@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Build a long, native-resolution colour video in one TR-DOS image.
+"""Build long 2-bit brightness video with player-side native dithering.
 
 The profile is deliberately different from the temporal-dither demo:
 
-* every encoded pixel maps directly to one pixel of the 256x192 screen;
-* one attribute describes each native 8x8 Spectrum cell;
+* the stream stores 128x96 logical pixels with four brightness levels;
+* the player expands every level to a real 2x2 pattern on the 256x192 screen;
+* one attribute describes each real 8x8 Spectrum character cell;
 * frames are XOR-delta encoded with zero/repeat/literal RLE;
 * bank 5 and bank 7 are used as ordinary frame buffers and are flipped only
   when a complete logical frame is ready;
@@ -41,21 +42,24 @@ LOAD_ADDRESS = 0x6000
 BUFFER = 0x8000
 BUFFER_BYTES = 0x2000
 STATE_ADDRESS = BUFFER + BUFFER_BYTES
-STATE_BITMAP_BYTES = base.SCREEN_BITMAP_BYTES
-STATE_ATTR_BYTES = base.SCREEN_ATTR_BYTES
+LOGICAL_WIDTH = 128
+LOGICAL_HEIGHT = 96
+ATTR_COLS = base.CELLS_X
+ATTR_ROWS = base.CELLS_Y
+ATTR_SOURCE_WIDTH = LOGICAL_WIDTH // ATTR_COLS
+ATTR_SOURCE_HEIGHT = LOGICAL_HEIGHT // ATTR_ROWS
+STATE_LEVEL_BYTES = LOGICAL_WIDTH * LOGICAL_HEIGHT * 2 // 8
+STATE_ATTR_BYTES = ATTR_COLS * ATTR_ROWS
+STATE_BITMAP_BYTES = STATE_LEVEL_BYTES
 STATE_BYTES = STATE_BITMAP_BYTES + STATE_ATTR_BYTES
 PACKET_HEADER_BYTES = 8
 VIDEO_MAGIC = b"ZXVL"
-VIDEO_VERSION = 2
+VIDEO_VERSION = 3
 PAGING_ROM48_BANK7 = 0x17
-LOGICAL_WIDTH = base.WIDTH
-LOGICAL_HEIGHT = base.HEIGHT
-ATTR_COLS = base.CELLS_X
-ATTR_ROWS = base.CELLS_Y
 MAX_PACKET_SECTORS = BUFFER_BYTES // base.SECTOR_SIZE
 MAX_TRDOS_FILE_SECTORS = 255
-MAX_VIDEO_VOLUME_SECTORS = (
-    (base.LOGICAL_TRACKS - 1) * base.SECTORS_PER_TRACK - 4
+TRD_DATA_SECTORS = (
+    (base.LOGICAL_TRACKS - 1) * base.SECTORS_PER_TRACK
 )
 
 
@@ -140,65 +144,62 @@ def encode_compact_frame(
     attr_change_penalty: int,
     dither: str,
 ) -> tuple[bytes, np.ndarray]:
-    """Convert one 256x192 RGB image to a native Spectrum screen."""
+    """Convert one 128x96 image to packed two-bit brightness levels."""
     if image.shape != (LOGICAL_HEIGHT, LOGICAL_WIDTH, 3):
         raise ValueError(f"unexpected compact frame shape {image.shape}")
-    work = image.astype(np.int32)
-    dither_threshold: np.ndarray | None
-    if dither == "ordered4":
-        dither_threshold = np.tile(BAYER_4X4, (2, 2))
-    elif dither == "ordered8":
-        dither_threshold = BAYER_8X8
-    else:
-        dither_threshold = None
-    bitmap = bytearray(STATE_BITMAP_BYTES)
+    work = image.astype(np.float64)
+    levels = np.empty((LOGICAL_HEIGHT, LOGICAL_WIDTH), dtype=np.uint8)
     attrs = np.empty(STATE_ATTR_BYTES, dtype=np.uint8)
+    coverages = (
+        np.array([0.0, 0.25, 0.5, 1.0], dtype=np.float64)
+        if dither != "none"
+        else np.array([0.0, 0.0, 1.0, 1.0], dtype=np.float64)
+    )
     cell = 0
     for by in range(ATTR_ROWS):
         for bx in range(ATTR_COLS):
-            block = work[by * 8:(by + 1) * 8, bx * 8:(bx + 1) * 8]
+            block = work[
+                by * ATTR_SOURCE_HEIGHT:(by + 1) * ATTR_SOURCE_HEIGHT,
+                bx * ATTR_SOURCE_WIDTH:(bx + 1) * ATTR_SOURCE_WIDTH,
+            ]
             best_score: int | None = None
             best_attr = 0x78
-            best_bits: np.ndarray | None = None
+            best_levels: np.ndarray | None = None
             for attr, ink, paper in COLOUR_CANDIDATES:
                 direction = (ink - paper).astype(np.float64)
-                length_squared = float(np.dot(direction, direction))
-                if dither == "none" or length_squared == 0.0:
-                    ink_distance = np.sum((block - ink) ** 2, axis=2)
-                    paper_distance = np.sum((block - paper) ** 2, axis=2)
-                    score = int(np.minimum(ink_distance, paper_distance).sum())
-                    bits = ink_distance < paper_distance
-                else:
-                    source = block.astype(np.float64)
-                    amount = np.clip(
-                        np.sum((source - paper) * direction, axis=2)
-                        / length_squared,
-                        0.0,
-                        1.0,
-                    )
-                    approximation = (
-                        paper[None, None, :] + amount[:, :, None] * direction
-                    )
-                    score = int(np.sum((source - approximation) ** 2))
-                    assert dither_threshold is not None
-                    bits = amount > dither_threshold
+                palette = (
+                    paper[None, :]
+                    + coverages[:, None] * direction[None, :]
+                )
+                distances = np.sum(
+                    (block[:, :, None, :] - palette[None, None, :, :]) ** 2,
+                    axis=3,
+                )
+                candidate_levels = np.argmin(distances, axis=2).astype(
+                    np.uint8
+                )
+                score = int(np.min(distances, axis=2).sum())
                 if previous_attrs is not None and attr != int(previous_attrs[cell]):
                     score += attr_change_penalty
                 if best_score is None or score < best_score:
                     best_score = score
                     best_attr = attr
-                    best_bits = bits
-            assert best_bits is not None
+                    best_levels = candidate_levels
+            assert best_levels is not None
             attrs[cell] = best_attr
-            for row in range(8):
-                packed = np.packbits(
-                    best_bits[row], bitorder="big"
-                )[0]
-                bitmap[
-                    base.spectrum_bitmap_offset(bx, by * 8 + row)
-                ] = int(packed)
+            levels[
+                by * ATTR_SOURCE_HEIGHT:(by + 1) * ATTR_SOURCE_HEIGHT,
+                bx * ATTR_SOURCE_WIDTH:(bx + 1) * ATTR_SOURCE_WIDTH,
+            ] = best_levels
             cell += 1
-    return bytes(bitmap) + attrs.tobytes(), attrs
+
+    packed = (
+        (levels[:, 0::4] << 6)
+        | (levels[:, 1::4] << 4)
+        | (levels[:, 2::4] << 2)
+        | levels[:, 3::4]
+    )
+    return packed.tobytes() + attrs.tobytes(), attrs
 
 
 def encode_zero_literal_rle(data: bytes) -> bytes:
@@ -275,11 +276,55 @@ def decode_zero_literal_rle(encoded: bytes, previous: bytes) -> bytes:
     return bytes(state)
 
 
+def build_player_dither_tables() -> tuple[bytes, bytes]:
+    """Map four packed brightness levels to two native output scanlines."""
+    top = bytearray(256)
+    bottom = bytearray(256)
+    patterns = (
+        (0b00, 0b00),
+        (0b10, 0b00),
+        (0b10, 0b01),
+        (0b11, 0b11),
+    )
+    for packed in range(256):
+        top_byte = 0
+        bottom_byte = 0
+        for index, shift in enumerate((6, 4, 2, 0)):
+            level = (packed >> shift) & 3
+            top_pair, bottom_pair = patterns[level]
+            output_shift = 6 - index * 2
+            top_byte |= top_pair << output_shift
+            bottom_byte |= bottom_pair << output_shift
+        top[packed] = top_byte
+        bottom[packed] = bottom_byte
+    return bytes(top), bytes(bottom)
+
+
+PLAYER_DITHER_TOP, PLAYER_DITHER_BOTTOM = build_player_dither_tables()
+
+
 def expand_compact_screen(state: bytes) -> tuple[bytes, bytes]:
-    """Return the native screen stored in the codec state."""
+    """Reference rendering of player-side 2x2 native dithering."""
     if len(state) != STATE_BYTES:
-        raise ValueError("invalid native state size")
-    return state[:STATE_BITMAP_BYTES], state[STATE_BITMAP_BYTES:]
+        raise ValueError("invalid two-bit brightness state size")
+    packed = np.frombuffer(
+        state[:STATE_LEVEL_BYTES], dtype=np.uint8
+    ).reshape(LOGICAL_HEIGHT, LOGICAL_WIDTH // 4)
+    bitmap = bytearray(base.SCREEN_BITMAP_BYTES)
+    for source_y in range(LOGICAL_HEIGHT):
+        top_offset = base.spectrum_bitmap_offset(0, source_y * 2)
+        bottom_offset = base.spectrum_bitmap_offset(0, source_y * 2 + 1)
+        bitmap[top_offset:top_offset + 32] = bytes(
+            PLAYER_DITHER_TOP[value] for value in packed[source_y]
+        )
+        bitmap[bottom_offset:bottom_offset + 32] = bytes(
+            PLAYER_DITHER_BOTTOM[value] for value in packed[source_y]
+        )
+
+    attrs = state[STATE_LEVEL_BYTES:]
+    if len(attrs) != base.SCREEN_ATTR_BYTES:
+        raise AssertionError("native 32x24 attribute grid is incomplete")
+    return bytes(bitmap), attrs
 
 
 def make_packet(state: bytes, previous: bytes | None) -> Packet:
@@ -319,7 +364,7 @@ def serialize_video(
     struct.pack_into(
         "<H", header, 20, 1 + len(packet_data) // base.SECTOR_SIZE
     )
-    header[24:32] = b"ZXVLONG2"
+    header[24:32] = b"ZXVBRI3 "
     return bytes(header) + packet_data
 
 
@@ -328,6 +373,7 @@ def split_video_volumes(
     packets: list[Packet],
     fps: int,
     timing_fps: float,
+    max_video_sectors: int,
 ) -> list[tuple[int, int, bytes, list[Packet]]]:
     """Split a long stream into independently bootable TRD-sized volumes."""
     if len(states) != len(packets):
@@ -340,7 +386,7 @@ def split_video_volumes(
         end = start + 1
         while end < len(states):
             candidate = packets[end]
-            if used_sectors + candidate.sectors > MAX_VIDEO_VOLUME_SECTORS:
+            if used_sectors + candidate.sectors > max_video_sectors:
                 break
             part_packets.append(candidate)
             used_sectors += candidate.sectors
@@ -371,6 +417,13 @@ def emit_ld_mem_hl(a: base.MiniAssembler, label: str) -> None:
 
 def emit_ld_de_mem(a: base.MiniAssembler, label: str) -> None:
     a.emit(0xED, 0x5B)
+    pos = len(a.code)
+    a.emit(0, 0)
+    a.abs_fixups.append((pos, label))
+
+
+def emit_ld_bc_mem(a: base.MiniAssembler, label: str) -> None:
+    a.emit(0xED, 0x4B)
     pos = len(a.code)
     a.emit(0, 0)
     a.abs_fixups.append((pos, label))
@@ -438,7 +491,7 @@ def build_player(
     a.emit(0x2B)
     emit_ld_mem_hl(a, "frames_remaining")
 
-    # First packet is raw and initializes the native screen state.
+    # First packet is raw and initializes the two-bit brightness state.
     a.abs16(0xCD, "read_packet")
     a.abs16(0xCD, "apply_packet")
     a.emit(0x3E, 0x40)
@@ -612,10 +665,45 @@ def build_player(
 
     # --------------------------------------------------------------- renderer
     a.label("render_state")
-    a.emit(0x21); a.word(STATE_ADDRESS)
-    a.emit(0x57, 0x1E, 0x00)              # DE = 4000h or C000h
-    a.emit(0x01); a.word(STATE_BYTES)
-    a.emit(0xED, 0xB0, 0xC9)              # complete native screen
+    emit_ld_mem_a(a, "render_base")
+    a.emit(0x11); a.word(STATE_ADDRESS)
+    a.emit(0x21); a.abs16([], "row_addresses")
+    emit_ld_mem_hl(a, "row_table_ptr")
+    a.emit(0x3E, LOGICAL_HEIGHT); emit_ld_mem_a(a, "render_rows")
+
+    a.label("render_row")
+    emit_ld_mem_de(a, "source_row")
+    emit_ld_hl_mem(a, "row_table_ptr")
+    a.emit(0x4E, 0x23, 0x46, 0x23)        # BC = top row offset
+    emit_ld_a_mem(a, "render_base")
+    a.emit(0x80, 0x47)                    # add screen base to B
+    a.emit(0x5E, 0x23, 0x56, 0x23)        # DE = bottom row offset
+    emit_ld_a_mem(a, "render_base")
+    a.emit(0x82, 0x57)                    # add screen base to D
+    emit_ld_mem_de(a, "second_row")
+    emit_ld_mem_hl(a, "row_table_ptr")
+
+    emit_ld_de_mem(a, "source_row")
+    a.emit(0x21); a.abs16([], "dither_top")
+    for _ in range(LOGICAL_WIDTH // 4):
+        a.emit(0x1A, 0x13, 0x6F, 0x7E, 0x02, 0x03)
+
+    emit_ld_de_mem(a, "source_row")
+    emit_ld_bc_mem(a, "second_row")
+    a.emit(0x21); a.abs16([], "dither_bottom")
+    for _ in range(LOGICAL_WIDTH // 4):
+        a.emit(0x1A, 0x13, 0x6F, 0x7E, 0x02, 0x03)
+
+    emit_ld_a_mem(a, "render_rows")
+    a.emit(0x3D); emit_ld_mem_a(a, "render_rows")
+    a.abs16(0xC2, "render_row")
+
+    # Copy the native 32x24 attribute grid without scaling.
+    a.emit(0x21); a.word(STATE_ADDRESS + STATE_LEVEL_BYTES)
+    emit_ld_a_mem(a, "render_base")
+    a.emit(0xC6, 0x18, 0x57, 0x1E, 0x00)
+    a.emit(0x01); a.word(base.SCREEN_ATTR_BYTES)
+    a.emit(0xED, 0xB0, 0xC9)
 
     # ----------------------------------------------------------- TR-DOS read
     a.label("read_n")
@@ -666,9 +754,26 @@ def build_player(
         ("prefetch_ptr", 2),
         ("run_count", 1),
         ("repeat_value", 1),
+        ("render_base", 1),
+        ("render_rows", 1),
+        ("row_table_ptr", 2),
+        ("source_row", 2),
+        ("second_row", 2),
     ):
         a.label(name)
         a.emit(*([0] * size))
+
+    a.label("row_addresses")
+    for source_y in range(LOGICAL_HEIGHT):
+        a.word(base.spectrum_bitmap_offset(0, source_y * 2))
+        a.word(base.spectrum_bitmap_offset(0, source_y * 2 + 1))
+
+    while a.pc & 0xFF:
+        a.emit(0)
+    a.label("dither_top")
+    a.emit(*PLAYER_DITHER_TOP)
+    a.label("dither_bottom")
+    a.emit(*PLAYER_DITHER_BOTTOM)
 
     code = a.resolve()
     if LOAD_ADDRESS + len(code) >= BUFFER:
@@ -706,8 +811,8 @@ def ffmpeg_frames(
         "-vf",
         (
             f"fps={fps},"
-            "scale=256:144:flags=area,"
-            "pad=256:192:0:24:black"
+            "scale=128:72:flags=area,"
+            "pad=128:96:0:12:black"
         ),
         "-pix_fmt", "rgb24",
         "-f", "rawvideo",
@@ -923,17 +1028,24 @@ def main() -> None:
     if len(player) != len(provisional):
         raise AssertionError("player size changed after embedding disk location")
 
+    boot_sectors = math.ceil((len(boot) + 4) / base.SECTOR_SIZE)
+    player_sectors = math.ceil(len(player) / base.SECTOR_SIZE)
+    max_video_sectors = TRD_DATA_SECTORS - boot_sectors - player_sectors
     volumes = split_video_volumes(
-        states, packets, args.fps, args.timing_fps
+        states,
+        packets,
+        args.fps,
+        args.timing_fps,
+        max_video_sectors,
     )
     video_chunk_bytes = MAX_TRDOS_FILE_SECTORS * base.SECTOR_SIZE
     volume_metadata: list[dict[str, object]] = []
     total_chunks = 0
     total_volume_bytes = 0
     stem = (
-        "big_buck_bunny_2min_zx_native_dithered"
+        "big_buck_bunny_2min_zx_brightness_dithered"
         if dithered
-        else "big_buck_bunny_2min_zx_native"
+        else "big_buck_bunny_2min_zx_brightness"
     )
     for volume_index, (
         frame_start,
@@ -1011,7 +1123,7 @@ def main() -> None:
         )
         for entry in volume_metadata
     )
-    report = f"""# Big Buck Bunny — ZX Spectrum native-resolution long-video profile
+    report = f"""# Big Buck Bunny — ZX player-side native-dither profile
 
 - Source: {args.input_video}
 - Source interval: {args.start:.3f}..{args.start + args.duration:.3f} s
@@ -1021,8 +1133,9 @@ def main() -> None:
   ({50 / args.timing_fps:g} fields per completed frame)
 - Encoded source duration: {stats['duration_seconds']:.3f} s
 - Ideal screen duration: {stats['frames'] / args.timing_fps:.3f} s
-- Logical image: 256x192; one encoded pixel equals one screen pixel
-- Colour attributes: native 32x24 Spectrum cells
+- Stored brightness image: 128x96, four levels (2 bits per pixel)
+- Player output: native 256x192 one-dot 2x2 patterns
+- Colour attributes: native 32x24 Spectrum cells (768 bytes)
 - Spatial dithering: {args.dither}
 - Screen presentation: bank 5/7 double buffer, one flip per logical frame
 - 50 Hz temporal A/B flicker: disabled
@@ -1065,6 +1178,12 @@ boundary.
             "version": VIDEO_VERSION,
             "logical_width": LOGICAL_WIDTH,
             "logical_height": LOGICAL_HEIGHT,
+            "brightness_bits_per_pixel": 2,
+            "brightness_levels": 4,
+            "attribute_columns": ATTR_COLS,
+            "attribute_rows": ATTR_ROWS,
+            "player_output_width": base.WIDTH,
+            "player_output_height": base.HEIGHT,
             "state_bytes": STATE_BYTES,
         },
     }
