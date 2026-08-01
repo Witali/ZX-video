@@ -1209,17 +1209,54 @@ def apply_reframe(image: np.ndarray, window: ReframeWindow) -> np.ndarray:
     return result
 
 
-def analyse_ay_frames(
+def track_note_path(
+    salience: np.ndarray,
+    first_note: int,
+    last_note: int,
+    jump_cost: float,
+) -> np.ndarray:
+    """Track one musically continuous note path through a salience matrix."""
+    notes = np.arange(first_note, last_note + 1, dtype=np.int32)
+    local = salience[:, notes]
+    normaliser = np.maximum(np.max(local, axis=1, keepdims=True), 1e-12)
+    emission = np.log(0.025 + local / normaliser)
+    distance = np.abs(notes[:, None] - notes[None, :]).astype(np.float64)
+    transition = -jump_cost * distance - 0.055 * np.maximum(distance - 5.0, 0.0) ** 1.45
+    transition[distance == 0] += 0.32
+    transition[distance == 12] -= 0.45
+    score = emission[0].copy()
+    backtrack = np.zeros((len(salience), len(notes)), dtype=np.int16)
+    for frame in range(1, len(salience)):
+        choices = score[:, None] + transition
+        previous = np.argmax(choices, axis=0)
+        backtrack[frame] = previous
+        score = choices[previous, np.arange(len(notes))] + emission[frame]
+    path = np.empty(len(salience), dtype=np.int32)
+    state = int(np.argmax(score))
+    for frame in range(len(salience) - 1, -1, -1):
+        path[frame] = notes[state]
+        state = int(backtrack[frame, state])
+    # Remove one-frame trills when both surrounding frames agree.
+    for frame in range(1, len(path) - 1):
+        if path[frame - 1] == path[frame + 1] != path[frame]:
+            path[frame] = path[frame - 1]
+    return path
+
+
+def note_path_stats(path: np.ndarray) -> tuple[int, int, float]:
+    changes = int(np.count_nonzero(np.diff(path)))
+    large_jumps = int(np.count_nonzero(np.abs(np.diff(path)) > 7))
+    return changes, large_jumps, len(path) / max(1, changes + 1)
+
+
+def decode_analysis_audio(
+    ffmpeg: str,
     source: Path,
     start: float,
     duration: float,
-    fps: float,
-) -> tuple[list[AyFrame], dict[str, object]]:
-    """Reduce the soundtrack to three stable, note-quantised AY tone voices."""
-    ffmpeg = shutil.which("ffmpeg")
-    if ffmpeg is None:
-        raise RuntimeError("ffmpeg is not available")
-    sample_rate = 48_000
+    sample_rate: int,
+    front_music_only: bool,
+) -> np.ndarray:
     command = [
         ffmpeg,
         "-v", "error",
@@ -1227,6 +1264,10 @@ def analyse_ay_frames(
         "-t", f"{duration:g}",
         "-i", str(source),
         "-map", "0:a:0",
+    ]
+    if front_music_only:
+        command += ["-af", "pan=mono|c0=0.5*FL+0.5*FR"]
+    command += [
         "-ac", "1",
         "-ar", str(sample_rate),
         "-f", "f32le",
@@ -1235,25 +1276,40 @@ def analyse_ay_frames(
     completed = subprocess.run(command, stdout=subprocess.PIPE, check=False)
     if completed.returncode:
         raise RuntimeError(f"audio-analysis ffmpeg exited with {completed.returncode}")
-    samples = np.frombuffer(completed.stdout, dtype="<f4").astype(np.float64)
+    return np.frombuffer(completed.stdout, dtype="<f4").astype(np.float64)
+
+
+def analyse_ay_frames(
+    source: Path,
+    start: float,
+    duration: float,
+    fps: float,
+) -> tuple[list[AyFrame], dict[str, object]]:
+    """Track melody, bass, and harmony as three continuous AY voices."""
+    ffmpeg = shutil.which("ffmpeg")
+    if ffmpeg is None:
+        raise RuntimeError("ffmpeg is not available")
+    sample_rate = 48_000
+    # The 5.1 centre channel carries many effects. Pitch comes from FL/FR,
+    # while loudness still follows a conventional downmix of the full source.
+    pitch_samples = decode_analysis_audio(
+        ffmpeg, source, start, duration, sample_rate, True
+    )
+    loudness_samples = decode_analysis_audio(
+        ffmpeg, source, start, duration, sample_rate, False
+    )
     expected_frames = round(duration * fps)
-    window_size = 4096
+    window_size = 8192
     half_window = window_size // 2
     window = np.hanning(window_size)
     frequencies = np.fft.rfftfreq(window_size, 1.0 / sample_rate)
-    usable = (frequencies >= 55.0) & (frequencies <= 1760.0)
-    usable_indices = np.flatnonzero(usable)
-    midi_bins = np.rint(
-        69.0 + 12.0 * np.log2(frequencies[usable] / 440.0)
-    ).astype(np.int32)
-    midi_min = 33
-    midi_max = 93
-    smoothed_salience = np.zeros(128, dtype=np.float64)
-    result: list[AyFrame] = []
-    used_notes: set[int] = set()
-    active_voice_frames = 0
-    frame_rms: list[float] = []
-    for frame_index in range(expected_frames):
+    candidate_notes = np.arange(33, 94, dtype=np.int32)
+    candidate_frequencies = 440.0 * 2.0 ** ((candidate_notes - 69) / 12.0)
+    harmonic_weights = np.array((1.35, 0.92, 0.70, 0.54, 0.43, 0.35))
+    salience = np.zeros((expected_frames, 128), dtype=np.float64)
+    frame_rms = np.zeros(expected_frames, dtype=np.float64)
+
+    def centred_segment(samples: np.ndarray, frame_index: int) -> np.ndarray:
         center = round((frame_index + 0.5) * sample_rate / fps)
         first = center - half_window
         source_first = max(0, first)
@@ -1263,7 +1319,42 @@ def analyse_ay_frames(
             segment[source_first - first:source_last - first] = samples[
                 source_first:source_last
             ]
-        frame_rms.append(float(np.sqrt(np.mean(segment * segment))))
+        return segment
+
+    for frame_index in range(expected_frames):
+        pitch_segment = centred_segment(pitch_samples, frame_index)
+        loudness_segment = centred_segment(loudness_samples, frame_index)
+        frame_rms[frame_index] = np.sqrt(np.mean(loudness_segment * loudness_segment))
+        magnitude = np.abs(np.fft.rfft(pitch_segment * window))
+        envelope = np.sqrt(
+            np.convolve(magnitude * magnitude, np.ones(41) / 41.0, mode="same")
+        )
+        whitened = magnitude / np.maximum(envelope, np.max(envelope) * 1e-5)
+        whitened *= np.sqrt(magnitude / max(float(np.max(magnitude)), 1e-12))
+        for note, fundamental in zip(candidate_notes, candidate_frequencies):
+            harmonics = fundamental * np.arange(1, len(harmonic_weights) + 1)
+            values = np.interp(harmonics, frequencies, whitened, left=0.0, right=0.0)
+            support = float(np.dot(values, harmonic_weights))
+            fundamental_ratio = values[0] / max(float(np.max(values)), 1e-12)
+            salience[frame_index, note] = support * (0.62 + 0.38 * fundamental_ratio)
+
+    if expected_frames > 2:
+        salience[1:-1] = (
+            salience[:-2] * 0.20
+            + salience[1:-1] * 0.60
+            + salience[2:] * 0.20
+        )
+    melody = track_note_path(salience, 48, 88, 0.13)
+    bass_salience = salience.copy()
+    harmony_salience = salience.copy()
+    for frame, note in enumerate(melody):
+        harmony_salience[frame, max(0, note - 1):min(128, note + 2)] = 0.0
+        bass_salience[frame, max(0, note - 1):min(128, note + 2)] = 0.0
+    bass = track_note_path(bass_salience, 33, 64, 0.17)
+    for frame, note in enumerate(bass):
+        harmony_salience[frame, max(0, note - 1):min(128, note + 2)] = 0.0
+    harmony = track_note_path(harmony_salience, 43, 79, 0.16)
+
     rms_db = 20.0 * np.log10(np.maximum(frame_rms, 1e-8))
     audible_db = rms_db[rms_db > -70.0]
     if len(audible_db):
@@ -1272,92 +1363,61 @@ def analyse_ay_frames(
     else:
         quiet_db, loud_db = -48.0, -12.0
     loud_db = max(loud_db, quiet_db + 6.0)
-    master_volumes: list[int] = []
 
-    for frame_index in range(expected_frames):
-        center = round((frame_index + 0.5) * sample_rate / fps)
-        first = center - half_window
-        segment = np.zeros(window_size, dtype=np.float64)
-        source_first = max(0, first)
-        source_last = min(len(samples), first + window_size)
-        if source_last > source_first:
-            segment[source_first - first:source_last - first] = samples[
-                source_first:source_last
-            ]
+    result: list[AyFrame] = []
+    used_notes: set[int] = set()
+    active_voice_frames = 0
+    master_volumes: list[int] = []
+    paths = np.column_stack((bass, harmony, melody))
+    for frame_index, notes in enumerate(paths):
         db = float(rms_db[frame_index])
         if db <= -70.0:
             master_volume = 0
         else:
-            master_volume = int(
-                np.clip(
-                    round(1.0 + 14.0 * (db - quiet_db) / (loud_db - quiet_db)),
-                    1,
-                    15,
-                )
-            )
+            master_volume = int(np.clip(
+                round(1.0 + 14.0 * (db - quiet_db) / (loud_db - quiet_db)),
+                1,
+                15,
+            ))
         master_volumes.append(master_volume)
-        spectrum = np.abs(np.fft.rfft(segment * window)) ** 2
-        local = spectrum[usable_indices]
-        peak_mask = np.zeros_like(local, dtype=bool)
-        peak_mask[1:-1] = (
-            (local[1:-1] > local[:-2]) & (local[1:-1] >= local[2:])
-        )
-        peak_power = np.where(peak_mask, local, 0.0)
-        salience = np.bincount(
-            midi_bins,
-            weights=peak_power,
-            minlength=128,
-        ).astype(np.float64)
-        smoothed_salience = smoothed_salience * 0.55 + salience * 0.45
-        ranked = np.argsort(smoothed_salience[midi_min:midi_max + 1])[::-1]
-        selected: list[int] = []
-        for relative_note in ranked:
-            note = int(relative_note + midi_min)
-            if smoothed_salience[note] <= 0.0:
-                break
-            if all(abs(note - other) >= 2 for other in selected):
-                selected.append(note)
-            if len(selected) == 3:
-                break
-        selected.sort()
-        selected_count = len(selected)
-        while len(selected) < 3:
-            selected.append(69)
-
-        maximum = max((smoothed_salience[note] for note in selected), default=0.0)
+        scores = np.array([salience[frame_index, note] for note in notes])
+        maximum = max(float(np.max(scores)), 1e-12)
         periods: list[int] = []
         volumes: list[int] = []
-        for voice, note in enumerate(selected):
-            frequency = 440.0 * 2.0 ** ((note - 69) / 12.0)
-            period = int(np.clip(round(AY_CLOCK_HZ / (16.0 * frequency)), 1, 4095))
-            periods.append(period)
-            score = smoothed_salience[note]
-            if master_volume == 0 or maximum <= 0.0 or voice >= selected_count:
+        for voice, (note, score) in enumerate(zip(notes, scores)):
+            frequency = 440.0 * 2.0 ** ((int(note) - 69) / 12.0)
+            periods.append(int(np.clip(
+                round(AY_CLOCK_HZ / (16.0 * frequency)), 1, 4095
+            )))
+            if master_volume == 0 or score < maximum * 0.055:
                 volume = 0
+            elif voice == 2:
+                volume = master_volume
             else:
-                relative_db = 10.0 * math.log10(max(score / maximum, 1e-8))
-                volume = int(
-                    np.clip(
-                        round(master_volume + relative_db / 3.0),
-                        1,
-                        master_volume,
-                    )
-                )
+                relative_db = 20.0 * math.log10(max(float(score) / maximum, 1e-8))
+                role_offset = -2 if voice == 0 else -3
+                volume = int(np.clip(
+                    round(master_volume + role_offset + relative_db / 4.5),
+                    1,
+                    master_volume,
+                ))
             volumes.append(volume)
             if volume:
-                used_notes.add(note)
+                used_notes.add(int(note))
         if any(volumes):
             active_voice_frames += 1
         result.append(AyFrame(tuple(periods), tuple(volumes)))
 
+    melody_changes, melody_jumps, melody_hold = note_path_stats(melody)
     print(
-        f"AY analysis: {len(result)} frames, {len(used_notes)} notes, "
-        f"active {active_voice_frames / max(1, len(result)):.1%}, "
-        f"master volume {min(master_volumes)}..{max(master_volumes)}",
+        f"AY melody tracking: {len(result)} frames, {len(used_notes)} notes, "
+        f"melody changes {melody_changes}, large jumps {melody_jumps}, "
+        f"mean hold {melody_hold:.2f} frames",
         flush=True,
     )
     return result, {
-        "mode": "three_note_spectral",
+        "mode": "harmonic_viterbi_three_voice",
+        "pitch_mix": "front_left_right",
         "clock_hz": AY_CLOCK_HZ,
         "update_rate_hz": float(fps),
         "distinct_notes": len(used_notes),
@@ -1367,6 +1427,9 @@ def analyse_ay_frames(
         "master_volume_min": min(master_volumes),
         "master_volume_max": max(master_volumes),
         "master_volume_mean": float(np.mean(master_volumes)),
+        "melody_note_changes": melody_changes,
+        "melody_large_jumps": melody_jumps,
+        "melody_mean_hold_frames": melody_hold,
     }
 
 
@@ -2176,8 +2239,9 @@ def main() -> None:
 {f"- Feedback baseline MSE: {feedback_stats['mean_default_mse']:.6f}; selected delta: {feedback_stats['mean_error_delta_vs_default']:+.6f}" if feedback_stats else ''}
 - Screen presentation: bank 5/7 double buffer, one flip per logical frame
 - 50 Hz temporal A/B flicker: disabled
-- Audio: three note-quantised AY-3-8912/YM2149F tone voices
+- Audio: harmonic/Viterbi melody, bass and harmony on AY-3-8912/YM2149F
 - AY update rate: {args.timing_fps:g} Hz; distinct selected notes: {ay_stats['distinct_notes']}
+- AY melody changes: {ay_stats['melody_note_changes']}; jumps over a fifth: {ay_stats['melody_large_jumps']}; mean hold: {ay_stats['melody_mean_hold_frames']:.2f} frames
 - AY active-frame ratio: {ay_stats['active_frame_ratio']:.1%}
 - AY source loudness anchors: {ay_stats['source_quiet_dbfs']:.1f}..{ay_stats['source_loud_dbfs']:.1f} dBFS
 - AY master volume: {ay_stats['master_volume_min']}..{ay_stats['master_volume_max']} (mean {ay_stats['master_volume_mean']:.2f})
