@@ -44,6 +44,8 @@ BUFFER_BYTES = 0x2000
 STATE_ADDRESS = BUFFER + BUFFER_BYTES
 LOGICAL_WIDTH = 128
 LOGICAL_HEIGHT = 96
+ACTIVE_Y0 = 12
+ACTIVE_HEIGHT = 72
 ATTR_COLS = base.CELLS_X
 ATTR_ROWS = base.CELLS_Y
 ATTR_SOURCE_WIDTH = LOGICAL_WIDTH // ATTR_COLS
@@ -81,6 +83,16 @@ class Packet:
             raise ValueError("packet exceeds its sector allocation")
         result += bytes(expected - len(result))
         return bytes(result)
+
+
+@dataclass(frozen=True)
+class ToneRange:
+    black_point: float
+    white_point: float
+    centers: tuple[float, float, float, float]
+    thresholds: tuple[float, float, float]
+    black_percentile: float = 3.0
+    white_percentile: float = 97.0
 
 
 def zx_rgb(index: int) -> np.ndarray:
@@ -823,12 +835,204 @@ def ffmpeg_frames(
     return process, command
 
 
+def histogram_percentile(histogram: np.ndarray, percentile: float) -> float:
+    cumulative = np.cumsum(histogram, dtype=np.int64)
+    if cumulative[-1] == 0:
+        raise ValueError("empty luminance histogram")
+    target = cumulative[-1] * percentile / 100.0
+    index = int(np.searchsorted(cumulative, target, side="left"))
+    return (index + 0.5) / len(histogram)
+
+
+def tone_range_from_histogram(
+    histogram: np.ndarray,
+    black_percentile: float,
+    white_percentile: float,
+) -> ToneRange:
+    black = histogram_percentile(histogram, black_percentile)
+    white = histogram_percentile(histogram, white_percentile)
+    bins = len(histogram)
+    if white - black < 1.0 / bins:
+        raise RuntimeError("analysed luminance range is empty")
+
+    bin_values = (np.arange(bins, dtype=np.float64) + 0.5) / bins
+    included = (bin_values >= black) & (bin_values <= white)
+    values = bin_values[included]
+    weights = histogram[included].astype(np.float64)
+    centers = np.linspace(black, white, 4)
+    for _ in range(32):
+        thresholds = (centers[:-1] + centers[1:]) * 0.5
+        groups = np.digitize(values, thresholds)
+        updated = centers.copy()
+        for group in range(4):
+            selected = groups == group
+            total = float(weights[selected].sum())
+            if total:
+                updated[group] = float(
+                    np.sum(values[selected] * weights[selected]) / total
+                )
+        if np.max(np.abs(updated - centers)) < 1e-7:
+            centers = updated
+            break
+        centers = updated
+    thresholds = (centers[:-1] + centers[1:]) * 0.5
+    return ToneRange(
+        black_point=float(black),
+        white_point=float(white),
+        centers=tuple(float(value) for value in centers),
+        thresholds=tuple(float(value) for value in thresholds),
+        black_percentile=black_percentile,
+        white_percentile=white_percentile,
+    )
+
+
+def analyse_tone_ranges(
+    source: Path,
+    start: float,
+    duration: float,
+    fps: int,
+    black_percentile: float,
+    white_percentile: float,
+    window_seconds: float,
+) -> list[ToneRange]:
+    """Calculate smoothly adaptive tone groups in a centred time window."""
+    process, _ = ffmpeg_frames(source, start, duration, fps)
+    assert process.stdout is not None
+    bins = 1024
+    frame_histograms: list[np.ndarray] = []
+    frame_bytes = LOGICAL_WIDTH * LOGICAL_HEIGHT * 3
+    try:
+        while True:
+            raw = read_exact(process.stdout, frame_bytes)
+            if not raw:
+                break
+            if len(raw) != frame_bytes:
+                raise RuntimeError("ffmpeg returned a partial analysis frame")
+            image = np.frombuffer(raw, dtype=np.uint8).reshape(
+                LOGICAL_HEIGHT, LOGICAL_WIDTH, 3
+            )
+            active = image[ACTIVE_Y0:ACTIVE_Y0 + ACTIVE_HEIGHT]
+            linear = base.srgb_to_linear(active.astype(np.float64))
+            luminance = (
+                linear[:, :, 0] * 0.2126
+                + linear[:, :, 1] * 0.7152
+                + linear[:, :, 2] * 0.0722
+            )
+            frame_histograms.append(
+                np.histogram(luminance, bins=bins, range=(0.0, 1.0))[0]
+            )
+    finally:
+        process.stdout.close()
+    return_code = process.wait()
+    if return_code:
+        raise RuntimeError(f"tone-analysis ffmpeg exited with {return_code}")
+    if not frame_histograms:
+        raise RuntimeError("tone analysis decoded no frames")
+
+    histograms = np.stack(frame_histograms).astype(np.int64, copy=False)
+    prefix = np.vstack(
+        [np.zeros((1, bins), dtype=np.int64), np.cumsum(histograms, axis=0)]
+    )
+    radius = max(1, round(window_seconds * fps * 0.5))
+    ranges: list[ToneRange] = []
+    for index in range(len(histograms)):
+        first = max(0, index - radius)
+        last = min(len(histograms), index + radius + 1)
+        ranges.append(
+            tone_range_from_histogram(
+                prefix[last] - prefix[first],
+                black_percentile,
+                white_percentile,
+            )
+        )
+
+    # A symmetric one-second low-pass removes histogram-bin jitter without
+    # delaying or anticipating scene changes by more than the analysis window.
+    parameter_rows = np.array(
+        [
+            (tone.black_point, tone.white_point, *tone.centers)
+            for tone in ranges
+        ],
+        dtype=np.float64,
+    )
+    smooth_radius = max(1, round(fps * 0.5))
+    kernel_positions = np.arange(-smooth_radius, smooth_radius + 1)
+    kernel = (smooth_radius + 1 - np.abs(kernel_positions)).astype(np.float64)
+    kernel /= kernel.sum()
+    smoothed = np.empty_like(parameter_rows)
+    for column in range(parameter_rows.shape[1]):
+        padded = np.pad(
+            parameter_rows[:, column], smooth_radius, mode="edge"
+        )
+        smoothed[:, column] = np.convolve(padded, kernel, mode="valid")
+
+    result: list[ToneRange] = []
+    for row in smoothed:
+        black_point = float(np.clip(row[0], 0.0, 1.0 - 1.0 / bins))
+        white_point = float(np.clip(row[1], black_point + 1.0 / bins, 1.0))
+        centers = np.clip(row[2:], black_point, white_point)
+        centers = np.maximum.accumulate(centers)
+        thresholds = (centers[:-1] + centers[1:]) * 0.5
+        result.append(
+            ToneRange(
+                black_point=black_point,
+                white_point=white_point,
+                centers=tuple(float(value) for value in centers),
+                thresholds=tuple(float(value) for value in thresholds),
+                black_percentile=black_percentile,
+                white_percentile=white_percentile,
+            )
+        )
+
+    black_values = np.array([tone.black_point for tone in result])
+    white_values = np.array([tone.white_point for tone in result])
+    middle = result[len(result) // 2]
+    print(
+        f"adaptive tone window={window_seconds:g}s, "
+        f"P{black_percentile:g}={black_values.min():.5f}.."
+        f"{black_values.max():.5f}, "
+        f"P{white_percentile:g}={white_values.min():.5f}.."
+        f"{white_values.max():.5f}, "
+        f"middle thresholds={','.join(f'{x:.5f}' for x in middle.thresholds)}",
+        flush=True,
+    )
+    return result
+
+
+def apply_tone_groups(image: np.ndarray, tone: ToneRange) -> np.ndarray:
+    """Map the current adaptive luminance groups while retaining pixel hue."""
+    linear = base.srgb_to_linear(image.astype(np.float64))
+    active = linear[ACTIVE_Y0:ACTIVE_Y0 + ACTIVE_HEIGHT]
+    luminance = (
+        active[:, :, 0] * 0.2126
+        + active[:, :, 1] * 0.7152
+        + active[:, :, 2] * 0.0722
+    )
+    clipped = np.clip(luminance, tone.black_point, tone.white_point)
+    groups = np.digitize(clipped, np.asarray(tone.thresholds))
+    target_levels = np.array([0.0, 0.25, 0.5, 1.0], dtype=np.float64)
+    target = target_levels[groups]
+    scale = np.divide(
+        target,
+        np.maximum(luminance, 1e-8),
+        out=np.zeros_like(target),
+    )
+    active[:] = np.clip(active * scale[:, :, None], 0.0, 1.0)
+    srgb = np.where(
+        linear <= 0.0031308,
+        linear * 12.92,
+        1.055 * np.power(linear, 1.0 / 2.4) - 0.055,
+    )
+    return np.clip(np.rint(srgb * 255.0), 0, 255).astype(np.uint8)
+
+
 def build_video(
     source: Path,
     start: float,
     duration: float,
     fps: int,
     timing_fps: float,
+    tone_ranges: list[ToneRange],
     attr_change_penalty: int,
     dither: str,
     preview_path: Path,
@@ -861,6 +1065,9 @@ def build_video(
             image = np.frombuffer(raw, dtype=np.uint8).reshape(
                 LOGICAL_HEIGHT, LOGICAL_WIDTH, 3
             )
+            if len(packets) >= len(tone_ranges):
+                raise RuntimeError("tone analysis has fewer frames than video")
+            image = apply_tone_groups(image, tone_ranges[len(packets)])
             state, attrs = encode_compact_frame(
                 image, previous_attrs, attr_change_penalty, dither
             )
@@ -884,6 +1091,10 @@ def build_video(
         raise RuntimeError(f"ffmpeg exited with {return_code}")
     if len(packets) < 2:
         raise RuntimeError("not enough source frames")
+    if len(packets) != len(tone_ranges):
+        raise RuntimeError(
+            f"tone/video frame mismatch: {len(tone_ranges)} vs {len(packets)}"
+        )
     if len(packets) > 0xFFFF:
         raise ValueError("too many frames for the long-video header")
 
@@ -892,6 +1103,15 @@ def build_video(
         "frames": len(packets),
         "fps": fps,
         "screen_fps": timing_fps,
+        "tone_range": {
+            "mode": "adaptive",
+            "black_percentile": tone_ranges[0].black_percentile,
+            "white_percentile": tone_ranges[0].white_percentile,
+            "black_point_min": min(t.black_point for t in tone_ranges),
+            "black_point_max": max(t.black_point for t in tone_ranges),
+            "white_point_min": min(t.white_point for t in tone_ranges),
+            "white_point_max": max(t.white_point for t in tone_ranges),
+        },
         "duration_seconds": len(packets) / fps,
         "video_bytes": len(video),
         "video_sectors": len(video) // base.SECTOR_SIZE,
@@ -970,6 +1190,24 @@ def main() -> None:
     )
     parser.add_argument("--attr-change-penalty", type=int, default=100_000)
     parser.add_argument(
+        "--black-percentile",
+        type=float,
+        default=3.0,
+        help="clip luminance below this adaptive-window percentile",
+    )
+    parser.add_argument(
+        "--white-percentile",
+        type=float,
+        default=97.0,
+        help="clip luminance above this adaptive-window percentile",
+    )
+    parser.add_argument(
+        "--tone-window-seconds",
+        type=float,
+        default=4.0,
+        help="centred window for smoothly adaptive luminance groups",
+    )
+    parser.add_argument(
         "--dither",
         choices=("none", "ordered4", "ordered8"),
         default="ordered4",
@@ -990,6 +1228,12 @@ def main() -> None:
         parser.error(
             "timing-fps must map to a whole number of 50 Hz fields"
         )
+    if not 0.0 <= args.black_percentile < args.white_percentile <= 100.0:
+        parser.error(
+            "percentiles must satisfy 0 <= black < white <= 100"
+        )
+    if args.tone_window_seconds <= 0.0:
+        parser.error("tone-window-seconds must be positive")
 
     out = args.output
     out.mkdir(parents=True, exist_ok=True)
@@ -999,12 +1243,22 @@ def main() -> None:
         if dithered
         else "big_buck_bunny_zx_preview.mp4"
     )
+    tone_ranges = analyse_tone_ranges(
+        args.input_video,
+        args.start,
+        args.duration,
+        args.fps,
+        args.black_percentile,
+        args.white_percentile,
+        args.tone_window_seconds,
+    )
     video, packets, states, stats = build_video(
         args.input_video,
         args.start,
         args.duration,
         args.fps,
         args.timing_fps,
+        tone_ranges,
         args.attr_change_penalty,
         args.dither,
         preview_path,
@@ -1043,9 +1297,9 @@ def main() -> None:
     total_chunks = 0
     total_volume_bytes = 0
     stem = (
-        "big_buck_bunny_2min_zx_brightness_dithered"
+        "big_buck_bunny_2min_zx_adaptive_tone_dithered"
         if dithered
-        else "big_buck_bunny_2min_zx_brightness"
+        else "big_buck_bunny_2min_zx_adaptive_tone"
     )
     for volume_index, (
         frame_start,
@@ -1113,6 +1367,7 @@ def main() -> None:
 
     packet_sectors = stats["packet_sectors"]
     assert isinstance(packet_sectors, list)
+    middle_tone = tone_ranges[len(tone_ranges) // 2]
     volume_lines = "\n".join(
         (
             f"  - part {entry['index']:02d}: frames "
@@ -1136,6 +1391,10 @@ def main() -> None:
 - Stored brightness image: 128x96, four levels (2 bits per pixel)
 - Player output: native 256x192 one-dot 2x2 patterns
 - Colour attributes: native 32x24 Spectrum cells (768 bytes)
+- Adaptive tone window: {args.tone_window_seconds:g} s, P{args.black_percentile:g}..P{args.white_percentile:g}
+- Linear black-point range: {min(t.black_point for t in tone_ranges):.5f}..{max(t.black_point for t in tone_ranges):.5f}
+- Linear white-point range: {min(t.white_point for t in tone_ranges):.5f}..{max(t.white_point for t in tone_ranges):.5f}
+- Middle-frame Lloyd-Max thresholds: {', '.join(f'{value:.5f}' for value in middle_tone.thresholds)}
 - Spatial dithering: {args.dither}
 - Screen presentation: bank 5/7 double buffer, one flip per logical frame
 - 50 Hz temporal A/B flicker: disabled
@@ -1168,6 +1427,7 @@ boundary.
         "video_chunks": total_chunks,
         "stats": stats,
         "timing_fps": args.timing_fps,
+        "tone_window_seconds": args.tone_window_seconds,
         "source": {
             "path": str(args.input_video),
             "start_seconds": args.start,
