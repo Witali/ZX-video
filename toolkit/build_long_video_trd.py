@@ -24,6 +24,7 @@ import shutil
 import struct
 import subprocess
 import sys
+import wave
 from dataclasses import dataclass
 from pathlib import Path
 from typing import BinaryIO
@@ -56,7 +57,9 @@ STATE_BITMAP_BYTES = STATE_LEVEL_BYTES
 STATE_BYTES = STATE_BITMAP_BYTES + STATE_ATTR_BYTES
 PACKET_HEADER_BYTES = 8
 VIDEO_MAGIC = b"ZXVL"
-VIDEO_VERSION = 3
+VIDEO_VERSION = 4
+AY_CLOCK_HZ = 1_773_400
+AY_STATE_BYTES = 9
 PAGING_ROM48_BANK7 = 0x17
 MAX_PACKET_SECTORS = BUFFER_BYTES // base.SECTOR_SIZE
 MAX_TRDOS_FILE_SECTORS = 255
@@ -70,13 +73,18 @@ class Packet:
     payload: bytes
     raw: bool
     sectors: int
+    ay_state: bytes
 
     def serialize(self) -> bytes:
         result = bytearray(PACKET_HEADER_BYTES)
         result[0] = self.sectors
         result[1] = 1 if self.raw else 0
         struct.pack_into("<H", result, 2, len(self.payload))
-        struct.pack_into("<H", result, 6, sum(self.payload) & 0xFFFF)
+        result[4] = AY_STATE_BYTES
+        struct.pack_into(
+            "<H", result, 6, (sum(self.ay_state) + sum(self.payload)) & 0xFFFF
+        )
+        result += self.ay_state
         result += self.payload
         expected = self.sectors * base.SECTOR_SIZE
         if len(result) > expected:
@@ -93,6 +101,21 @@ class ToneRange:
     thresholds: tuple[float, float, float]
     black_percentile: float = 3.0
     white_percentile: float = 97.0
+
+
+@dataclass(frozen=True)
+class AyFrame:
+    periods: tuple[int, int, int]
+    volumes: tuple[int, int, int]
+
+    def serialize(self) -> bytes:
+        result = bytearray()
+        for period in self.periods:
+            result += bytes((period & 0xFF, (period >> 8) & 0x0F))
+        result += bytes(self.volumes)
+        if len(result) != AY_STATE_BYTES:
+            raise AssertionError("invalid AY state size")
+        return bytes(result)
 
 
 def zx_rgb(index: int) -> np.ndarray:
@@ -339,7 +362,13 @@ def expand_compact_screen(state: bytes) -> tuple[bytes, bytes]:
     return bytes(bitmap), attrs
 
 
-def make_packet(state: bytes, previous: bytes | None) -> Packet:
+def make_packet(
+    state: bytes,
+    previous: bytes | None,
+    ay_state: bytes,
+) -> Packet:
+    if len(ay_state) != AY_STATE_BYTES:
+        raise ValueError("invalid AY state")
     if previous is None:
         payload = state
         raw = True
@@ -348,10 +377,12 @@ def make_packet(state: bytes, previous: bytes | None) -> Packet:
         compressed = encode_zero_literal_rle(delta)
         raw = len(compressed) >= len(state)
         payload = state if raw else compressed
-    sectors = math.ceil((PACKET_HEADER_BYTES + len(payload)) / base.SECTOR_SIZE)
+    sectors = math.ceil(
+        (PACKET_HEADER_BYTES + AY_STATE_BYTES + len(payload)) / base.SECTOR_SIZE
+    )
     if not 1 <= sectors <= MAX_PACKET_SECTORS:
         raise ValueError(f"frame packet needs {sectors} sectors")
-    return Packet(payload, raw, sectors)
+    return Packet(payload, raw, sectors, ay_state)
 
 
 def serialize_video(
@@ -376,7 +407,7 @@ def serialize_video(
     struct.pack_into(
         "<H", header, 20, 1 + len(packet_data) // base.SECTOR_SIZE
     )
-    header[24:32] = b"ZXVBRI3 "
+    header[24:32] = b"ZXVAY04 "
     return bytes(header) + packet_data
 
 
@@ -393,7 +424,9 @@ def split_video_volumes(
     volumes: list[tuple[int, int, bytes, list[Packet]]] = []
     start = 0
     while start < len(states):
-        part_packets = [make_packet(states[start], None)]
+        part_packets = [
+            make_packet(states[start], None, packets[start].ay_state)
+        ]
         used_sectors = 1 + part_packets[0].sectors
         end = start + 1
         while end < len(states):
@@ -506,6 +539,7 @@ def build_player(
     # First packet is raw and initializes the two-bit brightness state.
     a.abs16(0xCD, "read_packet")
     a.abs16(0xCD, "apply_packet")
+    a.abs16(0xCD, "ay_apply")
     a.emit(0x3E, 0x40)
     a.abs16(0xCD, "render_state")
     a.emit(0x3E, 0xC0)
@@ -556,6 +590,7 @@ def build_player(
 
     a.label("flip_ready")
     a.abs16(0xCD, "flip_screen")
+    a.abs16(0xCD, "ay_apply")
     emit_ld_hl_mem(a, "frames_remaining")
     a.emit(0x2B)
     emit_ld_mem_hl(a, "frames_remaining")
@@ -595,6 +630,18 @@ def build_player(
     a.emit(0x01); a.word(0x7FFD)
     a.emit(0xED, 0x79, 0xC9)
 
+    # --------------------------------------------------------------- AY sound
+    # Tone generators A/B/C only; noise is disabled. One compact sound state
+    # is applied per completed logical frame, so video rendering stays fast.
+    a.label("ay_apply")
+    a.emit(0x3E, 7, 0x01); a.word(0xFFFD); a.emit(0xED, 0x79)
+    a.emit(0x3E, 0x38, 0x06, 0xBF, 0xED, 0x79)
+    a.emit(0x21); a.abs16([], "ay_state")
+    for register in (0, 1, 2, 3, 4, 5, 8, 9, 10):
+        a.emit(0x3E, register, 0x01); a.word(0xFFFD)
+        a.emit(0xED, 0x79, 0x7E, 0x23, 0x06, 0xBF, 0xED, 0x79)
+    a.emit(0xC9)
+
     # -------------------------------------------------------------- packets
     a.label("read_packet")
     a.emit(0x21); a.word(BUFFER)
@@ -626,16 +673,20 @@ def build_player(
 
     # Raw packet copy or XOR zero/repeat/literal RLE.
     a.label("apply_packet")
+    a.emit(0x21); a.word(BUFFER + PACKET_HEADER_BYTES)
+    a.emit(0x11); a.abs16([], "ay_state")
+    a.emit(0x01); a.word(AY_STATE_BYTES)
+    a.emit(0xED, 0xB0)
     a.emit(0x3A); a.word(BUFFER + 1)
     a.emit(0xE6, 1)
     a.rel8(0x28, "apply_delta")
-    a.emit(0x21); a.word(BUFFER + PACKET_HEADER_BYTES)
+    a.emit(0x21); a.word(BUFFER + PACKET_HEADER_BYTES + AY_STATE_BYTES)
     a.emit(0x11); a.word(STATE_ADDRESS)
     a.emit(0x01); a.word(STATE_BYTES)
     a.emit(0xED, 0xB0, 0xC9)
 
     a.label("apply_delta")
-    a.emit(0x21); a.word(BUFFER + PACKET_HEADER_BYTES)
+    a.emit(0x21); a.word(BUFFER + PACKET_HEADER_BYTES + AY_STATE_BYTES)
     a.emit(0x11); a.word(STATE_ADDRESS)
     a.emit(0x01); a.word(STATE_BYTES)
     a.label("rle_next")
@@ -744,6 +795,9 @@ def build_player(
 
     # ---------------------------------------------------------- stop/errors
     a.label("finished")
+    for register in (8, 9, 10):
+        a.emit(0x3E, register, 0x01); a.word(0xFFFD)
+        a.emit(0xED, 0x79, 0xAF, 0x06, 0xBF, 0xED, 0x79)
     a.emit(0xFB)
     a.label("finished_wait")
     a.emit(0x76)
@@ -771,6 +825,7 @@ def build_player(
         ("row_table_ptr", 2),
         ("source_row", 2),
         ("second_row", 2),
+        ("ay_state", AY_STATE_BYTES),
     ):
         a.label(name)
         a.emit(*([0] * size))
@@ -833,6 +888,123 @@ def ffmpeg_frames(
     process = subprocess.Popen(command, stdout=subprocess.PIPE)
     assert process.stdout is not None
     return process, command
+
+
+def analyse_ay_frames(
+    source: Path,
+    start: float,
+    duration: float,
+    fps: int,
+) -> tuple[list[AyFrame], dict[str, object]]:
+    """Reduce the soundtrack to three stable, note-quantised AY tone voices."""
+    ffmpeg = shutil.which("ffmpeg")
+    if ffmpeg is None:
+        raise RuntimeError("ffmpeg is not available")
+    sample_rate = 48_000
+    command = [
+        ffmpeg,
+        "-v", "error",
+        "-ss", f"{start:g}",
+        "-t", f"{duration:g}",
+        "-i", str(source),
+        "-map", "0:a:0",
+        "-ac", "1",
+        "-ar", str(sample_rate),
+        "-f", "f32le",
+        "pipe:1",
+    ]
+    completed = subprocess.run(command, stdout=subprocess.PIPE, check=False)
+    if completed.returncode:
+        raise RuntimeError(f"audio-analysis ffmpeg exited with {completed.returncode}")
+    samples = np.frombuffer(completed.stdout, dtype="<f4").astype(np.float64)
+    expected_frames = round(duration * fps)
+    window_size = 4096
+    half_window = window_size // 2
+    window = np.hanning(window_size)
+    frequencies = np.fft.rfftfreq(window_size, 1.0 / sample_rate)
+    usable = (frequencies >= 55.0) & (frequencies <= 1760.0)
+    usable_indices = np.flatnonzero(usable)
+    midi_bins = np.rint(
+        69.0 + 12.0 * np.log2(frequencies[usable] / 440.0)
+    ).astype(np.int32)
+    midi_min = 33
+    midi_max = 93
+    smoothed_salience = np.zeros(128, dtype=np.float64)
+    result: list[AyFrame] = []
+    used_notes: set[int] = set()
+    active_voice_frames = 0
+
+    for frame_index in range(expected_frames):
+        center = round((frame_index + 0.5) * sample_rate / fps)
+        first = center - half_window
+        segment = np.zeros(window_size, dtype=np.float64)
+        source_first = max(0, first)
+        source_last = min(len(samples), first + window_size)
+        if source_last > source_first:
+            segment[source_first - first:source_last - first] = samples[
+                source_first:source_last
+            ]
+        rms = float(np.sqrt(np.mean(segment * segment)))
+        spectrum = np.abs(np.fft.rfft(segment * window)) ** 2
+        local = spectrum[usable_indices]
+        peak_mask = np.zeros_like(local, dtype=bool)
+        peak_mask[1:-1] = (
+            (local[1:-1] > local[:-2]) & (local[1:-1] >= local[2:])
+        )
+        peak_power = np.where(peak_mask, local, 0.0)
+        salience = np.bincount(
+            midi_bins,
+            weights=peak_power,
+            minlength=128,
+        ).astype(np.float64)
+        smoothed_salience = smoothed_salience * 0.55 + salience * 0.45
+        ranked = np.argsort(smoothed_salience[midi_min:midi_max + 1])[::-1]
+        selected: list[int] = []
+        for relative_note in ranked:
+            note = int(relative_note + midi_min)
+            if smoothed_salience[note] <= 0.0:
+                break
+            if all(abs(note - other) >= 2 for other in selected):
+                selected.append(note)
+            if len(selected) == 3:
+                break
+        selected.sort()
+        selected_count = len(selected)
+        while len(selected) < 3:
+            selected.append(69)
+
+        maximum = max((smoothed_salience[note] for note in selected), default=0.0)
+        periods: list[int] = []
+        volumes: list[int] = []
+        for voice, note in enumerate(selected):
+            frequency = 440.0 * 2.0 ** ((note - 69) / 12.0)
+            period = int(np.clip(round(AY_CLOCK_HZ / (16.0 * frequency)), 1, 4095))
+            periods.append(period)
+            score = smoothed_salience[note]
+            if rms < 0.003 or maximum <= 0.0 or voice >= selected_count:
+                volume = 0
+            else:
+                relative_db = 10.0 * math.log10(max(score / maximum, 1e-8))
+                volume = int(np.clip(round(15.0 + relative_db / 3.0), 2, 15))
+            volumes.append(volume)
+            if volume:
+                used_notes.add(note)
+        if any(volumes):
+            active_voice_frames += 1
+        result.append(AyFrame(tuple(periods), tuple(volumes)))
+
+    print(
+        f"AY analysis: {len(result)} frames, {len(used_notes)} notes, "
+        f"active {active_voice_frames / max(1, len(result)):.1%}",
+        flush=True,
+    )
+    return result, {
+        "mode": "three_note_spectral",
+        "clock_hz": AY_CLOCK_HZ,
+        "update_rate_hz": 50.0 / round(50.0 / 12.5),
+        "distinct_notes": len(used_notes),
+        "active_frame_ratio": active_voice_frames / max(1, len(result)),
+    }
 
 
 def histogram_percentile(histogram: np.ndarray, percentile: float) -> float:
@@ -1033,6 +1205,7 @@ def build_video(
     fps: int,
     timing_fps: float,
     tone_ranges: list[ToneRange],
+    ay_frames: list[AyFrame],
     attr_change_penalty: int,
     dither: str,
     preview_path: Path,
@@ -1047,7 +1220,7 @@ def build_video(
     writer = cv2.VideoWriter(
         str(preview_path),
         cv2.VideoWriter_fourcc(*"mp4v"),
-        fps,
+        timing_fps,
         (base.WIDTH, base.HEIGHT),
     )
     if not writer.isOpened():
@@ -1071,7 +1244,13 @@ def build_video(
             state, attrs = encode_compact_frame(
                 image, previous_attrs, attr_change_penalty, dither
             )
-            packet = make_packet(state, previous_state)
+            if len(packets) >= len(ay_frames):
+                raise RuntimeError("audio analysis has fewer frames than video")
+            packet = make_packet(
+                state,
+                previous_state,
+                ay_frames[len(packets)].serialize(),
+            )
             packets.append(packet)
             states.append(state)
             raw_packets += int(packet.raw)
@@ -1095,6 +1274,10 @@ def build_video(
         raise RuntimeError(
             f"tone/video frame mismatch: {len(tone_ranges)} vs {len(packets)}"
         )
+    if len(packets) != len(ay_frames):
+        raise RuntimeError(
+            f"audio/video frame mismatch: {len(ay_frames)} vs {len(packets)}"
+        )
     if len(packets) > 0xFFFF:
         raise ValueError("too many frames for the long-video header")
 
@@ -1103,6 +1286,7 @@ def build_video(
         "frames": len(packets),
         "fps": fps,
         "screen_fps": timing_fps,
+        "ay_state_bytes_per_frame": AY_STATE_BYTES,
         "tone_range": {
             "mode": "adaptive",
             "black_percentile": tone_ranges[0].black_percentile,
@@ -1136,12 +1320,19 @@ def verify_video(video: bytes, expected_states: list[bytes]) -> None:
         sectors = video[offset]
         flags = video[offset + 1]
         payload_length = struct.unpack_from("<H", video, offset + 2)[0]
+        ay_length = video[offset + 4]
+        if ay_length != AY_STATE_BYTES:
+            raise ValueError(f"packet {index} has invalid AY state")
         checksum = struct.unpack_from("<H", video, offset + 6)[0]
-        payload = video[
+        ay_state = video[
             offset + PACKET_HEADER_BYTES:
-            offset + PACKET_HEADER_BYTES + payload_length
+            offset + PACKET_HEADER_BYTES + ay_length
         ]
-        if (sum(payload) & 0xFFFF) != checksum:
+        payload = video[
+            offset + PACKET_HEADER_BYTES + ay_length:
+            offset + PACKET_HEADER_BYTES + ay_length + payload_length
+        ]
+        if ((sum(ay_state) + sum(payload)) & 0xFFFF) != checksum:
             raise ValueError(f"packet {index} checksum mismatch")
         if flags & 1:
             state = payload
@@ -1165,6 +1356,61 @@ def write_contact_sheet(path: Path, states: list[bytes]) -> None:
             ((position % 3) * base.WIDTH, (position // 3) * base.HEIGHT),
         )
     sheet.save(path)
+
+
+def write_ay_preview(
+    path: Path,
+    frames: list[AyFrame],
+    update_rate: float,
+    sample_rate: int = 44_100,
+) -> None:
+    """Render a listening preview of the three AY square-wave voices."""
+    samples_per_frame = sample_rate / update_rate
+    total_samples = round(len(frames) * samples_per_frame)
+    output = np.empty(total_samples, dtype=np.float64)
+    phases = np.zeros(3, dtype=np.float64)
+    frame_index = 0
+    next_boundary = samples_per_frame
+    for sample_index in range(total_samples):
+        while sample_index >= next_boundary and frame_index + 1 < len(frames):
+            frame_index += 1
+            next_boundary = (frame_index + 1) * samples_per_frame
+        frame = frames[frame_index]
+        mixed = 0.0
+        for voice in range(3):
+            frequency = AY_CLOCK_HZ / (16.0 * frame.periods[voice])
+            phases[voice] = (phases[voice] + frequency / sample_rate) % 1.0
+            level = frame.volumes[voice] / 15.0
+            mixed += (1.0 if phases[voice] < 0.5 else -1.0) * level
+        output[sample_index] = mixed / 4.0
+    pcm = np.clip(np.rint(output * 32767.0), -32768, 32767).astype("<i2")
+    with wave.open(str(path), "wb") as wav:
+        wav.setnchannels(1)
+        wav.setsampwidth(2)
+        wav.setframerate(sample_rate)
+        wav.writeframes(pcm.tobytes())
+
+
+def mux_ay_preview(video_path: Path, audio_path: Path, output_path: Path) -> None:
+    ffmpeg = shutil.which("ffmpeg")
+    if ffmpeg is None:
+        raise RuntimeError("ffmpeg is not available")
+    completed = subprocess.run(
+        [
+            ffmpeg,
+            "-v", "error",
+            "-i", str(video_path),
+            "-i", str(audio_path),
+            "-c:v", "copy",
+            "-c:a", "aac",
+            "-b:a", "128k",
+            "-shortest",
+            "-y", str(output_path),
+        ],
+        check=False,
+    )
+    if completed.returncode:
+        raise RuntimeError("could not create AY listening preview")
 
 
 def main() -> None:
@@ -1252,6 +1498,13 @@ def main() -> None:
         args.white_percentile,
         args.tone_window_seconds,
     )
+    ay_frames, ay_stats = analyse_ay_frames(
+        args.input_video,
+        args.start,
+        args.duration,
+        args.fps,
+    )
+    ay_stats["update_rate_hz"] = args.timing_fps
     video, packets, states, stats = build_video(
         args.input_video,
         args.start,
@@ -1259,11 +1512,16 @@ def main() -> None:
         args.fps,
         args.timing_fps,
         tone_ranges,
+        ay_frames,
         args.attr_change_penalty,
         args.dither,
         preview_path,
     )
     verify_video(video, states)
+    ay_preview_path = out / "big_buck_bunny_zx_ay_preview.wav"
+    ay_muxed_preview_path = out / "big_buck_bunny_zx_dithered_ay_preview.mp4"
+    write_ay_preview(ay_preview_path, ay_frames, args.timing_fps)
+    mux_ay_preview(preview_path, ay_preview_path, ay_muxed_preview_path)
 
     boot = streaming.build_boot_basic()
     provisional, _ = build_player(0, 0, args.timing_fps)
@@ -1297,9 +1555,9 @@ def main() -> None:
     total_chunks = 0
     total_volume_bytes = 0
     stem = (
-        "big_buck_bunny_2min_zx_adaptive_tone_dithered"
+        "big_buck_bunny_2min_zx_adaptive_tone_ay_dithered"
         if dithered
-        else "big_buck_bunny_2min_zx_adaptive_tone"
+        else "big_buck_bunny_2min_zx_adaptive_tone_ay"
     )
     for volume_index, (
         frame_start,
@@ -1398,7 +1656,9 @@ def main() -> None:
 - Spatial dithering: {args.dither}
 - Screen presentation: bank 5/7 double buffer, one flip per logical frame
 - 50 Hz temporal A/B flicker: disabled
-- Audio: not included
+- Audio: three note-quantised AY-3-8912/YM2149F tone voices
+- AY update rate: {args.timing_fps:g} Hz; distinct selected notes: {ay_stats['distinct_notes']}
+- AY active-frame ratio: {ay_stats['active_frame_ratio']:.1%}
 - Unsplit encoded stream: {stats['video_bytes']} bytes, {stats['video_sectors']} sectors
 - Bootable TRD volumes: {len(volume_metadata)}
 - Total volume payload: {total_volume_bytes} bytes
@@ -1428,6 +1688,7 @@ boundary.
         "stats": stats,
         "timing_fps": args.timing_fps,
         "tone_window_seconds": args.tone_window_seconds,
+        "ay": ay_stats,
         "source": {
             "path": str(args.input_video),
             "start_seconds": args.start,
@@ -1445,6 +1706,7 @@ boundary.
             "player_output_width": base.WIDTH,
             "player_output_height": base.HEIGHT,
             "state_bytes": STATE_BYTES,
+            "ay_state_bytes": AY_STATE_BYTES,
         },
     }
     (out / "build_metadata.json").write_text(
