@@ -139,6 +139,13 @@ def colour_candidates() -> list[tuple[int, np.ndarray, np.ndarray]]:
             for ink in range(8):
                 if ink == paper:
                     continue
+                # Spectrum colour 7 at normal intensity is light gray rather
+                # than true white. Do not use it as a palette endpoint: neutral
+                # midtones are represented by native pixel dithering between
+                # black and BRIGHT white instead. Chromatic normal colours stay
+                # available.
+                if not bright and (ink == 7 or paper == 7):
+                    continue
                 attr = (bright << 6) | (paper << 3) | ink
                 result.append(
                     (
