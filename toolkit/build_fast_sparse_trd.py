@@ -21,7 +21,7 @@ LOAD_ADDRESS = 0x6000
 BUFFER = 0x8000
 STAGING_SECTOR = 0xBF00
 VIDEO_MAGIC = b"ZXFS"
-VIDEO_VERSION = 5
+VIDEO_VERSION = 6
 PACKET_FIRST_HEADER = 12
 FIXED_RING_SECTORS = 63
 RING_BANKS = (0, 1, 3, 4, 6)
@@ -40,6 +40,9 @@ CMD_BITMAP_POINTS = 3
 CMD_ATTRIBUTES_DELTA = 4
 CMD_BITMAP_ROW_RLE = 5
 CMD_BITMAP_ROW_SHIFT = 6
+CMD_BITMAP_SPANS = 7
+CMD_COPY_VISIBLE_ROW = 8
+COPY_VISIBLE_ROW_CYCLES = 1759
 PAGING_ROM48_BANK7 = 0x17
 MAX_TRDOS_FILE_SECTORS = 255
 TRD_DATA_SECTORS = (base.LOGICAL_TRACKS - 1) * base.SECTORS_PER_TRACK
@@ -131,9 +134,21 @@ def encode_byte_rle(data: bytes) -> bytes:
     return bytes(encoded)
 
 
+def bitmap_delta_cycles(command: int, changed: int, spans: int = 0) -> int:
+    """Timing-table estimate including dispatch and return to command_loop."""
+    if command == CMD_BITMAP_ROW:
+        return 2117 + 64 * changed
+    if command == CMD_BITMAP_POINTS:
+        return 572 + 265 * changed
+    if command == CMD_BITMAP_SPANS:
+        return 372 + 178 * spans + 126 * changed
+    raise ValueError(f"no delta cycle model for command {command}")
+
+
 def frame_records(
     current: bytes,
     previous: bytes,
+    visible: bytes | None = None,
     allow_dense_rle: bool = False,
     allow_motion: bool = False,
 ) -> list[bytes]:
@@ -142,6 +157,10 @@ def frame_records(
         start = row * (source.LOGICAL_WIDTH // 4)
         current_row = current[start:start + source.LOGICAL_WIDTH // 4]
         previous_row = previous[start:start + source.LOGICAL_WIDTH // 4]
+        visible_row = (
+            None if visible is None
+            else visible[start:start + source.LOGICAL_WIDTH // 4]
+        )
 
         def delta_record(predicted: bytes) -> bytes | None:
             mask = 0
@@ -165,10 +184,77 @@ def frame_records(
             point_record = bytearray((CMD_BITMAP_POINTS, row, len(changed_columns)))
             for column, value in zip(changed_columns, values):
                 point_record += bytes((column, value))
-            return min(mask_record, bytes(point_record), key=len)
+            spans: list[tuple[int, int]] = []
+            span_start = changed_columns[0]
+            span_end = span_start + 1
+            for column in changed_columns[1:]:
+                if column == span_end:
+                    span_end += 1
+                else:
+                    spans.append((span_start, span_end))
+                    span_start, span_end = column, column + 1
+            spans.append((span_start, span_end))
+            split_spans: list[tuple[int, int]] = []
+            for start, end in spans:
+                while end - start > 16:
+                    split_spans.append((start, start + 16))
+                    start += 16
+                split_spans.append((start, end))
+            spans = split_spans
+            span_record: bytes | None = None
+            cursor = 0
+            if len(spans) <= 15:
+                encoded = bytearray((CMD_BITMAP_SPANS, row, len(spans)))
+                for start, end in spans:
+                    length = end - start
+                    gap = start - cursor
+                    if gap > 15:
+                        break
+                    encoded.append((gap << 4) | (length - 1))
+                    encoded += current_row[start:end]
+                    cursor = end
+                else:
+                    span_record = bytes(encoded)
+            baseline = min((mask_record, bytes(point_record)), key=len)
+            if span_record is None:
+                return baseline
+            baseline_cycles = bitmap_delta_cycles(baseline[0], len(changed_columns))
+            span_cycles = bitmap_delta_cycles(
+                CMD_BITMAP_SPANS, len(changed_columns), len(spans)
+            )
+            # A byte saving is accepted only within a small CPU regression
+            # budget. On equal size, spans must also be strictly faster.
+            if (
+                len(span_record) < len(baseline)
+                and span_cycles * 10 <= baseline_cycles * 11
+            ) or (
+                len(span_record) == len(baseline)
+                and span_cycles < baseline_cycles
+            ):
+                return span_record
+            return baseline
 
         direct = delta_record(previous_row)
         candidates: list[list[bytes]] = [[] if direct is None else [direct]]
+        if direct is not None and visible_row is not None:
+            correction = delta_record(visible_row)
+            visible_candidate = [bytes((CMD_COPY_VISIBLE_ROW, row))]
+            if correction is not None:
+                visible_candidate.append(correction)
+            direct_changed = sum(a != b for a, b in zip(current_row, previous_row))
+            visible_changed = sum(a != b for a, b in zip(current_row, visible_row))
+            direct_cycles = bitmap_delta_cycles(direct[0], direct_changed)
+            visible_cycles = COPY_VISIBLE_ROW_CYCLES
+            if correction is not None:
+                span_count = correction[2] if correction[0] == CMD_BITMAP_SPANS else 0
+                visible_cycles += bitmap_delta_cycles(
+                    correction[0], visible_changed, span_count
+                )
+            if (
+                sum(map(len, visible_candidate)) < len(direct)
+                and visible_cycles * 10 <= direct_cycles * 11
+            ):
+                candidates.append(visible_candidate)
         if allow_dense_rle and direct is not None:
             row_rle = encode_byte_rle(current_row)
             candidates.append(
@@ -273,7 +359,9 @@ def pack_packet(
     )
 
 
-def apply_packet_reference(packet: SparsePacket, previous: bytes) -> bytes:
+def apply_packet_reference(
+    packet: SparsePacket, previous: bytes, visible: bytes | None = None
+) -> bytes:
     state = bytearray(previous)
     for sector_index, sector in enumerate(packet.sectors):
         position = PACKET_FIRST_HEADER if sector_index == 0 else 0
@@ -346,6 +434,30 @@ def apply_packet_reference(packet: SparsePacket, previous: bytes) -> bytes:
                     amount = -shift
                     shifted = old[amount:] + bytes(amount)
                 state[row_start:row_start + len(shifted)] = shifted
+            elif command == CMD_BITMAP_SPANS:
+                row = sector[position]
+                span_count = sector[position + 1]
+                position += 2
+                row_start = row * (source.LOGICAL_WIDTH // 4)
+                column = 0
+                for _ in range(span_count):
+                    token = sector[position]
+                    position += 1
+                    column += token >> 4
+                    length = (token & 0x0F) + 1
+                    state[row_start + column:row_start + column + length] = (
+                        sector[position:position + length]
+                    )
+                    position += length
+                    column += length
+            elif command == CMD_COPY_VISIBLE_ROW:
+                if visible is None:
+                    raise ValueError("visible-row predictor has no reference frame")
+                row = sector[position]
+                position += 1
+                row_start = row * (source.LOGICAL_WIDTH // 4)
+                row_end = row_start + source.LOGICAL_WIDTH // 4
+                state[row_start:row_end] = visible[row_start:row_end]
             else:
                 raise ValueError(f"unknown sparse command {command}")
     return bytes(state)
@@ -365,11 +477,15 @@ def make_volume_packets(
             prior = zero
         else:
             prior = previous[local & 1]
-        packet = pack_packet(frame_records(states[end], prior), ay_states[end])
+        visible = None if local == 0 else states[end - 1]
+        packet = pack_packet(
+            frame_records(states[end], prior, visible), ay_states[end]
+        )
         if packet.sector_count > 5:
             rle_records = frame_records(
                 states[end],
                 prior,
+                visible,
                 allow_dense_rle=True,
             )
             rle_packet = pack_packet(
@@ -383,6 +499,7 @@ def make_volume_packets(
             motion_records = frame_records(
                 states[end],
                 prior,
+                visible,
                 allow_dense_rle=True,
                 allow_motion=True,
             )
@@ -416,7 +533,7 @@ def make_volume_packets(
                     compressed.padding_bytes,
                 )
                 packet = compressed
-        if apply_packet_reference(packet, prior) != states[end]:
+        if apply_packet_reference(packet, prior, visible) != states[end]:
             raise AssertionError(f"sparse reference mismatch at frame {end}")
         if packets and used + packet.sector_count > limit:
             break
@@ -709,6 +826,8 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     a.emit(0xFE, CMD_ATTRIBUTES_DELTA); a.abs16(0xCA, "command_attrs_delta")
     a.emit(0xFE, CMD_BITMAP_ROW_RLE); a.abs16(0xCA, "command_row_rle")
     a.emit(0xFE, CMD_BITMAP_ROW_SHIFT); a.abs16(0xCA, "command_row_shift")
+    a.emit(0xFE, CMD_BITMAP_SPANS); a.abs16(0xCA, "command_spans")
+    a.emit(0xFE, CMD_COPY_VISIBLE_ROW); a.abs16(0xCA, "command_copy_visible")
     a.abs16(0xC3, "fatal")
 
     a.label("command_row")
@@ -755,6 +874,49 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     a.emit(0x7E, 0x02, 0x24, 0x7E, 0x12)
     ld_a_mem(a, "point_count"); a.emit(0x3D); ld_mem_a(a, "point_count")
     a.rel8(0x18, "point_loop")
+
+    a.label("command_spans")
+    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
+    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "span_count")
+    ld_a_mem(a, "row_index")
+    a.emit(0x6F, 0x26, 0, 0x29)
+    a.emit(0x11); a.abs16([], "row_addresses")
+    a.emit(0x19, 0x4E, 0x23, 0x46)
+    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
+    a.label("span_token_loop")
+    ld_a_mem(a, "span_count"); a.emit(0xB7); a.abs16(0xCA, "command_loop")
+    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "span_token")
+    # Add the high-nibble skip to both row pointers. Native 32-byte rows do
+    # not cross a page before their final byte, so low-byte arithmetic is safe.
+    a.emit(0x0F, 0x0F, 0x0F, 0x0F, 0xE6, 0x0F, 0x81, 0x4F, 0x59)
+    ld_a_mem(a, "span_token"); a.emit(0xE6, 0x0F, 0x3C); ld_mem_a(a, "span_length")
+    a.label("span_value_loop")
+    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0x6F)
+    a.emit(0x26, 0)  # dither_top page, patched after placement
+    span_table_high_pos = len(a.code) - 1
+    a.emit(0x7E, 0x02, 0x24, 0x7E, 0x12, 0x03, 0x13)
+    ld_a_mem(a, "span_length"); a.emit(0x3D); ld_mem_a(a, "span_length")
+    a.rel8(0x20, "span_value_loop")
+    ld_a_mem(a, "span_count"); a.emit(0x3D); ld_mem_a(a, "span_count")
+    a.rel8(0x18, "span_token_loop")
+
+    a.label("command_copy_visible")
+    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
+    ld_a_mem(a, "row_index")
+    a.emit(0x6F, 0x26, 0, 0x29)
+    a.emit(0x11); a.abs16([], "row_addresses")
+    a.emit(0x19, 0x4E, 0x23, 0x46)
+    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
+    # Copy the native top row from the visible screen to the hidden target.
+    # The two screen bases differ in bit 7 of the high byte (40h/C0h).
+    a.emit(0xD5, 0x60, 0x69, 0x7C, 0xEE, 0x80, 0x67, 0x50, 0x59)
+    a.emit(0x01); a.word(source.LOGICAL_WIDTH // 4)
+    a.emit(0xED, 0xB0, 0xD1)
+    # Repeat for the bottom row of the native dither pair.
+    a.emit(0x62, 0x6B, 0x7C, 0xEE, 0x80, 0x67)
+    a.emit(0x01); a.word(source.LOGICAL_WIDTH // 4)
+    a.emit(0xED, 0xB0)
+    a.abs16(0xC3, "command_loop")
 
     a.label("command_attrs")
     a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "attr_count")
@@ -920,6 +1082,7 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
         ("point_bottom", 2), ("ay_state", source.AY_STATE_BYTES),
         ("rle_remaining", 1), ("rle_count", 1), ("rle_value", 1),
         ("motion_shift", 1), ("motion_top", 2), ("motion_bottom", 2),
+        ("span_count", 1), ("span_token", 1), ("span_length", 1),
     ):
         a.label(name); a.emit(*([0] * size))
     a.label("queue_banks"); a.emit(*RING_BANKS)
@@ -936,6 +1099,7 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     a.label("dither_bottom"); a.emit(*source.PLAYER_DITHER_BOTTOM)
     a.code[point_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
     a.code[rle_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
+    a.code[span_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
     code = a.resolve()
     if LOAD_ADDRESS + len(code) >= BUFFER:
         raise ValueError(f"fast player overlaps buffer: {len(code)} bytes")
@@ -1035,6 +1199,11 @@ def main() -> None:
                 1,
             ),
             "disk_rom_and_physical_latency_included": False,
+            "bitmap_mask": "2117 + 64*N",
+            "bitmap_points": "572 + 265*N",
+            "bitmap_spans": "372 + 178*R + 126*N",
+            "copy_visible_row": COPY_VISIBLE_ROW_CYCLES,
+            "compression_cpu_regression_limit_percent": 10,
         },
         "rle_frames": rle_frames,
         "rle_rows": rle_rows,
