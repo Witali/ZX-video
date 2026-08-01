@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AY Voice TAP Encoder</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080b0a;
+      --panel: #101613;
+      --panel-2: #151e19;
+      --text: #e8f4ec;
+      --muted: #8fa398;
+      --line: #2a3930;
+      --green: #75f0a7;
+      --green-dark: #173925;
+      --amber: #f5c66a;
+      --red: #ff837d;
+      --shadow: 0 24px 70px rgba(0, 0, 0, .38);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 5%, rgba(117, 240, 167, .11), transparent 31rem),
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px),
+        var(--bg);
+      background-size: auto, 28px 28px, 28px 28px, auto;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(1050px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 52px 0 70px;
+    }
+
+    header { margin-bottom: 28px; }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--green);
+      font: 700 12px/1.3 ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 0;
+      font-size: clamp(34px, 6vw, 68px);
+      line-height: .98;
+      letter-spacing: -.055em;
+      font-weight: 750;
+    }
+
+    .lead {
+      max-width: 720px;
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.62;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(260px, .75fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(145deg, rgba(21, 30, 25, .96), rgba(13, 18, 15, .96));
+      box-shadow: var(--shadow);
+    }
+
+    .main-panel { padding: clamp(20px, 4vw, 34px); }
+    .side-panel { padding: 22px; }
+
+    .drop-zone {
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+      padding: 28px;
+      border: 1px dashed #466251;
+      border-radius: 14px;
+      background: rgba(117, 240, 167, .035);
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .18s ease, background .18s ease, transform .18s ease;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.dragging {
+      border-color: var(--green);
+      background: rgba(117, 240, 167, .075);
+      transform: translateY(-1px);
+    }
+
+    .drop-zone:focus-within { outline: 2px solid var(--green); outline-offset: 3px; }
+    .drop-zone input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+
+    .chip-mark {
+      display: inline-grid;
+      place-items: center;
+      width: 62px;
+      height: 62px;
+      margin-bottom: 18px;
+      border: 1px solid #4b6d58;
+      border-radius: 13px;
+      color: var(--green);
+      background: #0d1711;
+      font: 700 18px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+      box-shadow: inset 0 0 24px rgba(117, 240, 167, .08);
+    }
+
+    .drop-title { display: block; font-size: 19px; font-weight: 700; }
+    .drop-note { display: block; margin-top: 8px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    .status {
+      min-height: 24px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font: 13px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+
+    .status.error { color: var(--red); }
+    .status.ready { color: var(--green); }
+
+    .progress {
+      height: 4px;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #1e2a23;
+    }
+
+    .progress > span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--green);
+      transition: width .15s ease;
+    }
+
+    .result { display: none; margin-top: 24px; }
+    .result.visible { display: block; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: rgba(255,255,255,.018);
+    }
+
+    .metric span { display: block; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+    .metric strong { display: block; margin-top: 5px; font: 700 18px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace; }
+
+    .graph-wrap {
+      position: relative;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #0b100d;
+    }
+
+    canvas { display: block; width: 100%; height: 190px; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 13px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 14px;
+      height: 2px;
+      margin-right: 6px;
+      vertical-align: middle;
+      background: var(--legend);
+    }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+    button {
+      min-height: 44px;
+      padding: 0 17px;
+      border: 1px solid #41614d;
+      border-radius: 10px;
+      color: var(--text);
+      background: #17231b;
+      font: 700 14px/1 system-ui, sans-serif;
+      cursor: pointer;
+    }
+
+    button.primary { color: #07130c; border-color: var(--green); background: var(--green); }
+    button:hover:not(:disabled) { filter: brightness(1.09); }
+    button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+    button:disabled { opacity: .42; cursor: not-allowed; }
+
+    h2 { margin: 0 0 16px; font-size: 15px; letter-spacing: .02em; }
+    .spec { margin: 0; padding: 0; list-style: none; }
+    .spec li { padding: 11px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .spec li:first-child { border-top: 0; padding-top: 0; }
+    .spec strong { display: block; margin-bottom: 3px; color: var(--text); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+
+    .notice {
+      margin: 18px 0 0;
+      padding: 12px;
+      border-left: 2px solid var(--amber);
+      color: var(--muted);
+      background: rgba(245, 198, 106, .045);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    footer { margin-top: 18px; color: #718179; font-size: 12px; line-height: 1.55; }
+
+    @media (max-width: 780px) {
+      main { padding-top: 32px; }
+      .layout { grid-template-columns: 1fr; }
+      .side-panel { box-shadow: none; }
+    }
+
+    @media (max-width: 520px) {
+      main { width: min(100% - 20px, 1050px); }
+      .metrics { grid-template-columns: 1fr; }
+      .drop-zone { min-height: 190px; padding: 20px; }
+      .actions button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">ZX Spectrum 128 · AY-3-8912 / YM2149F</p>
+      <h1>Голос через три тона и шум AY</h1>
+      <p class="lead">Загрузите запись речи. Кодировщик выделит основной тон и три LPC-форманты, превратит их в состояния генераторов AY и создаст автозапускаемую кассету <code>.tap</code>.</p>
+    </header>
+
+    <div class="layout">
+      <section class="panel main-panel" aria-labelledby="upload-title">
+        <label class="drop-zone" id="dropZone">
+          <input id="fileInput" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.aac,.flac">
+          <span>
+            <span class="chip-mark">AY</span>
+            <span class="drop-title" id="upload-title">Выберите аудиофайл</span>
+            <span class="drop-note">или перетащите его сюда · WAV, MP3, OGG и другие форматы, которые читает браузер</span>
+          </span>
+        </label>
+
+        <p class="status" id="status" aria-live="polite">Ожидание записи…</p>
+        <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+        <div class="result" id="result">
+          <div class="metrics">
+            <div class="metric"><span>Длительность</span><strong id="durationMetric">—</strong></div>
+            <div class="metric"><span>AY-кадры</span><strong id="framesMetric">—</strong></div>
+            <div class="metric"><span>Размер TAP</span><strong id="sizeMetric">—</strong></div>
+          </div>
+
+          <div class="graph-wrap">
+            <canvas id="formantGraph" width="900" height="190" role="img" aria-label="Частоты трёх каналов AY во времени"></canvas>
+            <div class="legend" aria-hidden="true">
+              <span style="--legend:#75f0a7">Канал A</span>
+              <span style="--legend:#f5c66a">Канал B</span>
+              <span style="--legend:#e98bff">Канал C</span>
+              <span style="--legend:#8fa398">Шум</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="downloadButton" type="button">Скачать автозапуск .tap</button>
+            <button id="previewButton" type="button">Прослушать модель AY</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel side-panel">
+        <h2>Параметры кассеты</h2>
+        <ul class="spec">
+          <li><strong>50 Гц</strong>Один набор регистров на телевизионное поле PAL.</li>
+          <li><strong>8 байт/кадр</strong>Три периода, три громкости, noise и mixer.</li>
+          <li><strong>LPC-10</strong>Анализ выполняется в браузере; Z80 получает готовые состояния AY.</li>
+          <li><strong>LOAD 24576</strong>BASIC-загрузчик автоматически загружает CODE и вызывает плеер.</li>
+          <li><strong>≈ 101 секунда</strong>Максимум в одном TAP без переключения банков памяти.</li>
+        </ul>
+        <p class="notice">Монтирование TAP в эмуляторе не всегда равнозначно нажатию PLAY. Если автозагрузка эмулятора отключена, выполните <code>LOAD ""</code>; после чтения кассеты голос запустится сам.</p>
+      </aside>
+    </div>
+
+    <footer>Все вычисления выполняются локально. Запись не отправляется в сеть.</footer>
+  </main>
+
+  <script>
+  (() => {
+    "use strict";
+
+    const AY_CLOCK = 1773400;
+    const LOAD_ADDRESS = 24576;
+    const ANALYSIS_RATE = 8000;
+    const FRAME_RATE = 50;
+    const FRAME_SAMPLES = ANALYSIS_RATE / FRAME_RATE;
+    const LPC_ORDER = 10;
+    const BYTES_PER_FRAME = 8;
+
+    class Z80Builder {
+      constructor(baseAddress) {
+        this.baseAddress = baseAddress;
+        this.bytes = [];
+        this.labels = new Map();
+        this.patches = [];
+      }
+
+      emit(...values) {
+        for (const value of values.flat()) this.bytes.push(value & 255);
+      }
+
+      word(value) {
+        this.emit(value & 255, (value >>> 8) & 255);
+      }
+
+      label(name) {
+        if (this.labels.has(name)) throw new Error(`Повторная метка Z80: ${name}`);
+        this.labels.set(name, this.bytes.length);
+      }
+
+      absolute(opcode, label) {
+        this.emit(opcode);
+        this.patches.push({ offset: this.bytes.length, label });
+        this.word(0);
+      }
+
+      absoluteEd(opcode, label) {
+        this.emit(0xED, opcode);
+        this.patches.push({ offset: this.bytes.length, label });
+        this.word(0);
+      }
+
+      finish() {
+        for (const patch of this.patches) {
+          if (!this.labels.has(patch.label)) throw new Error(`Неизвестная метка Z80: ${patch.label}`);
+          const address = this.baseAddress + this.labels.get(patch.label);
+          this.bytes[patch.offset] = address & 255;
+          this.bytes[patch.offset + 1] = (address >>> 8) & 255;
+        }
+        return new Uint8Array(this.bytes);
+      }
+    }
+
+    function buildPlayer(frameCount) {
+      const z = new Z80Builder(LOAD_ADDRESS);
+
+      z.emit(0xF3);                         // DI
+      z.emit(0x21); z.patches.push({ offset: z.bytes.length, label: "sound_data" }); z.word(0); // LD HL,data
+      z.emit(0xFB);                         // EI
+
+      z.label("frame_loop");
+      z.absoluteEd(0x5B, "remaining");      // LD DE,(remaining)
+      z.emit(0x7A, 0xB3);                   // LD A,D / OR E
+      z.absolute(0xCA, "finished");         // JP Z,finished
+
+      for (const channel of [
+        { fine: 0, coarse: 1, volume: 8 },
+        { fine: 2, coarse: 3, volume: 9 },
+        { fine: 4, coarse: 5, volume: 10 }
+      ]) {
+        z.emit(0x56, 0x23);                 // LD D,(HL) / INC HL
+        z.emit(0x3E, channel.fine);
+        z.absolute(0xCD, "ay_write");
+
+        z.emit(0x56, 0x23, 0x5A);           // packed coarse+volume -> D and E
+        z.emit(0x7A, 0xE6, 0x0F, 0x57);     // D = packed & 15
+        z.emit(0x3E, channel.coarse);
+        z.absolute(0xCD, "ay_write");
+
+        z.emit(0x7B, 0x0F, 0x0F, 0x0F, 0x0F, 0xE6, 0x0F, 0x57); // D = packed >> 4
+        z.emit(0x3E, channel.volume);
+        z.absolute(0xCD, "ay_write");
+      }
+
+      z.emit(0x56, 0x23, 0x3E, 0x06);       // noise period
+      z.absolute(0xCD, "ay_write");
+      z.emit(0x56, 0x23, 0x3E, 0x07);       // mixer
+      z.absolute(0xCD, "ay_write");
+
+      z.emit(0x76);                         // HALT: next 50 Hz field
+      z.absoluteEd(0x5B, "remaining");      // LD DE,(remaining)
+      z.emit(0x1B);                         // DEC DE
+      z.absoluteEd(0x53, "remaining");      // LD (remaining),DE
+      z.absolute(0xC3, "frame_loop");
+
+      z.label("finished");
+      z.emit(0x16, 0x00);                   // LD D,0
+      for (const register of [8, 9, 10]) {
+        z.emit(0x3E, register);
+        z.absolute(0xCD, "ay_write");
+      }
+      z.emit(0xFB, 0xC9);                   // EI / RET to BASIC
+
+      z.label("ay_write");
+      z.emit(
+        0x01, 0xFD, 0xFF,                   // LD BC,FFFD
+        0xED, 0x79,                         // OUT (C),A: select register
+        0x7A,                               // LD A,D
+        0x06, 0xBF,                         // LD B,BF -> BFFD
+        0xED, 0x79,                         // OUT (C),A: write value
+        0xC9                                // RET
+      );
+
+      z.label("remaining");
+      z.word(frameCount);
+      z.label("sound_data");
+      return z.finish();
+    }
+
+    function byteWord(value) {
+      return [value & 255, (value >>> 8) & 255];
+    }
+
+    function xorChecksum(bytes) {
+      let checksum = 0;
+      for (const value of bytes) checksum ^= value;
+      return checksum;
+    }
+
+    function tapeBlock(flag, payload) {
+      const body = new Uint8Array(payload.length + 2);
+      body[0] = flag;
+      body.set(payload, 1);
+      body[body.length - 1] = xorChecksum(body.subarray(0, body.length - 1));
+      const result = new Uint8Array(body.length + 2);
+      result.set(byteWord(body.length), 0);
+      result.set(body, 2);
+      return result;
+    }
+
+    function tapeName(name) {
+      const sanitized = name.toUpperCase().replace(/[^A-Z0-9 _-]/g, "").trim();
+      const clean = (sanitized || "AYVOICE").slice(0, 10).padEnd(10, " ");
+      return Uint8Array.from(clean, character => character.charCodeAt(0));
+    }
+
+    function tapeHeader(type, name, length, parameter1, parameter2) {
+      const header = new Uint8Array(17);
+      header[0] = type;
+      header.set(tapeName(name), 1);
+      header.set(byteWord(length), 11);
+      header.set(byteWord(parameter1), 13);
+      header.set(byteWord(parameter2), 15);
+      return tapeBlock(0x00, header);
+    }
+
+    function basicLine(number, content) {
+      const length = content.length + 1;
+      return Uint8Array.from([
+        (number >>> 8) & 255, number & 255,
+        length & 255, (length >>> 8) & 255,
+        ...content, 0x0D
+      ]);
+    }
+
+    function ascii(text) {
+      return Array.from(text, character => character.charCodeAt(0));
+    }
+
+    function concatenate(parts) {
+      const length = parts.reduce((sum, part) => sum + part.length, 0);
+      const result = new Uint8Array(length);
+      let offset = 0;
+      for (const part of parts) {
+        result.set(part, offset);
+        offset += part.length;
+      }
+      return result;
+    }
+
+    function buildBasicLoader() {
+      const lines = [
+        basicLine(10, [0xFD, 0x20, 0xB0, 0x20, 0x22, ...ascii("24575"), 0x22]), // CLEAR VAL "24575"
+        basicLine(20, [0xEF, 0x20, 0x22, 0x22, 0x20, 0xAF]),              // LOAD "" CODE
+        basicLine(30, [0xF9, 0x20, 0xC0, 0x20, 0xB0, 0x20, 0x22, ...ascii("24576"), 0x22]) // RANDOMIZE USR VAL "24576"
+      ];
+      return concatenate(lines);
+    }
+
+    function encodeStates(states) {
+      const result = new Uint8Array(states.length * BYTES_PER_FRAME);
+      let offset = 0;
+      for (const state of states) {
+        for (let channel = 0; channel < 3; channel++) {
+          const period = Math.max(1, Math.min(4095, state.periods[channel] | 0));
+          const volume = Math.max(0, Math.min(15, state.volumes[channel] | 0));
+          result[offset++] = period & 255;
+          result[offset++] = ((volume & 15) << 4) | ((period >>> 8) & 15);
+        }
+        result[offset++] = Math.max(1, Math.min(31, state.noise | 0));
+        result[offset++] = state.mixer & 0x3F;
+      }
+      return result;
+    }
+
+    function buildTap(states, name = "AYVOICE") {
+      const player = buildPlayer(states.length);
+      const sound = encodeStates(states);
+      const code = concatenate([player, sound]);
+      if (LOAD_ADDRESS + code.length > 65536) throw new Error("Запись не помещается в адресное пространство Spectrum");
+
+      const basic = buildBasicLoader();
+      return concatenate([
+        tapeHeader(0, "AY LOADER", basic.length, 10, basic.length),
+        tapeBlock(0xFF, basic),
+        tapeHeader(3, name, code.length, LOAD_ADDRESS, 0x8000),
+        tapeBlock(0xFF, code)
+      ]);
+    }
+
+    function maxFrameCount() {
+      return Math.floor((65536 - LOAD_ADDRESS - buildPlayer(1).length) / BYTES_PER_FRAME);
+    }
+
+    function percentile(values, fraction) {
+      if (!values.length) return 0;
+      const sorted = [...values].sort((a, b) => a - b);
+      return sorted[Math.min(sorted.length - 1, Math.max(0, Math.round((sorted.length - 1) * fraction)))];
+    }
+
+    function resampleAudioBuffer(buffer, durationLimit) {
+      const outputLength = Math.max(FRAME_SAMPLES, Math.floor(durationLimit * ANALYSIS_RATE));
+      const output = new Float32Array(outputLength);
+      const ratio = buffer.sampleRate / ANALYSIS_RATE;
+      const channels = Array.from({ length: buffer.numberOfChannels }, (_, index) => buffer.getChannelData(index));
+
+      for (let i = 0; i < outputLength; i++) {
+        const position = i * ratio;
+        const left = Math.min(buffer.length - 1, Math.floor(position));
+        const right = Math.min(buffer.length - 1, left + 1);
+        const mix = position - left;
+        let sample = 0;
+        for (const channel of channels) sample += channel[left] * (1 - mix) + channel[right] * mix;
+        output[i] = sample / channels.length;
+      }
+      return output;
+    }
+
+    function levinsonDurbin(correlation, order) {
+      const coefficients = new Float64Array(order + 1);
+      coefficients[0] = 1;
+      let error = Math.max(correlation[0], 1e-9);
+
+      for (let i = 1; i <= order; i++) {
+        let sum = 0;
+        for (let j = 1; j < i; j++) sum += coefficients[j] * correlation[i - j];
+        const reflection = Math.max(-0.995, Math.min(0.995, -(correlation[i] + sum) / error));
+        const previous = coefficients.slice();
+        coefficients[i] = reflection;
+        for (let j = 1; j < i; j++) coefficients[j] = previous[j] + reflection * previous[i - j];
+        error *= Math.max(1e-4, 1 - reflection * reflection);
+      }
+      return coefficients;
+    }
+
+    function lpcGainAt(coefficients, frequency) {
+      const angle = 2 * Math.PI * frequency / ANALYSIS_RATE;
+      let real = 1;
+      let imaginary = 0;
+      for (let k = 1; k < coefficients.length; k++) {
+        real += coefficients[k] * Math.cos(angle * k);
+        imaginary -= coefficients[k] * Math.sin(angle * k);
+      }
+      return 1 / Math.sqrt(real * real + imaginary * imaginary + 1e-10);
+    }
+
+    function bestSpectralPeak(spectrum, minimum, maximum) {
+      const local = spectrum.filter((point, index) => {
+        if (point.frequency < minimum || point.frequency > maximum) return false;
+        const before = spectrum[Math.max(0, index - 1)].gain;
+        const after = spectrum[Math.min(spectrum.length - 1, index + 1)].gain;
+        return point.gain >= before && point.gain >= after;
+      });
+      const pool = local.length ? local : spectrum.filter(point => point.frequency >= minimum && point.frequency <= maximum);
+      return pool.reduce((best, point) => !best || point.gain > best.gain ? point : best, null);
+    }
+
+    function analyzeRawFrame(samples, start) {
+      const raw = new Float64Array(FRAME_SAMPLES);
+      let mean = 0;
+      for (let i = 0; i < FRAME_SAMPLES; i++) {
+        raw[i] = samples[Math.min(samples.length - 1, start + i)] || 0;
+        mean += raw[i];
+      }
+      mean /= FRAME_SAMPLES;
+
+      let energy = 0;
+      let zeroCrossings = 0;
+      for (let i = 0; i < FRAME_SAMPLES; i++) {
+        raw[i] -= mean;
+        energy += raw[i] * raw[i];
+        if (i && (raw[i] >= 0) !== (raw[i - 1] >= 0)) zeroCrossings++;
+      }
+      const rms = Math.sqrt(energy / FRAME_SAMPLES);
+      const zcr = zeroCrossings / (FRAME_SAMPLES - 1);
+
+      let bestPitchScore = -1;
+      let bestLag = Math.round(ANALYSIS_RATE / 120);
+      const minimumLag = Math.floor(ANALYSIS_RATE / 330);
+      const maximumLag = Math.ceil(ANALYSIS_RATE / 70);
+      for (let lag = minimumLag; lag <= maximumLag; lag++) {
+        let cross = 0;
+        let leftEnergy = 0;
+        let rightEnergy = 0;
+        for (let i = lag; i < FRAME_SAMPLES; i++) {
+          cross += raw[i] * raw[i - lag];
+          leftEnergy += raw[i] * raw[i];
+          rightEnergy += raw[i - lag] * raw[i - lag];
+        }
+        const score = cross / Math.sqrt(leftEnergy * rightEnergy + 1e-14);
+        if (score > bestPitchScore) {
+          bestPitchScore = score;
+          bestLag = lag;
+        }
+      }
+
+      const windowed = new Float64Array(FRAME_SAMPLES);
+      for (let i = 0; i < FRAME_SAMPLES; i++) {
+        const previous = i ? raw[i - 1] : 0;
+        const preemphasized = raw[i] - 0.94 * previous;
+        const window = 0.54 - 0.46 * Math.cos(2 * Math.PI * i / (FRAME_SAMPLES - 1));
+        windowed[i] = preemphasized * window;
+      }
+
+      const correlation = new Float64Array(LPC_ORDER + 1);
+      for (let lag = 0; lag <= LPC_ORDER; lag++) {
+        for (let i = lag; i < FRAME_SAMPLES; i++) correlation[lag] += windowed[i] * windowed[i - lag];
+      }
+      const coefficients = levinsonDurbin(correlation, LPC_ORDER);
+      const spectrum = [];
+      for (let frequency = 120; frequency <= 3900; frequency += 35) {
+        spectrum.push({ frequency, gain: lpcGainAt(coefficients, frequency) });
+      }
+
+      const first = bestSpectralPeak(spectrum, 180, 1050) || { frequency: 500, gain: 1 };
+      const second = bestSpectralPeak(spectrum, Math.max(750, first.frequency + 300), 2850) || { frequency: 1500, gain: 1 };
+      const third = bestSpectralPeak(spectrum, Math.max(1650, second.frequency + 350), 3900) || { frequency: 2600, gain: 1 };
+
+      return {
+        rms,
+        zcr,
+        pitchScore: bestPitchScore,
+        pitch: ANALYSIS_RATE / bestLag,
+        formants: [first.frequency, second.frequency, third.frequency],
+        gains: [first.gain, second.gain, third.gain]
+      };
+    }
+
+    function volumeFromLevel(master, gain, maximumGain) {
+      const relativeDb = 20 * Math.log10(Math.max(1e-6, gain / Math.max(maximumGain, 1e-6)));
+      return Math.max(0, Math.min(master, Math.round(master + relativeDb / 2.4)));
+    }
+
+    function tonePeriod(frequency) {
+      return Math.max(1, Math.min(4095, Math.round(AY_CLOCK / (16 * Math.max(27, frequency)))));
+    }
+
+    async function analyzeSamples(samples, progress) {
+      const frameCount = Math.ceil(samples.length / FRAME_SAMPLES);
+      const rawFrames = new Array(frameCount);
+      for (let frame = 0; frame < frameCount; frame++) {
+        rawFrames[frame] = analyzeRawFrame(samples, frame * FRAME_SAMPLES);
+        if ((frame & 31) === 0) {
+          progress(frame / Math.max(1, frameCount));
+          await new Promise(resolve => requestAnimationFrame(resolve));
+        }
+      }
+
+      const loudReference = Math.max(1e-5, percentile(rawFrames.map(frame => frame.rms).filter(value => value > 1e-6), 0.92));
+      const states = [];
+      let previousPitch = 120;
+      let previousFormants = [500, 1500, 2600];
+
+      for (const frame of rawFrames) {
+        const relativeDb = 20 * Math.log10(Math.max(1e-7, frame.rms / loudReference));
+        const quiet = relativeDb < -34;
+        const voiced = !quiet && frame.pitchScore > 0.38 && frame.zcr < 0.29;
+        const weakVoicing = voiced && frame.pitchScore < 0.57;
+        const pitch = voiced ? previousPitch * 0.35 + frame.pitch * 0.65 : previousPitch;
+        if (voiced) previousPitch = pitch;
+
+        const formants = frame.formants.map((frequency, index) => {
+          const smoothed = previousFormants[index] * 0.42 + frequency * 0.58;
+          previousFormants[index] = smoothed;
+          return smoothed;
+        });
+
+        const periods = formants.map(frequency => {
+          if (!voiced) return tonePeriod(frequency);
+          const harmonic = Math.max(1, Math.round(frequency / pitch));
+          return tonePeriod(harmonic * pitch);
+        });
+
+        const master = quiet ? 0 : Math.max(1, Math.min(15, Math.round(15 + relativeDb / 2.1)));
+        const maximumGain = Math.max(...frame.gains);
+        const volumes = frame.gains.map(gain => quiet ? 0 : volumeFromLevel(master, gain, maximumGain));
+        const noiseBrightness = Math.max(0, Math.min(1, (frame.zcr - 0.045) / 0.34));
+        const noise = Math.max(1, Math.min(31, Math.round(31 - noiseBrightness * 30)));
+        const mixer = quiet ? 0x3F : voiced ? (weakVoicing ? 0x18 : 0x38) : 0x00;
+
+        states.push({ periods, volumes, noise, mixer, voiced });
+      }
+      progress(1);
+      return states;
+    }
+
+    function parseTapeBlocks(tap) {
+      const blocks = [];
+      let offset = 0;
+      while (offset < tap.length) {
+        if (offset + 2 > tap.length) throw new Error("Оборванная длина TAP-блока");
+        const length = tap[offset] | (tap[offset + 1] << 8);
+        offset += 2;
+        if (length < 2 || offset + length > tap.length) throw new Error("Некорректный TAP-блок");
+        const body = tap.slice(offset, offset + length);
+        if (xorChecksum(body) !== 0) throw new Error("Ошибка контрольной суммы TAP");
+        blocks.push(body);
+        offset += length;
+      }
+      return blocks;
+    }
+
+    const core = {
+      AY_CLOCK,
+      LOAD_ADDRESS,
+      FRAME_RATE,
+      BYTES_PER_FRAME,
+      buildPlayer,
+      buildBasicLoader,
+      buildTap,
+      encodeStates,
+      analyzeSamples,
+      maxFrameCount,
+      parseTapeBlocks
+    };
+    if (typeof window !== "undefined") window.AySpeechTapCore = core;
+    if (typeof document === "undefined") return;
+
+    const fileInput = document.getElementById("fileInput");
+    const dropZone = document.getElementById("dropZone");
+    const status = document.getElementById("status");
+    const progressBar = document.getElementById("progressBar");
+    const result = document.getElementById("result");
+    const durationMetric = document.getElementById("durationMetric");
+    const framesMetric = document.getElementById("framesMetric");
+    const sizeMetric = document.getElementById("sizeMetric");
+    const downloadButton = document.getElementById("downloadButton");
+    const previewButton = document.getElementById("previewButton");
+    const graph = document.getElementById("formantGraph");
+    let current = null;
+    let previewSource = null;
+    let operation = 0;
+
+    function setStatus(message, kind = "") {
+      status.textContent = message;
+      status.className = `status ${kind}`.trim();
+    }
+
+    function formatBytes(bytes) {
+      return bytes < 1024 ? `${bytes} Б` : `${(bytes / 1024).toFixed(1)} КиБ`;
+    }
+
+    function cleanDownloadName(name) {
+      const base = name.replace(/\.[^.]+$/, "").replace(/[^a-zа-яё0-9_-]+/gi, "-").replace(/^-+|-+$/g, "");
+      return `${base || "ay-voice"}.tap`;
+    }
+
+    function drawGraph(states) {
+      const context = graph.getContext("2d");
+      const width = graph.width;
+      const height = graph.height;
+      context.clearRect(0, 0, width, height);
+      context.fillStyle = "#0b100d";
+      context.fillRect(0, 0, width, height);
+
+      context.strokeStyle = "#26342c";
+      context.lineWidth = 1;
+      for (let frequency = 1000; frequency <= 3000; frequency += 1000) {
+        const y = height - 10 - frequency / 4000 * (height - 20);
+        context.beginPath(); context.moveTo(0, y); context.lineTo(width, y); context.stroke();
+      }
+
+      const colors = ["#75f0a7", "#f5c66a", "#e98bff"];
+      colors.forEach((color, channel) => {
+        context.strokeStyle = color;
+        context.lineWidth = 1.35;
+        context.beginPath();
+        states.forEach((state, index) => {
+          const x = states.length === 1 ? 0 : index / (states.length - 1) * width;
+          const frequency = AY_CLOCK / (16 * state.periods[channel]);
+          const y = height - 10 - Math.min(4000, frequency) / 4000 * (height - 20);
+          if (!index) context.moveTo(x, y); else context.lineTo(x, y);
+        });
+        context.stroke();
+      });
+
+      context.strokeStyle = "#8fa398";
+      context.setLineDash([3, 5]);
+      context.beginPath();
+      states.forEach((state, index) => {
+        if (state.mixer === 0x38 || state.mixer === 0x3F) return;
+        const x = states.length === 1 ? 0 : index / (states.length - 1) * width;
+        const y = height - 4;
+        context.moveTo(x, y); context.lineTo(x, y - 12);
+      });
+      context.stroke();
+      context.setLineDash([]);
+    }
+
+    async function processFile(file) {
+      const ownOperation = ++operation;
+      result.classList.remove("visible");
+      progressBar.style.width = "3%";
+      setStatus(`Декодирование ${file.name}…`);
+      downloadButton.disabled = true;
+      previewButton.disabled = true;
+
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) throw new Error("В этом браузере нет Web Audio API");
+        const audioContext = new AudioContextClass();
+        const arrayBuffer = await file.arrayBuffer();
+        const decoded = await audioContext.decodeAudioData(arrayBuffer.slice(0));
+        await audioContext.close();
+        if (ownOperation !== operation) return;
+
+        const playerBytes = buildPlayer(1).length;
+        const limitFrames = Math.floor((65536 - LOAD_ADDRESS - playerBytes) / BYTES_PER_FRAME);
+        const limitDuration = limitFrames / FRAME_RATE;
+        const usedDuration = Math.min(decoded.duration, limitDuration);
+        const truncated = decoded.duration > limitDuration;
+        setStatus(`Подготовка моно 8 кГц${truncated ? ` · первые ${limitDuration.toFixed(1)} с` : ""}…`);
+        progressBar.style.width = "8%";
+        const samples = resampleAudioBuffer(decoded, usedDuration);
+
+        setStatus("LPC-анализ и построение состояний AY…");
+        const states = await analyzeSamples(samples, fraction => {
+          progressBar.style.width = `${8 + fraction * 88}%`;
+        });
+        if (ownOperation !== operation) return;
+
+        const tapName = file.name.replace(/\.[^.]+$/, "");
+        const tap = buildTap(states, tapName);
+        parseTapeBlocks(tap);
+        current = { states, tap, filename: cleanDownloadName(file.name) };
+
+        const duration = states.length / FRAME_RATE;
+        durationMetric.textContent = `${duration.toFixed(2)} с`;
+        framesMetric.textContent = states.length.toLocaleString("ru-RU");
+        sizeMetric.textContent = formatBytes(tap.length);
+        drawGraph(states);
+        result.classList.add("visible");
+        downloadButton.disabled = false;
+        previewButton.disabled = false;
+        progressBar.style.width = "100%";
+        setStatus(truncated ? "TAP готов. Длинная запись обрезана по пределу памяти." : "TAP готов и проверен.", "ready");
+      } catch (error) {
+        console.error(error);
+        progressBar.style.width = "0";
+        setStatus(error && error.message ? error.message : "Не удалось обработать запись", "error");
+      }
+    }
+
+    function renderPreview(states, sampleRate = 22050) {
+      const sampleCount = Math.ceil(states.length / FRAME_RATE * sampleRate);
+      const output = new Float32Array(sampleCount);
+      const phases = [0, 0, 0];
+      const volumeTable = [0, .004, .006, .009, .013, .019, .027, .039, .056, .08, .115, .165, .235, .34, .55, 1];
+      let noisePhase = 0;
+      let lfsr = 0x1FFFF;
+      let previousInput = 0;
+      let previousOutput = 0;
+      let maximum = 1e-5;
+
+      for (let i = 0; i < sampleCount; i++) {
+        const state = states[Math.min(states.length - 1, Math.floor(i / sampleRate * FRAME_RATE))];
+        const noiseRate = AY_CLOCK / (16 * state.noise);
+        noisePhase += noiseRate / sampleRate;
+        while (noisePhase >= 1) {
+          const feedback = (lfsr ^ (lfsr >>> 3)) & 1;
+          lfsr = (lfsr >>> 1) | (feedback << 16);
+          noisePhase--;
+        }
+        const noiseBit = (lfsr & 1) !== 0;
+        let mixed = 0;
+        for (let channel = 0; channel < 3; channel++) {
+          const frequency = AY_CLOCK / (16 * state.periods[channel]);
+          phases[channel] = (phases[channel] + frequency / sampleRate) % 1;
+          const toneBit = phases[channel] < .5;
+          const toneInput = (state.mixer & (1 << channel)) ? true : toneBit;
+          const noiseInput = (state.mixer & (1 << (channel + 3))) ? true : noiseBit;
+          const signal = toneInput && noiseInput ? 1 : -1;
+          mixed += signal * volumeTable[state.volumes[channel]];
+        }
+        mixed /= 3;
+        const highPassed = mixed - previousInput + 0.994 * previousOutput;
+        previousInput = mixed;
+        previousOutput = highPassed;
+        output[i] = highPassed;
+        maximum = Math.max(maximum, Math.abs(highPassed));
+      }
+      const scale = .78 / maximum;
+      for (let i = 0; i < output.length; i++) output[i] *= scale;
+      return output;
+    }
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files && fileInput.files[0]) processFile(fileInput.files[0]);
+    });
+
+    for (const eventName of ["dragenter", "dragover"]) {
+      dropZone.addEventListener(eventName, event => {
+        event.preventDefault();
+        dropZone.classList.add("dragging");
+      });
+    }
+    for (const eventName of ["dragleave", "drop"]) {
+      dropZone.addEventListener(eventName, event => {
+        event.preventDefault();
+        dropZone.classList.remove("dragging");
+      });
+    }
+    dropZone.addEventListener("drop", event => {
+      const file = event.dataTransfer.files && event.dataTransfer.files[0];
+      if (file) processFile(file);
+    });
+
+    downloadButton.addEventListener("click", () => {
+      if (!current) return;
+      const url = URL.createObjectURL(new Blob([current.tap], { type: "application/octet-stream" }));
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = current.filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+
+    previewButton.addEventListener("click", async () => {
+      if (!current) return;
+      if (previewSource) {
+        previewSource.stop();
+        previewSource = null;
+        previewButton.textContent = "Прослушать модель AY";
+        setStatus("TAP готов и проверен.", "ready");
+        return;
+      }
+
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      const audioContext = new AudioContextClass({ sampleRate: 22050 });
+      await audioContext.resume();
+      setStatus("Рендеринг предварительного звучания…");
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      const samples = renderPreview(current.states, audioContext.sampleRate);
+      const buffer = audioContext.createBuffer(1, samples.length, audioContext.sampleRate);
+      buffer.copyToChannel(samples, 0);
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContext.destination);
+      source.onended = () => {
+        if (previewSource === source) {
+          previewSource = null;
+          previewButton.textContent = "Прослушать модель AY";
+          setStatus("TAP готов и проверен.", "ready");
+        }
+        audioContext.close();
+      };
+      previewSource = source;
+      previewButton.textContent = "Остановить прослушивание";
+      setStatus("Воспроизводится браузерная модель AY…", "ready");
+      source.start();
+    });
+  })();
+  </script>
+</body>
+</html>
