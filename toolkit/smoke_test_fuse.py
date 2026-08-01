@@ -48,6 +48,11 @@ def main() -> None:
             "requires player_labels.read_n in metadata"
         ),
     )
+    parser.add_argument(
+        "--forbid-underflow",
+        action="store_true",
+        help="fail if the ring-buffer player waits for a missing packet",
+    )
     parser.add_argument("--timeout", type=float, default=20.0)
     args = parser.parse_args()
     if args.hits < 1:
@@ -64,6 +69,7 @@ def main() -> None:
 
     debugger_commands: list[str] = []
     main_breakpoint = 1
+    next_breakpoint = 1
     if args.forbid_read_after_preload:
         read_n = int(metadata["player_labels"]["read_n"])
         debugger_commands += (
@@ -73,7 +79,19 @@ def main() -> None:
             f"exit {FORBIDDEN_READ_EXIT}",
             "end",
         )
-        main_breakpoint = 2
+        next_breakpoint += 1
+
+    if args.forbid_underflow:
+        underflow = int(metadata["player_labels"]["wait_packet_fill"])
+        debugger_commands += (
+            f"breakpoint 0x{underflow:04X}",
+            f"commands {next_breakpoint}",
+            f"exit {FORBIDDEN_READ_EXIT}",
+            "end",
+        )
+        next_breakpoint += 1
+
+    main_breakpoint = next_breakpoint
 
     debugger_commands.append(f"breakpoint 0x{main_loop:04X}")
     if args.hits > 1:
@@ -116,9 +134,9 @@ def main() -> None:
         ) from exc
 
     if completed.returncode == FORBIDDEN_READ_EXIT:
-        raise SystemExit(
-            "Fuse reached read_n after the two startup preload calls"
-        )
+        if args.forbid_underflow:
+            raise SystemExit("Fuse reached the ring-buffer underflow path")
+        raise SystemExit("Fuse reached read_n after the two startup preload calls")
     if completed.returncode != BREAKPOINT_EXIT:
         raise SystemExit(
             f"Fuse exited with {completed.returncode}, expected "
@@ -130,6 +148,8 @@ def main() -> None:
     )
     if args.forbid_read_after_preload:
         print("No disk read occurred during playback")
+    if args.forbid_underflow:
+        print("No ring-buffer underflow occurred during playback")
 
 
 if __name__ == "__main__":
