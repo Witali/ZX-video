@@ -1054,6 +1054,36 @@ def analyse_motion_reframe(
     return windows, stats
 
 
+def build_fixed_center_reframe(
+    duration: float,
+    fps: float,
+    zoom: float,
+) -> tuple[list[ReframeWindow], dict[str, float]]:
+    """Use one stable central crop for the entire clip."""
+    if not 1.0 <= zoom <= 2.0:
+        raise ValueError("fixed centre zoom must be in 1..2")
+    frame_count = round(duration * fps)
+    window = ReframeWindow(center_x=0.5, center_y=0.5, zoom=zoom)
+    windows = [window] * frame_count
+    stats = {
+        "center_x_min": 0.5,
+        "center_x_max": 0.5,
+        "center_y_min": 0.5,
+        "center_y_max": 0.5,
+        "zoom_min": zoom,
+        "zoom_max": zoom,
+        "zoom_mean": zoom,
+        "changes": 0.0,
+        "horizontal_crop_each_side": (1.0 - 1.0 / zoom) * 0.5,
+    }
+    print(
+        f"fixed centre crop: zoom={zoom:.2f}, "
+        f"cut={stats['horizontal_crop_each_side']:.1%} per side",
+        flush=True,
+    )
+    return windows, stats
+
+
 def apply_reframe(image: np.ndarray, window: ReframeWindow) -> np.ndarray:
     crop_width = ANALYSIS_WIDTH / window.zoom
     crop_height = ANALYSIS_HEIGHT / window.zoom
@@ -1726,6 +1756,12 @@ def main() -> None:
         help="centred window for smoothly adaptive luminance groups",
     )
     parser.add_argument(
+        "--fixed-center-zoom",
+        type=float,
+        default=1.25,
+        help="constant central crop; 1.25 removes 10%% from each side",
+    )
+    parser.add_argument(
         "--dither",
         choices=("none", "ordered4", "ordered8"),
         default="ordered4",
@@ -1755,6 +1791,8 @@ def main() -> None:
         )
     if args.tone_window_seconds <= 0.0:
         parser.error("tone-window-seconds must be positive")
+    if not 1.0 <= args.fixed_center_zoom <= 2.0:
+        parser.error("fixed-center-zoom must be in 1..2")
 
     out = args.output
     out.mkdir(parents=True, exist_ok=True)
@@ -1764,11 +1802,10 @@ def main() -> None:
         if dithered
         else "big_buck_bunny_zx_preview.mp4"
     )
-    reframe_windows, reframe_stats = analyse_motion_reframe(
-        args.input_video,
-        args.start,
+    reframe_windows, reframe_stats = build_fixed_center_reframe(
         args.duration,
         args.fps,
+        args.fixed_center_zoom,
     )
     tone_ranges = analyse_tone_ranges(
         args.input_video,
@@ -1843,9 +1880,9 @@ def main() -> None:
     total_chunks = 0
     total_volume_bytes = 0
     stem = (
-        "big_buck_bunny_2min_zx_motion_crop_colour_ay_dithered"
+        "big_buck_bunny_2min_zx_center_crop_colour_ay_dithered"
         if dithered
-        else "big_buck_bunny_2min_zx_motion_crop_colour_ay"
+        else "big_buck_bunny_2min_zx_center_crop_colour_ay"
     )
     for volume_index, (
         frame_start,
@@ -1936,9 +1973,7 @@ def main() -> None:
 - Ideal screen duration: {stats['frames'] / args.timing_fps:.3f} s
 - Stored brightness image: 128x96, four levels (2 bits per pixel)
 - Player output: native 256x192 one-dot 2x2 patterns
-- Motion-aware reframe: centre x {reframe_stats['center_x_min']:.3f}..{reframe_stats['center_x_max']:.3f}, y {reframe_stats['center_y_min']:.3f}..{reframe_stats['center_y_max']:.3f}
-- Motion-aware zoom: {reframe_stats['zoom_min']:.2f}..{reframe_stats['zoom_max']:.2f}x (mean {reframe_stats['zoom_mean']:.2f}x)
-- Motion-aware virtual-shot changes: {int(reframe_stats['changes'])}
+- Fixed centre crop: {reframe_stats['zoom_mean']:.2f}x; {reframe_stats['horizontal_crop_each_side']:.1%} removed from each side
 - Colour attributes: native 32x24 Spectrum cells (768 bytes)
 - Attribute search: all {stats['colour_candidates']} legal oriented INK/PAPER pairs; {stats['distinct_attributes']} used
 - Adaptive tone window: {args.tone_window_seconds:g} s, P{args.black_percentile:g}..P{args.white_percentile:g}
@@ -1983,7 +2018,7 @@ boundary.
         "timing_fps": args.timing_fps,
         "tone_window_seconds": args.tone_window_seconds,
         "ay": ay_stats,
-        "motion_reframe": reframe_stats,
+        "fixed_center_crop": reframe_stats,
         "source": {
             "path": str(args.input_video),
             "start_seconds": args.start,
