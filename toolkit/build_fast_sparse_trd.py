@@ -20,7 +20,7 @@ import build_zxv_trd as base  # noqa: E402
 LOAD_ADDRESS = 0x6000
 BUFFER = 0x8000
 VIDEO_MAGIC = b"ZXFS"
-VIDEO_VERSION = 2
+VIDEO_VERSION = 3
 PACKET_FIRST_HEADER = 12
 CMD_END = 0
 CMD_BITMAP_ROW = 1
@@ -28,6 +28,7 @@ CMD_ATTRIBUTES = 2
 CMD_BITMAP_POINTS = 3
 CMD_ATTRIBUTES_DELTA = 4
 CMD_BITMAP_ROW_RLE = 5
+CMD_BITMAP_ROW_SHIFT = 6
 PAGING_ROM48_BANK7 = 0x17
 MAX_TRDOS_FILE_SECTORS = 255
 TRD_DATA_SECTORS = (base.LOGICAL_TRACKS - 1) * base.SECTORS_PER_TRACK
@@ -38,6 +39,7 @@ class SparsePacket:
     sectors: tuple[bytes, ...]
     ay_state: bytes
     rle_rows: int = 0
+    motion_rows: int = 0
     sectors_saved: int = 0
 
     @property
@@ -117,19 +119,26 @@ def encode_byte_rle(data: bytes) -> bytes:
 
 
 def frame_records(
-    current: bytes, previous: bytes, allow_dense_rle: bool = False
+    current: bytes,
+    previous: bytes,
+    allow_dense_rle: bool = False,
+    allow_motion: bool = False,
 ) -> list[bytes]:
     records: list[bytes] = []
     for row in range(source.LOGICAL_HEIGHT):
         start = row * (source.LOGICAL_WIDTH // 4)
-        mask = 0
-        values = bytearray()
-        for column in range(source.LOGICAL_WIDTH // 4):
-            value = current[start + column]
-            if value != previous[start + column]:
-                mask |= 1 << (31 - column)
-                values.append(value)
-        if mask:
+        current_row = current[start:start + source.LOGICAL_WIDTH // 4]
+        previous_row = previous[start:start + source.LOGICAL_WIDTH // 4]
+
+        def delta_record(predicted: bytes) -> bytes | None:
+            mask = 0
+            values = bytearray()
+            for column, value in enumerate(current_row):
+                if value != predicted[column]:
+                    mask |= 1 << (31 - column)
+                    values.append(value)
+            if not mask:
+                return None
             changed_columns = [
                 column
                 for column in range(source.LOGICAL_WIDTH // 4)
@@ -143,15 +152,29 @@ def frame_records(
             point_record = bytearray((CMD_BITMAP_POINTS, row, len(changed_columns)))
             for column, value in zip(changed_columns, values):
                 point_record += bytes((column, value))
-            candidates = [mask_record, bytes(point_record)]
-            if allow_dense_rle:
-                row_rle = encode_byte_rle(
-                    current[start:start + source.LOGICAL_WIDTH // 4]
-                )
-                candidates.append(
-                    bytes((CMD_BITMAP_ROW_RLE, row, len(row_rle))) + row_rle
-                )
-            records.append(min(candidates, key=len))
+            return min(mask_record, bytes(point_record), key=len)
+
+        direct = delta_record(previous_row)
+        candidates: list[list[bytes]] = [[] if direct is None else [direct]]
+        if allow_dense_rle and direct is not None:
+            row_rle = encode_byte_rle(current_row)
+            candidates.append(
+                [bytes((CMD_BITMAP_ROW_RLE, row, len(row_rle))) + row_rle]
+            )
+        if allow_motion and direct is not None:
+            for shift in (*range(-8, 0), *range(1, 9)):
+                if shift > 0:
+                    predicted = bytes(shift) + previous_row[:-shift]
+                else:
+                    amount = -shift
+                    predicted = previous_row[amount:] + bytes(amount)
+                correction = delta_record(predicted)
+                motion = [bytes((CMD_BITMAP_ROW_SHIFT, row, shift & 0xFF))]
+                if correction is not None:
+                    motion.append(correction)
+                candidates.append(motion)
+        selected = min(candidates, key=lambda candidate: sum(map(len, candidate)))
+        records.extend(selected)
 
     changes = [
         (index, current[source.STATE_LEVEL_BYTES + index])
@@ -182,6 +205,7 @@ def pack_packet(
     ay_state: bytes,
     *,
     rle_rows: int = 0,
+    motion_rows: int = 0,
     sectors_saved: int = 0,
 ) -> SparsePacket:
     if len(ay_state) != source.AY_STATE_BYTES:
@@ -206,6 +230,7 @@ def pack_packet(
         tuple(bytes(payload) for payload in payloads),
         ay_state,
         rle_rows,
+        motion_rows,
         sectors_saved,
     )
 
@@ -271,6 +296,18 @@ def apply_packet_reference(packet: SparsePacket, previous: bytes) -> bytes:
                     raise ValueError("invalid RLE bitmap row")
                 row_start = row * (source.LOGICAL_WIDTH // 4)
                 state[row_start:row_start + len(decoded)] = decoded
+            elif command == CMD_BITMAP_ROW_SHIFT:
+                row = sector[position]
+                shift = struct.unpack_from("b", sector, position + 1)[0]
+                position += 2
+                row_start = row * (source.LOGICAL_WIDTH // 4)
+                old = bytes(state[row_start:row_start + source.LOGICAL_WIDTH // 4])
+                if shift > 0:
+                    shifted = bytes(shift) + old[:-shift]
+                else:
+                    amount = -shift
+                    shifted = old[amount:] + bytes(amount)
+                state[row_start:row_start + len(shifted)] = shifted
             else:
                 raise ValueError(f"unknown sparse command {command}")
     return bytes(state)
@@ -292,23 +329,50 @@ def make_volume_packets(
             prior = previous[local & 1]
         packet = pack_packet(frame_records(states[end], prior), ay_states[end])
         if packet.sector_count > 5:
-            compressed_records = frame_records(
-                states[end], prior, allow_dense_rle=True
+            rle_records = frame_records(
+                states[end],
+                prior,
+                allow_dense_rle=True,
             )
-            compressed = pack_packet(
-                compressed_records,
+            rle_packet = pack_packet(
+                rle_records,
                 ay_states[end],
                 rle_rows=sum(
                     record[0] == CMD_BITMAP_ROW_RLE
-                    for record in compressed_records
+                    for record in rle_records
                 ),
-                sectors_saved=packet.sector_count,
+            )
+            motion_records = frame_records(
+                states[end],
+                prior,
+                allow_dense_rle=True,
+                allow_motion=True,
+            )
+            motion_packet = pack_packet(
+                motion_records,
+                ay_states[end],
+                rle_rows=sum(
+                    record[0] == CMD_BITMAP_ROW_RLE
+                    for record in motion_records
+                ),
+                motion_rows=sum(
+                    record[0] == CMD_BITMAP_ROW_SHIFT
+                    for record in motion_records
+                ),
+            )
+            compressed = min(
+                (rle_packet, motion_packet),
+                key=lambda candidate: (
+                    candidate.sector_count,
+                    candidate.motion_rows > 0,
+                ),
             )
             if compressed.sector_count < packet.sector_count:
                 compressed = SparsePacket(
                     compressed.sectors,
                     compressed.ay_state,
                     compressed.rle_rows,
+                    compressed.motion_rows,
                     packet.sector_count - compressed.sector_count,
                 )
                 packet = compressed
@@ -466,6 +530,7 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     a.emit(0xFE, CMD_BITMAP_POINTS); a.abs16(0xCA, "command_points")
     a.emit(0xFE, CMD_ATTRIBUTES_DELTA); a.abs16(0xCA, "command_attrs_delta")
     a.emit(0xFE, CMD_BITMAP_ROW_RLE); a.abs16(0xCA, "command_row_rle")
+    a.emit(0xFE, CMD_BITMAP_ROW_SHIFT); a.abs16(0xCA, "command_row_shift")
     a.abs16(0xC3, "fatal")
 
     a.label("command_row")
@@ -584,6 +649,63 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     ld_a_mem(a, "rle_remaining"); a.emit(0x3D); ld_mem_a(a, "rle_remaining")
     a.emit(0xC9)
 
+    a.label("command_row_shift")
+    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
+    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "motion_shift")
+    ld_a_mem(a, "row_index")
+    a.emit(0x6F, 0x26, 0, 0x29, 0x29)
+    a.emit(0x11); a.abs16([], "row_addresses")
+    a.emit(0x19, 0x4E, 0x23, 0x46, 0x23)
+    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47)
+    a.emit(0xED, 0x43); a.abs16([], "motion_top")
+    a.emit(0x5E, 0x23, 0x56)
+    ld_a_mem(a, "update_base"); a.emit(0x82, 0x57)
+    a.emit(0xED, 0x53); a.abs16([], "motion_bottom")
+    ld_a_mem(a, "motion_shift"); a.emit(0xCB, 0x7F)
+    a.rel8(0x20, "motion_left")
+    a.emit(0xED, 0x4B); a.abs16([], "motion_top")
+    a.abs16(0xCD, "shift_right_row")
+    a.emit(0xED, 0x4B); a.abs16([], "motion_bottom")
+    a.abs16(0xCD, "shift_right_row")
+    a.abs16(0xC3, "command_loop")
+    a.label("motion_left")
+    a.emit(0xED, 0x44); ld_mem_a(a, "motion_shift")
+    a.emit(0xED, 0x4B); a.abs16([], "motion_top")
+    a.abs16(0xCD, "shift_left_row")
+    a.emit(0xED, 0x4B); a.abs16([], "motion_bottom")
+    a.abs16(0xCD, "shift_left_row")
+    a.abs16(0xC3, "command_loop")
+
+    # Shift one physical 32-byte bitmap row. Input BC is its base address;
+    # the small exposed edge is cleared and later sparse corrections replace it.
+    a.label("shift_right_row")
+    a.emit(0xC5, 0xC5, 0xE1)  # save base, HL = base
+    a.emit(0x11); a.word(31); a.emit(0x19, 0xEB)  # DE = base + 31
+    a.emit(0xE1, 0xC5)  # HL = base, keep base for clearing
+    a.emit(0x01); a.word(31); a.emit(0x09)
+    ld_a_mem(a, "motion_shift"); a.emit(0x4F, 0x7D, 0x91, 0x6F)
+    ld_a_mem(a, "motion_shift"); a.emit(0x4F, 0x3E, 32, 0x91, 0x4F, 0x06, 0)
+    a.emit(0xED, 0xB8)  # LDDR
+    a.emit(0xE1)  # exposed left edge
+    ld_a_mem(a, "motion_shift"); a.emit(0x4F, 0xAF)
+    a.label("shift_right_clear")
+    a.emit(0x77, 0x23, 0x0D); a.rel8(0x20, "shift_right_clear")
+    a.emit(0xC9)
+
+    a.label("shift_left_row")
+    a.emit(0xC5, 0xC5, 0xC5, 0xE1)  # save base twice, HL = base
+    ld_a_mem(a, "motion_shift"); a.emit(0x85, 0x6F)  # HL = base + shift
+    a.emit(0xD1)  # DE = base
+    ld_a_mem(a, "motion_shift"); a.emit(0x4F, 0x3E, 32, 0x91, 0x4F, 0x06, 0)
+    a.emit(0xED, 0xB0)  # LDIR
+    a.emit(0xE1)  # base for exposed right edge
+    a.emit(0x11); a.word(32)
+    ld_a_mem(a, "motion_shift"); a.emit(0x4F, 0x06, 0, 0xB7, 0xED, 0x42, 0x19)
+    ld_a_mem(a, "motion_shift"); a.emit(0x4F, 0xAF)
+    a.label("shift_left_clear")
+    a.emit(0x77, 0x23, 0x0D); a.rel8(0x20, "shift_left_clear")
+    a.emit(0xC9)
+
     a.label("flip_screen")
     ld_a_mem(a, "screen_flag"); a.emit(0xEE, 0x08); ld_mem_a(a, "screen_flag")
     a.emit(0xF6, PAGING_ROM48_BANK7, 0x01); a.word(0x7FFD)
@@ -623,6 +745,7 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
         ("point_count", 1), ("point_column", 1), ("point_top", 2),
         ("point_bottom", 2), ("ay_state", source.AY_STATE_BYTES),
         ("rle_remaining", 1), ("rle_count", 1), ("rle_value", 1),
+        ("motion_shift", 1), ("motion_top", 2), ("motion_bottom", 2),
     ):
         a.label(name); a.emit(*([0] * size))
     a.label("row_addresses")
@@ -668,6 +791,8 @@ def main() -> None:
     all_sector_counts: list[int] = []
     rle_frames = 0
     rle_rows = 0
+    motion_frames = 0
+    motion_rows = 0
     rle_sectors_saved = 0
     while start < len(states):
         end, packets = make_volume_packets(states, ay_states, start, limit)
@@ -688,6 +813,8 @@ def main() -> None:
         all_sector_counts += counts
         rle_frames += sum(packet.rle_rows > 0 for packet in packets)
         rle_rows += sum(packet.rle_rows for packet in packets)
+        motion_frames += sum(packet.motion_rows > 0 for packet in packets)
+        motion_rows += sum(packet.motion_rows for packet in packets)
         rle_sectors_saved += sum(packet.sectors_saved for packet in packets)
         volumes.append({
             "index": index, "trd_name": name, "frame_start": start,
@@ -707,6 +834,8 @@ def main() -> None:
         "packets_over_six": sum(value > 6 for value in all_sector_counts),
         "rle_frames": rle_frames,
         "rle_rows": rle_rows,
+        "motion_frames": motion_frames,
+        "motion_rows": motion_rows,
         "rle_sectors_saved": rle_sectors_saved,
         "source_metadata": metadata,
     }
