@@ -52,6 +52,8 @@ class SparsePacket:
     rle_rows: int = 0
     motion_rows: int = 0
     sectors_saved: int = 0
+    packing_sectors_saved: int = 0
+    padding_bytes: int = 0
 
     @property
     def sector_count(self) -> int:
@@ -185,7 +187,10 @@ def frame_records(
                     motion.append(correction)
                 candidates.append(motion)
         selected = min(candidates, key=lambda candidate: sum(map(len, candidate)))
-        records.extend(selected)
+        # A motion predictor and its correction must remain adjacent if the
+        # sector packer later reorders independent row records.
+        if selected:
+            records.append(b"".join(selected))
 
     changes = [
         (index, current[source.STATE_LEVEL_BYTES + index])
@@ -221,17 +226,37 @@ def pack_packet(
 ) -> SparsePacket:
     if len(ay_state) != source.AY_STATE_BYTES:
         raise ValueError("invalid AY state")
-    payloads: list[bytearray] = [bytearray(PACKET_FIRST_HEADER)]
     for record in records:
         if len(record) + 1 > base.SECTOR_SIZE:
             raise ValueError("sparse record does not fit a sector")
-        if len(payloads[-1]) + len(record) + 1 > base.SECTOR_SIZE:
-            payloads[-1].append(CMD_END)
-            payloads[-1] += bytes(base.SECTOR_SIZE - len(payloads[-1]))
-            payloads.append(bytearray())
-        payloads[-1] += record
-    payloads[-1].append(CMD_END)
-    payloads[-1] += bytes(base.SECTOR_SIZE - len(payloads[-1]))
+
+    # Baseline sector count used by the former in-order greedy packer.
+    greedy_used = PACKET_FIRST_HEADER
+    greedy_sectors = 1
+    for record in records:
+        if greedy_used + len(record) + 1 > base.SECTOR_SIZE:
+            greedy_sectors += 1
+            greedy_used = 0
+        greedy_used += len(record)
+
+    # Best-fit decreasing keeps complete row records intact but fills holes in
+    # earlier sectors. Record execution order is irrelevant, except that a
+    # motion operation and its correction were joined above into one record.
+    payloads: list[bytearray] = [bytearray(PACKET_FIRST_HEADER)]
+    for record in sorted(records, key=len, reverse=True):
+        fitting = [
+            (base.SECTOR_SIZE - len(payload) - 1 - len(record), index)
+            for index, payload in enumerate(payloads)
+            if len(payload) + len(record) + 1 <= base.SECTOR_SIZE
+        ]
+        if fitting:
+            payloads[min(fitting)[1]] += record
+        else:
+            payloads.append(bytearray(record))
+    unpadded_bytes = sum(len(payload) + 1 for payload in payloads)
+    for payload in payloads:
+        payload.append(CMD_END)
+        payload += bytes(base.SECTOR_SIZE - len(payload))
     if len(payloads) > 255:
         raise ValueError("too many sparse sectors")
     payloads[0][0] = len(payloads)
@@ -243,6 +268,8 @@ def pack_packet(
         rle_rows,
         motion_rows,
         sectors_saved,
+        greedy_sectors - len(payloads),
+        len(payloads) * base.SECTOR_SIZE - unpadded_bytes,
     )
 
 
@@ -385,6 +412,8 @@ def make_volume_packets(
                     compressed.rle_rows,
                     compressed.motion_rows,
                     packet.sector_count - compressed.sector_count,
+                    compressed.packing_sectors_saved,
+                    compressed.padding_bytes,
                 )
                 packet = compressed
         if apply_packet_reference(packet, prior) != states[end]:
@@ -943,6 +972,8 @@ def main() -> None:
     motion_frames = 0
     motion_rows = 0
     rle_sectors_saved = 0
+    packing_sectors_saved = 0
+    packet_padding_bytes = 0
     while start < len(states):
         end, packets = make_volume_packets(states, ay_states, start, limit)
         video = serialize_volume(packets, frame_rate)
@@ -966,6 +997,8 @@ def main() -> None:
         motion_frames += sum(packet.motion_rows > 0 for packet in packets)
         motion_rows += sum(packet.motion_rows for packet in packets)
         rle_sectors_saved += sum(packet.sectors_saved for packet in packets)
+        packing_sectors_saved += sum(packet.packing_sectors_saved for packet in packets)
+        packet_padding_bytes += sum(packet.padding_bytes for packet in packets)
         volumes.append({
             "index": index, "trd_name": name, "frame_start": start,
             "frame_end": end, "frames": end - start,
@@ -1008,6 +1041,8 @@ def main() -> None:
         "motion_frames": motion_frames,
         "motion_rows": motion_rows,
         "rle_sectors_saved": rle_sectors_saved,
+        "packing_sectors_saved": packing_sectors_saved,
+        "packet_padding_bytes": packet_padding_bytes,
         "source_metadata": metadata,
     }
     (args.output / "build_metadata.json").write_text(json.dumps(output_metadata, indent=2), encoding="utf-8")
