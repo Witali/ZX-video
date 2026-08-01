@@ -26,6 +26,7 @@ import subprocess
 import sys
 import wave
 from dataclasses import dataclass
+from fractions import Fraction
 from pathlib import Path
 from typing import BinaryIO
 
@@ -47,6 +48,8 @@ LOGICAL_WIDTH = 128
 LOGICAL_HEIGHT = 96
 ACTIVE_Y0 = 12
 ACTIVE_HEIGHT = 72
+ANALYSIS_WIDTH = 256
+ANALYSIS_HEIGHT = 144
 ATTR_COLS = base.CELLS_X
 ATTR_ROWS = base.CELLS_Y
 ATTR_SOURCE_WIDTH = LOGICAL_WIDTH // ATTR_COLS
@@ -116,6 +119,13 @@ class AyFrame:
         if len(result) != AY_STATE_BYTES:
             raise AssertionError("invalid AY state size")
         return bytes(result)
+
+
+@dataclass(frozen=True)
+class ReframeWindow:
+    center_x: float
+    center_y: float
+    zoom: float
 
 
 def colour_candidates() -> list[tuple[int, np.ndarray, np.ndarray]]:
@@ -393,7 +403,7 @@ def make_packet(
 
 def serialize_video(
     packets: list[Packet],
-    fps: int,
+    fps: float,
     timing_fps: float,
 ) -> bytes:
     if not packets:
@@ -402,7 +412,8 @@ def serialize_video(
     header = bytearray(base.SECTOR_SIZE)
     header[:4] = VIDEO_MAGIC
     header[4] = VIDEO_VERSION
-    header[5] = fps
+    rate = Fraction(fps).limit_denominator(1000)
+    header[5] = round(fps)
     header[6] = round(50 / timing_fps)
     header[7] = 0
     struct.pack_into("<H", header, 8, len(packets))
@@ -414,13 +425,14 @@ def serialize_video(
         "<H", header, 20, 1 + len(packet_data) // base.SECTOR_SIZE
     )
     header[24:32] = b"ZXVAY04 "
+    struct.pack_into("<HH", header, 32, rate.numerator, rate.denominator)
     return bytes(header) + packet_data
 
 
 def split_video_volumes(
     states: list[bytes],
     packets: list[Packet],
-    fps: int,
+    fps: float,
     timing_fps: float,
     max_video_sectors: int,
 ) -> list[tuple[int, int, bytes, list[Packet]]]:
@@ -870,7 +882,7 @@ def ffmpeg_frames(
     source: Path,
     start: float,
     duration: float,
-    fps: int,
+    fps: float,
 ) -> tuple[subprocess.Popen[bytes], list[str]]:
     ffmpeg = shutil.which("ffmpeg")
     if ffmpeg is None:
@@ -882,11 +894,7 @@ def ffmpeg_frames(
         "-t", f"{duration:g}",
         "-i", str(source),
         "-vf",
-        (
-            f"fps={fps},"
-            "scale=128:72:flags=area,"
-            "pad=128:96:0:12:black"
-        ),
+        f"fps={fps},scale={ANALYSIS_WIDTH}:{ANALYSIS_HEIGHT}:flags=area",
         "-pix_fmt", "rgb24",
         "-f", "rawvideo",
         "-",
@@ -896,11 +904,180 @@ def ffmpeg_frames(
     return process, command
 
 
+def analyse_motion_reframe(
+    source: Path,
+    start: float,
+    duration: float,
+    fps: float,
+) -> tuple[list[ReframeWindow], dict[str, float]]:
+    """Find and smoothly centre the most persistent moving image region."""
+    process, _ = ffmpeg_frames(source, start, duration, fps)
+    assert process.stdout is not None
+    frame_bytes = ANALYSIS_WIDTH * ANALYSIS_HEIGHT * 3
+    grid_width, grid_height = 32, 18
+    previous_gray: np.ndarray | None = None
+    targets: list[tuple[float, float, float]] = []
+    try:
+        while True:
+            raw = read_exact(process.stdout, frame_bytes)
+            if not raw:
+                break
+            if len(raw) != frame_bytes:
+                raise RuntimeError("ffmpeg returned a partial motion frame")
+            frame = np.frombuffer(raw, dtype=np.uint8).reshape(
+                ANALYSIS_HEIGHT, ANALYSIS_WIDTH, 3
+            )
+            gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+            gray = cv2.GaussianBlur(gray, (5, 5), 0)
+            if previous_gray is None:
+                targets.append((0.5, 0.5, 1.15))
+            else:
+                difference = cv2.absdiff(gray, previous_gray).astype(np.float32)
+                energy = cv2.resize(
+                    difference * difference,
+                    (grid_width, grid_height),
+                    interpolation=cv2.INTER_AREA,
+                )
+                floor = float(np.percentile(energy, 55.0))
+                weights = np.maximum(energy - floor, 0.0)
+                total = float(weights.sum())
+                if total < 1.0:
+                    targets.append((0.5, 0.5, 1.15))
+                else:
+                    yy, xx = np.mgrid[0:grid_height, 0:grid_width]
+                    center_x = float(
+                        np.sum(weights * (xx + 0.5)) / total / grid_width
+                    )
+                    center_y = float(
+                        np.sum(weights * (yy + 0.5)) / total / grid_height
+                    )
+                    variance = float(
+                        np.sum(
+                            weights
+                            * (
+                                ((xx + 0.5) / grid_width - center_x) ** 2
+                                + ((yy + 0.5) / grid_height - center_y) ** 2
+                            )
+                        )
+                        / total
+                    )
+                    concentration = float(np.clip(1.0 - variance / 0.14, 0.0, 1.0))
+                    zoom = 1.15 + 0.35 * concentration
+                    targets.append((center_x, center_y, zoom))
+            previous_gray = gray
+    finally:
+        process.stdout.close()
+    return_code = process.wait()
+    if return_code:
+        raise RuntimeError(f"motion-analysis ffmpeg exited with {return_code}")
+    if not targets:
+        raise RuntimeError("motion analysis decoded no frames")
+
+    values = np.asarray(targets, dtype=np.float64)
+    # A centred two-second triangular filter avoids camera hunting and makes
+    # scene transitions look like deliberate pans rather than crop jumps.
+    radius = max(1, round(fps))
+    positions = np.arange(-radius, radius + 1)
+    kernel = (radius + 1 - np.abs(positions)).astype(np.float64)
+    kernel /= kernel.sum()
+    smooth = np.empty_like(values)
+    for column in range(3):
+        padded = np.pad(values[:, column], radius, mode="edge")
+        smooth[:, column] = np.convolve(padded, kernel, mode="valid")
+
+    candidate_windows: list[ReframeWindow] = []
+    for center_x, center_y, zoom in smooth:
+        zoom = float(np.clip(zoom, 1.15, 1.5))
+        half_width = 0.5 / zoom
+        half_height = 0.5 / zoom
+        candidate_windows.append(
+            ReframeWindow(
+                center_x=float(np.clip(center_x, half_width, 1.0 - half_width)),
+                center_y=float(np.clip(center_y, half_height, 1.0 - half_height)),
+                zoom=zoom,
+            )
+        )
+    # Continuous sub-pixel zoom/pan destroys inter-frame compression because
+    # nearly every source pixel changes. Use stable virtual shots and reframe
+    # only when the subject has moved materially. The occasional larger packet
+    # is preferable to slowing every frame of the video.
+    windows: list[ReframeWindow] = []
+    current = candidate_windows[0]
+    last_change = 0
+    minimum_hold = max(1, round(fps * 1.5))
+    reframe_changes = 0
+    for index, candidate in enumerate(candidate_windows):
+        displacement = math.hypot(
+            candidate.center_x - current.center_x,
+            candidate.center_y - current.center_y,
+        )
+        zoom_change = abs(candidate.zoom - current.zoom)
+        if (
+            index - last_change >= minimum_hold
+            and (displacement >= 0.055 or zoom_change >= 0.09)
+        ):
+            zoom = round(candidate.zoom / 0.05) * 0.05
+            half_width = 0.5 / zoom
+            half_height = 0.5 / zoom
+            current = ReframeWindow(
+                center_x=float(
+                    np.clip(round(candidate.center_x * 64.0) / 64.0, half_width, 1.0 - half_width)
+                ),
+                center_y=float(
+                    np.clip(round(candidate.center_y * 64.0) / 64.0, half_height, 1.0 - half_height)
+                ),
+                zoom=float(zoom),
+            )
+            last_change = index
+            reframe_changes += 1
+        windows.append(current)
+    xs = np.array([window.center_x for window in windows])
+    ys = np.array([window.center_y for window in windows])
+    zooms = np.array([window.zoom for window in windows])
+    stats = {
+        "center_x_min": float(xs.min()),
+        "center_x_max": float(xs.max()),
+        "center_y_min": float(ys.min()),
+        "center_y_max": float(ys.max()),
+        "zoom_min": float(zooms.min()),
+        "zoom_max": float(zooms.max()),
+        "zoom_mean": float(zooms.mean()),
+        "changes": float(reframe_changes),
+    }
+    print(
+        f"motion reframe: x={xs.min():.3f}..{xs.max():.3f}, "
+        f"y={ys.min():.3f}..{ys.max():.3f}, "
+        f"zoom={zooms.min():.2f}..{zooms.max():.2f} "
+        f"(mean {zooms.mean():.2f}), changes={reframe_changes}",
+        flush=True,
+    )
+    return windows, stats
+
+
+def apply_reframe(image: np.ndarray, window: ReframeWindow) -> np.ndarray:
+    crop_width = ANALYSIS_WIDTH / window.zoom
+    crop_height = ANALYSIS_HEIGHT / window.zoom
+    x0 = int(round(window.center_x * ANALYSIS_WIDTH - crop_width * 0.5))
+    y0 = int(round(window.center_y * ANALYSIS_HEIGHT - crop_height * 0.5))
+    x0 = int(np.clip(x0, 0, ANALYSIS_WIDTH - round(crop_width)))
+    y0 = int(np.clip(y0, 0, ANALYSIS_HEIGHT - round(crop_height)))
+    x1 = min(ANALYSIS_WIDTH, x0 + round(crop_width))
+    y1 = min(ANALYSIS_HEIGHT, y0 + round(crop_height))
+    active = cv2.resize(
+        image[y0:y1, x0:x1],
+        (LOGICAL_WIDTH, ACTIVE_HEIGHT),
+        interpolation=cv2.INTER_AREA,
+    )
+    result = np.zeros((LOGICAL_HEIGHT, LOGICAL_WIDTH, 3), dtype=np.uint8)
+    result[ACTIVE_Y0:ACTIVE_Y0 + ACTIVE_HEIGHT] = active
+    return result
+
+
 def analyse_ay_frames(
     source: Path,
     start: float,
     duration: float,
-    fps: int,
+    fps: float,
 ) -> tuple[list[AyFrame], dict[str, object]]:
     """Reduce the soundtrack to three stable, note-quantised AY tone voices."""
     ffmpeg = shutil.which("ffmpeg")
@@ -939,6 +1116,27 @@ def analyse_ay_frames(
     result: list[AyFrame] = []
     used_notes: set[int] = set()
     active_voice_frames = 0
+    frame_rms: list[float] = []
+    for frame_index in range(expected_frames):
+        center = round((frame_index + 0.5) * sample_rate / fps)
+        first = center - half_window
+        source_first = max(0, first)
+        source_last = min(len(samples), first + window_size)
+        segment = np.zeros(window_size, dtype=np.float64)
+        if source_last > source_first:
+            segment[source_first - first:source_last - first] = samples[
+                source_first:source_last
+            ]
+        frame_rms.append(float(np.sqrt(np.mean(segment * segment))))
+    rms_db = 20.0 * np.log10(np.maximum(frame_rms, 1e-8))
+    audible_db = rms_db[rms_db > -70.0]
+    if len(audible_db):
+        quiet_db = float(np.percentile(audible_db, 10.0))
+        loud_db = float(np.percentile(audible_db, 95.0))
+    else:
+        quiet_db, loud_db = -48.0, -12.0
+    loud_db = max(loud_db, quiet_db + 6.0)
+    master_volumes: list[int] = []
 
     for frame_index in range(expected_frames):
         center = round((frame_index + 0.5) * sample_rate / fps)
@@ -950,7 +1148,18 @@ def analyse_ay_frames(
             segment[source_first - first:source_last - first] = samples[
                 source_first:source_last
             ]
-        rms = float(np.sqrt(np.mean(segment * segment)))
+        db = float(rms_db[frame_index])
+        if db <= -70.0:
+            master_volume = 0
+        else:
+            master_volume = int(
+                np.clip(
+                    round(1.0 + 14.0 * (db - quiet_db) / (loud_db - quiet_db)),
+                    1,
+                    15,
+                )
+            )
+        master_volumes.append(master_volume)
         spectrum = np.abs(np.fft.rfft(segment * window)) ** 2
         local = spectrum[usable_indices]
         peak_mask = np.zeros_like(local, dtype=bool)
@@ -987,11 +1196,17 @@ def analyse_ay_frames(
             period = int(np.clip(round(AY_CLOCK_HZ / (16.0 * frequency)), 1, 4095))
             periods.append(period)
             score = smoothed_salience[note]
-            if rms < 0.003 or maximum <= 0.0 or voice >= selected_count:
+            if master_volume == 0 or maximum <= 0.0 or voice >= selected_count:
                 volume = 0
             else:
                 relative_db = 10.0 * math.log10(max(score / maximum, 1e-8))
-                volume = int(np.clip(round(15.0 + relative_db / 3.0), 2, 15))
+                volume = int(
+                    np.clip(
+                        round(master_volume + relative_db / 3.0),
+                        1,
+                        master_volume,
+                    )
+                )
             volumes.append(volume)
             if volume:
                 used_notes.add(note)
@@ -1001,15 +1216,21 @@ def analyse_ay_frames(
 
     print(
         f"AY analysis: {len(result)} frames, {len(used_notes)} notes, "
-        f"active {active_voice_frames / max(1, len(result)):.1%}",
+        f"active {active_voice_frames / max(1, len(result)):.1%}, "
+        f"master volume {min(master_volumes)}..{max(master_volumes)}",
         flush=True,
     )
     return result, {
         "mode": "three_note_spectral",
         "clock_hz": AY_CLOCK_HZ,
-        "update_rate_hz": 50.0 / round(50.0 / 12.5),
+        "update_rate_hz": float(fps),
         "distinct_notes": len(used_notes),
         "active_frame_ratio": active_voice_frames / max(1, len(result)),
+        "source_quiet_dbfs": quiet_db,
+        "source_loud_dbfs": loud_db,
+        "master_volume_min": min(master_volumes),
+        "master_volume_max": max(master_volumes),
+        "master_volume_mean": float(np.mean(master_volumes)),
     }
 
 
@@ -1068,17 +1289,18 @@ def analyse_tone_ranges(
     source: Path,
     start: float,
     duration: float,
-    fps: int,
+    fps: float,
     black_percentile: float,
     white_percentile: float,
     window_seconds: float,
+    reframe_windows: list[ReframeWindow],
 ) -> list[ToneRange]:
     """Calculate smoothly adaptive tone groups in a centred time window."""
     process, _ = ffmpeg_frames(source, start, duration, fps)
     assert process.stdout is not None
     bins = 1024
     frame_histograms: list[np.ndarray] = []
-    frame_bytes = LOGICAL_WIDTH * LOGICAL_HEIGHT * 3
+    frame_bytes = ANALYSIS_WIDTH * ANALYSIS_HEIGHT * 3
     try:
         while True:
             raw = read_exact(process.stdout, frame_bytes)
@@ -1087,7 +1309,12 @@ def analyse_tone_ranges(
             if len(raw) != frame_bytes:
                 raise RuntimeError("ffmpeg returned a partial analysis frame")
             image = np.frombuffer(raw, dtype=np.uint8).reshape(
-                LOGICAL_HEIGHT, LOGICAL_WIDTH, 3
+                ANALYSIS_HEIGHT, ANALYSIS_WIDTH, 3
+            )
+            if len(frame_histograms) >= len(reframe_windows):
+                raise RuntimeError("motion analysis has fewer frames than video")
+            image = apply_reframe(
+                image, reframe_windows[len(frame_histograms)]
             )
             active = image[ACTIVE_Y0:ACTIVE_Y0 + ACTIVE_HEIGHT]
             linear = base.srgb_to_linear(active.astype(np.float64))
@@ -1208,10 +1435,11 @@ def build_video(
     source: Path,
     start: float,
     duration: float,
-    fps: int,
+    fps: float,
     timing_fps: float,
     tone_ranges: list[ToneRange],
     ay_frames: list[AyFrame],
+    reframe_windows: list[ReframeWindow],
     attr_change_penalty: int,
     dither: str,
     preview_path: Path,
@@ -1233,7 +1461,7 @@ def build_video(
         process.kill()
         raise RuntimeError("cannot create preview video")
 
-    frame_bytes = LOGICAL_WIDTH * LOGICAL_HEIGHT * 3
+    frame_bytes = ANALYSIS_WIDTH * ANALYSIS_HEIGHT * 3
     try:
         while True:
             raw = read_exact(process.stdout, frame_bytes)
@@ -1242,8 +1470,11 @@ def build_video(
             if len(raw) != frame_bytes:
                 raise RuntimeError("ffmpeg returned a partial frame")
             image = np.frombuffer(raw, dtype=np.uint8).reshape(
-                LOGICAL_HEIGHT, LOGICAL_WIDTH, 3
+                ANALYSIS_HEIGHT, ANALYSIS_WIDTH, 3
             )
+            if len(packets) >= len(reframe_windows):
+                raise RuntimeError("motion analysis has fewer frames than video")
+            image = apply_reframe(image, reframe_windows[len(packets)])
             if len(packets) >= len(tone_ranges):
                 raise RuntimeError("tone analysis has fewer frames than video")
             image = apply_tone_groups(image, tone_ranges[len(packets)])
@@ -1283,6 +1514,10 @@ def build_video(
     if len(packets) != len(ay_frames):
         raise RuntimeError(
             f"audio/video frame mismatch: {len(ay_frames)} vs {len(packets)}"
+        )
+    if len(packets) != len(reframe_windows):
+        raise RuntimeError(
+            f"motion/video frame mismatch: {len(reframe_windows)} vs {len(packets)}"
         )
     if len(packets) > 0xFFFF:
         raise ValueError("too many frames for the long-video header")
@@ -1405,17 +1640,28 @@ def write_ay_preview(
         wav.writeframes(pcm.tobytes())
 
 
-def mux_ay_preview(video_path: Path, audio_path: Path, output_path: Path) -> None:
+def mux_ay_preview(
+    video_path: Path,
+    audio_path: Path,
+    output_path: Path,
+    frame_rate: float,
+) -> None:
     ffmpeg = shutil.which("ffmpeg")
     if ffmpeg is None:
         raise RuntimeError("ffmpeg is not available")
+    rate = Fraction(frame_rate).limit_denominator(1000)
+    rate_text = f"{rate.numerator}/{rate.denominator}"
     completed = subprocess.run(
         [
             ffmpeg,
             "-v", "error",
             "-i", str(video_path),
             "-i", str(audio_path),
-            "-c:v", "copy",
+            "-vf", f"setpts=N*{rate.denominator}/({rate.numerator}*TB)",
+            "-r", rate_text,
+            "-c:v", "libx264",
+            "-preset", "fast",
+            "-crf", "18",
             "-c:a", "aac",
             "-b:a", "128k",
             "-shortest",
@@ -1427,6 +1673,18 @@ def mux_ay_preview(video_path: Path, audio_path: Path, output_path: Path) -> Non
         raise RuntimeError("could not create AY listening preview")
 
 
+def parse_rate(value: str) -> float:
+    try:
+        if "/" in value:
+            numerator, denominator = value.split("/", 1)
+            return float(Fraction(int(numerator), int(denominator)))
+        return float(value)
+    except (ValueError, ZeroDivisionError) as exc:
+        raise argparse.ArgumentTypeError(
+            "rate must be a number or fraction such as 25/3"
+        ) from exc
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-video", type=Path, required=True)
@@ -1435,17 +1693,17 @@ def main() -> None:
     parser.add_argument("--duration", type=float, default=120.0)
     parser.add_argument(
         "--fps",
-        type=int,
-        default=12,
+        type=parse_rate,
+        default=parse_rate("25/3"),
         help="source frames encoded per second",
     )
     parser.add_argument(
         "--timing-fps",
-        type=float,
-        default=12.5,
+        type=parse_rate,
+        default=parse_rate("25/3"),
         help=(
-            "maximum presentation rate tied to the 50 Hz screen; 12.5 means "
-            "one completed frame every four fields"
+            "presentation rate tied to the 50 Hz screen; 25/3 means "
+            "one completed frame every six fields"
         ),
     )
     parser.add_argument("--attr-change-penalty", type=int, default=100_000)
@@ -1482,8 +1740,11 @@ def main() -> None:
         parser.error("fps must be in 1..25")
     if not 1.0 <= args.timing_fps <= 25.0:
         parser.error("timing-fps must be in 1..25")
-    if not math.isclose(
-        50.0 / args.timing_fps, round(50.0 / args.timing_fps)
+    if (
+        not float(args.timing_fps).is_integer()
+        and not math.isclose(
+            50.0 / args.timing_fps, round(50.0 / args.timing_fps)
+        )
     ):
         parser.error(
             "timing-fps must map to a whole number of 50 Hz fields"
@@ -1503,6 +1764,12 @@ def main() -> None:
         if dithered
         else "big_buck_bunny_zx_preview.mp4"
     )
+    reframe_windows, reframe_stats = analyse_motion_reframe(
+        args.input_video,
+        args.start,
+        args.duration,
+        args.fps,
+    )
     tone_ranges = analyse_tone_ranges(
         args.input_video,
         args.start,
@@ -1511,6 +1778,7 @@ def main() -> None:
         args.black_percentile,
         args.white_percentile,
         args.tone_window_seconds,
+        reframe_windows,
     )
     ay_frames, ay_stats = analyse_ay_frames(
         args.input_video,
@@ -1527,6 +1795,7 @@ def main() -> None:
         args.timing_fps,
         tone_ranges,
         ay_frames,
+        reframe_windows,
         args.attr_change_penalty,
         args.dither,
         preview_path,
@@ -1535,7 +1804,12 @@ def main() -> None:
     ay_preview_path = out / "big_buck_bunny_zx_ay_preview.wav"
     ay_muxed_preview_path = out / "big_buck_bunny_zx_dithered_ay_preview.mp4"
     write_ay_preview(ay_preview_path, ay_frames, args.timing_fps)
-    mux_ay_preview(preview_path, ay_preview_path, ay_muxed_preview_path)
+    mux_ay_preview(
+        preview_path,
+        ay_preview_path,
+        ay_muxed_preview_path,
+        args.timing_fps,
+    )
 
     boot = streaming.build_boot_basic()
     provisional, _ = build_player(0, 0, args.timing_fps)
@@ -1569,9 +1843,9 @@ def main() -> None:
     total_chunks = 0
     total_volume_bytes = 0
     stem = (
-        "big_buck_bunny_2min_zx_full_colour_ay_dithered"
+        "big_buck_bunny_2min_zx_motion_crop_colour_ay_dithered"
         if dithered
-        else "big_buck_bunny_2min_zx_full_colour_ay"
+        else "big_buck_bunny_2min_zx_motion_crop_colour_ay"
     )
     for volume_index, (
         frame_start,
@@ -1655,13 +1929,16 @@ def main() -> None:
 - Source: {args.input_video}
 - Source interval: {args.start:.3f}..{args.start + args.duration:.3f} s
 - Encoded frames: {stats['frames']}
-- Encoded source rate: {args.fps} fps
+- Encoded source rate: {args.fps:g} fps (25/3 profile)
 - Screen scheduler: {args.timing_fps:g} fps
   ({50 / args.timing_fps:g} fields per completed frame)
 - Encoded source duration: {stats['duration_seconds']:.3f} s
 - Ideal screen duration: {stats['frames'] / args.timing_fps:.3f} s
 - Stored brightness image: 128x96, four levels (2 bits per pixel)
 - Player output: native 256x192 one-dot 2x2 patterns
+- Motion-aware reframe: centre x {reframe_stats['center_x_min']:.3f}..{reframe_stats['center_x_max']:.3f}, y {reframe_stats['center_y_min']:.3f}..{reframe_stats['center_y_max']:.3f}
+- Motion-aware zoom: {reframe_stats['zoom_min']:.2f}..{reframe_stats['zoom_max']:.2f}x (mean {reframe_stats['zoom_mean']:.2f}x)
+- Motion-aware virtual-shot changes: {int(reframe_stats['changes'])}
 - Colour attributes: native 32x24 Spectrum cells (768 bytes)
 - Attribute search: all {stats['colour_candidates']} legal oriented INK/PAPER pairs; {stats['distinct_attributes']} used
 - Adaptive tone window: {args.tone_window_seconds:g} s, P{args.black_percentile:g}..P{args.white_percentile:g}
@@ -1674,6 +1951,8 @@ def main() -> None:
 - Audio: three note-quantised AY-3-8912/YM2149F tone voices
 - AY update rate: {args.timing_fps:g} Hz; distinct selected notes: {ay_stats['distinct_notes']}
 - AY active-frame ratio: {ay_stats['active_frame_ratio']:.1%}
+- AY source loudness anchors: {ay_stats['source_quiet_dbfs']:.1f}..{ay_stats['source_loud_dbfs']:.1f} dBFS
+- AY master volume: {ay_stats['master_volume_min']}..{ay_stats['master_volume_max']} (mean {ay_stats['master_volume_mean']:.2f})
 - Unsplit encoded stream: {stats['video_bytes']} bytes, {stats['video_sectors']} sectors
 - Bootable TRD volumes: {len(volume_metadata)}
 - Total volume payload: {total_volume_bytes} bytes
@@ -1704,6 +1983,7 @@ boundary.
         "timing_fps": args.timing_fps,
         "tone_window_seconds": args.tone_window_seconds,
         "ay": ay_stats,
+        "motion_reframe": reframe_stats,
         "source": {
             "path": str(args.input_video),
             "start_seconds": args.start,
