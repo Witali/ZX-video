@@ -27,6 +27,12 @@ FIXED_RING_SECTORS = 63
 RING_BANKS = (0, 1, 3, 4, 6)
 RING_CAPACITY_SECTORS = FIXED_RING_SECTORS + 64 * len(RING_BANKS)
 FIELDS_PER_FRAME = 6
+# Z80 timing-table model for address preparation shared by bitmap-row
+# commands. The former table held two words and required row*4 plus two
+# independently relocated addresses. The current table holds one word,
+# indexes it with row*2, and derives the second native row with high+1.
+ROW_ADDRESS_SETUP_CYCLES_PREVIOUS = 155
+ROW_ADDRESS_SETUP_CYCLES_CURRENT = 109
 CMD_END = 0
 CMD_BITMAP_ROW = 1
 CMD_ATTRIBUTES = 2
@@ -681,12 +687,10 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     for mask_name in ("mask0", "mask1", "mask2", "mask3"):
         a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, mask_name)
     ld_a_mem(a, "row_index")
-    a.emit(0x6F, 0x26, 0, 0x29, 0x29)
+    a.emit(0x6F, 0x26, 0, 0x29)
     a.emit(0x11); a.abs16([], "row_addresses")
-    a.emit(0x19, 0x4E, 0x23, 0x46, 0x23)
-    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47)
-    a.emit(0x5E, 0x23, 0x56)
-    ld_a_mem(a, "update_base"); a.emit(0x82, 0x57)
+    a.emit(0x19, 0x4E, 0x23, 0x46)
+    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
     a.emit(0x21); a.abs16([], "dither_top")
     for group, mask_name in enumerate(("mask0", "mask1", "mask2", "mask3")):
         for bit in range(8):
@@ -702,13 +706,11 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
     a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "point_count")
     ld_a_mem(a, "row_index")
-    a.emit(0x6F, 0x26, 0, 0x29, 0x29)
+    a.emit(0x6F, 0x26, 0, 0x29)
     a.emit(0x11); a.abs16([], "row_addresses")
-    a.emit(0x19, 0x4E, 0x23, 0x46, 0x23)
-    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47)
+    a.emit(0x19, 0x4E, 0x23, 0x46)
+    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
     a.emit(0xED, 0x43); a.abs16([], "point_top")
-    a.emit(0x5E, 0x23, 0x56)
-    ld_a_mem(a, "update_base"); a.emit(0x82, 0x57)
     a.emit(0xED, 0x53); a.abs16([], "point_bottom")
     a.label("point_loop")
     ld_a_mem(a, "point_count"); a.emit(0xB7); a.abs16(0xCA, "command_loop")
@@ -759,12 +761,10 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     # terminates after exactly 32 decoded bytes.
     a.emit(0xDD, 0x23)
     ld_a_mem(a, "row_index")
-    a.emit(0x6F, 0x26, 0, 0x29, 0x29)
+    a.emit(0x6F, 0x26, 0, 0x29)
     a.emit(0x11); a.abs16([], "row_addresses")
-    a.emit(0x19, 0x4E, 0x23, 0x46, 0x23)
-    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47)
-    a.emit(0x5E, 0x23, 0x56)
-    ld_a_mem(a, "update_base"); a.emit(0x82, 0x57)
+    a.emit(0x19, 0x4E, 0x23, 0x46)
+    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
     a.emit(0x3E, source.LOGICAL_WIDTH // 4); ld_mem_a(a, "rle_remaining")
     a.label("rle_token_loop")
     ld_a_mem(a, "rle_remaining"); a.emit(0xB7); a.abs16(0xCA, "command_loop")
@@ -796,13 +796,11 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
     a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "motion_shift")
     ld_a_mem(a, "row_index")
-    a.emit(0x6F, 0x26, 0, 0x29, 0x29)
+    a.emit(0x6F, 0x26, 0, 0x29)
     a.emit(0x11); a.abs16([], "row_addresses")
-    a.emit(0x19, 0x4E, 0x23, 0x46, 0x23)
-    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47)
+    a.emit(0x19, 0x4E, 0x23, 0x46)
+    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
     a.emit(0xED, 0x43); a.abs16([], "motion_top")
-    a.emit(0x5E, 0x23, 0x56)
-    ld_a_mem(a, "update_base"); a.emit(0x82, 0x57)
     a.emit(0xED, 0x53); a.abs16([], "motion_bottom")
     ld_a_mem(a, "motion_shift"); a.emit(0xCB, 0x7F)
     a.rel8(0x20, "motion_left")
@@ -898,8 +896,11 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     a.label("queue_banks"); a.emit(*RING_BANKS)
     a.label("row_addresses")
     for y in range(source.LOGICAL_HEIGHT):
-        a.word(base.spectrum_bitmap_offset(0, y * 2))
-        a.word(base.spectrum_bitmap_offset(0, y * 2 + 1))
+        top = base.spectrum_bitmap_offset(0, y * 2)
+        bottom = base.spectrum_bitmap_offset(0, y * 2 + 1)
+        if bottom != top + 0x100:
+            raise AssertionError("native row pair is not 0100h apart")
+        a.word(top)
     while a.pc & 0xFF:
         a.emit(0)
     a.label("dither_top"); a.emit(*source.PLAYER_DITHER_TOP)
@@ -987,6 +988,21 @@ def main() -> None:
         "packets_over_six": sum(value > 6 for value in all_sector_counts),
         "ring_capacity_sectors": RING_CAPACITY_SECTORS,
         "disk_sectors_per_frame": FIELDS_PER_FRAME,
+        "cycle_model": {
+            "unit": "Z80 T-states",
+            "scope": "bitmap row-pair address setup, excluding command dispatch",
+            "previous": ROW_ADDRESS_SETUP_CYCLES_PREVIOUS,
+            "current": ROW_ADDRESS_SETUP_CYCLES_CURRENT,
+            "saved_per_row_command": (
+                ROW_ADDRESS_SETUP_CYCLES_PREVIOUS - ROW_ADDRESS_SETUP_CYCLES_CURRENT
+            ),
+            "saved_percent": round(
+                100 * (ROW_ADDRESS_SETUP_CYCLES_PREVIOUS - ROW_ADDRESS_SETUP_CYCLES_CURRENT)
+                / ROW_ADDRESS_SETUP_CYCLES_PREVIOUS,
+                1,
+            ),
+            "disk_rom_and_physical_latency_included": False,
+        },
         "rle_frames": rle_frames,
         "rle_rows": rle_rows,
         "motion_frames": motion_frames,
