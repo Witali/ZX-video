@@ -118,29 +118,38 @@ class AyFrame:
         return bytes(result)
 
 
-def zx_rgb(index: int) -> np.ndarray:
-    return np.array(
-        [
-            255 if index & 0x02 else 0,
-            255 if index & 0x04 else 0,
-            255 if index & 0x01 else 0,
-        ],
-        dtype=np.int32,
-    )
-
-
 def colour_candidates() -> list[tuple[int, np.ndarray, np.ndarray]]:
     result: list[tuple[int, np.ndarray, np.ndarray]] = []
-    # Bright coloured ink on white paper works well for the mostly bright film.
-    for ink in range(8):
-        result.append((0x40 | (7 << 3) | ink, zx_rgb(ink), zx_rgb(7)))
-    # Black ink on coloured paper preserves large saturated areas.
-    for paper in range(1, 7):
-        result.append((0x40 | (paper << 3), zx_rgb(0), zx_rgb(paper)))
+    # Try every legal Spectrum INK/PAPER combination at both intensity levels.
+    # The attribute grid and player cost stay unchanged; only the offline search
+    # becomes richer. Keeping both orientations also favours temporal stability
+    # when a previous cell already uses one of them.
+    for bright in range(2):
+        for paper in range(8):
+            for ink in range(8):
+                if ink == paper:
+                    continue
+                attr = (bright << 6) | (paper << 3) | ink
+                result.append(
+                    (
+                        attr,
+                        base.zx_rgb(ink, bright),
+                        base.zx_rgb(paper, bright),
+                    )
+                )
     return result
 
 
 COLOUR_CANDIDATES = colour_candidates()
+COLOUR_ATTRS = np.array(
+    [candidate[0] for candidate in COLOUR_CANDIDATES], dtype=np.uint8
+)
+COLOUR_INKS = np.stack(
+    [candidate[1] for candidate in COLOUR_CANDIDATES]
+).astype(np.float64)
+COLOUR_PAPERS = np.stack(
+    [candidate[2] for candidate in COLOUR_CANDIDATES]
+).astype(np.float64)
 
 BAYER_4X4 = (
     np.array(
@@ -190,6 +199,11 @@ def encode_compact_frame(
         if dither != "none"
         else np.array([0.0, 0.0, 1.0, 1.0], dtype=np.float64)
     )
+    directions = COLOUR_INKS - COLOUR_PAPERS
+    palettes = (
+        COLOUR_PAPERS[:, None, :]
+        + coverages[None, :, None] * directions[:, None, :]
+    )
     cell = 0
     for by in range(ATTR_ROWS):
         for bx in range(ATTR_COLS):
@@ -197,30 +211,22 @@ def encode_compact_frame(
                 by * ATTR_SOURCE_HEIGHT:(by + 1) * ATTR_SOURCE_HEIGHT,
                 bx * ATTR_SOURCE_WIDTH:(bx + 1) * ATTR_SOURCE_WIDTH,
             ]
-            best_score: int | None = None
-            best_attr = 0x78
-            best_levels: np.ndarray | None = None
-            for attr, ink, paper in COLOUR_CANDIDATES:
-                direction = (ink - paper).astype(np.float64)
-                palette = (
-                    paper[None, :]
-                    + coverages[:, None] * direction[None, :]
-                )
-                distances = np.sum(
-                    (block[:, :, None, :] - palette[None, None, :, :]) ** 2,
-                    axis=3,
-                )
-                candidate_levels = np.argmin(distances, axis=2).astype(
-                    np.uint8
-                )
-                score = int(np.min(distances, axis=2).sum())
-                if previous_attrs is not None and attr != int(previous_attrs[cell]):
-                    score += attr_change_penalty
-                if best_score is None or score < best_score:
-                    best_score = score
-                    best_attr = attr
-                    best_levels = candidate_levels
-            assert best_levels is not None
+            flat = block.reshape(-1, 3)
+            distances = np.sum(
+                (flat[:, None, None, :] - palettes[None, :, :, :]) ** 2,
+                axis=3,
+            )
+            candidate_levels = np.argmin(distances, axis=2).astype(np.uint8)
+            scores = np.min(distances, axis=2).sum(axis=0)
+            if previous_attrs is not None:
+                scores += (
+                    COLOUR_ATTRS != int(previous_attrs[cell])
+                ) * attr_change_penalty
+            best_index = int(np.argmin(scores))
+            best_attr = int(COLOUR_ATTRS[best_index])
+            best_levels = candidate_levels[:, best_index].reshape(
+                ATTR_SOURCE_HEIGHT, ATTR_SOURCE_WIDTH
+            )
             attrs[cell] = best_attr
             levels[
                 by * ATTR_SOURCE_HEIGHT:(by + 1) * ATTR_SOURCE_HEIGHT,
@@ -1287,6 +1293,14 @@ def build_video(
         "fps": fps,
         "screen_fps": timing_fps,
         "ay_state_bytes_per_frame": AY_STATE_BYTES,
+        "colour_candidates": len(COLOUR_CANDIDATES),
+        "distinct_attributes": len(
+            {
+                value
+                for state in states
+                for value in state[STATE_LEVEL_BYTES:]
+            }
+        ),
         "tone_range": {
             "mode": "adaptive",
             "black_percentile": tone_ranges[0].black_percentile,
@@ -1555,9 +1569,9 @@ def main() -> None:
     total_chunks = 0
     total_volume_bytes = 0
     stem = (
-        "big_buck_bunny_2min_zx_adaptive_tone_ay_dithered"
+        "big_buck_bunny_2min_zx_full_colour_ay_dithered"
         if dithered
-        else "big_buck_bunny_2min_zx_adaptive_tone_ay"
+        else "big_buck_bunny_2min_zx_full_colour_ay"
     )
     for volume_index, (
         frame_start,
@@ -1649,6 +1663,7 @@ def main() -> None:
 - Stored brightness image: 128x96, four levels (2 bits per pixel)
 - Player output: native 256x192 one-dot 2x2 patterns
 - Colour attributes: native 32x24 Spectrum cells (768 bytes)
+- Attribute search: all {stats['colour_candidates']} legal oriented INK/PAPER pairs; {stats['distinct_attributes']} used
 - Adaptive tone window: {args.tone_window_seconds:g} s, P{args.black_percentile:g}..P{args.white_percentile:g}
 - Linear black-point range: {min(t.black_point for t in tone_ranges):.5f}..{max(t.black_point for t in tone_ranges):.5f}
 - Linear white-point range: {min(t.white_point for t in tone_ranges):.5f}..{max(t.white_point for t in tone_ranges):.5f}
