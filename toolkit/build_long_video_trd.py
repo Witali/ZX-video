@@ -253,6 +253,112 @@ def encode_compact_frame(
     return packed.tobytes() + attrs.tobytes(), attrs
 
 
+def estimate_fast_sparse_sectors(current: bytes, previous: bytes) -> int:
+    """Estimate the exact fast-sparse record packing for rate control."""
+    record_lengths: list[int] = []
+    row_bytes = LOGICAL_WIDTH // 4
+    for row in range(LOGICAL_HEIGHT):
+        start = row * row_bytes
+        changed = sum(
+            current[start + column] != previous[start + column]
+            for column in range(row_bytes)
+        )
+        if changed:
+            record_lengths.append(min(6 + changed, 3 + 2 * changed))
+
+    changes = [
+        index
+        for index in range(STATE_ATTR_BYTES)
+        if current[STATE_LEVEL_BYTES + index]
+        != previous[STATE_LEVEL_BYTES + index]
+    ]
+    while changes:
+        group = changes[:80]
+        changes = changes[80:]
+        length = 2
+        previous_index = -1
+        for index in group:
+            gap = index - previous_index - 1
+            length += 2 if gap < 255 else 4
+            previous_index = index
+        record_lengths.append(length)
+
+    used = 12
+    sectors = 1
+    for length in record_lengths:
+        if used + length + 1 > base.SECTOR_SIZE:
+            sectors += 1
+            used = 0
+        used += length
+    return sectors
+
+
+def reconstructed_error(state: bytes, target: np.ndarray) -> float:
+    bitmap, attrs = expand_compact_screen(state)
+    rendered = base.render_spectrum_screen(bitmap, attrs)
+    reduced = cv2.resize(
+        rendered,
+        (LOGICAL_WIDTH, LOGICAL_HEIGHT),
+        interpolation=cv2.INTER_AREA,
+    )
+    reconstructed_linear = base.srgb_to_linear(reduced.astype(np.float64))
+    target_linear = base.srgb_to_linear(target.astype(np.float64))
+    active = slice(ACTIVE_Y0, ACTIVE_Y0 + ACTIVE_HEIGHT)
+    difference = reconstructed_linear[active] - target_linear[active]
+    return float(np.mean(difference * difference))
+
+
+def encode_feedback_frame(
+    image: np.ndarray,
+    previous_attrs: np.ndarray | None,
+    parity_previous: bytes,
+    dither: str,
+    sector_budget: int,
+    max_error_ratio: float,
+) -> tuple[bytes, np.ndarray, dict[str, float | int]]:
+    """Select the least distorted reconstruction within the sparse budget."""
+    penalties = (100_000, 0, 1_600_000)
+    candidates: list[tuple[int, float, int, bytes, np.ndarray]] = []
+    seen: set[bytes] = set()
+    for candidate_index, penalty in enumerate(penalties):
+        state, attrs = encode_compact_frame(
+            image, previous_attrs, penalty, dither
+        )
+        if state in seen:
+            continue
+        seen.add(state)
+        sectors = estimate_fast_sparse_sectors(state, parity_previous)
+        error = reconstructed_error(state, image)
+        candidates.append((sectors, error, penalty, state, attrs))
+        # The default and quality-first modes are enough for an easy frame.
+        if candidate_index == 1 and all(
+            item[0] <= sector_budget for item in candidates
+        ):
+            break
+
+    default_error = candidates[0][1]
+    acceptable = [
+        candidate
+        for candidate in candidates
+        if candidate[0] <= sector_budget
+        and candidate[1] <= default_error * max_error_ratio
+    ]
+    if acceptable:
+        selected = min(acceptable, key=lambda item: item[1])
+    else:
+        selected = candidates[0]
+    sectors, error, penalty, state, attrs = selected
+    return state, attrs, {
+        "sectors": sectors,
+        "error": error,
+        "penalty": penalty,
+        "candidates": len(candidates),
+        "within_budget": int(sectors <= sector_budget),
+        "default_error": default_error,
+        "error_delta_vs_default": error - default_error,
+    }
+
+
 def encode_zero_literal_rle(data: bytes) -> bytes:
     """Pack zero runs, repeated bytes, and literal runs.
 
@@ -1472,6 +1578,9 @@ def build_video(
     reframe_windows: list[ReframeWindow],
     attr_change_penalty: int,
     dither: str,
+    feedback_rate_distortion: bool,
+    sparse_sector_budget: int,
+    feedback_max_error_ratio: float,
     preview_path: Path,
 ) -> tuple[bytes, list[Packet], list[bytes], dict[str, object]]:
     process, ffmpeg_command = ffmpeg_frames(source, start, duration, fps)
@@ -1481,6 +1590,7 @@ def build_video(
     previous_state: bytes | None = None
     previous_attrs: np.ndarray | None = None
     raw_packets = 0
+    feedback_choices: list[dict[str, float | int]] = []
     writer = cv2.VideoWriter(
         str(preview_path),
         cv2.VideoWriter_fourcc(*"mp4v"),
@@ -1508,9 +1618,26 @@ def build_video(
             if len(packets) >= len(tone_ranges):
                 raise RuntimeError("tone analysis has fewer frames than video")
             image = apply_tone_groups(image, tone_ranges[len(packets)])
-            state, attrs = encode_compact_frame(
-                image, previous_attrs, attr_change_penalty, dither
-            )
+            if feedback_rate_distortion:
+                if not states:
+                    parity_previous = bytes(STATE_BYTES)
+                elif len(states) == 1:
+                    parity_previous = states[0]
+                else:
+                    parity_previous = states[-2]
+                state, attrs, feedback = encode_feedback_frame(
+                    image,
+                    previous_attrs,
+                    parity_previous,
+                    dither,
+                    sparse_sector_budget,
+                    feedback_max_error_ratio,
+                )
+                feedback_choices.append(feedback)
+            else:
+                state, attrs = encode_compact_frame(
+                    image, previous_attrs, attr_change_penalty, dither
+                )
             if len(packets) >= len(ay_frames):
                 raise RuntimeError("audio analysis has fewer frames than video")
             packet = make_packet(
@@ -1584,6 +1711,42 @@ def build_video(
         "dither": dither,
         "ffmpeg_command": ffmpeg_command,
     }
+    if feedback_choices:
+        stats["feedback"] = {
+            "enabled": True,
+            "sector_budget": sparse_sector_budget,
+            "max_error_ratio": feedback_max_error_ratio,
+            "mean_reconstruction_mse": float(
+                np.mean([choice["error"] for choice in feedback_choices])
+            ),
+            "mean_default_mse": float(
+                np.mean(
+                    [choice["default_error"] for choice in feedback_choices]
+                )
+            ),
+            "mean_error_delta_vs_default": float(
+                np.mean(
+                    [
+                        choice["error_delta_vs_default"]
+                        for choice in feedback_choices
+                    ]
+                )
+            ),
+            "mean_candidates": float(
+                np.mean([choice["candidates"] for choice in feedback_choices])
+            ),
+            "frames_within_budget": int(
+                sum(choice["within_budget"] for choice in feedback_choices)
+            ),
+            "penalty_histogram": {
+                str(penalty): sum(
+                    choice["penalty"] == penalty for choice in feedback_choices
+                )
+                for penalty in sorted(
+                    {int(choice["penalty"]) for choice in feedback_choices}
+                )
+            },
+        }
     return video, packets, states, stats
 
 
@@ -1738,6 +1901,23 @@ def main() -> None:
     )
     parser.add_argument("--attr-change-penalty", type=int, default=100_000)
     parser.add_argument(
+        "--no-feedback-rate-distortion",
+        action="store_true",
+        help="disable reconstructed-frame feedback mode selection",
+    )
+    parser.add_argument(
+        "--sparse-sector-budget",
+        type=int,
+        default=6,
+        help="target fast-sparse sectors per frame for feedback selection",
+    )
+    parser.add_argument(
+        "--feedback-max-error-ratio",
+        type=float,
+        default=1.25,
+        help="maximum selected reconstruction MSE relative to baseline",
+    )
+    parser.add_argument(
         "--black-percentile",
         type=float,
         default=3.0,
@@ -1793,6 +1973,10 @@ def main() -> None:
         parser.error("tone-window-seconds must be positive")
     if not 1.0 <= args.fixed_center_zoom <= 2.0:
         parser.error("fixed-center-zoom must be in 1..2")
+    if not 1 <= args.sparse_sector_budget <= 32:
+        parser.error("sparse-sector-budget must be in 1..32")
+    if args.feedback_max_error_ratio < 1.0:
+        parser.error("feedback-max-error-ratio must be at least 1")
 
     out = args.output
     out.mkdir(parents=True, exist_ok=True)
@@ -1835,6 +2019,9 @@ def main() -> None:
         reframe_windows,
         args.attr_change_penalty,
         args.dither,
+        not args.no_feedback_rate_distortion,
+        args.sparse_sector_budget,
+        args.feedback_max_error_ratio,
         preview_path,
     )
     verify_video(video, states)
@@ -1951,6 +2138,7 @@ def main() -> None:
     packet_sectors = stats["packet_sectors"]
     assert isinstance(packet_sectors, list)
     middle_tone = tone_ranges[len(tone_ranges) // 2]
+    feedback_stats = stats.get("feedback")
     volume_lines = "\n".join(
         (
             f"  - part {entry['index']:02d}: frames "
@@ -1981,6 +2169,11 @@ def main() -> None:
 - Linear white-point range: {min(t.white_point for t in tone_ranges):.5f}..{max(t.white_point for t in tone_ranges):.5f}
 - Middle-frame Lloyd-Max thresholds: {', '.join(f'{value:.5f}' for value in middle_tone.thresholds)}
 - Spatial dithering: {args.dither}
+- Rate-distortion feedback: {'enabled' if feedback_stats else 'disabled'}
+{f"- Feedback sparse budget: {feedback_stats['sector_budget']} sectors; frames within budget: {feedback_stats['frames_within_budget']}/{stats['frames']}" if feedback_stats else ''}
+{f"- Feedback distortion guard: {feedback_stats['max_error_ratio']:.2f}x baseline MSE" if feedback_stats else ''}
+{f"- Feedback reconstructed linear-RGB MSE: {feedback_stats['mean_reconstruction_mse']:.6f}; mean candidates: {feedback_stats['mean_candidates']:.2f}" if feedback_stats else ''}
+{f"- Feedback baseline MSE: {feedback_stats['mean_default_mse']:.6f}; selected delta: {feedback_stats['mean_error_delta_vs_default']:+.6f}" if feedback_stats else ''}
 - Screen presentation: bank 5/7 double buffer, one flip per logical frame
 - 50 Hz temporal A/B flicker: disabled
 - Audio: three note-quantised AY-3-8912/YM2149F tone voices
