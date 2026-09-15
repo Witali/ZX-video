@@ -99,7 +99,7 @@ def minimum_startup_backlog(lengths: list[int], capacity: int = RING_CAPACITY_SE
     raise ValueError("frame sequence exceeds packed ring capacity")
 
 
-def emit_transport(a, *, blocked: bool = False, input_limit=FRAME_BUFFER_BYTES) -> None:
+def emit_transport(a, *, blocked: bool = False, input_limit=FRAME_BUFFER_BYTES, lookahead=False) -> None:
     """Emit header reads and whole-frame copies from the banked sector ring."""
     def load(name):
         a.abs16(0x3A, name)
@@ -157,6 +157,7 @@ def emit_transport(a, *, blocked: bool = False, input_limit=FRAME_BUFFER_BYTES) 
     a.abs16(0x2A, "frame_length"); a.abs16(0x22, "frame_remaining")
     a.emit(0x21); a.word(FRAME_BUFFER); a.abs16(0x22, "frame_destination")
     a.label("frame_copy_loop")
+    if lookahead:a.abs16(0xCD,'ahead_checkpoint')
     # The paged source is copied directly into fixed RAM. Unlike v6, no
     # intermediate BF00h staging copy is needed before the frame copy.
     a.abs16(0xCD, "prepare_read_sector")

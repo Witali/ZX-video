@@ -113,7 +113,7 @@ def select_rom_clock(a, slow):
         a.emit(0x3E,0xD9,0x32);a.word(0xBDBF)
 
 
-def emit_wait(a, *, dos_irq=False, quota=0):
+def emit_wait(a, *, dos_irq=False, quota=0, lookahead=False):
     a.label('prefetch_loop')
     if quota:
         a.emit(0x3E,quota);a.abs16(0x32,'prefetch_remaining')
@@ -142,8 +142,16 @@ def emit_wait(a, *, dos_irq=False, quota=0):
     a.abs16((0xED,0x5B),'next_frame_field')
     a.emit(0xB7,0xED,0x52,0xCB,0x7C)
     a.rel8(0x28,'frame_due')
+    if lookahead:
+        # Negative elapsed-deadline: leave a complete field for a bounded
+        # quantum. Quota is already fulfilled before this optional work.
+        a.emit(0x23,0x7C,0xB5);a.rel8(0x28,'ahead_wait_field')
+        a.emit(0xFB);a.label('ahead_call');a.abs16(0xCD,'ahead_prefetch')
+        a.label('ahead_return');a.emit(0xF3,0xB7)
+        a.abs16(0xC2,loop)
     a.abs16(0xCD,'producer_one')
     a.emit(0xB7); a.rel8(0x20,loop)
+    if lookahead:a.label('ahead_wait_field')
     a.abs16(0xCD,'wait_field'); a.rel8(0x18,loop)
     a.label('frame_due')
     a.abs16(0x2A,'next_frame_field'); a.emit(0x11); a.word(6)

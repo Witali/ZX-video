@@ -108,10 +108,10 @@ def emit_hold_budget(a):
     a.abs16(0x32,'hold_counter')
 
 
-def emit_transport(a, *, input_limit=8192, incremental=False):
-    packed_stream.emit_transport(a,blocked=True,input_limit=input_limit)
+def emit_transport(a, *, input_limit=8192, incremental=False, lookahead=False):
+    packed_stream.emit_transport(a,blocked=True,input_limit=input_limit,lookahead=lookahead)
     if incremental:
-        incremental_zx0.emit_wait(a)
+        incremental_zx0.emit_wait(a,lookahead=lookahead)
     else:
         a.label('wait_packet')
         a.abs16(0x2A,'block_frame_pointer')

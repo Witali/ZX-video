@@ -1,0 +1,90 @@
+{
+  "baseline_commit": "0ec3bfe",
+  "source_sha256": "5d42a94efb0343fb3415c12dcc616bb9403b02f8946d7e8fbfaf45e7030f26e6",
+  "baseline": {
+    "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+    "clock_hz": 3546900,
+    "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "player_startup_ms": 3557.7391524993654,
+    "frames": 1000,
+    "frame_interval_mean_ms": 121.20555160026248,
+    "frame_interval_max_ms": 224.76190476190476,
+    "measured_fps": 8.250447168443351,
+    "rom_call_mean_ms": 7.949526545497576,
+    "rom_call_max_ms": 193.41763229862696,
+    "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+    "intervals_over_125ms": 238,
+    "sector_reads_including_header": 2518,
+    "rom_playback_seconds": 19.373726634525923
+  },
+  "current": {
+    "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+    "clock_hz": 3546900,
+    "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "player_startup_ms": 3533.7446784516055,
+    "frames": 1000,
+    "frame_interval_mean_ms": 121.14078272357334,
+    "frame_interval_max_ms": 218.22380106571936,
+    "measured_fps": 8.25485833521369,
+    "rom_call_mean_ms": 7.93993108046344,
+    "rom_call_max_ms": 193.7703346584341,
+    "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+    "intervals_over_125ms": 171,
+    "sector_reads_including_header": 2518,
+    "rom_playback_seconds": 19.36934844512109
+  },
+  "intermediate": {
+    "one_packet": {
+      "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+      "clock_hz": 3546900,
+      "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+      "player_startup_ms": 3547.1716146494123,
+      "frames": 1000,
+      "frame_interval_mean_ms": 121.34557913519824,
+      "frame_interval_max_ms": 224.50788012066874,
+      "measured_fps": 8.240926510275592,
+      "rom_call_mean_ms": 7.944542228702787,
+      "rom_call_max_ms": 193.78555922072795,
+      "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+      "intervals_over_125ms": 205,
+      "sector_reads_including_header": 2518,
+      "rom_playback_seconds": 19.36957258451042
+    },
+    "extend_block": {
+      "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+      "clock_hz": 3546900,
+      "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+      "player_startup_ms": 3546.3785277284387,
+      "frames": 1000,
+      "frame_interval_mean_ms": 121.1658603823593,
+      "frame_interval_max_ms": 224.28656009473062,
+      "measured_fps": 8.253149829864052,
+      "rom_call_mean_ms": 7.962312420966456,
+      "rom_call_max_ms": 193.7627223772872,
+      "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+      "intervals_over_125ms": 176,
+      "sector_reads_including_header": 2518,
+      "rom_playback_seconds": 19.380910090501565
+    }
+  },
+  "cpu": {
+    "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+    "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+    "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+    "frames": 1000,
+    "delivery_tstates_mean": 152340.32732732734,
+    "delivery_tstates_max": 580183,
+    "background_preparation_tstates_mean": 66641.39439439439,
+    "combined_preparation_tstates_mean": 218981.72172172173,
+    "background_quantum_max_tstates": 22009
+  },
+  "blocks_identical_to_baseline": true,
+  "blocks": 112,
+  "payload_sectors": 2517,
+  "player_bytes": 4608,
+  "free_sectors": 4,
+  "files": {
+    "PLAYER.C.bin": "2657a8e66a4f268fa3a3aa0fa6d7d6634148391ebf0852fe317987c4a1bb14c8",
+    "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd": "a85a5f5c5c5f6df7061a17e13b9c8a249254292b19f3c0f451b483235328d283"
+  }
+}

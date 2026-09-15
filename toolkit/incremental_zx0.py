@@ -9,18 +9,31 @@ STACK_TOP = 0x7DF0
 STACK_BOTTOM = 0x7D80
 
 
-def emit_wait(a):
-    a.label('wait_packet')
+def emit_wait(a, *, lookahead=False):
+    a.label('prepare_packet' if lookahead else 'wait_packet')
     a.abs16(0x2A,'block_frame_pointer')
     a.abs16((0xED,0x5B),'block_end');a.emit(0xB7,0xED,0x52)
     a.abs16(0xC2,'slice_frame_header')
+    if lookahead:
+        a.abs16(0x3A,'ahead_input_ready');a.emit(0xB7)
+        a.abs16(0xC2,'slice_validate_length')
+        a.abs16(0xCD,'ahead_require_input')
     a.abs16(0xCD,'load_block_header')
+    if lookahead:a.label('slice_validate_length')
     a.abs16(0x2A,'block_length');a.emit(0x11);a.word(8193)
     a.emit(0xB7,0xED,0x52);a.abs16(0xD2,'fatal')
     a.abs16(0x2A,'block_length');a.emit(0x7C,0xB7)
     a.rel8(0x20,'slice_length_valid')
     a.emit(0x7D,0xFE,12);a.abs16(0xDA,'fatal')
-    a.label('slice_length_valid');a.abs16(0xCD,'load_block_body')
+    a.label('slice_length_valid')
+    if lookahead:
+        a.abs16(0x3A,'ahead_input_ready');a.emit(0xB7)
+        a.rel8(0x28,'slice_copy_input')
+        a.emit(0xAF);a.abs16(0x32,'ahead_input_ready')
+        a.abs16(0xC3,'slice_block_loaded')
+        a.label('slice_copy_input')
+    a.abs16(0xCD,'load_block_body')
+    if lookahead:a.label('slice_block_loaded')
     a.abs16(0x2A,'block_length');a.emit(0x11);a.word(0x8000)
     a.emit(0x19);a.abs16(0x22,'block_end')
     a.emit(0x21);a.word(0x8000);a.abs16(0x22,'block_frame_pointer')
@@ -34,7 +47,7 @@ def emit_wait(a):
     a.abs16(0x22,'slice_target')
     a.abs16((0xED,0x5B),'block_end');a.emit(0xB7,0xED,0x52)
     a.rel8(0x28,'slice_frame_valid');a.abs16(0xD2,'fatal')
-    a.label('slice_frame_valid');a.abs16(0xC3,'slice_until')
+    a.label('slice_frame_valid');a.abs16(0xC3,'ahead_decode' if lookahead else 'slice_until')
 
 
 def emit_decoder(a):

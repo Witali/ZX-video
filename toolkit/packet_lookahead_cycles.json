@@ -1,0 +1,37 @@
+{
+  "baseline_commit": "0ec3bfe",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "routine entry through RET; same two 1000-byte stored packets including their 2000-byte block copy",
+  "exclusions": [
+    "ROM",
+    "disk latency",
+    "ULA contention",
+    "IRQ",
+    "scheduler"
+  ],
+  "routines": {
+    "two_packets_foreground": {
+      "previous_tstates": 94514,
+      "current_tstates": 95963,
+      "delta": 1449
+    },
+    "two_packets_background": {
+      "previous_tstates": 94514,
+      "current_tstates": 116330,
+      "delta": 21816,
+      "quantum_count": 24,
+      "quantum_max_tstates": 10172
+    }
+  },
+  "checkpoint": {
+    "foreground_entry_tstates": 55,
+    "foreground_with_call_tstates": 72,
+    "background_suspend_entry_tstates": 130,
+    "resume_entry_tstates": 70
+  },
+  "irq_tstates": {
+    "before": 61,
+    "after": 61,
+    "delta": 0
+  }
+}

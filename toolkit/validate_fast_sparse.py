@@ -290,6 +290,7 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
     decoded = 0
     delivery_start = None
     delivery_cycles = []
+    background_cycles=[];background_start=None;frame_background=0;quantum_cycles=[]
     underflows = 0
     underflow_addresses = {labels[name] for name in ('wait_packet_fill','stream_byte_fill') if name in labels}
     next_interrupt = interrupt_every or 0
@@ -316,11 +317,18 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
             assert bytes(cpu.ay[r] for r in (0,1,2,3,4,5,8,9,10)) == ay_states[local], f"AY {local}"
             assert (7 if cpu.port_7ffd & 8 else 5) == newest_bank, f"visible bank {local}"
             decoded += 1
+            if decoded>1:
+                background_cycles.append(frame_background);frame_background=0
             if decoded == len(states): break
             delivery_start = cpu.tstates
         if cpu.pc == labels['prefetch_loop'] and delivery_start is not None:
             delivery_cycles.append(cpu.tstates - delivery_start)
             delivery_start = None
+        if cpu.pc == labels.get('ahead_call'):background_start=cpu.tstates
+        if cpu.pc == labels.get('ahead_return'):
+            assert background_start is not None
+            quantum=cpu.tstates-background_start
+            frame_background+=quantum;quantum_cycles.append(quantum);background_start=None
         cpu.step()
         # Stress test only: inject between instructions while IM2 is enabled.
         # This is not a Spectrum IRQ timing model (HALT waiting is omitted).
@@ -334,6 +342,9 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
     if clock_checks is not None: assert clock_index==len(clock_checks)
     return dict(frames=decoded, instructions=cpu.steps, cpu_tstates=cpu.tstates,
                 delivery_tstates=delivery_cycles, dos_reads=cpu.dos_reads,
+                background_preparation_tstates=background_cycles,
+                background_quantum_count=len(quantum_cycles),
+                background_quantum_max_tstates=max(quantum_cycles,default=0),
                 disk_bytes=cpu.bytes_read, underflows=underflows, minimum_sp=cpu.min_sp,
                 injected_interrupts=interrupts)
 
@@ -366,6 +377,10 @@ def main():
                   frames=sum(r['frames'] for r in results),
                   delivery_tstates_mean=sum(cycles)/len(cycles), delivery_tstates_max=max(cycles),
                   volumes=results)
+    background=[n for result in results for n in result['background_preparation_tstates']]
+    report['background_preparation_tstates_mean']=sum(background)/len(background)
+    report['combined_preparation_tstates_mean']=(sum(cycles)+sum(background))/len(cycles)
+    report['background_quantum_max_tstates']=max(r['background_quantum_max_tstates'] for r in results)
     if args.output: args.output.write_text(json.dumps(report, indent=2))
     print(json.dumps({key: value for key, value in report.items() if key != 'volumes'}, indent=2))
 
