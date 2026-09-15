@@ -109,10 +109,10 @@ def emit_hold_budget(a):
 
 
 def emit_transport(a, *, input_limit=8192, incremental=False, lookahead=False,
-                   output_base=OUTPUT_BUFFER, stack_top=incremental_zx0.STACK_TOP):
-    packed_stream.emit_transport(a,blocked=True,input_limit=input_limit,lookahead=lookahead)
+                   output_base=OUTPUT_BUFFER, stack_top=incremental_zx0.STACK_TOP, direct_input=False):
+    packed_stream.emit_transport(a,blocked=True,input_limit=input_limit,lookahead=lookahead,direct_input=direct_input)
     if incremental:
-        incremental_zx0.emit_wait(a,lookahead=lookahead,output_base=output_base)
+        incremental_zx0.emit_wait(a,lookahead=lookahead,output_base=output_base,direct_input=direct_input)
     else:
         a.label('wait_packet')
         a.abs16(0x2A,'block_frame_pointer')
@@ -159,7 +159,7 @@ def emit_transport(a, *, input_limit=8192, incremental=False, lookahead=False,
     a.emit(0xED,0xB0,0xE5,0xDD,0xE1)
     a.abs16(0xCD,'command_loop'); a.emit(0xC9)
     if incremental:
-        incremental_zx0.emit_decoder(a,output_base=output_base,stack_top=stack_top)
+        incremental_zx0.emit_decoder(a,output_base=output_base,stack_top=stack_top,direct_input=direct_input)
     else:
         zx0_codec.emit_decoder(a,'turbo')
 

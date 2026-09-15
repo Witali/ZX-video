@@ -25,6 +25,7 @@ import fast_drawing  # noqa: E402
 import disk_layout  # noqa: E402
 import incremental_zx0  # noqa: E402
 import fast_seek  # noqa: E402
+import direct_ring_input  # noqa: E402
 import packet_lookahead  # noqa: E402
 
 
@@ -625,7 +626,9 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
                  irq_disk: bool = False, incremental: bool = False,
                  keepalive_fields: int = 0, prefetch_quota: int = 0,
                  full_rom_clock: bool = False, cached_seek: bool = False,
-                 lookahead: bool = False, uncontended: bool = False, read_reserve: int = 0, memory_clock: bool = False) -> tuple[bytes, dict[str, int]]:
+                 lookahead: bool = False, uncontended: bool = False, read_reserve: int = 0, memory_clock: bool = False, direct_input: bool = False) -> tuple[bytes, dict[str, int]]:
+    if direct_input and not (uncontended and lookahead):
+        raise ValueError('direct ring input requires uncontended code and packet lookahead')
     if memory_clock and not (irq_disk and full_rom_clock):
         raise ValueError('memory clock requires the IRQ disk reader and full ROM clock')
     if read_reserve and not (read_reserve>=64 and read_reserve<=256 and lookahead and cached_seek):
@@ -775,8 +778,8 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         blocked_format.emit_transport(a,input_limit=7424 if irq_disk else 8192,
                                       incremental=incremental,lookahead=lookahead,
                                       output_base=0x6000 if uncontended else 0x8000,
-                                      stack_top=0x9DF0 if uncontended else incremental_zx0.STACK_TOP)
-        if lookahead:packet_lookahead.emit(a,stack_top=0x9D70 if uncontended else packet_lookahead.STACK_TOP)
+                                      stack_top=0x9DF0 if uncontended else incremental_zx0.STACK_TOP,direct_input=direct_input)
+        if lookahead:packet_lookahead.emit(a,stack_top=0x9D70 if uncontended else packet_lookahead.STACK_TOP,direct_input=direct_input)
     elif packed:
         packed_format.emit_transport(a)
     else:
@@ -1300,12 +1303,14 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         ("span_count", 1), ("span_token", 1), ("span_length", 1),
     ):
         a.label(name); a.emit(*([0] * size))
+    if direct_input:direct_ring_input.emit_helpers(a)
     if packed:
         packed_format.emit_variables(a)
     if blocked:
         blocked_format.emit_variables(a)
         if incremental: incremental_zx0.emit_variables(a)
         if lookahead:packet_lookahead.emit_variables(a)
+        if direct_input:direct_ring_input.emit_variables(a)
     if clocked:
         a.label("field_counter"); a.emit(0)
     if read_batch != 1 or deadline:
@@ -1379,6 +1384,7 @@ def main() -> None:
     parser.add_argument('--disk-layout',choices=('linear','interleaved'),default='linear',
                         help='interleaved: v9 stream in TR-DOS 1,9,2,10,... track order')
     parser.add_argument("--zx0-decoding",choices=("block","incremental"),default="block")
+    parser.add_argument('--direct-input',action='store_true',help='decode contiguous blocks directly from held ring sectors')
     parser.add_argument('--memory-clock',action='store_true',help='count IRQ fields in memory and leave scheduling interrupts enabled')
     parser.add_argument('--read-reserve',type=int,default=0,help='defer read quota near deadlines while retaining this many sectors (64..256)')
     parser.add_argument('--uncontended',action='store_true',help='run code in bank 2 and keep ZX0 history at 6000h')
@@ -1411,14 +1417,14 @@ def main() -> None:
 
     boot = streaming.build_boot_basic()
     provisional, _ = build_player(0, 0, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock)
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock,direct_input=args.direct_input)
     preceding = [
         base.TrdFile("boot", "B", boot, basic_variables_offset=len(boot), autostart_line=10),
         base.TrdFile("PLAYER", "C", provisional, start=LOAD_ADDRESS),
     ]
     video_track, video_sector = streaming.calculate_file_start(preceding)
     player, labels = build_player(video_track, video_sector, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock)
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock,direct_input=args.direct_input)
     boot_sectors = math.ceil((len(boot) + 4) / base.SECTOR_SIZE)
     player_sectors = math.ceil(len(player) / base.SECTOR_SIZE)
     limit = TRD_DATA_SECTORS - boot_sectors - player_sectors
@@ -1530,6 +1536,22 @@ def main() -> None:
         "uncontended": args.uncontended,
         "read_reserve": args.read_reserve,
         "memory_clock": args.memory_clock,
+        "direct_input": args.direct_input,
+        "direct_input_model": {
+            "reference": "DIRECT_INPUT_RESULTS_ru.md",
+            "scope": "nominal Z80 T-states; IRQ, contention and ROM excluded",
+            "ownership": "hold body sectors until decoded; release before checking next header availability",
+            "fallback": "copy blocks crossing a 16 KiB bank to A000h",
+            "load_contiguous_tstates": 161,
+            "load_exact_bank_end_tstates": 171,
+            "crossing_load_overhead_tstates": 151,
+            "page_active_tstates": 131,
+            "page_inactive_tstates": 28,
+            "release_inactive_tstates": 28,
+            "slice_begin_active_delta_tstates": 154,
+            "slice_resume_active_delta_tstates": 148,
+            "slice_return_delta_tstates": 52,
+        } if args.direct_input else None,
         "irq_cycle_model": {
             "irq_scope": "includes 19 T acknowledge, vector dispatch and ROM mapper",
             "switch_scope": "inline handler selection; excludes IRQ and ROM service",
@@ -1555,7 +1577,7 @@ def main() -> None:
         "prefetch_quota": args.prefetch_quota,
         "rom_clock": args.rom_clock,
         "disk_seek": args.disk_seek,
-        "speed_cycle_reference": "PACKET_LOOKAHEAD_RESULTS_ru.md" if args.packet_lookahead else "MOTOR_KEEPALIVE_RESULTS_ru.md" if args.disk_seek=='cached' and args.motor_keepalive_fields else "STREAM_DRAWING_RESULTS_ru.md" if fast_draw else "INCREMENTAL_PLAYBACK_RESULTS_ru.md",
+        "speed_cycle_reference": "DIRECT_INPUT_RESULTS_ru.md" if args.direct_input else "PACKET_LOOKAHEAD_RESULTS_ru.md" if args.packet_lookahead else "MOTOR_KEEPALIVE_RESULTS_ru.md" if args.disk_seek=='cached' and args.motor_keepalive_fields else "STREAM_DRAWING_RESULTS_ru.md" if fast_draw else "INCREMENTAL_PLAYBACK_RESULTS_ru.md",
         "lookahead_model": dict(decode_quantum_bytes=128,copy_quantum_max_bytes=256,
                                 minimum_input_sectors=30,stack_bottom=0x7D00,stack_top=0x7D70,
                                 foreground_checkpoint_tstates=55,suspend_checkpoint_tstates=130,

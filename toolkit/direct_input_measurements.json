@@ -1,0 +1,934 @@
+{
+  "baseline_commit": "da60d63",
+  "source_sha256": "5d42a94efb0343fb3415c12dcc616bb9403b02f8946d7e8fbfaf45e7030f26e6",
+  "baseline": {
+    "fuse": {
+      "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+      "clock_hz": 3546900,
+      "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+      "player_startup_ms": 3514.6657644703823,
+      "frames": 1000,
+      "frame_interval_mean_ms": 119.93381099953037,
+      "frame_interval_max_ms": 171.95832980912908,
+      "measured_fps": 8.337932328389996,
+      "rom_call_mean_ms": 7.923620167957012,
+      "rom_call_max_ms": 193.6792692210099,
+      "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+      "intervals_over_125ms": 14,
+      "late_frames": [
+        412,
+        487,
+        532,
+        575,
+        622,
+        626,
+        630,
+        631,
+        646,
+        651,
+        656,
+        940,
+        992,
+        996
+      ],
+      "clock_deficit_fields_approx": -0.8422885993113596,
+      "rom_playback_seconds": 19.37913755673969
+    },
+    "cpu": {
+      "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+      "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+      "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+      "frames": 1000,
+      "delivery_tstates_mean": 133117.28228228228,
+      "delivery_tstates_max": 592391,
+      "background_preparation_tstates_mean": 88420.01801801802,
+      "combined_preparation_tstates_mean": 221537.3003003003,
+      "background_quantum_max_tstates": 21784
+    },
+    "validation": {
+      "frames": 1000,
+      "instructions": 27794535,
+      "cpu_tstates": 230092004,
+      "dos_reads": 2518,
+      "background_quantum_count": 8003,
+      "background_quantum_max_tstates": 21784,
+      "disk_bytes": 644608,
+      "underflows": 0,
+      "minimum_sp": 40290,
+      "reserve_checks": 898,
+      "minimum_live_queue_before_flip": 73,
+      "injected_interrupts": 0
+    },
+    "disk": {
+      "player_bytes": 4608,
+      "video_payload_sectors": 2517,
+      "layout_padding_sectors": 3,
+      "stats": {
+        "used_sectors": 2540,
+        "free_sectors": 4,
+        "first_free_track": 159,
+        "first_free_sector": 12
+      }
+    },
+    "sha256": {
+      "PLAYER.C.bin": "1e0d272621fc0510fae35333059e0057947e0803c5825c1a6245db76100dbc78",
+      "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd": "5630672ade15befd6373f630e9d9e7b0ffc9cbed15a81b95e3c699c94575c004"
+    }
+  },
+  "current": {
+    "fuse": {
+      "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+      "clock_hz": 3546900,
+      "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+      "player_startup_ms": 3493.4260903887903,
+      "frames": 1000,
+      "frame_interval_mean_ms": 119.93400403702357,
+      "frame_interval_max_ms": 157.3013053652485,
+      "measured_fps": 8.337918908229733,
+      "rom_call_mean_ms": 7.908242186282758,
+      "rom_call_max_ms": 194.03084383546195,
+      "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+      "intervals_over_125ms": 5,
+      "late_frames": [
+        630,
+        631,
+        646,
+        661,
+        996
+      ],
+      "clock_deficit_fields_approx": -0.8395949681280399,
+      "rom_playback_seconds": 19.370778708167695
+    },
+    "cpu": {
+      "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+      "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+      "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+      "frames": 1000,
+      "delivery_tstates_mean": 124305.992992993,
+      "delivery_tstates_max": 524527,
+      "background_preparation_tstates_mean": 89088.70570570571,
+      "combined_preparation_tstates_mean": 213394.6986986987,
+      "background_quantum_max_tstates": 23665
+    },
+    "validation": {
+      "frames": 1000,
+      "instructions": 27864697,
+      "cpu_tstates": 221783588,
+      "dos_reads": 2518,
+      "background_quantum_count": 7467,
+      "background_quantum_max_tstates": 23665,
+      "disk_bytes": 644608,
+      "underflows": 0,
+      "minimum_sp": 40290,
+      "reserve_checks": 899,
+      "minimum_live_queue_before_flip": 79,
+      "injected_interrupts": 0
+    },
+    "disk": {
+      "player_bytes": 4864,
+      "video_payload_sectors": 2517,
+      "layout_padding_sectors": 3,
+      "stats": {
+        "used_sectors": 2541,
+        "free_sectors": 3,
+        "first_free_track": 159,
+        "first_free_sector": 13
+      }
+    },
+    "sha256": {
+      "PLAYER.C.bin": "f977e276c7b378c27bf6fd0130bb38093bfc500abd00f984b3504efe02f17ce7",
+      "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd": "62ff452a86c394967a1c24044d1522e21985aaa44045adbcd5734eaa736c587a"
+    }
+  },
+  "logical_video_identical": true,
+  "logical_video_sha256": "8f711f9ab2f989a6cbc94a290c6c9237ba7ca0ef742a13044798e4ecc0923543",
+  "tests_passed": 63,
+  "direct_blocks": 73,
+  "copied_blocks": 39,
+  "block_input_layout": [
+    {
+      "frame_start": 0,
+      "frame_end": 16,
+      "input_pointer": 49156,
+      "input_bytes": 1839,
+      "direct": true
+    },
+    {
+      "frame_start": 16,
+      "frame_end": 25,
+      "input_pointer": 50999,
+      "input_bytes": 3861,
+      "direct": true
+    },
+    {
+      "frame_start": 25,
+      "frame_end": 34,
+      "input_pointer": 54864,
+      "input_bytes": 4336,
+      "direct": true
+    },
+    {
+      "frame_start": 34,
+      "frame_end": 42,
+      "input_pointer": 59204,
+      "input_bytes": 4372,
+      "direct": true
+    },
+    {
+      "frame_start": 42,
+      "frame_end": 50,
+      "input_pointer": 63580,
+      "input_bytes": 4879,
+      "direct": false
+    },
+    {
+      "frame_start": 50,
+      "frame_end": 57,
+      "input_pointer": 52079,
+      "input_bytes": 4419,
+      "direct": true
+    },
+    {
+      "frame_start": 57,
+      "frame_end": 63,
+      "input_pointer": 56502,
+      "input_bytes": 4639,
+      "direct": true
+    },
+    {
+      "frame_start": 63,
+      "frame_end": 70,
+      "input_pointer": 61145,
+      "input_bytes": 5551,
+      "direct": false
+    },
+    {
+      "frame_start": 70,
+      "frame_end": 77,
+      "input_pointer": 50316,
+      "input_bytes": 5025,
+      "direct": true
+    },
+    {
+      "frame_start": 77,
+      "frame_end": 84,
+      "input_pointer": 55345,
+      "input_bytes": 5575,
+      "direct": true
+    },
+    {
+      "frame_start": 84,
+      "frame_end": 92,
+      "input_pointer": 60924,
+      "input_bytes": 6268,
+      "direct": false
+    },
+    {
+      "frame_start": 92,
+      "frame_end": 100,
+      "input_pointer": 50812,
+      "input_bytes": 5488,
+      "direct": true
+    },
+    {
+      "frame_start": 100,
+      "frame_end": 109,
+      "input_pointer": 56304,
+      "input_bytes": 6566,
+      "direct": true
+    },
+    {
+      "frame_start": 109,
+      "frame_end": 118,
+      "input_pointer": 62874,
+      "input_bytes": 6868,
+      "direct": false
+    },
+    {
+      "frame_start": 118,
+      "frame_end": 128,
+      "input_pointer": 53362,
+      "input_bytes": 6805,
+      "direct": true
+    },
+    {
+      "frame_start": 128,
+      "frame_end": 138,
+      "input_pointer": 60171,
+      "input_bytes": 5649,
+      "direct": false
+    },
+    {
+      "frame_start": 138,
+      "frame_end": 147,
+      "input_pointer": 49440,
+      "input_bytes": 5401,
+      "direct": true
+    },
+    {
+      "frame_start": 147,
+      "frame_end": 160,
+      "input_pointer": 54845,
+      "input_bytes": 5455,
+      "direct": true
+    },
+    {
+      "frame_start": 160,
+      "frame_end": 172,
+      "input_pointer": 60304,
+      "input_bytes": 5235,
+      "direct": false
+    },
+    {
+      "frame_start": 172,
+      "frame_end": 182,
+      "input_pointer": 49159,
+      "input_bytes": 5205,
+      "direct": true
+    },
+    {
+      "frame_start": 182,
+      "frame_end": 194,
+      "input_pointer": 54368,
+      "input_bytes": 5101,
+      "direct": true
+    },
+    {
+      "frame_start": 194,
+      "frame_end": 206,
+      "input_pointer": 59473,
+      "input_bytes": 6590,
+      "direct": false
+    },
+    {
+      "frame_start": 206,
+      "frame_end": 214,
+      "input_pointer": 49683,
+      "input_bytes": 6652,
+      "direct": true
+    },
+    {
+      "frame_start": 214,
+      "frame_end": 224,
+      "input_pointer": 56339,
+      "input_bytes": 6692,
+      "direct": true
+    },
+    {
+      "frame_start": 224,
+      "frame_end": 236,
+      "input_pointer": 63035,
+      "input_bytes": 6634,
+      "direct": false
+    },
+    {
+      "frame_start": 236,
+      "frame_end": 245,
+      "input_pointer": 53289,
+      "input_bytes": 6227,
+      "direct": true
+    },
+    {
+      "frame_start": 245,
+      "frame_end": 252,
+      "input_pointer": 59520,
+      "input_bytes": 6223,
+      "direct": false
+    },
+    {
+      "frame_start": 252,
+      "frame_end": 261,
+      "input_pointer": 49363,
+      "input_bytes": 7017,
+      "direct": true
+    },
+    {
+      "frame_start": 261,
+      "frame_end": 268,
+      "input_pointer": 56384,
+      "input_bytes": 6770,
+      "direct": true
+    },
+    {
+      "frame_start": 268,
+      "frame_end": 275,
+      "input_pointer": 63158,
+      "input_bytes": 6263,
+      "direct": false
+    },
+    {
+      "frame_start": 275,
+      "frame_end": 284,
+      "input_pointer": 53041,
+      "input_bytes": 6125,
+      "direct": true
+    },
+    {
+      "frame_start": 284,
+      "frame_end": 294,
+      "input_pointer": 59170,
+      "input_bytes": 6207,
+      "direct": true
+    },
+    {
+      "frame_start": 294,
+      "frame_end": 305,
+      "input_pointer": 65381,
+      "input_bytes": 6061,
+      "direct": false
+    },
+    {
+      "frame_start": 305,
+      "frame_end": 317,
+      "input_pointer": 55062,
+      "input_bytes": 6093,
+      "direct": true
+    },
+    {
+      "frame_start": 317,
+      "frame_end": 330,
+      "input_pointer": 61159,
+      "input_bytes": 6184,
+      "direct": false
+    },
+    {
+      "frame_start": 330,
+      "frame_end": 344,
+      "input_pointer": 50963,
+      "input_bytes": 5934,
+      "direct": true
+    },
+    {
+      "frame_start": 344,
+      "frame_end": 361,
+      "input_pointer": 56901,
+      "input_bytes": 5769,
+      "direct": true
+    },
+    {
+      "frame_start": 361,
+      "frame_end": 375,
+      "input_pointer": 62674,
+      "input_bytes": 6302,
+      "direct": false
+    },
+    {
+      "frame_start": 375,
+      "frame_end": 384,
+      "input_pointer": 52596,
+      "input_bytes": 6134,
+      "direct": true
+    },
+    {
+      "frame_start": 384,
+      "frame_end": 394,
+      "input_pointer": 58734,
+      "input_bytes": 6275,
+      "direct": true
+    },
+    {
+      "frame_start": 394,
+      "frame_end": 401,
+      "input_pointer": 65013,
+      "input_bytes": 5935,
+      "direct": false
+    },
+    {
+      "frame_start": 401,
+      "frame_end": 407,
+      "input_pointer": 54568,
+      "input_bytes": 6531,
+      "direct": true
+    },
+    {
+      "frame_start": 407,
+      "frame_end": 412,
+      "input_pointer": 61103,
+      "input_bytes": 6368,
+      "direct": false
+    },
+    {
+      "frame_start": 412,
+      "frame_end": 417,
+      "input_pointer": 51091,
+      "input_bytes": 6027,
+      "direct": true
+    },
+    {
+      "frame_start": 417,
+      "frame_end": 425,
+      "input_pointer": 57122,
+      "input_bytes": 6727,
+      "direct": true
+    },
+    {
+      "frame_start": 425,
+      "frame_end": 436,
+      "input_pointer": 63853,
+      "input_bytes": 6480,
+      "direct": false
+    },
+    {
+      "frame_start": 436,
+      "frame_end": 447,
+      "input_pointer": 53953,
+      "input_bytes": 6805,
+      "direct": true
+    },
+    {
+      "frame_start": 447,
+      "frame_end": 455,
+      "input_pointer": 60762,
+      "input_bytes": 6460,
+      "direct": false
+    },
+    {
+      "frame_start": 455,
+      "frame_end": 461,
+      "input_pointer": 50842,
+      "input_bytes": 5524,
+      "direct": true
+    },
+    {
+      "frame_start": 461,
+      "frame_end": 467,
+      "input_pointer": 56370,
+      "input_bytes": 5286,
+      "direct": true
+    },
+    {
+      "frame_start": 467,
+      "frame_end": 482,
+      "input_pointer": 61660,
+      "input_bytes": 4612,
+      "direct": false
+    },
+    {
+      "frame_start": 482,
+      "frame_end": 487,
+      "input_pointer": 49892,
+      "input_bytes": 5389,
+      "direct": true
+    },
+    {
+      "frame_start": 487,
+      "frame_end": 493,
+      "input_pointer": 55285,
+      "input_bytes": 5544,
+      "direct": true
+    },
+    {
+      "frame_start": 493,
+      "frame_end": 505,
+      "input_pointer": 60833,
+      "input_bytes": 6093,
+      "direct": false
+    },
+    {
+      "frame_start": 505,
+      "frame_end": 511,
+      "input_pointer": 50546,
+      "input_bytes": 5179,
+      "direct": true
+    },
+    {
+      "frame_start": 511,
+      "frame_end": 519,
+      "input_pointer": 55729,
+      "input_bytes": 5600,
+      "direct": true
+    },
+    {
+      "frame_start": 519,
+      "frame_end": 526,
+      "input_pointer": 61333,
+      "input_bytes": 5553,
+      "direct": false
+    },
+    {
+      "frame_start": 526,
+      "frame_end": 532,
+      "input_pointer": 50506,
+      "input_bytes": 4760,
+      "direct": true
+    },
+    {
+      "frame_start": 532,
+      "frame_end": 543,
+      "input_pointer": 55270,
+      "input_bytes": 6510,
+      "direct": true
+    },
+    {
+      "frame_start": 543,
+      "frame_end": 552,
+      "input_pointer": 61784,
+      "input_bytes": 5856,
+      "direct": false
+    },
+    {
+      "frame_start": 552,
+      "frame_end": 558,
+      "input_pointer": 51260,
+      "input_bytes": 4824,
+      "direct": true
+    },
+    {
+      "frame_start": 558,
+      "frame_end": 563,
+      "input_pointer": 56088,
+      "input_bytes": 4378,
+      "direct": true
+    },
+    {
+      "frame_start": 563,
+      "frame_end": 570,
+      "input_pointer": 60470,
+      "input_bytes": 5684,
+      "direct": false
+    },
+    {
+      "frame_start": 570,
+      "frame_end": 575,
+      "input_pointer": 49774,
+      "input_bytes": 4933,
+      "direct": true
+    },
+    {
+      "frame_start": 575,
+      "frame_end": 584,
+      "input_pointer": 54711,
+      "input_bytes": 5879,
+      "direct": true
+    },
+    {
+      "frame_start": 584,
+      "frame_end": 602,
+      "input_pointer": 60594,
+      "input_bytes": 5601,
+      "direct": false
+    },
+    {
+      "frame_start": 602,
+      "frame_end": 612,
+      "input_pointer": 49815,
+      "input_bytes": 5097,
+      "direct": true
+    },
+    {
+      "frame_start": 612,
+      "frame_end": 617,
+      "input_pointer": 54916,
+      "input_bytes": 5319,
+      "direct": true
+    },
+    {
+      "frame_start": 617,
+      "frame_end": 622,
+      "input_pointer": 60239,
+      "input_bytes": 5605,
+      "direct": false
+    },
+    {
+      "frame_start": 622,
+      "frame_end": 626,
+      "input_pointer": 49464,
+      "input_bytes": 5103,
+      "direct": true
+    },
+    {
+      "frame_start": 626,
+      "frame_end": 631,
+      "input_pointer": 54571,
+      "input_bytes": 5736,
+      "direct": true
+    },
+    {
+      "frame_start": 631,
+      "frame_end": 637,
+      "input_pointer": 60311,
+      "input_bytes": 6475,
+      "direct": false
+    },
+    {
+      "frame_start": 637,
+      "frame_end": 642,
+      "input_pointer": 50406,
+      "input_bytes": 6084,
+      "direct": true
+    },
+    {
+      "frame_start": 642,
+      "frame_end": 646,
+      "input_pointer": 56494,
+      "input_bytes": 5178,
+      "direct": true
+    },
+    {
+      "frame_start": 646,
+      "frame_end": 651,
+      "input_pointer": 61676,
+      "input_bytes": 6414,
+      "direct": false
+    },
+    {
+      "frame_start": 651,
+      "frame_end": 656,
+      "input_pointer": 51710,
+      "input_bytes": 6094,
+      "direct": true
+    },
+    {
+      "frame_start": 656,
+      "frame_end": 661,
+      "input_pointer": 57808,
+      "input_bytes": 6025,
+      "direct": true
+    },
+    {
+      "frame_start": 661,
+      "frame_end": 666,
+      "input_pointer": 63837,
+      "input_bytes": 5591,
+      "direct": false
+    },
+    {
+      "frame_start": 666,
+      "frame_end": 673,
+      "input_pointer": 53048,
+      "input_bytes": 6098,
+      "direct": true
+    },
+    {
+      "frame_start": 673,
+      "frame_end": 680,
+      "input_pointer": 59150,
+      "input_bytes": 6025,
+      "direct": true
+    },
+    {
+      "frame_start": 680,
+      "frame_end": 689,
+      "input_pointer": 65179,
+      "input_bytes": 6112,
+      "direct": false
+    },
+    {
+      "frame_start": 689,
+      "frame_end": 709,
+      "input_pointer": 54911,
+      "input_bytes": 5982,
+      "direct": true
+    },
+    {
+      "frame_start": 709,
+      "frame_end": 725,
+      "input_pointer": 60897,
+      "input_bytes": 6109,
+      "direct": false
+    },
+    {
+      "frame_start": 725,
+      "frame_end": 739,
+      "input_pointer": 50626,
+      "input_bytes": 5883,
+      "direct": true
+    },
+    {
+      "frame_start": 739,
+      "frame_end": 754,
+      "input_pointer": 56513,
+      "input_bytes": 5994,
+      "direct": true
+    },
+    {
+      "frame_start": 754,
+      "frame_end": 768,
+      "input_pointer": 62511,
+      "input_bytes": 5534,
+      "direct": false
+    },
+    {
+      "frame_start": 768,
+      "frame_end": 788,
+      "input_pointer": 51665,
+      "input_bytes": 5898,
+      "direct": true
+    },
+    {
+      "frame_start": 788,
+      "frame_end": 799,
+      "input_pointer": 57567,
+      "input_bytes": 5620,
+      "direct": true
+    },
+    {
+      "frame_start": 799,
+      "frame_end": 810,
+      "input_pointer": 63191,
+      "input_bytes": 5395,
+      "direct": false
+    },
+    {
+      "frame_start": 810,
+      "frame_end": 827,
+      "input_pointer": 52206,
+      "input_bytes": 5276,
+      "direct": true
+    },
+    {
+      "frame_start": 827,
+      "frame_end": 841,
+      "input_pointer": 57486,
+      "input_bytes": 5887,
+      "direct": true
+    },
+    {
+      "frame_start": 841,
+      "frame_end": 851,
+      "input_pointer": 63377,
+      "input_bytes": 5733,
+      "direct": false
+    },
+    {
+      "frame_start": 851,
+      "frame_end": 863,
+      "input_pointer": 52730,
+      "input_bytes": 6141,
+      "direct": true
+    },
+    {
+      "frame_start": 863,
+      "frame_end": 870,
+      "input_pointer": 58875,
+      "input_bytes": 5193,
+      "direct": true
+    },
+    {
+      "frame_start": 870,
+      "frame_end": 877,
+      "input_pointer": 64072,
+      "input_bytes": 5736,
+      "direct": false
+    },
+    {
+      "frame_start": 877,
+      "frame_end": 884,
+      "input_pointer": 53428,
+      "input_bytes": 5811,
+      "direct": true
+    },
+    {
+      "frame_start": 884,
+      "frame_end": 893,
+      "input_pointer": 59243,
+      "input_bytes": 6261,
+      "direct": true
+    },
+    {
+      "frame_start": 893,
+      "frame_end": 902,
+      "input_pointer": 65508,
+      "input_bytes": 5837,
+      "direct": false
+    },
+    {
+      "frame_start": 902,
+      "frame_end": 910,
+      "input_pointer": 54965,
+      "input_bytes": 6071,
+      "direct": true
+    },
+    {
+      "frame_start": 910,
+      "frame_end": 919,
+      "input_pointer": 61040,
+      "input_bytes": 6327,
+      "direct": false
+    },
+    {
+      "frame_start": 919,
+      "frame_end": 928,
+      "input_pointer": 50987,
+      "input_bytes": 5931,
+      "direct": true
+    },
+    {
+      "frame_start": 928,
+      "frame_end": 935,
+      "input_pointer": 56922,
+      "input_bytes": 5685,
+      "direct": true
+    },
+    {
+      "frame_start": 935,
+      "frame_end": 940,
+      "input_pointer": 62611,
+      "input_bytes": 4401,
+      "direct": false
+    },
+    {
+      "frame_start": 940,
+      "frame_end": 946,
+      "input_pointer": 50632,
+      "input_bytes": 5235,
+      "direct": true
+    },
+    {
+      "frame_start": 946,
+      "frame_end": 954,
+      "input_pointer": 55871,
+      "input_bytes": 5887,
+      "direct": true
+    },
+    {
+      "frame_start": 954,
+      "frame_end": 962,
+      "input_pointer": 61762,
+      "input_bytes": 6526,
+      "direct": false
+    },
+    {
+      "frame_start": 962,
+      "frame_end": 970,
+      "input_pointer": 51908,
+      "input_bytes": 5451,
+      "direct": true
+    },
+    {
+      "frame_start": 970,
+      "frame_end": 979,
+      "input_pointer": 57363,
+      "input_bytes": 6144,
+      "direct": true
+    },
+    {
+      "frame_start": 979,
+      "frame_end": 987,
+      "input_pointer": 63511,
+      "input_bytes": 6164,
+      "direct": false
+    },
+    {
+      "frame_start": 987,
+      "frame_end": 992,
+      "input_pointer": 53295,
+      "input_bytes": 6481,
+      "direct": true
+    },
+    {
+      "frame_start": 992,
+      "frame_end": 996,
+      "input_pointer": 59780,
+      "input_bytes": 5730,
+      "direct": true
+    },
+    {
+      "frame_start": 996,
+      "frame_end": 1000,
+      "input_pointer": 65514,
+      "input_bytes": 5281,
+      "direct": false
+    }
+  ]
+}

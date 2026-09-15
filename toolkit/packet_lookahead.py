@@ -8,7 +8,7 @@ STACK_TOP=0x7D70
 DECODE_QUANTUM=128
 
 
-def emit(a, *, stack_top=STACK_TOP):
+def emit(a, *, stack_top=STACK_TOP, direct_input=False):
     a.label('wait_packet')
     a.abs16(0x3A,'ahead_state');a.emit(0xFE,4);a.rel8(0x38,'ahead_wait_regular')
     # During pre-copy, the complete current block remains in its fixed output buffer.
@@ -69,6 +69,7 @@ def emit(a, *, stack_top=STACK_TOP):
     a.abs16(0x22,'slice_target');a.abs16(0xC3,'ahead_decode')
 
     a.label('ahead_precopy')
+    if direct_input:a.abs16(0xCD,'direct_release')
     # This threshold also excludes final padding after the last block.
     a.abs16(0x2A,'ring_count');a.emit(0x11);a.word(30)
     a.emit(0xB7,0xED,0x52);a.rel8(0x30,'ahead_precopy_begin')

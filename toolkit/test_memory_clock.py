@@ -15,8 +15,8 @@ OPTIONS=dict(**PACKET_OPTIONS,uncontended=True,full_rom_clock=True,cached_seek=T
              keepalive_fields=64,read_reserve=64,memory_clock=True)
 
 
-def fixture(cpu_type=CPU):
-    player,labels=codec.build_player(3,2,**OPTIONS)
+def fixture(cpu_type=CPU, **options):
+    player,labels=codec.build_player(3,2,**(OPTIONS|options))
     cpu=cpu_type(player,bytes(2560*256));relocate(cpu,labels)
     cpu.sp=0xBFF0;cpu.port_7ffd=0x17;run(cpu,labels,'setup_clock')
     return cpu,labels

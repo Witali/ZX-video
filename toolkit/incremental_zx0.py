@@ -9,7 +9,7 @@ STACK_TOP = 0x7DF0
 STACK_BOTTOM = 0x7D80
 
 
-def emit_wait(a, *, lookahead=False, output_base=0x8000):
+def emit_wait(a, *, lookahead=False, output_base=0x8000, direct_input=False):
     a.label('prepare_packet' if lookahead else 'wait_packet')
     a.abs16(0x2A,'block_frame_pointer')
     a.abs16((0xED,0x5B),'block_end');a.emit(0xB7,0xED,0x52)
@@ -17,6 +17,7 @@ def emit_wait(a, *, lookahead=False, output_base=0x8000):
     if lookahead:
         a.abs16(0x3A,'ahead_input_ready');a.emit(0xB7)
         a.abs16(0xC2,'slice_validate_length')
+        if direct_input:a.abs16(0xCD,'direct_release')
         a.abs16(0xCD,'ahead_require_input')
     a.abs16(0xCD,'load_block_header')
     if lookahead:a.label('slice_validate_length')
@@ -50,22 +51,26 @@ def emit_wait(a, *, lookahead=False, output_base=0x8000):
     a.label('slice_frame_valid');a.abs16(0xC3,'ahead_decode' if lookahead else 'slice_until')
 
 
-def emit_decoder(a, *, output_base=0x8000, stack_top=STACK_TOP):
+def emit_decoder(a, *, output_base=0x8000, stack_top=STACK_TOP, direct_input=False):
     a.label('slice_until')
     a.abs16(0xCD,'slice_sync_target')
     a.abs16(0x2A,'slice_output');a.abs16((0xED,0x5B),'slice_target')
     a.emit(0xB7,0xED,0x52,0xD0)  # RET NC: enough output already exists.
     a.label('slice_resume')
+    if direct_input:a.abs16(0xCD,'direct_page')
     a.abs16((0xED,0x73),'slice_caller_sp')
     a.abs16((0xED,0x7B),'slice_decoder_sp')
     a.emit(0xE1,0xD1,0xC1,0xF1,0xC9)
 
     a.label('slice_begin')
+    if direct_input:a.abs16(0xCD,'direct_page')
     a.abs16(0xCD,'slice_sync_target')
     a.abs16((0xED,0x73),'slice_caller_sp')
     a.emit(0x31);a.word(stack_top)
     a.abs16(0x21,'slice_finished');a.emit(0xE5)
-    a.emit(0x21);a.word(0xA000);a.emit(0x11);a.word(output_base)
+    if direct_input:a.abs16(0x2A,'direct_pointer')
+    else:a.emit(0x21);a.word(0xA000)
+    a.emit(0x11);a.word(output_base)
     a.abs16(0x3A,'block_stored');a.emit(0xB7)
     a.abs16(0xCA,'dzx0_turbo')
     a.abs16((0xED,0x4B),'block_length');a.abs16(0xCD,'slice_copy')
@@ -75,13 +80,17 @@ def emit_decoder(a, *, output_base=0x8000, stack_top=STACK_TOP):
     a.abs16(0x2A,'block_end');a.emit(0xB7,0xED,0x52)
     a.abs16(0xC2,'fatal')
     a.abs16((0xED,0x53),'slice_output')
-    a.abs16((0xED,0x7B),'slice_caller_sp');a.emit(0xC9)
+    a.abs16((0xED,0x7B),'slice_caller_sp')
+    if direct_input:a.abs16(0xC3,'page_bank7')
+    else:a.emit(0xC9)
 
     a.label('slice_yield')
     a.abs16((0xED,0x53),'slice_output')
     a.emit(0xF5,0xC5,0xD5,0xE5)
     a.abs16((0xED,0x73),'slice_decoder_sp')
-    a.abs16((0xED,0x7B),'slice_caller_sp');a.emit(0xC9)
+    a.abs16((0xED,0x7B),'slice_caller_sp')
+    if direct_input:a.abs16(0xC3,'page_bank7')
+    else:a.emit(0xC9)
 
     a.label('slice_copy')
     # The usual run fits entirely. Compare DE+BC with patched target bytes,

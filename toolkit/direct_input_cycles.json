@@ -1,0 +1,86 @@
+{
+  "consume_sector_tstates": {
+    "1:c0": 119,
+    "1:ff": 170,
+    "5:ff": 184
+  },
+  "baseline_commit": "da60d63",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "routine entry through RET, excludes invoking CALL; two packets includes all preparation and coroutine calls",
+  "exclusions": [
+    "IRQ",
+    "ULA contention",
+    "ROM service",
+    "disk latency",
+    "drawing",
+    "scheduler"
+  ],
+  "assumptions": "stored fixture, ring_count=40, foreground copy forced; slice begins at output+2, resume to +130, finish at +600",
+  "routines": {
+    "load_contiguous_6000": {
+      "previous_tstates": 143499,
+      "current_tstates": 161,
+      "delta": -143338
+    },
+    "load_exact_end_1040": {
+      "previous_tstates": 25669,
+      "current_tstates": 171,
+      "delta": -25498
+    },
+    "load_crossing_6000": {
+      "previous_tstates": 143550,
+      "current_tstates": 143701,
+      "delta": 151
+    },
+    "stored_slice_begin": {
+      "previous_tstates": 659,
+      "current_tstates": 865,
+      "delta": 206
+    },
+    "stored_slice_resume": {
+      "previous_tstates": 3330,
+      "current_tstates": 3530,
+      "delta": 200
+    },
+    "stored_slice_already_ready": {
+      "previous_tstates": 143,
+      "current_tstates": 143,
+      "delta": 0
+    },
+    "stored_slice_finish": {
+      "previous_tstates": 12984,
+      "current_tstates": 13184,
+      "delta": 200
+    },
+    "two_packets_foreground": {
+      "previous_tstates": 95963,
+      "current_tstates": 49124,
+      "delta": -46839
+    },
+    "two_packets_background": {
+      "previous_tstates": 116330,
+      "current_tstates": 69747,
+      "delta": -46583
+    }
+  },
+  "release_tstates": {
+    "6000": 4052,
+    "1040": 1043,
+    "12": 143
+  },
+  "release_inactive_tstates": 28,
+  "page_tstates": {
+    "inactive": 28,
+    "active": 131
+  },
+  "inline_deltas": {
+    "contiguous_load": 161,
+    "exact_end_load": 171,
+    "crossing_overhead": 151,
+    "slice_begin_active": 154,
+    "slice_resume_active": 148,
+    "slice_return": 52,
+    "slice_begin_copied": 51,
+    "slice_resume_copied": 45
+  }
+}

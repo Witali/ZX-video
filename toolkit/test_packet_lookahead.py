@@ -134,9 +134,9 @@ class PacketLookaheadTests(unittest.TestCase):
             return struct.pack('<HH',len(data)|(0x8000 if stored else 0),len(decoded))+data
 
         old=packet(0x11)+packet(0x22)
-        for stored in (False,True):
-            with self.subTest(stored=stored):
-                cpu,labels=fixture()
+        for stored,direct in ((False,False),(True,False),(False,True),(True,True)):
+            with self.subTest(stored=stored,direct=direct):
+                cpu,labels=fixture(direct_input=direct)
                 decoded=packet(0x33) if stored else EMPTY_DECODED
                 data=decoded if stored else EMPTY_COMPRESSED
                 stream=block(old,old,True)+block(data,decoded,stored)
