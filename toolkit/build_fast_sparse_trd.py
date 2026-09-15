@@ -19,6 +19,7 @@ import build_streaming_trd as streaming  # noqa: E402
 import build_zxv_trd as base  # noqa: E402
 import packed_stream as packed_format  # noqa: E402
 import blocked_stream as blocked_format  # noqa: E402
+import fast_drawing  # noqa: E402
 
 
 LOAD_ADDRESS = 0x6000
@@ -612,7 +613,7 @@ def call_rom(a: base.MiniAssembler, address: int) -> None:
 
 
 def build_player(video_track: int, video_sector: int, *, packed: bool = False, blocked: bool = False,
-                 clocked: bool = False) -> tuple[bytes, dict[str, int]]:
+                 clocked: bool = False, fast_draw: bool = False) -> tuple[bytes, dict[str, int]]:
     packed = packed or blocked
     ring_capacity = (blocked_format.RING_CAPACITY_SECTORS if blocked else
                      packed_format.RING_CAPACITY_SECTORS if packed else RING_CAPACITY_SECTORS)
@@ -878,50 +879,56 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     a.emit(0xFE, CMD_COPY_VISIBLE_ROW); a.abs16(0xCA, "command_copy_visible")
     a.abs16(0xC3, "fatal")
 
-    a.label("command_row")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
-    for mask_name in ("mask0", "mask1", "mask2", "mask3"):
-        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, mask_name)
-    ld_a_mem(a, "row_index")
-    a.emit(0x6F, 0x26, 0, 0x29)
-    a.emit(0x11); a.abs16([], "row_addresses")
-    a.emit(0x19, 0x4E, 0x23, 0x46)
-    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
-    a.emit(0x21); a.abs16([], "dither_top")
-    for group, mask_name in enumerate(("mask0", "mask1", "mask2", "mask3")):
-        for bit in range(8):
-            unchanged = f"unchanged_{group}_{bit}"
-            ld_a_mem(a, mask_name); a.emit(0x87); ld_mem_a(a, mask_name)
-            a.rel8(0x30, unchanged)
-            a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0x6F, 0x7E, 0x02, 0x24, 0x7E, 0x12, 0x25)
-            a.label(unchanged)
-            a.emit(0x03, 0x13)
-    a.abs16(0xC3, "command_loop")
+    if fast_draw:
+        fast_drawing.emit_mask(a)
+    else:
+        a.label("command_row")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
+        for mask_name in ("mask0", "mask1", "mask2", "mask3"):
+            a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, mask_name)
+        ld_a_mem(a, "row_index")
+        a.emit(0x6F, 0x26, 0, 0x29)
+        a.emit(0x11); a.abs16([], "row_addresses")
+        a.emit(0x19, 0x4E, 0x23, 0x46)
+        ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
+        a.emit(0x21); a.abs16([], "dither_top")
+        for group, mask_name in enumerate(("mask0", "mask1", "mask2", "mask3")):
+            for bit in range(8):
+                unchanged = f"unchanged_{group}_{bit}"
+                ld_a_mem(a, mask_name); a.emit(0x87); ld_mem_a(a, mask_name)
+                a.rel8(0x30, unchanged)
+                a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0x6F, 0x7E, 0x02, 0x24, 0x7E, 0x12, 0x25)
+                a.label(unchanged)
+                a.emit(0x03, 0x13)
+        a.abs16(0xC3, "command_loop")
 
-    a.label("command_points")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "point_count")
-    ld_a_mem(a, "row_index")
-    a.emit(0x6F, 0x26, 0, 0x29)
-    a.emit(0x11); a.abs16([], "row_addresses")
-    a.emit(0x19, 0x4E, 0x23, 0x46)
-    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
-    a.emit(0xED, 0x43); a.abs16([], "point_top")
-    a.emit(0xED, 0x53); a.abs16([], "point_bottom")
-    a.label("point_loop")
-    ld_a_mem(a, "point_count"); a.emit(0xB7); a.abs16(0xCA, "command_loop")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "point_column")
-    a.emit(0xED, 0x4B); a.abs16([], "point_top")
-    a.emit(0xED, 0x5B); a.abs16([], "point_bottom")
-    ld_a_mem(a, "point_column"); a.emit(0x81, 0x4F)
-    ld_a_mem(a, "point_column"); a.emit(0x83, 0x5F)
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0x6F)
-    a.emit(0x26, 0)  # dither_top page, patched after table placement
-    # MiniAssembler has no high-byte fixup; replace the immediate after resolve.
-    point_table_high_pos = len(a.code) - 1
-    a.emit(0x7E, 0x02, 0x24, 0x7E, 0x12)
-    ld_a_mem(a, "point_count"); a.emit(0x3D); ld_mem_a(a, "point_count")
-    a.rel8(0x18, "point_loop")
+    if fast_draw:
+        point_table_high_pos = fast_drawing.emit_points(a)
+    else:
+        a.label("command_points")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "point_count")
+        ld_a_mem(a, "row_index")
+        a.emit(0x6F, 0x26, 0, 0x29)
+        a.emit(0x11); a.abs16([], "row_addresses")
+        a.emit(0x19, 0x4E, 0x23, 0x46)
+        ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
+        a.emit(0xED, 0x43); a.abs16([], "point_top")
+        a.emit(0xED, 0x53); a.abs16([], "point_bottom")
+        a.label("point_loop")
+        ld_a_mem(a, "point_count"); a.emit(0xB7); a.abs16(0xCA, "command_loop")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "point_column")
+        a.emit(0xED, 0x4B); a.abs16([], "point_top")
+        a.emit(0xED, 0x5B); a.abs16([], "point_bottom")
+        ld_a_mem(a, "point_column"); a.emit(0x81, 0x4F)
+        ld_a_mem(a, "point_column"); a.emit(0x83, 0x5F)
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0x6F)
+        a.emit(0x26, 0)  # dither_top page, patched after table placement
+        # MiniAssembler has no high-byte fixup; replace the immediate after resolve.
+        point_table_high_pos = len(a.code) - 1
+        a.emit(0x7E, 0x02, 0x24, 0x7E, 0x12)
+        ld_a_mem(a, "point_count"); a.emit(0x3D); ld_mem_a(a, "point_count")
+        a.rel8(0x18, "point_loop")
 
     a.label("command_spans")
     a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
@@ -1176,7 +1183,9 @@ def main() -> None:
     parser.add_argument("--zx0", type=Path, help="path to the upstream ZX0 v2 compressor")
     parser.add_argument("--pacing", choices=("cpu-fields", "legacy"), default="cpu-fields",
                         help="ZX0 playback: subtract CPU fields from the display hold")
+    parser.add_argument('--drawing',choices=('legacy','registers'),default='legacy')
     args = parser.parse_args()
+    fast_draw = args.drawing == 'registers'
     blocked = args.packing == "zx0"
     clocked = blocked and args.pacing == "cpu-fields"
     packed = args.packing != "sector"
@@ -1190,13 +1199,13 @@ def main() -> None:
     args.output.mkdir(parents=True, exist_ok=True)
 
     boot = streaming.build_boot_basic()
-    provisional, _ = build_player(0, 0, packed=packed, blocked=blocked, clocked=clocked)
+    provisional, _ = build_player(0, 0, packed=packed, blocked=blocked, clocked=clocked,fast_draw=fast_draw)
     preceding = [
         base.TrdFile("boot", "B", boot, basic_variables_offset=len(boot), autostart_line=10),
         base.TrdFile("PLAYER", "C", provisional, start=LOAD_ADDRESS),
     ]
     video_track, video_sector = streaming.calculate_file_start(preceding)
-    player, labels = build_player(video_track, video_sector, packed=packed, blocked=blocked, clocked=clocked)
+    player, labels = build_player(video_track, video_sector, packed=packed, blocked=blocked, clocked=clocked,fast_draw=fast_draw)
     boot_sectors = math.ceil((len(boot) + 4) / base.SECTOR_SIZE)
     player_sectors = math.ceil(len(player) / base.SECTOR_SIZE)
     limit = TRD_DATA_SECTORS - boot_sectors - player_sectors
@@ -1283,6 +1292,7 @@ def main() -> None:
         "profile": "banked_ring_fast_sparse_direct_screen", "frame_rate": frame_rate,
         "packing": args.packing, "video_version": blocked_format.VERSION if blocked else packed_format.VERSION if packed else VIDEO_VERSION,
         "pacing": "cpu-fields" if clocked else "legacy",
+        "drawing": args.drawing,
         "frames": len(states), "player_labels": labels, "player_bytes": len(player),
         "video_track": video_track, "video_sector": video_sector,
         "volumes": volumes, "trd_names": [v["trd_name"] for v in volumes],
@@ -1305,8 +1315,8 @@ def main() -> None:
                 1,
             ),
             "disk_rom_and_physical_latency_included": False,
-            "bitmap_mask": "2117 + 64*N",
-            "bitmap_points": "572 + 265*N",
+            "bitmap_mask": "1287 + 68*N" if fast_draw else "2067 + 64*N",
+            "bitmap_points": "220 + 189*N" if fast_draw else "260 + 265*N",
             "bitmap_spans": "372 + 178*R + 126*N",
             "copy_visible_row": COPY_VISIBLE_ROW_CYCLES,
             "compression_cpu_regression_limit_percent": 10,

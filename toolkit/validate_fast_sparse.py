@@ -24,6 +24,7 @@ class CPU(MemoryCPU):
         self.ay = bytearray(16)
         self.i = self.im = 0
         self.iff1 = False
+        self.alt_a=0; self.alt_z=False; self.alt_carry=False
 
     def reg(self, index):
         return self.read8(self.hl()) if index == 6 else getattr(self, self.registers[index])
@@ -59,6 +60,11 @@ class CPU(MemoryCPU):
 
     def instruction(self):
         op = self.fetch8()
+        if op == 0x08:
+            self.a,self.alt_a=self.alt_a,self.a
+            self.z,self.alt_z=self.alt_z,self.z
+            self.carry,self.alt_carry=self.alt_carry,self.carry
+            return 4
         if op in (0, 0xF3, 0xFB):
             if op != 0: self.iff1 = op == 0xFB
             return 4
