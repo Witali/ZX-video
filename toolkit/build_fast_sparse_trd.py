@@ -15,6 +15,7 @@ sys.path.insert(0, str(HERE))
 import build_long_video_trd as source  # noqa: E402
 import build_streaming_trd as streaming  # noqa: E402
 import build_zxv_trd as base  # noqa: E402
+import packed_stream as packed_format  # noqa: E402
 
 
 LOAD_ADDRESS = 0x6000
@@ -464,12 +465,13 @@ def apply_packet_reference(
 
 
 def make_volume_packets(
-    states: list[bytes], ay_states: list[bytes], start: int, limit: int
+    states: list[bytes], ay_states: list[bytes], start: int, limit: int,
+    *, packed: bool = False,
 ) -> tuple[int, list[SparsePacket]]:
     zero = bytes(source.STATE_BYTES)
     previous = [zero, zero]
     packets: list[SparsePacket] = []
-    used = 1
+    used = base.SECTOR_SIZE if packed else 1
     end = start
     while end < len(states):
         local = end - start
@@ -535,10 +537,11 @@ def make_volume_packets(
                 packet = compressed
         if apply_packet_reference(packet, prior, visible) != states[end]:
             raise AssertionError(f"sparse reference mismatch at frame {end}")
-        if packets and used + packet.sector_count > limit:
+        allocation = len(packed_format.frame_bytes(packet)) if packed else packet.sector_count
+        if packets and used + allocation > limit * (base.SECTOR_SIZE if packed else 1):
             break
         packets.append(packet)
-        used += packet.sector_count
+        used += allocation
         if local == 0:
             previous = [states[end], states[end]]
         else:
@@ -548,13 +551,22 @@ def make_volume_packets(
     return end, packets
 
 
-def serialize_volume(packets: list[SparsePacket], frame_rate: float) -> bytes:
+def serialize_volume(packets: list[SparsePacket], frame_rate: float, *, packed: bool = False) -> bytes:
     header = bytearray(base.SECTOR_SIZE)
-    header[:4] = VIDEO_MAGIC
-    header[4] = VIDEO_VERSION
+    header[:4] = packed_format.MAGIC if packed else VIDEO_MAGIC
+    header[4] = packed_format.VERSION if packed else VIDEO_VERSION
     struct.pack_into("<H", header, 8, len(packets))
     rate = source.Fraction(frame_rate).limit_denominator(1000)
     struct.pack_into("<HH", header, 12, rate.numerator, rate.denominator)
+    if packed:
+        frames = [packed_format.frame_bytes(packet) for packet in packets]
+        lengths = list(map(len, frames))
+        payload = b"".join(frames)
+        struct.pack_into("<H", header, 16, (len(payload) + 255) // 256)
+        struct.pack_into("<H", header, 18, packed_format.minimum_startup_backlog(lengths))
+        struct.pack_into("<H", header, 20, packed_format.RING_CAPACITY_SECTORS)
+        struct.pack_into("<I", header, 22, len(payload))
+        return bytes(header) + payload + bytes(-len(payload) % 256)
     sector_counts = [packet.sector_count for packet in packets]
     struct.pack_into("<H", header, 16, sum(sector_counts))
     struct.pack_into("<H", header, 18, minimum_startup_backlog(sector_counts))
@@ -596,7 +608,9 @@ def call_rom(a: base.MiniAssembler, address: int) -> None:
     a.emit(0xCD); a.word(address)
 
 
-def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, int]]:
+def build_player(video_track: int, video_sector: int, *, packed: bool = False) -> tuple[bytes, dict[str, int]]:
+    ring_capacity = packed_format.RING_CAPACITY_SECTORS if packed else RING_CAPACITY_SECTORS
+    ring_end_high = 0xA0 if packed else 0xBF
     a = base.MiniAssembler(LOAD_ADDRESS)
     a.label("start")
     a.emit(0xF3, 0x31); a.word(0x5FF0)
@@ -610,15 +624,20 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     # Stream header.
     a.emit(0x21); a.word(BUFFER)
     a.emit(0x06, 1); a.abs16(0xCD, "read_n")
-    for offset, value in enumerate(VIDEO_MAGIC):
+    for offset, value in enumerate(packed_format.MAGIC if packed else VIDEO_MAGIC):
         a.emit(0x3A); a.word(BUFFER + offset)
         a.emit(0xFE, value); a.abs16(0xC2, "fatal")
+    if packed:
+        a.emit(0x3A); a.word(BUFFER + 4)
+        a.emit(0xFE, packed_format.VERSION); a.abs16(0xC2, "fatal")
     a.emit(0x2A); a.word(BUFFER + 8)
     a.emit(0x2B); a.abs16(0x22, "frames_remaining")
     a.emit(0x2A); a.word(BUFFER + 16); a.abs16(0x22, "disk_sectors_remaining")
     a.emit(0x2A); a.word(BUFFER + 18); a.abs16(0x22, "startup_target")
     a.emit(0xAF)
     ld_mem_a(a, "ring_read_region"); ld_mem_a(a, "ring_write_region")
+    if packed:
+        ld_mem_a(a, "ring_read_low")
     a.emit(0x21); a.word(0); a.abs16(0x22, "ring_count")
     a.emit(0x3E, 0x80)
     ld_mem_a(a, "ring_read_high"); ld_mem_a(a, "ring_write_high")
@@ -631,7 +650,7 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     a.emit(0x36, 0, 0xED, 0xB0)
     a.emit(0x3E, 0x40); ld_mem_a(a, "update_base")
     a.emit(0x21); a.word(0x5800); a.abs16(0x22, "attr_base")
-    a.abs16(0xCD, "prepare_read_sector")
+    a.abs16(0xCD, "wait_packet" if packed else "prepare_read_sector")
     a.abs16(0xCD, "ring_packet")
     a.emit(0x21); a.word(0x4000)
     a.emit(0x11); a.word(0xC000)
@@ -675,50 +694,54 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     a.abs16(0xCD, "producer_one")
     a.rel8(0x18, "startup_fill")
 
-    # Wait only on an actual underflow. With the encoded startup backlog this
-    # path is not expected during normal playback.
-    a.label("wait_packet")
-    a.emit(0x2A); a.abs16([], "ring_count")
-    a.emit(0x7C, 0xB5)
-    a.rel8(0x28, "wait_packet_fill")
-    a.abs16(0xCD, "prepare_read_sector")
-    a.emit(0x2A); a.abs16([], "sector_pointer")
-    a.emit(0x46)
-    a.emit(0x2A); a.abs16([], "ring_count")
-    a.emit(0x7C, 0xB7, 0xC0, 0x7D, 0xB8, 0xD0)
-    a.label("wait_packet_fill")
-    a.abs16(0xCD, "wait_field")
-    a.abs16(0xCD, "producer_one")
-    a.rel8(0x18, "wait_packet")
+    if packed:
+        packed_format.emit_transport(a)
+    else:
+        # Wait only on an actual underflow. With the encoded startup backlog this
+        # path is not expected during normal playback.
+        a.label("wait_packet")
+        a.emit(0x2A); a.abs16([], "ring_count")
+        a.emit(0x7C, 0xB5)
+        a.rel8(0x28, "wait_packet_fill")
+        a.abs16(0xCD, "prepare_read_sector")
+        a.emit(0x2A); a.abs16([], "sector_pointer")
+        a.emit(0x46)
+        a.emit(0x2A); a.abs16([], "ring_count")
+        a.emit(0x7C, 0xB7, 0xC0, 0x7D, 0xB8, 0xD0)
+        a.label("wait_packet_fill")
+        a.abs16(0xCD, "wait_field")
+        a.abs16(0xCD, "producer_one")
+        a.rel8(0x18, "wait_packet")
 
-    # Consume one complete packet from the RAM ring without disk accesses.
-    a.label("ring_packet")
-    a.emit(0x2A); a.abs16([], "sector_pointer")
-    a.emit(0x7E); ld_mem_a(a, "packet_remaining")
-    a.emit(0x11); a.word(3); a.emit(0x19)
-    a.emit(0x11); a.abs16([], "ay_state")
-    a.emit(0x01); a.word(source.AY_STATE_BYTES)
-    a.emit(0xED, 0xB0)
-    a.emit(0x2A); a.abs16([], "sector_pointer")
-    a.emit(0x11); a.word(PACKET_FIRST_HEADER); a.emit(0x19, 0xE5, 0xDD, 0xE1)
-    a.abs16(0xCD, "command_loop")
-    a.abs16(0xCD, "consume_sector")
-    a.label("ring_packet_more")
-    ld_a_mem(a, "packet_remaining"); a.emit(0xB7, 0xC8)
-    a.abs16(0xCD, "prepare_read_sector")
-    a.emit(0x2A); a.abs16([], "sector_pointer")
-    a.emit(0xE5, 0xDD, 0xE1)
-    a.abs16(0xCD, "command_loop")
-    a.abs16(0xCD, "consume_sector")
-    a.rel8(0x18, "ring_packet_more")
+        # Consume one complete packet from the RAM ring without disk accesses.
+        a.label("ring_packet")
+        a.emit(0x2A); a.abs16([], "sector_pointer")
+        a.emit(0x7E); ld_mem_a(a, "packet_remaining")
+        a.emit(0x11); a.word(3); a.emit(0x19)
+        a.emit(0x11); a.abs16([], "ay_state")
+        a.emit(0x01); a.word(source.AY_STATE_BYTES)
+        a.emit(0xED, 0xB0)
+        a.emit(0x2A); a.abs16([], "sector_pointer")
+        a.emit(0x11); a.word(PACKET_FIRST_HEADER); a.emit(0x19, 0xE5, 0xDD, 0xE1)
+        a.abs16(0xCD, "command_loop")
+        a.abs16(0xCD, "consume_sector")
+        a.label("ring_packet_more")
+        ld_a_mem(a, "packet_remaining"); a.emit(0xB7, 0xC8)
+        a.abs16(0xCD, "prepare_read_sector")
+        a.emit(0x2A); a.abs16([], "sector_pointer")
+        a.emit(0xE5, 0xDD, 0xE1)
+        a.abs16(0xCD, "command_loop")
+        a.abs16(0xCD, "consume_sector")
+        a.rel8(0x18, "ring_packet_more")
 
     a.label("consume_sector")
     a.emit(0x2A); a.abs16([], "ring_count")
     a.emit(0x2B); a.abs16(0x22, "ring_count")
-    ld_a_mem(a, "packet_remaining"); a.emit(0x3D); ld_mem_a(a, "packet_remaining")
+    if not packed:
+        ld_a_mem(a, "packet_remaining"); a.emit(0x3D); ld_mem_a(a, "packet_remaining")
     ld_a_mem(a, "ring_read_region"); a.emit(0xB7)
     a.rel8(0x20, "consume_banked")
-    ld_a_mem(a, "ring_read_high"); a.emit(0x3C, 0xFE, 0xBF)
+    ld_a_mem(a, "ring_read_high"); a.emit(0x3C, 0xFE, ring_end_high)
     a.rel8(0x20, "consume_store_high")
     a.emit(0x3E, 1); ld_mem_a(a, "ring_read_region")
     a.emit(0x3E, 0xC0)
@@ -738,25 +761,28 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     ld_mem_a(a, "ring_read_high")
     a.emit(0xC9)
 
-    # Make the current read sector visible at a stable address. Banked sectors
-    # are copied through BF00h because bank 7 may simultaneously be the target.
-    a.label("prepare_read_sector")
-    ld_a_mem(a, "ring_read_region"); a.emit(0xB7)
-    a.rel8(0x28, "prepare_fixed")
-    a.abs16(0xCD, "page_queue_region")
-    ld_a_mem(a, "ring_read_high"); a.emit(0x67, 0x2E, 0)
-    a.emit(0x11); a.word(STAGING_SECTOR)
-    a.emit(0x01); a.word(base.SECTOR_SIZE)
-    a.emit(0xED, 0xB0)
-    a.abs16(0xCD, "page_bank7")
-    a.emit(0x21); a.word(STAGING_SECTOR)
-    a.abs16(0x22, "sector_pointer")
-    a.emit(0xC9)
-    a.label("prepare_fixed")
-    ld_a_mem(a, "ring_read_high"); a.emit(0x67, 0x2E, 0)
-    a.abs16(0x22, "sector_pointer")
-    a.abs16(0xCD, "page_bank7")
-    a.emit(0xC9)
+    if packed:
+        packed_format.emit_prepare_sector(a)
+    else:
+        # Make the current read sector visible at a stable address. Banked sectors
+        # are copied through BF00h because bank 7 may simultaneously be the target.
+        a.label("prepare_read_sector")
+        ld_a_mem(a, "ring_read_region"); a.emit(0xB7)
+        a.rel8(0x28, "prepare_fixed")
+        a.abs16(0xCD, "page_queue_region")
+        ld_a_mem(a, "ring_read_high"); a.emit(0x67, 0x2E, 0)
+        a.emit(0x11); a.word(STAGING_SECTOR)
+        a.emit(0x01); a.word(base.SECTOR_SIZE)
+        a.emit(0xED, 0xB0)
+        a.abs16(0xCD, "page_bank7")
+        a.emit(0x21); a.word(STAGING_SECTOR)
+        a.abs16(0x22, "sector_pointer")
+        a.emit(0xC9)
+        a.label("prepare_fixed")
+        ld_a_mem(a, "ring_read_high"); a.emit(0x67, 0x2E, 0)
+        a.abs16(0x22, "sector_pointer")
+        a.abs16(0xCD, "page_bank7")
+        a.emit(0xC9)
 
     # Read at most one future sector. The caller supplies the display-field
     # pacing, so startup can call this routine without waits.
@@ -764,7 +790,7 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     a.emit(0x2A); a.abs16([], "disk_sectors_remaining")
     a.emit(0x7C, 0xB5, 0xC8)
     a.emit(0x2A); a.abs16([], "ring_count")
-    a.emit(0x11); a.word(RING_CAPACITY_SECTORS)
+    a.emit(0x11); a.word(ring_capacity)
     a.emit(0xAF, 0xED, 0x52, 0xD0)
     ld_a_mem(a, "ring_write_region"); a.emit(0xB7)
     a.rel8(0x28, "producer_fixed")
@@ -778,7 +804,7 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
     a.emit(0x2B); a.abs16(0x22, "disk_sectors_remaining")
     ld_a_mem(a, "ring_write_region"); a.emit(0xB7)
     a.rel8(0x20, "producer_banked")
-    ld_a_mem(a, "ring_write_high"); a.emit(0x3C, 0xFE, 0xBF)
+    ld_a_mem(a, "ring_write_high"); a.emit(0x3C, 0xFE, ring_end_high)
     a.rel8(0x20, "producer_store_high")
     a.emit(0x3E, 1); ld_mem_a(a, "ring_write_region")
     a.emit(0x3E, 0xC0)
@@ -1085,6 +1111,8 @@ def build_player(video_track: int, video_sector: int) -> tuple[bytes, dict[str, 
         ("span_count", 1), ("span_token", 1), ("span_length", 1),
     ):
         a.label(name); a.emit(*([0] * size))
+    if packed:
+        packed_format.emit_variables(a)
     a.label("queue_banks"); a.emit(*RING_BANKS)
     a.label("row_addresses")
     for y in range(source.LOGICAL_HEIGHT):
@@ -1110,20 +1138,23 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source-build", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--packing", choices=("contiguous", "sector"), default="contiguous")
     args = parser.parse_args()
+    packed = args.packing == "contiguous"
+    ring_capacity = packed_format.RING_CAPACITY_SECTORS if packed else RING_CAPACITY_SECTORS
     source_stream = args.source_build / "VIDEO_full.C.bin"
     metadata = json.loads((args.source_build / "build_metadata.json").read_text())
     states, ay_states, frame_rate = decode_compact_build(source_stream)
     args.output.mkdir(parents=True, exist_ok=True)
 
     boot = streaming.build_boot_basic()
-    provisional, _ = build_player(0, 0)
+    provisional, _ = build_player(0, 0, packed=packed)
     preceding = [
         base.TrdFile("boot", "B", boot, basic_variables_offset=len(boot), autostart_line=10),
         base.TrdFile("PLAYER", "C", provisional, start=LOAD_ADDRESS),
     ]
     video_track, video_sector = streaming.calculate_file_start(preceding)
-    player, labels = build_player(video_track, video_sector)
+    player, labels = build_player(video_track, video_sector, packed=packed)
     boot_sectors = math.ceil((len(boot) + 4) / base.SECTOR_SIZE)
     player_sectors = math.ceil(len(player) / base.SECTOR_SIZE)
     limit = TRD_DATA_SECTORS - boot_sectors - player_sectors
@@ -1139,8 +1170,8 @@ def main() -> None:
     packing_sectors_saved = 0
     packet_padding_bytes = 0
     while start < len(states):
-        end, packets = make_volume_packets(states, ay_states, start, limit)
-        video = serialize_volume(packets, frame_rate)
+        end, packets = make_volume_packets(states, ay_states, start, limit, packed=packed)
+        video = serialize_volume(packets, frame_rate, packed=packed)
         chunks = [
             video[offset:offset + MAX_TRDOS_FILE_SECTORS * base.SECTOR_SIZE]
             for offset in range(0, len(video), MAX_TRDOS_FILE_SECTORS * base.SECTOR_SIZE)
@@ -1153,8 +1184,13 @@ def main() -> None:
         trd, directory, stats = streaming.place_files(files, f"FST{index:02d}")
         name = f"big_buck_bunny_2min_zx_fast_sparse_25over3fps_part{index:02d}.trd"
         (args.output / name).write_bytes(trd)
-        counts = [packet.sector_count for packet in packets]
-        startup_backlog = minimum_startup_backlog(counts)
+        if packed:
+            lengths = [len(packed_format.frame_bytes(packet)) for packet in packets]
+            counts = packed_format.sector_demands(lengths)
+            startup_backlog = packed_format.minimum_startup_backlog(lengths)
+        else:
+            counts = [packet.sector_count for packet in packets]
+            startup_backlog = minimum_startup_backlog(counts)
         all_sector_counts += counts
         rle_frames += sum(packet.rle_rows > 0 for packet in packets)
         rle_rows += sum(packet.rle_rows for packet in packets)
@@ -1162,14 +1198,14 @@ def main() -> None:
         motion_rows += sum(packet.motion_rows for packet in packets)
         rle_sectors_saved += sum(packet.sectors_saved for packet in packets)
         packing_sectors_saved += sum(packet.packing_sectors_saved for packet in packets)
-        packet_padding_bytes += sum(packet.padding_bytes for packet in packets)
+        packet_padding_bytes += (-sum(lengths) % 256 if packed else sum(packet.padding_bytes for packet in packets))
         volumes.append({
             "index": index, "trd_name": name, "frame_start": start,
             "frame_end": end, "frames": end - start,
             "packet_sectors": counts,
             "packet_sector_total": sum(counts),
             "startup_backlog_sectors": startup_backlog,
-            "ring_capacity_sectors": RING_CAPACITY_SECTORS,
+            "ring_capacity_sectors": ring_capacity,
             "directory": directory, "trd_stats": stats,
         })
         start = end
@@ -1177,13 +1213,14 @@ def main() -> None:
     (args.output / "PLAYER.C.bin").write_bytes(player)
     output_metadata = {
         "profile": "banked_ring_fast_sparse_direct_screen", "frame_rate": frame_rate,
+        "packing": args.packing, "video_version": packed_format.VERSION if packed else VIDEO_VERSION,
         "frames": len(states), "player_labels": labels, "player_bytes": len(player),
         "video_track": video_track, "video_sector": video_sector,
         "volumes": volumes, "trd_names": [v["trd_name"] for v in volumes],
         "packet_sector_mean": sum(all_sector_counts) / len(all_sector_counts),
         "packet_sector_max": max(all_sector_counts),
         "packets_over_six": sum(value > 6 for value in all_sector_counts),
-        "ring_capacity_sectors": RING_CAPACITY_SECTORS,
+        "ring_capacity_sectors": ring_capacity,
         "disk_sectors_per_frame": FIELDS_PER_FRAME,
         "cycle_model": {
             "unit": "Z80 T-states",
@@ -1205,6 +1242,7 @@ def main() -> None:
             "copy_visible_row": COPY_VISIBLE_ROW_CYCLES,
             "compression_cpu_regression_limit_percent": 10,
         },
+        "transport_cycle_reference": "PACKED_STREAM_V7_ru.md",
         "rle_frames": rle_frames,
         "rle_rows": rle_rows,
         "motion_frames": motion_frames,
@@ -1214,6 +1252,11 @@ def main() -> None:
         "packet_padding_bytes": packet_padding_bytes,
         "source_metadata": metadata,
     }
+    if packed:
+        output_metadata["legacy_sector_layout_estimates"] = {
+            key: output_metadata.pop(key)
+            for key in ("rle_sectors_saved", "packing_sectors_saved")
+        }
     (args.output / "build_metadata.json").write_text(json.dumps(output_metadata, indent=2), encoding="utf-8")
     print(json.dumps({key: value for key, value in output_metadata.items() if key not in ("volumes", "source_metadata")}, indent=2))
     for volume in volumes:

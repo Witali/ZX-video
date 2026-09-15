@@ -1,0 +1,282 @@
+"""Execute generated Z80 players; validate every frame/AY and count CPU T-states.
+
+TR-DOS sector reads are mocked. Timings exclude ROM execution, ULA contention,
+interrupt service, HALT waiting and physical disk latency; use Fuse for those.
+Instruction timings: Zilog UM0080, https://www.zilog.com/docs/z80/um0080.pdf.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+from validate_streaming_player import CPU as MemoryCPU, extract_file, parse_dir
+
+
+class CPU(MemoryCPU):
+    registers = ("b", "c", "d", "e", "h", "l", None, "a")
+
+    def __init__(self, player: bytes, trd: bytes):
+        super().__init__(player, trd)
+        self.ix = 0
+        self.tstates = 0
+        self.ay_register = 0
+        self.ay = bytearray(16)
+
+    def reg(self, index):
+        return self.read8(self.hl()) if index == 6 else getattr(self, self.registers[index])
+
+    def put(self, index, value):
+        if index == 6:
+            self.write8(self.hl(), value)
+        else:
+            setattr(self, self.registers[index], value & 255)
+
+    def pair(self, index):
+        return (self.bc(), self.de(), self.hl(), self.sp)[index]
+
+    def set_pair(self, index, value):
+        if index == 3:
+            self.sp = value & 65535
+        else:
+            (self.set_bc, self.set_de, self.set_hl)[index](value)
+
+    def condition(self, index):
+        if index > 3:
+            raise RuntimeError("unimplemented condition")
+        return (not self.z, self.z, not self.carry, self.carry)[index]
+
+    def step(self):
+        before = self.pc
+        try:
+            cycles = self.instruction()
+        except Exception as exc:
+            raise RuntimeError(f"at {before:04X}: {exc}") from exc
+        self.tstates += cycles
+        self.steps += 1
+
+    def instruction(self):
+        op = self.fetch8()
+        if op in (0, 0xF3, 0xFB):
+            return 4
+        if op == 0x76:
+            self.halts += 1
+            return 4
+        if op == 0xDD:
+            q = self.fetch8()
+            if q == 0x21:
+                self.ix = self.fetch16(); return 14
+            if q == 0x23:
+                self.ix = (self.ix + 1) & 65535; return 10
+            if q == 0xE5:
+                self.push(self.ix); return 15
+            if q == 0xE1:
+                self.ix = self.pop(); return 14
+            if q & 0xC7 == 0x46:
+                displacement = self.rel()
+                self.put((q >> 3) & 7, self.read8(self.ix + displacement)); return 19
+            raise RuntimeError(f"unsupported DD {q:02X}")
+        if 0x40 <= op < 0x80:
+            dest, source = (op >> 3) & 7, op & 7
+            self.put(dest, self.reg(source))
+            return 7 if 6 in (dest, source) else 4
+        if op & 0xC7 == 0x06:
+            register = (op >> 3) & 7
+            self.put(register, self.fetch8())
+            return 10 if register == 6 else 7
+        if op & 0xCF == 0x01:
+            self.set_pair(op >> 4, self.fetch16()); return 10
+        if op & 0xCF in (0x03, 0x0B):
+            index = op >> 4
+            self.set_pair(index, self.pair(index) + (1 if op & 8 == 0 else -1))
+            return 6
+        if op & 0xCF == 0x09:
+            value = self.hl() + self.pair(op >> 4)
+            self.set_hl(value); self.carry = value > 65535; return 11
+        if op & 0xC7 in (0x04, 0x05):
+            register = (op >> 3) & 7
+            value = (self.reg(register) + (1 if op & 1 == 0 else -1)) & 255
+            self.put(register, value); self.z = value == 0
+            return 11 if register == 6 else 4
+        if op in (0x02, 0x12):
+            self.write8(self.bc() if op == 2 else self.de(), self.a); return 7
+        if op in (0x0A, 0x1A):
+            self.a = self.read8(self.bc() if op == 10 else self.de()); return 7
+        if op in (0x32, 0x3A):
+            address = self.fetch16()
+            if op == 0x32: self.write8(address, self.a)
+            else: self.a = self.read8(address)
+            return 13
+        if op in (0x22, 0x2A):
+            address = self.fetch16()
+            if op == 0x22:
+                self.write8(address, self.l); self.write8(address + 1, self.h)
+            else:
+                self.set_hl(self.read8(address) | self.read8(address + 1) << 8)
+            return 16
+        if 0x80 <= op < 0xC0 or op & 0xC7 == 0xC6:
+            immediate = op >= 0xC0
+            value = self.fetch8() if immediate else self.reg(op & 7)
+            operation = (op >> 3) & 7
+            if operation in (0, 1):
+                result = self.a + value + (int(self.carry) if operation == 1 else 0)
+                self.carry = result > 255
+            elif operation in (2, 3, 7):
+                result = self.a - value - (int(self.carry) if operation == 3 else 0)
+                self.carry = result < 0
+            else:
+                result = (self.a & value, self.a ^ value, self.a | value)[operation - 4]
+                self.carry = False
+            self.z = result & 255 == 0
+            if operation != 7: self.a = result & 255
+            return 7 if immediate or op & 7 == 6 else 4
+        if op == 0x0F:
+            self.carry = bool(self.a & 1)
+            self.a = (self.a >> 1) | ((self.a & 1) << 7); return 4
+        if op == 0xEB:
+            old = self.hl(); self.set_hl(self.de()); self.set_de(old); return 4
+        if op in (0xC5, 0xD5, 0xE5, 0xF5, 0xC1, 0xD1, 0xE1, 0xF1):
+            index = (op >> 4) & 3
+            if op & 4:
+                value = self.pair(index) if index < 3 else self.a << 8 | int(self.z) << 6 | int(self.carry)
+                self.push(value); return 11
+            value = self.pop()
+            if index < 3: self.set_pair(index, value)
+            else:
+                self.a = value >> 8; self.z = bool(value & 64); self.carry = bool(value & 1)
+            return 10
+        if op in (0xC3, 0xC2, 0xCA, 0xD2, 0xDA):
+            target = self.fetch16()
+            if op == 0xC3 or self.condition((op >> 3) & 7): self.pc = target
+            return 10
+        if op in (0xCD, 0xC4, 0xCC, 0xD4, 0xDC):
+            target = self.fetch16()
+            if op != 0xCD and not self.condition((op >> 3) & 7): return 10
+            if target == 0x3D13: self.mock_trdos()
+            else: self.push(self.pc); self.pc = target
+            return 17
+        if op in (0xC9, 0xC0, 0xC8, 0xD0, 0xD8):
+            if op != 0xC9 and not self.condition((op >> 3) & 7): return 5
+            self.pc = self.pop()
+            return 10 if op == 0xC9 else 11
+        if op in (0x18, 0x20, 0x28, 0x30, 0x38, 0x10):
+            distance = self.rel()
+            if op == 0x10:
+                self.b = (self.b - 1) & 255; take = self.b != 0
+            else:
+                take = op == 0x18 or self.condition((op - 0x20) >> 3)
+            if take: self.pc = (self.pc + distance) & 65535
+            return (13 if take else 8) if op == 0x10 else (12 if take else 7)
+        if op == 0xD3:
+            self.fetch8(); return 11
+        if op == 0xCB:
+            q = self.fetch8(); register = q & 7; value = self.reg(register)
+            if q & 0xC0 == 0x40:
+                self.z = value & (1 << ((q >> 3) & 7)) == 0
+                return 12 if register == 6 else 8
+            if q & 0xF8 == 0x38:
+                self.carry = bool(value & 1); value >>= 1
+                self.put(register, value); self.z = value == 0
+                return 15 if register == 6 else 8
+            raise RuntimeError(f"unsupported CB {q:02X}")
+        if op == 0xED:
+            q = self.fetch8()
+            if q == 0x79:
+                port = self.bc()
+                if port == 0x7FFD:
+                    if (self.port_7ffd ^ self.a) & 8: self.screen_page_toggles += 1
+                    self.port_7ffd = self.a
+                elif port == 0xFFFD: self.ay_register = self.a & 15
+                elif port == 0xBFFD: self.ay[self.ay_register] = self.a
+                return 12
+            if q & 0xCF in (0x43, 0x4B):
+                index = (q >> 4) & 3; address = self.fetch16()
+                if q & 8:
+                    self.set_pair(index, self.read8(address) | self.read8(address + 1) << 8)
+                else:
+                    value = self.pair(index)
+                    self.write8(address, value); self.write8(address + 1, value >> 8)
+                return 20
+            if q & 0xCF == 0x42:
+                value = self.hl() - self.pair((q >> 4) & 3) - int(self.carry)
+                self.set_hl(value); self.carry = value < 0; self.z = self.hl() == 0; return 15
+            if q == 0x44:
+                self.carry = self.a != 0; self.a = (-self.a) & 255; self.z = self.a == 0; return 8
+            if q in (0xB0, 0xB8):
+                count = self.bc() or 65536
+                step = 1 if q == 0xB0 else -1
+                source, dest = self.hl(), self.de()
+                for _ in range(count):
+                    self.write8(dest, self.read8(source))
+                    source = (source + step) & 65535; dest = (dest + step) & 65535
+                self.set_hl(source); self.set_de(dest); self.set_bc(0)
+                return 21 * count - 5
+            raise RuntimeError(f"unsupported ED {q:02X}")
+        raise RuntimeError(f"unsupported opcode {op:02X}")
+
+
+def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000):
+    import build_long_video_trd as compact
+    trd = path.read_bytes()
+    player = extract_file(trd, next(e for e in parse_dir(trd) if e[0] == 'PLAYER'))
+    cpu = CPU(player, trd)
+    screens = [b"".join(compact.expand_compact_screen(state)) for state in states]
+    decoded = 0
+    delivery_start = None
+    delivery_cycles = []
+    underflows = 0
+    while cpu.steps < max_steps:
+        if cpu.pc in [labels[name] for name in ('wait_packet_fill', 'stream_byte_fill') if name in labels]:
+            underflows += 1
+        if cpu.pc == labels['fatal']:
+            raise AssertionError(f"player entered fatal at frame {decoded}")
+        if cpu.pc == labels['main_loop']:
+            local = decoded
+            newest_bank = 5 if local % 2 == 0 else 7
+            other_bank = 7 if newest_bank == 5 else 5
+            assert bytes(cpu.banks[newest_bank][:6912]) == screens[local], f"frame {local}, bank {newest_bank}"
+            assert bytes(cpu.banks[other_bank][:6912]) == screens[max(0, local-1)], f"reference bank at {local}"
+            assert bytes(cpu.ay[r] for r in (0,1,2,3,4,5,8,9,10)) == ay_states[local], f"AY {local}"
+            assert (7 if cpu.port_7ffd & 8 else 5) == newest_bank, f"visible bank {local}"
+            decoded += 1
+            if decoded == len(states): break
+            delivery_start = cpu.tstates
+        if cpu.pc == labels['prefetch_loop'] and delivery_start is not None:
+            delivery_cycles.append(cpu.tstates - delivery_start)
+            delivery_start = None
+        cpu.step()
+    else:
+        raise AssertionError("instruction limit exceeded")
+    assert underflows == 0, f"{underflows} ring underflows"
+    return dict(frames=decoded, instructions=cpu.steps, cpu_tstates=cpu.tstates,
+                delivery_tstates=delivery_cycles, dos_reads=cpu.dos_reads,
+                disk_bytes=cpu.bytes_read, underflows=underflows, minimum_sp=cpu.min_sp)
+
+
+def main():
+    import build_fast_sparse_trd as codec
+    parser = argparse.ArgumentParser()
+    parser.add_argument('build', type=Path)
+    parser.add_argument('--source-build', type=Path, required=True)
+    parser.add_argument('--output', type=Path)
+    args = parser.parse_args()
+    meta = json.loads((args.build/'build_metadata.json').read_text())
+    states, ay_states, _ = codec.decode_compact_build(args.source_build/'VIDEO_full.C.bin')
+    results = []
+    for volume in meta['volumes']:
+        start, end = volume['frame_start'], volume['frame_end']
+        result = validate_volume(args.build/volume['trd_name'], meta['player_labels'], states[start:end], ay_states[start:end])
+        results.append(result)
+        print(f"Verified frames {start}..{end-1}; {result['dos_reads']} sector reads", flush=True)
+    cycles = [n for result in results for n in result['delivery_tstates']]
+    report = dict(scope='player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency',
+                  timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
+                  delivery_scope='main_loop through first prefetch_loop, excluding frame zero',
+                  frames=sum(r['frames'] for r in results),
+                  delivery_tstates_mean=sum(cycles)/len(cycles), delivery_tstates_max=max(cycles),
+                  volumes=results)
+    if args.output: args.output.write_text(json.dumps(report, indent=2))
+    print(json.dumps({key: value for key, value in report.items() if key != 'volumes'}, indent=2))
+
+
+if __name__ == '__main__': main()

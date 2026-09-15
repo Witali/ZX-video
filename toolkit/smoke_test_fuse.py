@@ -82,14 +82,17 @@ def main() -> None:
         next_breakpoint += 1
 
     if args.forbid_underflow:
-        underflow = int(metadata["player_labels"]["wait_packet_fill"])
-        debugger_commands += (
-            f"breakpoint 0x{underflow:04X}",
-            f"commands {next_breakpoint}",
-            f"exit {FORBIDDEN_READ_EXIT}",
-            "end",
-        )
-        next_breakpoint += 1
+        for name in ("wait_packet_fill", "stream_byte_fill"):
+            if name not in metadata["player_labels"]:
+                continue
+            underflow = int(metadata["player_labels"][name])
+            debugger_commands += (
+                f"breakpoint 0x{underflow:04X}",
+                f"commands {next_breakpoint}",
+                f"exit {FORBIDDEN_READ_EXIT}",
+                "end",
+            )
+            next_breakpoint += 1
 
     main_breakpoint = next_breakpoint
 
