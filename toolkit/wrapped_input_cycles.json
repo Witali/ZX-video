@@ -1,0 +1,96 @@
+{
+  "baseline_commit": "de43e1b",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "each routine entry through RET, without invoking CALL; whole block sums load, slices and release",
+  "exclusions": [
+    "IRQ",
+    "ULA contention",
+    "ROM service",
+    "disk latency",
+    "drawing",
+    "scheduler"
+  ],
+  "assumptions": "6400 decoded bytes: 128 distinct literals repeated 50 times; stored or upstream ZX0 137-byte fixture",
+  "routines": {
+    "load_c004_6000": {
+      "previous_tstates": 161,
+      "current_tstates": 181,
+      "delta": 20
+    },
+    "load_fbf0_1040": {
+      "previous_tstates": 171,
+      "current_tstates": 196,
+      "delta": 25
+    },
+    "load_f004_6000": {
+      "previous_tstates": 143701,
+      "current_tstates": 198,
+      "delta": -143503
+    },
+    "compressed_c004_whole": {
+      "previous_tstates": 136642,
+      "current_tstates": 136696,
+      "delta": 54
+    },
+    "compressed_c004_sliced": {
+      "previous_tstates": 141688,
+      "current_tstates": 141742,
+      "delta": 54
+    },
+    "compressed_fff0_whole": {
+      "previous_tstates": 140825,
+      "current_tstates": 137617,
+      "delta": -3208
+    },
+    "compressed_fff0_sliced": {
+      "previous_tstates": 145253,
+      "current_tstates": 142692,
+      "delta": -2561
+    },
+    "compressed_ffff_whole": {
+      "previous_tstates": 140825,
+      "current_tstates": 137436,
+      "delta": -3389
+    },
+    "compressed_ffff_sliced": {
+      "previous_tstates": 145253,
+      "current_tstates": 142482,
+      "delta": -2771
+    },
+    "stored_c004_whole": {
+      "previous_tstates": 139560,
+      "current_tstates": 139678,
+      "delta": 118
+    },
+    "stored_c004_sliced": {
+      "previous_tstates": 144612,
+      "current_tstates": 144730,
+      "delta": 118
+    },
+    "stored_f004_whole": {
+      "previous_tstates": 288489,
+      "current_tstates": 140182,
+      "delta": -148307
+    },
+    "stored_f004_sliced": {
+      "previous_tstates": 292923,
+      "current_tstates": 145234,
+      "delta": -147689
+    }
+  },
+  "input_increment": {
+    "previous_tstates": 6,
+    "current_without_wrap": 24,
+    "delta": 18
+  },
+  "wrap_helper_tstates": {
+    "1": 248,
+    "5": 250
+  },
+  "literal_no_wrap_overhead": 96,
+  "begin_selection_delta": {
+    "contiguous_compressed": 34,
+    "wrapped_compressed": 24,
+    "stored": 2
+  }
+}

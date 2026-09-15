@@ -51,7 +51,7 @@ def emit_wait(a, *, lookahead=False, output_base=0x8000, direct_input=False):
     a.label('slice_frame_valid');a.abs16(0xC3,'ahead_decode' if lookahead else 'slice_until')
 
 
-def emit_decoder(a, *, output_base=0x8000, stack_top=STACK_TOP, direct_input=False):
+def emit_decoder(a, *, output_base=0x8000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False):
     a.label('slice_until')
     a.abs16(0xCD,'slice_sync_target')
     a.abs16(0x2A,'slice_output');a.abs16((0xED,0x5B),'slice_target')
@@ -72,8 +72,13 @@ def emit_decoder(a, *, output_base=0x8000, stack_top=STACK_TOP, direct_input=Fal
     else:a.emit(0x21);a.word(0xA000)
     a.emit(0x11);a.word(output_base)
     a.abs16(0x3A,'block_stored');a.emit(0xB7)
-    a.abs16(0xCA,'dzx0_turbo')
-    a.abs16((0xED,0x4B),'block_length');a.abs16(0xCD,'slice_copy')
+    if wrapped_input:
+        a.rel8(0x20,'slice_stored')
+        a.abs16(0x3A,'direct_cross');a.emit(0xB7);a.abs16(0xC2,'wrap_dzx0_turbo')
+        a.abs16(0xC3,'dzx0_turbo')
+        a.label('slice_stored')
+    else:a.abs16(0xCA,'dzx0_turbo')
+    a.abs16((0xED,0x4B),'block_length');a.abs16(0xCD,'wrapped_literal' if wrapped_input else 'slice_copy')
     a.emit(0xC9)
 
     a.label('slice_finished')
@@ -120,6 +125,9 @@ def emit_decoder(a, *, output_base=0x8000, stack_top=STACK_TOP, direct_input=Fal
     a.labels['slice_high_operand']=a.labels['slice_compare_high']+1
     a.labels['slice_low_operand']=a.labels['slice_compare_low']+1
     zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy')
+    if wrapped_input:
+        zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook='wrapped_literal',
+                              source_wrap='direct_wrap',label_prefix='wrap_')
 
 
 def emit_variables(a):

@@ -1,0 +1,232 @@
+{
+  "baseline_commit": "de43e1b",
+  "source_sha256": "5d42a94efb0343fb3415c12dcc616bb9403b02f8946d7e8fbfaf45e7030f26e6",
+  "baseline": {
+    "fuse": {
+      "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+      "clock_hz": 3546900,
+      "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+      "player_startup_ms": 3493.4260903887903,
+      "frames": 1000,
+      "frame_interval_mean_ms": 119.93400403702357,
+      "frame_interval_max_ms": 157.3013053652485,
+      "measured_fps": 8.337918908229733,
+      "rom_call_mean_ms": 7.908242186282758,
+      "rom_call_max_ms": 194.03084383546195,
+      "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+      "intervals_over_125ms": 5,
+      "late_frames": [
+        630,
+        631,
+        646,
+        661,
+        996
+      ],
+      "clock_deficit_fields_approx": -0.8395949681280399,
+      "rom_playback_seconds": 19.370778708167695
+    },
+    "cpu": {
+      "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+      "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+      "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+      "frames": 1000,
+      "delivery_tstates_mean": 124305.992992993,
+      "delivery_tstates_max": 524527,
+      "background_preparation_tstates_mean": 89088.70570570571,
+      "combined_preparation_tstates_mean": 213394.6986986987,
+      "background_quantum_max_tstates": 23665
+    },
+    "validation": {
+      "frames": 1000,
+      "instructions": 27864697,
+      "cpu_tstates": 221783588,
+      "dos_reads": 2518,
+      "background_quantum_count": 7467,
+      "background_quantum_max_tstates": 23665,
+      "disk_bytes": 644608,
+      "underflows": 0,
+      "minimum_sp": 40290,
+      "reserve_checks": 899,
+      "minimum_live_queue_before_flip": 79,
+      "injected_interrupts": 0
+    },
+    "disk": {
+      "player_bytes": 4864,
+      "video_payload_sectors": 2517,
+      "layout_padding_sectors": 3,
+      "stats": {
+        "used_sectors": 2541,
+        "free_sectors": 3,
+        "first_free_track": 159,
+        "first_free_sector": 13
+      }
+    },
+    "sha256": {
+      "PLAYER.C.bin": "f977e276c7b378c27bf6fd0130bb38093bfc500abd00f984b3504efe02f17ce7",
+      "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd": "62ff452a86c394967a1c24044d1522e21985aaa44045adbcd5734eaa736c587a"
+    }
+  },
+  "current": {
+    "fuse": {
+      "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+      "clock_hz": 3546900,
+      "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+      "player_startup_ms": 3482.3045476331445,
+      "frames": 1000,
+      "frame_interval_mean_ms": 119.94712522440962,
+      "frame_interval_max_ms": 135.02044038456117,
+      "measured_fps": 8.337006811368722,
+      "rom_call_mean_ms": 7.9226598461071704,
+      "rom_call_max_ms": 194.03535481688235,
+      "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+      "late_frames": [
+        630,
+        940
+      ],
+      "intervals_over_125ms": 2,
+      "clock_deficit_fields_approx": -0.1823207536526752,
+      "rom_playback_seconds": 19.376366122529532
+    },
+    "cpu": {
+      "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+      "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+      "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+      "frames": 1000,
+      "delivery_tstates_mean": 124331.38738738738,
+      "delivery_tstates_max": 461686,
+      "background_preparation_tstates_mean": 90823.27627627627,
+      "combined_preparation_tstates_mean": 215154.66366366367,
+      "background_quantum_max_tstates": 25804
+    },
+    "validation": {
+      "frames": 1000,
+      "instructions": 28503029,
+      "cpu_tstates": 223329954,
+      "dos_reads": 2518,
+      "background_quantum_count": 6807,
+      "background_quantum_max_tstates": 25804,
+      "disk_bytes": 644608,
+      "underflows": 0,
+      "minimum_sp": 40292,
+      "reserve_checks": 901,
+      "minimum_live_queue_before_flip": 83,
+      "injected_interrupts": 0
+    },
+    "disk": {
+      "player_bytes": 5120,
+      "video_payload_sectors": 2517,
+      "layout_padding_sectors": 2,
+      "stats": {
+        "used_sectors": 2541,
+        "free_sectors": 3,
+        "first_free_track": 159,
+        "first_free_sector": 13
+      }
+    },
+    "sha256": {
+      "PLAYER.C.bin": "53dcae4db8619bc8c86212d5dab9af5b6066149fe0f8869cbc9ef0d9e1b127b2",
+      "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd": "551bd18423f11aca4efc7c77925577340e3da67516373038517e570d92bd7ae0"
+    }
+  },
+  "logical_video_identical": true,
+  "logical_video_sha256": "8f711f9ab2f989a6cbc94a290c6c9237ba7ca0ef742a13044798e4ecc0923543",
+  "tests_passed": 70,
+  "direct_blocks": 73,
+  "wrapped_blocks": 39,
+  "copied_blocks": 0,
+  "discarded_schedule_experiments": {
+    "build_final_field": {
+      "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+      "clock_hz": 3546900,
+      "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+      "player_startup_ms": 3491.4736812427755,
+      "frames": 1000,
+      "frame_interval_mean_ms": 119.9487372568091,
+      "frame_interval_max_ms": 157.30412472863628,
+      "measured_fps": 8.336894767462283,
+      "rom_call_mean_ms": 7.9069551716275095,
+      "rom_call_max_ms": 194.00039471087428,
+      "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+      "late_frames": [
+        630,
+        631,
+        646,
+        661,
+        996
+      ],
+      "intervals_over_125ms": 5,
+      "clock_deficit_fields_approx": -0.10200541546782915,
+      "rom_playback_seconds": 19.36934167864896,
+      "final_quanta": 264,
+      "crossed_irq": 0,
+      "maximum_finish_phase": 18949
+    },
+    "build_cpu_priority128": {
+      "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+      "clock_hz": 3546900,
+      "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+      "player_startup_ms": 3493.905100228368,
+      "frames": 1000,
+      "frame_interval_mean_ms": 119.93727297457315,
+      "frame_interval_max_ms": 242.63807832191492,
+      "measured_fps": 8.337691654970355,
+      "rom_call_mean_ms": 7.903189904475795,
+      "rom_call_max_ms": 193.44554399616567,
+      "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+      "late_frames": [
+        631,
+        646,
+        680,
+        996
+      ],
+      "intervals_over_125ms": 4,
+      "clock_deficit_fields_approx": -0.6763411744796031,
+      "rom_playback_seconds": 19.360947588034623
+    },
+    "build_cpu_priority192_eof": {
+      "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+      "clock_hz": 3546900,
+      "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+      "player_startup_ms": 3493.1063745806196,
+      "frames": 1000,
+      "frame_interval_mean_ms": 119.93829009025377,
+      "frame_interval_max_ms": 242.63864219459245,
+      "measured_fps": 8.33762094863532,
+      "rom_call_mean_ms": 7.90538394535777,
+      "rom_call_max_ms": 193.41114776283516,
+      "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+      "late_frames": [
+        631,
+        646,
+        680,
+        996
+      ],
+      "intervals_over_125ms": 4,
+      "clock_deficit_fields_approx": -0.6253455181358731,
+      "rom_playback_seconds": 19.35970086554456
+    },
+    "build_bounded_priority": {
+      "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+      "clock_hz": 3546900,
+      "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+      "player_startup_ms": 3497.8324734275,
+      "frames": 1000,
+      "frame_interval_mean_ms": 119.9482213612863,
+      "frame_interval_max_ms": 157.3013053652485,
+      "measured_fps": 8.33693062432315,
+      "rom_call_mean_ms": 7.911017248485067,
+      "rom_call_max_ms": 194.0604471510333,
+      "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+      "late_frames": [
+        630,
+        631,
+        646,
+        661,
+        996
+      ],
+      "intervals_over_125ms": 5,
+      "clock_deficit_fields_approx": -0.12754555198262096,
+      "rom_playback_seconds": 19.359112182469197
+    }
+  }
+}

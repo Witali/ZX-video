@@ -100,7 +100,7 @@ def minimum_startup_backlog(lengths: list[int], capacity: int = RING_CAPACITY_SE
     raise ValueError("frame sequence exceeds packed ring capacity")
 
 
-def emit_transport(a, *, blocked: bool = False, input_limit=FRAME_BUFFER_BYTES, lookahead=False, direct_input=False) -> None:
+def emit_transport(a, *, blocked: bool = False, input_limit=FRAME_BUFFER_BYTES, lookahead=False, direct_input=False, wrapped_input=False) -> None:
     """Emit header reads and whole-frame copies from the banked sector ring."""
     def load(name):
         a.abs16(0x3A, name)
@@ -155,7 +155,7 @@ def emit_transport(a, *, blocked: bool = False, input_limit=FRAME_BUFFER_BYTES, 
     a.abs16(0xCD, "page_bank7"); a.emit(0xF1, 0xC9)
 
     a.label("load_block_body" if blocked else "ring_packet")
-    if direct_input:direct_ring_input.emit_load(a)
+    if direct_input:direct_ring_input.emit_load(a,wrapped_input=wrapped_input)
     a.abs16(0x2A, "frame_length"); a.abs16(0x22, "frame_remaining")
     a.emit(0x21); a.word(FRAME_BUFFER); a.abs16(0x22, "frame_destination")
     a.label("frame_copy_loop")
