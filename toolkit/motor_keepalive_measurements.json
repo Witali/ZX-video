@@ -1,0 +1,57 @@
+{
+  "baseline_commit": "8674c91",
+  "source_sha256": "5d42a94efb0343fb3415c12dcc616bb9403b02f8946d7e8fbfaf45e7030f26e6",
+  "baseline": {
+    "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+    "clock_hz": 3546900,
+    "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "player_startup_ms": 3556.66582085765,
+    "frames": 1000,
+    "frame_interval_mean_ms": 121.27108077374507,
+    "frame_interval_max_ms": 363.3079590628436,
+    "measured_fps": 8.245989015845382,
+    "rom_call_mean_ms": 8.359221407467926,
+    "rom_call_max_ms": 193.56423919478982,
+    "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+    "intervals_over_125ms": 238,
+    "sector_reads_including_header": 2524,
+    "scratch_reads": 6,
+    "playback_direct_reads_over_100ms": 6,
+    "rom_playback_seconds": 20.520776452676987
+  },
+  "current": {
+    "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+    "clock_hz": 3546900,
+    "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "player_startup_ms": 3557.7391524993654,
+    "frames": 1000,
+    "frame_interval_mean_ms": 121.20555160026248,
+    "frame_interval_max_ms": 224.76190476190476,
+    "measured_fps": 8.250447168443351,
+    "rom_call_mean_ms": 7.949526545497576,
+    "rom_call_max_ms": 193.41763229862696,
+    "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+    "intervals_over_125ms": 238,
+    "sector_reads_including_header": 2518,
+    "scratch_reads": 0,
+    "playback_direct_reads_over_100ms": 0,
+    "rom_playback_seconds": 19.373726634525923
+  },
+  "cpu": {
+    "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+    "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+    "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+    "frames": 1000,
+    "delivery_tstates_mean": 211101.76076076075,
+    "delivery_tstates_max": 605829
+  },
+  "blocks_identical_to_baseline": true,
+  "blocks": 112,
+  "payload_sectors": 2517,
+  "player_bytes": 4096,
+  "free_sectors": 5,
+  "files": {
+    "PLAYER.C.bin": "a16e1636a4d14769e23c796e6de8cc03c0bfa491f6890fe9c6bdcb0ce5de1914",
+    "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd": "c58307eea5f7891be3f642425a6b9c0960f860e78892697e6534b2bbdc6735fc"
+  }
+}

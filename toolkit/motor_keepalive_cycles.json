@@ -1,0 +1,35 @@
+{
+  "baseline_commit": "8674c91",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "producer_one entry through RET, including RAM CALL/JP; ROM bodies/returns excluded",
+  "exclusions": [
+    "ROM service",
+    "disk latency",
+    "ULA contention",
+    "interrupt execution"
+  ],
+  "assumptions": "full ring, logical track 3, sector 1, last read at field zero, interval 64 fields",
+  "routines": {
+    "not_due": {
+      "previous_tstates": 214,
+      "current_tstates": 214,
+      "delta": 0
+    },
+    "due": {
+      "previous_tstates": 929,
+      "current_tstates": 476,
+      "delta": -453
+    },
+    "eof": {
+      "previous_tstates": 125,
+      "current_tstates": 125,
+      "delta": 0
+    }
+  },
+  "irq_tstates": {
+    "before": 61,
+    "after": 61,
+    "delta": 0,
+    "slow_seek": 160
+  }
+}

@@ -31,3 +31,21 @@ def emit(a):
     playback_schedule.select_rom_clock(a,False)
     a.emit(0x3E,0x84,0x32);a.word(0x5CFE)
     a.emit(0xE1,0xC9)
+
+
+def emit_keepalive(a):
+    # SEEK with h=1, V=0 to the last-read cylinder keeps HLD active without
+    # stepping or waiting for a sector. The next stream track may differ.
+    # Preserve side, stream cursor, ring and pending READ command flags.
+    a.label('keepalive_seek');a.emit(0xF3)
+    playback_schedule.select_rom_clock(a,True)
+    a.emit(0x06,0)
+    a.abs16(0x21,'keepalive_seek_return');a.emit(0xE5,0x21);a.word(0x3E44)
+    a.emit(0xE5,0x3E,0xBE,0xED,0x47,0xED,0x5E)
+    # Set the target cylinder after I setup, which uses A.
+    a.abs16(0x3A,'fast_disk_track');a.emit(0xCB,0x3F,0xFB)
+    a.label('keepalive_seek_enter');a.emit(0xC3);a.word(0x3D2F)
+    a.label('keepalive_seek_return');a.emit(0xF3)
+    playback_schedule.select_rom_clock(a,False)
+    a.emit(0xD9);a.abs16(0x22,'elapsed_fields');a.abs16(0x22,'last_disk_fields')
+    a.emit(0xD9,0xC9)

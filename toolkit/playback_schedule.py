@@ -12,7 +12,7 @@ def minimum_queue(demands, startup, capacity, quota):
     return lowest
 
 
-def emit_producer(a, capacity, batch, *, keepalive_fields=0):
+def emit_producer(a, capacity, batch, *, keepalive_fields=0, cached_keepalive=False):
     def load(name): a.abs16(0x3A,name)
     def save(name): a.abs16(0x32,name)
     a.label('producer_one')
@@ -58,6 +58,9 @@ def emit_producer(a, capacity, batch, *, keepalive_fields=0):
         a.abs16(0x2A,'elapsed_fields');a.abs16((0xED,0x5B),'last_disk_fields')
         a.emit(0xB7,0xED,0x52,0x11);a.word(keepalive_fields)
         a.emit(0xB7,0xED,0x52,0xD8)
+        if cached_keepalive:
+            a.abs16(0xC3,'keepalive_seek')
+            return
         # Read into scratch while the ring is full. Preserve the next stream
         # sector and queue occupancy; it is consumed only by the real producer.
         load('disk_track');a.emit(0x57);load('disk_sector');a.emit(0x5F,0xD5)

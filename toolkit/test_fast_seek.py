@@ -51,5 +51,37 @@ class CachedSeekTests(unittest.TestCase):
         with self.assertRaises(ValueError):codec.build_player(0,0,cached_seek=True)
         with self.assertRaises(ValueError):codec.build_player(0,0,**{**OPTIONS,'full_rom_clock':False})
 
+    def test_keepalive_seeks_current_cylinder_without_reading_or_moving_cursor(self):
+        player,labels=codec.build_player(0,0,**OPTIONS,keepalive_fields=64)
+        for track in range(160):
+            for elapsed,last,remaining,due in ((63,0,5,False),(64,0,5,True),
+                                              (28,65500,5,True),(100,0,0,False)):
+                cpu=CPU(player,bytes(2560*256));cpu.port_7ffd=0x17;cpu.sp=0xBFF0
+                cpu.alt_l=elapsed&255;cpu.alt_h=elapsed>>8
+                for name,value in dict(elapsed_fields=elapsed,last_disk_fields=last,
+                                       ring_count=320,disk_sectors_remaining=remaining).items():
+                    cpu.write8(labels[name],value);cpu.write8(labels[name]+1,value>>8)
+                for name,value in dict(disk_track=(track+1)%160,disk_sector=0,
+                                       fast_disk_track=track,ring_write_region=1,ring_write_high=0xC0).items():
+                    cpu.write8(labels[name],value)
+                cpu.write8(0x5CFE,0x84)
+                before=[bytes(cpu.banks[i]) for i in (0,1,3,4,6,7)]
+                cpu.pc=labels['producer_one'];cpu.push(0x5F00)
+                while cpu.pc!=0x5F00:
+                    self.assertLess(cpu.steps,300);cpu.step()
+                self.assertEqual(cpu.dos_reads,0)
+                self.assertEqual(cpu.seek_calls,[(0x3E44,track//2,0)] if due else [])
+                self.assertEqual([bytes(cpu.banks[i]) for i in (0,1,3,4,6,7)],before)
+                for name,value in dict(disk_track=(track+1)%160,disk_sector=0,fast_disk_track=track,
+                                       ring_write_region=1,ring_write_high=0xC0).items():
+                    self.assertEqual(cpu.read8(labels[name]),value)
+                for name,value in dict(ring_count=320,disk_sectors_remaining=remaining,
+                                       last_disk_fields=elapsed if due else last).items():
+                    self.assertEqual(cpu.read8(labels[name])|cpu.read8(labels[name]+1)<<8,value)
+                self.assertEqual(cpu.read8(0x5CFE),0x84)
+                self.assertEqual((cpu.sp,cpu.a,cpu.alt_h*256+cpu.alt_l),(0xBFF0,0,elapsed))
+                if due:
+                    self.assertEqual(bytes(cpu.read8(0xBDBD+i) for i in range(3)),bytes.fromhex('d923d9'))
+
 
 if __name__=='__main__':unittest.main()

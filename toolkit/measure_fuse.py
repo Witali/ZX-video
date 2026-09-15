@@ -26,7 +26,8 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     if 'fast_read_enter' in labels: events.append((labels['fast_read_enter'],109))
     if 'disk_finish' in labels and 'fast_disk_return' in labels:
         events.append((labels['fast_disk_return'],103))
-    for entry,exit in (('seek_enter','seek_return'),('seek_side_enter','seek_side_return')):
+    for entry,exit in (('seek_enter','seek_return'),('seek_side_enter','seek_side_return'),
+                       ('keepalive_seek_enter','keepalive_seek_return')):
         if entry in labels:
             events.extend(((labels[entry],110),(labels[exit],103)))
     default_rom = fuse.parent/'roms/trdos.rom'

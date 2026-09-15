@@ -852,7 +852,8 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     # Read at most one future sector. The caller supplies the display-field
     # pacing, so startup can call this routine without waits.
     if read_batch != 1 or deadline:
-        playback_schedule.emit_producer(a,ring_capacity,read_batch,keepalive_fields=keepalive_fields)
+        playback_schedule.emit_producer(a,ring_capacity,read_batch,
+                                       keepalive_fields=keepalive_fields,cached_keepalive=cached_seek)
     else:
         a.label("producer_one")
         a.emit(0x2A); a.abs16([], "disk_sectors_remaining")
@@ -1253,6 +1254,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     a.label("finished_wait"); a.emit(0x76); a.rel8(0x18, "finished_wait")
     a.label("fatal"); a.emit(0x3E, 2, 0xD3, 0xFE); a.rel8(0x18, "fatal")
     if cached_seek: fast_seek.emit(a)
+    if cached_seek and keepalive_fields: fast_seek.emit_keepalive(a)
     if deadline:
         playback_schedule.emit_clock(a,dos_irq=irq_disk,full_rom_clock=full_rom_clock)
     elif clocked:
@@ -1483,10 +1485,11 @@ def main() -> None:
         "disk_layout": args.disk_layout,
         "zx0_decoding": args.zx0_decoding,
         "motor_keepalive_fields": args.motor_keepalive_fields,
+        "motor_keepalive_method": ("seek-current-cylinder" if args.disk_seek=='cached' else "scratch-sector-read") if args.motor_keepalive_fields else "disabled",
         "prefetch_quota": args.prefetch_quota,
         "rom_clock": args.rom_clock,
         "disk_seek": args.disk_seek,
-        "speed_cycle_reference": "STREAM_DRAWING_RESULTS_ru.md" if fast_draw else "INCREMENTAL_PLAYBACK_RESULTS_ru.md",
+        "speed_cycle_reference": "MOTOR_KEEPALIVE_RESULTS_ru.md" if args.disk_seek=='cached' and args.motor_keepalive_fields else "STREAM_DRAWING_RESULTS_ru.md" if fast_draw else "INCREMENTAL_PLAYBACK_RESULTS_ru.md",
         "frames": len(states), "player_labels": labels, "player_bytes": len(player),
         "video_track": video_track, "video_sector": video_sector,
         "volumes": volumes, "trd_names": [v["trd_name"] for v in volumes],
