@@ -108,10 +108,11 @@ def emit_hold_budget(a):
     a.abs16(0x32,'hold_counter')
 
 
-def emit_transport(a, *, input_limit=8192, incremental=False, lookahead=False):
+def emit_transport(a, *, input_limit=8192, incremental=False, lookahead=False,
+                   output_base=OUTPUT_BUFFER, stack_top=incremental_zx0.STACK_TOP):
     packed_stream.emit_transport(a,blocked=True,input_limit=input_limit,lookahead=lookahead)
     if incremental:
-        incremental_zx0.emit_wait(a,lookahead=lookahead)
+        incremental_zx0.emit_wait(a,lookahead=lookahead,output_base=output_base)
     else:
         a.label('wait_packet')
         a.abs16(0x2A,'block_frame_pointer')
@@ -128,10 +129,10 @@ def emit_transport(a, *, input_limit=8192, incremental=False, lookahead=False):
         a.abs16(0xCD,'load_block_body')
         a.abs16(0x2A,'block_length')
         # Output is 1..8192 bytes. The builder only emits whole nonempty frames.
-        a.emit(0x11); a.word(OUTPUT_BUFFER)
+        a.emit(0x11); a.word(output_base)
         a.emit(0x19); a.abs16(0x22,'block_end')
         a.emit(0x21); a.word(packed_stream.FRAME_BUFFER)
-        a.emit(0x11); a.word(OUTPUT_BUFFER)
+        a.emit(0x11); a.word(output_base)
         a.abs16(0x3A,'block_stored'); a.emit(0xB7)
         a.rel8(0x28,'block_unpack')
         a.abs16((0xED,0x4B),'block_length'); a.emit(0xED,0xB0)
@@ -141,7 +142,7 @@ def emit_transport(a, *, input_limit=8192, incremental=False, lookahead=False):
         a.label('block_unpacked')
         a.abs16(0x2A,'block_end'); a.emit(0xB7,0xED,0x52)
         a.abs16(0xC2,'fatal')
-        a.emit(0x21); a.word(OUTPUT_BUFFER)
+        a.emit(0x21); a.word(output_base)
         a.abs16(0x22,'block_frame_pointer'); a.emit(0xC9)
 
     a.label('ring_packet')
@@ -158,7 +159,7 @@ def emit_transport(a, *, input_limit=8192, incremental=False, lookahead=False):
     a.emit(0xED,0xB0,0xE5,0xDD,0xE1)
     a.abs16(0xCD,'command_loop'); a.emit(0xC9)
     if incremental:
-        incremental_zx0.emit_decoder(a)
+        incremental_zx0.emit_decoder(a,output_base=output_base,stack_top=stack_top)
     else:
         zx0_codec.emit_decoder(a,'turbo')
 

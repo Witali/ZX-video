@@ -39,7 +39,7 @@ class BlockedStreamTests(unittest.TestCase):
         self.assertEqual(result['disk_bytes'],logical_bytes)
         if clocked: self.assertGreater(result['injected_interrupts'],100)
         if player_options.get('lookahead'):
-            self.assertGreaterEqual(result['minimum_sp'],0x7D00)
+            self.assertGreaterEqual(result['minimum_sp'],0x9D00 if player_options.get('uncontended') else 0x7D00)
         elif player_options.get('incremental'):
             self.assertGreaterEqual(result['minimum_sp'],0x7D80)
         elif player_options.get('irq_disk'):

@@ -1,0 +1,72 @@
+{
+  "baseline_commit": "a55744f",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "preparation: routine entry through RET; drawing: command entry through JP command_loop",
+  "exclusions": [
+    "ROM",
+    "disk latency",
+    "ULA contention",
+    "IRQ",
+    "scheduler"
+  ],
+  "routines": {
+    "two_packets_foreground": {
+      "previous_tstates": 95963,
+      "current_tstates": 95963,
+      "delta": 0
+    },
+    "two_packets_background": {
+      "previous_tstates": 116330,
+      "current_tstates": 116330,
+      "delta": 0,
+      "quantum_count": 24,
+      "quantum_max_tstates": 10172
+    },
+    "mask_0": {
+      "previous_tstates": 984,
+      "current_tstates": 984,
+      "delta": 0
+    },
+    "mask_32": {
+      "previous_tstates": 2904,
+      "current_tstates": 2904,
+      "delta": 0
+    },
+    "points_0": {
+      "previous_tstates": 217,
+      "current_tstates": 217,
+      "delta": 0
+    },
+    "points_8": {
+      "previous_tstates": 1119,
+      "current_tstates": 1119,
+      "delta": 0
+    },
+    "spans_2x16": {
+      "previous_tstates": 3367,
+      "current_tstates": 3367,
+      "delta": 0
+    },
+    "rle_repeat_32": {
+      "previous_tstates": 1840,
+      "current_tstates": 1840,
+      "delta": 0
+    },
+    "rle_literal_32": {
+      "previous_tstates": 3119,
+      "current_tstates": 3119,
+      "delta": 0
+    },
+    "one_time_bootstrap": {
+      "previous_tstates": 0,
+      "current_tstates": 96471,
+      "delta": 96471
+    }
+  },
+  "assumptions": "same packets; drawing row 95 at 4000h, command stream crosses a page",
+  "irq_tstates": {
+    "before": 61,
+    "after": 61,
+    "delta": 0
+  }
+}

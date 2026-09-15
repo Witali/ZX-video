@@ -17,8 +17,9 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     image = trd.read_bytes()
     player = extract_file(image, next(e for e in parse_dir(image) if e[0] == 'PLAYER'))
     # Bracket ROM service: CALL 3D13h or direct-entry JP, through RAM return.
-    call = 0x6000 + player.index(b'\xcd\x13\x3d', labels['read_n']-0x6000)
-    events = [(labels['start'], 100), (labels['main_loop'], 101),
+    call = labels.get('disk_full_call')
+    if call is None: call = 0x6000 + player.index(b'\xcd\x13\x3d', labels['read_n']-0x6000)
+    events = [(labels.get('bootstrap',labels['start']), 100), (labels['main_loop'], 101),
               (call, 102), (call+3, 103), (labels['finished'], 199)]
     events += [(labels[n], 198) for n in ('wait_packet_fill','stream_byte_fill','fatal') if n in labels]
     if 'frame_prepared' in labels: events.append((labels['frame_prepared'],107))

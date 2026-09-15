@@ -624,7 +624,11 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
                  irq_disk: bool = False, incremental: bool = False,
                  keepalive_fields: int = 0, prefetch_quota: int = 0,
                  full_rom_clock: bool = False, cached_seek: bool = False,
-                 lookahead: bool = False) -> tuple[bytes, dict[str, int]]:
+                 lookahead: bool = False, uncontended: bool = False) -> tuple[bytes, dict[str, int]]:
+    if uncontended and not (lookahead and irq_disk and (not keepalive_fields or cached_seek)):
+        raise ValueError('uncontended code requires lookahead, IRQ clock and cached keepalive')
+    origin=0x8010 if uncontended else LOAD_ADDRESS
+    header_buffer=0x6000 if uncontended else BUFFER
     if lookahead and not (incremental and irq_disk and prefetch_quota):
         raise ValueError('packet lookahead requires incremental ZX0, IRQ clock and a producer quota')
     if cached_seek and not (irq_disk and full_rom_clock):
@@ -648,7 +652,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     ring_capacity = (blocked_format.RING_CAPACITY_SECTORS if blocked else
                      packed_format.RING_CAPACITY_SECTORS if packed else RING_CAPACITY_SECTORS)
     ring_end_high = 0xA0 if packed else 0xBF
-    a = base.MiniAssembler(LOAD_ADDRESS)
+    a = base.MiniAssembler(origin)
     a.label("start")
     a.emit(0xF3, 0x31); a.word(0xBFF0 if irq_disk else 0x5FF0)
     a.emit(0xAF, 0xD3, 0xFE)
@@ -662,19 +666,19 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         a.abs16(0xCD,'setup_clock')
 
     # Stream header.
-    a.emit(0x21); a.word(BUFFER)
+    a.emit(0x21); a.word(header_buffer)
     a.emit(0x06, 1); a.abs16(0xCD, "read_n")
     magic = blocked_format.MAGIC if blocked else packed_format.MAGIC if packed else VIDEO_MAGIC
     for offset, value in enumerate(magic):
-        a.emit(0x3A); a.word(BUFFER + offset)
+        a.emit(0x3A); a.word(header_buffer + offset)
         a.emit(0xFE, value); a.abs16(0xC2, "fatal")
     if packed:
-        a.emit(0x3A); a.word(BUFFER + 4)
+        a.emit(0x3A); a.word(header_buffer + 4)
         a.emit(0xFE, 9 if interleaved else blocked_format.VERSION if blocked else packed_format.VERSION); a.abs16(0xC2, "fatal")
-    a.emit(0x2A); a.word(BUFFER + 8)
+    a.emit(0x2A); a.word(header_buffer + 8)
     a.emit(0x2B); a.abs16(0x22, "frames_remaining")
-    a.emit(0x2A); a.word(BUFFER + 16); a.abs16(0x22, "disk_sectors_remaining")
-    a.emit(0x2A); a.word(BUFFER + 18); a.abs16(0x22, "startup_target")
+    a.emit(0x2A); a.word(header_buffer + 16); a.abs16(0x22, "disk_sectors_remaining")
+    a.emit(0x2A); a.word(header_buffer + 18); a.abs16(0x22, "startup_target")
     a.emit(0xAF)
     ld_mem_a(a, "ring_read_region"); ld_mem_a(a, "ring_write_region")
     if packed:
@@ -763,8 +767,10 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
 
     if blocked:
         blocked_format.emit_transport(a,input_limit=7424 if irq_disk else 8192,
-                                      incremental=incremental,lookahead=lookahead)
-        if lookahead:packet_lookahead.emit(a)
+                                      incremental=incremental,lookahead=lookahead,
+                                      output_base=0x6000 if uncontended else 0x8000,
+                                      stack_top=0x9DF0 if uncontended else incremental_zx0.STACK_TOP)
+        if lookahead:packet_lookahead.emit(a,stack_top=0x9D70 if uncontended else packet_lookahead.STACK_TOP)
     elif packed:
         packed_format.emit_transport(a)
     else:
@@ -915,10 +921,10 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     a.emit(0xFB, 0x76, 0xF3, 0xC9)
 
     a.label("apply_first")
-    a.emit(0xDD, 0x21); a.word(BUFFER + PACKET_FIRST_HEADER)
+    a.emit(0xDD, 0x21); a.word(header_buffer + PACKET_FIRST_HEADER)
     a.rel8(0x18, "command_loop")
     a.label("apply_following")
-    a.emit(0xDD, 0x21); a.word(BUFFER)
+    a.emit(0xDD, 0x21); a.word(header_buffer)
     a.label("command_loop")
     a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0xB7, 0xC8)
     a.emit(0xFE, CMD_BITMAP_ROW); a.abs16(0xCA, "command_row")
@@ -1215,7 +1221,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         if full_rom_clock:
             a.emit(0xE5);playback_schedule.select_rom_clock(a,True);a.emit(0xE1)
             a.emit(0x3E,0xBE,0xED,0x47,0xED,0x5E,0xFB)
-    call_rom(a, 0x3D13)
+    a.label('disk_full_call');call_rom(a, 0x3D13)
     a.label('disk_return');a.emit(0xF3)
     a.label('disk_finish')
     if full_rom_clock: playback_schedule.select_rom_clock(a,False)
@@ -1325,10 +1331,23 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     if span_table_high_pos is not None:
         a.code[span_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
     code = a.resolve()
-    if keepalive_fields and LOAD_ADDRESS+len(code)>0x7C00:
-        raise ValueError('player overlaps motor keepalive scratch buffer')
-    if LOAD_ADDRESS + len(code) >= (packet_lookahead.STACK_BOTTOM if lookahead else incremental_zx0.STACK_BOTTOM if incremental else 0x7E00 if clocked else BUFFER):
-        raise ValueError(f"fast player overlaps buffer: {len(code)} bytes")
+    if uncontended:
+        if origin+len(code)>0x9D00:
+            raise ValueError('player overlaps relocated coroutine stacks')
+        # Keep BASIC's 6000h entry; copy once before this RAM becomes history.
+        # DI 4 + three LD rr,nn 30 + LDIR (21*N-5) + JP 10 = 21*N+39 T.
+        boot=base.MiniAssembler(LOAD_ADDRESS)
+        boot.emit(0xF3,0x21);boot.word(LOAD_ADDRESS+16)
+        boot.emit(0x11);boot.word(origin);boot.emit(0x01);boot.word(len(code))
+        boot.emit(0xED,0xB0,0xC3);boot.word(origin);boot.emit(0)
+        assert len(boot.code)==16
+        code=boot.resolve()+code
+        a.labels['bootstrap']=LOAD_ADDRESS
+    else:
+        if keepalive_fields and LOAD_ADDRESS+len(code)>0x7C00:
+            raise ValueError('player overlaps motor keepalive scratch buffer')
+        if LOAD_ADDRESS + len(code) >= (packet_lookahead.STACK_BOTTOM if lookahead else incremental_zx0.STACK_BOTTOM if incremental else 0x7E00 if clocked else BUFFER):
+            raise ValueError(f"fast player overlaps buffer: {len(code)} bytes")
     return code, dict(a.labels)
 
 
@@ -1348,6 +1367,7 @@ def main() -> None:
     parser.add_argument('--disk-layout',choices=('linear','interleaved'),default='linear',
                         help='interleaved: v9 stream in TR-DOS 1,9,2,10,... track order')
     parser.add_argument("--zx0-decoding",choices=("block","incremental"),default="block")
+    parser.add_argument('--uncontended',action='store_true',help='run code in bank 2 and keep ZX0 history at 6000h')
     parser.add_argument('--packet-lookahead',action='store_true',help='prepare the next packet in bounded background quanta')
     parser.add_argument('--motor-keepalive-fields',type=int,choices=(0,32,64,100),default=0,
                         help='prevent motor spin-down while the input ring is full; 64 fields = 1.28 s')
@@ -1377,14 +1397,14 @@ def main() -> None:
 
     boot = streaming.build_boot_basic()
     provisional, _ = build_player(0, 0, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead)
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended)
     preceding = [
         base.TrdFile("boot", "B", boot, basic_variables_offset=len(boot), autostart_line=10),
         base.TrdFile("PLAYER", "C", provisional, start=LOAD_ADDRESS),
     ]
     video_track, video_sector = streaming.calculate_file_start(preceding)
     player, labels = build_player(video_track, video_sector, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead)
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended)
     boot_sectors = math.ceil((len(boot) + 4) / base.SECTOR_SIZE)
     player_sectors = math.ceil(len(player) / base.SECTOR_SIZE)
     limit = TRD_DATA_SECTORS - boot_sectors - player_sectors
@@ -1493,6 +1513,14 @@ def main() -> None:
         "disk_layout": args.disk_layout,
         "zx0_decoding": args.zx0_decoding,
         "packet_lookahead": args.packet_lookahead,
+        "uncontended": args.uncontended,
+        "relocation": {
+            "load_address": LOAD_ADDRESS, "runtime_address": 0x8010,
+            "history_range": [0x6000,0x8000], "preparation_stack_range": [0x9D00,0x9D70],
+            "decoder_stack_range": [0x9D80,0x9DF0],
+            "native_bytes": len(player)-16, "startup_tstates": 21*(len(player)-16)+39,
+            "hot_path_instruction_delta_tstates": 0,
+        } if args.uncontended else None,
         "motor_keepalive_fields": args.motor_keepalive_fields,
         "motor_keepalive_method": ("seek-current-cylinder" if args.disk_seek=='cached' else "scratch-sector-read") if args.motor_keepalive_fields else "disabled",
         "prefetch_quota": args.prefetch_quota,

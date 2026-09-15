@@ -9,7 +9,7 @@ STACK_TOP = 0x7DF0
 STACK_BOTTOM = 0x7D80
 
 
-def emit_wait(a, *, lookahead=False):
+def emit_wait(a, *, lookahead=False, output_base=0x8000):
     a.label('prepare_packet' if lookahead else 'wait_packet')
     a.abs16(0x2A,'block_frame_pointer')
     a.abs16((0xED,0x5B),'block_end');a.emit(0xB7,0xED,0x52)
@@ -34,9 +34,9 @@ def emit_wait(a, *, lookahead=False):
         a.label('slice_copy_input')
     a.abs16(0xCD,'load_block_body')
     if lookahead:a.label('slice_block_loaded')
-    a.abs16(0x2A,'block_length');a.emit(0x11);a.word(0x8000)
+    a.abs16(0x2A,'block_length');a.emit(0x11);a.word(output_base)
     a.emit(0x19);a.abs16(0x22,'block_end')
-    a.emit(0x21);a.word(0x8000);a.abs16(0x22,'block_frame_pointer')
+    a.emit(0x21);a.word(output_base);a.abs16(0x22,'block_frame_pointer')
     a.abs16(0x22,'slice_output');a.emit(0x23,0x23);a.abs16(0x22,'slice_target')
     a.abs16(0xCD,'slice_begin')
 
@@ -50,7 +50,7 @@ def emit_wait(a, *, lookahead=False):
     a.label('slice_frame_valid');a.abs16(0xC3,'ahead_decode' if lookahead else 'slice_until')
 
 
-def emit_decoder(a):
+def emit_decoder(a, *, output_base=0x8000, stack_top=STACK_TOP):
     a.label('slice_until')
     a.abs16(0xCD,'slice_sync_target')
     a.abs16(0x2A,'slice_output');a.abs16((0xED,0x5B),'slice_target')
@@ -63,9 +63,9 @@ def emit_decoder(a):
     a.label('slice_begin')
     a.abs16(0xCD,'slice_sync_target')
     a.abs16((0xED,0x73),'slice_caller_sp')
-    a.emit(0x31);a.word(STACK_TOP)
+    a.emit(0x31);a.word(stack_top)
     a.abs16(0x21,'slice_finished');a.emit(0xE5)
-    a.emit(0x21);a.word(0xA000);a.emit(0x11);a.word(0x8000)
+    a.emit(0x21);a.word(0xA000);a.emit(0x11);a.word(output_base)
     a.abs16(0x3A,'block_stored');a.emit(0xB7)
     a.abs16(0xCA,'dzx0_turbo')
     a.abs16((0xED,0x4B),'block_length');a.abs16(0xCD,'slice_copy')

@@ -1,0 +1,107 @@
+{
+  "baseline_commit": "a55744f",
+  "source_sha256": "5d42a94efb0343fb3415c12dcc616bb9403b02f8946d7e8fbfaf45e7030f26e6",
+  "baseline": {
+    "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+    "clock_hz": 3546900,
+    "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "player_startup_ms": 3533.7446784516055,
+    "frames": 1000,
+    "frame_interval_mean_ms": 121.14078272357334,
+    "frame_interval_max_ms": 218.22380106571936,
+    "measured_fps": 8.25485833521369,
+    "rom_call_mean_ms": 7.93993108046344,
+    "rom_call_max_ms": 193.7703346584341,
+    "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+    "intervals_over_125ms": 171,
+    "sector_reads_including_header": 2518,
+    "rom_playback_seconds": 19.36934844512109
+  },
+  "current": {
+    "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+    "clock_hz": 3546900,
+    "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "player_startup_ms": 3518.8043079872564,
+    "frames": 1000,
+    "frame_interval_mean_ms": 121.3904877275708,
+    "frame_interval_max_ms": 178.30950971270687,
+    "measured_fps": 8.237877767195716,
+    "rom_call_mean_ms": 7.930794734111471,
+    "rom_call_max_ms": 193.6702472581691,
+    "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+    "intervals_over_125ms": 123,
+    "sector_reads_including_header": 2518,
+    "rom_playback_seconds": 19.366073754546225
+  },
+  "cpu_baseline": {
+    "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+    "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+    "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+    "frames": 1000,
+    "delivery_tstates_mean": 152340.32732732734,
+    "delivery_tstates_max": 580183,
+    "background_preparation_tstates_mean": 66641.39439439439,
+    "combined_preparation_tstates_mean": 218981.72172172173,
+    "background_quantum_max_tstates": 22009
+  },
+  "cpu_current": {
+    "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+    "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+    "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+    "frames": 1000,
+    "delivery_tstates_mean": 133445.002002002,
+    "delivery_tstates_max": 520264,
+    "background_preparation_tstates_mean": 87728.50950950952,
+    "combined_preparation_tstates_mean": 221173.51151151152,
+    "background_quantum_max_tstates": 22021
+  },
+  "relocation": {
+    "load_address": 24576,
+    "runtime_address": 32784,
+    "history_range": [
+      24576,
+      32768
+    ],
+    "preparation_stack_range": [
+      40192,
+      40304
+    ],
+    "decoder_stack_range": [
+      40320,
+      40432
+    ],
+    "native_bytes": 4592,
+    "startup_tstates": 96471,
+    "hot_path_instruction_delta_tstates": 0
+  },
+  "player_bytes": 4608,
+  "files": {
+    "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd": "b2d3c0c55291e1b9954e97d0499c9931b5bffacc7311bfe4e5b16a45eb46eb76",
+    "PLAYER.C.bin": "3552c6c1fa24aa4f0c23e7fd5b3e2eab600d6a571a8cfc1bd263e6d01823f645"
+  },
+  "validation": "All 1000 screens and AY states match in the CPU validator with Fuse clock replay; no underflow or fatal in Fuse. Physical hardware not measured.",
+  "video_bytes_identical": true,
+  "video_sha256": "1891c84271a04235fef9fa536af8e42d38d14e97ac33a08606a0e3f7e843e7bc",
+  "blocks_identical_to_baseline": true,
+  "blocks": 112,
+  "payload_sectors": 2517,
+  "free_sectors": 4,
+  "tests": 43,
+  "discarded_experiments": {
+    "triple_buffer_contended": {
+      "correct_frames": 1000,
+      "intervals_over_125ms": 207,
+      "max_interval_ms": 259.632919
+    },
+    "triple_buffer_uncontended": {
+      "correct_frames": 1000,
+      "intervals_over_125ms": 116,
+      "max_interval_ms": 243.9310383715357
+    },
+    "budgeted_io_triple": "input underflow; rejected",
+    "single_buffer_extra_tail_quantum": {
+      "intervals_over_125ms": 178,
+      "max_interval_ms": 217.701091094
+    }
+  }
+}

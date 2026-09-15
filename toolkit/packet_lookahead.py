@@ -8,10 +8,10 @@ STACK_TOP=0x7D70
 DECODE_QUANTUM=128
 
 
-def emit(a):
+def emit(a, *, stack_top=STACK_TOP):
     a.label('wait_packet')
     a.abs16(0x3A,'ahead_state');a.emit(0xFE,4);a.rel8(0x38,'ahead_wait_regular')
-    # During pre-copy, the complete current block is still in 8000..9FFF.
+    # During pre-copy, the complete current block remains in its fixed output buffer.
     # Its frames can be drawn without resuming or discarding the copy stack.
     a.abs16(0x2A,'block_frame_pointer');a.abs16((0xED,0x5B),'block_end')
     a.emit(0xB7,0xED,0x52,0xC0)
@@ -43,7 +43,7 @@ def emit(a):
     a.abs16((0xED,0x73),'ahead_caller_sp')
     a.abs16(0xC2,'ahead_resume')
     a.emit(0x3E,1);a.abs16(0x32,'ahead_state')
-    a.emit(0x31);a.word(STACK_TOP)
+    a.emit(0x31);a.word(stack_top)
     a.abs16(0x21,'ahead_done');a.emit(0xE5)
     a.abs16(0xC3,'prepare_packet')
     a.label('ahead_done')
@@ -57,7 +57,7 @@ def emit(a):
     a.label('ahead_extend_begin')
     a.abs16((0xED,0x73),'ahead_caller_sp')
     a.emit(0x3E,3);a.abs16(0x32,'ahead_state')
-    a.emit(0x31);a.word(STACK_TOP)
+    a.emit(0x31);a.word(stack_top)
     a.abs16(0x21,'ahead_done');a.emit(0xE5,0xEB)
     a.abs16(0x22,'slice_target');a.abs16(0xC3,'ahead_decode')
 
@@ -69,7 +69,7 @@ def emit(a):
     a.label('ahead_precopy_begin')
     a.abs16((0xED,0x73),'ahead_caller_sp')
     a.emit(0x3E,4);a.abs16(0x32,'ahead_state')
-    a.emit(0x31);a.word(STACK_TOP)
+    a.emit(0x31);a.word(stack_top)
     a.abs16(0xCD,'load_block_header');a.abs16(0xCD,'load_block_body')
     a.emit(0x3E,1);a.abs16(0x32,'ahead_input_ready')
     a.emit(0x3E,5);a.abs16(0x32,'ahead_state')
