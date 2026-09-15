@@ -1,0 +1,43 @@
+{
+  "baseline_commit": "3b96f43",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "ahead_prefetch entry through RET or to ahead_run entry; CALL excluded",
+  "exclusions": [
+    "IRQ",
+    "ULA contention",
+    "ROM",
+    "disk latency",
+    "decoder work after the new gate"
+  ],
+  "assumptions": "ahead_state=5; frames_remaining=3 except last_frame=1; block end=history+34; pointer=history+17 or end",
+  "instruction_sums": {
+    "common_prefix": 79,
+    "compare_pointers": 55,
+    "old_idle_tail": 14,
+    "new_pending_tail": 76,
+    "new_restart_tail": 94
+  },
+  "routines": {
+    "last_frame": {
+      "previous_tstates": 41,
+      "current_tstates": 41,
+      "delta": 0,
+      "previous_restarts": false,
+      "current_restarts": false
+    },
+    "old_packet_pending": {
+      "previous_tstates": 93,
+      "current_tstates": 155,
+      "delta": 62,
+      "previous_restarts": false,
+      "current_restarts": false
+    },
+    "old_block_consumed": {
+      "previous_tstates": 93,
+      "current_tstates": 173,
+      "delta": 80,
+      "previous_restarts": false,
+      "current_restarts": true
+    }
+  }
+}

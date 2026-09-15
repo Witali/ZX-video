@@ -122,6 +122,61 @@ class PacketLookaheadTests(unittest.TestCase):
             self.assertEqual(cpu.read8(labels['ahead_input_ready']),0)
             self.assertEqual(cpu.dos_reads,0)
 
+    def test_recycle_history_after_last_draw_preserves_both_screens_and_ay(self):
+        from test_memory_clock import fixture, readword
+        from test_blocked_stream import EMPTY_COMPRESSED, EMPTY_DECODED
+
+        def packet(value):
+            body=bytes([value])*9+bytes([codec.CMD_BITMAP_POINTS,0,1,0,value,0])
+            return struct.pack('<H',len(body))+body
+
+        def block(data,decoded,stored):
+            return struct.pack('<HH',len(data)|(0x8000 if stored else 0),len(decoded))+data
+
+        old=packet(0x11)+packet(0x22)
+        for stored in (False,True):
+            with self.subTest(stored=stored):
+                cpu,labels=fixture()
+                decoded=packet(0x33) if stored else EMPTY_DECODED
+                data=decoded if stored else EMPTY_COMPRESSED
+                stream=block(old,old,True)+block(data,decoded,stored)
+                cpu.banks[0][:len(stream)]=stream
+                word(cpu,labels,'ring_count',40);word(cpu,labels,'frames_remaining',3)
+                cpu.write8(labels['ring_read_region'],1);cpu.write8(labels['ring_read_high'],0xC0)
+                cpu.write8(labels['update_base'],0x40);word(cpu,labels,'attr_base',0x5800)
+                run(cpu,labels,'wait_packet');run(cpu,labels,'ring_packet');run(cpu,labels,'ay_apply')
+                for _ in range(100):
+                    if cpu.read8(labels['ahead_state'])==5:break
+                    run(cpu,labels,'ahead_prefetch')
+                self.assertEqual(cpu.read8(labels['ahead_state']),5)
+                self.assertLess(readword(cpu,labels,'block_frame_pointer'),readword(cpu,labels,'block_end'))
+                self.assertEqual(run(cpu,labels,'ahead_prefetch'),155)
+                self.assertEqual(cpu.a,0)
+                self.assertEqual(bytes(cpu.read8(0x6000+i) for i in range(len(old))),old)
+                self.assertEqual(cpu.read8(labels['ahead_state']),5)
+                cpu.write8(labels['update_base'],0xC0);word(cpu,labels,'attr_base',0xD800)
+                run(cpu,labels,'wait_packet');run(cpu,labels,'ring_packet')
+                self.assertEqual(readword(cpu,labels,'block_frame_pointer'),readword(cpu,labels,'block_end'))
+                screens=[bytes(cpu.banks[bank][:6912]) for bank in (5,7)]
+                staged=bytes(cpu.read8(labels['ay_state']+i) for i in range(9))
+                self.assertEqual(staged,bytes([0x22])*9)
+                playing=bytes(cpu.ay)
+                for _ in range(100):
+                    run(cpu,labels,'ahead_prefetch')
+                    if cpu.read8(labels['ahead_state'])==2:break
+                self.assertEqual(cpu.read8(labels['ahead_state']),2)
+                packet_length=int.from_bytes(decoded[:2],'little')+2
+                self.assertEqual(bytes(cpu.read8(0x6000+i) for i in range(packet_length)),decoded[:packet_length])
+                self.assertEqual([bytes(cpu.banks[bank][:6912]) for bank in (5,7)],screens)
+                self.assertEqual(bytes(cpu.read8(labels['ay_state']+i) for i in range(9)),staged)
+                self.assertEqual(bytes(cpu.ay),playing)
+                self.assertEqual(cpu.dos_reads,0)
+                run(cpu,labels,'ay_apply')
+                cpu.write8(labels['update_base'],0x40);word(cpu,labels,'attr_base',0x5800)
+                run(cpu,labels,'wait_packet');run(cpu,labels,'ring_packet')
+                expected=bytes([0x33])*9 if stored else bytes(9)
+                self.assertEqual(bytes(cpu.read8(labels['ay_state']+i) for i in range(9)),expected)
+
     def test_precopied_decoded_length_is_still_validated(self):
         for invalid in (0,11,8193):
             cpu,labels,_=self.fixture()

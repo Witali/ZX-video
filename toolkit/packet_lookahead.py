@@ -34,7 +34,14 @@ def emit(a, *, stack_top=STACK_TOP):
     a.abs16(0x2A,'frames_remaining');a.emit(0x2B,0x7C,0xB5,0xC8)
     a.emit(0xAF);a.abs16(0x32,'ahead_force')
     a.abs16(0x3A,'ahead_state');a.emit(0xFE,5)
-    a.rel8(0x20,'ahead_prefetch_active');a.emit(0xAF,0xC9)
+    a.rel8(0x20,'ahead_prefetch_active')
+    # The final packet has already been drawn and its AY bytes staged. Its
+    # old history can be reused before flip_screen presents that image.
+    a.abs16(0x2A,'block_frame_pointer');a.abs16((0xED,0x5B),'block_end')
+    a.emit(0xB7,0xED,0x52);a.rel8(0x28,'ahead_recycle_history')
+    a.emit(0xAF,0xC9)
+    a.label('ahead_recycle_history')
+    a.emit(0xAF);a.abs16(0x32,'ahead_state');a.abs16(0xC3,'ahead_run')
     a.label('ahead_prefetch_active');a.emit(0xFE,2)
     a.abs16(0xCA,'ahead_extend')
 
