@@ -92,7 +92,8 @@ def emit_clock(a):
     a.emit(0xED,0xB0,0x3E,0x7E,0xED,0x47,0xED,0x5E,0xC9)
     a.label('clock_isr_template')
     a.emit(0xF5); a.abs16(0x3A,'field_counter'); a.emit(0x3C)
-    a.abs16(0x32,'field_counter'); a.emit(0xF1,0xFB,0xED,0x4D)
+    a.abs16(0x32,'field_counter'); a.emit(0xF1,0xFB)
+    a.emit(0xED,0x4D)
     assert a.pc-a.labels['clock_isr_template'] == 12
 
 
@@ -106,8 +107,8 @@ def emit_hold_budget(a):
     a.abs16(0x32,'hold_counter')
 
 
-def emit_transport(a):
-    packed_stream.emit_transport(a,blocked=True)
+def emit_transport(a, *, input_limit=8192):
+    packed_stream.emit_transport(a,blocked=True,input_limit=input_limit)
     a.label('wait_packet')
     a.abs16(0x2A,'block_frame_pointer')
     a.abs16((0xED,0x5B),'block_end')

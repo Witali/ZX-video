@@ -19,7 +19,9 @@ import build_streaming_trd as streaming  # noqa: E402
 import build_zxv_trd as base  # noqa: E402
 import packed_stream as packed_format  # noqa: E402
 import blocked_stream as blocked_format  # noqa: E402
+import playback_schedule  # noqa: E402
 import fast_drawing  # noqa: E402
+import disk_layout  # noqa: E402
 
 
 LOAD_ADDRESS = 0x6000
@@ -613,20 +615,34 @@ def call_rom(a: base.MiniAssembler, address: int) -> None:
 
 
 def build_player(video_track: int, video_sector: int, *, packed: bool = False, blocked: bool = False,
-                 clocked: bool = False, fast_draw: bool = False) -> tuple[bytes, dict[str, int]]:
+                 clocked: bool = False, read_batch: int = 1,
+                 deadline: bool = False, fast_draw: bool = False,
+                 fast_disk: bool = False, interleaved: bool = False,
+                 irq_disk: bool = False) -> tuple[bytes, dict[str, int]]:
+    if interleaved and (not blocked or read_batch != 1):
+        raise ValueError('physical track order requires single-sector ZX0')
+    if fast_disk and read_batch != 1:
+        raise ValueError('fast disk reader requires single-sector requests')
+    if irq_disk and not (deadline and fast_disk):
+        raise ValueError('IRQ disk reader requires deadline pacing and the fast reader')
+    if (read_batch != 1 or deadline) and not (blocked and clocked):
+        raise ValueError('batched/deadline playback requires clocked ZX0')
     packed = packed or blocked
     ring_capacity = (blocked_format.RING_CAPACITY_SECTORS if blocked else
                      packed_format.RING_CAPACITY_SECTORS if packed else RING_CAPACITY_SECTORS)
     ring_end_high = 0xA0 if packed else 0xBF
     a = base.MiniAssembler(LOAD_ADDRESS)
     a.label("start")
-    a.emit(0xF3, 0x31); a.word(0x5FF0)
+    a.emit(0xF3, 0x31); a.word(0xBFF0 if irq_disk else 0x5FF0)
     a.emit(0xAF, 0xD3, 0xFE)
     ld_mem_a(a, "screen_flag")
     a.emit(0x3E, video_track); ld_mem_a(a, "disk_track")
     a.emit(0x3E, video_sector); ld_mem_a(a, "disk_sector")
     a.emit(0x3E, PAGING_ROM48_BANK7, 0x01); a.word(0x7FFD)
     a.emit(0xED, 0x79)
+
+    if deadline:
+        a.abs16(0xCD,'setup_clock')
 
     # Stream header.
     a.emit(0x21); a.word(BUFFER)
@@ -637,7 +653,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         a.emit(0xFE, value); a.abs16(0xC2, "fatal")
     if packed:
         a.emit(0x3A); a.word(BUFFER + 4)
-        a.emit(0xFE, blocked_format.VERSION if blocked else packed_format.VERSION); a.abs16(0xC2, "fatal")
+        a.emit(0xFE, 9 if interleaved else blocked_format.VERSION if blocked else packed_format.VERSION); a.abs16(0xC2, "fatal")
     a.emit(0x2A); a.word(BUFFER + 8)
     a.emit(0x2B); a.abs16(0x22, "frames_remaining")
     a.emit(0x2A); a.word(BUFFER + 16); a.abs16(0x22, "disk_sectors_remaining")
@@ -668,7 +684,11 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     a.emit(0x01); a.word(base.SCREEN_BYTES)
     a.emit(0xED, 0xB0)
     a.abs16(0xCD, "ay_apply")
-    if clocked:
+    if deadline:
+        a.emit(0x21); a.word(0); a.abs16(0x22,'elapsed_fields')
+        if irq_disk:a.emit(0xD9,0x21,0,0,0xD9)
+        a.emit(0x21); a.word(6); a.abs16(0x22,'next_frame_field')
+    elif clocked:
         a.abs16(0xCD,"setup_clock")
 
     a.label("main_loop")
@@ -683,23 +703,31 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     a.emit(0x3E, 0xC0); ld_mem_a(a, "update_base")
     a.emit(0x21); a.word(0xD800); a.abs16(0x22, "attr_base")
     a.label("target_ready")
-    if clocked:
+    if clocked and not deadline:
         a.emit(0xAF); ld_mem_a(a,"field_counter"); a.emit(0xFB)
+    elif deadline:
+        a.emit(0xFB)
     a.abs16(0xCD, "wait_packet")
     if clocked:
         a.emit(0xFB)
     a.abs16(0xCD, "ring_packet")
     if clocked:
         a.emit(0xF3); a.label("frame_prepared")
-        blocked_format.emit_hold_budget(a)
+        if not deadline:
+            blocked_format.emit_hold_budget(a)
+        else:
+            a.emit(0x00)  # Distinct trace point from the repeated scheduler check.
     else:
         a.emit(0x3E, FIELDS_PER_FRAME); ld_mem_a(a, "hold_counter")
-    a.label("prefetch_loop")
-    a.abs16(0xCD, "wait_field")
-    a.abs16(0xCD, "producer_one")
-    a.abs16(0xCD, "decrement_hold")
-    ld_a_mem(a, "hold_counter"); a.emit(0xB7)
-    a.rel8(0x20, "prefetch_loop")
+    if deadline:
+        playback_schedule.emit_wait(a,dos_irq=irq_disk)
+    else:
+        a.label("prefetch_loop")
+        a.abs16(0xCD, "wait_field")
+        a.abs16(0xCD, "producer_one")
+        a.abs16(0xCD, "decrement_hold")
+        ld_a_mem(a, "hold_counter"); a.emit(0xB7)
+        a.rel8(0x20, "prefetch_loop")
     a.abs16(0xCD, "flip_screen")
     a.abs16(0xCD, "ay_apply")
     a.emit(0x2A); a.abs16([], "frames_remaining")
@@ -716,7 +744,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     a.rel8(0x18, "startup_fill")
 
     if blocked:
-        blocked_format.emit_transport(a)
+        blocked_format.emit_transport(a,input_limit=7424 if irq_disk else 8192)
     elif packed:
         packed_format.emit_transport(a)
     else:
@@ -809,43 +837,46 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
 
     # Read at most one future sector. The caller supplies the display-field
     # pacing, so startup can call this routine without waits.
-    a.label("producer_one")
-    a.emit(0x2A); a.abs16([], "disk_sectors_remaining")
-    a.emit(0x7C, 0xB5, 0xC8)
-    a.emit(0x2A); a.abs16([], "ring_count")
-    a.emit(0x11); a.word(ring_capacity)
-    a.emit(0xAF, 0xED, 0x52, 0xD0)
-    ld_a_mem(a, "ring_write_region"); a.emit(0xB7)
-    a.rel8(0x28, "producer_fixed")
-    a.abs16(0xCD, "page_queue_region")
-    a.label("producer_fixed")
-    ld_a_mem(a, "ring_write_high"); a.emit(0x67, 0x2E, 0)
-    a.emit(0x06, 1); a.abs16(0xCD, "read_n")
-    a.emit(0x2A); a.abs16([], "ring_count")
-    a.emit(0x23); a.abs16(0x22, "ring_count")
-    a.emit(0x2A); a.abs16([], "disk_sectors_remaining")
-    a.emit(0x2B); a.abs16(0x22, "disk_sectors_remaining")
-    ld_a_mem(a, "ring_write_region"); a.emit(0xB7)
-    a.rel8(0x20, "producer_banked")
-    ld_a_mem(a, "ring_write_high"); a.emit(0x3C, 0xFE, ring_end_high)
-    a.rel8(0x20, "producer_store_high")
-    a.emit(0x3E, 1); ld_mem_a(a, "ring_write_region")
-    a.emit(0x3E, 0xC0)
-    a.rel8(0x18, "producer_store_high")
-    a.label("producer_banked")
-    ld_a_mem(a, "ring_write_high"); a.emit(0x3C)
-    a.rel8(0x20, "producer_store_high")
-    ld_a_mem(a, "ring_write_region"); a.emit(0x3C, 0xFE, len(RING_BANKS) + 1)
-    a.rel8(0x38, "producer_next_bank")
-    a.emit(*((0x3E, 1) if blocked else (0xAF,))); ld_mem_a(a, "ring_write_region")
-    a.emit(0x3E, 0xC0 if blocked else 0x80)
-    a.rel8(0x18, "producer_store_high")
-    a.label("producer_next_bank")
-    ld_mem_a(a, "ring_write_region")
-    a.emit(0x3E, 0xC0)
-    a.label("producer_store_high")
-    ld_mem_a(a, "ring_write_high")
-    a.emit(0xC9)
+    if read_batch != 1 or deadline:
+        playback_schedule.emit_producer(a,ring_capacity,read_batch)
+    else:
+        a.label("producer_one")
+        a.emit(0x2A); a.abs16([], "disk_sectors_remaining")
+        a.emit(0x7C, 0xB5, 0xC8)
+        a.emit(0x2A); a.abs16([], "ring_count")
+        a.emit(0x11); a.word(ring_capacity)
+        a.emit(0xAF, 0xED, 0x52, 0xD0)
+        ld_a_mem(a, "ring_write_region"); a.emit(0xB7)
+        a.rel8(0x28, "producer_fixed")
+        a.abs16(0xCD, "page_queue_region")
+        a.label("producer_fixed")
+        ld_a_mem(a, "ring_write_high"); a.emit(0x67, 0x2E, 0)
+        a.emit(0x06, 1); a.abs16(0xCD, "read_n")
+        a.emit(0x2A); a.abs16([], "ring_count")
+        a.emit(0x23); a.abs16(0x22, "ring_count")
+        a.emit(0x2A); a.abs16([], "disk_sectors_remaining")
+        a.emit(0x2B); a.abs16(0x22, "disk_sectors_remaining")
+        ld_a_mem(a, "ring_write_region"); a.emit(0xB7)
+        a.rel8(0x20, "producer_banked")
+        ld_a_mem(a, "ring_write_high"); a.emit(0x3C, 0xFE, ring_end_high)
+        a.rel8(0x20, "producer_store_high")
+        a.emit(0x3E, 1); ld_mem_a(a, "ring_write_region")
+        a.emit(0x3E, 0xC0)
+        a.rel8(0x18, "producer_store_high")
+        a.label("producer_banked")
+        ld_a_mem(a, "ring_write_high"); a.emit(0x3C)
+        a.rel8(0x20, "producer_store_high")
+        ld_a_mem(a, "ring_write_region"); a.emit(0x3C, 0xFE, len(RING_BANKS) + 1)
+        a.rel8(0x38, "producer_next_bank")
+        a.emit(*((0x3E, 1) if blocked else (0xAF,))); ld_mem_a(a, "ring_write_region")
+        a.emit(0x3E, 0xC0 if blocked else 0x80)
+        a.rel8(0x18, "producer_store_high")
+        a.label("producer_next_bank")
+        ld_mem_a(a, "ring_write_region")
+        a.emit(0x3E, 0xC0)
+        a.label("producer_store_high")
+        ld_mem_a(a, "ring_write_high")
+        a.emit(0xC9)
 
     a.label("page_queue_region")
     a.emit(0x3D, 0x5F, 0x16, 0)
@@ -1107,18 +1138,65 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     a.emit(0xC9)
 
     a.label("read_n")
+    if read_batch != 1 or deadline:
+        a.emit(0x78); ld_mem_a(a,'read_count')
     if clocked:
         # TR-DOS may enable IRQs internally and expects the ROM's IM1 handler.
         a.emit(0xF3,0xED,0x56)
+    if deadline and not irq_disk:
+        a.emit(0xED,0x5B); a.word(0x5C78)
+        a.abs16((0xED,0x53),'dos_start_fields')
     ld_a_mem(a, "disk_track"); a.emit(0x57)
     ld_a_mem(a, "disk_sector"); a.emit(0x5F, 0x0E, 0x05)
-    call_rom(a, 0x3D13); a.emit(0xF3)
+    if fast_disk:
+        ld_a_mem(a,'fast_disk_track');a.emit(0xBA)
+        a.rel8(0x20,'disk_full_dispatch')
+        a.emit(0x22);a.word(0x5D00)
+        a.emit(0x7B,0x32);a.word(0x5CFF)
+        a.abs16(0x11,'fast_disk_return' if irq_disk else 'disk_return');a.emit(0xD5)
+        if irq_disk:
+            a.emit(0x11);a.word(0x0A00);a.emit(0xD5)
+        a.emit(0x11);a.word(0x3F17 if irq_disk else 0x3F0E);a.emit(0xD5)
+        if irq_disk:
+            a.emit(0x3E,0xBE,0xED,0x47,0xED,0x5E,0xFB)
+        a.label('fast_read_enter');a.emit(0xC3);a.word(0x3D2F)
+        if irq_disk:
+            a.label('fast_disk_return');a.emit(0xF3,0xD9)
+            a.abs16(0x22,'elapsed_fields');a.emit(0xD9);a.abs16(0xC3,'disk_return')
+        a.label('disk_full_dispatch')
+        a.emit(0x7A);ld_mem_a(a,'fast_disk_track')
+    call_rom(a, 0x3D13)
+    a.label('disk_return');a.emit(0xF3)
+    if irq_disk:
+        # Full dispatcher/seek calls retain the ROM's IM1 handler. Their time
+        # is not counted by this experimental clock (see speed results).
+        a.emit(0xD9);a.abs16(0x22,'elapsed_fields');a.emit(0xD9)
+    elif deadline:
+        a.emit(0x2A); a.word(0x5C78)
+        a.abs16((0xED,0x5B),'dos_start_fields'); a.emit(0xB7,0xED,0x52)
+        a.abs16((0xED,0x5B),'elapsed_fields'); a.emit(0x19)
+        a.abs16(0x22,'elapsed_fields')
     if clocked:
         # TR-DOS owns its interrupt state. Restore ours after every ROM call.
-        a.emit(0x3E,0x7E,0xED,0x47,0xED,0x5E)
+        a.emit(0x3E,0xBE if irq_disk else 0x7E,0xED,0x47,0xED,0x5E)
     ld_a_mem(a, "screen_flag"); a.emit(0xF6, PAGING_ROM48_BANK7, 0x01); a.word(0x7FFD); a.emit(0xED, 0x79)
-    ld_a_mem(a, "disk_sector"); a.emit(0x3C, 0xFE, 16); a.rel8(0x38, "store_sector")
-    a.emit(0xAF); ld_mem_a(a, "disk_sector")
+    if interleaved:
+        ld_a_mem(a,'disk_interleaved');a.emit(0xB7);a.rel8(0x28,'disk_advance_linear')
+        ld_a_mem(a,'disk_sector');a.emit(0xFE,15);a.rel8(0x28,'disk_advance_linear')
+        a.emit(0xFE,8);a.rel8(0x38,'disk_advance_low')
+        a.emit(0xD6,7);a.abs16(0xC3,'store_sector')
+        a.label('disk_advance_low');a.emit(0xC6,8);a.abs16(0xC3,'store_sector')
+        a.label('disk_advance_linear')
+    ld_a_mem(a, "disk_sector")
+    if read_batch != 1 or deadline:
+        a.emit(0x47); ld_a_mem(a,'read_count'); a.emit(0x80)
+    else:
+        a.emit(0x3C)
+    a.emit(0xFE, 16); a.rel8(0x38, "store_sector")
+    a.emit(*((0xD6,16) if read_batch != 1 or deadline else (0xAF,)))
+    ld_mem_a(a, "disk_sector")
+    if interleaved:
+        a.emit(0x3E,1);ld_mem_a(a,'disk_interleaved')
     ld_a_mem(a, "disk_track"); a.emit(0x3C); ld_mem_a(a, "disk_track"); a.emit(0xC9)
     a.label("store_sector"); ld_mem_a(a, "disk_sector"); a.emit(0xC9)
 
@@ -1128,7 +1206,9 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     a.emit(0xFB)
     a.label("finished_wait"); a.emit(0x76); a.rel8(0x18, "finished_wait")
     a.label("fatal"); a.emit(0x3E, 2, 0xD3, 0xFE); a.rel8(0x18, "fatal")
-    if clocked:
+    if deadline:
+        playback_schedule.emit_clock(a,dos_irq=irq_disk)
+    elif clocked:
         blocked_format.emit_clock(a)
 
     for name, size in (
@@ -1154,6 +1234,17 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         blocked_format.emit_variables(a)
     if clocked:
         a.label("field_counter"); a.emit(0)
+    if read_batch != 1 or deadline:
+        a.label('read_count'); a.emit(0)
+    if deadline:
+        a.label('elapsed_fields'); a.word(0)
+        a.label('next_frame_field'); a.word(6)
+        if not irq_disk:
+            a.label('dos_start_fields'); a.word(0)
+    if fast_disk:
+        a.label('fast_disk_track');a.emit(0xFF)
+    if interleaved:
+        a.label('disk_interleaved');a.emit(0)
     a.label("queue_banks"); a.emit(*RING_BANKS)
     a.label("row_addresses")
     for y in range(source.LOGICAL_HEIGHT):
@@ -1181,13 +1272,25 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--packing", choices=("contiguous", "sector", "zx0"), default="contiguous")
     parser.add_argument("--zx0", type=Path, help="path to the upstream ZX0 v2 compressor")
-    parser.add_argument("--pacing", choices=("cpu-fields", "legacy"), default="cpu-fields",
+    parser.add_argument("--pacing", choices=("cpu-fields", "legacy", "deadline"), default="cpu-fields",
                         help="ZX0 playback: subtract CPU fields from the display hold")
-    parser.add_argument('--drawing',choices=('legacy','registers'),default='legacy')
+    parser.add_argument('--read-batch',type=int,choices=(1,2,4,8,16),default=1)
+    parser.add_argument('--drawing',choices=('legacy','registers'),default='legacy',
+                        help='registers: faster mask/point commands with identical pixels and packets')
+    parser.add_argument('--disk-reader',choices=('trdos','trdos503','trdos503-irq'),default='trdos',
+                        help='experimental direct ROM paths require TR-DOS 5.03; IRQ path requires deadline pacing')
+    parser.add_argument('--disk-layout',choices=('linear','interleaved'),default='linear',
+                        help='interleaved: v9 stream in TR-DOS 1,9,2,10,... track order')
     args = parser.parse_args()
-    fast_draw = args.drawing == 'registers'
     blocked = args.packing == "zx0"
-    clocked = blocked and args.pacing == "cpu-fields"
+    clocked = blocked and args.pacing != "legacy"
+    deadline = blocked and args.pacing == 'deadline'
+    fast_draw = args.drawing == 'registers'
+    fast_disk = args.disk_reader != 'trdos'
+    irq_disk = args.disk_reader == 'trdos503-irq'
+    interleaved = args.disk_layout == 'interleaved'
+    if args.read_batch != 1 and not clocked:
+        parser.error('--read-batch requires clocked ZX0 playback')
     packed = args.packing != "sector"
     if blocked and args.zx0 is None:
         parser.error("--packing zx0 requires --zx0 /path/to/zx0")
@@ -1199,13 +1302,15 @@ def main() -> None:
     args.output.mkdir(parents=True, exist_ok=True)
 
     boot = streaming.build_boot_basic()
-    provisional, _ = build_player(0, 0, packed=packed, blocked=blocked, clocked=clocked,fast_draw=fast_draw)
+    provisional, _ = build_player(0, 0, packed=packed, blocked=blocked, clocked=clocked,
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk)
     preceding = [
         base.TrdFile("boot", "B", boot, basic_variables_offset=len(boot), autostart_line=10),
         base.TrdFile("PLAYER", "C", provisional, start=LOAD_ADDRESS),
     ]
     video_track, video_sector = streaming.calculate_file_start(preceding)
-    player, labels = build_player(video_track, video_sector, packed=packed, blocked=blocked, clocked=clocked,fast_draw=fast_draw)
+    player, labels = build_player(video_track, video_sector, packed=packed, blocked=blocked, clocked=clocked,
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk)
     boot_sectors = math.ceil((len(boot) + 4) / base.SECTOR_SIZE)
     player_sectors = math.ceil(len(player) / base.SECTOR_SIZE)
     limit = TRD_DATA_SECTORS - boot_sectors - player_sectors
@@ -1229,7 +1334,12 @@ def main() -> None:
             blocks = []
             used = base.SECTOR_SIZE
             for candidate in candidates:
-                if used+len(candidate.serialize()) > limit*base.SECTOR_SIZE:
+                if irq_disk and len(candidate.data)>7424:
+                    raise ValueError('block input overlaps the uncontended IRQ area')
+                sector_need = math.ceil((used+len(candidate.serialize()))/base.SECTOR_SIZE)
+                if interleaved:
+                    sector_need = disk_layout.required_sectors(sector_need, video_sector)
+                if sector_need > limit:
                     break
                 blocks.append(candidate); used += len(candidate.serialize())
             if not blocks:
@@ -1239,6 +1349,11 @@ def main() -> None:
             video = blocked_format.serialize_volume(blocks,frame_rate,clocked=clocked)
         else:
             video = serialize_volume(packets, frame_rate, packed=packed)
+        if interleaved:
+            video=video[:4]+bytes([9])+video[5:]
+            video=disk_layout.arrange(video,video_sector)
+        if len(video) > limit*base.SECTOR_SIZE:
+            raise ValueError('physical stream allocation exceeds the disk budget')
         chunks = [
             video[offset:offset + MAX_TRDOS_FILE_SECTORS * base.SECTOR_SIZE]
             for offset in range(0, len(video), MAX_TRDOS_FILE_SECTORS * base.SECTOR_SIZE)
@@ -1278,6 +1393,8 @@ def main() -> None:
             "packet_sector_total": sum(counts),
             "startup_backlog_sectors": startup_backlog,
             "ring_capacity_sectors": ring_capacity,
+            "physical_video_sectors": len(video)//base.SECTOR_SIZE,
+            "layout_padding_sectors": len(video)//base.SECTOR_SIZE - 1 - sum(counts),
             "directory": directory, "trd_stats": stats,
         })
         if blocked:
@@ -1290,9 +1407,12 @@ def main() -> None:
     (args.output / "PLAYER.C.bin").write_bytes(player)
     output_metadata = {
         "profile": "banked_ring_fast_sparse_direct_screen", "frame_rate": frame_rate,
-        "packing": args.packing, "video_version": blocked_format.VERSION if blocked else packed_format.VERSION if packed else VIDEO_VERSION,
-        "pacing": "cpu-fields" if clocked else "legacy",
+        "packing": args.packing, "video_version": 9 if interleaved else blocked_format.VERSION if blocked else packed_format.VERSION if packed else VIDEO_VERSION,
+        "pacing": args.pacing if blocked else 'legacy', "read_batch": args.read_batch,
         "drawing": args.drawing,
+        "disk_reader": args.disk_reader,
+        "disk_layout": args.disk_layout,
+        "speed_cycle_reference": "PLAYBACK_SPEED_RESULTS_ru.md",
         "frames": len(states), "player_labels": labels, "player_bytes": len(player),
         "video_track": video_track, "video_sector": video_sector,
         "volumes": volumes, "trd_names": [v["trd_name"] for v in volumes],
@@ -1317,6 +1437,7 @@ def main() -> None:
             "disk_rom_and_physical_latency_included": False,
             "bitmap_mask": "1287 + 68*N" if fast_draw else "2067 + 64*N",
             "bitmap_points": "220 + 189*N" if fast_draw else "260 + 265*N",
+            "bitmap_scope": "command_row / command_points entry to command_loop; dispatch excluded",
             "bitmap_spans": "372 + 178*R + 126*N",
             "copy_visible_row": COPY_VISIBLE_ROW_CYCLES,
             "compression_cpu_regression_limit_percent": 10,
@@ -1340,9 +1461,17 @@ def main() -> None:
         output_metadata["block_codec"] = {
             "name": "ZX0 v2", "decoder": "turbo", "decoded_block_limit": 8192,
             "command_order": "stable screen row order",
+            "compressed_input_limit": 7424 if irq_disk else 8192,
             "upstream_revision": "ecde3a2ae05061fe06469ed46df81a33b7de7d86",
         }
         shutil.copyfile(HERE/'third_party/zx0/LICENSE',args.output/'ZX0_LICENSE.txt')
+    if fast_disk:
+        output_metadata['disk_reader_requirements'] = {
+            'rom': 'TR-DOS 5.03; direct entry addresses are not portable to other ROM versions',
+            'status': 'experimental, emulator tested; physical drive and disk-error recovery unverified',
+            'clock_limitation': 'full TR-DOS dispatcher and seek time is not counted by IM2',
+            'irq_register': "HL prime reserved for clock" if irq_disk else None,
+        }
     (args.output / "build_metadata.json").write_text(json.dumps(output_metadata, indent=2), encoding="utf-8")
     print(json.dumps({key: value for key, value in output_metadata.items() if key not in ("volumes", "source_metadata")}, indent=2))
     for volume in volumes:

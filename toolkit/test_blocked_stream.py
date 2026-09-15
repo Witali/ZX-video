@@ -5,6 +5,7 @@ import tempfile
 import unittest
 
 import blocked_stream
+import disk_layout
 import build_fast_sparse_trd as codec
 import packed_stream
 import zx0_codec
@@ -17,23 +18,27 @@ EMPTY_DECODED = (bytes((10,0))+bytes(10))*500
 
 
 class BlockedStreamTests(unittest.TestCase):
-    def run_player(self, states, blocks, *, clocked=False):
+    def run_player(self, states, blocks, *, clocked=False, **player_options):
         ay = [bytes(9)]*len(states)
         video = blocked_stream.serialize_volume(blocks,25/3,clocked=clocked)
+        logical_bytes = len(video)
         boot = codec.streaming.build_boot_basic()
-        provisional,_ = codec.build_player(0,0,blocked=True,clocked=clocked)
+        provisional,_ = codec.build_player(0,0,blocked=True,clocked=clocked,**player_options)
         files = [codec.base.TrdFile('boot','B',boot,basic_variables_offset=len(boot),autostart_line=10),
                  codec.base.TrdFile('PLAYER','C',provisional,start=0x6000)]
         track,sector = codec.streaming.calculate_file_start(files)
-        player,labels = codec.build_player(track,sector,blocked=True,clocked=clocked)
+        player,labels = codec.build_player(track,sector,blocked=True,clocked=clocked,**player_options)
+        if player_options.get('interleaved'):
+            video = disk_layout.arrange(video[:4]+bytes([9])+video[5:],sector)
         files[1] = codec.base.TrdFile('PLAYER','C',player,start=0x6000)
         files.append(codec.base.TrdFile('VIDEO','C',video,start=0))
         trd,_,_ = codec.streaming.place_files(files,'BLOCK')
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)/'test.trd'; path.write_bytes(trd)
             result = validate_volume(path,labels,states,ay,interrupt_every=701 if clocked else None)
-        self.assertEqual(result['disk_bytes'],len(video))
+        self.assertEqual(result['disk_bytes'],logical_bytes)
         if clocked: self.assertGreater(result['injected_interrupts'],100)
+        if player_options.get('irq_disk'): self.assertGreater(result['minimum_sp'],0xBF00)
 
     def test_reference_and_both_upstream_decoders(self):
         self.assertEqual(zx0_codec.decompress(EMPTY_COMPRESSED),EMPTY_DECODED)
@@ -63,6 +68,15 @@ class BlockedStreamTests(unittest.TestCase):
         frames = [packed_stream.frame_bytes(p,natural_order=True) for p in packets]
         blocks = [blocked_stream.Block(frame,frame,1,True,0) for frame in frames]
         self.run_player(states,blocks)
+
+    def test_fast_drawing_and_deadline_clock_with_irq_stress(self):
+        rng = random.Random(83)
+        states = [rng.randbytes(3840) for _ in range(4)]
+        _,packets = codec.make_volume_packets(states,[bytes(9)]*4,0,2530,packed=True)
+        frames = [packed_stream.frame_bytes(p,natural_order=True) for p in packets]
+        blocks = [blocked_stream.Block(frame,frame,1,True,0) for frame in frames]
+        self.run_player(states,blocks,clocked=True,deadline=True,fast_disk=True,
+                        irq_disk=True,interleaved=True,fast_draw=True)
 
     def test_corrupt_stream_is_rejected_by_reference(self):
         for data in (EMPTY_COMPRESSED[:-1],EMPTY_COMPRESSED+b'\0',b'\0'):

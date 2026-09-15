@@ -1,0 +1,66 @@
+{
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "routine entry through RET; schedule through CALL flip_screen; ROM entry CALL/JP counted, ROM body excluded",
+  "exclusions": [
+    "ROM service",
+    "disk latency",
+    "contention",
+    "IRQ execution",
+    "HALT wait beyond its first 4 T"
+  ],
+  "assumptions": "single sector, bank 1 queue at C000, track 3, interleaving active, no ring/bank wrap unless specified",
+  "comparison": "v8 cpu-fields/legacy drawing versus v9 deadline/registers/trdos503-irq/interleaved",
+  "routines": {
+    "setup_clock": {
+      "previous_tstates": 5722,
+      "current_tstates": 5635,
+      "delta": -87
+    },
+    "read_same_track_low": {
+      "previous_tstates": 199,
+      "current_tstates": 470,
+      "delta": 271
+    },
+    "read_same_track_high": {
+      "previous_tstates": 199,
+      "current_tstates": 465,
+      "delta": 266
+    },
+    "read_track_wrap": {
+      "previous_tstates": 228,
+      "current_tstates": 544,
+      "delta": 316
+    },
+    "read_full_dispatch": {
+      "previous_tstates": 199,
+      "current_tstates": 337,
+      "delta": 138
+    },
+    "producer_one_sector": {
+      "previous_tstates": 623,
+      "current_tstates": 1093,
+      "delta": 470
+    },
+    "producer_full_ring": {
+      "previous_tstates": 85,
+      "current_tstates": 73,
+      "delta": -12
+    },
+    "producer_end_of_stream": {
+      "previous_tstates": 35,
+      "current_tstates": 134,
+      "delta": 99
+    },
+    "schedule_due_no_io": {
+      "previous_tstates": 198,
+      "current_tstates": 205,
+      "delta": 7
+    }
+  },
+  "irq": {
+    "previous_tstates": 88,
+    "current_tstates": 61,
+    "delta": -27,
+    "scope": "includes 19 T IM2 acknowledgement and 14 T ROM mapper NOP/RET for current ISR"
+  }
+}

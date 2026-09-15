@@ -18,6 +18,7 @@ class CPU(MemoryCPU):
 
     def __init__(self, player: bytes, trd: bytes):
         super().__init__(player, trd)
+        self.min_sp = 0x10000  # Ignore the constructor's unused default stack.
         self.ix = 0
         self.tstates = 0
         self.ay_register = 0
@@ -25,6 +26,7 @@ class CPU(MemoryCPU):
         self.i = self.im = 0
         self.iff1 = False
         self.alt_a=0; self.alt_z=False; self.alt_carry=False
+        self.alt_b=self.alt_c=self.alt_d=self.alt_e=self.alt_h=self.alt_l=0
 
     def reg(self, index):
         return self.read8(self.hl()) if index == 6 else getattr(self, self.registers[index])
@@ -49,6 +51,10 @@ class CPU(MemoryCPU):
             raise RuntimeError("unimplemented condition")
         return (not self.z, self.z, not self.carry, self.carry)[index]
 
+    def mock_trdos(self):
+        self.write8(0x5CF5,self.d)
+        super().mock_trdos()
+
     def step(self):
         before = self.pc
         try:
@@ -60,6 +66,10 @@ class CPU(MemoryCPU):
 
     def instruction(self):
         op = self.fetch8()
+        if op == 0xD9:
+            for name in ('b','c','d','e','h','l'):
+                value=getattr(self,name);setattr(self,name,getattr(self,'alt_'+name));setattr(self,'alt_'+name,value)
+            return 4
         if op == 0x08:
             self.a,self.alt_a=self.alt_a,self.a
             self.z,self.alt_z=self.alt_z,self.z
@@ -164,6 +174,16 @@ class CPU(MemoryCPU):
             return 10
         if op in (0xC3, 0xC2, 0xCA, 0xD2, 0xDA):
             target = self.fetch16()
+            if op == 0xC3 and target == 0x3D2F:
+                entry=self.pop()
+                if entry not in (0x3F0E,0x3F17):
+                    self.pc=entry
+                    return 24  # JP plus ROM NOP/RET trampoline in IRQ tests.
+                if entry==0x3F17:self.pop()  # retry counter saved before ROM core
+                self.d=self.read8(0x5CF5);self.e=self.read8(0x5CFF)
+                self.set_hl(self.read8(0x5D00) | self.read8(0x5D01)<<8)
+                self.b=1;self.c=5;self.mock_trdos();self.pc=self.pop()
+                return 10
             if op == 0xC3 or self.condition((op >> 3) & 7): self.pc = target
             return 10
         if op in (0xCD, 0xC4, 0xCC, 0xD4, 0xDC):
@@ -249,7 +269,7 @@ class CPU(MemoryCPU):
 
 
 def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, decode_fields=None,
-                    interrupt_every: int | None = None):
+                    interrupt_every: int | None = None, clock_checks=None):
     import build_long_video_trd as compact
     trd = path.read_bytes()
     player = extract_file(trd, next(e for e in parse_dir(trd) if e[0] == 'PLAYER'))
@@ -262,11 +282,17 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
     underflow_addresses = {labels[name] for name in ('wait_packet_fill','stream_byte_fill') if name in labels}
     next_interrupt = interrupt_every or 0
     interrupts = 0
+    clock_index = 0
     while cpu.steps < max_steps:
         if cpu.pc in underflow_addresses:
             underflows += 1
         if decode_fields is not None and cpu.pc == labels.get('frame_prepared'):
             cpu.write8(labels['field_counter'],decode_fields[decoded-1])
+        if clock_checks is not None and cpu.pc == labels['clock_check']:
+            value=clock_checks[clock_index];clock_index+=1
+            cpu.write8(labels['elapsed_fields'],value)
+            cpu.write8(labels['elapsed_fields']+1,value>>8)
+            cpu.alt_h=value>>8;cpu.alt_l=value&255
         if cpu.pc == labels['fatal']:
             raise AssertionError(f"player entered fatal at frame {decoded}")
         if cpu.pc == labels['main_loop']:
@@ -293,6 +319,7 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
     else:
         raise AssertionError("instruction limit exceeded")
     assert underflows == 0, f"{underflows} ring underflows"
+    if clock_checks is not None: assert clock_index==len(clock_checks)
     return dict(frames=decoded, instructions=cpu.steps, cpu_tstates=cpu.tstates,
                 delivery_tstates=delivery_cycles, dos_reads=cpu.dos_reads,
                 disk_bytes=cpu.bytes_read, underflows=underflows, minimum_sp=cpu.min_sp,
@@ -308,13 +335,16 @@ def main():
     parser.add_argument('--fuse-timing', type=Path, help='Replay measured IRQ field counts, excluding IRQ execution from CPU totals')
     args = parser.parse_args()
     meta = json.loads((args.build/'build_metadata.json').read_text())
+    if meta.get('pacing') == 'deadline' and not args.fuse_timing:
+        parser.error('deadline playback requires --fuse-timing to replay its measured clock')
     states, ay_states, _ = codec.decode_compact_build(args.source_build/'VIDEO_full.C.bin')
     results = []
     timing = json.loads(args.fuse_timing.read_text()) if args.fuse_timing else None
     for index,volume in enumerate(meta['volumes']):
         start, end = volume['frame_start'], volume['frame_end']
         result = validate_volume(args.build/volume['trd_name'], meta['player_labels'], states[start:end], ay_states[start:end],
-                                 decode_fields=timing[index]['decode_fields'] if timing else None)
+                                 decode_fields=timing[index]['decode_fields'] if timing else None,
+                                 clock_checks=timing[index].get('clock_checks') or None if timing else None)
         results.append(result)
         print(f"Verified frames {start}..{end-1}; {result['dos_reads']} sector reads", flush=True)
     cycles = [n for result in results for n in result['delivery_tstates']]
