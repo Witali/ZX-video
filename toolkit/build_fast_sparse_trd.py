@@ -1153,20 +1153,28 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         a.rel8(0x20,'disk_full_dispatch')
         a.emit(0x22);a.word(0x5D00)
         a.emit(0x7B,0x32);a.word(0x5CFF)
-        a.abs16(0x11,'fast_disk_return' if irq_disk else 'disk_return');a.emit(0xD5)
+        a.abs16(0x11,'fast_disk_return');a.emit(0xD5)
         if irq_disk:
             a.emit(0x11);a.word(0x0A00);a.emit(0xD5)
         a.emit(0x11);a.word(0x3F17 if irq_disk else 0x3F0E);a.emit(0xD5)
         if irq_disk:
             a.emit(0x3E,0xBE,0xED,0x47,0xED,0x5E,0xFB)
         a.label('fast_read_enter');a.emit(0xC3);a.word(0x3D2F)
-        if irq_disk:
-            a.label('fast_disk_return');a.emit(0xF3,0xD9)
-            a.abs16(0x22,'elapsed_fields');a.emit(0xD9);a.abs16(0xC3,'disk_return')
+        a.label('fast_disk_return');a.emit(0xF3)
+        # ROM masks status bit 7 (not ready). A short read can otherwise look
+        # successful and leave old queue bytes in the unread part of a sector.
+        a.emit(0xED,0x5B);a.word(0x5D00);a.emit(0x14,0xB7,0xED,0x52)
+        a.abs16(0xCA,'disk_finish')
+        a.label('fast_read_retry')
+        a.emit(0xED,0x56,0x2A);a.word(0x5D00)
+        a.emit(0x06,1)
+        ld_a_mem(a,'disk_track');a.emit(0x57)
+        ld_a_mem(a,'disk_sector');a.emit(0x5F,0x0E,5)
         a.label('disk_full_dispatch')
         a.emit(0x7A);ld_mem_a(a,'fast_disk_track')
     call_rom(a, 0x3D13)
     a.label('disk_return');a.emit(0xF3)
+    a.label('disk_finish')
     if irq_disk:
         # Full dispatcher/seek calls retain the ROM's IM1 handler. Their time
         # is not counted by this experimental clock (see speed results).

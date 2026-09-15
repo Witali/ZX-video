@@ -24,6 +24,8 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     if 'frame_prepared' in labels: events.append((labels['frame_prepared'],107))
     if 'elapsed_fields' in labels: events.append((labels['clock_check'],108))
     if 'fast_read_enter' in labels: events.append((labels['fast_read_enter'],102))
+    if 'disk_finish' in labels and 'fast_disk_return' in labels:
+        events.append((labels['fast_disk_return'],103))
     default_rom = fuse.parent/'roms/trdos.rom'
     if trdos_rom is None and default_rom.exists(): trdos_rom = default_rom
     rom_hash = hashlib.sha256(trdos_rom.read_bytes()).hexdigest() if trdos_rom else None

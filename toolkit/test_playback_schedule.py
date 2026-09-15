@@ -6,6 +6,31 @@ from validate_fast_sparse import CPU
 
 
 class BatchedProducerTests(unittest.TestCase):
+    def test_short_direct_read_retries_without_advancing_the_stream(self):
+        trd=b''.join(bytes([i%251])*256 for i in range(2560))
+        for irq in (False,True):
+            player,labels=codec.build_player(3,2,blocked=True,clocked=True,
+                                            deadline=irq,fast_disk=True,irq_disk=irq)
+            class ShortReadCPU(CPU):
+                def instruction(self):
+                    before=self.pc
+                    cycles=super().instruction()
+                    if before==labels['fast_read_enter']:
+                        self.set_hl(0xC001)  # Same short-read return observed in Fuse.
+                        for i in range(1,256):self.write8(0xC000+i,0xEE)
+                    return cycles
+            cpu=ShortReadCPU(player,trd);cpu.port_7ffd=0x17
+            for name,value in dict(disk_track=3,disk_sector=2,fast_disk_track=3).items():
+                cpu.write8(labels[name],value)
+            cpu.write8(0x5CF5,3);cpu.b=1;cpu.set_hl(0xC000)
+            cpu.pc=labels['read_n'];cpu.push(0x5F00)
+            while cpu.pc!=0x5F00:
+                self.assertLess(cpu.steps,500);cpu.step()
+            self.assertEqual(cpu.dos_reads,2)
+            self.assertEqual(bytes(cpu.banks[7][:256]),trd[50*256:51*256])
+            self.assertEqual(cpu.read8(labels['disk_sector']),3)
+            self.assertEqual(cpu.read8(labels['disk_track']),3)
+
     def test_deadline_wrap_and_late_frame_keeps_input_available(self):
         for elapsed,deadline in ((65535,65534),(2,65534),(13,6)):
             for count in (63,64):

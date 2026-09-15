@@ -182,7 +182,8 @@ class CPU(MemoryCPU):
                 if entry==0x3F17:self.pop()  # retry counter saved before ROM core
                 self.d=self.read8(0x5CF5);self.e=self.read8(0x5CFF)
                 self.set_hl(self.read8(0x5D00) | self.read8(0x5D01)<<8)
-                self.b=1;self.c=5;self.mock_trdos();self.pc=self.pop()
+                destination=self.hl()
+                self.b=1;self.c=5;self.mock_trdos();self.set_hl(destination+256);self.pc=self.pop()
                 return 10
             if op == 0xC3 or self.condition((op >> 3) & 7): self.pc = target
             return 10
