@@ -27,6 +27,7 @@ class CPU(MemoryCPU):
         self.iff1 = False
         self.alt_a=0; self.alt_z=False; self.alt_carry=False
         self.alt_b=self.alt_c=self.alt_d=self.alt_e=self.alt_h=self.alt_l=0
+        self.seek_calls=[]
 
     def reg(self, index):
         return self.read8(self.hl()) if index == 6 else getattr(self, self.registers[index])
@@ -176,6 +177,16 @@ class CPU(MemoryCPU):
             target = self.fetch16()
             if op == 0xC3 and target == 0x3D2F:
                 entry=self.pop()
+                if entry in (0x1FEB,0x1FF6,0x3E44):
+                    # Direct 5.03 side/seek helpers. ROM and physical latency
+                    # remain outside this CPU model; Fuse executes the ROM.
+                    self.seek_calls.append((entry,self.a,self.b))
+                    if entry in (0x1FEB,0x1FF6):
+                        value=self.read8(0x5D16)
+                        self.write8(0x5D16,value|0x3C if entry==0x1FEB else value&0x6F)
+                    self.set_hl(0xA55A);self.set_bc(0xC33C);self.set_de(0xDEAD)
+                    self.a=0x81;self.pc=self.pop()
+                    return 10
                 if entry not in (0x3F0E,0x3F17):
                     self.pc=entry
                     return 24  # JP plus ROM NOP/RET trampoline in IRQ tests.

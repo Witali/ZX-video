@@ -23,9 +23,12 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     events += [(labels[n], 198) for n in ('wait_packet_fill','stream_byte_fill','fatal') if n in labels]
     if 'frame_prepared' in labels: events.append((labels['frame_prepared'],107))
     if 'elapsed_fields' in labels: events.append((labels['clock_check'],108))
-    if 'fast_read_enter' in labels: events.append((labels['fast_read_enter'],102))
+    if 'fast_read_enter' in labels: events.append((labels['fast_read_enter'],109))
     if 'disk_finish' in labels and 'fast_disk_return' in labels:
         events.append((labels['fast_disk_return'],103))
+    for entry,exit in (('seek_enter','seek_return'),('seek_side_enter','seek_side_return')):
+        if entry in labels:
+            events.extend(((labels[entry],110),(labels[exit],103)))
     default_rom = fuse.parent/'roms/trdos.rom'
     if trdos_rom is None and default_rom.exists(): trdos_rom = default_rom
     rom_hash = hashlib.sha256(trdos_rom.read_bytes()).hexdigest() if trdos_rom else None
@@ -56,14 +59,17 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     numbers = [int(line.strip(), 0) for line in output.splitlines() if re.fullmatch(pattern, line.strip())]
     if len(numbers) % 2: raise ValueError(f'incomplete Fuse trace: {output[-300:]}')
     frames = []; reads = []; read_start = None; decode_fields=[]; player_start=None; clock_checks=[]
+    read_kinds=[];read_frames=[]
     for event, timestamp in zip(numbers[::2], numbers[1::2]):
         if event == 100: player_start=timestamp
         elif event == 101: frames.append(timestamp)
         elif event == 107: decode_fields.append(timestamp)
         elif event == 108: clock_checks.append(timestamp)
-        elif event == 102:
+        elif event in (102,109,110):
             if read_start is not None: raise ValueError('unpaired ROM entry')
             read_start = timestamp
+            read_kinds.append({102:'dispatcher',109:'direct',110:'seek'}[event])
+            read_frames.append(len(frames)-1)
         elif event == 103:
             if read_start is None: raise ValueError('unpaired ROM exit')
             reads.append(timestamp-read_start); read_start=None
@@ -81,6 +87,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
                 measured_fps=3546900*len(intervals)/sum(intervals),
                 decode_fields=decode_fields,
                 clock_checks=clock_checks,
+                rom_call_kinds=read_kinds,rom_call_entry_frames=read_frames,
                 rom_call_tstates=reads, rom_call_mean_ms=sum(reads)/len(reads)/3546.9,
                 rom_call_max_ms=max(reads)/3546.9,
                 note='ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.')

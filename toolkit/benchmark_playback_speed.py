@@ -8,12 +8,12 @@ from validate_fast_sparse import CPU
 
 
 def measure(options, routine, *, sector=1, count=64, remaining=100, cached=True,
-            elapsed=6, last_read=0):
+            elapsed=6, last_read=0, cached_track=None):
     player, labels = codec.build_player(3,0,blocked=True,clocked=True,**options)
     cpu = CPU(player,bytes(2560*256))
     cpu.port_7ffd=0x17;cpu.sp=0xBFF0 if options.get('irq_disk') else 0x5FF0
     values=dict(disk_track=3,disk_sector=sector,ring_write_high=0xC0,
-                ring_write_region=1,fast_disk_track=3 if cached else 255,
+                ring_write_region=1,fast_disk_track=(3 if cached else 255) if cached_track is None else cached_track,
                 disk_interleaved=1,hold_counter=1)
     for name,value in values.items():
         if name in labels:cpu.write8(labels[name],value)

@@ -23,6 +23,7 @@ import playback_schedule  # noqa: E402
 import fast_drawing  # noqa: E402
 import disk_layout  # noqa: E402
 import incremental_zx0  # noqa: E402
+import fast_seek  # noqa: E402
 
 
 LOAD_ADDRESS = 0x6000
@@ -621,7 +622,9 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
                  fast_disk: bool = False, interleaved: bool = False,
                  irq_disk: bool = False, incremental: bool = False,
                  keepalive_fields: int = 0, prefetch_quota: int = 0,
-                 full_rom_clock: bool = False) -> tuple[bytes, dict[str, int]]:
+                 full_rom_clock: bool = False, cached_seek: bool = False) -> tuple[bytes, dict[str, int]]:
+    if cached_seek and not (irq_disk and full_rom_clock):
+        raise ValueError('cached seek requires the IRQ reader and full ROM clock')
     if incremental and not blocked: raise ValueError("incremental decoding requires ZX0")
     if keepalive_fields and not (deadline and fast_disk):
         raise ValueError('motor keepalive requires the fast reader and deadline pacing')
@@ -1160,8 +1163,18 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     ld_a_mem(a, "disk_track"); a.emit(0x57)
     ld_a_mem(a, "disk_sector"); a.emit(0x5F, 0x0E, 0x05)
     if fast_disk:
+        if cached_seek:
+            a.emit(0x3E,0x80,0x32);a.word(0x5CFE)
         ld_a_mem(a,'fast_disk_track');a.emit(0xBA)
-        a.rel8(0x20,'disk_full_dispatch')
+        if cached_seek:
+            a.rel8(0x28,'fast_disk_ready')
+            a.emit(0xFE,0xFF);a.abs16(0xCA,'disk_full_dispatch')
+            a.abs16(0xCD,'seek_cached_track')
+            ld_a_mem(a,'disk_track');a.emit(0x57)
+            ld_a_mem(a,'disk_sector');a.emit(0x5F)
+            a.label('fast_disk_ready')
+        else:
+            a.rel8(0x20,'disk_full_dispatch')
         a.emit(0x22);a.word(0x5D00)
         a.emit(0x7B,0x32);a.word(0x5CFF)
         a.abs16(0x11,'fast_disk_return');a.emit(0xD5)
@@ -1230,6 +1243,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     a.emit(0xFB)
     a.label("finished_wait"); a.emit(0x76); a.rel8(0x18, "finished_wait")
     a.label("fatal"); a.emit(0x3E, 2, 0xD3, 0xFE); a.rel8(0x18, "fatal")
+    if cached_seek: fast_seek.emit(a)
     if deadline:
         playback_schedule.emit_clock(a,dos_irq=irq_disk,full_rom_clock=full_rom_clock)
     elif clocked:
@@ -1317,6 +1331,7 @@ def main() -> None:
                         help='prevent motor spin-down while the input ring is full; 64 fields = 1.28 s')
     parser.add_argument('--prefetch-quota',type=int,choices=(0,3,4,5,6,8),default=0)
     parser.add_argument('--rom-clock',choices=('partial','full'),default='partial')
+    parser.add_argument('--disk-seek',choices=('dispatcher','cached'),default='dispatcher')
     args = parser.parse_args()
     incremental = args.zx0_decoding == "incremental"
     blocked = args.packing == "zx0"
@@ -1340,14 +1355,14 @@ def main() -> None:
 
     boot = streaming.build_boot_basic()
     provisional, _ = build_player(0, 0, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full')
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached')
     preceding = [
         base.TrdFile("boot", "B", boot, basic_variables_offset=len(boot), autostart_line=10),
         base.TrdFile("PLAYER", "C", provisional, start=LOAD_ADDRESS),
     ]
     video_track, video_sector = streaming.calculate_file_start(preceding)
     player, labels = build_player(video_track, video_sector, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full')
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached')
     boot_sectors = math.ceil((len(boot) + 4) / base.SECTOR_SIZE)
     player_sectors = math.ceil(len(player) / base.SECTOR_SIZE)
     limit = TRD_DATA_SECTORS - boot_sectors - player_sectors
@@ -1458,7 +1473,8 @@ def main() -> None:
         "motor_keepalive_fields": args.motor_keepalive_fields,
         "prefetch_quota": args.prefetch_quota,
         "rom_clock": args.rom_clock,
-        "speed_cycle_reference": "INCREMENTAL_PLAYBACK_RESULTS_ru.md",
+        "disk_seek": args.disk_seek,
+        "speed_cycle_reference": "CACHED_SEEK_RESULTS_ru.md" if args.disk_seek=='cached' else "INCREMENTAL_PLAYBACK_RESULTS_ru.md",
         "frames": len(states), "player_labels": labels, "player_bytes": len(player),
         "video_track": video_track, "video_sector": video_sector,
         "volumes": volumes, "trd_names": [v["trd_name"] for v in volumes],
@@ -1519,6 +1535,7 @@ def main() -> None:
                                  if args.rom_clock=='full' else
                                  'full TR-DOS dispatcher and seek time is not counted by IM2'),
             'short_read_recovery': 'retry incomplete direct sectors through the full C=5 dispatcher',
+            'cached_seek_geometry': '80 cylinders, two sides, 16 sectors per side' if args.disk_seek=='cached' else None,
             'irq_register': "HL prime reserved for clock" if irq_disk else None,
         }
     (args.output / "build_metadata.json").write_text(json.dumps(output_metadata, indent=2), encoding="utf-8")

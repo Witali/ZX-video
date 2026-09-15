@@ -1,0 +1,93 @@
+{
+  "baseline_commit": "a936ac8",
+  "source_sha256": "5d42a94efb0343fb3415c12dcc616bb9403b02f8946d7e8fbfaf45e7030f26e6",
+  "baseline": {
+    "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+    "clock_hz": 3546900,
+    "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "player_startup_ms": 8785.083312188108,
+    "frames": 1000,
+    "frame_interval_mean_ms": 149.71784240187634,
+    "frame_interval_max_ms": 581.6270546110688,
+    "measured_fps": 6.679230637827222,
+    "rom_call_mean_ms": 25.448318312366876,
+    "rom_call_max_ms": 398.33629366489043,
+    "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+    "intervals_over_125ms": 305,
+    "rom_playback_seconds": 55.717629479263586,
+    "sector_reads_including_header": 2521,
+    "playback_calls_by_kind": {
+      "dispatcher": {
+        "count": 137,
+        "total_seconds": 41.72980912909865,
+        "mean_ms": 304.59714692772735,
+        "max_ms": 398.33629366489043
+      },
+      "direct": {
+        "count": 2063,
+        "total_seconds": 13.987820350164931,
+        "mean_ms": 6.780329786798319,
+        "max_ms": 192.8833629366489
+      }
+    }
+  },
+  "current": {
+    "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+    "clock_hz": 3546900,
+    "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "player_startup_ms": 3545.2000338323605,
+    "frames": 1000,
+    "frame_interval_mean_ms": 121.43991068798647,
+    "frame_interval_max_ms": 457.5401054441907,
+    "measured_fps": 8.234525160095705,
+    "rom_call_mean_ms": 8.356299025058577,
+    "rom_call_max_ms": 193.6770137302997,
+    "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+    "intervals_over_125ms": 274,
+    "rom_playback_seconds": 20.5228757506555,
+    "sector_reads_including_header": 2524,
+    "playback_calls_by_kind": {
+      "direct": {
+        "count": 2203,
+        "total_seconds": 20.097960472525305,
+        "mean_ms": 9.122996129153565,
+        "max_ms": 192.88533649102033
+      },
+      "seek": {
+        "count": 274,
+        "total_seconds": 0.4249152781301982,
+        "mean_ms": 1.5507856866065628,
+        "max_ms": 6.1216837238151625
+      }
+    }
+  },
+  "cpu": {
+    "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+    "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+    "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+    "frames": 1000,
+    "delivery_tstates_mean": 237303.94094094093,
+    "delivery_tstates_max": 837711
+  },
+  "options": {
+    "packing": "zx0",
+    "pacing": "deadline",
+    "drawing": "registers",
+    "disk_reader": "trdos503-irq",
+    "disk_layout": "interleaved",
+    "zx0_decoding": "incremental",
+    "motor_keepalive_fields": 64,
+    "prefetch_quota": 3,
+    "rom_clock": "full",
+    "disk_seek": "cached"
+  },
+  "player_bytes": 4352,
+  "blocks": 112,
+  "payload_sectors": 2517,
+  "layout_padding_sectors": 4,
+  "free_sectors": 4,
+  "files": {
+    "PLAYER.C.bin": "54618bba0a5dbd4332066889c0141458748c69a372dafca3051b34070df13952",
+    "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd": "6f51d33fde9f1da11d8381ad0c83778fb01171a13df77f0f208a39131c10e783"
+  }
+}
