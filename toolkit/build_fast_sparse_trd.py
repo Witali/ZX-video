@@ -948,7 +948,8 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         a.abs16(0xC3, "command_loop")
 
     if fast_draw:
-        point_table_high_pos = fast_drawing.emit_points(a)
+        fast_drawing.emit_points(a)
+        point_table_high_pos = None
     else:
         a.label("command_points")
         a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
@@ -975,30 +976,34 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         ld_a_mem(a, "point_count"); a.emit(0x3D); ld_mem_a(a, "point_count")
         a.rel8(0x18, "point_loop")
 
-    a.label("command_spans")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "span_count")
-    ld_a_mem(a, "row_index")
-    a.emit(0x6F, 0x26, 0, 0x29)
-    a.emit(0x11); a.abs16([], "row_addresses")
-    a.emit(0x19, 0x4E, 0x23, 0x46)
-    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
-    a.label("span_token_loop")
-    ld_a_mem(a, "span_count"); a.emit(0xB7); a.abs16(0xCA, "command_loop")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "span_token")
-    # Add the high-nibble skip to both row pointers. Native 32-byte rows do
-    # not cross a page before their final byte, so low-byte arithmetic is safe.
-    a.emit(0x0F, 0x0F, 0x0F, 0x0F, 0xE6, 0x0F, 0x81, 0x4F, 0x59)
-    ld_a_mem(a, "span_token"); a.emit(0xE6, 0x0F, 0x3C); ld_mem_a(a, "span_length")
-    a.label("span_value_loop")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0x6F)
-    a.emit(0x26, 0)  # dither_top page, patched after placement
-    span_table_high_pos = len(a.code) - 1
-    a.emit(0x7E, 0x02, 0x24, 0x7E, 0x12, 0x03, 0x13)
-    ld_a_mem(a, "span_length"); a.emit(0x3D); ld_mem_a(a, "span_length")
-    a.rel8(0x20, "span_value_loop")
-    ld_a_mem(a, "span_count"); a.emit(0x3D); ld_mem_a(a, "span_count")
-    a.rel8(0x18, "span_token_loop")
+    if fast_draw:
+        fast_drawing.emit_spans(a)
+        span_table_high_pos = None
+    else:
+        a.label("command_spans")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "span_count")
+        ld_a_mem(a, "row_index")
+        a.emit(0x6F, 0x26, 0, 0x29)
+        a.emit(0x11); a.abs16([], "row_addresses")
+        a.emit(0x19, 0x4E, 0x23, 0x46)
+        ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
+        a.label("span_token_loop")
+        ld_a_mem(a, "span_count"); a.emit(0xB7); a.abs16(0xCA, "command_loop")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "span_token")
+        # Add the high-nibble skip to both row pointers. Native 32-byte rows do
+        # not cross a page before their final byte, so low-byte arithmetic is safe.
+        a.emit(0x0F, 0x0F, 0x0F, 0x0F, 0xE6, 0x0F, 0x81, 0x4F, 0x59)
+        ld_a_mem(a, "span_token"); a.emit(0xE6, 0x0F, 0x3C); ld_mem_a(a, "span_length")
+        a.label("span_value_loop")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0x6F)
+        a.emit(0x26, 0)  # dither_top page, patched after placement
+        span_table_high_pos = len(a.code) - 1
+        a.emit(0x7E, 0x02, 0x24, 0x7E, 0x12, 0x03, 0x13)
+        ld_a_mem(a, "span_length"); a.emit(0x3D); ld_mem_a(a, "span_length")
+        a.rel8(0x20, "span_value_loop")
+        ld_a_mem(a, "span_count"); a.emit(0x3D); ld_mem_a(a, "span_count")
+        a.rel8(0x18, "span_token_loop")
 
     a.label("command_copy_visible")
     a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
@@ -1046,42 +1051,46 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     ld_a_mem(a, "attr_count"); a.emit(0x3D); ld_mem_a(a, "attr_count")
     a.rel8(0x18, "attr_delta_loop")
 
-    a.label("command_row_rle")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
-    # The encoded byte length is useful to the host verifier; the player
-    # terminates after exactly 32 decoded bytes.
-    a.emit(0xDD, 0x23)
-    ld_a_mem(a, "row_index")
-    a.emit(0x6F, 0x26, 0, 0x29)
-    a.emit(0x11); a.abs16([], "row_addresses")
-    a.emit(0x19, 0x4E, 0x23, 0x46)
-    ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
-    a.emit(0x3E, source.LOGICAL_WIDTH // 4); ld_mem_a(a, "rle_remaining")
-    a.label("rle_token_loop")
-    ld_a_mem(a, "rle_remaining"); a.emit(0xB7); a.abs16(0xCA, "command_loop")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0xCB, 0x7F)
-    a.rel8(0x20, "rle_run")
-    a.emit(0x3C); ld_mem_a(a, "rle_count")
-    a.label("rle_literal_loop")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23)
-    a.abs16(0xCD, "rle_write")
-    ld_a_mem(a, "rle_count"); a.emit(0x3D); ld_mem_a(a, "rle_count")
-    a.rel8(0x20, "rle_literal_loop")
-    a.rel8(0x18, "rle_token_loop")
-    a.label("rle_run")
-    a.emit(0xE6, 0x7F, 0xC6, 2); ld_mem_a(a, "rle_count")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "rle_value")
-    a.label("rle_run_loop")
-    ld_a_mem(a, "rle_value"); a.abs16(0xCD, "rle_write")
-    ld_a_mem(a, "rle_count"); a.emit(0x3D); ld_mem_a(a, "rle_count")
-    a.rel8(0x20, "rle_run_loop")
-    a.rel8(0x18, "rle_token_loop")
-    a.label("rle_write")
-    a.emit(0x6F, 0x26, 0)  # dither_top page, patched after placement
-    rle_table_high_pos = len(a.code) - 1
-    a.emit(0x7E, 0x02, 0x24, 0x7E, 0x12, 0x03, 0x13)
-    ld_a_mem(a, "rle_remaining"); a.emit(0x3D); ld_mem_a(a, "rle_remaining")
-    a.emit(0xC9)
+    if fast_draw:
+        fast_drawing.emit_rle(a)
+        rle_table_high_pos = None
+    else:
+        a.label("command_row_rle")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
+        # The encoded byte length is useful to the host verifier; the player
+        # terminates after exactly 32 decoded bytes.
+        a.emit(0xDD, 0x23)
+        ld_a_mem(a, "row_index")
+        a.emit(0x6F, 0x26, 0, 0x29)
+        a.emit(0x11); a.abs16([], "row_addresses")
+        a.emit(0x19, 0x4E, 0x23, 0x46)
+        ld_a_mem(a, "update_base"); a.emit(0x80, 0x47, 0x3C, 0x57, 0x59)
+        a.emit(0x3E, source.LOGICAL_WIDTH // 4); ld_mem_a(a, "rle_remaining")
+        a.label("rle_token_loop")
+        ld_a_mem(a, "rle_remaining"); a.emit(0xB7); a.abs16(0xCA, "command_loop")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0xCB, 0x7F)
+        a.rel8(0x20, "rle_run")
+        a.emit(0x3C); ld_mem_a(a, "rle_count")
+        a.label("rle_literal_loop")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23)
+        a.abs16(0xCD, "rle_write")
+        ld_a_mem(a, "rle_count"); a.emit(0x3D); ld_mem_a(a, "rle_count")
+        a.rel8(0x20, "rle_literal_loop")
+        a.rel8(0x18, "rle_token_loop")
+        a.label("rle_run")
+        a.emit(0xE6, 0x7F, 0xC6, 2); ld_mem_a(a, "rle_count")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "rle_value")
+        a.label("rle_run_loop")
+        ld_a_mem(a, "rle_value"); a.abs16(0xCD, "rle_write")
+        ld_a_mem(a, "rle_count"); a.emit(0x3D); ld_mem_a(a, "rle_count")
+        a.rel8(0x20, "rle_run_loop")
+        a.rel8(0x18, "rle_token_loop")
+        a.label("rle_write")
+        a.emit(0x6F, 0x26, 0)  # dither_top page, patched after placement
+        rle_table_high_pos = len(a.code) - 1
+        a.emit(0x7E, 0x02, 0x24, 0x7E, 0x12, 0x03, 0x13)
+        ld_a_mem(a, "rle_remaining"); a.emit(0x3D); ld_mem_a(a, "rle_remaining")
+        a.emit(0xC9)
 
     a.label("command_row_shift")
     a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "row_index")
@@ -1300,9 +1309,12 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         a.emit(0)
     a.label("dither_top"); a.emit(*source.PLAYER_DITHER_TOP)
     a.label("dither_bottom"); a.emit(*source.PLAYER_DITHER_BOTTOM)
-    a.code[point_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
-    a.code[rle_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
-    a.code[span_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
+    if point_table_high_pos is not None:
+        a.code[point_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
+    if rle_table_high_pos is not None:
+        a.code[rle_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
+    if span_table_high_pos is not None:
+        a.code[span_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
     code = a.resolve()
     if keepalive_fields and LOAD_ADDRESS+len(code)>0x7C00:
         raise ValueError('player overlaps motor keepalive scratch buffer')
@@ -1474,7 +1486,7 @@ def main() -> None:
         "prefetch_quota": args.prefetch_quota,
         "rom_clock": args.rom_clock,
         "disk_seek": args.disk_seek,
-        "speed_cycle_reference": "CACHED_SEEK_RESULTS_ru.md" if args.disk_seek=='cached' else "INCREMENTAL_PLAYBACK_RESULTS_ru.md",
+        "speed_cycle_reference": "STREAM_DRAWING_RESULTS_ru.md" if fast_draw else "INCREMENTAL_PLAYBACK_RESULTS_ru.md",
         "frames": len(states), "player_labels": labels, "player_bytes": len(player),
         "video_track": video_track, "video_sector": video_sector,
         "volumes": volumes, "trd_names": [v["trd_name"] for v in volumes],
@@ -1485,7 +1497,7 @@ def main() -> None:
         "disk_sectors_per_frame": FIELDS_PER_FRAME,
         "cycle_model": {
             "unit": "Z80 T-states",
-            "scope": "bitmap row-pair address setup, excluding command dispatch",
+            "scope": "legacy bitmap row-pair address setup; stream commands include pointer setup in the whole-command totals below" if fast_draw else "bitmap row-pair address setup, excluding command dispatch",
             "previous": ROW_ADDRESS_SETUP_CYCLES_PREVIOUS,
             "current": ROW_ADDRESS_SETUP_CYCLES_CURRENT,
             "saved_per_row_command": (
@@ -1497,10 +1509,12 @@ def main() -> None:
                 1,
             ),
             "disk_rom_and_physical_latency_included": False,
-            "bitmap_mask": "1287 + 68*N" if fast_draw else "2067 + 64*N",
-            "bitmap_points": "220 + 189*N" if fast_draw else "260 + 265*N",
-            "bitmap_scope": "command_row / command_points entry to command_loop; dispatch excluded",
-            "bitmap_spans": "372 + 178*R + 126*N",
+            "bitmap_mask": "984 + 60*N" if fast_draw else "2067 + 64*N",
+            "bitmap_points": "207 + 114*N (N>0); 217 (N=0)" if fast_draw else "260 + 265*N",
+            "bitmap_scope": "mask / points / spans / RLE command entry to command_loop; dispatch excluded",
+            "bitmap_spans": "243 + 122*R + 90*N" if fast_draw else "220 + 178*R + 126*N",
+            "bitmap_rle": "189+50*L+147*R+90*NL+47*NR" if fast_draw else "208+95*L+152*R+183*NL+167*NR",
+            "bitmap_rle_symbols": "L/R: literal/repeat token counts; NL/NR: corresponding output lengths, total 32",
             "copy_visible_row": COPY_VISIBLE_ROW_CYCLES,
             "compression_cpu_regression_limit_percent": 10,
         },

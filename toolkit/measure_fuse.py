@@ -41,6 +41,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
                       f'[{labels["field_counter"]}]' if event == 107 else 'spectrum:frames * 70908 + ula:tstates')
         lines += [f'breakpoint 0x{address:04x}', f'commands {index}',
                   f'print {event}', f'print {expression}']
+        if event in (102,109):lines += ['print 120','print z80:hl']
         if event==198:lines += ['print 197','print z80:pc']
         lines += [
                   ('exit 77' if event == 199 else 'exit 99' if event == 198 else 'continue'), 'end']
@@ -59,7 +60,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     numbers = [int(line.strip(), 0) for line in output.splitlines() if re.fullmatch(pattern, line.strip())]
     if len(numbers) % 2: raise ValueError(f'incomplete Fuse trace: {output[-300:]}')
     frames = []; reads = []; read_start = None; decode_fields=[]; player_start=None; clock_checks=[]
-    read_kinds=[];read_frames=[]
+    read_kinds=[];read_frames=[];read_buffers=[]
     for event, timestamp in zip(numbers[::2], numbers[1::2]):
         if event == 100: player_start=timestamp
         elif event == 101: frames.append(timestamp)
@@ -70,6 +71,10 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
             read_start = timestamp
             read_kinds.append({102:'dispatcher',109:'direct',110:'seek'}[event])
             read_frames.append(len(frames)-1)
+            read_buffers.append(None)
+        elif event == 120:
+            if read_start is None:raise ValueError('read buffer outside a ROM call')
+            read_buffers[-1]=timestamp
         elif event == 103:
             if read_start is None: raise ValueError('unpaired ROM exit')
             reads.append(timestamp-read_start); read_start=None
@@ -87,7 +92,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
                 measured_fps=3546900*len(intervals)/sum(intervals),
                 decode_fields=decode_fields,
                 clock_checks=clock_checks,
-                rom_call_kinds=read_kinds,rom_call_entry_frames=read_frames,
+                rom_call_kinds=read_kinds,rom_call_entry_frames=read_frames,rom_call_buffers=read_buffers,
                 rom_call_tstates=reads, rom_call_mean_ms=sum(reads)/len(reads)/3546.9,
                 rom_call_max_ms=max(reads)/3546.9,
                 note='ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.')
