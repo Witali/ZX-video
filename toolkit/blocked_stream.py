@@ -9,6 +9,7 @@ from fractions import Fraction
 
 import packed_stream
 import zx0_codec
+import incremental_zx0
 
 MAGIC = b'ZXFC'
 VERSION = 8
@@ -107,38 +108,41 @@ def emit_hold_budget(a):
     a.abs16(0x32,'hold_counter')
 
 
-def emit_transport(a, *, input_limit=8192):
+def emit_transport(a, *, input_limit=8192, incremental=False):
     packed_stream.emit_transport(a,blocked=True,input_limit=input_limit)
-    a.label('wait_packet')
-    a.abs16(0x2A,'block_frame_pointer')
-    a.abs16((0xED,0x5B),'block_end')
-    a.emit(0xB7,0xED,0x52,0xC0)  # RET NZ: another complete frame remains.
-    a.abs16(0xCD,'load_block_header')
-    a.abs16(0x2A,'block_length')
-    a.emit(0x11); a.word(8193)
-    a.emit(0xB7,0xED,0x52); a.abs16(0xD2,'fatal')
-    a.abs16(0x2A,'block_length'); a.emit(0x7C,0xB7)
-    a.rel8(0x20,'block_length_valid')
-    a.emit(0x7D,0xFE,12); a.abs16(0xDA,'fatal')
-    a.label('block_length_valid')
-    a.abs16(0xCD,'load_block_body')
-    a.abs16(0x2A,'block_length')
-    # Output is 1..8192 bytes. The builder only emits whole nonempty frames.
-    a.emit(0x11); a.word(OUTPUT_BUFFER)
-    a.emit(0x19); a.abs16(0x22,'block_end')
-    a.emit(0x21); a.word(packed_stream.FRAME_BUFFER)
-    a.emit(0x11); a.word(OUTPUT_BUFFER)
-    a.abs16(0x3A,'block_stored'); a.emit(0xB7)
-    a.rel8(0x28,'block_unpack')
-    a.abs16((0xED,0x4B),'block_length'); a.emit(0xED,0xB0)
-    a.rel8(0x18,'block_unpacked')
-    a.label('block_unpack')
-    a.abs16(0xCD,'dzx0_turbo')
-    a.label('block_unpacked')
-    a.abs16(0x2A,'block_end'); a.emit(0xB7,0xED,0x52)
-    a.abs16(0xC2,'fatal')
-    a.emit(0x21); a.word(OUTPUT_BUFFER)
-    a.abs16(0x22,'block_frame_pointer'); a.emit(0xC9)
+    if incremental:
+        incremental_zx0.emit_wait(a)
+    else:
+        a.label('wait_packet')
+        a.abs16(0x2A,'block_frame_pointer')
+        a.abs16((0xED,0x5B),'block_end')
+        a.emit(0xB7,0xED,0x52,0xC0)  # RET NZ: another complete frame remains.
+        a.abs16(0xCD,'load_block_header')
+        a.abs16(0x2A,'block_length')
+        a.emit(0x11); a.word(8193)
+        a.emit(0xB7,0xED,0x52); a.abs16(0xD2,'fatal')
+        a.abs16(0x2A,'block_length'); a.emit(0x7C,0xB7)
+        a.rel8(0x20,'block_length_valid')
+        a.emit(0x7D,0xFE,12); a.abs16(0xDA,'fatal')
+        a.label('block_length_valid')
+        a.abs16(0xCD,'load_block_body')
+        a.abs16(0x2A,'block_length')
+        # Output is 1..8192 bytes. The builder only emits whole nonempty frames.
+        a.emit(0x11); a.word(OUTPUT_BUFFER)
+        a.emit(0x19); a.abs16(0x22,'block_end')
+        a.emit(0x21); a.word(packed_stream.FRAME_BUFFER)
+        a.emit(0x11); a.word(OUTPUT_BUFFER)
+        a.abs16(0x3A,'block_stored'); a.emit(0xB7)
+        a.rel8(0x28,'block_unpack')
+        a.abs16((0xED,0x4B),'block_length'); a.emit(0xED,0xB0)
+        a.rel8(0x18,'block_unpacked')
+        a.label('block_unpack')
+        a.abs16(0xCD,'dzx0_turbo')
+        a.label('block_unpacked')
+        a.abs16(0x2A,'block_end'); a.emit(0xB7,0xED,0x52)
+        a.abs16(0xC2,'fatal')
+        a.emit(0x21); a.word(OUTPUT_BUFFER)
+        a.abs16(0x22,'block_frame_pointer'); a.emit(0xC9)
 
     a.label('ring_packet')
     a.abs16(0x2A,'block_frame_pointer')
@@ -153,7 +157,10 @@ def emit_transport(a, *, input_limit=8192):
     a.abs16(0x11,'ay_state'); a.emit(0x01); a.word(9)
     a.emit(0xED,0xB0,0xE5,0xDD,0xE1)
     a.abs16(0xCD,'command_loop'); a.emit(0xC9)
-    zx0_codec.emit_decoder(a,'turbo')
+    if incremental:
+        incremental_zx0.emit_decoder(a)
+    else:
+        zx0_codec.emit_decoder(a,'turbo')
 
 
 def emit_variables(a):

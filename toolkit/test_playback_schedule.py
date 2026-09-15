@@ -2,10 +2,82 @@
 import unittest
 
 import build_fast_sparse_trd as codec
+import playback_schedule
 from validate_fast_sparse import CPU
 
 
 class BatchedProducerTests(unittest.TestCase):
+    def test_quota_bounds_late_reads_and_respects_capacity_and_eof(self):
+        for elapsed,deadline in ((13,6),(2,65534)):
+            for count,remaining,expected in ((100,20,3),(319,20,1),(320,20,0),(100,2,2),(100,0,0)):
+                player,labels=codec.build_player(0,0,blocked=True,clocked=True,
+                                                deadline=True,prefetch_quota=3)
+                cpu=CPU(player,bytes(2560*256));cpu.port_7ffd=0x17
+                for name,value in dict(elapsed_fields=elapsed,next_frame_field=deadline,
+                                       ring_count=count,disk_sectors_remaining=remaining).items():
+                    cpu.write8(labels[name],value);cpu.write8(labels[name]+1,value>>8)
+                cpu.write8(labels['ring_write_region'],1);cpu.write8(labels['ring_write_high'],0xC0)
+                cpu.pc=labels['prefetch_loop']
+                while cpu.pc!=labels['flip_screen']:
+                    self.assertLess(cpu.steps,1000);cpu.step()
+                self.assertEqual(cpu.dos_reads,expected)
+                self.assertEqual(cpu.read8(labels['prefetch_remaining']),0)
+                self.assertEqual(cpu.read8(labels['next_frame_field']) |
+                                 cpu.read8(labels['next_frame_field']+1)<<8,(deadline+6)&65535)
+
+    def test_minimum_queue_detects_burst_before_production(self):
+        self.assertEqual(playback_schedule.minimum_queue([3,2,3,1],5,5,3),0)
+        self.assertEqual(playback_schedule.minimum_queue([3,3,0],5,5,3),-1)
+        self.assertEqual(playback_schedule.minimum_queue([2,0,0,3],5,5,3),0)
+
+    def test_motor_keepalive_preserves_full_queue_and_stream_cursor(self):
+        trd=b''.join(bytes([i%251])*256 for i in range(2560))
+        player,labels=codec.build_player(3,2,blocked=True,clocked=True,deadline=True,
+                                        fast_disk=True,irq_disk=True,keepalive_fields=64)
+        for elapsed,last,remaining,expected in ((63,0,5,0),(64,0,5,1),(10,65500,5,0),
+                                                (28,65500,5,1),(100,0,0,0)):
+            cpu=CPU(player,trd);cpu.port_7ffd=0x17;cpu.alt_l=elapsed&255;cpu.alt_h=elapsed>>8
+            for name,value in dict(elapsed_fields=elapsed,last_disk_fields=last,
+                                   ring_count=320,disk_sectors_remaining=remaining).items():
+                cpu.write8(labels[name],value);cpu.write8(labels[name]+1,value>>8)
+            for name,value in dict(disk_track=3,disk_sector=2,fast_disk_track=3,
+                                   ring_write_region=1,ring_write_high=0xC0).items():
+                cpu.write8(labels[name],value)
+            cpu.write8(0x5CF5,3)
+            before=[bytes(cpu.banks[i]) for i in (0,1,3,4,6)]
+            cpu.pc=labels['producer_one'];cpu.push(0x5F00)
+            while cpu.pc!=0x5F00:
+                self.assertLess(cpu.steps,1000);cpu.step()
+            self.assertEqual(cpu.dos_reads,expected);self.assertEqual(cpu.a,0)
+            self.assertEqual([bytes(cpu.banks[i]) for i in (0,1,3,4,6)],before)
+            self.assertEqual((cpu.read8(labels['disk_track']),cpu.read8(labels['disk_sector'])),(3,2))
+            self.assertEqual(cpu.read8(labels['disk_sectors_remaining']),remaining)
+            self.assertEqual(cpu.read8(labels['ring_count']) | cpu.read8(labels['ring_count']+1)<<8,320)
+            self.assertEqual(cpu.read8(labels['last_disk_fields']) |
+                             cpu.read8(labels['last_disk_fields']+1)<<8,elapsed if expected else last)
+            if expected:
+                self.assertEqual(bytes(cpu.read8(0x7C00+i) for i in range(256)),trd[50*256:51*256])
+
+    def test_full_rom_irq_routes_break_key_and_preserves_registers(self):
+        player,labels=codec.build_player(0,0,blocked=True,clocked=True,deadline=True,
+                                        fast_disk=True,irq_disk=True,full_rom_clock=True)
+        for return_pc,total in ((0x6001,160),(0x1F53,187),(0x1F54,186),(0x1F5F,186),(0x1F60,201)):
+            cpu=CPU(player,b'');cpu.sp=0xBFF0;cpu.pc=labels['setup_clock'];cpu.push(0x6001)
+            while cpu.pc!=0x6001:cpu.step()
+            # Full-dispatch vector is patched while interrupts are disabled.
+            for i,value in enumerate(bytes.fromhex('c300bd')):cpu.write8(0xBDBD+i,value)
+            cpu.set_bc(0x1234);cpu.set_de(0x5678);cpu.set_hl(0x9ABC)
+            cpu.a=77;cpu.z=True;cpu.carry=True;cpu.alt_a=54
+            start=cpu.tstates;cpu.pc=0xBDBD;cpu.push(return_pc);mapper=False
+            while cpu.pc!=return_pc:
+                if cpu.read8(cpu.pc)==0xC3 and cpu.read8(cpu.pc+1)==0x2F:mapper=True
+                cpu.step()
+            self.assertEqual(cpu.tstates-start+19,total)
+            self.assertEqual(mapper,not 0x1F54<=return_pc<0x1F60)
+            self.assertEqual((cpu.bc(),cpu.de(),cpu.hl(),cpu.a,cpu.z,cpu.carry,cpu.alt_a),
+                             (0x1234,0x5678,0x9ABC,77,True,True,54))
+            self.assertEqual(cpu.alt_h*256+cpu.alt_l,1);self.assertEqual(cpu.sp,0xBFF0)
+
     def test_short_direct_read_retries_without_advancing_the_stream(self):
         trd=b''.join(bytes([i%251])*256 for i in range(2560))
         for irq in (False,True):

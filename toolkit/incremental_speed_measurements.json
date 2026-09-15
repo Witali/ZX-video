@@ -1,0 +1,98 @@
+{
+  "baseline_commit": "fddc21e",
+  "source_sha256": "5d42a94efb0343fb3415c12dcc616bb9403b02f8946d7e8fbfaf45e7030f26e6",
+  "baseline": {
+    "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+    "clock_hz": 3546900,
+    "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "player_startup_ms": 8876.790718655728,
+    "frames": 1000,
+    "frame_interval_mean_ms": 162.78923006572504,
+    "frame_interval_max_ms": 759.2929036623531,
+    "measured_fps": 6.142912523121197,
+    "rom_call_mean_ms": 25.25272356885453,
+    "rom_call_max_ms": 398.0250359468832,
+    "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+    "intervals_over_120ms": 280,
+    "rom_playback_seconds": 55.13410442921988,
+    "sector_calls_including_header": 2518
+  },
+  "current": {
+    "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+    "clock_hz": 3546900,
+    "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "player_startup_ms": 8784.78333192365,
+    "frames": 1000,
+    "frame_interval_mean_ms": 149.46079999760678,
+    "frame_interval_max_ms": 581.5937861230934,
+    "measured_fps": 6.69071756618466,
+    "rom_call_mean_ms": 25.44782948105518,
+    "rom_call_max_ms": 398.29766838647834,
+    "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+    "intervals_over_120ms": 339,
+    "rom_playback_seconds": 55.716043305421636,
+    "sector_calls_including_header": 2521
+  },
+  "cpu": {
+    "baseline": {
+      "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+      "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+      "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+      "frames": 1000,
+      "delivery_tstates_mean": 208275.57557557558,
+      "delivery_tstates_max": 1269546
+    },
+    "current": {
+      "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+      "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+      "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+      "frames": 1000,
+      "delivery_tstates_mean": 237303.94094094093,
+      "delivery_tstates_max": 837711
+    }
+  },
+  "decoder": {
+    "scope": "Compare decoder work on the exact same blocks and frame boundaries.\n\nZ80 T-states from UM0080; no disk, paging, contention, IRQs or frame drawing.\nThe old scope is turbo entry through RET. The new scope includes coroutine\nentry/return, target synchronization and all suspensions at frame boundaries.\n",
+    "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+    "blocks": 112,
+    "frames": 1000,
+    "old_block_mean": 635311.9196428572,
+    "old_block_max": 727739,
+    "incremental_block_mean": 889926.1428571428,
+    "incremental_frame_mean": 99671.728,
+    "incremental_frame_max": 290917,
+    "incremental_slice_max": 290083,
+    "total_delta": 28516793
+  },
+  "current_options": {
+    "packing": "zx0",
+    "pacing": "deadline",
+    "read_batch": 1,
+    "drawing": "registers",
+    "disk_reader": "trdos503-irq",
+    "disk_layout": "interleaved",
+    "zx0_decoding": "incremental",
+    "motor_keepalive_fields": 64,
+    "prefetch_quota": 3,
+    "rom_clock": "full"
+  },
+  "storage": {
+    "volumes": 1,
+    "frames": 1000,
+    "player_bytes": 4096,
+    "blocks": 112,
+    "payload_sectors": 2517,
+    "layout_padding_sectors": 4,
+    "trd_stats": {
+      "used_sectors": 2539,
+      "free_sectors": 5,
+      "first_free_track": 159,
+      "first_free_sector": 11
+    },
+    "minimum_queue_after_frame_sectors": 0
+  },
+  "files": {
+    "PLAYER.C.bin": "ba117185ba997f549398c8945250384e6a6268f460d3c151c5d0b953efb59070",
+    "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd": "882a5796fba332729fefd42ad5399e44a0bc7fbb947f9bcfd5a2d5874bd062e6"
+  }
+}

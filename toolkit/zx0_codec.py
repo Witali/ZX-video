@@ -61,9 +61,10 @@ def decompress(data: bytes, limit: int = 8192) -> bytes:
         mode = 'offset' if bit() else 'literal'
 
 
-def emit_decoder(a, variant="turbo"):
+def emit_decoder(a, variant="turbo", *, copy_hook=None):
     if variant not in ("standard", "turbo"):
         raise ValueError(variant)
+    if copy_hook and variant != 'turbo': raise ValueError('suspension requires turbo')
     source = Path(__file__).parent / 'third_party/zx0' / f'dzx0_{variant}.asm'
     start = a.pc
     simple = {
@@ -79,6 +80,8 @@ def emit_decoder(a, variant="turbo"):
     for original in source.read_text().splitlines():
         line = ' '.join(original.split(';')[0].strip().split()).replace(', ', ',')
         if not line: continue
+        if line == 'ldir' and copy_hook:
+            a.abs16(0xCD,copy_hook);continue
         if line.endswith(':'):
             a.label(line[:-1]); continue
         if line in simple:
@@ -105,5 +108,5 @@ def emit_decoder(a, variant="turbo"):
         else:
             raise ValueError(f'unsupported ZX0 instruction: {line}')
     for alias,(label,offset) in aliases.items(): a.labels[alias]=a.labels[label]+offset
-    assert a.pc-start == {'standard':68,'turbo':126}[variant]
+    assert a.pc-start == {'standard':68,'turbo':126}[variant]+(2 if copy_hook else 0)
     return f'dzx0_{variant}'

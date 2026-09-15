@@ -1,0 +1,110 @@
+{
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "baseline_commit": "fddc21e",
+  "scope": "routine entry through RET; schedule through CALL flip_screen; ROM entry CALL/JP counted, ROM body excluded",
+  "exclusions": [
+    "ROM service",
+    "disk latency",
+    "contention",
+    "IRQ execution",
+    "HALT wait beyond its first 4 T"
+  ],
+  "assumptions": "single sector, bank 1 queue at C000, track 3, interleaving active, no ring/bank wrap unless specified",
+  "options": {
+    "fast_draw": true,
+    "deadline": true,
+    "fast_disk": true,
+    "irq_disk": true,
+    "interleaved": true,
+    "incremental": true,
+    "keepalive_fields": 64,
+    "prefetch_quota": 3,
+    "full_rom_clock": true
+  },
+  "routines": {
+    "setup_clock": {
+      "previous_tstates": 5635,
+      "current_tstates": 6395,
+      "delta": 760
+    },
+    "read_same_track_low": {
+      "previous_tstates": 470,
+      "current_tstates": 563,
+      "delta": 93
+    },
+    "read_same_track_high": {
+      "previous_tstates": 465,
+      "current_tstates": 558,
+      "delta": 93
+    },
+    "read_track_wrap": {
+      "previous_tstates": 544,
+      "current_tstates": 637,
+      "delta": 93
+    },
+    "read_full_dispatch": {
+      "previous_tstates": 337,
+      "current_tstates": 510,
+      "delta": 173
+    },
+    "producer_one_sector": {
+      "previous_tstates": 1093,
+      "current_tstates": 1186,
+      "delta": 93
+    },
+    "producer_full_ring": {
+      "previous_tstates": 73,
+      "current_tstates": 214,
+      "delta": 141
+    },
+    "producer_end_of_stream": {
+      "previous_tstates": 134,
+      "current_tstates": 186,
+      "delta": 52
+    },
+    "schedule_due_no_io": {
+      "previous_tstates": 205,
+      "current_tstates": 388,
+      "delta": 183
+    }
+  },
+  "extra_paths": {
+    "producer_full_ring_keepalive_due": {
+      "previous_tstates": 73,
+      "current_tstates": 904,
+      "delta": 831
+    },
+    "schedule_late_three_reads": {
+      "previous_tstates": 223,
+      "current_tstates": 4170,
+      "delta": 3947
+    }
+  },
+  "copier_four_bytes": {
+    "lower_high_byte": {
+      "previous_tstates": 79,
+      "current_tstates": 149,
+      "delta": 70
+    },
+    "same_high_byte": {
+      "previous_tstates": 79,
+      "current_tstates": 178,
+      "delta": 99
+    },
+    "exact_target": {
+      "previous_tstates": 79,
+      "current_tstates": 185,
+      "delta": 106
+    }
+  },
+  "interrupt_tstates": {
+    "fast_before": 61,
+    "fast_after": 61,
+    "fast_delta": 0,
+    "full_dispatch_normal": 160,
+    "full_dispatch_break_key": 186,
+    "full_dispatch_pc_1f00_1f53": 187,
+    "full_dispatch_pc_1f60_1fff": 201
+  },
+  "interrupt_scope": "Includes 19 T IM2 acknowledgement, vector JP for full dispatcher, and ROM NOP/RET when used; old full dispatcher ran the uncounted ROM IM1 handler"
+}

@@ -38,7 +38,10 @@ class BlockedStreamTests(unittest.TestCase):
             result = validate_volume(path,labels,states,ay,interrupt_every=701 if clocked else None)
         self.assertEqual(result['disk_bytes'],logical_bytes)
         if clocked: self.assertGreater(result['injected_interrupts'],100)
-        if player_options.get('irq_disk'): self.assertGreater(result['minimum_sp'],0xBF00)
+        if player_options.get('incremental'):
+            self.assertGreaterEqual(result['minimum_sp'],0x7D80)
+        elif player_options.get('irq_disk'):
+            self.assertGreater(result['minimum_sp'],0xBF00)
 
     def test_reference_and_both_upstream_decoders(self):
         self.assertEqual(zx0_codec.decompress(EMPTY_COMPRESSED),EMPTY_DECODED)

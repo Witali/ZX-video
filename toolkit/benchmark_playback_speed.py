@@ -7,7 +7,8 @@ import build_fast_sparse_trd as codec
 from validate_fast_sparse import CPU
 
 
-def measure(options, routine, *, sector=1, count=64, remaining=100, cached=True):
+def measure(options, routine, *, sector=1, count=64, remaining=100, cached=True,
+            elapsed=6, last_read=0):
     player, labels = codec.build_player(3,0,blocked=True,clocked=True,**options)
     cpu = CPU(player,bytes(2560*256))
     cpu.port_7ffd=0x17;cpu.sp=0xBFF0 if options.get('irq_disk') else 0x5FF0
@@ -17,10 +18,11 @@ def measure(options, routine, *, sector=1, count=64, remaining=100, cached=True)
     for name,value in values.items():
         if name in labels:cpu.write8(labels[name],value)
     for name,value in dict(ring_count=count,disk_sectors_remaining=remaining,
-                           elapsed_fields=6,next_frame_field=6).items():
+                           elapsed_fields=elapsed,last_disk_fields=last_read,next_frame_field=6).items():
         if name in labels:
             cpu.write8(labels[name],value);cpu.write8(labels[name]+1,value>>8)
-    cpu.alt_l=6;cpu.write8(0x5CF5,3);cpu.set_hl(0xC000);cpu.b=1
+    cpu.alt_l=elapsed&255;cpu.alt_h=elapsed>>8
+    cpu.write8(0x5CF5,3);cpu.set_hl(0xC000);cpu.b=1
     cpu.pc=labels[routine];cpu.push(0x5F00)
     if routine=='isr':raise ValueError('use setup_clock for clock initialization')
     stop=labels['flip_screen'] if routine=='prefetch_loop' else 0x5F00
