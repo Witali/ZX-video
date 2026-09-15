@@ -22,6 +22,8 @@ class CPU(MemoryCPU):
         self.tstates = 0
         self.ay_register = 0
         self.ay = bytearray(16)
+        self.i = self.im = 0
+        self.iff1 = False
 
     def reg(self, index):
         return self.read8(self.hl()) if index == 6 else getattr(self, self.registers[index])
@@ -58,6 +60,7 @@ class CPU(MemoryCPU):
     def instruction(self):
         op = self.fetch8()
         if op in (0, 0xF3, 0xFB):
+            if op != 0: self.iff1 = op == 0xFB
             return 4
         if op == 0x76:
             self.halts += 1
@@ -133,6 +136,14 @@ class CPU(MemoryCPU):
         if op == 0x0F:
             self.carry = bool(self.a & 1)
             self.a = (self.a >> 1) | ((self.a & 1) << 7); return 4
+        if op == 0x17:
+            carry = self.carry
+            self.carry = bool(self.a & 128)
+            self.a = ((self.a << 1) | int(carry)) & 255; return 4
+        if op == 0xE3:
+            old = self.hl()
+            self.set_hl(self.read8(self.sp) | self.read8(self.sp+1) << 8)
+            self.write8(self.sp,old); self.write8(self.sp+1,old >> 8); return 19
         if op == 0xEB:
             old = self.hl(); self.set_hl(self.de()); self.set_de(old); return 4
         if op in (0xC5, 0xD5, 0xE5, 0xF5, 0xC1, 0xD1, 0xE1, 0xF1):
@@ -178,9 +189,25 @@ class CPU(MemoryCPU):
                 self.carry = bool(value & 1); value >>= 1
                 self.put(register, value); self.z = value == 0
                 return 15 if register == 6 else 8
+            if q & 0xF8 in (0x10,0x18):
+                carry = self.carry
+                if q & 8:
+                    self.carry = bool(value & 1); value = (value >> 1) | (int(carry) << 7)
+                else:
+                    self.carry = bool(value & 128); value = ((value << 1) | int(carry)) & 255
+                self.put(register,value); self.z = value == 0
+                return 15 if register == 6 else 8
             raise RuntimeError(f"unsupported CB {q:02X}")
         if op == 0xED:
             q = self.fetch8()
+            if q == 0x47:
+                self.i = self.a; return 9
+            if q == 0x5E:
+                self.im = 2; return 8
+            if q == 0x56:
+                self.im = 1; return 8
+            if q == 0x4D:
+                self.pc = self.pop(); return 14
             if q == 0x79:
                 port = self.bc()
                 if port == 0x7FFD:
@@ -215,7 +242,8 @@ class CPU(MemoryCPU):
         raise RuntimeError(f"unsupported opcode {op:02X}")
 
 
-def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000):
+def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, decode_fields=None,
+                    interrupt_every: int | None = None):
     import build_long_video_trd as compact
     trd = path.read_bytes()
     player = extract_file(trd, next(e for e in parse_dir(trd) if e[0] == 'PLAYER'))
@@ -225,9 +253,14 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000):
     delivery_start = None
     delivery_cycles = []
     underflows = 0
+    underflow_addresses = {labels[name] for name in ('wait_packet_fill','stream_byte_fill') if name in labels}
+    next_interrupt = interrupt_every or 0
+    interrupts = 0
     while cpu.steps < max_steps:
-        if cpu.pc in [labels[name] for name in ('wait_packet_fill', 'stream_byte_fill') if name in labels]:
+        if cpu.pc in underflow_addresses:
             underflows += 1
+        if decode_fields is not None and cpu.pc == labels.get('frame_prepared'):
+            cpu.write8(labels['field_counter'],decode_fields[decoded-1])
         if cpu.pc == labels['fatal']:
             raise AssertionError(f"player entered fatal at frame {decoded}")
         if cpu.pc == labels['main_loop']:
@@ -245,12 +278,19 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000):
             delivery_cycles.append(cpu.tstates - delivery_start)
             delivery_start = None
         cpu.step()
+        # Stress test only: inject between instructions while IM2 is enabled.
+        # This is not a Spectrum IRQ timing model (HALT waiting is omitted).
+        if interrupt_every and cpu.iff1 and cpu.im == 2 and cpu.tstates >= next_interrupt:
+            cpu.push(cpu.pc); cpu.pc = cpu.read8((cpu.i << 8)|255) | cpu.read8((cpu.i << 8)+256) << 8
+            cpu.iff1 = False; cpu.tstates += 19
+            interrupts += 1; next_interrupt = cpu.tstates+interrupt_every
     else:
         raise AssertionError("instruction limit exceeded")
     assert underflows == 0, f"{underflows} ring underflows"
     return dict(frames=decoded, instructions=cpu.steps, cpu_tstates=cpu.tstates,
                 delivery_tstates=delivery_cycles, dos_reads=cpu.dos_reads,
-                disk_bytes=cpu.bytes_read, underflows=underflows, minimum_sp=cpu.min_sp)
+                disk_bytes=cpu.bytes_read, underflows=underflows, minimum_sp=cpu.min_sp,
+                injected_interrupts=interrupts)
 
 
 def main():
@@ -259,13 +299,16 @@ def main():
     parser.add_argument('build', type=Path)
     parser.add_argument('--source-build', type=Path, required=True)
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--fuse-timing', type=Path, help='Replay measured IRQ field counts, excluding IRQ execution from CPU totals')
     args = parser.parse_args()
     meta = json.loads((args.build/'build_metadata.json').read_text())
     states, ay_states, _ = codec.decode_compact_build(args.source_build/'VIDEO_full.C.bin')
     results = []
-    for volume in meta['volumes']:
+    timing = json.loads(args.fuse_timing.read_text()) if args.fuse_timing else None
+    for index,volume in enumerate(meta['volumes']):
         start, end = volume['frame_start'], volume['frame_end']
-        result = validate_volume(args.build/volume['trd_name'], meta['player_labels'], states[start:end], ay_states[start:end])
+        result = validate_volume(args.build/volume['trd_name'], meta['player_labels'], states[start:end], ay_states[start:end],
+                                 decode_fields=timing[index]['decode_fields'] if timing else None)
         results.append(result)
         print(f"Verified frames {start}..{end-1}; {result['dos_reads']} sector reads", flush=True)
     cycles = [n for result in results for n in result['delivery_tstates']]

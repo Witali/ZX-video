@@ -1,0 +1,72 @@
+"""ZX0 reference/machine-code agreement and real-player block transitions."""
+from pathlib import Path
+import random
+import tempfile
+import unittest
+
+import blocked_stream
+import build_fast_sparse_trd as codec
+import packed_stream
+import zx0_codec
+from validate_fast_sparse import CPU, validate_volume
+
+# Produced by upstream ZX0 2.2 from 500 empty v7 frames. Exercises long Elias
+# lengths, overlapping matches and an independently restarting second block.
+EMPTY_COMPRESSED = bytes.fromhex('210a0039e851405d5556')
+EMPTY_DECODED = (bytes((10,0))+bytes(10))*500
+
+
+class BlockedStreamTests(unittest.TestCase):
+    def run_player(self, states, blocks, *, clocked=False):
+        ay = [bytes(9)]*len(states)
+        video = blocked_stream.serialize_volume(blocks,25/3,clocked=clocked)
+        boot = codec.streaming.build_boot_basic()
+        provisional,_ = codec.build_player(0,0,blocked=True,clocked=clocked)
+        files = [codec.base.TrdFile('boot','B',boot,basic_variables_offset=len(boot),autostart_line=10),
+                 codec.base.TrdFile('PLAYER','C',provisional,start=0x6000)]
+        track,sector = codec.streaming.calculate_file_start(files)
+        player,labels = codec.build_player(track,sector,blocked=True,clocked=clocked)
+        files[1] = codec.base.TrdFile('PLAYER','C',player,start=0x6000)
+        files.append(codec.base.TrdFile('VIDEO','C',video,start=0))
+        trd,_,_ = codec.streaming.place_files(files,'BLOCK')
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/'test.trd'; path.write_bytes(trd)
+            result = validate_volume(path,labels,states,ay,interrupt_every=701 if clocked else None)
+        self.assertEqual(result['disk_bytes'],len(video))
+        if clocked: self.assertGreater(result['injected_interrupts'],100)
+
+    def test_reference_and_both_upstream_decoders(self):
+        self.assertEqual(zx0_codec.decompress(EMPTY_COMPRESSED),EMPTY_DECODED)
+        for variant in ('standard','turbo'):
+            a = codec.base.MiniAssembler(0x6000)
+            zx0_codec.emit_decoder(a,variant)
+            cpu = CPU(a.resolve(),b'')
+            cpu.set_hl(0xA000); cpu.set_de(0x8000); cpu.push(0x5F00)
+            for i,value in enumerate(EMPTY_COMPRESSED): cpu.write8(0xA000+i,value)
+            while cpu.pc != 0x5F00:
+                self.assertLess(cpu.steps,100000)
+                cpu.step()
+            self.assertEqual(bytes(cpu.banks[2][:len(EMPTY_DECODED)]),EMPTY_DECODED)
+
+    def test_two_blocks_share_one_disk_sector(self):
+        block = blocked_stream.Block(EMPTY_COMPRESSED,EMPTY_DECODED,500,False,0)
+        self.run_player([bytes(3840)]*1000,[block,block])
+
+    def test_irq_during_decompression_preserves_registers(self):
+        block = blocked_stream.Block(EMPTY_COMPRESSED,EMPTY_DECODED,500,False,0)
+        self.run_player([bytes(3840)]*1000,[block,block],clocked=True)
+
+    def test_uncompressed_fallback_with_dense_frames(self):
+        rng = random.Random(7)
+        states = [rng.randbytes(3840) for _ in range(4)]
+        _,packets = codec.make_volume_packets(states,[bytes(9)]*4,0,2530,packed=True)
+        frames = [packed_stream.frame_bytes(p,natural_order=True) for p in packets]
+        blocks = [blocked_stream.Block(frame,frame,1,True,0) for frame in frames]
+        self.run_player(states,blocks)
+
+    def test_corrupt_stream_is_rejected_by_reference(self):
+        for data in (EMPTY_COMPRESSED[:-1],EMPTY_COMPRESSED+b'\0',b'\0'):
+            with self.assertRaises(ValueError): zx0_codec.decompress(data)
+
+
+if __name__ == '__main__': unittest.main()

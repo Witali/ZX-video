@@ -57,9 +57,12 @@ def sector_records(sector: bytes, first: bool) -> list[bytes]:
     raise ValueError("missing sector END")
 
 
-def frame_bytes(packet) -> bytes:
+def frame_bytes(packet, *, natural_order: bool = False) -> bytes:
     records = [record for i, sector in enumerate(packet.sectors)
                for record in sector_records(sector, i == 0)]
+    if natural_order:
+        # Stable sorting retains a row predictor before its correction.
+        records.sort(key=lambda record: 256 if record[0] in (2, 4) else record[1])
     payload = packet.ay_state + b"".join(records) + b"\0"
     if not 10 <= len(payload) < FRAME_BUFFER_BYTES:
         raise ValueError("frame exceeds fixed decode buffer")
@@ -96,7 +99,7 @@ def minimum_startup_backlog(lengths: list[int], capacity: int = RING_CAPACITY_SE
     raise ValueError("frame sequence exceeds packed ring capacity")
 
 
-def emit_transport(a) -> None:
+def emit_transport(a, *, blocked: bool = False) -> None:
     """Emit header reads and whole-frame copies from the banked sector ring."""
     def load(name):
         a.abs16(0x3A, name)
@@ -104,15 +107,28 @@ def emit_transport(a) -> None:
     def save(name):
         a.abs16(0x32, name)
 
-    a.label("wait_packet")
+    a.label("load_block_header" if blocked else "wait_packet")
     a.abs16(0xCD, "stream_byte"); save("frame_length")
     a.abs16(0xCD, "stream_byte"); save("frame_length_high")
+    if blocked:
+        a.emit(0xE6, 0x80); save("block_stored")
+        load("frame_length_high"); a.emit(0xE6, 0x7F); save("frame_length_high")
+        a.abs16(0xCD, "stream_byte"); save("block_length")
+        a.abs16(0xCD, "stream_byte"); save("block_length_high")
     # Bounds are checked before any copy to A000h..BFFFh.
     a.abs16(0x2A, "frame_length")
     a.emit(0x7C, 0xFE, FRAME_BUFFER_BYTES >> 8)
-    a.abs16(0xD2, "fatal")
+    if blocked:
+        a.rel8(0x38, "block_size_below_limit")
+        a.abs16(0xC2, "fatal")
+        a.emit(0x7D, 0xB7); a.abs16(0xC2, "fatal")
+        a.rel8(0x18, "frame_length_valid")
+        a.label("block_size_below_limit")
+        a.emit(0x7C)
+    else:
+        a.abs16(0xD2, "fatal")
     a.emit(0xB7); a.rel8(0x20, "frame_length_valid")
-    a.emit(0x7D, 0xFE, 10); a.abs16(0xDA, "fatal")
+    a.emit(0x7D, 0xFE, 1 if blocked else 10); a.abs16(0xDA, "fatal")
     a.label("frame_length_valid")
     load("ring_read_low"); a.emit(0x5F, 0x16, 0, 0x19, 0x2B, 0x7C, 0x3C)
     save("frame_sector_need")
@@ -137,7 +153,7 @@ def emit_transport(a) -> None:
     a.abs16(0xCC, "consume_sector")
     a.abs16(0xCD, "page_bank7"); a.emit(0xF1, 0xC9)
 
-    a.label("ring_packet")
+    a.label("load_block_body" if blocked else "ring_packet")
     a.abs16(0x2A, "frame_length"); a.abs16(0x22, "frame_remaining")
     a.emit(0x21); a.word(FRAME_BUFFER); a.abs16(0x22, "frame_destination")
     a.label("frame_copy_loop")
@@ -165,6 +181,9 @@ def emit_transport(a) -> None:
     a.abs16(0x2A, "frame_remaining"); a.emit(0x7C, 0xB5)
     a.abs16(0xC2, "frame_copy_loop")
     a.abs16(0xCD, "page_bank7")
+    if blocked:
+        a.emit(0xC9)
+        return
     a.emit(0x21); a.word(FRAME_BUFFER)
     a.abs16(0x11, "ay_state")
     a.emit(0x01); a.word(9); a.emit(0xED, 0xB0)

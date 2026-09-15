@@ -17,12 +17,15 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float) -> dict:
     player = extract_file(image, next(e for e in parse_dir(image) if e[0] == 'PLAYER'))
     # Bracket only CALL 3D13h; ROM execution/disk time includes that CALL.
     call = 0x6000 + player.index(b'\xcd\x13\x3d', labels['read_n']-0x6000)
-    events = [(labels['main_loop'], 101), (call, 102), (call+3, 103), (labels['finished'], 199)]
+    events = [(labels['start'], 100), (labels['main_loop'], 101),
+              (call, 102), (call+3, 103), (labels['finished'], 199)]
     events += [(labels[n], 198) for n in ('wait_packet_fill','stream_byte_fill','fatal') if n in labels]
+    if 'frame_prepared' in labels: events.append((labels['frame_prepared'],107))
     lines = ['base 10']
     for index, (address, event) in enumerate(events, 1):
+        expression = (f'[{labels["field_counter"]}]' if event == 107 else 'spectrum:frames * 70908 + ula:tstates')
         lines += [f'breakpoint 0x{address:04x}', f'commands {index}',
-                  f'print {event}', 'print spectrum:frames * 70908 + ula:tstates',
+                  f'print {event}', f'print {expression}',
                   ('exit 77' if event == 199 else 'exit 99' if event == 198 else 'continue'), 'end']
     env = dict(os.environ, SDL_VIDEODRIVER='dummy')
     completed = subprocess.run([str(fuse), '--no-sound', '--no-autosave-settings',
@@ -37,20 +40,26 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float) -> dict:
         output = (fuse.parent/'stdout.txt').read_text(errors='replace')
     numbers = [int(line.strip(), 0) for line in output.splitlines() if re.fullmatch(pattern, line.strip())]
     if len(numbers) % 2: raise ValueError(f'incomplete Fuse trace: {output[-300:]}')
-    frames = []; reads = []; read_start = None
+    frames = []; reads = []; read_start = None; decode_fields=[]; player_start=None
     for event, timestamp in zip(numbers[::2], numbers[1::2]):
-        if event == 101: frames.append(timestamp)
+        if event == 100: player_start=timestamp
+        elif event == 101: frames.append(timestamp)
+        elif event == 107: decode_fields.append(timestamp)
         elif event == 102: read_start = timestamp
         elif event == 103:
             if read_start is None: raise ValueError('unpaired ROM exit')
             reads.append(timestamp-read_start); read_start=None
     if len(frames) < 2 or not reads: raise ValueError(f'empty trace: {output[:300]}')
+    if 'frame_prepared' in labels and len(decode_fields) != len(frames)-1:
+        raise ValueError('incomplete CPU field trace')
     intervals = [b-a for a,b in zip(frames,frames[1:])]
     return dict(machine='Fuse 1.9.0 Spectrum 128 + Beta128', clock_hz=3546900,
+                player_startup_ms=(frames[0]-player_start)/3546.9 if player_start is not None else None,
                 frames=len(frames), frame_interval_tstates=intervals,
                 frame_interval_mean_ms=sum(intervals)/len(intervals)/3546.9,
                 frame_interval_max_ms=max(intervals)/3546.9,
                 measured_fps=3546900*len(intervals)/sum(intervals),
+                decode_fields=decode_fields,
                 rom_call_tstates=reads, rom_call_mean_ms=sum(reads)/len(reads)/3546.9,
                 rom_call_max_ms=max(reads)/3546.9,
                 note='ROM CALL durations include CALL instruction and emulator disk latency; not a physical-drive measurement.')

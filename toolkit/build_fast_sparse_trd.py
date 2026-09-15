@@ -7,6 +7,8 @@ import json
 import math
 import struct
 import sys
+import hashlib
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -16,6 +18,7 @@ import build_long_video_trd as source  # noqa: E402
 import build_streaming_trd as streaming  # noqa: E402
 import build_zxv_trd as base  # noqa: E402
 import packed_stream as packed_format  # noqa: E402
+import blocked_stream as blocked_format  # noqa: E402
 
 
 LOAD_ADDRESS = 0x6000
@@ -608,8 +611,11 @@ def call_rom(a: base.MiniAssembler, address: int) -> None:
     a.emit(0xCD); a.word(address)
 
 
-def build_player(video_track: int, video_sector: int, *, packed: bool = False) -> tuple[bytes, dict[str, int]]:
-    ring_capacity = packed_format.RING_CAPACITY_SECTORS if packed else RING_CAPACITY_SECTORS
+def build_player(video_track: int, video_sector: int, *, packed: bool = False, blocked: bool = False,
+                 clocked: bool = False) -> tuple[bytes, dict[str, int]]:
+    packed = packed or blocked
+    ring_capacity = (blocked_format.RING_CAPACITY_SECTORS if blocked else
+                     packed_format.RING_CAPACITY_SECTORS if packed else RING_CAPACITY_SECTORS)
     ring_end_high = 0xA0 if packed else 0xBF
     a = base.MiniAssembler(LOAD_ADDRESS)
     a.label("start")
@@ -624,12 +630,13 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
     # Stream header.
     a.emit(0x21); a.word(BUFFER)
     a.emit(0x06, 1); a.abs16(0xCD, "read_n")
-    for offset, value in enumerate(packed_format.MAGIC if packed else VIDEO_MAGIC):
+    magic = blocked_format.MAGIC if blocked else packed_format.MAGIC if packed else VIDEO_MAGIC
+    for offset, value in enumerate(magic):
         a.emit(0x3A); a.word(BUFFER + offset)
         a.emit(0xFE, value); a.abs16(0xC2, "fatal")
     if packed:
         a.emit(0x3A); a.word(BUFFER + 4)
-        a.emit(0xFE, packed_format.VERSION); a.abs16(0xC2, "fatal")
+        a.emit(0xFE, blocked_format.VERSION if blocked else packed_format.VERSION); a.abs16(0xC2, "fatal")
     a.emit(0x2A); a.word(BUFFER + 8)
     a.emit(0x2B); a.abs16(0x22, "frames_remaining")
     a.emit(0x2A); a.word(BUFFER + 16); a.abs16(0x22, "disk_sectors_remaining")
@@ -638,8 +645,11 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
     ld_mem_a(a, "ring_read_region"); ld_mem_a(a, "ring_write_region")
     if packed:
         ld_mem_a(a, "ring_read_low")
+    if blocked:
+        a.emit(0x3E, 1)
+        ld_mem_a(a, "ring_read_region"); ld_mem_a(a, "ring_write_region")
     a.emit(0x21); a.word(0); a.abs16(0x22, "ring_count")
-    a.emit(0x3E, 0x80)
+    a.emit(0x3E, 0xC0 if blocked else 0x80)
     ld_mem_a(a, "ring_read_high"); ld_mem_a(a, "ring_write_high")
     a.abs16(0xCD, "startup_fill")
 
@@ -657,6 +667,8 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
     a.emit(0x01); a.word(base.SCREEN_BYTES)
     a.emit(0xED, 0xB0)
     a.abs16(0xCD, "ay_apply")
+    if clocked:
+        a.abs16(0xCD,"setup_clock")
 
     a.label("main_loop")
     a.emit(0x2A); a.abs16([], "frames_remaining")
@@ -670,9 +682,17 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
     a.emit(0x3E, 0xC0); ld_mem_a(a, "update_base")
     a.emit(0x21); a.word(0xD800); a.abs16(0x22, "attr_base")
     a.label("target_ready")
+    if clocked:
+        a.emit(0xAF); ld_mem_a(a,"field_counter"); a.emit(0xFB)
     a.abs16(0xCD, "wait_packet")
+    if clocked:
+        a.emit(0xFB)
     a.abs16(0xCD, "ring_packet")
-    a.emit(0x3E, FIELDS_PER_FRAME); ld_mem_a(a, "hold_counter")
+    if clocked:
+        a.emit(0xF3); a.label("frame_prepared")
+        blocked_format.emit_hold_budget(a)
+    else:
+        a.emit(0x3E, FIELDS_PER_FRAME); ld_mem_a(a, "hold_counter")
     a.label("prefetch_loop")
     a.abs16(0xCD, "wait_field")
     a.abs16(0xCD, "producer_one")
@@ -685,8 +705,8 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
     a.emit(0x2B); a.abs16(0x22, "frames_remaining")
     a.abs16(0xC3, "main_loop")
 
-    # Fill the ring before frame zero. Each volume carries the exact minimum
-    # backlog calculated by the host-side buffer simulation.
+    # Fill the ring before frame zero. Legacy pacing uses the simulated minimum;
+    # CPU-field pacing conservatively preloads the whole ring.
     a.label("startup_fill")
     a.emit(0x2A); a.abs16([], "ring_count")
     a.emit(0xED, 0x5B); a.abs16([], "startup_target")
@@ -694,7 +714,9 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
     a.abs16(0xCD, "producer_one")
     a.rel8(0x18, "startup_fill")
 
-    if packed:
+    if blocked:
+        blocked_format.emit_transport(a)
+    elif packed:
         packed_format.emit_transport(a)
     else:
         # Wait only on an actual underflow. With the encoded startup backlog this
@@ -751,8 +773,8 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
     a.rel8(0x20, "consume_store_high")
     ld_a_mem(a, "ring_read_region"); a.emit(0x3C, 0xFE, len(RING_BANKS) + 1)
     a.rel8(0x38, "consume_next_bank")
-    a.emit(0xAF); ld_mem_a(a, "ring_read_region")
-    a.emit(0x3E, 0x80)
+    a.emit(*((0x3E, 1) if blocked else (0xAF,))); ld_mem_a(a, "ring_read_region")
+    a.emit(0x3E, 0xC0 if blocked else 0x80)
     a.rel8(0x18, "consume_store_high")
     a.label("consume_next_bank")
     ld_mem_a(a, "ring_read_region")
@@ -814,8 +836,8 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
     a.rel8(0x20, "producer_store_high")
     ld_a_mem(a, "ring_write_region"); a.emit(0x3C, 0xFE, len(RING_BANKS) + 1)
     a.rel8(0x38, "producer_next_bank")
-    a.emit(0xAF); ld_mem_a(a, "ring_write_region")
-    a.emit(0x3E, 0x80)
+    a.emit(*((0x3E, 1) if blocked else (0xAF,))); ld_mem_a(a, "ring_write_region")
+    a.emit(0x3E, 0xC0 if blocked else 0x80)
     a.rel8(0x18, "producer_store_high")
     a.label("producer_next_bank")
     ld_mem_a(a, "ring_write_region")
@@ -1078,9 +1100,15 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
     a.emit(0xC9)
 
     a.label("read_n")
+    if clocked:
+        # TR-DOS may enable IRQs internally and expects the ROM's IM1 handler.
+        a.emit(0xF3,0xED,0x56)
     ld_a_mem(a, "disk_track"); a.emit(0x57)
     ld_a_mem(a, "disk_sector"); a.emit(0x5F, 0x0E, 0x05)
     call_rom(a, 0x3D13); a.emit(0xF3)
+    if clocked:
+        # TR-DOS owns its interrupt state. Restore ours after every ROM call.
+        a.emit(0x3E,0x7E,0xED,0x47,0xED,0x5E)
     ld_a_mem(a, "screen_flag"); a.emit(0xF6, PAGING_ROM48_BANK7, 0x01); a.word(0x7FFD); a.emit(0xED, 0x79)
     ld_a_mem(a, "disk_sector"); a.emit(0x3C, 0xFE, 16); a.rel8(0x38, "store_sector")
     a.emit(0xAF); ld_mem_a(a, "disk_sector")
@@ -1093,6 +1121,8 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
     a.emit(0xFB)
     a.label("finished_wait"); a.emit(0x76); a.rel8(0x18, "finished_wait")
     a.label("fatal"); a.emit(0x3E, 2, 0xD3, 0xFE); a.rel8(0x18, "fatal")
+    if clocked:
+        blocked_format.emit_clock(a)
 
     for name, size in (
         ("screen_flag", 1), ("disk_track", 1), ("disk_sector", 1),
@@ -1113,6 +1143,10 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
         a.label(name); a.emit(*([0] * size))
     if packed:
         packed_format.emit_variables(a)
+    if blocked:
+        blocked_format.emit_variables(a)
+    if clocked:
+        a.label("field_counter"); a.emit(0)
     a.label("queue_banks"); a.emit(*RING_BANKS)
     a.label("row_addresses")
     for y in range(source.LOGICAL_HEIGHT):
@@ -1129,7 +1163,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False) -
     a.code[rle_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
     a.code[span_table_high_pos] = (a.labels["dither_top"] >> 8) & 0xFF
     code = a.resolve()
-    if LOAD_ADDRESS + len(code) >= BUFFER:
+    if LOAD_ADDRESS + len(code) >= (0x7E00 if clocked else BUFFER):
         raise ValueError(f"fast player overlaps buffer: {len(code)} bytes")
     return code, dict(a.labels)
 
@@ -1138,23 +1172,31 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source-build", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--packing", choices=("contiguous", "sector"), default="contiguous")
+    parser.add_argument("--packing", choices=("contiguous", "sector", "zx0"), default="contiguous")
+    parser.add_argument("--zx0", type=Path, help="path to the upstream ZX0 v2 compressor")
+    parser.add_argument("--pacing", choices=("cpu-fields", "legacy"), default="cpu-fields",
+                        help="ZX0 playback: subtract CPU fields from the display hold")
     args = parser.parse_args()
-    packed = args.packing == "contiguous"
-    ring_capacity = packed_format.RING_CAPACITY_SECTORS if packed else RING_CAPACITY_SECTORS
+    blocked = args.packing == "zx0"
+    clocked = blocked and args.pacing == "cpu-fields"
+    packed = args.packing != "sector"
+    if blocked and args.zx0 is None:
+        parser.error("--packing zx0 requires --zx0 /path/to/zx0")
+    ring_capacity = (blocked_format.RING_CAPACITY_SECTORS if blocked else
+                     packed_format.RING_CAPACITY_SECTORS if packed else RING_CAPACITY_SECTORS)
     source_stream = args.source_build / "VIDEO_full.C.bin"
     metadata = json.loads((args.source_build / "build_metadata.json").read_text())
     states, ay_states, frame_rate = decode_compact_build(source_stream)
     args.output.mkdir(parents=True, exist_ok=True)
 
     boot = streaming.build_boot_basic()
-    provisional, _ = build_player(0, 0, packed=packed)
+    provisional, _ = build_player(0, 0, packed=packed, blocked=blocked, clocked=clocked)
     preceding = [
         base.TrdFile("boot", "B", boot, basic_variables_offset=len(boot), autostart_line=10),
         base.TrdFile("PLAYER", "C", provisional, start=LOAD_ADDRESS),
     ]
     video_track, video_sector = streaming.calculate_file_start(preceding)
-    player, labels = build_player(video_track, video_sector, packed=packed)
+    player, labels = build_player(video_track, video_sector, packed=packed, blocked=blocked, clocked=clocked)
     boot_sectors = math.ceil((len(boot) + 4) / base.SECTOR_SIZE)
     player_sectors = math.ceil(len(player) / base.SECTOR_SIZE)
     limit = TRD_DATA_SECTORS - boot_sectors - player_sectors
@@ -1170,8 +1212,24 @@ def main() -> None:
     packing_sectors_saved = 0
     packet_padding_bytes = 0
     while start < len(states):
-        end, packets = make_volume_packets(states, ay_states, start, limit, packed=packed)
-        video = serialize_volume(packets, frame_rate, packed=packed)
+        end, packets = make_volume_packets(states, ay_states, start, 0x100000 if blocked else limit, packed=packed)
+        if blocked:
+            candidates = blocked_format.compress_frames(
+                [packed_format.frame_bytes(packet,natural_order=True) for packet in packets],
+                args.zx0, args.output/'compression_cache')
+            blocks = []
+            used = base.SECTOR_SIZE
+            for candidate in candidates:
+                if used+len(candidate.serialize()) > limit*base.SECTOR_SIZE:
+                    break
+                blocks.append(candidate); used += len(candidate.serialize())
+            if not blocks:
+                raise ValueError("compressed block does not fit a volume")
+            end = start+sum(block.frames for block in blocks)
+            packets = packets[:end-start]
+            video = blocked_format.serialize_volume(blocks,frame_rate,clocked=clocked)
+        else:
+            video = serialize_volume(packets, frame_rate, packed=packed)
         chunks = [
             video[offset:offset + MAX_TRDOS_FILE_SECTORS * base.SECTOR_SIZE]
             for offset in range(0, len(video), MAX_TRDOS_FILE_SECTORS * base.SECTOR_SIZE)
@@ -1184,7 +1242,12 @@ def main() -> None:
         trd, directory, stats = streaming.place_files(files, f"FST{index:02d}")
         name = f"big_buck_bunny_2min_zx_fast_sparse_25over3fps_part{index:02d}.trd"
         (args.output / name).write_bytes(trd)
-        if packed:
+        if blocked:
+            lengths = blocked_format.frame_demands(blocks)
+            counts = packed_format.sector_demands(lengths)
+            startup_backlog = (min(ring_capacity,sum(counts)) if clocked else
+                               packed_format.minimum_startup_backlog(lengths,ring_capacity))
+        elif packed:
             lengths = [len(packed_format.frame_bytes(packet)) for packet in packets]
             counts = packed_format.sector_demands(lengths)
             startup_backlog = packed_format.minimum_startup_backlog(lengths)
@@ -1208,12 +1271,18 @@ def main() -> None:
             "ring_capacity_sectors": ring_capacity,
             "directory": directory, "trd_stats": stats,
         })
+        if blocked:
+            volumes[-1]["blocks"] = [dict(frames=block.frames, decoded_bytes=len(block.decoded),
+                compressed_bytes=len(block.data), stored=block.stored, deflate_bytes=block.deflate_bytes,
+                sha256=hashlib.sha256(block.decoded).hexdigest())
+                for block in blocks]
         start = end
 
     (args.output / "PLAYER.C.bin").write_bytes(player)
     output_metadata = {
         "profile": "banked_ring_fast_sparse_direct_screen", "frame_rate": frame_rate,
-        "packing": args.packing, "video_version": packed_format.VERSION if packed else VIDEO_VERSION,
+        "packing": args.packing, "video_version": blocked_format.VERSION if blocked else packed_format.VERSION if packed else VIDEO_VERSION,
+        "pacing": "cpu-fields" if clocked else "legacy",
         "frames": len(states), "player_labels": labels, "player_bytes": len(player),
         "video_track": video_track, "video_sector": video_sector,
         "volumes": volumes, "trd_names": [v["trd_name"] for v in volumes],
@@ -1242,7 +1311,7 @@ def main() -> None:
             "copy_visible_row": COPY_VISIBLE_ROW_CYCLES,
             "compression_cpu_regression_limit_percent": 10,
         },
-        "transport_cycle_reference": "PACKED_STREAM_V7_ru.md",
+        "transport_cycle_reference": "BLOCKED_STREAM_V8_ru.md" if blocked else "PACKED_STREAM_V7_ru.md",
         "rle_frames": rle_frames,
         "rle_rows": rle_rows,
         "motion_frames": motion_frames,
@@ -1257,6 +1326,13 @@ def main() -> None:
             key: output_metadata.pop(key)
             for key in ("rle_sectors_saved", "packing_sectors_saved")
         }
+    if blocked:
+        output_metadata["block_codec"] = {
+            "name": "ZX0 v2", "decoder": "turbo", "decoded_block_limit": 8192,
+            "command_order": "stable screen row order",
+            "upstream_revision": "ecde3a2ae05061fe06469ed46df81a33b7de7d86",
+        }
+        shutil.copyfile(HERE/'third_party/zx0/LICENSE',args.output/'ZX0_LICENSE.txt')
     (args.output / "build_metadata.json").write_text(json.dumps(output_metadata, indent=2), encoding="utf-8")
     print(json.dumps({key: value for key, value in output_metadata.items() if key not in ("volumes", "source_metadata")}, indent=2))
     for volume in volumes:
