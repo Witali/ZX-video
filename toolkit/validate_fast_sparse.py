@@ -281,7 +281,7 @@ class CPU(MemoryCPU):
 
 
 def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, decode_fields=None,
-                    interrupt_every: int | None = None, clock_checks=None):
+                    interrupt_every: int | None = None, clock_checks=None, minimum_read_reserve=0):
     import build_long_video_trd as compact
     trd = path.read_bytes()
     player = extract_file(trd, next(e for e in parse_dir(trd) if e[0] == 'PLAYER'))
@@ -296,7 +296,15 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
     next_interrupt = interrupt_every or 0
     interrupts = 0
     clock_index = 0
+    reserve_checks=0;minimum_live_queue=None
     while cpu.steps < max_steps:
+        if minimum_read_reserve and cpu.pc==labels['flip_screen']:
+            unread=cpu.read8(labels['disk_sectors_remaining'])|cpu.read8(labels['disk_sectors_remaining']+1)<<8
+            if unread:
+                queued=cpu.read8(labels['ring_count'])|cpu.read8(labels['ring_count']+1)<<8
+                assert queued>=minimum_read_reserve, f'queue reserve {queued} at frame {decoded}'
+                reserve_checks+=1
+                minimum_live_queue=queued if minimum_live_queue is None else min(minimum_live_queue,queued)
         if cpu.pc in underflow_addresses:
             underflows += 1
         if decode_fields is not None and cpu.pc == labels.get('frame_prepared'):
@@ -346,6 +354,7 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
                 background_quantum_count=len(quantum_cycles),
                 background_quantum_max_tstates=max(quantum_cycles,default=0),
                 disk_bytes=cpu.bytes_read, underflows=underflows, minimum_sp=cpu.min_sp,
+                reserve_checks=reserve_checks,minimum_live_queue_before_flip=minimum_live_queue,
                 injected_interrupts=interrupts)
 
 
@@ -367,7 +376,8 @@ def main():
         start, end = volume['frame_start'], volume['frame_end']
         result = validate_volume(args.build/volume['trd_name'], meta['player_labels'], states[start:end], ay_states[start:end],
                                  decode_fields=timing[index]['decode_fields'] if timing else None,
-                                 clock_checks=timing[index].get('clock_checks') or None if timing else None)
+                                 clock_checks=timing[index].get('clock_checks') or None if timing else None,
+                                 minimum_read_reserve=meta.get('read_reserve',0))
         results.append(result)
         print(f"Verified frames {start}..{end-1}; {result['dos_reads']} sector reads", flush=True)
     cycles = [n for result in results for n in result['delivery_tstates']]

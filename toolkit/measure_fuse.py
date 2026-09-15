@@ -43,6 +43,12 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
                       f'[{labels["field_counter"]}]' if event == 107 else 'spectrum:frames * 70908 + ula:tstates')
         lines += [f'breakpoint 0x{address:04x}', f'commands {index}',
                   f'print {event}', f'print {expression}']
+        if event == 107:
+            lines += ['print 117', 'print spectrum:frames * 70908 + ula:tstates']
+        if event == 108:
+            lines += ['print 130', f'print [{labels["ring_count"]}] + 256 * [{labels["ring_count"]+1}]',
+                      'print 131', f'print [{labels["next_frame_field"]}] + 256 * [{labels["next_frame_field"]+1}]',
+                      'print 132', 'print spectrum:frames * 70908 + ula:tstates']
         if event in (102,109):lines += ['print 120','print z80:hl']
         if event==198:lines += ['print 197','print z80:pc']
         lines += [
@@ -63,11 +69,16 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     if len(numbers) % 2: raise ValueError(f'incomplete Fuse trace: {output[-300:]}')
     frames = []; reads = []; read_start = None; decode_fields=[]; player_start=None; clock_checks=[]
     read_kinds=[];read_frames=[];read_buffers=[]
+    prepared_times=[];queue_checks=[];deadline_checks=[];clock_times=[]
     for event, timestamp in zip(numbers[::2], numbers[1::2]):
         if event == 100: player_start=timestamp
         elif event == 101: frames.append(timestamp)
         elif event == 107: decode_fields.append(timestamp)
         elif event == 108: clock_checks.append(timestamp)
+        elif event == 117: prepared_times.append(timestamp)
+        elif event == 130: queue_checks.append(timestamp)
+        elif event == 131: deadline_checks.append(timestamp)
+        elif event == 132: clock_times.append(timestamp)
         elif event in (102,109,110):
             if read_start is not None: raise ValueError('unpaired ROM entry')
             read_start = timestamp
@@ -84,6 +95,9 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     if read_start is not None: raise ValueError('missing final ROM exit')
     if 'frame_prepared' in labels and len(decode_fields) != len(frames)-1:
         raise ValueError('incomplete CPU field trace')
+    if len(prepared_times)!=len(decode_fields):raise ValueError('incomplete preparation timestamps')
+    if any(len(trace)!=len(clock_checks) for trace in (queue_checks,deadline_checks,clock_times)):
+        raise ValueError('incomplete scheduler trace')
     intervals = [b-a for a,b in zip(frames,frames[1:])]
     return dict(machine='Fuse 1.9.0 Spectrum 128 + Beta128', clock_hz=3546900,
                 trdos_rom_sha256=rom_hash,
@@ -94,6 +108,8 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
                 measured_fps=3546900*len(intervals)/sum(intervals),
                 decode_fields=decode_fields,
                 clock_checks=clock_checks,
+                frame_timestamps=frames,frame_prepared_timestamps=prepared_times,
+                queue_checks=queue_checks,deadline_checks=deadline_checks,clock_timestamps=clock_times,
                 rom_call_kinds=read_kinds,rom_call_entry_frames=read_frames,rom_call_buffers=read_buffers,
                 rom_call_tstates=reads, rom_call_mean_ms=sum(reads)/len(reads)/3546.9,
                 rom_call_max_ms=max(reads)/3546.9,

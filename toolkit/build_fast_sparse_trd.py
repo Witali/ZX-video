@@ -19,6 +19,7 @@ import build_streaming_trd as streaming  # noqa: E402
 import build_zxv_trd as base  # noqa: E402
 import packed_stream as packed_format  # noqa: E402
 import blocked_stream as blocked_format  # noqa: E402
+import read_debt
 import playback_schedule  # noqa: E402
 import fast_drawing  # noqa: E402
 import disk_layout  # noqa: E402
@@ -624,7 +625,9 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
                  irq_disk: bool = False, incremental: bool = False,
                  keepalive_fields: int = 0, prefetch_quota: int = 0,
                  full_rom_clock: bool = False, cached_seek: bool = False,
-                 lookahead: bool = False, uncontended: bool = False) -> tuple[bytes, dict[str, int]]:
+                 lookahead: bool = False, uncontended: bool = False, read_reserve: int = 0) -> tuple[bytes, dict[str, int]]:
+    if read_reserve and not (read_reserve>=64 and read_reserve<=256 and lookahead and cached_seek):
+        raise ValueError('read debt requires a 64..256 sector reserve, lookahead and cached seek')
     if uncontended and not (lookahead and irq_disk and (not keepalive_fields or cached_seek)):
         raise ValueError('uncontended code requires lookahead, IRQ clock and cached keepalive')
     origin=0x8010 if uncontended else LOAD_ADDRESS
@@ -742,7 +745,8 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     else:
         a.emit(0x3E, FIELDS_PER_FRAME); ld_mem_a(a, "hold_counter")
     if deadline:
-        playback_schedule.emit_wait(a,dos_irq=irq_disk,quota=prefetch_quota,lookahead=lookahead)
+        if read_reserve:read_debt.emit(a,prefetch_quota,read_reserve,keepalive=bool(keepalive_fields))
+        else:playback_schedule.emit_wait(a,dos_irq=irq_disk,quota=prefetch_quota,lookahead=lookahead)
     else:
         a.label("prefetch_loop")
         a.abs16(0xCD, "wait_field")
@@ -1308,6 +1312,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         a.label('fast_disk_track');a.emit(0xFF)
     if keepalive_fields:
         a.label('last_disk_fields');a.word(0)
+    if read_reserve:read_debt.emit_variables(a)
     if prefetch_quota:
         a.label('prefetch_remaining');a.emit(0)
     if interleaved:
@@ -1367,6 +1372,7 @@ def main() -> None:
     parser.add_argument('--disk-layout',choices=('linear','interleaved'),default='linear',
                         help='interleaved: v9 stream in TR-DOS 1,9,2,10,... track order')
     parser.add_argument("--zx0-decoding",choices=("block","incremental"),default="block")
+    parser.add_argument('--read-reserve',type=int,default=0,help='defer read quota near deadlines while retaining this many sectors (64..256)')
     parser.add_argument('--uncontended',action='store_true',help='run code in bank 2 and keep ZX0 history at 6000h')
     parser.add_argument('--packet-lookahead',action='store_true',help='prepare the next packet in bounded background quanta')
     parser.add_argument('--motor-keepalive-fields',type=int,choices=(0,32,64,100),default=0,
@@ -1397,14 +1403,14 @@ def main() -> None:
 
     boot = streaming.build_boot_basic()
     provisional, _ = build_player(0, 0, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended)
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve)
     preceding = [
         base.TrdFile("boot", "B", boot, basic_variables_offset=len(boot), autostart_line=10),
         base.TrdFile("PLAYER", "C", provisional, start=LOAD_ADDRESS),
     ]
     video_track, video_sector = streaming.calculate_file_start(preceding)
     player, labels = build_player(video_track, video_sector, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended)
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve)
     boot_sectors = math.ceil((len(boot) + 4) / base.SECTOR_SIZE)
     player_sectors = math.ceil(len(player) / base.SECTOR_SIZE)
     limit = TRD_DATA_SECTORS - boot_sectors - player_sectors
@@ -1472,7 +1478,7 @@ def main() -> None:
             counts = [packet.sector_count for packet in packets]
             startup_backlog = minimum_startup_backlog(counts)
         minimum_queue = None
-        if args.prefetch_quota:
+        if args.prefetch_quota and not args.read_reserve:
             minimum_queue = playback_schedule.minimum_queue(counts,startup_backlog,ring_capacity,args.prefetch_quota)
             if minimum_queue < 0: raise ValueError('prefetch quota is too small for this stream')
         (args.output / name).write_bytes(trd)
@@ -1514,6 +1520,9 @@ def main() -> None:
         "zx0_decoding": args.zx0_decoding,
         "packet_lookahead": args.packet_lookahead,
         "uncontended": args.uncontended,
+        "read_reserve": args.read_reserve,
+        "read_schedule": ("defer quota, carry debt, enforce reserve before flip" if args.read_reserve else "mandatory quota before deadline"),
+        "reserve_scope": "minimum ring sectors before flip while disk sectors remain; checked by runtime validation" if args.read_reserve else None,
         "relocation": {
             "load_address": LOAD_ADDRESS, "runtime_address": 0x8010,
             "history_range": [0x6000,0x8000], "preparation_stack_range": [0x9D00,0x9D70],

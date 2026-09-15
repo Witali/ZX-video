@@ -1,0 +1,182 @@
+{
+  "baseline_commit": "233179c",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "prefetch_loop through flip_screen entry, or first action entry; includes calling instruction",
+  "exclusions": [
+    "ROM service",
+    "disk latency",
+    "ULA contention",
+    "interrupt execution",
+    "HALT wait"
+  ],
+  "assumptions": "reserve 64; quota 3; debt initially zero; same-track sector data mocked; keepalive not due",
+  "quota_initialization": {
+    "previous_tstates": 20,
+    "current_tstates": 115,
+    "delta": 95,
+    "current_saturated_tstates": 114
+  },
+  "routines": {
+    "late_with_reserve": {
+      "previous": {
+        "tstates": 4190,
+        "reads": 3,
+        "action": "flip_screen"
+      },
+      "current": {
+        "tstates": 509,
+        "reads": 0,
+        "action": "flip_screen"
+      },
+      "delta_tstates": -3681
+    },
+    "late_below_reserve": {
+      "previous": {
+        "tstates": 4145,
+        "reads": 3,
+        "action": "flip_screen"
+      },
+      "current": {
+        "tstates": 6057,
+        "reads": 4,
+        "action": "flip_screen"
+      },
+      "delta_tstates": 1912
+    },
+    "late_full_ring": {
+      "previous": {
+        "tstates": 477,
+        "reads": 0,
+        "action": "flip_screen"
+      },
+      "current": {
+        "tstates": 509,
+        "reads": 0,
+        "action": "flip_screen"
+      },
+      "delta_tstates": 32
+    },
+    "late_eof": {
+      "previous": {
+        "tstates": 449,
+        "reads": 0,
+        "action": "flip_screen"
+      },
+      "current": {
+        "tstates": 370,
+        "reads": 0,
+        "action": "flip_screen"
+      },
+      "delta_tstates": -79
+    },
+    "first_action_new_track_1_fields": {
+      "previous": {
+        "tstates": 85,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "current": {
+        "tstates": 339,
+        "reads": 0,
+        "action": "wait_field"
+      },
+      "delta_tstates": 254
+    },
+    "first_action_new_track_2_fields": {
+      "previous": {
+        "tstates": 85,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "current": {
+        "tstates": 427,
+        "reads": 0,
+        "action": "ahead_prefetch"
+      },
+      "delta_tstates": 342
+    },
+    "first_action_new_track_3_fields": {
+      "previous": {
+        "tstates": 85,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "current": {
+        "tstates": 448,
+        "reads": 0,
+        "action": "ahead_prefetch"
+      },
+      "delta_tstates": 363
+    },
+    "first_action_new_track_4_fields": {
+      "previous": {
+        "tstates": 85,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "current": {
+        "tstates": 478,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "delta_tstates": 393
+    },
+    "first_action_same_track_1_fields": {
+      "previous": {
+        "tstates": 85,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "current": {
+        "tstates": 339,
+        "reads": 0,
+        "action": "wait_field"
+      },
+      "delta_tstates": 254
+    },
+    "first_action_same_track_2_fields": {
+      "previous": {
+        "tstates": 85,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "current": {
+        "tstates": 441,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "delta_tstates": 356
+    },
+    "first_action_same_track_3_fields": {
+      "previous": {
+        "tstates": 85,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "current": {
+        "tstates": 441,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "delta_tstates": 356
+    },
+    "first_action_same_track_4_fields": {
+      "previous": {
+        "tstates": 85,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "current": {
+        "tstates": 441,
+        "reads": 0,
+        "action": "producer_one"
+      },
+      "delta_tstates": 356
+    }
+  },
+  "irq_tstates": {
+    "before": 61,
+    "after": 61,
+    "delta": 0
+  }
+}
