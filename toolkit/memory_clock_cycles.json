@@ -1,0 +1,79 @@
+{
+  "baseline_commit": "bcf303f",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "routine entry through RET; IRQ includes 19 T acknowledge and ROM mapper; scheduler through flip_screen entry",
+  "exclusions": [
+    "disk latency",
+    "TR-DOS service execution",
+    "ULA contention",
+    "HALT waiting"
+  ],
+  "assumptions": "IRQ not injected into ordinary routines; stream track 3, sector 2, one sector; clock value 100",
+  "routines": {
+    "setup_clock": {
+      "previous_tstates": 6395,
+      "current_tstates": 6659,
+      "delta": 264
+    },
+    "wait_field": {
+      "previous_tstates": 22,
+      "current_tstates": 18,
+      "delta": -4
+    },
+    "keepalive_seek": {
+      "previous_tstates": 258,
+      "current_tstates": 214,
+      "delta": -44
+    },
+    "read_same_track": {
+      "previous_tstates": 583,
+      "current_tstates": 535,
+      "delta": -48
+    },
+    "read_new_track": {
+      "previous_tstates": 1084,
+      "current_tstates": 996,
+      "delta": -88
+    },
+    "read_cold_track": {
+      "previous_tstates": 537,
+      "current_tstates": 469,
+      "delta": -68
+    },
+    "fast_irq": {
+      "previous_tstates": 61,
+      "current_tstates": 116,
+      "delta": 55
+    },
+    "slow_irq_normal": {
+      "previous_tstates": 160,
+      "current_tstates": 184,
+      "delta": 24
+    },
+    "slow_irq_break": {
+      "previous_tstates": 186,
+      "current_tstates": 210,
+      "delta": 24
+    },
+    "late_scheduler": {
+      "previous_tstates": 509,
+      "current_tstates": 489,
+      "delta": -20
+    }
+  },
+  "handler_switch": {
+    "previous_tstates": 46,
+    "current_tstates": 26,
+    "delta": -20
+  },
+  "scheduler_snapshot": {
+    "previous_tstates": 24,
+    "current_tstates": 4,
+    "delta": -20
+  },
+  "after_background": {
+    "previous_tstates": 4,
+    "current_tstates": 0,
+    "delta": -4
+  }
+}
