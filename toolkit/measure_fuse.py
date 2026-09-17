@@ -133,11 +133,16 @@ def main():
     parser.add_argument('build',type=Path)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--timeout',type=float,default=60)
+    parser.add_argument('--volumes',type=int,nargs='+',help='measure selected one-based volumes for experiments; omit for a release')
     parser.add_argument('--trdos-rom',type=Path,help='default: roms/trdos.rom next to Fuse; direct reader verifies the ROM hash')
     args=parser.parse_args()
     meta=json.loads((args.build/'build_metadata.json').read_text())
     results=[]
-    for volume in meta['volumes']:
+    volumes=meta['volumes']
+    if args.volumes:
+        if any(index<1 or index>len(volumes) for index in args.volumes):parser.error('volume outside build')
+        volumes=[volumes[index-1] for index in args.volumes]
+    for volume in volumes:
         result=measure(args.fuse.resolve(),(args.build/volume['trd_name']).resolve(),meta['player_labels'],args.timeout,args.trdos_rom)
         assert result['frames']==volume['frames']
         results.append(result)
