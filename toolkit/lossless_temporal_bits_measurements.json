@@ -1,0 +1,58 @@
+{
+  "scope": "Round-trip checked storage probes; these are not playable disk builds.\n\nAll transforms preserve every compact screen byte. DEFLATE is a fast layout\nscreening tool, not a bound on ZX0 and not a proposed Spectrum decoder.\n",
+  "frames": 4971,
+  "states_sha256": "9cc006a31408e2c3c3f96f96901b003756c2a480497e12d6b124baedafaeb35d",
+  "audio_sha256": "c55ee9d570284c89a33bd582eb28f3c141676ec63e7ced4c00b5aac7cb575cae",
+  "three_disk_budget_bytes": 1937664,
+  "note": "Sizes exclude audio, frame/disk headers and decoder growth. Long blocks need a different player.",
+  "layouts": [
+    {
+      "layout": "packed",
+      "prediction": "absolute",
+      "order": "timebits8",
+      "raw_bytes": 19107840,
+      "nonzero_bytes": 13337649,
+      "deflate": {
+        "6144": 3268452,
+        "32768": 3183714,
+        "19107840": 3103644
+      }
+    },
+    {
+      "layout": "packed",
+      "prediction": "absolute",
+      "order": "timebits32",
+      "raw_bytes": 19107840,
+      "nonzero_bytes": 13337649,
+      "deflate": {
+        "6144": 3574273,
+        "32768": 3436310,
+        "19107840": 3429636
+      }
+    },
+    {
+      "layout": "packed",
+      "prediction": "xor1",
+      "order": "timebits8",
+      "raw_bytes": 19107840,
+      "nonzero_bytes": 2586631,
+      "deflate": {
+        "6144": 3008816,
+        "32768": 2938823,
+        "19107840": 2931328
+      }
+    },
+    {
+      "layout": "packed",
+      "prediction": "xor1",
+      "order": "timebits32",
+      "raw_bytes": 19107840,
+      "nonzero_bytes": 2586631,
+      "deflate": {
+        "6144": 3412788,
+        "32768": 3307116,
+        "19107840": 3314948
+      }
+    }
+  ]
+}

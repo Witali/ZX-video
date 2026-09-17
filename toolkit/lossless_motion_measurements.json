@@ -1,0 +1,143 @@
+{
+  "scope": "Lossless tile motion experiment; storage evidence, not a Z80 player.\n\nVectors predict both packed pixels and attributes from the preceding frame.\nEvery residual byte is retained and the full sequence is decoded to verify it.\n",
+  "tile": 8,
+  "offsets": [
+    [
+      0,
+      0
+    ],
+    [
+      -8,
+      -8
+    ],
+    [
+      -4,
+      -8
+    ],
+    [
+      0,
+      -8
+    ],
+    [
+      4,
+      -8
+    ],
+    [
+      8,
+      -8
+    ],
+    [
+      -8,
+      -4
+    ],
+    [
+      -4,
+      -4
+    ],
+    [
+      0,
+      -4
+    ],
+    [
+      4,
+      -4
+    ],
+    [
+      8,
+      -4
+    ],
+    [
+      -8,
+      0
+    ],
+    [
+      -4,
+      0
+    ],
+    [
+      4,
+      0
+    ],
+    [
+      8,
+      0
+    ],
+    [
+      -8,
+      4
+    ],
+    [
+      -4,
+      4
+    ],
+    [
+      0,
+      4
+    ],
+    [
+      4,
+      4
+    ],
+    [
+      8,
+      4
+    ],
+    [
+      -8,
+      8
+    ],
+    [
+      -4,
+      8
+    ],
+    [
+      0,
+      8
+    ],
+    [
+      4,
+      8
+    ],
+    [
+      8,
+      8
+    ]
+  ],
+  "frames": 4971,
+  "states_sha256": "9cc006a31408e2c3c3f96f96901b003756c2a480497e12d6b124baedafaeb35d",
+  "exact_round_trip": true,
+  "motion_tiles": 79088,
+  "total_tiles": 954432,
+  "layouts": [
+    {
+      "name": "tile_interleaved",
+      "sha256": "0603b087368d9cf8f8ab622fe6c87e298853d1487f4e2506b228a035f4d2054f",
+      "raw_bytes": 20043072,
+      "deflate": {
+        "8192": 3149529,
+        "32768": 3018052,
+        "20043072": 2971404
+      }
+    },
+    {
+      "name": "separate_vectors",
+      "sha256": "366a65c49ad6e5d35e242a99533160f5d76be64390752aba20876aa8bad3ad9c",
+      "raw_bytes": 20043072,
+      "deflate": {
+        "8192": 3122873,
+        "32768": 2996782,
+        "20043072": 2952319
+      }
+    },
+    {
+      "name": "frame_separate_vectors",
+      "sha256": "8dd449be0ad8c7c78de298e111e4b433113a54380e895e6c06c8aa0c8c1934ce",
+      "raw_bytes": 20043072,
+      "deflate": {
+        "8192": 3153925,
+        "32768": 3021991,
+        "20043072": 2974747
+      }
+    }
+  ]
+}
