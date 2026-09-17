@@ -246,21 +246,29 @@ def noise_sequence():
     return sequence
 
 
-def render(frames, update_rate, sample_rate=44100):
+def render(frames, update_rate, sample_rate=44100, *, sample_boundaries=None, clock_hz=AY_CLOCK):
     """AY approximation: band-limited tones, 4x sampled shared noise, log levels.
 
     Noise state continues across video frames; the preview is not a cycle-exact
     emulation of counter writes or the analogue output circuit.
     """
-    result = np.zeros(round(len(frames)*sample_rate/update_rate))
+    if sample_boundaries is None:
+        sample_boundaries=np.rint(np.arange(len(frames)+1)*sample_rate/update_rate).astype(np.int64)
+    else:
+        sample_boundaries=np.asarray(sample_boundaries)
+        if (sample_boundaries.shape!=(len(frames)+1,) or sample_boundaries[0]!=0
+                or not np.issubdtype(sample_boundaries.dtype,np.integer)
+                or np.any(np.diff(sample_boundaries)<0)):
+            raise ValueError('expected ordered integer sample boundaries starting at zero')
+    result = np.zeros(int(sample_boundaries[-1]))
     phase = np.zeros(3)
     noise_phase = 0.0
     sequence = noise_sequence() if any(f.noise_period for f in frames) else None
     for i, frame in enumerate(frames):
-        start, end = round(i*sample_rate/update_rate), round((i+1)*sample_rate/update_rate)
+        start, end = map(int,sample_boundaries[i:i+2])
         t = np.arange(1, end-start+1)/sample_rate
         for voice in range(3):
-            frequency = AY_CLOCK/(16*max(1, frame.periods[voice]))
+            frequency = clock_hz/(16*max(1, frame.periods[voice]))
             cycles = phase[voice]+t*frequency
             if frame.volumes[voice] and not (voice==1 and frame.noise_period):
                 wave_values = np.zeros(len(t))
@@ -269,7 +277,7 @@ def render(frames, update_rate, sample_rate=44100):
                 result[start:end] += wave_values*(4/np.pi)*LEVELS[frame.volumes[voice]]/4
             phase[voice] = (phase[voice]+len(t)*frequency/sample_rate)%1
         if sequence is not None:
-            frequency = AY_CLOCK/(16*max(1, frame.noise_period))
+            frequency = clock_hz/(16*max(1, frame.noise_period))
             if frame.noise_period and frame.volumes[1]:
                 clock = noise_phase+np.arange(1,len(t)*4+1)*frequency/(sample_rate*4)
                 values = sequence[np.floor(clock).astype(np.int64)%len(sequence)].reshape(-1,4).mean(axis=1)

@@ -72,5 +72,13 @@ class AyFidelityTests(unittest.TestCase):
         np.testing.assert_allclose(signal,ay.render([frame],25/6),atol=1e-11)
         self.assertLess(float(np.max(np.abs(signal))),1)
 
+    def test_measured_boundaries_preserve_phase_and_actual_duration(self):
+        frame=video.AyFrame((252,500,700),(12,10,8),19)
+        expected=ay.render([frame]*3,50,22050)
+        np.testing.assert_array_equal(expected,ay.render([frame]*3,50,22050,sample_boundaries=[0,441,882,1323]))
+        stretched=ay.render([frame]*3,50,22050,sample_boundaries=[0,400,850,1400])
+        np.testing.assert_allclose(stretched,ay.render([frame],22050/1400,22050),atol=1e-12)
+        with self.assertRaises(ValueError):ay.render([frame]*2,50,sample_boundaries=[0,500,400])
+
 
 if __name__=='__main__':unittest.main()
