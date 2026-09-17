@@ -1386,6 +1386,8 @@ def main() -> None:
     parser.add_argument("--packing", choices=("contiguous", "sector", "zx0"), default="contiguous")
     parser.add_argument("--zx0", type=Path, help="path to the upstream ZX0 v2 compressor")
     parser.add_argument('--compression-cache',type=Path,help='reuse verified ZX0 blocks across player builds')
+    parser.add_argument('--block-bytes',type=int,default=8192,
+                        help='maximum decoded ZX0 block size, 1..8192; smaller blocks change decode scheduling')
     parser.add_argument("--pacing", choices=("cpu-fields", "legacy", "deadline"), default="cpu-fields",
                         help="ZX0 playback: subtract CPU fields from the display hold")
     parser.add_argument('--read-batch',type=int,choices=(1,2,4,8,16),default=1)
@@ -1411,6 +1413,10 @@ def main() -> None:
     args = parser.parse_args()
     incremental = args.zx0_decoding == "incremental"
     blocked = args.packing == "zx0"
+    if not 1 <= args.block_bytes <= 8192:
+        parser.error('--block-bytes must be 1..8192')
+    if args.block_bytes != 8192 and not blocked:
+        parser.error('--block-bytes requires --packing zx0')
     clocked = blocked and args.pacing != "legacy"
     deadline = blocked and args.pacing == 'deadline'
     fast_draw = args.drawing == 'registers'
@@ -1471,7 +1477,8 @@ def main() -> None:
             tick_records = ay_interrupt.encode_ticks(audio_frames[start*6:end*6]) if audio_irq else None
             candidates = blocked_format.compress_frames(
                 [packed_format.frame_bytes(packet,natural_order=True,audio_payload=b"".join(tick_records[i*6:i*6+6]) if audio_irq else None) for i,packet in enumerate(packets)],
-                args.zx0, args.compression_cache or args.output/'compression_cache')
+                args.zx0, args.compression_cache or args.output/'compression_cache',
+                max_block_bytes=args.block_bytes)
             blocks = []
             used = base.SECTOR_SIZE
             for candidate in candidates:
@@ -1684,6 +1691,7 @@ def main() -> None:
     if blocked:
         output_metadata["block_codec"] = {
             "name": "ZX0 v2", "decoder": "turbo incremental" if incremental else "turbo", "decoded_block_limit": 8192,
+            "encoder_block_limit": args.block_bytes,
             "command_order": "stable screen row order",
             "compressed_input_limit": 7424 if irq_disk else 8192,
             "upstream_revision": "ecde3a2ae05061fe06469ed46df81a33b7de7d86",

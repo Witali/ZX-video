@@ -29,15 +29,19 @@ class Block:
         return struct.pack('<HH', len(self.data) | (0x8000 if self.stored else 0), len(self.decoded)) + self.data
 
 
-def compress_frames(frames: list[bytes], executable: Path, cache: Path) -> list[Block]:
+def compress_frames(frames: list[bytes], executable: Path, cache: Path,
+                    *, max_block_bytes: int = 8192) -> list[Block]:
     """Compressor work is offline. Cache entries are verified before reuse."""
+    if not 1 <= max_block_bytes <= 8192:
+        raise ValueError('block limit must be 1..8192 bytes')
     cache.mkdir(parents=True, exist_ok=True)
     groups = []
     pending = bytearray()
     count = 0
     for frame in frames:
-        if len(frame) > 8192: raise ValueError('frame exceeds block buffer')
-        if pending and len(pending)+len(frame) > 8192:
+        if not frame or len(frame) > max_block_bytes:
+            raise ValueError('frame is empty or exceeds chosen block limit')
+        if pending and len(pending)+len(frame) > max_block_bytes:
             groups.append((bytes(pending),count)); pending.clear(); count=0
         pending += frame; count += 1
     if pending: groups.append((bytes(pending),count))

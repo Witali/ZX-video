@@ -81,6 +81,7 @@ python toolkit/benchmark_ay_interrupt.py --output toolkit/ay_interrupt_cycles.js
 python -m unittest discover -s toolkit -p 'test_*.py'
 ```
 
-Перед принятием: ужать поток без потери аудиосостояний, вернуть одну TRD
-и все видеоинтервалы ≤125 мс, сравнить звук по фактической временной трассе
-с оригиналом. Сводные аудиопроверки сохранены в `ay_interrupt_validation.json`.
+Ограничение одной TRD снято пользователем. Контрольный фрагмент принят
+с блоками 6144 байта: все видеоинтервалы ≤125 мс, звук сравнен по фактической
+временной трассе. Подробности: `AY_BLOCK_SIZE_RESULTS_ru.md`.
+Сводные аудиопроверки первого прототипа — в `ay_interrupt_validation.json`.

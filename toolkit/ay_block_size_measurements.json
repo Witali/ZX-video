@@ -1,0 +1,254 @@
+{
+  "note": "Same decoder instruction paths, different data and scheduling. CPU excludes IRQ/ULA/ROM/disk; Fuse includes them. Disk change gaps are excluded from per-volume intervals.",
+  "variants": [
+    {
+      "build": "build_audio_irq_trd",
+      "block_bytes": 8192,
+      "metadata_sha256": "8e64f19796c692c205a9a320c656131e7122a589d390ca9adf62142747d8b46a",
+      "timing_sha256": "a7a8dae9517db4abcde03e122b00b8ab560879d97552be5a6a46771c79ac3aba",
+      "player_sha256": "e70a0c7576c109979187a1b94edcac97a454b01d24a6ca99bf6262864cfff3fa",
+      "player_bytes": 5120,
+      "blocks": 115,
+      "physical_video_sectors": 2594,
+      "disks": [
+        {
+          "name": "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd",
+          "sha256": "d63f9e7deb41e8a233a7dbe0c5b53edfc17709e7e27444ed57d1786a8a3a6422",
+          "frame_start": 0,
+          "frame_end": 987,
+          "physical_video_sectors": 2520
+        },
+        {
+          "name": "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part02.trd",
+          "sha256": "98ebde4ebaea5ceb9ba29ed1588cd404653d3205d6fafc0318cd9011e08c762e",
+          "frame_start": 987,
+          "frame_end": 1000,
+          "physical_video_sectors": 74
+        }
+      ],
+      "delivery": {
+        "frames": 1000,
+        "volumes": [
+          {
+            "frames": 987,
+            "frame_start": 0,
+            "maximum_ms": 128.54915560066536,
+            "mean_ms": 119.9491468051666,
+            "fps": 8.33686630238646,
+            "late_frames": [
+              {
+                "frame": 623,
+                "interval_ms": 126.94070878795569,
+                "preparation_since_previous_flip_ms": 126.76534438523781,
+                "after_preparation_ms": 0.1753644027178663,
+                "decode_fields": 0,
+                "rom_intervals_ms": []
+              },
+              {
+                "frame": 624,
+                "interval_ms": 128.54915560066536,
+                "preparation_since_previous_flip_ms": 128.3763286249965,
+                "after_preparation_ms": 0.17282697566889396,
+                "decode_fields": 0,
+                "rom_intervals_ms": []
+              },
+              {
+                "frame": 630,
+                "interval_ms": 125.8414390030731,
+                "preparation_since_previous_flip_ms": 125.66635653669401,
+                "after_preparation_ms": 0.1750824663790916,
+                "decode_fields": 0,
+                "rom_intervals_ms": []
+              }
+            ]
+          },
+          {
+            "frames": 13,
+            "frame_start": 987,
+            "maximum_ms": 120.01945360737545,
+            "mean_ms": 119.94062890599302,
+            "fps": 8.337458366870656,
+            "late_frames": []
+          }
+        ],
+        "intervals_over_125ms": 3
+      },
+      "rom": [
+        {
+          "mean_ms": 7.944679728448118,
+          "max_ms": 193.9355493529561,
+          "scope": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement."
+        },
+        {
+          "mean_ms": 11.677924976392184,
+          "max_ms": 193.67870534833233,
+          "scope": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement."
+        }
+      ],
+      "cpu": {
+        "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+        "frames": 1000,
+        "delivery_tstates_mean": 133609.39779559118,
+        "delivery_tstates_max": 436195,
+        "background_preparation_tstates_mean": 84476.51202404809,
+        "combined_preparation_tstates_mean": 218085.9098196393,
+        "background_quantum_max_tstates": 27190,
+        "measurement_sha256": "6b05822eeceebee6a2ed599b010fb44cc42a692d2a6a504debe8f9861a800802",
+        "minimum_live_queue_before_flip": 88,
+        "minimum_sp": 40290
+      },
+      "identical_player": true,
+      "sector_delta": 0,
+      "cpu_mean_deltas": {
+        "delivery_tstates_mean": 0.0,
+        "background_preparation_tstates_mean": 0.0,
+        "combined_preparation_tstates_mean": 0.0
+      }
+    },
+    {
+      "build": "build_audio_irq_6144",
+      "block_bytes": 6144,
+      "metadata_sha256": "3bf4778b720b2dcd6da55e2b9920a86887fe336120ecd626a15949cd23b7c047",
+      "timing_sha256": "8edc686c1657186a23fb97bb6172b1043318324fc260147e3bd4a4ff3cf6ea4e",
+      "player_sha256": "e70a0c7576c109979187a1b94edcac97a454b01d24a6ca99bf6262864cfff3fa",
+      "player_bytes": 5120,
+      "blocks": 158,
+      "physical_video_sectors": 2623,
+      "disks": [
+        {
+          "name": "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd",
+          "sha256": "7797eba58b08d758fb3324f67d275c16e909a58f29a34ed57730fa4e06e66a8f",
+          "frame_start": 0,
+          "frame_end": 979,
+          "physical_video_sectors": 2520
+        },
+        {
+          "name": "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part02.trd",
+          "sha256": "d611a0fecb62e9b89a2b5c6f7392a1f9c44eb03b56cb213e7c49306534a9d91e",
+          "frame_start": 979,
+          "frame_end": 1000,
+          "physical_video_sectors": 103
+        }
+      ],
+      "delivery": {
+        "frames": 1000,
+        "volumes": [
+          {
+            "frames": 979,
+            "frame_start": 0,
+            "maximum_ms": 124.64123600890919,
+            "mean_ms": 119.94909838315563,
+            "fps": 8.336869667879299,
+            "late_frames": []
+          },
+          {
+            "frames": 21,
+            "frame_start": 979,
+            "maximum_ms": 122.0040034960106,
+            "mean_ms": 119.94407792720403,
+            "fps": 8.337218621222098,
+            "late_frames": []
+          }
+        ],
+        "intervals_over_125ms": 0
+      },
+      "rom": [
+        {
+          "mean_ms": 7.952505268344199,
+          "max_ms": 193.44187882376158,
+          "scope": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement."
+        },
+        {
+          "mean_ms": 10.71334465650629,
+          "max_ms": 194.01618314584567,
+          "scope": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement."
+        }
+      ],
+      "cpu": {
+        "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+        "frames": 1000,
+        "delivery_tstates_mean": 130891.70841683367,
+        "delivery_tstates_max": 420178,
+        "background_preparation_tstates_mean": 83967.71843687375,
+        "combined_preparation_tstates_mean": 214859.4268537074,
+        "background_quantum_max_tstates": 25816,
+        "measurement_sha256": "362ee93e4dcf434ce1344163e7b77ef51847dd51721120cefb058f5ba981b60b",
+        "minimum_live_queue_before_flip": 80,
+        "minimum_sp": 40290
+      },
+      "identical_player": true,
+      "sector_delta": 29,
+      "cpu_mean_deltas": {
+        "delivery_tstates_mean": -2717.68937875751,
+        "background_preparation_tstates_mean": -508.79358717433934,
+        "combined_preparation_tstates_mean": -3226.4829659318784
+      }
+    },
+    {
+      "build": "build_audio_irq_4096",
+      "block_bytes": 4096,
+      "metadata_sha256": "330d039670828086f9b31a3fcebc5d8cf183a532fd051bb6878eafade1471d7b",
+      "timing_sha256": "9d6af6a8111b1bf8ac1fb43411e4f6b85086b8ebe767c49574d4ba454108def3",
+      "player_sha256": "e70a0c7576c109979187a1b94edcac97a454b01d24a6ca99bf6262864cfff3fa",
+      "player_bytes": 5120,
+      "blocks": 247,
+      "physical_video_sectors": 2670,
+      "disks": [
+        {
+          "name": "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part01.trd",
+          "sha256": "ba8ec2896cbeae4a3d411dbf43d729976f5d6ea23c1246404de47bbcb7416cf1",
+          "frame_start": 0,
+          "frame_end": 965,
+          "physical_video_sectors": 2522
+        },
+        {
+          "name": "big_buck_bunny_2min_zx_fast_sparse_25over3fps_part02.trd",
+          "sha256": "969f3fe00d74b3b0f124794f8915e317c94a48e241c6e2c02ad7cf49b06c2a81",
+          "frame_start": 965,
+          "frame_end": 1000,
+          "physical_video_sectors": 148
+        }
+      ],
+      "delivery": {
+        "frames": 1000,
+        "volumes": [
+          {
+            "frames": 965,
+            "frame_start": 0,
+            "maximum_ms": 124.96292537145112,
+            "mean_ms": 119.94916869140242,
+            "fps": 8.336864781220253,
+            "late_frames": []
+          },
+          {
+            "frames": 35,
+            "frame_start": 965,
+            "maximum_ms": 120.97465392314415,
+            "mean_ms": 119.94621649725609,
+            "fps": 8.33706997354832,
+            "late_frames": []
+          }
+        ],
+        "intervals_over_125ms": 0
+      },
+      "rom": [
+        {
+          "mean_ms": 7.975095948044132,
+          "max_ms": 194.02182187262116,
+          "scope": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement."
+        },
+        {
+          "mean_ms": 9.939227646925627,
+          "max_ms": 193.99842115650284,
+          "scope": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement."
+        }
+      ],
+      "identical_player": true,
+      "sector_delta": 76
+    }
+  ]
+}

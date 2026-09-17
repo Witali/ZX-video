@@ -1,0 +1,68 @@
+{
+  "source_pcm_sha256": "50e6cace8c690c53cdd4cf15d8559f82c6db0678609e9eae7736fdc560473758",
+  "metrics": {
+    "semitone_spectral_cosine": 0.8539646967466885,
+    "chroma_cosine": 0.9526702519022789,
+    "loudness_correlation": 0.9859488895013665,
+    "rhythm_onset_f1": 0.7569444444444444,
+    "onsets": {
+      "reference": 134,
+      "candidate": 154,
+      "matched": 109,
+      "precision": 0.7077922077922078,
+      "recall": 0.8134328358208955,
+      "f1": 0.7569444444444444
+    },
+    "evaluated_frames": 870
+  },
+  "verified_audio": {
+    "ticks": 6000,
+    "volumes": [
+      {
+        "ticks": 5874,
+        "verified_register_writes": 10653,
+        "unchanged_ticks_without_io": 1442,
+        "interval_min_ms": 19.73751726860075,
+        "interval_mean_ms": 19.99150614573453,
+        "interval_max_ms": 20.19594575544842,
+        "intervals_over_25ms": 0,
+        "interval_scope": "end of each handler; differing numbers of writes slightly move the trace point",
+        "frame_start": 0
+      },
+      {
+        "ticks": 126,
+        "verified_register_writes": 287,
+        "unchanged_ticks_without_io": 9,
+        "interval_min_ms": 19.780935464772053,
+        "interval_mean_ms": 19.990229214243424,
+        "interval_max_ms": 20.108545490428263,
+        "intervals_over_25ms": 0,
+        "interval_scope": "end of each handler; differing numbers of writes slightly move the trace point",
+        "frame_start": 979
+      }
+    ],
+    "continuous_single_disk": false
+  },
+  "volumes": [
+    {
+      "frame_start": 0,
+      "measured_audio_seconds": 117.43011337868481,
+      "nominal_seconds": 117.48,
+      "end_padding_ms": 49.88662131519274,
+      "synthesis_clock_hz": 1773450.0
+    },
+    {
+      "frame_start": 979,
+      "measured_audio_seconds": 2.5187755102040814,
+      "nominal_seconds": 2.52,
+      "end_padding_ms": 1.2244897959183674,
+      "synthesis_clock_hz": 1773450.0
+    }
+  ],
+  "model": "Compare original audio with approximate AY synthesis driven by Fuse ticks.\n\nRegister states and every write are checked first. Tick-end timestamps place\nthe batches on the measured clock; writes within a batch are treated as\nsimultaneous. This is not captured PCM or cycle-exact AY/analogue emulation.\nFor multiple disks each volume is aligned separately to its original offset;\npadding/cropping at disk ends is reported, never claimed as continuous play.\n",
+  "metric_rate_hz": 8.333333333333334,
+  "onset_tolerance_seconds": 0.12,
+  "required_metrics_pass": true,
+  "rhythm_required": false,
+  "continuous_single_disk": false
+}
