@@ -1,0 +1,184 @@
+{
+  "scope": "Lossless tile dictionary/RAM sweep; offline screening, not a Z80 player.\n\nEach physical 8x8 cell is represented by four compact bitmap bytes and one\nattribute. Groups reset prediction to zero and store <frames:u16, entries:u16>,\nthen entries*5 dictionary bytes. Per frame, tokens encode 1..64 cells:\n00xxxxxx skip, 01xxxxxx dictionary indices, 10xxxxxx literal cells.\nIndices occupy one byte for <=256 entries, otherwise two little-endian bytes.\nThe optional tiered mode sets bit 15 in the entry count: indices 0..254 use\none byte, others use FF followed by a u16 index (only for >256 entries).\nDEFLATE only screens layouts; its size does not predict ZX0 or playback speed.\n",
+  "baseline_commit": "27d2c92",
+  "frames": 4971,
+  "states_sha256": "9cc006a31408e2c3c3f96f96901b003756c2a480497e12d6b124baedafaeb35d",
+  "current_ring_sectors": 320,
+  "video_only": true,
+  "player_changed": false,
+  "hot_path_delta_tstates": 0,
+  "index_mode": "tiered",
+  "ram_model": "Expanded 9 bytes/cell; whole 16KiB banks taken from 80KiB ring; excludes new decoder/tables and bank-crossing costs.",
+  "rows": [
+    {
+      "name": "group256_entries512_tiered",
+      "group_frames": 256,
+      "requested_entries": 512,
+      "raw_bytes": 4433480,
+      "stream_sha256": "a4458332f46637740b2a18512c492e6c820f12ea88fcce83be52cedb3bc7044e",
+      "exact_round_trip": true,
+      "table_bytes": 51200,
+      "max_entries": 512,
+      "indexed_cells": 406509,
+      "skipped_cells": 2803538,
+      "literal_cells": 607681,
+      "dictionary_compact_ram_bytes": 2560,
+      "dictionary_expanded_ram_bytes": 4608,
+      "ring_sectors_if_compact_whole_banks_reserved": 256,
+      "ring_sectors_if_whole_banks_reserved": 256,
+      "deflate": {
+        "6144": 3178121,
+        "4433480": 2935609
+      }
+    },
+    {
+      "name": "group256_entries1024_tiered",
+      "group_frames": 256,
+      "requested_entries": 1024,
+      "raw_bytes": 4354987,
+      "stream_sha256": "42b792ffb5e35579f0bab9c7e63588233c9907951680fe91252115455d021f98",
+      "exact_round_trip": true,
+      "table_bytes": 102400,
+      "max_entries": 1024,
+      "indexed_cells": 475965,
+      "skipped_cells": 2803538,
+      "literal_cells": 538225,
+      "dictionary_compact_ram_bytes": 5120,
+      "dictionary_expanded_ram_bytes": 9216,
+      "ring_sectors_if_compact_whole_banks_reserved": 256,
+      "ring_sectors_if_whole_banks_reserved": 256,
+      "deflate": {
+        "6144": 3186045,
+        "4354987": 2968161
+      }
+    },
+    {
+      "name": "group256_entries2048_tiered",
+      "group_frames": 256,
+      "requested_entries": 2048,
+      "raw_bytes": 4311320,
+      "stream_sha256": "3e2090ac4e216fb15560ebc07a51c518581e9243cbcfac2d3fc965e1b5743676",
+      "exact_round_trip": true,
+      "table_bytes": 200245,
+      "max_entries": 2048,
+      "indexed_cells": 549760,
+      "skipped_cells": 2803538,
+      "literal_cells": 464430,
+      "dictionary_compact_ram_bytes": 10240,
+      "dictionary_expanded_ram_bytes": 18432,
+      "ring_sectors_if_compact_whole_banks_reserved": 256,
+      "ring_sectors_if_whole_banks_reserved": 192,
+      "deflate": {
+        "6144": 3208977,
+        "4311320": 3020429
+      }
+    },
+    {
+      "name": "group256_entries4096_tiered",
+      "group_frames": 256,
+      "requested_entries": 4096,
+      "raw_bytes": 4325436,
+      "stream_sha256": "ba8ddb676a852d57b9f89c23045f945b8728fb8c67364ef2cf9afb82c88c6933",
+      "exact_round_trip": true,
+      "table_bytes": 387670,
+      "max_entries": 4096,
+      "indexed_cells": 635478,
+      "skipped_cells": 2803538,
+      "literal_cells": 378712,
+      "dictionary_compact_ram_bytes": 20480,
+      "dictionary_expanded_ram_bytes": 36864,
+      "ring_sectors_if_compact_whole_banks_reserved": 192,
+      "ring_sectors_if_whole_banks_reserved": 128,
+      "deflate": {
+        "6144": 3264344,
+        "4325436": 3113885
+      }
+    },
+    {
+      "name": "group1024_entries512_tiered",
+      "group_frames": 1024,
+      "requested_entries": 512,
+      "raw_bytes": 4449802,
+      "stream_sha256": "6e5fafa906b26a24e8e6ada199c643033e6d834c7dbd6dac369a2e4821a9446e",
+      "exact_round_trip": true,
+      "table_bytes": 12800,
+      "max_entries": 512,
+      "indexed_cells": 378112,
+      "skipped_cells": 2811964,
+      "literal_cells": 627652,
+      "dictionary_compact_ram_bytes": 2560,
+      "dictionary_expanded_ram_bytes": 4608,
+      "ring_sectors_if_compact_whole_banks_reserved": 256,
+      "ring_sectors_if_whole_banks_reserved": 256,
+      "deflate": {
+        "6144": 3164508,
+        "4449802": 2912440
+      }
+    },
+    {
+      "name": "group1024_entries1024_tiered",
+      "group_frames": 1024,
+      "requested_entries": 1024,
+      "raw_bytes": 4346557,
+      "stream_sha256": "b1db220ebd83e3876422e7621891590c13913b0f3740feefb201e36213cdfaf8",
+      "exact_round_trip": true,
+      "table_bytes": 25600,
+      "max_entries": 1024,
+      "indexed_cells": 440961,
+      "skipped_cells": 2811964,
+      "literal_cells": 564803,
+      "dictionary_compact_ram_bytes": 5120,
+      "dictionary_expanded_ram_bytes": 9216,
+      "ring_sectors_if_compact_whole_banks_reserved": 256,
+      "ring_sectors_if_whole_banks_reserved": 256,
+      "deflate": {
+        "6144": 3157341,
+        "4346557": 2923113
+      }
+    },
+    {
+      "name": "group1024_entries2048_tiered",
+      "group_frames": 1024,
+      "requested_entries": 2048,
+      "raw_bytes": 4256248,
+      "stream_sha256": "8945fb40c839bb466619216196e4045f413eea82f60bb3c4fadec909cd198686",
+      "exact_round_trip": true,
+      "table_bytes": 51200,
+      "max_entries": 2048,
+      "indexed_cells": 502495,
+      "skipped_cells": 2811964,
+      "literal_cells": 503269,
+      "dictionary_compact_ram_bytes": 10240,
+      "dictionary_expanded_ram_bytes": 18432,
+      "ring_sectors_if_compact_whole_banks_reserved": 256,
+      "ring_sectors_if_whole_banks_reserved": 192,
+      "deflate": {
+        "6144": 3148835,
+        "4256248": 2935033
+      }
+    },
+    {
+      "name": "group1024_entries4096_tiered",
+      "group_frames": 1024,
+      "requested_entries": 4096,
+      "raw_bytes": 4181021,
+      "stream_sha256": "54582c826c8cc197d8d0ee6b4866a4a2914453e364e7a650d28c92ce756226f2",
+      "exact_round_trip": true,
+      "table_bytes": 102400,
+      "max_entries": 4096,
+      "indexed_cells": 566938,
+      "skipped_cells": 2811964,
+      "literal_cells": 438826,
+      "dictionary_compact_ram_bytes": 20480,
+      "dictionary_expanded_ram_bytes": 36864,
+      "ring_sectors_if_compact_whole_banks_reserved": 192,
+      "ring_sectors_if_whole_banks_reserved": 128,
+      "deflate": {
+        "6144": 3148961,
+        "4181021": 2957585
+      }
+    }
+  ],
+  "complete": true,
+  "rows_expected": 8
+}

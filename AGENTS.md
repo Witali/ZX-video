@@ -1,5 +1,9 @@
 # Project rules
 
+- Use the full 128 KiB RAM budget of Spectrum 128 for optimization. Bank
+  allocation may change, including trading disk-buffer space for dictionaries.
+  Account for screens, code, stacks, AY/IRQ and TR-DOS workspace; validate
+  sustained disk delivery before accepting a smaller read buffer.
 - Store release disk images in Git LFS. When introducing another disk-image
   extension, add its LFS rule to `.gitattributes` before staging the image.
 - For every change to the ZX Spectrum player hot path, count Z80 T-states
