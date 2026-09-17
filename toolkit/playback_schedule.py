@@ -69,7 +69,7 @@ def emit_producer(a, capacity, batch, *, keepalive_fields=0, cached_keepalive=Fa
         a.emit(0xC9)
 
 
-def emit_clock(a, *, dos_irq=False, full_rom_clock=False, memory_clock=False):
+def emit_clock(a, *, dos_irq=False, full_rom_clock=False, memory_clock=False, audio_irq=False):
     a.label('setup_clock')
     if memory_clock:
         a.emit(0x21);a.word(0);a.abs16(0x22,'elapsed_fields')
@@ -80,7 +80,7 @@ def emit_clock(a, *, dos_irq=False, full_rom_clock=False, memory_clock=False):
     a.emit(0x36,0xBD if dos_irq else 0x7F,0xED,0xB0)
     a.abs16(0x21,'clock_isr_template')
     a.emit(0x11); a.word(0xBD80 if memory_clock else 0xBDBD if dos_irq else 0x7F7F)
-    a.emit(0x01); a.word(13 if memory_clock else 7 if dos_irq else 12)
+    a.emit(0x01); a.word((16 if audio_irq else 13) if memory_clock else 7 if dos_irq else 12)
     a.emit(0xED,0xB0)
     if full_rom_clock:
         a.abs16(0x21,'clock_slow_template');a.emit(0x11);a.word(0xBD00)
@@ -97,7 +97,9 @@ def emit_clock(a, *, dos_irq=False, full_rom_clock=False, memory_clock=False):
             # INC HL leaves AF intact. An atomic LD reads the counter in the
             # foreground, so its entire scheduling loop can keep IRQ enabled.
             a.emit(0xE5);a.abs16(0x2A,'elapsed_fields')
-            a.emit(0x23);a.abs16(0x22,'elapsed_fields');a.emit(0xE1)
+            a.emit(0x23);a.abs16(0x22,'elapsed_fields')
+            if audio_irq:a.abs16(0xCD,'audio_tick')
+            a.emit(0xE1)
         else:a.emit(0xD9,0x23,0xD9)
         a.emit(0xFB,0xC3);a.word(0x3D2F)
         if full_rom_clock:
@@ -106,6 +108,7 @@ def emit_clock(a, *, dos_irq=False, full_rom_clock=False, memory_clock=False):
             if memory_clock:
                 a.abs16(0x2A,'elapsed_fields');a.emit(0x23);a.abs16(0x22,'elapsed_fields')
             else:a.emit(0xD9,0x23,0xD9)
+            if audio_irq:a.abs16(0xCD,'audio_tick')
             a.emit(0x21);a.word(5)
             a.emit(0x39,0x7E,0xFE,0x1F);a.rel8(0x20,'clock_return_dos')
             a.emit(0x2B,0x7E,0xFE,0x54);a.rel8(0x38,'clock_return_dos')

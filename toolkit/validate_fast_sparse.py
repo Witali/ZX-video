@@ -285,7 +285,7 @@ class CPU(MemoryCPU):
 
 
 def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, decode_fields=None,
-                    interrupt_every: int | None = None, clock_checks=None, minimum_read_reserve=0):
+                    interrupt_every: int | None = None, clock_checks=None, minimum_read_reserve=0, audio_frames=None):
     import build_long_video_trd as compact
     trd = path.read_bytes()
     player = extract_file(trd, next(e for e in parse_dir(trd) if e[0] == 'PLAYER'))
@@ -301,6 +301,17 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
     interrupts = 0
     clock_index = 0
     reserve_checks=0;minimum_live_queue=None
+    audio_index=0
+    def audio_irq():
+        nonlocal audio_index
+        import ay_interrupt
+        return_pc=cpu.pc;before=cpu.tstates
+        cpu.push(return_pc);cpu.pc=0xBDBD;cpu.iff1=False
+        while cpu.pc!=return_pc:cpu.step()
+        assert bytes(cpu.ay[:11])==ay_interrupt.registers(audio_frames[audio_index]), f'50 Hz AY {audio_index}'
+        audio_index+=1
+        # The deterministic foreground model excludes IRQ execution, as before.
+        cpu.tstates=before
     while cpu.steps < max_steps:
         if minimum_read_reserve and cpu.pc==labels['flip_screen']:
             unread=cpu.read8(labels['disk_sectors_remaining'])|cpu.read8(labels['disk_sectors_remaining']+1)<<8
@@ -315,6 +326,9 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
             cpu.write8(labels['field_counter'],decode_fields[decoded-1])
         if clock_checks is not None and cpu.pc == labels['clock_check']:
             value=clock_checks[clock_index];clock_index+=1
+            if audio_frames is not None:
+                current=cpu.read8(labels['elapsed_fields'])|cpu.read8(labels['elapsed_fields']+1)<<8
+                for _ in range((value-current)&65535):audio_irq()
             cpu.write8(labels['elapsed_fields'],value)
             cpu.write8(labels['elapsed_fields']+1,value>>8)
             cpu.alt_h=value>>8;cpu.alt_l=value&255
@@ -326,11 +340,12 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
             other_bank = 7 if newest_bank == 5 else 5
             assert bytes(cpu.banks[newest_bank][:6912]) == screens[local], f"frame {local}, bank {newest_bank}"
             assert bytes(cpu.banks[other_bank][:6912]) == screens[max(0, local-1)], f"reference bank at {local}"
-            expected_ay = compact.AyFrame.deserialize(ay_states[local])
-            expected_tones = compact.AyFrame(expected_ay.periods, expected_ay.volumes).serialize()
-            assert bytes(cpu.ay[r] for r in (0,1,2,3,4,5,8,9,10)) == expected_tones, f"AY {local}"
-            assert cpu.ay[7] == expected_ay.mixer, f"AY mixer {local}"
-            assert cpu.ay[6] == expected_ay.noise_period, f"AY noise {local}"
+            if audio_frames is None:
+                expected_ay = compact.AyFrame.deserialize(ay_states[local])
+                expected_tones = compact.AyFrame(expected_ay.periods, expected_ay.volumes).serialize()
+                assert bytes(cpu.ay[r] for r in (0,1,2,3,4,5,8,9,10)) == expected_tones, f"AY {local}"
+                assert cpu.ay[7] == expected_ay.mixer, f"AY mixer {local}"
+                assert cpu.ay[6] == expected_ay.noise_period, f"AY noise {local}"
             assert (7 if cpu.port_7ffd & 8 else 5) == newest_bank, f"visible bank {local}"
             decoded += 1
             if decoded>1:
@@ -345,7 +360,10 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
             assert background_start is not None
             quantum=cpu.tstates-background_start
             frame_background+=quantum;quantum_cycles.append(quantum);background_start=None
+        before_pc=cpu.pc
         cpu.step()
+        if audio_frames is not None and before_pc==labels['audio_start']+7:
+            audio_irq()  # First HALT starts the sound before the video clock reset.
         # Stress test only: inject between instructions while IM2 is enabled.
         # This is not a Spectrum IRQ timing model (HALT waiting is omitted).
         if interrupt_every and cpu.iff1 and cpu.im == 2 and cpu.tstates >= next_interrupt:
@@ -356,6 +374,9 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
         raise AssertionError("instruction limit exceeded")
     assert underflows == 0, f"{underflows} ring underflows"
     if clock_checks is not None: assert clock_index==len(clock_checks)
+    if audio_frames is not None:
+        while audio_index<len(audio_frames):audio_irq()
+        assert cpu.read8(labels['audio_underruns'])==cpu.read8(labels['audio_underruns']+1)==0
     return dict(frames=decoded, instructions=cpu.steps, cpu_tstates=cpu.tstates,
                 delivery_tstates=delivery_cycles, dos_reads=cpu.dos_reads,
                 background_preparation_tstates=background_cycles,
@@ -363,7 +384,7 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
                 background_quantum_max_tstates=max(quantum_cycles,default=0),
                 disk_bytes=cpu.bytes_read, underflows=underflows, minimum_sp=cpu.min_sp,
                 reserve_checks=reserve_checks,minimum_live_queue_before_flip=minimum_live_queue,
-                injected_interrupts=interrupts)
+                injected_interrupts=interrupts,verified_audio_ticks=audio_index)
 
 
 def main():
@@ -372,6 +393,7 @@ def main():
     parser.add_argument('build', type=Path)
     parser.add_argument('--source-build', type=Path, required=True)
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--ay-50hz',type=Path,help='raw states matching the v11 build')
     parser.add_argument('--fuse-timing', type=Path, help='Replay measured IRQ field counts, excluding IRQ execution from CPU totals')
     args = parser.parse_args()
     meta = json.loads((args.build/'build_metadata.json').read_text())
@@ -380,12 +402,20 @@ def main():
     states, ay_states, _ = codec.decode_compact_build(args.source_build/'VIDEO_full.C.bin')
     results = []
     timing = json.loads(args.fuse_timing.read_text()) if args.fuse_timing else None
+    audio_frames=None
+    if meta.get('audio_irq'):
+        import build_long_video_trd as compact
+        if not args.ay_50hz:parser.error('v11 validation requires --ay-50hz')
+        raw=args.ay_50hz.read_bytes()
+        audio_frames=[compact.AyFrame.deserialize(raw[i:i+9]) for i in range(0,len(raw),9)]
+        assert len(audio_frames)==6*len(states)
     for index,volume in enumerate(meta['volumes']):
         start, end = volume['frame_start'], volume['frame_end']
         result = validate_volume(args.build/volume['trd_name'], meta['player_labels'], states[start:end], ay_states[start:end],
                                  decode_fields=timing[index]['decode_fields'] if timing else None,
                                  clock_checks=timing[index].get('clock_checks') or None if timing else None,
-                                 minimum_read_reserve=meta.get('read_reserve',0))
+                                 minimum_read_reserve=meta.get('read_reserve',0),
+                                 audio_frames=audio_frames[start*6:end*6] if audio_frames is not None else None)
         results.append(result)
         print(f"Verified frames {start}..{end-1}; {result['dos_reads']} sector reads", flush=True)
     cycles = [n for result in results for n in result['delivery_tstates']]

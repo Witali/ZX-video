@@ -58,14 +58,14 @@ def sector_records(sector: bytes, first: bool) -> list[bytes]:
     raise ValueError("missing sector END")
 
 
-def frame_bytes(packet, *, natural_order: bool = False) -> bytes:
+def frame_bytes(packet, *, natural_order: bool = False, audio_payload: bytes | None = None) -> bytes:
     records = [record for i, sector in enumerate(packet.sectors)
                for record in sector_records(sector, i == 0)]
     if natural_order:
         # Stable sorting retains a row predictor before its correction.
         records.sort(key=lambda record: 256 if record[0] in (2, 4) else record[1])
-    payload = packet.ay_state + b"".join(records) + b"\0"
-    if not 10 <= len(payload) < FRAME_BUFFER_BYTES:
+    payload = (packet.ay_state if audio_payload is None else audio_payload) + b"".join(records) + b"\0"
+    if not (10 if audio_payload is None else 7) <= len(payload) < FRAME_BUFFER_BYTES:
         raise ValueError("frame exceeds fixed decode buffer")
     return struct.pack("<H", len(payload)) + payload
 

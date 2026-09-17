@@ -109,10 +109,10 @@ def emit_hold_budget(a):
 
 
 def emit_transport(a, *, input_limit=8192, incremental=False, lookahead=False,
-                   output_base=OUTPUT_BUFFER, stack_top=incremental_zx0.STACK_TOP, direct_input=False, wrapped_input=False):
+                   output_base=OUTPUT_BUFFER, stack_top=incremental_zx0.STACK_TOP, direct_input=False, wrapped_input=False, audio_irq=False):
     packed_stream.emit_transport(a,blocked=True,input_limit=input_limit,lookahead=lookahead,direct_input=direct_input,wrapped_input=wrapped_input)
     if incremental:
-        incremental_zx0.emit_wait(a,lookahead=lookahead,output_base=output_base,direct_input=direct_input)
+        incremental_zx0.emit_wait(a,lookahead=lookahead,output_base=output_base,direct_input=direct_input,audio_irq=audio_irq)
     else:
         a.label('wait_packet')
         a.abs16(0x2A,'block_frame_pointer')
@@ -155,8 +155,11 @@ def emit_transport(a, *, input_limit=8192, incremental=False, lookahead=False,
     a.abs16(0xD2,'fatal')
     a.label('block_frame_valid')
     a.emit(0xE1)
-    a.abs16(0x11,'ay_state'); a.emit(0x01); a.word(9)
-    a.emit(0xED,0xB0,0xE5,0xDD,0xE1)
+    if audio_irq:a.abs16(0xCD,'audio_enqueue_six')
+    else:
+        a.abs16(0x11,'ay_state'); a.emit(0x01); a.word(9)
+        a.emit(0xED,0xB0)
+    a.emit(0xE5,0xDD,0xE1)
     a.abs16(0xCD,'command_loop'); a.emit(0xC9)
     if incremental:
         incremental_zx0.emit_decoder(a,output_base=output_base,stack_top=stack_top,direct_input=direct_input,wrapped_input=wrapped_input)

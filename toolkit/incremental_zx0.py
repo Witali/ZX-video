@@ -9,7 +9,7 @@ STACK_TOP = 0x7DF0
 STACK_BOTTOM = 0x7D80
 
 
-def emit_wait(a, *, lookahead=False, output_base=0x8000, direct_input=False):
+def emit_wait(a, *, lookahead=False, output_base=0x8000, direct_input=False, audio_irq=False):
     a.label('prepare_packet' if lookahead else 'wait_packet')
     a.abs16(0x2A,'block_frame_pointer')
     a.abs16((0xED,0x5B),'block_end');a.emit(0xB7,0xED,0x52)
@@ -25,7 +25,7 @@ def emit_wait(a, *, lookahead=False, output_base=0x8000, direct_input=False):
     a.emit(0xB7,0xED,0x52);a.abs16(0xD2,'fatal')
     a.abs16(0x2A,'block_length');a.emit(0x7C,0xB7)
     a.rel8(0x20,'slice_length_valid')
-    a.emit(0x7D,0xFE,12);a.abs16(0xDA,'fatal')
+    a.emit(0x7D,0xFE,9 if audio_irq else 12);a.abs16(0xDA,'fatal')
     a.label('slice_length_valid')
     if lookahead:
         a.abs16(0x3A,'ahead_input_ready');a.emit(0xB7)

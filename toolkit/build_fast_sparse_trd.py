@@ -28,6 +28,7 @@ import fast_seek  # noqa: E402
 import direct_ring_input  # noqa: E402
 import packet_lookahead  # noqa: E402
 import ay_noise as noise_format
+import ay_interrupt
 
 
 LOAD_ADDRESS = 0x6000
@@ -629,7 +630,9 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
                  irq_disk: bool = False, incremental: bool = False,
                  keepalive_fields: int = 0, prefetch_quota: int = 0,
                  full_rom_clock: bool = False, cached_seek: bool = False,
-                 lookahead: bool = False, uncontended: bool = False, read_reserve: int = 0, memory_clock: bool = False, direct_input: bool = False, wrapped_input: bool = False, ay_noise: bool = False) -> tuple[bytes, dict[str, int]]:
+                 lookahead: bool = False, uncontended: bool = False, read_reserve: int = 0, memory_clock: bool = False, direct_input: bool = False, wrapped_input: bool = False, ay_noise: bool = False, audio_irq: bool = False) -> tuple[bytes, dict[str, int]]:
+    if audio_irq and not (wrapped_input and memory_clock and interleaved):
+        raise ValueError('50 Hz audio requires wrapped input, RAM clock and interleaved ZX0')
     if ay_noise and not interleaved:
         raise ValueError('AY noise requires the v10 interleaved ZX0 player')
     if wrapped_input and not direct_input:
@@ -689,8 +692,9 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         a.emit(0xFE, value); a.abs16(0xC2, "fatal")
     if packed:
         a.emit(0x3A); a.word(header_buffer + 4)
-        a.emit(0xFE, noise_format.VERSION if ay_noise else 9 if interleaved else blocked_format.VERSION if blocked else packed_format.VERSION); a.abs16(0xC2, "fatal")
+        a.emit(0xFE, ay_interrupt.VERSION if audio_irq else noise_format.VERSION if ay_noise else 9 if interleaved else blocked_format.VERSION if blocked else packed_format.VERSION); a.abs16(0xC2, "fatal")
     a.emit(0x2A); a.word(header_buffer + 8)
+    if audio_irq:a.abs16(0xCD,'audio_init')
     a.emit(0x2B); a.abs16(0x22, "frames_remaining")
     a.emit(0x2A); a.word(header_buffer + 16); a.abs16(0x22, "disk_sectors_remaining")
     a.emit(0x2A); a.word(header_buffer + 18); a.abs16(0x22, "startup_target")
@@ -719,7 +723,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     a.emit(0x11); a.word(0xC000)
     a.emit(0x01); a.word(base.SCREEN_BYTES)
     a.emit(0xED, 0xB0)
-    a.abs16(0xCD, "ay_apply")
+    a.abs16(0xCD, 'audio_start' if audio_irq else 'ay_apply')
     if deadline:
         a.emit(0x21); a.word(0); a.abs16(0x22,'elapsed_fields')
         if keepalive_fields: a.abs16(0x22,'last_disk_fields')
@@ -730,7 +734,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
 
     a.label("main_loop")
     a.emit(0x2A); a.abs16([], "frames_remaining")
-    a.emit(0x7C, 0xB5); a.abs16(0xCA, "finished")
+    a.emit(0x7C, 0xB5); a.abs16(0xCA, "audio_video_finished" if audio_irq else "finished")
     ld_a_mem(a, "screen_flag"); a.emit(0xB7)
     a.rel8(0x28, "target_bank7")
     a.emit(0x3E, 0x40); ld_mem_a(a, "update_base")
@@ -767,7 +771,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         ld_a_mem(a, "hold_counter"); a.emit(0xB7)
         a.rel8(0x20, "prefetch_loop")
     a.abs16(0xCD, "flip_screen")
-    a.abs16(0xCD, "ay_apply")
+    if not audio_irq:a.abs16(0xCD, "ay_apply")
     a.emit(0x2A); a.abs16([], "frames_remaining")
     a.emit(0x2B); a.abs16(0x22, "frames_remaining")
     a.abs16(0xC3, "main_loop")
@@ -785,7 +789,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         blocked_format.emit_transport(a,input_limit=7424 if irq_disk else 8192,
                                       incremental=incremental,lookahead=lookahead,
                                       output_base=0x6000 if uncontended else 0x8000,
-                                      stack_top=0x9DF0 if uncontended else incremental_zx0.STACK_TOP,direct_input=direct_input,wrapped_input=wrapped_input)
+                                      stack_top=0x9DF0 if uncontended else incremental_zx0.STACK_TOP,direct_input=direct_input,wrapped_input=wrapped_input,audio_irq=audio_irq)
         if lookahead:packet_lookahead.emit(a,stack_top=0x9D70 if uncontended else packet_lookahead.STACK_TOP,direct_input=direct_input)
     elif packed:
         packed_format.emit_transport(a)
@@ -1182,7 +1186,8 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     ld_a_mem(a, "screen_flag"); a.emit(0xEE, 0x08); ld_mem_a(a, "screen_flag")
     a.emit(0xF6, PAGING_ROM48_BANK7, 0x01); a.word(0x7FFD)
     a.emit(0xED, 0x79, 0xC9)
-    noise_format.emit_apply(a, ay_noise)
+    if audio_irq:ay_interrupt.emit(a)
+    else:noise_format.emit_apply(a, ay_noise)
 
     a.label("read_n")
     if read_batch != 1 or deadline:
@@ -1273,6 +1278,8 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     ld_a_mem(a, "disk_track"); a.emit(0x3C); ld_mem_a(a, "disk_track"); a.emit(0xC9)
     a.label("store_sector"); ld_mem_a(a, "disk_sector"); a.emit(0xC9)
 
+    if audio_irq:
+        a.label('audio_video_finished');a.abs16(0xCD,'audio_drain')
     a.label("finished")
     for register in (8, 9, 10):
         a.emit(0x3E, register, 0x01); a.word(0xFFFD); a.emit(0xED, 0x79, 0xAF, 0x06, 0xBF, 0xED, 0x79)
@@ -1282,7 +1289,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     if cached_seek: fast_seek.emit(a,memory_clock=memory_clock)
     if cached_seek and keepalive_fields: fast_seek.emit_keepalive(a,memory_clock=memory_clock)
     if deadline:
-        playback_schedule.emit_clock(a,dos_irq=irq_disk,full_rom_clock=full_rom_clock,memory_clock=memory_clock)
+        playback_schedule.emit_clock(a,dos_irq=irq_disk,full_rom_clock=full_rom_clock,memory_clock=memory_clock,audio_irq=audio_irq)
     elif clocked:
         blocked_format.emit_clock(a)
 
@@ -1304,6 +1311,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     ):
         a.label(name); a.emit(*([0] * size))
     if direct_input:direct_ring_input.emit_helpers(a,wrapped_input=wrapped_input)
+    if audio_irq:ay_interrupt.emit_variables(a)
     if packed:
         packed_format.emit_variables(a)
     if blocked:
@@ -1395,6 +1403,7 @@ def main() -> None:
     parser.add_argument('--prefetch-quota',type=int,choices=(0,3,4,5,6,8),default=0)
     parser.add_argument('--rom-clock',choices=('partial','full'),default='partial')
     parser.add_argument('--disk-seek',choices=('dispatcher','cached'),default='dispatcher')
+    parser.add_argument("--ay-50hz",type=Path,help="raw nine-byte AY states, exactly six per video frame; experimental v11")
     args = parser.parse_args()
     incremental = args.zx0_decoding == "incremental"
     blocked = args.packing == "zx0"
@@ -1414,6 +1423,15 @@ def main() -> None:
     source_stream = args.source_build / "VIDEO_full.C.bin"
     metadata = json.loads((args.source_build / "build_metadata.json").read_text())
     states, ay_states, frame_rate = decode_compact_build(source_stream)
+    audio_irq = args.ay_50hz is not None
+    audio_frames = None
+    if audio_irq:
+        audio_data = args.ay_50hz.read_bytes()
+        if len(audio_data) != len(states)*6*9 or abs(frame_rate-25/3)>1e-6:
+            parser.error("50 Hz audio requires six states per 25/3 fps video frame")
+        if len(states)*6>65535:
+            parser.error("50 Hz audio currently supports at most 65535 ticks")
+        audio_frames=[source.AyFrame.deserialize(audio_data[i:i+9]) for i in range(0,len(audio_data),9)]
     ay_noise = any(source.AyFrame.deserialize(state).noise_period for state in ay_states)
     if ay_noise and not interleaved:
         parser.error('AY noise requires --packing zx0 --disk-layout interleaved (v10)')
@@ -1421,14 +1439,14 @@ def main() -> None:
 
     boot = streaming.build_boot_basic()
     provisional, _ = build_player(0, 0, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock,direct_input=args.direct_input,wrapped_input=args.wrapped_input,ay_noise=ay_noise)
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock,direct_input=args.direct_input,wrapped_input=args.wrapped_input,ay_noise=ay_noise,audio_irq=audio_irq)
     preceding = [
         base.TrdFile("boot", "B", boot, basic_variables_offset=len(boot), autostart_line=10),
         base.TrdFile("PLAYER", "C", provisional, start=LOAD_ADDRESS),
     ]
     video_track, video_sector = streaming.calculate_file_start(preceding)
     player, labels = build_player(video_track, video_sector, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock,direct_input=args.direct_input,wrapped_input=args.wrapped_input,ay_noise=ay_noise)
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock,direct_input=args.direct_input,wrapped_input=args.wrapped_input,ay_noise=ay_noise,audio_irq=audio_irq)
     boot_sectors = math.ceil((len(boot) + 4) / base.SECTOR_SIZE)
     player_sectors = math.ceil(len(player) / base.SECTOR_SIZE)
     limit = TRD_DATA_SECTORS - boot_sectors - player_sectors
@@ -1446,8 +1464,9 @@ def main() -> None:
     while start < len(states):
         end, packets = make_volume_packets(states, ay_states, start, 0x100000 if blocked else limit, packed=packed)
         if blocked:
+            tick_records = ay_interrupt.encode_ticks(audio_frames[start*6:end*6]) if audio_irq else None
             candidates = blocked_format.compress_frames(
-                [packed_format.frame_bytes(packet,natural_order=True) for packet in packets],
+                [packed_format.frame_bytes(packet,natural_order=True,audio_payload=b"".join(tick_records[i*6:i*6+6]) if audio_irq else None) for i,packet in enumerate(packets)],
                 args.zx0, args.output/'compression_cache')
             blocks = []
             used = base.SECTOR_SIZE
@@ -1468,7 +1487,7 @@ def main() -> None:
         else:
             video = serialize_volume(packets, frame_rate, packed=packed)
         if interleaved:
-            video=video[:4]+bytes([noise_format.VERSION if ay_noise else 9])+video[5:]
+            video=video[:4]+bytes([ay_interrupt.VERSION if audio_irq else noise_format.VERSION if ay_noise else 9])+video[5:]
             video=disk_layout.arrange(video,video_sector)
         if len(video) > limit*base.SECTOR_SIZE:
             raise ValueError('physical stream allocation exceeds the disk budget')
@@ -1530,7 +1549,7 @@ def main() -> None:
     (args.output / "PLAYER.C.bin").write_bytes(player)
     output_metadata = {
         "profile": "banked_ring_fast_sparse_direct_screen", "frame_rate": frame_rate,
-        "packing": args.packing, "video_version": noise_format.VERSION if ay_noise else 9 if interleaved else blocked_format.VERSION if blocked else packed_format.VERSION if packed else VIDEO_VERSION,
+        "packing": args.packing, "video_version": ay_interrupt.VERSION if audio_irq else noise_format.VERSION if ay_noise else 9 if interleaved else blocked_format.VERSION if blocked else packed_format.VERSION if packed else VIDEO_VERSION,
         "pacing": args.pacing if blocked else 'legacy', "read_batch": args.read_batch,
         "drawing": args.drawing,
         "disk_reader": args.disk_reader,
@@ -1543,6 +1562,12 @@ def main() -> None:
         "direct_input": args.direct_input,
         "wrapped_input": args.wrapped_input,
         "ay_noise": ay_noise,
+        "audio_irq": audio_irq,
+        "audio_irq_cycle_model": dict(ay_interrupt.TSTATES,
+            previous_frame_copy=204,previous_frame_apply=noise_format.APPLY_TSTATES,
+            setup_extra=63,reference="AY_INTERRUPT_RESULTS_ru.md",
+            scope="nominal Z80; enqueue/tick exclude CALL; add 17 T per call; IRQ/ROM/ULA/disk accounted separately") if audio_irq else None,
+        "audio_source": {"path": str(args.ay_50hz), "sha256": hashlib.sha256(audio_data).hexdigest(), "ticks": len(audio_frames), "rate_hz": 50} if audio_irq else None,
         "ay_apply_tstates": noise_format.APPLY_TSTATES,
         "wrapped_input_model": {
             "reference": "WRAPPED_INPUT_RESULTS_ru.md",
@@ -1572,6 +1597,7 @@ def main() -> None:
             "slice_return_delta_tstates": 52,
         } if args.direct_input else None,
         "irq_cycle_model": {
+            "audio_callback": "add 17 T + audio_tick from audio_irq_cycle_model" if audio_irq else None,
             "irq_scope": "includes 19 T acknowledge, vector dispatch and ROM mapper",
             "switch_scope": "inline handler selection; excludes IRQ and ROM service",
             "fast_previous": 61, "fast_current": 116, "fast_delta": 55,

@@ -1,0 +1,120 @@
+{
+  "source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "nominal CPU, includes IM2 19 T and ROM NOP/RET trampoline; excludes ULA and disk latency",
+  "model": {
+    "disabled": 58,
+    "underrun": 205,
+    "unchanged": 377,
+    "changed_base": 367,
+    "per_register": 83,
+    "last_tick_extra": 24,
+    "enqueue_six_base": 1705,
+    "enqueue_per_register": 42,
+    "previous_fast_irq": 116,
+    "irq_call": 17
+  },
+  "fast_irq": [
+    {
+      "register_writes": 0,
+      "routine_tstates": 377,
+      "fast_irq_tstates": 510,
+      "delta_vs_old_fast_irq": 394
+    },
+    {
+      "register_writes": 1,
+      "routine_tstates": 450,
+      "fast_irq_tstates": 583,
+      "delta_vs_old_fast_irq": 467
+    },
+    {
+      "register_writes": 2,
+      "routine_tstates": 533,
+      "fast_irq_tstates": 666,
+      "delta_vs_old_fast_irq": 550
+    },
+    {
+      "register_writes": 3,
+      "routine_tstates": 616,
+      "fast_irq_tstates": 749,
+      "delta_vs_old_fast_irq": 633
+    },
+    {
+      "register_writes": 4,
+      "routine_tstates": 699,
+      "fast_irq_tstates": 832,
+      "delta_vs_old_fast_irq": 716
+    },
+    {
+      "register_writes": 5,
+      "routine_tstates": 782,
+      "fast_irq_tstates": 915,
+      "delta_vs_old_fast_irq": 799
+    },
+    {
+      "register_writes": 6,
+      "routine_tstates": 865,
+      "fast_irq_tstates": 998,
+      "delta_vs_old_fast_irq": 882
+    },
+    {
+      "register_writes": 7,
+      "routine_tstates": 948,
+      "fast_irq_tstates": 1081,
+      "delta_vs_old_fast_irq": 965
+    },
+    {
+      "register_writes": 8,
+      "routine_tstates": 1031,
+      "fast_irq_tstates": 1164,
+      "delta_vs_old_fast_irq": 1048
+    },
+    {
+      "register_writes": 9,
+      "routine_tstates": 1114,
+      "fast_irq_tstates": 1247,
+      "delta_vs_old_fast_irq": 1131
+    },
+    {
+      "register_writes": 10,
+      "routine_tstates": 1197,
+      "fast_irq_tstates": 1330,
+      "delta_vs_old_fast_irq": 1214
+    },
+    {
+      "register_writes": 11,
+      "routine_tstates": 1280,
+      "fast_irq_tstates": 1413,
+      "delta_vs_old_fast_irq": 1297
+    }
+  ],
+  "rom_irq": [
+    {
+      "return_pc": 32769,
+      "register_writes": 3,
+      "previous_tstates": 184,
+      "current_tstates": 817,
+      "delta_tstates": 633
+    },
+    {
+      "return_pc": 8019,
+      "register_writes": 3,
+      "previous_tstates": 211,
+      "current_tstates": 844,
+      "delta_tstates": 633
+    },
+    {
+      "return_pc": 8020,
+      "register_writes": 3,
+      "previous_tstates": 210,
+      "current_tstates": 843,
+      "delta_tstates": 633
+    },
+    {
+      "return_pc": 8032,
+      "register_writes": 3,
+      "previous_tstates": 225,
+      "current_tstates": 858,
+      "delta_tstates": 633
+    }
+  ]
+}

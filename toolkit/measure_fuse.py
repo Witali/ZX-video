@@ -22,6 +22,9 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     events = [(labels.get('bootstrap',labels['start']), 100), (labels['main_loop'], 101),
               (call, 102), (call+3, 103), (labels['finished'], 199)]
     events += [(labels[n], 198) for n in ('wait_packet_fill','stream_byte_fill','fatal') if n in labels]
+    if 'audio_tick' in labels:
+        events += [(labels['audio_write_loop'],140),(labels['audio_tick_done'],143),
+                   (labels['audio_tick_empty'],198)]
     if 'frame_prepared' in labels: events.append((labels['frame_prepared'],107))
     if 'elapsed_fields' in labels: events.append((labels['clock_check'],108))
     if 'fast_read_enter' in labels: events.append((labels['fast_read_enter'],109))
@@ -51,6 +54,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
                       'print 132', 'print spectrum:frames * 70908 + ula:tstates']
         if event in (102,109):lines += ['print 120','print z80:hl']
         if event==198:lines += ['print 197','print z80:pc']
+        if event==140:lines += ['print 141','print [z80:hl]','print 142','print [z80:hl + 1]']
         lines += [
                   ('exit 77' if event == 199 else 'exit 99' if event == 198 else 'continue'), 'end']
     env = dict(os.environ, SDL_VIDEODRIVER='dummy')
@@ -70,6 +74,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     frames = []; reads = []; read_start = None; decode_fields=[]; player_start=None; clock_checks=[]
     read_kinds=[];read_frames=[];read_buffers=[]
     prepared_times=[];queue_checks=[];deadline_checks=[];clock_times=[]
+    audio_writes=[];audio_ticks=[]
     for event, timestamp in zip(numbers[::2], numbers[1::2]):
         if event == 100: player_start=timestamp
         elif event == 101: frames.append(timestamp)
@@ -79,6 +84,10 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
         elif event == 130: queue_checks.append(timestamp)
         elif event == 131: deadline_checks.append(timestamp)
         elif event == 132: clock_times.append(timestamp)
+        elif event == 140: audio_writes.append(dict(tstate=timestamp+55))
+        elif event == 141: audio_writes[-1]['register']=timestamp
+        elif event == 142: audio_writes[-1]['value']=timestamp
+        elif event == 143: audio_ticks.append(timestamp)
         elif event in (102,109,110):
             if read_start is not None: raise ValueError('unpaired ROM entry')
             read_start = timestamp
@@ -103,6 +112,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
                 trdos_rom_sha256=rom_hash,
                 player_startup_ms=(frames[0]-player_start)/3546.9 if player_start is not None else None,
                 frames=len(frames), frame_interval_tstates=intervals,
+                audio_ticks=audio_ticks,audio_writes=audio_writes,
                 frame_interval_mean_ms=sum(intervals)/len(intervals)/3546.9,
                 frame_interval_max_ms=max(intervals)/3546.9,
                 measured_fps=3546900*len(intervals)/sum(intervals),
