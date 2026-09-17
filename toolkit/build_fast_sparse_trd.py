@@ -1383,6 +1383,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source-build", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument('--name-prefix',default='big_buck_bunny_2min_zx_fast_sparse_25over3fps',
+                        help='file name prefix; volumes receive _partNN.trd')
     parser.add_argument("--packing", choices=("contiguous", "sector", "zx0"), default="contiguous")
     parser.add_argument("--zx0", type=Path, help="path to the upstream ZX0 v2 compressor")
     parser.add_argument('--compression-cache',type=Path,help='reuse verified ZX0 blocks across player builds')
@@ -1411,6 +1413,8 @@ def main() -> None:
     parser.add_argument('--disk-seek',choices=('dispatcher','cached'),default='dispatcher')
     parser.add_argument("--ay-50hz",type=Path,help="raw nine-byte AY states, exactly six per video frame; experimental v11")
     args = parser.parse_args()
+    if not args.name_prefix or any(not (c.isalnum() or c in '_-') for c in args.name_prefix):
+        parser.error('--name-prefix must contain only letters, digits, underscores and hyphens')
     incremental = args.zx0_decoding == "incremental"
     blocked = args.packing == "zx0"
     if not 1 <= args.block_bytes <= 8192:
@@ -1475,7 +1479,7 @@ def main() -> None:
         end, packets = make_volume_packets(states, ay_states, start, 0x100000 if blocked else limit, packed=packed)
         if blocked:
             tick_records = ay_interrupt.encode_ticks(audio_frames[start*6:end*6]) if audio_irq else None
-            candidates = blocked_format.compress_frames(
+            candidates = blocked_format.iter_compress_frames(
                 [packed_format.frame_bytes(packet,natural_order=True,audio_payload=b"".join(tick_records[i*6:i*6+6]) if audio_irq else None) for i,packet in enumerate(packets)],
                 args.zx0, args.compression_cache or args.output/'compression_cache',
                 max_block_bytes=args.block_bytes)
@@ -1512,7 +1516,7 @@ def main() -> None:
         ] + [base.TrdFile(f"VIDEO{i:03d}", "C", chunk, start=0) for i, chunk in enumerate(chunks)]
         index = len(volumes) + 1
         trd, directory, stats = streaming.place_files(files, f"FST{index:02d}")
-        name = f"big_buck_bunny_2min_zx_fast_sparse_25over3fps_part{index:02d}.trd"
+        name = f"{args.name_prefix}_part{index:02d}.trd"
         if blocked:
             lengths = blocked_format.frame_demands(blocks)
             counts = packed_format.sector_demands(lengths)

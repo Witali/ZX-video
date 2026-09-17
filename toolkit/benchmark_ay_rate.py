@@ -38,17 +38,18 @@ def main():
     p.add_argument('--zx0',type=Path)
     p.add_argument('--delta-only',action='store_true',help='compress only byte deltas; faster for large high-rate trials')
     p.add_argument('--duration',type=float,default=120)
+    p.add_argument('--pad-end',action='store_true',help='pad final partial video interval with silence')
     p.add_argument('--rates',type=video.parse_rate,nargs='+',default=[25/3,25,50])
     args=p.parse_args()
     if not args.ffmpeg:p.error('ffmpeg is required')
     args.output.mkdir(parents=True,exist_ok=True)
     sample_rate=22050;metric_rate=25/3
-    samples=video.decode_analysis_audio(args.ffmpeg,args.input_video,0,args.duration,sample_rate,True)
+    samples=video.decode_analysis_audio(args.ffmpeg,args.input_video,0,args.duration,sample_rate,True,pad_end=args.pad_end)
     reference=quality.features(samples,sample_rate,metric_rate,round(args.duration*metric_rate))
     report=dict(scope='offline synthesis only; no claim of playback compatibility',
                 metric_rate_hz=metric_rate,onset_tolerance_seconds=1/metric_rate,
                 source_pcm_sha256=hashlib.sha256(samples.astype('<f8').tobytes()).hexdigest(),
-                duration_seconds=args.duration,rates=[])
+                duration_seconds=args.duration,pad_end=args.pad_end,rates=[])
     for rate in args.rates:
         count=round(args.duration*rate)
         magnitude,rms=ay.spectra(samples,sample_rate,rate,count)

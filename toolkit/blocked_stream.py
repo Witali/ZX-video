@@ -31,6 +31,11 @@ class Block:
 
 def compress_frames(frames: list[bytes], executable: Path, cache: Path,
                     *, max_block_bytes: int = 8192) -> list[Block]:
+    return list(iter_compress_frames(frames,executable,cache,max_block_bytes=max_block_bytes))
+
+
+def iter_compress_frames(frames: list[bytes], executable: Path, cache: Path,
+                         *, max_block_bytes: int = 8192):
     """Compressor work is offline. Cache entries are verified before reuse."""
     if not 1 <= max_block_bytes <= 8192:
         raise ValueError('block limit must be 1..8192 bytes')
@@ -45,13 +50,16 @@ def compress_frames(frames: list[bytes], executable: Path, cache: Path,
             groups.append((bytes(pending),count)); pending.clear(); count=0
         pending += frame; count += 1
     if pending: groups.append((bytes(pending),count))
-    return compress_groups(groups,executable,cache)
+    yield from iter_compress_groups(groups,executable,cache)
 
 
 def compress_groups(groups,executable: Path,cache: Path) -> list[Block]:
+    return list(iter_compress_groups(groups,executable,cache))
+
+
+def iter_compress_groups(groups,executable: Path,cache: Path):
     """Compress an explicit partition without silently merging small groups."""
     cache.mkdir(parents=True,exist_ok=True)
-    result=[]
     for index,(decoded,count) in enumerate(groups):
         if not 0<len(decoded)<=8192 or count<1:raise ValueError('invalid block group')
         digest=hashlib.sha256(decoded).hexdigest()
@@ -66,9 +74,8 @@ def compress_groups(groups,executable: Path,cache: Path) -> list[Block]:
         compressor=zlib.compressobj(9,zlib.DEFLATED,-15)
         deflated=compressor.compress(decoded)+compressor.flush()
         assert zlib.decompress(deflated,-15)==decoded
-        result.append(Block(decoded if stored else payload,decoded,count,stored,len(deflated)))
+        yield Block(decoded if stored else payload,decoded,count,stored,len(deflated))
         if index%20==0: print(f'compressed block {index+1}/{len(groups)}',flush=True)
-    return result
 
 
 def frame_demands(blocks: list[Block]) -> list[int]:

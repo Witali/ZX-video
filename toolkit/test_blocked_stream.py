@@ -1,5 +1,6 @@
 """ZX0 reference/machine-code agreement and real-player block transitions."""
 from pathlib import Path
+import hashlib
 import random
 import tempfile
 import unittest
@@ -19,10 +20,20 @@ EMPTY_DECODED = (bytes((10,0))+bytes(10))*500
 
 
 class BlockedStreamTests(unittest.TestCase):
+    def test_lazy_compression_stops_at_the_volume_boundary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            cache=Path(directory)
+            (cache/(hashlib.sha256(EMPTY_DECODED).hexdigest()+'.zx0')).write_bytes(EMPTY_COMPRESSED)
+            stream=blocked_stream.iter_compress_groups([(EMPTY_DECODED,500),(b'',0)],Path('unused'),cache)
+            first=next(stream)
+            self.assertEqual(first.data,EMPTY_COMPRESSED)
+            self.assertEqual(first.decoded,EMPTY_DECODED)
+            with self.assertRaises(ValueError):next(stream)
+
     def test_selected_block_limit_preserves_whole_frames(self):
         frames = [b'a'*3,b'b'*4,b'c',b'd'*8,b'e']
         with tempfile.TemporaryDirectory() as directory:
-            with patch.object(blocked_stream,'compress_groups',side_effect=lambda groups,*_:groups):
+            with patch.object(blocked_stream,'iter_compress_groups',side_effect=lambda groups,*_:groups):
                 groups=blocked_stream.compress_frames(frames,Path('unused'),Path(directory),max_block_bytes=8)
                 self.assertEqual(groups,[(b'aaabbbbc',3),(b'd'*8,1),(b'e',1)])
                 self.assertEqual(b''.join(data for data,_ in groups),b''.join(frames))

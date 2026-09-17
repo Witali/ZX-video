@@ -1052,6 +1052,7 @@ def ffmpeg_frames(
     start: float,
     duration: float,
     fps: float,
+    *, pad_end: bool = False,
 ) -> tuple[subprocess.Popen[bytes], list[str]]:
     ffmpeg = shutil.which("ffmpeg")
     if ffmpeg is None:
@@ -1063,11 +1064,14 @@ def ffmpeg_frames(
         "-t", f"{duration:g}",
         "-i", str(source),
         "-vf",
-        f"fps={fps},scale={ANALYSIS_WIDTH}:{ANALYSIS_HEIGHT}:flags=area",
+        (f"tpad=stop_mode=clone:stop_duration={1/fps}," if pad_end else "")
+        + f"fps={fps},scale={ANALYSIS_WIDTH}:{ANALYSIS_HEIGHT}:flags=area",
         "-pix_fmt", "rgb24",
         "-f", "rawvideo",
         "-",
     ]
+    if pad_end:
+        command[-1:-1] = ["-frames:v",str(round(duration*fps))]
     process = subprocess.Popen(command, stdout=subprocess.PIPE)
     assert process.stdout is not None
     return process, command
@@ -1319,6 +1323,7 @@ def decode_analysis_audio(
     duration: float,
     sample_rate: int,
     front_music_only: bool,
+    *, pad_end: bool = False,
 ) -> np.ndarray:
     command = [
         ffmpeg,
@@ -1339,7 +1344,11 @@ def decode_analysis_audio(
     completed = subprocess.run(command, stdout=subprocess.PIPE, check=False)
     if completed.returncode:
         raise RuntimeError(f"audio-analysis ffmpeg exited with {completed.returncode}")
-    return np.frombuffer(completed.stdout, dtype="<f4").astype(np.float64)
+    samples = np.frombuffer(completed.stdout, dtype="<f4").astype(np.float64)
+    if pad_end:
+        count=round(duration*sample_rate)
+        samples=np.pad(samples[:count],(0,max(0,count-len(samples))))
+    return samples
 
 
 def analyse_ay_frames(
@@ -1567,9 +1576,10 @@ def analyse_tone_ranges(
     white_percentile: float,
     window_seconds: float,
     reframe_windows: list[ReframeWindow],
+    *, pad_end: bool = False,
 ) -> list[ToneRange]:
     """Calculate smoothly adaptive tone groups in a centred time window."""
-    process, _ = ffmpeg_frames(source, start, duration, fps)
+    process, _ = ffmpeg_frames(source, start, duration, fps,pad_end=pad_end)
     assert process.stdout is not None
     bins = 1024
     frame_histograms: list[np.ndarray] = []
@@ -1719,8 +1729,9 @@ def build_video(
     sparse_sector_budget: int,
     feedback_max_error_ratio: float,
     preview_path: Path,
+    *, pad_end: bool = False,
 ) -> tuple[bytes, list[Packet], list[bytes], dict[str, object]]:
-    process, ffmpeg_command = ffmpeg_frames(source, start, duration, fps)
+    process, ffmpeg_command = ffmpeg_frames(source, start, duration, fps,pad_end=pad_end)
     assert process.stdout is not None
     packets: list[Packet] = []
     states: list[bytes] = []

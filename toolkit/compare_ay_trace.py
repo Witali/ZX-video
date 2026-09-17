@@ -34,7 +34,7 @@ def main():
     verified=verify_ay_trace.verify_build(metadata,timing,raw)
     experiment=json.loads(args.rate_report.read_text())
     fps=metadata['frame_rate'];count=metadata['frames'];sample_rate=22050
-    original=video.decode_analysis_audio(args.ffmpeg,args.input_video,0,count/fps,sample_rate,True)
+    original=video.decode_analysis_audio(args.ffmpeg,args.input_video,0,count/fps,sample_rate,True,pad_end=experiment.get('pad_end',False))
     digest=hashlib.sha256(original.astype('<f8').tobytes()).hexdigest()
     if digest!=experiment['source_pcm_sha256']:raise ValueError('reference PCM differs from rate experiment')
     frames=[video.AyFrame.deserialize(raw[i:i+9]) for i in range(0,len(raw),9)]
