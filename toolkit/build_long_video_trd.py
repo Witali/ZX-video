@@ -217,7 +217,7 @@ BAYER_8X8 = (
 ) / 64.0
 
 
-def encode_compact_frame(
+def encode_compact_frame_reference(
     image: np.ndarray,
     previous_attrs: np.ndarray | None,
     attr_change_penalty: int,
@@ -276,6 +276,43 @@ def encode_compact_frame(
         | levels[:, 3::4]
     )
     return packed.tobytes() + attrs.tobytes(), attrs
+
+
+def prepare_compact_palette(image: np.ndarray, dither: str):
+    """Evaluate each distinct RGB value once, shared by all feedback penalties.
+
+    The palette contains integers/quarters; squared distances and sums are
+    exactly representable in float64. Candidate and pixel order are unchanged.
+    """
+    if image.shape != (LOGICAL_HEIGHT,LOGICAL_WIDTH,3):
+        raise ValueError(f'unexpected compact frame shape {image.shape}')
+    colours,inverse=np.unique(image.reshape(-1,3),axis=0,return_inverse=True)
+    coverages=np.array([0.,.25,.5,1.] if dither!='none' else [0.,0.,1.,1.])
+    palettes=COLOUR_PAPERS[:,None,:]+coverages[None,:,None]*(COLOUR_INKS-COLOUR_PAPERS)[:,None,:]
+    errors=np.empty((len(colours),len(COLOUR_ATTRS)))
+    levels=np.empty(errors.shape,dtype=np.uint8)
+    for first in range(0,len(colours),512):
+        part=colours[first:first+512].astype(np.float64)
+        distances=np.sum((part[:,None,None,:]-palettes[None,:,:,:])**2,axis=3)
+        errors[first:first+512]=np.min(distances,axis=2)
+        levels[first:first+512]=np.argmin(distances,axis=2)
+    shape=(ATTR_ROWS,ATTR_SOURCE_HEIGHT,ATTR_COLS,ATTR_SOURCE_WIDTH,len(COLOUR_ATTRS))
+    cells=(STATE_ATTR_BYTES,ATTR_SOURCE_HEIGHT*ATTR_SOURCE_WIDTH,len(COLOUR_ATTRS))
+    error_cells=errors[inverse].reshape(shape).transpose(0,2,1,3,4).reshape(cells)
+    level_cells=levels[inverse].reshape(shape).transpose(0,2,1,3,4).reshape(cells)
+    return error_cells.sum(axis=1),level_cells
+
+
+def encode_compact_frame(image,previous_attrs,attr_change_penalty,dither,*,prepared=None):
+    scores,candidate_levels=prepare_compact_palette(image,dither) if prepared is None else prepared
+    if previous_attrs is not None:
+        scores=scores+(COLOUR_ATTRS[None,:]!=np.asarray(previous_attrs)[:,None])*attr_change_penalty
+    best=np.argmin(scores,axis=1)
+    attrs=COLOUR_ATTRS[best].copy()
+    selected=candidate_levels[np.arange(STATE_ATTR_BYTES),:,best]
+    levels=selected.reshape(ATTR_ROWS,ATTR_COLS,ATTR_SOURCE_HEIGHT,ATTR_SOURCE_WIDTH).transpose(0,2,1,3).reshape(LOGICAL_HEIGHT,LOGICAL_WIDTH)
+    packed=(levels[:,0::4]<<6)|(levels[:,1::4]<<4)|(levels[:,2::4]<<2)|levels[:,3::4]
+    return packed.tobytes()+attrs.tobytes(),attrs
 
 
 def estimate_fast_sparse_sectors(current: bytes, previous: bytes) -> int:
@@ -343,11 +380,12 @@ def encode_feedback_frame(
 ) -> tuple[bytes, np.ndarray, dict[str, float | int]]:
     """Select the least distorted reconstruction within the sparse budget."""
     penalties = (100_000, 0, 1_600_000)
+    prepared=prepare_compact_palette(image,dither)
     candidates: list[tuple[int, float, int, bytes, np.ndarray]] = []
     seen: set[bytes] = set()
     for candidate_index, penalty in enumerate(penalties):
         state, attrs = encode_compact_frame(
-            image, previous_attrs, penalty, dither
+            image, previous_attrs, penalty, dither,prepared=prepared
         )
         if state in seen:
             continue

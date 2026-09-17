@@ -226,7 +226,7 @@ def convert_frame_to_phases(
     return bytes(bitmap_a), bytes(bitmap_b), bytes(attrs), total_error
 
 
-def render_spectrum_screen(bitmap: bytes, attrs: bytes) -> np.ndarray:
+def render_spectrum_screen_reference(bitmap: bytes, attrs: bytes) -> np.ndarray:
     output = np.zeros((HEIGHT, WIDTH, 3), dtype=np.uint8)
     for y in range(HEIGHT):
         cell_y = y >> 3
@@ -239,6 +239,21 @@ def render_spectrum_screen(bitmap: bytes, attrs: bytes) -> np.ndarray:
             for bit in range(8):
                 output[y, x_byte * 8 + bit] = ink if value & (0x80 >> bit) else paper
     return output
+
+
+SCREEN_OFFSETS=np.array([[spectrum_bitmap_offset(x,y) for x in range(32)] for y in range(HEIGHT)])
+SCREEN_PALETTE=np.array([zx_rgb(i&7,i>>3) for i in range(16)],dtype=np.uint8)
+
+
+def render_spectrum_screen(bitmap: bytes, attrs: bytes) -> np.ndarray:
+    """Vectorised host preview; same ULA addressing, bit order and fixed FLASH phase."""
+    if len(bitmap)!=SCREEN_BITMAP_BYTES or len(attrs)!=SCREEN_ATTR_BYTES:
+        raise ValueError('invalid Spectrum screen size')
+    rows=np.frombuffer(bitmap,dtype=np.uint8)[SCREEN_OFFSETS]
+    bits=np.unpackbits(rows,axis=1)
+    cells=np.frombuffer(attrs,dtype=np.uint8).reshape(CELLS_Y,CELLS_X).repeat(8,axis=0).repeat(8,axis=1)
+    colour=np.where(bits,cells&7,(cells>>3)&7)|((cells>>3)&8)
+    return SCREEN_PALETTE[colour]
 
 
 def temporal_average(a: np.ndarray, b: np.ndarray) -> np.ndarray:
