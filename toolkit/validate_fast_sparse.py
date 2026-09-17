@@ -326,7 +326,11 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
             other_bank = 7 if newest_bank == 5 else 5
             assert bytes(cpu.banks[newest_bank][:6912]) == screens[local], f"frame {local}, bank {newest_bank}"
             assert bytes(cpu.banks[other_bank][:6912]) == screens[max(0, local-1)], f"reference bank at {local}"
-            assert bytes(cpu.ay[r] for r in (0,1,2,3,4,5,8,9,10)) == ay_states[local], f"AY {local}"
+            expected_ay = compact.AyFrame.deserialize(ay_states[local])
+            expected_tones = compact.AyFrame(expected_ay.periods, expected_ay.volumes).serialize()
+            assert bytes(cpu.ay[r] for r in (0,1,2,3,4,5,8,9,10)) == expected_tones, f"AY {local}"
+            assert cpu.ay[7] == expected_ay.mixer, f"AY mixer {local}"
+            assert cpu.ay[6] == expected_ay.noise_period, f"AY noise {local}"
             assert (7 if cpu.port_7ffd & 8 else 5) == newest_bank, f"visible bank {local}"
             decoded += 1
             if decoded>1:

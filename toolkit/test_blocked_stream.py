@@ -18,8 +18,8 @@ EMPTY_DECODED = (bytes((10,0))+bytes(10))*500
 
 
 class BlockedStreamTests(unittest.TestCase):
-    def run_player(self, states, blocks, *, clocked=False, **player_options):
-        ay = [bytes(9)]*len(states)
+    def run_player(self, states, blocks, *, clocked=False, ay_states=None, stream_version=None, **player_options):
+        ay = ay_states if ay_states is not None else [bytes(9)]*len(states)
         video = blocked_stream.serialize_volume(blocks,25/3,clocked=clocked)
         logical_bytes = len(video)
         boot = codec.streaming.build_boot_basic()
@@ -29,7 +29,8 @@ class BlockedStreamTests(unittest.TestCase):
         track,sector = codec.streaming.calculate_file_start(files)
         player,labels = codec.build_player(track,sector,blocked=True,clocked=clocked,**player_options)
         if player_options.get('interleaved'):
-            video = disk_layout.arrange(video[:4]+bytes([9])+video[5:],sector)
+            version = stream_version if stream_version is not None else (10 if player_options.get('ay_noise') else 9)
+            video = disk_layout.arrange(video[:4]+bytes([version])+video[5:],sector)
         files[1] = codec.base.TrdFile('PLAYER','C',player,start=0x6000)
         files.append(codec.base.TrdFile('VIDEO','C',video,start=0))
         trd,_,_ = codec.streaming.place_files(files,'BLOCK')

@@ -1,0 +1,189 @@
+{
+  "date": "2026-09-17",
+  "baseline_commit": "9fa1d17",
+  "source": {
+    "movie": "Big Buck Bunny 1080p H.264, first 120 seconds, front L/R music mix",
+    "compact_baseline_sha256": "5d42a94efb0343fb3415c12dcc616bb9403b02f8946d7e8fbfaf45e7030f26e6",
+    "compact_audio_sha256": "e85b465674351b1b5b3ed18766a2e1324163a17e4e6e452d81a8d73e40150b4c"
+  },
+  "ay": {
+    "mode": "joint_harmonic_sparse_three_voice",
+    "update_rate_hz": 8.333333333333334,
+    "pitch_mix": "front_left_right",
+    "clock_hz": 1773400,
+    "mean_harmonic_explained": 0.7255007341943233,
+    "distinct_notes": 57,
+    "active_frame_ratio": 0.929,
+    "melody_note_changes": 300,
+    "melody_large_jumps": 12,
+    "melody_mean_hold_frames": 3.3222591362126246,
+    "source_quiet_dbfs": -53.61279580240728,
+    "source_loud_dbfs": -25.089564807299432,
+    "master_volume_min": 0,
+    "master_volume_max": 15,
+    "master_volume_mean": 8.079,
+    "volume_model": "nominal_3dB_steps",
+    "frames": 1000,
+    "noise_frames": 217,
+    "noise_seconds": 26.04,
+    "noise_mode": "channel_B_replaces_weaker_harmony",
+    "required_fast_stream_version": 10,
+    "noise_analysis": {
+      "frequency_median_bins": 17,
+      "median_power_scale": 0.7,
+      "minimum_broadband_share": 0.16,
+      "harmony_replacement_ratio": 1.35,
+      "minimum_rms_dbfs": -55,
+      "noise_period_range": [
+        1,
+        31
+      ]
+    },
+    "analysis": {
+      "sample_rate": 22050,
+      "window_samples": 4096,
+      "fft_samples": 8192,
+      "harmonic_slopes": [
+        0.65,
+        1.2,
+        2.0
+      ],
+      "harmonics_limit": 16,
+      "amplitude_exponent": 0.75,
+      "sparsity_penalty": 0.045,
+      "iterations": 80,
+      "noise_flatness_limit": 0.75,
+      "silence_dbfs": -65,
+      "melody_jump_cost": 0.14,
+      "support_jump_cost": 0.112,
+      "note_change_cost": 0.25
+    }
+  },
+  "comparison": {
+    "scope": "front-channel music; independent 8192-sample FFT semitone/chroma energy and RMS; no listening or true-note score",
+    "frames": 1000,
+    "video_identical": true,
+    "update_rate_hz": 8.333333333333334,
+    "source_start_seconds": 0.0,
+    "preview_model": "band-limited tones, continuous 17-bit LFSR noise with 4x sample averaging, nominal AY 3 dB volume steps; approximate synthesis",
+    "metrics": {
+      "before": {
+        "semitone_spectral_cosine": 0.6628028263396546,
+        "chroma_cosine": 0.8575991178102157,
+        "loudness_correlation": 0.9315422673426613,
+        "rhythm_onset_f1": 0.6739130434782609,
+        "onsets": {
+          "reference": 134,
+          "candidate": 142,
+          "matched": 93,
+          "precision": 0.6549295774647887,
+          "recall": 0.6940298507462687,
+          "f1": 0.6739130434782609
+        },
+        "evaluated_frames": 870
+      },
+      "after": {
+        "semitone_spectral_cosine": 0.8307586197789152,
+        "chroma_cosine": 0.9477773554489777,
+        "loudness_correlation": 0.9886404680790744,
+        "rhythm_onset_f1": 0.6985294117647058,
+        "onsets": {
+          "reference": 134,
+          "candidate": 138,
+          "matched": 95,
+          "precision": 0.6884057971014492,
+          "recall": 0.7089552238805971,
+          "f1": 0.6985294117647058
+        },
+        "evaluated_frames": 870
+      }
+    },
+    "target": {
+      "threshold": 0.95,
+      "criteria": [
+        "chroma_cosine",
+        "rhythm_onset_f1",
+        "loudness_correlation"
+      ],
+      "passed": false,
+      "onset_tolerance_seconds": 0.12,
+      "meaning": "engineering proxies; not 95% perceptual fidelity or true-note accuracy"
+    },
+    "excerpt": {
+      "start_seconds": 60,
+      "duration_seconds": 24,
+      "common_rms": 0.1,
+      "note": "All three listening excerpts have equal RMS loudness; disk levels are unchanged."
+    }
+  },
+  "cycle_model": {
+    "scope": "ay_apply entry through RET; no CALL, IRQ, ULA, ROM, disk latency",
+    "source": "https://www.zilog.com/docs/z80/um0080.pdf",
+    "previous_tstates": 624,
+    "extended_tones_tstates": 790,
+    "extended_noise_tstates": 792,
+    "delta_tones": 166,
+    "delta_noise": 168
+  },
+  "disk": {
+    "volumes": 1,
+    "frames": 1000,
+    "bytes": 655360,
+    "player_bytes": 5120,
+    "payload_sectors": 2521,
+    "physical_video_sectors": 2522,
+    "free_sectors": 1,
+    "player_sha256": "e5112bf8da2c2c6be13e9008e98f04f9cabe54e7e58944570dcf0511ffad4ec0",
+    "trd_sha256": "7d32dd73f21148b532ebb4a63a69233fc57d491c6a08067b638b0ce5428b3dc2",
+    "version": 10
+  },
+  "fuse": {
+    "machine": "Fuse 1.9.0 Spectrum 128 + Beta128",
+    "clock_hz": 3546900,
+    "trdos_rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "player_startup_ms": 3484.9823789788265,
+    "frames": 1000,
+    "frame_interval_mean_ms": 119.9316173146842,
+    "frame_interval_max_ms": 124.76585187064761,
+    "measured_fps": 8.338084838597117,
+    "rom_call_mean_ms": 7.9246397639168515,
+    "rom_call_max_ms": 193.40861033578616,
+    "note": "ROM service intervals include entry CALL/JP, interrupts inside the interval and emulator disk latency; not a physical-drive measurement.",
+    "intervals_over_125ms": 0
+  },
+  "cpu": {
+    "scope": "player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency",
+    "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+    "delivery_scope": "main_loop through first prefetch_loop, excluding frame zero",
+    "frames": 1000,
+    "delivery_tstates_mean": 124447.41341341341,
+    "delivery_tstates_max": 427451,
+    "background_preparation_tstates_mean": 89572.73373373374,
+    "combined_preparation_tstates_mean": 214020.14714714716,
+    "background_quantum_max_tstates": 27047
+  },
+  "validation": {
+    "existing_playback_tests": 73,
+    "audio_tests": 15,
+    "unique_tests_passed": 88,
+    "pixels": "all 1000 screens and prior screen banks byte-identical to baseline",
+    "audio": "all 1000 decoded tone, volume, mixer and noise register states match encoded data",
+    "ay_irq": "IRQ injected at every instruction boundary of noise ay_apply",
+    "cpu_volumes": [
+      {
+        "frames": 1000,
+        "instructions": 28329590,
+        "cpu_tstates": 222356640,
+        "dos_reads": 2522,
+        "background_quantum_count": 6746,
+        "background_quantum_max_tstates": 27047,
+        "disk_bytes": 645632,
+        "underflows": 0,
+        "minimum_sp": 40292,
+        "reserve_checks": 900,
+        "minimum_live_queue_before_flip": 89,
+        "injected_interrupts": 0
+      }
+    ]
+  }
+}

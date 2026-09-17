@@ -27,6 +27,7 @@ import incremental_zx0  # noqa: E402
 import fast_seek  # noqa: E402
 import direct_ring_input  # noqa: E402
 import packet_lookahead  # noqa: E402
+import ay_noise as noise_format
 
 
 LOAD_ADDRESS = 0x6000
@@ -82,6 +83,8 @@ def decode_compact_build(path: Path) -> tuple[list[bytes], list[bytes], float]:
     data = path.read_bytes()
     if data[:4] != source.VIDEO_MAGIC:
         raise ValueError("not a compact long-video stream")
+    if data[4] not in (source.VIDEO_VERSION, source.VIDEO_NOISE_VERSION):
+        raise ValueError("unsupported compact source version")
     frame_count = struct.unpack_from("<H", data, 8)[0]
     numerator, denominator = struct.unpack_from("<HH", data, 32)
     frame_rate = numerator / denominator if denominator else float(data[5])
@@ -626,7 +629,9 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
                  irq_disk: bool = False, incremental: bool = False,
                  keepalive_fields: int = 0, prefetch_quota: int = 0,
                  full_rom_clock: bool = False, cached_seek: bool = False,
-                 lookahead: bool = False, uncontended: bool = False, read_reserve: int = 0, memory_clock: bool = False, direct_input: bool = False, wrapped_input: bool = False) -> tuple[bytes, dict[str, int]]:
+                 lookahead: bool = False, uncontended: bool = False, read_reserve: int = 0, memory_clock: bool = False, direct_input: bool = False, wrapped_input: bool = False, ay_noise: bool = False) -> tuple[bytes, dict[str, int]]:
+    if ay_noise and not interleaved:
+        raise ValueError('AY noise requires the v10 interleaved ZX0 player')
     if wrapped_input and not direct_input:
         raise ValueError('wrapped input requires direct ring input')
     if direct_input and not (uncontended and lookahead):
@@ -684,7 +689,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
         a.emit(0xFE, value); a.abs16(0xC2, "fatal")
     if packed:
         a.emit(0x3A); a.word(header_buffer + 4)
-        a.emit(0xFE, 9 if interleaved else blocked_format.VERSION if blocked else packed_format.VERSION); a.abs16(0xC2, "fatal")
+        a.emit(0xFE, noise_format.VERSION if ay_noise else 9 if interleaved else blocked_format.VERSION if blocked else packed_format.VERSION); a.abs16(0xC2, "fatal")
     a.emit(0x2A); a.word(header_buffer + 8)
     a.emit(0x2B); a.abs16(0x22, "frames_remaining")
     a.emit(0x2A); a.word(header_buffer + 16); a.abs16(0x22, "disk_sectors_remaining")
@@ -1177,14 +1182,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     ld_a_mem(a, "screen_flag"); a.emit(0xEE, 0x08); ld_mem_a(a, "screen_flag")
     a.emit(0xF6, PAGING_ROM48_BANK7, 0x01); a.word(0x7FFD)
     a.emit(0xED, 0x79, 0xC9)
-    a.label("ay_apply")
-    a.emit(0x3E, 7, 0x01); a.word(0xFFFD); a.emit(0xED, 0x79)
-    a.emit(0x3E, 0x38, 0x06, 0xBF, 0xED, 0x79)
-    a.emit(0x21); a.abs16([], "ay_state")
-    for register in (0, 1, 2, 3, 4, 5, 8, 9, 10):
-        a.emit(0x3E, register, 0x01); a.word(0xFFFD)
-        a.emit(0xED, 0x79, 0x7E, 0x23, 0x06, 0xBF, 0xED, 0x79)
-    a.emit(0xC9)
+    noise_format.emit_apply(a, ay_noise)
 
     a.label("read_n")
     if read_batch != 1 or deadline:
@@ -1416,18 +1414,21 @@ def main() -> None:
     source_stream = args.source_build / "VIDEO_full.C.bin"
     metadata = json.loads((args.source_build / "build_metadata.json").read_text())
     states, ay_states, frame_rate = decode_compact_build(source_stream)
+    ay_noise = any(source.AyFrame.deserialize(state).noise_period for state in ay_states)
+    if ay_noise and not interleaved:
+        parser.error('AY noise requires --packing zx0 --disk-layout interleaved (v10)')
     args.output.mkdir(parents=True, exist_ok=True)
 
     boot = streaming.build_boot_basic()
     provisional, _ = build_player(0, 0, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock,direct_input=args.direct_input,wrapped_input=args.wrapped_input)
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock,direct_input=args.direct_input,wrapped_input=args.wrapped_input,ay_noise=ay_noise)
     preceding = [
         base.TrdFile("boot", "B", boot, basic_variables_offset=len(boot), autostart_line=10),
         base.TrdFile("PLAYER", "C", provisional, start=LOAD_ADDRESS),
     ]
     video_track, video_sector = streaming.calculate_file_start(preceding)
     player, labels = build_player(video_track, video_sector, packed=packed, blocked=blocked, clocked=clocked,
-                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock,direct_input=args.direct_input,wrapped_input=args.wrapped_input)
+                                  read_batch=args.read_batch,deadline=deadline,fast_draw=fast_draw,fast_disk=fast_disk,interleaved=interleaved,irq_disk=irq_disk,incremental=incremental,keepalive_fields=args.motor_keepalive_fields,prefetch_quota=args.prefetch_quota,full_rom_clock=args.rom_clock=='full',cached_seek=args.disk_seek=='cached',lookahead=args.packet_lookahead,uncontended=args.uncontended,read_reserve=args.read_reserve,memory_clock=args.memory_clock,direct_input=args.direct_input,wrapped_input=args.wrapped_input,ay_noise=ay_noise)
     boot_sectors = math.ceil((len(boot) + 4) / base.SECTOR_SIZE)
     player_sectors = math.ceil(len(player) / base.SECTOR_SIZE)
     limit = TRD_DATA_SECTORS - boot_sectors - player_sectors
@@ -1467,7 +1468,7 @@ def main() -> None:
         else:
             video = serialize_volume(packets, frame_rate, packed=packed)
         if interleaved:
-            video=video[:4]+bytes([9])+video[5:]
+            video=video[:4]+bytes([noise_format.VERSION if ay_noise else 9])+video[5:]
             video=disk_layout.arrange(video,video_sector)
         if len(video) > limit*base.SECTOR_SIZE:
             raise ValueError('physical stream allocation exceeds the disk budget')
@@ -1529,7 +1530,7 @@ def main() -> None:
     (args.output / "PLAYER.C.bin").write_bytes(player)
     output_metadata = {
         "profile": "banked_ring_fast_sparse_direct_screen", "frame_rate": frame_rate,
-        "packing": args.packing, "video_version": 9 if interleaved else blocked_format.VERSION if blocked else packed_format.VERSION if packed else VIDEO_VERSION,
+        "packing": args.packing, "video_version": noise_format.VERSION if ay_noise else 9 if interleaved else blocked_format.VERSION if blocked else packed_format.VERSION if packed else VIDEO_VERSION,
         "pacing": args.pacing if blocked else 'legacy', "read_batch": args.read_batch,
         "drawing": args.drawing,
         "disk_reader": args.disk_reader,
@@ -1541,6 +1542,8 @@ def main() -> None:
         "memory_clock": args.memory_clock,
         "direct_input": args.direct_input,
         "wrapped_input": args.wrapped_input,
+        "ay_noise": ay_noise,
+        "ay_apply_tstates": noise_format.APPLY_TSTATES,
         "wrapped_input_model": {
             "reference": "WRAPPED_INPUT_RESULTS_ru.md",
             "source_increment_previous_tstates": 6,

@@ -24,7 +24,6 @@ import shutil
 import struct
 import subprocess
 import sys
-import wave
 from dataclasses import dataclass
 from fractions import Fraction
 from pathlib import Path
@@ -61,6 +60,8 @@ STATE_BYTES = STATE_BITMAP_BYTES + STATE_ATTR_BYTES
 PACKET_HEADER_BYTES = 8
 VIDEO_MAGIC = b"ZXVL"
 VIDEO_VERSION = 4
+# Intermediate compact stream for repacking into ZXFC v10, not the v4 player.
+VIDEO_NOISE_VERSION = 5
 AY_CLOCK_HZ = 1_773_400
 AY_STATE_BYTES = 9
 PAGING_ROM48_BANK7 = 0x17
@@ -110,15 +111,32 @@ class ToneRange:
 class AyFrame:
     periods: tuple[int, int, int]
     volumes: tuple[int, int, int]
+    # Zero: three tones. 1..31: channel B becomes noise-only (ZXFC v10).
+    noise_period: int = 0
+
+    @property
+    def mixer(self) -> int:
+        return 0x2A if self.noise_period else 0x38
 
     def serialize(self) -> bytes:
         result = bytearray()
         for period in self.periods:
             result += bytes((period & 0xFF, (period >> 8) & 0x0F))
         result += bytes(self.volumes)
+        if not 0 <= self.noise_period <= 31:
+            raise ValueError("noise period must be 0..31")
+        result[1] |= (self.noise_period & 15) << 4
+        result[3] |= self.noise_period & 16
         if len(result) != AY_STATE_BYTES:
             raise AssertionError("invalid AY state size")
         return bytes(result)
+
+    @classmethod
+    def deserialize(cls, state: bytes) -> "AyFrame":
+        if len(state) != AY_STATE_BYTES:
+            raise ValueError("invalid AY state size")
+        return cls(tuple(state[2*i] + ((state[2*i+1] & 15) << 8) for i in range(3)),
+                   tuple(state[6:]), (state[1] >> 4) | (state[3] & 16))
 
 
 @dataclass(frozen=True)
@@ -524,7 +542,7 @@ def serialize_video(
     packet_data = b"".join(packet.serialize() for packet in packets)
     header = bytearray(base.SECTOR_SIZE)
     header[:4] = VIDEO_MAGIC
-    header[4] = VIDEO_VERSION
+    header[4] = VIDEO_NOISE_VERSION if any(AyFrame.deserialize(p.ay_state).noise_period for p in packets) else VIDEO_VERSION
     rate = Fraction(fps).limit_denominator(1000)
     header[5] = round(fps)
     header[6] = round(50 / timing_fps)
@@ -537,7 +555,7 @@ def serialize_video(
     struct.pack_into(
         "<H", header, 20, 1 + len(packet_data) // base.SECTOR_SIZE
     )
-    header[24:32] = b"ZXVAY04 "
+    header[24:32] = b"ZXVAY05 " if header[4] == VIDEO_NOISE_VERSION else b"ZXVAY04 "
     struct.pack_into("<HH", header, 32, rate.numerator, rate.denominator)
     return bytes(header) + packet_data
 
@@ -1292,6 +1310,17 @@ def analyse_ay_frames(
     duration: float,
     fps: float,
 ) -> tuple[list[AyFrame], dict[str, object]]:
+    """Jointly separate harmonic voices, with rests and independent dynamics."""
+    import ay_fidelity
+    return ay_fidelity.analyse(source, start, duration, fps)
+
+
+def analyse_ay_frames_legacy(
+    source: Path,
+    start: float,
+    duration: float,
+    fps: float,
+) -> tuple[list[AyFrame], dict[str, object]]:
     """Track melody, bass, and harmony as three continuous AY voices."""
     ffmpeg = shutil.which("ffmpeg")
     if ffmpeg is None:
@@ -1876,31 +1905,9 @@ def write_ay_preview(
     update_rate: float,
     sample_rate: int = 44_100,
 ) -> None:
-    """Render a listening preview of the three AY square-wave voices."""
-    samples_per_frame = sample_rate / update_rate
-    total_samples = round(len(frames) * samples_per_frame)
-    output = np.empty(total_samples, dtype=np.float64)
-    phases = np.zeros(3, dtype=np.float64)
-    frame_index = 0
-    next_boundary = samples_per_frame
-    for sample_index in range(total_samples):
-        while sample_index >= next_boundary and frame_index + 1 < len(frames):
-            frame_index += 1
-            next_boundary = (frame_index + 1) * samples_per_frame
-        frame = frames[frame_index]
-        mixed = 0.0
-        for voice in range(3):
-            frequency = AY_CLOCK_HZ / (16.0 * frame.periods[voice])
-            phases[voice] = (phases[voice] + frequency / sample_rate) % 1.0
-            level = frame.volumes[voice] / 15.0
-            mixed += (1.0 if phases[voice] < 0.5 else -1.0) * level
-        output[sample_index] = mixed / 4.0
-    pcm = np.clip(np.rint(output * 32767.0), -32768, 32767).astype("<i2")
-    with wave.open(str(path), "wb") as wav:
-        wav.setnchannels(1)
-        wav.setsampwidth(2)
-        wav.setframerate(sample_rate)
-        wav.writeframes(pcm.tobytes())
+    """Render a band-limited preview with nominal logarithmic AY levels."""
+    import ay_fidelity
+    ay_fidelity.write_preview(path, frames, update_rate, sample_rate)
 
 
 def mux_ay_preview(
@@ -2246,12 +2253,12 @@ def main() -> None:
 {f"- Feedback baseline MSE: {feedback_stats['mean_default_mse']:.6f}; selected delta: {feedback_stats['mean_error_delta_vs_default']:+.6f}" if feedback_stats else ''}
 - Screen presentation: bank 5/7 double buffer, one flip per logical frame
 - 50 Hz temporal A/B flicker: disabled
-- Audio: harmonic/Viterbi melody, bass and harmony on AY-3-8912/YM2149F
+- Audio: joint harmonic fit, Viterbi voices and rests on AY-3-8912/YM2149F
 - AY update rate: {args.timing_fps:g} Hz; distinct selected notes: {ay_stats['distinct_notes']}
 - AY melody changes: {ay_stats['melody_note_changes']}; jumps over a fifth: {ay_stats['melody_large_jumps']}; mean hold: {ay_stats['melody_mean_hold_frames']:.2f} frames
 - AY active-frame ratio: {ay_stats['active_frame_ratio']:.1%}
-- AY source loudness anchors: {ay_stats['source_quiet_dbfs']:.1f}..{ay_stats['source_loud_dbfs']:.1f} dBFS
-- AY master volume: {ay_stats['master_volume_min']}..{ay_stats['master_volume_max']} (mean {ay_stats['master_volume_mean']:.2f})
+- AY source RMS percentiles (10/98): {ay_stats['source_quiet_dbfs']:.1f}..{ay_stats['source_loud_dbfs']:.1f} dBFS
+- AY strongest channel volume: {ay_stats['master_volume_min']}..{ay_stats['master_volume_max']} (mean {ay_stats['master_volume_mean']:.2f})
 - Unsplit encoded stream: {stats['video_bytes']} bytes, {stats['video_sectors']} sectors
 - Bootable TRD volumes: {len(volume_metadata)}
 - Total volume payload: {total_volume_bytes} bytes
