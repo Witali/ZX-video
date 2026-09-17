@@ -20,6 +20,34 @@ EMPTY_DECODED = (bytes((10,0))+bytes(10))*500
 
 
 class BlockedStreamTests(unittest.TestCase):
+    def test_heavy_frames_do_not_force_light_neighbors_to_be_stored(self):
+        frames=[b'a'*3,b'b'*4,b'c',b'd'*8,b'e']
+        captured=[]
+        def inspect(groups,*args,stored_groups=()):
+            captured.extend((data,count,index in stored_groups) for index,(data,count) in enumerate(groups))
+            return groups
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(blocked_stream,'iter_compress_groups',side_effect=inspect):
+                groups=blocked_stream.compress_frames(frames,Path('unused'),Path(directory),
+                    max_block_bytes=8,store_over_bytes=3,separate_stored=True)
+        self.assertEqual(b''.join(data for data,count in groups),b''.join(frames))
+        self.assertEqual(captured,[(frame,1,len(frame)>3) for frame in frames])
+
+    def test_cached_packets_preserve_both_bank_histories_at_every_boundary(self):
+        rng=random.Random(437);state=bytearray(3840);states=[]
+        for frame in range(10):
+            for _ in range(80):state[rng.randrange(len(state))]=rng.randrange(256)
+            states.append(bytes(state))
+        sound=[bytes([i])*9 for i in range(len(states))]
+        _,cached=codec.make_volume_packets(states,sound,0,0x100000,packed=True)
+        for start in range(len(states)):
+            for limit in (0,1,2,3):
+                end,actual=codec.cached_volume_packets(states,sound,cached,start,max_frames=limit)
+                expected_end,expected=codec.make_volume_packets(states,sound,start,0x100000,packed=True,max_frames=limit)
+                self.assertEqual(end,expected_end)
+                self.assertEqual([packed_stream.frame_bytes(p) for p in actual],
+                                 [packed_stream.frame_bytes(p) for p in expected])
+
     def test_volume_planner_does_not_bank_reads_beyond_ring_capacity(self):
         idle=blocked_stream.Block(b'x',b'x',100,True,0)
         dense=blocked_stream.Block(bytes(6140),bytes(6140),3,True,0)

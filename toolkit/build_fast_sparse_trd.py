@@ -1379,6 +1379,19 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     return code, dict(a.labels)
 
 
+def cached_volume_packets(states,ay_states,cached,start,*,max_frames=0):
+    """Only the first two packets depend on the chosen volume boundary.
+
+    The first screen initializes both banks. From local frame two onward,
+    bank history is exactly n-2 and the visible predictor is n-1, independent
+    of the volume's parity. Reuse the verified global packets after that.
+    """
+    end=min(len(states),start+max_frames) if max_frames else len(states)
+    if start==0:return end,cached[:end]
+    _,prefix=make_volume_packets(states,ay_states,start,0x100000,packed=True,max_frames=min(2,end-start))
+    return end,prefix+cached[start+len(prefix):end]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source-build", type=Path, required=True)
@@ -1391,6 +1404,7 @@ def main() -> None:
     parser.add_argument('--block-bytes',type=int,default=8192,
                         help='maximum decoded ZX0 block size, 1..8192; smaller blocks change decode scheduling')
     parser.add_argument('--store-over-bytes',type=int,default=0,help='store blocks containing larger frame packets without ZX0; 0 disables')
+    parser.add_argument('--separate-stored',action='store_true',help='keep heavy stored frames out of compressed blocks of lighter frames')
     parser.add_argument('--max-volume-frames',type=int,default=0,help='optional cap on frames per disk; 0 fills disks')
     parser.add_argument('--minimum-planned-queue',type=int,default=0,help='split before estimated ring reserve falls below this sector count; 0 disables')
     parser.add_argument("--pacing", choices=("cpu-fields", "legacy", "deadline"), default="cpu-fields",
@@ -1484,14 +1498,20 @@ def main() -> None:
     rle_sectors_saved = 0
     packing_sectors_saved = 0
     packet_padding_bytes = 0
+    cached_packets=None
+    if blocked:
+        _,cached_packets=make_volume_packets(states,ay_states,0,0x100000,packed=True)
     while start < len(states):
-        end, packets = make_volume_packets(states, ay_states, start, 0x100000 if blocked else limit, packed=packed,max_frames=args.max_volume_frames)
+        if blocked:
+            end,packets=cached_volume_packets(states,ay_states,cached_packets,start,max_frames=args.max_volume_frames)
+        else:
+            end,packets=make_volume_packets(states,ay_states,start,limit,packed=packed,max_frames=args.max_volume_frames)
         if blocked:
             tick_records = ay_interrupt.encode_ticks(audio_frames[start*6:end*6]) if audio_irq else None
             candidates = blocked_format.iter_compress_frames(
                 [packed_format.frame_bytes(packet,natural_order=True,audio_payload=b"".join(tick_records[i*6:i*6+6]) if audio_irq else None) for i,packet in enumerate(packets)],
                 args.zx0, args.compression_cache or args.output/'compression_cache',
-                max_block_bytes=args.block_bytes,store_over_bytes=args.store_over_bytes)
+                max_block_bytes=args.block_bytes,store_over_bytes=args.store_over_bytes,separate_stored=args.separate_stored)
             blocks = []
             used = base.SECTOR_SIZE
             planned_queue=ring_capacity
@@ -1712,6 +1732,7 @@ def main() -> None:
             "name": "ZX0 v2", "decoder": "turbo incremental" if incremental else "turbo", "decoded_block_limit": 8192,
             "encoder_block_limit": args.block_bytes,
             "store_over_frame_bytes": args.store_over_bytes,
+            "separate_stored": args.separate_stored,
             "max_volume_frames": args.max_volume_frames,
             "minimum_planned_queue": args.minimum_planned_queue,
             "command_order": "stable screen row order",

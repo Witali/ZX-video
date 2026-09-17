@@ -45,6 +45,7 @@ def main():
     p.add_argument('--stage',choices=('all','audio','video','disks'),default='all')
     p.add_argument('--resume-video',action='store_true',help='reuse a hashed conversion checkpoint and repeat verification')
     p.add_argument('--store-over-bytes',type=int,default=0)
+    p.add_argument('--separate-stored',action='store_true')
     p.add_argument('--max-volume-frames',type=int,default=0)
     p.add_argument('--minimum-planned-queue',type=int,default=0)
     p.add_argument('--compression-cache',type=Path)
@@ -116,7 +117,7 @@ def main():
     if args.stage in ('all','disks'):
         require('audio');require('video')
         manifest['disk_settings']=dict(store_over_bytes=args.store_over_bytes,max_volume_frames=args.max_volume_frames,
-            minimum_planned_queue=args.minimum_planned_queue)
+            minimum_planned_queue=args.minimum_planned_queue,separate_stored=args.separate_stored)
         save()
         run('disks',[HERE/'build_fast_sparse_trd.py','--source-build',source,'--output',disks,
             '--name-prefix','ZX-video-full-50Hz','--ay-50hz',sound/'50Hz/raw.bin',
@@ -127,6 +128,7 @@ def main():
             '--read-reserve','64','--memory-clock','--direct-input','--wrapped-input','--block-bytes','6144',
             '--store-over-bytes',args.store_over_bytes,'--max-volume-frames',args.max_volume_frames,
             '--minimum-planned-queue',args.minimum_planned_queue,
+            *(['--separate-stored'] if args.separate_stored else []),
             *(['--compression-cache',args.compression_cache.resolve()] if args.compression_cache else [])])
         meta=json.loads((disks/'build_metadata.json').read_text())
         if meta['frames']!=count:raise ValueError('disk set does not cover the source')
