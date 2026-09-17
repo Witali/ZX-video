@@ -39,3 +39,40 @@
 Для изменений горячего пути Z80 записать абсолютные T-states и разницу;
 ROM, IRQ, ULA и дисковые задержки учитывать отдельно. Экспериментальная
 перекодировка на ПК сама по себе не изменяет инструкции PLAYER: 0 T.
+
+## Выполнено до уточнения качества
+
+`canonicalize_display_cells.py` проверяет другой способ записи одинаково
+выглядящих ячеек. Одноцветная ячейка хранится через PAPER; в двуцветной
+ячейке без промежуточных уровней можно поменять INK/PAPER и инвертировать
+bitmap. Изменены 1 645 088 представлений ячеек, но все отображаемые RGB
+пиксели всех 4971 кадров совпали с исходными. Прочитанный обратно поток
+также совпал с новым представлением и прежними AY-байтами. Отдельный тест
+сверяет расчёт цветов с существующим native-screen renderer для всех
+128 атрибутов без FLASH и разных рисунков.
+
+Отчёт: `display_canonicalization_measurements.json`. Это экспериментальный
+вариант без потери видимого качества; он не включён в текущий выпуск.
+Изменение инструкций проигрывателя — 0 T; скорость нового набора пакетов
+в Fuse не заявляется.
+
+ZX0-опыт остановлен после выхода за бюджет. `assess_cached_zx0_budget.py`
+заново воспроизвёл разбиение полного видео со всеми 29826 AY-тактами,
+проверил соответствие кэша и распаковал каждый готовый блок. Для выбранного
+разбиения 379 из 747 блоков уже требуют **2 121 066 байт** с заголовками
+против 1 291 776 доступных. Остальные блоки в этой оценке считаются нулевыми.
+Поэтому этот конкретный вариант отклонён без досжатия оставшейся части.
+`equivalent_cells_budget.json` явно помечен `complete: false`; указанное
+число — нижняя оценка этого фиксированного разбиения, а не размер полного
+фильма и не предел других способов кодирования или границ томов.
+
+```text
+python toolkit/canonicalize_display_cells.py --source-build ORIGINAL_SOURCE --output toolkit/build_equivalent/source
+python -m unittest discover -s toolkit -p test_display_canonicalization.py
+python toolkit/benchmark_ay_encoding.py --source-build toolkit/build_equivalent/source --ay-50hz AUDIO --player-build ORIGINAL_DISKS --zx0 ZX0 --output toolkit/build_equivalent/encoding --formats pairs
+python toolkit/assess_cached_zx0_budget.py --source-build toolkit/build_equivalent/source --ay-50hz AUDIO --cache toolkit/build_equivalent/encoding/cache --output toolkit/equivalent_cells_budget.json
+```
+
+Новая сборка на двух TRD пока не создана. Вопрос о небольших потерях
+изображения остаётся открытым: прежнее требование сохранять качество
+не отменяется предположением, что в новом запросе названо только разрешение.
