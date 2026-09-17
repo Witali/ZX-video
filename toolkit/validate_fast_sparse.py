@@ -387,6 +387,10 @@ def validate_volume(path, labels, states, ay_states, *, max_steps=100_000_000, d
                 injected_interrupts=interrupts,verified_audio_ticks=audio_index)
 
 
+def _validate_job(job):
+    return validate_volume(**job)
+
+
 def main():
     import build_fast_sparse_trd as codec
     parser = argparse.ArgumentParser()
@@ -395,6 +399,7 @@ def main():
     parser.add_argument('--output', type=Path)
     parser.add_argument('--ay-50hz',type=Path,help='raw states matching the v11 build')
     parser.add_argument('--fuse-timing', type=Path, help='Replay measured IRQ field counts, excluding IRQ execution from CPU totals')
+    parser.add_argument('--jobs',type=int,choices=range(1,9),default=1,help='independent host processes for disk validation')
     args = parser.parse_args()
     meta = json.loads((args.build/'build_metadata.json').read_text())
     if meta.get('pacing') == 'deadline' and not args.fuse_timing:
@@ -409,15 +414,25 @@ def main():
         raw=args.ay_50hz.read_bytes()
         audio_frames=[compact.AyFrame.deserialize(raw[i:i+9]) for i in range(0,len(raw),9)]
         assert len(audio_frames)==6*len(states)
+    jobs=[]
     for index,volume in enumerate(meta['volumes']):
+        if timing and timing[index].get('trd_sha256'):
+            import hashlib
+            if hashlib.sha256((args.build/volume['trd_name']).read_bytes()).hexdigest()!=timing[index]['trd_sha256']:
+                raise ValueError('Fuse timing belongs to another disk image')
         start, end = volume['frame_start'], volume['frame_end']
-        result = validate_volume(args.build/volume['trd_name'], meta['player_labels'], states[start:end], ay_states[start:end],
+        jobs.append(dict(path=args.build/volume['trd_name'],labels=meta['player_labels'],states=states[start:end],ay_states=ay_states[start:end],
                                  decode_fields=timing[index]['decode_fields'] if timing else None,
                                  clock_checks=timing[index].get('clock_checks') or None if timing else None,
                                  minimum_read_reserve=meta.get('read_reserve',0),
-                                 audio_frames=audio_frames[start*6:end*6] if audio_frames is not None else None)
-        results.append(result)
-        print(f"Verified frames {start}..{end-1}; {result['dos_reads']} sector reads", flush=True)
+                                 audio_frames=audio_frames[start*6:end*6] if audio_frames is not None else None))
+    from concurrent.futures import ProcessPoolExecutor
+    from contextlib import nullcontext
+    with ProcessPoolExecutor(max_workers=args.jobs) if args.jobs>1 else nullcontext() as pool:
+        measured=pool.map(_validate_job,jobs) if pool else map(_validate_job,jobs)
+        for volume,result in zip(meta['volumes'],measured):
+            results.append(result)
+            print(f"Verified frames {volume['frame_start']}..{volume['frame_end']-1}; {result['dos_reads']} sector reads",flush=True)
     cycles = [n for result in results for n in result['delivery_tstates']]
     report = dict(scope='player CPU only; excludes contention, ROM, IRQ, HALT waiting and disk latency',
                   timing_source='https://www.zilog.com/docs/z80/um0080.pdf',

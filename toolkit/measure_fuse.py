@@ -109,6 +109,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
         raise ValueError('incomplete scheduler trace')
     intervals = [b-a for a,b in zip(frames,frames[1:])]
     return dict(machine='Fuse 1.9.0 Spectrum 128 + Beta128', clock_hz=3546900,
+                trd_sha256=hashlib.sha256(image).hexdigest(),player_sha256=hashlib.sha256(player).hexdigest(),
                 trdos_rom_sha256=rom_hash,
                 player_startup_ms=(frames[0]-player_start)/3546.9 if player_start is not None else None,
                 frames=len(frames), frame_interval_tstates=intervals,
@@ -140,6 +141,7 @@ def main():
         result=measure(args.fuse.resolve(),(args.build/volume['trd_name']).resolve(),meta['player_labels'],args.timeout,args.trdos_rom)
         assert result['frames']==volume['frames']
         results.append(result)
+        args.output.with_suffix('.partial.json').write_text(json.dumps(results,indent=2))
         print(json.dumps({key:value for key,value in result.items() if not isinstance(value,list)}),flush=True)
     args.output.write_text(json.dumps(results,indent=2))
 
