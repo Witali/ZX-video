@@ -82,7 +82,7 @@ def decompose(magnitude, sample_rate=22050, iterations=80):
     return amplitude, np.clip(explained, 0, 1)
 
 
-def track(amplitude, low, high, reference=None, change_cost=.25, jump_cost=.14):
+def track(amplitude, low, high, reference=None, change_cost=.25, jump_cost=.14, transition_scale=1.0):
     """Viterbi voice with a real rest state and modest continuity preference."""
     allowed = (NOTES >= low) & (NOTES <= high)
     notes = NOTES[allowed]
@@ -97,6 +97,7 @@ def track(amplitude, low, high, reference=None, change_cost=.25, jump_cost=.14):
     transitions = np.full((len(notes)+1, len(notes)+1), -.30)
     transitions[:-1, :-1] = -change_cost*(distance>0)-jump_cost*np.minimum(distance, 24)
     transitions[-1, -1] = 0
+    transitions *= transition_scale
     score = emissions[0].copy(); back = np.zeros(emissions.shape, dtype=np.int16)
     for i in range(1, len(emissions)):
         choices = score[:, None]+transitions
@@ -109,19 +110,19 @@ def track(amplitude, low, high, reference=None, change_cost=.25, jump_cost=.14):
     return path
 
 
-def arrange(amplitude, rms, explained):
+def arrange(amplitude, rms, explained, *, transition_scale=1.0):
     """Allocate melody, bass, harmony, suppressing already assigned notes."""
     active = amplitude.copy()
     active[(rms < 10**(-65/20)) | (explained < .12)] = 0
     reference = np.max(active, axis=1, keepdims=True)
-    bass = track(active, 33, 59, reference, jump_cost=.112)
+    bass = track(active, 33, 59, reference, jump_cost=.112, transition_scale=transition_scale)
     residual = active.copy()
     for i, note in enumerate(bass):
         if note>=0: residual[i, np.abs(NOTES-note)<=1] = 0
-    melody = track(residual, 55, 93, reference)
+    melody = track(residual, 55, 93, reference, transition_scale=transition_scale)
     for i, note in enumerate(melody):
         if note>=0: residual[i, np.abs(NOTES-note)<=1] = 0
-    harmony = track(residual, 43, 88, reference, jump_cost=.112)
+    harmony = track(residual, 43, 88, reference, jump_cost=.112, transition_scale=transition_scale)
     paths = np.column_stack((bass, harmony, melody))
     strengths = np.zeros(paths.shape)
     for i, notes in enumerate(paths):
@@ -153,21 +154,27 @@ def arrange_noise(magnitude, rms, explained, volumes, sample_rate=22050):
     Melody and bass remain intact; channel B is tone OR noise, never both.
     """
     frequencies = np.fft.rfftfreq((magnitude.shape[1]-1)*2, 1/sample_rate)
-    power = magnitude*magnitude
-    padded = np.pad(power, ((0, 0), (8, 8)), mode='edge')
-    floor = np.median(np.lib.stride_tricks.sliding_window_view(padded, 17, axis=1), axis=-1)/.7
-    broad = np.minimum(power, floor)
     useful = (frequencies >= 150) & (frequencies <= 9000)
-    share = np.sum(broad[:, useful], axis=1)/np.maximum(np.sum(power, axis=1), 1e-16)
+    frequency = frequencies[useful]
+    templates = np.array([np.abs(np.sinc(frequency/(AY_CLOCK/(16*n)))) for n in range(1,32)])
+    templates /= np.maximum(np.linalg.norm(templates, axis=1, keepdims=True), 1e-12)
+    share = np.empty(len(magnitude))
+    periods = np.empty(len(magnitude), dtype=int)
+    # The 17-bin median needs a temporary copy. Bound it independently of
+    # duration/update rate (100 Hz over two minutes otherwise needs >6 GiB).
+    for first in range(0,len(magnitude),128):
+        last=min(first+128,len(magnitude))
+        power = magnitude[first:last]*magnitude[first:last]
+        padded = np.pad(power, ((0, 0), (8, 8)), mode='edge')
+        floor = np.median(np.lib.stride_tricks.sliding_window_view(padded, 17, axis=1), axis=-1)/.7
+        broad = np.minimum(power, floor)
+        share[first:last] = np.sum(broad[:, useful], axis=1)/np.maximum(np.sum(power, axis=1), 1e-16)
+        periods[first:last] = np.argmax(np.sqrt(broad[:,useful]) @ templates.T, axis=1)+1
     # The clipped median is conservative: tonal leakage must not trigger hiss.
     noise_rms = rms*np.sqrt(share)
     peak = max(float(np.percentile(rms*np.sqrt(explained), 98)), 1e-12)
     level = np.clip(noise_rms/peak*.85, 0, 1)
     selected = (share>.16) & (rms>10**(-55/20)) & (level>np.maximum(.012, LEVELS[volumes[:,1]]*1.35))
-    frequency = frequencies[useful]
-    templates = np.array([np.abs(np.sinc(frequency/(AY_CLOCK/(16*n)))) for n in range(1,32)])
-    templates /= np.maximum(np.linalg.norm(templates, axis=1, keepdims=True), 1e-12)
-    periods = np.argmax(np.sqrt(broad[:,useful]) @ templates.T, axis=1)+1
     periods[~selected] = 0
     result = volumes.copy()
     result[selected,1] = np.argmin(np.abs(level[selected,None]-LEVELS[None,:]), axis=1)
