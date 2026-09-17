@@ -157,6 +157,10 @@ class CPU(MemoryCPU):
             carry = self.carry
             self.carry = bool(self.a & 128)
             self.a = ((self.a << 1) | int(carry)) & 255; return 4
+        if op == 0x1F:
+            carry = self.carry
+            self.carry = bool(self.a & 1)
+            self.a = (self.a >> 1) | (int(carry) << 7); return 4
         if op == 0xE3:
             old = self.hl()
             self.set_hl(self.read8(self.sp) | self.read8(self.sp+1) << 8)
