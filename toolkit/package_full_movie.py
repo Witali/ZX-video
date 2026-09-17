@@ -70,6 +70,9 @@ def main():
     rows += [f'| {i+1}: `{part["file"]}` | {timecode(part["source_start_seconds"])}–{timecode(part["source_end_seconds"])} | {part["frames"]} |' for i,part in enumerate(parts)]
     readme=f'''# Big Buck Bunny целиком — ZX Spectrum 128
 
+Образы TRD хранятся в Git LFS. После клонирования репозитория выполните
+`git lfs install` и `git lfs pull`, чтобы получить полные файлы дискет.
+
 Исходник: {settings['source_duration_seconds']:.6f} с; сборка: {settings['encoded_duration_seconds']:.2f} с.
 Все {count} кадров и {count*6} состояний AY проверены. Частота видео 25/3 кадра/с,
 звук — 50 Гц от IM2, только изменения регистров, с шумовым каналом.

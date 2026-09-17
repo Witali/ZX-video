@@ -1,5 +1,7 @@
 # Project rules
 
+- Store release disk images in Git LFS. When introducing another disk-image
+  extension, add its LFS rule to `.gitattributes` before staging the image.
 - For every change to the ZX Spectrum player hot path, count Z80 T-states
   from the instruction timing table. Compare the new path with the previous
   implementation and record both the absolute count and the difference.
