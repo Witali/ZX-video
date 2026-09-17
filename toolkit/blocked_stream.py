@@ -32,12 +32,12 @@ class Block:
 
 
 def compress_frames(frames: list[bytes], executable: Path, cache: Path,
-                    *, max_block_bytes: int = 8192, store_over_bytes: int = 0, separate_stored: bool = False, minimum_match: int = 0, speed_over_bytes: int = 0) -> list[Block]:
-    return list(iter_compress_frames(frames,executable,cache,max_block_bytes=max_block_bytes,store_over_bytes=store_over_bytes,separate_stored=separate_stored,minimum_match=minimum_match,speed_over_bytes=speed_over_bytes))
+                    *, max_block_bytes: int = 8192, store_over_bytes: int = 0, separate_stored: bool = False, minimum_match: int = 0, speed_over_bytes: int = 0, stored_frames=()) -> list[Block]:
+    return list(iter_compress_frames(frames,executable,cache,max_block_bytes=max_block_bytes,store_over_bytes=store_over_bytes,separate_stored=separate_stored,minimum_match=minimum_match,speed_over_bytes=speed_over_bytes,stored_frames=stored_frames))
 
 
 def iter_compress_frames(frames: list[bytes], executable: Path, cache: Path,
-                         *, max_block_bytes: int = 8192, store_over_bytes: int = 0, separate_stored: bool = False, minimum_match: int = 0, speed_over_bytes: int = 0):
+                         *, max_block_bytes: int = 8192, store_over_bytes: int = 0, separate_stored: bool = False, minimum_match: int = 0, speed_over_bytes: int = 0, stored_frames=()):
     """Compressor work is offline. Cache entries are verified before reuse."""
     if not 1 <= max_block_bytes <= 8192:
         raise ValueError('block limit must be 1..8192 bytes')
@@ -46,10 +46,13 @@ def iter_compress_frames(frames: list[bytes], executable: Path, cache: Path,
     stored_groups=set();pending_store=False
     pending = bytearray()
     count = 0
-    for frame in frames:
+    stored_frames=set(stored_frames)
+    if any(not 0 <= index < len(frames) for index in stored_frames):
+        raise ValueError('stored frame outside input')
+    for frame_index,frame in enumerate(frames):
         if not frame or len(frame) > max_block_bytes:
             raise ValueError('frame is empty or exceeds chosen block limit')
-        frame_store=bool(store_over_bytes and len(frame)>store_over_bytes)
+        frame_store=frame_index in stored_frames or bool(store_over_bytes and len(frame)>store_over_bytes)
         if pending and (len(pending)+len(frame)>max_block_bytes or (separate_stored and frame_store!=pending_store)):
             if pending_store:stored_groups.add(len(groups))
             groups.append((bytes(pending),count)); pending.clear(); count=0;pending_store=False

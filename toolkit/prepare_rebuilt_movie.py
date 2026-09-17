@@ -43,8 +43,8 @@ def main():
     result['disk_settings'] = {key: meta['block_codec'][key] for key in
         ('max_volume_frames', 'minimum_planned_queue', 'separate_stored')}
     result['disk_settings']['store_over_bytes'] = meta['block_codec']['store_over_frame_bytes']
-    for key in ('minimum_match', 'speed_over_frame_bytes', 'volume_end_frames'):
-        result['disk_settings'][key] = meta['block_codec'].get(key, 0 if key != 'volume_end_frames' else [])
+    for key in ('minimum_match', 'speed_over_frame_bytes', 'volume_end_frames', 'stored_frames'):
+        result['disk_settings'][key] = meta['block_codec'].get(key, [] if key in ('volume_end_frames', 'stored_frames') else 0)
     if 'player_rebuild' in meta:
         result['disk_settings']['player_rebuild'] = meta['player_rebuild']
     shutil.copytree(args.comparison, args.output / 'comparison', dirs_exist_ok=True)

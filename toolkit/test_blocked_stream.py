@@ -20,6 +20,17 @@ EMPTY_DECODED = (bytes((10,0))+bytes(10))*500
 
 
 class BlockedStreamTests(unittest.TestCase):
+    def test_measured_stored_frame_is_isolated_without_changing_neighbors(self):
+        captured=[]
+        def inspect(groups,*args,stored_groups=(),**kwargs):
+            captured.extend((data,count,index in stored_groups) for index,(data,count) in enumerate(groups))
+            return groups
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(blocked_stream,'iter_compress_groups',side_effect=inspect):
+                blocked_stream.compress_frames([b'a',b'bc',b'd',b'ef'],Path('unused'),Path(directory),
+                    max_block_bytes=16,separate_stored=True,stored_frames=[1])
+        self.assertEqual(captured,[(b'a',1,False),(b'bc',1,True),(b'def',2,False)])
+
     def test_heavy_frames_do_not_force_light_neighbors_to_be_stored(self):
         frames=[b'a'*3,b'b'*4,b'c',b'd'*8,b'e']
         captured=[]

@@ -1410,6 +1410,7 @@ def main() -> None:
     parser.add_argument('--block-bytes',type=int,default=8192,
                         help='maximum decoded ZX0 block size, 1..8192; smaller blocks change decode scheduling')
     parser.add_argument('--store-over-bytes',type=int,default=0,help='store blocks containing larger frame packets without ZX0; 0 disables')
+    parser.add_argument('--store-frame',type=int,action='append',default=[],help='store a measured CPU-heavy global zero-based frame without outer ZX0; repeatable')
     parser.add_argument('--separate-stored',action='store_true',help='keep heavy stored frames out of compressed blocks of lighter frames')
     parser.add_argument('--max-volume-frames',type=int,default=0,help='optional cap on frames per disk; 0 fills disks')
     parser.add_argument('--volume-end-frame',type=int,action='append',default=[],help='end a volume before this global zero-based frame; repeat for measured input-buffer bottlenecks')
@@ -1441,7 +1442,7 @@ def main() -> None:
         parser.error('--name-prefix must contain only letters, digits, underscores and hyphens')
     incremental = args.zx0_decoding == "incremental"
     blocked = args.packing == "zx0"
-    if (args.zx0_minimum_match or args.zx0_speed_over_bytes or args.volume_end_frame) and not blocked:
+    if (args.zx0_minimum_match or args.zx0_speed_over_bytes or args.volume_end_frame or args.store_frame) and not blocked:
         parser.error('ZX0 match tuning and explicit volume boundaries require --packing zx0')
     if args.zx0_speed_over_bytes and not args.zx0_minimum_match:
         parser.error('--zx0-speed-over-bytes requires --zx0-minimum-match')
@@ -1473,6 +1474,8 @@ def main() -> None:
     states, ay_states, frame_rate = decode_compact_build(source_stream)
     if any(not 0 < end <= len(states) for end in args.volume_end_frame):
         parser.error('volume boundaries must be within the complete movie')
+    if any(not 0 <= frame < len(states) for frame in args.store_frame):
+        parser.error('stored frames must be within the complete movie')
     audio_irq = args.ay_50hz is not None
     audio_frames = None
     if audio_irq:
@@ -1526,7 +1529,8 @@ def main() -> None:
             candidates = blocked_format.iter_compress_frames(
                 [packed_format.frame_bytes(packet,natural_order=True,audio_payload=b"".join(tick_records[i*6:i*6+6]) if audio_irq else None) for i,packet in enumerate(packets)],
                 args.zx0, args.compression_cache or args.output/'compression_cache',
-                max_block_bytes=args.block_bytes,store_over_bytes=args.store_over_bytes,separate_stored=args.separate_stored,minimum_match=args.zx0_minimum_match,speed_over_bytes=args.zx0_speed_over_bytes)
+                max_block_bytes=args.block_bytes,store_over_bytes=args.store_over_bytes,separate_stored=args.separate_stored,minimum_match=args.zx0_minimum_match,speed_over_bytes=args.zx0_speed_over_bytes,
+                stored_frames=[frame-start for frame in args.store_frame if start<=frame<end])
             blocks = []
             used = base.SECTOR_SIZE
             planned_queue=ring_capacity
@@ -1753,6 +1757,7 @@ def main() -> None:
             "minimum_match": args.zx0_minimum_match,
             "speed_over_frame_bytes": args.zx0_speed_over_bytes,
             "store_over_frame_bytes": args.store_over_bytes,
+            "stored_frames": sorted(set(args.store_frame)),
             "separate_stored": args.separate_stored,
             "max_volume_frames": args.max_volume_frames,
             "volume_end_frames": sorted(set(args.volume_end_frame)),
