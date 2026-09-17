@@ -1405,11 +1405,14 @@ def main() -> None:
     parser.add_argument("--packing", choices=("contiguous", "sector", "zx0"), default="contiguous")
     parser.add_argument("--zx0", type=Path, help="path to the upstream ZX0 v2 compressor")
     parser.add_argument('--compression-cache',type=Path,help='reuse verified ZX0 blocks across player builds')
+    parser.add_argument('--zx0-minimum-match',type=int,default=0,choices=(0,2,3,4,5,6,8,12,16),help='replace shorter ZX0 matches with literals to reduce decoder work')
+    parser.add_argument('--zx0-speed-over-bytes',type=int,default=0,help='apply the minimum match only to blocks containing larger frame packets; 0 means all blocks')
     parser.add_argument('--block-bytes',type=int,default=8192,
                         help='maximum decoded ZX0 block size, 1..8192; smaller blocks change decode scheduling')
     parser.add_argument('--store-over-bytes',type=int,default=0,help='store blocks containing larger frame packets without ZX0; 0 disables')
     parser.add_argument('--separate-stored',action='store_true',help='keep heavy stored frames out of compressed blocks of lighter frames')
     parser.add_argument('--max-volume-frames',type=int,default=0,help='optional cap on frames per disk; 0 fills disks')
+    parser.add_argument('--volume-end-frame',type=int,action='append',default=[],help='end a volume before this global zero-based frame; repeat for measured input-buffer bottlenecks')
     parser.add_argument('--minimum-planned-queue',type=int,default=0,help='split before estimated ring reserve falls below this sector count; 0 disables')
     parser.add_argument("--pacing", choices=("cpu-fields", "legacy", "deadline"), default="cpu-fields",
                         help="ZX0 playback: subtract CPU fields from the display hold")
@@ -1438,11 +1441,15 @@ def main() -> None:
         parser.error('--name-prefix must contain only letters, digits, underscores and hyphens')
     incremental = args.zx0_decoding == "incremental"
     blocked = args.packing == "zx0"
+    if (args.zx0_minimum_match or args.zx0_speed_over_bytes or args.volume_end_frame) and not blocked:
+        parser.error('ZX0 match tuning and explicit volume boundaries require --packing zx0')
+    if args.zx0_speed_over_bytes and not args.zx0_minimum_match:
+        parser.error('--zx0-speed-over-bytes requires --zx0-minimum-match')
     if not 1 <= args.block_bytes <= 8192:
         parser.error('--block-bytes must be 1..8192')
     if args.block_bytes != 8192 and not blocked:
         parser.error('--block-bytes requires --packing zx0')
-    if args.store_over_bytes<0 or args.max_volume_frames<0:
+    if args.store_over_bytes<0 or args.max_volume_frames<0 or args.zx0_speed_over_bytes<0:
         parser.error('storage threshold and frame cap must be non-negative')
     clocked = blocked and args.pacing != "legacy"
     deadline = blocked and args.pacing == 'deadline'
@@ -1464,6 +1471,8 @@ def main() -> None:
     source_stream = args.source_build / "VIDEO_full.C.bin"
     metadata = json.loads((args.source_build / "build_metadata.json").read_text())
     states, ay_states, frame_rate = decode_compact_build(source_stream)
+    if any(not 0 < end <= len(states) for end in args.volume_end_frame):
+        parser.error('volume boundaries must be within the complete movie')
     audio_irq = args.ay_50hz is not None
     audio_frames = None
     if audio_irq:
@@ -1507,7 +1516,9 @@ def main() -> None:
         _,cached_packets=make_volume_packets(states,ay_states,0,0x100000,packed=True)
     while start < len(states):
         if blocked:
-            end,packets=cached_volume_packets(states,ay_states,cached_packets,start,max_frames=args.max_volume_frames)
+            boundary=min((end for end in args.volume_end_frame if end>start),default=len(states))
+            maximum=min(args.max_volume_frames or len(states),boundary-start)
+            end,packets=cached_volume_packets(states,ay_states,cached_packets,start,max_frames=maximum)
         else:
             end,packets=make_volume_packets(states,ay_states,start,limit,packed=packed,max_frames=args.max_volume_frames)
         if blocked:
@@ -1515,7 +1526,7 @@ def main() -> None:
             candidates = blocked_format.iter_compress_frames(
                 [packed_format.frame_bytes(packet,natural_order=True,audio_payload=b"".join(tick_records[i*6:i*6+6]) if audio_irq else None) for i,packet in enumerate(packets)],
                 args.zx0, args.compression_cache or args.output/'compression_cache',
-                max_block_bytes=args.block_bytes,store_over_bytes=args.store_over_bytes,separate_stored=args.separate_stored)
+                max_block_bytes=args.block_bytes,store_over_bytes=args.store_over_bytes,separate_stored=args.separate_stored,minimum_match=args.zx0_minimum_match,speed_over_bytes=args.zx0_speed_over_bytes)
             blocks = []
             used = base.SECTOR_SIZE
             planned_queue=ring_capacity
@@ -1595,7 +1606,7 @@ def main() -> None:
         })
         if blocked:
             volumes[-1]["blocks"] = [dict(frames=block.frames, decoded_bytes=len(block.decoded),
-                compressed_bytes=len(block.data), stored=block.stored, deflate_bytes=block.deflate_bytes,
+                compressed_bytes=len(block.data), stored=block.stored, deflate_bytes=block.deflate_bytes,minimum_match=block.minimum_match,
                 sha256=hashlib.sha256(block.decoded).hexdigest())
                 for block in blocks]
         start = end
@@ -1739,9 +1750,12 @@ def main() -> None:
         output_metadata["block_codec"] = {
             "name": "ZX0 v2", "decoder": "turbo incremental" if incremental else "turbo", "decoded_block_limit": 8192,
             "encoder_block_limit": args.block_bytes,
+            "minimum_match": args.zx0_minimum_match,
+            "speed_over_frame_bytes": args.zx0_speed_over_bytes,
             "store_over_frame_bytes": args.store_over_bytes,
             "separate_stored": args.separate_stored,
             "max_volume_frames": args.max_volume_frames,
+            "volume_end_frames": sorted(set(args.volume_end_frame)),
             "minimum_planned_queue": args.minimum_planned_queue,
             "command_order": "stable screen row order",
             "compressed_input_limit": 7424 if irq_disk else 8192,

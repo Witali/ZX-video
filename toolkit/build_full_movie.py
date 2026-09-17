@@ -49,6 +49,9 @@ def main():
     p.add_argument('--max-volume-frames',type=int,default=0)
     p.add_argument('--minimum-planned-queue',type=int,default=0)
     p.add_argument('--compression-cache',type=Path)
+    p.add_argument('--zx0-minimum-match',type=int,default=0,choices=(0,2,3,4,5,6,8,12,16))
+    p.add_argument('--zx0-speed-over-bytes',type=int,default=0)
+    p.add_argument('--volume-end-frame',type=int,action='append',default=[])
     args=p.parse_args()
     src=args.input_video.resolve();out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
     ffmpeg=args.ffmpeg.resolve();os.environ['PATH']=str(ffmpeg.parent)+os.pathsep+os.environ['PATH']
@@ -117,7 +120,9 @@ def main():
     if args.stage in ('all','disks'):
         require('audio');require('video')
         manifest['disk_settings']=dict(store_over_bytes=args.store_over_bytes,max_volume_frames=args.max_volume_frames,
-            minimum_planned_queue=args.minimum_planned_queue,separate_stored=args.separate_stored)
+            minimum_planned_queue=args.minimum_planned_queue,separate_stored=args.separate_stored,
+            minimum_match=args.zx0_minimum_match,speed_over_frame_bytes=args.zx0_speed_over_bytes,
+            volume_end_frames=sorted(set(args.volume_end_frame)))
         save()
         run('disks',[HERE/'build_fast_sparse_trd.py','--source-build',source,'--output',disks,
             '--name-prefix','ZX-video-full-50Hz','--ay-50hz',sound/'50Hz/raw.bin',
@@ -128,6 +133,8 @@ def main():
             '--read-reserve','64','--memory-clock','--direct-input','--wrapped-input','--block-bytes','6144',
             '--store-over-bytes',args.store_over_bytes,'--max-volume-frames',args.max_volume_frames,
             '--minimum-planned-queue',args.minimum_planned_queue,
+            '--zx0-minimum-match',args.zx0_minimum_match,'--zx0-speed-over-bytes',args.zx0_speed_over_bytes,
+            *[argument for end in args.volume_end_frame for argument in ('--volume-end-frame',end)],
             *(['--separate-stored'] if args.separate_stored else []),
             *(['--compression-cache',args.compression_cache.resolve()] if args.compression_cache else [])])
         meta=json.loads((disks/'build_metadata.json').read_text())

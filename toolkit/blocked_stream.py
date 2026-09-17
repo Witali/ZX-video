@@ -10,6 +10,7 @@ from fractions import Fraction
 import packed_stream
 import zx0_codec
 import incremental_zx0
+import zx0_speed
 
 MAGIC = b'ZXFC'
 VERSION = 8
@@ -24,18 +25,19 @@ class Block:
     frames: int
     stored: bool
     deflate_bytes: int
+    minimum_match: int = 0
 
     def serialize(self):
         return struct.pack('<HH', len(self.data) | (0x8000 if self.stored else 0), len(self.decoded)) + self.data
 
 
 def compress_frames(frames: list[bytes], executable: Path, cache: Path,
-                    *, max_block_bytes: int = 8192, store_over_bytes: int = 0, separate_stored: bool = False) -> list[Block]:
-    return list(iter_compress_frames(frames,executable,cache,max_block_bytes=max_block_bytes,store_over_bytes=store_over_bytes,separate_stored=separate_stored))
+                    *, max_block_bytes: int = 8192, store_over_bytes: int = 0, separate_stored: bool = False, minimum_match: int = 0, speed_over_bytes: int = 0) -> list[Block]:
+    return list(iter_compress_frames(frames,executable,cache,max_block_bytes=max_block_bytes,store_over_bytes=store_over_bytes,separate_stored=separate_stored,minimum_match=minimum_match,speed_over_bytes=speed_over_bytes))
 
 
 def iter_compress_frames(frames: list[bytes], executable: Path, cache: Path,
-                         *, max_block_bytes: int = 8192, store_over_bytes: int = 0, separate_stored: bool = False):
+                         *, max_block_bytes: int = 8192, store_over_bytes: int = 0, separate_stored: bool = False, minimum_match: int = 0, speed_over_bytes: int = 0):
     """Compressor work is offline. Cache entries are verified before reuse."""
     if not 1 <= max_block_bytes <= 8192:
         raise ValueError('block limit must be 1..8192 bytes')
@@ -56,20 +58,28 @@ def iter_compress_frames(frames: list[bytes], executable: Path, cache: Path,
     if pending:
         if pending_store:stored_groups.add(len(groups))
         groups.append((bytes(pending),count))
-    yield from iter_compress_groups(groups,executable,cache,stored_groups=stored_groups)
+    yield from iter_compress_groups(groups,executable,cache,stored_groups=stored_groups,minimum_match=minimum_match,speed_over_bytes=speed_over_bytes)
 
 
 def compress_groups(groups,executable: Path,cache: Path) -> list[Block]:
     return list(iter_compress_groups(groups,executable,cache))
 
 
-def iter_compress_groups(groups,executable: Path,cache: Path,*,stored_groups=()):
+def iter_compress_groups(groups,executable: Path,cache: Path,*,stored_groups=(),minimum_match=0,speed_over_bytes=0):
     """Compress an explicit partition without silently merging small groups."""
     cache.mkdir(parents=True,exist_ok=True)
     for index,(decoded,count) in enumerate(groups):
         if not 0<len(decoded)<=8192 or count<1:raise ValueError('invalid block group')
         digest=hashlib.sha256(decoded).hexdigest()
         raw=cache/f'{digest}.raw'; encoded=cache/f'{digest}.zx0'
+        applied_match = minimum_match
+        if minimum_match and speed_over_bytes:
+            position = largest = 0
+            while position < len(decoded):
+                size = struct.unpack_from('<H', decoded, position)[0] + 2
+                largest = max(largest, size); position += size
+            if position != len(decoded): raise ValueError('invalid frame boundaries')
+            if largest <= speed_over_bytes: applied_match = 0
         if index in stored_groups:
             payload=decoded
         else:
@@ -79,11 +89,12 @@ def iter_compress_groups(groups,executable: Path,cache: Path,*,stored_groups=())
                                check=True,capture_output=True)
             payload=encoded.read_bytes()
             if zx0_codec.decompress(payload) != decoded: raise ValueError('ZX0 verification failed')
+            if applied_match: payload=zx0_speed.rewrite(payload,applied_match)
         stored=len(payload)>=len(decoded)
         compressor=zlib.compressobj(9,zlib.DEFLATED,-15)
         deflated=compressor.compress(decoded)+compressor.flush()
         assert zlib.decompress(deflated,-15)==decoded
-        yield Block(decoded if stored else payload,decoded,count,stored,len(deflated))
+        yield Block(decoded if stored else payload,decoded,count,stored,len(deflated),0 if stored else applied_match)
         if index%20==0: print(f'compressed block {index+1}/{len(groups)}',flush=True)
 
 

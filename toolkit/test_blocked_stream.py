@@ -23,7 +23,7 @@ class BlockedStreamTests(unittest.TestCase):
     def test_heavy_frames_do_not_force_light_neighbors_to_be_stored(self):
         frames=[b'a'*3,b'b'*4,b'c',b'd'*8,b'e']
         captured=[]
-        def inspect(groups,*args,stored_groups=()):
+        def inspect(groups,*args,stored_groups=(),minimum_match=0,speed_over_bytes=0):
             captured.extend((data,count,index in stored_groups) for index,(data,count) in enumerate(groups))
             return groups
         with tempfile.TemporaryDirectory() as directory:
