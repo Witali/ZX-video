@@ -12,6 +12,16 @@ import build_long_video_trd as video
 
 
 class FullMovieTests(unittest.TestCase):
+    def test_compact_verification_accepts_tones_and_noise(self):
+        states=[bytes(video.STATE_BYTES),bytes([85])*video.STATE_BYTES]
+        for noise in (0,17):
+            sound=video.AyFrame((200,300,400),(10,11,12),noise).serialize()
+            packets=[video.make_packet(states[0],None,sound),video.make_packet(states[1],states[0],sound)]
+            stream=video.serialize_video(packets,25/3,25/3)
+            self.assertEqual(stream[4],video.VIDEO_NOISE_VERSION if noise else video.VIDEO_VERSION)
+            video.verify_video(stream,states)
+            with self.assertRaises(ValueError):video.verify_video(stream[:4]+bytes([99])+stream[5:],states)
+
     def test_final_partial_frame_is_included(self):
         source,count,duration=full_duration(dict(streams=[
             dict(codec_type='video',duration='596.458333'),
@@ -30,8 +40,8 @@ class FullMovieTests(unittest.TestCase):
         raw=np.array([.25,-.5,.75],dtype='<f4').tobytes()
         with patch.object(video.subprocess,'run',return_value=SimpleNamespace(returncode=0,stdout=raw)):
             args=('ffmpeg',Path('source.mov'),0,1,5,True)
-            np.testing.assert_array_equal(video.decode_analysis_audio(*args),[.25,-.5,.75])
-            np.testing.assert_array_equal(video.decode_analysis_audio(*args,pad_end=True),[.25,-.5,.75,0,0])
+            self.assertEqual(video.decode_analysis_audio(*args).tolist(),[.25,-.5,.75])
+            self.assertEqual(video.decode_analysis_audio(*args,pad_end=True).tolist(),[.25,-.5,.75,0,0])
 
 
 if __name__=='__main__':unittest.main()

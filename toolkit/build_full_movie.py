@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import numpy as np
 
 import build_long_video_trd as video
 from retune_ay_build import replace_ay_states
@@ -42,6 +43,7 @@ def main():
     p.add_argument('--ffprobe',type=Path,required=True)
     p.add_argument('--zx0',type=Path,required=True)
     p.add_argument('--stage',choices=('all','audio','video','disks'),default='all')
+    p.add_argument('--resume-video',action='store_true',help='reuse a hashed conversion checkpoint and repeat verification')
     args=p.parse_args()
     src=args.input_video.resolve();out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
     ffmpeg=args.ffmpeg.resolve();os.environ['PATH']=str(ffmpeg.parent)+os.pathsep+os.environ['PATH']
@@ -79,10 +81,22 @@ def main():
         raw=(sound/'50Hz/raw.bin').read_bytes()
         if len(raw)!=count*6*9:raise ValueError('audio count differs from full duration')
         frames=[video.AyFrame.deserialize(raw[i:i+9]) for i in range(0,len(raw),54)]
-        windows,reframe=video.build_fixed_center_reframe(float(duration),25/3,1.25)
-        tones=video.analyse_tone_ranges(src,0,float(duration),25/3,3,97,4,windows,pad_end=True)
-        stream,packets,states,stats=video.build_video(src,0,float(duration),25/3,25/3,
-            tones,frames,windows,100_000,'ordered4',True,6,1.25,source/'preview.mp4',pad_end=True)
+        checkpoint=source/'conversion.npz'
+        if args.resume_video:
+            require('video_candidate')
+            with np.load(checkpoint) as saved:
+                stream=saved['stream'].tobytes()
+                states=[state.tobytes() for state in saved['states']]
+                stats=json.loads(str(saved['stats']));reframe=json.loads(str(saved['reframe']))
+        else:
+            windows,reframe=video.build_fixed_center_reframe(float(duration),25/3,1.25)
+            tones=video.analyse_tone_ranges(src,0,float(duration),25/3,3,97,4,windows,pad_end=True)
+            stream,packets,states,stats=video.build_video(src,0,float(duration),25/3,25/3,
+                tones,frames,windows,100_000,'ordered4',True,6,1.25,source/'preview.mp4',pad_end=True)
+            np.savez(checkpoint,stream=np.frombuffer(stream,dtype=np.uint8),
+                states=np.frombuffer(b''.join(states),dtype=np.uint8).reshape(count,video.STATE_BYTES),
+                stats=json.dumps(stats),reframe=json.dumps(reframe))
+            record('video_candidate',[checkpoint,source/'preview.mp4'])
         video.verify_video(stream,states)
         if len(states)!=count:raise ValueError('full source frame count mismatch')
         stream=replace_ay_states(stream,frames)

@@ -1899,7 +1899,7 @@ def build_video(
 
 
 def verify_video(video: bytes, expected_states: list[bytes]) -> None:
-    if video[:4] != VIDEO_MAGIC or video[4] != VIDEO_VERSION:
+    if video[:4] != VIDEO_MAGIC or video[4] not in (VIDEO_VERSION, VIDEO_NOISE_VERSION):
         raise ValueError("invalid long-video header")
     frame_count = struct.unpack_from("<H", video, 8)[0]
     if frame_count != len(expected_states):
