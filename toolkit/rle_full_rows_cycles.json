@@ -1,0 +1,356 @@
+{
+  "baseline": "v11 AY IRQ player before full-row unrolling",
+  "source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "command entry to command_loop; chains include dispatch and END; excludes ROM/ULA/IRQ/disk",
+  "instruction_counts": {
+    "unrolled_pairs": 16,
+    "pair_tstates": 106,
+    "unrolled_body_tstates": 1696,
+    "previous_literal_core": 2209,
+    "current_literal_core": 1736,
+    "full_row_delta": -473,
+    "other_token_probe": 17,
+    "adjacent_chain_discount_unchanged": 172
+  },
+  "bootstrap": {
+    "previous": 107223,
+    "current": 112599
+  },
+  "routines": {
+    "literal_1": {
+      "previous_tstates": 1400,
+      "current_tstates": 1434,
+      "delta_tstates": 34
+    },
+    "literal_2": {
+      "previous_tstates": 1448,
+      "current_tstates": 1482,
+      "delta_tstates": 34
+    },
+    "literal_3": {
+      "previous_tstates": 1484,
+      "current_tstates": 1518,
+      "delta_tstates": 34
+    },
+    "literal_4": {
+      "previous_tstates": 1526,
+      "current_tstates": 1560,
+      "delta_tstates": 34
+    },
+    "literal_5": {
+      "previous_tstates": 1562,
+      "current_tstates": 1596,
+      "delta_tstates": 34
+    },
+    "literal_6": {
+      "previous_tstates": 1604,
+      "current_tstates": 1638,
+      "delta_tstates": 34
+    },
+    "literal_7": {
+      "previous_tstates": 1640,
+      "current_tstates": 1674,
+      "delta_tstates": 34
+    },
+    "literal_8": {
+      "previous_tstates": 1682,
+      "current_tstates": 1716,
+      "delta_tstates": 34
+    },
+    "literal_9": {
+      "previous_tstates": 1718,
+      "current_tstates": 1752,
+      "delta_tstates": 34
+    },
+    "literal_10": {
+      "previous_tstates": 1760,
+      "current_tstates": 1794,
+      "delta_tstates": 34
+    },
+    "literal_11": {
+      "previous_tstates": 1796,
+      "current_tstates": 1830,
+      "delta_tstates": 34
+    },
+    "literal_12": {
+      "previous_tstates": 1838,
+      "current_tstates": 1872,
+      "delta_tstates": 34
+    },
+    "literal_13": {
+      "previous_tstates": 1874,
+      "current_tstates": 1908,
+      "delta_tstates": 34
+    },
+    "literal_14": {
+      "previous_tstates": 1916,
+      "current_tstates": 1950,
+      "delta_tstates": 34
+    },
+    "literal_15": {
+      "previous_tstates": 1952,
+      "current_tstates": 1986,
+      "delta_tstates": 34
+    },
+    "literal_16": {
+      "previous_tstates": 1994,
+      "current_tstates": 2028,
+      "delta_tstates": 34
+    },
+    "literal_17": {
+      "previous_tstates": 2030,
+      "current_tstates": 2064,
+      "delta_tstates": 34
+    },
+    "literal_18": {
+      "previous_tstates": 2072,
+      "current_tstates": 2106,
+      "delta_tstates": 34
+    },
+    "literal_19": {
+      "previous_tstates": 2108,
+      "current_tstates": 2142,
+      "delta_tstates": 34
+    },
+    "literal_20": {
+      "previous_tstates": 2150,
+      "current_tstates": 2184,
+      "delta_tstates": 34
+    },
+    "literal_21": {
+      "previous_tstates": 2186,
+      "current_tstates": 2220,
+      "delta_tstates": 34
+    },
+    "literal_22": {
+      "previous_tstates": 2228,
+      "current_tstates": 2262,
+      "delta_tstates": 34
+    },
+    "literal_23": {
+      "previous_tstates": 2264,
+      "current_tstates": 2298,
+      "delta_tstates": 34
+    },
+    "literal_24": {
+      "previous_tstates": 2306,
+      "current_tstates": 2340,
+      "delta_tstates": 34
+    },
+    "literal_25": {
+      "previous_tstates": 2342,
+      "current_tstates": 2376,
+      "delta_tstates": 34
+    },
+    "literal_26": {
+      "previous_tstates": 2384,
+      "current_tstates": 2418,
+      "delta_tstates": 34
+    },
+    "literal_27": {
+      "previous_tstates": 2420,
+      "current_tstates": 2454,
+      "delta_tstates": 34
+    },
+    "literal_28": {
+      "previous_tstates": 2462,
+      "current_tstates": 2496,
+      "delta_tstates": 34
+    },
+    "literal_29": {
+      "previous_tstates": 2498,
+      "current_tstates": 2532,
+      "delta_tstates": 34
+    },
+    "literal_30": {
+      "previous_tstates": 2540,
+      "current_tstates": 2574,
+      "delta_tstates": 34
+    },
+    "literal_31": {
+      "previous_tstates": 2522,
+      "current_tstates": 2556,
+      "delta_tstates": 34
+    },
+    "literal_32": {
+      "previous_tstates": 2447,
+      "current_tstates": 1974,
+      "delta_tstates": -473
+    },
+    "repeat_2": {
+      "previous_tstates": 2540,
+      "current_tstates": 2574,
+      "delta_tstates": 34
+    },
+    "repeat_3": {
+      "previous_tstates": 2498,
+      "current_tstates": 2532,
+      "delta_tstates": 34
+    },
+    "repeat_4": {
+      "previous_tstates": 2462,
+      "current_tstates": 2496,
+      "delta_tstates": 34
+    },
+    "repeat_5": {
+      "previous_tstates": 2420,
+      "current_tstates": 2454,
+      "delta_tstates": 34
+    },
+    "repeat_6": {
+      "previous_tstates": 2384,
+      "current_tstates": 2418,
+      "delta_tstates": 34
+    },
+    "repeat_7": {
+      "previous_tstates": 2342,
+      "current_tstates": 2376,
+      "delta_tstates": 34
+    },
+    "repeat_8": {
+      "previous_tstates": 2306,
+      "current_tstates": 2340,
+      "delta_tstates": 34
+    },
+    "repeat_9": {
+      "previous_tstates": 2264,
+      "current_tstates": 2298,
+      "delta_tstates": 34
+    },
+    "repeat_10": {
+      "previous_tstates": 2228,
+      "current_tstates": 2262,
+      "delta_tstates": 34
+    },
+    "repeat_11": {
+      "previous_tstates": 2186,
+      "current_tstates": 2220,
+      "delta_tstates": 34
+    },
+    "repeat_12": {
+      "previous_tstates": 2150,
+      "current_tstates": 2184,
+      "delta_tstates": 34
+    },
+    "repeat_13": {
+      "previous_tstates": 2108,
+      "current_tstates": 2142,
+      "delta_tstates": 34
+    },
+    "repeat_14": {
+      "previous_tstates": 2072,
+      "current_tstates": 2106,
+      "delta_tstates": 34
+    },
+    "repeat_15": {
+      "previous_tstates": 2030,
+      "current_tstates": 2064,
+      "delta_tstates": 34
+    },
+    "repeat_16": {
+      "previous_tstates": 1994,
+      "current_tstates": 2028,
+      "delta_tstates": 34
+    },
+    "repeat_17": {
+      "previous_tstates": 1952,
+      "current_tstates": 1986,
+      "delta_tstates": 34
+    },
+    "repeat_18": {
+      "previous_tstates": 1916,
+      "current_tstates": 1950,
+      "delta_tstates": 34
+    },
+    "repeat_19": {
+      "previous_tstates": 1874,
+      "current_tstates": 1908,
+      "delta_tstates": 34
+    },
+    "repeat_20": {
+      "previous_tstates": 1838,
+      "current_tstates": 1872,
+      "delta_tstates": 34
+    },
+    "repeat_21": {
+      "previous_tstates": 1796,
+      "current_tstates": 1830,
+      "delta_tstates": 34
+    },
+    "repeat_22": {
+      "previous_tstates": 1760,
+      "current_tstates": 1794,
+      "delta_tstates": 34
+    },
+    "repeat_23": {
+      "previous_tstates": 1718,
+      "current_tstates": 1752,
+      "delta_tstates": 34
+    },
+    "repeat_24": {
+      "previous_tstates": 1682,
+      "current_tstates": 1716,
+      "delta_tstates": 34
+    },
+    "repeat_25": {
+      "previous_tstates": 1640,
+      "current_tstates": 1674,
+      "delta_tstates": 34
+    },
+    "repeat_26": {
+      "previous_tstates": 1604,
+      "current_tstates": 1638,
+      "delta_tstates": 34
+    },
+    "repeat_27": {
+      "previous_tstates": 1562,
+      "current_tstates": 1596,
+      "delta_tstates": 34
+    },
+    "repeat_28": {
+      "previous_tstates": 1526,
+      "current_tstates": 1560,
+      "delta_tstates": 34
+    },
+    "repeat_29": {
+      "previous_tstates": 1484,
+      "current_tstates": 1518,
+      "delta_tstates": 34
+    },
+    "repeat_30": {
+      "previous_tstates": 1448,
+      "current_tstates": 1482,
+      "delta_tstates": 34
+    },
+    "repeat_31": {
+      "previous_tstates": 1400,
+      "current_tstates": 1434,
+      "delta_tstates": 34
+    },
+    "repeat_32": {
+      "previous_tstates": 1298,
+      "current_tstates": 1315,
+      "delta_tstates": 17
+    },
+    "full_literal_chain_1": {
+      "previous_tstates": 2614,
+      "current_tstates": 2141,
+      "delta_tstates": -473
+    },
+    "full_literal_chain_2": {
+      "previous_tstates": 5012,
+      "current_tstates": 4066,
+      "delta_tstates": -946
+    },
+    "full_literal_chain_4": {
+      "previous_tstates": 9808,
+      "current_tstates": 7916,
+      "delta_tstates": -1892
+    },
+    "full_literal_chain_96": {
+      "previous_tstates": 230424,
+      "current_tstates": 185016,
+      "delta_tstates": -45408
+    }
+  }
+}

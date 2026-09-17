@@ -41,8 +41,15 @@ def compress_frames(frames: list[bytes], executable: Path, cache: Path) -> list[
             groups.append((bytes(pending),count)); pending.clear(); count=0
         pending += frame; count += 1
     if pending: groups.append((bytes(pending),count))
+    return compress_groups(groups,executable,cache)
+
+
+def compress_groups(groups,executable: Path,cache: Path) -> list[Block]:
+    """Compress an explicit partition without silently merging small groups."""
+    cache.mkdir(parents=True,exist_ok=True)
     result=[]
     for index,(decoded,count) in enumerate(groups):
+        if not 0<len(decoded)<=8192 or count<1:raise ValueError('invalid block group')
         digest=hashlib.sha256(decoded).hexdigest()
         raw=cache/f'{digest}.raw'; encoded=cache/f'{digest}.zx0'
         if not encoded.exists():

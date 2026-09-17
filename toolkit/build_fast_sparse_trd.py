@@ -481,8 +481,9 @@ def apply_packet_reference(
 
 def make_volume_packets(
     states: list[bytes], ay_states: list[bytes], start: int, limit: int,
-    *, packed: bool = False,
+    *, packed: bool = False, dense_packed: bool = False,
 ) -> tuple[int, list[SparsePacket]]:
+    if dense_packed and not packed:raise ValueError('dense packet selection requires packed transport')
     zero = bytes(source.STATE_BYTES)
     previous = [zero, zero]
     packets: list[SparsePacket] = []
@@ -498,7 +499,7 @@ def make_volume_packets(
         packet = pack_packet(
             frame_records(states[end], prior, visible), ay_states[end]
         )
-        if packet.sector_count > 5:
+        if packet.sector_count > 5 or dense_packed:
             rle_records = frame_records(
                 states[end],
                 prior,
@@ -532,14 +533,16 @@ def make_volume_packets(
                     for record in motion_records
                 ),
             )
+            def allocation_size(candidate):
+                return len(packed_format.frame_bytes(candidate)) if dense_packed else candidate.sector_count
             compressed = min(
                 (rle_packet, motion_packet),
                 key=lambda candidate: (
-                    candidate.sector_count,
+                    allocation_size(candidate),
                     candidate.motion_rows > 0,
                 ),
             )
-            if compressed.sector_count < packet.sector_count:
+            if allocation_size(compressed) < allocation_size(packet):
                 compressed = SparsePacket(
                     compressed.sectors,
                     compressed.ay_state,
@@ -1382,6 +1385,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--packing", choices=("contiguous", "sector", "zx0"), default="contiguous")
     parser.add_argument("--zx0", type=Path, help="path to the upstream ZX0 v2 compressor")
+    parser.add_argument('--compression-cache',type=Path,help='reuse verified ZX0 blocks across player builds')
     parser.add_argument("--pacing", choices=("cpu-fields", "legacy", "deadline"), default="cpu-fields",
                         help="ZX0 playback: subtract CPU fields from the display hold")
     parser.add_argument('--read-batch',type=int,choices=(1,2,4,8,16),default=1)
@@ -1467,7 +1471,7 @@ def main() -> None:
             tick_records = ay_interrupt.encode_ticks(audio_frames[start*6:end*6]) if audio_irq else None
             candidates = blocked_format.compress_frames(
                 [packed_format.frame_bytes(packet,natural_order=True,audio_payload=b"".join(tick_records[i*6:i*6+6]) if audio_irq else None) for i,packet in enumerate(packets)],
-                args.zx0, args.output/'compression_cache')
+                args.zx0, args.compression_cache or args.output/'compression_cache')
             blocks = []
             used = base.SECTOR_SIZE
             for candidate in candidates:

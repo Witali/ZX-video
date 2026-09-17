@@ -1,0 +1,64 @@
+diff --git a/toolkit/fast_drawing.py b/toolkit/fast_drawing.py
+index 854c961..171638e 100644
+--- a/toolkit/fast_drawing.py
++++ b/toolkit/fast_drawing.py
+@@ -7,7 +7,9 @@ mask: 1287+68*N -> 984+60*N; points: 220+189*N -> 207+114*N (N>0),
+ empty points: 220 -> 217; spans: 220+178*R+126*N -> 243+122*R+90*N.
+ RLE vs ba6cab7, standalone row ending at command_loop:
+ 189+50*L+147*R+90*NL+47*NR ->
+-215+50*L+155*R+90*NL+39*NR+sum(DL(n))+sum(DR(n)).
++215+67*L+172*R+90*NL+39*NR+sum(DL(n))+sum(DR(n)), except that
++a single 32-literal row costs 1974 T. Relative to the former paired loop:
++full literal row 2447 -> 1974 (-473); all other tokens add 17 T each.
+ L/R are literal/repeat token counts, NL/NR their output lengths (sum 32).
+ DL(1)=-2; DL(n)=22-45*(n//2) for even n, 4-45*(n//2) for odd n>1.
+ DR(n)=16-21*(n//2) for even n, -2-21*(n//2) for odd n.
+@@ -81,7 +83,8 @@ def emit_rle(a):
+     a.label('command_row_rle');row_address(a, 'rle_row_from_hl')
+     a.emit(0x23)  # Encoded byte length; the output boundary is 32 columns.
+     a.label('rle_token_loop')
+-    a.emit(0x7E,0x23,0xCB,0x7F);a.rel8(0x20,'rle_run')
++    a.emit(0x7E,0x23,0xFE,31);a.abs16(0xCA,'rle_literal_full')
++    a.emit(0xCB,0x7F);a.rel8(0x20,'rle_run')
+     # Draw two literals per loop. Reverse top/bottom order for the second
+     # value, avoiding four INC/DEC instructions while returning to top.
+     # OR clears carry for RRA; token = length-1, so carry means even length.
+@@ -115,3 +118,11 @@ def emit_rle(a):
+     a.emit(0x7E,0xFE,5);a.rel8(0x20,'rle_finished')
+     a.emit(0x23);a.abs16(0xC3,'rle_row_from_hl')
+     a.label('rle_finished');finish(a)
++    # A 32-literal token necessarily fills the entire valid row. Unrolling
++    # removes the pair counter/branches: 2447 -> 1974 T per standalone row.
++    # Other tokens pay the CP/JP probe, +17 T each. No data format change.
++    a.label('rle_literal_full')
++    for _ in range(16):
++        a.emit(0x4E,0x23,0x0A,0x12,0x04,0x14,0x0A,0x12,0x1C)
++        a.emit(0x4E,0x23,0x0A,0x12,0x05,0x15,0x0A,0x12,0x1C)
++    a.abs16(0xC3,'rle_after_token')
+diff --git a/toolkit/test_fast_drawing.py b/toolkit/test_fast_drawing.py
+index 0d4595b..33472f3 100644
+--- a/toolkit/test_fast_drawing.py
++++ b/toolkit/test_fast_drawing.py
+@@ -123,7 +123,9 @@ class FastDrawingTests(unittest.TestCase):
+                 new,new_t=execute(*fast,'command_row_rle',payload,base,start=0x80FD)
+                 self.assertEqual(new,old)
+                 self.assertEqual(old_t,208+95*literal_tokens+152*repeat_tokens+183*literal_bytes+167*repeat_bytes)
+-                self.assertEqual(new_t,215+50*literal_tokens+155*repeat_tokens+90*literal_bytes+39*repeat_bytes+literal_delta+repeat_delta)
++                expected=215+67*literal_tokens+172*repeat_tokens+90*literal_bytes+39*repeat_bytes+literal_delta+repeat_delta
++                if literal_tokens==1 and literal_bytes==32:expected=1974
++                self.assertEqual(new_t,expected)
+                 self.assertLess(new_t,old_t)
+ 
+     def test_rle_chains_preserve_stream_and_exit_to_other_commands(self):
+@@ -136,9 +138,9 @@ class FastDrawingTests(unittest.TestCase):
+                 old,old_t=execute_packet(*legacy,rows+b'\0',base)
+                 new,new_t=execute_packet(*fast,rows+b'\0',base)
+                 self.assertEqual(new,old)
+-                # Each standalone row costs 1298 T, dispatch costs 123 T,
++                # Each standalone row costs 1315 T, dispatch costs 123 T,
+                 # each successful chain removes 172 T, and END costs 44 T.
+-                self.assertEqual(new_t,count*(1298+123)-172*(count-1)+44)
++                self.assertEqual(new_t,count*(1315+123)-172*(count-1)+44)
+                 self.assertLess(new_t,old_t)
+                 # A points command breaks the chain, followed by another RLE.
+                 separator=bytes([codec.CMD_BITMAP_POINTS,95,1,31,129])
