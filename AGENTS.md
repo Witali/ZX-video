@@ -14,3 +14,12 @@
 - Keep cycle calculations and their assumptions in build metadata or project
   documentation so that later optimizations can be checked against the same
   baseline.
+- Record each meaningful experiment in the root `CHANGELOG.md`, including
+  unsuccessful, reverted, interrupted, and partially verified attempts.
+  Include the date, objective, baseline/input scope, changed parameters,
+  measured results, verification coverage, and the decision with its reason.
+  Link the reproducing scripts and saved reports when available. Distinguish
+  estimates and partial runs from fully verified releases; keep old entries
+  when a later attempt supersedes them. Update the changelog in the same
+  focused commit as the completed experiment or change. Never invent missing
+  historical dates or measurements.
