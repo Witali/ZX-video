@@ -1,20 +1,48 @@
 # Полный мультфильм на нескольких дискетах
 
-## Текущий выпуск: 19 дискет и плавные 25/3 кадра/с
+## Текущий профиль: плотный ZX0 и плавные 25/3 кадра/с
 
-Используйте описанную ниже сборку с параметрами
-`--store-over-bytes 1400 --max-volume-frames 512 --minimum-planned-queue 80 --separate-stored`.
-Новый PLAYER ускоряет вывод атрибутов; расчёт T-states и результаты:
-`SMOOTH_CADENCE_RESULTS_ru.md`. Все изображения и AY сохраняются.
+Упаковщик удаляет короткие совпадения ZX0 в тяжёлых блоках. PLAYER,
+все изображения и состояния AY сохраняются. Измерения CPU/объёма:
+`ZX0_SPEED_RESULTS_ru.md`; прежнее ускорение вывода атрибутов:
+`SMOOTH_CADENCE_RESULTS_ru.md`. Последние итоги полного прогона:
+`FULL_MOVIE_RESULTS_ru.md` и `full_movie_measurements.json`.
+
+Параметры нынешней упаковки (добавить к `build_full_movie.py`):
+
+```text
+--zx0-minimum-match 3 --zx0-speed-over-bytes 1400 --store-over-bytes 2600 --separate-stored --store-frame 3008 --max-volume-frames 1000 --minimum-planned-queue 0 --volume-end-frame 2883 --volume-end-frame 2929 --volume-end-frame 3000 --volume-end-frame 3700 --volume-end-frame 4518 --volume-end-frame 4567 --volume-end-frame 4607 --volume-end-frame 4646 --volume-end-frame 4679
+```
+
+Границы подобраны по полному прогону именно сохранённого исходного фильма.
+Кадры нумеруются с нуля; `--volume-end-frame N` завершает часть перед N.
+`--store-frame 3008` убирает внешний ZX0 у единственного дополнительно
+измеренного кадра с дорогим рисованием; дельты и RLE остаются. Для другого
+исходника требуется новый прогон и подбор границ, а не перенос этих чисел.
+Сохранённый оптимальный кэш ZX0 можно передать через `--compression-cache`.
+
 `package_full_movie.py` теперь требует прямые отметки переключения экранов
 из обновлённого `measure_fuse.py`: каждый кадр через шесть полей, отклонение
 интервала ≤1 мс. Старые трассы для упаковки нового выпуска непригодны.
 
 Для повторного использования уже упакованных дисков можно заменить только
 PLAYER через `rebuild_player_only.py`, затем повторить CPU/Fuse/AY-проверки.
-`prepare_rebuilt_movie.py` соединяет проверенные диски с прежними исходными
-этапами; `install_movie_release.py` проверяет хеши и LFS перед установкой
+`prepare_rebuilt_movie.py` соединяет заново упакованные/пересобранные
+проверенные диски с прежними исходными этапами;
+`install_movie_release.py` проверяет хеши и LFS перед установкой
 пакета в корень. История первоначальной сборки на 30 дискетах приведена ниже.
+
+При использовании прежних исходных этапов после трёх проверок
+(`measure_fuse.py`, `validate_fast_sparse.py`, `compare_ay_trace.py`):
+
+```text
+python toolkit/prepare_rebuilt_movie.py ORIGINAL_MOVIE_BUILD --disks NEW_DISKS --comparison NEW_COMPARISON --output VERIFIED_MOVIE
+python toolkit/package_full_movie.py VERIFIED_MOVIE --output RELEASE --report toolkit/full_movie_measurements.json --ffmpeg ffmpeg.exe
+python toolkit/install_movie_release.py RELEASE --repository .
+```
+
+Все образы перед заменой проверяются по хешам; устаревшие части удаляются
+только после установки полного нового комплекта. TRD должны иметь LFS-правило.
 
 ## Первоначальная сборка
 
