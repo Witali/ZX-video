@@ -35,7 +35,7 @@ def profile_commands(build, commands):
     for i, value in enumerate(commands):
         cpu.write8(pointer + i, value)
     cpu.pc = labels['command_loop']; cpu.ix = pointer; cpu.push(0x5F00)
-    rows = []; current = None
+    rows = []; current = None; masks = Counter()
     entries = {labels[name]: name for name in labels if name.startswith('command_') and name != 'command_loop'}
     while cpu.pc != 0x5F00:
         if cpu.pc in entries or cpu.pc == labels.get('rle_row_from_hl'):
@@ -43,6 +43,8 @@ def profile_commands(build, commands):
                 current['tstates'] = cpu.tstates - current.pop('start')
             current = dict(command=entries.get(cpu.pc, 'rle_row_from_hl'), start=cpu.tstates)
             rows.append(current)
+            if current['command'] == 'command_row':
+                masks.update(cpu.read8(cpu.ix + i) for i in range(1, 5))
         if cpu.pc == labels['command_loop'] and current is not None and 'start' in current:
             current['tstates'] = cpu.tstates - current.pop('start'); current = None
         cpu.step()
@@ -53,6 +55,7 @@ def profile_commands(build, commands):
         counts[row['command']] += 1
         cycles[row['command']] += row['tstates']
     return dict(command_bytes=len(commands), routines=dict(counts), tstates=dict(cycles),
+                mask_bytes=dict(sorted(masks.items())),
                 total_routine_tstates=sum(cycles.values()))
 
 

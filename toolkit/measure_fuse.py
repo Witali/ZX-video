@@ -139,16 +139,32 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--timeout',type=float,default=60)
     parser.add_argument('--volumes',type=int,nargs='+',help='measure selected one-based volumes for experiments; omit for a release')
+    parser.add_argument('--reuse-timing',type=Path,nargs='+',help='reuse completed traces only for byte-identical TRDs, PLAYER, ROM and Fuse executable')
     parser.add_argument('--trdos-rom',type=Path,help='default: roms/trdos.rom next to Fuse; direct reader verifies the ROM hash')
     args=parser.parse_args()
     meta=json.loads((args.build/'build_metadata.json').read_text())
     results=[]
+    reusable={}
+    rom=args.trdos_rom or args.fuse.parent/'roms/trdos.rom'
+    rom_hash=hashlib.sha256(rom.read_bytes()).hexdigest() if rom.exists() else None
+    player_hash=hashlib.sha256((args.build/'PLAYER.C.bin').read_bytes()).hexdigest()
+    fuse_hash=hashlib.sha256(args.fuse.read_bytes()).hexdigest()
+    for path in args.reuse_timing or []:
+        for trace in json.loads(path.read_text()):
+            if (trace.get('player_sha256')==player_hash and trace.get('trdos_rom_sha256')==rom_hash
+                    and trace.get('fuse_sha256')==fuse_hash
+                    and len(trace.get('screen_flip_timestamps',[]))==trace['frames']-1):
+                reusable[trace['trd_sha256']]=trace
     volumes=meta['volumes']
     if args.volumes:
         if any(index<1 or index>len(volumes) for index in args.volumes):parser.error('volume outside build')
         volumes=[volumes[index-1] for index in args.volumes]
     for volume in volumes:
-        result=measure(args.fuse.resolve(),(args.build/volume['trd_name']).resolve(),meta['player_labels'],args.timeout,args.trdos_rom)
+        path=(args.build/volume['trd_name']).resolve()
+        result=reusable.get(hashlib.sha256(path.read_bytes()).hexdigest())
+        if result is None:
+            result=measure(args.fuse.resolve(),path,meta['player_labels'],args.timeout,args.trdos_rom)
+            result['fuse_sha256']=fuse_hash
         assert result['frames']==volume['frames']
         results.append(result)
         args.output.with_suffix('.partial.json').write_text(json.dumps(results,indent=2))
