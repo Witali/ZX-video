@@ -44,6 +44,10 @@ def main():
     p.add_argument('--zx0',type=Path,required=True)
     p.add_argument('--stage',choices=('all','audio','video','disks'),default='all')
     p.add_argument('--resume-video',action='store_true',help='reuse a hashed conversion checkpoint and repeat verification')
+    p.add_argument('--store-over-bytes',type=int,default=0)
+    p.add_argument('--max-volume-frames',type=int,default=0)
+    p.add_argument('--minimum-planned-queue',type=int,default=0)
+    p.add_argument('--compression-cache',type=Path)
     args=p.parse_args()
     src=args.input_video.resolve();out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
     ffmpeg=args.ffmpeg.resolve();os.environ['PATH']=str(ffmpeg.parent)+os.pathsep+os.environ['PATH']
@@ -111,13 +115,19 @@ def main():
         record('video',[source/'VIDEO_full.C.bin',source/'build_metadata.json'])
     if args.stage in ('all','disks'):
         require('audio');require('video')
+        manifest['disk_settings']=dict(store_over_bytes=args.store_over_bytes,max_volume_frames=args.max_volume_frames,
+            minimum_planned_queue=args.minimum_planned_queue)
+        save()
         run('disks',[HERE/'build_fast_sparse_trd.py','--source-build',source,'--output',disks,
             '--name-prefix','ZX-video-full-50Hz','--ay-50hz',sound/'50Hz/raw.bin',
             '--packing','zx0','--zx0',args.zx0.resolve(),'--drawing','registers',
             '--disk-reader','trdos503-irq','--disk-layout','interleaved','--pacing','deadline',
             '--zx0-decoding','incremental','--motor-keepalive-fields','64','--prefetch-quota','3',
             '--rom-clock','full','--disk-seek','cached','--packet-lookahead','--uncontended',
-            '--read-reserve','64','--memory-clock','--direct-input','--wrapped-input','--block-bytes','6144'])
+            '--read-reserve','64','--memory-clock','--direct-input','--wrapped-input','--block-bytes','6144',
+            '--store-over-bytes',args.store_over_bytes,'--max-volume-frames',args.max_volume_frames,
+            '--minimum-planned-queue',args.minimum_planned_queue,
+            *(['--compression-cache',args.compression_cache.resolve()] if args.compression_cache else [])])
         meta=json.loads((disks/'build_metadata.json').read_text())
         if meta['frames']!=count:raise ValueError('disk set does not cover the source')
         record('disks',[disks/'build_metadata.json',disks/'PLAYER.C.bin',

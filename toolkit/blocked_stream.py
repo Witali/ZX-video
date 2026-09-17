@@ -30,46 +30,54 @@ class Block:
 
 
 def compress_frames(frames: list[bytes], executable: Path, cache: Path,
-                    *, max_block_bytes: int = 8192) -> list[Block]:
-    return list(iter_compress_frames(frames,executable,cache,max_block_bytes=max_block_bytes))
+                    *, max_block_bytes: int = 8192, store_over_bytes: int = 0) -> list[Block]:
+    return list(iter_compress_frames(frames,executable,cache,max_block_bytes=max_block_bytes,store_over_bytes=store_over_bytes))
 
 
 def iter_compress_frames(frames: list[bytes], executable: Path, cache: Path,
-                         *, max_block_bytes: int = 8192):
+                         *, max_block_bytes: int = 8192, store_over_bytes: int = 0):
     """Compressor work is offline. Cache entries are verified before reuse."""
     if not 1 <= max_block_bytes <= 8192:
         raise ValueError('block limit must be 1..8192 bytes')
     cache.mkdir(parents=True, exist_ok=True)
     groups = []
+    stored_groups=set();pending_store=False
     pending = bytearray()
     count = 0
     for frame in frames:
         if not frame or len(frame) > max_block_bytes:
             raise ValueError('frame is empty or exceeds chosen block limit')
         if pending and len(pending)+len(frame) > max_block_bytes:
-            groups.append((bytes(pending),count)); pending.clear(); count=0
+            if pending_store:stored_groups.add(len(groups))
+            groups.append((bytes(pending),count)); pending.clear(); count=0;pending_store=False
         pending += frame; count += 1
-    if pending: groups.append((bytes(pending),count))
-    yield from iter_compress_groups(groups,executable,cache)
+        pending_store |= bool(store_over_bytes and len(frame)>store_over_bytes)
+    if pending:
+        if pending_store:stored_groups.add(len(groups))
+        groups.append((bytes(pending),count))
+    yield from iter_compress_groups(groups,executable,cache,stored_groups=stored_groups)
 
 
 def compress_groups(groups,executable: Path,cache: Path) -> list[Block]:
     return list(iter_compress_groups(groups,executable,cache))
 
 
-def iter_compress_groups(groups,executable: Path,cache: Path):
+def iter_compress_groups(groups,executable: Path,cache: Path,*,stored_groups=()):
     """Compress an explicit partition without silently merging small groups."""
     cache.mkdir(parents=True,exist_ok=True)
     for index,(decoded,count) in enumerate(groups):
         if not 0<len(decoded)<=8192 or count<1:raise ValueError('invalid block group')
         digest=hashlib.sha256(decoded).hexdigest()
         raw=cache/f'{digest}.raw'; encoded=cache/f'{digest}.zx0'
-        if not encoded.exists():
-            raw.write_bytes(decoded)
-            subprocess.run([str(executable.resolve()),'-f',str(raw.resolve()),str(encoded.resolve())],
-                           check=True,capture_output=True)
-        payload=encoded.read_bytes()
-        if zx0_codec.decompress(payload) != decoded: raise ValueError('ZX0 verification failed')
+        if index in stored_groups:
+            payload=decoded
+        else:
+            if not encoded.exists():
+                raw.write_bytes(decoded)
+                subprocess.run([str(executable.resolve()),'-f',str(raw.resolve()),str(encoded.resolve())],
+                               check=True,capture_output=True)
+            payload=encoded.read_bytes()
+            if zx0_codec.decompress(payload) != decoded: raise ValueError('ZX0 verification failed')
         stored=len(payload)>=len(decoded)
         compressor=zlib.compressobj(9,zlib.DEFLATED,-15)
         deflated=compressor.compress(decoded)+compressor.flush()
@@ -80,6 +88,17 @@ def iter_compress_groups(groups,executable: Path,cache: Path):
 
 def frame_demands(blocks: list[Block]) -> list[int]:
     return [length for block in blocks for length in (len(block.serialize()), *([0]*(block.frames-1)))]
+
+
+def planned_queue_after_block(queued, block, capacity, quota, minimum):
+    """Conservative volume-planning estimate, not a wall-time guarantee.
+
+    Charge whole sectors before crediting the block's frame read quotas.
+    Never bank unused read opportunities beyond the physical ring capacity.
+    """
+    remaining=queued-(len(block.serialize())+255)//256
+    if remaining<minimum:return None
+    return min(capacity,remaining+quota*block.frames)
 
 
 def serialize_volume(blocks: list[Block], frame_rate: float, *, clocked: bool = False) -> bytes:

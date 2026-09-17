@@ -20,6 +20,28 @@ EMPTY_DECODED = (bytes((10,0))+bytes(10))*500
 
 
 class BlockedStreamTests(unittest.TestCase):
+    def test_volume_planner_does_not_bank_reads_beyond_ring_capacity(self):
+        idle=blocked_stream.Block(b'x',b'x',100,True,0)
+        dense=blocked_stream.Block(bytes(6140),bytes(6140),3,True,0)
+        queue=blocked_stream.planned_queue_after_block(320,idle,320,3,128)
+        self.assertEqual(queue,320)
+        accepted=0
+        while True:
+            next_queue=blocked_stream.planned_queue_after_block(queue,dense,320,3,128)
+            if next_queue is None:break
+            queue=next_queue;accepted+=1
+        self.assertEqual(accepted,12)
+        self.assertEqual(queue,140)
+        self.assertEqual(blocked_stream.planned_queue_after_block(queue,idle,320,3,128),320)
+
+    def test_large_frames_can_use_the_existing_stored_block_path(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(blocked_stream.subprocess,'run',side_effect=AssertionError('must not launch compressor')):
+                blocks=blocked_stream.compress_frames([EMPTY_DECODED],Path('unused'),Path(directory),store_over_bytes=1800)
+        self.assertEqual(len(blocks),1)
+        self.assertTrue(blocks[0].stored)
+        self.assertEqual(blocks[0].data,EMPTY_DECODED)
+
     def test_lazy_compression_stops_at_the_volume_boundary(self):
         with tempfile.TemporaryDirectory() as directory:
             cache=Path(directory)
@@ -33,7 +55,7 @@ class BlockedStreamTests(unittest.TestCase):
     def test_selected_block_limit_preserves_whole_frames(self):
         frames = [b'a'*3,b'b'*4,b'c',b'd'*8,b'e']
         with tempfile.TemporaryDirectory() as directory:
-            with patch.object(blocked_stream,'iter_compress_groups',side_effect=lambda groups,*_:groups):
+            with patch.object(blocked_stream,'iter_compress_groups',side_effect=lambda groups,*a,**kw:groups):
                 groups=blocked_stream.compress_frames(frames,Path('unused'),Path(directory),max_block_bytes=8)
                 self.assertEqual(groups,[(b'aaabbbbc',3),(b'd'*8,1),(b'e',1)])
                 self.assertEqual(b''.join(data for data,_ in groups),b''.join(frames))

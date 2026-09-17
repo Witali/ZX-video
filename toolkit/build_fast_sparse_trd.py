@@ -481,7 +481,7 @@ def apply_packet_reference(
 
 def make_volume_packets(
     states: list[bytes], ay_states: list[bytes], start: int, limit: int,
-    *, packed: bool = False, dense_packed: bool = False,
+    *, packed: bool = False, dense_packed: bool = False, max_frames: int = 0,
 ) -> tuple[int, list[SparsePacket]]:
     if dense_packed and not packed:raise ValueError('dense packet selection requires packed transport')
     zero = bytes(source.STATE_BYTES)
@@ -489,7 +489,7 @@ def make_volume_packets(
     packets: list[SparsePacket] = []
     used = base.SECTOR_SIZE if packed else 1
     end = start
-    while end < len(states):
+    while end < len(states) and (not max_frames or end-start < max_frames):
         local = end - start
         if local == 0:
             prior = zero
@@ -1390,6 +1390,9 @@ def main() -> None:
     parser.add_argument('--compression-cache',type=Path,help='reuse verified ZX0 blocks across player builds')
     parser.add_argument('--block-bytes',type=int,default=8192,
                         help='maximum decoded ZX0 block size, 1..8192; smaller blocks change decode scheduling')
+    parser.add_argument('--store-over-bytes',type=int,default=0,help='store blocks containing larger frame packets without ZX0; 0 disables')
+    parser.add_argument('--max-volume-frames',type=int,default=0,help='optional cap on frames per disk; 0 fills disks')
+    parser.add_argument('--minimum-planned-queue',type=int,default=0,help='split before estimated ring reserve falls below this sector count; 0 disables')
     parser.add_argument("--pacing", choices=("cpu-fields", "legacy", "deadline"), default="cpu-fields",
                         help="ZX0 playback: subtract CPU fields from the display hold")
     parser.add_argument('--read-batch',type=int,choices=(1,2,4,8,16),default=1)
@@ -1421,6 +1424,8 @@ def main() -> None:
         parser.error('--block-bytes must be 1..8192')
     if args.block_bytes != 8192 and not blocked:
         parser.error('--block-bytes requires --packing zx0')
+    if args.store_over_bytes<0 or args.max_volume_frames<0:
+        parser.error('storage threshold and frame cap must be non-negative')
     clocked = blocked and args.pacing != "legacy"
     deadline = blocked and args.pacing == 'deadline'
     fast_draw = args.drawing == 'registers'
@@ -1434,6 +1439,10 @@ def main() -> None:
         parser.error("--packing zx0 requires --zx0 /path/to/zx0")
     ring_capacity = (blocked_format.RING_CAPACITY_SECTORS if blocked else
                      packed_format.RING_CAPACITY_SECTORS if packed else RING_CAPACITY_SECTORS)
+    if not 0<=args.minimum_planned_queue<ring_capacity:
+        parser.error('planned queue must be non-negative and below ring capacity')
+    if args.minimum_planned_queue and not (blocked and clocked and args.prefetch_quota):
+        parser.error('planned queue requires clocked ZX0 and a prefetch quota')
     source_stream = args.source_build / "VIDEO_full.C.bin"
     metadata = json.loads((args.source_build / "build_metadata.json").read_text())
     states, ay_states, frame_rate = decode_compact_build(source_stream)
@@ -1476,15 +1485,16 @@ def main() -> None:
     packing_sectors_saved = 0
     packet_padding_bytes = 0
     while start < len(states):
-        end, packets = make_volume_packets(states, ay_states, start, 0x100000 if blocked else limit, packed=packed)
+        end, packets = make_volume_packets(states, ay_states, start, 0x100000 if blocked else limit, packed=packed,max_frames=args.max_volume_frames)
         if blocked:
             tick_records = ay_interrupt.encode_ticks(audio_frames[start*6:end*6]) if audio_irq else None
             candidates = blocked_format.iter_compress_frames(
                 [packed_format.frame_bytes(packet,natural_order=True,audio_payload=b"".join(tick_records[i*6:i*6+6]) if audio_irq else None) for i,packet in enumerate(packets)],
                 args.zx0, args.compression_cache or args.output/'compression_cache',
-                max_block_bytes=args.block_bytes)
+                max_block_bytes=args.block_bytes,store_over_bytes=args.store_over_bytes)
             blocks = []
             used = base.SECTOR_SIZE
+            planned_queue=ring_capacity
             for candidate in candidates:
                 if irq_disk and len(candidate.data)>7424:
                     raise ValueError('block input overlaps the uncontended IRQ area')
@@ -1493,6 +1503,11 @@ def main() -> None:
                     sector_need = disk_layout.required_sectors(sector_need, video_sector)
                 if sector_need > limit:
                     break
+                if args.minimum_planned_queue:
+                    next_queue=blocked_format.planned_queue_after_block(planned_queue,candidate,
+                        ring_capacity,args.prefetch_quota,args.minimum_planned_queue)
+                    if next_queue is None:break
+                    planned_queue=next_queue
                 blocks.append(candidate); used += len(candidate.serialize())
             if not blocks:
                 raise ValueError("compressed block does not fit a volume")
@@ -1696,6 +1711,9 @@ def main() -> None:
         output_metadata["block_codec"] = {
             "name": "ZX0 v2", "decoder": "turbo incremental" if incremental else "turbo", "decoded_block_limit": 8192,
             "encoder_block_limit": args.block_bytes,
+            "store_over_frame_bytes": args.store_over_bytes,
+            "max_volume_frames": args.max_volume_frames,
+            "minimum_planned_queue": args.minimum_planned_queue,
             "command_order": "stable screen row order",
             "compressed_input_limit": 7424 if irq_disk else 8192,
             "upstream_revision": "ecde3a2ae05061fe06469ed46df81a33b7de7d86",

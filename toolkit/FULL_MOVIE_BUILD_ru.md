@@ -15,11 +15,12 @@
 Нужны Python с NumPy, Pillow, OpenCV; FFmpeg/FFprobe и ZX0 v2.
 
 ```text
-python toolkit/build_full_movie.py --input-video SOURCE.mov --output toolkit/build_full_movie --ffmpeg ffmpeg.exe --ffprobe ffprobe.exe --zx0 zx0.exe
+python toolkit/build_full_movie.py --input-video SOURCE.mov --output toolkit/build_full_movie --ffmpeg ffmpeg.exe --ffprobe ffprobe.exe --zx0 zx0.exe --store-over-bytes 1400 --max-volume-frames 512 --minimum-planned-queue 160
 ```
 
 Этапы: `audio`, `video`, `disks`; для повторного запуска одного этапа
-добавить `--stage ИМЯ`. Manifest хранит SHA-256 исходника и готовых этапов,
+добавить `--stage ИМЯ`. `--stage video --resume-video` повторяет проверку
+из сохранённого checkpoint без повторной конвертации. Manifest хранит SHA-256 исходника и готовых этапов,
 проверяет их перед использованием. Видео/аудио сравниваются на всей
 длительности; метрики двухминутной проверки не переносятся на весь фильм.
 
@@ -29,15 +30,58 @@ python toolkit/build_full_movie.py --input-video SOURCE.mov --output toolkit/bui
 две TRD (хеши в `ay_block_size_measurements.json`). Изменений процедур
 проигрывателя и их стоимости нет: 0 T относительно принятой версии v11.
 
+Для полного фильма применяется смешанное хранение: блок с пакетом кадра
+больше 1400 байт сохраняется без внешнего ZX0. Разреженные команды, дельты
+экранов и RLE остаются прежними. Это ускоряет подготовку насыщенных кадров,
+но увеличивает чтение с диска. Поэтому одного ограничения 512 кадров на
+том оказалось недостаточно.
+
+Планировщик оценивает запас кольцевого буфера: начинает с 320 секторов,
+списывает округлённую вверх длину блока, затем учитывает до трёх чтений
+на кадр, ограничивая запас ёмкостью буфера. Если перед пополнением запас
+упадёт ниже 160 секторов, следующий блок начинает новую дискету. Это
+консервативная оценка размещения; она не заменяет полный прогон Fuse,
+учитывающий распаковку, прерывания, TR-DOS и задержки диска.
+
+Сохранённые неудачные эксперименты:
+
+- `full_movie_initial_failure.json`: обычный ZX0, сбой звукового буфера
+  перед исходным кадром 2101.
+- `full_movie_mixed_failure.json`: порог 1800 байт, перед кадром 2903.
+- `full_movie_mixed1400_failure.json`: порог 1400 байт без планирования
+  запаса, перед кадром 2928; несжатые блоки исчерпали буфер чтения.
+
+Проигрыватель во всех этих сборках побайтно одинаков: 5120 байт,
+SHA-256 `e70a0c7576c109979187a1b94edcac97a454b01d24a6ca99bf6262864cfff3fa`.
+Абсолютная стоимость каждой процедуры остаётся указанной в
+`AY_INTERRUPT_RESULTS_ru.md` и метаданных сборки; изменение стоимости
+инструкций — **0 T**. Общая стоимость кадра зависит от выбора уже
+существующего пути stored/ZX0 и измеряется отдельно.
+
 ## Проверка
 
 ```text
 python toolkit/measure_fuse.py FUSE.exe toolkit/build_full_movie/disks --output toolkit/build_full_movie/disks/fuse_timing.json --timeout 180
-python toolkit/validate_fast_sparse.py toolkit/build_full_movie/disks --source-build toolkit/build_full_movie/source --ay-50hz toolkit/build_full_movie/audio/50Hz/raw.bin --fuse-timing toolkit/build_full_movie/disks/fuse_timing.json --output toolkit/build_full_movie/disks/cpu_validation.json
+python toolkit/validate_fast_sparse.py toolkit/build_full_movie/disks --source-build toolkit/build_full_movie/source --ay-50hz toolkit/build_full_movie/audio/50Hz/raw.bin --fuse-timing toolkit/build_full_movie/disks/fuse_timing.json --output toolkit/build_full_movie/disks/cpu_validation.json --jobs 4
 python toolkit/compare_ay_trace.py toolkit/build_full_movie/disks --timing toolkit/build_full_movie/disks/fuse_timing.json --ay-50hz toolkit/build_full_movie/audio/50Hz/raw.bin --rate-report toolkit/build_full_movie/audio/comparison.json --input-video SOURCE.mov --ffmpeg ffmpeg.exe --output toolkit/build_full_movie/comparison
+python toolkit/package_full_movie.py toolkit/build_full_movie --output release_full_50Hz --report toolkit/full_movie_measurements.json --ffmpeg ffmpeg.exe
 ```
 
 Каждый том самостоятельно загружается через `boot`. Между дискетами есть
 пауза на смену и загрузку; автоматического бесшовного перехода пока нет.
 Порядок и диапазоны кадров определяются `disks/build_metadata.json`.
 Для проигрывания нужен Spectrum 128 с Beta128 и проверенной TR-DOS 5.03.
+
+Fuse сохраняет промежуточные результаты после каждого тома и связывает
+измерение с SHA-256 TRD и PLAYER. CPU-проверка умеет обрабатывать независимые
+тома в нескольких процессах; её результат с `--jobs 2` побайтно совпал
+с последовательной проверкой контрольных 120 секунд.
+
+Упаковка выпуска проверяет непрерывность диапазонов кадров, все состояния
+AY и записи регистров, хеши исходных этапов и TRD, отсутствие недогрузок,
+интервалы видео до 125 мс и сохранённые пороги chroma/динамики. Прослушиваемый
+preview — приближённый синтез по времени Fuse, а не запись выхода эмулятора.
+
+По просьбе пользователя актуальные `ZX-video-full-50Hz_partNN.trd` хранятся
+в корне репозитория и отслеживаются Git. Старые TRD из корня удаляются
+после проверки полного комплекта; промежуточные сборки остаются вне Git.
