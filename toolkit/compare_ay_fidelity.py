@@ -111,10 +111,14 @@ def main():
                 preview_model='band-limited tones, continuous 17-bit LFSR noise with 4x sample averaging, nominal AY 3 dB volume steps; approximate synthesis',
                 metrics={name:compare(reference,features(samples,rate,fps,len(new)))
                          for name,samples in versions.items() if name!='original'})
-    criteria=('chroma_cosine','rhythm_onset_f1','loudness_correlation')
+    # User decision, 2026-09-17: attack F1 is best effort, not a 95% gate.
+    criteria=('chroma_cosine','loudness_correlation')
     report['target']=dict(threshold=.95,criteria=list(criteria),
                           passed=all(report['metrics']['after'][key]>=.95 for key in criteria),
                           onset_tolerance_seconds=1/fps,
+                          rhythm=dict(metric='rhythm_onset_f1',required=False,
+                                      aspirational_range=[.90,.92],
+                                      measured=report['metrics']['after']['rhythm_onset_f1']),
                           meaning='engineering proxies; not 95% perceptual fidelity or true-note accuracy')
     args.output.mkdir(parents=True,exist_ok=True)
     lo=round(args.excerpt_start*rate);hi=round((args.excerpt_start+args.excerpt_duration)*rate)
