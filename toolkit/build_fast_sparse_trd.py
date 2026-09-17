@@ -1071,23 +1071,26 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     ld_a_mem(a, "attr_count"); a.emit(0x3D); ld_mem_a(a, "attr_count")
     a.rel8(0x18, "attr_loop")
 
-    a.label("command_attrs_delta")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "attr_count")
-    a.emit(0x21); a.word(0xFFFF); a.abs16(0x22, "attr_index")
-    a.label("attr_delta_loop")
-    ld_a_mem(a, "attr_count"); a.emit(0xB7); a.abs16(0xCA, "command_loop")
-    a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0xFE, 0xFF)
-    a.rel8(0x28, "attr_gap_wide")
-    a.emit(0x5F, 0x16, 0); a.rel8(0x18, "attr_gap_ready")
-    a.label("attr_gap_wide")
-    a.emit(0xDD, 0x5E, 0, 0xDD, 0x23, 0xDD, 0x56, 0, 0xDD, 0x23)
-    a.label("attr_gap_ready")
-    a.emit(0x2A); a.abs16([], "attr_index")
-    a.emit(0x23, 0x19); a.abs16(0x22, "attr_index")
-    a.emit(0xED, 0x4B); a.abs16([], "attr_base")
-    a.emit(0x09, 0xDD, 0x7E, 0, 0xDD, 0x23, 0x77)
-    ld_a_mem(a, "attr_count"); a.emit(0x3D); ld_mem_a(a, "attr_count")
-    a.rel8(0x18, "attr_delta_loop")
+    if fast_draw:
+        fast_drawing.emit_attributes_delta(a)
+    else:
+        a.label("command_attrs_delta")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23); ld_mem_a(a, "attr_count")
+        a.emit(0x21); a.word(0xFFFF); a.abs16(0x22, "attr_index")
+        a.label("attr_delta_loop")
+        ld_a_mem(a, "attr_count"); a.emit(0xB7); a.abs16(0xCA, "command_loop")
+        a.emit(0xDD, 0x7E, 0, 0xDD, 0x23, 0xFE, 0xFF)
+        a.rel8(0x28, "attr_gap_wide")
+        a.emit(0x5F, 0x16, 0); a.rel8(0x18, "attr_gap_ready")
+        a.label("attr_gap_wide")
+        a.emit(0xDD, 0x5E, 0, 0xDD, 0x23, 0xDD, 0x56, 0, 0xDD, 0x23)
+        a.label("attr_gap_ready")
+        a.emit(0x2A); a.abs16([], "attr_index")
+        a.emit(0x23, 0x19); a.abs16(0x22, "attr_index")
+        a.emit(0xED, 0x4B); a.abs16([], "attr_base")
+        a.emit(0x09, 0xDD, 0x7E, 0, 0xDD, 0x23, 0x77)
+        ld_a_mem(a, "attr_count"); a.emit(0x3D); ld_mem_a(a, "attr_count")
+        a.rel8(0x18, "attr_delta_loop")
 
     if fast_draw:
         fast_drawing.emit_rle(a)
@@ -1188,6 +1191,7 @@ def build_player(video_track: int, video_sector: int, *, packed: bool = False, b
     a.label("flip_screen")
     ld_a_mem(a, "screen_flag"); a.emit(0xEE, 0x08); ld_mem_a(a, "screen_flag")
     a.emit(0xF6, PAGING_ROM48_BANK7, 0x01); a.word(0x7FFD)
+    a.label('screen_flip_out')
     a.emit(0xED, 0x79, 0xC9)
     if audio_irq:ay_interrupt.emit(a)
     else:noise_format.emit_apply(a, ay_noise)
@@ -1710,6 +1714,10 @@ def main() -> None:
             "bitmap_rle_chain": "subtract 172 T per adjacent RLE boundary from standalone rows plus dispatch" if fast_draw else None,
             "bitmap_rle_reference": "RLE_PAIR_RESULTS_ru.md" if fast_draw else None,
             "copy_visible_row": COPY_VISIBLE_ROW_CYCLES,
+            "attributes_delta_previous": "95+251*N+40*W",
+            "attributes_delta": "112+86*N+55*W-C (N>0); 91 (N=0)" if fast_draw else "95+251*N+40*W",
+            "attributes_delta_symbols": "N: attribute writes; W: extended gaps; C: carry from gap low byte plus previous address low byte",
+            "attributes_delta_reference": "SMOOTH_CADENCE_RESULTS_ru.md",
             "compression_cpu_regression_limit_percent": 10,
         },
         "transport_cycle_reference": "BLOCKED_STREAM_V8_ru.md" if blocked else "PACKED_STREAM_V7_ru.md",

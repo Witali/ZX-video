@@ -36,6 +36,30 @@ def finish(a):
     a.emit(0xE5,0xDD,0xE1);a.abs16(0xC3,'command_loop')
 
 
+def emit_attributes_delta(a):
+    """Keep the stream in HL, destination in DE and item count in B.
+
+    Entry through JP command_loop, dispatch excluded (UM0080):
+    old 95+251*N+40*W -> 112+86*N+55*W-C for N>0; empty 95 -> 91.
+    W counts extended gaps; C counts carry from adding a gap to E.
+    IRQ preserves these registers. No alternate registers or SMC are used.
+    """
+    a.label('command_attrs_delta')
+    a.emit(0xDD,0xE5,0xE1,0x46,0x23,0x78,0xB7)
+    a.abs16(0xCA,'attr_delta_finished')
+    a.abs16((0xED,0x5B),'attr_base');a.emit(0x1B)
+    a.label('attr_delta_loop')
+    a.emit(0x7E,0x23,0xFE,0xFF);a.rel8(0x28,'attr_gap_wide')
+    a.label('attr_gap_ready')
+    a.emit(0x83,0x5F);a.rel8(0x30,'attr_gap_no_carry');a.emit(0x14)
+    a.label('attr_gap_no_carry')
+    a.emit(0x13,0x7E,0x23,0x12);a.rel8(0x10,'attr_delta_loop')
+    a.label('attr_delta_finished');finish(a)
+    a.label('attr_gap_wide')
+    a.emit(0x4E,0x23,0x7E,0x23,0x82,0x57,0x79)
+    a.rel8(0x18,'attr_gap_ready')
+
+
 def emit_mask(a):
     a.label('command_row');row_address(a)
     for name in ('mask0','mask1','mask2','mask3'):

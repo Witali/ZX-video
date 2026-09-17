@@ -9,6 +9,7 @@ import zipfile
 from build_full_movie import digest
 from summarize_ay_delivery import summarize
 from verify_ay_trace import verify_build
+from inspect_frame_cadence import inspect, require_smooth
 
 
 def timecode(seconds):
@@ -49,6 +50,8 @@ def main():
     if quality['verified_audio']!=audio:raise ValueError('quality comparison belongs to another trace')
     delivery=summarize(meta,timing)
     if delivery['intervals_over_125ms']:raise ValueError('video timing exceeds 125 ms')
+    cadence=inspect(meta,timing)
+    require_smooth(cadence)
     if not quality['required_metrics_pass']:raise ValueError('audio metrics below saved thresholds')
     out=args.output;out.mkdir(parents=True,exist_ok=True)
     parts=[]
@@ -59,7 +62,7 @@ def main():
             source_start_seconds=volume['frame_start']/meta['frame_rate'],
             source_end_seconds=volume['frame_end']/meta['frame_rate']))
     report=dict(source=settings,disk_settings=manifest['disk_settings'],parts=parts,player_sha256=digest(disks/'PLAYER.C.bin'),
-        verified_frames=cpu['frames'],verified_audio=audio,delivery=delivery,
+        verified_frames=cpu['frames'],verified_audio=audio,delivery=delivery,cadence=cadence,
         cpu={k:v for k,v in cpu.items() if k!='volumes'},
         audio_metrics=quality['metrics'],quality_model=quality['model'],
         evidence_sha256={name:digest(disks/name) for name in ('build_metadata.json','fuse_timing.json','cpu_validation.json')},
@@ -96,7 +99,9 @@ Spectrum 128 + Beta128, TR-DOS 5.03 (проверено в Fuse 1.9.0).
 ## Проверки
 
 Максимальный интервал видео в Fuse: {max(v['maximum_ms'] for v in delivery['volumes']):.6f} мс.
-Ни одного интервала длиннее 125 мс; недогрузок нет. Это проверка модели эмулятора;
+Переключение экрана каждые шесть прерываний; пропусков нет.
+Максимальное отклонение интервала от шести полей: {cadence['maximum_jitter_ms']:.6f} мс.
+Недогрузок нет. Это проверка модели эмулятора;
 физический дисковод не измерялся. SHA-256 дисков и показатели аудио — в measurements.json.
 Проценты chroma/динамики являются техническими метриками, не процентом сходства на слух.
 

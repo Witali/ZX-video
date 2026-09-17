@@ -26,6 +26,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
         events += [(labels['audio_write_loop'],140),(labels['audio_tick_done'],143),
                    (labels['audio_tick_empty'],198)]
     if 'frame_prepared' in labels: events.append((labels['frame_prepared'],107))
+    if 'screen_flip_out' in labels: events.append((labels['screen_flip_out'],150))
     if 'elapsed_fields' in labels: events.append((labels['clock_check'],108))
     if 'fast_read_enter' in labels: events.append((labels['fast_read_enter'],109))
     if 'disk_finish' in labels and 'fast_disk_return' in labels:
@@ -74,7 +75,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     frames = []; reads = []; read_start = None; decode_fields=[]; player_start=None; clock_checks=[]
     read_kinds=[];read_frames=[];read_buffers=[]
     prepared_times=[];queue_checks=[];deadline_checks=[];clock_times=[]
-    audio_writes=[];audio_ticks=[]
+    audio_writes=[];audio_ticks=[];screen_flips=[]
     for event, timestamp in zip(numbers[::2], numbers[1::2]):
         if event == 100: player_start=timestamp
         elif event == 101: frames.append(timestamp)
@@ -88,6 +89,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
         elif event == 141: audio_writes[-1]['register']=timestamp
         elif event == 142: audio_writes[-1]['value']=timestamp
         elif event == 143: audio_ticks.append(timestamp)
+        elif event == 150: screen_flips.append(timestamp+12)  # OUT (C),A completion.
         elif event in (102,109,110):
             if read_start is not None: raise ValueError('unpaired ROM entry')
             read_start = timestamp
@@ -105,6 +107,8 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
     if 'frame_prepared' in labels and len(decode_fields) != len(frames)-1:
         raise ValueError('incomplete CPU field trace')
     if len(prepared_times)!=len(decode_fields):raise ValueError('incomplete preparation timestamps')
+    if 'screen_flip_out' in labels and len(screen_flips)!=len(frames)-1:
+        raise ValueError('incomplete screen flip trace')
     if any(len(trace)!=len(clock_checks) for trace in (queue_checks,deadline_checks,clock_times)):
         raise ValueError('incomplete scheduler trace')
     intervals = [b-a for a,b in zip(frames,frames[1:])]
@@ -120,6 +124,7 @@ def measure(fuse: Path, trd: Path, labels: dict, timeout: float, trdos_rom: Path
                 decode_fields=decode_fields,
                 clock_checks=clock_checks,
                 frame_timestamps=frames,frame_prepared_timestamps=prepared_times,
+                screen_flip_timestamps=screen_flips,
                 queue_checks=queue_checks,deadline_checks=deadline_checks,clock_timestamps=clock_times,
                 rom_call_kinds=read_kinds,rom_call_entry_frames=read_frames,rom_call_buffers=read_buffers,
                 rom_call_tstates=reads, rom_call_mean_ms=sum(reads)/len(reads)/3546.9,
