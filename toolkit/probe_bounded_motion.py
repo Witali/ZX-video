@@ -132,6 +132,7 @@ def main():
     parser.add_argument('--max-inexact', type=int, default=1)
     parser.add_argument('--rmse', type=float, default=24)
     parser.add_argument('--groups', type=int, nargs='+', default=[8, 16])
+    parser.add_argument('--baseline-commit', default='66257b4')
     args = parser.parse_args()
     if (any(n < 0 for n in args.budgets) or not 0 <= args.maximum_changed <= 16
             or args.max_inexact < 1 or not np.isfinite(args.rmse) or args.rmse < 0
@@ -144,7 +145,7 @@ def main():
     offsets = [(0, 0)] + [(x, y) for y in range(-4, 5) for x in range(-4, 5) if x or y]
     args.cache.mkdir(parents=True, exist_ok=True)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    report = dict(scope=__doc__, baseline_commit='66257b4', reference_sha256=STATES_SHA256,
+    report = dict(scope=__doc__, baseline_commit=args.baseline_commit, reference_sha256=STATES_SHA256,
                   frames=len(states), resolution=[256, 192], logical_resolution=[128, 96], fps='25/3',
                   maximum_changed_pixels_per_cell=args.maximum_changed, max_inexact_frames=args.max_inexact,
                   rmse_limit=args.rmse, offsets=offsets, vector_penalty=8,

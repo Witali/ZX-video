@@ -63,6 +63,18 @@ class BoundedMotionTests(unittest.TestCase):
         np.testing.assert_array_equal(delta, expected_delta)
         np.testing.assert_array_equal(filtered, states)
 
+    def test_three_frame_error_cap_forces_repair_without_drift(self):
+        states = np.zeros((6, 3840), dtype=np.uint8)
+        states[:, 3072:] = 7
+        states[1:, 0] = 0x40
+        vectors, residual, filtered, stats = predict(states, [(0, 0)], budget=1, max_inexact=3)
+        self.assertEqual(stats['maximum_consecutive_inexact_frames'], 3)
+        self.assertEqual(stats['logical_changes_per_frame'], [0, 1, 1, 1, 0, 0])
+        np.testing.assert_array_equal(filtered[1:4, 0], [0, 0, 0])
+        np.testing.assert_array_equal(filtered[4:], states[4:])
+        np.testing.assert_array_equal(filtered[:, 3072:], states[:, 3072:])
+        np.testing.assert_array_equal(motion.decode(motion.encode(vectors, residual, 8, [(0, 0)], 2)), filtered)
+
 
 if __name__ == '__main__':
     unittest.main()

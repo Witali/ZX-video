@@ -1,0 +1,111 @@
+{
+  "scope": "Encode bounded-motion candidates as FHT1 with a fixed context map.\n\nRetrain canonical lengths on each candidate's actual direct bitmap bytes\nand XOR attributes. Keep the baseline predictor-to-context map, framing and\ndecoder unchanged. Independently restore every causal frame before saving.\nThis is an offline storage experiment, not a quality or playback approval.\n",
+  "baseline_commit": "2de2203",
+  "baseline_fht_sha256": "f686b56666e9061e6360cef6fa36fc49fb469d493624594b0f4fa9f686838f85",
+  "fixed_context_map_sha256": "068fa72874b2e7978d4505fa80213bad47ab55bcc9fc40e50fbcb728e786f176",
+  "complete": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "rows": [
+    {
+      "name": "bounded_motion_p2_b128_a1_e24",
+      "frames": 4971,
+      "states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+      "input_vectors_sha256": "ad2a2785fda255ba40f2e7913a000da8a940c250880ac7c3bbe46e60b6605c5b",
+      "input_residual_sha256": "c0d53e97d588ad0e9d54c590292665cc4b92ca6e06856a59312c49d75158d873",
+      "raw_bytes": 2823159,
+      "sha256": "f686b56666e9061e6360cef6fa36fc49fb469d493624594b0f4fa9f686838f85",
+      "exact_causal_frame_decode": true,
+      "exact_baseline_stream": true,
+      "tables_equal_baseline": true,
+      "groups": 622,
+      "max_group_bytes": 8610,
+      "values": 1688733,
+      "attribute_values": 36242,
+      "bits": 8715932,
+      "cache_frames": 4858,
+      "prefix_depth": 18,
+      "prefix_body_bytes": 12195,
+      "prefix_ram_regions": [
+        {
+          "base": 49152,
+          "bytes": 16384,
+          "sha256": "cac50a267627fec94d377b6ba27b2791ed643a68933187156064230444b5d86e"
+        },
+        {
+          "base": 47360,
+          "bytes": 256,
+          "sha256": "85b7e5401e2725784d39454a8b3439a8db34b790ea26c40f3b909bdff04ce9ea"
+        },
+        {
+          "base": 47616,
+          "bytes": 34,
+          "sha256": "ffe356115e1c0b8fbb505cb70e8b30dc586e7593f7f56a744f4c73de7a4ca6e1"
+        },
+        {
+          "base": 47856,
+          "bytes": 8,
+          "sha256": "c19cab3b905cdc103dadfd87f342a18e5e0abdd0f45e1da22ad370d0c0d7daff"
+        },
+        {
+          "base": 47872,
+          "bytes": 256,
+          "sha256": "7f52963d84feca8237a9530774664259622c9dee61191d9b87fe9e2db3f35598"
+        }
+      ],
+      "deflate_8192": 2050133,
+      "quality_approval": false,
+      "z80_cpu_measured": false
+    },
+    {
+      "name": "bounded_motion_p2_b128_a3_e24",
+      "frames": 4971,
+      "states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+      "input_vectors_sha256": "359c4c4a51f89395b875b0ba3193172f5cb07404d3833164c6fd33fcec0dabae",
+      "input_residual_sha256": "ea1acfba721385bb6c548393103634b69d56f06a51e7889335d181f002430978",
+      "raw_bytes": 2784318,
+      "sha256": "6e61aebc8174d4a532e205996e43a2ca9194187890e3efc769f88aa2816149df",
+      "exact_causal_frame_decode": true,
+      "exact_baseline_stream": false,
+      "tables_equal_baseline": false,
+      "groups": 622,
+      "max_group_bytes": 8612,
+      "values": 1648908,
+      "attribute_values": 36242,
+      "bits": 8497717,
+      "cache_frames": 4822,
+      "prefix_depth": 17,
+      "prefix_body_bytes": 12149,
+      "prefix_ram_regions": [
+        {
+          "base": 49152,
+          "bytes": 16384,
+          "sha256": "d0593f889fd887f598d795b02b8c1f41fee4c79302f3da3576e231b381e2336a"
+        },
+        {
+          "base": 47360,
+          "bytes": 256,
+          "sha256": "85b7e5401e2725784d39454a8b3439a8db34b790ea26c40f3b909bdff04ce9ea"
+        },
+        {
+          "base": 47616,
+          "bytes": 34,
+          "sha256": "d15e60632758b99cb4ee39a19edf25d7d3e25130fc2ed829ce4166ce43c6a3a6"
+        },
+        {
+          "base": 47856,
+          "bytes": 8,
+          "sha256": "c19cab3b905cdc103dadfd87f342a18e5e0abdd0f45e1da22ad370d0c0d7daff"
+        },
+        {
+          "base": 47872,
+          "bytes": 256,
+          "sha256": "7f52963d84feca8237a9530774664259622c9dee61191d9b87fe9e2db3f35598"
+        }
+      ],
+      "deflate_8192": 2004996,
+      "quality_approval": false,
+      "z80_cpu_measured": false
+    }
+  ]
+}
