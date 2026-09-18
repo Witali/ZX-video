@@ -1,0 +1,122 @@
+{
+  "scope": "Combine complete Z80 stage measurements, without claiming a player schedule.\n\nBefore: original FPR1 turbo ZX0, then copy its value bytes to the same kind\nof staging output. After: FPE1 turbo ZX0, then nibble Huffman into staging.\nThe sum is measured work of separate stages, NOT integrated frame timing.\nNo assumption is made that staging copies or register setup match a future\nplayer; drawing, motion, masks, audio, paging, IRQ, ULA and disk are absent.\n",
+  "baseline_commit": "f3f5390",
+  "frames": 4971,
+  "stages": [
+    {
+      "stage": "ZX0",
+      "before_tstates": 291270807,
+      "after_tstates": 191504507,
+      "delta_tstates": -99766300,
+      "before_per_frame_mean": 58594.00663850332,
+      "after_per_frame_mean": 38524.34258700463,
+      "delta_per_frame_mean": -20069.664051498694
+    },
+    {
+      "stage": "value_staging",
+      "before_tstates": 35474591,
+      "after_tstates": 362673773,
+      "delta_tstates": 327199182,
+      "before_per_frame_mean": 7136.308790987729,
+      "after_per_frame_mean": 72957.91048078857,
+      "delta_per_frame_mean": 65821.60168980084
+    },
+    {
+      "stage": "sum_of_separate_stages",
+      "before_tstates": 326745398,
+      "after_tstates": 554178280,
+      "delta_tstates": 227432882,
+      "before_per_frame_mean": 65730.31542949105,
+      "after_per_frame_mean": 111482.2530677932,
+      "delta_per_frame_mean": 45751.93763830215
+    }
+  ],
+  "nominal_six_field_budget_tstates": 425448,
+  "huffman_only_frames_over_budget": [
+    {
+      "index": 192,
+      "values": 2032,
+      "raw_tstates": 42690,
+      "huffman_tstates": 426404,
+      "delta_tstates": 383714
+    },
+    {
+      "index": 3375,
+      "values": 1975,
+      "raw_tstates": 41475,
+      "huffman_tstates": 474875,
+      "delta_tstates": 433400
+    },
+    {
+      "index": 3635,
+      "values": 2111,
+      "raw_tstates": 44331,
+      "huffman_tstates": 461854,
+      "delta_tstates": 417523
+    },
+    {
+      "index": 3685,
+      "values": 2221,
+      "raw_tstates": 46641,
+      "huffman_tstates": 554488,
+      "delta_tstates": 507847
+    },
+    {
+      "index": 3686,
+      "values": 1800,
+      "raw_tstates": 37800,
+      "huffman_tstates": 451771,
+      "delta_tstates": 413971
+    },
+    {
+      "index": 4841,
+      "values": 2283,
+      "raw_tstates": 47961,
+      "huffman_tstates": 454860,
+      "delta_tstates": 406899
+    }
+  ],
+  "worst_huffman_group": {
+    "index": 581,
+    "frames": 8,
+    "values": 10551,
+    "bits": 75397,
+    "input_bytes": 9425,
+    "raw_tstates": 221589,
+    "huffman_tstates": 2603037,
+    "delta_tstates": 2381448
+  },
+  "before_video_bytes": 2470635,
+  "after_video_bytes": 2339165,
+  "saved_bytes": 131470,
+  "before_contiguous_video_sectors": 9651,
+  "after_contiguous_video_sectors": 9138,
+  "sector_scope": "ceil(total stream bytes/256); excludes per-volume alignment and all other disk files",
+  "audio_bytes_previous_measurement": 77696,
+  "generous_three_disk_budget": 1937664,
+  "after_video_plus_audio_bytes": 2416861,
+  "minimum_excess_bytes": 479197,
+  "huffman_table_bytes": 12288,
+  "huffman_code_bytes": 76,
+  "benchmark_max_coded_group_bytes": 9425,
+  "benchmark_max_decoded_group_values": 10551,
+  "complete_stage_comparison": true,
+  "integrated_delivery_measured": false,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "decision": "Do not integrate the synchronous whole-frame Huffman path: six frames exceed the full frame budget before other work. A bounded producer and faster decoder need measurement; three disks are not achieved.",
+  "source_reports": [
+    {
+      "file": "motion_alphabet_zx0_cpu_measurements.json",
+      "sha256": "6bb75b4d59b755d8c391166a2ea872384d4655232d3433a8187b4249032f4078"
+    },
+    {
+      "file": "motion_entropy_zx0_cpu_measurements.json",
+      "sha256": "4f6d31ab56cb01209dc11d9bf2c69ce98d54779ed9cd9623305962f9e57c4a10"
+    },
+    {
+      "file": "huffman_z80_measurements.json",
+      "sha256": "714a29501b88712b9e08a0bb6e7e5d6250e4ebcaeb58abbfedcfb071a765ea2e"
+    }
+  ]
+}

@@ -233,6 +233,9 @@ class CPU(MemoryCPU):
                     self.carry = bool(value & 128); value = ((value << 1) | (value >> 7)) & 255
                 self.put(register, value); self.z = value == 0
                 return 15 if register == 6 else 8
+            if q & 0xC0 == 0xC0:
+                self.put(register, value | (1 << ((q >> 3) & 7)))
+                return 15 if register == 6 else 8
             if q & 0xC0 == 0x40:
                 self.z = value & (1 << ((q >> 3) & 7)) == 0
                 return 12 if register == 6 else 8
