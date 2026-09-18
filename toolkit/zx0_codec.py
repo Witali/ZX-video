@@ -7,7 +7,7 @@ See third_party/zx0/LICENSE for the BSD-3-Clause conditions and disclaimer.
 from pathlib import Path
 
 
-def decompress(data: bytes, limit: int = 8192) -> bytes:
+def decompress(data: bytes, limit: int = 8192, *, on_match=None, on_literals=None) -> bytes:
     """ZX0 v2 reference decoder, adapted from Einar Saukas' BSD-licensed dzx0.c."""
     position = 0
     mask = value = last_byte = 0
@@ -39,6 +39,7 @@ def decompress(data: bytes, limit: int = 8192) -> bytes:
     def copy(offset, length):
         if not 0 < offset <= len(output) or len(output)+length > limit:
             raise ValueError('invalid ZX0 match')
+        if on_match is not None: on_match(len(output), offset, length)
         for _ in range(length): output.append(output[-offset])
 
     offset = 1
@@ -47,6 +48,7 @@ def decompress(data: bytes, limit: int = 8192) -> bytes:
         if mode == 'literal':
             length = gamma()
             if len(output)+length > limit: raise ValueError('oversized ZX0 output')
+            if on_literals is not None: on_literals(len(output), length)
             for _ in range(length): output.append(byte())
             if not bit():
                 copy(offset, gamma())
