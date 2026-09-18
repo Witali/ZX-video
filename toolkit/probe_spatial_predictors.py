@@ -2,7 +2,8 @@
 
 Selection uses 8*changed bytes + popcount +8 for a nonzero vector.
 All intra sources are already decoded at the point of use. No new pixel
-loss, no Z80 implementation for left/second-above, no playback claim.
+loss; Z80 execution is checked separately by benchmark_spatial_tiles.py.
+This storage probe does not prove playback speed.
 """
 import argparse
 import json

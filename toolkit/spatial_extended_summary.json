@@ -1,0 +1,857 @@
+{
+  "scope": "Validate full-movie extended-intra CPU evidence against two age3 baselines.\n\nCPU work includes frame reconstruction and a separate ZX0 run, not delivery.\nPixel states are identical, but predictor choices and Huffman tables differ.\nThe actual disk layout, output, IRQ/ULA/ROM and sector latency are unmeasured.\n",
+  "baseline_commit": "7dea054",
+  "complete": true,
+  "old_above_binary_unchanged": true,
+  "states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "input_sha256": "e72db632ba43b5603f3388d45efaf2a1d4cabc273e94e61766b6461b830e6cd7",
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "full_frame_delivery_measured": false,
+  "video_bytes": 1848876,
+  "unchanged_ay_estimate_bytes": 77696,
+  "video_plus_ay_estimate_bytes": 1926572,
+  "preliminary_three_trd_margin_bytes": 11092,
+  "cpu": [
+    {
+      "frames": 4971,
+      "groups": 622,
+      "total_tstates": 1428953317,
+      "mean_frame_tstates": 287457.91933212633,
+      "max_frame_tstates": 1008630,
+      "worst_frame": 3685,
+      "frames_over_nominal_425448": 714,
+      "stages": {
+        "control": 185426715,
+        "patch": 287184066,
+        "attribute_pass": 40696361,
+        "huffman": 344286189,
+        "cache": 283495024,
+        "motion": 287864962
+      },
+      "bits": 8497717,
+      "values": 1648908,
+      "literals": 0,
+      "cache_frames": 4822,
+      "max_contiguous_input_bytes": 8612,
+      "code_bytes": 1388,
+      "state_bytes": 23,
+      "input_sha256": "6e61aebc8174d4a532e205996e43a2ca9194187890e3efc769f88aa2816149df",
+      "huffman_branches": {
+        "attribute": 36242,
+        "bitmap": 1612666,
+        "long": 164294
+      },
+      "worst_frames": [
+        {
+          "index": 3685,
+          "values": 2232,
+          "bits": 13900,
+          "total_tstates": 1008630,
+          "stages": {
+            "control": 38035,
+            "cache": 58792,
+            "patch": 161805,
+            "huffman": 542297,
+            "motion": 171910,
+            "attribute_pass": 35791
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 3686,
+          "values": 1805,
+          "bits": 11037,
+          "total_tstates": 905691,
+          "stages": {
+            "control": 38000,
+            "cache": 58792,
+            "patch": 156647,
+            "huffman": 423416,
+            "motion": 211767,
+            "attribute_pass": 17069
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 3687,
+          "values": 1682,
+          "bits": 9952,
+          "total_tstates": 847973,
+          "stages": {
+            "control": 38042,
+            "cache": 58792,
+            "patch": 152328,
+            "huffman": 375834,
+            "motion": 206896,
+            "attribute_pass": 16081
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4648,
+          "values": 1421,
+          "bits": 9301,
+          "total_tstates": 846494,
+          "stages": {
+            "control": 38133,
+            "cache": 58792,
+            "patch": 141066,
+            "motion": 206100,
+            "huffman": 394259,
+            "attribute_pass": 8144
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4585,
+          "values": 1274,
+          "bits": 8743,
+          "total_tstates": 845695,
+          "stages": {
+            "control": 38175,
+            "cache": 58792,
+            "patch": 137388,
+            "motion": 215788,
+            "huffman": 388303,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4580,
+          "values": 1266,
+          "bits": 8752,
+          "total_tstates": 836160,
+          "stages": {
+            "control": 38175,
+            "cache": 58792,
+            "patch": 136646,
+            "motion": 211063,
+            "huffman": 384235,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 3635,
+          "values": 2106,
+          "bits": 9008,
+          "total_tstates": 835717,
+          "stages": {
+            "control": 38056,
+            "cache": 58792,
+            "patch": 156953,
+            "motion": 180888,
+            "huffman": 368083,
+            "attribute_pass": 32945
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4652,
+          "values": 1426,
+          "bits": 9250,
+          "total_tstates": 835690,
+          "stages": {
+            "control": 38105,
+            "cache": 58792,
+            "patch": 139841,
+            "motion": 202130,
+            "huffman": 389573,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4617,
+          "values": 1315,
+          "bits": 8916,
+          "total_tstates": 834239,
+          "stages": {
+            "control": 38126,
+            "cache": 58792,
+            "patch": 137371,
+            "motion": 209556,
+            "huffman": 382297,
+            "attribute_pass": 8097
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4611,
+          "values": 1347,
+          "bits": 8812,
+          "total_tstates": 834145,
+          "stages": {
+            "control": 38182,
+            "cache": 58792,
+            "patch": 141409,
+            "motion": 213592,
+            "huffman": 373838,
+            "attribute_pass": 8332
+          },
+          "literals": 0,
+          "cache": true
+        }
+      ],
+      "worst_windows": [
+        {
+          "frames": 8,
+          "first": 4588,
+          "total_tstates": 6477663,
+          "mean_tstates": 809707.875
+        },
+        {
+          "frames": 50,
+          "first": 4574,
+          "total_tstates": 38654253,
+          "mean_tstates": 773085.06
+        },
+        {
+          "frames": 100,
+          "first": 4571,
+          "total_tstates": 76844496,
+          "mean_tstates": 768444.96
+        },
+        {
+          "frames": 200,
+          "first": 4481,
+          "total_tstates": 149891631,
+          "mean_tstates": 749458.155
+        }
+      ],
+      "idealized_queue": [
+        {
+          "budget_tstates": 425448,
+          "minimum_complete_frames": 167
+        },
+        {
+          "budget_tstates": 350000,
+          "minimum_complete_frames": 258
+        },
+        {
+          "budget_tstates": 300000,
+          "minimum_complete_frames": 351
+        },
+        {
+          "budget_tstates": 250000,
+          "minimum_complete_frames": 874
+        }
+      ]
+    },
+    {
+      "frames": 4971,
+      "groups": 622,
+      "total_tstates": 1358779063,
+      "mean_frame_tstates": 273341.19151076244,
+      "max_frame_tstates": 861629,
+      "worst_frame": 3685,
+      "frames_over_nominal_425448": 599,
+      "stages": {
+        "control": 184006919,
+        "patch": 244189676,
+        "attribute_pass": 40696361,
+        "huffman": 307118348,
+        "intra": 59713058,
+        "cache": 283201064,
+        "motion": 239853637
+      },
+      "values": 1471251,
+      "intra_tiles": 48267,
+      "code_bytes": 1639,
+      "state_bytes": 23,
+      "input_sha256": "4c6ac5cce858c7a351d9ff355209dc24c3e4d3c6f0ca1a86c226eab207a2f81b",
+      "huffman_branches": {
+        "attribute": 36242,
+        "bitmap": 1435009,
+        "long": 145782
+      },
+      "worst_frames": [
+        {
+          "index": 3685,
+          "intra_tiles": 110,
+          "values": 2082,
+          "bits": 12153,
+          "total_tstates": 861629,
+          "stages": {
+            "control": 34723,
+            "cache": 58792,
+            "patch": 46363,
+            "huffman": 472011,
+            "intra": 152340,
+            "motion": 61609,
+            "attribute_pass": 35791
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4585,
+          "intra_tiles": 1,
+          "values": 1273,
+          "bits": 8742,
+          "total_tstates": 842458,
+          "stages": {
+            "control": 38144,
+            "cache": 58792,
+            "patch": 136534,
+            "motion": 214793,
+            "huffman": 385697,
+            "intra": 1249,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4648,
+          "intra_tiles": 5,
+          "values": 1414,
+          "bits": 9327,
+          "total_tstates": 840014,
+          "stages": {
+            "control": 37985,
+            "cache": 58792,
+            "patch": 137392,
+            "motion": 199904,
+            "huffman": 391577,
+            "intra": 6220,
+            "attribute_pass": 8144
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4580,
+          "intra_tiles": 0,
+          "values": 1266,
+          "bits": 8745,
+          "total_tstates": 838497,
+          "stages": {
+            "control": 38175,
+            "cache": 58792,
+            "patch": 136646,
+            "motion": 211063,
+            "huffman": 386572,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4584,
+          "intra_tiles": 1,
+          "values": 1274,
+          "bits": 8814,
+          "total_tstates": 834506,
+          "stages": {
+            "control": 38151,
+            "cache": 58792,
+            "patch": 136260,
+            "motion": 218626,
+            "huffman": 374254,
+            "intra": 1174,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4652,
+          "intra_tiles": 2,
+          "values": 1424,
+          "bits": 9340,
+          "total_tstates": 833907,
+          "stages": {
+            "control": 38043,
+            "cache": 58792,
+            "patch": 138602,
+            "motion": 197944,
+            "huffman": 390804,
+            "intra": 2473,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4590,
+          "intra_tiles": 0,
+          "values": 1286,
+          "bits": 8708,
+          "total_tstates": 829606,
+          "stages": {
+            "control": 38182,
+            "cache": 58792,
+            "patch": 139301,
+            "motion": 215856,
+            "huffman": 370226,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4588,
+          "intra_tiles": 0,
+          "values": 1287,
+          "bits": 8826,
+          "total_tstates": 828025,
+          "stages": {
+            "control": 38182,
+            "cache": 58792,
+            "patch": 138335,
+            "motion": 209767,
+            "huffman": 375700,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4586,
+          "intra_tiles": 0,
+          "values": 1271,
+          "bits": 8727,
+          "total_tstates": 827673,
+          "stages": {
+            "control": 38196,
+            "cache": 58792,
+            "patch": 139801,
+            "motion": 201367,
+            "huffman": 382268,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4589,
+          "intra_tiles": 2,
+          "values": 1278,
+          "bits": 8714,
+          "total_tstates": 826410,
+          "stages": {
+            "control": 38113,
+            "cache": 58792,
+            "patch": 136627,
+            "motion": 208399,
+            "huffman": 374782,
+            "intra": 2448,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        }
+      ],
+      "worst_windows": [
+        {
+          "frames": 8,
+          "first": 4588,
+          "total_tstates": 6479065,
+          "mean_tstates": 809883.125
+        },
+        {
+          "frames": 50,
+          "first": 4568,
+          "total_tstates": 38385350,
+          "mean_tstates": 767707.0
+        },
+        {
+          "frames": 100,
+          "first": 4571,
+          "total_tstates": 76249391,
+          "mean_tstates": 762493.91
+        },
+        {
+          "frames": 200,
+          "first": 4480,
+          "total_tstates": 149198826,
+          "mean_tstates": 745994.13
+        }
+      ],
+      "idealized_queue": [
+        {
+          "budget_tstates": 425448,
+          "minimum_complete_frames": 165
+        },
+        {
+          "budget_tstates": 350000,
+          "minimum_complete_frames": 255
+        },
+        {
+          "budget_tstates": 300000,
+          "minimum_complete_frames": 346
+        },
+        {
+          "budget_tstates": 250000,
+          "minimum_complete_frames": 681
+        }
+      ]
+    },
+    {
+      "frames": 4971,
+      "groups": 622,
+      "total_tstates": 1344619738,
+      "mean_frame_tstates": 270492.8058740696,
+      "max_frame_tstates": 842114,
+      "worst_frame": 3685,
+      "frames_over_nominal_425448": 583,
+      "stages": {
+        "control": 183710894,
+        "patch": 236711860,
+        "attribute_pass": 40696361,
+        "huffman": 304165321,
+        "intra": 71432193,
+        "cache": 282965896,
+        "motion": 224937213
+      },
+      "values": 1473262,
+      "intra_tiles": 57352,
+      "intra_modes": {
+        "82": 43784,
+        "83": 12758,
+        "84": 810
+      },
+      "code_bytes": 2317,
+      "state_bytes": 23,
+      "input_sha256": "e72db632ba43b5603f3388d45efaf2a1d4cabc273e94e61766b6461b830e6cd7",
+      "huffman_branches": {
+        "attribute": 36242,
+        "bitmap": 1437020,
+        "long": 137055
+      },
+      "worst_frames": [
+        {
+          "index": 3685,
+          "intra_tiles": 119,
+          "intra_modes": {
+            "82": 104,
+            "83": 11,
+            "84": 4
+          },
+          "values": 2106,
+          "bits": 12034,
+          "total_tstates": 842114,
+          "stages": {
+            "control": 34402,
+            "cache": 58792,
+            "patch": 37458,
+            "huffman": 470041,
+            "intra": 167702,
+            "motion": 37928,
+            "attribute_pass": 35791
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4585,
+          "intra_tiles": 15,
+          "intra_modes": {
+            "84": 1,
+            "83": 13,
+            "82": 1
+          },
+          "values": 1266,
+          "bits": 8686,
+          "total_tstates": 815944,
+          "stages": {
+            "control": 37710,
+            "cache": 58792,
+            "patch": 124901,
+            "motion": 193181,
+            "huffman": 376435,
+            "intra": 17676,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4590,
+          "intra_tiles": 20,
+          "intra_modes": {
+            "83": 16,
+            "82": 3,
+            "84": 1
+          },
+          "values": 1274,
+          "bits": 8617,
+          "total_tstates": 812554,
+          "stages": {
+            "control": 37562,
+            "cache": 58792,
+            "patch": 122583,
+            "motion": 191588,
+            "huffman": 371187,
+            "intra": 23593,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4580,
+          "intra_tiles": 18,
+          "intra_modes": {
+            "83": 18
+          },
+          "values": 1256,
+          "bits": 8659,
+          "total_tstates": 811631,
+          "stages": {
+            "control": 37617,
+            "cache": 58792,
+            "patch": 122983,
+            "motion": 184336,
+            "huffman": 380183,
+            "intra": 20471,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4584,
+          "intra_tiles": 21,
+          "intra_modes": {
+            "83": 20,
+            "82": 1
+          },
+          "values": 1274,
+          "bits": 8729,
+          "total_tstates": 809870,
+          "stages": {
+            "control": 37538,
+            "cache": 58792,
+            "patch": 120402,
+            "motion": 192002,
+            "huffman": 369399,
+            "intra": 24488,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4652,
+          "intra_tiles": 23,
+          "intra_modes": {
+            "82": 3,
+            "83": 20
+          },
+          "values": 1403,
+          "bits": 9246,
+          "total_tstates": 809762,
+          "stages": {
+            "control": 37420,
+            "cache": 58792,
+            "patch": 121265,
+            "motion": 172239,
+            "huffman": 385863,
+            "intra": 26934,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4582,
+          "intra_tiles": 17,
+          "intra_modes": {
+            "83": 15,
+            "84": 1,
+            "82": 1
+          },
+          "values": 1278,
+          "bits": 8723,
+          "total_tstates": 805061,
+          "stages": {
+            "control": 37662,
+            "cache": 58792,
+            "patch": 123614,
+            "motion": 183418,
+            "huffman": 374181,
+            "intra": 20145,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4648,
+          "intra_tiles": 34,
+          "intra_modes": {
+            "82": 10,
+            "83": 24
+          },
+          "values": 1417,
+          "bits": 9209,
+          "total_tstates": 803122,
+          "stages": {
+            "control": 37086,
+            "cache": 58792,
+            "patch": 111449,
+            "motion": 157864,
+            "huffman": 387394,
+            "intra": 42393,
+            "attribute_pass": 8144
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4586,
+          "intra_tiles": 24,
+          "intra_modes": {
+            "83": 24
+          },
+          "values": 1261,
+          "bits": 8649,
+          "total_tstates": 799647,
+          "stages": {
+            "control": 37452,
+            "cache": 58792,
+            "patch": 119931,
+            "motion": 169876,
+            "huffman": 378634,
+            "intra": 27713,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        },
+        {
+          "index": 4588,
+          "intra_tiles": 21,
+          "intra_modes": {
+            "83": 20,
+            "82": 1
+          },
+          "values": 1282,
+          "bits": 8754,
+          "total_tstates": 798084,
+          "stages": {
+            "control": 37531,
+            "cache": 58792,
+            "patch": 120363,
+            "motion": 175203,
+            "huffman": 374323,
+            "intra": 24623,
+            "attribute_pass": 7249
+          },
+          "literals": 0,
+          "cache": true
+        }
+      ],
+      "worst_windows": [
+        {
+          "frames": 8,
+          "first": 4588,
+          "total_tstates": 6249903,
+          "mean_tstates": 781237.875
+        },
+        {
+          "frames": 50,
+          "first": 4573,
+          "total_tstates": 37131522,
+          "mean_tstates": 742630.44
+        },
+        {
+          "frames": 100,
+          "first": 4571,
+          "total_tstates": 73764357,
+          "mean_tstates": 737643.57
+        },
+        {
+          "frames": 200,
+          "first": 4481,
+          "total_tstates": 144428361,
+          "mean_tstates": 722141.805
+        }
+      ],
+      "idealized_queue": [
+        {
+          "budget_tstates": 425448,
+          "minimum_complete_frames": 152
+        },
+        {
+          "budget_tstates": 350000,
+          "minimum_complete_frames": 240
+        },
+        {
+          "budget_tstates": 300000,
+          "minimum_complete_frames": 326
+        },
+        {
+          "budget_tstates": 250000,
+          "minimum_complete_frames": 641
+        }
+      ]
+    }
+  ],
+  "zx0": {
+    "blocks": 323,
+    "raw_bytes": 2640460,
+    "total_tstates": 102179564,
+    "mean_block_tstates": 316345.39938080497,
+    "max_block_tstates": 548379,
+    "bytes_with_headers": 1848876
+  },
+  "deltas": [
+    {
+      "baseline": "spatial_tiles_baseline",
+      "reconstruction_tstates": -84333579,
+      "zx0_tstates": -7500190,
+      "two_stage_tstates_before": 1538633071,
+      "two_stage_tstates_after": 1446799302,
+      "two_stage_delta_tstates": -91833769,
+      "code_delta_bytes": 929,
+      "stages": {
+        "attribute_pass": 0,
+        "cache": -529128,
+        "control": -1715821,
+        "huffman": -40120868,
+        "intra": 71432193,
+        "motion": -62927749,
+        "patch": -50472206
+      }
+    },
+    {
+      "baseline": "spatial_tiles_motion_16",
+      "reconstruction_tstates": -14159325,
+      "zx0_tstates": -1191608,
+      "two_stage_tstates_before": 1462150235,
+      "two_stage_tstates_after": 1446799302,
+      "two_stage_delta_tstates": -15350933,
+      "code_delta_bytes": 678,
+      "stages": {
+        "attribute_pass": 0,
+        "cache": -235168,
+        "control": -296025,
+        "huffman": -2953027,
+        "intra": 11719135,
+        "motion": -14916424,
+        "patch": -7477816
+      }
+    }
+  ],
+  "intra_tstates": {
+    "above": "1091 top /1133 below +25*N",
+    "left": "902 left edge /982 elsewhere +25*N",
+    "above2": "1103 top /1187 below +25*N",
+    "exclusions": "external CALL and Huffman are separate stages"
+  },
+  "same_above_stream_extended_dispatch_delta_formula": "34*48267 =1641078 T; not an additional full CPU run"
+}

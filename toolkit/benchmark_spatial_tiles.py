@@ -1,4 +1,4 @@
-"""Execute every FHS1 motion-context frame with above-row intra prediction.
+"""Execute every FHS1 motion-context frame with causal intra prediction.
 
 CPU fixture only: includes causal cache/motion/intra/masks/values/attributes;
 excludes ZX0/metadata, input refill/paging, native output, IRQ/ULA/ROM/disk.
@@ -24,6 +24,8 @@ def main():
     p.add_argument('--motion-cache', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--states-sha256', required=True)
+    p.add_argument('--extended', action='store_true', help='enable all three spatial predictors')
+    p.add_argument('--baseline-commit', default='7dea054')
     args = p.parse_args()
     data = args.fhs.read_bytes(); r = Reader(data)
     model, _, count, mapping, tables = read_header(r)
@@ -31,8 +33,9 @@ def main():
         states = saved['states']
     if model != 0 or states.shape != (4971, 3840) or count != len(states) or sha(states.tobytes()) != args.states_sha256:
         raise ValueError('model/source mismatch')
-    h = Harness(tables, mapping, OFFSETS, skip_empty=True, hybrid=True, intra_above=True)
-    report = dict(scope=__doc__, baseline_commit='e7727cd', input_sha256=sha(data),
+    h = Harness(tables, mapping, OFFSETS, skip_empty=True, hybrid=True, intra_above=True, intra_extended=args.extended)
+    report = dict(scope=__doc__, baseline_commit=args.baseline_commit, input_sha256=sha(data),
+        intra_extended=args.extended,
         states_sha256=sha(states.tobytes()), frames_expected=count, complete=False,
         code_bytes=h.labels['state']-machine.CODE, state_bytes=h.labels['end']-h.labels['state'],
         code_hex=h.code.hex(), labels=h.labels, instruction_listing=h.listing,
@@ -43,22 +46,24 @@ def main():
     start = 0
     while start < count:
         n, flags, bits, vectors, bm, at, encoded = read_group(r, count-start)
-        if any(v > 82 for v in vectors):
+        if any(v > (84 if args.extended else 82) for v in vectors):
             raise ValueError('this Z80 path supports above-row intra only')
         h.begin(encoded, vectors, bm, at)
         for i in range(n):
             got = h.run(i, states[start+i].tobytes())
             expected = intra = 0
+            modes = Counter()
             for tile, v in enumerate(vectors[i*192:(i+1)*192]):
-                if v == 82:
+                if v >= 82:
                     values = sum(b.bit_count() for b in bm[i*384+tile*2:i*384+tile*2+2])
-                    expected += (1057 if tile < 16 else 1099)+25*values
+                    expected += machine.intra_tstates(v, tile, values, extended=args.extended)
                     intra += 1
+                    modes[v] += 1
             values = sum(b.bit_count() for b in bm[i*384:(i+1)*384]+at[i*96:(i+1)*96])
             if (got['stages'].get('intra', 0) != expected or got['values'] != values
                     or got['cache'] != bool(flags & (128 >> i)) or got['literals']):
                 raise AssertionError('formula/coverage/cache mismatch')
-            report['frames'].append(dict(index=start+i, intra_tiles=intra, **got))
+            report['frames'].append(dict(index=start+i, intra_tiles=intra, intra_modes=dict(modes), **got))
         if h.position() != bits:
             raise AssertionError('group bit coverage')
         report['groups'].append(dict(start=start, frames=n, bits=bits, encoded_bytes=len(encoded)))
@@ -75,6 +80,7 @@ def main():
         mean_frame_tstates=sum(totals)/count, max_frame_tstates=max(totals), worst_frame=totals.index(max(totals)),
         frames_over_nominal_425448=sum(t > 425448 for t in totals), stages=dict(stages),
         values=sum(f['values'] for f in report['frames']), intra_tiles=sum(f['intra_tiles'] for f in report['frames']))
+    report['summary']['intra_modes'] = dict(sum((Counter(row['intra_modes']) for row in report['frames']), Counter()))
     report['instruction_histogram'] = [dict(address=pc, tstates=t, count=n) for (pc, t), n in sorted(h.histogram.items())]
     if sum(t*n for (_, t), n in h.histogram.items()) != sum(totals):
         raise AssertionError('histogram differs')

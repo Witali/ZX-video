@@ -46,10 +46,10 @@ class GuardCPU(CPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False):
+    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False):
         self.hybrid = hybrid
         self.raw_kind = raw_kind
-        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above)
+        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above, intra_extended=intra_extended)
         self.raw_value_entries = {self.labels[f'raw_value_{i}'] for i in range(16)} if raw_kind is not None else set()
         self.cpu = GuardCPU(b'', b'')
         self.cpu.port_7ffd, self.cpu.sp = 0x16, STACK

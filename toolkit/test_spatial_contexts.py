@@ -11,6 +11,7 @@ from probe_spatial_predictors import choose as choose_extended
 from optimize_spatial_tiles import choose_coded
 from probe_motion_entropy import Reader
 from benchmark_causal_tiles import Harness
+import causal_tile_z80 as machine
 import test_causal_tiles as causal_tests
 
 
@@ -76,28 +77,35 @@ class SpatialContextTests(unittest.TestCase):
             self.assertEqual(actual, states.tobytes())
             self.assertEqual(decoded, detail['frames'])
             if model == 0:
-                self.run_z80(data, states)
+                old = self.run_z80(data, states)
+                new = self.run_z80(data, states, extended=True)
+                for i, (before, after) in enumerate(zip(old, new)):
+                    delta = 34*int(np.count_nonzero(vectors[i] == 82))
+                    self.assertEqual(after['total_tstates']-before['total_tstates'], delta)
+                    self.assertEqual(after['stages'].get('intra', 0)-before['stages'].get('intra', 0), delta)
 
-    def run_z80(self, data, states):
+    def run_z80(self, data, states, *, extended=False):
         r = Reader(data)
         model, _, remaining, mapping, tables = spatial.read_header(r)
         self.assertEqual(model, 0)
-        h = Harness(tables, mapping, spatial.OFFSETS, skip_empty=True, hybrid=True, intra_above=True)
-        start = 0
+        h = Harness(tables, mapping, spatial.OFFSETS, skip_empty=True, hybrid=True, intra_above=True, intra_extended=extended)
+        start, results = 0, []
         while remaining:
             n, _, bits, v, bm, at, encoded = spatial.read_group(r, remaining)
             h.begin(encoded, v, bm, at)
             for i in range(n):
                 got = h.run(i, states[start+i].tobytes())
+                results.append(got)
                 expected = 0
                 for tile, vector in enumerate(v[i*192:(i+1)*192]):
-                    if vector == 82:
+                    if vector >= 82:
                         count = sum(b.bit_count() for b in bm[i*384+tile*2:i*384+tile*2+2])
-                        expected += (1057 if tile < 16 else 1099)+25*count
+                        expected += machine.intra_tstates(vector, tile, count, extended=extended)
                 self.assertEqual(got['stages'].get('intra', 0), expected)
             self.assertEqual(h.position(), bits)
             start += n; remaining -= n
         r.end()
+        return results
 
     def test_irq_during_intra_and_motion(self):
         states = np.zeros((3, 3840), dtype=np.uint8)
@@ -135,10 +143,36 @@ class SpatialContextTests(unittest.TestCase):
             data, detail = spatial.encode(header(2), states, vv, dd, 0, mapping, table)
             actual, rows = spatial.decode(data)
             self.assertEqual(actual, states.tobytes()); self.assertEqual(rows, detail['frames'])
+            self.run_z80(data, states, extended=True)
         expected_v, expected_d, _ = choose(states, vectors, residual)
         only_above_v, only_above_d = choose_extended(states, vectors, residual, ['above'])
         np.testing.assert_array_equal(only_above_v, expected_v)
         np.testing.assert_array_equal(only_above_d, expected_d)
+
+    def test_extended_z80_edges_corrections_and_irq(self):
+        # Three all-intra frames exercise first rows, left edges and stripes.
+        # Corrections on both bytes must feed the next causal prediction.
+        rng = np.random.default_rng(83084)
+        states = rng.choice(np.array([0, 255], dtype=np.uint8), (3, 3840))
+        vectors = np.array([np.full(192, v, dtype=np.uint8) for v in (82, 83, 84)])
+        residual = states.copy()
+        for i, v in enumerate((82, 83, 84)):
+            rows = states[i, :3072].reshape(96, 32)
+            previous = np.zeros_like(rows)
+            if v == 82:
+                previous[1:] = rows[:-1]
+            elif v == 83:
+                previous[:, 1:] = rows[:, :-1]
+            else:
+                previous[2:] = rows[:-2]
+            residual[i, :3072] ^= previous.ravel()
+            if i:
+                residual[i, 3072:] ^= states[i-1, 3072:]
+        table = bytes([1]+[0]*254+[1])
+        data, _ = spatial.encode(header(3), states, vectors, residual, 0, bytes(256), [table]*2)
+        self.assertEqual(spatial.decode(data)[0], states.tobytes())
+        self.run_z80(data, states, extended=True)
+        causal_tests.CausalTileTests.exercise_irq(self, True, spatial_data=data, spatial_extended=True)
 
 
 if __name__ == '__main__':

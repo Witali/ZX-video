@@ -7,7 +7,7 @@ hold 16 rows with horizontal zero padding. No host-generated predictions.
 Optional hybrid=True accepts FHT1 inline literals, raster-order attributes
 and a validated per-frame motion-cache flag. Default FPD1 code is unchanged.
 With intra_above=True, vector82 instead reads the already corrected above
-row (FHS1 motion context). Other spatial vectors are not implemented here.
+row (FHS1 motion context). intra_extended=True adds left/second-above (83/84).
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -18,7 +18,29 @@ CODE, FRAME, CACHE = prefix.CODE, 0x6400, 0x7400
 VECTOR_X, VECTOR_Y, VECTOR_PHASE, ROW_LOW, ROW_HIGH = 0x9800, 0x9900, 0x9a00, 0x9b00, 0x9c00
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False):
+def intra_tstates(vector, tile, corrections, *, extended=False):
+    """Instruction-table formula, including RET, excluding caller/Huffman.
+
+    Common body is 629 T. Above reads cost 32/53 T across a page (zero
+    boundary/visible) or 26 T in the same page. Left reads cost 32/42 T
+    for even fields; odd fields already have the corrected byte in A.
+    Extended dispatch costs 17 T for left and 34 T for either above mode.
+    """
+    if not 0 <= tile < 192 or not 0 <= corrections <= 16:
+        raise ValueError('invalid intra tile')
+    if vector == 82:
+        base = 1057 if tile < 16 else 1099
+        return base+25*corrections+(34 if extended else 0)
+    if not extended or vector not in (83, 84):
+        raise ValueError('unsupported intra vector')
+    if vector == 83:
+        return 629+17+8*(32 if tile % 16 == 0 else 42)+25*corrections
+    return 629+34+4*(32 if tile < 16 else 53)+12*26+25*corrections
+
+
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False):
+    if intra_extended and not intra_above:
+        raise ValueError('extended intra requires intra_above')
     if intra_above and (not hybrid or not skip_empty or raw_kind is not None):
         raise ValueError('intra above requires the separate attribute/skip-empty path')
     if raw_kind is not None and (raw_kind not in (0, 1) or not hybrid or not skip_empty):
@@ -59,22 +81,36 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     def next_output_row():
         emit('LD A,L', [0x7d], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD L,A', [0x6f], 4)
 
-    def read_above(field):
-        # Tiles align to eight rows / one 256-byte page. Fields 0/1
+    def read_above(field, distance=1):
+        # Tiles align to eight rows / one 256-byte page. First 2*distance fields
         # refer to the previous page (or virtual zero top); all later
         # fields have their above byte in the same page as DE.
-        if field < 2:
+        tag = f'{field}' if distance == 1 else f'{distance}_{field}'
+        if field < 2*distance:
             emit('LD A,D', [0x7a], 4); emit('CP frame_page', [0xfe, FRAME >> 8], 7)
-            jump('JR NZ,above_visible', 0x20, f'above_visible_{field}', [7, 12], True)
-            emit('XOR A', [0xaf], 4); jump('JP above_ready', 0xc3, f'above_ready_{field}', 10)
-            a.label(f'above_visible_{field}')
+            jump('JR NZ,above_visible', 0x20, f'above_visible_{tag}', [7, 12], True)
+            emit('XOR A', [0xaf], 4); jump('JP above_ready', 0xc3, f'above_ready_{tag}', 10)
+            a.label(f'above_visible_{tag}')
             emit('LD H,D', [0x62], 4); emit('DEC H', [0x25], 4)
-            emit('LD A,E', [0x7b], 4); emit('ADD A,224', [0xc6, 224], 7)
+            emit('LD A,E', [0x7b], 4); emit(f'ADD A,{256-32*distance}', [0xc6, 256-32*distance], 7)
             emit('LD L,A', [0x6f], 4); emit('LD A,(HL)', [0x7e], 7)
-            a.label(f'above_ready_{field}')
+            a.label(f'above_ready_{tag}')
         else:
-            emit('LD A,E', [0x7b], 4); emit('SUB 32', [0xd6, 32], 7)
+            emit('LD A,E', [0x7b], 4); emit(f'SUB {32*distance}', [0xd6, 32*distance], 7)
             emit('LD L,A', [0x6f], 4); emit('LD H,D', [0x62], 4); emit('LD A,(HL)', [0x7e], 7)
+
+    def read_left(field):
+        # Odd fields use A from the immediately preceding corrected store.
+        # INC E / SLA B / JP do not alter A, and no row boundary lies here.
+        if field % 2:
+            return
+        emit('LD A,E', [0x7b], 4); emit('AND 31', [0xe6, 31], 7)
+        jump('JR NZ,left_visible', 0x20, f'left_visible_{field}', [7, 12], True)
+        emit('XOR A', [0xaf], 4); jump('JP left_ready', 0xc3, f'left_ready_{field}', 10)
+        a.label(f'left_visible_{field}')
+        emit('LD H,D', [0x62], 4); emit('LD L,E', [0x6b], 4)
+        emit('DEC L', [0x2d], 4); emit('LD A,(HL)', [0x7e], 7)
+        a.label(f'left_ready_{field}')
 
     a.label('frame')
     load('LD IX,(source)', (0xdd, 0x2a), 'source', 20)
@@ -115,7 +151,8 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         a.label('tile_done')
     elif hybrid:
         emit('CP intra_vector' if intra_above else 'CP literal_vector', [0xfe, 82], 7)
-        jump('JP Z,literal_tile', 0xca, 'literal_tile', 10)
+        jump('JP NC,literal_tile' if intra_extended else 'JP Z,literal_tile',
+             0xd2 if intra_extended else 0xca, 'literal_tile', 10)
     if raw_kind is None:
         emit('OR A', [0xb7], 4); jump('CALL NZ,motion', 0xc4, 'motion', [10, 17])
         jump('CALL patches', 0xcd, 'patches', 17)
@@ -195,20 +232,32 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('LD C,(HL)', [0x4e], 7); emit('INC HL', [0x23], 6)
         load('LD (bitmap_masks),HL', 0x22, 'bitmap_masks', 16)
         load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
-        for field in range(16):
-            if field == 8:
-                emit('LD B,C', [0x41], 4)
-            read_above(field)
-            emit('SLA B', [0xcb, 0x20], 8)
-            jump('JP NC,intra_store', 0xd2, f'intra_store_{field}', 10)
-            emit('EXX', [0xd9], 4); jump('CALL bitmap', 0xcd, 'bitmap', 17); emit('EXX', [0xd9], 4)
-            a.label(f'intra_store_{field}'); emit('LD (DE),A', [0x12], 7)
-            if field < 15:
-                if not field % 2:
-                    emit('INC E', [0x1c], 4)
+        if intra_extended:
+            emit('CP left_vector', [0xfe, 83], 7)
+            jump('JP Z,intra_left', 0xca, 'intra_left', 10)
+            emit('CP second_above_vector', [0xfe, 84], 7)
+            jump('JP Z,intra_above2', 0xca, 'intra_above2', 10)
+        for name in (('above', 'left', 'above2') if intra_extended else ('above',)):
+            if name != 'above':
+                a.label('intra_'+name)
+            for field in range(16):
+                if field == 8:
+                    emit('LD B,C', [0x41], 4)
+                if name == 'left':
+                    read_left(field)
                 else:
-                    emit('LD A,E', [0x7b], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD E,A', [0x5f], 4)
-        emit('RET', [0xc9], 10)
+                    read_above(field, 2 if name == 'above2' else 1)
+                tag = str(field) if name == 'above' else f'{name}_{field}'
+                emit('SLA B', [0xcb, 0x20], 8)
+                jump('JP NC,intra_store', 0xd2, f'intra_store_{tag}', 10)
+                emit('EXX', [0xd9], 4); jump('CALL bitmap', 0xcd, 'bitmap', 17); emit('EXX', [0xd9], 4)
+                a.label(f'intra_store_{tag}'); emit('LD (DE),A', [0x12], 7)
+                if field < 15:
+                    if not field % 2:
+                        emit('INC E', [0x1c], 4)
+                    else:
+                        emit('LD A,E', [0x7b], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD E,A', [0x5f], 4)
+            emit('RET', [0xc9], 10)
 
     if raw_kind is not None:
         stage = 'raw_patch'
