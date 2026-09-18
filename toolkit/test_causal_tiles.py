@@ -146,15 +146,25 @@ class CausalTileTests(unittest.TestCase):
             with self.subTest(skip_empty=skip_empty):
                 self.exercise_irq(skip_empty)
 
-    def exercise_irq(self, skip_empty):
+    def exercise_irq(self, skip_empty, *, hybrid_data=None):
         tables, mapping = [bytes([8]*256)]*2, bytes(256)
-        h = Harness(tables, mapping, OFFSETS, skip_empty=skip_empty)
         # Several moving boundary tiles, attributes and untouched regions.
         v = bytearray(192)
         for tile, vector in ((0, 1), (15, 9), (176, 73), (191, 81)):
             v[tile] = vector
         current = bytes(255 if i % 401 == 0 else 0 for i in range(3840))
         _, encoded, vectors, bm, at = group(bytes(3840), [bytes(v)], [current], tables, mapping)
+        targets = [current]
+        if hybrid_data is not None:
+            from probe_hybrid_tiles import read_header, read_group, decode
+            from probe_motion_entropy import Reader
+            r = Reader(hybrid_data)
+            _, n, _, mapping, tables = read_header(r)
+            count, _, _, vectors, bm, at, encoded = read_group(r, n)
+            self.assertEqual(count, n); r.end()
+            restored, _ = decode(hybrid_data)
+            targets = [restored[i*3840:(i+1)*3840] for i in range(n)]
+        h = Harness(tables, mapping, OFFSETS, skip_empty=skip_empty, hybrid=hybrid_data is not None)
         h.begin(encoded, vectors, bm, at)
         a = MiniAssembler(0x8800)
         ay_interrupt.emit(a)
@@ -198,7 +208,8 @@ class CausalTileTests(unittest.TestCase):
             cpu.guarding = True
             return cpu.tstates-start
 
-        h.run(0, current, interrupt)
+        for i, target in enumerate(targets):
+            h.run(i, target, interrupt)
         self.assertGreater(calls, 10000)
 
 

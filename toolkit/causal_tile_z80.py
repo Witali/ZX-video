@@ -4,6 +4,8 @@ Consumes expanded frame vectors/bitmaps/attribute masks and contiguous
 Huffman input. The entire motion predictor and masked value application
 execute on Z80. History is one 3840-byte compact frame; 1024 cache bytes
 hold 16 rows with horizontal zero padding. No host-generated predictions.
+Optional hybrid=True accepts FHT1 inline literals, raster-order attributes
+and a validated per-frame motion-cache flag. Default FPD1 code is unchanged.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -14,7 +16,7 @@ CODE, FRAME, CACHE = prefix.CODE, 0x6400, 0x7400
 VECTOR_X, VECTOR_Y, VECTOR_PHASE, ROW_LOW, ROW_HIGH = 0x9800, 0x9900, 0x9a00, 0x9b00, 0x9c00
 
 
-def build(tables, mapping, offsets, *, skip_empty=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False):
     if len(offsets) != 81 or offsets[0] != (0, 0) or set(offsets) != {(x, y) for x in range(-4, 5) for y in range(-4, 5)}:
         raise ValueError('expected the complete +/-4 motion alphabet')
     original, labels, instructions, layout = prefix.build(tables, mapping)
@@ -56,9 +58,13 @@ def build(tables, mapping, offsets, *, skip_empty=False):
     load('LD A,(bit_page)', 0x3a, 'bit_page', 13)
     emit('EXX', [0xd9], 4); emit('LD C,A', [0x4f], 4); emit('EXX', [0xd9], 4)
     wordop('LD HL,compact_frame', 0x21, FRAME, 10); load('LD (target),HL', 0x22, 'target', 16)
-    wordop('LD HL,attributes', 0x21, FRAME+3072, 10); load('LD (attr_target),HL', 0x22, 'attr_target', 16)
+    if not hybrid:
+        wordop('LD HL,attributes', 0x21, FRAME+3072, 10); load('LD (attr_target),HL', 0x22, 'attr_target', 16)
     emit('XOR A', [0xaf], 4); load('LD (stripe_y),A', 0x32, 'stripe_y', 13)
     emit('LD A,12', [0x3e, 12], 7); load('LD (stripes_left),A', 0x32, 'stripes_left', 13)
+    if hybrid:
+        load('LD A,(cache_enabled)', 0x3a, 'cache_enabled', 13)
+        emit('OR A', [0xb7], 4); jump('JP Z,stripe', 0xca, 'stripe', 10)
     # The top four virtual rows are black. Padding columns stay zero from
     # cache initialization; no routine writes them.
     wordop('LD DE,top_virtual_cache_rows', 0x11, CACHE+12*64+1, 10)
@@ -75,24 +81,40 @@ def build(tables, mapping, offsets, *, skip_empty=False):
     load('LD HL,(vectors)', 0x2a, 'vectors', 16)
     emit('LD A,(HL)', [0x7e], 7); emit('INC HL', [0x23], 6)
     load('LD (vectors),HL', 0x22, 'vectors', 16)
+    if hybrid:
+        emit('CP literal_vector', [0xfe, 82], 7)
+        jump('JP Z,literal_tile', 0xca, 'literal_tile', 10)
     emit('OR A', [0xb7], 4); jump('CALL NZ,motion', 0xc4, 'motion', [10, 17])
     jump('CALL patches', 0xcd, 'patches', 17)
+    if hybrid:
+        jump('JP tile_done', 0xc3, 'tile_done', 10)
+        a.label('literal_tile')
+        load('LD HL,(bitmap_masks)', 0x2a, 'bitmap_masks', 16)
+        emit('INC HL', [0x23], 6); emit('INC HL', [0x23], 6)
+        load('LD (bitmap_masks),HL', 0x22, 'bitmap_masks', 16)
+        jump('CALL literal', 0xcd, 'literal', 17)
+        a.label('tile_done')
     load('LD HL,(target)', 0x2a, 'target', 16)
     emit('INC L', [0x2c], 4); emit('INC L', [0x2c], 4)
     load('LD (target),HL', 0x22, 'target', 16)
-    load('LD HL,(attr_target)', 0x2a, 'attr_target', 16)
-    emit('INC HL', [0x23], 6); emit('INC HL', [0x23], 6)
-    load('LD (attr_target),HL', 0x22, 'attr_target', 16)
+    if not hybrid:
+        load('LD HL,(attr_target)', 0x2a, 'attr_target', 16)
+        emit('INC HL', [0x23], 6); emit('INC HL', [0x23], 6)
+        load('LD (attr_target),HL', 0x22, 'attr_target', 16)
     load('LD HL,tiles_left', 0x21, 'tiles_left', 10)
     emit('DEC (HL)', [0x35], 11); jump('JP NZ,tile', 0xc2, 'tile', 10)
     load('LD HL,stripes_left', 0x21, 'stripes_left', 10)
     emit('DEC (HL)', [0x35], 11); jump('JP Z,frame_done', 0xca, 'frame_done', 10)
     load('LD HL,(target)', 0x2a, 'target', 16); wordop('LD DE,224', 0x11, 224, 10)
     emit('ADD HL,DE', [0x19], 11); load('LD (target),HL', 0x22, 'target', 16)
-    load('LD HL,(attr_target)', 0x2a, 'attr_target', 16); wordop('LD DE,32', 0x11, 32, 10)
-    emit('ADD HL,DE', [0x19], 11); load('LD (attr_target),HL', 0x22, 'attr_target', 16)
+    if not hybrid:
+        load('LD HL,(attr_target)', 0x2a, 'attr_target', 16); wordop('LD DE,32', 0x11, 32, 10)
+        emit('ADD HL,DE', [0x19], 11); load('LD (attr_target),HL', 0x22, 'attr_target', 16)
     load('LD A,(stripe_y)', 0x3a, 'stripe_y', 13)
     emit('ADD A,8', [0xc6, 8], 7); load('LD (stripe_y),A', 0x32, 'stripe_y', 13)
+    if hybrid:
+        load('LD A,(cache_enabled)', 0x3a, 'cache_enabled', 13)
+        emit('OR A', [0xb7], 4); jump('JP Z,stripe', 0xca, 'stripe', 10)
     load('LD HL,(cache_read)', 0x2a, 'cache_read', 16)
     load('LD DE,(cache_write)', (0xed, 0x5b), 'cache_write', 20)
     load('LD A,(stripes_left)', 0x3a, 'stripes_left', 13)
@@ -104,9 +126,30 @@ def build(tables, mapping, offsets, *, skip_empty=False):
     emit('LD B,4', [0x06, 4], 7); jump('CALL cache_zero', 0xcd, 'cache_zero', 17)
     jump('JP save_cache', 0xc3, 'save_cache', 10)
     a.label('frame_done')
+    if hybrid:
+        jump('CALL attribute_pass', 0xcd, 'attribute_pass', 17)
     load('LD (source),IX', (0xdd, 0x22), 'source', 20)
     emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4); emit('EXX', [0xd9], 4)
     load('LD (bit_page),A', 0x32, 'bit_page', 13); emit('RET', [0xc9], 10)
+
+    if hybrid:
+        stage = 'literal'
+        a.label('literal')
+        # IX points at the current Huffman byte. Skip its unused low bits;
+        # the format requires those bits to be zero. Use the alternate bank
+        # so LDI cannot destroy traversal registers, and preserve reservoir C.
+        emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4)
+        emit('AND 7', [0xe6, 7], 7); jump('JP Z,literal_aligned', 0xca, 'literal_aligned', 10)
+        emit('INC IX', [0xdd, 0x23], 10); a.label('literal_aligned')
+        emit('LD C,F0h', [0x0e, 0xf0], 7); emit('PUSH BC', [0xc5], 11)
+        emit('PUSH IX', [0xdd, 0xe5], 15); emit('POP HL', [0xe1], 10)
+        load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
+        for row in range(8):
+            emit('LDI', [0xed, 0xa0], 16); emit('LDI', [0xed, 0xa0], 16)
+            if row < 7:
+                emit('LD A,E', [0x7b], 4); emit('ADD A,30', [0xc6, 30], 7); emit('LD E,A', [0x5f], 4)
+        emit('PUSH HL', [0xe5], 11); emit('POP IX', [0xdd, 0xe1], 14)
+        emit('POP BC', [0xc1], 10); emit('EXX', [0xd9], 4); emit('RET', [0xc9], 10)
 
     stage = 'cache'
     for zero in (False, True):
@@ -210,6 +253,55 @@ def build(tables, mapping, offsets, *, skip_empty=False):
         if skip_empty and field == 7:
             jump('JP second_half', 0xc3, 'second_half', 10)
     a.label('attributes')
+    if hybrid:
+        emit('RET', [0xc9], 10)
+        stage = 'attribute_pass'
+        a.label('attribute_pass')
+        load('LD HL,(attribute_masks)', 0x2a, 'attribute_masks', 16)
+        wordop('LD DE,attributes', 0x11, FRAME+3072, 10)
+        a.label('attribute_mask')
+        emit('LD A,(HL)', [0x7e], 7); emit('INC HL', [0x23], 6)
+        emit('OR A', [0xb7], 4); jump('JP Z,attribute_empty', 0xca, 'attribute_empty', 10)
+        emit('LD B,A', [0x47], 4)
+        for field in range(8):
+            emit('SLA B', [0xcb, 0x20], 8); jump('JP NC,keep_attribute', 0xd2, f'keep_raster_{field}', 10)
+            emit('LD A,(DE)', [0x1a], 7); emit('LD C,A', [0x4f], 4); emit('EXX', [0xd9], 4)
+            jump('CALL attribute', 0xcd, 'attribute', 17); emit('EXX', [0xd9], 4)
+            emit('XOR C', [0xa9], 4); emit('LD (DE),A', [0x12], 7)
+            a.label(f'keep_raster_{field}')
+            emit('INC E' if field < 7 else 'INC DE', [0x1c if field < 7 else 0x13], 4 if field < 7 else 6)
+        jump('JP attribute_next', 0xc3, 'attribute_next', 10)
+        a.label('attribute_empty')
+        emit('LD A,E', [0x7b], 4); emit('ADD A,8', [0xc6, 8], 7); emit('LD E,A', [0x5f], 4)
+        jump('JR NC,attribute_next', 0x30, 'attribute_next', [7, 12], True)
+        emit('INC D', [0x14], 4)
+        a.label('attribute_next')
+        emit('LD A,D', [0x7a], 4); emit('CP attribute_end', [0xfe, (FRAME+3840) >> 8], 7)
+        jump('JP NZ,attribute_mask', 0xc2, 'attribute_mask', 10)
+        load('LD (attribute_masks),HL', 0x22, 'attribute_masks', 16); emit('RET', [0xc9], 10)
+    else:
+        emit_tile_attributes(a, emit, load, jump, skip_empty)
+    a.label('state')
+    for name in ('source', 'vectors', 'bitmap_masks', 'attribute_masks', 'target', 'attr_target', 'cache_read', 'cache_write'):
+        a.label(name); a.word(0)
+    for name, value in [('bit_page', 0xf0), ('stripe_y', 0), ('stripes_left', 0), ('tiles_left', 0), ('phase', 0), ('attr_bits', 0)]:
+        a.label(name); a.emit(value)
+    if hybrid:
+        a.label('cache_enabled'); a.emit(1)
+    a.label('end')
+    if a.pc > VECTOR_X:
+        raise ValueError('frame code collides with motion tables')
+    regions = layout['regions']+[
+        (VECTOR_X, bytes((-dx//4) & 255 for dx, _ in offsets)),
+        (VECTOR_Y, bytes((-dy) & 255 for _, dy in offsets)),
+        (VECTOR_PHASE, bytes(2*((-dx) % 4) for dx, _ in offsets)),
+        (ROW_LOW, bytes((row*64) & 255 for row in range(16))),
+        (ROW_HIGH, bytes((CACHE+row*64) >> 8 for row in range(16)))]
+    return a.resolve(), dict(a.labels), listing, regions
+
+
+def emit_tile_attributes(a, emit, load, jump, skip_empty):
+    """Unchanged FPD1 path, retained byte-for-byte for baseline timings."""
     load('LD A,(tiles_left)', 0x3a, 'tiles_left', 13); emit('AND 1', [0xe6, 1], 7)
     jump('JR NZ,reuse_attr_bits', 0x20, 'reuse_attr_bits', [7, 12], True)
     load('LD HL,(attribute_masks)', 0x2a, 'attribute_masks', 16)
@@ -239,18 +331,3 @@ def build(tables, mapping, offsets, *, skip_empty=False):
         for _ in range(4):
             emit('ADD A,A', [0x87], 4)
         load('LD (attr_bits),A', 0x32, 'attr_bits', 13); emit('RET', [0xc9], 10)
-    a.label('state')
-    for name in ('source', 'vectors', 'bitmap_masks', 'attribute_masks', 'target', 'attr_target', 'cache_read', 'cache_write'):
-        a.label(name); a.word(0)
-    for name, value in [('bit_page', 0xf0), ('stripe_y', 0), ('stripes_left', 0), ('tiles_left', 0), ('phase', 0), ('attr_bits', 0)]:
-        a.label(name); a.emit(value)
-    a.label('end')
-    if a.pc > VECTOR_X:
-        raise ValueError('frame code collides with motion tables')
-    regions = layout['regions']+[
-        (VECTOR_X, bytes((-dx//4) & 255 for dx, _ in offsets)),
-        (VECTOR_Y, bytes((-dy) & 255 for _, dy in offsets)),
-        (VECTOR_PHASE, bytes(2*((-dx) % 4) for dx, _ in offsets)),
-        (ROW_LOW, bytes((row*64) & 255 for row in range(16))),
-        (ROW_HIGH, bytes((CACHE+row*64) >> 8 for row in range(16)))]
-    return a.resolve(), dict(a.labels), listing, regions

@@ -46,8 +46,9 @@ class GuardCPU(CPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, offsets, *, skip_empty=False):
-        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty)
+    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False):
+        self.hybrid = hybrid
+        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid)
         self.cpu = GuardCPU(b'', b'')
         self.cpu.port_7ffd, self.cpu.sp = 0x16, STACK
         self.cpu.state = self.labels['state'], self.labels['end']
@@ -74,6 +75,7 @@ class Harness:
         word(self.cpu, self.labels['source'], INPUT)
         self.cpu.write8(self.labels['bit_page'], 0xf0)
         self.group_frames = frames
+        self.cache_frames = [any(0 < v < 81 for v in vectors[i*192:(i+1)*192]) for i in range(frames)]
 
     def position(self):
         page = self.cpu.read8(self.labels['bit_page'])
@@ -86,6 +88,8 @@ class Harness:
             raise ValueError('invalid frame')
         cpu = self.cpu
         cpu.guarding = False
+        if self.hybrid:
+            cpu.write8(self.labels['cache_enabled'], int(self.cache_frames[frame]))
         for name, value in (('vectors', VECTORS+192*frame), ('bitmap_masks', BITMAP_MASKS+384*frame),
                              ('attribute_masks', ATTRIBUTE_MASKS+96*frame)):
             word(cpu, self.labels[name], value)
@@ -96,7 +100,7 @@ class Harness:
         cpu.pc, cpu.sp = self.labels['frame'], STACK
         cpu.push(STOP); cpu.guarding = True
         before, position, steps, irq = cpu.tstates, self.position(), 0, 0
-        stages, values = Counter(), 0
+        stages, values, literals = Counter(), 0, 0
         while cpu.pc != STOP:
             pc, ticks = cpu.pc, cpu.tstates
             if pc == self.labels['invalid'] or steps > 2_000_000:
@@ -104,6 +108,8 @@ class Harness:
             row = self.instructions[pc]
             if pc in (self.labels['bitmap'], self.labels['attribute']):
                 values += 1
+            if self.hybrid and pc == self.labels['literal']:
+                literals += 1
             cpu.step(); steps += 1
             elapsed, wanted = cpu.tstates-ticks, row['tstates']
             if elapsed not in (wanted if isinstance(wanted, list) else [wanted]):
@@ -122,7 +128,10 @@ class Harness:
                              ('attribute_masks', ATTRIBUTE_MASKS+96*(frame+1))):
             if word(cpu, self.labels[name]) != wanted:
                 raise AssertionError(f'incomplete metadata traversal: {name}')
-        return dict(values=values, bits=self.position()-position, total_tstates=sum(stages.values()), stages=dict(stages))
+        result = dict(values=values, bits=self.position()-position, total_tstates=sum(stages.values()), stages=dict(stages))
+        if self.hybrid:
+            result.update(literals=literals, cache=self.cache_frames[frame])
+        return result
 
 
 def main():
