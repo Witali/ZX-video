@@ -140,6 +140,8 @@ def main():
     parser.add_argument('--radius', type=int, choices=range(1, 8), default=4)
     parser.add_argument('--group-frames', type=int, default=16)
     parser.add_argument('--vector-penalty', type=int, default=8)
+    parser.add_argument('--baseline-commit', default='a13c3fe',
+                        help='experiment input/code baseline recorded in the report')
     args = parser.parse_args()
     if not 1 <= args.group_frames <= 65535 or args.vector_penalty < 0:
         parser.error('invalid group/penalty')
@@ -151,7 +153,7 @@ def main():
                          for x in range(-args.radius, args.radius + 1) if x or y]
     args.cache.mkdir(parents=True, exist_ok=True)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    report = dict(scope=__doc__, baseline_commit='a13c3fe', frames=len(states),
+    report = dict(scope=__doc__, baseline_commit=args.baseline_commit, frames=len(states),
                   states_sha256=STATES_SHA256, radius=args.radius, offsets=offsets,
                   vector_penalty=args.vector_penalty, group_frames=args.group_frames,
                   resolution=[256, 192], logical_resolution=[128, 96], fps='25/3',

@@ -1,6 +1,6 @@
 {
   "scope": "Exact pixel-aligned motion prediction with sparse residuals.\n\nSearch runs on the PC. FMR1 decoder only shifts/copies a selected tile and\napplies XOR corrections. This offline prototype does not establish Z80 speed.\nHeader: magic, tile size u8, offset count u8, frames u32, signed (dx,dy) pairs.\nAn index equal to offset count selects zero instead of the preceding frame.\nGroup: frame count u16, raster tile indices for each frame, 480 mask bytes per\nframe, then nonzero residual bytes in frame/raster order. Attributes predict\nthe same position of the preceding frame, regardless of the bitmap vector.\n",
-  "baseline_commit": "a13c3fe",
+  "baseline_commit": "66257b4",
   "frames": 4971,
   "states_sha256": "9cc006a31408e2c3c3f96f96901b003756c2a480497e12d6b124baedafaeb35d",
   "radius": 4,

@@ -140,7 +140,7 @@ ZX0 проверены независимым декодером. PLAYER/TRD н�
 как контроль с меньшим буфером; он также не достигает трёх дискет.
 
 ```text
-python toolkit/probe_fine_motion.py --checkpoint CHECKPOINT --cache .tmp/fine_motion --output toolkit/fine_motion_groups8_measurements.json --tiles 8 --group-frames 8
+python toolkit/probe_fine_motion.py --checkpoint CHECKPOINT --cache .tmp/fine_motion --output toolkit/fine_motion_groups8_measurements.json --tiles 8 --group-frames 8 --baseline-commit 66257b4
 python toolkit/probe_zx0_storage.py --raw .tmp/fine_motion/fine_motion_t8_r4_p8_g8.raw --block-bytes 8192 --zx0 ZX0 --cache .tmp/fine_motion_zx0 --output toolkit/fine_motion_groups8_zx0_measurements.json
 ```
 
