@@ -1,0 +1,50 @@
+{
+  "scope": "Separate FPD1 metadata from its unchanged Huffman byte stream.\n\nMDV1 metadata: magic, value-byte count u32, FPD1 header size u16/header;\nthen groups (n/vlen/mlen u16, bit length u32, vector bytes, mask bytes).\nValues retain original per-group padding. Exact FPD1 inverse is checked.\nIndependent-stream sizes exclude a physical multiplex schedule and are\nestimates until a sequential on-disk container and reader are constructed.\n",
+  "baseline_commit": "2f3ce3f",
+  "complete": true,
+  "input_sha256": "a0f2ad8434576ff0a233d6066558383ba3c4fe9ebf4eb898b0a634125a874fd3",
+  "input_bytes": 2821977,
+  "exact_fpd1_inverse": true,
+  "rows": [
+    {
+      "name": "metadata",
+      "bytes": 1732217,
+      "sha256": "b39c7cb82bd1df9ffc20f48a9318e2ad71ae3e8f8b6c8265bfe1bb1f4053495c",
+      "deflate_8192": 913202
+    },
+    {
+      "name": "values",
+      "bytes": 1089770,
+      "sha256": "2621626f8107f90d7cd6a7893bc08a364b7ac0e591acc61b9b13e7f28bc8b78f",
+      "deflate_8192": 1080722
+    }
+  ],
+  "combined_deflate_estimate_bytes": 1993924,
+  "raw_values_plus_metadata_deflate_estimate_bytes": 2002972,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "native_zx0": {
+    "parts": [
+      {
+        "name": "metadata",
+        "bytes_with_block_headers": 946906,
+        "blocks": 212
+      },
+      {
+        "name": "values",
+        "bytes_with_block_headers": 1082894,
+        "blocks": 134
+      }
+    ],
+    "baseline_bytes": 2034286,
+    "combined_streams_estimate_bytes": 2029800,
+    "delta_bytes": -4486,
+    "raw_values_plus_zx0_metadata_estimate_bytes": 2036676,
+    "raw_values_delta_bytes": 2390,
+    "unchanged_ay_estimate_bytes": 77696,
+    "generous_three_trd_budget_bytes": 1937664,
+    "combined_minimum_three_trd_deficit_bytes": 169832,
+    "physical_multiplex_overhead_included": false,
+    "integrated_cpu_measured": false
+  }
+}
