@@ -43,6 +43,8 @@ def main():
     parser.add_argument('--storage-report', type=Path, required=True)
     parser.add_argument('--cache', type=Path, required=True, help='actual optimal or quick ZX0 cache directory')
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--baseline-commit', default='f3f5390',
+                        help='experiment baseline, recorded without changing decoder code')
     args = parser.parse_args()
     raw = args.raw.read_bytes()
     source = json.loads(args.storage_report.read_text())
@@ -51,7 +53,7 @@ def main():
     assembler = MiniAssembler(0x8000)
     emit_decoder(assembler, 'turbo')
     code = assembler.resolve()
-    report = dict(scope=__doc__, baseline_commit='f3f5390', input_sha256=sha(raw),
+    report = dict(scope=__doc__, baseline_commit=args.baseline_commit, input_sha256=sha(raw),
         storage_report_sha256=sha(args.storage_report.read_bytes()), decoder='ZX0 turbo',
         decoder_bytes=len(code), decoder_sha256=sha(code),
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
