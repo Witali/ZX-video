@@ -1,0 +1,66 @@
+{
+  "scope": "Exact FPC2 Huffman contexts selected by the motion-predicted bitmap byte.\n\nFPC2: magic, context count u8 (including the attribute context), original\nFPR1 header length u16, header, 256-byte predictor/context map, count*256\ncanonical code lengths. Groups use the FPC1 metadata and bit layout.\nThe PC encoder uses a verified cache. The independent decoder derives every\nprediction from its own preceding decoded frame; it never reads that cache.\nThis is a storage prototype, not an integrated player or timing result.\n",
+  "baseline_commit": "8b3f83f",
+  "input_sha256": "843eb9756ef43927236207692a84075bc1c733012d5fccc5729eb113e8b59c24",
+  "states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+  "profile_sha256": "0ec298c94d3320fbe1f0337ac664914ed5392fe75711e827ba81a09252f4f68b",
+  "frames": 4971,
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "complete": true,
+  "rows": [
+    {
+      "name": "prediction_8",
+      "bitmap_contexts": 8,
+      "contexts": 9,
+      "raw_bytes": 2976852,
+      "sha256": "697dfdca03421bcfa55834280581527d9a85dae80cd048b6c1efdc308ab93835",
+      "encoded_value_bits": 9226122,
+      "table_file_bytes": 2560,
+      "exact_fpr1_round_trip": true,
+      "exact_causal_frame_decode": true,
+      "decoded_states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+      "deflate_8192": 2195704
+    },
+    {
+      "name": "prediction_16",
+      "bitmap_contexts": 16,
+      "contexts": 17,
+      "raw_bytes": 2934816,
+      "sha256": "bfa3ff5a0a6513061b8c620f6863db83b20efaeba28baaf956bb0a77e1d4daf0",
+      "encoded_value_bits": 8873398,
+      "table_file_bytes": 4608,
+      "exact_fpr1_round_trip": true,
+      "exact_causal_frame_decode": true,
+      "decoded_states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+      "deflate_8192": 2150118
+    },
+    {
+      "name": "prediction_32",
+      "bitmap_contexts": 32,
+      "contexts": 33,
+      "raw_bytes": 2906763,
+      "sha256": "93dd9445a0ead6c0f6830876778d80a5a1a091d8cb44c72da263d60a9c66c8c1",
+      "encoded_value_bits": 8616203,
+      "table_file_bytes": 8704,
+      "exact_fpr1_round_trip": true,
+      "exact_causal_frame_decode": true,
+      "decoded_states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+      "deflate_8192": 2119713
+    },
+    {
+      "name": "prediction_64",
+      "bitmap_contexts": 64,
+      "contexts": 65,
+      "raw_bytes": 2890210,
+      "sha256": "54a743ca9805333e2f0c0d0c9cfc9f3275f41a8c3e21649b1a4ace32262c8a22",
+      "encoded_value_bits": 8418269,
+      "table_file_bytes": 16896,
+      "exact_fpr1_round_trip": true,
+      "exact_causal_frame_decode": true,
+      "decoded_states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+      "deflate_8192": 2096636
+    }
+  ]
+}
