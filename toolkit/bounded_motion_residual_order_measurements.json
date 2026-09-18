@@ -1,0 +1,44 @@
+{
+  "scope": "Reorder exact FMR1 residual fields into spatial tiles before ZX0.\n\nFMO1 stores a one-byte tile size, then the original FMR1 header and groups.\nOnly each frame's mask/values are reordered; vectors and prediction are\nunchanged. Restoring the entire serialized FMR1 input byte-for-byte checks\nthe transform independently of any image-quality assumptions.\n",
+  "input_file": "bounded_motion_p2_b128_a1_e24_g8.raw",
+  "input_sha256": "504114fff444c5a0fda51e5ccfeb0443384e5e6b3495f86d68af7f493efeaca5",
+  "frame_count": 4971,
+  "player_changed": false,
+  "hot_path_delta_tstates": 0,
+  "complete": true,
+  "rows": [
+    {
+      "name": "bounded_motion_p2_b128_a1_e24_g8_order4",
+      "residual_tile": 4,
+      "raw_bytes": 5030666,
+      "stream_sha256": "ba3e8ae55172751357aa75c5abc5a650dac40f29e892acf30f7d0ba350e76a0e",
+      "exact_serialized_round_trip": true,
+      "deflate": {
+        "8192": 2433604,
+        "5030666": 2407154
+      }
+    },
+    {
+      "name": "bounded_motion_p2_b128_a1_e24_g8_order8",
+      "residual_tile": 8,
+      "raw_bytes": 5030666,
+      "stream_sha256": "c8b3f69ebea3570cf00f9d3c5615cc64b24342978543dfa54574ef97e6e01728",
+      "exact_serialized_round_trip": true,
+      "deflate": {
+        "8192": 2408274,
+        "5030666": 2379279
+      }
+    },
+    {
+      "name": "bounded_motion_p2_b128_a1_e24_g8_order16",
+      "residual_tile": 16,
+      "raw_bytes": 5030666,
+      "stream_sha256": "7cce28981ca7e3f36c1a6b06b78989bfb338accb3645fe72741dc4c4b7488103",
+      "exact_serialized_round_trip": true,
+      "deflate": {
+        "8192": 2427507,
+        "5030666": 2401465
+      }
+    }
+  ]
+}
