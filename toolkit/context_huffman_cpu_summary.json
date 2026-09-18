@@ -1,0 +1,616 @@
+{
+  "scope": "Compare complete context-decoder CPU runs and idealized value-queue bounds.\n\nQueue simulation counts only measured bounded Huffman work. The first K\nframes are predecoded before time zero; frame i displays at i*budget.\nAt most K finished frames wait, plus the frame being produced. It excludes\nall other player/ZX0/IRQ/ULA/disk work and is an optimistic bound, not proof\nof actual frame delivery or a release RAM allocation.\n",
+  "baseline_commit": "8e0812b",
+  "input_sha256": "54a743ca9805333e2f0c0d0c9cfc9f3275f41a8c3e21649b1a4ace32262c8a22",
+  "complete": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "compact": {
+    "frames": 4971,
+    "groups": 622,
+    "values": 1688733,
+    "bits": 8418269,
+    "calls": 55184,
+    "max_quantum_tstates": 27080,
+    "total_table_bytes": 16250,
+    "primitive_tstates": {
+      "total": 751161911,
+      "mean": 151108.81331723998,
+      "maximum": 1165920,
+      "worst_frame": 3685,
+      "frames_over_nominal_425448": 372
+    },
+    "wrapper_tstates": {
+      "total": 206496421,
+      "mean": 41540.217461275395,
+      "maximum": 277144,
+      "worst_frame": 4841,
+      "frames_over_nominal_425448": 0
+    },
+    "total_tstates": {
+      "total": 957658332,
+      "mean": 192649.0307785154,
+      "maximum": 1435014,
+      "worst_frame": 3685,
+      "frames_over_nominal_425448": 500
+    }
+  },
+  "unrolled": {
+    "frames": 4971,
+    "groups": 622,
+    "values": 1688733,
+    "bits": 8418269,
+    "calls": 55184,
+    "max_quantum_tstates": 23928,
+    "total_table_bytes": 16888,
+    "primitive_tstates": {
+      "total": 649319871,
+      "mean": 130621.57936028967,
+      "maximum": 1012894,
+      "worst_frame": 3685,
+      "frames_over_nominal_425448": 336
+    },
+    "wrapper_tstates": {
+      "total": 206496421,
+      "mean": 41540.217461275395,
+      "maximum": 277144,
+      "worst_frame": 4841,
+      "frames_over_nominal_425448": 0
+    },
+    "total_tstates": {
+      "total": 855816292,
+      "mean": 172161.79682156508,
+      "maximum": 1281988,
+      "worst_frame": 3685,
+      "frames_over_nominal_425448": 430
+    }
+  },
+  "primitive_delta_tstates": -101842040,
+  "bounded_delta_tstates": -101842040,
+  "code_bytes_before": 105,
+  "code_bytes_after": 404,
+  "zx0_before": {
+    "blocks": 379,
+    "raw_bytes": 3101943,
+    "total_tstates": 126825689,
+    "mean_block_tstates": 334632.4248021108,
+    "max_block_tstates": 448927,
+    "bytes_with_headers": 2294248
+  },
+  "zx0_after": {
+    "blocks": 353,
+    "raw_bytes": 2890210,
+    "total_tstates": 121478238,
+    "mean_block_tstates": 344130.98583569407,
+    "max_block_tstates": 788767,
+    "bytes_with_headers": 2087933
+  },
+  "zx0_delta_tstates": -5347451,
+  "prior_global_huffman_contiguous_tstates": 362673773,
+  "prior_global_huffman_bounded_tstates": 437826228,
+  "prior_decoder_scope_note": "Global Huffman has no context lookup. Its bounded reader checks split windows; the new wrapper reads predictor pairs but assumes contiguous input. Totals are contextual baselines, not isolated algorithm deltas.",
+  "idealized_value_queue": [
+    {
+      "budget_tstates": 425448,
+      "first_passing_capacity": 138,
+      "primitive_only_minimum_capacity": 65,
+      "rows": [
+        {
+          "prefilled_frames": 1,
+          "max_lateness_tstates": 57938434,
+          "first_late_frame": 11
+        },
+        {
+          "prefilled_frames": 2,
+          "max_lateness_tstates": 57512986,
+          "first_late_frame": 99
+        },
+        {
+          "prefilled_frames": 3,
+          "max_lateness_tstates": 57087538,
+          "first_late_frame": 2508
+        },
+        {
+          "prefilled_frames": 4,
+          "max_lateness_tstates": 56662090,
+          "first_late_frame": 3507
+        },
+        {
+          "prefilled_frames": 5,
+          "max_lateness_tstates": 56236642,
+          "first_late_frame": 3687
+        },
+        {
+          "prefilled_frames": 6,
+          "max_lateness_tstates": 55811194,
+          "first_late_frame": 3688
+        },
+        {
+          "prefilled_frames": 7,
+          "max_lateness_tstates": 55385746,
+          "first_late_frame": 3689
+        },
+        {
+          "prefilled_frames": 8,
+          "max_lateness_tstates": 54960298,
+          "first_late_frame": 3690
+        },
+        {
+          "prefilled_frames": 9,
+          "max_lateness_tstates": 54534850,
+          "first_late_frame": 3692
+        },
+        {
+          "prefilled_frames": 10,
+          "max_lateness_tstates": 54109402,
+          "first_late_frame": 4490
+        },
+        {
+          "prefilled_frames": 11,
+          "max_lateness_tstates": 53683954,
+          "first_late_frame": 4492
+        },
+        {
+          "prefilled_frames": 12,
+          "max_lateness_tstates": 53258506,
+          "first_late_frame": 4493
+        },
+        {
+          "prefilled_frames": 13,
+          "max_lateness_tstates": 52833058,
+          "first_late_frame": 4495
+        },
+        {
+          "prefilled_frames": 14,
+          "max_lateness_tstates": 52407610,
+          "first_late_frame": 4498
+        },
+        {
+          "prefilled_frames": 15,
+          "max_lateness_tstates": 51982162,
+          "first_late_frame": 4499
+        },
+        {
+          "prefilled_frames": 16,
+          "max_lateness_tstates": 51556714,
+          "first_late_frame": 4500
+        }
+      ]
+    },
+    {
+      "budget_tstates": 350000,
+      "first_passing_capacity": 218,
+      "primitive_only_minimum_capacity": 125,
+      "rows": [
+        {
+          "prefilled_frames": 1,
+          "max_lateness_tstates": 75624091,
+          "first_late_frame": 11
+        },
+        {
+          "prefilled_frames": 2,
+          "max_lateness_tstates": 75274091,
+          "first_late_frame": 12
+        },
+        {
+          "prefilled_frames": 3,
+          "max_lateness_tstates": 74924091,
+          "first_late_frame": 1632
+        },
+        {
+          "prefilled_frames": 4,
+          "max_lateness_tstates": 74574091,
+          "first_late_frame": 2508
+        },
+        {
+          "prefilled_frames": 5,
+          "max_lateness_tstates": 74224091,
+          "first_late_frame": 2997
+        },
+        {
+          "prefilled_frames": 6,
+          "max_lateness_tstates": 73874091,
+          "first_late_frame": 3000
+        },
+        {
+          "prefilled_frames": 7,
+          "max_lateness_tstates": 73524091,
+          "first_late_frame": 3004
+        },
+        {
+          "prefilled_frames": 8,
+          "max_lateness_tstates": 73174091,
+          "first_late_frame": 3688
+        },
+        {
+          "prefilled_frames": 9,
+          "max_lateness_tstates": 72824091,
+          "first_late_frame": 3688
+        },
+        {
+          "prefilled_frames": 10,
+          "max_lateness_tstates": 72474091,
+          "first_late_frame": 3689
+        },
+        {
+          "prefilled_frames": 11,
+          "max_lateness_tstates": 72124091,
+          "first_late_frame": 3690
+        },
+        {
+          "prefilled_frames": 12,
+          "max_lateness_tstates": 71774091,
+          "first_late_frame": 3691
+        },
+        {
+          "prefilled_frames": 13,
+          "max_lateness_tstates": 71424091,
+          "first_late_frame": 3693
+        },
+        {
+          "prefilled_frames": 14,
+          "max_lateness_tstates": 71074091,
+          "first_late_frame": 3706
+        },
+        {
+          "prefilled_frames": 15,
+          "max_lateness_tstates": 70724091,
+          "first_late_frame": 3707
+        },
+        {
+          "prefilled_frames": 16,
+          "max_lateness_tstates": 70374091,
+          "first_late_frame": 4488
+        }
+      ]
+    },
+    {
+      "budget_tstates": 300000,
+      "first_passing_capacity": 294,
+      "primitive_only_minimum_capacity": 183,
+      "rows": [
+        {
+          "prefilled_frames": 1,
+          "max_lateness_tstates": 87864363,
+          "first_late_frame": 11
+        },
+        {
+          "prefilled_frames": 2,
+          "max_lateness_tstates": 87564363,
+          "first_late_frame": 12
+        },
+        {
+          "prefilled_frames": 3,
+          "max_lateness_tstates": 87264363,
+          "first_late_frame": 99
+        },
+        {
+          "prefilled_frames": 4,
+          "max_lateness_tstates": 86964363,
+          "first_late_frame": 1633
+        },
+        {
+          "prefilled_frames": 5,
+          "max_lateness_tstates": 86664363,
+          "first_late_frame": 2508
+        },
+        {
+          "prefilled_frames": 6,
+          "max_lateness_tstates": 86364363,
+          "first_late_frame": 2620
+        },
+        {
+          "prefilled_frames": 7,
+          "max_lateness_tstates": 86064363,
+          "first_late_frame": 2881
+        },
+        {
+          "prefilled_frames": 8,
+          "max_lateness_tstates": 85764363,
+          "first_late_frame": 2883
+        },
+        {
+          "prefilled_frames": 9,
+          "max_lateness_tstates": 85464363,
+          "first_late_frame": 2886
+        },
+        {
+          "prefilled_frames": 10,
+          "max_lateness_tstates": 85164363,
+          "first_late_frame": 2888
+        },
+        {
+          "prefilled_frames": 11,
+          "max_lateness_tstates": 84864363,
+          "first_late_frame": 2923
+        },
+        {
+          "prefilled_frames": 12,
+          "max_lateness_tstates": 84564363,
+          "first_late_frame": 2928
+        },
+        {
+          "prefilled_frames": 13,
+          "max_lateness_tstates": 84264363,
+          "first_late_frame": 2930
+        },
+        {
+          "prefilled_frames": 14,
+          "max_lateness_tstates": 83964363,
+          "first_late_frame": 3690
+        },
+        {
+          "prefilled_frames": 15,
+          "max_lateness_tstates": 83664363,
+          "first_late_frame": 3691
+        },
+        {
+          "prefilled_frames": 16,
+          "max_lateness_tstates": 83364363,
+          "first_late_frame": 3692
+        }
+      ]
+    },
+    {
+      "budget_tstates": 250000,
+      "first_passing_capacity": 404,
+      "primitive_only_minimum_capacity": 268,
+      "rows": [
+        {
+          "prefilled_frames": 1,
+          "max_lateness_tstates": 100662241,
+          "first_late_frame": 11
+        },
+        {
+          "prefilled_frames": 2,
+          "max_lateness_tstates": 100412241,
+          "first_late_frame": 12
+        },
+        {
+          "prefilled_frames": 3,
+          "max_lateness_tstates": 100162241,
+          "first_late_frame": 12
+        },
+        {
+          "prefilled_frames": 4,
+          "max_lateness_tstates": 99912241,
+          "first_late_frame": 645
+        },
+        {
+          "prefilled_frames": 5,
+          "max_lateness_tstates": 99662241,
+          "first_late_frame": 652
+        },
+        {
+          "prefilled_frames": 6,
+          "max_lateness_tstates": 99412241,
+          "first_late_frame": 657
+        },
+        {
+          "prefilled_frames": 7,
+          "max_lateness_tstates": 99162241,
+          "first_late_frame": 666
+        },
+        {
+          "prefilled_frames": 8,
+          "max_lateness_tstates": 98912241,
+          "first_late_frame": 1782
+        },
+        {
+          "prefilled_frames": 9,
+          "max_lateness_tstates": 98662241,
+          "first_late_frame": 2618
+        },
+        {
+          "prefilled_frames": 10,
+          "max_lateness_tstates": 98412241,
+          "first_late_frame": 2620
+        },
+        {
+          "prefilled_frames": 11,
+          "max_lateness_tstates": 98162241,
+          "first_late_frame": 2620
+        },
+        {
+          "prefilled_frames": 12,
+          "max_lateness_tstates": 97912241,
+          "first_late_frame": 2685
+        },
+        {
+          "prefilled_frames": 13,
+          "max_lateness_tstates": 97662241,
+          "first_late_frame": 2881
+        },
+        {
+          "prefilled_frames": 14,
+          "max_lateness_tstates": 97412241,
+          "first_late_frame": 2882
+        },
+        {
+          "prefilled_frames": 15,
+          "max_lateness_tstates": 97162241,
+          "first_late_frame": 2884
+        },
+        {
+          "prefilled_frames": 16,
+          "max_lateness_tstates": 96912241,
+          "first_late_frame": 2886
+        }
+      ]
+    },
+    {
+      "budget_tstates": 200000,
+      "first_passing_capacity": 571,
+      "primitive_only_minimum_capacity": 398,
+      "rows": [
+        {
+          "prefilled_frames": 1,
+          "max_lateness_tstates": 113885364,
+          "first_late_frame": 11
+        },
+        {
+          "prefilled_frames": 2,
+          "max_lateness_tstates": 113685364,
+          "first_late_frame": 11
+        },
+        {
+          "prefilled_frames": 3,
+          "max_lateness_tstates": 113485364,
+          "first_late_frame": 12
+        },
+        {
+          "prefilled_frames": 4,
+          "max_lateness_tstates": 113285364,
+          "first_late_frame": 12
+        },
+        {
+          "prefilled_frames": 5,
+          "max_lateness_tstates": 113085364,
+          "first_late_frame": 16
+        },
+        {
+          "prefilled_frames": 6,
+          "max_lateness_tstates": 112885364,
+          "first_late_frame": 16
+        },
+        {
+          "prefilled_frames": 7,
+          "max_lateness_tstates": 112685364,
+          "first_late_frame": 414
+        },
+        {
+          "prefilled_frames": 8,
+          "max_lateness_tstates": 112485364,
+          "first_late_frame": 639
+        },
+        {
+          "prefilled_frames": 9,
+          "max_lateness_tstates": 112285364,
+          "first_late_frame": 641
+        },
+        {
+          "prefilled_frames": 10,
+          "max_lateness_tstates": 112085364,
+          "first_late_frame": 642
+        },
+        {
+          "prefilled_frames": 11,
+          "max_lateness_tstates": 111885364,
+          "first_late_frame": 644
+        },
+        {
+          "prefilled_frames": 12,
+          "max_lateness_tstates": 111685364,
+          "first_late_frame": 646
+        },
+        {
+          "prefilled_frames": 13,
+          "max_lateness_tstates": 111485364,
+          "first_late_frame": 649
+        },
+        {
+          "prefilled_frames": 14,
+          "max_lateness_tstates": 111285364,
+          "first_late_frame": 651
+        },
+        {
+          "prefilled_frames": 15,
+          "max_lateness_tstates": 111085364,
+          "first_late_frame": 653
+        },
+        {
+          "prefilled_frames": 16,
+          "max_lateness_tstates": 110885364,
+          "first_late_frame": 656
+        }
+      ]
+    },
+    {
+      "budget_tstates": 150000,
+      "first_passing_capacity": 1189,
+      "primitive_only_minimum_capacity": 618,
+      "rows": [
+        {
+          "prefilled_frames": 1,
+          "max_lateness_tstates": 178135546,
+          "first_late_frame": 11
+        },
+        {
+          "prefilled_frames": 2,
+          "max_lateness_tstates": 177985546,
+          "first_late_frame": 11
+        },
+        {
+          "prefilled_frames": 3,
+          "max_lateness_tstates": 177835546,
+          "first_late_frame": 11
+        },
+        {
+          "prefilled_frames": 4,
+          "max_lateness_tstates": 177685546,
+          "first_late_frame": 12
+        },
+        {
+          "prefilled_frames": 5,
+          "max_lateness_tstates": 177535546,
+          "first_late_frame": 12
+        },
+        {
+          "prefilled_frames": 6,
+          "max_lateness_tstates": 177385546,
+          "first_late_frame": 12
+        },
+        {
+          "prefilled_frames": 7,
+          "max_lateness_tstates": 177235546,
+          "first_late_frame": 16
+        },
+        {
+          "prefilled_frames": 8,
+          "max_lateness_tstates": 177085546,
+          "first_late_frame": 16
+        },
+        {
+          "prefilled_frames": 9,
+          "max_lateness_tstates": 176935546,
+          "first_late_frame": 16
+        },
+        {
+          "prefilled_frames": 10,
+          "max_lateness_tstates": 176785546,
+          "first_late_frame": 409
+        },
+        {
+          "prefilled_frames": 11,
+          "max_lateness_tstates": 176635546,
+          "first_late_frame": 410
+        },
+        {
+          "prefilled_frames": 12,
+          "max_lateness_tstates": 176485546,
+          "first_late_frame": 411
+        },
+        {
+          "prefilled_frames": 13,
+          "max_lateness_tstates": 176335546,
+          "first_late_frame": 411
+        },
+        {
+          "prefilled_frames": 14,
+          "max_lateness_tstates": 176185546,
+          "first_late_frame": 413
+        },
+        {
+          "prefilled_frames": 15,
+          "max_lateness_tstates": 176035546,
+          "first_late_frame": 414
+        },
+        {
+          "prefilled_frames": 16,
+          "max_lateness_tstates": 175885546,
+          "first_late_frame": 417
+        }
+      ]
+    }
+  ]
+}

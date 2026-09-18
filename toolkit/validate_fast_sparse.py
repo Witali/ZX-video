@@ -250,6 +250,10 @@ class CPU(MemoryCPU):
                 self.carry = bool(value & 1); value >>= 1
                 self.put(register, value); self.z = value == 0
                 return 15 if register == 6 else 8
+            if q & 0xF8 == 0x20:
+                self.carry = bool(value & 128); value = (value << 1) & 255
+                self.put(register, value); self.z = value == 0
+                return 15 if register == 6 else 8  # SLA r / (HL), UM0080.
             if q & 0xF8 in (0x10,0x18):
                 carry = self.carry
                 if q & 8:
