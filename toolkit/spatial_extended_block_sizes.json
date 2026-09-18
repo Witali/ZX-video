@@ -1,0 +1,47 @@
+{
+  "scope": "Check complete ZX0 storage/CPU reports for two block sizes on one stream.\n\nOnly storage and isolated decoder execution are compared. No claim about\nring capacity, sector delivery, integrated memory placement or playback.\n",
+  "baseline_commit": "7dea054",
+  "complete": true,
+  "input_sha256": "e72db632ba43b5603f3388d45efaf2a1d4cabc273e94e61766b6461b830e6cd7",
+  "raw_bytes": 2640460,
+  "before": {
+    "block_bytes": 8192,
+    "blocks": 323,
+    "video_bytes_with_headers": 1848876,
+    "video_plus_ay_estimate_bytes": 1926572,
+    "preliminary_three_trd_margin_bytes": 11092,
+    "densely_packed_video_sectors": 7223,
+    "total_tstates": 102179564,
+    "max_block_tstates": 548379,
+    "benchmark_layout": "default8",
+    "decoder_bytes": 126,
+    "decoder_sha256": "a9e31b3d78214b99a485fc7664cce77ab3938f425513c68df4d41e5b6c3e8609",
+    "encoder_sha256": "e6aec5cdfc3535b808610cb54412ce375b5b13e17b59f2bc878a54a00a8acbac"
+  },
+  "after": {
+    "block_bytes": 16384,
+    "blocks": 162,
+    "video_bytes_with_headers": 1843814,
+    "video_plus_ay_estimate_bytes": 1921510,
+    "preliminary_three_trd_margin_bytes": 16154,
+    "densely_packed_video_sectors": 7203,
+    "total_tstates": 103355511,
+    "max_block_tstates": 899126,
+    "benchmark_layout": "bank16",
+    "decoder_bytes": 126,
+    "decoder_sha256": "a9e31b3d78214b99a485fc7664cce77ab3938f425513c68df4d41e5b6c3e8609",
+    "encoder_sha256": "e6aec5cdfc3535b808610cb54412ce375b5b13e17b59f2bc878a54a00a8acbac"
+  },
+  "delta": {
+    "video_bytes_with_headers": -5062,
+    "densely_packed_video_sectors": -20,
+    "total_tstates": 1175947,
+    "max_block_tstates": 350747,
+    "decoder_bytes": 0
+  },
+  "decoder_implementation_changed": false,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "smaller_disk_buffer_accepted": false,
+  "physical_disk_latency_measured": false
+}
