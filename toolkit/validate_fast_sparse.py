@@ -84,6 +84,13 @@ class CPU(MemoryCPU):
             return 4
         if op == 0xDD:
             q = self.fetch8()
+            if q in (0x22, 0x2A):
+                address = self.fetch16()
+                if q == 0x22:
+                    self.write8(address, self.ix); self.write8(address + 1, self.ix >> 8)
+                else:
+                    self.ix = self.read8(address) | self.read8(address + 1) << 8
+                return 20
             if q == 0x21:
                 self.ix = self.fetch16(); return 14
             if q == 0x23:

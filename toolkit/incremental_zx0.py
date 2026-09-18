@@ -51,7 +51,7 @@ def emit_wait(a, *, lookahead=False, output_base=0x8000, direct_input=False, aud
     a.label('slice_frame_valid');a.abs16(0xC3,'ahead_decode' if lookahead else 'slice_until')
 
 
-def emit_decoder(a, *, output_base=0x8000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False):
+def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False):
     a.label('slice_until')
     a.abs16(0xCD,'slice_sync_target')
     a.abs16(0x2A,'slice_output');a.abs16((0xED,0x5B),'slice_target')
@@ -69,7 +69,7 @@ def emit_decoder(a, *, output_base=0x8000, stack_top=STACK_TOP, direct_input=Fal
     a.emit(0x31);a.word(stack_top)
     a.abs16(0x21,'slice_finished');a.emit(0xE5)
     if direct_input:a.abs16(0x2A,'direct_pointer')
-    else:a.emit(0x21);a.word(0xA000)
+    else:a.emit(0x21);a.word(input_base)
     a.emit(0x11);a.word(output_base)
     a.abs16(0x3A,'block_stored');a.emit(0xB7)
     if wrapped_input:
