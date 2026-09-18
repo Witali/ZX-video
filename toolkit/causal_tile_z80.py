@@ -16,7 +16,9 @@ CODE, FRAME, CACHE = prefix.CODE, 0x6400, 0x7400
 VECTOR_X, VECTOR_Y, VECTOR_PHASE, ROW_LOW, ROW_HIGH = 0x9800, 0x9900, 0x9a00, 0x9b00, 0x9c00
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None):
+    if raw_kind is not None and (raw_kind not in (0, 1) or not hybrid or not skip_empty):
+        raise ValueError('raw direct/XOR patches require hybrid and empty-half skips')
     if len(offsets) != 81 or offsets[0] != (0, 0) or set(offsets) != {(x, y) for x in range(-4, 5) for y in range(-4, 5)}:
         raise ValueError('expected the complete +/-4 motion alphabet')
     original, labels, instructions, layout = prefix.build(tables, mapping)
@@ -81,12 +83,22 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False):
     load('LD HL,(vectors)', 0x2a, 'vectors', 16)
     emit('LD A,(HL)', [0x7e], 7); emit('INC HL', [0x23], 6)
     load('LD (vectors),HL', 0x22, 'vectors', 16)
-    if hybrid:
+    if raw_kind is not None:
+        emit('PUSH AF', [0xf5], 11); emit('AND 7Fh', [0xe6, 127], 7)
+        jump('CALL NZ,motion', 0xc4, 'motion', [10, 17])
+        emit('POP AF', [0xf1], 10); emit('BIT 7,A', [0xcb, 0x7f], 8)
+        jump('JP NZ,raw_tile', 0xc2, 'raw_tile', 10)
+        jump('CALL patches', 0xcd, 'patches', 17)
+        jump('JP tile_done', 0xc3, 'tile_done', 10)
+        a.label('raw_tile'); jump('CALL raw_patches', 0xcd, 'raw_patches', 17)
+        a.label('tile_done')
+    elif hybrid:
         emit('CP literal_vector', [0xfe, 82], 7)
         jump('JP Z,literal_tile', 0xca, 'literal_tile', 10)
-    emit('OR A', [0xb7], 4); jump('CALL NZ,motion', 0xc4, 'motion', [10, 17])
-    jump('CALL patches', 0xcd, 'patches', 17)
-    if hybrid:
+    if raw_kind is None:
+        emit('OR A', [0xb7], 4); jump('CALL NZ,motion', 0xc4, 'motion', [10, 17])
+        jump('CALL patches', 0xcd, 'patches', 17)
+    if hybrid and raw_kind is None:
         jump('JP tile_done', 0xc3, 'tile_done', 10)
         a.label('literal_tile')
         load('LD HL,(bitmap_masks)', 0x2a, 'bitmap_masks', 16)
@@ -132,7 +144,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False):
     emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4); emit('EXX', [0xd9], 4)
     load('LD (bit_page),A', 0x32, 'bit_page', 13); emit('RET', [0xc9], 10)
 
-    if hybrid:
+    if hybrid and raw_kind is None:
         stage = 'literal'
         a.label('literal')
         # IX points at the current Huffman byte. Skip its unused low bits;
@@ -150,6 +162,47 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False):
                 emit('LD A,E', [0x7b], 4); emit('ADD A,30', [0xc6, 30], 7); emit('LD E,A', [0x5f], 4)
         emit('PUSH HL', [0xe5], 11); emit('POP IX', [0xdd, 0xe1], 14)
         emit('POP BC', [0xc1], 10); emit('EXX', [0xd9], 4); emit('RET', [0xc9], 10)
+
+    if raw_kind is not None:
+        stage = 'raw_patch'
+        a.label('raw_patches')
+        load('LD HL,(bitmap_masks)', 0x2a, 'bitmap_masks', 16)
+        emit('LD B,(HL)', [0x46], 7); emit('INC HL', [0x23], 6)
+        emit('LD C,(HL)', [0x4e], 7); emit('INC HL', [0x23], 6)
+        load('LD (bitmap_masks),HL', 0x22, 'bitmap_masks', 16)
+        # Cache/motion have already formed the predictor. Align the shared
+        # bit input, then read raw bytes with HL while primary BC keeps masks.
+        emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4)
+        emit('AND 7', [0xe6, 7], 7); jump('JP Z,raw_aligned', 0xca, 'raw_aligned', 10)
+        emit('INC IX', [0xdd, 0x23], 10); a.label('raw_aligned')
+        emit('LD C,F0h', [0x0e, 0xf0], 7); emit('EXX', [0xd9], 4)
+        emit('PUSH IX', [0xdd, 0xe5], 15); emit('POP HL', [0xe1], 10)
+        load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
+        for field in range(16):
+            if field == 8:
+                a.label('raw_skip_half_0')
+                emit('LD A,E', [0x7b], 4); emit('ADD A,128', [0xc6, 128], 7); emit('LD E,A', [0x5f], 4)
+                a.label('raw_second_half'); emit('LD B,C', [0x41], 4)
+            if field in (0, 8):
+                emit('LD A,B', [0x78], 4); emit('OR A', [0xb7], 4)
+                jump('JP Z,raw_empty_half', 0xca, 'raw_skip_half_0' if field == 0 else 'raw_done', 10)
+            emit('SLA B', [0xcb, 0x20], 8); jump('JP NC,raw_keep', 0xd2, f'raw_keep_{field}', 10)
+            a.label(f'raw_value_{field}')
+            if raw_kind == 1:
+                emit('LD A,(DE)', [0x1a], 7); emit('XOR (HL)', [0xae], 7)
+            else:
+                emit('LD A,(HL)', [0x7e], 7)
+            emit('INC HL', [0x23], 6); emit('LD (DE),A', [0x12], 7)
+            a.label(f'raw_keep_{field}')
+            if field < 15:
+                if not field % 2:
+                    emit('INC E', [0x1c], 4)
+                else:
+                    emit('LD A,E', [0x7b], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD E,A', [0x5f], 4)
+            if field == 7:
+                jump('JP raw_second_half', 0xc3, 'raw_second_half', 10)
+        a.label('raw_done')
+        emit('PUSH HL', [0xe5], 11); emit('POP IX', [0xdd, 0xe1], 14); emit('RET', [0xc9], 10)
 
     stage = 'cache'
     for zero in (False, True):

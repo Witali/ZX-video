@@ -46,9 +46,11 @@ class GuardCPU(CPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False):
+    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None):
         self.hybrid = hybrid
-        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid)
+        self.raw_kind = raw_kind
+        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind)
+        self.raw_value_entries = {self.labels[f'raw_value_{i}'] for i in range(16)} if raw_kind is not None else set()
         self.cpu = GuardCPU(b'', b'')
         self.cpu.port_7ffd, self.cpu.sp = 0x16, STACK
         self.cpu.state = self.labels['state'], self.labels['end']
@@ -75,7 +77,7 @@ class Harness:
         word(self.cpu, self.labels['source'], INPUT)
         self.cpu.write8(self.labels['bit_page'], 0xf0)
         self.group_frames = frames
-        self.cache_frames = [any(0 < v < 81 for v in vectors[i*192:(i+1)*192]) for i in range(frames)]
+        self.cache_frames = [any(0 < (v & (127 if self.raw_kind is not None else 255)) < 81 for v in vectors[i*192:(i+1)*192]) for i in range(frames)]
 
     def position(self):
         page = self.cpu.read8(self.labels['bit_page'])
@@ -100,7 +102,7 @@ class Harness:
         cpu.pc, cpu.sp = self.labels['frame'], STACK
         cpu.push(STOP); cpu.guarding = True
         before, position, steps, irq = cpu.tstates, self.position(), 0, 0
-        stages, values, literals = Counter(), 0, 0
+        stages, values, literals, raw_values, raw_tiles, unaligned = Counter(), 0, 0, 0, 0, 0
         while cpu.pc != STOP:
             pc, ticks = cpu.pc, cpu.tstates
             if pc == self.labels['invalid'] or steps > 2_000_000:
@@ -108,8 +110,12 @@ class Harness:
             row = self.instructions[pc]
             if pc in (self.labels['bitmap'], self.labels['attribute']):
                 values += 1
-            if self.hybrid and pc == self.labels['literal']:
+            if self.hybrid and pc == self.labels.get('literal'):
                 literals += 1
+            if pc in self.raw_value_entries:
+                raw_values += 1
+            if self.raw_kind is not None and pc == self.labels['raw_patches']:
+                raw_tiles += 1; unaligned += int(cpu.alt_c & 7 != 0)
             cpu.step(); steps += 1
             elapsed, wanted = cpu.tstates-ticks, row['tstates']
             if elapsed not in (wanted if isinstance(wanted, list) else [wanted]):
@@ -131,6 +137,8 @@ class Harness:
         result = dict(values=values, bits=self.position()-position, total_tstates=sum(stages.values()), stages=dict(stages))
         if self.hybrid:
             result.update(literals=literals, cache=self.cache_frames[frame])
+        if self.raw_kind is not None:
+            result.update(raw_values=raw_values, raw_tiles=raw_tiles, unaligned_raw_tiles=unaligned)
         return result
 
 

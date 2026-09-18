@@ -146,7 +146,7 @@ class CausalTileTests(unittest.TestCase):
             with self.subTest(skip_empty=skip_empty):
                 self.exercise_irq(skip_empty)
 
-    def exercise_irq(self, skip_empty, *, hybrid_data=None):
+    def exercise_irq(self, skip_empty, *, hybrid_data=None, raw_data=None):
         tables, mapping = [bytes([8]*256)]*2, bytes(256)
         # Several moving boundary tiles, attributes and untouched regions.
         v = bytearray(192)
@@ -155,6 +155,7 @@ class CausalTileTests(unittest.TestCase):
         current = bytes(255 if i % 401 == 0 else 0 for i in range(3840))
         _, encoded, vectors, bm, at = group(bytes(3840), [bytes(v)], [current], tables, mapping)
         targets = [current]
+        raw_kind = None
         if hybrid_data is not None:
             from probe_hybrid_tiles import read_header, read_group, decode
             from probe_motion_entropy import Reader
@@ -164,7 +165,18 @@ class CausalTileTests(unittest.TestCase):
             self.assertEqual(count, n); r.end()
             restored, _ = decode(hybrid_data)
             targets = [restored[i*3840:(i+1)*3840] for i in range(n)]
-        h = Harness(tables, mapping, OFFSETS, skip_empty=skip_empty, hybrid=hybrid_data is not None)
+        if raw_data is not None:
+            from probe_raw_patches import read_header, read_group, decode
+            from probe_motion_entropy import Reader
+            self.assertIsNone(hybrid_data)
+            r = Reader(raw_data)
+            raw_kind, _, n, mapping, tables, _ = read_header(r)
+            count, _, _, vectors, bm, at, encoded = read_group(r, n)
+            self.assertEqual(count, n); r.end()
+            restored, _ = decode(raw_data)
+            targets = [restored[i*3840:(i+1)*3840] for i in range(n)]
+        h = Harness(tables, mapping, OFFSETS, skip_empty=skip_empty,
+            hybrid=hybrid_data is not None or raw_data is not None, raw_kind=raw_kind)
         h.begin(encoded, vectors, bm, at)
         a = MiniAssembler(0x8800)
         ay_interrupt.emit(a)
