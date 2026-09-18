@@ -1,0 +1,81 @@
+{
+  "scope": "FHF1: exact whole-tile alternatives to spatial/motion Huffman correction.\n\n85: 16 final bytes; 86: two-byte row repeated eight times; 87: two row\npairs and one MSB-first selector; 88: one byte repeated sixteen times.\nPayloads align to a byte using zero padding. Bitmap masks are zero for\nfast tiles. FHS1 motion/attributes/contexts and group structure remain.\nSelection estimates pre-ZX0 bit costs and primitive CPU work. The estimate\nis not a full player benchmark. Every stream is independently restored.\n",
+  "baseline_commit": "15b5638",
+  "complete": true,
+  "input_sha256": "e72db632ba43b5603f3388d45efaf2a1d4cabc273e94e61766b6461b830e6cd7",
+  "states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "measured_motion_stage": {
+    "0": 995,
+    "6": 2103,
+    "4": 2093,
+    "2": 2076,
+    "-1": 445
+  },
+  "all_tile_kinds": {
+    "85": 501944,
+    "86": 4098,
+    "87": 140866,
+    "88": 307524
+  },
+  "cpu_selection_is_estimate": true,
+  "rows": [
+    {
+      "name": "target_300000",
+      "target_tstates": 300000,
+      "estimated_total_tstates": 1144559978,
+      "estimated_max_frame_tstates": 326722,
+      "estimated_frames_over_target": 1,
+      "selected_frames": 1391,
+      "estimate_excludes_alignment_and_cache_changes": true,
+      "raw_bytes": 3076050,
+      "sha256": "1f9dd1e9638afeca4db20b02c9ad747a27bbc0cb9c9075ea003dda65a37be209",
+      "frames": 4971,
+      "fast_tiles": 61225,
+      "fast_kinds": {
+        "88": 4929,
+        "87": 3083,
+        "85": 53011,
+        "86": 202
+      },
+      "groups": 643,
+      "max_group_bytes": 9190,
+      "bits": 11836577,
+      "values": 1018254,
+      "exact_causal_frame_decode": true,
+      "deflate_8192": 2056790,
+      "estimated_tile_cpu_saved": 201138572,
+      "estimated_savings_exclude_new_dispatch_and_bit_position_changes": true
+    },
+    {
+      "name": "target_250000",
+      "target_tstates": 250000,
+      "estimated_total_tstates": 1054580287,
+      "estimated_max_frame_tstates": 326722,
+      "estimated_frames_over_target": 20,
+      "selected_frames": 2205,
+      "estimate_excludes_alignment_and_cache_changes": true,
+      "raw_bytes": 3423164,
+      "sha256": "03e162c00d01d4d213131dfebee89dd5527e898bf71b2ba078cca4bc5bb3b324",
+      "frames": 4971,
+      "fast_tiles": 99786,
+      "fast_kinds": {
+        "87": 6645,
+        "85": 85045,
+        "88": 7752,
+        "86": 344
+      },
+      "groups": 656,
+      "max_group_bytes": 9104,
+      "bits": 15131053,
+      "values": 820683,
+      "exact_causal_frame_decode": true,
+      "deflate_8192": 2171641,
+      "estimated_tile_cpu_saved": 290813109,
+      "estimated_savings_exclude_new_dispatch_and_bit_position_changes": true
+    }
+  ],
+  "cpu_report_sha256": "d5ba99890d3367b05b0c8ad507c779b3a5c1611f89959794ffe7b0b2a8951c54"
+}

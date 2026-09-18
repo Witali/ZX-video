@@ -1,0 +1,131 @@
+{
+  "scope": "FHF1: exact whole-tile alternatives to spatial/motion Huffman correction.\n\n85: 16 final bytes; 86: two-byte row repeated eight times; 87: two row\npairs and one MSB-first selector; 88: one byte repeated sixteen times.\nPayloads align to a byte using zero padding. Bitmap masks are zero for\nfast tiles. FHS1 motion/attributes/contexts and group structure remain.\nSelection estimates pre-ZX0 bit costs and primitive CPU work. The estimate\nis not a full player benchmark. Every stream is independently restored.\n",
+  "baseline_commit": "15b5638",
+  "complete": true,
+  "input_sha256": "e72db632ba43b5603f3388d45efaf2a1d4cabc273e94e61766b6461b830e6cd7",
+  "states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "measured_motion_stage": {
+    "0": 995,
+    "6": 2103,
+    "4": 2093,
+    "2": 2076,
+    "-1": 445
+  },
+  "all_tile_kinds": {
+    "85": 501944,
+    "86": 4098,
+    "87": 140866,
+    "88": 307524
+  },
+  "cpu_selection_is_estimate": true,
+  "rows": [
+    {
+      "name": "control",
+      "allowance_bits": null,
+      "raw_bytes": 2640460,
+      "sha256": "50db36d8b136ffb45079e58f56367f31643a2d2baf51b06c0273a10ab5131328",
+      "frames": 4971,
+      "fast_tiles": 0,
+      "fast_kinds": {},
+      "groups": 622,
+      "max_group_bytes": 8539,
+      "bits": 7461276,
+      "values": 1473262,
+      "exact_causal_frame_decode": true,
+      "deflate_8192": 1864019,
+      "estimated_tile_cpu_saved": 0,
+      "estimated_savings_exclude_new_dispatch_and_bit_position_changes": true
+    },
+    {
+      "name": "allowance_0",
+      "allowance_bits": 0,
+      "raw_bytes": 2640431,
+      "sha256": "0250f43aafb26a4172c8e82aeba48456dc7fe418190f03259a33a2658e1414e3",
+      "frames": 4971,
+      "fast_tiles": 36,
+      "fast_kinds": {
+        "88": 25,
+        "87": 3,
+        "85": 7,
+        "86": 1
+      },
+      "groups": 622,
+      "max_group_bytes": 8541,
+      "bits": 7461424,
+      "values": 1473080,
+      "exact_causal_frame_decode": true,
+      "deflate_8192": 1864088,
+      "estimated_tile_cpu_saved": 79766,
+      "estimated_savings_exclude_new_dispatch_and_bit_position_changes": true
+    },
+    {
+      "name": "allowance_16",
+      "allowance_bits": 16,
+      "raw_bytes": 2657360,
+      "sha256": "ee33cdedbbe0b3f3530f3e4177441f1029616ccad02b988fcbcce4999f476edd",
+      "frames": 4971,
+      "fast_tiles": 13910,
+      "fast_kinds": {
+        "88": 13321,
+        "86": 268,
+        "87": 158,
+        "85": 163
+      },
+      "groups": 622,
+      "max_group_bytes": 8616,
+      "bits": 7609300,
+      "values": 1469219,
+      "exact_causal_frame_decode": true,
+      "deflate_8192": 1877239,
+      "estimated_tile_cpu_saved": 10618020,
+      "estimated_savings_exclude_new_dispatch_and_bit_position_changes": true
+    },
+    {
+      "name": "allowance_32",
+      "allowance_bits": 32,
+      "raw_bytes": 2675535,
+      "sha256": "194f2ffe28fee4e5df4d2cf18cf6e4ada4d7f06c626f3f40693ea5b6a882db76",
+      "frames": 4971,
+      "fast_tiles": 21041,
+      "fast_kinds": {
+        "88": 13321,
+        "87": 5287,
+        "86": 726,
+        "85": 1707
+      },
+      "groups": 622,
+      "max_group_bytes": 9081,
+      "bits": 7840926,
+      "values": 1435706,
+      "exact_causal_frame_decode": true,
+      "deflate_8192": 1893972,
+      "estimated_tile_cpu_saved": 23584479,
+      "estimated_savings_exclude_new_dispatch_and_bit_position_changes": true
+    },
+    {
+      "name": "allowance_64",
+      "allowance_bits": 64,
+      "raw_bytes": 2885365,
+      "sha256": "7107b33a34df0c0449bef301195c773826fbcbb7a573ae6d8a8464f71042ce96",
+      "frames": 4971,
+      "fast_tiles": 61006,
+      "fast_kinds": {
+        "87": 21953,
+        "88": 13321,
+        "86": 726,
+        "85": 25006
+      },
+      "groups": 630,
+      "max_group_bytes": 9210,
+      "bits": 9972618,
+      "values": 1182661,
+      "exact_causal_frame_decode": true,
+      "deflate_8192": 2005205,
+      "estimated_tile_cpu_saved": 134032680,
+      "estimated_savings_exclude_new_dispatch_and_bit_position_changes": true
+    }
+  ]
+}

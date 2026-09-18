@@ -46,10 +46,11 @@ class GuardCPU(CPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False):
+    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False):
         self.hybrid = hybrid
         self.raw_kind = raw_kind
-        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above, intra_extended=intra_extended)
+        self.fast_fragments = fast_fragments
+        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above, intra_extended=intra_extended, fast_fragments=fast_fragments)
         self.raw_value_entries = {self.labels[f'raw_value_{i}'] for i in range(16)} if raw_kind is not None else set()
         self.cpu = GuardCPU(b'', b'')
         self.cpu.port_7ffd, self.cpu.sp = 0x16, STACK
@@ -103,6 +104,7 @@ class Harness:
         cpu.push(STOP); cpu.guarding = True
         before, position, steps, irq = cpu.tstates, self.position(), 0, 0
         stages, values, literals, raw_values, raw_tiles, unaligned = Counter(), 0, 0, 0, 0, 0
+        fast_kinds, fast_formula, fast_unaligned = Counter(), 0, 0
         while cpu.pc != STOP:
             pc, ticks = cpu.pc, cpu.tstates
             if pc == self.labels['invalid'] or steps > 2_000_000:
@@ -116,6 +118,11 @@ class Harness:
                 raw_values += 1
             if self.raw_kind is not None and pc == self.labels['raw_patches']:
                 raw_tiles += 1; unaligned += int(cpu.alt_c & 7 != 0)
+            if self.fast_fragments and pc == self.labels['fast_fragment']:
+                is_unaligned = bool(cpu.alt_c & 7)
+                selector = cpu.read8(cpu.ix+is_unaligned+4) if cpu.a == 87 else 0
+                fast_formula += machine.fast_tstates(cpu.a, unaligned=is_unaligned, selector=selector)
+                fast_unaligned += is_unaligned; fast_kinds[cpu.a] += 1
             cpu.step(); steps += 1
             elapsed, wanted = cpu.tstates-ticks, row['tstates']
             if elapsed not in (wanted if isinstance(wanted, list) else [wanted]):
@@ -139,6 +146,11 @@ class Harness:
             result.update(literals=literals, cache=self.cache_frames[frame])
         if self.raw_kind is not None:
             result.update(raw_values=raw_values, raw_tiles=raw_tiles, unaligned_raw_tiles=unaligned)
+        if self.fast_fragments:
+            if fast_formula != stages['fast_fragment']:
+                raise AssertionError(('fast-fragment timing formula', fast_formula, stages['fast_fragment']))
+            result.update(fast_kinds=dict(fast_kinds), fast_tiles=sum(fast_kinds.values()),
+                fast_unaligned=fast_unaligned, fast_formula_tstates=fast_formula)
         return result
 
 

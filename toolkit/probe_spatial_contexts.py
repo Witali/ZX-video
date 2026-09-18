@@ -114,9 +114,9 @@ def encode(original, states, vectors, residual, model, mapping, tables, *, cap=M
     return bytes(out), dict(groups=groups, frames=rows)
 
 
-def read_header(reader):
-    if reader.take(4) != b'FHS1':
-        raise ValueError('not FHS1')
+def read_header(reader, *, magic=b'FHS1'):
+    if reader.take(4) != magic:
+        raise ValueError('unexpected spatial magic')
     model, count = reader.take(2)
     original = reader.take(reader.u16())
     hr = Reader(original); _, frames = parse_header(hr); hr.end()
@@ -129,19 +129,46 @@ def read_header(reader):
     return model, original, frames, mapping, tables
 
 
-def decode(data):
+def decode(data, *, fast_fragments=False):
     r = Reader(data)
-    model, _, remaining, mapping, tables = read_header(r)
+    model, _, remaining, mapping, tables = read_header(r, magic=b'FHF1' if fast_fragments else b'FHS1')
+    if fast_fragments and model != 0:
+        raise ValueError('fast fragments require motion contexts')
     decoder = Decoder(tables, allow_zero=True)
     previous, out, rows = bytes(3840), bytearray(), []
     while remaining:
-        n, _, bits, vectors, bm, at, encoded = read_group(r, remaining)
+        n, _, bits, vectors, bm, at, encoded = read_group(r, remaining, fast_fragments=fast_fragments)
         decoder.begin(encoded, bits)
         for frame in range(n):
             screen, first, values = bytearray(previous), decoder.position, 0
             for tile in range(192):
                 ty, tx = divmod(tile, 16)
                 vector = vectors[frame*192+tile]
+                if vector >= 85:
+                    start = (decoder.position+7)//8*8
+                    for bit in range(decoder.position, start):
+                        if encoded[bit//8] & (128 >> (bit % 8)):
+                            raise ValueError('nonzero fragment padding')
+                    size = {85: 16, 86: 2, 87: 5, 88: 1}[vector]
+                    if start+size*8 > bits:
+                        raise ValueError('truncated fragment')
+                    payload = encoded[start//8:start//8+size]
+                    decoder.position = start+size*8
+                    if vector == 85:
+                        fragment = payload
+                    elif vector == 86:
+                        fragment = payload*8
+                    elif vector == 88:
+                        fragment = payload*16
+                    else:
+                        selector = payload[4]
+                        if selector & 128 or not selector or payload[:2] == payload[2:4]:
+                            raise ValueError('noncanonical two-row fragment')
+                        fragment = b''.join(payload[2:4] if selector & (128 >> row) else payload[:2]
+                                            for row in range(8))
+                    for field, value in enumerate(fragment):
+                        screen[(ty*8+field//2)*32+tx*2+field % 2] = value
+                    continue
                 dx, dy = OFFSETS[vector] if vector < 81 else (0, 0)
                 for field in range(16):
                     y, bx = ty*8+field//2, tx*2+field % 2
@@ -194,7 +221,7 @@ def decode(data):
     return bytes(out), rows
 
 
-def read_group(r, remaining):
+def read_group(r, remaining, *, fast_fragments=False):
     n, vl, ml = r.u16(), r.u16(), r.u16()
     flags = r.take(1)[0]
     bits = int.from_bytes(r.take(4), 'little')
@@ -202,8 +229,10 @@ def read_group(r, remaining):
         raise ValueError('invalid group size')
     vectors = restore(r.take(vl), n, 192, 2)
     masks = restore(r.take(ml), n, 480, 4)
-    if any(v > 84 for v in vectors):
+    if any(v > (88 if fast_fragments else 84) for v in vectors):
         raise ValueError('invalid vector')
+    if fast_fragments and any(v >= 85 and masks[2*i:2*i+2] != b'\0\0' for i, v in enumerate(vectors)):
+        raise ValueError('fast fragment has corrections')
     wanted = sum(int(any(0 < v < 81 for v in vectors[i*192:(i+1)*192])) << (7-i) for i in range(n))
     if flags != wanted:
         raise ValueError('invalid motion cache flags')

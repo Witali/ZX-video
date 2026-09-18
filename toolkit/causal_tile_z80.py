@@ -8,6 +8,7 @@ Optional hybrid=True accepts FHT1 inline literals, raster-order attributes
 and a validated per-frame motion-cache flag. Default FPD1 code is unchanged.
 With intra_above=True, vector82 instead reads the already corrected above
 row (FHS1 motion context). intra_extended=True adds left/second-above (83/84).
+fast_fragments=True adds FHF1 raw/repeated-row/two-row/fill tiles (85..88).
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -38,7 +39,17 @@ def intra_tstates(vector, tile, corrections, *, extended=False):
     return 629+34+4*(32 if tile < 16 else 53)+12*26+25*corrections
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False):
+def fast_tstates(vector, *, unaligned=False, selector=0):
+    """Whole-fragment routine incl. RET; caller/outer traversal are separate."""
+    if vector not in (85, 86, 87, 88) or not 0 <= selector <= 255:
+        raise ValueError('invalid fast fragment')
+    base = {85: 546, 86: 541, 87: 818+10*(8-selector.bit_count()), 88: 513}[vector]
+    return base+10*bool(unaligned)
+
+
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False):
+    if fast_fragments and not intra_extended:
+        raise ValueError('fast fragments require extended spatial mode')
     if intra_extended and not intra_above:
         raise ValueError('extended intra requires intra_above')
     if intra_above and (not hybrid or not skip_empty or raw_kind is not None):
@@ -160,7 +171,13 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         jump('JP tile_done', 0xc3, 'tile_done', 10)
         a.label('literal_tile')
         if intra_above:
+            if fast_fragments:
+                emit('CP fast_vector', [0xfe, 85], 7)
+                jump('JP NC,fast_tile', 0xd2, 'fast_tile', 10)
             jump('CALL intra_above', 0xcd, 'intra_above', 17)
+            if fast_fragments:
+                jump('JP tile_done', 0xc3, 'tile_done', 10)
+                a.label('fast_tile'); jump('CALL fast_fragment', 0xcd, 'fast_fragment', 17)
         else:
             load('LD HL,(bitmap_masks)', 0x2a, 'bitmap_masks', 16)
             emit('INC HL', [0x23], 6); emit('INC HL', [0x23], 6)
@@ -258,6 +275,80 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
                     else:
                         emit('LD A,E', [0x7b], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD E,A', [0x5f], 4)
             emit('RET', [0xc9], 10)
+
+    if fast_fragments:
+        stage = 'fast_fragment'
+        a.label('fast_fragment')
+        # Masks are validated as zero by the container. Keep the normal
+        # bitmap-mask cursor in sync without touching predictor memory.
+        load('LD HL,(bitmap_masks)', 0x2a, 'bitmap_masks', 16)
+        emit('INC HL', [0x23], 6); emit('INC HL', [0x23], 6)
+        load('LD (bitmap_masks),HL', 0x22, 'bitmap_masks', 16)
+        emit('LD B,A', [0x47], 4)
+        emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4)
+        emit('AND 7', [0xe6, 7], 7); jump('JP Z,fragment_aligned', 0xca, 'fragment_aligned', 10)
+        emit('INC IX', [0xdd, 0x23], 10); a.label('fragment_aligned')
+        emit('LD C,F0h', [0x0e, 0xf0], 7); emit('EXX', [0xd9], 4)
+        emit('PUSH IX', [0xdd, 0xe5], 15); emit('POP HL', [0xe1], 10)
+        load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
+        emit('LD A,B', [0x78], 4)
+        for value, label in ((85, 'fragment_raw'), (86, 'fragment_repeat'), (87, 'fragment_rows')):
+            emit(f'CP {value}', [0xfe, value], 7); jump('JP Z,'+label, 0xca, label, 10)
+
+        def save_fragment_cursor():
+            emit('PUSH HL', [0xe5], 11); emit('POP IX', [0xdd, 0xe1], 14)
+
+        def row_advance():
+            emit('LD A,E', [0x7b], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD E,A', [0x5f], 4)
+
+        def write_pair(first, second):
+            emit('LD A,'+first, [0x78 if first == 'B' else 0x7c], 4)
+            emit('LD (DE),A', [0x12], 7); emit('INC E', [0x1c], 4)
+            emit('LD A,'+second, [0x79 if second == 'C' else 0x7d], 4)
+            emit('LD (DE),A', [0x12], 7)
+
+        a.label('fragment_fill')
+        emit('LD B,(HL)', [0x46], 7); emit('INC HL', [0x23], 6); save_fragment_cursor()
+        for row in range(8):
+            emit('LD A,B', [0x78], 4); emit('LD (DE),A', [0x12], 7)
+            emit('INC E', [0x1c], 4); emit('LD (DE),A', [0x12], 7)
+            if row < 7:
+                row_advance()
+        emit('RET', [0xc9], 10)
+
+        a.label('fragment_raw')
+        for row in range(8):
+            emit('LDI', [0xed, 0xa0], 16); emit('LDI', [0xed, 0xa0], 16)
+            if row < 7:
+                emit('LD A,E', [0x7b], 4); emit('ADD A,30', [0xc6, 30], 7); emit('LD E,A', [0x5f], 4)
+        save_fragment_cursor(); emit('RET', [0xc9], 10)
+
+        a.label('fragment_repeat')
+        emit('LD B,(HL)', [0x46], 7); emit('INC HL', [0x23], 6)
+        emit('LD C,(HL)', [0x4e], 7); emit('INC HL', [0x23], 6); save_fragment_cursor()
+        for row in range(8):
+            write_pair('B', 'C')
+            if row < 7:
+                row_advance()
+        emit('RET', [0xc9], 10)
+
+        a.label('fragment_rows')
+        for name, opcode in (('B', 0x46), ('C', 0x4e), ('D', 0x56), ('E', 0x5e), ('A', 0x7e)):
+            emit(f'LD {name},(HL)', [opcode], 7); emit('INC HL', [0x23], 6)
+        save_fragment_cursor()
+        emit('PUSH DE', [0xd5], 11); emit('POP HL', [0xe1], 10)
+        load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
+        emit("EX AF,AF'", [0x08], 4)
+        for row in range(8):
+            emit("EX AF,AF'", [0x08], 4); emit('RLA', [0x17], 4)
+            jump('JP C,second_pair', 0xda, f'fragment_second_{row}', 10)
+            emit("EX AF,AF'", [0x08], 4); write_pair('B', 'C')
+            jump('JP pair_done', 0xc3, f'fragment_pair_done_{row}', 10)
+            a.label(f'fragment_second_{row}'); emit("EX AF,AF'", [0x08], 4); write_pair('H', 'L')
+            a.label(f'fragment_pair_done_{row}')
+            if row < 7:
+                row_advance()
+        emit('RET', [0xc9], 10)
 
     if raw_kind is not None:
         stage = 'raw_patch'
