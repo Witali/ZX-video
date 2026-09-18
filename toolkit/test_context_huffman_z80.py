@@ -95,14 +95,19 @@ class ContextHuffmanZ80Tests(unittest.TestCase):
         profile = json.loads((Path(__file__).parent/'prediction_context_profile.json').read_text())
         candidate = next(row for row in profile['rows'] if row['name'] == 'exact_predicted_byte')['clustered_huffman'][0]
         tables, mapping = [bytes(t) for t in candidate['tables']], bytes(candidate['context_map'])
+        self.exercise_ay_irq(tables, mapping, lambda: Harness(tables, mapping, 'unrolled'),
+                             'benchmark_context_huffman.PAIRS')
+
+    def exercise_ay_irq(self, tables, mapping, harness_factory, pairs_variable):
         pairs, values, contexts = [], bytearray(), []
         # Exercise maximum-depth codes, both entries and unaligned refills.
-        for context in list(range(15))+[64]:
-            pairs.append((1, 0) if context == 64 else (0, mapping.index(context)))
+        attribute_context = len(tables)-1
+        for context in list(range(min(15, attribute_context)))+[attribute_context]:
+            pairs.append((1, 0) if context == attribute_context else (0, mapping.index(context)))
             values.append(max(range(256), key=lambda v: tables[context][v]))
             contexts.append(context)
         _, encoded = pack(values, contexts, [codes_for(255, t) for t in tables])
-        h = Harness(tables, mapping, 'unrolled')
+        h = harness_factory()
         h.begin(encoded)
         a = MiniAssembler(0xa500)
         ay_interrupt.emit(a)
@@ -159,7 +164,7 @@ class ContextHuffmanZ80Tests(unittest.TestCase):
 
         # The normal CPU fixture puts pairs at A000; relocate them for this
         # IRQ fixture because the real AY queue owns A000..A3FF.
-        with patch('benchmark_context_huffman.PAIRS', 0x9400):
+        with patch(pairs_variable, 0x9400):
             h.run(pairs, bytes(values), interrupt)
         self.assertGreater(calls, 1000)
 

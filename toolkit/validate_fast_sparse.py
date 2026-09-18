@@ -93,8 +93,8 @@ class CPU(MemoryCPU):
                 return 20
             if q == 0x21:
                 self.ix = self.fetch16(); return 14
-            if q == 0x23:
-                self.ix = (self.ix + 1) & 65535; return 10
+            if q in (0x23, 0x2B):
+                self.ix = (self.ix + (1 if q == 0x23 else -1)) & 65535; return 10
             if q == 0xE5:
                 self.push(self.ix); return 15
             if q == 0xE1:
