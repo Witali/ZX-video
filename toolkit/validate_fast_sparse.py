@@ -294,6 +294,10 @@ class CPU(MemoryCPU):
                 self.set_hl(value); self.carry = value < 0; self.z = self.hl() == 0; return 15
             if q == 0x44:
                 self.carry = self.a != 0; self.a = (-self.a) & 255; self.z = self.a == 0; return 8
+            if q == 0xA0:
+                self.write8(self.de(), self.read8(self.hl()))
+                self.set_hl(self.hl()+1); self.set_de(self.de()+1); self.set_bc(self.bc()-1)
+                return 16  # LDI preserves the modeled Z/C flags (UM0080).
             if q in (0xB0, 0xB8):
                 count = self.bc() or 65536
                 step = 1 if q == 0xB0 else -1
