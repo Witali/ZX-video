@@ -23,6 +23,7 @@ def main():
     p.add_argument('--motion-cache', type=Path, required=True)
     p.add_argument('--selection', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--widths', type=int, nargs='+', choices=range(8, 13), help='also estimate wider fixed-index dictionaries')
     args = p.parse_args()
     with np.load(args.motion_cache, allow_pickle=False) as saved:
         states = saved['states']
@@ -54,6 +55,22 @@ def main():
         estimated_new_arbitrary_payload_bytes=int(np.minimum(payload, 16).sum()),
         estimated_payload_saving=savings, estimated_payload_saving_less_dictionary=savings-510,
         does_not_include_metadata_alignment_or_zx0=True, player_changed=False)
+    if args.widths:
+        ranking = np.argsort(-histogram, kind='stable')
+        variants = []
+        for bits in args.widths:
+            entries = (1 << bits)-1
+            member = np.zeros(65536, dtype=bool); member[ranking[:entries]] = True
+            missing = (~member[words]).sum(axis=1)
+            size = bits+2*missing  # Eight fixed-width indices, then 16-bit escapes.
+            shorter = size < 16
+            saving = int((16-size[shorter]).sum())
+            variants.append(dict(index_bits=bits, dictionary_entries=entries,
+                dictionary_bytes=entries*2, dictionary_hits=int(member[words].sum()),
+                adopted_tiles=int(shorter.sum()), payload_saving=saving,
+                payload_saving_less_dictionary=saving-2*entries,
+                miss_histogram=dict(Counter(int(m) for m in missing))))
+        report['width_variants'] = variants
     args.output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
     print(json.dumps({k: v for k, v in report.items() if k != 'dictionary_words'}), flush=True)
 

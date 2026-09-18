@@ -129,15 +129,27 @@ def read_header(reader, *, magic=b'FHS1'):
     return model, original, frames, mapping, tables
 
 
-def decode(data, *, fast_fragments=False):
+def decode(data, *, fast_fragments=False, fragment_dictionary=False):
+    if fragment_dictionary and not fast_fragments:
+        raise ValueError('dictionary requires fast fragments')
     r = Reader(data)
-    model, _, remaining, mapping, tables = read_header(r, magic=b'FHF1' if fast_fragments else b'FHS1')
+    magic = b'FHD1' if fragment_dictionary else b'FHF1' if fast_fragments else b'FHS1'
+    model, _, remaining, mapping, tables = read_header(r, magic=magic)
     if fast_fragments and model != 0:
         raise ValueError('fast fragments require motion contexts')
+    if fragment_dictionary:
+        word_bits = r.take(1)[0]
+        if word_bits not in range(8, 13):
+            raise ValueError('invalid dictionary width')
+        escape = (1 << word_bits)-1
+        blob = r.take(escape*2)
+        words = [blob[i:i+2] for i in range(0, len(blob), 2)]
+        if len(set(words)) != len(words):
+            raise ValueError('duplicate dictionary word')
     decoder = Decoder(tables, allow_zero=True)
     previous, out, rows = bytes(3840), bytearray(), []
     while remaining:
-        n, _, bits, vectors, bm, at, encoded = read_group(r, remaining, fast_fragments=fast_fragments)
+        n, _, bits, vectors, bm, at, encoded = read_group(r, remaining, fast_fragments=fast_fragments, fragment_dictionary=fragment_dictionary)
         decoder.begin(encoded, bits)
         for frame in range(n):
             screen, first, values = bytearray(previous), decoder.position, 0
@@ -149,12 +161,25 @@ def decode(data, *, fast_fragments=False):
                     for bit in range(decoder.position, start):
                         if encoded[bit//8] & (128 >> (bit % 8)):
                             raise ValueError('nonzero fragment padding')
-                    size = {85: 16, 86: 2, 87: 5, 88: 1}[vector]
+                    size = word_bits if vector == 89 else {85: 16, 86: 2, 87: 5, 88: 1}[vector]
                     if start+size*8 > bits:
                         raise ValueError('truncated fragment')
                     payload = encoded[start//8:start//8+size]
                     decoder.position = start+size*8
-                    if vector == 85:
+                    if vector == 89:
+                        upper = int.from_bytes(payload[8:], 'big')
+                        fragment = bytearray()
+                        for row in range(8):
+                            high = (upper >> ((word_bits-8)*(7-row))) & ((1 << (word_bits-8))-1)
+                            index = payload[row] | (high << 8)
+                            if index == escape:
+                                if decoder.position+16 > bits:
+                                    raise ValueError('truncated dictionary escape')
+                                byte = decoder.position//8
+                                fragment.extend(encoded[byte:byte+2]); decoder.position += 16
+                            else:
+                                fragment.extend(words[index])
+                    elif vector == 85:
                         fragment = payload
                     elif vector == 86:
                         fragment = payload*8
@@ -221,7 +246,9 @@ def decode(data, *, fast_fragments=False):
     return bytes(out), rows
 
 
-def read_group(r, remaining, *, fast_fragments=False):
+def read_group(r, remaining, *, fast_fragments=False, fragment_dictionary=False):
+    if fragment_dictionary and not fast_fragments:
+        raise ValueError('dictionary requires fast fragments')
     n, vl, ml = r.u16(), r.u16(), r.u16()
     flags = r.take(1)[0]
     bits = int.from_bytes(r.take(4), 'little')
@@ -229,7 +256,7 @@ def read_group(r, remaining, *, fast_fragments=False):
         raise ValueError('invalid group size')
     vectors = restore(r.take(vl), n, 192, 2)
     masks = restore(r.take(ml), n, 480, 4)
-    if any(v > (88 if fast_fragments else 84) for v in vectors):
+    if any(v > (89 if fragment_dictionary else 88 if fast_fragments else 84) for v in vectors):
         raise ValueError('invalid vector')
     if fast_fragments and any(v >= 85 and masks[2*i:2*i+2] != b'\0\0' for i, v in enumerate(vectors)):
         raise ValueError('fast fragment has corrections')

@@ -106,7 +106,7 @@ def profile(states, vectors, residual, mapping, tables):
         kind_histogram={str(v): int(np.count_nonzero(kinds == v)) for v in SIZES})
 
 
-def encode(original, states, vectors, residual, mapping, tables, selected, *, cap=MAX_CODED):
+def encode(original, states, vectors, residual, mapping, tables, selected, *, cap=MAX_CODED, dictionary=None):
     hr = Reader(original); _, count = parse_header(hr); hr.end()
     if states.shape != (count, 3840) or residual.shape != states.shape or vectors.shape != (count, 192):
         raise ValueError('invalid shapes')
@@ -119,13 +119,23 @@ def encode(original, states, vectors, residual, mapping, tables, selected, *, ca
     payloads = {}
     for frame, tile in np.argwhere(selected):
         kind, payload = pack_fragment(current[frame, tile].tobytes())
+        if dictionary is not None and kind == 85:
+            from fragment_dictionary import pack as pack_words
+            packed = pack_words(payload, dictionary)
+            if len(packed) < len(payload):
+                kind, payload = 89, packed
         v[frame, tile] = kind; active[frame, tile] = False
         payloads[int(frame), int(tile)] = payload
     bm = np.packbits(active.reshape(count, 3072), axis=1)
     attrs = residual[:, 3072:] != 0; at = np.packbits(attrs, axis=1)
     contexts = np.frombuffer(mapping, dtype=np.uint8)[predicted]
     codes = [codes_for(255, t) for t in tables]
-    out = bytearray(b'FHF1'+bytes([0, len(tables)])+struct.pack('<H', len(original))+original+mapping+b''.join(tables))
+    out = bytearray((b'FHD1' if dictionary is not None else b'FHF1')+bytes([0, len(tables)])+struct.pack('<H', len(original))+original+mapping+b''.join(tables))
+    if dictionary is not None:
+        bits, blob, lookup = dictionary
+        if bits not in range(8, 13) or len(blob) != 2*((1 << bits)-1) or len(lookup) != 65536:
+            raise ValueError('invalid dictionary')
+        out.extend(bytes([bits])+blob)
     writer, start, index, groups, rows = Writer(), 0, 0, [], []
 
     def flush(end):
