@@ -1,0 +1,187 @@
+{
+  "scope": "Exact correction alphabets conditioned on each predicted 2-bit level.\n\nFPR1: magic, 16 decoder-table bytes (prediction*4+code), then an FMO1 stream.\nCode zero always reproduces the predicted value; masks therefore do not\nchange. Attribute corrections remain XOR. This transforms an existing movie\nexactly, without another motion search or another image quantization.\n",
+  "baseline_commit": "8dd09de",
+  "frames": 4971,
+  "input_states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+  "input_fmr1_sha256": "504114fff444c5a0fda51e5ccfeb0443384e5e6b3495f86d68af7f493efeaca5",
+  "predicted_to_actual_counts": [
+    [
+      24570363,
+      365347,
+      382637,
+      216030
+    ],
+    [
+      196506,
+      8911223,
+      321781,
+      167552
+    ],
+    [
+      210451,
+      327590,
+      10543191,
+      551245
+    ],
+    [
+      107109,
+      172093,
+      587106,
+      13453424
+    ]
+  ],
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "hot_path_delta_tstates": 0,
+  "complete": true,
+  "rows": [
+    {
+      "name": "xor",
+      "symbols": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          1,
+          0,
+          3,
+          2
+        ],
+        [
+          2,
+          3,
+          0,
+          1
+        ],
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "raw_bytes": 5030686,
+      "stream_sha256": "2ee95598a652a19404b3b33e90f4442bad989366080d1c5582c741ce8dbe4480",
+      "exact_round_trip": true,
+      "mask_unchanged": true,
+      "deflate": {
+        "8192": 2408284,
+        "5030686": 2379304
+      }
+    },
+    {
+      "name": "frequency",
+      "symbols": [
+        [
+          0,
+          2,
+          1,
+          3
+        ],
+        [
+          1,
+          2,
+          0,
+          3
+        ],
+        [
+          2,
+          3,
+          1,
+          0
+        ],
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "raw_bytes": 5030686,
+      "stream_sha256": "843eb9756ef43927236207692a84075bc1c733012d5fccc5729eb113e8b59c24",
+      "exact_round_trip": true,
+      "mask_unchanged": true,
+      "deflate": {
+        "8192": 2358059,
+        "5030686": 2331175
+      }
+    },
+    {
+      "name": "nearest",
+      "symbols": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          1,
+          0,
+          2,
+          3
+        ],
+        [
+          2,
+          1,
+          0,
+          3
+        ],
+        [
+          3,
+          2,
+          1,
+          0
+        ]
+      ],
+      "raw_bytes": 5030686,
+      "stream_sha256": "6d6bea4b187b67eab7b194b05afe9a6603e2bb34bec9d433e17068e7e333ba28",
+      "exact_round_trip": true,
+      "mask_unchanged": true,
+      "deflate": {
+        "8192": 2396555,
+        "5030686": 2369019
+      }
+    },
+    {
+      "name": "cyclic",
+      "symbols": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          1,
+          2,
+          3,
+          0
+        ],
+        [
+          2,
+          3,
+          0,
+          1
+        ],
+        [
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "raw_bytes": 5030686,
+      "stream_sha256": "2670b692b55e1f3b15ea66da1947746dcf27f71a87a7f42102abf1347000190d",
+      "exact_round_trip": true,
+      "mask_unchanged": true,
+      "deflate": {
+        "8192": 2423662,
+        "5030686": 2394600
+      }
+    }
+  ]
+}

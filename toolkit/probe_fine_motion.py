@@ -73,7 +73,12 @@ def encode(vectors, residual, size, offsets, group_frames):
     return bytes(output)
 
 
-def decode(data):
+def decode(data, symbols=None):
+    # Optional per-predicted-level correction alphabet; default remains XOR.
+    if symbols is not None:
+        if len(symbols) != 4 or any(len(row) != 4 or sorted(row) != list(range(4)) or row[0] != p
+                                     for p, row in enumerate(symbols)):
+            raise ValueError('invalid correction alphabet')
     offset = 0
 
     def read(count):
@@ -123,7 +128,14 @@ def decode(data):
             for byte, flags in enumerate(masks[row * 480:(row + 1) * 480]):
                 for bit in range(8):
                     if flags & (128 >> bit):
-                        screen[byte * 8 + bit] ^= read(1)[0]
+                        address = byte * 8 + bit
+                        value = read(1)[0]
+                        if symbols is None or address >= 3072:
+                            screen[address] ^= value
+                        else:
+                            previous_value = screen[address]
+                            screen[address] = sum(symbols[(previous_value >> shift) & 3][(value >> shift) & 3] << shift
+                                                  for shift in (6, 4, 2, 0))
             previous = bytes(screen)
             frames.append(previous)
     if offset != len(data):

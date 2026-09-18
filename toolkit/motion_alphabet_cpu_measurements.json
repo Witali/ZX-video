@@ -1,0 +1,312 @@
+{
+  "scope": "Compare register XOR with an exact predictor-conditioned Z80 lookup.\n\nEntry-to-RET primitive only, B=predicted byte, C=correction byte, A=result.\nLookup has an aligned 256-byte table at H:00, destroys D/L/flags.\nBoth preserve B/C/H. Excludes CALL, input/output, traversal, paging, IRQ,\nULA, ROM, disk and ZX0. This is not the complete frame decoder.\n",
+  "baseline_commit": "8dd09de",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "timing_pages": [
+    71,
+    74,
+    158,
+    160,
+    162,
+    209,
+    285
+  ],
+  "input_report_sha256": "30d5a331135087859e2bcd3599c476598b083e9eb60890ab54a93fb5612f3fd0",
+  "input_states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+  "reference_listing": [
+    {
+      "instruction": "LD A,B",
+      "code": [
+        120
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "XOR C",
+      "code": [
+        169
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RET",
+      "code": [
+        201
+      ],
+      "tstates": 10
+    }
+  ],
+  "reference": {
+    "input_pairs": 65536,
+    "cpu_tstates": 18,
+    "lookup_bytes": 256,
+    "lookup_sha256": "c64c6cd5750493429a8a7378e51e8a44b1d70c11d0564b411db0043923d6af20",
+    "complete": true
+  },
+  "code_hex": "790f0f0f0fe60f6f78e6f0b56f7e0f0f0f0f57780f0f0f0fe6f06f79e60fb56f7eb2c9",
+  "code_bytes": 35,
+  "listing": [
+    {
+      "instruction": "LD A,C",
+      "code": [
+        121
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "AND 0Fh",
+      "code": [
+        230,
+        15
+      ],
+      "tstates": 7
+    },
+    {
+      "instruction": "LD L,A",
+      "code": [
+        111
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD A,B",
+      "code": [
+        120
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "AND F0h",
+      "code": [
+        230,
+        240
+      ],
+      "tstates": 7
+    },
+    {
+      "instruction": "OR L",
+      "code": [
+        181
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD L,A",
+      "code": [
+        111
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD A,(HL)",
+      "code": [
+        126
+      ],
+      "tstates": 7
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD D,A",
+      "code": [
+        87
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD A,B",
+      "code": [
+        120
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "AND F0h",
+      "code": [
+        230,
+        240
+      ],
+      "tstates": 7
+    },
+    {
+      "instruction": "LD L,A",
+      "code": [
+        111
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD A,C",
+      "code": [
+        121
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "AND 0Fh",
+      "code": [
+        230,
+        15
+      ],
+      "tstates": 7
+    },
+    {
+      "instruction": "OR L",
+      "code": [
+        181
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD L,A",
+      "code": [
+        111
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD A,(HL)",
+      "code": [
+        126
+      ],
+      "tstates": 7
+    },
+    {
+      "instruction": "OR D",
+      "code": [
+        178
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RET",
+      "code": [
+        201
+      ],
+      "tstates": 10
+    }
+  ],
+  "primitive_before_tstates": 18,
+  "primitive_after_tstates": 148,
+  "primitive_delta_tstates": 130,
+  "variants": {
+    "xor": {
+      "input_pairs": 65536,
+      "cpu_tstates": 148,
+      "lookup_bytes": 256,
+      "lookup_sha256": "c64c6cd5750493429a8a7378e51e8a44b1d70c11d0564b411db0043923d6af20",
+      "complete": true
+    },
+    "frequency": {
+      "input_pairs": 65536,
+      "cpu_tstates": 148,
+      "lookup_bytes": 256,
+      "lookup_sha256": "8b9c7774e1d20a10b964a5a57bb867438cfe3d80ce4856b72852644c655b130e",
+      "complete": true
+    },
+    "nearest": {
+      "input_pairs": 65536,
+      "cpu_tstates": 148,
+      "lookup_bytes": 256,
+      "lookup_sha256": "e1c3de541e840aa0e3cac3d19e0a2c80f1232ff1613562187ccad7b551084c01",
+      "complete": true
+    },
+    "cyclic": {
+      "input_pairs": 65536,
+      "cpu_tstates": 148,
+      "lookup_bytes": 256,
+      "lookup_sha256": "22fcebff9e856550f2a882f931488823a0f8820c9f35ad689e1f6c1cbf6239e2",
+      "complete": true
+    }
+  },
+  "bitmap_corrections_per_frame_mean": 332.42627237980287,
+  "bitmap_corrections_per_frame_max": 1984,
+  "bitmap_corrections_total": 1652491,
+  "estimated_extra_primitive_tstates_per_frame_mean": 43215.41540937437,
+  "estimated_extra_primitive_tstates_per_frame_max": 257920,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "full_decoder_tstates_measured": false
+}
