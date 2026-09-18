@@ -1,0 +1,37 @@
+{
+  "scope": "FHS1: lossless spatial contexts for masked causal motion corrections.\n\nThe motion, masks, attributes and candidate pixels remain unchanged.\nModel selection is global; above/left bytes belong to the already decoded\ncurrent frame. Frame edges use zero. This is an offline codec experiment.\nFHS1: model u8, count u8, original FPR1 header length/header, context map256,\nlengths256/context; then FHT1 groups without literal vectors.\n",
+  "baseline_commit": "e7727cd",
+  "states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "baseline_sha256": "6e61aebc8174d4a532e205996e43a2ca9194187890e3efc769f88aa2816149df",
+  "frames": 4971,
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "complete": true,
+  "rows": [
+    {
+      "name": "above_16",
+      "model": 1,
+      "contexts": 16,
+      "raw_bytes": 2715587,
+      "sha256": "9fc1f642563ed0b2d04bb25522cf3f17111808522b206a6b8bb15a9808accac2",
+      "exact_causal_frame_decode": true,
+      "bits": 7947857,
+      "groups": 622,
+      "max_group_bytes": 8916,
+      "deflate_8192": 1941213
+    },
+    {
+      "name": "above_64",
+      "model": 1,
+      "contexts": 64,
+      "raw_bytes": 2689290,
+      "sha256": "142105afb3974b52a17a1f1b7d043ecbc9200f0ebcace87aba0a06ba05c61b5f",
+      "exact_causal_frame_decode": true,
+      "bits": 7639233,
+      "groups": 622,
+      "max_group_bytes": 9105,
+      "deflate_8192": 1905203
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+{
+  "scope": "Collect fully verified FHS1 storage and the two full causal CPU runs.\n\nStorage margins include the previous unchanged AY estimate, but not new\nvolume/code overhead. CPU queues exclude all stages except reconstruction.\nNeither an offline size margin nor a CPU-only queue proves a release.\n",
+  "baseline_commit": "e7727cd",
+  "complete": true,
+  "candidate_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "baseline_video_bytes": 1988153,
+  "unchanged_ay_estimate_bytes": 77696,
+  "preliminary_three_trd_budget_bytes": 1937664,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "full_frame_delivery_measured": false,
+  "rows": [
+    {
+      "source": "spatial_context_measurements.json",
+      "variant": "above_16",
+      "storage_report": "spatial_context_above_16_zx0.json",
+      "raw_bytes": 2715587,
+      "bits": 7947857,
+      "zx0_bytes_with_headers": 1925466,
+      "blocks": 332,
+      "sha256": "9fc1f642563ed0b2d04bb25522cf3f17111808522b206a6b8bb15a9808accac2",
+      "delta_to_baseline_video_bytes": -62687,
+      "video_plus_ay_estimate_bytes": 2003162,
+      "preliminary_margin_before_overhead_bytes": -65498
+    },
+    {
+      "source": "spatial_context_measurements.json",
+      "variant": "above_64",
+      "storage_report": "spatial_context_above_64_zx0.json",
+      "raw_bytes": 2689290,
+      "bits": 7639233,
+      "zx0_bytes_with_headers": 1892910,
+      "blocks": 329,
+      "sha256": "142105afb3974b52a17a1f1b7d043ecbc9200f0ebcace87aba0a06ba05c61b5f",
+      "delta_to_baseline_video_bytes": -95243,
+      "video_plus_ay_estimate_bytes": 1970606,
+      "preliminary_margin_before_overhead_bytes": -32942
+    },
+    {
+      "source": "spatial_tiles_measurements.json",
+      "variant": "motion_16",
+      "storage_report": "spatial_tiles_motion_16_zx0.json",
+      "raw_bytes": 2660918,
+      "bits": 7566110,
+      "zx0_bytes_with_headers": 1866890,
+      "blocks": 325,
+      "sha256": "4c6ac5cce858c7a351d9ff355209dc24c3e4d3c6f0ca1a86c226eab207a2f81b",
+      "delta_to_baseline_video_bytes": -121263,
+      "video_plus_ay_estimate_bytes": 1944586,
+      "preliminary_margin_before_overhead_bytes": -6922
+    },
+    {
+      "source": "spatial_tiles_measurements.json",
+      "variant": "above_16",
+      "storage_report": "spatial_tiles_above_16_zx0.json",
+      "raw_bytes": 2679739,
+      "bits": 7716754,
+      "zx0_bytes_with_headers": 1886168,
+      "blocks": 328,
+      "sha256": "c95bacdb95cc9119ebc0513567ac0846deefc71fc027e686e4f413a83456d0b0",
+      "delta_to_baseline_video_bytes": -101985,
+      "video_plus_ay_estimate_bytes": 1963864,
+      "preliminary_margin_before_overhead_bytes": -26200
+    },
+    {
+      "source": "spatial_tiles_cost_measurements.json",
+      "variant": "iteration_1",
+      "storage_report": "spatial_tiles_cost_1_zx0.json",
+      "raw_bytes": 2655186,
+      "bits": 7542667,
+      "zx0_bytes_with_headers": 1858802,
+      "blocks": 325,
+      "sha256": "c767678b24cc41ea597e9f8f19502fd82844b03ebbc572acd9f8dc8b48bf0cdf",
+      "delta_to_baseline_video_bytes": -129351,
+      "video_plus_ay_estimate_bytes": 1936498,
+      "preliminary_margin_before_overhead_bytes": 1166
+    },
+    {
+      "source": "spatial_tiles_cost_measurements.json",
+      "variant": "iteration_2",
+      "storage_report": "spatial_tiles_cost_2_zx0.json",
+      "raw_bytes": 2654603,
+      "bits": 7537728,
+      "zx0_bytes_with_headers": 1857847,
+      "blocks": 325,
+      "sha256": "e624f836253467961e31d9577446850ca9dd073929bde3fb668238c94fdfb980",
+      "delta_to_baseline_video_bytes": -130306,
+      "video_plus_ay_estimate_bytes": 1935543,
+      "preliminary_margin_before_overhead_bytes": 2121
+    },
+    {
+      "source": "spatial_predictors_measurements.json",
+      "variant": null,
+      "storage_report": "spatial_predictors_zx0.json",
+      "raw_bytes": 2649879,
+      "bits": 7510066,
+      "zx0_bytes_with_headers": 1860667,
+      "blocks": 324,
+      "sha256": "8211cfbfd039db6e695a05490235e39611143fbd6b76047647674d887bf9f178",
+      "delta_to_baseline_video_bytes": -127486,
+      "video_plus_ay_estimate_bytes": 1938363,
+      "preliminary_margin_before_overhead_bytes": -699
+    },
+    {
+      "source": "spatial_predictors_cost_measurements.json",
+      "variant": "iteration_1",
+      "storage_report": "spatial_predictors_cost_1_zx0.json",
+      "raw_bytes": 2640460,
+      "bits": 7461276,
+      "zx0_bytes_with_headers": 1848876,
+      "blocks": 323,
+      "sha256": "e72db632ba43b5603f3388d45efaf2a1d4cabc273e94e61766b6461b830e6cd7",
+      "delta_to_baseline_video_bytes": -139277,
+      "video_plus_ay_estimate_bytes": 1926572,
+      "preliminary_margin_before_overhead_bytes": 11092
+    },
+    {
+      "source": "spatial_predictors_cost_measurements.json",
+      "variant": "iteration_2",
+      "storage_report": "spatial_predictors_cost_2_zx0.json",
+      "raw_bytes": 2640935,
+      "bits": 7464715,
+      "zx0_bytes_with_headers": 1849230,
+      "blocks": 323,
+      "sha256": "a450e336dac8359c9e19109d0254f0caea6b54cae9a1adbba5df37eb48036673",
+      "delta_to_baseline_video_bytes": -138923,
+      "video_plus_ay_estimate_bytes": 1926926,
+      "preliminary_margin_before_overhead_bytes": 10738
+    }
+  ],
+  "verified_zx0_blocks": 2934,
+  "cpu": [
+    {
+      "name": "spatial_tiles_baseline",
+      "frames": 4971,
+      "code_bytes": 1388,
+      "state_bytes": 23,
+      "total_tstates": 1428953317,
+      "mean_frame_tstates": 287457.91933212633,
+      "max_frame_tstates": 1008630,
+      "worst_frame": 3685,
+      "frames_over_nominal_425448": 714,
+      "stages": {
+        "control": 185426715,
+        "patch": 287184066,
+        "attribute_pass": 40696361,
+        "huffman": 344286189,
+        "cache": 283495024,
+        "motion": 287864962
+      },
+      "zx0_cpu": {
+        "blocks": 340,
+        "raw_bytes": 2784318,
+        "total_tstates": 109679754,
+        "mean_block_tstates": 322587.5117647059,
+        "max_block_tstates": 549661,
+        "bytes_with_headers": 1988153
+      },
+      "two_stage_total_tstates": 1538633071,
+      "idealized_queue": [
+        {
+          "budget_tstates": 425448,
+          "minimum_complete_frame_capacity": 167
+        },
+        {
+          "budget_tstates": 350000,
+          "minimum_complete_frame_capacity": 258
+        },
+        {
+          "budget_tstates": 300000,
+          "minimum_complete_frame_capacity": 351
+        },
+        {
+          "budget_tstates": 250000,
+          "minimum_complete_frame_capacity": 874
+        }
+      ]
+    },
+    {
+      "name": "spatial_tiles_motion_16",
+      "frames": 4971,
+      "code_bytes": 1639,
+      "state_bytes": 23,
+      "total_tstates": 1358779063,
+      "mean_frame_tstates": 273341.19151076244,
+      "max_frame_tstates": 861629,
+      "worst_frame": 3685,
+      "frames_over_nominal_425448": 599,
+      "stages": {
+        "control": 184006919,
+        "patch": 244189676,
+        "attribute_pass": 40696361,
+        "huffman": 307118348,
+        "intra": 59713058,
+        "cache": 283201064,
+        "motion": 239853637
+      },
+      "zx0_cpu": {
+        "blocks": 325,
+        "raw_bytes": 2660918,
+        "total_tstates": 103371172,
+        "mean_block_tstates": 318065.14461538463,
+        "max_block_tstates": 544448,
+        "bytes_with_headers": 1866890
+      },
+      "two_stage_total_tstates": 1462150235,
+      "idealized_queue": [
+        {
+          "budget_tstates": 425448,
+          "minimum_complete_frame_capacity": 165
+        },
+        {
+          "budget_tstates": 350000,
+          "minimum_complete_frame_capacity": 255
+        },
+        {
+          "budget_tstates": 300000,
+          "minimum_complete_frame_capacity": 346
+        },
+        {
+          "budget_tstates": 250000,
+          "minimum_complete_frame_capacity": 681
+        }
+      ]
+    }
+  ],
+  "cpu_delta": {
+    "total_tstates": -70174254,
+    "two_stage_tstates": -76482836,
+    "code_bytes": 251,
+    "stages": {
+      "motion": -48011325,
+      "intra": 59713058,
+      "patch": -42994390,
+      "cache": -293960,
+      "attribute_pass": 0,
+      "control": -1419796,
+      "huffman": -37167841
+    }
+  },
+  "intra_formula": "1057 T top tile stripe /1099 T other stripes +25 T per correction, including RET; Huffman and external CALL separate"
+}

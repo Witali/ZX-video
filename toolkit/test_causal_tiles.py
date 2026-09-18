@@ -146,7 +146,7 @@ class CausalTileTests(unittest.TestCase):
             with self.subTest(skip_empty=skip_empty):
                 self.exercise_irq(skip_empty)
 
-    def exercise_irq(self, skip_empty, *, hybrid_data=None, raw_data=None):
+    def exercise_irq(self, skip_empty, *, hybrid_data=None, raw_data=None, spatial_data=None):
         tables, mapping = [bytes([8]*256)]*2, bytes(256)
         # Several moving boundary tiles, attributes and untouched regions.
         v = bytearray(192)
@@ -175,8 +175,20 @@ class CausalTileTests(unittest.TestCase):
             self.assertEqual(count, n); r.end()
             restored, _ = decode(raw_data)
             targets = [restored[i*3840:(i+1)*3840] for i in range(n)]
+        if spatial_data is not None:
+            from probe_spatial_contexts import read_header, read_group, decode
+            from probe_motion_entropy import Reader
+            self.assertIsNone(hybrid_data); self.assertIsNone(raw_data)
+            r = Reader(spatial_data)
+            model, _, n, mapping, tables = read_header(r)
+            self.assertEqual(model, 0)
+            count, _, _, vectors, bm, at, encoded = read_group(r, n)
+            self.assertEqual(count, n); r.end()
+            restored, _ = decode(spatial_data)
+            targets = [restored[i*3840:(i+1)*3840] for i in range(n)]
         h = Harness(tables, mapping, OFFSETS, skip_empty=skip_empty,
-            hybrid=hybrid_data is not None or raw_data is not None, raw_kind=raw_kind)
+            hybrid=hybrid_data is not None or raw_data is not None or spatial_data is not None,
+            raw_kind=raw_kind, intra_above=spatial_data is not None)
         h.begin(encoded, vectors, bm, at)
         a = MiniAssembler(0x8800)
         ay_interrupt.emit(a)
@@ -202,6 +214,10 @@ class CausalTileTests(unittest.TestCase):
         def interrupt(cpu):
             nonlocal calls
             cpu.guarding = False
+            # Exhaustive instruction-boundary injection may exceed 65535
+            # ticks. Keep this synthetic stream active; its final-tick path
+            # has separate AY tests. The real clock still wraps at 16 bits.
+            word(cpu, a.labels['audio_remaining'], 65535)
             index = cpu.read8(a.labels['audio_read_index'])
             slot = ay_interrupt.QUEUE_BASE+index*ay_interrupt.SLOT_BYTES
             cpu.write8(slot, 1); cpu.write8(slot+1, 8); cpu.write8(slot+2, calls & 15)
@@ -215,7 +231,7 @@ class CausalTileTests(unittest.TestCase):
             self.assertEqual(cpu.ay[8], calls & 15)
             self.assertEqual(cpu.tstates-start, 116+17+367+83)
             calls += 1
-            self.assertEqual(word(cpu, a.labels['elapsed_fields']), calls)
+            self.assertEqual(word(cpu, a.labels['elapsed_fields']), calls & 65535)
             self.assertEqual(word(cpu, a.labels['audio_underruns']), 0)
             cpu.guarding = True
             return cpu.tstates-start

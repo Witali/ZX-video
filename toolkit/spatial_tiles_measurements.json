@@ -1,0 +1,50 @@
+{
+  "scope": "Add exact intra-frame above-row prediction to a bounded-motion candidate.\n\nChoose between its original temporal predictor and an above-row predictor\nwith a simple offline cost. Pixel/attribute states are preserved exactly.\nThe decoder must apply each correction before predicting the next row.\n",
+  "baseline_commit": "e7727cd",
+  "complete": true,
+  "states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "baseline_sha256": "6e61aebc8174d4a532e205996e43a2ca9194187890e3efc769f88aa2816149df",
+  "frames": 4971,
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "intra_tiles": 48267,
+  "bitmap_values_before": 1612666,
+  "bitmap_values_after": 1435009,
+  "rows": [
+    {
+      "name": "motion_16",
+      "model": 0,
+      "contexts": 16,
+      "raw_bytes": 2660918,
+      "sha256": "4c6ac5cce858c7a351d9ff355209dc24c3e4d3c6f0ca1a86c226eab207a2f81b",
+      "exact_causal_frame_decode": true,
+      "bits": 7566110,
+      "groups": 622,
+      "max_group_bytes": 8664,
+      "prefix_layout": {
+        "fits_existing_bank": true,
+        "depth": 17,
+        "body_bytes": 12158
+      },
+      "deflate_8192": 1881081
+    },
+    {
+      "name": "above_16",
+      "model": 1,
+      "contexts": 16,
+      "raw_bytes": 2679739,
+      "sha256": "c95bacdb95cc9119ebc0513567ac0846deefc71fc027e686e4f413a83456d0b0",
+      "exact_causal_frame_decode": true,
+      "bits": 7716754,
+      "groups": 622,
+      "max_group_bytes": 9039,
+      "prefix_layout": {
+        "fits_existing_bank": true,
+        "depth": 18,
+        "body_bytes": 11851
+      },
+      "deflate_8192": 1902734
+    }
+  ]
+}

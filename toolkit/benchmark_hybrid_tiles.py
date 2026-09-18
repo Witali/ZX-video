@@ -25,15 +25,17 @@ def main():
     p.add_argument('--fht', type=Path, required=True)
     p.add_argument('--motion-cache', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--states-sha256', default=alphabet.INPUT_STATES_SHA)
+    p.add_argument('--baseline-commit', default='608e57b')
     args = p.parse_args()
     data = args.fht.read_bytes(); r = Reader(data)
     _, expected, offsets, mapping, tables = read_header(r)
     with np.load(args.motion_cache) as saved:
         states = saved['states']
-    if expected != 4971 or states.shape != (expected, 3840) or sha(states.tobytes()) != alphabet.INPUT_STATES_SHA:
+    if expected != 4971 or states.shape != (expected, 3840) or sha(states.tobytes()) != args.states_sha256:
         raise ValueError('unexpected source')
     h = Harness(tables, mapping, offsets, skip_empty=True, hybrid=True)
-    report = dict(scope=__doc__, baseline_commit='608e57b', input_sha256=sha(data),
+    report = dict(scope=__doc__, baseline_commit=args.baseline_commit, input_sha256=sha(data),
         states_sha256=sha(states.tobytes()), frames_expected=expected, complete=False,
         code_bytes=h.labels['state']-machine.CODE, state_bytes=h.labels['end']-h.labels['state'],
         code_hex=h.code.hex(), labels=h.labels, instruction_listing=h.listing,

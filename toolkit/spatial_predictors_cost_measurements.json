@@ -1,0 +1,69 @@
+{
+  "scope": "Choose temporal/intra tiles by coded bits, then retrain 16 contexts.\n\nDeterministic offline rate optimization; all candidate pixels remain exact.\nCosts include canonical value lengths, nonempty mask bytes and an 8-bit\nnonzero-vector penalty. They estimate pre-ZX0 cost, not final disk size or\nZ80 time. Every iteration is serialized and independently decoded in full.\n",
+  "baseline_commit": "e7727cd",
+  "complete": true,
+  "initial_sha256": "8211cfbfd039db6e695a05490235e39611143fbd6b76047647674d887bf9f178",
+  "states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "cost": "sum active canonical lengths (unseen=24) +8 per nonzero mask byte +8 per nonzero vector",
+  "rows": [
+    {
+      "name": "iteration_1",
+      "iteration": 1,
+      "intra_tiles": 57352,
+      "bitmap_values": 1437020,
+      "predictors": [
+        "above",
+        "left",
+        "above2"
+      ],
+      "intra_vectors": {
+        "82": 43784,
+        "83": 12758,
+        "84": 810
+      },
+      "raw_bytes": 2640460,
+      "sha256": "e72db632ba43b5603f3388d45efaf2a1d4cabc273e94e61766b6461b830e6cd7",
+      "exact_causal_frame_decode": true,
+      "bits": 7461276,
+      "groups": 622,
+      "max_group_bytes": 8539,
+      "prefix_layout": {
+        "fits_existing_bank": true,
+        "depth": 17,
+        "body_bytes": 12112
+      },
+      "deflate_8192": 1864019
+    },
+    {
+      "name": "iteration_2",
+      "iteration": 2,
+      "intra_tiles": 57645,
+      "bitmap_values": 1437868,
+      "predictors": [
+        "above",
+        "left",
+        "above2"
+      ],
+      "intra_vectors": {
+        "82": 44064,
+        "83": 12777,
+        "84": 804
+      },
+      "raw_bytes": 2640935,
+      "sha256": "a450e336dac8359c9e19109d0254f0caea6b54cae9a1adbba5df37eb48036673",
+      "exact_causal_frame_decode": true,
+      "bits": 7464715,
+      "groups": 622,
+      "max_group_bytes": 8544,
+      "prefix_layout": {
+        "fits_existing_bank": true,
+        "depth": 17,
+        "body_bytes": 12100
+      },
+      "deflate_8192": 1864355
+    }
+  ]
+}

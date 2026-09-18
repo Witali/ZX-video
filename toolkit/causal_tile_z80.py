@@ -6,6 +6,8 @@ execute on Z80. History is one 3840-byte compact frame; 1024 cache bytes
 hold 16 rows with horizontal zero padding. No host-generated predictions.
 Optional hybrid=True accepts FHT1 inline literals, raster-order attributes
 and a validated per-frame motion-cache flag. Default FPD1 code is unchanged.
+With intra_above=True, vector82 instead reads the already corrected above
+row (FHS1 motion context). Other spatial vectors are not implemented here.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -16,7 +18,9 @@ CODE, FRAME, CACHE = prefix.CODE, 0x6400, 0x7400
 VECTOR_X, VECTOR_Y, VECTOR_PHASE, ROW_LOW, ROW_HIGH = 0x9800, 0x9900, 0x9a00, 0x9b00, 0x9c00
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False):
+    if intra_above and (not hybrid or not skip_empty or raw_kind is not None):
+        raise ValueError('intra above requires the separate attribute/skip-empty path')
     if raw_kind is not None and (raw_kind not in (0, 1) or not hybrid or not skip_empty):
         raise ValueError('raw direct/XOR patches require hybrid and empty-half skips')
     if len(offsets) != 81 or offsets[0] != (0, 0) or set(offsets) != {(x, y) for x in range(-4, 5) for y in range(-4, 5)}:
@@ -54,6 +58,23 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
 
     def next_output_row():
         emit('LD A,L', [0x7d], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD L,A', [0x6f], 4)
+
+    def read_above(field):
+        # Tiles align to eight rows / one 256-byte page. Fields 0/1
+        # refer to the previous page (or virtual zero top); all later
+        # fields have their above byte in the same page as DE.
+        if field < 2:
+            emit('LD A,D', [0x7a], 4); emit('CP frame_page', [0xfe, FRAME >> 8], 7)
+            jump('JR NZ,above_visible', 0x20, f'above_visible_{field}', [7, 12], True)
+            emit('XOR A', [0xaf], 4); jump('JP above_ready', 0xc3, f'above_ready_{field}', 10)
+            a.label(f'above_visible_{field}')
+            emit('LD H,D', [0x62], 4); emit('DEC H', [0x25], 4)
+            emit('LD A,E', [0x7b], 4); emit('ADD A,224', [0xc6, 224], 7)
+            emit('LD L,A', [0x6f], 4); emit('LD A,(HL)', [0x7e], 7)
+            a.label(f'above_ready_{field}')
+        else:
+            emit('LD A,E', [0x7b], 4); emit('SUB 32', [0xd6, 32], 7)
+            emit('LD L,A', [0x6f], 4); emit('LD H,D', [0x62], 4); emit('LD A,(HL)', [0x7e], 7)
 
     a.label('frame')
     load('LD IX,(source)', (0xdd, 0x2a), 'source', 20)
@@ -93,7 +114,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         a.label('raw_tile'); jump('CALL raw_patches', 0xcd, 'raw_patches', 17)
         a.label('tile_done')
     elif hybrid:
-        emit('CP literal_vector', [0xfe, 82], 7)
+        emit('CP intra_vector' if intra_above else 'CP literal_vector', [0xfe, 82], 7)
         jump('JP Z,literal_tile', 0xca, 'literal_tile', 10)
     if raw_kind is None:
         emit('OR A', [0xb7], 4); jump('CALL NZ,motion', 0xc4, 'motion', [10, 17])
@@ -101,10 +122,13 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     if hybrid and raw_kind is None:
         jump('JP tile_done', 0xc3, 'tile_done', 10)
         a.label('literal_tile')
-        load('LD HL,(bitmap_masks)', 0x2a, 'bitmap_masks', 16)
-        emit('INC HL', [0x23], 6); emit('INC HL', [0x23], 6)
-        load('LD (bitmap_masks),HL', 0x22, 'bitmap_masks', 16)
-        jump('CALL literal', 0xcd, 'literal', 17)
+        if intra_above:
+            jump('CALL intra_above', 0xcd, 'intra_above', 17)
+        else:
+            load('LD HL,(bitmap_masks)', 0x2a, 'bitmap_masks', 16)
+            emit('INC HL', [0x23], 6); emit('INC HL', [0x23], 6)
+            load('LD (bitmap_masks),HL', 0x22, 'bitmap_masks', 16)
+            jump('CALL literal', 0xcd, 'literal', 17)
         a.label('tile_done')
     load('LD HL,(target)', 0x2a, 'target', 16)
     emit('INC L', [0x2c], 4); emit('INC L', [0x2c], 4)
@@ -144,7 +168,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4); emit('EXX', [0xd9], 4)
     load('LD (bit_page),A', 0x32, 'bit_page', 13); emit('RET', [0xc9], 10)
 
-    if hybrid and raw_kind is None:
+    if hybrid and raw_kind is None and not intra_above:
         stage = 'literal'
         a.label('literal')
         # IX points at the current Huffman byte. Skip its unused low bits;
@@ -162,6 +186,29 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
                 emit('LD A,E', [0x7b], 4); emit('ADD A,30', [0xc6, 30], 7); emit('LD E,A', [0x5f], 4)
         emit('PUSH HL', [0xe5], 11); emit('POP IX', [0xdd, 0xe1], 14)
         emit('POP BC', [0xc1], 10); emit('EXX', [0xd9], 4); emit('RET', [0xc9], 10)
+
+    if intra_above:
+        stage = 'intra'
+        a.label('intra_above')
+        load('LD HL,(bitmap_masks)', 0x2a, 'bitmap_masks', 16)
+        emit('LD B,(HL)', [0x46], 7); emit('INC HL', [0x23], 6)
+        emit('LD C,(HL)', [0x4e], 7); emit('INC HL', [0x23], 6)
+        load('LD (bitmap_masks),HL', 0x22, 'bitmap_masks', 16)
+        load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
+        for field in range(16):
+            if field == 8:
+                emit('LD B,C', [0x41], 4)
+            read_above(field)
+            emit('SLA B', [0xcb, 0x20], 8)
+            jump('JP NC,intra_store', 0xd2, f'intra_store_{field}', 10)
+            emit('EXX', [0xd9], 4); jump('CALL bitmap', 0xcd, 'bitmap', 17); emit('EXX', [0xd9], 4)
+            a.label(f'intra_store_{field}'); emit('LD (DE),A', [0x12], 7)
+            if field < 15:
+                if not field % 2:
+                    emit('INC E', [0x1c], 4)
+                else:
+                    emit('LD A,E', [0x7b], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD E,A', [0x5f], 4)
+        emit('RET', [0xc9], 10)
 
     if raw_kind is not None:
         stage = 'raw_patch'

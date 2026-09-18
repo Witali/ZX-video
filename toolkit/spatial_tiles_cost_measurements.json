@@ -1,0 +1,49 @@
+{
+  "scope": "Choose temporal/intra tiles by coded bits, then retrain 16 contexts.\n\nDeterministic offline rate optimization; all candidate pixels remain exact.\nCosts include canonical value lengths, nonempty mask bytes and an 8-bit\nnonzero-vector penalty. They estimate pre-ZX0 cost, not final disk size or\nZ80 time. Every iteration is serialized and independently decoded in full.\n",
+  "baseline_commit": "e7727cd",
+  "complete": true,
+  "initial_sha256": "4c6ac5cce858c7a351d9ff355209dc24c3e4d3c6f0ca1a86c226eab207a2f81b",
+  "states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "cost": "sum active canonical lengths (unseen=24) +8 per nonzero mask byte +8 per nonzero vector",
+  "rows": [
+    {
+      "name": "iteration_1",
+      "iteration": 1,
+      "intra_tiles": 49262,
+      "bitmap_values": 1449639,
+      "raw_bytes": 2655186,
+      "sha256": "c767678b24cc41ea597e9f8f19502fd82844b03ebbc572acd9f8dc8b48bf0cdf",
+      "exact_causal_frame_decode": true,
+      "bits": 7542667,
+      "groups": 622,
+      "max_group_bytes": 8658,
+      "prefix_layout": {
+        "fits_existing_bank": true,
+        "depth": 17,
+        "body_bytes": 12117
+      },
+      "deflate_8192": 1873532
+    },
+    {
+      "name": "iteration_2",
+      "iteration": 2,
+      "intra_tiles": 49643,
+      "bitmap_values": 1450600,
+      "raw_bytes": 2654603,
+      "sha256": "e624f836253467961e31d9577446850ca9dd073929bde3fb668238c94fdfb980",
+      "exact_causal_frame_decode": true,
+      "bits": 7537728,
+      "groups": 622,
+      "max_group_bytes": 8631,
+      "prefix_layout": {
+        "fits_existing_bank": true,
+        "depth": 17,
+        "body_bytes": 12116
+      },
+      "deflate_8192": 1872954
+    }
+  ]
+}
