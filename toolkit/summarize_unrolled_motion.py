@@ -21,7 +21,10 @@ def main():
     p.add_argument('--fhs', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--include-retuned-storage', action='store_true')
+    p.add_argument('--include-retuned-cpu', action='store_true')
     args = p.parse_args()
+    if args.include_retuned_cpu and not args.include_retuned_storage:
+        p.error('--include-retuned-cpu requires --include-retuned-storage')
     source = args.fhs.read_bytes()
     model, _, count, mapping, tables = read_header(Reader(source))
     if model != 0 or count != 4971:
@@ -99,6 +102,31 @@ def main():
             video_plus_ay_bytes=video+77696, preliminary_three_trd_margin_bytes=1937664-video-77696,
             full_pc_decode_verified=True, full_z80_reconstruction_not_yet_included=True,
             full_frame_delivery_measured=False)
+        if args.include_retuned_cpu:
+            cpu = load('unrolled_fast_cpu'); zx0 = load('unrolled_fast_zx0_cpu')
+            if (cpu['input_sha256'] != row['sha256'] or zx0['input_sha256'] != row['sha256']
+                    or not cpu.get('unrolled_motion') or not cpu.get('fast_fragments')
+                    or cpu['summary']['fast_tiles'] != row['fast_tiles']
+                    or cpu['summary']['values'] != row['values']
+                    or sum(f['bits'] for f in cpu['frames']) != row['bits']
+                    or sum(g['frames'] for g in cpu['groups']) != 4971
+                    or len(zx0['blocks']) != storage['blocks_expected']
+                    or zx0['storage_report_sha256'] != sha((args.reports/'unrolled_fast_zx0.json').read_bytes())):
+                raise AssertionError('retuned CPU coverage differs')
+            for block, encoded in zip(zx0['blocks'], storage['blocks']):
+                if (block['raw_sha256'] != encoded['sha256'] or block['raw_bytes'] != encoded['decoded_bytes']
+                        or block['compressed_bytes'] != encoded['zx0_bytes']):
+                    raise AssertionError('retuned ZX0 block differs')
+            if sum(b['tstates'] for b in zx0['blocks']) != zx0['summary']['total_tstates']:
+                raise AssertionError('retuned ZX0 sum differs')
+            current = cpu_summary(cpu)
+            combined = current['total_tstates']+zx0['summary']['total_tstates']
+            report['retuned_cpu'] = dict(reconstruction=current, zx0=zx0['summary'],
+                reconstruction_delta_tstates=current['total_tstates']-results[1]['new']['total_tstates'],
+                two_stage_total_tstates=combined,
+                two_stage_delta_tstates=combined-results[1]['two_stage_total_tstates'],
+                full_frame_delivery_measured=False)
+            report['retuned_storage']['full_z80_reconstruction_not_yet_included'] = False
     args.output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
     for row in results:
         print(json.dumps(dict(kind=row['kind'], delta=row['total_delta_tstates'], code_delta=row['code_delta_bytes'],

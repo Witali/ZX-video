@@ -115,7 +115,7 @@ IRQ/ULA, TR-DOS ROM и физический диск. Отдельная пре�
 [Полная сводка](unrolled_motion_summary.json),
 [CPU FHS1](unrolled_motion_fhs_cpu.json), [CPU FHF1](unrolled_motion_fhf_cpu.json).
 
-## Перевыбор fast-плиток: размер проверен, новый CPU-прогон отдельно
+## Перевыбор fast-плиток: размер и полный CPU-прогон проверены
 
 Эвристика `target_300000` заново использовала полный FHS1 CPU-отчёт
 после ускорения. Быстрых плиток стало **55846 вместо 61225**, затронутых
@@ -127,12 +127,27 @@ IRQ/ULA, TR-DOS ROM и физический диск. Отдельная пре�
 С AY требуется **2121503 байта**: до предварительного бюджета трёх
 TRD по-прежнему не хватает **183839**. Фактическое размещение нового
 кода/томов не включено. Полный Z80-прогон **этого пересчитанного потока**
-ещё не входит в сводку; предыдущие два полных CPU-прогона относятся
-к неизменным FHS1/FHF1. Его оценочные времена выбора не выдаются за
-измеренную плавность. Отдельная проверка запущена со своим входным SHA
+завершён отдельно от прежних двух прогонов. Восстановлены все 4971 кадр,
+641 группа, 1038625 значений Хаффмана и 55846 fast-плиток. Входной SHA:
 `23bfb3800f561467ee0e54d3eaf23e24ad13a2bbbaf5252f8bfe273eb8460327`.
 
-[Выбор и PC-проверка](unrolled_fast_selection.json), [полный ZX0](unrolled_fast_zx0.json).
+| Измерение | Прежний FHF1, развёрнутое движение | Перевыбор | Разница |
+|---|---:|---:|---:|
+| Восстановление всего фильма, T | 1115890355 | 1127839894 | +11949539 |
+| Максимум кадра, T | 302832 | 308635 | +5803 |
+| ZX0 всего потока, T | 162154891 | 157425317 | −4729574 |
+| Сумма двух стадий, T | 1278045246 | 1285265211 | +7219965 |
+| ZX0 с заголовками, байты | 2066726 | 2043807 | −22919 |
+
+Каждый из 371 блока исполнен через Z80 turbo ZX0, максимум блока
+690282 T. Это работа распаковки блока, а не задержка отдельного кадра.
+Ни один кадр реконструкции не превысил 425448 T, но вывод/окно/метаданные/
+paging/IRQ/ULA/ROM/диск по-прежнему не входят в сумму. Плавность выпуска
+не доказана. Выигрыш места покупается небольшим ростом общей CPU-работы;
+вариант оставлен как база для сокращения полных литеральных плиток.
+
+[Выбор и PC-проверка](unrolled_fast_selection.json), [полный ZX0](unrolled_fast_zx0.json),
+[восстановление на Z80](unrolled_fast_cpu.json), [ZX0 на Z80](unrolled_fast_zx0_cpu.json).
 
 ## Воспроизведение
 
@@ -144,7 +159,8 @@ python toolkit/benchmark_spatial_tiles.py --fhs .tmp/fast_fragments/target_30000
 python toolkit/probe_fast_fragments.py --fhs .tmp/spatial_predictors_cost/iteration_1.raw --motion-cache .tmp/spatial_predictors_cost/iteration_1.npz --allowances --no-control --targets 300000 --cpu-report toolkit/unrolled_motion_fhs_cpu.json --unrolled-motion --baseline-commit d17f2ab --cache .tmp/unrolled_fast --output toolkit/unrolled_fast_selection.json
 python toolkit/probe_zx0_storage.py --raw .tmp/unrolled_fast/target_300000.raw --block-bytes 8192 --zx0 ../audio-fidelity/.tmp/bin/zx0.exe --cache .tmp/unrolled_fast/zx0 --output toolkit/unrolled_fast_zx0.json --jobs 4
 python toolkit/benchmark_spatial_tiles.py --fhs .tmp/unrolled_fast/target_300000.raw --motion-cache .tmp/spatial_predictors_cost/iteration_1.npz --states-sha256 4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b --extended --fast-fragments --unrolled-motion --baseline-commit d17f2ab --output .tmp/unrolled_fast/target_300000_cpu.json
-python toolkit/summarize_unrolled_motion.py --fhs .tmp/spatial_predictors_cost/iteration_1.raw --include-retuned-storage --output toolkit/unrolled_motion_summary.json
+python toolkit/benchmark_zx0_storage.py --raw .tmp/unrolled_fast/target_300000.raw --storage-report toolkit/unrolled_fast_zx0.json --cache .tmp/unrolled_fast/zx0/optimal --output toolkit/unrolled_fast_zx0_cpu.json --baseline-commit eea5d62
+python toolkit/summarize_unrolled_motion.py --fhs .tmp/spatial_predictors_cost/iteration_1.raw --include-retuned-storage --include-retuned-cpu --output toolkit/unrolled_motion_summary.json
 ```
 
 Тесты из `toolkit`: `python -m unittest test_unrolled_motion`,
