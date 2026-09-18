@@ -115,3 +115,34 @@ python -m unittest discover -s toolkit -p test_fine_motion.py -v
 [все блоки ZX0](fine_motion_zx0_measurements.json),
 [гистограмма остатка](fine_motion_residual_statistics.json),
 [контроль без движения](TEMPORAL_RESIDUAL_RESULTS_ru.md).
+
+## Дополнение 18 сентября 2026: группы по 8 кадров
+
+База следующего опыта — `66257b4`. Все исходные кадры и параметры поиска
+движения сохранены; изменён только размер группы с 16 до 8. Предыдущий
+раздел описывает состояние на момент первого опыта.
+
+| Группа | Векторы/маски в RAM | Оптимальный ZX0, блоки 8192 |
+|---|---:|---:|
+| 16 кадров | 10752 | 2660953 |
+| 8 кадров | 5376 | 2679898 |
+
+Экономия буфера **5376 байт**, увеличение потока **18945 байт (0,712%)**.
+С двумя компактными историями рабочие данные составляют 13056 вместо
+18432 байт. 13056 помещаются по объёму в 16 КБ, оставляя 3328 байт;
+это арифметическая проверка, не готовая карта памяти. Общие экраны, ZX0,
+код/стеки, AY/IRQ, TR-DOS и одновременный доступ к банкам всё ещё требуют
+полной проверки. Уменьшение кольца диска в PLAYER не выполнялось.
+
+Повторно восстановлены побайтно все 4971 кадр, 638 блоков оптимального
+ZX0 проверены независимым декодером. PLAYER/TRD не менялись: разница
+горячего пути 0 T, новых Z80/Fuse/дисковых замеров нет. Вариант полезен
+как контроль с меньшим буфером; он также не достигает трёх дискет.
+
+```text
+python toolkit/probe_fine_motion.py --checkpoint CHECKPOINT --cache .tmp/fine_motion --output toolkit/fine_motion_groups8_measurements.json --tiles 8 --group-frames 8
+python toolkit/probe_zx0_storage.py --raw .tmp/fine_motion/fine_motion_t8_r4_p8_g8.raw --block-bytes 8192 --zx0 ZX0 --cache .tmp/fine_motion_zx0 --output toolkit/fine_motion_groups8_zx0_measurements.json
+```
+
+Данные: [группа 8](fine_motion_groups8_measurements.json),
+[все блоки ZX0](fine_motion_groups8_zx0_measurements.json).
