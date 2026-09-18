@@ -9,6 +9,8 @@ and a validated per-frame motion-cache flag. Default FPD1 code is unchanged.
 With intra_above=True, vector82 instead reads the already corrected above
 row (FHS1 motion context). intra_extended=True adds left/second-above (83/84).
 fast_fragments=True adds FHF1 raw/repeated-row/two-row/fill tiles (85..88).
+unrolled_motion=True removes row loops and uses alternate DE as the output
+cursor; phases 2/6 use rotate/mask merges. No stream or table changes.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -47,7 +49,20 @@ def fast_tstates(vector, *, unaligned=False, selector=0):
     return base+10*bool(unaligned)
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False):
+def motion_tstates(vector, offsets, *, unrolled=False):
+    """Motion routine incl. RET, excluding caller; stripes start at y%8=0."""
+    if not 1 <= vector <= 81:
+        raise ValueError('motion is called only for vectors 1..81')
+    if vector == 81:
+        return 324 if unrolled else 445
+    dx, dy = offsets[vector]
+    phase = 2*((-dx) % 4)
+    if not unrolled:
+        return {0: 995, 2: 2076, 4: 2093, 6: 2103}[phase]
+    return {0: 826, 2: 1616, 4: 1713, 6: 1643}[phase]+21*bool(dy % 4)
+
+
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False):
     if fast_fragments and not intra_extended:
         raise ValueError('fast fragments require extended spatial mode')
     if intra_extended and not intra_above:
@@ -426,13 +441,61 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     emit('LD A,(HL)', [0x7e], 7); emit('ADD A,C', [0x81], 4); emit('LD E,A', [0x5f], 4)
     emit('INC H', [0x24], 4); emit('LD D,(HL)', [0x56], 7)
     load('LD HL,(target)', 0x2a, 'target', 16)
-    emit('LD B,8', [0x06, 8], 7); load('LD A,(phase)', 0x3a, 'phase', 13)
+    if not unrolled_motion:
+        emit('LD B,8', [0x06, 8], 7)
+    load('LD A,(phase)', 0x3a, 'phase', 13)
     for phase in (0, 2, 4):
         emit(f'CP {phase}', [0xfe, phase], 7)
         jump(f'JP Z,predict_{phase}', 0xca, f'predict_{phase}', 10)
     jump('JP predict_6', 0xc3, 'predict_6', 10)
     for phase in (0, 2, 4, 6):
         a.label(f'predict_{phase}')
+        if unrolled_motion:
+            if phase:
+                # Alternate C retains the Huffman bit page. Alternate DE is
+                # free between Huffman calls and survives every AY interrupt.
+                emit('PUSH HL', [0xe5], 11); emit('EXX', [0xd9], 4)
+                emit('POP DE', [0xd1], 10); emit('EXX', [0xd9], 4)
+            for row in range(8):
+                if phase == 0:
+                    emit('LD A,(DE)', [0x1a], 7); emit('LD (HL),A', [0x77], 7)
+                    emit('INC E', [0x1c], 4); emit('INC L', [0x2c], 4)
+                    emit('LD A,(DE)', [0x1a], 7); emit('LD (HL),A', [0x77], 7)
+                elif phase == 4:
+                    emit('LD A,(DE)', [0x1a], 7); emit('INC E', [0x1c], 4); emit('LD L,A', [0x6f], 4)
+                    emit('LD H,left_shift', [0x26, 0xf4], 7); emit('LD B,(HL)', [0x46], 7)
+                    emit('LD A,(DE)', [0x1a], 7); emit('LD L,A', [0x6f], 4)
+                    emit('LD H,right_shift', [0x26, 0xfc], 7); emit('LD A,(HL)', [0x7e], 7)
+                    emit('OR B', [0xb0], 4)
+                    emit('EXX', [0xd9], 4); emit('LD (DE),A', [0x12], 7)
+                    emit('INC E', [0x1c], 4); emit('EXX', [0xd9], 4)
+                    emit('LD H,left_shift', [0x26, 0xf4], 7); emit('LD B,(HL)', [0x46], 7)
+                    emit('INC E', [0x1c], 4); emit('LD A,(DE)', [0x1a], 7); emit('LD L,A', [0x6f], 4)
+                    emit('LD H,right_shift', [0x26, 0xfc], 7); emit('LD A,(HL)', [0x7e], 7)
+                    emit('OR B', [0xb0], 4)
+                else:
+                    rotate, opcode, mask = ('RLCA', 0x07, 3) if phase == 2 else ('RRCA', 0x0f, 63)
+                    emit('LD A,(DE)', [0x1a], 7)
+                    emit(rotate, [opcode], 4); emit(rotate, [opcode], 4); emit('LD C,A', [0x4f], 4)
+                    emit('INC E', [0x1c], 4); emit('LD A,(DE)', [0x1a], 7)
+                    emit(rotate, [opcode], 4); emit(rotate, [opcode], 4); emit('LD B,A', [0x47], 4)
+                    emit('XOR C', [0xa9], 4); emit('AND merge_mask', [0xe6, mask], 7); emit('XOR C', [0xa9], 4)
+                    emit('EXX', [0xd9], 4); emit('LD (DE),A', [0x12], 7)
+                    emit('INC E', [0x1c], 4); emit('EXX', [0xd9], 4)
+                    emit('LD C,B', [0x48], 4); emit('INC E', [0x1c], 4); emit('LD A,(DE)', [0x1a], 7)
+                    emit(rotate, [opcode], 4); emit(rotate, [opcode], 4)
+                    emit('XOR C', [0xa9], 4); emit('AND merge_mask', [0xe6, mask], 7); emit('XOR C', [0xa9], 4)
+                if phase:
+                    emit('EXX', [0xd9], 4); emit('LD (DE),A', [0x12], 7)
+                    if row < 7:
+                        emit('LD A,E', [0x7b], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD E,A', [0x5f], 4)
+                    emit('EXX', [0xd9], 4)
+                if row < 7:
+                    cache_advance(f'predict_{phase}_{row}_advanced', 63 if not phase else 62)
+                    if not phase:
+                        next_output_row()
+            emit('RET', [0xc9], 10)
+            continue
         if not phase:
             emit('LD A,(DE)', [0x1a], 7); emit('LD (HL),A', [0x77], 7)
             emit('INC E', [0x1c], 4); emit('INC L', [0x2c], 4)
@@ -455,10 +518,19 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         jump('DJNZ predict_row', 0x10, f'predict_{phase}', [8, 13], True)
         emit('RET', [0xc9], 10)
     a.label('clear_tile')
-    load('LD HL,(target)', 0x2a, 'target', 16); emit('LD B,8', [0x06, 8], 7)
-    a.label('clear_row'); emit('XOR A', [0xaf], 4)
-    emit('LD (HL),A', [0x77], 7); emit('INC L', [0x2c], 4); emit('LD (HL),A', [0x77], 7)
-    next_output_row(); jump('DJNZ clear_row', 0x10, 'clear_row', [8, 13], True); emit('RET', [0xc9], 10)
+    load('LD HL,(target)', 0x2a, 'target', 16)
+    if unrolled_motion:
+        for row in range(8):
+            emit('XOR A', [0xaf], 4)
+            emit('LD (HL),A', [0x77], 7); emit('INC L', [0x2c], 4); emit('LD (HL),A', [0x77], 7)
+            if row < 7:
+                next_output_row()
+        emit('RET', [0xc9], 10)
+    else:
+        emit('LD B,8', [0x06, 8], 7)
+        a.label('clear_row'); emit('XOR A', [0xaf], 4)
+        emit('LD (HL),A', [0x77], 7); emit('INC L', [0x2c], 4); emit('LD (HL),A', [0x77], 7)
+        next_output_row(); jump('DJNZ clear_row', 0x10, 'clear_row', [8, 13], True); emit('RET', [0xc9], 10)
 
     stage = 'patch'
     a.label('patches')

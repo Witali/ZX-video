@@ -26,6 +26,7 @@ def main():
     p.add_argument('--states-sha256', required=True)
     p.add_argument('--extended', action='store_true', help='enable all three spatial predictors')
     p.add_argument('--fast-fragments', action='store_true', help='FHF1 complete fragment payloads; requires --extended')
+    p.add_argument('--unrolled-motion', action='store_true')
     p.add_argument('--baseline-commit', default='7dea054')
     args = p.parse_args()
     if args.fast_fragments and not args.extended:
@@ -36,9 +37,9 @@ def main():
         states = saved['states']
     if model != 0 or states.shape != (4971, 3840) or count != len(states) or sha(states.tobytes()) != args.states_sha256:
         raise ValueError('model/source mismatch')
-    h = Harness(tables, mapping, OFFSETS, skip_empty=True, hybrid=True, intra_above=True, intra_extended=args.extended, fast_fragments=args.fast_fragments)
+    h = Harness(tables, mapping, OFFSETS, skip_empty=True, hybrid=True, intra_above=True, intra_extended=args.extended, fast_fragments=args.fast_fragments, unrolled_motion=args.unrolled_motion)
     report = dict(scope=__doc__, baseline_commit=args.baseline_commit, input_sha256=sha(data),
-        intra_extended=args.extended, fast_fragments=args.fast_fragments,
+        intra_extended=args.extended, fast_fragments=args.fast_fragments, unrolled_motion=args.unrolled_motion,
         states_sha256=sha(states.tobytes()), frames_expected=count, complete=False,
         code_bytes=h.labels['state']-machine.CODE, state_bytes=h.labels['end']-h.labels['state'],
         code_hex=h.code.hex(), labels=h.labels, instruction_listing=h.listing,

@@ -46,11 +46,12 @@ class GuardCPU(CPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False):
+    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False):
         self.hybrid = hybrid
         self.raw_kind = raw_kind
         self.fast_fragments = fast_fragments
-        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above, intra_extended=intra_extended, fast_fragments=fast_fragments)
+        self.unrolled_motion, self.offsets = unrolled_motion, offsets
+        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above, intra_extended=intra_extended, fast_fragments=fast_fragments, unrolled_motion=unrolled_motion)
         self.raw_value_entries = {self.labels[f'raw_value_{i}'] for i in range(16)} if raw_kind is not None else set()
         self.cpu = GuardCPU(b'', b'')
         self.cpu.port_7ffd, self.cpu.sp = 0x16, STACK
@@ -105,11 +106,15 @@ class Harness:
         before, position, steps, irq = cpu.tstates, self.position(), 0, 0
         stages, values, literals, raw_values, raw_tiles, unaligned = Counter(), 0, 0, 0, 0, 0
         fast_kinds, fast_formula, fast_unaligned = Counter(), 0, 0
+        motion_formula, motion_vectors = 0, Counter()
         while cpu.pc != STOP:
             pc, ticks = cpu.pc, cpu.tstates
             if pc == self.labels['invalid'] or steps > 2_000_000:
                 raise AssertionError('decoder did not finish frame')
             row = self.instructions[pc]
+            if self.unrolled_motion and pc == self.labels['motion']:
+                motion_formula += machine.motion_tstates(cpu.a, self.offsets, unrolled=True)
+                motion_vectors[cpu.a] += 1
             if pc in (self.labels['bitmap'], self.labels['attribute']):
                 values += 1
             if self.hybrid and pc == self.labels.get('literal'):
@@ -151,6 +156,10 @@ class Harness:
                 raise AssertionError(('fast-fragment timing formula', fast_formula, stages['fast_fragment']))
             result.update(fast_kinds=dict(fast_kinds), fast_tiles=sum(fast_kinds.values()),
                 fast_unaligned=fast_unaligned, fast_formula_tstates=fast_formula)
+        if self.unrolled_motion:
+            if motion_formula != stages['motion']:
+                raise AssertionError(('unrolled motion timing formula', motion_formula, stages['motion']))
+            result.update(motion_vectors=dict(motion_vectors), motion_formula_tstates=motion_formula)
         return result
 
 

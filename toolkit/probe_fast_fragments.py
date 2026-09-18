@@ -43,13 +43,19 @@ def pack_fragment(fragment):
     return 85, fragment
 
 
-def motion_costs():
-    """Measure existing motion stage on zero frames; branch cost is phase-only."""
+def motion_costs(*, unrolled=False):
+    """Measure motion on zero frames; unrolling also depends on dy modulo 4."""
     h = Harness([bytes([8]*256)]*2, bytes(256), OFFSETS,
-        hybrid=True, skip_empty=True, intra_above=True, intra_extended=True)
+        hybrid=True, skip_empty=True, intra_above=True, intra_extended=True, unrolled_motion=unrolled)
+    def key(v):
+        if v == 81:
+            return -1
+        dx, dy = OFFSETS[v]
+        phase = 2*((-dx) % 4)
+        return f'{phase}:{int(bool(dy % 4))}' if unrolled else phase
     measured = {}
     for v in range(1, 82):
-        phase = 2*((-OFFSETS[v][0]) % 4) if v < 81 else -1
+        phase = key(v)
         if phase in measured:
             continue
         h.begin(b'', bytes([v])*192, bytes(384), bytes(96))
@@ -58,10 +64,10 @@ def motion_costs():
         if cost % 192:
             raise AssertionError('motion cost depends on position')
         measured[phase] = cost//192
-    return [0]+[measured[2*((-dx) % 4)] for dx, _ in OFFSETS[1:]]+[measured[-1], 0, 0, 0], measured
+    return [0]+[measured[key(v)] for v in range(1, 81)]+[measured[-1], 0, 0, 0], measured
 
 
-def profile(states, vectors, residual, mapping, tables):
+def profile(states, vectors, residual, mapping, tables, *, unrolled_motion=False):
     order = field_order(8).reshape(192, 20)[:, :16]
     current = states[:, order]
     predicted = (states ^ residual)[:, order]
@@ -84,7 +90,7 @@ def profile(states, vectors, residual, mapping, tables):
     payload_bytes = np.choose(kinds-85, [16, 2, 5, 1])
     # Seven padding bits is conservative; actual serialization decides it.
     extra_bits = payload_bytes*8+7+8-old_bits
-    costs, measured = motion_costs()
+    costs, measured = motion_costs(unrolled=unrolled_motion)
     huff = np.where(length <= 8, 171, 493+53*(length.astype(np.int16)-9)+32*((np.maximum(length.astype(np.int16)-8, 0)+7)//8))
     huff = (huff*active).sum(axis=2)
     values = active.sum(axis=2)
@@ -208,6 +214,8 @@ def main():
     p.add_argument('--no-control', action='store_true')
     p.add_argument('--targets', type=int, nargs='*', default=[])
     p.add_argument('--cpu-report', type=Path)
+    p.add_argument('--unrolled-motion', action='store_true')
+    p.add_argument('--baseline-commit', default='15b5638')
     p.add_argument('--cache', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     args = p.parse_args()
@@ -217,7 +225,7 @@ def main():
         states, vectors, residual = (saved[k] for k in ('states', 'vectors', 'residual'))
     if model != 0 or states.shape != (count, 3840) or decode(source)[0] != states.tobytes():
         raise ValueError('source mismatch')
-    prof = profile(states, vectors, residual, mapping, tables)
+    prof = profile(states, vectors, residual, mapping, tables, unrolled_motion=args.unrolled_motion)
     cpu = None
     if args.targets:
         if args.cpu_report is None:
@@ -225,10 +233,12 @@ def main():
         cpu = json.loads(args.cpu_report.read_text(encoding='utf-8'))
         if (not cpu['complete'] or cpu['input_sha256'] != sha(source)
                 or cpu['states_sha256'] != sha(states.tobytes()) or len(cpu['frames']) != count
+                or bool(cpu.get('unrolled_motion')) != args.unrolled_motion
                 or [f['index'] for f in cpu['frames']] != list(range(count))):
             raise ValueError('incomplete/mismatched CPU baseline')
     args.cache.mkdir(parents=True, exist_ok=True)
-    report = dict(scope=__doc__, baseline_commit='15b5638', complete=False,
+    report = dict(scope=__doc__, baseline_commit=args.baseline_commit, complete=False,
+        unrolled_motion=args.unrolled_motion,
         input_sha256=sha(source), states_sha256=sha(states.tobytes()),
         no_additional_pixel_changes=True, player_changed=False, integrated_player_delta_tstates=0,
         measured_motion_stage=prof['measured_motion_stage'], all_tile_kinds=prof['kind_histogram'],

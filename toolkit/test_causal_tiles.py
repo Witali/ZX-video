@@ -146,7 +146,7 @@ class CausalTileTests(unittest.TestCase):
             with self.subTest(skip_empty=skip_empty):
                 self.exercise_irq(skip_empty)
 
-    def exercise_irq(self, skip_empty, *, hybrid_data=None, raw_data=None, spatial_data=None, spatial_extended=False, fast_fragments=False):
+    def exercise_irq(self, skip_empty, *, hybrid_data=None, raw_data=None, spatial_data=None, spatial_extended=False, fast_fragments=False, unrolled_motion=False):
         tables, mapping = [bytes([8]*256)]*2, bytes(256)
         # Several moving boundary tiles, attributes and untouched regions.
         v = bytearray(192)
@@ -188,9 +188,9 @@ class CausalTileTests(unittest.TestCase):
             targets = [restored[i*3840:(i+1)*3840] for i in range(n)]
         h = Harness(tables, mapping, OFFSETS, skip_empty=skip_empty,
             hybrid=hybrid_data is not None or raw_data is not None or spatial_data is not None,
-            raw_kind=raw_kind, intra_above=spatial_data is not None, intra_extended=spatial_extended, fast_fragments=fast_fragments)
+            raw_kind=raw_kind, intra_above=spatial_data is not None, intra_extended=spatial_extended, fast_fragments=fast_fragments, unrolled_motion=unrolled_motion)
         h.begin(encoded, vectors, bm, at)
-        irq_base = 0x9200 if spatial_extended else 0x8800
+        irq_base = 0x9400 if unrolled_motion else 0x9200 if spatial_extended else 0x8800
         a = MiniAssembler(irq_base)
         ay_interrupt.emit(a)
         playback_schedule.emit_clock(a, dos_irq=True, full_rom_clock=True, memory_clock=True, audio_irq=True)

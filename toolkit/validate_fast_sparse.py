@@ -157,6 +157,9 @@ class CPU(MemoryCPU):
             self.z = result & 255 == 0
             if operation != 7: self.a = result & 255
             return 7 if immediate or op & 7 == 6 else 4
+        if op == 0x07:
+            self.carry = bool(self.a & 128)
+            self.a = ((self.a << 1) | (self.a >> 7)) & 255; return 4
         if op == 0x0F:
             self.carry = bool(self.a & 1)
             self.a = (self.a >> 1) | ((self.a & 1) << 7); return 4
