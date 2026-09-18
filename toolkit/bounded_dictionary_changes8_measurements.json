@@ -1,0 +1,113 @@
+{
+  "scope": "Screen full-movie bitmap codebooks with explicitly bounded pixel changes.\n\nOffline experiment, not a playable Z80 format. Attributes are exact; there is\nno resampling, frame dropping or temporal hold. The dictionary is searched\non the PC. A cell may change <=--max-changed-pixels (default 2) logical pixels\nby <=1 quarter coverage;\nits 2x2-average RGB RMSE must also fit --limits. Zero is a lossless control.\n\nGroups contain <frames:u16, dictionary_entries:u16>, then 4 bytes/entry.\nEach frame has 768 cells in raster order: top two token bits mean skip n-2,\ndictionary, literal, or invalid; bottom six encode count-1. Dictionary indices\nuse one byte for <=256 entries; larger tables use 0..254 or FF plus u16.\nThen a 96-byte attribute change mask and changed attributes follow (n-2).\nBoth prediction banks reset at each group. Outer DEFLATE only screens layouts.\n",
+  "baseline_commit": "24a819a",
+  "states_sha256": "9cc006a31408e2c3c3f96f96901b003756c2a480497e12d6b124baedafaeb35d",
+  "resolution": [
+    256,
+    192
+  ],
+  "logical_resolution": [
+    128,
+    96
+  ],
+  "fps": "25/3",
+  "frames": 4971,
+  "audio": "unchanged; omitted from storage probe",
+  "group_frames": 512,
+  "max_changed_pixels_per_cell": 8,
+  "complete": true,
+  "player_changed": false,
+  "hot_path_delta_tstates": 0,
+  "rows": [
+    {
+      "name": "bitmap64_rmse32_group512_changes8",
+      "entries": 64,
+      "rmse_limit": 32.0,
+      "raw_bytes": 4519063,
+      "stream_sha256": "4e2b1f741e60e4bad4f38784d2eea18a28a21d3551de1e87f575fdccf92d889b",
+      "filtered_sha256": "bcf47b98997db4cb5be87513fb2513dbee9bc11e34e4f35ae289b69df2f2f350",
+      "compact_dictionary_ram_bytes": 256,
+      "expanded_dictionary_ram_bytes": 512,
+      "decoded_frames_exact_to_filtered": true,
+      "quality": {
+        "reference": "accepted Spectrum release, active 256x144 area; no original-source quality claim",
+        "attributes_exact": true,
+        "frames": 4971,
+        "altered_cells": 322187,
+        "max_changed_logical_pixels_per_cell": 8,
+        "max_quarter_coverage_delta": 1,
+        "average_rgb_psnr_db": 30.337656548726038,
+        "worst_frame_average_rgb_psnr_db": 25.61168123573617,
+        "native_rgb_psnr_db": 24.317056635446413,
+        "worst_frame_native_rgb_psnr_db": 19.591081322456546,
+        "max_cell_average_rgb_rmse": 31.875,
+        "native_changed_fraction": 0.00425329323269407,
+        "worst_frame_native_changed_fraction": 0.017415364583333332,
+        "worst_frames": [
+          2508,
+          2513,
+          2514,
+          4066,
+          2509,
+          4069,
+          2511,
+          2512,
+          4070,
+          2515,
+          1242,
+          483
+        ],
+        "repeated_frames_added": 0
+      },
+      "deflate": {
+        "6144": 2756543,
+        "4519063": 2553452
+      }
+    },
+    {
+      "name": "bitmap256_rmse32_group512_changes8",
+      "entries": 256,
+      "rmse_limit": 32.0,
+      "raw_bytes": 4127947,
+      "stream_sha256": "982bd759dc4e7ca0b0aed4146e55b93a1abf7f06d4e0eb44b30f1f2ca1e39623",
+      "filtered_sha256": "481708089c63576c171f1d2140e497aedbd27ddaeca00981a6f14bef703eeead",
+      "compact_dictionary_ram_bytes": 1024,
+      "expanded_dictionary_ram_bytes": 2048,
+      "decoded_frames_exact_to_filtered": true,
+      "quality": {
+        "reference": "accepted Spectrum release, active 256x144 area; no original-source quality claim",
+        "attributes_exact": true,
+        "frames": 4971,
+        "altered_cells": 337358,
+        "max_changed_logical_pixels_per_cell": 8,
+        "max_quarter_coverage_delta": 1,
+        "average_rgb_psnr_db": 30.341152932639964,
+        "worst_frame_average_rgb_psnr_db": 25.27253276687615,
+        "native_rgb_psnr_db": 24.320553019360347,
+        "worst_frame_native_rgb_psnr_db": 19.25193285359653,
+        "max_cell_average_rgb_rmse": 31.875,
+        "native_changed_fraction": 0.004082472830262746,
+        "worst_frame_native_changed_fraction": 0.0146484375,
+        "worst_frames": [
+          4069,
+          4070,
+          4071,
+          4066,
+          2508,
+          2509,
+          4068,
+          2513,
+          4067,
+          2511,
+          2510,
+          4064
+        ],
+        "repeated_frames_added": 0
+      },
+      "deflate": {
+        "6144": 2658994,
+        "4127947": 2491059
+      }
+    }
+  ]
+}

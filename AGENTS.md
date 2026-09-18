@@ -1,5 +1,9 @@
 # Project rules
 
+- Current target: the complete movie on at most three TRDs, with unchanged
+  resolution, smooth 25/3 fps and the existing 50 Hz AY soundtrack. Only
+  subtle pixel changes are allowed. Record frame-level quality and inspect
+  difficult scenes; an offline size estimate does not qualify as a release.
 - Use the full 128 KiB RAM budget of Spectrum 128 for optimization. Bank
   allocation may change, including trading disk-buffer space for dictionaries.
   Account for screens, code, stacks, AY/IRQ and TR-DOS workspace; validate
