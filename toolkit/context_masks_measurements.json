@@ -1,0 +1,69 @@
+{
+  "scope": "Lossless permutations of FPC2 masks before the existing sparse/ZX0 stages.\n\nFPC3 = magic, permutation u8, original header length u16, FPC2 header;\nthen unchanged group format with masks permuted before sparse mode 4.\nReconstruct the entire FPC2 byte stream, including its coded corrections.\nNo new pixel errors, player code or release timing claims.\n",
+  "baseline_commit": "8e0812b",
+  "input_sha256": "54a743ca9805333e2f0c0d0c9cfc9f3275f41a8c3e21649b1a4ace32262c8a22",
+  "frames": 4971,
+  "groups": 622,
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "complete": true,
+  "rows": [
+    {
+      "name": "control",
+      "mode": 0,
+      "raw_bytes": 2890217,
+      "sha256": "c289e6aa2270938a0374acbbca40fdb0e1429cfdfdd5dec0d00f74695e4bf0d3",
+      "exact_fpc2_round_trip": true,
+      "deflate_8192": 2096652
+    },
+    {
+      "name": "frame_split",
+      "mode": 1,
+      "raw_bytes": 2797062,
+      "sha256": "58d3dc12fb9aeac82875468057ca2d2cf03dd38a054b5a2f6c041e984dfeb2fb",
+      "exact_fpc2_round_trip": true,
+      "deflate_8192": 2019499
+    },
+    {
+      "name": "group_split",
+      "mode": 2,
+      "raw_bytes": 2797062,
+      "sha256": "3bf5648df1648153322c2824c6d1142588c77c3e1218036250ec67540f85e531",
+      "exact_fpc2_round_trip": true,
+      "deflate_8192": 2017385
+    },
+    {
+      "name": "group_byte_planes",
+      "mode": 3,
+      "raw_bytes": 2801413,
+      "sha256": "22509d470ae48263eee6499e26c625caa1f6c01565a6aa38dba963e4e7d9ad08",
+      "exact_fpc2_round_trip": true,
+      "deflate_8192": 2020277
+    },
+    {
+      "name": "frame_bit_planes",
+      "mode": 4,
+      "raw_bytes": 3062258,
+      "sha256": "893580727fe4f8f959dbbc98114dfa959ef9cd895e2e2ec16561b88cf8257729",
+      "exact_fpc2_round_trip": true,
+      "deflate_8192": 2198895
+    },
+    {
+      "name": "eight_tile_planes",
+      "mode": 5,
+      "raw_bytes": 3026384,
+      "sha256": "1014624d247965109946cdf470da8b87a5bcb903811586541a0d8bfd2f7204ac",
+      "exact_fpc2_round_trip": true,
+      "deflate_8192": 2152251
+    },
+    {
+      "name": "time_bits",
+      "mode": 6,
+      "raw_bytes": 2984507,
+      "sha256": "80732aca3da63a73bb7aa29c773a6fcd0f1b43d23b807681f70c1cc81286f60f",
+      "exact_fpc2_round_trip": true,
+      "deflate_8192": 2072305
+    }
+  ]
+}

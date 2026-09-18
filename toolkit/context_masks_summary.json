@@ -1,0 +1,84 @@
+{
+  "scope": "Join full mask-layout sizes and unchanged sparse-primitive CPU formulas.\n\nSparse totals use the previously executed 412+8*n primitive formula, not\na new full reader. ZX0 CPU is separately measured by actual instructions.\nNo permutation-reader, caller setup, paging, IRQ, ULA or disk costs are\nincluded; inverse bit transposition is a PC verification operation only.\n",
+  "baseline_commit": "8e0812b",
+  "input_sha256": "54a743ca9805333e2f0c0d0c9cfc9f3275f41a8c3e21649b1a4ace32262c8a22",
+  "frames": 4971,
+  "audio_estimate_bytes": 77696,
+  "three_trd_budget_bytes": 1937664,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "no_additional_pixel_changes": true,
+  "complete": true,
+  "rows": [
+    {
+      "name": "control",
+      "blocks": 353,
+      "zx0_with_headers_bytes": 2087964,
+      "saved_vs_fpc2": -31,
+      "with_audio_estimate_bytes": 2165660,
+      "deficit_before_extra_overheads": 227996,
+      "mask_primitive_formula": {
+        "packets": 335543,
+        "nonzero_bytes": 822614,
+        "tstates": 144824628
+      }
+    },
+    {
+      "name": "frame_split",
+      "blocks": 342,
+      "zx0_with_headers_bytes": 2007337,
+      "saved_vs_fpc2": 80596,
+      "with_audio_estimate_bytes": 2085033,
+      "deficit_before_extra_overheads": 147369,
+      "mask_primitive_formula": {
+        "packets": 335543,
+        "nonzero_bytes": 729459,
+        "tstates": 144079388
+      }
+    },
+    {
+      "name": "group_split",
+      "blocks": 342,
+      "zx0_with_headers_bytes": 2004838,
+      "saved_vs_fpc2": 83095,
+      "with_audio_estimate_bytes": 2082534,
+      "deficit_before_extra_overheads": 144870,
+      "mask_primitive_formula": {
+        "packets": 335543,
+        "nonzero_bytes": 729459,
+        "tstates": 144079388
+      }
+    },
+    {
+      "name": "group_byte_planes",
+      "blocks": 342,
+      "zx0_with_headers_bytes": 2006603,
+      "saved_vs_fpc2": 81330,
+      "with_audio_estimate_bytes": 2084299,
+      "deficit_before_extra_overheads": 146635,
+      "mask_primitive_formula": {
+        "packets": 335543,
+        "nonzero_bytes": 733810,
+        "tstates": 144114196
+      }
+    }
+  ],
+  "zx0_cpu_before": {
+    "blocks": 353,
+    "raw_bytes": 2890210,
+    "total_tstates": 121478238,
+    "mean_block_tstates": 344130.98583569407,
+    "max_block_tstates": 788767,
+    "bytes_with_headers": 2087933
+  },
+  "zx0_cpu_after": {
+    "blocks": 342,
+    "raw_bytes": 2797062,
+    "total_tstates": 110592540,
+    "mean_block_tstates": 323370.0,
+    "max_block_tstates": 788526,
+    "bytes_with_headers": 2004838
+  },
+  "zx0_cpu_delta_tstates": -10885698,
+  "mask_primitive_delta_tstates": -745240
+}
