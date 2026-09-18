@@ -100,11 +100,11 @@ def encode(header, parsed, mode, tables):
 
 
 class Decoder:
-    def __init__(self, tables):
+    def __init__(self, tables, *, allow_zero=False):
         # Independent canonical first-code construction, not codes_for().
         self.lookups, self.maxima = [], []
         for lengths in tables:
-            if len(lengths) != 256 or max(lengths) > 24 or lengths[0]:
+            if len(lengths) != 256 or max(lengths) > 24 or (lengths[0] and not allow_zero):
                 raise ValueError('invalid context table')
             counts = Counter(n for n in lengths if n)
             first, lookup = 0, {}

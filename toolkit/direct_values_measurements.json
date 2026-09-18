@@ -1,0 +1,73 @@
+{
+  "scope": "FPD1: contextual frequency/XOR corrections or final bitmap bytes.\n\nHeader: magic, value kind u8 (0 frequency, 1 XOR, 2 direct), context count\nu8, original FPR1 header length u16, header, predictor map 256 bytes,\n256 canonical lengths/context. Groups retain FPC2 framing but their masks\nuse the FPC3 group-split layout. Attributes stay XOR in every value kind.\nDirect values may be zero. The independent causal decoder also reconstructs\nthe original frequency FPR1, proving masks/vectors/pixels unchanged.\nOffline storage prototype; no integrated player or frame delivery claim.\n",
+  "baseline_commit": "fbf351e",
+  "input_sha256": "843eb9756ef43927236207692a84075bc1c733012d5fccc5729eb113e8b59c24",
+  "states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+  "frames": 4971,
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "complete": true,
+  "rows": [
+    {
+      "name": "frequency_64",
+      "kind": 0,
+      "bitmap_contexts": 64,
+      "raw_bytes": 2797056,
+      "sha256": "db895f33342f897397a16262d69f8feff039897c23dfd746eaf9ca097be1759d",
+      "bits": 8418269,
+      "exact_fpr1_restoration": true,
+      "exact_causal_frame_decode": true,
+      "decoded_states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+      "deflate_8192": 2017386
+    },
+    {
+      "name": "xor_64",
+      "kind": 1,
+      "bitmap_contexts": 64,
+      "raw_bytes": 2792979,
+      "sha256": "3610a87abe2f70921cff1da8d1eee8932fbbe8af4e782c0f742cbeb966869de8",
+      "bits": 8385730,
+      "exact_fpr1_restoration": true,
+      "exact_causal_frame_decode": true,
+      "decoded_states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+      "deflate_8192": 2012415
+    },
+    {
+      "name": "direct_16",
+      "kind": 2,
+      "bitmap_contexts": 16,
+      "raw_bytes": 2821977,
+      "sha256": "a0f2ad8434576ff0a233d6066558383ba3c4fe9ebf4eb898b0a634125a874fd3",
+      "bits": 8715932,
+      "exact_fpr1_restoration": true,
+      "exact_causal_frame_decode": true,
+      "decoded_states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+      "deflate_8192": 2051858
+    },
+    {
+      "name": "direct_32",
+      "kind": 2,
+      "bitmap_contexts": 32,
+      "raw_bytes": 2803303,
+      "sha256": "7eeb558041883853932e2a32f792bb8d3ca78c0d50288eceb5fe750f12de3b43",
+      "bits": 8533807,
+      "exact_fpr1_restoration": true,
+      "exact_causal_frame_decode": true,
+      "decoded_states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+      "deflate_8192": 2030067
+    },
+    {
+      "name": "direct_64",
+      "kind": 2,
+      "bitmap_contexts": 64,
+      "raw_bytes": 2793401,
+      "sha256": "e6098ea7d6414ba73deb70b852ae8130ed3f6231daa2590f1032582a1d6111fc",
+      "bits": 8389038,
+      "exact_fpr1_restoration": true,
+      "exact_causal_frame_decode": true,
+      "decoded_states_sha256": "cab64f41c1046d8b9a59c4adbe009029ee6b37d52d22ccd9877644fd376dffa2",
+      "deflate_8192": 2015314
+    }
+  ]
+}

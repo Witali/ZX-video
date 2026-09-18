@@ -19,7 +19,7 @@ import probe_fine_motion as motion
 import probe_motion_residual_order as ordering
 
 
-def clustered_tables(histogram, requested=(4, 8, 16, 32, 64)):
+def clustered_tables(histogram, requested=(4, 8, 16, 32, 64), baseline_bits=10245241):
     """Greedily merge bitmap distributions by increase in zero-order entropy.
 
     Attributes stay independent. A 256-byte predictor-to-cluster map is enough
@@ -61,7 +61,7 @@ def clustered_tables(histogram, requested=(4, 8, 16, 32, 64)):
             bits = int((np.array([list(t) for t in tables])*merged_hist).sum())
             results.append(dict(bitmap_contexts=len(hist), contexts=len(tables), context_map=mapping,
                 tables=[list(t) for t in tables], bits=bits, table_file_bytes=256+len(tables)*256,
-                byte_saving_before_tables=(10245241-bits)/8,
+                byte_saving_before_tables=(baseline_bits-bits)/8,
                 minimum_code_bits=min(n for t in tables for n in t if n),
                 maximum_code_bits=max(max(t) for t in tables)))
     return results
