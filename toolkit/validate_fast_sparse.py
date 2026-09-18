@@ -153,6 +153,8 @@ class CPU(MemoryCPU):
         if op == 0x0F:
             self.carry = bool(self.a & 1)
             self.a = (self.a >> 1) | ((self.a & 1) << 7); return 4
+        if op == 0x2F:
+            self.a ^= 255; return 4  # CPL preserves the modeled Z/C flags.
         if op == 0x17:
             carry = self.carry
             self.carry = bool(self.a & 128)
@@ -224,6 +226,13 @@ class CPU(MemoryCPU):
             self.fetch8(); return 11
         if op == 0xCB:
             q = self.fetch8(); register = q & 7; value = self.reg(register)
+            if q & 0xF8 in (0x00, 0x08):
+                if q & 8:
+                    self.carry = bool(value & 1); value = (value >> 1) | ((value & 1) << 7)
+                else:
+                    self.carry = bool(value & 128); value = ((value << 1) | (value >> 7)) & 255
+                self.put(register, value); self.z = value == 0
+                return 15 if register == 6 else 8
             if q & 0xC0 == 0x40:
                 self.z = value & (1 << ((q >> 3) & 7)) == 0
                 return 12 if register == 6 else 8

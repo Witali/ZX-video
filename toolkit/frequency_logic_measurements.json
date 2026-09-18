@@ -1,0 +1,461 @@
+{
+  "scope": "Exact fixed frequency-alphabet reconstruction without a lookup table.\n\nFor one pixel, p=(ph,pl) predicts the level and c=(ch,cl) is its code:\nqh = ph XOR cl XOR (ph AND (ch XOR cl))\nql = pl XOR (ch AND NOT(ph AND pl)) XOR (cl AND (ph OR pl)).\nThe Z80 computes four pixels in parallel in alternating bit positions.\nTwo variants: freely uses D/E/H/L, or preserves B/C/E/H like the lookup\nand only destroys D/L/flags. A=result. Entry-to-RET only. Loads/stores,\nCALL, traversal, paging, ZX0, IRQ, ULA, ROM, disk and full-frame scheduling\nare excluded. Fixed alphabet only; not a general replacement for any table.\n",
+  "baseline_commit": "cb7031f",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "timing_pages": [
+    71,
+    145,
+    158,
+    160,
+    162,
+    175,
+    209,
+    213,
+    226,
+    285
+  ],
+  "alphabet_report_sha256": "30d5a331135087859e2bcd3599c476598b083e9eb60890ab54a93fb5612f3fd0",
+  "previous_cpu_report_sha256": "3fec5fc822e64c06596bfb1c5db7d09a0735abc93946a0c77034a03280003201",
+  "symbols": [
+    [
+      0,
+      2,
+      1,
+      3
+    ],
+    [
+      1,
+      2,
+      0,
+      3
+    ],
+    [
+      2,
+      3,
+      1,
+      0
+    ],
+    [
+      3,
+      2,
+      1,
+      0
+    ]
+  ],
+  "code_hex": "780f57b0a16f7aa02fcb09a1ada86f79cb01a9a2a9aa87ade6aaadc9",
+  "code_bytes": 28,
+  "listing": [
+    {
+      "instruction": "LD A,B",
+      "code": [
+        120
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRCA",
+      "code": [
+        15
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD D,A",
+      "code": [
+        87
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "OR B",
+      "code": [
+        176
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "AND C",
+      "code": [
+        161
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD L,A",
+      "code": [
+        111
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD A,D",
+      "code": [
+        122
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "AND B",
+      "code": [
+        160
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "CPL",
+      "code": [
+        47
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RRC C",
+      "code": [
+        203,
+        9
+      ],
+      "tstates": 8
+    },
+    {
+      "instruction": "AND C",
+      "code": [
+        161
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "XOR L",
+      "code": [
+        173
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "XOR B",
+      "code": [
+        168
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD L,A",
+      "code": [
+        111
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "LD A,C",
+      "code": [
+        121
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RLC C",
+      "code": [
+        203,
+        1
+      ],
+      "tstates": 8
+    },
+    {
+      "instruction": "XOR C",
+      "code": [
+        169
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "AND D",
+      "code": [
+        162
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "XOR C",
+      "code": [
+        169
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "XOR D",
+      "code": [
+        170
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "ADD A,A",
+      "code": [
+        135
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "XOR L",
+      "code": [
+        173
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "AND AAh",
+      "code": [
+        230,
+        170
+      ],
+      "tstates": 7
+    },
+    {
+      "instruction": "XOR L",
+      "code": [
+        173
+      ],
+      "tstates": 4
+    },
+    {
+      "instruction": "RET",
+      "code": [
+        201
+      ],
+      "tstates": 10
+    }
+  ],
+  "previous": {
+    "input_pairs": 65536,
+    "cpu_tstates": 148,
+    "lookup_bytes": 256,
+    "lookup_sha256": "8b9c7774e1d20a10b964a5a57bb867438cfe3d80ce4856b72852644c655b130e",
+    "complete": true
+  },
+  "current": {
+    "input_pairs": 65536,
+    "tstates": 117,
+    "lookup_bytes": 0,
+    "complete": true
+  },
+  "freely_clobbering": {
+    "code_hex": "780f57b0a15f790f677aa0eeffa4aba86f7ca9a2a9aa87ade6aaadc9",
+    "code_bytes": 28,
+    "listing": [
+      {
+        "instruction": "LD A,B",
+        "code": [
+          120
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "RRCA",
+        "code": [
+          15
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "LD D,A",
+        "code": [
+          87
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "OR B",
+        "code": [
+          176
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "AND C",
+        "code": [
+          161
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "LD E,A",
+        "code": [
+          95
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "LD A,C",
+        "code": [
+          121
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "RRCA",
+        "code": [
+          15
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "LD H,A",
+        "code": [
+          103
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "LD A,D",
+        "code": [
+          122
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "AND B",
+        "code": [
+          160
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "XOR FFh",
+        "code": [
+          238,
+          255
+        ],
+        "tstates": 7
+      },
+      {
+        "instruction": "AND H",
+        "code": [
+          164
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "XOR E",
+        "code": [
+          171
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "XOR B",
+        "code": [
+          168
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "LD L,A",
+        "code": [
+          111
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "LD A,H",
+        "code": [
+          124
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "XOR C",
+        "code": [
+          169
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "AND D",
+        "code": [
+          162
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "XOR C",
+        "code": [
+          169
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "XOR D",
+        "code": [
+          170
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "ADD A,A",
+        "code": [
+          135
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "XOR L",
+        "code": [
+          173
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "AND AAh",
+        "code": [
+          230,
+          170
+        ],
+        "tstates": 7
+      },
+      {
+        "instruction": "XOR L",
+        "code": [
+          173
+        ],
+        "tstates": 4
+      },
+      {
+        "instruction": "RET",
+        "code": [
+          201
+        ],
+        "tstates": 10
+      }
+    ],
+    "verification": {
+      "input_pairs": 65536,
+      "tstates": 116,
+      "lookup_bytes": 0,
+      "complete": true
+    },
+    "preserved": [
+      "B",
+      "C"
+    ]
+  },
+  "primitive_before_tstates": 148,
+  "primitive_after_tstates": 117,
+  "primitive_delta_tstates": -31,
+  "previous_preserved": [
+    "B",
+    "C",
+    "E",
+    "H"
+  ],
+  "current_preserved": [
+    "B",
+    "C",
+    "E",
+    "H"
+  ],
+  "register_contract_matches": true,
+  "estimated_primitive_saving_per_frame_mean": 10305.21444377389,
+  "estimated_primitive_saving_per_frame_max": 61504,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "full_decoder_tstates_measured": false
+}
