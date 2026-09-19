@@ -1,4 +1,4 @@
-"""Verify the complete FAP1 movie in one Z80/RAM instance.
+"""Verify the complete FAP1 or FAP2 movie in one Z80/RAM instance.
 
 Z80 reads packet headers, AY records, metadata and values from the ZX0 ring,
 prepares native screens, then publishes them. Host startup installs Huffman
@@ -36,6 +36,7 @@ def main():
     p.add_argument('--cadence', action='store_true', help='Run real 70908-T IRQ deadlines; ideal producer, no ULA/disk')
     p.add_argument('--lookahead', action='store_true', help='Decode 256-byte quanta during idle fields')
     p.add_argument('--zero-copy', action='store_true', help='Consume bulk vectors and native map in place')
+    p.add_argument('--skip-noop-runs', action='store_true', help='Skip consecutive unchanged tiles in each stripe')
     args = p.parse_args()
     if args.lookahead and not args.cadence: p.error('--lookahead requires --cadence')
     raw = args.raw.read_bytes()
@@ -60,7 +61,7 @@ def main():
         if sha(data) != b['sha256'] or len(payload) != b['zx0_bytes']: raise ValueError('wrong cached block')
         ring += struct.pack('<HH', len(data), len(payload))+payload
     if position != len(raw): raise ValueError('incomplete block coverage')
-    h = Harness(bytes(ring), tables, mapping, count,bulk=bulk,zero_copy=args.zero_copy)
+    h = Harness(bytes(ring), tables, mapping, count,bulk=bulk,zero_copy=args.zero_copy,skip_noop_runs=args.skip_noop_runs)
     header_result = h.consume_header(raw[:r.pos]); h.histogram.clear()
     clock = None
     all_ticks = []
@@ -75,13 +76,13 @@ def main():
                 _, ml, coded, lit = struct.unpack('<BHHH',ar.take(7))
                 ar.take(3+192+ml+80+coded+lit)
         ar.end()
-    report = dict(scope=__doc__, complete=False, baseline_commit='a875d18' if bulk else '1963bab', frames_expected=count,
+    report = dict(scope=__doc__, complete=False, baseline_commit=('8390053' if args.skip_noop_runs else 'a875d18') if bulk else '1963bab', frames_expected=count,
         raw_sha256=sha(raw), states_sha256=sha(states.tobytes()), frames=[], header_results=header_result,
         code_regions=[dict(base=base,code_hex=data.hex()) for base,data in h.regions],
         packet_labels=h.p, reader_labels=h.r, decoder_labels=h.z, audio_labels=h.audio,
         instruction_listing=list(h.instructions.values()), timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         release=False, disk_delivery_verified=False, cadence_verified=False, cadence_requested=args.cadence,
-        lookahead=args.lookahead,bulk_packet=bulk,zero_copy=args.zero_copy)
+        lookahead=args.lookahead,bulk_packet=bulk,zero_copy=args.zero_copy,skip_noop_runs=args.skip_noop_runs)
     for i, expected in enumerate(states[:args.limit or count]):
         if bulk:
             _, detail = read_bulk_packet(r)
@@ -140,13 +141,18 @@ def main():
         stages = Counter(prepared['stages']); stages.update(published['stages'])
         old = baseline['frames'][i]['stages']
         for stage in ('metadata','reconstruct','output'):
-            if stages[stage] != old[stage]: raise AssertionError(('unchanged stage timing differs',i,stage))
+            delta = 0
+            if stage == 'reconstruct' and args.skip_noop_runs:
+                from causal_tile_z80 import noop_run_delta_tstates
+                delta = noop_run_delta_tstates(group[3],group[4])
+            if stages[stage] != old[stage]+delta: raise AssertionError(('stage timing differs',i,stage))
         if stages['handoff'] != old['handoff']+10+6*bulk+12*args.zero_copy: raise AssertionError('wrapper timing differs')
         if stages['audio'] != 1705+42*sum(t[0] for t in ticks)+(42 if args.cadence and i == 0 else 0):
             raise AssertionError('AY enqueue timing differs')
         irq = (prepared['irq_tstates']+published['irq_tstates']) if args.cadence else h.drain_six(ticks)
         total = prepared['tstates']+published['tstates']
         report['frames'].append(dict(index=i,tstates=total,stages=dict(stages),irq_tstates=irq,
+            reconstruction_delta_tstates=stages['reconstruct']-old['reconstruct'],
             idle_tstates=prepared.get('idle_tstates',0)+published.get('idle_tstates',0),
             consumed_raw_bytes=consumed,consumed_ring_bytes=cpu.consumed,
             baseline_video_tstates=baseline['frames'][i]['total_tstates'],
@@ -171,7 +177,9 @@ def main():
         mean_tstates=sum(counts)/len(counts),max_tstates=max(counts),worst_frame=counts.index(max(counts)),
         frames_above_425448=sum(t>425448 for t in counts),
         irq_tstates=sum(row['irq_tstates'] for row in report['frames']),
-        unchanged_video_except_wrapper=True, added_ret_tstates=10*len(counts),
+        unchanged_video_except_wrapper=not args.skip_noop_runs, exact_pixels_and_ay=True,
+        reconstruction_delta_tstates=sum(row['reconstruction_delta_tstates'] for row in report['frames']),
+        added_ret_tstates=10*len(counts),
         added_dynamic_source_tstates=6*len(counts)*bulk,
         added_dynamic_metadata_tstates=12*len(counts)*args.zero_copy)
     report['instruction_histogram'] = [dict(address=a,tstates=t,count=n) for (a,t),n in sorted(h.histogram.items())]

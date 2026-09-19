@@ -70,15 +70,19 @@ class FrameOutputPipelineTests(unittest.TestCase):
     def test_irq_preserves_fast_native_dispatch_and_raw_attributes(self):
         self.exercise_irq(raw=True, fast=True)
 
-    def exercise_irq(self, raw=False, fast=False, selective=False):
+    def exercise_irq(self, raw=False, fast=False, selective=False, noops=False, empty_noops=False):
         states, stream, _ = fixture(2)
         if raw:
             from raw_attribute_stream import pack
             stream, _ = pack(stream, states, [True, False])
         tables, mapping, packets = frames(stream)
         h = Harness(tables, mapping, raw_attributes=raw, decode_metadata=raw, fast_mask_dispatch=fast,
-                    selective_cache=selective)
+                    selective_cache=selective,skip_noop_runs=noops)
         coded_masks = serialized_masks(stream) if raw else [None]*len(packets)
+        if empty_noops:
+            states = np.zeros((2,3840),dtype=np.uint8)
+            packets = [((1,0,0,bytes(192),bytes(384),bytes(96),b'',b''),bytes(80))]*2
+            coded_masks = [bytes(8)]*2
         a = MiniAssembler(0x9400)
         ay_interrupt.emit(a)
         playback_schedule.emit_clock(a, dos_irq=True, full_rom_clock=True, memory_clock=True, audio_irq=True)
@@ -100,6 +104,8 @@ class FrameOutputPipelineTests(unittest.TestCase):
 
         def interrupt(cpu):
             nonlocal calls
+            if noops and not 0x7a00 <= cpu.pc < h.recon['noop_scanner_end']:
+                return 0
             cpu.guarding = False
             word(cpu, a.labels['audio_remaining'], 65535)
             index = cpu.read8(a.labels['audio_read_index'])
@@ -127,7 +133,8 @@ class FrameOutputPipelineTests(unittest.TestCase):
                 needed = source_coverage(group[3], 32).reshape(24, 4).any(axis=1)
                 coverage = np.packbits(needed).tobytes()
             h.run(group, mask, state.tobytes(), index, interrupt, encoded_metadata=coded_masks[index], cache_map=coverage)
-        self.assertGreater(calls, 20000)
+        self.assertGreater(calls, 0 if noops else 20000)
+        return calls
 
 
 if __name__ == '__main__':

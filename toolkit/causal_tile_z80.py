@@ -29,6 +29,25 @@ import prefix_huffman_z80 as prefix
 CODE, FRAME, CACHE = prefix.CODE, 0x6400, 0x7400
 VECTOR_X, VECTOR_Y, VECTOR_PHASE, ROW_LOW, ROW_HIGH = 0x9800, 0x9900, 0x9a00, 0x9b00, 0x9c00
 CACHE_MAP = 0xba40  # Three MSB-first bytes covering 24 four-row groups.
+NOOP_SCANNER = 0x7a00
+
+
+def noop_run_delta_tstates(vectors, masks):
+    """Exact delta against current hybrid tile traversal; no data change."""
+    if len(vectors) != 192 or len(masks) != 384: raise ValueError('one frame required')
+    delta = 0
+    for first in range(0,192,16):
+        i, end = first, first+16
+        while i < end:
+            if vectors[i]:
+                delta += 10 if vectors[i] < 82 else 14; i += 1
+            elif masks[i*2:i*2+2] != b'\0\0':
+                delta += 7; i += 1
+            else:
+                start = i
+                while i < end and vectors[i] == 0 and masks[i*2:i*2+2] == b'\0\0': i += 1
+                delta += (200 if i == end else 236 if vectors[i] else 282)-168*(i-start)
+    return delta
 
 
 def selective_cache_delta_tstates(flags, enabled):
@@ -104,7 +123,9 @@ def raw_intra_tstates(vector, tile, mask, *, unaligned=False):
     return total
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False):
+    if skip_noop_runs and not (hybrid and skip_empty and intra_extended and raw_kind is None and not raw_intra):
+        raise ValueError('no-op scanner requires the current hybrid masked path')
     if selective_cache and not hybrid:
         raise ValueError('selective cache requires per-frame cache flag')
     if raw_attributes and not (hybrid and split_literals):
@@ -128,6 +149,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     a = MiniAssembler(CODE)
     a.emit(*original[:end-CODE])
     a.labels.update({name: address for name, address in labels.items() if address < end})
+    if skip_noop_runs: a.labels['scan_zero_run'] = NOOP_SCANNER
     listing = [dict(row, stage='huffman') for row in instructions if row['address'] < end]
     stage = 'control'
 
@@ -219,7 +241,10 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     emit('LD A,16', [0x3e, 16], 7); load('LD (tiles_left),A', 0x32, 'tiles_left', 13)
     a.label('tile')
     load('LD HL,(vectors)', 0x2a, 'vectors', 16)
-    emit('LD A,(HL)', [0x7e], 7); emit('INC HL', [0x23], 6)
+    emit('LD A,(HL)', [0x7e], 7)
+    if skip_noop_runs:
+        emit('OR A',[0xb7],4); jump('JP Z,scan_zero_run',0xca,'scan_zero_run',10)
+    emit('INC HL', [0x23], 6)
     load('LD (vectors),HL', 0x22, 'vectors', 16)
     if raw_kind is not None:
         emit('PUSH AF', [0xf5], 11); emit('AND 7Fh', [0xe6, 127], 7)
@@ -235,7 +260,10 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         jump('JP NC,literal_tile' if intra_extended else 'JP Z,literal_tile',
              0xd2 if intra_extended else 0xca, 'literal_tile', 10)
     if raw_kind is None:
-        emit('OR A', [0xb7], 4); jump('CALL NZ,motion', 0xc4, 'motion', [10, 17])
+        if skip_noop_runs:
+            jump('CALL motion',0xcd,'motion',17)
+        else:
+            emit('OR A', [0xb7], 4); jump('CALL NZ,motion', 0xc4, 'motion', [10, 17])
         jump('CALL patches', 0xcd, 'patches', 17)
     if hybrid and raw_kind is None:
         jump('JP tile_done', 0xc3, 'tile_done', 10)
@@ -271,6 +299,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         load('LD (attr_target),HL', 0x22, 'attr_target', 16)
     load('LD HL,tiles_left', 0x21, 'tiles_left', 10)
     emit('DEC (HL)', [0x35], 11); jump('JP NZ,tile', 0xc2, 'tile', 10)
+    a.label('stripe_done')
     load('LD HL,stripes_left', 0x21, 'stripes_left', 10)
     emit('DEC (HL)', [0x35], 11); jump('JP Z,frame_done', 0xca, 'frame_done', 10)
     load('LD HL,(target)', 0x2a, 'target', 16); wordop('LD DE,224', 0x11, 224, 10)
@@ -679,6 +708,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     load('LD (bitmap_masks),HL', 0x22, 'bitmap_masks', 16)
     emit('LD A,B', [0x78], 4); emit('OR C', [0xb1], 4)
     jump('JP Z,attributes', 0xca, 'attributes', 10)
+    a.label('patches_nonzero')
     load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
     for field in range(16):
         if field == 8:
@@ -766,7 +796,47 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         (VECTOR_PHASE, bytes(2*((-dx) % 4) for dx, _ in offsets)),
         (ROW_LOW, bytes((row*64) & 255 for row in range(16))),
         (ROW_HIGH, bytes((CACHE+row*64) >> 8 for row in range(16)))]
-    return a.resolve(), dict(a.labels), listing, regions
+    code, labels = a.resolve(), dict(a.labels)
+    if skip_noop_runs:
+        a = MiniAssembler(NOOP_SCANNER); a.labels.update(labels)
+        stage = 'noop_control'
+        load('LD DE,(bitmap_masks)',(0xed,0x5b),'bitmap_masks',20)
+        emit('EX DE,HL',[0xeb],4)
+        emit('LD B,(HL)',[0x46],7); emit('INC HL',[0x23],6)
+        emit('LD C,(HL)',[0x4e],7); emit('DEC HL',[0x2b],6)
+        emit('LD A,B',[0x78],4); emit('OR C',[0xb1],4)
+        jump('JP NZ,scan_zero_patch',0xc2,'scan_zero_patch',10)
+        load('LD A,(tiles_left)',0x3a,'tiles_left',13)
+        emit('LD B,A',[0x47],4); emit('LD C,0',[0x0e,0],7)
+        a.label('scan_skip')
+        emit('INC DE',[0x13],6); emit('INC HL',[0x23],6); emit('INC HL',[0x23],6)
+        emit('INC C',[0x0c],4); jump('DJNZ scan_check',0x10,'scan_check',[8,13],True)
+        a.label('scan_done')
+        load('LD (bitmap_masks),HL',0x22,'bitmap_masks',16)
+        load('LD (vectors),DE',(0xed,0x53),'vectors',20)
+        emit('LD A,B',[0x78],4); load('LD (tiles_left),A',0x32,'tiles_left',13)
+        load('LD HL,(target)',0x2a,'target',16)
+        emit('LD A,C',[0x79],4); emit('ADD A,A',[0x87],4)
+        emit('LD E,A',[0x5f],4); emit('LD D,0',[0x16,0],7); emit('ADD HL,DE',[0x19],11)
+        load('LD (target),HL',0x22,'target',16)
+        emit('LD A,B',[0x78],4); emit('OR A',[0xb7],4)
+        jump('JP Z,stripe_done',0xca,'stripe_done',10); jump('JP tile',0xc3,'tile',10)
+        a.label('scan_check')
+        emit('LD A,(DE)',[0x1a],7); emit('OR A',[0xb7],4)
+        jump('JP NZ,scan_done',0xc2,'scan_done',10)
+        emit('LD A,(HL)',[0x7e],7); emit('INC HL',[0x23],6)
+        emit('OR (HL)',[0xb6],7); emit('DEC HL',[0x2b],6)
+        jump('JP Z,scan_skip',0xca,'scan_skip',10); jump('JP scan_done',0xc3,'scan_done',10)
+        a.label('scan_zero_patch')
+        emit('INC DE',[0x13],6); load('LD (vectors),DE',(0xed,0x53),'vectors',20)
+        emit('INC HL',[0x23],6); emit('INC HL',[0x23],6)
+        load('LD (bitmap_masks),HL',0x22,'bitmap_masks',16)
+        jump('CALL patches_nonzero',0xcd,'patches_nonzero',17); jump('JP tile_done',0xc3,'tile_done',10)
+        if a.pc > 0x7b00: raise ValueError('no-op scanner overlaps cold initializer')
+        labels.update({k:v for k,v in a.labels.items() if k not in labels})
+        labels['noop_scanner_end'] = a.pc
+        regions.append((NOOP_SCANNER,a.resolve()))
+    return code, labels, listing, regions
 
 
 def emit_tile_attributes(a, emit, load, jump, skip_empty):

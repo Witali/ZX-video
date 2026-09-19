@@ -51,12 +51,12 @@ class FrameStreamCPU(stream.StreamCPU):
 
 
 class Harness:
-    def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False):
+    def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False):
         if zero_copy and not bulk: raise ValueError('zero-copy metadata requires bulk packets')
         self.bulk = bulk
         f = self.frame = pipeline.Harness(tables, mapping, raw_attributes=True, decode_metadata=True,
             fast_mask_dispatch=True, selective_cache=True, deferred_publish=True,dynamic_source=bulk,
-            dynamic_metadata=zero_copy)
+            dynamic_metadata=zero_copy,skip_noop_runs=skip_noop_runs)
         s = stream.Harness(ring, ring_start=ring_start)
         self.z, self.r, self.blocks = s.z, s.r, 0
         cpu = self.cpu = FrameStreamCPU(b'', b'')
