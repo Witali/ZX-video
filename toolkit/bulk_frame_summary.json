@@ -1,0 +1,154 @@
+{
+  "scope": "Compare complete FAP1/FAP2 CPU runs and separate failed clock trials.",
+  "complete": true,
+  "release": false,
+  "disk_delivery_verified": false,
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "frames": 4221,
+  "measured_stages": {
+    "packet": {
+      "before": 7357203,
+      "after": 24307715,
+      "delta": 16950512
+    },
+    "stream_input": {
+      "before": 106023939,
+      "after": 70336349,
+      "delta": -35687590
+    },
+    "banked_zx0": {
+      "before": 342628971,
+      "after": 303561027,
+      "delta": -39067944
+    },
+    "audio": {
+      "before": 9150603,
+      "after": 9150603,
+      "delta": 0
+    },
+    "metadata": {
+      "before": 80531227,
+      "after": 80531227,
+      "delta": 0
+    },
+    "handoff": {
+      "before": 1574433,
+      "after": 1599759,
+      "delta": 25326
+    },
+    "reconstruct": {
+      "before": 751710764,
+      "after": 751710764,
+      "delta": 0
+    },
+    "output": {
+      "before": 405533717,
+      "after": 405533717,
+      "delta": 0
+    }
+  },
+  "before": {
+    "frames": 4221,
+    "total_tstates": 1704510857,
+    "stages": {
+      "packet": 7357203,
+      "stream_input": 106023939,
+      "banked_zx0": 342628971,
+      "audio": 9150603,
+      "metadata": 80531227,
+      "handoff": 1574433,
+      "reconstruct": 751710764,
+      "output": 405533717
+    },
+    "mean_tstates": 403816.8341625207,
+    "max_tstates": 862649,
+    "worst_frame": 4052,
+    "frames_above_425448": 1751,
+    "manual_irq_tstates": 16591971,
+    "unchanged_video_except_ret": true,
+    "added_ret_tstates": 42210
+  },
+  "after": {
+    "frames": 4221,
+    "total_tstates": 1646731161,
+    "stages": {
+      "packet": 24307715,
+      "stream_input": 70336349,
+      "banked_zx0": 303561027,
+      "audio": 9150603,
+      "metadata": 80531227,
+      "handoff": 1599759,
+      "reconstruct": 751710764,
+      "output": 405533717
+    },
+    "mean_tstates": 390128.2068230277,
+    "max_tstates": 864972,
+    "worst_frame": 4052,
+    "frames_above_425448": 1573,
+    "irq_tstates": 16591971,
+    "unchanged_video_except_wrapper": true,
+    "added_ret_tstates": 42210,
+    "added_dynamic_source_tstates": 25326
+  },
+  "measured_delta_tstates": -57779696,
+  "storage": {
+    "before": 1928341,
+    "after": 1935757,
+    "delta": 7416,
+    "sectors_before": 7533,
+    "sectors_after": 7562,
+    "preliminary_three_disk_allowance": 1937664,
+    "preliminary_margin": 1907,
+    "actual_release_capacity_verified": false
+  },
+  "zero_copy_projection": {
+    "measured_full_run": false,
+    "delta_per_frame": -4481,
+    "total_tstates": 1627816860,
+    "mean_tstates": 385647.2068230277,
+    "max_tstates": 860491,
+    "frames_above_425448": 1512
+  },
+  "clock_trials": [
+    {
+      "variant": "copy",
+      "report": "bulk_frame_clock_cpu.json",
+      "complete": false,
+      "verified_frames": 65,
+      "failure": {
+        "frame": 65,
+        "error": "('scheduled AY underrun', 390)",
+        "tstates": 29091218,
+        "pc": 56167,
+        "fields": 390,
+        "played_ticks": 390
+      },
+      "late_frames": 5,
+      "first_late": {
+        "frame": 60,
+        "fields": 1
+      },
+      "max_late_fields": 5
+    },
+    {
+      "variant": "zero_copy",
+      "report": "bulk_frame_zero_copy_clock_cpu.json",
+      "complete": false,
+      "verified_frames": 66,
+      "failure": {
+        "frame": 66,
+        "error": "('scheduled AY underrun', 396)",
+        "tstates": 29512187,
+        "pc": 31842,
+        "fields": 396,
+        "played_ticks": 396
+      },
+      "late_frames": 16,
+      "first_late": {
+        "frame": 47,
+        "fields": 1
+      },
+      "max_late_fields": 5
+    }
+  ]
+}

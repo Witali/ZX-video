@@ -20,6 +20,9 @@ from validate_fast_sparse import CPU
 
 class FrameStreamCPU(stream.StreamCPU):
     def read8(self, address):
+        if (self.guarding and self.bulk and self.phase in ('packet','audio')
+                and pipeline.INPUT <= address < pipeline.INPUT_END and address >= self.packet_end):
+            raise AssertionError(f'bulk packet overread {address:04x}')
         if (self.guarding and self.phase in ('metadata', 'reconstruct')
                 and pipeline.INPUT <= address < pipeline.INPUT_END and address >= self.input_end):
             raise AssertionError(f'packet value overread {address:04x}')
@@ -35,6 +38,10 @@ class FrameStreamCPU(stream.StreamCPU):
                     or any(lo <= address < hi for lo,hi in self.wrapper_state)
                     or pipeline.INPUT <= address < self.input_end
                     or address == self.z_labels['history_page'])
+                if self.bulk:
+                    allowed |= (pipeline.VECTORS <= address < pipeline.VECTORS+192
+                        or pipeline.MAP <= address < pipeline.MAP+80
+                        or packet.CACHE_MAP <= address < packet.CACHE_MAP+3)
                 if allowed: return CPU.write8(self, address, value)
             if self.phase == 'audio':
                 if (ay_interrupt.QUEUE_BASE <= address < ay_interrupt.QUEUE_BASE+1024
@@ -44,13 +51,17 @@ class FrameStreamCPU(stream.StreamCPU):
 
 
 class Harness:
-    def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0):
+    def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False):
+        if zero_copy and not bulk: raise ValueError('zero-copy metadata requires bulk packets')
+        self.bulk = bulk
         f = self.frame = pipeline.Harness(tables, mapping, raw_attributes=True, decode_metadata=True,
-            fast_mask_dispatch=True, selective_cache=True, deferred_publish=True)
+            fast_mask_dispatch=True, selective_cache=True, deferred_publish=True,dynamic_source=bulk,
+            dynamic_metadata=zero_copy)
         s = stream.Harness(ring, ring_start=ring_start)
         self.z, self.r, self.blocks = s.z, s.r, 0
         cpu = self.cpu = FrameStreamCPU(b'', b'')
         cpu.__dict__.update(f.cpu.__dict__); cpu.guarding = False
+        cpu.bulk, cpu.packet_end = bulk, pipeline.INPUT_END
         for name in ('z_labels','r_labels','patches','ring_data','ring_start','consumed','produced','dest_first','dest_end'):
             setattr(cpu, name, getattr(s.cpu, name))
         for bank in banked_zx0.BANKS: cpu.banks[bank][:] = s.cpu.banks[bank]
@@ -67,7 +78,11 @@ class Harness:
         a.label('fatal'); a.emit(0x76); a.label('end')
         self.audio, audio_code = dict(a.labels), a.resolve()
         if a.pc > 0x9800: raise ValueError('AY overlaps motion tables')
-        code, bridge, self.p, listing = packet.build(self.z, self.r, f.w, f.draw, f.metadata_labels, self.audio)
+        if bulk:
+            import bulk_frame_z80 as builder
+        else:
+            builder = packet
+        code, bridge, self.p, listing = builder.build(self.z, self.r, f.w, f.draw, f.metadata_labels, self.audio)
         cpu.p_labels = self.p; cpu.audio_state, cpu.audio_end = self.audio['state'], self.audio['end']
         cpu.wrapper_state = [(f.w['state'], f.w['end'])]
         self.regions = s.regions+[(packet.CODE, code), (packet.BRIDGE, bridge), (0x9400, audio_code)]
@@ -106,13 +121,17 @@ class Harness:
                 regions = ((pipeline.INPUT, pipeline.INPUT_END), (pipeline.MAP, pipeline.MAP+80),
                     (pipeline.VECTORS, pipeline.VECTORS+192), (packet.CACHE_MAP, packet.CACHE_MAP+3),
                     (packet.HEADER, packet.HEADER+7))
+                if self.bulk: regions += ((0xba58,0xba5a),)
                 if not any(lo <= first <= last <= hi for lo,hi in regions):
                     raise AssertionError(f'invalid stream destination {first:04x}..{last:04x}')
                 cpu.dest_first, cpu.dest_end = first, last
             if pc == self.frame.metadata_labels['decode']:
-                cpu.input_end = pipeline.INPUT+word(cpu, packet.HEADER+1)
+                cpu.input_end = cpu.hl()+word(cpu, packet.HEADER+1)
+            if self.bulk and pc == self.audio['audio_enqueue_six']:
+                cpu.packet_end = word(cpu,self.p['payload_end'])
             if pc == self.frame.w['run']:
-                cpu.input_end = pipeline.INPUT+word(cpu,packet.HEADER+3)+word(cpu,packet.HEADER+5)+2
+                cpu.input_end = (cpu.packet_end if self.bulk else
+                    pipeline.INPUT+word(cpu,packet.HEADER+3)+word(cpu,packet.HEADER+5)+2)
             if pc == self.frame.draw['draw']:
                 cpu.target_bank = 7 if cpu.a == 0xc0 else 5
             row = self.instructions.get(pc)

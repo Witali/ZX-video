@@ -35,15 +35,20 @@ def main():
     p.add_argument('--limit', type=int, default=0)
     p.add_argument('--cadence', action='store_true', help='Run real 70908-T IRQ deadlines; ideal producer, no ULA/disk')
     p.add_argument('--lookahead', action='store_true', help='Decode 256-byte quanta during idle fields')
+    p.add_argument('--zero-copy', action='store_true', help='Consume bulk vectors and native map in place')
     args = p.parse_args()
     if args.lookahead and not args.cadence: p.error('--lookahead requires --cadence')
     raw = args.raw.read_bytes()
+    bulk = raw[:4] == b'FAP2'
+    if args.zero_copy and not bulk: p.error('--zero-copy requires FAP2')
+    if bulk:
+        from bulk_frame_stream import unpack as unpack_bulk,read_packet as read_bulk_packet
     storage = json.loads(args.storage_report.read_text(encoding='utf-8'))
     baseline = json.loads(args.baseline.read_text(encoding='utf-8'))
     with np.load(args.states, allow_pickle=False) as saved: states = saved['states']
-    cells = unpack_audio(unpack_cache(unpack(raw), 32, 4))[0]
+    cells = unpack_audio(unpack_cache(unpack(unpack_bulk(raw) if bulk else raw), 32, 4))[0]
     tables, mapping, packets = frames(cells)
-    r = Reader(raw); _, _, count, _, _ = read_header(r, magic=b'FAP1')
+    r = Reader(raw); _, _, count, _, _ = read_header(r, magic=raw[:4])
     if (not storage['complete'] or storage['input_sha256'] != sha(raw) or not baseline['complete']
             or baseline['states_sha256'] != sha(states.tobytes()) or len(states) != count
             or baseline['stream_sha256'] != sha(cells)):
@@ -55,29 +60,39 @@ def main():
         if sha(data) != b['sha256'] or len(payload) != b['zx0_bytes']: raise ValueError('wrong cached block')
         ring += struct.pack('<HH', len(data), len(payload))+payload
     if position != len(raw): raise ValueError('incomplete block coverage')
-    h = Harness(bytes(ring), tables, mapping, count)
+    h = Harness(bytes(ring), tables, mapping, count,bulk=bulk,zero_copy=args.zero_copy)
     header_result = h.consume_header(raw[:r.pos]); h.histogram.clear()
     clock = None
     all_ticks = []
     if args.cadence:
         from frame_clock_harness import Clock
-        ar = Reader(raw); read_header(ar,magic=b'FAP1')
+        ar = Reader(raw); read_header(ar,magic=raw[:4])
         for _ in range(count):
-            all_ticks.extend(take_tick(ar) for _ in range(6))
-            _, ml, coded, lit = struct.unpack('<BHHH',ar.take(7))
-            ar.take(3+192+ml+80+coded+lit)
+            if bulk:
+                all_ticks.extend(read_bulk_packet(ar)[1]['ticks'])
+            else:
+                all_ticks.extend(take_tick(ar) for _ in range(6))
+                _, ml, coded, lit = struct.unpack('<BHHH',ar.take(7))
+                ar.take(3+192+ml+80+coded+lit)
         ar.end()
-    report = dict(scope=__doc__, complete=False, baseline_commit='1963bab', frames_expected=count,
+    report = dict(scope=__doc__, complete=False, baseline_commit='a875d18' if bulk else '1963bab', frames_expected=count,
         raw_sha256=sha(raw), states_sha256=sha(states.tobytes()), frames=[], header_results=header_result,
         code_regions=[dict(base=base,code_hex=data.hex()) for base,data in h.regions],
         packet_labels=h.p, reader_labels=h.r, decoder_labels=h.z, audio_labels=h.audio,
         instruction_listing=list(h.instructions.values()), timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         release=False, disk_delivery_verified=False, cadence_verified=False, cadence_requested=args.cadence,
-        lookahead=args.lookahead)
+        lookahead=args.lookahead,bulk_packet=bulk,zero_copy=args.zero_copy)
     for i, expected in enumerate(states[:args.limit or count]):
-        ticks = [take_tick(r) for _ in range(6)]
-        flags, ml, coded, lit = struct.unpack('<BHHH', r.take(7))
-        body = r.take(3+192+ml+80+coded+lit)
+        if bulk:
+            _, detail = read_bulk_packet(r)
+            ticks,flags,ml,coded,lit = (detail[n] for n in ('ticks','flags','mask_bytes','coded_bytes','literal_bytes'))
+            cache_map = detail['cache']
+            value_base = 0xa6a0+detail['coded_offset']
+        else:
+            ticks = [take_tick(r) for _ in range(6)]
+            flags, ml, coded, lit = struct.unpack('<BHHH', r.take(7))
+            body = r.take(3+192+ml+80+coded+lit)
+            cache_map,value_base = body[:3],0xa6a0
         try:
             if args.cadence and i:
                 prepared = clock.play_one()
@@ -104,12 +119,15 @@ def main():
         for bank, wanted in h.expected_screens.items():
             if bytes(cpu.banks[bank][:6912]) != wanted: raise AssertionError(('native screen differs', i, bank))
         consumed = ends[h.blocks-1]+word(cpu,h.r['position'])
-        bits = (word(cpu,h.frame.recon['source'])-0xa6a0)*8+(cpu.read8(h.frame.recon['bit_page']) & 7)
+        bits = (word(cpu,h.frame.recon['source'])-value_base)*8+(cpu.read8(h.frame.recon['bit_page']) & 7)
         if (consumed != r.pos or bits != group[2]
-                or word(cpu,h.frame.recon['literal_source']) != 0xa6a0+coded+1+lit):
+                or word(cpu,h.frame.recon['literal_source']) != value_base+coded+1+lit):
             raise AssertionError(('packet/bit/literal cursor differs', i))
-        checks = ((0xa400, group[3]), (0xa4c0,group[4]+group[5]), (0x7300,native),
-            (0xba40,body[:3]), (0xa6a0,group[6]+b'\0'+group[7]+b'\0'))
+        vector_base = word(cpu,h.frame.w['vector_pointer']) if args.zero_copy else 0xa400
+        native_base = word(cpu,h.frame.w['native_pointer']) if args.zero_copy else 0x7300
+        checks = ((vector_base, group[3]), (0xa4c0,group[4]+group[5]), (native_base,native),
+            (0xba40,cache_map), (value_base,group[6]+b'\0'+group[7]+b'\0'))
+        if bulk: checks += ((0xa6a0,detail['payload']),)
         for first, wanted in checks:
             if bytes(cpu.read8(first+j) for j in range(len(wanted))) != wanted:
                 raise AssertionError(('parsed input differs',i,first))
@@ -123,7 +141,7 @@ def main():
         old = baseline['frames'][i]['stages']
         for stage in ('metadata','reconstruct','output'):
             if stages[stage] != old[stage]: raise AssertionError(('unchanged stage timing differs',i,stage))
-        if stages['handoff'] != old['handoff']+10: raise AssertionError('deferred RET timing differs')
+        if stages['handoff'] != old['handoff']+10+6*bulk+12*args.zero_copy: raise AssertionError('wrapper timing differs')
         if stages['audio'] != 1705+42*sum(t[0] for t in ticks)+(42 if args.cadence and i == 0 else 0):
             raise AssertionError('AY enqueue timing differs')
         irq = (prepared['irq_tstates']+published['irq_tstates']) if args.cadence else h.drain_six(ticks)
@@ -136,7 +154,7 @@ def main():
         if i % 100 == 0:
             if clock: report['publications'] = clock.publications
             args.output.write_text(json.dumps(report,indent=2)+'\n', encoding='utf-8')
-            print(f'Integrated FAP1 Z80 checked frame {i+1}/{count}',flush=True)
+            print(f'Integrated {raw[:4].decode()} Z80 checked frame {i+1}/{count}',flush=True)
     complete = len(report['frames']) == count
     if complete:
         r.end()
@@ -153,7 +171,9 @@ def main():
         mean_tstates=sum(counts)/len(counts),max_tstates=max(counts),worst_frame=counts.index(max(counts)),
         frames_above_425448=sum(t>425448 for t in counts),
         irq_tstates=sum(row['irq_tstates'] for row in report['frames']),
-        unchanged_video_except_ret=True, added_ret_tstates=10*len(counts))
+        unchanged_video_except_wrapper=True, added_ret_tstates=10*len(counts),
+        added_dynamic_source_tstates=6*len(counts)*bulk,
+        added_dynamic_metadata_tstates=12*len(counts)*args.zero_copy)
     report['instruction_histogram'] = [dict(address=a,tstates=t,count=n) for (a,t),n in sorted(h.histogram.items())]
     if sum(r['tstates']*r['count'] for r in report['instruction_histogram']) != sum(counts):
         raise AssertionError('full instruction histogram differs')

@@ -31,7 +31,7 @@ VECTORS, BITMAP, ATTRS, INPUT, INPUT_END = 0xa400, 0xa4c0, 0xa640, 0xa6a0, 0xb90
 MAP, WRAPPER, INITIALIZER = 0x7300, 0x8f60, 0x7b00
 
 
-def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False):
+def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False, dynamic_source=False, dynamic_metadata=False):
     a, listing = MiniAssembler(origin), []
     a.label('run')
     def emit(name, data, ticks):
@@ -42,7 +42,12 @@ def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False):
     def load_a(addr): address('LD A,(nn)', 0x3a, addr, 13)
     def store_a(addr): address('LD (nn),A', 0x32, addr, 13)
     for name, value in (('vectors', VECTORS), ('bitmap_masks', BITMAP), ('attribute_masks', ATTRS), ('source', INPUT)):
-        address('LD HL,'+name, 0x21, value, 10)
+        if name == 'source' and dynamic_source or name == 'vectors' and dynamic_metadata:
+            pointer = 'coded_pointer' if name == 'source' else 'vector_pointer'
+            listing.append(dict(address=a.pc,instruction='LD HL,('+pointer+')',tstates=16,stage='handoff'))
+            a.abs16(0x2a,pointer)
+        else:
+            address('LD HL,'+name, 0x21, value, 10)
         address('LD ('+name+'),HL', 0x22, recon[name], 16)
     listing.append(dict(address=a.pc, instruction='LD HL,(literal_pointer)', tstates=16, stage='handoff'))
     a.abs16(0x2a, 'literal_pointer')
@@ -55,7 +60,11 @@ def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False):
         a.abs16(0x3a, 'raw_attribute_flag'); store_a(recon['raw_attributes'])
     address('CALL reconstruct', 0xcd, recon['frame'], 17)
     load_a(draw['screen_base'])
-    address('LD HL,native_map', 0x21, MAP, 10)
+    if dynamic_metadata:
+        listing.append(dict(address=a.pc,instruction='LD HL,(native_pointer)',tstates=16,stage='handoff'))
+        a.abs16(0x2a,'native_pointer')
+    else:
+        address('LD HL,native_map', 0x21, MAP, 10)
     address('CALL draw', 0xcd, draw['draw'], 17)
     if deferred_publish:
         emit('RET (prepared screen)', [0xc9], 10)
@@ -70,6 +79,11 @@ def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False):
     a.label('cache_flag'); a.emit(0)
     if 'raw_attributes' in recon:
         a.label('raw_attribute_flag'); a.emit(0)
+    if dynamic_source:
+        a.label('coded_pointer'); a.word(0)
+    if dynamic_metadata:
+        a.label('vector_pointer'); a.word(0)
+        a.label('native_pointer'); a.word(0)
     a.label('end')
     if (origin == WRAPPER and (a.pc > output.CODE or recon['end'] > WRAPPER)
             or origin != WRAPPER and (origin < 0x78a0 or a.pc > INITIALIZER or recon['end'] > output.CODE)):
@@ -126,7 +140,7 @@ class PipelineCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False):
+    def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False):
         self.raw_attributes = raw_attributes
         self.decode_metadata = decode_metadata
         self.fast_mask_dispatch = fast_mask_dispatch
@@ -137,7 +151,8 @@ class Harness:
             selective_cache=selective_cache)
         self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch)
         self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw, origin=0x7900 if selective_cache else WRAPPER,
-                                               deferred_publish=deferred_publish)
+                                               deferred_publish=deferred_publish,dynamic_source=dynamic_source,
+                                               dynamic_metadata=dynamic_metadata)
         self.init_code, ii = initializer(self.draw)
         self.cpu = PipelineCPU(b'', b'')
         self.cpu.port_7ffd = 0x16
