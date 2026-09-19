@@ -1,0 +1,87 @@
+# FAP3: служебный байт создаётся в RAM
+
+База: `17f079c`, FAP2 с указателями на метаданные и пропуском серий
+неизменённых плиток. Данные: 4221 кадр без финальных титров, прежние
+разрешение, изменения age3 и 25326 записей AY. Это эксперимент над
+потоком и исполняемым Z80-кодом; готовность выпуска проверяется отдельно.
+
+## Формат и корректность
+
+FAP2 хранит нулевой байт после кодов Huffman и ещё один после литералов.
+FAP3 удаляет оба: литералы следуют непосредственно за кодами; обработчик
+создаёт один ноль **после всего пакета в RAM**. Поток короче на 8442 байта.
+Максимальный допустимый пакет — 4703 байта в окне 4704 байта; последний
+байт окна зарезервирован для созданного нуля. Реальный максимум — 3645.
+Для запуска FAP3 нужно явно собрать его вариант обработчика; FAP2 остаётся
+форматом по умолчанию и сохраняет прежние машинные байты.
+
+Восстановление читает текущий байт Huffman и следующий для восьмибитового
+префикса. Для корректного полного кода значение лишних битов не влияет
+на символ: короткая запись таблицы повторяется для каждого неиспользованного
+суффикса; длинная ветвь читает только необходимые биты кода. Поэтому первый
+литерал может служить lookahead. При отсутствии литералов читается ноль,
+созданный обработчиком. Сам декодер Huffman не меняется.
+
+Тесты проверяют все 256 соседних байтов на каждом из восьми смещений для
+коротких кодов, все коды таблиц фильма на каждом смещении с соседним `FF`,
+включая длинные ветви. Интеграционные проверки сравнивают оба экрана,
+компактный кадр, AY, указатели и нетронутый пакет; блоки по 509 байт и
+начало кольца `FFFF` принудительно пересекают границы буфера.
+
+## Такты Z80
+
+Таблица: [Zilog Z80 CPU User Manual](https://www.zilog.com/docs/z80/um0080.pdf).
+Числа ниже — детерминированные T-states, без задержек ULA, диска и ROM.
+
+| Участок | FAP2 | FAP3 | Разница |
+|---|---:|---:|---:|
+| Проверка первого нуля и переход к литералам: `LD A,(HL); OR A; JP NZ; INC HL` | 27 | 0 | −27 |
+| Последний ноль: `DEC HL; LD A,(HL); OR A; JP NZ` → `LD (HL),0; OR A` | 27 | 14 | −13 |
+| Всего изменённый участок | 54 | 14 | **−40/кадр** |
+| Все 4221 пакета | 227934 | 59094 | **−168840** |
+
+Обёртка остаётся 391 T/кадр. Изменение длины сдвигает границы блоков ZX0,
+поэтому затраты чтения и распаковки нельзя получить простым вычитанием
+168840 T из общего времени. Они измеряются заново. Звук, восстановление
+плиток и запись экранов должны побитно и потактно совпадать с базой.
+
+## Измерения 19 сентября 2026
+
+Все 379 блоков optimal ZX0 по 8192 байта независимо распакованы обратно.
+Размер с четырёхбайтовыми заголовками: **1935757 → 1932429 байт**,
+экономия **3328 байт / 13 секторов**. Предварительный остаток от бюджета
+1937664 — 5235 байт; это ещё не проверенный расход трёх готовых TRD.
+
+16 тестов прошли. Прогон с настоящим ISR каждые 70908 T, без ULA/диска,
+проверил 405 кадров и остановился на кадре 405 из-за AY underrun,
+tick 2430. Среди публикаций **49 опозданий**, первое — кадр 61;
+максимальная фаза относительно первой публикации — **316677 T**.
+Номинальный график и резервный допуск не пройдены. Старый FAP2 с no-op
+останавливался на кадре 406: изменение границ ZX0 не дало улучшения
+расписания. Полный прогон детерминированного CPU запущен отдельно;
+его результат на момент этой записи ещё не получен.
+
+Решение: сохранить FAP3 как опцию с меньшим объёмом, **не выпускать**.
+Корневые TRD не меняются. Отчёты: [поток](lean_frame_stream.json),
+[ZX0](lean_frame_zx0.json), [частичный таймер](lean_frame_clock_cpu.json),
+[аудит сроков и компенсации](lean_frame_timing.json).
+
+## Воспроизведение
+
+Команды выполняются из корня рабочей копии, с `toolkit` и зависимостями
+проекта в `PYTHONPATH`. Путь к `zx0.exe` можно заменить; хеш записывается
+в отчёт сжатия.
+
+```powershell
+python -m unittest toolkit/test_bulk_frame_stream.py toolkit/test_bulk_frame_z80.py toolkit/test_prefix_huffman_z80.py toolkit/test_frame_stream_z80.py
+python toolkit/bulk_frame_stream.py --source .tmp/frame_packet/stream.raw --output .tmp/lean_frame/stream.raw --report toolkit/lean_frame_stream.json --omit-guards
+python toolkit/probe_zx0_storage.py --raw .tmp/lean_frame/stream.raw --block-bytes 8192 --zx0 ../audio-fidelity/.tmp/bin/zx0.exe --cache .tmp/lean_frame/zx0 --output toolkit/lean_frame_zx0.json
+python toolkit/benchmark_frame_stream.py --raw .tmp/lean_frame/stream.raw --states .tmp/no_credits/source/conversion.npz --storage-report toolkit/lean_frame_zx0.json --cache .tmp/lean_frame/zx0/optimal --baseline toolkit/selective_cache_pipeline_cpu.json --output toolkit/lean_frame_cpu.json --zero-copy --skip-noop-runs
+python toolkit/benchmark_frame_stream.py --raw .tmp/lean_frame/stream.raw --states .tmp/no_credits/source/conversion.npz --storage-report toolkit/lean_frame_zx0.json --cache .tmp/lean_frame/zx0/optimal --baseline toolkit/selective_cache_pipeline_cpu.json --output toolkit/lean_frame_clock_cpu.json --zero-copy --skip-noop-runs --cadence --lookahead
+python toolkit/summarize_lean_frames.py --old-stream toolkit/bulk_frame_stream.json --stream toolkit/lean_frame_stream.json --old-storage toolkit/bulk_frame_zx0.json --storage toolkit/lean_frame_zx0.json --old-cpu toolkit/bulk_frame_noop_cpu.json --cpu toolkit/lean_frame_cpu.json --clock toolkit/lean_frame_clock_cpu.json --output toolkit/lean_frame_summary.json
+```
+
+Тест с `--cadence` сохраняет частичный отчёт при срыве AY/расписания и
+завершается с ошибкой. Это отрицательный результат проверки, не выпуск.
+Полный тест с ручным вызовом ISR подтверждает данные и работу инструкций,
+но не доказывает 50 Гц или точные моменты публикации.

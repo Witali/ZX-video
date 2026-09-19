@@ -51,9 +51,12 @@ class FrameStreamCPU(stream.StreamCPU):
 
 
 class Harness:
-    def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False):
+    def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False,
+                 stored_guards=True):
         if zero_copy and not bulk: raise ValueError('zero-copy metadata requires bulk packets')
+        if not stored_guards and not bulk: raise ValueError('omitting guards requires bulk packets')
         self.bulk = bulk
+        self.stored_guards = stored_guards
         f = self.frame = pipeline.Harness(tables, mapping, raw_attributes=True, decode_metadata=True,
             fast_mask_dispatch=True, selective_cache=True, deferred_publish=True,dynamic_source=bulk,
             dynamic_metadata=zero_copy,skip_noop_runs=skip_noop_runs)
@@ -82,7 +85,8 @@ class Harness:
             import bulk_frame_z80 as builder
         else:
             builder = packet
-        code, bridge, self.p, listing = builder.build(self.z, self.r, f.w, f.draw, f.metadata_labels, self.audio)
+        code, bridge, self.p, listing = builder.build(self.z, self.r, f.w, f.draw, f.metadata_labels, self.audio,
+            **({'stored_guards':stored_guards} if bulk else {}))
         cpu.p_labels = self.p; cpu.audio_state, cpu.audio_end = self.audio['state'], self.audio['end']
         cpu.wrapper_state = [(f.w['state'], f.w['end'])]
         self.regions = s.regions+[(packet.CODE, code), (packet.BRIDGE, bridge), (0x9400, audio_code)]
@@ -130,7 +134,7 @@ class Harness:
             if self.bulk and pc == self.audio['audio_enqueue_six']:
                 cpu.packet_end = word(cpu,self.p['payload_end'])
             if pc == self.frame.w['run']:
-                cpu.input_end = (cpu.packet_end if self.bulk else
+                cpu.input_end = (cpu.packet_end+int(not self.stored_guards) if self.bulk else
                     pipeline.INPUT+word(cpu,packet.HEADER+3)+word(cpu,packet.HEADER+5)+2)
             if pc == self.frame.draw['draw']:
                 cpu.target_bank = 7 if cpu.a == 0xc0 else 5

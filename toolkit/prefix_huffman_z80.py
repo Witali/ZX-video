@@ -7,7 +7,9 @@ sentinel -> bit position map (BB00). Zero-valued symbols are supported.
 
 Entry A = predicted byte, or separate attribute entry; IX is the current
 input byte, C = F0h + bit offset 0..7. Peek always reads IX and IX+1; caller
-must provide one zero lookahead byte after a group. Returns the decoded byte
+must provide one readable lookahead byte after a group. Its value does not
+affect a complete valid code (short roots replicate every unused suffix).
+Returns the decoded byte
 in A and updated IX/C. The wrapper saves IX/C between <=32-value calls.
 This machine primitive is not a complete streamed player.
 """

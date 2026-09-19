@@ -12,6 +12,40 @@ from benchmark_context_huffman import word
 
 
 class BulkFrameZ80Tests(unittest.TestCase):
+    def test_fap3_generated_guard_exact_output_and_packet_cycle_delta(self):
+        states,cells,fap1,ticks = source(4)
+        guarded,_ = pack(fap1); raw,rows = pack(fap1,stored_guards=False)
+        tables,mapping,_ = frames(cells); r = Reader(raw); read_header(r,magic=b'FAP3')
+        for compressed in (False,True):
+            for zero_copy in (False,True):
+                old = Harness(ring(guarded,509,compressed),tables,mapping,len(states),bulk=True,
+                    zero_copy=zero_copy,ring_start=0xffff)
+                new = Harness(ring(raw,509,compressed),tables,mapping,len(states),bulk=True,
+                    zero_copy=zero_copy,ring_start=0xffff,stored_guards=False)
+                old.consume_header(guarded[:r.pos]); new.consume_header(raw[:r.pos])
+                for i,state in enumerate(states):
+                    before,after = old.prepare(),new.prepare()
+                    self.assertEqual(after['stages']['packet']-before['stages']['packet'],-40)
+                    for stage in ('metadata','reconstruct','output','handoff','audio'):
+                        self.assertEqual(after['stages'][stage],before['stages'][stage])
+                    for h in (old,new): h.publish(); h.drain_six(ticks[i*6:i*6+6])
+                    row = rows[i]; body = raw[row['offset']+2:row['offset']+2+row['payload_bytes']]
+                    self.assertEqual(bytes(new.cpu.read8(0xa6a0+j) for j in range(len(body)+1)),body+b'\0')
+                    self.assertEqual(word(new.cpu,new.frame.w['literal_pointer']),0xa6a0+row['literal_offset'])
+                    self.assertEqual(bytes(new.cpu.read8(0x6400+j) for j in range(3840)),state.tobytes())
+                    for bank in (5,7): self.assertEqual(old.cpu.banks[bank][:6912],new.cpu.banks[bank][:6912])
+                self.assertEqual(new.cpu.consumed,len(new.cpu.ring_data))
+
+    def test_fap3_reserves_ram_guard_byte(self):
+        _,cells,fap1,_ = source(1); raw,rows = pack(fap1,stored_guards=False)
+        tables,mapping,_ = frames(cells); first = rows[0]
+        for value in (0,293,4704,65535):
+            bad = bytearray(raw); struct.pack_into('<H',bad,first['offset'],value)
+            h = Harness(ring(bad),tables,mapping,1,bulk=True,stored_guards=False)
+            h.consume_header(bad[:first['offset']])
+            with self.assertRaises((AssertionError,RuntimeError)): h.prepare()
+            self.assertFalse(any(h.cpu.banks[5][:6912])); self.assertFalse(any(h.cpu.banks[7][:6912]))
+
     def test_shared_cpu_bulk_packet_and_values_in_place(self):
         states,cells,fap1,ticks = source(4)
         raw,rows = pack(fap1)

@@ -50,6 +50,9 @@ class PrefixHuffmanZ80Tests(unittest.TestCase):
                     for offset in range(8):
                         encoded = (code << ((-offset-size) % 8)).to_bytes((offset+size+7)//8, 'big')
                         h.begin(encoded)
+                        # FAP3 places arbitrary literal data immediately
+                        # after the coded bits, instead of a zero guard.
+                        h.cpu.write8(INPUT+len(encoded),255)
                         h.cpu.write8(h.labels['bit_page'], 0xf0+offset)
                         h.run([pair], bytes([value]))
                     pairs.append(pair); values.append(value)
@@ -57,6 +60,19 @@ class PrefixHuffmanZ80Tests(unittest.TestCase):
             pairs.append((0, prediction))
             values.append(next(v for v, n in enumerate(tables[mapping[prediction]]) if n))
         self.drive(tables, mapping, pairs, bytes(values))
+
+    def test_every_lookahead_byte_at_every_bit_offset(self):
+        tables = [bytes([1,2,2]+[0]*253)]*2
+        h = Harness(tables,bytes(256))
+        for symbol,(code,length) in enumerate(codes_for(255,tables[0])[:3]):
+            for offset in range(8):
+                encoded = (code << ((-offset-length) % 8)).to_bytes((offset+length+7)//8,'big')
+                for lookahead in range(256):
+                    h.begin(encoded)
+                    h.cpu.write8(INPUT+len(encoded),lookahead)
+                    h.cpu.write8(h.labels['bit_page'],0xf0+offset)
+                    h.run([(0,0)],bytes([symbol]))
+                    self.assertEqual(h.position(),offset+length)
 
     def test_invalid_layout_and_missing_lookahead(self):
         with self.assertRaises(ValueError):

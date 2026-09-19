@@ -1,4 +1,4 @@
-"""Verify the complete FAP1 or FAP2 movie in one Z80/RAM instance.
+"""Verify the complete FAP1, FAP2 or FAP3 movie in one Z80/RAM instance.
 
 Z80 reads packet headers, AY records, metadata and values from the ZX0 ring,
 prepares native screens, then publishes them. Host startup installs Huffman
@@ -40,8 +40,9 @@ def main():
     args = p.parse_args()
     if args.lookahead and not args.cadence: p.error('--lookahead requires --cadence')
     raw = args.raw.read_bytes()
-    bulk = raw[:4] == b'FAP2'
-    if args.zero_copy and not bulk: p.error('--zero-copy requires FAP2')
+    bulk = raw[:4] in (b'FAP2',b'FAP3')
+    stored_guards = raw[:4] != b'FAP3'
+    if args.zero_copy and not bulk: p.error('--zero-copy requires FAP2 or FAP3')
     if bulk:
         from bulk_frame_stream import unpack as unpack_bulk,read_packet as read_bulk_packet
     storage = json.loads(args.storage_report.read_text(encoding='utf-8'))
@@ -61,7 +62,8 @@ def main():
         if sha(data) != b['sha256'] or len(payload) != b['zx0_bytes']: raise ValueError('wrong cached block')
         ring += struct.pack('<HH', len(data), len(payload))+payload
     if position != len(raw): raise ValueError('incomplete block coverage')
-    h = Harness(bytes(ring), tables, mapping, count,bulk=bulk,zero_copy=args.zero_copy,skip_noop_runs=args.skip_noop_runs)
+    h = Harness(bytes(ring), tables, mapping, count,bulk=bulk,zero_copy=args.zero_copy,
+        skip_noop_runs=args.skip_noop_runs,stored_guards=stored_guards)
     header_result = h.consume_header(raw[:r.pos]); h.histogram.clear()
     clock = None
     all_ticks = []
@@ -70,22 +72,24 @@ def main():
         ar = Reader(raw); read_header(ar,magic=raw[:4])
         for _ in range(count):
             if bulk:
-                all_ticks.extend(read_bulk_packet(ar)[1]['ticks'])
+                all_ticks.extend(read_bulk_packet(ar,stored_guards=stored_guards)[1]['ticks'])
             else:
                 all_ticks.extend(take_tick(ar) for _ in range(6))
                 _, ml, coded, lit = struct.unpack('<BHHH',ar.take(7))
                 ar.take(3+192+ml+80+coded+lit)
         ar.end()
-    report = dict(scope=__doc__, complete=False, baseline_commit=('8390053' if args.skip_noop_runs else 'a875d18') if bulk else '1963bab', frames_expected=count,
+    report = dict(scope=__doc__, complete=False, baseline_commit='17f079c' if not stored_guards else
+        ('8390053' if args.skip_noop_runs else 'a875d18') if bulk else '1963bab', frames_expected=count,
         raw_sha256=sha(raw), states_sha256=sha(states.tobytes()), frames=[], header_results=header_result,
         code_regions=[dict(base=base,code_hex=data.hex()) for base,data in h.regions],
         packet_labels=h.p, reader_labels=h.r, decoder_labels=h.z, audio_labels=h.audio,
         instruction_listing=list(h.instructions.values()), timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         release=False, disk_delivery_verified=False, cadence_verified=False, cadence_requested=args.cadence,
-        lookahead=args.lookahead,bulk_packet=bulk,zero_copy=args.zero_copy,skip_noop_runs=args.skip_noop_runs)
+        lookahead=args.lookahead,bulk_packet=bulk,zero_copy=args.zero_copy,skip_noop_runs=args.skip_noop_runs,
+        format=raw[:4].decode(),stored_guards=stored_guards)
     for i, expected in enumerate(states[:args.limit or count]):
         if bulk:
-            _, detail = read_bulk_packet(r)
+            _, detail = read_bulk_packet(r,stored_guards=stored_guards)
             ticks,flags,ml,coded,lit = (detail[n] for n in ('ticks','flags','mask_bytes','coded_bytes','literal_bytes'))
             cache_map = detail['cache']
             value_base = 0xa6a0+detail['coded_offset']
@@ -122,12 +126,12 @@ def main():
         consumed = ends[h.blocks-1]+word(cpu,h.r['position'])
         bits = (word(cpu,h.frame.recon['source'])-value_base)*8+(cpu.read8(h.frame.recon['bit_page']) & 7)
         if (consumed != r.pos or bits != group[2]
-                or word(cpu,h.frame.recon['literal_source']) != value_base+coded+1+lit):
+                or word(cpu,h.frame.recon['literal_source']) != value_base+coded+stored_guards+lit):
             raise AssertionError(('packet/bit/literal cursor differs', i))
         vector_base = word(cpu,h.frame.w['vector_pointer']) if args.zero_copy else 0xa400
         native_base = word(cpu,h.frame.w['native_pointer']) if args.zero_copy else 0x7300
         checks = ((vector_base, group[3]), (0xa4c0,group[4]+group[5]), (native_base,native),
-            (0xba40,cache_map), (value_base,group[6]+b'\0'+group[7]+b'\0'))
+            (0xba40,cache_map), (value_base,group[6]+(b'\0' if stored_guards else b'')+group[7]+b'\0'))
         if bulk: checks += ((0xa6a0,detail['payload']),)
         for first, wanted in checks:
             if bytes(cpu.read8(first+j) for j in range(len(wanted))) != wanted:
