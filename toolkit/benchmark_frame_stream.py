@@ -17,7 +17,8 @@ import struct
 import numpy as np
 import ay_interrupt
 from frame_stream_harness import Harness
-from frame_output_pipeline import frames
+from frame_output_pipeline import frames,display_screen
+from cell_screen_z80 import expected_tstates as output_tstates
 from frame_packet_stream import unpack
 from probe_sparse_motion_cache import unpack as unpack_cache
 from cell_audio_stream import unpack as unpack_audio, take_tick
@@ -38,7 +39,9 @@ def main():
     p.add_argument('--zero-copy', action='store_true', help='Consume bulk vectors and native map in place')
     p.add_argument('--skip-noop-runs', action='store_true', help='Skip consecutive unchanged tiles in each stripe')
     p.add_argument('--constant-attribute-borders',action='store_true',help='Initialize constant rows once; copy only 576 attributes')
+    p.add_argument('--black-borders',action='store_true',help='Initialize black borders once; draw only the central 18 cell rows')
     args = p.parse_args()
+    if args.black_borders: args.constant_attribute_borders = True
     if args.lookahead and not args.cadence: p.error('--lookahead requires --cadence')
     raw = args.raw.read_bytes()
     bulk = raw[:4] in (b'FAP2',b'FAP3')
@@ -68,7 +71,7 @@ def main():
     if position != len(raw): raise ValueError('incomplete block coverage')
     h = Harness(bytes(ring), tables, mapping, count,bulk=bulk,zero_copy=args.zero_copy,
         skip_noop_runs=args.skip_noop_runs,stored_guards=stored_guards,
-        constant_attribute_borders=args.constant_attribute_borders)
+        constant_attribute_borders=args.constant_attribute_borders,skip_black_borders=args.black_borders)
     header_result = h.consume_header(raw[:r.pos]); h.histogram.clear()
     clock = None
     all_ticks = []
@@ -83,7 +86,7 @@ def main():
                 _, ml, coded, lit = struct.unpack('<BHHH',ar.take(7))
                 ar.take(3+192+ml+80+coded+lit)
         ar.end()
-    report = dict(scope=__doc__, complete=False, baseline_commit='469402c' if args.constant_attribute_borders else '17f079c' if not stored_guards else
+    report = dict(scope=__doc__, complete=False, baseline_commit='8706cc0' if args.black_borders else '469402c' if args.constant_attribute_borders else '17f079c' if not stored_guards else
         ('8390053' if args.skip_noop_runs else 'a875d18') if bulk else '1963bab', frames_expected=count,
         raw_sha256=sha(raw), states_sha256=sha(states.tobytes()), frames=[], header_results=header_result,
         code_regions=[dict(base=base,code_hex=data.hex()) for base,data in h.regions],
@@ -92,7 +95,7 @@ def main():
         release=False, disk_delivery_verified=False, cadence_verified=False, cadence_requested=args.cadence,
         lookahead=args.lookahead,bulk_packet=bulk,zero_copy=args.zero_copy,skip_noop_runs=args.skip_noop_runs,
         format=raw[:4].decode(),stored_guards=stored_guards,
-        constant_attribute_borders=args.constant_attribute_borders,cold_init=h.frame.init_result,
+        constant_attribute_borders=args.constant_attribute_borders,black_borders=args.black_borders,cold_init=h.frame.init_result,
         cold_init_code_hex=h.frame.init_code.hex())
     for i, expected in enumerate(states[:args.limit or count]):
         if bulk:
@@ -127,7 +130,7 @@ def main():
         current = bytes(cpu.read8(0x6400+j) for j in range(3840))
         if current != expected.tobytes(): raise AssertionError(('compact frame differs', i))
         target = 7 if i % 2 == 0 else 5
-        h.expected_screens[target] = b''.join(expand_compact_screen(current))
+        h.expected_screens[target] = display_screen(current,black_borders=args.black_borders)
         for bank, wanted in h.expected_screens.items():
             if bytes(cpu.banks[bank][:6912]) != wanted: raise AssertionError(('native screen differs', i, bank))
         consumed = ends[h.blocks-1]+word(cpu,h.r['position'])
@@ -156,7 +159,10 @@ def main():
             if stage == 'reconstruct' and args.skip_noop_runs:
                 from causal_tile_z80 import noop_run_delta_tstates
                 delta = noop_run_delta_tstates(group[3],group[4])
-            if stage == 'output' and args.constant_attribute_borders: delta = -3240
+            if stage == 'output':
+                delta = output_tstates(native,fast_mask_dispatch=True,
+                    constant_attribute_borders=args.constant_attribute_borders,skip_black_borders=args.black_borders
+                    )-output_tstates(native,fast_mask_dispatch=True)
             if stages[stage] != old[stage]+delta: raise AssertionError(('stage timing differs',i,stage))
         if stages['handoff'] != old['handoff']+10+6*bulk+12*args.zero_copy: raise AssertionError('wrapper timing differs')
         if stages['audio'] != 1705+42*sum(t[0] for t in ticks)+(42 if args.cadence and i == 0 else 0):
@@ -189,7 +195,9 @@ def main():
         mean_tstates=sum(counts)/len(counts),max_tstates=max(counts),worst_frame=counts.index(max(counts)),
         frames_above_425448=sum(t>425448 for t in counts),
         irq_tstates=sum(row['irq_tstates'] for row in report['frames']),
-        unchanged_video_except_wrapper=not (args.skip_noop_runs or args.constant_attribute_borders), exact_pixels_and_ay=True,
+        unchanged_video_except_wrapper=not (args.skip_noop_runs or args.constant_attribute_borders),
+        exact_pixels_and_ay=not args.black_borders,exact_active_pixels_and_ay=True,
+        exact_compact_states=True,black_borders=args.black_borders,
         constant_attribute_output_delta_tstates=-3240*len(counts)*args.constant_attribute_borders,
         reconstruction_delta_tstates=sum(row['reconstruction_delta_tstates'] for row in report['frames']),
         added_ret_tstates=10*len(counts),

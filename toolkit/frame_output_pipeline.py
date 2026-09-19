@@ -31,6 +31,13 @@ VECTORS, BITMAP, ATTRS, INPUT, INPUT_END = 0xa400, 0xa4c0, 0xa640, 0xa6a0, 0xb90
 MAP, WRAPPER, INITIALIZER = 0x7300, 0x8f60, 0x7b00
 
 
+def display_screen(state, *, black_borders=False):
+    """Native reference; optional user-authorized cleanup of outside pixels."""
+    if black_borders:
+        state = bytes(384)+bytes(state[384:2688])+bytes(384)+bytes(state[3072:])
+    return b''.join(expand_compact_screen(state))
+
+
 def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False, dynamic_source=False, dynamic_metadata=False):
     a, listing = MiniAssembler(origin), []
     a.label('run')
@@ -149,9 +156,12 @@ class PipelineCPU(NativeCPU):
 
 class Harness:
     def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False,
-                 constant_attribute_borders=False):
+                 constant_attribute_borders=False,skip_black_borders=False):
+        if skip_black_borders and not constant_attribute_borders:
+            raise ValueError('black borders require initialized constant attributes')
         self.raw_attributes = raw_attributes
         self.constant_attribute_borders = constant_attribute_borders
+        self.skip_black_borders = skip_black_borders
         self.decode_metadata = decode_metadata
         self.fast_mask_dispatch = fast_mask_dispatch
         self.selective_cache = selective_cache
@@ -160,7 +170,7 @@ class Harness:
             fast_fragments=True, unrolled_motion=True, split_literals=True, raw_attributes=raw_attributes,
             selective_cache=selective_cache,skip_noop_runs=skip_noop_runs)
         self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch,
-            constant_attribute_borders=constant_attribute_borders)
+            constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders)
         self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw, origin=0x7900 if selective_cache else WRAPPER,
                                                deferred_publish=deferred_publish,dynamic_source=dynamic_source,
                                                dynamic_metadata=dynamic_metadata)
@@ -271,13 +281,13 @@ class Harness:
         result = self.execute(self.w['run'], interrupt)
         if bytes(cpu.read8(0x6400+i) for i in range(3840)) != expected:
             raise AssertionError('causal reconstructed frame differs')
-        self.expected_screens[target] = b''.join(expand_compact_screen(expected))
+        self.expected_screens[target] = display_screen(expected,black_borders=self.skip_black_borders)
         if any(bytes(cpu.banks[b][:6912]) != wanted for b, wanted in self.expected_screens.items()):
             raise AssertionError('screen bytes differ or preceding visible screen damaged')
         position = (word(cpu, self.recon['source'])-INPUT)*8+(cpu.read8(self.recon['bit_page']) & 7)
         if (position != bits or word(cpu, self.recon['literal_source']) != INPUT+len(encoded)+1+len(literals)
                 or result['stages']['output'] != output.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch,
-                    constant_attribute_borders=self.constant_attribute_borders)
+                    constant_attribute_borders=self.constant_attribute_borders,skip_black_borders=self.skip_black_borders)
                 or result['stages']['handoff'] != 337+26*self.raw_attributes
                 or cpu.port_7ffd != page ^ 8 or result['page_writes'] != [page | 1, page, page ^ 8]
                 or bytes(cpu.banks[5][0x1b00:0x2400]) != b'\xa5'*0x900):

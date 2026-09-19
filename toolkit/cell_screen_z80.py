@@ -14,11 +14,14 @@ from build_long_video_trd import build_player_dither_tables
 CODE, FRAME, TABLE, MASK = 0x9000, 0x6400, 0x9e00, 0xbf20
 
 
-def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borders=False):
+def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False):
     if len(mask) != 80:
         raise ValueError('expected 80 cell-mask bytes')
+    if skip_black_borders and not fast_mask_dispatch:
+        raise ValueError('black-border omission requires fast mask dispatch')
+    first, bands = (1,18) if skip_black_borders else (0,20)
     dense = odd_dense = partial_cells = zero_masks = 0
-    for band in range(20):
+    for band in range(first,first+bands):
         flags = mask[band*4:band*4+4]
         if flags == b'\xff'*4:
             dense += 1
@@ -29,11 +32,13 @@ def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borde
     # 80 LDI map transfers and 768 attrs (576 with constant borders); external CALL,
     # IRQ/ULA, mask ZX0 and disk delivery excluded. See instruction listing.
     if fast_mask_dispatch:
-        return 37584+5853*dense+4*odd_dense+296*partial_cells-136*zero_masks-3240*constant_attribute_borders
+        return 37584-2308*skip_black_borders+5853*dense+4*odd_dense+296*partial_cells-136*zero_masks-3240*constant_attribute_borders
     return 58784+4793*dense+4*odd_dense+277*partial_cells-3240*constant_attribute_borders
 
 
-def build(*, fast_mask_dispatch=False, constant_attribute_borders=False):
+def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False):
+    if skip_black_borders and not (fast_mask_dispatch and constant_attribute_borders):
+        raise ValueError('black-border omission requires fast dispatch and initialized constant attributes')
     a, listing = MiniAssembler(CODE), []
 
     def emit(name, data, ticks, stage):
@@ -76,14 +81,14 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False):
     imm('LD BC,7FFD', 0x01, 0x7ffd, 10, 'paging')
     emit('OUT (C),A', [0xed, 0x79], 12, 'paging')
     emit('EXX', [0xd9], 4, 'control')
-    imm('LD HL,map', 0x21, MASK, 10, 'control')
+    imm('LD HL,map', 0x21, MASK+4*skip_black_borders, 10, 'control')
     emit('EXX', [0xd9], 4, 'control')
-    imm('LD HL,compact_first_row', 0x21, FRAME+256, 10, 'control')
+    imm('LD HL,compact_first_row', 0x21, FRAME+(384 if skip_black_borders else 256), 10, 'control')
     ref('LD A,(screen_base)', 0x3a, 'screen_base', 13, 'control')
     emit('LD D,A', [0x57], 4, 'control')
-    emit('LD E,64', [0x1e, 64], 7, 'control')
+    emit('LD E,first screen row', [0x1e, 96 if skip_black_borders else 64], 7, 'control')
     emit('LD B,dither_top_page', [0x06, TABLE >> 8], 7, 'control')
-    emit('LD A,20', [0x3e, 20], 7, 'control')
+    emit('LD A,band count', [0x3e, 18 if skip_black_borders else 20], 7, 'control')
     ref('LD (bands_left),A', 0x32, 'bands_left', 13, 'control')
     a.label('band')
     emit('EXX', [0xd9], 4, 'band_dispatch')
