@@ -1,6 +1,8 @@
 # Project rules
 
-- Current target: the complete movie on at most three TRDs, with unchanged
+- Current target: the movie without final credits on at most three TRDs,
+  retaining the entire main story and post-credit scene through EOF. Use
+  toolkit/movie_no_credits.json for the user-authorized edit. Keep unchanged
   resolution, smooth 25/3 fps and the existing 50 Hz AY soundtrack. Only
   subtle pixel changes are allowed. Record frame-level quality and inspect
   difficult scenes; an offline size estimate does not qualify as a release.

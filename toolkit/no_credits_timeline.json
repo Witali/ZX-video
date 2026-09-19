@@ -1,0 +1,62 @@
+{
+  "scope": "Apply a reviewed frame edit to converted screens and absolute 50 Hz AY states.\n\nRetained bytes are never requantized. Regenerate legacy video deltas so a\nsplice cannot reference a deleted frame. Outputs feed build_fast_sparse_trd;\nthey are verified build inputs, not a tested release or disk-speed result.\n",
+  "complete": true,
+  "timeline": {
+    "description": "Remove final credits, retain the main story and post-credit scene through EOF",
+    "source_video_sha256": "dc2146a2b1172def56730143ad80cd1825b7fad15f1fc9c23a4e7d01a741ac11",
+    "source_frames": 4971,
+    "frame_rate": [
+      25,
+      3
+    ],
+    "audio_rate_hz": 50,
+    "accepted_states_sha256": [
+      "9cc006a31408e2c3c3f96f96901b003756c2a480497e12d6b124baedafaeb35d",
+      "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b"
+    ],
+    "source_ay_sha256": "c55ee9d570284c89a33bd582eb28f3c141676ec63e7ced4c00b5aac7cb575cae",
+    "remove_frames": [
+      [
+        4086,
+        4836
+      ]
+    ],
+    "range_convention": "zero-based, start inclusive, end exclusive",
+    "reviewed_cut_seconds": [
+      490.32,
+      580.32
+    ]
+  },
+  "source_states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "source_ay_sha256": "c55ee9d570284c89a33bd582eb28f3c141676ec63e7ced4c00b5aac7cb575cae",
+  "frames_before": 4971,
+  "frames_after": 4221,
+  "removed_frames": 750,
+  "removed_seconds": 90.0,
+  "duration_seconds": 506.52,
+  "audio_ticks": 25326,
+  "ay_pair_bytes": 118364,
+  "ay_pairs_sha256": "47d14f12d0267e431de1d0a93e263ec597d5785d8584404bda3eade51b221db8",
+  "ay_register_replay_verified": true,
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "ay_sha256": "7ad7f363b912fe8c8658b2ce94ab84e3150b9932757f5fea5c4e006b45fc182d",
+  "legacy_stream_sha256": "8ffb4beb68127d6f44796d89fc113893942995c2bb3d576dfa55df3667f6f32d",
+  "last_source_frame": 4970,
+  "last_frame_sha256": "facbce0939d23d74bc5c7d745dec4c64d84f5d2ffd3909a4383ee6d72782c2bc",
+  "source_frame_map_sha256": "7a21499745fc5a4eda811a0d6a6b3dd9df2c429eb39ce88e6de56622eb9b3211",
+  "joins": [
+    {
+      "output_frame": 4086,
+      "previous_source_frame": 4085,
+      "next_source_frame": 4836,
+      "audio_tick": 24516
+    }
+  ],
+  "retained_screens_byte_exact": true,
+  "retained_ay_ticks_byte_exact": true,
+  "legacy_stream_full_decode_verified": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "full_frame_delivery_measured": false,
+  "release_disks_changed": false
+}
