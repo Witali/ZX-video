@@ -1,0 +1,176 @@
+diff --git a/toolkit/compact_screen_z80.py b/toolkit/compact_screen_z80.py
+index a0f61f9..15317ea 100644
+--- a/toolkit/compact_screen_z80.py
++++ b/toolkit/compact_screen_z80.py
+@@ -14,9 +14,17 @@ from build_long_video_trd import build_player_dither_tables
+ CODE, FRAME, TABLE, ROWS = 0x9000, 0x6400, 0x9e00, 0xbc00
+ 
+ 
+-def expected_tstates(first=0, rows=96, *, paired=True, unrolled_attrs=True):
++def expected_tstates(first=0, rows=96, *, paired=True, unrolled_attrs=True,
++                     sparse_edges=False, edge_ranges=None, target_bank=None):
+     if not 0 <= first < 96 or not 1 <= rows <= 96-first:
+         raise ValueError('invalid row range')
++    if sparse_edges:
++        if (first, rows, paired, unrolled_attrs) != (8, 80, True, True):
++            raise ValueError('sparse edges require rows 8..87 and both optimizations')
++        if edge_ranges is None or len(edge_ranges) != 2 or target_bank not in (5, 7):
++            raise ValueError('sparse timing requires both edge flags and screen bank')
++        upper, lower = map(bool, edge_ranges)
++        return 143252 + 10*(target_bank == 7) + 7122*(upper+lower) + 4*lower
+     # Raster includes table loads, source-page carry, loop and 32 expansions.
+     carries = (first+rows)//8-first//8
+     pixels = 32*rows*(51 if paired else 59)
+@@ -25,8 +33,9 @@ def expected_tstates(first=0, rows=96, *, paired=True, unrolled_attrs=True):
+     return 106 + rows*129 + carries*4 + pixels + 51 + attrs + 45
+ 
+ 
+-def build(*, first=0, rows=96, paired=True, unrolled_attrs=True):
+-    expected_tstates(first, rows, paired=paired, unrolled_attrs=unrolled_attrs)
++def build(*, first=0, rows=96, paired=True, unrolled_attrs=True, sparse_edges=False):
++    expected_tstates(first, rows, paired=paired, unrolled_attrs=unrolled_attrs,
++                     sparse_edges=sparse_edges, edge_ranges=(False, False), target_bank=5)
+     a, listing = MiniAssembler(CODE), []
+ 
+     def emit(name, data, ticks, stage):
+@@ -39,45 +48,87 @@ def build(*, first=0, rows=96, paired=True, unrolled_attrs=True):
+ 
+     a.label('draw')
+     ref('LD (screen_base),A', 0x32, 'screen_base', 13, 'control')
++    if sparse_edges:
++        emit('BIT 7,A', [0xcb, 0x7f], 8, 'edge_control')
++        ref('LD DE,edge_history5', 0x11, 'edge_history5', 10, 'edge_control')
++        ref('JP Z,edge_history_ready', 0xca, 'edge_history_ready', 10, 'edge_control')
++        ref('LD DE,edge_history7', 0x11, 'edge_history7', 10, 'edge_control')
++        a.label('edge_history_ready')
+     ref('LD A,(saved_page)', 0x3a, 'saved_page', 13, 'paging')
+     emit('OR 1', [0xf6, 1], 7, 'paging')
+     emit('LD BC,7FFD', [0x01, 0xfd, 0x7f], 10, 'paging')
+     emit('OUT (C),A', [0xed, 0x79], 12, 'paging')
+-    emit('LD HL,compact_first_row', [0x21, (FRAME+32*first) & 255, (FRAME+32*first) >> 8], 10, 'control')
+-    emit('LD IX,row_addresses', [0xdd, 0x21, ROWS & 255, ROWS >> 8], 14, 'control')
+-    emit('LD B,dither_top_page', [0x06, TABLE >> 8], 7, 'control')
+-    emit('LD A,row_count', [0x3e, rows], 7, 'control')
+-    ref('LD (rows_left),A', 0x32, 'rows_left', 13, 'control')
+-    a.label('row')
+-    emit('LD E,(IX+0)', [0xdd, 0x5e, 0], 19, 'row_address')
+-    emit('LD D,(IX+1)', [0xdd, 0x56, 1], 19, 'row_address')
+-    emit('INC IX', [0xdd, 0x23], 10, 'row_address')
+-    emit('INC IX', [0xdd, 0x23], 10, 'row_address')
+-    ref('LD A,(screen_base)', 0x3a, 'screen_base', 13, 'row_address')
+-    emit('OR D', [0xb2], 4, 'row_address')
+-    emit('LD D,A', [0x57], 4, 'row_address')
+-    for column in range(32):
+-        emit('LD C,(HL)', [0x4e], 7, 'bitmap')
+-        emit('LD A,(BC)', [0x0a], 7, 'bitmap')
+-        emit('LD (DE),A', [0x12], 7, 'bitmap')
+-        reverse = paired and column % 2
+-        emit('DEC B' if reverse else 'INC B', [0x05 if reverse else 0x04], 4, 'bitmap')
+-        emit('DEC D' if reverse else 'INC D', [0x15 if reverse else 0x14], 4, 'bitmap')
+-        emit('LD A,(BC)', [0x0a], 7, 'bitmap')
+-        emit('LD (DE),A', [0x12], 7, 'bitmap')
+-        if not paired:
+-            emit('DEC B', [0x05], 4, 'bitmap')
+-            emit('DEC D', [0x15], 4, 'bitmap')
+-        emit('INC E', [0x1c], 4, 'bitmap')
+-        # Last INC L supplies Z for the page carry, without touching D/B.
+-        emit('INC L', [0x2c], 4, 'bitmap')
+-    ref('JP NZ,source_page_ready', 0xc2, 'source_page_ready', 10, 'control')
+-    emit('INC H', [0x24], 4, 'control')
+-    a.label('source_page_ready')
+-    ref('LD A,(rows_left)', 0x3a, 'rows_left', 13, 'control')
+-    emit('DEC A', [0x3d], 4, 'control')
+-    ref('LD (rows_left),A', 0x32, 'rows_left', 13, 'control')
+-    ref('JP NZ,row', 0xc2, 'row', 10, 'control')
++    def setup_range(start, count):
++        pointer = FRAME+32*start
++        row_pointer = ROWS+2*(start-first)
++        emit('LD HL,compact_first_row', [0x21, pointer & 255, pointer >> 8], 10, 'control')
++        emit('LD IX,row_addresses', [0xdd, 0x21, row_pointer & 255, row_pointer >> 8], 14, 'control')
++        emit('LD B,dither_top_page', [0x06, TABLE >> 8], 7, 'control')
++        emit('LD A,row_count', [0x3e, count], 7, 'control')
++        ref('LD (rows_left),A', 0x32, 'rows_left', 13, 'control')
++
++    def row_body():
++        a.label('row')
++        emit('LD E,(IX+0)', [0xdd, 0x5e, 0], 19, 'row_address')
++        emit('LD D,(IX+1)', [0xdd, 0x56, 1], 19, 'row_address')
++        emit('INC IX', [0xdd, 0x23], 10, 'row_address')
++        emit('INC IX', [0xdd, 0x23], 10, 'row_address')
++        ref('LD A,(screen_base)', 0x3a, 'screen_base', 13, 'row_address')
++        emit('OR D', [0xb2], 4, 'row_address')
++        emit('LD D,A', [0x57], 4, 'row_address')
++        for column in range(32):
++            emit('LD C,(HL)', [0x4e], 7, 'bitmap')
++            emit('LD A,(BC)', [0x0a], 7, 'bitmap')
++            emit('LD (DE),A', [0x12], 7, 'bitmap')
++            reverse = paired and column % 2
++            emit('DEC B' if reverse else 'INC B', [0x05 if reverse else 0x04], 4, 'bitmap')
++            emit('DEC D' if reverse else 'INC D', [0x15 if reverse else 0x14], 4, 'bitmap')
++            emit('LD A,(BC)', [0x0a], 7, 'bitmap')
++            emit('LD (DE),A', [0x12], 7, 'bitmap')
++            if not paired:
++                emit('DEC B', [0x05], 4, 'bitmap')
++                emit('DEC D', [0x15], 4, 'bitmap')
++            emit('INC E', [0x1c], 4, 'bitmap')
++            emit('INC L', [0x2c], 4, 'bitmap')
++        ref('JP NZ,source_page_ready', 0xc2, 'source_page_ready', 10, 'control')
++        emit('INC H', [0x24], 4, 'control')
++        a.label('source_page_ready')
++        ref('LD A,(rows_left)', 0x3a, 'rows_left', 13, 'control')
++        emit('DEC A', [0x3d], 4, 'control')
++        ref('LD (rows_left),A', 0x32, 'rows_left', 13, 'control')
++        ref('JP NZ,row', 0xc2, 'row', 10, 'control')
++
++    if sparse_edges:
++        for name, start in (('upper', 8), ('lower', 84)):
++            pointer = FRAME+32*start
++            emit('LD HL,edge_start', [0x21, pointer & 255, pointer >> 8], 10, 'edge_scan')
++            emit('XOR A', [0xaf], 4, 'edge_scan')
++            emit('LD B,8', [0x06, 8], 7, 'edge_scan')
++            a.label('scan_'+name)
++            for _ in range(16):
++                emit('OR (HL)', [0xb6], 7, 'edge_scan')
++                emit('INC L', [0x2c], 4, 'edge_scan')
++            listing.append(dict(address=a.pc, instruction='DJNZ scan_'+name, tstates=[8, 13], stage='edge_scan'))
++            a.rel8(0x10, 'scan_'+name)
++            emit('LD C,A', [0x4f], 4, 'edge_scan')
++            emit('LD A,(DE)', [0x1a], 7, 'edge_scan')
++            emit('OR C', [0xb1], 4, 'edge_scan')
++            ref('LD (edge_'+name+'),A', 0x32, 'edge_'+name, 13, 'edge_scan')
++            emit('LD A,C', [0x79], 4, 'edge_scan')
++            emit('LD (DE),A', [0x12], 7, 'edge_scan')
++            emit('INC DE', [0x13], 6, 'edge_scan')
++        for name, start, count in (('upper', 8, 4), ('core', 12, 72), ('lower', 84, 4)):
++            if name != 'core':
++                ref('LD A,(edge_'+name+')', 0x3a, 'edge_'+name, 13, 'edge_control')
++                emit('OR A', [0xb7], 4, 'edge_control')
++                ref('JP Z,skip_'+name, 0xca, 'skip_'+name, 10, 'edge_control')
++            setup_range(start, count)
++            ref('CALL row', 0xcd, 'row', 17, 'control')
++            if name != 'core':
++                a.label('skip_'+name)
++    else:
++        setup_range(first, rows)
++        row_body()
+     emit('LD HL,compact_attributes', [0x21, 0, 0x70], 10, 'attributes')
+     ref('LD A,(screen_base)', 0x3a, 'screen_base', 13, 'attributes')
+     emit('OR 18h', [0xf6, 0x18], 7, 'attributes')
+@@ -97,9 +148,17 @@ def build(*, first=0, rows=96, paired=True, unrolled_attrs=True):
+     emit('LD BC,7FFD', [0x01, 0xfd, 0x7f], 10, 'paging')
+     emit('OUT (C),A', [0xed, 0x79], 12, 'paging')
+     emit('RET', [0xc9], 10, 'control')
++    if sparse_edges:
++        row_body()
++        emit('RET', [0xc9], 10, 'control')
+     a.label('state')
+     for label in ('screen_base', 'saved_page', 'rows_left'):
+         a.label(label); a.emit(0)
++    if sparse_edges:
++        for label in ('edge_history5', 'edge_history7'):
++            a.label(label); a.emit(0, 0)
++        for label in ('edge_upper', 'edge_lower'):
++            a.label(label); a.emit(0)
+     a.label('end')
+     if a.pc > 0x9400:
+         raise ValueError('renderer overlaps AY fixture')
