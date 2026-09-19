@@ -1,4 +1,4 @@
-"""Audit the user-authorized 0..1-field late budget without accepting drift.
+"""Audit exact nominal frame deadlines first, then the fallback 0..1-field budget.
 
 Field counters are necessary, but do not establish publication at the IRQ
 boundary. Exact T-state phase errors are also reported. Existing recordings
@@ -21,6 +21,7 @@ def assess(rows):
     time_phase=[r['tstates']-first_time-6*i*FIELD for i,r in enumerate(rows)]
     time_intervals=[b['tstates']-a['tstates'] for a,b in zip(rows,rows[1:])]
     bad=[i for i,n in enumerate(phase) if n not in (0,1)]
+    off_nominal=[i for i,n in enumerate(phase) if n != 0]
     bad_intervals=[i+1 for i,n in enumerate(intervals) if not 5<=n<=7]
     runs=[]; start=None
     for i,n in enumerate(phase+[0]):
@@ -30,6 +31,9 @@ def assess(rows):
                 recovered_at_frame=i if i<len(phase) else None))
             start=None
     return dict(checked_publications=len(rows),late_field_histogram=dict(sorted(Counter(phase).items())),
+        late_publications=sum(n>0 for n in phase),early_publications=sum(n<0 for n in phase),
+        first_off_nominal_field=off_nominal[0] if off_nominal else None,
+        passes_nominal_field_schedule=not off_nominal,
         interval_field_histogram=dict(sorted(Counter(intervals).items())),
         frames_outside_field_budget=len(bad),first_outside_field_budget=bad[0] if bad else None,
         intervals_outside_budget=len(bad_intervals),
@@ -53,6 +57,8 @@ def main():
         trials.append(dict(report=path.name,sha256=sha256(data).hexdigest(),
             complete=r['complete'],failure=r.get('failure'),**assess(r['publications'])))
     report=dict(scope=__doc__,complete=True,release=False,
+        primary_target='every frame on its original six-field deadline; zero late frames',
+        primary_interval_fields=6,primary_interval_ms=120,jitter_allowance_role='fallback only',
         authorized_video_jitter_fields=1,authorized_video_jitter_ms=20,
         nominal_period_fields=6,allowed_intervals_fields=[5,6,7],ay_rate_hz=50,
         recovery_policy='next ready frame returns to the original absolute deadlines; never reset the schedule origin',

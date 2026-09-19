@@ -6,9 +6,21 @@ class FrameJitterTests(unittest.TestCase):
     def rows(self,fields):
         return [dict(fields=f,tstates=f*FIELD+100) for f in fields]
 
+    def test_exact_six_field_schedule_meets_the_primary_target(self):
+        r=assess(self.rows([1,7,13,19]))
+        self.assertTrue(r['passes_nominal_field_schedule'])
+        self.assertTrue(r['passes_field_budget'])
+        self.assertEqual(r['late_publications'],0)
+        self.assertEqual(r['early_publications'],0)
+        self.assertIsNone(r['first_off_nominal_field'])
+        self.assertFalse(r['irq_boundary_publication_verified'])
+
     def test_one_late_frame_recovers_original_deadline(self):
         r=assess(self.rows([1,7,14,19,25]))
         self.assertTrue(r['passes_field_budget'])
+        self.assertFalse(r['passes_nominal_field_schedule'])
+        self.assertEqual(r['late_publications'],1)
+        self.assertEqual(r['first_off_nominal_field'],2)
         self.assertEqual(r['interval_field_histogram'],{5:1,6:2,7:1})
         self.assertEqual(r['phase_above_20ms'],0)
         self.assertEqual(r['late_runs'],[dict(first_frame=2,frames=1,recovered_at_frame=3)])
