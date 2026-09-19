@@ -8,6 +8,7 @@ from collections import Counter
 
 import ay_interrupt
 import banked_zx0
+import disk_progress_z80 as progress
 import frame_metadata_z80
 import frame_output_pipeline as pipeline
 import frame_stream_z80 as packet
@@ -30,6 +31,15 @@ class FrameStreamCPU(stream.StreamCPU):
 
     def write8(self, address, value):
         if self.guarding:
+            if self.phase == 'progress':
+                bank = self.port_7ffd & 7
+                allowed = (bank == 7 and self.progress_labels['state'] <= address < self.progress_labels['state_end']
+                    or any(base <= address < base+32 for base in progress.PIXEL_ROWS+(progress.ATTRIBUTE_ROW,))
+                    or bank == 7 and any(base+0x8000 <= address < base+0x8020
+                        for base in progress.PIXEL_ROWS+(progress.ATTRIBUTE_ROW,)))
+                if allowed: return CPU.write8(self, address, value)
+                if not stream.STACK-96 <= address < stream.STACK:
+                    raise AssertionError(f'progress write outside bar/state/stack: {address:04x}, bank {bank}')
             if self.phase in ('metadata', 'reconstruct', 'output', 'handoff'):
                 return pipeline.PipelineCPU.write8(self, address, value)
             if self.phase == 'packet':
@@ -52,9 +62,11 @@ class FrameStreamCPU(stream.StreamCPU):
 
 class Harness:
     def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False,
-                 stored_guards=True,constant_attribute_borders=False,skip_black_borders=False):
+                 stored_guards=True,constant_attribute_borders=False,skip_black_borders=False,progress_frames=None):
         if zero_copy and not bulk: raise ValueError('zero-copy metadata requires bulk packets')
         if not stored_guards and not bulk: raise ValueError('omitting guards requires bulk packets')
+        if progress_frames is not None and not (bulk and zero_copy and skip_black_borders):
+            raise ValueError('disk progress requires bulk zero-copy packets and black borders')
         self.bulk = bulk
         self.stored_guards = stored_guards
         f = self.frame = pipeline.Harness(tables, mapping, raw_attributes=True, decode_metadata=True,
@@ -86,22 +98,36 @@ class Harness:
             import bulk_frame_z80 as builder
         else:
             builder = packet
+        self.progress, self.progress_init_result = None, None
+        progress_options = {}
+        if progress_frames is not None:
+            progress_code,self.progress,progress_listing,_ = progress.build(progress_frames)
+            progress_options['progress_entry'] = self.progress['tick']
         code, bridge, self.p, listing = builder.build(self.z, self.r, f.w, f.draw, f.metadata_labels, self.audio,
-            **({'stored_guards':stored_guards} if bulk else {}))
+            **({'stored_guards':stored_guards} if bulk else {}),**progress_options)
         cpu.p_labels = self.p; cpu.audio_state, cpu.audio_end = self.audio['state'], self.audio['end']
         cpu.wrapper_state = [(f.w['state'], f.w['end'])]
         self.regions = s.regions+[(packet.CODE, code), (packet.BRIDGE, bridge), (0x9400, audio_code)]
+        if self.progress:
+            if self.p['end'] > progress.CODE: raise ValueError('packet code overlaps progress')
+            self.regions.append((progress.CODE,progress_code))
+            cpu.progress_labels = self.progress
         for base, blob in self.regions[3:]:
             for i, value in enumerate(blob): cpu.write8(base+i, value)
         self.instructions = dict(f.instructions)
         self.instructions.update({pc:dict(row, phase='stream_input') for pc,row in s.instructions.items()})
         self.instructions.update({row['address']:dict(row, phase='packet') for row in listing})
+        if self.progress: self.instructions.update({row['address']:row for row in progress_listing})
         self.histogram, self.rows = Counter(), []
         cpu.set_hl(frames)
         self.initialize(self.audio['audio_init']); self.initialize(self.audio['setup_clock'])
         self.frames, self.index = frames, 0
         self.expected_screens = dict(f.expected_screens)
         cpu.input_end = pipeline.INPUT_END
+        if self.progress:
+            self.progress_init_result = self.execute(self.progress['reset'])
+            self.expected_screens = {bank:progress.reference_screen(screen,0,progress_frames)
+                for bank,screen in self.expected_screens.items()}
 
     def initialize(self, entry):
         cpu = self.cpu; cpu.guarding = False

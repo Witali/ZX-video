@@ -40,7 +40,13 @@ def main():
     p.add_argument('--skip-noop-runs', action='store_true', help='Skip consecutive unchanged tiles in each stripe')
     p.add_argument('--constant-attribute-borders',action='store_true',help='Initialize constant rows once; copy only 576 attributes')
     p.add_argument('--black-borders',action='store_true',help='Initialize black borders once; draw only the central 18 cell rows')
+    p.add_argument('--progress-frames',type=int,help='Enable the bar with this CURRENT DISK frame count; implies black borders')
+    p.add_argument('--preview',type=Path,help='Save the final visible native screen as a PNG')
     args = p.parse_args()
+    if args.progress_frames is not None:
+        if not 1 <= args.progress_frames <= 16320: p.error('--progress-frames must be 1..16320')
+        if not args.zero_copy: p.error('--progress-frames requires --zero-copy')
+        args.black_borders = True
     if args.black_borders: args.constant_attribute_borders = True
     if args.lookahead and not args.cadence: p.error('--lookahead requires --cadence')
     raw = args.raw.read_bytes()
@@ -58,6 +64,8 @@ def main():
     cells = unpack_audio(unpack_cache(unpack(unpack_bulk(raw) if bulk else raw), 32, 4))[0]
     tables, mapping, packets = frames(cells)
     r = Reader(raw); _, _, count, _, _ = read_header(r, magic=raw[:4])
+    if args.progress_frames is not None and (args.limit or count) > args.progress_frames:
+        p.error('benchmark would cross the supplied disk boundary; set --limit to its frame count or less')
     if (not storage['complete'] or storage['input_sha256'] != sha(raw) or not baseline['complete']
             or baseline['states_sha256'] != sha(states.tobytes()) or len(states) != count
             or baseline['stream_sha256'] != sha(cells)):
@@ -71,7 +79,8 @@ def main():
     if position != len(raw): raise ValueError('incomplete block coverage')
     h = Harness(bytes(ring), tables, mapping, count,bulk=bulk,zero_copy=args.zero_copy,
         skip_noop_runs=args.skip_noop_runs,stored_guards=stored_guards,
-        constant_attribute_borders=args.constant_attribute_borders,skip_black_borders=args.black_borders)
+        constant_attribute_borders=args.constant_attribute_borders,skip_black_borders=args.black_borders,
+        progress_frames=args.progress_frames)
     header_result = h.consume_header(raw[:r.pos]); h.histogram.clear()
     clock = None
     all_ticks = []
@@ -86,7 +95,7 @@ def main():
                 _, ml, coded, lit = struct.unpack('<BHHH',ar.take(7))
                 ar.take(3+192+ml+80+coded+lit)
         ar.end()
-    report = dict(scope=__doc__, complete=False, baseline_commit='8706cc0' if args.black_borders else '469402c' if args.constant_attribute_borders else '17f079c' if not stored_guards else
+    report = dict(scope=__doc__, complete=False, baseline_commit='7608922' if h.progress else '8706cc0' if args.black_borders else '469402c' if args.constant_attribute_borders else '17f079c' if not stored_guards else
         ('8390053' if args.skip_noop_runs else 'a875d18') if bulk else '1963bab', frames_expected=count,
         raw_sha256=sha(raw), states_sha256=sha(states.tobytes()), frames=[], header_results=header_result,
         code_regions=[dict(base=base,code_hex=data.hex()) for base,data in h.regions],
@@ -96,7 +105,8 @@ def main():
         lookahead=args.lookahead,bulk_packet=bulk,zero_copy=args.zero_copy,skip_noop_runs=args.skip_noop_runs,
         format=raw[:4].decode(),stored_guards=stored_guards,
         constant_attribute_borders=args.constant_attribute_borders,black_borders=args.black_borders,cold_init=h.frame.init_result,
-        cold_init_code_hex=h.frame.init_code.hex())
+        cold_init_code_hex=h.frame.init_code.hex(),progress_frames_on_disk=args.progress_frames,
+        progress_labels=h.progress,progress_init=h.progress_init_result)
     for i, expected in enumerate(states[:args.limit or count]):
         if bulk:
             _, detail = read_bulk_packet(r,stored_guards=stored_guards)
@@ -131,6 +141,10 @@ def main():
         if current != expected.tobytes(): raise AssertionError(('compact frame differs', i))
         target = 7 if i % 2 == 0 else 5
         h.expected_screens[target] = display_screen(current,black_borders=args.black_borders)
+        if h.progress:
+            from disk_progress_z80 import reference_screen
+            h.expected_screens = {bank:reference_screen(screen,i+1,args.progress_frames)
+                for bank,screen in h.expected_screens.items()}
         for bank, wanted in h.expected_screens.items():
             if bytes(cpu.banks[bank][:6912]) != wanted: raise AssertionError(('native screen differs', i, bank))
         consumed = ends[h.blocks-1]+word(cpu,h.r['position'])
@@ -153,6 +167,11 @@ def main():
                 raise AssertionError(('protected tables differ', i, first))
         cpu.port_7ffd = old_page
         stages = Counter(prepared['stages']); stages.update(published['stages'])
+        if h.progress:
+            from disk_progress_z80 import expected_tick_tstates
+            old_steps,new_steps = i*64//args.progress_frames,(i+1)*64//args.progress_frames
+            if stages['progress'] != expected_tick_tstates(old_steps,new_steps):
+                raise AssertionError(('progress timing differs',i))
         old = baseline['frames'][i]['stages']
         for stage in ('metadata','reconstruct','output'):
             delta = 0
@@ -197,7 +216,7 @@ def main():
         irq_tstates=sum(row['irq_tstates'] for row in report['frames']),
         unchanged_video_except_wrapper=not (args.skip_noop_runs or args.constant_attribute_borders),
         exact_pixels_and_ay=not args.black_borders,exact_active_pixels_and_ay=True,
-        exact_compact_states=True,black_borders=args.black_borders,
+        exact_compact_states=True,black_borders=args.black_borders,progress_frames_on_disk=args.progress_frames,
         constant_attribute_output_delta_tstates=-3240*len(counts)*args.constant_attribute_borders,
         reconstruction_delta_tstates=sum(row['reconstruction_delta_tstates'] for row in report['frames']),
         added_ret_tstates=10*len(counts),
@@ -213,6 +232,15 @@ def main():
         report['summary'].update(late_frames=sum(bool(n) for n in late),max_late_fields=max(late),
             played_ay_ticks=clock.ticks,ideal_clock_irq_tstates=clock.irq_tstates,ideal_clock_idle_tstates=clock.idle_tstates)
         report['cadence_verified'] = complete and not any(late)
+    if args.preview:
+        from PIL import Image
+        from build_long_video_trd import base
+        native = bytes(cpu.banks[7 if cpu.port_7ffd & 8 else 5][:6912])
+        args.preview.parent.mkdir(parents=True,exist_ok=True)
+        Image.fromarray(base.render_spectrum_screen(native[:6144],native[6144:])).resize((512,384),
+            Image.Resampling.NEAREST).save(args.preview)
+        report['preview'] = dict(path=args.preview.as_posix(),sha256=sha(args.preview.read_bytes()),
+            source='actual Z80 visible-screen RAM',frame=len(report['frames'])-1)
     args.output.write_text(json.dumps(report,indent=2)+'\n', encoding='utf-8')
     print(json.dumps(report['summary']), flush=True)
 

@@ -12,7 +12,7 @@ from causal_tile_z80 import CACHE_MAP
 CODE, BRIDGE, HEADER = 0xdc00, 0x7f00, 0xba50
 
 
-def build(zx0, reader, wrapper, draw, metadata, audio):
+def build(zx0, reader, wrapper, draw, metadata, audio, *, progress_entry=None):
     listing = []
 
     def helpers(a):
@@ -38,6 +38,9 @@ def build(zx0, reader, wrapper, draw, metadata, audio):
     addr('JP restore_bank7', 0xc3, 'restore_bank7', 10)
     a.label('publish_bridge')
     addr('CALL publish', 0xcd, wrapper['publish'], 17)
+    if progress_entry is not None:
+        addr('CALL restore_bank7', 0xcd, 'restore_bank7', 17)
+        addr('JP disk_progress', 0xc3, progress_entry, 10)
     a.label('restore_bank7')
     addr('LD A,(saved_page)', 0x3a, draw['saved_page'], 13)
     emit('OR 1', [0xf6, 1], 7)

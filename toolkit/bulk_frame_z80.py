@@ -8,8 +8,9 @@ import frame_stream_z80
 LENGTH = 0xba58
 
 
-def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True):
-    _, bridge, oldlabels, oldlisting = frame_stream_z80.build(zx0,reader,wrapper,draw,metadata,audio)
+def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True,progress_entry=None):
+    _, bridge, oldlabels, oldlisting = frame_stream_z80.build(zx0,reader,wrapper,draw,metadata,audio,
+        progress_entry=progress_entry)
     listing = [row for row in oldlisting if BRIDGE <= row['address'] < oldlabels['bridge_end']]
     a = MiniAssembler(CODE)
     def emit(name,data,ticks):
