@@ -1,0 +1,70 @@
+{
+  "scope": "Compare adaptive frame delivery against the measured 6103e11 baseline.\n\nCPU baseline uses eight-frame groups, candidate one-frame groups and real\n337-T handoff. ZX0 block timing is separate; no uniform per-frame ZX0/disk\ncharge, six-field publication schedule or playable TRD count is inferred.\n",
+  "complete": true,
+  "frames": 4221,
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "separate_ay_attempts": [
+    {
+      "frame_budget_tstates": 375000,
+      "fast_tiles": 61862,
+      "fsc_zx0_bytes": 1833006,
+      "with_uncompressed_ay_bytes": 1951370,
+      "preliminary_three_trd_margin_bytes": -13706,
+      "shared_pipeline_measured": true
+    },
+    {
+      "frame_budget_tstates": 385000,
+      "fast_tiles": 56892,
+      "fsc_zx0_bytes": 1814845,
+      "with_uncompressed_ay_bytes": 1933209,
+      "preliminary_three_trd_margin_bytes": 4455,
+      "shared_pipeline_measured": false
+    }
+  ],
+  "reconstruction_output_handoff": {
+    "baseline_total_tstates": 1403831746,
+    "total_tstates": 1310702865,
+    "delta_tstates": -93128881,
+    "mean_tstates": 310519.513148543,
+    "max_tstates": 405873,
+    "worst_frame": 3375,
+    "baseline_max_tstates": 450831,
+    "baseline_frames_over_nominal_425448": 939,
+    "frames_over_nominal_425448": 0,
+    "frames_over_selection_budget_375000": 3,
+    "model_frames_unable_to_reach_selection_limit": 4,
+    "wrapper_tstates": 337,
+    "cold_init_tstates": 397967,
+    "note": "Baseline groups <=8 and host glue; candidate groups 1 and actual wrapper. Reconstruction/drawing code byte-identical."
+  },
+  "multiplexed_video_audio": {
+    "zx0_with_headers_bytes": 1918548,
+    "preliminary_three_trd_margin_bytes": 19116,
+    "delta_bytes_vs_separate_ay": -32822,
+    "max_ay_bytes_per_frame": 74,
+    "zx0_tstates": 171761112,
+    "zx0_max_block_tstates": 633994
+  },
+  "measured_separated_stage_total_tstates": 1482463977,
+  "measured_separated_stage_mean_tstates": 351211.5557924662,
+  "remaining_nominal_mean_tstates": 74236.44420753379,
+  "max_coded_input_bytes": 2802,
+  "exact_ay_register_replay": true,
+  "no_additional_pixel_changes": true,
+  "metadata_expanded_by_host": true,
+  "ay_scheduling_included": false,
+  "ula_contention_included": false,
+  "rom_and_disk_included": false,
+  "frame_pacing_verified": false,
+  "release_disks_changed": false,
+  "full_frame_delivery_measured": false,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "disk_tradeoff": {
+    "added_bytes": 161996,
+    "added_sectors_roundup": 633,
+    "net_measured_cpu_saving_tstates": 46458607,
+    "break_even_added_sector_ms": 20.701281619749633,
+    "note": "Average break-even only; metadata/AY parsing and changed disk-read deadlines still need actual integration."
+  }
+}

@@ -6,6 +6,22 @@ from probe_cache_aware_fragments import choose
 
 
 class CacheAwareSelectionTests(unittest.TestCase):
+    def test_each_frame_has_its_own_delivery_limit(self):
+        vectors = np.zeros((3, 192), dtype=np.uint8)
+        gains = np.zeros((3, 192), dtype=np.int64)
+        gains[:, :2] = [100, 200]
+        extra = np.full_like(gains, 8)
+        costs = np.array([500, 500, 500])
+        selected, report = choose(gains, extra, vectors, costs, [500, 300, 200], 0)
+        self.assertEqual([np.flatnonzero(row).tolist() for row in selected], [[], [1], [0, 1]])
+        self.assertEqual(report['estimated_total_tstates'], 1000)
+        self.assertEqual(report['estimated_frames_over_target'], 0)
+        scalar, _ = choose(gains, extra, vectors, costs, 300, 0)
+        broadcast, _ = choose(gains, extra, vectors, costs, [300]*3, 0)
+        np.testing.assert_array_equal(scalar, broadcast)
+        with self.assertRaises(ValueError):
+            choose(gains, extra, vectors, costs, [500, 0, 200], 0)
+
     def test_cache_removal_competes_with_ordinary_choices(self):
         vectors = np.zeros((3, 192), dtype=np.uint8)
         vectors[1:, :3] = 1

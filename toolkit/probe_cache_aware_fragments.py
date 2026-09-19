@@ -36,18 +36,22 @@ def cache_cost(tables, mapping):
 
 
 def choose(gains, extra_bits, vectors, frame_costs, target, cache_overhead):
+    limits = np.broadcast_to(np.asarray(target, dtype=np.int64), (len(vectors),))
+    if np.any(limits <= 0):
+        raise ValueError('frame limits must be positive')
     motion = (vectors > 0) & (vectors < 81)
     selected = np.zeros_like(vectors, dtype=bool)
     costs = np.empty(len(vectors), dtype=np.int64)
     forced_wins = 0
     for frame in range(len(vectors)):
+        limit = int(limits[frame])
         order = sorted(range(192), key=lambda t: (-gains[frame, t]/max(1, int(extra_bits[frame, t])), t))
         cases = []
         for force in ((False, True) if motion[frame].any() else (False,)):
             pick = motion[frame].copy() if force else np.zeros(192, dtype=bool)
             ticks = int(frame_costs[frame]-gains[frame, pick].sum()-(cache_overhead if force else 0))
             for tile in order:
-                if ticks <= target:
+                if ticks <= limit:
                     break
                 if not pick[tile] and gains[frame, tile] > 0:
                     pick[tile] = True; ticks -= int(gains[frame, tile])
@@ -56,12 +60,12 @@ def choose(gains, extra_bits, vectors, frame_costs, target, cache_overhead):
             added = int(extra_bits[frame, pick].sum())
             # Prefer a feasible budget, then fewer estimated bytes. If no
             # candidate reaches it, retain the least CPU work explicitly.
-            key = (ticks > target, added if ticks <= target else ticks, ticks, force)
+            key = (ticks > limit, added if ticks <= limit else ticks, ticks, force)
             cases.append((key, pick, ticks, force))
         _, pick, ticks, force = min(cases, key=lambda item: item[0])
         selected[frame] = pick; costs[frame] = ticks; forced_wins += force
-    return selected, dict(target_tstates=target, estimated_total_tstates=int(costs.sum()),
-        estimated_max_frame_tstates=int(costs.max()), estimated_frames_over_target=int((costs > target).sum()),
+    return selected, dict(target_tstates=int(target) if np.ndim(target) == 0 else limits.tolist(), estimated_total_tstates=int(costs.sum()),
+        estimated_max_frame_tstates=int(costs.max()), estimated_frames_over_target=int((costs > limits).sum()),
         forced_no_cache_winning_frames=forced_wins,
         cache_frames_before=int(motion.any(axis=1).sum()),
         cache_frames_after=int((motion & ~selected).any(axis=1).sum()),

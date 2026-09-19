@@ -1,0 +1,23 @@
+{
+  "scope": "FSA1: six unchanged AY register records before each one-frame FSC1 group.\n\nThe common ZX0 stream shares one decompression history for audio and video.\nHeader matches FSC1 except magic. AY records keep the existing IRQ queue\nformat: count u8 followed by count register/value pairs. This PC framing\nexperiment does not prove Z80 parsing, queue deadlines or disk delivery.\n",
+  "complete": true,
+  "baseline_commit": "6103e11",
+  "cells_sha256": "55a6dfda7080f72da5fce0ecdeda46ba4279006f077f952abe631d979545de98",
+  "audio_pairs_sha256": "47d14f12d0267e431de1d0a93e263ec597d5785d8584404bda3eade51b221db8",
+  "raw_ay_sha256": "7ad7f363b912fe8c8658b2ce94ab84e3150b9932757f5fea5c4e006b45fc182d",
+  "stream_sha256": "2af21eb4c422cb200282041235e32e4106ba541014ee2203d8928e5ee86658b1",
+  "raw_bytes": 3079808,
+  "frames": 4221,
+  "ay_ticks": 25326,
+  "audio_bytes": 118364,
+  "max_audio_bytes_per_frame": 74,
+  "exact_fsc_roundtrip": true,
+  "exact_audio_roundtrip": true,
+  "all_ay_registers_verified": true,
+  "no_additional_pixel_changes": true,
+  "same_50hz_ay": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "frame_pacing_verified": false,
+  "disk_delivery_verified": false
+}
