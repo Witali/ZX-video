@@ -36,7 +36,7 @@ def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borde
     return 58784+4793*dense+4*odd_dense+277*partial_cells-3240*constant_attribute_borders
 
 
-def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False):
+def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False,page_entry=None):
     if skip_black_borders and not (fast_mask_dispatch and constant_attribute_borders):
         raise ValueError('black-border omission requires fast dispatch and initialized constant attributes')
     a, listing = MiniAssembler(CODE), []
@@ -79,7 +79,8 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
     ref('LD A,(saved_page)', 0x3a, 'saved_page', 13, 'paging')
     emit('OR 1', [0xf6, 1], 7, 'paging')
     imm('LD BC,7FFD', 0x01, 0x7ffd, 10, 'paging')
-    emit('OUT (C),A', [0xed, 0x79], 12, 'paging')
+    if page_entry is None: emit('OUT (C),A', [0xed, 0x79], 12, 'paging')
+    else: imm('CALL atomic_page',0xcd,page_entry,17,'paging')
     emit('EXX', [0xd9], 4, 'control')
     imm('LD HL,map', 0x21, MASK+4*skip_black_borders, 10, 'control')
     emit('EXX', [0xd9], 4, 'control')
@@ -201,7 +202,8 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
     a.label('attribute_end')
     ref('LD A,(saved_page)', 0x3a, 'saved_page', 13, 'paging')
     imm('LD BC,7FFD', 0x01, 0x7ffd, 10, 'paging')
-    emit('OUT (C),A', [0xed, 0x79], 12, 'paging')
+    if page_entry is None: emit('OUT (C),A', [0xed, 0x79], 12, 'paging')
+    else: imm('CALL atomic_page',0xcd,page_entry,17,'paging')
     emit('RET', [0xc9], 10, 'control')
     if fast_mask_dispatch:
         a.label('empty_mask')

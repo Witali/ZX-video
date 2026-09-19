@@ -12,7 +12,7 @@ from causal_tile_z80 import CACHE_MAP
 CODE, BRIDGE, HEADER = 0xdc00, 0x7f00, 0xba50
 
 
-def build(zx0, reader, wrapper, draw, metadata, audio, *, progress_entry=None):
+def build(zx0, reader, wrapper, draw, metadata, audio, *, progress_entry=None,page_entry=None):
     listing = []
 
     def helpers(a):
@@ -33,9 +33,15 @@ def build(zx0, reader, wrapper, draw, metadata, audio, *, progress_entry=None):
     a = MiniAssembler(BRIDGE); emit, addr, take = helpers(a)
     a.label('prepare_bridge')
     addr('LD A,(saved_page)', 0x3a, draw['saved_page'], 13)
-    addr('LD BC,7FFD', 0x01, 0x7ffd, 10); emit('OUT (C),A', [0xed, 0x79], 12)
+    addr('LD BC,7FFD', 0x01, 0x7ffd, 10)
+    if page_entry is None: emit('OUT (C),A', [0xed, 0x79], 12)
+    else: addr('CALL atomic_page',0xcd,page_entry,17)
     addr('CALL prepare', 0xcd, wrapper['run'], 17)
     addr('JP restore_bank7', 0xc3, 'restore_bank7', 10)
+    if 'draw_compact' in wrapper:
+        a.label('draw_bridge')
+        addr('CALL draw_compact',0xcd,wrapper['draw_compact'],17)
+        addr('JP restore_bank7',0xc3,'restore_bank7',10)
     a.label('publish_bridge')
     addr('CALL publish', 0xcd, wrapper['publish'], 17)
     if progress_entry is not None:
@@ -44,8 +50,10 @@ def build(zx0, reader, wrapper, draw, metadata, audio, *, progress_entry=None):
     a.label('restore_bank7')
     addr('LD A,(saved_page)', 0x3a, draw['saved_page'], 13)
     emit('OR 1', [0xf6, 1], 7)
-    addr('LD (history_page),A', 0x32, zx0['history_page'], 13)
-    addr('LD BC,7FFD', 0x01, 0x7ffd, 10); emit('OUT (C),A', [0xed, 0x79], 12)
+    if page_entry is None: addr('LD (history_page),A', 0x32, zx0['history_page'], 13)
+    addr('LD BC,7FFD', 0x01, 0x7ffd, 10)
+    if page_entry is None: emit('OUT (C),A', [0xed, 0x79], 12)
+    else: addr('CALL atomic_page',0xcd,page_entry,17)
     emit('RET', [0xc9], 10)
     a.label('end')
     bridge, labels = a.resolve(), dict(a.labels)
@@ -102,6 +110,6 @@ def build(zx0, reader, wrapper, draw, metadata, audio, *, progress_entry=None):
     emit('RET', [0xc9], 10)
     a.label('state'); a.label('ay_left'); a.emit(0); a.label('end')
     if a.pc > 0xe000: raise ValueError('packet reader overlaps ZX0 history')
-    labels = dict(**a.labels, prepare_bridge=labels['prepare_bridge'], publish_bridge=labels['publish_bridge'],
+    labels = dict(**a.labels, **{k:labels[k] for k in ('prepare_bridge','publish_bridge','draw_bridge') if k in labels},
                   bridge_end=labels['end'])
     return a.resolve(), bridge, labels, listing

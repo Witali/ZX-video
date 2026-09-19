@@ -1,0 +1,330 @@
+{
+  "scope": "Compare recorded IM2 pipeline timing without equating different prefixes.\n\nCPU instruction-table costs and ideal-clock publications are separate from\nphysical disk/ULA timing. Failure recordings remain incomplete releases.\n",
+  "complete": true,
+  "release": false,
+  "inputs": [
+    {
+      "file": "token_boundary_fast_clock_cpu.json",
+      "sha256": "6ec9ca7e6c6ff95f53666225577ba943c6a12899f03f0a2b95274e9b81512673"
+    },
+    {
+      "file": "pipelined_frame_cpu.json",
+      "sha256": "73f6ec5c686bee91f97994e19041c311cb0108322e8b60635eb37ec565ba9085"
+    },
+    {
+      "file": "token_boundary_fast_cpu.json",
+      "sha256": "a7916e31b07144884924f1d1929dfbd051187801c9b4c9dab54a5b7eefb499bf"
+    },
+    {
+      "file": "pipelined_progress_cpu.json",
+      "sha256": "6dca79d7789f74122c5457dec438392f3102bc7962fbc47946d2ed22ca9400e0"
+    }
+  ],
+  "common_publications": 407,
+  "before_common": {
+    "checked_publications": 407,
+    "late_field_histogram": {
+      "0": 380,
+      "1": 14,
+      "2": 9,
+      "3": 2,
+      "4": 2
+    },
+    "late_publications": 27,
+    "early_publications": 0,
+    "first_off_nominal_field": 62,
+    "passes_nominal_field_schedule": false,
+    "interval_field_histogram": {
+      "5": 6,
+      "6": 392,
+      "7": 7,
+      "9": 1
+    },
+    "frames_outside_field_budget": 13,
+    "first_outside_field_budget": 64,
+    "intervals_outside_budget": 1,
+    "passes_field_budget": false,
+    "late_runs": [
+      {
+        "first_frame": 62,
+        "frames": 15,
+        "recovered_at_frame": 77
+      },
+      {
+        "first_frame": 265,
+        "frames": 1,
+        "recovered_at_frame": 266
+      },
+      {
+        "first_frame": 269,
+        "frames": 2,
+        "recovered_at_frame": 271
+      },
+      {
+        "first_frame": 398,
+        "frames": 9,
+        "recovered_at_frame": null
+      }
+    ],
+    "max_consecutive_late_frames": 15,
+    "unrecovered_at_recording_end": true,
+    "min_phase_tstates": -945,
+    "max_phase_tstates": 350444,
+    "intervals_below_5_fields": 0,
+    "intervals_above_7_fields": 1,
+    "phase_above_20ms": 27,
+    "irq_boundary_publication_verified": false
+  },
+  "after_common": {
+    "checked_publications": 407,
+    "late_field_histogram": {
+      "0": 407
+    },
+    "late_publications": 0,
+    "early_publications": 0,
+    "first_off_nominal_field": null,
+    "passes_nominal_field_schedule": true,
+    "interval_field_histogram": {
+      "6": 406
+    },
+    "frames_outside_field_budget": 0,
+    "first_outside_field_budget": null,
+    "intervals_outside_budget": 0,
+    "passes_field_budget": true,
+    "late_runs": [],
+    "max_consecutive_late_frames": 0,
+    "unrecovered_at_recording_end": false,
+    "min_phase_tstates": -13,
+    "max_phase_tstates": 12,
+    "intervals_below_5_fields": 0,
+    "intervals_above_7_fields": 0,
+    "phase_above_20ms": 0,
+    "irq_boundary_publication_verified": false
+  },
+  "after_recording": {
+    "checked_publications": 411,
+    "late_field_histogram": {
+      "0": 408,
+      "2": 1,
+      "3": 1,
+      "4": 1
+    },
+    "late_publications": 3,
+    "early_publications": 0,
+    "first_off_nominal_field": 408,
+    "passes_nominal_field_schedule": false,
+    "interval_field_histogram": {
+      "6": 407,
+      "7": 2,
+      "8": 1
+    },
+    "frames_outside_field_budget": 3,
+    "first_outside_field_budget": 408,
+    "intervals_outside_budget": 1,
+    "passes_field_budget": false,
+    "late_runs": [
+      {
+        "first_frame": 408,
+        "frames": 3,
+        "recovered_at_frame": null
+      }
+    ],
+    "max_consecutive_late_frames": 3,
+    "unrecovered_at_recording_end": true,
+    "min_phase_tstates": -13,
+    "max_phase_tstates": 283619,
+    "intervals_below_5_fields": 0,
+    "intervals_above_7_fields": 2,
+    "phase_above_20ms": 3,
+    "irq_boundary_publication_verified": false
+  },
+  "failure": {
+    "error": "('scheduled AY underrun', 2466)",
+    "pc": 31855,
+    "tstates": 176270196,
+    "fields": 2468,
+    "checked": {
+      "compact": 411,
+      "native": 411,
+      "publish": 411
+    }
+  },
+  "checked": {
+    "compact": 411,
+    "native": 411,
+    "publish": 411
+  },
+  "publication_offset_from_irq_entry_tstates": 326,
+  "foreground_paging_calls": 3221,
+  "atomic_paging_tstates": 283448,
+  "costs": {
+    "atomic_page": {
+      "previous_out": 12,
+      "new_call_plus_routine": 105,
+      "delta": 93,
+      "routine": 88
+    },
+    "video_irq_disabled": {
+      "previous": 0,
+      "new": 75,
+      "delta": 75
+    },
+    "video_irq_no_ready": {
+      "previous": 0,
+      "new": 102,
+      "delta": 102
+    },
+    "video_irq_before_deadline": {
+      "previous": 0,
+      "new": 196,
+      "delta": 196
+    },
+    "video_irq_publish": {
+      "previous": 0,
+      "new": 495,
+      "delta": 495
+    },
+    "split_wrapper": {
+      "previous_extra_ret": 0,
+      "new_extra_ret": 10,
+      "delta": 10
+    },
+    "native_output": {
+      "previous": 35171769,
+      "new": 35175879,
+      "delta": 4110,
+      "note": "Only the two 17-T CALL sites replace 12-T OUTs; helper time is separate."
+    },
+    "reconstruct": {
+      "previous": 63116719,
+      "new": 63116719,
+      "delta": 0
+    },
+    "foreground_frame_glue": {
+      "delta": 361,
+      "derivation": "prepare bridge +173; draw bridge +172; wrapper +10; output with helpers +186; old publish -180",
+      "excludes": "scheduler loops, ZX0 paging, video IRQ, progress, outer host entry CALLs"
+    },
+    "progress_128": {
+      "previous_tick_and_bridge": 26249,
+      "new_tick_and_call": 24969,
+      "delta": -1280,
+      "excludes": "reset and scheduler wait/return common to both bar/no-bar"
+    }
+  },
+  "cpu_windows": [
+    {
+      "first_frame": 395,
+      "last_frame_exclusive": 421,
+      "frames": 26,
+      "mean_tstates": 453438.0,
+      "stages": {
+        "packet": 32002,
+        "stream_input": 592956,
+        "banked_zx0": 2224313,
+        "audio": 45632,
+        "metadata": 570887,
+        "handoff": 10166,
+        "reconstruct": 5078226,
+        "output": 3235206
+      },
+      "frames_above_425448": 16,
+      "note": "Previous full manual-IRQ data run: no scheduled lookahead/IRQ/ULA/disk; not a pipeline projection."
+    },
+    {
+      "first_frame": 400,
+      "last_frame_exclusive": 431,
+      "frames": 31,
+      "mean_tstates": 414033.70967741933,
+      "stages": {
+        "packet": 38092,
+        "stream_input": 618455,
+        "banked_zx0": 2279160,
+        "audio": 60247,
+        "metadata": 668786,
+        "handoff": 12121,
+        "reconstruct": 5598366,
+        "output": 3559818
+      },
+      "frames_above_425448": 15,
+      "note": "Previous full manual-IRQ data run: no scheduled lookahead/IRQ/ULA/disk; not a pipeline projection."
+    },
+    {
+      "first_frame": 408,
+      "last_frame_exclusive": 431,
+      "frames": 23,
+      "mean_tstates": 400414.2173913043,
+      "stages": {
+        "packet": 28236,
+        "stream_input": 439433,
+        "banked_zx0": 1617759,
+        "audio": 46565,
+        "metadata": 490304,
+        "handoff": 8993,
+        "reconstruct": 4043880,
+        "output": 2534357
+      },
+      "frames_above_425448": 9,
+      "note": "Previous full manual-IRQ data run: no scheduled lookahead/IRQ/ULA/disk; not a pipeline projection."
+    },
+    {
+      "first_frame": 0,
+      "last_frame_exclusive": 4221,
+      "frames": 4221,
+      "mean_tstates": 360660.10092395166,
+      "stages": {
+        "packet": 5173922,
+        "stream_input": 70149814,
+        "banked_zx0": 278862405,
+        "audio": 9150603,
+        "metadata": 80531227,
+        "handoff": 1650411,
+        "reconstruct": 690341535,
+        "output": 386486369
+      },
+      "frames_above_425448": 1227,
+      "note": "Previous full manual-IRQ data run: no scheduled lookahead/IRQ/ULA/disk; not a pipeline projection."
+    }
+  ],
+  "progress_virtual_volume": {
+    "frames": 128,
+    "ay_ticks": 768,
+    "audit": {
+      "checked_publications": 128,
+      "late_field_histogram": {
+        "0": 128
+      },
+      "late_publications": 0,
+      "early_publications": 0,
+      "first_off_nominal_field": null,
+      "passes_nominal_field_schedule": true,
+      "interval_field_histogram": {
+        "6": 127
+      },
+      "frames_outside_field_budget": 0,
+      "first_outside_field_budget": null,
+      "intervals_outside_budget": 0,
+      "passes_field_budget": true,
+      "late_runs": [],
+      "max_consecutive_late_frames": 0,
+      "unrecovered_at_recording_end": false,
+      "min_phase_tstates": -13,
+      "max_phase_tstates": 7,
+      "intervals_below_5_fields": 0,
+      "intervals_above_7_fields": 0,
+      "phase_above_20ms": 0,
+      "irq_boundary_publication_verified": false
+    },
+    "final_drain": {
+      "tstates": 238,
+      "stages": {
+        "audio": 238
+      },
+      "irq_tstates": 4196,
+      "idle_tstates": 349703,
+      "page_writes": [],
+      "ring_bytes_consumed": 46087
+    }
+  },
+  "decision": "Keep the optional IRQ pipeline; heavy-burst CPU/AY underflow still blocks release. Three real TRDs, final loader placement, disk delivery and ULA remain unverified."
+}

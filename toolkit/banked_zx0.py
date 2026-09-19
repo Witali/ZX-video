@@ -17,7 +17,7 @@ STACK_TOP, STACK_BOTTOM = 0x7be0, 0x7b70
 BANKS = (0, 1, 3, 4)
 
 
-def build(*, fast_literal=False, fast_refill=False, token_boundaries=False):
+def build(*, fast_literal=False, fast_refill=False, token_boundaries=False,page_entry=None):
     a = MiniAssembler(CODE)
     a.label('begin')
     a.abs16(0xcd, 'refill')
@@ -87,7 +87,8 @@ def build(*, fast_literal=False, fast_refill=False, token_boundaries=False):
     a.abs16(0x22, 'ring_pointer')
     a.abs16(0x3a, 'history_page')
     a.emit(0x01); a.word(0x7ffd)
-    a.emit(0xed, 0x79)
+    if page_entry is None: a.emit(0xed, 0x79)
+    else: a.emit(0xcd); a.word(page_entry)
     a.label('refill_empty')
     a.emit(0x21); a.word(INPUT)
     a.emit(0xd1, 0xc1, 0xf1, 0xc9)
@@ -131,7 +132,9 @@ def build(*, fast_literal=False, fast_refill=False, token_boundaries=False):
     a.emit(0x19, 0x5e)
     a.abs16(0x3a, 'history_page')
     a.emit(0xe6, 0xf8, 0xb3, 0x01); a.word(0x7ffd)
-    a.emit(0xed, 0x79, 0xc9)
+    if page_entry is None: a.emit(0xed, 0x79)
+    else: a.emit(0xcd); a.word(page_entry)
+    a.emit(0xc9)
 
     a.label('fatal'); a.emit(0x76)
     a.label('state')

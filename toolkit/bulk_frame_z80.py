@@ -8,9 +8,9 @@ import frame_stream_z80
 LENGTH = 0xba58
 
 
-def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True,progress_entry=None):
+def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True,progress_entry=None,page_entry=None):
     _, bridge, oldlabels, oldlisting = frame_stream_z80.build(zx0,reader,wrapper,draw,metadata,audio,
-        progress_entry=progress_entry)
+        progress_entry=progress_entry,page_entry=page_entry)
     listing = [row for row in oldlisting if BRIDGE <= row['address'] < oldlabels['bridge_end']]
     a = MiniAssembler(CODE)
     def emit(name,data,ticks):
@@ -91,4 +91,5 @@ def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True,progress
     if a.pc > 0xde00: raise ValueError('bulk parser overlaps frame clock')
     labels = dict(a.labels,prepare_bridge=oldlabels['prepare_bridge'],publish_bridge=oldlabels['publish_bridge'],
         bridge_end=oldlabels['bridge_end'])
+    if 'draw_bridge' in oldlabels: labels['draw_bridge'] = oldlabels['draw_bridge']
     return a.resolve(),bridge,labels,listing

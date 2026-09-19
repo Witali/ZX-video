@@ -31,6 +31,8 @@ class FrameStreamCPU(stream.StreamCPU):
 
     def write8(self, address, value):
         if self.guarding:
+            if self.phase == 'paging' and address == self.video_labels['page_shadow']:
+                return CPU.write8(self,address,value)
             if self.phase == 'progress':
                 bank = self.port_7ffd & 7
                 allowed = (bank == 7 and self.progress_labels['state'] <= address < self.progress_labels['state_end']
@@ -63,19 +65,24 @@ class FrameStreamCPU(stream.StreamCPU):
 class Harness:
     def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False,
                  stored_guards=True,constant_attribute_borders=False,skip_black_borders=False,progress_frames=None,
-                 encoded_noop_runs=False,skip_static_stripes=False,token_boundaries=False):
+                 encoded_noop_runs=False,skip_static_stripes=False,token_boundaries=False,pipelined=False):
         if zero_copy and not bulk: raise ValueError('zero-copy metadata requires bulk packets')
         if not stored_guards and not bulk: raise ValueError('omitting guards requires bulk packets')
         if progress_frames is not None and not (bulk and zero_copy and skip_black_borders):
             raise ValueError('disk progress requires bulk zero-copy packets and black borders')
+        if pipelined and not (bulk and zero_copy and token_boundaries):
+            raise ValueError('pipelined playback requires bulk zero-copy and token boundaries')
+        import pipelined_frame_z80 as video
+        page_entry = video.PAGE if pipelined else None
         self.bulk = bulk
         self.stored_guards = stored_guards
         f = self.frame = pipeline.Harness(tables, mapping, raw_attributes=True, decode_metadata=True,
             fast_mask_dispatch=True, selective_cache=True, deferred_publish=True,dynamic_source=bulk,
             dynamic_metadata=zero_copy,skip_noop_runs=skip_noop_runs,
             constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders,
-            encoded_noop_runs=encoded_noop_runs,skip_static_stripes=skip_static_stripes)
-        s = stream.Harness(ring, ring_start=ring_start,token_boundaries=token_boundaries)
+            encoded_noop_runs=encoded_noop_runs,skip_static_stripes=skip_static_stripes,
+            split_prepare=pipelined,page_entry=page_entry)
+        s = stream.Harness(ring, ring_start=ring_start,token_boundaries=token_boundaries,page_entry=page_entry)
         self.z, self.r, self.blocks = s.z, s.r, 0
         cpu = self.cpu = FrameStreamCPU(b'', b'')
         cpu.__dict__.update(f.cpu.__dict__); cpu.guarding = False
@@ -90,12 +97,18 @@ class Harness:
         for name in ('ring_region','history_page'): cpu.write8(self.z[name], s.cpu.read8(self.z[name]))
         a = MiniAssembler(0x9400)
         ay_interrupt.emit(a)
-        playback_schedule.emit_clock(a, dos_irq=True, full_rom_clock=True, memory_clock=True, audio_irq=True)
+        playback_schedule.emit_clock(a, dos_irq=True, full_rom_clock=True, memory_clock=True, audio_irq=True,
+            video_irq=video.VIDEO if pipelined else None)
         a.label('state'); ay_interrupt.emit_variables(a)
         a.label('elapsed_fields'); a.word(0)
         a.label('fatal'); a.emit(0x76); a.label('end')
         self.audio, audio_code = dict(a.labels), a.resolve()
         if a.pc > 0x9800: raise ValueError('AY overlaps motion tables')
+        self.video = None
+        if pipelined:
+            if a.pc > video.VIDEO: raise ValueError('AY overlaps video IRQ')
+            video_regions,self.video,video_listing = video.build_video(f.draw,self.z,self.audio)
+            cpu.video_labels = self.video
         if bulk:
             import bulk_frame_z80 as builder
         else:
@@ -104,12 +117,13 @@ class Harness:
         progress_options = {}
         if progress_frames is not None:
             progress_code,self.progress,progress_listing,_ = progress.build(progress_frames)
-            progress_options['progress_entry'] = self.progress['tick']
+            if not pipelined: progress_options['progress_entry'] = self.progress['tick']
         code, bridge, self.p, listing = builder.build(self.z, self.r, f.w, f.draw, f.metadata_labels, self.audio,
-            **({'stored_guards':stored_guards} if bulk else {}),**progress_options)
+            **({'stored_guards':stored_guards} if bulk else {}),**progress_options,page_entry=page_entry)
         cpu.p_labels = self.p; cpu.audio_state, cpu.audio_end = self.audio['state'], self.audio['end']
         cpu.wrapper_state = [(f.w['state'], f.w['end'])]
         self.regions = s.regions+[(packet.CODE, code), (packet.BRIDGE, bridge), (0x9400, audio_code)]
+        if pipelined: self.regions += video_regions
         if self.progress:
             if self.p['end'] > progress.CODE: raise ValueError('packet code overlaps progress')
             self.regions.append((progress.CODE,progress_code))
@@ -119,6 +133,7 @@ class Harness:
         self.instructions = dict(f.instructions)
         self.instructions.update({pc:dict(row, phase='stream_input') for pc,row in s.instructions.items()})
         self.instructions.update({row['address']:dict(row, phase='packet') for row in listing})
+        if pipelined: self.instructions.update({row['address']:row for row in video_listing})
         if self.progress: self.instructions.update({row['address']:row for row in progress_listing})
         self.histogram, self.rows = Counter(), []
         cpu.set_hl(frames)
@@ -208,6 +223,7 @@ class Harness:
         return results
 
     def prepare(self):
+        if self.video is not None: raise ValueError('use the pipelined clock for split preparation')
         old_page = self.cpu.port_7ffd
         front = 7 if old_page & 8 else 5
         previous = bytes(self.cpu.banks[front][:6912])
@@ -217,6 +233,7 @@ class Harness:
         return result
 
     def publish(self):
+        if self.video is not None: raise ValueError('pipelined screens are published by the IRQ')
         old_page = self.cpu.port_7ffd
         result = self.execute(self.p['publish_bridge'])
         if self.cpu.port_7ffd != old_page ^ 8: raise AssertionError('wrong published screen')
