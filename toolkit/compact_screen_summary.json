@@ -1,0 +1,85 @@
+{
+  "scope": "Validate screen-output evidence and combine separately measured CPU costs.\n\nThe queue bounds below are optimistic CPU-only bounds. Work from two\nindependent runs is added; this does not claim an integrated memory map,\nreal decoded-frame queue, sector schedule, or smooth playback.\n",
+  "complete": true,
+  "baseline_commit": "d4f2b15",
+  "states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "frames": 4971,
+  "rows": {
+    "first": 8,
+    "rows": 80,
+    "paired": true,
+    "unrolled_attrs": true
+  },
+  "code_bytes": 405,
+  "baseline_code_bytes": 433,
+  "state_bytes": 3,
+  "tables_bytes": 672,
+  "code_end_hex": "0x9198",
+  "output_per_frame_tstates": 154089,
+  "baseline_per_frame_tstates": 177725,
+  "output_delta_per_frame_tstates": -23636,
+  "output_total_tstates": 765976419,
+  "output_delta_total_tstates": -117494556,
+  "reconstruction_and_output_tstates": 1894252942,
+  "reconstruction_and_output_max_tstates": 463775,
+  "frames_over_nominal_425448": 1684,
+  "three_stage_total_tstates": 2043674747,
+  "three_stage_mean_tstates": 411119.44216455444,
+  "remaining_nominal_mean_tstates": 14328.557835445565,
+  "idealized_reconstruction_output_queues": [
+    {
+      "budget": 425448,
+      "frames": 27
+    },
+    {
+      "budget": 400000,
+      "frames": 64
+    },
+    {
+      "budget": 375000,
+      "frames": 142
+    },
+    {
+      "budget": 350000,
+      "frames": 448
+    }
+  ],
+  "dirty_metadata_summary": {
+    "current_tiles": {
+      "total": 399009,
+      "maximum": 160,
+      "mean": 80.26735063367532
+    },
+    "union_tiles": {
+      "total": 479035,
+      "maximum": 160,
+      "mean": 96.36592234962784
+    },
+    "actual_tiles": {
+      "total": 473940,
+      "maximum": 160,
+      "mean": 95.34097767048884
+    },
+    "union_stripes": {
+      "total": 48310,
+      "maximum": 10,
+      "mean": 9.71836652584993
+    },
+    "union_attributes": {
+      "total": 68895,
+      "maximum": 768,
+      "mean": 13.859384429692215
+    },
+    "actual_attributes": {
+      "total": 67994,
+      "maximum": 768,
+      "mean": 13.678133172399919
+    }
+  },
+  "dirty_generation_measured_on_z80": false,
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "full_frame_delivery_measured": false,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf"
+}
