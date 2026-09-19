@@ -11,6 +11,8 @@ row (FHS1 motion context). intra_extended=True adds left/second-above (83/84).
 fast_fragments=True adds FHF1 raw/repeated-row/two-row/fill tiles (85..88).
 unrolled_motion=True removes row loops and uses alternate DE as the output
 cursor; phases 2/6 use rotate/mask merges. No stream or table changes.
+raw_intra=True adds FHC1 high-bit flags on spatial modes 82..84. Only
+masked bytes are literal; their spatial predictions are never computed.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -62,7 +64,29 @@ def motion_tstates(vector, offsets, *, unrolled=False):
     return {0: 826, 2: 1616, 4: 1713, 6: 1643}[phase]+21*bool(dy % 4)
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False):
+def raw_intra_tstates(vector, tile, mask, *, unaligned=False):
+    """FHC1 fused raw/spatial body incl. RET; no caller/outer traversal.
+
+    The 16-bit mask is MSB first. Corrected fields read a literal instead
+    of computing the spatial predictor. Their branch/read costs 39 T.
+    """
+    if vector not in (82, 83, 84) or not 0 <= tile < 192 or not 0 <= mask <= 65535:
+        raise ValueError('invalid raw intra tile')
+    total = 693+(17 if vector == 83 else 34)+10*bool(unaligned)
+    for field in range(16):
+        if mask & (32768 >> field):
+            total += 39
+        elif vector == 83:
+            total += 0 if field % 2 else (32 if tile % 16 == 0 else 42)
+        else:
+            distance = 1 if vector == 82 else 2
+            total += (32 if tile < 16 else 53) if field < 2*distance else 26
+    return total
+
+
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False):
+    if raw_intra and not fast_fragments:
+        raise ValueError('raw intra requires fast fragments')
     if fast_fragments and not intra_extended:
         raise ValueError('fast fragments require extended spatial mode')
     if intra_extended and not intra_above:
@@ -107,11 +131,11 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     def next_output_row():
         emit('LD A,L', [0x7d], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD L,A', [0x6f], 4)
 
-    def read_above(field, distance=1):
+    def read_above(field, distance=1, prefix=''):
         # Tiles align to eight rows / one 256-byte page. First 2*distance fields
         # refer to the previous page (or virtual zero top); all later
         # fields have their above byte in the same page as DE.
-        tag = f'{field}' if distance == 1 else f'{distance}_{field}'
+        tag = prefix+(f'{field}' if distance == 1 else f'{distance}_{field}')
         if field < 2*distance:
             emit('LD A,D', [0x7a], 4); emit('CP frame_page', [0xfe, FRAME >> 8], 7)
             jump('JR NZ,above_visible', 0x20, f'above_visible_{tag}', [7, 12], True)
@@ -125,18 +149,18 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
             emit('LD A,E', [0x7b], 4); emit(f'SUB {32*distance}', [0xd6, 32*distance], 7)
             emit('LD L,A', [0x6f], 4); emit('LD H,D', [0x62], 4); emit('LD A,(HL)', [0x7e], 7)
 
-    def read_left(field):
+    def read_left(field, prefix=''):
         # Odd fields use A from the immediately preceding corrected store.
         # INC E / SLA B / JP do not alter A, and no row boundary lies here.
         if field % 2:
             return
         emit('LD A,E', [0x7b], 4); emit('AND 31', [0xe6, 31], 7)
-        jump('JR NZ,left_visible', 0x20, f'left_visible_{field}', [7, 12], True)
-        emit('XOR A', [0xaf], 4); jump('JP left_ready', 0xc3, f'left_ready_{field}', 10)
-        a.label(f'left_visible_{field}')
+        jump('JR NZ,left_visible', 0x20, f'left_visible_{prefix}{field}', [7, 12], True)
+        emit('XOR A', [0xaf], 4); jump('JP left_ready', 0xc3, f'left_ready_{prefix}{field}', 10)
+        a.label(f'left_visible_{prefix}{field}')
         emit('LD H,D', [0x62], 4); emit('LD L,E', [0x6b], 4)
         emit('DEC L', [0x2d], 4); emit('LD A,(HL)', [0x7e], 7)
-        a.label(f'left_ready_{field}')
+        a.label(f'left_ready_{prefix}{field}')
 
     a.label('frame')
     load('LD IX,(source)', (0xdd, 0x2a), 'source', 20)
@@ -186,6 +210,11 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         jump('JP tile_done', 0xc3, 'tile_done', 10)
         a.label('literal_tile')
         if intra_above:
+            if raw_intra:
+                # High-bit raw flags only exist on spatial modes 82..84.
+                # Ordinary temporal tiles do not pay this dispatch cost.
+                emit('BIT 7,A', [0xcb, 0x7f], 8)
+                jump('JP NZ,raw_intra_tile', 0xc2, 'raw_intra_tile', 10)
             if fast_fragments:
                 emit('CP fast_vector', [0xfe, 85], 7)
                 jump('JP NC,fast_tile', 0xd2, 'fast_tile', 10)
@@ -193,6 +222,9 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
             if fast_fragments:
                 jump('JP tile_done', 0xc3, 'tile_done', 10)
                 a.label('fast_tile'); jump('CALL fast_fragment', 0xcd, 'fast_fragment', 17)
+            if raw_intra:
+                jump('JP tile_done', 0xc3, 'tile_done', 10)
+                a.label('raw_intra_tile'); jump('CALL raw_intra', 0xcd, 'raw_intra', 17)
         else:
             load('LD HL,(bitmap_masks)', 0x2a, 'bitmap_masks', 16)
             emit('INC HL', [0x23], 6); emit('INC HL', [0x23], 6)
@@ -284,6 +316,44 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
                 jump('JP NC,intra_store', 0xd2, f'intra_store_{tag}', 10)
                 emit('EXX', [0xd9], 4); jump('CALL bitmap', 0xcd, 'bitmap', 17); emit('EXX', [0xd9], 4)
                 a.label(f'intra_store_{tag}'); emit('LD (DE),A', [0x12], 7)
+                if field < 15:
+                    if not field % 2:
+                        emit('INC E', [0x1c], 4)
+                    else:
+                        emit('LD A,E', [0x7b], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD E,A', [0x5f], 4)
+            emit('RET', [0xc9], 10)
+
+    if raw_intra:
+        stage = 'raw_intra'
+        a.label('raw_intra')
+        emit('AND 7Fh', [0xe6, 127], 7); emit('PUSH AF', [0xf5], 11)
+        load('LD HL,(bitmap_masks)', 0x2a, 'bitmap_masks', 16)
+        emit('LD B,(HL)', [0x46], 7); emit('INC HL', [0x23], 6)
+        emit('LD C,(HL)', [0x4e], 7); emit('INC HL', [0x23], 6)
+        load('LD (bitmap_masks),HL', 0x22, 'bitmap_masks', 16)
+        emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4)
+        emit('AND 7', [0xe6, 7], 7); jump('JP Z,raw_intra_aligned', 0xca, 'raw_intra_aligned', 10)
+        emit('INC IX', [0xdd, 0x23], 10); a.label('raw_intra_aligned')
+        emit('LD C,F0h', [0x0e, 0xf0], 7); emit('EXX', [0xd9], 4)
+        load('LD DE,(target)', (0xed, 0x5b), 'target', 20); emit('POP AF', [0xf1], 10)
+        emit('CP left_vector', [0xfe, 83], 7); jump('JP Z,raw_intra_left', 0xca, 'raw_intra_left', 10)
+        emit('CP second_above_vector', [0xfe, 84], 7); jump('JP Z,raw_intra_above2', 0xca, 'raw_intra_above2', 10)
+        for name in ('above', 'left', 'above2'):
+            a.label('raw_intra_'+name)
+            for field in range(16):
+                tag = f'raw_{name}_{field}'
+                if field == 8:
+                    emit('LD B,C', [0x41], 4)
+                emit('SLA B', [0xcb, 0x20], 8)
+                jump('JP NC,raw_intra_predict', 0xd2, tag+'_predict', 10)
+                emit('LD A,(IX+0)', [0xdd, 0x7e, 0], 19); emit('INC IX', [0xdd, 0x23], 10)
+                jump('JP raw_intra_store', 0xc3, tag+'_store', 10)
+                a.label(tag+'_predict')
+                if name == 'left':
+                    read_left(field, 'raw_')
+                else:
+                    read_above(field, 2 if name == 'above2' else 1, 'raw_')
+                a.label(tag+'_store'); emit('LD (DE),A', [0x12], 7)
                 if field < 15:
                     if not field % 2:
                         emit('INC E', [0x1c], 4)

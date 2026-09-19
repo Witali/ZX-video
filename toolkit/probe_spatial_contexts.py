@@ -129,11 +129,13 @@ def read_header(reader, *, magic=b'FHS1'):
     return model, original, frames, mapping, tables
 
 
-def decode(data, *, fast_fragments=False, fragment_dictionary=False):
+def decode(data, *, fast_fragments=False, fragment_dictionary=False, raw_intra=False):
+    if raw_intra and (not fast_fragments or fragment_dictionary):
+        raise ValueError('raw intra requires fast fragments without dictionary')
     if fragment_dictionary and not fast_fragments:
         raise ValueError('dictionary requires fast fragments')
     r = Reader(data)
-    magic = b'FHD1' if fragment_dictionary else b'FHF1' if fast_fragments else b'FHS1'
+    magic = b'FHC1' if raw_intra else b'FHD1' if fragment_dictionary else b'FHF1' if fast_fragments else b'FHS1'
     model, _, remaining, mapping, tables = read_header(r, magic=magic)
     if fast_fragments and model != 0:
         raise ValueError('fast fragments require motion contexts')
@@ -149,13 +151,21 @@ def decode(data, *, fast_fragments=False, fragment_dictionary=False):
     decoder = Decoder(tables, allow_zero=True)
     previous, out, rows = bytes(3840), bytearray(), []
     while remaining:
-        n, _, bits, vectors, bm, at, encoded = read_group(r, remaining, fast_fragments=fast_fragments, fragment_dictionary=fragment_dictionary)
+        n, _, bits, vectors, bm, at, encoded = read_group(r, remaining, fast_fragments=fast_fragments, fragment_dictionary=fragment_dictionary, raw_intra=raw_intra)
         decoder.begin(encoded, bits)
         for frame in range(n):
             screen, first, values = bytearray(previous), decoder.position, 0
             for tile in range(192):
                 ty, tx = divmod(tile, 16)
                 vector = vectors[frame*192+tile]
+                direct = raw_intra and bool(vector & 128)
+                if direct:
+                    vector &= 127
+                    start = (decoder.position+7)//8*8
+                    for bit in range(decoder.position, start):
+                        if encoded[bit//8] & (128 >> (bit % 8)):
+                            raise ValueError('nonzero raw intra padding')
+                    decoder.position = start
                 if vector >= 85:
                     start = (decoder.position+7)//8*8
                     for bit in range(decoder.position, start):
@@ -213,6 +223,14 @@ def decode(data, *, fast_fragments=False, fragment_dictionary=False):
                     flag = frame*3072+tile*16+field
                     current = predicted
                     if bm[flag//8] & (128 >> (flag % 8)):
+                        if direct:
+                            if decoder.position+8 > bits:
+                                raise ValueError('truncated raw intra')
+                            current = encoded[decoder.position//8]; decoder.position += 8
+                            if current == predicted:
+                                raise ValueError('unchanged raw correction')
+                            screen[address] = current
+                            continue
                         # Scalar decoder computes its neighbours from values
                         # it has actually restored, never encoder matrices.
                         neighbour = (screen[address-32] if y else 0) if model in (1, 3, 5, 7) else (screen[address-1] if bx else 0)
@@ -246,7 +264,9 @@ def decode(data, *, fast_fragments=False, fragment_dictionary=False):
     return bytes(out), rows
 
 
-def read_group(r, remaining, *, fast_fragments=False, fragment_dictionary=False):
+def read_group(r, remaining, *, fast_fragments=False, fragment_dictionary=False, raw_intra=False):
+    if raw_intra and (not fast_fragments or fragment_dictionary):
+        raise ValueError('raw intra requires fast fragments without dictionary')
     if fragment_dictionary and not fast_fragments:
         raise ValueError('dictionary requires fast fragments')
     n, vl, ml = r.u16(), r.u16(), r.u16()
@@ -256,9 +276,11 @@ def read_group(r, remaining, *, fast_fragments=False, fragment_dictionary=False)
         raise ValueError('invalid group size')
     vectors = restore(r.take(vl), n, 192, 2)
     masks = restore(r.take(ml), n, 480, 4)
-    if any(v > (89 if fragment_dictionary else 88 if fast_fragments else 84) for v in vectors):
+    if any(v > (89 if fragment_dictionary else 88 if fast_fragments else 84) and not (raw_intra and v in (210, 211, 212)) for v in vectors):
         raise ValueError('invalid vector')
-    if fast_fragments and any(v >= 85 and masks[2*i:2*i+2] != b'\0\0' for i, v in enumerate(vectors)):
+    if raw_intra and any(v >= 128 and masks[2*i:2*i+2] == b'\0\0' for i, v in enumerate(vectors)):
+        raise ValueError('raw intra has no corrections')
+    if fast_fragments and any(85 <= v < 128 and masks[2*i:2*i+2] != b'\0\0' for i, v in enumerate(vectors)):
         raise ValueError('fast fragment has corrections')
     wanted = sum(int(any(0 < v < 81 for v in vectors[i*192:(i+1)*192])) << (7-i) for i in range(n))
     if flags != wanted:

@@ -46,12 +46,13 @@ class GuardCPU(CPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False):
+    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False):
         self.hybrid = hybrid
         self.raw_kind = raw_kind
         self.fast_fragments = fast_fragments
         self.unrolled_motion, self.offsets = unrolled_motion, offsets
-        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above, intra_extended=intra_extended, fast_fragments=fast_fragments, unrolled_motion=unrolled_motion)
+        self.raw_intra = raw_intra
+        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above, intra_extended=intra_extended, fast_fragments=fast_fragments, unrolled_motion=unrolled_motion, raw_intra=raw_intra)
         self.raw_value_entries = {self.labels[f'raw_value_{i}'] for i in range(16)} if raw_kind is not None else set()
         self.cpu = GuardCPU(b'', b'')
         self.cpu.port_7ffd, self.cpu.sp = 0x16, STACK
@@ -107,11 +108,20 @@ class Harness:
         stages, values, literals, raw_values, raw_tiles, unaligned = Counter(), 0, 0, 0, 0, 0
         fast_kinds, fast_formula, fast_unaligned = Counter(), 0, 0
         motion_formula, motion_vectors = 0, Counter()
+        raw_intra_formula, raw_intra_tiles, raw_intra_values, raw_intra_unaligned = 0, 0, 0, 0
         while cpu.pc != STOP:
             pc, ticks = cpu.pc, cpu.tstates
             if pc == self.labels['invalid'] or steps > 2_000_000:
                 raise AssertionError('decoder did not finish frame')
             row = self.instructions[pc]
+            if self.raw_intra and pc == self.labels['raw_intra']:
+                target = word(cpu, self.labels['target'])-machine.FRAME
+                tile = (target//256)*16+(target % 32)//2
+                masks = word(cpu, self.labels['bitmap_masks'])
+                mask = cpu.read8(masks)*256+cpu.read8(masks+1)
+                is_unaligned = bool(cpu.alt_c & 7)
+                raw_intra_formula += machine.raw_intra_tstates(cpu.a & 127, tile, mask, unaligned=is_unaligned)
+                raw_intra_tiles += 1; raw_intra_values += mask.bit_count(); raw_intra_unaligned += is_unaligned
             if self.unrolled_motion and pc == self.labels['motion']:
                 motion_formula += machine.motion_tstates(cpu.a, self.offsets, unrolled=True)
                 motion_vectors[cpu.a] += 1
@@ -160,6 +170,11 @@ class Harness:
             if motion_formula != stages['motion']:
                 raise AssertionError(('unrolled motion timing formula', motion_formula, stages['motion']))
             result.update(motion_vectors=dict(motion_vectors), motion_formula_tstates=motion_formula)
+        if self.raw_intra:
+            if raw_intra_formula != stages['raw_intra']:
+                raise AssertionError(('raw intra timing formula', raw_intra_formula, stages['raw_intra']))
+            result.update(raw_intra_tiles=raw_intra_tiles, raw_intra_values=raw_intra_values,
+                raw_intra_unaligned=raw_intra_unaligned, raw_intra_formula_tstates=raw_intra_formula)
         return result
 
 

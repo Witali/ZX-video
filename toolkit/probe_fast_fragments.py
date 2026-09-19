@@ -112,7 +112,7 @@ def profile(states, vectors, residual, mapping, tables, *, unrolled_motion=False
         kind_histogram={str(v): int(np.count_nonzero(kinds == v)) for v in SIZES})
 
 
-def encode(original, states, vectors, residual, mapping, tables, selected, *, cap=MAX_CODED, dictionary=None):
+def encode(original, states, vectors, residual, mapping, tables, selected, *, cap=MAX_CODED, dictionary=None, raw_intra=None):
     hr = Reader(original); _, count = parse_header(hr); hr.end()
     if states.shape != (count, 3840) or residual.shape != states.shape or vectors.shape != (count, 192):
         raise ValueError('invalid shapes')
@@ -121,7 +121,13 @@ def encode(original, states, vectors, residual, mapping, tables, selected, *, ca
     order = field_order(8).reshape(192, 20)[:, :16]
     current, predicted = states[:, order], (states ^ residual)[:, order]
     active = current != predicted
+    raw = np.zeros_like(selected, dtype=bool) if raw_intra is None else np.asarray(raw_intra, dtype=bool)
+    if (raw.shape != selected.shape or np.any(raw & selected)
+            or np.any(raw & ((vectors < 82) | (vectors > 84) | ~active.any(axis=2)))
+            or (raw_intra is not None and dictionary is not None)):
+        raise ValueError('invalid raw intra selection')
     v = vectors.copy()
+    v[raw] |= 128
     payloads = {}
     for frame, tile in np.argwhere(selected):
         kind, payload = pack_fragment(current[frame, tile].tobytes())
@@ -136,7 +142,7 @@ def encode(original, states, vectors, residual, mapping, tables, selected, *, ca
     attrs = residual[:, 3072:] != 0; at = np.packbits(attrs, axis=1)
     contexts = np.frombuffer(mapping, dtype=np.uint8)[predicted]
     codes = [codes_for(255, t) for t in tables]
-    out = bytearray((b'FHD1' if dictionary is not None else b'FHF1')+bytes([0, len(tables)])+struct.pack('<H', len(original))+original+mapping+b''.join(tables))
+    out = bytearray((b'FHC1' if raw_intra is not None else b'FHD1' if dictionary is not None else b'FHF1')+bytes([0, len(tables)])+struct.pack('<H', len(original))+original+mapping+b''.join(tables))
     if dictionary is not None:
         bits, blob, lookup = dictionary
         if bits not in range(8, 13) or len(blob) != 2*((1 << bits)-1) or len(lookup) != 65536:
@@ -160,6 +166,8 @@ def encode(original, states, vectors, residual, mapping, tables, selected, *, ca
         for tile in range(192):
             if selected[index, tile]:
                 writer.literal(payloads[index, tile])
+            elif raw[index, tile]:
+                writer.literal(current[index, tile, active[index, tile]].tobytes())
             else:
                 for field in np.flatnonzero(active[index, tile]):
                     writer.put(*codes[contexts[index, tile, field]][current[index, tile, field]])
@@ -169,11 +177,14 @@ def encode(original, states, vectors, residual, mapping, tables, selected, *, ca
             if index == start:
                 raise ValueError('frame exceeds capacity')
             writer.rewind(saved); flush(index); continue
-        rows.append(dict(index=index, bits=writer.bits-saved[3], values=int(active[index].sum()+attrs[index].sum())))
+        rows.append(dict(index=index, bits=writer.bits-saved[3], values=int((active[index] & ~raw[index, :, None]).sum()+attrs[index].sum())))
         index += 1
         if index-start == 8 or index == count:
             flush(index)
-    return bytes(out), dict(groups=groups, frames=rows, fast_kinds=dict(Counter(int(x) for x in v[selected])))
+    detail = dict(groups=groups, frames=rows, fast_kinds=dict(Counter(int(x) for x in v[selected])))
+    if raw_intra is not None:
+        detail.update(raw_intra_tiles=int(raw.sum()), raw_intra_values=int(active[raw].sum()))
+    return bytes(out), detail
 
 
 def select_target(prof, vectors, frame_costs, target):
