@@ -15,6 +15,8 @@ raw_intra=True adds FHC1 high-bit flags on spatial modes 82..84. Only
 masked bytes are literal; their spatial predictions are never computed.
 split_literals=True adds an independent FSF1 fragment cursor in state;
 fragment loads do not align or change the retained Huffman IX/C position.
+raw_attributes=True optionally copies 768 final attributes from that cursor;
+the default keeps the earlier generated machine code byte for byte.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -86,7 +88,9 @@ def raw_intra_tstates(vector, tile, mask, *, unaligned=False):
     return total
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False):
+    if raw_attributes and not (hybrid and split_literals):
+        raise ValueError('raw attributes require hybrid split literals')
     if split_literals and (not fast_fragments or raw_intra):
         raise ValueError('split literals require FHF fast fragments without raw intra')
     if raw_intra and not fast_fragments:
@@ -649,6 +653,17 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('RET', [0xc9], 10)
         stage = 'attribute_pass'
         a.label('attribute_pass')
+        if raw_attributes:
+            load('LD A,(raw_attributes)', 0x3a, 'raw_attributes', 13)
+            emit('OR A', [0xb7], 4)
+            jump('JR Z,coded_attributes', 0x28, 'coded_attributes', [7, 12], True)
+            load('LD HL,(literal_source)', 0x2a, 'literal_source', 16)
+            wordop('LD DE,attributes', 0x11, FRAME+3072, 10)
+            wordop('LD BC,768', 0x01, 768, 10)
+            emit('LDIR', [0xed, 0xb0], [16, 21])
+            load('LD (literal_source),HL', 0x22, 'literal_source', 16)
+            emit('RET', [0xc9], 10)
+            a.label('coded_attributes')
         load('LD HL,(attribute_masks)', 0x2a, 'attribute_masks', 16)
         wordop('LD DE,attributes', 0x11, FRAME+3072, 10)
         a.label('attribute_mask')
@@ -682,6 +697,8 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         a.label('cache_enabled'); a.emit(1)
     if split_literals:
         a.label('literal_source'); a.word(0)
+    if raw_attributes:
+        a.label('raw_attributes'); a.emit(0)
     a.label('end')
     if a.pc > VECTOR_X:
         raise ValueError('frame code collides with motion tables')

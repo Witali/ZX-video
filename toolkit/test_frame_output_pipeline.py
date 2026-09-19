@@ -8,7 +8,7 @@ import test_fast_fragments
 from benchmark_context_huffman import word
 from build_zxv_trd import MiniAssembler
 from cell_output_stream import pack
-from frame_output_pipeline import Harness, frames, INPUT, INPUT_END, STACK, STOP
+from frame_output_pipeline import Harness, frames, serialized_masks, INPUT, INPUT_END, STACK, STOP
 from probe_cell_output_masks import masks
 from probe_fast_fragments import encode
 from probe_fragment_channels import split
@@ -62,9 +62,19 @@ class FrameOutputPipelineTests(unittest.TestCase):
             h.run(packets[0][0], bytes(80), states[0].tobytes(), 0)
 
     def test_irq_preserves_both_decoders_and_screen_publication(self):
+        self.exercise_irq()
+
+    def test_irq_preserves_absolute_attribute_copy(self):
+        self.exercise_irq(raw=True)
+
+    def exercise_irq(self, raw=False):
         states, stream, _ = fixture(2)
+        if raw:
+            from raw_attribute_stream import pack
+            stream, _ = pack(stream, states, [True, False])
         tables, mapping, packets = frames(stream)
-        h = Harness(tables, mapping)
+        h = Harness(tables, mapping, raw_attributes=raw, decode_metadata=raw)
+        coded_masks = serialized_masks(stream) if raw else [None]*len(packets)
         a = MiniAssembler(0x9400)
         ay_interrupt.emit(a)
         playback_schedule.emit_clock(a, dos_irq=True, full_rom_clock=True, memory_clock=True, audio_irq=True)
@@ -107,7 +117,7 @@ class FrameOutputPipelineTests(unittest.TestCase):
             return cpu.tstates-start
 
         for index, ((group, mask), state) in enumerate(zip(packets, states)):
-            h.run(group, mask, state.tobytes(), index, interrupt)
+            h.run(group, mask, state.tobytes(), index, interrupt, encoded_metadata=coded_masks[index])
         self.assertGreater(calls, 20000)
 
 

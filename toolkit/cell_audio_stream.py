@@ -1,4 +1,4 @@
-"""FSA1: six unchanged AY register records before each one-frame FSC1 group.
+"""FSA1/FSA2: six unchanged AY records before each one-frame FSC1/FSC2 group.
 
 The common ZX0 stream shares one decompression history for audio and video.
 Header matches FSC1 except magic. AY records keep the existing IRQ queue
@@ -31,10 +31,16 @@ def take_tick(reader):
 
 
 def pack(cells, audio):
-    _, _, groups = cell_output_stream.unpack(cells)
+    extended = cells[:4] == b'FSC2'
+    if extended:
+        from raw_attribute_stream import packets
+        _, _, _, parsed = packets(cells)
+        groups = [dict(frames=g[0], coded_bytes=len(g[6])+len(g[7])) for g, _ in parsed]
+    else:
+        _, _, groups = cell_output_stream.unpack(cells)
     r, ticks = Reader(cells), Reader(audio)
-    _, _, count, _, _ = read_header(r, magic=b'FSC1')
-    out = bytearray(b'FSA1'+cells[4:r.pos])
+    _, _, count, _, _ = read_header(r, magic=b'FSC2' if extended else b'FSC1')
+    out = bytearray((b'FSA2' if extended else b'FSA1')+cells[4:r.pos])
     for group in groups:
         if group['frames'] != 1:
             raise ValueError('FSA1 requires one-frame groups')
@@ -51,14 +57,20 @@ def pack(cells, audio):
 
 def unpack(source):
     r = Reader(source)
-    _, _, count, _, _ = read_header(r, magic=b'FSA1')
-    cells, audio, sizes = bytearray(b'FSC1'+source[4:r.pos]), bytearray(), []
+    extended = source[:4] == b'FSA2'
+    _, _, count, _, _ = read_header(r, magic=b'FSA2' if extended else b'FSA1')
+    cells, audio, sizes = bytearray((b'FSC2' if extended else b'FSC1')+source[4:r.pos]), bytearray(), []
     for index in range(count):
         start_audio = len(audio)
         for _ in range(6):
             audio += take_tick(r)
         sizes.append(len(audio)-start_audio)
         start = r.pos
+        if extended:
+            from raw_attribute_stream import read_packet
+            read_packet(r, count-index)
+            cells += source[start:r.pos]
+            continue
         header = r.take(11)
         n, vl, ml, _, bits = struct.unpack('<HHHBI', header)
         if n != 1:
@@ -72,7 +84,11 @@ def unpack(source):
         r.take(sum(SIZES.get(v, 0) for v in group[3]))
         cells += source[start:r.pos]
     r.end()
-    cell_output_stream.unpack(bytes(cells))
+    if extended:
+        from raw_attribute_stream import packets
+        packets(bytes(cells))
+    else:
+        cell_output_stream.unpack(bytes(cells))
     return bytes(cells), bytes(audio), sizes
 
 
@@ -84,6 +100,7 @@ def main():
     p.add_argument('--timeline-report', type=Path, default=Path(__file__).with_name('no_credits_timeline.json'))
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--report', type=Path, required=True)
+    p.add_argument('--baseline-commit', default='6103e11')
     args = p.parse_args()
     cells, audio, raw = (f.read_bytes() for f in (args.cells, args.audio, args.raw_ay))
     timeline = json.loads(args.timeline_report.read_text(encoding='utf-8'))
@@ -104,7 +121,7 @@ def main():
     ticks.end()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_bytes(data)
-    report = dict(scope=__doc__, complete=True, baseline_commit='6103e11',
+    report = dict(scope=__doc__, complete=True, baseline_commit=args.baseline_commit,
         cells_sha256=sha(cells), audio_pairs_sha256=sha(audio), raw_ay_sha256=sha(raw),
         stream_sha256=sha(data), raw_bytes=len(data), frames=len(sizes), ay_ticks=len(sizes)*6,
         audio_bytes=len(audio), max_audio_bytes_per_frame=max(sizes),
