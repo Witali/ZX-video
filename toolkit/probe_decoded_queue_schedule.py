@@ -55,8 +55,8 @@ class Decoder:
         return used
 
 
-def simulate(ends,costs,pre,draw,irq,capacity,extra):
-    decoder=Decoder(ends,costs,capacity)
+def simulate(ends,costs,pre,draw,irq,capacity,extra,*,decoder_ends=None,decoder_type=Decoder):
+    decoder=decoder_type(ends if decoder_ends is None else decoder_ends,costs,capacity)
     startup_decode=decoder.advance(float('inf'))
     # Native frame 0 and compact frame 1 are ready before the clock starts.
     startup_decode+=decoder.require(ends[2])
