@@ -24,6 +24,7 @@ def main():
     p.add_argument('--motion-cache', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--states-sha256', required=True)
+    p.add_argument('--expected-frames', type=int, default=4971, help='explicit length of an edited timeline')
     p.add_argument('--extended', action='store_true', help='enable all three spatial predictors')
     p.add_argument('--fast-fragments', action='store_true', help='FHF1 complete fragment payloads; requires --extended')
     p.add_argument('--unrolled-motion', action='store_true')
@@ -45,7 +46,7 @@ def main():
     model, _, count, mapping, tables = read_header(r, magic=b'FSF1' if args.split_literals else b'FHC1' if args.raw_intra else b'FHF1' if args.fast_fragments else b'FHS1')
     with np.load(args.motion_cache) as saved:
         states = saved['states']
-    if model != 0 or states.shape != (4971, 3840) or count != len(states) or sha(states.tobytes()) != args.states_sha256:
+    if args.expected_frames <= 0 or model != 0 or states.shape != (args.expected_frames, 3840) or count != len(states) or sha(states.tobytes()) != args.states_sha256:
         raise ValueError('model/source mismatch')
     h = Harness(tables, mapping, OFFSETS, skip_empty=True, hybrid=True, intra_above=True, intra_extended=args.extended, fast_fragments=args.fast_fragments, unrolled_motion=args.unrolled_motion, raw_intra=args.raw_intra, split_literals=args.split_literals)
     report = dict(scope=__doc__, baseline_commit=args.baseline_commit, input_sha256=sha(data),

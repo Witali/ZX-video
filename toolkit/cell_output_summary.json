@@ -1,0 +1,61 @@
+{
+  "scope": "Combine full edited-movie cell-output evidence and separated CPU stages.\n\nThe one-frame FSC1 prototype is a storage/memory-window result, not an\nintegrated timing result. No uniform per-frame ZX0 or disk cost is assumed.\n",
+  "complete": true,
+  "frames": 4221,
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "native_output": {
+    "total_tstates": 478315535,
+    "mean_frame_tstates": 113318.06088604596,
+    "maximum_frame_tstates": 146202,
+    "baseline_total_tstates": 650409669,
+    "delta_tstates": -172094134
+  },
+  "map_zx0_tstates": 19064798,
+  "net_cpu_saving_tstates": 153029336,
+  "mean_net_cpu_saving_tstates": 36254.28476664297,
+  "reconstruction_and_output_tstates": 1403831746,
+  "reconstruction_and_output_max_tstates": 450831,
+  "worst_frame": 3685,
+  "frames_over_nominal_425448": 939,
+  "four_separated_stage_tstates": 1528922584,
+  "mean_four_stage_tstates": 362218.096185738,
+  "remaining_nominal_mean_tstates": 63229.90381426201,
+  "optimistic_reconstruction_output_queue": [
+    {
+      "budget": 425448,
+      "frames": 5
+    },
+    {
+      "budget": 400000,
+      "frames": 10
+    },
+    {
+      "budget": 375000,
+      "frames": 20
+    },
+    {
+      "budget": 350000,
+      "frames": 38
+    }
+  ],
+  "added_map_bytes": 163932,
+  "separate_streams_plus_ay_bytes": 1756552,
+  "preliminary_three_trd_margin_bytes": 181112,
+  "extra_sectors_roundup": 641,
+  "break_even_added_sector_ms": 67.33663721231537,
+  "disk_note": "CPU saving only pays for added disk time below this average; actual TR-DOS/physical latency and deadline distribution still need measurement.",
+  "one_frame_fsc": {
+    "zx0_bytes": 1708995,
+    "plus_ay_bytes": 1827359,
+    "preliminary_three_trd_margin_bytes": 110305,
+    "max_coded_bytes_with_guards": 2424,
+    "cpu_timing_inherited": false,
+    "integrated_memory_verified": false
+  },
+  "code_bytes": 720,
+  "state_bytes": 4,
+  "no_additional_pixel_changes": true,
+  "full_frame_delivery_measured": false,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0
+}

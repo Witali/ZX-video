@@ -41,6 +41,7 @@ def main():
     p.add_argument('--timeline', type=Path, default=Path(__file__).with_name('movie_no_credits.json'))
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--report', type=Path, required=True)
+    p.add_argument('--group-frames', type=int, choices=range(1, 9), default=8)
     args = p.parse_args()
     source = args.fhs.read_bytes()
     model, header, count, mapping, tables = read_header(Reader(source))
@@ -61,7 +62,7 @@ def main():
     missing = [int(v) for v in np.unique(attrs[attrs != 0]) if not tables[-1][v]]
     if missing:
         tables[-1] = huffman_lengths(Counter(attrs[attrs != 0].tolist()))
-    interleaved, detail = encode(bytes(original), screens, vv, rr, mapping, tables, chosen)
+    interleaved, detail = encode(bytes(original), screens, vv, rr, mapping, tables, chosen, group_frames=args.group_frames)
     data, groups = split(interleaved, screens, vv, rr)
     rebuilt, actual = restore(data)
     if actual != screens.tobytes() or rebuilt != interleaved:
@@ -73,7 +74,7 @@ def main():
     report = dict(scope=__doc__, complete=True, source_sha256=sha(source),
         source_states_sha256=sha(states.tobytes()), frames=len(screens),
         states_sha256=sha(actual), sha256=sha(data), raw_bytes=len(data),
-        reset_frames=boundaries.tolist(), attribute_table_retrained=bool(missing),
+        reset_frames=boundaries.tolist(), group_frame_limit=args.group_frames, attribute_table_retrained=bool(missing),
         new_attribute_symbols=missing, groups=len(groups), fast_kinds=detail['fast_kinds'],
         max_group_bytes=max(g['combined_bytes'] for g in groups),
         exact_causal_frame_decode=True, exact_interleaved_roundtrip=True,

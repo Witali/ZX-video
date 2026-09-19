@@ -1,0 +1,27 @@
+{
+  "scope": "FSC1: put 80-byte native update maps before each FSF1 group's values.\n\nHeader matches FSF1 except magic. Group layout: unchanged 11-byte header,\nencoded vectors/masks, n*80 native-map bytes, Huffman bytes, fragment bytes.\nThis provides one causal stream for a future player; it is not a release.\n",
+  "complete": true,
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "fsf_sha256": "a54291e9020cab26fd36872f99b96cca694483a58f836916878ba7fc3f210c6e",
+  "maps_sha256": "f72e33dd431a80459a7391846e71cd4a56f57eb6b621ec320ed5e247ec83d570",
+  "stream_sha256": "33f413420dee5db15f00fd65ffb0aeefa9957007bb315218aa93cfb2e7f541b9",
+  "frames": 4221,
+  "groups": 4221,
+  "raw_bytes": 2640025,
+  "exact_serialized_roundtrip": true,
+  "exact_causal_frames": true,
+  "exact_native_map_coverage": true,
+  "one_frame_groups": true,
+  "max_coded_bytes_with_guards": 2424,
+  "max_expanded_metadata_bytes": 672,
+  "proposed_input_window": {
+    "first": 42656,
+    "end_exclusive": 47360,
+    "bytes": 4704,
+    "fits": true,
+    "note": "Requires relocating one frame of metadata to A400..A69F and maps to 7300..734F; not an integrated memory validation."
+  },
+  "full_frame_delivery_measured": false,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0
+}

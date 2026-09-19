@@ -112,11 +112,12 @@ def profile(states, vectors, residual, mapping, tables, *, unrolled_motion=False
         kind_histogram={str(v): int(np.count_nonzero(kinds == v)) for v in SIZES})
 
 
-def encode(original, states, vectors, residual, mapping, tables, selected, *, cap=MAX_CODED, dictionary=None, raw_intra=None):
+def encode(original, states, vectors, residual, mapping, tables, selected, *, cap=MAX_CODED, dictionary=None, raw_intra=None, group_frames=8):
     hr = Reader(original); _, count = parse_header(hr); hr.end()
     if states.shape != (count, 3840) or residual.shape != states.shape or vectors.shape != (count, 192):
         raise ValueError('invalid shapes')
-    if selected.shape != vectors.shape or not 1 <= cap <= MAX_CODED or np.any(vectors > 84):
+    if (selected.shape != vectors.shape or not 1 <= cap <= MAX_CODED or np.any(vectors > 84)
+            or type(group_frames) is not int or not 1 <= group_frames <= 8):
         raise ValueError('invalid selection/cap/vectors')
     order = field_order(8).reshape(192, 20)[:, :16]
     current, predicted = states[:, order], (states ^ residual)[:, order]
@@ -179,7 +180,7 @@ def encode(original, states, vectors, residual, mapping, tables, selected, *, ca
             writer.rewind(saved); flush(index); continue
         rows.append(dict(index=index, bits=writer.bits-saved[3], values=int((active[index] & ~raw[index, :, None]).sum()+attrs[index].sum())))
         index += 1
-        if index-start == 8 or index == count:
+        if index-start == group_frames or index == count:
             flush(index)
     detail = dict(groups=groups, frames=rows, fast_kinds=dict(Counter(int(x) for x in v[selected])))
     if raw_intra is not None:
