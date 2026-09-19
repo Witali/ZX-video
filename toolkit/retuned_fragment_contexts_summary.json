@@ -1,0 +1,620 @@
+{
+  "scope": "Verify full retained-value table training and actual ZX0 storage coverage.\n\nOptional complete CPU evidence applies only to the best FHF1 clustered16\nvariant. No other variant or complete frame-delivery performance is inferred.\n",
+  "complete": true,
+  "states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "rows": [
+    {
+      "format": "FHF1",
+      "variant": "fixed",
+      "input_sha256": "fd159ee86c7eaa47b815196abde3aeb50a0a54aacda802b6985ff297ebc1a2e2",
+      "raw_bytes": 3026940,
+      "video_bytes": 2040815,
+      "blocks": 370,
+      "delta_from_same_format_bytes": -2992,
+      "delta_from_unrolled_fhf_bytes": -2992,
+      "video_plus_ay_bytes": 2118511,
+      "preliminary_three_trd_margin_bytes": -180847,
+      "huffman_bits": 4882310,
+      "huffman_bit_delta": -32709,
+      "long_values": 72262,
+      "long_value_delta": 13206,
+      "prefix_bank_bytes": 15842,
+      "decoder_binary_unchanged": true
+    },
+    {
+      "format": "FHF1",
+      "variant": "clustered16",
+      "input_sha256": "262ed8291ed41577fc68d51292c2722f14c340ee89b0aa070c990e5a33c8f668",
+      "raw_bytes": 3026816,
+      "video_bytes": 2040549,
+      "blocks": 370,
+      "delta_from_same_format_bytes": -3258,
+      "delta_from_unrolled_fhf_bytes": -3258,
+      "video_plus_ay_bytes": 2118245,
+      "preliminary_three_trd_margin_bytes": -180581,
+      "huffman_bits": 4881419,
+      "huffman_bit_delta": -33600,
+      "long_values": 72642,
+      "long_value_delta": 13586,
+      "prefix_bank_bytes": 15830,
+      "decoder_binary_unchanged": true
+    },
+    {
+      "format": "FHC1",
+      "variant": "fixed",
+      "input_sha256": "6eb11488458c36ef2991cc15bf2951afd1d92d57d410527c14d549642b6a4173",
+      "raw_bytes": 2990216,
+      "video_bytes": 2046844,
+      "blocks": 366,
+      "delta_from_same_format_bytes": -4600,
+      "delta_from_unrolled_fhf_bytes": 3037,
+      "video_plus_ay_bytes": 2124540,
+      "preliminary_three_trd_margin_bytes": -186876,
+      "huffman_bits": 4645852,
+      "huffman_bit_delta": -34869,
+      "long_values": 67798,
+      "long_value_delta": 12392,
+      "prefix_bank_bytes": 15788,
+      "decoder_binary_unchanged": true
+    },
+    {
+      "format": "FHC1",
+      "variant": "clustered16",
+      "input_sha256": "333f2dca239cde8dc7d8f22a75677d9b9c723c03ebc89e826ecb2b280a42c18d",
+      "raw_bytes": 2989727,
+      "video_bytes": 2046168,
+      "blocks": 365,
+      "delta_from_same_format_bytes": -5276,
+      "delta_from_unrolled_fhf_bytes": 2361,
+      "video_plus_ay_bytes": 2123864,
+      "preliminary_three_trd_margin_bytes": -186200,
+      "huffman_bits": 4641886,
+      "huffman_bit_delta": -38835,
+      "long_values": 68133,
+      "long_value_delta": 12727,
+      "prefix_bank_bytes": 15776,
+      "decoder_binary_unchanged": true
+    }
+  ],
+  "full_pc_decode_verified": true,
+  "no_additional_pixel_changes": true,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "full_frame_delivery_measured": false,
+  "full_z80_reconstruction_verified": true,
+  "cpu_variant": "FHF1 clustered16",
+  "cpu": {
+    "frames": 4971,
+    "groups": 641,
+    "total_tstates": 1133996268,
+    "mean_frame_tstates": 228122.36330718166,
+    "max_frame_tstates": 319497,
+    "worst_frame": 4088,
+    "frames_over_nominal_425448": 0,
+    "stages": {
+      "control": 184549641,
+      "patch": 204418023,
+      "attribute_pass": 40696361,
+      "huffman": 205353305,
+      "intra": 48705576,
+      "cache": 282613144,
+      "motion": 136422764,
+      "fast_fragment": 31237454
+    },
+    "values": 1038625,
+    "intra_tiles": 39933,
+    "intra_modes": {
+      "82": 29460,
+      "83": 9936,
+      "84": 537
+    },
+    "fast_kinds": {
+      "88": 4136,
+      "87": 2238,
+      "85": 49290,
+      "86": 182
+    },
+    "fast_tiles": 55846,
+    "fast_unaligned": 17307,
+    "code_bytes": 3893,
+    "state_bytes": 23,
+    "input_sha256": "262ed8291ed41577fc68d51292c2722f14c340ee89b0aa070c990e5a33c8f668",
+    "huffman_branches": {
+      "attribute": 36242,
+      "bitmap": 1002383,
+      "long": 72642
+    },
+    "worst_frames": [
+      {
+        "index": 4088,
+        "intra_tiles": 16,
+        "intra_modes": {
+          "83": 15,
+          "82": 1
+        },
+        "values": 437,
+        "bits": 3482,
+        "total_tstates": 319497,
+        "stages": {
+          "control": 37138,
+          "cache": 58792,
+          "patch": 45829,
+          "huffman": 144356,
+          "intra": 18938,
+          "fast_fragment": 1112,
+          "motion": 3304,
+          "attribute_pass": 10028
+        },
+        "literals": 0,
+        "cache": true,
+        "fast_kinds": {
+          "85": 2
+        },
+        "fast_tiles": 2,
+        "fast_unaligned": 2,
+        "fast_formula_tstates": 1112,
+        "motion_vectors": {
+          "76": 1,
+          "5": 1,
+          "9": 1,
+          "44": 1
+        },
+        "motion_formula_tstates": 3304
+      },
+      {
+        "index": 4616,
+        "intra_tiles": 14,
+        "intra_modes": {
+          "83": 12,
+          "82": 2
+        },
+        "values": 289,
+        "bits": 15577,
+        "total_tstates": 318345,
+        "stages": {
+          "control": 36558,
+          "cache": 58792,
+          "patch": 30020,
+          "huffman": 87053,
+          "motion": 24258,
+          "intra": 15925,
+          "fast_fragment": 58066,
+          "attribute_pass": 7673
+        },
+        "literals": 0,
+        "cache": true,
+        "fast_kinds": {
+          "85": 106
+        },
+        "fast_tiles": 106,
+        "fast_unaligned": 19,
+        "fast_formula_tstates": 58066,
+        "motion_vectors": {
+          "41": 1,
+          "42": 2,
+          "37": 1,
+          "50": 1,
+          "49": 4,
+          "53": 1,
+          "23": 7,
+          "81": 2,
+          "5": 1,
+          "9": 1,
+          "45": 2,
+          "32": 2,
+          "19": 1
+        },
+        "motion_formula_tstates": 24258
+      },
+      {
+        "index": 4493,
+        "intra_tiles": 7,
+        "intra_modes": {
+          "83": 6,
+          "84": 1
+        },
+        "values": 290,
+        "bits": 14813,
+        "total_tstates": 318157,
+        "stages": {
+          "control": 36649,
+          "cache": 58792,
+          "patch": 36331,
+          "fast_fragment": 54780,
+          "motion": 32106,
+          "huffman": 84271,
+          "intra": 7979,
+          "attribute_pass": 7249
+        },
+        "literals": 0,
+        "cache": true,
+        "fast_kinds": {
+          "85": 100
+        },
+        "fast_tiles": 100,
+        "fast_unaligned": 18,
+        "fast_formula_tstates": 54780,
+        "motion_vectors": {
+          "49": 4,
+          "48": 1,
+          "47": 1,
+          "53": 2,
+          "23": 15,
+          "32": 5,
+          "9": 2,
+          "45": 1,
+          "5": 1,
+          "28": 4
+        },
+        "motion_formula_tstates": 32106
+      },
+      {
+        "index": 4564,
+        "intra_tiles": 15,
+        "intra_modes": {
+          "82": 4,
+          "83": 11
+        },
+        "values": 277,
+        "bits": 14297,
+        "total_tstates": 316569,
+        "stages": {
+          "control": 36687,
+          "cache": 58792,
+          "patch": 34672,
+          "motion": 30632,
+          "huffman": 79471,
+          "intra": 15934,
+          "fast_fragment": 53132,
+          "attribute_pass": 7249
+        },
+        "literals": 0,
+        "cache": true,
+        "fast_kinds": {
+          "85": 97
+        },
+        "fast_tiles": 97,
+        "fast_unaligned": 17,
+        "fast_formula_tstates": 53132,
+        "motion_vectors": {
+          "39": 1,
+          "72": 2,
+          "23": 13,
+          "45": 2,
+          "53": 2,
+          "32": 5,
+          "19": 1,
+          "25": 2,
+          "1": 1,
+          "5": 1,
+          "49": 1,
+          "81": 3,
+          "27": 1
+        },
+        "motion_formula_tstates": 30632
+      },
+      {
+        "index": 4653,
+        "intra_tiles": 13,
+        "intra_modes": {
+          "83": 13
+        },
+        "values": 297,
+        "bits": 14486,
+        "total_tstates": 316436,
+        "stages": {
+          "control": 36681,
+          "cache": 58792,
+          "patch": 32171,
+          "intra": 14111,
+          "huffman": 78385,
+          "motion": 35369,
+          "fast_fragment": 53678,
+          "attribute_pass": 7249
+        },
+        "literals": 0,
+        "cache": true,
+        "fast_kinds": {
+          "85": 98
+        },
+        "fast_tiles": 98,
+        "fast_unaligned": 17,
+        "fast_formula_tstates": 53678,
+        "motion_vectors": {
+          "49": 7,
+          "53": 2,
+          "50": 1,
+          "61": 1,
+          "45": 2,
+          "72": 1,
+          "23": 11,
+          "1": 1,
+          "21": 2,
+          "31": 1,
+          "32": 5,
+          "40": 1,
+          "37": 1
+        },
+        "motion_formula_tstates": 35369
+      },
+      {
+        "index": 4538,
+        "intra_tiles": 7,
+        "intra_modes": {
+          "82": 2,
+          "83": 5
+        },
+        "values": 292,
+        "bits": 14184,
+        "total_tstates": 316289,
+        "stages": {
+          "control": 36684,
+          "cache": 58792,
+          "patch": 36164,
+          "huffman": 79488,
+          "motion": 35172,
+          "intra": 8026,
+          "fast_fragment": 54714,
+          "attribute_pass": 7249
+        },
+        "literals": 0,
+        "cache": true,
+        "fast_kinds": {
+          "85": 95,
+          "87": 3
+        },
+        "fast_tiles": 98,
+        "fast_unaligned": 18,
+        "fast_formula_tstates": 54714,
+        "motion_vectors": {
+          "32": 8,
+          "37": 1,
+          "49": 2,
+          "23": 16,
+          "53": 1,
+          "6": 2,
+          "5": 1,
+          "81": 2,
+          "45": 1,
+          "19": 1,
+          "35": 1,
+          "16": 1,
+          "1": 2
+        },
+        "motion_formula_tstates": 35172
+      },
+      {
+        "index": 4581,
+        "intra_tiles": 15,
+        "intra_modes": {
+          "83": 15
+        },
+        "values": 266,
+        "bits": 15673,
+        "total_tstates": 316152,
+        "stages": {
+          "control": 36610,
+          "cache": 58792,
+          "patch": 26605,
+          "motion": 33149,
+          "huffman": 77071,
+          "fast_fragment": 59996,
+          "intra": 16680,
+          "attribute_pass": 7249
+        },
+        "literals": 0,
+        "cache": true,
+        "fast_kinds": {
+          "85": 108,
+          "87": 1
+        },
+        "fast_tiles": 109,
+        "fast_unaligned": 15,
+        "fast_formula_tstates": 59996,
+        "motion_vectors": {
+          "49": 5,
+          "53": 4,
+          "50": 1,
+          "45": 1,
+          "65": 1,
+          "23": 12,
+          "3": 1,
+          "81": 3,
+          "32": 4,
+          "5": 1,
+          "31": 1,
+          "10": 1,
+          "16": 1
+        },
+        "motion_formula_tstates": 33149
+      },
+      {
+        "index": 4658,
+        "intra_tiles": 11,
+        "intra_modes": {
+          "83": 9,
+          "82": 2
+        },
+        "values": 285,
+        "bits": 15365,
+        "total_tstates": 315867,
+        "stages": {
+          "control": 36633,
+          "cache": 58792,
+          "patch": 28681,
+          "motion": 38855,
+          "huffman": 75042,
+          "intra": 12629,
+          "fast_fragment": 57986,
+          "attribute_pass": 7249
+        },
+        "literals": 0,
+        "cache": true,
+        "fast_kinds": {
+          "85": 106
+        },
+        "fast_tiles": 106,
+        "fast_unaligned": 11,
+        "fast_formula_tstates": 57986,
+        "motion_vectors": {
+          "45": 1,
+          "53": 1,
+          "49": 2,
+          "62": 1,
+          "48": 2,
+          "23": 15,
+          "22": 2,
+          "13": 1,
+          "1": 1,
+          "9": 1,
+          "32": 6,
+          "81": 1,
+          "31": 1,
+          "52": 1,
+          "30": 1,
+          "33": 1
+        },
+        "motion_formula_tstates": 38855
+      },
+      {
+        "index": 4588,
+        "intra_tiles": 13,
+        "intra_modes": {
+          "83": 12,
+          "82": 1
+        },
+        "values": 292,
+        "bits": 15658,
+        "total_tstates": 315659,
+        "stages": {
+          "control": 36618,
+          "cache": 58792,
+          "patch": 27868,
+          "fast_fragment": 59450,
+          "motion": 31976,
+          "huffman": 78689,
+          "intra": 15017,
+          "attribute_pass": 7249
+        },
+        "literals": 0,
+        "cache": true,
+        "fast_kinds": {
+          "85": 107,
+          "87": 1
+        },
+        "fast_tiles": 108,
+        "fast_unaligned": 14,
+        "fast_formula_tstates": 59450,
+        "motion_vectors": {
+          "49": 2,
+          "53": 3,
+          "51": 1,
+          "45": 2,
+          "46": 1,
+          "37": 1,
+          "23": 11,
+          "32": 14,
+          "81": 2
+        },
+        "motion_formula_tstates": 31976
+      },
+      {
+        "index": 4614,
+        "intra_tiles": 15,
+        "intra_modes": {
+          "83": 11,
+          "82": 4
+        },
+        "values": 297,
+        "bits": 15094,
+        "total_tstates": 315588,
+        "stages": {
+          "control": 36610,
+          "cache": 58792,
+          "patch": 30782,
+          "huffman": 78235,
+          "intra": 17179,
+          "motion": 29161,
+          "fast_fragment": 56378,
+          "attribute_pass": 8451
+        },
+        "literals": 0,
+        "cache": true,
+        "fast_kinds": {
+          "85": 103
+        },
+        "fast_tiles": 103,
+        "fast_unaligned": 14,
+        "fast_formula_tstates": 56378,
+        "motion_vectors": {
+          "30": 1,
+          "32": 9,
+          "37": 1,
+          "53": 1,
+          "23": 11,
+          "33": 2,
+          "81": 1,
+          "36": 1,
+          "34": 1,
+          "10": 1,
+          "47": 1
+        },
+        "motion_formula_tstates": 29161
+      }
+    ],
+    "worst_windows": [
+      {
+        "frames": 8,
+        "first": 4581,
+        "total_tstates": 2503358,
+        "mean_tstates": 312919.75
+      },
+      {
+        "frames": 50,
+        "first": 4609,
+        "total_tstates": 15577755,
+        "mean_tstates": 311555.1
+      },
+      {
+        "frames": 100,
+        "first": 4561,
+        "total_tstates": 31136066,
+        "mean_tstates": 311360.66
+      },
+      {
+        "frames": 200,
+        "first": 4480,
+        "total_tstates": 62193089,
+        "mean_tstates": 310965.445
+      }
+    ],
+    "idealized_queue": [
+      {
+        "budget_tstates": 425448,
+        "minimum_complete_frames": 1
+      },
+      {
+        "budget_tstates": 350000,
+        "minimum_complete_frames": 1
+      },
+      {
+        "budget_tstates": 300000,
+        "minimum_complete_frames": 10
+      },
+      {
+        "budget_tstates": 250000,
+        "minimum_complete_frames": 100
+      }
+    ]
+  },
+  "reconstruction_delta_tstates": 6156374,
+  "zx0_cpu": {
+    "blocks": 370,
+    "raw_bytes": 3026816,
+    "total_tstates": 157317276,
+    "mean_block_tstates": 425181.82702702703,
+    "max_block_tstates": 674461,
+    "bytes_with_headers": 2040549
+  },
+  "two_stage_total_tstates": 1291313544
+}
