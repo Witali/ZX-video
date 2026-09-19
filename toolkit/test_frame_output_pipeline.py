@@ -17,10 +17,12 @@ from test_causal_tiles import predict
 from test_hybrid_tiles import header
 
 
-def fixture(count=5):
+def fixture(count=5, *, constant_attribute_borders=False):
     states, vectors, residual, selected = test_fast_fragments.FastFragmentTests().fixture(count)
     states[:, :256] = 0; states[:, 2816:3072] = 0
     states[:, 3072:] &= 127
+    if constant_attribute_borders:
+        states[:,3072:3168] = 1; states[:,3744:3840] = 1
     order = field_order(8).reshape(192, 20)[:, :16]
     previous = bytes(3840)
     for index, state in enumerate(states):
@@ -70,14 +72,14 @@ class FrameOutputPipelineTests(unittest.TestCase):
     def test_irq_preserves_fast_native_dispatch_and_raw_attributes(self):
         self.exercise_irq(raw=True, fast=True)
 
-    def exercise_irq(self, raw=False, fast=False, selective=False, noops=False, empty_noops=False):
-        states, stream, _ = fixture(2)
+    def exercise_irq(self, raw=False, fast=False, selective=False, noops=False, empty_noops=False, constant=False):
+        states, stream, _ = fixture(2,constant_attribute_borders=constant)
         if raw:
             from raw_attribute_stream import pack
             stream, _ = pack(stream, states, [True, False])
         tables, mapping, packets = frames(stream)
         h = Harness(tables, mapping, raw_attributes=raw, decode_metadata=raw, fast_mask_dispatch=fast,
-                    selective_cache=selective,skip_noop_runs=noops)
+                    selective_cache=selective,skip_noop_runs=noops,constant_attribute_borders=constant)
         coded_masks = serialized_masks(stream) if raw else [None]*len(packets)
         if empty_noops:
             states = np.zeros((2,3840),dtype=np.uint8)
@@ -106,6 +108,8 @@ class FrameOutputPipelineTests(unittest.TestCase):
             nonlocal calls
             if noops and not 0x7a00 <= cpu.pc < h.recon['noop_scanner_end']:
                 return 0
+            if constant and not h.draw['attributes'] <= cpu.pc < h.draw['attribute_end']:
+                return 0
             cpu.guarding = False
             word(cpu, a.labels['audio_remaining'], 65535)
             index = cpu.read8(a.labels['audio_read_index'])
@@ -133,7 +137,7 @@ class FrameOutputPipelineTests(unittest.TestCase):
                 needed = source_coverage(group[3], 32).reshape(24, 4).any(axis=1)
                 coverage = np.packbits(needed).tobytes()
             h.run(group, mask, state.tobytes(), index, interrupt, encoded_metadata=coded_masks[index], cache_map=coverage)
-        self.assertGreater(calls, 0 if noops else 20000)
+        self.assertGreater(calls, 0 if noops or constant else 20000)
         return calls
 
 

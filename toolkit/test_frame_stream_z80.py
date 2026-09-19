@@ -15,8 +15,8 @@ from benchmark_context_huffman import word
 from zx0_speed import Token, encode
 
 
-def source(count=4):
-    states, cells, _ = fixture(count)
+def source(count=4, *, constant_attribute_borders=False):
+    states, cells, _ = fixture(count,constant_attribute_borders=constant_attribute_borders)
     cells, _ = attributes(cells, states, [i % 2 == 0 for i in range(count)])
     ticks = [bytes([1, (i % 11), (i*3) & 15]) if i % 3 else b'\0' for i in range(count*6)]
     sc, _ = cache(audio(cells, b''.join(ticks)), states, 32, 4)

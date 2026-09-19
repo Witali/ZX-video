@@ -37,6 +37,7 @@ def main():
     p.add_argument('--lookahead', action='store_true', help='Decode 256-byte quanta during idle fields')
     p.add_argument('--zero-copy', action='store_true', help='Consume bulk vectors and native map in place')
     p.add_argument('--skip-noop-runs', action='store_true', help='Skip consecutive unchanged tiles in each stripe')
+    p.add_argument('--constant-attribute-borders',action='store_true',help='Initialize constant rows once; copy only 576 attributes')
     args = p.parse_args()
     if args.lookahead and not args.cadence: p.error('--lookahead requires --cadence')
     raw = args.raw.read_bytes()
@@ -48,6 +49,9 @@ def main():
     storage = json.loads(args.storage_report.read_text(encoding='utf-8'))
     baseline = json.loads(args.baseline.read_text(encoding='utf-8'))
     with np.load(args.states, allow_pickle=False) as saved: states = saved['states']
+    if args.constant_attribute_borders and (not np.all(states[:,3072:3168] == 1)
+            or not np.all(states[:,3744:3840] == 1)):
+        raise ValueError('constant attribute border optimization requires rows 0..2 and 21..23 to stay 1')
     cells = unpack_audio(unpack_cache(unpack(unpack_bulk(raw) if bulk else raw), 32, 4))[0]
     tables, mapping, packets = frames(cells)
     r = Reader(raw); _, _, count, _, _ = read_header(r, magic=raw[:4])
@@ -63,7 +67,8 @@ def main():
         ring += struct.pack('<HH', len(data), len(payload))+payload
     if position != len(raw): raise ValueError('incomplete block coverage')
     h = Harness(bytes(ring), tables, mapping, count,bulk=bulk,zero_copy=args.zero_copy,
-        skip_noop_runs=args.skip_noop_runs,stored_guards=stored_guards)
+        skip_noop_runs=args.skip_noop_runs,stored_guards=stored_guards,
+        constant_attribute_borders=args.constant_attribute_borders)
     header_result = h.consume_header(raw[:r.pos]); h.histogram.clear()
     clock = None
     all_ticks = []
@@ -78,7 +83,7 @@ def main():
                 _, ml, coded, lit = struct.unpack('<BHHH',ar.take(7))
                 ar.take(3+192+ml+80+coded+lit)
         ar.end()
-    report = dict(scope=__doc__, complete=False, baseline_commit='17f079c' if not stored_guards else
+    report = dict(scope=__doc__, complete=False, baseline_commit='469402c' if args.constant_attribute_borders else '17f079c' if not stored_guards else
         ('8390053' if args.skip_noop_runs else 'a875d18') if bulk else '1963bab', frames_expected=count,
         raw_sha256=sha(raw), states_sha256=sha(states.tobytes()), frames=[], header_results=header_result,
         code_regions=[dict(base=base,code_hex=data.hex()) for base,data in h.regions],
@@ -86,7 +91,9 @@ def main():
         instruction_listing=list(h.instructions.values()), timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         release=False, disk_delivery_verified=False, cadence_verified=False, cadence_requested=args.cadence,
         lookahead=args.lookahead,bulk_packet=bulk,zero_copy=args.zero_copy,skip_noop_runs=args.skip_noop_runs,
-        format=raw[:4].decode(),stored_guards=stored_guards)
+        format=raw[:4].decode(),stored_guards=stored_guards,
+        constant_attribute_borders=args.constant_attribute_borders,cold_init=h.frame.init_result,
+        cold_init_code_hex=h.frame.init_code.hex())
     for i, expected in enumerate(states[:args.limit or count]):
         if bulk:
             _, detail = read_bulk_packet(r,stored_guards=stored_guards)
@@ -149,6 +156,7 @@ def main():
             if stage == 'reconstruct' and args.skip_noop_runs:
                 from causal_tile_z80 import noop_run_delta_tstates
                 delta = noop_run_delta_tstates(group[3],group[4])
+            if stage == 'output' and args.constant_attribute_borders: delta = -3240
             if stages[stage] != old[stage]+delta: raise AssertionError(('stage timing differs',i,stage))
         if stages['handoff'] != old['handoff']+10+6*bulk+12*args.zero_copy: raise AssertionError('wrapper timing differs')
         if stages['audio'] != 1705+42*sum(t[0] for t in ticks)+(42 if args.cadence and i == 0 else 0):
@@ -181,7 +189,8 @@ def main():
         mean_tstates=sum(counts)/len(counts),max_tstates=max(counts),worst_frame=counts.index(max(counts)),
         frames_above_425448=sum(t>425448 for t in counts),
         irq_tstates=sum(row['irq_tstates'] for row in report['frames']),
-        unchanged_video_except_wrapper=not args.skip_noop_runs, exact_pixels_and_ay=True,
+        unchanged_video_except_wrapper=not (args.skip_noop_runs or args.constant_attribute_borders), exact_pixels_and_ay=True,
+        constant_attribute_output_delta_tstates=-3240*len(counts)*args.constant_attribute_borders,
         reconstruction_delta_tstates=sum(row['reconstruction_delta_tstates'] for row in report['frames']),
         added_ret_tstates=10*len(counts),
         added_dynamic_source_tstates=6*len(counts)*bulk,

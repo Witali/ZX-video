@@ -52,14 +52,15 @@ class FrameStreamCPU(stream.StreamCPU):
 
 class Harness:
     def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False,
-                 stored_guards=True):
+                 stored_guards=True,constant_attribute_borders=False):
         if zero_copy and not bulk: raise ValueError('zero-copy metadata requires bulk packets')
         if not stored_guards and not bulk: raise ValueError('omitting guards requires bulk packets')
         self.bulk = bulk
         self.stored_guards = stored_guards
         f = self.frame = pipeline.Harness(tables, mapping, raw_attributes=True, decode_metadata=True,
             fast_mask_dispatch=True, selective_cache=True, deferred_publish=True,dynamic_source=bulk,
-            dynamic_metadata=zero_copy,skip_noop_runs=skip_noop_runs)
+            dynamic_metadata=zero_copy,skip_noop_runs=skip_noop_runs,
+            constant_attribute_borders=constant_attribute_borders)
         s = stream.Harness(ring, ring_start=ring_start)
         self.z, self.r, self.blocks = s.z, s.r, 0
         cpu = self.cpu = FrameStreamCPU(b'', b'')
@@ -99,7 +100,7 @@ class Harness:
         cpu.set_hl(frames)
         self.initialize(self.audio['audio_init']); self.initialize(self.audio['setup_clock'])
         self.frames, self.index = frames, 0
-        self.expected_screens = {5: bytes(6912), 7: bytes(6912)}
+        self.expected_screens = dict(f.expected_screens)
         cpu.input_end = pipeline.INPUT_END
 
     def initialize(self, entry):

@@ -3,7 +3,10 @@
 Entry A=40/C0 selects the back screen, HL points to 80 map bytes.
 The map is copied to BF20..BF6F before bank 7 is paged. Compact screens
 remain at 6400; rows outside 8..87 must be zero. Map bits refer to n-2.
-All attributes are copied. No screen flip, disk, IRQ or ULA cost is hidden.
+All attributes are copied by default. constant_attribute_borders copies only
+rows 3..20; the caller must first initialize all attributes in both screens
+to 1 and prove that omitted rows stay 1. No screen flip, disk, IRQ or ULA
+cost is hidden.
 """
 from build_zxv_trd import MiniAssembler
 from build_long_video_trd import build_player_dither_tables
@@ -11,7 +14,7 @@ from build_long_video_trd import build_player_dither_tables
 CODE, FRAME, TABLE, MASK = 0x9000, 0x6400, 0x9e00, 0xbf20
 
 
-def expected_tstates(mask, *, fast_mask_dispatch=False):
+def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borders=False):
     if len(mask) != 80:
         raise ValueError('expected 80 cell-mask bytes')
     dense = odd_dense = partial_cells = zero_masks = 0
@@ -23,14 +26,14 @@ def expected_tstates(mask, *, fast_mask_dispatch=False):
         else:
             partial_cells += sum(v.bit_count() for v in flags)
             zero_masks += flags.count(0)
-    # 80 LDI map transfers and all 768 attrs included; external CALL,
+    # 80 LDI map transfers and 768 attrs (576 with constant borders); external CALL,
     # IRQ/ULA, mask ZX0 and disk delivery excluded. See instruction listing.
     if fast_mask_dispatch:
-        return 37584+5853*dense+4*odd_dense+296*partial_cells-136*zero_masks
-    return 58784+4793*dense+4*odd_dense+277*partial_cells
+        return 37584+5853*dense+4*odd_dense+296*partial_cells-136*zero_masks-3240*constant_attribute_borders
+    return 58784+4793*dense+4*odd_dense+277*partial_cells-3240*constant_attribute_borders
 
 
-def build(*, fast_mask_dispatch=False):
+def build(*, fast_mask_dispatch=False, constant_attribute_borders=False):
     a, listing = MiniAssembler(CODE), []
 
     def emit(name, data, ticks, stage):
@@ -177,18 +180,20 @@ def build(*, fast_mask_dispatch=False):
     ref('LD (bands_left),A', 0x32, 'bands_left', 13, 'band_control')
     ref('JP band', 0xc3, 'band', 10, 'band_control')
     a.label('attributes')
-    imm('LD HL,compact_attributes', 0x21, 0x7000, 10, 'attributes')
+    first,count = (96,576) if constant_attribute_borders else (0,768)
+    imm('LD HL,compact_attributes', 0x21, 0x7000+first, 10, 'attributes')
     ref('LD A,(screen_base)', 0x3a, 'screen_base', 13, 'attributes')
     emit('OR 18h', [0xf6, 0x18], 7, 'attributes')
     emit('LD D,A', [0x57], 4, 'attributes')
-    emit('LD E,0', [0x1e, 0], 7, 'attributes')
-    imm('LD BC,768', 0x01, 768, 10, 'attributes')
-    emit('LD A,48', [0x3e, 48], 7, 'attributes')
+    emit('LD E,first attribute', [0x1e, first], 7, 'attributes')
+    imm('LD BC,attribute count', 0x01, count, 10, 'attributes')
+    emit('LD A,attribute chunks', [0x3e, count//16], 7, 'attributes')
     a.label('attribute_chunk')
     for _ in range(16):
         emit('LDI', [0xed, 0xa0], 16, 'attributes')
     emit('DEC A', [0x3d], 4, 'attributes')
     ref('JP NZ,attribute_chunk', 0xc2, 'attribute_chunk', 10, 'attributes')
+    a.label('attribute_end')
     ref('LD A,(saved_page)', 0x3a, 'saved_page', 13, 'paging')
     imm('LD BC,7FFD', 0x01, 0x7ffd, 10, 'paging')
     emit('OUT (C),A', [0xed, 0x79], 12, 'paging')

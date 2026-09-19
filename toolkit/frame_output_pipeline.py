@@ -91,7 +91,7 @@ def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False, dynamic_sour
     return a.resolve(), a.labels, listing
 
 
-def initializer(draw):
+def initializer(draw, *, constant_attribute_borders=False):
     a, listing = MiniAssembler(INITIALIZER), []
     def emit(name, data, ticks):
         listing.append(dict(address=a.pc, instruction=name, tstates=ticks, stage='cold_init'))
@@ -106,12 +106,20 @@ def initializer(draw):
         imm('LD BC,clear_length-1', 0x01, count-1, 10)
         emit('LD (HL),0', [0x36, 0], 10)
         emit('LDIR', [0xed, 0xb0], [16, 21])
+    if constant_attribute_borders:
+        for base in (0x5800,0xd800):
+            imm('LD HL,attributes',0x21,base,10)
+            imm('LD DE,attributes+1',0x11,base+1,10)
+            imm('LD BC,767',0x01,767,10)
+            emit('LD (HL),1',[0x36,1],10)
+            emit('LDIR',[0xed,0xb0],[16,21])
     emit('LD A,16h', [0x3e, 0x16], 7)
     imm('LD (saved_page),A', 0x32, draw['saved_page'], 13)
     imm('LD BC,7FFD', 0x01, 0x7ffd, 10); emit('OUT (C),A', [0xed, 0x79], 12)
     emit('LD A,C0h', [0x3e, 0xc0], 7)
     imm('LD (screen_base),A', 0x32, draw['screen_base'], 13)
     emit('RET', [0xc9], 10)
+    if a.pc > 0x7b70: raise ValueError('cold initializer overlaps private ZX0 stack')
     return a.resolve(), listing
 
 
@@ -140,8 +148,10 @@ class PipelineCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False):
+    def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False,
+                 constant_attribute_borders=False):
         self.raw_attributes = raw_attributes
+        self.constant_attribute_borders = constant_attribute_borders
         self.decode_metadata = decode_metadata
         self.fast_mask_dispatch = fast_mask_dispatch
         self.selective_cache = selective_cache
@@ -149,11 +159,12 @@ class Harness:
             hybrid=True, skip_empty=True, intra_above=True, intra_extended=True,
             fast_fragments=True, unrolled_motion=True, split_literals=True, raw_attributes=raw_attributes,
             selective_cache=selective_cache,skip_noop_runs=skip_noop_runs)
-        self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch)
+        self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch,
+            constant_attribute_borders=constant_attribute_borders)
         self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw, origin=0x7900 if selective_cache else WRAPPER,
                                                deferred_publish=deferred_publish,dynamic_source=dynamic_source,
                                                dynamic_metadata=dynamic_metadata)
-        self.init_code, ii = initializer(self.draw)
+        self.init_code, ii = initializer(self.draw,constant_attribute_borders=constant_attribute_borders)
         self.cpu = PipelineCPU(b'', b'')
         self.cpu.port_7ffd = 0x16
         self.cpu.state_regions = [(x['state'], x['end']) for x in (self.recon, self.draw, self.w)]
@@ -177,11 +188,12 @@ class Harness:
                     raise ValueError('overlapping instruction ranges')
                 self.instructions[row['address']] = dict(row, phase=phase)
         self.histogram = Counter()
-        self.expected_screens = {5: bytes(6912), 7: bytes(6912)}
+        initial_screen = bytes(6144)+bytes([int(constant_attribute_borders)])*768
+        self.expected_screens = {5: initial_screen, 7: initial_screen}
         self.protected_regions = [(first, blob) for first, blob in rr+dr]
         self.init_result = self.execute(INITIALIZER)
-        if (self.cpu.port_7ffd != 0x16 or any(self.cpu.banks[5][:6912])
-                or any(self.cpu.banks[7][:6912]) or any(self.cpu.banks[5][0x2400:0x3800])):
+        if (self.cpu.port_7ffd != 0x16 or bytes(self.cpu.banks[5][:6912]) != initial_screen
+                or bytes(self.cpu.banks[7][:6912]) != initial_screen or any(self.cpu.banks[5][0x2400:0x3800])):
             raise AssertionError('cold initialization differs')
         self.histogram.clear()
 
@@ -216,6 +228,8 @@ class Harness:
             raise ValueError('raw attribute packet requires matching decoder')
         if n != 1 or len(mask) != 80 or len(expected) != 3840:
             raise ValueError('one-frame packet required')
+        if self.constant_attribute_borders and (expected[3072:3168] != b'\1'*96 or expected[3744:] != b'\1'*96):
+            raise ValueError('constant attribute borders differ')
         data = encoded+b'\0'+literals+b'\0'
         if len(data) > INPUT_END-INPUT:
             raise ValueError('frame input overlaps prefix tables')
@@ -262,7 +276,8 @@ class Harness:
             raise AssertionError('screen bytes differ or preceding visible screen damaged')
         position = (word(cpu, self.recon['source'])-INPUT)*8+(cpu.read8(self.recon['bit_page']) & 7)
         if (position != bits or word(cpu, self.recon['literal_source']) != INPUT+len(encoded)+1+len(literals)
-                or result['stages']['output'] != output.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch)
+                or result['stages']['output'] != output.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch,
+                    constant_attribute_borders=self.constant_attribute_borders)
                 or result['stages']['handoff'] != 337+26*self.raw_attributes
                 or cpu.port_7ffd != page ^ 8 or result['page_writes'] != [page | 1, page, page ^ 8]
                 or bytes(cpu.banks[5][0x1b00:0x2400]) != b'\xa5'*0x900):
