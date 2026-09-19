@@ -1,4 +1,4 @@
-"""Verify the complete FAP1, FAP2 or FAP3 movie in one Z80/RAM instance.
+"""Verify FAP1..FAP5 movie packets in one Z80/RAM instance.
 
 Z80 reads packet headers, AY records, metadata and values from the ZX0 ring,
 prepares native screens, then publishes them. Host startup installs Huffman
@@ -50,9 +50,10 @@ def main():
     if args.black_borders: args.constant_attribute_borders = True
     if args.lookahead and not args.cadence: p.error('--lookahead requires --cadence')
     raw = args.raw.read_bytes()
-    bulk = raw[:4] in (b'FAP2',b'FAP3')
-    stored_guards = raw[:4] != b'FAP3'
-    if args.zero_copy and not bulk: p.error('--zero-copy requires FAP2 or FAP3')
+    bulk = raw[:4] in (b'FAP2',b'FAP3',b'FAP4',b'FAP5')
+    stored_guards = raw[:4] not in (b'FAP3',b'FAP4',b'FAP5')
+    encoded_noop_runs = 'inplace' if raw[:4] == b'FAP5' else raw[:4] == b'FAP4'
+    if args.zero_copy and not bulk: p.error('--zero-copy requires FAP2..FAP5')
     if bulk:
         from bulk_frame_stream import unpack as unpack_bulk,read_packet as read_bulk_packet
     storage = json.loads(args.storage_report.read_text(encoding='utf-8'))
@@ -61,7 +62,11 @@ def main():
     if args.constant_attribute_borders and (not np.all(states[:,3072:3168] == 1)
             or not np.all(states[:,3744:3840] == 1)):
         raise ValueError('constant attribute border optimization requires rows 0..2 and 21..23 to stay 1')
-    cells = unpack_audio(unpack_cache(unpack(unpack_bulk(raw) if bulk else raw), 32, 4))[0]
+    source = raw
+    if encoded_noop_runs:
+        from vector_run_stream import transcode,encode_vectors
+        source = transcode(raw,inverse=True)[0]
+    cells = unpack_audio(unpack_cache(unpack(unpack_bulk(source) if bulk else source), 32, 4))[0]
     tables, mapping, packets = frames(cells)
     r = Reader(raw); _, _, count, _, _ = read_header(r, magic=raw[:4])
     if args.progress_frames is not None and (args.limit or count) > args.progress_frames:
@@ -80,7 +85,7 @@ def main():
     h = Harness(bytes(ring), tables, mapping, count,bulk=bulk,zero_copy=args.zero_copy,
         skip_noop_runs=args.skip_noop_runs,stored_guards=stored_guards,
         constant_attribute_borders=args.constant_attribute_borders,skip_black_borders=args.black_borders,
-        progress_frames=args.progress_frames)
+        progress_frames=args.progress_frames,encoded_noop_runs=encoded_noop_runs)
     header_result = h.consume_header(raw[:r.pos]); h.histogram.clear()
     clock = None
     all_ticks = []
@@ -95,7 +100,7 @@ def main():
                 _, ml, coded, lit = struct.unpack('<BHHH',ar.take(7))
                 ar.take(3+192+ml+80+coded+lit)
         ar.end()
-    report = dict(scope=__doc__, complete=False, baseline_commit='7608922' if h.progress else '8706cc0' if args.black_borders else '469402c' if args.constant_attribute_borders else '17f079c' if not stored_guards else
+    report = dict(scope=__doc__, complete=False, baseline_commit='2f8535e' if encoded_noop_runs else '7608922' if h.progress else '8706cc0' if args.black_borders else '469402c' if args.constant_attribute_borders else '17f079c' if not stored_guards else
         ('8390053' if args.skip_noop_runs else 'a875d18') if bulk else '1963bab', frames_expected=count,
         raw_sha256=sha(raw), states_sha256=sha(states.tobytes()), frames=[], header_results=header_result,
         code_regions=[dict(base=base,code_hex=data.hex()) for base,data in h.regions],
@@ -103,7 +108,7 @@ def main():
         instruction_listing=list(h.instructions.values()), timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         release=False, disk_delivery_verified=False, cadence_verified=False, cadence_requested=args.cadence,
         lookahead=args.lookahead,bulk_packet=bulk,zero_copy=args.zero_copy,skip_noop_runs=args.skip_noop_runs,
-        format=raw[:4].decode(),stored_guards=stored_guards,
+        format=raw[:4].decode(),stored_guards=stored_guards,encoded_noop_runs=encoded_noop_runs,
         constant_attribute_borders=args.constant_attribute_borders,black_borders=args.black_borders,cold_init=h.frame.init_result,
         cold_init_code_hex=h.frame.init_code.hex(),progress_frames_on_disk=args.progress_frames,
         progress_labels=h.progress,progress_init=h.progress_init_result)
@@ -154,7 +159,16 @@ def main():
             raise AssertionError(('packet/bit/literal cursor differs', i))
         vector_base = word(cpu,h.frame.w['vector_pointer']) if args.zero_copy else 0xa400
         native_base = word(cpu,h.frame.w['native_pointer']) if args.zero_copy else 0x7300
-        checks = ((vector_base, group[3]), (0xa4c0,group[4]+group[5]), (native_base,native),
+        vectors = group[3]
+        if encoded_noop_runs:
+            # Validate the actual command choices, including unencoded short
+            # runs; no implicit threshold is substituted by the benchmark.
+            from vector_run_stream import decode_vectors
+            offset = sum(map(len,ticks))+8
+            vectors = detail['payload'][offset:offset+192]
+            if decode_vectors(vectors,group[4],inplace=encoded_noop_runs == 'inplace')[0] != group[3]:
+                raise AssertionError('vector commands changed predictions')
+        checks = ((vector_base, vectors), (0xa4c0,group[4]+group[5]), (native_base,native),
             (0xba40,cache_map), (value_base,group[6]+(b'\0' if stored_guards else b'')+group[7]+b'\0'))
         if bulk: checks += ((0xa6a0,detail['payload']),)
         for first, wanted in checks:
@@ -178,6 +192,10 @@ def main():
             if stage == 'reconstruct' and args.skip_noop_runs:
                 from causal_tile_z80 import noop_run_delta_tstates
                 delta = noop_run_delta_tstates(group[3],group[4])
+            if stage == 'reconstruct' and encoded_noop_runs:
+                from causal_tile_z80 import encoded_run_delta_tstates
+                delta = encoded_run_delta_tstates(group[3],group[4],commands=vectors,
+                    inplace=encoded_noop_runs == 'inplace',scan_uncoded=args.skip_noop_runs)
             if stage == 'output':
                 delta = output_tstates(native,fast_mask_dispatch=True,
                     constant_attribute_borders=args.constant_attribute_borders,skip_black_borders=args.black_borders

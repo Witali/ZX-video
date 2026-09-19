@@ -50,6 +50,31 @@ def noop_run_delta_tstates(vectors, masks):
     return delta
 
 
+def encoded_run_delta_tstates(vectors, masks, *, commands=None, inplace=False, scan_uncoded=False):
+    """FAP4 traversal delta against the original per-tile masked path."""
+    if len(vectors) != 192 or len(masks) != 384: raise ValueError('one frame required')
+    from vector_run_stream import encode_vectors,decode_vectors
+    if commands is None: commands = encode_vectors(vectors,masks,inplace=inplace)[0]
+    if decode_vectors(commands,masks,inplace=inplace)[0] != vectors: raise ValueError('commands differ')
+    delta = i = pos = 0
+    while i < 192:
+        tag = commands[pos]; pos += 1
+        if tag < 128:
+            if not scan_uncoded: delta += 17; i += 1
+            elif tag: delta += 17+(10 if tag < 82 else 14); i += 1
+            elif masks[2*i:2*i+2] != b'\0\0': delta += 7; i += 1
+            else:
+                start = i; i += 1
+                while i % 16 and commands[pos] == 0 and masks[2*i:2*i+2] == b'\0\0':
+                    i += 1; pos += 1
+                delta += (200 if i % 16 == 0 else 236 if commands[pos] else 282)-168*(i-start)
+        else:
+            count = tag-128; i += count
+            if inplace: pos += count-1
+            delta += (230 if i % 16 == 0 else 240)+12*inplace+14*scan_uncoded-260*count
+    return delta
+
+
 def selective_cache_delta_tstates(flags, enabled):
     """Relative to full cache fills, including 46-T per-frame mask setup.
 
@@ -123,7 +148,9 @@ def raw_intra_tstates(vector, tile, mask, *, unaligned=False):
     return total
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False):
+    if encoded_noop_runs and not (hybrid and skip_empty and intra_extended and raw_kind is None and not raw_intra):
+        raise ValueError('encoded runs require the hybrid masked path')
     if skip_noop_runs and not (hybrid and skip_empty and intra_extended and raw_kind is None and not raw_intra):
         raise ValueError('no-op scanner requires the current hybrid masked path')
     if selective_cache and not hybrid:
@@ -150,6 +177,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     a.emit(*original[:end-CODE])
     a.labels.update({name: address for name, address in labels.items() if address < end})
     if skip_noop_runs: a.labels['scan_zero_run'] = NOOP_SCANNER
+    if encoded_noop_runs: a.labels['encoded_zero_run'] = NOOP_SCANNER+128*skip_noop_runs
     listing = [dict(row, stage='huffman') for row in instructions if row['address'] < end]
     stage = 'control'
 
@@ -244,8 +272,12 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     emit('LD A,(HL)', [0x7e], 7)
     if skip_noop_runs:
         emit('OR A',[0xb7],4); jump('JP Z,scan_zero_run',0xca,'scan_zero_run',10)
+    if encoded_noop_runs == 'inplace':
+        emit('CP run tag',[0xfe,128],7); jump('JP NC,encoded_zero_run',0xd2,'encoded_zero_run',10)
     emit('INC HL', [0x23], 6)
     load('LD (vectors),HL', 0x22, 'vectors', 16)
+    if encoded_noop_runs and encoded_noop_runs != 'inplace':
+        emit('CP run tag',[0xfe,128],7); jump('JP NC,encoded_zero_run',0xd2,'encoded_zero_run',10)
     if raw_kind is not None:
         emit('PUSH AF', [0xf5], 11); emit('AND 7Fh', [0xe6, 127], 7)
         jump('CALL NZ,motion', 0xc4, 'motion', [10, 17])
@@ -832,10 +864,32 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('INC HL',[0x23],6); emit('INC HL',[0x23],6)
         load('LD (bitmap_masks),HL',0x22,'bitmap_masks',16)
         jump('CALL patches_nonzero',0xcd,'patches_nonzero',17); jump('JP tile_done',0xc3,'tile_done',10)
-        if a.pc > 0x7b00: raise ValueError('no-op scanner overlaps cold initializer')
+        if a.pc > (NOOP_SCANNER+128 if encoded_noop_runs else 0x7b00):
+            raise ValueError('no-op scanner overlaps following code')
         labels.update({k:v for k,v in a.labels.items() if k not in labels})
         labels['noop_scanner_end'] = a.pc
         regions.append((NOOP_SCANNER,a.resolve()))
+    if encoded_noop_runs:
+        origin = labels['encoded_zero_run']
+        a = MiniAssembler(origin); a.labels.update(labels)
+        stage = 'encoded_noop_control'
+        emit('AND run length',[0xe6,31],7); emit('LD C,A',[0x4f],4)
+        if encoded_noop_runs == 'inplace':
+            emit('LD B,0',[0x06,0],7); emit('ADD HL,BC',[0x09],11)
+            load('LD (vectors),HL',0x22,'vectors',16)
+        load('LD A,(tiles_left)',0x3a,'tiles_left',13); emit('SUB C',[0x91],4)
+        load('LD (tiles_left),A',0x32,'tiles_left',13); emit('LD B,A',[0x47],4)
+        emit('LD A,C',[0x79],4); emit('ADD A,A',[0x87],4)
+        emit('LD E,A',[0x5f],4); emit('LD D,0',[0x16,0],7)
+        load('LD HL,(bitmap_masks)',0x2a,'bitmap_masks',16); emit('ADD HL,DE',[0x19],11)
+        load('LD (bitmap_masks),HL',0x22,'bitmap_masks',16)
+        load('LD HL,(target)',0x2a,'target',16); emit('ADD HL,DE',[0x19],11)
+        load('LD (target),HL',0x22,'target',16)
+        emit('LD A,B',[0x78],4); emit('OR A',[0xb7],4)
+        jump('JP Z,stripe_done',0xca,'stripe_done',10); jump('JP tile',0xc3,'tile',10)
+        if a.pc > 0x7b00: raise ValueError('encoded run handler overlaps initializer')
+        labels['encoded_run_end'] = a.pc
+        regions.append((origin,a.resolve()))
     return code, labels, listing, regions
 
 

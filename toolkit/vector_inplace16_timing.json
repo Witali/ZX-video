@@ -1,0 +1,83 @@
+{
+  "scope": "Audit exact nominal frame deadlines first, then the fallback 0..1-field budget.\n\nField counters are necessary, but do not establish publication at the IRQ\nboundary. Exact T-state phase errors are also reported. Existing recordings\ndo not establish safe ULA/disk delivery and remain non-release evidence.\n",
+  "complete": true,
+  "release": false,
+  "primary_target": "every frame on its original six-field deadline; zero late frames",
+  "primary_interval_fields": 6,
+  "primary_interval_ms": 120,
+  "jitter_allowance_role": "fallback only",
+  "authorized_video_jitter_fields": 1,
+  "authorized_video_jitter_ms": 20,
+  "nominal_period_fields": 6,
+  "allowed_intervals_fields": [
+    5,
+    6,
+    7
+  ],
+  "ay_rate_hz": 50,
+  "recovery_policy": "next ready frame returns to the original absolute deadlines; never reset the schedule origin",
+  "player_changed": false,
+  "player_delta_tstates": 0,
+  "trials": [
+    {
+      "report": "vector_inplace16_clock_cpu.json",
+      "sha256": "cb9743fc0fe9d6607d5dfa4218db7303974f8c0600b94e1e3a0295f40adbb15d",
+      "complete": false,
+      "failure": {
+        "frame": 406,
+        "error": "('scheduled AY underrun', 2436)",
+        "tstates": 174146699,
+        "pc": 32037,
+        "fields": 2436,
+        "played_ticks": 2436
+      },
+      "checked_publications": 406,
+      "late_field_histogram": {
+        "0": 367,
+        "1": 15,
+        "2": 18,
+        "3": 5,
+        "4": 1
+      },
+      "late_publications": 39,
+      "early_publications": 0,
+      "first_off_nominal_field": 62,
+      "passes_nominal_field_schedule": false,
+      "interval_field_histogram": {
+        "5": 5,
+        "6": 393,
+        "7": 6,
+        "9": 1
+      },
+      "frames_outside_field_budget": 24,
+      "first_outside_field_budget": 63,
+      "intervals_outside_budget": 1,
+      "passes_field_budget": false,
+      "late_runs": [
+        {
+          "first_frame": 62,
+          "frames": 25,
+          "recovered_at_frame": 87
+        },
+        {
+          "first_frame": 265,
+          "frames": 6,
+          "recovered_at_frame": 271
+        },
+        {
+          "first_frame": 398,
+          "frames": 8,
+          "recovered_at_frame": null
+        }
+      ],
+      "max_consecutive_late_frames": 25,
+      "unrecovered_at_recording_end": true,
+      "min_phase_tstates": -945,
+      "max_phase_tstates": 344012,
+      "intervals_below_5_fields": 0,
+      "intervals_above_7_fields": 2,
+      "phase_above_20ms": 39,
+      "irq_boundary_publication_verified": false
+    }
+  ]
+}
