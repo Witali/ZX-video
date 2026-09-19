@@ -121,13 +121,14 @@ class PipelineCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False):
+    def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False):
         self.raw_attributes = raw_attributes
         self.decode_metadata = decode_metadata
+        self.fast_mask_dispatch = fast_mask_dispatch
         self.recon_code, self.recon, ri, rr = reconstruction.build(tables, mapping, OFFSETS,
             hybrid=True, skip_empty=True, intra_above=True, intra_extended=True,
             fast_fragments=True, unrolled_motion=True, split_literals=True, raw_attributes=raw_attributes)
-        self.draw_code, self.draw, di, dr = output.build()
+        self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch)
         self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw)
         self.init_code, ii = initializer(self.draw)
         self.cpu = PipelineCPU(b'', b'')
@@ -233,7 +234,7 @@ class Harness:
             raise AssertionError('screen bytes differ or preceding visible screen damaged')
         position = (word(cpu, self.recon['source'])-INPUT)*8+(cpu.read8(self.recon['bit_page']) & 7)
         if (position != bits or word(cpu, self.recon['literal_source']) != INPUT+len(encoded)+1+len(literals)
-                or result['stages']['output'] != output.expected_tstates(mask)
+                or result['stages']['output'] != output.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch)
                 or result['stages']['handoff'] != 337+26*self.raw_attributes
                 or cpu.port_7ffd != page ^ 8 or result['page_writes'] != [page | 1, page, page ^ 8]
                 or bytes(cpu.banks[5][0x1b00:0x2400]) != b'\xa5'*0x900):
@@ -293,6 +294,7 @@ def main():
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--baseline-commit', default='6103e11')
     p.add_argument('--decode-metadata', action='store_true')
+    p.add_argument('--fast-mask-dispatch', action='store_true')
     args = p.parse_args()
     data = args.stream.read_bytes()
     tables, mapping, packets = frames(data)
@@ -301,13 +303,14 @@ def main():
     if states.shape != (len(packets), 3840):
         raise ValueError('different frame count')
     raw_attributes = data[:4] == b'FSC2'
-    h = Harness(tables, mapping, raw_attributes=raw_attributes, decode_metadata=args.decode_metadata)
+    h = Harness(tables, mapping, raw_attributes=raw_attributes, decode_metadata=args.decode_metadata,
+                fast_mask_dispatch=args.fast_mask_dispatch)
     masks = serialized_masks(data) if args.decode_metadata else [None]*len(packets)
     report = dict(scope=__doc__, complete=False, baseline_commit=args.baseline_commit, stream_sha256=sha(data),
         states_sha256=sha(states.tobytes()), frames_expected=len(states), frames=[],
         reconstruction_code_sha256=sha(h.recon_code), output_code_sha256=sha(h.draw_code),
         wrapper_code_hex=h.wrapper_code.hex(), wrapper_labels=h.w, wrapper_tstates=337+26*raw_attributes,
-        raw_attributes=raw_attributes,
+        raw_attributes=raw_attributes, fast_mask_dispatch=args.fast_mask_dispatch,
         initializer_code_hex=h.init_code.hex(), cold_init=h.init_result,
         instruction_listing=list(h.instructions.values()),
         input_memory=dict(vectors=VECTORS, bitmap_masks=BITMAP, attribute_masks=ATTRS,

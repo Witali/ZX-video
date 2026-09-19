@@ -28,8 +28,9 @@ class CellCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self):
-        self.code, self.labels, self.listing, self.regions = machine.build()
+    def __init__(self, *, fast_mask_dispatch=False):
+        self.fast_mask_dispatch = fast_mask_dispatch
+        self.code, self.labels, self.listing, self.regions = machine.build(fast_mask_dispatch=fast_mask_dispatch)
         self.cpu = CellCPU(b'', b'')
         self.cpu.state = self.labels['state'], self.labels['end']
         for address, blob in [(machine.CODE, self.code)]+self.regions:
@@ -64,7 +65,8 @@ class Harness:
             row = self.instructions[pc]
             cpu.step(); steps += 1
             elapsed = cpu.tstates-ticks
-            if elapsed != row['tstates']:
+            wanted = row['tstates']
+            if elapsed not in (wanted if isinstance(wanted, list) else [wanted]):
                 raise AssertionError(('instruction timing', row, elapsed))
             stages[row['stage']] += elapsed; self.histogram[pc, elapsed] += 1
             if cpu.port_7ffd != previous_page:
@@ -81,8 +83,9 @@ class Harness:
                 or bytes(cpu.read8(machine.FRAME+i) for i in range(3840)) != state
                 or bytes(cpu.read8(INPUT+i) for i in range(80)) != mask
                 or sum(stages.values()) != cpu.tstates-before-irq
-                or sum(stages.values()) != machine.expected_tstates(mask)):
-            raise AssertionError(('paging/stack/source/timing differs', sum(stages.values()), machine.expected_tstates(mask)))
+                or sum(stages.values()) != machine.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch)):
+            raise AssertionError(('paging/stack/source/timing differs', sum(stages.values()),
+                machine.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch)))
         return dict(index=index, target_bank=target, tstates=sum(stages.values()), stages=dict(stages),
                     output_sha256=sha(expected), page_writes=pages, irq_tstates=irq)
 

@@ -67,13 +67,16 @@ class FrameOutputPipelineTests(unittest.TestCase):
     def test_irq_preserves_absolute_attribute_copy(self):
         self.exercise_irq(raw=True)
 
-    def exercise_irq(self, raw=False):
+    def test_irq_preserves_fast_native_dispatch_and_raw_attributes(self):
+        self.exercise_irq(raw=True, fast=True)
+
+    def exercise_irq(self, raw=False, fast=False):
         states, stream, _ = fixture(2)
         if raw:
             from raw_attribute_stream import pack
             stream, _ = pack(stream, states, [True, False])
         tables, mapping, packets = frames(stream)
-        h = Harness(tables, mapping, raw_attributes=raw, decode_metadata=raw)
+        h = Harness(tables, mapping, raw_attributes=raw, decode_metadata=raw, fast_mask_dispatch=fast)
         coded_masks = serialized_masks(stream) if raw else [None]*len(packets)
         a = MiniAssembler(0x9400)
         ay_interrupt.emit(a)

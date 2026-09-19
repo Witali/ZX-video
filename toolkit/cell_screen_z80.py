@@ -11,10 +11,10 @@ from build_long_video_trd import build_player_dither_tables
 CODE, FRAME, TABLE, MASK = 0x9000, 0x6400, 0x9e00, 0xbf20
 
 
-def expected_tstates(mask):
+def expected_tstates(mask, *, fast_mask_dispatch=False):
     if len(mask) != 80:
         raise ValueError('expected 80 cell-mask bytes')
-    dense = odd_dense = partial_cells = 0
+    dense = odd_dense = partial_cells = zero_masks = 0
     for band in range(20):
         flags = mask[band*4:band*4+4]
         if flags == b'\xff'*4:
@@ -22,12 +22,15 @@ def expected_tstates(mask):
             odd_dense += band & 1
         else:
             partial_cells += sum(v.bit_count() for v in flags)
+            zero_masks += flags.count(0)
     # 80 LDI map transfers and all 768 attrs included; external CALL,
     # IRQ/ULA, mask ZX0 and disk delivery excluded. See instruction listing.
+    if fast_mask_dispatch:
+        return 37584+5853*dense+4*odd_dense+296*partial_cells-136*zero_masks
     return 58784+4793*dense+4*odd_dense+277*partial_cells
 
 
-def build():
+def build(*, fast_mask_dispatch=False):
     a, listing = MiniAssembler(CODE), []
 
     def emit(name, data, ticks, stage):
@@ -94,33 +97,47 @@ def build():
     emit('EXX', [0xd9], 4, 'partial_control')
     a.label('mask_byte')
     emit('EXX', [0xd9], 4, 'partial_control')
-    emit('LD B,(HL)', [0x46], 7, 'partial_control')
+    emit('LD A,(HL)' if fast_mask_dispatch else 'LD B,(HL)',
+         [0x7e if fast_mask_dispatch else 0x46], 7, 'partial_control')
     emit('INC HL', [0x23], 6, 'partial_control')
-    emit('LD E,8', [0x1e, 8], 7, 'partial_control')
+    if not fast_mask_dispatch:
+        emit('LD E,8', [0x1e, 8], 7, 'partial_control')
     emit('EXX', [0xd9], 4, 'partial_control')
-    a.label('cell')
-    emit('EXX', [0xd9], 4, 'cell_dispatch')
-    emit('SLA B', [0xcb, 0x20], 8, 'cell_dispatch')
-    emit('EXX', [0xd9], 4, 'cell_dispatch')
-    ref('JP NC,skip_cell', 0xd2, 'skip_cell', 10, 'cell_dispatch')
-    for row in range(4):
-        pixel(reverse=bool(row & 1))
-        if row != 3:
-            adjust('L', 32, 'cell_address')
-            emit('INC D', [0x14], 4, 'cell_address')
-            emit('INC D', [0x14], 4, 'cell_address')
-    adjust('L', -95, 'cell_address')
-    adjust('D', -6, 'cell_address')
-    emit('INC E', [0x1c], 4, 'cell_address')
-    ref('JP cell_done', 0xc3, 'cell_done', 10, 'cell_address')
-    a.label('skip_cell')
-    emit('INC L', [0x2c], 4, 'cell_skip')
-    emit('INC E', [0x1c], 4, 'cell_skip')
-    a.label('cell_done')
-    emit('EXX', [0xd9], 4, 'cell_control')
-    emit('DEC E', [0x1d], 4, 'cell_control')
-    emit('EXX', [0xd9], 4, 'cell_control')
-    ref('JP NZ,cell', 0xc2, 'cell', 10, 'cell_control')
+    if fast_mask_dispatch:
+        emit('OR A', [0xb7], 4, 'mask_dispatch')
+        ref('JP Z,empty_mask', 0xca, 'empty_mask', 10, 'mask_dispatch')
+        # A holds all eight flags; the cell routine preserves it through AF'.
+        # No bit-loop counter or EXX is needed between columns.
+        for _ in range(8):
+            emit('ADD A,A', [0x87], 4, 'cell_dispatch')
+            ref('CALL C,draw_cell', 0xdc, 'draw_cell', [10, 17], 'cell_dispatch')
+            emit('INC L', [0x2c], 4, 'cell_address')
+            emit('INC E', [0x1c], 4, 'cell_address')
+    else:
+        a.label('cell')
+        emit('EXX', [0xd9], 4, 'cell_dispatch')
+        emit('SLA B', [0xcb, 0x20], 8, 'cell_dispatch')
+        emit('EXX', [0xd9], 4, 'cell_dispatch')
+        ref('JP NC,skip_cell', 0xd2, 'skip_cell', 10, 'cell_dispatch')
+        for row in range(4):
+            pixel(reverse=bool(row & 1))
+            if row != 3:
+                adjust('L', 32, 'cell_address')
+                emit('INC D', [0x14], 4, 'cell_address')
+                emit('INC D', [0x14], 4, 'cell_address')
+        adjust('L', -95, 'cell_address')
+        adjust('D', -6, 'cell_address')
+        emit('INC E', [0x1c], 4, 'cell_address')
+        ref('JP cell_done', 0xc3, 'cell_done', 10, 'cell_address')
+        a.label('skip_cell')
+        emit('INC L', [0x2c], 4, 'cell_skip')
+        emit('INC E', [0x1c], 4, 'cell_skip')
+        a.label('cell_done')
+        emit('EXX', [0xd9], 4, 'cell_control')
+        emit('DEC E', [0x1d], 4, 'cell_control')
+        emit('EXX', [0xd9], 4, 'cell_control')
+        ref('JP NZ,cell', 0xc2, 'cell', 10, 'cell_control')
+    a.label('mask_done')
     emit('EXX', [0xd9], 4, 'partial_control')
     emit('DEC C', [0x0d], 4, 'partial_control')
     emit('EXX', [0xd9], 4, 'partial_control')
@@ -176,6 +193,23 @@ def build():
     imm('LD BC,7FFD', 0x01, 0x7ffd, 10, 'paging')
     emit('OUT (C),A', [0xed, 0x79], 12, 'paging')
     emit('RET', [0xc9], 10, 'control')
+    if fast_mask_dispatch:
+        a.label('empty_mask')
+        adjust('L', 8, 'mask_skip')
+        adjust('E', 8, 'mask_skip')
+        ref('JP mask_done', 0xc3, 'mask_done', 10, 'mask_skip')
+        a.label('draw_cell')
+        emit("EX AF,AF'", [0x08], 4, 'cell_control')
+        for row in range(4):
+            pixel(reverse=bool(row & 1))
+            if row != 3:
+                adjust('L', 32, 'cell_address')
+                emit('INC D', [0x14], 4, 'cell_address')
+                emit('INC D', [0x14], 4, 'cell_address')
+        adjust('L', -96, 'cell_address')
+        adjust('D', -6, 'cell_address')
+        emit("EX AF,AF'", [0x08], 4, 'cell_control')
+        emit('RET', [0xc9], 10, 'cell_control')
     a.label('state')
     for name in ('screen_base', 'saved_page', 'bands_left', 'dense_rows_left'):
         a.label(name); a.emit(0)

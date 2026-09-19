@@ -9,9 +9,34 @@ import playback_schedule
 from benchmark_compact_screen import STACK, STOP
 from benchmark_context_huffman import word
 from build_zxv_trd import MiniAssembler
+import cell_screen_z80 as machine
 
 
 class CellScreenTests(unittest.TestCase):
+    def test_unrolled_dispatch_every_mask_and_old_code(self):
+        # This hash is of the unchanged generator's code in cell_output_cpu.json.
+        import json
+        from pathlib import Path
+        baseline = json.loads(Path(__file__).with_name('cell_output_cpu.json').read_text(encoding='utf-8'))
+        self.assertEqual(machine.build()[0], bytes.fromhex(baseline['code_hex']))
+        h = Harness(fast_mask_dispatch=True)
+        states = [bytearray(3840), bytearray(3840)]
+        seen = set()
+        for index in range(4):
+            state = states[index % 2]
+            mask = bytes((index*80+i) % 256 for i in range(80))
+            seen.update(mask)
+            for pos, flags in enumerate(mask):
+                band, octet = divmod(pos, 4)
+                for bit in range(8):
+                    if flags & (128 >> bit):
+                        for row in range(8+band*4, 12+band*4):
+                            state[row*32+octet*8+bit] ^= (17+row+index) & 255
+            state[3072:] = bytes([index+1])*768
+            result = h.run(state, mask, index)
+            self.assertLessEqual(result['tstates'], machine.expected_tstates(mask))
+        self.assertEqual(seen, set(range(256)))
+
     def test_dense_sparse_and_n_minus_two_clearing(self):
         rng = np.random.default_rng(4221)
         states = np.zeros((6, 3840), dtype=np.uint8)
@@ -33,6 +58,8 @@ class CellScreenTests(unittest.TestCase):
     def test_empty_masks_and_invalid_crop(self):
         h = Harness()
         self.assertEqual(h.run(bytes(3840), bytes(80), 0)['tstates'], 58784)
+        fast = Harness(fast_mask_dispatch=True)
+        self.assertEqual(fast.run(bytes(3840), bytes(80), 0)['tstates'], 26704)
         state = bytearray(3840); state[255] = 1
         with self.assertRaises(ValueError):
             h.run(state, bytes(80), 1)
@@ -40,7 +67,13 @@ class CellScreenTests(unittest.TestCase):
             masks(np.array([list(state)], dtype=np.uint8))
 
     def test_ay_irq_at_every_instruction_preserves_exx_and_map_copy(self):
-        h = Harness()
+        self.exercise_irq()
+
+    def test_ay_irq_preserves_unrolled_flags_in_alternate_af(self):
+        self.exercise_irq(fast=True)
+
+    def exercise_irq(self, fast=False):
+        h = Harness(fast_mask_dispatch=fast)
         a = MiniAssembler(0x9400)
         ay_interrupt.emit(a)
         playback_schedule.emit_clock(a, dos_irq=True, full_rom_clock=True, memory_clock=True, audio_irq=True)
