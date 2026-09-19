@@ -146,7 +146,7 @@ class CausalTileTests(unittest.TestCase):
             with self.subTest(skip_empty=skip_empty):
                 self.exercise_irq(skip_empty)
 
-    def exercise_irq(self, skip_empty, *, hybrid_data=None, raw_data=None, spatial_data=None, spatial_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False):
+    def exercise_irq(self, skip_empty, *, hybrid_data=None, raw_data=None, spatial_data=None, spatial_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False):
         tables, mapping = [bytes([8]*256)]*2, bytes(256)
         # Several moving boundary tiles, attributes and untouched regions.
         v = bytearray(192)
@@ -155,6 +155,7 @@ class CausalTileTests(unittest.TestCase):
         current = bytes(255 if i % 401 == 0 else 0 for i in range(3840))
         _, encoded, vectors, bm, at = group(bytes(3840), [bytes(v)], [current], tables, mapping)
         targets = [current]
+        literals = None
         raw_kind = None
         if hybrid_data is not None:
             from probe_hybrid_tiles import read_header, read_group, decode
@@ -180,16 +181,23 @@ class CausalTileTests(unittest.TestCase):
             from probe_motion_entropy import Reader
             self.assertIsNone(hybrid_data); self.assertIsNone(raw_data)
             r = Reader(spatial_data)
-            model, _, n, mapping, tables = read_header(r, magic=b'FHC1' if raw_intra else b'FHF1' if fast_fragments else b'FHS1')
+            model, _, n, mapping, tables = read_header(r, magic=b'FSF1' if split_literals else b'FHC1' if raw_intra else b'FHF1' if fast_fragments else b'FHS1')
             self.assertEqual(model, 0)
             count, _, _, vectors, bm, at, encoded = read_group(r, n, fast_fragments=fast_fragments, raw_intra=raw_intra)
+            if split_literals:
+                from probe_fast_fragments import SIZES
+                from probe_fragment_channels import restore
+                literals = r.take(sum(SIZES.get(v, 0) for v in vectors))
             self.assertEqual(count, n); r.end()
-            restored, _ = decode(spatial_data, fast_fragments=fast_fragments, raw_intra=raw_intra)
+            if split_literals:
+                _, restored = restore(spatial_data)
+            else:
+                restored, _ = decode(spatial_data, fast_fragments=fast_fragments, raw_intra=raw_intra)
             targets = [restored[i*3840:(i+1)*3840] for i in range(n)]
         h = Harness(tables, mapping, OFFSETS, skip_empty=skip_empty,
             hybrid=hybrid_data is not None or raw_data is not None or spatial_data is not None,
-            raw_kind=raw_kind, intra_above=spatial_data is not None, intra_extended=spatial_extended, fast_fragments=fast_fragments, unrolled_motion=unrolled_motion, raw_intra=raw_intra)
-        h.begin(encoded, vectors, bm, at)
+            raw_kind=raw_kind, intra_above=spatial_data is not None, intra_extended=spatial_extended, fast_fragments=fast_fragments, unrolled_motion=unrolled_motion, raw_intra=raw_intra, split_literals=split_literals)
+        h.begin(encoded, vectors, bm, at, literals=literals)
         irq_base = 0x9400 if unrolled_motion else 0x9200 if spatial_extended else 0x8800
         a = MiniAssembler(irq_base)
         ay_interrupt.emit(a)

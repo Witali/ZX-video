@@ -13,6 +13,8 @@ unrolled_motion=True removes row loops and uses alternate DE as the output
 cursor; phases 2/6 use rotate/mask merges. No stream or table changes.
 raw_intra=True adds FHC1 high-bit flags on spatial modes 82..84. Only
 masked bytes are literal; their spatial predictions are never computed.
+split_literals=True adds an independent FSF1 fragment cursor in state;
+fragment loads do not align or change the retained Huffman IX/C position.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -43,12 +45,12 @@ def intra_tstates(vector, tile, corrections, *, extended=False):
     return 629+34+4*(32 if tile < 16 else 53)+12*26+25*corrections
 
 
-def fast_tstates(vector, *, unaligned=False, selector=0):
+def fast_tstates(vector, *, unaligned=False, selector=0, split_literals=False):
     """Whole-fragment routine incl. RET; caller/outer traversal are separate."""
     if vector not in (85, 86, 87, 88) or not 0 <= selector <= 255:
         raise ValueError('invalid fast fragment')
     base = {85: 546, 86: 541, 87: 818+10*(8-selector.bit_count()), 88: 513}[vector]
-    return base+10*bool(unaligned)
+    return base-54 if split_literals else base+10*bool(unaligned)
 
 
 def motion_tstates(vector, offsets, *, unrolled=False):
@@ -84,7 +86,9 @@ def raw_intra_tstates(vector, tile, mask, *, unaligned=False):
     return total
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False):
+    if split_literals and (not fast_fragments or raw_intra):
+        raise ValueError('split literals require FHF fast fragments without raw intra')
     if raw_intra and not fast_fragments:
         raise ValueError('raw intra requires fast fragments')
     if fast_fragments and not intra_extended:
@@ -370,18 +374,24 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('INC HL', [0x23], 6); emit('INC HL', [0x23], 6)
         load('LD (bitmap_masks),HL', 0x22, 'bitmap_masks', 16)
         emit('LD B,A', [0x47], 4)
-        emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4)
-        emit('AND 7', [0xe6, 7], 7); jump('JP Z,fragment_aligned', 0xca, 'fragment_aligned', 10)
-        emit('INC IX', [0xdd, 0x23], 10); a.label('fragment_aligned')
-        emit('LD C,F0h', [0x0e, 0xf0], 7); emit('EXX', [0xd9], 4)
-        emit('PUSH IX', [0xdd, 0xe5], 15); emit('POP HL', [0xe1], 10)
+        if split_literals:
+            load('LD HL,(literal_source)', 0x2a, 'literal_source', 16)
+        else:
+            emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4)
+            emit('AND 7', [0xe6, 7], 7); jump('JP Z,fragment_aligned', 0xca, 'fragment_aligned', 10)
+            emit('INC IX', [0xdd, 0x23], 10); a.label('fragment_aligned')
+            emit('LD C,F0h', [0x0e, 0xf0], 7); emit('EXX', [0xd9], 4)
+            emit('PUSH IX', [0xdd, 0xe5], 15); emit('POP HL', [0xe1], 10)
         load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
         emit('LD A,B', [0x78], 4)
         for value, label in ((85, 'fragment_raw'), (86, 'fragment_repeat'), (87, 'fragment_rows')):
             emit(f'CP {value}', [0xfe, value], 7); jump('JP Z,'+label, 0xca, label, 10)
 
         def save_fragment_cursor():
-            emit('PUSH HL', [0xe5], 11); emit('POP IX', [0xdd, 0xe1], 14)
+            if split_literals:
+                load('LD (literal_source),HL', 0x22, 'literal_source', 16)
+            else:
+                emit('PUSH HL', [0xe5], 11); emit('POP IX', [0xdd, 0xe1], 14)
 
         def row_advance():
             emit('LD A,E', [0x7b], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD E,A', [0x5f], 4)
@@ -670,6 +680,8 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         a.label(name); a.emit(value)
     if hybrid:
         a.label('cache_enabled'); a.emit(1)
+    if split_literals:
+        a.label('literal_source'); a.word(0)
     a.label('end')
     if a.pc > VECTOR_X:
         raise ValueError('frame code collides with motion tables')

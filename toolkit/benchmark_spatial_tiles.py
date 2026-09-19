@@ -28,6 +28,7 @@ def main():
     p.add_argument('--fast-fragments', action='store_true', help='FHF1 complete fragment payloads; requires --extended')
     p.add_argument('--unrolled-motion', action='store_true')
     p.add_argument('--raw-intra', action='store_true', help='FHC1 fused raw spatial corrections; requires --fast-fragments')
+    p.add_argument('--split-literals', action='store_true', help='FSF1 separate fragment channel; requires --fast-fragments')
     p.add_argument('--baseline-commit', default='7dea054')
     p.add_argument('--resume', action='store_true', help='resume an incomplete group-boundary checkpoint in --output')
     p.add_argument('--group-limit', type=int, help='stop with an incomplete checkpoint after this total number of groups')
@@ -36,15 +37,17 @@ def main():
         p.error('--fast-fragments requires --extended')
     if args.raw_intra and not args.fast_fragments:
         p.error('--raw-intra requires --fast-fragments')
+    if args.split_literals and (not args.fast_fragments or args.raw_intra):
+        p.error('--split-literals requires --fast-fragments without --raw-intra')
     if args.group_limit is not None and args.group_limit <= 0:
         p.error('--group-limit must be positive')
     data = args.fhs.read_bytes(); r = Reader(data)
-    model, _, count, mapping, tables = read_header(r, magic=b'FHC1' if args.raw_intra else b'FHF1' if args.fast_fragments else b'FHS1')
+    model, _, count, mapping, tables = read_header(r, magic=b'FSF1' if args.split_literals else b'FHC1' if args.raw_intra else b'FHF1' if args.fast_fragments else b'FHS1')
     with np.load(args.motion_cache) as saved:
         states = saved['states']
     if model != 0 or states.shape != (4971, 3840) or count != len(states) or sha(states.tobytes()) != args.states_sha256:
         raise ValueError('model/source mismatch')
-    h = Harness(tables, mapping, OFFSETS, skip_empty=True, hybrid=True, intra_above=True, intra_extended=args.extended, fast_fragments=args.fast_fragments, unrolled_motion=args.unrolled_motion, raw_intra=args.raw_intra)
+    h = Harness(tables, mapping, OFFSETS, skip_empty=True, hybrid=True, intra_above=True, intra_extended=args.extended, fast_fragments=args.fast_fragments, unrolled_motion=args.unrolled_motion, raw_intra=args.raw_intra, split_literals=args.split_literals)
     report = dict(scope=__doc__, baseline_commit=args.baseline_commit, input_sha256=sha(data),
         intra_extended=args.extended, fast_fragments=args.fast_fragments, unrolled_motion=args.unrolled_motion,
         states_sha256=sha(states.tobytes()), frames_expected=count, complete=False,
@@ -56,6 +59,21 @@ def main():
         groups=[], frames=[])
     if args.raw_intra:
         report['raw_intra'] = True
+    if args.split_literals:
+        report['split_literals'] = True
+        report['input_channel_guard_bytes'] = 2
+    def group_input(remaining):
+        group = read_group(r, remaining, fast_fragments=args.fast_fragments, raw_intra=args.raw_intra)
+        literals = None
+        if args.split_literals:
+            from probe_fast_fragments import SIZES
+            literals = r.take(sum(SIZES.get(v, 0) for v in group[3]))
+        return (*group, literals)
+    def group_record(start, n, bits, encoded, literals):
+        record = dict(start=start, frames=n, bits=bits, encoded_bytes=len(encoded)+(len(literals) if literals is not None else 0))
+        if literals is not None:
+            record['literal_bytes'] = len(literals)
+        return record
     start = 0
     if args.resume:
         saved = json.loads(args.output.read_text(encoding='utf-8'))
@@ -63,7 +81,8 @@ def main():
                     'intra_extended', 'fast_fragments', 'unrolled_motion'):
             if saved.get(key) != report.get(key):
                 raise ValueError('checkpoint differs: '+key)
-        if saved.get('raw_intra', False) != args.raw_intra or saved.get('complete') or 'checkpoint' not in saved:
+        if (saved.get('raw_intra', False) != args.raw_intra or saved.get('split_literals', False) != args.split_literals
+                or saved.get('complete') or 'checkpoint' not in saved):
             raise ValueError('not a resumable incomplete checkpoint')
         checkpoint = saved['checkpoint']; start = checkpoint['frames']
         previous = bytes.fromhex(checkpoint['compact_frame_hex'])
@@ -76,8 +95,8 @@ def main():
             raise ValueError('checkpoint coverage/state differs')
         skipped = 0
         for old in saved['groups']:
-            n, _, bits, _, _, _, encoded = read_group(r, count-skipped, fast_fragments=args.fast_fragments, raw_intra=args.raw_intra)
-            if old != dict(start=skipped, frames=n, bits=bits, encoded_bytes=len(encoded)):
+            n, _, bits, _, _, _, encoded, literals = group_input(count-skipped)
+            if old != group_record(skipped, n, bits, encoded, literals):
                 raise ValueError('checkpoint group differs')
             skipped += n
         for i, value in enumerate(previous):
@@ -90,10 +109,10 @@ def main():
             p.error('--group-limit must exceed the resumed group count')
         print(f'Resumed verified checkpoint at {start}/{count}', flush=True)
     while start < count:
-        n, flags, bits, vectors, bm, at, encoded = read_group(r, count-start, fast_fragments=args.fast_fragments, raw_intra=args.raw_intra)
+        n, flags, bits, vectors, bm, at, encoded, literals = group_input(count-start)
         if any(v > (88 if args.fast_fragments else (84 if args.extended else 82)) and not (args.raw_intra and v in (210, 211, 212)) for v in vectors):
             raise ValueError('unsupported vector in this Z80 configuration')
-        h.begin(encoded, vectors, bm, at)
+        h.begin(encoded, vectors, bm, at, literals=literals)
         for i in range(n):
             got = h.run(i, states[start+i].tobytes())
             expected = intra = 0
@@ -113,7 +132,9 @@ def main():
             report['frames'].append(dict(index=start+i, intra_tiles=intra, intra_modes=dict(modes), **got))
         if h.position() != bits:
             raise AssertionError('group bit coverage')
-        report['groups'].append(dict(start=start, frames=n, bits=bits, encoded_bytes=len(encoded)))
+        if args.split_literals and h.literal_position() != len(literals):
+            raise AssertionError('group literal coverage')
+        report['groups'].append(group_record(start, n, bits, encoded, literals))
         start += n
         if len(report['groups']) % 25 == 1 or len(report['groups']) == args.group_limit:
             report['instruction_histogram'] = [dict(address=pc, tstates=t, count=n) for (pc, t), n in sorted(h.histogram.items())]

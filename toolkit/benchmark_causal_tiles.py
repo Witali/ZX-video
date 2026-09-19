@@ -46,13 +46,14 @@ class GuardCPU(CPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False):
+    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False):
         self.hybrid = hybrid
         self.raw_kind = raw_kind
         self.fast_fragments = fast_fragments
         self.unrolled_motion, self.offsets = unrolled_motion, offsets
         self.raw_intra = raw_intra
-        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above, intra_extended=intra_extended, fast_fragments=fast_fragments, unrolled_motion=unrolled_motion, raw_intra=raw_intra)
+        self.split_literals = split_literals
+        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above, intra_extended=intra_extended, fast_fragments=fast_fragments, unrolled_motion=unrolled_motion, raw_intra=raw_intra, split_literals=split_literals)
         self.raw_value_entries = {self.labels[f'raw_value_{i}'] for i in range(16)} if raw_kind is not None else set()
         self.cpu = GuardCPU(b'', b'')
         self.cpu.port_7ffd, self.cpu.sp = 0x16, STACK
@@ -63,20 +64,26 @@ class Harness:
         self.instructions = {r['address']: r for r in self.listing}
         self.histogram = Counter()
 
-    def begin(self, encoded, vectors, bitmap_masks, attribute_masks):
+    def begin(self, encoded, vectors, bitmap_masks, attribute_masks, *, literals=None):
         if not 1 <= len(vectors)//192 <= 8 or len(vectors) % 192:
             raise ValueError('invalid group vectors')
         frames = len(vectors)//192
         if len(bitmap_masks) != frames*384 or len(attribute_masks) != frames*96:
             raise ValueError('invalid group masks')
-        if len(encoded)+1 > machine.FRAME-INPUT:
+        if (literals is not None) != self.split_literals:
+            raise ValueError('literal channel configuration differs')
+        input_data = encoded+b'\0'+literals if self.split_literals else encoded
+        if len(input_data)+1 > machine.FRAME-INPUT:
             raise ValueError('input exceeds contiguous CPU fixture')
         self.cpu.guarding = False
-        for base, blob in ((INPUT, encoded+b'\0'), (VECTORS, vectors),
+        for base, blob in ((INPUT, input_data+b'\0'), (VECTORS, vectors),
                            (BITMAP_MASKS, bitmap_masks), (ATTRIBUTE_MASKS, attribute_masks)):
             for i, value in enumerate(blob):
                 self.cpu.write8(base+i, value)
-        self.cpu.input_end = INPUT+len(encoded)+1
+        self.cpu.input_end = INPUT+len(input_data)+1
+        if self.split_literals:
+            self.literal_start = INPUT+len(encoded)+1
+            word(self.cpu, self.labels['literal_source'], self.literal_start)
         word(self.cpu, self.labels['source'], INPUT)
         self.cpu.write8(self.labels['bit_page'], 0xf0)
         self.group_frames = frames
@@ -87,6 +94,9 @@ class Harness:
         if not 0xf0 <= page <= 0xf7:
             raise AssertionError('invalid retained bit position')
         return (word(self.cpu, self.labels['source'])-INPUT)*8+(page & 7)
+
+    def literal_position(self):
+        return word(self.cpu, self.labels['literal_source'])-self.literal_start
 
     def run(self, frame, expected, interrupt=None):
         if not 0 <= frame < self.group_frames or len(expected) != 3840:
@@ -134,9 +144,10 @@ class Harness:
             if self.raw_kind is not None and pc == self.labels['raw_patches']:
                 raw_tiles += 1; unaligned += int(cpu.alt_c & 7 != 0)
             if self.fast_fragments and pc == self.labels['fast_fragment']:
-                is_unaligned = bool(cpu.alt_c & 7)
-                selector = cpu.read8(cpu.ix+is_unaligned+4) if cpu.a == 87 else 0
-                fast_formula += machine.fast_tstates(cpu.a, unaligned=is_unaligned, selector=selector)
+                is_unaligned = False if self.split_literals else bool(cpu.alt_c & 7)
+                source = word(cpu, self.labels['literal_source']) if self.split_literals else cpu.ix+is_unaligned
+                selector = cpu.read8(source+4) if cpu.a == 87 else 0
+                fast_formula += machine.fast_tstates(cpu.a, unaligned=is_unaligned, selector=selector, split_literals=self.split_literals)
                 fast_unaligned += is_unaligned; fast_kinds[cpu.a] += 1
             cpu.step(); steps += 1
             elapsed, wanted = cpu.tstates-ticks, row['tstates']

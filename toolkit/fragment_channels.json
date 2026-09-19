@@ -1,0 +1,5795 @@
+{
+  "scope": "FSF1: separate Huffman bits and complete fragment payloads per FHF1 group.\n\nPreserves group boundaries, metadata, code tables and selected modes. The\ngroup bit count now covers Huffman only, followed by byte-aligned fragment\npayloads. Their total size is determined by the vector bytes, without a new\nlength field. Independent causal decoding rebuilds the original FHF1 stream\nbyte for byte. No Spectrum two-cursor/window implementation is claimed.\n",
+  "complete": true,
+  "baseline_commit": "6c5c818",
+  "input_sha256": "23bfb3800f561467ee0e54d3eaf23e24ad13a2bbbaf5252f8bfe273eb8460327",
+  "sha256": "82daadf51b0633aa02345b6c184fb1536b8c70f29b85ae4ab2ebb5ad712da212",
+  "states_sha256": "4b9e90d22df2809a70c1cb09890de0a9bb0a23d1b1e357b3f6c29ff830cc9c3b",
+  "frames": 4971,
+  "exact_original_stream_roundtrip": true,
+  "exact_causal_frame_decode": true,
+  "original_bytes": 3031081,
+  "raw_bytes": 3022350,
+  "raw_delta_bytes": -8731,
+  "huffman_bits": 4915019,
+  "literal_bytes": 804330,
+  "removed_alignment_bits": 69918,
+  "max_group_bytes": 9159,
+  "groups": [
+    {
+      "start": 0,
+      "frames": 8,
+      "original_bits": 3840,
+      "huffman_bits": 3840,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 480
+    },
+    {
+      "start": 8,
+      "frames": 8,
+      "original_bits": 4845,
+      "huffman_bits": 4423,
+      "literal_bytes": 52,
+      "removed_alignment_bits": 6,
+      "combined_bytes": 605
+    },
+    {
+      "start": 16,
+      "frames": 8,
+      "original_bits": 5318,
+      "huffman_bits": 3920,
+      "literal_bytes": 172,
+      "removed_alignment_bits": 22,
+      "combined_bytes": 662
+    },
+    {
+      "start": 24,
+      "frames": 8,
+      "original_bits": 3360,
+      "huffman_bits": 3360,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 420
+    },
+    {
+      "start": 32,
+      "frames": 8,
+      "original_bits": 3470,
+      "huffman_bits": 3470,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 434
+    },
+    {
+      "start": 40,
+      "frames": 8,
+      "original_bits": 4451,
+      "huffman_bits": 4451,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 557
+    },
+    {
+      "start": 48,
+      "frames": 8,
+      "original_bits": 4705,
+      "huffman_bits": 4705,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 589
+    },
+    {
+      "start": 56,
+      "frames": 8,
+      "original_bits": 5751,
+      "huffman_bits": 5751,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 719
+    },
+    {
+      "start": 64,
+      "frames": 8,
+      "original_bits": 7755,
+      "huffman_bits": 7755,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 970
+    },
+    {
+      "start": 72,
+      "frames": 8,
+      "original_bits": 8878,
+      "huffman_bits": 8878,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1110
+    },
+    {
+      "start": 80,
+      "frames": 8,
+      "original_bits": 10243,
+      "huffman_bits": 10243,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1281
+    },
+    {
+      "start": 88,
+      "frames": 8,
+      "original_bits": 6956,
+      "huffman_bits": 6956,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 870
+    },
+    {
+      "start": 96,
+      "frames": 8,
+      "original_bits": 17395,
+      "huffman_bits": 6388,
+      "literal_bytes": 1363,
+      "removed_alignment_bits": 103,
+      "combined_bytes": 2162
+    },
+    {
+      "start": 104,
+      "frames": 8,
+      "original_bits": 7730,
+      "huffman_bits": 7730,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 967
+    },
+    {
+      "start": 112,
+      "frames": 8,
+      "original_bits": 7772,
+      "huffman_bits": 7772,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 972
+    },
+    {
+      "start": 120,
+      "frames": 8,
+      "original_bits": 6809,
+      "huffman_bits": 6809,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 852
+    },
+    {
+      "start": 128,
+      "frames": 8,
+      "original_bits": 11783,
+      "huffman_bits": 5493,
+      "literal_bytes": 770,
+      "removed_alignment_bits": 130,
+      "combined_bytes": 1457
+    },
+    {
+      "start": 136,
+      "frames": 8,
+      "original_bits": 5297,
+      "huffman_bits": 5297,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 663
+    },
+    {
+      "start": 144,
+      "frames": 8,
+      "original_bits": 6072,
+      "huffman_bits": 6072,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 759
+    },
+    {
+      "start": 152,
+      "frames": 8,
+      "original_bits": 2186,
+      "huffman_bits": 2186,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 274
+    },
+    {
+      "start": 160,
+      "frames": 8,
+      "original_bits": 3132,
+      "huffman_bits": 3132,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 392
+    },
+    {
+      "start": 168,
+      "frames": 8,
+      "original_bits": 8460,
+      "huffman_bits": 8460,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1058
+    },
+    {
+      "start": 176,
+      "frames": 8,
+      "original_bits": 4401,
+      "huffman_bits": 4401,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 551
+    },
+    {
+      "start": 184,
+      "frames": 8,
+      "original_bits": 1644,
+      "huffman_bits": 1644,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 206
+    },
+    {
+      "start": 192,
+      "frames": 8,
+      "original_bits": 14451,
+      "huffman_bits": 5486,
+      "literal_bytes": 1108,
+      "removed_alignment_bits": 101,
+      "combined_bytes": 1794
+    },
+    {
+      "start": 200,
+      "frames": 8,
+      "original_bits": 4917,
+      "huffman_bits": 4917,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 615
+    },
+    {
+      "start": 208,
+      "frames": 8,
+      "original_bits": 12730,
+      "huffman_bits": 12730,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1592
+    },
+    {
+      "start": 216,
+      "frames": 8,
+      "original_bits": 5987,
+      "huffman_bits": 5987,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 749
+    },
+    {
+      "start": 224,
+      "frames": 8,
+      "original_bits": 4710,
+      "huffman_bits": 4710,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 589
+    },
+    {
+      "start": 232,
+      "frames": 8,
+      "original_bits": 4996,
+      "huffman_bits": 4996,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 625
+    },
+    {
+      "start": 240,
+      "frames": 8,
+      "original_bits": 10388,
+      "huffman_bits": 10388,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1299
+    },
+    {
+      "start": 248,
+      "frames": 8,
+      "original_bits": 8778,
+      "huffman_bits": 8778,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1098
+    },
+    {
+      "start": 256,
+      "frames": 8,
+      "original_bits": 9930,
+      "huffman_bits": 9930,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1242
+    },
+    {
+      "start": 264,
+      "frames": 8,
+      "original_bits": 11928,
+      "huffman_bits": 11928,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1491
+    },
+    {
+      "start": 272,
+      "frames": 8,
+      "original_bits": 7533,
+      "huffman_bits": 7533,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 942
+    },
+    {
+      "start": 280,
+      "frames": 8,
+      "original_bits": 6328,
+      "huffman_bits": 6328,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 791
+    },
+    {
+      "start": 288,
+      "frames": 8,
+      "original_bits": 5411,
+      "huffman_bits": 5411,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 677
+    },
+    {
+      "start": 296,
+      "frames": 8,
+      "original_bits": 4591,
+      "huffman_bits": 4591,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 574
+    },
+    {
+      "start": 304,
+      "frames": 8,
+      "original_bits": 4442,
+      "huffman_bits": 4442,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 556
+    },
+    {
+      "start": 312,
+      "frames": 8,
+      "original_bits": 3942,
+      "huffman_bits": 3942,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 493
+    },
+    {
+      "start": 320,
+      "frames": 8,
+      "original_bits": 3494,
+      "huffman_bits": 3494,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 437
+    },
+    {
+      "start": 328,
+      "frames": 8,
+      "original_bits": 3601,
+      "huffman_bits": 3601,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 451
+    },
+    {
+      "start": 336,
+      "frames": 8,
+      "original_bits": 3047,
+      "huffman_bits": 3047,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 381
+    },
+    {
+      "start": 344,
+      "frames": 8,
+      "original_bits": 2710,
+      "huffman_bits": 2710,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 339
+    },
+    {
+      "start": 352,
+      "frames": 8,
+      "original_bits": 2444,
+      "huffman_bits": 2444,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 306
+    },
+    {
+      "start": 360,
+      "frames": 8,
+      "original_bits": 2292,
+      "huffman_bits": 2292,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 287
+    },
+    {
+      "start": 368,
+      "frames": 8,
+      "original_bits": 5914,
+      "huffman_bits": 5914,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 740
+    },
+    {
+      "start": 376,
+      "frames": 8,
+      "original_bits": 6309,
+      "huffman_bits": 6309,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 789
+    },
+    {
+      "start": 384,
+      "frames": 8,
+      "original_bits": 6114,
+      "huffman_bits": 6114,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 765
+    },
+    {
+      "start": 392,
+      "frames": 8,
+      "original_bits": 18215,
+      "huffman_bits": 7246,
+      "literal_bytes": 1359,
+      "removed_alignment_bits": 97,
+      "combined_bytes": 2265
+    },
+    {
+      "start": 400,
+      "frames": 8,
+      "original_bits": 20054,
+      "huffman_bits": 14339,
+      "literal_bytes": 701,
+      "removed_alignment_bits": 107,
+      "combined_bytes": 2494
+    },
+    {
+      "start": 408,
+      "frames": 8,
+      "original_bits": 32449,
+      "huffman_bits": 14423,
+      "literal_bytes": 2210,
+      "removed_alignment_bits": 346,
+      "combined_bytes": 4013
+    },
+    {
+      "start": 416,
+      "frames": 8,
+      "original_bits": 11064,
+      "huffman_bits": 11064,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1383
+    },
+    {
+      "start": 424,
+      "frames": 8,
+      "original_bits": 4384,
+      "huffman_bits": 4384,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 548
+    },
+    {
+      "start": 432,
+      "frames": 8,
+      "original_bits": 6519,
+      "huffman_bits": 6519,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 815
+    },
+    {
+      "start": 440,
+      "frames": 8,
+      "original_bits": 6192,
+      "huffman_bits": 6192,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 774
+    },
+    {
+      "start": 448,
+      "frames": 8,
+      "original_bits": 10104,
+      "huffman_bits": 10104,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1263
+    },
+    {
+      "start": 456,
+      "frames": 8,
+      "original_bits": 13255,
+      "huffman_bits": 13255,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1657
+    },
+    {
+      "start": 464,
+      "frames": 8,
+      "original_bits": 8456,
+      "huffman_bits": 5884,
+      "literal_bytes": 314,
+      "removed_alignment_bits": 60,
+      "combined_bytes": 1050
+    },
+    {
+      "start": 472,
+      "frames": 8,
+      "original_bits": 1978,
+      "huffman_bits": 1978,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 248
+    },
+    {
+      "start": 480,
+      "frames": 8,
+      "original_bits": 22978,
+      "huffman_bits": 8874,
+      "literal_bytes": 1723,
+      "removed_alignment_bits": 320,
+      "combined_bytes": 2833
+    },
+    {
+      "start": 488,
+      "frames": 8,
+      "original_bits": 7395,
+      "huffman_bits": 7395,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 925
+    },
+    {
+      "start": 496,
+      "frames": 8,
+      "original_bits": 2576,
+      "huffman_bits": 2576,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 322
+    },
+    {
+      "start": 504,
+      "frames": 8,
+      "original_bits": 12048,
+      "huffman_bits": 6923,
+      "literal_bytes": 627,
+      "removed_alignment_bits": 109,
+      "combined_bytes": 1493
+    },
+    {
+      "start": 512,
+      "frames": 8,
+      "original_bits": 5332,
+      "huffman_bits": 5332,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 667
+    },
+    {
+      "start": 520,
+      "frames": 8,
+      "original_bits": 7291,
+      "huffman_bits": 7158,
+      "literal_bytes": 16,
+      "removed_alignment_bits": 5,
+      "combined_bytes": 911
+    },
+    {
+      "start": 528,
+      "frames": 8,
+      "original_bits": 12940,
+      "huffman_bits": 5942,
+      "literal_bytes": 863,
+      "removed_alignment_bits": 94,
+      "combined_bytes": 1606
+    },
+    {
+      "start": 536,
+      "frames": 8,
+      "original_bits": 6023,
+      "huffman_bits": 6023,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 753
+    },
+    {
+      "start": 544,
+      "frames": 8,
+      "original_bits": 9810,
+      "huffman_bits": 9810,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1227
+    },
+    {
+      "start": 552,
+      "frames": 8,
+      "original_bits": 12408,
+      "huffman_bits": 12371,
+      "literal_bytes": 3,
+      "removed_alignment_bits": 13,
+      "combined_bytes": 1550
+    },
+    {
+      "start": 560,
+      "frames": 8,
+      "original_bits": 8383,
+      "huffman_bits": 8383,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1048
+    },
+    {
+      "start": 568,
+      "frames": 8,
+      "original_bits": 20054,
+      "huffman_bits": 9240,
+      "literal_bytes": 1326,
+      "removed_alignment_bits": 206,
+      "combined_bytes": 2481
+    },
+    {
+      "start": 576,
+      "frames": 8,
+      "original_bits": 11445,
+      "huffman_bits": 4633,
+      "literal_bytes": 830,
+      "removed_alignment_bits": 172,
+      "combined_bytes": 1410
+    },
+    {
+      "start": 584,
+      "frames": 8,
+      "original_bits": 1279,
+      "huffman_bits": 1279,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 160
+    },
+    {
+      "start": 592,
+      "frames": 8,
+      "original_bits": 6501,
+      "huffman_bits": 2462,
+      "literal_bytes": 497,
+      "removed_alignment_bits": 63,
+      "combined_bytes": 805
+    },
+    {
+      "start": 600,
+      "frames": 8,
+      "original_bits": 3704,
+      "huffman_bits": 3704,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 463
+    },
+    {
+      "start": 608,
+      "frames": 8,
+      "original_bits": 16115,
+      "huffman_bits": 7867,
+      "literal_bytes": 1018,
+      "removed_alignment_bits": 104,
+      "combined_bytes": 2002
+    },
+    {
+      "start": 616,
+      "frames": 8,
+      "original_bits": 32704,
+      "huffman_bits": 9014,
+      "literal_bytes": 2907,
+      "removed_alignment_bits": 434,
+      "combined_bytes": 4034
+    },
+    {
+      "start": 624,
+      "frames": 8,
+      "original_bits": 30890,
+      "huffman_bits": 10795,
+      "literal_bytes": 2460,
+      "removed_alignment_bits": 415,
+      "combined_bytes": 3810
+    },
+    {
+      "start": 632,
+      "frames": 8,
+      "original_bits": 20982,
+      "huffman_bits": 14280,
+      "literal_bytes": 818,
+      "removed_alignment_bits": 158,
+      "combined_bytes": 2603
+    },
+    {
+      "start": 640,
+      "frames": 8,
+      "original_bits": 41121,
+      "huffman_bits": 11504,
+      "literal_bytes": 3640,
+      "removed_alignment_bits": 497,
+      "combined_bytes": 5078
+    },
+    {
+      "start": 648,
+      "frames": 8,
+      "original_bits": 39523,
+      "huffman_bits": 11324,
+      "literal_bytes": 3463,
+      "removed_alignment_bits": 495,
+      "combined_bytes": 4879
+    },
+    {
+      "start": 656,
+      "frames": 8,
+      "original_bits": 33522,
+      "huffman_bits": 11946,
+      "literal_bytes": 2651,
+      "removed_alignment_bits": 368,
+      "combined_bytes": 4145
+    },
+    {
+      "start": 664,
+      "frames": 8,
+      "original_bits": 13102,
+      "huffman_bits": 9366,
+      "literal_bytes": 458,
+      "removed_alignment_bits": 72,
+      "combined_bytes": 1629
+    },
+    {
+      "start": 672,
+      "frames": 8,
+      "original_bits": 10995,
+      "huffman_bits": 9231,
+      "literal_bytes": 215,
+      "removed_alignment_bits": 44,
+      "combined_bytes": 1369
+    },
+    {
+      "start": 680,
+      "frames": 8,
+      "original_bits": 7461,
+      "huffman_bits": 7461,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 933
+    },
+    {
+      "start": 688,
+      "frames": 8,
+      "original_bits": 5904,
+      "huffman_bits": 5904,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 738
+    },
+    {
+      "start": 696,
+      "frames": 8,
+      "original_bits": 1996,
+      "huffman_bits": 1996,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 250
+    },
+    {
+      "start": 704,
+      "frames": 8,
+      "original_bits": 411,
+      "huffman_bits": 411,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 52
+    },
+    {
+      "start": 712,
+      "frames": 8,
+      "original_bits": 4466,
+      "huffman_bits": 4466,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 559
+    },
+    {
+      "start": 720,
+      "frames": 8,
+      "original_bits": 5953,
+      "huffman_bits": 5953,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 745
+    },
+    {
+      "start": 728,
+      "frames": 8,
+      "original_bits": 4642,
+      "huffman_bits": 4642,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 581
+    },
+    {
+      "start": 736,
+      "frames": 8,
+      "original_bits": 2473,
+      "huffman_bits": 2473,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 310
+    },
+    {
+      "start": 744,
+      "frames": 8,
+      "original_bits": 7687,
+      "huffman_bits": 3234,
+      "literal_bytes": 545,
+      "removed_alignment_bits": 93,
+      "combined_bytes": 950
+    },
+    {
+      "start": 752,
+      "frames": 8,
+      "original_bits": 2092,
+      "huffman_bits": 2092,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 262
+    },
+    {
+      "start": 760,
+      "frames": 8,
+      "original_bits": 6621,
+      "huffman_bits": 3565,
+      "literal_bytes": 372,
+      "removed_alignment_bits": 80,
+      "combined_bytes": 818
+    },
+    {
+      "start": 768,
+      "frames": 8,
+      "original_bits": 2023,
+      "huffman_bits": 2023,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 253
+    },
+    {
+      "start": 776,
+      "frames": 8,
+      "original_bits": 1935,
+      "huffman_bits": 1935,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 242
+    },
+    {
+      "start": 784,
+      "frames": 8,
+      "original_bits": 3573,
+      "huffman_bits": 3573,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 447
+    },
+    {
+      "start": 792,
+      "frames": 8,
+      "original_bits": 6934,
+      "huffman_bits": 6934,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 867
+    },
+    {
+      "start": 800,
+      "frames": 8,
+      "original_bits": 7289,
+      "huffman_bits": 7289,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 912
+    },
+    {
+      "start": 808,
+      "frames": 8,
+      "original_bits": 1434,
+      "huffman_bits": 1434,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 180
+    },
+    {
+      "start": 816,
+      "frames": 8,
+      "original_bits": 3011,
+      "huffman_bits": 3011,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 377
+    },
+    {
+      "start": 824,
+      "frames": 8,
+      "original_bits": 8022,
+      "huffman_bits": 3815,
+      "literal_bytes": 513,
+      "removed_alignment_bits": 103,
+      "combined_bytes": 990
+    },
+    {
+      "start": 832,
+      "frames": 8,
+      "original_bits": 2601,
+      "huffman_bits": 2601,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 326
+    },
+    {
+      "start": 840,
+      "frames": 8,
+      "original_bits": 3348,
+      "huffman_bits": 3348,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 419
+    },
+    {
+      "start": 848,
+      "frames": 8,
+      "original_bits": 7241,
+      "huffman_bits": 7241,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 906
+    },
+    {
+      "start": 856,
+      "frames": 8,
+      "original_bits": 4256,
+      "huffman_bits": 4256,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 532
+    },
+    {
+      "start": 864,
+      "frames": 8,
+      "original_bits": 12982,
+      "huffman_bits": 7994,
+      "literal_bytes": 608,
+      "removed_alignment_bits": 124,
+      "combined_bytes": 1608
+    },
+    {
+      "start": 872,
+      "frames": 8,
+      "original_bits": 11624,
+      "huffman_bits": 10596,
+      "literal_bytes": 124,
+      "removed_alignment_bits": 36,
+      "combined_bytes": 1449
+    },
+    {
+      "start": 880,
+      "frames": 8,
+      "original_bits": 11039,
+      "huffman_bits": 10513,
+      "literal_bytes": 64,
+      "removed_alignment_bits": 14,
+      "combined_bytes": 1379
+    },
+    {
+      "start": 888,
+      "frames": 8,
+      "original_bits": 7015,
+      "huffman_bits": 7015,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 877
+    },
+    {
+      "start": 896,
+      "frames": 8,
+      "original_bits": 8610,
+      "huffman_bits": 8610,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1077
+    },
+    {
+      "start": 904,
+      "frames": 8,
+      "original_bits": 9005,
+      "huffman_bits": 9005,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1126
+    },
+    {
+      "start": 912,
+      "frames": 8,
+      "original_bits": 9647,
+      "huffman_bits": 9513,
+      "literal_bytes": 16,
+      "removed_alignment_bits": 6,
+      "combined_bytes": 1206
+    },
+    {
+      "start": 920,
+      "frames": 8,
+      "original_bits": 7639,
+      "huffman_bits": 7102,
+      "literal_bytes": 65,
+      "removed_alignment_bits": 17,
+      "combined_bytes": 953
+    },
+    {
+      "start": 928,
+      "frames": 8,
+      "original_bits": 10980,
+      "huffman_bits": 10407,
+      "literal_bytes": 69,
+      "removed_alignment_bits": 21,
+      "combined_bytes": 1370
+    },
+    {
+      "start": 936,
+      "frames": 8,
+      "original_bits": 18189,
+      "huffman_bits": 10017,
+      "literal_bytes": 1009,
+      "removed_alignment_bits": 100,
+      "combined_bytes": 2262
+    },
+    {
+      "start": 944,
+      "frames": 8,
+      "original_bits": 9393,
+      "huffman_bits": 9393,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1175
+    },
+    {
+      "start": 952,
+      "frames": 8,
+      "original_bits": 9548,
+      "huffman_bits": 9548,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1194
+    },
+    {
+      "start": 960,
+      "frames": 8,
+      "original_bits": 8471,
+      "huffman_bits": 8471,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1059
+    },
+    {
+      "start": 968,
+      "frames": 8,
+      "original_bits": 8067,
+      "huffman_bits": 8067,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1009
+    },
+    {
+      "start": 976,
+      "frames": 8,
+      "original_bits": 14759,
+      "huffman_bits": 6662,
+      "literal_bytes": 999,
+      "removed_alignment_bits": 105,
+      "combined_bytes": 1832
+    },
+    {
+      "start": 984,
+      "frames": 8,
+      "original_bits": 27776,
+      "huffman_bits": 12320,
+      "literal_bytes": 1897,
+      "removed_alignment_bits": 280,
+      "combined_bytes": 3437
+    },
+    {
+      "start": 992,
+      "frames": 8,
+      "original_bits": 51179,
+      "huffman_bits": 11152,
+      "literal_bytes": 4926,
+      "removed_alignment_bits": 619,
+      "combined_bytes": 6320
+    },
+    {
+      "start": 1000,
+      "frames": 8,
+      "original_bits": 19811,
+      "huffman_bits": 11218,
+      "literal_bytes": 1059,
+      "removed_alignment_bits": 121,
+      "combined_bytes": 2462
+    },
+    {
+      "start": 1008,
+      "frames": 8,
+      "original_bits": 12999,
+      "huffman_bits": 12999,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1625
+    },
+    {
+      "start": 1016,
+      "frames": 8,
+      "original_bits": 11408,
+      "huffman_bits": 11408,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1426
+    },
+    {
+      "start": 1024,
+      "frames": 8,
+      "original_bits": 15059,
+      "huffman_bits": 9099,
+      "literal_bytes": 735,
+      "removed_alignment_bits": 80,
+      "combined_bytes": 1873
+    },
+    {
+      "start": 1032,
+      "frames": 8,
+      "original_bits": 4338,
+      "huffman_bits": 4338,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 543
+    },
+    {
+      "start": 1040,
+      "frames": 8,
+      "original_bits": 3900,
+      "huffman_bits": 3900,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 488
+    },
+    {
+      "start": 1048,
+      "frames": 8,
+      "original_bits": 2886,
+      "huffman_bits": 2886,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 361
+    },
+    {
+      "start": 1056,
+      "frames": 8,
+      "original_bits": 16536,
+      "huffman_bits": 8748,
+      "literal_bytes": 959,
+      "removed_alignment_bits": 116,
+      "combined_bytes": 2053
+    },
+    {
+      "start": 1064,
+      "frames": 8,
+      "original_bits": 8359,
+      "huffman_bits": 8359,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1045
+    },
+    {
+      "start": 1072,
+      "frames": 8,
+      "original_bits": 4208,
+      "huffman_bits": 4208,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 526
+    },
+    {
+      "start": 1080,
+      "frames": 8,
+      "original_bits": 5892,
+      "huffman_bits": 5892,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 737
+    },
+    {
+      "start": 1088,
+      "frames": 8,
+      "original_bits": 6615,
+      "huffman_bits": 6615,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 827
+    },
+    {
+      "start": 1096,
+      "frames": 8,
+      "original_bits": 6380,
+      "huffman_bits": 6380,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 798
+    },
+    {
+      "start": 1104,
+      "frames": 8,
+      "original_bits": 5573,
+      "huffman_bits": 5573,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 697
+    },
+    {
+      "start": 1112,
+      "frames": 8,
+      "original_bits": 7170,
+      "huffman_bits": 7170,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 897
+    },
+    {
+      "start": 1120,
+      "frames": 8,
+      "original_bits": 8405,
+      "huffman_bits": 8405,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1051
+    },
+    {
+      "start": 1128,
+      "frames": 8,
+      "original_bits": 9149,
+      "huffman_bits": 9149,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1144
+    },
+    {
+      "start": 1136,
+      "frames": 8,
+      "original_bits": 4406,
+      "huffman_bits": 4406,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 551
+    },
+    {
+      "start": 1144,
+      "frames": 8,
+      "original_bits": 5702,
+      "huffman_bits": 5702,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 713
+    },
+    {
+      "start": 1152,
+      "frames": 8,
+      "original_bits": 9477,
+      "huffman_bits": 9477,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1185
+    },
+    {
+      "start": 1160,
+      "frames": 8,
+      "original_bits": 10525,
+      "huffman_bits": 10525,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1316
+    },
+    {
+      "start": 1168,
+      "frames": 8,
+      "original_bits": 7345,
+      "huffman_bits": 7345,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 919
+    },
+    {
+      "start": 1176,
+      "frames": 8,
+      "original_bits": 5591,
+      "huffman_bits": 5591,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 699
+    },
+    {
+      "start": 1184,
+      "frames": 8,
+      "original_bits": 14388,
+      "huffman_bits": 14125,
+      "literal_bytes": 32,
+      "removed_alignment_bits": 7,
+      "combined_bytes": 1798
+    },
+    {
+      "start": 1192,
+      "frames": 8,
+      "original_bits": 10578,
+      "huffman_bits": 10433,
+      "literal_bytes": 17,
+      "removed_alignment_bits": 9,
+      "combined_bytes": 1322
+    },
+    {
+      "start": 1200,
+      "frames": 8,
+      "original_bits": 3303,
+      "huffman_bits": 3303,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 413
+    },
+    {
+      "start": 1208,
+      "frames": 8,
+      "original_bits": 5625,
+      "huffman_bits": 5625,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 704
+    },
+    {
+      "start": 1216,
+      "frames": 8,
+      "original_bits": 12710,
+      "huffman_bits": 6738,
+      "literal_bytes": 735,
+      "removed_alignment_bits": 92,
+      "combined_bytes": 1578
+    },
+    {
+      "start": 1224,
+      "frames": 8,
+      "original_bits": 2099,
+      "huffman_bits": 2099,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 263
+    },
+    {
+      "start": 1232,
+      "frames": 8,
+      "original_bits": 1613,
+      "huffman_bits": 1613,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 202
+    },
+    {
+      "start": 1240,
+      "frames": 8,
+      "original_bits": 17627,
+      "huffman_bits": 7182,
+      "literal_bytes": 1295,
+      "removed_alignment_bits": 85,
+      "combined_bytes": 2193
+    },
+    {
+      "start": 1248,
+      "frames": 8,
+      "original_bits": 8967,
+      "huffman_bits": 8967,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1121
+    },
+    {
+      "start": 1256,
+      "frames": 8,
+      "original_bits": 11079,
+      "huffman_bits": 11079,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1385
+    },
+    {
+      "start": 1264,
+      "frames": 8,
+      "original_bits": 14366,
+      "huffman_bits": 13972,
+      "literal_bytes": 48,
+      "removed_alignment_bits": 10,
+      "combined_bytes": 1795
+    },
+    {
+      "start": 1272,
+      "frames": 8,
+      "original_bits": 17392,
+      "huffman_bits": 13768,
+      "literal_bytes": 443,
+      "removed_alignment_bits": 80,
+      "combined_bytes": 2164
+    },
+    {
+      "start": 1280,
+      "frames": 8,
+      "original_bits": 10311,
+      "huffman_bits": 9899,
+      "literal_bytes": 50,
+      "removed_alignment_bits": 12,
+      "combined_bytes": 1288
+    },
+    {
+      "start": 1288,
+      "frames": 8,
+      "original_bits": 9876,
+      "huffman_bits": 9876,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1235
+    },
+    {
+      "start": 1296,
+      "frames": 8,
+      "original_bits": 15274,
+      "huffman_bits": 4946,
+      "literal_bytes": 1277,
+      "removed_alignment_bits": 112,
+      "combined_bytes": 1896
+    },
+    {
+      "start": 1304,
+      "frames": 8,
+      "original_bits": 4909,
+      "huffman_bits": 4909,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 614
+    },
+    {
+      "start": 1312,
+      "frames": 8,
+      "original_bits": 4597,
+      "huffman_bits": 4597,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 575
+    },
+    {
+      "start": 1320,
+      "frames": 8,
+      "original_bits": 6842,
+      "huffman_bits": 6842,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 856
+    },
+    {
+      "start": 1328,
+      "frames": 8,
+      "original_bits": 8875,
+      "huffman_bits": 8875,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1110
+    },
+    {
+      "start": 1336,
+      "frames": 8,
+      "original_bits": 17515,
+      "huffman_bits": 6038,
+      "literal_bytes": 1423,
+      "removed_alignment_bits": 93,
+      "combined_bytes": 2178
+    },
+    {
+      "start": 1344,
+      "frames": 8,
+      "original_bits": 9548,
+      "huffman_bits": 9548,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1194
+    },
+    {
+      "start": 1352,
+      "frames": 8,
+      "original_bits": 16766,
+      "huffman_bits": 10712,
+      "literal_bytes": 744,
+      "removed_alignment_bits": 102,
+      "combined_bytes": 2083
+    },
+    {
+      "start": 1360,
+      "frames": 8,
+      "original_bits": 20209,
+      "huffman_bits": 9386,
+      "literal_bytes": 1338,
+      "removed_alignment_bits": 119,
+      "combined_bytes": 2512
+    },
+    {
+      "start": 1368,
+      "frames": 8,
+      "original_bits": 7577,
+      "huffman_bits": 7577,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 948
+    },
+    {
+      "start": 1376,
+      "frames": 8,
+      "original_bits": 7227,
+      "huffman_bits": 7227,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 904
+    },
+    {
+      "start": 1384,
+      "frames": 8,
+      "original_bits": 9549,
+      "huffman_bits": 3544,
+      "literal_bytes": 739,
+      "removed_alignment_bits": 93,
+      "combined_bytes": 1182
+    },
+    {
+      "start": 1392,
+      "frames": 8,
+      "original_bits": 5428,
+      "huffman_bits": 5428,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 679
+    },
+    {
+      "start": 1400,
+      "frames": 8,
+      "original_bits": 16801,
+      "huffman_bits": 6948,
+      "literal_bytes": 1218,
+      "removed_alignment_bits": 109,
+      "combined_bytes": 2087
+    },
+    {
+      "start": 1408,
+      "frames": 8,
+      "original_bits": 15125,
+      "huffman_bits": 9135,
+      "literal_bytes": 737,
+      "removed_alignment_bits": 94,
+      "combined_bytes": 1879
+    },
+    {
+      "start": 1416,
+      "frames": 8,
+      "original_bits": 4194,
+      "huffman_bits": 4194,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 525
+    },
+    {
+      "start": 1424,
+      "frames": 8,
+      "original_bits": 4848,
+      "huffman_bits": 4848,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 606
+    },
+    {
+      "start": 1432,
+      "frames": 8,
+      "original_bits": 3637,
+      "huffman_bits": 3637,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 455
+    },
+    {
+      "start": 1440,
+      "frames": 8,
+      "original_bits": 7032,
+      "huffman_bits": 7032,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 879
+    },
+    {
+      "start": 1448,
+      "frames": 8,
+      "original_bits": 4798,
+      "huffman_bits": 4798,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 600
+    },
+    {
+      "start": 1456,
+      "frames": 8,
+      "original_bits": 8294,
+      "huffman_bits": 8294,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1037
+    },
+    {
+      "start": 1464,
+      "frames": 8,
+      "original_bits": 20977,
+      "huffman_bits": 12208,
+      "literal_bytes": 1085,
+      "removed_alignment_bits": 89,
+      "combined_bytes": 2611
+    },
+    {
+      "start": 1472,
+      "frames": 8,
+      "original_bits": 12172,
+      "huffman_bits": 12172,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1522
+    },
+    {
+      "start": 1480,
+      "frames": 8,
+      "original_bits": 14909,
+      "huffman_bits": 8610,
+      "literal_bytes": 776,
+      "removed_alignment_bits": 91,
+      "combined_bytes": 1853
+    },
+    {
+      "start": 1488,
+      "frames": 8,
+      "original_bits": 8202,
+      "huffman_bits": 8202,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1026
+    },
+    {
+      "start": 1496,
+      "frames": 8,
+      "original_bits": 8876,
+      "huffman_bits": 8876,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1110
+    },
+    {
+      "start": 1504,
+      "frames": 8,
+      "original_bits": 25125,
+      "huffman_bits": 14451,
+      "literal_bytes": 1324,
+      "removed_alignment_bits": 82,
+      "combined_bytes": 3131
+    },
+    {
+      "start": 1512,
+      "frames": 8,
+      "original_bits": 18979,
+      "huffman_bits": 16440,
+      "literal_bytes": 310,
+      "removed_alignment_bits": 59,
+      "combined_bytes": 2365
+    },
+    {
+      "start": 1520,
+      "frames": 8,
+      "original_bits": 18091,
+      "huffman_bits": 15480,
+      "literal_bytes": 320,
+      "removed_alignment_bits": 51,
+      "combined_bytes": 2255
+    },
+    {
+      "start": 1528,
+      "frames": 8,
+      "original_bits": 17616,
+      "huffman_bits": 17227,
+      "literal_bytes": 48,
+      "removed_alignment_bits": 5,
+      "combined_bytes": 2202
+    },
+    {
+      "start": 1536,
+      "frames": 8,
+      "original_bits": 29992,
+      "huffman_bits": 13869,
+      "literal_bytes": 1973,
+      "removed_alignment_bits": 339,
+      "combined_bytes": 3707
+    },
+    {
+      "start": 1544,
+      "frames": 8,
+      "original_bits": 12911,
+      "huffman_bits": 7358,
+      "literal_bytes": 678,
+      "removed_alignment_bits": 129,
+      "combined_bytes": 1598
+    },
+    {
+      "start": 1552,
+      "frames": 8,
+      "original_bits": 29798,
+      "huffman_bits": 15160,
+      "literal_bytes": 1791,
+      "removed_alignment_bits": 310,
+      "combined_bytes": 3686
+    },
+    {
+      "start": 1560,
+      "frames": 8,
+      "original_bits": 27151,
+      "huffman_bits": 12646,
+      "literal_bytes": 1777,
+      "removed_alignment_bits": 289,
+      "combined_bytes": 3358
+    },
+    {
+      "start": 1568,
+      "frames": 8,
+      "original_bits": 11859,
+      "huffman_bits": 9994,
+      "literal_bytes": 222,
+      "removed_alignment_bits": 89,
+      "combined_bytes": 1472
+    },
+    {
+      "start": 1576,
+      "frames": 8,
+      "original_bits": 11457,
+      "huffman_bits": 5464,
+      "literal_bytes": 741,
+      "removed_alignment_bits": 65,
+      "combined_bytes": 1424
+    },
+    {
+      "start": 1584,
+      "frames": 8,
+      "original_bits": 933,
+      "huffman_bits": 933,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 117
+    },
+    {
+      "start": 1592,
+      "frames": 8,
+      "original_bits": 2218,
+      "huffman_bits": 2218,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 278
+    },
+    {
+      "start": 1600,
+      "frames": 8,
+      "original_bits": 37398,
+      "huffman_bits": 11033,
+      "literal_bytes": 3231,
+      "removed_alignment_bits": 517,
+      "combined_bytes": 4611
+    },
+    {
+      "start": 1608,
+      "frames": 8,
+      "original_bits": 22776,
+      "huffman_bits": 13000,
+      "literal_bytes": 1196,
+      "removed_alignment_bits": 208,
+      "combined_bytes": 2821
+    },
+    {
+      "start": 1616,
+      "frames": 8,
+      "original_bits": 17590,
+      "huffman_bits": 11258,
+      "literal_bytes": 773,
+      "removed_alignment_bits": 148,
+      "combined_bytes": 2181
+    },
+    {
+      "start": 1624,
+      "frames": 8,
+      "original_bits": 25667,
+      "huffman_bits": 10129,
+      "literal_bytes": 1898,
+      "removed_alignment_bits": 354,
+      "combined_bytes": 3165
+    },
+    {
+      "start": 1632,
+      "frames": 8,
+      "original_bits": 20358,
+      "huffman_bits": 9645,
+      "literal_bytes": 1303,
+      "removed_alignment_bits": 289,
+      "combined_bytes": 2509
+    },
+    {
+      "start": 1640,
+      "frames": 8,
+      "original_bits": 8292,
+      "huffman_bits": 4008,
+      "literal_bytes": 523,
+      "removed_alignment_bits": 100,
+      "combined_bytes": 1024
+    },
+    {
+      "start": 1648,
+      "frames": 8,
+      "original_bits": 8318,
+      "huffman_bits": 6329,
+      "literal_bytes": 242,
+      "removed_alignment_bits": 53,
+      "combined_bytes": 1034
+    },
+    {
+      "start": 1656,
+      "frames": 8,
+      "original_bits": 9792,
+      "huffman_bits": 8064,
+      "literal_bytes": 210,
+      "removed_alignment_bits": 48,
+      "combined_bytes": 1218
+    },
+    {
+      "start": 1664,
+      "frames": 8,
+      "original_bits": 9846,
+      "huffman_bits": 4958,
+      "literal_bytes": 599,
+      "removed_alignment_bits": 96,
+      "combined_bytes": 1219
+    },
+    {
+      "start": 1672,
+      "frames": 8,
+      "original_bits": 6399,
+      "huffman_bits": 6399,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 800
+    },
+    {
+      "start": 1680,
+      "frames": 8,
+      "original_bits": 4483,
+      "huffman_bits": 4483,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 561
+    },
+    {
+      "start": 1688,
+      "frames": 8,
+      "original_bits": 4631,
+      "huffman_bits": 4631,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 579
+    },
+    {
+      "start": 1696,
+      "frames": 8,
+      "original_bits": 8094,
+      "huffman_bits": 3578,
+      "literal_bytes": 555,
+      "removed_alignment_bits": 76,
+      "combined_bytes": 1003
+    },
+    {
+      "start": 1704,
+      "frames": 8,
+      "original_bits": 3461,
+      "huffman_bits": 3461,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 433
+    },
+    {
+      "start": 1712,
+      "frames": 8,
+      "original_bits": 12424,
+      "huffman_bits": 6918,
+      "literal_bytes": 678,
+      "removed_alignment_bits": 82,
+      "combined_bytes": 1543
+    },
+    {
+      "start": 1720,
+      "frames": 8,
+      "original_bits": 10287,
+      "huffman_bits": 10287,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1286
+    },
+    {
+      "start": 1728,
+      "frames": 8,
+      "original_bits": 10697,
+      "huffman_bits": 6033,
+      "literal_bytes": 575,
+      "removed_alignment_bits": 64,
+      "combined_bytes": 1330
+    },
+    {
+      "start": 1736,
+      "frames": 8,
+      "original_bits": 17780,
+      "huffman_bits": 11388,
+      "literal_bytes": 785,
+      "removed_alignment_bits": 112,
+      "combined_bytes": 2209
+    },
+    {
+      "start": 1744,
+      "frames": 8,
+      "original_bits": 16934,
+      "huffman_bits": 15462,
+      "literal_bytes": 179,
+      "removed_alignment_bits": 40,
+      "combined_bytes": 2112
+    },
+    {
+      "start": 1752,
+      "frames": 8,
+      "original_bits": 18313,
+      "huffman_bits": 15505,
+      "literal_bytes": 340,
+      "removed_alignment_bits": 88,
+      "combined_bytes": 2279
+    },
+    {
+      "start": 1760,
+      "frames": 8,
+      "original_bits": 17562,
+      "huffman_bits": 12681,
+      "literal_bytes": 598,
+      "removed_alignment_bits": 97,
+      "combined_bytes": 2184
+    },
+    {
+      "start": 1768,
+      "frames": 8,
+      "original_bits": 33436,
+      "huffman_bits": 13162,
+      "literal_bytes": 2491,
+      "removed_alignment_bits": 346,
+      "combined_bytes": 4137
+    },
+    {
+      "start": 1776,
+      "frames": 8,
+      "original_bits": 34647,
+      "huffman_bits": 10372,
+      "literal_bytes": 2981,
+      "removed_alignment_bits": 427,
+      "combined_bytes": 4278
+    },
+    {
+      "start": 1784,
+      "frames": 8,
+      "original_bits": 6086,
+      "huffman_bits": 6086,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 761
+    },
+    {
+      "start": 1792,
+      "frames": 8,
+      "original_bits": 5112,
+      "huffman_bits": 5112,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 639
+    },
+    {
+      "start": 1800,
+      "frames": 8,
+      "original_bits": 6226,
+      "huffman_bits": 6226,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 779
+    },
+    {
+      "start": 1808,
+      "frames": 8,
+      "original_bits": 6771,
+      "huffman_bits": 6771,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 847
+    },
+    {
+      "start": 1816,
+      "frames": 8,
+      "original_bits": 10517,
+      "huffman_bits": 10517,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1315
+    },
+    {
+      "start": 1824,
+      "frames": 8,
+      "original_bits": 7970,
+      "huffman_bits": 7970,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 997
+    },
+    {
+      "start": 1832,
+      "frames": 8,
+      "original_bits": 8618,
+      "huffman_bits": 4775,
+      "literal_bytes": 468,
+      "removed_alignment_bits": 99,
+      "combined_bytes": 1065
+    },
+    {
+      "start": 1840,
+      "frames": 8,
+      "original_bits": 9821,
+      "huffman_bits": 5263,
+      "literal_bytes": 562,
+      "removed_alignment_bits": 62,
+      "combined_bytes": 1220
+    },
+    {
+      "start": 1848,
+      "frames": 8,
+      "original_bits": 2851,
+      "huffman_bits": 2851,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 357
+    },
+    {
+      "start": 1856,
+      "frames": 8,
+      "original_bits": 1600,
+      "huffman_bits": 1600,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 200
+    },
+    {
+      "start": 1864,
+      "frames": 8,
+      "original_bits": 11250,
+      "huffman_bits": 3557,
+      "literal_bytes": 952,
+      "removed_alignment_bits": 77,
+      "combined_bytes": 1397
+    },
+    {
+      "start": 1872,
+      "frames": 8,
+      "original_bits": 6153,
+      "huffman_bits": 6153,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 770
+    },
+    {
+      "start": 1880,
+      "frames": 8,
+      "original_bits": 16351,
+      "huffman_bits": 10381,
+      "literal_bytes": 733,
+      "removed_alignment_bits": 106,
+      "combined_bytes": 2031
+    },
+    {
+      "start": 1888,
+      "frames": 8,
+      "original_bits": 10518,
+      "huffman_bits": 10518,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1315
+    },
+    {
+      "start": 1896,
+      "frames": 8,
+      "original_bits": 7538,
+      "huffman_bits": 7094,
+      "literal_bytes": 54,
+      "removed_alignment_bits": 12,
+      "combined_bytes": 941
+    },
+    {
+      "start": 1904,
+      "frames": 8,
+      "original_bits": 6689,
+      "huffman_bits": 6689,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 837
+    },
+    {
+      "start": 1912,
+      "frames": 8,
+      "original_bits": 15970,
+      "huffman_bits": 7460,
+      "literal_bytes": 1048,
+      "removed_alignment_bits": 126,
+      "combined_bytes": 1981
+    },
+    {
+      "start": 1920,
+      "frames": 8,
+      "original_bits": 2932,
+      "huffman_bits": 2932,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 367
+    },
+    {
+      "start": 1928,
+      "frames": 8,
+      "original_bits": 3720,
+      "huffman_bits": 3720,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 465
+    },
+    {
+      "start": 1936,
+      "frames": 8,
+      "original_bits": 17513,
+      "huffman_bits": 9859,
+      "literal_bytes": 943,
+      "removed_alignment_bits": 110,
+      "combined_bytes": 2176
+    },
+    {
+      "start": 1944,
+      "frames": 8,
+      "original_bits": 5782,
+      "huffman_bits": 5782,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 723
+    },
+    {
+      "start": 1952,
+      "frames": 8,
+      "original_bits": 2040,
+      "huffman_bits": 2040,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 255
+    },
+    {
+      "start": 1960,
+      "frames": 8,
+      "original_bits": 4079,
+      "huffman_bits": 4079,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 510
+    },
+    {
+      "start": 1968,
+      "frames": 8,
+      "original_bits": 2746,
+      "huffman_bits": 2746,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 344
+    },
+    {
+      "start": 1976,
+      "frames": 8,
+      "original_bits": 3970,
+      "huffman_bits": 3970,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 497
+    },
+    {
+      "start": 1984,
+      "frames": 8,
+      "original_bits": 2666,
+      "huffman_bits": 2666,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 334
+    },
+    {
+      "start": 1992,
+      "frames": 8,
+      "original_bits": 4075,
+      "huffman_bits": 4075,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 510
+    },
+    {
+      "start": 2000,
+      "frames": 8,
+      "original_bits": 2859,
+      "huffman_bits": 2859,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 358
+    },
+    {
+      "start": 2008,
+      "frames": 8,
+      "original_bits": 6823,
+      "huffman_bits": 6823,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 853
+    },
+    {
+      "start": 2016,
+      "frames": 8,
+      "original_bits": 22516,
+      "huffman_bits": 11086,
+      "literal_bytes": 1416,
+      "removed_alignment_bits": 102,
+      "combined_bytes": 2802
+    },
+    {
+      "start": 2024,
+      "frames": 8,
+      "original_bits": 22890,
+      "huffman_bits": 12083,
+      "literal_bytes": 1334,
+      "removed_alignment_bits": 135,
+      "combined_bytes": 2845
+    },
+    {
+      "start": 2032,
+      "frames": 8,
+      "original_bits": 21216,
+      "huffman_bits": 16143,
+      "literal_bytes": 618,
+      "removed_alignment_bits": 129,
+      "combined_bytes": 2636
+    },
+    {
+      "start": 2040,
+      "frames": 8,
+      "original_bits": 14265,
+      "huffman_bits": 11735,
+      "literal_bytes": 309,
+      "removed_alignment_bits": 58,
+      "combined_bytes": 1776
+    },
+    {
+      "start": 2048,
+      "frames": 8,
+      "original_bits": 18659,
+      "huffman_bits": 12165,
+      "literal_bytes": 796,
+      "removed_alignment_bits": 126,
+      "combined_bytes": 2317
+    },
+    {
+      "start": 2056,
+      "frames": 8,
+      "original_bits": 16796,
+      "huffman_bits": 12258,
+      "literal_bytes": 554,
+      "removed_alignment_bits": 106,
+      "combined_bytes": 2087
+    },
+    {
+      "start": 2064,
+      "frames": 8,
+      "original_bits": 27398,
+      "huffman_bits": 14931,
+      "literal_bytes": 1527,
+      "removed_alignment_bits": 251,
+      "combined_bytes": 3394
+    },
+    {
+      "start": 2072,
+      "frames": 8,
+      "original_bits": 12896,
+      "huffman_bits": 11664,
+      "literal_bytes": 150,
+      "removed_alignment_bits": 32,
+      "combined_bytes": 1608
+    },
+    {
+      "start": 2080,
+      "frames": 8,
+      "original_bits": 8217,
+      "huffman_bits": 7545,
+      "literal_bytes": 81,
+      "removed_alignment_bits": 24,
+      "combined_bytes": 1025
+    },
+    {
+      "start": 2088,
+      "frames": 8,
+      "original_bits": 13783,
+      "huffman_bits": 6376,
+      "literal_bytes": 903,
+      "removed_alignment_bits": 183,
+      "combined_bytes": 1700
+    },
+    {
+      "start": 2096,
+      "frames": 8,
+      "original_bits": 26356,
+      "huffman_bits": 7418,
+      "literal_bytes": 2323,
+      "removed_alignment_bits": 354,
+      "combined_bytes": 3251
+    },
+    {
+      "start": 2104,
+      "frames": 8,
+      "original_bits": 33533,
+      "huffman_bits": 10991,
+      "literal_bytes": 2765,
+      "removed_alignment_bits": 422,
+      "combined_bytes": 4139
+    },
+    {
+      "start": 2112,
+      "frames": 8,
+      "original_bits": 23312,
+      "huffman_bits": 11813,
+      "literal_bytes": 1416,
+      "removed_alignment_bits": 171,
+      "combined_bytes": 2893
+    },
+    {
+      "start": 2120,
+      "frames": 8,
+      "original_bits": 8930,
+      "huffman_bits": 8930,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1117
+    },
+    {
+      "start": 2128,
+      "frames": 8,
+      "original_bits": 6482,
+      "huffman_bits": 3928,
+      "literal_bytes": 310,
+      "removed_alignment_bits": 74,
+      "combined_bytes": 801
+    },
+    {
+      "start": 2136,
+      "frames": 8,
+      "original_bits": 15990,
+      "huffman_bits": 5582,
+      "literal_bytes": 1283,
+      "removed_alignment_bits": 144,
+      "combined_bytes": 1981
+    },
+    {
+      "start": 2144,
+      "frames": 8,
+      "original_bits": 9762,
+      "huffman_bits": 9762,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1221
+    },
+    {
+      "start": 2152,
+      "frames": 8,
+      "original_bits": 18070,
+      "huffman_bits": 8388,
+      "literal_bytes": 1184,
+      "removed_alignment_bits": 210,
+      "combined_bytes": 2233
+    },
+    {
+      "start": 2160,
+      "frames": 8,
+      "original_bits": 18347,
+      "huffman_bits": 8733,
+      "literal_bytes": 1183,
+      "removed_alignment_bits": 150,
+      "combined_bytes": 2275
+    },
+    {
+      "start": 2168,
+      "frames": 8,
+      "original_bits": 9093,
+      "huffman_bits": 8218,
+      "literal_bytes": 106,
+      "removed_alignment_bits": 27,
+      "combined_bytes": 1134
+    },
+    {
+      "start": 2176,
+      "frames": 8,
+      "original_bits": 16538,
+      "huffman_bits": 6012,
+      "literal_bytes": 1299,
+      "removed_alignment_bits": 134,
+      "combined_bytes": 2051
+    },
+    {
+      "start": 2184,
+      "frames": 8,
+      "original_bits": 16969,
+      "huffman_bits": 6269,
+      "literal_bytes": 1318,
+      "removed_alignment_bits": 156,
+      "combined_bytes": 2102
+    },
+    {
+      "start": 2192,
+      "frames": 8,
+      "original_bits": 14800,
+      "huffman_bits": 10195,
+      "literal_bytes": 561,
+      "removed_alignment_bits": 117,
+      "combined_bytes": 1836
+    },
+    {
+      "start": 2200,
+      "frames": 8,
+      "original_bits": 11469,
+      "huffman_bits": 6481,
+      "literal_bytes": 609,
+      "removed_alignment_bits": 116,
+      "combined_bytes": 1420
+    },
+    {
+      "start": 2208,
+      "frames": 8,
+      "original_bits": 7397,
+      "huffman_bits": 7397,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 925
+    },
+    {
+      "start": 2216,
+      "frames": 8,
+      "original_bits": 15500,
+      "huffman_bits": 6556,
+      "literal_bytes": 1103,
+      "removed_alignment_bits": 120,
+      "combined_bytes": 1923
+    },
+    {
+      "start": 2224,
+      "frames": 8,
+      "original_bits": 8736,
+      "huffman_bits": 5865,
+      "literal_bytes": 352,
+      "removed_alignment_bits": 55,
+      "combined_bytes": 1086
+    },
+    {
+      "start": 2232,
+      "frames": 8,
+      "original_bits": 4755,
+      "huffman_bits": 4755,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 595
+    },
+    {
+      "start": 2240,
+      "frames": 8,
+      "original_bits": 7902,
+      "huffman_bits": 7902,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 988
+    },
+    {
+      "start": 2248,
+      "frames": 8,
+      "original_bits": 16604,
+      "huffman_bits": 7756,
+      "literal_bytes": 1091,
+      "removed_alignment_bits": 120,
+      "combined_bytes": 2061
+    },
+    {
+      "start": 2256,
+      "frames": 8,
+      "original_bits": 20204,
+      "huffman_bits": 16432,
+      "literal_bytes": 457,
+      "removed_alignment_bits": 116,
+      "combined_bytes": 2511
+    },
+    {
+      "start": 2264,
+      "frames": 8,
+      "original_bits": 17084,
+      "huffman_bits": 15470,
+      "literal_bytes": 196,
+      "removed_alignment_bits": 46,
+      "combined_bytes": 2130
+    },
+    {
+      "start": 2272,
+      "frames": 8,
+      "original_bits": 16553,
+      "huffman_bits": 14930,
+      "literal_bytes": 196,
+      "removed_alignment_bits": 55,
+      "combined_bytes": 2063
+    },
+    {
+      "start": 2280,
+      "frames": 8,
+      "original_bits": 8667,
+      "huffman_bits": 8667,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1084
+    },
+    {
+      "start": 2288,
+      "frames": 8,
+      "original_bits": 6702,
+      "huffman_bits": 6702,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 838
+    },
+    {
+      "start": 2296,
+      "frames": 8,
+      "original_bits": 13199,
+      "huffman_bits": 6567,
+      "literal_bytes": 809,
+      "removed_alignment_bits": 160,
+      "combined_bytes": 1630
+    },
+    {
+      "start": 2304,
+      "frames": 8,
+      "original_bits": 9883,
+      "huffman_bits": 9334,
+      "literal_bytes": 66,
+      "removed_alignment_bits": 21,
+      "combined_bytes": 1233
+    },
+    {
+      "start": 2312,
+      "frames": 8,
+      "original_bits": 17561,
+      "huffman_bits": 8510,
+      "literal_bytes": 1117,
+      "removed_alignment_bits": 115,
+      "combined_bytes": 2181
+    },
+    {
+      "start": 2320,
+      "frames": 8,
+      "original_bits": 12772,
+      "huffman_bits": 11602,
+      "literal_bytes": 144,
+      "removed_alignment_bits": 18,
+      "combined_bytes": 1595
+    },
+    {
+      "start": 2328,
+      "frames": 8,
+      "original_bits": 15030,
+      "huffman_bits": 8415,
+      "literal_bytes": 813,
+      "removed_alignment_bits": 111,
+      "combined_bytes": 1865
+    },
+    {
+      "start": 2336,
+      "frames": 8,
+      "original_bits": 7555,
+      "huffman_bits": 7555,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 945
+    },
+    {
+      "start": 2344,
+      "frames": 8,
+      "original_bits": 17754,
+      "huffman_bits": 6683,
+      "literal_bytes": 1366,
+      "removed_alignment_bits": 143,
+      "combined_bytes": 2202
+    },
+    {
+      "start": 2352,
+      "frames": 8,
+      "original_bits": 11782,
+      "huffman_bits": 6794,
+      "literal_bytes": 609,
+      "removed_alignment_bits": 116,
+      "combined_bytes": 1459
+    },
+    {
+      "start": 2360,
+      "frames": 8,
+      "original_bits": 7410,
+      "huffman_bits": 6182,
+      "literal_bytes": 143,
+      "removed_alignment_bits": 84,
+      "combined_bytes": 916
+    },
+    {
+      "start": 2368,
+      "frames": 8,
+      "original_bits": 10854,
+      "huffman_bits": 5276,
+      "literal_bytes": 688,
+      "removed_alignment_bits": 74,
+      "combined_bytes": 1348
+    },
+    {
+      "start": 2376,
+      "frames": 8,
+      "original_bits": 3261,
+      "huffman_bits": 3261,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 408
+    },
+    {
+      "start": 2384,
+      "frames": 8,
+      "original_bits": 1669,
+      "huffman_bits": 1669,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 209
+    },
+    {
+      "start": 2392,
+      "frames": 8,
+      "original_bits": 1642,
+      "huffman_bits": 1642,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 206
+    },
+    {
+      "start": 2400,
+      "frames": 8,
+      "original_bits": 2863,
+      "huffman_bits": 2863,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 358
+    },
+    {
+      "start": 2408,
+      "frames": 8,
+      "original_bits": 2472,
+      "huffman_bits": 2472,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 309
+    },
+    {
+      "start": 2416,
+      "frames": 8,
+      "original_bits": 1789,
+      "huffman_bits": 1789,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 224
+    },
+    {
+      "start": 2424,
+      "frames": 8,
+      "original_bits": 4575,
+      "huffman_bits": 4575,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 572
+    },
+    {
+      "start": 2432,
+      "frames": 8,
+      "original_bits": 10366,
+      "huffman_bits": 5574,
+      "literal_bytes": 590,
+      "removed_alignment_bits": 72,
+      "combined_bytes": 1287
+    },
+    {
+      "start": 2440,
+      "frames": 8,
+      "original_bits": 15733,
+      "huffman_bits": 11627,
+      "literal_bytes": 501,
+      "removed_alignment_bits": 98,
+      "combined_bytes": 1955
+    },
+    {
+      "start": 2448,
+      "frames": 8,
+      "original_bits": 26688,
+      "huffman_bits": 12994,
+      "literal_bytes": 1671,
+      "removed_alignment_bits": 326,
+      "combined_bytes": 3296
+    },
+    {
+      "start": 2456,
+      "frames": 8,
+      "original_bits": 27898,
+      "huffman_bits": 12258,
+      "literal_bytes": 1919,
+      "removed_alignment_bits": 288,
+      "combined_bytes": 3452
+    },
+    {
+      "start": 2464,
+      "frames": 8,
+      "original_bits": 4552,
+      "huffman_bits": 4552,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 569
+    },
+    {
+      "start": 2472,
+      "frames": 8,
+      "original_bits": 12352,
+      "huffman_bits": 6281,
+      "literal_bytes": 747,
+      "removed_alignment_bits": 95,
+      "combined_bytes": 1533
+    },
+    {
+      "start": 2480,
+      "frames": 8,
+      "original_bits": 21268,
+      "huffman_bits": 15473,
+      "literal_bytes": 711,
+      "removed_alignment_bits": 107,
+      "combined_bytes": 2646
+    },
+    {
+      "start": 2488,
+      "frames": 8,
+      "original_bits": 11715,
+      "huffman_bits": 4378,
+      "literal_bytes": 897,
+      "removed_alignment_bits": 161,
+      "combined_bytes": 1445
+    },
+    {
+      "start": 2496,
+      "frames": 8,
+      "original_bits": 0,
+      "huffman_bits": 0,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 0
+    },
+    {
+      "start": 2504,
+      "frames": 8,
+      "original_bits": 28571,
+      "huffman_bits": 8418,
+      "literal_bytes": 2499,
+      "removed_alignment_bits": 161,
+      "combined_bytes": 3552
+    },
+    {
+      "start": 2512,
+      "frames": 8,
+      "original_bits": 10252,
+      "huffman_bits": 10252,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1282
+    },
+    {
+      "start": 2520,
+      "frames": 8,
+      "original_bits": 13200,
+      "huffman_bits": 13200,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1650
+    },
+    {
+      "start": 2528,
+      "frames": 8,
+      "original_bits": 10951,
+      "huffman_bits": 10951,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1369
+    },
+    {
+      "start": 2536,
+      "frames": 8,
+      "original_bits": 17214,
+      "huffman_bits": 8567,
+      "literal_bytes": 1072,
+      "removed_alignment_bits": 71,
+      "combined_bytes": 2143
+    },
+    {
+      "start": 2544,
+      "frames": 8,
+      "original_bits": 4884,
+      "huffman_bits": 4884,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 611
+    },
+    {
+      "start": 2552,
+      "frames": 8,
+      "original_bits": 7730,
+      "huffman_bits": 7730,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 967
+    },
+    {
+      "start": 2560,
+      "frames": 8,
+      "original_bits": 17946,
+      "huffman_bits": 13346,
+      "literal_bytes": 561,
+      "removed_alignment_bits": 112,
+      "combined_bytes": 2230
+    },
+    {
+      "start": 2568,
+      "frames": 8,
+      "original_bits": 19529,
+      "huffman_bits": 7489,
+      "literal_bytes": 1482,
+      "removed_alignment_bits": 184,
+      "combined_bytes": 2419
+    },
+    {
+      "start": 2576,
+      "frames": 8,
+      "original_bits": 6824,
+      "huffman_bits": 6824,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 853
+    },
+    {
+      "start": 2584,
+      "frames": 8,
+      "original_bits": 6083,
+      "huffman_bits": 6083,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 761
+    },
+    {
+      "start": 2592,
+      "frames": 8,
+      "original_bits": 11161,
+      "huffman_bits": 11161,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1396
+    },
+    {
+      "start": 2600,
+      "frames": 8,
+      "original_bits": 31047,
+      "huffman_bits": 12175,
+      "literal_bytes": 2331,
+      "removed_alignment_bits": 224,
+      "combined_bytes": 3853
+    },
+    {
+      "start": 2608,
+      "frames": 8,
+      "original_bits": 38308,
+      "huffman_bits": 16952,
+      "literal_bytes": 2619,
+      "removed_alignment_bits": 404,
+      "combined_bytes": 4738
+    },
+    {
+      "start": 2616,
+      "frames": 8,
+      "original_bits": 34015,
+      "huffman_bits": 13084,
+      "literal_bytes": 2568,
+      "removed_alignment_bits": 387,
+      "combined_bytes": 4204
+    },
+    {
+      "start": 2624,
+      "frames": 8,
+      "original_bits": 13526,
+      "huffman_bits": 9638,
+      "literal_bytes": 469,
+      "removed_alignment_bits": 136,
+      "combined_bytes": 1674
+    },
+    {
+      "start": 2632,
+      "frames": 8,
+      "original_bits": 21814,
+      "huffman_bits": 8969,
+      "literal_bytes": 1572,
+      "removed_alignment_bits": 269,
+      "combined_bytes": 2694
+    },
+    {
+      "start": 2640,
+      "frames": 8,
+      "original_bits": 23008,
+      "huffman_bits": 12328,
+      "literal_bytes": 1317,
+      "removed_alignment_bits": 144,
+      "combined_bytes": 2858
+    },
+    {
+      "start": 2648,
+      "frames": 8,
+      "original_bits": 20448,
+      "huffman_bits": 16149,
+      "literal_bytes": 529,
+      "removed_alignment_bits": 67,
+      "combined_bytes": 2548
+    },
+    {
+      "start": 2656,
+      "frames": 8,
+      "original_bits": 25926,
+      "huffman_bits": 9829,
+      "literal_bytes": 1974,
+      "removed_alignment_bits": 305,
+      "combined_bytes": 3203
+    },
+    {
+      "start": 2664,
+      "frames": 8,
+      "original_bits": 31257,
+      "huffman_bits": 8993,
+      "literal_bytes": 2741,
+      "removed_alignment_bits": 336,
+      "combined_bytes": 3866
+    },
+    {
+      "start": 2672,
+      "frames": 8,
+      "original_bits": 53763,
+      "huffman_bits": 11063,
+      "literal_bytes": 5250,
+      "removed_alignment_bits": 700,
+      "combined_bytes": 6633
+    },
+    {
+      "start": 2680,
+      "frames": 8,
+      "original_bits": 39560,
+      "huffman_bits": 9345,
+      "literal_bytes": 3718,
+      "removed_alignment_bits": 471,
+      "combined_bytes": 4887
+    },
+    {
+      "start": 2688,
+      "frames": 8,
+      "original_bits": 3154,
+      "huffman_bits": 3154,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 395
+    },
+    {
+      "start": 2696,
+      "frames": 8,
+      "original_bits": 28812,
+      "huffman_bits": 12265,
+      "literal_bytes": 2036,
+      "removed_alignment_bits": 259,
+      "combined_bytes": 3570
+    },
+    {
+      "start": 2704,
+      "frames": 8,
+      "original_bits": 16874,
+      "huffman_bits": 10570,
+      "literal_bytes": 775,
+      "removed_alignment_bits": 104,
+      "combined_bytes": 2097
+    },
+    {
+      "start": 2712,
+      "frames": 8,
+      "original_bits": 14336,
+      "huffman_bits": 12125,
+      "literal_bytes": 267,
+      "removed_alignment_bits": 75,
+      "combined_bytes": 1783
+    },
+    {
+      "start": 2720,
+      "frames": 8,
+      "original_bits": 15613,
+      "huffman_bits": 12788,
+      "literal_bytes": 344,
+      "removed_alignment_bits": 73,
+      "combined_bytes": 1943
+    },
+    {
+      "start": 2728,
+      "frames": 8,
+      "original_bits": 40819,
+      "huffman_bits": 11892,
+      "literal_bytes": 3550,
+      "removed_alignment_bits": 527,
+      "combined_bytes": 5037
+    },
+    {
+      "start": 2736,
+      "frames": 8,
+      "original_bits": 7822,
+      "huffman_bits": 7160,
+      "literal_bytes": 80,
+      "removed_alignment_bits": 22,
+      "combined_bytes": 975
+    },
+    {
+      "start": 2744,
+      "frames": 8,
+      "original_bits": 6316,
+      "huffman_bits": 6316,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 790
+    },
+    {
+      "start": 2752,
+      "frames": 8,
+      "original_bits": 4805,
+      "huffman_bits": 4805,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 601
+    },
+    {
+      "start": 2760,
+      "frames": 8,
+      "original_bits": 9757,
+      "huffman_bits": 9570,
+      "literal_bytes": 21,
+      "removed_alignment_bits": 19,
+      "combined_bytes": 1218
+    },
+    {
+      "start": 2768,
+      "frames": 8,
+      "original_bits": 6120,
+      "huffman_bits": 6120,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 765
+    },
+    {
+      "start": 2776,
+      "frames": 8,
+      "original_bits": 5530,
+      "huffman_bits": 5530,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 692
+    },
+    {
+      "start": 2784,
+      "frames": 8,
+      "original_bits": 11366,
+      "huffman_bits": 5620,
+      "literal_bytes": 705,
+      "removed_alignment_bits": 106,
+      "combined_bytes": 1408
+    },
+    {
+      "start": 2792,
+      "frames": 8,
+      "original_bits": 6680,
+      "huffman_bits": 6680,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 835
+    },
+    {
+      "start": 2800,
+      "frames": 8,
+      "original_bits": 6937,
+      "huffman_bits": 6198,
+      "literal_bytes": 89,
+      "removed_alignment_bits": 27,
+      "combined_bytes": 864
+    },
+    {
+      "start": 2808,
+      "frames": 8,
+      "original_bits": 5614,
+      "huffman_bits": 5153,
+      "literal_bytes": 56,
+      "removed_alignment_bits": 13,
+      "combined_bytes": 701
+    },
+    {
+      "start": 2816,
+      "frames": 8,
+      "original_bits": 1623,
+      "huffman_bits": 1623,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 203
+    },
+    {
+      "start": 2824,
+      "frames": 8,
+      "original_bits": 6368,
+      "huffman_bits": 2173,
+      "literal_bytes": 511,
+      "removed_alignment_bits": 107,
+      "combined_bytes": 783
+    },
+    {
+      "start": 2832,
+      "frames": 8,
+      "original_bits": 4409,
+      "huffman_bits": 4409,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 552
+    },
+    {
+      "start": 2840,
+      "frames": 8,
+      "original_bits": 10894,
+      "huffman_bits": 10894,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1362
+    },
+    {
+      "start": 2848,
+      "frames": 8,
+      "original_bits": 8795,
+      "huffman_bits": 8664,
+      "literal_bytes": 16,
+      "removed_alignment_bits": 3,
+      "combined_bytes": 1099
+    },
+    {
+      "start": 2856,
+      "frames": 8,
+      "original_bits": 62778,
+      "huffman_bits": 10209,
+      "literal_bytes": 6493,
+      "removed_alignment_bits": 625,
+      "combined_bytes": 7770
+    },
+    {
+      "start": 2864,
+      "frames": 7,
+      "original_bits": 70754,
+      "huffman_bits": 8123,
+      "literal_bytes": 7740,
+      "removed_alignment_bits": 711,
+      "combined_bytes": 8756
+    },
+    {
+      "start": 2871,
+      "frames": 7,
+      "original_bits": 70285,
+      "huffman_bits": 7901,
+      "literal_bytes": 7716,
+      "removed_alignment_bits": 656,
+      "combined_bytes": 8704
+    },
+    {
+      "start": 2878,
+      "frames": 7,
+      "original_bits": 69664,
+      "huffman_bits": 7474,
+      "literal_bytes": 7690,
+      "removed_alignment_bits": 670,
+      "combined_bytes": 8625
+    },
+    {
+      "start": 2885,
+      "frames": 8,
+      "original_bits": 71320,
+      "huffman_bits": 8939,
+      "literal_bytes": 7698,
+      "removed_alignment_bits": 797,
+      "combined_bytes": 8816
+    },
+    {
+      "start": 2893,
+      "frames": 8,
+      "original_bits": 67962,
+      "huffman_bits": 6567,
+      "literal_bytes": 7574,
+      "removed_alignment_bits": 803,
+      "combined_bytes": 8395
+    },
+    {
+      "start": 2901,
+      "frames": 8,
+      "original_bits": 67512,
+      "huffman_bits": 6588,
+      "literal_bytes": 7520,
+      "removed_alignment_bits": 764,
+      "combined_bytes": 8344
+    },
+    {
+      "start": 2909,
+      "frames": 8,
+      "original_bits": 67184,
+      "huffman_bits": 8575,
+      "literal_bytes": 7224,
+      "removed_alignment_bits": 817,
+      "combined_bytes": 8296
+    },
+    {
+      "start": 2917,
+      "frames": 8,
+      "original_bits": 73167,
+      "huffman_bits": 8412,
+      "literal_bytes": 7982,
+      "removed_alignment_bits": 899,
+      "combined_bytes": 9034
+    },
+    {
+      "start": 2925,
+      "frames": 8,
+      "original_bits": 60126,
+      "huffman_bits": 9701,
+      "literal_bytes": 6221,
+      "removed_alignment_bits": 657,
+      "combined_bytes": 7434
+    },
+    {
+      "start": 2933,
+      "frames": 8,
+      "original_bits": 18686,
+      "huffman_bits": 14497,
+      "literal_bytes": 512,
+      "removed_alignment_bits": 93,
+      "combined_bytes": 2325
+    },
+    {
+      "start": 2941,
+      "frames": 8,
+      "original_bits": 24014,
+      "huffman_bits": 12589,
+      "literal_bytes": 1403,
+      "removed_alignment_bits": 201,
+      "combined_bytes": 2977
+    },
+    {
+      "start": 2949,
+      "frames": 8,
+      "original_bits": 6035,
+      "huffman_bits": 6035,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 755
+    },
+    {
+      "start": 2957,
+      "frames": 8,
+      "original_bits": 57058,
+      "huffman_bits": 11855,
+      "literal_bytes": 5580,
+      "removed_alignment_bits": 563,
+      "combined_bytes": 7062
+    },
+    {
+      "start": 2965,
+      "frames": 8,
+      "original_bits": 3725,
+      "huffman_bits": 3725,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 466
+    },
+    {
+      "start": 2973,
+      "frames": 8,
+      "original_bits": 55028,
+      "huffman_bits": 11284,
+      "literal_bytes": 5400,
+      "removed_alignment_bits": 544,
+      "combined_bytes": 6811
+    },
+    {
+      "start": 2981,
+      "frames": 7,
+      "original_bits": 65363,
+      "huffman_bits": 8206,
+      "literal_bytes": 7062,
+      "removed_alignment_bits": 661,
+      "combined_bytes": 8088
+    },
+    {
+      "start": 2988,
+      "frames": 7,
+      "original_bits": 69524,
+      "huffman_bits": 7712,
+      "literal_bytes": 7643,
+      "removed_alignment_bits": 668,
+      "combined_bytes": 8607
+    },
+    {
+      "start": 2995,
+      "frames": 7,
+      "original_bits": 65742,
+      "huffman_bits": 8625,
+      "literal_bytes": 7052,
+      "removed_alignment_bits": 701,
+      "combined_bytes": 8131
+    },
+    {
+      "start": 3002,
+      "frames": 8,
+      "original_bits": 59757,
+      "huffman_bits": 10247,
+      "literal_bytes": 6100,
+      "removed_alignment_bits": 710,
+      "combined_bytes": 7381
+    },
+    {
+      "start": 3010,
+      "frames": 8,
+      "original_bits": 2233,
+      "huffman_bits": 2233,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 280
+    },
+    {
+      "start": 3018,
+      "frames": 8,
+      "original_bits": 2688,
+      "huffman_bits": 2688,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 336
+    },
+    {
+      "start": 3026,
+      "frames": 8,
+      "original_bits": 3612,
+      "huffman_bits": 3612,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 452
+    },
+    {
+      "start": 3034,
+      "frames": 8,
+      "original_bits": 9833,
+      "huffman_bits": 9299,
+      "literal_bytes": 64,
+      "removed_alignment_bits": 22,
+      "combined_bytes": 1227
+    },
+    {
+      "start": 3042,
+      "frames": 8,
+      "original_bits": 25870,
+      "huffman_bits": 13606,
+      "literal_bytes": 1506,
+      "removed_alignment_bits": 216,
+      "combined_bytes": 3207
+    },
+    {
+      "start": 3050,
+      "frames": 8,
+      "original_bits": 32047,
+      "huffman_bits": 9699,
+      "literal_bytes": 2744,
+      "removed_alignment_bits": 396,
+      "combined_bytes": 3957
+    },
+    {
+      "start": 3058,
+      "frames": 8,
+      "original_bits": 33308,
+      "huffman_bits": 8657,
+      "literal_bytes": 3025,
+      "removed_alignment_bits": 451,
+      "combined_bytes": 4108
+    },
+    {
+      "start": 3066,
+      "frames": 8,
+      "original_bits": 21988,
+      "huffman_bits": 10627,
+      "literal_bytes": 1389,
+      "removed_alignment_bits": 249,
+      "combined_bytes": 2718
+    },
+    {
+      "start": 3074,
+      "frames": 8,
+      "original_bits": 8207,
+      "huffman_bits": 8207,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1026
+    },
+    {
+      "start": 3082,
+      "frames": 8,
+      "original_bits": 2390,
+      "huffman_bits": 2390,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 299
+    },
+    {
+      "start": 3090,
+      "frames": 8,
+      "original_bits": 19299,
+      "huffman_bits": 5998,
+      "literal_bytes": 1641,
+      "removed_alignment_bits": 173,
+      "combined_bytes": 2391
+    },
+    {
+      "start": 3098,
+      "frames": 8,
+      "original_bits": 5063,
+      "huffman_bits": 5063,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 633
+    },
+    {
+      "start": 3106,
+      "frames": 8,
+      "original_bits": 7839,
+      "huffman_bits": 2224,
+      "literal_bytes": 692,
+      "removed_alignment_bits": 79,
+      "combined_bytes": 970
+    },
+    {
+      "start": 3114,
+      "frames": 8,
+      "original_bits": 492,
+      "huffman_bits": 492,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 62
+    },
+    {
+      "start": 3122,
+      "frames": 8,
+      "original_bits": 10424,
+      "huffman_bits": 2210,
+      "literal_bytes": 1011,
+      "removed_alignment_bits": 126,
+      "combined_bytes": 1288
+    },
+    {
+      "start": 3130,
+      "frames": 8,
+      "original_bits": 5093,
+      "huffman_bits": 5093,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 637
+    },
+    {
+      "start": 3138,
+      "frames": 8,
+      "original_bits": 8878,
+      "huffman_bits": 8486,
+      "literal_bytes": 48,
+      "removed_alignment_bits": 8,
+      "combined_bytes": 1109
+    },
+    {
+      "start": 3146,
+      "frames": 8,
+      "original_bits": 21570,
+      "huffman_bits": 9635,
+      "literal_bytes": 1479,
+      "removed_alignment_bits": 103,
+      "combined_bytes": 2684
+    },
+    {
+      "start": 3154,
+      "frames": 8,
+      "original_bits": 11879,
+      "huffman_bits": 11747,
+      "literal_bytes": 16,
+      "removed_alignment_bits": 4,
+      "combined_bytes": 1485
+    },
+    {
+      "start": 3162,
+      "frames": 8,
+      "original_bits": 9099,
+      "huffman_bits": 9099,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1138
+    },
+    {
+      "start": 3170,
+      "frames": 8,
+      "original_bits": 16004,
+      "huffman_bits": 9347,
+      "literal_bytes": 819,
+      "removed_alignment_bits": 105,
+      "combined_bytes": 1988
+    },
+    {
+      "start": 3178,
+      "frames": 8,
+      "original_bits": 6497,
+      "huffman_bits": 6497,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 813
+    },
+    {
+      "start": 3186,
+      "frames": 8,
+      "original_bits": 1670,
+      "huffman_bits": 1670,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 209
+    },
+    {
+      "start": 3194,
+      "frames": 8,
+      "original_bits": 701,
+      "huffman_bits": 701,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 88
+    },
+    {
+      "start": 3202,
+      "frames": 8,
+      "original_bits": 2575,
+      "huffman_bits": 2575,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 322
+    },
+    {
+      "start": 3210,
+      "frames": 8,
+      "original_bits": 5120,
+      "huffman_bits": 5120,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 640
+    },
+    {
+      "start": 3218,
+      "frames": 8,
+      "original_bits": 1995,
+      "huffman_bits": 1995,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 250
+    },
+    {
+      "start": 3226,
+      "frames": 8,
+      "original_bits": 2537,
+      "huffman_bits": 2537,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 318
+    },
+    {
+      "start": 3234,
+      "frames": 8,
+      "original_bits": 5299,
+      "huffman_bits": 5299,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 663
+    },
+    {
+      "start": 3242,
+      "frames": 8,
+      "original_bits": 3766,
+      "huffman_bits": 3766,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 471
+    },
+    {
+      "start": 3250,
+      "frames": 8,
+      "original_bits": 8390,
+      "huffman_bits": 6061,
+      "literal_bytes": 286,
+      "removed_alignment_bits": 41,
+      "combined_bytes": 1044
+    },
+    {
+      "start": 3258,
+      "frames": 8,
+      "original_bits": 11587,
+      "huffman_bits": 11313,
+      "literal_bytes": 33,
+      "removed_alignment_bits": 10,
+      "combined_bytes": 1448
+    },
+    {
+      "start": 3266,
+      "frames": 8,
+      "original_bits": 14708,
+      "huffman_bits": 6290,
+      "literal_bytes": 1038,
+      "removed_alignment_bits": 114,
+      "combined_bytes": 1825
+    },
+    {
+      "start": 3274,
+      "frames": 8,
+      "original_bits": 2742,
+      "huffman_bits": 2742,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 343
+    },
+    {
+      "start": 3282,
+      "frames": 8,
+      "original_bits": 9302,
+      "huffman_bits": 2266,
+      "literal_bytes": 870,
+      "removed_alignment_bits": 76,
+      "combined_bytes": 1154
+    },
+    {
+      "start": 3290,
+      "frames": 8,
+      "original_bits": 3139,
+      "huffman_bits": 3139,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 393
+    },
+    {
+      "start": 3298,
+      "frames": 8,
+      "original_bits": 11189,
+      "huffman_bits": 5999,
+      "literal_bytes": 636,
+      "removed_alignment_bits": 102,
+      "combined_bytes": 1386
+    },
+    {
+      "start": 3306,
+      "frames": 8,
+      "original_bits": 5325,
+      "huffman_bits": 5325,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 666
+    },
+    {
+      "start": 3314,
+      "frames": 8,
+      "original_bits": 4816,
+      "huffman_bits": 4816,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 602
+    },
+    {
+      "start": 3322,
+      "frames": 8,
+      "original_bits": 25155,
+      "huffman_bits": 11584,
+      "literal_bytes": 1672,
+      "removed_alignment_bits": 195,
+      "combined_bytes": 3120
+    },
+    {
+      "start": 3330,
+      "frames": 8,
+      "original_bits": 10230,
+      "huffman_bits": 6969,
+      "literal_bytes": 397,
+      "removed_alignment_bits": 85,
+      "combined_bytes": 1269
+    },
+    {
+      "start": 3338,
+      "frames": 8,
+      "original_bits": 4745,
+      "huffman_bits": 4745,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 594
+    },
+    {
+      "start": 3346,
+      "frames": 8,
+      "original_bits": 5602,
+      "huffman_bits": 5602,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 701
+    },
+    {
+      "start": 3354,
+      "frames": 8,
+      "original_bits": 6433,
+      "huffman_bits": 6433,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 805
+    },
+    {
+      "start": 3362,
+      "frames": 8,
+      "original_bits": 26035,
+      "huffman_bits": 15045,
+      "literal_bytes": 1344,
+      "removed_alignment_bits": 238,
+      "combined_bytes": 3225
+    },
+    {
+      "start": 3370,
+      "frames": 8,
+      "original_bits": 31430,
+      "huffman_bits": 8556,
+      "literal_bytes": 2854,
+      "removed_alignment_bits": 42,
+      "combined_bytes": 3924
+    },
+    {
+      "start": 3378,
+      "frames": 8,
+      "original_bits": 8779,
+      "huffman_bits": 7840,
+      "literal_bytes": 114,
+      "removed_alignment_bits": 27,
+      "combined_bytes": 1094
+    },
+    {
+      "start": 3386,
+      "frames": 8,
+      "original_bits": 12212,
+      "huffman_bits": 10220,
+      "literal_bytes": 242,
+      "removed_alignment_bits": 56,
+      "combined_bytes": 1520
+    },
+    {
+      "start": 3394,
+      "frames": 8,
+      "original_bits": 17758,
+      "huffman_bits": 6251,
+      "literal_bytes": 1430,
+      "removed_alignment_bits": 67,
+      "combined_bytes": 2212
+    },
+    {
+      "start": 3402,
+      "frames": 8,
+      "original_bits": 21358,
+      "huffman_bits": 12459,
+      "literal_bytes": 1089,
+      "removed_alignment_bits": 187,
+      "combined_bytes": 2647
+    },
+    {
+      "start": 3410,
+      "frames": 8,
+      "original_bits": 9521,
+      "huffman_bits": 9374,
+      "literal_bytes": 18,
+      "removed_alignment_bits": 3,
+      "combined_bytes": 1190
+    },
+    {
+      "start": 3418,
+      "frames": 8,
+      "original_bits": 29230,
+      "huffman_bits": 12961,
+      "literal_bytes": 2007,
+      "removed_alignment_bits": 213,
+      "combined_bytes": 3628
+    },
+    {
+      "start": 3426,
+      "frames": 8,
+      "original_bits": 16594,
+      "huffman_bits": 15668,
+      "literal_bytes": 112,
+      "removed_alignment_bits": 30,
+      "combined_bytes": 2071
+    },
+    {
+      "start": 3434,
+      "frames": 8,
+      "original_bits": 9687,
+      "huffman_bits": 3974,
+      "literal_bytes": 701,
+      "removed_alignment_bits": 105,
+      "combined_bytes": 1198
+    },
+    {
+      "start": 3442,
+      "frames": 8,
+      "original_bits": 4950,
+      "huffman_bits": 4950,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 619
+    },
+    {
+      "start": 3450,
+      "frames": 8,
+      "original_bits": 4691,
+      "huffman_bits": 4691,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 587
+    },
+    {
+      "start": 3458,
+      "frames": 8,
+      "original_bits": 5007,
+      "huffman_bits": 5007,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 626
+    },
+    {
+      "start": 3466,
+      "frames": 8,
+      "original_bits": 17068,
+      "huffman_bits": 8440,
+      "literal_bytes": 1064,
+      "removed_alignment_bits": 116,
+      "combined_bytes": 2119
+    },
+    {
+      "start": 3474,
+      "frames": 8,
+      "original_bits": 25835,
+      "huffman_bits": 11107,
+      "literal_bytes": 1823,
+      "removed_alignment_bits": 144,
+      "combined_bytes": 3212
+    },
+    {
+      "start": 3482,
+      "frames": 8,
+      "original_bits": 7913,
+      "huffman_bits": 7913,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 990
+    },
+    {
+      "start": 3490,
+      "frames": 8,
+      "original_bits": 11530,
+      "huffman_bits": 11530,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1442
+    },
+    {
+      "start": 3498,
+      "frames": 8,
+      "original_bits": 49937,
+      "huffman_bits": 14352,
+      "literal_bytes": 4393,
+      "removed_alignment_bits": 441,
+      "combined_bytes": 6187
+    },
+    {
+      "start": 3506,
+      "frames": 8,
+      "original_bits": 40245,
+      "huffman_bits": 12951,
+      "literal_bytes": 3358,
+      "removed_alignment_bits": 430,
+      "combined_bytes": 4977
+    },
+    {
+      "start": 3514,
+      "frames": 8,
+      "original_bits": 39241,
+      "huffman_bits": 15683,
+      "literal_bytes": 2909,
+      "removed_alignment_bits": 286,
+      "combined_bytes": 4870
+    },
+    {
+      "start": 3522,
+      "frames": 8,
+      "original_bits": 27567,
+      "huffman_bits": 17229,
+      "literal_bytes": 1264,
+      "removed_alignment_bits": 226,
+      "combined_bytes": 3418
+    },
+    {
+      "start": 3530,
+      "frames": 8,
+      "original_bits": 23965,
+      "huffman_bits": 14895,
+      "literal_bytes": 1123,
+      "removed_alignment_bits": 86,
+      "combined_bytes": 2985
+    },
+    {
+      "start": 3538,
+      "frames": 8,
+      "original_bits": 6465,
+      "huffman_bits": 6465,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 809
+    },
+    {
+      "start": 3546,
+      "frames": 8,
+      "original_bits": 18572,
+      "huffman_bits": 6894,
+      "literal_bytes": 1450,
+      "removed_alignment_bits": 78,
+      "combined_bytes": 2312
+    },
+    {
+      "start": 3554,
+      "frames": 8,
+      "original_bits": 35464,
+      "huffman_bits": 12454,
+      "literal_bytes": 2826,
+      "removed_alignment_bits": 402,
+      "combined_bytes": 4383
+    },
+    {
+      "start": 3562,
+      "frames": 8,
+      "original_bits": 20638,
+      "huffman_bits": 10571,
+      "literal_bytes": 1228,
+      "removed_alignment_bits": 243,
+      "combined_bytes": 2550
+    },
+    {
+      "start": 3570,
+      "frames": 8,
+      "original_bits": 17572,
+      "huffman_bits": 9235,
+      "literal_bytes": 1038,
+      "removed_alignment_bits": 33,
+      "combined_bytes": 2193
+    },
+    {
+      "start": 3578,
+      "frames": 8,
+      "original_bits": 6282,
+      "huffman_bits": 6282,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 786
+    },
+    {
+      "start": 3586,
+      "frames": 8,
+      "original_bits": 39639,
+      "huffman_bits": 10497,
+      "literal_bytes": 3606,
+      "removed_alignment_bits": 294,
+      "combined_bytes": 4919
+    },
+    {
+      "start": 3594,
+      "frames": 8,
+      "original_bits": 43801,
+      "huffman_bits": 12016,
+      "literal_bytes": 3890,
+      "removed_alignment_bits": 665,
+      "combined_bytes": 5392
+    },
+    {
+      "start": 3602,
+      "frames": 8,
+      "original_bits": 40668,
+      "huffman_bits": 12354,
+      "literal_bytes": 3462,
+      "removed_alignment_bits": 618,
+      "combined_bytes": 5007
+    },
+    {
+      "start": 3610,
+      "frames": 8,
+      "original_bits": 25417,
+      "huffman_bits": 13108,
+      "literal_bytes": 1510,
+      "removed_alignment_bits": 229,
+      "combined_bytes": 3149
+    },
+    {
+      "start": 3618,
+      "frames": 8,
+      "original_bits": 9098,
+      "huffman_bits": 9098,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1138
+    },
+    {
+      "start": 3626,
+      "frames": 8,
+      "original_bits": 43401,
+      "huffman_bits": 11757,
+      "literal_bytes": 3924,
+      "removed_alignment_bits": 252,
+      "combined_bytes": 5394
+    },
+    {
+      "start": 3634,
+      "frames": 8,
+      "original_bits": 35409,
+      "huffman_bits": 10374,
+      "literal_bytes": 3110,
+      "removed_alignment_bits": 155,
+      "combined_bytes": 4407
+    },
+    {
+      "start": 3642,
+      "frames": 8,
+      "original_bits": 9627,
+      "huffman_bits": 8261,
+      "literal_bytes": 164,
+      "removed_alignment_bits": 54,
+      "combined_bytes": 1197
+    },
+    {
+      "start": 3650,
+      "frames": 8,
+      "original_bits": 18450,
+      "huffman_bits": 14258,
+      "literal_bytes": 513,
+      "removed_alignment_bits": 88,
+      "combined_bytes": 2296
+    },
+    {
+      "start": 3658,
+      "frames": 8,
+      "original_bits": 7670,
+      "huffman_bits": 7670,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 959
+    },
+    {
+      "start": 3666,
+      "frames": 8,
+      "original_bits": 11973,
+      "huffman_bits": 6977,
+      "literal_bytes": 613,
+      "removed_alignment_bits": 92,
+      "combined_bytes": 1486
+    },
+    {
+      "start": 3674,
+      "frames": 8,
+      "original_bits": 3687,
+      "huffman_bits": 3687,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 461
+    },
+    {
+      "start": 3682,
+      "frames": 6,
+      "original_bits": 60995,
+      "huffman_bits": 9496,
+      "literal_bytes": 6410,
+      "removed_alignment_bits": 219,
+      "combined_bytes": 7597
+    },
+    {
+      "start": 3688,
+      "frames": 5,
+      "original_bits": 70213,
+      "huffman_bits": 8414,
+      "literal_bytes": 7669,
+      "removed_alignment_bits": 447,
+      "combined_bytes": 8721
+    },
+    {
+      "start": 3693,
+      "frames": 8,
+      "original_bits": 33332,
+      "huffman_bits": 13057,
+      "literal_bytes": 2481,
+      "removed_alignment_bits": 427,
+      "combined_bytes": 4114
+    },
+    {
+      "start": 3701,
+      "frames": 8,
+      "original_bits": 49205,
+      "huffman_bits": 14635,
+      "literal_bytes": 4266,
+      "removed_alignment_bits": 442,
+      "combined_bytes": 6096
+    },
+    {
+      "start": 3709,
+      "frames": 8,
+      "original_bits": 12757,
+      "huffman_bits": 12625,
+      "literal_bytes": 16,
+      "removed_alignment_bits": 4,
+      "combined_bytes": 1595
+    },
+    {
+      "start": 3717,
+      "frames": 8,
+      "original_bits": 5501,
+      "huffman_bits": 5501,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 688
+    },
+    {
+      "start": 3725,
+      "frames": 8,
+      "original_bits": 4861,
+      "huffman_bits": 4861,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 608
+    },
+    {
+      "start": 3733,
+      "frames": 8,
+      "original_bits": 3073,
+      "huffman_bits": 3073,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 385
+    },
+    {
+      "start": 3741,
+      "frames": 8,
+      "original_bits": 4033,
+      "huffman_bits": 4033,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 505
+    },
+    {
+      "start": 3749,
+      "frames": 8,
+      "original_bits": 8585,
+      "huffman_bits": 8585,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1074
+    },
+    {
+      "start": 3757,
+      "frames": 8,
+      "original_bits": 4427,
+      "huffman_bits": 4427,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 554
+    },
+    {
+      "start": 3765,
+      "frames": 8,
+      "original_bits": 41344,
+      "huffman_bits": 11012,
+      "literal_bytes": 3762,
+      "removed_alignment_bits": 236,
+      "combined_bytes": 5139
+    },
+    {
+      "start": 3773,
+      "frames": 8,
+      "original_bits": 68009,
+      "huffman_bits": 11246,
+      "literal_bytes": 7024,
+      "removed_alignment_bits": 571,
+      "combined_bytes": 8430
+    },
+    {
+      "start": 3781,
+      "frames": 8,
+      "original_bits": 2276,
+      "huffman_bits": 2276,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 285
+    },
+    {
+      "start": 3789,
+      "frames": 8,
+      "original_bits": 1705,
+      "huffman_bits": 1705,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 214
+    },
+    {
+      "start": 3797,
+      "frames": 8,
+      "original_bits": 5046,
+      "huffman_bits": 5046,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 631
+    },
+    {
+      "start": 3805,
+      "frames": 8,
+      "original_bits": 21413,
+      "huffman_bits": 12771,
+      "literal_bytes": 1055,
+      "removed_alignment_bits": 202,
+      "combined_bytes": 2652
+    },
+    {
+      "start": 3813,
+      "frames": 8,
+      "original_bits": 15003,
+      "huffman_bits": 8688,
+      "literal_bytes": 779,
+      "removed_alignment_bits": 83,
+      "combined_bytes": 1865
+    },
+    {
+      "start": 3821,
+      "frames": 8,
+      "original_bits": 19335,
+      "huffman_bits": 11838,
+      "literal_bytes": 913,
+      "removed_alignment_bits": 193,
+      "combined_bytes": 2393
+    },
+    {
+      "start": 3829,
+      "frames": 8,
+      "original_bits": 11224,
+      "huffman_bits": 10535,
+      "literal_bytes": 85,
+      "removed_alignment_bits": 9,
+      "combined_bytes": 1402
+    },
+    {
+      "start": 3837,
+      "frames": 8,
+      "original_bits": 8832,
+      "huffman_bits": 2178,
+      "literal_bytes": 816,
+      "removed_alignment_bits": 126,
+      "combined_bytes": 1089
+    },
+    {
+      "start": 3845,
+      "frames": 8,
+      "original_bits": 969,
+      "huffman_bits": 969,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 122
+    },
+    {
+      "start": 3853,
+      "frames": 8,
+      "original_bits": 46710,
+      "huffman_bits": 10316,
+      "literal_bytes": 4475,
+      "removed_alignment_bits": 594,
+      "combined_bytes": 5765
+    },
+    {
+      "start": 3861,
+      "frames": 8,
+      "original_bits": 37846,
+      "huffman_bits": 8019,
+      "literal_bytes": 3662,
+      "removed_alignment_bits": 531,
+      "combined_bytes": 4665
+    },
+    {
+      "start": 3869,
+      "frames": 8,
+      "original_bits": 17146,
+      "huffman_bits": 8166,
+      "literal_bytes": 1091,
+      "removed_alignment_bits": 252,
+      "combined_bytes": 2112
+    },
+    {
+      "start": 3877,
+      "frames": 8,
+      "original_bits": 25967,
+      "huffman_bits": 8949,
+      "literal_bytes": 2092,
+      "removed_alignment_bits": 282,
+      "combined_bytes": 3211
+    },
+    {
+      "start": 3885,
+      "frames": 8,
+      "original_bits": 52409,
+      "huffman_bits": 9324,
+      "literal_bytes": 5300,
+      "removed_alignment_bits": 685,
+      "combined_bytes": 6466
+    },
+    {
+      "start": 3893,
+      "frames": 8,
+      "original_bits": 48506,
+      "huffman_bits": 8173,
+      "literal_bytes": 4965,
+      "removed_alignment_bits": 613,
+      "combined_bytes": 5987
+    },
+    {
+      "start": 3901,
+      "frames": 8,
+      "original_bits": 52689,
+      "huffman_bits": 7726,
+      "literal_bytes": 5547,
+      "removed_alignment_bits": 587,
+      "combined_bytes": 6513
+    },
+    {
+      "start": 3909,
+      "frames": 8,
+      "original_bits": 54247,
+      "huffman_bits": 8578,
+      "literal_bytes": 5627,
+      "removed_alignment_bits": 653,
+      "combined_bytes": 6700
+    },
+    {
+      "start": 3917,
+      "frames": 8,
+      "original_bits": 27056,
+      "huffman_bits": 12593,
+      "literal_bytes": 1774,
+      "removed_alignment_bits": 271,
+      "combined_bytes": 3349
+    },
+    {
+      "start": 3925,
+      "frames": 8,
+      "original_bits": 14303,
+      "huffman_bits": 5711,
+      "literal_bytes": 1059,
+      "removed_alignment_bits": 120,
+      "combined_bytes": 1773
+    },
+    {
+      "start": 3933,
+      "frames": 8,
+      "original_bits": 2621,
+      "huffman_bits": 2621,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 328
+    },
+    {
+      "start": 3941,
+      "frames": 8,
+      "original_bits": 16122,
+      "huffman_bits": 4838,
+      "literal_bytes": 1398,
+      "removed_alignment_bits": 100,
+      "combined_bytes": 2003
+    },
+    {
+      "start": 3949,
+      "frames": 8,
+      "original_bits": 10817,
+      "huffman_bits": 9907,
+      "literal_bytes": 112,
+      "removed_alignment_bits": 14,
+      "combined_bytes": 1351
+    },
+    {
+      "start": 3957,
+      "frames": 8,
+      "original_bits": 14090,
+      "huffman_bits": 13315,
+      "literal_bytes": 96,
+      "removed_alignment_bits": 7,
+      "combined_bytes": 1761
+    },
+    {
+      "start": 3965,
+      "frames": 8,
+      "original_bits": 8225,
+      "huffman_bits": 8225,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1029
+    },
+    {
+      "start": 3973,
+      "frames": 8,
+      "original_bits": 2560,
+      "huffman_bits": 2560,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 320
+    },
+    {
+      "start": 3981,
+      "frames": 8,
+      "original_bits": 38914,
+      "huffman_bits": 12309,
+      "literal_bytes": 3275,
+      "removed_alignment_bits": 405,
+      "combined_bytes": 4814
+    },
+    {
+      "start": 3989,
+      "frames": 8,
+      "original_bits": 52534,
+      "huffman_bits": 10015,
+      "literal_bytes": 5229,
+      "removed_alignment_bits": 687,
+      "combined_bytes": 6481
+    },
+    {
+      "start": 3997,
+      "frames": 8,
+      "original_bits": 22201,
+      "huffman_bits": 10257,
+      "literal_bytes": 1463,
+      "removed_alignment_bits": 240,
+      "combined_bytes": 2746
+    },
+    {
+      "start": 4005,
+      "frames": 8,
+      "original_bits": 1794,
+      "huffman_bits": 1794,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 225
+    },
+    {
+      "start": 4013,
+      "frames": 8,
+      "original_bits": 11730,
+      "huffman_bits": 3775,
+      "literal_bytes": 989,
+      "removed_alignment_bits": 43,
+      "combined_bytes": 1461
+    },
+    {
+      "start": 4021,
+      "frames": 8,
+      "original_bits": 2404,
+      "huffman_bits": 2404,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 301
+    },
+    {
+      "start": 4029,
+      "frames": 8,
+      "original_bits": 5428,
+      "huffman_bits": 3042,
+      "literal_bytes": 290,
+      "removed_alignment_bits": 66,
+      "combined_bytes": 671
+    },
+    {
+      "start": 4037,
+      "frames": 8,
+      "original_bits": 726,
+      "huffman_bits": 726,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 91
+    },
+    {
+      "start": 4045,
+      "frames": 8,
+      "original_bits": 15544,
+      "huffman_bits": 2565,
+      "literal_bytes": 1612,
+      "removed_alignment_bits": 83,
+      "combined_bytes": 1933
+    },
+    {
+      "start": 4053,
+      "frames": 8,
+      "original_bits": 13086,
+      "huffman_bits": 11154,
+      "literal_bytes": 233,
+      "removed_alignment_bits": 68,
+      "combined_bytes": 1628
+    },
+    {
+      "start": 4061,
+      "frames": 8,
+      "original_bits": 8005,
+      "huffman_bits": 8005,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1001
+    },
+    {
+      "start": 4069,
+      "frames": 8,
+      "original_bits": 5754,
+      "huffman_bits": 5754,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 720
+    },
+    {
+      "start": 4077,
+      "frames": 8,
+      "original_bits": 6998,
+      "huffman_bits": 6998,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 875
+    },
+    {
+      "start": 4085,
+      "frames": 8,
+      "original_bits": 10193,
+      "huffman_bits": 9925,
+      "literal_bytes": 32,
+      "removed_alignment_bits": 12,
+      "combined_bytes": 1273
+    },
+    {
+      "start": 4093,
+      "frames": 8,
+      "original_bits": 13908,
+      "huffman_bits": 13908,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1739
+    },
+    {
+      "start": 4101,
+      "frames": 8,
+      "original_bits": 6141,
+      "huffman_bits": 6141,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 768
+    },
+    {
+      "start": 4109,
+      "frames": 8,
+      "original_bits": 4696,
+      "huffman_bits": 4696,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 587
+    },
+    {
+      "start": 4117,
+      "frames": 8,
+      "original_bits": 3661,
+      "huffman_bits": 3661,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 458
+    },
+    {
+      "start": 4125,
+      "frames": 8,
+      "original_bits": 4117,
+      "huffman_bits": 4117,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 515
+    },
+    {
+      "start": 4133,
+      "frames": 8,
+      "original_bits": 4643,
+      "huffman_bits": 4643,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 581
+    },
+    {
+      "start": 4141,
+      "frames": 8,
+      "original_bits": 6062,
+      "huffman_bits": 6062,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 758
+    },
+    {
+      "start": 4149,
+      "frames": 8,
+      "original_bits": 5904,
+      "huffman_bits": 5904,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 738
+    },
+    {
+      "start": 4157,
+      "frames": 8,
+      "original_bits": 8011,
+      "huffman_bits": 8011,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1002
+    },
+    {
+      "start": 4165,
+      "frames": 8,
+      "original_bits": 11436,
+      "huffman_bits": 11436,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1430
+    },
+    {
+      "start": 4173,
+      "frames": 8,
+      "original_bits": 11487,
+      "huffman_bits": 11487,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1436
+    },
+    {
+      "start": 4181,
+      "frames": 8,
+      "original_bits": 11646,
+      "huffman_bits": 11646,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1456
+    },
+    {
+      "start": 4189,
+      "frames": 8,
+      "original_bits": 12028,
+      "huffman_bits": 12028,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1504
+    },
+    {
+      "start": 4197,
+      "frames": 8,
+      "original_bits": 11030,
+      "huffman_bits": 11030,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1379
+    },
+    {
+      "start": 4205,
+      "frames": 8,
+      "original_bits": 11850,
+      "huffman_bits": 11850,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1482
+    },
+    {
+      "start": 4213,
+      "frames": 8,
+      "original_bits": 12902,
+      "huffman_bits": 12771,
+      "literal_bytes": 16,
+      "removed_alignment_bits": 3,
+      "combined_bytes": 1613
+    },
+    {
+      "start": 4221,
+      "frames": 8,
+      "original_bits": 13456,
+      "huffman_bits": 13038,
+      "literal_bytes": 50,
+      "removed_alignment_bits": 18,
+      "combined_bytes": 1680
+    },
+    {
+      "start": 4229,
+      "frames": 8,
+      "original_bits": 25209,
+      "huffman_bits": 13729,
+      "literal_bytes": 1394,
+      "removed_alignment_bits": 328,
+      "combined_bytes": 3111
+    },
+    {
+      "start": 4237,
+      "frames": 8,
+      "original_bits": 14364,
+      "huffman_bits": 12444,
+      "literal_bytes": 232,
+      "removed_alignment_bits": 64,
+      "combined_bytes": 1788
+    },
+    {
+      "start": 4245,
+      "frames": 8,
+      "original_bits": 13045,
+      "huffman_bits": 12201,
+      "literal_bytes": 102,
+      "removed_alignment_bits": 28,
+      "combined_bytes": 1628
+    },
+    {
+      "start": 4253,
+      "frames": 8,
+      "original_bits": 12316,
+      "huffman_bits": 11441,
+      "literal_bytes": 106,
+      "removed_alignment_bits": 27,
+      "combined_bytes": 1537
+    },
+    {
+      "start": 4261,
+      "frames": 8,
+      "original_bits": 9472,
+      "huffman_bits": 9472,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1184
+    },
+    {
+      "start": 4269,
+      "frames": 8,
+      "original_bits": 10009,
+      "huffman_bits": 10009,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1252
+    },
+    {
+      "start": 4277,
+      "frames": 8,
+      "original_bits": 9112,
+      "huffman_bits": 9112,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1139
+    },
+    {
+      "start": 4285,
+      "frames": 8,
+      "original_bits": 9207,
+      "huffman_bits": 9207,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1151
+    },
+    {
+      "start": 4293,
+      "frames": 8,
+      "original_bits": 12020,
+      "huffman_bits": 10519,
+      "literal_bytes": 183,
+      "removed_alignment_bits": 37,
+      "combined_bytes": 1498
+    },
+    {
+      "start": 4301,
+      "frames": 8,
+      "original_bits": 8017,
+      "huffman_bits": 8017,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1003
+    },
+    {
+      "start": 4309,
+      "frames": 8,
+      "original_bits": 6085,
+      "huffman_bits": 6085,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 761
+    },
+    {
+      "start": 4317,
+      "frames": 8,
+      "original_bits": 6333,
+      "huffman_bits": 6333,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 792
+    },
+    {
+      "start": 4325,
+      "frames": 8,
+      "original_bits": 10261,
+      "huffman_bits": 10261,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1283
+    },
+    {
+      "start": 4333,
+      "frames": 8,
+      "original_bits": 9578,
+      "huffman_bits": 9578,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1198
+    },
+    {
+      "start": 4341,
+      "frames": 8,
+      "original_bits": 7233,
+      "huffman_bits": 7233,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 905
+    },
+    {
+      "start": 4349,
+      "frames": 8,
+      "original_bits": 7243,
+      "huffman_bits": 7243,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 906
+    },
+    {
+      "start": 4357,
+      "frames": 8,
+      "original_bits": 8910,
+      "huffman_bits": 8450,
+      "literal_bytes": 55,
+      "removed_alignment_bits": 20,
+      "combined_bytes": 1112
+    },
+    {
+      "start": 4365,
+      "frames": 8,
+      "original_bits": 14732,
+      "huffman_bits": 10832,
+      "literal_bytes": 469,
+      "removed_alignment_bits": 148,
+      "combined_bytes": 1823
+    },
+    {
+      "start": 4373,
+      "frames": 8,
+      "original_bits": 10218,
+      "huffman_bits": 9800,
+      "literal_bytes": 49,
+      "removed_alignment_bits": 26,
+      "combined_bytes": 1274
+    },
+    {
+      "start": 4381,
+      "frames": 8,
+      "original_bits": 12088,
+      "huffman_bits": 11510,
+      "literal_bytes": 68,
+      "removed_alignment_bits": 34,
+      "combined_bytes": 1507
+    },
+    {
+      "start": 4389,
+      "frames": 8,
+      "original_bits": 9981,
+      "huffman_bits": 9981,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 1248
+    },
+    {
+      "start": 4397,
+      "frames": 8,
+      "original_bits": 12895,
+      "huffman_bits": 11851,
+      "literal_bytes": 124,
+      "removed_alignment_bits": 52,
+      "combined_bytes": 1606
+    },
+    {
+      "start": 4405,
+      "frames": 8,
+      "original_bits": 12186,
+      "huffman_bits": 11234,
+      "literal_bytes": 116,
+      "removed_alignment_bits": 24,
+      "combined_bytes": 1521
+    },
+    {
+      "start": 4413,
+      "frames": 8,
+      "original_bits": 10688,
+      "huffman_bits": 9874,
+      "literal_bytes": 99,
+      "removed_alignment_bits": 22,
+      "combined_bytes": 1334
+    },
+    {
+      "start": 4421,
+      "frames": 8,
+      "original_bits": 10166,
+      "huffman_bits": 10083,
+      "literal_bytes": 8,
+      "removed_alignment_bits": 19,
+      "combined_bytes": 1269
+    },
+    {
+      "start": 4429,
+      "frames": 8,
+      "original_bits": 12251,
+      "huffman_bits": 11718,
+      "literal_bytes": 65,
+      "removed_alignment_bits": 13,
+      "combined_bytes": 1530
+    },
+    {
+      "start": 4437,
+      "frames": 8,
+      "original_bits": 18287,
+      "huffman_bits": 13623,
+      "literal_bytes": 568,
+      "removed_alignment_bits": 120,
+      "combined_bytes": 2271
+    },
+    {
+      "start": 4445,
+      "frames": 8,
+      "original_bits": 29453,
+      "huffman_bits": 15251,
+      "literal_bytes": 1749,
+      "removed_alignment_bits": 210,
+      "combined_bytes": 3656
+    },
+    {
+      "start": 4453,
+      "frames": 8,
+      "original_bits": 42229,
+      "huffman_bits": 15415,
+      "literal_bytes": 3324,
+      "removed_alignment_bits": 222,
+      "combined_bytes": 5251
+    },
+    {
+      "start": 4461,
+      "frames": 8,
+      "original_bits": 57490,
+      "huffman_bits": 14939,
+      "literal_bytes": 5270,
+      "removed_alignment_bits": 391,
+      "combined_bytes": 7138
+    },
+    {
+      "start": 4469,
+      "frames": 7,
+      "original_bits": 66826,
+      "huffman_bits": 11935,
+      "literal_bytes": 6823,
+      "removed_alignment_bits": 307,
+      "combined_bytes": 8315
+    },
+    {
+      "start": 4476,
+      "frames": 6,
+      "original_bits": 67704,
+      "huffman_bits": 10086,
+      "literal_bytes": 7157,
+      "removed_alignment_bits": 362,
+      "combined_bytes": 8418
+    },
+    {
+      "start": 4482,
+      "frames": 5,
+      "original_bits": 68291,
+      "huffman_bits": 8472,
+      "literal_bytes": 7440,
+      "removed_alignment_bits": 299,
+      "combined_bytes": 8499
+    },
+    {
+      "start": 4487,
+      "frames": 5,
+      "original_bits": 72063,
+      "huffman_bits": 7228,
+      "literal_bytes": 8069,
+      "removed_alignment_bits": 283,
+      "combined_bytes": 8973
+    },
+    {
+      "start": 4492,
+      "frames": 5,
+      "original_bits": 70504,
+      "huffman_bits": 7880,
+      "literal_bytes": 7781,
+      "removed_alignment_bits": 376,
+      "combined_bytes": 8766
+    },
+    {
+      "start": 4497,
+      "frames": 4,
+      "original_bits": 59887,
+      "huffman_bits": 6585,
+      "literal_bytes": 6634,
+      "removed_alignment_bits": 230,
+      "combined_bytes": 7458
+    },
+    {
+      "start": 4501,
+      "frames": 5,
+      "original_bits": 70170,
+      "huffman_bits": 7920,
+      "literal_bytes": 7736,
+      "removed_alignment_bits": 362,
+      "combined_bytes": 8726
+    },
+    {
+      "start": 4506,
+      "frames": 5,
+      "original_bits": 73542,
+      "huffman_bits": 8004,
+      "literal_bytes": 8158,
+      "removed_alignment_bits": 274,
+      "combined_bytes": 9159
+    },
+    {
+      "start": 4511,
+      "frames": 5,
+      "original_bits": 69224,
+      "huffman_bits": 7908,
+      "literal_bytes": 7619,
+      "removed_alignment_bits": 364,
+      "combined_bytes": 8608
+    },
+    {
+      "start": 4516,
+      "frames": 5,
+      "original_bits": 73163,
+      "huffman_bits": 7682,
+      "literal_bytes": 8154,
+      "removed_alignment_bits": 249,
+      "combined_bytes": 9115
+    },
+    {
+      "start": 4521,
+      "frames": 5,
+      "original_bits": 70280,
+      "huffman_bits": 7757,
+      "literal_bytes": 7775,
+      "removed_alignment_bits": 323,
+      "combined_bytes": 8745
+    },
+    {
+      "start": 4526,
+      "frames": 5,
+      "original_bits": 68384,
+      "huffman_bits": 7327,
+      "literal_bytes": 7587,
+      "removed_alignment_bits": 361,
+      "combined_bytes": 8503
+    },
+    {
+      "start": 4531,
+      "frames": 5,
+      "original_bits": 71787,
+      "huffman_bits": 8173,
+      "literal_bytes": 7907,
+      "removed_alignment_bits": 358,
+      "combined_bytes": 8929
+    },
+    {
+      "start": 4536,
+      "frames": 5,
+      "original_bits": 69330,
+      "huffman_bits": 7793,
+      "literal_bytes": 7642,
+      "removed_alignment_bits": 401,
+      "combined_bytes": 8617
+    },
+    {
+      "start": 4541,
+      "frames": 4,
+      "original_bits": 60165,
+      "huffman_bits": 6553,
+      "literal_bytes": 6671,
+      "removed_alignment_bits": 244,
+      "combined_bytes": 7491
+    },
+    {
+      "start": 4545,
+      "frames": 5,
+      "original_bits": 71235,
+      "huffman_bits": 7790,
+      "literal_bytes": 7886,
+      "removed_alignment_bits": 357,
+      "combined_bytes": 8860
+    },
+    {
+      "start": 4550,
+      "frames": 5,
+      "original_bits": 69093,
+      "huffman_bits": 7367,
+      "literal_bytes": 7678,
+      "removed_alignment_bits": 302,
+      "combined_bytes": 8599
+    },
+    {
+      "start": 4555,
+      "frames": 5,
+      "original_bits": 71411,
+      "huffman_bits": 8115,
+      "literal_bytes": 7881,
+      "removed_alignment_bits": 248,
+      "combined_bytes": 8896
+    },
+    {
+      "start": 4560,
+      "frames": 5,
+      "original_bits": 69560,
+      "huffman_bits": 7777,
+      "literal_bytes": 7680,
+      "removed_alignment_bits": 343,
+      "combined_bytes": 8653
+    },
+    {
+      "start": 4565,
+      "frames": 5,
+      "original_bits": 71246,
+      "huffman_bits": 8253,
+      "literal_bytes": 7840,
+      "removed_alignment_bits": 273,
+      "combined_bytes": 8872
+    },
+    {
+      "start": 4570,
+      "frames": 5,
+      "original_bits": 70328,
+      "huffman_bits": 8079,
+      "literal_bytes": 7744,
+      "removed_alignment_bits": 297,
+      "combined_bytes": 8754
+    },
+    {
+      "start": 4575,
+      "frames": 4,
+      "original_bits": 61625,
+      "huffman_bits": 6860,
+      "literal_bytes": 6810,
+      "removed_alignment_bits": 285,
+      "combined_bytes": 7668
+    },
+    {
+      "start": 4579,
+      "frames": 4,
+      "original_bits": 60559,
+      "huffman_bits": 6278,
+      "literal_bytes": 6757,
+      "removed_alignment_bits": 225,
+      "combined_bytes": 7542
+    },
+    {
+      "start": 4583,
+      "frames": 4,
+      "original_bits": 64022,
+      "huffman_bits": 6583,
+      "literal_bytes": 7151,
+      "removed_alignment_bits": 231,
+      "combined_bytes": 7974
+    },
+    {
+      "start": 4587,
+      "frames": 4,
+      "original_bits": 59653,
+      "huffman_bits": 6159,
+      "literal_bytes": 6655,
+      "removed_alignment_bits": 254,
+      "combined_bytes": 7425
+    },
+    {
+      "start": 4591,
+      "frames": 4,
+      "original_bits": 60795,
+      "huffman_bits": 6312,
+      "literal_bytes": 6778,
+      "removed_alignment_bits": 259,
+      "combined_bytes": 7567
+    },
+    {
+      "start": 4595,
+      "frames": 5,
+      "original_bits": 69424,
+      "huffman_bits": 7983,
+      "literal_bytes": 7632,
+      "removed_alignment_bits": 385,
+      "combined_bytes": 8630
+    },
+    {
+      "start": 4600,
+      "frames": 5,
+      "original_bits": 69736,
+      "huffman_bits": 7884,
+      "literal_bytes": 7696,
+      "removed_alignment_bits": 284,
+      "combined_bytes": 8682
+    },
+    {
+      "start": 4605,
+      "frames": 4,
+      "original_bits": 60712,
+      "huffman_bits": 6996,
+      "literal_bytes": 6688,
+      "removed_alignment_bits": 212,
+      "combined_bytes": 7563
+    },
+    {
+      "start": 4609,
+      "frames": 4,
+      "original_bits": 59034,
+      "huffman_bits": 6277,
+      "literal_bytes": 6554,
+      "removed_alignment_bits": 325,
+      "combined_bytes": 7339
+    },
+    {
+      "start": 4613,
+      "frames": 4,
+      "original_bits": 60262,
+      "huffman_bits": 6993,
+      "literal_bytes": 6629,
+      "removed_alignment_bits": 237,
+      "combined_bytes": 7504
+    },
+    {
+      "start": 4617,
+      "frames": 5,
+      "original_bits": 68250,
+      "huffman_bits": 8019,
+      "literal_bytes": 7488,
+      "removed_alignment_bits": 327,
+      "combined_bytes": 8491
+    },
+    {
+      "start": 4622,
+      "frames": 5,
+      "original_bits": 73090,
+      "huffman_bits": 8478,
+      "literal_bytes": 8039,
+      "removed_alignment_bits": 300,
+      "combined_bytes": 9099
+    },
+    {
+      "start": 4627,
+      "frames": 5,
+      "original_bits": 71662,
+      "huffman_bits": 7933,
+      "literal_bytes": 7915,
+      "removed_alignment_bits": 409,
+      "combined_bytes": 8907
+    },
+    {
+      "start": 4632,
+      "frames": 4,
+      "original_bits": 59309,
+      "huffman_bits": 6582,
+      "literal_bytes": 6555,
+      "removed_alignment_bits": 287,
+      "combined_bytes": 7378
+    },
+    {
+      "start": 4636,
+      "frames": 5,
+      "original_bits": 66047,
+      "huffman_bits": 8290,
+      "literal_bytes": 7184,
+      "removed_alignment_bits": 285,
+      "combined_bytes": 8221
+    },
+    {
+      "start": 4641,
+      "frames": 5,
+      "original_bits": 71129,
+      "huffman_bits": 8779,
+      "literal_bytes": 7767,
+      "removed_alignment_bits": 214,
+      "combined_bytes": 8865
+    },
+    {
+      "start": 4646,
+      "frames": 5,
+      "original_bits": 72153,
+      "huffman_bits": 8533,
+      "literal_bytes": 7915,
+      "removed_alignment_bits": 300,
+      "combined_bytes": 8982
+    },
+    {
+      "start": 4651,
+      "frames": 5,
+      "original_bits": 70579,
+      "huffman_bits": 8514,
+      "literal_bytes": 7721,
+      "removed_alignment_bits": 297,
+      "combined_bytes": 8786
+    },
+    {
+      "start": 4656,
+      "frames": 4,
+      "original_bits": 60713,
+      "huffman_bits": 6725,
+      "literal_bytes": 6725,
+      "removed_alignment_bits": 188,
+      "combined_bytes": 7566
+    },
+    {
+      "start": 4660,
+      "frames": 5,
+      "original_bits": 70182,
+      "huffman_bits": 8255,
+      "literal_bytes": 7695,
+      "removed_alignment_bits": 367,
+      "combined_bytes": 8727
+    },
+    {
+      "start": 4665,
+      "frames": 5,
+      "original_bits": 70831,
+      "huffman_bits": 8972,
+      "literal_bytes": 7696,
+      "removed_alignment_bits": 291,
+      "combined_bytes": 8818
+    },
+    {
+      "start": 4670,
+      "frames": 5,
+      "original_bits": 68385,
+      "huffman_bits": 7940,
+      "literal_bytes": 7521,
+      "removed_alignment_bits": 277,
+      "combined_bytes": 8514
+    },
+    {
+      "start": 4675,
+      "frames": 5,
+      "original_bits": 65008,
+      "huffman_bits": 7834,
+      "literal_bytes": 7105,
+      "removed_alignment_bits": 334,
+      "combined_bytes": 8085
+    },
+    {
+      "start": 4680,
+      "frames": 6,
+      "original_bits": 69707,
+      "huffman_bits": 9892,
+      "literal_bytes": 7433,
+      "removed_alignment_bits": 351,
+      "combined_bytes": 8670
+    },
+    {
+      "start": 4686,
+      "frames": 8,
+      "original_bits": 72453,
+      "huffman_bits": 12158,
+      "literal_bytes": 7461,
+      "removed_alignment_bits": 607,
+      "combined_bytes": 8981
+    },
+    {
+      "start": 4694,
+      "frames": 8,
+      "original_bits": 48049,
+      "huffman_bits": 12490,
+      "literal_bytes": 4400,
+      "removed_alignment_bits": 359,
+      "combined_bytes": 5962
+    },
+    {
+      "start": 4702,
+      "frames": 8,
+      "original_bits": 33932,
+      "huffman_bits": 12120,
+      "literal_bytes": 2691,
+      "removed_alignment_bits": 284,
+      "combined_bytes": 4206
+    },
+    {
+      "start": 4710,
+      "frames": 8,
+      "original_bits": 14452,
+      "huffman_bits": 11619,
+      "literal_bytes": 346,
+      "removed_alignment_bits": 65,
+      "combined_bytes": 1799
+    },
+    {
+      "start": 4718,
+      "frames": 8,
+      "original_bits": 8596,
+      "huffman_bits": 8207,
+      "literal_bytes": 48,
+      "removed_alignment_bits": 5,
+      "combined_bytes": 1074
+    },
+    {
+      "start": 4726,
+      "frames": 8,
+      "original_bits": 5473,
+      "huffman_bits": 5473,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 685
+    },
+    {
+      "start": 4734,
+      "frames": 8,
+      "original_bits": 6470,
+      "huffman_bits": 6470,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 809
+    },
+    {
+      "start": 4742,
+      "frames": 8,
+      "original_bits": 6534,
+      "huffman_bits": 6534,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 817
+    },
+    {
+      "start": 4750,
+      "frames": 8,
+      "original_bits": 4927,
+      "huffman_bits": 4927,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 616
+    },
+    {
+      "start": 4758,
+      "frames": 8,
+      "original_bits": 5613,
+      "huffman_bits": 5613,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 702
+    },
+    {
+      "start": 4766,
+      "frames": 8,
+      "original_bits": 6938,
+      "huffman_bits": 6938,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 868
+    },
+    {
+      "start": 4774,
+      "frames": 8,
+      "original_bits": 7073,
+      "huffman_bits": 7073,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 885
+    },
+    {
+      "start": 4782,
+      "frames": 8,
+      "original_bits": 5037,
+      "huffman_bits": 5037,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 630
+    },
+    {
+      "start": 4790,
+      "frames": 8,
+      "original_bits": 3241,
+      "huffman_bits": 3241,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 406
+    },
+    {
+      "start": 4798,
+      "frames": 8,
+      "original_bits": 3841,
+      "huffman_bits": 3841,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 481
+    },
+    {
+      "start": 4806,
+      "frames": 8,
+      "original_bits": 4803,
+      "huffman_bits": 4803,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 601
+    },
+    {
+      "start": 4814,
+      "frames": 8,
+      "original_bits": 5133,
+      "huffman_bits": 5133,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 642
+    },
+    {
+      "start": 4822,
+      "frames": 8,
+      "original_bits": 4934,
+      "huffman_bits": 4934,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 617
+    },
+    {
+      "start": 4830,
+      "frames": 8,
+      "original_bits": 7406,
+      "huffman_bits": 5893,
+      "literal_bytes": 181,
+      "removed_alignment_bits": 65,
+      "combined_bytes": 918
+    },
+    {
+      "start": 4838,
+      "frames": 8,
+      "original_bits": 5837,
+      "huffman_bits": 2226,
+      "literal_bytes": 444,
+      "removed_alignment_bits": 59,
+      "combined_bytes": 723
+    },
+    {
+      "start": 4846,
+      "frames": 8,
+      "original_bits": 2322,
+      "huffman_bits": 2322,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 291
+    },
+    {
+      "start": 4854,
+      "frames": 8,
+      "original_bits": 5898,
+      "huffman_bits": 5898,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 738
+    },
+    {
+      "start": 4862,
+      "frames": 8,
+      "original_bits": 5658,
+      "huffman_bits": 5658,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 708
+    },
+    {
+      "start": 4870,
+      "frames": 8,
+      "original_bits": 3270,
+      "huffman_bits": 3270,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 409
+    },
+    {
+      "start": 4878,
+      "frames": 8,
+      "original_bits": 1772,
+      "huffman_bits": 1772,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 222
+    },
+    {
+      "start": 4886,
+      "frames": 8,
+      "original_bits": 1555,
+      "huffman_bits": 1555,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 195
+    },
+    {
+      "start": 4894,
+      "frames": 8,
+      "original_bits": 1643,
+      "huffman_bits": 1643,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 206
+    },
+    {
+      "start": 4902,
+      "frames": 8,
+      "original_bits": 3992,
+      "huffman_bits": 3992,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 499
+    },
+    {
+      "start": 4910,
+      "frames": 8,
+      "original_bits": 4176,
+      "huffman_bits": 4176,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 522
+    },
+    {
+      "start": 4918,
+      "frames": 8,
+      "original_bits": 3652,
+      "huffman_bits": 3652,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 457
+    },
+    {
+      "start": 4926,
+      "frames": 8,
+      "original_bits": 3926,
+      "huffman_bits": 3926,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 491
+    },
+    {
+      "start": 4934,
+      "frames": 8,
+      "original_bits": 4057,
+      "huffman_bits": 4057,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 508
+    },
+    {
+      "start": 4942,
+      "frames": 8,
+      "original_bits": 4266,
+      "huffman_bits": 4266,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 534
+    },
+    {
+      "start": 4950,
+      "frames": 8,
+      "original_bits": 4781,
+      "huffman_bits": 4781,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 598
+    },
+    {
+      "start": 4958,
+      "frames": 8,
+      "original_bits": 4196,
+      "huffman_bits": 4196,
+      "literal_bytes": 0,
+      "removed_alignment_bits": 0,
+      "combined_bytes": 525
+    },
+    {
+      "start": 4966,
+      "frames": 5,
+      "original_bits": 2951,
+      "huffman_bits": 2731,
+      "literal_bytes": 24,
+      "removed_alignment_bits": 28,
+      "combined_bytes": 366
+    }
+  ],
+  "deflate_8192": 2024614,
+  "player_changed": false,
+  "integrated_player_delta_tstates": 0,
+  "full_z80_reconstruction_verified": false,
+  "full_frame_delivery_measured": false,
+  "two_input_cursors_and_stream_windows_not_implemented": true
+}
