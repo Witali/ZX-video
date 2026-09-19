@@ -31,7 +31,7 @@ VECTORS, BITMAP, ATTRS, INPUT, INPUT_END = 0xa400, 0xa4c0, 0xa640, 0xa6a0, 0xb90
 MAP, WRAPPER, INITIALIZER = 0x7300, 0x8f60, 0x7b00
 
 
-def wrapper(recon, draw, *, origin=WRAPPER):
+def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False):
     a, listing = MiniAssembler(origin), []
     a.label('run')
     def emit(name, data, ticks):
@@ -57,6 +57,8 @@ def wrapper(recon, draw, *, origin=WRAPPER):
     load_a(draw['screen_base'])
     address('LD HL,native_map', 0x21, MAP, 10)
     address('CALL draw', 0xcd, draw['draw'], 17)
+    if deferred_publish:
+        emit('RET (prepared screen)', [0xc9], 10)
     a.label('publish')
     load_a(draw['saved_page']); emit('XOR 8', [0xee, 8], 7); store_a(draw['saved_page'])
     address('LD BC,7FFD', 0x01, 0x7ffd, 10)
@@ -124,7 +126,7 @@ class PipelineCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False):
+    def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False):
         self.raw_attributes = raw_attributes
         self.decode_metadata = decode_metadata
         self.fast_mask_dispatch = fast_mask_dispatch
@@ -134,7 +136,8 @@ class Harness:
             fast_fragments=True, unrolled_motion=True, split_literals=True, raw_attributes=raw_attributes,
             selective_cache=selective_cache)
         self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch)
-        self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw, origin=0x7900 if selective_cache else WRAPPER)
+        self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw, origin=0x7900 if selective_cache else WRAPPER,
+                                               deferred_publish=deferred_publish)
         self.init_code, ii = initializer(self.draw)
         self.cpu = PipelineCPU(b'', b'')
         self.cpu.port_7ffd = 0x16

@@ -1,0 +1,66 @@
+{
+  "scope": "Check combined CPU totals, unchanged video stages and failed clock attempts.",
+  "complete": true,
+  "baseline_commit": "1963bab",
+  "frames": 4221,
+  "raw_sha256": "67df4508085589d5f0e664c831fd48738801824813458d0734263a8a8594bf39",
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "total_foreground_tstates": 1704510857,
+  "stages": {
+    "packet": 7357203,
+    "stream_input": 106023939,
+    "banked_zx0": 342628971,
+    "audio": 9150603,
+    "metadata": 80531227,
+    "handoff": 1574433,
+    "reconstruct": 751710764,
+    "output": 405533717
+  },
+  "mean_tstates": 403816.8341625207,
+  "max_tstates": 862649,
+  "worst_frame": 4052,
+  "frames_above_425448": 1751,
+  "baseline_video_tstates": 1239307931,
+  "added_input_audio_bridge_tstates": 465202926,
+  "added_deferred_ret_tstates": 42210,
+  "manual_irq_tstates": 16591971,
+  "mean_remaining_before_irq_ula_disk": 21631.16583747929,
+  "clock_attempts": [
+    {
+      "report": "frame_stream_clock_cpu.json",
+      "lookahead": false,
+      "verified_frames": 62,
+      "first_late_frame": 49,
+      "late_frames": 13,
+      "max_late_fields": 5,
+      "failure": {
+        "frame": 62,
+        "error": "('scheduled AY queue differs', 378)",
+        "tstates": 28252283,
+        "pc": 37364,
+        "fields": 378,
+        "played_ticks": 378
+      }
+    },
+    {
+      "report": "frame_stream_clock_ahead_cpu.json",
+      "lookahead": true,
+      "verified_frames": 62,
+      "first_late_frame": 49,
+      "late_frames": 13,
+      "max_late_fields": 5,
+      "failure": {
+        "frame": 62,
+        "error": "('scheduled AY underrun', 378)",
+        "tstates": 28252283,
+        "pc": 37364,
+        "fields": 378,
+        "played_ticks": 378
+      }
+    }
+  ],
+  "pixel_and_ay_data_verified": true,
+  "video_cadence_verified": false,
+  "disk_delivery_verified": false,
+  "release": false
+}
