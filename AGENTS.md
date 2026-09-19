@@ -3,7 +3,15 @@
 - Current target: the movie without final credits on at most three TRDs,
   retaining the entire main story and post-credit scene through EOF. Use
   toolkit/movie_no_credits.json for the user-authorized edit. Keep unchanged
-  resolution, smooth 25/3 fps and the existing 50 Hz AY soundtrack. Only
+  resolution, mean 25/3 fps and the existing 50 Hz AY soundtrack. The user
+  permits up to one 50 Hz field (20 ms) of video jitter: publish on the
+  nominal six-field deadline or one field later, with 5..7 fields between
+  frames and no accumulated schedule drift or dropped frames. After a late
+  frame, compensate on the next ready frame and return to the original
+  deadlines; never shift the schedule origin to the delayed publication.
+  Report recovery of late runs as well as their maximum deviation. AY remains
+  on every 50 Hz interrupt. Verify actual publication timing as well as
+  field counters; a partial run cannot pass the release check. Only
   subtle pixel changes are allowed. Record frame-level quality and inspect
   difficult scenes; an offline size estimate does not qualify as a release.
 - Use the full 128 KiB RAM budget of Spectrum 128 for optimization. Bank

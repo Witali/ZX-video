@@ -1,0 +1,177 @@
+{
+  "scope": "Audit the user-authorized 0..1-field late budget without accepting drift.\n\nField counters are necessary, but do not establish publication at the IRQ\nboundary. Exact T-state phase errors are also reported. Existing recordings\ndo not establish safe ULA/disk delivery and remain non-release evidence.\n",
+  "complete": true,
+  "release": false,
+  "authorized_video_jitter_fields": 1,
+  "authorized_video_jitter_ms": 20,
+  "nominal_period_fields": 6,
+  "allowed_intervals_fields": [
+    5,
+    6,
+    7
+  ],
+  "ay_rate_hz": 50,
+  "recovery_policy": "next ready frame returns to the original absolute deadlines; never reset the schedule origin",
+  "player_changed": false,
+  "player_delta_tstates": 0,
+  "trials": [
+    {
+      "report": "bulk_frame_clock_cpu.json",
+      "sha256": "0a7422789860299755107701a9b88308251b26d0163a9fdb153334fd68bf9ac8",
+      "complete": false,
+      "failure": {
+        "frame": 65,
+        "error": "('scheduled AY underrun', 390)",
+        "tstates": 29091218,
+        "pc": 56167,
+        "fields": 390,
+        "played_ticks": 390
+      },
+      "checked_publications": 65,
+      "late_field_histogram": {
+        "0": 60,
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1,
+        "5": 1
+      },
+      "interval_field_histogram": {
+        "6": 59,
+        "7": 5
+      },
+      "frames_outside_field_budget": 4,
+      "first_outside_field_budget": 61,
+      "intervals_outside_budget": 0,
+      "passes_field_budget": false,
+      "late_runs": [
+        {
+          "first_frame": 60,
+          "frames": 5,
+          "recovered_at_frame": null
+        }
+      ],
+      "max_consecutive_late_frames": 5,
+      "unrecovered_at_recording_end": true,
+      "min_phase_tstates": -945,
+      "max_phase_tstates": 355066,
+      "intervals_below_5_fields": 0,
+      "intervals_above_7_fields": 1,
+      "phase_above_20ms": 5,
+      "irq_boundary_publication_verified": false
+    },
+    {
+      "report": "bulk_frame_zero_copy_clock_cpu.json",
+      "sha256": "a60262b644756336c9fac2ed9480cd71600bd0a1bfac5a9b00fed7c8114b6d9e",
+      "complete": false,
+      "failure": {
+        "frame": 66,
+        "error": "('scheduled AY underrun', 396)",
+        "tstates": 29512187,
+        "pc": 31842,
+        "fields": 396,
+        "played_ticks": 396
+      },
+      "checked_publications": 66,
+      "late_field_histogram": {
+        "0": 50,
+        "1": 11,
+        "2": 1,
+        "3": 1,
+        "4": 2,
+        "5": 1
+      },
+      "interval_field_histogram": {
+        "5": 2,
+        "6": 56,
+        "7": 7
+      },
+      "frames_outside_field_budget": 5,
+      "first_outside_field_budget": 61,
+      "intervals_outside_budget": 0,
+      "passes_field_budget": false,
+      "late_runs": [
+        {
+          "first_frame": 47,
+          "frames": 1,
+          "recovered_at_frame": 48
+        },
+        {
+          "first_frame": 49,
+          "frames": 5,
+          "recovered_at_frame": 54
+        },
+        {
+          "first_frame": 56,
+          "frames": 10,
+          "recovered_at_frame": null
+        }
+      ],
+      "max_consecutive_late_frames": 10,
+      "unrecovered_at_recording_end": true,
+      "min_phase_tstates": -945,
+      "max_phase_tstates": 363760,
+      "intervals_below_5_fields": 0,
+      "intervals_above_7_fields": 1,
+      "phase_above_20ms": 15,
+      "irq_boundary_publication_verified": false
+    },
+    {
+      "report": "bulk_frame_noop_clock_cpu.json",
+      "sha256": "fefcd78cdce73947db458e7bca97428bdfd34e986b1d5133bb896d17ef2bc564",
+      "complete": false,
+      "failure": {
+        "frame": 406,
+        "error": "('scheduled AY underrun', 2436)",
+        "tstates": 174134654,
+        "pc": 31993,
+        "fields": 2436,
+        "played_ticks": 2436
+      },
+      "checked_publications": 406,
+      "late_field_histogram": {
+        "0": 356,
+        "1": 9,
+        "2": 14,
+        "3": 14,
+        "4": 13
+      },
+      "interval_field_histogram": {
+        "4": 1,
+        "5": 7,
+        "6": 385,
+        "7": 11,
+        "8": 1
+      },
+      "frames_outside_field_budget": 41,
+      "first_outside_field_budget": 62,
+      "intervals_outside_budget": 2,
+      "passes_field_budget": false,
+      "late_runs": [
+        {
+          "first_frame": 61,
+          "frames": 30,
+          "recovered_at_frame": 91
+        },
+        {
+          "first_frame": 264,
+          "frames": 12,
+          "recovered_at_frame": 276
+        },
+        {
+          "first_frame": 398,
+          "frames": 8,
+          "recovered_at_frame": null
+        }
+      ],
+      "max_consecutive_late_frames": 30,
+      "unrecovered_at_recording_end": true,
+      "min_phase_tstates": -945,
+      "max_phase_tstates": 349137,
+      "intervals_below_5_fields": 1,
+      "intervals_above_7_fields": 3,
+      "phase_above_20ms": 49,
+      "irq_boundary_publication_verified": false
+    }
+  ]
+}
