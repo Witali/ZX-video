@@ -1,0 +1,215 @@
+{
+  "scope": "Compare fully executed FAP3 with guarded FAP2, keeping cadence separate.",
+  "complete": true,
+  "baseline_commit": "17f079c",
+  "release": false,
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "frames": 4221,
+  "raw_bytes": {
+    "before": 3106401,
+    "after": 3097959,
+    "delta": -8442
+  },
+  "zx0_bytes_with_headers": {
+    "before": 1935757,
+    "after": 1932429,
+    "delta": -3328
+  },
+  "sectors": {
+    "before": 7562,
+    "after": 7549,
+    "delta": -13
+  },
+  "preliminary_three_trd_data_allowance": 1937664,
+  "preliminary_data_margin_bytes": 5235,
+  "actual_disk_delivery_verified": false,
+  "ula_included": false,
+  "packet_guard_path_tstates": {
+    "before": 54,
+    "after": 14,
+    "delta": -40
+  },
+  "foreground_tstates": {
+    "before": 1577064563,
+    "after": 1573904228,
+    "delta": -3160335,
+    "reduction_percent": 0.20039350792260494
+  },
+  "stages": {
+    "packet": {
+      "before": 5342762,
+      "after": 5173922,
+      "delta": -168840
+    },
+    "stream_input": {
+      "before": 70336349,
+      "after": 70158102,
+      "delta": -178247
+    },
+    "banked_zx0": {
+      "before": 303561027,
+      "after": 300747779,
+      "delta": -2813248
+    },
+    "audio": {
+      "before": 9150603,
+      "after": 9150603,
+      "delta": 0
+    },
+    "metadata": {
+      "before": 80531227,
+      "after": 80531227,
+      "delta": 0
+    },
+    "handoff": {
+      "before": 1650411,
+      "after": 1650411,
+      "delta": 0
+    },
+    "reconstruct": {
+      "before": 700958467,
+      "after": 700958467,
+      "delta": 0
+    },
+    "output": {
+      "before": 405533717,
+      "after": 405533717,
+      "delta": 0
+    }
+  },
+  "summary": {
+    "frames": 4221,
+    "total_tstates": 1573904228,
+    "stages": {
+      "packet": 5173922,
+      "stream_input": 70158102,
+      "banked_zx0": 300747779,
+      "audio": 9150603,
+      "metadata": 80531227,
+      "handoff": 1650411,
+      "reconstruct": 700958467,
+      "output": 405533717
+    },
+    "mean_tstates": 372874.7282634447,
+    "max_tstates": 853547,
+    "worst_frame": 4052,
+    "frames_above_425448": 1370,
+    "irq_tstates": 16591971,
+    "unchanged_video_except_wrapper": false,
+    "exact_pixels_and_ay": true,
+    "reconstruction_delta_tstates": -50752297,
+    "added_ret_tstates": 42210,
+    "added_dynamic_source_tstates": 25326,
+    "added_dynamic_metadata_tstates": 50652
+  },
+  "instruction_table": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "exact_framewise_packet_delta": true,
+  "unchanged_video_and_audio_phases": true,
+  "exact_pixels_and_ay": true,
+  "generated_guard_bytes_per_packet": 1,
+  "empty_value_streams": {
+    "coded": 44,
+    "literals": 2635
+  },
+  "cadence": {
+    "complete": false,
+    "verified_frames": 405,
+    "failure": {
+      "frame": 405,
+      "error": "('scheduled AY underrun', 2430)",
+      "tstates": 173710519,
+      "pc": 31921,
+      "fields": 2430,
+      "played_ticks": 2430
+    },
+    "late_frames": 49,
+    "first_late": {
+      "index": 61,
+      "fields": 1
+    },
+    "audit": {
+      "checked_publications": 405,
+      "late_field_histogram": {
+        "0": 356,
+        "1": 12,
+        "2": 7,
+        "3": 18,
+        "4": 12
+      },
+      "late_publications": 49,
+      "early_publications": 0,
+      "first_off_nominal_field": 61,
+      "passes_nominal_field_schedule": false,
+      "interval_field_histogram": {
+        "5": 10,
+        "6": 382,
+        "7": 11,
+        "9": 1
+      },
+      "frames_outside_field_budget": 37,
+      "first_outside_field_budget": 62,
+      "intervals_outside_budget": 1,
+      "passes_field_budget": false,
+      "late_runs": [
+        {
+          "first_frame": 61,
+          "frames": 30,
+          "recovered_at_frame": 91
+        },
+        {
+          "first_frame": 173,
+          "frames": 1,
+          "recovered_at_frame": 174
+        },
+        {
+          "first_frame": 264,
+          "frames": 11,
+          "recovered_at_frame": 275
+        },
+        {
+          "first_frame": 398,
+          "frames": 7,
+          "recovered_at_frame": null
+        }
+      ],
+      "max_consecutive_late_frames": 30,
+      "unrecovered_at_recording_end": true,
+      "min_phase_tstates": -945,
+      "max_phase_tstates": 316677,
+      "intervals_below_5_fields": 1,
+      "intervals_above_7_fields": 1,
+      "phase_above_20ms": 49,
+      "irq_boundary_publication_verified": false
+    }
+  },
+  "sources": {
+    "old_stream": {
+      "path": "bulk_frame_stream.json",
+      "sha256": "58b52ca2cedb7b6b788784e171d866ad30452b95f1888cd16eb7f020414bc30f"
+    },
+    "stream": {
+      "path": "lean_frame_stream.json",
+      "sha256": "008a39624f1c5ce9ec55a2ae5c1e55c249aa39f8612c7860dd4e70eff0581352"
+    },
+    "old_storage": {
+      "path": "bulk_frame_zx0.json",
+      "sha256": "c78eff8f4de6eaa25ce0a9f9c82e51fa77c7f2161ff508f478a3d3b1891fb14e"
+    },
+    "storage": {
+      "path": "lean_frame_zx0.json",
+      "sha256": "b95fff4f7a7c93aad9d5cfef211ccef507784b588868f1bc4cc3b1eb327985f0"
+    },
+    "old_cpu": {
+      "path": "bulk_frame_noop_cpu.json",
+      "sha256": "e0de05f057f4e29cf91c7af58b4d6f00da2f595e3203891906a7c15e36a5a97e"
+    },
+    "cpu": {
+      "path": "lean_frame_cpu.json",
+      "sha256": "14dccdc54b1d1491b48d075d52d0420c129936f6256eabed11e0c9a2d800a8aa"
+    },
+    "clock": {
+      "path": "lean_frame_clock_cpu.json",
+      "sha256": "1de6884858a9232e2f502641d105c2dc7087828842fa2cafd9634229bca8764e"
+    }
+  }
+}

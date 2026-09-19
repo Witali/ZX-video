@@ -1,0 +1,128 @@
+{
+  "scope": "Project the constant 3240-T saving from measured output loops; audit real IRQ playback separately.",
+  "complete": true,
+  "baseline_commit": "469402c",
+  "release": false,
+  "frames": 4221,
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "cells_sha256": "766c3048d96c05fbceca45b23152abbda19851d275e8a6115f0edda80ddad3d0",
+  "compression_change_bytes": 0,
+  "stream_extra_sectors": 0,
+  "extra_initializer_code_bytes": 26,
+  "attribute_loop_tstates": {
+    "before": 12960,
+    "after": 9720,
+    "delta": -3240
+  },
+  "attribute_stage_tstates": {
+    "before": 13018,
+    "after": 9778,
+    "delta": -3240
+  },
+  "cold_init_tstates": {
+    "before": 397967,
+    "after": 430251,
+    "delta": 32284
+  },
+  "code_sizes": {
+    "renderer": [
+      769,
+      769
+    ],
+    "cold_init": [
+      62,
+      88
+    ]
+  },
+  "new_buffers_bytes": 0,
+  "instruction_table_projection": {
+    "full_execution_measured": false,
+    "baseline_foreground_tstates": 1573904228,
+    "total_tstates": 1560228188,
+    "total_delta": -13676040,
+    "mean_tstates": 369634.7282634447,
+    "max_tstates": 850307,
+    "worst_frame": 4052,
+    "frames_above_425448": 1336,
+    "output_before": 405533717,
+    "output_after": 391857677
+  },
+  "measured_cadence": {
+    "complete": false,
+    "verified_frames": 405,
+    "failure": {
+      "frame": 405,
+      "error": "('scheduled AY underrun', 2430)",
+      "tstates": 173739556,
+      "pc": 56167,
+      "fields": 2430,
+      "played_ticks": 2430
+    },
+    "audit": {
+      "checked_publications": 405,
+      "late_field_histogram": {
+        "0": 361,
+        "1": 12,
+        "2": 14,
+        "3": 17,
+        "4": 1
+      },
+      "late_publications": 44,
+      "early_publications": 0,
+      "first_off_nominal_field": 62,
+      "passes_nominal_field_schedule": false,
+      "interval_field_histogram": {
+        "5": 7,
+        "6": 388,
+        "7": 8,
+        "9": 1
+      },
+      "frames_outside_field_budget": 32,
+      "first_outside_field_budget": 63,
+      "intervals_outside_budget": 1,
+      "passes_field_budget": false,
+      "late_runs": [
+        {
+          "first_frame": 62,
+          "frames": 28,
+          "recovered_at_frame": 90
+        },
+        {
+          "first_frame": 265,
+          "frames": 9,
+          "recovered_at_frame": 274
+        },
+        {
+          "first_frame": 398,
+          "frames": 7,
+          "recovered_at_frame": null
+        }
+      ],
+      "max_consecutive_late_frames": 28,
+      "unrecovered_at_recording_end": true,
+      "min_phase_tstates": -945,
+      "max_phase_tstates": 284794,
+      "intervals_below_5_fields": 0,
+      "intervals_above_7_fields": 1,
+      "phase_above_20ms": 44,
+      "irq_boundary_publication_verified": false
+    }
+  },
+  "exact_static_border_profile": true,
+  "actual_disk_delivery_verified": false,
+  "ula_included": false,
+  "sources": {
+    "profile": {
+      "path": "constant_attributes_profile.json",
+      "sha256": "f03b70057190611941e1d07cda4c5d2a9b792bc984f98da4158da76bfb714ed1"
+    },
+    "baseline": {
+      "path": "lean_frame_cpu.json",
+      "sha256": "14dccdc54b1d1491b48d075d52d0420c129936f6256eabed11e0c9a2d800a8aa"
+    },
+    "clock": {
+      "path": "constant_attribute_clock_cpu.json",
+      "sha256": "1c6ca39754a94da7d78ed5d2e160cfcda11a486001f9962ee4b228308653bd52"
+    }
+  }
+}
