@@ -4,7 +4,10 @@ Ring banks 0/1/3/4 map at C000; output E000..FFFF resides in bank 7.
 Code 7C00, private stack below 7BE0, fixed input BC00..BCFF. The ring is
 assumed to contain the complete compressed block; disk supply is external.
 Targets are monotonically increasing output byte counts, with address 0000
-representing the end of an 8192-byte block. No screen/table RAM is borrowed.
+representing the end of an 8192-byte block. token_boundaries treats them as
+minimums and can finish the current copy before pausing; output remains
+inside the block. Validate lookahead latency for the chosen input stream.
+No screen/table RAM is borrowed.
 """
 import incremental_zx0
 from build_zxv_trd import MiniAssembler
@@ -14,13 +17,13 @@ STACK_TOP, STACK_BOTTOM = 0x7be0, 0x7b70
 BANKS = (0, 1, 3, 4)
 
 
-def build(*, fast_literal=False, fast_refill=False):
+def build(*, fast_literal=False, fast_refill=False, token_boundaries=False):
     a = MiniAssembler(CODE)
     a.label('begin')
     a.abs16(0xcd, 'refill')
     a.abs16(0xc3, 'slice_begin')
     incremental_zx0.emit_decoder(a, output_base=OUTPUT, input_base=INPUT, stack_top=STACK_TOP,
-        wrap_output=True, source_page_wrap='refill', literal_hook='literal')
+        wrap_output=True, source_page_wrap='refill', literal_hook='literal',token_boundaries=token_boundaries)
 
     a.label('literal')
     # Split a literal run at BD00 before LDIR can leave the input page.

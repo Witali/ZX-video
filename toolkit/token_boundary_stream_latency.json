@@ -1,0 +1,5766 @@
+{
+  "scope": "Bound CPU-only lookahead time at every copy boundary in the saved movie.\n\nExecute every complete block and record copy-entry times. A quota can end\nonly at the next copy boundary or EOF. Target-dependent fast comparisons\ncan add at most 32 T per copied run relative to this full-block trace.\nAdd 308 T for the slowest resume, 189 T for the stopping comparison/yield,\nand 17 T for its caller CALL. Source decoding/refills/copies/paging are\nmeasured, not estimated. No ULA/ROM/disk/IRQ cost is claimed by this bound.\nThe bound is specific to this verified stream and ring placement.\n",
+  "complete": true,
+  "release": false,
+  "baseline_commit": "81779ce",
+  "input_sha256": "1aff3a304635025c25cc8b20d066b6044f2767b02c99d2490c9f9ae1613ac2ab",
+  "quota": 256,
+  "copy_paths": [
+    {
+      "path": "lower_high_byte",
+      "length": 3,
+      "before": {
+        "copy_tstates": 118,
+        "sync_tstates": 60
+      },
+      "after": {
+        "copy_tstates": 99,
+        "sync_tstates": 100
+      },
+      "delta_tstates": -19
+    },
+    {
+      "path": "same_high_byte",
+      "length": 3,
+      "before": {
+        "copy_tstates": 147,
+        "sync_tstates": 60
+      },
+      "after": {
+        "copy_tstates": 124,
+        "sync_tstates": 100
+      },
+      "delta_tstates": -23
+    },
+    {
+      "path": "last_byte_wrap",
+      "length": 1,
+      "before": {
+        "copy_tstates": 227,
+        "sync_tstates": 60
+      },
+      "after": {
+        "copy_tstates": 89,
+        "sync_tstates": 108
+      },
+      "delta_tstates": -138
+    }
+  ],
+  "blocks": [
+    {
+      "index": 0,
+      "copy_boundaries": 1863,
+      "ring_start": 65524,
+      "bound": {
+        "first": 813,
+        "requested": 1069,
+        "produced": 1071,
+        "copies": 114,
+        "full_block_trace_interval": 40029,
+        "bound_tstates": 44191
+      },
+      "measured_relative_quota_max_resume": 40052,
+      "relative_quota_total": 755307
+    },
+    {
+      "index": 1,
+      "copy_boundaries": 850,
+      "ring_start": 2807,
+      "bound": {
+        "first": 7486,
+        "requested": 7742,
+        "produced": 7776,
+        "copies": 73,
+        "full_block_trace_interval": 27537,
+        "bound_tstates": 30387
+      },
+      "measured_relative_quota_max_resume": 26149,
+      "relative_quota_total": 455526
+    },
+    {
+      "index": 2,
+      "copy_boundaries": 1735,
+      "ring_start": 4860,
+      "bound": {
+        "first": 2512,
+        "requested": 2768,
+        "produced": 2813,
+        "copies": 78,
+        "full_block_trace_interval": 28940,
+        "bound_tstates": 31950
+      },
+      "measured_relative_quota_max_resume": 27972,
+      "relative_quota_total": 704859
+    },
+    {
+      "index": 3,
+      "copy_boundaries": 1902,
+      "ring_start": 9182,
+      "bound": {
+        "first": 7879,
+        "requested": 8135,
+        "produced": 8185,
+        "copies": 80,
+        "full_block_trace_interval": 32489,
+        "bound_tstates": 35563
+      },
+      "measured_relative_quota_max_resume": 31710,
+      "relative_quota_total": 759414
+    },
+    {
+      "index": 4,
+      "copy_boundaries": 2255,
+      "ring_start": 14258,
+      "bound": {
+        "first": 3440,
+        "requested": 3696,
+        "produced": 3698,
+        "copies": 134,
+        "full_block_trace_interval": 39711,
+        "bound_tstates": 44513
+      },
+      "measured_relative_quota_max_resume": 39519,
+      "relative_quota_total": 842058
+    },
+    {
+      "index": 5,
+      "copy_boundaries": 1598,
+      "ring_start": 19709,
+      "bound": {
+        "first": 3691,
+        "requested": 3947,
+        "produced": 3952,
+        "copies": 77,
+        "full_block_trace_interval": 30206,
+        "bound_tstates": 33184
+      },
+      "measured_relative_quota_max_resume": 31570,
+      "relative_quota_total": 684105
+    },
+    {
+      "index": 6,
+      "copy_boundaries": 1440,
+      "ring_start": 25215,
+      "bound": {
+        "first": 4479,
+        "requested": 4735,
+        "produced": 4849,
+        "copies": 82,
+        "full_block_trace_interval": 36216,
+        "bound_tstates": 39354
+      },
+      "measured_relative_quota_max_resume": 36233,
+      "relative_quota_total": 643045
+    },
+    {
+      "index": 7,
+      "copy_boundaries": 1791,
+      "ring_start": 30533,
+      "bound": {
+        "first": 3012,
+        "requested": 3268,
+        "produced": 3272,
+        "copies": 117,
+        "full_block_trace_interval": 39866,
+        "bound_tstates": 44124
+      },
+      "measured_relative_quota_max_resume": 41350,
+      "relative_quota_total": 724334
+    },
+    {
+      "index": 8,
+      "copy_boundaries": 1454,
+      "ring_start": 35725,
+      "bound": {
+        "first": 6411,
+        "requested": 6667,
+        "produced": 6711,
+        "copies": 91,
+        "full_block_trace_interval": 37446,
+        "bound_tstates": 40872
+      },
+      "measured_relative_quota_max_resume": 35079,
+      "relative_quota_total": 649204
+    },
+    {
+      "index": 9,
+      "copy_boundaries": 1711,
+      "ring_start": 40954,
+      "bound": {
+        "first": 5138,
+        "requested": 5394,
+        "produced": 5473,
+        "copies": 90,
+        "full_block_trace_interval": 38388,
+        "bound_tstates": 41782
+      },
+      "measured_relative_quota_max_resume": 37840,
+      "relative_quota_total": 696849
+    },
+    {
+      "index": 10,
+      "copy_boundaries": 1814,
+      "ring_start": 46075,
+      "bound": {
+        "first": 6642,
+        "requested": 6898,
+        "produced": 6902,
+        "copies": 86,
+        "full_block_trace_interval": 30417,
+        "bound_tstates": 33683
+      },
+      "measured_relative_quota_max_resume": 30120,
+      "relative_quota_total": 732377
+    },
+    {
+      "index": 11,
+      "copy_boundaries": 1776,
+      "ring_start": 51469,
+      "bound": {
+        "first": 3527,
+        "requested": 3783,
+        "produced": 3904,
+        "copies": 81,
+        "full_block_trace_interval": 31737,
+        "bound_tstates": 34843
+      },
+      "measured_relative_quota_max_resume": 28889,
+      "relative_quota_total": 698433
+    },
+    {
+      "index": 12,
+      "copy_boundaries": 1828,
+      "ring_start": 55683,
+      "bound": {
+        "first": 1265,
+        "requested": 1521,
+        "produced": 1526,
+        "copies": 120,
+        "full_block_trace_interval": 36027,
+        "bound_tstates": 40381
+      },
+      "measured_relative_quota_max_resume": 35634,
+      "relative_quota_total": 731110
+    },
+    {
+      "index": 13,
+      "copy_boundaries": 1773,
+      "ring_start": 60949,
+      "bound": {
+        "first": 3534,
+        "requested": 3790,
+        "produced": 3791,
+        "copies": 116,
+        "full_block_trace_interval": 35781,
+        "bound_tstates": 40007
+      },
+      "measured_relative_quota_max_resume": 37881,
+      "relative_quota_total": 701557
+    },
+    {
+      "index": 14,
+      "copy_boundaries": 1610,
+      "ring_start": 64986,
+      "bound": {
+        "first": 4159,
+        "requested": 4415,
+        "produced": 4472,
+        "copies": 96,
+        "full_block_trace_interval": 38025,
+        "bound_tstates": 41611
+      },
+      "measured_relative_quota_max_resume": 31803,
+      "relative_quota_total": 681373
+    },
+    {
+      "index": 15,
+      "copy_boundaries": 1540,
+      "ring_start": 4824,
+      "bound": {
+        "first": 7204,
+        "requested": 7460,
+        "produced": 7517,
+        "copies": 86,
+        "full_block_trace_interval": 35959,
+        "bound_tstates": 39225
+      },
+      "measured_relative_quota_max_resume": 30827,
+      "relative_quota_total": 653113
+    },
+    {
+      "index": 16,
+      "copy_boundaries": 1622,
+      "ring_start": 10034,
+      "bound": {
+        "first": 6314,
+        "requested": 6570,
+        "produced": 6686,
+        "copies": 94,
+        "full_block_trace_interval": 33707,
+        "bound_tstates": 37229
+      },
+      "measured_relative_quota_max_resume": 31757,
+      "relative_quota_total": 673151
+    },
+    {
+      "index": 17,
+      "copy_boundaries": 1352,
+      "ring_start": 14999,
+      "bound": {
+        "first": 1792,
+        "requested": 2048,
+        "produced": 2163,
+        "copies": 62,
+        "full_block_trace_interval": 34114,
+        "bound_tstates": 36612
+      },
+      "measured_relative_quota_max_resume": 33968,
+      "relative_quota_total": 634898
+    },
+    {
+      "index": 18,
+      "copy_boundaries": 1629,
+      "ring_start": 20533,
+      "bound": {
+        "first": 732,
+        "requested": 988,
+        "produced": 1091,
+        "copies": 85,
+        "full_block_trace_interval": 36245,
+        "bound_tstates": 39479
+      },
+      "measured_relative_quota_max_resume": 35533,
+      "relative_quota_total": 694886
+    },
+    {
+      "index": 19,
+      "copy_boundaries": 1524,
+      "ring_start": 26004,
+      "bound": {
+        "first": 6715,
+        "requested": 6971,
+        "produced": 7037,
+        "copies": 82,
+        "full_block_trace_interval": 35352,
+        "bound_tstates": 38490
+      },
+      "measured_relative_quota_max_resume": 33702,
+      "relative_quota_total": 663706
+    },
+    {
+      "index": 20,
+      "copy_boundaries": 1675,
+      "ring_start": 31656,
+      "bound": {
+        "first": 6676,
+        "requested": 6932,
+        "produced": 7022,
+        "copies": 105,
+        "full_block_trace_interval": 35914,
+        "bound_tstates": 39788
+      },
+      "measured_relative_quota_max_resume": 32858,
+      "relative_quota_total": 678123
+    },
+    {
+      "index": 21,
+      "copy_boundaries": 1685,
+      "ring_start": 36627,
+      "bound": {
+        "first": 2764,
+        "requested": 3020,
+        "produced": 3067,
+        "copies": 100,
+        "full_block_trace_interval": 34190,
+        "bound_tstates": 37904
+      },
+      "measured_relative_quota_max_resume": 36604,
+      "relative_quota_total": 686724
+    },
+    {
+      "index": 22,
+      "copy_boundaries": 1654,
+      "ring_start": 41313,
+      "bound": {
+        "first": 6106,
+        "requested": 6362,
+        "produced": 6498,
+        "copies": 86,
+        "full_block_trace_interval": 33282,
+        "bound_tstates": 36548
+      },
+      "measured_relative_quota_max_resume": 31954,
+      "relative_quota_total": 663739
+    },
+    {
+      "index": 23,
+      "copy_boundaries": 1554,
+      "ring_start": 45676,
+      "bound": {
+        "first": 6031,
+        "requested": 6287,
+        "produced": 6349,
+        "copies": 90,
+        "full_block_trace_interval": 33004,
+        "bound_tstates": 36398
+      },
+      "measured_relative_quota_max_resume": 31784,
+      "relative_quota_total": 630908
+    },
+    {
+      "index": 24,
+      "copy_boundaries": 1537,
+      "ring_start": 49634,
+      "bound": {
+        "first": 1748,
+        "requested": 2004,
+        "produced": 2162,
+        "copies": 83,
+        "full_block_trace_interval": 33280,
+        "bound_tstates": 36450
+      },
+      "measured_relative_quota_max_resume": 33782,
+      "relative_quota_total": 629320
+    },
+    {
+      "index": 25,
+      "copy_boundaries": 1685,
+      "ring_start": 53162,
+      "bound": {
+        "first": 5535,
+        "requested": 5791,
+        "produced": 5890,
+        "copies": 84,
+        "full_block_trace_interval": 34823,
+        "bound_tstates": 38025
+      },
+      "measured_relative_quota_max_resume": 33309,
+      "relative_quota_total": 681218
+    },
+    {
+      "index": 26,
+      "copy_boundaries": 1711,
+      "ring_start": 58154,
+      "bound": {
+        "first": 7016,
+        "requested": 7272,
+        "produced": 7312,
+        "copies": 97,
+        "full_block_trace_interval": 33129,
+        "bound_tstates": 36747
+      },
+      "measured_relative_quota_max_resume": 33274,
+      "relative_quota_total": 693122
+    },
+    {
+      "index": 27,
+      "copy_boundaries": 1697,
+      "ring_start": 63150,
+      "bound": {
+        "first": 2100,
+        "requested": 2356,
+        "produced": 2359,
+        "copies": 118,
+        "full_block_trace_interval": 37794,
+        "bound_tstates": 42084
+      },
+      "measured_relative_quota_max_resume": 37963,
+      "relative_quota_total": 707512
+    },
+    {
+      "index": 28,
+      "copy_boundaries": 1668,
+      "ring_start": 3092,
+      "bound": {
+        "first": 5325,
+        "requested": 5581,
+        "produced": 5587,
+        "copies": 109,
+        "full_block_trace_interval": 37123,
+        "bound_tstates": 41125
+      },
+      "measured_relative_quota_max_resume": 39478,
+      "relative_quota_total": 716260
+    },
+    {
+      "index": 29,
+      "copy_boundaries": 1569,
+      "ring_start": 8503,
+      "bound": {
+        "first": 2541,
+        "requested": 2797,
+        "produced": 2821,
+        "copies": 96,
+        "full_block_trace_interval": 34124,
+        "bound_tstates": 37710
+      },
+      "measured_relative_quota_max_resume": 34930,
+      "relative_quota_total": 689011
+    },
+    {
+      "index": 30,
+      "copy_boundaries": 1603,
+      "ring_start": 13719,
+      "bound": {
+        "first": 2582,
+        "requested": 2838,
+        "produced": 2898,
+        "copies": 91,
+        "full_block_trace_interval": 37108,
+        "bound_tstates": 40534
+      },
+      "measured_relative_quota_max_resume": 34834,
+      "relative_quota_total": 680165
+    },
+    {
+      "index": 31,
+      "copy_boundaries": 1610,
+      "ring_start": 18950,
+      "bound": {
+        "first": 5961,
+        "requested": 6217,
+        "produced": 6279,
+        "copies": 77,
+        "full_block_trace_interval": 35324,
+        "bound_tstates": 38302
+      },
+      "measured_relative_quota_max_resume": 31088,
+      "relative_quota_total": 672583
+    },
+    {
+      "index": 32,
+      "copy_boundaries": 1947,
+      "ring_start": 24176,
+      "bound": {
+        "first": 7336,
+        "requested": 7592,
+        "produced": 7631,
+        "copies": 128,
+        "full_block_trace_interval": 41341,
+        "bound_tstates": 45951
+      },
+      "measured_relative_quota_max_resume": 34879,
+      "relative_quota_total": 772364
+    },
+    {
+      "index": 33,
+      "copy_boundaries": 1845,
+      "ring_start": 30130,
+      "bound": {
+        "first": 845,
+        "requested": 1101,
+        "produced": 1108,
+        "copies": 109,
+        "full_block_trace_interval": 35737,
+        "bound_tstates": 39739
+      },
+      "measured_relative_quota_max_resume": 34317,
+      "relative_quota_total": 725262
+    },
+    {
+      "index": 34,
+      "copy_boundaries": 2106,
+      "ring_start": 35021,
+      "bound": {
+        "first": 5034,
+        "requested": 5290,
+        "produced": 5291,
+        "copies": 104,
+        "full_block_trace_interval": 36288,
+        "bound_tstates": 40130
+      },
+      "measured_relative_quota_max_resume": 36397,
+      "relative_quota_total": 815416
+    },
+    {
+      "index": 35,
+      "copy_boundaries": 2468,
+      "ring_start": 39674,
+      "bound": {
+        "first": 6539,
+        "requested": 6795,
+        "produced": 6814,
+        "copies": 120,
+        "full_block_trace_interval": 37338,
+        "bound_tstates": 41692
+      },
+      "measured_relative_quota_max_resume": 37453,
+      "relative_quota_total": 872532
+    },
+    {
+      "index": 36,
+      "copy_boundaries": 2157,
+      "ring_start": 45016,
+      "bound": {
+        "first": 5414,
+        "requested": 5670,
+        "produced": 5681,
+        "copies": 134,
+        "full_block_trace_interval": 38838,
+        "bound_tstates": 43640
+      },
+      "measured_relative_quota_max_resume": 41992,
+      "relative_quota_total": 805705
+    },
+    {
+      "index": 37,
+      "copy_boundaries": 2099,
+      "ring_start": 49874,
+      "bound": {
+        "first": 7381,
+        "requested": 7637,
+        "produced": 7648,
+        "copies": 118,
+        "full_block_trace_interval": 35791,
+        "bound_tstates": 40081
+      },
+      "measured_relative_quota_max_resume": 31529,
+      "relative_quota_total": 782555
+    },
+    {
+      "index": 38,
+      "copy_boundaries": 2249,
+      "ring_start": 55413,
+      "bound": {
+        "first": 1406,
+        "requested": 1662,
+        "produced": 1663,
+        "copies": 124,
+        "full_block_trace_interval": 38223,
+        "bound_tstates": 42705
+      },
+      "measured_relative_quota_max_resume": 38353,
+      "relative_quota_total": 822197
+    },
+    {
+      "index": 39,
+      "copy_boundaries": 1547,
+      "ring_start": 60746,
+      "bound": {
+        "first": 5149,
+        "requested": 5405,
+        "produced": 5512,
+        "copies": 86,
+        "full_block_trace_interval": 36328,
+        "bound_tstates": 39594
+      },
+      "measured_relative_quota_max_resume": 32720,
+      "relative_quota_total": 673172
+    },
+    {
+      "index": 40,
+      "copy_boundaries": 1881,
+      "ring_start": 559,
+      "bound": {
+        "first": 6598,
+        "requested": 6854,
+        "produced": 6872,
+        "copies": 109,
+        "full_block_trace_interval": 37420,
+        "bound_tstates": 41422
+      },
+      "measured_relative_quota_max_resume": 38755,
+      "relative_quota_total": 766499
+    },
+    {
+      "index": 41,
+      "copy_boundaries": 2133,
+      "ring_start": 6379,
+      "bound": {
+        "first": 5890,
+        "requested": 6146,
+        "produced": 6166,
+        "copies": 106,
+        "full_block_trace_interval": 36973,
+        "bound_tstates": 40879
+      },
+      "measured_relative_quota_max_resume": 37487,
+      "relative_quota_total": 816646
+    },
+    {
+      "index": 42,
+      "copy_boundaries": 2595,
+      "ring_start": 12166,
+      "bound": {
+        "first": 2638,
+        "requested": 2894,
+        "produced": 2901,
+        "copies": 122,
+        "full_block_trace_interval": 39988,
+        "bound_tstates": 44406
+      },
+      "measured_relative_quota_max_resume": 41084,
+      "relative_quota_total": 931126
+    },
+    {
+      "index": 43,
+      "copy_boundaries": 1936,
+      "ring_start": 17155,
+      "bound": {
+        "first": 5528,
+        "requested": 5784,
+        "produced": 5790,
+        "copies": 139,
+        "full_block_trace_interval": 37785,
+        "bound_tstates": 42747
+      },
+      "measured_relative_quota_max_resume": 39960,
+      "relative_quota_total": 736527
+    },
+    {
+      "index": 44,
+      "copy_boundaries": 2000,
+      "ring_start": 21092,
+      "bound": {
+        "first": 7010,
+        "requested": 7266,
+        "produced": 7266,
+        "copies": 126,
+        "full_block_trace_interval": 37664,
+        "bound_tstates": 42210
+      },
+      "measured_relative_quota_max_resume": 38794,
+      "relative_quota_total": 756890
+    },
+    {
+      "index": 45,
+      "copy_boundaries": 2572,
+      "ring_start": 25940,
+      "bound": {
+        "first": 1812,
+        "requested": 2068,
+        "produced": 2088,
+        "copies": 123,
+        "full_block_trace_interval": 38881,
+        "bound_tstates": 43331
+      },
+      "measured_relative_quota_max_resume": 38262,
+      "relative_quota_total": 924984
+    },
+    {
+      "index": 46,
+      "copy_boundaries": 2712,
+      "ring_start": 31374,
+      "bound": {
+        "first": 4218,
+        "requested": 4474,
+        "produced": 4481,
+        "copies": 116,
+        "full_block_trace_interval": 38072,
+        "bound_tstates": 42298
+      },
+      "measured_relative_quota_max_resume": 38055,
+      "relative_quota_total": 958187
+    },
+    {
+      "index": 47,
+      "copy_boundaries": 2418,
+      "ring_start": 36442,
+      "bound": {
+        "first": 4176,
+        "requested": 4432,
+        "produced": 4550,
+        "copies": 95,
+        "full_block_trace_interval": 41523,
+        "bound_tstates": 45077
+      },
+      "measured_relative_quota_max_resume": 40320,
+      "relative_quota_total": 886862
+    },
+    {
+      "index": 48,
+      "copy_boundaries": 1807,
+      "ring_start": 41881,
+      "bound": {
+        "first": 864,
+        "requested": 1120,
+        "produced": 1122,
+        "copies": 126,
+        "full_block_trace_interval": 37241,
+        "bound_tstates": 41787
+      },
+      "measured_relative_quota_max_resume": 37871,
+      "relative_quota_total": 751685
+    },
+    {
+      "index": 49,
+      "copy_boundaries": 2144,
+      "ring_start": 47311,
+      "bound": {
+        "first": 1567,
+        "requested": 1823,
+        "produced": 1834,
+        "copies": 117,
+        "full_block_trace_interval": 37693,
+        "bound_tstates": 41951
+      },
+      "measured_relative_quota_max_resume": 37181,
+      "relative_quota_total": 829055
+    },
+    {
+      "index": 50,
+      "copy_boundaries": 2599,
+      "ring_start": 52443,
+      "bound": {
+        "first": 5807,
+        "requested": 6063,
+        "produced": 6065,
+        "copies": 110,
+        "full_block_trace_interval": 38177,
+        "bound_tstates": 42211
+      },
+      "measured_relative_quota_max_resume": 39097,
+      "relative_quota_total": 949795
+    },
+    {
+      "index": 51,
+      "copy_boundaries": 2617,
+      "ring_start": 57579,
+      "bound": {
+        "first": 5927,
+        "requested": 6183,
+        "produced": 6190,
+        "copies": 135,
+        "full_block_trace_interval": 40085,
+        "bound_tstates": 44919
+      },
+      "measured_relative_quota_max_resume": 40633,
+      "relative_quota_total": 935269
+    },
+    {
+      "index": 52,
+      "copy_boundaries": 2604,
+      "ring_start": 62879,
+      "bound": {
+        "first": 3324,
+        "requested": 3580,
+        "produced": 3582,
+        "copies": 122,
+        "full_block_trace_interval": 39936,
+        "bound_tstates": 44354
+      },
+      "measured_relative_quota_max_resume": 42093,
+      "relative_quota_total": 952008
+    },
+    {
+      "index": 53,
+      "copy_boundaries": 2405,
+      "ring_start": 3008,
+      "bound": {
+        "first": 5883,
+        "requested": 6139,
+        "produced": 6148,
+        "copies": 123,
+        "full_block_trace_interval": 38693,
+        "bound_tstates": 43143
+      },
+      "measured_relative_quota_max_resume": 39293,
+      "relative_quota_total": 858502
+    },
+    {
+      "index": 54,
+      "copy_boundaries": 2116,
+      "ring_start": 8652,
+      "bound": {
+        "first": 2697,
+        "requested": 2953,
+        "produced": 2959,
+        "copies": 131,
+        "full_block_trace_interval": 37049,
+        "bound_tstates": 41755
+      },
+      "measured_relative_quota_max_resume": 36211,
+      "relative_quota_total": 789754
+    },
+    {
+      "index": 55,
+      "copy_boundaries": 1560,
+      "ring_start": 14226,
+      "bound": {
+        "first": 5238,
+        "requested": 5494,
+        "produced": 5525,
+        "copies": 84,
+        "full_block_trace_interval": 29648,
+        "bound_tstates": 32850
+      },
+      "measured_relative_quota_max_resume": 30837,
+      "relative_quota_total": 654961
+    },
+    {
+      "index": 56,
+      "copy_boundaries": 1196,
+      "ring_start": 18882,
+      "bound": {
+        "first": 6365,
+        "requested": 6621,
+        "produced": 6699,
+        "copies": 60,
+        "full_block_trace_interval": 26214,
+        "bound_tstates": 28648
+      },
+      "measured_relative_quota_max_resume": 25131,
+      "relative_quota_total": 537156
+    },
+    {
+      "index": 57,
+      "copy_boundaries": 1437,
+      "ring_start": 22199,
+      "bound": {
+        "first": 6198,
+        "requested": 6454,
+        "produced": 6578,
+        "copies": 73,
+        "full_block_trace_interval": 28959,
+        "bound_tstates": 31809
+      },
+      "measured_relative_quota_max_resume": 28127,
+      "relative_quota_total": 615878
+    },
+    {
+      "index": 58,
+      "copy_boundaries": 1791,
+      "ring_start": 26407,
+      "bound": {
+        "first": 2627,
+        "requested": 2883,
+        "produced": 2885,
+        "copies": 135,
+        "full_block_trace_interval": 38639,
+        "bound_tstates": 43473
+      },
+      "measured_relative_quota_max_resume": 36971,
+      "relative_quota_total": 686200
+    },
+    {
+      "index": 59,
+      "copy_boundaries": 1507,
+      "ring_start": 30431,
+      "bound": {
+        "first": 479,
+        "requested": 735,
+        "produced": 740,
+        "copies": 104,
+        "full_block_trace_interval": 32999,
+        "bound_tstates": 36841
+      },
+      "measured_relative_quota_max_resume": 34075,
+      "relative_quota_total": 626519
+    },
+    {
+      "index": 60,
+      "copy_boundaries": 1433,
+      "ring_start": 34294,
+      "bound": {
+        "first": 789,
+        "requested": 1045,
+        "produced": 1066,
+        "copies": 87,
+        "full_block_trace_interval": 30454,
+        "bound_tstates": 33752
+      },
+      "measured_relative_quota_max_resume": 29467,
+      "relative_quota_total": 614632
+    },
+    {
+      "index": 61,
+      "copy_boundaries": 1499,
+      "ring_start": 38532,
+      "bound": {
+        "first": 7840,
+        "requested": 8096,
+        "produced": 8138,
+        "copies": 83,
+        "full_block_trace_interval": 30932,
+        "bound_tstates": 34102
+      },
+      "measured_relative_quota_max_resume": 29362,
+      "relative_quota_total": 641932
+    },
+    {
+      "index": 62,
+      "copy_boundaries": 1843,
+      "ring_start": 42821,
+      "bound": {
+        "first": 6420,
+        "requested": 6676,
+        "produced": 6679,
+        "copies": 121,
+        "full_block_trace_interval": 36341,
+        "bound_tstates": 40727
+      },
+      "measured_relative_quota_max_resume": 38583,
+      "relative_quota_total": 738819
+    },
+    {
+      "index": 63,
+      "copy_boundaries": 1794,
+      "ring_start": 47352,
+      "bound": {
+        "first": 6991,
+        "requested": 7247,
+        "produced": 7282,
+        "copies": 124,
+        "full_block_trace_interval": 38707,
+        "bound_tstates": 43189
+      },
+      "measured_relative_quota_max_resume": 39034,
+      "relative_quota_total": 703053
+    },
+    {
+      "index": 64,
+      "copy_boundaries": 1811,
+      "ring_start": 51959,
+      "bound": {
+        "first": 5920,
+        "requested": 6176,
+        "produced": 6237,
+        "copies": 87,
+        "full_block_trace_interval": 37051,
+        "bound_tstates": 40349
+      },
+      "measured_relative_quota_max_resume": 36344,
+      "relative_quota_total": 728426
+    },
+    {
+      "index": 65,
+      "copy_boundaries": 1997,
+      "ring_start": 57056,
+      "bound": {
+        "first": 5339,
+        "requested": 5595,
+        "produced": 5652,
+        "copies": 114,
+        "full_block_trace_interval": 37276,
+        "bound_tstates": 41438
+      },
+      "measured_relative_quota_max_resume": 38734,
+      "relative_quota_total": 778746
+    },
+    {
+      "index": 66,
+      "copy_boundaries": 1927,
+      "ring_start": 62454,
+      "bound": {
+        "first": 5028,
+        "requested": 5284,
+        "produced": 5320,
+        "copies": 130,
+        "full_block_trace_interval": 38859,
+        "bound_tstates": 43533
+      },
+      "measured_relative_quota_max_resume": 38183,
+      "relative_quota_total": 757363
+    },
+    {
+      "index": 67,
+      "copy_boundaries": 1764,
+      "ring_start": 2733,
+      "bound": {
+        "first": 7130,
+        "requested": 7386,
+        "produced": 7470,
+        "copies": 83,
+        "full_block_trace_interval": 35879,
+        "bound_tstates": 39049
+      },
+      "measured_relative_quota_max_resume": 32619,
+      "relative_quota_total": 716357
+    },
+    {
+      "index": 68,
+      "copy_boundaries": 2070,
+      "ring_start": 8370,
+      "bound": {
+        "first": 7396,
+        "requested": 7652,
+        "produced": 7655,
+        "copies": 133,
+        "full_block_trace_interval": 39350,
+        "bound_tstates": 44120
+      },
+      "measured_relative_quota_max_resume": 42614,
+      "relative_quota_total": 791253
+    },
+    {
+      "index": 69,
+      "copy_boundaries": 2100,
+      "ring_start": 14054,
+      "bound": {
+        "first": 5968,
+        "requested": 6224,
+        "produced": 6225,
+        "copies": 122,
+        "full_block_trace_interval": 37925,
+        "bound_tstates": 42343
+      },
+      "measured_relative_quota_max_resume": 38005,
+      "relative_quota_total": 793316
+    },
+    {
+      "index": 70,
+      "copy_boundaries": 1829,
+      "ring_start": 19681,
+      "bound": {
+        "first": 6191,
+        "requested": 6447,
+        "produced": 6450,
+        "copies": 111,
+        "full_block_trace_interval": 35446,
+        "bound_tstates": 39512
+      },
+      "measured_relative_quota_max_resume": 34823,
+      "relative_quota_total": 730208
+    },
+    {
+      "index": 71,
+      "copy_boundaries": 1795,
+      "ring_start": 25190,
+      "bound": {
+        "first": 2969,
+        "requested": 3225,
+        "produced": 3227,
+        "copies": 111,
+        "full_block_trace_interval": 35350,
+        "bound_tstates": 39416
+      },
+      "measured_relative_quota_max_resume": 37304,
+      "relative_quota_total": 741937
+    },
+    {
+      "index": 72,
+      "copy_boundaries": 1696,
+      "ring_start": 31042,
+      "bound": {
+        "first": 2001,
+        "requested": 2257,
+        "produced": 2322,
+        "copies": 67,
+        "full_block_trace_interval": 33622,
+        "bound_tstates": 36280
+      },
+      "measured_relative_quota_max_resume": 32718,
+      "relative_quota_total": 704622
+    },
+    {
+      "index": 73,
+      "copy_boundaries": 1699,
+      "ring_start": 36901,
+      "bound": {
+        "first": 4295,
+        "requested": 4551,
+        "produced": 4635,
+        "copies": 94,
+        "full_block_trace_interval": 31101,
+        "bound_tstates": 34623
+      },
+      "measured_relative_quota_max_resume": 30921,
+      "relative_quota_total": 692217
+    },
+    {
+      "index": 74,
+      "copy_boundaries": 1872,
+      "ring_start": 42401,
+      "bound": {
+        "first": 1141,
+        "requested": 1397,
+        "produced": 1399,
+        "copies": 123,
+        "full_block_trace_interval": 37996,
+        "bound_tstates": 42446
+      },
+      "measured_relative_quota_max_resume": 39584,
+      "relative_quota_total": 766386
+    },
+    {
+      "index": 75,
+      "copy_boundaries": 2811,
+      "ring_start": 47947,
+      "bound": {
+        "first": 1819,
+        "requested": 2075,
+        "produced": 2076,
+        "copies": 129,
+        "full_block_trace_interval": 39904,
+        "bound_tstates": 44546
+      },
+      "measured_relative_quota_max_resume": 40668,
+      "relative_quota_total": 980885
+    },
+    {
+      "index": 76,
+      "copy_boundaries": 2308,
+      "ring_start": 53428,
+      "bound": {
+        "first": 909,
+        "requested": 1165,
+        "produced": 1176,
+        "copies": 131,
+        "full_block_trace_interval": 38929,
+        "bound_tstates": 43635
+      },
+      "measured_relative_quota_max_resume": 37317,
+      "relative_quota_total": 857576
+    },
+    {
+      "index": 77,
+      "copy_boundaries": 1729,
+      "ring_start": 58873,
+      "bound": {
+        "first": 6033,
+        "requested": 6289,
+        "produced": 6293,
+        "copies": 116,
+        "full_block_trace_interval": 37482,
+        "bound_tstates": 41708
+      },
+      "measured_relative_quota_max_resume": 37584,
+      "relative_quota_total": 702924
+    },
+    {
+      "index": 78,
+      "copy_boundaries": 1671,
+      "ring_start": 64283,
+      "bound": {
+        "first": 4620,
+        "requested": 4876,
+        "produced": 4893,
+        "copies": 117,
+        "full_block_trace_interval": 35319,
+        "bound_tstates": 39577
+      },
+      "measured_relative_quota_max_resume": 36869,
+      "relative_quota_total": 692570
+    },
+    {
+      "index": 79,
+      "copy_boundaries": 1790,
+      "ring_start": 4641,
+      "bound": {
+        "first": 5342,
+        "requested": 5598,
+        "produced": 5600,
+        "copies": 128,
+        "full_block_trace_interval": 38863,
+        "bound_tstates": 43473
+      },
+      "measured_relative_quota_max_resume": 36832,
+      "relative_quota_total": 719343
+    },
+    {
+      "index": 80,
+      "copy_boundaries": 1811,
+      "ring_start": 10204,
+      "bound": {
+        "first": 3598,
+        "requested": 3854,
+        "produced": 3910,
+        "copies": 100,
+        "full_block_trace_interval": 32923,
+        "bound_tstates": 36637
+      },
+      "measured_relative_quota_max_resume": 32040,
+      "relative_quota_total": 700146
+    },
+    {
+      "index": 81,
+      "copy_boundaries": 1695,
+      "ring_start": 14695,
+      "bound": {
+        "first": 3251,
+        "requested": 3507,
+        "produced": 3507,
+        "copies": 121,
+        "full_block_trace_interval": 36156,
+        "bound_tstates": 40542
+      },
+      "measured_relative_quota_max_resume": 38385,
+      "relative_quota_total": 693321
+    },
+    {
+      "index": 82,
+      "copy_boundaries": 1484,
+      "ring_start": 19947,
+      "bound": {
+        "first": 6510,
+        "requested": 6766,
+        "produced": 6835,
+        "copies": 103,
+        "full_block_trace_interval": 35225,
+        "bound_tstates": 39035
+      },
+      "measured_relative_quota_max_resume": 34884,
+      "relative_quota_total": 640783
+    },
+    {
+      "index": 83,
+      "copy_boundaries": 1453,
+      "ring_start": 24790,
+      "bound": {
+        "first": 1302,
+        "requested": 1558,
+        "produced": 1734,
+        "copies": 83,
+        "full_block_trace_interval": 33781,
+        "bound_tstates": 36951
+      },
+      "measured_relative_quota_max_resume": 35502,
+      "relative_quota_total": 625258
+    },
+    {
+      "index": 84,
+      "copy_boundaries": 1495,
+      "ring_start": 29484,
+      "bound": {
+        "first": 2358,
+        "requested": 2614,
+        "produced": 2652,
+        "copies": 82,
+        "full_block_trace_interval": 34629,
+        "bound_tstates": 37767
+      },
+      "measured_relative_quota_max_resume": 28125,
+      "relative_quota_total": 643710
+    },
+    {
+      "index": 85,
+      "copy_boundaries": 1388,
+      "ring_start": 34541,
+      "bound": {
+        "first": 6247,
+        "requested": 6503,
+        "produced": 6677,
+        "copies": 76,
+        "full_block_trace_interval": 30583,
+        "bound_tstates": 33529
+      },
+      "measured_relative_quota_max_resume": 30436,
+      "relative_quota_total": 613243
+    },
+    {
+      "index": 86,
+      "copy_boundaries": 1359,
+      "ring_start": 39737,
+      "bound": {
+        "first": 6633,
+        "requested": 6889,
+        "produced": 7037,
+        "copies": 83,
+        "full_block_trace_interval": 32627,
+        "bound_tstates": 35797
+      },
+      "measured_relative_quota_max_resume": 26883,
+      "relative_quota_total": 600553
+    },
+    {
+      "index": 87,
+      "copy_boundaries": 1390,
+      "ring_start": 44647,
+      "bound": {
+        "first": 4947,
+        "requested": 5203,
+        "produced": 5286,
+        "copies": 77,
+        "full_block_trace_interval": 34330,
+        "bound_tstates": 37308
+      },
+      "measured_relative_quota_max_resume": 32038,
+      "relative_quota_total": 619578
+    },
+    {
+      "index": 88,
+      "copy_boundaries": 1358,
+      "ring_start": 49915,
+      "bound": {
+        "first": 7476,
+        "requested": 7732,
+        "produced": 7822,
+        "copies": 70,
+        "full_block_trace_interval": 32450,
+        "bound_tstates": 35204
+      },
+      "measured_relative_quota_max_resume": 29517,
+      "relative_quota_total": 616466
+    },
+    {
+      "index": 89,
+      "copy_boundaries": 1355,
+      "ring_start": 55489,
+      "bound": {
+        "first": 5170,
+        "requested": 5426,
+        "produced": 5539,
+        "copies": 82,
+        "full_block_trace_interval": 34761,
+        "bound_tstates": 37899
+      },
+      "measured_relative_quota_max_resume": 31154,
+      "relative_quota_total": 604900
+    },
+    {
+      "index": 90,
+      "copy_boundaries": 1744,
+      "ring_start": 60762,
+      "bound": {
+        "first": 3029,
+        "requested": 3285,
+        "produced": 3323,
+        "copies": 119,
+        "full_block_trace_interval": 37397,
+        "bound_tstates": 41719
+      },
+      "measured_relative_quota_max_resume": 39449,
+      "relative_quota_total": 711590
+    },
+    {
+      "index": 91,
+      "copy_boundaries": 1617,
+      "ring_start": 1006,
+      "bound": {
+        "first": 6870,
+        "requested": 7126,
+        "produced": 7240,
+        "copies": 77,
+        "full_block_trace_interval": 35719,
+        "bound_tstates": 38697
+      },
+      "measured_relative_quota_max_resume": 32740,
+      "relative_quota_total": 674098
+    },
+    {
+      "index": 92,
+      "copy_boundaries": 1690,
+      "ring_start": 5686,
+      "bound": {
+        "first": 2581,
+        "requested": 2837,
+        "produced": 2840,
+        "copies": 120,
+        "full_block_trace_interval": 38434,
+        "bound_tstates": 42788
+      },
+      "measured_relative_quota_max_resume": 36084,
+      "relative_quota_total": 674035
+    },
+    {
+      "index": 93,
+      "copy_boundaries": 1695,
+      "ring_start": 9787,
+      "bound": {
+        "first": 5609,
+        "requested": 5865,
+        "produced": 5870,
+        "copies": 120,
+        "full_block_trace_interval": 37763,
+        "bound_tstates": 42117
+      },
+      "measured_relative_quota_max_resume": 36584,
+      "relative_quota_total": 679839
+    },
+    {
+      "index": 94,
+      "copy_boundaries": 1230,
+      "ring_start": 14116,
+      "bound": {
+        "first": 3234,
+        "requested": 3490,
+        "produced": 3552,
+        "copies": 82,
+        "full_block_trace_interval": 37440,
+        "bound_tstates": 40578
+      },
+      "measured_relative_quota_max_resume": 31241,
+      "relative_quota_total": 601763
+    },
+    {
+      "index": 95,
+      "copy_boundaries": 1332,
+      "ring_start": 19672,
+      "bound": {
+        "first": 2824,
+        "requested": 3080,
+        "produced": 3220,
+        "copies": 75,
+        "full_block_trace_interval": 35452,
+        "bound_tstates": 38366
+      },
+      "measured_relative_quota_max_resume": 36016,
+      "relative_quota_total": 625832
+    },
+    {
+      "index": 96,
+      "copy_boundaries": 1559,
+      "ring_start": 25518,
+      "bound": {
+        "first": 4418,
+        "requested": 4674,
+        "produced": 4707,
+        "copies": 121,
+        "full_block_trace_interval": 36971,
+        "bound_tstates": 41357
+      },
+      "measured_relative_quota_max_resume": 36215,
+      "relative_quota_total": 678226
+    },
+    {
+      "index": 97,
+      "copy_boundaries": 1373,
+      "ring_start": 31502,
+      "bound": {
+        "first": 4864,
+        "requested": 5120,
+        "produced": 5217,
+        "copies": 95,
+        "full_block_trace_interval": 33928,
+        "bound_tstates": 37482
+      },
+      "measured_relative_quota_max_resume": 34027,
+      "relative_quota_total": 623422
+    },
+    {
+      "index": 98,
+      "copy_boundaries": 1770,
+      "ring_start": 36938,
+      "bound": {
+        "first": 3372,
+        "requested": 3628,
+        "produced": 3633,
+        "copies": 134,
+        "full_block_trace_interval": 36845,
+        "bound_tstates": 41647
+      },
+      "measured_relative_quota_max_resume": 37128,
+      "relative_quota_total": 710346
+    },
+    {
+      "index": 99,
+      "copy_boundaries": 1568,
+      "ring_start": 41490,
+      "bound": {
+        "first": 813,
+        "requested": 1069,
+        "produced": 1121,
+        "copies": 72,
+        "full_block_trace_interval": 33436,
+        "bound_tstates": 36254
+      },
+      "measured_relative_quota_max_resume": 31477,
+      "relative_quota_total": 662284
+    },
+    {
+      "index": 100,
+      "copy_boundaries": 1410,
+      "ring_start": 46349,
+      "bound": {
+        "first": 3090,
+        "requested": 3346,
+        "produced": 3464,
+        "copies": 58,
+        "full_block_trace_interval": 32261,
+        "bound_tstates": 34631
+      },
+      "measured_relative_quota_max_resume": 29822,
+      "relative_quota_total": 632478
+    },
+    {
+      "index": 101,
+      "copy_boundaries": 1750,
+      "ring_start": 51765,
+      "bound": {
+        "first": 2928,
+        "requested": 3184,
+        "produced": 3188,
+        "copies": 139,
+        "full_block_trace_interval": 39027,
+        "bound_tstates": 43989
+      },
+      "measured_relative_quota_max_resume": 40333,
+      "relative_quota_total": 718616
+    },
+    {
+      "index": 102,
+      "copy_boundaries": 1971,
+      "ring_start": 57217,
+      "bound": {
+        "first": 2945,
+        "requested": 3201,
+        "produced": 3207,
+        "copies": 124,
+        "full_block_trace_interval": 36968,
+        "bound_tstates": 41450
+      },
+      "measured_relative_quota_max_resume": 38733,
+      "relative_quota_total": 757256
+    },
+    {
+      "index": 103,
+      "copy_boundaries": 1752,
+      "ring_start": 62735,
+      "bound": {
+        "first": 2041,
+        "requested": 2297,
+        "produced": 2299,
+        "copies": 128,
+        "full_block_trace_interval": 39254,
+        "bound_tstates": 43864
+      },
+      "measured_relative_quota_max_resume": 40049,
+      "relative_quota_total": 709620
+    },
+    {
+      "index": 104,
+      "copy_boundaries": 1423,
+      "ring_start": 2861,
+      "bound": {
+        "first": 2099,
+        "requested": 2355,
+        "produced": 2482,
+        "copies": 84,
+        "full_block_trace_interval": 36729,
+        "bound_tstates": 39931
+      },
+      "measured_relative_quota_max_resume": 31367,
+      "relative_quota_total": 629649
+    },
+    {
+      "index": 105,
+      "copy_boundaries": 1785,
+      "ring_start": 8017,
+      "bound": {
+        "first": 7884,
+        "requested": 8140,
+        "produced": 8146,
+        "copies": 114,
+        "full_block_trace_interval": 37357,
+        "bound_tstates": 41519
+      },
+      "measured_relative_quota_max_resume": 33623,
+      "relative_quota_total": 705794
+    },
+    {
+      "index": 106,
+      "copy_boundaries": 1679,
+      "ring_start": 12833,
+      "bound": {
+        "first": 87,
+        "requested": 343,
+        "produced": 349,
+        "copies": 125,
+        "full_block_trace_interval": 36530,
+        "bound_tstates": 41044
+      },
+      "measured_relative_quota_max_resume": 36354,
+      "relative_quota_total": 689450
+    },
+    {
+      "index": 107,
+      "copy_boundaries": 1936,
+      "ring_start": 18140,
+      "bound": {
+        "first": 1577,
+        "requested": 1833,
+        "produced": 1845,
+        "copies": 119,
+        "full_block_trace_interval": 37008,
+        "bound_tstates": 41330
+      },
+      "measured_relative_quota_max_resume": 37642,
+      "relative_quota_total": 725530
+    },
+    {
+      "index": 108,
+      "copy_boundaries": 1312,
+      "ring_start": 22790,
+      "bound": {
+        "first": 7434,
+        "requested": 7690,
+        "produced": 7842,
+        "copies": 53,
+        "full_block_trace_interval": 26315,
+        "bound_tstates": 28525
+      },
+      "measured_relative_quota_max_resume": 26904,
+      "relative_quota_total": 580535
+    },
+    {
+      "index": 109,
+      "copy_boundaries": 1839,
+      "ring_start": 27038,
+      "bound": {
+        "first": 5077,
+        "requested": 5333,
+        "produced": 5435,
+        "copies": 91,
+        "full_block_trace_interval": 38315,
+        "bound_tstates": 41741
+      },
+      "measured_relative_quota_max_resume": 31102,
+      "relative_quota_total": 727133
+    },
+    {
+      "index": 110,
+      "copy_boundaries": 2342,
+      "ring_start": 32522,
+      "bound": {
+        "first": 7168,
+        "requested": 7424,
+        "produced": 7444,
+        "copies": 115,
+        "full_block_trace_interval": 38747,
+        "bound_tstates": 42941
+      },
+      "measured_relative_quota_max_resume": 40039,
+      "relative_quota_total": 862834
+    },
+    {
+      "index": 111,
+      "copy_boundaries": 1605,
+      "ring_start": 38463,
+      "bound": {
+        "first": 7829,
+        "requested": 8085,
+        "produced": 8088,
+        "copies": 124,
+        "full_block_trace_interval": 39533,
+        "bound_tstates": 44015
+      },
+      "measured_relative_quota_max_resume": 35202,
+      "relative_quota_total": 691818
+    },
+    {
+      "index": 112,
+      "copy_boundaries": 1726,
+      "ring_start": 44331,
+      "bound": {
+        "first": 123,
+        "requested": 379,
+        "produced": 406,
+        "copies": 105,
+        "full_block_trace_interval": 33654,
+        "bound_tstates": 37528
+      },
+      "measured_relative_quota_max_resume": 31238,
+      "relative_quota_total": 707509
+    },
+    {
+      "index": 113,
+      "copy_boundaries": 1911,
+      "ring_start": 49739,
+      "bound": {
+        "first": 6544,
+        "requested": 6800,
+        "produced": 6803,
+        "copies": 121,
+        "full_block_trace_interval": 37323,
+        "bound_tstates": 41709
+      },
+      "measured_relative_quota_max_resume": 37499,
+      "relative_quota_total": 743574
+    },
+    {
+      "index": 114,
+      "copy_boundaries": 1641,
+      "ring_start": 55463,
+      "bound": {
+        "first": 6462,
+        "requested": 6718,
+        "produced": 6748,
+        "copies": 125,
+        "full_block_trace_interval": 38004,
+        "bound_tstates": 42518
+      },
+      "measured_relative_quota_max_resume": 40883,
+      "relative_quota_total": 706937
+    },
+    {
+      "index": 115,
+      "copy_boundaries": 1609,
+      "ring_start": 61169,
+      "bound": {
+        "first": 2051,
+        "requested": 2307,
+        "produced": 2335,
+        "copies": 115,
+        "full_block_trace_interval": 37484,
+        "bound_tstates": 41678
+      },
+      "measured_relative_quota_max_resume": 38027,
+      "relative_quota_total": 704991
+    },
+    {
+      "index": 116,
+      "copy_boundaries": 1427,
+      "ring_start": 1579,
+      "bound": {
+        "first": 3652,
+        "requested": 3908,
+        "produced": 3945,
+        "copies": 111,
+        "full_block_trace_interval": 35824,
+        "bound_tstates": 39890
+      },
+      "measured_relative_quota_max_resume": 35235,
+      "relative_quota_total": 651997
+    },
+    {
+      "index": 117,
+      "copy_boundaries": 1446,
+      "ring_start": 7470,
+      "bound": {
+        "first": 6399,
+        "requested": 6655,
+        "produced": 6657,
+        "copies": 115,
+        "full_block_trace_interval": 37353,
+        "bound_tstates": 41547
+      },
+      "measured_relative_quota_max_resume": 40597,
+      "relative_quota_total": 659571
+    },
+    {
+      "index": 118,
+      "copy_boundaries": 1866,
+      "ring_start": 13211,
+      "bound": {
+        "first": 7323,
+        "requested": 7579,
+        "produced": 7586,
+        "copies": 132,
+        "full_block_trace_interval": 38713,
+        "bound_tstates": 43451
+      },
+      "measured_relative_quota_max_resume": 36773,
+      "relative_quota_total": 736964
+    },
+    {
+      "index": 119,
+      "copy_boundaries": 1749,
+      "ring_start": 18582,
+      "bound": {
+        "first": 2307,
+        "requested": 2563,
+        "produced": 2715,
+        "copies": 78,
+        "full_block_trace_interval": 38285,
+        "bound_tstates": 41295
+      },
+      "measured_relative_quota_max_resume": 35852,
+      "relative_quota_total": 730662
+    },
+    {
+      "index": 120,
+      "copy_boundaries": 2270,
+      "ring_start": 24538,
+      "bound": {
+        "first": 4298,
+        "requested": 4554,
+        "produced": 4585,
+        "copies": 128,
+        "full_block_trace_interval": 39441,
+        "bound_tstates": 44051
+      },
+      "measured_relative_quota_max_resume": 39969,
+      "relative_quota_total": 856080
+    },
+    {
+      "index": 121,
+      "copy_boundaries": 1966,
+      "ring_start": 30223,
+      "bound": {
+        "first": 3352,
+        "requested": 3608,
+        "produced": 3615,
+        "copies": 135,
+        "full_block_trace_interval": 39067,
+        "bound_tstates": 43901
+      },
+      "measured_relative_quota_max_resume": 36363,
+      "relative_quota_total": 759545
+    },
+    {
+      "index": 122,
+      "copy_boundaries": 1663,
+      "ring_start": 35829,
+      "bound": {
+        "first": 629,
+        "requested": 885,
+        "produced": 888,
+        "copies": 117,
+        "full_block_trace_interval": 36198,
+        "bound_tstates": 40456
+      },
+      "measured_relative_quota_max_resume": 35219,
+      "relative_quota_total": 663564
+    },
+    {
+      "index": 123,
+      "copy_boundaries": 2216,
+      "ring_start": 39482,
+      "bound": {
+        "first": 4056,
+        "requested": 4312,
+        "produced": 4343,
+        "copies": 121,
+        "full_block_trace_interval": 38481,
+        "bound_tstates": 42867
+      },
+      "measured_relative_quota_max_resume": 39602,
+      "relative_quota_total": 827515
+    },
+    {
+      "index": 124,
+      "copy_boundaries": 2683,
+      "ring_start": 44828,
+      "bound": {
+        "first": 7439,
+        "requested": 7695,
+        "produced": 7698,
+        "copies": 122,
+        "full_block_trace_interval": 39327,
+        "bound_tstates": 43745
+      },
+      "measured_relative_quota_max_resume": 41007,
+      "relative_quota_total": 948157
+    },
+    {
+      "index": 125,
+      "copy_boundaries": 2249,
+      "ring_start": 50408,
+      "bound": {
+        "first": 7936,
+        "requested": 8192,
+        "produced": 8192,
+        "copies": 126,
+        "full_block_trace_interval": 41399,
+        "bound_tstates": 45945
+      },
+      "measured_relative_quota_max_resume": 40617,
+      "relative_quota_total": 832319
+    },
+    {
+      "index": 126,
+      "copy_boundaries": 2283,
+      "ring_start": 56185,
+      "bound": {
+        "first": 7871,
+        "requested": 8127,
+        "produced": 8129,
+        "copies": 125,
+        "full_block_trace_interval": 41268,
+        "bound_tstates": 45782
+      },
+      "measured_relative_quota_max_resume": 41477,
+      "relative_quota_total": 866614
+    },
+    {
+      "index": 127,
+      "copy_boundaries": 2373,
+      "ring_start": 61773,
+      "bound": {
+        "first": 5141,
+        "requested": 5397,
+        "produced": 5399,
+        "copies": 119,
+        "full_block_trace_interval": 39667,
+        "bound_tstates": 43989
+      },
+      "measured_relative_quota_max_resume": 38555,
+      "relative_quota_total": 871931
+    },
+    {
+      "index": 128,
+      "copy_boundaries": 2249,
+      "ring_start": 1629,
+      "bound": {
+        "first": 1229,
+        "requested": 1485,
+        "produced": 1486,
+        "copies": 128,
+        "full_block_trace_interval": 37976,
+        "bound_tstates": 42586
+      },
+      "measured_relative_quota_max_resume": 37997,
+      "relative_quota_total": 799502
+    },
+    {
+      "index": 129,
+      "copy_boundaries": 2116,
+      "ring_start": 6644,
+      "bound": {
+        "first": 4664,
+        "requested": 4920,
+        "produced": 4930,
+        "copies": 121,
+        "full_block_trace_interval": 38899,
+        "bound_tstates": 43285
+      },
+      "measured_relative_quota_max_resume": 38987,
+      "relative_quota_total": 789693
+    },
+    {
+      "index": 130,
+      "copy_boundaries": 1828,
+      "ring_start": 12143,
+      "bound": {
+        "first": 2284,
+        "requested": 2540,
+        "produced": 2543,
+        "copies": 132,
+        "full_block_trace_interval": 37050,
+        "bound_tstates": 41788
+      },
+      "measured_relative_quota_max_resume": 37482,
+      "relative_quota_total": 709561
+    },
+    {
+      "index": 131,
+      "copy_boundaries": 1713,
+      "ring_start": 16953,
+      "bound": {
+        "first": 5000,
+        "requested": 5256,
+        "produced": 5290,
+        "copies": 100,
+        "full_block_trace_interval": 33328,
+        "bound_tstates": 37042
+      },
+      "measured_relative_quota_max_resume": 33338,
+      "relative_quota_total": 694444
+    },
+    {
+      "index": 132,
+      "copy_boundaries": 1711,
+      "ring_start": 22016,
+      "bound": {
+        "first": 4639,
+        "requested": 4895,
+        "produced": 4897,
+        "copies": 116,
+        "full_block_trace_interval": 35830,
+        "bound_tstates": 40056
+      },
+      "measured_relative_quota_max_resume": 37000,
+      "relative_quota_total": 680788
+    },
+    {
+      "index": 133,
+      "copy_boundaries": 1685,
+      "ring_start": 26352,
+      "bound": {
+        "first": 3813,
+        "requested": 4069,
+        "produced": 4079,
+        "copies": 133,
+        "full_block_trace_interval": 37789,
+        "bound_tstates": 42559
+      },
+      "measured_relative_quota_max_resume": 37133,
+      "relative_quota_total": 692032
+    },
+    {
+      "index": 134,
+      "copy_boundaries": 1604,
+      "ring_start": 31657,
+      "bound": {
+        "first": 4102,
+        "requested": 4358,
+        "produced": 4362,
+        "copies": 130,
+        "full_block_trace_interval": 37709,
+        "bound_tstates": 42383
+      },
+      "measured_relative_quota_max_resume": 34083,
+      "relative_quota_total": 673918
+    },
+    {
+      "index": 135,
+      "copy_boundaries": 2245,
+      "ring_start": 37170,
+      "bound": {
+        "first": 3341,
+        "requested": 3597,
+        "produced": 3598,
+        "copies": 141,
+        "full_block_trace_interval": 40475,
+        "bound_tstates": 45501
+      },
+      "measured_relative_quota_max_resume": 41254,
+      "relative_quota_total": 841555
+    },
+    {
+      "index": 136,
+      "copy_boundaries": 1939,
+      "ring_start": 42935,
+      "bound": {
+        "first": 2030,
+        "requested": 2286,
+        "produced": 2287,
+        "copies": 128,
+        "full_block_trace_interval": 38855,
+        "bound_tstates": 43465
+      },
+      "measured_relative_quota_max_resume": 41423,
+      "relative_quota_total": 769170
+    },
+    {
+      "index": 137,
+      "copy_boundaries": 2029,
+      "ring_start": 48851,
+      "bound": {
+        "first": 5136,
+        "requested": 5392,
+        "produced": 5429,
+        "copies": 129,
+        "full_block_trace_interval": 39779,
+        "bound_tstates": 44421
+      },
+      "measured_relative_quota_max_resume": 36165,
+      "relative_quota_total": 790243
+    },
+    {
+      "index": 138,
+      "copy_boundaries": 1931,
+      "ring_start": 54580,
+      "bound": {
+        "first": 3574,
+        "requested": 3830,
+        "produced": 3832,
+        "copies": 130,
+        "full_block_trace_interval": 39503,
+        "bound_tstates": 44177
+      },
+      "measured_relative_quota_max_resume": 41910,
+      "relative_quota_total": 771920
+    },
+    {
+      "index": 139,
+      "copy_boundaries": 2175,
+      "ring_start": 60165,
+      "bound": {
+        "first": 2882,
+        "requested": 3138,
+        "produced": 3140,
+        "copies": 113,
+        "full_block_trace_interval": 36938,
+        "bound_tstates": 41068
+      },
+      "measured_relative_quota_max_resume": 34925,
+      "relative_quota_total": 832077
+    },
+    {
+      "index": 140,
+      "copy_boundaries": 2170,
+      "ring_start": 65395,
+      "bound": {
+        "first": 2509,
+        "requested": 2765,
+        "produced": 2782,
+        "copies": 116,
+        "full_block_trace_interval": 37938,
+        "bound_tstates": 42164
+      },
+      "measured_relative_quota_max_resume": 37344,
+      "relative_quota_total": 809830
+    },
+    {
+      "index": 141,
+      "copy_boundaries": 1669,
+      "ring_start": 5290,
+      "bound": {
+        "first": 2930,
+        "requested": 3186,
+        "produced": 3241,
+        "copies": 92,
+        "full_block_trace_interval": 33263,
+        "bound_tstates": 36721
+      },
+      "measured_relative_quota_max_resume": 33234,
+      "relative_quota_total": 684639
+    },
+    {
+      "index": 142,
+      "copy_boundaries": 1358,
+      "ring_start": 10077,
+      "bound": {
+        "first": 1316,
+        "requested": 1572,
+        "produced": 1695,
+        "copies": 78,
+        "full_block_trace_interval": 34774,
+        "bound_tstates": 37784
+      },
+      "measured_relative_quota_max_resume": 31940,
+      "relative_quota_total": 627417
+    },
+    {
+      "index": 143,
+      "copy_boundaries": 1521,
+      "ring_start": 15561,
+      "bound": {
+        "first": 3594,
+        "requested": 3850,
+        "produced": 3981,
+        "copies": 82,
+        "full_block_trace_interval": 36703,
+        "bound_tstates": 39841
+      },
+      "measured_relative_quota_max_resume": 34351,
+      "relative_quota_total": 653899
+    },
+    {
+      "index": 144,
+      "copy_boundaries": 1922,
+      "ring_start": 21041,
+      "bound": {
+        "first": 3114,
+        "requested": 3370,
+        "produced": 3393,
+        "copies": 119,
+        "full_block_trace_interval": 36219,
+        "bound_tstates": 40541
+      },
+      "measured_relative_quota_max_resume": 37567,
+      "relative_quota_total": 745657
+    },
+    {
+      "index": 145,
+      "copy_boundaries": 1611,
+      "ring_start": 25958,
+      "bound": {
+        "first": 7763,
+        "requested": 8019,
+        "produced": 8144,
+        "copies": 95,
+        "full_block_trace_interval": 34692,
+        "bound_tstates": 38246
+      },
+      "measured_relative_quota_max_resume": 35206,
+      "relative_quota_total": 662125
+    },
+    {
+      "index": 146,
+      "copy_boundaries": 1985,
+      "ring_start": 29953,
+      "bound": {
+        "first": 5338,
+        "requested": 5594,
+        "produced": 5675,
+        "copies": 90,
+        "full_block_trace_interval": 37613,
+        "bound_tstates": 41007
+      },
+      "measured_relative_quota_max_resume": 33941,
+      "relative_quota_total": 756181
+    },
+    {
+      "index": 147,
+      "copy_boundaries": 1675,
+      "ring_start": 34800,
+      "bound": {
+        "first": 4474,
+        "requested": 4730,
+        "produced": 4738,
+        "copies": 135,
+        "full_block_trace_interval": 37636,
+        "bound_tstates": 42470
+      },
+      "measured_relative_quota_max_resume": 39225,
+      "relative_quota_total": 701687
+    },
+    {
+      "index": 148,
+      "copy_boundaries": 1790,
+      "ring_start": 40506,
+      "bound": {
+        "first": 4167,
+        "requested": 4423,
+        "produced": 4465,
+        "copies": 127,
+        "full_block_trace_interval": 38545,
+        "bound_tstates": 43123
+      },
+      "measured_relative_quota_max_resume": 39641,
+      "relative_quota_total": 724512
+    },
+    {
+      "index": 149,
+      "copy_boundaries": 1839,
+      "ring_start": 46065,
+      "bound": {
+        "first": 6198,
+        "requested": 6454,
+        "produced": 6506,
+        "copies": 126,
+        "full_block_trace_interval": 39766,
+        "bound_tstates": 44312
+      },
+      "measured_relative_quota_max_resume": 36780,
+      "relative_quota_total": 726126
+    },
+    {
+      "index": 150,
+      "copy_boundaries": 1867,
+      "ring_start": 51693,
+      "bound": {
+        "first": 281,
+        "requested": 537,
+        "produced": 538,
+        "copies": 121,
+        "full_block_trace_interval": 36279,
+        "bound_tstates": 40665
+      },
+      "measured_relative_quota_max_resume": 36198,
+      "relative_quota_total": 719644
+    },
+    {
+      "index": 151,
+      "copy_boundaries": 1985,
+      "ring_start": 56137,
+      "bound": {
+        "first": 6974,
+        "requested": 7230,
+        "produced": 7256,
+        "copies": 115,
+        "full_block_trace_interval": 37777,
+        "bound_tstates": 41971
+      },
+      "measured_relative_quota_max_resume": 39016,
+      "relative_quota_total": 765062
+    },
+    {
+      "index": 152,
+      "copy_boundaries": 1558,
+      "ring_start": 61539,
+      "bound": {
+        "first": 4747,
+        "requested": 5003,
+        "produced": 5156,
+        "copies": 86,
+        "full_block_trace_interval": 33700,
+        "bound_tstates": 36966
+      },
+      "measured_relative_quota_max_resume": 35194,
+      "relative_quota_total": 648753
+    },
+    {
+      "index": 153,
+      "copy_boundaries": 1714,
+      "ring_start": 418,
+      "bound": {
+        "first": 4723,
+        "requested": 4979,
+        "produced": 5114,
+        "copies": 95,
+        "full_block_trace_interval": 35766,
+        "bound_tstates": 39320
+      },
+      "measured_relative_quota_max_resume": 33887,
+      "relative_quota_total": 688287
+    },
+    {
+      "index": 154,
+      "copy_boundaries": 1751,
+      "ring_start": 4685,
+      "bound": {
+        "first": 4932,
+        "requested": 5188,
+        "produced": 5229,
+        "copies": 97,
+        "full_block_trace_interval": 34664,
+        "bound_tstates": 38282
+      },
+      "measured_relative_quota_max_resume": 33090,
+      "relative_quota_total": 688574
+    },
+    {
+      "index": 155,
+      "copy_boundaries": 1692,
+      "ring_start": 8908,
+      "bound": {
+        "first": 3344,
+        "requested": 3600,
+        "produced": 3744,
+        "copies": 88,
+        "full_block_trace_interval": 33386,
+        "bound_tstates": 36716
+      },
+      "measured_relative_quota_max_resume": 34308,
+      "relative_quota_total": 695422
+    },
+    {
+      "index": 156,
+      "copy_boundaries": 1780,
+      "ring_start": 13821,
+      "bound": {
+        "first": 2011,
+        "requested": 2267,
+        "produced": 2275,
+        "copies": 121,
+        "full_block_trace_interval": 36960,
+        "bound_tstates": 41346
+      },
+      "measured_relative_quota_max_resume": 37875,
+      "relative_quota_total": 718947
+    },
+    {
+      "index": 157,
+      "copy_boundaries": 1774,
+      "ring_start": 18797,
+      "bound": {
+        "first": 4329,
+        "requested": 4585,
+        "produced": 4586,
+        "copies": 127,
+        "full_block_trace_interval": 39468,
+        "bound_tstates": 44046
+      },
+      "measured_relative_quota_max_resume": 39065,
+      "relative_quota_total": 732103
+    },
+    {
+      "index": 158,
+      "copy_boundaries": 1537,
+      "ring_start": 24145,
+      "bound": {
+        "first": 7476,
+        "requested": 7732,
+        "produced": 7748,
+        "copies": 117,
+        "full_block_trace_interval": 36718,
+        "bound_tstates": 40976
+      },
+      "measured_relative_quota_max_resume": 37075,
+      "relative_quota_total": 685452
+    },
+    {
+      "index": 159,
+      "copy_boundaries": 1640,
+      "ring_start": 30008,
+      "bound": {
+        "first": 7895,
+        "requested": 8151,
+        "produced": 8153,
+        "copies": 112,
+        "full_block_trace_interval": 35590,
+        "bound_tstates": 39688
+      },
+      "measured_relative_quota_max_resume": 34587,
+      "relative_quota_total": 698055
+    },
+    {
+      "index": 160,
+      "copy_boundaries": 1857,
+      "ring_start": 35735,
+      "bound": {
+        "first": 5165,
+        "requested": 5421,
+        "produced": 5423,
+        "copies": 122,
+        "full_block_trace_interval": 38046,
+        "bound_tstates": 42464
+      },
+      "measured_relative_quota_max_resume": 37810,
+      "relative_quota_total": 745498
+    },
+    {
+      "index": 161,
+      "copy_boundaries": 1897,
+      "ring_start": 41494,
+      "bound": {
+        "first": 6183,
+        "requested": 6439,
+        "produced": 6450,
+        "copies": 128,
+        "full_block_trace_interval": 38914,
+        "bound_tstates": 43524
+      },
+      "measured_relative_quota_max_resume": 41670,
+      "relative_quota_total": 783560
+    },
+    {
+      "index": 162,
+      "copy_boundaries": 1640,
+      "ring_start": 47324,
+      "bound": {
+        "first": 3577,
+        "requested": 3833,
+        "produced": 3859,
+        "copies": 107,
+        "full_block_trace_interval": 36040,
+        "bound_tstates": 39978
+      },
+      "measured_relative_quota_max_resume": 35762,
+      "relative_quota_total": 700820
+    },
+    {
+      "index": 163,
+      "copy_boundaries": 1923,
+      "ring_start": 53323,
+      "bound": {
+        "first": 1220,
+        "requested": 1476,
+        "produced": 1492,
+        "copies": 136,
+        "full_block_trace_interval": 39155,
+        "bound_tstates": 44021
+      },
+      "measured_relative_quota_max_resume": 35318,
+      "relative_quota_total": 743611
+    },
+    {
+      "index": 164,
+      "copy_boundaries": 2182,
+      "ring_start": 58840,
+      "bound": {
+        "first": 6525,
+        "requested": 6781,
+        "produced": 6784,
+        "copies": 135,
+        "full_block_trace_interval": 38696,
+        "bound_tstates": 43530
+      },
+      "measured_relative_quota_max_resume": 40420,
+      "relative_quota_total": 799139
+    },
+    {
+      "index": 165,
+      "copy_boundaries": 2173,
+      "ring_start": 63936,
+      "bound": {
+        "first": 3049,
+        "requested": 3305,
+        "produced": 3306,
+        "copies": 110,
+        "full_block_trace_interval": 37326,
+        "bound_tstates": 41360
+      },
+      "measured_relative_quota_max_resume": 38563,
+      "relative_quota_total": 849505
+    },
+    {
+      "index": 166,
+      "copy_boundaries": 2355,
+      "ring_start": 3265,
+      "bound": {
+        "first": 7865,
+        "requested": 8121,
+        "produced": 8125,
+        "copies": 120,
+        "full_block_trace_interval": 38662,
+        "bound_tstates": 43016
+      },
+      "measured_relative_quota_max_resume": 38272,
+      "relative_quota_total": 882229
+    },
+    {
+      "index": 167,
+      "copy_boundaries": 1807,
+      "ring_start": 8589,
+      "bound": {
+        "first": 1359,
+        "requested": 1615,
+        "produced": 1617,
+        "copies": 124,
+        "full_block_trace_interval": 37454,
+        "bound_tstates": 41936
+      },
+      "measured_relative_quota_max_resume": 36746,
+      "relative_quota_total": 732442
+    },
+    {
+      "index": 168,
+      "copy_boundaries": 1649,
+      "ring_start": 14190,
+      "bound": {
+        "first": 2895,
+        "requested": 3151,
+        "produced": 3158,
+        "copies": 110,
+        "full_block_trace_interval": 34508,
+        "bound_tstates": 38542
+      },
+      "measured_relative_quota_max_resume": 31996,
+      "relative_quota_total": 683592
+    },
+    {
+      "index": 169,
+      "copy_boundaries": 1764,
+      "ring_start": 19026,
+      "bound": {
+        "first": 2320,
+        "requested": 2576,
+        "produced": 2579,
+        "copies": 120,
+        "full_block_trace_interval": 37728,
+        "bound_tstates": 42082
+      },
+      "measured_relative_quota_max_resume": 37856,
+      "relative_quota_total": 722359
+    },
+    {
+      "index": 170,
+      "copy_boundaries": 2223,
+      "ring_start": 24420,
+      "bound": {
+        "first": 7467,
+        "requested": 7723,
+        "produced": 7724,
+        "copies": 124,
+        "full_block_trace_interval": 37900,
+        "bound_tstates": 42382
+      },
+      "measured_relative_quota_max_resume": 40866,
+      "relative_quota_total": 853988
+    },
+    {
+      "index": 171,
+      "copy_boundaries": 2197,
+      "ring_start": 29885,
+      "bound": {
+        "first": 6924,
+        "requested": 7180,
+        "produced": 7204,
+        "copies": 127,
+        "full_block_trace_interval": 38899,
+        "bound_tstates": 43477
+      },
+      "measured_relative_quota_max_resume": 38305,
+      "relative_quota_total": 820640
+    },
+    {
+      "index": 172,
+      "copy_boundaries": 1972,
+      "ring_start": 35440,
+      "bound": {
+        "first": 1599,
+        "requested": 1855,
+        "produced": 1883,
+        "copies": 122,
+        "full_block_trace_interval": 37847,
+        "bound_tstates": 42265
+      },
+      "measured_relative_quota_max_resume": 34432,
+      "relative_quota_total": 761520
+    },
+    {
+      "index": 173,
+      "copy_boundaries": 2259,
+      "ring_start": 40581,
+      "bound": {
+        "first": 7912,
+        "requested": 8168,
+        "produced": 8170,
+        "copies": 122,
+        "full_block_trace_interval": 39142,
+        "bound_tstates": 43560
+      },
+      "measured_relative_quota_max_resume": 38688,
+      "relative_quota_total": 842434
+    },
+    {
+      "index": 174,
+      "copy_boundaries": 1792,
+      "ring_start": 45800,
+      "bound": {
+        "first": 4978,
+        "requested": 5234,
+        "produced": 5235,
+        "copies": 113,
+        "full_block_trace_interval": 40259,
+        "bound_tstates": 44389
+      },
+      "measured_relative_quota_max_resume": 36035,
+      "relative_quota_total": 739559
+    },
+    {
+      "index": 175,
+      "copy_boundaries": 1646,
+      "ring_start": 51326,
+      "bound": {
+        "first": 2921,
+        "requested": 3177,
+        "produced": 3274,
+        "copies": 111,
+        "full_block_trace_interval": 38829,
+        "bound_tstates": 42895
+      },
+      "measured_relative_quota_max_resume": 40268,
+      "relative_quota_total": 695410
+    },
+    {
+      "index": 176,
+      "copy_boundaries": 2225,
+      "ring_start": 56572,
+      "bound": {
+        "first": 7775,
+        "requested": 8031,
+        "produced": 8034,
+        "copies": 121,
+        "full_block_trace_interval": 40521,
+        "bound_tstates": 44907
+      },
+      "measured_relative_quota_max_resume": 42519,
+      "relative_quota_total": 830396
+    },
+    {
+      "index": 177,
+      "copy_boundaries": 1769,
+      "ring_start": 61926,
+      "bound": {
+        "first": 539,
+        "requested": 795,
+        "produced": 808,
+        "copies": 128,
+        "full_block_trace_interval": 36239,
+        "bound_tstates": 40849
+      },
+      "measured_relative_quota_max_resume": 36565,
+      "relative_quota_total": 706563
+    },
+    {
+      "index": 178,
+      "copy_boundaries": 1701,
+      "ring_start": 1349,
+      "bound": {
+        "first": 1008,
+        "requested": 1264,
+        "produced": 1280,
+        "copies": 124,
+        "full_block_trace_interval": 34639,
+        "bound_tstates": 39121
+      },
+      "measured_relative_quota_max_resume": 34318,
+      "relative_quota_total": 699671
+    },
+    {
+      "index": 179,
+      "copy_boundaries": 1909,
+      "ring_start": 6585,
+      "bound": {
+        "first": 401,
+        "requested": 657,
+        "produced": 658,
+        "copies": 131,
+        "full_block_trace_interval": 38524,
+        "bound_tstates": 43230
+      },
+      "measured_relative_quota_max_resume": 37308,
+      "relative_quota_total": 751126
+    },
+    {
+      "index": 180,
+      "copy_boundaries": 1894,
+      "ring_start": 12480,
+      "bound": {
+        "first": 4547,
+        "requested": 4803,
+        "produced": 4806,
+        "copies": 136,
+        "full_block_trace_interval": 38206,
+        "bound_tstates": 43072
+      },
+      "measured_relative_quota_max_resume": 40844,
+      "relative_quota_total": 756263
+    },
+    {
+      "index": 181,
+      "copy_boundaries": 1906,
+      "ring_start": 18351,
+      "bound": {
+        "first": 3021,
+        "requested": 3277,
+        "produced": 3278,
+        "copies": 128,
+        "full_block_trace_interval": 38162,
+        "bound_tstates": 42772
+      },
+      "measured_relative_quota_max_resume": 36637,
+      "relative_quota_total": 767044
+    },
+    {
+      "index": 182,
+      "copy_boundaries": 1484,
+      "ring_start": 24413,
+      "bound": {
+        "first": 3256,
+        "requested": 3512,
+        "produced": 3593,
+        "copies": 96,
+        "full_block_trace_interval": 34869,
+        "bound_tstates": 38455
+      },
+      "measured_relative_quota_max_resume": 32142,
+      "relative_quota_total": 646062
+    },
+    {
+      "index": 183,
+      "copy_boundaries": 1808,
+      "ring_start": 29636,
+      "bound": {
+        "first": 6162,
+        "requested": 6418,
+        "produced": 6423,
+        "copies": 133,
+        "full_block_trace_interval": 37860,
+        "bound_tstates": 42630
+      },
+      "measured_relative_quota_max_resume": 39510,
+      "relative_quota_total": 725952
+    },
+    {
+      "index": 184,
+      "copy_boundaries": 1886,
+      "ring_start": 34584,
+      "bound": {
+        "first": 7324,
+        "requested": 7580,
+        "produced": 7584,
+        "copies": 128,
+        "full_block_trace_interval": 39086,
+        "bound_tstates": 43696
+      },
+      "measured_relative_quota_max_resume": 40791,
+      "relative_quota_total": 751966
+    },
+    {
+      "index": 185,
+      "copy_boundaries": 2070,
+      "ring_start": 39971,
+      "bound": {
+        "first": 4353,
+        "requested": 4609,
+        "produced": 4651,
+        "copies": 119,
+        "full_block_trace_interval": 38598,
+        "bound_tstates": 42920
+      },
+      "measured_relative_quota_max_resume": 38063,
+      "relative_quota_total": 792981
+    },
+    {
+      "index": 186,
+      "copy_boundaries": 1838,
+      "ring_start": 45900,
+      "bound": {
+        "first": 2277,
+        "requested": 2533,
+        "produced": 2536,
+        "copies": 132,
+        "full_block_trace_interval": 38465,
+        "bound_tstates": 43203
+      },
+      "measured_relative_quota_max_resume": 39802,
+      "relative_quota_total": 738553
+    },
+    {
+      "index": 187,
+      "copy_boundaries": 2155,
+      "ring_start": 51469,
+      "bound": {
+        "first": 2872,
+        "requested": 3128,
+        "produced": 3131,
+        "copies": 121,
+        "full_block_trace_interval": 37225,
+        "bound_tstates": 41611
+      },
+      "measured_relative_quota_max_resume": 37477,
+      "relative_quota_total": 817713
+    },
+    {
+      "index": 188,
+      "copy_boundaries": 2294,
+      "ring_start": 56476,
+      "bound": {
+        "first": 3274,
+        "requested": 3530,
+        "produced": 3535,
+        "copies": 106,
+        "full_block_trace_interval": 35102,
+        "bound_tstates": 39008
+      },
+      "measured_relative_quota_max_resume": 34689,
+      "relative_quota_total": 865970
+    },
+    {
+      "index": 189,
+      "copy_boundaries": 2350,
+      "ring_start": 61758,
+      "bound": {
+        "first": 4281,
+        "requested": 4537,
+        "produced": 4539,
+        "copies": 109,
+        "full_block_trace_interval": 37918,
+        "bound_tstates": 41920
+      },
+      "measured_relative_quota_max_resume": 39764,
+      "relative_quota_total": 889872
+    },
+    {
+      "index": 190,
+      "copy_boundaries": 1809,
+      "ring_start": 1414,
+      "bound": {
+        "first": 936,
+        "requested": 1192,
+        "produced": 1198,
+        "copies": 106,
+        "full_block_trace_interval": 34742,
+        "bound_tstates": 38648
+      },
+      "measured_relative_quota_max_resume": 33761,
+      "relative_quota_total": 705875
+    },
+    {
+      "index": 191,
+      "copy_boundaries": 1418,
+      "ring_start": 5351,
+      "bound": {
+        "first": 1839,
+        "requested": 2095,
+        "produced": 2186,
+        "copies": 90,
+        "full_block_trace_interval": 32039,
+        "bound_tstates": 35433
+      },
+      "measured_relative_quota_max_resume": 31006,
+      "relative_quota_total": 597360
+    },
+    {
+      "index": 192,
+      "copy_boundaries": 1515,
+      "ring_start": 8615,
+      "bound": {
+        "first": 6592,
+        "requested": 6848,
+        "produced": 6891,
+        "copies": 95,
+        "full_block_trace_interval": 32541,
+        "bound_tstates": 36095
+      },
+      "measured_relative_quota_max_resume": 31432,
+      "relative_quota_total": 628063
+    },
+    {
+      "index": 193,
+      "copy_boundaries": 1670,
+      "ring_start": 12247,
+      "bound": {
+        "first": 4093,
+        "requested": 4349,
+        "produced": 4350,
+        "copies": 119,
+        "full_block_trace_interval": 35916,
+        "bound_tstates": 40238
+      },
+      "measured_relative_quota_max_resume": 35900,
+      "relative_quota_total": 674477
+    },
+    {
+      "index": 194,
+      "copy_boundaries": 1995,
+      "ring_start": 16789,
+      "bound": {
+        "first": 4076,
+        "requested": 4332,
+        "produced": 4333,
+        "copies": 130,
+        "full_block_trace_interval": 40183,
+        "bound_tstates": 44857
+      },
+      "measured_relative_quota_max_resume": 39492,
+      "relative_quota_total": 778558
+    },
+    {
+      "index": 195,
+      "copy_boundaries": 2362,
+      "ring_start": 22628,
+      "bound": {
+        "first": 4285,
+        "requested": 4541,
+        "produced": 4547,
+        "copies": 123,
+        "full_block_trace_interval": 39171,
+        "bound_tstates": 43621
+      },
+      "measured_relative_quota_max_resume": 41361,
+      "relative_quota_total": 877871
+    },
+    {
+      "index": 196,
+      "copy_boundaries": 2061,
+      "ring_start": 28128,
+      "bound": {
+        "first": 6744,
+        "requested": 7000,
+        "produced": 7000,
+        "copies": 117,
+        "full_block_trace_interval": 37838,
+        "bound_tstates": 42096
+      },
+      "measured_relative_quota_max_resume": 37717,
+      "relative_quota_total": 789582
+    },
+    {
+      "index": 197,
+      "copy_boundaries": 1747,
+      "ring_start": 33593,
+      "bound": {
+        "first": 6348,
+        "requested": 6604,
+        "produced": 6722,
+        "copies": 106,
+        "full_block_trace_interval": 37217,
+        "bound_tstates": 41123
+      },
+      "measured_relative_quota_max_resume": 36340,
+      "relative_quota_total": 698679
+    },
+    {
+      "index": 198,
+      "copy_boundaries": 2315,
+      "ring_start": 38524,
+      "bound": {
+        "first": 5112,
+        "requested": 5368,
+        "produced": 5374,
+        "copies": 132,
+        "full_block_trace_interval": 40895,
+        "bound_tstates": 45633
+      },
+      "measured_relative_quota_max_resume": 40022,
+      "relative_quota_total": 841176
+    },
+    {
+      "index": 199,
+      "copy_boundaries": 1204,
+      "ring_start": 44510,
+      "bound": {
+        "first": 822,
+        "requested": 1078,
+        "produced": 1081,
+        "copies": 133,
+        "full_block_trace_interval": 36897,
+        "bound_tstates": 41667
+      },
+      "measured_relative_quota_max_resume": 38790,
+      "relative_quota_total": 524618
+    },
+    {
+      "index": 200,
+      "copy_boundaries": 1732,
+      "ring_start": 47285,
+      "bound": {
+        "first": 3403,
+        "requested": 3659,
+        "produced": 3662,
+        "copies": 119,
+        "full_block_trace_interval": 39137,
+        "bound_tstates": 43459
+      },
+      "measured_relative_quota_max_resume": 38666,
+      "relative_quota_total": 706416
+    },
+    {
+      "index": 201,
+      "copy_boundaries": 1288,
+      "ring_start": 51595,
+      "bound": {
+        "first": 722,
+        "requested": 978,
+        "produced": 1077,
+        "copies": 76,
+        "full_block_trace_interval": 34546,
+        "bound_tstates": 37492
+      },
+      "measured_relative_quota_max_resume": 33159,
+      "relative_quota_total": 615405
+    },
+    {
+      "index": 202,
+      "copy_boundaries": 1361,
+      "ring_start": 57076,
+      "bound": {
+        "first": 6144,
+        "requested": 6400,
+        "produced": 6481,
+        "copies": 76,
+        "full_block_trace_interval": 35063,
+        "bound_tstates": 38009
+      },
+      "measured_relative_quota_max_resume": 33214,
+      "relative_quota_total": 634565
+    },
+    {
+      "index": 203,
+      "copy_boundaries": 1713,
+      "ring_start": 62549,
+      "bound": {
+        "first": 5643,
+        "requested": 5899,
+        "produced": 5905,
+        "copies": 118,
+        "full_block_trace_interval": 38026,
+        "bound_tstates": 42316
+      },
+      "measured_relative_quota_max_resume": 38632,
+      "relative_quota_total": 702552
+    },
+    {
+      "index": 204,
+      "copy_boundaries": 1350,
+      "ring_start": 1807,
+      "bound": {
+        "first": 6304,
+        "requested": 6560,
+        "produced": 6642,
+        "copies": 66,
+        "full_block_trace_interval": 32738,
+        "bound_tstates": 35364
+      },
+      "measured_relative_quota_max_resume": 25752,
+      "relative_quota_total": 608005
+    },
+    {
+      "index": 205,
+      "copy_boundaries": 1884,
+      "ring_start": 6614,
+      "bound": {
+        "first": 7424,
+        "requested": 7680,
+        "produced": 7681,
+        "copies": 125,
+        "full_block_trace_interval": 39088,
+        "bound_tstates": 43602
+      },
+      "measured_relative_quota_max_resume": 39602,
+      "relative_quota_total": 768609
+    },
+    {
+      "index": 206,
+      "copy_boundaries": 1489,
+      "ring_start": 12405,
+      "bound": {
+        "first": 6236,
+        "requested": 6492,
+        "produced": 6615,
+        "copies": 95,
+        "full_block_trace_interval": 36837,
+        "bound_tstates": 40391
+      },
+      "measured_relative_quota_max_resume": 36074,
+      "relative_quota_total": 651505
+    },
+    {
+      "index": 207,
+      "copy_boundaries": 1348,
+      "ring_start": 17443,
+      "bound": {
+        "first": 2010,
+        "requested": 2266,
+        "produced": 2311,
+        "copies": 87,
+        "full_block_trace_interval": 30648,
+        "bound_tstates": 33946
+      },
+      "measured_relative_quota_max_resume": 31813,
+      "relative_quota_total": 624187
+    },
+    {
+      "index": 208,
+      "copy_boundaries": 1785,
+      "ring_start": 22976,
+      "bound": {
+        "first": 4725,
+        "requested": 4981,
+        "produced": 4987,
+        "copies": 127,
+        "full_block_trace_interval": 39620,
+        "bound_tstates": 44198
+      },
+      "measured_relative_quota_max_resume": 41723,
+      "relative_quota_total": 739310
+    },
+    {
+      "index": 209,
+      "copy_boundaries": 1766,
+      "ring_start": 28751,
+      "bound": {
+        "first": 7679,
+        "requested": 7935,
+        "produced": 7939,
+        "copies": 113,
+        "full_block_trace_interval": 39851,
+        "bound_tstates": 43981
+      },
+      "measured_relative_quota_max_resume": 42787,
+      "relative_quota_total": 740431
+    },
+    {
+      "index": 210,
+      "copy_boundaries": 1750,
+      "ring_start": 34888,
+      "bound": {
+        "first": 5931,
+        "requested": 6187,
+        "produced": 6190,
+        "copies": 124,
+        "full_block_trace_interval": 38079,
+        "bound_tstates": 42561
+      },
+      "measured_relative_quota_max_resume": 38177,
+      "relative_quota_total": 736727
+    },
+    {
+      "index": 211,
+      "copy_boundaries": 2660,
+      "ring_start": 40918,
+      "bound": {
+        "first": 319,
+        "requested": 575,
+        "produced": 580,
+        "copies": 129,
+        "full_block_trace_interval": 37769,
+        "bound_tstates": 42411
+      },
+      "measured_relative_quota_max_resume": 37785,
+      "relative_quota_total": 942531
+    },
+    {
+      "index": 212,
+      "copy_boundaries": 2580,
+      "ring_start": 46027,
+      "bound": {
+        "first": 5283,
+        "requested": 5539,
+        "produced": 5546,
+        "copies": 118,
+        "full_block_trace_interval": 38496,
+        "bound_tstates": 42786
+      },
+      "measured_relative_quota_max_resume": 40307,
+      "relative_quota_total": 931436
+    },
+    {
+      "index": 213,
+      "copy_boundaries": 2468,
+      "ring_start": 51281,
+      "bound": {
+        "first": 5088,
+        "requested": 5344,
+        "produced": 5348,
+        "copies": 108,
+        "full_block_trace_interval": 37973,
+        "bound_tstates": 41943
+      },
+      "measured_relative_quota_max_resume": 39172,
+      "relative_quota_total": 899707
+    },
+    {
+      "index": 214,
+      "copy_boundaries": 2116,
+      "ring_start": 56482,
+      "bound": {
+        "first": 6965,
+        "requested": 7221,
+        "produced": 7251,
+        "copies": 127,
+        "full_block_trace_interval": 39622,
+        "bound_tstates": 44200
+      },
+      "measured_relative_quota_max_resume": 39480,
+      "relative_quota_total": 809697
+    },
+    {
+      "index": 215,
+      "copy_boundaries": 2247,
+      "ring_start": 62477,
+      "bound": {
+        "first": 5098,
+        "requested": 5354,
+        "produced": 5354,
+        "copies": 125,
+        "full_block_trace_interval": 39196,
+        "bound_tstates": 43710
+      },
+      "measured_relative_quota_max_resume": 40508,
+      "relative_quota_total": 849787
+    },
+    {
+      "index": 216,
+      "copy_boundaries": 2252,
+      "ring_start": 2982,
+      "bound": {
+        "first": 1970,
+        "requested": 2226,
+        "produced": 2231,
+        "copies": 129,
+        "full_block_trace_interval": 39078,
+        "bound_tstates": 43720
+      },
+      "measured_relative_quota_max_resume": 37722,
+      "relative_quota_total": 830693
+    },
+    {
+      "index": 217,
+      "copy_boundaries": 2117,
+      "ring_start": 8152,
+      "bound": {
+        "first": 5563,
+        "requested": 5819,
+        "produced": 5826,
+        "copies": 109,
+        "full_block_trace_interval": 39025,
+        "bound_tstates": 43027
+      },
+      "measured_relative_quota_max_resume": 38061,
+      "relative_quota_total": 841282
+    },
+    {
+      "index": 218,
+      "copy_boundaries": 2471,
+      "ring_start": 13614,
+      "bound": {
+        "first": 4084,
+        "requested": 4340,
+        "produced": 4346,
+        "copies": 115,
+        "full_block_trace_interval": 38342,
+        "bound_tstates": 42536
+      },
+      "measured_relative_quota_max_resume": 37426,
+      "relative_quota_total": 906941
+    },
+    {
+      "index": 219,
+      "copy_boundaries": 2234,
+      "ring_start": 18640,
+      "bound": {
+        "first": 4098,
+        "requested": 4354,
+        "produced": 4356,
+        "copies": 118,
+        "full_block_trace_interval": 38350,
+        "bound_tstates": 42640
+      },
+      "measured_relative_quota_max_resume": 40020,
+      "relative_quota_total": 847112
+    },
+    {
+      "index": 220,
+      "copy_boundaries": 1806,
+      "ring_start": 24067,
+      "bound": {
+        "first": 1971,
+        "requested": 2227,
+        "produced": 2231,
+        "copies": 120,
+        "full_block_trace_interval": 37675,
+        "bound_tstates": 42029
+      },
+      "measured_relative_quota_max_resume": 35930,
+      "relative_quota_total": 705239
+    },
+    {
+      "index": 221,
+      "copy_boundaries": 2116,
+      "ring_start": 28620,
+      "bound": {
+        "first": 5501,
+        "requested": 5757,
+        "produced": 5760,
+        "copies": 122,
+        "full_block_trace_interval": 41434,
+        "bound_tstates": 45852
+      },
+      "measured_relative_quota_max_resume": 39669,
+      "relative_quota_total": 798921
+    },
+    {
+      "index": 222,
+      "copy_boundaries": 1655,
+      "ring_start": 34384,
+      "bound": {
+        "first": 3806,
+        "requested": 4062,
+        "produced": 4065,
+        "copies": 132,
+        "full_block_trace_interval": 39674,
+        "bound_tstates": 44412
+      },
+      "measured_relative_quota_max_resume": 42029,
+      "relative_quota_total": 723307
+    },
+    {
+      "index": 223,
+      "copy_boundaries": 1781,
+      "ring_start": 40057,
+      "bound": {
+        "first": 7924,
+        "requested": 8180,
+        "produced": 8183,
+        "copies": 140,
+        "full_block_trace_interval": 40241,
+        "bound_tstates": 45235
+      },
+      "measured_relative_quota_max_resume": 37446,
+      "relative_quota_total": 728247
+    },
+    {
+      "index": 224,
+      "copy_boundaries": 1974,
+      "ring_start": 45733,
+      "bound": {
+        "first": 4829,
+        "requested": 5085,
+        "produced": 5095,
+        "copies": 98,
+        "full_block_trace_interval": 36905,
+        "bound_tstates": 40555
+      },
+      "measured_relative_quota_max_resume": 37786,
+      "relative_quota_total": 796448
+    },
+    {
+      "index": 225,
+      "copy_boundaries": 2459,
+      "ring_start": 51123,
+      "bound": {
+        "first": 6749,
+        "requested": 7005,
+        "produced": 7006,
+        "copies": 117,
+        "full_block_trace_interval": 39051,
+        "bound_tstates": 43309
+      },
+      "measured_relative_quota_max_resume": 40765,
+      "relative_quota_total": 904998
+    },
+    {
+      "index": 226,
+      "copy_boundaries": 1696,
+      "ring_start": 56506,
+      "bound": {
+        "first": 6433,
+        "requested": 6689,
+        "produced": 6751,
+        "copies": 73,
+        "full_block_trace_interval": 32222,
+        "bound_tstates": 35072
+      },
+      "measured_relative_quota_max_resume": 30218,
+      "relative_quota_total": 697212
+    },
+    {
+      "index": 227,
+      "copy_boundaries": 1654,
+      "ring_start": 61741,
+      "bound": {
+        "first": 6087,
+        "requested": 6343,
+        "produced": 6383,
+        "copies": 128,
+        "full_block_trace_interval": 39447,
+        "bound_tstates": 44057
+      },
+      "measured_relative_quota_max_resume": 40861,
+      "relative_quota_total": 686047
+    },
+    {
+      "index": 228,
+      "copy_boundaries": 1691,
+      "ring_start": 1483,
+      "bound": {
+        "first": 5687,
+        "requested": 5943,
+        "produced": 5965,
+        "copies": 83,
+        "full_block_trace_interval": 30554,
+        "bound_tstates": 33724
+      },
+      "measured_relative_quota_max_resume": 28148,
+      "relative_quota_total": 694047
+    },
+    {
+      "index": 229,
+      "copy_boundaries": 1908,
+      "ring_start": 6692,
+      "bound": {
+        "first": 2195,
+        "requested": 2451,
+        "produced": 2455,
+        "copies": 120,
+        "full_block_trace_interval": 37017,
+        "bound_tstates": 41371
+      },
+      "measured_relative_quota_max_resume": 36286,
+      "relative_quota_total": 747444
+    },
+    {
+      "index": 230,
+      "copy_boundaries": 1620,
+      "ring_start": 11962,
+      "bound": {
+        "first": 6085,
+        "requested": 6341,
+        "produced": 6344,
+        "copies": 97,
+        "full_block_trace_interval": 33560,
+        "bound_tstates": 37178
+      },
+      "measured_relative_quota_max_resume": 34008,
+      "relative_quota_total": 692467
+    },
+    {
+      "index": 231,
+      "copy_boundaries": 1446,
+      "ring_start": 17064,
+      "bound": {
+        "first": 7934,
+        "requested": 8190,
+        "produced": 8192,
+        "copies": 111,
+        "full_block_trace_interval": 31727,
+        "bound_tstates": 35793
+      },
+      "measured_relative_quota_max_resume": 30341,
+      "relative_quota_total": 608386
+    },
+    {
+      "index": 232,
+      "copy_boundaries": 1577,
+      "ring_start": 20369,
+      "bound": {
+        "first": 3842,
+        "requested": 4098,
+        "produced": 4196,
+        "copies": 86,
+        "full_block_trace_interval": 35814,
+        "bound_tstates": 39080
+      },
+      "measured_relative_quota_max_resume": 35912,
+      "relative_quota_total": 656462
+    },
+    {
+      "index": 233,
+      "copy_boundaries": 1295,
+      "ring_start": 25295,
+      "bound": {
+        "first": 6276,
+        "requested": 6532,
+        "produced": 6582,
+        "copies": 87,
+        "full_block_trace_interval": 30947,
+        "bound_tstates": 34245
+      },
+      "measured_relative_quota_max_resume": 31967,
+      "relative_quota_total": 609787
+    },
+    {
+      "index": 234,
+      "copy_boundaries": 2338,
+      "ring_start": 30647,
+      "bound": {
+        "first": 6729,
+        "requested": 6985,
+        "produced": 6989,
+        "copies": 111,
+        "full_block_trace_interval": 38930,
+        "bound_tstates": 42996
+      },
+      "measured_relative_quota_max_resume": 40241,
+      "relative_quota_total": 883741
+    },
+    {
+      "index": 235,
+      "copy_boundaries": 2347,
+      "ring_start": 36109,
+      "bound": {
+        "first": 6289,
+        "requested": 6545,
+        "produced": 6548,
+        "copies": 123,
+        "full_block_trace_interval": 39128,
+        "bound_tstates": 43578
+      },
+      "measured_relative_quota_max_resume": 38698,
+      "relative_quota_total": 879198
+    },
+    {
+      "index": 236,
+      "copy_boundaries": 2535,
+      "ring_start": 41541,
+      "bound": {
+        "first": 4804,
+        "requested": 5060,
+        "produced": 5063,
+        "copies": 134,
+        "full_block_trace_interval": 40209,
+        "bound_tstates": 45011
+      },
+      "measured_relative_quota_max_resume": 39944,
+      "relative_quota_total": 928044
+    },
+    {
+      "index": 237,
+      "copy_boundaries": 2515,
+      "ring_start": 46779,
+      "bound": {
+        "first": 802,
+        "requested": 1058,
+        "produced": 1061,
+        "copies": 130,
+        "full_block_trace_interval": 39771,
+        "bound_tstates": 44445
+      },
+      "measured_relative_quota_max_resume": 41440,
+      "relative_quota_total": 940707
+    },
+    {
+      "index": 238,
+      "copy_boundaries": 2303,
+      "ring_start": 52096,
+      "bound": {
+        "first": 2187,
+        "requested": 2443,
+        "produced": 2449,
+        "copies": 112,
+        "full_block_trace_interval": 38155,
+        "bound_tstates": 42253
+      },
+      "measured_relative_quota_max_resume": 40140,
+      "relative_quota_total": 882079
+    },
+    {
+      "index": 239,
+      "copy_boundaries": 2615,
+      "ring_start": 57450,
+      "bound": {
+        "first": 6376,
+        "requested": 6632,
+        "produced": 6634,
+        "copies": 106,
+        "full_block_trace_interval": 39601,
+        "bound_tstates": 43507
+      },
+      "measured_relative_quota_max_resume": 40581,
+      "relative_quota_total": 951246
+    },
+    {
+      "index": 240,
+      "copy_boundaries": 2379,
+      "ring_start": 62565,
+      "bound": {
+        "first": 2641,
+        "requested": 2897,
+        "produced": 2910,
+        "copies": 114,
+        "full_block_trace_interval": 38689,
+        "bound_tstates": 42851
+      },
+      "measured_relative_quota_max_resume": 38257,
+      "relative_quota_total": 903311
+    },
+    {
+      "index": 241,
+      "copy_boundaries": 2365,
+      "ring_start": 2315,
+      "bound": {
+        "first": 6227,
+        "requested": 6483,
+        "produced": 6486,
+        "copies": 126,
+        "full_block_trace_interval": 39381,
+        "bound_tstates": 43927
+      },
+      "measured_relative_quota_max_resume": 37864,
+      "relative_quota_total": 891583
+    },
+    {
+      "index": 242,
+      "copy_boundaries": 2776,
+      "ring_start": 7520,
+      "bound": {
+        "first": 7619,
+        "requested": 7875,
+        "produced": 7877,
+        "copies": 111,
+        "full_block_trace_interval": 39089,
+        "bound_tstates": 43155
+      },
+      "measured_relative_quota_max_resume": 39931,
+      "relative_quota_total": 989422
+    },
+    {
+      "index": 243,
+      "copy_boundaries": 2762,
+      "ring_start": 12615,
+      "bound": {
+        "first": 5801,
+        "requested": 6057,
+        "produced": 6059,
+        "copies": 113,
+        "full_block_trace_interval": 39261,
+        "bound_tstates": 43391
+      },
+      "measured_relative_quota_max_resume": 38164,
+      "relative_quota_total": 982694
+    },
+    {
+      "index": 244,
+      "copy_boundaries": 2869,
+      "ring_start": 17571,
+      "bound": {
+        "first": 7614,
+        "requested": 7870,
+        "produced": 7873,
+        "copies": 121,
+        "full_block_trace_interval": 39001,
+        "bound_tstates": 43387
+      },
+      "measured_relative_quota_max_resume": 38786,
+      "relative_quota_total": 994686
+    },
+    {
+      "index": 245,
+      "copy_boundaries": 2661,
+      "ring_start": 22498,
+      "bound": {
+        "first": 7215,
+        "requested": 7471,
+        "produced": 7477,
+        "copies": 120,
+        "full_block_trace_interval": 38874,
+        "bound_tstates": 43228
+      },
+      "measured_relative_quota_max_resume": 37465,
+      "relative_quota_total": 955641
+    },
+    {
+      "index": 246,
+      "copy_boundaries": 2675,
+      "ring_start": 27350,
+      "bound": {
+        "first": 4836,
+        "requested": 5092,
+        "produced": 5094,
+        "copies": 123,
+        "full_block_trace_interval": 39332,
+        "bound_tstates": 43782
+      },
+      "measured_relative_quota_max_resume": 38307,
+      "relative_quota_total": 961415
+    },
+    {
+      "index": 247,
+      "copy_boundaries": 2410,
+      "ring_start": 32531,
+      "bound": {
+        "first": 2807,
+        "requested": 3063,
+        "produced": 3068,
+        "copies": 117,
+        "full_block_trace_interval": 39850,
+        "bound_tstates": 44108
+      },
+      "measured_relative_quota_max_resume": 40448,
+      "relative_quota_total": 904131
+    },
+    {
+      "index": 248,
+      "copy_boundaries": 2418,
+      "ring_start": 37559,
+      "bound": {
+        "first": 4377,
+        "requested": 4633,
+        "produced": 4640,
+        "copies": 122,
+        "full_block_trace_interval": 39723,
+        "bound_tstates": 44141
+      },
+      "measured_relative_quota_max_resume": 38770,
+      "relative_quota_total": 889137
+    },
+    {
+      "index": 249,
+      "copy_boundaries": 2406,
+      "ring_start": 42626,
+      "bound": {
+        "first": 4239,
+        "requested": 4495,
+        "produced": 4504,
+        "copies": 114,
+        "full_block_trace_interval": 38315,
+        "bound_tstates": 42477
+      },
+      "measured_relative_quota_max_resume": 40033,
+      "relative_quota_total": 923544
+    },
+    {
+      "index": 250,
+      "copy_boundaries": 2246,
+      "ring_start": 47623,
+      "bound": {
+        "first": 4111,
+        "requested": 4367,
+        "produced": 4376,
+        "copies": 110,
+        "full_block_trace_interval": 37939,
+        "bound_tstates": 41973
+      },
+      "measured_relative_quota_max_resume": 37804,
+      "relative_quota_total": 860305
+    },
+    {
+      "index": 251,
+      "copy_boundaries": 2560,
+      "ring_start": 52498,
+      "bound": {
+        "first": 266,
+        "requested": 522,
+        "produced": 525,
+        "copies": 125,
+        "full_block_trace_interval": 38159,
+        "bound_tstates": 42673
+      },
+      "measured_relative_quota_max_resume": 40262,
+      "relative_quota_total": 928354
+    },
+    {
+      "index": 252,
+      "copy_boundaries": 1909,
+      "ring_start": 57659,
+      "bound": {
+        "first": 6221,
+        "requested": 6477,
+        "produced": 6478,
+        "copies": 116,
+        "full_block_trace_interval": 37557,
+        "bound_tstates": 41783
+      },
+      "measured_relative_quota_max_resume": 37813,
+      "relative_quota_total": 751192
+    },
+    {
+      "index": 253,
+      "copy_boundaries": 1812,
+      "ring_start": 63404,
+      "bound": {
+        "first": 6183,
+        "requested": 6439,
+        "produced": 6445,
+        "copies": 120,
+        "full_block_trace_interval": 38434,
+        "bound_tstates": 42788
+      },
+      "measured_relative_quota_max_resume": 38533,
+      "relative_quota_total": 748612
+    },
+    {
+      "index": 254,
+      "copy_boundaries": 1684,
+      "ring_start": 3627,
+      "bound": {
+        "first": 6777,
+        "requested": 7033,
+        "produced": 7037,
+        "copies": 131,
+        "full_block_trace_interval": 37614,
+        "bound_tstates": 42320
+      },
+      "measured_relative_quota_max_resume": 39898,
+      "relative_quota_total": 697454
+    },
+    {
+      "index": 255,
+      "copy_boundaries": 2150,
+      "ring_start": 8832,
+      "bound": {
+        "first": 1725,
+        "requested": 1981,
+        "produced": 1986,
+        "copies": 113,
+        "full_block_trace_interval": 38229,
+        "bound_tstates": 42359
+      },
+      "measured_relative_quota_max_resume": 38903,
+      "relative_quota_total": 863242
+    },
+    {
+      "index": 256,
+      "copy_boundaries": 1924,
+      "ring_start": 14067,
+      "bound": {
+        "first": 773,
+        "requested": 1029,
+        "produced": 1030,
+        "copies": 121,
+        "full_block_trace_interval": 37306,
+        "bound_tstates": 41692
+      },
+      "measured_relative_quota_max_resume": 38979,
+      "relative_quota_total": 748271
+    },
+    {
+      "index": 257,
+      "copy_boundaries": 2481,
+      "ring_start": 19201,
+      "bound": {
+        "first": 3133,
+        "requested": 3389,
+        "produced": 3392,
+        "copies": 125,
+        "full_block_trace_interval": 41102,
+        "bound_tstates": 45616
+      },
+      "measured_relative_quota_max_resume": 41392,
+      "relative_quota_total": 932757
+    },
+    {
+      "index": 258,
+      "copy_boundaries": 2418,
+      "ring_start": 24738,
+      "bound": {
+        "first": 5502,
+        "requested": 5758,
+        "produced": 5763,
+        "copies": 125,
+        "full_block_trace_interval": 38388,
+        "bound_tstates": 42902
+      },
+      "measured_relative_quota_max_resume": 39789,
+      "relative_quota_total": 900891
+    },
+    {
+      "index": 259,
+      "copy_boundaries": 2158,
+      "ring_start": 30121,
+      "bound": {
+        "first": 4799,
+        "requested": 5055,
+        "produced": 5062,
+        "copies": 110,
+        "full_block_trace_interval": 37213,
+        "bound_tstates": 41247
+      },
+      "measured_relative_quota_max_resume": 37650,
+      "relative_quota_total": 830810
+    },
+    {
+      "index": 260,
+      "copy_boundaries": 2303,
+      "ring_start": 35570,
+      "bound": {
+        "first": 6855,
+        "requested": 7111,
+        "produced": 7111,
+        "copies": 112,
+        "full_block_trace_interval": 37820,
+        "bound_tstates": 41918
+      },
+      "measured_relative_quota_max_resume": 39573,
+      "relative_quota_total": 870010
+    },
+    {
+      "index": 261,
+      "copy_boundaries": 2434,
+      "ring_start": 40907,
+      "bound": {
+        "first": 5056,
+        "requested": 5312,
+        "produced": 5314,
+        "copies": 120,
+        "full_block_trace_interval": 38584,
+        "bound_tstates": 42938
+      },
+      "measured_relative_quota_max_resume": 40256,
+      "relative_quota_total": 900623
+    },
+    {
+      "index": 262,
+      "copy_boundaries": 2409,
+      "ring_start": 46092,
+      "bound": {
+        "first": 6896,
+        "requested": 7152,
+        "produced": 7156,
+        "copies": 125,
+        "full_block_trace_interval": 40297,
+        "bound_tstates": 44811
+      },
+      "measured_relative_quota_max_resume": 41925,
+      "relative_quota_total": 898358
+    },
+    {
+      "index": 263,
+      "copy_boundaries": 2383,
+      "ring_start": 51427,
+      "bound": {
+        "first": 4037,
+        "requested": 4293,
+        "produced": 4294,
+        "copies": 116,
+        "full_block_trace_interval": 38317,
+        "bound_tstates": 42543
+      },
+      "measured_relative_quota_max_resume": 38277,
+      "relative_quota_total": 882911
+    },
+    {
+      "index": 264,
+      "copy_boundaries": 2599,
+      "ring_start": 56672,
+      "bound": {
+        "first": 3496,
+        "requested": 3752,
+        "produced": 3756,
+        "copies": 122,
+        "full_block_trace_interval": 39119,
+        "bound_tstates": 43537
+      },
+      "measured_relative_quota_max_resume": 41361,
+      "relative_quota_total": 941939
+    },
+    {
+      "index": 265,
+      "copy_boundaries": 1787,
+      "ring_start": 61738,
+      "bound": {
+        "first": 887,
+        "requested": 1143,
+        "produced": 1144,
+        "copies": 127,
+        "full_block_trace_interval": 38676,
+        "bound_tstates": 43254
+      },
+      "measured_relative_quota_max_resume": 38426,
+      "relative_quota_total": 685985
+    },
+    {
+      "index": 266,
+      "copy_boundaries": 1590,
+      "ring_start": 230,
+      "bound": {
+        "first": 7423,
+        "requested": 7679,
+        "produced": 7682,
+        "copies": 119,
+        "full_block_trace_interval": 35462,
+        "bound_tstates": 39784
+      },
+      "measured_relative_quota_max_resume": 38840,
+      "relative_quota_total": 671128
+    },
+    {
+      "index": 267,
+      "copy_boundaries": 1672,
+      "ring_start": 5221,
+      "bound": {
+        "first": 6873,
+        "requested": 7129,
+        "produced": 7134,
+        "copies": 116,
+        "full_block_trace_interval": 38356,
+        "bound_tstates": 42582
+      },
+      "measured_relative_quota_max_resume": 36884,
+      "relative_quota_total": 711747
+    },
+    {
+      "index": 268,
+      "copy_boundaries": 2728,
+      "ring_start": 10702,
+      "bound": {
+        "first": 4605,
+        "requested": 4861,
+        "produced": 4879,
+        "copies": 128,
+        "full_block_trace_interval": 39526,
+        "bound_tstates": 44136
+      },
+      "measured_relative_quota_max_resume": 40296,
+      "relative_quota_total": 949787
+    },
+    {
+      "index": 269,
+      "copy_boundaries": 2616,
+      "ring_start": 16036,
+      "bound": {
+        "first": 4406,
+        "requested": 4662,
+        "produced": 4663,
+        "copies": 115,
+        "full_block_trace_interval": 38593,
+        "bound_tstates": 42787
+      },
+      "measured_relative_quota_max_resume": 39526,
+      "relative_quota_total": 927041
+    },
+    {
+      "index": 270,
+      "copy_boundaries": 2627,
+      "ring_start": 21324,
+      "bound": {
+        "first": 7048,
+        "requested": 7304,
+        "produced": 7310,
+        "copies": 119,
+        "full_block_trace_interval": 38599,
+        "bound_tstates": 42921
+      },
+      "measured_relative_quota_max_resume": 40197,
+      "relative_quota_total": 927231
+    },
+    {
+      "index": 271,
+      "copy_boundaries": 2409,
+      "ring_start": 26496,
+      "bound": {
+        "first": 5533,
+        "requested": 5789,
+        "produced": 5794,
+        "copies": 120,
+        "full_block_trace_interval": 38939,
+        "bound_tstates": 43293
+      },
+      "measured_relative_quota_max_resume": 40672,
+      "relative_quota_total": 880492
+    },
+    {
+      "index": 272,
+      "copy_boundaries": 1760,
+      "ring_start": 31725,
+      "bound": {
+        "first": 2533,
+        "requested": 2789,
+        "produced": 2824,
+        "copies": 116,
+        "full_block_trace_interval": 35544,
+        "bound_tstates": 39770
+      },
+      "measured_relative_quota_max_resume": 34340,
+      "relative_quota_total": 700579
+    },
+    {
+      "index": 273,
+      "copy_boundaries": 1933,
+      "ring_start": 36677,
+      "bound": {
+        "first": 5419,
+        "requested": 5675,
+        "produced": 5678,
+        "copies": 118,
+        "full_block_trace_interval": 37630,
+        "bound_tstates": 41920
+      },
+      "measured_relative_quota_max_resume": 37782,
+      "relative_quota_total": 737731
+    },
+    {
+      "index": 274,
+      "copy_boundaries": 1515,
+      "ring_start": 41383,
+      "bound": {
+        "first": 4226,
+        "requested": 4482,
+        "produced": 4489,
+        "copies": 114,
+        "full_block_trace_interval": 36335,
+        "bound_tstates": 40497
+      },
+      "measured_relative_quota_max_resume": 38199,
+      "relative_quota_total": 628562
+    },
+    {
+      "index": 275,
+      "copy_boundaries": 1435,
+      "ring_start": 45323,
+      "bound": {
+        "first": 5064,
+        "requested": 5320,
+        "produced": 5447,
+        "copies": 97,
+        "full_block_trace_interval": 37548,
+        "bound_tstates": 41166
+      },
+      "measured_relative_quota_max_resume": 36199,
+      "relative_quota_total": 613465
+    },
+    {
+      "index": 276,
+      "copy_boundaries": 1563,
+      "ring_start": 48814,
+      "bound": {
+        "first": 6695,
+        "requested": 6951,
+        "produced": 6956,
+        "copies": 107,
+        "full_block_trace_interval": 34043,
+        "bound_tstates": 37981
+      },
+      "measured_relative_quota_max_resume": 34982,
+      "relative_quota_total": 674378
+    },
+    {
+      "index": 277,
+      "copy_boundaries": 1750,
+      "ring_start": 54110,
+      "bound": {
+        "first": 4583,
+        "requested": 4839,
+        "produced": 4843,
+        "copies": 121,
+        "full_block_trace_interval": 38067,
+        "bound_tstates": 42453
+      },
+      "measured_relative_quota_max_resume": 37832,
+      "relative_quota_total": 705169
+    },
+    {
+      "index": 278,
+      "copy_boundaries": 1319,
+      "ring_start": 59460,
+      "bound": {
+        "first": 2168,
+        "requested": 2424,
+        "produced": 2446,
+        "copies": 115,
+        "full_block_trace_interval": 33950,
+        "bound_tstates": 38144
+      },
+      "measured_relative_quota_max_resume": 29278,
+      "relative_quota_total": 618064
+    },
+    {
+      "index": 279,
+      "copy_boundaries": 1706,
+      "ring_start": 64999,
+      "bound": {
+        "first": 5904,
+        "requested": 6160,
+        "produced": 6348,
+        "copies": 101,
+        "full_block_trace_interval": 39454,
+        "bound_tstates": 43200
+      },
+      "measured_relative_quota_max_resume": 39935,
+      "relative_quota_total": 703127
+    },
+    {
+      "index": 280,
+      "copy_boundaries": 1408,
+      "ring_start": 4661,
+      "bound": {
+        "first": 2429,
+        "requested": 2685,
+        "produced": 2805,
+        "copies": 88,
+        "full_block_trace_interval": 32659,
+        "bound_tstates": 35989
+      },
+      "measured_relative_quota_max_resume": 30615,
+      "relative_quota_total": 608841
+    },
+    {
+      "index": 281,
+      "copy_boundaries": 1649,
+      "ring_start": 8366,
+      "bound": {
+        "first": 7327,
+        "requested": 7583,
+        "produced": 7704,
+        "copies": 91,
+        "full_block_trace_interval": 36328,
+        "bound_tstates": 39754
+      },
+      "measured_relative_quota_max_resume": 38122,
+      "relative_quota_total": 664922
+    },
+    {
+      "index": 282,
+      "copy_boundaries": 1420,
+      "ring_start": 12539,
+      "bound": {
+        "first": 7869,
+        "requested": 8125,
+        "produced": 8150,
+        "copies": 94,
+        "full_block_trace_interval": 32119,
+        "bound_tstates": 35641
+      },
+      "measured_relative_quota_max_resume": 28888,
+      "relative_quota_total": 607468
+    },
+    {
+      "index": 283,
+      "copy_boundaries": 1498,
+      "ring_start": 15925,
+      "bound": {
+        "first": 2773,
+        "requested": 3029,
+        "produced": 3091,
+        "copies": 89,
+        "full_block_trace_interval": 31100,
+        "bound_tstates": 34462
+      },
+      "measured_relative_quota_max_resume": 33469,
+      "relative_quota_total": 638461
+    },
+    {
+      "index": 284,
+      "copy_boundaries": 1374,
+      "ring_start": 20638,
+      "bound": {
+        "first": 2965,
+        "requested": 3221,
+        "produced": 3239,
+        "copies": 91,
+        "full_block_trace_interval": 32178,
+        "bound_tstates": 35604
+      },
+      "measured_relative_quota_max_resume": 30906,
+      "relative_quota_total": 630418
+    },
+    {
+      "index": 285,
+      "copy_boundaries": 1719,
+      "ring_start": 26080,
+      "bound": {
+        "first": 2611,
+        "requested": 2867,
+        "produced": 2870,
+        "copies": 127,
+        "full_block_trace_interval": 39794,
+        "bound_tstates": 44372
+      },
+      "measured_relative_quota_max_resume": 40812,
+      "relative_quota_total": 682225
+    },
+    {
+      "index": 286,
+      "copy_boundaries": 1841,
+      "ring_start": 30286,
+      "bound": {
+        "first": 2002,
+        "requested": 2258,
+        "produced": 2265,
+        "copies": 118,
+        "full_block_trace_interval": 35449,
+        "bound_tstates": 39739
+      },
+      "measured_relative_quota_max_resume": 34956,
+      "relative_quota_total": 716978
+    },
+    {
+      "index": 287,
+      "copy_boundaries": 1572,
+      "ring_start": 34636,
+      "bound": {
+        "first": 1609,
+        "requested": 1865,
+        "produced": 1872,
+        "copies": 119,
+        "full_block_trace_interval": 36313,
+        "bound_tstates": 40635
+      },
+      "measured_relative_quota_max_resume": 36212,
+      "relative_quota_total": 658815
+    },
+    {
+      "index": 288,
+      "copy_boundaries": 1686,
+      "ring_start": 39353,
+      "bound": {
+        "first": 6816,
+        "requested": 7072,
+        "produced": 7074,
+        "copies": 111,
+        "full_block_trace_interval": 37117,
+        "bound_tstates": 41183
+      },
+      "measured_relative_quota_max_resume": 36700,
+      "relative_quota_total": 691131
+    },
+    {
+      "index": 289,
+      "copy_boundaries": 1838,
+      "ring_start": 44466,
+      "bound": {
+        "first": 1559,
+        "requested": 1815,
+        "produced": 1849,
+        "copies": 111,
+        "full_block_trace_interval": 37126,
+        "bound_tstates": 41192
+      },
+      "measured_relative_quota_max_resume": 36398,
+      "relative_quota_total": 731213
+    },
+    {
+      "index": 290,
+      "copy_boundaries": 1590,
+      "ring_start": 49778,
+      "bound": {
+        "first": 3730,
+        "requested": 3986,
+        "produced": 4015,
+        "copies": 89,
+        "full_block_trace_interval": 30863,
+        "bound_tstates": 34225
+      },
+      "measured_relative_quota_max_resume": 31523,
+      "relative_quota_total": 676129
+    },
+    {
+      "index": 291,
+      "copy_boundaries": 1749,
+      "ring_start": 54689,
+      "bound": {
+        "first": 5945,
+        "requested": 6201,
+        "produced": 6251,
+        "copies": 115,
+        "full_block_trace_interval": 38755,
+        "bound_tstates": 42949
+      },
+      "measured_relative_quota_max_resume": 36552,
+      "relative_quota_total": 715758
+    },
+    {
+      "index": 292,
+      "copy_boundaries": 1780,
+      "ring_start": 59787,
+      "bound": {
+        "first": 346,
+        "requested": 602,
+        "produced": 607,
+        "copies": 123,
+        "full_block_trace_interval": 35535,
+        "bound_tstates": 39985
+      },
+      "measured_relative_quota_max_resume": 36353,
+      "relative_quota_total": 713815
+    },
+    {
+      "index": 293,
+      "copy_boundaries": 2181,
+      "ring_start": 63881,
+      "bound": {
+        "first": 6382,
+        "requested": 6638,
+        "produced": 6639,
+        "copies": 120,
+        "full_block_trace_interval": 38178,
+        "bound_tstates": 42532
+      },
+      "measured_relative_quota_max_resume": 38208,
+      "relative_quota_total": 810112
+    },
+    {
+      "index": 294,
+      "copy_boundaries": 1655,
+      "ring_start": 3352,
+      "bound": {
+        "first": 5928,
+        "requested": 6184,
+        "produced": 6228,
+        "copies": 123,
+        "full_block_trace_interval": 39148,
+        "bound_tstates": 43598
+      },
+      "measured_relative_quota_max_resume": 38832,
+      "relative_quota_total": 699538
+    },
+    {
+      "index": 295,
+      "copy_boundaries": 2249,
+      "ring_start": 8613,
+      "bound": {
+        "first": 7273,
+        "requested": 7529,
+        "produced": 7539,
+        "copies": 108,
+        "full_block_trace_interval": 37610,
+        "bound_tstates": 41580
+      },
+      "measured_relative_quota_max_resume": 37868,
+      "relative_quota_total": 821028
+    },
+    {
+      "index": 296,
+      "copy_boundaries": 2028,
+      "ring_start": 12970,
+      "bound": {
+        "first": 4754,
+        "requested": 5010,
+        "produced": 5057,
+        "copies": 111,
+        "full_block_trace_interval": 39705,
+        "bound_tstates": 43771
+      },
+      "measured_relative_quota_max_resume": 36926,
+      "relative_quota_total": 795560
+    },
+    {
+      "index": 297,
+      "copy_boundaries": 2121,
+      "ring_start": 18394,
+      "bound": {
+        "first": 3125,
+        "requested": 3381,
+        "produced": 3383,
+        "copies": 121,
+        "full_block_trace_interval": 39581,
+        "bound_tstates": 43967
+      },
+      "measured_relative_quota_max_resume": 39786,
+      "relative_quota_total": 803666
+    },
+    {
+      "index": 298,
+      "copy_boundaries": 1800,
+      "ring_start": 23324,
+      "bound": {
+        "first": 7669,
+        "requested": 7925,
+        "produced": 7928,
+        "copies": 124,
+        "full_block_trace_interval": 38379,
+        "bound_tstates": 42861
+      },
+      "measured_relative_quota_max_resume": 38661,
+      "relative_quota_total": 738894
+    },
+    {
+      "index": 299,
+      "copy_boundaries": 1772,
+      "ring_start": 29150,
+      "bound": {
+        "first": 2256,
+        "requested": 2512,
+        "produced": 2657,
+        "copies": 99,
+        "full_block_trace_interval": 37866,
+        "bound_tstates": 41548
+      },
+      "measured_relative_quota_max_resume": 37738,
+      "relative_quota_total": 718333
+    },
+    {
+      "index": 300,
+      "copy_boundaries": 1775,
+      "ring_start": 33936,
+      "bound": {
+        "first": 1607,
+        "requested": 1863,
+        "produced": 1931,
+        "copies": 93,
+        "full_block_trace_interval": 38014,
+        "bound_tstates": 41504
+      },
+      "measured_relative_quota_max_resume": 38293,
+      "relative_quota_total": 717900
+    },
+    {
+      "index": 301,
+      "copy_boundaries": 1897,
+      "ring_start": 38988,
+      "bound": {
+        "first": 5834,
+        "requested": 6090,
+        "produced": 6099,
+        "copies": 110,
+        "full_block_trace_interval": 36759,
+        "bound_tstates": 40793
+      },
+      "measured_relative_quota_max_resume": 36770,
+      "relative_quota_total": 748847
+    },
+    {
+      "index": 302,
+      "copy_boundaries": 1738,
+      "ring_start": 44273,
+      "bound": {
+        "first": 6447,
+        "requested": 6703,
+        "produced": 6709,
+        "copies": 117,
+        "full_block_trace_interval": 38466,
+        "bound_tstates": 42724
+      },
+      "measured_relative_quota_max_resume": 38504,
+      "relative_quota_total": 729972
+    },
+    {
+      "index": 303,
+      "copy_boundaries": 1331,
+      "ring_start": 49927,
+      "bound": {
+        "first": 6321,
+        "requested": 6577,
+        "produced": 6669,
+        "copies": 82,
+        "full_block_trace_interval": 35953,
+        "bound_tstates": 39091
+      },
+      "measured_relative_quota_max_resume": 36060,
+      "relative_quota_total": 622926
+    },
+    {
+      "index": 304,
+      "copy_boundaries": 1689,
+      "ring_start": 55213,
+      "bound": {
+        "first": 7799,
+        "requested": 8055,
+        "produced": 8074,
+        "copies": 121,
+        "full_block_trace_interval": 36010,
+        "bound_tstates": 40396
+      },
+      "measured_relative_quota_max_resume": 36435,
+      "relative_quota_total": 715702
+    },
+    {
+      "index": 305,
+      "copy_boundaries": 2246,
+      "ring_start": 61237,
+      "bound": {
+        "first": 4600,
+        "requested": 4856,
+        "produced": 4858,
+        "copies": 127,
+        "full_block_trace_interval": 37026,
+        "bound_tstates": 41604
+      },
+      "measured_relative_quota_max_resume": 40128,
+      "relative_quota_total": 844890
+    },
+    {
+      "index": 306,
+      "copy_boundaries": 1960,
+      "ring_start": 1676,
+      "bound": {
+        "first": 1636,
+        "requested": 1892,
+        "produced": 1894,
+        "copies": 120,
+        "full_block_trace_interval": 36476,
+        "bound_tstates": 40830
+      },
+      "measured_relative_quota_max_resume": 37868,
+      "relative_quota_total": 767178
+    },
+    {
+      "index": 307,
+      "copy_boundaries": 1843,
+      "ring_start": 7394,
+      "bound": {
+        "first": 1839,
+        "requested": 2095,
+        "produced": 2101,
+        "copies": 128,
+        "full_block_trace_interval": 38416,
+        "bound_tstates": 43026
+      },
+      "measured_relative_quota_max_resume": 39573,
+      "relative_quota_total": 746306
+    },
+    {
+      "index": 308,
+      "copy_boundaries": 1483,
+      "ring_start": 12931,
+      "bound": {
+        "first": 2220,
+        "requested": 2476,
+        "produced": 2481,
+        "copies": 110,
+        "full_block_trace_interval": 34479,
+        "bound_tstates": 38513
+      },
+      "measured_relative_quota_max_resume": 34823,
+      "relative_quota_total": 672396
+    },
+    {
+      "index": 309,
+      "copy_boundaries": 1364,
+      "ring_start": 18874,
+      "bound": {
+        "first": 3606,
+        "requested": 3862,
+        "produced": 3874,
+        "copies": 104,
+        "full_block_trace_interval": 33230,
+        "bound_tstates": 37072
+      },
+      "measured_relative_quota_max_resume": 33919,
+      "relative_quota_total": 624979
+    },
+    {
+      "index": 310,
+      "copy_boundaries": 1826,
+      "ring_start": 24416,
+      "bound": {
+        "first": 718,
+        "requested": 974,
+        "produced": 982,
+        "copies": 123,
+        "full_block_trace_interval": 36695,
+        "bound_tstates": 41145
+      },
+      "measured_relative_quota_max_resume": 35302,
+      "relative_quota_total": 710458
+    },
+    {
+      "index": 311,
+      "copy_boundaries": 2040,
+      "ring_start": 29196,
+      "bound": {
+        "first": 7916,
+        "requested": 8172,
+        "produced": 8173,
+        "copies": 111,
+        "full_block_trace_interval": 37905,
+        "bound_tstates": 41971
+      },
+      "measured_relative_quota_max_resume": 38002,
+      "relative_quota_total": 798291
+    },
+    {
+      "index": 312,
+      "copy_boundaries": 2297,
+      "ring_start": 33930,
+      "bound": {
+        "first": 7549,
+        "requested": 7805,
+        "produced": 7806,
+        "copies": 118,
+        "full_block_trace_interval": 39896,
+        "bound_tstates": 44186
+      },
+      "measured_relative_quota_max_resume": 41352,
+      "relative_quota_total": 877668
+    },
+    {
+      "index": 313,
+      "copy_boundaries": 2386,
+      "ring_start": 39031,
+      "bound": {
+        "first": 5258,
+        "requested": 5514,
+        "produced": 5517,
+        "copies": 122,
+        "full_block_trace_interval": 39951,
+        "bound_tstates": 44369
+      },
+      "measured_relative_quota_max_resume": 39823,
+      "relative_quota_total": 897408
+    },
+    {
+      "index": 314,
+      "copy_boundaries": 2068,
+      "ring_start": 44493,
+      "bound": {
+        "first": 3177,
+        "requested": 3433,
+        "produced": 3463,
+        "copies": 120,
+        "full_block_trace_interval": 36576,
+        "bound_tstates": 40930
+      },
+      "measured_relative_quota_max_resume": 35907,
+      "relative_quota_total": 783200
+    },
+    {
+      "index": 315,
+      "copy_boundaries": 1891,
+      "ring_start": 49294,
+      "bound": {
+        "first": 6427,
+        "requested": 6683,
+        "produced": 6685,
+        "copies": 112,
+        "full_block_trace_interval": 35293,
+        "bound_tstates": 39391
+      },
+      "measured_relative_quota_max_resume": 37856,
+      "relative_quota_total": 760334
+    },
+    {
+      "index": 316,
+      "copy_boundaries": 2035,
+      "ring_start": 54129,
+      "bound": {
+        "first": 4364,
+        "requested": 4620,
+        "produced": 4627,
+        "copies": 103,
+        "full_block_trace_interval": 36780,
+        "bound_tstates": 40590
+      },
+      "measured_relative_quota_max_resume": 37085,
+      "relative_quota_total": 814937
+    },
+    {
+      "index": 317,
+      "copy_boundaries": 2029,
+      "ring_start": 59191,
+      "bound": {
+        "first": 700,
+        "requested": 956,
+        "produced": 958,
+        "copies": 123,
+        "full_block_trace_interval": 36195,
+        "bound_tstates": 40645
+      },
+      "measured_relative_quota_max_resume": 37436,
+      "relative_quota_total": 816152
+    },
+    {
+      "index": 318,
+      "copy_boundaries": 2067,
+      "ring_start": 64282,
+      "bound": {
+        "first": 477,
+        "requested": 733,
+        "produced": 738,
+        "copies": 124,
+        "full_block_trace_interval": 37249,
+        "bound_tstates": 41731
+      },
+      "measured_relative_quota_max_resume": 37226,
+      "relative_quota_total": 825645
+    },
+    {
+      "index": 319,
+      "copy_boundaries": 2067,
+      "ring_start": 3793,
+      "bound": {
+        "first": 2013,
+        "requested": 2269,
+        "produced": 2270,
+        "copies": 97,
+        "full_block_trace_interval": 35854,
+        "bound_tstates": 39472
+      },
+      "measured_relative_quota_max_resume": 35893,
+      "relative_quota_total": 823424
+    },
+    {
+      "index": 320,
+      "copy_boundaries": 2069,
+      "ring_start": 8988,
+      "bound": {
+        "first": 4437,
+        "requested": 4693,
+        "produced": 4695,
+        "copies": 121,
+        "full_block_trace_interval": 38244,
+        "bound_tstates": 42630
+      },
+      "measured_relative_quota_max_resume": 36317,
+      "relative_quota_total": 787677
+    },
+    {
+      "index": 321,
+      "copy_boundaries": 1851,
+      "ring_start": 14128,
+      "bound": {
+        "first": 7909,
+        "requested": 8165,
+        "produced": 8175,
+        "copies": 106,
+        "full_block_trace_interval": 36619,
+        "bound_tstates": 40525
+      },
+      "measured_relative_quota_max_resume": 33706,
+      "relative_quota_total": 730367
+    },
+    {
+      "index": 322,
+      "copy_boundaries": 2361,
+      "ring_start": 18960,
+      "bound": {
+        "first": 4803,
+        "requested": 5059,
+        "produced": 5060,
+        "copies": 129,
+        "full_block_trace_interval": 39516,
+        "bound_tstates": 44158
+      },
+      "measured_relative_quota_max_resume": 41007,
+      "relative_quota_total": 879563
+    },
+    {
+      "index": 323,
+      "copy_boundaries": 1604,
+      "ring_start": 24435,
+      "bound": {
+        "first": 3143,
+        "requested": 3399,
+        "produced": 3412,
+        "copies": 79,
+        "full_block_trace_interval": 31241,
+        "bound_tstates": 34283
+      },
+      "measured_relative_quota_max_resume": 30906,
+      "relative_quota_total": 667362
+    },
+    {
+      "index": 324,
+      "copy_boundaries": 1812,
+      "ring_start": 29193,
+      "bound": {
+        "first": 3211,
+        "requested": 3467,
+        "produced": 3560,
+        "copies": 116,
+        "full_block_trace_interval": 38489,
+        "bound_tstates": 42715
+      },
+      "measured_relative_quota_max_resume": 36228,
+      "relative_quota_total": 725723
+    },
+    {
+      "index": 325,
+      "copy_boundaries": 1658,
+      "ring_start": 34563,
+      "bound": {
+        "first": 6733,
+        "requested": 6989,
+        "produced": 7074,
+        "copies": 129,
+        "full_block_trace_interval": 39811,
+        "bound_tstates": 44453
+      },
+      "measured_relative_quota_max_resume": 39064,
+      "relative_quota_total": 695628
+    },
+    {
+      "index": 326,
+      "copy_boundaries": 1556,
+      "ring_start": 40123,
+      "bound": {
+        "first": 1689,
+        "requested": 1945,
+        "produced": 1955,
+        "copies": 122,
+        "full_block_trace_interval": 35532,
+        "bound_tstates": 39950
+      },
+      "measured_relative_quota_max_resume": 34813,
+      "relative_quota_total": 640150
+    },
+    {
+      "index": 327,
+      "copy_boundaries": 2409,
+      "ring_start": 43431,
+      "bound": {
+        "first": 7737,
+        "requested": 7993,
+        "produced": 7995,
+        "copies": 137,
+        "full_block_trace_interval": 44112,
+        "bound_tstates": 49010
+      },
+      "measured_relative_quota_max_resume": 42722,
+      "relative_quota_total": 878770
+    },
+    {
+      "index": 328,
+      "copy_boundaries": 2603,
+      "ring_start": 48856,
+      "bound": {
+        "first": 6301,
+        "requested": 6557,
+        "produced": 6562,
+        "copies": 129,
+        "full_block_trace_interval": 42687,
+        "bound_tstates": 47329
+      },
+      "measured_relative_quota_max_resume": 43792,
+      "relative_quota_total": 972672
+    },
+    {
+      "index": 329,
+      "copy_boundaries": 2473,
+      "ring_start": 55028,
+      "bound": {
+        "first": 3424,
+        "requested": 3680,
+        "produced": 3681,
+        "copies": 129,
+        "full_block_trace_interval": 40914,
+        "bound_tstates": 45556
+      },
+      "measured_relative_quota_max_resume": 41447,
+      "relative_quota_total": 922137
+    },
+    {
+      "index": 330,
+      "copy_boundaries": 2150,
+      "ring_start": 60687,
+      "bound": {
+        "first": 3012,
+        "requested": 3268,
+        "produced": 3273,
+        "copies": 123,
+        "full_block_trace_interval": 37793,
+        "bound_tstates": 42243
+      },
+      "measured_relative_quota_max_resume": 36077,
+      "relative_quota_total": 822554
+    },
+    {
+      "index": 331,
+      "copy_boundaries": 2260,
+      "ring_start": 625,
+      "bound": {
+        "first": 2537,
+        "requested": 2793,
+        "produced": 2799,
+        "copies": 125,
+        "full_block_trace_interval": 39691,
+        "bound_tstates": 44205
+      },
+      "measured_relative_quota_max_resume": 39020,
+      "relative_quota_total": 870231
+    },
+    {
+      "index": 332,
+      "copy_boundaries": 1554,
+      "ring_start": 6203,
+      "bound": {
+        "first": 1266,
+        "requested": 1522,
+        "produced": 1525,
+        "copies": 136,
+        "full_block_trace_interval": 36009,
+        "bound_tstates": 40875
+      },
+      "measured_relative_quota_max_resume": 36300,
+      "relative_quota_total": 666099
+    },
+    {
+      "index": 333,
+      "copy_boundaries": 1339,
+      "ring_start": 11445,
+      "bound": {
+        "first": 2115,
+        "requested": 2371,
+        "produced": 2389,
+        "copies": 99,
+        "full_block_trace_interval": 32651,
+        "bound_tstates": 36333
+      },
+      "measured_relative_quota_max_resume": 31889,
+      "relative_quota_total": 597305
+    },
+    {
+      "index": 334,
+      "copy_boundaries": 1246,
+      "ring_start": 16065,
+      "bound": {
+        "first": 7319,
+        "requested": 7575,
+        "produced": 7663,
+        "copies": 78,
+        "full_block_trace_interval": 29465,
+        "bound_tstates": 32475
+      },
+      "measured_relative_quota_max_resume": 28203,
+      "relative_quota_total": 555084
+    },
+    {
+      "index": 335,
+      "copy_boundaries": 1636,
+      "ring_start": 19858,
+      "bound": {
+        "first": 7772,
+        "requested": 8028,
+        "produced": 8029,
+        "copies": 123,
+        "full_block_trace_interval": 40504,
+        "bound_tstates": 44954
+      },
+      "measured_relative_quota_max_resume": 39224,
+      "relative_quota_total": 667658
+    },
+    {
+      "index": 336,
+      "copy_boundaries": 1917,
+      "ring_start": 24796,
+      "bound": {
+        "first": 6884,
+        "requested": 7140,
+        "produced": 7142,
+        "copies": 121,
+        "full_block_trace_interval": 38386,
+        "bound_tstates": 42772
+      },
+      "measured_relative_quota_max_resume": 40237,
+      "relative_quota_total": 763243
+    },
+    {
+      "index": 337,
+      "copy_boundaries": 2662,
+      "ring_start": 30391,
+      "bound": {
+        "first": 540,
+        "requested": 796,
+        "produced": 799,
+        "copies": 127,
+        "full_block_trace_interval": 39576,
+        "bound_tstates": 44154
+      },
+      "measured_relative_quota_max_resume": 41652,
+      "relative_quota_total": 956995
+    },
+    {
+      "index": 338,
+      "copy_boundaries": 1742,
+      "ring_start": 36403,
+      "bound": {
+        "first": 1316,
+        "requested": 1572,
+        "produced": 1573,
+        "copies": 125,
+        "full_block_trace_interval": 36935,
+        "bound_tstates": 41449
+      },
+      "measured_relative_quota_max_resume": 37362,
+      "relative_quota_total": 683732
+    },
+    {
+      "index": 339,
+      "copy_boundaries": 1565,
+      "ring_start": 40775,
+      "bound": {
+        "first": 6982,
+        "requested": 7238,
+        "produced": 7243,
+        "copies": 122,
+        "full_block_trace_interval": 36689,
+        "bound_tstates": 41107
+      },
+      "measured_relative_quota_max_resume": 38801,
+      "relative_quota_total": 658260
+    },
+    {
+      "index": 340,
+      "copy_boundaries": 1754,
+      "ring_start": 45503,
+      "bound": {
+        "first": 3986,
+        "requested": 4242,
+        "produced": 4244,
+        "copies": 124,
+        "full_block_trace_interval": 37809,
+        "bound_tstates": 42291
+      },
+      "measured_relative_quota_max_resume": 39101,
+      "relative_quota_total": 722224
+    },
+    {
+      "index": 341,
+      "copy_boundaries": 2298,
+      "ring_start": 51034,
+      "bound": {
+        "first": 1163,
+        "requested": 1419,
+        "produced": 1425,
+        "copies": 126,
+        "full_block_trace_interval": 39053,
+        "bound_tstates": 43599
+      },
+      "measured_relative_quota_max_resume": 39449,
+      "relative_quota_total": 857507
+    },
+    {
+      "index": 342,
+      "copy_boundaries": 2346,
+      "ring_start": 56455,
+      "bound": {
+        "first": 5781,
+        "requested": 6037,
+        "produced": 6043,
+        "copies": 108,
+        "full_block_trace_interval": 38393,
+        "bound_tstates": 42363
+      },
+      "measured_relative_quota_max_resume": 38957,
+      "relative_quota_total": 865502
+    },
+    {
+      "index": 343,
+      "copy_boundaries": 1090,
+      "ring_start": 61837,
+      "bound": {
+        "first": 3188,
+        "requested": 3444,
+        "produced": 3445,
+        "copies": 116,
+        "full_block_trace_interval": 37956,
+        "bound_tstates": 42182
+      },
+      "measured_relative_quota_max_resume": 39381,
+      "relative_quota_total": 509269
+    },
+    {
+      "index": 344,
+      "copy_boundaries": 2149,
+      "ring_start": 64983,
+      "bound": {
+        "first": 6946,
+        "requested": 7202,
+        "produced": 7212,
+        "copies": 113,
+        "full_block_trace_interval": 38804,
+        "bound_tstates": 42934
+      },
+      "measured_relative_quota_max_resume": 39018,
+      "relative_quota_total": 860460
+    },
+    {
+      "index": 345,
+      "copy_boundaries": 2656,
+      "ring_start": 4522,
+      "bound": {
+        "first": 1591,
+        "requested": 1847,
+        "produced": 1850,
+        "copies": 129,
+        "full_block_trace_interval": 39990,
+        "bound_tstates": 44632
+      },
+      "measured_relative_quota_max_resume": 40033,
+      "relative_quota_total": 961927
+    },
+    {
+      "index": 346,
+      "copy_boundaries": 2775,
+      "ring_start": 9473,
+      "bound": {
+        "first": 2847,
+        "requested": 3103,
+        "produced": 3104,
+        "copies": 125,
+        "full_block_trace_interval": 39899,
+        "bound_tstates": 44413
+      },
+      "measured_relative_quota_max_resume": 40375,
+      "relative_quota_total": 965128
+    },
+    {
+      "index": 347,
+      "copy_boundaries": 2767,
+      "ring_start": 14630,
+      "bound": {
+        "first": 2211,
+        "requested": 2467,
+        "produced": 2473,
+        "copies": 124,
+        "full_block_trace_interval": 40477,
+        "bound_tstates": 44959
+      },
+      "measured_relative_quota_max_resume": 38352,
+      "relative_quota_total": 949877
+    },
+    {
+      "index": 348,
+      "copy_boundaries": 2549,
+      "ring_start": 20217,
+      "bound": {
+        "first": 7902,
+        "requested": 8158,
+        "produced": 8160,
+        "copies": 118,
+        "full_block_trace_interval": 40330,
+        "bound_tstates": 44620
+      },
+      "measured_relative_quota_max_resume": 40590,
+      "relative_quota_total": 922855
+    },
+    {
+      "index": 349,
+      "copy_boundaries": 2715,
+      "ring_start": 25750,
+      "bound": {
+        "first": 6441,
+        "requested": 6697,
+        "produced": 6705,
+        "copies": 123,
+        "full_block_trace_interval": 38616,
+        "bound_tstates": 43066
+      },
+      "measured_relative_quota_max_resume": 39297,
+      "relative_quota_total": 944486
+    },
+    {
+      "index": 350,
+      "copy_boundaries": 2798,
+      "ring_start": 31158,
+      "bound": {
+        "first": 5570,
+        "requested": 5826,
+        "produced": 5835,
+        "copies": 129,
+        "full_block_trace_interval": 38800,
+        "bound_tstates": 43442
+      },
+      "measured_relative_quota_max_resume": 37796,
+      "relative_quota_total": 966637
+    },
+    {
+      "index": 351,
+      "copy_boundaries": 2836,
+      "ring_start": 36581,
+      "bound": {
+        "first": 2198,
+        "requested": 2454,
+        "produced": 2457,
+        "copies": 125,
+        "full_block_trace_interval": 38069,
+        "bound_tstates": 42583
+      },
+      "measured_relative_quota_max_resume": 38460,
+      "relative_quota_total": 980765
+    },
+    {
+      "index": 352,
+      "copy_boundaries": 2827,
+      "ring_start": 41865,
+      "bound": {
+        "first": 3572,
+        "requested": 3828,
+        "produced": 3828,
+        "copies": 122,
+        "full_block_trace_interval": 38661,
+        "bound_tstates": 43079
+      },
+      "measured_relative_quota_max_resume": 38047,
+      "relative_quota_total": 960920
+    },
+    {
+      "index": 353,
+      "copy_boundaries": 2783,
+      "ring_start": 47002,
+      "bound": {
+        "first": 2278,
+        "requested": 2534,
+        "produced": 2543,
+        "copies": 129,
+        "full_block_trace_interval": 38590,
+        "bound_tstates": 43232
+      },
+      "measured_relative_quota_max_resume": 37771,
+      "relative_quota_total": 955634
+    },
+    {
+      "index": 354,
+      "copy_boundaries": 2648,
+      "ring_start": 52184,
+      "bound": {
+        "first": 6434,
+        "requested": 6690,
+        "produced": 6692,
+        "copies": 125,
+        "full_block_trace_interval": 39466,
+        "bound_tstates": 43980
+      },
+      "measured_relative_quota_max_resume": 37903,
+      "relative_quota_total": 940915
+    },
+    {
+      "index": 355,
+      "copy_boundaries": 2590,
+      "ring_start": 57311,
+      "bound": {
+        "first": 5746,
+        "requested": 6002,
+        "produced": 6008,
+        "copies": 112,
+        "full_block_trace_interval": 37323,
+        "bound_tstates": 41421
+      },
+      "measured_relative_quota_max_resume": 38401,
+      "relative_quota_total": 929322
+    },
+    {
+      "index": 356,
+      "copy_boundaries": 1610,
+      "ring_start": 62332,
+      "bound": {
+        "first": 2119,
+        "requested": 2375,
+        "produced": 2381,
+        "copies": 108,
+        "full_block_trace_interval": 35749,
+        "bound_tstates": 39719
+      },
+      "measured_relative_quota_max_resume": 35919,
+      "relative_quota_total": 696717
+    },
+    {
+      "index": 357,
+      "copy_boundaries": 2130,
+      "ring_start": 2172,
+      "bound": {
+        "first": 1830,
+        "requested": 2086,
+        "produced": 2094,
+        "copies": 116,
+        "full_block_trace_interval": 36389,
+        "bound_tstates": 40615
+      },
+      "measured_relative_quota_max_resume": 37801,
+      "relative_quota_total": 791982
+    },
+    {
+      "index": 358,
+      "copy_boundaries": 1886,
+      "ring_start": 6837,
+      "bound": {
+        "first": 1285,
+        "requested": 1541,
+        "produced": 1542,
+        "copies": 121,
+        "full_block_trace_interval": 38020,
+        "bound_tstates": 42406
+      },
+      "measured_relative_quota_max_resume": 37611,
+      "relative_quota_total": 732260
+    },
+    {
+      "index": 359,
+      "copy_boundaries": 1901,
+      "ring_start": 11997,
+      "bound": {
+        "first": 3177,
+        "requested": 3433,
+        "produced": 3466,
+        "copies": 135,
+        "full_block_trace_interval": 39075,
+        "bound_tstates": 43909
+      },
+      "measured_relative_quota_max_resume": 38968,
+      "relative_quota_total": 774691
+    },
+    {
+      "index": 360,
+      "copy_boundaries": 1482,
+      "ring_start": 17999,
+      "bound": {
+        "first": 6827,
+        "requested": 7083,
+        "produced": 7245,
+        "copies": 97,
+        "full_block_trace_interval": 36417,
+        "bound_tstates": 40035
+      },
+      "measured_relative_quota_max_resume": 35692,
+      "relative_quota_total": 648757
+    },
+    {
+      "index": 361,
+      "copy_boundaries": 1818,
+      "ring_start": 22939,
+      "bound": {
+        "first": 7392,
+        "requested": 7648,
+        "produced": 7650,
+        "copies": 119,
+        "full_block_trace_interval": 39038,
+        "bound_tstates": 43360
+      },
+      "measured_relative_quota_max_resume": 38008,
+      "relative_quota_total": 750556
+    },
+    {
+      "index": 362,
+      "copy_boundaries": 2458,
+      "ring_start": 28430,
+      "bound": {
+        "first": 7603,
+        "requested": 7859,
+        "produced": 7871,
+        "copies": 119,
+        "full_block_trace_interval": 38509,
+        "bound_tstates": 42831
+      },
+      "measured_relative_quota_max_resume": 39202,
+      "relative_quota_total": 906438
+    },
+    {
+      "index": 363,
+      "copy_boundaries": 2601,
+      "ring_start": 33783,
+      "bound": {
+        "first": 5134,
+        "requested": 5390,
+        "produced": 5398,
+        "copies": 122,
+        "full_block_trace_interval": 39920,
+        "bound_tstates": 44338
+      },
+      "measured_relative_quota_max_resume": 39250,
+      "relative_quota_total": 932136
+    },
+    {
+      "index": 364,
+      "copy_boundaries": 1681,
+      "ring_start": 38964,
+      "bound": {
+        "first": 6362,
+        "requested": 6618,
+        "produced": 6622,
+        "copies": 111,
+        "full_block_trace_interval": 35602,
+        "bound_tstates": 39668
+      },
+      "measured_relative_quota_max_resume": 37260,
+      "relative_quota_total": 716672
+    },
+    {
+      "index": 365,
+      "copy_boundaries": 1861,
+      "ring_start": 43962,
+      "bound": {
+        "first": 3882,
+        "requested": 4138,
+        "produced": 4167,
+        "copies": 96,
+        "full_block_trace_interval": 34187,
+        "bound_tstates": 37773
+      },
+      "measured_relative_quota_max_resume": 33818,
+      "relative_quota_total": 720574
+    },
+    {
+      "index": 366,
+      "copy_boundaries": 1510,
+      "ring_start": 47671,
+      "bound": {
+        "first": 6695,
+        "requested": 6951,
+        "produced": 6953,
+        "copies": 117,
+        "full_block_trace_interval": 35282,
+        "bound_tstates": 39540
+      },
+      "measured_relative_quota_max_resume": 31955,
+      "relative_quota_total": 630096
+    },
+    {
+      "index": 367,
+      "copy_boundaries": 2029,
+      "ring_start": 51385,
+      "bound": {
+        "first": 6963,
+        "requested": 7219,
+        "produced": 7233,
+        "copies": 123,
+        "full_block_trace_interval": 38355,
+        "bound_tstates": 42805
+      },
+      "measured_relative_quota_max_resume": 37526,
+      "relative_quota_total": 754616
+    },
+    {
+      "index": 368,
+      "copy_boundaries": 1590,
+      "ring_start": 55053,
+      "bound": {
+        "first": 5141,
+        "requested": 5397,
+        "produced": 5399,
+        "copies": 115,
+        "full_block_trace_interval": 35809,
+        "bound_tstates": 40003
+      },
+      "measured_relative_quota_max_resume": 35886,
+      "relative_quota_total": 683383
+    },
+    {
+      "index": 369,
+      "copy_boundaries": 1575,
+      "ring_start": 59891,
+      "bound": {
+        "first": 5687,
+        "requested": 5943,
+        "produced": 6026,
+        "copies": 87,
+        "full_block_trace_interval": 35980,
+        "bound_tstates": 39278
+      },
+      "measured_relative_quota_max_resume": 35581,
+      "relative_quota_total": 684890
+    },
+    {
+      "index": 370,
+      "copy_boundaries": 1242,
+      "ring_start": 65241,
+      "bound": {
+        "first": 3839,
+        "requested": 4095,
+        "produced": 4111,
+        "copies": 112,
+        "full_block_trace_interval": 34690,
+        "bound_tstates": 38788
+      },
+      "measured_relative_quota_max_resume": 36905,
+      "relative_quota_total": 570212
+    },
+    {
+      "index": 371,
+      "copy_boundaries": 1265,
+      "ring_start": 3166,
+      "bound": {
+        "first": 754,
+        "requested": 1010,
+        "produced": 1016,
+        "copies": 106,
+        "full_block_trace_interval": 33809,
+        "bound_tstates": 37715
+      },
+      "measured_relative_quota_max_resume": 33501,
+      "relative_quota_total": 566367
+    },
+    {
+      "index": 372,
+      "copy_boundaries": 1623,
+      "ring_start": 6267,
+      "bound": {
+        "first": 4614,
+        "requested": 4870,
+        "produced": 4875,
+        "copies": 78,
+        "full_block_trace_interval": 29250,
+        "bound_tstates": 32260
+      },
+      "measured_relative_quota_max_resume": 30287,
+      "relative_quota_total": 684306
+    },
+    {
+      "index": 373,
+      "copy_boundaries": 1171,
+      "ring_start": 11233,
+      "bound": {
+        "first": 260,
+        "requested": 516,
+        "produced": 528,
+        "copies": 73,
+        "full_block_trace_interval": 25765,
+        "bound_tstates": 28615
+      },
+      "measured_relative_quota_max_resume": 26052,
+      "relative_quota_total": 536338
+    },
+    {
+      "index": 374,
+      "copy_boundaries": 1391,
+      "ring_start": 14114,
+      "bound": {
+        "first": 7408,
+        "requested": 7664,
+        "produced": 7685,
+        "copies": 76,
+        "full_block_trace_interval": 29579,
+        "bound_tstates": 32525
+      },
+      "measured_relative_quota_max_resume": 30106,
+      "relative_quota_total": 609129
+    },
+    {
+      "index": 375,
+      "copy_boundaries": 1701,
+      "ring_start": 17871,
+      "bound": {
+        "first": 1068,
+        "requested": 1324,
+        "produced": 1348,
+        "copies": 88,
+        "full_block_trace_interval": 31590,
+        "bound_tstates": 34920
+      },
+      "measured_relative_quota_max_resume": 32078,
+      "relative_quota_total": 689295
+    },
+    {
+      "index": 376,
+      "copy_boundaries": 1706,
+      "ring_start": 22205,
+      "bound": {
+        "first": 4616,
+        "requested": 4872,
+        "produced": 4889,
+        "copies": 85,
+        "full_block_trace_interval": 30749,
+        "bound_tstates": 33983
+      },
+      "measured_relative_quota_max_resume": 30253,
+      "relative_quota_total": 696899
+    },
+    {
+      "index": 377,
+      "copy_boundaries": 1573,
+      "ring_start": 26553,
+      "bound": {
+        "first": 589,
+        "requested": 845,
+        "produced": 864,
+        "copies": 80,
+        "full_block_trace_interval": 27277,
+        "bound_tstates": 30351
+      },
+      "measured_relative_quota_max_resume": 26101,
+      "relative_quota_total": 660276
+    },
+    {
+      "index": 378,
+      "copy_boundaries": 279,
+      "ring_start": 31107,
+      "bound": {
+        "first": 695,
+        "requested": 951,
+        "produced": 987,
+        "copies": 70,
+        "full_block_trace_interval": 27512,
+        "bound_tstates": 30266
+      },
+      "measured_relative_quota_max_resume": 23423,
+      "relative_quota_total": 111595
+    }
+  ],
+  "extra_per_copied_run_tstates": 32,
+  "resume_bound_tstates": 308,
+  "stop_bound_tstates": 189,
+  "external_call_tstates": 17,
+  "irq_included": false,
+  "ula_included": false,
+  "disk_delivery_verified": false,
+  "first_payload_ring_offset": 65524,
+  "decoder_sha256": "4104e55622af8d55264c639fe1adbe0f64ed0ad057e5944eca019a52f0b09f4c",
+  "summary": {
+    "blocks": 379,
+    "copy_boundaries": 720269,
+    "worst": {
+      "index": 327,
+      "copy_boundaries": 2409,
+      "ring_start": 43431,
+      "bound": {
+        "first": 7737,
+        "requested": 7993,
+        "produced": 7995,
+        "copies": 137,
+        "full_block_trace_interval": 44112,
+        "bound_tstates": 49010
+      },
+      "measured_relative_quota_max_resume": 42722,
+      "relative_quota_total": 878770
+    },
+    "measured_max_resume": 43792,
+    "total_relative_quota_tstates": 284673714
+  }
+}

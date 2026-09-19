@@ -5,6 +5,8 @@ history in bank 7 E000..FFFF. Host supplies complete blocks to the ring and
 requests output boundaries; disk acquisition, packet parsing/AY/drawing,
 ULA and ROM are excluded. Includes internal pointer setup, calls, paging and
 copies. Host descriptor writes, request setup and the outer CALL are excluded.
+With --token-boundaries a request is a minimum; complete copies may produce
+additional bytes within the same verified block.
 """
 import argparse
 from collections import Counter
@@ -66,13 +68,15 @@ class GuardCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, *, fast_literal=False, fast_refill=False, profile=False):
-        self.code, self.labels = machine.build(fast_literal=fast_literal, fast_refill=fast_refill)
+    def __init__(self, *, fast_literal=False, fast_refill=False, profile=False, token_boundaries=False):
+        self.code, self.labels = machine.build(fast_literal=fast_literal, fast_refill=fast_refill,token_boundaries=token_boundaries)
+        self.token_boundaries = token_boundaries
         self.profile, self.histogram = profile, Counter()
         cpu = self.cpu = GuardCPU(b'', b'')
         cpu.labels = self.labels
         cpu.patched_addresses = {self.labels['slice_high_operand'], self.labels['slice_low_operand'],
                                  self.labels['dzx0t_last_offset']+1, self.labels['dzx0t_last_offset']+2}
+        if token_boundaries: cpu.patched_addresses.add(self.labels['slice_equal_branch'])
         for bank in cpu.banks:
             bank[:] = b'\xa5'*16384
         for i, value in enumerate(self.code):
@@ -92,6 +96,7 @@ class Harness:
         cpu.input_reads = cpu.ring_reads = cpu.produced = cpu.limit = 0
         cpu.private_min = machine.STACK_TOP
         self.expected, self.first, self.total, self.slices, self.pages = expected, True, 0, [], []
+        self.last_target = 0
         for name, value in dict(block_length=len(expected), block_end=(machine.OUTPUT+len(expected)) & 65535,
                                 remaining=len(payload), valid=0,
                                 ring_pointer=0xc000+cpu.ring_start % 16384).items():
@@ -99,13 +104,13 @@ class Harness:
         for name, value in dict(block_stored=128 if stored else 0, ring_region=cpu.ring_start//16384, history_page=page).items():
             cpu.write8(self.labels[name], value)
 
-    def run(self, count, interrupt=None):
+    def run(self, count, interrupt=None, *, copy_trace=None):
         cpu = self.cpu
-        if not cpu.produced <= count <= len(self.expected) or count == 0:
+        if not (self.last_target if self.token_boundaries else cpu.produced) <= count <= len(self.expected) or count == 0:
             raise ValueError('output targets must be monotonic')
         cpu.guarding = False
         word(cpu, self.labels['slice_target'], (machine.OUTPUT+count) & 65535)
-        cpu.limit = count
+        cpu.limit = len(self.expected) if self.token_boundaries else count
         cpu.pc = self.labels['begin' if self.first else 'slice_until']
         cpu.sp = STACK; cpu.push(STOP)
         start, steps, irq = cpu.tstates, cpu.steps, 0
@@ -114,6 +119,8 @@ class Harness:
             if cpu.pc == self.labels['fatal'] or cpu.steps-steps > 2000000:
                 raise AssertionError('decoder failed to return')
             page, pc, ticks = cpu.port_7ffd, cpu.pc, cpu.tstates
+            if copy_trace is not None and pc == self.labels['slice_copy']:
+                copy_trace.append(dict(produced=cpu.produced,tstates=cpu.tstates-start))
             cpu.step()
             if self.profile:
                 self.histogram[pc, cpu.tstates-ticks] += 1
@@ -122,12 +129,16 @@ class Harness:
             if interrupt and cpu.pc != STOP:
                 irq += interrupt(cpu)
         elapsed = cpu.tstates-start-irq
+        if copy_trace is not None:
+            copy_trace.append(dict(produced=cpu.produced,tstates=cpu.tstates-start,returned=True))
         cpu.guarding = False
-        if (cpu.sp != STACK or cpu.produced != count or cpu.port_7ffd not in (0x17, 0x1f)
-                or bytes(cpu.banks[7][8192:8192+count]) != self.expected[:count]):
+        valid_count = count <= cpu.produced <= len(self.expected) if self.token_boundaries else cpu.produced == count
+        if (cpu.sp != STACK or not valid_count or cpu.port_7ffd not in (0x17, 0x1f)
+                or bytes(cpu.banks[7][8192:8192+cpu.produced]) != self.expected[:cpu.produced]):
             raise AssertionError('bounded output, stack or paging differs')
-        self.first = False; self.total += elapsed
-        self.slices.append(dict(target=count, tstates=elapsed, irq_tstates=irq))
+        self.first = False; self.total += elapsed; self.last_target = count
+        self.slices.append(dict(target=count, tstates=elapsed, irq_tstates=irq,
+            **(dict(produced=cpu.produced,extra_decoded_bytes=cpu.produced-count) if self.token_boundaries else {})))
         # Every suspended invocation must survive arbitrary caller registers.
         cpu.set_hl(0x1357); cpu.set_de(0x2468); cpu.set_bc(0xabcd)
         cpu.a, cpu.z, cpu.carry = 0x93, True, True
@@ -161,18 +172,21 @@ def main():
     p.add_argument('--fast-literal', action='store_true')
     p.add_argument('--fast-refill', action='store_true')
     p.add_argument('--profile', action='store_true')
+    p.add_argument('--token-boundaries',action='store_true',help='Yield between copies; may decode past requested target')
+    p.add_argument('--token-boundary-check',choices=('aligned','decrement'),default='aligned',help='Reproduce the first target-1 experiment with decrement')
     p.add_argument('--output', type=Path, required=True)
     args = p.parse_args()
+    token_mode = 'decrement' if args.token_boundaries and args.token_boundary_check=='decrement' else args.token_boundaries
     raw = args.raw.read_bytes()
     storage, baseline = (json.loads(p.read_text(encoding='utf-8')) for p in (args.storage_report, args.baseline_cpu))
     if (not storage['complete'] or not baseline['complete'] or not 1 <= args.quota <= 8192
             or storage['input_sha256'] != sha(raw) or baseline['input_sha256'] != sha(raw)):
         raise ValueError('different/incomplete baseline or invalid quota')
-    h = Harness(fast_literal=args.fast_literal, fast_refill=args.fast_refill, profile=args.profile)
+    h = Harness(fast_literal=args.fast_literal, fast_refill=args.fast_refill, profile=args.profile,token_boundaries=token_mode)
     position, ring = 0, 0xfff0
     report = dict(scope=__doc__, complete=False, baseline_commit=args.baseline_commit, input_sha256=sha(raw),
         code_hex=h.code.hex(), labels=h.labels, output_quota=args.quota, blocks=[],
-        fast_literal=args.fast_literal, fast_refill=args.fast_refill,
+        fast_literal=args.fast_literal, fast_refill=args.fast_refill,token_boundaries=token_mode,
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf', disk_delivery_verified=False)
     for index, block in enumerate(storage['blocks']):
         expected = raw[position:position+block['decoded_bytes']]; position += len(expected)

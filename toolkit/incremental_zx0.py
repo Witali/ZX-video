@@ -51,7 +51,11 @@ def emit_wait(a, *, lookahead=False, output_base=0x8000, direct_input=False, aud
     a.label('slice_frame_valid');a.abs16(0xC3,'ahead_decode' if lookahead else 'slice_until')
 
 
-def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False, wrap_output=False, source_page_wrap=None, literal_hook=None):
+def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False, wrap_output=False, source_page_wrap=None, literal_hook=None, token_boundaries=False):
+    if token_boundaries not in (False,True,'decrement'):
+        raise ValueError('unknown token boundary comparison')
+    if token_boundaries and (not wrap_output or direct_input or wrapped_input):
+        raise ValueError('token boundaries require the wrapped banked-output path')
     if wrapped_input and (source_page_wrap or literal_hook):
         raise ValueError('wrapped direct input and fixed input window are exclusive')
     a.label('slice_until')
@@ -59,7 +63,14 @@ def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TO
     a.abs16(0x2A,'slice_output');a.abs16((0xED,0x5B),'slice_target')
     # Wrapped end 0000 cannot use an unsigned >= comparison. In this mode
     # the caller must request monotonic targets and the copier stops exactly.
-    a.emit(0xB7,0xED,0x52,0xC8 if wrap_output else 0xD0)
+    if token_boundaries:
+        # A completed 8-KiB block has absolute output address 0000.
+        # Other targets may already have been exceeded by the last token.
+        a.emit(0x7c,0xb5,0xc8,0x7a,0xb3)
+        a.abs16(0xca,'slice_resume')
+        a.emit(0xb7,0xed,0x52,0xd0)
+    else:
+        a.emit(0xB7,0xED,0x52,0xC8 if wrap_output else 0xD0)
     a.label('slice_resume')
     if direct_input:a.abs16(0xCD,'direct_page')
     a.abs16((0xED,0x73),'slice_caller_sp')
@@ -102,6 +113,44 @@ def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TO
     else:a.emit(0xC9)
 
     a.label('slice_copy')
+    if token_boundaries:
+        # Pause before a new copy, once the preceding token met the target.
+        # A wrapped target uses FFFF and permits equality, so the final
+        # byte and EOF still run. Normal targets pause on equality.
+        a.emit(0x08,0x7a)
+        a.label('slice_compare_high');a.emit(0xfe,0)
+        a.rel8(0x38,'slice_copy_fast');a.rel8(0x20,'slice_copy_slow')
+        a.emit(0x7b)
+        a.label('slice_compare_low');a.emit(0xfe,0)
+        a.rel8(0x38,'slice_copy_fast')
+        a.label('slice_equal_branch');a.rel8(0x28 if token_boundaries=='decrement' else 0x38,'slice_copy_fast')
+        a.label('slice_copy_slow');a.emit(0x08)
+        a.abs16(0xcd,'slice_yield');a.abs16(0xc3,'slice_copy')
+        a.label('slice_copy_fast');a.emit(0x08,0xed,0xb0,0xc9)
+    else:
+        emit_exact_copy(a,wrap_output=wrap_output)
+    a.label('slice_sync_target')
+    a.abs16(0x2A,'slice_target')
+    if token_boundaries=='decrement':
+        a.emit(0x2b)  # Reproduce the first measured target-1 experiment.
+    elif token_boundaries:
+        # Preserve the target's high byte on aligned non-final requests:
+        # E100 remains E100, keeping all E0xx positions on the short path.
+        a.emit(0x7c,0xb5,0x3e,0x38)  # LD A,H / OR L / LD A,JR C.
+        a.rel8(0x20,'slice_sync_compare')
+        a.emit(0x3e,0x28,0x2b)  # Wrapped target: JR Z / DEC HL -> FFFF.
+        a.label('slice_sync_compare');a.abs16(0x32,'slice_equal_branch')
+    a.emit(0x7C);a.abs16(0x32,'slice_high_operand')
+    a.emit(0x7D);a.abs16(0x32,'slice_low_operand');a.emit(0xC9)
+    a.labels['slice_high_operand']=a.labels['slice_compare_high']+1
+    a.labels['slice_low_operand']=a.labels['slice_compare_low']+1
+    zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook=literal_hook,source_page_wrap=source_page_wrap)
+    if wrapped_input:
+        zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook='wrapped_literal',
+                              source_wrap='direct_wrap',label_prefix='wrap_')
+
+
+def emit_exact_copy(a,*,wrap_output):
     # The usual run fits entirely. Compare DE+BC with patched target bytes,
     # preserving the ZX0 bit accumulator in AF' without borrowing HL.
     a.emit(0x08,0x7B,0x81,0x7A,0x88)
@@ -126,15 +175,6 @@ def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TO
     a.label('slice_pause');a.abs16(0xCD,'slice_yield');a.abs16(0xC3,'slice_copy')
     a.label('slice_copy_full');a.emit(0xC1,0xE1,0xED,0xB0,0xF1,0xC9)
     a.label('slice_copy_fast');a.emit(0x08,0xED,0xB0,0xC9)
-    a.label('slice_sync_target')
-    a.abs16(0x2A,'slice_target');a.emit(0x7C);a.abs16(0x32,'slice_high_operand')
-    a.emit(0x7D);a.abs16(0x32,'slice_low_operand');a.emit(0xC9)
-    a.labels['slice_high_operand']=a.labels['slice_compare_high']+1
-    a.labels['slice_low_operand']=a.labels['slice_compare_low']+1
-    zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook=literal_hook,source_page_wrap=source_page_wrap)
-    if wrapped_input:
-        zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook='wrapped_literal',
-                              source_wrap='direct_wrap',label_prefix='wrap_')
 
 
 def emit_variables(a):

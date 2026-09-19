@@ -63,9 +63,9 @@ class StreamCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, stream, *, ring_start=0xfff0, page=0x17):
+    def __init__(self, stream, *, ring_start=0xfff0, page=0x17,token_boundaries=False):
         if page not in (0x17, 0x1f): raise ValueError('bank 7 required')
-        zcode, self.z = zx0.build(fast_literal=True, fast_refill=True)
+        zcode, self.z = zx0.build(fast_literal=True, fast_refill=True,token_boundaries=token_boundaries)
         rcode, loader, self.r, listing = reader.build(self.z)
         cpu = self.cpu = StreamCPU(b'', b'')
         for bank in cpu.banks: bank[:] = b'\xa5'*16384
@@ -76,6 +76,7 @@ class Harness:
         self.regions = [(zx0.CODE, zcode), (reader.CODE, rcode), (reader.LOADER, loader)]
         cpu.patches = {self.z['slice_high_operand'], self.z['slice_low_operand'],
                        self.z['dzx0t_last_offset']+1, self.z['dzx0t_last_offset']+2}
+        if token_boundaries: cpu.patches.add(self.z['slice_equal_branch'])
         cpu.ring_data, cpu.ring_start, cpu.consumed = stream, ring_start % 65536, 0
         cpu.produced, cpu.dest_first, cpu.dest_end = 0, DESTINATION, DESTINATION
         for i, value in enumerate(stream[:65536]):

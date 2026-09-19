@@ -36,6 +36,8 @@ def main():
     p.add_argument('--limit', type=int, default=0)
     p.add_argument('--cadence', action='store_true', help='Run real 70908-T IRQ deadlines; ideal producer, no ULA/disk')
     p.add_argument('--lookahead', action='store_true', help='Decode 256-byte quanta during idle fields')
+    p.add_argument('--token-boundaries',action='store_true',help='Permit ZX0 to finish a copy beyond the requested output target')
+    p.add_argument('--token-boundary-check',choices=('aligned','decrement'),default='aligned',help='Choose the target comparison for reproducible experiments')
     p.add_argument('--zero-copy', action='store_true', help='Consume bulk vectors and native map in place')
     p.add_argument('--skip-noop-runs', action='store_true', help='Skip consecutive unchanged tiles in each stripe')
     p.add_argument('--static-stripes',action='store_true',help='Skip verified idle edge stripes, preserving nonzero-vector escapes')
@@ -44,6 +46,7 @@ def main():
     p.add_argument('--progress-frames',type=int,help='Enable the bar with this CURRENT DISK frame count; implies black borders')
     p.add_argument('--preview',type=Path,help='Save the final visible native screen as a PNG')
     args = p.parse_args()
+    token_mode = 'decrement' if args.token_boundaries and args.token_boundary_check=='decrement' else args.token_boundaries
     if args.progress_frames is not None:
         if not 1 <= args.progress_frames <= 16320: p.error('--progress-frames must be 1..16320')
         if not args.zero_copy: p.error('--progress-frames requires --zero-copy')
@@ -91,7 +94,8 @@ def main():
     h = Harness(bytes(ring), tables, mapping, count,bulk=bulk,zero_copy=args.zero_copy,
         skip_noop_runs=args.skip_noop_runs,stored_guards=stored_guards,
         constant_attribute_borders=args.constant_attribute_borders,skip_black_borders=args.black_borders,
-        progress_frames=args.progress_frames,encoded_noop_runs=encoded_noop_runs,skip_static_stripes=args.static_stripes)
+        progress_frames=args.progress_frames,encoded_noop_runs=encoded_noop_runs,skip_static_stripes=args.static_stripes,
+        token_boundaries=token_mode)
     header_result = h.consume_header(raw[:r.pos]); h.histogram.clear()
     clock = None
     all_ticks = []
@@ -106,7 +110,7 @@ def main():
                 _, ml, coded, lit = struct.unpack('<BHHH',ar.take(7))
                 ar.take(3+192+ml+80+coded+lit)
         ar.end()
-    report = dict(scope=__doc__, complete=False, baseline_commit='a9f359f' if args.static_stripes else '2f8535e' if encoded_noop_runs else '7608922' if h.progress else '8706cc0' if args.black_borders else '469402c' if args.constant_attribute_borders else '17f079c' if not stored_guards else
+    report = dict(scope=__doc__, complete=False, baseline_commit='81779ce' if args.token_boundaries else 'a9f359f' if args.static_stripes else '2f8535e' if encoded_noop_runs else '7608922' if h.progress else '8706cc0' if args.black_borders else '469402c' if args.constant_attribute_borders else '17f079c' if not stored_guards else
         ('8390053' if args.skip_noop_runs else 'a875d18') if bulk else '1963bab', frames_expected=count,
         raw_sha256=sha(raw), states_sha256=sha(states.tobytes()), frames=[], header_results=header_result,
         code_regions=[dict(base=base,code_hex=data.hex()) for base,data in h.regions],
@@ -115,7 +119,7 @@ def main():
         release=False, disk_delivery_verified=False, cadence_verified=False, cadence_requested=args.cadence,
         lookahead=args.lookahead,bulk_packet=bulk,zero_copy=args.zero_copy,skip_noop_runs=args.skip_noop_runs,
         format=raw[:4].decode(),stored_guards=stored_guards,encoded_noop_runs=encoded_noop_runs,
-        static_stripes=args.static_stripes,
+        static_stripes=args.static_stripes,token_boundaries=token_mode,
         constant_attribute_borders=args.constant_attribute_borders,black_borders=args.black_borders,cold_init=h.frame.init_result,
         cold_init_code_hex=h.frame.init_code.hex(),progress_frames_on_disk=args.progress_frames,
         progress_labels=h.progress,progress_init=h.progress_init_result)
