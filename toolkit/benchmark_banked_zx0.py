@@ -156,6 +156,7 @@ def main():
     p.add_argument('--storage-report', type=Path, required=True)
     p.add_argument('--cache', type=Path, required=True)
     p.add_argument('--baseline-cpu', type=Path, required=True)
+    p.add_argument('--baseline-commit', default='9e4c6c0')
     p.add_argument('--quota', type=int, default=256)
     p.add_argument('--fast-literal', action='store_true')
     p.add_argument('--fast-refill', action='store_true')
@@ -169,7 +170,7 @@ def main():
         raise ValueError('different/incomplete baseline or invalid quota')
     h = Harness(fast_literal=args.fast_literal, fast_refill=args.fast_refill, profile=args.profile)
     position, ring = 0, 0xfff0
-    report = dict(scope=__doc__, complete=False, baseline_commit='9e4c6c0', input_sha256=sha(raw),
+    report = dict(scope=__doc__, complete=False, baseline_commit=args.baseline_commit, input_sha256=sha(raw),
         code_hex=h.code.hex(), labels=h.labels, output_quota=args.quota, blocks=[],
         fast_literal=args.fast_literal, fast_refill=args.fast_refill,
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf', disk_delivery_verified=False)

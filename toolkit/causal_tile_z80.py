@@ -17,6 +17,9 @@ split_literals=True adds an independent FSF1 fragment cursor in state;
 fragment loads do not align or change the retained Huffman IX/C position.
 raw_attributes=True optionally copies 768 final attributes from that cursor;
 the default keeps the earlier generated machine code byte for byte.
+selective_cache=True reads three coverage bytes at BA40 and skips unneeded
+four-row copies. Map consumption and a skipped group's pointer advance run
+on Z80. Virtual border rows still clear normally; the disk ring is unchanged.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -25,6 +28,19 @@ import prefix_huffman_z80 as prefix
 
 CODE, FRAME, CACHE = prefix.CODE, 0x6400, 0x7400
 VECTOR_X, VECTOR_Y, VECTOR_PHASE, ROW_LOW, ROW_HIGH = 0x9800, 0x9900, 0x9a00, 0x9b00, 0x9c00
+CACHE_MAP = 0xba40  # Three MSB-first bytes covering 24 four-row groups.
+
+
+def selective_cache_delta_tstates(flags, enabled):
+    """Relative to full cache fills, including 46-T per-frame mask setup.
+
+    Across all twelve calls old cache_copy costs 55572 T. The new loop
+    costs 3795+2305*N for N copied groups. Zero-border calls are identical;
+    cache-disabled frames branch before the new setup and have zero delta.
+    """
+    if len(flags) != 3:
+        raise ValueError('three cache coverage bytes required')
+    return 3589-2305*(24-sum(v.bit_count() for v in flags)) if enabled else 0
 
 
 def intra_tstates(vector, tile, corrections, *, extended=False):
@@ -88,7 +104,9 @@ def raw_intra_tstates(vector, tile, mask, *, unaligned=False):
     return total
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False):
+    if selective_cache and not hybrid:
+        raise ValueError('selective cache requires per-frame cache flag')
     if raw_attributes and not (hybrid and split_literals):
         raise ValueError('raw attributes require hybrid split literals')
     if split_literals and (not fast_fragments or raw_intra):
@@ -184,6 +202,11 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('OR A', [0xb7], 4); jump('JP Z,stripe', 0xca, 'stripe', 10)
     # The top four virtual rows are black. Padding columns stay zero from
     # cache initialization; no routine writes them.
+    if selective_cache:
+        wordop('LD HL,cache_map', 0x21, CACHE_MAP, 10)
+        load('LD (cache_mask_source),HL', 0x22, 'cache_mask_source', 16)
+        emit('LD A,80h', [0x3e, 128], 7)
+        load('LD (cache_mask_shift),A', 0x32, 'cache_mask_shift', 13)
     wordop('LD DE,top_virtual_cache_rows', 0x11, CACHE+12*64+1, 10)
     emit('LD B,4', [0x06, 4], 7); jump('CALL cache_zero', 0xcd, 'cache_zero', 17)
     wordop('LD HL,compact_frame', 0x21, FRAME, 10)
@@ -491,8 +514,40 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('PUSH HL', [0xe5], 11); emit('POP IX', [0xdd, 0xe1], 14); emit('RET', [0xc9], 10)
 
     stage = 'cache'
+    if selective_cache:
+        # B is the original row count (4, 8 or 12). One flag covers four
+        # consecutive source rows and therefore one 256-byte cache page.
+        a.label('cache_copy')
+        emit('PUSH BC', [0xc5], 11)
+        load('LD A,(cache_mask_shift)', 0x3a, 'cache_mask_shift', 13)
+        emit('ADD A,A', [0x87], 4)
+        jump('JR NZ,cache_mask_ready', 0x20, 'cache_mask_ready', [7, 12], True)
+        emit('PUSH HL', [0xe5], 11)
+        load('LD HL,(cache_mask_source)', 0x2a, 'cache_mask_source', 16)
+        emit('LD A,(HL)', [0x7e], 7); emit('INC HL', [0x23], 6)
+        load('LD (cache_mask_source),HL', 0x22, 'cache_mask_source', 16)
+        emit('POP HL', [0xe1], 10)
+        # The exhausted 80h sentinel left carry set. All loads above retain
+        # it, so ADC appends a new sentinel without a redundant SCF.
+        emit('ADC A,A', [0x8f], 4)
+        a.label('cache_mask_ready')
+        load('LD (cache_mask_shift),A', 0x32, 'cache_mask_shift', 13)
+        jump('JP NC,cache_skip_four', 0xd2, 'cache_skip_four', 10)
+        emit('LD B,4', [0x06, 4], 7)
+        jump('CALL cache_copy_rows', 0xcd, 'cache_copy_rows', 17)
+        jump('JP cache_four_done', 0xc3, 'cache_four_done', 10)
+        a.label('cache_skip_four')
+        wordop('LD BC,128', 0x01, 128, 10); emit('ADD HL,BC', [0x09], 11)
+        emit('INC D', [0x14], 4); emit('LD A,D', [0x7a], 4)
+        emit('AND 3', [0xe6, 3], 7); emit('OR cache_page', [0xf6, CACHE >> 8], 7)
+        emit('LD D,A', [0x57], 4)
+        a.label('cache_four_done')
+        emit('POP BC', [0xc1], 10)
+        emit('LD A,B', [0x78], 4); emit('SUB 4', [0xd6, 4], 7); emit('LD B,A', [0x47], 4)
+        jump('JP NZ,cache_copy', 0xc2, 'cache_copy', 10)
+        emit('RET', [0xc9], 10)
     for zero in (False, True):
-        name = 'cache_zero' if zero else 'cache_copy'
+        name = 'cache_zero' if zero else 'cache_copy_rows' if selective_cache else 'cache_copy'
         a.label(name)
         if zero:
             emit('XOR A', [0xaf], 4)
@@ -699,6 +754,9 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         a.label('literal_source'); a.word(0)
     if raw_attributes:
         a.label('raw_attributes'); a.emit(0)
+    if selective_cache:
+        a.label('cache_mask_source'); a.word(0)
+        a.label('cache_mask_shift'); a.emit(0)
     a.label('end')
     if a.pc > VECTOR_X:
         raise ValueError('frame code collides with motion tables')

@@ -70,13 +70,14 @@ class FrameOutputPipelineTests(unittest.TestCase):
     def test_irq_preserves_fast_native_dispatch_and_raw_attributes(self):
         self.exercise_irq(raw=True, fast=True)
 
-    def exercise_irq(self, raw=False, fast=False):
+    def exercise_irq(self, raw=False, fast=False, selective=False):
         states, stream, _ = fixture(2)
         if raw:
             from raw_attribute_stream import pack
             stream, _ = pack(stream, states, [True, False])
         tables, mapping, packets = frames(stream)
-        h = Harness(tables, mapping, raw_attributes=raw, decode_metadata=raw, fast_mask_dispatch=fast)
+        h = Harness(tables, mapping, raw_attributes=raw, decode_metadata=raw, fast_mask_dispatch=fast,
+                    selective_cache=selective)
         coded_masks = serialized_masks(stream) if raw else [None]*len(packets)
         a = MiniAssembler(0x9400)
         ay_interrupt.emit(a)
@@ -120,7 +121,12 @@ class FrameOutputPipelineTests(unittest.TestCase):
             return cpu.tstates-start
 
         for index, ((group, mask), state) in enumerate(zip(packets, states)):
-            h.run(group, mask, state.tobytes(), index, interrupt, encoded_metadata=coded_masks[index])
+            coverage = None
+            if selective:
+                from probe_sparse_motion_cache import coverage as source_coverage
+                needed = source_coverage(group[3], 32).reshape(24, 4).any(axis=1)
+                coverage = np.packbits(needed).tobytes()
+            h.run(group, mask, state.tobytes(), index, interrupt, encoded_metadata=coded_masks[index], cache_map=coverage)
         self.assertGreater(calls, 20000)
 
 

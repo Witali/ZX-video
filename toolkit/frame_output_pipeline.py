@@ -2,6 +2,7 @@
 
 CPU executes cold screen/cache clearing, frame setup, both stages, paging,
 and screen publication. With --decode-metadata it also expands sparse masks.
+With --cache-stream it consumes actual SC04 coverage to skip cache copies.
 Host still parses headers and supplies/copies input. No ZX0/AY/ROM/disk
 scheduling or frame pacing claim.
 """
@@ -30,8 +31,9 @@ VECTORS, BITMAP, ATTRS, INPUT, INPUT_END = 0xa400, 0xa4c0, 0xa640, 0xa6a0, 0xb90
 MAP, WRAPPER, INITIALIZER = 0x7300, 0x8f60, 0x7b00
 
 
-def wrapper(recon, draw):
-    a, listing = MiniAssembler(WRAPPER), []
+def wrapper(recon, draw, *, origin=WRAPPER):
+    a, listing = MiniAssembler(origin), []
+    a.label('run')
     def emit(name, data, ticks):
         listing.append(dict(address=a.pc, instruction=name, tstates=ticks, stage='handoff'))
         a.emit(*data)
@@ -67,7 +69,8 @@ def wrapper(recon, draw):
     if 'raw_attributes' in recon:
         a.label('raw_attribute_flag'); a.emit(0)
     a.label('end')
-    if a.pc > output.CODE or recon['end'] > WRAPPER:
+    if (origin == WRAPPER and (a.pc > output.CODE or recon['end'] > WRAPPER)
+            or origin != WRAPPER and (origin < 0x78a0 or a.pc > INITIALIZER or recon['end'] > output.CODE)):
         raise ValueError('frame wrapper overlaps generated code')
     return a.resolve(), a.labels, listing
 
@@ -121,15 +124,17 @@ class PipelineCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False):
+    def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False):
         self.raw_attributes = raw_attributes
         self.decode_metadata = decode_metadata
         self.fast_mask_dispatch = fast_mask_dispatch
+        self.selective_cache = selective_cache
         self.recon_code, self.recon, ri, rr = reconstruction.build(tables, mapping, OFFSETS,
             hybrid=True, skip_empty=True, intra_above=True, intra_extended=True,
-            fast_fragments=True, unrolled_motion=True, split_literals=True, raw_attributes=raw_attributes)
+            fast_fragments=True, unrolled_motion=True, split_literals=True, raw_attributes=raw_attributes,
+            selective_cache=selective_cache)
         self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch)
-        self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw)
+        self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw, origin=0x7900 if selective_cache else WRAPPER)
         self.init_code, ii = initializer(self.draw)
         self.cpu = PipelineCPU(b'', b'')
         self.cpu.port_7ffd = 0x16
@@ -139,7 +144,7 @@ class Harness:
         self.cpu.banks[5][:0x3800] = b'\xa5'*0x3800
         self.cpu.banks[7][:6912] = b'\xa5'*6912
         regions = [(reconstruction.CODE, self.recon_code), (output.CODE, self.draw_code),
-                   (WRAPPER, self.wrapper_code), (INITIALIZER, self.init_code)]+rr+dr
+                   (self.w['run'], self.wrapper_code), (INITIALIZER, self.init_code)]+rr+dr
         mi = []
         if decode_metadata:
             self.metadata_code, self.metadata_labels, mi = metadata.build()
@@ -187,7 +192,7 @@ class Harness:
             raise AssertionError('stack/timing mismatch')
         return dict(total_tstates=sum(stages.values()), stages=dict(stages), page_writes=pages, irq_tstates=irq)
 
-    def run(self, group, mask, expected, index, interrupt=None, *, encoded_metadata=None):
+    def run(self, group, mask, expected, index, interrupt=None, *, encoded_metadata=None, cache_map=None):
         n, flags, bits, vectors, bitmap, attrs, encoded, literals = group
         if flags & 64 and not self.raw_attributes:
             raise ValueError('raw attribute packet requires matching decoder')
@@ -202,6 +207,11 @@ class Harness:
         if cpu.port_7ffd != page:
             raise AssertionError('paging state not retained from prior frame')
         cpu.target_bank = target
+        if self.selective_cache:
+            if cache_map is None or len(cache_map) != 3:
+                raise ValueError('three-byte cache coverage required')
+            for i, value in enumerate(cache_map):
+                cpu.write8(reconstruction.CACHE_MAP+i, value)
         meta_result = None
         if self.decode_metadata:
             if encoded_metadata is None or len(encoded_metadata) > INPUT_END-INPUT:
@@ -226,7 +236,7 @@ class Harness:
         cpu.write8(self.w['cache_flag'], int(bool(flags & 128)))
         if self.raw_attributes:
             cpu.write8(self.w['raw_attribute_flag'], int(bool(flags & 64)))
-        result = self.execute(WRAPPER, interrupt)
+        result = self.execute(self.w['run'], interrupt)
         if bytes(cpu.read8(0x6400+i) for i in range(3840)) != expected:
             raise AssertionError('causal reconstructed frame differs')
         self.expected_screens[target] = b''.join(expand_compact_screen(expected))
@@ -242,6 +252,11 @@ class Harness:
         for base, blob in ((VECTORS, vectors), (BITMAP, bitmap), (ATTRS, attrs), (INPUT, data), (MAP, mask)):
             if bytes(cpu.read8(base+i) for i in range(len(blob))) != blob:
                 raise AssertionError('input/metadata/map modified')
+        if self.selective_cache:
+            if (bytes(cpu.read8(reconstruction.CACHE_MAP+i) for i in range(3)) != cache_map
+                    or flags & 128 and (word(cpu, self.recon['cache_mask_source']) != reconstruction.CACHE_MAP+3
+                        or cpu.read8(self.recon['cache_mask_shift']) != 128)):
+                raise AssertionError('selective cache cursor or map differs')
         if meta_result:
             result['total_tstates'] += meta_result['total_tstates']
             result['stages'].update(meta_result['stages'])
@@ -295,6 +310,7 @@ def main():
     p.add_argument('--baseline-commit', default='6103e11')
     p.add_argument('--decode-metadata', action='store_true')
     p.add_argument('--fast-mask-dispatch', action='store_true')
+    p.add_argument('--cache-stream', type=Path, help='SC04 stream with actual serialized coverage maps')
     args = p.parse_args()
     data = args.stream.read_bytes()
     tables, mapping, packets = frames(data)
@@ -303,25 +319,35 @@ def main():
     if states.shape != (len(packets), 3840):
         raise ValueError('different frame count')
     raw_attributes = data[:4] == b'FSC2'
+    cache_maps = [None]*len(packets)
+    if args.cache_stream:
+        from probe_sparse_motion_cache import unpack as unpack_cache
+        from cell_audio_stream import unpack as unpack_audio
+        restored, cache_maps = unpack_cache(args.cache_stream.read_bytes(), 32, 4, return_maps=True)
+        if unpack_audio(restored)[0] != data:
+            raise ValueError('cache stream belongs to different video')
     h = Harness(tables, mapping, raw_attributes=raw_attributes, decode_metadata=args.decode_metadata,
-                fast_mask_dispatch=args.fast_mask_dispatch)
+                fast_mask_dispatch=args.fast_mask_dispatch, selective_cache=bool(args.cache_stream))
     masks = serialized_masks(data) if args.decode_metadata else [None]*len(packets)
     report = dict(scope=__doc__, complete=False, baseline_commit=args.baseline_commit, stream_sha256=sha(data),
         states_sha256=sha(states.tobytes()), frames_expected=len(states), frames=[],
         reconstruction_code_sha256=sha(h.recon_code), output_code_sha256=sha(h.draw_code),
         wrapper_code_hex=h.wrapper_code.hex(), wrapper_labels=h.w, wrapper_tstates=337+26*raw_attributes,
         raw_attributes=raw_attributes, fast_mask_dispatch=args.fast_mask_dispatch,
+        cache_stream_sha256=sha(args.cache_stream.read_bytes()) if args.cache_stream else None,
+        cache_map_supplied_by_host=bool(args.cache_stream),
         initializer_code_hex=h.init_code.hex(), cold_init=h.init_result,
         instruction_listing=list(h.instructions.values()),
         input_memory=dict(vectors=VECTORS, bitmap_masks=BITMAP, attribute_masks=ATTRS,
-            values=INPUT, end_exclusive=INPUT_END, native_map=MAP),
+            values=INPUT, end_exclusive=INPUT_END, native_map=MAP,
+            selective_cache_map=reconstruction.CACHE_MAP if args.cache_stream else None),
         cpu_shared_memory_verified=False, metadata_expanded_by_host=not args.decode_metadata,
         serialized_masks_supplied_by_host=args.decode_metadata,
         metadata_code_hex=h.metadata_code.hex() if args.decode_metadata else None,
         zx0_included=False, frame_pacing_verified=False, disk_delivery_verified=False,
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf', player_changed=False)
-    for index, ((group, mask), state, coded_masks) in enumerate(zip(packets, states, masks)):
-        report['frames'].append(h.run(group, mask, state.tobytes(), index, encoded_metadata=coded_masks))
+    for index, ((group, mask), state, coded_masks, cache_map) in enumerate(zip(packets, states, masks, cache_maps)):
+        report['frames'].append(h.run(group, mask, state.tobytes(), index, encoded_metadata=coded_masks, cache_map=cache_map))
         if index % 250 == 0:
             args.output.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
             print(f'Shared pipeline Z80 verified {index+1}/{len(states)}', flush=True)

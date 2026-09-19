@@ -18,7 +18,8 @@ def summarize(baseline, candidate, stream, banked, storage):
             or baseline['reconstruction_code_sha256'] != candidate['reconstruction_code_sha256']
             # Draw state moves with its code; wrapper operands change, but
             # instruction sequence, state layout and timing must stay equal.
-            or baseline['wrapper_labels'] != candidate['wrapper_labels']
+            or {k:v for k,v in baseline['wrapper_labels'].items() if k != 'run'}
+            != {k:v for k,v in candidate['wrapper_labels'].items() if k != 'run'}
             or [(r['instruction'], r['tstates']) for r in baseline['instruction_listing'] if r['phase'] == 'handoff']
             != [(r['instruction'], r['tstates']) for r in candidate['instruction_listing'] if r['phase'] == 'handoff']
             or baseline['metadata_code_hex'] != candidate['metadata_code_hex']

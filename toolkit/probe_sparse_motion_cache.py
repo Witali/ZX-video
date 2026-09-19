@@ -108,14 +108,16 @@ def pack(source, states, chunk_bytes, group_rows=1):
     return bytes(result), rows
 
 
-def unpack(data, chunk_bytes, group_rows=1):
+def unpack(data, chunk_bytes, group_rows=1, *, return_maps=False):
     r = Reader(data)
     _, _, count, _, _ = read_header(r, magic=magic(chunk_bytes, group_rows))
     output = bytearray(b'FSA2'+data[4:r.pos])
+    maps = []
     for index in range(count):
         for _ in range(6):
             output += take_tick(r)
         packed = r.take(96//group_rows*(32//chunk_bytes)//8)
+        maps.append(packed)
         start = r.pos
         group, _ = read_packet(r, count-index)
         # Independent scalar verification of every required original pixel;
@@ -132,7 +134,7 @@ def unpack(data, chunk_bytes, group_rows=1):
                             raise AssertionError('missing required cache pixel')
         output += data[start:r.pos]
     r.end()
-    return bytes(output)
+    return (bytes(output), maps) if return_maps else bytes(output)
 
 
 def main():
