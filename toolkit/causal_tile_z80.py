@@ -30,6 +30,25 @@ CODE, FRAME, CACHE = prefix.CODE, 0x6400, 0x7400
 VECTOR_X, VECTOR_Y, VECTOR_PHASE, ROW_LOW, ROW_HIGH = 0x9800, 0x9900, 0x9a00, 0x9b00, 0x9c00
 CACHE_MAP = 0xba40  # Three MSB-first bytes covering 24 four-row groups.
 NOOP_SCANNER = 0x7a00
+STATIC_EDGE = 0x7a80
+
+
+def validate_static_stripes(vectors, masks):
+    """A zero first vector is a stream-level promise that the edge is idle.
+
+    A nonzero first vector always takes the complete existing path. The
+    movie uses this escape for its post-credit splice; literals still run.
+    """
+    if len(vectors) != 192 or len(masks) != 384: raise ValueError('one frame required')
+    for first in (0,176):
+        if vectors[first] == 0 and (any(vectors[first:first+16]) or any(masks[2*first:2*first+32])):
+            raise ValueError('zero edge marker does not describe an unchanged stripe')
+
+
+def static_stripe_delta_tstates(vectors, masks):
+    """Exact delta against skip_noop_runs, including ten inner dispatches."""
+    validate_static_stripes(vectors,masks)
+    return 440+(67 if vectors[0] else -1485)+(81 if vectors[176] else -1471)
 
 
 def noop_run_delta_tstates(vectors, masks):
@@ -148,7 +167,9 @@ def raw_intra_tstates(vector, tile, mask, *, unaligned=False):
     return total
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False):
+    if skip_static_stripes and (not skip_noop_runs or encoded_noop_runs):
+        raise ValueError('static stripes require the plain vector/no-op scanner path')
     if encoded_noop_runs and not (hybrid and skip_empty and intra_extended and raw_kind is None and not raw_intra):
         raise ValueError('encoded runs require the hybrid masked path')
     if skip_noop_runs and not (hybrid and skip_empty and intra_extended and raw_kind is None and not raw_intra):
@@ -178,6 +199,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     a.labels.update({name: address for name, address in labels.items() if address < end})
     if skip_noop_runs: a.labels['scan_zero_run'] = NOOP_SCANNER
     if encoded_noop_runs: a.labels['encoded_zero_run'] = NOOP_SCANNER+128*skip_noop_runs
+    if skip_static_stripes: a.labels['static_edge'] = STATIC_EDGE
     listing = [dict(row, stage='huffman') for row in instructions if row['address'] < end]
     stage = 'control'
 
@@ -266,6 +288,11 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     load('LD (cache_read),HL', 0x22, 'cache_read', 16)
     load('LD (cache_write),DE', (0xed, 0x53), 'cache_write', 20)
     a.label('stripe')
+    if skip_static_stripes:
+        load('LD A,(stripes_left)',0x3a,'stripes_left',13)
+        emit('CP first stripe',[0xfe,12],7); jump('JP Z,static_edge',0xca,'static_edge',10)
+        emit('DEC A (last stripe)',[0x3d],4); jump('JP Z,static_edge',0xca,'static_edge',10)
+    a.label('regular_stripe')
     emit('LD A,16', [0x3e, 16], 7); load('LD (tiles_left),A', 0x32, 'tiles_left', 13)
     a.label('tile')
     load('LD HL,(vectors)', 0x2a, 'vectors', 16)
@@ -864,7 +891,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('INC HL',[0x23],6); emit('INC HL',[0x23],6)
         load('LD (bitmap_masks),HL',0x22,'bitmap_masks',16)
         jump('CALL patches_nonzero',0xcd,'patches_nonzero',17); jump('JP tile_done',0xc3,'tile_done',10)
-        if a.pc > (NOOP_SCANNER+128 if encoded_noop_runs else 0x7b00):
+        if a.pc > (NOOP_SCANNER+128 if encoded_noop_runs or skip_static_stripes else 0x7b00):
             raise ValueError('no-op scanner overlaps following code')
         labels.update({k:v for k,v in a.labels.items() if k not in labels})
         labels['noop_scanner_end'] = a.pc
@@ -890,6 +917,22 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         if a.pc > 0x7b00: raise ValueError('encoded run handler overlaps initializer')
         labels['encoded_run_end'] = a.pc
         regions.append((origin,a.resolve()))
+    if skip_static_stripes:
+        a = MiniAssembler(STATIC_EDGE); a.labels.update(labels)
+        stage = 'static_edge'
+        load('LD HL,(vectors)',0x2a,'vectors',16); emit('LD A,(HL)',[0x7e],7)
+        emit('OR A',[0xb7],4); jump('JP NZ,regular_stripe',0xc2,'regular_stripe',10)
+        wordop('LD DE,16',0x11,16,10); emit('ADD HL,DE',[0x19],11)
+        load('LD (vectors),HL',0x22,'vectors',16)
+        emit('LD E,32',[0x1e,32],7)
+        load('LD HL,(bitmap_masks)',0x2a,'bitmap_masks',16); emit('ADD HL,DE',[0x19],11)
+        load('LD (bitmap_masks),HL',0x22,'bitmap_masks',16)
+        load('LD HL,(target)',0x2a,'target',16); emit('ADD HL,DE',[0x19],11)
+        load('LD (target),HL',0x22,'target',16)
+        jump('JP stripe_done',0xc3,'stripe_done',10)
+        labels['static_edge_end'] = a.pc
+        if a.pc > 0x7b00: raise ValueError('static edge handler overlaps initializer')
+        regions.append((STATIC_EDGE,a.resolve()))
     return code, labels, listing, regions
 
 

@@ -63,7 +63,7 @@ class FrameStreamCPU(stream.StreamCPU):
 class Harness:
     def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False,
                  stored_guards=True,constant_attribute_borders=False,skip_black_borders=False,progress_frames=None,
-                 encoded_noop_runs=False):
+                 encoded_noop_runs=False,skip_static_stripes=False):
         if zero_copy and not bulk: raise ValueError('zero-copy metadata requires bulk packets')
         if not stored_guards and not bulk: raise ValueError('omitting guards requires bulk packets')
         if progress_frames is not None and not (bulk and zero_copy and skip_black_borders):
@@ -74,7 +74,7 @@ class Harness:
             fast_mask_dispatch=True, selective_cache=True, deferred_publish=True,dynamic_source=bulk,
             dynamic_metadata=zero_copy,skip_noop_runs=skip_noop_runs,
             constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders,
-            encoded_noop_runs=encoded_noop_runs)
+            encoded_noop_runs=encoded_noop_runs,skip_static_stripes=skip_static_stripes)
         s = stream.Harness(ring, ring_start=ring_start)
         self.z, self.r, self.blocks = s.z, s.r, 0
         cpu = self.cpu = FrameStreamCPU(b'', b'')

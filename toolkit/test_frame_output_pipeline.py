@@ -72,7 +72,7 @@ class FrameOutputPipelineTests(unittest.TestCase):
     def test_irq_preserves_fast_native_dispatch_and_raw_attributes(self):
         self.exercise_irq(raw=True, fast=True)
 
-    def exercise_irq(self, raw=False, fast=False, selective=False, noops=False, empty_noops=False, constant=False,encoded=False):
+    def exercise_irq(self, raw=False, fast=False, selective=False, noops=False, empty_noops=False, constant=False,encoded=False,static=False):
         states, stream, _ = fixture(2,constant_attribute_borders=constant)
         if raw:
             from raw_attribute_stream import pack
@@ -80,7 +80,7 @@ class FrameOutputPipelineTests(unittest.TestCase):
         tables, mapping, packets = frames(stream)
         h = Harness(tables, mapping, raw_attributes=raw, decode_metadata=raw, fast_mask_dispatch=fast,
                     selective_cache=selective,skip_noop_runs=noops,constant_attribute_borders=constant,
-                    encoded_noop_runs=encoded)
+                    encoded_noop_runs=encoded,skip_static_stripes=static)
         coded_masks = serialized_masks(stream) if raw else [None]*len(packets)
         if empty_noops:
             states = np.zeros((2,3840),dtype=np.uint8)
@@ -107,10 +107,12 @@ class FrameOutputPipelineTests(unittest.TestCase):
 
         def interrupt(cpu):
             nonlocal calls
-            if noops or encoded:
+            if noops or encoded or static:
                 in_scanner = noops and 0x7a00 <= cpu.pc < h.recon['noop_scanner_end']
                 in_encoded = encoded and h.recon['encoded_zero_run'] <= cpu.pc < h.recon['encoded_run_end']
-                if not (in_scanner or in_encoded): return 0
+                in_static = static and (h.recon['static_edge'] <= cpu.pc < h.recon['static_edge_end']
+                    or h.recon['stripe'] <= cpu.pc < h.recon['regular_stripe'])
+                if not (in_scanner or in_encoded or in_static): return 0
             if constant and not h.draw['attributes'] <= cpu.pc < h.draw['attribute_end']:
                 return 0
             cpu.guarding = False

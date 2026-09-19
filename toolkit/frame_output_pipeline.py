@@ -156,7 +156,7 @@ class PipelineCPU(NativeCPU):
 
 class Harness:
     def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False,
-                 constant_attribute_borders=False,skip_black_borders=False,encoded_noop_runs=False):
+                 constant_attribute_borders=False,skip_black_borders=False,encoded_noop_runs=False,skip_static_stripes=False):
         if skip_black_borders and not constant_attribute_borders:
             raise ValueError('black borders require initialized constant attributes')
         self.raw_attributes = raw_attributes
@@ -166,10 +166,12 @@ class Harness:
         self.fast_mask_dispatch = fast_mask_dispatch
         self.selective_cache = selective_cache
         self.encoded_noop_runs = encoded_noop_runs
+        self.skip_static_stripes = skip_static_stripes
         self.recon_code, self.recon, ri, rr = reconstruction.build(tables, mapping, OFFSETS,
             hybrid=True, skip_empty=True, intra_above=True, intra_extended=True,
             fast_fragments=True, unrolled_motion=True, split_literals=True, raw_attributes=raw_attributes,
-            selective_cache=selective_cache,skip_noop_runs=skip_noop_runs,encoded_noop_runs=encoded_noop_runs)
+            selective_cache=selective_cache,skip_noop_runs=skip_noop_runs,encoded_noop_runs=encoded_noop_runs,
+            skip_static_stripes=skip_static_stripes)
         self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch,
             constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders)
         self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw, origin=0x7900 if selective_cache else WRAPPER,
@@ -235,6 +237,7 @@ class Harness:
 
     def run(self, group, mask, expected, index, interrupt=None, *, encoded_metadata=None, cache_map=None):
         n, flags, bits, vectors, bitmap, attrs, encoded, literals = group
+        if self.skip_static_stripes: reconstruction.validate_static_stripes(vectors,bitmap)
         if self.encoded_noop_runs:
             from vector_run_stream import encode_vectors
             vectors = encode_vectors(vectors,bitmap,inplace=self.encoded_noop_runs == 'inplace')[0]

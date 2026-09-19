@@ -38,6 +38,7 @@ def main():
     p.add_argument('--lookahead', action='store_true', help='Decode 256-byte quanta during idle fields')
     p.add_argument('--zero-copy', action='store_true', help='Consume bulk vectors and native map in place')
     p.add_argument('--skip-noop-runs', action='store_true', help='Skip consecutive unchanged tiles in each stripe')
+    p.add_argument('--static-stripes',action='store_true',help='Skip verified idle edge stripes, preserving nonzero-vector escapes')
     p.add_argument('--constant-attribute-borders',action='store_true',help='Initialize constant rows once; copy only 576 attributes')
     p.add_argument('--black-borders',action='store_true',help='Initialize black borders once; draw only the central 18 cell rows')
     p.add_argument('--progress-frames',type=int,help='Enable the bar with this CURRENT DISK frame count; implies black borders')
@@ -53,6 +54,8 @@ def main():
     bulk = raw[:4] in (b'FAP2',b'FAP3',b'FAP4',b'FAP5')
     stored_guards = raw[:4] not in (b'FAP3',b'FAP4',b'FAP5')
     encoded_noop_runs = 'inplace' if raw[:4] == b'FAP5' else raw[:4] == b'FAP4'
+    if args.static_stripes and (not args.skip_noop_runs or encoded_noop_runs):
+        p.error('--static-stripes requires plain vectors with --skip-noop-runs')
     if args.zero_copy and not bulk: p.error('--zero-copy requires FAP2..FAP5')
     if bulk:
         from bulk_frame_stream import unpack as unpack_bulk,read_packet as read_bulk_packet
@@ -68,6 +71,9 @@ def main():
         source = transcode(raw,inverse=True)[0]
     cells = unpack_audio(unpack_cache(unpack(unpack_bulk(source) if bulk else source), 32, 4))[0]
     tables, mapping, packets = frames(cells)
+    if args.static_stripes:
+        from causal_tile_z80 import validate_static_stripes
+        for group,_ in packets: validate_static_stripes(group[3],group[4])
     r = Reader(raw); _, _, count, _, _ = read_header(r, magic=raw[:4])
     if args.progress_frames is not None and (args.limit or count) > args.progress_frames:
         p.error('benchmark would cross the supplied disk boundary; set --limit to its frame count or less')
@@ -85,7 +91,7 @@ def main():
     h = Harness(bytes(ring), tables, mapping, count,bulk=bulk,zero_copy=args.zero_copy,
         skip_noop_runs=args.skip_noop_runs,stored_guards=stored_guards,
         constant_attribute_borders=args.constant_attribute_borders,skip_black_borders=args.black_borders,
-        progress_frames=args.progress_frames,encoded_noop_runs=encoded_noop_runs)
+        progress_frames=args.progress_frames,encoded_noop_runs=encoded_noop_runs,skip_static_stripes=args.static_stripes)
     header_result = h.consume_header(raw[:r.pos]); h.histogram.clear()
     clock = None
     all_ticks = []
@@ -100,7 +106,7 @@ def main():
                 _, ml, coded, lit = struct.unpack('<BHHH',ar.take(7))
                 ar.take(3+192+ml+80+coded+lit)
         ar.end()
-    report = dict(scope=__doc__, complete=False, baseline_commit='2f8535e' if encoded_noop_runs else '7608922' if h.progress else '8706cc0' if args.black_borders else '469402c' if args.constant_attribute_borders else '17f079c' if not stored_guards else
+    report = dict(scope=__doc__, complete=False, baseline_commit='a9f359f' if args.static_stripes else '2f8535e' if encoded_noop_runs else '7608922' if h.progress else '8706cc0' if args.black_borders else '469402c' if args.constant_attribute_borders else '17f079c' if not stored_guards else
         ('8390053' if args.skip_noop_runs else 'a875d18') if bulk else '1963bab', frames_expected=count,
         raw_sha256=sha(raw), states_sha256=sha(states.tobytes()), frames=[], header_results=header_result,
         code_regions=[dict(base=base,code_hex=data.hex()) for base,data in h.regions],
@@ -109,6 +115,7 @@ def main():
         release=False, disk_delivery_verified=False, cadence_verified=False, cadence_requested=args.cadence,
         lookahead=args.lookahead,bulk_packet=bulk,zero_copy=args.zero_copy,skip_noop_runs=args.skip_noop_runs,
         format=raw[:4].decode(),stored_guards=stored_guards,encoded_noop_runs=encoded_noop_runs,
+        static_stripes=args.static_stripes,
         constant_attribute_borders=args.constant_attribute_borders,black_borders=args.black_borders,cold_init=h.frame.init_result,
         cold_init_code_hex=h.frame.init_code.hex(),progress_frames_on_disk=args.progress_frames,
         progress_labels=h.progress,progress_init=h.progress_init_result)
@@ -196,6 +203,9 @@ def main():
                 from causal_tile_z80 import encoded_run_delta_tstates
                 delta = encoded_run_delta_tstates(group[3],group[4],commands=vectors,
                     inplace=encoded_noop_runs == 'inplace',scan_uncoded=args.skip_noop_runs)
+            if stage == 'reconstruct' and args.static_stripes:
+                from causal_tile_z80 import static_stripe_delta_tstates
+                delta += static_stripe_delta_tstates(group[3],group[4])
             if stage == 'output':
                 delta = output_tstates(native,fast_mask_dispatch=True,
                     constant_attribute_borders=args.constant_attribute_borders,skip_black_borders=args.black_borders
