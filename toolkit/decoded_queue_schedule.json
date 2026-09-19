@@ -1,0 +1,513 @@
+{
+  "scope": "Estimate a pipelined player with a bounded queue of 8-KiB decoded blocks.\n\nNo player changes or speed verification. Distribute measured per-frame ZX0\nT uniformly over the raw byte interval that frame consumed. This preserves\nthe total work but approximates its placement, especially at block edges.\nDecoding is arbitrarily preemptible, resumes/paging/IRQ publication are free,\nand compressed bytes are supplied instantly. The optional constant work per\nframe is a sensitivity parameter, NOT a measured disk/ULA cost.\n",
+  "complete": true,
+  "estimated_only": true,
+  "release": false,
+  "player_changed": false,
+  "player_delta_tstates": 0,
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "raw_sha256": "4ab750e4d93c2638bbbe6cc560ef4f99b1500f9babc53a69c7ec570c20652ecc",
+  "proposed_memory": {
+    "raw_ring_bank": 0,
+    "raw_ring_bytes": 16384,
+    "decoded_banks": [
+      1,
+      3,
+      4
+    ],
+    "decoded_bytes": 49152,
+    "existing_bank7_history_bytes": 8192,
+    "total_history_bytes": 57344,
+    "actual_bank_switching_implemented": false,
+    "disk_delivery_verified": false
+  },
+  "scenarios": [
+    {
+      "decoded_blocks": 1,
+      "decoded_bytes": 8192,
+      "extra_work_per_frame": 0,
+      "late_frames": 1852,
+      "first_late": {
+        "frame": 408,
+        "tstates": 95734.366
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 24384654.917
+      },
+      "startup_decode_tstates_estimate": 792685.333,
+      "forced_decode_tstates_estimate": 212695280.426,
+      "peak_allocated_blocks": 1
+    },
+    {
+      "decoded_blocks": 2,
+      "decoded_bytes": 16384,
+      "extra_work_per_frame": 0,
+      "late_frames": 1457,
+      "first_late": {
+        "frame": 415,
+        "tstates": 6802.717
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 23409294.819
+      },
+      "startup_decode_tstates_estimate": 1255964.674,
+      "forced_decode_tstates_estimate": 154363799.466,
+      "peak_allocated_blocks": 2
+    },
+    {
+      "decoded_blocks": 3,
+      "decoded_bytes": 24576,
+      "extra_work_per_frame": 0,
+      "late_frames": 1167,
+      "first_late": {
+        "frame": 630,
+        "tstates": 68194.423
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 22429222.283
+      },
+      "startup_decode_tstates_estimate": 2015860.201,
+      "forced_decode_tstates_estimate": 124595699.245,
+      "peak_allocated_blocks": 3
+    },
+    {
+      "decoded_blocks": 4,
+      "decoded_bytes": 32768,
+      "extra_work_per_frame": 0,
+      "late_frames": 1003,
+      "first_late": {
+        "frame": 641,
+        "tstates": 64019.901
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 21424269.942
+      },
+      "startup_decode_tstates_estimate": 2833875.564,
+      "forced_decode_tstates_estimate": 107033689.224,
+      "peak_allocated_blocks": 4
+    },
+    {
+      "decoded_blocks": 5,
+      "decoded_bytes": 40960,
+      "extra_work_per_frame": 0,
+      "late_frames": 889,
+      "first_late": {
+        "frame": 647,
+        "tstates": 110317.876
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 20440776.277
+      },
+      "startup_decode_tstates_estimate": 3731084.553,
+      "forced_decode_tstates_estimate": 94052764.525,
+      "peak_allocated_blocks": 5
+    },
+    {
+      "decoded_blocks": 6,
+      "decoded_bytes": 49152,
+      "extra_work_per_frame": 0,
+      "late_frames": 789,
+      "first_late": {
+        "frame": 651,
+        "tstates": 7624.803
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 19507559.834
+      },
+      "startup_decode_tstates_estimate": 4472886.292,
+      "forced_decode_tstates_estimate": 84920455.005,
+      "peak_allocated_blocks": 6
+    },
+    {
+      "decoded_blocks": 7,
+      "decoded_bytes": 57344,
+      "extra_work_per_frame": 0,
+      "late_frames": 708,
+      "first_late": {
+        "frame": 659,
+        "tstates": 79002.144
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 18527887.52
+      },
+      "startup_decode_tstates_estimate": 5151493.589,
+      "forced_decode_tstates_estimate": 75395663.757,
+      "peak_allocated_blocks": 7
+    },
+    {
+      "decoded_blocks": 1,
+      "decoded_bytes": 8192,
+      "extra_work_per_frame": 5000,
+      "late_frames": 2018,
+      "first_late": {
+        "frame": 76,
+        "tstates": 3139.436
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 25149654.917
+      },
+      "startup_decode_tstates_estimate": 792685.333,
+      "forced_decode_tstates_estimate": 220417059.482,
+      "peak_allocated_blocks": 1
+    },
+    {
+      "decoded_blocks": 2,
+      "decoded_bytes": 16384,
+      "extra_work_per_frame": 5000,
+      "late_frames": 1613,
+      "first_late": {
+        "frame": 414,
+        "tstates": 52153.717
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 24174294.819
+      },
+      "startup_decode_tstates_estimate": 1255964.674,
+      "forced_decode_tstates_estimate": 161793995.789,
+      "peak_allocated_blocks": 2
+    },
+    {
+      "decoded_blocks": 3,
+      "decoded_bytes": 24576,
+      "extra_work_per_frame": 5000,
+      "late_frames": 1303,
+      "first_late": {
+        "frame": 630,
+        "tstates": 168194.423
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 23194222.283
+      },
+      "startup_decode_tstates_estimate": 2015860.201,
+      "forced_decode_tstates_estimate": 135987471.178,
+      "peak_allocated_blocks": 3
+    },
+    {
+      "decoded_blocks": 4,
+      "decoded_bytes": 32768,
+      "extra_work_per_frame": 5000,
+      "late_frames": 1101,
+      "first_late": {
+        "frame": 640,
+        "tstates": 46048.901
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 22189269.942
+      },
+      "startup_decode_tstates_estimate": 2833875.564,
+      "forced_decode_tstates_estimate": 115490074.502,
+      "peak_allocated_blocks": 4
+    },
+    {
+      "decoded_blocks": 5,
+      "decoded_bytes": 40960,
+      "extra_work_per_frame": 5000,
+      "late_frames": 951,
+      "first_late": {
+        "frame": 646,
+        "tstates": 114657.876
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 21205776.277
+      },
+      "startup_decode_tstates_estimate": 3731084.553,
+      "forced_decode_tstates_estimate": 98900097.835,
+      "peak_allocated_blocks": 5
+    },
+    {
+      "decoded_blocks": 6,
+      "decoded_bytes": 49152,
+      "extra_work_per_frame": 5000,
+      "late_frames": 863,
+      "first_late": {
+        "frame": 650,
+        "tstates": 35058.803
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 20272559.834
+      },
+      "startup_decode_tstates_estimate": 4472886.292,
+      "forced_decode_tstates_estimate": 88885518.553,
+      "peak_allocated_blocks": 6
+    },
+    {
+      "decoded_blocks": 7,
+      "decoded_bytes": 57344,
+      "extra_work_per_frame": 5000,
+      "late_frames": 765,
+      "first_late": {
+        "frame": 657,
+        "tstates": 68403.144
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 19292887.52
+      },
+      "startup_decode_tstates_estimate": 5151493.589,
+      "forced_decode_tstates_estimate": 79581750.367,
+      "peak_allocated_blocks": 7
+    },
+    {
+      "decoded_blocks": 1,
+      "decoded_bytes": 8192,
+      "extra_work_per_frame": 10000,
+      "late_frames": 2246,
+      "first_late": {
+        "frame": 69,
+        "tstates": 40431.436
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 25914654.917
+      },
+      "startup_decode_tstates_estimate": 792685.333,
+      "forced_decode_tstates_estimate": 229892226.307,
+      "peak_allocated_blocks": 1
+    },
+    {
+      "decoded_blocks": 2,
+      "decoded_bytes": 16384,
+      "extra_work_per_frame": 10000,
+      "late_frames": 1790,
+      "first_late": {
+        "frame": 413,
+        "tstates": 62752.717
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 24939294.819
+      },
+      "startup_decode_tstates_estimate": 1255964.674,
+      "forced_decode_tstates_estimate": 173262735.308,
+      "peak_allocated_blocks": 2
+    },
+    {
+      "decoded_blocks": 3,
+      "decoded_bytes": 24576,
+      "extra_work_per_frame": 10000,
+      "late_frames": 1508,
+      "first_late": {
+        "frame": 628,
+        "tstates": 22936.423
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 23959222.283
+      },
+      "startup_decode_tstates_estimate": 2015860.201,
+      "forced_decode_tstates_estimate": 149212349.526,
+      "peak_allocated_blocks": 3
+    },
+    {
+      "decoded_blocks": 4,
+      "decoded_bytes": 32768,
+      "extra_work_per_frame": 10000,
+      "late_frames": 1246,
+      "first_late": {
+        "frame": 639,
+        "tstates": 76067.901
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 22981932.082
+      },
+      "startup_decode_tstates_estimate": 2833875.564,
+      "forced_decode_tstates_estimate": 124218284.879,
+      "peak_allocated_blocks": 4
+    },
+    {
+      "decoded_blocks": 5,
+      "decoded_bytes": 40960,
+      "extra_work_per_frame": 10000,
+      "late_frames": 1050,
+      "first_late": {
+        "frame": 645,
+        "tstates": 133734.876
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 22084607.082
+      },
+      "startup_decode_tstates_estimate": 3731084.553,
+      "forced_decode_tstates_estimate": 108970785.561,
+      "peak_allocated_blocks": 5
+    },
+    {
+      "decoded_blocks": 6,
+      "decoded_bytes": 49152,
+      "extra_work_per_frame": 10000,
+      "late_frames": 928,
+      "first_late": {
+        "frame": 649,
+        "tstates": 11927.803
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 21115108.859
+      },
+      "startup_decode_tstates_estimate": 4472886.292,
+      "forced_decode_tstates_estimate": 94252831.782,
+      "peak_allocated_blocks": 6
+    },
+    {
+      "decoded_blocks": 7,
+      "decoded_bytes": 57344,
+      "extra_work_per_frame": 10000,
+      "late_frames": 833,
+      "first_late": {
+        "frame": 656,
+        "tstates": 145007.144
+      },
+      "worst_late": {
+        "frame": 3009,
+        "tstates": 20103629.477
+      },
+      "startup_decode_tstates_estimate": 5151493.589,
+      "forced_decode_tstates_estimate": 85407859.687,
+      "peak_allocated_blocks": 7
+    },
+    {
+      "decoded_blocks": 1,
+      "decoded_bytes": 8192,
+      "extra_work_per_frame": 20000,
+      "late_frames": 2657,
+      "first_late": {
+        "frame": 64,
+        "tstates": 10233.436
+      },
+      "worst_late": {
+        "frame": 3076,
+        "tstates": 29720951.568
+      },
+      "startup_decode_tstates_estimate": 792685.333,
+      "forced_decode_tstates_estimate": 249347457.853,
+      "peak_allocated_blocks": 1
+    },
+    {
+      "decoded_blocks": 2,
+      "decoded_bytes": 16384,
+      "extra_work_per_frame": 20000,
+      "late_frames": 2233,
+      "first_late": {
+        "frame": 411,
+        "tstates": 44358.717
+      },
+      "worst_late": {
+        "frame": 3076,
+        "tstates": 28953626.568
+      },
+      "startup_decode_tstates_estimate": 1255964.674,
+      "forced_decode_tstates_estimate": 202043981.375,
+      "peak_allocated_blocks": 2
+    },
+    {
+      "decoded_blocks": 3,
+      "decoded_bytes": 24576,
+      "extra_work_per_frame": 20000,
+      "late_frames": 1987,
+      "first_late": {
+        "frame": 627,
+        "tstates": 79846.423
+      },
+      "worst_late": {
+        "frame": 3076,
+        "tstates": 28149723.905
+      },
+      "startup_decode_tstates_estimate": 2015860.201,
+      "forced_decode_tstates_estimate": 181540272.8,
+      "peak_allocated_blocks": 3
+    },
+    {
+      "decoded_blocks": 4,
+      "decoded_bytes": 32768,
+      "extra_work_per_frame": 20000,
+      "late_frames": 1806,
+      "first_late": {
+        "frame": 636,
+        "tstates": 30227.901
+      },
+      "worst_late": {
+        "frame": 3076,
+        "tstates": 27382398.905
+      },
+      "startup_decode_tstates_estimate": 2833875.564,
+      "forced_decode_tstates_estimate": 165236038.978,
+      "peak_allocated_blocks": 4
+    },
+    {
+      "decoded_blocks": 5,
+      "decoded_bytes": 40960,
+      "extra_work_per_frame": 20000,
+      "late_frames": 1599,
+      "first_late": {
+        "frame": 643,
+        "tstates": 158569.876
+      },
+      "worst_late": {
+        "frame": 3076,
+        "tstates": 26489624.082
+      },
+      "startup_decode_tstates_estimate": 3731084.553,
+      "forced_decode_tstates_estimate": 150740275.176,
+      "peak_allocated_blocks": 5
+    },
+    {
+      "decoded_blocks": 6,
+      "decoded_bytes": 49152,
+      "extra_work_per_frame": 20000,
+      "late_frames": 1357,
+      "first_late": {
+        "frame": 648,
+        "tstates": 191130.803
+      },
+      "worst_late": {
+        "frame": 3076,
+        "tstates": 25520125.859
+      },
+      "startup_decode_tstates_estimate": 4472886.292,
+      "forced_decode_tstates_estimate": 131168904.333,
+      "peak_allocated_blocks": 6
+    },
+    {
+      "decoded_blocks": 7,
+      "decoded_bytes": 57344,
+      "extra_work_per_frame": 20000,
+      "late_frames": 1148,
+      "first_late": {
+        "frame": 652,
+        "tstates": 16603.144
+      },
+      "worst_late": {
+        "frame": 3076,
+        "tstates": 24508646.477
+      },
+      "startup_decode_tstates_estimate": 5151493.589,
+      "forced_decode_tstates_estimate": 113705796.41,
+      "peak_allocated_blocks": 7
+    }
+  ],
+  "impossible_unbounded_predecode_control": {
+    "decoded_blocks": 380,
+    "decoded_bytes": 3112960,
+    "extra_work_per_frame": 0,
+    "late_frames": 0,
+    "first_late": null,
+    "worst_late": null,
+    "startup_decode_tstates_estimate": 304251338.0,
+    "forced_decode_tstates_estimate": 0.0,
+    "peak_allocated_blocks": 380
+  }
+}

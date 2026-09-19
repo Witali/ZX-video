@@ -1,0 +1,44 @@
+{
+  "scope": "Offline scheduling bound for separating reconstruction from native drawing.\n\nThis does not execute a changed Z80 player. It adds measured manual ISR costs\nper six fields to frame work; actual IRQ phases, new control code, ULA, disk\nand lookahead resumption overhead are excluded. A second variant removes\nall ZX0 work (an intentionally impossible free-decoding lower bound).\nPreparing frame 1 before publishing frame 0 permits drawing frame i and\nreconstructing i+1 while the ready native frame i waits for its deadline.\nPublication inside the IRQ and safe shared page state would need new code.\n",
+  "complete": true,
+  "estimated_only": true,
+  "release": false,
+  "player_changed": false,
+  "player_delta_tstates": 0,
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "frames": 4221,
+  "scenarios": [
+    {
+      "input": "fixed_measured_ZX0_cost",
+      "pipeline": false,
+      "late_frames": 2668,
+      "max_late_tstates": 25004595,
+      "first_late_frame": 56,
+      "worst_frame": 3009
+    },
+    {
+      "input": "fixed_measured_ZX0_cost",
+      "pipeline": true,
+      "late_frames": 2051,
+      "max_late_tstates": 24678673,
+      "first_late_frame": 404,
+      "worst_frame": 3009
+    },
+    {
+      "input": "free_ZX0_lower_bound",
+      "pipeline": false,
+      "late_frames": 134,
+      "max_late_tstates": 181598,
+      "first_late_frame": 99,
+      "worst_frame": 3005
+    },
+    {
+      "input": "free_ZX0_lower_bound",
+      "pipeline": true,
+      "late_frames": 0,
+      "max_late_tstates": 0,
+      "first_late_frame": null,
+      "worst_frame": 1
+    }
+  ]
+}
