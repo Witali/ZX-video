@@ -63,11 +63,13 @@ def decompress(data: bytes, limit: int = 8192, *, on_match=None, on_literals=Non
         mode = 'offset' if bit() else 'literal'
 
 
-def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, source_wrap=None, label_prefix=""):
+def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, source_wrap=None, source_page_wrap=None, label_prefix=""):
     if variant not in ("standard", "turbo"):
         raise ValueError(variant)
     if copy_hook and variant != 'turbo': raise ValueError('suspension requires turbo')
-    if (literal_hook or source_wrap) and not copy_hook:
+    if source_wrap and source_page_wrap:
+        raise ValueError('choose one source wrap mode')
+    if (literal_hook or source_wrap or source_page_wrap) and not copy_hook:
         raise ValueError('input paging requires the bounded turbo copier')
     source = Path(__file__).parent / 'third_party/zx0' / f'dzx0_{variant}.asm'
     start = a.pc
@@ -90,6 +92,10 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
             copy_index+=1;continue
         if line == 'inc hl' and source_wrap:
             a.emit(0x23,0xCB,0x7C);a.abs16(0xCC,source_wrap);continue
+        if line == 'inc hl' and source_page_wrap:
+            # A 256-byte aligned fixed input window: preserve carry, return
+            # to low byte zero and refill before the next input access.
+            a.emit(0x2c);a.abs16(0xCC,source_page_wrap);continue
         if line.endswith(':'):
             a.label(line[:-1]); continue
         if line in simple:
@@ -116,5 +122,5 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
         else:
             raise ValueError(f'unsupported ZX0 instruction: {line}')
     for alias,(label,offset) in aliases.items(): a.labels[alias]=a.labels[label]+offset
-    assert a.pc-start == {'standard':68,'turbo':126}[variant]+(2 if copy_hook else 0)+(30 if source_wrap else 0)
+    assert a.pc-start == {'standard':68,'turbo':126}[variant]+(2 if copy_hook else 0)+(30 if source_wrap else 0)+(18 if source_page_wrap else 0)
     return f'{label_prefix}dzx0_{variant}'

@@ -1,0 +1,41 @@
+{
+  "scope": "Separate full-stream CPU sums; packet input, outer calls, AY, ULA and disk excluded.",
+  "complete": true,
+  "input_sha256": "99c4f880cd06cf28ebfef7189a7aac1220a4c121071715f0e1174544790bbe2d",
+  "optimized_stages_tstates": {
+    "bounded_control": 116357761,
+    "zx0_core": 128705877,
+    "literal_boundary": 15198617,
+    "refill_control": 2611970,
+    "ring_copy": 32782590,
+    "paging": 840996
+  },
+  "simple": {
+    "blocks": 379,
+    "code_bytes": 567,
+    "total_tstates": 319378688,
+    "baseline_tstates": 172816320,
+    "delta_tstates": 146562368,
+    "max_slice_tstates": 62005,
+    "max_private_stack_bytes": 18,
+    "page_switches": 15456
+  },
+  "optimized": {
+    "blocks": 379,
+    "code_bytes": 649,
+    "total_tstates": 296497811,
+    "baseline_tstates": 172816320,
+    "delta_tstates": 123681491,
+    "max_slice_tstates": 59818,
+    "max_private_stack_bytes": 18,
+    "page_switches": 15456
+  },
+  "optimized_minus_simple_tstates": -22880877,
+  "reconstruction_output_metadata_tstates": 1389096558,
+  "frames": 4221,
+  "separate_cpu_sum_tstates": 1685594369,
+  "separate_cpu_mean_tstates": 399335.3160388534,
+  "nominal_mean_remaining_tstates": 26112.683961146628,
+  "disk_delivery_verified": false,
+  "release": false
+}
