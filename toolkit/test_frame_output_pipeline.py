@@ -72,7 +72,7 @@ class FrameOutputPipelineTests(unittest.TestCase):
     def test_irq_preserves_fast_native_dispatch_and_raw_attributes(self):
         self.exercise_irq(raw=True, fast=True)
 
-    def exercise_irq(self, raw=False, fast=False, selective=False, noops=False, empty_noops=False, constant=False,encoded=False,static=False):
+    def exercise_irq(self, raw=False, fast=False, selective=False, noops=False, empty_noops=False, constant=False,encoded=False,static=False,cache_columns=32,unrolled_cache=False):
         states, stream, _ = fixture(2,constant_attribute_borders=constant)
         if raw:
             from raw_attribute_stream import pack
@@ -80,7 +80,7 @@ class FrameOutputPipelineTests(unittest.TestCase):
         tables, mapping, packets = frames(stream)
         h = Harness(tables, mapping, raw_attributes=raw, decode_metadata=raw, fast_mask_dispatch=fast,
                     selective_cache=selective,skip_noop_runs=noops,constant_attribute_borders=constant,
-                    encoded_noop_runs=encoded,skip_static_stripes=static)
+                    encoded_noop_runs=encoded,skip_static_stripes=static,cache_columns=cache_columns,unrolled_cache=unrolled_cache)
         coded_masks = serialized_masks(stream) if raw else [None]*len(packets)
         if empty_noops:
             states = np.zeros((2,3840),dtype=np.uint8)
@@ -139,7 +139,7 @@ class FrameOutputPipelineTests(unittest.TestCase):
             coverage = None
             if selective:
                 from probe_sparse_motion_cache import coverage as source_coverage
-                needed = source_coverage(group[3], 32).reshape(24, 4).any(axis=1)
+                needed = source_coverage(group[3], 8).reshape(24,4,32//cache_columns,cache_columns//8).any(axis=(1,3))
                 coverage = np.packbits(needed).tobytes()
             h.run(group, mask, state.tobytes(), index, interrupt, encoded_metadata=coded_masks[index], cache_map=coverage)
         self.assertGreater(calls, 0 if noops or constant or encoded else 20000)

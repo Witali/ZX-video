@@ -169,7 +169,7 @@ class PipelineCPU(NativeCPU):
 class Harness:
     def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False,
                  constant_attribute_borders=False,skip_black_borders=False,encoded_noop_runs=False,skip_static_stripes=False,
-                 split_prepare=False,page_entry=None,preloaded_mask=False):
+                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False):
         if skip_black_borders and not constant_attribute_borders:
             raise ValueError('black borders require initialized constant attributes')
         self.raw_attributes = raw_attributes
@@ -178,13 +178,16 @@ class Harness:
         self.decode_metadata = decode_metadata
         self.fast_mask_dispatch = fast_mask_dispatch
         self.selective_cache = selective_cache
+        self.cache_map_bytes = 96//cache_columns
         self.encoded_noop_runs = encoded_noop_runs
         self.skip_static_stripes = skip_static_stripes
         self.recon_code, self.recon, ri, rr = reconstruction.build(tables, mapping, OFFSETS,
             hybrid=True, skip_empty=True, intra_above=True, intra_extended=True,
             fast_fragments=True, unrolled_motion=True, split_literals=True, raw_attributes=raw_attributes,
             selective_cache=selective_cache,skip_noop_runs=skip_noop_runs,encoded_noop_runs=encoded_noop_runs,
-            skip_static_stripes=skip_static_stripes)
+            skip_static_stripes=skip_static_stripes,cache_columns=cache_columns,unrolled_cache=unrolled_cache)
+        if self.recon['end'] > output.CODE:
+            raise ValueError('reconstruction overlaps native renderer')
         self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch,
             constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders,page_entry=page_entry,
             preloaded_mask=preloaded_mask)
@@ -272,8 +275,8 @@ class Harness:
             raise AssertionError('paging state not retained from prior frame')
         cpu.target_bank = target
         if self.selective_cache:
-            if cache_map is None or len(cache_map) != 3:
-                raise ValueError('three-byte cache coverage required')
+            if cache_map is None or len(cache_map) != self.cache_map_bytes:
+                raise ValueError('cache coverage size differs')
             for i, value in enumerate(cache_map):
                 cpu.write8(reconstruction.CACHE_MAP+i, value)
         meta_result = None
@@ -318,8 +321,8 @@ class Harness:
             if bytes(cpu.read8(base+i) for i in range(len(blob))) != blob:
                 raise AssertionError('input/metadata/map modified')
         if self.selective_cache:
-            if (bytes(cpu.read8(reconstruction.CACHE_MAP+i) for i in range(3)) != cache_map
-                    or flags & 128 and (word(cpu, self.recon['cache_mask_source']) != reconstruction.CACHE_MAP+3
+            if (bytes(cpu.read8(reconstruction.CACHE_MAP+i) for i in range(self.cache_map_bytes)) != cache_map
+                    or flags & 128 and (word(cpu, self.recon['cache_mask_source']) != reconstruction.CACHE_MAP+self.cache_map_bytes
                         or cpu.read8(self.recon['cache_mask_shift']) != 128)):
                 raise AssertionError('selective cache cursor or map differs')
         if meta_result:

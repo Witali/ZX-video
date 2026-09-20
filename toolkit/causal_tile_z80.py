@@ -20,6 +20,9 @@ the default keeps the earlier generated machine code byte for byte.
 selective_cache=True reads three coverage bytes at BA40 and skips unneeded
 four-row copies. Map consumption and a skipped group's pointer advance run
 on Z80. Virtual border rows still clear normally; the disk ring is unchanged.
+Experimental cache_columns=16 reads six coverage bytes and copies only the
+requested halves. unrolled_cache=True retains the three-byte map and copies
+rows in pairs. They are mutually exclusive; default machine code is unchanged.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -167,7 +170,11 @@ def raw_intra_tstates(vector, tile, mask, *, unaligned=False):
     return total
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False):
+    if cache_columns not in (16,32) or (cache_columns != 32 or unrolled_cache) and not selective_cache:
+        raise ValueError('cache variants require selective coverage with 16/32 columns')
+    if unrolled_cache and cache_columns != 32:
+        raise ValueError('unrolled cache experiment retains the three-byte map')
     if skip_static_stripes and (not skip_noop_runs or encoded_noop_runs):
         raise ValueError('static stripes require the plain vector/no-op scanner path')
     if encoded_noop_runs and not (hybrid and skip_empty and intra_extended and raw_kind is None and not raw_intra):
@@ -619,11 +626,25 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         # it, so ADC appends a new sentinel without a redundant SCF.
         emit('ADC A,A', [0x8f], 4)
         a.label('cache_mask_ready')
+        if cache_columns == 16:
+            # A byte holds four MSB-first pairs. The first shift/reload above
+            # produces bit one in carry; retain it while consuming bit two.
+            emit('LD C,0', [0x0e,0], 7); emit('RL C', [0xcb,0x11], 8)
+            emit('ADD A,A', [0x87], 4); emit('RL C', [0xcb,0x11], 8)
         load('LD (cache_mask_shift),A', 0x32, 'cache_mask_shift', 13)
-        jump('JP NC,cache_skip_four', 0xd2, 'cache_skip_four', 10)
-        emit('LD B,4', [0x06, 4], 7)
+        if cache_columns == 16:
+            emit('LD A,C', [0x79], 4); emit('OR A', [0xb7], 4)
+            jump('JR Z,cache_skip_four', 0x28, 'cache_skip_four', [7,12], True)
+            emit('LD B,4', [0x06,4], 7); emit('CP 3', [0xfe,3], 7)
+            jump('JR NZ,cache_half', 0x20, 'cache_half', [7,12], True)
+        else:
+            jump('JP NC,cache_skip_four', 0xd2, 'cache_skip_four', 10)
+            emit('LD B,4', [0x06, 4], 7)
         jump('CALL cache_copy_rows', 0xcd, 'cache_copy_rows', 17)
-        jump('JP cache_four_done', 0xc3, 'cache_four_done', 10)
+        if cache_columns == 16:
+            jump('JR cache_four_done', 0x18, 'cache_four_done', 12, True)
+        else:
+            jump('JP cache_four_done', 0xc3, 'cache_four_done', 10)
         a.label('cache_skip_four')
         wordop('LD BC,128', 0x01, 128, 10); emit('ADD HL,BC', [0x09], 11)
         emit('INC D', [0x14], 4); emit('LD A,D', [0x7a], 4)
@@ -634,9 +655,42 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('LD A,B', [0x78], 4); emit('SUB 4', [0xd6, 4], 7); emit('LD B,A', [0x47], 4)
         jump('JP NZ,cache_copy', 0xc2, 'cache_copy', 10)
         emit('RET', [0xc9], 10)
+    if cache_columns == 16:
+        a.label('cache_half')
+        # C=1 right half, C=2 left half. Each row preserves it across LDI.
+        emit('CP 1', [0xfe,1], 7)
+        jump('JR NZ,cache_half_start', 0x20, 'cache_half_start', [7,12], True)
+        # Groups start at source low byte 0/128, so +16 cannot carry.
+        emit('LD A,L', [0x7d], 4); emit('ADD A,16', [0xc6,16], 7); emit('LD L,A', [0x6f], 4)
+        emit('LD A,E', [0x7b], 4); emit('ADD A,16', [0xc6,16], 7); emit('LD E,A', [0x5f], 4)
+        a.label('cache_half_start')
+        a.label('cache_half_row'); emit('PUSH BC', [0xc5], 11)
+        for _ in range(16): emit('LDI', [0xed,0xa0], 16)
+        wordop('LD BC,16', 0x01, 16, 10); emit('ADD HL,BC', [0x09], 11)
+        emit('POP BC', [0xc1], 10)
+        cache_advance('cache_half_advanced',48)
+        jump('DJNZ cache_half_row', 0x10, 'cache_half_row', [8,13], True)
+        emit('DEC C', [0x0d], 4)
+        jump('JR NZ,cache_four_done', 0x20, 'cache_four_done', [7,12], True)
+        wordop('LD BC,-16', 0x01, 65520, 10); emit('ADD HL,BC', [0x09], 11)
+        emit('LD E,1', [0x1e,1], 7)
+        jump('JR cache_four_done', 0x18, 'cache_four_done', 12, True)
     for zero in (False, True):
         name = 'cache_zero' if zero else 'cache_copy_rows' if selective_cache else 'cache_copy'
         a.label(name)
+        if unrolled_cache and not zero:
+            # Two iterations of two rows fit the actual movie's code map.
+            # The first row cannot cross a cache page; the second may.
+            emit('LD B,2', [0x06,2], 7); a.label('cache_pair')
+            emit('PUSH BC', [0xc5], 11)
+            for _ in range(32): emit('LDI', [0xed,0xa0], 16)
+            emit('LD A,E', [0x7b], 4); emit('ADD A,32', [0xc6,32], 7); emit('LD E,A', [0x5f], 4)
+            for _ in range(32): emit('LDI', [0xed,0xa0], 16)
+            emit('POP BC', [0xc1], 10); cache_advance('cache_pair_advanced',32)
+            # The 64 LDI instructions alone exceed the relative range.
+            emit('DEC B', [0x05], 4); jump('JP NZ,cache_pair', 0xc2, 'cache_pair', 10)
+            emit('RET', [0xc9], 10)
+            continue
         if zero:
             emit('XOR A', [0xaf], 4)
             for _ in range(32):

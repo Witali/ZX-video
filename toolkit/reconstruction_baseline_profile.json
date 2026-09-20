@@ -1,0 +1,559 @@
+{
+  "scope": "Rank measured instructions and sub-stages in a complete player CPU report.",
+  "input": "toolkit/token_boundary_fast_cpu.json",
+  "input_sha256": "a7916e31b07144884924f1d1929dfbd051187801c9b4c9dab54a5b7eefb499bf",
+  "complete": true,
+  "measured": true,
+  "total_tstates": 1522346286,
+  "phases": {
+    "reconstruct": 690341535,
+    "output": 386486369,
+    "unlisted ZX0/AY": 288013008,
+    "metadata": 80531227,
+    "stream_input": 70149814,
+    "packet": 5173922,
+    "handoff": 1650411
+  },
+  "sub_stages": {
+    "unlisted ZX0/AY/unlisted ZX0/AY": 288013008,
+    "reconstruct/huffman": 139063076,
+    "output/dense_pixels": 136337280,
+    "reconstruct/cache": 126783065,
+    "reconstruct/patch": 103162272,
+    "reconstruct/noop_control": 81343425,
+    "output/cell_pixels": 80652692,
+    "metadata/metadata": 80531227,
+    "stream_input/stream_input": 70149814,
+    "reconstruct/motion": 66883657,
+    "reconstruct/control": 66629984,
+    "output/cell_address": 55906605,
+    "output/attributes": 41272938,
+    "reconstruct/intra": 38658502,
+    "reconstruct/attribute_pass": 34392554,
+    "reconstruct/fast_fragment": 31931046,
+    "output/cell_dispatch": 19880105,
+    "output/partial_control": 13718157,
+    "output/cell_control": 8440398,
+    "output/band_dispatch": 5850306,
+    "output/map_copy": 5487300,
+    "output/dense_control": 5262310,
+    "output/band_control": 5196051,
+    "packet/packet": 5173922,
+    "output/mask_dispatch": 3085208,
+    "output/mask_skip": 2887120,
+    "output/dense_address": 1754340,
+    "handoff/handoff": 1650411,
+    "reconstruct/static_edge": 1493954,
+    "output/control": 430542,
+    "output/paging": 325017
+  },
+  "hot_instructions": [
+    {
+      "address": 56167,
+      "tstates": 64911966,
+      "executions": 3093146,
+      "instruction": {
+        "address": 56167,
+        "instruction": "LDIR",
+        "tstates": [
+          16,
+          21
+        ],
+        "stage": "stream_input",
+        "phase": "stream_input"
+      }
+    },
+    {
+      "address": 31878,
+      "tstates": 61363776,
+      "executions": 3093146,
+      "instruction": {}
+    },
+    {
+      "address": 32778,
+      "tstates": 14174950,
+      "executions": 746050,
+      "instruction": {
+        "address": 32778,
+        "instruction": "LD L,(IX+0)",
+        "tstates": 19,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 32784,
+      "tstates": 14174950,
+      "executions": 746050,
+      "instruction": {
+        "address": 32784,
+        "instruction": "LD L,(IX+1)",
+        "tstates": 19,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 31859,
+      "tstates": 7952336,
+      "executions": 726093,
+      "instruction": {}
+    },
+    {
+      "address": 31960,
+      "tstates": 7560563,
+      "executions": 444739,
+      "instruction": {}
+    },
+    {
+      "address": 31880,
+      "tstates": 7184580,
+      "executions": 718458,
+      "instruction": {}
+    },
+    {
+      "address": 32807,
+      "tstates": 7140100,
+      "executions": 714010,
+      "instruction": {
+        "address": 32807,
+        "instruction": "RET",
+        "tstates": 10,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 33125,
+      "tstates": 6833296,
+      "executions": 427081,
+      "instruction": {
+        "address": 33125,
+        "instruction": "LD HL,(vectors)",
+        "tstates": 16,
+        "stage": "control",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 32799,
+      "tstates": 6641890,
+      "executions": 714010,
+      "instruction": {
+        "address": 32799,
+        "instruction": "JR Z,short_position",
+        "tstates": [
+          7,
+          12
+        ],
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 32008,
+      "tstates": 6136372,
+      "executions": 700486,
+      "instruction": {}
+    },
+    {
+      "address": 32782,
+      "tstates": 5968400,
+      "executions": 746050,
+      "instruction": {
+        "address": 32782,
+        "instruction": "SET 3,H",
+        "tstates": 8,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 32797,
+      "tstates": 5712080,
+      "executions": 714010,
+      "instruction": {
+        "address": 32797,
+        "instruction": "BIT 3,A",
+        "tstates": 8,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 31232,
+      "tstates": 5614500,
+      "executions": 280725,
+      "instruction": {
+        "address": 31232,
+        "instruction": "LD DE,(bitmap_masks)",
+        "tstates": 20,
+        "stage": "noop_control",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 32005,
+      "tstates": 5603888,
+      "executions": 700486,
+      "instruction": {}
+    },
+    {
+      "address": 30748,
+      "tstates": 5453532,
+      "executions": 287028,
+      "instruction": {
+        "address": 30748,
+        "instruction": "LD A,(IX+0)",
+        "tstates": 19,
+        "stage": "metadata",
+        "phase": "metadata"
+      }
+    },
+    {
+      "address": 32794,
+      "tstates": 5382550,
+      "executions": 746050,
+      "instruction": {
+        "address": 32794,
+        "instruction": "JR Z,long",
+        "tstates": [
+          7,
+          12
+        ],
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 31944,
+      "tstates": 5274920,
+      "executions": 263746,
+      "instruction": {}
+    },
+    {
+      "address": 32781,
+      "tstates": 5222350,
+      "executions": 746050,
+      "instruction": {
+        "address": 32781,
+        "instruction": "LD A,(HL)",
+        "tstates": 7,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 32787,
+      "tstates": 5222350,
+      "executions": 746050,
+      "instruction": {
+        "address": 32787,
+        "instruction": "OR (HL)",
+        "tstates": 7,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 32790,
+      "tstates": 5222350,
+      "executions": 746050,
+      "instruction": {
+        "address": 32790,
+        "instruction": "LD E,(HL)",
+        "tstates": 7,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 32792,
+      "tstates": 5222350,
+      "executions": 746050,
+      "instruction": {
+        "address": 32792,
+        "instruction": "LD A,(HL)",
+        "tstates": 7,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 33165,
+      "tstates": 5152400,
+      "executions": 322025,
+      "instruction": {
+        "address": 33165,
+        "instruction": "LD HL,(target)",
+        "tstates": 16,
+        "stage": "control",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 33170,
+      "tstates": 5152400,
+      "executions": 322025,
+      "instruction": {
+        "address": 33170,
+        "instruction": "LD (target),HL",
+        "tstates": 16,
+        "stage": "control",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 31857,
+      "tstates": 5082651,
+      "executions": 726093,
+      "instruction": {}
+    },
+    {
+      "address": 32774,
+      "tstates": 5064066,
+      "executions": 723438,
+      "instruction": {
+        "address": 32774,
+        "instruction": "LD H,map_page",
+        "tstates": 7,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 32776,
+      "tstates": 5064066,
+      "executions": 723438,
+      "instruction": {
+        "address": 32776,
+        "instruction": "LD D,(HL)",
+        "tstates": 7,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 32803,
+      "tstates": 4998070,
+      "executions": 714010,
+      "instruction": {
+        "address": 32803,
+        "instruction": "AND F7h",
+        "tstates": 7,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 31955,
+      "tstates": 4892129,
+      "executions": 444739,
+      "instruction": {}
+    },
+    {
+      "address": 31959,
+      "tstates": 4892129,
+      "executions": 444739,
+      "instruction": {}
+    },
+    {
+      "address": 37628,
+      "tstates": 4689110,
+      "executions": 468911,
+      "instruction": {
+        "address": 37628,
+        "instruction": "RET",
+        "tstates": 10,
+        "stage": "cell_control",
+        "phase": "output"
+      }
+    },
+    {
+      "address": 36735,
+      "tstates": 4591224,
+      "executions": 387687,
+      "instruction": {
+        "address": 36735,
+        "instruction": "JR NC,attribute_next",
+        "tstates": [
+          7,
+          12
+        ],
+        "stage": "attribute_pass",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 31981,
+      "tstates": 4587926,
+      "executions": 269878,
+      "instruction": {}
+    },
+    {
+      "address": 31256,
+      "tstates": 4460621,
+      "executions": 353367,
+      "instruction": {
+        "address": 31256,
+        "instruction": "DJNZ scan_check",
+        "tstates": [
+          8,
+          13
+        ],
+        "stage": "noop_control",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 31956,
+      "tstates": 4447390,
+      "executions": 444739,
+      "instruction": {}
+    },
+    {
+      "address": 31963,
+      "tstates": 4447390,
+      "executions": 444739,
+      "instruction": {}
+    },
+    {
+      "address": 33130,
+      "tstates": 4270810,
+      "executions": 427081,
+      "instruction": {
+        "address": 33130,
+        "instruction": "JP Z,scan_zero_run",
+        "tstates": 10,
+        "stage": "control",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 36323,
+      "tstates": 4238140,
+      "executions": 211907,
+      "instruction": {
+        "address": 36323,
+        "instruction": "LD DE,(target)",
+        "tstates": 20,
+        "stage": "patch",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 36604,
+      "tstates": 4012800,
+      "executions": 401280,
+      "instruction": {
+        "address": 36604,
+        "instruction": "JP Z,attribute_empty",
+        "tstates": 10,
+        "stage": "attribute_pass",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 36741,
+      "tstates": 4012800,
+      "executions": 401280,
+      "instruction": {
+        "address": 36741,
+        "instruction": "JP NZ,attribute_mask",
+        "tstates": 10,
+        "stage": "attribute_pass",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 31965,
+      "tstates": 3989368,
+      "executions": 444739,
+      "instruction": {}
+    },
+    {
+      "address": 32801,
+      "tstates": 3852460,
+      "executions": 385246,
+      "instruction": {
+        "address": 32801,
+        "instruction": "INC IX",
+        "tstates": 10,
+        "stage": "huffman",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 32010,
+      "tstates": 3714548,
+      "executions": 453892,
+      "instruction": {}
+    },
+    {
+      "address": 31929,
+      "tstates": 3597674,
+      "executions": 264125,
+      "instruction": {}
+    },
+    {
+      "address": 31978,
+      "tstates": 3550736,
+      "executions": 269878,
+      "instruction": {}
+    },
+    {
+      "address": 33176,
+      "tstates": 3542275,
+      "executions": 322025,
+      "instruction": {
+        "address": 33176,
+        "instruction": "DEC (HL)",
+        "tstates": 11,
+        "stage": "control",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 31305,
+      "tstates": 3513380,
+      "executions": 175669,
+      "instruction": {
+        "address": 31305,
+        "instruction": "LD (vectors),DE",
+        "tstates": 20,
+        "stage": "noop_control",
+        "phase": "reconstruct"
+      }
+    },
+    {
+      "address": 31951,
+      "tstates": 3500280,
+      "executions": 263746,
+      "instruction": {}
+    },
+    {
+      "address": 37573,
+      "tstates": 3282377,
+      "executions": 468911,
+      "instruction": {
+        "address": 37573,
+        "instruction": "LD C,(HL)",
+        "tstates": 7,
+        "stage": "cell_pixels",
+        "phase": "output"
+      }
+    },
+    {
+      "address": 37574,
+      "tstates": 3282377,
+      "executions": 468911,
+      "instruction": {
+        "address": 37574,
+        "instruction": "LD A,(BC)",
+        "tstates": 7,
+        "stage": "cell_pixels",
+        "phase": "output"
+      }
+    }
+  ]
+}
