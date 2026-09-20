@@ -1,0 +1,1025 @@
+{
+  "scope": "Compare packet prefetch attempts and count their instruction-table overhead.\n\nUnequal failed prefixes are reported separately, never as total CPU savings.\nThe scheduler costs exclude called routines, wait loops, IRQ, ULA and disk.\n",
+  "release": false,
+  "complete": false,
+  "common_publications": 411,
+  "compressed_stream_bytes": 1932429,
+  "compressed_stream_delta_bytes": 0,
+  "disk_delivery_verified": false,
+  "ula_verified": false,
+  "local_costs": {
+    "native_map_before_tstates": 1300,
+    "native_map_after_tstates": 1310,
+    "new_map_call_tstates": 17,
+    "frame_mask_transfer_delta_tstates": 27,
+    "combined_packet_entry_extra_tstates": 10,
+    "separated_parser_removed_prepare_call_tstates": 17,
+    "idle_pending_already_published": {
+      "tstates": 250,
+      "instructions": [
+        {
+          "instruction": "LD HL,(remaining)",
+          "tstates": 16
+        },
+        {
+          "instruction": "LD A,H",
+          "tstates": 4
+        },
+        {
+          "instruction": "OR L",
+          "tstates": 4
+        },
+        {
+          "instruction": "RET Z",
+          "tstates": 5
+        },
+        {
+          "instruction": "CALL draw_compact",
+          "tstates": 17
+        },
+        {
+          "instruction": "LD A,1",
+          "tstates": 7
+        },
+        {
+          "instruction": "LD (ready),A",
+          "tstates": 13
+        },
+        {
+          "instruction": "LD HL,(remaining)",
+          "tstates": 16
+        },
+        {
+          "instruction": "DEC HL",
+          "tstates": 6
+        },
+        {
+          "instruction": "LD (remaining),HL",
+          "tstates": 16
+        },
+        {
+          "instruction": "LD A,H",
+          "tstates": 4
+        },
+        {
+          "instruction": "OR L",
+          "tstates": 4
+        },
+        {
+          "instruction": "JP Z,wait_published",
+          "tstates": 10
+        },
+        {
+          "instruction": "LD A,(packet_pending)",
+          "tstates": 13
+        },
+        {
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "instruction": "CALL Z,read required packet",
+          "tstates": 10
+        },
+        {
+          "instruction": "CALL reconstruct pending packet",
+          "tstates": 17
+        },
+        {
+          "instruction": "XOR A",
+          "tstates": 4
+        },
+        {
+          "instruction": "LD (packet_pending),A",
+          "tstates": 13
+        },
+        {
+          "instruction": "LD HL,(remaining)",
+          "tstates": 16
+        },
+        {
+          "instruction": "DEC HL",
+          "tstates": 6
+        },
+        {
+          "instruction": "LD A,H",
+          "tstates": 4
+        },
+        {
+          "instruction": "OR L",
+          "tstates": 4
+        },
+        {
+          "instruction": "JP Z,wait_published",
+          "tstates": 10
+        },
+        {
+          "instruction": "LD A,(ready)",
+          "tstates": 13
+        },
+        {
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "instruction": "JP Z,wait_published",
+          "tstates": 10
+        }
+      ]
+    },
+    "idle_required_read_already_published": {
+      "tstates": 257,
+      "instructions": [
+        {
+          "instruction": "LD HL,(remaining)",
+          "tstates": 16
+        },
+        {
+          "instruction": "LD A,H",
+          "tstates": 4
+        },
+        {
+          "instruction": "OR L",
+          "tstates": 4
+        },
+        {
+          "instruction": "RET Z",
+          "tstates": 5
+        },
+        {
+          "instruction": "CALL draw_compact",
+          "tstates": 17
+        },
+        {
+          "instruction": "LD A,1",
+          "tstates": 7
+        },
+        {
+          "instruction": "LD (ready),A",
+          "tstates": 13
+        },
+        {
+          "instruction": "LD HL,(remaining)",
+          "tstates": 16
+        },
+        {
+          "instruction": "DEC HL",
+          "tstates": 6
+        },
+        {
+          "instruction": "LD (remaining),HL",
+          "tstates": 16
+        },
+        {
+          "instruction": "LD A,H",
+          "tstates": 4
+        },
+        {
+          "instruction": "OR L",
+          "tstates": 4
+        },
+        {
+          "instruction": "JP Z,wait_published",
+          "tstates": 10
+        },
+        {
+          "instruction": "LD A,(packet_pending)",
+          "tstates": 13
+        },
+        {
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "instruction": "CALL Z,read required packet",
+          "tstates": 17
+        },
+        {
+          "instruction": "CALL reconstruct pending packet",
+          "tstates": 17
+        },
+        {
+          "instruction": "XOR A",
+          "tstates": 4
+        },
+        {
+          "instruction": "LD (packet_pending),A",
+          "tstates": 13
+        },
+        {
+          "instruction": "LD HL,(remaining)",
+          "tstates": 16
+        },
+        {
+          "instruction": "DEC HL",
+          "tstates": 6
+        },
+        {
+          "instruction": "LD A,H",
+          "tstates": 4
+        },
+        {
+          "instruction": "OR L",
+          "tstates": 4
+        },
+        {
+          "instruction": "JP Z,wait_published",
+          "tstates": 10
+        },
+        {
+          "instruction": "LD A,(ready)",
+          "tstates": 13
+        },
+        {
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "instruction": "JP Z,wait_published",
+          "tstates": 10
+        }
+      ]
+    }
+  },
+  "trials": [
+    {
+      "report": "pipelined_frame_cpu.json",
+      "sha256": "73f6ec5c686bee91f97994e19041c311cb0108322e8b60635eb37ec565ba9085",
+      "checked": {
+        "compact": 411,
+        "native": 411,
+        "publish": 411
+      },
+      "complete": false,
+      "failure": {
+        "error": "('scheduled AY underrun', 2466)",
+        "pc": 31855,
+        "tstates": 176270196,
+        "fields": 2468,
+        "checked": {
+          "compact": 411,
+          "native": 411,
+          "publish": 411
+        }
+      },
+      "foreground_tstates": 132933185,
+      "foreground_stages": {
+        "schedule": 420505,
+        "packet": 502789,
+        "stream_input": 5382676,
+        "banked_zx0": 19282700,
+        "audio": 863211,
+        "metadata": 7780725,
+        "paging": 283448,
+        "handoff": 124533,
+        "reconstruct": 63116719,
+        "output": 35175879
+      },
+      "irq_tstates": 2132665,
+      "played_ay_ticks": 2466,
+      "timing": {
+        "checked_publications": 411,
+        "late_field_histogram": {
+          "0": 408,
+          "2": 1,
+          "3": 1,
+          "4": 1
+        },
+        "late_publications": 3,
+        "early_publications": 0,
+        "first_off_nominal_field": 408,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 407,
+          "7": 2,
+          "8": 1
+        },
+        "frames_outside_field_budget": 3,
+        "first_outside_field_budget": 408,
+        "intervals_outside_budget": 1,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 408,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 3,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -13,
+        "max_phase_tstates": 283619,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 2,
+        "phase_above_20ms": 3,
+        "irq_boundary_publication_verified": false
+      },
+      "common_prefix_timing": {
+        "checked_publications": 411,
+        "late_field_histogram": {
+          "0": 408,
+          "2": 1,
+          "3": 1,
+          "4": 1
+        },
+        "late_publications": 3,
+        "early_publications": 0,
+        "first_off_nominal_field": 408,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 407,
+          "7": 2,
+          "8": 1
+        },
+        "frames_outside_field_budget": 3,
+        "first_outside_field_budget": 408,
+        "intervals_outside_budget": 1,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 408,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 3,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -13,
+        "max_phase_tstates": 283619,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 2,
+        "phase_above_20ms": 3,
+        "irq_boundary_publication_verified": false
+      },
+      "routing_steady": {
+        "tstates": 129,
+        "instructions": [
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "RET Z",
+            "tstates": 5
+          },
+          {
+            "instruction": "CALL draw_compact",
+            "tstates": 17
+          },
+          {
+            "instruction": "LD A,1",
+            "tstates": 7
+          },
+          {
+            "instruction": "LD (ready),A",
+            "tstates": 13
+          },
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "DEC HL",
+            "tstates": 6
+          },
+          {
+            "instruction": "LD (remaining),HL",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "CALL NZ,prepare next compact",
+            "tstates": 17
+          }
+        ]
+      },
+      "routing_tail": {
+        "tstates": 122,
+        "instructions": [
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "RET Z",
+            "tstates": 5
+          },
+          {
+            "instruction": "CALL draw_compact",
+            "tstates": 17
+          },
+          {
+            "instruction": "LD A,1",
+            "tstates": 7
+          },
+          {
+            "instruction": "LD (ready),A",
+            "tstates": 13
+          },
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "DEC HL",
+            "tstates": 6
+          },
+          {
+            "instruction": "LD (remaining),HL",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "CALL NZ,prepare next compact",
+            "tstates": 10
+          }
+        ]
+      },
+      "code_and_state_bytes": 2587
+    },
+    {
+      "report": "packet_ahead_cpu.json",
+      "sha256": "7fdefd058b9d63e167a0d0344368bb1e59e027eac1aefd9c229fafa990a14e07",
+      "checked": {
+        "compact": 416,
+        "native": 415,
+        "publish": 415,
+        "packet": 416
+      },
+      "complete": false,
+      "failure": {
+        "error": "('scheduled AY underrun', 2496)",
+        "pc": 56167,
+        "tstates": 178468360,
+        "fields": 2499,
+        "checked": {
+          "compact": 416,
+          "native": 415,
+          "publish": 415,
+          "packet": 416
+        }
+      },
+      "foreground_tstates": 135289848,
+      "foreground_stages": {
+        "schedule": 453792,
+        "packet": 501842,
+        "stream_input": 5505482,
+        "banked_zx0": 19774473,
+        "audio": 872408,
+        "metadata": 7891684,
+        "paging": 288024,
+        "handoff": 133080,
+        "reconstruct": 64143285,
+        "output": 35725778
+      },
+      "irq_tstates": 2154843,
+      "played_ay_ticks": 2496,
+      "timing": {
+        "checked_publications": 415,
+        "late_field_histogram": {
+          "0": 408,
+          "1": 1,
+          "2": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1,
+          "7": 1,
+          "8": 1
+        },
+        "late_publications": 7,
+        "early_publications": 0,
+        "first_off_nominal_field": 408,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 407,
+          "7": 6,
+          "8": 1
+        },
+        "frames_outside_field_budget": 6,
+        "first_outside_field_budget": 409,
+        "intervals_outside_budget": 1,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 408,
+            "frames": 7,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 7,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": 0,
+        "max_phase_tstates": 567269,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 4,
+        "phase_above_20ms": 7,
+        "irq_boundary_publication_verified": false
+      },
+      "common_prefix_timing": {
+        "checked_publications": 411,
+        "late_field_histogram": {
+          "0": 408,
+          "1": 1,
+          "2": 1,
+          "4": 1
+        },
+        "late_publications": 3,
+        "early_publications": 0,
+        "first_off_nominal_field": 408,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 407,
+          "7": 2,
+          "8": 1
+        },
+        "frames_outside_field_budget": 2,
+        "first_outside_field_budget": 409,
+        "intervals_outside_budget": 1,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 408,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 3,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": 0,
+        "max_phase_tstates": 283634,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 2,
+        "phase_above_20ms": 3,
+        "irq_boundary_publication_verified": false
+      },
+      "routing_steady": {
+        "tstates": 186,
+        "instructions": [
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "RET Z",
+            "tstates": 5
+          },
+          {
+            "instruction": "CALL draw_compact",
+            "tstates": 17
+          },
+          {
+            "instruction": "LD A,1",
+            "tstates": 7
+          },
+          {
+            "instruction": "LD (ready),A",
+            "tstates": 13
+          },
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "DEC HL",
+            "tstates": 6
+          },
+          {
+            "instruction": "LD (remaining),HL",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "JP Z,wait_published",
+            "tstates": 10
+          },
+          {
+            "instruction": "CALL reconstruct pending packet",
+            "tstates": 17
+          },
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "DEC HL",
+            "tstates": 6
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "CALL NZ,read next packet",
+            "tstates": 17
+          }
+        ]
+      },
+      "routing_tail": {
+        "tstates": 122,
+        "instructions": [
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "RET Z",
+            "tstates": 5
+          },
+          {
+            "instruction": "CALL draw_compact",
+            "tstates": 17
+          },
+          {
+            "instruction": "LD A,1",
+            "tstates": 7
+          },
+          {
+            "instruction": "LD (ready),A",
+            "tstates": 13
+          },
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "DEC HL",
+            "tstates": 6
+          },
+          {
+            "instruction": "LD (remaining),HL",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "JP Z,wait_published",
+            "tstates": 10
+          }
+        ]
+      },
+      "code_and_state_bytes": 2609,
+      "steady_routing_delta_tstates": 57,
+      "steady_total_glue_delta_tstates": 67,
+      "code_and_state_delta_bytes": 22
+    },
+    {
+      "report": "packet_ahead_idle_cpu.json",
+      "sha256": "a2aefbae980ca157e6dabccc50296203a5d4cf01d0a8ed5c4b137e549a089fc0",
+      "checked": {
+        "compact": 414,
+        "native": 414,
+        "publish": 414,
+        "packet": 414
+      },
+      "complete": false,
+      "failure": {
+        "error": "('scheduled AY underrun', 2484)",
+        "pc": 31878,
+        "tstates": 177617459,
+        "fields": 2487,
+        "checked": {
+          "compact": 414,
+          "native": 414,
+          "publish": 414,
+          "packet": 414
+        }
+      },
+      "foreground_tstates": 134487391,
+      "foreground_stages": {
+        "schedule": 494874,
+        "packet": 499498,
+        "stream_input": 5444361,
+        "banked_zx0": 19587663,
+        "audio": 868704,
+        "metadata": 7848409,
+        "paging": 286352,
+        "handoff": 132480,
+        "reconstruct": 63736382,
+        "output": 35588668
+      },
+      "irq_tstates": 2147035,
+      "played_ay_ticks": 2484,
+      "timing": {
+        "checked_publications": 414,
+        "late_field_histogram": {
+          "0": 410,
+          "1": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1
+        },
+        "late_publications": 4,
+        "early_publications": 0,
+        "first_off_nominal_field": 410,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 409,
+          "7": 3,
+          "8": 1
+        },
+        "frames_outside_field_budget": 3,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 1,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 410,
+            "frames": 4,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 4,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": 0,
+        "max_phase_tstates": 354542,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 1,
+        "phase_above_20ms": 3,
+        "irq_boundary_publication_verified": false
+      },
+      "common_prefix_timing": {
+        "checked_publications": 411,
+        "late_field_histogram": {
+          "0": 410,
+          "1": 1
+        },
+        "late_publications": 1,
+        "early_publications": 0,
+        "first_off_nominal_field": 410,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 409,
+          "7": 1
+        },
+        "frames_outside_field_budget": 0,
+        "first_outside_field_budget": null,
+        "intervals_outside_budget": 0,
+        "passes_field_budget": true,
+        "late_runs": [
+          {
+            "first_frame": 410,
+            "frames": 1,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 1,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": 0,
+        "max_phase_tstates": 70908,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 0,
+        "phase_above_20ms": 0,
+        "irq_boundary_publication_verified": false
+      },
+      "routing_steady": {
+        "tstates": 287,
+        "instructions": [
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "RET Z",
+            "tstates": 5
+          },
+          {
+            "instruction": "CALL draw_compact",
+            "tstates": 17
+          },
+          {
+            "instruction": "LD A,1",
+            "tstates": 7
+          },
+          {
+            "instruction": "LD (ready),A",
+            "tstates": 13
+          },
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "DEC HL",
+            "tstates": 6
+          },
+          {
+            "instruction": "LD (remaining),HL",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "JP Z,wait_published",
+            "tstates": 10
+          },
+          {
+            "instruction": "LD A,(packet_pending)",
+            "tstates": 13
+          },
+          {
+            "instruction": "OR A",
+            "tstates": 4
+          },
+          {
+            "instruction": "CALL Z,read required packet",
+            "tstates": 10
+          },
+          {
+            "instruction": "CALL reconstruct pending packet",
+            "tstates": 17
+          },
+          {
+            "instruction": "XOR A",
+            "tstates": 4
+          },
+          {
+            "instruction": "LD (packet_pending),A",
+            "tstates": 13
+          },
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "DEC HL",
+            "tstates": 6
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "JP Z,wait_published",
+            "tstates": 10
+          },
+          {
+            "instruction": "LD A,(ready)",
+            "tstates": 13
+          },
+          {
+            "instruction": "OR A",
+            "tstates": 4
+          },
+          {
+            "instruction": "JP Z,wait_published",
+            "tstates": 10
+          },
+          {
+            "instruction": "CALL read next packet",
+            "tstates": 17
+          },
+          {
+            "instruction": "LD A,1",
+            "tstates": 7
+          },
+          {
+            "instruction": "LD (packet_pending),A",
+            "tstates": 13
+          }
+        ]
+      },
+      "routing_tail": {
+        "tstates": 122,
+        "instructions": [
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "RET Z",
+            "tstates": 5
+          },
+          {
+            "instruction": "CALL draw_compact",
+            "tstates": 17
+          },
+          {
+            "instruction": "LD A,1",
+            "tstates": 7
+          },
+          {
+            "instruction": "LD (ready),A",
+            "tstates": 13
+          },
+          {
+            "instruction": "LD HL,(remaining)",
+            "tstates": 16
+          },
+          {
+            "instruction": "DEC HL",
+            "tstates": 6
+          },
+          {
+            "instruction": "LD (remaining),HL",
+            "tstates": 16
+          },
+          {
+            "instruction": "LD A,H",
+            "tstates": 4
+          },
+          {
+            "instruction": "OR L",
+            "tstates": 4
+          },
+          {
+            "instruction": "JP Z,wait_published",
+            "tstates": 10
+          }
+        ]
+      },
+      "code_and_state_bytes": 2636,
+      "steady_routing_delta_tstates": 158,
+      "steady_total_glue_delta_tstates": 168,
+      "code_and_state_delta_bytes": 49
+    }
+  ]
+}

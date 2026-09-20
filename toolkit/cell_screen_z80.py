@@ -36,7 +36,8 @@ def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borde
     return 58784+4793*dense+4*odd_dense+277*partial_cells-3240*constant_attribute_borders
 
 
-def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False,page_entry=None):
+def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False,page_entry=None,
+          preloaded_mask=False):
     if skip_black_borders and not (fast_mask_dispatch and constant_attribute_borders):
         raise ValueError('black-border omission requires fast dispatch and initialized constant attributes')
     a, listing = MiniAssembler(CODE), []
@@ -70,12 +71,14 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
             emit('INC E', [0x1c], 4, stage)
             emit('INC L', [0x2c], 4, stage)
 
+    def copy_map():
+        imm('LD DE,map', 0x11, MASK, 10, 'map_copy')
+        imm('LD BC,80', 0x01, 80, 10, 'map_copy')
+        for _ in range(80): emit('LDI', [0xed, 0xa0], 16, 'map_copy')
+
     a.label('draw')
     ref('LD (screen_base),A', 0x32, 'screen_base', 13, 'control')
-    imm('LD DE,map', 0x11, MASK, 10, 'map_copy')
-    imm('LD BC,80', 0x01, 80, 10, 'map_copy')
-    for _ in range(80):
-        emit('LDI', [0xed, 0xa0], 16, 'map_copy')
+    if not preloaded_mask: copy_map()
     ref('LD A,(saved_page)', 0x3a, 'saved_page', 13, 'paging')
     emit('OR 1', [0xf6, 1], 7, 'paging')
     imm('LD BC,7FFD', 0x01, 0x7ffd, 10, 'paging')
@@ -222,6 +225,10 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
         adjust('D', -6, 'cell_address')
         emit("EX AF,AF'", [0x08], 4, 'cell_control')
         emit('RET', [0xc9], 10, 'cell_control')
+    if preloaded_mask:
+        # Same transfer as before, now callable after compact reconstruction.
+        # BF20..BF6F survives reading metadata (BF80..BFBF) for the next packet.
+        a.label('copy_map'); copy_map(); emit('RET (map saved)',[0xc9],10,'map_copy')
     a.label('state')
     for name in ('screen_base', 'saved_page', 'bands_left', 'dense_rows_left'):
         a.label(name); a.emit(0)

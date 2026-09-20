@@ -8,7 +8,9 @@ import frame_stream_z80
 LENGTH = 0xba58
 
 
-def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True,progress_entry=None,page_entry=None):
+def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True,progress_entry=None,page_entry=None,separate_prepare=False):
+    if separate_prepare and 'draw_compact' not in wrapper:
+        raise ValueError('separate packet input requires split frame preparation')
     _, bridge, oldlabels, oldlisting = frame_stream_z80.build(zx0,reader,wrapper,draw,metadata,audio,
         progress_entry=progress_entry,page_entry=page_entry)
     listing = [row for row in oldlisting if BRIDGE <= row['address'] < oldlabels['bridge_end']]
@@ -33,6 +35,10 @@ def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True,progress
         addr('LD ('+name+'),HL',0x22,wrapper[name],16)
         addr('LD DE,field length',0x11,count,10); emit('ADD HL,DE',[0x19],11)
     a.label('next_frame')
+    if separate_prepare:
+        addr('CALL read_packet',0xcd,'read_packet',17)
+        addr('JP prepare_bridge',0xc3,oldlabels['prepare_bridge'],10)
+        a.label('read_packet')
     minimum = 294+2*stored_guards
     maximum = INPUT_END-INPUT-int(not stored_guards)
     addr('LD DE,length',0x11,LENGTH,10); addr('LD BC,2',0x01,2,10)
@@ -86,7 +92,9 @@ def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True,progress
         emit('LD (HL),0',[0x36,0],10); emit('OR A',[0xb7],4)
     emit('SBC HL,DE',[0xed,0x52],15)
     addr('LD (literal_length),HL',0x22,HEADER+5,16)
-    addr('CALL prepare_bridge',0xcd,oldlabels['prepare_bridge'],17); emit('RET',[0xc9],10)
+    if not separate_prepare: addr('CALL prepare_bridge',0xcd,oldlabels['prepare_bridge'],17)
+    else: a.label('packet_ready')
+    emit('RET',[0xc9],10)
     a.label('state'); a.label('payload_end'); a.word(0); a.label('end')
     if a.pc > 0xde00: raise ValueError('bulk parser overlaps frame clock')
     labels = dict(a.labels,prepare_bridge=oldlabels['prepare_bridge'],publish_bridge=oldlabels['publish_bridge'],

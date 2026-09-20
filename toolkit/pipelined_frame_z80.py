@@ -77,7 +77,7 @@ def build_video(draw,zx0,audio):
     return regions,labels,listing
 
 
-def build_clock(packet,audio,frames,*,zx0,progress_entry=None,lookahead=False):
+def build_clock(packet,audio,frames,*,zx0,progress_entry=None,lookahead=False,packet_ahead=False):
     if not 1<=frames<=10922: raise ValueError('six AY ticks per frame must fit u16')
     a=MiniAssembler(CODE); listing=[]; emit,addr=helpers(a,listing,'schedule')
     a.label('prime')
@@ -85,6 +85,7 @@ def build_clock(packet,audio,frames,*,zx0,progress_entry=None,lookahead=False):
     addr('CALL native zero',0xcd,packet['draw_bridge'],17)
     emit('LD A,1',[0x3e,1],7); addr('LD (ready),A',0x32,READY,13)
     if frames>1: addr('CALL compact one',0xcd,packet['next_frame'],17)
+    if packet_ahead and frames>2: addr('CALL read packet two',0xcd,packet['read_packet'],17)
     emit('RET',[0xc9],10)
     a.label('start')
     emit('DI',[0xf3],4)
@@ -103,7 +104,28 @@ def build_clock(packet,audio,frames,*,zx0,progress_entry=None,lookahead=False):
     addr('LD HL,(remaining)',0x2a,'remaining',16); emit('DEC HL',[0x2b],6)
     addr('LD (remaining),HL',0x22,'remaining',16)
     emit('LD A,H',[0x7c],4); emit('OR L',[0xb5],4)
-    addr('CALL NZ,prepare next compact',0xc4,packet['next_frame'],[10,17])
+    if packet_ahead:
+        addr('JP Z,wait_published',0xca,'wait_published',10)
+        if packet_ahead=='idle':
+            addr('LD A,(packet_pending)',0x3a,'packet_pending',13); emit('OR A',[0xb7],4)
+            addr('CALL Z,read required packet',0xcc,packet['read_packet'],[10,17])
+        addr('CALL reconstruct pending packet',0xcd,packet['prepare_bridge'],17)
+        if packet_ahead=='idle':
+            emit('XOR A',[0xaf],4); addr('LD (packet_pending),A',0x32,'packet_pending',13)
+        addr('LD HL,(remaining)',0x2a,'remaining',16); emit('DEC HL',[0x2b],6)
+        emit('LD A,H',[0x7c],4); emit('OR L',[0xb5],4)
+        if packet_ahead=='idle':
+            addr('JP Z,wait_published',0xca,'wait_published',10)
+            # Once the preceding screen has been published, drawing the ready
+            # compact frame takes priority over optional input acquisition.
+            addr('LD A,(ready)',0x3a,READY,13); emit('OR A',[0xb7],4)
+            addr('JP Z,wait_published',0xca,'wait_published',10)
+            addr('CALL read next packet',0xcd,packet['read_packet'],17)
+            emit('LD A,1',[0x3e,1],7); addr('LD (packet_pending),A',0x32,'packet_pending',13)
+        else:
+            addr('CALL NZ,read next packet',0xc4,packet['read_packet'],[10,17])
+    else:
+        addr('CALL NZ,prepare next compact',0xc4,packet['next_frame'],[10,17])
     a.label('wait_published')
     addr('LD A,(ready)',0x3a,READY,13); emit('OR A',[0xb7],4)
     addr('JP Z,published',0xca,'published',10)
@@ -141,6 +163,8 @@ def build_clock(packet,audio,frames,*,zx0,progress_entry=None,lookahead=False):
         addr('CALL slice_until',0xcd,zx0['slice_until'],17)
         emit('LD A,1',[0x3e,1],7); emit('RET',[0xc9],10)
         a.label('ahead_done'); emit('XOR A',[0xaf],4); emit('RET',[0xc9],10)
-    a.label('state'); a.label('remaining'); a.word(frames-1); a.label('end')
+    a.label('state'); a.label('remaining'); a.word(frames-1)
+    if packet_ahead=='idle': a.label('packet_pending'); a.emit(int(frames>2))
+    a.label('end')
     if a.pc>0xe000: raise ValueError('pipelined clock overlaps ZX0 history')
     return a.resolve(),dict(a.labels),listing

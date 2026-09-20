@@ -47,7 +47,8 @@ class Clock:
         self.h,self.expected,self.observer=harness,expected_ticks,observer
         cpu=harness.cpu; cpu.__class__=PipelineClockCPU; cpu.guarding=False
         self.code,self.labels,self.listing=machine.build_clock(harness.p,harness.audio,harness.frames,
-            zx0=harness.z,progress_entry=harness.progress['tick'] if harness.progress else None,lookahead=lookahead)
+            zx0=harness.z,progress_entry=harness.progress['tick'] if harness.progress else None,lookahead=lookahead,
+            packet_ahead=harness.packet_ahead)
         for i,value in enumerate(self.code): cpu.write8(machine.CODE+i,value)
         harness.regions.append((machine.CODE,self.code))
         harness.instructions.update({r['address']:r for r in self.listing})
@@ -62,6 +63,7 @@ class Clock:
         self.event_pc={r['address']:event for event,name in
             (('compact','RET (compact ready)'),('native','RET (prepared screen)'))
             for r in harness.instructions.values() if r['instruction']==name}
+        if harness.packet_ahead: self.event_pc[harness.p['packet_ready']]='packet'
 
     def event(self,kind):
         cpu=self.h.cpu

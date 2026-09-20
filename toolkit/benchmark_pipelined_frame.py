@@ -33,6 +33,9 @@ def main():
         p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--limit',type=int,default=0)
     p.add_argument('--lookahead',action='store_true')
+    p.add_argument('--packet-ahead',action='store_true',help='Preparse another packet/AY while retaining the current native mask')
+    p.add_argument('--packet-ahead-policy',choices=('always','idle'),default='always',
+        help='With idle, draw a ready compact frame before optional input if the prior screen is already published')
     p.add_argument('--progress-frames',type=int)
     args=p.parse_args()
     raw=args.raw.read_bytes()
@@ -66,14 +69,26 @@ def main():
     if position!=len(raw): raise ValueError('incomplete blocks')
     h=Harness(bytes(ring),tables,mapping,target,bulk=True,zero_copy=True,stored_guards=False,
         skip_noop_runs=True,constant_attribute_borders=True,skip_black_borders=True,
-        skip_static_stripes=True,token_boundaries=True,pipelined=True,progress_frames=args.progress_frames)
+        skip_static_stripes=True,token_boundaries=True,pipelined=True,progress_frames=args.progress_frames,
+        packet_ahead='idle' if args.packet_ahead and args.packet_ahead_policy=='idle' else args.packet_ahead)
     header_result=h.consume_header(header); h.histogram.clear()
     checked=dict(compact=0,native=0,publish=0); bar_frames=0
+    if args.packet_ahead: checked['packet']=0
     screens=dict(h.expected_screens)
     def observe(kind,clock):
         i=checked[kind]; cpu=h.cpu
         if i>=target: raise AssertionError(('extra frame',kind,i))
-        if kind=='compact':
+        if kind=='packet':
+            detail=details[i]; pos=h.r['position']-0xc000
+            consumed=ends[h.blocks-1]+int.from_bytes(cpu.banks[7][pos:pos+2],'little')
+            if consumed!=detail['raw_end']: raise AssertionError(('packet input cursor differs',i))
+            if bytes(cpu.read8(0xa6a0+j) for j in range(len(detail['payload'])))!=detail['payload']:
+                raise AssertionError(('lookahead packet differs',i))
+            if checked['compact']:
+                previous_map=packets[checked['compact']-1][1]
+                if bytes(cpu.read8(0xbf20+j) for j in range(80))!=previous_map:
+                    raise AssertionError(('packet input overwrote pending native map',i))
+        elif kind=='compact':
             if bytes(cpu.banks[5][0x2400:0x3300])!=states[i].tobytes(): raise AssertionError(('compact differs',i))
             group,native=packets[i]; detail=details[i]; base=0xa6a0+detail['coded_offset']
             pos=h.r['position']-0xc000
@@ -87,6 +102,8 @@ def main():
                     (0xba40,detail['cache']),(0xa6a0,detail['payload']+b'\0')):
                 if bytes(cpu.read8(address+j) for j in range(len(wanted)))!=wanted:
                     raise AssertionError(('input mutated',i,address))
+            if args.packet_ahead and bytes(cpu.read8(0xbf20+j) for j in range(80))!=native:
+                raise AssertionError(('saved native map differs',i))
             for address,wanted in h.frame.protected_regions:
                 bank=5 if address<0x8000 else 2 if address<0xc000 else 6
                 if bytes(cpu.banks[bank][address&16383:(address&16383)+len(wanted)])!=wanted:
@@ -95,16 +112,16 @@ def main():
             bank=7 if i%2==0 else 5; screens[bank]=display_screen(states[i].tobytes(),black_borders=True)
         elif (7 if cpu.port_7ffd&8 else 5)!=(7 if i%2==0 else 5):
             raise AssertionError(('published wrong bank',i))
-        if kind!='compact':
+        if kind not in ('compact','packet'):
             for bank,screen in screens.items():
                 wanted=progress.reference_screen(screen,bar_frames,args.progress_frames) if h.progress else screen
                 if bytes(cpu.banks[bank][:6912])!=wanted: raise AssertionError(('native differs',kind,i,bank))
         if bytes(cpu.banks[5][0x1b00:0x2400])!=b'\xa5'*0x900: raise AssertionError('TR-DOS workspace changed')
         checked[kind]+=1
     clock=Clock(h,ticks[:target*6],lookahead=args.lookahead,observer=observe)
-    report=dict(scope=__doc__,baseline_commit='1f58971',complete=False,release=False,
+    report=dict(scope=__doc__,baseline_commit='a50aa55' if args.packet_ahead else '1f58971',complete=False,release=False,
         frames_expected=count,frames_requested=target,raw_sha256=sha(raw),states_sha256=sha(states.tobytes()),
-        compressed_bytes=len(ring),compressed_stream_delta_bytes=0,lookahead=args.lookahead,
+        compressed_bytes=len(ring),compressed_stream_delta_bytes=0,lookahead=args.lookahead,packet_ahead=h.packet_ahead,
         progress_frames_on_virtual_volume=args.progress_frames,disk_delivery_verified=False,ula_verified=False,
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         code_regions=[dict(base=base,code_hex=blob.hex()) for base,blob in h.regions],

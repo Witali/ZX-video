@@ -39,9 +39,11 @@ def display_screen(state, *, black_borders=False):
 
 
 def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False, dynamic_source=False, dynamic_metadata=False,
-            split_prepare=False):
+            split_prepare=False,preloaded_mask=False):
     if split_prepare and not deferred_publish:
         raise ValueError('split preparation requires deferred publication')
+    if preloaded_mask and not (split_prepare and dynamic_metadata):
+        raise ValueError('preloaded native mask requires split preparation and dynamic metadata')
     a, listing = MiniAssembler(origin), []
     a.label('run')
     def emit(name, data, ticks):
@@ -69,14 +71,18 @@ def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False, dynamic_sour
         listing.append(dict(address=a.pc, instruction='LD A,(raw_attribute_flag)', tstates=13, stage='handoff'))
         a.abs16(0x3a, 'raw_attribute_flag'); store_a(recon['raw_attributes'])
     address('CALL reconstruct', 0xcd, recon['frame'], 17)
+    if preloaded_mask:
+        listing.append(dict(address=a.pc,instruction='LD HL,(native_pointer)',tstates=16,stage='handoff'))
+        a.abs16(0x2a,'native_pointer')
+        address('CALL save native map',0xcd,draw['copy_map'],17)
     if split_prepare:
         emit('RET (compact ready)', [0xc9], 10)
         a.label('draw_compact')
     load_a(draw['screen_base'])
-    if dynamic_metadata:
+    if dynamic_metadata and not preloaded_mask:
         listing.append(dict(address=a.pc,instruction='LD HL,(native_pointer)',tstates=16,stage='handoff'))
         a.abs16(0x2a,'native_pointer')
-    else:
+    elif not preloaded_mask:
         address('LD HL,native_map', 0x21, MAP, 10)
     address('CALL draw', 0xcd, draw['draw'], 17)
     if deferred_publish:
@@ -163,7 +169,7 @@ class PipelineCPU(NativeCPU):
 class Harness:
     def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False,
                  constant_attribute_borders=False,skip_black_borders=False,encoded_noop_runs=False,skip_static_stripes=False,
-                 split_prepare=False,page_entry=None):
+                 split_prepare=False,page_entry=None,preloaded_mask=False):
         if skip_black_borders and not constant_attribute_borders:
             raise ValueError('black borders require initialized constant attributes')
         self.raw_attributes = raw_attributes
@@ -180,12 +186,14 @@ class Harness:
             selective_cache=selective_cache,skip_noop_runs=skip_noop_runs,encoded_noop_runs=encoded_noop_runs,
             skip_static_stripes=skip_static_stripes)
         self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch,
-            constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders,page_entry=page_entry)
+            constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders,page_entry=page_entry,
+            preloaded_mask=preloaded_mask)
         self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw, origin=0x7900 if selective_cache else WRAPPER,
                                                deferred_publish=deferred_publish,dynamic_source=dynamic_source,
-                                               dynamic_metadata=dynamic_metadata,split_prepare=split_prepare)
+                                               dynamic_metadata=dynamic_metadata,split_prepare=split_prepare,preloaded_mask=preloaded_mask)
         self.init_code, ii = initializer(self.draw,constant_attribute_borders=constant_attribute_borders)
         self.cpu = PipelineCPU(b'', b'')
+        self.cpu.target_bank = None  # A saved map may precede the first native draw.
         self.cpu.port_7ffd = 0x16
         self.cpu.state_regions = [(x['state'], x['end']) for x in (self.recon, self.draw, self.w)]
         self.cpu.input_end = INPUT_END
