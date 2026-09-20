@@ -63,10 +63,11 @@ class StreamCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, stream, *, ring_start=0xfff0, page=0x17,token_boundaries=False,page_entry=None):
+    def __init__(self, stream, *, ring_start=0xfff0, page=0x17,token_boundaries=False,page_entry=None,
+                 unrolled_copy=False):
         if page not in (0x17, 0x1f): raise ValueError('bank 7 required')
         zcode, self.z = zx0.build(fast_literal=True, fast_refill=True,token_boundaries=token_boundaries,page_entry=page_entry)
-        rcode, loader, self.r, listing = reader.build(self.z)
+        rcode, loader, self.r, listing = reader.build(self.z,unrolled_copy=unrolled_copy)
         cpu = self.cpu = StreamCPU(b'', b'')
         for bank in cpu.banks: bank[:] = b'\xa5'*16384
         cpu.z_labels, cpu.r_labels = self.z, self.r
@@ -77,6 +78,7 @@ class Harness:
         cpu.patches = {self.z['slice_high_operand'], self.z['slice_low_operand'],
                        self.z['dzx0t_last_offset']+1, self.z['dzx0t_last_offset']+2}
         if token_boundaries: cpu.patches.add(self.z['slice_equal_branch'])
+        if unrolled_copy: cpu.patches.add(self.r['copy_jump_operand'])
         cpu.ring_data, cpu.ring_start, cpu.consumed = stream, ring_start % 65536, 0
         cpu.produced, cpu.dest_first, cpu.dest_end = 0, DESTINATION, DESTINATION
         for i, value in enumerate(stream[:65536]):

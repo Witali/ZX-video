@@ -74,10 +74,16 @@ class StreamReaderTests(unittest.TestCase):
             Harness(stream[:-1]).take(6)
 
     def test_ay_irq_after_every_instruction(self):
+        self.check_ay_irq_after_every_instruction(False)
+
+    def test_unrolled_ay_irq_after_every_instruction(self):
+        self.check_ay_irq_after_every_instruction(True)
+
+    def check_ay_irq_after_every_instruction(self,unrolled_copy):
         data = bytes(range(256))*2
         stream, expected = blocks([(data[:256], None),
             (data, encode(data, [Token(0, 256), Token(256, 256, 256)]))])
-        h = Harness(stream, ring_start=0xffff)
+        h = Harness(stream, ring_start=0xffff,unrolled_copy=unrolled_copy)
         a = MiniAssembler(0x9400)
         ay_interrupt.emit(a)
         playback_schedule.emit_clock(a, dos_irq=True, full_rom_clock=True, memory_clock=True, audio_irq=True)

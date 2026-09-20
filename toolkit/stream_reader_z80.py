@@ -12,7 +12,12 @@ from build_zxv_trd import MiniAssembler
 CODE, LOADER = 0xdb00, 0x7e90
 
 
-def build(zx0):
+def copy_tstates(count, *, unrolled=False):
+    if count<=0: raise ValueError('copy path requires a positive count')
+    return 48+16*count+18*((count+31)//32) if unrolled else 21*count-5
+
+
+def build(zx0, *, unrolled_copy=False):
     listing = []
 
     def helpers(a):
@@ -66,7 +71,23 @@ def build(zx0):
     addr('LD DE,E000', 0x11, banked_zx0.OUTPUT, 10); emit('ADD HL,DE', [0x19], 11)
     addr('LD DE,(destination)', (0xed, 0x5b), 'destination', 20)
     addr('LD BC,(copy_count)', (0xed, 0x4b), 'copy_count', 20)
-    emit('LDIR', [0xed, 0xb0], [16, 21])
+    a.label('copy')
+    if unrolled_copy:
+        # BC>0. Enter the first partial group at 2*(-C mod 32), then use
+        # complete groups. No alignment, speculative read, or extra buffer.
+        # The IRQ never calls take, so the one-byte JR operand is not reentrant.
+        emit('LD A,C', [0x79], 4); emit('NEG', [0xed,0x44], 8)
+        emit('AND 31', [0xe6,31], 7); emit('ADD A,A', [0x87], 4)
+        addr('LD (copy_jump_operand),A', 0x32, 'copy_jump_operand', 13)
+        listing.append(dict(address=a.pc,instruction='JR partial group',tstates=12,stage='stream_input'))
+        a.emit(0x18); a.label('copy_jump_operand'); a.emit(0)
+        a.label('copy_group')
+        for _ in range(32): emit('LDI', [0xed,0xa0], 16)
+        emit('LD A,B', [0x78], 4); emit('OR C', [0xb1], 4)
+        addr('JP NZ,copy_group', 0xc2, 'copy_group', 10)
+    else:
+        emit('LDIR', [0xed, 0xb0], [16, 21])
+    a.label('copy_end')
     addr('LD (destination),DE', (0xed, 0x53), 'destination', 20)
     addr('LD HL,(pending)', 0x2a, 'pending', 16)
     emit('LD A,H', [0x7c], 4); emit('OR L', [0xb5], 4)
@@ -78,7 +99,7 @@ def build(zx0):
         a.label(name); a.word(0)
     a.label('end')
     code, labels = a.resolve(), dict(a.labels)
-    if a.pc > 0xe000: raise ValueError('reader overlaps ZX0 history')
+    if a.pc > 0xdc00: raise ValueError('reader overlaps packet parser')
 
     a = MiniAssembler(LOADER); emit, addr = helpers(a)
     a.label('load_block')

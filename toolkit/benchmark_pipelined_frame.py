@@ -33,6 +33,7 @@ def main():
         p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--limit',type=int,default=0)
     p.add_argument('--lookahead',action='store_true')
+    p.add_argument('--unrolled-copy',action='store_true',help='Copy decoded packets with groups of 32 LDI')
     p.add_argument('--packet-ahead',action='store_true',help='Preparse another packet/AY while retaining the current native mask')
     p.add_argument('--packet-ahead-policy',choices=('always','idle'),default='always',
         help='With idle, draw a ready compact frame before optional input if the prior screen is already published')
@@ -70,7 +71,8 @@ def main():
     h=Harness(bytes(ring),tables,mapping,target,bulk=True,zero_copy=True,stored_guards=False,
         skip_noop_runs=True,constant_attribute_borders=True,skip_black_borders=True,
         skip_static_stripes=True,token_boundaries=True,pipelined=True,progress_frames=args.progress_frames,
-        packet_ahead='idle' if args.packet_ahead and args.packet_ahead_policy=='idle' else args.packet_ahead)
+        packet_ahead='idle' if args.packet_ahead and args.packet_ahead_policy=='idle' else args.packet_ahead,
+        unrolled_copy=args.unrolled_copy)
     header_result=h.consume_header(header); h.histogram.clear()
     checked=dict(compact=0,native=0,publish=0); bar_frames=0
     if args.packet_ahead: checked['packet']=0
@@ -119,9 +121,10 @@ def main():
         if bytes(cpu.banks[5][0x1b00:0x2400])!=b'\xa5'*0x900: raise AssertionError('TR-DOS workspace changed')
         checked[kind]+=1
     clock=Clock(h,ticks[:target*6],lookahead=args.lookahead,observer=observe)
-    report=dict(scope=__doc__,baseline_commit='a50aa55' if args.packet_ahead else '1f58971',complete=False,release=False,
+    report=dict(scope=__doc__,baseline_commit='0e8acec' if args.unrolled_copy else 'a50aa55' if args.packet_ahead else '1f58971',complete=False,release=False,
         frames_expected=count,frames_requested=target,raw_sha256=sha(raw),states_sha256=sha(states.tobytes()),
         compressed_bytes=len(ring),compressed_stream_delta_bytes=0,lookahead=args.lookahead,packet_ahead=h.packet_ahead,
+        unrolled_copy=args.unrolled_copy,
         progress_frames_on_virtual_volume=args.progress_frames,disk_delivery_verified=False,ula_verified=False,
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         code_regions=[dict(base=base,code_hex=blob.hex()) for base,blob in h.regions],
