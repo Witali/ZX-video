@@ -1,0 +1,72 @@
+{
+  "scope": "Summarize complete B2 consumer measurements separately from queue estimates.",
+  "complete": true,
+  "release": false,
+  "player_changed": false,
+  "frames_verified": 4221,
+  "input_reports": [
+    {
+      "file": "prepared_cells_cpu.json",
+      "sha256": "78920f20f73e18771395e600b3b8d4818708d981e8ad1a49ccc4c0b89951a835"
+    },
+    {
+      "file": "prepared_cells_unrolled_cpu.json",
+      "sha256": "2d490975d7dd185b63db92374df90ccbb38d216e10424b9ec7833ce7affca79f"
+    },
+    {
+      "file": "prepared_cells_unrolled_schedule.json",
+      "sha256": "b2e2f3c4ead5c5c686af7388a7e6dbb061b4ec399ac6d48eaa53a791df6f5e18"
+    }
+  ],
+  "exact_native_screen_verification": "CPU run compared both entire 6912-byte screens after each frame; visible/border writes guarded",
+  "disk_stream_delta_bytes": 0,
+  "producer_measured": false,
+  "actual_cadence_verified": false,
+  "ay_playback_verified": false,
+  "disk_delivery_verified": false,
+  "baseline_output_tstates": 387271475,
+  "b2_ldir_tstates": 501796331,
+  "b2_unrolled_tstates": 489730549,
+  "unrolling_delta_tstates": -12065782,
+  "best_consumer_delta_to_baseline": 102459074,
+  "best_consumer_change_percent": 26.456653953147466,
+  "by_screen_bank": {
+    "5": {
+      "frames": 2110,
+      "tstates": 207868735,
+      "baseline_tstates": 193492762,
+      "delta_tstates": 14375973,
+      "change_percent": 7.429721324666398
+    },
+    "7": {
+      "frames": 2111,
+      "tstates": 281861814,
+      "baseline_tstates": 193778713,
+      "delta_tstates": 88083101,
+      "change_percent": 45.455509346890956
+    }
+  },
+  "code_bytes": {
+    "baseline": 771,
+    "b2_ldir": 768,
+    "b2_unrolled": 852
+  },
+  "copy_formulas": {
+    "ldir": "21*n-5",
+    "unrolled_with_call_return": "75+16*n+18*ceil(n/32)",
+    "positive_length_only": true
+  },
+  "optimistic_model": {
+    "estimated_only": true,
+    "first_late": 648,
+    "late_frames": 906,
+    "frames_outside_20ms": 893,
+    "max_late_fields": 294,
+    "intervals_outside_5_7": 564,
+    "late_runs": 6,
+    "recovered_runs": 6,
+    "max_consecutive_late_frames": 351,
+    "unrecovered_at_end": false
+  },
+  "decision": "Keep the current renderer. This B2 queue adds CPU and its optimistic model misses deadlines. Do not integrate this producer before reducing reconstruction/transport costs. No claim about all possible queues."
+}
