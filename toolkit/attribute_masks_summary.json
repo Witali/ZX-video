@@ -1,0 +1,404 @@
+{
+  "scope": "Separate complete attribute-tail measurements from player timing evidence.",
+  "complete": false,
+  "release": false,
+  "attribute_stage_complete": true,
+  "checked_attribute_frames": 4221,
+  "stages": {
+    "before": {
+      "tstates": 38721106,
+      "stages": {
+        "attribute_pass": 34392554,
+        "huffman": 4328552
+      },
+      "reconstruction_bytes": 4081,
+      "code_end": 36849,
+      "controller_end": null
+    },
+    "after": {
+      "tstates": 20201726,
+      "stages": {
+        "attribute_pass": 15873174,
+        "huffman": 4328552
+      },
+      "reconstruction_bytes": 4052,
+      "code_end": 36820,
+      "controller_end": 37799
+    }
+  },
+  "delta_tstates": -18519380,
+  "change_percent": -47.82761112247155,
+  "delta_formula": "raw=0; coded=-5551+530*nonempty_flags+50*nonempty_masks",
+  "slower_frames": 100,
+  "max_extra_tstates": 1799,
+  "compressed_stream_bytes": 1932429,
+  "compressed_stream_delta_bytes": 0,
+  "additional_ring_or_framebuffer_bytes": 0,
+  "common_publications": 416,
+  "clocks": [
+    {
+      "name": "before",
+      "complete": false,
+      "checked": {
+        "compact": 416,
+        "native": 416,
+        "publish": 416,
+        "packet": 416
+      },
+      "failure": {
+        "error": "('scheduled AY underrun', 2496)",
+        "pc": 56200,
+        "tstates": 178376199,
+        "fields": 2498,
+        "checked": {
+          "compact": 416,
+          "native": 416,
+          "publish": 416,
+          "packet": 416
+        }
+      },
+      "ay_ticks": 2496,
+      "timing": {
+        "checked_publications": 416,
+        "late_field_histogram": {
+          "0": 411,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 2
+        },
+        "late_publications": 5,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 411,
+          "7": 3,
+          "8": 1
+        },
+        "frames_outside_field_budget": 5,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 1,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 5,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 5,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -16,
+        "max_phase_tstates": 354536,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 2,
+        "phase_above_20ms": 5,
+        "irq_boundary_publication_verified": false
+      },
+      "common_timing": {
+        "checked_publications": 416,
+        "late_field_histogram": {
+          "0": 411,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 2
+        },
+        "late_publications": 5,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 411,
+          "7": 3,
+          "8": 1
+        },
+        "frames_outside_field_budget": 5,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 1,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 5,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 5,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -16,
+        "max_phase_tstates": 354536,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 2,
+        "phase_above_20ms": 5,
+        "irq_boundary_publication_verified": false
+      },
+      "on_time_out_phase_tstates": [
+        -16,
+        59
+      ],
+      "foreground_tstates": 131178791,
+      "irq_tstates": 2162960,
+      "missed_nominal_frames": [
+        {
+          "index": 411,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141811
+        },
+        {
+          "index": 412,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212717
+        },
+        {
+          "index": 413,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283630
+        },
+        {
+          "index": 414,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354529
+        },
+        {
+          "index": 415,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354536
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "complete": false,
+      "checked": {
+        "compact": 623,
+        "native": 623,
+        "publish": 623,
+        "packet": 623
+      },
+      "failure": {
+        "error": "('scheduled AY underrun', 3738)",
+        "pc": 31929,
+        "tstates": 266443936,
+        "fields": 3740,
+        "checked": {
+          "compact": 623,
+          "native": 623,
+          "publish": 623,
+          "packet": 623
+        }
+      },
+      "ay_ticks": 3738,
+      "timing": {
+        "checked_publications": 623,
+        "late_field_histogram": {
+          "0": 604,
+          "1": 4,
+          "2": 4,
+          "3": 4,
+          "4": 4,
+          "5": 3
+        },
+        "late_publications": 19,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "4": 1,
+          "5": 6,
+          "6": 605,
+          "7": 7,
+          "8": 3
+        },
+        "frames_outside_field_budget": 15,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 4,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 12,
+            "recovered_at_frame": 423
+          },
+          {
+            "first_frame": 576,
+            "frames": 4,
+            "recovered_at_frame": 580
+          },
+          {
+            "first_frame": 620,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 12,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -13,
+        "max_phase_tstates": 354534,
+        "intervals_below_5_fields": 2,
+        "intervals_above_7_fields": 6,
+        "phase_above_20ms": 16,
+        "irq_boundary_publication_verified": false
+      },
+      "common_timing": {
+        "checked_publications": 416,
+        "late_field_histogram": {
+          "0": 411,
+          "2": 2,
+          "3": 1,
+          "4": 1,
+          "5": 1
+        },
+        "late_publications": 5,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 411,
+          "7": 3,
+          "8": 1
+        },
+        "frames_outside_field_budget": 5,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 1,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 5,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 5,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -13,
+        "max_phase_tstates": 354534,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 2,
+        "phase_above_20ms": 5,
+        "irq_boundary_publication_verified": false
+      },
+      "on_time_out_phase_tstates": [
+        -13,
+        30
+      ],
+      "foreground_tstates": 202321384,
+      "irq_tstates": 3268010,
+      "missed_nominal_frames": [
+        {
+          "index": 411,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141805
+        },
+        {
+          "index": 412,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141817
+        },
+        {
+          "index": 413,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212714
+        },
+        {
+          "index": 414,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283621
+        },
+        {
+          "index": 415,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354534
+        },
+        {
+          "index": 416,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354529
+        },
+        {
+          "index": 417,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283623
+        },
+        {
+          "index": 418,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283620
+        },
+        {
+          "index": 419,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283624
+        },
+        {
+          "index": 420,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212713
+        },
+        {
+          "index": 421,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141805
+        },
+        {
+          "index": 422,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70899
+        },
+        {
+          "index": 576,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70896
+        },
+        {
+          "index": 577,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141804
+        },
+        {
+          "index": 578,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212713
+        },
+        {
+          "index": 579,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70898
+        },
+        {
+          "index": 620,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70909
+        },
+        {
+          "index": 621,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212726
+        },
+        {
+          "index": 622,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354532
+        }
+      ]
+    }
+  ],
+  "full_frame_delivery_verified": false,
+  "disk_delivery_verified": false,
+  "ula_verified": false,
+  "inputs": {
+    "cpu": {
+      "file": "attribute_masks_cpu.json",
+      "sha256": "465aa682a0d49ebc3be39dd221ae2558f35acfbc886956965f8aab75d7ed28fd"
+    },
+    "before": {
+      "file": "attribute_groups_idle_cpu.json",
+      "sha256": "b4b477baf7e977fd78f7d0db774fb508073db92df1259c2372d0d8633d2dc76e"
+    },
+    "after": {
+      "file": "attribute_masks_idle_cpu.json",
+      "sha256": "f0f68d360987d7f30619bacef2e008e5e4979b75f27bbdc06d04bd3425816232"
+    }
+  }
+}

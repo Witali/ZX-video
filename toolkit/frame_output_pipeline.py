@@ -171,7 +171,9 @@ class PipelineCPU(NativeCPU):
 class Harness:
     def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False,
                  constant_attribute_borders=False,skip_black_borders=False,encoded_noop_runs=False,skip_static_stripes=False,
-                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False,attribute_groups=False):
+                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,attribute_flags=False):
+        if attribute_flags and not (decode_metadata and raw_attributes):
+            raise ValueError('attribute flags require decoded metadata and the raw flag')
         if skip_black_borders and not constant_attribute_borders:
             raise ValueError('black borders require initialized constant attributes')
         if attribute_groups and not (constant_attribute_borders and decode_metadata and raw_attributes):
@@ -190,7 +192,8 @@ class Harness:
             hybrid=True, skip_empty=True, intra_above=True, intra_extended=True,
             fast_fragments=True, unrolled_motion=True, split_literals=True, raw_attributes=raw_attributes,
             selective_cache=selective_cache,skip_noop_runs=skip_noop_runs,encoded_noop_runs=encoded_noop_runs,
-            skip_static_stripes=skip_static_stripes,cache_columns=cache_columns,unrolled_cache=unrolled_cache)
+            skip_static_stripes=skip_static_stripes,cache_columns=cache_columns,unrolled_cache=unrolled_cache,
+            attribute_flags=attribute_flags)
         if self.recon['end'] > output.CODE:
             raise ValueError('reconstruction overlaps native renderer')
         ai=[]; ar=[]; attribute_entry=None
@@ -202,6 +205,10 @@ class Harness:
         self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch,
             constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders,page_entry=page_entry,
             preloaded_mask=preloaded_mask,attribute_groups=attribute_groups)
+        if attribute_flags:
+            from attribute_mask_z80 import CODE as attribute_controller
+            if self.draw['end']>attribute_controller:
+                raise ValueError('native renderer overlaps attribute flag controller')
         self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw, origin=0x7900 if selective_cache else WRAPPER,
                                                deferred_publish=deferred_publish,dynamic_source=dynamic_source,
                                                dynamic_metadata=dynamic_metadata,split_prepare=split_prepare,preloaded_mask=preloaded_mask,

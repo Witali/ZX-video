@@ -66,7 +66,7 @@ class Harness:
     def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False,
                  stored_guards=True,constant_attribute_borders=False,skip_black_borders=False,progress_frames=None,
                  encoded_noop_runs=False,skip_static_stripes=False,token_boundaries=False,pipelined=False,packet_ahead=False,
-                 unrolled_copy=False,unrolled_cache=False,attribute_groups=False):
+                 unrolled_copy=False,unrolled_cache=False,attribute_groups=False,attribute_flags=False):
         if zero_copy and not bulk: raise ValueError('zero-copy metadata requires bulk packets')
         if not stored_guards and not bulk: raise ValueError('omitting guards requires bulk packets')
         if progress_frames is not None and not (bulk and zero_copy and skip_black_borders):
@@ -85,7 +85,8 @@ class Harness:
             dynamic_metadata=zero_copy,skip_noop_runs=skip_noop_runs,
             constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders,
             encoded_noop_runs=encoded_noop_runs,skip_static_stripes=skip_static_stripes,unrolled_cache=unrolled_cache,
-            split_prepare=pipelined,page_entry=page_entry,preloaded_mask=packet_ahead,attribute_groups=attribute_groups)
+            split_prepare=pipelined,page_entry=page_entry,preloaded_mask=packet_ahead,attribute_groups=attribute_groups,
+            attribute_flags=attribute_flags)
         s = stream.Harness(ring, ring_start=ring_start,token_boundaries=token_boundaries,page_entry=page_entry,
             unrolled_copy=unrolled_copy)
         self.z, self.r, self.blocks = s.z, s.r, 0

@@ -23,6 +23,9 @@ on Z80. Virtual border rows still clear normally; the disk ring is unchanged.
 Experimental cache_columns=16 reads six coverage bytes and copies only the
 requested halves. unrolled_cache=True retains the three-byte map and copies
 rows in pairs. They are mutually exclusive; default machine code is unchanged.
+attribute_flags=True uses the metadata flags at BFB0..BFBB to skip eight
+empty attribute masks, with a controller at 9360 below the AY handler.
+It requires the pipeline's fixed A640 mask layout and decoded metadata.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -170,7 +173,9 @@ def raw_intra_tstates(vector, tile, mask, *, unaligned=False):
     return total
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False):
+    if attribute_flags and not (hybrid and raw_attributes):
+        raise ValueError('attribute flags require the hybrid raw-attribute path')
     if cache_columns not in (16,32) or (cache_columns != 32 or unrolled_cache) and not selective_cache:
         raise ValueError('cache variants require selective coverage with 16/32 columns')
     if unrolled_cache and cache_columns != 32:
@@ -862,12 +867,17 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
             load('LD (literal_source),HL', 0x22, 'literal_source', 16)
             emit('RET', [0xc9], 10)
             a.label('coded_attributes')
-        load('LD HL,(attribute_masks)', 0x2a, 'attribute_masks', 16)
-        wordop('LD DE,attributes', 0x11, FRAME+3072, 10)
-        a.label('attribute_mask')
-        emit('LD A,(HL)', [0x7e], 7); emit('INC HL', [0x23], 6)
-        emit('OR A', [0xb7], 4); jump('JP Z,attribute_empty', 0xca, 'attribute_empty', 10)
-        emit('LD B,A', [0x47], 4)
+        if attribute_flags:
+            from attribute_mask_z80 import CODE as attribute_controller
+            wordop('JP attribute_flag_scan',0xc3,attribute_controller,10)
+            a.label('attribute_group_apply')
+        else:
+            load('LD HL,(attribute_masks)', 0x2a, 'attribute_masks', 16)
+            wordop('LD DE,attributes', 0x11, FRAME+3072, 10)
+            a.label('attribute_mask')
+            emit('LD A,(HL)', [0x7e], 7); emit('INC HL', [0x23], 6)
+            emit('OR A', [0xb7], 4); jump('JP Z,attribute_empty', 0xca, 'attribute_empty', 10)
+            emit('LD B,A', [0x47], 4)
         for field in range(8):
             emit('SLA B', [0xcb, 0x20], 8); jump('JP NC,keep_attribute', 0xd2, f'keep_raster_{field}', 10)
             emit('LD A,(DE)', [0x1a], 7); emit('LD C,A', [0x4f], 4); emit('EXX', [0xd9], 4)
@@ -875,15 +885,18 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
             emit('XOR C', [0xa9], 4); emit('LD (DE),A', [0x12], 7)
             a.label(f'keep_raster_{field}')
             emit('INC E' if field < 7 else 'INC DE', [0x1c if field < 7 else 0x13], 4 if field < 7 else 6)
-        jump('JP attribute_next', 0xc3, 'attribute_next', 10)
-        a.label('attribute_empty')
-        emit('LD A,E', [0x7b], 4); emit('ADD A,8', [0xc6, 8], 7); emit('LD E,A', [0x5f], 4)
-        jump('JR NC,attribute_next', 0x30, 'attribute_next', [7, 12], True)
-        emit('INC D', [0x14], 4)
-        a.label('attribute_next')
-        emit('LD A,D', [0x7a], 4); emit('CP attribute_end', [0xfe, (FRAME+3840) >> 8], 7)
-        jump('JP NZ,attribute_mask', 0xc2, 'attribute_mask', 10)
-        load('LD (attribute_masks),HL', 0x22, 'attribute_masks', 16); emit('RET', [0xc9], 10)
+        if attribute_flags:
+            emit('RET', [0xc9], 10)
+        else:
+            jump('JP attribute_next', 0xc3, 'attribute_next', 10)
+            a.label('attribute_empty')
+            emit('LD A,E', [0x7b], 4); emit('ADD A,8', [0xc6, 8], 7); emit('LD E,A', [0x5f], 4)
+            jump('JR NC,attribute_next', 0x30, 'attribute_next', [7, 12], True)
+            emit('INC D', [0x14], 4)
+            a.label('attribute_next')
+            emit('LD A,D', [0x7a], 4); emit('CP attribute_end', [0xfe, (FRAME+3840) >> 8], 7)
+            jump('JP NZ,attribute_mask', 0xc2, 'attribute_mask', 10)
+            load('LD (attribute_masks),HL', 0x22, 'attribute_masks', 16); emit('RET', [0xc9], 10)
     else:
         emit_tile_attributes(a, emit, load, jump, skip_empty)
     a.label('state')
@@ -910,6 +923,10 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         (ROW_LOW, bytes((row*64) & 255 for row in range(16))),
         (ROW_HIGH, bytes((CACHE+row*64) >> 8 for row in range(16)))]
     code, labels = a.resolve(), dict(a.labels)
+    if attribute_flags:
+        import attribute_mask_z80 as attributes
+        extra,labels,rows=attributes.build(labels)
+        regions.append((attributes.CODE,extra)); listing.extend(rows)
     if skip_noop_runs:
         a = MiniAssembler(NOOP_SCANNER); a.labels.update(labels)
         stage = 'noop_control'
