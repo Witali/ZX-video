@@ -1,0 +1,1083 @@
+{
+  "scope": "Keep packet CPU, mask storage and whole-clock evidence distinct.",
+  "baseline_commit": "c829610",
+  "complete": true,
+  "release": false,
+  "all_frames_requested": 4221,
+  "packet_stage_complete": true,
+  "checked_packets": 4221,
+  "manually_verified_ay_ticks": 25326,
+  "packet_stages": {
+    "before": {
+      "packet": 4219976,
+      "stream_input": 57002448,
+      "banked_zx0": 278943990,
+      "audio": 9150603,
+      "metadata": 80531227,
+      "paging": 1435896
+    },
+    "after": {
+      "packet": 4570319,
+      "stream_input": 59696416,
+      "banked_zx0": 282943361,
+      "audio": 9150603,
+      "metadata": 80531227,
+      "paging": 1435896
+    }
+  },
+  "packet_total_tstates": {
+    "before": 431284140,
+    "after": 438327822
+  },
+  "packet_stage_deltas": {
+    "audio": 0,
+    "banked_zx0": 3999371,
+    "metadata": 0,
+    "packet": 350343,
+    "paging": 0,
+    "stream_input": 2693968
+  },
+  "parser_only_delta_per_frame": 83,
+  "parser_code_delta_bytes": 16,
+  "new_framebuffer_bytes": 0,
+  "sound_bytes_changed": false,
+  "common_publications": 623,
+  "clocks": [
+    {
+      "name": "baseline",
+      "complete": false,
+      "checked": {
+        "compact": 623,
+        "native": 623,
+        "publish": 623,
+        "packet": 623
+      },
+      "failure": {
+        "error": "('scheduled AY underrun', 3738)",
+        "pc": 31934,
+        "tstates": 266443934,
+        "fields": 3740,
+        "checked": {
+          "compact": 623,
+          "native": 623,
+          "publish": 623,
+          "packet": 623
+        }
+      },
+      "ay_ticks": 3738,
+      "timing": {
+        "checked_publications": 623,
+        "late_field_histogram": {
+          "0": 606,
+          "1": 5,
+          "2": 1,
+          "3": 5,
+          "4": 3,
+          "5": 3
+        },
+        "late_publications": 17,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "4": 2,
+          "5": 4,
+          "6": 606,
+          "7": 7,
+          "8": 3
+        },
+        "frames_outside_field_budget": 12,
+        "first_outside_field_budget": 412,
+        "intervals_outside_budget": 5,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 11,
+            "recovered_at_frame": 422
+          },
+          {
+            "first_frame": 577,
+            "frames": 3,
+            "recovered_at_frame": 580
+          },
+          {
+            "first_frame": 620,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 11,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -13,
+        "max_phase_tstates": 354538,
+        "intervals_below_5_fields": 4,
+        "intervals_above_7_fields": 5,
+        "phase_above_20ms": 13,
+        "irq_boundary_publication_verified": false
+      },
+      "common_timing": {
+        "checked_publications": 623,
+        "late_field_histogram": {
+          "0": 606,
+          "1": 5,
+          "2": 1,
+          "3": 5,
+          "4": 3,
+          "5": 3
+        },
+        "late_publications": 17,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "4": 2,
+          "5": 4,
+          "6": 606,
+          "7": 7,
+          "8": 3
+        },
+        "frames_outside_field_budget": 12,
+        "first_outside_field_budget": 412,
+        "intervals_outside_budget": 5,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 11,
+            "recovered_at_frame": 422
+          },
+          {
+            "first_frame": 577,
+            "frames": 3,
+            "recovered_at_frame": 580
+          },
+          {
+            "first_frame": 620,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 11,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -13,
+        "max_phase_tstates": 354538,
+        "intervals_below_5_fields": 4,
+        "intervals_above_7_fields": 5,
+        "phase_above_20ms": 13,
+        "irq_boundary_publication_verified": false
+      },
+      "on_time_out_phase_tstates": [
+        -13,
+        30
+      ],
+      "foreground_tstates": 199462876,
+      "irq_tstates": 3274308,
+      "missed_nominal_frames": [
+        {
+          "index": 411,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70895
+        },
+        {
+          "index": 412,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141805
+        },
+        {
+          "index": 413,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212712
+        },
+        {
+          "index": 414,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283624
+        },
+        {
+          "index": 415,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354530
+        },
+        {
+          "index": 416,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354532
+        },
+        {
+          "index": 417,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283626
+        },
+        {
+          "index": 418,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283624
+        },
+        {
+          "index": 419,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212714
+        },
+        {
+          "index": 420,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212716
+        },
+        {
+          "index": 421,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70911
+        },
+        {
+          "index": 577,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70900
+        },
+        {
+          "index": 578,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212711
+        },
+        {
+          "index": 579,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70901
+        },
+        {
+          "index": 620,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70896
+        },
+        {
+          "index": 621,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212724
+        },
+        {
+          "index": 622,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354538
+        }
+      ],
+      "compressed_bytes": 1932429,
+      "foreground_stages": {
+        "schedule": 768503,
+        "packet": 752014,
+        "stream_input": 7049292,
+        "banked_zx0": 33001921,
+        "audio": 1326437,
+        "metadata": 11837592,
+        "paging": 443960,
+        "handoff": 209951,
+        "reconstruct": 96514129,
+        "attribute_groups": 625517,
+        "output": 46933560
+      },
+      "parser_bytes": 206,
+      "parser_end": 56526,
+      "next_unfinished_packet": {
+        "index": 623,
+        "payload_bytes": 1601,
+        "ay_bytes": 20,
+        "coded_bytes": 44,
+        "literal_bytes": 1181
+      }
+    },
+    {
+      "name": "density",
+      "complete": false,
+      "checked": {
+        "compact": 623,
+        "native": 623,
+        "publish": 623,
+        "packet": 623
+      },
+      "failure": {
+        "error": "('scheduled AY underrun', 3738)",
+        "pc": 32007,
+        "tstates": 266443931,
+        "fields": 3740,
+        "checked": {
+          "compact": 623,
+          "native": 623,
+          "publish": 623,
+          "packet": 623
+        }
+      },
+      "ay_ticks": 3738,
+      "timing": {
+        "checked_publications": 623,
+        "late_field_histogram": {
+          "0": 604,
+          "1": 4,
+          "2": 4,
+          "3": 4,
+          "4": 3,
+          "5": 4
+        },
+        "late_publications": 19,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "4": 1,
+          "5": 6,
+          "6": 605,
+          "7": 7,
+          "8": 3
+        },
+        "frames_outside_field_budget": 15,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 4,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 12,
+            "recovered_at_frame": 423
+          },
+          {
+            "first_frame": 576,
+            "frames": 4,
+            "recovered_at_frame": 580
+          },
+          {
+            "first_frame": 620,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 12,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -13,
+        "max_phase_tstates": 354532,
+        "intervals_below_5_fields": 4,
+        "intervals_above_7_fields": 8,
+        "phase_above_20ms": 15,
+        "irq_boundary_publication_verified": false
+      },
+      "common_timing": {
+        "checked_publications": 623,
+        "late_field_histogram": {
+          "0": 604,
+          "1": 4,
+          "2": 4,
+          "3": 4,
+          "4": 3,
+          "5": 4
+        },
+        "late_publications": 19,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "4": 1,
+          "5": 6,
+          "6": 605,
+          "7": 7,
+          "8": 3
+        },
+        "frames_outside_field_budget": 15,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 4,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 12,
+            "recovered_at_frame": 423
+          },
+          {
+            "first_frame": 576,
+            "frames": 4,
+            "recovered_at_frame": 580
+          },
+          {
+            "first_frame": 620,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 12,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -13,
+        "max_phase_tstates": 354532,
+        "intervals_below_5_fields": 4,
+        "intervals_above_7_fields": 8,
+        "phase_above_20ms": 15,
+        "irq_boundary_publication_verified": false
+      },
+      "on_time_out_phase_tstates": [
+        -13,
+        7
+      ],
+      "foreground_tstates": 200394869,
+      "irq_tstates": 3271958,
+      "missed_nominal_frames": [
+        {
+          "index": 411,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141809
+        },
+        {
+          "index": 412,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141804
+        },
+        {
+          "index": 413,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212716
+        },
+        {
+          "index": 414,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283634
+        },
+        {
+          "index": 415,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354532
+        },
+        {
+          "index": 416,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354527
+        },
+        {
+          "index": 417,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354527
+        },
+        {
+          "index": 418,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283620
+        },
+        {
+          "index": 419,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283622
+        },
+        {
+          "index": 420,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212716
+        },
+        {
+          "index": 421,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141812
+        },
+        {
+          "index": 422,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70898
+        },
+        {
+          "index": 576,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70898
+        },
+        {
+          "index": 577,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141807
+        },
+        {
+          "index": 578,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212711
+        },
+        {
+          "index": 579,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70898
+        },
+        {
+          "index": 620,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70900
+        },
+        {
+          "index": 621,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212714
+        },
+        {
+          "index": 622,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354531
+        }
+      ],
+      "compressed_bytes": 1916903,
+      "foreground_stages": {
+        "schedule": 761459,
+        "packet": 752014,
+        "stream_input": 7049341,
+        "banked_zx0": 32699134,
+        "audio": 1326437,
+        "metadata": 11837592,
+        "paging": 442288,
+        "handoff": 209951,
+        "reconstruct": 96514129,
+        "attribute_groups": 625517,
+        "output": 48177007
+      },
+      "parser_bytes": 206,
+      "parser_end": 56526,
+      "next_unfinished_packet": {
+        "index": 623,
+        "payload_bytes": 1601,
+        "ay_bytes": 20,
+        "coded_bytes": 44,
+        "literal_bytes": 1181
+      }
+    },
+    {
+      "name": "early",
+      "complete": false,
+      "checked": {
+        "compact": 624,
+        "native": 623,
+        "publish": 623,
+        "packet": 624
+      },
+      "failure": {
+        "error": "('scheduled AY underrun', 3744)",
+        "pc": 37233,
+        "tstates": 266869383,
+        "fields": 3746,
+        "checked": {
+          "compact": 624,
+          "native": 623,
+          "publish": 623,
+          "packet": 624
+        }
+      },
+      "ay_ticks": 3744,
+      "timing": {
+        "checked_publications": 623,
+        "late_field_histogram": {
+          "0": 604,
+          "1": 5,
+          "2": 3,
+          "3": 4,
+          "4": 4,
+          "5": 3
+        },
+        "late_publications": 19,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "4": 1,
+          "5": 6,
+          "6": 604,
+          "7": 9,
+          "8": 2
+        },
+        "frames_outside_field_budget": 14,
+        "first_outside_field_budget": 412,
+        "intervals_outside_budget": 3,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 12,
+            "recovered_at_frame": 423
+          },
+          {
+            "first_frame": 576,
+            "frames": 4,
+            "recovered_at_frame": 580
+          },
+          {
+            "first_frame": 620,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 12,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -1,
+        "max_phase_tstates": 354544,
+        "intervals_below_5_fields": 4,
+        "intervals_above_7_fields": 6,
+        "phase_above_20ms": 18,
+        "irq_boundary_publication_verified": false
+      },
+      "common_timing": {
+        "checked_publications": 623,
+        "late_field_histogram": {
+          "0": 604,
+          "1": 5,
+          "2": 3,
+          "3": 4,
+          "4": 4,
+          "5": 3
+        },
+        "late_publications": 19,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "4": 1,
+          "5": 6,
+          "6": 604,
+          "7": 9,
+          "8": 2
+        },
+        "frames_outside_field_budget": 14,
+        "first_outside_field_budget": 412,
+        "intervals_outside_budget": 3,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 12,
+            "recovered_at_frame": 423
+          },
+          {
+            "first_frame": 576,
+            "frames": 4,
+            "recovered_at_frame": 580
+          },
+          {
+            "first_frame": 620,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 12,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -1,
+        "max_phase_tstates": 354544,
+        "intervals_below_5_fields": 4,
+        "intervals_above_7_fields": 6,
+        "phase_above_20ms": 18,
+        "irq_boundary_publication_verified": false
+      },
+      "on_time_out_phase_tstates": [
+        -1,
+        74
+      ],
+      "foreground_tstates": 200382571,
+      "irq_tstates": 3277759,
+      "missed_nominal_frames": [
+        {
+          "index": 411,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70912
+        },
+        {
+          "index": 412,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141827
+        },
+        {
+          "index": 413,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212723
+        },
+        {
+          "index": 414,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283636
+        },
+        {
+          "index": 415,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354542
+        },
+        {
+          "index": 416,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354542
+        },
+        {
+          "index": 417,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283635
+        },
+        {
+          "index": 418,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283645
+        },
+        {
+          "index": 419,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283636
+        },
+        {
+          "index": 420,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212738
+        },
+        {
+          "index": 421,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141821
+        },
+        {
+          "index": 422,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70915
+        },
+        {
+          "index": 576,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70908
+        },
+        {
+          "index": 577,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141828
+        },
+        {
+          "index": 578,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212725
+        },
+        {
+          "index": 579,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70911
+        },
+        {
+          "index": 620,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70909
+        },
+        {
+          "index": 621,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212725
+        },
+        {
+          "index": 622,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354544
+        }
+      ],
+      "compressed_bytes": 1932429,
+      "foreground_stages": {
+        "schedule": 767464,
+        "packet": 804775,
+        "stream_input": 7470507,
+        "banked_zx0": 33159820,
+        "audio": 1328436,
+        "metadata": 11856139,
+        "paging": 444576,
+        "handoff": 210278,
+        "reconstruct": 96714252,
+        "attribute_groups": 626787,
+        "output": 46999537
+      },
+      "parser_bytes": 222,
+      "parser_end": 56542,
+      "next_unfinished_packet": {
+        "index": 624,
+        "payload_bytes": 1612,
+        "ay_bytes": 32,
+        "coded_bytes": 64,
+        "literal_bytes": 1153
+      }
+    },
+    {
+      "name": "combined",
+      "complete": false,
+      "checked": {
+        "compact": 624,
+        "native": 623,
+        "publish": 623,
+        "packet": 624
+      },
+      "failure": {
+        "error": "('scheduled AY underrun', 3744)",
+        "pc": 37047,
+        "tstates": 266869378,
+        "fields": 3746,
+        "checked": {
+          "compact": 624,
+          "native": 623,
+          "publish": 623,
+          "packet": 624
+        }
+      },
+      "ay_ticks": 3744,
+      "timing": {
+        "checked_publications": 623,
+        "late_field_histogram": {
+          "0": 604,
+          "1": 3,
+          "2": 4,
+          "3": 3,
+          "4": 3,
+          "5": 5,
+          "6": 1
+        },
+        "late_publications": 19,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "4": 3,
+          "5": 2,
+          "6": 607,
+          "7": 7,
+          "8": 2,
+          "9": 1
+        },
+        "frames_outside_field_budget": 16,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 6,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 12,
+            "recovered_at_frame": 423
+          },
+          {
+            "first_frame": 576,
+            "frames": 4,
+            "recovered_at_frame": 580
+          },
+          {
+            "first_frame": 620,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 12,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -1,
+        "max_phase_tstates": 425455,
+        "intervals_below_5_fields": 3,
+        "intervals_above_7_fields": 7,
+        "phase_above_20ms": 19,
+        "irq_boundary_publication_verified": false
+      },
+      "common_timing": {
+        "checked_publications": 623,
+        "late_field_histogram": {
+          "0": 604,
+          "1": 3,
+          "2": 4,
+          "3": 3,
+          "4": 3,
+          "5": 5,
+          "6": 1
+        },
+        "late_publications": 19,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "4": 3,
+          "5": 2,
+          "6": 607,
+          "7": 7,
+          "8": 2,
+          "9": 1
+        },
+        "frames_outside_field_budget": 16,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 6,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 12,
+            "recovered_at_frame": 423
+          },
+          {
+            "first_frame": 576,
+            "frames": 4,
+            "recovered_at_frame": 580
+          },
+          {
+            "first_frame": 620,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 12,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -1,
+        "max_phase_tstates": 425455,
+        "intervals_below_5_fields": 3,
+        "intervals_above_7_fields": 7,
+        "phase_above_20ms": 19,
+        "irq_boundary_publication_verified": false
+      },
+      "on_time_out_phase_tstates": [
+        -1,
+        36
+      ],
+      "foreground_tstates": 201313634,
+      "irq_tstates": 3275691,
+      "missed_nominal_frames": [
+        {
+          "index": 411,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141816
+        },
+        {
+          "index": 412,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212726
+        },
+        {
+          "index": 413,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283636
+        },
+        {
+          "index": 414,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354544
+        },
+        {
+          "index": 415,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354558
+        },
+        {
+          "index": 416,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354542
+        },
+        {
+          "index": 417,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354548
+        },
+        {
+          "index": 418,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354545
+        },
+        {
+          "index": 419,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283638
+        },
+        {
+          "index": 420,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283636
+        },
+        {
+          "index": 421,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141823
+        },
+        {
+          "index": 422,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141815
+        },
+        {
+          "index": 576,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70917
+        },
+        {
+          "index": 577,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141820
+        },
+        {
+          "index": 578,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212726
+        },
+        {
+          "index": 579,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70910
+        },
+        {
+          "index": 620,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70914
+        },
+        {
+          "index": 621,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212738
+        },
+        {
+          "index": 622,
+          "late_fields": 6,
+          "actual_out_phase_tstates": 425455
+        }
+      ],
+      "compressed_bytes": 1916903,
+      "foreground_stages": {
+        "schedule": 757840,
+        "packet": 804775,
+        "stream_input": 7470612,
+        "banked_zx0": 32880709,
+        "audio": 1328436,
+        "metadata": 11856139,
+        "paging": 442904,
+        "handoff": 210278,
+        "reconstruct": 96714252,
+        "attribute_groups": 626787,
+        "output": 48220902
+      },
+      "parser_bytes": 222,
+      "parser_end": 56542,
+      "next_unfinished_packet": {
+        "index": 624,
+        "payload_bytes": 1612,
+        "ay_bytes": 32,
+        "coded_bytes": 64,
+        "literal_bytes": 1153
+      }
+    }
+  ],
+  "full_movie_cadence_verified": false,
+  "physical_disk_verified": false,
+  "ula_verified": false,
+  "limitations": [
+    "Packet benchmark drains AY manually and omits reconstruction/rendering.",
+    "Clock foreground totals include different amounts of future work; do not infer full-movie speedup.",
+    "Compressed sizes include block headers, not assembled disk volumes."
+  ],
+  "inputs": {
+    "packet": {
+      "file": "early_ay_packet_cpu.json",
+      "sha256": "7bf61caef892113a0ba0940653f45d118e26d49dcd3ebbe8965fdb92b70212de"
+    },
+    "baseline": {
+      "file": "gray_cells_idle_cpu.json",
+      "sha256": "60b8ad640e57ad787f55480fba9aeb3565cf436ddc8fd7edfe697dc830dc2ece"
+    },
+    "density": {
+      "file": "density_16_idle_cpu.json",
+      "sha256": "95fb3055baa1ff306d5ff33656fc31b26896c2d497f7e35a2612edbe237766bc"
+    },
+    "early": {
+      "file": "early_ay_idle_cpu.json",
+      "sha256": "5e9c083b29628be45bfd83aa6ab4ec08bfefc5d68ba78870d936ee3612471ecf"
+    },
+    "combined": {
+      "file": "density_16_early_ay_cpu.json",
+      "sha256": "582979e2af2556534a9383d40d9b4782da339f82e455ee3271b204859be44182"
+    },
+    "storage": {
+      "file": "lean_frame_zx0.json",
+      "sha256": "b95fff4f7a7c93aad9d5cfef211ccef507784b588868f1bc4cc3b1eb327985f0"
+    },
+    "density_storage": {
+      "file": "native_density_compact_16_zx0.json",
+      "sha256": "54e1fd10de4bdf4f231340981764fa1f7521b4850a58db57e366b3e9f846d910"
+    }
+  }
+}

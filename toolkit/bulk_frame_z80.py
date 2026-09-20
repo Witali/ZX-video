@@ -6,9 +6,12 @@ from causal_tile_z80 import CACHE_MAP
 import frame_stream_z80
 
 LENGTH = 0xba58
+# Six records, each count plus at most eleven (register,value) pairs.
+# audio_enqueue_six rejects counts >=12. Every valid packet is >=294 bytes.
+EARLY_AY_BYTES = 6*(1+2*11)
 
 
-def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True,progress_entry=None,page_entry=None,separate_prepare=False):
+def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True,progress_entry=None,page_entry=None,separate_prepare=False,early_ay=False):
     if separate_prepare and 'draw_compact' not in wrapper:
         raise ValueError('separate packet input requires split frame preparation')
     _, bridge, oldlabels, oldlisting = frame_stream_z80.build(zx0,reader,wrapper,draw,metadata,audio,
@@ -47,10 +50,27 @@ def build(zx0,reader,wrapper,draw,metadata,audio, *, stored_guards=True,progress
     emit('OR A',[0xb7],4); emit('SBC HL,DE',[0xed,0x52],15); addr('JP C,fatal',0xda,zx0['fatal'],10)
     addr('LD DE,valid length range',0x11,maximum-minimum+1,10)
     emit('OR A',[0xb7],4); emit('SBC HL,DE',[0xed,0x52],15); addr('JP NC,fatal',0xd2,zx0['fatal'],10)
-    addr('LD DE,packet',0x11,INPUT,10); addr('LD BC,(length)',(0xed,0x4b),LENGTH,20)
-    addr('CALL take packet',0xcd,reader['take'],17)
-    addr('LD (payload_end),DE',(0xed,0x53),'payload_end',20)
-    addr('LD HL,AY records',0x21,INPUT,10); addr('CALL enqueue_six',0xcd,audio['audio_enqueue_six'],17)
+    addr('LD DE,packet',0x11,INPUT,10)
+    if early_ay:
+        addr('LD BC,AY prefix',0x01,EARLY_AY_BYTES,10)
+        addr('CALL take AY prefix',0xcd,reader['take'],17)
+        addr('LD HL,AY records',0x21,INPUT,10); addr('CALL enqueue_six',0xcd,audio['audio_enqueue_six'],17)
+        # Preserve the variable-length audio end while the reader fills the
+        # untouched suffix in place. No byte is copied twice or stored anew.
+        emit('PUSH HL (video header)',[0xe5],11)
+        addr('LD HL,(length)',0x2a,LENGTH,16)
+        addr('LD BC,-AY prefix',0x01,(-EARLY_AY_BYTES)&65535,10)
+        emit('ADD HL,BC',[0x09],11); emit('LD B,H',[0x44],4); emit('LD C,L',[0x4d],4)
+        addr('LD DE,packet suffix',0x11,INPUT+EARLY_AY_BYTES,10)
+        addr('CALL take video suffix',0xcd,reader['take'],17)
+        addr('LD (payload_end),DE',(0xed,0x53),'payload_end',20)
+        emit('POP HL (video header)',[0xe1],10)
+    else:
+        addr('LD BC,(length)',(0xed,0x4b),LENGTH,20)
+        addr('CALL take packet',0xcd,reader['take'],17)
+        addr('LD (payload_end),DE',(0xed,0x53),'payload_end',20)
+        addr('LD HL,AY records',0x21,INPUT,10); addr('CALL enqueue_six',0xcd,audio['audio_enqueue_six'],17)
+    a.label('video_payload_ready')
     copy(5,HEADER)
     emit('PUSH HL',[0xe5],11)
     addr('LD A,(flags)',0x3a,HEADER,13); emit('AND 38h',[0xe6,0x38],7)

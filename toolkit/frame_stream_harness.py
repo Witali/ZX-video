@@ -66,7 +66,9 @@ class Harness:
     def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False,
                  stored_guards=True,constant_attribute_borders=False,skip_black_borders=False,progress_frames=None,
                  encoded_noop_runs=False,skip_static_stripes=False,token_boundaries=False,pipelined=False,packet_ahead=False,
-                 unrolled_copy=False,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False):
+                 unrolled_copy=False,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,early_ay=False):
+        if early_ay and not bulk: raise ValueError('early AY requires bulk packets')
+        self.early_ay=early_ay
         if zero_copy and not bulk: raise ValueError('zero-copy metadata requires bulk packets')
         if not stored_guards and not bulk: raise ValueError('omitting guards requires bulk packets')
         if progress_frames is not None and not (bulk and zero_copy and skip_black_borders):
@@ -125,7 +127,7 @@ class Harness:
             progress_code,self.progress,progress_listing,_ = progress.build(progress_frames)
             if not pipelined: progress_options['progress_entry'] = self.progress['tick']
         code, bridge, self.p, listing = builder.build(self.z, self.r, f.w, f.draw, f.metadata_labels, self.audio,
-            **({'stored_guards':stored_guards,'separate_prepare':packet_ahead} if bulk else {}),
+            **({'stored_guards':stored_guards,'separate_prepare':packet_ahead,'early_ay':early_ay} if bulk else {}),
             **progress_options,page_entry=page_entry)
         cpu.p_labels = self.p; cpu.audio_state, cpu.audio_end = self.audio['state'], self.audio['end']
         cpu.wrapper_state = [(f.w['state'], f.w['end'])]
@@ -183,6 +185,9 @@ class Harness:
             if pc == self.frame.metadata_labels['decode']:
                 cpu.input_end = cpu.hl()+word(cpu, packet.HEADER+1)
             if self.bulk and pc == self.audio['audio_enqueue_six']:
+                from bulk_frame_z80 import EARLY_AY_BYTES
+                cpu.packet_end = pipeline.INPUT+EARLY_AY_BYTES if self.early_ay else word(cpu,self.p['payload_end'])
+            if self.bulk and pc == self.p['video_payload_ready']:
                 cpu.packet_end = word(cpu,self.p['payload_end'])
             if pc == self.frame.w['run']:
                 cpu.input_end = (cpu.packet_end+int(not self.stored_guards) if self.bulk else
