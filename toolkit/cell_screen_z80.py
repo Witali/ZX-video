@@ -7,6 +7,8 @@ All attributes are copied by default. constant_attribute_borders copies only
 rows 3..20; the caller must first initialize all attributes in both screens
 to 1 and prove that omitted rows stay 1. No screen flip, disk, IRQ or ULA
 cost is hidden.
+gray_cells=True visits compact rows 0,1,3,2 inside each sparse cell.
+Bit transitions restore the same source/output address and save 35 T/cell.
 """
 from build_zxv_trd import MiniAssembler
 from build_long_video_trd import build_player_dither_tables
@@ -14,11 +16,12 @@ from build_long_video_trd import build_player_dither_tables
 CODE, FRAME, TABLE, MASK = 0x9000, 0x6400, 0x9e00, 0xbf20
 
 
-def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False,attribute_group_counts=None):
+def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False,attribute_group_counts=None,gray_cells=False):
     if len(mask) != 80:
         raise ValueError('expected 80 cell-mask bytes')
     if skip_black_borders and not fast_mask_dispatch:
         raise ValueError('black-border omission requires fast mask dispatch')
+    if gray_cells and not fast_mask_dispatch: raise ValueError('Gray cells require fast mask dispatch')
     attribute_delta=0
     if attribute_group_counts is not None:
         if not constant_attribute_borders: raise ValueError('attribute groups require constant borders')
@@ -37,12 +40,13 @@ def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borde
     # 80 LDI map transfers and 768 attrs (576 with constant borders); external CALL,
     # IRQ/ULA, mask ZX0 and disk delivery excluded. See instruction listing.
     if fast_mask_dispatch:
-        return 37584-2308*skip_black_borders+5853*dense+4*odd_dense+296*partial_cells-136*zero_masks-3240*constant_attribute_borders+attribute_delta
+        return 37584-2308*skip_black_borders+5853*dense+4*odd_dense+(296-35*gray_cells)*partial_cells-136*zero_masks-3240*constant_attribute_borders+attribute_delta
     return 58784+4793*dense+4*odd_dense+277*partial_cells-3240*constant_attribute_borders+attribute_delta
 
 
 def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False,page_entry=None,
-          preloaded_mask=False,attribute_groups=False):
+          preloaded_mask=False,attribute_groups=False,gray_cells=False):
+    if gray_cells and not fast_mask_dispatch: raise ValueError('Gray cells require fast mask dispatch')
     if skip_black_borders and not (fast_mask_dispatch and constant_attribute_borders):
         raise ValueError('black-border omission requires fast dispatch and initialized constant attributes')
     if attribute_groups and not constant_attribute_borders: raise ValueError('attribute groups require constant borders')
@@ -225,14 +229,25 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
         ref('JP mask_done', 0xc3, 'mask_done', 10, 'mask_skip')
         a.label('draw_cell')
         emit("EX AF,AF'", [0x08], 4, 'cell_control')
-        for row in range(4):
-            pixel(reverse=bool(row & 1))
-            if row != 3:
-                adjust('L', 32, 'cell_address')
-                emit('INC D', [0x14], 4, 'cell_address')
-                emit('INC D', [0x14], 4, 'cell_address')
-        adjust('L', -96, 'cell_address')
-        adjust('D', -6, 'cell_address')
+        if gray_cells:
+            # A compact cell begins with L bits 5/6 and D bits 0..2 zero.
+            # Alternating top/bottom order leaves D at 1,2,7,4; each next
+            # cell row (or return to its origin) then needs one bit change.
+            for index,(source_bit,output_bit) in enumerate(((5,1),(6,2),(5,1),(6,2))):
+                pixel(reverse=bool(index&1))
+                base=0xc0 if index<2 else 0x80
+                action='SET' if index<2 else 'RES'
+                emit(f'{action} {source_bit},L',[0xcb,base+8*source_bit+5],8,'cell_address')
+                emit(f'{action} {output_bit},D',[0xcb,base+8*output_bit+2],8,'cell_address')
+        else:
+            for row in range(4):
+                pixel(reverse=bool(row & 1))
+                if row != 3:
+                    adjust('L', 32, 'cell_address')
+                    emit('INC D', [0x14], 4, 'cell_address')
+                    emit('INC D', [0x14], 4, 'cell_address')
+            adjust('L', -96, 'cell_address')
+            adjust('D', -6, 'cell_address')
         emit("EX AF,AF'", [0x08], 4, 'cell_control')
         emit('RET', [0xc9], 10, 'cell_control')
     if preloaded_mask:

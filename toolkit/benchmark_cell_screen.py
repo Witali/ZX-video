@@ -28,9 +28,10 @@ class CellCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, *, fast_mask_dispatch=False):
+    def __init__(self, *, fast_mask_dispatch=False,gray_cells=False):
         self.fast_mask_dispatch = fast_mask_dispatch
-        self.code, self.labels, self.listing, self.regions = machine.build(fast_mask_dispatch=fast_mask_dispatch)
+        self.gray_cells=gray_cells
+        self.code, self.labels, self.listing, self.regions = machine.build(fast_mask_dispatch=fast_mask_dispatch,gray_cells=gray_cells)
         self.cpu = CellCPU(b'', b'')
         self.cpu.state = self.labels['state'], self.labels['end']
         for address, blob in [(machine.CODE, self.code)]+self.regions:
@@ -83,9 +84,9 @@ class Harness:
                 or bytes(cpu.read8(machine.FRAME+i) for i in range(3840)) != state
                 or bytes(cpu.read8(INPUT+i) for i in range(80)) != mask
                 or sum(stages.values()) != cpu.tstates-before-irq
-                or sum(stages.values()) != machine.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch)):
+                or sum(stages.values()) != machine.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch,gray_cells=self.gray_cells)):
             raise AssertionError(('paging/stack/source/timing differs', sum(stages.values()),
-                machine.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch)))
+                machine.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch,gray_cells=self.gray_cells)))
         return dict(index=index, target_bank=target, tstates=sum(stages.values()), stages=dict(stages),
                     output_sha256=sha(expected), page_writes=pages, irq_tstates=irq)
 

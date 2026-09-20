@@ -171,7 +171,7 @@ class PipelineCPU(NativeCPU):
 class Harness:
     def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False,
                  constant_attribute_borders=False,skip_black_borders=False,encoded_noop_runs=False,skip_static_stripes=False,
-                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,attribute_flags=False):
+                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False):
         if attribute_flags and not (decode_metadata and raw_attributes):
             raise ValueError('attribute flags require decoded metadata and the raw flag')
         if skip_black_borders and not constant_attribute_borders:
@@ -184,6 +184,7 @@ class Harness:
         self.skip_black_borders = skip_black_borders
         self.decode_metadata = decode_metadata
         self.fast_mask_dispatch = fast_mask_dispatch
+        self.gray_cells=gray_cells
         self.selective_cache = selective_cache
         self.cache_map_bytes = 96//cache_columns
         self.encoded_noop_runs = encoded_noop_runs
@@ -204,7 +205,7 @@ class Harness:
             ar=[(groups.CODE,self.group_code)]+ar
         self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch,
             constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders,page_entry=page_entry,
-            preloaded_mask=preloaded_mask,attribute_groups=attribute_groups)
+            preloaded_mask=preloaded_mask,attribute_groups=attribute_groups,gray_cells=gray_cells)
         if attribute_flags:
             from attribute_mask_z80 import CODE as attribute_controller
             if self.draw['end']>attribute_controller:
@@ -341,7 +342,7 @@ class Harness:
         if (position != bits or word(cpu, self.recon['literal_source']) != INPUT+len(encoded)+1+len(literals)
                 or result['stages']['output'] != output.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch,
                     constant_attribute_borders=self.constant_attribute_borders,skip_black_borders=self.skip_black_borders,
-                    attribute_group_counts=group_counts)
+                    attribute_group_counts=group_counts,gray_cells=self.gray_cells)
                 or result['stages']['handoff'] != 337+26*self.raw_attributes+17*self.attribute_groups
                 or cpu.port_7ffd != page ^ 8 or result['page_writes'] != [page | 1, page, page ^ 8]
                 or bytes(cpu.banks[5][0x1b00:0x2400]) != b'\xa5'*0x900):
