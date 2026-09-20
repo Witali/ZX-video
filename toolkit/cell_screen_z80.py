@@ -14,11 +14,16 @@ from build_long_video_trd import build_player_dither_tables
 CODE, FRAME, TABLE, MASK = 0x9000, 0x6400, 0x9e00, 0xbf20
 
 
-def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False):
+def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False,attribute_group_counts=None):
     if len(mask) != 80:
         raise ValueError('expected 80 cell-mask bytes')
     if skip_black_borders and not fast_mask_dispatch:
         raise ValueError('black-border omission requires fast mask dispatch')
+    attribute_delta=0
+    if attribute_group_counts is not None:
+        if not constant_attribute_borders: raise ValueError('attribute groups require constant borders')
+        from attribute_groups_z80 import draw_tstates
+        attribute_delta=draw_tstates(attribute_group_counts)-9778
     first, bands = (1,18) if skip_black_borders else (0,20)
     dense = odd_dense = partial_cells = zero_masks = 0
     for band in range(first,first+bands):
@@ -32,14 +37,15 @@ def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borde
     # 80 LDI map transfers and 768 attrs (576 with constant borders); external CALL,
     # IRQ/ULA, mask ZX0 and disk delivery excluded. See instruction listing.
     if fast_mask_dispatch:
-        return 37584-2308*skip_black_borders+5853*dense+4*odd_dense+296*partial_cells-136*zero_masks-3240*constant_attribute_borders
-    return 58784+4793*dense+4*odd_dense+277*partial_cells-3240*constant_attribute_borders
+        return 37584-2308*skip_black_borders+5853*dense+4*odd_dense+296*partial_cells-136*zero_masks-3240*constant_attribute_borders+attribute_delta
+    return 58784+4793*dense+4*odd_dense+277*partial_cells-3240*constant_attribute_borders+attribute_delta
 
 
 def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False,page_entry=None,
-          preloaded_mask=False):
+          preloaded_mask=False,attribute_groups=False):
     if skip_black_borders and not (fast_mask_dispatch and constant_attribute_borders):
         raise ValueError('black-border omission requires fast dispatch and initialized constant attributes')
+    if attribute_groups and not constant_attribute_borders: raise ValueError('attribute groups require constant borders')
     a, listing = MiniAssembler(CODE), []
 
     def emit(name, data, ticks, stage):
@@ -189,19 +195,23 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
     ref('LD (bands_left),A', 0x32, 'bands_left', 13, 'band_control')
     ref('JP band', 0xc3, 'band', 10, 'band_control')
     a.label('attributes')
-    first,count = (96,576) if constant_attribute_borders else (0,768)
-    imm('LD HL,compact_attributes', 0x21, 0x7000+first, 10, 'attributes')
-    ref('LD A,(screen_base)', 0x3a, 'screen_base', 13, 'attributes')
-    emit('OR 18h', [0xf6, 0x18], 7, 'attributes')
-    emit('LD D,A', [0x57], 4, 'attributes')
-    emit('LD E,first attribute', [0x1e, first], 7, 'attributes')
-    imm('LD BC,attribute count', 0x01, count, 10, 'attributes')
-    emit('LD A,attribute chunks', [0x3e, count//16], 7, 'attributes')
-    a.label('attribute_chunk')
-    for _ in range(16):
-        emit('LDI', [0xed, 0xa0], 16, 'attributes')
-    emit('DEC A', [0x3d], 4, 'attributes')
-    ref('JP NZ,attribute_chunk', 0xc2, 'attribute_chunk', 10, 'attributes')
+    if attribute_groups:
+        from attribute_groups_z80 import emit_draw
+        emit_draw(a,emit,ref,imm)
+    else:
+        first,count = (96,576) if constant_attribute_borders else (0,768)
+        imm('LD HL,compact_attributes', 0x21, 0x7000+first, 10, 'attributes')
+        ref('LD A,(screen_base)', 0x3a, 'screen_base', 13, 'attributes')
+        emit('OR 18h', [0xf6, 0x18], 7, 'attributes')
+        emit('LD D,A', [0x57], 4, 'attributes')
+        emit('LD E,first attribute', [0x1e, first], 7, 'attributes')
+        imm('LD BC,attribute count', 0x01, count, 10, 'attributes')
+        emit('LD A,attribute chunks', [0x3e, count//16], 7, 'attributes')
+        a.label('attribute_chunk')
+        for _ in range(16):
+            emit('LDI', [0xed, 0xa0], 16, 'attributes')
+        emit('DEC A', [0x3d], 4, 'attributes')
+        ref('JP NZ,attribute_chunk', 0xc2, 'attribute_chunk', 10, 'attributes')
     a.label('attribute_end')
     ref('LD A,(saved_page)', 0x3a, 'saved_page', 13, 'paging')
     imm('LD BC,7FFD', 0x01, 0x7ffd, 10, 'paging')

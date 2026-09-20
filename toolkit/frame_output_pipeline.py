@@ -39,7 +39,7 @@ def display_screen(state, *, black_borders=False):
 
 
 def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False, dynamic_source=False, dynamic_metadata=False,
-            split_prepare=False,preloaded_mask=False):
+            split_prepare=False,preloaded_mask=False,attribute_group_entry=None):
     if split_prepare and not deferred_publish:
         raise ValueError('split preparation requires deferred publication')
     if preloaded_mask and not (split_prepare and dynamic_metadata):
@@ -71,6 +71,8 @@ def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False, dynamic_sour
         listing.append(dict(address=a.pc, instruction='LD A,(raw_attribute_flag)', tstates=13, stage='handoff'))
         a.abs16(0x3a, 'raw_attribute_flag'); store_a(recon['raw_attributes'])
     address('CALL reconstruct', 0xcd, recon['frame'], 17)
+    if attribute_group_entry is not None:
+        address('CALL prepare attribute groups',0xcd,attribute_group_entry,17)
     if preloaded_mask:
         listing.append(dict(address=a.pc,instruction='LD HL,(native_pointer)',tstates=16,stage='handoff'))
         a.abs16(0x2a,'native_pointer')
@@ -169,9 +171,12 @@ class PipelineCPU(NativeCPU):
 class Harness:
     def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False,
                  constant_attribute_borders=False,skip_black_borders=False,encoded_noop_runs=False,skip_static_stripes=False,
-                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False):
+                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False,attribute_groups=False):
         if skip_black_borders and not constant_attribute_borders:
             raise ValueError('black borders require initialized constant attributes')
+        if attribute_groups and not (constant_attribute_borders and decode_metadata and raw_attributes):
+            raise ValueError('attribute lists require metadata, raw flag and constant borders')
+        self.attribute_groups=attribute_groups
         self.raw_attributes = raw_attributes
         self.constant_attribute_borders = constant_attribute_borders
         self.skip_black_borders = skip_black_borders
@@ -188,23 +193,33 @@ class Harness:
             skip_static_stripes=skip_static_stripes,cache_columns=cache_columns,unrolled_cache=unrolled_cache)
         if self.recon['end'] > output.CODE:
             raise ValueError('reconstruction overlaps native renderer')
+        ai=[]; ar=[]; attribute_entry=None
+        if attribute_groups:
+            import attribute_groups_z80 as groups
+            self.group_code,self.group_labels,ai,ar=groups.build(self.recon['raw_attributes'])
+            attribute_entry=self.group_labels['prepare']
+            ar=[(groups.CODE,self.group_code)]+ar
         self.draw_code, self.draw, di, dr = output.build(fast_mask_dispatch=fast_mask_dispatch,
             constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders,page_entry=page_entry,
-            preloaded_mask=preloaded_mask)
+            preloaded_mask=preloaded_mask,attribute_groups=attribute_groups)
         self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw, origin=0x7900 if selective_cache else WRAPPER,
                                                deferred_publish=deferred_publish,dynamic_source=dynamic_source,
-                                               dynamic_metadata=dynamic_metadata,split_prepare=split_prepare,preloaded_mask=preloaded_mask)
+                                               dynamic_metadata=dynamic_metadata,split_prepare=split_prepare,preloaded_mask=preloaded_mask,
+                                               attribute_group_entry=attribute_entry)
         self.init_code, ii = initializer(self.draw,constant_attribute_borders=constant_attribute_borders)
         self.cpu = PipelineCPU(b'', b'')
         self.cpu.target_bank = None  # A saved map may precede the first native draw.
         self.cpu.port_7ffd = 0x16
         self.cpu.state_regions = [(x['state'], x['end']) for x in (self.recon, self.draw, self.w)]
+        if attribute_groups:
+            self.cpu.state_regions += [(base,base+groups.LIST_BYTES) for base in groups.LISTS]
+            self.cpu.state_regions += [(self.group_labels['state'],self.group_labels['end'])]
         self.cpu.input_end = INPUT_END
         # Catch any dependence on clear RAM or accidental TR-DOS writes.
         self.cpu.banks[5][:0x3800] = b'\xa5'*0x3800
         self.cpu.banks[7][:6912] = b'\xa5'*6912
         regions = [(reconstruction.CODE, self.recon_code), (output.CODE, self.draw_code),
-                   (self.w['run'], self.wrapper_code), (INITIALIZER, self.init_code)]+rr+dr
+                   (self.w['run'], self.wrapper_code), (INITIALIZER, self.init_code)]+rr+dr+ar
         mi = []
         if decode_metadata:
             self.metadata_code, self.metadata_labels, mi = metadata.build()
@@ -213,7 +228,7 @@ class Harness:
             for i, value in enumerate(blob):
                 self.cpu.write8(first+i, value)
         self.instructions = {}
-        for phase, rows in (('reconstruct', ri), ('output', di), ('handoff', wi), ('cold_init', ii), ('metadata', mi)):
+        for phase, rows in (('reconstruct', ri), ('output', di), ('handoff', wi), ('cold_init', ii), ('metadata', mi),('attribute_groups',ai)):
             for row in rows:
                 if row['address'] in self.instructions:
                     raise ValueError('overlapping instruction ranges')
@@ -255,6 +270,8 @@ class Harness:
 
     def run(self, group, mask, expected, index, interrupt=None, *, encoded_metadata=None, cache_map=None):
         n, flags, bits, vectors, bitmap, attrs, encoded, literals = group
+        if self.attribute_groups and index>=2 and not flags&64 and (any(attrs[:12]) or any(attrs[84:])):
+            raise ValueError('attribute changes outside constant borders')
         if self.skip_static_stripes: reconstruction.validate_static_stripes(vectors,bitmap)
         if self.encoded_noop_runs:
             from vector_run_stream import encode_vectors
@@ -310,10 +327,15 @@ class Harness:
         if any(bytes(cpu.banks[b][:6912]) != wanted for b, wanted in self.expected_screens.items()):
             raise AssertionError('screen bytes differ or preceding visible screen damaged')
         position = (word(cpu, self.recon['source'])-INPUT)*8+(cpu.read8(self.recon['bit_page']) & 7)
+        group_counts=None
+        if self.attribute_groups:
+            from attribute_groups_z80 import LISTS
+            group_counts=[cpu.read8(base) for base in LISTS]
         if (position != bits or word(cpu, self.recon['literal_source']) != INPUT+len(encoded)+1+len(literals)
                 or result['stages']['output'] != output.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch,
-                    constant_attribute_borders=self.constant_attribute_borders,skip_black_borders=self.skip_black_borders)
-                or result['stages']['handoff'] != 337+26*self.raw_attributes
+                    constant_attribute_borders=self.constant_attribute_borders,skip_black_borders=self.skip_black_borders,
+                    attribute_group_counts=group_counts)
+                or result['stages']['handoff'] != 337+26*self.raw_attributes+17*self.attribute_groups
                 or cpu.port_7ffd != page ^ 8 or result['page_writes'] != [page | 1, page, page ^ 8]
                 or bytes(cpu.banks[5][0x1b00:0x2400]) != b'\xa5'*0x900):
             raise AssertionError('pipeline cursor/timing/paging/TR-DOS contract differs')

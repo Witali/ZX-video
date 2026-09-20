@@ -1,0 +1,358 @@
+{
+  "scope": "Separate full attribute-stage evidence from incomplete player cadence.",
+  "complete": false,
+  "release": false,
+  "attribute_stage_complete": true,
+  "frames_verified": 4221,
+  "initial_stage": {
+    "tstates": 14745931,
+    "baseline_tstates": 41272938,
+    "delta_tstates": -26527007,
+    "change_percent": -64.27215576463202,
+    "prepare_tstates": 4673098,
+    "draw_tstates": 10001076,
+    "slower_frames": 312,
+    "max_extra_tstates": 33882
+  },
+  "final_stage": {
+    "tstates": 13399394,
+    "baseline_tstates": 41272938,
+    "delta_tstates": -27873544,
+    "change_percent": -67.53467368860439,
+    "prepare_tstates": 4575574,
+    "draw_tstates": 8752063,
+    "slower_frames": 315,
+    "max_extra_tstates": 3086
+  },
+  "full_attribute_copy_tstates": 9778,
+  "sparse_draw_formula": "51 + min(9778, 64 + sum(32 if n=0 else 31+285*n))",
+  "prepare_formula": "warmup=150; raw=155; coded=760+152*nonempty_flags+18*groups; outer CALL adds 17",
+  "compressed_stream_bytes": 1932429,
+  "compressed_stream_delta_bytes": 0,
+  "storage_candidates": [
+    {
+      "format": "FAC1",
+      "bytes": 1969468,
+      "delta_bytes": 37039,
+      "delta_continuous_stream_sectors": 145,
+      "preliminary_three_trd_margin": -31804,
+      "decision": "not integrated; exceeds preliminary size budget"
+    },
+    {
+      "format": "FAC2",
+      "bytes": 1949955,
+      "delta_bytes": 17526,
+      "delta_continuous_stream_sectors": 69,
+      "preliminary_three_trd_margin": -12291,
+      "decision": "not integrated; exceeds preliminary size budget"
+    }
+  ],
+  "memory": {
+    "lists": [
+      39968,
+      40064
+    ],
+    "list_bytes": 73,
+    "helper": [
+      40144,
+      40283
+    ],
+    "stack_reserved": [
+      40336,
+      40432
+    ],
+    "extra_screen_or_disk_bytes": 0
+  },
+  "common_publications": 414,
+  "clocks": [
+    {
+      "name": "before",
+      "complete": false,
+      "checked": {
+        "compact": 415,
+        "native": 415,
+        "publish": 414,
+        "packet": 415
+      },
+      "failure": {
+        "error": "('scheduled AY underrun', 2490)",
+        "pc": 32005,
+        "tstates": 177950746,
+        "fields": 2492,
+        "checked": {
+          "compact": 415,
+          "native": 415,
+          "publish": 414,
+          "packet": 415
+        }
+      },
+      "played_ay_ticks": 2490,
+      "timing": {
+        "checked_publications": 414,
+        "late_field_histogram": {
+          "0": 410,
+          "1": 1,
+          "3": 2,
+          "5": 1
+        },
+        "late_publications": 4,
+        "early_publications": 0,
+        "first_off_nominal_field": 410,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 410,
+          "7": 1,
+          "8": 2
+        },
+        "frames_outside_field_budget": 3,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 2,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 410,
+            "frames": 4,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 4,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -9,
+        "max_phase_tstates": 354536,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 2,
+        "phase_above_20ms": 3,
+        "irq_boundary_publication_verified": false
+      },
+      "common_timing": {
+        "checked_publications": 414,
+        "late_field_histogram": {
+          "0": 410,
+          "1": 1,
+          "3": 2,
+          "5": 1
+        },
+        "late_publications": 4,
+        "early_publications": 0,
+        "first_off_nominal_field": 410,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 410,
+          "7": 1,
+          "8": 2
+        },
+        "frames_outside_field_budget": 3,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 2,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 410,
+            "frames": 4,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 4,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -9,
+        "max_phase_tstates": 354536,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 2,
+        "phase_above_20ms": 3,
+        "irq_boundary_publication_verified": false
+      },
+      "on_time_out_phase_tstates": [
+        -9,
+        11
+      ],
+      "foreground_tstates": 133645470,
+      "irq_tstates": 2152550,
+      "missed_nominal_frames": [
+        {
+          "index": 410,
+          "late_fields": 1,
+          "actual_out_phase_tstates": 70903
+        },
+        {
+          "index": 411,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212718
+        },
+        {
+          "index": 412,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212719
+        },
+        {
+          "index": 413,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354536
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "complete": false,
+      "checked": {
+        "compact": 416,
+        "native": 416,
+        "publish": 416,
+        "packet": 416
+      },
+      "failure": {
+        "error": "('scheduled AY underrun', 2496)",
+        "pc": 56200,
+        "tstates": 178376199,
+        "fields": 2498,
+        "checked": {
+          "compact": 416,
+          "native": 416,
+          "publish": 416,
+          "packet": 416
+        }
+      },
+      "played_ay_ticks": 2496,
+      "timing": {
+        "checked_publications": 416,
+        "late_field_histogram": {
+          "0": 411,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 2
+        },
+        "late_publications": 5,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 411,
+          "7": 3,
+          "8": 1
+        },
+        "frames_outside_field_budget": 5,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 1,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 5,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 5,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -16,
+        "max_phase_tstates": 354536,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 2,
+        "phase_above_20ms": 5,
+        "irq_boundary_publication_verified": false
+      },
+      "common_timing": {
+        "checked_publications": 414,
+        "late_field_histogram": {
+          "0": 411,
+          "2": 1,
+          "3": 1,
+          "4": 1
+        },
+        "late_publications": 3,
+        "early_publications": 0,
+        "first_off_nominal_field": 411,
+        "passes_nominal_field_schedule": false,
+        "interval_field_histogram": {
+          "6": 410,
+          "7": 2,
+          "8": 1
+        },
+        "frames_outside_field_budget": 3,
+        "first_outside_field_budget": 411,
+        "intervals_outside_budget": 1,
+        "passes_field_budget": false,
+        "late_runs": [
+          {
+            "first_frame": 411,
+            "frames": 3,
+            "recovered_at_frame": null
+          }
+        ],
+        "max_consecutive_late_frames": 3,
+        "unrecovered_at_recording_end": true,
+        "min_phase_tstates": -16,
+        "max_phase_tstates": 283630,
+        "intervals_below_5_fields": 0,
+        "intervals_above_7_fields": 2,
+        "phase_above_20ms": 3,
+        "irq_boundary_publication_verified": false
+      },
+      "on_time_out_phase_tstates": [
+        -16,
+        59
+      ],
+      "foreground_tstates": 131178791,
+      "irq_tstates": 2162960,
+      "missed_nominal_frames": [
+        {
+          "index": 411,
+          "late_fields": 2,
+          "actual_out_phase_tstates": 141811
+        },
+        {
+          "index": 412,
+          "late_fields": 3,
+          "actual_out_phase_tstates": 212717
+        },
+        {
+          "index": 413,
+          "late_fields": 4,
+          "actual_out_phase_tstates": 283630
+        },
+        {
+          "index": 414,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354529
+        },
+        {
+          "index": 415,
+          "late_fields": 5,
+          "actual_out_phase_tstates": 354536
+        }
+      ]
+    }
+  ],
+  "all_native_attribute_bytes_verified": true,
+  "bitmap_stream_unchanged": true,
+  "ay_bytes_unchanged": true,
+  "full_bitmap_render_cpu_frames": 416,
+  "full_frame_delivery_verified": false,
+  "disk_delivery_verified": false,
+  "ula_verified": false,
+  "inputs": {
+    "cpu": {
+      "file": "attribute_groups_cpu.json",
+      "sha256": "025bb323db3dbe43ec11ff79c22fafb539f148dd501964707f98c9a73fb0930d"
+    },
+    "initial": {
+      "file": "attribute_groups_initial_cpu.json",
+      "sha256": "0092d807a39c81a45cda58b81ff97b6f561e0abb50d1e08da0781d3545a8a18c"
+    },
+    "before": {
+      "file": "cache_unrolled_idle_cpu.json",
+      "sha256": "a4064b1d210f75897c0a13834e81c30355dec8ef96cce5fde620c8e700655bf3"
+    },
+    "after": {
+      "file": "attribute_groups_idle_cpu.json",
+      "sha256": "b4b477baf7e977fd78f7d0db774fb508073db92df1259c2372d0d8633d2dc76e"
+    },
+    "fac1": {
+      "file": "attribute_updates_zx0.json",
+      "sha256": "e7b343de1b6684dfb55e226a3928c2dcb62085d8e51976865a97e228a3ef64e4"
+    },
+    "fac2": {
+      "file": "attribute_previous_zx0.json",
+      "sha256": "513e2af3136fe8883ed7c641dff77cfa8ee332f2aac445ee6ab7fde354a6379f"
+    }
+  }
+}
