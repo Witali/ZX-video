@@ -38,6 +38,7 @@ def main():
     p.add_argument('--attribute-groups',action='store_true',help='Render attributes using both preceding n-1 group lists')
     p.add_argument('--attribute-flags',action='store_true',help='Skip empty reconstruction groups with existing metadata flags')
     p.add_argument('--gray-cells',action='store_true',help='Visit sparse cell rows in 0,1,3,2 order with bitwise addresses')
+    p.add_argument('--sparse-patches',action='store_true',help='Stop each bitmap half after its last Huffman correction')
     p.add_argument('--early-ay',action='store_true',help='Enqueue AY after the first 138 packet bytes, before the video suffix')
     p.add_argument('--packet-ahead',action='store_true',help='Preparse another packet/AY while retaining the current native mask')
     p.add_argument('--packet-ahead-policy',choices=('always','idle'),default='always',
@@ -78,7 +79,7 @@ def main():
         skip_static_stripes=True,token_boundaries=True,pipelined=True,progress_frames=args.progress_frames,
         packet_ahead='idle' if args.packet_ahead and args.packet_ahead_policy=='idle' else args.packet_ahead,
         unrolled_copy=args.unrolled_copy,unrolled_cache=args.unrolled_cache,attribute_groups=args.attribute_groups,
-        attribute_flags=args.attribute_flags,gray_cells=args.gray_cells,early_ay=args.early_ay)
+        attribute_flags=args.attribute_flags,gray_cells=args.gray_cells,early_ay=args.early_ay,sparse_patches=args.sparse_patches)
     header_result=h.consume_header(header); h.histogram.clear()
     checked=dict(compact=0,native=0,publish=0); bar_frames=0
     if args.packet_ahead: checked['packet']=0
@@ -127,7 +128,7 @@ def main():
         if bytes(cpu.banks[5][0x1b00:0x2400])!=b'\xa5'*0x900: raise AssertionError('TR-DOS workspace changed')
         checked[kind]+=1
     clock=Clock(h,ticks[:target*6],lookahead=args.lookahead,observer=observe)
-    report=dict(scope=__doc__,baseline_commit='c829610' if args.early_ay else 'dcfb953' if args.gray_cells else '6dbb142' if args.attribute_flags else 'a4a3f82' if args.attribute_groups else '4b62e52' if args.unrolled_cache else '0e8acec' if args.unrolled_copy else 'a50aa55' if args.packet_ahead else '1f58971',complete=False,release=False,
+    report=dict(scope=__doc__,baseline_commit='a8f28c2' if args.sparse_patches else 'c829610' if args.early_ay else 'dcfb953' if args.gray_cells else '6dbb142' if args.attribute_flags else 'a4a3f82' if args.attribute_groups else '4b62e52' if args.unrolled_cache else '0e8acec' if args.unrolled_copy else 'a50aa55' if args.packet_ahead else '1f58971',complete=False,release=False,
         frames_expected=count,frames_requested=target,raw_sha256=sha(raw),states_sha256=sha(states.tobytes()),
         compressed_bytes=len(ring),compressed_stream_delta_bytes=0,lookahead=args.lookahead,packet_ahead=h.packet_ahead,
         unrolled_copy=args.unrolled_copy,
@@ -135,6 +136,7 @@ def main():
         attribute_groups=args.attribute_groups,
         attribute_flags=args.attribute_flags,
         gray_cells=args.gray_cells,
+        sparse_patches=args.sparse_patches,
         early_ay=args.early_ay,
         progress_frames_on_virtual_volume=args.progress_frames,disk_delivery_verified=False,ula_verified=False,
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',

@@ -26,6 +26,9 @@ rows in pairs. They are mutually exclusive; default machine code is unchanged.
 attribute_flags=True uses the metadata flags at BFB0..BFBB to skip eight
 empty attribute masks, with a controller at 9360 below the AY handler.
 It requires the pipeline's fixed A640 mask layout and decoded metadata.
+sparse_patches=True jumps to the final correction as soon as SLA B has
+shifted out the last set bit. It retains the input order and Huffman state,
+uses HL as the bitmap cursor, and requires the hybrid skip-empty path.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -173,7 +176,38 @@ def raw_intra_tstates(vector, tile, mask, *, unaligned=False):
     return total
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False):
+def patch_half_tstates(mask, half, *, sparse_patches=False):
+    """One skip-empty half including its exit, excluding Huffman bodies.
+
+    First-half exit includes positioning the cursor at row four; second
+    includes RET. The DE/HL target load and LD B,C are separate (24/20 T).
+    Both-zero masks return before either half and must not use this sum.
+    """
+    if not 0 <= mask <= 255 or half not in (0, 1):
+        raise ValueError('expected an 8-bit mask and half 0/1')
+    if not sparse_patches:
+        if not mask: return 33 if half == 0 else 28
+        return (248 if half == 0 else 233)+39*mask.bit_count()
+    exit_cost = 22 if half == 0 else 10
+    if not mask: return 18+exit_cost
+    last = 7-((mask & -mask).bit_length()-1)
+    advances = sum(4 if j % 2 == 0 else 12 if j in (1, 5) else 15 for j in range(last))
+    checks = mask.bit_count()-int(bool(mask & 1))
+    return 18+18*(last+1)+10*checks+39*mask.bit_count()+advances+exit_cost
+
+
+def patch_delta_tstates(vectors, masks):
+    """Exact sparse-patch delta for expanded temporal/zero tile metadata."""
+    if len(vectors) != 192 or len(masks) != 384:
+        raise ValueError('one expanded frame required')
+    return sum(-4+sum(patch_half_tstates(m, h, sparse_patches=True)-patch_half_tstates(m, h)
+                         for h, m in enumerate((b, c)))
+        for v, b, c in zip(vectors, masks[::2], masks[1::2]) if v <= 81 and (b or c))
+
+
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False):
+    if sparse_patches and not (hybrid and skip_empty and raw_kind is None and not raw_intra):
+        raise ValueError('sparse patches require hybrid skip-empty Huffman patches')
     if attribute_flags and not (hybrid and raw_attributes):
         raise ValueError('attribute flags require the hybrid raw-attribute path')
     if cache_columns not in (16,32) or (cache_columns != 32 or unrolled_cache) and not selective_cache:
@@ -827,8 +861,43 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     emit('LD A,B', [0x78], 4); emit('OR C', [0xb1], 4)
     jump('JP Z,attributes', 0xca, 'attributes', 10)
     a.label('patches_nonzero')
-    load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
-    for field in range(16):
+    if sparse_patches:
+        load('LD HL,(target)', 0x2a, 'target', 16)
+        for half in range(2):
+            if half:
+                a.label('patch_second_half')
+                # Every tile begins at an even column. An early last byte
+                # may be in either column and any of the first four rows.
+                emit('LD A,L', [0x7d], 4); emit('AND 30', [0xe6, 30], 7)
+                emit('OR 128', [0xf6, 128], 7); emit('LD L,A', [0x6f], 4)
+                emit('LD B,C', [0x41], 4)
+            emit('LD A,B', [0x78], 4); emit('OR A', [0xb7], 4)
+            jump('JP Z,empty_bitmap_half', 0xca, 'patch_second_half' if not half else 'attributes', 10)
+            for field in range(8):
+                tag = half*8+field
+                emit('SLA B', [0xcb, 0x20], 8)
+                jump('JP NC,keep_bitmap', 0xd2, f'keep_bm_{tag}', 10)
+                if field < 7:
+                    # JP NC preserves SLA's Z flag. If B is now zero, the
+                    # current byte is the last correction; reuse field 7's
+                    # apply/exit code without changing the target cursor.
+                    jump('JP Z,last_bitmap_patch', 0xca, f'last_bm_{half}', 10)
+                else:
+                    a.label(f'last_bm_{half}')
+                emit('LD A,(HL)', [0x7e], 7); emit('EXX', [0xd9], 4)
+                jump('CALL bitmap', 0xcd, 'bitmap', 17); emit('EXX', [0xd9], 4)
+                emit('LD (HL),A', [0x77], 7)
+                a.label(f'keep_bm_{tag}')
+                if field < 7:
+                    if field % 2 == 0:
+                        emit('INC L', [0x2c], 4)
+                    elif field in (1, 5):
+                        emit('DEC L', [0x2d], 4); emit('SET 5,L', [0xcb, 0xed], 8)
+                    else:
+                        emit('LD A,L', [0x7d], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD L,A', [0x6f], 4)
+    else:
+        load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
+    for field in range(0 if sparse_patches else 16):
         if field == 8:
             if skip_empty:
                 a.label('skip_half_0')
