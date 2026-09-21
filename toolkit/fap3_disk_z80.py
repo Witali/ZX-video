@@ -11,6 +11,7 @@ import zx0_codec
 
 DISK, DRIVER, DISK_STACK = 0x6000, 0xdf20, 0x9c00
 WAIT_NEXT, LOAD_NEXT = 0x6200, 0x9a60
+CACHED_SEEK = 0x9a90  # after the next-volume loader, before row-low at 9B00
 TRDOS_503_SHA256='91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5'
 
 
@@ -43,7 +44,10 @@ def packed_sector(linear):
     return track * 256 + sector
 
 
-def build_disk(next_sector, remaining, *, fast_disk=False):
+def build_disk(next_sector, remaining, *, fast_disk=False, cached_seek=False, initial_track=255):
+    if cached_seek and not fast_disk: raise ValueError('cached seek requires fast disk')
+    if initial_track!=255 and not (cached_seek and 0<=initial_track<160):
+        raise ValueError('initial track requires cached seek and a valid bootstrap track')
     a = MiniAssembler(DISK); listing = []
     e, n = helpers(a, listing, 'disk_adapter')
     a.label('refill')
@@ -69,11 +73,21 @@ def build_disk(next_sector, remaining, *, fast_disk=False):
     e('LD H,A', [0x67], 4); e('LD L,0', [0x2e,0], 7)
     n('LD DE,(disk_position)', (0xed,0x5b), 'disk_position', 20)
     if fast_disk:
+        if cached_seek:
+            e('LD A,80h',[0x3e,0x80],7); n('LD (ROM_command),A',0x32,0x5cfe,13)
         n('LD A,(cached_track)', 0x3a, 'cached_track', 13); e('CP D',[0xba],4)
-        n('JP NZ,full_read',0xc2,'full_read',10)
+        if cached_seek:
+            n('JP Z,direct_ready',0xca,'direct_ready',10)
+            e('CP FFh',[0xfe,255],7); n('JP Z,full_read',0xca,'full_read',10)
+            n('CALL cached_seek',0xcd,CACHED_SEEK,17)
+            n('LD DE,(disk_position)',(0xed,0x5b),'disk_position',20)
+            a.label('direct_ready')
+        else:
+            n('JP NZ,full_read',0xc2,'full_read',10)
         n('LD (ROM_destination),HL',0x22,0x5d00,16)
         e('LD A,E',[0x7b],4); n('LD (ROM_sector),A',0x32,0x5cff,13)
-        e('LD A,80h',[0x3e,0x80],7); n('LD (ROM_command),A',0x32,0x5cfe,13)
+        if not cached_seek:
+            e('LD A,80h',[0x3e,0x80],7); n('LD (ROM_command),A',0x32,0x5cfe,13)
         n('LD DE,fast_disk_return',0x11,'fast_disk_return',10); e('PUSH DE',[0xd5],11)
         n('LD DE,retry_counter',0x11,0x0a00,10); e('PUSH DE',[0xd5],11)
         n('LD DE,read_503',0x11,0x3f17,10); e('PUSH DE',[0xd5],11)
@@ -122,10 +136,43 @@ def build_disk(next_sector, remaining, *, fast_disk=False):
         a.label(label); a.word(value)
     for label, value in (('write_region',0),('write_high',0xc0),('free_high',0xc0)):
         a.label(label); a.emit(value)
-    if fast_disk: a.label('cached_track'); a.emit(255)
+    if fast_disk: a.label('cached_track'); a.emit(initial_track)
     a.label('end')
     if a.pc > 0x6100: raise ValueError('disk adapter exceeds bootstrap overlay')
     return a.resolve(), dict(a.labels), listing
+
+
+def build_cached_seek(disk_labels):
+    """Known 5.03 side/SEEK entries; HL is the pending sector destination."""
+    a=MiniAssembler(CACHED_SEEK); listing=[]
+    e,n=helpers(a,listing,'cached_seek')
+    a.label('cached_seek')
+    e('PUSH HL',[0xe5],11); e('LD A,D',[0x7a],4)
+    n('LD (ROM_track),A',0x32,0x5cf5,13)
+    n('LD (cached_track),A',0x32,disk_labels['cached_track'],13)
+    n('LD HL,slow_irq',0x21,0xbd00,10); n('LD (irq_vector),HL',0x22,0xbdbe,16)
+    n('LD A,(disk_track)',0x3a,disk_labels['disk_position']+1,13)
+    e('AND 1',[0xe6,1],7); n('LD DE,side_zero',0x11,0x1feb,10)
+    n('JP Z,side_ready',0xca,'side_ready',10); n('LD DE,side_one',0x11,0x1ff6,10)
+    a.label('side_ready'); n('LD HL,seek_side_return',0x21,'seek_side_return',10)
+    e('PUSH HL',[0xe5],11); e('PUSH DE',[0xd5],11)
+    e('LD A,BEh',[0x3e,0xbe],7); e('LD I,A',[0xed,0x47],9); e('IM 2',[0xed,0x5e],8); e('EI',[0xfb],4)
+    a.label('seek_side_enter'); n('JP ROM trampoline',0xc3,0x3d2f,10)
+    a.label('seek_side_return'); e('EI',[0xfb],4)
+    n('LD A,(ROM_drive)',0x3a,0x5cf6,13); e('LD E,A',[0x5f],4); e('LD D,0',[0x16,0],7)
+    n('LD HL,drive_step_rates',0x21,0x5cfa,10); e('ADD HL,DE',[0x19],11)
+    e('LD A,(HL)',[0x7e],7); e('AND 3',[0xe6,3],7); e('LD B,A',[0x47],4)
+    n('LD A,(disk_track)',0x3a,disk_labels['disk_position']+1,13); e('SRL A',[0xcb,0x3f],8)
+    n('LD HL,seek_return',0x21,'seek_return',10); e('PUSH HL',[0xe5],11)
+    n('LD HL,seek_503',0x21,0x3e44,10); e('PUSH HL',[0xe5],11); e('EI',[0xfb],4)
+    a.label('seek_enter'); n('JP ROM trampoline',0xc3,0x3d2f,10)
+    a.label('seek_return'); e('EI',[0xfb],4)
+    n('LD HL,fast_irq',0x21,0xbd80,10); n('LD (irq_vector),HL',0x22,0xbdbe,16)
+    e('LD A,84h',[0x3e,0x84],7); n('LD (ROM_command),A',0x32,0x5cfe,13)
+    e('POP HL',[0xe1],10); e('RET',[0xc9],10)
+    a.label('end')
+    if a.pc>0x9b00: raise ValueError('cached seek overlaps row-low table')
+    return a.resolve(),dict(a.labels),listing
 
 
 def build_next_loader():

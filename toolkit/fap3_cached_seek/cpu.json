@@ -1,0 +1,162 @@
+{
+  "baseline_commit": "9db8954",
+  "scope": "Compare FAP3 cached seeks with the same-track reader; ROM is mocked.",
+  "complete": true,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "routines": {
+    "same_track": {
+      "previous": {
+        "tstates": 896,
+        "code_bytes": 215,
+        "seek_bytes": 0,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "current": {
+        "tstates": 896,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 0
+    },
+    "cold": {
+      "previous": {
+        "tstates": 804,
+        "code_bytes": 215,
+        "seek_bytes": 0,
+        "full_calls": 1,
+        "direct_calls": 0,
+        "fallback_calls": 0
+      },
+      "current": {
+        "tstates": 841,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "full_calls": 1,
+        "direct_calls": 0,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 37
+    },
+    "new_side": {
+      "previous": {
+        "tstates": 804,
+        "code_bytes": 215,
+        "seek_bytes": 0,
+        "full_calls": 1,
+        "direct_calls": 0,
+        "fallback_calls": 0
+      },
+      "current": {
+        "tstates": 1351,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 547
+    },
+    "new_cylinder": {
+      "previous": {
+        "tstates": 804,
+        "code_bytes": 215,
+        "seek_bytes": 0,
+        "full_calls": 1,
+        "direct_calls": 0,
+        "fallback_calls": 0
+      },
+      "current": {
+        "tstates": 1341,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 537
+    },
+    "track_wrap": {
+      "previous": {
+        "tstates": 907,
+        "code_bytes": 215,
+        "seek_bytes": 0,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "current": {
+        "tstates": 907,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 0
+    },
+    "ring_wrap": {
+      "previous": {
+        "tstates": 944,
+        "code_bytes": 215,
+        "seek_bytes": 0,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "current": {
+        "tstates": 944,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 0
+    },
+    "short_retry": {
+      "previous": {
+        "tstates": 1023,
+        "code_bytes": 215,
+        "seek_bytes": 0,
+        "full_calls": 1,
+        "direct_calls": 1,
+        "fallback_calls": 1
+      },
+      "current": {
+        "tstates": 1023,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "full_calls": 1,
+        "direct_calls": 1,
+        "fallback_calls": 1
+      },
+      "delta_tstates": 0
+    },
+    "seek_short_retry": {
+      "previous": {
+        "tstates": 804,
+        "code_bytes": 215,
+        "seek_bytes": 0,
+        "full_calls": 1,
+        "direct_calls": 0,
+        "fallback_calls": 0
+      },
+      "current": {
+        "tstates": 1478,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "full_calls": 1,
+        "direct_calls": 1,
+        "fallback_calls": 1
+      },
+      "delta_tstates": 674
+    }
+  },
+  "geometry_cases": 2560,
+  "rom_execution_verified": false
+}

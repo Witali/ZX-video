@@ -63,6 +63,11 @@ def main():
         event(lab['fast_read_enter'],110,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])])
         event(lab['fast_disk_return'],111,[stamp]+sector_expr)
         event(lab['fast_read_retry'],112,[stamp])
+    if 'seek_enter' in lab:
+        event(lab['seek_side_enter'],120,[stamp])
+        event(lab['seek_side_return'],121,[stamp])
+        event(lab['seek_enter'],122,[stamp])
+        event(lab['seek_return'],123,[stamp])
     event(lab['finished'],199,[stamp,mem(lab['published']),mem(lab['audio_ticks_played']),mem(lab['audio_underruns'])]+
         [f'[{base+i}]' for base in (0x50e0,0x51e0,0xd0e0,0xd1e0) for i in range(32)],True)
     for name in ('fatal','zx0_fatal'): event(lab[name],198,[stamp,'z80:pc'],True)
@@ -88,6 +93,7 @@ def main():
         parsed.append((tag,nums[pos:pos+widths[tag]])); pos+=widths[tag]
     pubs=[]; writes=[]; ticks=[]; underruns=[]; reads=[]; final=None; failure=None
     image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0; retries=0; read_kind=None
+    seek_pending=None; seek_calls=[]
     with np.load(args.states,allow_pickle=False) as data: states=data['states']
     for tag,v in parsed:
         if tag==150:
@@ -122,6 +128,13 @@ def main():
         elif tag==112:
             if not reads or reads[-1]['kind']!='direct503': raise ValueError('retry without direct read')
             retries+=1; reads[-1]['retried']=True
+        elif tag in (120,122):
+            if seek_pending is not None: raise ValueError('overlapping seek calls')
+            seek_pending=(tag,v[0])
+        elif tag in (121,123):
+            if seek_pending is None or seek_pending[0]!=tag-1: raise ValueError('unmatched seek return')
+            seek_calls.append(dict(kind='side' if tag==121 else 'seek',tstates=v[0]-seek_pending[1]))
+            seek_pending=None
         elif tag==199: final=v
         elif tag==198: failure=v
     for read in reads:
@@ -130,7 +143,7 @@ def main():
     accepted=[q['sector'] for q in reads if not q['retried']]
     wanted_sectors=list(range(m['video_start_sector']+min(256,m['video_sectors']),
         m['video_start_sector']+m['video_sectors']))
-    if pending is not None or accepted!=wanted_sectors:
+    if pending is not None or seek_pending is not None or accepted!=wanted_sectors:
         errors.append(dict(error='runtime sector sequence incomplete or duplicated'))
     raw=args.raw.read_bytes(); r=Reader(raw); _,_,count,_,_=read_header(r,magic=b'FAP3')
     expected=[]
@@ -161,6 +174,10 @@ def main():
         progress_100_percent=progress_complete,ay_ticks=len(ticks),ay_records_exact=ay_exact,
         audio_underruns=len(underruns),runtime_sectors_checked=len(accepted),read_attempts=len(reads),errors=errors[:100],
         fast_read_retries=retries,fast_disk=m.get('fast_disk',False),
+        cached_seek=m.get('cached_seek',False),seek_calls=seek_calls,
+        audio_tick_tstates=ticks,
+        ay_record_field_gaps=sum(max(0,b//FIELD-a//FIELD-1) for a,b in zip(ticks,ticks[1:])),
+        ay_record_field_duplicates=sum(b//FIELD==a//FIELD for a,b in zip(ticks,ticks[1:])),
         pixel_sample_offsets=samples,pixel_samples_per_frame=len(samples),full_pixel_comparison=False,
         nominal_late_frames=sum(q['late_fields']>0 for q in pubs),max_late_fields=max((q['late_fields'] for q in pubs),default=0),
         actual_out_over_one_field=sum(x>FIELD for x in offsets),max_actual_deviation_tstates=max(offsets,default=0),
@@ -169,7 +186,7 @@ def main():
         audio_underrun_tstates=underruns,
         rom_sha256=hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest())
     args.output.write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','pixel_sample_offsets','late_runs','errors')}),flush=True)
+    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors')}),flush=True)
     if not complete: raise SystemExit(1)
 
 
