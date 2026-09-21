@@ -17,7 +17,7 @@ STACK_TOP, STACK_BOTTOM = 0x7be0, 0x7b70
 BANKS = (0, 1, 3, 4)
 
 
-def build(*, fast_literal=False, fast_refill=False, token_boundaries=False,page_entry=None):
+def build(*, fast_literal=False, fast_refill=False, token_boundaries=False,page_entry=None,disk_refill_entry=None):
     a = MiniAssembler(CODE)
     a.label('begin')
     a.abs16(0xcd, 'refill')
@@ -85,6 +85,10 @@ def build(*, fast_literal=False, fast_refill=False, token_boundaries=False,page_
     a.emit(0x11); a.word(INPUT)
     a.abs16(0xcd, 'ring_copy')
     a.abs16(0x22, 'ring_pointer')
+    if disk_refill_entry is not None:
+        # The consumed bytes are already in fixed RAM. A producer may now
+        # replace completed ring sectors; outer saves retain live ZX0 inputs.
+        a.emit(0xcd); a.word(disk_refill_entry)
     a.abs16(0x3a, 'history_page')
     a.emit(0x01); a.word(0x7ffd)
     if page_entry is None: a.emit(0xed, 0x79)

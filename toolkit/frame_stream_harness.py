@@ -66,7 +66,7 @@ class Harness:
     def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False,
                  stored_guards=True,constant_attribute_borders=False,skip_black_borders=False,progress_frames=None,
                  encoded_noop_runs=False,skip_static_stripes=False,token_boundaries=False,pipelined=False,packet_ahead=False,
-                 unrolled_copy=False,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,early_ay=False,sparse_patches=False):
+                 unrolled_copy=False,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,early_ay=False,sparse_patches=False,disk_refill_entry=None):
         if early_ay and not bulk: raise ValueError('early AY requires bulk packets')
         self.early_ay=early_ay
         if zero_copy and not bulk: raise ValueError('zero-copy metadata requires bulk packets')
@@ -90,7 +90,7 @@ class Harness:
             split_prepare=pipelined,page_entry=page_entry,preloaded_mask=packet_ahead,attribute_groups=attribute_groups,
             attribute_flags=attribute_flags,gray_cells=gray_cells,sparse_patches=sparse_patches)
         s = stream.Harness(ring, ring_start=ring_start,token_boundaries=token_boundaries,page_entry=page_entry,
-            unrolled_copy=unrolled_copy)
+            unrolled_copy=unrolled_copy,disk_refill_entry=disk_refill_entry)
         self.z, self.r, self.blocks = s.z, s.r, 0
         cpu = self.cpu = FrameStreamCPU(b'', b'')
         cpu.__dict__.update(f.cpu.__dict__); cpu.guarding = False
@@ -104,7 +104,7 @@ class Harness:
         for name in ('ring_pointer',): word(cpu, self.z[name], word(s.cpu, self.z[name]))
         for name in ('ring_region','history_page'): cpu.write8(self.z[name], s.cpu.read8(self.z[name]))
         a = MiniAssembler(0x9400)
-        ay_interrupt.emit(a)
+        ay_interrupt.emit(a,backpressure=disk_refill_entry is not None)
         playback_schedule.emit_clock(a, dos_irq=True, full_rom_clock=True, memory_clock=True, audio_irq=True,
             video_irq=video.VIDEO if pipelined else None)
         a.label('state'); ay_interrupt.emit_variables(a)

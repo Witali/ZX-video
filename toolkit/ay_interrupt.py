@@ -42,7 +42,7 @@ def emit_slot_address(a):
     a.emit(0x0F,0x0F,0x0F,0x6F,0xE6,3,0xF6,0xA0,0x67,0x7D,0xE6,0xE0,0x6F)
 
 
-def emit(a):
+def emit(a, *, backpressure=False):
     a.label('audio_init')
     # Input HL=number of video frames, six audio ticks per video frame.
     a.emit(0xE5,0x54,0x5D,0x29,0x19,0x29)
@@ -59,7 +59,14 @@ def emit(a):
     a.emit(0x3E,6);a.abs16(0x32,'audio_enqueue_left')
     a.label('audio_enqueue_one')
     a.abs16(0x3A,'audio_write_index');a.emit(0x3C,0xE6,31,0x47)
-    a.abs16(0x3A,'audio_read_index');a.emit(0xB8);a.abs16(0xCA,'fatal')
+    a.abs16(0x3A,'audio_read_index');a.emit(0xB8)
+    if backpressure:
+        a.abs16(0xC2,'audio_enqueue_space')
+        # Slow disk delivery can leave video behind the AY queue. Wait for
+        # one complete slot, retaining every original sound record.
+        a.emit(0xFB,0x76);a.abs16(0xC3,'audio_enqueue_one')
+        a.label('audio_enqueue_space')
+    else: a.abs16(0xCA,'fatal')
     a.emit(0xE5);a.abs16(0x3A,'audio_write_index');emit_slot_address(a)
     a.emit(0xEB,0xE1,0x7E,0xFE,12);a.abs16(0xD2,'fatal')
     a.emit(0x87,0x3C,0x4F,0x06,0,0xED,0xB0)

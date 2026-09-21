@@ -1,0 +1,151 @@
+"""Measure a complete experimental FAP3 disk with the real Fuse/TR-DOS.
+
+Records actual publication OUTs, every AY register write/tick, all runtime
+sector bytes and deterministic pixel samples per frame. Samples are not a
+full image comparison. No synthetic disk producer or IRQ is used.
+"""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import time
+
+import numpy as np
+from bulk_frame_stream import read_packet
+from frame_output_pipeline import display_screen
+from probe_motion_entropy import Reader
+from probe_spatial_contexts import read_header
+from smoke_test_fuse import hidden_startupinfo
+
+FIELD=70908
+
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__)
+    for key in ('fuse','trd','metadata','raw','states','output'): p.add_argument('--'+key,type=Path,required=True)
+    p.add_argument('--timeout',type=float,default=180)
+    args=p.parse_args(); m=json.loads(args.metadata.read_text()); lab=m['player_labels']
+    lines=['base 10','set $running 0']; widths={}; events=[]
+    def event(pc,tag,expressions,stop=False):
+        index=len(events)+1; events.append((pc,tag)); widths[tag]=len(expressions)
+        lines.extend([f'breakpoint 0x{pc:04x}',f'commands {index}',f'print {tag}'])
+        if tag==100: lines.append('set $running 1')
+        lines.extend('print '+e for e in expressions)
+        lines.extend(['exit 77' if stop else 'continue','end'])
+        if tag!=100: lines.append(f'condition {index} $running == 1')
+    def mem(address): return f'[{address}]+256*[{address+1}]'
+    stamp='spectrum:frames*70908+ula:tstates'
+    event(lab['start'],100,[])
+    samples=sorted(set([i*97%6912 for i in range(56)]+[6144+i*31 for i in range(24)]))
+    sample_expr=[]
+    # Sample after drawing returns to the bank-7 clock; publication itself
+    # is allowed to interrupt a disk read with another bank at C000.
+    for address in (0x4000,0xc000): sample_expr += [f'[{address+i}]' for i in samples]
+    # Stop after OUT has executed: includes real I/O contention, without
+    # adding an assumed 12 T to the preceding instruction boundary.
+    event(lab['publish_out']+2,150,[stamp,'z80:a',mem(lab['elapsed_fields']),mem(lab['late_fields'])])
+    for index,pc in enumerate(m['native_ready_pcs']): event(pc,151+index,[stamp,'ula:mem7ffd']+sample_expr)
+    event(lab['audio_write_loop'],140,[stamp,'[z80:hl]','[z80:hl+1]'])
+    event(lab['audio_tick_done'],143,[stamp])
+    event(lab['audio_tick_empty'],144,[stamp])
+    event(lab['disk_full_call'],102,[stamp,'z80:hl','z80:de'])
+    # A whole consumed sector was replaced at saved write_high. Read its
+    # exact bytes before the decoder resumes; compact four bytes per print.
+    base=f'256*[{m["disk_labels"]["write_high"]}]'
+    sector_expr=['+'.join(f'{256**k}*[{base}+{i+k}]' for k in range(4)) for i in range(0,256,4)]
+    event(lab['disk_return'],103,[stamp]+sector_expr)
+    event(lab['finished'],199,[stamp,mem(lab['published']),mem(lab['audio_ticks_played']),mem(lab['audio_underruns'])]+
+        [f'[{base+i}]' for base in (0x50e0,0x51e0,0xd0e0,0xd1e0) for i in range(32)],True)
+    for name in ('fatal','zx0_fatal'): event(lab[name],198,[stamp,'z80:pc'],True)
+    if len('\n'.join(lines))>29000: raise ValueError('Windows command line too long')
+    args.output.parent.mkdir(parents=True,exist_ok=True)
+    args.output.with_suffix('.debugger.txt').write_text('\n'.join(lines))
+    env=dict(os.environ,SDL_VIDEODRIVER='dummy')
+    command=[str(args.fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions',
+        '--speed','10000','--machine','128','--beta128','--debugger-command','\n'.join(lines),str(args.trd.resolve())]
+    started=time.monotonic()
+    completed=subprocess.run(command,cwd=args.fuse.parent,env=env,capture_output=True,
+        startupinfo=hidden_startupinfo(),timeout=args.timeout)
+    output=completed.stdout.decode(errors='replace')
+    if not re.search(r'^\s*\d+\s*$',output,re.M) and (args.fuse.parent/'stdout.txt').exists():
+        output=(args.fuse.parent/'stdout.txt').read_text(errors='replace')
+    args.output.with_suffix('.stderr.txt').write_text(completed.stderr.decode(errors='replace'))
+    args.output.with_suffix('.trace.txt').write_text(output)
+    nums=[int(s.strip(),0) for s in output.splitlines() if re.fullmatch(r'(?:-?\d+|0x[\da-fA-F]+)',s.strip())]
+    parsed=[]; pos=0
+    while pos<len(nums):
+        tag=nums[pos]; pos+=1
+        if tag not in widths or pos+widths[tag]>len(nums): raise ValueError(f'bad trace at {pos}: {nums[pos-1:pos+3]} / {output[-300:]}')
+        parsed.append((tag,nums[pos:pos+widths[tag]])); pos+=widths[tag]
+    pubs=[]; writes=[]; ticks=[]; underruns=[]; reads=[]; final=None; failure=None
+    image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0
+    with np.load(args.states,allow_pickle=False) as data: states=data['states']
+    for tag,v in parsed:
+        if tag==150:
+            pubs.append(dict(tstate=v[0],page=v[1],field=v[2],late_fields=v[3]))
+        elif tag in (151,152):
+            frame=m['frame_start']+native_count
+            samples_at=v[2:2+len(samples)] if native_count%2 else v[2+len(samples):]
+            wanted=display_screen(states[frame].tobytes(),black_borders=True)
+            bad=[i for i,x in zip(samples,samples_at) if x!=wanted[i]]
+            # Bar occupies bitmap offsets 10e0/11e0 and attribute 1ae0.
+            bad=[i for i in bad if not (0x10e0<=i<0x1100 or 0x11e0<=i<0x1200 or 0x1ae0<=i<0x1b00)]
+            if bad: errors.append(dict(frame=frame,page=v[1],pixels=bad,
+                values=[dict(offset=i,actual=x,expected=wanted[i]) for i,x in zip(samples,samples_at) if i in bad]))
+            native_count+=1
+        elif tag==140: writes.append(v)
+        elif tag==143: ticks.append(v[0])
+        elif tag==144: underruns.append(v[0])
+        elif tag==102: pending=v
+        elif tag==103:
+            if pending is None: raise ValueError('return without ROM entry')
+            linear=(pending[2]>>8)*16+(pending[2]&255)
+            actual=b''.join((value&0xffffffff).to_bytes(4,'little') for value in v[1:])
+            if actual!=image[linear*256:(linear+1)*256]: errors.append(dict(sector=linear,error='disk bytes differ'))
+            reads.append(dict(sector=linear,tstates=v[0]-pending[0])); pending=None
+        elif tag==199: final=v
+        elif tag==198: failure=v
+    raw=args.raw.read_bytes(); r=Reader(raw); _,_,count,_,_=read_header(r,magic=b'FAP3')
+    expected=[]
+    for i in range(count):
+        _,detail=read_packet(r,stored_guards=False)
+        if m['frame_start']<=i<m['frame_end_exclusive']: expected+=detail['ticks']
+    actual=[]; cursor=0
+    for timestamp in ticks:
+        changed=[]
+        while cursor<len(writes) and writes[cursor][0]<timestamp:
+            changed+=writes[cursor][1:]; cursor+=1
+        actual.append(bytes([len(changed)//2]+changed))
+    ay_exact=actual==expected
+    offsets=[q['tstate']-pubs[0]['tstate']-6*i*FIELD for i,q in enumerate(pubs)]
+    intervals=[b['tstate']-a['tstate'] for a,b in zip(pubs,pubs[1:])]
+    runs=[]; first=None
+    for i,q in enumerate(pubs):
+        if q['late_fields'] and first is None: first=i
+        if not q['late_fields'] and first is not None:
+            runs.append(dict(start=first,end=i-1,recovered_at=i)); first=None
+    if first is not None: runs.append(dict(start=first,end=len(pubs)-1,recovered_at=None))
+    progress_complete=bool(final and final[4:]==[255]*128)
+    complete=bool(final and final[1]==m['frames'] and final[2]==6*m['frames'] and len(pubs)==m['frames']
+        and native_count==m['frames'] and ay_exact and not errors and progress_complete)
+    report=dict(scope=__doc__,part=m['part'],complete=complete,release=False,exit_code=completed.returncode,
+        runtime_seconds=time.monotonic()-started,trd_sha256=hashlib.sha256(image).hexdigest(),
+        final=final[:4] if final else None,failure=failure,frames=len(pubs),native_frames_sampled=native_count,
+        progress_100_percent=progress_complete,ay_ticks=len(ticks),ay_records_exact=ay_exact,
+        audio_underruns=len(underruns),runtime_sectors_checked=len(reads),errors=errors[:100],
+        pixel_sample_offsets=samples,pixel_samples_per_frame=len(samples),full_pixel_comparison=False,
+        nominal_late_frames=sum(q['late_fields']>0 for q in pubs),max_late_fields=max((q['late_fields'] for q in pubs),default=0),
+        actual_out_over_one_field=sum(x>FIELD for x in offsets),max_actual_deviation_tstates=max(offsets,default=0),
+        bad_actual_intervals=sum(x<5*FIELD-64 or x>7*FIELD+64 for x in intervals),
+        late_runs=runs,publications=pubs,actual_phase_tstates=offsets,reads=reads,
+        audio_underrun_tstates=underruns,
+        rom_sha256=hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest())
+    args.output.write_text(json.dumps(report,indent=2)+'\n')
+    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','pixel_sample_offsets','late_runs','errors')}),flush=True)
+    if not complete: raise SystemExit(1)
+
+
+if __name__=='__main__': main()

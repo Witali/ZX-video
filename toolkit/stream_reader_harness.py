@@ -64,9 +64,10 @@ class StreamCPU(NativeCPU):
 
 class Harness:
     def __init__(self, stream, *, ring_start=0xfff0, page=0x17,token_boundaries=False,page_entry=None,
-                 unrolled_copy=False):
+                 unrolled_copy=False,disk_refill_entry=None):
         if page not in (0x17, 0x1f): raise ValueError('bank 7 required')
-        zcode, self.z = zx0.build(fast_literal=True, fast_refill=True,token_boundaries=token_boundaries,page_entry=page_entry)
+        zcode, self.z = zx0.build(fast_literal=True, fast_refill=True,token_boundaries=token_boundaries,page_entry=page_entry,
+            disk_refill_entry=disk_refill_entry)
         rcode, loader, self.r, listing = reader.build(self.z,unrolled_copy=unrolled_copy)
         cpu = self.cpu = StreamCPU(b'', b'')
         for bank in cpu.banks: bank[:] = b'\xa5'*16384
