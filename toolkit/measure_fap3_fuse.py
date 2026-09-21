@@ -14,6 +14,7 @@ import subprocess
 import time
 
 import numpy as np
+import disk_layout
 from bulk_frame_stream import read_packet
 from frame_output_pipeline import display_screen
 from probe_motion_entropy import Reader
@@ -141,8 +142,8 @@ def main():
         if not read['retried'] and not read['bytes_exact']:
             errors.append(dict(sector=read['sector'],error='accepted disk bytes differ'))
     accepted=[q['sector'] for q in reads if not q['retried']]
-    wanted_sectors=list(range(m['video_start_sector']+min(256,m['video_sectors']),
-        m['video_start_sector']+m['video_sectors']))
+    positions=list(disk_layout.positions(m['video_sectors'],m['video_start_sector']%16)) if m.get('interleaved') else list(range(m['video_sectors']))
+    wanted_sectors=[m['video_start_sector']+p for p in positions[min(256,m['video_sectors']):]]
     if pending is not None or seek_pending is not None or accepted!=wanted_sectors:
         errors.append(dict(error='runtime sector sequence incomplete or duplicated'))
     raw=args.raw.read_bytes(); r=Reader(raw); _,_,count,_,_=read_header(r,magic=b'FAP3')
@@ -175,6 +176,7 @@ def main():
         audio_underruns=len(underruns),runtime_sectors_checked=len(accepted),read_attempts=len(reads),errors=errors[:100],
         fast_read_retries=retries,fast_disk=m.get('fast_disk',False),
         cached_seek=m.get('cached_seek',False),seek_calls=seek_calls,
+        interleaved=m.get('interleaved',False),
         audio_tick_tstates=ticks,
         ay_record_field_gaps=sum(max(0,b//FIELD-a//FIELD-1) for a,b in zip(ticks,ticks[1:])),
         ay_record_field_duplicates=sum(b//FIELD==a//FIELD for a,b in zip(ticks,ticks[1:])),

@@ -44,7 +44,18 @@ def packed_sector(linear):
     return track * 256 + sector
 
 
-def build_disk(next_sector, remaining, *, fast_disk=False, cached_seek=False, initial_track=255):
+def emit_interleaved_cursor(a, listing):
+    """DE holds physical track/sector, zero based; advance 0,8,1,9,...,15."""
+    e,n=helpers(a,listing,'interleaved_cursor')
+    e('LD A,E',[0x7b],4); e('XOR 8',[0xee,8],7); e('BIT 3,A',[0xcb,0x5f],8)
+    n('JP NZ,advance_value',0xc2,'advance_value',10)
+    e('INC A',[0x3c],4); e('CP 8',[0xfe,8],7)
+    n('JP NZ,advance_value',0xc2,'advance_value',10)
+    e('XOR A',[0xaf],4); e('INC D',[0x14],4)
+    a.label('advance_value'); e('LD E,A',[0x5f],4)
+
+
+def build_disk(next_sector, remaining, *, fast_disk=False, cached_seek=False, initial_track=255, interleaved=False):
     if cached_seek and not fast_disk: raise ValueError('cached seek requires fast disk')
     if initial_track!=255 and not (cached_seek and 0<=initial_track<160):
         raise ValueError('initial track requires cached seek and a valid bootstrap track')
@@ -113,9 +124,12 @@ def build_disk(next_sector, remaining, *, fast_disk=False, cached_seek=False, in
     n('LD HL,fast_irq', 0x21, 0xbd80, 10); n('LD (irq_vector),HL', 0x22, 0xbdbe, 16)
     e('EI', [0xfb], 4)
     n('LD DE,(disk_position)', (0xed,0x5b), 'disk_position', 20)
-    e('INC E', [0x1c], 4); e('BIT 4,E', [0xcb,0x63], 8)
-    n('JP Z,sector_ok', 0xca, 'sector_ok', 10)
-    e('LD E,0', [0x1e,0], 7); e('INC D', [0x14], 4)
+    if interleaved:
+        emit_interleaved_cursor(a,listing)
+    else:
+        e('INC E', [0x1c], 4); e('BIT 4,E', [0xcb,0x63], 8)
+        n('JP Z,sector_ok', 0xca, 'sector_ok', 10)
+        e('LD E,0', [0x1e,0], 7); e('INC D', [0x14], 4)
     a.label('sector_ok'); n('LD (disk_position),DE', (0xed,0x53), 'disk_position', 20)
     n('LD HL,(remaining)', 0x2a, 'remaining', 16); e('DEC HL', [0x2b], 6)
     n('LD (remaining),HL', 0x22, 'remaining', 16)
@@ -213,7 +227,7 @@ def build_driver(h, clock, ay_state, *, has_next=False):
     return a.resolve(), dict(a.labels)
 
 
-def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16)):
+def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16), interleaved=False):
     """Sections already sector-aligned on disk; decompress directly to RAM."""
     a = MiniAssembler(0x6000)
     def call(label): a.abs16(0xcd,label)
@@ -246,7 +260,14 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16))
     a.abs16((0xed,0x5b),'disk_position'); a.emit(0x01); a.word(0x105)
     a.label('boot_disk_call'); a.emit(0xcd); a.word(0x3d13)
     a.emit(0xe1,0xc1,0x24)
-    a.abs16((0xed,0x5b),'disk_position'); a.emit(0x1c,0xcb,0x63)
+    a.abs16((0xed,0x5b),'disk_position')
+    if interleaved:
+        # Startup sections and the first partial video track stay linear.
+        # Every later track belongs only to the arranged video stream.
+        a.emit(0x7a,0xfe,video_sector//16+1); a.abs16(0xda,'advance_linear')
+        emit_interleaved_cursor(a,[]); a.abs16(0xc3,'sector_ok')
+        a.label('advance_linear')
+    a.emit(0x1c,0xcb,0x63)
     a.rel8(0x28,'sector_ok'); a.emit(0x1e,0,0x14)
     a.label('sector_ok'); a.abs16((0xed,0x53),'disk_position')
     a.rel8(0x10,'read_loop'); a.emit(0xc9)

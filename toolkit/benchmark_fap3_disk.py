@@ -27,14 +27,14 @@ class ShortReadCPU(DiskCPU):
         return super().instruction()
 
 
-def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cached_seek=False,drive=0):
+def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cached_seek=False,drive=0,interleaved=False):
     data=b''.join(bytes([i%251])*256 for i in range(2560))
     cpu=ShortReadCPU(b'',data);cpu.poison_rom=True;cpu.short_once=short;cpu.port_7ffd=0x1f
     regions,_,vl=video.build_video(dict(saved_page=0x8000,screen_base=0x8001),
         dict(history_page=0x8002),dict(elapsed_fields=0x8003))
     for address,blob in regions: install(cpu,address,blob)
     cpu.write8(video.SHADOW,0x1f)
-    code,l,rows=disk.build_disk(track*16+sector,7,fast_disk=fast_disk,cached_seek=cached_seek)
+    code,l,rows=disk.build_disk(track*16+sector,7,fast_disk=fast_disk,cached_seek=cached_seek,interleaved=interleaved)
     install(cpu,disk.DISK,code)
     seek_bytes=0
     if cached_seek:
@@ -57,7 +57,11 @@ def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cac
         assert cpu.steps<500
     assert {n:getattr(cpu,n) for n in saved}==saved
     assert cpu.sp==0x7bc0 and word(cpu,l['remaining'])==6
-    assert word(cpu,l['disk_position'])==disk.packed_sector(track*16+sector+1)
+    if interleaved:
+        next_sector=(sector+8 if sector<8 else sector-7) if sector<15 else 16
+        assert word(cpu,l['disk_position'])==(track+next_sector//16)*256+next_sector%16
+    else:
+        assert word(cpu,l['disk_position'])==disk.packed_sector(track*16+sector+1)
     assert cpu.read8(l['write_high'])==(high+1 if high<255 else 0xc0)
     assert cpu.read8(l['write_region'])==(region if high<255 else (region+1)%4)
     assert bytes(cpu.banks[(0,1,3,4)[region]][(high-0xc0)*256:(high-0xc0+1)*256])==data[(track*16+sector)*256:(track*16+sector+1)*256]

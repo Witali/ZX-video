@@ -26,6 +26,7 @@ from probe_spatial_contexts import read_header
 import disk_progress_z80 as progress
 import fap3_disk_z80 as disk
 import zx0_codec
+import disk_layout
 
 
 def sha(data): return hashlib.sha256(data).hexdigest()
@@ -34,7 +35,7 @@ def padded(data): return data+bytes((-len(data))%256)
 
 
 class Builder:
-    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False):
+    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False):
         self.raw, self.states, self.zx0, self.cache = raw, states, zx0, cache
         self.cache.mkdir(parents=True,exist_ok=True)
         self.memo = {}
@@ -42,6 +43,7 @@ class Builder:
         self.fast_disk=fast_disk
         self.cached_seek=cached_seek
         self.cold_track=cold_track
+        self.interleaved=interleaved
         r=Reader(raw)
         _,_,count,self.mapping,self.tables=read_header(r,magic=b'FAP3')
         if len(states)!=count: raise ValueError('state/frame count differs')
@@ -101,7 +103,7 @@ class Builder:
         # Its last track remains selected when runtime playback starts.
         initial_track=(next_sector-1)//16 if self.cached_seek and not self.cold_track else 255
         code, dl, listing=disk.build_disk(next_sector,remaining,fast_disk=self.fast_disk,
-            cached_seek=self.cached_seek,initial_track=initial_track)
+            cached_seek=self.cached_seek,initial_track=initial_track,interleaved=self.interleaved)
         for i,value in enumerate(code+bytes(256-len(code))): cpu.write8(0xa100+i,value)
         code,next_loader=disk.build_next_loader()
         for i,value in enumerate(code): cpu.write8(disk.LOAD_NEXT+i,value)
@@ -158,9 +160,10 @@ class Builder:
         disk_id=b'FAP3ZXV1'+bytes.fromhex(sha(series))[:6]+struct.pack('<H',part)
         next_id=disk_id[:14]+struct.pack('<H',part+1)
         for attempt in range(8):
-            sections,metadata=self.ram(start,end,video_sector+min(256,ns),max(0,ns-256))
+            positions=list(disk_layout.positions(ns+1,video_sector%16)) if self.interleaved else list(range(ns+1))
+            sections,metadata=self.ram(start,end,video_sector+positions[min(256,ns)],max(0,ns-256))
             for s in sections: s['sector']=0
-            player,_=disk.build_bootstrap(sections,video_sector,ns,next_id=next_id)
+            player,_=disk.build_bootstrap(sections,video_sector,ns,next_id=next_id,interleaved=self.interleaved)
             files=[TrdFile('boot','B',boot,basic_variables_offset=len(boot),autostart_line=10),
                 TrdFile('PLAYER','C',player,start=0x6000)]
             if calculate_file_start(files[:1])!=(1,1) or len(player)!=1024:
@@ -170,14 +173,16 @@ class Builder:
             if position==video_sector: break
             video_sector=position
         else: raise ValueError('bootstrap size did not converge')
-        player,boot_labels=disk.build_bootstrap(sections,video_sector,ns,next_id=next_id)
+        player,boot_labels=disk.build_bootstrap(sections,video_sector,ns,next_id=next_id,interleaved=self.interleaved)
         files[1]=TrdFile('PLAYER','C',player,start=0x6000)
         files.extend(TrdFile(f'INIT{i}','C',s['data']) for i,s in enumerate(sections))
-        files.extend(TrdFile(f'VIDEO{i:03}','C',chunk) for i,chunk in enumerate(
-            padded(stream)[p:p+65280] for p in range(0,len(padded(stream)),65280)))
-        used=video_sector-16+ns
+        physical=disk_layout.arrange(padded(stream),video_sector%16) if self.interleaved else padded(stream)
+        files.extend(TrdFile(f'VIDEO{i:03}','C',physical[p:p+65280]) for i,p in enumerate(range(0,len(physical),65280)))
+        used=video_sector-16+len(physical)//256
         metadata.update(part=part,frame_start=start,frame_end_exclusive=end,frames=end-start,
             fast_disk=self.fast_disk,cached_seek=self.cached_seek,required_trdos_sha256=disk.TRDOS_503_SHA256 if self.fast_disk else None,
+            interleaved=self.interleaved,video_physical_sectors=len(physical)//256,
+            layout_padding_sectors=len(physical)//256-ns,
             duration_seconds=(end-start)*3/25,video_bytes=len(stream),video_sectors=ns,
             video_start_sector=video_sector,used_sectors=used,free_sectors=2544-used,
             raw_sha256=sha(self.raw),states_sha256=sha(self.states.tobytes()),
@@ -204,6 +209,7 @@ def main():
     p.add_argument('--fast-disk',action='store_true',help='TR-DOS 5.03 same-track direct reads, normal dispatcher fallback')
     p.add_argument('--cached-seek',action='store_true',help='Known track and side changes without the full TR-DOS dispatcher; requires --fast-disk')
     p.add_argument('--cold-track',action='store_true',help='Control experiment: ignore the track already selected by bootstrap')
+    p.add_argument('--interleaved',action='store_true',help='Arrange full video tracks in 1,9,2,10,... sector order')
     p.add_argument('--trdos-rom',type=Path,help='Required ROM hash check for --fast-disk')
     args=p.parse_args()
     if not 1<=args.volumes<=255: p.error('--volumes must be between 1 and 255')
@@ -213,7 +219,7 @@ def main():
         p.error('--fast-disk requires the verified TR-DOS 5.03 ROM')
     with np.load(args.states,allow_pickle=False) as saved: states=saved['states']
     b=Builder(args.raw.read_bytes(),states,args.zx0.resolve(),args.cache.resolve(),fast_disk=args.fast_disk,
-        cached_seek=args.cached_seek,cold_track=args.cold_track)
+        cached_seek=args.cached_seek,cold_track=args.cold_track,interleaved=args.interleaved)
     if args.ends: ends=[int(n) for n in args.ends.split(',')]
     else:
         # Storage weights use the already measured global block boundaries.
