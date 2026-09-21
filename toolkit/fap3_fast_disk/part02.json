@@ -1,0 +1,1704 @@
+{
+  "player_labels": {
+    "start": 57120,
+    "ay_restore": 57138,
+    "main_loop": 57163,
+    "drain": 57177,
+    "finished": 57216,
+    "ay_state": 57219,
+    "end": 57230,
+    "disk_full_call": 24702,
+    "disk_return": 24705,
+    "publish_out": 38446,
+    "audio_tick_empty": 38100,
+    "audio_tick_done": 38067,
+    "audio_write_loop": 38051,
+    "audio_ticks_played": 38243,
+    "audio_underruns": 38241,
+    "elapsed_fields": 38245,
+    "published": 38856,
+    "late_fields": 38854,
+    "fatal": 38247,
+    "zx0_fatal": 32339,
+    "fast_read_enter": 24665,
+    "fast_disk_return": 24668,
+    "fast_read_retry": 24680,
+    "disk_finish": 24705
+  },
+  "decoder_labels": {
+    "begin": 31744,
+    "slice_until": 31750,
+    "slice_resume": 31772,
+    "slice_begin": 31785,
+    "slice_finished": 31820,
+    "slice_yield": 31838,
+    "slice_copy": 31855,
+    "slice_compare_high": 31857,
+    "slice_compare_low": 31864,
+    "slice_equal_branch": 31868,
+    "slice_copy_slow": 31870,
+    "slice_copy_fast": 31877,
+    "slice_sync_target": 31881,
+    "slice_sync_compare": 31893,
+    "slice_high_operand": 31858,
+    "slice_low_operand": 31865,
+    "dzx0_turbo": 31905,
+    "dzx0t_new_offset": 31917,
+    "dzx0t_new_offset_skip": 31929,
+    "dzx0t_copy": 31955,
+    "dzx0t_last_offset": 31956,
+    "dzx0t_literals": 31967,
+    "dzx0t_literals_skip": 31978,
+    "dzx0t_last_offset_skip": 31998,
+    "dzx0t_elias": 32004,
+    "dzx0t_elias_loop": 32033,
+    "dzx0t_last_offset+1": 31957,
+    "literal": 32051,
+    "literal_prefix_ready": 32091,
+    "literal_done": 32111,
+    "literal_fast": 32113,
+    "refill": 32117,
+    "refill_short": 32137,
+    "refill_count": 32139,
+    "refill_empty": 32178,
+    "ring_copy": 32185,
+    "ring_copy_fits": 32233,
+    "ring_copy_bytes": 32238,
+    "ring_copy_32": 32244,
+    "ring_copy_small": 32312,
+    "ring_page": 32315,
+    "fatal": 32339,
+    "state": 32340,
+    "slice_output": 32340,
+    "slice_target": 32342,
+    "slice_caller_sp": 32344,
+    "slice_decoder_sp": 32346,
+    "block_length": 32348,
+    "block_end": 32350,
+    "remaining": 32352,
+    "valid": 32354,
+    "ring_pointer": 32356,
+    "literal_tail": 32358,
+    "ring_tail": 32360,
+    "block_stored": 32362,
+    "ring_region": 32363,
+    "history_page": 32364,
+    "ring_banks": 32365,
+    "end": 32369
+  },
+  "disk_labels": {
+    "refill": 24576,
+    "page": 24619,
+    "fast_read_enter": 24665,
+    "fast_disk_return": 24668,
+    "fast_read_retry": 24680,
+    "full_read": 24687,
+    "disk_full_call": 24702,
+    "disk_return": 24705,
+    "disk_finish": 24705,
+    "sector_ok": 24732,
+    "high_ok": 24761,
+    "state": 24781,
+    "disk_position": 24781,
+    "remaining": 24783,
+    "saved_sp": 24785,
+    "write_region": 24787,
+    "write_high": 24788,
+    "free_high": 24789,
+    "cached_track": 24790,
+    "end": 24791
+  },
+  "packet_labels": {
+    "next_frame": 56320,
+    "read_packet": 56326,
+    "video_payload_ready": 56376,
+    "length_valid": 56470,
+    "packet_ready": 56523,
+    "state": 56524,
+    "payload_end": 56524,
+    "end": 56526,
+    "prepare_bridge": 32512,
+    "publish_bridge": 32533,
+    "bridge_end": 32548,
+    "draw_bridge": 32527
+  },
+  "clock_labels": {
+    "prime": 56832,
+    "start": 56850,
+    "play_one": 56870,
+    "wait_published": 56934,
+    "published": 56960,
+    "ahead": 56964,
+    "ahead_fits": 57000,
+    "ahead_target": 57001,
+    "ahead_done": 57014,
+    "state": 57016,
+    "remaining": 57016,
+    "packet_pending": 57018,
+    "end": 57019
+  },
+  "audio_labels": {
+    "audio_init": 37888,
+    "audio_enqueue_six": 37918,
+    "audio_enqueue_one": 37923,
+    "audio_enqueue_space": 37942,
+    "audio_start": 37993,
+    "audio_drain": 38002,
+    "audio_tick": 38011,
+    "audio_write_loop": 38051,
+    "audio_tick_done": 38067,
+    "audio_tick_empty": 38100,
+    "audio_tick_return": 38107,
+    "audio_tick_disabled": 38110,
+    "setup_clock": 38112,
+    "clock_isr_template": 38171,
+    "clock_slow_template": 38190,
+    "clock_return_dos": 38229,
+    "state": 38235,
+    "audio_enabled": 38235,
+    "audio_read_index": 38236,
+    "audio_write_index": 38237,
+    "audio_enqueue_left": 38238,
+    "audio_remaining": 38239,
+    "audio_underruns": 38241,
+    "audio_ticks_played": 38243,
+    "elapsed_fields": 38245,
+    "fatal": 38247,
+    "end": 38248
+  },
+  "next_loader_labels": {
+    "load_next": 39520,
+    "load_next_sector": 39536,
+    "end": 39555
+  },
+  "native_ready_pcs": [
+    56838,
+    56879
+  ],
+  "disk_instruction_listing": [
+    {
+      "address": 24576,
+      "instruction": "LD A,(free_high)",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24579,
+      "instruction": "CP H",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24580,
+      "instruction": "RET Z",
+      "tstates": [
+        5,
+        11
+      ],
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24581,
+      "instruction": "LD A,H",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24582,
+      "instruction": "LD (free_high),A",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24585,
+      "instruction": "LD HL,(remaining)",
+      "tstates": 16,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24588,
+      "instruction": "LD A,H",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24589,
+      "instruction": "OR L",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24590,
+      "instruction": "RET Z",
+      "tstates": [
+        5,
+        11
+      ],
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24591,
+      "instruction": "LD (saved_sp),SP",
+      "tstates": 20,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24595,
+      "instruction": "LD SP,disk_stack",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24598,
+      "instruction": "PUSH IX",
+      "tstates": 15,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24600,
+      "instruction": "PUSH IY",
+      "tstates": 15,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24602,
+      "instruction": "EX AF,AF2",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24603,
+      "instruction": "PUSH AF",
+      "tstates": 11,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24604,
+      "instruction": "EX AF,AF2",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24605,
+      "instruction": "EXX",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24606,
+      "instruction": "PUSH BC",
+      "tstates": 11,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24607,
+      "instruction": "PUSH DE",
+      "tstates": 11,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24608,
+      "instruction": "PUSH HL",
+      "tstates": 11,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24609,
+      "instruction": "EXX",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24610,
+      "instruction": "LD A,(write_region)",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24613,
+      "instruction": "CP 2",
+      "tstates": 7,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24615,
+      "instruction": "JP C,page",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24618,
+      "instruction": "INC A",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24619,
+      "instruction": "OR 10h",
+      "tstates": 7,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24621,
+      "instruction": "CALL atomic_page",
+      "tstates": 17,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24624,
+      "instruction": "LD A,(write_high)",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24627,
+      "instruction": "LD H,A",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24628,
+      "instruction": "LD L,0",
+      "tstates": 7,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24630,
+      "instruction": "LD DE,(disk_position)",
+      "tstates": 20,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24634,
+      "instruction": "LD A,(cached_track)",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24637,
+      "instruction": "CP D",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24638,
+      "instruction": "JP NZ,full_read",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24641,
+      "instruction": "LD (ROM_destination),HL",
+      "tstates": 16,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24644,
+      "instruction": "LD A,E",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24645,
+      "instruction": "LD (ROM_sector),A",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24648,
+      "instruction": "LD A,80h",
+      "tstates": 7,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24650,
+      "instruction": "LD (ROM_command),A",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24653,
+      "instruction": "LD DE,fast_disk_return",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24656,
+      "instruction": "PUSH DE",
+      "tstates": 11,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24657,
+      "instruction": "LD DE,retry_counter",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24660,
+      "instruction": "PUSH DE",
+      "tstates": 11,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24661,
+      "instruction": "LD DE,read_503",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24664,
+      "instruction": "PUSH DE",
+      "tstates": 11,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24665,
+      "instruction": "JP ROM trampoline",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24668,
+      "instruction": "EI",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24669,
+      "instruction": "LD DE,(ROM_destination)",
+      "tstates": 20,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24673,
+      "instruction": "INC D",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24674,
+      "instruction": "OR A",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24675,
+      "instruction": "SBC HL,DE",
+      "tstates": 15,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24677,
+      "instruction": "JP Z,disk_finish",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24680,
+      "instruction": "LD HL,(ROM_destination)",
+      "tstates": 16,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24683,
+      "instruction": "LD DE,(disk_position)",
+      "tstates": 20,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24687,
+      "instruction": "LD A,D",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24688,
+      "instruction": "LD (cached_track),A",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24691,
+      "instruction": "PUSH HL",
+      "tstates": 11,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24692,
+      "instruction": "LD HL,slow_irq",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24695,
+      "instruction": "LD (irq_vector),HL",
+      "tstates": 16,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24698,
+      "instruction": "POP HL",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24699,
+      "instruction": "LD BC,0105h",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24702,
+      "instruction": "CALL TR-DOS",
+      "tstates": 17,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24705,
+      "instruction": "DI",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24706,
+      "instruction": "LD A,BEh",
+      "tstates": 7,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24708,
+      "instruction": "LD I,A",
+      "tstates": 9,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24710,
+      "instruction": "IM 2",
+      "tstates": 8,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24712,
+      "instruction": "LD HL,fast_irq",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24715,
+      "instruction": "LD (irq_vector),HL",
+      "tstates": 16,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24718,
+      "instruction": "EI",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24719,
+      "instruction": "LD DE,(disk_position)",
+      "tstates": 20,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24723,
+      "instruction": "INC E",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24724,
+      "instruction": "BIT 4,E",
+      "tstates": 8,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24726,
+      "instruction": "JP Z,sector_ok",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24729,
+      "instruction": "LD E,0",
+      "tstates": 7,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24731,
+      "instruction": "INC D",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24732,
+      "instruction": "LD (disk_position),DE",
+      "tstates": 20,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24736,
+      "instruction": "LD HL,(remaining)",
+      "tstates": 16,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24739,
+      "instruction": "DEC HL",
+      "tstates": 6,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24740,
+      "instruction": "LD (remaining),HL",
+      "tstates": 16,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24743,
+      "instruction": "LD A,(write_high)",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24746,
+      "instruction": "INC A",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24747,
+      "instruction": "JP NZ,high_ok",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24750,
+      "instruction": "LD A,(write_region)",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24753,
+      "instruction": "INC A",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24754,
+      "instruction": "AND 3",
+      "tstates": 7,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24756,
+      "instruction": "LD (write_region),A",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24759,
+      "instruction": "LD A,C0h",
+      "tstates": 7,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24761,
+      "instruction": "LD (write_high),A",
+      "tstates": 13,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24764,
+      "instruction": "EXX",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24765,
+      "instruction": "POP HL",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24766,
+      "instruction": "POP DE",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24767,
+      "instruction": "POP BC",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24768,
+      "instruction": "EXX",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24769,
+      "instruction": "EX AF,AF2",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24770,
+      "instruction": "POP AF",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24771,
+      "instruction": "EX AF,AF2",
+      "tstates": 4,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24772,
+      "instruction": "POP IY",
+      "tstates": 14,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24774,
+      "instruction": "POP IX",
+      "tstates": 14,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24776,
+      "instruction": "LD SP,(saved_sp)",
+      "tstates": 20,
+      "phase": "disk_adapter"
+    },
+    {
+      "address": 24780,
+      "instruction": "RET",
+      "tstates": 10,
+      "phase": "disk_adapter"
+    }
+  ],
+  "reconstruction_bytes": 4084,
+  "decoder_end": 32369,
+  "clock_end": 57019,
+  "driver_end": 57230,
+  "part": 2,
+  "frame_start": 1269,
+  "frame_end_exclusive": 2334,
+  "frames": 1065,
+  "fast_disk": true,
+  "required_trdos_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+  "duration_seconds": 127.8,
+  "video_bytes": 483039,
+  "video_sectors": 1887,
+  "video_start_sector": 89,
+  "used_sectors": 1960,
+  "free_sectors": 584,
+  "raw_sha256": "1aff3a304635025c25cc8b20d066b6044f2767b02c99d2490c9f9ae1613ac2ab",
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "pixel_changes": false,
+  "ay_changes": false,
+  "fps": "25/3",
+  "ay_hz": 50,
+  "release": false,
+  "timing_verified": false,
+  "disk_delivery_verified": false,
+  "bootstrap_labels": {
+    "bootstrap": 24576,
+    "read_n": 24862,
+    "read_loop": 24862,
+    "boot_disk_call": 24871,
+    "sector_ok": 24889,
+    "dzx0_standard": 24896,
+    "dzx0s_literals": 24903,
+    "dzx0s_copy": 24914,
+    "dzx0s_new_offset": 24924,
+    "dzx0s_elias": 24949,
+    "dzx0s_elias_loop": 24950,
+    "dzx0s_elias_skip": 24956,
+    "dzx0s_elias_backtrack": 24957,
+    "disk_position": 24964,
+    "wait_next": 25088,
+    "prompt_row": 25118,
+    "attr_23232": 25147,
+    "attr_56000": 25157,
+    "poll_next": 25162,
+    "pause": 25165,
+    "poll_disk_call": 25181,
+    "check_id": 25192,
+    "next_disk_accepted": 25201,
+    "next_id": 25204,
+    "prompt": 25220,
+    "end": 25444
+  },
+  "blocks": [
+    {
+      "raw_start": 784769,
+      "raw_end": 786432,
+      "decoded_bytes": 1663,
+      "zx0_bytes": 1206,
+      "sha256": "e42b77b5ad3aad3d1eef1ec58cf3618a227f9f20f37ef4abef7afbc4408e1beb"
+    },
+    {
+      "raw_start": 786432,
+      "raw_end": 794624,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5980,
+      "sha256": "4951e87bc64f7c16dc110f2eb9d24c63cabf5684af301637bcd4ae6b4b425818"
+    },
+    {
+      "raw_start": 794624,
+      "raw_end": 802816,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5432,
+      "sha256": "5aed7ab8164ddf587bbae89b39e28324aee7da2be39d6b325eb383361816b60b"
+    },
+    {
+      "raw_start": 802816,
+      "raw_end": 811008,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4548,
+      "sha256": "8c4f342fe60bf18b56036c6bd91956c376575a462eff1e8fc620781d68600b70"
+    },
+    {
+      "raw_start": 811008,
+      "raw_end": 819200,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4855,
+      "sha256": "081bdd3df38d42f7843094818fd33847f30cd9335986f4c1bd6fd9b4fc0651ad"
+    },
+    {
+      "raw_start": 819200,
+      "raw_end": 827392,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5412,
+      "sha256": "e821a26f4155917fe517fbfe17aa8aa17a6c75f450b49bad4e81d3e06ced23c6"
+    },
+    {
+      "raw_start": 827392,
+      "raw_end": 835584,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5448,
+      "sha256": "7c534d99e542462e48cbdee97997570c1f78a48943cdc0e99acd828f5bb34450"
+    },
+    {
+      "raw_start": 835584,
+      "raw_end": 843776,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5514,
+      "sha256": "119ab550b7d05b30a9fed6792e3de16a052f861066315ec0c999736d1a22dea4"
+    },
+    {
+      "raw_start": 843776,
+      "raw_end": 851968,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5658,
+      "sha256": "84c41bf2e7be9d4b5ec1c191c732128915f25c05cde377fe3b6ff6618cd03087"
+    },
+    {
+      "raw_start": 851968,
+      "raw_end": 860160,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5152,
+      "sha256": "84fbf9710327b65155b840568effa56abbf7013d879037497dc66d37c936a5da"
+    },
+    {
+      "raw_start": 860160,
+      "raw_end": 868352,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4812,
+      "sha256": "3f6c129c5d461d3714709dfae1a63e0d54ec70d6fd29c51408738097990c1574"
+    },
+    {
+      "raw_start": 868352,
+      "raw_end": 876544,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5303,
+      "sha256": "9ae7f2098a8981aa4e8a92c7542b01316049f908cc179b1a521e228f11122b20"
+    },
+    {
+      "raw_start": 876544,
+      "raw_end": 884736,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4646,
+      "sha256": "163779ea56019225aa6055292d6a64494971d679400e1106467ea75526978c42"
+    },
+    {
+      "raw_start": 884736,
+      "raw_end": 892928,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4244,
+      "sha256": "7454c40c3d56eae50556064fe3c241e61d4a6d68b56e3b7523b0ce1d52fa5ac2"
+    },
+    {
+      "raw_start": 892928,
+      "raw_end": 901120,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5480,
+      "sha256": "84c0506d717126c0a239eeb7b8fe89bd465aad8ef1580a8b5c87100b83f98293"
+    },
+    {
+      "raw_start": 901120,
+      "raw_end": 909312,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5937,
+      "sha256": "d0b627dcae6fbd052dffdd8444c8fef4d55e4df4268114c7d281647864359994"
+    },
+    {
+      "raw_start": 909312,
+      "raw_end": 917504,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5864,
+      "sha256": "af0217ede5a19916d551a23467afc35f467448b3aadd6538372d66010fd7f38a"
+    },
+    {
+      "raw_start": 917504,
+      "raw_end": 925696,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5404,
+      "sha256": "fed04814b3f4a903419728dd64931901db8557d7c7efaffb33945a552d4a5aee"
+    },
+    {
+      "raw_start": 925696,
+      "raw_end": 933888,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5720,
+      "sha256": "a6a5c2e756187a59a76763274883b8ea85daff6e5ea6263f714d68fc89775d04"
+    },
+    {
+      "raw_start": 933888,
+      "raw_end": 942080,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5702,
+      "sha256": "a0979caba10bcc67af750a294747323665ca7631c22c26b0cc4839fc47eff1f5"
+    },
+    {
+      "raw_start": 942080,
+      "raw_end": 950272,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5942,
+      "sha256": "1757139af9c33edfe82e62bbbd0307c750fd40f6f1f980622978bcc7769d0101"
+    },
+    {
+      "raw_start": 950272,
+      "raw_end": 958464,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5887,
+      "sha256": "d3778687e045c0f71e5ff268905e200c6339f435cff4792c42ddac00d7058a6e"
+    },
+    {
+      "raw_start": 958464,
+      "raw_end": 966656,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5737,
+      "sha256": "35b6007ec70052c42bdb11cbdbe89793affc922c170cb67e580abbdde4eceddf"
+    },
+    {
+      "raw_start": 966656,
+      "raw_end": 974848,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5367,
+      "sha256": "592a45f01c04bf8a31d672e9b69ba15e24d6fe939939ad54530792d2cde7f2cf"
+    },
+    {
+      "raw_start": 974848,
+      "raw_end": 983040,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5952,
+      "sha256": "9bdafcc33eacfcd2b798cce271ceff8e32e4ebc9e4daf150865be27b87692b3e"
+    },
+    {
+      "raw_start": 983040,
+      "raw_end": 991232,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5681,
+      "sha256": "2695462e012348b3166001d4e6d23d390dd2413f1fc86a08c2d4115818c686f8"
+    },
+    {
+      "raw_start": 991232,
+      "raw_end": 999424,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5602,
+      "sha256": "7edda6fadd2a42d6b9ce8cb3805e8ea6a379f34b02abf1241a4e895b6cbeef2b"
+    },
+    {
+      "raw_start": 999424,
+      "raw_end": 1007616,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 3649,
+      "sha256": "2c0e851195e0740a77b364d65d7a2678258668396fe3c8c9a9cc1016f94df632"
+    },
+    {
+      "raw_start": 1007616,
+      "raw_end": 1015808,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5342,
+      "sha256": "bffc1c21e7023e37d2f6674385787a1846aff6d063e7df5e64738c474bc61509"
+    },
+    {
+      "raw_start": 1015808,
+      "raw_end": 1024000,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5576,
+      "sha256": "081aa3fbad0b4a2f52929d814bc65238e02122f357412a96305412072ccd08b8"
+    },
+    {
+      "raw_start": 1024000,
+      "raw_end": 1032192,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5773,
+      "sha256": "6b970e59e1f44254030538f2dcf6cc34542f3c39e924d9c5b45b02f1f36b3718"
+    },
+    {
+      "raw_start": 1032192,
+      "raw_end": 1040384,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5584,
+      "sha256": "7f10aeac2c22e4accb8e5d057fb4298b46f9fb2375c111b45df6485a91bede71"
+    },
+    {
+      "raw_start": 1040384,
+      "raw_end": 1048576,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5388,
+      "sha256": "c97d9fafb5d0c1cef81c254ec0007a06e42a821c9cc4bffcfbcc4842c35387f8"
+    },
+    {
+      "raw_start": 1048576,
+      "raw_end": 1056768,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5011,
+      "sha256": "39d90521c804952aede347730978de77bffcf498b34bedefb46e922fb3aef2cb"
+    },
+    {
+      "raw_start": 1056768,
+      "raw_end": 1064960,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5495,
+      "sha256": "cc21f37bb7b431ba2bb86ae46097bd7b01f2a3441b8059b5c9dc68efd75e00c8"
+    },
+    {
+      "raw_start": 1064960,
+      "raw_end": 1073152,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4806,
+      "sha256": "26de602eb38fa2bda9dfec29cf6a8cf32c71fc101fd133d9935dc01e1ee9842f"
+    },
+    {
+      "raw_start": 1073152,
+      "raw_end": 1081344,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5059,
+      "sha256": "6751a21cdad9dd5d4b833ecae8e831c37084d3b865d9fc442792e2f7485a045d"
+    },
+    {
+      "raw_start": 1081344,
+      "raw_end": 1089536,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4332,
+      "sha256": "9dcb48182e9dad44ac7132e9fdb757a221dcd61c22432041835a8f2c630162ac"
+    },
+    {
+      "raw_start": 1089536,
+      "raw_end": 1097728,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5301,
+      "sha256": "6dd774eecdacaa1698a2fae638650dd1cad212ff03450f42d87ebae6b3df4065"
+    },
+    {
+      "raw_start": 1097728,
+      "raw_end": 1105920,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5509,
+      "sha256": "355c1ef88325fc5f8461f7bd02d4b790c6c61d60e59b22042680a1f2c11bfbcd"
+    },
+    {
+      "raw_start": 1105920,
+      "raw_end": 1114112,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5761,
+      "sha256": "725f9ade279bf3cd49e66982793baff03c04b939b9085fa82b8ce2d46074e733"
+    },
+    {
+      "raw_start": 1114112,
+      "raw_end": 1122304,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5912,
+      "sha256": "871a336c2f8ec9891182dd7297f5bd2f92f8d2b49a6f70e5f1f453dbffaaa523"
+    },
+    {
+      "raw_start": 1122304,
+      "raw_end": 1130496,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5725,
+      "sha256": "76da65840e0336f79ab8578160e70f0286b87ab8f321bf5f507741cf0302ab9f"
+    },
+    {
+      "raw_start": 1130496,
+      "raw_end": 1138688,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5581,
+      "sha256": "06ada8cafacc6f8ad3a3f00eb131b2187d75c7f771f3f3281678172d19bf5150"
+    },
+    {
+      "raw_start": 1138688,
+      "raw_end": 1146880,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5226,
+      "sha256": "4666650dd03cdf2543af4715c894bb392e44ab3da6faa619d51c8d1350a09e82"
+    },
+    {
+      "raw_start": 1146880,
+      "raw_end": 1155072,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5427,
+      "sha256": "f0af5fc3357ce46b9b451d2591e15679aabdfc21c0c7d648af7c03765b89855a"
+    },
+    {
+      "raw_start": 1155072,
+      "raw_end": 1163264,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4783,
+      "sha256": "eb3c0833171e966fbad6bcd6a9f23b72db90ea6aaefc6af02c09697d7b8647f8"
+    },
+    {
+      "raw_start": 1163264,
+      "raw_end": 1171456,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5480,
+      "sha256": "ed20fae3d8677c086e7cad56cfda9b2334f182e9bd27e53876b5bbb02f1aa0d5"
+    },
+    {
+      "raw_start": 1171456,
+      "raw_end": 1179648,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5476,
+      "sha256": "4bec4a05be30320709e9e8f6bc1393248d764a164b9e8c4b6e7766ea8d11aeec"
+    },
+    {
+      "raw_start": 1179648,
+      "raw_end": 1187840,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4913,
+      "sha256": "aab862cc51cb1ca624c217ed5242686a1fc580397b34df4c760ae75190f8aadb"
+    },
+    {
+      "raw_start": 1187840,
+      "raw_end": 1196032,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 3991,
+      "sha256": "74de3ad5010f07307bf71ac7a6d173da3f0a77a4b1be9bdbf8d7d1a399e313ef"
+    },
+    {
+      "raw_start": 1196032,
+      "raw_end": 1204224,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4843,
+      "sha256": "ffba01553f0358151e4a28b92a694fc6ee44ddf2e27cdb37e7da281b4a06a3b9"
+    },
+    {
+      "raw_start": 1204224,
+      "raw_end": 1212416,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5702,
+      "sha256": "4f56aaaa16815977f6b7d2201a719dd7c0e8097af1088e36dfe5a91064b7e4d7"
+    },
+    {
+      "raw_start": 1212416,
+      "raw_end": 1220608,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5555,
+      "sha256": "74cb9b3266aab2dbd1e673d7cf16d359eda08b1b5f87c2114a05b6c9afa4efe1"
+    },
+    {
+      "raw_start": 1220608,
+      "raw_end": 1228800,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5624,
+      "sha256": "78f0701da3f6c2548288436c10d9a8068a85d996b8526c6f17de15512b08f808"
+    },
+    {
+      "raw_start": 1228800,
+      "raw_end": 1236992,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4440,
+      "sha256": "a0872c6323886d814a35a3ad26f16c49e25a1c0b524884e5a42f0071138db59d"
+    },
+    {
+      "raw_start": 1236992,
+      "raw_end": 1245184,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5398,
+      "sha256": "6f1dae0f645b9352a9639f48bce8f8e4b96c0a7979474d124fc6ed8bb2494edd"
+    },
+    {
+      "raw_start": 1245184,
+      "raw_end": 1253376,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4411,
+      "sha256": "efc6bdb665845a039e3a1fd336ad733276df4cb9de36c28d0d14c46e736b92f2"
+    },
+    {
+      "raw_start": 1253376,
+      "raw_end": 1261568,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4263,
+      "sha256": "635c5254c116166d838696fd20a05387aa26a912368f66b1ece8de2fae5628ca"
+    },
+    {
+      "raw_start": 1261568,
+      "raw_end": 1269760,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4219,
+      "sha256": "06fc2e6c98819fe1a3e317e8cf080cbcb59f93e54671d5660384d9358a4fa725"
+    },
+    {
+      "raw_start": 1269760,
+      "raw_end": 1277952,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4909,
+      "sha256": "f9f0fc61fa7b74e4441eeeb70ca7654209b3e3a1d25e14a30745143e6495c1e3"
+    },
+    {
+      "raw_start": 1277952,
+      "raw_end": 1286144,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4972,
+      "sha256": "82a79ee3711bb633be09dc550a201b66078d793d3e975f16d0301a0ab2fc5983"
+    },
+    {
+      "raw_start": 1286144,
+      "raw_end": 1294336,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5344,
+      "sha256": "372bfb61f535e109eee269a99224fefb9d5490985a72b62b441fdef37cfafd39"
+    },
+    {
+      "raw_start": 1294336,
+      "raw_end": 1302528,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5859,
+      "sha256": "32296214913ae2cb82a223019ec2253f93bcdc62e72e429ba96a2a332eed9468"
+    },
+    {
+      "raw_start": 1302528,
+      "raw_end": 1310720,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5723,
+      "sha256": "8db9730524fd23444a7ddbb954f8607345b689c08133a6b25a99aafb4e46ce43"
+    },
+    {
+      "raw_start": 1310720,
+      "raw_end": 1318912,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5755,
+      "sha256": "65426825e9e83fb6be686471e556e469301c8b45e8a2a28f4cd9fd1dbcc3906a"
+    },
+    {
+      "raw_start": 1318912,
+      "raw_end": 1327104,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5826,
+      "sha256": "0ae2dd7d54272df4539f0cda6d524f8e9823b7e5d05e7d92fd3c0da47c62882b"
+    },
+    {
+      "raw_start": 1327104,
+      "raw_end": 1335296,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5995,
+      "sha256": "05d2bb583158a88e7acdde157f44a7f0880568727bfcf74dab2932c0ee82212c"
+    },
+    {
+      "raw_start": 1335296,
+      "raw_end": 1343488,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5513,
+      "sha256": "f7cd0ab276c2241d743d9a4ef3735a304091d7dfa66a7abeb6d421ee92dfc03b"
+    },
+    {
+      "raw_start": 1343488,
+      "raw_end": 1351680,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5092,
+      "sha256": "ddf078a6161b066f6cea8d1394f3b2f08ce54a8d96a5ad6bfd6e9da781c948d8"
+    },
+    {
+      "raw_start": 1351680,
+      "raw_end": 1359872,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4861,
+      "sha256": "db59563bfb684df18f5619529ba9f8aec8bbca6815c1879b61101b2ce715ff55"
+    },
+    {
+      "raw_start": 1359872,
+      "raw_end": 1368064,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5320,
+      "sha256": "9f2c9c5dcf983f4b185d4924cd3fbcc70f14308c86fecab119a2a72dc867d93d"
+    },
+    {
+      "raw_start": 1368064,
+      "raw_end": 1376256,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5597,
+      "sha256": "187722c5f14a4976d1aeb64f5cdc80a1beecdbfa95f87f4d20cbdf1088a4bd82"
+    },
+    {
+      "raw_start": 1376256,
+      "raw_end": 1384448,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4832,
+      "sha256": "936cb1f1f58205e8d6d3b59128b7e11e100bc7b8c3ff88f2343b0ef9c315aa4f"
+    },
+    {
+      "raw_start": 1384448,
+      "raw_end": 1392640,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5390,
+      "sha256": "6497324554663670f4c4c4690a641c08c6d51d551d6f3fe400f80f585d768631"
+    },
+    {
+      "raw_start": 1392640,
+      "raw_end": 1400832,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5461,
+      "sha256": "026524adcd67a4fc7e0a0b1598c989ed19903fb1f45d9fcd4c38ff4434580b84"
+    },
+    {
+      "raw_start": 1400832,
+      "raw_end": 1409024,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5551,
+      "sha256": "494686b5368a4e0e548a647faaa56c9e9068fb662cb6337e643298278347d42f"
+    },
+    {
+      "raw_start": 1409024,
+      "raw_end": 1417216,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5137,
+      "sha256": "be5254d9c530ec7c9861d85dda6727d5a4ba0f3e521ad61b7ea8fa01cc529142"
+    },
+    {
+      "raw_start": 1417216,
+      "raw_end": 1425408,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5215,
+      "sha256": "cfcb8212e43533a50aea9189599f7566f37b270ade772f03e1b3eb91387b93d4"
+    },
+    {
+      "raw_start": 1425408,
+      "raw_end": 1433600,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5522,
+      "sha256": "f4d1318f84d3bf60e57b37e461e53d89b492298f916ecf1ec0a0821ccbc5347a"
+    },
+    {
+      "raw_start": 1433600,
+      "raw_end": 1441792,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5242,
+      "sha256": "116ee592bf9acc3587eac9ae83e6f6c77bfb28d203f6fee826468ec106b1d67d"
+    },
+    {
+      "raw_start": 1441792,
+      "raw_end": 1449984,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5350,
+      "sha256": "0dbf1a2ec4d64d711351b5617ae375b5cfdb5af592f0dd954b15ddef02cf2620"
+    },
+    {
+      "raw_start": 1449984,
+      "raw_end": 1458176,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4955,
+      "sha256": "a85e4da673917642d0426fdf04bf3d6635694f2cc7558edb6f474121b5f38fcc"
+    },
+    {
+      "raw_start": 1458176,
+      "raw_end": 1466368,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5232,
+      "sha256": "8ae1e6377a63465a2fca47c39b644dd9432b56b0df0f46e8187b2e1bf345e086"
+    },
+    {
+      "raw_start": 1466368,
+      "raw_end": 1474560,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5891,
+      "sha256": "8b859cf486db9f4a2e871ce38a042557ce2a92579f81b700a5e0d0f5fc1fa9c2"
+    },
+    {
+      "raw_start": 1474560,
+      "raw_end": 1482752,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5867,
+      "sha256": "3d44b3667b7ea678f5d0c67b6e32310f515afbf5670250acc97f0c60f328b1c3"
+    },
+    {
+      "raw_start": 1482752,
+      "raw_end": 1490944,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 6058,
+      "sha256": "c959908e973e64f306943779e215c4b5e83a7cd453cad2b70d92eb6b8af7bb4f"
+    },
+    {
+      "raw_start": 1490944,
+      "raw_end": 1499136,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5219,
+      "sha256": "e9dbe5a27385d67a00135a6aa6cf3546ee98cfda696e1b5657e7641b5a66c857"
+    },
+    {
+      "raw_start": 1499136,
+      "raw_end": 1507328,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 4944,
+      "sha256": "a5664b1aab4c1bb1f11ab9910037d31f09699db0fa6a1efb883055b3c7622ac7"
+    },
+    {
+      "raw_start": 1507328,
+      "raw_end": 1515520,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5383,
+      "sha256": "64fedf634686445d0b3fad5f75ba0fe0539d3f9fef72646d1fddd050d25b173b"
+    },
+    {
+      "raw_start": 1515520,
+      "raw_end": 1523712,
+      "decoded_bytes": 8192,
+      "zx0_bytes": 5925,
+      "sha256": "e22211ecc4d1ce61c04af04362db7908949e1dc99d6add979718c1dfd72fb60e"
+    },
+    {
+      "raw_start": 1523712,
+      "raw_end": 1527715,
+      "decoded_bytes": 4003,
+      "zx0_bytes": 2691,
+      "sha256": "c4bd867ad993781f4ec4594b848134338c004f82f8ebd0e5b328dbefdb24aeea"
+    }
+  ],
+  "sections": [
+    {
+      "bank": 6,
+      "address": 49152,
+      "buffer": 16384,
+      "sectors": 22,
+      "decoded_bytes": 16384,
+      "compressed_bytes": 5483,
+      "sha256": "2c191d230ccce88314181a165b3e9f0841f57ad63f6de094fa02504e865e75eb",
+      "sector": 21
+    },
+    {
+      "bank": 2,
+      "address": 40960,
+      "buffer": 16384,
+      "sectors": 2,
+      "decoded_bytes": 8192,
+      "compressed_bytes": 462,
+      "sha256": "11d4225d2bf93f4f2a849b9ab50afe77e9a196d765b294256f625ba24eb4494d",
+      "sector": 43
+    },
+    {
+      "bank": 2,
+      "address": 32768,
+      "buffer": 42656,
+      "sectors": 10,
+      "decoded_bytes": 8192,
+      "compressed_bytes": 2353,
+      "sha256": "185523ad31f03594323d2fd22b68cd8ade4a847dfa8a5f3933d3307ad1f31f0e",
+      "sector": 45
+    },
+    {
+      "bank": 7,
+      "address": 49152,
+      "buffer": 42656,
+      "sectors": 13,
+      "decoded_bytes": 8192,
+      "compressed_bytes": 3194,
+      "sha256": "f9cf862a38674363830597cf08da0ca8ee832f1cd4cc32dfde80263641e42981",
+      "sector": 55
+    },
+    {
+      "bank": 5,
+      "address": 16384,
+      "buffer": 42656,
+      "sectors": 11,
+      "decoded_bytes": 6912,
+      "compressed_bytes": 2642,
+      "sha256": "f54ec5d2917f4aa95532a775ea1292701195919a9d7123724be74f2d80310694",
+      "sector": 68
+    },
+    {
+      "bank": 5,
+      "address": 25600,
+      "buffer": 42656,
+      "sectors": 10,
+      "decoded_bytes": 7168,
+      "compressed_bytes": 2472,
+      "sha256": "9f02f67c5f13a6c6ab3f50d5aa94392c3767d670008e8d28a85523abcad5c5bd",
+      "sector": 79
+    }
+  ],
+  "disk_id_hex": "464150335a585631f5d521dca8a80200",
+  "has_next": true,
+  "next_part": 3,
+  "disk_change": "automatic poll of series fingerprint and volume ordinal in reserved system sector 15",
+  "directory": [
+    {
+      "name": "boot",
+      "type": "B",
+      "field1": 67,
+      "length": 67,
+      "sectors": 1,
+      "sector": 0,
+      "track": 1
+    },
+    {
+      "name": "PLAYER",
+      "type": "C",
+      "field1": 24576,
+      "length": 1024,
+      "sectors": 4,
+      "sector": 1,
+      "track": 1
+    },
+    {
+      "name": "INIT0",
+      "type": "C",
+      "field1": 0,
+      "length": 5632,
+      "sectors": 22,
+      "sector": 5,
+      "track": 1
+    },
+    {
+      "name": "INIT1",
+      "type": "C",
+      "field1": 0,
+      "length": 512,
+      "sectors": 2,
+      "sector": 11,
+      "track": 2
+    },
+    {
+      "name": "INIT2",
+      "type": "C",
+      "field1": 0,
+      "length": 2560,
+      "sectors": 10,
+      "sector": 13,
+      "track": 2
+    },
+    {
+      "name": "INIT3",
+      "type": "C",
+      "field1": 0,
+      "length": 3328,
+      "sectors": 13,
+      "sector": 7,
+      "track": 3
+    },
+    {
+      "name": "INIT4",
+      "type": "C",
+      "field1": 0,
+      "length": 2816,
+      "sectors": 11,
+      "sector": 4,
+      "track": 4
+    },
+    {
+      "name": "INIT5",
+      "type": "C",
+      "field1": 0,
+      "length": 2560,
+      "sectors": 10,
+      "sector": 15,
+      "track": 4
+    },
+    {
+      "name": "VIDEO000",
+      "type": "C",
+      "field1": 0,
+      "length": 65280,
+      "sectors": 255,
+      "sector": 9,
+      "track": 5
+    },
+    {
+      "name": "VIDEO001",
+      "type": "C",
+      "field1": 0,
+      "length": 65280,
+      "sectors": 255,
+      "sector": 8,
+      "track": 21
+    },
+    {
+      "name": "VIDEO002",
+      "type": "C",
+      "field1": 0,
+      "length": 65280,
+      "sectors": 255,
+      "sector": 7,
+      "track": 37
+    },
+    {
+      "name": "VIDEO003",
+      "type": "C",
+      "field1": 0,
+      "length": 65280,
+      "sectors": 255,
+      "sector": 6,
+      "track": 53
+    },
+    {
+      "name": "VIDEO004",
+      "type": "C",
+      "field1": 0,
+      "length": 65280,
+      "sectors": 255,
+      "sector": 5,
+      "track": 69
+    },
+    {
+      "name": "VIDEO005",
+      "type": "C",
+      "field1": 0,
+      "length": 65280,
+      "sectors": 255,
+      "sector": 4,
+      "track": 85
+    },
+    {
+      "name": "VIDEO006",
+      "type": "C",
+      "field1": 0,
+      "length": 65280,
+      "sectors": 255,
+      "sector": 3,
+      "track": 101
+    },
+    {
+      "name": "VIDEO007",
+      "type": "C",
+      "field1": 0,
+      "length": 26112,
+      "sectors": 102,
+      "sector": 2,
+      "track": 117
+    }
+  ],
+  "stats": {
+    "used_sectors": 1960,
+    "free_sectors": 584,
+    "first_free_track": 123,
+    "first_free_sector": 8
+  },
+  "trd_sha256": "a2164beebab5dcd609ab2e7398b9750d2d37426a5181ccc2706c4be617b05a48"
+}

@@ -34,11 +34,12 @@ def padded(data): return data+bytes((-len(data))%256)
 
 
 class Builder:
-    def __init__(self, raw, states, zx0, cache):
+    def __init__(self, raw, states, zx0, cache, *, fast_disk=False):
         self.raw, self.states, self.zx0, self.cache = raw, states, zx0, cache
         self.cache.mkdir(parents=True,exist_ok=True)
         self.memo = {}
         self.ends=None
+        self.fast_disk=fast_disk
         r=Reader(raw)
         _,_,count,self.mapping,self.tables=read_header(r,magic=b'FAP3')
         if len(states)!=count: raise ValueError('state/frame count differs')
@@ -94,7 +95,7 @@ class Builder:
             if frame>=0:
                 screen=display_screen(self.states[frame].tobytes(),black_borders=True)
                 cpu.banks[bank][:6912]=progress.reference_screen(screen,0,end-start)
-        code, dl, listing=disk.build_disk(next_sector,remaining)
+        code, dl, listing=disk.build_disk(next_sector,remaining,fast_disk=self.fast_disk)
         for i,value in enumerate(code+bytes(256-len(code))): cpu.write8(0xa100+i,value)
         code,next_loader=disk.build_next_loader()
         for i,value in enumerate(code): cpu.write8(disk.LOAD_NEXT+i,value)
@@ -123,6 +124,8 @@ class Builder:
             audio_ticks_played=h.audio['audio_ticks_played'],audio_underruns=h.audio['audio_underruns'],
             elapsed_fields=h.audio['elapsed_fields'],published=h.video['published'],
             late_fields=h.video['late_fields'],fatal=h.audio['fatal'],zx0_fatal=h.z['fatal'])
+        for name in ('fast_read_enter','fast_disk_return','fast_read_retry','disk_finish'):
+            if name in dl: labels[name]=dl[name]
         return sections,dict(player_labels=labels,decoder_labels=h.z,disk_labels=dl,
             packet_labels=h.p,clock_labels=clock.labels,audio_labels=h.audio,next_loader_labels=next_loader,
             native_ready_pcs=[row['address']+3 for row in clock.listing
@@ -158,6 +161,7 @@ class Builder:
             padded(stream)[p:p+65280] for p in range(0,len(padded(stream)),65280)))
         used=video_sector-16+ns
         metadata.update(part=part,frame_start=start,frame_end_exclusive=end,frames=end-start,
+            fast_disk=self.fast_disk,required_trdos_sha256=disk.TRDOS_503_SHA256 if self.fast_disk else None,
             duration_seconds=(end-start)*3/25,video_bytes=len(stream),video_sectors=ns,
             video_start_sector=video_sector,used_sectors=used,free_sectors=2544-used,
             raw_sha256=sha(self.raw),states_sha256=sha(self.states.tobytes()),
@@ -181,10 +185,14 @@ def main():
     p.add_argument('--ends',help='exclusive frame ends, including final count')
     p.add_argument('--volumes',type=int,default=4,help='number of experimental volumes; release target remains three')
     p.add_argument('--prefix',default='ZX-video-optimized-preview')
+    p.add_argument('--fast-disk',action='store_true',help='TR-DOS 5.03 same-track direct reads, normal dispatcher fallback')
+    p.add_argument('--trdos-rom',type=Path,help='Required ROM hash check for --fast-disk')
     args=p.parse_args()
     if not 1<=args.volumes<=255: p.error('--volumes must be between 1 and 255')
+    if args.fast_disk and (not args.trdos_rom or sha(args.trdos_rom.read_bytes())!=disk.TRDOS_503_SHA256):
+        p.error('--fast-disk requires the verified TR-DOS 5.03 ROM')
     with np.load(args.states,allow_pickle=False) as saved: states=saved['states']
-    b=Builder(args.raw.read_bytes(),states,args.zx0.resolve(),args.cache.resolve())
+    b=Builder(args.raw.read_bytes(),states,args.zx0.resolve(),args.cache.resolve(),fast_disk=args.fast_disk)
     if args.ends: ends=[int(n) for n in args.ends.split(',')]
     else:
         # Storage weights use the already measured global block boundaries.

@@ -28,6 +28,8 @@ def main():
     for key in ('fuse','trd','metadata','raw','states','output'): p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--timeout',type=float,default=180)
     args=p.parse_args(); m=json.loads(args.metadata.read_text()); lab=m['player_labels']
+    if m.get('required_trdos_sha256') and hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest()!=m['required_trdos_sha256']:
+        raise ValueError('fast reader requires its verified TR-DOS ROM')
     lines=['base 10','set $running 0']; widths={}; events=[]
     def event(pc,tag,expressions,stop=False):
         index=len(events)+1; events.append((pc,tag)); widths[tag]=len(expressions)
@@ -51,12 +53,16 @@ def main():
     event(lab['audio_write_loop'],140,[stamp,'[z80:hl]','[z80:hl+1]'])
     event(lab['audio_tick_done'],143,[stamp])
     event(lab['audio_tick_empty'],144,[stamp])
-    event(lab['disk_full_call'],102,[stamp,'z80:hl','z80:de'])
+    event(lab['disk_full_call'],102,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])])
     # A whole consumed sector was replaced at saved write_high. Read its
     # exact bytes before the decoder resumes; compact four bytes per print.
     base=f'256*[{m["disk_labels"]["write_high"]}]'
     sector_expr=['+'.join(f'{256**k}*[{base}+{i+k}]' for k in range(4)) for i in range(0,256,4)]
     event(lab['disk_return'],103,[stamp]+sector_expr)
+    if 'fast_read_enter' in lab:
+        event(lab['fast_read_enter'],110,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])])
+        event(lab['fast_disk_return'],111,[stamp]+sector_expr)
+        event(lab['fast_read_retry'],112,[stamp])
     event(lab['finished'],199,[stamp,mem(lab['published']),mem(lab['audio_ticks_played']),mem(lab['audio_underruns'])]+
         [f'[{base+i}]' for base in (0x50e0,0x51e0,0xd0e0,0xd1e0) for i in range(32)],True)
     for name in ('fatal','zx0_fatal'): event(lab[name],198,[stamp,'z80:pc'],True)
@@ -81,7 +87,7 @@ def main():
         if tag not in widths or pos+widths[tag]>len(nums): raise ValueError(f'bad trace at {pos}: {nums[pos-1:pos+3]} / {output[-300:]}')
         parsed.append((tag,nums[pos:pos+widths[tag]])); pos+=widths[tag]
     pubs=[]; writes=[]; ticks=[]; underruns=[]; reads=[]; final=None; failure=None
-    image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0
+    image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0; retries=0; read_kind=None
     with np.load(args.states,allow_pickle=False) as data: states=data['states']
     for tag,v in parsed:
         if tag==150:
@@ -99,15 +105,33 @@ def main():
         elif tag==140: writes.append(v)
         elif tag==143: ticks.append(v[0])
         elif tag==144: underruns.append(v[0])
-        elif tag==102: pending=v
-        elif tag==103:
+        elif tag in (102,110):
+            if pending is not None: raise ValueError('overlapping ROM reads')
+            pending=v; read_kind='trdos' if tag==102 else 'direct503'
+        elif tag in (103,111):
+            # Successful direct reads jump to the shared full-read epilogue.
+            # Its second breakpoint is not another ROM return/read attempt.
+            if tag==103 and pending is None and reads and reads[-1]['kind']=='direct503' and not reads[-1]['retried']:
+                continue
             if pending is None: raise ValueError('return without ROM entry')
             linear=(pending[2]>>8)*16+(pending[2]&255)
             actual=b''.join((value&0xffffffff).to_bytes(4,'little') for value in v[1:])
-            if actual!=image[linear*256:(linear+1)*256]: errors.append(dict(sector=linear,error='disk bytes differ'))
-            reads.append(dict(sector=linear,tstates=v[0]-pending[0])); pending=None
+            reads.append(dict(sector=linear,tstates=v[0]-pending[0],kind=read_kind,
+                bytes_exact=actual==image[linear*256:(linear+1)*256],retried=False,
+                entry_tstates=17 if tag==103 else 10)); pending=None
+        elif tag==112:
+            if not reads or reads[-1]['kind']!='direct503': raise ValueError('retry without direct read')
+            retries+=1; reads[-1]['retried']=True
         elif tag==199: final=v
         elif tag==198: failure=v
+    for read in reads:
+        if not read['retried'] and not read['bytes_exact']:
+            errors.append(dict(sector=read['sector'],error='accepted disk bytes differ'))
+    accepted=[q['sector'] for q in reads if not q['retried']]
+    wanted_sectors=list(range(m['video_start_sector']+min(256,m['video_sectors']),
+        m['video_start_sector']+m['video_sectors']))
+    if pending is not None or accepted!=wanted_sectors:
+        errors.append(dict(error='runtime sector sequence incomplete or duplicated'))
     raw=args.raw.read_bytes(); r=Reader(raw); _,_,count,_,_=read_header(r,magic=b'FAP3')
     expected=[]
     for i in range(count):
@@ -135,7 +159,8 @@ def main():
         runtime_seconds=time.monotonic()-started,trd_sha256=hashlib.sha256(image).hexdigest(),
         final=final[:4] if final else None,failure=failure,frames=len(pubs),native_frames_sampled=native_count,
         progress_100_percent=progress_complete,ay_ticks=len(ticks),ay_records_exact=ay_exact,
-        audio_underruns=len(underruns),runtime_sectors_checked=len(reads),errors=errors[:100],
+        audio_underruns=len(underruns),runtime_sectors_checked=len(accepted),read_attempts=len(reads),errors=errors[:100],
+        fast_read_retries=retries,fast_disk=m.get('fast_disk',False),
         pixel_sample_offsets=samples,pixel_samples_per_frame=len(samples),full_pixel_comparison=False,
         nominal_late_frames=sum(q['late_fields']>0 for q in pubs),max_late_fields=max((q['late_fields'] for q in pubs),default=0),
         actual_out_over_one_field=sum(x>FIELD for x in offsets),max_actual_deviation_tstates=max(offsets,default=0),

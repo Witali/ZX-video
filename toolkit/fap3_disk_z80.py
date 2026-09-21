@@ -11,6 +11,7 @@ import zx0_codec
 
 DISK, DRIVER, DISK_STACK = 0x6000, 0xdf20, 0x9c00
 WAIT_NEXT, LOAD_NEXT = 0x6200, 0x9a60
+TRDOS_503_SHA256='91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5'
 
 
 def prompt_bitmap():
@@ -42,7 +43,7 @@ def packed_sector(linear):
     return track * 256 + sector
 
 
-def build_disk(next_sector, remaining):
+def build_disk(next_sector, remaining, *, fast_disk=False):
     a = MiniAssembler(DISK); listing = []
     e, n = helpers(a, listing, 'disk_adapter')
     a.label('refill')
@@ -62,13 +63,37 @@ def build_disk(next_sector, remaining):
     e('CP 2', [0xfe,2], 7); n('JP C,page', 0xda, 'page', 10)
     e('INC A', [0x3c], 4)
     a.label('page'); e('OR 10h', [0xf6,0x10], 7); n('CALL atomic_page', 0xcd, PAGE, 17)
-    n('LD HL,slow_irq', 0x21, 0xbd00, 10); n('LD (irq_vector),HL', 0x22, 0xbdbe, 16)
+    if not fast_disk:
+        n('LD HL,slow_irq', 0x21, 0xbd00, 10); n('LD (irq_vector),HL', 0x22, 0xbdbe, 16)
     n('LD A,(write_high)', 0x3a, 'write_high', 13)
     e('LD H,A', [0x67], 4); e('LD L,0', [0x2e,0], 7)
     n('LD DE,(disk_position)', (0xed,0x5b), 'disk_position', 20)
+    if fast_disk:
+        n('LD A,(cached_track)', 0x3a, 'cached_track', 13); e('CP D',[0xba],4)
+        n('JP NZ,full_read',0xc2,'full_read',10)
+        n('LD (ROM_destination),HL',0x22,0x5d00,16)
+        e('LD A,E',[0x7b],4); n('LD (ROM_sector),A',0x32,0x5cff,13)
+        e('LD A,80h',[0x3e,0x80],7); n('LD (ROM_command),A',0x32,0x5cfe,13)
+        n('LD DE,fast_disk_return',0x11,'fast_disk_return',10); e('PUSH DE',[0xd5],11)
+        n('LD DE,retry_counter',0x11,0x0a00,10); e('PUSH DE',[0xd5],11)
+        n('LD DE,read_503',0x11,0x3f17,10); e('PUSH DE',[0xd5],11)
+        a.label('fast_read_enter'); n('JP ROM trampoline',0xc3,0x3d2f,10)
+        a.label('fast_disk_return'); e('EI',[0xfb],4)
+        # ROM masks the not-ready flag. Only a full 256-byte advance counts
+        # as success; retry short/error reads with the ordinary dispatcher.
+        n('LD DE,(ROM_destination)',(0xed,0x5b),0x5d00,20)
+        e('INC D',[0x14],4); e('OR A',[0xb7],4); e('SBC HL,DE',[0xed,0x52],15)
+        n('JP Z,disk_finish',0xca,'disk_finish',10)
+        a.label('fast_read_retry'); n('LD HL,(ROM_destination)',0x2a,0x5d00,16)
+        n('LD DE,(disk_position)',(0xed,0x5b),'disk_position',20)
+        a.label('full_read'); e('LD A,D',[0x7a],4); n('LD (cached_track),A',0x32,'cached_track',13)
+        e('PUSH HL',[0xe5],11)
+        n('LD HL,slow_irq',0x21,0xbd00,10); n('LD (irq_vector),HL',0x22,0xbdbe,16)
+        e('POP HL',[0xe1],10)
     n('LD BC,0105h', 0x01, 0x105, 10)
     a.label('disk_full_call'); n('CALL TR-DOS', 0xcd, 0x3d13, 17)
     a.label('disk_return')
+    a.label('disk_finish')
     e('DI', [0xf3], 4)
     e('LD A,BEh', [0x3e,0xbe], 7); e('LD I,A', [0xed,0x47], 9); e('IM 2', [0xed,0x5e], 8)
     n('LD HL,fast_irq', 0x21, 0xbd80, 10); n('LD (irq_vector),HL', 0x22, 0xbdbe, 16)
@@ -97,6 +122,7 @@ def build_disk(next_sector, remaining):
         a.label(label); a.word(value)
     for label, value in (('write_region',0),('write_high',0xc0),('free_high',0xc0)):
         a.label(label); a.emit(value)
+    if fast_disk: a.label('cached_track'); a.emit(255)
     a.label('end')
     if a.pc > 0x6100: raise ValueError('disk adapter exceeds bootstrap overlay')
     return a.resolve(), dict(a.labels), listing

@@ -23,6 +23,8 @@ def main():
     for row in volumes:
         part=row['part']; stem=f'ZX-video-optimized-preview_part{part:02}'
         meta=json.loads((build/(stem+'.json')).read_text())
+        if meta.get('fast_disk'):
+            raise ValueError('fast-disk is an optional experiment; archive with summarize_fap3_fast_disk.py')
         report=json.loads((build/f'fuse_part{part:02}.json').read_text())
         image=(build/(stem+'.trd')).read_bytes(); digest=hashlib.sha256(image).hexdigest()
         if len(image)!=655360 or digest!=meta['trd_sha256'] or digest!=report['trd_sha256']:
