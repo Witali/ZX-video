@@ -1,7 +1,8 @@
 """Build independently bootable experimental FAP3/ZX0 volumes.
 
 Uses the existing packets, Huffman tables, exact compact checkpoints and
-AY register history. Only ZX0 blocks touching a volume boundary change.
+AY register history. Optional cold bitmaps replace the two native checkpoints
+with zero bitmaps and force complete output of the first two frames.
 No cadence/release claim is made by this builder; validate real disk I/O
 and all displayed frames separately in Fuse.
 """
@@ -53,7 +54,7 @@ def player_harness(ring, tables, mapping, frames, *, disk_reader=True):
 
 
 class Builder:
-    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False):
+    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False):
         if not 0 <= deferred_limit <= 248: raise ValueError('deferred limit must be 0..248')
         if frame_service and not keepalive_fields: raise ValueError('frame service requires keepalive clock')
         self.raw, self.states, self.zx0, self.cache = raw, states, zx0, cache
@@ -67,13 +68,15 @@ class Builder:
         self.deferred_limit=deferred_limit
         self.keepalive_fields=keepalive_fields
         self.frame_service=frame_service
+        self.cold_bitmaps=cold_bitmaps
         r=Reader(raw)
         _,_,count,self.mapping,self.tables=read_header(r,magic=b'FAP3')
         if len(states)!=count: raise ValueError('state/frame count differs')
-        self.offsets=[r.pos]; self.ay=[bytes(11)]
+        self.offsets=[r.pos]; self.ay=[bytes(11)]; self.native_map_offsets=[]
         state=bytearray(11)
         for _ in range(count):
             _,detail=read_packet(r,stored_guards=False)
+            self.native_map_offsets.append(self.offsets[-1]+2+detail['coded_offset']-80)
             for tick in detail['ticks']:
                 for i in range(tick[0]): state[tick[1+2*i]]=tick[2+2*i]
             self.ay.append(bytes(state)); self.offsets.append(r.pos)
@@ -96,12 +99,26 @@ class Builder:
         self.memo[digest]=encoded
         return encoded
 
+    def checkpoint_screen(self, frame):
+        screen=display_screen(self.states[frame].tobytes(),black_borders=True)
+        # Attribute-group flags still refer to n-2. Keep those attributes and
+        # the compact n-1 predictor; only the native bitmaps may be discarded.
+        return bytes(6144)+screen[6144:] if self.cold_bitmaps else screen
+
+    def stream_block(self, lo, stop, start, end):
+        raw=bytearray(self.raw[lo:stop])
+        if self.cold_bitmaps and start:
+            for offset in self.native_map_offsets[start:min(start+2,end)]:
+                first,last=max(lo,offset),min(stop,offset+80)
+                if first<last: raw[first-lo:last-lo]=b'\xff'*(last-first)
+        return bytes(raw)
+
     def stream(self, start, end):
         lo,hi=self.offsets[start],self.offsets[end]
         result=bytearray(); blocks=[]
         while lo<hi:
             stop=min(hi,(lo//8192+1)*8192)
-            raw=self.raw[lo:stop]; payload=self.compress(raw)
+            raw=self.stream_block(lo,stop,start,end); payload=self.compress(raw)
             result+=struct.pack('<HH',len(raw),len(payload))+payload
             blocks.append(dict(raw_start=lo,raw_end=stop,decoded_bytes=len(raw),zx0_bytes=len(payload),sha256=sha(raw)))
             lo=stop
@@ -116,7 +133,7 @@ class Builder:
         if start: cpu.banks[5][0x2400:0x3300]=self.states[start-1].tobytes()
         for bank,frame in ((5,start-1),(7,start-2)):
             if frame>=0:
-                screen=display_screen(self.states[frame].tobytes(),black_borders=True)
+                screen=self.checkpoint_screen(frame)
                 cpu.banks[bank][:6912]=progress.reference_screen(screen,0,end-start)
         # The last bootstrap operation fills the ring using ordinary C=5.
         # Its last track remains selected when runtime playback starts.
@@ -211,6 +228,8 @@ class Builder:
         metadata.update(part=part,frame_start=start,frame_end_exclusive=end,frames=end-start,
             fast_disk=self.fast_disk,cached_seek=self.cached_seek,deferred_limit=self.deferred_limit,keepalive_fields=self.keepalive_fields,
             frame_service=self.frame_service,
+            cold_bitmaps=self.cold_bitmaps,
+            forced_native_map_frames=list(range(start,min(start+2,end))) if self.cold_bitmaps and start else [],
             required_trdos_sha256=disk.TRDOS_503_SHA256 if self.fast_disk else None,
             interleaved=self.interleaved,video_physical_sectors=len(physical)//256,
             layout_padding_sectors=len(physical)//256-ns,
@@ -280,6 +299,7 @@ def main():
     p.add_argument('--deferred-limit',type=int,default=0,help='Experimental idle disk reads: keep at most N-1 freed sectors pending (1..248); 0 disables')
     p.add_argument('--keepalive-fields',type=int,default=0,help='Experimental current-cylinder SEEK after idle fields; requires deferred cached reads')
     p.add_argument('--frame-service',action='store_true',help='Check overdue disk service after every published frame as well as idle waits')
+    p.add_argument('--cold-bitmaps',action='store_true',help='Experimental smaller native checkpoints; redraw the first two frames of later disks')
     p.add_argument('--trdos-rom',type=Path,help='Required ROM hash check for --fast-disk')
     args=p.parse_args()
     if not 1<=args.volumes<=255: p.error('--volumes must be between 1 and 255')
@@ -290,7 +310,7 @@ def main():
     with np.load(args.states,allow_pickle=False) as saved: states=saved['states']
     b=Builder(args.raw.read_bytes(),states,args.zx0.resolve(),args.cache.resolve(),fast_disk=args.fast_disk,
         cached_seek=args.cached_seek,cold_track=args.cold_track,interleaved=args.interleaved,deferred_limit=args.deferred_limit,
-        keepalive_fields=args.keepalive_fields,frame_service=args.frame_service)
+        keepalive_fields=args.keepalive_fields,frame_service=args.frame_service,cold_bitmaps=args.cold_bitmaps)
     if args.ends: ends=[int(n) for n in args.ends.split(',')]
     else:
         # Storage weights use the already measured global block boundaries.

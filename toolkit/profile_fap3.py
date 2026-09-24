@@ -35,7 +35,7 @@ def cpu_profile(builder, start, end):
     screens = dict(h.expected_screens)
     for bank, index in ((5, start-1), (7, start-2)):
         if index >= 0:
-            screens[bank] = display_screen(builder.states[index].tobytes(), black_borders=True)
+            screens[bank] = builder.checkpoint_screen(index)
             h.cpu.banks[bank][:6912] = progress.reference_screen(screens[bank], 0, end-start)
     h.cpu.ay[:] = builder.ay[start]
     r = Reader(builder.raw[builder.offsets[start]:builder.offsets[end]])
@@ -201,7 +201,8 @@ def main():
         Path(executable(args.zx0, 'zx0')), output/'work/zx0',
         fast_disk=first['fast_disk'], cached_seek=first['cached_seek'], interleaved=first['interleaved'],
         deferred_limit=first.get('deferred_limit',0),
-        keepalive_fields=first.get('keepalive_fields',0),frame_service=first.get('frame_service',False))
+        keepalive_fields=first.get('keepalive_fields',0),frame_service=first.get('frame_service',False),
+        cold_bitmaps=first.get('cold_bitmaps',False))
     if sha(builder.raw) != first['raw_sha256'] or sha(states.tobytes()) != first['states_sha256']:
         raise ValueError('checkpoint or stream differs from disk metadata')
     result = verify_volumes(builder, records, output, args.fuse, args.timeout)
