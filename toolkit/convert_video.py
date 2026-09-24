@@ -191,6 +191,7 @@ def main(argv=None):
         help='trdos503 enables the latest direct reads, cached seek and sector interleave')
     parser.add_argument('--trdos-rom', type=Path, help='verified TR-DOS 5.03 ROM, required for trdos503')
     parser.add_argument('--inline-matches', action='store_true', help='Optional faster ZX0 match copies; keeps the compressed stream unchanged')
+    parser.add_argument('--startup-delta', action='store_true', help='Smaller boot tables when adjacent-byte differences save disk sectors')
     parser.add_argument('--verify', choices=('cpu', 'fuse', 'none'), default='cpu',
         help='cpu: every instruction and full images; fuse: also real disk timing; none: host roundtrip only')
     parser.add_argument('--fuse', type=Path, help='Fuse executable for --verify fuse')
@@ -224,6 +225,7 @@ def main(argv=None):
         player_baseline='80ab9d9' if args.inline_matches else '00313d3',
         player_hot_path_changed=args.inline_matches, player_hot_path_delta_tstates=None if args.inline_matches else 0,
         inline_matches=args.inline_matches,
+        startup_delta=args.startup_delta,
         timing_verified=False, verification=args.verify)
     write_json(output/'conversion.json', manifest)
     try:
@@ -237,7 +239,7 @@ def main(argv=None):
         (work/'stream.raw').write_bytes(raw)
         write_json(output/'codec.json', codec)
         builder = Builder(raw, states, Path(executables['zx0']), work/'zx0',
-            fast_disk=fast, cached_seek=fast, interleaved=fast, inline_matches=args.inline_matches)
+            fast_disk=fast, cached_seek=fast, interleaved=fast, inline_matches=args.inline_matches,startup_delta=args.startup_delta)
         ends = builder.automatic_ends(args.max_frames_per_disk)
         records = []
         start = 0

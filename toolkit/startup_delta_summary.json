@@ -1,0 +1,210 @@
+{
+  "complete": true,
+  "release": false,
+  "pairs": [
+    {
+      "part": 1,
+      "frames": 1269,
+      "sectors_before": 1930,
+      "sectors_after": 1919,
+      "sectors_delta": -11,
+      "boot_mocked_tstates_before": 2164445,
+      "boot_mocked_tstates_after": 2702917,
+      "boot_mocked_tstates_delta": 538472,
+      "video_sha256": "bd0b82933cbaded014bcbc8993aaffde8b754756234e7d15312d15a3ce1d3067"
+    },
+    {
+      "part": 2,
+      "frames": 1065,
+      "sectors_before": 1946,
+      "sectors_after": 1936,
+      "sectors_delta": -10,
+      "boot_mocked_tstates_before": 2428188,
+      "boot_mocked_tstates_after": 2966639,
+      "boot_mocked_tstates_delta": 538451,
+      "video_sha256": "76030e9c7388d6230e96e0db73050df85cee64c98478ec630be14d59d9d9270c"
+    },
+    {
+      "part": 3,
+      "frames": 861,
+      "sectors_before": 1946,
+      "sectors_after": 1935,
+      "sectors_delta": -11,
+      "boot_mocked_tstates_before": 2358332,
+      "boot_mocked_tstates_after": 2897270,
+      "boot_mocked_tstates_delta": 538938,
+      "video_sha256": "aa280bdc8c529d50c2f8d0746fde73fe32ad7124593aa7749e2e0d89101f145c"
+    },
+    {
+      "part": 4,
+      "frames": 1026,
+      "sectors_before": 1937,
+      "sectors_after": 1934,
+      "sectors_delta": -3,
+      "boot_mocked_tstates_before": 2358299,
+      "boot_mocked_tstates_after": 2897237,
+      "boot_mocked_tstates_delta": 538938,
+      "video_sha256": "1c40eb7af82e6f41ee88f6132e8de1e1d2978c27e8cf9947153c6ad6a94a365a"
+    }
+  ],
+  "totals": [
+    {
+      "name": "baseline",
+      "used_sectors": 7759,
+      "nominal_misses": 4097,
+      "ay_missing_fields": 2936,
+      "runtime_sectors": 6515,
+      "video_bytes": 1929627,
+      "bootstrap_seconds": 221.37944571315796,
+      "playback_seconds": 565.740549211988
+    },
+    {
+      "name": "delta",
+      "used_sectors": 7724,
+      "nominal_misses": 4133,
+      "ay_missing_fields": 2946,
+      "runtime_sectors": 6515,
+      "video_bytes": 1929627,
+      "bootstrap_seconds": 223.14493811497363,
+      "playback_seconds": 565.9483405227099
+    }
+  ],
+  "generic": [
+    {
+      "source": "single.mp4",
+      "frames": 1,
+      "disks": 1,
+      "filtered_boot_tables": 1,
+      "stream_identical": true,
+      "all_cpu_frames_verified": true,
+      "full_fuse": true,
+      "nominal_met": true
+    },
+    {
+      "source": "portrait.mkv",
+      "frames": 3,
+      "disks": 1,
+      "filtered_boot_tables": 1,
+      "stream_identical": true,
+      "all_cpu_frames_verified": true,
+      "full_fuse": true,
+      "nominal_met": true
+    },
+    {
+      "source": "colour.avi",
+      "frames": 9,
+      "disks": 3,
+      "filtered_boot_tables": 3,
+      "stream_identical": true,
+      "all_cpu_frames_verified": true,
+      "full_fuse": true,
+      "nominal_met": true
+    },
+    {
+      "source": "anamorphic.mov",
+      "frames": 2,
+      "disks": 1,
+      "filtered_boot_tables": 1,
+      "stream_identical": true,
+      "all_cpu_frames_verified": true,
+      "full_fuse": true,
+      "nominal_met": true
+    },
+    {
+      "source": "audio-tail.mkv",
+      "frames": 5,
+      "disks": 1,
+      "filtered_boot_tables": 1,
+      "stream_identical": true,
+      "all_cpu_frames_verified": true,
+      "full_fuse": true,
+      "nominal_met": true
+    },
+    {
+      "source": "noise.avi",
+      "frames": 48,
+      "disks": 1,
+      "filtered_boot_tables": 1,
+      "stream_identical": true,
+      "all_cpu_frames_verified": true,
+      "full_fuse": true,
+      "nominal_met": false
+    }
+  ],
+  "size_controls": [
+    {
+      "name": "baseline",
+      "ends": [
+        1614,
+        2920,
+        4221
+      ],
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1614,
+          "used_sectors": 2543,
+          "free_sectors": 1,
+          "video_bytes": 638962
+        },
+        {
+          "part": 2,
+          "frames": 1306,
+          "used_sectors": 2587,
+          "free_sectors": -43,
+          "video_bytes": 647831
+        },
+        {
+          "part": 3,
+          "frames": 1301,
+          "used_sectors": 2571,
+          "free_sectors": -27,
+          "video_bytes": 643007
+        }
+      ],
+      "all_fit": false,
+      "total_used_sectors": 7701
+    },
+    {
+      "name": "delta",
+      "ends": [
+        1614,
+        2920,
+        4221
+      ],
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1614,
+          "used_sectors": 2541,
+          "free_sectors": 3,
+          "video_bytes": 638962
+        },
+        {
+          "part": 2,
+          "frames": 1306,
+          "used_sectors": 2585,
+          "free_sectors": -41,
+          "video_bytes": 647831
+        },
+        {
+          "part": 3,
+          "frames": 1301,
+          "used_sectors": 2561,
+          "free_sectors": -17,
+          "video_bytes": 643007
+        }
+      ],
+      "all_fit": false,
+      "total_used_sectors": 7687
+    }
+  ],
+  "nominal_and_fallback_failed": true,
+  "default_enabled": false,
+  "startup_cycles": {
+    "table_pass": 541409,
+    "call": 17,
+    "total": 541426
+  },
+  "cpu_boot_excludes": "ROM execution, physical latency, IRQ and ULA; not a real-time boot duration"
+}

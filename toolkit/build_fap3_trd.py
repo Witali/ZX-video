@@ -56,7 +56,7 @@ def player_harness(ring, tables, mapping, frames, *, disk_reader=True,inline_mat
 
 
 class Builder:
-    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False,inline_matches=False,warm_continuation=False):
+    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False,inline_matches=False,warm_continuation=False,startup_delta=False):
         if not 0 <= deferred_limit <= 248: raise ValueError('deferred limit must be 0..248')
         if frame_service and not keepalive_fields: raise ValueError('frame service requires keepalive clock')
         self.raw, self.states, self.zx0, self.cache = raw, states, zx0, cache
@@ -74,6 +74,7 @@ class Builder:
         self.inline_matches=inline_matches
         self.warm_continuation=warm_continuation
         self.warm_immutable=None
+        self.startup_delta=startup_delta
         r=Reader(raw)
         _,_,count,self.mapping,self.tables=read_header(r,magic=b'FAP3')
         if len(states)!=count: raise ValueError('state/frame count differs')
@@ -195,11 +196,21 @@ class Builder:
             is_reset=reset is not None and bank==2 and address==0x4000
             data=reset if is_reset else bytes(cpu.banks[bank][address&0x3fff:(address&0x3fff)+length])
             packed=self.compress(data)
+            storage=data; filtered=False
+            if self.startup_delta and bank==6:
+                # Adjacent-byte differences are restored once at bootstrap;
+                # the runtime Huffman tables and all frame packets stay exact.
+                delta=bytes([data[0]])+bytes((data[i]-data[i-1])&255 for i in range(1,len(data)))
+                candidate=self.compress(delta)
+                if sectors(candidate)<sectors(packed):
+                    packed=candidate; storage=delta; filtered=True
             capacity=6912 if buffer==0x4000 else 4608
             if len(padded(packed))>capacity: raise ValueError(f'startup section too large: {bank}/{address:x}: {len(packed)}')
             sections.append(dict(bank=bank,address=address,buffer=buffer,sectors=sectors(packed),
                 decoded_bytes=len(data),compressed_bytes=len(packed),sha256=sha(data),data=padded(packed)))
             if is_reset: sections[-1]['warm_reset']=True
+            if filtered: sections[-1].update(startup_delta=True,storage_sha256=sha(storage),
+                baseline_compressed_bytes=len(self.compress(data)),restore_tstates=541426)
         labels=dict(driver,**{k:dl[k] for k in ('disk_full_call','disk_return')},
             publish_out=h.video['publish_out'],audio_tick_empty=h.audio['audio_tick_empty'],
             audio_tick_done=h.audio['audio_tick_done'],audio_write_loop=h.audio['audio_write_loop'],
@@ -240,6 +251,7 @@ class Builder:
             options=dict(fast_disk=self.fast_disk,cached_seek=self.cached_seek,cold_track=self.cold_track,
                 interleaved=self.interleaved,deferred_limit=self.deferred_limit,keepalive_fields=self.keepalive_fields,
                 frame_service=self.frame_service,cold_bitmaps=self.cold_bitmaps,inline_matches=self.inline_matches)
+            if self.startup_delta: options['startup_delta']=True
             contract=b'WARM1'+json.dumps(options,sort_keys=True).encode()+self.states.tobytes()
             disk_id=volume_id(self.raw+contract,self.ends,part)
         next_id=disk_id[:14]+struct.pack('<H',part+1)
@@ -271,6 +283,7 @@ class Builder:
             cold_bitmaps=self.cold_bitmaps,
             inline_matches=self.inline_matches,
             warm_continuation=self.warm_continuation,independently_bootable=not (start and self.warm_continuation),
+            startup_delta=self.startup_delta,
             forced_native_map_frames=list(range(start,min(start+2,end))) if self.cold_bitmaps and start else [],
             required_trdos_sha256=disk.TRDOS_503_SHA256 if self.fast_disk else None,
             interleaved=self.interleaved,video_physical_sectors=len(physical)//256,
@@ -296,7 +309,7 @@ class Builder:
         Leave 16 sectors for checkpoint/fingerprint convergence. This is a
         bounded fit, not a proof of the smallest possible number of disks.
         """
-        if self.warm_continuation:
+        if getattr(self,'warm_continuation',False):
             raise ValueError('warm experiment requires explicit sequential boundaries')
         if not 1 <= max_frames <= 65535//6:
             raise ValueError('max_frames must be in 1..10922')
@@ -345,6 +358,7 @@ def main():
     p.add_argument('--frame-service',action='store_true',help='Check overdue disk service after every published frame as well as idle waits')
     p.add_argument('--cold-bitmaps',action='store_true',help='Experimental smaller native checkpoints; redraw the first two frames of later disks')
     p.add_argument('--inline-matches',action='store_true',help='Experimental ZX0 match copies without per-match CALL/RET')
+    p.add_argument('--startup-delta',action='store_true',help='Try adjacent-byte differences for boot tables; preserve independent boot')
     p.add_argument('--trdos-rom',type=Path,help='Required ROM hash check for --fast-disk')
     args=p.parse_args()
     if not 1<=args.volumes<=255: p.error('--volumes must be between 1 and 255')
@@ -355,7 +369,8 @@ def main():
     with np.load(args.states,allow_pickle=False) as saved: states=saved['states']
     b=Builder(args.raw.read_bytes(),states,args.zx0.resolve(),args.cache.resolve(),fast_disk=args.fast_disk,
         cached_seek=args.cached_seek,cold_track=args.cold_track,interleaved=args.interleaved,deferred_limit=args.deferred_limit,
-        keepalive_fields=args.keepalive_fields,frame_service=args.frame_service,cold_bitmaps=args.cold_bitmaps,inline_matches=args.inline_matches)
+        keepalive_fields=args.keepalive_fields,frame_service=args.frame_service,cold_bitmaps=args.cold_bitmaps,inline_matches=args.inline_matches,
+        startup_delta=args.startup_delta)
     if args.ends: ends=[int(n) for n in args.ends.split(',')]
     else:
         # Storage weights use the already measured global block boundaries.

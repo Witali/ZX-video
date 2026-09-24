@@ -21,6 +21,7 @@ def main():
     p.add_argument('--noise-frames', type=int, default=48, help='384 exercises automatic size-based splitting')
     p.add_argument('--only-noise', action='store_true')
     p.add_argument('--inline-matches', action='store_true')
+    p.add_argument('--startup-delta', action='store_true')
     args = p.parse_args()
     if args.noise_frames < 1: p.error('--noise-frames must be positive')
     programs = {name: executable(getattr(args, name), name) for name in ('ffmpeg', 'ffprobe', 'zx0')}
@@ -51,7 +52,8 @@ def main():
         '-framerate', '25/3', '-i', str(rgb)], ['-c:v', 'ffv1'])
     if args.only_noise: sources = []
     sources.append((noisy_video, args.noise_frames, [], 'high entropy; runtime disk reads beyond the 64 KiB preload'))
-    report = dict(complete=False, release=False, generator_seed=20260921, inline_matches=args.inline_matches, cases=[])
+    report = dict(complete=False, release=False, generator_seed=20260921, inline_matches=args.inline_matches,
+                  startup_delta=args.startup_delta, cases=[])
     write_json(args.report, report)
     for source, expected_frames, extra, objective in sources:
         out = args.output/(source.stem+'-out')
@@ -61,6 +63,7 @@ def main():
         if args.fuse: command += ['--fuse', str(args.fuse)]
         if args.trdos_rom: command += ['--disk-profile', 'trdos503', '--trdos-rom', str(args.trdos_rom)]
         if args.inline_matches: command += ['--inline-matches']
+        if args.startup_delta: command += ['--startup-delta']
         subprocess.run(command, check=True)
         meta = json.loads((out/'conversion.json').read_text(encoding='utf-8'))
         if meta['frames'] != expected_frames: raise AssertionError((source.name, meta['frames'], expected_frames))
@@ -81,6 +84,8 @@ def main():
             stream_sha256=meta['stream_sha256'], timing=timing,
             swaps=json.loads((out/'swaps.json').read_text(encoding='utf-8')),
             cpu=[])
+        case['filtered_boot_tables']=sum(any(s.get('startup_delta') for s in json.loads((out/r['metadata']).read_text())['sections'])
+            for r in meta['volumes'])
         for record in timing['disks']:
             cpu = json.loads((out/record['cpu_report']).read_text(encoding='utf-8'))
             case['cpu'].append({k: cpu[k] for k in ('complete', 'frames', 'foreground_tstates',

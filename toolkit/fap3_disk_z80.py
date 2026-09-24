@@ -357,6 +357,10 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
         a.emit(0x11); a.word(section['address']); call('dzx0_standard')
         if section.get('warm_reset'):
             a.emit(0x21); a.word(section['address']); call('warm_reset')
+        if section.get('startup_delta'):
+            if section['bank']!=6 or section['address']!=0xc000 or section['decoded_bytes']!=16384:
+                raise ValueError('startup delta requires a whole bank-6 table')
+            call('restore_table_delta')
     a.emit(0x11); a.word(packed_sector(video_sector)); a.abs16((0xed,0x53),'disk_position')
     left = min(256, video_sectors)
     for bank in (0,1,3,4):
@@ -393,6 +397,8 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
     a.label('sector_ok'); a.abs16((0xed,0x53),'disk_position')
     a.rel8(0x10,'read_loop'); a.emit(0xc9)
     zx0_codec.emit_decoder(a,variant='standard')
+    if any(s.get('startup_delta') for s in sections):
+        emit_table_delta(a)
     if any(s.get('warm_reset') for s in sections):
         # count:u16, destination:u16, count bytes; zero count terminates.
         a.label('warm_reset'); a.emit(0x4e,0x23,0x46,0x23,0x78,0xb1,0xc8)
@@ -422,3 +428,17 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
     a.label('prompt'); a.emit(*prompt_bitmap()); a.label('end')
     if a.pc > 0x6400: raise ValueError('bootstrap overlaps compact checkpoint')
     return a.resolve()+bytes(0x6400-a.pc), dict(a.labels)
+
+
+def emit_table_delta(a):
+    """Restore 16 KiB modulo-256 differences in place: 541409 T + CALL 17.
+
+    Setup 28; 64*(256*33-5+4+12)-5; RET 10. No paging, disk or IRQ
+    cost included. This code runs only before the playback driver starts.
+    """
+    a.label('restore_table_delta')
+    a.emit(0x21);a.word(0xc000)  # LD HL,C000: 10
+    a.emit(0x06,0,0x16,64,0xaf)  # LD B,0 / LD D,64 / XOR A: 7+7+4
+    a.label('table_delta_byte');a.emit(0x86,0x77,0x23)  # ADD A,(HL)/LD(HL),A/INC HL: 7+7+6
+    a.rel8(0x10,'table_delta_byte')  # DJNZ: 13/8
+    a.emit(0x15);a.rel8(0x20,'table_delta_byte');a.emit(0xc9)  # DEC D 4; JR NZ 12/7; RET 10
