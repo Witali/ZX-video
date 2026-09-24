@@ -1,0 +1,52 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Summarize packet-byte changes and unchanged fast-fragment instruction costs.\n\nCosts use causal_tile_z80's previously verified instruction-table formula.\nThey are ONLY the paired whole-fragment subroutines, excluding the caller,\nHuffman, cache, metadata, output, ZX0, IRQ/ULA, ROM and physical disk.\n",
+  "source_sha256": "1aff3a304635025c25cc8b20d066b6044f2767b02c99d2490c9f9ae1613ac2ab",
+  "candidate_sha256": "555156c931467696efb9419db60c7ed6c95ba53a86bb54ecf01721905cebcd9a",
+  "baseline_bytes": {
+    "header": 4813,
+    "ay": 118364,
+    "packet_headers": 29547,
+    "cache": 12663,
+    "vectors": 810432,
+    "masks": 497143,
+    "native_map": 337680,
+    "coded": 428221,
+    "bitmap_literals": 827608,
+    "raw_attributes": 31488
+  },
+  "candidate_bytes": {
+    "header": 4813,
+    "ay": 118364,
+    "packet_headers": 29547,
+    "cache": 12663,
+    "vectors": 810432,
+    "masks": 498539,
+    "native_map": 337680,
+    "coded": 430387,
+    "bitmap_literals": 801147,
+    "raw_attributes": 31488
+  },
+  "byte_deltas": {
+    "header": 0,
+    "ay": 0,
+    "packet_headers": 0,
+    "cache": 0,
+    "vectors": 0,
+    "masks": 1396,
+    "native_map": 0,
+    "coded": 2166,
+    "bitmap_literals": -26461,
+    "raw_attributes": 0
+  },
+  "common_fast_tiles": 61862,
+  "previous_fast_body_tstates": 31931046,
+  "candidate_fast_body_tstates": 32547284,
+  "delta_common_fast_body_tstates": 616238,
+  "player_machine_code_changed": false,
+  "player_instruction_delta_tstates": 0,
+  "whole_player_timing_measured": false,
+  "new_ram_bytes": 0,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf"
+}
