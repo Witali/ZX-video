@@ -42,9 +42,10 @@ class PipelineClockCPU(frame_stream_harness.FrameStreamCPU):
 
 
 class Clock:
-    def __init__(self,harness,expected_ticks,*,lookahead=False,observer=None):
+    def __init__(self,harness,expected_ticks,*,lookahead=False,observer=None,record_underruns=False):
         if harness.video is None: raise ValueError('pipelined harness required')
         self.h,self.expected,self.observer=harness,expected_ticks,observer
+        self.record_underruns,self.underruns=record_underruns,[]
         cpu=harness.cpu; cpu.__class__=PipelineClockCPU; cpu.guarding=False
         self.code,self.labels,self.listing=machine.build_clock(harness.p,harness.audio,harness.frames,
             zx0=harness.z,progress_entry=harness.progress['tick'] if harness.progress else None,lookahead=lookahead,
@@ -75,10 +76,12 @@ class Clock:
     def run_irq(self):
         cpu=self.h.cpu; h=self.h
         enabled=cpu.read8(h.audio['audio_enabled']); wanted=bytearray(cpu.ay)
-        if enabled:
+        empty=enabled and cpu.read8(h.audio['audio_read_index'])==cpu.read8(h.audio['audio_write_index'])
+        if empty:
+            if not self.record_underruns: raise AssertionError(('scheduled AY underrun',self.ticks))
+            self.underruns.append(dict(tstates=cpu.tstates,after_audio_ticks=self.ticks))
+        if enabled and not empty:
             if self.ticks>=len(self.expected): raise AssertionError('unexpected audio tick')
-            if cpu.read8(h.audio['audio_read_index'])==cpu.read8(h.audio['audio_write_index']):
-                raise AssertionError(('scheduled AY underrun',self.ticks))
             tick=self.expected[self.ticks]; slot=ay_interrupt.QUEUE_BASE+32*cpu.read8(h.audio['audio_read_index'])
             if bytes(cpu.read8(slot+i) for i in range(len(tick)))!=tick:
                 raise AssertionError(('scheduled AY queue differs',self.ticks))
@@ -105,9 +108,9 @@ class Clock:
         if ({n:getattr(cpu,n) for n in self.saved}!=before or (cpu.port_7ffd^page)&~8
                 or cpu.read8(machine.SHADOW)!=cpu.port_7ffd):
             raise AssertionError('IRQ corrupted foreground registers/bank/shadow')
-        if bytes(cpu.ay)!=wanted or word(cpu,h.audio['audio_underruns']):
+        if bytes(cpu.ay)!=wanted or (word(cpu,h.audio['audio_underruns']) and not self.record_underruns):
             raise AssertionError('scheduled AY output or underrun')
-        if enabled: self.ticks+=1
+        if enabled and not empty: self.ticks+=1
         return cpu.tstates-start
 
     def interrupt(self,cpu):

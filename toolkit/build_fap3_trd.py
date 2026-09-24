@@ -6,6 +6,7 @@ No cadence/release claim is made by this builder; validate real disk I/O
 and all displayed frames separately in Fuse.
 """
 import argparse
+from bisect import bisect_right
 import hashlib
 import json
 from pathlib import Path
@@ -32,6 +33,23 @@ import disk_layout
 def sha(data): return hashlib.sha256(data).hexdigest()
 def sectors(data): return (len(data)+255)//256
 def padded(data): return data+bytes((-len(data))%256)
+
+
+def volume_id(raw, ends, part):
+    # Retain existing fingerprints; longer generic sources need 32-bit ends.
+    wide=any(end>65535 for end in ends)
+    series=raw+(b'ENDS32' if wide else b'')+struct.pack('<'+('I' if wide else 'H')*len(ends),*ends)
+    return b'FAP3ZXV1'+bytes.fromhex(sha(series))[:6]+struct.pack('<H',part)
+
+
+def player_harness(ring, tables, mapping, frames, *, disk_reader=True):
+    """Shared current player options for disk assembly and instruction profiling."""
+    return Harness(ring,tables,mapping,frames,ring_start=0,
+        bulk=True,zero_copy=True,stored_guards=False,skip_noop_runs=True,
+        constant_attribute_borders=True,skip_black_borders=True,skip_static_stripes=True,
+        token_boundaries=True,pipelined=True,progress_frames=frames,packet_ahead='idle',
+        unrolled_copy=True,unrolled_cache=True,attribute_groups=True,attribute_flags=True,
+        gray_cells=True,sparse_patches=True,disk_refill_entry=disk.DISK if disk_reader else None)
 
 
 class Builder:
@@ -85,12 +103,7 @@ class Builder:
         return bytes(result),blocks
 
     def ram(self, start, end, next_sector, remaining):
-        h=Harness(bytes(4),self.tables,self.mapping,end-start,ring_start=0,
-            bulk=True,zero_copy=True,stored_guards=False,skip_noop_runs=True,
-            constant_attribute_borders=True,skip_black_borders=True,skip_static_stripes=True,
-            token_boundaries=True,pipelined=True,progress_frames=end-start,packet_ahead='idle',
-            unrolled_copy=True,unrolled_cache=True,attribute_groups=True,attribute_flags=True,
-            gray_cells=True,sparse_patches=True,disk_refill_entry=disk.DISK)
+        h=player_harness(bytes(4),self.tables,self.mapping,end-start)
         clock=Clock(h,[],lookahead=True)
         if clock.labels['end']>disk.DRIVER: raise ValueError('clock/driver overlap')
         cpu=h.cpu
@@ -152,12 +165,15 @@ class Builder:
             decoder_end=h.z['end'],clock_end=clock.labels['end'],driver_end=driver['end'])
 
     def volume(self, start, end, part):
+        if not 0 <= start < end <= len(self.states) or end-start > 65535//6:
+            raise ValueError('volume must contain 1..10922 frames (16-bit AY counter)')
+        if not 1 <= part <= 65534:
+            raise ValueError('volume ordinal exceeds the disk-change format')
         stream,blocks=self.stream(start,end)
         ns=sectors(stream); video_sector=64
         boot=build_boot_basic()
         if self.ends is None: raise ValueError('set the complete volume boundaries before building')
-        series=self.raw+struct.pack('<'+'H'*len(self.ends),*self.ends)
-        disk_id=b'FAP3ZXV1'+bytes.fromhex(sha(series))[:6]+struct.pack('<H',part)
+        disk_id=volume_id(self.raw,self.ends,part)
         next_id=disk_id[:14]+struct.pack('<H',part+1)
         for attempt in range(8):
             positions=list(disk_layout.positions(ns+1,video_sector%16)) if self.interleaved else list(range(ns+1))
@@ -188,7 +204,7 @@ class Builder:
             raw_sha256=sha(self.raw),states_sha256=sha(self.states.tobytes()),
             pixel_changes=False,ay_changes=False,fps='25/3',ay_hz=50,release=False,
             timing_verified=False,disk_delivery_verified=False,
-            bootstrap_labels=boot_labels,blocks=blocks,
+            bootstrap_labels=boot_labels,bootstrap_overlay_jump_tstates=10 if 'overlay_jump' in boot_labels else 0,blocks=blocks,
             sections=[{k:v for k,v in s.items() if k!='data'} for s in sections],disk_id_hex=disk_id.hex(),
             has_next=end<len(self.states),next_part=part+1 if end<len(self.states) else None,
             disk_change='automatic poll of series fingerprint and volume ordinal in reserved system sector 15')
@@ -197,6 +213,42 @@ class Builder:
         image=bytearray(image); image[15*256:15*256+16]=disk_id; image=bytes(image)
         metadata.update(directory=directory,stats=stats,trd_sha256=sha(image))
         return image,metadata
+
+    def automatic_ends(self, max_frames=4096):
+        """Partition by measured ZX0 bytes, then check real bootstrap/TRD sizes.
+
+        Leave 16 sectors for checkpoint/fingerprint convergence. This is a
+        bounded fit, not a proof of the smallest possible number of disks.
+        """
+        if not 1 <= max_frames <= 65535//6:
+            raise ValueError('max_frames must be in 1..10922')
+        weights=[0]
+        for pos in range(0,len(self.raw),8192):
+            weights.append(weights[-1]+4+len(self.compress(self.raw[pos:pos+8192])))
+        positions=[]
+        for pos in self.offsets:
+            block,offset=divmod(pos,8192)
+            if block==len(weights)-1: positions.append(float(weights[-1]))
+            else:
+                size=min(8192,len(self.raw)-block*8192)
+                positions.append(weights[block]+(weights[block+1]-weights[block])*offset/size)
+        self.ends=[len(self.states)]
+        ends=[]; start=0
+        while start<len(self.states):
+            # Initial estimate reserves 32 KiB for bootstrap/checkpoint and layout.
+            end=min(len(self.states),start+max_frames,
+                max(start+1,bisect_right(positions,positions[start]+(2544-128)*256)-1))
+            while True:
+                _,meta=self.volume(start,end,len(ends)+1)
+                if meta['free_sectors']>=16: break
+                if end==start+1: raise ValueError('one frame and its checkpoint do not fit a TRD')
+                excess=16-meta['free_sectors']
+                remove=max(1,round((end-start)*excess/max(1,meta['video_sectors'])))
+                end=max(start+1,end-remove)
+            ends.append(end); start=end
+            print(f'Planned disk {len(ends)}: {meta["frames"]} frames, {meta["free_sectors"]} free sectors',flush=True)
+        self.ends=ends
+        return ends
 
 
 def main():

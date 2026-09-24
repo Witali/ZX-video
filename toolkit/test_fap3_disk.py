@@ -127,9 +127,12 @@ class AdapterTests(unittest.TestCase):
 
 def verify_swaps(directory,output):
     reports=[]
-    for part in (1,2,3):
-        current=directory/f'ZX-video-optimized-preview_part{part:02}.trd'
-        following=directory/f'ZX-video-optimized-preview_part{part+1:02}.trd'
+    records=json.loads((directory/'volumes.json').read_text(encoding='utf-8'))
+    names=[r.get('file',f'ZX-video-optimized-preview_part{r.get("part", i+1):02}.trd')
+           for i,r in enumerate(records)]
+    for part,(current_name,next_name) in enumerate(zip(names,names[1:]),1):
+        current=directory/current_name
+        following=directory/next_name
         m=json.loads(current.with_suffix('.json').read_text()); next_meta=json.loads(following.with_suffix('.json').read_text())
         data=current.read_bytes(); player=extract_file(data,next(e for e in parse_dir(data) if e[0]=='PLAYER'))
         cpu=DiskCPU(player,data)

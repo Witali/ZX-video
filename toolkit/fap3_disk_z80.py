@@ -252,7 +252,14 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
     page(7)
     # Runtime reader replaces only the no-longer-used bootstrap prefix.
     # A100 is temporary storage in the initially empty AY queue.
-    if a.pc<0x6100: raise ValueError('overlay copy executes inside its target')
+    if a.pc<0x6100:
+        # Small videos preload fewer banks and produce a shorter bootstrap.
+        # Skip inert padding before overwriting 6000..60FF. JP nn = 10 T;
+        # existing full-ring bootstraps emit exactly the previous byte sequence.
+        target=max(0x6100,a.pc+3)
+        a.label('overlay_jump')
+        a.emit(0xc3); a.word(target); a.emit(*bytes(target-a.pc))
+    a.label('overlay_copy')
     a.emit(0x21); a.word(0xa100); a.emit(0x11); a.word(DISK)
     a.emit(0x01); a.word(256); a.emit(0xed,0xb0,0xf3,0xc3); a.word(DRIVER)
     a.label('read_n')

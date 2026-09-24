@@ -38,10 +38,11 @@ def main():
         if tag==100: lines.append('set $running 1')
         lines.extend('print '+e for e in expressions)
         lines.extend(['exit 77' if stop else 'continue','end'])
-        if tag!=100: lines.append(f'condition {index} $running == 1')
+        if tag!=100: lines.append(f'condition {index} $running == {0 if tag==90 else 1}')
     def mem(address): return f'[{address}]+256*[{address+1}]'
     stamp='spectrum:frames*70908+ula:tstates'
-    event(lab['start'],100,[])
+    event(0x6000,90,[stamp])
+    event(lab['start'],100,[stamp])
     samples=sorted(set([i*97%6912 for i in range(56)]+[6144+i*31 for i in range(24)]))
     sample_expr=[]
     # Sample after drawing returns to the bank-7 clock; publication itself
@@ -94,10 +95,14 @@ def main():
         parsed.append((tag,nums[pos:pos+widths[tag]])); pos+=widths[tag]
     pubs=[]; writes=[]; ticks=[]; underruns=[]; reads=[]; final=None; failure=None
     image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0; retries=0; read_kind=None
+    boot_started=player_started=None
     seek_pending=None; seek_calls=[]
     with np.load(args.states,allow_pickle=False) as data: states=data['states']
     for tag,v in parsed:
-        if tag==150:
+        if tag==90:
+            if boot_started is None: boot_started=v[0]
+        elif tag==100: player_started=v[0]
+        elif tag==150:
             pubs.append(dict(tstate=v[0],page=v[1],field=v[2],late_fields=v[3]))
         elif tag in (151,152):
             frame=m['frame_start']+native_count
@@ -178,6 +183,10 @@ def main():
         cached_seek=m.get('cached_seek',False),seek_calls=seek_calls,
         interleaved=m.get('interleaved',False),
         audio_tick_tstates=ticks,
+        elapsed_timing=dict(bootstrap_tstates=player_started-boot_started if player_started is not None and boot_started is not None else None,
+            playback_tstates=final[0]-player_started if final and player_started is not None else None,
+            bootstrap_and_playback_tstates=final[0]-boot_started if final and boot_started is not None else None,
+            includes='all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes'),
         ay_record_field_gaps=sum(max(0,b//FIELD-a//FIELD-1) for a,b in zip(ticks,ticks[1:])),
         ay_record_field_duplicates=sum(b//FIELD==a//FIELD for a,b in zip(ticks,ticks[1:])),
         pixel_sample_offsets=samples,pixel_samples_per_frame=len(samples),full_pixel_comparison=False,
