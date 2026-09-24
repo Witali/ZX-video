@@ -43,18 +43,18 @@ def volume_id(raw, ends, part):
     return b'FAP3ZXV1'+bytes.fromhex(sha(series))[:6]+struct.pack('<H',part)
 
 
-def player_harness(ring, tables, mapping, frames, *, disk_reader=True):
+def player_harness(ring, tables, mapping, frames, *, disk_reader=True,inline_matches=False):
     """Shared current player options for disk assembly and instruction profiling."""
     return Harness(ring,tables,mapping,frames,ring_start=0,
         bulk=True,zero_copy=True,stored_guards=False,skip_noop_runs=True,
         constant_attribute_borders=True,skip_black_borders=True,skip_static_stripes=True,
         token_boundaries=True,pipelined=True,progress_frames=frames,packet_ahead='idle',
         unrolled_copy=True,unrolled_cache=True,attribute_groups=True,attribute_flags=True,
-        gray_cells=True,sparse_patches=True,disk_refill_entry=disk.DISK if disk_reader else None)
+        gray_cells=True,sparse_patches=True,disk_refill_entry=disk.DISK if disk_reader else None,inline_matches=inline_matches)
 
 
 class Builder:
-    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False):
+    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False,inline_matches=False):
         if not 0 <= deferred_limit <= 248: raise ValueError('deferred limit must be 0..248')
         if frame_service and not keepalive_fields: raise ValueError('frame service requires keepalive clock')
         self.raw, self.states, self.zx0, self.cache = raw, states, zx0, cache
@@ -69,6 +69,7 @@ class Builder:
         self.keepalive_fields=keepalive_fields
         self.frame_service=frame_service
         self.cold_bitmaps=cold_bitmaps
+        self.inline_matches=inline_matches
         r=Reader(raw)
         _,_,count,self.mapping,self.tables=read_header(r,magic=b'FAP3')
         if len(states)!=count: raise ValueError('state/frame count differs')
@@ -125,7 +126,7 @@ class Builder:
         return bytes(result),blocks
 
     def ram(self, start, end, next_sector, remaining):
-        h=player_harness(bytes(4),self.tables,self.mapping,end-start)
+        h=player_harness(bytes(4),self.tables,self.mapping,end-start,inline_matches=self.inline_matches)
         clock=Clock(h,[],lookahead=True,disk_idle_entry=disk.DEFERRED if self.deferred_limit else None,
             disk_due_entry=disk.DEFERRED_DUE if self.frame_service else None)
         if clock.labels['end']>disk.DRIVER: raise ValueError('clock/driver overlap')
@@ -229,6 +230,7 @@ class Builder:
             fast_disk=self.fast_disk,cached_seek=self.cached_seek,deferred_limit=self.deferred_limit,keepalive_fields=self.keepalive_fields,
             frame_service=self.frame_service,
             cold_bitmaps=self.cold_bitmaps,
+            inline_matches=self.inline_matches,
             forced_native_map_frames=list(range(start,min(start+2,end))) if self.cold_bitmaps and start else [],
             required_trdos_sha256=disk.TRDOS_503_SHA256 if self.fast_disk else None,
             interleaved=self.interleaved,video_physical_sectors=len(physical)//256,
@@ -300,6 +302,7 @@ def main():
     p.add_argument('--keepalive-fields',type=int,default=0,help='Experimental current-cylinder SEEK after idle fields; requires deferred cached reads')
     p.add_argument('--frame-service',action='store_true',help='Check overdue disk service after every published frame as well as idle waits')
     p.add_argument('--cold-bitmaps',action='store_true',help='Experimental smaller native checkpoints; redraw the first two frames of later disks')
+    p.add_argument('--inline-matches',action='store_true',help='Experimental ZX0 match copies without per-match CALL/RET')
     p.add_argument('--trdos-rom',type=Path,help='Required ROM hash check for --fast-disk')
     args=p.parse_args()
     if not 1<=args.volumes<=255: p.error('--volumes must be between 1 and 255')
@@ -310,7 +313,7 @@ def main():
     with np.load(args.states,allow_pickle=False) as saved: states=saved['states']
     b=Builder(args.raw.read_bytes(),states,args.zx0.resolve(),args.cache.resolve(),fast_disk=args.fast_disk,
         cached_seek=args.cached_seek,cold_track=args.cold_track,interleaved=args.interleaved,deferred_limit=args.deferred_limit,
-        keepalive_fields=args.keepalive_fields,frame_service=args.frame_service,cold_bitmaps=args.cold_bitmaps)
+        keepalive_fields=args.keepalive_fields,frame_service=args.frame_service,cold_bitmaps=args.cold_bitmaps,inline_matches=args.inline_matches)
     if args.ends: ends=[int(n) for n in args.ends.split(',')]
     else:
         # Storage weights use the already measured global block boundaries.

@@ -20,6 +20,7 @@ def main():
     p.add_argument('--report', type=Path, required=True)
     p.add_argument('--noise-frames', type=int, default=48, help='384 exercises automatic size-based splitting')
     p.add_argument('--only-noise', action='store_true')
+    p.add_argument('--inline-matches', action='store_true')
     args = p.parse_args()
     if args.noise_frames < 1: p.error('--noise-frames must be positive')
     programs = {name: executable(getattr(args, name), name) for name in ('ffmpeg', 'ffprobe', 'zx0')}
@@ -50,7 +51,7 @@ def main():
         '-framerate', '25/3', '-i', str(rgb)], ['-c:v', 'ffv1'])
     if args.only_noise: sources = []
     sources.append((noisy_video, args.noise_frames, [], 'high entropy; runtime disk reads beyond the 64 KiB preload'))
-    report = dict(complete=False, release=False, generator_seed=20260921, cases=[])
+    report = dict(complete=False, release=False, generator_seed=20260921, inline_matches=args.inline_matches, cases=[])
     write_json(args.report, report)
     for source, expected_frames, extra, objective in sources:
         out = args.output/(source.stem+'-out')
@@ -59,6 +60,7 @@ def main():
         for name, path in programs.items(): command += ['--'+name, path]
         if args.fuse: command += ['--fuse', str(args.fuse)]
         if args.trdos_rom: command += ['--disk-profile', 'trdos503', '--trdos-rom', str(args.trdos_rom)]
+        if args.inline_matches: command += ['--inline-matches']
         subprocess.run(command, check=True)
         meta = json.loads((out/'conversion.json').read_text(encoding='utf-8'))
         if meta['frames'] != expected_frames: raise AssertionError((source.name, meta['frames'], expected_frames))

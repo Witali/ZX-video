@@ -29,7 +29,7 @@ def cpu_profile(builder, start, end):
     if builder.deferred_limit:
         raise ValueError('Deferred disk builds require run_deferred_disk.py; this ideal producer does not model pending sectors.')
     ring, _ = builder.stream(start, end)
-    h = player_harness(ring, builder.tables, builder.mapping, end-start, disk_reader=False)
+    h = player_harness(ring, builder.tables, builder.mapping, end-start, disk_reader=False,inline_matches=builder.inline_matches)
     if start:
         h.cpu.banks[5][0x2400:0x3300] = builder.states[start-1].tobytes()
     screens = dict(h.expected_screens)
@@ -96,7 +96,9 @@ def cpu_profile(builder, start, end):
         irq_tstates=clock.irq_tstates, idle_tstates=clock.idle_tstates,
         audio_underruns=clock.underruns,
         nominal_deadlines_met_with_ideal_disk=not clock.underruns and not any(p['late_fields'] for p in clock.publications),
-        unchanged_player_baseline='00313d3', player_hot_path_delta_tstates=0,
+        unchanged_player_baseline=None if builder.inline_matches else '00313d3',
+        player_hot_path_delta_tstates=None if builder.inline_matches else 0,
+        inline_matches=builder.inline_matches,
         prime=prime, runs=runs, drain=drain, publications=clock.publications, events=clock.events,
         instruction_listing=list(h.instructions.values()),
         instruction_histogram=[dict(address=a, tstates=t, count=n) for (a, t), n in sorted(h.histogram.items())],
@@ -140,7 +142,7 @@ def verify_volumes(builder, records, output, fuse=None, timeout=1800):
     directory = output/'timing'; directory.mkdir(exist_ok=True)
     report = dict(complete=False, all_nominal_deadlines_met=False, release=False,
         profile='instruction counts with ideal input; optional complete Fuse measurements',
-        player_hot_path_changed=False, player_hot_path_delta_tstates=0, disks=[])
+        player_hot_path_changed=builder.inline_matches, player_hot_path_delta_tstates=None if builder.inline_matches else 0, disks=[])
     # Absolute adapter costs from instruction tables, separately from ROM/disk.
     options = dict(fast_disk=builder.fast_disk, cached_seek=builder.cached_seek, interleaved=builder.interleaved)
     report['disk_adapter_instruction_tstates'] = {
@@ -202,7 +204,7 @@ def main():
         fast_disk=first['fast_disk'], cached_seek=first['cached_seek'], interleaved=first['interleaved'],
         deferred_limit=first.get('deferred_limit',0),
         keepalive_fields=first.get('keepalive_fields',0),frame_service=first.get('frame_service',False),
-        cold_bitmaps=first.get('cold_bitmaps',False))
+        cold_bitmaps=first.get('cold_bitmaps',False),inline_matches=first.get('inline_matches',False))
     if sha(builder.raw) != first['raw_sha256'] or sha(states.tobytes()) != first['states_sha256']:
         raise ValueError('checkpoint or stream differs from disk metadata')
     result = verify_volumes(builder, records, output, args.fuse, args.timeout)

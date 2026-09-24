@@ -63,7 +63,7 @@ def decompress(data: bytes, limit: int = 8192, *, on_match=None, on_literals=Non
         mode = 'offset' if bit() else 'literal'
 
 
-def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, source_wrap=None, source_page_wrap=None, label_prefix=""):
+def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, source_wrap=None, source_page_wrap=None, label_prefix="", inline_match=None):
     if variant not in ("standard", "turbo"):
         raise ValueError(variant)
     if copy_hook and variant != 'turbo': raise ValueError('suspension requires turbo')
@@ -71,6 +71,7 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
         raise ValueError('choose one source wrap mode')
     if (literal_hook or source_wrap or source_page_wrap) and not copy_hook:
         raise ValueError('input paging requires the bounded turbo copier')
+    if inline_match and not copy_hook: raise ValueError('inline match requires a bounded copy hook')
     source = Path(__file__).parent / 'third_party/zx0' / f'dzx0_{variant}.asm'
     start = a.pc
     simple = {
@@ -82,13 +83,15 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
         'rl b': (0xCB,0x10), 'rl c': (0xCB,0x11), 'rla': (0x17,),
         'ret': (0xC9,), 'ret z': (0xC8,), 'ret nz': (0xC0,), 'ret c': (0xD8,),
     }
-    aliases = {}; copy_index=0
+    aliases = {}; copy_index=0; inline_delta=0
     for original in source.read_text().splitlines():
         line = ' '.join(original.split(';')[0].strip().split()).replace(', ', ',')
         if not line: continue
         if label_prefix:line=line.replace("dzx0",label_prefix+"dzx0")
         if line == 'ldir' and copy_hook:
-            a.abs16(0xCD,literal_hook if copy_index and literal_hook else copy_hook)
+            if not copy_index and inline_match:
+                before=a.pc; inline_match(a); inline_delta=a.pc-before-3
+            else: a.abs16(0xCD,literal_hook if copy_index and literal_hook else copy_hook)
             copy_index+=1;continue
         if line == 'inc hl' and source_wrap:
             a.emit(0x23,0xCB,0x7C);a.abs16(0xCC,source_wrap);continue
@@ -122,5 +125,5 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
         else:
             raise ValueError(f'unsupported ZX0 instruction: {line}')
     for alias,(label,offset) in aliases.items(): a.labels[alias]=a.labels[label]+offset
-    assert a.pc-start == {'standard':68,'turbo':126}[variant]+(2 if copy_hook else 0)+(30 if source_wrap else 0)+(18 if source_page_wrap else 0)
+    assert a.pc-start == {'standard':68,'turbo':126}[variant]+(2 if copy_hook else 0)+(30 if source_wrap else 0)+(18 if source_page_wrap else 0)+inline_delta
     return f'{label_prefix}dzx0_{variant}'

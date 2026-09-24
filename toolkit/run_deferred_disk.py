@@ -40,6 +40,7 @@ def main():
     p.add_argument('--limits',default='0,64,248')
     p.add_argument('--keepalive-fields',type=int,default=0)
     p.add_argument('--frame-service',action='store_true')
+    p.add_argument('--inline-matches',action='store_true',help='Measure the optional inline ZX0 match decoder')
     p.add_argument('--timeout',type=float,default=300)
     p.add_argument('--ends',default='1269,2334,3195,4221')
     args=p.parse_args()
@@ -48,11 +49,11 @@ def main():
     raw=args.raw.read_bytes()
     with np.load(args.states,allow_pickle=False) as saved: states=saved['states']
     if ends!=sorted(set(ends)) or not ends or ends[0]<=0 or ends[-1]!=len(states): p.error('invalid ends')
-    report=dict(baseline_commit='7aca091',complete=False,release=False,
+    report=dict(baseline_commit='80ab9d9' if args.inline_matches else '7aca091',complete=False,release=False,
         raw_sha256=sha(raw),states_sha256=sha(states.tobytes()),frames=len(states),ends=ends,
         compact_frames_changed=False,ay_bytes_changed=False,full_pixel_comparison=False,
         pixel_samples_per_frame=80,physical_drive_verified=False,keepalive_fields=args.keepalive_fields,
-        frame_service=args.frame_service,variants=[])
+        frame_service=args.frame_service,inline_matches=args.inline_matches,variants=[])
     args.output.mkdir(parents=True,exist_ok=True); args.report.parent.mkdir(parents=True,exist_ok=True)
     def save(): args.report.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     save()
@@ -60,7 +61,8 @@ def main():
         directory=args.output/f'limit-{limit:03}'; directory.mkdir(exist_ok=True)
         builder=ReadThroughBuilder(raw,states,args.zx0.resolve(),args.output/'zx0',
             fast_disk=True,cached_seek=True,interleaved=True,deferred_limit=limit,
-            keepalive_fields=args.keepalive_fields if limit else 0,frame_service=args.frame_service if limit else False)
+            keepalive_fields=args.keepalive_fields if limit else 0,frame_service=args.frame_service if limit else False,
+            inline_matches=args.inline_matches)
         builder.read_cache=args.read_cache; builder.ends=ends
         variant=dict(limit=limit,complete=False,volumes=[]); report['variants'].append(variant)
         records=[]; start=0

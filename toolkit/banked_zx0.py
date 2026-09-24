@@ -17,13 +17,13 @@ STACK_TOP, STACK_BOTTOM = 0x7be0, 0x7b70
 BANKS = (0, 1, 3, 4)
 
 
-def build(*, fast_literal=False, fast_refill=False, token_boundaries=False,page_entry=None,disk_refill_entry=None):
+def build(*, fast_literal=False, fast_refill=False, token_boundaries=False,page_entry=None,disk_refill_entry=None,inline_matches=False):
     a = MiniAssembler(CODE)
     a.label('begin')
     a.abs16(0xcd, 'refill')
     a.abs16(0xc3, 'slice_begin')
     incremental_zx0.emit_decoder(a, output_base=OUTPUT, input_base=INPUT, stack_top=STACK_TOP,
-        wrap_output=True, source_page_wrap='refill', literal_hook='literal',token_boundaries=token_boundaries)
+        wrap_output=True, source_page_wrap='refill', literal_hook='literal',token_boundaries=token_boundaries,inline_matches=inline_matches)
 
     a.label('literal')
     # Split a literal run at BD00 before LDIR can leave the input page.

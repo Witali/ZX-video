@@ -68,8 +68,8 @@ class GuardCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, *, fast_literal=False, fast_refill=False, profile=False, token_boundaries=False):
-        self.code, self.labels = machine.build(fast_literal=fast_literal, fast_refill=fast_refill,token_boundaries=token_boundaries)
+    def __init__(self, *, fast_literal=False, fast_refill=False, profile=False, token_boundaries=False,inline_matches=False):
+        self.code, self.labels = machine.build(fast_literal=fast_literal, fast_refill=fast_refill,token_boundaries=token_boundaries,inline_matches=inline_matches)
         self.token_boundaries = token_boundaries
         self.profile, self.histogram = profile, Counter()
         cpu = self.cpu = GuardCPU(b'', b'')
@@ -77,6 +77,7 @@ class Harness:
         cpu.patched_addresses = {self.labels['slice_high_operand'], self.labels['slice_low_operand'],
                                  self.labels['dzx0t_last_offset']+1, self.labels['dzx0t_last_offset']+2}
         if token_boundaries: cpu.patched_addresses.add(self.labels['slice_equal_branch'])
+        if inline_matches: cpu.patched_addresses.update(self.labels[n] for n in ('match_high_operand','match_low_operand','match_equal_branch'))
         for bank in cpu.banks:
             bank[:] = b'\xa5'*16384
         for i, value in enumerate(self.code):
@@ -173,6 +174,7 @@ def main():
     p.add_argument('--fast-refill', action='store_true')
     p.add_argument('--profile', action='store_true')
     p.add_argument('--token-boundaries',action='store_true',help='Yield between copies; may decode past requested target')
+    p.add_argument('--inline-matches',action='store_true',help='Inline the bounded match copy; requires current token boundaries')
     p.add_argument('--token-boundary-check',choices=('aligned','decrement'),default='aligned',help='Reproduce the first target-1 experiment with decrement')
     p.add_argument('--output', type=Path, required=True)
     args = p.parse_args()
@@ -182,11 +184,12 @@ def main():
     if (not storage['complete'] or not baseline['complete'] or not 1 <= args.quota <= 8192
             or storage['input_sha256'] != sha(raw) or baseline['input_sha256'] != sha(raw)):
         raise ValueError('different/incomplete baseline or invalid quota')
-    h = Harness(fast_literal=args.fast_literal, fast_refill=args.fast_refill, profile=args.profile,token_boundaries=token_mode)
+    h = Harness(fast_literal=args.fast_literal, fast_refill=args.fast_refill, profile=args.profile,token_boundaries=token_mode,inline_matches=args.inline_matches)
     position, ring = 0, 0xfff0
     report = dict(scope=__doc__, complete=False, baseline_commit=args.baseline_commit, input_sha256=sha(raw),
         code_hex=h.code.hex(), labels=h.labels, output_quota=args.quota, blocks=[],
         fast_literal=args.fast_literal, fast_refill=args.fast_refill,token_boundaries=token_mode,
+        inline_matches=args.inline_matches,
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf', disk_delivery_verified=False)
     for index, block in enumerate(storage['blocks']):
         expected = raw[position:position+block['decoded_bytes']]; position += len(expected)

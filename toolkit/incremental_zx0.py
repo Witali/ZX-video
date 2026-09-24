@@ -51,11 +51,13 @@ def emit_wait(a, *, lookahead=False, output_base=0x8000, direct_input=False, aud
     a.label('slice_frame_valid');a.abs16(0xC3,'ahead_decode' if lookahead else 'slice_until')
 
 
-def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False, wrap_output=False, source_page_wrap=None, literal_hook=None, token_boundaries=False):
+def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False, wrap_output=False, source_page_wrap=None, literal_hook=None, token_boundaries=False, inline_matches=False):
     if token_boundaries not in (False,True,'decrement'):
         raise ValueError('unknown token boundary comparison')
     if token_boundaries and (not wrap_output or direct_input or wrapped_input):
         raise ValueError('token boundaries require the wrapped banked-output path')
+    if inline_matches and token_boundaries is not True:
+        raise ValueError('inline matches require current token boundaries')
     if wrapped_input and (source_page_wrap or literal_hook):
         raise ValueError('wrapped direct input and fixed input window are exclusive')
     a.label('slice_until')
@@ -140,11 +142,32 @@ def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TO
         a.rel8(0x20,'slice_sync_compare')
         a.emit(0x3e,0x28,0x2b)  # Wrapped target: JR Z / DEC HL -> FFFF.
         a.label('slice_sync_compare');a.abs16(0x32,'slice_equal_branch')
+        if inline_matches: a.abs16(0x32,'match_equal_branch')
     a.emit(0x7C);a.abs16(0x32,'slice_high_operand')
-    a.emit(0x7D);a.abs16(0x32,'slice_low_operand');a.emit(0xC9)
+    if inline_matches: a.abs16(0x32,'match_high_operand')
+    a.emit(0x7D);a.abs16(0x32,'slice_low_operand')
+    if inline_matches: a.abs16(0x32,'match_low_operand')
+    a.emit(0xC9)
     a.labels['slice_high_operand']=a.labels['slice_compare_high']+1
     a.labels['slice_low_operand']=a.labels['slice_compare_low']+1
-    zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook=literal_hook,source_page_wrap=source_page_wrap)
+    def inline_copy(assembler):
+        # Same pause contract as slice_copy; fall through to POP HL instead
+        # of returning through a CALL/RET for each match. Both sets of target
+        # operands are synchronized before starting/resuming the decoder.
+        assembler.label('match_copy');assembler.emit(0x08,0x7a)
+        assembler.label('match_compare_high');assembler.emit(0xfe,0)
+        assembler.rel8(0x38,'match_copy_fast');assembler.rel8(0x20,'match_copy_slow')
+        assembler.emit(0x7b)
+        assembler.label('match_compare_low');assembler.emit(0xfe,0)
+        assembler.rel8(0x38,'match_copy_fast')
+        assembler.label('match_equal_branch');assembler.rel8(0x38,'match_copy_fast')
+        assembler.label('match_copy_slow');assembler.emit(0x08)
+        assembler.abs16(0xcd,'slice_yield');assembler.abs16(0xc3,'match_copy')
+        assembler.label('match_copy_fast');assembler.emit(0x08,0xed,0xb0)
+        assembler.labels['match_high_operand']=assembler.labels['match_compare_high']+1
+        assembler.labels['match_low_operand']=assembler.labels['match_compare_low']+1
+    zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook=literal_hook,source_page_wrap=source_page_wrap,
+        inline_match=inline_copy if inline_matches else None)
     if wrapped_input:
         zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook='wrapped_literal',
                               source_wrap='direct_wrap',label_prefix='wrap_')
