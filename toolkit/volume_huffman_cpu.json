@@ -1,0 +1,162 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Count isolated prefix-decoder T-states for every original entropy symbol.\n\nFormula is from benchmark_prefix_huffman.py / the Z80 instruction table.\nCheck the actual decoder opcodes at all eight bit offsets for each used\ncontext/symbol, then sum data-dependent costs for every real frame.\nExcluded: wrappers, motion, ZX0, output, IRQ/ULA, ROM and physical disk.\nThis is not a full-player speed prediction or a release check.\n",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "raw_sha256": "1aff3a304635025c25cc8b20d066b6044f2767b02c99d2490c9f9ae1613ac2ab",
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "ends": [
+    1614,
+    2920,
+    4221
+  ],
+  "variants": [
+    {
+      "name": "baseline",
+      "actual_opcode_cases": 22904,
+      "volumes": [
+        {
+          "part": 1,
+          "frame_start": 0,
+          "frame_end_exclusive": 1614,
+          "values": 271869,
+          "bits": 1257481,
+          "baseline_bits": 1257481,
+          "long_values": 12884,
+          "baseline_long_values": 12884,
+          "baseline_primitive_tstates": 51154001,
+          "primitive_tstates": 51154001,
+          "delta_tstates": 0
+        },
+        {
+          "part": 2,
+          "frame_start": 1614,
+          "frame_end_exclusive": 2920,
+          "values": 246375,
+          "bits": 1112215,
+          "baseline_bits": 1112215,
+          "long_values": 9794,
+          "baseline_long_values": 9794,
+          "baseline_primitive_tstates": 45620726,
+          "primitive_tstates": 45620726,
+          "delta_tstates": 0
+        },
+        {
+          "part": 3,
+          "frame_start": 2920,
+          "frame_end_exclusive": 4221,
+          "values": 227806,
+          "bits": 1041338,
+          "baseline_bits": 1041338,
+          "long_values": 9362,
+          "baseline_long_values": 9362,
+          "baseline_primitive_tstates": 42288349,
+          "primitive_tstates": 42288349,
+          "delta_tstates": 0
+        }
+      ]
+    },
+    {
+      "name": "global",
+      "actual_opcode_cases": 22904,
+      "volumes": [
+        {
+          "part": 1,
+          "frame_start": 0,
+          "frame_end_exclusive": 1614,
+          "values": 271869,
+          "bits": 1231408,
+          "baseline_bits": 1257481,
+          "long_values": 16241,
+          "baseline_long_values": 12884,
+          "baseline_primitive_tstates": 51154001,
+          "primitive_tstates": 52724016,
+          "delta_tstates": 1570015
+        },
+        {
+          "part": 2,
+          "frame_start": 1614,
+          "frame_end_exclusive": 2920,
+          "values": 246375,
+          "bits": 1093322,
+          "baseline_bits": 1112215,
+          "long_values": 13345,
+          "baseline_long_values": 9794,
+          "baseline_primitive_tstates": 45620726,
+          "primitive_tstates": 47165456,
+          "delta_tstates": 1544730
+        },
+        {
+          "part": 3,
+          "frame_start": 2920,
+          "frame_end_exclusive": 4221,
+          "values": 227806,
+          "bits": 1025307,
+          "baseline_bits": 1041338,
+          "long_values": 12720,
+          "baseline_long_values": 9362,
+          "baseline_primitive_tstates": 42288349,
+          "primitive_tstates": 43737149,
+          "delta_tstates": 1448800
+        }
+      ]
+    },
+    {
+      "name": "volume-1",
+      "actual_opcode_cases": 22904,
+      "volumes": [
+        {
+          "part": 1,
+          "frame_start": 0,
+          "frame_end_exclusive": 1614,
+          "values": 271869,
+          "bits": 1223484,
+          "baseline_bits": 1257481,
+          "long_values": 16728,
+          "baseline_long_values": 12884,
+          "baseline_primitive_tstates": 51154001,
+          "primitive_tstates": 52744685,
+          "delta_tstates": 1590684
+        }
+      ]
+    },
+    {
+      "name": "volume-2",
+      "actual_opcode_cases": 22904,
+      "volumes": [
+        {
+          "part": 2,
+          "frame_start": 1614,
+          "frame_end_exclusive": 2920,
+          "values": 246375,
+          "bits": 1089334,
+          "baseline_bits": 1112215,
+          "long_values": 14148,
+          "baseline_long_values": 9794,
+          "baseline_primitive_tstates": 45620726,
+          "primitive_tstates": 47393645,
+          "delta_tstates": 1772919
+        }
+      ]
+    },
+    {
+      "name": "volume-3",
+      "actual_opcode_cases": 22904,
+      "volumes": [
+        {
+          "part": 3,
+          "frame_start": 2920,
+          "frame_end_exclusive": 4221,
+          "values": 227806,
+          "bits": 1020098,
+          "baseline_bits": 1041338,
+          "long_values": 12453,
+          "baseline_long_values": 9362,
+          "baseline_primitive_tstates": 42288349,
+          "primitive_tstates": 43621697,
+          "delta_tstates": 1333348
+        }
+      ]
+    }
+  ]
+}
