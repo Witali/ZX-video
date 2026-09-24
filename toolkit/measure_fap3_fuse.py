@@ -70,6 +70,9 @@ def main():
         event(lab['seek_side_return'],121,[stamp])
         event(lab['seek_enter'],122,[stamp])
         event(lab['seek_return'],123,[stamp])
+    if 'keepalive_enter' in m.get('deferred_labels',{}):
+        event(m['deferred_labels']['keepalive_enter'],124,[stamp])
+        event(m['deferred_labels']['keepalive_return'],125,[stamp])
     event(lab['finished'],199,[stamp,mem(lab['published']),mem(lab['audio_ticks_played']),mem(lab['audio_underruns'])]+
         [f'[{base+i}]' for base in (0x50e0,0x51e0,0xd0e0,0xd1e0) for i in range(32)],True)
     for name in ('fatal','zx0_fatal'): event(lab[name],198,[stamp,'z80:pc'],True)
@@ -130,16 +133,16 @@ def main():
             actual=b''.join((value&0xffffffff).to_bytes(4,'little') for value in v[1:])
             reads.append(dict(sector=linear,tstates=v[0]-pending[0],kind=read_kind,
                 bytes_exact=actual==image[linear*256:(linear+1)*256],retried=False,
-                entry_tstates=17 if tag==103 else 10)); pending=None
+                start_tstate=pending[0],end_tstate=v[0],entry_tstates=17 if tag==103 else 10)); pending=None
         elif tag==112:
             if not reads or reads[-1]['kind']!='direct503': raise ValueError('retry without direct read')
             retries+=1; reads[-1]['retried']=True
-        elif tag in (120,122):
+        elif tag in (120,122,124):
             if seek_pending is not None: raise ValueError('overlapping seek calls')
             seek_pending=(tag,v[0])
-        elif tag in (121,123):
+        elif tag in (121,123,125):
             if seek_pending is None or seek_pending[0]!=tag-1: raise ValueError('unmatched seek return')
-            seek_calls.append(dict(kind='side' if tag==121 else 'seek',tstates=v[0]-seek_pending[1]))
+            seek_calls.append(dict(kind={121:'side',123:'seek',125:'keepalive'}[tag],tstates=v[0]-seek_pending[1]))
             seek_pending=None
         elif tag==199: final=v
         elif tag==198: failure=v

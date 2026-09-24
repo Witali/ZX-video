@@ -77,7 +77,7 @@ def build_video(draw,zx0,audio):
     return regions,labels,listing
 
 
-def build_clock(packet,audio,frames,*,zx0,progress_entry=None,lookahead=False,packet_ahead=False):
+def build_clock(packet,audio,frames,*,zx0,progress_entry=None,lookahead=False,packet_ahead=False,disk_idle_entry=None,disk_due_entry=None):
     if not 1<=frames<=10922: raise ValueError('six AY ticks per frame must fit u16')
     a=MiniAssembler(CODE); listing=[]; emit,addr=helpers(a,listing,'schedule')
     a.label('prime')
@@ -129,6 +129,9 @@ def build_clock(packet,audio,frames,*,zx0,progress_entry=None,lookahead=False,pa
     a.label('wait_published')
     addr('LD A,(ready)',0x3a,READY,13); emit('OR A',[0xb7],4)
     addr('JP Z,published',0xca,'published',10)
+    if disk_idle_entry is not None:
+        addr('CALL idle disk read',0xcd,disk_idle_entry,17); emit('OR A',[0xb7],4)
+        addr('JP NZ,wait_published',0xc2,'wait_published',10)
     if lookahead:
         addr('CALL ahead',0xcd,'ahead',17); emit('OR A',[0xb7],4)
         addr('JP NZ,wait_published',0xc2,'wait_published',10)
@@ -140,6 +143,7 @@ def build_clock(packet,audio,frames,*,zx0,progress_entry=None,lookahead=False,pa
     addr('JP wait_published',0xc3,'wait_published',10)
     a.label('published')
     if progress_entry is not None: addr('CALL disk_progress',0xcd,progress_entry,17)
+    if disk_due_entry is not None: addr('CALL timed disk service',0xcd,disk_due_entry,17)
     emit('RET',[0xc9],10)
     if lookahead:
         # Publication is now interruptible inside ZX0. This minimum quantum

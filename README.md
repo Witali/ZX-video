@@ -35,5 +35,6 @@ python toolkit/convert_video.py "C:/Video/example.mp4" --output "build/example-t
 
 [Параметры, формат отчётов и проверка](toolkit/GENERIC_CONVERTER_ru.md) ·
 [H.263 и простые блочные кодеки](toolkit/LIGHT_VIDEO_CODECS_ru.md) ·
+[Отложенное чтение диска: измерения](toolkit/FAP3_DEFERRED_DISK_ru.md) ·
 [История экспериментов](CHANGELOG.md) ·
 [Ранее собранный мультфильм и исследования](toolkit/README_ru.md)

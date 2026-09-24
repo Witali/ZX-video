@@ -42,14 +42,14 @@ class PipelineClockCPU(frame_stream_harness.FrameStreamCPU):
 
 
 class Clock:
-    def __init__(self,harness,expected_ticks,*,lookahead=False,observer=None,record_underruns=False):
+    def __init__(self,harness,expected_ticks,*,lookahead=False,observer=None,record_underruns=False,disk_idle_entry=None,disk_due_entry=None):
         if harness.video is None: raise ValueError('pipelined harness required')
         self.h,self.expected,self.observer=harness,expected_ticks,observer
         self.record_underruns,self.underruns=record_underruns,[]
         cpu=harness.cpu; cpu.__class__=PipelineClockCPU; cpu.guarding=False
         self.code,self.labels,self.listing=machine.build_clock(harness.p,harness.audio,harness.frames,
             zx0=harness.z,progress_entry=harness.progress['tick'] if harness.progress else None,lookahead=lookahead,
-            packet_ahead=harness.packet_ahead)
+            packet_ahead=harness.packet_ahead,disk_idle_entry=disk_idle_entry,disk_due_entry=disk_due_entry)
         for i,value in enumerate(self.code): cpu.write8(machine.CODE+i,value)
         harness.regions.append((machine.CODE,self.code))
         harness.instructions.update({r['address']:r for r in self.listing})

@@ -26,6 +26,8 @@ def save(path, report):
 
 
 def cpu_profile(builder, start, end):
+    if builder.deferred_limit:
+        raise ValueError('Deferred disk builds require run_deferred_disk.py; this ideal producer does not model pending sectors.')
     ring, _ = builder.stream(start, end)
     h = player_harness(ring, builder.tables, builder.mapping, end-start, disk_reader=False)
     if start:
@@ -197,7 +199,9 @@ def main():
         states = saved['states']
     builder = Builder((output/'work/stream.raw').read_bytes(), states,
         Path(executable(args.zx0, 'zx0')), output/'work/zx0',
-        fast_disk=first['fast_disk'], cached_seek=first['cached_seek'], interleaved=first['interleaved'])
+        fast_disk=first['fast_disk'], cached_seek=first['cached_seek'], interleaved=first['interleaved'],
+        deferred_limit=first.get('deferred_limit',0),
+        keepalive_fields=first.get('keepalive_fields',0),frame_service=first.get('frame_service',False))
     if sha(builder.raw) != first['raw_sha256'] or sha(states.tobytes()) != first['states_sha256']:
         raise ValueError('checkpoint or stream differs from disk metadata')
     result = verify_volumes(builder, records, output, args.fuse, args.timeout)

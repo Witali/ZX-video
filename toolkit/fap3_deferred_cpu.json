@@ -1,0 +1,149 @@
+{
+  "baseline_commit": "7aca091",
+  "complete": true,
+  "release": false,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "Execute deferred disk hooks and ring wrap tests; ROM service is mocked.\n\nT-states come from executed opcodes and are checked against each assembler\nlisting. Disk mechanics, ROM bodies, IRQs and ULA are excluded here.\n",
+  "costs": {
+    "previous_same_track_read_tstates": 907,
+    "deferred_routines_tstates": {
+      "partial": 38,
+      "defer": 124,
+      "eof": 84,
+      "force": 1007,
+      "idle_empty": 28,
+      "idle_read": 1086,
+      "idle_eof": 57
+    },
+    "forced_read_delta": 100,
+    "idle_clock_extra_tstates_per_call": 31,
+    "startup_overlay_copy_tstates": 5401
+  },
+  "cases": [
+    {
+      "limit": 1,
+      "idle_every": 0,
+      "interleaved": false,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 0,
+      "max_pending": 0,
+      "remaining_disk_sectors": 0
+    },
+    {
+      "limit": 1,
+      "idle_every": 0,
+      "interleaved": true,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 0,
+      "max_pending": 0,
+      "remaining_disk_sectors": 0
+    },
+    {
+      "limit": 8,
+      "idle_every": 0,
+      "interleaved": false,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 0,
+      "max_pending": 7,
+      "remaining_disk_sectors": 0
+    },
+    {
+      "limit": 8,
+      "idle_every": 0,
+      "interleaved": true,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 0,
+      "max_pending": 7,
+      "remaining_disk_sectors": 0
+    },
+    {
+      "limit": 8,
+      "idle_every": 3,
+      "interleaved": false,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 514,
+      "max_pending": 7,
+      "remaining_disk_sectors": 0
+    },
+    {
+      "limit": 8,
+      "idle_every": 3,
+      "interleaved": true,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 514,
+      "max_pending": 7,
+      "remaining_disk_sectors": 0
+    },
+    {
+      "limit": 64,
+      "idle_every": 5,
+      "interleaved": false,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 308,
+      "max_pending": 63,
+      "remaining_disk_sectors": 0
+    },
+    {
+      "limit": 64,
+      "idle_every": 5,
+      "interleaved": true,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 308,
+      "max_pending": 63,
+      "remaining_disk_sectors": 0
+    },
+    {
+      "limit": 248,
+      "idle_every": 0,
+      "interleaved": false,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 0,
+      "max_pending": 247,
+      "remaining_disk_sectors": 0
+    },
+    {
+      "limit": 248,
+      "idle_every": 0,
+      "interleaved": true,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 0,
+      "max_pending": 247,
+      "remaining_disk_sectors": 0
+    },
+    {
+      "limit": 248,
+      "idle_every": 2,
+      "interleaved": false,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 772,
+      "max_pending": 108,
+      "remaining_disk_sectors": 0
+    },
+    {
+      "limit": 248,
+      "idle_every": 2,
+      "interleaved": true,
+      "exact_bytes": 230400,
+      "consumer_calls": 1544,
+      "idle_calls": 772,
+      "max_pending": 108,
+      "remaining_disk_sectors": 0
+    }
+  ],
+  "new_buffer_bytes": 0,
+  "new_counter_bytes": 1,
+  "reused_bootstrap_bytes": 256,
+  "startup_staging": "A200..A2FF in the initially empty AY queue; copied before audio_init",
+  "physical_disk_and_frame_timing_verified": false
+}

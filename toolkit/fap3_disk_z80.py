@@ -3,7 +3,8 @@
 The refill hook replaces only fully consumed 256-byte ring sectors. ROM
 service time is additional to the instruction listing, never estimated as
 zero. Disk calls use a separate fixed-RAM stack, preserving ZX0's alternate
-registers and private suspension stack. This is a blocking first backend.
+registers and private suspension stack. Optional deferred credits move reads
+into idle waits, with forced refill before the loaded ring reserve runs out.
 """
 from build_zxv_trd import MiniAssembler
 from pipelined_frame_z80 import helpers, PAGE
@@ -12,6 +13,9 @@ import zx0_codec
 DISK, DRIVER, DISK_STACK = 0x6000, 0xdf20, 0x9c00
 WAIT_NEXT, LOAD_NEXT = 0x6200, 0x9a60
 CACHED_SEEK = 0x9a90  # after the next-volume loader, before row-low at 9B00
+DEFERRED, CONSUME = 0x6100, 0x6140  # installed after bootstrap, before disk prompt
+LAST_DISK_FIELDS = 0x61fc
+DEFERRED_DUE = 0x611c
 TRDOS_503_SHA256='91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5'
 
 
@@ -55,16 +59,23 @@ def emit_interleaved_cursor(a, listing):
     a.label('advance_value'); e('LD E,A',[0x5f],4)
 
 
-def build_disk(next_sector, remaining, *, fast_disk=False, cached_seek=False, initial_track=255, interleaved=False):
+def build_disk(next_sector, remaining, *, fast_disk=False, cached_seek=False, initial_track=255, interleaved=False, deferred_limit=0,keepalive_fields=0,elapsed_fields=None):
+    if not 0 <= deferred_limit <= 248: raise ValueError('deferred limit must be 0..248 sectors')
+    if keepalive_fields and not (1<=keepalive_fields<=100 and deferred_limit and cached_seek and initial_track!=255 and elapsed_fields is not None):
+        raise ValueError('keepalive requires deferred cached reads and a field counter')
     if cached_seek and not fast_disk: raise ValueError('cached seek requires fast disk')
     if initial_track!=255 and not (cached_seek and 0<=initial_track<160):
         raise ValueError('initial track requires cached seek and a valid bootstrap track')
     a = MiniAssembler(DISK); listing = []
     e, n = helpers(a, listing, 'disk_adapter')
     a.label('refill')
-    n('LD A,(free_high)', 0x3a, 'free_high', 13)
-    e('CP H', [0xbc], 4); e('RET Z', [0xc8], [5,11])
-    e('LD A,H', [0x7c], 4); n('LD (free_high),A', 0x32, 'free_high', 13)
+    if deferred_limit:
+        n('JP deferred_consume', 0xc3, CONSUME, 10)
+    else:
+        n('LD A,(free_high)', 0x3a, 'free_high', 13)
+        e('CP H', [0xbc], 4); e('RET Z', [0xc8], [5,11])
+        e('LD A,H', [0x7c], 4); n('LD (free_high),A', 0x32, 'free_high', 13)
+    a.label('read_one')
     n('LD HL,(remaining)', 0x2a, 'remaining', 16)
     e('LD A,H', [0x7c], 4); e('OR L', [0xb5], 4); e('RET Z', [0xc8], [5,11])
     n('LD (saved_sp),SP', (0xed,0x73), 'saved_sp', 20)
@@ -139,6 +150,10 @@ def build_disk(next_sector, remaining, *, fast_disk=False, cached_seek=False, in
     e('INC A', [0x3c], 4); e('AND 3', [0xe6,3], 7)
     n('LD (write_region),A', 0x32, 'write_region', 13); e('LD A,C0h', [0x3e,0xc0], 7)
     a.label('high_ok'); n('LD (write_high),A', 0x32, 'write_high', 13)
+    if keepalive_fields:
+        n('LD HL,(elapsed_fields)',0x2a,elapsed_fields,16)
+        n('LD (last_disk_fields),HL',0x22,LAST_DISK_FIELDS,16)
+    a.label('disk_restore')
     e('EXX', [0xd9], 4)
     for op, reg in ((0xe1,'HL'),(0xd1,'DE'),(0xc1,'BC')): e('POP '+reg, [op], 10)
     e('EXX', [0xd9], 4)
@@ -154,6 +169,90 @@ def build_disk(next_sector, remaining, *, fast_disk=False, cached_seek=False, in
     a.label('end')
     if a.pc > 0x6100: raise ValueError('disk adapter exceeds bootstrap overlay')
     return a.resolve(), dict(a.labels), listing
+
+
+def build_deferred(disk_labels, limit, *,keepalive_fields=0,elapsed_fields=None,frame_service=False):
+    """Defer completed sectors; force one read before consuming the ring reserve.
+
+    A sector becomes writable only after its bytes have been copied to BC00.
+    At most limit-1 sectors remain unfilled: even limit=248 retains eight
+    complete loaded sectors ahead of a <=256-byte consumer request. The
+    caller still accounts for 4-byte block headers through the same hook.
+    Idle calls run from the bank-7 clock and must restore bank 7 before RET.
+    """
+    if not 1 <= limit <= 248: raise ValueError('deferred limit must be 1..248')
+    if keepalive_fields and not (1<=keepalive_fields<=100 and elapsed_fields is not None and 'cached_track' in disk_labels):
+        raise ValueError('invalid deferred keepalive')
+    if frame_service and not keepalive_fields: raise ValueError('frame service requires keepalive clock')
+    a=MiniAssembler(DEFERRED); rows=[]; e,n=helpers(a,rows,'disk_deferred')
+    a.label('idle')
+    n('LD A,(pending)',0x3a,'pending',13); e('OR A',[0xb7],4)
+    if keepalive_fields: n('JP Z,no_pending',0xca,'no_pending',10)
+    else: e('RET Z',[0xc8],[5,11])
+    n('LD HL,(remaining)',0x2a,disk_labels['remaining'],16)
+    e('LD A,H',[0x7c],4); e('OR L',[0xb5],4); e('RET Z',[0xc8],[5,11])
+    n('LD HL,pending',0x21,'pending',10); e('DEC (HL)',[0x35],11)
+    n('CALL read_one',0xcd,disk_labels['read_one'],17)
+    e('LD A,17h',[0x3e,0x17],7); n('CALL atomic_page',0xcd,PAGE,17)
+    e('LD A,1',[0x3e,1],7); e('RET',[0xc9],10)
+    if keepalive_fields:
+        a.label('no_pending')
+        if a.pc!=DEFERRED_DUE: raise ValueError('timed service entry moved')
+        n('LD HL,(remaining)',0x2a,disk_labels['remaining'],16)
+        e('LD A,H',[0x7c],4); e('OR L',[0xb5],4); e('RET Z',[0xc8],[5,11])
+        n('LD HL,(elapsed_fields)',0x2a,elapsed_fields,16)
+        n('LD DE,(last_disk_fields)',(0xed,0x5b),LAST_DISK_FIELDS,20)
+        e('OR A',[0xb7],4); e('SBC HL,DE',[0xed,0x52],15)
+        target='service_due' if frame_service else 'keepalive'
+        e('LD A,H',[0x7c],4); e('OR A',[0xb7],4); n('JP NZ,service due',0xc2,target,10)
+        e('LD A,L',[0x7d],4); e('CP fields',[0xfe,keepalive_fields],7)
+        n('JP NC,service due',0xd2,target,10)
+        e('XOR A',[0xaf],4); e('RET',[0xc9],10)
+    if a.pc>CONSUME: raise ValueError('idle routine overlaps consumption hook')
+    a.emit(*bytes(CONSUME-a.pc))
+    a.label('consume')
+    n('LD A,(free_high)',0x3a,disk_labels['free_high'],13)
+    e('CP H',[0xbc],4); e('RET Z',[0xc8],[5,11])
+    e('LD A,H',[0x7c],4); n('LD (free_high),A',0x32,disk_labels['free_high'],13)
+    n('LD HL,(remaining)',0x2a,disk_labels['remaining'],16)
+    e('LD A,H',[0x7c],4); e('OR L',[0xb5],4); e('RET Z',[0xc8],[5,11])
+    n('LD HL,pending',0x21,'pending',10); e('INC (HL)',[0x34],11)
+    e('LD A,(HL)',[0x7e],7); e('CP limit',[0xfe,limit],7); e('RET C',[0xd8],[5,11])
+    e('DEC (HL)',[0x35],11); n('JP read_one',0xc3,disk_labels['read_one'],10)
+    if keepalive_fields:
+        if frame_service:
+            a.label('service_due')
+            n('LD A,(pending)',0x3a,'pending',13); e('OR A',[0xb7],4)
+            n('JP NZ,idle read',0xc2,'idle',10)
+        a.label('keepalive')
+        # Same outer register/stack contract as read_one. The controller gets
+        # SEEK+HLD to the LAST-read cylinder; no stream/side/READ flag changes.
+        n('LD (saved_sp),SP',(0xed,0x73),disk_labels['saved_sp'],20)
+        n('LD SP,disk_stack',0x31,DISK_STACK,10)
+        e('PUSH IX',[0xdd,0xe5],15); e('PUSH IY',[0xfd,0xe5],15)
+        e('EX AF,AF2',[0x08],4); e('PUSH AF',[0xf5],11); e('EX AF,AF2',[0x08],4)
+        e('EXX',[0xd9],4)
+        for op,reg in ((0xc5,'BC'),(0xd5,'DE'),(0xe5,'HL')): e('PUSH '+reg,[op],11)
+        e('EXX',[0xd9],4)
+        n('LD HL,slow_irq',0x21,0xbd00,10); n('LD (irq_vector),HL',0x22,0xbdbe,16)
+        e('LD B,0',[0x06,0],7)
+        n('LD HL,keepalive_return',0x21,'keepalive_return',10); e('PUSH HL',[0xe5],11)
+        n('LD HL,seek_503',0x21,0x3e44,10); e('PUSH HL',[0xe5],11)
+        e('LD A,BEh',[0x3e,0xbe],7); e('LD I,A',[0xed,0x47],9); e('IM 2',[0xed,0x5e],8)
+        n('LD A,(cached_track)',0x3a,disk_labels['cached_track'],13); e('SRL A',[0xcb,0x3f],8); e('EI',[0xfb],4)
+        a.label('keepalive_enter'); n('JP ROM trampoline',0xc3,0x3d2f,10)
+        a.label('keepalive_return'); e('EI',[0xfb],4)
+        n('LD HL,fast_irq',0x21,0xbd80,10); n('LD (irq_vector),HL',0x22,0xbdbe,16)
+        n('LD HL,(elapsed_fields)',0x2a,elapsed_fields,16)
+        n('LD (last_disk_fields),HL',0x22,LAST_DISK_FIELDS,16)
+        e('LD A,1',[0x3e,1],7); n('JP disk_restore',0xc3,disk_labels['disk_restore'],10)
+        if a.pc>LAST_DISK_FIELDS-2: raise ValueError('keepalive code overlaps deferred state')
+        a.emit(*bytes(LAST_DISK_FIELDS-2-a.pc))
+    a.label('state'); a.label('pending'); a.emit(0); a.label('end')
+    if keepalive_fields:
+        a.emit(0); a.label('last_disk_fields'); a.word(0); a.labels['end']=a.pc
+    if a.pc>WAIT_NEXT: raise ValueError('deferred disk code overlaps next-disk prompt')
+    return a.resolve(),dict(a.labels),rows
 
 
 def build_cached_seek(disk_labels):
@@ -203,10 +302,15 @@ def build_next_loader():
     return a.resolve(), dict(a.labels)
 
 
-def build_driver(h, clock, ay_state, *, has_next=False):
+def build_driver(h, clock, ay_state, *, has_next=False, deferred=False):
     a = MiniAssembler(DRIVER)
     def call(address): a.emit(0xcd); a.word(address)
     a.label('start'); a.emit(0xf3,0x31); a.word(0x9df0)
+    if deferred:
+        # Bootstrap is finished; its old 6100..61FF can now be replaced.
+        # Copy before audio_init clears the temporary AY queue at A200.
+        a.emit(0x21); a.word(0xa200); a.emit(0x11); a.word(DEFERRED)
+        a.emit(0x01); a.word(256); a.emit(0xed,0xb0)
     a.emit(0x21); a.word(h.frames); call(h.audio['audio_init']); call(h.audio['setup_clock'])
     # R0..10 checkpoint: following packets remain byte-identical AY deltas.
     a.abs16(0x21,'ay_state'); a.emit(0x16,0)
