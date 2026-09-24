@@ -3,6 +3,8 @@
 Uses the existing packets, Huffman tables, exact compact checkpoints and
 AY register history. Optional cold bitmaps replace the two native checkpoints
 with zero bitmaps and force complete output of the first two frames.
+The separate warm_continuation experiment requires the preceding volume's
+RAM and is not the default independently bootable format.
 No cadence/release claim is made by this builder; validate real disk I/O
 and all displayed frames separately in Fuse.
 """
@@ -17,7 +19,7 @@ import tempfile
 
 import numpy as np
 
-from build_zxv_trd import TrdFile, build_boot_basic
+from build_zxv_trd import TrdFile, build_boot_basic, basic_line
 from build_streaming_trd import place_files, calculate_file_start
 from bulk_frame_stream import read_packet
 from frame_output_pipeline import display_screen
@@ -54,7 +56,7 @@ def player_harness(ring, tables, mapping, frames, *, disk_reader=True,inline_mat
 
 
 class Builder:
-    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False,inline_matches=False):
+    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False,inline_matches=False,warm_continuation=False):
         if not 0 <= deferred_limit <= 248: raise ValueError('deferred limit must be 0..248')
         if frame_service and not keepalive_fields: raise ValueError('frame service requires keepalive clock')
         self.raw, self.states, self.zx0, self.cache = raw, states, zx0, cache
@@ -70,6 +72,8 @@ class Builder:
         self.frame_service=frame_service
         self.cold_bitmaps=cold_bitmaps
         self.inline_matches=inline_matches
+        self.warm_continuation=warm_continuation
+        self.warm_immutable=None
         r=Reader(raw)
         _,_,count,self.mapping,self.tables=read_header(r,magic=b'FAP3')
         if len(states)!=count: raise ValueError('state/frame count differs')
@@ -149,7 +153,7 @@ class Builder:
                 keepalive_fields=self.keepalive_fields,elapsed_fields=h.audio['elapsed_fields'],frame_service=self.frame_service)
             for i,value in enumerate(code+bytes(256-len(code))): cpu.write8(0xa200+i,value)
             listing+=deferred_rows
-        code,next_loader=disk.build_next_loader()
+        code,next_loader=disk.build_next_loader(entry=0x6003 if self.warm_continuation else 0x6000)
         for i,value in enumerate(code): cpu.write8(disk.LOAD_NEXT+i,value)
         seek_labels={}
         if self.cached_seek:
@@ -168,14 +172,34 @@ class Builder:
         layout=[(6,0xc000,16384,0x4000),(2,0xa000,8192,0x4000),(2,0x8000,8192,0xa6a0),
             (7,0xc000,8192,0xa6a0),
             (5,0x4000,6912,0xa6a0),(5,0x6400,7168,0xa6a0)]
+        warm_metadata={}
+        reset=None
+        if self.warm_continuation:
+            from warm_startup import reset_ranges, encode_reset, immutable_fixed
+            ranges=reset_ranges(h)
+            fixed=bytes(cpu.banks[5]+cpu.banks[2])
+            invariant=sha(bytes(cpu.banks[6])+immutable_fixed(fixed,ranges))
+            if self.warm_immutable is not None and invariant!=self.warm_immutable:
+                raise ValueError('warm volumes have different immutable tables or fixed code')
+            self.warm_immutable=invariant
+            warm_metadata=dict(warm_reset_ranges=ranges,warm_immutable_sha256=invariant,
+                warm_compact_checkpoint_sha256=sha(self.states[start-1].tobytes()) if start else None)
+            if start:
+                reset=encode_reset(fixed,ranges)
+                # Keep n-1 at 6400..72FF and immutable fixed code. Reset all
+                # mutable cache, wrapper, ZX0 operands/state and stacks.
+                layout=[(2,0xa000,8192,0x4000),(2,0x4000,len(reset),0xa6a0),
+                    (7,0xc000,8192,0xa6a0),(5,0x4000,6912,0xa6a0)]
         sections=[]
         for bank,address,length,buffer in layout:
-            data=bytes(cpu.banks[bank][address&0x3fff:(address&0x3fff)+length])
+            is_reset=reset is not None and bank==2 and address==0x4000
+            data=reset if is_reset else bytes(cpu.banks[bank][address&0x3fff:(address&0x3fff)+length])
             packed=self.compress(data)
             capacity=6912 if buffer==0x4000 else 4608
             if len(padded(packed))>capacity: raise ValueError(f'startup section too large: {bank}/{address:x}: {len(packed)}')
             sections.append(dict(bank=bank,address=address,buffer=buffer,sectors=sectors(packed),
                 decoded_bytes=len(data),compressed_bytes=len(packed),sha256=sha(data),data=padded(packed)))
+            if is_reset: sections[-1]['warm_reset']=True
         labels=dict(driver,**{k:dl[k] for k in ('disk_full_call','disk_return')},
             publish_out=h.video['publish_out'],audio_tick_empty=h.audio['audio_tick_empty'],
             audio_tick_done=h.audio['audio_tick_done'],audio_write_loop=h.audio['audio_write_loop'],
@@ -186,7 +210,7 @@ class Builder:
             if name in dl: labels[name]=dl[name]
         for name in ('seek_side_enter','seek_side_return','seek_enter','seek_return'):
             if name in seek_labels: labels[name]=seek_labels[name]
-        return sections,dict(player_labels=labels,decoder_labels=h.z,disk_labels=dl,
+        return sections,dict(**warm_metadata,player_labels=labels,decoder_labels=h.z,disk_labels=dl,
             seek_labels=seek_labels,deferred_labels=deferred_labels,
             initial_cached_track=initial_track,
             packet_labels=h.p,clock_labels=clock.labels,audio_labels=h.audio,next_loader_labels=next_loader,
@@ -204,13 +228,27 @@ class Builder:
         ns=sectors(stream); video_sector=64
         boot=build_boot_basic()
         if self.ends is None: raise ValueError('set the complete volume boundaries before building')
+        if self.warm_continuation:
+            if part>len(self.ends) or end!=self.ends[part-1] or start!=(self.ends[part-2] if part>1 else 0):
+                raise ValueError('warm volumes must use the complete declared sequential partition')
+            if start:
+                boot+=basic_line(40,bytes([0xf5])+b' "START WITH DISK 1"')
         disk_id=volume_id(self.raw,self.ends,part)
+        if self.warm_continuation:
+            # A normal set, or another warm binary/options set, must never
+            # be accepted by a continuation loader with retained RAM.
+            options=dict(fast_disk=self.fast_disk,cached_seek=self.cached_seek,cold_track=self.cold_track,
+                interleaved=self.interleaved,deferred_limit=self.deferred_limit,keepalive_fields=self.keepalive_fields,
+                frame_service=self.frame_service,cold_bitmaps=self.cold_bitmaps,inline_matches=self.inline_matches)
+            contract=b'WARM1'+json.dumps(options,sort_keys=True).encode()+self.states.tobytes()
+            disk_id=volume_id(self.raw+contract,self.ends,part)
         next_id=disk_id[:14]+struct.pack('<H',part+1)
         for attempt in range(8):
             positions=list(disk_layout.positions(ns+1,video_sector%16)) if self.interleaved else list(range(ns+1))
             sections,metadata=self.ram(start,end,video_sector+positions[min(256,ns)],max(0,ns-256))
             for s in sections: s['sector']=0
-            player,_=disk.build_bootstrap(sections,video_sector,ns,next_id=next_id,interleaved=self.interleaved)
+            player,_=disk.build_bootstrap(sections,video_sector,ns,next_id=next_id,interleaved=self.interleaved,
+                warm_set=self.warm_continuation,continuation=bool(start and self.warm_continuation))
             files=[TrdFile('boot','B',boot,basic_variables_offset=len(boot),autostart_line=10),
                 TrdFile('PLAYER','C',player,start=0x6000)]
             if calculate_file_start(files[:1])!=(1,1) or len(player)!=1024:
@@ -220,7 +258,8 @@ class Builder:
             if position==video_sector: break
             video_sector=position
         else: raise ValueError('bootstrap size did not converge')
-        player,boot_labels=disk.build_bootstrap(sections,video_sector,ns,next_id=next_id,interleaved=self.interleaved)
+        player,boot_labels=disk.build_bootstrap(sections,video_sector,ns,next_id=next_id,interleaved=self.interleaved,
+            warm_set=self.warm_continuation,continuation=bool(start and self.warm_continuation))
         files[1]=TrdFile('PLAYER','C',player,start=0x6000)
         files.extend(TrdFile(f'INIT{i}','C',s['data']) for i,s in enumerate(sections))
         physical=disk_layout.arrange(padded(stream),video_sector%16) if self.interleaved else padded(stream)
@@ -231,6 +270,7 @@ class Builder:
             frame_service=self.frame_service,
             cold_bitmaps=self.cold_bitmaps,
             inline_matches=self.inline_matches,
+            warm_continuation=self.warm_continuation,independently_bootable=not (start and self.warm_continuation),
             forced_native_map_frames=list(range(start,min(start+2,end))) if self.cold_bitmaps and start else [],
             required_trdos_sha256=disk.TRDOS_503_SHA256 if self.fast_disk else None,
             interleaved=self.interleaved,video_physical_sectors=len(physical)//256,
@@ -256,6 +296,8 @@ class Builder:
         Leave 16 sectors for checkpoint/fingerprint convergence. This is a
         bounded fit, not a proof of the smallest possible number of disks.
         """
+        if self.warm_continuation:
+            raise ValueError('warm experiment requires explicit sequential boundaries')
         if not 1 <= max_frames <= 65535//6:
             raise ValueError('max_frames must be in 1..10922')
         weights=[0]

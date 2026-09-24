@@ -1,5 +1,9 @@
 # Project rules
 
+- Keep every release TRD independently bootable. Reusing RAM from a previous
+  disk may be measured as an explicitly separate experiment, but must not
+  become a requirement for the main format.
+
 - Current target: the movie without final credits on at most three TRDs,
   retaining the entire main story and post-credit scene through EOF. Use
   toolkit/movie_no_credits.json for the user-authorized edit. Keep unchanged

@@ -288,7 +288,7 @@ def build_cached_seek(disk_labels):
     return a.resolve(),dict(a.labels),listing
 
 
-def build_next_loader():
+def build_next_loader(*,entry=0x6000):
     a=MiniAssembler(LOAD_NEXT)
     # Runs outside 6000..63ff while replacing the next disk's bootstrap.
     a.label('load_next'); a.emit(0xf3,0x31); a.word(0x5ff0)
@@ -296,7 +296,7 @@ def build_next_loader():
     a.label('load_next_sector'); a.emit(0xc5,0xd5,0xe5,0x01); a.word(0x105)
     a.emit(0xcd); a.word(0x3d13)
     a.emit(0xe1,0xd1,0xc1,0x24,0x1c); a.rel8(0x10,'load_next_sector')
-    a.emit(0xc3); a.word(0x6000)
+    a.emit(0xc3); a.word(entry)
     a.label('end')
     if a.pc > 0x9b00: raise ValueError('next loader overlaps row-low table')
     return a.resolve(), dict(a.labels)
@@ -331,13 +331,21 @@ def build_driver(h, clock, ay_state, *, has_next=False, deferred=False):
     return a.resolve(), dict(a.labels)
 
 
-def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16), interleaved=False):
+def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16), interleaved=False,
+                    warm_set=False,continuation=False):
     """Sections already sector-aligned on disk; decompress directly to RAM."""
     a = MiniAssembler(0x6000)
     def call(label): a.abs16(0xcd,label)
     def page(bank):
         a.emit(0x3e,0x10|bank,0x01); a.word(0x7ffd); a.emit(0xed,0x79)
-    a.label('bootstrap'); a.emit(0xf3,0x31); a.word(0x5ff0)
+    if continuation and not warm_set: raise ValueError('continuation requires warm set')
+    a.label('bootstrap')
+    if warm_set:
+        # The disk-change loader enters at 6003. A cold USR on a later
+        # disk returns to BASIC, which prints START WITH DISK 1.
+        if continuation: a.emit(0xc9,0,0)
+        else: a.emit(0xc3); a.word(0x6003)
+    a.label('bootstrap_entry'); a.emit(0xf3,0x31); a.word(0x5ff0)
     a.emit(0xfd,0x21); a.word(0x5c3a); a.emit(0xed,0x56,0xfb)
     for section in sections:
         page(section['bank'])
@@ -347,6 +355,8 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
         a.emit(0x06,section['sectors']); call('read_n')
         a.emit(0x21); a.word(section['buffer'])
         a.emit(0x11); a.word(section['address']); call('dzx0_standard')
+        if section.get('warm_reset'):
+            a.emit(0x21); a.word(section['address']); call('warm_reset')
     a.emit(0x11); a.word(packed_sector(video_sector)); a.abs16((0xed,0x53),'disk_position')
     left = min(256, video_sectors)
     for bank in (0,1,3,4):
@@ -383,6 +393,10 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
     a.label('sector_ok'); a.abs16((0xed,0x53),'disk_position')
     a.rel8(0x10,'read_loop'); a.emit(0xc9)
     zx0_codec.emit_decoder(a,variant='standard')
+    if any(s.get('warm_reset') for s in sections):
+        # count:u16, destination:u16, count bytes; zero count terminates.
+        a.label('warm_reset'); a.emit(0x4e,0x23,0x46,0x23,0x78,0xb1,0xc8)
+        a.emit(0x5e,0x23,0x56,0x23,0xed,0xb0); a.abs16(0xc3,'warm_reset')
     a.label('disk_position'); a.word(0)
     if a.pc>WAIT_NEXT: raise ValueError('bootstrap overlaps disk prompt')
     a.emit(*bytes(WAIT_NEXT-a.pc))

@@ -28,20 +28,28 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('fuse','trd','metadata','raw','states','output'): p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--timeout',type=float,default=180)
+    p.add_argument('--continuation-snapshot',type=Path,help='Resume the previous verified EOF at its disk prompt')
+    p.add_argument('--export-warm-ram',type=Path,help='Dump actual banks 5/2/6 only after the complete disk finishes')
     args=p.parse_args(); m=json.loads(args.metadata.read_text()); lab=m['player_labels']
+    if not m.get('independently_bootable',True) and not args.continuation_snapshot:
+        raise ValueError('continuation disk requires RAM exported from its predecessor')
     if m.get('required_trdos_sha256') and hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest()!=m['required_trdos_sha256']:
         raise ValueError('fast reader requires its verified TR-DOS ROM')
-    lines=['base 10','set $running 0']; widths={}; events=[]
-    def event(pc,tag,expressions,stop=False):
+    lines=['base 10','set $running 0','set $dump 65537']; widths={}; events=[]
+    def event(pc,tag,expressions,stop=False,after=()):
         index=len(events)+1; events.append((pc,tag)); widths[tag]=len(expressions)
         lines.extend([f'breakpoint 0x{pc:04x}',f'commands {index}',f'print {tag}'])
         if tag==100: lines.append('set $running 1')
         lines.extend('print '+e for e in expressions)
+        lines.extend(after)
         lines.extend(['exit 77' if stop else 'continue','end'])
         if tag!=100: lines.append(f'condition {index} $running == {0 if tag==90 else 1}')
     def mem(address): return f'[{address}]+256*[{address+1}]'
     stamp='spectrum:frames*70908+ula:tstates'
-    event(0x6000,90,[stamp])
+    event(m['bootstrap_labels'].get('bootstrap_entry',0x6000),90,[stamp])
+    if args.continuation_snapshot:
+        event(m['bootstrap_labels']['next_disk_accepted'],88,[stamp])
+        lines[-1]=f'condition {len(events)} $running == 0'
     event(lab['start'],100,[stamp])
     samples=sorted(set([i*97%6912 for i in range(56)]+[6144+i*31 for i in range(24)]))
     sample_expr=[]
@@ -73,15 +81,26 @@ def main():
     if 'keepalive_enter' in m.get('deferred_labels',{}):
         event(m['deferred_labels']['keepalive_enter'],124,[stamp])
         event(m['deferred_labels']['keepalive_return'],125,[stamp])
+    export=['set $running 0','set $dump 16384','out 32765 22','set z80:pc 39520'] if args.export_warm_ram else []
     event(lab['finished'],199,[stamp,mem(lab['published']),mem(lab['audio_ticks_played']),mem(lab['audio_underruns'])]+
-        [f'[{base+i}]' for base in (0x50e0,0x51e0,0xd0e0,0xd1e0) for i in range(32)],True)
+        [f'[{base+i}]' for base in (0x50e0,0x51e0,0xd0e0,0xd1e0) for i in range(32)],not bool(export),after=export)
     for name in ('fatal','zx0_fatal'): event(lab[name],198,[stamp,'z80:pc'],True)
+    if export:
+        # After EOF only: repeat the existing DI at 9A60; debugger redirects
+        # PC before its following instruction. RAM is neither patched nor
+        # synthesized. Three actual banks are exported at one dword per hit.
+        event(0x9a61,300,['[$dump]+256*[$dump+1]+65536*[$dump+2]+16777216*[$dump+3]'],
+            after=['set $dump $dump+4','set z80:pc 39520'])
+        lines[-1]=f'condition {len(events)} $dump < 65536'
+        event(0x9a61,301,[],True)
+        lines[-1]=f'condition {len(events)} $running == 0 && $dump == 65536'
     if len('\n'.join(lines))>29000: raise ValueError('Windows command line too long')
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.with_suffix('.debugger.txt').write_text('\n'.join(lines))
     env=dict(os.environ,SDL_VIDEODRIVER='dummy')
+    media=['--betadisk',str(args.trd.resolve()),'--snapshot',str(args.continuation_snapshot.resolve())] if args.continuation_snapshot else [str(args.trd.resolve())]
     command=[str(args.fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions',
-        '--speed','10000','--machine','128','--beta128','--debugger-command','\n'.join(lines),str(args.trd.resolve())]
+        '--speed','10000','--machine','128','--beta128','--debugger-command','\n'.join(lines)]+media
     started=time.monotonic()
     completed=subprocess.run(command,cwd=args.fuse.parent,env=env,capture_output=True,
         startupinfo=hidden_startupinfo(),timeout=args.timeout)
@@ -99,11 +118,15 @@ def main():
     pubs=[]; writes=[]; ticks=[]; underruns=[]; reads=[]; final=None; failure=None
     image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0; retries=0; read_kind=None
     boot_started=player_started=None
+    warm_ram=bytearray(); warm_dump_complete=False; continuation_accepted=[]
     seek_pending=None; seek_calls=[]
     with np.load(args.states,allow_pickle=False) as data: states=data['states']
     for tag,v in parsed:
         if tag==90:
             if boot_started is None: boot_started=v[0]
+        elif tag==88: continuation_accepted.append(v[0])
+        elif tag==300: warm_ram+=(v[0]&0xffffffff).to_bytes(4,'little')
+        elif tag==301: warm_dump_complete=True
         elif tag==100: player_started=v[0]
         elif tag==150:
             pubs.append(dict(tstate=v[0],page=v[1],field=v[2],late_fields=v[3]))
@@ -175,6 +198,10 @@ def main():
             runs.append(dict(start=first,end=i-1,recovered_at=i)); first=None
     if first is not None: runs.append(dict(start=first,end=len(pubs)-1,recovered_at=None))
     progress_complete=bool(final and final[4:]==[255]*128)
+    if args.continuation_snapshot and len(continuation_accepted)!=1:
+        errors.append(dict(error='continuation ID was not accepted exactly once'))
+    if args.export_warm_ram and (not warm_dump_complete or len(warm_ram)!=49152):
+        errors.append(dict(error='warm RAM export incomplete',bytes=len(warm_ram)))
     complete=bool(final and final[1]==m['frames'] and final[2]==6*m['frames'] and len(pubs)==m['frames']
         and native_count==m['frames'] and ay_exact and not errors and progress_complete)
     report=dict(scope=__doc__,part=m['part'],complete=complete,release=False,exit_code=completed.returncode,
@@ -199,6 +226,15 @@ def main():
         late_runs=runs,publications=pubs,actual_phase_tstates=offsets,reads=reads,
         audio_underrun_tstates=underruns,
         rom_sha256=hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest())
+    if args.continuation_snapshot:
+        report.update(continuation_snapshot_sha256=hashlib.sha256(args.continuation_snapshot.read_bytes()).hexdigest(),
+            continuation_disk_accepted_tstates=continuation_accepted)
+    if args.export_warm_ram:
+        report.update(warm_ram_bytes=len(warm_ram),warm_ram_sha256=hashlib.sha256(warm_ram).hexdigest(),
+            warm_ram_export_complete=warm_dump_complete and len(warm_ram)==49152)
+        if complete:
+            args.export_warm_ram.parent.mkdir(parents=True,exist_ok=True)
+            args.export_warm_ram.write_bytes(warm_ram)
     args.output.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors')}),flush=True)
     if not complete: raise SystemExit(1)
