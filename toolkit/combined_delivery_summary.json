@@ -1,0 +1,955 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Archive complete trials and compare only identical volume partitions.\n\nActual OUT recovery is computed independently of IRQ counters. Each archived\ntrace keeps every publication, AY timestamp and sector check. Screen samples\nare not promoted to full-pixel verification, and missed deadlines stay failures.\n",
+  "baseline_commit": "3356730",
+  "full_pixel_comparison": false,
+  "pixel_samples_per_frame": 80,
+  "physical_drive_verified": false,
+  "nominal_tolerance_tstates": 64,
+  "nominal_period_tstates": 425448,
+  "comparison_groups": [
+    [
+      "previous",
+      "inline"
+    ],
+    [
+      "control",
+      "inline_control",
+      "deferred",
+      "combined"
+    ]
+  ],
+  "same_partition_logical_video_exact": true,
+  "physical_layout_note": "Larger startup code changes first-track position and interleave holes; compare deinterleaved sectors",
+  "variants": [
+    {
+      "name": "previous",
+      "ends": [
+        1625,
+        2921,
+        4221
+      ],
+      "options": {
+        "fast_disk": true,
+        "cached_seek": true,
+        "interleaved": true,
+        "cold_bitmaps": true,
+        "startup_delta": true,
+        "fast_noop_scan": true,
+        "irq_safe_paging": true
+      },
+      "frames": 4221,
+      "ay_ticks": 25326,
+      "runtime_sectors": 6733,
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1625,
+          "used_sectors": 2544,
+          "video_bytes": 641486,
+          "video_physical_sha256": "f0b0f11b5e81e9fd82aafd081612379b10649096ef620e778474323bd77a651b",
+          "logical_video_sha256": "a4413e321124d97649e8850b604b65641b5deb93b7e30de4428ca6217fdfd611",
+          "video_start_sector": 54,
+          "actual_fps": 7.933817282733168,
+          "missed_nominal_frames": 1372,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 490,
+          "empty_queue_visits": 489,
+          "unobserved_irq_fields": 1,
+          "read_retries": 0,
+          "recovered_actual_runs": 7,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 61,
+              "end": 143,
+              "recovered_at": 144
+            },
+            {
+              "start": 149,
+              "end": 151,
+              "recovered_at": 152
+            },
+            {
+              "start": 173,
+              "end": 174,
+              "recovered_at": 175
+            },
+            {
+              "start": 191,
+              "end": 191,
+              "recovered_at": 192
+            },
+            {
+              "start": 193,
+              "end": 193,
+              "recovered_at": 194
+            },
+            {
+              "start": 213,
+              "end": 219,
+              "recovered_at": 220
+            },
+            {
+              "start": 249,
+              "end": 296,
+              "recovered_at": 297
+            },
+            {
+              "start": 398,
+              "end": 1624,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 9.895811271814825,
+          "elapsed_timing": {
+            "bootstrap_tstates": 194120625,
+            "playback_tstates": 726313793,
+            "bootstrap_and_playback_tstates": 920434418,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 2,
+          "frames": 1296,
+          "used_sectors": 2542,
+          "video_bytes": 639731,
+          "video_physical_sha256": "f3ec7531012c37f5a3f149cdcfb319ad63632c7d615912198a946928da64bdd7",
+          "logical_video_sha256": "a3171135c6c8ae71b6369551c28122d9e6bbb6bf4fc13c8b4b803017e2773f46",
+          "video_start_sector": 58,
+          "actual_fps": 7.387932819890125,
+          "missed_nominal_frames": 1292,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 993,
+          "empty_queue_visits": 992,
+          "unobserved_irq_fields": 1,
+          "read_retries": 0,
+          "recovered_actual_runs": 0,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 4,
+              "end": 1295,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 19.95155798020807,
+          "elapsed_timing": {
+            "bootstrap_tstates": 197242967,
+            "playback_tstates": 623097578,
+            "bootstrap_and_playback_tstates": 820340545,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 3,
+          "frames": 1300,
+          "used_sectors": 2542,
+          "video_bytes": 638742,
+          "video_physical_sha256": "631717337be60e8104bfe4c85869226f59b7de19990296d5a52cfc6c7687e48a",
+          "logical_video_sha256": "5e13de6a25cd203743fb20d952f8f04b072234a246967236111f8cbc7fd9c1ef",
+          "video_start_sector": 61,
+          "actual_fps": 7.187774333903217,
+          "missed_nominal_frames": 1298,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 1266,
+          "empty_queue_visits": 1266,
+          "unobserved_irq_fields": 0,
+          "read_retries": 0,
+          "recovered_actual_runs": 0,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 2,
+              "end": 1299,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 25.409250613211537,
+          "elapsed_timing": {
+            "bootstrap_tstates": 199539101,
+            "playback_tstates": 644873336,
+            "bootstrap_and_playback_tstates": 844412437,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        }
+      ],
+      "weighted_fps": 7.522702253337873,
+      "missed_nominal_frames": 3962,
+      "ay_missing_fields": 2749,
+      "playback_seconds": 562.2613287659647
+    },
+    {
+      "name": "inline",
+      "ends": [
+        1625,
+        2921,
+        4221
+      ],
+      "options": {
+        "fast_disk": true,
+        "cached_seek": true,
+        "interleaved": true,
+        "cold_bitmaps": true,
+        "startup_delta": true,
+        "fast_noop_scan": true,
+        "irq_safe_paging": true,
+        "inline_matches": true
+      },
+      "frames": 4221,
+      "ay_ticks": 25326,
+      "runtime_sectors": 6733,
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1625,
+          "used_sectors": 2544,
+          "video_bytes": 641486,
+          "video_physical_sha256": "f0b0f11b5e81e9fd82aafd081612379b10649096ef620e778474323bd77a651b",
+          "logical_video_sha256": "a4413e321124d97649e8850b604b65641b5deb93b7e30de4428ca6217fdfd611",
+          "video_start_sector": 54,
+          "actual_fps": 7.958690609201598,
+          "missed_nominal_frames": 1359,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 459,
+          "empty_queue_visits": 458,
+          "unobserved_irq_fields": 1,
+          "read_retries": 0,
+          "recovered_actual_runs": 5,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 62,
+              "end": 135,
+              "recovered_at": 136
+            },
+            {
+              "start": 137,
+              "end": 138,
+              "recovered_at": 139
+            },
+            {
+              "start": 173,
+              "end": 174,
+              "recovered_at": 175
+            },
+            {
+              "start": 213,
+              "end": 219,
+              "recovered_at": 220
+            },
+            {
+              "start": 249,
+              "end": 295,
+              "recovered_at": 296
+            },
+            {
+              "start": 398,
+              "end": 1624,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 9.25608362231808,
+          "elapsed_timing": {
+            "bootstrap_tstates": 194154895,
+            "playback_tstates": 724114788,
+            "bootstrap_and_playback_tstates": 918269683,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 2,
+          "frames": 1296,
+          "used_sectors": 2542,
+          "video_bytes": 639731,
+          "video_physical_sha256": "f3ec7531012c37f5a3f149cdcfb319ad63632c7d615912198a946928da64bdd7",
+          "logical_video_sha256": "a3171135c6c8ae71b6369551c28122d9e6bbb6bf4fc13c8b4b803017e2773f46",
+          "video_start_sector": 58,
+          "actual_fps": 7.433715354114065,
+          "missed_nominal_frames": 1292,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 938,
+          "empty_queue_visits": 937,
+          "unobserved_irq_fields": 1,
+          "read_retries": 0,
+          "recovered_actual_runs": 0,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 4,
+              "end": 1295,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 18.872013025458852,
+          "elapsed_timing": {
+            "bootstrap_tstates": 197244134,
+            "playback_tstates": 619269045,
+            "bootstrap_and_playback_tstates": 816513179,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 3,
+          "frames": 1300,
+          "used_sectors": 2542,
+          "video_bytes": 638742,
+          "video_physical_sha256": "631717337be60e8104bfe4c85869226f59b7de19990296d5a52cfc6c7687e48a",
+          "logical_video_sha256": "5e13de6a25cd203743fb20d952f8f04b072234a246967236111f8cbc7fd9c1ef",
+          "video_start_sector": 61,
+          "actual_fps": 7.231772873557243,
+          "missed_nominal_frames": 1298,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 1211,
+          "empty_queue_visits": 1211,
+          "unobserved_irq_fields": 0,
+          "read_retries": 0,
+          "recovered_actual_runs": 0,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 2,
+              "end": 1299,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 24.32970565846232,
+          "elapsed_timing": {
+            "bootstrap_tstates": 199563544,
+            "playback_tstates": 640990901,
+            "bootstrap_and_playback_tstates": 840554445,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        }
+      ],
+      "weighted_fps": 7.560712029499962,
+      "missed_nominal_frames": 3949,
+      "ay_missing_fields": 2608,
+      "playback_seconds": 559.4673472609885
+    },
+    {
+      "name": "control",
+      "ends": [
+        1624,
+        2921,
+        4221
+      ],
+      "options": {
+        "fast_disk": true,
+        "cached_seek": true,
+        "interleaved": true,
+        "cold_bitmaps": true,
+        "startup_delta": true,
+        "fast_noop_scan": true,
+        "irq_safe_paging": true
+      },
+      "frames": 4221,
+      "ay_ticks": 25326,
+      "runtime_sectors": 6733,
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1624,
+          "used_sectors": 2543,
+          "video_bytes": 641005,
+          "video_physical_sha256": "afa07719024a225fbadad483e8fb0f41857693232ccd63fd637180b10c213844",
+          "logical_video_sha256": "5e0f1ca385418bb46e5646949b76cf534d29301a28eb62d3b8d11b7c14bff995",
+          "video_start_sector": 54,
+          "actual_fps": 7.935907494446193,
+          "missed_nominal_frames": 1371,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 487,
+          "empty_queue_visits": 486,
+          "unobserved_irq_fields": 1,
+          "read_retries": 0,
+          "recovered_actual_runs": 7,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 61,
+              "end": 143,
+              "recovered_at": 144
+            },
+            {
+              "start": 149,
+              "end": 151,
+              "recovered_at": 152
+            },
+            {
+              "start": 173,
+              "end": 174,
+              "recovered_at": 175
+            },
+            {
+              "start": 191,
+              "end": 191,
+              "recovered_at": 192
+            },
+            {
+              "start": 193,
+              "end": 193,
+              "recovered_at": 194
+            },
+            {
+              "start": 213,
+              "end": 219,
+              "recovered_at": 220
+            },
+            {
+              "start": 249,
+              "end": 296,
+              "recovered_at": 297
+            },
+            {
+              "start": 398,
+              "end": 1623,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 9.83583749189433,
+          "elapsed_timing": {
+            "bootstrap_tstates": 194162298,
+            "playback_tstates": 725669477,
+            "bootstrap_and_playback_tstates": 919831775,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 2,
+          "frames": 1297,
+          "used_sectors": 2543,
+          "video_bytes": 640198,
+          "video_physical_sha256": "80c80b5cdec8ee54e124f24418761973a8e0a22017130dde0f24a2326209c813",
+          "logical_video_sha256": "052797f1fd5d2b4f15a911dcf749139d48f19747b8ae5193dd95c21e4d46eb32",
+          "video_start_sector": 58,
+          "actual_fps": 7.387739693036697,
+          "missed_nominal_frames": 1293,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 994,
+          "empty_queue_visits": 992,
+          "unobserved_irq_fields": 2,
+          "read_retries": 0,
+          "recovered_actual_runs": 0,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 4,
+              "end": 1296,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 19.971550367926923,
+          "elapsed_timing": {
+            "bootstrap_tstates": 197243660,
+            "playback_tstates": 623372260,
+            "bootstrap_and_playback_tstates": 820615920,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 3,
+          "frames": 1300,
+          "used_sectors": 2542,
+          "video_bytes": 638742,
+          "video_physical_sha256": "631717337be60e8104bfe4c85869226f59b7de19990296d5a52cfc6c7687e48a",
+          "logical_video_sha256": "5e13de6a25cd203743fb20d952f8f04b072234a246967236111f8cbc7fd9c1ef",
+          "video_start_sector": 61,
+          "actual_fps": 7.188569439930635,
+          "missed_nominal_frames": 1298,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 1265,
+          "empty_queue_visits": 1264,
+          "unobserved_irq_fields": 1,
+          "read_retries": 0,
+          "recovered_actual_runs": 0,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 2,
+              "end": 1299,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 25.3892590713017,
+          "elapsed_timing": {
+            "bootstrap_tstates": 199531996,
+            "playback_tstates": 644796765,
+            "bootstrap_and_playback_tstates": 844328761,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        }
+      ],
+      "weighted_fps": 7.523506939599453,
+      "missed_nominal_frames": 3962,
+      "ay_missing_fields": 2746,
+      "playback_seconds": 562.1355273619217
+    },
+    {
+      "name": "inline_control",
+      "ends": [
+        1624,
+        2921,
+        4221
+      ],
+      "options": {
+        "fast_disk": true,
+        "cached_seek": true,
+        "interleaved": true,
+        "cold_bitmaps": true,
+        "startup_delta": true,
+        "fast_noop_scan": true,
+        "irq_safe_paging": true,
+        "inline_matches": true
+      },
+      "frames": 4221,
+      "ay_ticks": 25326,
+      "runtime_sectors": 6733,
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1624,
+          "used_sectors": 2543,
+          "video_bytes": 641005,
+          "video_physical_sha256": "afa07719024a225fbadad483e8fb0f41857693232ccd63fd637180b10c213844",
+          "logical_video_sha256": "5e0f1ca385418bb46e5646949b76cf534d29301a28eb62d3b8d11b7c14bff995",
+          "video_start_sector": 54,
+          "actual_fps": 7.958468123982709,
+          "missed_nominal_frames": 1358,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 458,
+          "empty_queue_visits": 457,
+          "unobserved_irq_fields": 1,
+          "read_retries": 0,
+          "recovered_actual_runs": 5,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 62,
+              "end": 135,
+              "recovered_at": 136
+            },
+            {
+              "start": 137,
+              "end": 138,
+              "recovered_at": 139
+            },
+            {
+              "start": 173,
+              "end": 174,
+              "recovered_at": 175
+            },
+            {
+              "start": 213,
+              "end": 219,
+              "recovered_at": 220
+            },
+            {
+              "start": 249,
+              "end": 295,
+              "recovered_at": 296
+            },
+            {
+              "start": 398,
+              "end": 1623,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 9.256084186190758,
+          "elapsed_timing": {
+            "bootstrap_tstates": 194134868,
+            "playback_tstates": 723598819,
+            "bootstrap_and_playback_tstates": 917733687,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 2,
+          "frames": 1297,
+          "used_sectors": 2543,
+          "video_bytes": 640198,
+          "video_physical_sha256": "80c80b5cdec8ee54e124f24418761973a8e0a22017130dde0f24a2326209c813",
+          "logical_video_sha256": "052797f1fd5d2b4f15a911dcf749139d48f19747b8ae5193dd95c21e4d46eb32",
+          "video_start_sector": 58,
+          "actual_fps": 7.4326320511103035,
+          "missed_nominal_frames": 1293,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 940,
+          "empty_queue_visits": 937,
+          "unobserved_irq_fields": 3,
+          "read_retries": 0,
+          "recovered_actual_runs": 0,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 4,
+              "end": 1296,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 18.911996109278526,
+          "elapsed_timing": {
+            "bootstrap_tstates": 197215381,
+            "playback_tstates": 619596343,
+            "bootstrap_and_playback_tstates": 816811724,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 3,
+          "frames": 1300,
+          "used_sectors": 2542,
+          "video_bytes": 638742,
+          "video_physical_sha256": "631717337be60e8104bfe4c85869226f59b7de19990296d5a52cfc6c7687e48a",
+          "logical_video_sha256": "5e13de6a25cd203743fb20d952f8f04b072234a246967236111f8cbc7fd9c1ef",
+          "video_start_sector": 61,
+          "actual_fps": 7.230968080006129,
+          "missed_nominal_frames": 1298,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 1212,
+          "empty_queue_visits": 1212,
+          "unobserved_irq_fields": 0,
+          "read_retries": 0,
+          "recovered_actual_runs": 0,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 2,
+              "end": 1299,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 24.34969804618117,
+          "elapsed_timing": {
+            "bootstrap_tstates": 199562569,
+            "playback_tstates": 640991876,
+            "bootstrap_and_playback_tstates": 840554445,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        }
+      ],
+      "weighted_fps": 7.559899288951964,
+      "missed_nominal_frames": 3949,
+      "ay_missing_fields": 2610,
+      "playback_seconds": 559.4144289379458
+    },
+    {
+      "name": "deferred",
+      "ends": [
+        1624,
+        2921,
+        4221
+      ],
+      "options": {
+        "fast_disk": true,
+        "cached_seek": true,
+        "interleaved": true,
+        "cold_bitmaps": true,
+        "startup_delta": true,
+        "fast_noop_scan": true,
+        "irq_safe_paging": true,
+        "deferred_limit": 248,
+        "keepalive_fields": 64,
+        "frame_service": true
+      },
+      "frames": 4221,
+      "ay_ticks": 25326,
+      "runtime_sectors": 6733,
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1624,
+          "used_sectors": 2543,
+          "video_bytes": 641005,
+          "video_physical_sha256": "f5d595b5f0a3577f024fe64a1e2444eaf06807facfe34097eb1c2c379a965166",
+          "logical_video_sha256": "5e0f1ca385418bb46e5646949b76cf534d29301a28eb62d3b8d11b7c14bff995",
+          "video_start_sector": 55,
+          "actual_fps": 7.928931960026468,
+          "missed_nominal_frames": 1072,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 495,
+          "empty_queue_visits": 495,
+          "unobserved_irq_fields": 0,
+          "read_retries": 0,
+          "recovered_actual_runs": 4,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 405,
+              "end": 430,
+              "recovered_at": 431
+            },
+            {
+              "start": 461,
+              "end": 468,
+              "recovered_at": 469
+            },
+            {
+              "start": 484,
+              "end": 500,
+              "recovered_at": 501
+            },
+            {
+              "start": 570,
+              "end": 584,
+              "recovered_at": 585
+            },
+            {
+              "start": 618,
+              "end": 1623,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 10.015759677464828,
+          "elapsed_timing": {
+            "bootstrap_tstates": 194875296,
+            "playback_tstates": 726281361,
+            "bootstrap_and_playback_tstates": 921156657,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 2,
+          "frames": 1297,
+          "used_sectors": 2544,
+          "video_bytes": 640198,
+          "video_physical_sha256": "c822f29240508f8dcce022e69cf7559403fa50db54fc5d8776bbe5c4e32f3aa8",
+          "logical_video_sha256": "052797f1fd5d2b4f15a911dcf749139d48f19747b8ae5193dd95c21e4d46eb32",
+          "video_start_sector": 59,
+          "actual_fps": 7.343386499039575,
+          "missed_nominal_frames": 1199,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 1047,
+          "empty_queue_visits": 1045,
+          "unobserved_irq_fields": 2,
+          "read_retries": 0,
+          "recovered_actual_runs": 2,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 5,
+              "end": 25,
+              "recovered_at": 26
+            },
+            {
+              "start": 34,
+              "end": 34,
+              "recovered_at": 35
+            },
+            {
+              "start": 120,
+              "end": 1296,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 21.03110152527559,
+          "elapsed_timing": {
+            "bootstrap_tstates": 197962034,
+            "playback_tstates": 626951682,
+            "bootstrap_and_playback_tstates": 824913716,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 3,
+          "frames": 1300,
+          "used_sectors": 2543,
+          "video_bytes": 638742,
+          "video_physical_sha256": "9004b1fa45313033de6a1dbb579df6356a6706a22affd1990d3b80b335578872",
+          "logical_video_sha256": "5e13de6a25cd203743fb20d952f8f04b072234a246967236111f8cbc7fd9c1ef",
+          "video_start_sector": 62,
+          "actual_fps": 7.26086484229619,
+          "missed_nominal_frames": 1296,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 1175,
+          "empty_queue_visits": 1175,
+          "unobserved_irq_fields": 0,
+          "read_retries": 0,
+          "recovered_actual_runs": 0,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 4,
+              "end": 1299,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 23.590019453607376,
+          "elapsed_timing": {
+            "bootstrap_tstates": 200315289,
+            "playback_tstates": 637971278,
+            "bootstrap_and_playback_tstates": 838286567,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        }
+      ],
+      "weighted_fps": 7.531026191559742,
+      "missed_nominal_frames": 3567,
+      "ay_missing_fields": 2717,
+      "playback_seconds": 561.3928560151118
+    },
+    {
+      "name": "combined",
+      "ends": [
+        1624,
+        2921,
+        4221
+      ],
+      "options": {
+        "fast_disk": true,
+        "cached_seek": true,
+        "interleaved": true,
+        "cold_bitmaps": true,
+        "startup_delta": true,
+        "fast_noop_scan": true,
+        "irq_safe_paging": true,
+        "inline_matches": true,
+        "deferred_limit": 248,
+        "keepalive_fields": 64,
+        "frame_service": true
+      },
+      "frames": 4221,
+      "ay_ticks": 25326,
+      "runtime_sectors": 6733,
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1624,
+          "used_sectors": 2543,
+          "video_bytes": 641005,
+          "video_physical_sha256": "f5d595b5f0a3577f024fe64a1e2444eaf06807facfe34097eb1c2c379a965166",
+          "logical_video_sha256": "5e0f1ca385418bb46e5646949b76cf534d29301a28eb62d3b8d11b7c14bff995",
+          "video_start_sector": 55,
+          "actual_fps": 8.00003289166581,
+          "missed_nominal_frames": 1064,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 405,
+          "empty_queue_visits": 405,
+          "unobserved_irq_fields": 0,
+          "read_retries": 0,
+          "recovered_actual_runs": 4,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 406,
+              "end": 429,
+              "recovered_at": 430
+            },
+            {
+              "start": 461,
+              "end": 468,
+              "recovered_at": 469
+            },
+            {
+              "start": 485,
+              "end": 499,
+              "recovered_at": 500
+            },
+            {
+              "start": 573,
+              "end": 583,
+              "recovered_at": 584
+            },
+            {
+              "start": 618,
+              "end": 1623,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 8.196530773351377,
+          "elapsed_timing": {
+            "bootstrap_tstates": 194893722,
+            "playback_tstates": 719829232,
+            "bootstrap_and_playback_tstates": 914722954,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 2,
+          "frames": 1297,
+          "used_sectors": 2544,
+          "video_bytes": 640198,
+          "video_physical_sha256": "c822f29240508f8dcce022e69cf7559403fa50db54fc5d8776bbe5c4e32f3aa8",
+          "logical_video_sha256": "052797f1fd5d2b4f15a911dcf749139d48f19747b8ae5193dd95c21e4d46eb32",
+          "video_start_sector": 59,
+          "actual_fps": 7.40207997633438,
+          "missed_nominal_frames": 1195,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 977,
+          "empty_queue_visits": 976,
+          "unobserved_irq_fields": 1,
+          "read_retries": 0,
+          "recovered_actual_runs": 1,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 5,
+              "end": 24,
+              "recovered_at": 25
+            },
+            {
+              "start": 122,
+              "end": 1296,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 19.631692463841663,
+          "elapsed_timing": {
+            "bootstrap_tstates": 197994069,
+            "playback_tstates": 622001000,
+            "bootstrap_and_playback_tstates": 819995069,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        },
+        {
+          "part": 3,
+          "frames": 1300,
+          "used_sectors": 2543,
+          "video_bytes": 638742,
+          "video_physical_sha256": "9004b1fa45313033de6a1dbb579df6356a6706a22affd1990d3b80b335578872",
+          "logical_video_sha256": "5e13de6a25cd203743fb20d952f8f04b072234a246967236111f8cbc7fd9c1ef",
+          "video_start_sector": 62,
+          "actual_fps": 7.299200120735775,
+          "missed_nominal_frames": 1296,
+          "fallback_one_field_met": false,
+          "ay_missing_fields": 1128,
+          "empty_queue_visits": 1127,
+          "unobserved_irq_fields": 1,
+          "read_retries": 0,
+          "recovered_actual_runs": 0,
+          "unrecovered_actual_runs": 1,
+          "actual_runs": [
+            {
+              "start": 4,
+              "end": 1299,
+              "recovered_at": null
+            }
+          ],
+          "max_actual_deviation_seconds": 22.63042797936226,
+          "elapsed_timing": {
+            "bootstrap_tstates": 200310658,
+            "playback_tstates": 634577535,
+            "bootstrap_and_playback_tstates": 834888193,
+            "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+          }
+        }
+      ],
+      "weighted_fps": 7.587357224067061,
+      "missed_nominal_frames": 3555,
+      "ay_missing_fields": 2510,
+      "playback_seconds": 557.2211697538696
+    }
+  ],
+  "generic": {
+    "cases": 6,
+    "frames": 68,
+    "ay_ticks": 408,
+    "disks": 8,
+    "complete_cpu_and_fuse": true,
+    "all_streams_exact": true,
+    "deferred_in_generic_cli": false,
+    "deadline_failures": [
+      "noise.avi"
+    ]
+  }
+}

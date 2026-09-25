@@ -148,7 +148,8 @@ def verify_volumes(builder, records, output, fuse=None, timeout=1800):
         player_hot_path_changed=builder.inline_matches or builder.fast_noop_scan or builder.irq_safe_paging,
         player_hot_path_delta_tstates=None if builder.inline_matches or builder.fast_noop_scan or builder.irq_safe_paging else 0, disks=[])
     # Absolute adapter costs from instruction tables, separately from ROM/disk.
-    options = dict(fast_disk=builder.fast_disk, cached_seek=builder.cached_seek, interleaved=builder.interleaved)
+    options = dict(fast_disk=builder.fast_disk, cached_seek=builder.cached_seek, interleaved=builder.interleaved,
+        irq_safe_paging=builder.irq_safe_paging)
     report['disk_adapter_instruction_tstates'] = {
         name: disk_instruction_case(**options, **case) for name, case in (
             ('same_track', {}), ('track_change', dict(cached=2)),

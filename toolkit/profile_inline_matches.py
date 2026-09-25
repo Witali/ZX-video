@@ -17,19 +17,23 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('raw','states','zx0','cache','report'):p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--read-cache',type=Path,action='append',default=[])
+    p.add_argument('--fast-noop-scan',action='store_true')
+    p.add_argument('--irq-safe-paging',action='store_true')
     p.add_argument('--ranges',default='62:94,408:440,1269:1301,2159:2191,2334:2366,2919:2951,3195:3227,3838:3870')
     args=p.parse_args(); raw=args.raw.read_bytes()
     with np.load(args.states,allow_pickle=False) as saved:states=saved['states']
     ranges=[tuple(map(int,s.split(':'))) for s in args.ranges.split(',')]
     if any(len(pair)!=2 or not 0<=pair[0]<pair[1]<=len(states) for pair in ranges):p.error('invalid ranges')
-    report=dict(complete=False,full_movie=False,release=False,baseline_commit='80ab9d9',
+    report=dict(complete=False,full_movie=False,release=False,baseline_commit='3356730' if args.irq_safe_paging else '80ab9d9',
+        fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging,
         raw_sha256=sha(raw),states_sha256=sha(states.tobytes()),ideal_disk=True,
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',ranges=[])
     args.report.parent.mkdir(parents=True,exist_ok=True)
     def save():args.report.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     builders=[]
     for inline in (False,True):
-        b=ReadThroughBuilder(raw,states,args.zx0.resolve(),args.cache,inline_matches=inline)
+        b=ReadThroughBuilder(raw,states,args.zx0.resolve(),args.cache,inline_matches=inline,
+            fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging)
         b.read_cache=args.read_cache;builders.append(b)
     save()
     for start,end in ranges:

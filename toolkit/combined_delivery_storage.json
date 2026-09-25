@@ -1,0 +1,197 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Build actual three-volume layouts for combinations of measured accelerations.\n\nStorage-only preflight, not playback or a release check. No new player\ninstructions; enables existing independently measured build options.\n",
+  "baseline_commit": "3356730",
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "raw_sha256": [
+    "9404fc8b57b5445c88c3c877021c613be24f91cf777c3221ea08822d67c511b3",
+    "3b8f2efa8c88351a6f7d70de68dff4ce28fb1904b6293a09775f134808b26483",
+    "4590013f35618db7514e612736b5cea90af28791da900c58cd40367be25f4cfa"
+  ],
+  "ends": [
+    1625,
+    2921,
+    4221
+  ],
+  "new_player_instructions": false,
+  "timing_verified": false,
+  "variants": [
+    {
+      "name": "baseline",
+      "options": {
+        "fast_disk": true,
+        "cached_seek": true,
+        "interleaved": true,
+        "cold_bitmaps": true,
+        "startup_delta": true,
+        "fast_noop_scan": true,
+        "irq_safe_paging": true
+      },
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1625,
+          "used_sectors": 2544,
+          "free_sectors": 0,
+          "video_bytes": 641486,
+          "independently_bootable": true,
+          "fits": true
+        },
+        {
+          "part": 2,
+          "frames": 1296,
+          "used_sectors": 2542,
+          "free_sectors": 2,
+          "video_bytes": 639731,
+          "independently_bootable": true,
+          "fits": true
+        },
+        {
+          "part": 3,
+          "frames": 1300,
+          "used_sectors": 2542,
+          "free_sectors": 2,
+          "video_bytes": 638742,
+          "independently_bootable": true,
+          "fits": true
+        }
+      ],
+      "all_fit": true
+    },
+    {
+      "name": "inline",
+      "options": {
+        "fast_disk": true,
+        "cached_seek": true,
+        "interleaved": true,
+        "cold_bitmaps": true,
+        "startup_delta": true,
+        "fast_noop_scan": true,
+        "irq_safe_paging": true,
+        "inline_matches": true
+      },
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1625,
+          "used_sectors": 2544,
+          "free_sectors": 0,
+          "video_bytes": 641486,
+          "independently_bootable": true,
+          "fits": true
+        },
+        {
+          "part": 2,
+          "frames": 1296,
+          "used_sectors": 2542,
+          "free_sectors": 2,
+          "video_bytes": 639731,
+          "independently_bootable": true,
+          "fits": true
+        },
+        {
+          "part": 3,
+          "frames": 1300,
+          "used_sectors": 2542,
+          "free_sectors": 2,
+          "video_bytes": 638742,
+          "independently_bootable": true,
+          "fits": true
+        }
+      ],
+      "all_fit": true
+    },
+    {
+      "name": "deferred",
+      "options": {
+        "fast_disk": true,
+        "cached_seek": true,
+        "interleaved": true,
+        "cold_bitmaps": true,
+        "startup_delta": true,
+        "fast_noop_scan": true,
+        "irq_safe_paging": true,
+        "deferred_limit": 248,
+        "keepalive_fields": 64,
+        "frame_service": true
+      },
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1625,
+          "used_sectors": 2545,
+          "free_sectors": -1,
+          "video_bytes": 641486,
+          "independently_bootable": true,
+          "fits": false
+        },
+        {
+          "part": 2,
+          "frames": 1296,
+          "used_sectors": 2543,
+          "free_sectors": 1,
+          "video_bytes": 639731,
+          "independently_bootable": true,
+          "fits": true
+        },
+        {
+          "part": 3,
+          "frames": 1300,
+          "used_sectors": 2543,
+          "free_sectors": 1,
+          "video_bytes": 638742,
+          "independently_bootable": true,
+          "fits": true
+        }
+      ],
+      "all_fit": false
+    },
+    {
+      "name": "combined",
+      "options": {
+        "fast_disk": true,
+        "cached_seek": true,
+        "interleaved": true,
+        "cold_bitmaps": true,
+        "startup_delta": true,
+        "fast_noop_scan": true,
+        "irq_safe_paging": true,
+        "inline_matches": true,
+        "deferred_limit": 248,
+        "keepalive_fields": 64,
+        "frame_service": true
+      },
+      "volumes": [
+        {
+          "part": 1,
+          "frames": 1625,
+          "used_sectors": 2545,
+          "free_sectors": -1,
+          "video_bytes": 641486,
+          "independently_bootable": true,
+          "fits": false
+        },
+        {
+          "part": 2,
+          "frames": 1296,
+          "used_sectors": 2543,
+          "free_sectors": 1,
+          "video_bytes": 639731,
+          "independently_bootable": true,
+          "fits": true
+        },
+        {
+          "part": 3,
+          "frames": 1300,
+          "used_sectors": 2543,
+          "free_sectors": 1,
+          "video_bytes": 638742,
+          "independently_bootable": true,
+          "fits": true
+        }
+      ],
+      "all_fit": false
+    }
+  ]
+}

@@ -16,7 +16,7 @@ from stream_reader_harness import Harness
 from test_fap3_disk import DiskCPU, install
 
 
-def fixture(limit, *, sectors=900, interleaved=True,keepalive_fields=0,frame_service=False):
+def fixture(limit, *, sectors=900, interleaved=True,keepalive_fields=0,frame_service=False,irq_safe_paging=False):
     image=b''.join(bytes((sector*13+i*31+(sector>>8))&255 for i in range(256)) for sector in range(2560))
     positions=list(disk_layout.positions(sectors,0)) if interleaved else list(range(sectors))
     stream=b''.join(image[(32+p)*256:(33+p)*256] for p in positions)
@@ -24,7 +24,7 @@ def fixture(limit, *, sectors=900, interleaved=True,keepalive_fields=0,frame_ser
         unrolled_copy=True,disk_refill_entry=disk.DISK)
     cpu=h.cpu; cpu.__class__=DiskCPU; cpu.iy=0; cpu.poison_rom=True; cpu.trd=image
     regions,_,vr=video.build_video(dict(saved_page=0x8000,screen_base=0x8001),
-        dict(history_page=0x8002),dict(elapsed_fields=0x8003))
+        dict(history_page=0x8002),dict(elapsed_fields=0x8003),irq_safe_paging=irq_safe_paging)
     for address,blob in regions: install(cpu,address,blob)
     cpu.write8(video.SHADOW,0x17)
     code,dl,dr=disk.build_disk(32+positions[256],sectors-256,fast_disk=True,
@@ -56,7 +56,7 @@ def execute(cpu, entry, rows=None, *, stack=0x7bc0):
     return cpu.tstates-before
 
 
-def timings(keepalive_fields=0):
+def timings(keepalive_fields=0,irq_safe_paging=False):
     result={}
     for name,options in (
             ('partial',dict(high=0xc0)),('defer',dict(high=0xc1)),
@@ -64,7 +64,7 @@ def timings(keepalive_fields=0):
             ('force',dict(high=0xc1,pending=7)),
             ('idle_empty',dict(idle=True)),('idle_read',dict(idle=True,pending=1)),
             ('idle_eof',dict(idle=True,pending=1,remaining=0))):
-        h,dl,ql,rows,_=fixture(8,keepalive_fields=keepalive_fields); cpu=h.cpu
+        h,dl,ql,rows,_=fixture(8,keepalive_fields=keepalive_fields,irq_safe_paging=irq_safe_paging); cpu=h.cpu
         # Same-track read isolates the common adapter path.
         cpu.write8(dl['cached_track'],word(cpu,dl['disk_position'])>>8)
         cpu.write8(0x5cf5,word(cpu,dl['disk_position'])>>8)
@@ -74,15 +74,15 @@ def timings(keepalive_fields=0):
         result[name]=execute(cpu,ql['idle'] if options.get('idle') else disk.DISK,rows)
         assert cpu.read8(ql['pending'])<=7
         if options.get('idle'): assert cpu.port_7ffd&7==7
-    previous=previous_case(fast_disk=True,cached_seek=True,interleaved=True)['tstates']
+    previous=previous_case(fast_disk=True,cached_seek=True,interleaved=True,irq_safe_paging=irq_safe_paging)['tstates']
     return dict(previous_same_track_read_tstates=previous, deferred_routines_tstates=result,
         forced_read_delta=result['force']-previous,
         idle_clock_extra_tstates_per_call=31,
         startup_overlay_copy_tstates=30+21*256-5)
 
 
-def check_keepalive(frame_service=False):
-    h,dl,ql,rows,_=fixture(8,keepalive_fields=64,frame_service=frame_service); cpu=h.cpu
+def check_keepalive(frame_service=False,irq_safe_paging=False):
+    h,dl,ql,rows,_=fixture(8,keepalive_fields=64,frame_service=frame_service,irq_safe_paging=irq_safe_paging); cpu=h.cpu
     costs={}; frame_costs={}
     for track in range(160):
         for delta,last in ((63,0),(64,0),(64,65500),(256,0)):
@@ -126,8 +126,8 @@ def check_keepalive(frame_service=False):
     return result
 
 
-def ring_case(limit, idle_every, interleaved,keepalive_fields=0):
-    h,dl,ql,_,expected=fixture(limit,interleaved=interleaved,keepalive_fields=keepalive_fields); cpu=h.cpu
+def ring_case(limit, idle_every, interleaved,keepalive_fields=0,irq_safe_paging=False):
+    h,dl,ql,_,expected=fixture(limit,interleaved=interleaved,keepalive_fields=keepalive_fields,irq_safe_paging=irq_safe_paging); cpu=h.cpu
     offset=calls=idle_calls=0; max_pending=0
     # Unaligned requests and four-byte headers also free sectors; multiple
     # bank/ring wraps force replacement before any stale byte is consumed.
@@ -154,19 +154,20 @@ def ring_case(limit, idle_every, interleaved,keepalive_fields=0):
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--keepalive-fields',type=int,default=0,choices=(0,64))
-    p.add_argument('--frame-service',action='store_true');args=p.parse_args()
+    p.add_argument('--frame-service',action='store_true')
+    p.add_argument('--irq-safe-paging',action='store_true');args=p.parse_args()
     if args.frame_service and not args.keepalive_fields: p.error('frame service requires keepalive')
-    costs=timings(args.keepalive_fields); print(json.dumps(costs),flush=True)
+    costs=timings(args.keepalive_fields,args.irq_safe_paging); print(json.dumps(costs),flush=True)
     cases=[]
     for limit,idle in ((1,0),(8,0),(8,3),(64,5),(248,0),(248,2)):
         for interleaved in (False,True):
-            result=ring_case(limit,idle,interleaved,args.keepalive_fields); cases.append(result); print(json.dumps(result),flush=True)
+            result=ring_case(limit,idle,interleaved,args.keepalive_fields,args.irq_safe_paging); cases.append(result); print(json.dumps(result),flush=True)
     report=dict(baseline_commit='7aca091',complete=True,release=False,timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
-        scope=__doc__,costs=costs,cases=cases,
+        scope=__doc__,costs=costs,cases=cases,irq_safe_paging=args.irq_safe_paging,
         new_buffer_bytes=0,new_counter_bytes=3 if args.keepalive_fields else 1,reused_bootstrap_bytes=256,
         startup_staging='A200..A2FF in the initially empty AY queue; copied before audio_init',
         physical_disk_and_frame_timing_verified=False)
-    if args.keepalive_fields: report['keepalive']=check_keepalive(args.frame_service)
+    if args.keepalive_fields: report['keepalive']=check_keepalive(args.frame_service,args.irq_safe_paging)
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 

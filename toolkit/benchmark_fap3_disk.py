@@ -27,11 +27,11 @@ class ShortReadCPU(DiskCPU):
         return super().instruction()
 
 
-def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cached_seek=False,drive=0,interleaved=False):
+def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cached_seek=False,drive=0,interleaved=False,irq_safe_paging=False):
     data=b''.join(bytes([i%251])*256 for i in range(2560))
     cpu=ShortReadCPU(b'',data);cpu.poison_rom=True;cpu.short_once=short;cpu.port_7ffd=0x1f
     regions,_,vl=video.build_video(dict(saved_page=0x8000,screen_base=0x8001),
-        dict(history_page=0x8002),dict(elapsed_fields=0x8003))
+        dict(history_page=0x8002),dict(elapsed_fields=0x8003),irq_safe_paging=irq_safe_paging)
     for address,blob in regions: install(cpu,address,blob)
     cpu.write8(video.SHADOW,0x1f)
     code,l,rows=disk.build_disk(track*16+sector,7,fast_disk=fast_disk,cached_seek=cached_seek,interleaved=interleaved)

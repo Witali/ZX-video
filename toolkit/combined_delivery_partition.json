@@ -1,0 +1,181 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Bounded partition search using already validated per-volume Huffman raws.\n\nEach raw remains a valid whole movie; moving a boundary changes no pixels.\nBuild real standalone volume layouts, but do not publish mixed-series TRDs.\nThis is a storage-only search; neither frame cadence nor disk swaps pass here.\n",
+  "probe_raw_sha256": "1aff3a304635025c25cc8b20d066b6044f2767b02c99d2490c9f9ae1613ac2ab",
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "original_ends": [
+    1614,
+    2920,
+    4221
+  ],
+  "search_center": [
+    1625,
+    2921,
+    4221
+  ],
+  "options": {
+    "fast_disk": true,
+    "cached_seek": true,
+    "interleaved": true,
+    "cold_bitmaps": true,
+    "startup_delta": true,
+    "fast_noop_scan": true,
+    "irq_safe_paging": true,
+    "inline_matches": true,
+    "deferred_limit": 248,
+    "keepalive_fields": 64,
+    "frame_service": true
+  },
+  "first_radius": 0,
+  "second_radius": 4,
+  "attempts": [
+    {
+      "part": 1,
+      "frame_start": 0,
+      "frame_end_exclusive": 1623,
+      "used_sectors": 2543,
+      "free_sectors": 1,
+      "video_bytes": 640553,
+      "layout_padding_sectors": 1,
+      "independently_bootable": true
+    },
+    {
+      "part": 1,
+      "frame_start": 0,
+      "frame_end_exclusive": 1624,
+      "used_sectors": 2543,
+      "free_sectors": 1,
+      "video_bytes": 641005,
+      "layout_padding_sectors": 0,
+      "independently_bootable": true
+    },
+    {
+      "part": 1,
+      "frame_start": 0,
+      "frame_end_exclusive": 1625,
+      "used_sectors": 2545,
+      "free_sectors": -1,
+      "video_bytes": 641486,
+      "layout_padding_sectors": 0,
+      "independently_bootable": true
+    },
+    {
+      "part": 2,
+      "frame_start": 1624,
+      "frame_end_exclusive": 2919,
+      "used_sectors": 2539,
+      "free_sectors": 5,
+      "video_bytes": 637690,
+      "layout_padding_sectors": 5,
+      "independently_bootable": true
+    },
+    {
+      "part": 3,
+      "frame_start": 2919,
+      "frame_end_exclusive": 4221,
+      "used_sectors": 2556,
+      "free_sectors": -12,
+      "video_bytes": 641309,
+      "layout_padding_sectors": 4,
+      "independently_bootable": true
+    },
+    {
+      "part": 2,
+      "frame_start": 1624,
+      "frame_end_exclusive": 2920,
+      "used_sectors": 2541,
+      "free_sectors": 3,
+      "video_bytes": 638968,
+      "layout_padding_sectors": 2,
+      "independently_bootable": true
+    },
+    {
+      "part": 3,
+      "frame_start": 2920,
+      "frame_end_exclusive": 4221,
+      "used_sectors": 2553,
+      "free_sectors": -9,
+      "video_bytes": 639987,
+      "layout_padding_sectors": 7,
+      "independently_bootable": true
+    },
+    {
+      "part": 2,
+      "frame_start": 1624,
+      "frame_end_exclusive": 2921,
+      "used_sectors": 2544,
+      "free_sectors": 0,
+      "video_bytes": 640198,
+      "layout_padding_sectors": 0,
+      "independently_bootable": true
+    },
+    {
+      "part": 3,
+      "frame_start": 2921,
+      "frame_end_exclusive": 4221,
+      "used_sectors": 2543,
+      "free_sectors": 1,
+      "video_bytes": 638742,
+      "layout_padding_sectors": 1,
+      "independently_bootable": true
+    }
+  ],
+  "partitions": [
+    {
+      "ends": [
+        1624,
+        2919,
+        4221
+      ],
+      "used_sectors": [
+        2543,
+        2539,
+        2556
+      ],
+      "all_fit": false
+    },
+    {
+      "ends": [
+        1624,
+        2920,
+        4221
+      ],
+      "used_sectors": [
+        2543,
+        2541,
+        2553
+      ],
+      "all_fit": false
+    },
+    {
+      "ends": [
+        1624,
+        2921,
+        4221
+      ],
+      "used_sectors": [
+        2543,
+        2544,
+        2543
+      ],
+      "all_fit": true
+    }
+  ],
+  "all_fit": true,
+  "timing_verified": false,
+  "physical_drive_verified": false,
+  "selected": {
+    "ends": [
+      1624,
+      2921,
+      4221
+    ],
+    "used_sectors": [
+      2543,
+      2544,
+      2543
+    ],
+    "all_fit": true
+  }
+}
