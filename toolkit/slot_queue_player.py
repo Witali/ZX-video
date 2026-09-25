@@ -18,7 +18,9 @@ import pipelined_frame_z80 as video
 import bulk_frame_z80 as packet
 
 
-def build(metadata,raw,*,uncontended=False):
+def build(metadata,raw,*,uncontended=False,compiled_masks=False):
+    if compiled_masks and uncontended:
+        raise ValueError('combined mask and relocated-frame fixture is not verified')
     m=deepcopy(metadata)
     if not m.get('irq_safe_paging') or not m.get('independently_bootable'):
         raise ValueError('queue requires IRQ-safe paging and an independent volume')
@@ -38,16 +40,31 @@ def build(metadata,raw,*,uncontended=False):
     scode,seek,srows=disk.build_cached_seek(d)
     pcode,p,prows=producer.build(z,d)
     regions,q,qrows=queue.build(z,p,len(m['blocks']))
+    mask_labels=h.frame.metadata_labels
+    prefill=q['prefill']
+    mask_rows=[]
+    if compiled_masks:
+        import compiled_masks_z80 as masks
+        mask_regions,mask_labels,mask_rows,generated=masks.build(prefill_entry=prefill)
+        if q['end']>masks.INIT:raise ValueError('queue overlaps mask generator')
+        regions+=mask_regions
+        prefill=mask_labels['initialize']
+        m['compiled_masks']=dict(labels=mask_labels,
+            stored_bytes=sum(len(b) for _,b in mask_regions),
+            generated_regions=[dict(address=a,bytes=len(b),sha256=sha(b)) for a,b in generated],
+            initialize_cpu_tstates=201509,initialization_before_playback=True,
+            baseline_partial_group='370+8*popcount',partial_group='276+5*popcount-2*LSB',
+            zero_group_tstates=161,full_group_tstates=227,decode_overhead_tstates=158)
     vregions,vl,vrows=video.build_video(h.frame.draw,z,h.audio,irq_safe_paging=True)
     regions += [(a,b) for a,b in vregions if a==video.VIDEO]
-    code,bridge,pl,rows=packet.build(z,q,h.frame.w,h.frame.draw,h.frame.metadata_labels,h.audio,
+    code,bridge,pl,rows=packet.build(z,q,h.frame.w,h.frame.draw,mask_labels,h.audio,
         stored_guards=False,separate_prepare='idle',page_entry=video.PAGE)
     regions += [(packet.CODE,code),(packet.BRIDGE,bridge)]
     ccode,c,crows=video.build_clock(pl,h.audio,h.frames,zx0=z,progress_entry=h.progress['tick'],
         packet_ahead='idle',disk_idle_entry=q['step'])
     if c['end']>disk.DRIVER:raise ValueError('clock overlaps driver')
     drivercode,driver=disk.build_driver(h,c,bytes(ay),has_next=m['frame_end_exclusive']<count,
-        prefill_entry=q['prefill'])
+        prefill_entry=prefill)
     regions += [(local.CODE,zcode),(producer.CODE,pcode),(disk.DISK,dcode),
         (disk.CACHED_SEEK,scode),(video.CODE,ccode),(disk.DRIVER,drivercode)]
     # Original packet/bridge bytes are known; only patch their differences.
@@ -80,5 +97,5 @@ def build(metadata,raw,*,uncontended=False):
         runtime_video_preload_sectors=0,slot_queue_fixture=True,release=False,
         slot_queue_patches=sparse,slot_queue_patch_sha256=sha(bytes(v for _,v in sparse)),
         slot_queue_regions=[dict(address=a,bytes=len(b),sha256=sha(b)) for a,b in regions],
-        slot_queue_instruction_listing=qrows+prows+drows+srows+crows+vrows)
+        slot_queue_instruction_listing=qrows+prows+drows+srows+crows+vrows+mask_rows)
     return sparse,m

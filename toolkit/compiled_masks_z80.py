@@ -34,14 +34,13 @@ def build(*,prefill_entry=None):
     emit('LD H,table page',[0x26,TABLE>>8],7);emit('LD L,C',[0x69],4)
     emit('LD A,(HL)',[0x7e],7);emit('INC H',[0x24],4);emit('LD H,(HL)',[0x66],7);emit('LD L,A',[0x6f],4)
     emit('EX (SP),HL',[0xe3],19);emit('XOR A',[0xaf],4);emit('RET (dispatch)',[0xc9],10)
-    a.label('compiled_done');emit('POP BC',[0xc1],10);ref('JP next',0xc3,'next',10)
     a.label('zero')
     for i in range(8):
         emit('LD (DE),A',[0x12],7);emit('INC E' if i<7 else 'INC DE',[0x1c if i<7 else 0x13],4 if i<7 else 6)
     ref('JP next',0xc3,'next',10)
     a.label('full');emit('PUSH BC',[0xc5],11)
     for _ in range(8):emit('LDI',[0xed,0xa0],16)
-    emit('POP BC',[0xc1],10)
+    a.label('compiled_done');emit('POP BC',[0xc1],10)
     a.label('next');emit('DEC B',[0x05],4);ref('JP NZ,groups',0xc2,'groups',10);emit('RET',[0xc9],10)
     a.label('end');runtime=a.resolve();labels=dict(a.labels)
     if a.pc>TABLE:raise ValueError('runtime overlaps table')
@@ -89,9 +88,9 @@ def build(*,prefill_entry=None):
 
 def group_tstates(mask):
     # Whole loop iteration, helper RET excluded. Partial: prologue 64,
-    # dispatch 88, body 90+5*popcount-2*LSB, JP 10, POP 10, JP 10,
+    # dispatch 88, body 90+5*popcount-2*LSB, JP 10, POP 10,
     # DEC/JP 14. Full/zero retain their old instruction sequences.
-    return 161 if mask==0 else 227 if mask==255 else 286+5*mask.bit_count()-2*(mask&1)
+    return 161 if mask==0 else 227 if mask==255 else 276+5*mask.bit_count()-2*(mask&1)
 
 
 def expected_tstates(encoded):

@@ -35,14 +35,17 @@ def main():
     p.add_argument('--trace-paging',action='store_true',help='Record IRQ entries and paging boundaries near the IRQ pulse; address breakpoints only')
     p.add_argument('--slot-queue',action='store_true',help='Install the experimental four-slot player after normal cold bootstrap')
     p.add_argument('--uncontended-frame',action='store_true',help='With --slot-queue, relocate compact frame/cache to bank 2')
+    p.add_argument('--compiled-masks',action='store_true',help='With --slot-queue, generate sparse-mask routines in bank 7')
     p.add_argument('--fixture-zx0',type=Path,help='ZX0 executable for compressing debugger-only startup patches')
     args=p.parse_args(); m=json.loads(args.metadata.read_text()); lab=m['player_labels']
     patches=[];nonce=secrets.randbits(30)
     if args.uncontended_frame and not args.slot_queue:raise ValueError('relocation requires --slot-queue')
+    if args.compiled_masks and not args.slot_queue:raise ValueError('compiled masks require --slot-queue')
     if args.slot_queue:
         if args.continuation_snapshot or args.export_warm_ram:raise ValueError('queue fixture requires an independent cold boot')
         from slot_queue_player import build
-        patches,m=build(m,args.raw.read_bytes(),uncontended=args.uncontended_frame);lab=m['player_labels']
+        patches,m=build(m,args.raw.read_bytes(),uncontended=args.uncontended_frame,
+            compiled_masks=args.compiled_masks);lab=m['player_labels']
     if not m.get('independently_bootable',True) and not args.continuation_snapshot:
         raise ValueError('continuation disk requires RAM exported from its predecessor')
     if m.get('required_trdos_sha256') and hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest()!=m['required_trdos_sha256']:
@@ -298,6 +301,7 @@ def main():
     if args.slot_queue:
         report['fixture_installer']=install_report
         if args.uncontended_frame:report['uncontended_frame']=m['uncontended_frame']
+        if args.compiled_masks:report['compiled_masks']=m['compiled_masks']
         report['slot_queue_fixture']={k:v for k,v in m.items() if k.startswith('slot_queue_') or k in
             ('queue_labels','producer_labels','decoder_labels','clock_labels','packet_labels','native_ready_pcs')}
     if args.continuation_snapshot:
