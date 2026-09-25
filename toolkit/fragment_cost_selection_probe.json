@@ -1,0 +1,97 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Lossless fragment selection on a measured volume, with actual optimal ZX0.\n\nThe selector estimates a conservative portion of removed CPU work; it is\nnot a cycle-accurate player or release check. Pixel states, AY, native maps,\nHuffman tables and player opcodes stay unchanged. Validate the entire movie\nindependently, and measure only the declared volume with cold bitmap maps.\n",
+  "baseline_commit": "94c2e6f",
+  "source_sha256": "4590013f35618db7514e612736b5cea90af28791da900c58cd40367be25f4cfa",
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "part": 3,
+  "start": 2921,
+  "end": 4221,
+  "whole_movie_frames": 4221,
+  "tested_volume_frames": 1300,
+  "minimum_heuristic_saved_tstates": 400,
+  "player_opcodes_changed": false,
+  "actual_cpu_tstates_measured": false,
+  "full_player_verified": false,
+  "variants": [
+    {
+      "allowance_bits": 0,
+      "raw_file": "allowance-0.raw",
+      "selected_tiles": 50,
+      "selected_frames": 36,
+      "modes": {
+        "88": 45,
+        "86": 4,
+        "85": 1
+      },
+      "heuristic_saved_tstates": 46139,
+      "whole_movie_scalar_video_ay_exact": true,
+      "raw_bytes": 3092285,
+      "sha256": "5a5440a0fe36e7fc50aac75865794f09d0dd6f9a0695a7d790da421b27b1fad8",
+      "stream_bytes": 638789,
+      "stream_sha256": "66b4fdcaa71c207c487fdc73d28bf009d09276b570ee29c628caddd9968f3b98",
+      "blocks": 129,
+      "sectors": 2496,
+      "all_zx0_blocks_exact": true,
+      "stream_delta_bytes": 47,
+      "sector_delta": 0
+    },
+    {
+      "allowance_bits": 16,
+      "raw_file": "allowance-16.raw",
+      "selected_tiles": 1413,
+      "selected_frames": 429,
+      "modes": {
+        "88": 1243,
+        "87": 105,
+        "86": 50,
+        "85": 15
+      },
+      "heuristic_saved_tstates": 989515,
+      "whole_movie_scalar_video_ay_exact": true,
+      "raw_bytes": 3093712,
+      "sha256": "eff003590e85d2aed193cee82813eaeb689addd015e09e71fcd90ae0890b4c53",
+      "stream_bytes": 639650,
+      "stream_sha256": "d2ee34f3b06d474bca18fe496e4eb7919ce8acc425263b6903ebc457a791ec7e",
+      "blocks": 129,
+      "sectors": 2499,
+      "all_zx0_blocks_exact": true,
+      "stream_delta_bytes": 908,
+      "sector_delta": 3
+    },
+    {
+      "allowance_bits": 64,
+      "raw_file": "allowance-64.raw",
+      "selected_tiles": 4843,
+      "selected_frames": 917,
+      "modes": {
+        "87": 1632,
+        "85": 1918,
+        "88": 1243,
+        "86": 50
+      },
+      "heuristic_saved_tstates": 5698402,
+      "whole_movie_scalar_video_ay_exact": true,
+      "raw_bytes": 3111762,
+      "sha256": "14c1c86ea6f0e8798dc722761dd4d885b070ab82eaaf072a84aeac5fd0ebfb9d",
+      "stream_bytes": 650358,
+      "stream_sha256": "e1a6ded3952f723e8cb2df382f921e104eeb35af956fd290fa3c9f0bf5db041b",
+      "blocks": 131,
+      "sectors": 2541,
+      "all_zx0_blocks_exact": true,
+      "stream_delta_bytes": 11616,
+      "sector_delta": 45
+    }
+  ],
+  "baseline_reencode_byte_identical": true,
+  "baseline": {
+    "raw_bytes": 3092317,
+    "sha256": "4590013f35618db7514e612736b5cea90af28791da900c58cd40367be25f4cfa",
+    "stream_bytes": 638742,
+    "stream_sha256": "5e13de6a25cd203743fb20d952f8f04b072234a246967236111f8cbc7fd9c1ef",
+    "blocks": 129,
+    "sectors": 2496,
+    "all_zx0_blocks_exact": true
+  }
+}

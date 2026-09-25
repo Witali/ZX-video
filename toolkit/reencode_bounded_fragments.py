@@ -30,7 +30,7 @@ from probe_spatial_contexts import read_header
 import raw_attribute_stream
 
 
-def encode(source,states,*,new_simple=False):
+def encode(source,states,*,new_simple=False,fragment_selector=None):
     r=Reader(source); _,_,count,mapping,tables=read_header(r,magic=b'FAP3')
     if states.shape!=(count,3840):raise ValueError('different frame count')
     out=bytearray(source[:r.pos]);order=field_order(8).reshape(192,20)[:,:16]
@@ -51,7 +51,7 @@ def encode(source,states,*,new_simple=False):
                 dy=1 if vector==82 else 2;image[dy:]=picture[:-dy]
             spatial.append(image.reshape(3072))
         writer=Writer();literal=bytearray();active=np.zeros((192,16),bool)
-        escaped=converted=0
+        escaped=converted=selected=0
         for tile,addresses in enumerate(order):
             values=current[addresses];v=int(vv[tile]);kind,payload=pack_fragment(values)
             if v<85:
@@ -61,8 +61,11 @@ def encode(source,states,*,new_simple=False):
                 missing=any(n==0 for n in lengths)
                 cheap_simple=(new_simple and kind!=85 and len(payload)*8<=sum(lengths)+8*np.count_nonzero(
                     (values!=prediction).reshape(2,8).any(axis=1)))
-                if missing or cheap_simple:
+                chosen=(fragment_selector is not None and not missing and
+                    fragment_selector(index,tile,v,kind,payload,values,prediction,lengths))
+                if missing or cheap_simple or chosen:
                     v=kind;escaped+=missing;converted+=cheap_simple and not missing
+                    selected+=bool(chosen)
                 else:
                     active[tile,changes]=True
                     for f in changes:writer.put(*codes[mapping[int(prediction[f])]][int(values[f])])
@@ -84,7 +87,8 @@ def encode(source,states,*,new_simple=False):
         body=ay+struct.pack('<BHH',flags,len(mm),len(encoded))+cache+vv.tobytes()+mm+output_map+encoded+literal
         if len(body)>=WINDOW:raise ValueError(f'frame {index} exceeds input window')
         out+=struct.pack('<H',len(body))+body
-        rows.append(dict(index=index,payload_bytes=len(body),missing_symbol_escapes=escaped,simple_substitutions=converted))
+        rows.append(dict(index=index,payload_bytes=len(body),missing_symbol_escapes=escaped,simple_substitutions=converted,
+            selected_fragments=selected))
         previous=current
         if index%500==0:print(f'Re-encode FAP3: {index}/{count}',flush=True)
     r.end()

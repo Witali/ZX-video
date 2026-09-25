@@ -1,0 +1,78 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Assemble actual volume layouts for lossless fragment-selection candidates.\n\nUses the saved independent bootstrap and player options, before debugger\nqueue/compiled-mask installation. No images are published and no playback\nclaim is made. A rejected over-capacity volume still has exact layout data.\n",
+  "probe_sha256": "ecc8efe2ddae892cc8552faa86cae71bffbb5647ecbcc6a8d6a1d67af9eb00f4",
+  "input_metadata_sha256": "a5767c9c6c3ff9ff1b9eeccc867719eb9433a796e0b1d5906b3b71fccb9040f9",
+  "part": 3,
+  "options": {
+    "fast_disk": true,
+    "cached_seek": true,
+    "interleaved": true,
+    "cold_bitmaps": true,
+    "startup_delta": true,
+    "inline_matches": true,
+    "fast_noop_scan": true,
+    "irq_safe_paging": true,
+    "static_cache_borders": true,
+    "carry_huffman": true,
+    "register_fragments": true,
+    "deferred_limit": 248,
+    "keepalive_fields": 64,
+    "frame_service": true
+  },
+  "variants": [
+    {
+      "name": "baseline",
+      "source_sha256": "4590013f35618db7514e612736b5cea90af28791da900c58cd40367be25f4cfa",
+      "fits": true,
+      "independently_bootable": true,
+      "used_sectors": 2543,
+      "free_sectors": 1,
+      "video_bytes": 638742,
+      "video_sectors": 2496,
+      "video_start_sector": 62,
+      "video_physical_sectors": 2497,
+      "layout_padding_sectors": 1
+    },
+    {
+      "name": "allowance-0",
+      "source_sha256": "5a5440a0fe36e7fc50aac75865794f09d0dd6f9a0695a7d790da421b27b1fad8",
+      "fits": true,
+      "independently_bootable": true,
+      "used_sectors": 2543,
+      "free_sectors": 1,
+      "video_bytes": 638789,
+      "video_sectors": 2496,
+      "video_start_sector": 62,
+      "video_physical_sectors": 2497,
+      "layout_padding_sectors": 1
+    },
+    {
+      "name": "allowance-16",
+      "source_sha256": "eff003590e85d2aed193cee82813eaeb689addd015e09e71fcd90ae0890b4c53",
+      "fits": false,
+      "independently_bootable": true,
+      "used_sectors": 2545,
+      "free_sectors": -1,
+      "video_bytes": 639650,
+      "video_sectors": 2499,
+      "video_start_sector": 62,
+      "video_physical_sectors": 2499,
+      "layout_padding_sectors": 0
+    },
+    {
+      "name": "allowance-64",
+      "source_sha256": "14c1c86ea6f0e8798dc722761dd4d885b070ab82eaaf072a84aeac5fd0ebfb9d",
+      "fits": false,
+      "independently_bootable": true,
+      "used_sectors": 2589,
+      "free_sectors": -45,
+      "video_bytes": 650358,
+      "video_sectors": 2541,
+      "video_start_sector": 62,
+      "video_physical_sectors": 2543,
+      "layout_padding_sectors": 2
+    }
+  ]
+}
