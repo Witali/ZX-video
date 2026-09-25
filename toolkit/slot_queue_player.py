@@ -18,7 +18,7 @@ import pipelined_frame_z80 as video
 import bulk_frame_z80 as packet
 
 
-def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False,partial_consumption=False,cached_huffman_byte=False,inline_literals=False):
+def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False,partial_consumption=False,cached_huffman_byte=False,inline_literals=False,demand_decode=False):
     if idle_masks and not compiled_masks:
         raise ValueError('idle stripes require compiled metadata')
     if compiled_masks and uncontended:
@@ -50,7 +50,12 @@ def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False
         fast_disk=True,cached_seek=True,interleaved=True)
     scode,seek,srows=disk.build_cached_seek(d)
     pcode,p,prows=producer.build(z,d)
-    regions,q,qrows=queue.build(z,p,len(m['blocks']),partial_consumption=partial_consumption)
+    partial_consumption=partial_consumption or demand_decode
+    regions,q,qrows=queue.build(z,p,len(m['blocks']),partial_consumption=partial_consumption,demand_decode=demand_decode)
+    if demand_decode:
+        m['demand_decode']=dict(helper_start=queue.DEMAND,helper_end=q['demand_end'],
+            queue_bytes=q['end']-queue.CODE,helper_bytes=q['demand_end']-queue.DEMAND,
+            extra_variable_bytes=0,extra_stream_bytes=0,background_quantum=256)
     mask_labels=h.frame.metadata_labels
     prefill=q['prefill']
     mask_rows=[]

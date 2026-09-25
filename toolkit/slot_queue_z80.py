@@ -4,16 +4,20 @@ All public entries require bank 7 mapped and restore it before returning.
 step performs one sector operation or one ZX0 quantum, never both. Completed
 slots are released only after take has copied their last byte. IRQ owns the
 screen bit. The former bank-7 ZX0 history now holds queue code and state.
+demand_decode lets take wait for its whole required prefix before copying;
+background step retains its configured quantum. History stays until EOF.
 """
 from build_zxv_trd import MiniAssembler
 from pipelined_frame_z80 import helpers, PAGE
 
 CODE, BRIDGE, LIMIT = 0xe000, 0x6100, 0xf000
+DEMAND, DEMAND_LIMIT = 0xe200, 0xe300
 
 
-def build(z, p, blocks, *, quantum=256, partial_consumption=False):
+def build(z, p, blocks, *, quantum=256, partial_consumption=False, demand_decode=False):
     if not 1 <= blocks <= 65535 or not 1 <= quantum <= 8192:
         raise ValueError('invalid block count or decode quantum')
+    partial_consumption = partial_consumption or demand_decode
     rows=[]
     a=MiniAssembler(BRIDGE);e,n=helpers(a,rows,'slot_bridge')
     def call(target):n('CALL '+str(target),0xcd,target,17)
@@ -63,6 +67,7 @@ def build(z, p, blocks, *, quantum=256, partial_consumption=False):
     j(0xda,'quota_fits');e('EX DE,HL',[0xeb],4);j(0xc3,'quota')
     a.label('quota_fits');e('ADD HL,DE',[0x19],11)
     a.label('quota');n('LD DE,E000',0x11,0xe000,10);e('ADD HL,DE',[0x19],11);ws(z['slice_target'])
+    a.label('run_decode')
     call(b['decode_step'])
     wl(z['slice_output']);n('LD DE,(block_end)',(0xed,0x5b),z['block_end'],20)
     e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15);j(0xc2,'worked')
@@ -82,7 +87,9 @@ def build(z, p, blocks, *, quantum=256, partial_consumption=False):
     a.label('take');e('LD A,B',[0x78],4);e('OR C',[0xb1],4);e('RET Z',[0xc8],[5,11])
     n('LD (pending),BC',(0xed,0x43),'pending',20);n('LD (destination),DE',(0xed,0x53),'destination',20)
     a.label('take_next');load('count');e('OR A',[0xb7],4);j(0xc2,'have_slot')
-    if partial_consumption:
+    if demand_decode:
+        load('phase');e('CP 2',[0xfe,2],7);j(0xca,'demand')
+    elif partial_consumption:
         # With no completed descriptor, read_slot == write_slot. The active
         # decoder retains all history even when its produced prefix is copied.
         # Release this slot only after EOF publishes its complete descriptor.
@@ -123,4 +130,34 @@ def build(z, p, blocks, *, quantum=256, partial_consumption=False):
     for name in ('position','pending','destination','copy_count','slot_left'):a.label(name);a.word(0)
     a.label('lengths');a.emit(*bytes(8));a.label('end')
     if a.pc>LIMIT:raise ValueError('queue code/state exceeds bank-7 reservation')
-    return [(BRIDGE,bridge),(CODE,a.resolve())],dict(a.labels,bridge=b),rows
+    extra=[]
+    if demand_decode:
+        # Separate gap after compiled-mask initialization and before runtime
+        # E300. The original E180 generator must remain available at boot.
+        if a.pc>0xe180:raise ValueError('demand queue overlaps compiled-mask initializer')
+        main=a;a=MiniAssembler(DEMAND);a.labels.update(main.labels)
+        e,n=helpers(a,rows,'slot_queue')
+        a.label('demand')
+        # Relative target=min(position+pending,block_length); a wide caller
+        # request may overflow 16 bits, which must also clamp to block end.
+        wl('position');n('LD BC,(pending)',(0xed,0x4b),'pending',20)
+        n('LD DE,(block_length)',(0xed,0x5b),z['block_length'],20)
+        e('ADD HL,BC',[0x09],11);j(0xda,'demand_full')
+        e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15);j(0xda,'demand_fits')
+        a.label('demand_full');e('EX DE,HL',[0xeb],4);j(0xc3,'demand_target')
+        a.label('demand_fits');e('ADD HL,DE',[0x19],11)
+        a.label('demand_target');e('PUSH HL',[0xe5],11)
+        # Compare relative positions so absolute output 0000 means 8192,
+        # and a target wrapping to 0000 never looks like an already-ready 0.
+        n('LD DE,(slice_output)',(0xed,0x5b),z['slice_output'],20)
+        e('EX DE,HL',[0xeb],4);n('LD BC,2000',0x01,0x2000,10);e('ADD HL,BC',[0x09],11)
+        e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15);j(0xd2,'demand_ready')
+        e('POP HL',[0xe1],10);n('LD DE,E000',0x11,0xe000,10);e('ADD HL,DE',[0x19],11)
+        ws(z['slice_target']);call('run_decode');j(0xc3,'take_next')
+        a.label('demand_ready');e('POP HL',[0xe1],10)
+        n('LD DE,(position)',(0xed,0x5b),'position',20)
+        e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15);j(0xc3,'take_available')
+        a.label('demand_end')
+        if a.pc>DEMAND_LIMIT:raise ValueError('demand helper overlaps compiled-mask runtime')
+        extra=[(DEMAND,a.resolve())];main.labels.update(a.labels);a=main
+    return [(BRIDGE,bridge),(CODE,a.resolve())]+extra,dict(a.labels,bridge=b),rows

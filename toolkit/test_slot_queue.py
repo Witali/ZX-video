@@ -12,9 +12,9 @@ import pipelined_frame_z80 as video
 
 
 class QueueHarness:
-    def __init__(self,h,blocks,*,partial_consumption=False):
+    def __init__(self,h,blocks,*,partial_consumption=False,demand_decode=False):
         self.h=h;self.cpu=h.cpu;self.cpu.port_7ffd=0x17
-        self.regions,self.q,rows=queue.build(h.decoder.labels,h.p,blocks,partial_consumption=partial_consumption)
+        self.regions,self.q,rows=queue.build(h.decoder.labels,h.p,blocks,partial_consumption=partial_consumption,demand_decode=demand_decode)
         for address,blob in self.regions:install(self.cpu,address,blob)
         self.instructions=dict(h.instructions)
         self.instructions.update({r['address']:r for r in rows})

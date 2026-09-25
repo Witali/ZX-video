@@ -41,6 +41,7 @@ def main():
     p.add_argument('--partial-slots',action='store_true',help='With slot queue, allow consumption of a produced prefix before block EOF')
     p.add_argument('--cached-huffman-byte',action='store_true',help='With slot queue, retain the current Huffman input byte in B')
     p.add_argument('--inline-literals',action='store_true',help='With slot queue, copy ZX0 literals without CALL/RET')
+    p.add_argument('--demand-decode',action='store_true',help='With slot queue, decode the requested prefix before one contiguous copy')
     p.add_argument('--fixture-zx0',type=Path,help='ZX0 executable for compressing debugger-only startup patches')
     args=p.parse_args(); m=json.loads(args.metadata.read_text()); lab=m['player_labels']
     patches=[];nonce=secrets.randbits(30)
@@ -51,13 +52,14 @@ def main():
     if args.partial_slots and not args.slot_queue:raise ValueError('partial slots require --slot-queue')
     if args.cached_huffman_byte and not args.slot_queue:raise ValueError('cached byte requires --slot-queue')
     if args.inline_literals and not args.slot_queue:raise ValueError('inline literals require --slot-queue')
+    if args.demand_decode and not args.slot_queue:raise ValueError('demand decoding requires --slot-queue')
     if args.slot_queue:
         if args.continuation_snapshot or args.export_warm_ram:raise ValueError('queue fixture requires an independent cold boot')
         from slot_queue_player import build
         patches,m=build(m,args.raw.read_bytes(),uncontended=args.uncontended_frame,
             compiled_masks=args.compiled_masks,idle_masks=args.idle_masks,
             partial_consumption=args.partial_slots,cached_huffman_byte=args.cached_huffman_byte,
-            inline_literals=args.inline_literals);lab=m['player_labels']
+            inline_literals=args.inline_literals,demand_decode=args.demand_decode);lab=m['player_labels']
     if not m.get('independently_bootable',True) and not args.continuation_snapshot:
         raise ValueError('continuation disk requires RAM exported from its predecessor')
     if m.get('required_trdos_sha256') and hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest()!=m['required_trdos_sha256']:
@@ -341,11 +343,12 @@ def main():
         trace_sha256=hashlib.sha256(args.output.with_suffix('.trace.txt').read_bytes()).hexdigest())
     if args.slot_queue:
         report['fixture_installer']=install_report
-        report['partial_slot_consumption']=args.partial_slots
+        report['partial_slot_consumption']=m['partial_slot_consumption']
         if args.uncontended_frame:report['uncontended_frame']=m['uncontended_frame']
         if args.compiled_masks:report['compiled_masks']=m['compiled_masks']
         if m.get('cached_huffman_byte'):report['cached_huffman_byte']=m['cached_huffman_byte']
         if args.inline_literals:report['inline_literals']=m['inline_literals']
+        if args.demand_decode:report['demand_decode']=m['demand_decode']
         if args.idle_masks:
             report['idle_masks']=m['idle_masks']
         if target_samples:
