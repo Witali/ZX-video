@@ -1,0 +1,67 @@
+{
+  "complete": true,
+  "scope": "After the real TRD cold boot, check field length and RAM contention.\n\nThis destructive diagnostic replaces the frame code and exits without\nplaying video. Interrupts are disabled. Identical 10000-iteration read loops\nexecute in fixed bank 2, first reading A800, then 6400. Each loop is exactly\n310000 CPU T-states. Independent frame/tstate counters expose an accidental\nmachine switch; no assumed field length is hidden in the trace.\n",
+  "nonce_exact": true,
+  "exit_code": 77,
+  "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+  "trd_sha256": "205eb131fc97f2310bdf321ae32b32fc3f5273c5a524a7b7abeb583e19e0baf4",
+  "actual_70908_tstate_field_verified": true,
+  "bank5_contention_verified": true,
+  "loops": [
+    {
+      "address": 43008,
+      "cpu_tstates": 310000,
+      "frames": 4,
+      "start_ula_tstates": 37062,
+      "end_ula_tstates": 63430,
+      "elapsed_tstates_70908": 310000,
+      "extra_tstates": 0
+    },
+    {
+      "address": 25600,
+      "cpu_tstates": 310000,
+      "frames": 5,
+      "start_ula_tstates": 63450,
+      "end_ula_tstates": 21510,
+      "elapsed_tstates_70908": 312600,
+      "extra_tstates": 2600
+    },
+    {
+      "address": 43008,
+      "cpu_tstates": 310000,
+      "frames": 4,
+      "start_ula_tstates": 21530,
+      "end_ula_tstates": 47898,
+      "elapsed_tstates_70908": 310000,
+      "extra_tstates": 0
+    },
+    {
+      "address": 25600,
+      "cpu_tstates": 310000,
+      "frames": 5,
+      "start_ula_tstates": 47918,
+      "end_ula_tstates": 6017,
+      "elapsed_tstates_70908": 312639,
+      "extra_tstates": 2639
+    },
+    {
+      "address": 43008,
+      "cpu_tstates": 310000,
+      "frames": 4,
+      "start_ula_tstates": 6037,
+      "end_ula_tstates": 32405,
+      "elapsed_tstates_70908": 310000,
+      "extra_tstates": 0
+    },
+    {
+      "address": 25600,
+      "cpu_tstates": 310000,
+      "frames": 4,
+      "start_ula_tstates": 32425,
+      "end_ula_tstates": 61658,
+      "elapsed_tstates_70908": 312865,
+      "extra_tstates": 2865
+    }
+  ],
+  "trace_sha256": "03cfe5bae7b86ee065b0d940eafbad74a70727d4827bc7c5ec774b41683b0fe3"
+}

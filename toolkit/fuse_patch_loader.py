@@ -13,7 +13,7 @@ import zx0_codec
 ENTRY,PACKED,OUTPUT=0xe400,0xe600,0xf000
 
 
-def build(patches,entry,zx0,directory):
+def build(patches,entry,zx0,directory,*,copies=()):
     runs=[]
     for address,value in sorted(patches):
         if runs and address==runs[-1][0]+len(runs[-1][1]):runs[-1][1].append(value)
@@ -33,7 +33,13 @@ def build(patches,entry,zx0,directory):
     a.emit(0x21);a.word(OUTPUT)
     a.label('next');a.emit(0x4e,0x23,0x46,0x23,0x78,0xb1);a.abs16(0xca,'finished')
     a.emit(0x5e,0x23,0x56,0x23,0xed,0xb0);a.abs16(0xc3,'next')
-    a.label('finished');a.emit(0xc3);a.word(entry)
+    a.label('finished')
+    for source,destination,count in copies:
+        if not (0x6400<=source<source+count<=0x7800 and 0xa400<=destination<destination+count<=0xb700):
+            raise ValueError('unexpected checkpoint copy range')
+        a.emit(0x21);a.word(source);a.emit(0x11);a.word(destination)
+        a.emit(0x01);a.word(count);a.emit(0xed,0xb0)
+    a.emit(0xc3);a.word(entry)
     zx0_codec.emit_decoder(a,'turbo')
     code=a.resolve()
     if ENTRY+len(code)>PACKED:raise ValueError('patch loader overlaps packed data')
@@ -41,12 +47,16 @@ def build(patches,entry,zx0,directory):
         if address>=ENTRY:raise ValueError('patch target overlaps installer scratch')
     # Execute installer in the same Z80 CPU, checking every requested byte.
     c=NativeCPU(b'',b'');c.port_7ffd=0x17
-    for bank in c.banks:bank[:]=b'\xa5'*16384
+    for bank in c.banks:bank[:]=bytes((i*37+i//256)%256 for i in range(16384))
+    copy_expected=[bytes(c.read8(src+i) for i in range(n)) for src,_,n in copies]
     install(c,ENTRY,code);install(c,PACKED,payload);c.pc=ENTRY
     while c.pc!=entry:
         c.step()
         if c.steps>100000:raise AssertionError('patch installer did not terminate')
     if any(c.read8(a)!=v for a,v in patches):raise AssertionError('installed patch differs')
+    if any(bytes(c.read8(dst+i) for i in range(n))!=blob for (_,dst,n),blob in zip(copies,copy_expected)):
+        raise AssertionError('installed checkpoint copy differs')
     return [(ENTRY+i,v) for i,v in enumerate(code)]+[(PACKED+i,v) for i,v in enumerate(payload)],ENTRY,dict(
         installed_bytes=len(patches),compressed_bytes=len(payload),table_bytes=len(data),loader_bytes=len(code),
-        cpu_verified=True,playback_code=False)
+        cpu_verified=True,playback_code=False,checkpoint_copies=copies,
+        checkpoint_copy_tstates=sum(25+21*n for _,_,n in copies))

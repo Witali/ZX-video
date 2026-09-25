@@ -1,0 +1,186 @@
+base 10
+se $r 0
+br 0xdf20
+com 1
+pr 186831337
+se 32768 243
+se 32769 33
+se 32770 0
+se 32771 168
+se 32772 1
+se 32773 16
+se 32774 39
+se 32775 86
+se 32776 11
+se 32777 120
+se 32778 177
+se 32779 194
+se 32780 7
+se 32781 128
+se 32782 33
+se 32783 0
+se 32784 100
+se 32785 1
+se 32786 16
+se 32787 39
+se 32788 86
+se 32789 11
+se 32790 120
+se 32791 177
+se 32792 194
+se 32793 20
+se 32794 128
+se 32795 33
+se 32796 0
+se 32797 168
+se 32798 1
+se 32799 16
+se 32800 39
+se 32801 86
+se 32802 11
+se 32803 120
+se 32804 177
+se 32805 194
+se 32806 33
+se 32807 128
+se 32808 33
+se 32809 0
+se 32810 100
+se 32811 1
+se 32812 16
+se 32813 39
+se 32814 86
+se 32815 11
+se 32816 120
+se 32817 177
+se 32818 194
+se 32819 46
+se 32820 128
+se 32821 33
+se 32822 0
+se 32823 168
+se 32824 1
+se 32825 16
+se 32826 39
+se 32827 86
+se 32828 11
+se 32829 120
+se 32830 177
+se 32831 194
+se 32832 59
+se 32833 128
+se 32834 33
+se 32835 0
+se 32836 100
+se 32837 1
+se 32838 16
+se 32839 39
+se 32840 86
+se 32841 11
+se 32842 120
+se 32843 177
+se 32844 194
+se 32845 72
+se 32846 128
+se 32847 118
+se $r 1
+se z80:pc 32768
+co
+end
+cond 1 $r==0
+br 32775
+com 2
+pr 100
+pr spectrum:frames
+pr ula:tstates
+co
+end
+cond 2 $r==1 && z80:bc==10000
+br 32782
+com 3
+pr 101
+pr spectrum:frames
+pr ula:tstates
+co
+end
+cond 3 $r==1
+br 32788
+com 4
+pr 102
+pr spectrum:frames
+pr ula:tstates
+co
+end
+cond 4 $r==1 && z80:bc==10000
+br 32795
+com 5
+pr 103
+pr spectrum:frames
+pr ula:tstates
+co
+end
+cond 5 $r==1
+br 32801
+com 6
+pr 104
+pr spectrum:frames
+pr ula:tstates
+co
+end
+cond 6 $r==1 && z80:bc==10000
+br 32808
+com 7
+pr 105
+pr spectrum:frames
+pr ula:tstates
+co
+end
+cond 7 $r==1
+br 32814
+com 8
+pr 106
+pr spectrum:frames
+pr ula:tstates
+co
+end
+cond 8 $r==1 && z80:bc==10000
+br 32821
+com 9
+pr 107
+pr spectrum:frames
+pr ula:tstates
+co
+end
+cond 9 $r==1
+br 32827
+com 10
+pr 108
+pr spectrum:frames
+pr ula:tstates
+co
+end
+cond 10 $r==1 && z80:bc==10000
+br 32834
+com 11
+pr 109
+pr spectrum:frames
+pr ula:tstates
+co
+end
+cond 11 $r==1
+br 32840
+com 12
+pr 110
+pr spectrum:frames
+pr ula:tstates
+co
+end
+cond 12 $r==1 && z80:bc==10000
+br 32847
+com 13
+pr 111
+pr spectrum:frames
+pr ula:tstates
+ex 77
+end
+cond 13 $r==1

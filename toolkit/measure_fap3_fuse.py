@@ -34,13 +34,15 @@ def main():
     p.add_argument('--trace-fields',action='store_true',help='Record IRQ entries and CPU state at field offsets 0/32; no player changes')
     p.add_argument('--trace-paging',action='store_true',help='Record IRQ entries and paging boundaries near the IRQ pulse; address breakpoints only')
     p.add_argument('--slot-queue',action='store_true',help='Install the experimental four-slot player after normal cold bootstrap')
+    p.add_argument('--uncontended-frame',action='store_true',help='With --slot-queue, relocate compact frame/cache to bank 2')
     p.add_argument('--fixture-zx0',type=Path,help='ZX0 executable for compressing debugger-only startup patches')
     args=p.parse_args(); m=json.loads(args.metadata.read_text()); lab=m['player_labels']
     patches=[];nonce=secrets.randbits(30)
+    if args.uncontended_frame and not args.slot_queue:raise ValueError('relocation requires --slot-queue')
     if args.slot_queue:
         if args.continuation_snapshot or args.export_warm_ram:raise ValueError('queue fixture requires an independent cold boot')
         from slot_queue_player import build
-        patches,m=build(m,args.raw.read_bytes());lab=m['player_labels']
+        patches,m=build(m,args.raw.read_bytes(),uncontended=args.uncontended_frame);lab=m['player_labels']
     if not m.get('independently_bootable',True) and not args.continuation_snapshot:
         raise ValueError('continuation disk requires RAM exported from its predecessor')
     if m.get('required_trdos_sha256') and hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest()!=m['required_trdos_sha256']:
@@ -63,7 +65,8 @@ def main():
     if args.slot_queue:
         if not args.fixture_zx0:raise ValueError('--slot-queue requires --fixture-zx0')
         from fuse_patch_loader import build as build_installer
-        patches,install_entry,install_report=build_installer(patches,lab['start'],args.fixture_zx0,args.output.parent/'install')
+        patches,install_entry,install_report=build_installer(patches,lab['start'],args.fixture_zx0,args.output.parent/'install',
+            copies=m.get('fixture_checkpoint_copies',()))
         # Installation is logged separately; entering the actual driver is
         # the start of measured playback, after the temporary loader returns.
         event(lab['start'],89,[stamp],after=[f'se {a} {v}' for a,v in patches]+['set $running 2',f'set z80:pc {install_entry}'])
@@ -98,7 +101,7 @@ def main():
     # A whole consumed sector was replaced at saved write_high. Read its
     # exact bytes before the decoder resumes; compact four bytes per print.
     base='$b'
-    sector_expr=['+'.join(f'{256**k}*[{base}+{i+k}]' for k in range(4)) for i in range(0,256,4)]
+    sector_expr=['+'.join((f'{256**k}*' if k else '')+f'[{base}+{i+k}]' for k in range(4)) for i in range(0,256,4)]
     event(lab['disk_return'],103,[stamp]+sector_expr)
     if 'fast_read_enter' in lab:
         event(lab['fast_read_enter'],110,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])],
@@ -130,13 +133,19 @@ def main():
         lines[-1]=f'condition {len(events)} $running == 0 && $dump == 65536'
     # Documented debugger abbreviations keep the patch fixture below Windows' limit.
     lines=[s.replace('print ','pr ',1) if s.startswith('print ') else s for s in lines]
+    abbreviations={'set ':'se ','breakpoint ':'br ','condition ':'cond ','continue':'co'}
+    for i,line in enumerate(lines):
+        for long,short in abbreviations.items():
+            if line.startswith(long):line=short+line[len(long):];break
+        lines[i]=line.replace('$running','$r').replace(' == ','==')
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.with_suffix('.debugger.txt').write_text('\n'.join(lines))
     env=dict(os.environ,SDL_VIDEODRIVER='dummy')
     media=['--betadisk',str(args.trd.resolve()),'--snapshot',str(args.continuation_snapshot.resolve())] if args.continuation_snapshot else [str(args.trd.resolve())]
     command=[str(args.fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions',
         '--speed','10000','--machine','128','--beta128','--debugger-command','\n'.join(lines)]+media
-    if len(subprocess.list2cmdline(command))>=32760:raise ValueError('Windows command line too long')
+    if len(subprocess.list2cmdline(command))>=32760:
+        raise ValueError(f'Windows command line too long: {len(subprocess.list2cmdline(command))}')
     started=time.monotonic();epoch=time.time()
     completed=subprocess.run(command,cwd=args.fuse.parent,env=env,capture_output=True,
         startupinfo=hidden_startupinfo(),timeout=args.timeout)
@@ -288,6 +297,7 @@ def main():
         trace_sha256=hashlib.sha256(args.output.with_suffix('.trace.txt').read_bytes()).hexdigest())
     if args.slot_queue:
         report['fixture_installer']=install_report
+        if args.uncontended_frame:report['uncontended_frame']=m['uncontended_frame']
         report['slot_queue_fixture']={k:v for k,v in m.items() if k.startswith('slot_queue_') or k in
             ('queue_labels','producer_labels','decoder_labels','clock_labels','packet_labels','native_ready_pcs')}
     if args.continuation_snapshot:
@@ -303,7 +313,7 @@ def main():
             args.export_warm_ram.parent.mkdir(parents=True,exist_ok=True)
             args.export_warm_ram.write_bytes(warm_ram)
     args.output.write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','slot_queue_fixture')}),flush=True)
+    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','slot_queue_fixture','uncontended_frame')}),flush=True)
     if not complete: raise SystemExit(1)
 
 

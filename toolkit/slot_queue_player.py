@@ -18,7 +18,7 @@ import pipelined_frame_z80 as video
 import bulk_frame_z80 as packet
 
 
-def build(metadata,raw):
+def build(metadata,raw,*,uncontended=False):
     m=deepcopy(metadata)
     if not m.get('irq_safe_paging') or not m.get('independently_bootable'):
         raise ValueError('queue requires IRQ-safe paging and an independent volume')
@@ -58,6 +58,16 @@ def build(metadata,raw):
             address=base+i
             if base in (packet.CODE,packet.BRIDGE,video.VIDEO) and h.cpu.read8(address)==value:continue
             sparse.append((address,value))
+    if uncontended:
+        from uncontended_frame import patches as frame_patches,CHECKPOINT_COPIES
+        # Read the final packet/clock/queue image, not the original reader.
+        image={a+i:v for a,blob in regions for i,v in enumerate(blob)}
+        def read8(address):return image.get(address,h.cpu.read8(address))
+        current_rows={pc:row for pc,row in h.frame.instructions.items()}
+        current_rows.update({row['address']:row for row in rows})
+        extra,audit=frame_patches(read8,current_rows.values())
+        sparse=sorted(dict(sparse+extra).items())
+        m.update(uncontended_frame=audit,fixture_checkpoint_copies=CHECKPOINT_COPIES)
     lab=dict(m['player_labels']);lab.update(driver)
     for name in ('disk_full_call','disk_return','fast_read_enter','fast_disk_return','fast_read_retry','disk_finish'):
         lab[name]=d[name]
