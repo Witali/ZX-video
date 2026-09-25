@@ -62,12 +62,19 @@ def install_stage(h):
     from benchmark_compact_screen import STACK
     from frame_output_pipeline import PipelineCPU
     from validate_fast_sparse import CPU
+    if h.metadata_mode == 'idle':
+        raise ValueError('idle metadata relocation is not verified')
     c=h.cpu;c.guarding=False
+    # Compiled metadata lives in bank 7; bank 6 is normally mapped here.
+    # Its generated bodies already exist in this standalone CPU fixture.
+    page=c.port_7ffd
+    if h.metadata_mode == 'compiled':c.port_7ffd=(page&~7)|7
     changes,report=patches(c.read8,h.instructions.values())
+    for a,v in changes:c.write8(a,v)
+    c.port_7ffd=page
     saved=[(dest,bytes(c.read8(lo+i) for i in range(hi-lo))) for lo,hi,dest in RANGES]
     for dest,blob in saved:
         for i,v in enumerate(blob):c.write8(dest+i,v)
-    for a,v in changes:c.write8(a,v)
 
     class RelocatedCPU(PipelineCPU):
         def read8(self,address):
@@ -94,7 +101,6 @@ def run_stage(h,group,native,expected,index,encoded_metadata,cache_map,interrupt
     """Execute actual relocated metadata/reconstruction/native code, no disk/ULA."""
     from benchmark_context_huffman import word
     from frame_output_pipeline import display_screen
-    from frame_metadata_z80 import expected_tstates
     n,flags,bits,vectors,bitmap,attrs,encoded,literals=group
     if n!=1 or len(expected)!=3840:raise ValueError('one compact frame required')
     c=h.cpu;c.guarding=False
@@ -105,11 +111,13 @@ def run_stage(h,group,native,expected,index,encoded_metadata,cache_map,interrupt
         for i,v in enumerate(blob):c.write8(base+i,v)
     put(0xba40,cache_map);put(INPUT,encoded_metadata)
     c.input_end=INPUT+len(encoded_metadata);c.set_hl(INPUT)
-    metadata=h.execute(0x7800,interrupt)
-    if (c.hl()!=c.input_end or metadata['total_tstates']!=expected_tstates(encoded_metadata) or
+    if h.metadata_mode == 'compiled':c.port_7ffd=(page&~7)|7
+    metadata=h.execute(h.metadata_entry,interrupt)
+    if (c.hl()!=c.input_end or metadata['total_tstates']!=h.metadata_formula(encoded_metadata) or
         bytes(c.read8(MASKS+i) for i in range(480))!=bitmap+attrs or any(c.read8(0xbfbc+i) for i in range(4))):
         raise AssertionError('relocated metadata differs')
     c.guarding=False
+    c.port_7ffd=page
     data=encoded+b'\0'+literals+b'\0'
     if len(data)>INPUT_END-INPUT:raise ValueError('packet too large')
     for base,blob in ((VECTORS,vectors),(MAP,native),(INPUT,data)):put(base,blob)

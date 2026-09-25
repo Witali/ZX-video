@@ -13,7 +13,7 @@ import zx0_codec
 ENTRY,PACKED,OUTPUT=0xe400,0xe600,0xf000
 
 
-def build(patches,entry,zx0,directory,*,copies=()):
+def build(patches,entry,zx0,directory,*,copies=(),compact=False):
     runs=[]
     for address,value in sorted(patches):
         if runs and address==runs[-1][0]+len(runs[-1][1]):runs[-1][1].append(value)
@@ -27,9 +27,10 @@ def build(patches,entry,zx0,directory,*,copies=()):
     payload=packed.read_bytes()
     if PACKED+len(payload)>OUTPUT or zx0_codec.decompress(payload,limit=len(data))!=data:
         raise ValueError('fixture patch compression failed')
+    variant='standard' if compact else 'turbo'
     a=MiniAssembler(ENTRY)
     a.emit(0xf3,0x31);a.word(0x9df0)
-    a.emit(0x21);a.word(PACKED);a.emit(0x11);a.word(OUTPUT);a.abs16(0xcd,'dzx0_turbo')
+    a.emit(0x21);a.word(PACKED);a.emit(0x11);a.word(OUTPUT);a.abs16(0xcd,'dzx0_'+variant)
     a.emit(0x21);a.word(OUTPUT)
     a.label('next');a.emit(0x4e,0x23,0x46,0x23,0x78,0xb1);a.abs16(0xca,'finished')
     a.emit(0x5e,0x23,0x56,0x23,0xed,0xb0);a.abs16(0xc3,'next')
@@ -40,7 +41,7 @@ def build(patches,entry,zx0,directory,*,copies=()):
         a.emit(0x21);a.word(source);a.emit(0x11);a.word(destination)
         a.emit(0x01);a.word(count);a.emit(0xed,0xb0)
     a.emit(0xc3);a.word(entry)
-    zx0_codec.emit_decoder(a,'turbo')
+    zx0_codec.emit_decoder(a,variant)
     code=a.resolve()
     if ENTRY+len(code)>PACKED:raise ValueError('patch loader overlaps packed data')
     for address,_ in patches:
@@ -59,4 +60,4 @@ def build(patches,entry,zx0,directory,*,copies=()):
     return [(ENTRY+i,v) for i,v in enumerate(code)]+[(PACKED+i,v) for i,v in enumerate(payload)],ENTRY,dict(
         installed_bytes=len(patches),compressed_bytes=len(payload),table_bytes=len(data),loader_bytes=len(code),
         cpu_verified=True,playback_code=False,checkpoint_copies=copies,
-        checkpoint_copy_tstates=sum(25+21*n for _,_,n in copies))
+        checkpoint_copy_tstates=sum(25+21*n for _,_,n in copies),decoder_variant=variant)

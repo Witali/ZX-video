@@ -65,7 +65,7 @@ def main():
     if m.get('required_trdos_sha256') and hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest()!=m['required_trdos_sha256']:
         raise ValueError('fast reader requires its verified TR-DOS ROM')
     lines=['base 10','set $running 0','set $dump 65537']; widths={}; events=[]
-    target_samples=args.idle_masks or args.trace_pipeline
+    target_samples=args.idle_masks or args.trace_pipeline or args.uncontended_frame
     if target_samples: lines.append('set $n 0')
     if args.trace_pipeline:lines.append('set $qwait 0')
     def event(pc,tag,expressions,stop=False,after=(),breakpoint=None,before=()):
@@ -87,7 +87,7 @@ def main():
         if not args.fixture_zx0:raise ValueError('--slot-queue requires --fixture-zx0')
         from fuse_patch_loader import build as build_installer
         patches,install_entry,install_report=build_installer(patches,lab['start'],args.fixture_zx0,args.output.parent/'install',
-            copies=m.get('fixture_checkpoint_copies',()))
+            copies=m.get('fixture_checkpoint_copies',()),compact=args.uncontended_frame)
         # Installation is logged separately; entering the actual driver is
         # the start of measured playback, after the temporary loader returns.
         event(lab['start'],89,[stamp],after=[f'se {a} {v}' for a,v in patches]+['set $running 2',f'set z80:pc {install_entry}'])

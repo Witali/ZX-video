@@ -21,12 +21,14 @@ import bulk_frame_z80 as packet
 def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False,partial_consumption=False,cached_huffman_byte=False,inline_literals=False,demand_decode=False):
     if idle_masks and not compiled_masks:
         raise ValueError('idle stripes require compiled metadata')
-    if compiled_masks and uncontended:
-        raise ValueError('combined mask and relocated-frame fixture is not verified')
+    if idle_masks and uncontended:
+        raise ValueError('idle-mask relocation is not verified')
     cached_in_bootstrap=bool(metadata.get('cached_huffman_byte',False))
     cached_huffman_byte=cached_huffman_byte or cached_in_bootstrap
-    if cached_huffman_byte and (uncontended or idle_masks):
-        raise ValueError('cached-byte combinations with relocation/idle stripes are not verified')
+    if uncontended and cached_huffman_byte and not cached_in_bootstrap:
+        raise ValueError('relocated cached-byte fixture requires a cached-Huffman bootstrap')
+    if cached_huffman_byte and idle_masks:
+        raise ValueError('cached-byte combination with idle stripes is not verified')
     m=deepcopy(metadata)
     if not m.get('irq_safe_paging') or not m.get('independently_bootable'):
         raise ValueError('queue requires IRQ-safe paging and an independent volume')
@@ -146,6 +148,11 @@ def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False
         def read8(address):return image.get(address,h.cpu.read8(address))
         current_rows={pc:row for pc,row in h.frame.instructions.items()}
         current_rows.update({row['address']:row for row in rows})
+        # Include the final cached reconstruction and compiled runtime. The
+        # generated mask bodies are not installed yet and contain no absolute
+        # data operands; do not interpret the bank-6 bytes at their addresses.
+        current_rows.update({row['address']:row for row in mask_rows
+            if row['address']<0xc000 or compiled_masks and row['address']<masks.TABLE})
         extra,audit=frame_patches(read8,current_rows.values())
         sparse=sorted(dict(sparse+extra).items())
         m.update(uncontended_frame=audit,fixture_checkpoint_copies=CHECKPOINT_COPIES)
