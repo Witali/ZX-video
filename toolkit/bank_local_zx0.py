@@ -13,11 +13,11 @@ STACK_BOTTOM, STACK_TOP = 0x7b70, 0x7be0
 BANKS = (1, 3, 4)
 
 
-def build():
+def build(*, dynamic_input=False):
     a = MiniAssembler(CODE)
     incremental_zx0.emit_decoder(a, output_base=OUTPUT, input_base=INPUT,
         stack_top=STACK_TOP, wrap_output=True, token_boundaries=True,
-        inline_matches=True)
+        inline_matches=True,input_pointer_label='input_pointer' if dynamic_input else None)
     a.labels['begin'] = a.labels['slice_begin']
     a.label('fatal'); a.emit(0x76)
     a.label('state')
@@ -25,6 +25,7 @@ def build():
     for name in ('block_length', 'block_end'):
         a.label(name); a.word(0)
     a.label('block_stored'); a.emit(0)
+    if dynamic_input:a.label('input_pointer');a.word(INPUT)
     a.label('end')
     if a.pc > 0x7e90:
         raise ValueError('decoder overlaps the current packet reader')

@@ -29,7 +29,7 @@ class GuardCPU(NativeCPU):
                 raise AssertionError('wrong slot paged')
             if address < machine.OUTPUT:
                 if (self.input_reads >= len(self.payload)
-                        or address != machine.INPUT + self.input_reads):
+                        or address != self.input_start + self.input_reads):
                     raise AssertionError('input cursor or bound differs')
                 self.input_reads += 1
             elif address >= machine.OUTPUT + self.produced:
@@ -53,8 +53,9 @@ class GuardCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self):
-        self.code, self.labels = machine.build()
+    def __init__(self, *, dynamic_input=False):
+        self.dynamic_input=dynamic_input
+        self.code, self.labels = machine.build(dynamic_input=dynamic_input)
         cpu = self.cpu = GuardCPU(b'', b'')
         cpu.labels = self.labels
         cpu.patched = {self.labels[n] for n in ('slice_high_operand', 'slice_low_operand',
@@ -63,14 +64,21 @@ class Harness:
         for bank in cpu.banks: bank[:] = b'\xa5'*16384
         for i, value in enumerate(self.code): cpu.write8(machine.CODE+i, value)
 
-    def begin(self, payload, expected, *, slot=1, screen_bit=0, stored=False):
+    def begin(self, payload, expected, *, slot=1, screen_bit=0, stored=False,input_offset=0,preloaded=False):
         if not 1 <= len(payload) <= 8192 or not 1 <= len(expected) <= 8192:
             raise ValueError('block exceeds the half-bank slot')
-        if slot not in machine.BANKS or screen_bit not in (0, 8):
+        if not 0<=input_offset<=8192-len(payload) or input_offset and not self.dynamic_input:
+            raise ValueError('invalid input offset')
+        if slot not in ((0,1,3,4) if self.dynamic_input else machine.BANKS) or screen_bit not in (0, 8):
             raise ValueError('invalid slot or screen bit')
         cpu = self.cpu; cpu.guarding = False
         cpu.slot, cpu.payload, self.expected = slot, payload, expected
-        cpu.banks[slot][:] = payload+b'\xa5'*(16384-len(payload))
+        cpu.input_start=machine.INPUT+input_offset
+        if preloaded:
+            if bytes(cpu.banks[slot][input_offset:input_offset+len(payload)])!=payload:
+                raise AssertionError('preloaded compressed bytes differ')
+        else:
+            cpu.banks[slot][:] = b'\xa5'*input_offset+payload+b'\xa5'*(16384-input_offset-len(payload))
         cpu.port_7ffd = self.page = 0x10 | slot | screen_bit
         cpu.produced = cpu.input_reads = 0; cpu.limit = len(expected)
         cpu.private_min = machine.STACK_TOP
@@ -78,6 +86,7 @@ class Harness:
         for n, value in dict(block_length=len(expected), block_end=(machine.OUTPUT+len(expected)) & 65535).items():
             word(cpu, self.labels[n], value)
         cpu.write8(self.labels['block_stored'], 128 if stored else 0)
+        if self.dynamic_input:word(cpu,self.labels['input_pointer'],cpu.input_start)
         self.protected = {b: bytes(cpu.banks[b]) for b in range(8) if b not in (slot, 2, 5)}
         self.fixed = bytes(cpu.banks[5][:0x3800])
 
@@ -111,7 +120,7 @@ class Harness:
     def finish(self):
         cpu = self.cpu
         if (cpu.produced != len(self.expected) or cpu.input_reads != len(cpu.payload)
-                or bytes(cpu.banks[cpu.slot][:len(cpu.payload)]) != cpu.payload
+                or bytes(cpu.banks[cpu.slot][cpu.input_start-machine.INPUT:cpu.input_start-machine.INPUT+len(cpu.payload)]) != cpu.payload
                 or bytes(cpu.banks[5][:0x3800]) != self.fixed
                 or any(bytes(cpu.banks[b]) != data for b, data in self.protected.items())):
             raise AssertionError('incomplete input or damaged protected RAM')

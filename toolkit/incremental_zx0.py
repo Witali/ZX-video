@@ -51,7 +51,9 @@ def emit_wait(a, *, lookahead=False, output_base=0x8000, direct_input=False, aud
     a.label('slice_frame_valid');a.abs16(0xC3,'ahead_decode' if lookahead else 'slice_until')
 
 
-def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False, wrap_output=False, source_page_wrap=None, literal_hook=None, token_boundaries=False, inline_matches=False):
+def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False, wrap_output=False, source_page_wrap=None, literal_hook=None, token_boundaries=False, inline_matches=False, input_pointer_label=None):
+    if input_pointer_label is not None and direct_input:
+        raise ValueError('choose one dynamic input pointer contract')
     if token_boundaries not in (False,True,'decrement'):
         raise ValueError('unknown token boundary comparison')
     if token_boundaries and (not wrap_output or direct_input or wrapped_input):
@@ -86,6 +88,7 @@ def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TO
     a.emit(0x31);a.word(stack_top)
     a.abs16(0x21,'slice_finished');a.emit(0xE5)
     if direct_input:a.abs16(0x2A,'direct_pointer')
+    elif input_pointer_label is not None:a.abs16(0x2A,input_pointer_label)
     else:a.emit(0x21);a.word(input_base)
     a.emit(0x11);a.word(output_base)
     a.abs16(0x3A,'block_stored');a.emit(0xB7)

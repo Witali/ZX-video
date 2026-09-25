@@ -40,9 +40,16 @@ class LocalZX0Tests(unittest.TestCase):
                 h.run(len(raw)); h.finish()
 
     def test_ay_interrupt_at_every_decoder_instruction(self):
+        self.exercise_irq()
+
+    def test_dynamic_input_ay_interrupt_at_every_decoder_instruction(self):
+        self.exercise_irq(dynamic=True)
+
+    def exercise_irq(self,*,dynamic=False):
         raw = bytes(range(256))*32
         payload = encode(raw,[Token(0,300),Token(300,len(raw)-300,256)])
-        h = Harness(); h.begin(payload,raw,slot=3,screen_bit=8)
+        h = Harness(dynamic_input=dynamic)
+        h.begin(payload,raw,slot=3,screen_bit=8,input_offset=259 if dynamic else 0)
         a = MiniAssembler(0x9400)
         ay_interrupt.emit(a)
         playback_schedule.emit_clock(a,dos_irq=True,full_rom_clock=True,memory_clock=True,audio_irq=True)

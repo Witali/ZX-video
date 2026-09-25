@@ -1,0 +1,179 @@
+{
+  "complete": true,
+  "release": false,
+  "baseline_commit": "03013e3",
+  "scope": "Archive and summarize complete CPU/Fuse evidence for the direct input fixture.",
+  "comparison": "New producer includes header parsing, carry copies, adapter/paging and mocked CALL/JP; old side contains only the bounded banked decoder. Old disk adapter/header costs are not subtracted as a new saving.",
+  "full_player_integrated": false,
+  "actual_video_and_ay_schedule_verified": false,
+  "smaller_buffer_sustained_frame_delivery_verified": false,
+  "physical_drive_verified": false,
+  "cpu_excludes": "TR-DOS execution, hardware IRQ, ULA and physical latency; outer request setup/CALLs remain host work.",
+  "fuse_includes": "Real TR-DOS/controller/ULA and IRQ with AY disabled; fixture driver included, byte-export loops excluded.",
+  "fuse_delta_must_not_be_called_physical_disk_latency": true,
+  "memory": {
+    "slot_banks": [
+      0,
+      1,
+      3,
+      4
+    ],
+    "compressed_half_bytes": 8192,
+    "decoded_half_bytes": 8192,
+    "decoded_capacity_bytes": 32768,
+    "additional_disk_ring_bytes": 0,
+    "fixed_carry": [
+      48128,
+      48384
+    ],
+    "decoder": [
+      31744,
+      32074
+    ],
+    "producer": [
+      32080,
+      32448
+    ],
+    "original_stream_reader_replacement_required": true,
+    "queue_reader_and_scheduler_not_implemented": true
+  },
+  "volumes": [
+    {
+      "part": 1,
+      "blocks": 126,
+      "raw_bytes": 1025898,
+      "baseline_banked_decoder_only_tstates": 84627386,
+      "dynamic_local_decoder_tstates": 65840603,
+      "direct_producer_cpu_tstates": 4423645,
+      "component_cpu_tstates": 70264248,
+      "conservative_delta_tstates": -14363138,
+      "carry_copy_bytes": 64256,
+      "runtime_sectors": 2504,
+      "fuse_retries": 0,
+      "fuse_all_decoded_bytes_exact": true,
+      "fuse_all_sector_bytes_exact": true,
+      "fuse_producer_elapsed_tstates": 85363056,
+      "fuse_decoder_elapsed_tstates": 81430947,
+      "fuse_read_service_tstates": 78212358,
+      "fuse_seek_service_tstates": 1727167,
+      "max_cpu_input_step_tstates": 5258,
+      "input_window_used_max": 6092
+    },
+    {
+      "part": 2,
+      "blocks": 123,
+      "raw_bytes": 1006693,
+      "baseline_banked_decoder_only_tstates": 88506367,
+      "dynamic_local_decoder_tstates": 69486142,
+      "direct_producer_cpu_tstates": 4381496,
+      "component_cpu_tstates": 73867638,
+      "conservative_delta_tstates": -14638729,
+      "carry_copy_bytes": 62208,
+      "runtime_sectors": 2501,
+      "fuse_retries": 0,
+      "fuse_all_decoded_bytes_exact": true,
+      "fuse_all_sector_bytes_exact": true,
+      "fuse_producer_elapsed_tstates": 85274675,
+      "fuse_decoder_elapsed_tstates": 85956868,
+      "fuse_read_service_tstates": 78169097,
+      "fuse_seek_service_tstates": 1727992,
+      "max_cpu_input_step_tstates": 4623,
+      "input_window_used_max": 6315
+    },
+    {
+      "part": 3,
+      "blocks": 129,
+      "raw_bytes": 1050784,
+      "baseline_banked_decoder_only_tstates": 92242467,
+      "dynamic_local_decoder_tstates": 73054590,
+      "direct_producer_cpu_tstates": 4442730,
+      "component_cpu_tstates": 77497320,
+      "conservative_delta_tstates": -14745147,
+      "carry_copy_bytes": 65792,
+      "runtime_sectors": 2496,
+      "fuse_retries": 0,
+      "fuse_all_decoded_bytes_exact": true,
+      "fuse_all_sector_bytes_exact": true,
+      "fuse_producer_elapsed_tstates": 85185626,
+      "fuse_decoder_elapsed_tstates": 90347757,
+      "fuse_read_service_tstates": 78041262,
+      "fuse_seek_service_tstates": 1726467,
+      "max_cpu_input_step_tstates": 4623,
+      "input_window_used_max": 6176
+    }
+  ],
+  "totals": {
+    "blocks": 378,
+    "raw_bytes": 3083375,
+    "baseline_banked_decoder_only_tstates": 265376220,
+    "dynamic_local_decoder_tstates": 208381335,
+    "direct_producer_cpu_tstates": 13247871,
+    "component_cpu_tstates": 221629206,
+    "conservative_delta_tstates": -43747014,
+    "carry_copy_bytes": 192256,
+    "runtime_sectors": 7501,
+    "fuse_retries": 0,
+    "fuse_producer_elapsed_tstates": 255823357,
+    "fuse_decoder_elapsed_tstates": 257735572,
+    "fuse_read_service_tstates": 234422717,
+    "fuse_seek_service_tstates": 5181626
+  },
+  "evidence": [
+    {
+      "file": "part01.json",
+      "bytes": 521277,
+      "sha256": "1264ca55989042be64b377ae3ee81fca25fb399be913eff1e3d689516a9c2ad2",
+      "uncompressed_sha256": "1264ca55989042be64b377ae3ee81fca25fb399be913eff1e3d689516a9c2ad2"
+    },
+    {
+      "file": "part01.debugger.txt",
+      "bytes": 27843,
+      "sha256": "ebf23a35929efabd42be28b1400a0a29c3b837f05aaf94d4ebf8449e64599bb2",
+      "uncompressed_sha256": "ebf23a35929efabd42be28b1400a0a29c3b837f05aaf94d4ebf8449e64599bb2"
+    },
+    {
+      "file": "part01.trace.txt.gz",
+      "bytes": 1919474,
+      "sha256": "e3ddb55d2fe57ff8b6919970fb9c4b0f153ac7b583ec865b1061244571276567",
+      "uncompressed_sha256": "261f90d1364da2fccf7efb66649a3b41b619eb69c1e37f7c3b455734b6826e80"
+    },
+    {
+      "file": "part02.json",
+      "bytes": 519560,
+      "sha256": "80d78f291f933d721ef65943601bdf08d741027f3f930e2fe4f21077e6d209c2",
+      "uncompressed_sha256": "80d78f291f933d721ef65943601bdf08d741027f3f930e2fe4f21077e6d209c2"
+    },
+    {
+      "file": "part02.debugger.txt",
+      "bytes": 27845,
+      "sha256": "6887a714fcf0ba2c03f467e38fb18824b8bbe09a593189f12bac61c1b2517c6c",
+      "uncompressed_sha256": "6887a714fcf0ba2c03f467e38fb18824b8bbe09a593189f12bac61c1b2517c6c"
+    },
+    {
+      "file": "part02.trace.txt.gz",
+      "bytes": 1926192,
+      "sha256": "42cc929a97e21c6f11e55642910f7743133c3f601fa1b8ad581d3c4a4e4888b9",
+      "uncompressed_sha256": "1c9fc49891402a4adfea359934976684b50f0921ff09bf76484203d5149f1de8"
+    },
+    {
+      "file": "part03.json",
+      "bytes": 521030,
+      "sha256": "2c1203c3ead9cc30d99348f9615dc7bfe15d6b294bfcb8f9bb88a93021a7cac2",
+      "uncompressed_sha256": "2c1203c3ead9cc30d99348f9615dc7bfe15d6b294bfcb8f9bb88a93021a7cac2"
+    },
+    {
+      "file": "part03.debugger.txt",
+      "bytes": 27845,
+      "sha256": "38828f0271fcf9f3aa5cb7e5e8833f722cd011ff13a344fddf5b1eee72c6a107",
+      "uncompressed_sha256": "38828f0271fcf9f3aa5cb7e5e8833f722cd011ff13a344fddf5b1eee72c6a107"
+    },
+    {
+      "file": "part03.trace.txt.gz",
+      "bytes": 1926752,
+      "sha256": "bea6cfe9cbf0aaf8978905bb2021c4eeeb3e44e173e950f0980235ca9a86c01a",
+      "uncompressed_sha256": "4b5b85ed29639d31e8cdbca127b185d0a15b2b7cea78a97b2a18c47c063e6c7a"
+    }
+  ],
+  "cpu_report_sha256": "7f7ebc576dad3778d6db260655d2e02a5bd99d76bbfa4fb881125cfb13fb36e1",
+  "baseline_report_sha256": "e01df8bc0b299e4f4ef55c63f7e40f486405dbd1e23acb343f1d86af6ea16906"
+}
