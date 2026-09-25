@@ -36,25 +36,29 @@ def main():
     p.add_argument('--slot-queue',action='store_true',help='Install the experimental four-slot player after normal cold bootstrap')
     p.add_argument('--uncontended-frame',action='store_true',help='With --slot-queue, relocate compact frame/cache to bank 2')
     p.add_argument('--compiled-masks',action='store_true',help='With --slot-queue, generate sparse-mask routines in bank 7')
+    p.add_argument('--idle-masks',action='store_true',help='With compiled masks, skip untouched bitmap stripes using RAM flags')
     p.add_argument('--fixture-zx0',type=Path,help='ZX0 executable for compressing debugger-only startup patches')
     args=p.parse_args(); m=json.loads(args.metadata.read_text()); lab=m['player_labels']
     patches=[];nonce=secrets.randbits(30)
     if args.uncontended_frame and not args.slot_queue:raise ValueError('relocation requires --slot-queue')
     if args.compiled_masks and not args.slot_queue:raise ValueError('compiled masks require --slot-queue')
+    if args.idle_masks and not args.compiled_masks:raise ValueError('idle masks require --compiled-masks')
     if args.slot_queue:
         if args.continuation_snapshot or args.export_warm_ram:raise ValueError('queue fixture requires an independent cold boot')
         from slot_queue_player import build
         patches,m=build(m,args.raw.read_bytes(),uncontended=args.uncontended_frame,
-            compiled_masks=args.compiled_masks);lab=m['player_labels']
+            compiled_masks=args.compiled_masks,idle_masks=args.idle_masks);lab=m['player_labels']
     if not m.get('independently_bootable',True) and not args.continuation_snapshot:
         raise ValueError('continuation disk requires RAM exported from its predecessor')
     if m.get('required_trdos_sha256') and hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest()!=m['required_trdos_sha256']:
         raise ValueError('fast reader requires its verified TR-DOS ROM')
     lines=['base 10','set $running 0','set $dump 65537']; widths={}; events=[]
-    def event(pc,tag,expressions,stop=False,after=(),breakpoint=None):
+    if args.idle_masks: lines.append('set $n 0')
+    def event(pc,tag,expressions,stop=False,after=(),breakpoint=None,before=()):
         index=len(events)+1; events.append((pc,tag)); widths[tag]=len(expressions)
-        lines.extend([breakpoint or f'breakpoint 0x{pc:04x}',f'commands {index}',f'print {tag}'])
+        lines.extend([breakpoint or f'breakpoint {pc}',f'commands {index}',f'print {tag}'])
         if tag==100: lines.append('set $running 1')
+        lines.extend(before)
         lines.extend('print '+e for e in expressions)
         lines.extend(after)
         lines.extend(['exit 77' if stop else 'continue','end'])
@@ -81,10 +85,18 @@ def main():
     # Sample after drawing returns to the bank-7 clock; publication itself
     # is allowed to interrupt a disk read with another bank at C000.
     for address in (0x4000,0xc000): sample_expr += [f'[{address+i}]' for i in samples]
+    if args.idle_masks:
+        # Old traces exported both screens then discarded the non-target 80
+        # samples. Export the same target addresses directly to leave room for
+        # the larger installer in Windows' 32767-character command line.
+        sample_expr=[f'[$s+{i}]' for i in samples]
     # Stop after OUT has executed: includes real I/O contention, without
     # adding an assumed 12 T to the preceding instruction boundary.
     event(lab['publish_out']+2,150,[stamp,'z80:a',mem(lab['elapsed_fields']),mem(lab['late_fields'])])
-    for index,pc in enumerate(m['native_ready_pcs']): event(pc,151+index,[stamp,'ula:mem7ffd']+sample_expr)
+    for index,pc in enumerate(m['native_ready_pcs']):
+        event(pc,151+index,[stamp,'ula:mem7ffd']+sample_expr,
+            before=['set $s 49152-32768*($n&1)'] if args.idle_masks else (),
+            after=['set $n $n+1'] if args.idle_masks else ())
     event(lab['audio_write_loop'],140,[stamp,'[z80:hl]','[z80:hl+1]'])
     event(lab['audio_tick_done'],143,[stamp])
     event(lab['audio_tick_empty'],144,[stamp])
@@ -136,10 +148,13 @@ def main():
         lines[-1]=f'condition {len(events)} $running == 0 && $dump == 65536'
     # Documented debugger abbreviations keep the patch fixture below Windows' limit.
     lines=[s.replace('print ','pr ',1) if s.startswith('print ') else s for s in lines]
-    abbreviations={'set ':'se ','breakpoint ':'br ','condition ':'cond ','continue':'co'}
+    abbreviations={'set ':'se ','breakpoint ':'br ','condition ':'cond ','commands ':'com ','exit ':'ex ','continue':'co'}
     for i,line in enumerate(lines):
         for long,short in abbreviations.items():
             if line.startswith(long):line=short+line[len(long):];break
+        # '[' delimits a memory expression without whitespace; verified with
+        # Fuse 1.9.0. Keep every pixel/sector expression and breakpoint intact.
+        if line.startswith('pr ['): line='pr['+line[4:]
         lines[i]=line.replace('$running','$r').replace(' == ','==')
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.with_suffix('.debugger.txt').write_text('\n'.join(lines))
@@ -182,7 +197,7 @@ def main():
             pubs.append(dict(tstate=v[0],page=v[1],field=v[2],late_fields=v[3]))
         elif tag in (151,152):
             frame=m['frame_start']+native_count
-            samples_at=v[2:2+len(samples)] if native_count%2 else v[2+len(samples):]
+            samples_at=v[2:] if args.idle_masks else (v[2:2+len(samples)] if native_count%2 else v[2+len(samples):])
             wanted=display_screen(states[frame].tobytes(),black_borders=True)
             bad=[i for i,x in zip(samples,samples_at) if x!=wanted[i]]
             # Bar occupies bitmap offsets 10e0/11e0 and attribute 1ae0.
@@ -302,6 +317,9 @@ def main():
         report['fixture_installer']=install_report
         if args.uncontended_frame:report['uncontended_frame']=m['uncontended_frame']
         if args.compiled_masks:report['compiled_masks']=m['compiled_masks']
+        if args.idle_masks:
+            report['idle_masks']=m['idle_masks']
+            report['native_sample_trace']='target-only; same 80 offsets and per-disk parity as the two-screen trace'
         report['slot_queue_fixture']={k:v for k,v in m.items() if k.startswith('slot_queue_') or k in
             ('queue_labels','producer_labels','decoder_labels','clock_labels','packet_labels','native_ready_pcs')}
     if args.continuation_snapshot:

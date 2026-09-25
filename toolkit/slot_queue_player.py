@@ -18,7 +18,9 @@ import pipelined_frame_z80 as video
 import bulk_frame_z80 as packet
 
 
-def build(metadata,raw,*,uncontended=False,compiled_masks=False):
+def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False):
+    if idle_masks and not compiled_masks:
+        raise ValueError('idle stripes require compiled metadata')
     if compiled_masks and uncontended:
         raise ValueError('combined mask and relocated-frame fixture is not verified')
     m=deepcopy(metadata)
@@ -55,6 +57,33 @@ def build(metadata,raw,*,uncontended=False,compiled_masks=False):
             initialize_cpu_tstates=201509,initialization_before_playback=True,
             baseline_partial_group='370+8*popcount',partial_group='276+5*popcount-2*LSB',
             zero_group_tstates=161,full_group_tstates=227,decode_overhead_tstates=158)
+    if idle_masks:
+        from benchmark_static_cache_borders import OPTIONS
+        from frame_output_pipeline import Harness
+        import causal_tile_z80 as reconstruction
+        import attribute_groups_z80 as groups
+        import idle_masks_z80 as idle
+        f=Harness(tables,mapping,metadata_mode='idle',deferred_publish=True,dynamic_source=True,
+            dynamic_metadata=True,split_prepare=True,page_entry=video.PAGE,preloaded_mask='idle',
+            static_cache_borders=m['static_cache_borders'],carry_huffman=m['carry_huffman'],
+            register_fragments=m['register_fragments'],**OPTIONS)
+        if f.w!=h.frame.w or f.draw_code!=h.frame.draw_code:
+            raise ValueError('idle fixture changed the wrapper ABI or native renderer')
+        # Reassemble all references to reconstruction state, including attribute
+        # helpers. Bank-6 lookup tables are unchanged; install fixed RAM only.
+        fixed=[(reconstruction.CODE,f.recon_code),(f.w['run'],f.wrapper_code),(groups.CODE,f.group_code)]
+        fixed += [(a,b) for a,b in f.protected_regions if a<0xc000]
+        changes={a+i:v for a,b in fixed for i,v in enumerate(b) if h.cpu.read8(a+i)!=v}
+        for address in sorted(changes): regions.append((address,bytes([changes[address]])))
+        mask_code,mask_labels,idle_rows=idle.build(vector_pointer=f.w['vector_pointer'])
+        regions.append((idle.CODE,mask_code));mask_rows+=idle_rows
+        # These rows document the changed fixed CPU path; metadata generation
+        # rows are already present in mask_rows.
+        mask_rows += [row for row in f.instructions.values() if row['phase'] in ('reconstruct','handoff','attribute_groups')]
+        m['idle_masks']=dict(labels=mask_labels,reconstruction_labels=f.recon,
+            code_sha256=sha(mask_code),code_bytes=len(mask_code),fixed_patch_bytes=len(changes),
+            flags_start=idle.IDLE_BASE+1,flags_bytes=12,vector_pointer=f.w['vector_pointer'],
+            extra_packet_bytes=0,poisoned_masks_cpu_test_required=True)
     vregions,vl,vrows=video.build_video(h.frame.draw,z,h.audio,irq_safe_paging=True)
     regions += [(a,b) for a,b in vregions if a==video.VIDEO]
     code,bridge,pl,rows=packet.build(z,q,h.frame.w,h.frame.draw,mask_labels,h.audio,

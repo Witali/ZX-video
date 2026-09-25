@@ -145,9 +145,15 @@ def initializer(draw, *, constant_attribute_borders=False):
 
 
 class PipelineCPU(NativeCPU):
+    unreadable_bitmap_regions = ()
+    metadata_extra_writes = ()
+
     def read8(self, address):
         if self.guarding and INPUT <= address < INPUT_END and address >= self.input_end:
             raise AssertionError(f'coded input overread: {address:04x}')
+        if self.guarding and self.phase == 'reconstruct' and BITMAP <= address < ATTRS:
+            if any(first <= address < last for first, last in self.unreadable_bitmap_regions):
+                raise AssertionError(f'stale idle bitmap mask read: {address:04x}')
         return super().read8(address)
 
     def write8(self, address, value):
@@ -159,7 +165,11 @@ class PipelineCPU(NativeCPU):
             compact = self.phase == 'reconstruct' and (0x6400 <= address < 0x7300
                 or 0x7400 <= address < 0x7800 and 1 <= (address & 63) <= 32)
             masks = self.phase == 'metadata' and (BITMAP <= address < INPUT
-                or metadata.FLAGS <= address < metadata.FLAGS+64)
+                or metadata.FLAGS <= address < metadata.FLAGS+64
+                or any(first <= address < last for first,last in self.metadata_extra_writes))
+            if self.guarding and self.phase == 'metadata' and BITMAP <= address < ATTRS:
+                if any(first <= address < last for first,last in self.unreadable_bitmap_regions):
+                    raise AssertionError(f'idle mask was unnecessarily written: {address:04x}')
             states = any(first <= address < last for first, last in self.state_regions)
             if not (cold or pixels or compact or masks or states or STACK-96 <= address < STACK
                     or self.phase == 'output' and output.MASK <= address < output.MASK+80):
@@ -171,7 +181,10 @@ class PipelineCPU(NativeCPU):
 class Harness:
     def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False,
                  constant_attribute_borders=False,skip_black_borders=False,encoded_noop_runs=False,skip_static_stripes=False,
-                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,sparse_patches=False,fast_noop_scan=False,static_cache_borders=False,carry_huffman=False,register_fragments=False):
+                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,sparse_patches=False,fast_noop_scan=False,static_cache_borders=False,carry_huffman=False,register_fragments=False,metadata_mode='standard'):
+        if metadata_mode not in ('standard','compiled','idle') or metadata_mode != 'standard' and not decode_metadata:
+            raise ValueError('metadata mode requires a matching decoded-metadata stage')
+        self.metadata_mode = metadata_mode
         if fast_noop_scan and BITMAP % 2:
             raise ValueError('fast scanner requires even bitmap-mask addresses')
         if attribute_flags and not (decode_metadata and raw_attributes):
@@ -196,7 +209,8 @@ class Harness:
             fast_fragments=True, unrolled_motion=True, split_literals=True, raw_attributes=raw_attributes,
             selective_cache=selective_cache,skip_noop_runs=skip_noop_runs,encoded_noop_runs=encoded_noop_runs,
             skip_static_stripes=skip_static_stripes,cache_columns=cache_columns,unrolled_cache=unrolled_cache,
-            attribute_flags=attribute_flags,sparse_patches=sparse_patches,fast_noop_scan=fast_noop_scan,static_cache_borders=static_cache_borders,carry_huffman=carry_huffman,register_fragments=register_fragments)
+            attribute_flags=attribute_flags,sparse_patches=sparse_patches,fast_noop_scan=fast_noop_scan,static_cache_borders=static_cache_borders,carry_huffman=carry_huffman,register_fragments=register_fragments,
+            idle_stripe_flags=metadata_mode == 'idle')
         if self.recon['end'] > output.CODE:
             raise ValueError('reconstruction overlaps native renderer')
         ai=[]; ar=[]; attribute_entry=None
@@ -251,6 +265,32 @@ class Harness:
         if (self.cpu.port_7ffd != 0x16 or bytes(self.cpu.banks[5][:6912]) != initial_screen
                 or bytes(self.cpu.banks[7][:6912]) != initial_screen or any(self.cpu.banks[5][0x2400:0x3800])):
             raise AssertionError('cold initialization differs')
+        self.metadata_entry = metadata.CODE
+        self.metadata_formula = metadata.expected_tstates
+        if metadata_mode != 'standard':
+            import compiled_masks_z80 as compiled
+            import idle_masks_z80 as idle
+            regions, labels, rows, generated = compiled.build()
+            self.metadata_entry = labels['decode']
+            self.metadata_formula = compiled.expected_tstates
+            if metadata_mode == 'idle':
+                code, labels_idle, rows_idle = idle.build()
+                regions.append((idle.CODE,code)); rows += rows_idle
+                self.metadata_entry = labels_idle['decode']
+            self.cpu.guarding = False; self.cpu.port_7ffd = 0x17
+            for first,blob in regions:
+                for i,value in enumerate(blob): self.cpu.write8(first+i,value)
+            for row in rows:
+                if row['address'] in self.instructions: raise ValueError('metadata code overlap')
+                self.instructions[row['address']] = dict(row,phase='metadata')
+            self.cpu.metadata_extra_writes = [(compiled.TABLE,compiled.END)]
+            self.metadata_init_result = self.execute(labels['initialize'])
+            if self.metadata_init_result['total_tstates'] != 201509: raise AssertionError('compiled initialization timing differs')
+            for first,blob in generated:
+                if bytes(self.cpu.read8(first+i) for i in range(len(blob))) != blob:
+                    raise AssertionError('compiled tables differ')
+            self.cpu.metadata_extra_writes = [(idle.IDLE_BASE+1,idle.IDLE_BASE+13)] if metadata_mode == 'idle' else []
+            self.cpu.port_7ffd = 0x16
         self.histogram.clear()
 
     def execute(self, entry, interrupt=None):
@@ -307,19 +347,38 @@ class Harness:
             for i, value in enumerate(cache_map):
                 cpu.write8(reconstruction.CACHE_MAP+i, value)
         meta_result = None
+        physical_bitmap = bitmap
         if self.decode_metadata:
             if encoded_metadata is None or len(encoded_metadata) > INPUT_END-INPUT:
                 raise ValueError('serialized metadata required')
             for i, value in enumerate(encoded_metadata):
                 cpu.write8(INPUT+i, value)
             cpu.input_end = INPUT+len(encoded_metadata)
+            meta_page = cpu.port_7ffd
+            if self.metadata_mode != 'standard': cpu.port_7ffd = (meta_page & ~7) | 7
+            if self.metadata_mode == 'idle':
+                import idle_masks_z80 as idle
+                for i,value in enumerate(vectors): cpu.write8(VECTORS+i,value)
+                word(cpu,idle.VECTOR_POINTER,VECTORS)
+                idle_flags = idle.idle_stripes(vectors,bitmap)
+                cpu.unreadable_bitmap_regions = [(BITMAP+i*32,BITMAP+i*32+32) for i,skip in enumerate(idle_flags) if skip]
+                physical_bitmap = bytearray(bitmap)
+                for i,skip in enumerate(idle_flags):
+                    if skip: physical_bitmap[i*32:i*32+32] = b'\xa5'*32
+                physical_bitmap = bytes(physical_bitmap)
+                for i,value in enumerate(physical_bitmap): cpu.write8(BITMAP+i,value ^ (0 if idle_flags[i//32] else 255))
+                wanted_ticks = idle.expected_tstates(encoded_metadata,vectors)
+            else: wanted_ticks = self.metadata_formula(encoded_metadata)
             cpu.set_hl(INPUT)
-            meta_result = self.execute(metadata.CODE, interrupt)
-            if (cpu.hl() != cpu.input_end or meta_result['total_tstates'] != metadata.expected_tstates(encoded_metadata)
-                    or bytes(cpu.read8(BITMAP+i) for i in range(480)) != bitmap+attrs
+            meta_result = self.execute(self.metadata_entry, interrupt)
+            cpu.guarding = False
+            if (cpu.hl() != cpu.input_end or meta_result['total_tstates'] != wanted_ticks
+                    or bytes(cpu.read8(BITMAP+i) for i in range(480)) != physical_bitmap+attrs
                     or any(cpu.read8(metadata.FLAGS+60+i) for i in range(4))):
                 raise AssertionError('metadata decoder differs')
-            cpu.guarding = False
+            if self.metadata_mode == 'idle' and bytes(cpu.read8(idle.IDLE_BASE+1+i) for i in range(12)) != bytes(255*flag for flag in reversed(idle_flags)):
+                raise AssertionError('idle stripe flags differ')
+            cpu.port_7ffd = meta_page
         for base, blob in ((VECTORS, vectors), (BITMAP, bitmap), (ATTRS, attrs), (INPUT, data), (MAP, mask)):
             if self.decode_metadata and base in (BITMAP, ATTRS):
                 continue
@@ -349,7 +408,7 @@ class Harness:
                 or cpu.port_7ffd != page ^ 8 or result['page_writes'] != [page | 1, page, page ^ 8]
                 or bytes(cpu.banks[5][0x1b00:0x2400]) != b'\xa5'*0x900):
             raise AssertionError('pipeline cursor/timing/paging/TR-DOS contract differs')
-        for base, blob in ((VECTORS, vectors), (BITMAP, bitmap), (ATTRS, attrs), (INPUT, data), (MAP, mask)):
+        for base, blob in ((VECTORS, vectors), (BITMAP, physical_bitmap), (ATTRS, attrs), (INPUT, data), (MAP, mask)):
             if bytes(cpu.read8(base+i) for i in range(len(blob))) != blob:
                 raise AssertionError('input/metadata/map modified')
         if self.selective_cache:

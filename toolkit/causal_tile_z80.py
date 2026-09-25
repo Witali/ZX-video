@@ -212,7 +212,9 @@ def patch_delta_tstates(vectors, masks):
         for v, b, c in zip(vectors, masks[::2], masks[1::2]) if v <= 81 and (b or c))
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False, fast_noop_scan=False, static_cache_borders=False,carry_huffman=False,register_fragments=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False, fast_noop_scan=False, static_cache_borders=False,carry_huffman=False,register_fragments=False,idle_stripe_flags=False):
+    if idle_stripe_flags and not skip_static_stripes:
+        raise ValueError('idle flags require the static stripe handler')
     if register_fragments and not fast_fragments:
         raise ValueError('register fragments require fast fragments')
     if static_cache_borders and not skip_static_stripes:
@@ -353,7 +355,15 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     load('LD (cache_read),HL', 0x22, 'cache_read', 16)
     load('LD (cache_write),DE', (0xed, 0x53), 'cache_write', 20)
     a.label('stripe')
-    if skip_static_stripes:
+    if idle_stripe_flags:
+        from idle_masks_z80 import IDLE_BASE
+        load('LD A,(stripes_left)',0x3a,'stripes_left',13)
+        emit('OR idle base',[0xf6,IDLE_BASE & 255],7)
+        emit('LD L,A',[0x6f],4); emit('LD H,idle page',[0x26,IDLE_BASE >> 8],7)
+        # A still contains F1..FC. FFh marks idle; zero marks active.
+        emit('AND (HL)',[0xa6],7)
+        jump('JP NZ,static_edge',0xc2,'static_edge',10)
+    elif skip_static_stripes:
         load('LD A,(stripes_left)',0x3a,'stripes_left',13)
         emit('CP first stripe',[0xfe,12],7); jump('JP Z,static_edge',0xca,'static_edge',10)
         emit('DEC A (last stripe)',[0x3d],4); jump('JP Z,static_edge',0xca,'static_edge',10)
@@ -1122,8 +1132,10 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     if skip_static_stripes:
         a = MiniAssembler(STATIC_EDGE); a.labels.update(labels)
         stage = 'static_edge'
-        load('LD HL,(vectors)',0x2a,'vectors',16); emit('LD A,(HL)',[0x7e],7)
-        emit('OR A',[0xb7],4); jump('JP NZ,regular_stripe',0xc2,'regular_stripe',10)
+        load('LD HL,(vectors)',0x2a,'vectors',16)
+        if not idle_stripe_flags:
+            emit('LD A,(HL)',[0x7e],7)
+            emit('OR A',[0xb7],4); jump('JP NZ,regular_stripe',0xc2,'regular_stripe',10)
         wordop('LD DE,16',0x11,16,10); emit('ADD HL,DE',[0x19],11)
         load('LD (vectors),HL',0x22,'vectors',16)
         emit('LD E,32',[0x1e,32],7)
