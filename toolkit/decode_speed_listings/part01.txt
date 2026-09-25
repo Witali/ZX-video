@@ -1,0 +1,3194 @@
+; Assembled reconstruction: actual bytes + generator instruction/timing table.
+; This is an assembler listing, not an independent disassembler.
+; T values are uncontended instruction timings; list means branch alternatives.
+scan_zero_run:
+7A00  ED 5B 98 8F  LD DE,(bitmap_masks)               ; 20 T
+7A04  EB           EX DE,HL                           ; 4 T
+7A05  46           LD B,(HL)                          ; 7 T
+7A06  2C           INC L                              ; 4 T
+7A07  4E           LD C,(HL)                          ; 7 T
+7A08  2D           DEC L                              ; 4 T
+7A09  78           LD A,B                             ; 4 T
+7A0A  B1           OR C                               ; 4 T
+7A0B  C2 44 7A     JP NZ,scan_zero_patch              ; 10 T
+7A0E  3A A7 8F     LD A,(tiles_left)                  ; 13 T
+7A11  47           LD B,A                             ; 4 T
+7A12  0E 00        LD C,0                             ; 7 T
+scan_skip:
+7A14  13           INC DE                             ; 6 T
+7A15  2C           INC L                              ; 4 T
+7A16  23           INC HL                             ; 6 T
+7A17  0C           INC C                              ; 4 T
+7A18  10 1F        DJNZ scan_check                    ; [8, 13] T
+scan_done:
+7A1A  22 98 8F     LD (bitmap_masks),HL               ; 16 T
+7A1D  ED 53 96 8F  LD (vectors),DE                    ; 20 T
+7A21  78           LD A,B                             ; 4 T
+7A22  32 A7 8F     LD (tiles_left),A                  ; 13 T
+7A25  2A 9C 8F     LD HL,(target)                     ; 16 T
+7A28  79           LD A,C                             ; 4 T
+7A29  87           ADD A,A                            ; 4 T
+7A2A  5F           LD E,A                             ; 4 T
+7A2B  16 00        LD D,0                             ; 7 T
+7A2D  19           ADD HL,DE                          ; 11 T
+7A2E  22 9C 8F     LD (target),HL                     ; 16 T
+7A31  78           LD A,B                             ; 4 T
+7A32  B7           OR A                               ; 4 T
+7A33  CA 80 81     JP Z,stripe_done                   ; 10 T
+7A36  C3 49 81     JP tile                            ; 10 T
+scan_check:
+7A39  1A           LD A,(DE)                          ; 7 T
+7A3A  B6           OR (HL)                            ; 7 T
+7A3B  2C           INC L                              ; 4 T
+7A3C  B6           OR (HL)                            ; 7 T
+7A3D  2B           DEC HL                             ; 6 T
+7A3E  CA 14 7A     JP Z,scan_skip                     ; 10 T
+7A41  C3 1A 7A     JP scan_done                       ; 10 T
+scan_zero_patch:
+7A44  13           INC DE                             ; 6 T
+7A45  ED 53 96 8F  LD (vectors),DE                    ; 20 T
+7A49  2C           INC L                              ; 4 T
+7A4A  23           INC HL                             ; 6 T
+7A4B  22 98 8F     LD (bitmap_masks),HL               ; 16 T
+7A4E  CD E8 8D     CALL patches_nonzero               ; 17 T
+7A51  C3 71 81     JP tile_done                       ; 10 T
+static_edge:
+7A80  2A 96 8F     LD HL,(vectors)                    ; 16 T
+7A83  7E           LD A,(HL)                          ; 7 T
+7A84  B7           OR A                               ; 4 T
+7A85  C2 44 81     JP NZ,regular_stripe               ; 10 T
+7A88  11 10 00     LD DE,16                           ; 10 T
+7A8B  19           ADD HL,DE                          ; 11 T
+7A8C  22 96 8F     LD (vectors),HL                    ; 16 T
+7A8F  1E 20        LD E,32                            ; 7 T
+7A91  2A 98 8F     LD HL,(bitmap_masks)               ; 16 T
+7A94  19           ADD HL,DE                          ; 11 T
+7A95  22 98 8F     LD (bitmap_masks),HL               ; 16 T
+7A98  2A 9C 8F     LD HL,(target)                     ; 16 T
+7A9B  19           ADD HL,DE                          ; 11 T
+7A9C  22 9C 8F     LD (target),HL                     ; 16 T
+7A9F  C3 80 81     JP stripe_done                     ; 10 T
+attribute:
+8000  16 E0        LD D,attribute_root_page           ; 7 T
+8002  C3 09 80     JP peek                            ; 10 T
+bitmap:
+8005  6F           LD L,A                             ; 4 T
+8006  26 B9        LD H,map_page                      ; 7 T
+8008  56           LD D,(HL)                          ; 7 T
+peek:
+8009  61           LD H,C                             ; 4 T
+800A  DD 6E 01     LD L,(IX+1)                        ; 19 T
+800D  7E           LD A,(HL)                          ; 7 T
+800E  CB 9C        RES 3,H                            ; 8 T
+8010  DD 6E 00     LD L,(IX+0)                        ; 19 T
+8013  B6           OR (HL)                            ; 7 T
+8014  6F           LD L,A                             ; 4 T
+8015  62           LD H,D                             ; 4 T
+8016  5E           LD E,(HL)                          ; 7 T
+8017  24           INC H                              ; 4 T
+8018  7E           LD A,(HL)                          ; 7 T
+8019  B7           OR A                               ; 4 T
+801A  28 0A        JR Z,long                          ; [7, 12] T
+801C  81           ADD A,C                            ; 4 T
+801D  30 02        JR NC,short_position               ; [7, 12] T
+801F  DD 23        INC IX                             ; 10 T
+short_position:
+8021  F6 F8        OR F8h                             ; 7 T
+8023  4F           LD C,A                             ; 4 T
+8024  7B           LD A,E                             ; 4 T
+8025  C9           RET                                ; 10 T
+long:
+8026  DD 23        INC IX                             ; 10 T
+8028  43           LD B,E                             ; 4 T
+8029  C5           PUSH BC                            ; 11 T
+802A  79           LD A,C                             ; 4 T
+802B  FE F8        CP bit_base                        ; 7 T
+802D  28 12        JR Z,aligned                       ; [7, 12] T
+802F  61           LD H,C                             ; 4 T
+long_shift_page:
+8030  CB 9C        RES 3,H (long offset)              ; 8 T
+8032  DD 6E 00     LD L,(IX+0)                        ; 19 T
+8035  7E           LD A,(HL)                          ; 7 T
+8036  5F           LD E,A                             ; 4 T
+8037  69           LD L,C                             ; 4 T
+8038  26 BA        LD H,marker_page                   ; 7 T
+803A  7E           LD A,(HL)                          ; 7 T
+803B  B3           OR E                               ; 4 T
+803C  47           LD B,A                             ; 4 T
+803D  DD 23        INC IX                             ; 10 T
+803F  18 02        JR ready                           ; 12 T
+aligned:
+8041  06 80        LD B,80h                           ; 7 T
+ready:
+8043  7A           LD A,D                             ; 4 T
+8044  D6 C0        SUB C0h                            ; 7 T
+8046  6F           LD L,A                             ; 4 T
+8047  26 BA        LD H,tail_pointer_page             ; 7 T
+8049  5E           LD E,(HL)                          ; 7 T
+804A  2C           INC L                              ; 4 T
+804B  56           LD D,(HL)                          ; 7 T
+804C  EB           EX DE,HL                           ; 4 T
+804D  7D           LD A,L                             ; 4 T
+804E  C6 0E        ADD A,tail_header_bytes            ; 7 T
+8050  5F           LD E,A                             ; 4 T
+8051  7C           LD A,H                             ; 4 T
+8052  CE 00        ADC A,0                            ; 7 T
+8054  57           LD D,A                             ; 4 T
+8055  F1           POP AF                             ; 10 T
+8056  CB 20        SLA B                              ; 8 T
+8058  20 07        JR NZ,have_bit                     ; [7, 12] T
+805A  DD 46 00     LD B,(IX+0)                        ; 19 T
+805D  DD 23        INC IX                             ; 10 T
+805F  CB 10        RL B                               ; 8 T
+have_8:
+8061  17           RLA                                ; 4 T
+8062  96           SUB (HL)                           ; 7 T
+8063  23           INC HL                             ; 6 T
+8064  DA D5 80     JP C,tail_leaf                     ; 10 T
+8067  23           INC HL                             ; 6 T
+8068  CB 20        SLA B                              ; 8 T
+806A  20 07        JR NZ,have_bit                     ; [7, 12] T
+806C  DD 46 00     LD B,(IX+0)                        ; 19 T
+806F  DD 23        INC IX                             ; 10 T
+8071  CB 10        RL B                               ; 8 T
+have_9:
+8073  17           RLA                                ; 4 T
+8074  96           SUB (HL)                           ; 7 T
+8075  23           INC HL                             ; 6 T
+8076  DA D5 80     JP C,tail_leaf                     ; 10 T
+8079  23           INC HL                             ; 6 T
+807A  CB 20        SLA B                              ; 8 T
+807C  20 07        JR NZ,have_bit                     ; [7, 12] T
+807E  DD 46 00     LD B,(IX+0)                        ; 19 T
+8081  DD 23        INC IX                             ; 10 T
+8083  CB 10        RL B                               ; 8 T
+have_10:
+8085  17           RLA                                ; 4 T
+8086  96           SUB (HL)                           ; 7 T
+8087  23           INC HL                             ; 6 T
+8088  DA D5 80     JP C,tail_leaf                     ; 10 T
+808B  23           INC HL                             ; 6 T
+808C  CB 20        SLA B                              ; 8 T
+808E  20 07        JR NZ,have_bit                     ; [7, 12] T
+8090  DD 46 00     LD B,(IX+0)                        ; 19 T
+8093  DD 23        INC IX                             ; 10 T
+8095  CB 10        RL B                               ; 8 T
+have_11:
+8097  17           RLA                                ; 4 T
+8098  96           SUB (HL)                           ; 7 T
+8099  23           INC HL                             ; 6 T
+809A  DA D5 80     JP C,tail_leaf                     ; 10 T
+809D  23           INC HL                             ; 6 T
+809E  CB 20        SLA B                              ; 8 T
+80A0  20 07        JR NZ,have_bit                     ; [7, 12] T
+80A2  DD 46 00     LD B,(IX+0)                        ; 19 T
+80A5  DD 23        INC IX                             ; 10 T
+80A7  CB 10        RL B                               ; 8 T
+have_12:
+80A9  17           RLA                                ; 4 T
+80AA  96           SUB (HL)                           ; 7 T
+80AB  23           INC HL                             ; 6 T
+80AC  DA D5 80     JP C,tail_leaf                     ; 10 T
+80AF  23           INC HL                             ; 6 T
+80B0  CB 20        SLA B                              ; 8 T
+80B2  20 07        JR NZ,have_bit                     ; [7, 12] T
+80B4  DD 46 00     LD B,(IX+0)                        ; 19 T
+80B7  DD 23        INC IX                             ; 10 T
+80B9  CB 10        RL B                               ; 8 T
+have_13:
+80BB  17           RLA                                ; 4 T
+80BC  96           SUB (HL)                           ; 7 T
+80BD  23           INC HL                             ; 6 T
+80BE  DA D5 80     JP C,tail_leaf                     ; 10 T
+80C1  23           INC HL                             ; 6 T
+80C2  CB 20        SLA B                              ; 8 T
+80C4  20 07        JR NZ,have_bit                     ; [7, 12] T
+80C6  DD 46 00     LD B,(IX+0)                        ; 19 T
+80C9  DD 23        INC IX                             ; 10 T
+80CB  CB 10        RL B                               ; 8 T
+have_14:
+80CD  17           RLA                                ; 4 T
+80CE  96           SUB (HL)                           ; 7 T
+80CF  23           INC HL                             ; 6 T
+80D0  DA D5 80     JP C,tail_leaf                     ; 10 T
+80D3  23           INC HL                             ; 6 T
+invalid:
+80D4  76           HALT invalid code                  ; 4 T
+tail_leaf:
+80D5  86           ADD A,(HL)                         ; 7 T
+80D6  83           ADD A,E                            ; 4 T
+80D7  5F           LD E,A                             ; 4 T
+80D8  30 01        JR NC,tail_symbol                  ; [7, 12] T
+80DA  14           INC D                              ; 4 T
+tail_symbol:
+80DB  1A           LD A,(DE)                          ; 7 T
+80DC  F5           PUSH AF                            ; 11 T
+80DD  78           LD A,B                             ; 4 T
+80DE  6F           LD L,A                             ; 4 T
+80DF  26 BB        LD H,position_page                 ; 7 T
+80E1  4E           LD C,(HL)                          ; 7 T
+80E2  79           LD A,C                             ; 4 T
+80E3  FE F8        CP bit_base                        ; 7 T
+80E5  28 02        JR Z,position_ready                ; [7, 12] T
+80E7  DD 2B        DEC IX                             ; 10 T
+position_ready:
+80E9  F1           POP AF                             ; 10 T
+80EA  C9           RET                                ; 10 T
+frame:
+80EB  DD 2A 94 8F  LD IX,(source)                     ; 20 T
+80EF  3A A4 8F     LD A,(bit_page)                    ; 13 T
+80F2  D9           EXX                                ; 4 T
+80F3  4F           LD C,A                             ; 4 T
+80F4  D9           EXX                                ; 4 T
+80F5  21 00 64     LD HL,compact_frame                ; 10 T
+80F8  22 9C 8F     LD (target),HL                     ; 16 T
+80FB  AF           XOR A                              ; 4 T
+80FC  32 A5 8F     LD (stripe_y),A                    ; 13 T
+80FF  3E 0C        LD A,12                            ; 7 T
+8101  32 A6 8F     LD (stripes_left),A                ; 13 T
+8104  3A AA 8F     LD A,(cache_enabled)               ; 13 T
+8107  B7           OR A                               ; 4 T
+8108  CA 38 81     JP Z,stripe                        ; 10 T
+810B  21 40 BA     LD HL,cache_map                    ; 10 T
+810E  22 AE 8F     LD (cache_mask_source),HL          ; 16 T
+8111  3E 80        LD A,80h                           ; 7 T
+8113  32 B0 8F     LD (cache_mask_shift),A            ; 13 T
+8116  2A 96 8F     LD HL,(vectors)                    ; 16 T
+8119  7E           LD A,(HL)                          ; 7 T
+811A  B7           OR A                               ; 4 T
+811B  CA 26 81     JP Z,top_cache_ready               ; 10 T
+811E  11 01 77     LD DE,top_virtual_cache_rows       ; 10 T
+8121  06 04        LD B,4                             ; 7 T
+8123  CD 35 88     CALL cache_zero                    ; 17 T
+top_cache_ready:
+8126  21 00 64     LD HL,compact_frame                ; 10 T
+8129  11 01 74     LD DE,cache_first_visible          ; 10 T
+812C  06 0C        LD B,12                            ; 7 T
+812E  CD 67 87     CALL cache_copy                    ; 17 T
+save_cache:
+8131  22 A0 8F     LD (cache_read),HL                 ; 16 T
+8134  ED 53 A2 8F  LD (cache_write),DE                ; 20 T
+stripe:
+8138  3A A6 8F     LD A,(stripes_left)                ; 13 T
+813B  FE 0C        CP first stripe                    ; 7 T
+813D  CA 80 7A     JP Z,static_edge                   ; 10 T
+8140  3D           DEC A (last stripe)                ; 4 T
+8141  CA 80 7A     JP Z,static_edge                   ; 10 T
+regular_stripe:
+8144  3E 10        LD A,16                            ; 7 T
+8146  32 A7 8F     LD (tiles_left),A                  ; 13 T
+tile:
+8149  2A 96 8F     LD HL,(vectors)                    ; 16 T
+814C  7E           LD A,(HL)                          ; 7 T
+814D  B7           OR A                               ; 4 T
+814E  CA 00 7A     JP Z,scan_zero_run                 ; 10 T
+8151  23           INC HL                             ; 6 T
+8152  22 96 8F     LD (vectors),HL                    ; 16 T
+8155  FE 52        CP intra_vector                    ; 7 T
+8157  D2 63 81     JP NC,literal_tile                 ; 10 T
+815A  CD 86 88     CALL motion                        ; 17 T
+815D  CD D9 8D     CALL patches                       ; 17 T
+8160  C3 71 81     JP tile_done                       ; 10 T
+literal_tile:
+8163  FE 55        CP fast_vector                     ; 7 T
+8165  D2 6E 81     JP NC,fast_tile                    ; 10 T
+8168  CD DF 81     CALL intra_above                   ; 17 T
+816B  C3 71 81     JP tile_done                       ; 10 T
+fast_tile:
+816E  CD DD 85     CALL fast_fragment                 ; 17 T
+tile_done:
+8171  2A 9C 8F     LD HL,(target)                     ; 16 T
+8174  2C           INC L                              ; 4 T
+8175  2C           INC L                              ; 4 T
+8176  22 9C 8F     LD (target),HL                     ; 16 T
+8179  21 A7 8F     LD HL,tiles_left                   ; 10 T
+817C  35           DEC (HL)                           ; 11 T
+817D  C2 49 81     JP NZ,tile                         ; 10 T
+stripe_done:
+8180  21 A6 8F     LD HL,stripes_left                 ; 10 T
+8183  35           DEC (HL)                           ; 11 T
+8184  CA D1 81     JP Z,frame_done                    ; 10 T
+8187  2A 9C 8F     LD HL,(target)                     ; 16 T
+818A  11 E0 00     LD DE,224                          ; 10 T
+818D  19           ADD HL,DE                          ; 11 T
+818E  22 9C 8F     LD (target),HL                     ; 16 T
+8191  3A A5 8F     LD A,(stripe_y)                    ; 13 T
+8194  C6 08        ADD A,8                            ; 7 T
+8196  32 A5 8F     LD (stripe_y),A                    ; 13 T
+8199  3A AA 8F     LD A,(cache_enabled)               ; 13 T
+819C  B7           OR A                               ; 4 T
+819D  CA 38 81     JP Z,stripe                        ; 10 T
+81A0  2A A0 8F     LD HL,(cache_read)                 ; 16 T
+81A3  ED 5B A2 8F  LD DE,(cache_write)                ; 20 T
+81A7  3A A6 8F     LD A,(stripes_left)                ; 13 T
+81AA  FE 01        CP 1                               ; 7 T
+81AC  28 08        JR Z,last_prefetch                 ; [7, 12] T
+81AE  06 08        LD B,8                             ; 7 T
+81B0  CD 67 87     CALL cache_copy                    ; 17 T
+81B3  C3 31 81     JP save_cache                      ; 10 T
+last_prefetch:
+81B6  06 04        LD B,4                             ; 7 T
+81B8  CD 67 87     CALL cache_copy                    ; 17 T
+81BB  D9           EXX                                ; 4 T
+81BC  2A 96 8F     LD HL,(vectors)                    ; 16 T
+81BF  7E           LD A,(HL)                          ; 7 T
+81C0  D9           EXX                                ; 4 T
+81C1  B7           OR A                               ; 4 T
+81C2  C2 C9 81     JP NZ,clear_bottom_cache           ; 10 T
+81C5  14           INC D                              ; 4 T
+81C6  C3 31 81     JP save_cache                      ; 10 T
+clear_bottom_cache:
+81C9  06 04        LD B,4                             ; 7 T
+81CB  CD 35 88     CALL cache_zero                    ; 17 T
+81CE  C3 31 81     JP save_cache                      ; 10 T
+frame_done:
+81D1  CD 03 8F     CALL attribute_pass                ; 17 T
+81D4  DD 22 94 8F  LD (source),IX                     ; 20 T
+81D8  D9           EXX                                ; 4 T
+81D9  79           LD A,C                             ; 4 T
+81DA  D9           EXX                                ; 4 T
+81DB  32 A4 8F     LD (bit_page),A                    ; 13 T
+81DE  C9           RET                                ; 10 T
+intra_above:
+81DF  2A 98 8F     LD HL,(bitmap_masks)               ; 16 T
+81E2  46           LD B,(HL)                          ; 7 T
+81E3  23           INC HL                             ; 6 T
+81E4  4E           LD C,(HL)                          ; 7 T
+81E5  23           INC HL                             ; 6 T
+81E6  22 98 8F     LD (bitmap_masks),HL               ; 16 T
+81E9  ED 5B 9C 8F  LD DE,(target)                     ; 20 T
+81ED  FE 53        CP left_vector                     ; 7 T
+81EF  CA 41 83     JP Z,intra_left                    ; 10 T
+81F2  FE 54        CP second_above_vector             ; 7 T
+81F4  CA 7F 84     JP Z,intra_above2                  ; 10 T
+81F7  7A           LD A,D                             ; 4 T
+81F8  FE 64        CP frame_page                      ; 7 T
+81FA  20 04        JR NZ,above_visible                ; [7, 12] T
+81FC  AF           XOR A                              ; 4 T
+81FD  C3 07 82     JP above_ready                     ; 10 T
+above_visible_0:
+8200  62           LD H,D                             ; 4 T
+8201  25           DEC H                              ; 4 T
+8202  7B           LD A,E                             ; 4 T
+8203  C6 E0        ADD A,224                          ; 7 T
+8205  6F           LD L,A                             ; 4 T
+8206  7E           LD A,(HL)                          ; 7 T
+above_ready_0:
+8207  CB 20        SLA B                              ; 8 T
+8209  D2 11 82     JP NC,intra_store                  ; 10 T
+820C  D9           EXX                                ; 4 T
+820D  CD 05 80     CALL bitmap                        ; 17 T
+8210  D9           EXX                                ; 4 T
+intra_store_0:
+8211  12           LD (DE),A                          ; 7 T
+8212  1C           INC E                              ; 4 T
+8213  7A           LD A,D                             ; 4 T
+8214  FE 64        CP frame_page                      ; 7 T
+8216  20 04        JR NZ,above_visible                ; [7, 12] T
+8218  AF           XOR A                              ; 4 T
+8219  C3 23 82     JP above_ready                     ; 10 T
+above_visible_1:
+821C  62           LD H,D                             ; 4 T
+821D  25           DEC H                              ; 4 T
+821E  7B           LD A,E                             ; 4 T
+821F  C6 E0        ADD A,224                          ; 7 T
+8221  6F           LD L,A                             ; 4 T
+8222  7E           LD A,(HL)                          ; 7 T
+above_ready_1:
+8223  CB 20        SLA B                              ; 8 T
+8225  D2 2D 82     JP NC,intra_store                  ; 10 T
+8228  D9           EXX                                ; 4 T
+8229  CD 05 80     CALL bitmap                        ; 17 T
+822C  D9           EXX                                ; 4 T
+intra_store_1:
+822D  12           LD (DE),A                          ; 7 T
+822E  7B           LD A,E                             ; 4 T
+822F  C6 1F        ADD A,31                           ; 7 T
+8231  5F           LD E,A                             ; 4 T
+8232  7B           LD A,E                             ; 4 T
+8233  D6 20        SUB 32                             ; 7 T
+8235  6F           LD L,A                             ; 4 T
+8236  62           LD H,D                             ; 4 T
+8237  7E           LD A,(HL)                          ; 7 T
+8238  CB 20        SLA B                              ; 8 T
+823A  D2 42 82     JP NC,intra_store                  ; 10 T
+823D  D9           EXX                                ; 4 T
+823E  CD 05 80     CALL bitmap                        ; 17 T
+8241  D9           EXX                                ; 4 T
+intra_store_2:
+8242  12           LD (DE),A                          ; 7 T
+8243  1C           INC E                              ; 4 T
+8244  7B           LD A,E                             ; 4 T
+8245  D6 20        SUB 32                             ; 7 T
+8247  6F           LD L,A                             ; 4 T
+8248  62           LD H,D                             ; 4 T
+8249  7E           LD A,(HL)                          ; 7 T
+824A  CB 20        SLA B                              ; 8 T
+824C  D2 54 82     JP NC,intra_store                  ; 10 T
+824F  D9           EXX                                ; 4 T
+8250  CD 05 80     CALL bitmap                        ; 17 T
+8253  D9           EXX                                ; 4 T
+intra_store_3:
+8254  12           LD (DE),A                          ; 7 T
+8255  7B           LD A,E                             ; 4 T
+8256  C6 1F        ADD A,31                           ; 7 T
+8258  5F           LD E,A                             ; 4 T
+8259  7B           LD A,E                             ; 4 T
+825A  D6 20        SUB 32                             ; 7 T
+825C  6F           LD L,A                             ; 4 T
+825D  62           LD H,D                             ; 4 T
+825E  7E           LD A,(HL)                          ; 7 T
+825F  CB 20        SLA B                              ; 8 T
+8261  D2 69 82     JP NC,intra_store                  ; 10 T
+8264  D9           EXX                                ; 4 T
+8265  CD 05 80     CALL bitmap                        ; 17 T
+8268  D9           EXX                                ; 4 T
+intra_store_4:
+8269  12           LD (DE),A                          ; 7 T
+826A  1C           INC E                              ; 4 T
+826B  7B           LD A,E                             ; 4 T
+826C  D6 20        SUB 32                             ; 7 T
+826E  6F           LD L,A                             ; 4 T
+826F  62           LD H,D                             ; 4 T
+8270  7E           LD A,(HL)                          ; 7 T
+8271  CB 20        SLA B                              ; 8 T
+8273  D2 7B 82     JP NC,intra_store                  ; 10 T
+8276  D9           EXX                                ; 4 T
+8277  CD 05 80     CALL bitmap                        ; 17 T
+827A  D9           EXX                                ; 4 T
+intra_store_5:
+827B  12           LD (DE),A                          ; 7 T
+827C  7B           LD A,E                             ; 4 T
+827D  C6 1F        ADD A,31                           ; 7 T
+827F  5F           LD E,A                             ; 4 T
+8280  7B           LD A,E                             ; 4 T
+8281  D6 20        SUB 32                             ; 7 T
+8283  6F           LD L,A                             ; 4 T
+8284  62           LD H,D                             ; 4 T
+8285  7E           LD A,(HL)                          ; 7 T
+8286  CB 20        SLA B                              ; 8 T
+8288  D2 90 82     JP NC,intra_store                  ; 10 T
+828B  D9           EXX                                ; 4 T
+828C  CD 05 80     CALL bitmap                        ; 17 T
+828F  D9           EXX                                ; 4 T
+intra_store_6:
+8290  12           LD (DE),A                          ; 7 T
+8291  1C           INC E                              ; 4 T
+8292  7B           LD A,E                             ; 4 T
+8293  D6 20        SUB 32                             ; 7 T
+8295  6F           LD L,A                             ; 4 T
+8296  62           LD H,D                             ; 4 T
+8297  7E           LD A,(HL)                          ; 7 T
+8298  CB 20        SLA B                              ; 8 T
+829A  D2 A2 82     JP NC,intra_store                  ; 10 T
+829D  D9           EXX                                ; 4 T
+829E  CD 05 80     CALL bitmap                        ; 17 T
+82A1  D9           EXX                                ; 4 T
+intra_store_7:
+82A2  12           LD (DE),A                          ; 7 T
+82A3  7B           LD A,E                             ; 4 T
+82A4  C6 1F        ADD A,31                           ; 7 T
+82A6  5F           LD E,A                             ; 4 T
+82A7  41           LD B,C                             ; 4 T
+82A8  7B           LD A,E                             ; 4 T
+82A9  D6 20        SUB 32                             ; 7 T
+82AB  6F           LD L,A                             ; 4 T
+82AC  62           LD H,D                             ; 4 T
+82AD  7E           LD A,(HL)                          ; 7 T
+82AE  CB 20        SLA B                              ; 8 T
+82B0  D2 B8 82     JP NC,intra_store                  ; 10 T
+82B3  D9           EXX                                ; 4 T
+82B4  CD 05 80     CALL bitmap                        ; 17 T
+82B7  D9           EXX                                ; 4 T
+intra_store_8:
+82B8  12           LD (DE),A                          ; 7 T
+82B9  1C           INC E                              ; 4 T
+82BA  7B           LD A,E                             ; 4 T
+82BB  D6 20        SUB 32                             ; 7 T
+82BD  6F           LD L,A                             ; 4 T
+82BE  62           LD H,D                             ; 4 T
+82BF  7E           LD A,(HL)                          ; 7 T
+82C0  CB 20        SLA B                              ; 8 T
+82C2  D2 CA 82     JP NC,intra_store                  ; 10 T
+82C5  D9           EXX                                ; 4 T
+82C6  CD 05 80     CALL bitmap                        ; 17 T
+82C9  D9           EXX                                ; 4 T
+intra_store_9:
+82CA  12           LD (DE),A                          ; 7 T
+82CB  7B           LD A,E                             ; 4 T
+82CC  C6 1F        ADD A,31                           ; 7 T
+82CE  5F           LD E,A                             ; 4 T
+82CF  7B           LD A,E                             ; 4 T
+82D0  D6 20        SUB 32                             ; 7 T
+82D2  6F           LD L,A                             ; 4 T
+82D3  62           LD H,D                             ; 4 T
+82D4  7E           LD A,(HL)                          ; 7 T
+82D5  CB 20        SLA B                              ; 8 T
+82D7  D2 DF 82     JP NC,intra_store                  ; 10 T
+82DA  D9           EXX                                ; 4 T
+82DB  CD 05 80     CALL bitmap                        ; 17 T
+82DE  D9           EXX                                ; 4 T
+intra_store_10:
+82DF  12           LD (DE),A                          ; 7 T
+82E0  1C           INC E                              ; 4 T
+82E1  7B           LD A,E                             ; 4 T
+82E2  D6 20        SUB 32                             ; 7 T
+82E4  6F           LD L,A                             ; 4 T
+82E5  62           LD H,D                             ; 4 T
+82E6  7E           LD A,(HL)                          ; 7 T
+82E7  CB 20        SLA B                              ; 8 T
+82E9  D2 F1 82     JP NC,intra_store                  ; 10 T
+82EC  D9           EXX                                ; 4 T
+82ED  CD 05 80     CALL bitmap                        ; 17 T
+82F0  D9           EXX                                ; 4 T
+intra_store_11:
+82F1  12           LD (DE),A                          ; 7 T
+82F2  7B           LD A,E                             ; 4 T
+82F3  C6 1F        ADD A,31                           ; 7 T
+82F5  5F           LD E,A                             ; 4 T
+82F6  7B           LD A,E                             ; 4 T
+82F7  D6 20        SUB 32                             ; 7 T
+82F9  6F           LD L,A                             ; 4 T
+82FA  62           LD H,D                             ; 4 T
+82FB  7E           LD A,(HL)                          ; 7 T
+82FC  CB 20        SLA B                              ; 8 T
+82FE  D2 06 83     JP NC,intra_store                  ; 10 T
+8301  D9           EXX                                ; 4 T
+8302  CD 05 80     CALL bitmap                        ; 17 T
+8305  D9           EXX                                ; 4 T
+intra_store_12:
+8306  12           LD (DE),A                          ; 7 T
+8307  1C           INC E                              ; 4 T
+8308  7B           LD A,E                             ; 4 T
+8309  D6 20        SUB 32                             ; 7 T
+830B  6F           LD L,A                             ; 4 T
+830C  62           LD H,D                             ; 4 T
+830D  7E           LD A,(HL)                          ; 7 T
+830E  CB 20        SLA B                              ; 8 T
+8310  D2 18 83     JP NC,intra_store                  ; 10 T
+8313  D9           EXX                                ; 4 T
+8314  CD 05 80     CALL bitmap                        ; 17 T
+8317  D9           EXX                                ; 4 T
+intra_store_13:
+8318  12           LD (DE),A                          ; 7 T
+8319  7B           LD A,E                             ; 4 T
+831A  C6 1F        ADD A,31                           ; 7 T
+831C  5F           LD E,A                             ; 4 T
+831D  7B           LD A,E                             ; 4 T
+831E  D6 20        SUB 32                             ; 7 T
+8320  6F           LD L,A                             ; 4 T
+8321  62           LD H,D                             ; 4 T
+8322  7E           LD A,(HL)                          ; 7 T
+8323  CB 20        SLA B                              ; 8 T
+8325  D2 2D 83     JP NC,intra_store                  ; 10 T
+8328  D9           EXX                                ; 4 T
+8329  CD 05 80     CALL bitmap                        ; 17 T
+832C  D9           EXX                                ; 4 T
+intra_store_14:
+832D  12           LD (DE),A                          ; 7 T
+832E  1C           INC E                              ; 4 T
+832F  7B           LD A,E                             ; 4 T
+8330  D6 20        SUB 32                             ; 7 T
+8332  6F           LD L,A                             ; 4 T
+8333  62           LD H,D                             ; 4 T
+8334  7E           LD A,(HL)                          ; 7 T
+8335  CB 20        SLA B                              ; 8 T
+8337  D2 3F 83     JP NC,intra_store                  ; 10 T
+833A  D9           EXX                                ; 4 T
+833B  CD 05 80     CALL bitmap                        ; 17 T
+833E  D9           EXX                                ; 4 T
+intra_store_15:
+833F  12           LD (DE),A                          ; 7 T
+8340  C9           RET                                ; 10 T
+intra_left:
+8341  7B           LD A,E                             ; 4 T
+8342  E6 1F        AND 31                             ; 7 T
+8344  20 04        JR NZ,left_visible                 ; [7, 12] T
+8346  AF           XOR A                              ; 4 T
+8347  C3 4E 83     JP left_ready                      ; 10 T
+left_visible_0:
+834A  62           LD H,D                             ; 4 T
+834B  6B           LD L,E                             ; 4 T
+834C  2D           DEC L                              ; 4 T
+834D  7E           LD A,(HL)                          ; 7 T
+left_ready_0:
+834E  CB 20        SLA B                              ; 8 T
+8350  D2 58 83     JP NC,intra_store                  ; 10 T
+8353  D9           EXX                                ; 4 T
+8354  CD 05 80     CALL bitmap                        ; 17 T
+8357  D9           EXX                                ; 4 T
+intra_store_left_0:
+8358  12           LD (DE),A                          ; 7 T
+8359  1C           INC E                              ; 4 T
+835A  CB 20        SLA B                              ; 8 T
+835C  D2 64 83     JP NC,intra_store                  ; 10 T
+835F  D9           EXX                                ; 4 T
+8360  CD 05 80     CALL bitmap                        ; 17 T
+8363  D9           EXX                                ; 4 T
+intra_store_left_1:
+8364  12           LD (DE),A                          ; 7 T
+8365  7B           LD A,E                             ; 4 T
+8366  C6 1F        ADD A,31                           ; 7 T
+8368  5F           LD E,A                             ; 4 T
+8369  7B           LD A,E                             ; 4 T
+836A  E6 1F        AND 31                             ; 7 T
+836C  20 04        JR NZ,left_visible                 ; [7, 12] T
+836E  AF           XOR A                              ; 4 T
+836F  C3 76 83     JP left_ready                      ; 10 T
+left_visible_2:
+8372  62           LD H,D                             ; 4 T
+8373  6B           LD L,E                             ; 4 T
+8374  2D           DEC L                              ; 4 T
+8375  7E           LD A,(HL)                          ; 7 T
+left_ready_2:
+8376  CB 20        SLA B                              ; 8 T
+8378  D2 80 83     JP NC,intra_store                  ; 10 T
+837B  D9           EXX                                ; 4 T
+837C  CD 05 80     CALL bitmap                        ; 17 T
+837F  D9           EXX                                ; 4 T
+intra_store_left_2:
+8380  12           LD (DE),A                          ; 7 T
+8381  1C           INC E                              ; 4 T
+8382  CB 20        SLA B                              ; 8 T
+8384  D2 8C 83     JP NC,intra_store                  ; 10 T
+8387  D9           EXX                                ; 4 T
+8388  CD 05 80     CALL bitmap                        ; 17 T
+838B  D9           EXX                                ; 4 T
+intra_store_left_3:
+838C  12           LD (DE),A                          ; 7 T
+838D  7B           LD A,E                             ; 4 T
+838E  C6 1F        ADD A,31                           ; 7 T
+8390  5F           LD E,A                             ; 4 T
+8391  7B           LD A,E                             ; 4 T
+8392  E6 1F        AND 31                             ; 7 T
+8394  20 04        JR NZ,left_visible                 ; [7, 12] T
+8396  AF           XOR A                              ; 4 T
+8397  C3 9E 83     JP left_ready                      ; 10 T
+left_visible_4:
+839A  62           LD H,D                             ; 4 T
+839B  6B           LD L,E                             ; 4 T
+839C  2D           DEC L                              ; 4 T
+839D  7E           LD A,(HL)                          ; 7 T
+left_ready_4:
+839E  CB 20        SLA B                              ; 8 T
+83A0  D2 A8 83     JP NC,intra_store                  ; 10 T
+83A3  D9           EXX                                ; 4 T
+83A4  CD 05 80     CALL bitmap                        ; 17 T
+83A7  D9           EXX                                ; 4 T
+intra_store_left_4:
+83A8  12           LD (DE),A                          ; 7 T
+83A9  1C           INC E                              ; 4 T
+83AA  CB 20        SLA B                              ; 8 T
+83AC  D2 B4 83     JP NC,intra_store                  ; 10 T
+83AF  D9           EXX                                ; 4 T
+83B0  CD 05 80     CALL bitmap                        ; 17 T
+83B3  D9           EXX                                ; 4 T
+intra_store_left_5:
+83B4  12           LD (DE),A                          ; 7 T
+83B5  7B           LD A,E                             ; 4 T
+83B6  C6 1F        ADD A,31                           ; 7 T
+83B8  5F           LD E,A                             ; 4 T
+83B9  7B           LD A,E                             ; 4 T
+83BA  E6 1F        AND 31                             ; 7 T
+83BC  20 04        JR NZ,left_visible                 ; [7, 12] T
+83BE  AF           XOR A                              ; 4 T
+83BF  C3 C6 83     JP left_ready                      ; 10 T
+left_visible_6:
+83C2  62           LD H,D                             ; 4 T
+83C3  6B           LD L,E                             ; 4 T
+83C4  2D           DEC L                              ; 4 T
+83C5  7E           LD A,(HL)                          ; 7 T
+left_ready_6:
+83C6  CB 20        SLA B                              ; 8 T
+83C8  D2 D0 83     JP NC,intra_store                  ; 10 T
+83CB  D9           EXX                                ; 4 T
+83CC  CD 05 80     CALL bitmap                        ; 17 T
+83CF  D9           EXX                                ; 4 T
+intra_store_left_6:
+83D0  12           LD (DE),A                          ; 7 T
+83D1  1C           INC E                              ; 4 T
+83D2  CB 20        SLA B                              ; 8 T
+83D4  D2 DC 83     JP NC,intra_store                  ; 10 T
+83D7  D9           EXX                                ; 4 T
+83D8  CD 05 80     CALL bitmap                        ; 17 T
+83DB  D9           EXX                                ; 4 T
+intra_store_left_7:
+83DC  12           LD (DE),A                          ; 7 T
+83DD  7B           LD A,E                             ; 4 T
+83DE  C6 1F        ADD A,31                           ; 7 T
+83E0  5F           LD E,A                             ; 4 T
+83E1  41           LD B,C                             ; 4 T
+83E2  7B           LD A,E                             ; 4 T
+83E3  E6 1F        AND 31                             ; 7 T
+83E5  20 04        JR NZ,left_visible                 ; [7, 12] T
+83E7  AF           XOR A                              ; 4 T
+83E8  C3 EF 83     JP left_ready                      ; 10 T
+left_visible_8:
+83EB  62           LD H,D                             ; 4 T
+83EC  6B           LD L,E                             ; 4 T
+83ED  2D           DEC L                              ; 4 T
+83EE  7E           LD A,(HL)                          ; 7 T
+left_ready_8:
+83EF  CB 20        SLA B                              ; 8 T
+83F1  D2 F9 83     JP NC,intra_store                  ; 10 T
+83F4  D9           EXX                                ; 4 T
+83F5  CD 05 80     CALL bitmap                        ; 17 T
+83F8  D9           EXX                                ; 4 T
+intra_store_left_8:
+83F9  12           LD (DE),A                          ; 7 T
+83FA  1C           INC E                              ; 4 T
+83FB  CB 20        SLA B                              ; 8 T
+83FD  D2 05 84     JP NC,intra_store                  ; 10 T
+8400  D9           EXX                                ; 4 T
+8401  CD 05 80     CALL bitmap                        ; 17 T
+8404  D9           EXX                                ; 4 T
+intra_store_left_9:
+8405  12           LD (DE),A                          ; 7 T
+8406  7B           LD A,E                             ; 4 T
+8407  C6 1F        ADD A,31                           ; 7 T
+8409  5F           LD E,A                             ; 4 T
+840A  7B           LD A,E                             ; 4 T
+840B  E6 1F        AND 31                             ; 7 T
+840D  20 04        JR NZ,left_visible                 ; [7, 12] T
+840F  AF           XOR A                              ; 4 T
+8410  C3 17 84     JP left_ready                      ; 10 T
+left_visible_10:
+8413  62           LD H,D                             ; 4 T
+8414  6B           LD L,E                             ; 4 T
+8415  2D           DEC L                              ; 4 T
+8416  7E           LD A,(HL)                          ; 7 T
+left_ready_10:
+8417  CB 20        SLA B                              ; 8 T
+8419  D2 21 84     JP NC,intra_store                  ; 10 T
+841C  D9           EXX                                ; 4 T
+841D  CD 05 80     CALL bitmap                        ; 17 T
+8420  D9           EXX                                ; 4 T
+intra_store_left_10:
+8421  12           LD (DE),A                          ; 7 T
+8422  1C           INC E                              ; 4 T
+8423  CB 20        SLA B                              ; 8 T
+8425  D2 2D 84     JP NC,intra_store                  ; 10 T
+8428  D9           EXX                                ; 4 T
+8429  CD 05 80     CALL bitmap                        ; 17 T
+842C  D9           EXX                                ; 4 T
+intra_store_left_11:
+842D  12           LD (DE),A                          ; 7 T
+842E  7B           LD A,E                             ; 4 T
+842F  C6 1F        ADD A,31                           ; 7 T
+8431  5F           LD E,A                             ; 4 T
+8432  7B           LD A,E                             ; 4 T
+8433  E6 1F        AND 31                             ; 7 T
+8435  20 04        JR NZ,left_visible                 ; [7, 12] T
+8437  AF           XOR A                              ; 4 T
+8438  C3 3F 84     JP left_ready                      ; 10 T
+left_visible_12:
+843B  62           LD H,D                             ; 4 T
+843C  6B           LD L,E                             ; 4 T
+843D  2D           DEC L                              ; 4 T
+843E  7E           LD A,(HL)                          ; 7 T
+left_ready_12:
+843F  CB 20        SLA B                              ; 8 T
+8441  D2 49 84     JP NC,intra_store                  ; 10 T
+8444  D9           EXX                                ; 4 T
+8445  CD 05 80     CALL bitmap                        ; 17 T
+8448  D9           EXX                                ; 4 T
+intra_store_left_12:
+8449  12           LD (DE),A                          ; 7 T
+844A  1C           INC E                              ; 4 T
+844B  CB 20        SLA B                              ; 8 T
+844D  D2 55 84     JP NC,intra_store                  ; 10 T
+8450  D9           EXX                                ; 4 T
+8451  CD 05 80     CALL bitmap                        ; 17 T
+8454  D9           EXX                                ; 4 T
+intra_store_left_13:
+8455  12           LD (DE),A                          ; 7 T
+8456  7B           LD A,E                             ; 4 T
+8457  C6 1F        ADD A,31                           ; 7 T
+8459  5F           LD E,A                             ; 4 T
+845A  7B           LD A,E                             ; 4 T
+845B  E6 1F        AND 31                             ; 7 T
+845D  20 04        JR NZ,left_visible                 ; [7, 12] T
+845F  AF           XOR A                              ; 4 T
+8460  C3 67 84     JP left_ready                      ; 10 T
+left_visible_14:
+8463  62           LD H,D                             ; 4 T
+8464  6B           LD L,E                             ; 4 T
+8465  2D           DEC L                              ; 4 T
+8466  7E           LD A,(HL)                          ; 7 T
+left_ready_14:
+8467  CB 20        SLA B                              ; 8 T
+8469  D2 71 84     JP NC,intra_store                  ; 10 T
+846C  D9           EXX                                ; 4 T
+846D  CD 05 80     CALL bitmap                        ; 17 T
+8470  D9           EXX                                ; 4 T
+intra_store_left_14:
+8471  12           LD (DE),A                          ; 7 T
+8472  1C           INC E                              ; 4 T
+8473  CB 20        SLA B                              ; 8 T
+8475  D2 7D 84     JP NC,intra_store                  ; 10 T
+8478  D9           EXX                                ; 4 T
+8479  CD 05 80     CALL bitmap                        ; 17 T
+847C  D9           EXX                                ; 4 T
+intra_store_left_15:
+847D  12           LD (DE),A                          ; 7 T
+847E  C9           RET                                ; 10 T
+intra_above2:
+847F  7A           LD A,D                             ; 4 T
+8480  FE 64        CP frame_page                      ; 7 T
+8482  20 04        JR NZ,above_visible                ; [7, 12] T
+8484  AF           XOR A                              ; 4 T
+8485  C3 8F 84     JP above_ready                     ; 10 T
+above_visible_2_0:
+8488  62           LD H,D                             ; 4 T
+8489  25           DEC H                              ; 4 T
+848A  7B           LD A,E                             ; 4 T
+848B  C6 C0        ADD A,192                          ; 7 T
+848D  6F           LD L,A                             ; 4 T
+848E  7E           LD A,(HL)                          ; 7 T
+above_ready_2_0:
+848F  CB 20        SLA B                              ; 8 T
+8491  D2 99 84     JP NC,intra_store                  ; 10 T
+8494  D9           EXX                                ; 4 T
+8495  CD 05 80     CALL bitmap                        ; 17 T
+8498  D9           EXX                                ; 4 T
+intra_store_above2_0:
+8499  12           LD (DE),A                          ; 7 T
+849A  1C           INC E                              ; 4 T
+849B  7A           LD A,D                             ; 4 T
+849C  FE 64        CP frame_page                      ; 7 T
+849E  20 04        JR NZ,above_visible                ; [7, 12] T
+84A0  AF           XOR A                              ; 4 T
+84A1  C3 AB 84     JP above_ready                     ; 10 T
+above_visible_2_1:
+84A4  62           LD H,D                             ; 4 T
+84A5  25           DEC H                              ; 4 T
+84A6  7B           LD A,E                             ; 4 T
+84A7  C6 C0        ADD A,192                          ; 7 T
+84A9  6F           LD L,A                             ; 4 T
+84AA  7E           LD A,(HL)                          ; 7 T
+above_ready_2_1:
+84AB  CB 20        SLA B                              ; 8 T
+84AD  D2 B5 84     JP NC,intra_store                  ; 10 T
+84B0  D9           EXX                                ; 4 T
+84B1  CD 05 80     CALL bitmap                        ; 17 T
+84B4  D9           EXX                                ; 4 T
+intra_store_above2_1:
+84B5  12           LD (DE),A                          ; 7 T
+84B6  7B           LD A,E                             ; 4 T
+84B7  C6 1F        ADD A,31                           ; 7 T
+84B9  5F           LD E,A                             ; 4 T
+84BA  7A           LD A,D                             ; 4 T
+84BB  FE 64        CP frame_page                      ; 7 T
+84BD  20 04        JR NZ,above_visible                ; [7, 12] T
+84BF  AF           XOR A                              ; 4 T
+84C0  C3 CA 84     JP above_ready                     ; 10 T
+above_visible_2_2:
+84C3  62           LD H,D                             ; 4 T
+84C4  25           DEC H                              ; 4 T
+84C5  7B           LD A,E                             ; 4 T
+84C6  C6 C0        ADD A,192                          ; 7 T
+84C8  6F           LD L,A                             ; 4 T
+84C9  7E           LD A,(HL)                          ; 7 T
+above_ready_2_2:
+84CA  CB 20        SLA B                              ; 8 T
+84CC  D2 D4 84     JP NC,intra_store                  ; 10 T
+84CF  D9           EXX                                ; 4 T
+84D0  CD 05 80     CALL bitmap                        ; 17 T
+84D3  D9           EXX                                ; 4 T
+intra_store_above2_2:
+84D4  12           LD (DE),A                          ; 7 T
+84D5  1C           INC E                              ; 4 T
+84D6  7A           LD A,D                             ; 4 T
+84D7  FE 64        CP frame_page                      ; 7 T
+84D9  20 04        JR NZ,above_visible                ; [7, 12] T
+84DB  AF           XOR A                              ; 4 T
+84DC  C3 E6 84     JP above_ready                     ; 10 T
+above_visible_2_3:
+84DF  62           LD H,D                             ; 4 T
+84E0  25           DEC H                              ; 4 T
+84E1  7B           LD A,E                             ; 4 T
+84E2  C6 C0        ADD A,192                          ; 7 T
+84E4  6F           LD L,A                             ; 4 T
+84E5  7E           LD A,(HL)                          ; 7 T
+above_ready_2_3:
+84E6  CB 20        SLA B                              ; 8 T
+84E8  D2 F0 84     JP NC,intra_store                  ; 10 T
+84EB  D9           EXX                                ; 4 T
+84EC  CD 05 80     CALL bitmap                        ; 17 T
+84EF  D9           EXX                                ; 4 T
+intra_store_above2_3:
+84F0  12           LD (DE),A                          ; 7 T
+84F1  7B           LD A,E                             ; 4 T
+84F2  C6 1F        ADD A,31                           ; 7 T
+84F4  5F           LD E,A                             ; 4 T
+84F5  7B           LD A,E                             ; 4 T
+84F6  D6 40        SUB 64                             ; 7 T
+84F8  6F           LD L,A                             ; 4 T
+84F9  62           LD H,D                             ; 4 T
+84FA  7E           LD A,(HL)                          ; 7 T
+84FB  CB 20        SLA B                              ; 8 T
+84FD  D2 05 85     JP NC,intra_store                  ; 10 T
+8500  D9           EXX                                ; 4 T
+8501  CD 05 80     CALL bitmap                        ; 17 T
+8504  D9           EXX                                ; 4 T
+intra_store_above2_4:
+8505  12           LD (DE),A                          ; 7 T
+8506  1C           INC E                              ; 4 T
+8507  7B           LD A,E                             ; 4 T
+8508  D6 40        SUB 64                             ; 7 T
+850A  6F           LD L,A                             ; 4 T
+850B  62           LD H,D                             ; 4 T
+850C  7E           LD A,(HL)                          ; 7 T
+850D  CB 20        SLA B                              ; 8 T
+850F  D2 17 85     JP NC,intra_store                  ; 10 T
+8512  D9           EXX                                ; 4 T
+8513  CD 05 80     CALL bitmap                        ; 17 T
+8516  D9           EXX                                ; 4 T
+intra_store_above2_5:
+8517  12           LD (DE),A                          ; 7 T
+8518  7B           LD A,E                             ; 4 T
+8519  C6 1F        ADD A,31                           ; 7 T
+851B  5F           LD E,A                             ; 4 T
+851C  7B           LD A,E                             ; 4 T
+851D  D6 40        SUB 64                             ; 7 T
+851F  6F           LD L,A                             ; 4 T
+8520  62           LD H,D                             ; 4 T
+8521  7E           LD A,(HL)                          ; 7 T
+8522  CB 20        SLA B                              ; 8 T
+8524  D2 2C 85     JP NC,intra_store                  ; 10 T
+8527  D9           EXX                                ; 4 T
+8528  CD 05 80     CALL bitmap                        ; 17 T
+852B  D9           EXX                                ; 4 T
+intra_store_above2_6:
+852C  12           LD (DE),A                          ; 7 T
+852D  1C           INC E                              ; 4 T
+852E  7B           LD A,E                             ; 4 T
+852F  D6 40        SUB 64                             ; 7 T
+8531  6F           LD L,A                             ; 4 T
+8532  62           LD H,D                             ; 4 T
+8533  7E           LD A,(HL)                          ; 7 T
+8534  CB 20        SLA B                              ; 8 T
+8536  D2 3E 85     JP NC,intra_store                  ; 10 T
+8539  D9           EXX                                ; 4 T
+853A  CD 05 80     CALL bitmap                        ; 17 T
+853D  D9           EXX                                ; 4 T
+intra_store_above2_7:
+853E  12           LD (DE),A                          ; 7 T
+853F  7B           LD A,E                             ; 4 T
+8540  C6 1F        ADD A,31                           ; 7 T
+8542  5F           LD E,A                             ; 4 T
+8543  41           LD B,C                             ; 4 T
+8544  7B           LD A,E                             ; 4 T
+8545  D6 40        SUB 64                             ; 7 T
+8547  6F           LD L,A                             ; 4 T
+8548  62           LD H,D                             ; 4 T
+8549  7E           LD A,(HL)                          ; 7 T
+854A  CB 20        SLA B                              ; 8 T
+854C  D2 54 85     JP NC,intra_store                  ; 10 T
+854F  D9           EXX                                ; 4 T
+8550  CD 05 80     CALL bitmap                        ; 17 T
+8553  D9           EXX                                ; 4 T
+intra_store_above2_8:
+8554  12           LD (DE),A                          ; 7 T
+8555  1C           INC E                              ; 4 T
+8556  7B           LD A,E                             ; 4 T
+8557  D6 40        SUB 64                             ; 7 T
+8559  6F           LD L,A                             ; 4 T
+855A  62           LD H,D                             ; 4 T
+855B  7E           LD A,(HL)                          ; 7 T
+855C  CB 20        SLA B                              ; 8 T
+855E  D2 66 85     JP NC,intra_store                  ; 10 T
+8561  D9           EXX                                ; 4 T
+8562  CD 05 80     CALL bitmap                        ; 17 T
+8565  D9           EXX                                ; 4 T
+intra_store_above2_9:
+8566  12           LD (DE),A                          ; 7 T
+8567  7B           LD A,E                             ; 4 T
+8568  C6 1F        ADD A,31                           ; 7 T
+856A  5F           LD E,A                             ; 4 T
+856B  7B           LD A,E                             ; 4 T
+856C  D6 40        SUB 64                             ; 7 T
+856E  6F           LD L,A                             ; 4 T
+856F  62           LD H,D                             ; 4 T
+8570  7E           LD A,(HL)                          ; 7 T
+8571  CB 20        SLA B                              ; 8 T
+8573  D2 7B 85     JP NC,intra_store                  ; 10 T
+8576  D9           EXX                                ; 4 T
+8577  CD 05 80     CALL bitmap                        ; 17 T
+857A  D9           EXX                                ; 4 T
+intra_store_above2_10:
+857B  12           LD (DE),A                          ; 7 T
+857C  1C           INC E                              ; 4 T
+857D  7B           LD A,E                             ; 4 T
+857E  D6 40        SUB 64                             ; 7 T
+8580  6F           LD L,A                             ; 4 T
+8581  62           LD H,D                             ; 4 T
+8582  7E           LD A,(HL)                          ; 7 T
+8583  CB 20        SLA B                              ; 8 T
+8585  D2 8D 85     JP NC,intra_store                  ; 10 T
+8588  D9           EXX                                ; 4 T
+8589  CD 05 80     CALL bitmap                        ; 17 T
+858C  D9           EXX                                ; 4 T
+intra_store_above2_11:
+858D  12           LD (DE),A                          ; 7 T
+858E  7B           LD A,E                             ; 4 T
+858F  C6 1F        ADD A,31                           ; 7 T
+8591  5F           LD E,A                             ; 4 T
+8592  7B           LD A,E                             ; 4 T
+8593  D6 40        SUB 64                             ; 7 T
+8595  6F           LD L,A                             ; 4 T
+8596  62           LD H,D                             ; 4 T
+8597  7E           LD A,(HL)                          ; 7 T
+8598  CB 20        SLA B                              ; 8 T
+859A  D2 A2 85     JP NC,intra_store                  ; 10 T
+859D  D9           EXX                                ; 4 T
+859E  CD 05 80     CALL bitmap                        ; 17 T
+85A1  D9           EXX                                ; 4 T
+intra_store_above2_12:
+85A2  12           LD (DE),A                          ; 7 T
+85A3  1C           INC E                              ; 4 T
+85A4  7B           LD A,E                             ; 4 T
+85A5  D6 40        SUB 64                             ; 7 T
+85A7  6F           LD L,A                             ; 4 T
+85A8  62           LD H,D                             ; 4 T
+85A9  7E           LD A,(HL)                          ; 7 T
+85AA  CB 20        SLA B                              ; 8 T
+85AC  D2 B4 85     JP NC,intra_store                  ; 10 T
+85AF  D9           EXX                                ; 4 T
+85B0  CD 05 80     CALL bitmap                        ; 17 T
+85B3  D9           EXX                                ; 4 T
+intra_store_above2_13:
+85B4  12           LD (DE),A                          ; 7 T
+85B5  7B           LD A,E                             ; 4 T
+85B6  C6 1F        ADD A,31                           ; 7 T
+85B8  5F           LD E,A                             ; 4 T
+85B9  7B           LD A,E                             ; 4 T
+85BA  D6 40        SUB 64                             ; 7 T
+85BC  6F           LD L,A                             ; 4 T
+85BD  62           LD H,D                             ; 4 T
+85BE  7E           LD A,(HL)                          ; 7 T
+85BF  CB 20        SLA B                              ; 8 T
+85C1  D2 C9 85     JP NC,intra_store                  ; 10 T
+85C4  D9           EXX                                ; 4 T
+85C5  CD 05 80     CALL bitmap                        ; 17 T
+85C8  D9           EXX                                ; 4 T
+intra_store_above2_14:
+85C9  12           LD (DE),A                          ; 7 T
+85CA  1C           INC E                              ; 4 T
+85CB  7B           LD A,E                             ; 4 T
+85CC  D6 40        SUB 64                             ; 7 T
+85CE  6F           LD L,A                             ; 4 T
+85CF  62           LD H,D                             ; 4 T
+85D0  7E           LD A,(HL)                          ; 7 T
+85D1  CB 20        SLA B                              ; 8 T
+85D3  D2 DB 85     JP NC,intra_store                  ; 10 T
+85D6  D9           EXX                                ; 4 T
+85D7  CD 05 80     CALL bitmap                        ; 17 T
+85DA  D9           EXX                                ; 4 T
+intra_store_above2_15:
+85DB  12           LD (DE),A                          ; 7 T
+85DC  C9           RET                                ; 10 T
+fast_fragment:
+85DD  2A 98 8F     LD HL,(bitmap_masks)               ; 16 T
+85E0  23           INC HL                             ; 6 T
+85E1  23           INC HL                             ; 6 T
+85E2  22 98 8F     LD (bitmap_masks),HL               ; 16 T
+85E5  47           LD B,A                             ; 4 T
+85E6  2A AB 8F     LD HL,(literal_source)             ; 16 T
+85E9  78           LD A,B                             ; 4 T
+85EA  FE 55        CP 85                              ; 7 T
+85EC  CA 36 86     JP Z,fragment_raw                  ; 10 T
+85EF  FE 56        CP 86                              ; 7 T
+85F1  CA 7A 86     JP Z,fragment_repeat               ; 10 T
+85F4  FE 57        CP 87                              ; 7 T
+85F6  CA B9 86     JP Z,fragment_rows                 ; 10 T
+fragment_fill:
+85F9  46           LD B,(HL)                          ; 7 T
+85FA  23           INC HL                             ; 6 T
+85FB  22 AB 8F     LD (literal_source),HL             ; 16 T
+85FE  2A 9C 8F     LD HL,(target)                     ; 16 T
+8601  70           LD (HL),B                          ; 7 T
+8602  2C           INC L                              ; 4 T
+8603  70           LD (HL),B                          ; 7 T
+8604  7D           LD A,L                             ; 4 T
+8605  C6 1F        ADD A,31                           ; 7 T
+8607  6F           LD L,A                             ; 4 T
+8608  70           LD (HL),B                          ; 7 T
+8609  2C           INC L                              ; 4 T
+860A  70           LD (HL),B                          ; 7 T
+860B  7D           LD A,L                             ; 4 T
+860C  C6 1F        ADD A,31                           ; 7 T
+860E  6F           LD L,A                             ; 4 T
+860F  70           LD (HL),B                          ; 7 T
+8610  2C           INC L                              ; 4 T
+8611  70           LD (HL),B                          ; 7 T
+8612  7D           LD A,L                             ; 4 T
+8613  C6 1F        ADD A,31                           ; 7 T
+8615  6F           LD L,A                             ; 4 T
+8616  70           LD (HL),B                          ; 7 T
+8617  2C           INC L                              ; 4 T
+8618  70           LD (HL),B                          ; 7 T
+8619  7D           LD A,L                             ; 4 T
+861A  C6 1F        ADD A,31                           ; 7 T
+861C  6F           LD L,A                             ; 4 T
+861D  70           LD (HL),B                          ; 7 T
+861E  2C           INC L                              ; 4 T
+861F  70           LD (HL),B                          ; 7 T
+8620  7D           LD A,L                             ; 4 T
+8621  C6 1F        ADD A,31                           ; 7 T
+8623  6F           LD L,A                             ; 4 T
+8624  70           LD (HL),B                          ; 7 T
+8625  2C           INC L                              ; 4 T
+8626  70           LD (HL),B                          ; 7 T
+8627  7D           LD A,L                             ; 4 T
+8628  C6 1F        ADD A,31                           ; 7 T
+862A  6F           LD L,A                             ; 4 T
+862B  70           LD (HL),B                          ; 7 T
+862C  2C           INC L                              ; 4 T
+862D  70           LD (HL),B                          ; 7 T
+862E  7D           LD A,L                             ; 4 T
+862F  C6 1F        ADD A,31                           ; 7 T
+8631  6F           LD L,A                             ; 4 T
+8632  70           LD (HL),B                          ; 7 T
+8633  2C           INC L                              ; 4 T
+8634  70           LD (HL),B                          ; 7 T
+8635  C9           RET                                ; 10 T
+fragment_raw:
+8636  ED 5B 9C 8F  LD DE,(target)                     ; 20 T
+863A  ED A0        LDI                                ; 16 T
+863C  ED A0        LDI                                ; 16 T
+863E  7B           LD A,E                             ; 4 T
+863F  C6 1E        ADD A,30                           ; 7 T
+8641  5F           LD E,A                             ; 4 T
+8642  ED A0        LDI                                ; 16 T
+8644  ED A0        LDI                                ; 16 T
+8646  7B           LD A,E                             ; 4 T
+8647  C6 1E        ADD A,30                           ; 7 T
+8649  5F           LD E,A                             ; 4 T
+864A  ED A0        LDI                                ; 16 T
+864C  ED A0        LDI                                ; 16 T
+864E  7B           LD A,E                             ; 4 T
+864F  C6 1E        ADD A,30                           ; 7 T
+8651  5F           LD E,A                             ; 4 T
+8652  ED A0        LDI                                ; 16 T
+8654  ED A0        LDI                                ; 16 T
+8656  7B           LD A,E                             ; 4 T
+8657  C6 1E        ADD A,30                           ; 7 T
+8659  5F           LD E,A                             ; 4 T
+865A  ED A0        LDI                                ; 16 T
+865C  ED A0        LDI                                ; 16 T
+865E  7B           LD A,E                             ; 4 T
+865F  C6 1E        ADD A,30                           ; 7 T
+8661  5F           LD E,A                             ; 4 T
+8662  ED A0        LDI                                ; 16 T
+8664  ED A0        LDI                                ; 16 T
+8666  7B           LD A,E                             ; 4 T
+8667  C6 1E        ADD A,30                           ; 7 T
+8669  5F           LD E,A                             ; 4 T
+866A  ED A0        LDI                                ; 16 T
+866C  ED A0        LDI                                ; 16 T
+866E  7B           LD A,E                             ; 4 T
+866F  C6 1E        ADD A,30                           ; 7 T
+8671  5F           LD E,A                             ; 4 T
+8672  ED A0        LDI                                ; 16 T
+8674  ED A0        LDI                                ; 16 T
+8676  22 AB 8F     LD (literal_source),HL             ; 16 T
+8679  C9           RET                                ; 10 T
+fragment_repeat:
+867A  46           LD B,(HL)                          ; 7 T
+867B  23           INC HL                             ; 6 T
+867C  4E           LD C,(HL)                          ; 7 T
+867D  23           INC HL                             ; 6 T
+867E  22 AB 8F     LD (literal_source),HL             ; 16 T
+8681  2A 9C 8F     LD HL,(target)                     ; 16 T
+8684  70           LD (HL),B                          ; 7 T
+8685  2C           INC L                              ; 4 T
+8686  71           LD (HL),C                          ; 7 T
+8687  7D           LD A,L                             ; 4 T
+8688  C6 1F        ADD A,31                           ; 7 T
+868A  6F           LD L,A                             ; 4 T
+868B  70           LD (HL),B                          ; 7 T
+868C  2C           INC L                              ; 4 T
+868D  71           LD (HL),C                          ; 7 T
+868E  7D           LD A,L                             ; 4 T
+868F  C6 1F        ADD A,31                           ; 7 T
+8691  6F           LD L,A                             ; 4 T
+8692  70           LD (HL),B                          ; 7 T
+8693  2C           INC L                              ; 4 T
+8694  71           LD (HL),C                          ; 7 T
+8695  7D           LD A,L                             ; 4 T
+8696  C6 1F        ADD A,31                           ; 7 T
+8698  6F           LD L,A                             ; 4 T
+8699  70           LD (HL),B                          ; 7 T
+869A  2C           INC L                              ; 4 T
+869B  71           LD (HL),C                          ; 7 T
+869C  7D           LD A,L                             ; 4 T
+869D  C6 1F        ADD A,31                           ; 7 T
+869F  6F           LD L,A                             ; 4 T
+86A0  70           LD (HL),B                          ; 7 T
+86A1  2C           INC L                              ; 4 T
+86A2  71           LD (HL),C                          ; 7 T
+86A3  7D           LD A,L                             ; 4 T
+86A4  C6 1F        ADD A,31                           ; 7 T
+86A6  6F           LD L,A                             ; 4 T
+86A7  70           LD (HL),B                          ; 7 T
+86A8  2C           INC L                              ; 4 T
+86A9  71           LD (HL),C                          ; 7 T
+86AA  7D           LD A,L                             ; 4 T
+86AB  C6 1F        ADD A,31                           ; 7 T
+86AD  6F           LD L,A                             ; 4 T
+86AE  70           LD (HL),B                          ; 7 T
+86AF  2C           INC L                              ; 4 T
+86B0  71           LD (HL),C                          ; 7 T
+86B1  7D           LD A,L                             ; 4 T
+86B2  C6 1F        ADD A,31                           ; 7 T
+86B4  6F           LD L,A                             ; 4 T
+86B5  70           LD (HL),B                          ; 7 T
+86B6  2C           INC L                              ; 4 T
+86B7  71           LD (HL),C                          ; 7 T
+86B8  C9           RET                                ; 10 T
+fragment_rows:
+86B9  46           LD B,(HL)                          ; 7 T
+86BA  23           INC HL                             ; 6 T
+86BB  4E           LD C,(HL)                          ; 7 T
+86BC  23           INC HL                             ; 6 T
+86BD  56           LD D,(HL)                          ; 7 T
+86BE  23           INC HL                             ; 6 T
+86BF  5E           LD E,(HL)                          ; 7 T
+86C0  23           INC HL                             ; 6 T
+86C1  7E           LD A,(HL)                          ; 7 T
+86C2  23           INC HL                             ; 6 T
+86C3  22 AB 8F     LD (literal_source),HL             ; 16 T
+86C6  2A 9C 8F     LD HL,(target)                     ; 16 T
+86C9  08           EX AF,AF'                          ; 4 T
+86CA  08           EX AF,AF'                          ; 4 T
+86CB  17           RLA                                ; 4 T
+86CC  DA D6 86     JP C,second_pair                   ; 10 T
+86CF  08           EX AF,AF'                          ; 4 T
+86D0  70           LD (HL),B                          ; 7 T
+86D1  2C           INC L                              ; 4 T
+86D2  71           LD (HL),C                          ; 7 T
+86D3  C3 DA 86     JP pair_done                       ; 10 T
+fragment_second_0:
+86D6  08           EX AF,AF'                          ; 4 T
+86D7  72           LD (HL),D                          ; 7 T
+86D8  2C           INC L                              ; 4 T
+86D9  73           LD (HL),E                          ; 7 T
+fragment_pair_done_0:
+86DA  7D           LD A,L                             ; 4 T
+86DB  C6 1F        ADD A,31                           ; 7 T
+86DD  6F           LD L,A                             ; 4 T
+86DE  08           EX AF,AF'                          ; 4 T
+86DF  17           RLA                                ; 4 T
+86E0  DA EA 86     JP C,second_pair                   ; 10 T
+86E3  08           EX AF,AF'                          ; 4 T
+86E4  70           LD (HL),B                          ; 7 T
+86E5  2C           INC L                              ; 4 T
+86E6  71           LD (HL),C                          ; 7 T
+86E7  C3 EE 86     JP pair_done                       ; 10 T
+fragment_second_1:
+86EA  08           EX AF,AF'                          ; 4 T
+86EB  72           LD (HL),D                          ; 7 T
+86EC  2C           INC L                              ; 4 T
+86ED  73           LD (HL),E                          ; 7 T
+fragment_pair_done_1:
+86EE  7D           LD A,L                             ; 4 T
+86EF  C6 1F        ADD A,31                           ; 7 T
+86F1  6F           LD L,A                             ; 4 T
+86F2  08           EX AF,AF'                          ; 4 T
+86F3  17           RLA                                ; 4 T
+86F4  DA FE 86     JP C,second_pair                   ; 10 T
+86F7  08           EX AF,AF'                          ; 4 T
+86F8  70           LD (HL),B                          ; 7 T
+86F9  2C           INC L                              ; 4 T
+86FA  71           LD (HL),C                          ; 7 T
+86FB  C3 02 87     JP pair_done                       ; 10 T
+fragment_second_2:
+86FE  08           EX AF,AF'                          ; 4 T
+86FF  72           LD (HL),D                          ; 7 T
+8700  2C           INC L                              ; 4 T
+8701  73           LD (HL),E                          ; 7 T
+fragment_pair_done_2:
+8702  7D           LD A,L                             ; 4 T
+8703  C6 1F        ADD A,31                           ; 7 T
+8705  6F           LD L,A                             ; 4 T
+8706  08           EX AF,AF'                          ; 4 T
+8707  17           RLA                                ; 4 T
+8708  DA 12 87     JP C,second_pair                   ; 10 T
+870B  08           EX AF,AF'                          ; 4 T
+870C  70           LD (HL),B                          ; 7 T
+870D  2C           INC L                              ; 4 T
+870E  71           LD (HL),C                          ; 7 T
+870F  C3 16 87     JP pair_done                       ; 10 T
+fragment_second_3:
+8712  08           EX AF,AF'                          ; 4 T
+8713  72           LD (HL),D                          ; 7 T
+8714  2C           INC L                              ; 4 T
+8715  73           LD (HL),E                          ; 7 T
+fragment_pair_done_3:
+8716  7D           LD A,L                             ; 4 T
+8717  C6 1F        ADD A,31                           ; 7 T
+8719  6F           LD L,A                             ; 4 T
+871A  08           EX AF,AF'                          ; 4 T
+871B  17           RLA                                ; 4 T
+871C  DA 26 87     JP C,second_pair                   ; 10 T
+871F  08           EX AF,AF'                          ; 4 T
+8720  70           LD (HL),B                          ; 7 T
+8721  2C           INC L                              ; 4 T
+8722  71           LD (HL),C                          ; 7 T
+8723  C3 2A 87     JP pair_done                       ; 10 T
+fragment_second_4:
+8726  08           EX AF,AF'                          ; 4 T
+8727  72           LD (HL),D                          ; 7 T
+8728  2C           INC L                              ; 4 T
+8729  73           LD (HL),E                          ; 7 T
+fragment_pair_done_4:
+872A  7D           LD A,L                             ; 4 T
+872B  C6 1F        ADD A,31                           ; 7 T
+872D  6F           LD L,A                             ; 4 T
+872E  08           EX AF,AF'                          ; 4 T
+872F  17           RLA                                ; 4 T
+8730  DA 3A 87     JP C,second_pair                   ; 10 T
+8733  08           EX AF,AF'                          ; 4 T
+8734  70           LD (HL),B                          ; 7 T
+8735  2C           INC L                              ; 4 T
+8736  71           LD (HL),C                          ; 7 T
+8737  C3 3E 87     JP pair_done                       ; 10 T
+fragment_second_5:
+873A  08           EX AF,AF'                          ; 4 T
+873B  72           LD (HL),D                          ; 7 T
+873C  2C           INC L                              ; 4 T
+873D  73           LD (HL),E                          ; 7 T
+fragment_pair_done_5:
+873E  7D           LD A,L                             ; 4 T
+873F  C6 1F        ADD A,31                           ; 7 T
+8741  6F           LD L,A                             ; 4 T
+8742  08           EX AF,AF'                          ; 4 T
+8743  17           RLA                                ; 4 T
+8744  DA 4E 87     JP C,second_pair                   ; 10 T
+8747  08           EX AF,AF'                          ; 4 T
+8748  70           LD (HL),B                          ; 7 T
+8749  2C           INC L                              ; 4 T
+874A  71           LD (HL),C                          ; 7 T
+874B  C3 52 87     JP pair_done                       ; 10 T
+fragment_second_6:
+874E  08           EX AF,AF'                          ; 4 T
+874F  72           LD (HL),D                          ; 7 T
+8750  2C           INC L                              ; 4 T
+8751  73           LD (HL),E                          ; 7 T
+fragment_pair_done_6:
+8752  7D           LD A,L                             ; 4 T
+8753  C6 1F        ADD A,31                           ; 7 T
+8755  6F           LD L,A                             ; 4 T
+8756  08           EX AF,AF'                          ; 4 T
+8757  17           RLA                                ; 4 T
+8758  DA 62 87     JP C,second_pair                   ; 10 T
+875B  08           EX AF,AF'                          ; 4 T
+875C  70           LD (HL),B                          ; 7 T
+875D  2C           INC L                              ; 4 T
+875E  71           LD (HL),C                          ; 7 T
+875F  C3 66 87     JP pair_done                       ; 10 T
+fragment_second_7:
+8762  08           EX AF,AF'                          ; 4 T
+8763  72           LD (HL),D                          ; 7 T
+8764  2C           INC L                              ; 4 T
+8765  73           LD (HL),E                          ; 7 T
+fragment_pair_done_7:
+8766  C9           RET                                ; 10 T
+cache_copy:
+8767  C5           PUSH BC                            ; 11 T
+8768  3A B0 8F     LD A,(cache_mask_shift)            ; 13 T
+876B  87           ADD A,A                            ; 4 T
+876C  20 0B        JR NZ,cache_mask_ready             ; [7, 12] T
+876E  E5           PUSH HL                            ; 11 T
+876F  2A AE 8F     LD HL,(cache_mask_source)          ; 16 T
+8772  7E           LD A,(HL)                          ; 7 T
+8773  23           INC HL                             ; 6 T
+8774  22 AE 8F     LD (cache_mask_source),HL          ; 16 T
+8777  E1           POP HL                             ; 10 T
+8778  8F           ADC A,A                            ; 4 T
+cache_mask_ready:
+8779  32 B0 8F     LD (cache_mask_shift),A            ; 13 T
+877C  D2 87 87     JP NC,cache_skip_four              ; 10 T
+877F  06 04        LD B,4                             ; 7 T
+8781  CD 9B 87     CALL cache_copy_rows               ; 17 T
+8784  C3 92 87     JP cache_four_done                 ; 10 T
+cache_skip_four:
+8787  01 80 00     LD BC,128                          ; 10 T
+878A  09           ADD HL,BC                          ; 11 T
+878B  14           INC D                              ; 4 T
+878C  7A           LD A,D                             ; 4 T
+878D  E6 03        AND 3                              ; 7 T
+878F  F6 74        OR cache_page                      ; 7 T
+8791  57           LD D,A                             ; 4 T
+cache_four_done:
+8792  C1           POP BC                             ; 10 T
+8793  78           LD A,B                             ; 4 T
+8794  D6 04        SUB 4                              ; 7 T
+8796  47           LD B,A                             ; 4 T
+8797  C2 67 87     JP NZ,cache_copy                   ; 10 T
+879A  C9           RET                                ; 10 T
+cache_copy_rows:
+879B  06 02        LD B,2                             ; 7 T
+cache_pair:
+879D  C5           PUSH BC                            ; 11 T
+879E  ED A0        LDI                                ; 16 T
+87A0  ED A0        LDI                                ; 16 T
+87A2  ED A0        LDI                                ; 16 T
+87A4  ED A0        LDI                                ; 16 T
+87A6  ED A0        LDI                                ; 16 T
+87A8  ED A0        LDI                                ; 16 T
+87AA  ED A0        LDI                                ; 16 T
+87AC  ED A0        LDI                                ; 16 T
+87AE  ED A0        LDI                                ; 16 T
+87B0  ED A0        LDI                                ; 16 T
+87B2  ED A0        LDI                                ; 16 T
+87B4  ED A0        LDI                                ; 16 T
+87B6  ED A0        LDI                                ; 16 T
+87B8  ED A0        LDI                                ; 16 T
+87BA  ED A0        LDI                                ; 16 T
+87BC  ED A0        LDI                                ; 16 T
+87BE  ED A0        LDI                                ; 16 T
+87C0  ED A0        LDI                                ; 16 T
+87C2  ED A0        LDI                                ; 16 T
+87C4  ED A0        LDI                                ; 16 T
+87C6  ED A0        LDI                                ; 16 T
+87C8  ED A0        LDI                                ; 16 T
+87CA  ED A0        LDI                                ; 16 T
+87CC  ED A0        LDI                                ; 16 T
+87CE  ED A0        LDI                                ; 16 T
+87D0  ED A0        LDI                                ; 16 T
+87D2  ED A0        LDI                                ; 16 T
+87D4  ED A0        LDI                                ; 16 T
+87D6  ED A0        LDI                                ; 16 T
+87D8  ED A0        LDI                                ; 16 T
+87DA  ED A0        LDI                                ; 16 T
+87DC  ED A0        LDI                                ; 16 T
+87DE  7B           LD A,E                             ; 4 T
+87DF  C6 20        ADD A,32                           ; 7 T
+87E1  5F           LD E,A                             ; 4 T
+87E2  ED A0        LDI                                ; 16 T
+87E4  ED A0        LDI                                ; 16 T
+87E6  ED A0        LDI                                ; 16 T
+87E8  ED A0        LDI                                ; 16 T
+87EA  ED A0        LDI                                ; 16 T
+87EC  ED A0        LDI                                ; 16 T
+87EE  ED A0        LDI                                ; 16 T
+87F0  ED A0        LDI                                ; 16 T
+87F2  ED A0        LDI                                ; 16 T
+87F4  ED A0        LDI                                ; 16 T
+87F6  ED A0        LDI                                ; 16 T
+87F8  ED A0        LDI                                ; 16 T
+87FA  ED A0        LDI                                ; 16 T
+87FC  ED A0        LDI                                ; 16 T
+87FE  ED A0        LDI                                ; 16 T
+8800  ED A0        LDI                                ; 16 T
+8802  ED A0        LDI                                ; 16 T
+8804  ED A0        LDI                                ; 16 T
+8806  ED A0        LDI                                ; 16 T
+8808  ED A0        LDI                                ; 16 T
+880A  ED A0        LDI                                ; 16 T
+880C  ED A0        LDI                                ; 16 T
+880E  ED A0        LDI                                ; 16 T
+8810  ED A0        LDI                                ; 16 T
+8812  ED A0        LDI                                ; 16 T
+8814  ED A0        LDI                                ; 16 T
+8816  ED A0        LDI                                ; 16 T
+8818  ED A0        LDI                                ; 16 T
+881A  ED A0        LDI                                ; 16 T
+881C  ED A0        LDI                                ; 16 T
+881E  ED A0        LDI                                ; 16 T
+8820  ED A0        LDI                                ; 16 T
+8822  C1           POP BC                             ; 10 T
+8823  7B           LD A,E                             ; 4 T
+8824  C6 20        ADD A,32                           ; 7 T
+8826  5F           LD E,A                             ; 4 T
+8827  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8829  14           INC D                              ; 4 T
+882A  7A           LD A,D                             ; 4 T
+882B  E6 03        AND 3                              ; 7 T
+882D  F6 74        OR cache_page                      ; 7 T
+882F  57           LD D,A                             ; 4 T
+cache_pair_advanced:
+8830  05           DEC B                              ; 4 T
+8831  C2 9D 87     JP NZ,cache_pair                   ; 10 T
+8834  C9           RET                                ; 10 T
+cache_zero:
+8835  AF           XOR A                              ; 4 T
+8836  12           LD (DE),A                          ; 7 T
+8837  1C           INC E                              ; 4 T
+8838  12           LD (DE),A                          ; 7 T
+8839  1C           INC E                              ; 4 T
+883A  12           LD (DE),A                          ; 7 T
+883B  1C           INC E                              ; 4 T
+883C  12           LD (DE),A                          ; 7 T
+883D  1C           INC E                              ; 4 T
+883E  12           LD (DE),A                          ; 7 T
+883F  1C           INC E                              ; 4 T
+8840  12           LD (DE),A                          ; 7 T
+8841  1C           INC E                              ; 4 T
+8842  12           LD (DE),A                          ; 7 T
+8843  1C           INC E                              ; 4 T
+8844  12           LD (DE),A                          ; 7 T
+8845  1C           INC E                              ; 4 T
+8846  12           LD (DE),A                          ; 7 T
+8847  1C           INC E                              ; 4 T
+8848  12           LD (DE),A                          ; 7 T
+8849  1C           INC E                              ; 4 T
+884A  12           LD (DE),A                          ; 7 T
+884B  1C           INC E                              ; 4 T
+884C  12           LD (DE),A                          ; 7 T
+884D  1C           INC E                              ; 4 T
+884E  12           LD (DE),A                          ; 7 T
+884F  1C           INC E                              ; 4 T
+8850  12           LD (DE),A                          ; 7 T
+8851  1C           INC E                              ; 4 T
+8852  12           LD (DE),A                          ; 7 T
+8853  1C           INC E                              ; 4 T
+8854  12           LD (DE),A                          ; 7 T
+8855  1C           INC E                              ; 4 T
+8856  12           LD (DE),A                          ; 7 T
+8857  1C           INC E                              ; 4 T
+8858  12           LD (DE),A                          ; 7 T
+8859  1C           INC E                              ; 4 T
+885A  12           LD (DE),A                          ; 7 T
+885B  1C           INC E                              ; 4 T
+885C  12           LD (DE),A                          ; 7 T
+885D  1C           INC E                              ; 4 T
+885E  12           LD (DE),A                          ; 7 T
+885F  1C           INC E                              ; 4 T
+8860  12           LD (DE),A                          ; 7 T
+8861  1C           INC E                              ; 4 T
+8862  12           LD (DE),A                          ; 7 T
+8863  1C           INC E                              ; 4 T
+8864  12           LD (DE),A                          ; 7 T
+8865  1C           INC E                              ; 4 T
+8866  12           LD (DE),A                          ; 7 T
+8867  1C           INC E                              ; 4 T
+8868  12           LD (DE),A                          ; 7 T
+8869  1C           INC E                              ; 4 T
+886A  12           LD (DE),A                          ; 7 T
+886B  1C           INC E                              ; 4 T
+886C  12           LD (DE),A                          ; 7 T
+886D  1C           INC E                              ; 4 T
+886E  12           LD (DE),A                          ; 7 T
+886F  1C           INC E                              ; 4 T
+8870  12           LD (DE),A                          ; 7 T
+8871  1C           INC E                              ; 4 T
+8872  12           LD (DE),A                          ; 7 T
+8873  1C           INC E                              ; 4 T
+8874  12           LD (DE),A                          ; 7 T
+8875  1C           INC E                              ; 4 T
+8876  7B           LD A,E                             ; 4 T
+8877  C6 20        ADD A,32                           ; 7 T
+8879  5F           LD E,A                             ; 4 T
+887A  30 07        JR NC,cache_page_ready             ; [7, 12] T
+887C  14           INC D                              ; 4 T
+887D  7A           LD A,D                             ; 4 T
+887E  E6 03        AND 3                              ; 7 T
+8880  F6 74        OR cache_page                      ; 7 T
+8882  57           LD D,A                             ; 4 T
+cache_zero_advanced:
+8883  10 B0        DJNZ cache_row                     ; [8, 13] T
+8885  C9           RET                                ; 10 T
+motion:
+8886  FE 51        CP zero_vector                     ; 7 T
+8888  CA 99 8D     JP Z,clear_tile                    ; 10 T
+888B  6F           LD L,A                             ; 4 T
+888C  26 98        LD H,vector_x                      ; 7 T
+888E  7E           LD A,(HL)                          ; 7 T
+888F  47           LD B,A                             ; 4 T
+8890  3A 9C 8F     LD A,(target_low)                  ; 13 T
+8893  E6 1F        AND 31                             ; 7 T
+8895  80           ADD A,B                            ; 4 T
+8896  3C           INC A                              ; 4 T
+8897  4F           LD C,A                             ; 4 T
+8898  24           INC H                              ; 4 T
+8899  46           LD B,(HL)                          ; 7 T
+889A  24           INC H                              ; 4 T
+889B  7E           LD A,(HL)                          ; 7 T
+889C  32 A8 8F     LD (phase),A                       ; 13 T
+889F  3A A5 8F     LD A,(stripe_y)                    ; 13 T
+88A2  80           ADD A,B                            ; 4 T
+88A3  E6 0F        AND 15                             ; 7 T
+88A5  6F           LD L,A                             ; 4 T
+88A6  26 9B        LD H,row_low                       ; 7 T
+88A8  7E           LD A,(HL)                          ; 7 T
+88A9  81           ADD A,C                            ; 4 T
+88AA  5F           LD E,A                             ; 4 T
+88AB  24           INC H                              ; 4 T
+88AC  56           LD D,(HL)                          ; 7 T
+88AD  2A 9C 8F     LD HL,(target)                     ; 16 T
+88B0  3A A8 8F     LD A,(phase)                       ; 13 T
+88B3  FE 00        CP 0                               ; 7 T
+88B5  CA C5 88     JP Z,predict_0                     ; 10 T
+88B8  FE 02        CP 2                               ; 7 T
+88BA  CA 6D 89     JP Z,predict_2                     ; 10 T
+88BD  FE 04        CP 4                               ; 7 T
+88BF  CA D1 8A     JP Z,predict_4                     ; 10 T
+88C2  C3 35 8C     JP predict_6                       ; 10 T
+predict_0:
+88C5  1A           LD A,(DE)                          ; 7 T
+88C6  77           LD (HL),A                          ; 7 T
+88C7  1C           INC E                              ; 4 T
+88C8  2C           INC L                              ; 4 T
+88C9  1A           LD A,(DE)                          ; 7 T
+88CA  77           LD (HL),A                          ; 7 T
+88CB  7B           LD A,E                             ; 4 T
+88CC  C6 3F        ADD A,63                           ; 7 T
+88CE  5F           LD E,A                             ; 4 T
+88CF  30 07        JR NC,cache_page_ready             ; [7, 12] T
+88D1  14           INC D                              ; 4 T
+88D2  7A           LD A,D                             ; 4 T
+88D3  E6 03        AND 3                              ; 7 T
+88D5  F6 74        OR cache_page                      ; 7 T
+88D7  57           LD D,A                             ; 4 T
+predict_0_0_advanced:
+88D8  7D           LD A,L                             ; 4 T
+88D9  C6 1F        ADD A,31                           ; 7 T
+88DB  6F           LD L,A                             ; 4 T
+88DC  1A           LD A,(DE)                          ; 7 T
+88DD  77           LD (HL),A                          ; 7 T
+88DE  1C           INC E                              ; 4 T
+88DF  2C           INC L                              ; 4 T
+88E0  1A           LD A,(DE)                          ; 7 T
+88E1  77           LD (HL),A                          ; 7 T
+88E2  7B           LD A,E                             ; 4 T
+88E3  C6 3F        ADD A,63                           ; 7 T
+88E5  5F           LD E,A                             ; 4 T
+88E6  30 07        JR NC,cache_page_ready             ; [7, 12] T
+88E8  14           INC D                              ; 4 T
+88E9  7A           LD A,D                             ; 4 T
+88EA  E6 03        AND 3                              ; 7 T
+88EC  F6 74        OR cache_page                      ; 7 T
+88EE  57           LD D,A                             ; 4 T
+predict_0_1_advanced:
+88EF  7D           LD A,L                             ; 4 T
+88F0  C6 1F        ADD A,31                           ; 7 T
+88F2  6F           LD L,A                             ; 4 T
+88F3  1A           LD A,(DE)                          ; 7 T
+88F4  77           LD (HL),A                          ; 7 T
+88F5  1C           INC E                              ; 4 T
+88F6  2C           INC L                              ; 4 T
+88F7  1A           LD A,(DE)                          ; 7 T
+88F8  77           LD (HL),A                          ; 7 T
+88F9  7B           LD A,E                             ; 4 T
+88FA  C6 3F        ADD A,63                           ; 7 T
+88FC  5F           LD E,A                             ; 4 T
+88FD  30 07        JR NC,cache_page_ready             ; [7, 12] T
+88FF  14           INC D                              ; 4 T
+8900  7A           LD A,D                             ; 4 T
+8901  E6 03        AND 3                              ; 7 T
+8903  F6 74        OR cache_page                      ; 7 T
+8905  57           LD D,A                             ; 4 T
+predict_0_2_advanced:
+8906  7D           LD A,L                             ; 4 T
+8907  C6 1F        ADD A,31                           ; 7 T
+8909  6F           LD L,A                             ; 4 T
+890A  1A           LD A,(DE)                          ; 7 T
+890B  77           LD (HL),A                          ; 7 T
+890C  1C           INC E                              ; 4 T
+890D  2C           INC L                              ; 4 T
+890E  1A           LD A,(DE)                          ; 7 T
+890F  77           LD (HL),A                          ; 7 T
+8910  7B           LD A,E                             ; 4 T
+8911  C6 3F        ADD A,63                           ; 7 T
+8913  5F           LD E,A                             ; 4 T
+8914  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8916  14           INC D                              ; 4 T
+8917  7A           LD A,D                             ; 4 T
+8918  E6 03        AND 3                              ; 7 T
+891A  F6 74        OR cache_page                      ; 7 T
+891C  57           LD D,A                             ; 4 T
+predict_0_3_advanced:
+891D  7D           LD A,L                             ; 4 T
+891E  C6 1F        ADD A,31                           ; 7 T
+8920  6F           LD L,A                             ; 4 T
+8921  1A           LD A,(DE)                          ; 7 T
+8922  77           LD (HL),A                          ; 7 T
+8923  1C           INC E                              ; 4 T
+8924  2C           INC L                              ; 4 T
+8925  1A           LD A,(DE)                          ; 7 T
+8926  77           LD (HL),A                          ; 7 T
+8927  7B           LD A,E                             ; 4 T
+8928  C6 3F        ADD A,63                           ; 7 T
+892A  5F           LD E,A                             ; 4 T
+892B  30 07        JR NC,cache_page_ready             ; [7, 12] T
+892D  14           INC D                              ; 4 T
+892E  7A           LD A,D                             ; 4 T
+892F  E6 03        AND 3                              ; 7 T
+8931  F6 74        OR cache_page                      ; 7 T
+8933  57           LD D,A                             ; 4 T
+predict_0_4_advanced:
+8934  7D           LD A,L                             ; 4 T
+8935  C6 1F        ADD A,31                           ; 7 T
+8937  6F           LD L,A                             ; 4 T
+8938  1A           LD A,(DE)                          ; 7 T
+8939  77           LD (HL),A                          ; 7 T
+893A  1C           INC E                              ; 4 T
+893B  2C           INC L                              ; 4 T
+893C  1A           LD A,(DE)                          ; 7 T
+893D  77           LD (HL),A                          ; 7 T
+893E  7B           LD A,E                             ; 4 T
+893F  C6 3F        ADD A,63                           ; 7 T
+8941  5F           LD E,A                             ; 4 T
+8942  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8944  14           INC D                              ; 4 T
+8945  7A           LD A,D                             ; 4 T
+8946  E6 03        AND 3                              ; 7 T
+8948  F6 74        OR cache_page                      ; 7 T
+894A  57           LD D,A                             ; 4 T
+predict_0_5_advanced:
+894B  7D           LD A,L                             ; 4 T
+894C  C6 1F        ADD A,31                           ; 7 T
+894E  6F           LD L,A                             ; 4 T
+894F  1A           LD A,(DE)                          ; 7 T
+8950  77           LD (HL),A                          ; 7 T
+8951  1C           INC E                              ; 4 T
+8952  2C           INC L                              ; 4 T
+8953  1A           LD A,(DE)                          ; 7 T
+8954  77           LD (HL),A                          ; 7 T
+8955  7B           LD A,E                             ; 4 T
+8956  C6 3F        ADD A,63                           ; 7 T
+8958  5F           LD E,A                             ; 4 T
+8959  30 07        JR NC,cache_page_ready             ; [7, 12] T
+895B  14           INC D                              ; 4 T
+895C  7A           LD A,D                             ; 4 T
+895D  E6 03        AND 3                              ; 7 T
+895F  F6 74        OR cache_page                      ; 7 T
+8961  57           LD D,A                             ; 4 T
+predict_0_6_advanced:
+8962  7D           LD A,L                             ; 4 T
+8963  C6 1F        ADD A,31                           ; 7 T
+8965  6F           LD L,A                             ; 4 T
+8966  1A           LD A,(DE)                          ; 7 T
+8967  77           LD (HL),A                          ; 7 T
+8968  1C           INC E                              ; 4 T
+8969  2C           INC L                              ; 4 T
+896A  1A           LD A,(DE)                          ; 7 T
+896B  77           LD (HL),A                          ; 7 T
+896C  C9           RET                                ; 10 T
+predict_2:
+896D  E5           PUSH HL                            ; 11 T
+896E  D9           EXX                                ; 4 T
+896F  D1           POP DE                             ; 10 T
+8970  D9           EXX                                ; 4 T
+8971  1A           LD A,(DE)                          ; 7 T
+8972  07           RLCA                               ; 4 T
+8973  07           RLCA                               ; 4 T
+8974  4F           LD C,A                             ; 4 T
+8975  1C           INC E                              ; 4 T
+8976  1A           LD A,(DE)                          ; 7 T
+8977  07           RLCA                               ; 4 T
+8978  07           RLCA                               ; 4 T
+8979  47           LD B,A                             ; 4 T
+897A  A9           XOR C                              ; 4 T
+897B  E6 03        AND merge_mask                     ; 7 T
+897D  A9           XOR C                              ; 4 T
+897E  D9           EXX                                ; 4 T
+897F  12           LD (DE),A                          ; 7 T
+8980  1C           INC E                              ; 4 T
+8981  D9           EXX                                ; 4 T
+8982  48           LD C,B                             ; 4 T
+8983  1C           INC E                              ; 4 T
+8984  1A           LD A,(DE)                          ; 7 T
+8985  07           RLCA                               ; 4 T
+8986  07           RLCA                               ; 4 T
+8987  A9           XOR C                              ; 4 T
+8988  E6 03        AND merge_mask                     ; 7 T
+898A  A9           XOR C                              ; 4 T
+898B  D9           EXX                                ; 4 T
+898C  12           LD (DE),A                          ; 7 T
+898D  7B           LD A,E                             ; 4 T
+898E  C6 1F        ADD A,31                           ; 7 T
+8990  5F           LD E,A                             ; 4 T
+8991  D9           EXX                                ; 4 T
+8992  7B           LD A,E                             ; 4 T
+8993  C6 3E        ADD A,62                           ; 7 T
+8995  5F           LD E,A                             ; 4 T
+8996  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8998  14           INC D                              ; 4 T
+8999  7A           LD A,D                             ; 4 T
+899A  E6 03        AND 3                              ; 7 T
+899C  F6 74        OR cache_page                      ; 7 T
+899E  57           LD D,A                             ; 4 T
+predict_2_0_advanced:
+899F  1A           LD A,(DE)                          ; 7 T
+89A0  07           RLCA                               ; 4 T
+89A1  07           RLCA                               ; 4 T
+89A2  4F           LD C,A                             ; 4 T
+89A3  1C           INC E                              ; 4 T
+89A4  1A           LD A,(DE)                          ; 7 T
+89A5  07           RLCA                               ; 4 T
+89A6  07           RLCA                               ; 4 T
+89A7  47           LD B,A                             ; 4 T
+89A8  A9           XOR C                              ; 4 T
+89A9  E6 03        AND merge_mask                     ; 7 T
+89AB  A9           XOR C                              ; 4 T
+89AC  D9           EXX                                ; 4 T
+89AD  12           LD (DE),A                          ; 7 T
+89AE  1C           INC E                              ; 4 T
+89AF  D9           EXX                                ; 4 T
+89B0  48           LD C,B                             ; 4 T
+89B1  1C           INC E                              ; 4 T
+89B2  1A           LD A,(DE)                          ; 7 T
+89B3  07           RLCA                               ; 4 T
+89B4  07           RLCA                               ; 4 T
+89B5  A9           XOR C                              ; 4 T
+89B6  E6 03        AND merge_mask                     ; 7 T
+89B8  A9           XOR C                              ; 4 T
+89B9  D9           EXX                                ; 4 T
+89BA  12           LD (DE),A                          ; 7 T
+89BB  7B           LD A,E                             ; 4 T
+89BC  C6 1F        ADD A,31                           ; 7 T
+89BE  5F           LD E,A                             ; 4 T
+89BF  D9           EXX                                ; 4 T
+89C0  7B           LD A,E                             ; 4 T
+89C1  C6 3E        ADD A,62                           ; 7 T
+89C3  5F           LD E,A                             ; 4 T
+89C4  30 07        JR NC,cache_page_ready             ; [7, 12] T
+89C6  14           INC D                              ; 4 T
+89C7  7A           LD A,D                             ; 4 T
+89C8  E6 03        AND 3                              ; 7 T
+89CA  F6 74        OR cache_page                      ; 7 T
+89CC  57           LD D,A                             ; 4 T
+predict_2_1_advanced:
+89CD  1A           LD A,(DE)                          ; 7 T
+89CE  07           RLCA                               ; 4 T
+89CF  07           RLCA                               ; 4 T
+89D0  4F           LD C,A                             ; 4 T
+89D1  1C           INC E                              ; 4 T
+89D2  1A           LD A,(DE)                          ; 7 T
+89D3  07           RLCA                               ; 4 T
+89D4  07           RLCA                               ; 4 T
+89D5  47           LD B,A                             ; 4 T
+89D6  A9           XOR C                              ; 4 T
+89D7  E6 03        AND merge_mask                     ; 7 T
+89D9  A9           XOR C                              ; 4 T
+89DA  D9           EXX                                ; 4 T
+89DB  12           LD (DE),A                          ; 7 T
+89DC  1C           INC E                              ; 4 T
+89DD  D9           EXX                                ; 4 T
+89DE  48           LD C,B                             ; 4 T
+89DF  1C           INC E                              ; 4 T
+89E0  1A           LD A,(DE)                          ; 7 T
+89E1  07           RLCA                               ; 4 T
+89E2  07           RLCA                               ; 4 T
+89E3  A9           XOR C                              ; 4 T
+89E4  E6 03        AND merge_mask                     ; 7 T
+89E6  A9           XOR C                              ; 4 T
+89E7  D9           EXX                                ; 4 T
+89E8  12           LD (DE),A                          ; 7 T
+89E9  7B           LD A,E                             ; 4 T
+89EA  C6 1F        ADD A,31                           ; 7 T
+89EC  5F           LD E,A                             ; 4 T
+89ED  D9           EXX                                ; 4 T
+89EE  7B           LD A,E                             ; 4 T
+89EF  C6 3E        ADD A,62                           ; 7 T
+89F1  5F           LD E,A                             ; 4 T
+89F2  30 07        JR NC,cache_page_ready             ; [7, 12] T
+89F4  14           INC D                              ; 4 T
+89F5  7A           LD A,D                             ; 4 T
+89F6  E6 03        AND 3                              ; 7 T
+89F8  F6 74        OR cache_page                      ; 7 T
+89FA  57           LD D,A                             ; 4 T
+predict_2_2_advanced:
+89FB  1A           LD A,(DE)                          ; 7 T
+89FC  07           RLCA                               ; 4 T
+89FD  07           RLCA                               ; 4 T
+89FE  4F           LD C,A                             ; 4 T
+89FF  1C           INC E                              ; 4 T
+8A00  1A           LD A,(DE)                          ; 7 T
+8A01  07           RLCA                               ; 4 T
+8A02  07           RLCA                               ; 4 T
+8A03  47           LD B,A                             ; 4 T
+8A04  A9           XOR C                              ; 4 T
+8A05  E6 03        AND merge_mask                     ; 7 T
+8A07  A9           XOR C                              ; 4 T
+8A08  D9           EXX                                ; 4 T
+8A09  12           LD (DE),A                          ; 7 T
+8A0A  1C           INC E                              ; 4 T
+8A0B  D9           EXX                                ; 4 T
+8A0C  48           LD C,B                             ; 4 T
+8A0D  1C           INC E                              ; 4 T
+8A0E  1A           LD A,(DE)                          ; 7 T
+8A0F  07           RLCA                               ; 4 T
+8A10  07           RLCA                               ; 4 T
+8A11  A9           XOR C                              ; 4 T
+8A12  E6 03        AND merge_mask                     ; 7 T
+8A14  A9           XOR C                              ; 4 T
+8A15  D9           EXX                                ; 4 T
+8A16  12           LD (DE),A                          ; 7 T
+8A17  7B           LD A,E                             ; 4 T
+8A18  C6 1F        ADD A,31                           ; 7 T
+8A1A  5F           LD E,A                             ; 4 T
+8A1B  D9           EXX                                ; 4 T
+8A1C  7B           LD A,E                             ; 4 T
+8A1D  C6 3E        ADD A,62                           ; 7 T
+8A1F  5F           LD E,A                             ; 4 T
+8A20  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8A22  14           INC D                              ; 4 T
+8A23  7A           LD A,D                             ; 4 T
+8A24  E6 03        AND 3                              ; 7 T
+8A26  F6 74        OR cache_page                      ; 7 T
+8A28  57           LD D,A                             ; 4 T
+predict_2_3_advanced:
+8A29  1A           LD A,(DE)                          ; 7 T
+8A2A  07           RLCA                               ; 4 T
+8A2B  07           RLCA                               ; 4 T
+8A2C  4F           LD C,A                             ; 4 T
+8A2D  1C           INC E                              ; 4 T
+8A2E  1A           LD A,(DE)                          ; 7 T
+8A2F  07           RLCA                               ; 4 T
+8A30  07           RLCA                               ; 4 T
+8A31  47           LD B,A                             ; 4 T
+8A32  A9           XOR C                              ; 4 T
+8A33  E6 03        AND merge_mask                     ; 7 T
+8A35  A9           XOR C                              ; 4 T
+8A36  D9           EXX                                ; 4 T
+8A37  12           LD (DE),A                          ; 7 T
+8A38  1C           INC E                              ; 4 T
+8A39  D9           EXX                                ; 4 T
+8A3A  48           LD C,B                             ; 4 T
+8A3B  1C           INC E                              ; 4 T
+8A3C  1A           LD A,(DE)                          ; 7 T
+8A3D  07           RLCA                               ; 4 T
+8A3E  07           RLCA                               ; 4 T
+8A3F  A9           XOR C                              ; 4 T
+8A40  E6 03        AND merge_mask                     ; 7 T
+8A42  A9           XOR C                              ; 4 T
+8A43  D9           EXX                                ; 4 T
+8A44  12           LD (DE),A                          ; 7 T
+8A45  7B           LD A,E                             ; 4 T
+8A46  C6 1F        ADD A,31                           ; 7 T
+8A48  5F           LD E,A                             ; 4 T
+8A49  D9           EXX                                ; 4 T
+8A4A  7B           LD A,E                             ; 4 T
+8A4B  C6 3E        ADD A,62                           ; 7 T
+8A4D  5F           LD E,A                             ; 4 T
+8A4E  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8A50  14           INC D                              ; 4 T
+8A51  7A           LD A,D                             ; 4 T
+8A52  E6 03        AND 3                              ; 7 T
+8A54  F6 74        OR cache_page                      ; 7 T
+8A56  57           LD D,A                             ; 4 T
+predict_2_4_advanced:
+8A57  1A           LD A,(DE)                          ; 7 T
+8A58  07           RLCA                               ; 4 T
+8A59  07           RLCA                               ; 4 T
+8A5A  4F           LD C,A                             ; 4 T
+8A5B  1C           INC E                              ; 4 T
+8A5C  1A           LD A,(DE)                          ; 7 T
+8A5D  07           RLCA                               ; 4 T
+8A5E  07           RLCA                               ; 4 T
+8A5F  47           LD B,A                             ; 4 T
+8A60  A9           XOR C                              ; 4 T
+8A61  E6 03        AND merge_mask                     ; 7 T
+8A63  A9           XOR C                              ; 4 T
+8A64  D9           EXX                                ; 4 T
+8A65  12           LD (DE),A                          ; 7 T
+8A66  1C           INC E                              ; 4 T
+8A67  D9           EXX                                ; 4 T
+8A68  48           LD C,B                             ; 4 T
+8A69  1C           INC E                              ; 4 T
+8A6A  1A           LD A,(DE)                          ; 7 T
+8A6B  07           RLCA                               ; 4 T
+8A6C  07           RLCA                               ; 4 T
+8A6D  A9           XOR C                              ; 4 T
+8A6E  E6 03        AND merge_mask                     ; 7 T
+8A70  A9           XOR C                              ; 4 T
+8A71  D9           EXX                                ; 4 T
+8A72  12           LD (DE),A                          ; 7 T
+8A73  7B           LD A,E                             ; 4 T
+8A74  C6 1F        ADD A,31                           ; 7 T
+8A76  5F           LD E,A                             ; 4 T
+8A77  D9           EXX                                ; 4 T
+8A78  7B           LD A,E                             ; 4 T
+8A79  C6 3E        ADD A,62                           ; 7 T
+8A7B  5F           LD E,A                             ; 4 T
+8A7C  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8A7E  14           INC D                              ; 4 T
+8A7F  7A           LD A,D                             ; 4 T
+8A80  E6 03        AND 3                              ; 7 T
+8A82  F6 74        OR cache_page                      ; 7 T
+8A84  57           LD D,A                             ; 4 T
+predict_2_5_advanced:
+8A85  1A           LD A,(DE)                          ; 7 T
+8A86  07           RLCA                               ; 4 T
+8A87  07           RLCA                               ; 4 T
+8A88  4F           LD C,A                             ; 4 T
+8A89  1C           INC E                              ; 4 T
+8A8A  1A           LD A,(DE)                          ; 7 T
+8A8B  07           RLCA                               ; 4 T
+8A8C  07           RLCA                               ; 4 T
+8A8D  47           LD B,A                             ; 4 T
+8A8E  A9           XOR C                              ; 4 T
+8A8F  E6 03        AND merge_mask                     ; 7 T
+8A91  A9           XOR C                              ; 4 T
+8A92  D9           EXX                                ; 4 T
+8A93  12           LD (DE),A                          ; 7 T
+8A94  1C           INC E                              ; 4 T
+8A95  D9           EXX                                ; 4 T
+8A96  48           LD C,B                             ; 4 T
+8A97  1C           INC E                              ; 4 T
+8A98  1A           LD A,(DE)                          ; 7 T
+8A99  07           RLCA                               ; 4 T
+8A9A  07           RLCA                               ; 4 T
+8A9B  A9           XOR C                              ; 4 T
+8A9C  E6 03        AND merge_mask                     ; 7 T
+8A9E  A9           XOR C                              ; 4 T
+8A9F  D9           EXX                                ; 4 T
+8AA0  12           LD (DE),A                          ; 7 T
+8AA1  7B           LD A,E                             ; 4 T
+8AA2  C6 1F        ADD A,31                           ; 7 T
+8AA4  5F           LD E,A                             ; 4 T
+8AA5  D9           EXX                                ; 4 T
+8AA6  7B           LD A,E                             ; 4 T
+8AA7  C6 3E        ADD A,62                           ; 7 T
+8AA9  5F           LD E,A                             ; 4 T
+8AAA  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8AAC  14           INC D                              ; 4 T
+8AAD  7A           LD A,D                             ; 4 T
+8AAE  E6 03        AND 3                              ; 7 T
+8AB0  F6 74        OR cache_page                      ; 7 T
+8AB2  57           LD D,A                             ; 4 T
+predict_2_6_advanced:
+8AB3  1A           LD A,(DE)                          ; 7 T
+8AB4  07           RLCA                               ; 4 T
+8AB5  07           RLCA                               ; 4 T
+8AB6  4F           LD C,A                             ; 4 T
+8AB7  1C           INC E                              ; 4 T
+8AB8  1A           LD A,(DE)                          ; 7 T
+8AB9  07           RLCA                               ; 4 T
+8ABA  07           RLCA                               ; 4 T
+8ABB  47           LD B,A                             ; 4 T
+8ABC  A9           XOR C                              ; 4 T
+8ABD  E6 03        AND merge_mask                     ; 7 T
+8ABF  A9           XOR C                              ; 4 T
+8AC0  D9           EXX                                ; 4 T
+8AC1  12           LD (DE),A                          ; 7 T
+8AC2  1C           INC E                              ; 4 T
+8AC3  D9           EXX                                ; 4 T
+8AC4  48           LD C,B                             ; 4 T
+8AC5  1C           INC E                              ; 4 T
+8AC6  1A           LD A,(DE)                          ; 7 T
+8AC7  07           RLCA                               ; 4 T
+8AC8  07           RLCA                               ; 4 T
+8AC9  A9           XOR C                              ; 4 T
+8ACA  E6 03        AND merge_mask                     ; 7 T
+8ACC  A9           XOR C                              ; 4 T
+8ACD  D9           EXX                                ; 4 T
+8ACE  12           LD (DE),A                          ; 7 T
+8ACF  D9           EXX                                ; 4 T
+8AD0  C9           RET                                ; 10 T
+predict_4:
+8AD1  E5           PUSH HL                            ; 11 T
+8AD2  D9           EXX                                ; 4 T
+8AD3  D1           POP DE                             ; 10 T
+8AD4  D9           EXX                                ; 4 T
+8AD5  1A           LD A,(DE)                          ; 7 T
+8AD6  1C           INC E                              ; 4 T
+8AD7  6F           LD L,A                             ; 4 T
+8AD8  26 F4        LD H,left_shift                    ; 7 T
+8ADA  46           LD B,(HL)                          ; 7 T
+8ADB  1A           LD A,(DE)                          ; 7 T
+8ADC  6F           LD L,A                             ; 4 T
+8ADD  26 FC        LD H,right_shift                   ; 7 T
+8ADF  7E           LD A,(HL)                          ; 7 T
+8AE0  B0           OR B                               ; 4 T
+8AE1  D9           EXX                                ; 4 T
+8AE2  12           LD (DE),A                          ; 7 T
+8AE3  1C           INC E                              ; 4 T
+8AE4  D9           EXX                                ; 4 T
+8AE5  26 F4        LD H,left_shift                    ; 7 T
+8AE7  46           LD B,(HL)                          ; 7 T
+8AE8  1C           INC E                              ; 4 T
+8AE9  1A           LD A,(DE)                          ; 7 T
+8AEA  6F           LD L,A                             ; 4 T
+8AEB  26 FC        LD H,right_shift                   ; 7 T
+8AED  7E           LD A,(HL)                          ; 7 T
+8AEE  B0           OR B                               ; 4 T
+8AEF  D9           EXX                                ; 4 T
+8AF0  12           LD (DE),A                          ; 7 T
+8AF1  7B           LD A,E                             ; 4 T
+8AF2  C6 1F        ADD A,31                           ; 7 T
+8AF4  5F           LD E,A                             ; 4 T
+8AF5  D9           EXX                                ; 4 T
+8AF6  7B           LD A,E                             ; 4 T
+8AF7  C6 3E        ADD A,62                           ; 7 T
+8AF9  5F           LD E,A                             ; 4 T
+8AFA  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8AFC  14           INC D                              ; 4 T
+8AFD  7A           LD A,D                             ; 4 T
+8AFE  E6 03        AND 3                              ; 7 T
+8B00  F6 74        OR cache_page                      ; 7 T
+8B02  57           LD D,A                             ; 4 T
+predict_4_0_advanced:
+8B03  1A           LD A,(DE)                          ; 7 T
+8B04  1C           INC E                              ; 4 T
+8B05  6F           LD L,A                             ; 4 T
+8B06  26 F4        LD H,left_shift                    ; 7 T
+8B08  46           LD B,(HL)                          ; 7 T
+8B09  1A           LD A,(DE)                          ; 7 T
+8B0A  6F           LD L,A                             ; 4 T
+8B0B  26 FC        LD H,right_shift                   ; 7 T
+8B0D  7E           LD A,(HL)                          ; 7 T
+8B0E  B0           OR B                               ; 4 T
+8B0F  D9           EXX                                ; 4 T
+8B10  12           LD (DE),A                          ; 7 T
+8B11  1C           INC E                              ; 4 T
+8B12  D9           EXX                                ; 4 T
+8B13  26 F4        LD H,left_shift                    ; 7 T
+8B15  46           LD B,(HL)                          ; 7 T
+8B16  1C           INC E                              ; 4 T
+8B17  1A           LD A,(DE)                          ; 7 T
+8B18  6F           LD L,A                             ; 4 T
+8B19  26 FC        LD H,right_shift                   ; 7 T
+8B1B  7E           LD A,(HL)                          ; 7 T
+8B1C  B0           OR B                               ; 4 T
+8B1D  D9           EXX                                ; 4 T
+8B1E  12           LD (DE),A                          ; 7 T
+8B1F  7B           LD A,E                             ; 4 T
+8B20  C6 1F        ADD A,31                           ; 7 T
+8B22  5F           LD E,A                             ; 4 T
+8B23  D9           EXX                                ; 4 T
+8B24  7B           LD A,E                             ; 4 T
+8B25  C6 3E        ADD A,62                           ; 7 T
+8B27  5F           LD E,A                             ; 4 T
+8B28  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8B2A  14           INC D                              ; 4 T
+8B2B  7A           LD A,D                             ; 4 T
+8B2C  E6 03        AND 3                              ; 7 T
+8B2E  F6 74        OR cache_page                      ; 7 T
+8B30  57           LD D,A                             ; 4 T
+predict_4_1_advanced:
+8B31  1A           LD A,(DE)                          ; 7 T
+8B32  1C           INC E                              ; 4 T
+8B33  6F           LD L,A                             ; 4 T
+8B34  26 F4        LD H,left_shift                    ; 7 T
+8B36  46           LD B,(HL)                          ; 7 T
+8B37  1A           LD A,(DE)                          ; 7 T
+8B38  6F           LD L,A                             ; 4 T
+8B39  26 FC        LD H,right_shift                   ; 7 T
+8B3B  7E           LD A,(HL)                          ; 7 T
+8B3C  B0           OR B                               ; 4 T
+8B3D  D9           EXX                                ; 4 T
+8B3E  12           LD (DE),A                          ; 7 T
+8B3F  1C           INC E                              ; 4 T
+8B40  D9           EXX                                ; 4 T
+8B41  26 F4        LD H,left_shift                    ; 7 T
+8B43  46           LD B,(HL)                          ; 7 T
+8B44  1C           INC E                              ; 4 T
+8B45  1A           LD A,(DE)                          ; 7 T
+8B46  6F           LD L,A                             ; 4 T
+8B47  26 FC        LD H,right_shift                   ; 7 T
+8B49  7E           LD A,(HL)                          ; 7 T
+8B4A  B0           OR B                               ; 4 T
+8B4B  D9           EXX                                ; 4 T
+8B4C  12           LD (DE),A                          ; 7 T
+8B4D  7B           LD A,E                             ; 4 T
+8B4E  C6 1F        ADD A,31                           ; 7 T
+8B50  5F           LD E,A                             ; 4 T
+8B51  D9           EXX                                ; 4 T
+8B52  7B           LD A,E                             ; 4 T
+8B53  C6 3E        ADD A,62                           ; 7 T
+8B55  5F           LD E,A                             ; 4 T
+8B56  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8B58  14           INC D                              ; 4 T
+8B59  7A           LD A,D                             ; 4 T
+8B5A  E6 03        AND 3                              ; 7 T
+8B5C  F6 74        OR cache_page                      ; 7 T
+8B5E  57           LD D,A                             ; 4 T
+predict_4_2_advanced:
+8B5F  1A           LD A,(DE)                          ; 7 T
+8B60  1C           INC E                              ; 4 T
+8B61  6F           LD L,A                             ; 4 T
+8B62  26 F4        LD H,left_shift                    ; 7 T
+8B64  46           LD B,(HL)                          ; 7 T
+8B65  1A           LD A,(DE)                          ; 7 T
+8B66  6F           LD L,A                             ; 4 T
+8B67  26 FC        LD H,right_shift                   ; 7 T
+8B69  7E           LD A,(HL)                          ; 7 T
+8B6A  B0           OR B                               ; 4 T
+8B6B  D9           EXX                                ; 4 T
+8B6C  12           LD (DE),A                          ; 7 T
+8B6D  1C           INC E                              ; 4 T
+8B6E  D9           EXX                                ; 4 T
+8B6F  26 F4        LD H,left_shift                    ; 7 T
+8B71  46           LD B,(HL)                          ; 7 T
+8B72  1C           INC E                              ; 4 T
+8B73  1A           LD A,(DE)                          ; 7 T
+8B74  6F           LD L,A                             ; 4 T
+8B75  26 FC        LD H,right_shift                   ; 7 T
+8B77  7E           LD A,(HL)                          ; 7 T
+8B78  B0           OR B                               ; 4 T
+8B79  D9           EXX                                ; 4 T
+8B7A  12           LD (DE),A                          ; 7 T
+8B7B  7B           LD A,E                             ; 4 T
+8B7C  C6 1F        ADD A,31                           ; 7 T
+8B7E  5F           LD E,A                             ; 4 T
+8B7F  D9           EXX                                ; 4 T
+8B80  7B           LD A,E                             ; 4 T
+8B81  C6 3E        ADD A,62                           ; 7 T
+8B83  5F           LD E,A                             ; 4 T
+8B84  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8B86  14           INC D                              ; 4 T
+8B87  7A           LD A,D                             ; 4 T
+8B88  E6 03        AND 3                              ; 7 T
+8B8A  F6 74        OR cache_page                      ; 7 T
+8B8C  57           LD D,A                             ; 4 T
+predict_4_3_advanced:
+8B8D  1A           LD A,(DE)                          ; 7 T
+8B8E  1C           INC E                              ; 4 T
+8B8F  6F           LD L,A                             ; 4 T
+8B90  26 F4        LD H,left_shift                    ; 7 T
+8B92  46           LD B,(HL)                          ; 7 T
+8B93  1A           LD A,(DE)                          ; 7 T
+8B94  6F           LD L,A                             ; 4 T
+8B95  26 FC        LD H,right_shift                   ; 7 T
+8B97  7E           LD A,(HL)                          ; 7 T
+8B98  B0           OR B                               ; 4 T
+8B99  D9           EXX                                ; 4 T
+8B9A  12           LD (DE),A                          ; 7 T
+8B9B  1C           INC E                              ; 4 T
+8B9C  D9           EXX                                ; 4 T
+8B9D  26 F4        LD H,left_shift                    ; 7 T
+8B9F  46           LD B,(HL)                          ; 7 T
+8BA0  1C           INC E                              ; 4 T
+8BA1  1A           LD A,(DE)                          ; 7 T
+8BA2  6F           LD L,A                             ; 4 T
+8BA3  26 FC        LD H,right_shift                   ; 7 T
+8BA5  7E           LD A,(HL)                          ; 7 T
+8BA6  B0           OR B                               ; 4 T
+8BA7  D9           EXX                                ; 4 T
+8BA8  12           LD (DE),A                          ; 7 T
+8BA9  7B           LD A,E                             ; 4 T
+8BAA  C6 1F        ADD A,31                           ; 7 T
+8BAC  5F           LD E,A                             ; 4 T
+8BAD  D9           EXX                                ; 4 T
+8BAE  7B           LD A,E                             ; 4 T
+8BAF  C6 3E        ADD A,62                           ; 7 T
+8BB1  5F           LD E,A                             ; 4 T
+8BB2  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8BB4  14           INC D                              ; 4 T
+8BB5  7A           LD A,D                             ; 4 T
+8BB6  E6 03        AND 3                              ; 7 T
+8BB8  F6 74        OR cache_page                      ; 7 T
+8BBA  57           LD D,A                             ; 4 T
+predict_4_4_advanced:
+8BBB  1A           LD A,(DE)                          ; 7 T
+8BBC  1C           INC E                              ; 4 T
+8BBD  6F           LD L,A                             ; 4 T
+8BBE  26 F4        LD H,left_shift                    ; 7 T
+8BC0  46           LD B,(HL)                          ; 7 T
+8BC1  1A           LD A,(DE)                          ; 7 T
+8BC2  6F           LD L,A                             ; 4 T
+8BC3  26 FC        LD H,right_shift                   ; 7 T
+8BC5  7E           LD A,(HL)                          ; 7 T
+8BC6  B0           OR B                               ; 4 T
+8BC7  D9           EXX                                ; 4 T
+8BC8  12           LD (DE),A                          ; 7 T
+8BC9  1C           INC E                              ; 4 T
+8BCA  D9           EXX                                ; 4 T
+8BCB  26 F4        LD H,left_shift                    ; 7 T
+8BCD  46           LD B,(HL)                          ; 7 T
+8BCE  1C           INC E                              ; 4 T
+8BCF  1A           LD A,(DE)                          ; 7 T
+8BD0  6F           LD L,A                             ; 4 T
+8BD1  26 FC        LD H,right_shift                   ; 7 T
+8BD3  7E           LD A,(HL)                          ; 7 T
+8BD4  B0           OR B                               ; 4 T
+8BD5  D9           EXX                                ; 4 T
+8BD6  12           LD (DE),A                          ; 7 T
+8BD7  7B           LD A,E                             ; 4 T
+8BD8  C6 1F        ADD A,31                           ; 7 T
+8BDA  5F           LD E,A                             ; 4 T
+8BDB  D9           EXX                                ; 4 T
+8BDC  7B           LD A,E                             ; 4 T
+8BDD  C6 3E        ADD A,62                           ; 7 T
+8BDF  5F           LD E,A                             ; 4 T
+8BE0  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8BE2  14           INC D                              ; 4 T
+8BE3  7A           LD A,D                             ; 4 T
+8BE4  E6 03        AND 3                              ; 7 T
+8BE6  F6 74        OR cache_page                      ; 7 T
+8BE8  57           LD D,A                             ; 4 T
+predict_4_5_advanced:
+8BE9  1A           LD A,(DE)                          ; 7 T
+8BEA  1C           INC E                              ; 4 T
+8BEB  6F           LD L,A                             ; 4 T
+8BEC  26 F4        LD H,left_shift                    ; 7 T
+8BEE  46           LD B,(HL)                          ; 7 T
+8BEF  1A           LD A,(DE)                          ; 7 T
+8BF0  6F           LD L,A                             ; 4 T
+8BF1  26 FC        LD H,right_shift                   ; 7 T
+8BF3  7E           LD A,(HL)                          ; 7 T
+8BF4  B0           OR B                               ; 4 T
+8BF5  D9           EXX                                ; 4 T
+8BF6  12           LD (DE),A                          ; 7 T
+8BF7  1C           INC E                              ; 4 T
+8BF8  D9           EXX                                ; 4 T
+8BF9  26 F4        LD H,left_shift                    ; 7 T
+8BFB  46           LD B,(HL)                          ; 7 T
+8BFC  1C           INC E                              ; 4 T
+8BFD  1A           LD A,(DE)                          ; 7 T
+8BFE  6F           LD L,A                             ; 4 T
+8BFF  26 FC        LD H,right_shift                   ; 7 T
+8C01  7E           LD A,(HL)                          ; 7 T
+8C02  B0           OR B                               ; 4 T
+8C03  D9           EXX                                ; 4 T
+8C04  12           LD (DE),A                          ; 7 T
+8C05  7B           LD A,E                             ; 4 T
+8C06  C6 1F        ADD A,31                           ; 7 T
+8C08  5F           LD E,A                             ; 4 T
+8C09  D9           EXX                                ; 4 T
+8C0A  7B           LD A,E                             ; 4 T
+8C0B  C6 3E        ADD A,62                           ; 7 T
+8C0D  5F           LD E,A                             ; 4 T
+8C0E  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8C10  14           INC D                              ; 4 T
+8C11  7A           LD A,D                             ; 4 T
+8C12  E6 03        AND 3                              ; 7 T
+8C14  F6 74        OR cache_page                      ; 7 T
+8C16  57           LD D,A                             ; 4 T
+predict_4_6_advanced:
+8C17  1A           LD A,(DE)                          ; 7 T
+8C18  1C           INC E                              ; 4 T
+8C19  6F           LD L,A                             ; 4 T
+8C1A  26 F4        LD H,left_shift                    ; 7 T
+8C1C  46           LD B,(HL)                          ; 7 T
+8C1D  1A           LD A,(DE)                          ; 7 T
+8C1E  6F           LD L,A                             ; 4 T
+8C1F  26 FC        LD H,right_shift                   ; 7 T
+8C21  7E           LD A,(HL)                          ; 7 T
+8C22  B0           OR B                               ; 4 T
+8C23  D9           EXX                                ; 4 T
+8C24  12           LD (DE),A                          ; 7 T
+8C25  1C           INC E                              ; 4 T
+8C26  D9           EXX                                ; 4 T
+8C27  26 F4        LD H,left_shift                    ; 7 T
+8C29  46           LD B,(HL)                          ; 7 T
+8C2A  1C           INC E                              ; 4 T
+8C2B  1A           LD A,(DE)                          ; 7 T
+8C2C  6F           LD L,A                             ; 4 T
+8C2D  26 FC        LD H,right_shift                   ; 7 T
+8C2F  7E           LD A,(HL)                          ; 7 T
+8C30  B0           OR B                               ; 4 T
+8C31  D9           EXX                                ; 4 T
+8C32  12           LD (DE),A                          ; 7 T
+8C33  D9           EXX                                ; 4 T
+8C34  C9           RET                                ; 10 T
+predict_6:
+8C35  E5           PUSH HL                            ; 11 T
+8C36  D9           EXX                                ; 4 T
+8C37  D1           POP DE                             ; 10 T
+8C38  D9           EXX                                ; 4 T
+8C39  1A           LD A,(DE)                          ; 7 T
+8C3A  0F           RRCA                               ; 4 T
+8C3B  0F           RRCA                               ; 4 T
+8C3C  4F           LD C,A                             ; 4 T
+8C3D  1C           INC E                              ; 4 T
+8C3E  1A           LD A,(DE)                          ; 7 T
+8C3F  0F           RRCA                               ; 4 T
+8C40  0F           RRCA                               ; 4 T
+8C41  47           LD B,A                             ; 4 T
+8C42  A9           XOR C                              ; 4 T
+8C43  E6 3F        AND merge_mask                     ; 7 T
+8C45  A9           XOR C                              ; 4 T
+8C46  D9           EXX                                ; 4 T
+8C47  12           LD (DE),A                          ; 7 T
+8C48  1C           INC E                              ; 4 T
+8C49  D9           EXX                                ; 4 T
+8C4A  48           LD C,B                             ; 4 T
+8C4B  1C           INC E                              ; 4 T
+8C4C  1A           LD A,(DE)                          ; 7 T
+8C4D  0F           RRCA                               ; 4 T
+8C4E  0F           RRCA                               ; 4 T
+8C4F  A9           XOR C                              ; 4 T
+8C50  E6 3F        AND merge_mask                     ; 7 T
+8C52  A9           XOR C                              ; 4 T
+8C53  D9           EXX                                ; 4 T
+8C54  12           LD (DE),A                          ; 7 T
+8C55  7B           LD A,E                             ; 4 T
+8C56  C6 1F        ADD A,31                           ; 7 T
+8C58  5F           LD E,A                             ; 4 T
+8C59  D9           EXX                                ; 4 T
+8C5A  7B           LD A,E                             ; 4 T
+8C5B  C6 3E        ADD A,62                           ; 7 T
+8C5D  5F           LD E,A                             ; 4 T
+8C5E  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8C60  14           INC D                              ; 4 T
+8C61  7A           LD A,D                             ; 4 T
+8C62  E6 03        AND 3                              ; 7 T
+8C64  F6 74        OR cache_page                      ; 7 T
+8C66  57           LD D,A                             ; 4 T
+predict_6_0_advanced:
+8C67  1A           LD A,(DE)                          ; 7 T
+8C68  0F           RRCA                               ; 4 T
+8C69  0F           RRCA                               ; 4 T
+8C6A  4F           LD C,A                             ; 4 T
+8C6B  1C           INC E                              ; 4 T
+8C6C  1A           LD A,(DE)                          ; 7 T
+8C6D  0F           RRCA                               ; 4 T
+8C6E  0F           RRCA                               ; 4 T
+8C6F  47           LD B,A                             ; 4 T
+8C70  A9           XOR C                              ; 4 T
+8C71  E6 3F        AND merge_mask                     ; 7 T
+8C73  A9           XOR C                              ; 4 T
+8C74  D9           EXX                                ; 4 T
+8C75  12           LD (DE),A                          ; 7 T
+8C76  1C           INC E                              ; 4 T
+8C77  D9           EXX                                ; 4 T
+8C78  48           LD C,B                             ; 4 T
+8C79  1C           INC E                              ; 4 T
+8C7A  1A           LD A,(DE)                          ; 7 T
+8C7B  0F           RRCA                               ; 4 T
+8C7C  0F           RRCA                               ; 4 T
+8C7D  A9           XOR C                              ; 4 T
+8C7E  E6 3F        AND merge_mask                     ; 7 T
+8C80  A9           XOR C                              ; 4 T
+8C81  D9           EXX                                ; 4 T
+8C82  12           LD (DE),A                          ; 7 T
+8C83  7B           LD A,E                             ; 4 T
+8C84  C6 1F        ADD A,31                           ; 7 T
+8C86  5F           LD E,A                             ; 4 T
+8C87  D9           EXX                                ; 4 T
+8C88  7B           LD A,E                             ; 4 T
+8C89  C6 3E        ADD A,62                           ; 7 T
+8C8B  5F           LD E,A                             ; 4 T
+8C8C  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8C8E  14           INC D                              ; 4 T
+8C8F  7A           LD A,D                             ; 4 T
+8C90  E6 03        AND 3                              ; 7 T
+8C92  F6 74        OR cache_page                      ; 7 T
+8C94  57           LD D,A                             ; 4 T
+predict_6_1_advanced:
+8C95  1A           LD A,(DE)                          ; 7 T
+8C96  0F           RRCA                               ; 4 T
+8C97  0F           RRCA                               ; 4 T
+8C98  4F           LD C,A                             ; 4 T
+8C99  1C           INC E                              ; 4 T
+8C9A  1A           LD A,(DE)                          ; 7 T
+8C9B  0F           RRCA                               ; 4 T
+8C9C  0F           RRCA                               ; 4 T
+8C9D  47           LD B,A                             ; 4 T
+8C9E  A9           XOR C                              ; 4 T
+8C9F  E6 3F        AND merge_mask                     ; 7 T
+8CA1  A9           XOR C                              ; 4 T
+8CA2  D9           EXX                                ; 4 T
+8CA3  12           LD (DE),A                          ; 7 T
+8CA4  1C           INC E                              ; 4 T
+8CA5  D9           EXX                                ; 4 T
+8CA6  48           LD C,B                             ; 4 T
+8CA7  1C           INC E                              ; 4 T
+8CA8  1A           LD A,(DE)                          ; 7 T
+8CA9  0F           RRCA                               ; 4 T
+8CAA  0F           RRCA                               ; 4 T
+8CAB  A9           XOR C                              ; 4 T
+8CAC  E6 3F        AND merge_mask                     ; 7 T
+8CAE  A9           XOR C                              ; 4 T
+8CAF  D9           EXX                                ; 4 T
+8CB0  12           LD (DE),A                          ; 7 T
+8CB1  7B           LD A,E                             ; 4 T
+8CB2  C6 1F        ADD A,31                           ; 7 T
+8CB4  5F           LD E,A                             ; 4 T
+8CB5  D9           EXX                                ; 4 T
+8CB6  7B           LD A,E                             ; 4 T
+8CB7  C6 3E        ADD A,62                           ; 7 T
+8CB9  5F           LD E,A                             ; 4 T
+8CBA  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8CBC  14           INC D                              ; 4 T
+8CBD  7A           LD A,D                             ; 4 T
+8CBE  E6 03        AND 3                              ; 7 T
+8CC0  F6 74        OR cache_page                      ; 7 T
+8CC2  57           LD D,A                             ; 4 T
+predict_6_2_advanced:
+8CC3  1A           LD A,(DE)                          ; 7 T
+8CC4  0F           RRCA                               ; 4 T
+8CC5  0F           RRCA                               ; 4 T
+8CC6  4F           LD C,A                             ; 4 T
+8CC7  1C           INC E                              ; 4 T
+8CC8  1A           LD A,(DE)                          ; 7 T
+8CC9  0F           RRCA                               ; 4 T
+8CCA  0F           RRCA                               ; 4 T
+8CCB  47           LD B,A                             ; 4 T
+8CCC  A9           XOR C                              ; 4 T
+8CCD  E6 3F        AND merge_mask                     ; 7 T
+8CCF  A9           XOR C                              ; 4 T
+8CD0  D9           EXX                                ; 4 T
+8CD1  12           LD (DE),A                          ; 7 T
+8CD2  1C           INC E                              ; 4 T
+8CD3  D9           EXX                                ; 4 T
+8CD4  48           LD C,B                             ; 4 T
+8CD5  1C           INC E                              ; 4 T
+8CD6  1A           LD A,(DE)                          ; 7 T
+8CD7  0F           RRCA                               ; 4 T
+8CD8  0F           RRCA                               ; 4 T
+8CD9  A9           XOR C                              ; 4 T
+8CDA  E6 3F        AND merge_mask                     ; 7 T
+8CDC  A9           XOR C                              ; 4 T
+8CDD  D9           EXX                                ; 4 T
+8CDE  12           LD (DE),A                          ; 7 T
+8CDF  7B           LD A,E                             ; 4 T
+8CE0  C6 1F        ADD A,31                           ; 7 T
+8CE2  5F           LD E,A                             ; 4 T
+8CE3  D9           EXX                                ; 4 T
+8CE4  7B           LD A,E                             ; 4 T
+8CE5  C6 3E        ADD A,62                           ; 7 T
+8CE7  5F           LD E,A                             ; 4 T
+8CE8  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8CEA  14           INC D                              ; 4 T
+8CEB  7A           LD A,D                             ; 4 T
+8CEC  E6 03        AND 3                              ; 7 T
+8CEE  F6 74        OR cache_page                      ; 7 T
+8CF0  57           LD D,A                             ; 4 T
+predict_6_3_advanced:
+8CF1  1A           LD A,(DE)                          ; 7 T
+8CF2  0F           RRCA                               ; 4 T
+8CF3  0F           RRCA                               ; 4 T
+8CF4  4F           LD C,A                             ; 4 T
+8CF5  1C           INC E                              ; 4 T
+8CF6  1A           LD A,(DE)                          ; 7 T
+8CF7  0F           RRCA                               ; 4 T
+8CF8  0F           RRCA                               ; 4 T
+8CF9  47           LD B,A                             ; 4 T
+8CFA  A9           XOR C                              ; 4 T
+8CFB  E6 3F        AND merge_mask                     ; 7 T
+8CFD  A9           XOR C                              ; 4 T
+8CFE  D9           EXX                                ; 4 T
+8CFF  12           LD (DE),A                          ; 7 T
+8D00  1C           INC E                              ; 4 T
+8D01  D9           EXX                                ; 4 T
+8D02  48           LD C,B                             ; 4 T
+8D03  1C           INC E                              ; 4 T
+8D04  1A           LD A,(DE)                          ; 7 T
+8D05  0F           RRCA                               ; 4 T
+8D06  0F           RRCA                               ; 4 T
+8D07  A9           XOR C                              ; 4 T
+8D08  E6 3F        AND merge_mask                     ; 7 T
+8D0A  A9           XOR C                              ; 4 T
+8D0B  D9           EXX                                ; 4 T
+8D0C  12           LD (DE),A                          ; 7 T
+8D0D  7B           LD A,E                             ; 4 T
+8D0E  C6 1F        ADD A,31                           ; 7 T
+8D10  5F           LD E,A                             ; 4 T
+8D11  D9           EXX                                ; 4 T
+8D12  7B           LD A,E                             ; 4 T
+8D13  C6 3E        ADD A,62                           ; 7 T
+8D15  5F           LD E,A                             ; 4 T
+8D16  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8D18  14           INC D                              ; 4 T
+8D19  7A           LD A,D                             ; 4 T
+8D1A  E6 03        AND 3                              ; 7 T
+8D1C  F6 74        OR cache_page                      ; 7 T
+8D1E  57           LD D,A                             ; 4 T
+predict_6_4_advanced:
+8D1F  1A           LD A,(DE)                          ; 7 T
+8D20  0F           RRCA                               ; 4 T
+8D21  0F           RRCA                               ; 4 T
+8D22  4F           LD C,A                             ; 4 T
+8D23  1C           INC E                              ; 4 T
+8D24  1A           LD A,(DE)                          ; 7 T
+8D25  0F           RRCA                               ; 4 T
+8D26  0F           RRCA                               ; 4 T
+8D27  47           LD B,A                             ; 4 T
+8D28  A9           XOR C                              ; 4 T
+8D29  E6 3F        AND merge_mask                     ; 7 T
+8D2B  A9           XOR C                              ; 4 T
+8D2C  D9           EXX                                ; 4 T
+8D2D  12           LD (DE),A                          ; 7 T
+8D2E  1C           INC E                              ; 4 T
+8D2F  D9           EXX                                ; 4 T
+8D30  48           LD C,B                             ; 4 T
+8D31  1C           INC E                              ; 4 T
+8D32  1A           LD A,(DE)                          ; 7 T
+8D33  0F           RRCA                               ; 4 T
+8D34  0F           RRCA                               ; 4 T
+8D35  A9           XOR C                              ; 4 T
+8D36  E6 3F        AND merge_mask                     ; 7 T
+8D38  A9           XOR C                              ; 4 T
+8D39  D9           EXX                                ; 4 T
+8D3A  12           LD (DE),A                          ; 7 T
+8D3B  7B           LD A,E                             ; 4 T
+8D3C  C6 1F        ADD A,31                           ; 7 T
+8D3E  5F           LD E,A                             ; 4 T
+8D3F  D9           EXX                                ; 4 T
+8D40  7B           LD A,E                             ; 4 T
+8D41  C6 3E        ADD A,62                           ; 7 T
+8D43  5F           LD E,A                             ; 4 T
+8D44  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8D46  14           INC D                              ; 4 T
+8D47  7A           LD A,D                             ; 4 T
+8D48  E6 03        AND 3                              ; 7 T
+8D4A  F6 74        OR cache_page                      ; 7 T
+8D4C  57           LD D,A                             ; 4 T
+predict_6_5_advanced:
+8D4D  1A           LD A,(DE)                          ; 7 T
+8D4E  0F           RRCA                               ; 4 T
+8D4F  0F           RRCA                               ; 4 T
+8D50  4F           LD C,A                             ; 4 T
+8D51  1C           INC E                              ; 4 T
+8D52  1A           LD A,(DE)                          ; 7 T
+8D53  0F           RRCA                               ; 4 T
+8D54  0F           RRCA                               ; 4 T
+8D55  47           LD B,A                             ; 4 T
+8D56  A9           XOR C                              ; 4 T
+8D57  E6 3F        AND merge_mask                     ; 7 T
+8D59  A9           XOR C                              ; 4 T
+8D5A  D9           EXX                                ; 4 T
+8D5B  12           LD (DE),A                          ; 7 T
+8D5C  1C           INC E                              ; 4 T
+8D5D  D9           EXX                                ; 4 T
+8D5E  48           LD C,B                             ; 4 T
+8D5F  1C           INC E                              ; 4 T
+8D60  1A           LD A,(DE)                          ; 7 T
+8D61  0F           RRCA                               ; 4 T
+8D62  0F           RRCA                               ; 4 T
+8D63  A9           XOR C                              ; 4 T
+8D64  E6 3F        AND merge_mask                     ; 7 T
+8D66  A9           XOR C                              ; 4 T
+8D67  D9           EXX                                ; 4 T
+8D68  12           LD (DE),A                          ; 7 T
+8D69  7B           LD A,E                             ; 4 T
+8D6A  C6 1F        ADD A,31                           ; 7 T
+8D6C  5F           LD E,A                             ; 4 T
+8D6D  D9           EXX                                ; 4 T
+8D6E  7B           LD A,E                             ; 4 T
+8D6F  C6 3E        ADD A,62                           ; 7 T
+8D71  5F           LD E,A                             ; 4 T
+8D72  30 07        JR NC,cache_page_ready             ; [7, 12] T
+8D74  14           INC D                              ; 4 T
+8D75  7A           LD A,D                             ; 4 T
+8D76  E6 03        AND 3                              ; 7 T
+8D78  F6 74        OR cache_page                      ; 7 T
+8D7A  57           LD D,A                             ; 4 T
+predict_6_6_advanced:
+8D7B  1A           LD A,(DE)                          ; 7 T
+8D7C  0F           RRCA                               ; 4 T
+8D7D  0F           RRCA                               ; 4 T
+8D7E  4F           LD C,A                             ; 4 T
+8D7F  1C           INC E                              ; 4 T
+8D80  1A           LD A,(DE)                          ; 7 T
+8D81  0F           RRCA                               ; 4 T
+8D82  0F           RRCA                               ; 4 T
+8D83  47           LD B,A                             ; 4 T
+8D84  A9           XOR C                              ; 4 T
+8D85  E6 3F        AND merge_mask                     ; 7 T
+8D87  A9           XOR C                              ; 4 T
+8D88  D9           EXX                                ; 4 T
+8D89  12           LD (DE),A                          ; 7 T
+8D8A  1C           INC E                              ; 4 T
+8D8B  D9           EXX                                ; 4 T
+8D8C  48           LD C,B                             ; 4 T
+8D8D  1C           INC E                              ; 4 T
+8D8E  1A           LD A,(DE)                          ; 7 T
+8D8F  0F           RRCA                               ; 4 T
+8D90  0F           RRCA                               ; 4 T
+8D91  A9           XOR C                              ; 4 T
+8D92  E6 3F        AND merge_mask                     ; 7 T
+8D94  A9           XOR C                              ; 4 T
+8D95  D9           EXX                                ; 4 T
+8D96  12           LD (DE),A                          ; 7 T
+8D97  D9           EXX                                ; 4 T
+8D98  C9           RET                                ; 10 T
+clear_tile:
+8D99  2A 9C 8F     LD HL,(target)                     ; 16 T
+8D9C  AF           XOR A                              ; 4 T
+8D9D  77           LD (HL),A                          ; 7 T
+8D9E  2C           INC L                              ; 4 T
+8D9F  77           LD (HL),A                          ; 7 T
+8DA0  7D           LD A,L                             ; 4 T
+8DA1  C6 1F        ADD A,31                           ; 7 T
+8DA3  6F           LD L,A                             ; 4 T
+8DA4  AF           XOR A                              ; 4 T
+8DA5  77           LD (HL),A                          ; 7 T
+8DA6  2C           INC L                              ; 4 T
+8DA7  77           LD (HL),A                          ; 7 T
+8DA8  7D           LD A,L                             ; 4 T
+8DA9  C6 1F        ADD A,31                           ; 7 T
+8DAB  6F           LD L,A                             ; 4 T
+8DAC  AF           XOR A                              ; 4 T
+8DAD  77           LD (HL),A                          ; 7 T
+8DAE  2C           INC L                              ; 4 T
+8DAF  77           LD (HL),A                          ; 7 T
+8DB0  7D           LD A,L                             ; 4 T
+8DB1  C6 1F        ADD A,31                           ; 7 T
+8DB3  6F           LD L,A                             ; 4 T
+8DB4  AF           XOR A                              ; 4 T
+8DB5  77           LD (HL),A                          ; 7 T
+8DB6  2C           INC L                              ; 4 T
+8DB7  77           LD (HL),A                          ; 7 T
+8DB8  7D           LD A,L                             ; 4 T
+8DB9  C6 1F        ADD A,31                           ; 7 T
+8DBB  6F           LD L,A                             ; 4 T
+8DBC  AF           XOR A                              ; 4 T
+8DBD  77           LD (HL),A                          ; 7 T
+8DBE  2C           INC L                              ; 4 T
+8DBF  77           LD (HL),A                          ; 7 T
+8DC0  7D           LD A,L                             ; 4 T
+8DC1  C6 1F        ADD A,31                           ; 7 T
+8DC3  6F           LD L,A                             ; 4 T
+8DC4  AF           XOR A                              ; 4 T
+8DC5  77           LD (HL),A                          ; 7 T
+8DC6  2C           INC L                              ; 4 T
+8DC7  77           LD (HL),A                          ; 7 T
+8DC8  7D           LD A,L                             ; 4 T
+8DC9  C6 1F        ADD A,31                           ; 7 T
+8DCB  6F           LD L,A                             ; 4 T
+8DCC  AF           XOR A                              ; 4 T
+8DCD  77           LD (HL),A                          ; 7 T
+8DCE  2C           INC L                              ; 4 T
+8DCF  77           LD (HL),A                          ; 7 T
+8DD0  7D           LD A,L                             ; 4 T
+8DD1  C6 1F        ADD A,31                           ; 7 T
+8DD3  6F           LD L,A                             ; 4 T
+8DD4  AF           XOR A                              ; 4 T
+8DD5  77           LD (HL),A                          ; 7 T
+8DD6  2C           INC L                              ; 4 T
+8DD7  77           LD (HL),A                          ; 7 T
+8DD8  C9           RET                                ; 10 T
+patches:
+8DD9  2A 98 8F     LD HL,(bitmap_masks)               ; 16 T
+8DDC  46           LD B,(HL)                          ; 7 T
+8DDD  23           INC HL                             ; 6 T
+8DDE  4E           LD C,(HL)                          ; 7 T
+8DDF  23           INC HL                             ; 6 T
+8DE0  22 98 8F     LD (bitmap_masks),HL               ; 16 T
+8DE3  78           LD A,B                             ; 4 T
+8DE4  B1           OR C                               ; 4 T
+8DE5  CA 02 8F     JP Z,attributes                    ; 10 T
+patches_nonzero:
+8DE8  2A 9C 8F     LD HL,(target)                     ; 16 T
+8DEB  78           LD A,B                             ; 4 T
+8DEC  B7           OR A                               ; 4 T
+8DED  CA 73 8E     JP Z,empty_bitmap_half             ; 10 T
+8DF0  CB 20        SLA B                              ; 8 T
+8DF2  D2 FF 8D     JP NC,keep_bitmap                  ; 10 T
+8DF5  CA 6C 8E     JP Z,last_bitmap_patch             ; 10 T
+8DF8  7E           LD A,(HL)                          ; 7 T
+8DF9  D9           EXX                                ; 4 T
+8DFA  CD 05 80     CALL bitmap                        ; 17 T
+8DFD  D9           EXX                                ; 4 T
+8DFE  77           LD (HL),A                          ; 7 T
+keep_bm_0:
+8DFF  2C           INC L                              ; 4 T
+8E00  CB 20        SLA B                              ; 8 T
+8E02  D2 0F 8E     JP NC,keep_bitmap                  ; 10 T
+8E05  CA 6C 8E     JP Z,last_bitmap_patch             ; 10 T
+8E08  7E           LD A,(HL)                          ; 7 T
+8E09  D9           EXX                                ; 4 T
+8E0A  CD 05 80     CALL bitmap                        ; 17 T
+8E0D  D9           EXX                                ; 4 T
+8E0E  77           LD (HL),A                          ; 7 T
+keep_bm_1:
+8E0F  2D           DEC L                              ; 4 T
+8E10  CB ED        SET 5,L                            ; 8 T
+8E12  CB 20        SLA B                              ; 8 T
+8E14  D2 21 8E     JP NC,keep_bitmap                  ; 10 T
+8E17  CA 6C 8E     JP Z,last_bitmap_patch             ; 10 T
+8E1A  7E           LD A,(HL)                          ; 7 T
+8E1B  D9           EXX                                ; 4 T
+8E1C  CD 05 80     CALL bitmap                        ; 17 T
+8E1F  D9           EXX                                ; 4 T
+8E20  77           LD (HL),A                          ; 7 T
+keep_bm_2:
+8E21  2C           INC L                              ; 4 T
+8E22  CB 20        SLA B                              ; 8 T
+8E24  D2 31 8E     JP NC,keep_bitmap                  ; 10 T
+8E27  CA 6C 8E     JP Z,last_bitmap_patch             ; 10 T
+8E2A  7E           LD A,(HL)                          ; 7 T
+8E2B  D9           EXX                                ; 4 T
+8E2C  CD 05 80     CALL bitmap                        ; 17 T
+8E2F  D9           EXX                                ; 4 T
+8E30  77           LD (HL),A                          ; 7 T
+keep_bm_3:
+8E31  7D           LD A,L                             ; 4 T
+8E32  C6 1F        ADD A,31                           ; 7 T
+8E34  6F           LD L,A                             ; 4 T
+8E35  CB 20        SLA B                              ; 8 T
+8E37  D2 44 8E     JP NC,keep_bitmap                  ; 10 T
+8E3A  CA 6C 8E     JP Z,last_bitmap_patch             ; 10 T
+8E3D  7E           LD A,(HL)                          ; 7 T
+8E3E  D9           EXX                                ; 4 T
+8E3F  CD 05 80     CALL bitmap                        ; 17 T
+8E42  D9           EXX                                ; 4 T
+8E43  77           LD (HL),A                          ; 7 T
+keep_bm_4:
+8E44  2C           INC L                              ; 4 T
+8E45  CB 20        SLA B                              ; 8 T
+8E47  D2 54 8E     JP NC,keep_bitmap                  ; 10 T
+8E4A  CA 6C 8E     JP Z,last_bitmap_patch             ; 10 T
+8E4D  7E           LD A,(HL)                          ; 7 T
+8E4E  D9           EXX                                ; 4 T
+8E4F  CD 05 80     CALL bitmap                        ; 17 T
+8E52  D9           EXX                                ; 4 T
+8E53  77           LD (HL),A                          ; 7 T
+keep_bm_5:
+8E54  2D           DEC L                              ; 4 T
+8E55  CB ED        SET 5,L                            ; 8 T
+8E57  CB 20        SLA B                              ; 8 T
+8E59  D2 66 8E     JP NC,keep_bitmap                  ; 10 T
+8E5C  CA 6C 8E     JP Z,last_bitmap_patch             ; 10 T
+8E5F  7E           LD A,(HL)                          ; 7 T
+8E60  D9           EXX                                ; 4 T
+8E61  CD 05 80     CALL bitmap                        ; 17 T
+8E64  D9           EXX                                ; 4 T
+8E65  77           LD (HL),A                          ; 7 T
+keep_bm_6:
+8E66  2C           INC L                              ; 4 T
+8E67  CB 20        SLA B                              ; 8 T
+8E69  D2 73 8E     JP NC,keep_bitmap                  ; 10 T
+last_bm_0:
+8E6C  7E           LD A,(HL)                          ; 7 T
+8E6D  D9           EXX                                ; 4 T
+8E6E  CD 05 80     CALL bitmap                        ; 17 T
+8E71  D9           EXX                                ; 4 T
+8E72  77           LD (HL),A                          ; 7 T
+keep_bm_7:
+patch_second_half:
+8E73  7D           LD A,L                             ; 4 T
+8E74  E6 1E        AND 30                             ; 7 T
+8E76  F6 80        OR 128                             ; 7 T
+8E78  6F           LD L,A                             ; 4 T
+8E79  41           LD B,C                             ; 4 T
+8E7A  78           LD A,B                             ; 4 T
+8E7B  B7           OR A                               ; 4 T
+8E7C  CA 02 8F     JP Z,empty_bitmap_half             ; 10 T
+8E7F  CB 20        SLA B                              ; 8 T
+8E81  D2 8E 8E     JP NC,keep_bitmap                  ; 10 T
+8E84  CA FB 8E     JP Z,last_bitmap_patch             ; 10 T
+8E87  7E           LD A,(HL)                          ; 7 T
+8E88  D9           EXX                                ; 4 T
+8E89  CD 05 80     CALL bitmap                        ; 17 T
+8E8C  D9           EXX                                ; 4 T
+8E8D  77           LD (HL),A                          ; 7 T
+keep_bm_8:
+8E8E  2C           INC L                              ; 4 T
+8E8F  CB 20        SLA B                              ; 8 T
+8E91  D2 9E 8E     JP NC,keep_bitmap                  ; 10 T
+8E94  CA FB 8E     JP Z,last_bitmap_patch             ; 10 T
+8E97  7E           LD A,(HL)                          ; 7 T
+8E98  D9           EXX                                ; 4 T
+8E99  CD 05 80     CALL bitmap                        ; 17 T
+8E9C  D9           EXX                                ; 4 T
+8E9D  77           LD (HL),A                          ; 7 T
+keep_bm_9:
+8E9E  2D           DEC L                              ; 4 T
+8E9F  CB ED        SET 5,L                            ; 8 T
+8EA1  CB 20        SLA B                              ; 8 T
+8EA3  D2 B0 8E     JP NC,keep_bitmap                  ; 10 T
+8EA6  CA FB 8E     JP Z,last_bitmap_patch             ; 10 T
+8EA9  7E           LD A,(HL)                          ; 7 T
+8EAA  D9           EXX                                ; 4 T
+8EAB  CD 05 80     CALL bitmap                        ; 17 T
+8EAE  D9           EXX                                ; 4 T
+8EAF  77           LD (HL),A                          ; 7 T
+keep_bm_10:
+8EB0  2C           INC L                              ; 4 T
+8EB1  CB 20        SLA B                              ; 8 T
+8EB3  D2 C0 8E     JP NC,keep_bitmap                  ; 10 T
+8EB6  CA FB 8E     JP Z,last_bitmap_patch             ; 10 T
+8EB9  7E           LD A,(HL)                          ; 7 T
+8EBA  D9           EXX                                ; 4 T
+8EBB  CD 05 80     CALL bitmap                        ; 17 T
+8EBE  D9           EXX                                ; 4 T
+8EBF  77           LD (HL),A                          ; 7 T
+keep_bm_11:
+8EC0  7D           LD A,L                             ; 4 T
+8EC1  C6 1F        ADD A,31                           ; 7 T
+8EC3  6F           LD L,A                             ; 4 T
+8EC4  CB 20        SLA B                              ; 8 T
+8EC6  D2 D3 8E     JP NC,keep_bitmap                  ; 10 T
+8EC9  CA FB 8E     JP Z,last_bitmap_patch             ; 10 T
+8ECC  7E           LD A,(HL)                          ; 7 T
+8ECD  D9           EXX                                ; 4 T
+8ECE  CD 05 80     CALL bitmap                        ; 17 T
+8ED1  D9           EXX                                ; 4 T
+8ED2  77           LD (HL),A                          ; 7 T
+keep_bm_12:
+8ED3  2C           INC L                              ; 4 T
+8ED4  CB 20        SLA B                              ; 8 T
+8ED6  D2 E3 8E     JP NC,keep_bitmap                  ; 10 T
+8ED9  CA FB 8E     JP Z,last_bitmap_patch             ; 10 T
+8EDC  7E           LD A,(HL)                          ; 7 T
+8EDD  D9           EXX                                ; 4 T
+8EDE  CD 05 80     CALL bitmap                        ; 17 T
+8EE1  D9           EXX                                ; 4 T
+8EE2  77           LD (HL),A                          ; 7 T
+keep_bm_13:
+8EE3  2D           DEC L                              ; 4 T
+8EE4  CB ED        SET 5,L                            ; 8 T
+8EE6  CB 20        SLA B                              ; 8 T
+8EE8  D2 F5 8E     JP NC,keep_bitmap                  ; 10 T
+8EEB  CA FB 8E     JP Z,last_bitmap_patch             ; 10 T
+8EEE  7E           LD A,(HL)                          ; 7 T
+8EEF  D9           EXX                                ; 4 T
+8EF0  CD 05 80     CALL bitmap                        ; 17 T
+8EF3  D9           EXX                                ; 4 T
+8EF4  77           LD (HL),A                          ; 7 T
+keep_bm_14:
+8EF5  2C           INC L                              ; 4 T
+8EF6  CB 20        SLA B                              ; 8 T
+8EF8  D2 02 8F     JP NC,keep_bitmap                  ; 10 T
+last_bm_1:
+8EFB  7E           LD A,(HL)                          ; 7 T
+8EFC  D9           EXX                                ; 4 T
+8EFD  CD 05 80     CALL bitmap                        ; 17 T
+8F00  D9           EXX                                ; 4 T
+8F01  77           LD (HL),A                          ; 7 T
+keep_bm_15:
+attributes:
+8F02  C9           RET                                ; 10 T
+attribute_pass:
+8F03  3A AD 8F     LD A,(raw_attributes)              ; 13 T
+8F06  B7           OR A                               ; 4 T
+8F07  28 0F        JR Z,coded_attributes              ; [7, 12] T
+8F09  2A AB 8F     LD HL,(literal_source)             ; 16 T
+8F0C  11 00 70     LD DE,attributes                   ; 10 T
+8F0F  01 00 03     LD BC,768                          ; 10 T
+8F12  ED B0        LDIR                               ; [16, 21] T
+8F14  22 AB 8F     LD (literal_source),HL             ; 16 T
+8F17  C9           RET                                ; 10 T
+coded_attributes:
+8F18  C3 60 93     JP attribute_flag_scan             ; 10 T
+attribute_group_apply:
+8F1B  CB 20        SLA B                              ; 8 T
+8F1D  D2 29 8F     JP NC,keep_attribute               ; 10 T
+8F20  1A           LD A,(DE)                          ; 7 T
+8F21  4F           LD C,A                             ; 4 T
+8F22  D9           EXX                                ; 4 T
+8F23  CD 00 80     CALL attribute                     ; 17 T
+8F26  D9           EXX                                ; 4 T
+8F27  A9           XOR C                              ; 4 T
+8F28  12           LD (DE),A                          ; 7 T
+keep_raster_0:
+8F29  1C           INC E                              ; 4 T
+8F2A  CB 20        SLA B                              ; 8 T
+8F2C  D2 38 8F     JP NC,keep_attribute               ; 10 T
+8F2F  1A           LD A,(DE)                          ; 7 T
+8F30  4F           LD C,A                             ; 4 T
+8F31  D9           EXX                                ; 4 T
+8F32  CD 00 80     CALL attribute                     ; 17 T
+8F35  D9           EXX                                ; 4 T
+8F36  A9           XOR C                              ; 4 T
+8F37  12           LD (DE),A                          ; 7 T
+keep_raster_1:
+8F38  1C           INC E                              ; 4 T
+8F39  CB 20        SLA B                              ; 8 T
+8F3B  D2 47 8F     JP NC,keep_attribute               ; 10 T
+8F3E  1A           LD A,(DE)                          ; 7 T
+8F3F  4F           LD C,A                             ; 4 T
+8F40  D9           EXX                                ; 4 T
+8F41  CD 00 80     CALL attribute                     ; 17 T
+8F44  D9           EXX                                ; 4 T
+8F45  A9           XOR C                              ; 4 T
+8F46  12           LD (DE),A                          ; 7 T
+keep_raster_2:
+8F47  1C           INC E                              ; 4 T
+8F48  CB 20        SLA B                              ; 8 T
+8F4A  D2 56 8F     JP NC,keep_attribute               ; 10 T
+8F4D  1A           LD A,(DE)                          ; 7 T
+8F4E  4F           LD C,A                             ; 4 T
+8F4F  D9           EXX                                ; 4 T
+8F50  CD 00 80     CALL attribute                     ; 17 T
+8F53  D9           EXX                                ; 4 T
+8F54  A9           XOR C                              ; 4 T
+8F55  12           LD (DE),A                          ; 7 T
+keep_raster_3:
+8F56  1C           INC E                              ; 4 T
+8F57  CB 20        SLA B                              ; 8 T
+8F59  D2 65 8F     JP NC,keep_attribute               ; 10 T
+8F5C  1A           LD A,(DE)                          ; 7 T
+8F5D  4F           LD C,A                             ; 4 T
+8F5E  D9           EXX                                ; 4 T
+8F5F  CD 00 80     CALL attribute                     ; 17 T
+8F62  D9           EXX                                ; 4 T
+8F63  A9           XOR C                              ; 4 T
+8F64  12           LD (DE),A                          ; 7 T
+keep_raster_4:
+8F65  1C           INC E                              ; 4 T
+8F66  CB 20        SLA B                              ; 8 T
+8F68  D2 74 8F     JP NC,keep_attribute               ; 10 T
+8F6B  1A           LD A,(DE)                          ; 7 T
+8F6C  4F           LD C,A                             ; 4 T
+8F6D  D9           EXX                                ; 4 T
+8F6E  CD 00 80     CALL attribute                     ; 17 T
+8F71  D9           EXX                                ; 4 T
+8F72  A9           XOR C                              ; 4 T
+8F73  12           LD (DE),A                          ; 7 T
+keep_raster_5:
+8F74  1C           INC E                              ; 4 T
+8F75  CB 20        SLA B                              ; 8 T
+8F77  D2 83 8F     JP NC,keep_attribute               ; 10 T
+8F7A  1A           LD A,(DE)                          ; 7 T
+8F7B  4F           LD C,A                             ; 4 T
+8F7C  D9           EXX                                ; 4 T
+8F7D  CD 00 80     CALL attribute                     ; 17 T
+8F80  D9           EXX                                ; 4 T
+8F81  A9           XOR C                              ; 4 T
+8F82  12           LD (DE),A                          ; 7 T
+keep_raster_6:
+8F83  1C           INC E                              ; 4 T
+8F84  CB 20        SLA B                              ; 8 T
+8F86  D2 92 8F     JP NC,keep_attribute               ; 10 T
+8F89  1A           LD A,(DE)                          ; 7 T
+8F8A  4F           LD C,A                             ; 4 T
+8F8B  D9           EXX                                ; 4 T
+8F8C  CD 00 80     CALL attribute                     ; 17 T
+8F8F  D9           EXX                                ; 4 T
+8F90  A9           XOR C                              ; 4 T
+8F91  12           LD (DE),A                          ; 7 T
+keep_raster_7:
+8F92  13           INC DE                             ; 6 T
+8F93  C9           RET                                ; 10 T
+attribute_flag_scan:
+9360  2A 9A 8F     LD HL,(attribute_masks)            ; 16 T
+9363  11 00 70     LD DE,compact attributes           ; 10 T
+9366  06 B0        LD B,attribute flag low            ; 7 T
+attribute_flag_block:
+9368  E5           PUSH HL                            ; 11 T
+9369  26 BF        LD H,flag page                     ; 7 T
+936B  68           LD L,B                             ; 4 T
+936C  4E           LD C,(HL)                          ; 7 T
+936D  E1           POP HL                             ; 10 T
+936E  04           INC B                              ; 4 T
+936F  79           LD A,C                             ; 4 T
+9370  B7           OR A                               ; 4 T
+9371  28 26        JR Z,attribute_empty_block         ; [7, 12] T
+attribute_flag_group:
+9373  CB 21        SLA C                              ; 8 T
+9375  30 0B        JR NC,attribute_skip_group         ; [7, 12] T
+9377  7E           LD A,(HL)                          ; 7 T
+9378  2C           INC L                              ; 4 T
+9379  C5           PUSH BC                            ; 11 T
+937A  47           LD B,A                             ; 4 T
+937B  CD 1B 8F     CALL attribute_group_apply         ; 17 T
+937E  C1           POP BC                             ; 10 T
+937F  C3 8A 93     JP attribute_group_done            ; 10 T
+attribute_skip_group:
+9382  2C           INC L                              ; 4 T
+9383  7B           LD A,E                             ; 4 T
+9384  C6 08        ADD A,8                            ; 7 T
+9386  5F           LD E,A                             ; 4 T
+9387  30 01        JR NC,attribute_skip_page          ; [7, 12] T
+9389  14           INC D                              ; 4 T
+attribute_skip_page:
+attribute_group_done:
+938A  7D           LD A,L                             ; 4 T
+938B  E6 07        AND 7                              ; 7 T
+938D  20 E4        JR NZ,attribute_flag_group         ; [7, 12] T
+attribute_block_done:
+938F  78           LD A,B                             ; 4 T
+9390  FE BC        CP attribute flag end              ; 7 T
+9392  C2 68 93     JP NZ,attribute_flag_block         ; 10 T
+9395  22 9A 8F     LD (attribute_masks),HL            ; 16 T
+9398  C9           RET                                ; 10 T
+attribute_empty_block:
+9399  7D           LD A,L                             ; 4 T
+939A  C6 08        ADD A,8                            ; 7 T
+939C  6F           LD L,A                             ; 4 T
+939D  7B           LD A,E                             ; 4 T
+939E  C6 40        ADD A,64                           ; 7 T
+93A0  5F           LD E,A                             ; 4 T
+93A1  30 01        JR NC,attribute_empty_page         ; [7, 12] T
+93A3  14           INC D                              ; 4 T
+attribute_empty_page:
+93A4  C3 8F 93     JP attribute_block_done            ; 10 T
+
+; ZX0 exact symbol/byte map (includes state and self-modifying operands).
+; See incremental_zx0.py and zx0_codec.py for instruction expansion.
+slice_until:
+7C00  db CD 83 7C 2A 3B 7D ED 5B 3D 7D 7C B5 C8 7A B3 CA
+7C10  db 16 7C B7 ED 52 D0
+slice_resume:
+7C16  db ED 73 3F 7D ED 7B 41 7D E1 D1 C1 F1 C9
+slice_begin/begin:
+7C23  db CD 83 7C ED 73 3F 7D 31 E0 7B 21 46 7C E5 2A 48
+7C33  db 7D 11 00 E0 3A 47 7D B7 CA A4 7C ED 4B 43 7D CD
+7C43  db 69 7C C9
+slice_finished:
+7C46  db 2A 45 7D B7 ED 52 C2 3A 7D ED 53 3B 7D ED 7B 3F
+7C56  db 7D C9
+slice_yield:
+7C58  db ED 53 3B 7D F5 C5 D5 E5 ED 73 41 7D ED 7B 3F 7D
+7C68  db C9
+slice_copy:
+7C69  db 08 7A
+slice_compare_high:
+7C6B  db FE
+slice_high_operand:
+7C6C  db 00 38 10 20 07 7B
+slice_compare_low:
+7C72  db FE
+slice_low_operand:
+7C73  db 00 38 09
+slice_equal_branch:
+7C76  db 38 07
+slice_copy_slow:
+7C78  db 08 CD 58 7C C3 69 7C
+slice_copy_fast:
+7C7F  db 08 ED B0 C9
+slice_sync_target:
+7C83  db 2A 3D 7D 7C B5 3E 38 20 03 3E 28 2B
+slice_sync_compare:
+7C8F  db 32 76 7C 32 E2 7C 7C 32 6C 7C 32 D8 7C 7D 32 73
+7C9F  db 7C 32 DF 7C C9
+dzx0_turbo:
+7CA4  db 01 FF FF ED 43 D2 7C 03 3E 80 18 42
+dzx0t_new_offset:
+7CB0  db 0E FE 87 C2 B9 7C 7E 23 17
+dzx0t_new_offset_skip:
+7CB9  db D4 11 7D 0C C8 41 4E 23 CB 18 CB 19 ED 43 D2 7C
+7CC9  db 01 01 00 D4 11 7D 03
+dzx0t_copy:
+7CD0  db E5
+dzx0t_last_offset:
+7CD1  db 21
+dzx0t_last_offset+1:
+7CD2  db 00 00 19
+match_copy:
+7CD5  db 08 7A
+match_compare_high:
+7CD7  db FE
+match_high_operand:
+7CD8  db 00 38 10 20 07 7B
+match_compare_low:
+7CDE  db FE
+match_low_operand:
+7CDF  db 00 38 09
+match_equal_branch:
+7CE2  db 38 07
+match_copy_slow:
+7CE4  db 08 CD 58 7C C3 D5 7C
+match_copy_fast:
+7CEB  db 08 ED B0 E1 87 38 BE
+dzx0t_literals:
+7CF2  db 0C 87 C2 FA 7C 7E 23 17
+dzx0t_literals_skip:
+7CFA  db D4 11 7D CD 69 7C 87 38 AD 0C 87 C2 0B 7D 7E 23
+7D0A  db 17
+dzx0t_last_offset_skip:
+7D0B  db D4 11 7D C3 D0 7C
+dzx0t_elias:
+7D11  db 87 CB 11 87 30 FA C0 7E 23 17 D8 87 CB 11 87 D8
+7D21  db 87 CB 11 87 D8 87 CB 11 87 D8
+dzx0t_elias_loop:
+7D2B  db 87 CB 11 CB 10 87 30 F8 C0 7E 23 17 30 F2 C9
+fatal:
+7D3A  db 76
+state/slice_output:
+7D3B  db 00 00
+slice_target:
+7D3D  db 00 00
+slice_caller_sp:
+7D3F  db 00 00
+slice_decoder_sp:
+7D41  db 00 00
+block_length:
+7D43  db 00 00
+block_end:
+7D45  db 00 00
+block_stored:
+7D47  db 00
+input_pointer:
+7D48  db 00 C0
