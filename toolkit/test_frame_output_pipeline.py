@@ -72,7 +72,7 @@ class FrameOutputPipelineTests(unittest.TestCase):
     def test_irq_preserves_fast_native_dispatch_and_raw_attributes(self):
         self.exercise_irq(raw=True, fast=True)
 
-    def exercise_irq(self, raw=False, fast=False, selective=False, noops=False, empty_noops=False, constant=False,encoded=False,static=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,sparse_patches=False,fast_noop_scan=False):
+    def exercise_irq(self, raw=False, fast=False, selective=False, noops=False, empty_noops=False, constant=False,encoded=False,static=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,sparse_patches=False,fast_noop_scan=False,static_cache_borders=False):
         states, stream, _ = fixture(2,constant_attribute_borders=constant)
         if raw:
             from raw_attribute_stream import pack
@@ -81,11 +81,11 @@ class FrameOutputPipelineTests(unittest.TestCase):
         h = Harness(tables, mapping, raw_attributes=raw, decode_metadata=raw, fast_mask_dispatch=fast,
                     selective_cache=selective,skip_noop_runs=noops,constant_attribute_borders=constant,
                     encoded_noop_runs=encoded,skip_static_stripes=static,cache_columns=cache_columns,unrolled_cache=unrolled_cache,
-                    attribute_groups=attribute_groups,sparse_patches=sparse_patches,fast_noop_scan=fast_noop_scan)
+                    attribute_groups=attribute_groups,sparse_patches=sparse_patches,fast_noop_scan=fast_noop_scan,static_cache_borders=static_cache_borders)
         coded_masks = serialized_masks(stream) if raw else [None]*len(packets)
         if empty_noops:
             states = np.zeros((2,3840),dtype=np.uint8)
-            packets = [((1,0,0,bytes(192),bytes(384),bytes(96),b'',b''),bytes(80))]*2
+            packets = [((1,128 if static_cache_borders else 0,0,bytes(192),bytes(384),bytes(96),b'',b''),bytes(80))]*2
             coded_masks = [bytes(8)]*2
         a = MiniAssembler(0x9400)
         ay_interrupt.emit(a)
@@ -108,7 +108,10 @@ class FrameOutputPipelineTests(unittest.TestCase):
 
         def interrupt(cpu):
             nonlocal calls
-            if sparse_patches:
+            if static_cache_borders:
+                if not (h.recon['frame'] <= cpu.pc < h.recon['stripe']
+                        or h.recon['last_prefetch'] <= cpu.pc < h.recon['frame_done']): return 0
+            elif sparse_patches:
                 if not h.recon['patches_nonzero'] <= cpu.pc < h.recon['attributes']: return 0
             elif noops or encoded or static:
                 in_scanner = noops and 0x7a00 <= cpu.pc < h.recon['noop_scanner_end']

@@ -66,7 +66,7 @@ class Harness:
     def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False,
                  stored_guards=True,constant_attribute_borders=False,skip_black_borders=False,progress_frames=None,
                  encoded_noop_runs=False,skip_static_stripes=False,token_boundaries=False,pipelined=False,packet_ahead=False,
-                 unrolled_copy=False,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,early_ay=False,sparse_patches=False,disk_refill_entry=None,inline_matches=False,fast_noop_scan=False,irq_safe_paging=False):
+                 unrolled_copy=False,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,early_ay=False,sparse_patches=False,disk_refill_entry=None,inline_matches=False,fast_noop_scan=False,irq_safe_paging=False,static_cache_borders=False):
         if irq_safe_paging and not pipelined: raise ValueError('IRQ-safe paging requires the pipelined ISR')
         if early_ay and not bulk: raise ValueError('early AY requires bulk packets')
         self.early_ay=early_ay
@@ -89,7 +89,7 @@ class Harness:
             constant_attribute_borders=constant_attribute_borders,skip_black_borders=skip_black_borders,
             encoded_noop_runs=encoded_noop_runs,skip_static_stripes=skip_static_stripes,unrolled_cache=unrolled_cache,
             split_prepare=pipelined,page_entry=page_entry,preloaded_mask=packet_ahead,attribute_groups=attribute_groups,
-            attribute_flags=attribute_flags,gray_cells=gray_cells,sparse_patches=sparse_patches,fast_noop_scan=fast_noop_scan)
+            attribute_flags=attribute_flags,gray_cells=gray_cells,sparse_patches=sparse_patches,fast_noop_scan=fast_noop_scan,static_cache_borders=static_cache_borders)
         s = stream.Harness(ring, ring_start=ring_start,token_boundaries=token_boundaries,page_entry=page_entry,
             unrolled_copy=unrolled_copy,disk_refill_entry=disk_refill_entry,inline_matches=inline_matches)
         self.z, self.r, self.blocks = s.z, s.r, 0

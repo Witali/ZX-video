@@ -37,6 +37,12 @@
 
 ## Параметры
 
+Дополнительная экспериментальная опция `--static-cache-borders` пропускает
+обнуление служебных строк кеша движения, когда крайняя полоса неизменна.
+Она сохраняет поток, пиксели и звук. Измерения и ограничения описаны в
+[STATIC_CACHE_BORDERS_ru.md](STATIC_CACHE_BORDERS_ru.md); включение опции
+само по себе не подтверждает соблюдение 25/3 кадра/с.
+
 ```powershell
 python toolkit/convert_video.py "input.mkv" --output "build/my-video" --prefix MYVIDEO
 ```

@@ -31,6 +31,8 @@ shifted out the last set bit. It retains the input order and Huffman state,
 uses HL as the bitmap cursor, and requires the hybrid skip-empty path.
 fast_noop_scan=True combines vector/mask checks; requires even mask pairs,
 retains 16-bit vector pointers for zero-copy packets, and uses no new RAM.
+static_cache_borders=True omits virtual-row clearing when the validated
+static-stripe marker proves that no tile can sample those rows this frame.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -207,7 +209,9 @@ def patch_delta_tstates(vectors, masks):
         for v, b, c in zip(vectors, masks[::2], masks[1::2]) if v <= 81 and (b or c))
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False, fast_noop_scan=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False, fast_noop_scan=False, static_cache_borders=False):
+    if static_cache_borders and not skip_static_stripes:
+        raise ValueError('static cache borders require validated static stripes')
     if fast_noop_scan and (not skip_noop_runs or encoded_noop_runs):
         raise ValueError('fast scanner requires plain no-op runs and even bitmap-mask addresses')
     if sparse_patches and not (hybrid and skip_empty and raw_kind is None and not raw_intra):
@@ -329,8 +333,13 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         load('LD (cache_mask_source),HL', 0x22, 'cache_mask_source', 16)
         emit('LD A,80h', [0x3e, 128], 7)
         load('LD (cache_mask_shift),A', 0x32, 'cache_mask_shift', 13)
+    if static_cache_borders:
+        load('LD HL,(vectors)', 0x2a, 'vectors', 16)
+        emit('LD A,(HL)', [0x7e], 7); emit('OR A', [0xb7], 4)
+        jump('JP Z,top_cache_ready', 0xca, 'top_cache_ready', 10)
     wordop('LD DE,top_virtual_cache_rows', 0x11, CACHE+12*64+1, 10)
     emit('LD B,4', [0x06, 4], 7); jump('CALL cache_zero', 0xcd, 'cache_zero', 17)
+    if static_cache_borders: a.label('top_cache_ready')
     wordop('LD HL,compact_frame', 0x21, FRAME, 10)
     wordop('LD DE,cache_first_visible', 0x11, CACHE+1, 10)
     emit('LD B,12', [0x06, 12], 7); jump('CALL cache_copy', 0xcd, 'cache_copy', 17)
@@ -429,6 +438,19 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     jump('JP save_cache', 0xc3, 'save_cache', 10)
     a.label('last_prefetch')
     emit('LD B,4', [0x06, 4], 7); jump('CALL cache_copy', 0xcd, 'cache_copy', 17)
+    if static_cache_borders:
+        # The final stripe is the sole reader of virtual rows 96..99.
+        # Preserve HL (the next source row) and C' (the Huffman position).
+        emit('EXX', [0xd9], 4)
+        load('LD HL,(vectors)', 0x2a, 'vectors', 16)
+        emit('LD A,(HL)', [0x7e], 7); emit('EXX', [0xd9], 4)
+        emit('OR A', [0xb7], 4)
+        jump('JP NZ,clear_bottom_cache', 0xc2, 'clear_bottom_cache', 10)
+        # Four rows advance exactly 7401h -> 7501h. Keep the saved cursor
+        # identical even though its bytes are never sampled by this frame.
+        emit('INC D', [0x14], 4)
+        jump('JP save_cache', 0xc3, 'save_cache', 10)
+        a.label('clear_bottom_cache')
     emit('LD B,4', [0x06, 4], 7); jump('CALL cache_zero', 0xcd, 'cache_zero', 17)
     jump('JP save_cache', 0xc3, 'save_cache', 10)
     a.label('frame_done')

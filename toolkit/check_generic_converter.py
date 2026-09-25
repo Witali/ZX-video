@@ -23,6 +23,7 @@ def main():
     p.add_argument('--inline-matches', action='store_true')
     p.add_argument('--startup-delta', action='store_true')
     p.add_argument('--fast-noop-scan', action='store_true')
+    p.add_argument('--static-cache-borders', action='store_true')
     p.add_argument('--irq-safe-paging', action='store_true')
     args = p.parse_args()
     if args.noise_frames < 1: p.error('--noise-frames must be positive')
@@ -55,7 +56,8 @@ def main():
     if args.only_noise: sources = []
     sources.append((noisy_video, args.noise_frames, [], 'high entropy; runtime disk reads beyond the 64 KiB preload'))
     report = dict(complete=False, release=False, generator_seed=20260921, inline_matches=args.inline_matches,
-                  startup_delta=args.startup_delta, fast_noop_scan=args.fast_noop_scan, irq_safe_paging=args.irq_safe_paging, cases=[])
+                  startup_delta=args.startup_delta, fast_noop_scan=args.fast_noop_scan, irq_safe_paging=args.irq_safe_paging,
+                  static_cache_borders=args.static_cache_borders, cases=[])
     write_json(args.report, report)
     for source, expected_frames, extra, objective in sources:
         out = args.output/(source.stem+'-out')
@@ -67,6 +69,7 @@ def main():
         if args.inline_matches: command += ['--inline-matches']
         if args.startup_delta: command += ['--startup-delta']
         if args.fast_noop_scan: command += ['--fast-noop-scan']
+        if args.static_cache_borders: command += ['--static-cache-borders']
         if args.irq_safe_paging: command += ['--irq-safe-paging']
         subprocess.run(command, check=True)
         meta = json.loads((out/'conversion.json').read_text(encoding='utf-8'))

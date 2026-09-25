@@ -19,37 +19,41 @@ def main():
     p.add_argument('--read-cache',type=Path,action='append',default=[])
     p.add_argument('--fast-noop-scan',action='store_true')
     p.add_argument('--irq-safe-paging',action='store_true')
+    p.add_argument('--experiment',choices=('inline_matches','static_cache_borders'),default='inline_matches')
     p.add_argument('--ranges',default='62:94,408:440,1269:1301,2159:2191,2334:2366,2919:2951,3195:3227,3838:3870')
     args=p.parse_args(); raw=args.raw.read_bytes()
     with np.load(args.states,allow_pickle=False) as saved:states=saved['states']
     ranges=[tuple(map(int,s.split(':'))) for s in args.ranges.split(',')]
     if any(len(pair)!=2 or not 0<=pair[0]<pair[1]<=len(states) for pair in ranges):p.error('invalid ranges')
-    report=dict(complete=False,full_movie=False,release=False,baseline_commit='3356730' if args.irq_safe_paging else '80ab9d9',
+    report=dict(complete=False,full_movie=False,release=False,baseline_commit='6e724f4' if args.experiment=='static_cache_borders' else '3356730' if args.irq_safe_paging else '80ab9d9',
+        experiment=args.experiment,
         fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging,
         raw_sha256=sha(raw),states_sha256=sha(states.tobytes()),ideal_disk=True,
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',ranges=[])
     args.report.parent.mkdir(parents=True,exist_ok=True)
     def save():args.report.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     builders=[]
-    for inline in (False,True):
-        b=ReadThroughBuilder(raw,states,args.zx0.resolve(),args.cache,inline_matches=inline,
+    for enabled in (False,True):
+        options = dict(inline_matches=enabled) if args.experiment=='inline_matches' else dict(inline_matches=True,static_cache_borders=enabled)
+        b=ReadThroughBuilder(raw,states,args.zx0.resolve(),args.cache,**options,
             fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging)
         b.read_cache=args.read_cache;builders.append(b)
     save()
     for start,end in ranges:
         pair=[]
         for b in builders:
-            print(f'CPU inline={b.inline_matches}, frames {start}..{end-1}',flush=True)
+            print(f'CPU {args.experiment}={getattr(b,args.experiment)}, frames {start}..{end-1}',flush=True)
             data=cpu_profile(b,start,end)
             # Full executed histogram is kept for the separate 379-block
             # benchmark. These records keep per-frame stages and publications.
             for key in ('instruction_listing','instruction_histogram','irq_instruction_histogram'):data.pop(key)
             pair.append(data)
         old,new=pair
-        row=dict(start=start,end=end,baseline=old,inline=new,
+        row=dict(start=start,end=end,baseline=old,
             foreground_delta=new['foreground_tstates']-old['foreground_tstates'],
             old_missed=sum(p['late_fields']>0 for p in old['publications']),
             new_missed=sum(p['late_fields']>0 for p in new['publications']))
+        row['inline' if args.experiment=='inline_matches' else 'static_cache_borders']=new
         report['ranges'].append(row);save()
         print(json.dumps({k:row[k] for k in ('start','end','foreground_delta','old_missed','new_missed')}),flush=True)
     report['complete']=True;save()
