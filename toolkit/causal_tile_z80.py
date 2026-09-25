@@ -29,6 +29,8 @@ It requires the pipeline's fixed A640 mask layout and decoded metadata.
 sparse_patches=True jumps to the final correction as soon as SLA B has
 shifted out the last set bit. It retains the input order and Huffman state,
 uses HL as the bitmap cursor, and requires the hybrid skip-empty path.
+fast_noop_scan=True combines vector/mask checks; requires even mask pairs,
+retains 16-bit vector pointers for zero-copy packets, and uses no new RAM.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -205,7 +207,9 @@ def patch_delta_tstates(vectors, masks):
         for v, b, c in zip(vectors, masks[::2], masks[1::2]) if v <= 81 and (b or c))
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False, fast_noop_scan=False):
+    if fast_noop_scan and (not skip_noop_runs or encoded_noop_runs):
+        raise ValueError('fast scanner requires plain no-op runs and even bitmap-mask addresses')
     if sparse_patches and not (hybrid and skip_empty and raw_kind is None and not raw_intra):
         raise ValueError('sparse patches require hybrid skip-empty Huffman patches')
     if attribute_flags and not (hybrid and raw_attributes):
@@ -1001,14 +1005,20 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         stage = 'noop_control'
         load('LD DE,(bitmap_masks)',(0xed,0x5b),'bitmap_masks',20)
         emit('EX DE,HL',[0xeb],4)
-        emit('LD B,(HL)',[0x46],7); emit('INC HL',[0x23],6)
-        emit('LD C,(HL)',[0x4e],7); emit('DEC HL',[0x2b],6)
+        # Mask pairs always start even; neither byte crosses a page.
+        # Vectors can cross pages in zero-copy packets: retain INC DE.
+        emit('LD B,(HL)',[0x46],7)
+        emit('INC L' if fast_noop_scan else 'INC HL',[0x2c if fast_noop_scan else 0x23],4 if fast_noop_scan else 6)
+        emit('LD C,(HL)',[0x4e],7)
+        emit('DEC L' if fast_noop_scan else 'DEC HL',[0x2d if fast_noop_scan else 0x2b],4 if fast_noop_scan else 6)
         emit('LD A,B',[0x78],4); emit('OR C',[0xb1],4)
         jump('JP NZ,scan_zero_patch',0xc2,'scan_zero_patch',10)
         load('LD A,(tiles_left)',0x3a,'tiles_left',13)
         emit('LD B,A',[0x47],4); emit('LD C,0',[0x0e,0],7)
         a.label('scan_skip')
-        emit('INC DE',[0x13],6); emit('INC HL',[0x23],6); emit('INC HL',[0x23],6)
+        emit('INC DE',[0x13],6)
+        emit('INC L' if fast_noop_scan else 'INC HL',[0x2c if fast_noop_scan else 0x23],4 if fast_noop_scan else 6)
+        emit('INC HL',[0x23],6)
         emit('INC C',[0x0c],4); jump('DJNZ scan_check',0x10,'scan_check',[8,13],True)
         a.label('scan_done')
         load('LD (bitmap_masks),HL',0x22,'bitmap_masks',16)
@@ -1021,14 +1031,19 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('LD A,B',[0x78],4); emit('OR A',[0xb7],4)
         jump('JP Z,stripe_done',0xca,'stripe_done',10); jump('JP tile',0xc3,'tile',10)
         a.label('scan_check')
-        emit('LD A,(DE)',[0x1a],7); emit('OR A',[0xb7],4)
-        jump('JP NZ,scan_done',0xc2,'scan_done',10)
-        emit('LD A,(HL)',[0x7e],7); emit('INC HL',[0x23],6)
+        emit('LD A,(DE)',[0x1a],7)
+        if fast_noop_scan:
+            emit('OR (HL)',[0xb6],7); emit('INC L',[0x2c],4)
+        else:
+            emit('OR A',[0xb7],4); jump('JP NZ,scan_done',0xc2,'scan_done',10)
+            emit('LD A,(HL)',[0x7e],7); emit('INC HL',[0x23],6)
+        # DEC HL preserves Z from OR; DEC L would test the pointer instead.
         emit('OR (HL)',[0xb6],7); emit('DEC HL',[0x2b],6)
         jump('JP Z,scan_skip',0xca,'scan_skip',10); jump('JP scan_done',0xc3,'scan_done',10)
         a.label('scan_zero_patch')
         emit('INC DE',[0x13],6); load('LD (vectors),DE',(0xed,0x53),'vectors',20)
-        emit('INC HL',[0x23],6); emit('INC HL',[0x23],6)
+        emit('INC L' if fast_noop_scan else 'INC HL',[0x2c if fast_noop_scan else 0x23],4 if fast_noop_scan else 6)
+        emit('INC HL',[0x23],6)
         load('LD (bitmap_masks),HL',0x22,'bitmap_masks',16)
         jump('CALL patches_nonzero',0xcd,'patches_nonzero',17); jump('JP tile_done',0xc3,'tile_done',10)
         if a.pc > (NOOP_SCANNER+128 if encoded_noop_runs or skip_static_stripes else 0x7b00):

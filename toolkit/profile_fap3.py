@@ -29,7 +29,8 @@ def cpu_profile(builder, start, end):
     if builder.deferred_limit:
         raise ValueError('Deferred disk builds require run_deferred_disk.py; this ideal producer does not model pending sectors.')
     ring, _ = builder.stream(start, end)
-    h = player_harness(ring, builder.tables, builder.mapping, end-start, disk_reader=False,inline_matches=builder.inline_matches)
+    h = player_harness(ring, builder.tables, builder.mapping, end-start, disk_reader=False,inline_matches=builder.inline_matches,
+        fast_noop_scan=builder.fast_noop_scan)
     if start:
         h.cpu.banks[5][0x2400:0x3300] = builder.states[start-1].tobytes()
     screens = dict(h.expected_screens)
@@ -96,9 +97,10 @@ def cpu_profile(builder, start, end):
         irq_tstates=clock.irq_tstates, idle_tstates=clock.idle_tstates,
         audio_underruns=clock.underruns,
         nominal_deadlines_met_with_ideal_disk=not clock.underruns and not any(p['late_fields'] for p in clock.publications),
-        unchanged_player_baseline=None if builder.inline_matches else '00313d3',
-        player_hot_path_delta_tstates=None if builder.inline_matches else 0,
+        unchanged_player_baseline=None if builder.inline_matches or builder.fast_noop_scan else '00313d3',
+        player_hot_path_delta_tstates=None if builder.inline_matches or builder.fast_noop_scan else 0,
         inline_matches=builder.inline_matches,
+        fast_noop_scan=builder.fast_noop_scan,
         prime=prime, runs=runs, drain=drain, publications=clock.publications, events=clock.events,
         instruction_listing=list(h.instructions.values()),
         instruction_histogram=[dict(address=a, tstates=t, count=n) for (a, t), n in sorted(h.histogram.items())],

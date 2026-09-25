@@ -1,0 +1,151 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Compare complete old/new runs and verify identical physical video sections.",
+  "volumes": [
+    {
+      "part": 1,
+      "frames": 1625,
+      "physical_video_byte_exact": true,
+      "video_physical_sha256": "f0b0f11b5e81e9fd82aafd081612379b10649096ef620e778474323bd77a651b",
+      "video_bytes": 641486,
+      "baseline_used_sectors": 2544,
+      "used_sectors": 2544,
+      "nominal_deadlines_met": false,
+      "fallback_one_field_met": false,
+      "actual_ay_50hz": false,
+      "actual_fps": {
+        "baseline": 7.916806954591815,
+        "candidate": 7.926849666354246,
+        "delta": 0.010042711762431544
+      },
+      "missed_nominal_frames": {
+        "baseline": 1564,
+        "candidate": 1573,
+        "delta": 9
+      },
+      "ay_missing_fields": {
+        "baseline": 512,
+        "candidate": 499,
+        "delta": -13
+      },
+      "runtime_disk_reads": {
+        "baseline": 2250,
+        "candidate": 2250,
+        "delta": 0
+      },
+      "disk_read_service_tstates": {
+        "baseline": 69347586,
+        "candidate": 69373184,
+        "delta": 25598
+      },
+      "seek_service_tstates": {
+        "baseline": 1551124,
+        "candidate": 1555244,
+        "delta": 4120
+      }
+    },
+    {
+      "part": 2,
+      "frames": 1296,
+      "physical_video_byte_exact": true,
+      "video_physical_sha256": "f3ec7531012c37f5a3f149cdcfb319ad63632c7d615912198a946928da64bdd7",
+      "video_bytes": 639731,
+      "baseline_used_sectors": 2542,
+      "used_sectors": 2542,
+      "nominal_deadlines_met": false,
+      "fallback_one_field_met": false,
+      "actual_ay_50hz": false,
+      "actual_fps": {
+        "baseline": 7.373636272307959,
+        "candidate": 7.38877549406042,
+        "delta": 0.015139221752461296
+      },
+      "missed_nominal_frames": {
+        "baseline": 1292,
+        "candidate": 1292,
+        "delta": 0
+      },
+      "ay_missing_fields": {
+        "baseline": 1010,
+        "candidate": 992,
+        "delta": -18
+      },
+      "runtime_disk_reads": {
+        "baseline": 2243,
+        "candidate": 2243,
+        "delta": 0
+      },
+      "disk_read_service_tstates": {
+        "baseline": 69086234,
+        "candidate": 69164536,
+        "delta": 78302
+      },
+      "seek_service_tstates": {
+        "baseline": 1550730,
+        "candidate": 1551243,
+        "delta": 513
+      }
+    },
+    {
+      "part": 3,
+      "frames": 1300,
+      "physical_video_byte_exact": true,
+      "video_physical_sha256": "631717337be60e8104bfe4c85869226f59b7de19990296d5a52cfc6c7687e48a",
+      "video_bytes": 638742,
+      "baseline_used_sectors": 2542,
+      "used_sectors": 2542,
+      "nominal_deadlines_met": false,
+      "fallback_one_field_met": false,
+      "actual_ay_50hz": false,
+      "actual_fps": {
+        "baseline": 7.177452786776559,
+        "candidate": 7.186184357982335,
+        "delta": 0.008731571205776056
+      },
+      "missed_nominal_frames": {
+        "baseline": 1298,
+        "candidate": 1298,
+        "delta": 0
+      },
+      "ay_missing_fields": {
+        "baseline": 1279,
+        "candidate": 1268,
+        "delta": -11
+      },
+      "runtime_disk_reads": {
+        "baseline": 2240,
+        "candidate": 2240,
+        "delta": 0
+      },
+      "disk_read_service_tstates": {
+        "baseline": 69136867,
+        "candidate": 69065204,
+        "delta": -71663
+      },
+      "seek_service_tstates": {
+        "baseline": 1551223,
+        "candidate": 1551641,
+        "delta": 418
+      }
+    }
+  ],
+  "baseline_commit": "491db7b",
+  "frames": 4221,
+  "capacity_sectors": 7632,
+  "used_sectors": 7628,
+  "baseline_used_sectors": 7628,
+  "all_independently_bootable": true,
+  "code_bytes_delta": -4,
+  "new_buffer_bytes": 0,
+  "extra_stack_bytes": 0,
+  "physical_drive_verified": false,
+  "deterministic_scanner": {
+    "baseline_tstates": 81343425,
+    "candidate_tstates": 74830741,
+    "delta_tstates": -6512684,
+    "slower_frames": 38,
+    "max_extra_frame_tstates": 114
+  },
+  "timing_note": "CPU experiment excludes disk/ROM/IRQ/ULA; Fuse includes all. Do not subtract them as disk latency."
+}

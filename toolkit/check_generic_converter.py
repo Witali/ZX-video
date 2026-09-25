@@ -22,6 +22,7 @@ def main():
     p.add_argument('--only-noise', action='store_true')
     p.add_argument('--inline-matches', action='store_true')
     p.add_argument('--startup-delta', action='store_true')
+    p.add_argument('--fast-noop-scan', action='store_true')
     args = p.parse_args()
     if args.noise_frames < 1: p.error('--noise-frames must be positive')
     programs = {name: executable(getattr(args, name), name) for name in ('ffmpeg', 'ffprobe', 'zx0')}
@@ -53,7 +54,7 @@ def main():
     if args.only_noise: sources = []
     sources.append((noisy_video, args.noise_frames, [], 'high entropy; runtime disk reads beyond the 64 KiB preload'))
     report = dict(complete=False, release=False, generator_seed=20260921, inline_matches=args.inline_matches,
-                  startup_delta=args.startup_delta, cases=[])
+                  startup_delta=args.startup_delta, fast_noop_scan=args.fast_noop_scan, cases=[])
     write_json(args.report, report)
     for source, expected_frames, extra, objective in sources:
         out = args.output/(source.stem+'-out')
@@ -64,6 +65,7 @@ def main():
         if args.trdos_rom: command += ['--disk-profile', 'trdos503', '--trdos-rom', str(args.trdos_rom)]
         if args.inline_matches: command += ['--inline-matches']
         if args.startup_delta: command += ['--startup-delta']
+        if args.fast_noop_scan: command += ['--fast-noop-scan']
         subprocess.run(command, check=True)
         meta = json.loads((out/'conversion.json').read_text(encoding='utf-8'))
         if meta['frames'] != expected_frames: raise AssertionError((source.name, meta['frames'], expected_frames))

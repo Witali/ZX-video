@@ -6,8 +6,10 @@ producer starvation from unobserved physical interrupt fields.
 
 The proposed scanner combines vector and mask tests. Keep DEC HL after
 the final OR: DEC L would overwrite Z before JP Z. INC L is safe before
-that OR because mask pairs start at even addresses. INC E assumes all
-192 vectors are in the A400..A4BF page. No player code is changed here.
+that OR because mask pairs start at even addresses. Retain INC DE for
+zero-copy vectors: the packet's vector array can cross a page boundary.
+The archived fast_noop_probe.json used a single-page assumption; its
+estimate is superseded by the implementation's measured report.
 """
 import argparse
 from collections import Counter
@@ -25,14 +27,14 @@ def scanner_tstates(length, following, proposed=False):
     """Tile entry through jump to next tile/stripe, excluding destination.
 
     Counts use the existing instruction listing in causal_tile_z80.py.
-    Proposed: initial mask pair INC/DEC L (-4 T), advancing INC E then
-    INC L/INC HL (-4 T/tile), combined check 41/51 T versus 57/21/67 T.
+    Proposed: initial mask pair INC/DEC L (-4 T), advancing INC DE then
+    INC L/INC HL (-2 T/tile), combined check 41/51 T versus 57/21/67 T.
     ROM, disk, paging outside scanner, IRQ and ULA contention excluded.
     """
     if not 1 <= length <= 16 or following not in ('end', 'vector', 'patch'):
         raise ValueError('invalid run shape')
     if proposed:
-        return 72*length+(212 if following == 'end' else 278)
+        return 74*length+(212 if following == 'end' else 278)
     return 92*length+{'end':200,'vector':236,'patch':282}[following]
 
 
@@ -60,7 +62,7 @@ def main():
         _,d = read_packet(r,stored_guards=False);at = sum(map(len,d['ticks']))+8
         v = d['payload'][at:at+192];m = restore(d['payload'][at+192:at+192+d['mask_bytes']],1,480,4)
         runs,n = frame_runs(v,m);hist.update(runs);patches += n
-        delta = -8*n+sum(scanner_tstates(length,kind,True)-scanner_tstates(length,kind)
+        delta = -6*n+sum(scanner_tstates(length,kind,True)-scanner_tstates(length,kind)
             for length,kind in runs)
         frames.append(dict(frame=index,delta_tstates=delta))
     r.end();ay = []
@@ -79,13 +81,13 @@ def main():
             note='Counts field occupancy, not exact IRQ entry time; seek timestamps are unavailable.'))
     report = dict(complete=True,release=False,scope=__doc__,raw_sha256=sha(source),frames=count,
         scanner_prediction_verified=False,estimated_delta_tstates=sum(f['delta_tstates'] for f in frames),
-        player_modified=False,
+        player_modified=True,
         cycle_model=dict(unit='Z80 T-states',
             baseline_run=dict(end='92*k+200',vector='92*k+236',patch='92*k+282'),
-            proposed_run=dict(end='72*k+212',vector='72*k+278',patch='72*k+278'),
-            zero_vector_patch_overhead=dict(baseline=251,proposed=243,delta=-8,
+            proposed_run=dict(end='74*k+212',vector='74*k+278',patch='74*k+278'),
+            zero_vector_patch_overhead=dict(baseline=257,proposed=251,delta=-6,
                 scope='Tile entry through tile_done; patch routine body excluded, CALL included.'),
-            assumptions=['Vectors at A400..A4BF; even mask pairs at A4C0..A63F.',
+            assumptions=['Vectors can cross pages; even mask pairs at A4C0..A63F.',
                 'Static first/last stripes skipped by the existing marker; no encoded runs.',
                 'Final OR followed by DEC HL, preserving Z for JP Z.',
                 'CPU estimate only: excludes IRQ, ULA, ROM and physical disk latency.']),

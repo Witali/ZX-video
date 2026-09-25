@@ -72,7 +72,7 @@ class FrameOutputPipelineTests(unittest.TestCase):
     def test_irq_preserves_fast_native_dispatch_and_raw_attributes(self):
         self.exercise_irq(raw=True, fast=True)
 
-    def exercise_irq(self, raw=False, fast=False, selective=False, noops=False, empty_noops=False, constant=False,encoded=False,static=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,sparse_patches=False):
+    def exercise_irq(self, raw=False, fast=False, selective=False, noops=False, empty_noops=False, constant=False,encoded=False,static=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,sparse_patches=False,fast_noop_scan=False):
         states, stream, _ = fixture(2,constant_attribute_borders=constant)
         if raw:
             from raw_attribute_stream import pack
@@ -81,7 +81,7 @@ class FrameOutputPipelineTests(unittest.TestCase):
         h = Harness(tables, mapping, raw_attributes=raw, decode_metadata=raw, fast_mask_dispatch=fast,
                     selective_cache=selective,skip_noop_runs=noops,constant_attribute_borders=constant,
                     encoded_noop_runs=encoded,skip_static_stripes=static,cache_columns=cache_columns,unrolled_cache=unrolled_cache,
-                    attribute_groups=attribute_groups,sparse_patches=sparse_patches)
+                    attribute_groups=attribute_groups,sparse_patches=sparse_patches,fast_noop_scan=fast_noop_scan)
         coded_masks = serialized_masks(stream) if raw else [None]*len(packets)
         if empty_noops:
             states = np.zeros((2,3840),dtype=np.uint8)
