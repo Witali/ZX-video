@@ -37,23 +37,30 @@ def main():
     p.add_argument('--uncontended-frame',action='store_true',help='With --slot-queue, relocate compact frame/cache to bank 2')
     p.add_argument('--compiled-masks',action='store_true',help='With --slot-queue, generate sparse-mask routines in bank 7')
     p.add_argument('--idle-masks',action='store_true',help='With compiled masks, skip untouched bitmap stripes using RAM flags')
+    p.add_argument('--trace-pipeline',action='store_true',help='With slot queue, record packet/prepare/draw entries and synchronous empty-queue waits')
+    p.add_argument('--partial-slots',action='store_true',help='With slot queue, allow consumption of a produced prefix before block EOF')
     p.add_argument('--fixture-zx0',type=Path,help='ZX0 executable for compressing debugger-only startup patches')
     args=p.parse_args(); m=json.loads(args.metadata.read_text()); lab=m['player_labels']
     patches=[];nonce=secrets.randbits(30)
     if args.uncontended_frame and not args.slot_queue:raise ValueError('relocation requires --slot-queue')
     if args.compiled_masks and not args.slot_queue:raise ValueError('compiled masks require --slot-queue')
     if args.idle_masks and not args.compiled_masks:raise ValueError('idle masks require --compiled-masks')
+    if args.trace_pipeline and not args.slot_queue:raise ValueError('pipeline tracing requires --slot-queue')
+    if args.partial_slots and not args.slot_queue:raise ValueError('partial slots require --slot-queue')
     if args.slot_queue:
         if args.continuation_snapshot or args.export_warm_ram:raise ValueError('queue fixture requires an independent cold boot')
         from slot_queue_player import build
         patches,m=build(m,args.raw.read_bytes(),uncontended=args.uncontended_frame,
-            compiled_masks=args.compiled_masks,idle_masks=args.idle_masks);lab=m['player_labels']
+            compiled_masks=args.compiled_masks,idle_masks=args.idle_masks,
+            partial_consumption=args.partial_slots);lab=m['player_labels']
     if not m.get('independently_bootable',True) and not args.continuation_snapshot:
         raise ValueError('continuation disk requires RAM exported from its predecessor')
     if m.get('required_trdos_sha256') and hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest()!=m['required_trdos_sha256']:
         raise ValueError('fast reader requires its verified TR-DOS ROM')
     lines=['base 10','set $running 0','set $dump 65537']; widths={}; events=[]
-    if args.idle_masks: lines.append('set $n 0')
+    target_samples=args.idle_masks or args.trace_pipeline
+    if target_samples: lines.append('set $n 0')
+    if args.trace_pipeline:lines.append('set $qwait 0')
     def event(pc,tag,expressions,stop=False,after=(),breakpoint=None,before=()):
         index=len(events)+1; events.append((pc,tag)); widths[tag]=len(expressions)
         lines.extend([breakpoint or f'breakpoint {pc}',f'commands {index}',f'print {tag}'])
@@ -85,7 +92,7 @@ def main():
     # Sample after drawing returns to the bank-7 clock; publication itself
     # is allowed to interrupt a disk read with another bank at C000.
     for address in (0x4000,0xc000): sample_expr += [f'[{address+i}]' for i in samples]
-    if args.idle_masks:
+    if target_samples:
         # Old traces exported both screens then discarded the non-target 80
         # samples. Export the same target addresses directly to leave room for
         # the larger installer in Windows' 32767-character command line.
@@ -95,8 +102,18 @@ def main():
     event(lab['publish_out']+2,150,[stamp,'z80:a',mem(lab['elapsed_fields']),mem(lab['late_fields'])])
     for index,pc in enumerate(m['native_ready_pcs']):
         event(pc,151+index,[stamp,'ula:mem7ffd']+sample_expr,
-            before=['set $s 49152-32768*($n&1)'] if args.idle_masks else (),
-            after=['set $n $n+1'] if args.idle_masks else ())
+            before=['set $s 49152-32768*($n&1)'] if target_samples else (),
+            after=['set $n $n+1'] if target_samples else ())
+    if args.trace_pipeline:
+        q,z,packet=m['queue_labels'],m['decoder_labels'],m['packet_labels']
+        queue_state=[stamp,'ula:mem7ffd',f'[{q["count"]}]',f'[{q["phase"]}]',
+            mem(q['blocks_left']),mem(q['position']),mem(z['slice_output'])]
+        for label,tag in (('read_packet',160),('packet_ready',161),('prepare_bridge',162),('draw_bridge',163)):
+            event(packet[label],tag,queue_state)
+        event(q['take_next'],165,queue_state,after=['set $qwait 1'])
+        lines[-1]=f'condition {len(events)} $running == 1 && [{q["count"]}]==0 && $qwait==0'
+        event(q['take_available'],166,queue_state,after=['set $qwait 0'])
+        lines[-1]=f'condition {len(events)} $running == 1 && $qwait==1'
     event(lab['audio_write_loop'],140,[stamp,'[z80:hl]','[z80:hl+1]'])
     event(lab['audio_tick_done'],143,[stamp])
     event(lab['audio_tick_empty'],144,[stamp])
@@ -180,7 +197,7 @@ def main():
         if tag not in widths or pos+widths[tag]>len(nums): raise ValueError(f'bad trace at {pos}: {nums[pos-1:pos+3]} / {output[-300:]}')
         parsed.append((tag,nums[pos:pos+widths[tag]])); pos+=widths[tag]
     pubs=[]; writes=[]; ticks=[]; underruns=[]; reads=[]; final=None; failure=None
-    irq_entries=[];field_samples=[];paging_samples=[]
+    irq_entries=[];field_samples=[];paging_samples=[];pipeline_events=[]
     image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0; retries=0; read_kind=None
     boot_started=player_started=None;nonces=[]
     warm_ram=bytearray(); warm_dump_complete=False; continuation_accepted=[]
@@ -197,7 +214,7 @@ def main():
             pubs.append(dict(tstate=v[0],page=v[1],field=v[2],late_fields=v[3]))
         elif tag in (151,152):
             frame=m['frame_start']+native_count
-            samples_at=v[2:] if args.idle_masks else (v[2:2+len(samples)] if native_count%2 else v[2+len(samples):])
+            samples_at=v[2:] if target_samples else (v[2:2+len(samples)] if native_count%2 else v[2+len(samples):])
             wanted=display_screen(states[frame].tobytes(),black_borders=True)
             bad=[i for i,x in zip(samples,samples_at) if x!=wanted[i]]
             # Bar occupies bitmap offsets 10e0/11e0 and attribute 1ae0.
@@ -208,6 +225,10 @@ def main():
         elif tag==140: writes.append(v)
         elif tag==143: ticks.append(v[0])
         elif tag==144: underruns.append(v[0])
+        elif tag in (160,161,162,163,165,166):
+            pipeline_events.append(dict(kind={160:'packet_start',161:'packet_ready',162:'prepare_start',
+                163:'draw_start',165:'empty_wait_start',166:'empty_wait_end'}[tag],
+                **dict(zip(('tstate','page','count','phase','blocks_left','position','slice_output'),v))))
         elif tag==130: irq_entries.append(dict(tstate=v[0],interrupted_pc=v[1],im=v[2],page=v[3]))
         elif tag in (131,132):
             field_samples.append(dict(offset=0 if tag==131 else 32,tstate=v[0],pc=v[1],iff1=v[2],iff2=v[3],
@@ -315,10 +336,12 @@ def main():
         trace_sha256=hashlib.sha256(args.output.with_suffix('.trace.txt').read_bytes()).hexdigest())
     if args.slot_queue:
         report['fixture_installer']=install_report
+        report['partial_slot_consumption']=args.partial_slots
         if args.uncontended_frame:report['uncontended_frame']=m['uncontended_frame']
         if args.compiled_masks:report['compiled_masks']=m['compiled_masks']
         if args.idle_masks:
             report['idle_masks']=m['idle_masks']
+        if target_samples:
             report['native_sample_trace']='target-only; same 80 offsets and per-disk parity as the two-screen trace'
         report['slot_queue_fixture']={k:v for k,v in m.items() if k.startswith('slot_queue_') or k in
             ('queue_labels','producer_labels','decoder_labels','clock_labels','packet_labels','native_ready_pcs')}
@@ -327,6 +350,7 @@ def main():
             continuation_disk_accepted_tstates=continuation_accepted)
     if args.trace_fields or args.trace_paging: report['irq_entries']=irq_entries
     if args.trace_fields: report['field_samples']=field_samples
+    if args.trace_pipeline:report['pipeline_events']=pipeline_events
     if args.trace_paging: report['paging_samples']=paging_samples
     if args.export_warm_ram:
         report.update(warm_ram_bytes=len(warm_ram),warm_ram_sha256=hashlib.sha256(warm_ram).hexdigest(),
@@ -335,7 +359,7 @@ def main():
             args.export_warm_ram.parent.mkdir(parents=True,exist_ok=True)
             args.export_warm_ram.write_bytes(warm_ram)
     args.output.write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','slot_queue_fixture','uncontended_frame')}),flush=True)
+    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','pipeline_events','slot_queue_fixture','uncontended_frame')}),flush=True)
     if not complete: raise SystemExit(1)
 
 

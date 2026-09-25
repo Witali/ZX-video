@@ -11,7 +11,7 @@ from pipelined_frame_z80 import helpers, PAGE
 CODE, BRIDGE, LIMIT = 0xe000, 0x6100, 0xf000
 
 
-def build(z, p, blocks, *, quantum=256):
+def build(z, p, blocks, *, quantum=256, partial_consumption=False):
     if not 1 <= blocks <= 65535 or not 1 <= quantum <= 8192:
         raise ValueError('invalid block count or decode quantum')
     rows=[]
@@ -82,10 +82,22 @@ def build(z, p, blocks, *, quantum=256):
     a.label('take');e('LD A,B',[0x78],4);e('OR C',[0xb1],4);e('RET Z',[0xc8],[5,11])
     n('LD (pending),BC',(0xed,0x43),'pending',20);n('LD (destination),DE',(0xed,0x53),'destination',20)
     a.label('take_next');load('count');e('OR A',[0xb7],4);j(0xc2,'have_slot')
+    if partial_consumption:
+        # With no completed descriptor, read_slot == write_slot. The active
+        # decoder retains all history even when its produced prefix is copied.
+        # Release this slot only after EOF publishes its complete descriptor.
+        load('phase');e('CP 2',[0xfe,2],7);j(0xc2,'need_step')
+        wl(z['slice_output']);n('LD DE,E000',0x11,0xe000,10)
+        e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15)
+        n('LD DE,(position)',(0xed,0x5b),'position',20)
+        e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15)
+        e('LD A,H',[0x7c],4);e('OR L',[0xb5],4);j(0xc2,'take_available')
+        a.label('need_step')
     call('step');e('OR A',[0xb7],4);j(0xca,'fatal');j(0xc3,'take_next')
     a.label('have_slot');load('read_slot');call('descriptor')
     e('LD E,(HL)',[0x5e],7);e('INC HL',[0x23],6);e('LD D,(HL)',[0x56],7)
     wl('position');e('EX DE,HL',[0xeb],4);e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15)
+    a.label('take_available')
     n('LD BC,(pending)',(0xed,0x4b),'pending',20);e('PUSH HL',[0xe5],11)
     e('OR A',[0xb7],4);e('SBC HL,BC',[0xed,0x42],15);j(0xd2,'take_fits')
     e('POP BC',[0xc1],10);n('LD HL,0',0x21,0,10);j(0xc3,'take_count')
@@ -97,6 +109,8 @@ def build(z, p, blocks, *, quantum=256):
     n('LD DE,(destination)',(0xed,0x5b),'destination',20);load('read_slot');call(b['copy'])
     n('LD (destination),DE',(0xed,0x53),'destination',20)
     wl('slot_left');e('LD A,H',[0x7c],4);e('OR L',[0xb5],4);j(0xc2,'retained')
+    if partial_consumption:
+        load('count');e('OR A',[0xb7],4);j(0xca,'retained')
     a.label('release');n('LD HL,count',0x21,'count',10);e('DEC (HL)',[0x35],11)
     load('read_slot');e('INC A',[0x3c],4);e('AND 3',[0xe6,3],7);store('read_slot')
     n('LD HL,0',0x21,0,10);ws('position')

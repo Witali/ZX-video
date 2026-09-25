@@ -18,7 +18,7 @@ import pipelined_frame_z80 as video
 import bulk_frame_z80 as packet
 
 
-def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False):
+def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False,partial_consumption=False):
     if idle_masks and not compiled_masks:
         raise ValueError('idle stripes require compiled metadata')
     if compiled_masks and uncontended:
@@ -41,7 +41,7 @@ def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False
         fast_disk=True,cached_seek=True,interleaved=True)
     scode,seek,srows=disk.build_cached_seek(d)
     pcode,p,prows=producer.build(z,d)
-    regions,q,qrows=queue.build(z,p,len(m['blocks']))
+    regions,q,qrows=queue.build(z,p,len(m['blocks']),partial_consumption=partial_consumption)
     mask_labels=h.frame.metadata_labels
     prefill=q['prefill']
     mask_rows=[]
@@ -124,6 +124,7 @@ def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False
         packet_labels=pl,clock_labels=c,queue_labels=q,producer_labels=p,
         native_ready_pcs=[row['address']+3 for row in crows if row['instruction'] in ('CALL native zero','CALL draw_compact')],
         runtime_video_preload_sectors=0,slot_queue_fixture=True,release=False,
+        partial_slot_consumption=partial_consumption,
         slot_queue_patches=sparse,slot_queue_patch_sha256=sha(bytes(v for _,v in sparse)),
         slot_queue_regions=[dict(address=a,bytes=len(b),sha256=sha(b)) for a,b in regions],
         slot_queue_instruction_listing=qrows+prows+drows+srows+crows+vrows+mask_rows)
