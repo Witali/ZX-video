@@ -302,7 +302,7 @@ def build_next_loader(*,entry=0x6000):
     return a.resolve(), dict(a.labels)
 
 
-def build_driver(h, clock, ay_state, *, has_next=False, deferred=False):
+def build_driver(h, clock, ay_state, *, has_next=False, deferred=False, prefill_entry=None):
     a = MiniAssembler(DRIVER)
     def call(address): a.emit(0xcd); a.word(address)
     a.label('start'); a.emit(0xf3,0x31); a.word(0x9df0)
@@ -316,7 +316,9 @@ def build_driver(h, clock, ay_state, *, has_next=False, deferred=False):
     a.abs16(0x21,'ay_state'); a.emit(0x16,0)
     a.label('ay_restore'); a.emit(0x7a,0x01); a.word(0xfffd); a.emit(0xed,0x79,0x7e,0x23,0x06,0xbf,0xed,0x79,0x14,0x7a,0xfe,11)
     a.rel8(0x20,'ay_restore')
-    a.emit(0xfb); call(clock['prime']); call(clock['start'])
+    a.emit(0xfb)
+    if prefill_entry is not None: call(prefill_entry)
+    call(clock['prime']); call(clock['start'])
     a.label('main_loop'); a.emit(0x2a); a.word(clock['remaining']); a.emit(0x7c,0xb5)
     a.abs16(0xca,'drain'); call(clock['play_one']); a.abs16(0xc3,'main_loop')
     a.label('drain'); call(h.audio['audio_drain'])

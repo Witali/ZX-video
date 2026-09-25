@@ -10,6 +10,7 @@ import json
 import os
 from pathlib import Path
 import re
+import secrets
 import subprocess
 import time
 
@@ -32,7 +33,14 @@ def main():
     p.add_argument('--export-warm-ram',type=Path,help='Dump actual banks 5/2/6 only after the complete disk finishes')
     p.add_argument('--trace-fields',action='store_true',help='Record IRQ entries and CPU state at field offsets 0/32; no player changes')
     p.add_argument('--trace-paging',action='store_true',help='Record IRQ entries and paging boundaries near the IRQ pulse; address breakpoints only')
+    p.add_argument('--slot-queue',action='store_true',help='Install the experimental four-slot player after normal cold bootstrap')
+    p.add_argument('--fixture-zx0',type=Path,help='ZX0 executable for compressing debugger-only startup patches')
     args=p.parse_args(); m=json.loads(args.metadata.read_text()); lab=m['player_labels']
+    patches=[];nonce=secrets.randbits(30)
+    if args.slot_queue:
+        if args.continuation_snapshot or args.export_warm_ram:raise ValueError('queue fixture requires an independent cold boot')
+        from slot_queue_player import build
+        patches,m=build(m,args.raw.read_bytes());lab=m['player_labels']
     if not m.get('independently_bootable',True) and not args.continuation_snapshot:
         raise ValueError('continuation disk requires RAM exported from its predecessor')
     if m.get('required_trdos_sha256') and hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest()!=m['required_trdos_sha256']:
@@ -52,7 +60,16 @@ def main():
     if args.continuation_snapshot:
         event(m['bootstrap_labels']['next_disk_accepted'],88,[stamp])
         lines[-1]=f'condition {len(events)} $running == 0'
-    event(lab['start'],100,[stamp])
+    if args.slot_queue:
+        if not args.fixture_zx0:raise ValueError('--slot-queue requires --fixture-zx0')
+        from fuse_patch_loader import build as build_installer
+        patches,install_entry,install_report=build_installer(patches,lab['start'],args.fixture_zx0,args.output.parent/'install')
+        # Installation is logged separately; entering the actual driver is
+        # the start of measured playback, after the temporary loader returns.
+        event(lab['start'],89,[stamp],after=[f'se {a} {v}' for a,v in patches]+['set $running 2',f'set z80:pc {install_entry}'])
+        lines[-1]=f'condition {len(events)} $running == 0'
+    event(lab['start'],100,[stamp,str(nonce)])
+    lines.append(f'condition {len(events)} $running == {2 if args.slot_queue else 0}')
     samples=sorted(set([i*97%6912 for i in range(56)]+[6144+i*31 for i in range(24)]))
     sample_expr=[]
     # Sample after drawing returns to the bank-7 clock; publication itself
@@ -76,15 +93,17 @@ def main():
         for pc,tag in ((0x9781,133),(0x9793,134)):
             event(pc,tag,[stamp,'z80:iff1','z80:iff2','z80:sp','[z80:sp]+256*[z80:sp+1]'])
             lines[-1]=f'condition {len(events)} $running == 1 && (ula:tstates >= 70800 || ula:tstates < 108)'
-    event(lab['disk_full_call'],102,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])])
+    event(lab['disk_full_call'],102,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])],
+        after=[f'set $b 256*[{m["disk_labels"]["write_high"]}]'])
     # A whole consumed sector was replaced at saved write_high. Read its
     # exact bytes before the decoder resumes; compact four bytes per print.
-    base=f'256*[{m["disk_labels"]["write_high"]}]'
+    base='$b'
     sector_expr=['+'.join(f'{256**k}*[{base}+{i+k}]' for k in range(4)) for i in range(0,256,4)]
     event(lab['disk_return'],103,[stamp]+sector_expr)
     if 'fast_read_enter' in lab:
-        event(lab['fast_read_enter'],110,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])])
-        event(lab['fast_disk_return'],111,[stamp]+sector_expr)
+        event(lab['fast_read_enter'],110,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])],
+            after=[f'set $b 256*[{m["disk_labels"]["write_high"]}]'])
+        event(lab['fast_disk_return'],111,[stamp]+([] if args.slot_queue else sector_expr))
         event(lab['fast_read_retry'],112,[stamp])
     if 'seek_enter' in lab:
         event(lab['seek_side_enter'],120,[stamp])
@@ -98,6 +117,8 @@ def main():
     event(lab['finished'],199,[stamp,mem(lab['published']),mem(lab['audio_ticks_played']),mem(lab['audio_underruns'])]+
         [f'[{base+i}]' for base in (0x50e0,0x51e0,0xd0e0,0xd1e0) for i in range(32)],not bool(export),after=export)
     for name in ('fatal','zx0_fatal'): event(lab[name],198,[stamp,'z80:pc'],True)
+    if args.slot_queue:
+        for labels in (m['queue_labels'],m['producer_labels']):event(labels['fatal'],198,[stamp,'z80:pc'],True)
     if export:
         # After EOF only: repeat the existing DI at 9A60; debugger redirects
         # PC before its following instruction. RAM is neither patched nor
@@ -107,18 +128,21 @@ def main():
         lines[-1]=f'condition {len(events)} $dump < 65536'
         event(0x9a61,301,[],True)
         lines[-1]=f'condition {len(events)} $running == 0 && $dump == 65536'
-    if len('\n'.join(lines))>29000: raise ValueError('Windows command line too long')
+    # Documented debugger abbreviations keep the patch fixture below Windows' limit.
+    lines=[s.replace('print ','pr ',1) if s.startswith('print ') else s for s in lines]
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.with_suffix('.debugger.txt').write_text('\n'.join(lines))
     env=dict(os.environ,SDL_VIDEODRIVER='dummy')
     media=['--betadisk',str(args.trd.resolve()),'--snapshot',str(args.continuation_snapshot.resolve())] if args.continuation_snapshot else [str(args.trd.resolve())]
     command=[str(args.fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions',
         '--speed','10000','--machine','128','--beta128','--debugger-command','\n'.join(lines)]+media
-    started=time.monotonic()
+    if len(subprocess.list2cmdline(command))>=32760:raise ValueError('Windows command line too long')
+    started=time.monotonic();epoch=time.time()
     completed=subprocess.run(command,cwd=args.fuse.parent,env=env,capture_output=True,
         startupinfo=hidden_startupinfo(),timeout=args.timeout)
     output=completed.stdout.decode(errors='replace')
-    if not re.search(r'^\s*\d+\s*$',output,re.M) and (args.fuse.parent/'stdout.txt').exists():
+    if (not re.search(r'^\s*\d+\s*$',output,re.M) and (args.fuse.parent/'stdout.txt').exists()
+            and (args.fuse.parent/'stdout.txt').stat().st_mtime>=epoch-2):
         output=(args.fuse.parent/'stdout.txt').read_text(errors='replace')
     args.output.with_suffix('.stderr.txt').write_text(completed.stderr.decode(errors='replace'))
     args.output.with_suffix('.trace.txt').write_text(output)
@@ -131,7 +155,7 @@ def main():
     pubs=[]; writes=[]; ticks=[]; underruns=[]; reads=[]; final=None; failure=None
     irq_entries=[];field_samples=[];paging_samples=[]
     image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0; retries=0; read_kind=None
-    boot_started=player_started=None
+    boot_started=player_started=None;nonces=[]
     warm_ram=bytearray(); warm_dump_complete=False; continuation_accepted=[]
     seek_pending=None; seek_calls=[]
     with np.load(args.states,allow_pickle=False) as data: states=data['states']
@@ -141,7 +165,7 @@ def main():
         elif tag==88: continuation_accepted.append(v[0])
         elif tag==300: warm_ram+=(v[0]&0xffffffff).to_bytes(4,'little')
         elif tag==301: warm_dump_complete=True
-        elif tag==100: player_started=v[0]
+        elif tag==100: player_started=v[0];nonces.append(v[1])
         elif tag==150:
             pubs.append(dict(tstate=v[0],page=v[1],field=v[2],late_fields=v[3]))
         elif tag in (151,152):
@@ -168,6 +192,10 @@ def main():
             if pending is not None: raise ValueError('overlapping ROM reads')
             pending=v; read_kind='trdos' if tag==102 else 'direct503'
         elif tag in (103,111):
+            if args.slot_queue and tag==111:
+                # The shared disk_finish breakpoint exports accepted bytes
+                # for either entry path; avoid duplicating 64 expressions.
+                continue
             # Successful direct reads jump to the shared full-read epilogue.
             # Its second breakpoint is not another ROM return/read attempt.
             if tag==103 and pending is None and reads and reads[-1]['kind']=='direct503' and not reads[-1]['retried']:
@@ -177,8 +205,15 @@ def main():
             actual=b''.join((value&0xffffffff).to_bytes(4,'little') for value in v[1:])
             reads.append(dict(sector=linear,tstates=v[0]-pending[0],kind=read_kind,
                 bytes_exact=actual==image[linear*256:(linear+1)*256],retried=False,
-                start_tstate=pending[0],end_tstate=v[0],entry_tstates=17 if tag==103 else 10)); pending=None
+                start_tstate=pending[0],end_tstate=v[0],entry_tstates=17 if read_kind=='trdos' else 10)); pending=None
         elif tag==112:
+            if args.slot_queue:
+                if pending is None or read_kind!='direct503':raise ValueError('retry without direct read')
+                linear=(pending[2]>>8)*16+(pending[2]&255)
+                reads.append(dict(sector=linear,tstates=v[0]-pending[0],kind=read_kind,
+                    bytes_exact=False,retried=True,start_tstate=pending[0],end_tstate=v[0],entry_tstates=10))
+                retries+=1;pending=None
+                continue
             if not reads or reads[-1]['kind']!='direct503': raise ValueError('retry without direct read')
             retries+=1; reads[-1]['retried']=True
         elif tag in (120,122,124):
@@ -196,7 +231,7 @@ def main():
             errors.append(dict(sector=read['sector'],error='accepted disk bytes differ'))
     accepted=[q['sector'] for q in reads if not q['retried']]
     positions=list(disk_layout.positions(m['video_sectors'],m['video_start_sector']%16)) if m.get('interleaved') else list(range(m['video_sectors']))
-    wanted_sectors=[m['video_start_sector']+p for p in positions[min(256,m['video_sectors']):]]
+    wanted_sectors=[m['video_start_sector']+p for p in positions[min(m.get('runtime_video_preload_sectors',256),m['video_sectors']):]]
     if pending is not None or seek_pending is not None or accepted!=wanted_sectors:
         errors.append(dict(error='runtime sector sequence incomplete or duplicated'))
     raw=args.raw.read_bytes(); r=Reader(raw); _,_,count,_,_=read_header(r,magic=b'FAP3')
@@ -224,7 +259,7 @@ def main():
         errors.append(dict(error='continuation ID was not accepted exactly once'))
     if args.export_warm_ram and (not warm_dump_complete or len(warm_ram)!=49152):
         errors.append(dict(error='warm RAM export incomplete',bytes=len(warm_ram)))
-    complete=bool(final and final[1]==m['frames'] and final[2]==6*m['frames'] and len(pubs)==m['frames']
+    complete=bool(nonces==[nonce] and final and final[1]==m['frames'] and final[2]==6*m['frames'] and len(pubs)==m['frames']
         and native_count==m['frames'] and ay_exact and not errors and progress_complete)
     report=dict(scope=__doc__,part=m['part'],complete=complete,release=False,exit_code=completed.returncode,
         runtime_seconds=time.monotonic()-started,trd_sha256=hashlib.sha256(image).hexdigest(),
@@ -248,6 +283,13 @@ def main():
         late_runs=runs,publications=pubs,actual_phase_tstates=offsets,reads=reads,
         audio_underrun_tstates=underruns,
         rom_sha256=hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest())
+    report.update(trace_nonce=nonce,trace_nonce_exact=nonces==[nonce],
+        debugger_script_sha256=hashlib.sha256(args.output.with_suffix('.debugger.txt').read_bytes()).hexdigest(),
+        trace_sha256=hashlib.sha256(args.output.with_suffix('.trace.txt').read_bytes()).hexdigest())
+    if args.slot_queue:
+        report['fixture_installer']=install_report
+        report['slot_queue_fixture']={k:v for k,v in m.items() if k.startswith('slot_queue_') or k in
+            ('queue_labels','producer_labels','decoder_labels','clock_labels','packet_labels','native_ready_pcs')}
     if args.continuation_snapshot:
         report.update(continuation_snapshot_sha256=hashlib.sha256(args.continuation_snapshot.read_bytes()).hexdigest(),
             continuation_disk_accepted_tstates=continuation_accepted)
@@ -261,7 +303,7 @@ def main():
             args.export_warm_ram.parent.mkdir(parents=True,exist_ok=True)
             args.export_warm_ram.write_bytes(warm_ram)
     args.output.write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples')}),flush=True)
+    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','slot_queue_fixture')}),flush=True)
     if not complete: raise SystemExit(1)
 
 

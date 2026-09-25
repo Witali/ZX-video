@@ -62,8 +62,10 @@ def build_video(draw,zx0,audio,*,irq_safe_paging=False):
         addr('JP NC,page_return_ready',0xd2,'page_return_ready',10)
         emit('DEC HL',[0x2b],6); emit('LD (HL),merge low',[0x36,PAGE_MERGE&255],10)
         a.label('page_return_ready')
-    for name,location,mask in (('saved_page',draw['saved_page'],8),
-            ('history_page',zx0['history_page'],8),('screen_base',draw['screen_base'],128)):
+    page_updates=[('saved_page',draw['saved_page'],8)]
+    if 'history_page' in zx0:page_updates.append(('history_page',zx0['history_page'],8))
+    page_updates.append(('screen_base',draw['screen_base'],128))
+    for name,location,mask in page_updates:
         addr('LD A,('+name+')',0x3a,location,13); emit('XOR mask',[0xee,mask],7)
         addr('LD ('+name+'),A',0x32,location,13)
     emit('XOR A',[0xaf],4); addr('LD (ready),A',0x32,READY,13)
@@ -169,8 +171,9 @@ def build_clock(packet,audio,frames,*,zx0,progress_entry=None,lookahead=False,pa
     if lookahead:
         addr('CALL ahead',0xcd,'ahead',17); emit('OR A',[0xb7],4)
         addr('JP NZ,wait_published',0xc2,'wait_published',10)
-        # The IRQ may have published during ahead; do not HALT for an extra
-        # field before drawing the next frame or reporting this publication.
+    if lookahead or disk_idle_entry is not None:
+        # Either background helper can return idle after publication. Do
+        # not HALT for an extra field before drawing/reporting that frame.
         addr('LD A,(ready)',0x3a,READY,13); emit('OR A',[0xb7],4)
         addr('JP Z,published',0xca,'published',10)
     emit('EI',[0xfb],4); emit('HALT',[0x76],4)
