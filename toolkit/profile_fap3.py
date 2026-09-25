@@ -30,7 +30,7 @@ def cpu_profile(builder, start, end):
         raise ValueError('Deferred disk builds require run_deferred_disk.py; this ideal producer does not model pending sectors.')
     ring, _ = builder.stream(start, end)
     h = player_harness(ring, builder.tables, builder.mapping, end-start, disk_reader=False,inline_matches=builder.inline_matches,
-        fast_noop_scan=builder.fast_noop_scan,irq_safe_paging=builder.irq_safe_paging,static_cache_borders=builder.static_cache_borders,carry_huffman=builder.carry_huffman)
+        fast_noop_scan=builder.fast_noop_scan,irq_safe_paging=builder.irq_safe_paging,static_cache_borders=builder.static_cache_borders,carry_huffman=builder.carry_huffman,register_fragments=builder.register_fragments)
     if start:
         h.cpu.banks[5][0x2400:0x3300] = builder.states[start-1].tobytes()
     screens = dict(h.expected_screens)
@@ -97,12 +97,13 @@ def cpu_profile(builder, start, end):
         irq_tstates=clock.irq_tstates, idle_tstates=clock.idle_tstates,
         audio_underruns=clock.underruns,
         nominal_deadlines_met_with_ideal_disk=not clock.underruns and not any(p['late_fields'] for p in clock.publications),
-        unchanged_player_baseline=None if builder.inline_matches or builder.fast_noop_scan or builder.irq_safe_paging or builder.static_cache_borders or builder.carry_huffman else '00313d3',
-        player_hot_path_delta_tstates=None if builder.inline_matches or builder.fast_noop_scan or builder.irq_safe_paging or builder.static_cache_borders or builder.carry_huffman else 0,
+        unchanged_player_baseline=None if builder.inline_matches or builder.fast_noop_scan or builder.irq_safe_paging or builder.static_cache_borders or builder.carry_huffman or builder.register_fragments else '00313d3',
+        player_hot_path_delta_tstates=None if builder.inline_matches or builder.fast_noop_scan or builder.irq_safe_paging or builder.static_cache_borders or builder.carry_huffman or builder.register_fragments else 0,
         inline_matches=builder.inline_matches,
         fast_noop_scan=builder.fast_noop_scan,
         static_cache_borders=builder.static_cache_borders,
         carry_huffman=builder.carry_huffman,
+        register_fragments=builder.register_fragments,
         irq_safe_paging=builder.irq_safe_paging,
         prime=prime, runs=runs, drain=drain, publications=clock.publications, events=clock.events,
         instruction_listing=list(h.instructions.values()),
@@ -147,8 +148,8 @@ def verify_volumes(builder, records, output, fuse=None, timeout=1800):
     directory = output/'timing'; directory.mkdir(exist_ok=True)
     report = dict(complete=False, all_nominal_deadlines_met=False, release=False,
         profile='instruction counts with ideal input; optional complete Fuse measurements',
-        player_hot_path_changed=builder.inline_matches or builder.fast_noop_scan or builder.irq_safe_paging or builder.static_cache_borders or builder.carry_huffman,
-        player_hot_path_delta_tstates=None if builder.inline_matches or builder.fast_noop_scan or builder.irq_safe_paging or builder.static_cache_borders or builder.carry_huffman else 0, disks=[])
+        player_hot_path_changed=builder.inline_matches or builder.fast_noop_scan or builder.irq_safe_paging or builder.static_cache_borders or builder.carry_huffman or builder.register_fragments,
+        player_hot_path_delta_tstates=None if builder.inline_matches or builder.fast_noop_scan or builder.irq_safe_paging or builder.static_cache_borders or builder.carry_huffman or builder.register_fragments else 0, disks=[])
     # Absolute adapter costs from instruction tables, separately from ROM/disk.
     options = dict(fast_disk=builder.fast_disk, cached_seek=builder.cached_seek, interleaved=builder.interleaved,
         irq_safe_paging=builder.irq_safe_paging)
@@ -213,7 +214,7 @@ def main():
         keepalive_fields=first.get('keepalive_fields',0),frame_service=first.get('frame_service',False),
         cold_bitmaps=first.get('cold_bitmaps',False),inline_matches=first.get('inline_matches',False),
         startup_delta=first.get('startup_delta',False),fast_noop_scan=first.get('fast_noop_scan',False),
-        irq_safe_paging=first.get('irq_safe_paging',False),static_cache_borders=first.get('static_cache_borders',False),carry_huffman=first.get('carry_huffman',False))
+        irq_safe_paging=first.get('irq_safe_paging',False),static_cache_borders=first.get('static_cache_borders',False),carry_huffman=first.get('carry_huffman',False),register_fragments=first.get('register_fragments',False))
     if sha(builder.raw) != first['raw_sha256'] or sha(states.tobytes()) != first['states_sha256']:
         raise ValueError('checkpoint or stream differs from disk metadata')
     result = verify_volumes(builder, records, output, args.fuse, args.timeout)

@@ -1,0 +1,115 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Locate CPU bursts in a fully executed frame-stage report.\n\nThese are isolated stage costs, not measured publication deadlines. ZX0,\nIRQ/ULA, disk and the capacity/cost of any future queue are excluded.\n",
+  "frames": 4221,
+  "field_tstates": 70908,
+  "frame_budget_tstates": 425448,
+  "total_stage_tstates": 1062161744,
+  "total_nominal_tstates": 1795816008,
+  "over_budget_frames": [
+    {
+      "frame": 3506,
+      "tstates": 425659,
+      "excess_tstates": 211
+    }
+  ],
+  "over_budget_count": 1,
+  "worst_fixed_windows": [
+    {
+      "frames": 1,
+      "start": 3506,
+      "end_exclusive": 3507,
+      "stage_tstates": 425659,
+      "available_tstates": 425448,
+      "excess_tstates": 211
+    },
+    {
+      "frames": 2,
+      "start": 3706,
+      "end_exclusive": 3708,
+      "stage_tstates": 815978,
+      "available_tstates": 850896,
+      "excess_tstates": -34918
+    },
+    {
+      "frames": 4,
+      "start": 3705,
+      "end_exclusive": 3709,
+      "stage_tstates": 1590516,
+      "available_tstates": 1701792,
+      "excess_tstates": -111276
+    },
+    {
+      "frames": 8,
+      "start": 3686,
+      "end_exclusive": 3694,
+      "stage_tstates": 3123362,
+      "available_tstates": 3403584,
+      "excess_tstates": -280222
+    },
+    {
+      "frames": 16,
+      "start": 2989,
+      "end_exclusive": 3005,
+      "stage_tstates": 6086404,
+      "available_tstates": 6807168,
+      "excess_tstates": -720764
+    },
+    {
+      "frames": 32,
+      "start": 2977,
+      "end_exclusive": 3009,
+      "stage_tstates": 11975168,
+      "available_tstates": 13614336,
+      "excess_tstates": -1639168
+    },
+    {
+      "frames": 64,
+      "start": 2868,
+      "end_exclusive": 2932,
+      "stage_tstates": 22409347,
+      "available_tstates": 27228672,
+      "excess_tstates": -4819325
+    },
+    {
+      "frames": 128,
+      "start": 2881,
+      "end_exclusive": 3009,
+      "stage_tstates": 42534858,
+      "available_tstates": 54457344,
+      "excess_tstates": -11922486
+    }
+  ],
+  "maximum_excess_interval": {
+    "start": 3506,
+    "end_exclusive": 3507,
+    "frames": 1,
+    "stage_tstates": 425659,
+    "available_tstates": 425448,
+    "excess_tstates": 211,
+    "excess_fields": 1
+  },
+  "queue_feasibility_proven": false,
+  "cpu_report_sha256": "80a3eefbfe55cc3619df4d036b277e57c57a1f67f4e919061b397673edca3234",
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "options": {
+    "raw_attributes": true,
+    "decode_metadata": true,
+    "fast_mask_dispatch": true,
+    "selective_cache": true,
+    "constant_attribute_borders": true,
+    "skip_black_borders": true,
+    "unrolled_cache": true,
+    "skip_noop_runs": true,
+    "skip_static_stripes": true,
+    "attribute_groups": true,
+    "attribute_flags": true,
+    "gray_cells": true,
+    "sparse_patches": true,
+    "fast_noop_scan": true,
+    "static_cache_borders": true,
+    "carry_huffman": true,
+    "register_fragments": true
+  }
+}

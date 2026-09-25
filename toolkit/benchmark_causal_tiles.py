@@ -46,14 +46,15 @@ class GuardCPU(CPU):
 
 
 class Harness:
-    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, sparse_patches=False):
+    def __init__(self, tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, sparse_patches=False,register_fragments=False):
         self.hybrid = hybrid
         self.raw_kind = raw_kind
         self.fast_fragments = fast_fragments
         self.unrolled_motion, self.offsets = unrolled_motion, offsets
         self.raw_intra = raw_intra
         self.split_literals = split_literals
-        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above, intra_extended=intra_extended, fast_fragments=fast_fragments, unrolled_motion=unrolled_motion, raw_intra=raw_intra, split_literals=split_literals, sparse_patches=sparse_patches)
+        self.register_fragments=register_fragments
+        self.code, self.labels, self.listing, self.regions = machine.build(tables, mapping, offsets, skip_empty=skip_empty, hybrid=hybrid, raw_kind=raw_kind, intra_above=intra_above, intra_extended=intra_extended, fast_fragments=fast_fragments, unrolled_motion=unrolled_motion, raw_intra=raw_intra, split_literals=split_literals, sparse_patches=sparse_patches,register_fragments=register_fragments)
         self.raw_value_entries = {self.labels[f'raw_value_{i}'] for i in range(16)} if raw_kind is not None else set()
         self.cpu = GuardCPU(b'', b'')
         self.cpu.port_7ffd, self.cpu.sp = 0x16, STACK
@@ -147,7 +148,7 @@ class Harness:
                 is_unaligned = False if self.split_literals else bool(cpu.alt_c & 7)
                 source = word(cpu, self.labels['literal_source']) if self.split_literals else cpu.ix+is_unaligned
                 selector = cpu.read8(source+4) if cpu.a == 87 else 0
-                fast_formula += machine.fast_tstates(cpu.a, unaligned=is_unaligned, selector=selector, split_literals=self.split_literals)
+                fast_formula += machine.fast_tstates(cpu.a, unaligned=is_unaligned, selector=selector, split_literals=self.split_literals,register_fragments=self.register_fragments)
                 fast_unaligned += is_unaligned; fast_kinds[cpu.a] += 1
             cpu.step(); steps += 1
             elapsed, wanted = cpu.tstates-ticks, row['tstates']

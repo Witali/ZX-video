@@ -45,7 +45,7 @@ def volume_id(raw, ends, part):
     return b'FAP3ZXV1'+bytes.fromhex(sha(series))[:6]+struct.pack('<H',part)
 
 
-def player_harness(ring, tables, mapping, frames, *, disk_reader=True,inline_matches=False,fast_noop_scan=False,irq_safe_paging=False,static_cache_borders=False,carry_huffman=False):
+def player_harness(ring, tables, mapping, frames, *, disk_reader=True,inline_matches=False,fast_noop_scan=False,irq_safe_paging=False,static_cache_borders=False,carry_huffman=False,register_fragments=False):
     """Shared current player options for disk assembly and instruction profiling."""
     return Harness(ring,tables,mapping,frames,ring_start=0,
         bulk=True,zero_copy=True,stored_guards=False,skip_noop_runs=True,
@@ -53,11 +53,11 @@ def player_harness(ring, tables, mapping, frames, *, disk_reader=True,inline_mat
         token_boundaries=True,pipelined=True,progress_frames=frames,packet_ahead='idle',
         unrolled_copy=True,unrolled_cache=True,attribute_groups=True,attribute_flags=True,
         gray_cells=True,sparse_patches=True,disk_refill_entry=disk.DISK if disk_reader else None,inline_matches=inline_matches,
-        fast_noop_scan=fast_noop_scan,irq_safe_paging=irq_safe_paging,static_cache_borders=static_cache_borders,carry_huffman=carry_huffman)
+        fast_noop_scan=fast_noop_scan,irq_safe_paging=irq_safe_paging,static_cache_borders=static_cache_borders,carry_huffman=carry_huffman,register_fragments=register_fragments)
 
 
 class Builder:
-    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False,inline_matches=False,warm_continuation=False,startup_delta=False,fast_noop_scan=False,irq_safe_paging=False,static_cache_borders=False,carry_huffman=False):
+    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False,inline_matches=False,warm_continuation=False,startup_delta=False,fast_noop_scan=False,irq_safe_paging=False,static_cache_borders=False,carry_huffman=False,register_fragments=False):
         if not 0 <= deferred_limit <= 248: raise ValueError('deferred limit must be 0..248')
         if frame_service and not keepalive_fields: raise ValueError('frame service requires keepalive clock')
         self.raw, self.states, self.zx0, self.cache = raw, states, zx0, cache
@@ -76,6 +76,7 @@ class Builder:
         self.fast_noop_scan=fast_noop_scan
         self.static_cache_borders=static_cache_borders
         self.carry_huffman=carry_huffman
+        self.register_fragments=register_fragments
         self.irq_safe_paging=irq_safe_paging
         self.warm_continuation=warm_continuation
         self.warm_immutable=None
@@ -137,7 +138,7 @@ class Builder:
 
     def ram(self, start, end, next_sector, remaining):
         h=player_harness(bytes(4),self.tables,self.mapping,end-start,inline_matches=self.inline_matches,
-            fast_noop_scan=self.fast_noop_scan,irq_safe_paging=self.irq_safe_paging,static_cache_borders=self.static_cache_borders,carry_huffman=self.carry_huffman)
+            fast_noop_scan=self.fast_noop_scan,irq_safe_paging=self.irq_safe_paging,static_cache_borders=self.static_cache_borders,carry_huffman=self.carry_huffman,register_fragments=self.register_fragments)
         clock=Clock(h,[],lookahead=True,disk_idle_entry=disk.DEFERRED if self.deferred_limit else None,
             disk_due_entry=disk.DEFERRED_DUE if self.frame_service else None)
         if clock.labels['end']>disk.DRIVER: raise ValueError('clock/driver overlap')
@@ -261,6 +262,7 @@ class Builder:
             if self.fast_noop_scan: options['fast_noop_scan']=True
             if self.static_cache_borders: options['static_cache_borders']=True
             if self.carry_huffman: options['carry_huffman']=True
+            if self.register_fragments: options['register_fragments']=True
             if self.irq_safe_paging: options['irq_safe_paging']=True
             contract=b'WARM1'+json.dumps(options,sort_keys=True).encode()+self.states.tobytes()
             disk_id=volume_id(self.raw+contract,self.ends,part)
@@ -295,6 +297,7 @@ class Builder:
             fast_noop_scan=self.fast_noop_scan,
             static_cache_borders=self.static_cache_borders,
             carry_huffman=self.carry_huffman,
+            register_fragments=self.register_fragments,
             irq_safe_paging=self.irq_safe_paging,
             warm_continuation=self.warm_continuation,independently_bootable=not (start and self.warm_continuation),
             startup_delta=self.startup_delta,
@@ -376,6 +379,7 @@ def main():
     p.add_argument('--irq-safe-paging',action='store_true',help='Experimental restartable bank changes without DI')
     p.add_argument('--static-cache-borders',action='store_true',help='Skip virtual-row clearing when the edge stripe is unchanged')
     p.add_argument('--carry-huffman',action='store_true',help='Use carry to advance the Huffman bit position')
+    p.add_argument('--register-fragments',action='store_true',help='Write repeated fragment rows directly from registers')
     p.add_argument('--startup-delta',action='store_true',help='Try adjacent-byte differences for boot tables; preserve independent boot')
     p.add_argument('--trdos-rom',type=Path,help='Required ROM hash check for --fast-disk')
     args=p.parse_args()
@@ -388,7 +392,7 @@ def main():
     b=Builder(args.raw.read_bytes(),states,args.zx0.resolve(),args.cache.resolve(),fast_disk=args.fast_disk,
         cached_seek=args.cached_seek,cold_track=args.cold_track,interleaved=args.interleaved,deferred_limit=args.deferred_limit,
         keepalive_fields=args.keepalive_fields,frame_service=args.frame_service,cold_bitmaps=args.cold_bitmaps,inline_matches=args.inline_matches,
-        startup_delta=args.startup_delta,fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging,static_cache_borders=args.static_cache_borders,carry_huffman=args.carry_huffman)
+        startup_delta=args.startup_delta,fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging,static_cache_borders=args.static_cache_borders,carry_huffman=args.carry_huffman,register_fragments=args.register_fragments)
     if args.ends: ends=[int(n) for n in args.ends.split(',')]
     else:
         # Storage weights use the already measured global block boundaries.

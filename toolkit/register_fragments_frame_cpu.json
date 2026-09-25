@@ -1,0 +1,3698 @@
+{
+  "complete": true,
+  "full_movie": false,
+  "release": false,
+  "baseline_commit": "7152e10",
+  "experiment": "register_fragments",
+  "fast_noop_scan": true,
+  "irq_safe_paging": true,
+  "raw_sha256": "4590013f35618db7514e612736b5cea90af28791da900c58cd40367be25f4cfa",
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "ideal_disk": true,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "ranges": [
+    {
+      "start": 2921,
+      "end": 2929,
+      "baseline": {
+        "complete": true,
+        "frame_start": 2921,
+        "frame_end_exclusive": 2929,
+        "frames": 8,
+        "full_compact_and_native_comparison": true,
+        "ay_records_exact": true,
+        "played_ay_ticks": 48,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "assumptions": "Spectrum 128: 70908 T/field, six fields/frame; ideal disk producer; no ULA contention",
+        "excluded": "bootstrap, disk-refill hook, TR-DOS ROM, physical disk, outer boot-driver CALL/loop overhead",
+        "field_tstates": 70908,
+        "nominal_frame_budget_tstates": 425448,
+        "foreground_tstates": 4807963,
+        "foreground_stages": {
+          "schedule": 2789,
+          "packet": 9766,
+          "stream_input": 283677,
+          "banked_zx0": 1659931,
+          "paging": 11776,
+          "audio": 17700,
+          "metadata": 170833,
+          "handoff": 2696,
+          "reconstruct": 1523694,
+          "attribute_groups": 14698,
+          "output": 1093834,
+          "progress": 16569
+        },
+        "irq_tstates": 47339,
+        "idle_tstates": 40240,
+        "audio_underruns": [
+          {
+            "tstates": 4767029,
+            "after_audio_ticks": 42
+          },
+          {
+            "tstates": 4837933,
+            "after_audio_ticks": 42
+          }
+        ],
+        "nominal_deadlines_met_with_ideal_disk": false,
+        "unchanged_player_baseline": null,
+        "player_hot_path_delta_tstates": null,
+        "inline_matches": true,
+        "fast_noop_scan": true,
+        "static_cache_borders": true,
+        "carry_huffman": true,
+        "register_fragments": false,
+        "irq_safe_paging": true,
+        "prime": {
+          "tstates": 1328283,
+          "stages": {
+            "schedule": 98,
+            "packet": 3404,
+            "stream_input": 107127,
+            "banked_zx0": 632692,
+            "paging": 3588,
+            "audio": 6669,
+            "metadata": 62778,
+            "handoff": 634,
+            "reconstruct": 372186,
+            "attribute_groups": 300,
+            "output": 138807
+          },
+          "irq_tstates": 4788,
+          "idle_tstates": 0,
+          "page_writes": [
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            22,
+            23,
+            22,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            22,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23
+          ],
+          "ring_bytes_consumed": 3844
+        },
+        "runs": [
+          {
+            "tstates": 23977,
+            "stages": {
+              "schedule": 450,
+              "banked_zx0": 21265,
+              "paging": 184,
+              "progress": 2078
+            },
+            "irq_tstates": 1094,
+            "idle_tstates": 0,
+            "page_writes": [
+              24,
+              31
+            ],
+            "ring_bytes_consumed": 3869
+          },
+          {
+            "tstates": 578450,
+            "stages": {
+              "schedule": 341,
+              "packet": 1214,
+              "handoff": 337,
+              "output": 137497,
+              "paging": 1564,
+              "reconstruct": 188482,
+              "attribute_groups": 2362,
+              "stream_input": 36146,
+              "banked_zx0": 184312,
+              "audio": 1915,
+              "metadata": 22202,
+              "progress": 2078
+            },
+            "irq_tstates": 6752,
+            "idle_tstates": 0,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              16,
+              23,
+              16,
+              23
+            ],
+            "ring_bytes_consumed": 5153
+          },
+          {
+            "tstates": 334576,
+            "stages": {
+              "schedule": 304,
+              "packet": 208,
+              "handoff": 337,
+              "output": 136077,
+              "paging": 460,
+              "reconstruct": 192660,
+              "attribute_groups": 2452,
+              "progress": 2078
+            },
+            "irq_tstates": 4509,
+            "idle_tstates": 0,
+            "page_writes": [
+              22,
+              23,
+              22,
+              31
+            ],
+            "ring_bytes_consumed": 5153
+          },
+          {
+            "tstates": 590833,
+            "stages": {
+              "schedule": 311,
+              "packet": 1214,
+              "handoff": 337,
+              "output": 136680,
+              "paging": 1380,
+              "stream_input": 35432,
+              "banked_zx0": 198531,
+              "audio": 2209,
+              "metadata": 21792,
+              "reconstruct": 188453,
+              "attribute_groups": 2416,
+              "progress": 2078
+            },
+            "irq_tstates": 6824,
+            "idle_tstates": 0,
+            "page_writes": [
+              30,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 6433
+          },
+          {
+            "tstates": 591747,
+            "stages": {
+              "schedule": 311,
+              "packet": 1214,
+              "handoff": 337,
+              "output": 137497,
+              "paging": 1196,
+              "stream_input": 35802,
+              "banked_zx0": 205937,
+              "audio": 2167,
+              "metadata": 21770,
+              "reconstruct": 181058,
+              "attribute_groups": 2380,
+              "progress": 2078
+            },
+            "irq_tstates": 7258,
+            "idle_tstates": 0,
+            "page_writes": [
+              22,
+              23,
+              16,
+              23,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 7457
+          },
+          {
+            "tstates": 624738,
+            "stages": {
+              "schedule": 311,
+              "packet": 1214,
+              "handoff": 337,
+              "output": 136395,
+              "paging": 1380,
+              "stream_input": 37038,
+              "banked_zx0": 232805,
+              "audio": 2377,
+              "metadata": 19736,
+              "reconstruct": 188821,
+              "attribute_groups": 2246,
+              "progress": 2078
+            },
+            "irq_tstates": 6626,
+            "idle_tstates": 0,
+            "page_writes": [
+              30,
+              31,
+              16,
+              23,
+              16,
+              23,
+              16,
+              23,
+              16,
+              23,
+              16,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 8737
+          },
+          {
+            "tstates": 596342,
+            "stages": {
+              "schedule": 284,
+              "packet": 1214,
+              "handoff": 337,
+              "output": 134694,
+              "paging": 1748,
+              "stream_input": 32132,
+              "banked_zx0": 184389,
+              "audio": 2335,
+              "metadata": 22555,
+              "reconstruct": 212034,
+              "attribute_groups": 2542,
+              "progress": 2078
+            },
+            "irq_tstates": 6904,
+            "idle_tstates": 0,
+            "page_writes": [
+              22,
+              23,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 9922
+          },
+          {
+            "tstates": 138989,
+            "stages": {
+              "schedule": 379,
+              "packet": 84,
+              "handoff": 40,
+              "output": 136187,
+              "paging": 276,
+              "progress": 2023
+            },
+            "irq_tstates": 2584,
+            "idle_tstates": 40240,
+            "page_writes": [
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 9922
+          }
+        ],
+        "drain": {
+          "tstates": 28,
+          "stages": {
+            "audio": 28
+          },
+          "irq_tstates": 0,
+          "idle_tstates": 0,
+          "page_writes": [],
+          "ring_bytes_consumed": 9922
+        },
+        "publications": [
+          {
+            "tstates": 1789211,
+            "fields": 19,
+            "audio_ticks": 0,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 1788885,
+            "interrupted_pc": 31943,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2214670,
+            "fields": 25,
+            "audio_ticks": 6,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2214344,
+            "interrupted_pc": 32082,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2640112,
+            "fields": 31,
+            "audio_ticks": 12,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2639786,
+            "interrupted_pc": 32796,
+            "interrupted_phase": "reconstruct",
+            "interrupted_bank": 6
+          },
+          {
+            "tstates": 3065557,
+            "fields": 37,
+            "audio_ticks": 18,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3065231,
+            "interrupted_pc": 56186,
+            "interrupted_phase": "stream_input",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 3491003,
+            "fields": 43,
+            "audio_ticks": 24,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3490677,
+            "interrupted_pc": 31859,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 4058281,
+            "fields": 51,
+            "audio_ticks": 32,
+            "late_fields": 2,
+            "interrupt_entry_tstates": 4057955,
+            "interrupted_pc": 31878,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 4696441,
+            "fields": 60,
+            "audio_ticks": 41,
+            "late_fields": 5,
+            "interrupt_entry_tstates": 4696115,
+            "interrupted_pc": 31995,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 5334611,
+            "fields": 69,
+            "audio_ticks": 48,
+            "late_fields": 8,
+            "interrupt_entry_tstates": 5334285,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          }
+        ],
+        "events": [
+          {
+            "kind": "packet",
+            "tstates": 718006,
+            "fields": 3,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 911346,
+            "fields": 6,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 1048482,
+            "fields": 8,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1322924,
+            "fields": 12,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 1507198,
+            "fields": 15,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1774694,
+            "fields": 18,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 1789211,
+            "fields": 19,
+            "phase": "banked_zx0",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 1937702,
+            "fields": 21,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 2132637,
+            "fields": 23,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 2214670,
+            "fields": 25,
+            "phase": "banked_zx0",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 2382825,
+            "fields": 27,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 2521982,
+            "fields": 29,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 2640112,
+            "fields": 31,
+            "phase": "reconstruct",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 2721687,
+            "fields": 32,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 2861421,
+            "fields": 34,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 3065557,
+            "fields": 37,
+            "phase": "stream_input",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 3124637,
+            "fields": 37,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 3319344,
+            "fields": 40,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 3459490,
+            "fields": 42,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 3491003,
+            "fields": 43,
+            "phase": "banked_zx0",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 3730253,
+            "fields": 46,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 3918349,
+            "fields": 49,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 4056781,
+            "fields": 50,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 4058281,
+            "fields": 51,
+            "phase": "banked_zx0",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 4355171,
+            "fields": 55,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 4549713,
+            "fields": 57,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 4687461,
+            "fields": 59,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 4696441,
+            "fields": 60,
+            "phase": "banked_zx0",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 4934416,
+            "fields": 63,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 5152986,
+            "fields": 66,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 5293617,
+            "fields": 68,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 5334611,
+            "fields": 69,
+            "phase": "schedule",
+            "bank": 5
+          }
+        ],
+        "actual_disk_deadlines_verified": false
+      },
+      "foreground_delta": -4639,
+      "old_missed": 3,
+      "new_missed": 3,
+      "register_fragments": {
+        "complete": true,
+        "frame_start": 2921,
+        "frame_end_exclusive": 2929,
+        "frames": 8,
+        "full_compact_and_native_comparison": true,
+        "ay_records_exact": true,
+        "played_ay_ticks": 48,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "assumptions": "Spectrum 128: 70908 T/field, six fields/frame; ideal disk producer; no ULA contention",
+        "excluded": "bootstrap, disk-refill hook, TR-DOS ROM, physical disk, outer boot-driver CALL/loop overhead",
+        "field_tstates": 70908,
+        "nominal_frame_budget_tstates": 425448,
+        "foreground_tstates": 4803324,
+        "foreground_stages": {
+          "schedule": 2789,
+          "packet": 9766,
+          "stream_input": 283677,
+          "banked_zx0": 1659931,
+          "paging": 11776,
+          "audio": 17700,
+          "metadata": 170833,
+          "handoff": 2696,
+          "reconstruct": 1519055,
+          "attribute_groups": 14698,
+          "output": 1093834,
+          "progress": 16569
+        },
+        "irq_tstates": 47339,
+        "idle_tstates": 44879,
+        "audio_underruns": [
+          {
+            "tstates": 4767023,
+            "after_audio_ticks": 42
+          },
+          {
+            "tstates": 4837931,
+            "after_audio_ticks": 42
+          }
+        ],
+        "nominal_deadlines_met_with_ideal_disk": false,
+        "unchanged_player_baseline": null,
+        "player_hot_path_delta_tstates": null,
+        "inline_matches": true,
+        "fast_noop_scan": true,
+        "static_cache_borders": true,
+        "carry_huffman": true,
+        "register_fragments": true,
+        "irq_safe_paging": true,
+        "prime": {
+          "tstates": 1327122,
+          "stages": {
+            "schedule": 98,
+            "packet": 3404,
+            "stream_input": 107127,
+            "banked_zx0": 632692,
+            "paging": 3588,
+            "audio": 6669,
+            "metadata": 62778,
+            "handoff": 634,
+            "reconstruct": 371025,
+            "attribute_groups": 300,
+            "output": 138807
+          },
+          "irq_tstates": 4788,
+          "idle_tstates": 0,
+          "page_writes": [
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            22,
+            23,
+            22,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            22,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23
+          ],
+          "ring_bytes_consumed": 3844
+        },
+        "runs": [
+          {
+            "tstates": 23977,
+            "stages": {
+              "schedule": 450,
+              "banked_zx0": 21265,
+              "paging": 184,
+              "progress": 2078
+            },
+            "irq_tstates": 1094,
+            "idle_tstates": 0,
+            "page_writes": [
+              24,
+              31
+            ],
+            "ring_bytes_consumed": 3869
+          },
+          {
+            "tstates": 577943,
+            "stages": {
+              "schedule": 341,
+              "packet": 1214,
+              "handoff": 337,
+              "output": 137497,
+              "paging": 1564,
+              "reconstruct": 187975,
+              "attribute_groups": 2362,
+              "stream_input": 36146,
+              "banked_zx0": 184312,
+              "audio": 1915,
+              "metadata": 22202,
+              "progress": 2078
+            },
+            "irq_tstates": 6752,
+            "idle_tstates": 0,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              16,
+              23,
+              16,
+              23
+            ],
+            "ring_bytes_consumed": 5153
+          },
+          {
+            "tstates": 334032,
+            "stages": {
+              "schedule": 304,
+              "packet": 208,
+              "handoff": 337,
+              "output": 136077,
+              "paging": 460,
+              "reconstruct": 192116,
+              "attribute_groups": 2452,
+              "progress": 2078
+            },
+            "irq_tstates": 4509,
+            "idle_tstates": 0,
+            "page_writes": [
+              22,
+              23,
+              22,
+              31
+            ],
+            "ring_bytes_consumed": 5153
+          },
+          {
+            "tstates": 590361,
+            "stages": {
+              "schedule": 311,
+              "packet": 1214,
+              "handoff": 337,
+              "output": 136680,
+              "paging": 1380,
+              "stream_input": 35432,
+              "banked_zx0": 198531,
+              "audio": 2209,
+              "metadata": 21792,
+              "reconstruct": 187981,
+              "attribute_groups": 2416,
+              "progress": 2078
+            },
+            "irq_tstates": 6824,
+            "idle_tstates": 0,
+            "page_writes": [
+              30,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 6433
+          },
+          {
+            "tstates": 591675,
+            "stages": {
+              "schedule": 311,
+              "packet": 1214,
+              "handoff": 337,
+              "output": 137497,
+              "paging": 1196,
+              "stream_input": 35802,
+              "banked_zx0": 205937,
+              "audio": 2167,
+              "metadata": 21770,
+              "reconstruct": 180986,
+              "attribute_groups": 2380,
+              "progress": 2078
+            },
+            "irq_tstates": 7258,
+            "idle_tstates": 0,
+            "page_writes": [
+              22,
+              23,
+              16,
+              23,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 7457
+          },
+          {
+            "tstates": 624375,
+            "stages": {
+              "schedule": 311,
+              "packet": 1214,
+              "handoff": 337,
+              "output": 136395,
+              "paging": 1380,
+              "stream_input": 37038,
+              "banked_zx0": 232805,
+              "audio": 2377,
+              "metadata": 19736,
+              "reconstruct": 188458,
+              "attribute_groups": 2246,
+              "progress": 2078
+            },
+            "irq_tstates": 6626,
+            "idle_tstates": 0,
+            "page_writes": [
+              30,
+              31,
+              16,
+              23,
+              16,
+              23,
+              16,
+              23,
+              16,
+              23,
+              16,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 8737
+          },
+          {
+            "tstates": 594822,
+            "stages": {
+              "schedule": 284,
+              "packet": 1214,
+              "handoff": 337,
+              "output": 134694,
+              "paging": 1748,
+              "stream_input": 32132,
+              "banked_zx0": 184389,
+              "audio": 2335,
+              "metadata": 22555,
+              "reconstruct": 210514,
+              "attribute_groups": 2542,
+              "progress": 2078
+            },
+            "irq_tstates": 6904,
+            "idle_tstates": 0,
+            "page_writes": [
+              22,
+              23,
+              16,
+              23,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              24,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 9922
+          },
+          {
+            "tstates": 138989,
+            "stages": {
+              "schedule": 379,
+              "packet": 84,
+              "handoff": 40,
+              "output": 136187,
+              "paging": 276,
+              "progress": 2023
+            },
+            "irq_tstates": 2584,
+            "idle_tstates": 44879,
+            "page_writes": [
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 9922
+          }
+        ],
+        "drain": {
+          "tstates": 28,
+          "stages": {
+            "audio": 28
+          },
+          "irq_tstates": 0,
+          "idle_tstates": 0,
+          "page_writes": [],
+          "ring_bytes_consumed": 9922
+        },
+        "publications": [
+          {
+            "tstates": 1789225,
+            "fields": 19,
+            "audio_ticks": 0,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 1788899,
+            "interrupted_pc": 32035,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2214662,
+            "fields": 25,
+            "audio_ticks": 6,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2214336,
+            "interrupted_pc": 31994,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2640112,
+            "fields": 31,
+            "audio_ticks": 12,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2639786,
+            "interrupted_pc": 36484,
+            "interrupted_phase": "reconstruct",
+            "interrupted_bank": 6
+          },
+          {
+            "tstates": 3065561,
+            "fields": 37,
+            "audio_ticks": 18,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3065235,
+            "interrupted_pc": 56198,
+            "interrupted_phase": "stream_input",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 3491012,
+            "fields": 43,
+            "audio_ticks": 24,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3490686,
+            "interrupted_pc": 31855,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 4058268,
+            "fields": 51,
+            "audio_ticks": 32,
+            "late_fields": 2,
+            "interrupt_entry_tstates": 4057942,
+            "interrupted_pc": 32036,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 4696441,
+            "fields": 60,
+            "audio_ticks": 41,
+            "late_fields": 5,
+            "interrupt_entry_tstates": 4696115,
+            "interrupted_pc": 31970,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 5334611,
+            "fields": 69,
+            "audio_ticks": 48,
+            "late_fields": 8,
+            "interrupt_entry_tstates": 5334285,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          }
+        ],
+        "events": [
+          {
+            "kind": "packet",
+            "tstates": 718006,
+            "fields": 3,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 910765,
+            "fields": 6,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 1047901,
+            "fields": 8,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1322343,
+            "fields": 12,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 1506037,
+            "fields": 15,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1773533,
+            "fields": 18,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 1789225,
+            "fields": 19,
+            "phase": "banked_zx0",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 1936541,
+            "fields": 21,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 2130969,
+            "fields": 23,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 2214662,
+            "fields": 25,
+            "phase": "banked_zx0",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 2381157,
+            "fields": 27,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 2520314,
+            "fields": 29,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 2640112,
+            "fields": 31,
+            "phase": "reconstruct",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 2719475,
+            "fields": 32,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 2859209,
+            "fields": 34,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 3065561,
+            "fields": 37,
+            "phase": "stream_input",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 3122425,
+            "fields": 37,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 3316660,
+            "fields": 40,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 3456806,
+            "fields": 42,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 3491012,
+            "fields": 43,
+            "phase": "banked_zx0",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 3727569,
+            "fields": 46,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 3914742,
+            "fields": 48,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 4054025,
+            "fields": 50,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 4058268,
+            "fields": 51,
+            "phase": "banked_zx0",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 4352415,
+            "fields": 55,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 4546594,
+            "fields": 57,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 4684342,
+            "fields": 59,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 4696441,
+            "fields": 60,
+            "phase": "banked_zx0",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 4931297,
+            "fields": 63,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 5148347,
+            "fields": 66,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 5288978,
+            "fields": 68,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 5334611,
+            "fields": 69,
+            "phase": "schedule",
+            "bank": 5
+          }
+        ],
+        "actual_disk_deadlines_verified": false
+      }
+    },
+    {
+      "start": 3195,
+      "end": 3203,
+      "baseline": {
+        "complete": true,
+        "frame_start": 3195,
+        "frame_end_exclusive": 3203,
+        "frames": 8,
+        "full_compact_and_native_comparison": true,
+        "ay_records_exact": true,
+        "played_ay_ticks": 48,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "assumptions": "Spectrum 128: 70908 T/field, six fields/frame; ideal disk producer; no ULA contention",
+        "excluded": "bootstrap, disk-refill hook, TR-DOS ROM, physical disk, outer boot-driver CALL/loop overhead",
+        "field_tstates": 70908,
+        "nominal_frame_budget_tstates": 425448,
+        "foreground_tstates": 1057236,
+        "foreground_stages": {
+          "schedule": 11656,
+          "packet": 9686,
+          "stream_input": 59141,
+          "banked_zx0": 202005,
+          "paging": 4600,
+          "audio": 17700,
+          "metadata": 118958,
+          "handoff": 2696,
+          "reconstruct": 377565,
+          "attribute_groups": 4860,
+          "output": 231800,
+          "progress": 16569
+        },
+        "irq_tstates": 44457,
+        "idle_tstates": 2515613,
+        "audio_underruns": [],
+        "nominal_deadlines_met_with_ideal_disk": true,
+        "unchanged_player_baseline": null,
+        "player_hot_path_delta_tstates": null,
+        "inline_matches": true,
+        "fast_noop_scan": true,
+        "static_cache_borders": true,
+        "carry_huffman": true,
+        "register_fragments": false,
+        "irq_safe_paging": true,
+        "prime": {
+          "tstates": 257767,
+          "stages": {
+            "schedule": 98,
+            "packet": 3374,
+            "stream_input": 21843,
+            "banked_zx0": 73560,
+            "paging": 1196,
+            "audio": 6795,
+            "metadata": 42640,
+            "handoff": 634,
+            "reconstruct": 71961,
+            "attribute_groups": 300,
+            "output": 35366
+          },
+          "irq_tstates": 798,
+          "idle_tstates": 0,
+          "page_writes": [
+            16,
+            23,
+            16,
+            23,
+            22,
+            23,
+            22,
+            23,
+            22,
+            23,
+            16,
+            23
+          ],
+          "ring_bytes_consumed": 516
+        },
+        "runs": [
+          {
+            "tstates": 30844,
+            "stages": {
+              "schedule": 757,
+              "banked_zx0": 28009,
+              "progress": 2078
+            },
+            "irq_tstates": 1167,
+            "idle_tstates": 0,
+            "page_writes": [],
+            "ring_bytes_consumed": 516
+          },
+          {
+            "tstates": 190119,
+            "stages": {
+              "schedule": 2691,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 33273,
+              "paging": 828,
+              "reconstruct": 26202,
+              "attribute_groups": 760,
+              "stream_input": 6926,
+              "audio": 2293,
+              "metadata": 13091,
+              "banked_zx0": 100436,
+              "progress": 2078
+            },
+            "irq_tstates": 5072,
+            "idle_tstates": 226622,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31,
+              24,
+              31,
+              24,
+              31
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 95208,
+            "stages": {
+              "schedule": 1356,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 29972,
+              "paging": 460,
+              "reconstruct": 36378,
+              "attribute_groups": 760,
+              "stream_input": 6830,
+              "audio": 2083,
+              "metadata": 13750,
+              "progress": 2078
+            },
+            "irq_tstates": 5809,
+            "idle_tstates": 324514,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 89845,
+            "stages": {
+              "schedule": 1356,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 19006,
+              "paging": 460,
+              "reconstruct": 39183,
+              "attribute_groups": 760,
+              "stream_input": 7424,
+              "audio": 1957,
+              "metadata": 16080,
+              "progress": 2078
+            },
+            "irq_tstates": 6390,
+            "idle_tstates": 329379,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 108000,
+            "stages": {
+              "schedule": 1356,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 19936,
+              "paging": 460,
+              "reconstruct": 55724,
+              "attribute_groups": 760,
+              "stream_input": 7858,
+              "audio": 2167,
+              "metadata": 16120,
+              "progress": 2078
+            },
+            "irq_tstates": 5643,
+            "idle_tstates": 311722,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 123912,
+            "stages": {
+              "schedule": 1356,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 26255,
+              "paging": 460,
+              "reconstruct": 63758,
+              "attribute_groups": 760,
+              "stream_input": 8260,
+              "audio": 2167,
+              "metadata": 17277,
+              "progress": 2078
+            },
+            "irq_tstates": 5155,
+            "idle_tstates": 296215,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 123226,
+            "stages": {
+              "schedule": 1292,
+              "packet": 208,
+              "handoff": 337,
+              "output": 33732,
+              "paging": 460,
+              "reconstruct": 84359,
+              "attribute_groups": 760,
+              "progress": 2078
+            },
+            "irq_tstates": 5155,
+            "idle_tstates": 297150,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 38077,
+            "stages": {
+              "schedule": 1394,
+              "packet": 84,
+              "handoff": 40,
+              "output": 34260,
+              "paging": 276,
+              "progress": 2023
+            },
+            "irq_tstates": 5394,
+            "idle_tstates": 381839,
+            "page_writes": [
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 935
+          }
+        ],
+        "drain": {
+          "tstates": 238,
+          "stages": {
+            "audio": 238
+          },
+          "irq_tstates": 3874,
+          "idle_tstates": 348172,
+          "page_writes": [],
+          "ring_bytes_consumed": 935
+        },
+        "publications": [
+          {
+            "tstates": 725593,
+            "fields": 4,
+            "audio_ticks": 0,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 725267,
+            "interrupted_pc": 31992,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 1151039,
+            "fields": 10,
+            "audio_ticks": 6,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 1150713,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 1576487,
+            "fields": 16,
+            "audio_ticks": 12,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 1576161,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2001935,
+            "fields": 22,
+            "audio_ticks": 18,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2001609,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2427383,
+            "fields": 28,
+            "audio_ticks": 24,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2427057,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2852831,
+            "fields": 34,
+            "audio_ticks": 30,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2852505,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 3278279,
+            "fields": 40,
+            "audio_ticks": 36,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3277953,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 3703727,
+            "fields": 46,
+            "audio_ticks": 42,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3703401,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          }
+        ],
+        "events": [
+          {
+            "kind": "packet",
+            "tstates": 494173,
+            "fields": 0,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 541677,
+            "fields": 1,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 574840,
+            "fields": 1,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 620239,
+            "fields": 2,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 648794,
+            "fields": 2,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 700188,
+            "fields": 3,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 725593,
+            "fields": 4,
+            "phase": "banked_zx0",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 764459,
+            "fields": 4,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 793456,
+            "fields": 4,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 817801,
+            "fields": 5,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 1151039,
+            "fields": 10,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 1182971,
+            "fields": 10,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 1223255,
+            "fields": 11,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1247174,
+            "fields": 11,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 1576487,
+            "fields": 16,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 1597536,
+            "fields": 16,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 1639514,
+            "fields": 16,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 1667010,
+            "fields": 17,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 2001935,
+            "fields": 22,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 2024080,
+            "fields": 22,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 2083544,
+            "fields": 23,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 2110945,
+            "fields": 23,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 2427383,
+            "fields": 28,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 2455764,
+            "fields": 28,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 2523262,
+            "fields": 29,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 2552222,
+            "fields": 29,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 2852831,
+            "fields": 34,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 2888523,
+            "fields": 34,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 2976383,
+            "fields": 35,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 3278279,
+            "fields": 40,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 3315892,
+            "fields": 40,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 3703727,
+            "fields": 46,
+            "phase": "schedule",
+            "bank": 5
+          }
+        ],
+        "actual_disk_deadlines_verified": false
+      },
+      "foreground_delta": 0,
+      "old_missed": 0,
+      "new_missed": 0,
+      "register_fragments": {
+        "complete": true,
+        "frame_start": 3195,
+        "frame_end_exclusive": 3203,
+        "frames": 8,
+        "full_compact_and_native_comparison": true,
+        "ay_records_exact": true,
+        "played_ay_ticks": 48,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "assumptions": "Spectrum 128: 70908 T/field, six fields/frame; ideal disk producer; no ULA contention",
+        "excluded": "bootstrap, disk-refill hook, TR-DOS ROM, physical disk, outer boot-driver CALL/loop overhead",
+        "field_tstates": 70908,
+        "nominal_frame_budget_tstates": 425448,
+        "foreground_tstates": 1057236,
+        "foreground_stages": {
+          "schedule": 11656,
+          "packet": 9686,
+          "stream_input": 59141,
+          "banked_zx0": 202005,
+          "paging": 4600,
+          "audio": 17700,
+          "metadata": 118958,
+          "handoff": 2696,
+          "reconstruct": 377565,
+          "attribute_groups": 4860,
+          "output": 231800,
+          "progress": 16569
+        },
+        "irq_tstates": 44457,
+        "idle_tstates": 2515613,
+        "audio_underruns": [],
+        "nominal_deadlines_met_with_ideal_disk": true,
+        "unchanged_player_baseline": null,
+        "player_hot_path_delta_tstates": null,
+        "inline_matches": true,
+        "fast_noop_scan": true,
+        "static_cache_borders": true,
+        "carry_huffman": true,
+        "register_fragments": true,
+        "irq_safe_paging": true,
+        "prime": {
+          "tstates": 257767,
+          "stages": {
+            "schedule": 98,
+            "packet": 3374,
+            "stream_input": 21843,
+            "banked_zx0": 73560,
+            "paging": 1196,
+            "audio": 6795,
+            "metadata": 42640,
+            "handoff": 634,
+            "reconstruct": 71961,
+            "attribute_groups": 300,
+            "output": 35366
+          },
+          "irq_tstates": 798,
+          "idle_tstates": 0,
+          "page_writes": [
+            16,
+            23,
+            16,
+            23,
+            22,
+            23,
+            22,
+            23,
+            22,
+            23,
+            16,
+            23
+          ],
+          "ring_bytes_consumed": 516
+        },
+        "runs": [
+          {
+            "tstates": 30844,
+            "stages": {
+              "schedule": 757,
+              "banked_zx0": 28009,
+              "progress": 2078
+            },
+            "irq_tstates": 1167,
+            "idle_tstates": 0,
+            "page_writes": [],
+            "ring_bytes_consumed": 516
+          },
+          {
+            "tstates": 190119,
+            "stages": {
+              "schedule": 2691,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 33273,
+              "paging": 828,
+              "reconstruct": 26202,
+              "attribute_groups": 760,
+              "stream_input": 6926,
+              "audio": 2293,
+              "metadata": 13091,
+              "banked_zx0": 100436,
+              "progress": 2078
+            },
+            "irq_tstates": 5072,
+            "idle_tstates": 226622,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31,
+              24,
+              31,
+              24,
+              31
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 95208,
+            "stages": {
+              "schedule": 1356,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 29972,
+              "paging": 460,
+              "reconstruct": 36378,
+              "attribute_groups": 760,
+              "stream_input": 6830,
+              "audio": 2083,
+              "metadata": 13750,
+              "progress": 2078
+            },
+            "irq_tstates": 5809,
+            "idle_tstates": 324514,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 89845,
+            "stages": {
+              "schedule": 1356,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 19006,
+              "paging": 460,
+              "reconstruct": 39183,
+              "attribute_groups": 760,
+              "stream_input": 7424,
+              "audio": 1957,
+              "metadata": 16080,
+              "progress": 2078
+            },
+            "irq_tstates": 6390,
+            "idle_tstates": 329379,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 108000,
+            "stages": {
+              "schedule": 1356,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 19936,
+              "paging": 460,
+              "reconstruct": 55724,
+              "attribute_groups": 760,
+              "stream_input": 7858,
+              "audio": 2167,
+              "metadata": 16120,
+              "progress": 2078
+            },
+            "irq_tstates": 5643,
+            "idle_tstates": 311722,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 123912,
+            "stages": {
+              "schedule": 1356,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 26255,
+              "paging": 460,
+              "reconstruct": 63758,
+              "attribute_groups": 760,
+              "stream_input": 8260,
+              "audio": 2167,
+              "metadata": 17277,
+              "progress": 2078
+            },
+            "irq_tstates": 5155,
+            "idle_tstates": 296215,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 123226,
+            "stages": {
+              "schedule": 1292,
+              "packet": 208,
+              "handoff": 337,
+              "output": 33732,
+              "paging": 460,
+              "reconstruct": 84359,
+              "attribute_groups": 760,
+              "progress": 2078
+            },
+            "irq_tstates": 5155,
+            "idle_tstates": 297150,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 935
+          },
+          {
+            "tstates": 38077,
+            "stages": {
+              "schedule": 1394,
+              "packet": 84,
+              "handoff": 40,
+              "output": 34260,
+              "paging": 276,
+              "progress": 2023
+            },
+            "irq_tstates": 5394,
+            "idle_tstates": 381839,
+            "page_writes": [
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 935
+          }
+        ],
+        "drain": {
+          "tstates": 238,
+          "stages": {
+            "audio": 238
+          },
+          "irq_tstates": 3874,
+          "idle_tstates": 348172,
+          "page_writes": [],
+          "ring_bytes_consumed": 935
+        },
+        "publications": [
+          {
+            "tstates": 725593,
+            "fields": 4,
+            "audio_ticks": 0,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 725267,
+            "interrupted_pc": 31992,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 1151039,
+            "fields": 10,
+            "audio_ticks": 6,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 1150713,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 1576487,
+            "fields": 16,
+            "audio_ticks": 12,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 1576161,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2001935,
+            "fields": 22,
+            "audio_ticks": 18,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2001609,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2427383,
+            "fields": 28,
+            "audio_ticks": 24,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2427057,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2852831,
+            "fields": 34,
+            "audio_ticks": 30,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2852505,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 3278279,
+            "fields": 40,
+            "audio_ticks": 36,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3277953,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 3703727,
+            "fields": 46,
+            "audio_ticks": 42,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3703401,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          }
+        ],
+        "events": [
+          {
+            "kind": "packet",
+            "tstates": 494173,
+            "fields": 0,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 541677,
+            "fields": 1,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 574840,
+            "fields": 1,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 620239,
+            "fields": 2,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 648794,
+            "fields": 2,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 700188,
+            "fields": 3,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 725593,
+            "fields": 4,
+            "phase": "banked_zx0",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 764459,
+            "fields": 4,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 793456,
+            "fields": 4,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 817801,
+            "fields": 5,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 1151039,
+            "fields": 10,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 1182971,
+            "fields": 10,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 1223255,
+            "fields": 11,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1247174,
+            "fields": 11,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 1576487,
+            "fields": 16,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 1597536,
+            "fields": 16,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 1639514,
+            "fields": 16,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 1667010,
+            "fields": 17,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 2001935,
+            "fields": 22,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 2024080,
+            "fields": 22,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 2083544,
+            "fields": 23,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 2110945,
+            "fields": 23,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 2427383,
+            "fields": 28,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 2455764,
+            "fields": 28,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 2523262,
+            "fields": 29,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 2552222,
+            "fields": 29,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 2852831,
+            "fields": 34,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 2888523,
+            "fields": 34,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 2976383,
+            "fields": 35,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 3278279,
+            "fields": 40,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 3315892,
+            "fields": 40,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 3703727,
+            "fields": 46,
+            "phase": "schedule",
+            "bank": 5
+          }
+        ],
+        "actual_disk_deadlines_verified": false
+      }
+    },
+    {
+      "start": 3838,
+      "end": 3846,
+      "baseline": {
+        "complete": true,
+        "frame_start": 3838,
+        "frame_end_exclusive": 3846,
+        "frames": 8,
+        "full_compact_and_native_comparison": true,
+        "ay_records_exact": true,
+        "played_ay_ticks": 48,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "assumptions": "Spectrum 128: 70908 T/field, six fields/frame; ideal disk producer; no ULA contention",
+        "excluded": "bootstrap, disk-refill hook, TR-DOS ROM, physical disk, outer boot-driver CALL/loop overhead",
+        "field_tstates": 70908,
+        "nominal_frame_budget_tstates": 425448,
+        "foreground_tstates": 1511320,
+        "foreground_stages": {
+          "schedule": 10938,
+          "packet": 9706,
+          "stream_input": 73694,
+          "banked_zx0": 246395,
+          "paging": 5152,
+          "audio": 13878,
+          "metadata": 106078,
+          "handoff": 2696,
+          "reconstruct": 547730,
+          "attribute_groups": 4860,
+          "output": 473624,
+          "progress": 16569
+        },
+        "irq_tstates": 39190,
+        "idle_tstates": 2633738,
+        "audio_underruns": [],
+        "nominal_deadlines_met_with_ideal_disk": true,
+        "unchanged_player_baseline": null,
+        "player_hot_path_delta_tstates": null,
+        "inline_matches": true,
+        "fast_noop_scan": true,
+        "static_cache_borders": true,
+        "carry_huffman": true,
+        "register_fragments": false,
+        "irq_safe_paging": true,
+        "prime": {
+          "tstates": 846864,
+          "stages": {
+            "schedule": 98,
+            "packet": 3394,
+            "stream_input": 41809,
+            "banked_zx0": 202954,
+            "paging": 1748,
+            "audio": 5115,
+            "metadata": 50548,
+            "handoff": 634,
+            "reconstruct": 401457,
+            "attribute_groups": 300,
+            "output": 138807
+          },
+          "irq_tstates": 2926,
+          "idle_tstates": 0,
+          "page_writes": [
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            22,
+            23,
+            22,
+            23,
+            16,
+            23,
+            22,
+            23
+          ],
+          "ring_bytes_consumed": 1240
+        },
+        "runs": [
+          {
+            "tstates": 10980,
+            "stages": {
+              "schedule": 450,
+              "banked_zx0": 8452,
+              "progress": 2078
+            },
+            "irq_tstates": 1094,
+            "idle_tstates": 0,
+            "page_writes": [],
+            "ring_bytes_consumed": 1240
+          },
+          {
+            "tstates": 216227,
+            "stages": {
+              "schedule": 1567,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 137497,
+              "paging": 460,
+              "reconstruct": 42152,
+              "attribute_groups": 760,
+              "stream_input": 6179,
+              "banked_zx0": 11182,
+              "audio": 1705,
+              "metadata": 11106,
+              "progress": 2078
+            },
+            "irq_tstates": 4436,
+            "idle_tstates": 197053,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 1240
+          },
+          {
+            "tstates": 188641,
+            "stages": {
+              "schedule": 1153,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 133853,
+              "paging": 460,
+              "reconstruct": 29813,
+              "attribute_groups": 760,
+              "stream_input": 6172,
+              "audio": 1705,
+              "metadata": 11106,
+              "progress": 2078
+            },
+            "irq_tstates": 4530,
+            "idle_tstates": 232277,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 1240
+          },
+          {
+            "tstates": 83372,
+            "stages": {
+              "schedule": 1663,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 14117,
+              "paging": 828,
+              "reconstruct": 18577,
+              "attribute_groups": 760,
+              "stream_input": 7190,
+              "banked_zx0": 23807,
+              "audio": 1705,
+              "metadata": 11106,
+              "progress": 2078
+            },
+            "irq_tstates": 4624,
+            "idle_tstates": 337452,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31,
+              24,
+              31,
+              24,
+              31
+            ],
+            "ring_bytes_consumed": 1260
+          },
+          {
+            "tstates": 56623,
+            "stages": {
+              "schedule": 1559,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 12665,
+              "paging": 460,
+              "reconstruct": 18577,
+              "attribute_groups": 760,
+              "stream_input": 6172,
+              "audio": 1705,
+              "metadata": 11106,
+              "progress": 2078
+            },
+            "irq_tstates": 4624,
+            "idle_tstates": 364201,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 1260
+          },
+          {
+            "tstates": 56623,
+            "stages": {
+              "schedule": 1559,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 12665,
+              "paging": 460,
+              "reconstruct": 18577,
+              "attribute_groups": 760,
+              "stream_input": 6172,
+              "audio": 1705,
+              "metadata": 11106,
+              "progress": 2078
+            },
+            "irq_tstates": 4624,
+            "idle_tstates": 364201,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 1260
+          },
+          {
+            "tstates": 36580,
+            "stages": {
+              "schedule": 1495,
+              "packet": 208,
+              "handoff": 337,
+              "output": 12665,
+              "paging": 460,
+              "reconstruct": 18577,
+              "attribute_groups": 760,
+              "progress": 2078
+            },
+            "irq_tstates": 4624,
+            "idle_tstates": 384244,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 1260
+          },
+          {
+            "tstates": 15172,
+            "stages": {
+              "schedule": 1394,
+              "packet": 84,
+              "handoff": 40,
+              "output": 11355,
+              "paging": 276,
+              "progress": 2023
+            },
+            "irq_tstates": 4624,
+            "idle_tstates": 405597,
+            "page_writes": [
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 1260
+          }
+        ],
+        "drain": {
+          "tstates": 238,
+          "stages": {
+            "audio": 238
+          },
+          "irq_tstates": 3084,
+          "idle_tstates": 348713,
+          "page_writes": [],
+          "ring_bytes_consumed": 1260
+        },
+        "publications": [
+          {
+            "tstates": 1292855,
+            "fields": 12,
+            "audio_ticks": 0,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 1292529,
+            "interrupted_pc": 31944,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 1718303,
+            "fields": 18,
+            "audio_ticks": 6,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 1717977,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2143751,
+            "fields": 24,
+            "audio_ticks": 12,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2143425,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2569199,
+            "fields": 30,
+            "audio_ticks": 18,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2568873,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2994647,
+            "fields": 36,
+            "audio_ticks": 24,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2994321,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 3420095,
+            "fields": 42,
+            "audio_ticks": 30,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3419769,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 3845543,
+            "fields": 48,
+            "audio_ticks": 36,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3845217,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 4270991,
+            "fields": 54,
+            "audio_ticks": 42,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 4270665,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          }
+        ],
+        "events": [
+          {
+            "kind": "packet",
+            "tstates": 648837,
+            "fields": 2,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 860999,
+            "fields": 5,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 998135,
+            "fields": 7,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1064128,
+            "fields": 8,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 1258851,
+            "fields": 11,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1291413,
+            "fields": 11,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 1292855,
+            "fields": 12,
+            "phase": "banked_zx0",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 1441195,
+            "fields": 14,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 1486142,
+            "fields": 14,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 1509488,
+            "fields": 15,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 1718303,
+            "fields": 18,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 1854655,
+            "fields": 19,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 1887969,
+            "fields": 20,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1908208,
+            "fields": 20,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 2143751,
+            "fields": 24,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 2159755,
+            "fields": 24,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 2181127,
+            "fields": 24,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 2212018,
+            "fields": 24,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 2569199,
+            "fields": 30,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 2583751,
+            "fields": 30,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 2605123,
+            "fields": 30,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 2625362,
+            "fields": 30,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 2994647,
+            "fields": 36,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 3009199,
+            "fields": 36,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 3030571,
+            "fields": 36,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 3050810,
+            "fields": 36,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 3420095,
+            "fields": 42,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 3434647,
+            "fields": 42,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 3456019,
+            "fields": 42,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 3845543,
+            "fields": 48,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 3860095,
+            "fields": 48,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 4270991,
+            "fields": 54,
+            "phase": "schedule",
+            "bank": 5
+          }
+        ],
+        "actual_disk_deadlines_verified": false
+      },
+      "foreground_delta": -2788,
+      "old_missed": 0,
+      "new_missed": 0,
+      "register_fragments": {
+        "complete": true,
+        "frame_start": 3838,
+        "frame_end_exclusive": 3846,
+        "frames": 8,
+        "full_compact_and_native_comparison": true,
+        "ay_records_exact": true,
+        "played_ay_ticks": 48,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "assumptions": "Spectrum 128: 70908 T/field, six fields/frame; ideal disk producer; no ULA contention",
+        "excluded": "bootstrap, disk-refill hook, TR-DOS ROM, physical disk, outer boot-driver CALL/loop overhead",
+        "field_tstates": 70908,
+        "nominal_frame_budget_tstates": 425448,
+        "foreground_tstates": 1508532,
+        "foreground_stages": {
+          "schedule": 10938,
+          "packet": 9706,
+          "stream_input": 73694,
+          "banked_zx0": 246395,
+          "paging": 5152,
+          "audio": 13878,
+          "metadata": 106078,
+          "handoff": 2696,
+          "reconstruct": 544942,
+          "attribute_groups": 4860,
+          "output": 473624,
+          "progress": 16569
+        },
+        "irq_tstates": 39190,
+        "idle_tstates": 2636526,
+        "audio_underruns": [],
+        "nominal_deadlines_met_with_ideal_disk": true,
+        "unchanged_player_baseline": null,
+        "player_hot_path_delta_tstates": null,
+        "inline_matches": true,
+        "fast_noop_scan": true,
+        "static_cache_borders": true,
+        "carry_huffman": true,
+        "register_fragments": true,
+        "irq_safe_paging": true,
+        "prime": {
+          "tstates": 844076,
+          "stages": {
+            "schedule": 98,
+            "packet": 3394,
+            "stream_input": 41809,
+            "banked_zx0": 202954,
+            "paging": 1748,
+            "audio": 5115,
+            "metadata": 50548,
+            "handoff": 634,
+            "reconstruct": 398669,
+            "attribute_groups": 300,
+            "output": 138807
+          },
+          "irq_tstates": 2926,
+          "idle_tstates": 0,
+          "page_writes": [
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            16,
+            23,
+            22,
+            23,
+            22,
+            23,
+            16,
+            23,
+            22,
+            23
+          ],
+          "ring_bytes_consumed": 1240
+        },
+        "runs": [
+          {
+            "tstates": 10980,
+            "stages": {
+              "schedule": 450,
+              "banked_zx0": 8452,
+              "progress": 2078
+            },
+            "irq_tstates": 1094,
+            "idle_tstates": 0,
+            "page_writes": [],
+            "ring_bytes_consumed": 1240
+          },
+          {
+            "tstates": 216227,
+            "stages": {
+              "schedule": 1567,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 137497,
+              "paging": 460,
+              "reconstruct": 42152,
+              "attribute_groups": 760,
+              "stream_input": 6179,
+              "banked_zx0": 11182,
+              "audio": 1705,
+              "metadata": 11106,
+              "progress": 2078
+            },
+            "irq_tstates": 4436,
+            "idle_tstates": 199841,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 1240
+          },
+          {
+            "tstates": 188641,
+            "stages": {
+              "schedule": 1153,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 133853,
+              "paging": 460,
+              "reconstruct": 29813,
+              "attribute_groups": 760,
+              "stream_input": 6172,
+              "audio": 1705,
+              "metadata": 11106,
+              "progress": 2078
+            },
+            "irq_tstates": 4530,
+            "idle_tstates": 232277,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 1240
+          },
+          {
+            "tstates": 83372,
+            "stages": {
+              "schedule": 1663,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 14117,
+              "paging": 828,
+              "reconstruct": 18577,
+              "attribute_groups": 760,
+              "stream_input": 7190,
+              "banked_zx0": 23807,
+              "audio": 1705,
+              "metadata": 11106,
+              "progress": 2078
+            },
+            "irq_tstates": 4624,
+            "idle_tstates": 337452,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31,
+              24,
+              31,
+              24,
+              31
+            ],
+            "ring_bytes_consumed": 1260
+          },
+          {
+            "tstates": 56623,
+            "stages": {
+              "schedule": 1559,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 12665,
+              "paging": 460,
+              "reconstruct": 18577,
+              "attribute_groups": 760,
+              "stream_input": 6172,
+              "audio": 1705,
+              "metadata": 11106,
+              "progress": 2078
+            },
+            "irq_tstates": 4624,
+            "idle_tstates": 364201,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 1260
+          },
+          {
+            "tstates": 56623,
+            "stages": {
+              "schedule": 1559,
+              "packet": 1204,
+              "handoff": 337,
+              "output": 12665,
+              "paging": 460,
+              "reconstruct": 18577,
+              "attribute_groups": 760,
+              "stream_input": 6172,
+              "audio": 1705,
+              "metadata": 11106,
+              "progress": 2078
+            },
+            "irq_tstates": 4624,
+            "idle_tstates": 364201,
+            "page_writes": [
+              30,
+              31,
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 1260
+          },
+          {
+            "tstates": 36580,
+            "stages": {
+              "schedule": 1495,
+              "packet": 208,
+              "handoff": 337,
+              "output": 12665,
+              "paging": 460,
+              "reconstruct": 18577,
+              "attribute_groups": 760,
+              "progress": 2078
+            },
+            "irq_tstates": 4624,
+            "idle_tstates": 384244,
+            "page_writes": [
+              22,
+              23,
+              22,
+              23
+            ],
+            "ring_bytes_consumed": 1260
+          },
+          {
+            "tstates": 15172,
+            "stages": {
+              "schedule": 1394,
+              "packet": 84,
+              "handoff": 40,
+              "output": 11355,
+              "paging": 276,
+              "progress": 2023
+            },
+            "irq_tstates": 4624,
+            "idle_tstates": 405597,
+            "page_writes": [
+              30,
+              31
+            ],
+            "ring_bytes_consumed": 1260
+          }
+        ],
+        "drain": {
+          "tstates": 238,
+          "stages": {
+            "audio": 238
+          },
+          "irq_tstates": 3084,
+          "idle_tstates": 348713,
+          "page_writes": [],
+          "ring_bytes_consumed": 1260
+        },
+        "publications": [
+          {
+            "tstates": 1292872,
+            "fields": 12,
+            "audio_ticks": 0,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 1292546,
+            "interrupted_pc": 31992,
+            "interrupted_phase": "banked_zx0",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 1718303,
+            "fields": 18,
+            "audio_ticks": 6,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 1717977,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2143751,
+            "fields": 24,
+            "audio_ticks": 12,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2143425,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2569199,
+            "fields": 30,
+            "audio_ticks": 18,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2568873,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 2994647,
+            "fields": 36,
+            "audio_ticks": 24,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 2994321,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 3420095,
+            "fields": 42,
+            "audio_ticks": 30,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3419769,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 3845543,
+            "fields": 48,
+            "audio_ticks": 36,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 3845217,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          },
+          {
+            "tstates": 4270991,
+            "fields": 54,
+            "audio_ticks": 42,
+            "late_fields": 0,
+            "interrupt_entry_tstates": 4270665,
+            "interrupted_pc": 56957,
+            "interrupted_phase": "schedule",
+            "interrupted_bank": 7
+          }
+        ],
+        "events": [
+          {
+            "kind": "packet",
+            "tstates": 648837,
+            "fields": 2,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 859114,
+            "fields": 5,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 996250,
+            "fields": 7,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1062243,
+            "fields": 8,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 1256063,
+            "fields": 11,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1288625,
+            "fields": 11,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 1292872,
+            "fields": 12,
+            "phase": "banked_zx0",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 1438407,
+            "fields": 14,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 1483354,
+            "fields": 14,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 1506700,
+            "fields": 15,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 1718303,
+            "fields": 18,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 1854655,
+            "fields": 19,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 1887969,
+            "fields": 20,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 1908208,
+            "fields": 20,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 2143751,
+            "fields": 24,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 2159755,
+            "fields": 24,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 2181127,
+            "fields": 24,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 2212018,
+            "fields": 24,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 2569199,
+            "fields": 30,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 2583751,
+            "fields": 30,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 2605123,
+            "fields": 30,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "packet",
+            "tstates": 2625362,
+            "fields": 30,
+            "phase": "packet",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 2994647,
+            "fields": 36,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 3009199,
+            "fields": 36,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "compact",
+            "tstates": 3030571,
+            "fields": 36,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "packet",
+            "tstates": 3050810,
+            "fields": 36,
+            "phase": "packet",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 3420095,
+            "fields": 42,
+            "phase": "schedule",
+            "bank": 5
+          },
+          {
+            "kind": "native",
+            "tstates": 3434647,
+            "fields": 42,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "compact",
+            "tstates": 3456019,
+            "fields": 42,
+            "phase": "handoff",
+            "bank": 5
+          },
+          {
+            "kind": "publish",
+            "tstates": 3845543,
+            "fields": 48,
+            "phase": "schedule",
+            "bank": 7
+          },
+          {
+            "kind": "native",
+            "tstates": 3860095,
+            "fields": 48,
+            "phase": "handoff",
+            "bank": 7
+          },
+          {
+            "kind": "publish",
+            "tstates": 4270991,
+            "fields": 54,
+            "phase": "schedule",
+            "bank": 5
+          }
+        ],
+        "actual_disk_deadlines_verified": false
+      }
+    }
+  ]
+}

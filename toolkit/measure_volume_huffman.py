@@ -58,6 +58,7 @@ def main():
     p.add_argument('--frame-service',action='store_true')
     p.add_argument('--static-cache-borders',action='store_true')
     p.add_argument('--carry-huffman',action='store_true')
+    p.add_argument('--register-fragments',action='store_true')
     args = p.parse_args();probe = json.loads(args.probe.read_text());partition = json.loads(args.partition.read_text())
     if not probe['complete'] or not partition['complete'] or not partition['all_fit']:
         raise ValueError('requires completed fitting storage experiment')
@@ -76,6 +77,7 @@ def main():
     if args.fast_noop_scan: options['fast_noop_scan']=True
     if args.static_cache_borders: options['static_cache_borders']=True
     if args.carry_huffman: options['carry_huffman']=True
+    if args.register_fragments: options['register_fragments']=True
     if args.irq_safe_paging: options['irq_safe_paging']=True
     if args.inline_matches: options['inline_matches']=True
     if args.deferred_limit: options['deferred_limit']=args.deferred_limit
@@ -100,7 +102,7 @@ def main():
         builder.read_cache = [args.directory/'zx0']+args.read_cache;builder.ends = ends
         image,m = builder.volume(start,end,part)
         if image is None or not m['independently_bootable']: raise ValueError('volume not standalone or overfull')
-        if not (args.fast_noop_scan or args.irq_safe_paging or args.inline_matches or args.deferred_limit or args.static_cache_borders or args.carry_huffman) and m['used_sectors'] != partition['selected']['used_sectors'][part-1]:
+        if not (args.fast_noop_scan or args.irq_safe_paging or args.inline_matches or args.deferred_limit or args.static_cache_borders or args.carry_huffman or args.register_fragments) and m['used_sectors'] != partition['selected']['used_sectors'][part-1]:
             raise AssertionError('partition size changed')
         image = identify(image,m,fingerprint);m['entropy_set_contract_sha256'] = contract_sha
         trd = args.output/f'ZX-video-huffman-preview_part{part:02}.trd';metadata = trd.with_suffix('.json')
@@ -130,6 +132,7 @@ def main():
             fast_noop_scan=args.fast_noop_scan,
             static_cache_borders=args.static_cache_borders,
             carry_huffman=args.carry_huffman,
+            register_fragments=args.register_fragments,
             irq_safe_paging=args.irq_safe_paging,
             inline_matches=args.inline_matches,deferred_limit=args.deferred_limit,
             keepalive_fields=args.keepalive_fields,frame_service=args.frame_service,

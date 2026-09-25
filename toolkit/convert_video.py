@@ -194,6 +194,7 @@ def main(argv=None):
     parser.add_argument('--fast-noop-scan', action='store_true', help='Optional combined unchanged-tile checks; keeps zero-copy vectors')
     parser.add_argument('--static-cache-borders', action='store_true', help='Skip virtual motion rows for unchanged edge stripes')
     parser.add_argument('--carry-huffman', action='store_true', help='Use carry for Huffman bit positions; unchanged video stream')
+    parser.add_argument('--register-fragments', action='store_true', help='Write repeated fragment rows directly from registers')
     parser.add_argument('--irq-safe-paging', action='store_true', help='Optional restartable bank changes without disabling IRQ')
     parser.add_argument('--startup-delta', action='store_true', help='Smaller boot tables when adjacent-byte differences save disk sectors')
     parser.add_argument('--verify', choices=('cpu', 'fuse', 'none'), default='cpu',
@@ -226,13 +227,14 @@ def main(argv=None):
     manifest = dict(source=str(source), source_sha256=source_hash, complete=False, release=False,
         video_fps='25/3', ay_hz=50, native_resolution=[256, 192], active_resolution=[256, 144],
         logical_resolution=[128, 96], disk_profile=args.disk_profile, executables=executables,
-        player_baseline='0cf64be' if args.carry_huffman else '6e724f4' if args.static_cache_borders else '00fb0fd' if args.irq_safe_paging else '491db7b' if args.fast_noop_scan else '80ab9d9' if args.inline_matches else '00313d3',
-        player_hot_path_changed=args.inline_matches or args.fast_noop_scan or args.irq_safe_paging or args.static_cache_borders or args.carry_huffman,
-        player_hot_path_delta_tstates=None if args.inline_matches or args.fast_noop_scan or args.irq_safe_paging or args.static_cache_borders or args.carry_huffman else 0,
+        player_baseline='7152e10' if args.register_fragments else '0cf64be' if args.carry_huffman else '6e724f4' if args.static_cache_borders else '00fb0fd' if args.irq_safe_paging else '491db7b' if args.fast_noop_scan else '80ab9d9' if args.inline_matches else '00313d3',
+        player_hot_path_changed=args.inline_matches or args.fast_noop_scan or args.irq_safe_paging or args.static_cache_borders or args.carry_huffman or args.register_fragments,
+        player_hot_path_delta_tstates=None if args.inline_matches or args.fast_noop_scan or args.irq_safe_paging or args.static_cache_borders or args.carry_huffman or args.register_fragments else 0,
         inline_matches=args.inline_matches,
         fast_noop_scan=args.fast_noop_scan,
         static_cache_borders=args.static_cache_borders,
         carry_huffman=args.carry_huffman,
+        register_fragments=args.register_fragments,
         irq_safe_paging=args.irq_safe_paging,
         startup_delta=args.startup_delta,
         timing_verified=False, verification=args.verify)
@@ -249,7 +251,7 @@ def main(argv=None):
         write_json(output/'codec.json', codec)
         builder = Builder(raw, states, Path(executables['zx0']), work/'zx0',
             fast_disk=fast, cached_seek=fast, interleaved=fast, inline_matches=args.inline_matches,
-            startup_delta=args.startup_delta,fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging,static_cache_borders=args.static_cache_borders,carry_huffman=args.carry_huffman)
+            startup_delta=args.startup_delta,fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging,static_cache_borders=args.static_cache_borders,carry_huffman=args.carry_huffman,register_fragments=args.register_fragments)
         ends = builder.automatic_ends(args.max_frames_per_disk)
         records = []
         start = 0

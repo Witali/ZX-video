@@ -19,13 +19,13 @@ def main():
     p.add_argument('--read-cache',type=Path,action='append',default=[])
     p.add_argument('--fast-noop-scan',action='store_true')
     p.add_argument('--irq-safe-paging',action='store_true')
-    p.add_argument('--experiment',choices=('inline_matches','static_cache_borders','carry_huffman'),default='inline_matches')
+    p.add_argument('--experiment',choices=('inline_matches','static_cache_borders','carry_huffman','register_fragments'),default='inline_matches')
     p.add_argument('--ranges',default='62:94,408:440,1269:1301,2159:2191,2334:2366,2919:2951,3195:3227,3838:3870')
     args=p.parse_args(); raw=args.raw.read_bytes()
     with np.load(args.states,allow_pickle=False) as saved:states=saved['states']
     ranges=[tuple(map(int,s.split(':'))) for s in args.ranges.split(',')]
     if any(len(pair)!=2 or not 0<=pair[0]<pair[1]<=len(states) for pair in ranges):p.error('invalid ranges')
-    baselines=dict(carry_huffman='0cf64be',static_cache_borders='6e724f4',inline_matches='3356730' if args.irq_safe_paging else '80ab9d9')
+    baselines=dict(register_fragments='7152e10',carry_huffman='0cf64be',static_cache_borders='6e724f4',inline_matches='3356730' if args.irq_safe_paging else '80ab9d9')
     report=dict(complete=False,full_movie=False,release=False,baseline_commit=baselines[args.experiment],
         experiment=args.experiment,
         fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging,
@@ -36,7 +36,8 @@ def main():
     builders=[]
     for enabled in (False,True):
         options = dict(inline_matches=enabled) if args.experiment=='inline_matches' else dict(inline_matches=True,**{args.experiment:enabled})
-        if args.experiment=='carry_huffman': options['static_cache_borders']=True
+        if args.experiment in ('carry_huffman','register_fragments'): options['static_cache_borders']=True
+        if args.experiment=='register_fragments': options['carry_huffman']=True
         b=ReadThroughBuilder(raw,states,args.zx0.resolve(),args.cache,**options,
             fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging)
         b.read_cache=args.read_cache;builders.append(b)

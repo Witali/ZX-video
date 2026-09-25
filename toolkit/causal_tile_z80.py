@@ -33,6 +33,8 @@ fast_noop_scan=True combines vector/mask checks; requires even mask pairs,
 retains 16-bit vector pointers for zero-copy packets, and uses no new RAM.
 static_cache_borders=True omits virtual-row clearing when the validated
 static-stripe marker proves that no tile can sample those rows this frame.
+register_fragments=True writes repeated/fill rows through HL directly from
+BC/DE, after saving the literal cursor; raw fragments keep their LDI path.
 This is not yet a streamed/displaying player: metadata/ZX0 decoding,
 window refill, screen expansion, paging and disk delivery are separate.
 """
@@ -139,11 +141,12 @@ def intra_tstates(vector, tile, corrections, *, extended=False):
     return 629+34+4*(32 if tile < 16 else 53)+12*26+25*corrections
 
 
-def fast_tstates(vector, *, unaligned=False, selector=0, split_literals=False):
+def fast_tstates(vector, *, unaligned=False, selector=0, split_literals=False,register_fragments=False):
     """Whole-fragment routine incl. RET; caller/outer traversal are separate."""
     if vector not in (85, 86, 87, 88) or not 0 <= selector <= 255:
         raise ValueError('invalid fast fragment')
     base = {85: 546, 86: 541, 87: 818+10*(8-selector.bit_count()), 88: 513}[vector]
+    if register_fragments: base -= {85:0,86:68,87:109,88:36}[vector]
     return base-54 if split_literals else base+10*bool(unaligned)
 
 
@@ -209,7 +212,9 @@ def patch_delta_tstates(vectors, masks):
         for v, b, c in zip(vectors, masks[::2], masks[1::2]) if v <= 81 and (b or c))
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False, fast_noop_scan=False, static_cache_borders=False,carry_huffman=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False, fast_noop_scan=False, static_cache_borders=False,carry_huffman=False,register_fragments=False):
+    if register_fragments and not fast_fragments:
+        raise ValueError('register fragments require fast fragments')
     if static_cache_borders and not skip_static_stripes:
         raise ValueError('static cache borders require validated static stripes')
     if fast_noop_scan and (not skip_noop_runs or encoded_noop_runs):
@@ -570,7 +575,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
             emit('INC IX', [0xdd, 0x23], 10); a.label('fragment_aligned')
             emit('LD C,bit_base', [0x0e, bit_base], 7); emit('EXX', [0xd9], 4)
             emit('PUSH IX', [0xdd, 0xe5], 15); emit('POP HL', [0xe1], 10)
-        load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
+        if not register_fragments: load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
         emit('LD A,B', [0x78], 4)
         for value, label in ((85, 'fragment_raw'), (86, 'fragment_repeat'), (87, 'fragment_rows')):
             emit(f'CP {value}', [0xfe, value], 7); jump('JP Z,'+label, 0xca, label, 10)
@@ -582,9 +587,18 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
                 emit('PUSH HL', [0xe5], 11); emit('POP IX', [0xdd, 0xe1], 14)
 
         def row_advance():
-            emit('LD A,E', [0x7b], 4); emit('ADD A,31', [0xc6, 31], 7); emit('LD E,A', [0x5f], 4)
+            reg='L' if register_fragments else 'E'
+            emit('LD A,'+reg, [0x7d if register_fragments else 0x7b], 4)
+            emit('ADD A,31', [0xc6, 31], 7)
+            emit('LD '+reg+',A', [0x6f if register_fragments else 0x5f], 4)
 
         def write_pair(first, second):
+            if register_fragments:
+                # HL is the destination, BC/DE retain the two row patterns.
+                emit('LD (HL),'+first, [dict(B=0x70,D=0x72)[first]], 7)
+                emit('INC L', [0x2c], 4)
+                emit('LD (HL),'+second, [dict(C=0x71,E=0x73)[second]], 7)
+                return
             emit('LD A,'+first, [0x78 if first == 'B' else 0x7c], 4)
             emit('LD (DE),A', [0x12], 7); emit('INC E', [0x1c], 4)
             emit('LD A,'+second, [0x79 if second == 'C' else 0x7d], 4)
@@ -592,14 +606,19 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
 
         a.label('fragment_fill')
         emit('LD B,(HL)', [0x46], 7); emit('INC HL', [0x23], 6); save_fragment_cursor()
+        if register_fragments: load('LD HL,(target)', 0x2a, 'target', 16)
         for row in range(8):
-            emit('LD A,B', [0x78], 4); emit('LD (DE),A', [0x12], 7)
-            emit('INC E', [0x1c], 4); emit('LD (DE),A', [0x12], 7)
+            if register_fragments:
+                emit('LD (HL),B', [0x70], 7); emit('INC L', [0x2c], 4); emit('LD (HL),B', [0x70], 7)
+            else:
+                emit('LD A,B', [0x78], 4); emit('LD (DE),A', [0x12], 7)
+                emit('INC E', [0x1c], 4); emit('LD (DE),A', [0x12], 7)
             if row < 7:
                 row_advance()
         emit('RET', [0xc9], 10)
 
         a.label('fragment_raw')
+        if register_fragments: load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
         for row in range(8):
             emit('LDI', [0xed, 0xa0], 16); emit('LDI', [0xed, 0xa0], 16)
             if row < 7:
@@ -609,6 +628,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         a.label('fragment_repeat')
         emit('LD B,(HL)', [0x46], 7); emit('INC HL', [0x23], 6)
         emit('LD C,(HL)', [0x4e], 7); emit('INC HL', [0x23], 6); save_fragment_cursor()
+        if register_fragments: load('LD HL,(target)', 0x2a, 'target', 16)
         for row in range(8):
             write_pair('B', 'C')
             if row < 7:
@@ -619,15 +639,19 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         for name, opcode in (('B', 0x46), ('C', 0x4e), ('D', 0x56), ('E', 0x5e), ('A', 0x7e)):
             emit(f'LD {name},(HL)', [opcode], 7); emit('INC HL', [0x23], 6)
         save_fragment_cursor()
-        emit('PUSH DE', [0xd5], 11); emit('POP HL', [0xe1], 10)
-        load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
+        if register_fragments:
+            load('LD HL,(target)', 0x2a, 'target', 16)
+        else:
+            emit('PUSH DE', [0xd5], 11); emit('POP HL', [0xe1], 10)
+            load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
         emit("EX AF,AF'", [0x08], 4)
         for row in range(8):
             emit("EX AF,AF'", [0x08], 4); emit('RLA', [0x17], 4)
             jump('JP C,second_pair', 0xda, f'fragment_second_{row}', 10)
             emit("EX AF,AF'", [0x08], 4); write_pair('B', 'C')
             jump('JP pair_done', 0xc3, f'fragment_pair_done_{row}', 10)
-            a.label(f'fragment_second_{row}'); emit("EX AF,AF'", [0x08], 4); write_pair('H', 'L')
+            a.label(f'fragment_second_{row}'); emit("EX AF,AF'", [0x08], 4)
+            write_pair('D' if register_fragments else 'H', 'E' if register_fragments else 'L')
             a.label(f'fragment_pair_done_{row}')
             if row < 7:
                 row_advance()

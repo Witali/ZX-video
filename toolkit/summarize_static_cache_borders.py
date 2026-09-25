@@ -27,7 +27,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     for name in ('directory','baseline-directory','evidence','output','cpu','generic'):
         p.add_argument('--'+name,type=Path,required=True)
-    p.add_argument('--experiment',choices=('static_cache_borders','carry_huffman'),default='static_cache_borders')
+    p.add_argument('--experiment',choices=('static_cache_borders','carry_huffman','register_fragments'),default='static_cache_borders')
     args = p.parse_args(); rows = []; archive = []
     args.evidence.mkdir(parents=True,exist_ok=True)
     for part in (1,2,3):
@@ -36,7 +36,7 @@ def main():
         if not meta.get(args.experiment) or previous.get(args.experiment,False):
             raise AssertionError('wrong experiment options')
         for option in ('fast_noop_scan','irq_safe_paging','inline_matches','deferred_limit',
-                       'keepalive_fields','frame_service','static_cache_borders','carry_huffman'):
+                       'keepalive_fields','frame_service','static_cache_borders','carry_huffman','register_fragments'):
             if option!=args.experiment and meta.get(option,False)!=previous.get(option,False):
                 raise AssertionError(('unrelated option differs',option))
         if new!=old or any(meta[k]!=previous[k] for k in ('frame_start','frame_end_exclusive','raw_sha256','states_sha256')):
@@ -68,13 +68,16 @@ def main():
     cpu,generic = read(args.cpu),read(args.generic)
     if not cpu['complete'] or not generic['complete'] or sum(v['frames'] for v in rows)!=cpu['checked_frames']:
         raise AssertionError('partial comparison')
-    before = read(Path(__file__).with_name('static_cache_borders_generic.json' if args.experiment=='carry_huffman' else 'combined_delivery_generic.json'))
+    baselines=dict(static_cache_borders=('6e724f4','combined_delivery'),
+        carry_huffman=('0cf64be','static_cache_borders'),register_fragments=('7152e10','carry_huffman'))
+    commit,report_prefix=baselines[args.experiment]
+    before = read(Path(__file__).with_name(report_prefix+'_generic.json'))
     sig = lambda report:[(v['source'],v['frames'],v['stream_sha256']) for v in report['cases']]
     if sig(before)!=sig(generic): raise AssertionError('generic FAP3 changed')
     if not all(c['timing']['complete'] and all(x['complete'] and x['full_compact_and_native_comparison'] for x in c['cpu'])
                for c in generic['cases']): raise AssertionError('partial generic verification')
     result = dict(complete=True,release=False,experiment=args.experiment,
-        baseline_commit='0cf64be' if args.experiment=='carry_huffman' else '6e724f4',
+        baseline_commit=commit,
         full_movie_stage_pixel_comparison=True,full_movie_fuse_pixel_comparison=False,
         full_stage_entropy_scope='Volume-1 Huffman tables across all 4221 unchanged states; runtime disk tables differ per volume.',
         fuse_pixel_samples_per_frame=80,physical_drive_verified=False,volumes=rows,
