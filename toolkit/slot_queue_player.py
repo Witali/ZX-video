@@ -18,11 +18,15 @@ import pipelined_frame_z80 as video
 import bulk_frame_z80 as packet
 
 
-def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False,partial_consumption=False):
+def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False,partial_consumption=False,cached_huffman_byte=False):
     if idle_masks and not compiled_masks:
         raise ValueError('idle stripes require compiled metadata')
     if compiled_masks and uncontended:
         raise ValueError('combined mask and relocated-frame fixture is not verified')
+    cached_in_bootstrap=bool(metadata.get('cached_huffman_byte',False))
+    cached_huffman_byte=cached_huffman_byte or cached_in_bootstrap
+    if cached_huffman_byte and (uncontended or idle_masks):
+        raise ValueError('cached-byte combinations with relocation/idle stripes are not verified')
     m=deepcopy(metadata)
     if not m.get('irq_safe_paging') or not m.get('independently_bootable'):
         raise ValueError('queue requires IRQ-safe paging and an independent volume')
@@ -35,6 +39,7 @@ def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False
             for i in range(tick[0]):ay[tick[1+2*i]]=tick[2+2*i]
     options={key:m[key] for key in ('inline_matches','fast_noop_scan','irq_safe_paging',
         'static_cache_borders','carry_huffman','register_fragments')}
+    options['cached_huffman_byte']=cached_in_bootstrap
     h=player_harness(bytes(4),tables,mapping,m['frames'],**options)
     zcode,z=local.build(dynamic_input=True)
     dcode,d,drows=disk.build_disk(m['video_start_sector'],m['video_sectors'],
@@ -57,33 +62,54 @@ def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False
             initialize_cpu_tstates=201509,initialization_before_playback=True,
             baseline_partial_group='370+8*popcount',partial_group='276+5*popcount-2*LSB',
             zero_group_tstates=161,full_group_tstates=227,decode_overhead_tstates=158)
-    if idle_masks:
+    if idle_masks or (cached_huffman_byte and not cached_in_bootstrap):
         from benchmark_static_cache_borders import OPTIONS
         from frame_output_pipeline import Harness
         import causal_tile_z80 as reconstruction
         import attribute_groups_z80 as groups
         import idle_masks_z80 as idle
-        f=Harness(tables,mapping,metadata_mode='idle',deferred_publish=True,dynamic_source=True,
-            dynamic_metadata=True,split_prepare=True,page_entry=video.PAGE,preloaded_mask='idle',
+        f=Harness(tables,mapping,metadata_mode='idle' if idle_masks else 'standard',deferred_publish=True,dynamic_source=True,
+            dynamic_metadata=True,split_prepare=True,page_entry=video.PAGE,preloaded_mask='idle' if idle_masks else True,
             static_cache_borders=m['static_cache_borders'],carry_huffman=m['carry_huffman'],
-            register_fragments=m['register_fragments'],**OPTIONS)
+            register_fragments=m['register_fragments'],cached_huffman_byte=cached_huffman_byte,**OPTIONS)
         if f.w!=h.frame.w or f.draw_code!=h.frame.draw_code:
-            raise ValueError('idle fixture changed the wrapper ABI or native renderer')
+            raise ValueError('reconstruction fixture changed the wrapper ABI or native renderer')
         # Reassemble all references to reconstruction state, including attribute
         # helpers. Bank-6 lookup tables are unchanged; install fixed RAM only.
         fixed=[(reconstruction.CODE,f.recon_code),(f.w['run'],f.wrapper_code),(groups.CODE,f.group_code)]
         fixed += [(a,b) for a,b in f.protected_regions if a<0xc000]
         changes={a+i:v for a,b in fixed for i,v in enumerate(b) if h.cpu.read8(a+i)!=v}
         for address in sorted(changes): regions.append((address,bytes([changes[address]])))
-        mask_code,mask_labels,idle_rows=idle.build(vector_pointer=f.w['vector_pointer'])
-        regions.append((idle.CODE,mask_code));mask_rows+=idle_rows
+        if idle_masks:
+            mask_code,mask_labels,idle_rows=idle.build(vector_pointer=f.w['vector_pointer'])
+            regions.append((idle.CODE,mask_code));mask_rows+=idle_rows
         # These rows document the changed fixed CPU path; metadata generation
         # rows are already present in mask_rows.
         mask_rows += [row for row in f.instructions.values() if row['phase'] in ('reconstruct','handoff','attribute_groups')]
-        m['idle_masks']=dict(labels=mask_labels,reconstruction_labels=f.recon,
-            code_sha256=sha(mask_code),code_bytes=len(mask_code),fixed_patch_bytes=len(changes),
-            flags_start=idle.IDLE_BASE+1,flags_bytes=12,vector_pointer=f.w['vector_pointer'],
-            extra_packet_bytes=0,poisoned_masks_cpu_test_required=True)
+        if idle_masks:
+            m['idle_masks']=dict(labels=mask_labels,reconstruction_labels=f.recon,
+                code_sha256=sha(mask_code),code_bytes=len(mask_code),fixed_patch_bytes=len(changes),
+                flags_start=idle.IDLE_BASE+1,flags_bytes=12,vector_pointer=f.w['vector_pointer'],
+                extra_packet_bytes=0,poisoned_masks_cpu_test_required=True)
+        else:
+            m['cached_huffman_byte']=dict(reconstruction_labels=f.recon,
+                code_sha256=sha(f.recon_code),code_bytes=len(f.recon_code),fixed_patch_bytes=len(changes),
+                code_growth_bytes=len(f.recon_code)-len(h.frame.recon_code),extra_packet_bytes=0,
+                extra_tables_bytes=0,initialization_tstates=19,
+                short_inside_delta_tstates=-15,short_cross_delta_tstates=4,long_delta_tstates=4)
+    if cached_in_bootstrap:
+        # The real bootstrap already restores all changed reconstruction
+        # references. Do not patch thousands of relocated bytes a second time.
+        f=h.frame
+        old_options=dict(options,cached_huffman_byte=False)
+        old=player_harness(bytes(4),tables,mapping,m['frames'],**old_options)
+        m['cached_huffman_byte']=dict(reconstruction_labels=f.recon,
+            code_sha256=sha(f.recon_code),code_bytes=len(f.recon_code),fixed_patch_bytes=0,
+            code_growth_bytes=len(f.recon_code)-len(old.frame.recon_code),
+            extra_packet_bytes=0,extra_tables_bytes=0,initialization_tstates=19,
+            short_inside_delta_tstates=-15,short_cross_delta_tstates=4,long_delta_tstates=4,
+            in_bootstrap=True)
+        mask_rows += [row for row in f.instructions.values() if row['phase'] in ('reconstruct','handoff','attribute_groups')]
     vregions,vl,vrows=video.build_video(h.frame.draw,z,h.audio,irq_safe_paging=True)
     regions += [(a,b) for a,b in vregions if a==video.VIDEO]
     code,bridge,pl,rows=packet.build(z,q,h.frame.w,h.frame.draw,mask_labels,h.audio,

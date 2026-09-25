@@ -1,0 +1,616 @@
+{
+  "complete": true,
+  "release": false,
+  "generator_seed": 20260921,
+  "inline_matches": true,
+  "startup_delta": true,
+  "fast_noop_scan": true,
+  "irq_safe_paging": true,
+  "static_cache_borders": true,
+  "carry_huffman": true,
+  "register_fragments": true,
+  "cached_huffman_byte": true,
+  "cases": [
+    {
+      "source": "single.mp4",
+      "objective": "single black frame; no audio",
+      "frames": 1,
+      "ay_ticks": 6,
+      "disks": 1,
+      "source_sha256": "5e4987c717c9c1b3772f45aaa2e03a361b31716c873b6358240dc89e40984b07",
+      "stream_sha256": "28572759bae9b250fcf2c6a36336cc7ed5279208f1ef9e3443f766e66ae01700",
+      "timing": {
+        "complete": true,
+        "all_nominal_deadlines_met": false,
+        "release": false,
+        "profile": "instruction counts with ideal input; optional complete Fuse measurements",
+        "player_hot_path_changed": true,
+        "player_hot_path_delta_tstates": null,
+        "disks": [
+          {
+            "file": "ZX-video_part01.trd",
+            "cpu_report": "timing/ZX-video_part01.cpu.json",
+            "cpu_complete": true
+          }
+        ],
+        "disk_adapter_instruction_tstates": {
+          "same_track": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_change": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_wrap": {
+            "tstates": 754,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "ring_wrap": {
+            "tstates": 791,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          }
+        },
+        "disk_adapter_excludes": "ROM execution, IRQ, ULA contention and physical latency; includes paging"
+      },
+      "swaps": [],
+      "cpu": [
+        {
+          "complete": true,
+          "frames": 1,
+          "foreground_tstates": 136567,
+          "foreground_stages": {
+            "schedule": 410,
+            "packet": 1241,
+            "stream_input": 19703,
+            "banked_zx0": 28803,
+            "paging": 828,
+            "audio": 2405,
+            "metadata": 11106,
+            "handoff": 337,
+            "reconstruct": 33078,
+            "attribute_groups": 150,
+            "output": 22315,
+            "progress": 16191
+          },
+          "irq_tstates": 5347,
+          "idle_tstates": 355118,
+          "played_ay_ticks": 6,
+          "full_compact_and_native_comparison": true,
+          "nominal_frame_budget_tstates": 425448
+        }
+      ],
+      "filtered_boot_tables": 1
+    },
+    {
+      "source": "portrait.mkv",
+      "objective": "portrait; no audio; letterbox geometry",
+      "frames": 3,
+      "ay_ticks": 18,
+      "disks": 1,
+      "source_sha256": "e58cbd2c339e7e6eb1dce3ec24f9636993a5850fa7476a87e4109dbfbab31c03",
+      "stream_sha256": "90aba13a5771ad7e46f89301d0e048e2dc15996f052c81a8e007d0dc8b7906aa",
+      "timing": {
+        "complete": true,
+        "all_nominal_deadlines_met": false,
+        "release": false,
+        "profile": "instruction counts with ideal input; optional complete Fuse measurements",
+        "player_hot_path_changed": true,
+        "player_hot_path_delta_tstates": null,
+        "disks": [
+          {
+            "file": "ZX-video_part01.trd",
+            "cpu_report": "timing/ZX-video_part01.cpu.json",
+            "cpu_complete": true
+          }
+        ],
+        "disk_adapter_instruction_tstates": {
+          "same_track": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_change": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_wrap": {
+            "tstates": 754,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "ring_wrap": {
+            "tstates": 791,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          }
+        },
+        "disk_adapter_excludes": "ROM execution, IRQ, ULA contention and physical latency; includes paging"
+      },
+      "swaps": [],
+      "cpu": [
+        {
+          "complete": true,
+          "frames": 3,
+          "foreground_tstates": 535258,
+          "foreground_stages": {
+            "schedule": 3130,
+            "packet": 3676,
+            "stream_input": 32285,
+            "banked_zx0": 54377,
+            "paging": 1748,
+            "audio": 5815,
+            "metadata": 34652,
+            "handoff": 1011,
+            "reconstruct": 172924,
+            "attribute_groups": 1060,
+            "output": 208281,
+            "progress": 16299
+          },
+          "irq_tstates": 15565,
+          "idle_tstates": 1080737,
+          "played_ay_ticks": 18,
+          "full_compact_and_native_comparison": true,
+          "nominal_frame_budget_tstates": 425448
+        }
+      ],
+      "filtered_boot_tables": 1
+    },
+    {
+      "source": "colour.avi",
+      "objective": "mono sound; three disks and two automatic continuations",
+      "frames": 9,
+      "ay_ticks": 54,
+      "disks": 3,
+      "source_sha256": "fb2249d0fa101138170fb589ca27cdfa01bc6c53fa44ee3c01c798424e7c4d1f",
+      "stream_sha256": "46fd4f9a54365c1c59634c427bc244d2a765e99db50e535f7f121d2556779976",
+      "timing": {
+        "complete": true,
+        "all_nominal_deadlines_met": false,
+        "release": false,
+        "profile": "instruction counts with ideal input; optional complete Fuse measurements",
+        "player_hot_path_changed": true,
+        "player_hot_path_delta_tstates": null,
+        "disks": [
+          {
+            "file": "ZX-video_part01.trd",
+            "cpu_report": "timing/ZX-video_part01.cpu.json",
+            "cpu_complete": true
+          },
+          {
+            "file": "ZX-video_part02.trd",
+            "cpu_report": "timing/ZX-video_part02.cpu.json",
+            "cpu_complete": true
+          },
+          {
+            "file": "ZX-video_part03.trd",
+            "cpu_report": "timing/ZX-video_part03.cpu.json",
+            "cpu_complete": true
+          }
+        ],
+        "disk_adapter_instruction_tstates": {
+          "same_track": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_change": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_wrap": {
+            "tstates": 754,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "ring_wrap": {
+            "tstates": 791,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          }
+        },
+        "disk_adapter_excludes": "ROM execution, IRQ, ULA contention and physical latency; includes paging"
+      },
+      "swaps": [
+        {
+          "from_part": 1,
+          "to_part": 2,
+          "prompt_exact": true,
+          "wrong_disk_rejected": true,
+          "wrong_series_rejected": true,
+          "correct_disk_accepted": true,
+          "bootstrap_ram_exact": true,
+          "rom_mocked": true
+        },
+        {
+          "from_part": 2,
+          "to_part": 3,
+          "prompt_exact": true,
+          "wrong_disk_rejected": true,
+          "wrong_series_rejected": true,
+          "correct_disk_accepted": true,
+          "bootstrap_ram_exact": true,
+          "rom_mocked": true
+        }
+      ],
+      "cpu": [
+        {
+          "complete": true,
+          "frames": 4,
+          "foreground_tstates": 1575539,
+          "foreground_stages": {
+            "schedule": 3885,
+            "packet": 4890,
+            "stream_input": 56009,
+            "banked_zx0": 199119,
+            "paging": 3312,
+            "audio": 7646,
+            "metadata": 77809,
+            "handoff": 1348,
+            "reconstruct": 780650,
+            "attribute_groups": 4606,
+            "output": 419912,
+            "progress": 16353
+          },
+          "irq_tstates": 22008,
+          "idle_tstates": 955817,
+          "played_ay_ticks": 24,
+          "full_compact_and_native_comparison": true,
+          "nominal_frame_budget_tstates": 425448
+        },
+        {
+          "complete": true,
+          "frames": 4,
+          "foreground_tstates": 1315007,
+          "foreground_stages": {
+            "schedule": 3882,
+            "packet": 4890,
+            "stream_input": 42343,
+            "banked_zx0": 160288,
+            "paging": 3128,
+            "audio": 7058,
+            "metadata": 78257,
+            "handoff": 1348,
+            "reconstruct": 700577,
+            "attribute_groups": 4578,
+            "output": 292305,
+            "progress": 16353
+          },
+          "irq_tstates": 20162,
+          "idle_tstates": 1005471,
+          "played_ay_ticks": 24,
+          "full_compact_and_native_comparison": true,
+          "nominal_frame_budget_tstates": 425448
+        },
+        {
+          "complete": true,
+          "frames": 1,
+          "foreground_tstates": 339967,
+          "foreground_stages": {
+            "schedule": 410,
+            "packet": 1231,
+            "stream_input": 11401,
+            "banked_zx0": 39016,
+            "paging": 1012,
+            "audio": 2237,
+            "metadata": 20265,
+            "handoff": 337,
+            "reconstruct": 171125,
+            "attribute_groups": 150,
+            "output": 76592,
+            "progress": 16191
+          },
+          "irq_tstates": 5803,
+          "idle_tstates": 363986,
+          "played_ay_ticks": 6,
+          "full_compact_and_native_comparison": true,
+          "nominal_frame_budget_tstates": 425448
+        }
+      ],
+      "filtered_boot_tables": 3
+    },
+    {
+      "source": "anamorphic.mov",
+      "objective": "non-square input pixels; display aspect 2:1",
+      "frames": 2,
+      "ay_ticks": 12,
+      "disks": 1,
+      "source_sha256": "bc98b2b997f917f6c6d6e0ac70e14217302f5eae4a719bbc9b04e750a5abee3b",
+      "stream_sha256": "04cd6cf5f21f8ef6d3fe390a1638dfdde708dc044ecdf5fd140922d3aa009ffa",
+      "timing": {
+        "complete": true,
+        "all_nominal_deadlines_met": false,
+        "release": false,
+        "profile": "instruction counts with ideal input; optional complete Fuse measurements",
+        "player_hot_path_changed": true,
+        "player_hot_path_delta_tstates": null,
+        "disks": [
+          {
+            "file": "ZX-video_part01.trd",
+            "cpu_report": "timing/ZX-video_part01.cpu.json",
+            "cpu_complete": true
+          }
+        ],
+        "disk_adapter_instruction_tstates": {
+          "same_track": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_change": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_wrap": {
+            "tstates": 754,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "ring_wrap": {
+            "tstates": 791,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          }
+        },
+        "disk_adapter_excludes": "ROM execution, IRQ, ULA contention and physical latency; includes paging"
+      },
+      "swaps": [],
+      "cpu": [
+        {
+          "complete": true,
+          "frames": 2,
+          "foreground_tstates": 572624,
+          "foreground_stages": {
+            "schedule": 1618,
+            "packet": 2472,
+            "stream_input": 25905,
+            "banked_zx0": 41409,
+            "paging": 1288,
+            "audio": 4110,
+            "metadata": 22212,
+            "handoff": 674,
+            "reconstruct": 206993,
+            "attribute_groups": 300,
+            "output": 249398,
+            "progress": 16245
+          },
+          "irq_tstates": 11207,
+          "idle_tstates": 693189,
+          "played_ay_ticks": 12,
+          "full_compact_and_native_comparison": true,
+          "nominal_frame_budget_tstates": 425448
+        }
+      ],
+      "filtered_boot_tables": 1
+    },
+    {
+      "source": "audio-tail.mkv",
+      "objective": "audio outlasts video; retained through EOF",
+      "frames": 5,
+      "ay_ticks": 30,
+      "disks": 1,
+      "source_sha256": "7a1577fc965a67f51736d08c7cfe9998283bb7a01ab13476ab777bfc7bd4a1cc",
+      "stream_sha256": "aa363b200d930a7f5f9a61e7590a6f44fd75d8fdf741d15f6de5026b95d4e165",
+      "timing": {
+        "complete": true,
+        "all_nominal_deadlines_met": false,
+        "release": false,
+        "profile": "instruction counts with ideal input; optional complete Fuse measurements",
+        "player_hot_path_changed": true,
+        "player_hot_path_delta_tstates": null,
+        "disks": [
+          {
+            "file": "ZX-video_part01.trd",
+            "cpu_report": "timing/ZX-video_part01.cpu.json",
+            "cpu_complete": true
+          }
+        ],
+        "disk_adapter_instruction_tstates": {
+          "same_track": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_change": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_wrap": {
+            "tstates": 754,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "ring_wrap": {
+            "tstates": 791,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          }
+        },
+        "disk_adapter_excludes": "ROM execution, IRQ, ULA contention and physical latency; includes paging"
+      },
+      "swaps": [],
+      "cpu": [
+        {
+          "complete": true,
+          "frames": 5,
+          "foreground_tstates": 774303,
+          "foreground_stages": {
+            "schedule": 6352,
+            "packet": 6084,
+            "stream_input": 44901,
+            "banked_zx0": 70988,
+            "paging": 2668,
+            "audio": 9645,
+            "metadata": 56848,
+            "handoff": 1685,
+            "reconstruct": 233506,
+            "attribute_groups": 2580,
+            "output": 322639,
+            "progress": 16407
+          },
+          "irq_tstates": 25785,
+          "idle_tstates": 1753276,
+          "played_ay_ticks": 30,
+          "full_compact_and_native_comparison": true,
+          "nominal_frame_budget_tstates": 425448
+        }
+      ],
+      "filtered_boot_tables": 1
+    },
+    {
+      "source": "noise.avi",
+      "objective": "high entropy; runtime disk reads beyond the 64 KiB preload",
+      "frames": 48,
+      "ay_ticks": 288,
+      "disks": 1,
+      "source_sha256": "be75f808153d4d35078e50cac2bb4c8d1ce05625394a287a8b234aee625c3649",
+      "stream_sha256": "b47ae0fcc18c6f387ec2d0cc594bd8291464aaa1c1c027eee2c07dda9d1ff23c",
+      "timing": {
+        "complete": true,
+        "all_nominal_deadlines_met": false,
+        "release": false,
+        "profile": "instruction counts with ideal input; optional complete Fuse measurements",
+        "player_hot_path_changed": true,
+        "player_hot_path_delta_tstates": null,
+        "disks": [
+          {
+            "file": "ZX-video_part01.trd",
+            "cpu_report": "timing/ZX-video_part01.cpu.json",
+            "cpu_complete": true
+          }
+        ],
+        "disk_adapter_instruction_tstates": {
+          "same_track": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_change": {
+            "tstates": 743,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "track_wrap": {
+            "tstates": 754,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          },
+          "ring_wrap": {
+            "tstates": 791,
+            "code_bytes": 155,
+            "seek_bytes": 0,
+            "full_calls": 1,
+            "direct_calls": 0,
+            "fallback_calls": 0
+          }
+        },
+        "disk_adapter_excludes": "ROM execution, IRQ, ULA contention and physical latency; includes paging"
+      },
+      "swaps": [],
+      "cpu": [
+        {
+          "complete": true,
+          "frames": 48,
+          "foreground_tstates": 53531923,
+          "foreground_stages": {
+            "schedule": 15506,
+            "packet": 57916,
+            "stream_input": 1614993,
+            "banked_zx0": 4712541,
+            "paging": 87308,
+            "audio": 82330,
+            "metadata": 888207,
+            "handoff": 16176,
+            "reconstruct": 39318693,
+            "attribute_groups": 119668,
+            "output": 6599856,
+            "progress": 18729
+          },
+          "irq_tstates": 401677,
+          "idle_tstates": 28760,
+          "played_ay_ticks": 288,
+          "full_compact_and_native_comparison": true,
+          "nominal_frame_budget_tstates": 425448
+        }
+      ],
+      "filtered_boot_tables": 1
+    }
+  ]
+}

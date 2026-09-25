@@ -27,6 +27,7 @@ def main():
     p.add_argument('--carry-huffman', action='store_true')
     p.add_argument('--register-fragments', action='store_true')
     p.add_argument('--irq-safe-paging', action='store_true')
+    p.add_argument('--cached-huffman-byte', action='store_true')
     args = p.parse_args()
     if args.noise_frames < 1: p.error('--noise-frames must be positive')
     programs = {name: executable(getattr(args, name), name) for name in ('ffmpeg', 'ffprobe', 'zx0')}
@@ -59,8 +60,8 @@ def main():
     sources.append((noisy_video, args.noise_frames, [], 'high entropy; runtime disk reads beyond the 64 KiB preload'))
     report = dict(complete=False, release=False, generator_seed=20260921, inline_matches=args.inline_matches,
                   startup_delta=args.startup_delta, fast_noop_scan=args.fast_noop_scan, irq_safe_paging=args.irq_safe_paging,
-                  static_cache_borders=args.static_cache_borders,carry_huffman=args.carry_huffman,register_fragments=args.register_fragments,cases=[])
-    write_json(args.report, report)
+                  static_cache_borders=args.static_cache_borders,carry_huffman=args.carry_huffman,register_fragments=args.register_fragments,cached_huffman_byte=args.cached_huffman_byte,cases=[])
+    args.report.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     for source, expected_frames, extra, objective in sources:
         out = args.output/(source.stem+'-out')
         command = [sys.executable, str(Path(__file__).with_name('convert_video.py')), str(source),
@@ -74,6 +75,7 @@ def main():
         if args.static_cache_borders: command += ['--static-cache-borders']
         if args.carry_huffman: command += ['--carry-huffman']
         if args.register_fragments: command += ['--register-fragments']
+        if args.cached_huffman_byte: command += ['--cached-huffman-byte']
         if args.irq_safe_paging: command += ['--irq-safe-paging']
         subprocess.run(command, check=True)
         meta = json.loads((out/'conversion.json').read_text(encoding='utf-8'))
@@ -103,9 +105,9 @@ def main():
                 'foreground_stages', 'irq_tstates', 'idle_tstates', 'played_ay_ticks',
                 'full_compact_and_native_comparison', 'nominal_frame_budget_tstates')})
         report['cases'].append(case)
-        write_json(args.report, report)
+        args.report.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     report['complete'] = True
-    write_json(args.report, report)
+    args.report.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
 
 
 if __name__ == '__main__':

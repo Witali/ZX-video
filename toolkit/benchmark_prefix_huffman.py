@@ -29,12 +29,13 @@ PAIRS = 0xa000
 
 
 class Harness:
-    def __init__(self, tables, mapping, *, single_byte=False,carry_huffman=False):
+    def __init__(self, tables, mapping, *, single_byte=False,carry_huffman=False,cached_byte=False):
         self.tables, self.mapping = tables, mapping
         self.single_byte=single_byte
         self.carry_huffman=carry_huffman
+        self.cached_byte=cached_byte
         self.bit_base=0xf8 if carry_huffman else 0xf0
-        self.code, self.labels, self.listing, self.layout = machine.build(tables, mapping,single_byte=single_byte,carry_huffman=carry_huffman)
+        self.code, self.labels, self.listing, self.layout = machine.build(tables, mapping,single_byte=single_byte,carry_huffman=carry_huffman,cached_byte=cached_byte)
         self.regions = self.layout['regions']
         self.cpu = GuardCPU(b'', b'')
         self.cpu.sp, self.cpu.port_7ffd = STACK, 0x16
@@ -73,6 +74,7 @@ class Harness:
                 result += 168+5*int(start+length >= 8)-attribute
                 if self.single_byte: result += -50 if start+length<=7 else 58
                 if self.carry_huffman: result -= 8
+                if self.cached_byte: result += -15+19*int(start+length >= 8)
                 short += 1
             else:
                 available = 8-start if start else 0
@@ -81,6 +83,7 @@ class Harness:
                 result += 420+53*(length-9)+32*refills-int(carry)+70*int(start > 0)+5*int(end > 0)-attribute
                 if self.single_byte: result += 47
                 if self.carry_huffman: result += 8*int(start>0)
+                if self.cached_byte: result += 4
             bits += length
         return result, bits, short
 
@@ -120,6 +123,7 @@ class Harness:
             raise AssertionError(('wrong value bytes or stack', result, expected))
         formula, bits, short = self.formula(pairs, expected, position)
         wrapper = 105+sum(112 if attr else 119 for attr, _ in pairs) if expected else 27
+        if self.cached_byte and expected: wrapper += 19
         if primitive != formula or elapsed != primitive+wrapper or self.position() != position+bits:
             raise AssertionError((primitive, formula, elapsed, wrapper, self.position(), position+bits))
         return dict(values=len(expected), bits=bits, short_values=short,

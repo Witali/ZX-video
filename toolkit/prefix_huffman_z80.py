@@ -13,6 +13,11 @@ Returns the decoded byte
 in A and updated IX/C. The wrapper saves IX/C between <=32-value calls.
 This machine primitive is not a complete streamed player.
 
+cached_byte=True with carry_huffman retains (IX+0) in B between values.
+The caller initializes B after loading IX and preserves it, like C. Short
+byte crossings and the long-code return refresh B. No new lookahead beyond
+the existing single guard is needed, including at the end of the stream.
+
 carry_huffman=True represents bit positions as F8..FF; ADD sets carry
 exactly when a short code crosses a byte, removing BIT 3,A. Shift pages
 are unchanged (also used by motion); peek reads right then left. The eight
@@ -82,7 +87,9 @@ def prepare(tables, mapping, *, single_byte=False,carry_huffman=False):
                 counts=counts, symbols=symbols, indices=indices)
 
 
-def build(tables, mapping, *, single_byte=False,carry_huffman=False):
+def build(tables, mapping, *, single_byte=False,carry_huffman=False,cached_byte=False):
+    if cached_byte and not carry_huffman:
+        raise ValueError('cached byte requires carry Huffman')
     layout = prepare(tables, mapping,single_byte=single_byte,carry_huffman=carry_huffman)
     bit_base=0xf8 if carry_huffman else 0xf0
     a, listing = MiniAssembler(CODE), []
@@ -124,7 +131,10 @@ def build(tables, mapping, *, single_byte=False,carry_huffman=False):
         emit('LD B,L', [0x45], 4)
         emit('LD H,C', [0x61], 4)
     emit('RES 3,H' if carry_huffman else 'SET 3,H', [0xcb, 0x9c if carry_huffman else 0xdc], 8)
-    emit('LD L,(IX+0)' if carry_huffman else 'LD L,(IX+1)', [0xdd, 0x6e, 0 if carry_huffman else 1], 19)
+    if cached_byte:
+        emit('LD L,B (cached input)', [0x68], 4)
+    else:
+        emit('LD L,(IX+0)' if carry_huffman else 'LD L,(IX+1)', [0xdd, 0x6e, 0 if carry_huffman else 1], 19)
     if single_byte:
         emit('LD A,(HL)', [0x7e], 7)
         emit('OR B', [0xb0], 4)
@@ -144,6 +154,8 @@ def build(tables, mapping, *, single_byte=False,carry_huffman=False):
     if not carry_huffman: emit('BIT 3,A', [0xcb, 0x5f], 8)
     jump('JR NC,short_position' if carry_huffman else 'JR Z,short_position', 0x30 if carry_huffman else 0x28, 'short_position', [7, 12], True)
     emit('INC IX', [0xdd, 0x23], 10)
+    if cached_byte:
+        a.label('cache_short_refresh'); emit('LD B,(IX+0)', [0xdd, 0x46, 0], 19)
     a.label('short_position')
     emit('OR F8h' if carry_huffman else 'AND F7h', [0xf6,0xf8] if carry_huffman else [0xe6,0xf7], 7)
     emit('LD C,A', [0x4f], 4)
@@ -219,6 +231,8 @@ def build(tables, mapping, *, single_byte=False,carry_huffman=False):
     emit('DEC IX', [0xdd, 0x2b], 10)
     a.label('position_ready')
     emit('POP AF', [0xf1], 10)
+    if cached_byte:
+        a.label('cache_long_refresh'); emit('LD B,(IX+0)', [0xdd, 0x46, 0], 19)
     emit('RET', [0xc9], 10)
     a.label('primitive_end')
 
@@ -230,6 +244,8 @@ def build(tables, mapping, *, single_byte=False,carry_huffman=False):
     a.emit(0xdd); a.abs16(0x2a, 'source')
     jump('LD A,(bit_page)', 0x3a, 'bit_page', 13)
     emit('LD C,A', [0x4f], 4)
+    if cached_byte:
+        emit('LD B,(IX+0)', [0xdd, 0x46, 0], 19)
     a.label('next')
     emit('EXX', [0xd9], 4)
     emit('LD A,(HL)', [0x7e], 7)

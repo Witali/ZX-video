@@ -201,7 +201,9 @@ def main(argv=None):
         help='cpu: every instruction and full images; fuse: also real disk timing; none: host roundtrip only')
     parser.add_argument('--fuse', type=Path, help='Fuse executable for --verify fuse')
     parser.add_argument('--verification-timeout', type=float, default=1800, help='Fuse timeout in seconds per disk')
+    parser.add_argument('--cached-huffman-byte', action='store_true', help='Cache current Huffman byte in B; requires --carry-huffman')
     args = parser.parse_args(argv)
+    if args.cached_huffman_byte and not args.carry_huffman: parser.error('--cached-huffman-byte requires --carry-huffman')
     try:
         if not args.input.is_file(): raise ValueError('input video file does not exist')
         if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}', args.prefix):
@@ -227,14 +229,15 @@ def main(argv=None):
     manifest = dict(source=str(source), source_sha256=source_hash, complete=False, release=False,
         video_fps='25/3', ay_hz=50, native_resolution=[256, 192], active_resolution=[256, 144],
         logical_resolution=[128, 96], disk_profile=args.disk_profile, executables=executables,
-        player_baseline='7152e10' if args.register_fragments else '0cf64be' if args.carry_huffman else '6e724f4' if args.static_cache_borders else '00fb0fd' if args.irq_safe_paging else '491db7b' if args.fast_noop_scan else '80ab9d9' if args.inline_matches else '00313d3',
-        player_hot_path_changed=args.inline_matches or args.fast_noop_scan or args.irq_safe_paging or args.static_cache_borders or args.carry_huffman or args.register_fragments,
-        player_hot_path_delta_tstates=None if args.inline_matches or args.fast_noop_scan or args.irq_safe_paging or args.static_cache_borders or args.carry_huffman or args.register_fragments else 0,
+        player_baseline='ab76fa1' if args.cached_huffman_byte else '7152e10' if args.register_fragments else '0cf64be' if args.carry_huffman else '6e724f4' if args.static_cache_borders else '00fb0fd' if args.irq_safe_paging else '491db7b' if args.fast_noop_scan else '80ab9d9' if args.inline_matches else '00313d3',
+        player_hot_path_changed=args.inline_matches or args.fast_noop_scan or args.irq_safe_paging or args.static_cache_borders or args.carry_huffman or args.register_fragments or args.cached_huffman_byte,
+        player_hot_path_delta_tstates=None if args.inline_matches or args.fast_noop_scan or args.irq_safe_paging or args.static_cache_borders or args.carry_huffman or args.register_fragments or args.cached_huffman_byte else 0,
         inline_matches=args.inline_matches,
         fast_noop_scan=args.fast_noop_scan,
         static_cache_borders=args.static_cache_borders,
         carry_huffman=args.carry_huffman,
         register_fragments=args.register_fragments,
+        cached_huffman_byte=args.cached_huffman_byte,
         irq_safe_paging=args.irq_safe_paging,
         startup_delta=args.startup_delta,
         timing_verified=False, verification=args.verify)
@@ -251,7 +254,7 @@ def main(argv=None):
         write_json(output/'codec.json', codec)
         builder = Builder(raw, states, Path(executables['zx0']), work/'zx0',
             fast_disk=fast, cached_seek=fast, interleaved=fast, inline_matches=args.inline_matches,
-            startup_delta=args.startup_delta,fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging,static_cache_borders=args.static_cache_borders,carry_huffman=args.carry_huffman,register_fragments=args.register_fragments)
+            startup_delta=args.startup_delta,fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging,static_cache_borders=args.static_cache_borders,carry_huffman=args.carry_huffman,register_fragments=args.register_fragments,cached_huffman_byte=args.cached_huffman_byte)
         ends = builder.automatic_ends(args.max_frames_per_disk)
         records = []
         start = 0

@@ -1,0 +1,409 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Rebuild standalone volumes with cached-byte decoding and identical ZX0 payloads.\n\nExecute cold boot and disk swaps with mocked ROM sector reads. This verifies\ncapacity and RAM restoration, not physical disk delivery or frame deadlines.\n",
+  "contract": {
+    "version": "standalone-cached-byte-1",
+    "ends": [
+      1624,
+      2921,
+      4221
+    ],
+    "options": {
+      "fast_disk": true,
+      "cached_seek": true,
+      "interleaved": true,
+      "deferred_limit": 248,
+      "keepalive_fields": 64,
+      "frame_service": true,
+      "cold_bitmaps": true,
+      "inline_matches": true,
+      "startup_delta": true,
+      "fast_noop_scan": true,
+      "irq_safe_paging": true,
+      "static_cache_borders": true,
+      "carry_huffman": true,
+      "register_fragments": true,
+      "cached_huffman_byte": true
+    },
+    "raw_sha256": [
+      "9404fc8b57b5445c88c3c877021c613be24f91cf777c3221ea08822d67c511b3",
+      "3b8f2efa8c88351a6f7d70de68dff4ce28fb1904b6293a09775f134808b26483",
+      "4590013f35618db7514e612736b5cea90af28791da900c58cd40367be25f4cfa"
+    ],
+    "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791"
+  },
+  "source_sha256": "70cda88dd06d253d82a0f6cf059ed8bae74a7258288b940d26027f4d22ac9cee",
+  "volumes": [
+    {
+      "part": 1,
+      "baseline_trd_sha256": "205eb131fc97f2310bdf321ae32b32fc3f5273c5a524a7b7abeb583e19e0baf4",
+      "baseline_used_sectors": 2543,
+      "used_sectors": 2543,
+      "free_sectors": 1,
+      "fits": true,
+      "trd_sha256": "2e1cb2a30372fe9a02c4d086a9c7c29c3fdd1dccb9be97ecc84e1d66e045eb90",
+      "raw_sha256": "9404fc8b57b5445c88c3c877021c613be24f91cf777c3221ea08822d67c511b3",
+      "video_bytes": 641005,
+      "stream_sha256": "5e0f1ca385418bb46e5646949b76cf534d29301a28eb62d3b8d11b7c14bff995",
+      "video_start_sector": 55,
+      "video_sectors": 2504,
+      "independently_bootable": true,
+      "compressed_stream_exact": true,
+      "cold_sections_exact": [
+        {
+          "bank": 6,
+          "address": 49152,
+          "bytes": 16384,
+          "sha256": "1979b8aea1b28908f5424d492359434afa3d6d89dcbc88d0c25e766f0e2213a8"
+        },
+        {
+          "bank": 2,
+          "address": 32768,
+          "bytes": 8192,
+          "sha256": "523c8d70c77cf60e95215577d8c5486cc773c6738d95a2a2eeebbe5bc5df11cc"
+        },
+        {
+          "bank": 7,
+          "address": 49152,
+          "bytes": 8192,
+          "sha256": "5592700f95ec639c0833b93fa9b3b5c6b6051565f746e73d3c5fd4147564679b"
+        },
+        {
+          "bank": 5,
+          "address": 16384,
+          "bytes": 6912,
+          "sha256": "b8a4084ca2e7d7b3fcbbc1a01c904f8894ffaa8b9840be0b7336c6611485e6b0"
+        },
+        {
+          "bank": 5,
+          "address": 25600,
+          "bytes": 7168,
+          "sha256": "b9c05eda0c3b7ad2ef3dc5e317c8920e712feaa431d0b81a144c9d5979f3eded"
+        }
+      ],
+      "mocked_boot_tstates": 2595786,
+      "reconstruction_bytes": 4024,
+      "sections": [
+        {
+          "bank": 6,
+          "address": 49152,
+          "buffer": 16384,
+          "sectors": 13,
+          "decoded_bytes": 16384,
+          "compressed_bytes": 3247,
+          "sha256": "1979b8aea1b28908f5424d492359434afa3d6d89dcbc88d0c25e766f0e2213a8",
+          "startup_delta": true,
+          "storage_sha256": "61776a76be08c5c710ac9bedf291f8b893ea9693669eb04923a9b0183b6faa91",
+          "baseline_compressed_bytes": 4523,
+          "restore_tstates": 541426,
+          "sector": 21
+        },
+        {
+          "bank": 2,
+          "address": 40960,
+          "buffer": 16384,
+          "sectors": 3,
+          "decoded_bytes": 8192,
+          "compressed_bytes": 580,
+          "sha256": "cc5321a4082cfe85b93a6b609c88cd5c86da79ac9df174f523326dff28f62ac0",
+          "sector": 34
+        },
+        {
+          "bank": 2,
+          "address": 32768,
+          "buffer": 42656,
+          "sectors": 10,
+          "decoded_bytes": 8192,
+          "compressed_bytes": 2482,
+          "sha256": "523c8d70c77cf60e95215577d8c5486cc773c6738d95a2a2eeebbe5bc5df11cc",
+          "sector": 37
+        },
+        {
+          "bank": 7,
+          "address": 49152,
+          "buffer": 42656,
+          "sectors": 3,
+          "decoded_bytes": 8192,
+          "compressed_bytes": 636,
+          "sha256": "5592700f95ec639c0833b93fa9b3b5c6b6051565f746e73d3c5fd4147564679b",
+          "sector": 47
+        },
+        {
+          "bank": 5,
+          "address": 16384,
+          "buffer": 42656,
+          "sectors": 1,
+          "decoded_bytes": 6912,
+          "compressed_bytes": 13,
+          "sha256": "b8a4084ca2e7d7b3fcbbc1a01c904f8894ffaa8b9840be0b7336c6611485e6b0",
+          "sector": 50
+        },
+        {
+          "bank": 5,
+          "address": 25600,
+          "buffer": 42656,
+          "sectors": 4,
+          "decoded_bytes": 7168,
+          "compressed_bytes": 880,
+          "sha256": "b9c05eda0c3b7ad2ef3dc5e317c8920e712feaa431d0b81a144c9d5979f3eded",
+          "sector": 51
+        }
+      ]
+    },
+    {
+      "part": 2,
+      "baseline_trd_sha256": "90129dd41465480ee7e430ca3aa57c191a65e38abe4c3edef8edf893febf9e55",
+      "baseline_used_sectors": 2544,
+      "used_sectors": 2544,
+      "free_sectors": 0,
+      "fits": true,
+      "trd_sha256": "a818390d2f2752d6814dc33e79905bb42e771ece278b9a8dac2b057b467675ca",
+      "raw_sha256": "3b8f2efa8c88351a6f7d70de68dff4ce28fb1904b6293a09775f134808b26483",
+      "video_bytes": 640198,
+      "stream_sha256": "052797f1fd5d2b4f15a911dcf749139d48f19747b8ae5193dd95c21e4d46eb32",
+      "video_start_sector": 59,
+      "video_sectors": 2501,
+      "independently_bootable": true,
+      "compressed_stream_exact": true,
+      "cold_sections_exact": [
+        {
+          "bank": 6,
+          "address": 49152,
+          "bytes": 16384,
+          "sha256": "eda1a179686ca953ea547768c21a5ff8d23d89fd836a6ed24b683be5ebc4f6de"
+        },
+        {
+          "bank": 2,
+          "address": 32768,
+          "bytes": 8192,
+          "sha256": "45bc5906eca4cb0b00d9aa799e5cf658300ad3ed16b89aa3b5f756138e210b98"
+        },
+        {
+          "bank": 7,
+          "address": 49152,
+          "bytes": 8192,
+          "sha256": "675584a5e9346ca751b613a16c3dae20ff8895380bb0e6d0d0264f5fb7b8c3ae"
+        },
+        {
+          "bank": 5,
+          "address": 16384,
+          "bytes": 6912,
+          "sha256": "7454ae2ba18df65d6f0b1d6aceaf26196e783eb84101a36aa3dfbd5c5f25e2fc"
+        },
+        {
+          "bank": 5,
+          "address": 25600,
+          "bytes": 7168,
+          "sha256": "f74912fd8414c1c2a6e46da200baaeedc905c724972065d75983da0d7a939ce4"
+        }
+      ],
+      "mocked_boot_tstates": 2745642,
+      "reconstruction_bytes": 4024,
+      "sections": [
+        {
+          "bank": 6,
+          "address": 49152,
+          "buffer": 16384,
+          "sectors": 13,
+          "decoded_bytes": 16384,
+          "compressed_bytes": 3207,
+          "sha256": "eda1a179686ca953ea547768c21a5ff8d23d89fd836a6ed24b683be5ebc4f6de",
+          "startup_delta": true,
+          "storage_sha256": "0a62a9691a2808a9d5a90d80a5debf8665d45db93b6d202314edd91e66074544",
+          "baseline_compressed_bytes": 4482,
+          "restore_tstates": 541426,
+          "sector": 21
+        },
+        {
+          "bank": 2,
+          "address": 40960,
+          "buffer": 16384,
+          "sectors": 3,
+          "decoded_bytes": 8192,
+          "compressed_bytes": 580,
+          "sha256": "1ad5c00a43cdabb3fd6d65e4c99965184cd5b2c06278561bc7d50290452ade45",
+          "sector": 34
+        },
+        {
+          "bank": 2,
+          "address": 32768,
+          "buffer": 42656,
+          "sectors": 10,
+          "decoded_bytes": 8192,
+          "compressed_bytes": 2482,
+          "sha256": "45bc5906eca4cb0b00d9aa799e5cf658300ad3ed16b89aa3b5f756138e210b98",
+          "sector": 37
+        },
+        {
+          "bank": 7,
+          "address": 49152,
+          "buffer": 42656,
+          "sectors": 3,
+          "decoded_bytes": 8192,
+          "compressed_bytes": 741,
+          "sha256": "675584a5e9346ca751b613a16c3dae20ff8895380bb0e6d0d0264f5fb7b8c3ae",
+          "sector": 47
+        },
+        {
+          "bank": 5,
+          "address": 16384,
+          "buffer": 42656,
+          "sectors": 1,
+          "decoded_bytes": 6912,
+          "compressed_bytes": 100,
+          "sha256": "7454ae2ba18df65d6f0b1d6aceaf26196e783eb84101a36aa3dfbd5c5f25e2fc",
+          "sector": 50
+        },
+        {
+          "bank": 5,
+          "address": 25600,
+          "buffer": 42656,
+          "sectors": 8,
+          "decoded_bytes": 7168,
+          "compressed_bytes": 1850,
+          "sha256": "f74912fd8414c1c2a6e46da200baaeedc905c724972065d75983da0d7a939ce4",
+          "sector": 51
+        }
+      ]
+    },
+    {
+      "part": 3,
+      "baseline_trd_sha256": "e5b213b46885ed0822d11ff113904d2f38fbb2656da409e0c88511e347d74d97",
+      "baseline_used_sectors": 2543,
+      "used_sectors": 2543,
+      "free_sectors": 1,
+      "fits": true,
+      "trd_sha256": "2306b7daac78a710d3d2297759255de294d771dc0c0be41a49aed80824b6602b",
+      "raw_sha256": "4590013f35618db7514e612736b5cea90af28791da900c58cd40367be25f4cfa",
+      "video_bytes": 638742,
+      "stream_sha256": "5e13de6a25cd203743fb20d952f8f04b072234a246967236111f8cbc7fd9c1ef",
+      "video_start_sector": 62,
+      "video_sectors": 2496,
+      "independently_bootable": true,
+      "compressed_stream_exact": true,
+      "cold_sections_exact": [
+        {
+          "bank": 6,
+          "address": 49152,
+          "bytes": 16384,
+          "sha256": "3321d0623eb9870ff126303109693e21b88efcc26193b82c82ead8d3eb5252a4"
+        },
+        {
+          "bank": 2,
+          "address": 32768,
+          "bytes": 8192,
+          "sha256": "f1a424df3410a6b998b6a5ccab619ea21ad129fd37c7f89611873b40c3bfdf9b"
+        },
+        {
+          "bank": 7,
+          "address": 49152,
+          "bytes": 8192,
+          "sha256": "73011b7e8e5df7a884e2186a04f4b462586f195e338fdf13748e13ef35a96192"
+        },
+        {
+          "bank": 5,
+          "address": 16384,
+          "bytes": 6912,
+          "sha256": "fa4b5962c4d5c313167f017b341a762b73e9016d8f80654611cf74ef9b8aacc5"
+        },
+        {
+          "bank": 5,
+          "address": 25600,
+          "bytes": 7168,
+          "sha256": "d657ffbc49e52402865eaf1fbd4d94e45efb4ed0a735ac7b971bf594f724cd0a"
+        }
+      ],
+      "mocked_boot_tstates": 2845625,
+      "reconstruction_bytes": 4024,
+      "sections": [
+        {
+          "bank": 6,
+          "address": 49152,
+          "buffer": 16384,
+          "sectors": 13,
+          "decoded_bytes": 16384,
+          "compressed_bytes": 3210,
+          "sha256": "3321d0623eb9870ff126303109693e21b88efcc26193b82c82ead8d3eb5252a4",
+          "startup_delta": true,
+          "storage_sha256": "14ab9fc8e8c28044758b45bfa7a3f701c79025d09d6690b700b2f5b5bb36e1a8",
+          "baseline_compressed_bytes": 4490,
+          "restore_tstates": 541426,
+          "sector": 21
+        },
+        {
+          "bank": 2,
+          "address": 40960,
+          "buffer": 16384,
+          "sectors": 3,
+          "decoded_bytes": 8192,
+          "compressed_bytes": 580,
+          "sha256": "4630038e7000830495a0ee5d9349f6bee63c4e3e1d607b6f946349f67c233683",
+          "sector": 34
+        },
+        {
+          "bank": 2,
+          "address": 32768,
+          "buffer": 42656,
+          "sectors": 10,
+          "decoded_bytes": 8192,
+          "compressed_bytes": 2482,
+          "sha256": "f1a424df3410a6b998b6a5ccab619ea21ad129fd37c7f89611873b40c3bfdf9b",
+          "sector": 37
+        },
+        {
+          "bank": 7,
+          "address": 49152,
+          "buffer": 42656,
+          "sectors": 4,
+          "decoded_bytes": 8192,
+          "compressed_bytes": 812,
+          "sha256": "73011b7e8e5df7a884e2186a04f4b462586f195e338fdf13748e13ef35a96192",
+          "sector": 47
+        },
+        {
+          "bank": 5,
+          "address": 16384,
+          "buffer": 42656,
+          "sectors": 1,
+          "decoded_bytes": 6912,
+          "compressed_bytes": 179,
+          "sha256": "fa4b5962c4d5c313167f017b341a762b73e9016d8f80654611cf74ef9b8aacc5",
+          "sector": 51
+        },
+        {
+          "bank": 5,
+          "address": 25600,
+          "buffer": 42656,
+          "sectors": 10,
+          "decoded_bytes": 7168,
+          "compressed_bytes": 2351,
+          "sha256": "d657ffbc49e52402865eaf1fbd4d94e45efb4ed0a735ac7b971bf594f724cd0a",
+          "sector": 52
+        }
+      ]
+    }
+  ],
+  "mocked_rom_swaps": [
+    {
+      "from_part": 1,
+      "to_part": 2,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    },
+    {
+      "from_part": 2,
+      "to_part": 3,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    }
+  ]
+}

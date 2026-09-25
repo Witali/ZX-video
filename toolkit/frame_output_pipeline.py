@@ -181,7 +181,7 @@ class PipelineCPU(NativeCPU):
 class Harness:
     def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False,
                  constant_attribute_borders=False,skip_black_borders=False,encoded_noop_runs=False,skip_static_stripes=False,
-                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,sparse_patches=False,fast_noop_scan=False,static_cache_borders=False,carry_huffman=False,register_fragments=False,metadata_mode='standard'):
+                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,sparse_patches=False,fast_noop_scan=False,static_cache_borders=False,carry_huffman=False,register_fragments=False,metadata_mode='standard',cached_huffman_byte=False):
         if metadata_mode not in ('standard','compiled','idle') or metadata_mode != 'standard' and not decode_metadata:
             raise ValueError('metadata mode requires a matching decoded-metadata stage')
         self.metadata_mode = metadata_mode
@@ -210,7 +210,7 @@ class Harness:
             selective_cache=selective_cache,skip_noop_runs=skip_noop_runs,encoded_noop_runs=encoded_noop_runs,
             skip_static_stripes=skip_static_stripes,cache_columns=cache_columns,unrolled_cache=unrolled_cache,
             attribute_flags=attribute_flags,sparse_patches=sparse_patches,fast_noop_scan=fast_noop_scan,static_cache_borders=static_cache_borders,carry_huffman=carry_huffman,register_fragments=register_fragments,
-            idle_stripe_flags=metadata_mode == 'idle')
+            idle_stripe_flags=metadata_mode == 'idle',cached_huffman_byte=cached_huffman_byte)
         if self.recon['end'] > output.CODE:
             raise ValueError('reconstruction overlaps native renderer')
         ai=[]; ar=[]; attribute_entry=None

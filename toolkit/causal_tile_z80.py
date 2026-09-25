@@ -212,7 +212,9 @@ def patch_delta_tstates(vectors, masks):
         for v, b, c in zip(vectors, masks[::2], masks[1::2]) if v <= 81 and (b or c))
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False, fast_noop_scan=False, static_cache_borders=False,carry_huffman=False,register_fragments=False,idle_stripe_flags=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False, fast_noop_scan=False, static_cache_borders=False,carry_huffman=False,register_fragments=False,idle_stripe_flags=False,cached_huffman_byte=False):
+    if cached_huffman_byte and (not carry_huffman or not split_literals or raw_intra or raw_kind is not None):
+        raise ValueError('cached Huffman byte requires carry and a separate literal channel')
     if idle_stripe_flags and not skip_static_stripes:
         raise ValueError('idle flags require the static stripe handler')
     if register_fragments and not fast_fragments:
@@ -253,7 +255,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         raise ValueError('raw direct/XOR patches require hybrid and empty-half skips')
     if len(offsets) != 81 or offsets[0] != (0, 0) or set(offsets) != {(x, y) for x in range(-4, 5) for y in range(-4, 5)}:
         raise ValueError('expected the complete +/-4 motion alphabet')
-    original, labels, instructions, layout = prefix.build(tables, mapping,carry_huffman=carry_huffman)
+    original, labels, instructions, layout = prefix.build(tables, mapping,carry_huffman=carry_huffman,cached_byte=cached_huffman_byte)
     bit_base=0xf8 if carry_huffman else 0xf0
     end = labels['primitive_end']
     a = MiniAssembler(CODE)
@@ -325,7 +327,10 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     a.label('frame')
     load('LD IX,(source)', (0xdd, 0x2a), 'source', 20)
     load('LD A,(bit_page)', 0x3a, 'bit_page', 13)
-    emit('EXX', [0xd9], 4); emit('LD C,A', [0x4f], 4); emit('EXX', [0xd9], 4)
+    emit('EXX', [0xd9], 4); emit('LD C,A', [0x4f], 4)
+    if cached_huffman_byte:
+        emit('LD B,(IX+0) (cache input)', [0xdd, 0x46, 0], 19)
+    emit('EXX', [0xd9], 4)
     wordop('LD HL,compact_frame', 0x21, FRAME, 10); load('LD (target),HL', 0x22, 'target', 16)
     if not hybrid:
         wordop('LD HL,attributes', 0x21, FRAME+3072, 10); load('LD (attr_target),HL', 0x22, 'attr_target', 16)
