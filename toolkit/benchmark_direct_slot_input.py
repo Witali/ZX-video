@@ -32,8 +32,8 @@ class ProducerCPU(ShortReadCPU):
 
 
 class Harness:
-    def __init__(self,image,first,sectors):
-        self.decoder=Decoder(dynamic_input=True)
+    def __init__(self,image,first,sectors,*,inline_literals=False):
+        self.decoder=Decoder(dynamic_input=True,inline_literals=inline_literals)
         old=self.decoder.cpu
         cpu=self.cpu=ProducerCPU(b'',image);cpu.__dict__.update(old.__dict__)
         cpu.trd=image;cpu.iy=0;cpu.poison_rom=True;cpu.reads=[];cpu.short_once=False

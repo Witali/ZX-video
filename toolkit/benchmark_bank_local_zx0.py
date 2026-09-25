@@ -53,9 +53,10 @@ class GuardCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, *, dynamic_input=False):
+    def __init__(self, *, dynamic_input=False, inline_literals=False):
         self.dynamic_input=dynamic_input
-        self.code, self.labels = machine.build(dynamic_input=dynamic_input)
+        self.inline_literals=inline_literals
+        self.code, self.labels = machine.build(dynamic_input=dynamic_input,inline_literals=inline_literals)
         cpu = self.cpu = GuardCPU(b'', b'')
         cpu.labels = self.labels
         cpu.patched = {self.labels[n] for n in ('slice_high_operand', 'slice_low_operand',
@@ -65,6 +66,7 @@ class Harness:
         for i, value in enumerate(self.code): cpu.write8(machine.CODE+i, value)
 
     def begin(self, payload, expected, *, slot=1, screen_bit=0, stored=False,input_offset=0,preloaded=False):
+        if stored and self.inline_literals: raise ValueError('inline literals accept ZX0 blocks only')
         if not 1 <= len(payload) <= 8192 or not 1 <= len(expected) <= 8192:
             raise ValueError('block exceeds the half-bank slot')
         if not 0<=input_offset<=8192-len(payload) or input_offset and not self.dynamic_input:

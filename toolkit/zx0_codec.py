@@ -63,7 +63,7 @@ def decompress(data: bytes, limit: int = 8192, *, on_match=None, on_literals=Non
         mode = 'offset' if bit() else 'literal'
 
 
-def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, source_wrap=None, source_page_wrap=None, label_prefix="", inline_match=None):
+def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, source_wrap=None, source_page_wrap=None, label_prefix="", inline_match=None, inline_literal=None):
     if variant not in ("standard", "turbo"):
         raise ValueError(variant)
     if copy_hook and variant != 'turbo': raise ValueError('suspension requires turbo')
@@ -72,6 +72,8 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
     if (literal_hook or source_wrap or source_page_wrap) and not copy_hook:
         raise ValueError('input paging requires the bounded turbo copier')
     if inline_match and not copy_hook: raise ValueError('inline match requires a bounded copy hook')
+    if inline_literal and (not copy_hook or literal_hook or source_wrap or source_page_wrap):
+        raise ValueError('inline literals require a bounded copier with contiguous input')
     source = Path(__file__).parent / 'third_party/zx0' / f'dzx0_{variant}.asm'
     start = a.pc
     simple = {
@@ -90,7 +92,9 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
         if label_prefix:line=line.replace("dzx0",label_prefix+"dzx0")
         if line == 'ldir' and copy_hook:
             if not copy_index and inline_match:
-                before=a.pc; inline_match(a); inline_delta=a.pc-before-3
+                before=a.pc; inline_match(a); inline_delta+=a.pc-before-3
+            elif copy_index and inline_literal:
+                before=a.pc; inline_literal(a); inline_delta+=a.pc-before-3
             else: a.abs16(0xCD,literal_hook if copy_index and literal_hook else copy_hook)
             copy_index+=1;continue
         if line == 'inc hl' and source_wrap:

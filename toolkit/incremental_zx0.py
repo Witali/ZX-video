@@ -2,6 +2,8 @@
 
 The compressed stream and the 8 KiB history buffer are unchanged. Only LDIR
 sites in the turbo decoder call a bounded copier. HL' belongs to the IM2 clock.
+inline_literals=True moves the literal copier into the ZX0 path and omits
+the stored-block dispatch. Use only with a producer that supplies ZX0 blocks.
 """
 import zx0_codec
 
@@ -51,7 +53,9 @@ def emit_wait(a, *, lookahead=False, output_base=0x8000, direct_input=False, aud
     a.label('slice_frame_valid');a.abs16(0xC3,'ahead_decode' if lookahead else 'slice_until')
 
 
-def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False, wrap_output=False, source_page_wrap=None, literal_hook=None, token_boundaries=False, inline_matches=False, input_pointer_label=None):
+def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False, wrap_output=False, source_page_wrap=None, literal_hook=None, token_boundaries=False, inline_matches=False, input_pointer_label=None, inline_literals=False):
+    if inline_literals and (token_boundaries is not True or not inline_matches or literal_hook or source_page_wrap):
+        raise ValueError('inline literals require inline matches, token boundaries and contiguous input')
     if input_pointer_label is not None and direct_input:
         raise ValueError('choose one dynamic input pointer contract')
     if token_boundaries not in (False,True,'decrement'):
@@ -91,15 +95,21 @@ def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TO
     elif input_pointer_label is not None:a.abs16(0x2A,input_pointer_label)
     else:a.emit(0x21);a.word(input_base)
     a.emit(0x11);a.word(output_base)
-    a.abs16(0x3A,'block_stored');a.emit(0xB7)
-    if wrapped_input:
-        a.rel8(0x20,'slice_stored')
-        a.abs16(0x3A,'direct_cross');a.emit(0xB7);a.abs16(0xC2,'wrap_dzx0_turbo')
-        a.abs16(0xC3,'dzx0_turbo')
-        a.label('slice_stored')
-    else:a.abs16(0xCA,'dzx0_turbo')
-    a.abs16((0xED,0x4B),'block_length');a.abs16(0xCD,'wrapped_literal' if wrapped_input else literal_hook or 'slice_copy')
-    a.emit(0xC9)
+    if inline_literals:
+        # This optional local-bank producer accepts ZX0 blocks only. Moving
+        # the one literal copier into the decoder removes CALL/RET without
+        # duplicating the body. The general stored-block path stays unchanged.
+        a.abs16(0xc3,'dzx0_turbo')
+    else:
+        a.abs16(0x3A,'block_stored');a.emit(0xB7)
+        if wrapped_input:
+            a.rel8(0x20,'slice_stored')
+            a.abs16(0x3A,'direct_cross');a.emit(0xB7);a.abs16(0xC2,'wrap_dzx0_turbo')
+            a.abs16(0xC3,'dzx0_turbo')
+            a.label('slice_stored')
+        else:a.abs16(0xCA,'dzx0_turbo')
+        a.abs16((0xED,0x4B),'block_length');a.abs16(0xCD,'wrapped_literal' if wrapped_input else literal_hook or 'slice_copy')
+        a.emit(0xC9)
 
     a.label('slice_finished')
     a.abs16(0x2A,'block_end');a.emit(0xB7,0xED,0x52)
@@ -117,8 +127,8 @@ def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TO
     if direct_input:a.abs16(0xC3,'page_bank7')
     else:a.emit(0xC9)
 
-    a.label('slice_copy')
-    if token_boundaries:
+    def literal_copy(a):
+        a.label('slice_copy')
         # Pause before a new copy, once the preceding token met the target.
         # A wrapped target uses FFFF and permits equality, so the final
         # byte and EOF still run. Normal targets pause on equality.
@@ -131,8 +141,12 @@ def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TO
         a.label('slice_equal_branch');a.rel8(0x28 if token_boundaries=='decrement' else 0x38,'slice_copy_fast')
         a.label('slice_copy_slow');a.emit(0x08)
         a.abs16(0xcd,'slice_yield');a.abs16(0xc3,'slice_copy')
-        a.label('slice_copy_fast');a.emit(0x08,0xed,0xb0,0xc9)
-    else:
+        a.label('slice_copy_fast');a.emit(0x08,0xed,0xb0)
+        if not inline_literals:a.emit(0xc9)
+    if token_boundaries and not inline_literals:
+        literal_copy(a)
+    elif not token_boundaries:
+        a.label('slice_copy')
         emit_exact_copy(a,wrap_output=wrap_output)
     a.label('slice_sync_target')
     a.abs16(0x2A,'slice_target')
@@ -151,8 +165,6 @@ def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TO
     a.emit(0x7D);a.abs16(0x32,'slice_low_operand')
     if inline_matches: a.abs16(0x32,'match_low_operand')
     a.emit(0xC9)
-    a.labels['slice_high_operand']=a.labels['slice_compare_high']+1
-    a.labels['slice_low_operand']=a.labels['slice_compare_low']+1
     def inline_copy(assembler):
         # Same pause contract as slice_copy; fall through to POP HL instead
         # of returning through a CALL/RET for each match. Both sets of target
@@ -170,7 +182,10 @@ def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TO
         assembler.labels['match_high_operand']=assembler.labels['match_compare_high']+1
         assembler.labels['match_low_operand']=assembler.labels['match_compare_low']+1
     zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook=literal_hook,source_page_wrap=source_page_wrap,
-        inline_match=inline_copy if inline_matches else None)
+        inline_match=inline_copy if inline_matches else None,
+        inline_literal=literal_copy if inline_literals else None)
+    a.labels['slice_high_operand']=a.labels['slice_compare_high']+1
+    a.labels['slice_low_operand']=a.labels['slice_compare_low']+1
     if wrapped_input:
         zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook='wrapped_literal',
                               source_wrap='direct_wrap',label_prefix='wrap_')

@@ -18,7 +18,7 @@ import pipelined_frame_z80 as video
 import bulk_frame_z80 as packet
 
 
-def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False,partial_consumption=False,cached_huffman_byte=False):
+def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False,partial_consumption=False,cached_huffman_byte=False,inline_literals=False):
     if idle_masks and not compiled_masks:
         raise ValueError('idle stripes require compiled metadata')
     if compiled_masks and uncontended:
@@ -41,7 +41,11 @@ def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False
         'static_cache_borders','carry_huffman','register_fragments')}
     options['cached_huffman_byte']=cached_in_bootstrap
     h=player_harness(bytes(4),tables,mapping,m['frames'],**options)
-    zcode,z=local.build(dynamic_input=True)
+    zcode,z=local.build(dynamic_input=True,inline_literals=inline_literals)
+    if inline_literals:
+        m['inline_literals']=dict(code_sha256=sha(zcode),code_bytes=len(zcode),labels=z,
+            zx0_only=True,literal_delta_tstates=-27,block_begin_delta_tstates=-17,
+            compressed_stream_delta_bytes=0,code_growth_bytes=-16)
     dcode,d,drows=disk.build_disk(m['video_start_sector'],m['video_sectors'],
         fast_disk=True,cached_seek=True,interleaved=True)
     scode,seek,srows=disk.build_cached_seek(d)
