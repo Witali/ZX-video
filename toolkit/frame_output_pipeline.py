@@ -39,7 +39,7 @@ def display_screen(state, *, black_borders=False):
 
 
 def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False, dynamic_source=False, dynamic_metadata=False,
-            split_prepare=False,preloaded_mask=False,attribute_group_entry=None):
+            split_prepare=False,preloaded_mask=False,attribute_group_entry=None,carry_huffman=False):
     if split_prepare and not deferred_publish:
         raise ValueError('split preparation requires deferred publication')
     if preloaded_mask and not (split_prepare and dynamic_metadata):
@@ -64,7 +64,7 @@ def wrapper(recon, draw, *, origin=WRAPPER, deferred_publish=False, dynamic_sour
     listing.append(dict(address=a.pc, instruction='LD HL,(literal_pointer)', tstates=16, stage='handoff'))
     a.abs16(0x2a, 'literal_pointer')
     address('LD (literal_source),HL', 0x22, recon['literal_source'], 16)
-    emit('LD A,F0h', [0x3e, 0xf0], 7); store_a(recon['bit_page'])
+    emit('LD A,bit_base', [0x3e, 0xf8 if carry_huffman else 0xf0], 7); store_a(recon['bit_page'])
     listing.append(dict(address=a.pc, instruction='LD A,(cache_flag)', tstates=13, stage='handoff'))
     a.abs16(0x3a, 'cache_flag'); store_a(recon['cache_enabled'])
     if 'raw_attributes' in recon:
@@ -171,7 +171,7 @@ class PipelineCPU(NativeCPU):
 class Harness:
     def __init__(self, tables, mapping, *, raw_attributes=False, decode_metadata=False, fast_mask_dispatch=False, selective_cache=False, deferred_publish=False, dynamic_source=False, dynamic_metadata=False, skip_noop_runs=False,
                  constant_attribute_borders=False,skip_black_borders=False,encoded_noop_runs=False,skip_static_stripes=False,
-                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,sparse_patches=False,fast_noop_scan=False,static_cache_borders=False):
+                 split_prepare=False,page_entry=None,preloaded_mask=False,cache_columns=32,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,sparse_patches=False,fast_noop_scan=False,static_cache_borders=False,carry_huffman=False):
         if fast_noop_scan and BITMAP % 2:
             raise ValueError('fast scanner requires even bitmap-mask addresses')
         if attribute_flags and not (decode_metadata and raw_attributes):
@@ -196,7 +196,7 @@ class Harness:
             fast_fragments=True, unrolled_motion=True, split_literals=True, raw_attributes=raw_attributes,
             selective_cache=selective_cache,skip_noop_runs=skip_noop_runs,encoded_noop_runs=encoded_noop_runs,
             skip_static_stripes=skip_static_stripes,cache_columns=cache_columns,unrolled_cache=unrolled_cache,
-            attribute_flags=attribute_flags,sparse_patches=sparse_patches,fast_noop_scan=fast_noop_scan,static_cache_borders=static_cache_borders)
+            attribute_flags=attribute_flags,sparse_patches=sparse_patches,fast_noop_scan=fast_noop_scan,static_cache_borders=static_cache_borders,carry_huffman=carry_huffman)
         if self.recon['end'] > output.CODE:
             raise ValueError('reconstruction overlaps native renderer')
         ai=[]; ar=[]; attribute_entry=None
@@ -215,7 +215,7 @@ class Harness:
         self.wrapper_code, self.w, wi = wrapper(self.recon, self.draw, origin=0x7900 if selective_cache else WRAPPER,
                                                deferred_publish=deferred_publish,dynamic_source=dynamic_source,
                                                dynamic_metadata=dynamic_metadata,split_prepare=split_prepare,preloaded_mask=preloaded_mask,
-                                               attribute_group_entry=attribute_entry)
+                                               attribute_group_entry=attribute_entry,carry_huffman=carry_huffman)
         self.init_code, ii = initializer(self.draw,constant_attribute_borders=constant_attribute_borders)
         self.cpu = PipelineCPU(b'', b'')
         self.cpu.target_bank = None  # A saved map may precede the first native draw.

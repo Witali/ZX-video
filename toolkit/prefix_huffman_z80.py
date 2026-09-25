@@ -12,6 +12,13 @@ affect a complete valid code (short roots replicate every unused suffix).
 Returns the decoded byte
 in A and updated IX/C. The wrapper saves IX/C between <=32-value calls.
 This machine primitive is not a complete streamed player.
+
+carry_huffman=True represents bit positions as F8..FF; ADD sets carry
+exactly when a short code crosses a byte, removing BIT 3,A. Shift pages
+are unchanged (also used by motion); peek reads right then left. The eight
+marker bytes move to BAF8 and positions at BB00 use the new representation.
+single_byte=True is a separate rejected speed experiment retained for
+reproduction: a speculative prefix avoids a read but penalizes crossings.
 """
 from build_zxv_trd import MiniAssembler
 from probe_motion_entropy import codes_for
@@ -19,7 +26,8 @@ from probe_motion_entropy import codes_for
 CODE, TABLE, MAP, TAILS, MARKERS, POSITIONS = 0x8000, 0xc000, 0xb900, 0xba00, 0xbaf0, 0xbb00
 
 
-def prepare(tables, mapping):
+def prepare(tables, mapping, *, single_byte=False,carry_huffman=False):
+    if single_byte and carry_huffman: raise ValueError('Huffman experiments are mutually exclusive')
     if len(mapping) != 256 or not 2 <= len(tables) <= 24 or max(mapping) >= len(tables)-1:
         raise ValueError('invalid context map/count')
     depth = max(max(t) for t in tables)
@@ -43,7 +51,10 @@ def prepare(tables, mapping):
                 if rank < 0:
                     raise AssertionError('unfilled short-code entry')
             values[prefix] = rank
-        root_data += values+sizes
+        # Speculative single-byte lookup: F7-length compares directly with
+        # C=F0+offset. Carry means that the leaf needs another byte. Long
+        # entries stay zero and therefore always select the full peek.
+        root_data += values+(bytes(0xf7-n if n else 0 for n in sizes) if single_byte else sizes)
         counts.append(TABLE+len(tables)*512+len(tail_data))
         cumulative = 0
         for n in range(9, depth+1):
@@ -62,16 +73,18 @@ def prepare(tables, mapping):
     data += b''.join(bytes((v << r) & 255 for v in range(256)) for r in range(8))
     data += b''.join(bytes(v >> (8-r) for v in range(256)) for r in range(8))
     marker = bytes([0]+[1 << (r-1) for r in range(1, 8)])
-    positions = bytes(0xf8 if not b else 0xf0 if b == 128 else 0xf1+((b & -b).bit_length()-1) for b in range(256))
+    bit_base=0xf8 if carry_huffman else 0xf0
+    positions = bytes((0xf0 if carry_huffman else 0xf8) if not b else bit_base if b == 128 else bit_base+1+((b & -b).bit_length()-1) for b in range(256))
     regions = [(TABLE, bytes(data)), (MAP, bytes(0xc0+2*c for c in mapping)),
                (TAILS, b''.join(p.to_bytes(2, 'little') for p in counts)),
-               (MARKERS, marker), (POSITIONS, positions)]
+               (MARKERS+8*carry_huffman, marker), (POSITIONS, positions)]
     return dict(depth=depth, regions=regions, body_bytes=body_bytes,
                 counts=counts, symbols=symbols, indices=indices)
 
 
-def build(tables, mapping):
-    layout = prepare(tables, mapping)
+def build(tables, mapping, *, single_byte=False,carry_huffman=False):
+    layout = prepare(tables, mapping,single_byte=single_byte,carry_huffman=carry_huffman)
+    bit_base=0xf8 if carry_huffman else 0xf0
     a, listing = MiniAssembler(CODE), []
 
     def emit(name, data, ticks):
@@ -90,11 +103,33 @@ def build(tables, mapping):
     emit('LD D,(HL)', [0x56], 7)
     a.label('peek')
     emit('LD H,C', [0x61], 4)
-    emit('LD L,(IX+0)', [0xdd, 0x6e, 0], 19)
+    emit('LD L,(IX+1)' if carry_huffman else 'LD L,(IX+0)', [0xdd, 0x6e, int(carry_huffman)], 19)
     emit('LD A,(HL)', [0x7e], 7)
-    emit('SET 3,H', [0xcb, 0xdc], 8)
-    emit('LD L,(IX+1)', [0xdd, 0x6e, 1], 19)
-    emit('OR (HL)', [0xb6], 7)
+    if single_byte:
+        emit('LD L,A', [0x6f], 4)
+        emit('LD H,D', [0x62], 4)
+        emit('INC H', [0x24], 4)
+        emit('LD A,(HL)', [0x7e], 7)
+        emit('CP C', [0xb9], 4)
+        jump('JR C,full_peek', 0x38, 'full_peek', [7,12], True)
+        # r+length <= 7, so IX does not advance. ~size = 8+length.
+        emit('CPL', [0x2f], 4)
+        emit('ADD A,C', [0x81], 4)
+        emit('AND F7h', [0xe6,0xf7], 7)
+        emit('LD C,A', [0x4f], 4)
+        emit('DEC H', [0x25], 4)
+        emit('LD A,(HL)', [0x7e], 7)
+        emit('RET', [0xc9], 10)
+        a.label('full_peek')
+        emit('LD B,L', [0x45], 4)
+        emit('LD H,C', [0x61], 4)
+    emit('RES 3,H' if carry_huffman else 'SET 3,H', [0xcb, 0x9c if carry_huffman else 0xdc], 8)
+    emit('LD L,(IX+0)' if carry_huffman else 'LD L,(IX+1)', [0xdd, 0x6e, 0 if carry_huffman else 1], 19)
+    if single_byte:
+        emit('LD A,(HL)', [0x7e], 7)
+        emit('OR B', [0xb0], 4)
+    else:
+        emit('OR (HL)', [0xb6], 7)
     emit('LD L,A', [0x6f], 4)
     emit('LD H,D', [0x62], 4)
     emit('LD E,(HL)', [0x5e], 7)
@@ -102,12 +137,15 @@ def build(tables, mapping):
     emit('LD A,(HL)', [0x7e], 7)
     emit('OR A', [0xb7], 4)
     jump('JR Z,long', 0x28, 'long', [7, 12], True)
+    if single_byte:
+        emit('CPL', [0x2f], 4)
+        emit('SUB 8', [0xd6,8], 7)
     emit('ADD A,C', [0x81], 4)
-    emit('BIT 3,A', [0xcb, 0x5f], 8)
-    jump('JR Z,short_position', 0x28, 'short_position', [7, 12], True)
+    if not carry_huffman: emit('BIT 3,A', [0xcb, 0x5f], 8)
+    jump('JR NC,short_position' if carry_huffman else 'JR Z,short_position', 0x30 if carry_huffman else 0x28, 'short_position', [7, 12], True)
     emit('INC IX', [0xdd, 0x23], 10)
     a.label('short_position')
-    emit('AND F7h', [0xe6, 0xf7], 7)
+    emit('OR F8h' if carry_huffman else 'AND F7h', [0xf6,0xf8] if carry_huffman else [0xe6,0xf7], 7)
     emit('LD C,A', [0x4f], 4)
     emit('LD A,E', [0x7b], 4)
     emit('RET', [0xc9], 10)
@@ -116,9 +154,11 @@ def build(tables, mapping):
     emit('LD B,E', [0x43], 4)
     emit('PUSH BC', [0xc5], 11)  # Saved rank in high byte, bit page in low.
     emit('LD A,C', [0x79], 4)
-    emit('CP F0h', [0xfe, 0xf0], 7)
+    emit('CP bit_base', [0xfe, bit_base], 7)
     jump('JR Z,aligned', 0x28, 'aligned', [7, 12], True)
     emit('LD H,C', [0x61], 4)
+    if carry_huffman:
+        a.label('long_shift_page');emit('RES 3,H (long offset)',[0xcb,0x9c],8)
     emit('LD L,(IX+0)', [0xdd, 0x6e, 0], 19)
     emit('LD A,(HL)', [0x7e], 7)
     emit('LD E,A', [0x5f], 4)
@@ -174,7 +214,7 @@ def build(tables, mapping):
     emit('LD H,position_page', [0x26, POSITIONS >> 8], 7)
     emit('LD C,(HL)', [0x4e], 7)
     emit('LD A,C', [0x79], 4)
-    emit('CP F0h', [0xfe, 0xf0], 7)
+    emit('CP bit_base', [0xfe, bit_base], 7)
     jump('JR Z,position_ready', 0x28, 'position_ready', [7, 12], True)
     emit('DEC IX', [0xdd, 0x2b], 10)
     a.label('position_ready')
@@ -213,6 +253,6 @@ def build(tables, mapping):
     jump('LD (bit_page),A', 0x32, 'bit_page', 13)
     emit('RET', [0xc9], 10)
     a.label('state'); a.label('source'); a.word(0)
-    a.label('bit_page'); a.emit(0xf0)
+    a.label('bit_page'); a.emit(bit_base)
     a.label('end')
     return a.resolve(), dict(a.labels), listing, layout

@@ -29,9 +29,12 @@ PAIRS = 0xa000
 
 
 class Harness:
-    def __init__(self, tables, mapping):
+    def __init__(self, tables, mapping, *, single_byte=False,carry_huffman=False):
         self.tables, self.mapping = tables, mapping
-        self.code, self.labels, self.listing, self.layout = machine.build(tables, mapping)
+        self.single_byte=single_byte
+        self.carry_huffman=carry_huffman
+        self.bit_base=0xf8 if carry_huffman else 0xf0
+        self.code, self.labels, self.listing, self.layout = machine.build(tables, mapping,single_byte=single_byte,carry_huffman=carry_huffman)
         self.regions = self.layout['regions']
         self.cpu = GuardCPU(b'', b'')
         self.cpu.sp, self.cpu.port_7ffd = STACK, 0x16
@@ -50,11 +53,11 @@ class Harness:
             self.cpu.write8(INPUT+i, value)
         self.cpu.input_end = INPUT+len(encoded)+1
         word(self.cpu, self.labels['source'], INPUT)
-        self.cpu.write8(self.labels['bit_page'], 0xf0)
+        self.cpu.write8(self.labels['bit_page'], self.bit_base)
 
     def position(self):
         page = self.cpu.read8(self.labels['bit_page'])
-        if not 0xf0 <= page <= 0xf7:
+        if not self.bit_base <= page <= self.bit_base+7:
             raise AssertionError('invalid saved bit position')
         return 8*(word(self.cpu, self.labels['source'])-INPUT)+(page & 7)
 
@@ -68,12 +71,16 @@ class Harness:
             start, end = (position+bits) % 8, (position+bits+length) % 8
             if length <= 8:
                 result += 168+5*int(start+length >= 8)-attribute
+                if self.single_byte: result += -50 if start+length<=7 else 58
+                if self.carry_huffman: result -= 8
                 short += 1
             else:
                 available = 8-start if start else 0
                 refills = (max(0, length-8-available)+7)//8
                 carry = (self.layout['symbols'][context] & 255)+self.layout['indices'][context][value] > 255
                 result += 420+53*(length-9)+32*refills-int(carry)+70*int(start > 0)+5*int(end > 0)-attribute
+                if self.single_byte: result += 47
+                if self.carry_huffman: result += 8*int(start>0)
             bits += length
         return result, bits, short
 

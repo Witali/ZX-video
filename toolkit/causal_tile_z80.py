@@ -209,7 +209,7 @@ def patch_delta_tstates(vectors, masks):
         for v, b, c in zip(vectors, masks[::2], masks[1::2]) if v <= 81 and (b or c))
 
 
-def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False, fast_noop_scan=False, static_cache_borders=False):
+def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=None, intra_above=False, intra_extended=False, fast_fragments=False, unrolled_motion=False, raw_intra=False, split_literals=False, raw_attributes=False, selective_cache=False, skip_noop_runs=False, encoded_noop_runs=False, skip_static_stripes=False, cache_columns=32, unrolled_cache=False, attribute_flags=False, sparse_patches=False, fast_noop_scan=False, static_cache_borders=False,carry_huffman=False):
     if static_cache_borders and not skip_static_stripes:
         raise ValueError('static cache borders require validated static stripes')
     if fast_noop_scan and (not skip_noop_runs or encoded_noop_runs):
@@ -246,7 +246,8 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         raise ValueError('raw direct/XOR patches require hybrid and empty-half skips')
     if len(offsets) != 81 or offsets[0] != (0, 0) or set(offsets) != {(x, y) for x in range(-4, 5) for y in range(-4, 5)}:
         raise ValueError('expected the complete +/-4 motion alphabet')
-    original, labels, instructions, layout = prefix.build(tables, mapping)
+    original, labels, instructions, layout = prefix.build(tables, mapping,carry_huffman=carry_huffman)
+    bit_base=0xf8 if carry_huffman else 0xf0
     end = labels['primitive_end']
     a = MiniAssembler(CODE)
     a.emit(*original[:end-CODE])
@@ -469,7 +470,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4)
         emit('AND 7', [0xe6, 7], 7); jump('JP Z,literal_aligned', 0xca, 'literal_aligned', 10)
         emit('INC IX', [0xdd, 0x23], 10); a.label('literal_aligned')
-        emit('LD C,F0h', [0x0e, 0xf0], 7); emit('PUSH BC', [0xc5], 11)
+        emit('LD C,bit_base', [0x0e, bit_base], 7); emit('PUSH BC', [0xc5], 11)
         emit('PUSH IX', [0xdd, 0xe5], 15); emit('POP HL', [0xe1], 10)
         load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
         for row in range(8):
@@ -525,7 +526,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4)
         emit('AND 7', [0xe6, 7], 7); jump('JP Z,raw_intra_aligned', 0xca, 'raw_intra_aligned', 10)
         emit('INC IX', [0xdd, 0x23], 10); a.label('raw_intra_aligned')
-        emit('LD C,F0h', [0x0e, 0xf0], 7); emit('EXX', [0xd9], 4)
+        emit('LD C,bit_base', [0x0e, bit_base], 7); emit('EXX', [0xd9], 4)
         load('LD DE,(target)', (0xed, 0x5b), 'target', 20); emit('POP AF', [0xf1], 10)
         emit('CP left_vector', [0xfe, 83], 7); jump('JP Z,raw_intra_left', 0xca, 'raw_intra_left', 10)
         emit('CP second_above_vector', [0xfe, 84], 7); jump('JP Z,raw_intra_above2', 0xca, 'raw_intra_above2', 10)
@@ -567,7 +568,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
             emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4)
             emit('AND 7', [0xe6, 7], 7); jump('JP Z,fragment_aligned', 0xca, 'fragment_aligned', 10)
             emit('INC IX', [0xdd, 0x23], 10); a.label('fragment_aligned')
-            emit('LD C,F0h', [0x0e, 0xf0], 7); emit('EXX', [0xd9], 4)
+            emit('LD C,bit_base', [0x0e, bit_base], 7); emit('EXX', [0xd9], 4)
             emit('PUSH IX', [0xdd, 0xe5], 15); emit('POP HL', [0xe1], 10)
         load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
         emit('LD A,B', [0x78], 4)
@@ -644,7 +645,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
         emit('EXX', [0xd9], 4); emit('LD A,C', [0x79], 4)
         emit('AND 7', [0xe6, 7], 7); jump('JP Z,raw_aligned', 0xca, 'raw_aligned', 10)
         emit('INC IX', [0xdd, 0x23], 10); a.label('raw_aligned')
-        emit('LD C,F0h', [0x0e, 0xf0], 7); emit('EXX', [0xd9], 4)
+        emit('LD C,bit_base', [0x0e, bit_base], 7); emit('EXX', [0xd9], 4)
         emit('PUSH IX', [0xdd, 0xe5], 15); emit('POP HL', [0xe1], 10)
         load('LD DE,(target)', (0xed, 0x5b), 'target', 20)
         for field in range(16):
@@ -997,7 +998,7 @@ def build(tables, mapping, offsets, *, skip_empty=False, hybrid=False, raw_kind=
     a.label('state')
     for name in ('source', 'vectors', 'bitmap_masks', 'attribute_masks', 'target', 'attr_target', 'cache_read', 'cache_write'):
         a.label(name); a.word(0)
-    for name, value in [('bit_page', 0xf0), ('stripe_y', 0), ('stripes_left', 0), ('tiles_left', 0), ('phase', 0), ('attr_bits', 0)]:
+    for name, value in [('bit_page', bit_base), ('stripe_y', 0), ('stripes_left', 0), ('tiles_left', 0), ('phase', 0), ('attr_bits', 0)]:
         a.label(name); a.emit(value)
     if hybrid:
         a.label('cache_enabled'); a.emit(1)
