@@ -31,7 +31,7 @@ class FrameStreamCPU(stream.StreamCPU):
 
     def write8(self, address, value):
         if self.guarding:
-            if self.phase == 'paging' and address == self.video_labels['page_shadow']:
+            if self.phase == 'paging' and address in (self.video_labels['page_shadow'],self.video_labels.get('requested_page_operand')):
                 return CPU.write8(self,address,value)
             if self.phase == 'progress':
                 bank = self.port_7ffd & 7
@@ -66,7 +66,8 @@ class Harness:
     def __init__(self, ring, tables, mapping, frames, *, ring_start=0xfff0, bulk=False, zero_copy=False, skip_noop_runs=False,
                  stored_guards=True,constant_attribute_borders=False,skip_black_borders=False,progress_frames=None,
                  encoded_noop_runs=False,skip_static_stripes=False,token_boundaries=False,pipelined=False,packet_ahead=False,
-                 unrolled_copy=False,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,early_ay=False,sparse_patches=False,disk_refill_entry=None,inline_matches=False,fast_noop_scan=False):
+                 unrolled_copy=False,unrolled_cache=False,attribute_groups=False,attribute_flags=False,gray_cells=False,early_ay=False,sparse_patches=False,disk_refill_entry=None,inline_matches=False,fast_noop_scan=False,irq_safe_paging=False):
+        if irq_safe_paging and not pipelined: raise ValueError('IRQ-safe paging requires the pipelined ISR')
         if early_ay and not bulk: raise ValueError('early AY requires bulk packets')
         self.early_ay=early_ay
         if zero_copy and not bulk: raise ValueError('zero-copy metadata requires bulk packets')
@@ -115,7 +116,7 @@ class Harness:
         self.video = None
         if pipelined:
             if a.pc > video.VIDEO: raise ValueError('AY overlaps video IRQ')
-            video_regions,self.video,video_listing = video.build_video(f.draw,self.z,self.audio)
+            video_regions,self.video,video_listing = video.build_video(f.draw,self.z,self.audio,irq_safe_paging=irq_safe_paging)
             cpu.video_labels = self.video
         if bulk:
             import bulk_frame_z80 as builder

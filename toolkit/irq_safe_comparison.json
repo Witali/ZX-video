@@ -1,0 +1,699 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Compare complete playback and identify lost IRQs in monitored DI windows.\n\nDiagnostic runs may have a different disk/start phase from the baseline.\nTheir timestamps must not be substituted into the before/after comparison.\n",
+  "baseline_commit": "00fb0fd",
+  "frames": 4221,
+  "volumes": [
+    {
+      "part": 1,
+      "frame_end_exclusive": 1625,
+      "physical_video_byte_exact": true,
+      "physical_video_sha256": "f0b0f11b5e81e9fd82aafd081612379b10649096ef620e778474323bd77a651b",
+      "baseline": {
+        "unobserved_irq_fields": 14,
+        "empty_queue_visits": 485,
+        "ay_missing_fields": 499,
+        "actual_fps": 7.926849666354246,
+        "nominal_missed": 1573,
+        "used_sectors": 2544
+      },
+      "candidate": {
+        "unobserved_irq_fields": 1,
+        "empty_queue_visits": 489,
+        "ay_missing_fields": 490,
+        "actual_fps": 7.933817282733168,
+        "nominal_missed": 1372,
+        "used_sectors": 2544
+      }
+    },
+    {
+      "part": 2,
+      "frame_end_exclusive": 2921,
+      "physical_video_byte_exact": true,
+      "physical_video_sha256": "f3ec7531012c37f5a3f149cdcfb319ad63632c7d615912198a946928da64bdd7",
+      "baseline": {
+        "unobserved_irq_fields": 7,
+        "empty_queue_visits": 985,
+        "ay_missing_fields": 992,
+        "actual_fps": 7.38877549406042,
+        "nominal_missed": 1292,
+        "used_sectors": 2542
+      },
+      "candidate": {
+        "unobserved_irq_fields": 1,
+        "empty_queue_visits": 992,
+        "ay_missing_fields": 993,
+        "actual_fps": 7.387932819890125,
+        "nominal_missed": 1292,
+        "used_sectors": 2542
+      }
+    },
+    {
+      "part": 3,
+      "frame_end_exclusive": 4221,
+      "physical_video_byte_exact": true,
+      "physical_video_sha256": "631717337be60e8104bfe4c85869226f59b7de19990296d5a52cfc6c7687e48a",
+      "baseline": {
+        "unobserved_irq_fields": 8,
+        "empty_queue_visits": 1260,
+        "ay_missing_fields": 1268,
+        "actual_fps": 7.186184357982335,
+        "nominal_missed": 1298,
+        "used_sectors": 2542
+      },
+      "candidate": {
+        "unobserved_irq_fields": 0,
+        "empty_queue_visits": 1266,
+        "ay_missing_fields": 1266,
+        "actual_fps": 7.187774333903217,
+        "nominal_missed": 1298,
+        "used_sectors": 2542
+      }
+    }
+  ],
+  "diagnostics": [
+    {
+      "file": "diagnostic_part01.json",
+      "sha256": "fc9ef8ee74b9480d87d44494c663fe3f1abf1b6900ca587b24d2dc360401c52e",
+      "frames": 1625,
+      "recorded_irq_entries": 10238,
+      "unobserved_irq_fields": 11,
+      "all_missing_fields": [
+        {
+          "field": 3411,
+          "samples": [
+            {
+              "offset": 0,
+              "tstate": 241867193,
+              "pc": 38797,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 23,
+              "elapsed_fields": 315
+            },
+            {
+              "offset": 32,
+              "tstate": 241867229,
+              "pc": 32338,
+              "iff1": 1,
+              "iff2": 1,
+              "im": 2,
+              "page": 16,
+              "elapsed_fields": 315
+            }
+          ]
+        },
+        {
+          "field": 4367,
+          "samples": [
+            {
+              "offset": 0,
+              "tstate": 309655236,
+              "pc": 38797,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 23,
+              "elapsed_fields": 1270
+            },
+            {
+              "offset": 32,
+              "tstate": 309655272,
+              "pc": 32521,
+              "iff1": 1,
+              "iff2": 1,
+              "im": 2,
+              "page": 22,
+              "elapsed_fields": 1270
+            }
+          ]
+        },
+        {
+          "field": 5073,
+          "samples": [
+            {
+              "offset": 0,
+              "tstate": 359716289,
+              "pc": 38787,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 30,
+              "elapsed_fields": 1975
+            },
+            {
+              "offset": 32,
+              "tstate": 359716317,
+              "pc": 38794,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 30,
+              "elapsed_fields": 1975
+            }
+          ]
+        },
+        {
+          "field": 5080,
+          "samples": [
+            {
+              "offset": 0,
+              "tstate": 360212649,
+              "pc": 38791,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 23,
+              "elapsed_fields": 1981
+            },
+            {
+              "offset": 32,
+              "tstate": 360212673,
+              "pc": 38797,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 23,
+              "elapsed_fields": 1981
+            }
+          ]
+        },
+        {
+          "field": 5673,
+          "samples": [
+            {
+              "offset": 0,
+              "tstate": 402261089,
+              "pc": 38797,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 24,
+              "elapsed_fields": 2573
+            },
+            {
+              "offset": 32,
+              "tstate": 402261125,
+              "pc": 24624,
+              "iff1": 1,
+              "iff2": 1,
+              "im": 2,
+              "page": 24,
+              "elapsed_fields": 2573
+            }
+          ]
+        },
+        {
+          "field": 6024,
+          "samples": [
+            {
+              "offset": 0,
+              "tstate": 427149792,
+              "pc": 38797,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 22,
+              "elapsed_fields": 2923
+            },
+            {
+              "offset": 32,
+              "tstate": 427149828,
+              "pc": 32547,
+              "iff1": 1,
+              "iff2": 1,
+              "im": 2,
+              "page": 23,
+              "elapsed_fields": 2923
+            }
+          ]
+        },
+        {
+          "field": 6149,
+          "samples": [
+            {
+              "offset": 0,
+              "tstate": 436013302,
+              "pc": 38797,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 27,
+              "elapsed_fields": 3047
+            },
+            {
+              "offset": 32,
+              "tstate": 436013324,
+              "pc": 38802,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 27,
+              "elapsed_fields": 3047
+            }
+          ]
+        },
+        {
+          "field": 7553,
+          "samples": [
+            {
+              "offset": 0,
+              "tstate": 535568125,
+              "pc": 38787,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 31,
+              "elapsed_fields": 4450
+            },
+            {
+              "offset": 32,
+              "tstate": 535568166,
+              "pc": 38797,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 31,
+              "elapsed_fields": 4450
+            }
+          ]
+        },
+        {
+          "field": 7649,
+          "samples": [
+            {
+              "offset": 0,
+              "tstate": 542375304,
+              "pc": 38797,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 23,
+              "elapsed_fields": 4545
+            },
+            {
+              "offset": 32,
+              "tstate": 542375326,
+              "pc": 38802,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 16,
+              "elapsed_fields": 4545
+            }
+          ]
+        },
+        {
+          "field": 9403,
+          "samples": [
+            {
+              "offset": 0,
+              "tstate": 666747929,
+              "pc": 38791,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 19,
+              "elapsed_fields": 6298
+            },
+            {
+              "offset": 32,
+              "tstate": 666747963,
+              "pc": 38800,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 19,
+              "elapsed_fields": 6298
+            }
+          ]
+        },
+        {
+          "field": 11307,
+          "samples": [
+            {
+              "offset": 0,
+              "tstate": 801756757,
+              "pc": 38793,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 17,
+              "elapsed_fields": 8201
+            },
+            {
+              "offset": 32,
+              "tstate": 801756796,
+              "pc": 38802,
+              "iff1": 0,
+              "iff2": 0,
+              "im": 2,
+              "page": 23,
+              "elapsed_fields": 8201
+            }
+          ]
+        }
+      ],
+      "identical_baseline_timing": false
+    },
+    {
+      "file": "diagnostic_addresses01.json",
+      "sha256": "b82878583ba53fec1bd2b505adb0ed6d8e7990fc30fa2b6c1ac71044a606f43f",
+      "frames": 1625,
+      "recorded_irq_entries": 10237,
+      "unobserved_irq_fields": 12,
+      "all_missing_fields": [
+        {
+          "field": 3411,
+          "di_instruction_start_tstate": 241867141,
+          "di_after_tstate": 241867145,
+          "irq_eligible_after_tstate": 241867229,
+          "pulse_start": 241867188,
+          "pulse_end": 241867224,
+          "samples": [
+            {
+              "kind": "after_di",
+              "tstate": 241867145,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 31696,
+              "caller": 32338
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 241867219,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 31696,
+              "caller": 32338
+            }
+          ]
+        },
+        {
+          "field": 4261,
+          "di_instruction_start_tstate": 302138987,
+          "di_after_tstate": 302138991,
+          "irq_eligible_after_tstate": 302139075,
+          "pulse_start": 302138988,
+          "pulse_end": 302139024,
+          "samples": [
+            {
+              "kind": "after_di",
+              "tstate": 302138991,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 40426,
+              "caller": 32547
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 302139065,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 40426,
+              "caller": 32547
+            }
+          ]
+        },
+        {
+          "field": 4363,
+          "di_instruction_start_tstate": 309371592,
+          "di_after_tstate": 309371596,
+          "irq_eligible_after_tstate": 309371680,
+          "pulse_start": 309371604,
+          "pulse_end": 309371640,
+          "samples": [
+            {
+              "kind": "after_di",
+              "tstate": 309371596,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 40426,
+              "caller": 32547
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 309371670,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 40426,
+              "caller": 32547
+            }
+          ]
+        },
+        {
+          "field": 4724,
+          "di_instruction_start_tstate": 334969350,
+          "di_after_tstate": 334969354,
+          "irq_eligible_after_tstate": 334969438,
+          "pulse_start": 334969392,
+          "pulse_end": 334969428,
+          "samples": [
+            {
+              "kind": "after_di",
+              "tstate": 334969354,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 40422,
+              "caller": 37477
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 334969428,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 40422,
+              "caller": 37477
+            }
+          ]
+        },
+        {
+          "field": 5075,
+          "di_instruction_start_tstate": 359858094,
+          "di_after_tstate": 359858098,
+          "irq_eligible_after_tstate": 359858182,
+          "pulse_start": 359858100,
+          "pulse_end": 359858136,
+          "samples": [
+            {
+              "kind": "before_ret",
+              "tstate": 359858007,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 40422,
+              "caller": 37477
+            },
+            {
+              "kind": "after_di",
+              "tstate": 359858098,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 40426,
+              "caller": 32547
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 359858172,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 40426,
+              "caller": 32547
+            }
+          ]
+        },
+        {
+          "field": 5082,
+          "di_instruction_start_tstate": 360354437,
+          "di_after_tstate": 360354441,
+          "irq_eligible_after_tstate": 360354525,
+          "pulse_start": 360354456,
+          "pulse_end": 360354492,
+          "samples": [
+            {
+              "kind": "after_di",
+              "tstate": 360354441,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 40426,
+              "caller": 32521
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 360354515,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 40426,
+              "caller": 32521
+            }
+          ]
+        },
+        {
+          "field": 6025,
+          "di_instruction_start_tstate": 427220648,
+          "di_after_tstate": 427220652,
+          "irq_eligible_after_tstate": 427220736,
+          "pulse_start": 427220700,
+          "pulse_end": 427220736,
+          "samples": [
+            {
+              "kind": "after_di",
+              "tstate": 427220652,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 40426,
+              "caller": 32547
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 427220726,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 40426,
+              "caller": 32547
+            }
+          ]
+        },
+        {
+          "field": 6150,
+          "di_instruction_start_tstate": 436084158,
+          "di_after_tstate": 436084162,
+          "irq_eligible_after_tstate": 436084246,
+          "pulse_start": 436084200,
+          "pulse_end": 436084236,
+          "samples": [
+            {
+              "kind": "after_di",
+              "tstate": 436084162,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 39922,
+              "caller": 24624
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 436084236,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 39922,
+              "caller": 24624
+            }
+          ]
+        },
+        {
+          "field": 7649,
+          "di_instruction_start_tstate": 542375252,
+          "di_after_tstate": 542375256,
+          "irq_eligible_after_tstate": 542375340,
+          "pulse_start": 542375292,
+          "pulse_end": 542375328,
+          "samples": [
+            {
+              "kind": "after_di",
+              "tstate": 542375256,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 31694,
+              "caller": 32338
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 542375330,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 31694,
+              "caller": 32338
+            }
+          ]
+        },
+        {
+          "field": 8634,
+          "di_instruction_start_tstate": 612219646,
+          "di_after_tstate": 612219650,
+          "irq_eligible_after_tstate": 612219734,
+          "pulse_start": 612219672,
+          "pulse_end": 612219708,
+          "samples": [
+            {
+              "kind": "after_di",
+              "tstate": 612219650,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 40426,
+              "caller": 32521
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 612219724,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 40426,
+              "caller": 32521
+            }
+          ]
+        },
+        {
+          "field": 9704,
+          "di_instruction_start_tstate": 688091216,
+          "di_after_tstate": 688091220,
+          "irq_eligible_after_tstate": 688091304,
+          "pulse_start": 688091232,
+          "pulse_end": 688091268,
+          "samples": [
+            {
+              "kind": "after_di",
+              "tstate": 688091220,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 40426,
+              "caller": 32547
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 688091294,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 40426,
+              "caller": 32547
+            }
+          ]
+        },
+        {
+          "field": 13048,
+          "di_instruction_start_tstate": 925207566,
+          "di_after_tstate": 925207570,
+          "irq_eligible_after_tstate": 925207654,
+          "pulse_start": 925207584,
+          "pulse_end": 925207620,
+          "samples": [
+            {
+              "kind": "after_di",
+              "tstate": 925207570,
+              "iff1": 0,
+              "iff2": 0,
+              "sp": 31698,
+              "caller": 32178
+            },
+            {
+              "kind": "before_ret",
+              "tstate": 925207644,
+              "iff1": 1,
+              "iff2": 1,
+              "sp": 31698,
+              "caller": 32178
+            }
+          ]
+        }
+      ],
+      "identical_baseline_timing": false
+    }
+  ],
+  "baseline_unobserved_irq_fields": 29,
+  "unobserved_irq_fields": 2,
+  "all_physical_video_sections_exact": true,
+  "physical_drive_verified": false,
+  "irq_pulse_tstates": 36,
+  "irq_timing_source": "https://github.com/speccytools/libspectrum/blob/master/timings.c",
+  "generic_streams_exact": true
+}

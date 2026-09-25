@@ -30,15 +30,17 @@ def main():
     p.add_argument('--timeout',type=float,default=180)
     p.add_argument('--continuation-snapshot',type=Path,help='Resume the previous verified EOF at its disk prompt')
     p.add_argument('--export-warm-ram',type=Path,help='Dump actual banks 5/2/6 only after the complete disk finishes')
+    p.add_argument('--trace-fields',action='store_true',help='Record IRQ entries and CPU state at field offsets 0/32; no player changes')
+    p.add_argument('--trace-paging',action='store_true',help='Record IRQ entries and paging boundaries near the IRQ pulse; address breakpoints only')
     args=p.parse_args(); m=json.loads(args.metadata.read_text()); lab=m['player_labels']
     if not m.get('independently_bootable',True) and not args.continuation_snapshot:
         raise ValueError('continuation disk requires RAM exported from its predecessor')
     if m.get('required_trdos_sha256') and hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest()!=m['required_trdos_sha256']:
         raise ValueError('fast reader requires its verified TR-DOS ROM')
     lines=['base 10','set $running 0','set $dump 65537']; widths={}; events=[]
-    def event(pc,tag,expressions,stop=False,after=()):
+    def event(pc,tag,expressions,stop=False,after=(),breakpoint=None):
         index=len(events)+1; events.append((pc,tag)); widths[tag]=len(expressions)
-        lines.extend([f'breakpoint 0x{pc:04x}',f'commands {index}',f'print {tag}'])
+        lines.extend([breakpoint or f'breakpoint 0x{pc:04x}',f'commands {index}',f'print {tag}'])
         if tag==100: lines.append('set $running 1')
         lines.extend('print '+e for e in expressions)
         lines.extend(after)
@@ -63,6 +65,17 @@ def main():
     event(lab['audio_write_loop'],140,[stamp,'[z80:hl]','[z80:hl+1]'])
     event(lab['audio_tick_done'],143,[stamp])
     event(lab['audio_tick_empty'],144,[stamp])
+    if args.trace_fields or args.trace_paging:
+        event(0xbdbd,130,[stamp,'[z80:sp]+256*[z80:sp+1]','z80:im','ula:mem7ffd'])
+    if args.trace_fields:
+        for offset,tag in ((0,131),(32,132)):
+            event(0,tag,[stamp,'z80:pc','z80:iff1','z80:iff2','z80:im','ula:mem7ffd',mem(lab['elapsed_fields'])],
+                breakpoint=f'breakpoint time {offset}')
+    if args.trace_paging:
+        if m.get('irq_safe_paging'): raise ValueError('DI window tracing requires the old paging helper')
+        for pc,tag in ((0x9781,133),(0x9793,134)):
+            event(pc,tag,[stamp,'z80:iff1','z80:iff2','z80:sp','[z80:sp]+256*[z80:sp+1]'])
+            lines[-1]=f'condition {len(events)} $running == 1 && (ula:tstates >= 70800 || ula:tstates < 108)'
     event(lab['disk_full_call'],102,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])])
     # A whole consumed sector was replaced at saved write_high. Read its
     # exact bytes before the decoder resumes; compact four bytes per print.
@@ -116,6 +129,7 @@ def main():
         if tag not in widths or pos+widths[tag]>len(nums): raise ValueError(f'bad trace at {pos}: {nums[pos-1:pos+3]} / {output[-300:]}')
         parsed.append((tag,nums[pos:pos+widths[tag]])); pos+=widths[tag]
     pubs=[]; writes=[]; ticks=[]; underruns=[]; reads=[]; final=None; failure=None
+    irq_entries=[];field_samples=[];paging_samples=[]
     image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0; retries=0; read_kind=None
     boot_started=player_started=None
     warm_ram=bytearray(); warm_dump_complete=False; continuation_accepted=[]
@@ -143,6 +157,13 @@ def main():
         elif tag==140: writes.append(v)
         elif tag==143: ticks.append(v[0])
         elif tag==144: underruns.append(v[0])
+        elif tag==130: irq_entries.append(dict(tstate=v[0],interrupted_pc=v[1],im=v[2],page=v[3]))
+        elif tag in (131,132):
+            field_samples.append(dict(offset=0 if tag==131 else 32,tstate=v[0],pc=v[1],iff1=v[2],iff2=v[3],
+                im=v[4],page=v[5],elapsed_fields=v[6]))
+        elif tag in (133,134):
+            paging_samples.append(dict(kind='after_di' if tag==133 else 'before_ret',tstate=v[0],
+                iff1=v[1],iff2=v[2],sp=v[3],caller=v[4]))
         elif tag in (102,110):
             if pending is not None: raise ValueError('overlapping ROM reads')
             pending=v; read_kind='trdos' if tag==102 else 'direct503'
@@ -165,7 +186,8 @@ def main():
             seek_pending=(tag,v[0])
         elif tag in (121,123,125):
             if seek_pending is None or seek_pending[0]!=tag-1: raise ValueError('unmatched seek return')
-            seek_calls.append(dict(kind={121:'side',123:'seek',125:'keepalive'}[tag],tstates=v[0]-seek_pending[1]))
+            seek_calls.append(dict(kind={121:'side',123:'seek',125:'keepalive'}[tag],tstates=v[0]-seek_pending[1],
+                start_tstate=seek_pending[1],end_tstate=v[0]))
             seek_pending=None
         elif tag==199: final=v
         elif tag==198: failure=v
@@ -229,6 +251,9 @@ def main():
     if args.continuation_snapshot:
         report.update(continuation_snapshot_sha256=hashlib.sha256(args.continuation_snapshot.read_bytes()).hexdigest(),
             continuation_disk_accepted_tstates=continuation_accepted)
+    if args.trace_fields or args.trace_paging: report['irq_entries']=irq_entries
+    if args.trace_fields: report['field_samples']=field_samples
+    if args.trace_paging: report['paging_samples']=paging_samples
     if args.export_warm_ram:
         report.update(warm_ram_bytes=len(warm_ram),warm_ram_sha256=hashlib.sha256(warm_ram).hexdigest(),
             warm_ram_export_complete=warm_dump_complete and len(warm_ram)==49152)
@@ -236,7 +261,7 @@ def main():
             args.export_warm_ram.parent.mkdir(parents=True,exist_ok=True)
             args.export_warm_ram.write_bytes(warm_ram)
     args.output.write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors')}),flush=True)
+    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples')}),flush=True)
     if not complete: raise SystemExit(1)
 
 

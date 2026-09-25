@@ -45,7 +45,7 @@ def volume_id(raw, ends, part):
     return b'FAP3ZXV1'+bytes.fromhex(sha(series))[:6]+struct.pack('<H',part)
 
 
-def player_harness(ring, tables, mapping, frames, *, disk_reader=True,inline_matches=False,fast_noop_scan=False):
+def player_harness(ring, tables, mapping, frames, *, disk_reader=True,inline_matches=False,fast_noop_scan=False,irq_safe_paging=False):
     """Shared current player options for disk assembly and instruction profiling."""
     return Harness(ring,tables,mapping,frames,ring_start=0,
         bulk=True,zero_copy=True,stored_guards=False,skip_noop_runs=True,
@@ -53,11 +53,11 @@ def player_harness(ring, tables, mapping, frames, *, disk_reader=True,inline_mat
         token_boundaries=True,pipelined=True,progress_frames=frames,packet_ahead='idle',
         unrolled_copy=True,unrolled_cache=True,attribute_groups=True,attribute_flags=True,
         gray_cells=True,sparse_patches=True,disk_refill_entry=disk.DISK if disk_reader else None,inline_matches=inline_matches,
-        fast_noop_scan=fast_noop_scan)
+        fast_noop_scan=fast_noop_scan,irq_safe_paging=irq_safe_paging)
 
 
 class Builder:
-    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False,inline_matches=False,warm_continuation=False,startup_delta=False,fast_noop_scan=False):
+    def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False,inline_matches=False,warm_continuation=False,startup_delta=False,fast_noop_scan=False,irq_safe_paging=False):
         if not 0 <= deferred_limit <= 248: raise ValueError('deferred limit must be 0..248')
         if frame_service and not keepalive_fields: raise ValueError('frame service requires keepalive clock')
         self.raw, self.states, self.zx0, self.cache = raw, states, zx0, cache
@@ -74,6 +74,7 @@ class Builder:
         self.cold_bitmaps=cold_bitmaps
         self.inline_matches=inline_matches
         self.fast_noop_scan=fast_noop_scan
+        self.irq_safe_paging=irq_safe_paging
         self.warm_continuation=warm_continuation
         self.warm_immutable=None
         self.startup_delta=startup_delta
@@ -133,7 +134,8 @@ class Builder:
         return bytes(result),blocks
 
     def ram(self, start, end, next_sector, remaining):
-        h=player_harness(bytes(4),self.tables,self.mapping,end-start,inline_matches=self.inline_matches,fast_noop_scan=self.fast_noop_scan)
+        h=player_harness(bytes(4),self.tables,self.mapping,end-start,inline_matches=self.inline_matches,
+            fast_noop_scan=self.fast_noop_scan,irq_safe_paging=self.irq_safe_paging)
         clock=Clock(h,[],lookahead=True,disk_idle_entry=disk.DEFERRED if self.deferred_limit else None,
             disk_due_entry=disk.DEFERRED_DUE if self.frame_service else None)
         if clock.labels['end']>disk.DRIVER: raise ValueError('clock/driver overlap')
@@ -255,6 +257,7 @@ class Builder:
                 frame_service=self.frame_service,cold_bitmaps=self.cold_bitmaps,inline_matches=self.inline_matches)
             if self.startup_delta: options['startup_delta']=True
             if self.fast_noop_scan: options['fast_noop_scan']=True
+            if self.irq_safe_paging: options['irq_safe_paging']=True
             contract=b'WARM1'+json.dumps(options,sort_keys=True).encode()+self.states.tobytes()
             disk_id=volume_id(self.raw+contract,self.ends,part)
         next_id=disk_id[:14]+struct.pack('<H',part+1)
@@ -286,6 +289,7 @@ class Builder:
             cold_bitmaps=self.cold_bitmaps,
             inline_matches=self.inline_matches,
             fast_noop_scan=self.fast_noop_scan,
+            irq_safe_paging=self.irq_safe_paging,
             warm_continuation=self.warm_continuation,independently_bootable=not (start and self.warm_continuation),
             startup_delta=self.startup_delta,
             forced_native_map_frames=list(range(start,min(start+2,end))) if self.cold_bitmaps and start else [],
@@ -363,6 +367,7 @@ def main():
     p.add_argument('--cold-bitmaps',action='store_true',help='Experimental smaller native checkpoints; redraw the first two frames of later disks')
     p.add_argument('--inline-matches',action='store_true',help='Experimental ZX0 match copies without per-match CALL/RET')
     p.add_argument('--fast-noop-scan',action='store_true',help='Experimental combined unchanged-tile checks; no extra copying')
+    p.add_argument('--irq-safe-paging',action='store_true',help='Experimental restartable bank changes without DI')
     p.add_argument('--startup-delta',action='store_true',help='Try adjacent-byte differences for boot tables; preserve independent boot')
     p.add_argument('--trdos-rom',type=Path,help='Required ROM hash check for --fast-disk')
     args=p.parse_args()
@@ -375,7 +380,7 @@ def main():
     b=Builder(args.raw.read_bytes(),states,args.zx0.resolve(),args.cache.resolve(),fast_disk=args.fast_disk,
         cached_seek=args.cached_seek,cold_track=args.cold_track,interleaved=args.interleaved,deferred_limit=args.deferred_limit,
         keepalive_fields=args.keepalive_fields,frame_service=args.frame_service,cold_bitmaps=args.cold_bitmaps,inline_matches=args.inline_matches,
-        startup_delta=args.startup_delta,fast_noop_scan=args.fast_noop_scan)
+        startup_delta=args.startup_delta,fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging)
     if args.ends: ends=[int(n) for n in args.ends.split(',')]
     else:
         # Storage weights use the already measured global block boundaries.

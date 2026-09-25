@@ -1,0 +1,1048 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Measure restartable paging and the exact added ISR instruction cost.\n\nNo disk/ROM/ULA latency in CPU sums. Both ISR stack layouts and every\npaging instruction boundary execute. Publication OUT must precede repair.\n",
+  "baseline_commit": "00fb0fd",
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "paging": {
+    "baseline_tstates": 88,
+    "tstates": 92,
+    "delta_tstates": 4,
+    "max_retry_extra_tstates": 52
+  },
+  "unchanged_nonpublication_irq_paths": true,
+  "publication_out_delta_tstates": 0,
+  "new_buffer_bytes": 0,
+  "new_stack_bytes": 0,
+  "self_modified_bytes": 1,
+  "variants": [
+    {
+      "safe": false,
+      "video_bytes": 97,
+      "page_bytes": 20,
+      "code_regions": [
+        {
+          "base": 38400,
+          "hex": "f53ac297b7ca5f963ac097b7ca5f96d52a6095ed5bc497b7ed52cb7cc25e9622c697c53aca97ee0832ca9701fd7fed793a0093ee083200933a697eee0832697e3aff92ee8032ff92af32c0972ac4971106001922c4972ac8972322c897c1d1f1c9"
+        },
+        {
+          "base": 38784,
+          "hex": "f3e6f7473aca97e608b032ca9701fd7fed79fbc9"
+        }
+      ],
+      "listing": [
+        {
+          "address": 38400,
+          "instruction": "PUSH AF",
+          "tstates": 11,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38401,
+          "instruction": "LD A,(enabled)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38404,
+          "instruction": "OR A",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38405,
+          "instruction": "JP Z,done_af",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38408,
+          "instruction": "LD A,(ready)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38411,
+          "instruction": "OR A",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38412,
+          "instruction": "JP Z,done_af",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38415,
+          "instruction": "PUSH DE",
+          "tstates": 11,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38416,
+          "instruction": "LD HL,(elapsed_fields)",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38419,
+          "instruction": "LD DE,(deadline)",
+          "tstates": 20,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38423,
+          "instruction": "OR A",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38424,
+          "instruction": "SBC HL,DE",
+          "tstates": 15,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38426,
+          "instruction": "BIT 7,H (signed deadline difference)",
+          "tstates": 8,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38428,
+          "instruction": "JP NZ,not_due",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38431,
+          "instruction": "LD (late_fields),HL",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38434,
+          "instruction": "PUSH BC",
+          "tstates": 11,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38435,
+          "instruction": "LD A,(page_shadow)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38438,
+          "instruction": "XOR 8",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38440,
+          "instruction": "LD (page_shadow),A",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38443,
+          "instruction": "LD BC,7FFD",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38446,
+          "instruction": "OUT (C),A",
+          "tstates": 12,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38448,
+          "instruction": "LD A,(saved_page)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38451,
+          "instruction": "XOR mask",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38453,
+          "instruction": "LD (saved_page),A",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38456,
+          "instruction": "LD A,(history_page)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38459,
+          "instruction": "XOR mask",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38461,
+          "instruction": "LD (history_page),A",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38464,
+          "instruction": "LD A,(screen_base)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38467,
+          "instruction": "XOR mask",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38469,
+          "instruction": "LD (screen_base),A",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38472,
+          "instruction": "XOR A",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38473,
+          "instruction": "LD (ready),A",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38476,
+          "instruction": "LD HL,(deadline)",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38479,
+          "instruction": "LD DE,6",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38482,
+          "instruction": "ADD HL,DE",
+          "tstates": 11,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38483,
+          "instruction": "LD (deadline),HL",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38486,
+          "instruction": "LD HL,(published)",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38489,
+          "instruction": "INC HL",
+          "tstates": 6,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38490,
+          "instruction": "LD (published),HL",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38493,
+          "instruction": "POP BC",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38494,
+          "instruction": "POP DE",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38495,
+          "instruction": "POP AF",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38496,
+          "instruction": "RET",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38784,
+          "instruction": "DI",
+          "tstates": 4,
+          "phase": "paging"
+        },
+        {
+          "address": 38785,
+          "instruction": "AND F7h",
+          "tstates": 7,
+          "phase": "paging"
+        },
+        {
+          "address": 38787,
+          "instruction": "LD B,A",
+          "tstates": 4,
+          "phase": "paging"
+        },
+        {
+          "address": 38788,
+          "instruction": "LD A,(page_shadow)",
+          "tstates": 13,
+          "phase": "paging"
+        },
+        {
+          "address": 38791,
+          "instruction": "AND 8",
+          "tstates": 7,
+          "phase": "paging"
+        },
+        {
+          "address": 38793,
+          "instruction": "OR B",
+          "tstates": 4,
+          "phase": "paging"
+        },
+        {
+          "address": 38794,
+          "instruction": "LD (page_shadow),A",
+          "tstates": 13,
+          "phase": "paging"
+        },
+        {
+          "address": 38797,
+          "instruction": "LD BC,7FFD",
+          "tstates": 10,
+          "phase": "paging"
+        },
+        {
+          "address": 38800,
+          "instruction": "OUT (C),A",
+          "tstates": 12,
+          "phase": "paging"
+        },
+        {
+          "address": 38802,
+          "instruction": "EI",
+          "tstates": 4,
+          "phase": "paging"
+        },
+        {
+          "address": 38803,
+          "instruction": "RET",
+          "tstates": 10,
+          "phase": "paging"
+        }
+      ]
+    },
+    {
+      "safe": true,
+      "video_bytes": 133,
+      "page_bytes": 21,
+      "code_regions": [
+        {
+          "base": 38400,
+          "hex": "f53ac297b7ca83963ac097b7ca8396d52a6095ed5bc497b7ed52cb7cc2829622c697c53aca97ee0832ca9701fd7fed79210a003abebdb7c23c962c2c395e23567afe97c254967bfe88da5496fe95d254962b36883a0093ee083200933a697eee0832697e3aff92ee8032ff92af32c0972ac4971106001922c4972ac8972322c897c1d1f1c9"
+        },
+        {
+          "base": 38784,
+          "hex": "e6f7328e9701fd7f3aca97e608f60032ca97ed79c9"
+        }
+      ],
+      "listing": [
+        {
+          "address": 38400,
+          "instruction": "PUSH AF",
+          "tstates": 11,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38401,
+          "instruction": "LD A,(enabled)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38404,
+          "instruction": "OR A",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38405,
+          "instruction": "JP Z,done_af",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38408,
+          "instruction": "LD A,(ready)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38411,
+          "instruction": "OR A",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38412,
+          "instruction": "JP Z,done_af",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38415,
+          "instruction": "PUSH DE",
+          "tstates": 11,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38416,
+          "instruction": "LD HL,(elapsed_fields)",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38419,
+          "instruction": "LD DE,(deadline)",
+          "tstates": 20,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38423,
+          "instruction": "OR A",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38424,
+          "instruction": "SBC HL,DE",
+          "tstates": 15,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38426,
+          "instruction": "BIT 7,H (signed deadline difference)",
+          "tstates": 8,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38428,
+          "instruction": "JP NZ,not_due",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38431,
+          "instruction": "LD (late_fields),HL",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38434,
+          "instruction": "PUSH BC",
+          "tstates": 11,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38435,
+          "instruction": "LD A,(page_shadow)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38438,
+          "instruction": "XOR 8",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38440,
+          "instruction": "LD (page_shadow),A",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38443,
+          "instruction": "LD BC,7FFD",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38446,
+          "instruction": "OUT (C),A",
+          "tstates": 12,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38448,
+          "instruction": "LD HL,fast IRQ return offset",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38451,
+          "instruction": "LD A,(irq_vector_low)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38454,
+          "instruction": "OR A",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38455,
+          "instruction": "JP NZ,irq_return_slot",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38458,
+          "instruction": "INC L",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38459,
+          "instruction": "INC L",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38460,
+          "instruction": "ADD HL,SP",
+          "tstates": 11,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38461,
+          "instruction": "LD E,(HL)",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38462,
+          "instruction": "INC HL",
+          "tstates": 6,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38463,
+          "instruction": "LD D,(HL)",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38464,
+          "instruction": "LD A,D",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38465,
+          "instruction": "CP paging high",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38467,
+          "instruction": "JP NZ,page_return_ready",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38470,
+          "instruction": "LD A,E",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38471,
+          "instruction": "CP merge low",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38473,
+          "instruction": "JP C,page_return_ready",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38476,
+          "instruction": "CP page end low",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38478,
+          "instruction": "JP NC,page_return_ready",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38481,
+          "instruction": "DEC HL",
+          "tstates": 6,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38482,
+          "instruction": "LD (HL),merge low",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38484,
+          "instruction": "LD A,(saved_page)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38487,
+          "instruction": "XOR mask",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38489,
+          "instruction": "LD (saved_page),A",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38492,
+          "instruction": "LD A,(history_page)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38495,
+          "instruction": "XOR mask",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38497,
+          "instruction": "LD (history_page),A",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38500,
+          "instruction": "LD A,(screen_base)",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38503,
+          "instruction": "XOR mask",
+          "tstates": 7,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38505,
+          "instruction": "LD (screen_base),A",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38508,
+          "instruction": "XOR A",
+          "tstates": 4,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38509,
+          "instruction": "LD (ready),A",
+          "tstates": 13,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38512,
+          "instruction": "LD HL,(deadline)",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38515,
+          "instruction": "LD DE,6",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38518,
+          "instruction": "ADD HL,DE",
+          "tstates": 11,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38519,
+          "instruction": "LD (deadline),HL",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38522,
+          "instruction": "LD HL,(published)",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38525,
+          "instruction": "INC HL",
+          "tstates": 6,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38526,
+          "instruction": "LD (published),HL",
+          "tstates": 16,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38529,
+          "instruction": "POP BC",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38530,
+          "instruction": "POP DE",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38531,
+          "instruction": "POP AF",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38532,
+          "instruction": "RET",
+          "tstates": 10,
+          "phase": "video_irq"
+        },
+        {
+          "address": 38784,
+          "instruction": "AND F7h",
+          "tstates": 7,
+          "phase": "paging"
+        },
+        {
+          "address": 38786,
+          "instruction": "LD (requested_page_operand),A",
+          "tstates": 13,
+          "phase": "paging"
+        },
+        {
+          "address": 38789,
+          "instruction": "LD BC,7FFD",
+          "tstates": 10,
+          "phase": "paging"
+        },
+        {
+          "address": 38792,
+          "instruction": "LD A,(page_shadow)",
+          "tstates": 13,
+          "phase": "paging"
+        },
+        {
+          "address": 38795,
+          "instruction": "AND 8",
+          "tstates": 7,
+          "phase": "paging"
+        },
+        {
+          "address": 38797,
+          "instruction": "OR requested page",
+          "tstates": 7,
+          "phase": "paging"
+        },
+        {
+          "address": 38799,
+          "instruction": "LD (page_shadow),A",
+          "tstates": 13,
+          "phase": "paging"
+        },
+        {
+          "address": 38802,
+          "instruction": "OUT (C),A",
+          "tstates": 12,
+          "phase": "paging"
+        },
+        {
+          "address": 38804,
+          "instruction": "RET",
+          "tstates": 10,
+          "phase": "paging"
+        }
+      ]
+    }
+  ],
+  "irq_cases": [
+    {
+      "safe": false,
+      "slow": false,
+      "pc": 37872,
+      "tstates": 686,
+      "publication_out_tstates": 326,
+      "resumed_pc": 37872
+    },
+    {
+      "safe": false,
+      "slow": false,
+      "pc": 38784,
+      "tstates": 686,
+      "publication_out_tstates": 326,
+      "resumed_pc": 38784
+    },
+    {
+      "safe": false,
+      "slow": false,
+      "pc": 38792,
+      "tstates": 686,
+      "publication_out_tstates": 326,
+      "resumed_pc": 38792
+    },
+    {
+      "safe": false,
+      "slow": false,
+      "pc": 38805,
+      "tstates": 686,
+      "publication_out_tstates": 326,
+      "resumed_pc": 38805
+    },
+    {
+      "safe": false,
+      "slow": false,
+      "pc": 38911,
+      "tstates": 686,
+      "publication_out_tstates": 326,
+      "resumed_pc": 38911
+    },
+    {
+      "safe": false,
+      "slow": true,
+      "pc": 37872,
+      "tstates": 754,
+      "publication_out_tstates": 337,
+      "resumed_pc": 37872
+    },
+    {
+      "safe": false,
+      "slow": true,
+      "pc": 38784,
+      "tstates": 754,
+      "publication_out_tstates": 337,
+      "resumed_pc": 38784
+    },
+    {
+      "safe": false,
+      "slow": true,
+      "pc": 38792,
+      "tstates": 754,
+      "publication_out_tstates": 337,
+      "resumed_pc": 38792
+    },
+    {
+      "safe": false,
+      "slow": true,
+      "pc": 38805,
+      "tstates": 754,
+      "publication_out_tstates": 337,
+      "resumed_pc": 38805
+    },
+    {
+      "safe": false,
+      "slow": true,
+      "pc": 38911,
+      "tstates": 754,
+      "publication_out_tstates": 337,
+      "resumed_pc": 38911
+    },
+    {
+      "safe": true,
+      "slow": false,
+      "pc": 37872,
+      "tstates": 775,
+      "publication_out_tstates": 326,
+      "resumed_pc": 37872,
+      "baseline_tstates": 686,
+      "delta_tstates": 89
+    },
+    {
+      "safe": true,
+      "slow": false,
+      "pc": 38784,
+      "tstates": 796,
+      "publication_out_tstates": 326,
+      "resumed_pc": 38784,
+      "baseline_tstates": 686,
+      "delta_tstates": 110
+    },
+    {
+      "safe": true,
+      "slow": false,
+      "pc": 38792,
+      "tstates": 829,
+      "publication_out_tstates": 326,
+      "resumed_pc": 38792,
+      "baseline_tstates": 686,
+      "delta_tstates": 143
+    },
+    {
+      "safe": true,
+      "slow": false,
+      "pc": 38805,
+      "tstates": 813,
+      "publication_out_tstates": 326,
+      "resumed_pc": 38805,
+      "baseline_tstates": 686,
+      "delta_tstates": 127
+    },
+    {
+      "safe": true,
+      "slow": false,
+      "pc": 38911,
+      "tstates": 813,
+      "publication_out_tstates": 326,
+      "resumed_pc": 38911,
+      "baseline_tstates": 686,
+      "delta_tstates": 127
+    },
+    {
+      "safe": true,
+      "slow": true,
+      "pc": 37872,
+      "tstates": 851,
+      "publication_out_tstates": 337,
+      "resumed_pc": 37872,
+      "baseline_tstates": 754,
+      "delta_tstates": 97
+    },
+    {
+      "safe": true,
+      "slow": true,
+      "pc": 38784,
+      "tstates": 872,
+      "publication_out_tstates": 337,
+      "resumed_pc": 38784,
+      "baseline_tstates": 754,
+      "delta_tstates": 118
+    },
+    {
+      "safe": true,
+      "slow": true,
+      "pc": 38792,
+      "tstates": 905,
+      "publication_out_tstates": 337,
+      "resumed_pc": 38792,
+      "baseline_tstates": 754,
+      "delta_tstates": 151
+    },
+    {
+      "safe": true,
+      "slow": true,
+      "pc": 38805,
+      "tstates": 889,
+      "publication_out_tstates": 337,
+      "resumed_pc": 38805,
+      "baseline_tstates": 754,
+      "delta_tstates": 135
+    },
+    {
+      "safe": true,
+      "slow": true,
+      "pc": 38911,
+      "tstates": 889,
+      "publication_out_tstates": 337,
+      "resumed_pc": 38911,
+      "baseline_tstates": 754,
+      "delta_tstates": 135
+    }
+  ],
+  "restart_cases": [
+    {
+      "interrupted_pc": 38784,
+      "paging_tstates": 92,
+      "extra_restart_tstates": 0,
+      "irq_tstates": 796
+    },
+    {
+      "interrupted_pc": 38786,
+      "paging_tstates": 92,
+      "extra_restart_tstates": 0,
+      "irq_tstates": 796
+    },
+    {
+      "interrupted_pc": 38789,
+      "paging_tstates": 92,
+      "extra_restart_tstates": 0,
+      "irq_tstates": 796
+    },
+    {
+      "interrupted_pc": 38792,
+      "paging_tstates": 92,
+      "extra_restart_tstates": 0,
+      "irq_tstates": 829
+    },
+    {
+      "interrupted_pc": 38795,
+      "paging_tstates": 105,
+      "extra_restart_tstates": 13,
+      "irq_tstates": 829
+    },
+    {
+      "interrupted_pc": 38797,
+      "paging_tstates": 112,
+      "extra_restart_tstates": 20,
+      "irq_tstates": 829
+    },
+    {
+      "interrupted_pc": 38799,
+      "paging_tstates": 119,
+      "extra_restart_tstates": 27,
+      "irq_tstates": 829
+    },
+    {
+      "interrupted_pc": 38802,
+      "paging_tstates": 132,
+      "extra_restart_tstates": 40,
+      "irq_tstates": 829
+    },
+    {
+      "interrupted_pc": 38804,
+      "paging_tstates": 144,
+      "extra_restart_tstates": 52,
+      "irq_tstates": 829
+    }
+  ]
+}

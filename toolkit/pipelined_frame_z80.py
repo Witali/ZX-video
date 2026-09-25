@@ -10,6 +10,8 @@ from build_zxv_trd import MiniAssembler
 CODE, VIDEO, PAGE, STATE = 0xde00, 0x9600, 0x9780, 0x97c0
 READY, ENABLED, DEADLINE, LATE, PUBLISHED, SHADOW = range(STATE,STATE+12,2)
 STATE_END = STATE+12
+# Restartable paging layout. Only the foreground patches REQUEST_OPERAND.
+PAGE_MERGE, REQUEST_OPERAND, SAFE_PAGE_OUT, SAFE_PAGE_END = PAGE+8, PAGE+14, PAGE+18, PAGE+21
 
 
 def helpers(a,listing,phase):
@@ -22,7 +24,7 @@ def helpers(a,listing,phase):
     return emit,addr
 
 
-def build_video(draw,zx0,audio):
+def build_video(draw,zx0,audio,*,irq_safe_paging=False):
     listing=[]; a=MiniAssembler(VIDEO); emit,addr=helpers(a,listing,'video_irq')
     a.label('video_tick')
     emit('PUSH AF',[0xf5],11)
@@ -42,6 +44,24 @@ def build_video(draw,zx0,audio):
     addr('LD (page_shadow),A',0x32,SHADOW,13)
     addr('LD BC,7FFD',0x01,0x7ffd,10)
     a.label('publish_out'); emit('OUT (C),A',[0xed,0x79],12)
+    if irq_safe_paging:
+        # After OUT, so checking the interrupted PC cannot delay publication.
+        # Stack: BC, DE, AF, video CALL return, outer HL, [outer AF], IRQ PC.
+        # Fast handler has one outer push; ROM-safe handler has two.
+        addr('LD HL,fast IRQ return offset',0x21,10,10)
+        addr('LD A,(irq_vector_low)',0x3a,0xbdbe,13); emit('OR A',[0xb7],4)
+        addr('JP NZ,irq_return_slot',0xc2,'irq_return_slot',10)
+        emit('INC L',[0x2c],4); emit('INC L',[0x2c],4)
+        a.label('irq_return_slot'); emit('ADD HL,SP',[0x39],11)
+        emit('LD E,(HL)',[0x5e],7); emit('INC HL',[0x23],6); emit('LD D,(HL)',[0x56],7)
+        emit('LD A,D',[0x7a],4); emit('CP paging high',[0xfe,PAGE>>8],7)
+        addr('JP NZ,page_return_ready',0xc2,'page_return_ready',10)
+        emit('LD A,E',[0x7b],4); emit('CP merge low',[0xfe,PAGE_MERGE&255],7)
+        addr('JP C,page_return_ready',0xda,'page_return_ready',10)
+        emit('CP page end low',[0xfe,SAFE_PAGE_END&255],7)
+        addr('JP NC,page_return_ready',0xd2,'page_return_ready',10)
+        emit('DEC HL',[0x2b],6); emit('LD (HL),merge low',[0x36,PAGE_MERGE&255],10)
+        a.label('page_return_ready')
     for name,location,mask in (('saved_page',draw['saved_page'],8),
             ('history_page',zx0['history_page'],8),('screen_base',draw['screen_base'],128)):
         addr('LD A,('+name+')',0x3a,location,13); emit('XOR mask',[0xee,mask],7)
@@ -61,12 +81,26 @@ def build_video(draw,zx0,audio):
     a.label('atomic_page')
     # Input A=requested page. BC and AF may be clobbered, like these callers
     # already permit. Startup callers must have installed the IM2 handler.
-    # EI is intentional: all runtime paging sites permit interrupts on return.
-    emit('DI',[0xf3],4); emit('AND F7h',[0xe6,0xf7],7); emit('LD B,A',[0x47],4)
-    addr('LD A,(page_shadow)',0x3a,SHADOW,13); emit('AND 8',[0xe6,8],7)
-    emit('OR B',[0xb0],4); addr('LD (page_shadow),A',0x32,SHADOW,13)
-    addr('LD BC,7FFD',0x01,0x7ffd,10); emit('OUT (C),A',[0xed,0x79],12)
-    emit('EI',[0xfb],4); emit('RET',[0xc9],10)
+    # The default EI is intentional: runtime callers permit IRQ on return.
+    # The restartable helper preserves IFF; the driver enables IRQ before prime.
+    if irq_safe_paging:
+        emit('AND F7h',[0xe6,0xf7],7)
+        addr('LD (requested_page_operand),A',0x32,REQUEST_OPERAND,13)
+        addr('LD BC,7FFD',0x01,0x7ffd,10)
+        a.label('page_merge'); addr('LD A,(page_shadow)',0x3a,SHADOW,13)
+        emit('AND 8',[0xe6,8],7)
+        a.label('requested_page'); emit('OR requested page',[0xf6,0],7)
+        addr('LD (page_shadow),A',0x32,SHADOW,13)
+        a.label('page_out'); emit('OUT (C),A',[0xed,0x79],12); emit('RET',[0xc9],10)
+        if (a.labels['page_merge'],a.labels['requested_page']+1,a.labels['page_out'],a.pc) != (PAGE_MERGE,REQUEST_OPERAND,SAFE_PAGE_OUT,SAFE_PAGE_END):
+            raise ValueError('restartable paging layout changed')
+        a.labels['requested_page_operand']=REQUEST_OPERAND
+    else:
+        emit('DI',[0xf3],4); emit('AND F7h',[0xe6,0xf7],7); emit('LD B,A',[0x47],4)
+        addr('LD A,(page_shadow)',0x3a,SHADOW,13); emit('AND 8',[0xe6,8],7)
+        emit('OR B',[0xb0],4); addr('LD (page_shadow),A',0x32,SHADOW,13)
+        addr('LD BC,7FFD',0x01,0x7ffd,10); emit('OUT (C),A',[0xed,0x79],12)
+        emit('EI',[0xfb],4); emit('RET',[0xc9],10)
     a.label('page_end')
     if a.pc>STATE: raise ValueError('atomic paging overlaps state')
     regions.append((PAGE,a.resolve())); labels.update(a.labels)

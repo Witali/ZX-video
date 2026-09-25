@@ -57,6 +57,9 @@ class Clock:
         cpu.audio_enabled_address=harness.audio['audio_enabled']
         cpu.irq_draw_state={harness.frame.draw[n] for n in ('saved_page','screen_base')}
         self.next_field=cpu.tstates+FIELD
+        # build_driver executes EI before prime. Restartable paging preserves
+        # IFF1 instead of implicitly enabling IRQ as the old helper did.
+        if 'page_merge' in harness.video: cpu.iff1=True
         self.halts,self.ticks,self.irq_tstates,self.idle_tstates=cpu.halts,0,0,0
         self.publications=[]; self.events=[]; self.irq_histogram=Counter()
         self.saved=('a','b','c','d','e','h','l','ix','z','carry','alt_a','alt_b',
@@ -87,10 +90,14 @@ class Clock:
                 raise AssertionError(('scheduled AY queue differs',self.ticks))
             for i in range(tick[0]): wanted[tick[1+2*i]]=tick[2+2*i]
         before={n:getattr(cpu,n) for n in self.saved}; page=cpu.port_7ffd
-        if cpu.read8(machine.SHADOW)!=page: raise AssertionError('stale paging shadow before IRQ')
+        shadow=cpu.read8(machine.SHADOW)
+        safe='page_merge' in h.video
+        pending_out=safe and cpu.pc==h.video['page_out']
+        if shadow!=page and not pending_out: raise AssertionError('stale paging shadow before IRQ')
         pc,start=cpu.pc,cpu.tstates; cpu.irq_active=True
+        publication_count=len(self.publications)
         cpu.push(pc); cpu.pc=0xbdbd; cpu.iff1=False; cpu.tstates+=19
-        while cpu.pc!=pc:
+        while cpu.sp!=before['sp']:
             at,t=cpu.pc,cpu.tstates
             if not (0x9400<=at<h.audio['state'] or 0xbd00<=at<0xbdc0
                     or machine.VIDEO<=at<h.video['video_end'] or at==0x3d2f):
@@ -105,8 +112,12 @@ class Clock:
                     interrupted_bank=page&7))
                 self.event('publish')
         cpu.irq_active=False
-        if ({n:getattr(cpu,n) for n in self.saved}!=before or (cpu.port_7ffd^page)&~8
-                or cpu.read8(machine.SHADOW)!=cpu.port_7ffd):
+        published=len(self.publications)>publication_count
+        restart=safe and published and h.video['page_merge']<=pc<h.video['page_end']
+        expected_pc=h.video['page_merge'] if restart else pc
+        expected_page=shadow^8 if published else page
+        if (cpu.pc!=expected_pc or {n:getattr(cpu,n) for n in self.saved}!=before or cpu.port_7ffd!=expected_page
+                or (published or not pending_out) and cpu.read8(machine.SHADOW)!=cpu.port_7ffd):
             raise AssertionError('IRQ corrupted foreground registers/bank/shadow')
         if bytes(cpu.ay)!=wanted or (word(cpu,h.audio['audio_underruns']) and not self.record_underruns):
             raise AssertionError('scheduled AY output or underrun')

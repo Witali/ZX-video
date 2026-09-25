@@ -51,6 +51,7 @@ def main():
     p.add_argument('--read-cache',type=Path,action='append',default=[])
     p.add_argument('--timeout',type=float,default=300)
     p.add_argument('--fast-noop-scan',action='store_true',help='Compare combined scanner with the saved original layout')
+    p.add_argument('--irq-safe-paging',action='store_true',help='Restart bank changes interrupted by publication; no DI')
     args = p.parse_args();probe = json.loads(args.probe.read_text());partition = json.loads(args.partition.read_text())
     if not probe['complete'] or not partition['complete'] or not partition['all_fit']:
         raise ValueError('requires completed fitting storage experiment')
@@ -67,6 +68,7 @@ def main():
         sources.append((path,raw))
     options = dict(fast_disk=True,cached_seek=True,interleaved=True,cold_bitmaps=True,startup_delta=True)
     if args.fast_noop_scan: options['fast_noop_scan']=True
+    if args.irq_safe_paging: options['irq_safe_paging']=True
     contract = dict(version='standalone-huffman-1',raw_sha256=[sha(raw) for _,raw in sources],
         states_sha256=probe['states_sha256'],ends=ends,options=options)
     contract_sha = sha(json.dumps(contract,sort_keys=True).encode())
@@ -86,7 +88,7 @@ def main():
         builder.read_cache = [args.directory/'zx0']+args.read_cache;builder.ends = ends
         image,m = builder.volume(start,end,part)
         if image is None or not m['independently_bootable']: raise ValueError('volume not standalone or overfull')
-        if not args.fast_noop_scan and m['used_sectors'] != partition['selected']['used_sectors'][part-1]:
+        if not (args.fast_noop_scan or args.irq_safe_paging) and m['used_sectors'] != partition['selected']['used_sectors'][part-1]:
             raise AssertionError('partition size changed')
         image = identify(image,m,fingerprint);m['entropy_set_contract_sha256'] = contract_sha
         trd = args.output/f'ZX-video-huffman-preview_part{part:02}.trd';metadata = trd.with_suffix('.json')
@@ -114,6 +116,7 @@ def main():
             video_bytes=m['video_bytes'],trd_sha256=sha(image),independently_bootable=True,
             cold_table_all_bytes_exact=True,boot_mocked_tstates=cpu.tstates,
             fast_noop_scan=args.fast_noop_scan,
+            irq_safe_paging=args.irq_safe_paging,
             read_attempts=data['read_attempts'],fast_read_retries=data['fast_read_retries'],
             full_report=target.name,timing=timing)
         variant['volumes'].append(row);save();print(json.dumps(row),flush=True)

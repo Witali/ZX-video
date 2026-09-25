@@ -13,7 +13,7 @@ from probe_spatial_contexts import read_header
 from test_frame_stream_z80 import source,ring
 
 
-def fixture(count,*,bar=False,compressed=True,packet_ahead=False,unrolled_copy=False,early_ay=False):
+def fixture(count,*,bar=False,compressed=True,packet_ahead=False,unrolled_copy=False,early_ay=False,irq_safe_paging=False):
     states,cells,fap1,ticks=source(count,constant_attribute_borders=True)
     # A valid, easy schedule: retain the first reconstructed picture, copy it
     # once to the other native screen, then leave both unchanged. Heavy random
@@ -29,7 +29,8 @@ def fixture(count,*,bar=False,compressed=True,packet_ahead=False,unrolled_copy=F
     h=Harness(ring(raw,509,compressed),tables,mapping,count,bulk=True,zero_copy=True,
         stored_guards=False,skip_noop_runs=True,constant_attribute_borders=True,
         skip_black_borders=True,token_boundaries=True,pipelined=True,
-        progress_frames=count if bar else None,packet_ahead=packet_ahead,unrolled_copy=unrolled_copy,early_ay=early_ay)
+        progress_frames=count if bar else None,packet_ahead=packet_ahead,unrolled_copy=unrolled_copy,early_ay=early_ay,
+        irq_safe_paging=irq_safe_paging)
     h.consume_header(raw[:cursor.pos])
     return h,states,ticks
 
