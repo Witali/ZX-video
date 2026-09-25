@@ -87,6 +87,9 @@ def main():
     nominal = all(v['reblocked']['nominal_late_frames'] == 0 and v['reblocked']['max_actual_deviation_tstates'] <= 64 for v in volumes)
     fallback = all(v['reblocked']['actual_out_over_one_field'] == 0 and v['reblocked']['bad_actual_intervals'] == 0 for v in volumes)
     result = dict(complete=True, release=False, scope=__doc__, baseline_commit='94c2e6f',
+        selection=inputs['build'].get('selection', 'minimum'),
+        input_files={k: getattr(args, k).name for k in inputs},
+        evidence_directory=args.evidence.name, baseline_directory=args.baseline_fuse.name,
         input_sha256={k: sha(getattr(args, k).read_bytes()) for k in inputs},
         source_packets_unchanged=True, every_packet_byte_compared_in_cpu=True,
         fuse_samples_per_frame=80, full_fuse_pixel_comparison=False, physical_drive_verified=False,

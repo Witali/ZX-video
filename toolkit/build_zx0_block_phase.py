@@ -34,6 +34,8 @@ def main():
     for name in ('probe', 'raw-directory', 'directory', 'states', 'zx0', 'output', 'report'):
         p.add_argument('--' + name, type=Path, required=True)
     p.add_argument('--read-cache', type=Path, action='append', default=[])
+    p.add_argument('--selection', choices=('minimum', 'start-aligned'), default='minimum',
+                   help='Keep the measured minimum or give every volume a full first block')
     args = p.parse_args()
     probe = json.loads(args.probe.read_bytes())
     if not probe['complete'] or [v['part'] for v in probe['volumes']] != [1, 2, 3]:
@@ -47,15 +49,19 @@ def main():
         raise ValueError('incomplete movie partition')
     metas = [disk_blocks(args.directory, i)[0] for i in (1, 2, 3)]
     options = [{k: m[k] for k in OPTIONS} for m in metas]
+    selected = [next(r for r in v['variants'] if
+        (r['volume_start_aligned'] if args.selection == 'start-aligned' else r['phase'] == v['selected_phase']))
+        for v in probe['volumes']]
     contract = dict(version='standalone-zx0-block-phase-1',
         raw_sha256=[v['raw_sha256'] for v in probe['volumes']],
         states_sha256=probe['states_sha256'], ends=ends, options=options,
-        phases=[v['selected_phase'] for v in probe['volumes']])
+        phases=[r['phase'] for r in selected])
     contract_sha = sha(json.dumps(contract, sort_keys=True).encode())
     fingerprint = b'FAP3ZXV1' + bytes.fromhex(contract_sha)[:6]
     args.output.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
     result = dict(complete=False, release=False, scope=__doc__,
+        selection=args.selection,
         probe_sha256=sha(args.probe.read_bytes()), contract=contract,
         contract_sha256=contract_sha, new_queue_bootstrap_capacity_verified=False,
         physical_drive_verified=False, full_playback_verified=False, volumes=[])
@@ -63,7 +69,7 @@ def main():
         args.report.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8', newline='\n')
     records = []
     save()
-    for v, meta, opts in zip(probe['volumes'], metas, options, strict=True):
+    for v, meta, opts, chosen in zip(probe['volumes'], metas, options, selected, strict=True):
         part, start, end = v['part'], v['start'], v['end']
         if (meta['frame_start'], meta['frame_end_exclusive']) != (start, end):
             raise ValueError('baseline partition differs')
@@ -80,7 +86,7 @@ def main():
         original = (args.directory / f'ZX-video-huffman-preview_part{part:02}.trd').read_bytes()
         if baseline != original:
             raise AssertionError('baseline rebuild is not byte exact')
-        b.block_phase = v['selected_phase']
+        b.block_phase = chosen['phase']
         image, m = b.volume(start, end, part)
         if image is None or not m['independently_bootable']:
             raise ValueError('selected volume is overfull or not independently bootable')
@@ -90,9 +96,11 @@ def main():
         trd.write_bytes(image)
         trd.with_suffix('.json').write_text(json.dumps(m, indent=2) + '\n', encoding='utf-8', newline='\n')
         _, stream, blocks = disk_blocks(args.output, part)
-        chosen = next(r for r in v['variants'] if r['phase'] == v['selected_phase'])
         if sha(stream) != chosen['stream_sha256'] or sha(b''.join(r for _, r in blocks)) != v['packet_sha256']:
             raise AssertionError('assembled stream or packet content differs')
+        initial_ready = sum(x['decoded_bytes'] for x in m['blocks'][:4])
+        if args.selection == 'start-aligned' and initial_ready != min(32768, v['packet_bytes']):
+            raise AssertionError('aligned volume did not fill its first four blocks')
         cpu = DiskCPU(player(image), image)
         until(cpu, disk.DRIVER)
         section = next(s for s in m['sections'] if s['bank'] == 6)
@@ -107,6 +115,8 @@ def main():
             baseline_rebuild_byte_exact=True, packet_sha256=v['packet_sha256'],
             stream_sha256=sha(stream), independently_bootable=True,
             cold_table_all_bytes_exact=True, boot_mocked_tstates=cpu.tstates,
+            initial_ready_bytes=initial_ready,
+            baseline_initial_ready_bytes=sum(x['decoded_bytes'] for x in meta['blocks'][:4]),
             baseline_used_sectors=meta['used_sectors'],
             **{k: m[k] for k in ('used_sectors', 'free_sectors', 'video_bytes',
                 'video_sectors', 'video_start_sector', 'video_physical_sectors', 'layout_padding_sectors')})

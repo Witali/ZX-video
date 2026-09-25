@@ -1,4 +1,5 @@
 """Check the saved block-phase evidence, coverage, timings and content hashes."""
+import argparse
 import gzip
 import json
 from pathlib import Path
@@ -10,11 +11,16 @@ from summarize_zx0_block_phase import compare_cpu
 
 def main():
     root = Path(__file__).parent
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--summary', type=Path, default=root / 'zx0_block_phase_summary.json')
+    args = parser.parse_args()
     def read(name):
         return json.loads((root / name).read_bytes())
-    summary = read('zx0_block_phase_summary.json')
-    paths = dict(probe='zx0_block_phase_probe.json', build='zx0_block_phase_build.json',
-                 cpu='zx0_block_phase_cpu.json', baseline_cpu='slot_queue_cpu.json')
+    summary = json.loads(args.summary.read_bytes())
+    paths = summary.get('input_files', dict(probe='zx0_block_phase_probe.json', build='zx0_block_phase_build.json',
+                 cpu='zx0_block_phase_cpu.json', baseline_cpu='slot_queue_cpu.json'))
+    evidence = summary.get('evidence_directory', 'zx0_block_phase_evidence')
+    baseline = summary.get('baseline_directory', 'compiled_masks_evidence')
     data = {k: read(v) for k, v in paths.items()}
     if not summary['complete'] or not all(r['complete'] for r in data.values()):
         raise AssertionError('incomplete evidence')
@@ -24,7 +30,7 @@ def main():
     if data['build']['probe_sha256'] != summary['input_sha256']['probe']:
         raise AssertionError('build input hash')
     for row in summary['evidence']:
-        blob = (root / 'zx0_block_phase_evidence' / row['file']).read_bytes()
+        blob = (root / evidence / row['file']).read_bytes()
         if sha(blob) != row['sha256']:
             raise AssertionError(('evidence hash', row['file']))
         if 'uncompressed_sha256' in row and sha(gzip.decompress(blob)) != row['uncompressed_sha256']:
@@ -36,8 +42,20 @@ def main():
         if v['part'] != part or v['start'] != next_frame or saved['start'] != v['start'] or saved['end'] != v['end']:
             raise AssertionError('frame coverage')
         next_frame = v['end']
-        chosen = min(v['variants'], key=lambda r: (r['stream_bytes'], len(r['blocks']), r['phase']))
-        if chosen['phase'] != v['selected_phase'] or chosen['phase'] != b['phase']:
+        selection = data['build'].get('selection', 'minimum')
+        if selection != summary.get('selection', 'minimum'):
+            raise AssertionError('selection rule differs')
+        if selection == 'start-aligned':
+            chosen = next(r for r in v['variants'] if r['volume_start_aligned'])
+            if b['initial_ready_bytes'] != min(32768, v['packet_bytes']):
+                raise AssertionError('initial queue is not full')
+        elif selection == 'minimum':
+            chosen = min(v['variants'], key=lambda r: (r['stream_bytes'], len(r['blocks']), r['phase']))
+            if chosen['phase'] != v['selected_phase']:
+                raise AssertionError('minimum-size selection differs')
+        else:
+            raise AssertionError('unknown selection')
+        if chosen['phase'] != b['phase']:
             raise AssertionError('selection differs')
         for row in v['variants']:
             blocks = row['blocks']
@@ -63,8 +81,8 @@ def main():
         for row in (cpu, old_cpu):
             if sum(r['tstates']*r['count'] for r in row['instruction_histogram']) != row['summary']['queue_total_tstates']:
                 raise AssertionError('CPU histogram')
-        baseline_path = root / f'compiled_masks_evidence/part{part:02}.json'
-        new = read(f'zx0_block_phase_evidence/part{part:02}.json')
+        baseline_path = root / baseline / f'part{part:02}.json'
+        new = read(f'{evidence}/part{part:02}.json')
         old = json.loads(baseline_path.read_bytes())
         if sha(baseline_path.read_bytes()) != saved['baseline_report_sha256']:
             raise AssertionError('baseline Fuse hash')
@@ -75,7 +93,7 @@ def main():
                 or metrics(new) != saved['reblocked'] or metrics(old) != saved['baseline']):
             raise AssertionError('Fuse input, coverage or timing')
         for suffix, key in (('trace.txt', 'trace_sha256'), ('debugger.txt', 'debugger_script_sha256')):
-            blob = gzip.decompress((root / f'zx0_block_phase_evidence/part{part:02}.{suffix}.gz').read_bytes())
+            blob = gzip.decompress((root / evidence / f'part{part:02}.{suffix}.gz').read_bytes())
             if sha(blob) != new[key]:
                 raise AssertionError('Fuse trace source')
     if next_frame != data['probe']['frames'] or len(data['build']['mocked_rom_swaps']) != 2:
