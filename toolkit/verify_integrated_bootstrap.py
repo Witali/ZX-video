@@ -1,0 +1,55 @@
+"""Verify real cold-installed bytes against the measured queue and CPU model."""
+import argparse
+import json
+from pathlib import Path
+import struct
+from benchmark_bank_local_zx0 import disk_blocks
+from build_fap3_trd import sha
+import fap3_disk_z80 as disk
+from slot_queue_player import build
+from test_fap3_disk import DiskCPU
+from test_warm_continuation import player,until
+
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__)
+    for key in ('directory','baseline-directory','raw-directory'):p.add_argument('--'+key,type=Path,required=True)
+    p.add_argument('--report',type=Path,default=Path('toolkit/integrated_bootstrap_build.json'))
+    a=p.parse_args();report=json.loads(a.report.read_bytes())
+    if not report['complete'] or len(report['volumes'])!=3:raise ValueError('incomplete build')
+    for name,digest in report['source_sha256'].items():
+        if sha(Path(__file__).with_name(name).read_bytes())!=digest:raise ValueError(('source changed',name))
+    model=json.loads(Path(__file__).with_name('inline_huffman_patches_cpu.json').read_bytes())
+    for part in (1,2,3):
+        m,stream,_=disk_blocks(a.directory,part);old,old_stream,_=disk_blocks(a.baseline_directory,part)
+        raw=(a.raw_directory/f'volume-{part}.raw').read_bytes()
+        if (sha(raw)!=m['raw_sha256'] or stream!=old_stream or m['used_sectors']>2544 or
+            m['trd_sha256']!=report['volumes'][part-1]['trd_sha256'] or
+            not m['independently_bootable'] or not m['integrated_slot_queue']):raise ValueError('wrong volume')
+        image=(a.directory/f'ZX-video-huffman-preview_part{part:02}.trd').read_bytes()
+        old_image=(a.baseline_directory/f'ZX-video-huffman-preview_part{part:02}.trd').read_bytes()
+        # The generalized hooks must preserve the legacy bootstrap byte for byte.
+        old_boot,_=disk.build_bootstrap(old['sections'],old['video_start_sector'],old['video_sectors'],
+            next_id=bytes.fromhex(old['disk_id_hex'])[:14]+struct.pack('<H',part+1),interleaved=True)
+        if old_boot!=player(old_image):raise AssertionError('legacy bootstrap changed')
+        c=DiskCPU(player(image),image);until(c,disk.DRIVER)
+        patches,_=build(old,raw,uncontended=True,compiled_masks=True,inline_literals=True,demand_decode=True)
+        inline=model['volumes'][part-1]['inline_patches']
+        retired=[(v['start'],v['end']) for v in m['retired_fixed_code']]
+        retired.append((inline['redirect_address'],inline['redirect_address']+3))
+        checked=0
+        for address,value in patches:
+            if any(lo<=address<hi for lo,hi in retired):continue
+            # Runtime cursor changes with startup-sector placement.
+            if m['disk_labels']['disk_position']<=address<m['disk_labels']['disk_position']+2:continue
+            if c.read8(address)!=value:raise AssertionError(('installed fixture differs',part,hex(address)))
+            checked+=1
+        blob=bytes.fromhex(inline['code_hex']);offset=inline['origin']&16383
+        if (bytes(c.banks[6][offset:offset+len(blob)])!=blob or
+            bytes(c.read8(inline['redirect_address']+i) for i in range(3))!=bytes.fromhex(inline['redirect_bytes'])):
+            raise AssertionError('installed Huffman differs from full-frame CPU model')
+        if c.dos_reads!=sum(s['sectors'] for s in m['sections']):raise AssertionError('unexpected preload')
+        print(f'Part {part}: exact stream, legacy bootstrap unchanged, {checked} fixture bytes and {len(blob)} inline bytes exact',flush=True)
+
+
+if __name__=='__main__':main()

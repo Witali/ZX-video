@@ -57,6 +57,16 @@ def player_harness(ring, tables, mapping, frames, *, disk_reader=True,inline_mat
 
 
 class Builder:
+    preload_sectors = 256
+
+    def bootstrap(self, sections, video_sector, ns, next_id, start):
+        return disk.build_bootstrap(sections,video_sector,ns,next_id=next_id,interleaved=self.interleaved,
+            warm_set=self.warm_continuation,continuation=bool(start and self.warm_continuation))
+
+    def place_sections(self, sections, position):
+        for s in sections: s['sector']=position; position+=s['sectors']
+        return [TrdFile(f'INIT{i}','C',s['data']) for i,s in enumerate(sections)],position
+
     def __init__(self, raw, states, zx0, cache, *, fast_disk=False, cached_seek=False, cold_track=False, interleaved=False,deferred_limit=0,keepalive_fields=0,frame_service=False,cold_bitmaps=False,inline_matches=False,warm_continuation=False,startup_delta=False,fast_noop_scan=False,irq_safe_paging=False,static_cache_borders=False,carry_huffman=False,register_fragments=False,cached_huffman_byte=False):
         if not 0 <= deferred_limit <= 248: raise ValueError('deferred limit must be 0..248')
         if frame_service and not keepalive_fields: raise ValueError('frame service requires keepalive clock')
@@ -272,23 +282,21 @@ class Builder:
         next_id=disk_id[:14]+struct.pack('<H',part+1)
         for attempt in range(8):
             positions=list(disk_layout.positions(ns+1,video_sector%16)) if self.interleaved else list(range(ns+1))
-            sections,metadata=self.ram(start,end,video_sector+positions[min(256,ns)],max(0,ns-256))
+            sections,metadata=self.ram(start,end,video_sector+positions[min(self.preload_sectors,ns)],max(0,ns-self.preload_sectors))
             for s in sections: s['sector']=0
-            player,_=disk.build_bootstrap(sections,video_sector,ns,next_id=next_id,interleaved=self.interleaved,
-                warm_set=self.warm_continuation,continuation=bool(start and self.warm_continuation))
+            player,_=self.bootstrap(sections,video_sector,ns,next_id,start)
             files=[TrdFile('boot','B',boot,basic_variables_offset=len(boot),autostart_line=10),
                 TrdFile('PLAYER','C',player,start=0x6000)]
             if calculate_file_start(files[:1])!=(1,1) or len(player)!=1024:
                 raise ValueError('next-volume loader requires PLAYER at sector 17, four sectors')
             track,sector=calculate_file_start(files); position=track*16+sector
-            for s in sections: s['sector']=position; position+=s['sectors']
+            init_files,position=self.place_sections(sections,position)
             if position==video_sector: break
             video_sector=position
         else: raise ValueError('bootstrap size did not converge')
-        player,boot_labels=disk.build_bootstrap(sections,video_sector,ns,next_id=next_id,interleaved=self.interleaved,
-            warm_set=self.warm_continuation,continuation=bool(start and self.warm_continuation))
+        player,boot_labels=self.bootstrap(sections,video_sector,ns,next_id,start)
         files[1]=TrdFile('PLAYER','C',player,start=0x6000)
-        files.extend(TrdFile(f'INIT{i}','C',s['data']) for i,s in enumerate(sections))
+        files.extend(init_files)
         physical=disk_layout.arrange(padded(stream),video_sector%16) if self.interleaved else padded(stream)
         files.extend(TrdFile(f'VIDEO{i:03}','C',physical[p:p+65280]) for i,p in enumerate(range(0,len(physical),65280)))
         used=video_sector-16+len(physical)//256

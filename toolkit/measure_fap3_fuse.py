@@ -44,11 +44,14 @@ def main():
     p.add_argument('--demand-decode',action='store_true',help='With slot queue, decode the requested prefix before one contiguous copy')
     p.add_argument('--fixture-zx0',type=Path,help='ZX0 executable for compressing debugger-only startup patches')
     args=p.parse_args(); m=json.loads(args.metadata.read_text()); lab=m['player_labels']
+    integrated=bool(m.get('integrated_slot_queue'))
+    queue_mode=args.slot_queue or integrated
+    if integrated and args.slot_queue:raise ValueError('integrated image must run without debugger installation')
     patches=[];nonce=secrets.randbits(30)
     if args.uncontended_frame and not args.slot_queue:raise ValueError('relocation requires --slot-queue')
     if args.compiled_masks and not args.slot_queue:raise ValueError('compiled masks require --slot-queue')
     if args.idle_masks and not args.compiled_masks:raise ValueError('idle masks require --compiled-masks')
-    if args.trace_pipeline and not args.slot_queue:raise ValueError('pipeline tracing requires --slot-queue')
+    if args.trace_pipeline and not queue_mode:raise ValueError('pipeline tracing requires a slot queue')
     if args.partial_slots and not args.slot_queue:raise ValueError('partial slots require --slot-queue')
     if args.cached_huffman_byte and not args.slot_queue:raise ValueError('cached byte requires --slot-queue')
     if args.inline_literals and not args.slot_queue:raise ValueError('inline literals require --slot-queue')
@@ -65,7 +68,7 @@ def main():
     if m.get('required_trdos_sha256') and hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest()!=m['required_trdos_sha256']:
         raise ValueError('fast reader requires its verified TR-DOS ROM')
     lines=['base 10','set $running 0','set $dump 65537']; widths={}; events=[]
-    target_samples=args.idle_masks or args.trace_pipeline or args.uncontended_frame
+    target_samples=args.idle_masks or args.trace_pipeline or args.uncontended_frame or integrated
     if target_samples: lines.append('set $n 0')
     if args.trace_pipeline:lines.append('set $qwait 0')
     def event(pc,tag,expressions,stop=False,after=(),breakpoint=None,before=()):
@@ -145,7 +148,7 @@ def main():
     if 'fast_read_enter' in lab:
         event(lab['fast_read_enter'],110,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])],
             after=[f'set $b 256*[{m["disk_labels"]["write_high"]}]'])
-        event(lab['fast_disk_return'],111,[stamp]+([] if args.slot_queue else sector_expr))
+        event(lab['fast_disk_return'],111,[stamp]+([] if queue_mode else sector_expr))
         event(lab['fast_read_retry'],112,[stamp])
     if 'seek_enter' in lab:
         event(lab['seek_side_enter'],120,[stamp])
@@ -159,7 +162,7 @@ def main():
     event(lab['finished'],199,[stamp,mem(lab['published']),mem(lab['audio_ticks_played']),mem(lab['audio_underruns'])]+
         [f'[{base+i}]' for base in (0x50e0,0x51e0,0xd0e0,0xd1e0) for i in range(32)],not bool(export),after=export)
     for name in ('fatal','zx0_fatal'): event(lab[name],198,[stamp,'z80:pc'],True)
-    if args.slot_queue:
+    if queue_mode:
         for labels in (m['queue_labels'],m['producer_labels']):event(labels['fatal'],198,[stamp,'z80:pc'],True)
     if export:
         # After EOF only: repeat the existing DI at 9A60; debugger redirects
@@ -247,7 +250,7 @@ def main():
             if pending is not None: raise ValueError('overlapping ROM reads')
             pending=v; read_kind='trdos' if tag==102 else 'direct503'
         elif tag in (103,111):
-            if args.slot_queue and tag==111:
+            if queue_mode and tag==111:
                 # The shared disk_finish breakpoint exports accepted bytes
                 # for either entry path; avoid duplicating 64 expressions.
                 continue
@@ -262,7 +265,7 @@ def main():
                 bytes_exact=actual==image[linear*256:(linear+1)*256],retried=False,
                 start_tstate=pending[0],end_tstate=v[0],entry_tstates=17 if read_kind=='trdos' else 10)); pending=None
         elif tag==112:
-            if args.slot_queue:
+            if queue_mode:
                 if pending is None or read_kind!='direct503':raise ValueError('retry without direct read')
                 linear=(pending[2]>>8)*16+(pending[2]&255)
                 reads.append(dict(sector=linear,tstates=v[0]-pending[0],kind=read_kind,
@@ -355,6 +358,11 @@ def main():
             report['native_sample_trace']='target-only; same 80 offsets and per-disk parity as the two-screen trace'
         report['slot_queue_fixture']={k:v for k,v in m.items() if k.startswith('slot_queue_') or k in
             ('queue_labels','producer_labels','decoder_labels','clock_labels','packet_labels','native_ready_pcs')}
+    if integrated:
+        report.update(integrated_slot_queue=True,debugger_installed_bytes=0,
+            integrated_bootstrap_metadata_sha256=hashlib.sha256(args.metadata.read_bytes()).hexdigest())
+        for key in ('uncontended_frame','compiled_masks','inline_literals','demand_decode','inline_huffman_patches'):
+            report[key]=m[key]
     if args.continuation_snapshot:
         report.update(continuation_snapshot_sha256=hashlib.sha256(args.continuation_snapshot.read_bytes()).hexdigest(),
             continuation_disk_accepted_tstates=continuation_accepted)
@@ -369,7 +377,7 @@ def main():
             args.export_warm_ram.parent.mkdir(parents=True,exist_ok=True)
             args.export_warm_ram.write_bytes(warm_ram)
     args.output.write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','pipeline_events','slot_queue_fixture','uncontended_frame')}),flush=True)
+    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','pipeline_events','slot_queue_fixture','uncontended_frame','inline_huffman_patches')}),flush=True)
     if not complete: raise SystemExit(1)
 
 

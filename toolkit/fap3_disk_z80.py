@@ -334,8 +334,8 @@ def build_driver(h, clock, ay_state, *, has_next=False, deferred=False, prefill_
 
 
 def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16), interleaved=False,
-                    warm_set=False,continuation=False):
-    """Sections already sector-aligned on disk; decompress directly to RAM."""
+                    warm_set=False,continuation=False,preload_sectors=256,runtime_entry=None):
+    """Read section sectors and decompress from their optional byte offset."""
     a = MiniAssembler(0x6000)
     def call(label): a.abs16(0xcd,label)
     def page(bank):
@@ -355,7 +355,7 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
         a.abs16((0xed,0x53),'disk_position')
         a.emit(0x21); a.word(section['buffer'])
         a.emit(0x06,section['sectors']); call('read_n')
-        a.emit(0x21); a.word(section['buffer'])
+        a.emit(0x21); a.word(section['buffer']+section.get('source_offset',0))
         a.emit(0x11); a.word(section['address']); call('dzx0_standard')
         if section.get('warm_reset'):
             a.emit(0x21); a.word(section['address']); call('warm_reset')
@@ -364,7 +364,8 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
                 raise ValueError('startup delta requires a whole bank-6 table')
             call('restore_table_delta')
     a.emit(0x11); a.word(packed_sector(video_sector)); a.abs16((0xed,0x53),'disk_position')
-    left = min(256, video_sectors)
+    if not 0 <= preload_sectors <= 256: raise ValueError('invalid bootstrap preload')
+    left = min(preload_sectors, video_sectors)
     for bank in (0,1,3,4):
         count = min(64,left)
         if not count: break
@@ -372,7 +373,7 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
     page(7)
     # Runtime reader replaces only the no-longer-used bootstrap prefix.
     # A100 is temporary storage in the initially empty AY queue.
-    if a.pc<0x6100:
+    if runtime_entry is None and a.pc<0x6100:
         # Small videos preload fewer banks and produce a shorter bootstrap.
         # Skip inert padding before overwriting 6000..60FF. JP nn = 10 T;
         # existing full-ring bootstraps emit exactly the previous byte sequence.
@@ -380,8 +381,12 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
         a.label('overlay_jump')
         a.emit(0xc3); a.word(target); a.emit(*bytes(target-a.pc))
     a.label('overlay_copy')
-    a.emit(0x21); a.word(0xa100); a.emit(0x11); a.word(DISK)
-    a.emit(0x01); a.word(256); a.emit(0xed,0xb0,0xf3,0xc3); a.word(DRIVER)
+    if runtime_entry is None:
+        a.emit(0x21); a.word(0xa100); a.emit(0x11); a.word(DISK)
+        a.emit(0x01); a.word(256); a.emit(0xed,0xb0,0xf3,0xc3); a.word(DRIVER)
+    else:
+        if not 0xc000 <= runtime_entry < 0x10000: raise ValueError('runtime entry must be in bank 7')
+        a.emit(0xf3,0xc3); a.word(runtime_entry)
     a.label('read_n')
     a.label('read_loop'); a.emit(0xc5,0xe5)
     a.abs16((0xed,0x5b),'disk_position'); a.emit(0x01); a.word(0x105)
