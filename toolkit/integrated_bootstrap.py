@@ -32,13 +32,14 @@ def installer():
 class Builder(ReadThroughBuilder):
     preload_sectors = 0
 
-    def __init__(self, *args, bank2_zx0=False, audio_wait_prefetch=False, ready_packet_guard=False, fast_return_irq=False, packet_prefix_guard=False, **kwargs):
+    def __init__(self, *args, bank2_zx0=False, audio_wait_prefetch=False, ready_packet_guard=False, fast_return_irq=False, packet_prefix_guard=False, hl_mask_reader=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.bank2_zx0=bank2_zx0
         self.audio_wait_prefetch=audio_wait_prefetch
         self.ready_packet_guard=ready_packet_guard
         self.fast_return_irq=fast_return_irq
         self.packet_prefix_guard=packet_prefix_guard
+        self.hl_mask_reader=hl_mask_reader
         if packet_prefix_guard and (not bank2_zx0 or ready_packet_guard):
             raise ValueError('prefix guard needs bank-2 ZX0 and replaces the conservative guard')
         if audio_wait_prefetch and not bank2_zx0:raise ValueError('audio prefetch requires bank-2 ZX0')
@@ -88,7 +89,7 @@ class Builder(ReadThroughBuilder):
             **{key:getattr(self,key) for key in ('inline_matches','fast_noop_scan','irq_safe_paging',
                 'static_cache_borders','carry_huffman','register_fragments','cached_huffman_byte')})
         patches, m = slot_queue_player.build(m,self.raw,uncontended=True,compiled_masks=True,
-            inline_literals=True,demand_decode=True)
+            inline_literals=True,demand_decode=True,hl_mask_reader=self.hl_mask_reader)
         # Move initial data on the host, not at every Spectrum cold start.
         relocated = [(dest,bytes(read8(i) for i in range(lo,hi))) for lo,hi,dest in RANGES]
         for address,data in relocated: put(address,data)

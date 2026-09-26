@@ -13,7 +13,7 @@ INIT,CODE,TABLE,BODIES,STRIDE=0xe180,0xe300,0xe400,0xe600,19
 END=BODIES+256*STRIDE
 
 
-def build(*,prefill_entry=None):
+def build(*,prefill_entry=None,hl_flags=False):
     rows=[];a=MiniAssembler(CODE)
     def emit(name,data,ticks):
         rows.append(dict(address=a.pc,instruction=name,tstates=ticks,stage='compiled_metadata'));a.emit(*data)
@@ -21,13 +21,28 @@ def build(*,prefill_entry=None):
         rows.append(dict(address=a.pc,instruction=name,tstates=ticks,stage='compiled_metadata'))
         if isinstance(target,str):a.abs16(op,target)
         else:a.emit(op);a.word(target)
-    a.label('decode');emit('PUSH HL',[0xe5],11);emit('POP IX',[0xdd,0xe1],14)
+    a.label('decode')
+    if hl_flags:
+        emit('EXX (save alternate HL)',[0xd9],4);emit('PUSH HL',[0xe5],11);emit('EXX',[0xd9],4)
+    emit('PUSH HL',[0xe5],11)
+    if hl_flags:
+        emit('EXX (flags cursor)',[0xd9],4);emit('POP HL',[0xe1],10);emit('EXX',[0xd9],4)
+    else:emit('POP IX',[0xdd,0xe1],14)
     ref('LD DE,8',0x11,8,10);emit('ADD HL,DE',[0x19],11)
     ref('LD DE,FLAGS',0x11,FLAGS,10);emit('LD B,8',[0x06,8],7);ref('CALL groups',0xcd,'groups',17)
-    emit('LD IX,FLAGS',[0xdd,0x21,FLAGS&255,FLAGS>>8],14)
+    if hl_flags:
+        emit('EXX (lower flags)',[0xd9],4);ref('LD HL,FLAGS',0x21,FLAGS,10);emit('EXX',[0xd9],4)
+    else:emit('LD IX,FLAGS',[0xdd,0x21,FLAGS&255,FLAGS>>8],14)
     ref('LD DE,MASKS',0x11,MASKS,10);emit('LD B,60',[0x06,60],7);ref('CALL groups',0xcd,'groups',17)
+    if hl_flags:
+        emit('EXX (restore alternate HL)',[0xd9],4);emit('POP HL',[0xe1],10);emit('EXX',[0xd9],4)
     emit('RET',[0xc9],10)
-    a.label('groups');emit('LD A,(IX+0)',[0xdd,0x7e,0],19);emit('INC IX',[0xdd,0x23],10)
+    a.label('groups');a.label('flags_read')
+    if hl_flags:
+        emit('EXX (read flags)',[0xd9],4);emit('LD A,(HL)',[0x7e],7);emit('INC HL',[0x23],6);emit('EXX',[0xd9],4)
+    else:
+        emit('LD A,(IX+0)',[0xdd,0x7e,0],19);emit('INC IX',[0xdd,0x23],10)
+    a.label('flags_read_end')
     emit('LD C,A',[0x4f],4);emit('OR A',[0xb7],4);ref('JP Z,zero',0xca,'zero',10)
     emit('CP FFh',[0xfe,255],7);ref('JP Z,full',0xca,'full',10)
     emit('PUSH BC',[0xc5],11);emit('PUSH HL',[0xe5],11)
@@ -86,14 +101,15 @@ def build(*,prefill_entry=None):
     return [(INIT,a.resolve()),(CODE,runtime)],labels,rows+body_rows,[(TABLE,table+bytes(bodies))]
 
 
-def group_tstates(mask):
+def group_tstates(mask,*,hl_flags=False):
     # Whole loop iteration, helper RET excluded. Partial: prologue 64,
     # dispatch 88, body 90+5*popcount-2*LSB, JP 10, POP 10,
     # DEC/JP 14. Full/zero retain their old instruction sequences.
-    return 161 if mask==0 else 227 if mask==255 else 276+5*mask.bit_count()-2*(mask&1)
+    base=161 if mask==0 else 227 if mask==255 else 276+5*mask.bit_count()-2*(mask&1)
+    return base-8*hl_flags
 
 
-def expected_tstates(encoded):
+def expected_tstates(encoded,*,hl_flags=False):
     upper=encoded[:8];pos=8;lower=[]
     if len(upper)!=8 or upper[-1]&15:raise ValueError('bad upper masks')
     for flags in upper:
@@ -101,4 +117,4 @@ def expected_tstates(encoded):
             if flags&(128>>i):lower.append(encoded[pos]);pos+=1
             else:lower.append(0)
     if pos+sum(v.bit_count() for v in lower[:60])!=len(encoded):raise ValueError('bad mask length')
-    return 158+sum(group_tstates(v) for v in list(upper)+lower[:60])
+    return 158+45*hl_flags+sum(group_tstates(v,hl_flags=hl_flags) for v in list(upper)+lower[:60])

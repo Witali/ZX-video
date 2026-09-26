@@ -52,6 +52,7 @@ def main():
     p.add_argument('--ready-packet-guard',action='store_true')
     p.add_argument('--fast-return-irq',action='store_true')
     p.add_argument('--packet-prefix-guard',action='store_true')
+    p.add_argument('--hl-mask-reader',action='store_true')
     args = p.parse_args()
     with np.load(args.states,allow_pickle=False) as saved: states = saved['states']
     inputs = [disk_blocks(args.directory,part) for part in (1,2,3)]
@@ -74,6 +75,7 @@ def main():
     if args.ready_packet_guard:options['ready_packet_guard']=True
     if args.fast_return_irq:options['fast_return_irq']=True
     if args.packet_prefix_guard:options['packet_prefix_guard']=True
+    if args.hl_mask_reader:options['hl_mask_reader']=True
     fingerprint = b'FAP3ZXV1'+bytes.fromhex(sha(json.dumps(contract,sort_keys=True).encode()))[:6]
     args.output.mkdir(parents=True,exist_ok=True); args.report.parent.mkdir(parents=True,exist_ok=True)
     report = dict(complete=False,release=False,scope=__doc__,baseline_commit='4ccd740',
@@ -95,6 +97,7 @@ def main():
         if args.ready_packet_guard:row['ready_packet_guard']=m['ready_packet_guard']
         if args.fast_return_irq:row['fast_return_irq']=m['fast_return_irq']
         if args.packet_prefix_guard:row['packet_prefix_guard']=m['packet_prefix_guard']
+        if args.hl_mask_reader:row['hl_mask_reader']=m['hl_mask_reader']
         report['volumes'].append(row);save()
         if image is None:
             print(json.dumps({k:v for k,v in row.items() if k not in ('sections','inline_huffman')}),flush=True)
@@ -122,6 +125,9 @@ def main():
     if args.ready_packet_guard:report['source_sha256']['ready_packet_guard.py']=sha(Path(__file__).with_name('ready_packet_guard.py').read_bytes())
     if args.fast_return_irq:report['source_sha256']['fast_return_irq.py']=sha(Path(__file__).with_name('fast_return_irq.py').read_bytes())
     if args.packet_prefix_guard:report['source_sha256']['packet_prefix_guard.py']=sha(Path(__file__).with_name('packet_prefix_guard.py').read_bytes())
+    if args.hl_mask_reader:
+        report['source_sha256'].update({name:sha(Path(__file__).with_name(name).read_bytes()) for name in
+            ('compiled_masks_z80.py','slot_queue_player.py')})
     save()
 
 

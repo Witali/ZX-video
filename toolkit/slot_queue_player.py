@@ -18,7 +18,9 @@ import pipelined_frame_z80 as video
 import bulk_frame_z80 as packet
 
 
-def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False,partial_consumption=False,cached_huffman_byte=False,inline_literals=False,demand_decode=False):
+def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False,partial_consumption=False,cached_huffman_byte=False,inline_literals=False,demand_decode=False,hl_mask_reader=False):
+    if hl_mask_reader and (not compiled_masks or idle_masks):
+        raise ValueError('HL mask reader requires compiled masks without idle overrides')
     if idle_masks and not compiled_masks:
         raise ValueError('idle stripes require compiled metadata')
     if idle_masks and uncontended:
@@ -63,7 +65,7 @@ def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False
     mask_rows=[]
     if compiled_masks:
         import compiled_masks_z80 as masks
-        mask_regions,mask_labels,mask_rows,generated=masks.build(prefill_entry=prefill)
+        mask_regions,mask_labels,mask_rows,generated=masks.build(prefill_entry=prefill,hl_flags=hl_mask_reader)
         if q['end']>masks.INIT:raise ValueError('queue overlaps mask generator')
         regions+=mask_regions
         prefill=mask_labels['initialize']
@@ -71,8 +73,15 @@ def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False
             stored_bytes=sum(len(b) for _,b in mask_regions),
             generated_regions=[dict(address=a,bytes=len(b),sha256=sha(b)) for a,b in generated],
             initialize_cpu_tstates=201509,initialization_before_playback=True,
-            baseline_partial_group='370+8*popcount',partial_group='276+5*popcount-2*LSB',
-            zero_group_tstates=161,full_group_tstates=227,decode_overhead_tstates=158)
+            baseline_partial_group='370+8*popcount',partial_group=f'{268 if hl_mask_reader else 276}+5*popcount-2*LSB',
+            zero_group_tstates=masks.group_tstates(0,hl_flags=hl_mask_reader),
+            full_group_tstates=masks.group_tstates(255,hl_flags=hl_mask_reader),decode_overhead_tstates=203 if hl_mask_reader else 158)
+        if hl_mask_reader:
+            m['hl_mask_reader']=dict(enabled=True,flags_cursor='alternate HL via EXX',preserves_alternate_registers=True,
+                group_read_tstates_before=29,group_read_tstates=21,groups_per_frame=68,
+                setup_and_restore_delta_tstates=45,frame_delta_tstates=-499,extra_stack_bytes=2,
+                code_growth_bytes=7,extra_stream_bytes=0,extra_buffer_bytes=0,
+                timing_source='https://www.zilog.com/docs/z80/um0080.pdf')
     if idle_masks or (cached_huffman_byte and not cached_in_bootstrap):
         from benchmark_static_cache_borders import OPTIONS
         from frame_output_pipeline import Harness

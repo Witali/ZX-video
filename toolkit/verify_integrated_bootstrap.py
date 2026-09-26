@@ -33,7 +33,8 @@ def main():
             next_id=bytes.fromhex(old['disk_id_hex'])[:14]+struct.pack('<H',part+1),interleaved=True)
         if old_boot!=player(old_image):raise AssertionError('legacy bootstrap changed')
         c=DiskCPU(player(image),image);until(c,disk.DRIVER)
-        patches,_=build(old,raw,uncontended=True,compiled_masks=True,inline_literals=True,demand_decode=True)
+        patches,_=build(old,raw,uncontended=True,compiled_masks=True,inline_literals=True,demand_decode=True,
+            hl_mask_reader=m.get('hl_mask_reader',{}).get('enabled',False))
         if m.get('bank2_zx0',{}).get('enabled'):
             from bank2_zx0 import build as split_decoder
             regions,labels,relocation=split_decoder()

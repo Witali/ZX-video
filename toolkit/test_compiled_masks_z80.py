@@ -20,8 +20,10 @@ class GuardedCPU(CPU):
 
 
 class CompiledMaskTests(unittest.TestCase):
+    hl_flags=False
+
     def setUp(self):
-        regions, self.labels, rows, self.expected = compiled.build()
+        regions, self.labels, rows, self.expected = compiled.build(hl_flags=self.hl_flags)
         self.cpu = GuardedCPU(b'', b'')
         self.cpu.port_7ffd = 0x17
         self.rows = {row['address']: row for row in rows}
@@ -79,7 +81,7 @@ class CompiledMaskTests(unittest.TestCase):
                 self.assertEqual(self.read(FLAGS + 60, 4), bytes(4))
                 self.assertEqual(self.read(INPUT, len(encoded)), encoded)
                 self.assertEqual(self.cpu.hl(), INPUT + len(encoded))
-                self.assertEqual(ticks, compiled.expected_tstates(encoded))
+                self.assertEqual(ticks, compiled.expected_tstates(encoded,hl_flags=self.hl_flags))
                 self.assertLessEqual(ticks, old_tstates(encoded))
 
     def test_ay_irq_after_each_generator_and_decoder_instruction(self):
@@ -137,7 +139,7 @@ class CompiledMaskTests(unittest.TestCase):
             encoded = transform(source, 480, 4)
             self.install(INPUT, encoded); cpu.set_hl(INPUT)
             ticks = self.run_code(self.labels['decode'], [(MASKS, MASKS + 480), (FLAGS, FLAGS + 64)], interrupt)
-            self.assertEqual(ticks, compiled.expected_tstates(encoded))
+            self.assertEqual(ticks, compiled.expected_tstates(encoded,hl_flags=self.hl_flags))
             self.assertEqual(self.read(MASKS, 480), source)
             self.assertEqual(cpu.hl(), INPUT + len(encoded))
         self.assertGreater(calls, 20000)

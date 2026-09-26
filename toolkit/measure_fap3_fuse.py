@@ -416,7 +416,7 @@ def main():
     if integrated:
         report.update(integrated_slot_queue=True,debugger_installed_bytes=0,
             integrated_bootstrap_metadata_sha256=hashlib.sha256(args.metadata.read_bytes()).hexdigest())
-        for key in ('uncontended_frame','compiled_masks','inline_literals','demand_decode','inline_huffman_patches','bank2_zx0','audio_wait_prefetch','ready_packet_guard','packet_prefix_guard','fast_return_irq'):
+        for key in ('uncontended_frame','compiled_masks','inline_literals','demand_decode','inline_huffman_patches','bank2_zx0','audio_wait_prefetch','ready_packet_guard','packet_prefix_guard','fast_return_irq','hl_mask_reader'):
             if key in m:report[key]=m[key]
     if args.continuation_snapshot:
         report.update(continuation_snapshot_sha256=hashlib.sha256(args.continuation_snapshot.read_bytes()).hexdigest(),
