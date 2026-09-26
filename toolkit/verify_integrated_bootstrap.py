@@ -49,6 +49,15 @@ def main():
             for address,blob in regions+[(relocation['old_origin'],bytes(relocation['core_and_state_bytes']))]:
                 patches.update({address+i:v for i,v in enumerate(blob)})
             patches=sorted(patches.items())
+        if m.get('audio_wait_prefetch',{}).get('enabled'):
+            from audio_wait_prefetch import build as audio_helper
+            helper=m['audio_wait_prefetch'];blob,expected=audio_helper(m['queue_labels']['step'],
+                int.from_bytes(bytes.fromhex(helper['previous_hook_hex'])[-2:],'little'))
+            if any(helper[k]!=v for k,v in expected.items()):raise AssertionError('audio helper metadata differs')
+            patches=dict(patches)
+            for address,data in ((helper['origin'],blob),(helper['hook_address'],bytes.fromhex(helper['hook_hex']))):
+                patches.update({address+i:v for i,v in enumerate(data)})
+            patches=sorted(patches.items())
         inline=model['volumes'][part-1]['inline_patches']
         retired=[(v['start'],v['end']) for v in m['retired_fixed_code']]
         retired.append((inline['redirect_address'],inline['redirect_address']+3))

@@ -48,6 +48,7 @@ def main():
     for key in ('directory','raw-directory','states','zx0','output','report'):
         p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--bank2-zx0',action='store_true')
+    p.add_argument('--audio-wait-prefetch',action='store_true')
     args = p.parse_args()
     with np.load(args.states,allow_pickle=False) as saved: states = saved['states']
     inputs = [disk_blocks(args.directory,part) for part in (1,2,3)]
@@ -66,6 +67,7 @@ def main():
     contract = dict(version='integrated-slot-1',ends=ends,options=options,
                     raw_sha256=list(map(sha,raws)),states_sha256=sha(states.tobytes()))
     if args.bank2_zx0:options['bank2_zx0']=True
+    if args.audio_wait_prefetch:options['audio_wait_prefetch']=True
     fingerprint = b'FAP3ZXV1'+bytes.fromhex(sha(json.dumps(contract,sort_keys=True).encode()))[:6]
     args.output.mkdir(parents=True,exist_ok=True); args.report.parent.mkdir(parents=True,exist_ok=True)
     report = dict(complete=False,release=False,scope=__doc__,baseline_commit='4ccd740',
@@ -83,6 +85,7 @@ def main():
                    video_start_sector=m['video_start_sector'],video_sectors=m['video_sectors'],
                    sections=m['sections'],inline_huffman=m['inline_huffman_patches'])
         if args.bank2_zx0:row['bank2_zx0']=m['bank2_zx0']
+        if args.audio_wait_prefetch:row['audio_wait_prefetch']=m['audio_wait_prefetch']
         report['volumes'].append(row);save()
         if image is None:
             print(json.dumps({k:v for k,v in row.items() if k not in ('sections','inline_huffman')}),flush=True)
@@ -106,6 +109,7 @@ def main():
     if args.bank2_zx0:
         report['source_sha256'].update({name:sha(Path(__file__).with_name(name).read_bytes()) for name in
             ('bank2_zx0.py','bank_local_zx0.py')})
+    if args.audio_wait_prefetch:report['source_sha256']['audio_wait_prefetch.py']=sha(Path(__file__).with_name('audio_wait_prefetch.py').read_bytes())
     save()
 
 

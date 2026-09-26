@@ -38,6 +38,7 @@ def main():
     p.add_argument('--compiled-masks',action='store_true',help='With --slot-queue, generate sparse-mask routines in bank 7')
     p.add_argument('--idle-masks',action='store_true',help='With compiled masks, skip untouched bitmap stripes using RAM flags')
     p.add_argument('--trace-pipeline',action='store_true',help='With slot queue, record packet/prepare/draw entries and synchronous empty-queue waits')
+    p.add_argument('--trace-queue-calls',action='store_true',help='Record real external queue calls for deterministic CPU replay')
     p.add_argument('--partial-slots',action='store_true',help='With slot queue, allow consumption of a produced prefix before block EOF')
     p.add_argument('--cached-huffman-byte',action='store_true',help='With slot queue, retain the current Huffman input byte in B')
     p.add_argument('--inline-literals',action='store_true',help='With slot queue, copy ZX0 literals without CALL/RET')
@@ -52,6 +53,7 @@ def main():
     if args.compiled_masks and not args.slot_queue:raise ValueError('compiled masks require --slot-queue')
     if args.idle_masks and not args.compiled_masks:raise ValueError('idle masks require --compiled-masks')
     if args.trace_pipeline and not queue_mode:raise ValueError('pipeline tracing requires a slot queue')
+    if args.trace_queue_calls and not integrated:raise ValueError('queue replay tracing requires real integrated bootstrap')
     if args.partial_slots and not args.slot_queue:raise ValueError('partial slots require --slot-queue')
     if args.cached_huffman_byte and not args.slot_queue:raise ValueError('cached byte requires --slot-queue')
     if args.inline_literals and not args.slot_queue:raise ValueError('inline literals require --slot-queue')
@@ -71,6 +73,7 @@ def main():
     target_samples=args.idle_masks or args.trace_pipeline or args.uncontended_frame or integrated
     if target_samples: lines.append('set $n 0')
     if args.trace_pipeline:lines.append('set $qwait 0')
+    if args.trace_queue_calls:lines.append('set $qinit 0')
     def event(pc,tag,expressions,stop=False,after=(),breakpoint=None,before=()):
         index=len(events)+1; events.append((pc,tag)); widths[tag]=len(expressions)
         lines.extend([breakpoint or f'breakpoint {pc}',f'commands {index}',f'print {tag}'])
@@ -130,6 +133,9 @@ def main():
         lines[-1]=f'condition {len(events)} $running == 1 && [{q["count"]}]==0 && $qwait==0'
         event(q['take_available'],166,queue_state,after=['set $qwait 0'])
         lines[-1]=f'condition {len(events)} $running == 1 && $qwait==1'
+    if args.trace_queue_calls:
+        from queue_call_trace import configure
+        configure(m,args.raw.read_bytes(),event,lines,stamp,mem)
     event(lab['audio_write_loop'],140,[stamp,'[z80:hl]','[z80:hl+1]'])
     event(lab['audio_tick_done'],143,[stamp])
     event(lab['audio_tick_empty'],144,[stamp])
@@ -213,7 +219,7 @@ def main():
         if tag not in widths or pos+widths[tag]>len(nums): raise ValueError(f'bad trace at {pos}: {nums[pos-1:pos+3]} / {output[-300:]}')
         parsed.append((tag,nums[pos:pos+widths[tag]])); pos+=widths[tag]
     pubs=[]; writes=[]; ticks=[]; underruns=[]; reads=[]; final=None; failure=None
-    irq_entries=[];field_samples=[];paging_samples=[];pipeline_events=[]
+    irq_entries=[];field_samples=[];paging_samples=[];pipeline_events=[];queue_events=[];enqueue_events=[]
     image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0; retries=0; read_kind=None
     boot_started=player_started=None;nonces=[]
     warm_ram=bytearray(); warm_dump_complete=False; continuation_accepted=[]
@@ -242,6 +248,13 @@ def main():
         elif tag==140: writes.append(v)
         elif tag==143: ticks.append(v[0])
         elif tag==144: underruns.append(v[0])
+        elif tag in (170,171,172,173,174,175):
+            from queue_call_trace import FIELDS
+            queue_events.append(dict(kind={170:'prefill_start',171:'prefill_end',172:'take_start',
+                173:'take_end',174:'step_start',175:'step_end'}[tag],**dict(zip(FIELDS,v))))
+        elif tag in (176,177,178):
+            enqueue_events.append(dict(kind={176:'enqueue_start',177:'enqueue_end',178:'enqueue_full'}[tag],
+                tstate=v[0],write_index=v[1],read_index=v[2]))
         elif tag in (160,161,162,163,164,165,166,167):
             pipeline_events.append(dict(kind={160:'packet_start',161:'packet_ready',162:'prepare_start',
                 163:'draw_start',164:'prepare_end',167:'video_payload_ready',
@@ -352,6 +365,7 @@ def main():
     report.update(trace_nonce=nonce,trace_nonce_exact=nonces==[nonce],
         debugger_script_sha256=hashlib.sha256(args.output.with_suffix('.debugger.txt').read_bytes()).hexdigest(),
         trace_sha256=hashlib.sha256(args.output.with_suffix('.trace.txt').read_bytes()).hexdigest())
+    if args.trace_queue_calls:report.update(queue_call_events=queue_events,audio_enqueue_events=enqueue_events)
     if args.slot_queue:
         report['fixture_installer']=install_report
         report['partial_slot_consumption']=m['partial_slot_consumption']
@@ -369,7 +383,7 @@ def main():
     if integrated:
         report.update(integrated_slot_queue=True,debugger_installed_bytes=0,
             integrated_bootstrap_metadata_sha256=hashlib.sha256(args.metadata.read_bytes()).hexdigest())
-        for key in ('uncontended_frame','compiled_masks','inline_literals','demand_decode','inline_huffman_patches','bank2_zx0'):
+        for key in ('uncontended_frame','compiled_masks','inline_literals','demand_decode','inline_huffman_patches','bank2_zx0','audio_wait_prefetch'):
             if key in m:report[key]=m[key]
     if args.continuation_snapshot:
         report.update(continuation_snapshot_sha256=hashlib.sha256(args.continuation_snapshot.read_bytes()).hexdigest(),
@@ -385,7 +399,7 @@ def main():
             args.export_warm_ram.parent.mkdir(parents=True,exist_ok=True)
             args.export_warm_ram.write_bytes(warm_ram)
     args.output.write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','pipeline_events','slot_queue_fixture','uncontended_frame','inline_huffman_patches')}),flush=True)
+    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','pipeline_events','slot_queue_fixture','uncontended_frame','inline_huffman_patches','queue_call_events','audio_enqueue_events')}),flush=True)
     if not complete: raise SystemExit(1)
 
 

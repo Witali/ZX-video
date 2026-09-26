@@ -11,6 +11,7 @@ def main():
     for key in ('fuse','directory','raw-directory','states','output'):
         p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--trace-pipeline',action='store_true')
+    p.add_argument('--trace-queue-calls',action='store_true')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
     for part in (1,2,3):
         stem=f'ZX-video-huffman-preview_part{part:02}'
@@ -22,6 +23,7 @@ def main():
             '--metadata',str(a.directory/(stem+'.json')),'--raw',str(a.raw_directory/f'volume-{part}.raw'),
             '--states',str(a.states),'--output',str(a.output/f'part{part:02}.json'),'--timeout','300']
         if a.trace_pipeline:command.append('--trace-pipeline')
+        if a.trace_queue_calls:command.append('--trace-queue-calls')
         completed=subprocess.run(command,capture_output=True,text=True)
         (a.output/f'part{part:02}.log').write_text(completed.stdout+completed.stderr,encoding='utf-8')
         completed.check_returncode()
