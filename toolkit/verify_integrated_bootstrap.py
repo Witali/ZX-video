@@ -58,6 +58,14 @@ def main():
             for address,data in ((helper['origin'],blob),(helper['hook_address'],bytes.fromhex(helper['hook_hex']))):
                 patches.update({address+i:v for i,v in enumerate(data)})
             patches=sorted(patches.items())
+        if m.get('ready_packet_guard',{}).get('enabled'):
+            from ready_packet_guard import build as packet_guard
+            helper=m['ready_packet_guard'];blob,expected=packet_guard(m['queue_labels'],helper['audio_labels'],m['packet_labels']['read_packet'])
+            if any(helper[k]!=v for k,v in expected.items()):raise AssertionError('packet guard metadata differs')
+            patches=dict(patches)
+            for address,data in ((helper['origin'],blob),(helper['hook_address'],bytes.fromhex(helper['hook_hex']))):
+                patches.update({address+i:v for i,v in enumerate(data)})
+            patches=sorted(patches.items())
         inline=model['volumes'][part-1]['inline_patches']
         retired=[(v['start'],v['end']) for v in m['retired_fixed_code']]
         retired.append((inline['redirect_address'],inline['redirect_address']+3))
