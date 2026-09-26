@@ -32,12 +32,15 @@ def installer():
 class Builder(ReadThroughBuilder):
     preload_sectors = 0
 
-    def __init__(self, *args, bank2_zx0=False, audio_wait_prefetch=False, ready_packet_guard=False, fast_return_irq=False, **kwargs):
+    def __init__(self, *args, bank2_zx0=False, audio_wait_prefetch=False, ready_packet_guard=False, fast_return_irq=False, packet_prefix_guard=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.bank2_zx0=bank2_zx0
         self.audio_wait_prefetch=audio_wait_prefetch
         self.ready_packet_guard=ready_packet_guard
         self.fast_return_irq=fast_return_irq
+        self.packet_prefix_guard=packet_prefix_guard
+        if packet_prefix_guard and (not bank2_zx0 or ready_packet_guard):
+            raise ValueError('prefix guard needs bank-2 ZX0 and replaces the conservative guard')
         if audio_wait_prefetch and not bank2_zx0:raise ValueError('audio prefetch requires bank-2 ZX0')
         if ready_packet_guard and not bank2_zx0:raise ValueError('packet guard requires bank-2 ZX0')
         if (self.warm_continuation or not self.fast_disk or not self.cached_seek or
@@ -115,6 +118,9 @@ class Builder(ReadThroughBuilder):
         if self.ready_packet_guard:
             from ready_packet_guard import install
             m['ready_packet_guard']=install(read8,put,m,h)
+        if self.packet_prefix_guard:
+            from packet_prefix_guard import install
+            m['packet_prefix_guard']=install(read8,put,m,h)
         if self.fast_return_irq:
             from fast_return_irq import install
             # volume() also records these after ram(); the installer needs

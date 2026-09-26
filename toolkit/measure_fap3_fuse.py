@@ -144,6 +144,15 @@ def main():
         event(guard['hook_address'],180,[stamp,f'[{q["count"]}]',mem(q['position']),
             f'[{descriptor}]+256*[{descriptor}+1]',f'[{ay["audio_read_index"]}]',f'[{ay["audio_write_index"]}]'])
         event(guard['hook_address']+5,181,[stamp,'z80:a'])
+    if args.trace_pipeline and m.get('packet_prefix_guard',{}).get('enabled'):
+        guard=m['packet_prefix_guard'];q=m['queue_labels'];ay=guard['audio_labels']
+        descriptor=f'{q["lengths"]}+2*[{q["read_slot"]}]'
+        event(guard['hook_address'],185,[stamp,f'[{q["count"]}]',f'[{q["phase"]}]',f'[{q["read_slot"]}]',
+            mem(q['position']),f'[{descriptor}]+256*[{descriptor}+1]',mem(m['decoder_labels']['slice_output']),
+            f'[{ay["audio_read_index"]}]',f'[{ay["audio_write_index"]}]'])
+        event(guard['length_ready'],186,[stamp,'z80:de'])
+        event(guard['audio_ready'],187,[stamp,'z80:a'])
+        event(guard['hook_address']+5,181,[stamp,'z80:a'])
     event(lab['audio_write_loop'],140,[stamp,'[z80:hl]','[z80:hl+1]'])
     event(lab['audio_tick_done'],143,[stamp])
     event(lab['audio_tick_empty'],144,[stamp])
@@ -278,6 +287,10 @@ def main():
                 **dict(zip(('tstate','page','count','phase','blocks_left','position','slice_output'),v))))
         elif tag==180:guard_events.append(dict(kind='start',**dict(zip(('tstate','count','position','length','audio_read','audio_write'),v))))
         elif tag==181:guard_events.append(dict(kind='end',tstate=v[0],accepted=v[1]))
+        elif tag==185:guard_events.append(dict(kind='start',**dict(zip(
+            ('tstate','count','phase','read_slot','position','length','slice_output','audio_read','audio_write'),v))))
+        elif tag==186:guard_events.append(dict(kind='length',tstate=v[0],body_length=v[1]))
+        elif tag==187:guard_events.append(dict(kind='audio',tstate=v[0],occupancy=v[1]))
         elif tag in (183,184):rom_return_states.append(dict(kind='direct' if tag==183 else 'restore',
             **dict(zip(('tstate','im','i','vector','iff1','iff2','hl','rom_destination','page'),v))))
         elif tag==130: irq_entries.append(dict(tstate=v[0],interrupted_pc=v[1],im=v[2],page=v[3]))
@@ -403,7 +416,7 @@ def main():
     if integrated:
         report.update(integrated_slot_queue=True,debugger_installed_bytes=0,
             integrated_bootstrap_metadata_sha256=hashlib.sha256(args.metadata.read_bytes()).hexdigest())
-        for key in ('uncontended_frame','compiled_masks','inline_literals','demand_decode','inline_huffman_patches','bank2_zx0','audio_wait_prefetch','ready_packet_guard','fast_return_irq'):
+        for key in ('uncontended_frame','compiled_masks','inline_literals','demand_decode','inline_huffman_patches','bank2_zx0','audio_wait_prefetch','ready_packet_guard','packet_prefix_guard','fast_return_irq'):
             if key in m:report[key]=m[key]
     if args.continuation_snapshot:
         report.update(continuation_snapshot_sha256=hashlib.sha256(args.continuation_snapshot.read_bytes()).hexdigest(),

@@ -67,6 +67,15 @@ def main():
                 patches.update({address+i:v for i,v in enumerate(data)})
             patches=sorted(patches.items())
         inline=model['volumes'][part-1]['inline_patches']
+        if m.get('packet_prefix_guard',{}).get('enabled'):
+            from packet_prefix_guard import build as prefix_guard
+            helper=m['packet_prefix_guard'];blob,expected=prefix_guard(m['queue_labels'],m['decoder_labels'],
+                helper['audio_labels'],m['packet_labels']['read_packet'])
+            if any(helper[k]!=v for k,v in expected.items()):raise AssertionError('prefix guard metadata differs')
+            patches=dict(patches)
+            for address,data in ((helper['origin'],blob),(helper['hook_address'],bytes.fromhex(helper['hook_hex']))):
+                patches.update({address+i:v for i,v in enumerate(data)})
+            patches=sorted(patches.items())
         if m.get('fast_return_irq',{}).get('enabled'):
             from fast_return_irq import install as fast_irq
             import copy
