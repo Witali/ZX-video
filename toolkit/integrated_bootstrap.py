@@ -32,11 +32,12 @@ def installer():
 class Builder(ReadThroughBuilder):
     preload_sectors = 0
 
-    def __init__(self, *args, bank2_zx0=False, audio_wait_prefetch=False, ready_packet_guard=False, **kwargs):
+    def __init__(self, *args, bank2_zx0=False, audio_wait_prefetch=False, ready_packet_guard=False, fast_return_irq=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.bank2_zx0=bank2_zx0
         self.audio_wait_prefetch=audio_wait_prefetch
         self.ready_packet_guard=ready_packet_guard
+        self.fast_return_irq=fast_return_irq
         if audio_wait_prefetch and not bank2_zx0:raise ValueError('audio prefetch requires bank-2 ZX0')
         if ready_packet_guard and not bank2_zx0:raise ValueError('packet guard requires bank-2 ZX0')
         if (self.warm_continuation or not self.fast_disk or not self.cached_seek or
@@ -114,6 +115,12 @@ class Builder(ReadThroughBuilder):
         if self.ready_packet_guard:
             from ready_packet_guard import install
             m['ready_packet_guard']=install(read8,put,m,h)
+        if self.fast_return_irq:
+            from fast_return_irq import install
+            # volume() also records these after ram(); the installer needs
+            # the same verified-reader contract before startup compression.
+            m.update(fast_disk=self.fast_disk,required_trdos_sha256=disk.TRDOS_503_SHA256)
+            m['fast_return_irq']=install(read8,put,m)
         # Both low overlays must survive until all decompression has finished.
         put(0xa100,bytes(read8(i) for i in range(0x6000,0x6100)))
         put(0xa200,bytes(read8(i) for i in range(0x6100,0x6200)))

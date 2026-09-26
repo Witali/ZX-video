@@ -15,6 +15,7 @@ from test_fap3_disk import DiskCPU,install
 
 class ShortReadCPU(DiskCPU):
     short_once=False
+    poison_irq_on_dispatch=False
 
     def instruction(self):
         if (self.short_once and self.read8(self.pc)==0xc3
@@ -24,10 +25,15 @@ class ShortReadCPU(DiskCPU):
             for i in range(17): self.write8(target+i,0xee)
             self.set_hl(target+17); self.pc=self.pop()
             return 10  # JP only, as in the existing CPU ROM stub.
-        return super().instruction()
+        full_dispatch=self.read8(self.pc)==0xcd and word(self,self.pc+1)==0x3d13
+        cycles=super().instruction()
+        if self.poison_irq_on_dispatch and full_dispatch:
+            self.i=0;self.im=1;self.iff1=False
+            word(self,0xbdbe,0xbd00)
+        return cycles
 
 
-def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cached_seek=False,drive=0,interleaved=False,irq_safe_paging=False):
+def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cached_seek=False,drive=0,interleaved=False,irq_safe_paging=False,fast_return_irq=False,poison_irq=False):
     data=b''.join(bytes([i%251])*256 for i in range(2560))
     cpu=ShortReadCPU(b'',data);cpu.poison_rom=True;cpu.short_once=short;cpu.port_7ffd=0x1f
     regions,_,vl=video.build_video(dict(saved_page=0x8000,screen_base=0x8001),
@@ -40,6 +46,14 @@ def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cac
     if cached_seek:
         seek_code,seek_labels,seek_rows=disk.build_cached_seek(l)
         install(cpu,disk.CACHED_SEEK,seek_code); rows+=seek_rows; seek_bytes=len(seek_code)
+    # The actual player installs IM2 before entering the adapter.
+    cpu.i=0xbe;cpu.im=2;cpu.iff1=True;word(cpu,0xbdbe,0xbd80)
+    cpu.poison_irq_on_dispatch=poison_irq
+    if fast_return_irq:
+        from fast_return_irq import install as patch
+        patch(cpu.read8,lambda address,blob:install(cpu,address,blob),
+            dict(fast_disk=fast_disk,required_trdos_sha256=disk.TRDOS_503_SHA256,
+                 disk_labels=l,slot_queue_instruction_listing=rows))
     cpu.write8(l['write_region'],region);cpu.write8(l['write_high'],high)
     if fast_disk: cpu.write8(l['cached_track'],cached)
     cpu.write8(0x5cf5,track)
@@ -66,6 +80,7 @@ def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cac
     assert cpu.read8(l['write_region'])==(region if high<255 else (region+1)%4)
     assert bytes(cpu.banks[(0,1,3,4)[region]][(high-0xc0)*256:(high-0xc0+1)*256])==data[(track*16+sector)*256:(track*16+sector+1)*256]
     assert cpu.port_7ffd&8 and word(cpu,0xbdbe)==0xbd80
+    assert cpu.i==0xbe and cpu.im==2 and cpu.iff1
     if fast_disk: assert cpu.read8(l['cached_track'])==track
     if cached_seek and cached not in (255,track):
         assert [c[0] for c in cpu.seek_calls]==[0x1ff6 if track&1 else 0x1feb,0x3e44],cpu.seek_calls
@@ -74,6 +89,7 @@ def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cac
     else: assert not cpu.seek_calls
     return dict(tstates=cpu.tstates,code_bytes=len(code),
         seek_bytes=seek_bytes,
+        restore_calls=visits.get(l['disk_finish'],0),
         full_calls=visits.get(l['disk_full_call'],0),
         direct_calls=visits.get(l.get('fast_read_enter'),0),
         fallback_calls=visits.get(l.get('fast_read_retry'),0))

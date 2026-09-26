@@ -60,6 +60,15 @@ def main():
         for change in m['bank2_zx0']['external_operands']:
             for i,value in enumerate(change['new_operand'].to_bytes(2,'little')):h.cpu.write8(change['operand_address']+i,value)
         guards=install_copy_guard(h);c=h.cpu
+        if m.get('fast_return_irq',{}).get('enabled'):
+            from fast_return_irq import install
+            def put(address,blob):
+                for i,value in enumerate(blob):c.write8(address+i,value)
+            # The model uses the same original adapter; check and apply the
+            # exact branch patch, rather than subtracting an estimated cost.
+            import copy
+            actual=install(c.read8,put,dict(m,slot_queue_instruction_listing=copy.deepcopy(list(h.instructions.values()))))
+            if actual!=m['fast_return_irq']:raise ValueError('IRQ return model differs')
         raw=b''.join(b for _,b in blocks);cursor=0;prefills=0;takes=0;rows=[];totals=Counter()
         intervals=merged([(r['start_tstate'],r['end_tstate']) for r in trace['reads']+trace['seek_calls']])
         row=dict(part=part,trd_sha256=m['trd_sha256'],stream_sha256=sha(stream),

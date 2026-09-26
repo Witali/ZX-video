@@ -74,6 +74,8 @@ def main():
     if target_samples: lines.append('set $n 0')
     if args.trace_pipeline:lines.append('set $qwait 0')
     if args.trace_queue_calls:lines.append('set $qinit 0')
+    fast_return=m.get('fast_return_irq',{}).get('enabled',False)
+    if fast_return:lines.append('set $direct 0')
     def event(pc,tag,expressions,stop=False,after=(),breakpoint=None,before=()):
         index=len(events)+1; events.append((pc,tag)); widths[tag]=len(expressions)
         lines.extend([breakpoint or f'breakpoint {pc}',f'commands {index}',f'print {tag}'])
@@ -151,21 +153,28 @@ def main():
         for offset,tag in ((0,131),(32,132)):
             event(0,tag,[stamp,'z80:pc','z80:iff1','z80:iff2','z80:im','ula:mem7ffd',mem(lab['elapsed_fields'])],
                 breakpoint=f'breakpoint time {offset}')
+        for key,tag in (('fast_disk_return',183),('disk_finish',184)):
+            if key in lab:
+                event(lab[key],tag,[stamp,'z80:im','z80:i',mem(0xbdbe),'z80:iff1','z80:iff2',
+                    'z80:hl',mem(0x5d00),'ula:mem7ffd'])
     if args.trace_paging:
         if m.get('irq_safe_paging'): raise ValueError('DI window tracing requires the old paging helper')
         for pc,tag in ((0x9781,133),(0x9793,134)):
             event(pc,tag,[stamp,'z80:iff1','z80:iff2','z80:sp','[z80:sp]+256*[z80:sp+1]'])
             lines[-1]=f'condition {len(events)} $running == 1 && (ula:tstates >= 70800 || ula:tstates < 108)'
     event(lab['disk_full_call'],102,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])],
-        after=[f'set $b 256*[{m["disk_labels"]["write_high"]}]'])
+        after=[f'set $b 256*[{m["disk_labels"]["write_high"]}]']+(['set $direct 0'] if fast_return else []))
     # A whole consumed sector was replaced at saved write_high. Read its
     # exact bytes before the decoder resumes; compact four bytes per print.
     base='$b'
     sector_expr=['+'.join((f'{256**k}*' if k else '')+f'[{base}+{i+k}]' for k in range(4)) for i in range(0,256,4)]
     event(lab['disk_return'],103,[stamp]+sector_expr)
+    if fast_return:
+        event(m['fast_return_irq']['accepted_sector'],113,[stamp]+sector_expr)
+        lines[-1]+=' && $direct == 1'
     if 'fast_read_enter' in lab:
         event(lab['fast_read_enter'],110,[stamp,'z80:hl',mem(m['disk_labels']['disk_position'])],
-            after=[f'set $b 256*[{m["disk_labels"]["write_high"]}]'])
+            after=[f'set $b 256*[{m["disk_labels"]["write_high"]}]']+(['set $direct 1'] if fast_return else []))
         event(lab['fast_disk_return'],111,[stamp]+([] if queue_mode else sector_expr))
         event(lab['fast_read_retry'],112,[stamp])
     if 'seek_enter' in lab:
@@ -226,6 +235,7 @@ def main():
         parsed.append((tag,nums[pos:pos+widths[tag]])); pos+=widths[tag]
     pubs=[]; writes=[]; ticks=[]; underruns=[]; reads=[]; final=None; failure=None
     irq_entries=[];field_samples=[];paging_samples=[];pipeline_events=[];queue_events=[];enqueue_events=[];guard_events=[]
+    rom_return_states=[]
     image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0; retries=0; read_kind=None
     boot_started=player_started=None;nonces=[]
     warm_ram=bytearray(); warm_dump_complete=False; continuation_accepted=[]
@@ -268,6 +278,8 @@ def main():
                 **dict(zip(('tstate','page','count','phase','blocks_left','position','slice_output'),v))))
         elif tag==180:guard_events.append(dict(kind='start',**dict(zip(('tstate','count','position','length','audio_read','audio_write'),v))))
         elif tag==181:guard_events.append(dict(kind='end',tstate=v[0],accepted=v[1]))
+        elif tag in (183,184):rom_return_states.append(dict(kind='direct' if tag==183 else 'restore',
+            **dict(zip(('tstate','im','i','vector','iff1','iff2','hl','rom_destination','page'),v))))
         elif tag==130: irq_entries.append(dict(tstate=v[0],interrupted_pc=v[1],im=v[2],page=v[3]))
         elif tag in (131,132):
             field_samples.append(dict(offset=0 if tag==131 else 32,tstate=v[0],pc=v[1],iff1=v[2],iff2=v[3],
@@ -278,7 +290,7 @@ def main():
         elif tag in (102,110):
             if pending is not None: raise ValueError('overlapping ROM reads')
             pending=v; read_kind='trdos' if tag==102 else 'direct503'
-        elif tag in (103,111):
+        elif tag in (103,111,113):
             if queue_mode and tag==111:
                 # The shared disk_finish breakpoint exports accepted bytes
                 # for either entry path; avoid duplicating 64 expressions.
@@ -391,13 +403,13 @@ def main():
     if integrated:
         report.update(integrated_slot_queue=True,debugger_installed_bytes=0,
             integrated_bootstrap_metadata_sha256=hashlib.sha256(args.metadata.read_bytes()).hexdigest())
-        for key in ('uncontended_frame','compiled_masks','inline_literals','demand_decode','inline_huffman_patches','bank2_zx0','audio_wait_prefetch','ready_packet_guard'):
+        for key in ('uncontended_frame','compiled_masks','inline_literals','demand_decode','inline_huffman_patches','bank2_zx0','audio_wait_prefetch','ready_packet_guard','fast_return_irq'):
             if key in m:report[key]=m[key]
     if args.continuation_snapshot:
         report.update(continuation_snapshot_sha256=hashlib.sha256(args.continuation_snapshot.read_bytes()).hexdigest(),
             continuation_disk_accepted_tstates=continuation_accepted)
     if args.trace_fields or args.trace_paging: report['irq_entries']=irq_entries
-    if args.trace_fields: report['field_samples']=field_samples
+    if args.trace_fields:report.update(field_samples=field_samples,rom_return_states=rom_return_states)
     if args.trace_pipeline:report['pipeline_events']=pipeline_events
     if guard_events:report['optional_packet_events']=guard_events
     if args.trace_paging: report['paging_samples']=paging_samples
@@ -408,7 +420,7 @@ def main():
             args.export_warm_ram.parent.mkdir(parents=True,exist_ok=True)
             args.export_warm_ram.write_bytes(warm_ram)
     args.output.write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','pipeline_events','slot_queue_fixture','uncontended_frame','inline_huffman_patches','queue_call_events','audio_enqueue_events')}),flush=True)
+    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','pipeline_events','slot_queue_fixture','uncontended_frame','inline_huffman_patches','queue_call_events','audio_enqueue_events','optional_packet_events','rom_return_states')}),flush=True)
     if not complete: raise SystemExit(1)
 
 

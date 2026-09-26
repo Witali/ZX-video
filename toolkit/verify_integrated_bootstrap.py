@@ -67,6 +67,18 @@ def main():
                 patches.update({address+i:v for i,v in enumerate(data)})
             patches=sorted(patches.items())
         inline=model['volumes'][part-1]['inline_patches']
+        if m.get('fast_return_irq',{}).get('enabled'):
+            from fast_return_irq import install as fast_irq
+            import copy
+            helper=m['fast_return_irq'];patches=dict(patches)
+            rows=copy.deepcopy(m['slot_queue_instruction_listing'])
+            for r in rows:
+                if r['address']==helper['hook_address']:r['instruction']='JP Z,disk_finish'
+            def put(address,blob):patches.update({address+i:v for i,v in enumerate(blob)})
+            expected=fast_irq(lambda address:patches.get(address,c.read8(address)),put,
+                dict(m,slot_queue_instruction_listing=rows))
+            if expected!=helper:raise AssertionError('fast IRQ metadata differs')
+            patches=sorted(patches.items())
         retired=[(v['start'],v['end']) for v in m['retired_fixed_code']]
         retired.append((inline['redirect_address'],inline['redirect_address']+3))
         checked=0
