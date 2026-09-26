@@ -13,6 +13,7 @@ def main():
     p.add_argument('--build',type=Path,default=Path('toolkit/integrated_bootstrap_build.json'))
     p.add_argument('--evidence',type=Path,default=Path('toolkit/integrated_bootstrap_evidence'))
     p.add_argument('--output',type=Path,default=Path('toolkit/integrated_bootstrap_summary.json'))
+    p.add_argument('--baseline',type=Path,default=Path('toolkit/combined_uncontended_evidence'))
     a=p.parse_args();built=json.loads(a.build.read_bytes())
     if not built['complete'] or len(built['volumes'])!=3:raise ValueError('incomplete build')
     files=[];volumes=[]
@@ -40,8 +41,10 @@ def main():
             raise ValueError('trace archive corrupt')
     for b in built['volumes']:
         part=b['part'];path=a.evidence/f'part{part:02}.json';r=json.loads(path.read_bytes())
-        old_path=Path('toolkit/combined_uncontended_evidence')/path.name;old=json.loads(old_path.read_bytes())
+        old_path=a.baseline/path.name;old=json.loads(old_path.read_bytes())
         m=json.loads((a.evidence/f'part{part:02}.metadata.json').read_bytes())
+        if m.get('bank2_zx0')!=r.get('bank2_zx0') or m.get('bank2_zx0')!=b.get('bank2_zx0'):
+            raise ValueError('ZX0 relocation metadata differs')
         if (not b['fits'] or not b['dirty_ram_boot_exact'] or not b['compressed_stream_exact'] or
             b['used_sectors']>2544 or not r['complete'] or r['errors'] or r['failure'] or
             r['trd_sha256']!=b['trd_sha256'] or not r['ay_records_exact'] or
@@ -64,6 +67,7 @@ def main():
           'read_service_tstates','seek_service_tstates','publication_span_tstates','bad_actual_intervals')
     totals={mode:{k:sum(v[mode][k] for v in volumes) for k in keys} for mode in ('baseline','integrated')}
     result=dict(complete=True,release=False,build_report_sha256=sha(a.build.read_bytes()),volumes=volumes,totals=totals,
+        baseline_evidence=str(a.baseline),
         capacity_verified=True,independent_cold_boot_verified=True,debugger_installed_bytes=0,
         physical_drive_verified=False,full_fuse_pixel_comparison=False,fuse_samples_per_frame=80,
         initial_disk_and_irq_phases_not_matched=True,

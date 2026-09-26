@@ -32,8 +32,9 @@ def installer():
 class Builder(ReadThroughBuilder):
     preload_sectors = 0
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, bank2_zx0=False, **kwargs):
         super().__init__(*args, **kwargs)
+        self.bank2_zx0=bank2_zx0
         if (self.warm_continuation or not self.fast_disk or not self.cached_seek or
             not self.interleaved or not self.irq_safe_paging or not self.cached_huffman_byte):
             raise ValueError('integrated mode requires independent cached-Huffman/interleaved fast-disk options')
@@ -99,6 +100,10 @@ class Builder(ReadThroughBuilder):
             m['inline_huffman_patches'] = dict(report,enabled=True)
         else:
             m['inline_huffman_patches'] = dict(enabled=False,reason='table tail too large',table_body_bytes=table_bytes)
+        old_decoder_end=m['decoder_labels']['end']
+        if self.bank2_zx0:
+            from bank2_zx0 import install_player
+            m['bank2_zx0']=install_player(read8,put,m,h)
         # Both low overlays must survive until all decompression has finished.
         put(0xa100,bytes(read8(i) for i in range(0x6000,0x6100)))
         put(0xa200,bytes(read8(i) for i in range(0x6100,0x6200)))
@@ -120,7 +125,7 @@ class Builder(ReadThroughBuilder):
             m['retired_fixed_code'].append(dict(start=lo,end=hi,sha256=sha(bytes(read8(i) for i in range(lo,hi)))))
             put(lo,bytes(hi-lo))
         # Old ring decoder/loader tails left beyond the shorter replacements.
-        for lo,hi in ((m['decoder_labels']['end'],0x7d50),(m['producer_labels']['end'],0x7f00)):
+        for lo,hi in ((old_decoder_end,0x7d50),(m['producer_labels']['end'],0x7f00)):
             if lo > hi: raise ValueError('producer or decoder overlaps its successor')
             put(lo,bytes(hi-lo))
         # All but the last section use the visible bitmap as temporary input.

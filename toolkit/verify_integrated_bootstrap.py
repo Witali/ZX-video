@@ -34,6 +34,21 @@ def main():
         if old_boot!=player(old_image):raise AssertionError('legacy bootstrap changed')
         c=DiskCPU(player(image),image);until(c,disk.DRIVER)
         patches,_=build(old,raw,uncontended=True,compiled_masks=True,inline_literals=True,demand_decode=True)
+        if m.get('bank2_zx0',{}).get('enabled'):
+            from bank2_zx0 import build as split_decoder
+            regions,labels,relocation=split_decoder()
+            if labels!=m['decoder_labels']:raise AssertionError('relocated labels differ')
+            for key,value in relocation.items():
+                if m['bank2_zx0'][key]!=value:raise AssertionError(('relocation differs',key))
+            patches=dict(patches)
+            for change in m['bank2_zx0']['external_operands']:
+                if (change['new_operand']-change['old_operand']!=relocation['new_origin']-relocation['old_origin'] or
+                    change['delta_tstates']!=0):raise AssertionError('invalid external relocation')
+                for i,v in enumerate(change['new_operand'].to_bytes(2,'little')):
+                    patches[change['operand_address']+i]=v
+            for address,blob in regions+[(relocation['old_origin'],bytes(relocation['core_and_state_bytes']))]:
+                patches.update({address+i:v for i,v in enumerate(blob)})
+            patches=sorted(patches.items())
         inline=model['volumes'][part-1]['inline_patches']
         retired=[(v['start'],v['end']) for v in m['retired_fixed_code']]
         retired.append((inline['redirect_address'],inline['redirect_address']+3))
