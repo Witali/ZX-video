@@ -120,6 +120,12 @@ def main():
             mem(q['blocks_left']),mem(q['position']),mem(z['slice_output'])]
         for label,tag in (('read_packet',160),('packet_ready',161),('prepare_bridge',162),('draw_bridge',163)):
             event(packet[label],tag,queue_state)
+        event(packet['video_payload_ready'],167,queue_state)
+        prepare_calls={'CALL compact zero','CALL compact one','CALL reconstruct pending packet'}
+        returns=[row['address']+3 for row in m['slot_queue_instruction_listing']
+                 if row['instruction'] in prepare_calls]
+        if len(returns)!=2+int(m['frames']>1):raise ValueError('unexpected clock preparation call sites')
+        for pc in returns:event(pc,164,queue_state)
         event(q['take_next'],165,queue_state,after=['set $qwait 1'])
         lines[-1]=f'condition {len(events)} $running == 1 && [{q["count"]}]==0 && $qwait==0'
         event(q['take_available'],166,queue_state,after=['set $qwait 0'])
@@ -223,6 +229,7 @@ def main():
         elif tag==150:
             pubs.append(dict(tstate=v[0],page=v[1],field=v[2],late_fields=v[3]))
         elif tag in (151,152):
+            if args.trace_pipeline:pipeline_events.append(dict(kind='native_done',tstate=v[0],page=v[1]))
             frame=m['frame_start']+native_count
             samples_at=v[2:] if target_samples else (v[2:2+len(samples)] if native_count%2 else v[2+len(samples):])
             wanted=display_screen(states[frame].tobytes(),black_borders=True)
@@ -235,9 +242,10 @@ def main():
         elif tag==140: writes.append(v)
         elif tag==143: ticks.append(v[0])
         elif tag==144: underruns.append(v[0])
-        elif tag in (160,161,162,163,165,166):
+        elif tag in (160,161,162,163,164,165,166,167):
             pipeline_events.append(dict(kind={160:'packet_start',161:'packet_ready',162:'prepare_start',
-                163:'draw_start',165:'empty_wait_start',166:'empty_wait_end'}[tag],
+                163:'draw_start',164:'prepare_end',167:'video_payload_ready',
+                165:'empty_wait_start',166:'empty_wait_end'}[tag],
                 **dict(zip(('tstate','page','count','phase','blocks_left','position','slice_output'),v))))
         elif tag==130: irq_entries.append(dict(tstate=v[0],interrupted_pc=v[1],im=v[2],page=v[3]))
         elif tag in (131,132):
