@@ -1,0 +1,54 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Check exact separated payloads, all cold-installed bytes and Z80 priming.\n\nBoot and priming execute real opcodes with mocked ROM reads and no scheduled\ninterrupts. This checks first-frame/checkpoint/queue integration, not cadence.\n",
+  "volumes": [
+    {
+      "part": 1,
+      "installed_bytes_checked": 65686,
+      "exact_all_video_packets": true,
+      "prepared_audio_records": 31,
+      "audio_initial_state_exact": true,
+      "audio_bank_immutable_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "priming_cpu_tstates": 1813732,
+      "read_slot": 0,
+      "write_slot": 0,
+      "slot_count": 3,
+      "mocked_boot_and_priming_sectors": 128
+    },
+    {
+      "part": 2,
+      "installed_bytes_checked": 64671,
+      "exact_all_video_packets": true,
+      "prepared_audio_records": 31,
+      "audio_initial_state_exact": true,
+      "audio_bank_immutable_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "priming_cpu_tstates": 2933949,
+      "read_slot": 0,
+      "write_slot": 0,
+      "slot_count": 3,
+      "mocked_boot_and_priming_sectors": 154
+    },
+    {
+      "part": 3,
+      "installed_bytes_checked": 64493,
+      "exact_all_video_packets": true,
+      "prepared_audio_records": 31,
+      "audio_initial_state_exact": true,
+      "audio_bank_immutable_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "priming_cpu_tstates": 3088629,
+      "read_slot": 0,
+      "write_slot": 0,
+      "slot_count": 3,
+      "mocked_boot_and_priming_sectors": 152
+    }
+  ],
+  "build_sha256": "3bc9aaaeac962b61127f33091a3e6c2026e0ee537b7bd0880b278d080c1e0e74",
+  "source_sha256_lf": "0b17bd64d1da00acc74a97a38f382548bbe15746144170db1a57f0a2175f04a8"
+}

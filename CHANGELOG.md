@@ -21,6 +21,79 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — foreground resident AY service: sound cadence fixed
+
+- **Objective/baseline:** correct audio starvation in the complete queue-only
+  resident-AY attempt below, keeping all 4221 frames and 25326 AY records,
+  resolution, nominal six-field deadlines and independent disks unchanged.
+- **Change:** service audio before packet acquisition, reconstruction and
+  native drawing as well as producer steps/drain; increase the maximum
+  batch from 6 to 31. Below 24 queued records, fill available FIFO space
+  without waiting. The old IRQ consumer is unchanged. Each additional
+  foreground hook adds 27 T plus service; a skipped refill adds 130 T.
+  These two parameter changes were tested together, not separately.
+- **Result:** complete cold Fuse playback of all three volumes has **zero AY
+  underruns, field gaps or duplicates**, with all records exact. Actual
+  capacity remains **2476/2479/2479 sectors**, leaving **68/65/65**. The
+  corrected build reads **91/92/93** boot sectors. Video remains late on
+  **213/654/878** frames, maximum **103/291/291 fields**; **98/365/584**
+  intervals fail the fallback. Late runs recover **5/3/6** times; final
+  runs on disks 1/2 do not recover. Average fps is **8.314549/8.032726/
+  8.333333**; the third average conceals temporary delays.
+- **Comparison:** versus the prior muxed two-byte-cache player, video reads
+  fall **7501→7158**, late frames **3066→1745**, AY underruns **845→0**, and
+  summed publication spans **1851904234→1816733868 elapsed T (−35170366)**.
+  Fallback interval violations increase **644→1047**. This is a combined
+  delivery measurement with changed disk/IRQ phases, not a CPU-only saving.
+- **Verification:** **24 tests pass**. Dirty boot, both mocked-ROM disk swaps,
+  all video packet fields, first complete native/second compact frames,
+  31 prepared audio records and immutable audio-bank bytes pass. Full Fuse
+  traces check all EOFs, actual OUT timing, 80 pixels/frame, audio and all
+  runtime sectors without retries or missing IRQ fields. Full new integrated
+  CPU/pixel replay and physical-drive tests remain unverified. The packet
+  verifier was corrected to account for existing later-disk native-mask
+  initialization; this required no player or data change.
+- **Decision:** retain as the next experimental baseline: capacity and audio
+  cadence pass; nominal/fallback video timing both fail. Preserve root
+  release images. Use the new spare sectors to reevaluate lossless faster
+  representations, measuring total delivery rather than decoder CPU alone.
+- **Evidence/reproduction:** [implementation, cycles and commands](toolkit/RESIDENT_AUDIO_PLAYER.md),
+  [builder](toolkit/build_resident_audio_player.py),
+  [verifier](toolkit/verify_resident_audio_player.py),
+  [saved complete evidence](toolkit/resident_audio_player_evidence/foreground/manifest.json),
+  [priming report](toolkit/resident_audio_player_prime.json), and
+  [reproducible summary/auditor](toolkit/summarize_resident_audio_player.py).
+
+## 2026-09-27 — first resident-AY TRDs: capacity passes, sound service fails
+
+- **Objective/baseline:** integrate the `8a49d3c` resident decoder into the
+  three-disk player. Separate audio from video packets; retain every encoded
+  video field, original AY record and independent checkpoint for all 4221
+  frames. Reduce ready video/history from four slots to banks 0/1/3 and
+  store the full per-volume audio bank in bank 4.
+- **Implementation/cycles:** allocate fixed guard/bridges in retired code,
+  add bounded audio startup sections, service only before producer steps
+  and during drain with batch limit 6. Guard costs **103 T** when skipped,
+  or **108 T + 436-T bridge + actual decode** on refill. Producer/drain
+  hook costs **13→160 T (+147)** when skipped; three-slot cursor changes
+  **11→39/47 T (+28/+36)**. Packet dispatch changes **17→10 T (−7)**,
+  excluding removed enqueue work. Full old/new instruction paths are linked
+  in [the integration report](toolkit/RESIDENT_AUDIO_PLAYER.md).
+- **Storage/result:** actual independently bootable TRDs use **2476/2479/2479
+  sectors**. Audio-bank images are **14230/13215/13037 B**. The video-only
+  stream is **1832196 B**, with **7158 video sectors**. Cold RAM, startup
+  sections and mocked swaps pass. Complete Fuse playback reaches all EOFs
+  with exact AY records and sampled pixels, but produces **537/1409/1884
+  AY underruns**, **203/546/847 late frames**, and **89/317/553 invalid
+  fallback intervals**. Maximum lateness is **97/273/270 fields**.
+- **Decision:** reject queue-only audio service. The trace and call graph
+  motivate foreground service and a larger refill batch; neither capacity
+  nor exact records alone proves cadence. Preserve this failed attempt's
+  original sources/build/metadata/raw traces in
+  [the queue-only archive](toolkit/resident_audio_player_evidence/queue-only/manifest.json).
+  Both attempts are independently auditable in
+  [the combined summary](toolkit/resident_audio_player_summary.json).
+
 ## 2026-09-27 — portable source pins for the resident AY measurement
 
 - **Objective/baseline:** reproduce the `ac427ab` CPU report from the root

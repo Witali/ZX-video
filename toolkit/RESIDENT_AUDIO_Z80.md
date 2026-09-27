@@ -6,6 +6,10 @@ the existing AY FIFO/consumer from the three-volume player at `8bc6a09`.
 an integrated player or a new TRD release. The 4221-frame target, exact
 six-field publication deadlines, AY 50 Hz and independent disks remain.
 
+Follow-up: [complete three-disk integration](RESIDENT_AUDIO_PLAYER.md) now
+verifies actual capacity and uninterrupted AY at 50 Hz. Video timing still
+fails. The prototype measurements below retain their original scope.
+
 ## Implementation
 
 [The generator](resident_audio_z80.py) validates AYH1 on the host and builds
