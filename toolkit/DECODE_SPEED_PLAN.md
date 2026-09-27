@@ -27,15 +27,19 @@ screens, code, stack, AY/IRQ, TR-DOS workspace, tables and disk buffers.
 
 ## Current baseline and evidence
 
-Use the [foreground resident-AY player](RESIDENT_AUDIO_PLAYER.md) at
-`da369e6` as the current smaller experimental baseline. It fits three
-independent disks and delivers all AY records at 50 Hz, but video timing
-still fails. The HL-reader configuration at `074e1e7` and the subsequent
-measurements below remain historical comparisons. Do not equate any of
-these configurations with generic converter defaults or root release images.
+Use the [larger-slot player with periodic drive maintenance](INPLACE_KEEPALIVE.md)
+at `a84451d` as the retained experimental baseline. Its three independent
+disks use 2462/2463/2462 sectors, with 82/81/82 free. All 25326 AY records
+meet 50 Hz; 1321 video frames miss their nominal deadlines and 783 intervals
+fail the fallback. It is not a release. The earlier
+[foreground resident-AY player](RESIDENT_AUDIO_PLAYER.md) at `da369e6` and
+the HL-reader configuration at `074e1e7` remain historical comparisons.
+Do not equate these experiments with generic converter defaults or root images.
 
-- Stream: **1,919,945 compressed bytes**, 3,083,375 packet bytes, 378 blocks,
-  7501 video sectors. Tables are per volume; each disk initializes its own
+- Current video stream: **1,818,909 compressed bytes**, 2,965,011 video-only
+  packet bytes, 188 blocks, 7106 video sectors. The older muxed stream used
+  1,919,945 compressed bytes, 3,083,375 packet bytes, 378 blocks and 7501
+  video sectors. Tables are per volume; each disk initializes its own
   state. A compact predictor references frame n-1 while native-screen masks
   reference n-2. Removing an intermediate buffer must preserve both.
 - The full HL-reader Fuse run still fails timing: 3073 late frames, 883 AY
@@ -255,6 +259,25 @@ Verify generated placement and all phases before adopting it.
 
 ## Avoid repeating rejected or completed experiments
 
+- [Positional no-op run tags](TAGGED_NOOP_RUNS.md) now use the existing
+  fast-fragment dispatch and exclude static edge stripes. This removes the
+  old experiment's per-motion-tile test, but still costs 43,634 extra ZX0
+  bytes / 172 video sectors. Three actual TRDs fit with 7/32/32 sectors free.
+  Complete Fuse playback has 1315 late frames versus 1321, but 786 bad
+  intervals versus 783; the total publication span falls by only 70,914 T.
+  Do not adopt this format as the default. Preserve the separate CPU and
+  disk results: the 481 frames whose baseline work exceeds six fields
+  actually add 173,339 frame-stage T, despite the aggregate CPU saving.
+- The September 25 [cost-selected fast-fragment experiment](FRAGMENT_COST_SELECTION_ru.md)
+  used an older 8-KiB-block/bootstrap budget. Its 64-bit local allowance saved
+  8,898,970 frame-stage T across all 1300 frames of volume 3, but added 11,616
+  ZX0 bytes and exceeded that disk's capacity. Capacity has since changed.
+  A justified next experiment is to remeasure that exact candidate with the
+  retained resident-AY framing and 15872-byte blocks, then check every frame,
+  producer/ZX0 cost and complete Fuse playback. Compare savings specifically
+  on frames whose full foreground work exceeds six fields. Keep the existing
+  unchanged-pixel decoder and original volume checkpoints. Do not assume the
+  old size/CPU delta transfers, or repeat only the local pre-ZX0 estimate.
 - The current stream already rounds bands with at least 18 changed cells
   to all-FF masks. A new nearly-dense test admits no extra bands and would
   add 531,846 T. A full-eight-cell helper with a new test on every nonzero

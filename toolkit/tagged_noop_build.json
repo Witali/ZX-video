@@ -1,0 +1,948 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Build three run-tag TRDs and verify dirty-RAM boots, priming and handoffs.\n\nAll original packets and AY bytes must be recoverable exactly. Full frame\nCPU execution and complete physical-time Fuse delivery are separate gates.\n",
+  "baseline_commit": "a84451d",
+  "baseline_build_sha256": "9915590d679237adba70ff21a412d19177876ee8356e53b3df18c06f287c2b62",
+  "size_report_sha256": "de63d4889867da8d18f91a5dd644456c37c22bd7d86f8b754e5be9d4674d147c",
+  "contract": {
+    "version": "resident-tagged-noop-1",
+    "ends": [
+      1624,
+      2921,
+      4221
+    ],
+    "options": {
+      "fast_disk": true,
+      "cached_seek": true,
+      "interleaved": true,
+      "deferred_limit": 248,
+      "keepalive_fields": 64,
+      "frame_service": true,
+      "cold_bitmaps": true,
+      "inline_matches": true,
+      "startup_delta": true,
+      "fast_noop_scan": true,
+      "irq_safe_paging": true,
+      "static_cache_borders": true,
+      "carry_huffman": true,
+      "register_fragments": true,
+      "cached_huffman_byte": true,
+      "bank2_zx0": true,
+      "fast_return_irq": true,
+      "hl_mask_reader": true,
+      "compact_cursor": true,
+      "cached_huffman_lookahead": true,
+      "audio_batch": 31,
+      "foreground_audio": true
+    },
+    "raw_sha256": [
+      "9404fc8b57b5445c88c3c877021c613be24f91cf777c3221ea08822d67c511b3",
+      "3b8f2efa8c88351a6f7d70de68dff4ce28fb1904b6293a09775f134808b26483",
+      "4590013f35618db7514e612736b5cea90af28791da900c58cd40367be25f4cfa"
+    ],
+    "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+    "audio_threshold": 24,
+    "minimum_run": 4
+  },
+  "zx0_sha256": "e6aec5cdfc3535b808610cb54412ce375b5b13e17b59f2bc878a54a00a8acbac",
+  "volumes": [
+    {
+      "part": 1,
+      "frames": 1624,
+      "used_sectors": 2537,
+      "free_sectors": 7,
+      "video_bytes": 624134,
+      "video_sectors": 2439,
+      "video_start_sector": 107,
+      "trd_sha256": "0d84a6c22ab11834c42437a43f820dc3522ba6fd852b793936b9714c30d7b278",
+      "metadata_sha256": "f4115d0287e4333ac67d023ce4e39c412cd2f33640a3c2fc81d57074381f1195",
+      "stream_sha256": "203d549520e87079712ffd60fbf8d57a26342d544481a5c482a3f2d74170951f",
+      "raw_video_sha256": "4c8900ffe39972e97da5f6177ca865ac651ccefe7f7a1a55c04525741a7a4de5",
+      "audio_sha256": "f46bbd7e124dd9c8034d2946045c6a12473233d186ca966f9ffd0a1069d246cf",
+      "tagged_noop_runs": {
+        "origin": 31793,
+        "end": 31837,
+        "helper_bytes": 44,
+        "code_hex": "fe80dae485e61f4f06002b09229d8f875f16002a9f8f19229f8f21a38f867721ae8f7e9177e1ca8781c35081",
+        "code_sha256": "912caab0390a06da263fc46ec136a54360580668068273b1db26eb3f0300d068",
+        "hook_address": 33141,
+        "before_hex": "cde485",
+        "hook_hex": "cd317c",
+        "listing": [
+          {
+            "address": 31793,
+            "instruction": "CP run tag",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31795,
+            "instruction": "JP C,fast_fragment",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31798,
+            "instruction": "AND run length",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31800,
+            "instruction": "LD C,A",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31801,
+            "instruction": "LD B,0",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31803,
+            "instruction": "DEC HL",
+            "tstates": 6,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31804,
+            "instruction": "ADD HL,BC",
+            "tstates": 11,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31805,
+            "instruction": "LD (vectors),HL",
+            "tstates": 16,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31808,
+            "instruction": "ADD A,A",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31809,
+            "instruction": "LD E,A",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31810,
+            "instruction": "LD D,0",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31812,
+            "instruction": "LD HL,(bitmap_masks)",
+            "tstates": 16,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31815,
+            "instruction": "ADD HL,DE",
+            "tstates": 11,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31816,
+            "instruction": "LD (bitmap_masks),HL",
+            "tstates": 16,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31819,
+            "instruction": "LD HL,target byte",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31822,
+            "instruction": "ADD A,(HL)",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31823,
+            "instruction": "LD (HL),A",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31824,
+            "instruction": "LD HL,tiles_left",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31827,
+            "instruction": "LD A,(HL)",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31828,
+            "instruction": "SUB C",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31829,
+            "instruction": "LD (HL),A",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31830,
+            "instruction": "POP HL (discard fragment return)",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31831,
+            "instruction": "JP Z,stripe_done",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31834,
+            "instruction": "JP tile",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 33141,
+            "instruction": "CALL tagged run or fast fragment",
+            "tstates": 17,
+            "stage": "control",
+            "phase": "reconstruct"
+          }
+        ],
+        "extra_stack_bytes": 0,
+        "extra_state_bytes": 0,
+        "baseline_fast_call_tstates": 17,
+        "fast_call_tstates": 17,
+        "fast_fragment_delta_tstates": 17,
+        "run_end_tstates": 308,
+        "run_continue_tstates": 318,
+        "baseline_run_tstates": {
+          "end": "74*k+192",
+          "vector": "74*k+258",
+          "patch": "74*k+258"
+        },
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "timing_excludes": [
+          "IRQ",
+          "ULA",
+          "ROM",
+          "disk delivery",
+          "outer frame stages"
+        ],
+        "enabled": true,
+        "minimum_run": 4,
+        "original_video_sha256": "a620841f4b1abd3227b8dcda23d8846ba99296ae14f2158c5a9060701da2b945",
+        "tagged_video_sha256": "4c8900ffe39972e97da5f6177ca865ac651ccefe7f7a1a55c04525741a7a4de5",
+        "exact_packet_inverse": true,
+        "format": "positional-interior-runs-v1"
+      },
+      "independently_bootable": true,
+      "exact_original_video_inverse": true,
+      "exact_ay_bytes": true,
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "d9f98e739d6399fac00c858be29b05f8bc933bf94573d2b7398b8b0e6affa403"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "96001d555538d431069736bbb559735df2e384003cd299f55b9c4520da726460"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 9216,
+          "sha256": "3b184da7092e0f21158c0a822bd912a12f1d38fb91217109454cc165c0a0fb19"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "c285789ceb44dccfea838489176edc2e9fac5fed58607850629fc49eb4f56799"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7424,
+          "sha256": "6418498a3aecd77c830aa57b9615d39ae9564c0859e820f3341b8e281bf5c2b7"
+        },
+        {
+          "bank": 4,
+          "offset": 7424,
+          "bytes": 6806,
+          "sha256": "737cbe7f85342f3cebe5dd9c7902a67a812edc6a082363b59e8dd00b15ec0ab3"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "b8a4084ca2e7d7b3fcbbc1a01c904f8894ffaa8b9840be0b7336c6611485e6b0"
+        }
+      ],
+      "mocked_boot_tstates": 3086337,
+      "boot_sectors": 91,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 3605851,
+      "mocked_boot_and_priming_sectors": 189
+    },
+    {
+      "part": 2,
+      "frames": 1297,
+      "used_sectors": 2512,
+      "free_sectors": 32,
+      "video_bytes": 619293,
+      "video_sectors": 2420,
+      "video_start_sector": 108,
+      "trd_sha256": "895fefef4bd0b08ad21ef2ffea4cb52e09795b2c3a6e8dc13cd9abf6dca49e9c",
+      "metadata_sha256": "3b772d8b725f70bb5497a7e2b8b17cda8813dfa2a9227334824f713ad4b9be33",
+      "stream_sha256": "668e7bc4b0341b8faa9fdc95a1d6ba70dfdd3f05b58a14fcf2059ae023549e35",
+      "raw_video_sha256": "964cfe31fd5a3a36ed996312da2607c101740acb6041b577afb4dc4f69e31fee",
+      "audio_sha256": "09ceb24b69532a0467581669e336f1f9a910e3425b3792c4b10b16e34dffd4e5",
+      "tagged_noop_runs": {
+        "origin": 31793,
+        "end": 31837,
+        "helper_bytes": 44,
+        "code_hex": "fe80dae485e61f4f06002b09229d8f875f16002a9f8f19229f8f21a38f867721ae8f7e9177e1ca8781c35081",
+        "code_sha256": "912caab0390a06da263fc46ec136a54360580668068273b1db26eb3f0300d068",
+        "hook_address": 33141,
+        "before_hex": "cde485",
+        "hook_hex": "cd317c",
+        "listing": [
+          {
+            "address": 31793,
+            "instruction": "CP run tag",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31795,
+            "instruction": "JP C,fast_fragment",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31798,
+            "instruction": "AND run length",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31800,
+            "instruction": "LD C,A",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31801,
+            "instruction": "LD B,0",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31803,
+            "instruction": "DEC HL",
+            "tstates": 6,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31804,
+            "instruction": "ADD HL,BC",
+            "tstates": 11,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31805,
+            "instruction": "LD (vectors),HL",
+            "tstates": 16,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31808,
+            "instruction": "ADD A,A",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31809,
+            "instruction": "LD E,A",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31810,
+            "instruction": "LD D,0",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31812,
+            "instruction": "LD HL,(bitmap_masks)",
+            "tstates": 16,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31815,
+            "instruction": "ADD HL,DE",
+            "tstates": 11,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31816,
+            "instruction": "LD (bitmap_masks),HL",
+            "tstates": 16,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31819,
+            "instruction": "LD HL,target byte",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31822,
+            "instruction": "ADD A,(HL)",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31823,
+            "instruction": "LD (HL),A",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31824,
+            "instruction": "LD HL,tiles_left",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31827,
+            "instruction": "LD A,(HL)",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31828,
+            "instruction": "SUB C",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31829,
+            "instruction": "LD (HL),A",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31830,
+            "instruction": "POP HL (discard fragment return)",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31831,
+            "instruction": "JP Z,stripe_done",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31834,
+            "instruction": "JP tile",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 33141,
+            "instruction": "CALL tagged run or fast fragment",
+            "tstates": 17,
+            "stage": "control",
+            "phase": "reconstruct"
+          }
+        ],
+        "extra_stack_bytes": 0,
+        "extra_state_bytes": 0,
+        "baseline_fast_call_tstates": 17,
+        "fast_call_tstates": 17,
+        "fast_fragment_delta_tstates": 17,
+        "run_end_tstates": 308,
+        "run_continue_tstates": 318,
+        "baseline_run_tstates": {
+          "end": "74*k+192",
+          "vector": "74*k+258",
+          "patch": "74*k+258"
+        },
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "timing_excludes": [
+          "IRQ",
+          "ULA",
+          "ROM",
+          "disk delivery",
+          "outer frame stages"
+        ],
+        "enabled": true,
+        "minimum_run": 4,
+        "original_video_sha256": "d9d544597dea91e02b45a3cf761ef064bce462fb29e1344b7490532c60292130",
+        "tagged_video_sha256": "964cfe31fd5a3a36ed996312da2607c101740acb6041b577afb4dc4f69e31fee",
+        "exact_packet_inverse": true,
+        "format": "positional-interior-runs-v1"
+      },
+      "independently_bootable": true,
+      "exact_original_video_inverse": true,
+      "exact_ay_bytes": true,
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "999999b96165d3c3a14b470f1d8635f97d755a37c5743aecbde2c3a8bb357992"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "c863090c419f3b0cbbd22887cdca527d259b49f923b54d7d6536d0c4226a1941"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 9216,
+          "sha256": "4a8c1ce8f4fb6532eb3a3ca0348766a4b92868571c8c2fd1f74d5c42c6df0938"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "c285789ceb44dccfea838489176edc2e9fac5fed58607850629fc49eb4f56799"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7168,
+          "sha256": "562f8d6b5602372ed78b38a12c97671ac69c4e861101e139a9262d7b9c96cfeb"
+        },
+        {
+          "bank": 4,
+          "offset": 7168,
+          "bytes": 6047,
+          "sha256": "b01378e3bb42c7a2a9bb06eeea0cc405788e12ceebca532a90200dd818cc3399"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "7454ae2ba18df65d6f0b1d6aceaf26196e783eb84101a36aa3dfbd5c5f25e2fc"
+        }
+      ],
+      "mocked_boot_tstates": 3206210,
+      "boot_sectors": 92,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 4771064,
+      "mocked_boot_and_priming_sectors": 210
+    },
+    {
+      "part": 3,
+      "frames": 1300,
+      "used_sectors": 2512,
+      "free_sectors": 32,
+      "video_bytes": 619116,
+      "video_sectors": 2419,
+      "video_start_sector": 109,
+      "trd_sha256": "e160d6e0e6d5ab513f58c0c3dbf619327a75d312d4e03c5c416f9a033bb8bfc9",
+      "metadata_sha256": "37bd113ca19cddefe0cc6a305bb57e8cf197c8bbcd1c90f5491688d08b6da12c",
+      "stream_sha256": "c4d802a69ea342b092aaea7f2eb1a1eaa5b0c7921aeeb54cdd4ea797dc314776",
+      "raw_video_sha256": "d1bc36c3d37fdce811fdcb42e1f034a709824510d36d4144289371c199b628f4",
+      "audio_sha256": "272f9eb355d9231fb3a76515609aa68e6798bdd696f63717fef5f28942f9ceca",
+      "tagged_noop_runs": {
+        "origin": 31793,
+        "end": 31837,
+        "helper_bytes": 44,
+        "code_hex": "fe80dae485e61f4f06002b09229d8f875f16002a9f8f19229f8f21a38f867721ae8f7e9177e1ca8781c35081",
+        "code_sha256": "912caab0390a06da263fc46ec136a54360580668068273b1db26eb3f0300d068",
+        "hook_address": 33141,
+        "before_hex": "cde485",
+        "hook_hex": "cd317c",
+        "listing": [
+          {
+            "address": 31793,
+            "instruction": "CP run tag",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31795,
+            "instruction": "JP C,fast_fragment",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31798,
+            "instruction": "AND run length",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31800,
+            "instruction": "LD C,A",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31801,
+            "instruction": "LD B,0",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31803,
+            "instruction": "DEC HL",
+            "tstates": 6,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31804,
+            "instruction": "ADD HL,BC",
+            "tstates": 11,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31805,
+            "instruction": "LD (vectors),HL",
+            "tstates": 16,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31808,
+            "instruction": "ADD A,A",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31809,
+            "instruction": "LD E,A",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31810,
+            "instruction": "LD D,0",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31812,
+            "instruction": "LD HL,(bitmap_masks)",
+            "tstates": 16,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31815,
+            "instruction": "ADD HL,DE",
+            "tstates": 11,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31816,
+            "instruction": "LD (bitmap_masks),HL",
+            "tstates": 16,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31819,
+            "instruction": "LD HL,target byte",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31822,
+            "instruction": "ADD A,(HL)",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31823,
+            "instruction": "LD (HL),A",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31824,
+            "instruction": "LD HL,tiles_left",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31827,
+            "instruction": "LD A,(HL)",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31828,
+            "instruction": "SUB C",
+            "tstates": 4,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31829,
+            "instruction": "LD (HL),A",
+            "tstates": 7,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31830,
+            "instruction": "POP HL (discard fragment return)",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31831,
+            "instruction": "JP Z,stripe_done",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 31834,
+            "instruction": "JP tile",
+            "tstates": 10,
+            "phase": "reconstruct",
+            "stage": "tagged_noop_control"
+          },
+          {
+            "address": 33141,
+            "instruction": "CALL tagged run or fast fragment",
+            "tstates": 17,
+            "stage": "control",
+            "phase": "reconstruct"
+          }
+        ],
+        "extra_stack_bytes": 0,
+        "extra_state_bytes": 0,
+        "baseline_fast_call_tstates": 17,
+        "fast_call_tstates": 17,
+        "fast_fragment_delta_tstates": 17,
+        "run_end_tstates": 308,
+        "run_continue_tstates": 318,
+        "baseline_run_tstates": {
+          "end": "74*k+192",
+          "vector": "74*k+258",
+          "patch": "74*k+258"
+        },
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "timing_excludes": [
+          "IRQ",
+          "ULA",
+          "ROM",
+          "disk delivery",
+          "outer frame stages"
+        ],
+        "enabled": true,
+        "minimum_run": 4,
+        "original_video_sha256": "bad4b6f977b4423d477402a2ec5f2204c5cd2991d46d66a1249f465827753b81",
+        "tagged_video_sha256": "d1bc36c3d37fdce811fdcb42e1f034a709824510d36d4144289371c199b628f4",
+        "exact_packet_inverse": true,
+        "format": "positional-interior-runs-v1"
+      },
+      "independently_bootable": true,
+      "exact_original_video_inverse": true,
+      "exact_ay_bytes": true,
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "addcdcda01682901728f2dbef0996acf694a4ddfda9fdcc960595cffb6ed23f4"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "fb932fe4c9c259f0b0a577ea9f82e128019fb3a1ea82d7ab2ee8d3d4a99031ea"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 9216,
+          "sha256": "d08fafe487864368fdf3901364d57f130ff23105e2df8a11ab7b5d87383a0565"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "c285789ceb44dccfea838489176edc2e9fac5fed58607850629fc49eb4f56799"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7424,
+          "sha256": "772031a2b4a4e2d4c1ecc1468a9ce5228663dc3e5132350b2ee004d21d310747"
+        },
+        {
+          "bank": 4,
+          "offset": 7424,
+          "bytes": 5613,
+          "sha256": "9a96caf5384f731b15914cff988489230d03da800e65bdba75bc6178ac2f4095"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "fa4b5962c4d5c313167f017b341a762b73e9016d8f80654611cf74ef9b8aacc5"
+        }
+      ],
+      "mocked_boot_tstates": 3294740,
+      "boot_sectors": 94,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 4990263,
+      "mocked_boot_and_priming_sectors": 214
+    }
+  ],
+  "source_sha256_lf": {
+    "build_inplace_keepalive.py": "8af7a1a7f07cc5ce60ff97816df1d0bb31d42605e7fe5531dbc2ff551bb29bba",
+    "inplace_keepalive_player.py": "0e798c66d14a842b6ec2b943ef1fa23c0db7cd8ee6fd2cbc4feee21af49c958f",
+    "test_inplace_keepalive.py": "f36b083bd21d43c2fe6f98c3c8e99362da31718d228e63740abc26e35a74d258",
+    "build_inplace_slot_player.py": "f89522b4190999e9cdfe00d7c6f4299e61a8bd737194ac1c8d6ed3020b4e4918",
+    "inplace_slot_player.py": "a51880cbae6751cc43143bd7daf516420f2fb6ad6f1f8b18b039f99a2fdd366b",
+    "inplace_slot_input_z80.py": "aed5462418016e17a64708b313e38dfc48a886f1c40bd006dd4db7370f1d5319",
+    "inplace_zx0.py": "c2675a2f2ffb938060f3568888c2e94d7e9300e88ab8a1afca000bd25ca48106",
+    "benchmark_inplace_slot.py": "f840275a215aa3f2c8dbc03a0cfd71ec60072bfc26f39a842f255d128a076a9e",
+    "test_inplace_slot.py": "1ff1dc18dc3e8bd891e92559bf41273926393445ac961130f0b217fd9b0348b6",
+    "build_resident_audio_player.py": "aec10c5e86611437beec398fde100ab7b613dccad194d2920948b3c4c5207ce5",
+    "resident_audio_player.py": "181b9fdaa90237b6c59d7f0f4bd05bc95639f14ef2a6cb59d12446936cc94404",
+    "resident_audio_z80.py": "f658004856c2dfb5bde1f6db3f5101193c974a0baaae75feeed16f254761d1b8",
+    "integrated_bootstrap.py": "fe43b8fd20ae2ae7b3c424d1bbb2e37d5e26f98f0a65c76872ae44eaf7176211",
+    "slot_queue_player.py": "211b4c1bdd233241967cae5b6e6c9b31b2483b79da5cb6f6d507f8a0e3250e6a",
+    "slot_queue_z80.py": "6038557b18c6ef513508c0f149e69e11050b5c09ba1127891af50fc4026b5f54",
+    "direct_slot_input_z80.py": "5aaa5b2725c70f3874b7d517e6ac353ce9937a10652c80510b2ee6085f0f7b7e",
+    "bulk_frame_z80.py": "6c71b8e03ccc42a7ab1352c39367e6f8fd155d58b6045b3e1952f6c1fc2747d3",
+    "pipelined_frame_z80.py": "d603b72fd89ad1428f857f4633d44bbbf165cf20ed726726a805cd741ee82843",
+    "build_fap3_trd.py": "040d40be7fbdb6855dfb6d2fcb1301f7858b84422e62bf126391f0cabf337f91",
+    "fap3_disk_z80.py": "e906dd14aa942e51831e8285dc1c33c9fb5002a0b70ff73f992c4602df374689",
+    "tagged_noop_runs.py": "ba60b46af12d9c8a6126f9858dbf1849601eb73f3a37210a116f5eda161da495",
+    "tagged_noop_player.py": "e43eb2f4e47aee4be1f253ab9092a51146484bdd3840c11b3aa1ff247bdc0dae",
+    "build_tagged_noop_player.py": "5edde30c186a76aa735215cbd85ad610b21ab9fda758b435a17eb0a9c384b91f",
+    "probe_tagged_noop_runs.py": "f5259efe97274ab051ec7de87618724cc3955bb83f52be6a2928fd62ebc45111"
+  },
+  "mocked_rom_swaps": [
+    {
+      "from_part": 1,
+      "to_part": 2,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    },
+    {
+      "from_part": 2,
+      "to_part": 3,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    }
+  ]
+}

@@ -21,6 +21,57 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — positional no-op tags save CPU mainly on already-fast frames
+
+- **Objective/baseline:** remove repeated unchanged-tile scanning from the
+  retained `a84451d` player, using its larger remaining capacity. Preserve
+  all 4221 authorized frames, every pixel, resolution, original AY records,
+  25/3-fps deadlines and three independent boots. This revisits September
+  19's older FAP5 experiment under explicitly changed dispatch/buffer limits.
+- **Parameters:** tag maximal interior runs of at least four tiles, keeping
+  vector positions, masks and packet lengths. Exclude the static edge stripes.
+  A 44-byte helper at 7C31 reuses the fast-fragment CALL, adding no test on
+  ordinary motion/intra tiles. Existing fragments add **17 T**. Tagged runs
+  take **308/318 T**, versus **74*k+192 / 74*k+258 T** for stripe-end/continue
+  cases. Sixteen tiles to stripe end cost **1376 -> 308 T (-1068)**. Other
+  thresholds are host CPU estimates only; minimum four is fully measured.
+- **Capacity/content:** exact inverse for every original video packet and
+  unchanged AY. All 188 blocks pass ZX0 and in-place overlap checks. Video
+  grows **1,818,909 -> 1,862,543 B (+43,634)**; reads **7106 -> 7278 (+172)**.
+  Actual TRDs use **2537/2512/2512 sectors**, leaving **7/32/32**. Bootstrap
+  and layout make occupied-sector growth 174. Root release images are unchanged.
+- **CPU evidence:** all 4221 compact frames and both complete native screens
+  match. Frame stages **1,018,049,241 -> 1,004,328,597 T (-13,720,644)**;
+  producer/ZX0 **201,404,859 -> 207,760,466 T (+6,355,607)**, with separately
+  checked instruction histograms. Combined measured components save
+  **7,365,037 T (about 0.604%)**; this excludes integrated queue/IRQ/ULA/ROM
+  and physical disk time. Critically, the **481 baseline over-budget frames
+  add 173,339 frame-stage T**; the other 3740 save 13,893,983 T. In all,
+  573 frames get slower. Grouping uses baseline elapsed foreground work.
+- **Complete Fuse result:** all three disks reach EOF; 25326 exact AY records
+  retain 50 Hz, with zero underruns, missing/duplicate IRQ fields or retries.
+  Late frames **90/465/760 = 1315 versus 1321**; bad intervals **44/252/490 =
+  786 versus 783**. Maximum lateness **67/259/259 fields**; actual deviations
+  **4,750,839/18,365,172/18,365,173 T**. Recovered runs **2/10/4**; volume 2
+  retains an unrecovered tail at local frames 1240..1296. Total publication
+  span falls only **70,914 T**. Both video timing gates still fail.
+- **Coverage/decision:** four boundary/mixed-frame/actual-IRQ tests, full
+  native frame and block execution, dirty-RAM boots, priming, handoffs and
+  full Fuse traces with 80 pixels/frame. Physical hardware and all-pixel Fuse
+  comparison remain unverified; initial disk/IRQ phases are not matched.
+  Development checks caught an unsupported verifier JP P opcode, synthetic
+  cache/RAM fixture setup, omitted cold maps in the first host probe and an
+  FPS-string audit comparison; each was corrected before final evidence.
+  **Do not adopt**: negligible deadline benefit, worse fallback intervals,
+  and substantially less disk headroom. Retain `a84451d`. Next remeasure
+  the previously capacity-rejected fast-fragment selection against today's
+  block/layout budget, prioritizing expensive frames and final ZX0 size.
+  See [report and commands](toolkit/TAGGED_NOOP_RUNS.md),
+  [CPU benchmark](toolkit/benchmark_tagged_noop_runs.py),
+  [producer benchmark](toolkit/benchmark_tagged_noop_delivery.py),
+  [size probe](toolkit/probe_tagged_noop_runs.py) and
+  [complete evidence audit](toolkit/summarize_tagged_noop_runs.py).
+
 ## 2026-09-27 — sector-streaming in-place ZX0 is exact but slower overall
 
 - **Objective/baseline:** remove full-block acquisition bursts from `a84451d`
