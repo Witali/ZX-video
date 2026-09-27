@@ -1,0 +1,522 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Build and cold/prime-check three resident-AY disks with half-row cache maps.\n\nChecks unchanged original payloads through reversible map expansion, every\nZX0 block, installed RAM and complete first native/second compact frames.\nTR-DOS is mocked for these checks; full Fuse delivery remains a separate run.\n",
+  "baseline_commit": "da369e6",
+  "baseline_build_sha256": "3bc9aaaeac962b61127f33091a3e6c2026e0ee537b7bd0880b278d080c1e0e74",
+  "contract": {
+    "version": "resident-half-row-1",
+    "ends": [
+      1624,
+      2921,
+      4221
+    ],
+    "options": {
+      "fast_disk": true,
+      "cached_seek": true,
+      "interleaved": true,
+      "deferred_limit": 248,
+      "keepalive_fields": 64,
+      "frame_service": true,
+      "cold_bitmaps": true,
+      "inline_matches": true,
+      "startup_delta": true,
+      "fast_noop_scan": true,
+      "irq_safe_paging": true,
+      "static_cache_borders": true,
+      "carry_huffman": true,
+      "register_fragments": true,
+      "cached_huffman_byte": true,
+      "bank2_zx0": true,
+      "fast_return_irq": true,
+      "hl_mask_reader": true,
+      "compact_cursor": true,
+      "cached_huffman_lookahead": true,
+      "audio_batch": 31,
+      "foreground_audio": true
+    },
+    "raw_sha256": [
+      "9404fc8b57b5445c88c3c877021c613be24f91cf777c3221ea08822d67c511b3",
+      "3b8f2efa8c88351a6f7d70de68dff4ce28fb1904b6293a09775f134808b26483",
+      "4590013f35618db7514e612736b5cea90af28791da900c58cd40367be25f4cfa"
+    ],
+    "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+    "audio_threshold": 24
+  },
+  "zx0_sha256": "e6aec5cdfc3535b808610cb54412ce375b5b13e17b59f2bc878a54a00a8acbac",
+  "volumes": [
+    {
+      "part": 1,
+      "frames": 1624,
+      "used_sectors": 2491,
+      "free_sectors": 53,
+      "video_bytes": 613413,
+      "video_sectors": 2397,
+      "video_start_sector": 106,
+      "trd_sha256": "8124b00784c28bd412c25aae7287b59150f3b9e3f278f283cfffa653dd8c5947",
+      "metadata_sha256": "46ff457eac675d3faa2bf9ab18717728e5f63b332ada3af31c004d562092bf58",
+      "stream_sha256": "94187fe0deca5fd9cc11b8be4728aeb2c8a8a8660dc605c99c19b2564893de03",
+      "raw_video_sha256": "dbcbda0e326dcec8cb7b54f1289c28436d5ea2853564474601819882cf2fca3f",
+      "audio_sha256": "f46bbd7e124dd9c8034d2946045c6a12473233d186ca966f9ffd0a1069d246cf",
+      "half_row_cache": {
+        "enabled": true,
+        "map_bytes": 6,
+        "previous_map_bytes": 3,
+        "selector_origin": 30755,
+        "half_origin": 31488,
+        "labels": {
+          "copy": 30755,
+          "ready": 30773,
+          "skip": 30797,
+          "done": 30808,
+          "selector_end": 30817,
+          "half": 31488,
+          "row": 31502,
+          "page_ready": 31553,
+          "half_end": 31568
+        },
+        "regions": [
+          {
+            "address": 30755,
+            "code_hex": "c53ab78f87200be52ab58f7e2322b58fe18f0e00cb1187cb1132b78f79b7280afe03c2007bcda287180b01800009147ae603f6a457c178d60447c22378c9"
+          },
+          {
+            "address": 31488,
+            "code_hex": "0604fe0120087dc6106f7bc6105fc5eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda001100009c17bc6305f3007147ae603f6a45710cb0dc2587801f0ff091e01c35878"
+          }
+        ],
+        "old_selector_sha256": "ca7396c9b9ce03b94e2b37f4677de37fe9a6e380b0cc2e9656a5fde89845cfd9",
+        "replaced_selector_origin": 34670,
+        "replaced_selector_hex": "c32378eda0eda0eda0eda0eda0c90000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "packet_patches": [
+          {
+            "address": 56471,
+            "before_hex": "1140ba010300eda0eda0eda0",
+            "code_hex": "1140ba010600cd7187eda000",
+            "previous_tstates": 68,
+            "tstates": 147,
+            "delta_tstates": 79
+          },
+          {
+            "address": 56338,
+            "before_hex": "112001",
+            "code_hex": "112301",
+            "previous_tstates": 10,
+            "tstates": 10,
+            "delta_tstates": 0
+          },
+          {
+            "address": 56347,
+            "before_hex": "113f11",
+            "code_hex": "113c11",
+            "previous_tstates": 10,
+            "tstates": 10,
+            "delta_tstates": 0
+          },
+          {
+            "address": 56440,
+            "before_hex": "111301",
+            "code_hex": "111601",
+            "previous_tstates": 10,
+            "tstates": 10,
+            "delta_tstates": 0
+          }
+        ],
+        "cache_entry_extra_tstates": 10,
+        "parser_delta_tstates": 79,
+        "additional_map_bytes_per_frame": 3,
+        "unchanged_full_row_helper": 34722,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "timing_excludes": [
+          "IRQ",
+          "ULA",
+          "TR-DOS ROM",
+          "disk latency"
+        ]
+      },
+      "independently_bootable": true,
+      "exact_video_field_roundtrip": true,
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "d9f98e739d6399fac00c858be29b05f8bc933bf94573d2b7398b8b0e6affa403"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "d7ed1a8bd15053a4cdd2bff99d550ea332392eb3791437d6898c09e4b9735dbe"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 9216,
+          "sha256": "fcbc353a7856b2144effdfbf59a49a4f8b415c2bd02eff898cb6beb27065fb4c"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "a6cce36754fb026e22627c1755ac44dd028824960d0dee3060722f4fec6ce1c9"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7424,
+          "sha256": "6418498a3aecd77c830aa57b9615d39ae9564c0859e820f3341b8e281bf5c2b7"
+        },
+        {
+          "bank": 4,
+          "offset": 7424,
+          "bytes": 6806,
+          "sha256": "737cbe7f85342f3cebe5dd9c7902a67a812edc6a082363b59e8dd00b15ec0ab3"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "b8a4084ca2e7d7b3fcbbc1a01c904f8894ffaa8b9840be0b7336c6611485e6b0"
+        }
+      ],
+      "mocked_boot_tstates": 3074230,
+      "boot_sectors": 91,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 1816264,
+      "mocked_boot_and_priming_sectors": 128
+    },
+    {
+      "part": 2,
+      "frames": 1297,
+      "used_sectors": 2492,
+      "free_sectors": 52,
+      "video_bytes": 613632,
+      "video_sectors": 2397,
+      "video_start_sector": 108,
+      "trd_sha256": "19e8d2fdae18a8f14f1292f1b6350c29ada82800f2f9becb0dceed6e6b16285f",
+      "metadata_sha256": "03356adc59735e5ecc2fcbc3b5ad6123334e4bfae3421aa173f52fa25be12572",
+      "stream_sha256": "fa5e041d240c3d38fb77438bb12b31e88eec86991adf96a2d7085f7eb7dd8d8a",
+      "raw_video_sha256": "c8dfab675d287fdc54edf952a48d4102840590948c24ee739016d53cd7c499e8",
+      "audio_sha256": "09ceb24b69532a0467581669e336f1f9a910e3425b3792c4b10b16e34dffd4e5",
+      "half_row_cache": {
+        "enabled": true,
+        "map_bytes": 6,
+        "previous_map_bytes": 3,
+        "selector_origin": 30755,
+        "half_origin": 31488,
+        "labels": {
+          "copy": 30755,
+          "ready": 30773,
+          "skip": 30797,
+          "done": 30808,
+          "selector_end": 30817,
+          "half": 31488,
+          "row": 31502,
+          "page_ready": 31553,
+          "half_end": 31568
+        },
+        "regions": [
+          {
+            "address": 30755,
+            "code_hex": "c53ab78f87200be52ab58f7e2322b58fe18f0e00cb1187cb1132b78f79b7280afe03c2007bcda287180b01800009147ae603f6a457c178d60447c22378c9"
+          },
+          {
+            "address": 31488,
+            "code_hex": "0604fe0120087dc6106f7bc6105fc5eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda001100009c17bc6305f3007147ae603f6a45710cb0dc2587801f0ff091e01c35878"
+          }
+        ],
+        "old_selector_sha256": "ca7396c9b9ce03b94e2b37f4677de37fe9a6e380b0cc2e9656a5fde89845cfd9",
+        "replaced_selector_origin": 34670,
+        "replaced_selector_hex": "c32378eda0eda0eda0eda0eda0c90000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "packet_patches": [
+          {
+            "address": 56471,
+            "before_hex": "1140ba010300eda0eda0eda0",
+            "code_hex": "1140ba010600cd7187eda000",
+            "previous_tstates": 68,
+            "tstates": 147,
+            "delta_tstates": 79
+          },
+          {
+            "address": 56338,
+            "before_hex": "112001",
+            "code_hex": "112301",
+            "previous_tstates": 10,
+            "tstates": 10,
+            "delta_tstates": 0
+          },
+          {
+            "address": 56347,
+            "before_hex": "113f11",
+            "code_hex": "113c11",
+            "previous_tstates": 10,
+            "tstates": 10,
+            "delta_tstates": 0
+          },
+          {
+            "address": 56440,
+            "before_hex": "111301",
+            "code_hex": "111601",
+            "previous_tstates": 10,
+            "tstates": 10,
+            "delta_tstates": 0
+          }
+        ],
+        "cache_entry_extra_tstates": 10,
+        "parser_delta_tstates": 79,
+        "additional_map_bytes_per_frame": 3,
+        "unchanged_full_row_helper": 34722,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "timing_excludes": [
+          "IRQ",
+          "ULA",
+          "TR-DOS ROM",
+          "disk latency"
+        ]
+      },
+      "independently_bootable": true,
+      "exact_video_field_roundtrip": true,
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "999999b96165d3c3a14b470f1d8635f97d755a37c5743aecbde2c3a8bb357992"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "9789b10616d78b4ada9e9adb964e8064be542e27b284aad208b7f307961d48e2"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 9216,
+          "sha256": "7b2f609a8a015f2fa39cbf5406d39fddfff4e7dced571989f77c711c18ac60cf"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "a6cce36754fb026e22627c1755ac44dd028824960d0dee3060722f4fec6ce1c9"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7168,
+          "sha256": "562f8d6b5602372ed78b38a12c97671ac69c4e861101e139a9262d7b9c96cfeb"
+        },
+        {
+          "bank": 4,
+          "offset": 7168,
+          "bytes": 6047,
+          "sha256": "b01378e3bb42c7a2a9bb06eeea0cc405788e12ceebca532a90200dd818cc3399"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "7454ae2ba18df65d6f0b1d6aceaf26196e783eb84101a36aa3dfbd5c5f25e2fc"
+        }
+      ],
+      "mocked_boot_tstates": 3194374,
+      "boot_sectors": 93,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 2905259,
+      "mocked_boot_and_priming_sectors": 155
+    },
+    {
+      "part": 3,
+      "frames": 1300,
+      "used_sectors": 2491,
+      "free_sectors": 53,
+      "video_bytes": 612734,
+      "video_sectors": 2394,
+      "video_start_sector": 109,
+      "trd_sha256": "84ae1fd08e18f300ec0f67e9645cc76f3aba2e4f0fcf9a4d7493ec3ab3dc1348",
+      "metadata_sha256": "23c38e045d2607104923e57c42c6a31d330518dfeaed2c15ac0a718ab7609a3a",
+      "stream_sha256": "9df0865a2e57fd9720e62197adb7421088a7cd4c4cdd92f2544211c367ad7ba0",
+      "raw_video_sha256": "bc432f86fffa7ae79f132d50686c15ac81e8972bc14eabcfb0d556edad0cee3f",
+      "audio_sha256": "272f9eb355d9231fb3a76515609aa68e6798bdd696f63717fef5f28942f9ceca",
+      "half_row_cache": {
+        "enabled": true,
+        "map_bytes": 6,
+        "previous_map_bytes": 3,
+        "selector_origin": 30755,
+        "half_origin": 31488,
+        "labels": {
+          "copy": 30755,
+          "ready": 30773,
+          "skip": 30797,
+          "done": 30808,
+          "selector_end": 30817,
+          "half": 31488,
+          "row": 31502,
+          "page_ready": 31553,
+          "half_end": 31568
+        },
+        "regions": [
+          {
+            "address": 30755,
+            "code_hex": "c53ab78f87200be52ab58f7e2322b58fe18f0e00cb1187cb1132b78f79b7280afe03c2007bcda287180b01800009147ae603f6a457c178d60447c22378c9"
+          },
+          {
+            "address": 31488,
+            "code_hex": "0604fe0120087dc6106f7bc6105fc5eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda001100009c17bc6305f3007147ae603f6a45710cb0dc2587801f0ff091e01c35878"
+          }
+        ],
+        "old_selector_sha256": "ca7396c9b9ce03b94e2b37f4677de37fe9a6e380b0cc2e9656a5fde89845cfd9",
+        "replaced_selector_origin": 34670,
+        "replaced_selector_hex": "c32378eda0eda0eda0eda0eda0c90000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "packet_patches": [
+          {
+            "address": 56471,
+            "before_hex": "1140ba010300eda0eda0eda0",
+            "code_hex": "1140ba010600cd7187eda000",
+            "previous_tstates": 68,
+            "tstates": 147,
+            "delta_tstates": 79
+          },
+          {
+            "address": 56338,
+            "before_hex": "112001",
+            "code_hex": "112301",
+            "previous_tstates": 10,
+            "tstates": 10,
+            "delta_tstates": 0
+          },
+          {
+            "address": 56347,
+            "before_hex": "113f11",
+            "code_hex": "113c11",
+            "previous_tstates": 10,
+            "tstates": 10,
+            "delta_tstates": 0
+          },
+          {
+            "address": 56440,
+            "before_hex": "111301",
+            "code_hex": "111601",
+            "previous_tstates": 10,
+            "tstates": 10,
+            "delta_tstates": 0
+          }
+        ],
+        "cache_entry_extra_tstates": 10,
+        "parser_delta_tstates": 79,
+        "additional_map_bytes_per_frame": 3,
+        "unchanged_full_row_helper": 34722,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "timing_excludes": [
+          "IRQ",
+          "ULA",
+          "TR-DOS ROM",
+          "disk latency"
+        ]
+      },
+      "independently_bootable": true,
+      "exact_video_field_roundtrip": true,
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "addcdcda01682901728f2dbef0996acf694a4ddfda9fdcc960595cffb6ed23f4"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "58f8ec5bf5486a3176d21d253cc0b2af37e0470baa969861133e12b6e4f614e2"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 9216,
+          "sha256": "0d970c00cc3758659996e527f19ace2c64f78dba39e03c6d80596bbdcfcc94bc"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "a6cce36754fb026e22627c1755ac44dd028824960d0dee3060722f4fec6ce1c9"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7424,
+          "sha256": "772031a2b4a4e2d4c1ecc1468a9ce5228663dc3e5132350b2ee004d21d310747"
+        },
+        {
+          "bank": 4,
+          "offset": 7424,
+          "bytes": 5613,
+          "sha256": "9a96caf5384f731b15914cff988489230d03da800e65bdba75bc6178ac2f4095"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "fa4b5962c4d5c313167f017b341a762b73e9016d8f80654611cf74ef9b8aacc5"
+        }
+      ],
+      "mocked_boot_tstates": 3282563,
+      "boot_sectors": 93,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 3095781,
+      "mocked_boot_and_priming_sectors": 152
+    }
+  ],
+  "mocked_rom_swaps": [
+    {
+      "from_part": 1,
+      "to_part": 2,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    },
+    {
+      "from_part": 2,
+      "to_part": 3,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    }
+  ],
+  "source_sha256_lf": {
+    "build_half_row_player.py": "71a3cd71e5cfdea97647cb69df3e846ba12ce95796e7012150103ee41e012226",
+    "half_row_player.py": "cab5fb34c61c6e379a8c93579f397352c63bfb8271bd93f98022c8f5da142457",
+    "half_row_cache.py": "34b3337086528108de40ee1472bd2656f60d55d7993d98c833d99fbf72fbb8d1",
+    "build_resident_audio_player.py": "aec10c5e86611437beec398fde100ab7b613dccad194d2920948b3c4c5207ce5",
+    "resident_audio_player.py": "181b9fdaa90237b6c59d7f0f4bd05bc95639f14ef2a6cb59d12446936cc94404",
+    "resident_audio_z80.py": "f658004856c2dfb5bde1f6db3f5101193c974a0baaae75feeed16f254761d1b8",
+    "integrated_bootstrap.py": "fe43b8fd20ae2ae7b3c424d1bbb2e37d5e26f98f0a65c76872ae44eaf7176211",
+    "slot_queue_player.py": "211b4c1bdd233241967cae5b6e6c9b31b2483b79da5cb6f6d507f8a0e3250e6a",
+    "slot_queue_z80.py": "6038557b18c6ef513508c0f149e69e11050b5c09ba1127891af50fc4026b5f54",
+    "direct_slot_input_z80.py": "5aaa5b2725c70f3874b7d517e6ac353ce9937a10652c80510b2ee6085f0f7b7e",
+    "bulk_frame_z80.py": "6c71b8e03ccc42a7ab1352c39367e6f8fd155d58b6045b3e1952f6c1fc2747d3",
+    "pipelined_frame_z80.py": "d603b72fd89ad1428f857f4633d44bbbf165cf20ed726726a805cd741ee82843",
+    "build_fap3_trd.py": "040d40be7fbdb6855dfb6d2fcb1301f7858b84422e62bf126391f0cabf337f91",
+    "fap3_disk_z80.py": "e906dd14aa942e51831e8285dc1c33c9fb5002a0b70ff73f992c4602df374689"
+  }
+}

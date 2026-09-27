@@ -21,6 +21,51 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — half-row motion cache: full CPU saving, small delivery gain
+
+- **Objective/baseline:** use the spare capacity of `da369e6` to copy fewer
+  motion-cache bytes, retaining all 4221 frames, exact picture fields and
+  25326 AY records, independent disks and the original nominal deadlines.
+- **Change:** widen each cache map from 3 to 6 bytes, selecting halves of
+  four-row groups. Retain the paired whole-row helper for full groups.
+  New 62/80-byte helpers use retired bank-5 code space; the old bank-2
+  selector becomes a jump and a map-copy helper. Screens, video slots,
+  AY bank/FIFO and stack allocations remain. This code placement is subject
+  to ULA contention; deterministic savings are not elapsed-time savings.
+- **CPU:** all compact frames and both complete native screens match for
+  all 4221 frames. Frame stages change **1018049241→1002069238 T
+  (−15980003)**; 124 frames are slower. Map-copy instructions change
+  **68→147 T/frame (+79)**, adding **333459 T**, for a net **−15646544 T**
+  in the accounted regions. Every per-frame delta matches the independent
+  copy formula. Three new tests pass, including every group/pair position,
+  untouched memory, wrapping, exact instruction counts and real AY IRQ
+  after every copy instruction. Full integrated CPU totals remain unmeasured.
+- **Actual capacity:** optimal ZX0 adds **7583 B**, runtime sectors
+  **7158→7188 (+30)** and occupied sectors **7434→7474 (+40)** including
+  startup/interleave padding. Disks use **2491/2492/2491 sectors**, leaving
+  **53/52/53**. Reversible map expansion checks all original video fields.
+  Dirty boot, full prime frames, immutable audio bank and both mocked swaps
+  pass. All helpers fit the existing RAM map.
+- **Full playback:** all three cold Fuse runs reach EOF; all 25326 AY ticks
+  remain exact at 50 Hz with zero gaps/underruns. All sectors and 80 pixel
+  samples/frame match. Late frames change **213/654/878→206/660/874**,
+  total **1745→1740**; maximum delays **103/291/291→97/287/282 fields**.
+  Fallback violations change **1047→1043**. Late runs recover 5/3/6 times,
+  but disks 1/2 end with unrecovered runs 1609..1623 and 994..1296. Summed
+  publication span changes **1816733868→1816379328 elapsed T (−354540)**:
+  only five fields. Disk/IRQ phases differ; this is not isolated CPU timing.
+- **Decision:** retain an optional measured variant, without changing the
+  smaller resident baseline or root release TRDs. It does not solve video
+  cadence. Next measure the hot 16-LDI body in unused uncontended selector
+  space, and investigate a larger prepared reservoir only after proving
+  overlap safety for every compressed input byte. Preserve this result
+  even if another placement or format supersedes it.
+- **Evidence/reproduction:** [implementation, formulas and commands](toolkit/HALF_ROW_PLAYER.md),
+  [frame CPU benchmark](toolkit/benchmark_half_row_cache.py),
+  [real TRD builder](toolkit/build_half_row_player.py),
+  [complete evidence](toolkit/half_row_player_evidence/manifest.json), and
+  [summary/auditor](toolkit/summarize_half_row_player.py).
+
 ## 2026-09-27 — foreground resident AY service: sound cadence fixed
 
 - **Objective/baseline:** correct audio starvation in the complete queue-only

@@ -27,9 +27,12 @@ screens, code, stack, AY/IRQ, TR-DOS workspace, tables and disk buffers.
 
 ## Current baseline and evidence
 
-Use the HL-reader configuration measured at `074e1e7`; the source also
-contains later experimental options. Do not equate this configuration with
-the generic converter's defaults or the root release images.
+Use the [foreground resident-AY player](RESIDENT_AUDIO_PLAYER.md) at
+`da369e6` as the current smaller experimental baseline. It fits three
+independent disks and delivers all AY records at 50 Hz, but video timing
+still fails. The HL-reader configuration at `074e1e7` and the subsequent
+measurements below remain historical comparisons. Do not equate any of
+these configurations with generic converter defaults or root release images.
 
 - Stream: **1,919,945 compressed bytes**, 3,083,375 packet bytes, 378 blocks,
   7501 video sectors. Tables are per volume; each disk initializes its own
@@ -124,9 +127,15 @@ See [the saved verification](hl_mask_reader_summary.json).
    fields; late runs recover 5/3/6 times, but disks 1/2 end late. Average
    8.333333 fps on disk 3 does not establish smooth playback.
    Obtain a complete new CPU replay and retain read/seek intervals separately.
-   Revisit finer motion-cache maps and lossless speed/size tradeoffs using
-   the actual spare sectors; the earlier half-row map's offline saving and
-   +7201-byte cost are not a combined-player result. Capacity and AY cadence
+   The [half-row cache integration](HALF_ROW_PLAYER.md) now completes all
+   CPU frames and all three disks: frame stages save **15980003 T**, parser
+   copies add **333459 T**, and ZX0 adds **7583 B / 30 runtime sectors**.
+   Actual occupied sectors grow by 40; 53/52/53 remain free. Sound stays
+   exact at 50 Hz, but late frames improve only **1745→1740**, with 1043
+   fallback interval violations. Keep it optional and preserve the smaller
+   baseline. Test moving its hottest 16-LDI body into the 38 unused bytes
+   of the old bank-2 selector (33 bytes required); count CALL/return costs
+   and include ULA/disk timing before adopting the placement. Capacity and AY cadence
    pass this experiment; both video timing gates still fail.
    The frozen-producer FIFO model does not establish that resizing the
    existing AY queue fixes starvation; do not infer missing byte availability
@@ -169,6 +178,15 @@ See [the saved verification](hl_mask_reader_summary.json).
    elapsed T, including producer work and disk service. Use these traces
    to distinguish burst buffering opportunities from sustained CPU cost;
    do not label all wait time removable overhead or fix only publication.
+   A separate new candidate is bank-local in-place ZX0 to use more of each
+   existing 16-KiB slot as prepared history. The resident player currently
+   reserves 8 KiB for input plus 8 KiB for output in each of banks 0/1/3.
+   Measure the unread-input/output overlap margin for every candidate block,
+   including EOF and disk-sector carry, before changing the decoder. Compare
+   larger ready reserves against copied bytes, compressed size, history
+   lifetime, pointer wrap and full frame/AY deadlines. The older 16-KiB
+   compression study used a different stream and separate input storage;
+   it does not validate this layout.
 
 A small concrete candidate for step 1 is the target setup for nonzero
 motion phases. With the new cache,
