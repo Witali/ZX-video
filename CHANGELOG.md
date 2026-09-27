@@ -1,23 +1,66 @@
-# История изменений и попыток оптимизации
+# Changelog and optimization experiments
 
-Здесь сохраняются принятые решения, неудачные и незавершённые эксперименты.
-Подробные расчёты и команды остаются в связанных отчётах `toolkit`.
-Первичная история восстановлена 17 сентября 2026 по отчётам, сборкам и Git;
-неизвестные даты ранних попыток не приписываются дате этой записи.
+This log preserves accepted, rejected and incomplete experiments. Detailed
+calculations and commands remain in the linked `toolkit` reports. The initial
+history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
+dates of earlier attempts are not assigned that reconstruction date.
 
-**Текущий выпуск:** `69754f3`, 14 TRD, полный мультфильм, 4971 кадр,
-AY 50 Гц, видео 25/3 кадра/с. Текущая цель — не более трёх дискет;
-разрешены только малозаметные изменения пикселей. Для следующего выпуска
-19 сентября разрешено удалить финальные титры, сохранив сцену после них.
-Также 19 сентября разрешён джиттер видео до 20 мс с компенсацией на
-следующих кадрах и неизменным AY 50 Гц. Приоритет — каждый кадр точно
-через 120 мс; допуск 20 мс служит только резервным пределом. Цель пока не достигнута,
-проверенный корневой комплект ещё содержит титры. Отдельный экспериментальный
-комплект `ZX-video-optimized-preview_part01..04.trd` от 21 сентября показывает
-текущий FAP3/ZX0; он проходит до EOF, но не выполняет требования по времени.
-24 сентября собран и полностью проигран отдельный эксперимент на **трёх
-самостоятельно загружаемых TRD**. Ёмкость достигнута, но сроки видео/AY
-пока не пройдены; корневой комплект этим экспериментом не заменён.
+**Current release:** `69754f3`, 14 TRDs, the complete 4971-frame movie,
+AY at 50 Hz and video at 25/3 fps. The target is at most three disks, with
+only subtle pixel changes allowed. On September 19 the user authorized
+removing final credits while preserving the post-credit scene. Video jitter
+of up to 20 ms with compensation on subsequent frames was also authorized;
+AY remains at 50 Hz. The priority is an exact 120-ms frame schedule; the
+20-ms allowance is only a fallback. The target is not yet achieved and the
+verified root set still includes the credits. The separate experimental
+`ZX-video-optimized-preview_part01..04.trd` set from September 21 reaches EOF
+but fails timing. On September 24 a separate set of **three independently
+bootable TRDs** was built and played through all volumes. Capacity was
+achieved; video/AY timing still fails. It has not replaced the root release.
+
+Current documentation and new entries are maintained in English. Dated
+historical entries below retain their original text and measurements.
+
+## 2026-09-27 — complete frame CPU profile and rejected dense-output probes
+
+- **Objective/baseline:** locate remaining decoder/output costs without
+  changing compression. Profile the HL-reader configuration `074e1e7` using
+  the same 4221 frame states and three raw volumes as the inline-Huffman
+  fixture. Tooling added after `8da95ed`; streaming input remains disabled.
+- **Change:** bank-aware instruction/stage counters, a full frame replay,
+  two analytical output probes and a saved-evidence auditor. No player
+  hot-path or stream change: **0 T / 0 bytes delta**.
+- **Measurement:** all 4221 compact frames and both complete native screens
+  match. CPU totals **388574871 / 329687365 / 309457388 T**, total
+  **1027719624 T**. Every frame equals the earlier baseline minus the already
+  verified 499-T HL-reader saving. Reconstruction is 60.36%, native output
+  32.85%, metadata 6.19% of this profile. Remaining indexed memory loads:
+  1203077 executions, 22858463 T; a hypothetical 19-to-7-T replacement has
+  a 14436924-T gross saving before setup/preservation, not a measured gain.
+- **Rejected parameters/results:** 36 nonzero one/two-bit constants in a
+  nearly-full-band test admit no new dense bands and each add an estimated
+  **531846 T**. The encoder already rounds bands with at least 18 changed
+  cells to full bands. A proposed eight-cell helper (2264→1919 T/group)
+  needs a 17-T test on all 148104 nonzero groups but helps only 4237 groups:
+  estimated **+1056003 T**. Neither candidate was implemented.
+- **Verification:** a two-frame-per-volume smoke run preceded the complete
+  CPU replay. Input/source hashes, per-frame/stage/instruction totals and
+  probe arithmetic are checked by the saved-evidence audit. The native-map
+  probe reads all 378 archived ZX0 blocks and 4221 packets. This profile
+  excludes ZX0/queue/copy/AY/IRQ/ULA/ROM/disk time; there is no new Fuse or
+  physical-drive run and it does not qualify a release.
+- **Decision:** retain the HL-reader baseline, reject both extra dispatch
+  tests, and prioritize complete register/address sequences using measured
+  frequencies. Save the current plan and index-access method in English.
+  Root release TRDs are unchanged.
+- **Reproduction/evidence:** [profile report](toolkit/FRAME_HOTSPOTS.md),
+  [profiler](toolkit/profile_frame_hotspots.py),
+  [full data](toolkit/frame_hotspot_profile.json),
+  [dense probe](toolkit/profile_dense_band_threshold.py),
+  [dense data](toolkit/dense_band_threshold_profile.json),
+  [auditor](toolkit/audit_frame_hotspots.py),
+  [summary](toolkit/frame_hotspot_summary.json),
+  [current plan](toolkit/DECODE_SPEED_PLAN.md).
 
 ## 2026-09-27 — завершена проверка плеера с частичной загрузкой ZX0
 

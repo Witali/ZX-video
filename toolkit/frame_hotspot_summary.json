@@ -1,0 +1,879 @@
+{
+  "scope": "Check saved frame-profile evidence and aggregate it without rerunning Z80.\n\nThis validates pinned files, frame/stage/instruction totals, the earlier\nper-frame baseline minus 499 T, and native-mask candidate arithmetic.\nIt does not repeat pixel comparisons or measure playback, IRQ, ULA or disk.\n",
+  "complete_saved_evidence_audit": true,
+  "release": false,
+  "source_sha256": "03615db226cf8ff0bb643ecf1180c318bf10da1e945253c350f889eff81a733b",
+  "report_sha256": {
+    "frame_hotspot_profile.json": "1bffb426c2a5aec075f95050a1c27350e5755576df79663962ce88bfcbb6cfaa",
+    "dense_band_threshold_profile.json": "7f7a6eb50188f031e5feef47a976afe8f8ee63759c94ec7c1f65b5cfaac0fc30"
+  },
+  "frames": 4221,
+  "total_tstates": 1027719624,
+  "volumes": [
+    {
+      "part": 1,
+      "frames": 1624,
+      "tstates": 388574871
+    },
+    {
+      "part": 2,
+      "frames": 1297,
+      "tstates": 329687365
+    },
+    {
+      "part": 3,
+      "frames": 1300,
+      "tstates": 309457388
+    }
+  ],
+  "phases": [
+    {
+      "phase": "reconstruct",
+      "tstates": 620300899,
+      "percent": 60.35701610773173
+    },
+    {
+      "phase": "output",
+      "tstates": 337654716,
+      "percent": 32.85475027574252
+    },
+    {
+      "phase": "metadata",
+      "tstates": 63590055,
+      "percent": 6.187490587413363
+    },
+    {
+      "phase": "attribute_groups",
+      "tstates": 4569974,
+      "percent": 0.44467127933328243
+    },
+    {
+      "phase": "handoff",
+      "tstates": 1603980,
+      "percent": 0.15607174977910124
+    }
+  ],
+  "stages": [
+    {
+      "stage": "output/dense_pixels",
+      "tstates": 136520064
+    },
+    {
+      "stage": "reconstruct/huffman",
+      "tstates": 131131792
+    },
+    {
+      "stage": "reconstruct/cache",
+      "tstates": 112146097
+    },
+    {
+      "stage": "output/cell_pixels",
+      "tstates": 80589740
+    },
+    {
+      "stage": "reconstruct/patch",
+      "tstates": 80521194
+    },
+    {
+      "stage": "reconstruct/noop_control",
+      "tstates": 74830741
+    },
+    {
+      "stage": "reconstruct/motion",
+      "tstates": 66883657
+    },
+    {
+      "stage": "reconstruct/control",
+      "tstates": 66807315
+    },
+    {
+      "stage": "metadata/compiled_metadata",
+      "tstates": 63590055
+    },
+    {
+      "stage": "output/cell_address",
+      "tstates": 39465536
+    },
+    {
+      "stage": "reconstruct/intra",
+      "tstates": 38658502
+    },
+    {
+      "stage": "reconstruct/fast_fragment",
+      "tstates": 31086504
+    },
+    {
+      "stage": "output/cell_dispatch",
+      "tstates": 19867463
+    },
+    {
+      "stage": "reconstruct/attribute_pass",
+      "tstates": 15873174
+    },
+    {
+      "stage": "output/partial_control",
+      "tstates": 13711185
+    },
+    {
+      "stage": "output/attributes",
+      "tstates": 8781760
+    },
+    {
+      "stage": "output/cell_control",
+      "tstates": 8433810
+    },
+    {
+      "stage": "output/band_dispatch",
+      "tstates": 5850306
+    },
+    {
+      "stage": "output/map_copy",
+      "tstates": 5487300
+    },
+    {
+      "stage": "output/dense_control",
+      "tstates": 5269370
+    },
+    {
+      "stage": "output/band_control",
+      "tstates": 5196051
+    },
+    {
+      "stage": "attribute_groups/attribute_groups",
+      "tstates": 4569974
+    },
+    {
+      "stage": "output/mask_dispatch",
+      "tstates": 3083640
+    },
+    {
+      "stage": "output/mask_skip",
+      "tstates": 2886240
+    },
+    {
+      "stage": "output/dense_address",
+      "tstates": 1756692
+    },
+    {
+      "stage": "handoff/handoff",
+      "tstates": 1603980
+    },
+    {
+      "stage": "reconstruct/static_edge",
+      "tstates": 1493954
+    },
+    {
+      "stage": "reconstruct/inline_huffman",
+      "tstates": 867969
+    },
+    {
+      "stage": "output/control",
+      "tstates": 430542
+    },
+    {
+      "stage": "output/paging",
+      "tstates": 325017
+    }
+  ],
+  "hottest_instructions": [
+    {
+      "bank": -1,
+      "address": 33104,
+      "instruction": "LD HL,(vectors)",
+      "stage": "reconstruct/control",
+      "tstates": 6833296
+    },
+    {
+      "bank": -1,
+      "address": 31232,
+      "instruction": "LD DE,(bitmap_masks)",
+      "stage": "reconstruct/noop_control",
+      "tstates": 5614500
+    },
+    {
+      "bank": -1,
+      "address": 33144,
+      "instruction": "LD HL,(target)",
+      "stage": "reconstruct/control",
+      "tstates": 5152400
+    },
+    {
+      "bank": -1,
+      "address": 33149,
+      "instruction": "LD (target),HL",
+      "stage": "reconstruct/control",
+      "tstates": 5152400
+    },
+    {
+      "bank": -1,
+      "address": 37699,
+      "instruction": "RET",
+      "stage": "output/cell_control",
+      "tstates": 4685450
+    },
+    {
+      "bank": -1,
+      "address": 31256,
+      "instruction": "DJNZ scan_check",
+      "stage": "reconstruct/noop_control",
+      "tstates": 4460621
+    },
+    {
+      "bank": -1,
+      "address": 33109,
+      "instruction": "JP Z,scan_zero_run",
+      "stage": "reconstruct/control",
+      "tstates": 4270810
+    },
+    {
+      "bank": -1,
+      "address": 37661,
+      "instruction": "SET 5,L",
+      "stage": "output/cell_address",
+      "tstates": 3748360
+    },
+    {
+      "bank": -1,
+      "address": 37663,
+      "instruction": "SET 1,D",
+      "stage": "output/cell_address",
+      "tstates": 3748360
+    },
+    {
+      "bank": -1,
+      "address": 37672,
+      "instruction": "SET 6,L",
+      "stage": "output/cell_address",
+      "tstates": 3748360
+    },
+    {
+      "bank": -1,
+      "address": 37674,
+      "instruction": "SET 2,D",
+      "stage": "output/cell_address",
+      "tstates": 3748360
+    },
+    {
+      "bank": -1,
+      "address": 37683,
+      "instruction": "RES 5,L",
+      "stage": "output/cell_address",
+      "tstates": 3748360
+    },
+    {
+      "bank": -1,
+      "address": 37685,
+      "instruction": "RES 1,D",
+      "stage": "output/cell_address",
+      "tstates": 3748360
+    },
+    {
+      "bank": -1,
+      "address": 37694,
+      "instruction": "RES 6,L",
+      "stage": "output/cell_address",
+      "tstates": 3748360
+    },
+    {
+      "bank": -1,
+      "address": 37696,
+      "instruction": "RES 2,D",
+      "stage": "output/cell_address",
+      "tstates": 3748360
+    },
+    {
+      "bank": -1,
+      "address": 33155,
+      "instruction": "DEC (HL)",
+      "stage": "reconstruct/control",
+      "tstates": 3542275
+    },
+    {
+      "bank": -1,
+      "address": 31301,
+      "instruction": "LD (vectors),DE",
+      "stage": "reconstruct/noop_control",
+      "tstates": 3513380
+    },
+    {
+      "bank": -1,
+      "address": 32778,
+      "instruction": "LD L,(IX+1)",
+      "stage": "reconstruct/huffman",
+      "tstates": 3477323
+    },
+    {
+      "bank": 6,
+      "address": 60416,
+      "instruction": "LD HL,(target)",
+      "stage": "reconstruct/patch",
+      "tstates": 3390512
+    },
+    {
+      "bank": -1,
+      "address": 37654,
+      "instruction": "LD C,(HL)",
+      "stage": "output/cell_pixels",
+      "tstates": 3279815
+    },
+    {
+      "bank": -1,
+      "address": 37655,
+      "instruction": "LD A,(BC)",
+      "stage": "output/cell_pixels",
+      "tstates": 3279815
+    },
+    {
+      "bank": -1,
+      "address": 37656,
+      "instruction": "LD (DE),A",
+      "stage": "output/cell_pixels",
+      "tstates": 3279815
+    },
+    {
+      "bank": -1,
+      "address": 37659,
+      "instruction": "LD A,(BC)",
+      "stage": "output/cell_pixels",
+      "tstates": 3279815
+    },
+    {
+      "bank": -1,
+      "address": 37660,
+      "instruction": "LD (DE),A",
+      "stage": "output/cell_pixels",
+      "tstates": 3279815
+    },
+    {
+      "bank": -1,
+      "address": 37665,
+      "instruction": "LD C,(HL)",
+      "stage": "output/cell_pixels",
+      "tstates": 3279815
+    },
+    {
+      "bank": -1,
+      "address": 37666,
+      "instruction": "LD A,(BC)",
+      "stage": "output/cell_pixels",
+      "tstates": 3279815
+    },
+    {
+      "bank": -1,
+      "address": 37667,
+      "instruction": "LD (DE),A",
+      "stage": "output/cell_pixels",
+      "tstates": 3279815
+    },
+    {
+      "bank": -1,
+      "address": 37670,
+      "instruction": "LD A,(BC)",
+      "stage": "output/cell_pixels",
+      "tstates": 3279815
+    },
+    {
+      "bank": -1,
+      "address": 37671,
+      "instruction": "LD (DE),A",
+      "stage": "output/cell_pixels",
+      "tstates": 3279815
+    },
+    {
+      "bank": -1,
+      "address": 37676,
+      "instruction": "LD C,(HL)",
+      "stage": "output/cell_pixels",
+      "tstates": 3279815
+    }
+  ],
+  "indexed_loads": {
+    "loads": 1203077,
+    "tstates": 22858463
+  },
+  "indexed_load_only_gross_saving_at_12_t": 14436924,
+  "nonzero_motion_target_setup": {
+    "implemented": false,
+    "entries": 28773,
+    "baseline_tstates": 1294785,
+    "proposed_tstates": 805644,
+    "estimated_delta_tstates": -489141,
+    "assumption": "Move the shared target load into phase zero; use EXX/LD DE,(target)/EXX for phases 2/4/6 with no extra saves. Not assembled or IRQ-tested."
+  },
+  "marked_cells_per_band": {
+    "0": 3007,
+    "1": 1912,
+    "2": 2261,
+    "3": 2641,
+    "4": 3010,
+    "5": 3349,
+    "6": 3760,
+    "7": 3805,
+    "8": 3834,
+    "9": 3740,
+    "10": 3729,
+    "11": 3467,
+    "12": 3332,
+    "13": 3051,
+    "14": 2801,
+    "15": 2525,
+    "16": 2584,
+    "17": 2257,
+    "32": 20913
+  },
+  "dense_candidates": [
+    {
+      "mask": 0,
+      "delta_tstates": 0,
+      "additional_dense_bands": 0,
+      "slower_frames": 0,
+      "max_frame_penalty": 0,
+      "per_volume_delta": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "mask": 1,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 2,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 4,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 8,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 16,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 32,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 64,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 128,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 3,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 5,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 9,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 17,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 33,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 65,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 129,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 6,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 10,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 18,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 34,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 66,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 130,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 12,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 20,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 36,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 68,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 132,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 24,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 40,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 72,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 136,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 48,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 80,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 144,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 96,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 160,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    },
+    {
+      "mask": 192,
+      "delta_tstates": 531846,
+      "additional_dense_bands": 0,
+      "slower_frames": 4221,
+      "max_frame_penalty": 126,
+      "per_volume_delta": [
+        204624,
+        163422,
+        163800
+      ]
+    }
+  ],
+  "dense_eight_cell_candidate": {
+    "implemented": false,
+    "note": "Analytical 1919-T helper including a final JP versus 8*(4+17+254+4+4)=2264 T; adds CP FF/JP Z at 17 T for every nonzero partial-band group. Requires an actual assembly/placement/IRQ test.",
+    "baseline_group_tstates": 2264,
+    "candidate_helper_tstates": 1919,
+    "predicted_delta_tstates": 1056003,
+    "full_groups": 4237,
+    "nonzero_groups": 148104
+  }
+}
