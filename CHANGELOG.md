@@ -21,6 +21,58 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — cost-selected fragments fit the current three-disk layout
+
+- **Objective/baseline:** revisit the September 25 capacity-rejected selector
+  using retained player `a84451d`, resident AY and 15872-byte in-place ZX0
+  blocks. Cover all 4221 authorized frames, unchanged pixels/resolution/AY,
+  25/3-fps deadlines and independent boot on all three disks.
+- **Parameters:** existing fragment modes 85..88, local allowance 64 bits,
+  estimated gain at least 400 T; 16051 tiles in 3261 frames selected. The
+  historical 150-T/symbol heuristic is not a bound for today's 134-T short
+  decoder. No player opcode template or RAM allocation changes. Volume 3
+  reproduces the old allowance-64 raw candidate byte-for-byte.
+- **Capacity/content:** complete scalar video/AY replay and 193 exact,
+  in-place-safe ZX0 blocks. Raw video grows 67125 B; final ZX0 grows
+  **1,818,909 -> 1,857,591 B (+38,682)**. Reads **7106 -> 7257 (+151)**.
+  Actual occupied sectors **2525/2510/2507**, free **19/34/37**; total
+  occupied growth is 155 sectors including bootstrap/layout effects.
+- **CPU evidence:** all 4221 compact frames and both complete native screens
+  match; no frame-stage regression. Frame stages **1,018,049,241 ->
+  988,604,338 T (-29,444,903)**. Producer/ZX0 **201,404,859 -> 213,186,508 T
+  (+11,781,649)**; measured components together save **17,663,254 T (~1.45%)**.
+  Instruction timing/histograms are checked; these totals exclude integrated
+  queue/AY/IRQ/ULA/ROM/disk time. The 481 baseline over-budget frames save
+  **3,444,876 frame T**; the other 3740 save **26,000,027 T**.
+- **Complete Fuse result:** all three disks reach EOF; all 25326 AY records
+  match at 50 Hz, with zero underruns, missing/duplicate IRQ fields or retries.
+  Late frames **73/432/732 = 1237**, versus 1321; invalid intervals
+  **36/239/472 = 747**, versus 783. Maximum lateness **72/247/238 fields**;
+  actual deviations **5,105,374/17,514,276/16,876,119 T**. Recovered runs
+  **2/8/4**; volume 2 has an unrecovered tail at local frames 1238..1296.
+  Total publication span **1,812,053,940 T (-921,810)**. Volume 1's maximum
+  deviation worsens despite fewer late frames. Both video gates still fail.
+- **Verification/decision:** dirty-RAM boots, initial frames, immutable AY,
+  both disk swaps, native block/frame execution and full Fuse traces pass
+  their content checks; Fuse samples 80 pixels/frame, not all pixels.
+  Physical hardware is untested and initial disk/IRQ phases are not matched.
+  The first build/frame processes disappeared for an unknown reason; their
+  incomplete reports were saved before replay, and the 101-frame prefix
+  matches exactly. The self-contained archive audit passes with 82 gzip files.
+  Keep this as a measured optional data variant and retain the roomier
+  `a84451d` comparison; release TRDs and converter defaults are unchanged.
+  Next compare exact sparse/full native masks chosen by the host, including
+  final ZX0 sectors and expensive delivery windows. Large block-acquisition
+  bursts remain; neither aggregate CPU savings nor publication waits alone
+  establish the requested smooth cadence.
+  See [report and reproduction](toolkit/RESIDENT_FRAGMENTS.md),
+  [selector probe](toolkit/probe_resident_fragments.py),
+  [frame CPU](toolkit/benchmark_resident_fragments.py),
+  [delivery CPU](toolkit/benchmark_resident_delivery.py),
+  [builder](toolkit/build_resident_fragments.py),
+  [archive audit](toolkit/summarize_resident_fragments.py), and
+  [saved results](toolkit/resident_fragments_summary.json).
+
 ## 2026-09-27 — positional no-op tags save CPU mainly on already-fast frames
 
 - **Objective/baseline:** remove repeated unchanged-tile scanning from the

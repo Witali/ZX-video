@@ -1,0 +1,1355 @@
+{
+  "complete": false,
+  "release": false,
+  "scope": "Execute every cost-selected frame with the retained complete CPU stage.\n\nAll compact bytes and both full native screens must match the original\nstates. Same opcode templates, tables and options as the complete baseline;\nonly encoded packets change. ZX0/queues/IRQ/ULA/ROM/disk are excluded here.\n",
+  "baseline_commit": "a84451d",
+  "reference_sha256": "26ffdf765533d3ea6df29331b83248c1bf2f08bf3d47aa8c42f1ceff45d8fbe1",
+  "probe_sha256": "ec923bd0d8bad3089d46ab70e32253987e9c17dd84bbb616a2215acb25e3e501",
+  "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+  "player_opcode_templates_unchanged": true,
+  "source_sha256_lf": {
+    "benchmark_resident_fragments.py": "511db39f87e7a4e866e1be5952f7c5f78f610254ea9c72a2642c7e0ade43f18a",
+    "benchmark_cached_huffman_lookahead.py": "fe76ef705441626aedd2aa20d3a3d5995148aeaa859029d0eb41942f9cdca116",
+    "cached_huffman_lookahead.py": "6ac33d05cd72be28f2590376564d6f06d06e27383ac41539d5c1d4953be1e039",
+    "test_cached_huffman_lookahead.py": "53ab5dad01e3d1d678f0eab7bd5a610bc776b5777b49ae2d4fd182ee8559b4c9",
+    "compact_cursor.py": "66359cae28367cd66e821a3eb56c5f7897cba8afa0c6565444107a4ed4638427",
+    "profile_frame_hotspots.py": "81d3760493e0d5a6b350fbf8fbec8843fcc432e76ffd0227ba90f17be224af1f",
+    "frame_output_pipeline.py": "6c2a955899ea3cfe7706697abcb40f53a282dcc2cb1f260e3275a057182abccd",
+    "causal_tile_z80.py": "4725324d2e908a92202eef9395594cf8f78b4a5674f252a2de8a2892ce637f92",
+    "cell_screen_z80.py": "6ae382962d4eb3c6b00a9f7c0068019eeae0a93e100b1a5ef0b910ae7c84f227",
+    "compiled_masks_z80.py": "f87b498e19741277cda218e87356a81ff9a8acd9b983712fb312c305aa4589f7",
+    "uncontended_frame.py": "d6cd9a03264b8b6b1235ff3e349827083e48f48745532f365e793c635798c23b",
+    "inline_huffman_patches.py": "f10a0a3c487d1c26b4646ab7ae71ebe9e0a41703172acbe6279faa02c883272d",
+    "prefix_huffman_z80.py": "c2e1080453667f6635baa3df61e28338912622235430ab2f6f670a447d12f030",
+    "benchmark_static_cache_borders.py": "542e57efa4724cf77b32f4a6bedcc7218bd47ff7e725f3678a922de0936acb8d",
+    "validate_fast_sparse.py": "f164538eb5dee7ee2a4278add9bfee1c93d4c1d5814eab9dfafee9f0fcb9bf58",
+    "benchmark_compact_screen.py": "d5745f2bb87b6e8d09e411681140dcc2b25fea5d82b427cb5ecae61d60b2e021",
+    "attribute_groups_z80.py": "fb9e05404508319a780d3edc220d157aef19dca4418f9d7d834f722e4c6fcb90"
+  },
+  "disk_delivery_verified": false,
+  "volumes": [
+    {
+      "part": 1,
+      "start": 0,
+      "end": 1624,
+      "raw_sha256": "0a70b6c0345bd62393c79066b4b596bc880d042fc8e5e011c5759d2aa9fdc823",
+      "baseline_raw_sha256": "9404fc8b57b5445c88c3c877021c613be24f91cf777c3221ea08822d67c511b3",
+      "inline_code_bytes": 875,
+      "frames": [
+        {
+          "frame": 0,
+          "baseline_tstates": 66356,
+          "tstates": 66356,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 32924,
+            "attribute_groups": 150,
+            "output": 22295,
+            "metadata": 10607
+          }
+        },
+        {
+          "frame": 1,
+          "baseline_tstates": 51874,
+          "tstates": 51874,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 18442,
+            "attribute_groups": 150,
+            "output": 22295,
+            "metadata": 10607
+          }
+        },
+        {
+          "frame": 2,
+          "baseline_tstates": 52484,
+          "tstates": 52484,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 18442,
+            "attribute_groups": 760,
+            "output": 22295,
+            "metadata": 10607
+          }
+        },
+        {
+          "frame": 3,
+          "baseline_tstates": 42834,
+          "tstates": 42834,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 18442,
+            "attribute_groups": 760,
+            "output": 12645,
+            "metadata": 10607
+          }
+        },
+        {
+          "frame": 4,
+          "baseline_tstates": 42834,
+          "tstates": 42834,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 18442,
+            "attribute_groups": 760,
+            "output": 12645,
+            "metadata": 10607
+          }
+        },
+        {
+          "frame": 5,
+          "baseline_tstates": 42834,
+          "tstates": 42834,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 18442,
+            "attribute_groups": 760,
+            "output": 12645,
+            "metadata": 10607
+          }
+        },
+        {
+          "frame": 6,
+          "baseline_tstates": 42834,
+          "tstates": 42834,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 18442,
+            "attribute_groups": 760,
+            "output": 12645,
+            "metadata": 10607
+          }
+        },
+        {
+          "frame": 7,
+          "baseline_tstates": 42834,
+          "tstates": 42834,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 18442,
+            "attribute_groups": 760,
+            "output": 12645,
+            "metadata": 10607
+          }
+        },
+        {
+          "frame": 8,
+          "baseline_tstates": 42834,
+          "tstates": 42834,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 18442,
+            "attribute_groups": 760,
+            "output": 12645,
+            "metadata": 10607
+          }
+        },
+        {
+          "frame": 9,
+          "baseline_tstates": 42834,
+          "tstates": 42834,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 18442,
+            "attribute_groups": 760,
+            "output": 12645,
+            "metadata": 10607
+          }
+        },
+        {
+          "frame": 10,
+          "baseline_tstates": 42834,
+          "tstates": 42834,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 18442,
+            "attribute_groups": 760,
+            "output": 12645,
+            "metadata": 10607
+          }
+        },
+        {
+          "frame": 11,
+          "baseline_tstates": 258185,
+          "tstates": 229877,
+          "delta_tstates": -28308,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 117074,
+            "attribute_groups": 155,
+            "output": 98441,
+            "metadata": 13827
+          }
+        },
+        {
+          "frame": 12,
+          "baseline_tstates": 283394,
+          "tstates": 269270,
+          "delta_tstates": -14124,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 119415,
+            "attribute_groups": 155,
+            "output": 137477,
+            "metadata": 11843
+          }
+        },
+        {
+          "frame": 13,
+          "baseline_tstates": 213407,
+          "tstates": 208811,
+          "delta_tstates": -4596,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 64248,
+            "attribute_groups": 1476,
+            "output": 130603,
+            "metadata": 12104
+          }
+        },
+        {
+          "frame": 14,
+          "baseline_tstates": 100463,
+          "tstates": 96380,
+          "delta_tstates": -4083,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 57842,
+            "attribute_groups": 1118,
+            "output": 25442,
+            "metadata": 11598
+          }
+        },
+        {
+          "frame": 15,
+          "baseline_tstates": 218130,
+          "tstates": 188961,
+          "delta_tstates": -29169,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 102191,
+            "attribute_groups": 155,
+            "output": 73763,
+            "metadata": 12472
+          }
+        },
+        {
+          "frame": 16,
+          "baseline_tstates": 269579,
+          "tstates": 268885,
+          "delta_tstates": -694,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 119416,
+            "attribute_groups": 155,
+            "output": 137477,
+            "metadata": 11457
+          }
+        },
+        {
+          "frame": 17,
+          "baseline_tstates": 297670,
+          "tstates": 291731,
+          "delta_tstates": -5939,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 138587,
+            "attribute_groups": 1118,
+            "output": 137477,
+            "metadata": 14169
+          }
+        },
+        {
+          "frame": 18,
+          "baseline_tstates": 222201,
+          "tstates": 220704,
+          "delta_tstates": -1497,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 111093,
+            "attribute_groups": 760,
+            "output": 95885,
+            "metadata": 12586
+          }
+        },
+        {
+          "frame": 19,
+          "baseline_tstates": 169093,
+          "tstates": 167998,
+          "delta_tstates": -1095,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 114311,
+            "attribute_groups": 760,
+            "output": 39693,
+            "metadata": 12854
+          }
+        },
+        {
+          "frame": 20,
+          "baseline_tstates": 174072,
+          "tstates": 174072,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 117210,
+            "attribute_groups": 760,
+            "output": 42325,
+            "metadata": 13397
+          }
+        },
+        {
+          "frame": 21,
+          "baseline_tstates": 147278,
+          "tstates": 145099,
+          "delta_tstates": -2179,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 88262,
+            "attribute_groups": 760,
+            "output": 42711,
+            "metadata": 12986
+          }
+        },
+        {
+          "frame": 22,
+          "baseline_tstates": 194146,
+          "tstates": 192981,
+          "delta_tstates": -1165,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 132335,
+            "attribute_groups": 760,
+            "output": 46762,
+            "metadata": 12744
+          }
+        },
+        {
+          "frame": 23,
+          "baseline_tstates": 203418,
+          "tstates": 200866,
+          "delta_tstates": -2552,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 135920,
+            "attribute_groups": 760,
+            "output": 50563,
+            "metadata": 13243
+          }
+        },
+        {
+          "frame": 24,
+          "baseline_tstates": 212305,
+          "tstates": 204556,
+          "delta_tstates": -7749,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 137496,
+            "attribute_groups": 760,
+            "output": 52912,
+            "metadata": 13008
+          }
+        },
+        {
+          "frame": 25,
+          "baseline_tstates": 222689,
+          "tstates": 221665,
+          "delta_tstates": -1024,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 154608,
+            "attribute_groups": 760,
+            "output": 52526,
+            "metadata": 13391
+          }
+        },
+        {
+          "frame": 26,
+          "baseline_tstates": 223292,
+          "tstates": 214818,
+          "delta_tstates": -8474,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 147343,
+            "attribute_groups": 760,
+            "output": 52798,
+            "metadata": 13537
+          }
+        },
+        {
+          "frame": 27,
+          "baseline_tstates": 228872,
+          "tstates": 220051,
+          "delta_tstates": -8821,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 150082,
+            "attribute_groups": 760,
+            "output": 55941,
+            "metadata": 12888
+          }
+        },
+        {
+          "frame": 28,
+          "baseline_tstates": 228648,
+          "tstates": 220040,
+          "delta_tstates": -8608,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 149840,
+            "attribute_groups": 760,
+            "output": 55544,
+            "metadata": 13516
+          }
+        },
+        {
+          "frame": 29,
+          "baseline_tstates": 216137,
+          "tstates": 213642,
+          "delta_tstates": -2495,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 144330,
+            "attribute_groups": 760,
+            "output": 54500,
+            "metadata": 13672
+          }
+        },
+        {
+          "frame": 30,
+          "baseline_tstates": 234723,
+          "tstates": 231597,
+          "delta_tstates": -3126,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 160028,
+            "attribute_groups": 760,
+            "output": 56849,
+            "metadata": 13580
+          }
+        },
+        {
+          "frame": 31,
+          "baseline_tstates": 235398,
+          "tstates": 230797,
+          "delta_tstates": -4601,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 158789,
+            "attribute_groups": 760,
+            "output": 57904,
+            "metadata": 12964
+          }
+        },
+        {
+          "frame": 32,
+          "baseline_tstates": 229897,
+          "tstates": 225507,
+          "delta_tstates": -4390,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 152921,
+            "attribute_groups": 760,
+            "output": 58040,
+            "metadata": 13406
+          }
+        },
+        {
+          "frame": 33,
+          "baseline_tstates": 227094,
+          "tstates": 224335,
+          "delta_tstates": -2759,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 151054,
+            "attribute_groups": 760,
+            "output": 58562,
+            "metadata": 13579
+          }
+        },
+        {
+          "frame": 34,
+          "baseline_tstates": 239508,
+          "tstates": 234806,
+          "delta_tstates": -4702,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 160722,
+            "attribute_groups": 760,
+            "output": 59742,
+            "metadata": 13202
+          }
+        },
+        {
+          "frame": 35,
+          "baseline_tstates": 245643,
+          "tstates": 241747,
+          "delta_tstates": -3896,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 167047,
+            "attribute_groups": 760,
+            "output": 60003,
+            "metadata": 13557
+          }
+        },
+        {
+          "frame": 36,
+          "baseline_tstates": 253377,
+          "tstates": 247403,
+          "delta_tstates": -5974,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 168548,
+            "attribute_groups": 760,
+            "output": 63918,
+            "metadata": 13797
+          }
+        },
+        {
+          "frame": 37,
+          "baseline_tstates": 238514,
+          "tstates": 236639,
+          "delta_tstates": -1875,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 158661,
+            "attribute_groups": 760,
+            "output": 63135,
+            "metadata": 13703
+          }
+        },
+        {
+          "frame": 38,
+          "baseline_tstates": 271006,
+          "tstates": 264132,
+          "delta_tstates": -6874,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 182563,
+            "attribute_groups": 760,
+            "output": 66650,
+            "metadata": 13779
+          }
+        },
+        {
+          "frame": 39,
+          "baseline_tstates": 270837,
+          "tstates": 265869,
+          "delta_tstates": -4968,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 180577,
+            "attribute_groups": 760,
+            "output": 70304,
+            "metadata": 13848
+          }
+        },
+        {
+          "frame": 40,
+          "baseline_tstates": 265789,
+          "tstates": 263564,
+          "delta_tstates": -2225,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 180325,
+            "attribute_groups": 760,
+            "output": 68080,
+            "metadata": 14019
+          }
+        },
+        {
+          "frame": 41,
+          "baseline_tstates": 279422,
+          "tstates": 273396,
+          "delta_tstates": -6026,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 184847,
+            "attribute_groups": 760,
+            "output": 73301,
+            "metadata": 14108
+          }
+        },
+        {
+          "frame": 42,
+          "baseline_tstates": 285488,
+          "tstates": 276789,
+          "delta_tstates": -8699,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 189752,
+            "attribute_groups": 760,
+            "output": 71885,
+            "metadata": 14012
+          }
+        },
+        {
+          "frame": 43,
+          "baseline_tstates": 289171,
+          "tstates": 281208,
+          "delta_tstates": -7963,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 193470,
+            "attribute_groups": 760,
+            "output": 72668,
+            "metadata": 13930
+          }
+        },
+        {
+          "frame": 44,
+          "baseline_tstates": 283149,
+          "tstates": 277106,
+          "delta_tstates": -6043,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 187545,
+            "attribute_groups": 760,
+            "output": 74359,
+            "metadata": 14062
+          }
+        },
+        {
+          "frame": 45,
+          "baseline_tstates": 289475,
+          "tstates": 283484,
+          "delta_tstates": -5991,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 194102,
+            "attribute_groups": 760,
+            "output": 74763,
+            "metadata": 13479
+          }
+        },
+        {
+          "frame": 46,
+          "baseline_tstates": 260444,
+          "tstates": 257413,
+          "delta_tstates": -3031,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 167938,
+            "attribute_groups": 760,
+            "output": 74763,
+            "metadata": 13572
+          }
+        },
+        {
+          "frame": 47,
+          "baseline_tstates": 298586,
+          "tstates": 297491,
+          "delta_tstates": -1095,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 203943,
+            "attribute_groups": 760,
+            "output": 78292,
+            "metadata": 14116
+          }
+        },
+        {
+          "frame": 48,
+          "baseline_tstates": 293558,
+          "tstates": 284255,
+          "delta_tstates": -9303,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 188020,
+            "attribute_groups": 760,
+            "output": 81024,
+            "metadata": 14071
+          }
+        },
+        {
+          "frame": 49,
+          "baseline_tstates": 299003,
+          "tstates": 295920,
+          "delta_tstates": -3083,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 199942,
+            "attribute_groups": 760,
+            "output": 80255,
+            "metadata": 14583
+          }
+        },
+        {
+          "frame": 50,
+          "baseline_tstates": 298539,
+          "tstates": 296306,
+          "delta_tstates": -2233,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 199508,
+            "attribute_groups": 760,
+            "output": 81324,
+            "metadata": 14334
+          }
+        },
+        {
+          "frame": 51,
+          "baseline_tstates": 294972,
+          "tstates": 292650,
+          "delta_tstates": -2322,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 196731,
+            "attribute_groups": 760,
+            "output": 80384,
+            "metadata": 14395
+          }
+        },
+        {
+          "frame": 52,
+          "baseline_tstates": 298987,
+          "tstates": 295382,
+          "delta_tstates": -3605,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 197684,
+            "attribute_groups": 930,
+            "output": 81712,
+            "metadata": 14676
+          }
+        },
+        {
+          "frame": 53,
+          "baseline_tstates": 299645,
+          "tstates": 293457,
+          "delta_tstates": -6188,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 194243,
+            "attribute_groups": 930,
+            "output": 83291,
+            "metadata": 14613
+          }
+        },
+        {
+          "frame": 54,
+          "baseline_tstates": 282124,
+          "tstates": 277718,
+          "delta_tstates": -4406,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 181930,
+            "attribute_groups": 930,
+            "output": 79919,
+            "metadata": 14559
+          }
+        },
+        {
+          "frame": 55,
+          "baseline_tstates": 297878,
+          "tstates": 293024,
+          "delta_tstates": -4854,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 197303,
+            "attribute_groups": 760,
+            "output": 80006,
+            "metadata": 14575
+          }
+        },
+        {
+          "frame": 56,
+          "baseline_tstates": 295028,
+          "tstates": 289233,
+          "delta_tstates": -5795,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 189841,
+            "attribute_groups": 760,
+            "output": 83899,
+            "metadata": 14353
+          }
+        },
+        {
+          "frame": 57,
+          "baseline_tstates": 298498,
+          "tstates": 293146,
+          "delta_tstates": -5352,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 190158,
+            "attribute_groups": 1100,
+            "output": 86646,
+            "metadata": 14862
+          }
+        },
+        {
+          "frame": 58,
+          "baseline_tstates": 300729,
+          "tstates": 296051,
+          "delta_tstates": -4678,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 197099,
+            "attribute_groups": 1100,
+            "output": 82848,
+            "metadata": 14624
+          }
+        },
+        {
+          "frame": 59,
+          "baseline_tstates": 305330,
+          "tstates": 301700,
+          "delta_tstates": -3630,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 198622,
+            "attribute_groups": 1100,
+            "output": 86854,
+            "metadata": 14744
+          }
+        },
+        {
+          "frame": 60,
+          "baseline_tstates": 310742,
+          "tstates": 310742,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 202043,
+            "attribute_groups": 930,
+            "output": 92433,
+            "metadata": 14956
+          }
+        },
+        {
+          "frame": 61,
+          "baseline_tstates": 315048,
+          "tstates": 314456,
+          "delta_tstates": -592,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 190772,
+            "attribute_groups": 760,
+            "output": 107442,
+            "metadata": 15102
+          }
+        },
+        {
+          "frame": 62,
+          "baseline_tstates": 313423,
+          "tstates": 312994,
+          "delta_tstates": -429,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 189456,
+            "attribute_groups": 760,
+            "output": 107419,
+            "metadata": 14979
+          }
+        },
+        {
+          "frame": 63,
+          "baseline_tstates": 316274,
+          "tstates": 316274,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 193079,
+            "attribute_groups": 760,
+            "output": 107326,
+            "metadata": 14729
+          }
+        },
+        {
+          "frame": 64,
+          "baseline_tstates": 320682,
+          "tstates": 319668,
+          "delta_tstates": -1014,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 192896,
+            "attribute_groups": 1136,
+            "output": 110131,
+            "metadata": 15125
+          }
+        },
+        {
+          "frame": 65,
+          "baseline_tstates": 299261,
+          "tstates": 297109,
+          "delta_tstates": -2152,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 192871,
+            "attribute_groups": 948,
+            "output": 87952,
+            "metadata": 14958
+          }
+        },
+        {
+          "frame": 66,
+          "baseline_tstates": 297635,
+          "tstates": 294871,
+          "delta_tstates": -2764,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 194319,
+            "attribute_groups": 760,
+            "output": 84571,
+            "metadata": 14841
+          }
+        },
+        {
+          "frame": 67,
+          "baseline_tstates": 296173,
+          "tstates": 295068,
+          "delta_tstates": -1105,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 192044,
+            "attribute_groups": 930,
+            "output": 86771,
+            "metadata": 14943
+          }
+        },
+        {
+          "frame": 68,
+          "baseline_tstates": 307028,
+          "tstates": 304878,
+          "delta_tstates": -2150,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 200041,
+            "attribute_groups": 1270,
+            "output": 88016,
+            "metadata": 15171
+          }
+        },
+        {
+          "frame": 69,
+          "baseline_tstates": 308986,
+          "tstates": 306893,
+          "delta_tstates": -2093,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 198588,
+            "attribute_groups": 1288,
+            "output": 91317,
+            "metadata": 15320
+          }
+        },
+        {
+          "frame": 70,
+          "baseline_tstates": 300996,
+          "tstates": 300009,
+          "delta_tstates": -987,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 192743,
+            "attribute_groups": 1100,
+            "output": 90907,
+            "metadata": 14879
+          }
+        },
+        {
+          "frame": 71,
+          "baseline_tstates": 283990,
+          "tstates": 279558,
+          "delta_tstates": -4432,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 179320,
+            "attribute_groups": 1100,
+            "output": 83846,
+            "metadata": 14912
+          }
+        },
+        {
+          "frame": 72,
+          "baseline_tstates": 296475,
+          "tstates": 294870,
+          "delta_tstates": -1605,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 196347,
+            "attribute_groups": 760,
+            "output": 82608,
+            "metadata": 14775
+          }
+        },
+        {
+          "frame": 73,
+          "baseline_tstates": 295952,
+          "tstates": 295952,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 195277,
+            "attribute_groups": 760,
+            "output": 84646,
+            "metadata": 14889
+          }
+        },
+        {
+          "frame": 74,
+          "baseline_tstates": 300197,
+          "tstates": 299210,
+          "delta_tstates": -987,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 192929,
+            "attribute_groups": 1100,
+            "output": 89377,
+            "metadata": 15424
+          }
+        },
+        {
+          "frame": 75,
+          "baseline_tstates": 296056,
+          "tstates": 295265,
+          "delta_tstates": -791,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 190573,
+            "attribute_groups": 930,
+            "output": 87970,
+            "metadata": 15412
+          }
+        },
+        {
+          "frame": 76,
+          "baseline_tstates": 303724,
+          "tstates": 301632,
+          "delta_tstates": -2092,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 195459,
+            "attribute_groups": 1306,
+            "output": 89086,
+            "metadata": 15401
+          }
+        },
+        {
+          "frame": 77,
+          "baseline_tstates": 298157,
+          "tstates": 294394,
+          "delta_tstates": -3763,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 188909,
+            "attribute_groups": 930,
+            "output": 88950,
+            "metadata": 15225
+          }
+        },
+        {
+          "frame": 78,
+          "baseline_tstates": 294296,
+          "tstates": 294296,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 188543,
+            "attribute_groups": 1118,
+            "output": 88766,
+            "metadata": 15489
+          }
+        },
+        {
+          "frame": 79,
+          "baseline_tstates": 269591,
+          "tstates": 265784,
+          "delta_tstates": -3807,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 160164,
+            "attribute_groups": 930,
+            "output": 88766,
+            "metadata": 15544
+          }
+        },
+        {
+          "frame": 80,
+          "baseline_tstates": 296938,
+          "tstates": 295542,
+          "delta_tstates": -1396,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 189126,
+            "attribute_groups": 1118,
+            "output": 89428,
+            "metadata": 15490
+          }
+        },
+        {
+          "frame": 81,
+          "baseline_tstates": 298108,
+          "tstates": 297538,
+          "delta_tstates": -570,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 185645,
+            "attribute_groups": 1118,
+            "output": 95069,
+            "metadata": 15326
+          }
+        },
+        {
+          "frame": 82,
+          "baseline_tstates": 301571,
+          "tstates": 301571,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 185425,
+            "attribute_groups": 1270,
+            "output": 98709,
+            "metadata": 15787
+          }
+        },
+        {
+          "frame": 83,
+          "baseline_tstates": 297402,
+          "tstates": 296328,
+          "delta_tstates": -1074,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 181927,
+            "attribute_groups": 1270,
+            "output": 97028,
+            "metadata": 15723
+          }
+        },
+        {
+          "frame": 84,
+          "baseline_tstates": 291561,
+          "tstates": 291561,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 180583,
+            "attribute_groups": 1100,
+            "output": 94001,
+            "metadata": 15497
+          }
+        },
+        {
+          "frame": 85,
+          "baseline_tstates": 294184,
+          "tstates": 292210,
+          "delta_tstates": -1974,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 178402,
+            "attribute_groups": 1306,
+            "output": 96509,
+            "metadata": 15613
+          }
+        },
+        {
+          "frame": 86,
+          "baseline_tstates": 287967,
+          "tstates": 284677,
+          "delta_tstates": -3290,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 174564,
+            "attribute_groups": 930,
+            "output": 93263,
+            "metadata": 15540
+          }
+        },
+        {
+          "frame": 87,
+          "baseline_tstates": 257393,
+          "tstates": 256309,
+          "delta_tstates": -1084,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 149847,
+            "attribute_groups": 1118,
+            "output": 89575,
+            "metadata": 15389
+          }
+        },
+        {
+          "frame": 88,
+          "baseline_tstates": 273544,
+          "tstates": 272379,
+          "delta_tstates": -1165,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 171034,
+            "attribute_groups": 1118,
+            "output": 84278,
+            "metadata": 15569
+          }
+        },
+        {
+          "frame": 89,
+          "baseline_tstates": 291189,
+          "tstates": 289636,
+          "delta_tstates": -1553,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 176634,
+            "attribute_groups": 1288,
+            "output": 95505,
+            "metadata": 15829
+          }
+        },
+        {
+          "frame": 90,
+          "baseline_tstates": 262007,
+          "tstates": 262007,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 150222,
+            "attribute_groups": 1118,
+            "output": 94833,
+            "metadata": 15454
+          }
+        },
+        {
+          "frame": 91,
+          "baseline_tstates": 221785,
+          "tstates": 220378,
+          "delta_tstates": -1407,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 120629,
+            "attribute_groups": 948,
+            "output": 82949,
+            "metadata": 15472
+          }
+        },
+        {
+          "frame": 92,
+          "baseline_tstates": 234515,
+          "tstates": 234515,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 134564,
+            "attribute_groups": 1100,
+            "output": 83035,
+            "metadata": 15436
+          }
+        },
+        {
+          "frame": 93,
+          "baseline_tstates": 221450,
+          "tstates": 221450,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 126488,
+            "attribute_groups": 948,
+            "output": 78365,
+            "metadata": 15269
+          }
+        },
+        {
+          "frame": 94,
+          "baseline_tstates": 185945,
+          "tstates": 185945,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 96280,
+            "attribute_groups": 1118,
+            "output": 72658,
+            "metadata": 15509
+          }
+        },
+        {
+          "frame": 95,
+          "baseline_tstates": 180626,
+          "tstates": 180626,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 95881,
+            "attribute_groups": 930,
+            "output": 68358,
+            "metadata": 15077
+          }
+        },
+        {
+          "frame": 96,
+          "baseline_tstates": 181404,
+          "tstates": 181404,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 99917,
+            "attribute_groups": 930,
+            "output": 65153,
+            "metadata": 15024
+          }
+        },
+        {
+          "frame": 97,
+          "baseline_tstates": 167352,
+          "tstates": 167352,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 89543,
+            "attribute_groups": 930,
+            "output": 61637,
+            "metadata": 14862
+          }
+        },
+        {
+          "frame": 98,
+          "baseline_tstates": 151272,
+          "tstates": 151272,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 84114,
+            "attribute_groups": 760,
+            "output": 51968,
+            "metadata": 14050
+          }
+        },
+        {
+          "frame": 99,
+          "baseline_tstates": 372549,
+          "tstates": 369035,
+          "delta_tstates": -3514,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 212604,
+            "attribute_groups": 2704,
+            "output": 136946,
+            "metadata": 16401
+          }
+        },
+        {
+          "frame": 100,
+          "baseline_tstates": 284854,
+          "tstates": 284854,
+          "delta_tstates": 0,
+          "stages": {
+            "handoff": 380,
+            "reconstruct": 130031,
+            "attribute_groups": 930,
+            "output": 137230,
+            "metadata": 16283
+          }
+        }
+      ]
+    }
+  ]
+}

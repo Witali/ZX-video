@@ -1,0 +1,308 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Build the three cost-selected-fragment disks using unchanged player code.\n\nUse the current resident-AY/in-place/drive-maintenance configuration with\na new set identity. Check actual capacity, dirty-RAM boots and handoffs.\n",
+  "baseline_commit": "a84451d",
+  "baseline_build_sha256": "9915590d679237adba70ff21a412d19177876ee8356e53b3df18c06f287c2b62",
+  "probe_sha256": "ec923bd0d8bad3089d46ab70e32253987e9c17dd84bbb616a2215acb25e3e501",
+  "contract": {
+    "version": "resident-cost-fragments-1",
+    "ends": [
+      1624,
+      2921,
+      4221
+    ],
+    "options": {
+      "fast_disk": true,
+      "cached_seek": true,
+      "interleaved": true,
+      "deferred_limit": 248,
+      "keepalive_fields": 64,
+      "frame_service": true,
+      "cold_bitmaps": true,
+      "inline_matches": true,
+      "startup_delta": true,
+      "fast_noop_scan": true,
+      "irq_safe_paging": true,
+      "static_cache_borders": true,
+      "carry_huffman": true,
+      "register_fragments": true,
+      "cached_huffman_byte": true,
+      "bank2_zx0": true,
+      "fast_return_irq": true,
+      "hl_mask_reader": true,
+      "compact_cursor": true,
+      "cached_huffman_lookahead": true,
+      "audio_batch": 31,
+      "foreground_audio": true
+    },
+    "raw_sha256": [
+      "0a70b6c0345bd62393c79066b4b596bc880d042fc8e5e011c5759d2aa9fdc823",
+      "af65da8c9449d1ca9dd6e0ce6a8c161d0160f4ea9ed8ae296185b9f62ebfd9a0",
+      "14c1c86ea6f0e8798dc722761dd4d885b070ab82eaaf072a84aeac5fd0ebfb9d"
+    ],
+    "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+    "audio_threshold": 24,
+    "allowance_bits": 64,
+    "minimum_heuristic_gain": 400
+  },
+  "zx0_sha256": "e6aec5cdfc3535b808610cb54412ce375b5b13e17b59f2bc878a54a00a8acbac",
+  "volumes": [
+    {
+      "part": 1,
+      "frames": 1624,
+      "used_sectors": 2525,
+      "free_sectors": 19,
+      "video_bytes": 622280,
+      "video_sectors": 2431,
+      "video_start_sector": 107,
+      "trd_sha256": "33f8b357d29223b40ac86a4872eb2841a4fef2d2fe01fc48f3cf5c4cd90eff32",
+      "metadata_sha256": "7fccbb82a7a7e050d580176d8f6871f57433876f913773d4aa47dfc498a96cbd",
+      "stream_sha256": "a1bbcc1262f055ec0a3063257af3209f27a439f6463dff2cc340d896b21b50ba",
+      "raw_video_sha256": "1afcbdf2fbfd01671b4817470419818e0d6934a0269b93ee97794bf0e8a00b44",
+      "audio_sha256": "f46bbd7e124dd9c8034d2946045c6a12473233d186ca966f9ffd0a1069d246cf",
+      "independently_bootable": true,
+      "exact_candidate_video_bytes": true,
+      "exact_ay_bytes": true,
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "d9f98e739d6399fac00c858be29b05f8bc933bf94573d2b7398b8b0e6affa403"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "16195a185ec81deed9e3471e0972cd87443434865013a1b4f767e121fac7f17b"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 9216,
+          "sha256": "4c1244fd2253b96e2eb5fa517ca917e29aafbf0e8521ab8641594125f6b8cccc"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "116b7bb822b27e744f2ab028bdaaa4344a065a34e9079ab4fb5178750860b307"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7424,
+          "sha256": "6418498a3aecd77c830aa57b9615d39ae9564c0859e820f3341b8e281bf5c2b7"
+        },
+        {
+          "bank": 4,
+          "offset": 7424,
+          "bytes": 6806,
+          "sha256": "737cbe7f85342f3cebe5dd9c7902a67a812edc6a082363b59e8dd00b15ec0ab3"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "b8a4084ca2e7d7b3fcbbc1a01c904f8894ffaa8b9840be0b7336c6611485e6b0"
+        }
+      ],
+      "mocked_boot_tstates": 3083081,
+      "boot_sectors": 91,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 3601201,
+      "mocked_boot_and_priming_sectors": 187
+    },
+    {
+      "part": 2,
+      "frames": 1297,
+      "used_sectors": 2510,
+      "free_sectors": 34,
+      "video_bytes": 618427,
+      "video_sectors": 2416,
+      "video_start_sector": 108,
+      "trd_sha256": "4e71499f3a21f7d6a87bf60dddc4bec2efc6d3faf7742cfb755d53d913ba1223",
+      "metadata_sha256": "d79b9ae95598d0da3e2d2d29ddde95b2af7f384b5908d848fbdaf10ca49beef6",
+      "stream_sha256": "dc45a64875a39b370387acca762e1f572aca0268bc6b1ddbf121b5be70851786",
+      "raw_video_sha256": "1bbec7d9f3cbdfb7b7463c09cda5a5cd5ceb025809a1eda739d9197715614a6e",
+      "audio_sha256": "09ceb24b69532a0467581669e336f1f9a910e3425b3792c4b10b16e34dffd4e5",
+      "independently_bootable": true,
+      "exact_candidate_video_bytes": true,
+      "exact_ay_bytes": true,
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "999999b96165d3c3a14b470f1d8635f97d755a37c5743aecbde2c3a8bb357992"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "153313fa7b519c1a389dd12482fccdcbd88c34f7e778f74a5e6ee1aecd64f63d"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 9216,
+          "sha256": "acf3d1637c0d2d074f70cd908189db85bf6c32d8393d332b2bd075613ad0d15d"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "116b7bb822b27e744f2ab028bdaaa4344a065a34e9079ab4fb5178750860b307"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7168,
+          "sha256": "562f8d6b5602372ed78b38a12c97671ac69c4e861101e139a9262d7b9c96cfeb"
+        },
+        {
+          "bank": 4,
+          "offset": 7168,
+          "bytes": 6047,
+          "sha256": "b01378e3bb42c7a2a9bb06eeea0cc405788e12ceebca532a90200dd818cc3399"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "7454ae2ba18df65d6f0b1d6aceaf26196e783eb84101a36aa3dfbd5c5f25e2fc"
+        }
+      ],
+      "mocked_boot_tstates": 3203007,
+      "boot_sectors": 92,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 4691054,
+      "mocked_boot_and_priming_sectors": 207
+    },
+    {
+      "part": 3,
+      "frames": 1300,
+      "used_sectors": 2507,
+      "free_sectors": 37,
+      "video_bytes": 616884,
+      "video_sectors": 2410,
+      "video_start_sector": 109,
+      "trd_sha256": "8043c065c0c688b69bd53f3feb2727f4f92bdee834f93ea0e9ef72e60bcaa8e4",
+      "metadata_sha256": "90a2ab0cb9ff58e09b13faaf8e380c95a0552ca2615c1ed2a6bab7efceb8a39a",
+      "stream_sha256": "7c4aea2a2bf2b5617aaefa7ec38db90e55caee949eb032ee2e9d30d9703f1f51",
+      "raw_video_sha256": "343ba2531983504c81910ea65558b0c00ae0de729b055a2963ff02d824494a62",
+      "audio_sha256": "272f9eb355d9231fb3a76515609aa68e6798bdd696f63717fef5f28942f9ceca",
+      "independently_bootable": true,
+      "exact_candidate_video_bytes": true,
+      "exact_ay_bytes": true,
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "addcdcda01682901728f2dbef0996acf694a4ddfda9fdcc960595cffb6ed23f4"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "cf0cbb421591e3973e0f837ee78c5561e56aa4b44c5880481b976e07e83f15d4"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 9216,
+          "sha256": "d11991ff47a05af90fcc81eff7bed844b0e0e1e3a0794cdaae93b6e8e532adc8"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "116b7bb822b27e744f2ab028bdaaa4344a065a34e9079ab4fb5178750860b307"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7424,
+          "sha256": "772031a2b4a4e2d4c1ecc1468a9ce5228663dc3e5132350b2ee004d21d310747"
+        },
+        {
+          "bank": 4,
+          "offset": 7424,
+          "bytes": 5613,
+          "sha256": "9a96caf5384f731b15914cff988489230d03da800e65bdba75bc6178ac2f4095"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "fa4b5962c4d5c313167f017b341a762b73e9016d8f80654611cf74ef9b8aacc5"
+        }
+      ],
+      "mocked_boot_tstates": 3291399,
+      "boot_sectors": 93,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 5006801,
+      "mocked_boot_and_priming_sectors": 212
+    }
+  ],
+  "source_sha256_lf": {
+    "build_inplace_keepalive.py": "8af7a1a7f07cc5ce60ff97816df1d0bb31d42605e7fe5531dbc2ff551bb29bba",
+    "inplace_keepalive_player.py": "0e798c66d14a842b6ec2b943ef1fa23c0db7cd8ee6fd2cbc4feee21af49c958f",
+    "test_inplace_keepalive.py": "f36b083bd21d43c2fe6f98c3c8e99362da31718d228e63740abc26e35a74d258",
+    "build_inplace_slot_player.py": "f89522b4190999e9cdfe00d7c6f4299e61a8bd737194ac1c8d6ed3020b4e4918",
+    "inplace_slot_player.py": "a51880cbae6751cc43143bd7daf516420f2fb6ad6f1f8b18b039f99a2fdd366b",
+    "inplace_slot_input_z80.py": "aed5462418016e17a64708b313e38dfc48a886f1c40bd006dd4db7370f1d5319",
+    "inplace_zx0.py": "c2675a2f2ffb938060f3568888c2e94d7e9300e88ab8a1afca000bd25ca48106",
+    "benchmark_inplace_slot.py": "f840275a215aa3f2c8dbc03a0cfd71ec60072bfc26f39a842f255d128a076a9e",
+    "test_inplace_slot.py": "1ff1dc18dc3e8bd891e92559bf41273926393445ac961130f0b217fd9b0348b6",
+    "build_resident_audio_player.py": "aec10c5e86611437beec398fde100ab7b613dccad194d2920948b3c4c5207ce5",
+    "resident_audio_player.py": "181b9fdaa90237b6c59d7f0f4bd05bc95639f14ef2a6cb59d12446936cc94404",
+    "resident_audio_z80.py": "f658004856c2dfb5bde1f6db3f5101193c974a0baaae75feeed16f254761d1b8",
+    "integrated_bootstrap.py": "fe43b8fd20ae2ae7b3c424d1bbb2e37d5e26f98f0a65c76872ae44eaf7176211",
+    "slot_queue_player.py": "211b4c1bdd233241967cae5b6e6c9b31b2483b79da5cb6f6d507f8a0e3250e6a",
+    "slot_queue_z80.py": "6038557b18c6ef513508c0f149e69e11050b5c09ba1127891af50fc4026b5f54",
+    "direct_slot_input_z80.py": "5aaa5b2725c70f3874b7d517e6ac353ce9937a10652c80510b2ee6085f0f7b7e",
+    "bulk_frame_z80.py": "6c71b8e03ccc42a7ab1352c39367e6f8fd155d58b6045b3e1952f6c1fc2747d3",
+    "pipelined_frame_z80.py": "d603b72fd89ad1428f857f4633d44bbbf165cf20ed726726a805cd741ee82843",
+    "build_fap3_trd.py": "040d40be7fbdb6855dfb6d2fcb1301f7858b84422e62bf126391f0cabf337f91",
+    "fap3_disk_z80.py": "e906dd14aa942e51831e8285dc1c33c9fb5002a0b70ff73f992c4602df374689",
+    "build_resident_fragments.py": "265897127bf093ab60b8fca21a4588c96de33410ee7ba0ee0cd053097eb4bf95",
+    "probe_resident_fragments.py": "a6690abb4838a0fb9a90f223ac765ac437801aacede492f71ebd047d494b8c8b"
+  },
+  "mocked_rom_swaps": [
+    {
+      "from_part": 1,
+      "to_part": 2,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    },
+    {
+      "from_part": 2,
+      "to_part": 3,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    }
+  ]
+}

@@ -87,6 +87,17 @@ streamed decoder should avoid routine input-page checks when enough input
 is already resident, prove the lower CPU cost first, then repeat full cadence
 and AY verification. Preserve the previous and current rejected experiments.
 
+The [cost-selected fast-fragment experiment](RESIDENT_FRAGMENTS.md) now also
+fits all three independent disks, with 19/34/37 sectors free. All 4221 compact
+frames and both complete native screens match; no frame-stage CPU regression
+occurs. It saves 29,444,903 frame T, but adds 11,781,649 producer/ZX0 T and
+151 video sectors. Complete Fuse playback retains exact 50-Hz AY and has
+1237 late frames / 747 invalid intervals, versus 1321 / 783. Both video
+gates still fail, and volume 1's maximum lateness grows 64 -> 72 fields.
+Keep this optional data variant as a comparison, while retaining the roomier
+`a84451d` baseline and unchanged release/defaults. Compare changes against
+the same input policy so data and decoder benefits are not double-counted.
+
 ## Method: replace indexed access when the whole path is faster
 
 Inspect the generated machine code and measured execution frequency.
@@ -272,19 +283,27 @@ Verify generated placement and all phases before adopting it.
   used an older 8-KiB-block/bootstrap budget. Its 64-bit local allowance saved
   8,898,970 frame-stage T across all 1300 frames of volume 3, but added 11,616
   ZX0 bytes and exceeded that disk's capacity. Capacity has since changed.
-  A justified next experiment is to remeasure that exact candidate with the
-  retained resident-AY framing and 15872-byte blocks, then check every frame,
-  producer/ZX0 cost and complete Fuse playback. Compare savings specifically
-  on frames whose full foreground work exceeds six fields. Keep the existing
-  unchanged-pixel decoder and original volume checkpoints. Do not assume the
-  old size/CPU delta transfers, or repeat only the local pre-ZX0 estimate.
+  Its [remeasurement with resident AY](RESIDENT_FRAGMENTS.md) is now complete
+  on all three volumes, retaining 15872-byte blocks, exact pixels and original
+  checkpoints. Volume 3 reproduces the old candidate bytes, but its current
+  frame-stage saving is 8,545,530 T. All-volume measured component CPU saves
+  17,663,254 T; final ZX0 grows 38,682 bytes. Use the complete reports for
+  future selection work, including the grouping by baseline foreground work.
+  The 150-T/symbol ranking term is historical, not a lower bound for today's
+  134-T short decoder. Do not repeat only the local pre-ZX0 estimate.
 - The current stream already rounds bands with at least 18 changed cells
   to all-FF masks. A new nearly-dense test admits no extra bands and would
   add 531,846 T. A full-eight-cell helper with a new test on every nonzero
   group is estimated to add 1,056,003 T. Both are rejected; see
   [the probe and assumptions](FRAME_HOTSPOTS.md).
 - Changing the encoder's density threshold is a separate stream-size
-  experiment. It cannot be accepted from decoder cycles alone.
+  experiment. Next compare the existing 18-cell rule with host-selected
+  sparse/full native maps using actual output costs, including zero groups
+  and band parity. This requires no extra runtime mask test and preserves
+  every pixel. Replay alternating screens and cold maps, measure final ZX0
+  size and actual capacity, then complete producer/CPU/Fuse checks. Select
+  for expensive windows as well as aggregate cost; a CPU-optimal mask cannot
+  be accepted without the disk-delivery measurements.
 - Whole-row zero/uniform detection was measured on all 83,652 dense rows.
   Only 90 are zero and 332 uniform. Charging just immediate failures while
   making every other test and successful fill free still adds at least
