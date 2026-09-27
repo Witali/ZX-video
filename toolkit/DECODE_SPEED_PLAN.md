@@ -27,14 +27,18 @@ screens, code, stack, AY/IRQ, TR-DOS workspace, tables and disk buffers.
 
 ## Current baseline and evidence
 
-Use the [larger-slot player with periodic drive maintenance](INPLACE_KEEPALIVE.md)
-at `a84451d` as the retained experimental baseline. Its three independent
-disks use 2462/2463/2462 sectors, with 82/81/82 free. All 25326 AY records
-meet 50 Hz; 1321 video frames miss their nominal deadlines and 783 intervals
-fail the fallback. It is not a release. The earlier
+Use the [integrated Fast ZX0 player](FAST_ZX0_PLAYER.md) as the next
+experimental baseline. Full playback retains all 25326 AY records at 50 Hz
+and improves late frames **1321→1239** and bad intervals **783→744** against
+the [Turbo periodic-drive player](INPLACE_KEEPALIVE.md) at `a84451d`.
+Retain that Turbo build for paired comparisons. Both use 2462/2463/2462
+sectors, with 82/81/82 free, and exactly the same compressed stream.
+Neither is a release. The earlier
 [foreground resident-AY player](RESIDENT_AUDIO_PLAYER.md) at `da369e6` and
 the HL-reader configuration at `074e1e7` remain historical comparisons.
-Do not equate these experiments with generic converter defaults or root images.
+Generic converter defaults and the verified root release are separate.
+The new root `ZX-video-fast-preview_part01..03.trd` set contains the measured
+Fast experiment and is explicitly a preview.
 
 - Current video stream: **1,818,909 compressed bytes**, 2,965,011 video-only
   packet bytes, 188 blocks, 7106 video sectors. The older muxed stream used
@@ -392,19 +396,24 @@ block and preserve exact in-place input/output. Fast has 62 of 11584 calls
 slower by at most 69 T; tuned Turbo has none. Four test groups, including
 real AY IRQ code after every instruction and arbitrary demand targets, pass.
 
-Proceed to a separate Fast disk-integration comparison, retaining tuned
-Turbo as the smaller alternative. Fast occupies **401 code/state bytes
+The [Fast disk integration](FAST_ZX0_PLAYER.md) now completes all three
+independently bootable volumes with unchanged stream/occupied sectors and
+exact 50-Hz AY. Late frames fall **1321→1239**, invalid intervals **783→744**.
+The publication-span reduction is only **850900 T / 0.0469%**; both video
+gates still fail. Keep Fast as the next experimental baseline and tuned
+Turbo as the smaller CPU-only alternative. Fast occupies **401 code/state bytes
 (+87)**: 7C00h..7C7Dh helpers and 8DF2h..8F06h hot core. It reuses retired
 RAM without shrinking buffers or requiring prior-disk state. Both variants
 assume non-wrapping C000h..FDFFh output; they are not replacements for the
-old wrapping half-bank decoder. Rebuild all queue/bridge/producer/cold-start
-references and account for the direct-HL prototype's shifted core bounds
-if combined. Bootstrap compression and sector occupancy are unmeasured.
+old wrapping half-bank decoder. The installed build remaps 22 external
+operands, verifies the rebuilt producer and updates the cold bridge overlay.
+Dirty-RAM boot and mocked disk swaps pass. Account for the direct-HL
+prototype's shifted core bounds if combined in a later experiment.
 
 The baseline executes 2253636 decoder T from bank 5; Fast executes 4530562.
-CPU savings therefore still require full ULA/ROM/disk/publication/AY
-measurement. Do not apply the CPU percentage to whole-player speed or
-declare a release. The [saved auditor](audit_faster_zx0.py) verifies code,
+Full ULA/ROM/disk/publication/AY measurements are now saved; do not apply the
+CPU percentage to whole-player speed or declare a release. The
+[saved auditor](audit_faster_zx0.py) verifies code,
 streams and all CPU sums. Preserve these results before further branch,
 gamma or Mega experiments; the latter remain unmeasured.
 

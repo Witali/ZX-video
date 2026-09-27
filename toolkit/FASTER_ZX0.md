@@ -9,6 +9,9 @@ without changing one compressed byte.** A smaller tuned-Turbo prototype
 saves 1.214%. These are complete native CPU measurements, not a new Fuse
 playback result or proof of smooth 25/3-fps publication.
 
+Follow-up: [Fast is now integrated into real TRDs](FAST_ZX0_PLAYER.md), with
+complete three-disk Fuse results. The CPU experiment below remains unchanged.
+
 ## What changes
 
 The project already uses ZX0 v2's Turbo decoder with resumable, token-boundary

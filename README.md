@@ -40,6 +40,15 @@ accuracy is not claimed.
 [Full-frame CPU profile](toolkit/FRAME_HOTSPOTS.md) ·
 [Experiment history](CHANGELOG.md)
 
+## Current three-disk experiment
+
+The root `ZX-video-fast-preview_part01..03.trd` images use the
+[adapted Fast ZX0 player](toolkit/FAST_ZX0_PLAYER.md). Each boots independently.
+All 4221 frames complete in Fuse with exact 50-Hz AY and unchanged compressed
+video data. Video still misses deadlines: this is an experimental preview,
+separate from the verified release and the generic converter defaults.
+Disk images are stored in Git LFS.
+
 Historical documentation:
 
 - [Converter options, reports and verification](toolkit/GENERIC_CONVERTER_ru.md)

@@ -21,6 +21,64 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — apply adapted Fast ZX0 to all three independent disks
+
+- **Objective/input:** integrate the unchanged-stream Fast decoder from
+  `3aa3e4b` into the retained `a84451d` periodic-drive player. Full authorized
+  4221-frame edit, three independent disks, existing resolution and AY data.
+- **Implementation:** the new Fast builder installs exactly the measured
+  401-byte core/helpers/state, remaps 22 known external instruction operands,
+  updates the cold bridge overlay and verifies the producer against a fresh
+  assembly. Existing buffers, queue policy and drive maintenance remain.
+  All substitutions keep their absolute instruction cost, delta **0 T**.
+  Ten cold-loaded queue-control paths also retain **75/109/172/96/169/302/
+  562/764/808/1240 T**, excluding callee bodies.
+- **CPU baseline:** installed code matches the complete 188-block Fast
+  proof: **189,573,555→183,122,436 decoder T (-6,451,119 / 3.403%)**.
+  Producer+decoder saving remains 3.203%; this is separate from elapsed
+  playback. Code/state grows **314→401 bytes**, without shrinking buffers.
+- **Compression/capacity:** all video/AY bytes and stream hashes match;
+  **1,818,909 compressed bytes, 7106 video sectors**. Bootstrap changes add
+  no occupied sectors: **2462/2463/2462 used, 82/81/82 free**, with unchanged
+  video start sectors 107/108/109. Root `ZX-video-fast-preview_part01..03.trd`
+  are the measured images, staged through Git LFS with a preview manifest.
+- **Complete Fuse results:** all **4221 frames / 25326 AY records** reach
+  EOF. Late frames **1321→1239**, bad fallback intervals **783→744**;
+  per-volume late counts **86/404/749**, bad intervals **41/230/473**.
+  AY remains exact at 50 Hz with zero underruns, record gaps or duplicates.
+  Effective fps **8.333333 / 8.075773 / 8.333333**. Summed publication span
+  **1,812,975,750→1,812,124,850 T (-850,900 / 0.0469%)**. This is not whole
+  startup/playback time or a matched initial disk/IRQ-phase comparison.
+- **Deadline recovery:** maximum lateness **62/248/244 fields**, actual
+  maximum deviations **4,396,302 / 17,585,184 / 17,301,569 T**. Late runs
+  recover **3/3, 13/14, 3/3**; disk 2 ends with one unrecovered run. Both
+  nominal and one-field-fallback video gates still fail.
+- **Coverage:** dirty-RAM cold boots, exact first native/second compact
+  frames, immutable audio bank, all-block byte verification and cold-reference
+  checks pass. Prompt/next-disk acceptance and wrong-disk/series rejection
+  execute actual code with ROM reads mocked. Each disk also cold-boots and
+  completes separately in Fuse without RAM patches or fast-read retries.
+  Fuse verifies every publication, AY record and sector, plus 80 screen
+  bytes per frame; the unchanged frame code retains its prior full-screen
+  CPU proof. No actual interactive disk replacement or hardware run.
+- **Packaging correction:** the first export refused before copying files
+  because the in-memory audit used numeric dictionary keys while saved JSON
+  uses strings. Normalize the audit through JSON before comparison; export
+  then passed. This did not change player bytes or playback measurements.
+- **Decision:** apply Fast as the next experimental baseline; retain Turbo
+  for comparisons and keep the verified release. CPU gains and fewer late
+  frames justify the change, but smooth 8⅓-fps playback remains unfinished.
+- **Reproduction/evidence:** [integration report](toolkit/FAST_ZX0_PLAYER.md),
+  [builder](toolkit/build_fast_zx0_player.py),
+  [installer](toolkit/fast_zx0_player.py),
+  [queue comparison](toolkit/measure_fast_zx0_queue.py),
+  [build](toolkit/fast_zx0_player_build.json),
+  [summary/audit](toolkit/summarize_fast_zx0_player.py),
+  [saved summary](toolkit/fast_zx0_player_summary.json),
+  [full source/metadata/traces](toolkit/fast_zx0_player_evidence/manifest.json),
+  [preview packager](toolkit/package_fast_zx0_preview.py),
+  [root image manifest](toolkit/fast_zx0_preview.json).
+
 ## 2026-09-27 — faster ZX0 prototypes preserve every compressed byte
 
 - **Objective/input:** test whether the decoder can be accelerated without
