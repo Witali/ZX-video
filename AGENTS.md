@@ -1,5 +1,9 @@
 # Project rules
 
+- Write and maintain project documentation and agent instruction files in
+  English. Add a Russian translation only when the user explicitly requests
+  it for the relevant document or task.
+
 - Keep every release TRD independently bootable. Reusing RAM from a previous
   disk may be measured as an explicitly separate experiment, but must not
   become a requirement for the main format.
