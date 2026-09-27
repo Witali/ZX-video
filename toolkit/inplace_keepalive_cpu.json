@@ -1,0 +1,2189 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Cycle counts, current-cylinder ownership and real IRQ stress for maintenance.",
+  "cases": [
+    {
+      "name": "recent",
+      "cached": 3,
+      "before": 100,
+      "now": 163,
+      "remaining": 7,
+      "tstates": 252,
+      "wrapper_delta_tstates": 279,
+      "seek_calls": [],
+      "last_service": 100,
+      "preserves_state": true,
+      "instruction_histogram": [
+        {
+          "address": 32368,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH AF"
+        },
+        {
+          "address": 32369,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH BC"
+        },
+        {
+          "address": 32370,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH DE"
+        },
+        {
+          "address": 32371,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32372,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(24803)"
+        },
+        {
+          "address": 32375,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,H"
+        },
+        {
+          "address": 32376,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR L"
+        },
+        {
+          "address": 32377,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32380,
+          "tstates": 13,
+          "count": 1,
+          "instruction": "LD A,(24810)"
+        },
+        {
+          "address": 32383,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "CP FEh"
+        },
+        {
+          "address": 32385,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32388,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(32773)"
+        },
+        {
+          "address": 32391,
+          "tstates": 20,
+          "count": 1,
+          "instruction": "LD DE,(last service)"
+        },
+        {
+          "address": 32395,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR A"
+        },
+        {
+          "address": 32396,
+          "tstates": 15,
+          "count": 1,
+          "instruction": "SBC HL,DE"
+        },
+        {
+          "address": 32398,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,H"
+        },
+        {
+          "address": 32399,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR A"
+        },
+        {
+          "address": 32400,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP due"
+        },
+        {
+          "address": 32403,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,L"
+        },
+        {
+          "address": 32404,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "CP threshold"
+        },
+        {
+          "address": 32406,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32412,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP HL"
+        },
+        {
+          "address": 32413,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP DE"
+        },
+        {
+          "address": 32414,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP BC"
+        },
+        {
+          "address": 32415,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP AF"
+        },
+        {
+          "address": 32416,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "RET"
+        }
+      ]
+    },
+    {
+      "name": "due",
+      "cached": 3,
+      "before": 100,
+      "now": 164,
+      "remaining": 7,
+      "tstates": 709,
+      "wrapper_delta_tstates": 736,
+      "seek_calls": [
+        [
+          15940,
+          1,
+          0
+        ]
+      ],
+      "last_service": 164,
+      "preserves_state": true,
+      "instruction_histogram": [
+        {
+          "address": 24784,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 24785,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP HL"
+        },
+        {
+          "address": 24786,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP DE"
+        },
+        {
+          "address": 24787,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP BC"
+        },
+        {
+          "address": 24788,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 24789,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF2"
+        },
+        {
+          "address": 24790,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP AF"
+        },
+        {
+          "address": 24791,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF2"
+        },
+        {
+          "address": 24792,
+          "tstates": 14,
+          "count": 1,
+          "instruction": "POP IY"
+        },
+        {
+          "address": 24794,
+          "tstates": 14,
+          "count": 1,
+          "instruction": "POP IX"
+        },
+        {
+          "address": 24796,
+          "tstates": 20,
+          "count": 1,
+          "instruction": "LD SP,(saved_sp)"
+        },
+        {
+          "address": 24800,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "RET"
+        },
+        {
+          "address": 32368,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH AF"
+        },
+        {
+          "address": 32369,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH BC"
+        },
+        {
+          "address": 32370,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH DE"
+        },
+        {
+          "address": 32371,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32372,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(24803)"
+        },
+        {
+          "address": 32375,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,H"
+        },
+        {
+          "address": 32376,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR L"
+        },
+        {
+          "address": 32377,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32380,
+          "tstates": 13,
+          "count": 1,
+          "instruction": "LD A,(24810)"
+        },
+        {
+          "address": 32383,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "CP FEh"
+        },
+        {
+          "address": 32385,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32388,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(32773)"
+        },
+        {
+          "address": 32391,
+          "tstates": 20,
+          "count": 1,
+          "instruction": "LD DE,(last service)"
+        },
+        {
+          "address": 32395,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR A"
+        },
+        {
+          "address": 32396,
+          "tstates": 15,
+          "count": 1,
+          "instruction": "SBC HL,DE"
+        },
+        {
+          "address": 32398,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,H"
+        },
+        {
+          "address": 32399,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR A"
+        },
+        {
+          "address": 32400,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP due"
+        },
+        {
+          "address": 32403,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,L"
+        },
+        {
+          "address": 32404,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "CP threshold"
+        },
+        {
+          "address": 32406,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32409,
+          "tstates": 17,
+          "count": 1,
+          "instruction": "CALL keepalive"
+        },
+        {
+          "address": 32412,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP HL"
+        },
+        {
+          "address": 32413,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP DE"
+        },
+        {
+          "address": 32414,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP BC"
+        },
+        {
+          "address": 32415,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP AF"
+        },
+        {
+          "address": 32416,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "RET"
+        },
+        {
+          "address": 32417,
+          "tstates": 20,
+          "count": 1,
+          "instruction": "LD (saved_sp),SP"
+        },
+        {
+          "address": 32421,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD SP,disk stack"
+        },
+        {
+          "address": 32424,
+          "tstates": 15,
+          "count": 1,
+          "instruction": "PUSH IX"
+        },
+        {
+          "address": 32426,
+          "tstates": 15,
+          "count": 1,
+          "instruction": "PUSH IY"
+        },
+        {
+          "address": 32428,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF'"
+        },
+        {
+          "address": 32429,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH AF"
+        },
+        {
+          "address": 32430,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF'"
+        },
+        {
+          "address": 32431,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 32432,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH BC"
+        },
+        {
+          "address": 32433,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH DE"
+        },
+        {
+          "address": 32434,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32435,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 32436,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,slow IRQ"
+        },
+        {
+          "address": 32439,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD (48574),HL"
+        },
+        {
+          "address": 32442,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "LD B,0"
+        },
+        {
+          "address": 32444,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,keepalive return"
+        },
+        {
+          "address": 32447,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32448,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,SEEK 5.03"
+        },
+        {
+          "address": 32451,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32452,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "LD A,BEh"
+        },
+        {
+          "address": 32454,
+          "tstates": 9,
+          "count": 1,
+          "instruction": "LD I,A"
+        },
+        {
+          "address": 32456,
+          "tstates": 8,
+          "count": 1,
+          "instruction": "IM 2"
+        },
+        {
+          "address": 32458,
+          "tstates": 13,
+          "count": 1,
+          "instruction": "LD A,(24810)"
+        },
+        {
+          "address": 32461,
+          "tstates": 8,
+          "count": 1,
+          "instruction": "SRL A"
+        },
+        {
+          "address": 32463,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EI"
+        },
+        {
+          "address": 32464,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP 15663"
+        },
+        {
+          "address": 32467,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EI"
+        },
+        {
+          "address": 32468,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,fast IRQ"
+        },
+        {
+          "address": 32471,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD (48574),HL"
+        },
+        {
+          "address": 32474,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(32773)"
+        },
+        {
+          "address": 32477,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD (30866),HL"
+        },
+        {
+          "address": 32480,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP 24784"
+        }
+      ]
+    },
+    {
+      "name": "wrapped",
+      "cached": 3,
+      "before": 65520,
+      "now": 48,
+      "remaining": 7,
+      "tstates": 709,
+      "wrapper_delta_tstates": 736,
+      "seek_calls": [
+        [
+          15940,
+          1,
+          0
+        ]
+      ],
+      "last_service": 48,
+      "preserves_state": true,
+      "instruction_histogram": [
+        {
+          "address": 24784,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 24785,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP HL"
+        },
+        {
+          "address": 24786,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP DE"
+        },
+        {
+          "address": 24787,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP BC"
+        },
+        {
+          "address": 24788,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 24789,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF2"
+        },
+        {
+          "address": 24790,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP AF"
+        },
+        {
+          "address": 24791,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF2"
+        },
+        {
+          "address": 24792,
+          "tstates": 14,
+          "count": 1,
+          "instruction": "POP IY"
+        },
+        {
+          "address": 24794,
+          "tstates": 14,
+          "count": 1,
+          "instruction": "POP IX"
+        },
+        {
+          "address": 24796,
+          "tstates": 20,
+          "count": 1,
+          "instruction": "LD SP,(saved_sp)"
+        },
+        {
+          "address": 24800,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "RET"
+        },
+        {
+          "address": 32368,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH AF"
+        },
+        {
+          "address": 32369,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH BC"
+        },
+        {
+          "address": 32370,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH DE"
+        },
+        {
+          "address": 32371,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32372,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(24803)"
+        },
+        {
+          "address": 32375,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,H"
+        },
+        {
+          "address": 32376,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR L"
+        },
+        {
+          "address": 32377,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32380,
+          "tstates": 13,
+          "count": 1,
+          "instruction": "LD A,(24810)"
+        },
+        {
+          "address": 32383,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "CP FEh"
+        },
+        {
+          "address": 32385,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32388,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(32773)"
+        },
+        {
+          "address": 32391,
+          "tstates": 20,
+          "count": 1,
+          "instruction": "LD DE,(last service)"
+        },
+        {
+          "address": 32395,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR A"
+        },
+        {
+          "address": 32396,
+          "tstates": 15,
+          "count": 1,
+          "instruction": "SBC HL,DE"
+        },
+        {
+          "address": 32398,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,H"
+        },
+        {
+          "address": 32399,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR A"
+        },
+        {
+          "address": 32400,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP due"
+        },
+        {
+          "address": 32403,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,L"
+        },
+        {
+          "address": 32404,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "CP threshold"
+        },
+        {
+          "address": 32406,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32409,
+          "tstates": 17,
+          "count": 1,
+          "instruction": "CALL keepalive"
+        },
+        {
+          "address": 32412,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP HL"
+        },
+        {
+          "address": 32413,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP DE"
+        },
+        {
+          "address": 32414,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP BC"
+        },
+        {
+          "address": 32415,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP AF"
+        },
+        {
+          "address": 32416,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "RET"
+        },
+        {
+          "address": 32417,
+          "tstates": 20,
+          "count": 1,
+          "instruction": "LD (saved_sp),SP"
+        },
+        {
+          "address": 32421,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD SP,disk stack"
+        },
+        {
+          "address": 32424,
+          "tstates": 15,
+          "count": 1,
+          "instruction": "PUSH IX"
+        },
+        {
+          "address": 32426,
+          "tstates": 15,
+          "count": 1,
+          "instruction": "PUSH IY"
+        },
+        {
+          "address": 32428,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF'"
+        },
+        {
+          "address": 32429,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH AF"
+        },
+        {
+          "address": 32430,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF'"
+        },
+        {
+          "address": 32431,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 32432,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH BC"
+        },
+        {
+          "address": 32433,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH DE"
+        },
+        {
+          "address": 32434,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32435,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 32436,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,slow IRQ"
+        },
+        {
+          "address": 32439,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD (48574),HL"
+        },
+        {
+          "address": 32442,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "LD B,0"
+        },
+        {
+          "address": 32444,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,keepalive return"
+        },
+        {
+          "address": 32447,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32448,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,SEEK 5.03"
+        },
+        {
+          "address": 32451,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32452,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "LD A,BEh"
+        },
+        {
+          "address": 32454,
+          "tstates": 9,
+          "count": 1,
+          "instruction": "LD I,A"
+        },
+        {
+          "address": 32456,
+          "tstates": 8,
+          "count": 1,
+          "instruction": "IM 2"
+        },
+        {
+          "address": 32458,
+          "tstates": 13,
+          "count": 1,
+          "instruction": "LD A,(24810)"
+        },
+        {
+          "address": 32461,
+          "tstates": 8,
+          "count": 1,
+          "instruction": "SRL A"
+        },
+        {
+          "address": 32463,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EI"
+        },
+        {
+          "address": 32464,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP 15663"
+        },
+        {
+          "address": 32467,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EI"
+        },
+        {
+          "address": 32468,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,fast IRQ"
+        },
+        {
+          "address": 32471,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD (48574),HL"
+        },
+        {
+          "address": 32474,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(32773)"
+        },
+        {
+          "address": 32477,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD (30866),HL"
+        },
+        {
+          "address": 32480,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP 24784"
+        }
+      ]
+    },
+    {
+      "name": "long",
+      "cached": 3,
+      "before": 100,
+      "now": 356,
+      "remaining": 7,
+      "tstates": 688,
+      "wrapper_delta_tstates": 715,
+      "seek_calls": [
+        [
+          15940,
+          1,
+          0
+        ]
+      ],
+      "last_service": 356,
+      "preserves_state": true,
+      "instruction_histogram": [
+        {
+          "address": 24784,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 24785,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP HL"
+        },
+        {
+          "address": 24786,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP DE"
+        },
+        {
+          "address": 24787,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP BC"
+        },
+        {
+          "address": 24788,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 24789,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF2"
+        },
+        {
+          "address": 24790,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP AF"
+        },
+        {
+          "address": 24791,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF2"
+        },
+        {
+          "address": 24792,
+          "tstates": 14,
+          "count": 1,
+          "instruction": "POP IY"
+        },
+        {
+          "address": 24794,
+          "tstates": 14,
+          "count": 1,
+          "instruction": "POP IX"
+        },
+        {
+          "address": 24796,
+          "tstates": 20,
+          "count": 1,
+          "instruction": "LD SP,(saved_sp)"
+        },
+        {
+          "address": 24800,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "RET"
+        },
+        {
+          "address": 32368,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH AF"
+        },
+        {
+          "address": 32369,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH BC"
+        },
+        {
+          "address": 32370,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH DE"
+        },
+        {
+          "address": 32371,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32372,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(24803)"
+        },
+        {
+          "address": 32375,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,H"
+        },
+        {
+          "address": 32376,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR L"
+        },
+        {
+          "address": 32377,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32380,
+          "tstates": 13,
+          "count": 1,
+          "instruction": "LD A,(24810)"
+        },
+        {
+          "address": 32383,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "CP FEh"
+        },
+        {
+          "address": 32385,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32388,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(32773)"
+        },
+        {
+          "address": 32391,
+          "tstates": 20,
+          "count": 1,
+          "instruction": "LD DE,(last service)"
+        },
+        {
+          "address": 32395,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR A"
+        },
+        {
+          "address": 32396,
+          "tstates": 15,
+          "count": 1,
+          "instruction": "SBC HL,DE"
+        },
+        {
+          "address": 32398,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,H"
+        },
+        {
+          "address": 32399,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR A"
+        },
+        {
+          "address": 32400,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP due"
+        },
+        {
+          "address": 32409,
+          "tstates": 17,
+          "count": 1,
+          "instruction": "CALL keepalive"
+        },
+        {
+          "address": 32412,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP HL"
+        },
+        {
+          "address": 32413,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP DE"
+        },
+        {
+          "address": 32414,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP BC"
+        },
+        {
+          "address": 32415,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP AF"
+        },
+        {
+          "address": 32416,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "RET"
+        },
+        {
+          "address": 32417,
+          "tstates": 20,
+          "count": 1,
+          "instruction": "LD (saved_sp),SP"
+        },
+        {
+          "address": 32421,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD SP,disk stack"
+        },
+        {
+          "address": 32424,
+          "tstates": 15,
+          "count": 1,
+          "instruction": "PUSH IX"
+        },
+        {
+          "address": 32426,
+          "tstates": 15,
+          "count": 1,
+          "instruction": "PUSH IY"
+        },
+        {
+          "address": 32428,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF'"
+        },
+        {
+          "address": 32429,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH AF"
+        },
+        {
+          "address": 32430,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EX AF,AF'"
+        },
+        {
+          "address": 32431,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 32432,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH BC"
+        },
+        {
+          "address": 32433,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH DE"
+        },
+        {
+          "address": 32434,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32435,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EXX"
+        },
+        {
+          "address": 32436,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,slow IRQ"
+        },
+        {
+          "address": 32439,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD (48574),HL"
+        },
+        {
+          "address": 32442,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "LD B,0"
+        },
+        {
+          "address": 32444,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,keepalive return"
+        },
+        {
+          "address": 32447,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32448,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,SEEK 5.03"
+        },
+        {
+          "address": 32451,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32452,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "LD A,BEh"
+        },
+        {
+          "address": 32454,
+          "tstates": 9,
+          "count": 1,
+          "instruction": "LD I,A"
+        },
+        {
+          "address": 32456,
+          "tstates": 8,
+          "count": 1,
+          "instruction": "IM 2"
+        },
+        {
+          "address": 32458,
+          "tstates": 13,
+          "count": 1,
+          "instruction": "LD A,(24810)"
+        },
+        {
+          "address": 32461,
+          "tstates": 8,
+          "count": 1,
+          "instruction": "SRL A"
+        },
+        {
+          "address": 32463,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EI"
+        },
+        {
+          "address": 32464,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP 15663"
+        },
+        {
+          "address": 32467,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "EI"
+        },
+        {
+          "address": 32468,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "LD HL,fast IRQ"
+        },
+        {
+          "address": 32471,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD (48574),HL"
+        },
+        {
+          "address": 32474,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(32773)"
+        },
+        {
+          "address": 32477,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD (30866),HL"
+        },
+        {
+          "address": 32480,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP 24784"
+        }
+      ]
+    },
+    {
+      "name": "uninitialized",
+      "cached": 255,
+      "before": 100,
+      "now": 164,
+      "remaining": 7,
+      "tstates": 158,
+      "wrapper_delta_tstates": 185,
+      "seek_calls": [],
+      "last_service": 100,
+      "preserves_state": true,
+      "instruction_histogram": [
+        {
+          "address": 32368,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH AF"
+        },
+        {
+          "address": 32369,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH BC"
+        },
+        {
+          "address": 32370,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH DE"
+        },
+        {
+          "address": 32371,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32372,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(24803)"
+        },
+        {
+          "address": 32375,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,H"
+        },
+        {
+          "address": 32376,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR L"
+        },
+        {
+          "address": 32377,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32380,
+          "tstates": 13,
+          "count": 1,
+          "instruction": "LD A,(24810)"
+        },
+        {
+          "address": 32383,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "CP FEh"
+        },
+        {
+          "address": 32385,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32412,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP HL"
+        },
+        {
+          "address": 32413,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP DE"
+        },
+        {
+          "address": 32414,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP BC"
+        },
+        {
+          "address": 32415,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP AF"
+        },
+        {
+          "address": 32416,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "RET"
+        }
+      ]
+    },
+    {
+      "name": "invalidated",
+      "cached": 254,
+      "before": 100,
+      "now": 164,
+      "remaining": 7,
+      "tstates": 158,
+      "wrapper_delta_tstates": 185,
+      "seek_calls": [],
+      "last_service": 100,
+      "preserves_state": true,
+      "instruction_histogram": [
+        {
+          "address": 32368,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH AF"
+        },
+        {
+          "address": 32369,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH BC"
+        },
+        {
+          "address": 32370,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH DE"
+        },
+        {
+          "address": 32371,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32372,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(24803)"
+        },
+        {
+          "address": 32375,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,H"
+        },
+        {
+          "address": 32376,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR L"
+        },
+        {
+          "address": 32377,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32380,
+          "tstates": 13,
+          "count": 1,
+          "instruction": "LD A,(24810)"
+        },
+        {
+          "address": 32383,
+          "tstates": 7,
+          "count": 1,
+          "instruction": "CP FEh"
+        },
+        {
+          "address": 32385,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32412,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP HL"
+        },
+        {
+          "address": 32413,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP DE"
+        },
+        {
+          "address": 32414,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP BC"
+        },
+        {
+          "address": 32415,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP AF"
+        },
+        {
+          "address": 32416,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "RET"
+        }
+      ]
+    },
+    {
+      "name": "eof",
+      "cached": 3,
+      "before": 100,
+      "now": 164,
+      "remaining": 0,
+      "tstates": 128,
+      "wrapper_delta_tstates": 155,
+      "seek_calls": [],
+      "last_service": 100,
+      "preserves_state": true,
+      "instruction_histogram": [
+        {
+          "address": 32368,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH AF"
+        },
+        {
+          "address": 32369,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH BC"
+        },
+        {
+          "address": 32370,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH DE"
+        },
+        {
+          "address": 32371,
+          "tstates": 11,
+          "count": 1,
+          "instruction": "PUSH HL"
+        },
+        {
+          "address": 32372,
+          "tstates": 16,
+          "count": 1,
+          "instruction": "LD HL,(24803)"
+        },
+        {
+          "address": 32375,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "LD A,H"
+        },
+        {
+          "address": 32376,
+          "tstates": 4,
+          "count": 1,
+          "instruction": "OR L"
+        },
+        {
+          "address": 32377,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "JP done"
+        },
+        {
+          "address": 32412,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP HL"
+        },
+        {
+          "address": 32413,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP DE"
+        },
+        {
+          "address": 32414,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP BC"
+        },
+        {
+          "address": 32415,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "POP AF"
+        },
+        {
+          "address": 32416,
+          "tstates": 10,
+          "count": 1,
+          "instruction": "RET"
+        }
+      ]
+    }
+  ],
+  "implementation": {
+    "address": 32368,
+    "code_hex": "f5c5d5e52ae3607cb5ca9c7e3aea60fefed29c7e2a0580ed5b9278b7ed527cb7c2997e7dfe40da9c7ecda17ee1d1c1f1c9ed73e56031009cdde5fde508f508d9c5d5e5d92100bd22bebd060021d37ee521443ee53ebeed47ed5e3aea60cb3ffbc32f3dfb2180bd22bebd2a0580229278c3d060",
+    "labels": {
+      "check": 32368,
+      "due": 32409,
+      "done": 32412,
+      "keepalive": 32417,
+      "keepalive_enter": 32464,
+      "keepalive_return": 32467,
+      "end": 32483
+    },
+    "listing": [
+      {
+        "address": 32368,
+        "instruction": "PUSH AF",
+        "tstates": 11,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32369,
+        "instruction": "PUSH BC",
+        "tstates": 11,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32370,
+        "instruction": "PUSH DE",
+        "tstates": 11,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32371,
+        "instruction": "PUSH HL",
+        "tstates": 11,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32372,
+        "instruction": "LD HL,(24803)",
+        "tstates": 16,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32375,
+        "instruction": "LD A,H",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32376,
+        "instruction": "OR L",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32377,
+        "instruction": "JP done",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32380,
+        "instruction": "LD A,(24810)",
+        "tstates": 13,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32383,
+        "instruction": "CP FEh",
+        "tstates": 7,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32385,
+        "instruction": "JP done",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32388,
+        "instruction": "LD HL,(32773)",
+        "tstates": 16,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32391,
+        "instruction": "LD DE,(last service)",
+        "tstates": 20,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32395,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32396,
+        "instruction": "SBC HL,DE",
+        "tstates": 15,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32398,
+        "instruction": "LD A,H",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32399,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32400,
+        "instruction": "JP due",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32403,
+        "instruction": "LD A,L",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32404,
+        "instruction": "CP threshold",
+        "tstates": 7,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32406,
+        "instruction": "JP done",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32409,
+        "instruction": "CALL keepalive",
+        "tstates": 17,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32412,
+        "instruction": "POP HL",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32413,
+        "instruction": "POP DE",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32414,
+        "instruction": "POP BC",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32415,
+        "instruction": "POP AF",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32416,
+        "instruction": "RET",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32417,
+        "instruction": "LD (saved_sp),SP",
+        "tstates": 20,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32421,
+        "instruction": "LD SP,disk stack",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32424,
+        "instruction": "PUSH IX",
+        "tstates": 15,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32426,
+        "instruction": "PUSH IY",
+        "tstates": 15,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32428,
+        "instruction": "EX AF,AF'",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32429,
+        "instruction": "PUSH AF",
+        "tstates": 11,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32430,
+        "instruction": "EX AF,AF'",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32431,
+        "instruction": "EXX",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32432,
+        "instruction": "PUSH BC",
+        "tstates": 11,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32433,
+        "instruction": "PUSH DE",
+        "tstates": 11,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32434,
+        "instruction": "PUSH HL",
+        "tstates": 11,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32435,
+        "instruction": "EXX",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32436,
+        "instruction": "LD HL,slow IRQ",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32439,
+        "instruction": "LD (48574),HL",
+        "tstates": 16,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32442,
+        "instruction": "LD B,0",
+        "tstates": 7,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32444,
+        "instruction": "LD HL,keepalive return",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32447,
+        "instruction": "PUSH HL",
+        "tstates": 11,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32448,
+        "instruction": "LD HL,SEEK 5.03",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32451,
+        "instruction": "PUSH HL",
+        "tstates": 11,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32452,
+        "instruction": "LD A,BEh",
+        "tstates": 7,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32454,
+        "instruction": "LD I,A",
+        "tstates": 9,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32456,
+        "instruction": "IM 2",
+        "tstates": 8,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32458,
+        "instruction": "LD A,(24810)",
+        "tstates": 13,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32461,
+        "instruction": "SRL A",
+        "tstates": 8,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32463,
+        "instruction": "EI",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32464,
+        "instruction": "JP 15663",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32467,
+        "instruction": "EI",
+        "tstates": 4,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32468,
+        "instruction": "LD HL,fast IRQ",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32471,
+        "instruction": "LD (48574),HL",
+        "tstates": 16,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32474,
+        "instruction": "LD HL,(32773)",
+        "tstates": 16,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32477,
+        "instruction": "LD (30866),HL",
+        "tstates": 16,
+        "phase": "inplace_keepalive"
+      },
+      {
+        "address": 32480,
+        "instruction": "JP 24784",
+        "tstates": 10,
+        "phase": "inplace_keepalive"
+      }
+    ]
+  },
+  "preserves_both_register_sets": true,
+  "rom_mocked": true,
+  "note": "Includes helper RET and shared adapter restoration; excludes caller CALL and ROM/IRQ/ULA. Wrapper delta adds 27 T. Repeated queue checks and real ROM latency need integrated measurement.",
+  "source_sha256_lf": {
+    "test_inplace_keepalive.py": "f36b083bd21d43c2fe6f98c3c8e99362da31718d228e63740abc26e35a74d258",
+    "inplace_keepalive_player.py": "0e798c66d14a842b6ec2b943ef1fa23c0db7cd8ee6fd2cbc4feee21af49c958f",
+    "inplace_slot_input_z80.py": "aed5462418016e17a64708b313e38dfc48a886f1c40bd006dd4db7370f1d5319",
+    "benchmark_inplace_slot.py": "f840275a215aa3f2c8dbc03a0cfd71ec60072bfc26f39a842f255d128a076a9e",
+    "test_inplace_slot.py": "1ff1dc18dc3e8bd891e92559bf41273926393445ac961130f0b217fd9b0348b6",
+    "fap3_disk_z80.py": "e906dd14aa942e51831e8285dc1c33c9fb5002a0b70ff73f992c4602df374689"
+  }
+}

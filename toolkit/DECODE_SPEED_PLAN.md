@@ -211,11 +211,24 @@ See [the saved verification](hl_mask_reader_summary.json).
    complete run has **1496 late frames**, **914 invalid intervals**, and
    **24 AY underruns**, versus 1745/1047/0 in the smaller resident baseline.
    Preserve both attempts; neither is a release or cadence pass.
-   Next add **periodic drive maintenance while the queue is full**, before
-   idle shutdown, without consuming or rereading any sector. Count the
-   extra queue checks and ROM service, test state/IRQ preservation, then
-   repeat all three EOF runs. Larger decoded packet storage is not extra
-   native-screen buffering and cannot establish cadence on its own.
+   [Periodic drive maintenance](INPLACE_KEEPALIVE.md) now runs during queue
+   waits and foreground frame work. All three volumes finish with **zero
+   AY underruns, record gaps/duplicates and missing/duplicate IRQ fields**;
+   50-Hz AY delivery passes again. The 185 SEEK/HLD calls consume 76670
+   elapsed ROM-service T; maximum sector read falls to about 43.9 ms.
+   Video improves to **1321 late frames and 783 invalid intervals**, still
+   failing both timing gates. All video/AY bytes and 7106 reads are unchanged;
+   actual occupied sectors are 2462/2463/2462. Retain the maintenance hook
+   in this experimental path; common checks add 279 CPU T each, and their
+   actual total call count is not replayed. All tested path counts are saved.
+   Next target **block-acquisition bursts and usable reserve**: worst packet
+   transfers still approach 1.9 million elapsed T despite short individual
+   reads. Compare earlier acquisition or consumption of partially acquired
+   compressed input, preserving overlap safety, live history, slot ownership
+   and AY. Keep the earlier streaming-input regression as a comparison and
+   measure sustained CPU/disk delivery before adoption. Larger decoded
+   packet storage is not extra native-screen buffering and cannot establish
+   cadence on its own.
 
 A small concrete candidate for step 1 is the target setup for nonzero
 motion phases. With the new cache,

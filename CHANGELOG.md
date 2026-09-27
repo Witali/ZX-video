@@ -21,6 +21,63 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — periodic drive maintenance restores 50-Hz AY delivery
+
+- **Objective/baseline:** remove the remaining idle-drive delays from the
+  larger-slot player at `1d3ac46`. Keep all 4221 authorized frames, resolution,
+  25/3-fps deadlines, exact video/AY packets and independent volume boots.
+- **Parameters/implementation:** check the shared 16-bit service clock at
+  five queue/foreground/audio-drain checkpoints. At 64 fields, issue the
+  existing ROM 5.03 SEEK/HLD for the current cached cylinder; do not read a
+  sector or advance stream/side/slot state. Preserve both register sets,
+  main registers, paging, stack and IRQ contract. Reuse 115 bytes at 7E70
+  and a six-byte bank-7 wrapper; allocate no new state or video buffer.
+  Existing pre-read recovery remains. All five CALL patches cost 17 -> 17 T.
+- **CPU costs:** new helper paths (including RET, excluding ROM/IRQ/ULA)
+  are **252/709/709/688/158/128 T** for recent/due/wrap/long/uninitialized-or-
+  invalidated/EOF cases. Including the extra wrapper they add
+  **279/736/736/715/185/155 T** over the previous zero periodic-check cost.
+  Per-instruction histograms are saved. Skipped-hook frequency is not
+  replayed, so a complete integrated-player CPU delta is not claimed.
+- **Capacity/content:** video remains **1818909 B / 7106 runtime sectors**.
+  Actual disks use **2462/2463/2462 sectors**, leaving **82/81/82**; disk 1
+  gains one occupied sector from bootstrap/placement changes. All video and
+  AY bytes match the previous attempt exactly.
+- **Complete Fuse result:** **zero AY underruns**, zero record-field gaps or
+  duplicates, zero missing/duplicate IRQ fields and zero direct-read retries.
+  All **25326 AY records pass 50-Hz delivery**. Maximum sector-read time is
+  **155717/155736/155756 T** (about 43.9 ms), versus the previous 2259050-T
+  maximum. **69/60/56 maintenance calls**, 185 total, consume **76670 elapsed
+  ROM-service T** across all disks, separate from their CPU wrappers.
+- **Video timing:** late frames **137/553/806 -> 90/465/766**, total
+  **1496 -> 1321 (-175)**; invalid intervals **914 -> 783 (-131)**. Effective
+  fps **8.333333/8.063713/8.333333**. Summed publication span changes
+  **1815953880 -> 1812975750 T (-2978130)**. Maximum lateness remains
+  **64/260/265 fields**; actual OUT deviations are **4538116/18436083/18790630
+  T**. Recovered runs **3/15/3**; disk 2 ends unrecovered at local frames
+  1238..1296. All missed frames and recoveries are saved. Both video gates
+  fail; initial disk/IRQ phases were not matched.
+- **Verification:** three tests cover all 160 current tracks, a different
+  next track, threshold/wrap/long idle/EOF, adversarial ROM register clobber
+  and real AY IRQ after every maintenance instruction. All three dirty-RAM
+  boots, first full native/second compact frames, soundtrack immutability,
+  both swaps and wrong-volume/series rejection pass. Full Fuse EOF runs
+  verify all frames (80 screen bytes each), all AY writes/sectors/progress
+  and actual publication/IRQ timing. Prior full-byte frame/block CPU evidence
+  is reused for unchanged code/data. Physical hardware remains untested.
+- **Decision/next:** retain the maintenance hook for the larger-slot
+  experiment, keeping root releases unchanged. Remaining packet transfers
+  reach about 1.9 million T with short individual reads; investigate block
+  acquisition and reserve scheduling next, including safely consuming input
+  before a whole compressed block arrives. Preserve overlap/AY correctness
+  and compare against the earlier streaming-input regression.
+- **Evidence:** [implementation and reproduction](toolkit/INPLACE_KEEPALIVE.md),
+  [native CPU cases](toolkit/inplace_keepalive_cpu.json),
+  [build](toolkit/inplace_keepalive_build.json),
+  [full comparison](toolkit/inplace_keepalive_summary.json),
+  [saved sources and complete traces](toolkit/inplace_keepalive_evidence/manifest.json),
+  [auditor](toolkit/summarize_inplace_keepalive.py).
+
 ## 2026-09-27 — integrate larger ZX0 slots and measure idle-drive limits
 
 - **Objective/baseline:** turn the `1ab9c2c` overlap proof into an actual
