@@ -1,0 +1,14 @@
+{
+  "complete": false,
+  "release": false,
+  "scope": "Actual cold-loaded parser/queue: forced yields, exact packets and IRQ stress.\n\nROM is mocked and video publication is injected at queue boundaries. This\nis a state/cycle test, not an emulated disk-latency or frame-cadence proof.\n",
+  "parts": [
+    1
+  ],
+  "volumes": [
+    {
+      "part": 1
+    }
+  ],
+  "failure": "AssertionError(('instruction timing differs', '0x8df2', 17, {'address': 36338, 'instruction': 'LD A,B', 'tstates': 4, 'stage': 'patch', 'phase': 'reconstruct'}))"
+}

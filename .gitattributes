@@ -189,3 +189,9 @@ toolkit/*native_mask_selection*.py text eol=lf
 toolkit/native_mask_selection*.json text eol=lf
 toolkit/native_mask_selection_evidence/*.json text eol=lf
 toolkit/native_mask_selection_evidence/*.gz -text
+toolkit/*resumable_packet*.py text eol=lf
+toolkit/resumable_packet*.json text eol=lf
+toolkit/resumable_packet_evidence/*.json text eol=lf
+toolkit/resumable_packet_evidence/*.gz -text
+# Compressed experimental disk images are disk artifacts too.
+toolkit/resumable_packet_evidence/*.trd.gz filter=lfs diff=lfs merge=lfs -text

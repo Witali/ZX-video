@@ -21,6 +21,64 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — resumable optional packet reads preserve size but worsen cadence
+
+- **Objective/baseline:** remove read-ahead calls that keep a prepared compact
+  frame waiting after screen publication. Compare with `a84451d`, all 4221
+  authorized frames, resident AY and three 15872-byte in-place ZX0 slots.
+- **Implementation:** a 162-byte bank-7 helper at F900..F9A1 includes two
+  parser state bytes. Optional reads yield at queue boundaries and resume
+  the same length/body; required reads retain demand decoding. Optional
+  reads consume available output or one 256-byte decode/input quantum.
+  No extra packet/frame buffer, repeated prefix copy or private stack;
+  the gate uses two extra stack bytes. Screen deadlines and AY IRQ unchanged.
+- **Capacity/content:** compressed video **1,818,909 B**, 188 blocks and
+  **7106 reads**, all byte-identical to the baseline. AY hashes also match.
+  Occupied sectors remain **2462/2463/2462**, free **82/81/82**. Video starts
+  at **107/109/110**, versus **107/108/109**. Dirty-RAM boots, initial complete
+  native/compact frames, resident audio and both disk swaps pass.
+- **CPU verification:** first 256 packets per volume in baseline, required
+  and forced-resume modes; 584 forced pauses across 768 packets. All packet
+  bytes are exact and written once, including continuation after register
+  clobber. Additional real-IRQ and split-length/final-slot cases pass, with
+  **4066 IRQ injections**. Required CPU totals: **15,749,661 -> 15,890,573 /
+  19,024,975 -> 19,173,868 / 27,631,846 -> 27,793,408 T**. The instruction
+  formula matches each prefix, separately accounting for **0/-92/-113 T**
+  of producer/disk CPU changes due to placement. Queue count read **13 ->
+  67 T (+54)** in required mode and **13 -> 94 T (+81)** in optional mode;
+  required demand dispatch **10 -> 37 T (+27)**. This is prefix CPU evidence,
+  with mocked ROM and excluding IRQ/ULA/physical latency, not full-movie CPU.
+- **Complete Fuse:** all disks reach EOF; all **25326 AY records** remain
+  exact at 50 Hz, zero underruns, IRQ gaps/duplicates or read retries.
+  Late frames **89/481/767 = 1337**, versus 1321; invalid intervals
+  **43/261/493 = 797**, versus 783. Maximum lateness **64/266/271 fields**,
+  actual OUT deviation **4,538,126/18,861,528/19,216,070 T**. Recovered runs
+  **2/11/3**, volume 2 unrecovered at local frames **1237..1296**. Summed
+  publication span **1,813,401,192 T (+425,442)**. Both video gates fail.
+- **Scheduling evidence/decision:** 33 native draws start before the
+  interrupted packet finishes. This responsiveness improvement does not
+  translate to sustained playback: late counts and total span worsen.
+  **Keep experimental; do not enable by default.** A next variant must
+  remove checks from mandatory reads and count optional setup/restoration.
+  Root releases and converter defaults stay unchanged. Fuse checks 80
+  pixels/frame, not complete screens; physical hardware and matched initial
+  disk/IRQ phases remain unverified. Suspended transfer intervals overlap
+  other drawing and must not be summed as exclusive CPU work.
+- **Incomplete attempts and audit:** initial test runs exposed a stale
+  relocated instruction listing and missing SCF support in the Python CPU;
+  both failure reports are saved. A later test reached disk 3 before its
+  build finished, exited on FileNotFoundError, and retained completed cases.
+  The resume script executed only missing cases; the audit checks unchanged
+  prior results. No player change was needed for these instrumentation
+  fixes. The completed archive verifies actual bootstrap helper bytes,
+  compressed streams, source/report hashes and complete traces. Experimental
+  `.trd.gz` evidence images are in Git LFS. See [report and commands](toolkit/RESUMABLE_PACKET.md),
+  [implementation](toolkit/resumable_packet_player.py),
+  [builder](toolkit/build_resumable_packet.py), [tests](toolkit/test_resumable_packet.py),
+  [resume script](toolkit/resume_resumable_packet_tests.py),
+  [auditor](toolkit/summarize_resumable_packet.py), and
+  [complete summary](toolkit/resumable_packet_summary.json).
+
 ## 2026-09-27 — CPU-optimal native masks fit but do not improve total delivery
 
 - **Objective/baseline:** remeasure the older capacity-rejected `gray_optimal`

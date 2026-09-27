@@ -106,6 +106,13 @@ and video adds 110 sectors. Full Fuse has 1268 late frames / 761 invalid
 intervals; total publication span grows 141,810 T and volume 2's maximum
 lateness grows 260 -> 262 fields. Do not adopt this global mask policy.
 
+The [resumable optional-reader experiment](RESUMABLE_PACKET.md) is also
+complete. It preserves all compressed video bytes and occupied sectors,
+and 33 native draws now begin before the interrupted packet finishes.
+Nevertheless, full Fuse worsens **1321 -> 1337 late frames**, **783 -> 797
+invalid intervals**, and summed publication span by **425,442 T**. AY stays
+exact at 50 Hz. Keep this implementation experimental and retain `a84451d`.
+
 ## Method: replace indexed access when the whole path is faster
 
 Inspect the generated machine code and measured execution frequency.
@@ -265,18 +272,23 @@ See [the saved verification](hl_mask_reader_summary.json).
    packet storage is not extra native-screen buffering and cannot establish
    cadence on its own.
 
-   Also investigate **resumable optional packet acquisition**. The new
-   [trace analysis](NATIVE_MASK_SELECTION.md) finds 64 baseline read-ahead
+   The first **resumable optional packet acquisition** experiment is
+   [complete and rejected as a default](RESUMABLE_PACKET.md). The earlier
+   [trace analysis](NATIVE_MASK_SELECTION.md) found 64 baseline read-ahead
    calls that span publication while the following compact frame is already
    prepared; 16 are followed by a late frame. The largest post-publication
    transfer tail is 1,542,815 elapsed T. These are blocking intervals, not
-   CPU savings. Try yielding only after an indivisible sector operation,
-   ZX0 quantum or copy chunk returns, so the next native draw can proceed.
-   Preserve partial header/body state, queue cursors and original deadlines;
-   required reads must finish the exact pending packet. Distinguish this
-   from the old whole-packet admission guards and per-input ZX0 checks.
-   Count all added T-states, prove slot/EOF/IRQ safety and measure all three
-   volumes before adoption. No timing improvement is established yet.
+   CPU savings. The implemented two-byte parser state resumes at existing
+   queue boundaries; actual full traces verify 33 earlier draws. Exact
+   packets, split length fields, slot EOF and IRQ preservation pass, but
+   global checks add 54 T per mandatory queue gate and 27 T per mandatory
+   demand dispatch. Smaller optional ZX0 quanta also add work. Both timing
+   gates still fail and total delivery worsens. A next variant should keep
+   the original mandatory path, using an optional-only consumer entry or
+   safely restored temporary routing. Count its setup/restoration, preserve
+   partial header/body state and original deadlines, then repeat complete
+   delivery measurements. Do not repeat the current global-gate policy or
+   infer a sustained speedup from its isolated responsiveness improvement.
 
 A small concrete candidate for step 1 is the target setup for nonzero
 motion phases. With the new cache,
