@@ -21,6 +21,36 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — complete reservoir traces identify sustained input depletion
+
+- **Objective/input:** identify why the retained `a84451d` player remains
+  late after read-ahead routing experiments. Reuse all 4221 frames/25326 AY
+  records of archived playback and exact current video blocks. No runtime
+  code, stream or pixel change; player instruction delta **0 T**.
+- **Method:** independently reconstruct absolute packet positions, completed
+  blocks and active decoded prefixes. All packet starts agree with traced
+  queue count, slot ownership, cursor and the 47616-byte capacity. Keep
+  deterministic frame CPU separate from elapsed stages and disk service.
+- **Results:** median decoded reserve is **30092/9263/4 bytes**; starts with
+  at most six bytes ready are **104/509/757**. Worst 32-frame work windows
+  **642..674 / 2870..2902 / 3887..3919** (exclusive ends) exceed their
+  13,614,336-T budget by **4,270,251/10,322,669/9,303,856 T**. Transfer
+  contributes **7,190,928/12,706,585/11,643,401 T**, including disk service
+  **2,667,757/4,877,724/4,886,539 T**. The last two windows have no completed
+  slot at any packet start and at most six decoded bytes ready.
+- **Decision:** target sustained acquisition/decode/copy cost and useful
+  advance work. Revisit faster ZX0 tokenizations with the new 82/81/82-sector
+  headroom; the old adaptive test had only 275/58/746 spare bytes. Measure
+  native CPU/overlap, extra sectors and full selected delivery before adoption.
+  A frozen-duration projection with free input has zero late frames, but is
+  explicitly hypothetical and proves no release or feasible schedule.
+- **Coverage/limitations:** full saved trace/packet coverage; physical drives
+  and changed playback remain unverified. The first analysis rejected the
+  resident packet minimum using an old 294-byte mux assumption; it now reads
+  the actual 288-byte contract from metadata. See [analysis](toolkit/LATE_RESERVOIR.md),
+  [reproducer/auditor](toolkit/profile_late_reservoir.py) and
+  [all frame/block results](toolkit/late_reservoir_profile.json).
+
 ## 2026-09-27 — separate optional consumer removes global checks but still misses cadence
 
 - **Objective/baseline:** remove mandatory queue overhead from `25780a9`

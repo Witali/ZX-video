@@ -302,6 +302,17 @@ See [the saved verification](hl_mask_reader_summary.json).
    scheduling work must reduce difficult-scene work or prepare more of it
    before those runs; account for reservoir capacity and overlapping stages.
 
+   The [complete decoded-reserve analysis](LATE_RESERVOIR.md) now confirms
+   sustained depletion: median reserve is 30092/9263/4 bytes by volume.
+   The hardest 32-frame windows on disks 2/3 have at most six bytes ready at
+   every packet start; transfer accounts for more than half their elapsed
+   foreground work. Next remeasure short-match removal in the unchanged ZX0
+   format with the present 82/81/82-sector headroom. The old adaptive search
+   had only 275/58/746 spare bytes and does not settle this larger-budget case.
+   Verify overlap across sector alignments, native coroutine work, added
+   reads and complete selected playback. The saved free-input projection is
+   hypothetical, not a feasibility proof or a substituted release criterion.
+
 A small concrete candidate for step 1 is the target setup for nonzero
 motion phases. With the new cache,
 `LD HL,(target); PUSH HL; EXX; POP HL; EXX` costs **45 T**.
