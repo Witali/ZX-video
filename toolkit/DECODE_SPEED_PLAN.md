@@ -98,6 +98,14 @@ Keep this optional data variant as a comparison, while retaining the roomier
 `a84451d` baseline and unchanged release/defaults. Compare changes against
 the same input policy so data and decoder benefits are not double-counted.
 
+The [native-mask remeasurement](NATIVE_MASK_SELECTION.md) now builds and
+plays all three disks too. It revisits the older capacity-rejected
+`gray_optimal` rule under the current layout. Exact pixels and 50-Hz AY
+are preserved. Frame CPU saves 6,373,807 T, but producer/ZX0 adds 1,774,469 T
+and video adds 110 sectors. Full Fuse has 1268 late frames / 761 invalid
+intervals; total publication span grows 141,810 T and volume 2's maximum
+lateness grows 260 -> 262 fields. Do not adopt this global mask policy.
+
 ## Method: replace indexed access when the whole path is faster
 
 Inspect the generated machine code and measured execution frequency.
@@ -257,6 +265,19 @@ See [the saved verification](hl_mask_reader_summary.json).
    packet storage is not extra native-screen buffering and cannot establish
    cadence on its own.
 
+   Also investigate **resumable optional packet acquisition**. The new
+   [trace analysis](NATIVE_MASK_SELECTION.md) finds 64 baseline read-ahead
+   calls that span publication while the following compact frame is already
+   prepared; 16 are followed by a late frame. The largest post-publication
+   transfer tail is 1,542,815 elapsed T. These are blocking intervals, not
+   CPU savings. Try yielding only after an indivisible sector operation,
+   ZX0 quantum or copy chunk returns, so the next native draw can proceed.
+   Preserve partial header/body state, queue cursors and original deadlines;
+   required reads must finish the exact pending packet. Distinguish this
+   from the old whole-packet admission guards and per-input ZX0 checks.
+   Count all added T-states, prove slot/EOF/IRQ safety and measure all three
+   volumes before adoption. No timing improvement is established yet.
+
 A small concrete candidate for step 1 is the target setup for nonzero
 motion phases. With the new cache,
 `LD HL,(target); PUSH HL; EXX; POP HL; EXX` costs **45 T**.
@@ -297,13 +318,15 @@ Verify generated placement and all phases before adopting it.
   group is estimated to add 1,056,003 T. Both are rejected; see
   [the probe and assumptions](FRAME_HOTSPOTS.md).
 - Changing the encoder's density threshold is a separate stream-size
-  experiment. Next compare the existing 18-cell rule with host-selected
-  sparse/full native maps using actual output costs, including zero groups
-  and band parity. This requires no extra runtime mask test and preserves
-  every pixel. Replay alternating screens and cold maps, measure final ZX0
-  size and actual capacity, then complete producer/CPU/Fuse checks. Select
-  for expensive windows as well as aggregate cost; a CPU-optimal mask cannot
-  be accepted without the disk-delivery measurements.
+  experiment. The [complete native-mask remeasurement](NATIVE_MASK_SELECTION.md)
+  now checks host-selected sparse/full maps, zero groups, band parity, every
+  compact/native byte, actual ZX0/capacity and full delivery. All three disks
+  fit with 49/38/48 sectors free, but a 4,599,338-T net measured component
+  saving does not compensate the complete delivery result: summed publication
+  span grows 141,810 T. Do not adopt the global CPU-optimal maps or repeat
+  their stage-only projection. Keep the prior 8-KiB `gray_optimal` and
+  `compact_16` records; the current larger-slot result does not test the
+  latter size-first rule or a targeted mix of policies.
 - Whole-row zero/uniform detection was measured on all 83,652 dense rows.
   Only 90 are zero and 332 uniform. Charging just immediate failures while
   making every other test and successful fill free still adds at least

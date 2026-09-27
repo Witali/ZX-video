@@ -21,6 +21,61 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — CPU-optimal native masks fit but do not improve total delivery
+
+- **Objective/baseline:** remeasure the older capacity-rejected `gray_optimal`
+  native-map rule with `a84451d`, resident AY and 15872-byte in-place ZX0
+  blocks. All 4221 authorized frames, resolution, pixel values, AY records,
+  25/3-fps deadlines and independently bootable volumes are retained.
+- **Parameters:** choose existing exact sparse or full output on the host.
+  Variable band cost is **5853 + 4*parity T** for full output versus
+  **261*marked_cells - 136*zero_groups T** for sparse output. No new Z80
+  instruction, dispatch test or memory allocation. Change only native-map
+  bytes: 9126 bands in 2230 frames; all other packet fields invert exactly.
+  The four later-volume cold maps retain their mandatory full redraw.
+- **Capacity:** all 188 blocks round-trip and satisfy sector-aligned in-place
+  safety. ZX0 grows **1,818,909 -> 1,846,953 B (+28,044)**, reads **7106 ->
+  7216 (+110)**. Actual occupied sectors **2495/2506/2496**, free **49/38/48**.
+  Total occupied growth is also 110 sectors, after bootstrap/placement changes.
+- **CPU evidence:** all 4221 compact frames and both full native screens
+  match. Each delta matches the output formula and historical projection,
+  adjusted for independent cold maps. Frame stages **1,018,049,241 ->
+  1,011,675,434 T (-6,373,807)**; no slower frame-stage cases. Producer/ZX0
+  **201,404,859 -> 203,179,328 T (+1,774,469)**. Measured components save
+  **4,599,338 T (~0.377%)**, excluding queue/AY/IRQ/ULA/ROM/disk elapsed time.
+  The 481 baseline over-budget frames save 1,247,998 frame T, versus
+  5,125,809 T on the other 3740. Histograms/instruction timings are checked.
+- **Complete Fuse result:** every volume reaches EOF, all 25326 AY records
+  remain exact at 50 Hz, zero underruns, missing/duplicate IRQ fields or
+  read retries. Late frames **87/420/761 = 1268**, versus 1321; invalid
+  intervals **41/238/482 = 761**, versus 783. Maximum lateness **63/262/261
+  fields**, actual deviation **4,467,209/18,577,896/18,506,994 T**. Recovered
+  runs **2/12/4**, with volume 2's unrecovered tail at local frames 1239..1296.
+  Total publication span **1,813,117,560 T (+141,810)**. Both video gates fail.
+- **Coverage/decision:** three focused tests, dirty-RAM boots, initial frames,
+  immutable AY, both swaps, full native frame/block execution and all Fuse
+  traces. Fuse samples 80 pixels/frame; physical hardware is untested and
+  initial disk/IRQ phases are not matched. The self-contained archive audit
+  passes with 81 gzip files, full source pixel/AY replay and exact inverses.
+  **Do not adopt the global mask policy:** extra sectors and worse total
+  span/volume-2 maximum deviation outweigh this small CPU saving. Preserve
+  the roomier baseline and separate fragment candidate; release/defaults stay
+  unchanged. The old capacity rejection is superseded, not erased.
+- **Next delivery question:** trace analysis finds 64 baseline optional
+  packet reads spanning publication while the following compact frame is
+  prepared; 16 are followed by a late frame, maximum transfer tail 1,542,815 T.
+  The mask variant has 63/12 calls and maximum 1,519,170 T. These are blocking
+  observations, not saved CPU. Plan a resumable optional reader at safe
+  sector/ZX0/copy boundaries, preserving partial packets, queue ownership,
+  original deadlines and exact mandatory-read completion. It is not implemented.
+  See [report and commands](toolkit/NATIVE_MASK_SELECTION.md),
+  [rewriter](toolkit/native_mask_selection.py),
+  [probe](toolkit/probe_native_mask_selection.py),
+  [tests](toolkit/test_native_mask_selection.py),
+  [builder](toolkit/build_native_mask_selection.py),
+  [archive/trace audit](toolkit/summarize_native_mask_selection.py), and
+  [complete results](toolkit/native_mask_selection_summary.json).
+
 ## 2026-09-27 — cost-selected fragments fit the current three-disk layout
 
 - **Objective/baseline:** revisit the September 25 capacity-rejected selector
