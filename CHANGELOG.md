@@ -21,6 +21,51 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — compact cursor byte updates, full CPU and disk playback
+
+- **Objective/baseline:** reduce repeated reconstruction bookkeeping without
+  changing compression. Sources start at `b3f33fc`; complete playback is
+  compared with HL-reader `074e1e7` on the same 4221 frames and three streams.
+- **Change:** replace full-address updates within a compact stripe with
+  low-byte operations. Normal tile **40→33 T (-7)**; no-op run
+  **62→42 T (-20)**. The stripe transition still handles full addresses.
+  Code-region lengths, labels, extra RAM/stack and compressed bytes are
+  unchanged. Added `--compact-cursor`, disabled by default.
+- **Complete CPU:** all 4221 compact frames and both full screens match.
+  Frame stages **1027719624→1023364329 T (-4355295)**, with per-frame
+  instruction-formula checks. All **25677 real queue calls** replay exactly;
+  queue/full-AY-wait CPU **289401696→289460171 T (+58475)**.
+- **Complete Fuse:** three EOFs, late frames **3073→3070**, AY underruns
+  **883→869**, summed publication span **1854669649→1853606028 T**
+  (**-1063621 T**). Intervals outside 5..7 fields **660→662**; the third
+  disk worsens on this metric. Maximum lateness **83/338/463 fields**;
+  recovered runs **0/3/2**, with the final run on each disk unrecovered at EOF.
+  Actual maximum deviations **5885379/23966904/32830408 T** and individual
+  nominal-deadline misses are saved separately from fallback results.
+- **Capacity/data:** independently bootable images use **2542/2543/2542**
+  sectors. The 1919945-B stream, 7501 video sectors and their start positions
+  are unchanged. All 25326 AY records are exact, but have **78/333/458**
+  field gaps; no duplicate records or missed physical IRQ fields. All 7498
+  direct ROM returns preserve IM2/I/vector. Runtime sectors are read once.
+- **Coverage/limits:** four boundary/mixed-frame/IRQ tests pass; a six-frame
+  smoke precedes full CPU replay. Dirty-RAM cold boots, regenerated installed
+  bytes and mocked-ROM disk swaps pass. Fuse has no debugger RAM patches
+  and checks 80 screen bytes per frame; full screen comparison belongs to
+  the separate CPU fixture. IRQ/disk starting phases are not matched.
+  No new source video or physical drive was tested.
+- **Decision:** retain the option and both comparison runs. CPU savings are
+  exact; measured delivery improvement is modest and not uniform. Nominal
+  deadlines, fallback and AY continuity still fail; root release TRDs remain
+  unchanged. Continue with larger remaining reconstruction/output costs.
+- **Reproduction/evidence:** [report and commands](toolkit/COMPACT_CURSOR.md),
+  [implementation](toolkit/compact_cursor.py),
+  [tests](toolkit/test_compact_cursor.py),
+  [full CPU script](toolkit/benchmark_compact_cursor.py),
+  [CPU data](toolkit/compact_cursor_cpu.json),
+  [build](toolkit/compact_cursor_build.json),
+  [playback audit](toolkit/summarize_compact_cursor.py),
+  [summary and archive index](toolkit/compact_cursor_summary.json).
+
 ## 2026-09-27 — complete frame CPU profile and rejected dense-output probes
 
 - **Objective/baseline:** locate remaining decoder/output costs without

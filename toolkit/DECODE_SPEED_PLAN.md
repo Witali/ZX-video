@@ -48,6 +48,13 @@ the generic converter's defaults or the root release images.
   with exact compact data and both complete screens. It totals
   **1,027,719,624 T**: reconstruction 60.36%, output 32.85%, metadata 6.19%.
   This excludes ZX0, copying, queues, IRQ/AY, ULA, ROM and disk latency.
+- The [compact cursor experiment](COMPACT_CURSOR.md) now completes all
+  4221 frames and all three Fuse volumes. Byte updates within a stripe save
+  **4,355,295 deterministic frame T-states** with unchanged compressed data,
+  code size and disk layout. AY underruns fall 883→869 and summed publication
+  span falls by 1,063,621 T, but bad intervals rise 660→662. Retain
+  `--compact-cursor` for measured work and keep both this result and HL-only
+  as comparison points; it is not a release and does not pass timing.
 
 ## Method: replace indexed access when the whole path is faster
 
@@ -85,7 +92,10 @@ See [the saved verification](hl_mask_reader_summary.json).
    histogram to inspect cache maintenance (112,146,097 T), control
    (66,807,315 T) and no-op traversal (74,830,741 T). Identify redundant
    address reloads and saves; retain the existing fast no-op and selective
-   cache paths. Record useful work separately from removable overhead.
+   cache paths. Low-byte tile/run cursor updates are now implemented and
+   verified; do not count their saving again. Record useful work separately
+   from removable overhead. Prioritize larger remaining costs over repeated
+   one-instruction changes with a small measured whole-player effect.
 2. **Audit remaining Huffman indexed loads and call boundaries.** There are
    1,203,077 indexed memory loads in the profile. A hypothetical 19→7 T
    substitution saves 14,436,924 T before setup costs. Use this as a gross

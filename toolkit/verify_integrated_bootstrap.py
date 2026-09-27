@@ -89,6 +89,22 @@ def main():
                 dict(m,slot_queue_instruction_listing=rows))
             if expected!=helper:raise AssertionError('fast IRQ metadata differs')
             patches=sorted(patches.items())
+        if m.get('compact_cursor',{}).get('enabled'):
+            from compact_cursor import build as cursor_patches
+            from build_fap3_trd import player_harness
+            from probe_motion_entropy import Reader
+            from probe_spatial_contexts import read_header
+            _,_,_,mapping,tables=read_header(Reader(raw),magic=b'FAP3')
+            h=player_harness(bytes(4),tables,mapping,m['frames'],
+                **{key:m[key] for key in ('inline_matches','fast_noop_scan','irq_safe_paging',
+                    'static_cache_borders','carry_huffman','register_fragments','cached_huffman_byte')})
+            expected=cursor_patches(h.cpu.read8,h.frame.instructions.values(),h.frame.recon)
+            if dict(expected,enabled=True)!=m['compact_cursor']:
+                raise AssertionError('regenerated compact cursor differs')
+            patches=dict(patches)
+            for change in expected['patches']:
+                patches.update({change['start']+i:value for i,value in enumerate(bytes.fromhex(change['code_hex']))})
+            patches=sorted(patches.items())
         retired=[(v['start'],v['end']) for v in m['retired_fixed_code']]
         retired.append((inline['redirect_address'],inline['redirect_address']+3))
         checked=0
