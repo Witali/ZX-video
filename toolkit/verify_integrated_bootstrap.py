@@ -33,8 +33,9 @@ def main():
             next_id=bytes.fromhex(old['disk_id_hex'])[:14]+struct.pack('<H',part+1),interleaved=True)
         if old_boot!=player(old_image):raise AssertionError('legacy bootstrap changed')
         c=DiskCPU(player(image),image);until(c,disk.DRIVER)
-        patches,_=build(old,raw,uncontended=True,compiled_masks=True,inline_literals=True,demand_decode=True,
+        patches,base_metadata=build(old,raw,uncontended=True,compiled_masks=True,inline_literals=True,demand_decode=True,
             hl_mask_reader=m.get('hl_mask_reader',{}).get('enabled',False))
+        base_patches=dict(patches)
         if m.get('bank2_zx0',{}).get('enabled'):
             from bank2_zx0 import build as split_decoder
             regions,labels,relocation=split_decoder()
@@ -68,6 +69,36 @@ def main():
                 patches.update({address+i:v for i,v in enumerate(data)})
             patches=sorted(patches.items())
         inline=model['volumes'][part-1]['inline_patches']
+        if m.get('cached_huffman_lookahead',{}).get('enabled'):
+            from build_fap3_trd import player_harness
+            from probe_motion_entropy import Reader
+            from probe_spatial_contexts import read_header
+            from prefix_huffman_z80 import prepare
+            from lookahead_player import install as cache_install
+            from inline_huffman_patches import build as inline_build
+            _,_,_,mapping,tables=read_header(Reader(raw),magic=b'FAP3')
+            h=player_harness(bytes(4),tables,mapping,m['frames'],
+                **{key:m[key] for key in ('inline_matches','fast_noop_scan','irq_safe_paging',
+                    'static_cache_borders','carry_huffman','register_fragments','cached_huffman_byte')})
+            # Reconstruct the source before inline copying and before ZX0
+            # overwrites the retired fixed patch body. Never trust cold RAM
+            # as the expected source for these new bytes.
+            def source_read(address): return base_patches.get(address,h.cpu.read8(address))
+            def source_put(address,blob): base_patches.update({address+i:v for i,v in enumerate(blob)})
+            expected=cache_install(source_read,source_put,base_metadata,h,raw)
+            if expected!=m['cached_huffman_lookahead']:raise AssertionError('lookahead metadata differs')
+            fixture=json.loads(Path(__file__).with_name('cached_huffman_lookahead_cpu.json').read_bytes())
+            ref=fixture['volumes'][part-1]['implementation']
+            for key in ('regions','labels','motion_changes'):
+                if expected['implementation'][key]!=ref[key]:raise AssertionError(('CPU cache differs',key))
+            _,inline=inline_build(source_read,h.frame.instructions.values(),h.frame.recon,
+                prepare(tables,mapping,carry_huffman=True)['body_bytes'])
+            if dict(inline,enabled=True)!=m['inline_huffman_patches']:
+                raise AssertionError('regenerated inline code differs')
+            patches=dict(patches)
+            for region in expected['implementation']['regions']+[expected['packet_contract']]:
+                patches.update({region['address']+i:v for i,v in enumerate(bytes.fromhex(region['code_hex']))})
+            patches=sorted(patches.items())
         if m.get('packet_prefix_guard',{}).get('enabled'):
             from packet_prefix_guard import build as prefix_guard
             helper=m['packet_prefix_guard'];blob,expected=prefix_guard(m['queue_labels'],m['decoder_labels'],

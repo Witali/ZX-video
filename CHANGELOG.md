@@ -21,6 +21,56 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — integrate the two-byte cache and measure all three disks
+
+- **Objective/baseline:** carry the `2995503` CPU prototype into real cold
+  TRDs and compare complete playback with compact cursor at `7a1d5de`.
+  Same 4221 frames, resolution, 25/3 fps schedule and 50 Hz AY data.
+- **Change:** optional `--cached-huffman-lookahead`, installed before inline
+  Huffman generation. Reserve two readable guards by lowering FAP3 payload
+  capacity **4703→4702 B** within the existing 4704-B window. Only a length
+  check immediate changes: **10→10 T**, full accepted range check **94 T**.
+  No extra stream byte, copy or guard write. The second guard is read-only
+  and may be arbitrary. Oversized optional configurations are rejected.
+- **CPU/size:** retain the complete prototype comparison:
+  **1023364329→1018049241 T (-5315088)** for frame stages; packet-parser
+  delta **0 T**. Shared short symbols **145/169→134/162 T**, long symbols
+  **+18 T**, setup **19→65 T**. The helper occupies 7 B at 8FC0; bank-6 inline
+  code remains 875 B. Compressed stream **1919945 B**, 7501 video sectors,
+  **2542/2543/2542** used sectors and starts **53/58/60** are unchanged.
+- **Verification:** four integration tests pass, including old/new executed
+  boundary checks, in-place pixels/AY/parser cycles, empty input with four
+  second-guard values, and host rejection at 4703 B. All disks independently
+  boot from dirty RAM. Mocked-ROM swaps and wrong disk/series rejection pass.
+  Cold-installed cache/motion regions match the full CPU prototype; all
+  inline bytes are independently regenerated and checked.
+- **Full Fuse:** all three volumes reach EOF without RAM patches, with all
+  25326 AY records exact, all frame samples exact, and no missing physical
+  IRQ fields. Fuse samples 80 bytes/frame; the separate CPU fixture compares
+  compact data and both complete screens. Fps changes
+  **8.284839/7.986197/7.889942→8.287377/7.995065/7.901460**. Summed publication
+  span **1853606028→1851904234 T (-1701794)**; initial IRQ/disk phases are
+  not matched, so this is an elapsed measurement, not predicted CPU saving.
+  Every actual queue call replays exactly: **25955** calls, with queue plus
+  full AY-wait CPU **289460171→289570034 T (+109863)**. Thirteen new gzip
+  archives preserve the raw evidence; CPU and elapsed disk service stay
+  separate. Saved-result hashes, coverage and arithmetic pass the audit.
+- **Remaining failures:** late frames **3070→3066**, AY underruns **869→845**,
+  invalid fallback intervals **662→644** (disk 1 alone worsens 120→121).
+  Maximum late fields **79/329/451**; actual deviations
+  **5601733/23328729/31979514 T**. Late-run recoveries **0/3/2**, with final
+  runs from local frames **640/478/56** unrecovered through EOF.
+- **Decision:** retain this optional, lossless integrated improvement for
+  further measured work. Capacity passes; nominal deadlines, fallback
+  recovery and continuous AY still fail. Root release images are unchanged.
+  No physical-drive or unrelated-video playback claim.
+- **Evidence/reproduction:** [report and commands](toolkit/LOOKAHEAD_PLAYER.md),
+  [installer](toolkit/lookahead_player.py), [tests](toolkit/test_lookahead_player.py),
+  [build](toolkit/lookahead_player_build.json),
+  [cold-code verifier](toolkit/verify_integrated_bootstrap.py),
+  [summary](toolkit/lookahead_player_summary.json), and
+  [saved-evidence auditor](toolkit/summarize_lookahead_player.py).
+
 ## 2026-09-27 — two-byte Huffman cache in alternate registers, CPU prototype
 
 - **Objective/baseline:** remove repeated indexed lookahead reads without

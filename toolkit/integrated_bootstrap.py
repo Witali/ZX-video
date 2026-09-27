@@ -32,7 +32,7 @@ def installer():
 class Builder(ReadThroughBuilder):
     preload_sectors = 0
 
-    def __init__(self, *args, bank2_zx0=False, audio_wait_prefetch=False, ready_packet_guard=False, fast_return_irq=False, packet_prefix_guard=False, hl_mask_reader=False, streaming_input=False, compact_cursor=False, **kwargs):
+    def __init__(self, *args, bank2_zx0=False, audio_wait_prefetch=False, ready_packet_guard=False, fast_return_irq=False, packet_prefix_guard=False, hl_mask_reader=False, streaming_input=False, compact_cursor=False, cached_huffman_lookahead=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.bank2_zx0=bank2_zx0
         self.audio_wait_prefetch=audio_wait_prefetch
@@ -42,6 +42,7 @@ class Builder(ReadThroughBuilder):
         self.hl_mask_reader=hl_mask_reader
         self.streaming_input=streaming_input
         self.compact_cursor=compact_cursor
+        self.cached_huffman_lookahead=cached_huffman_lookahead
         if streaming_input and (not bank2_zx0 or packet_prefix_guard or ready_packet_guard):
             raise ValueError('streaming input requires bank-2 ZX0 without packet guards')
         if packet_prefix_guard and (not bank2_zx0 or ready_packet_guard):
@@ -102,6 +103,9 @@ class Builder(ReadThroughBuilder):
         h = player_harness(bytes(4),self.tables,self.mapping,end-start,
             **{key:getattr(self,key) for key in ('inline_matches','fast_noop_scan','irq_safe_paging',
                 'static_cache_borders','carry_huffman','register_fragments','cached_huffman_byte')})
+        if self.cached_huffman_lookahead:
+            from lookahead_player import install
+            m['cached_huffman_lookahead']=install(read8,put,m,h,self.raw)
         table_bytes = prepare(self.tables,self.mapping,carry_huffman=True)['body_bytes']
         # An unrelated video's larger trees may require the shared routine.
         if 0xc000+table_bytes <= inline.ORIGIN:

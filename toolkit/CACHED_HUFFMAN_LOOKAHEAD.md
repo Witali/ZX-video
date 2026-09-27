@@ -1,7 +1,9 @@
 # Cache two Huffman input bytes in registers
 
 Date: 2026-09-27. Baseline: compact-cursor CPU configuration at `cb94632`.
-**CPU prototype; not integrated into the disk player or a release.**
+**This report describes the CPU prototype.** The subsequent
+[disk integration and full playback experiment](LOOKAHEAD_PLAYER.md)
+retains these results and still fails the release timing gates.
 
 ## Register allocation
 
@@ -80,7 +82,7 @@ guards need not be zero: exhaustive cases use **A5/3C**. A test deliberately
 providing only one guard fails, proving that the requirement cannot be
 silently inherited from the previous decoder.
 
-The current FAP3 disk parser only guarantees one final guard. The standalone
+At the prototype baseline, the FAP3 disk parser guarantees one final guard. The standalone
 frame fixture provides `coded + guard + literals + guard`, so it already
 satisfies the new requirement. **Passing that fixture does not verify the
 integrated parser.** The player must reserve a second readable byte before
@@ -115,8 +117,8 @@ The totals exclude ZX0, queues and packet copying, AY/IRQ cadence, ULA,
 TR-DOS ROM and physical disk latency. They do not predict a matching
 improvement in publication timing. See the [audited summary](cached_huffman_lookahead_summary.json).
 
-**Decision:** retain this lossless CPU prototype for integrated measurement.
-No new TRDs were built, no full disk playback was run, and the previous
+**Prototype decision:** retain it for integrated measurement.
+This CPU experiment built no TRDs or full disk playback; the previous
 nominal-deadline, fallback-jitter and AY-continuity failures remain open.
 
 ## Verification and reproduction
@@ -162,9 +164,11 @@ caught by the cycle assertion, including the partial movie smoke. Replacing
 that trampoline with the equal-size PUSH AF sequence reduced the final
 long-code delta to **18 T**. No failed intermediate variant is enabled.
 
-Before adopting this prototype, integrate the two-readable-byte packet
+The follow-up required before adoption was to integrate the two-readable-byte packet
 contract, regenerate cold-installed code including inline patches, verify
 dirty-RAM independent boots and disk swaps, and remeasure all three volumes
 through EOF. Count bootstrap sectors, IRQ/ULA effects, queue CPU, ROM and
 disk latency. Check nominal deadlines and fallback recovery separately,
-and retain AY at every 50 Hz interrupt. Existing release TRDs are unchanged.
+and retain AY at every 50 Hz interrupt. That integration and its remaining
+timing failures are now recorded in [the disk report](LOOKAHEAD_PLAYER.md).
+Existing release TRDs are unchanged.

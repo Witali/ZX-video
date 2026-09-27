@@ -59,10 +59,13 @@ the generic converter's defaults or the root release images.
   E' for lookahead and moves the motion output cursor to HL'. All 4221 CPU
   frames and both complete screens match. Against compact cursor it saves
   **5,315,088 T** (0.5194% of measured frame stages); 55 frames are slower,
-  by at most 50 T. It is not yet integrated into the TRD builder. It requires
-  two readable guard bytes; the current FAP3 parser guarantees one. All
-  current packets fit a 4702-byte payload limit in the existing 4704-byte
-  window, but the new contract must be enforced before full disk testing.
+  by at most 50 T. The subsequent [disk integration](LOOKAHEAD_PLAYER.md)
+  now enforces a 4702-byte payload limit and two readable guards in the
+  existing 4704-byte window, at zero parser CPU or stream cost. All three
+  independently bootable volumes complete: 3066 late frames, 845 AY
+  underruns, 644 invalid fallback intervals. The summed publication span
+  improves by 1,701,794 T with unchanged disk layout. Keep the optional
+  cache for measured work; all three timing gates still fail.
 
 ## Method: replace indexed access when the whole path is faster
 
@@ -109,13 +112,13 @@ See [the saved verification](hl_mask_reader_summary.json).
    substitution saves 14,436,924 T before setup costs. Use this as a gross
    ceiling for those loads, not a promised saving. Keep cached-byte and
    inline-patch optimizations already present. The two-byte cache now has
-   a complete CPU prototype: short symbols save 7..11 T, long symbols add
-   18 T and setup adds 46 T/frame. Next, enforce its two-readable-byte
-   packet contract, regenerate inline/cold-start code, and measure bootstrap
-   sectors plus complete three-volume delivery. For other videos, reject
-   an oversized optional configuration or retain the old decoder; never
-   read outside the reserved packet window. Do not count the CPU saving as
-   proven publication/AY improvement before that run.
+   complete CPU and integrated disk measurements: short symbols save
+   7..11 T, long symbols add 18 T and setup adds 46 T/frame. Its packet
+   contract, cold-installed inline code, bootstrap sectors and complete
+   three-volume delivery are checked. Preserve that work and do not count
+   the saving again. For other videos, reject an oversized optional
+   configuration or retain the old decoder. Future register-allocation
+   changes must preserve the two-readable-byte limit and IRQ state.
 3. **Optimize pixel conversion and addressing.** Dense pixel work alone
    costs 136,520,064 T. Try reuse of addresses/lookup results while retaining
    the exact dither output and alternate-screen dependencies. Count writes,
@@ -128,13 +131,21 @@ See [the saved verification](hl_mask_reader_summary.json).
    Preserve EOF handling, unloaded-page protection, one-sector steps and
    IRQ safety. Measure the complete producer/consumer schedule before
    accepting a changed disk buffer or queue policy.
+   The two-byte-cache trace has 460/397/619 frames whose foreground stages
+   exceed six fields, and no late frames already native-ready at least
+   1000 T before the nominal deadline. Empty-input waits total 134,642,123
+   elapsed T, including producer work and disk service. Use these traces
+   to distinguish burst buffering opportunities from sustained CPU cost;
+   do not label all wait time removable overhead or fix only publication.
 
 A small concrete candidate for step 1 is the target setup for nonzero
-motion phases. Currently `LD HL,(target); PUSH HL; EXX; POP DE; EXX` costs
-**45 T**. Loading alternate DE directly with
-`EXX; LD DE,(target); EXX` would cost **28 T**, if the common HL load moves
+motion phases. With the new cache,
+`LD HL,(target); PUSH HL; EXX; POP HL; EXX` costs **45 T**.
+Loading alternate HL directly with
+`EXX; LD HL,(target); EXX` would cost **24 T**, if the common HL load moves
 to phase zero and no additional preservation is needed. The profile contains
-28,773 such entries: setup **1,294,785→805,644 T**, estimated **-489,141 T**.
+28,773 such entries: setup **1,294,785→690,552 T**, estimated **-604,233 T**.
+The earlier DE' allocation gave a smaller 489,141-T estimate.
 This is not implemented or IRQ-tested and will not alone resolve playback.
 Verify generated placement and all phases before adopting it.
 

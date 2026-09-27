@@ -55,6 +55,7 @@ def main():
     p.add_argument('--hl-mask-reader',action='store_true')
     p.add_argument('--streaming-input',action='store_true')
     p.add_argument('--compact-cursor',action='store_true')
+    p.add_argument('--cached-huffman-lookahead',action='store_true')
     args = p.parse_args()
     with np.load(args.states,allow_pickle=False) as saved: states = saved['states']
     inputs = [disk_blocks(args.directory,part) for part in (1,2,3)]
@@ -80,6 +81,7 @@ def main():
     if args.hl_mask_reader:options['hl_mask_reader']=True
     if args.streaming_input:options['streaming_input']=True
     if args.compact_cursor:options['compact_cursor']=True
+    if args.cached_huffman_lookahead:options['cached_huffman_lookahead']=True
     fingerprint = b'FAP3ZXV1'+bytes.fromhex(sha(json.dumps(contract,sort_keys=True).encode()))[:6]
     args.output.mkdir(parents=True,exist_ok=True); args.report.parent.mkdir(parents=True,exist_ok=True)
     report = dict(complete=False,release=False,scope=__doc__,baseline_commit='4ccd740',
@@ -104,6 +106,7 @@ def main():
         if args.hl_mask_reader:row['hl_mask_reader']=m['hl_mask_reader']
         if args.streaming_input:row['streaming_input']=m['streaming_input']
         if args.compact_cursor:row['compact_cursor']=m['compact_cursor']
+        if args.cached_huffman_lookahead:row['cached_huffman_lookahead']=m['cached_huffman_lookahead']
         report['volumes'].append(row);save()
         if image is None:
             print(json.dumps({k:v for k,v in row.items() if k not in ('sections','inline_huffman')}),flush=True)
@@ -135,6 +138,9 @@ def main():
         report['source_sha256'].update({name:sha(Path(__file__).with_name(name).read_bytes()) for name in
             ('compiled_masks_z80.py','slot_queue_player.py')})
     if args.compact_cursor:report['source_sha256']['compact_cursor.py']=sha(Path(__file__).with_name('compact_cursor.py').read_bytes())
+    if args.cached_huffman_lookahead:
+        report['source_sha256'].update({name:sha(Path(__file__).with_name(name).read_bytes()) for name in
+                                       ('lookahead_player.py','cached_huffman_lookahead.py')})
     if args.streaming_input:
         report['source_sha256'].update({name:sha(Path(__file__).with_name(name).read_bytes()) for name in
             ('streaming_slot_player.py','streaming_slot_queue.py','streaming_slot_input.py',
