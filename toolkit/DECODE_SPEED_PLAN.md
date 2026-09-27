@@ -334,6 +334,53 @@ not measured. Keep it optional until independent boot, sector budget and
 all three full playback runs pass. This small saving alone does not resolve
 the remaining publication deadlines.
 
+## Priorities after complete player profiling
+
+The [2026-09-27 profiling report](PLAYER_PROFILING.md) combines fresh
+instruction profiles with all seven archived three-volume playback variants.
+Its [auditor](profile_player_comparison.py) partitions elapsed time without
+double-counting disk calls or drawing during a suspended packet acquisition.
+No player/stream changes are made by this analysis (0 T / 0 bytes).
+
+- Fresh current-frame CPU totals **1,017,445,008 T**: reconstruction
+  **59.96%**, native output **33.19%**, metadata **6.25%**. Dense/sparse
+  pixel operations cost **217,109,804 T**, Huffman **125,825,146 T**, and
+  cache filling **112,146,097 T**. Remaining indexed memory loads cost
+  **9,586,716 T (0.94%)**, so prioritize register substitutions by their
+  complete path cost rather than expecting them to dominate the result.
+- In the retained player's publication window, reconstruction takes
+  35.69%, native output 19.07%, disk service 11.85%, transfer outside disk
+  calls 9.94%, and metadata 4.33%. The remaining 19.13% contains background
+  work, audio, control and waits; do not treat it as measured idle time.
+- The fresh full required-reader fixture spends **190,422,888 T in ZX0**,
+  **50,177,846 T in packet copying** and **11,366,156 T in queue control**.
+  It has mocked ROM and a frozen clock. Its 63,590,055 metadata T are also
+  in the frame fixture: never count them twice or call the combined
+  fixtures a complete integrated CPU measurement.
+- Only **58,959,456 T (30.96%)** of ZX0 is the actual LDIR copy; the other
+  **131,463,432 T** goes to parsing, setup, boundaries and suspension.
+  Mean match/literal copies are **4.2901 / 4.8065 bytes**. Prioritize
+  short-run dispatch and demand-boundary costs before a blanket long-copy
+  unroller. Preserve the stream for runtime-only substitutions. Keep the
+  separate short-match-removal/sector-headroom encoder experiment above.
+- Keep native pixel conversion, Huffman, motion-cache filling and patch
+  dispatch high in the CPU work list. Rank both complete-movie and
+  difficult-scene costs using the saved per-frame profiles. Do not present
+  already active unrolled packet/cache copies or black-border omission as
+  new optimizations. Respect compact n-1 and native n-2 dependencies.
+- A zero-copy packet proposal must save enough of its measured copy cost
+  to pay for any extra paging/table accesses and preserve slot ownership.
+  The current transfer already uses 16-T LDI for each decoded byte.
+- Add paired audio-service, background-producer and wait trace points in
+  the next actual changed-player measurement to resolve the unclassified
+  elapsed bin. Existing archive traces do not isolate all those costs.
+
+The best late-frame count among the seven configurations is still
+**1237/4221** (fast fragments), with **747** invalid fallback intervals;
+it adds 151 video reads and worsens disk 1's peak. Neither CPU ranking nor
+mean fps replaces the complete nominal/fallback/AY gates. Keep the retained
+baseline and release unchanged while developing the next measured candidate.
+
 ## Avoid repeating rejected or completed experiments
 
 - [Positional no-op run tags](TAGGED_NOOP_RUNS.md) now use the existing

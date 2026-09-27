@@ -21,6 +21,62 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — complete instruction profiles and seven-player delivery comparison
+
+- **Objective/input:** locate the largest CPU costs and elapsed stalls at
+  repository `f701c54`. Use all 4221 authorized no-credits frames, original
+  checkpoints/pixels, the retained `a84451d` TRDs and all seven archived
+  complete three-volume Fuse configurations. No player code, stream, image
+  or release change: deterministic instruction delta **0 T**, stream delta
+  **0 bytes**. Maintain separate CPU and elapsed-time scopes.
+- **Fresh frame execution:** every instruction, compact byte and both
+  complete native screens match. Total **1,017,445,008 T**, mean
+  **241,043.59 T**, p99 **363,553 T**, maximum **378,448 T/frame**.
+  Reconstruction is **59.96%**, output **33.19%**, metadata **6.25%**.
+  Dense/sparse pixel work costs **217,109,804 T**, Huffman **125,825,146 T**,
+  cache filling **112,146,097 T**. Remaining indexed memory loads are
+  **9,586,716 T (0.94%)**. Restore the previously proven 604233-T motion
+  delta to reconstruct retained-player frame costs; this is not a second
+  fresh execution or a changed TRD.
+- **Fresh packet execution:** actual cold-loaded required parser/queue,
+  all 4221 exact packets and 7106 mocked sector reads, every payload byte
+  written once. Total **340,877,648 T**, including ZX0 **190,422,888 T**,
+  packet copying **50,177,846 T**, queue control **11,366,156 T** and
+  metadata **63,590,055 T**. Metadata is shared with the frame fixture and
+  must not be added twice. The frozen-clock, no-prefill workload excludes
+  real disk latency, ULA and ongoing AY/IRQ consumption.
+- **New bottleneck detail:** ZX0 LDIR transfers are only **58,959,456 T**
+  (30.96% of decoder cost); remaining parsing/setup/boundary work is
+  **131,463,432 T**. Match/literal runs average **4.2901/4.8065 bytes**.
+  Packet copying already uses unrolled LDI, **16 T × 2965011 bytes**.
+  Prioritize short-run decoding and sustained delivery before assuming
+  long-copy unrolling or small register substitutions will solve cadence.
+- **Elapsed comparison:** re-audit complete archived playback, not new
+  Fuse runs. Disjoint retained-player publication contexts total
+  **1,812,975,750 T**: reconstruction 35.69%, output 19.07%, disk service
+  11.85%, transfer outside disk 9.94%, metadata 4.33%, unclassified
+  background/control/wait 19.13%. Do not label the last bin entirely idle.
+  Suspended transfers in resumable variants overlap other frame stages;
+  the new sweep excludes that duplication. Peak packet transfer is
+  **1,884,022 T (~531.4 ms)** against a nominal 120-ms frame period.
+- **Coverage/decision:** all per-instruction/stage/frame sums and earlier
+  256-packet prefixes agree; three-volume CPU replay and saved-data audit
+  pass. Seven configurations retain exact 50-Hz AY; all fail both video
+  gates. Fast fragments have the fewest late frames, **1237**, but add
+  151 sector reads and worsen disk 1's peak. Keep the retained baseline,
+  current release and disabled experimental options unchanged. Next target
+  short-run ZX0/input delivery, pixel conversion and cache/Huffman paths;
+  instrument background/audio/wait entry/exit to resolve the remaining
+  elapsed bin. Physical drives and new playback are unmeasured.
+- **Reproduction/evidence:** [report and commands](toolkit/PLAYER_PROFILING.md),
+  [updated plan](toolkit/DECODE_SPEED_PLAN.md),
+  [frame profiler](toolkit/profile_current_frame.py),
+  [frame report](toolkit/current_frame_profile.json),
+  [packet profiler](toolkit/profile_packet_cpu.py),
+  [packet report](toolkit/packet_cpu_profile.json),
+  [comparison/auditor](toolkit/profile_player_comparison.py),
+  [comparison report](toolkit/player_comparison_profile.json).
+
 ## 2026-09-27 — direct alternate-HL motion target loads confirmed in CPU tests
 
 - **Objective/input:** verify the planned 45-to-24-T pointer setup against
