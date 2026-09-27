@@ -105,7 +105,9 @@ See [the saved verification](hl_mask_reader_summary.json).
    costs 136,520,064 T. Try reuse of addresses/lookup results while retaining
    the exact dither output and alternate-screen dependencies. Count writes,
    row/page transitions and ULA effects, not just dispatch instructions.
-   Two extra dense-output tests have already been rejected below.
+   Dense-output dispatch and whole-row fill tests have already been
+   rejected below. Avoid a runtime scan for uniform rows in this stream;
+   successful rows are too rare even under a zero-cost-fill bound.
 4. **Revisit producer scheduling only with a cheaper input guard.** The
    streaming prototype shortens some disk bursts but adds too much CPU.
    Preserve EOF handling, unloaded-page protection, one-sector steps and
@@ -130,6 +132,12 @@ Verify generated placement and all phases before adopting it.
   [the probe and assumptions](FRAME_HOTSPOTS.md).
 - Changing the encoder's density threshold is a separate stream-size
   experiment. It cannot be accepted from decoder cycles alone.
+- Whole-row zero/uniform detection was measured on all 83,652 dense rows.
+  Only 90 are zero and 332 uniform. Charging just immediate failures while
+  making every other test and successful fill free still adds at least
+  **1,314,132 / 1,022,816 T**. Reject these two dispatch strategies; this
+  does not rule out partial-row methods or precomputed hints. See the
+  [complete input profile and lower-bound calculation](FLAT_DENSE_ROWS.md).
 - Uncontended compact/cache, compiled masks, cached Huffman bytes, inline
   ZX0 literals/matches, demand decoding, AY-wait prefetch, fast IM2 return,
   Gray-order sparse cells and black-border omission have already been

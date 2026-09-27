@@ -21,6 +21,32 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — reject whole-row fill tests using complete frame evidence
+
+- **Objective/baseline:** find a larger native-output saving without changing
+  compression or pixels. Sources start at `7a1d5de`; use the same 4221
+  compact states, archived native masks and executed HL-reader CPU profile.
+  The later compact-cursor option leaves this output stage unchanged.
+- **Parameters:** two runtime tests before each dense-row pixel body:
+  whole-row zero and whole-row uniform. Failed tests retain normal output.
+  Count only the first failed test and assume all successful fills, further
+  tests and later failures cost zero to obtain optimistic lower bounds.
+- **Result:** among **83652** dense rows, only **90** are zero and **332**
+  uniform. Immediate failures cost **21 / 32 T**. Baseline row **1632 T**;
+  movie pixel bodies **136520064 T**. Optimistic candidate totals are
+  **137834196 / 137542880 T**, deltas **+1314132 / +1022816 T**.
+- **Verification:** every frame's dense-row count reproduces its previously
+  executed pixel-stage T-states, including independent-volume warmup. State
+  and source hashes, histograms, per-frame and per-volume counts are saved.
+  This is an input profile and instruction bound, not execution of a new
+  renderer. No new IRQ, disk, ULA, audio or playback check is claimed.
+- **Decision:** reject both whole-row dispatch strategies before allocating
+  code space. Actual CPU/stream change **0 T / 0 bytes**. Other fill methods
+  remain untested; existing release images and timing failures are unchanged.
+- **Reproduction/evidence:** [profiler](toolkit/profile_flat_dense_rows.py),
+  [complete report](toolkit/flat_dense_rows_profile.json),
+  [calculation and command](toolkit/FLAT_DENSE_ROWS.md).
+
 ## 2026-09-27 — compact cursor byte updates, full CPU and disk playback
 
 - **Objective/baseline:** reduce repeated reconstruction bookkeeping without
