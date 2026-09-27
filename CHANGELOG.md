@@ -21,6 +21,54 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — separate optional consumer removes global checks but still misses cadence
+
+- **Objective/baseline:** remove mandatory queue overhead from `25780a9`
+  while preserving resumable read-ahead. Compare with retained `a84451d`,
+  all 4221 authorized frames and 25326 AY records, unchanged pixels/audio.
+- **Implementation:** duplicate the consumer in unused bank 7, sharing
+  existing queue state and bridges. A 324-byte F900..FA43 helper replaces
+  162 bytes; no extra stack or data buffer. Required consumer opcodes are
+  unchanged. Optional calls yield at existing sector/256-byte ZX0 boundaries;
+  parser dispatch occurs per length/body transfer. No dynamic code routing.
+  Host builds now reuse checked SHA-keyed ZX0 caches. Deadlines/AY unchanged.
+- **Capacity/content:** three independent TRDs, **2462/2463/2462 sectors**,
+  **82/81/82 free**, video starts **107/109/110**. Video **1,818,909 bytes /
+  188 blocks / 7106 reads**, identical to baseline; all video/AY hashes match.
+  Dirty-RAM boots, initial full native/compact frames and both swaps pass.
+- **CPU:** required count read **13 -> 13 T**, demand jump **10 -> 10 T**;
+  optional gate **13 -> 40 T**, down from global-gate 94 T. Transfer selector
+  costs 27/37 T required/optional; direct fresh parser overhead is **245 T**
+  per packet, plus separately measured placement effects **0/-92/-113 T**
+  in the first 256 packets/volume. Required prefixes save **78,192/86,265/
+  98,955 T** against global gating; forced-resume saves **97,280/105,054/
+  128,555 T**. Exact packet bytes and single writes pass through 584 forced
+  pauses; split-header/EOF and IRQ cases pass **4976 AY-handler injections**.
+  These are prefix CPU counts with mocked ROM, excluding IRQ/ULA latency.
+- **Full Fuse:** all volumes reach EOF, all AY records exact at 50 Hz,
+  zero underruns, IRQ gaps/duplicates or read retries. Late frames
+  **89/474/766 = 1329**, versus original 1321/global-gate 1337. Bad intervals
+  **45/254/491 = 790**, versus 783/797. Maximum lateness **64/263/269 fields**,
+  actual OUT deviation **4,538,121/18,648,804/19,074,250 T**. Recovered runs
+  **2/10/3**, volume 2 unrecovered at local **1237..1296**. Publication span
+  **1,813,188,468 T**, 212,724 better than global gating, 212,718 worse than
+  original. Both video timing gates fail. Traces verify 35 earlier draws;
+  those response intervals are not exclusive CPU savings.
+- **Decision:** retain as an experiment; do not enable by default. Required
+  overhead removal works but does not establish smooth delivery. Next work
+  must reduce or prepare the difficult-scene workload. No root release or
+  converter default changes. Fuse samples 80 screen bytes/frame; physical
+  disks, complete integrated CPU and matched initial disk/IRQ phases remain
+  unverified. The first auditor stopped because old evidence had no TRDs;
+  it now archives verified baseline bank-7 payloads and checks original and
+  cloned opcodes directly. No player/test rerun was needed for that fix.
+- **Evidence:** [report and commands](toolkit/OPTIONAL_PACKET.md),
+  [implementation](toolkit/optional_packet_player.py),
+  [builder](toolkit/build_optional_packet.py), [CPU test](toolkit/test_optional_packet.py),
+  [auditor](toolkit/summarize_optional_packet.py), [summary](toolkit/optional_packet_summary.json).
+  All 51 archived files are hash-checked; three experimental `.trd.gz`
+  images use Git LFS. This is a verified experiment, not a verified release.
+
 ## 2026-09-27 — resumable optional packet reads preserve size but worsen cadence
 
 - **Objective/baseline:** remove read-ahead calls that keep a prepared compact

@@ -1,0 +1,4710 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Build three disks with a separate optional packet consumer.",
+  "baseline_commit": "a84451d",
+  "baseline_build_sha256": "9915590d679237adba70ff21a412d19177876ee8356e53b3df18c06f287c2b62",
+  "contract": {
+    "version": "separate-optional-consumer-1",
+    "ends": [
+      1624,
+      2921,
+      4221
+    ],
+    "options": {
+      "fast_disk": true,
+      "cached_seek": true,
+      "interleaved": true,
+      "deferred_limit": 248,
+      "keepalive_fields": 64,
+      "frame_service": true,
+      "cold_bitmaps": true,
+      "inline_matches": true,
+      "startup_delta": true,
+      "fast_noop_scan": true,
+      "irq_safe_paging": true,
+      "static_cache_borders": true,
+      "carry_huffman": true,
+      "register_fragments": true,
+      "cached_huffman_byte": true,
+      "bank2_zx0": true,
+      "fast_return_irq": true,
+      "hl_mask_reader": true,
+      "compact_cursor": true,
+      "cached_huffman_lookahead": true,
+      "audio_batch": 31,
+      "foreground_audio": true
+    },
+    "raw_sha256": [
+      "9404fc8b57b5445c88c3c877021c613be24f91cf777c3221ea08822d67c511b3",
+      "3b8f2efa8c88351a6f7d70de68dff4ce28fb1904b6293a09775f134808b26483",
+      "4590013f35618db7514e612736b5cea90af28791da900c58cd40367be25f4cfa"
+    ],
+    "states_sha256": "fdabc3331ee2ce7da23a5aa0dd3e2574e4bf7bf84d07abe381c5cecd7bc1e791",
+    "audio_threshold": 24
+  },
+  "zx0_sha256": "e6aec5cdfc3535b808610cb54412ce375b5b13e17b59f2bc878a54a00a8acbac",
+  "volumes": [
+    {
+      "part": 1,
+      "frames": 1624,
+      "used_sectors": 2462,
+      "free_sectors": 82,
+      "video_bytes": 606434,
+      "video_sectors": 2369,
+      "video_start_sector": 107,
+      "trd_sha256": "546f07e34c0bd9b11121dcff589923f644d42c6e36f5b241eacff1ad4c7159ab",
+      "metadata_sha256": "2be73eecce8bd52cffb8fb4809fcaf3b02f04b98c48c16a3eef8b3c5663e2439",
+      "stream_sha256": "2d23bfd750e5ca651c88efe518cca47030a818ebb04b625c9abc18d36f02fa9b",
+      "raw_video_sha256": "a620841f4b1abd3227b8dcda23d8846ba99296ae14f2158c5a9060701da2b945",
+      "audio_sha256": "f46bbd7e124dd9c8034d2946045c6a12473233d186ca966f9ffd0a1069d246cf",
+      "independently_bootable": true,
+      "exact_video_and_ay_bytes": true,
+      "resumable_packet": {
+        "enabled": true,
+        "labels": {
+          "required": 63744,
+          "optional": 63751,
+          "dispatch": 63756,
+          "packet_start": 63771,
+          "resume_length": 63791,
+          "begin_body": 63800,
+          "resume_body": 63821,
+          "complete": 63830,
+          "packet_ready": 63833,
+          "paused": 63843,
+          "take_dispatch": 63845,
+          "resume_dispatch": 63855,
+          "optional_take": 63865,
+          "original_57518": 63865,
+          "original_57519": 63866,
+          "original_57520": 63867,
+          "original_57521": 63868,
+          "original_57525": 63872,
+          "gate": 63876,
+          "original_57529": 63885,
+          "original_57532": 63888,
+          "original_57533": 63889,
+          "original_57536": 63892,
+          "original_57539": 63895,
+          "original_57541": 63897,
+          "original_57544": 63900,
+          "original_57547": 63903,
+          "original_57548": 63904,
+          "original_57551": 63907,
+          "original_57554": 63910,
+          "original_57557": 63913,
+          "original_57560": 63916,
+          "original_57561": 63917,
+          "original_57562": 63918,
+          "original_57563": 63919,
+          "original_57566": 63922,
+          "original_57567": 63923,
+          "original_57568": 63924,
+          "original_57570": 63926,
+          "original_57574": 63930,
+          "original_57575": 63931,
+          "original_57576": 63932,
+          "original_57578": 63934,
+          "original_57581": 63937,
+          "original_57582": 63938,
+          "original_57585": 63941,
+          "original_57588": 63944,
+          "original_57589": 63945,
+          "original_57592": 63948,
+          "original_57596": 63952,
+          "original_57599": 63955,
+          "original_57600": 63956,
+          "original_57602": 63958,
+          "original_57605": 63961,
+          "original_57608": 63964,
+          "original_57609": 63965,
+          "original_57610": 63966,
+          "original_57613": 63969,
+          "original_57614": 63970,
+          "original_57617": 63973,
+          "original_57618": 63974,
+          "original_57622": 63978,
+          "original_57625": 63981,
+          "original_57628": 63984,
+          "original_57632": 63988,
+          "original_57635": 63991,
+          "original_57636": 63992,
+          "original_57637": 63993,
+          "original_57640": 63996,
+          "original_57643": 63999,
+          "original_57644": 64000,
+          "original_57647": 64003,
+          "original_57650": 64006,
+          "original_57651": 64007,
+          "original_57654": 64010,
+          "original_57657": 64013,
+          "original_57660": 64016,
+          "original_57663": 64019,
+          "original_57666": 64022,
+          "original_57669": 64025,
+          "original_57670": 64026,
+          "original_57671": 64027,
+          "original_57674": 64030,
+          "original_57678": 64034,
+          "partial": 64035,
+          "stage": 64066,
+          "optional_mode": 64067,
+          "end": 64068
+        },
+        "sites": {
+          "validate_length": 56335,
+          "input": 25600,
+          "body_done": 56366,
+          "literal_length": 47701
+        },
+        "listing": [
+          {
+            "address": 63744,
+            "instruction": "XOR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63745,
+            "instruction": "LD (optional_mode),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63748,
+            "instruction": "JP dispatch",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63751,
+            "instruction": "LD A,1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63753,
+            "instruction": "LD (optional_mode),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63756,
+            "instruction": "LD A,(stage)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63759,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63760,
+            "instruction": "JP packet_start",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63763,
+            "instruction": "CP 1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63765,
+            "instruction": "JP resume_length",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63768,
+            "instruction": "JP resume_body",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63771,
+            "instruction": "LD A,1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63773,
+            "instruction": "LD (stage),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63776,
+            "instruction": "LD DE,length",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63779,
+            "instruction": "LD BC,2",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63782,
+            "instruction": "CALL take_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63785,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63788,
+            "instruction": "JP 56335",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63791,
+            "instruction": "CALL resume_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63794,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63797,
+            "instruction": "JP 56335",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63800,
+            "instruction": "LD A,2",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63802,
+            "instruction": "LD (stage),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63805,
+            "instruction": "LD DE,packet",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63808,
+            "instruction": "LD BC,(length)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63812,
+            "instruction": "CALL take_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63815,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63818,
+            "instruction": "JP 56366",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63821,
+            "instruction": "CALL resume_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63824,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63827,
+            "instruction": "JP 56366",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63830,
+            "instruction": "LD (literal_length),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63833,
+            "instruction": "XOR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63834,
+            "instruction": "LD (stage),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63837,
+            "instruction": "LD (optional_mode),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63840,
+            "instruction": "LD A,1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63842,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63843,
+            "instruction": "XOR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63844,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63845,
+            "instruction": "LD A,(optional_mode)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63848,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63849,
+            "instruction": "JP 57518",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63852,
+            "instruction": "JP optional_take",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63855,
+            "instruction": "LD A,(optional_mode)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63858,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63859,
+            "instruction": "JP 57529",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63862,
+            "instruction": "JP gate",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63865,
+            "instruction": "LD A,B",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63866,
+            "instruction": "OR C",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63867,
+            "instruction": "RET Z",
+            "tstates": [
+              5,
+              11
+            ],
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63868,
+            "instruction": "LD (pending),BC",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63872,
+            "instruction": "LD (destination),DE",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63876,
+            "instruction": "LD A,(38848)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63879,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63880,
+            "instruction": "JP original_57529",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63883,
+            "instruction": "SCF",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63884,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63885,
+            "instruction": "LD A,(count)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63888,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63889,
+            "instruction": "JP have_slot",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63892,
+            "instruction": "LD A,(phase)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63895,
+            "instruction": "CP 2",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63897,
+            "instruction": "JP Z,available optional output",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63900,
+            "instruction": "CALL step",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63903,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63904,
+            "instruction": "JP fatal",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63907,
+            "instruction": "JP take_next",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63910,
+            "instruction": "LD A,(read_slot)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63913,
+            "instruction": "CALL descriptor",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63916,
+            "instruction": "LD E,(HL)",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63917,
+            "instruction": "INC HL",
+            "tstates": 6,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63918,
+            "instruction": "LD D,(HL)",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63919,
+            "instruction": "LD HL,(position)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63922,
+            "instruction": "EX DE,HL",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63923,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63924,
+            "instruction": "SBC HL,DE",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63926,
+            "instruction": "LD BC,(pending)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63930,
+            "instruction": "PUSH HL",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63931,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63932,
+            "instruction": "SBC HL,BC",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63934,
+            "instruction": "JP take_fits",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63937,
+            "instruction": "POP BC",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63938,
+            "instruction": "LD HL,0",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63941,
+            "instruction": "JP take_count",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63944,
+            "instruction": "POP DE",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63945,
+            "instruction": "LD (slot_left),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63948,
+            "instruction": "LD (copy_count),BC",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63952,
+            "instruction": "LD HL,(pending)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63955,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63956,
+            "instruction": "SBC HL,BC",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63958,
+            "instruction": "LD (pending),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63961,
+            "instruction": "LD HL,(position)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63964,
+            "instruction": "PUSH HL",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63965,
+            "instruction": "ADD HL,BC",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63966,
+            "instruction": "LD (position),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63969,
+            "instruction": "POP HL",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63970,
+            "instruction": "LD DE,C000",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63973,
+            "instruction": "ADD HL,DE",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63974,
+            "instruction": "LD DE,(destination)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63978,
+            "instruction": "LD A,(read_slot)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63981,
+            "instruction": "CALL 24862",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63984,
+            "instruction": "LD (destination),DE",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63988,
+            "instruction": "LD HL,(slot_left)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63991,
+            "instruction": "LD A,H",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63992,
+            "instruction": "OR L",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63993,
+            "instruction": "JP retained",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63996,
+            "instruction": "LD A,(count)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63999,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64000,
+            "instruction": "JP retained",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64003,
+            "instruction": "LD HL,count",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64006,
+            "instruction": "DEC (HL)",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64007,
+            "instruction": "LD A,(read_slot)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64010,
+            "instruction": "CALL advance three-slot cursor",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64013,
+            "instruction": "LD (read_slot),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64016,
+            "instruction": "LD HL,0",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64019,
+            "instruction": "LD (position),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64022,
+            "instruction": "LD HL,(pending)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64025,
+            "instruction": "LD A,H",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64026,
+            "instruction": "OR L",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64027,
+            "instruction": "JP take_next",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64030,
+            "instruction": "LD DE,(destination)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64034,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64035,
+            "instruction": "LD HL,(slice_output)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64038,
+            "instruction": "LD DE,C000",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64041,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64042,
+            "instruction": "SBC HL,DE",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64044,
+            "instruction": "LD DE,(position)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64048,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64049,
+            "instruction": "SBC HL,DE",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64051,
+            "instruction": "LD A,H",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64052,
+            "instruction": "OR L",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64053,
+            "instruction": "JP original_57570",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64056,
+            "instruction": "CALL 57352",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64059,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64060,
+            "instruction": "JP 57679",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64063,
+            "instruction": "JP gate",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56326,
+            "instruction": "JP resumable parser",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56356,
+            "instruction": "JP resumable parser",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56520,
+            "instruction": "JP resumable parser",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56926,
+            "instruction": "CALL optional packet",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56929,
+            "instruction": "NOP",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56930,
+            "instruction": "NOP",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          }
+        ],
+        "patches": [
+          {
+            "address": 56326,
+            "before_hex": "1158ba",
+            "code_hex": "c300f9",
+            "old_listing": [
+              {
+                "address": 56326,
+                "instruction": "LD DE,length",
+                "tstates": 10,
+                "stage": "packet"
+              }
+            ]
+          },
+          {
+            "address": 56356,
+            "before_hex": "110064",
+            "code_hex": "c338f9",
+            "old_listing": [
+              {
+                "address": 56356,
+                "instruction": "LD DE,packet",
+                "tstates": 10,
+                "stage": "packet"
+              }
+            ]
+          },
+          {
+            "address": 56520,
+            "before_hex": "2255ba",
+            "code_hex": "c356f9",
+            "old_listing": [
+              {
+                "address": 56520,
+                "instruction": "LD (literal_length),HL",
+                "tstates": 16,
+                "stage": "packet"
+              }
+            ]
+          },
+          {
+            "address": 56926,
+            "before_hex": "cd06dc3e01",
+            "code_hex": "cd07f90000",
+            "old_listing": [
+              {
+                "address": 56926,
+                "instruction": "CALL read next packet",
+                "tstates": 17,
+                "phase": "schedule"
+              },
+              {
+                "address": 56929,
+                "instruction": "LD A,1",
+                "tstates": 7,
+                "phase": "schedule"
+              }
+            ]
+          }
+        ],
+        "regions": [
+          {
+            "address": 63744,
+            "code_hex": "af3243fac30cf93e013243fa3a42fab7ca1bf9fe01ca2ff9c34df93e013242fa1158ba010200cd65f9da63f9c30fdccd6ff9da63f9c30fdc3e023242fa110064ed4b58bacd65f9da63f9c32edccd6ff9da63f9c32edc2255baaf3242fa3243fa3e01c9afc93a43fab7caaee0c379f93a43fab7cab9e0c384f978b1c8ed4358e1ed535ae13ac097b7c28df937c93a51e1b7c2a6f93a50e1fe02ca23facd08e0b7ca4fe1c384f93a53e1cda5e05e23562a56e1ebb7ed52ed4b58e1e5b7ed42d2c8f9c1210000c3c9f9d1225ee1ed435ce12a58e1b7ed422258e12a56e1e5092256e1e11100c019ed5b5ae13a53e1cd1e61ed535ae12a5ee17cb5c216fa3a51e1b7ca16fa2151e1353a53e1cd2edb3253e12100002256e12a58e17cb5c284f9ed5b5ae1c92afa8e1100c0b7ed52ed5b56e1b7ed527cb5c2b6f9cd08e0b7ca4fe1c384f90000"
+          }
+        ],
+        "helper_bytes": 324,
+        "state_bytes": 2,
+        "extra_packet_bytes": 0,
+        "extra_stack_bytes": 0,
+        "private_stack": false,
+        "mandatory_gate_tstates": 13,
+        "previous_gate_tstates": 13,
+        "mandatory_gate_delta_tstates": 0,
+        "optional_continue_gate_tstates": 40,
+        "optional_continue_gate_delta_tstates": 27,
+        "mandatory_demand_gate_extra_tstates": 0,
+        "stream_unchanged": true,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "transfer_dispatch_tstates": {
+          "required": 27,
+          "optional": 37
+        },
+        "original_required_consumer_sha256": "63d2298ce4bbd4de44a5579dda6a57d328d5f94b1d01735bed4a6c588ea2963a",
+        "copied_instructions": [
+          {
+            "original_address": 57518,
+            "address": 63865,
+            "previous_hex": "78",
+            "tstates": 4
+          },
+          {
+            "original_address": 57519,
+            "address": 63866,
+            "previous_hex": "b1",
+            "tstates": 4
+          },
+          {
+            "original_address": 57520,
+            "address": 63867,
+            "previous_hex": "c8",
+            "tstates": [
+              5,
+              11
+            ]
+          },
+          {
+            "original_address": 57521,
+            "address": 63868,
+            "previous_hex": "ed4358e1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57525,
+            "address": 63872,
+            "previous_hex": "ed535ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57529,
+            "address": 63885,
+            "previous_hex": "3a51e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57532,
+            "address": 63888,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57533,
+            "address": 63889,
+            "previous_hex": "c2d2e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57536,
+            "address": 63892,
+            "previous_hex": "3a50e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57539,
+            "address": 63895,
+            "previous_hex": "fe02",
+            "tstates": 7
+          },
+          {
+            "original_address": 57541,
+            "address": 63897,
+            "previous_hex": "ca00e2",
+            "tstates": 10
+          },
+          {
+            "original_address": 57544,
+            "address": 63900,
+            "previous_hex": "cd08e0",
+            "tstates": 17
+          },
+          {
+            "original_address": 57547,
+            "address": 63903,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57548,
+            "address": 63904,
+            "previous_hex": "ca4fe1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57551,
+            "address": 63907,
+            "previous_hex": "c3b9e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57554,
+            "address": 63910,
+            "previous_hex": "3a53e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57557,
+            "address": 63913,
+            "previous_hex": "cda5e0",
+            "tstates": 17
+          },
+          {
+            "original_address": 57560,
+            "address": 63916,
+            "previous_hex": "5e",
+            "tstates": 7
+          },
+          {
+            "original_address": 57561,
+            "address": 63917,
+            "previous_hex": "23",
+            "tstates": 6
+          },
+          {
+            "original_address": 57562,
+            "address": 63918,
+            "previous_hex": "56",
+            "tstates": 7
+          },
+          {
+            "original_address": 57563,
+            "address": 63919,
+            "previous_hex": "2a56e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57566,
+            "address": 63922,
+            "previous_hex": "eb",
+            "tstates": 4
+          },
+          {
+            "original_address": 57567,
+            "address": 63923,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57568,
+            "address": 63924,
+            "previous_hex": "ed52",
+            "tstates": 15
+          },
+          {
+            "original_address": 57570,
+            "address": 63926,
+            "previous_hex": "ed4b58e1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57574,
+            "address": 63930,
+            "previous_hex": "e5",
+            "tstates": 11
+          },
+          {
+            "original_address": 57575,
+            "address": 63931,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57576,
+            "address": 63932,
+            "previous_hex": "ed42",
+            "tstates": 15
+          },
+          {
+            "original_address": 57578,
+            "address": 63934,
+            "previous_hex": "d2f4e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57581,
+            "address": 63937,
+            "previous_hex": "c1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57582,
+            "address": 63938,
+            "previous_hex": "210000",
+            "tstates": 10
+          },
+          {
+            "original_address": 57585,
+            "address": 63941,
+            "previous_hex": "c3f5e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57588,
+            "address": 63944,
+            "previous_hex": "d1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57589,
+            "address": 63945,
+            "previous_hex": "225ee1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57592,
+            "address": 63948,
+            "previous_hex": "ed435ce1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57596,
+            "address": 63952,
+            "previous_hex": "2a58e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57599,
+            "address": 63955,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57600,
+            "address": 63956,
+            "previous_hex": "ed42",
+            "tstates": 15
+          },
+          {
+            "original_address": 57602,
+            "address": 63958,
+            "previous_hex": "2258e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57605,
+            "address": 63961,
+            "previous_hex": "2a56e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57608,
+            "address": 63964,
+            "previous_hex": "e5",
+            "tstates": 11
+          },
+          {
+            "original_address": 57609,
+            "address": 63965,
+            "previous_hex": "09",
+            "tstates": 11
+          },
+          {
+            "original_address": 57610,
+            "address": 63966,
+            "previous_hex": "2256e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57613,
+            "address": 63969,
+            "previous_hex": "e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57614,
+            "address": 63970,
+            "previous_hex": "1100c0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57617,
+            "address": 63973,
+            "previous_hex": "19",
+            "tstates": 11
+          },
+          {
+            "original_address": 57618,
+            "address": 63974,
+            "previous_hex": "ed5b5ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57622,
+            "address": 63978,
+            "previous_hex": "3a53e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57625,
+            "address": 63981,
+            "previous_hex": "cd1e61",
+            "tstates": 17
+          },
+          {
+            "original_address": 57628,
+            "address": 63984,
+            "previous_hex": "ed535ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57632,
+            "address": 63988,
+            "previous_hex": "2a5ee1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57635,
+            "address": 63991,
+            "previous_hex": "7c",
+            "tstates": 4
+          },
+          {
+            "original_address": 57636,
+            "address": 63992,
+            "previous_hex": "b5",
+            "tstates": 4
+          },
+          {
+            "original_address": 57637,
+            "address": 63993,
+            "previous_hex": "c242e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57640,
+            "address": 63996,
+            "previous_hex": "3a51e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57643,
+            "address": 63999,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57644,
+            "address": 64000,
+            "previous_hex": "ca42e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57647,
+            "address": 64003,
+            "previous_hex": "2151e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57650,
+            "address": 64006,
+            "previous_hex": "35",
+            "tstates": 11
+          },
+          {
+            "original_address": 57651,
+            "address": 64007,
+            "previous_hex": "3a53e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57654,
+            "address": 64010,
+            "previous_hex": "cd2edb",
+            "tstates": 17
+          },
+          {
+            "original_address": 57657,
+            "address": 64013,
+            "previous_hex": "3253e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57660,
+            "address": 64016,
+            "previous_hex": "210000",
+            "tstates": 10
+          },
+          {
+            "original_address": 57663,
+            "address": 64019,
+            "previous_hex": "2256e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57666,
+            "address": 64022,
+            "previous_hex": "2a58e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57669,
+            "address": 64025,
+            "previous_hex": "7c",
+            "tstates": 4
+          },
+          {
+            "original_address": 57670,
+            "address": 64026,
+            "previous_hex": "b5",
+            "tstates": 4
+          },
+          {
+            "original_address": 57671,
+            "address": 64027,
+            "previous_hex": "c2b9e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57674,
+            "address": 64030,
+            "previous_hex": "ed5b5ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57678,
+            "address": 64034,
+            "previous_hex": "c9",
+            "tstates": 10
+          }
+        ],
+        "optional_consumer": true,
+        "dynamic_routing": false,
+        "shared_queue_state": true,
+        "previous_global_gate_helper_bytes": 162
+      },
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "d9f98e739d6399fac00c858be29b05f8bc933bf94573d2b7398b8b0e6affa403"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "d6b8a155827ca2728d1a5db2578d84ac1434be7c76d512f6204531d2e8ac50aa"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 14916,
+          "sha256": "9d4ace12893a53758c1606a5788657e9c58b67f0d29a98928a1e362a4bd82c8a"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "116b7bb822b27e744f2ab028bdaaa4344a065a34e9079ab4fb5178750860b307"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7424,
+          "sha256": "6418498a3aecd77c830aa57b9615d39ae9564c0859e820f3341b8e281bf5c2b7"
+        },
+        {
+          "bank": 4,
+          "offset": 7424,
+          "bytes": 6806,
+          "sha256": "737cbe7f85342f3cebe5dd9c7902a67a812edc6a082363b59e8dd00b15ec0ab3"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "b8a4084ca2e7d7b3fcbbc1a01c904f8894ffaa8b9840be0b7336c6611485e6b0"
+        }
+      ],
+      "mocked_boot_tstates": 3219876,
+      "boot_sectors": 92,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 3534933,
+      "mocked_boot_and_priming_sectors": 187
+    },
+    {
+      "part": 2,
+      "frames": 1297,
+      "used_sectors": 2463,
+      "free_sectors": 81,
+      "video_bytes": 606524,
+      "video_sectors": 2370,
+      "video_start_sector": 109,
+      "trd_sha256": "da18346b4dfa456195a940e3082e9257b9b677d6bfd85b1a816498da524dd609",
+      "metadata_sha256": "7e10cd3ac243c35552b8a3e7d4f5c3a1a7ba357c4d9d8f41715c65479df46cb7",
+      "stream_sha256": "c00e4407d9ba640015f9455db8ff6a495857c83006182481fb43076e468e2c82",
+      "raw_video_sha256": "d9d544597dea91e02b45a3cf761ef064bce462fb29e1344b7490532c60292130",
+      "audio_sha256": "09ceb24b69532a0467581669e336f1f9a910e3425b3792c4b10b16e34dffd4e5",
+      "independently_bootable": true,
+      "exact_video_and_ay_bytes": true,
+      "resumable_packet": {
+        "enabled": true,
+        "labels": {
+          "required": 63744,
+          "optional": 63751,
+          "dispatch": 63756,
+          "packet_start": 63771,
+          "resume_length": 63791,
+          "begin_body": 63800,
+          "resume_body": 63821,
+          "complete": 63830,
+          "packet_ready": 63833,
+          "paused": 63843,
+          "take_dispatch": 63845,
+          "resume_dispatch": 63855,
+          "optional_take": 63865,
+          "original_57518": 63865,
+          "original_57519": 63866,
+          "original_57520": 63867,
+          "original_57521": 63868,
+          "original_57525": 63872,
+          "gate": 63876,
+          "original_57529": 63885,
+          "original_57532": 63888,
+          "original_57533": 63889,
+          "original_57536": 63892,
+          "original_57539": 63895,
+          "original_57541": 63897,
+          "original_57544": 63900,
+          "original_57547": 63903,
+          "original_57548": 63904,
+          "original_57551": 63907,
+          "original_57554": 63910,
+          "original_57557": 63913,
+          "original_57560": 63916,
+          "original_57561": 63917,
+          "original_57562": 63918,
+          "original_57563": 63919,
+          "original_57566": 63922,
+          "original_57567": 63923,
+          "original_57568": 63924,
+          "original_57570": 63926,
+          "original_57574": 63930,
+          "original_57575": 63931,
+          "original_57576": 63932,
+          "original_57578": 63934,
+          "original_57581": 63937,
+          "original_57582": 63938,
+          "original_57585": 63941,
+          "original_57588": 63944,
+          "original_57589": 63945,
+          "original_57592": 63948,
+          "original_57596": 63952,
+          "original_57599": 63955,
+          "original_57600": 63956,
+          "original_57602": 63958,
+          "original_57605": 63961,
+          "original_57608": 63964,
+          "original_57609": 63965,
+          "original_57610": 63966,
+          "original_57613": 63969,
+          "original_57614": 63970,
+          "original_57617": 63973,
+          "original_57618": 63974,
+          "original_57622": 63978,
+          "original_57625": 63981,
+          "original_57628": 63984,
+          "original_57632": 63988,
+          "original_57635": 63991,
+          "original_57636": 63992,
+          "original_57637": 63993,
+          "original_57640": 63996,
+          "original_57643": 63999,
+          "original_57644": 64000,
+          "original_57647": 64003,
+          "original_57650": 64006,
+          "original_57651": 64007,
+          "original_57654": 64010,
+          "original_57657": 64013,
+          "original_57660": 64016,
+          "original_57663": 64019,
+          "original_57666": 64022,
+          "original_57669": 64025,
+          "original_57670": 64026,
+          "original_57671": 64027,
+          "original_57674": 64030,
+          "original_57678": 64034,
+          "partial": 64035,
+          "stage": 64066,
+          "optional_mode": 64067,
+          "end": 64068
+        },
+        "sites": {
+          "validate_length": 56335,
+          "input": 25600,
+          "body_done": 56366,
+          "literal_length": 47701
+        },
+        "listing": [
+          {
+            "address": 63744,
+            "instruction": "XOR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63745,
+            "instruction": "LD (optional_mode),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63748,
+            "instruction": "JP dispatch",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63751,
+            "instruction": "LD A,1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63753,
+            "instruction": "LD (optional_mode),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63756,
+            "instruction": "LD A,(stage)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63759,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63760,
+            "instruction": "JP packet_start",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63763,
+            "instruction": "CP 1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63765,
+            "instruction": "JP resume_length",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63768,
+            "instruction": "JP resume_body",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63771,
+            "instruction": "LD A,1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63773,
+            "instruction": "LD (stage),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63776,
+            "instruction": "LD DE,length",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63779,
+            "instruction": "LD BC,2",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63782,
+            "instruction": "CALL take_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63785,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63788,
+            "instruction": "JP 56335",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63791,
+            "instruction": "CALL resume_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63794,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63797,
+            "instruction": "JP 56335",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63800,
+            "instruction": "LD A,2",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63802,
+            "instruction": "LD (stage),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63805,
+            "instruction": "LD DE,packet",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63808,
+            "instruction": "LD BC,(length)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63812,
+            "instruction": "CALL take_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63815,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63818,
+            "instruction": "JP 56366",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63821,
+            "instruction": "CALL resume_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63824,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63827,
+            "instruction": "JP 56366",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63830,
+            "instruction": "LD (literal_length),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63833,
+            "instruction": "XOR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63834,
+            "instruction": "LD (stage),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63837,
+            "instruction": "LD (optional_mode),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63840,
+            "instruction": "LD A,1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63842,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63843,
+            "instruction": "XOR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63844,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63845,
+            "instruction": "LD A,(optional_mode)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63848,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63849,
+            "instruction": "JP 57518",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63852,
+            "instruction": "JP optional_take",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63855,
+            "instruction": "LD A,(optional_mode)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63858,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63859,
+            "instruction": "JP 57529",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63862,
+            "instruction": "JP gate",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63865,
+            "instruction": "LD A,B",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63866,
+            "instruction": "OR C",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63867,
+            "instruction": "RET Z",
+            "tstates": [
+              5,
+              11
+            ],
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63868,
+            "instruction": "LD (pending),BC",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63872,
+            "instruction": "LD (destination),DE",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63876,
+            "instruction": "LD A,(38848)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63879,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63880,
+            "instruction": "JP original_57529",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63883,
+            "instruction": "SCF",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63884,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63885,
+            "instruction": "LD A,(count)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63888,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63889,
+            "instruction": "JP have_slot",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63892,
+            "instruction": "LD A,(phase)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63895,
+            "instruction": "CP 2",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63897,
+            "instruction": "JP Z,available optional output",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63900,
+            "instruction": "CALL step",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63903,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63904,
+            "instruction": "JP fatal",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63907,
+            "instruction": "JP take_next",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63910,
+            "instruction": "LD A,(read_slot)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63913,
+            "instruction": "CALL descriptor",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63916,
+            "instruction": "LD E,(HL)",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63917,
+            "instruction": "INC HL",
+            "tstates": 6,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63918,
+            "instruction": "LD D,(HL)",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63919,
+            "instruction": "LD HL,(position)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63922,
+            "instruction": "EX DE,HL",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63923,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63924,
+            "instruction": "SBC HL,DE",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63926,
+            "instruction": "LD BC,(pending)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63930,
+            "instruction": "PUSH HL",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63931,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63932,
+            "instruction": "SBC HL,BC",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63934,
+            "instruction": "JP take_fits",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63937,
+            "instruction": "POP BC",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63938,
+            "instruction": "LD HL,0",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63941,
+            "instruction": "JP take_count",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63944,
+            "instruction": "POP DE",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63945,
+            "instruction": "LD (slot_left),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63948,
+            "instruction": "LD (copy_count),BC",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63952,
+            "instruction": "LD HL,(pending)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63955,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63956,
+            "instruction": "SBC HL,BC",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63958,
+            "instruction": "LD (pending),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63961,
+            "instruction": "LD HL,(position)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63964,
+            "instruction": "PUSH HL",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63965,
+            "instruction": "ADD HL,BC",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63966,
+            "instruction": "LD (position),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63969,
+            "instruction": "POP HL",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63970,
+            "instruction": "LD DE,C000",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63973,
+            "instruction": "ADD HL,DE",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63974,
+            "instruction": "LD DE,(destination)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63978,
+            "instruction": "LD A,(read_slot)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63981,
+            "instruction": "CALL 24862",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63984,
+            "instruction": "LD (destination),DE",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63988,
+            "instruction": "LD HL,(slot_left)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63991,
+            "instruction": "LD A,H",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63992,
+            "instruction": "OR L",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63993,
+            "instruction": "JP retained",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63996,
+            "instruction": "LD A,(count)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63999,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64000,
+            "instruction": "JP retained",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64003,
+            "instruction": "LD HL,count",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64006,
+            "instruction": "DEC (HL)",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64007,
+            "instruction": "LD A,(read_slot)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64010,
+            "instruction": "CALL advance three-slot cursor",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64013,
+            "instruction": "LD (read_slot),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64016,
+            "instruction": "LD HL,0",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64019,
+            "instruction": "LD (position),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64022,
+            "instruction": "LD HL,(pending)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64025,
+            "instruction": "LD A,H",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64026,
+            "instruction": "OR L",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64027,
+            "instruction": "JP take_next",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64030,
+            "instruction": "LD DE,(destination)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64034,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64035,
+            "instruction": "LD HL,(slice_output)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64038,
+            "instruction": "LD DE,C000",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64041,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64042,
+            "instruction": "SBC HL,DE",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64044,
+            "instruction": "LD DE,(position)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64048,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64049,
+            "instruction": "SBC HL,DE",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64051,
+            "instruction": "LD A,H",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64052,
+            "instruction": "OR L",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64053,
+            "instruction": "JP original_57570",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64056,
+            "instruction": "CALL 57352",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64059,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64060,
+            "instruction": "JP 57679",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64063,
+            "instruction": "JP gate",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56326,
+            "instruction": "JP resumable parser",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56356,
+            "instruction": "JP resumable parser",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56520,
+            "instruction": "JP resumable parser",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56926,
+            "instruction": "CALL optional packet",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56929,
+            "instruction": "NOP",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56930,
+            "instruction": "NOP",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          }
+        ],
+        "patches": [
+          {
+            "address": 56326,
+            "before_hex": "1158ba",
+            "code_hex": "c300f9",
+            "old_listing": [
+              {
+                "address": 56326,
+                "instruction": "LD DE,length",
+                "tstates": 10,
+                "stage": "packet"
+              }
+            ]
+          },
+          {
+            "address": 56356,
+            "before_hex": "110064",
+            "code_hex": "c338f9",
+            "old_listing": [
+              {
+                "address": 56356,
+                "instruction": "LD DE,packet",
+                "tstates": 10,
+                "stage": "packet"
+              }
+            ]
+          },
+          {
+            "address": 56520,
+            "before_hex": "2255ba",
+            "code_hex": "c356f9",
+            "old_listing": [
+              {
+                "address": 56520,
+                "instruction": "LD (literal_length),HL",
+                "tstates": 16,
+                "stage": "packet"
+              }
+            ]
+          },
+          {
+            "address": 56926,
+            "before_hex": "cd06dc3e01",
+            "code_hex": "cd07f90000",
+            "old_listing": [
+              {
+                "address": 56926,
+                "instruction": "CALL read next packet",
+                "tstates": 17,
+                "phase": "schedule"
+              },
+              {
+                "address": 56929,
+                "instruction": "LD A,1",
+                "tstates": 7,
+                "phase": "schedule"
+              }
+            ]
+          }
+        ],
+        "regions": [
+          {
+            "address": 63744,
+            "code_hex": "af3243fac30cf93e013243fa3a42fab7ca1bf9fe01ca2ff9c34df93e013242fa1158ba010200cd65f9da63f9c30fdccd6ff9da63f9c30fdc3e023242fa110064ed4b58bacd65f9da63f9c32edccd6ff9da63f9c32edc2255baaf3242fa3243fa3e01c9afc93a43fab7caaee0c379f93a43fab7cab9e0c384f978b1c8ed4358e1ed535ae13ac097b7c28df937c93a51e1b7c2a6f93a50e1fe02ca23facd08e0b7ca4fe1c384f93a53e1cda5e05e23562a56e1ebb7ed52ed4b58e1e5b7ed42d2c8f9c1210000c3c9f9d1225ee1ed435ce12a58e1b7ed422258e12a56e1e5092256e1e11100c019ed5b5ae13a53e1cd1e61ed535ae12a5ee17cb5c216fa3a51e1b7ca16fa2151e1353a53e1cd2edb3253e12100002256e12a58e17cb5c284f9ed5b5ae1c92afa8e1100c0b7ed52ed5b56e1b7ed527cb5c2b6f9cd08e0b7ca4fe1c384f90000"
+          }
+        ],
+        "helper_bytes": 324,
+        "state_bytes": 2,
+        "extra_packet_bytes": 0,
+        "extra_stack_bytes": 0,
+        "private_stack": false,
+        "mandatory_gate_tstates": 13,
+        "previous_gate_tstates": 13,
+        "mandatory_gate_delta_tstates": 0,
+        "optional_continue_gate_tstates": 40,
+        "optional_continue_gate_delta_tstates": 27,
+        "mandatory_demand_gate_extra_tstates": 0,
+        "stream_unchanged": true,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "transfer_dispatch_tstates": {
+          "required": 27,
+          "optional": 37
+        },
+        "original_required_consumer_sha256": "63d2298ce4bbd4de44a5579dda6a57d328d5f94b1d01735bed4a6c588ea2963a",
+        "copied_instructions": [
+          {
+            "original_address": 57518,
+            "address": 63865,
+            "previous_hex": "78",
+            "tstates": 4
+          },
+          {
+            "original_address": 57519,
+            "address": 63866,
+            "previous_hex": "b1",
+            "tstates": 4
+          },
+          {
+            "original_address": 57520,
+            "address": 63867,
+            "previous_hex": "c8",
+            "tstates": [
+              5,
+              11
+            ]
+          },
+          {
+            "original_address": 57521,
+            "address": 63868,
+            "previous_hex": "ed4358e1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57525,
+            "address": 63872,
+            "previous_hex": "ed535ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57529,
+            "address": 63885,
+            "previous_hex": "3a51e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57532,
+            "address": 63888,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57533,
+            "address": 63889,
+            "previous_hex": "c2d2e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57536,
+            "address": 63892,
+            "previous_hex": "3a50e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57539,
+            "address": 63895,
+            "previous_hex": "fe02",
+            "tstates": 7
+          },
+          {
+            "original_address": 57541,
+            "address": 63897,
+            "previous_hex": "ca00e2",
+            "tstates": 10
+          },
+          {
+            "original_address": 57544,
+            "address": 63900,
+            "previous_hex": "cd08e0",
+            "tstates": 17
+          },
+          {
+            "original_address": 57547,
+            "address": 63903,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57548,
+            "address": 63904,
+            "previous_hex": "ca4fe1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57551,
+            "address": 63907,
+            "previous_hex": "c3b9e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57554,
+            "address": 63910,
+            "previous_hex": "3a53e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57557,
+            "address": 63913,
+            "previous_hex": "cda5e0",
+            "tstates": 17
+          },
+          {
+            "original_address": 57560,
+            "address": 63916,
+            "previous_hex": "5e",
+            "tstates": 7
+          },
+          {
+            "original_address": 57561,
+            "address": 63917,
+            "previous_hex": "23",
+            "tstates": 6
+          },
+          {
+            "original_address": 57562,
+            "address": 63918,
+            "previous_hex": "56",
+            "tstates": 7
+          },
+          {
+            "original_address": 57563,
+            "address": 63919,
+            "previous_hex": "2a56e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57566,
+            "address": 63922,
+            "previous_hex": "eb",
+            "tstates": 4
+          },
+          {
+            "original_address": 57567,
+            "address": 63923,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57568,
+            "address": 63924,
+            "previous_hex": "ed52",
+            "tstates": 15
+          },
+          {
+            "original_address": 57570,
+            "address": 63926,
+            "previous_hex": "ed4b58e1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57574,
+            "address": 63930,
+            "previous_hex": "e5",
+            "tstates": 11
+          },
+          {
+            "original_address": 57575,
+            "address": 63931,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57576,
+            "address": 63932,
+            "previous_hex": "ed42",
+            "tstates": 15
+          },
+          {
+            "original_address": 57578,
+            "address": 63934,
+            "previous_hex": "d2f4e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57581,
+            "address": 63937,
+            "previous_hex": "c1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57582,
+            "address": 63938,
+            "previous_hex": "210000",
+            "tstates": 10
+          },
+          {
+            "original_address": 57585,
+            "address": 63941,
+            "previous_hex": "c3f5e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57588,
+            "address": 63944,
+            "previous_hex": "d1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57589,
+            "address": 63945,
+            "previous_hex": "225ee1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57592,
+            "address": 63948,
+            "previous_hex": "ed435ce1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57596,
+            "address": 63952,
+            "previous_hex": "2a58e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57599,
+            "address": 63955,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57600,
+            "address": 63956,
+            "previous_hex": "ed42",
+            "tstates": 15
+          },
+          {
+            "original_address": 57602,
+            "address": 63958,
+            "previous_hex": "2258e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57605,
+            "address": 63961,
+            "previous_hex": "2a56e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57608,
+            "address": 63964,
+            "previous_hex": "e5",
+            "tstates": 11
+          },
+          {
+            "original_address": 57609,
+            "address": 63965,
+            "previous_hex": "09",
+            "tstates": 11
+          },
+          {
+            "original_address": 57610,
+            "address": 63966,
+            "previous_hex": "2256e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57613,
+            "address": 63969,
+            "previous_hex": "e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57614,
+            "address": 63970,
+            "previous_hex": "1100c0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57617,
+            "address": 63973,
+            "previous_hex": "19",
+            "tstates": 11
+          },
+          {
+            "original_address": 57618,
+            "address": 63974,
+            "previous_hex": "ed5b5ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57622,
+            "address": 63978,
+            "previous_hex": "3a53e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57625,
+            "address": 63981,
+            "previous_hex": "cd1e61",
+            "tstates": 17
+          },
+          {
+            "original_address": 57628,
+            "address": 63984,
+            "previous_hex": "ed535ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57632,
+            "address": 63988,
+            "previous_hex": "2a5ee1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57635,
+            "address": 63991,
+            "previous_hex": "7c",
+            "tstates": 4
+          },
+          {
+            "original_address": 57636,
+            "address": 63992,
+            "previous_hex": "b5",
+            "tstates": 4
+          },
+          {
+            "original_address": 57637,
+            "address": 63993,
+            "previous_hex": "c242e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57640,
+            "address": 63996,
+            "previous_hex": "3a51e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57643,
+            "address": 63999,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57644,
+            "address": 64000,
+            "previous_hex": "ca42e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57647,
+            "address": 64003,
+            "previous_hex": "2151e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57650,
+            "address": 64006,
+            "previous_hex": "35",
+            "tstates": 11
+          },
+          {
+            "original_address": 57651,
+            "address": 64007,
+            "previous_hex": "3a53e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57654,
+            "address": 64010,
+            "previous_hex": "cd2edb",
+            "tstates": 17
+          },
+          {
+            "original_address": 57657,
+            "address": 64013,
+            "previous_hex": "3253e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57660,
+            "address": 64016,
+            "previous_hex": "210000",
+            "tstates": 10
+          },
+          {
+            "original_address": 57663,
+            "address": 64019,
+            "previous_hex": "2256e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57666,
+            "address": 64022,
+            "previous_hex": "2a58e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57669,
+            "address": 64025,
+            "previous_hex": "7c",
+            "tstates": 4
+          },
+          {
+            "original_address": 57670,
+            "address": 64026,
+            "previous_hex": "b5",
+            "tstates": 4
+          },
+          {
+            "original_address": 57671,
+            "address": 64027,
+            "previous_hex": "c2b9e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57674,
+            "address": 64030,
+            "previous_hex": "ed5b5ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57678,
+            "address": 64034,
+            "previous_hex": "c9",
+            "tstates": 10
+          }
+        ],
+        "optional_consumer": true,
+        "dynamic_routing": false,
+        "shared_queue_state": true,
+        "previous_global_gate_helper_bytes": 162
+      },
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "999999b96165d3c3a14b470f1d8635f97d755a37c5743aecbde2c3a8bb357992"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "ea537aedb9991dffd328c9e8d85622cdca2fcfd39e611ed000feb8521ba9f556"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 14916,
+          "sha256": "25d144360deaabc41bf7ae6c50e6c17e0e294153fdfe6ab1504b346e59942780"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "116b7bb822b27e744f2ab028bdaaa4344a065a34e9079ab4fb5178750860b307"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7168,
+          "sha256": "562f8d6b5602372ed78b38a12c97671ac69c4e861101e139a9262d7b9c96cfeb"
+        },
+        {
+          "bank": 4,
+          "offset": 7168,
+          "bytes": 6047,
+          "sha256": "b01378e3bb42c7a2a9bb06eeea0cc405788e12ceebca532a90200dd818cc3399"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "7454ae2ba18df65d6f0b1d6aceaf26196e783eb84101a36aa3dfbd5c5f25e2fc"
+        }
+      ],
+      "mocked_boot_tstates": 3339811,
+      "boot_sectors": 94,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 4640252,
+      "mocked_boot_and_priming_sectors": 209
+    },
+    {
+      "part": 3,
+      "frames": 1300,
+      "used_sectors": 2462,
+      "free_sectors": 82,
+      "video_bytes": 605951,
+      "video_sectors": 2367,
+      "video_start_sector": 110,
+      "trd_sha256": "16e318cd07b9c0f7b64aae1dec10e885eff94ea33fab7b058de117a90a824628",
+      "metadata_sha256": "0cfeb321e5947927a53eba18591524c67555c233d0318526b84549bbefa2a9f1",
+      "stream_sha256": "a683d596305871a1bbec58476c30b5de44c1b2d7218e00feb17bdc35b9597f0e",
+      "raw_video_sha256": "bad4b6f977b4423d477402a2ec5f2204c5cd2991d46d66a1249f465827753b81",
+      "audio_sha256": "272f9eb355d9231fb3a76515609aa68e6798bdd696f63717fef5f28942f9ceca",
+      "independently_bootable": true,
+      "exact_video_and_ay_bytes": true,
+      "resumable_packet": {
+        "enabled": true,
+        "labels": {
+          "required": 63744,
+          "optional": 63751,
+          "dispatch": 63756,
+          "packet_start": 63771,
+          "resume_length": 63791,
+          "begin_body": 63800,
+          "resume_body": 63821,
+          "complete": 63830,
+          "packet_ready": 63833,
+          "paused": 63843,
+          "take_dispatch": 63845,
+          "resume_dispatch": 63855,
+          "optional_take": 63865,
+          "original_57518": 63865,
+          "original_57519": 63866,
+          "original_57520": 63867,
+          "original_57521": 63868,
+          "original_57525": 63872,
+          "gate": 63876,
+          "original_57529": 63885,
+          "original_57532": 63888,
+          "original_57533": 63889,
+          "original_57536": 63892,
+          "original_57539": 63895,
+          "original_57541": 63897,
+          "original_57544": 63900,
+          "original_57547": 63903,
+          "original_57548": 63904,
+          "original_57551": 63907,
+          "original_57554": 63910,
+          "original_57557": 63913,
+          "original_57560": 63916,
+          "original_57561": 63917,
+          "original_57562": 63918,
+          "original_57563": 63919,
+          "original_57566": 63922,
+          "original_57567": 63923,
+          "original_57568": 63924,
+          "original_57570": 63926,
+          "original_57574": 63930,
+          "original_57575": 63931,
+          "original_57576": 63932,
+          "original_57578": 63934,
+          "original_57581": 63937,
+          "original_57582": 63938,
+          "original_57585": 63941,
+          "original_57588": 63944,
+          "original_57589": 63945,
+          "original_57592": 63948,
+          "original_57596": 63952,
+          "original_57599": 63955,
+          "original_57600": 63956,
+          "original_57602": 63958,
+          "original_57605": 63961,
+          "original_57608": 63964,
+          "original_57609": 63965,
+          "original_57610": 63966,
+          "original_57613": 63969,
+          "original_57614": 63970,
+          "original_57617": 63973,
+          "original_57618": 63974,
+          "original_57622": 63978,
+          "original_57625": 63981,
+          "original_57628": 63984,
+          "original_57632": 63988,
+          "original_57635": 63991,
+          "original_57636": 63992,
+          "original_57637": 63993,
+          "original_57640": 63996,
+          "original_57643": 63999,
+          "original_57644": 64000,
+          "original_57647": 64003,
+          "original_57650": 64006,
+          "original_57651": 64007,
+          "original_57654": 64010,
+          "original_57657": 64013,
+          "original_57660": 64016,
+          "original_57663": 64019,
+          "original_57666": 64022,
+          "original_57669": 64025,
+          "original_57670": 64026,
+          "original_57671": 64027,
+          "original_57674": 64030,
+          "original_57678": 64034,
+          "partial": 64035,
+          "stage": 64066,
+          "optional_mode": 64067,
+          "end": 64068
+        },
+        "sites": {
+          "validate_length": 56335,
+          "input": 25600,
+          "body_done": 56366,
+          "literal_length": 47701
+        },
+        "listing": [
+          {
+            "address": 63744,
+            "instruction": "XOR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63745,
+            "instruction": "LD (optional_mode),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63748,
+            "instruction": "JP dispatch",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63751,
+            "instruction": "LD A,1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63753,
+            "instruction": "LD (optional_mode),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63756,
+            "instruction": "LD A,(stage)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63759,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63760,
+            "instruction": "JP packet_start",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63763,
+            "instruction": "CP 1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63765,
+            "instruction": "JP resume_length",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63768,
+            "instruction": "JP resume_body",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63771,
+            "instruction": "LD A,1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63773,
+            "instruction": "LD (stage),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63776,
+            "instruction": "LD DE,length",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63779,
+            "instruction": "LD BC,2",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63782,
+            "instruction": "CALL take_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63785,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63788,
+            "instruction": "JP 56335",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63791,
+            "instruction": "CALL resume_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63794,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63797,
+            "instruction": "JP 56335",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63800,
+            "instruction": "LD A,2",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63802,
+            "instruction": "LD (stage),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63805,
+            "instruction": "LD DE,packet",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63808,
+            "instruction": "LD BC,(length)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63812,
+            "instruction": "CALL take_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63815,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63818,
+            "instruction": "JP 56366",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63821,
+            "instruction": "CALL resume_dispatch",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63824,
+            "instruction": "JP paused",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63827,
+            "instruction": "JP 56366",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63830,
+            "instruction": "LD (literal_length),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63833,
+            "instruction": "XOR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63834,
+            "instruction": "LD (stage),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63837,
+            "instruction": "LD (optional_mode),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63840,
+            "instruction": "LD A,1",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63842,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63843,
+            "instruction": "XOR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63844,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63845,
+            "instruction": "LD A,(optional_mode)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63848,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63849,
+            "instruction": "JP 57518",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63852,
+            "instruction": "JP optional_take",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63855,
+            "instruction": "LD A,(optional_mode)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63858,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63859,
+            "instruction": "JP 57529",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63862,
+            "instruction": "JP gate",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63865,
+            "instruction": "LD A,B",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63866,
+            "instruction": "OR C",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63867,
+            "instruction": "RET Z",
+            "tstates": [
+              5,
+              11
+            ],
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63868,
+            "instruction": "LD (pending),BC",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63872,
+            "instruction": "LD (destination),DE",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63876,
+            "instruction": "LD A,(38848)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63879,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63880,
+            "instruction": "JP original_57529",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63883,
+            "instruction": "SCF",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63884,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63885,
+            "instruction": "LD A,(count)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63888,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63889,
+            "instruction": "JP have_slot",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63892,
+            "instruction": "LD A,(phase)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63895,
+            "instruction": "CP 2",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63897,
+            "instruction": "JP Z,available optional output",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63900,
+            "instruction": "CALL step",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63903,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63904,
+            "instruction": "JP fatal",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63907,
+            "instruction": "JP take_next",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63910,
+            "instruction": "LD A,(read_slot)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63913,
+            "instruction": "CALL descriptor",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63916,
+            "instruction": "LD E,(HL)",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63917,
+            "instruction": "INC HL",
+            "tstates": 6,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63918,
+            "instruction": "LD D,(HL)",
+            "tstates": 7,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63919,
+            "instruction": "LD HL,(position)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63922,
+            "instruction": "EX DE,HL",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63923,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63924,
+            "instruction": "SBC HL,DE",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63926,
+            "instruction": "LD BC,(pending)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63930,
+            "instruction": "PUSH HL",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63931,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63932,
+            "instruction": "SBC HL,BC",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63934,
+            "instruction": "JP take_fits",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63937,
+            "instruction": "POP BC",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63938,
+            "instruction": "LD HL,0",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63941,
+            "instruction": "JP take_count",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63944,
+            "instruction": "POP DE",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63945,
+            "instruction": "LD (slot_left),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63948,
+            "instruction": "LD (copy_count),BC",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63952,
+            "instruction": "LD HL,(pending)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63955,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63956,
+            "instruction": "SBC HL,BC",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63958,
+            "instruction": "LD (pending),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63961,
+            "instruction": "LD HL,(position)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63964,
+            "instruction": "PUSH HL",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63965,
+            "instruction": "ADD HL,BC",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63966,
+            "instruction": "LD (position),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63969,
+            "instruction": "POP HL",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63970,
+            "instruction": "LD DE,C000",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63973,
+            "instruction": "ADD HL,DE",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63974,
+            "instruction": "LD DE,(destination)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63978,
+            "instruction": "LD A,(read_slot)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63981,
+            "instruction": "CALL 24862",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63984,
+            "instruction": "LD (destination),DE",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63988,
+            "instruction": "LD HL,(slot_left)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63991,
+            "instruction": "LD A,H",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63992,
+            "instruction": "OR L",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63993,
+            "instruction": "JP retained",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63996,
+            "instruction": "LD A,(count)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 63999,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64000,
+            "instruction": "JP retained",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64003,
+            "instruction": "LD HL,count",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64006,
+            "instruction": "DEC (HL)",
+            "tstates": 11,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64007,
+            "instruction": "LD A,(read_slot)",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64010,
+            "instruction": "CALL advance three-slot cursor",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64013,
+            "instruction": "LD (read_slot),A",
+            "tstates": 13,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64016,
+            "instruction": "LD HL,0",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64019,
+            "instruction": "LD (position),HL",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64022,
+            "instruction": "LD HL,(pending)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64025,
+            "instruction": "LD A,H",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64026,
+            "instruction": "OR L",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64027,
+            "instruction": "JP take_next",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64030,
+            "instruction": "LD DE,(destination)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64034,
+            "instruction": "RET",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64035,
+            "instruction": "LD HL,(slice_output)",
+            "tstates": 16,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64038,
+            "instruction": "LD DE,C000",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64041,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64042,
+            "instruction": "SBC HL,DE",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64044,
+            "instruction": "LD DE,(position)",
+            "tstates": 20,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64048,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64049,
+            "instruction": "SBC HL,DE",
+            "tstates": 15,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64051,
+            "instruction": "LD A,H",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64052,
+            "instruction": "OR L",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64053,
+            "instruction": "JP original_57570",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64056,
+            "instruction": "CALL 57352",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64059,
+            "instruction": "OR A",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64060,
+            "instruction": "JP 57679",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 64063,
+            "instruction": "JP gate",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56326,
+            "instruction": "JP resumable parser",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56356,
+            "instruction": "JP resumable parser",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56520,
+            "instruction": "JP resumable parser",
+            "tstates": 10,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56926,
+            "instruction": "CALL optional packet",
+            "tstates": 17,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56929,
+            "instruction": "NOP",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          },
+          {
+            "address": 56930,
+            "instruction": "NOP",
+            "tstates": 4,
+            "phase": "resumable_packet"
+          }
+        ],
+        "patches": [
+          {
+            "address": 56326,
+            "before_hex": "1158ba",
+            "code_hex": "c300f9",
+            "old_listing": [
+              {
+                "address": 56326,
+                "instruction": "LD DE,length",
+                "tstates": 10,
+                "stage": "packet"
+              }
+            ]
+          },
+          {
+            "address": 56356,
+            "before_hex": "110064",
+            "code_hex": "c338f9",
+            "old_listing": [
+              {
+                "address": 56356,
+                "instruction": "LD DE,packet",
+                "tstates": 10,
+                "stage": "packet"
+              }
+            ]
+          },
+          {
+            "address": 56520,
+            "before_hex": "2255ba",
+            "code_hex": "c356f9",
+            "old_listing": [
+              {
+                "address": 56520,
+                "instruction": "LD (literal_length),HL",
+                "tstates": 16,
+                "stage": "packet"
+              }
+            ]
+          },
+          {
+            "address": 56926,
+            "before_hex": "cd06dc3e01",
+            "code_hex": "cd07f90000",
+            "old_listing": [
+              {
+                "address": 56926,
+                "instruction": "CALL read next packet",
+                "tstates": 17,
+                "phase": "schedule"
+              },
+              {
+                "address": 56929,
+                "instruction": "LD A,1",
+                "tstates": 7,
+                "phase": "schedule"
+              }
+            ]
+          }
+        ],
+        "regions": [
+          {
+            "address": 63744,
+            "code_hex": "af3243fac30cf93e013243fa3a42fab7ca1bf9fe01ca2ff9c34df93e013242fa1158ba010200cd65f9da63f9c30fdccd6ff9da63f9c30fdc3e023242fa110064ed4b58bacd65f9da63f9c32edccd6ff9da63f9c32edc2255baaf3242fa3243fa3e01c9afc93a43fab7caaee0c379f93a43fab7cab9e0c384f978b1c8ed4358e1ed535ae13ac097b7c28df937c93a51e1b7c2a6f93a50e1fe02ca23facd08e0b7ca4fe1c384f93a53e1cda5e05e23562a56e1ebb7ed52ed4b58e1e5b7ed42d2c8f9c1210000c3c9f9d1225ee1ed435ce12a58e1b7ed422258e12a56e1e5092256e1e11100c019ed5b5ae13a53e1cd1e61ed535ae12a5ee17cb5c216fa3a51e1b7ca16fa2151e1353a53e1cd2edb3253e12100002256e12a58e17cb5c284f9ed5b5ae1c92afa8e1100c0b7ed52ed5b56e1b7ed527cb5c2b6f9cd08e0b7ca4fe1c384f90000"
+          }
+        ],
+        "helper_bytes": 324,
+        "state_bytes": 2,
+        "extra_packet_bytes": 0,
+        "extra_stack_bytes": 0,
+        "private_stack": false,
+        "mandatory_gate_tstates": 13,
+        "previous_gate_tstates": 13,
+        "mandatory_gate_delta_tstates": 0,
+        "optional_continue_gate_tstates": 40,
+        "optional_continue_gate_delta_tstates": 27,
+        "mandatory_demand_gate_extra_tstates": 0,
+        "stream_unchanged": true,
+        "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+        "transfer_dispatch_tstates": {
+          "required": 27,
+          "optional": 37
+        },
+        "original_required_consumer_sha256": "63d2298ce4bbd4de44a5579dda6a57d328d5f94b1d01735bed4a6c588ea2963a",
+        "copied_instructions": [
+          {
+            "original_address": 57518,
+            "address": 63865,
+            "previous_hex": "78",
+            "tstates": 4
+          },
+          {
+            "original_address": 57519,
+            "address": 63866,
+            "previous_hex": "b1",
+            "tstates": 4
+          },
+          {
+            "original_address": 57520,
+            "address": 63867,
+            "previous_hex": "c8",
+            "tstates": [
+              5,
+              11
+            ]
+          },
+          {
+            "original_address": 57521,
+            "address": 63868,
+            "previous_hex": "ed4358e1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57525,
+            "address": 63872,
+            "previous_hex": "ed535ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57529,
+            "address": 63885,
+            "previous_hex": "3a51e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57532,
+            "address": 63888,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57533,
+            "address": 63889,
+            "previous_hex": "c2d2e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57536,
+            "address": 63892,
+            "previous_hex": "3a50e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57539,
+            "address": 63895,
+            "previous_hex": "fe02",
+            "tstates": 7
+          },
+          {
+            "original_address": 57541,
+            "address": 63897,
+            "previous_hex": "ca00e2",
+            "tstates": 10
+          },
+          {
+            "original_address": 57544,
+            "address": 63900,
+            "previous_hex": "cd08e0",
+            "tstates": 17
+          },
+          {
+            "original_address": 57547,
+            "address": 63903,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57548,
+            "address": 63904,
+            "previous_hex": "ca4fe1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57551,
+            "address": 63907,
+            "previous_hex": "c3b9e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57554,
+            "address": 63910,
+            "previous_hex": "3a53e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57557,
+            "address": 63913,
+            "previous_hex": "cda5e0",
+            "tstates": 17
+          },
+          {
+            "original_address": 57560,
+            "address": 63916,
+            "previous_hex": "5e",
+            "tstates": 7
+          },
+          {
+            "original_address": 57561,
+            "address": 63917,
+            "previous_hex": "23",
+            "tstates": 6
+          },
+          {
+            "original_address": 57562,
+            "address": 63918,
+            "previous_hex": "56",
+            "tstates": 7
+          },
+          {
+            "original_address": 57563,
+            "address": 63919,
+            "previous_hex": "2a56e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57566,
+            "address": 63922,
+            "previous_hex": "eb",
+            "tstates": 4
+          },
+          {
+            "original_address": 57567,
+            "address": 63923,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57568,
+            "address": 63924,
+            "previous_hex": "ed52",
+            "tstates": 15
+          },
+          {
+            "original_address": 57570,
+            "address": 63926,
+            "previous_hex": "ed4b58e1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57574,
+            "address": 63930,
+            "previous_hex": "e5",
+            "tstates": 11
+          },
+          {
+            "original_address": 57575,
+            "address": 63931,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57576,
+            "address": 63932,
+            "previous_hex": "ed42",
+            "tstates": 15
+          },
+          {
+            "original_address": 57578,
+            "address": 63934,
+            "previous_hex": "d2f4e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57581,
+            "address": 63937,
+            "previous_hex": "c1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57582,
+            "address": 63938,
+            "previous_hex": "210000",
+            "tstates": 10
+          },
+          {
+            "original_address": 57585,
+            "address": 63941,
+            "previous_hex": "c3f5e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57588,
+            "address": 63944,
+            "previous_hex": "d1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57589,
+            "address": 63945,
+            "previous_hex": "225ee1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57592,
+            "address": 63948,
+            "previous_hex": "ed435ce1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57596,
+            "address": 63952,
+            "previous_hex": "2a58e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57599,
+            "address": 63955,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57600,
+            "address": 63956,
+            "previous_hex": "ed42",
+            "tstates": 15
+          },
+          {
+            "original_address": 57602,
+            "address": 63958,
+            "previous_hex": "2258e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57605,
+            "address": 63961,
+            "previous_hex": "2a56e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57608,
+            "address": 63964,
+            "previous_hex": "e5",
+            "tstates": 11
+          },
+          {
+            "original_address": 57609,
+            "address": 63965,
+            "previous_hex": "09",
+            "tstates": 11
+          },
+          {
+            "original_address": 57610,
+            "address": 63966,
+            "previous_hex": "2256e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57613,
+            "address": 63969,
+            "previous_hex": "e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57614,
+            "address": 63970,
+            "previous_hex": "1100c0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57617,
+            "address": 63973,
+            "previous_hex": "19",
+            "tstates": 11
+          },
+          {
+            "original_address": 57618,
+            "address": 63974,
+            "previous_hex": "ed5b5ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57622,
+            "address": 63978,
+            "previous_hex": "3a53e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57625,
+            "address": 63981,
+            "previous_hex": "cd1e61",
+            "tstates": 17
+          },
+          {
+            "original_address": 57628,
+            "address": 63984,
+            "previous_hex": "ed535ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57632,
+            "address": 63988,
+            "previous_hex": "2a5ee1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57635,
+            "address": 63991,
+            "previous_hex": "7c",
+            "tstates": 4
+          },
+          {
+            "original_address": 57636,
+            "address": 63992,
+            "previous_hex": "b5",
+            "tstates": 4
+          },
+          {
+            "original_address": 57637,
+            "address": 63993,
+            "previous_hex": "c242e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57640,
+            "address": 63996,
+            "previous_hex": "3a51e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57643,
+            "address": 63999,
+            "previous_hex": "b7",
+            "tstates": 4
+          },
+          {
+            "original_address": 57644,
+            "address": 64000,
+            "previous_hex": "ca42e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57647,
+            "address": 64003,
+            "previous_hex": "2151e1",
+            "tstates": 10
+          },
+          {
+            "original_address": 57650,
+            "address": 64006,
+            "previous_hex": "35",
+            "tstates": 11
+          },
+          {
+            "original_address": 57651,
+            "address": 64007,
+            "previous_hex": "3a53e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57654,
+            "address": 64010,
+            "previous_hex": "cd2edb",
+            "tstates": 17
+          },
+          {
+            "original_address": 57657,
+            "address": 64013,
+            "previous_hex": "3253e1",
+            "tstates": 13
+          },
+          {
+            "original_address": 57660,
+            "address": 64016,
+            "previous_hex": "210000",
+            "tstates": 10
+          },
+          {
+            "original_address": 57663,
+            "address": 64019,
+            "previous_hex": "2256e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57666,
+            "address": 64022,
+            "previous_hex": "2a58e1",
+            "tstates": 16
+          },
+          {
+            "original_address": 57669,
+            "address": 64025,
+            "previous_hex": "7c",
+            "tstates": 4
+          },
+          {
+            "original_address": 57670,
+            "address": 64026,
+            "previous_hex": "b5",
+            "tstates": 4
+          },
+          {
+            "original_address": 57671,
+            "address": 64027,
+            "previous_hex": "c2b9e0",
+            "tstates": 10
+          },
+          {
+            "original_address": 57674,
+            "address": 64030,
+            "previous_hex": "ed5b5ae1",
+            "tstates": 20
+          },
+          {
+            "original_address": 57678,
+            "address": 64034,
+            "previous_hex": "c9",
+            "tstates": 10
+          }
+        ],
+        "optional_consumer": true,
+        "dynamic_routing": false,
+        "shared_queue_state": true,
+        "previous_global_gate_helper_bytes": 162
+      },
+      "cold_sections": [
+        {
+          "bank": 6,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "addcdcda01682901728f2dbef0996acf694a4ddfda9fdcc960595cffb6ed23f4"
+        },
+        {
+          "bank": 2,
+          "offset": 0,
+          "bytes": 16384,
+          "sha256": "0a602512ddfef2b5cb929cc7ecc4e535c93115c37c01dc3908823daa6b188401"
+        },
+        {
+          "bank": 7,
+          "offset": 0,
+          "bytes": 14916,
+          "sha256": "d0a73866e65e5589ae6fa7ea43b2bebef58e258a6ac937b0952de2d61a0346f4"
+        },
+        {
+          "bank": 5,
+          "offset": 13824,
+          "bytes": 2560,
+          "sha256": "116b7bb822b27e744f2ab028bdaaa4344a065a34e9079ab4fb5178750860b307"
+        },
+        {
+          "bank": 4,
+          "offset": 0,
+          "bytes": 7424,
+          "sha256": "772031a2b4a4e2d4c1ecc1468a9ce5228663dc3e5132350b2ee004d21d310747"
+        },
+        {
+          "bank": 4,
+          "offset": 7424,
+          "bytes": 5613,
+          "sha256": "9a96caf5384f731b15914cff988489230d03da800e65bdba75bc6178ac2f4095"
+        },
+        {
+          "bank": 5,
+          "offset": 0,
+          "bytes": 6912,
+          "sha256": "fa4b5962c4d5c313167f017b341a762b73e9016d8f80654611cf74ef9b8aacc5"
+        }
+      ],
+      "mocked_boot_tstates": 3427947,
+      "boot_sectors": 94,
+      "dirty_ram_boot_exact": true,
+      "first_native_screen_exact": true,
+      "second_compact_frame_exact": true,
+      "audio_bank_immutable_exact": true,
+      "prepared_audio_records": 31,
+      "priming_cpu_tstates": 4945489,
+      "mocked_boot_and_priming_sectors": 213
+    }
+  ],
+  "source_sha256_lf": {
+    "build_inplace_keepalive.py": "8af7a1a7f07cc5ce60ff97816df1d0bb31d42605e7fe5531dbc2ff551bb29bba",
+    "inplace_keepalive_player.py": "0e798c66d14a842b6ec2b943ef1fa23c0db7cd8ee6fd2cbc4feee21af49c958f",
+    "test_inplace_keepalive.py": "f36b083bd21d43c2fe6f98c3c8e99362da31718d228e63740abc26e35a74d258",
+    "build_inplace_slot_player.py": "f89522b4190999e9cdfe00d7c6f4299e61a8bd737194ac1c8d6ed3020b4e4918",
+    "inplace_slot_player.py": "a51880cbae6751cc43143bd7daf516420f2fb6ad6f1f8b18b039f99a2fdd366b",
+    "inplace_slot_input_z80.py": "aed5462418016e17a64708b313e38dfc48a886f1c40bd006dd4db7370f1d5319",
+    "inplace_zx0.py": "c2675a2f2ffb938060f3568888c2e94d7e9300e88ab8a1afca000bd25ca48106",
+    "benchmark_inplace_slot.py": "f840275a215aa3f2c8dbc03a0cfd71ec60072bfc26f39a842f255d128a076a9e",
+    "test_inplace_slot.py": "1ff1dc18dc3e8bd891e92559bf41273926393445ac961130f0b217fd9b0348b6",
+    "build_resident_audio_player.py": "aec10c5e86611437beec398fde100ab7b613dccad194d2920948b3c4c5207ce5",
+    "resident_audio_player.py": "181b9fdaa90237b6c59d7f0f4bd05bc95639f14ef2a6cb59d12446936cc94404",
+    "resident_audio_z80.py": "f658004856c2dfb5bde1f6db3f5101193c974a0baaae75feeed16f254761d1b8",
+    "integrated_bootstrap.py": "fe43b8fd20ae2ae7b3c424d1bbb2e37d5e26f98f0a65c76872ae44eaf7176211",
+    "slot_queue_player.py": "211b4c1bdd233241967cae5b6e6c9b31b2483b79da5cb6f6d507f8a0e3250e6a",
+    "slot_queue_z80.py": "6038557b18c6ef513508c0f149e69e11050b5c09ba1127891af50fc4026b5f54",
+    "direct_slot_input_z80.py": "5aaa5b2725c70f3874b7d517e6ac353ce9937a10652c80510b2ee6085f0f7b7e",
+    "bulk_frame_z80.py": "6c71b8e03ccc42a7ab1352c39367e6f8fd155d58b6045b3e1952f6c1fc2747d3",
+    "pipelined_frame_z80.py": "d603b72fd89ad1428f857f4633d44bbbf165cf20ed726726a805cd741ee82843",
+    "build_fap3_trd.py": "040d40be7fbdb6855dfb6d2fcb1301f7858b84422e62bf126391f0cabf337f91",
+    "fap3_disk_z80.py": "e906dd14aa942e51831e8285dc1c33c9fb5002a0b70ff73f992c4602df374689",
+    "build_optional_packet.py": "cdda4d5223c21b48a4d012819c86ce802707eadd054d367007d0e0b1a0b92fe4",
+    "optional_packet_player.py": "74f230e633e1d8499ab78ae7e4094145e1b23a0e303832b8b20d9934fbe69652",
+    "resumable_packet_player.py": "524a2a7227030b2ec4dc27acac668f23a8278819e9ca45ceb00b4cb9cc1958aa"
+  },
+  "mocked_rom_swaps": [
+    {
+      "from_part": 1,
+      "to_part": 2,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    },
+    {
+      "from_part": 2,
+      "to_part": 3,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    }
+  ]
+}

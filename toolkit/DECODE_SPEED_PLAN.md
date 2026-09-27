@@ -290,6 +290,18 @@ See [the saved verification](hl_mask_reader_summary.json).
    delivery measurements. Do not repeat the current global-gate policy or
    infer a sustained speedup from its isolated responsiveness improvement.
 
+   The subsequent [separate optional consumer](OPTIONAL_PACKET.md) now
+   completes that proposed comparison. Its 324-byte bank-7 helper retains
+   the original required consumer bytes, with zero extra stack or data
+   buffers. Required queue/demand overhead is zero; resumable parser
+   dispatch still adds 245 T per fresh packet in the direct-entry fixture.
+   Full EOF playback reports **1329 late frames / 790 bad intervals**,
+   better than global gating (1337/797), worse than the original (1321/783).
+   Capacity and all AY bytes/50-Hz timing pass, both video gates fail.
+   Do not enable it by default or repeat this completed variant. Future
+   scheduling work must reduce difficult-scene work or prepare more of it
+   before those runs; account for reservoir capacity and overlapping stages.
+
 A small concrete candidate for step 1 is the target setup for nonzero
 motion phases. With the new cache,
 `LD HL,(target); PUSH HL; EXX; POP HL; EXX` costs **45 T**.
