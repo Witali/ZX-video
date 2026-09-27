@@ -1,0 +1,2678 @@
+{
+  "scope": "Execute every actual volume code at every bit offset; audit packet guard space.\n\nThe two-byte cache is compared with cached-byte Huffman using actual Z80\ninstructions. Input guards deliberately contain A5/3C, not zeros. Packet\nlengths are inspected separately; this does not install a two-guard parser\nor prove integrated playback. Raw sources must match the complete baseline.\n",
+  "complete": true,
+  "release": false,
+  "baseline_sha256": "0fa3e62bb083720f4c0cab5bf2355aa5dccbc70562ff616aa11564efd422ff77",
+  "source_sha256": {
+    "audit_cached_huffman_lookahead.py": "63900842a46d61d8e92dd9461c014c7a734a747e5600145033a2b024c31d89c7",
+    "cached_huffman_lookahead.py": "6ac33d05cd72be28f2590376564d6f06d06e27383ac41539d5c1d4953be1e039",
+    "test_cached_huffman_lookahead.py": "53ab5dad01e3d1d678f0eab7bd5a610bc776b5777b49ae2d4fd182ee8559b4c9",
+    "prefix_huffman_z80.py": "239b155fd9053cc4f9c2d34a0d327510afeb9fc29898de07a1c11604a0d87fdc",
+    "bulk_frame_stream.py": "47b1517010b8335d4686e479e71eba3249444f8bfc4b11c2a30c3eced9c4eea3"
+  },
+  "required_readable_lookahead_bytes": 2,
+  "guard_bytes_hex": "a53c",
+  "proposed_packet_maximum": 4702,
+  "integrated_parser_changed": false,
+  "actual_playback_measured": false,
+  "volumes": [
+    {
+      "part": 1,
+      "start": 0,
+      "end": 1624,
+      "raw_sha256": "9404fc8b57b5445c88c3c877021c613be24f91cf777c3221ea08822d67c511b3",
+      "tables_sha256": "b3c0ce43d99f94c7f7400f888cecb1b0a1b883f7727c6a695e74f957597f0fb9",
+      "mapping_sha256": "0f56895590caeb0e31551324788ae9041b486365ee499cdbac28e50d3cf25295",
+      "contexts": [
+        {
+          "context": 0,
+          "code_length_histogram": {
+            "3": 1,
+            "4": 7,
+            "5": 4,
+            "6": 6,
+            "7": 9,
+            "8": 19,
+            "9": 21,
+            "10": 15,
+            "11": 25,
+            "12": 12,
+            "13": 7,
+            "14": 42
+          },
+          "code_count": 168,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 1,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 1,
+            "4": 5,
+            "5": 1,
+            "6": 7,
+            "7": 10,
+            "8": 10,
+            "9": 9,
+            "10": 14,
+            "11": 24,
+            "12": 23,
+            "13": 27,
+            "14": 46
+          },
+          "code_count": 178,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 2,
+          "code_length_histogram": {
+            "2": 1,
+            "4": 4,
+            "5": 7,
+            "6": 8,
+            "7": 6,
+            "8": 7,
+            "9": 16,
+            "10": 23,
+            "11": 36,
+            "12": 17,
+            "13": 54
+          },
+          "code_count": 179,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 3,
+          "code_length_histogram": {
+            "4": 4,
+            "5": 12,
+            "6": 11,
+            "7": 8,
+            "8": 11,
+            "9": 25,
+            "10": 27,
+            "11": 27,
+            "12": 19,
+            "13": 18,
+            "14": 40
+          },
+          "code_count": 202,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 4,
+          "code_length_histogram": {
+            "5": 6,
+            "6": 20,
+            "7": 31,
+            "8": 35,
+            "9": 38,
+            "10": 29,
+            "11": 22,
+            "12": 17,
+            "13": 30
+          },
+          "code_count": 228,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 5,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 2,
+            "4": 2,
+            "5": 4,
+            "6": 4,
+            "7": 10,
+            "8": 12,
+            "9": 11,
+            "10": 19,
+            "11": 24,
+            "12": 16,
+            "13": 56
+          },
+          "code_count": 161,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 6,
+          "code_length_histogram": {
+            "3": 1,
+            "4": 7,
+            "5": 6,
+            "6": 7,
+            "7": 5,
+            "8": 9,
+            "9": 22,
+            "10": 4,
+            "11": 20,
+            "12": 20,
+            "13": 16,
+            "14": 48
+          },
+          "code_count": 165,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 7,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 1,
+            "4": 3,
+            "5": 3,
+            "6": 7,
+            "7": 12,
+            "8": 21,
+            "9": 13,
+            "10": 12,
+            "11": 22,
+            "12": 26,
+            "13": 19,
+            "14": 13,
+            "15": 42
+          },
+          "code_count": 195,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 8,
+          "code_length_histogram": {
+            "4": 2,
+            "5": 17,
+            "6": 10,
+            "7": 8,
+            "8": 9,
+            "9": 23,
+            "10": 25,
+            "11": 17,
+            "12": 32,
+            "13": 22,
+            "14": 28
+          },
+          "code_count": 193,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 9,
+          "code_length_histogram": {
+            "3": 2,
+            "4": 4,
+            "5": 8,
+            "6": 8,
+            "7": 6,
+            "8": 8,
+            "9": 9,
+            "10": 19,
+            "11": 6,
+            "12": 16,
+            "13": 13,
+            "14": 19,
+            "15": 38
+          },
+          "code_count": 156,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 10,
+          "code_length_histogram": {
+            "1": 1,
+            "3": 1,
+            "4": 1,
+            "5": 4,
+            "6": 3,
+            "7": 8,
+            "8": 9,
+            "9": 7,
+            "10": 13,
+            "11": 13,
+            "12": 22,
+            "13": 21,
+            "14": 14,
+            "15": 48
+          },
+          "code_count": 165,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 11,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 2,
+            "4": 4,
+            "5": 3,
+            "6": 3,
+            "7": 3,
+            "8": 8,
+            "9": 11,
+            "10": 13,
+            "11": 19,
+            "12": 23,
+            "13": 18,
+            "14": 56
+          },
+          "code_count": 164,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 12,
+          "code_length_histogram": {
+            "1": 1,
+            "2": 1,
+            "4": 1,
+            "5": 2,
+            "6": 3,
+            "7": 4,
+            "8": 2,
+            "9": 7,
+            "10": 11,
+            "11": 11,
+            "12": 17,
+            "13": 17,
+            "14": 50
+          },
+          "code_count": 127,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 13,
+          "code_length_histogram": {
+            "1": 1,
+            "3": 1,
+            "4": 1,
+            "5": 5,
+            "6": 4,
+            "7": 6,
+            "8": 1,
+            "9": 7,
+            "10": 11,
+            "11": 15,
+            "12": 19,
+            "13": 27,
+            "14": 54
+          },
+          "code_count": 152,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 14,
+          "code_length_histogram": {
+            "2": 2,
+            "3": 1,
+            "4": 3,
+            "5": 1,
+            "6": 2,
+            "7": 5,
+            "8": 10,
+            "9": 10,
+            "10": 11,
+            "11": 10,
+            "12": 19,
+            "13": 58
+          },
+          "code_count": 132,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 15,
+          "code_length_histogram": {
+            "2": 2,
+            "4": 4,
+            "5": 3,
+            "6": 2,
+            "7": 5,
+            "8": 5,
+            "9": 13,
+            "10": 21,
+            "11": 19,
+            "12": 20,
+            "13": 22,
+            "14": 60
+          },
+          "code_count": 176,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 16,
+          "code_length_histogram": {
+            "3": 1,
+            "4": 7,
+            "5": 6,
+            "6": 5,
+            "7": 9,
+            "8": 8,
+            "9": 21,
+            "10": 14,
+            "11": 13,
+            "12": 38
+          },
+          "code_count": 122,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ],
+      "paired_cases": 22904,
+      "costs": [
+        {
+          "kind": "cross",
+          "baseline_tstates": 168,
+          "tstates": 161,
+          "delta_tstates": -7,
+          "cases": 218
+        },
+        {
+          "kind": "cross",
+          "baseline_tstates": 169,
+          "tstates": 162,
+          "delta_tstates": -7,
+          "cases": 3690
+        },
+        {
+          "kind": "inside",
+          "baseline_tstates": 144,
+          "tstates": 133,
+          "delta_tstates": -11,
+          "cases": 70
+        },
+        {
+          "kind": "inside",
+          "baseline_tstates": 145,
+          "tstates": 134,
+          "delta_tstates": -11,
+          "cases": 958
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 460,
+          "tstates": 478,
+          "delta_tstates": 18,
+          "cases": 21
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 461,
+          "tstates": 479,
+          "delta_tstates": 18,
+          "cases": 242
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 501,
+          "tstates": 519,
+          "delta_tstates": 18,
+          "cases": 21
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 502,
+          "tstates": 520,
+          "delta_tstates": 18,
+          "cases": 242
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 506,
+          "tstates": 524,
+          "delta_tstates": 18,
+          "cases": 126
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 507,
+          "tstates": 525,
+          "delta_tstates": 18,
+          "cases": 1452
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 513,
+          "tstates": 531,
+          "delta_tstates": 18,
+          "cases": 32
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 514,
+          "tstates": 532,
+          "delta_tstates": 18,
+          "cases": 249
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 554,
+          "tstates": 572,
+          "delta_tstates": 18,
+          "cases": 32
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 555,
+          "tstates": 573,
+          "delta_tstates": 18,
+          "cases": 249
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 559,
+          "tstates": 577,
+          "delta_tstates": 18,
+          "cases": 160
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 560,
+          "tstates": 578,
+          "delta_tstates": 18,
+          "cases": 1245
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 566,
+          "tstates": 584,
+          "delta_tstates": 18,
+          "cases": 70
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 567,
+          "tstates": 585,
+          "delta_tstates": 18,
+          "cases": 253
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 591,
+          "tstates": 609,
+          "delta_tstates": 18,
+          "cases": 32
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 592,
+          "tstates": 610,
+          "delta_tstates": 18,
+          "cases": 249
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 607,
+          "tstates": 625,
+          "delta_tstates": 18,
+          "cases": 70
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 608,
+          "tstates": 626,
+          "delta_tstates": 18,
+          "cases": 253
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 612,
+          "tstates": 630,
+          "delta_tstates": 18,
+          "cases": 280
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 613,
+          "tstates": 631,
+          "delta_tstates": 18,
+          "cases": 1012
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 619,
+          "tstates": 637,
+          "delta_tstates": 18,
+          "cases": 111
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 620,
+          "tstates": 638,
+          "delta_tstates": 18,
+          "cases": 245
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 644,
+          "tstates": 662,
+          "delta_tstates": 18,
+          "cases": 140
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 645,
+          "tstates": 663,
+          "delta_tstates": 18,
+          "cases": 506
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 660,
+          "tstates": 678,
+          "delta_tstates": 18,
+          "cases": 111
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 661,
+          "tstates": 679,
+          "delta_tstates": 18,
+          "cases": 245
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 665,
+          "tstates": 683,
+          "delta_tstates": 18,
+          "cases": 333
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 666,
+          "tstates": 684,
+          "delta_tstates": 18,
+          "cases": 735
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 672,
+          "tstates": 690,
+          "delta_tstates": 18,
+          "cases": 86
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 673,
+          "tstates": 691,
+          "delta_tstates": 18,
+          "cases": 339
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 697,
+          "tstates": 715,
+          "delta_tstates": 18,
+          "cases": 333
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 698,
+          "tstates": 716,
+          "delta_tstates": 18,
+          "cases": 735
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 713,
+          "tstates": 731,
+          "delta_tstates": 18,
+          "cases": 86
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 714,
+          "tstates": 732,
+          "delta_tstates": 18,
+          "cases": 339
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 718,
+          "tstates": 736,
+          "delta_tstates": 18,
+          "cases": 172
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 719,
+          "tstates": 737,
+          "delta_tstates": 18,
+          "cases": 678
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 725,
+          "tstates": 743,
+          "delta_tstates": 18,
+          "cases": 284
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 726,
+          "tstates": 744,
+          "delta_tstates": 18,
+          "cases": 186
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 750,
+          "tstates": 768,
+          "delta_tstates": 18,
+          "cases": 344
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 751,
+          "tstates": 769,
+          "delta_tstates": 18,
+          "cases": 1356
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 766,
+          "tstates": 784,
+          "delta_tstates": 18,
+          "cases": 284
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 767,
+          "tstates": 785,
+          "delta_tstates": 18,
+          "cases": 186
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 771,
+          "tstates": 789,
+          "delta_tstates": 18,
+          "cases": 284
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 772,
+          "tstates": 790,
+          "delta_tstates": 18,
+          "cases": 186
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 778,
+          "tstates": 796,
+          "delta_tstates": 18,
+          "cases": 48
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 779,
+          "tstates": 797,
+          "delta_tstates": 18,
+          "cases": 80
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 803,
+          "tstates": 821,
+          "delta_tstates": 18,
+          "cases": 1420
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 804,
+          "tstates": 822,
+          "delta_tstates": 18,
+          "cases": 930
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 819,
+          "tstates": 837,
+          "delta_tstates": 18,
+          "cases": 48
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 820,
+          "tstates": 838,
+          "delta_tstates": 18,
+          "cases": 80
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 856,
+          "tstates": 874,
+          "delta_tstates": 18,
+          "cases": 288
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 857,
+          "tstates": 875,
+          "delta_tstates": 18,
+          "cases": 480
+        }
+      ],
+      "checked_packets": 1624,
+      "max_payload_bytes": 2638,
+      "packets_without_literals": 1111,
+      "packets_without_coded_values": 11,
+      "packets_exceeding_two_guard_capacity": 0,
+      "spare_packet_window_bytes_after_two_guards": 2064
+    },
+    {
+      "part": 2,
+      "start": 1624,
+      "end": 2921,
+      "raw_sha256": "3b8f2efa8c88351a6f7d70de68dff4ce28fb1904b6293a09775f134808b26483",
+      "tables_sha256": "b03e73035fef2eda1419e0a25ac91a8692954bdaed50cbb528af29eaf305dff2",
+      "mapping_sha256": "0f56895590caeb0e31551324788ae9041b486365ee499cdbac28e50d3cf25295",
+      "contexts": [
+        {
+          "context": 0,
+          "code_length_histogram": {
+            "3": 3,
+            "4": 4,
+            "5": 4,
+            "6": 5,
+            "7": 8,
+            "8": 11,
+            "9": 18,
+            "10": 13,
+            "11": 20,
+            "12": 13,
+            "13": 23,
+            "14": 46
+          },
+          "code_count": 168,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 1,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 1,
+            "4": 4,
+            "5": 2,
+            "6": 10,
+            "7": 9,
+            "8": 7,
+            "9": 14,
+            "10": 8,
+            "11": 27,
+            "12": 19,
+            "13": 16,
+            "14": 60
+          },
+          "code_count": 178,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 2,
+          "code_length_histogram": {
+            "2": 1,
+            "4": 5,
+            "5": 6,
+            "6": 5,
+            "7": 10,
+            "8": 7,
+            "9": 12,
+            "10": 20,
+            "11": 15,
+            "12": 34,
+            "13": 64
+          },
+          "code_count": 179,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 3,
+          "code_length_histogram": {
+            "4": 2,
+            "5": 17,
+            "6": 9,
+            "7": 8,
+            "8": 13,
+            "9": 24,
+            "10": 16,
+            "11": 27,
+            "12": 30,
+            "13": 56
+          },
+          "code_count": 202,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 4,
+          "code_length_histogram": {
+            "5": 6,
+            "6": 22,
+            "7": 28,
+            "8": 31,
+            "9": 39,
+            "10": 28,
+            "11": 30,
+            "12": 44
+          },
+          "code_count": 228,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 5,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 2,
+            "4": 3,
+            "5": 1,
+            "6": 7,
+            "7": 12,
+            "8": 6,
+            "9": 9,
+            "10": 13,
+            "11": 23,
+            "12": 24,
+            "13": 60
+          },
+          "code_count": 161,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 6,
+          "code_length_histogram": {
+            "3": 2,
+            "4": 6,
+            "5": 4,
+            "6": 8,
+            "7": 2,
+            "8": 12,
+            "9": 18,
+            "10": 12,
+            "11": 13,
+            "12": 14,
+            "13": 22,
+            "14": 52
+          },
+          "code_count": 165,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 7,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 1,
+            "4": 3,
+            "5": 3,
+            "6": 8,
+            "7": 12,
+            "8": 17,
+            "9": 14,
+            "10": 11,
+            "11": 21,
+            "12": 24,
+            "13": 18,
+            "14": 10,
+            "15": 52
+          },
+          "code_count": 195,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 8,
+          "code_length_histogram": {
+            "4": 3,
+            "5": 15,
+            "6": 10,
+            "7": 9,
+            "8": 10,
+            "9": 13,
+            "10": 28,
+            "11": 24,
+            "12": 31,
+            "13": 50
+          },
+          "code_count": 193,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 9,
+          "code_length_histogram": {
+            "3": 2,
+            "4": 3,
+            "5": 10,
+            "6": 9,
+            "7": 6,
+            "8": 5,
+            "9": 10,
+            "10": 11,
+            "11": 13,
+            "12": 9,
+            "13": 14,
+            "14": 16,
+            "15": 48
+          },
+          "code_count": 156,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 10,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 2,
+            "4": 2,
+            "5": 3,
+            "6": 7,
+            "7": 10,
+            "8": 12,
+            "9": 7,
+            "10": 10,
+            "11": 28,
+            "12": 20,
+            "13": 17,
+            "14": 46
+          },
+          "code_count": 165,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 11,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 2,
+            "4": 4,
+            "5": 3,
+            "6": 3,
+            "7": 3,
+            "8": 7,
+            "9": 15,
+            "10": 11,
+            "11": 12,
+            "12": 26,
+            "13": 27,
+            "14": 50
+          },
+          "code_count": 164,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 12,
+          "code_length_histogram": {
+            "1": 1,
+            "2": 1,
+            "5": 3,
+            "6": 4,
+            "7": 4,
+            "8": 7,
+            "9": 6,
+            "10": 8,
+            "11": 14,
+            "12": 15,
+            "13": 20,
+            "14": 44
+          },
+          "code_count": 127,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 13,
+          "code_length_histogram": {
+            "1": 1,
+            "3": 1,
+            "4": 1,
+            "5": 4,
+            "6": 6,
+            "7": 5,
+            "8": 4,
+            "9": 4,
+            "10": 13,
+            "11": 18,
+            "12": 17,
+            "13": 14,
+            "14": 64
+          },
+          "code_count": 152,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 14,
+          "code_length_histogram": {
+            "2": 2,
+            "3": 1,
+            "4": 3,
+            "5": 1,
+            "6": 1,
+            "7": 7,
+            "8": 10,
+            "9": 9,
+            "10": 13,
+            "11": 13,
+            "12": 12,
+            "13": 60
+          },
+          "code_count": 132,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 15,
+          "code_length_histogram": {
+            "2": 2,
+            "4": 5,
+            "5": 2,
+            "6": 2,
+            "7": 2,
+            "8": 5,
+            "9": 14,
+            "10": 13,
+            "11": 19,
+            "12": 15,
+            "13": 25,
+            "14": 12,
+            "15": 60
+          },
+          "code_count": 176,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 16,
+          "code_length_histogram": {
+            "3": 1,
+            "4": 5,
+            "5": 4,
+            "6": 14,
+            "7": 15,
+            "8": 13,
+            "9": 15,
+            "10": 10,
+            "11": 15,
+            "12": 6,
+            "13": 24
+          },
+          "code_count": 122,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ],
+      "paired_cases": 22904,
+      "costs": [
+        {
+          "kind": "cross",
+          "baseline_tstates": 168,
+          "tstates": 161,
+          "delta_tstates": -7,
+          "cases": 336
+        },
+        {
+          "kind": "cross",
+          "baseline_tstates": 169,
+          "tstates": 162,
+          "delta_tstates": -7,
+          "cases": 3640
+        },
+        {
+          "kind": "inside",
+          "baseline_tstates": 144,
+          "tstates": 133,
+          "delta_tstates": -11,
+          "cases": 80
+        },
+        {
+          "kind": "inside",
+          "baseline_tstates": 145,
+          "tstates": 134,
+          "delta_tstates": -11,
+          "cases": 976
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 460,
+          "tstates": 478,
+          "delta_tstates": 18,
+          "cases": 15
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 461,
+          "tstates": 479,
+          "delta_tstates": 18,
+          "cases": 226
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 501,
+          "tstates": 519,
+          "delta_tstates": 18,
+          "cases": 15
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 502,
+          "tstates": 520,
+          "delta_tstates": 18,
+          "cases": 226
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 506,
+          "tstates": 524,
+          "delta_tstates": 18,
+          "cases": 90
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 507,
+          "tstates": 525,
+          "delta_tstates": 18,
+          "cases": 1356
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 513,
+          "tstates": 531,
+          "delta_tstates": 18,
+          "cases": 29
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 514,
+          "tstates": 532,
+          "delta_tstates": 18,
+          "cases": 209
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 554,
+          "tstates": 572,
+          "delta_tstates": 18,
+          "cases": 29
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 555,
+          "tstates": 573,
+          "delta_tstates": 18,
+          "cases": 209
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 559,
+          "tstates": 577,
+          "delta_tstates": 18,
+          "cases": 145
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 560,
+          "tstates": 578,
+          "delta_tstates": 18,
+          "cases": 1045
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 566,
+          "tstates": 584,
+          "delta_tstates": 18,
+          "cases": 66
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 567,
+          "tstates": 585,
+          "delta_tstates": 18,
+          "cases": 266
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 591,
+          "tstates": 609,
+          "delta_tstates": 18,
+          "cases": 29
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 592,
+          "tstates": 610,
+          "delta_tstates": 18,
+          "cases": 209
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 607,
+          "tstates": 625,
+          "delta_tstates": 18,
+          "cases": 66
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 608,
+          "tstates": 626,
+          "delta_tstates": 18,
+          "cases": 266
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 612,
+          "tstates": 630,
+          "delta_tstates": 18,
+          "cases": 264
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 613,
+          "tstates": 631,
+          "delta_tstates": 18,
+          "cases": 1064
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 619,
+          "tstates": 637,
+          "delta_tstates": 18,
+          "cases": 85
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 620,
+          "tstates": 638,
+          "delta_tstates": 18,
+          "cases": 268
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 644,
+          "tstates": 662,
+          "delta_tstates": 18,
+          "cases": 132
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 645,
+          "tstates": 663,
+          "delta_tstates": 18,
+          "cases": 532
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 660,
+          "tstates": 678,
+          "delta_tstates": 18,
+          "cases": 85
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 661,
+          "tstates": 679,
+          "delta_tstates": 18,
+          "cases": 268
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 665,
+          "tstates": 683,
+          "delta_tstates": 18,
+          "cases": 255
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 666,
+          "tstates": 684,
+          "delta_tstates": 18,
+          "cases": 804
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 672,
+          "tstates": 690,
+          "delta_tstates": 18,
+          "cases": 142
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 673,
+          "tstates": 691,
+          "delta_tstates": 18,
+          "cases": 368
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 697,
+          "tstates": 715,
+          "delta_tstates": 18,
+          "cases": 255
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 698,
+          "tstates": 716,
+          "delta_tstates": 18,
+          "cases": 804
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 713,
+          "tstates": 731,
+          "delta_tstates": 18,
+          "cases": 142
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 714,
+          "tstates": 732,
+          "delta_tstates": 18,
+          "cases": 368
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 718,
+          "tstates": 736,
+          "delta_tstates": 18,
+          "cases": 284
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 719,
+          "tstates": 737,
+          "delta_tstates": 18,
+          "cases": 736
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 725,
+          "tstates": 743,
+          "delta_tstates": 18,
+          "cases": 196
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 726,
+          "tstates": 744,
+          "delta_tstates": 18,
+          "cases": 204
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 750,
+          "tstates": 768,
+          "delta_tstates": 18,
+          "cases": 568
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 751,
+          "tstates": 769,
+          "delta_tstates": 18,
+          "cases": 1472
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 766,
+          "tstates": 784,
+          "delta_tstates": 18,
+          "cases": 196
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 767,
+          "tstates": 785,
+          "delta_tstates": 18,
+          "cases": 204
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 771,
+          "tstates": 789,
+          "delta_tstates": 18,
+          "cases": 196
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 772,
+          "tstates": 790,
+          "delta_tstates": 18,
+          "cases": 204
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 778,
+          "tstates": 796,
+          "delta_tstates": 18,
+          "cases": 60
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 779,
+          "tstates": 797,
+          "delta_tstates": 18,
+          "cases": 100
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 803,
+          "tstates": 821,
+          "delta_tstates": 18,
+          "cases": 980
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 804,
+          "tstates": 822,
+          "delta_tstates": 18,
+          "cases": 1020
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 819,
+          "tstates": 837,
+          "delta_tstates": 18,
+          "cases": 60
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 820,
+          "tstates": 838,
+          "delta_tstates": 18,
+          "cases": 100
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 856,
+          "tstates": 874,
+          "delta_tstates": 18,
+          "cases": 360
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 857,
+          "tstates": 875,
+          "delta_tstates": 18,
+          "cases": 600
+        }
+      ],
+      "checked_packets": 1297,
+      "max_payload_bytes": 2921,
+      "packets_without_literals": 731,
+      "packets_without_coded_values": 13,
+      "packets_exceeding_two_guard_capacity": 0,
+      "spare_packet_window_bytes_after_two_guards": 1781
+    },
+    {
+      "part": 3,
+      "start": 2921,
+      "end": 4221,
+      "raw_sha256": "4590013f35618db7514e612736b5cea90af28791da900c58cd40367be25f4cfa",
+      "tables_sha256": "b7b9e53efb3e4bc9efd2b9379f0ede43abcfc39829c389b14e1f84dec9849f3b",
+      "mapping_sha256": "0f56895590caeb0e31551324788ae9041b486365ee499cdbac28e50d3cf25295",
+      "contexts": [
+        {
+          "context": 0,
+          "code_length_histogram": {
+            "3": 3,
+            "4": 2,
+            "5": 8,
+            "6": 4,
+            "7": 11,
+            "8": 10,
+            "9": 12,
+            "10": 23,
+            "11": 15,
+            "12": 19,
+            "13": 15,
+            "14": 46
+          },
+          "code_count": 168,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 1,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 1,
+            "4": 5,
+            "5": 1,
+            "6": 7,
+            "7": 10,
+            "8": 10,
+            "9": 9,
+            "10": 21,
+            "11": 13,
+            "12": 19,
+            "13": 11,
+            "14": 70
+          },
+          "code_count": 178,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 2,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 1,
+            "4": 4,
+            "5": 6,
+            "6": 2,
+            "7": 10,
+            "8": 6,
+            "9": 9,
+            "10": 18,
+            "11": 17,
+            "12": 19,
+            "13": 22,
+            "14": 64
+          },
+          "code_count": 179,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 3,
+          "code_length_histogram": {
+            "4": 4,
+            "5": 10,
+            "6": 14,
+            "7": 9,
+            "8": 16,
+            "9": 21,
+            "10": 20,
+            "11": 27,
+            "12": 19,
+            "13": 62
+          },
+          "code_count": 202,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 4,
+          "code_length_histogram": {
+            "5": 7,
+            "6": 24,
+            "7": 23,
+            "8": 28,
+            "9": 31,
+            "10": 29,
+            "11": 30,
+            "12": 56
+          },
+          "code_count": 228,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 5,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 2,
+            "4": 3,
+            "5": 2,
+            "6": 5,
+            "7": 9,
+            "8": 10,
+            "9": 13,
+            "10": 15,
+            "11": 20,
+            "12": 23,
+            "13": 58
+          },
+          "code_count": 161,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 6,
+          "code_length_histogram": {
+            "3": 1,
+            "4": 7,
+            "5": 5,
+            "6": 8,
+            "7": 6,
+            "8": 14,
+            "9": 9,
+            "10": 19,
+            "11": 11,
+            "12": 23,
+            "13": 62
+          },
+          "code_count": 165,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 7,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 1,
+            "4": 3,
+            "5": 3,
+            "6": 9,
+            "7": 8,
+            "8": 22,
+            "9": 10,
+            "10": 15,
+            "11": 25,
+            "12": 14,
+            "13": 20,
+            "14": 16,
+            "15": 48
+          },
+          "code_count": 195,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 8,
+          "code_length_histogram": {
+            "4": 3,
+            "5": 13,
+            "6": 13,
+            "7": 7,
+            "8": 18,
+            "9": 19,
+            "10": 15,
+            "11": 29,
+            "12": 24,
+            "13": 52
+          },
+          "code_count": 193,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 9,
+          "code_length_histogram": {
+            "3": 2,
+            "4": 3,
+            "5": 9,
+            "6": 12,
+            "7": 3,
+            "8": 5,
+            "9": 11,
+            "10": 15,
+            "11": 11,
+            "12": 14,
+            "13": 25,
+            "14": 46
+          },
+          "code_count": 156,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 10,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 2,
+            "4": 2,
+            "5": 3,
+            "6": 9,
+            "7": 6,
+            "8": 13,
+            "9": 5,
+            "10": 13,
+            "11": 23,
+            "12": 17,
+            "13": 13,
+            "14": 58
+          },
+          "code_count": 165,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 11,
+          "code_length_histogram": {
+            "2": 1,
+            "3": 2,
+            "4": 4,
+            "5": 3,
+            "6": 2,
+            "7": 4,
+            "8": 11,
+            "9": 9,
+            "10": 14,
+            "11": 20,
+            "12": 15,
+            "13": 21,
+            "14": 58
+          },
+          "code_count": 164,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 12,
+          "code_length_histogram": {
+            "1": 1,
+            "2": 1,
+            "5": 3,
+            "6": 3,
+            "7": 7,
+            "8": 5,
+            "9": 4,
+            "10": 7,
+            "11": 14,
+            "12": 30,
+            "13": 52
+          },
+          "code_count": 127,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 13,
+          "code_length_histogram": {
+            "1": 1,
+            "3": 1,
+            "4": 1,
+            "5": 4,
+            "6": 6,
+            "7": 7,
+            "9": 5,
+            "10": 10,
+            "11": 20,
+            "12": 15,
+            "13": 18,
+            "14": 64
+          },
+          "code_count": 152,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 14,
+          "code_length_histogram": {
+            "2": 2,
+            "3": 1,
+            "4": 3,
+            "6": 4,
+            "7": 4,
+            "8": 14,
+            "9": 6,
+            "10": 8,
+            "11": 12,
+            "12": 34,
+            "13": 44
+          },
+          "code_count": 132,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 15,
+          "code_length_histogram": {
+            "2": 2,
+            "4": 5,
+            "5": 2,
+            "6": 2,
+            "7": 2,
+            "8": 7,
+            "9": 14,
+            "10": 6,
+            "11": 14,
+            "12": 18,
+            "13": 29,
+            "14": 17,
+            "15": 58
+          },
+          "code_count": 176,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "context": 16,
+          "code_length_histogram": {
+            "3": 1,
+            "4": 3,
+            "5": 8,
+            "6": 13,
+            "7": 17,
+            "8": 11,
+            "9": 16,
+            "10": 18,
+            "11": 12,
+            "12": 9,
+            "13": 14
+          },
+          "code_count": 122,
+          "offsets_checked": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ],
+      "paired_cases": 22904,
+      "costs": [
+        {
+          "kind": "cross",
+          "baseline_tstates": 168,
+          "tstates": 161,
+          "delta_tstates": -7,
+          "cases": 340
+        },
+        {
+          "kind": "cross",
+          "baseline_tstates": 169,
+          "tstates": 162,
+          "delta_tstates": -7,
+          "cases": 3804
+        },
+        {
+          "kind": "inside",
+          "baseline_tstates": 144,
+          "tstates": 133,
+          "delta_tstates": -11,
+          "cases": 84
+        },
+        {
+          "kind": "inside",
+          "baseline_tstates": 145,
+          "tstates": 134,
+          "delta_tstates": -11,
+          "cases": 972
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 460,
+          "tstates": 478,
+          "delta_tstates": 18,
+          "cases": 18
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 461,
+          "tstates": 479,
+          "delta_tstates": 18,
+          "cases": 185
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 501,
+          "tstates": 519,
+          "delta_tstates": 18,
+          "cases": 18
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 502,
+          "tstates": 520,
+          "delta_tstates": 18,
+          "cases": 185
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 506,
+          "tstates": 524,
+          "delta_tstates": 18,
+          "cases": 108
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 507,
+          "tstates": 525,
+          "delta_tstates": 18,
+          "cases": 1110
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 513,
+          "tstates": 531,
+          "delta_tstates": 18,
+          "cases": 38
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 514,
+          "tstates": 532,
+          "delta_tstates": 18,
+          "cases": 228
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 554,
+          "tstates": 572,
+          "delta_tstates": 18,
+          "cases": 38
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 555,
+          "tstates": 573,
+          "delta_tstates": 18,
+          "cases": 228
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 559,
+          "tstates": 577,
+          "delta_tstates": 18,
+          "cases": 190
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 560,
+          "tstates": 578,
+          "delta_tstates": 18,
+          "cases": 1140
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 566,
+          "tstates": 584,
+          "delta_tstates": 18,
+          "cases": 89
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 567,
+          "tstates": 585,
+          "delta_tstates": 18,
+          "cases": 224
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 591,
+          "tstates": 609,
+          "delta_tstates": 18,
+          "cases": 38
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 592,
+          "tstates": 610,
+          "delta_tstates": 18,
+          "cases": 228
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 607,
+          "tstates": 625,
+          "delta_tstates": 18,
+          "cases": 89
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 608,
+          "tstates": 626,
+          "delta_tstates": 18,
+          "cases": 224
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 612,
+          "tstates": 630,
+          "delta_tstates": 18,
+          "cases": 356
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 613,
+          "tstates": 631,
+          "delta_tstates": 18,
+          "cases": 896
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 619,
+          "tstates": 637,
+          "delta_tstates": 18,
+          "cases": 88
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 620,
+          "tstates": 638,
+          "delta_tstates": 18,
+          "cases": 280
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 644,
+          "tstates": 662,
+          "delta_tstates": 18,
+          "cases": 178
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 645,
+          "tstates": 663,
+          "delta_tstates": 18,
+          "cases": 448
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 660,
+          "tstates": 678,
+          "delta_tstates": 18,
+          "cases": 88
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 661,
+          "tstates": 679,
+          "delta_tstates": 18,
+          "cases": 280
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 665,
+          "tstates": 683,
+          "delta_tstates": 18,
+          "cases": 264
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 666,
+          "tstates": 684,
+          "delta_tstates": 18,
+          "cases": 840
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 672,
+          "tstates": 690,
+          "delta_tstates": 18,
+          "cases": 185
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 673,
+          "tstates": 691,
+          "delta_tstates": 18,
+          "cases": 333
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 697,
+          "tstates": 715,
+          "delta_tstates": 18,
+          "cases": 264
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 698,
+          "tstates": 716,
+          "delta_tstates": 18,
+          "cases": 840
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 713,
+          "tstates": 731,
+          "delta_tstates": 18,
+          "cases": 185
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 714,
+          "tstates": 732,
+          "delta_tstates": 18,
+          "cases": 333
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 718,
+          "tstates": 736,
+          "delta_tstates": 18,
+          "cases": 370
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 719,
+          "tstates": 737,
+          "delta_tstates": 18,
+          "cases": 666
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 725,
+          "tstates": 743,
+          "delta_tstates": 18,
+          "cases": 162
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 726,
+          "tstates": 744,
+          "delta_tstates": 18,
+          "cases": 277
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 750,
+          "tstates": 768,
+          "delta_tstates": 18,
+          "cases": 740
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 751,
+          "tstates": 769,
+          "delta_tstates": 18,
+          "cases": 1332
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 766,
+          "tstates": 784,
+          "delta_tstates": 18,
+          "cases": 162
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 767,
+          "tstates": 785,
+          "delta_tstates": 18,
+          "cases": 277
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 771,
+          "tstates": 789,
+          "delta_tstates": 18,
+          "cases": 162
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 772,
+          "tstates": 790,
+          "delta_tstates": 18,
+          "cases": 277
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 778,
+          "tstates": 796,
+          "delta_tstates": 18,
+          "cases": 58
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 779,
+          "tstates": 797,
+          "delta_tstates": 18,
+          "cases": 48
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 803,
+          "tstates": 821,
+          "delta_tstates": 18,
+          "cases": 810
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 804,
+          "tstates": 822,
+          "delta_tstates": 18,
+          "cases": 1385
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 819,
+          "tstates": 837,
+          "delta_tstates": 18,
+          "cases": 58
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 820,
+          "tstates": 838,
+          "delta_tstates": 18,
+          "cases": 48
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 856,
+          "tstates": 874,
+          "delta_tstates": 18,
+          "cases": 348
+        },
+        {
+          "kind": "long",
+          "baseline_tstates": 857,
+          "tstates": 875,
+          "delta_tstates": 18,
+          "cases": 288
+        }
+      ],
+      "checked_packets": 1300,
+      "max_payload_bytes": 3645,
+      "packets_without_literals": 793,
+      "packets_without_coded_values": 20,
+      "packets_exceeding_two_guard_capacity": 0,
+      "spare_packet_window_bytes_after_two_guards": 1057
+    }
+  ],
+  "paired_cases": 68712,
+  "checked_packets": 4221,
+  "all_current_packets_fit_two_readable_guards": true
+}

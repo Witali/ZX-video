@@ -21,6 +21,53 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — two-byte Huffman cache in alternate registers, CPU prototype
+
+- **Objective/baseline:** remove repeated indexed lookahead reads without
+  changing the compressed stream. Compare against the compact-cursor
+  configuration at `cb94632`, using the same 4221 states and raw volumes.
+- **Change:** retain current/next bytes in B'/E' and bit position in C';
+  move the motion output cursor from DE' to HL' with 117 equal-cost opcode
+  substitutions. Use AF' to hold the short symbol/initial long-code rank.
+  Shared bitmap short paths **145/169→134/162 T (-11/-7)**; long paths
+  **+18 T**; frame setup **19→65 T (+46)**. The fixed helper adds **7 bytes**
+  at 8FC0, with two extra setup stack bytes. The 875-byte inline body retains
+  its size. Stream delta **0 bytes**; no default builder behavior changes.
+- **Complete CPU:** all compact data and both full native screens match for
+  **4221 frames**. Frame stages **1023364329→1018049241 T (-5315088)**,
+  **0.5194%** less work. Per-volume savings **1921526/1756135/1637427 T**.
+  Actual symbol counts reproduce every frame's delta. **55 frames** are
+  slower, by at most **50 T**; they remain included in the totals.
+- **Coverage:** five boundary/mixed-frame/actual-IRQ tests pass. Exhaustive
+  actual-volume tables pass **68712 paired code/bit-offset cases**, including
+  arbitrary A5/3C guards, exact cursors, cached bytes and instruction counts.
+  A six-frame smoke passed at **1487678→1481612 T (-6066)** before the full run.
+  Source/reference hashes and saved-result arithmetic pass the audit.
+- **Input-contract finding:** two readable lookahead bytes are required;
+  a one-guard boundary test fails as intended. The CPU stage already has
+  two guards, but the integrated FAP3 parser guarantees only one. All actual
+  packet maxima **2638/2921/3645 B** fit a proposed **4702 B** payload limit
+  in the existing 4704-B window. There are 2635 packets without literals
+  and 44 without coded values. Integration remains required.
+- **Corrected attempts:** placement at 8FB0 was rejected against the actual
+  8FB8 code/state end; helpers moved to 8FC0. An initial long-path trampoline
+  measured **+42 T**, contradicting a **+32 T** estimate because an extra
+  jump was omitted. Cycle tests and the partial movie smoke caught this.
+  Equal-size PUSH AF rank saving replaces that trampoline: final **+18 T**.
+- **Decision/limits:** retain the CPU prototype for integration. It excludes
+  ZX0, queue/copy work, AY/IRQ cadence, ULA, ROM and disk latency. No new
+  TRDs, capacity claim or disk playback result; release images are unchanged.
+  Exact nominal deadlines, fallback recovery and continuous AY remain open.
+- **Reproduction/evidence:** [report and commands](toolkit/CACHED_HUFFMAN_LOOKAHEAD.md),
+  [implementation](toolkit/cached_huffman_lookahead.py),
+  [tests](toolkit/test_cached_huffman_lookahead.py),
+  [full-frame runner](toolkit/benchmark_cached_huffman_lookahead.py),
+  [complete CPU report](toolkit/cached_huffman_lookahead_cpu.json),
+  [case/packet auditor](toolkit/audit_cached_huffman_lookahead.py),
+  [case report](toolkit/cached_huffman_lookahead_cases.json),
+  [saved-evidence audit](toolkit/summarize_cached_huffman_lookahead.py),
+  [summary](toolkit/cached_huffman_lookahead_summary.json).
+
 ## 2026-09-27 — reject whole-row fill tests using complete frame evidence
 
 - **Objective/baseline:** find a larger native-output saving without changing

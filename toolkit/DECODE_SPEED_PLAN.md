@@ -55,6 +55,14 @@ the generic converter's defaults or the root release images.
   span falls by 1,063,621 T, but bad intervals rise 660→662. Retain
   `--compact-cursor` for measured work and keep both this result and HL-only
   as comparison points; it is not a release and does not pass timing.
+- The [two-byte Huffman cache prototype](CACHED_HUFFMAN_LOOKAHEAD.md) uses
+  E' for lookahead and moves the motion output cursor to HL'. All 4221 CPU
+  frames and both complete screens match. Against compact cursor it saves
+  **5,315,088 T** (0.5194% of measured frame stages); 55 frames are slower,
+  by at most 50 T. It is not yet integrated into the TRD builder. It requires
+  two readable guard bytes; the current FAP3 parser guarantees one. All
+  current packets fit a 4702-byte payload limit in the existing 4704-byte
+  window, but the new contract must be enforced before full disk testing.
 
 ## Method: replace indexed access when the whole path is faster
 
@@ -100,7 +108,14 @@ See [the saved verification](hl_mask_reader_summary.json).
    1,203,077 indexed memory loads in the profile. A hypothetical 19→7 T
    substitution saves 14,436,924 T before setup costs. Use this as a gross
    ceiling for those loads, not a promised saving. Keep cached-byte and
-   inline-patch optimizations already present.
+   inline-patch optimizations already present. The two-byte cache now has
+   a complete CPU prototype: short symbols save 7..11 T, long symbols add
+   18 T and setup adds 46 T/frame. Next, enforce its two-readable-byte
+   packet contract, regenerate inline/cold-start code, and measure bootstrap
+   sectors plus complete three-volume delivery. For other videos, reject
+   an oversized optional configuration or retain the old decoder; never
+   read outside the reserved packet window. Do not count the CPU saving as
+   proven publication/AY improvement before that run.
 3. **Optimize pixel conversion and addressing.** Dense pixel work alone
    costs 136,520,064 T. Try reuse of addresses/lookup results while retaining
    the exact dither output and alternate-screen dependencies. Count writes,

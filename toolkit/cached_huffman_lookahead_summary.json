@@ -1,0 +1,62 @@
+{
+  "scope": "Audit saved two-byte-cache evidence, without repeating CPU or playback runs.",
+  "complete_saved_evidence_audit": true,
+  "release": false,
+  "source_sha256": "82f93d083bded5e387baff3bcf24dcacdc0d3ba96777cee8742c78e4bc4153a5",
+  "report_sha256": {
+    "cached_huffman_lookahead_cpu.json": "26ffdf765533d3ea6df29331b83248c1bf2f08bf3d47aa8c42f1ceff45d8fbe1",
+    "cached_huffman_lookahead_cases.json": "abd3a115d2b226259685d19c3edab58ec5bb83d5d7109f73cf0d2c5df55f30b0"
+  },
+  "checked_frames": 4221,
+  "paired_code_cases": 68712,
+  "baseline_tstates": 1023364329,
+  "tstates": 1018049241,
+  "delta_tstates": -5315088,
+  "reduction_percent": 0.5193739755609559,
+  "slower_frames": 55,
+  "full_compact_and_both_native_exact": true,
+  "compressed_stream_delta_bytes": 0,
+  "new_trds_built": false,
+  "integrated_guard_contract_verified": false,
+  "actual_new_playback_measured": false,
+  "physical_drive_verified": false,
+  "volumes": [
+    {
+      "part": 1,
+      "frames": 1624,
+      "baseline_tstates": 386925436,
+      "tstates": 385003910,
+      "delta_tstates": -1921526,
+      "slower_frames": 15,
+      "min_frame_delta": -3782,
+      "max_frame_delta": 46,
+      "paired_code_cases": 22904,
+      "max_payload_bytes": 2638
+    },
+    {
+      "part": 2,
+      "frames": 1297,
+      "baseline_tstates": 328284145,
+      "tstates": 326528010,
+      "delta_tstates": -1756135,
+      "slower_frames": 14,
+      "min_frame_delta": -3521,
+      "max_frame_delta": 46,
+      "paired_code_cases": 22904,
+      "max_payload_bytes": 2921
+    },
+    {
+      "part": 3,
+      "frames": 1300,
+      "baseline_tstates": 308154748,
+      "tstates": 306517321,
+      "delta_tstates": -1637427,
+      "slower_frames": 26,
+      "min_frame_delta": -3704,
+      "max_frame_delta": 50,
+      "paired_code_cases": 22904,
+      "max_payload_bytes": 3645
+    }
+  ],
+  "decision": "Retain the CPU prototype for integration. Reserve two readable guard bytes and recheck capacity, actual frame publication, AY continuity and total disk delivery before enabling it in independently bootable TRDs."
+}
