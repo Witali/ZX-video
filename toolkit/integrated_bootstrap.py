@@ -32,7 +32,7 @@ def installer():
 class Builder(ReadThroughBuilder):
     preload_sectors = 0
 
-    def __init__(self, *args, bank2_zx0=False, audio_wait_prefetch=False, ready_packet_guard=False, fast_return_irq=False, packet_prefix_guard=False, hl_mask_reader=False, **kwargs):
+    def __init__(self, *args, bank2_zx0=False, audio_wait_prefetch=False, ready_packet_guard=False, fast_return_irq=False, packet_prefix_guard=False, hl_mask_reader=False, streaming_input=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.bank2_zx0=bank2_zx0
         self.audio_wait_prefetch=audio_wait_prefetch
@@ -40,6 +40,9 @@ class Builder(ReadThroughBuilder):
         self.fast_return_irq=fast_return_irq
         self.packet_prefix_guard=packet_prefix_guard
         self.hl_mask_reader=hl_mask_reader
+        self.streaming_input=streaming_input
+        if streaming_input and (not bank2_zx0 or packet_prefix_guard or ready_packet_guard):
+            raise ValueError('streaming input requires bank-2 ZX0 without packet guards')
         if packet_prefix_guard and (not bank2_zx0 or ready_packet_guard):
             raise ValueError('prefix guard needs bank-2 ZX0 and replaces the conservative guard')
         if audio_wait_prefetch and not bank2_zx0:raise ValueError('audio prefetch requires bank-2 ZX0')
@@ -128,6 +131,9 @@ class Builder(ReadThroughBuilder):
             # the same verified-reader contract before startup compression.
             m.update(fast_disk=self.fast_disk,required_trdos_sha256=disk.TRDOS_503_SHA256)
             m['fast_return_irq']=install(read8,put,m)
+        if self.streaming_input:
+            from streaming_slot_player import install
+            m['streaming_input']=install(read8,put,m,h)
         # Both low overlays must survive until all decompression has finished.
         put(0xa100,bytes(read8(i) for i in range(0x6000,0x6100)))
         put(0xa200,bytes(read8(i) for i in range(0x6100,0x6200)))
