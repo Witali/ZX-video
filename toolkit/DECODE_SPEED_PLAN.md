@@ -133,10 +133,14 @@ See [the saved verification](hl_mask_reader_summary.json).
    Actual occupied sectors grow by 40; 53/52/53 remain free. Sound stays
    exact at 50 Hz, but late frames improve only **1745→1740**, with 1043
    fallback interval violations. Keep it optional and preserve the smaller
-   baseline. Test moving its hottest 16-LDI body into the 38 unused bytes
-   of the old bank-2 selector (33 bytes required); count CALL/return costs
-   and include ULA/disk timing before adopting the placement. Capacity and AY cadence
-   pass this experiment; both video timing gates still fail.
+   baseline. The subsequent [uncontended half-row body experiment](UNCONTENDED_HALF_COPY.md)
+   moves the sixteen LDIs into 33 of the old selector's 38 unused bank-2
+   bytes. CALL/RET adds 27 T per half-row, **2659824 T** across all 4221
+   fully pixel-checked CPU frames. Complete Fuse playback leaves
+   each publication span unchanged, increases late frames **1740→1741**
+   and bad intervals **1043→1048**, with byte-exact streams and identical
+   disk usage. Reject this placement as a speed improvement; preserve its
+   evidence. Capacity and AY cadence pass; both video timing gates fail.
    The frozen-producer FIFO model does not establish that resizing the
    existing AY queue fixes starvation; do not infer missing byte availability
    from a queue call's end timestamp alone.

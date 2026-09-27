@@ -21,6 +21,54 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — uncontended half-row body: no playback gain
+
+- **Objective/baseline:** test whether removing opcode contention from the
+  half-row cache copier at `0c674b6` improves delivery. Scope remains all
+  4221 frames, original pixel fields and 25326 AY records on three independent
+  disks, with unchanged resolution and nominal six-field deadlines.
+- **Change:** move sixteen LDIs plus RET into 33 of the 38 unused bank-2
+  selector bytes at 877C; replace the body with CALL and repack the bank-5
+  controller from 80 to 51 bytes. Active code grows by four bytes and nested
+  stack use by two. Body CPU cost increases **256→283 T (+27)** per copied
+  half-row, **+108 T** per partial four-row group. Parser, compressed video
+  and resident audio bytes are unchanged. Full frame-stage CPU grows
+  **1002069238→1004729062 T (+2659824)**, exactly matching the cache-copy
+  change **96166094→98825918 T**; 3421 frames are slower, 800 unchanged.
+  IRQ, ULA, ROM and disk latency are separate.
+- **Capacity/boot:** occupied sectors remain **2491/2492/2491**, free sectors
+  **53/52/53**, video **1839779 B / 7188 sectors**. Cold dirty-RAM boot,
+  first full native/second compact frame, immutable AY bank and both mocked
+  disk swaps pass. Startup compression saves 1411 mocked CPU T per disk,
+  outside playback. No release disk image is replaced.
+- **Full Fuse result:** every disk reaches EOF with all AY records exact at
+  50 Hz, zero gaps/underruns, all runtime sectors exact and no retries. All
+  80 sampled bytes per native frame match. Late frames **206/660/874→
+  206/661/874**, total **1740→1741**; invalid fallback intervals **1043→1048**.
+  Maximum lateness remains **97/287/282 fields**. Recovered late runs change
+  **5/3/6→5/2/6**; disks 1/2 still end with unrecovered runs 1609..1623 and
+  994..1296. Every publication span is unchanged, totaling **1816379328 T**.
+  Reconstruction elapsed time changes **640812368→640903384 T (+91016)**.
+  These totals include contention/IRQ and unmatched startup phases, not
+  isolated ROM/ULA costs. Both video timing gates still fail.
+- **Verification:** four instruction/bounds/IRQ tests pass. All 4221 compact
+  frames and both complete native screens match in the CPU fixture, and each
+  frame's cycle delta matches the independent formula. These full pixel
+  checks are separate from sampled Fuse pixels. The snapshot contains 30 pinned archives
+  (6195397 packed bytes), with all raw traces and generator sources. Full
+  integrated deterministic CPU totals and physical-drive checks remain open.
+- **Decision:** reject this placement as a speed improvement; retain its
+  implementation/evidence as an optional failed experiment. Continue from
+  the smaller resident-AY baseline or the prior half-row variant. Next prove
+  the input/output safety margin before attempting a larger bank-local ZX0
+  prepared reservoir. Do not assume that uncontended opcode placement alone
+  repays call overhead.
+- **Reproduction:** [layout, formulas and commands](toolkit/UNCONTENDED_HALF_COPY.md),
+  [CPU benchmark](toolkit/benchmark_uncontended_half_copy.py),
+  [TRD builder](toolkit/build_uncontended_half_player.py),
+  [evidence manifest](toolkit/uncontended_half_player_evidence/manifest.json),
+  and [summary/auditor](toolkit/summarize_uncontended_half_player.py).
+
 ## 2026-09-27 — half-row motion cache: full CPU saving, small delivery gain
 
 - **Objective/baseline:** use the spare capacity of `da369e6` to copy fewer
