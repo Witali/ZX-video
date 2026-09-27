@@ -1,0 +1,321 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Count boundary paths up to copying or the CALL into slice_yield.\n\nSynchronization includes its RET. Boundary costs include EX AF restoration\nand (when yielding) the CALL instruction, but exclude the yield body and\nsubsequent resume. These are CPU counts without IRQ or contention.\n",
+  "variants": [
+    {
+      "variant": "baseline",
+      "rows": [
+        {
+          "case": "lower_high_byte",
+          "site": "match",
+          "sync_tstates": 139,
+          "boundary_tstates": 31,
+          "yielded": false
+        },
+        {
+          "case": "lower_high_byte",
+          "site": "slice",
+          "sync_tstates": 139,
+          "boundary_tstates": 31,
+          "yielded": false
+        },
+        {
+          "case": "same_high_lower_low",
+          "site": "match",
+          "sync_tstates": 139,
+          "boundary_tstates": 56,
+          "yielded": false
+        },
+        {
+          "case": "same_high_lower_low",
+          "site": "slice",
+          "sync_tstates": 139,
+          "boundary_tstates": 56,
+          "yielded": false
+        },
+        {
+          "case": "equal_target",
+          "site": "match",
+          "sync_tstates": 139,
+          "boundary_tstates": 75,
+          "yielded": true
+        },
+        {
+          "case": "equal_target",
+          "site": "slice",
+          "sync_tstates": 139,
+          "boundary_tstates": 75,
+          "yielded": true
+        },
+        {
+          "case": "greater_low",
+          "site": "match",
+          "sync_tstates": 139,
+          "boundary_tstates": 75,
+          "yielded": true
+        },
+        {
+          "case": "greater_low",
+          "site": "slice",
+          "sync_tstates": 139,
+          "boundary_tstates": 75,
+          "yielded": true
+        },
+        {
+          "case": "greater_high",
+          "site": "match",
+          "sync_tstates": 139,
+          "boundary_tstates": 55,
+          "yielded": true
+        },
+        {
+          "case": "greater_high",
+          "site": "slice",
+          "sync_tstates": 139,
+          "boundary_tstates": 55,
+          "yielded": true
+        }
+      ]
+    },
+    {
+      "variant": "turbo_tuned",
+      "rows": [
+        {
+          "case": "lower_high_byte",
+          "site": "match",
+          "sync_tstates": 86,
+          "boundary_tstates": 29,
+          "yielded": false,
+          "sync_delta_tstates": -53,
+          "boundary_delta_tstates": -2
+        },
+        {
+          "case": "lower_high_byte",
+          "site": "slice",
+          "sync_tstates": 86,
+          "boundary_tstates": 29,
+          "yielded": false,
+          "sync_delta_tstates": -53,
+          "boundary_delta_tstates": -2
+        },
+        {
+          "case": "same_high_lower_low",
+          "site": "match",
+          "sync_tstates": 86,
+          "boundary_tstates": 57,
+          "yielded": false,
+          "sync_delta_tstates": -53,
+          "boundary_delta_tstates": 1
+        },
+        {
+          "case": "same_high_lower_low",
+          "site": "slice",
+          "sync_tstates": 86,
+          "boundary_tstates": 57,
+          "yielded": false,
+          "sync_delta_tstates": -53,
+          "boundary_delta_tstates": 1
+        },
+        {
+          "case": "equal_target",
+          "site": "match",
+          "sync_tstates": 86,
+          "boundary_tstates": 74,
+          "yielded": true,
+          "sync_delta_tstates": -53,
+          "boundary_delta_tstates": -1
+        },
+        {
+          "case": "equal_target",
+          "site": "slice",
+          "sync_tstates": 86,
+          "boundary_tstates": 74,
+          "yielded": true,
+          "sync_delta_tstates": -53,
+          "boundary_delta_tstates": -1
+        },
+        {
+          "case": "greater_low",
+          "site": "match",
+          "sync_tstates": 86,
+          "boundary_tstates": 74,
+          "yielded": true,
+          "sync_delta_tstates": -53,
+          "boundary_delta_tstates": -1
+        },
+        {
+          "case": "greater_low",
+          "site": "slice",
+          "sync_tstates": 86,
+          "boundary_tstates": 74,
+          "yielded": true,
+          "sync_delta_tstates": -53,
+          "boundary_delta_tstates": -1
+        },
+        {
+          "case": "greater_high",
+          "site": "match",
+          "sync_tstates": 86,
+          "boundary_tstates": 58,
+          "yielded": true,
+          "sync_delta_tstates": -53,
+          "boundary_delta_tstates": 3
+        },
+        {
+          "case": "greater_high",
+          "site": "slice",
+          "sync_tstates": 86,
+          "boundary_tstates": 58,
+          "yielded": true,
+          "sync_delta_tstates": -53,
+          "boundary_delta_tstates": 3
+        }
+      ]
+    },
+    {
+      "variant": "fast",
+      "rows": [
+        {
+          "case": "lower_high_byte",
+          "site": "match",
+          "sync_tstates": 112,
+          "boundary_tstates": 29,
+          "yielded": false,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": -2
+        },
+        {
+          "case": "lower_high_byte",
+          "site": "match3",
+          "sync_tstates": 112,
+          "boundary_tstates": 29,
+          "yielded": false,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": -2
+        },
+        {
+          "case": "lower_high_byte",
+          "site": "slice",
+          "sync_tstates": 112,
+          "boundary_tstates": 29,
+          "yielded": false,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": -2
+        },
+        {
+          "case": "same_high_lower_low",
+          "site": "match",
+          "sync_tstates": 112,
+          "boundary_tstates": 57,
+          "yielded": false,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": 1
+        },
+        {
+          "case": "same_high_lower_low",
+          "site": "match3",
+          "sync_tstates": 112,
+          "boundary_tstates": 57,
+          "yielded": false,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": 1
+        },
+        {
+          "case": "same_high_lower_low",
+          "site": "slice",
+          "sync_tstates": 112,
+          "boundary_tstates": 57,
+          "yielded": false,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": 1
+        },
+        {
+          "case": "equal_target",
+          "site": "match",
+          "sync_tstates": 112,
+          "boundary_tstates": 74,
+          "yielded": true,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": -1
+        },
+        {
+          "case": "equal_target",
+          "site": "match3",
+          "sync_tstates": 112,
+          "boundary_tstates": 74,
+          "yielded": true,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": -1
+        },
+        {
+          "case": "equal_target",
+          "site": "slice",
+          "sync_tstates": 112,
+          "boundary_tstates": 74,
+          "yielded": true,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": -1
+        },
+        {
+          "case": "greater_low",
+          "site": "match",
+          "sync_tstates": 112,
+          "boundary_tstates": 74,
+          "yielded": true,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": -1
+        },
+        {
+          "case": "greater_low",
+          "site": "match3",
+          "sync_tstates": 112,
+          "boundary_tstates": 74,
+          "yielded": true,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": -1
+        },
+        {
+          "case": "greater_low",
+          "site": "slice",
+          "sync_tstates": 112,
+          "boundary_tstates": 74,
+          "yielded": true,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": -1
+        },
+        {
+          "case": "greater_high",
+          "site": "match",
+          "sync_tstates": 112,
+          "boundary_tstates": 58,
+          "yielded": true,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": 3
+        },
+        {
+          "case": "greater_high",
+          "site": "match3",
+          "sync_tstates": 112,
+          "boundary_tstates": 58,
+          "yielded": true,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": 3
+        },
+        {
+          "case": "greater_high",
+          "site": "slice",
+          "sync_tstates": 112,
+          "boundary_tstates": 58,
+          "yielded": true,
+          "sync_delta_tstates": -27,
+          "boundary_delta_tstates": 3
+        }
+      ]
+    }
+  ],
+  "sources": {
+    "probe_faster_zx0_paths.py": "427199656307e15785bc2b98b5f80669d135ffd697cfcd844f2aad88aee016d7",
+    "faster_zx0.py": "f9391a910a3e5eb94b9f0e93d6c6e87ae0eed444f826921eb194056aa87ccd8d"
+  }
+}

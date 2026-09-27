@@ -381,6 +381,33 @@ it adds 151 video reads and worsens disk 1's peak. Neither CPU ranking nor
 mean fps replaces the complete nominal/fallback/AY gates. Keep the retained
 baseline and release unchanged while developing the next measured candidate.
 
+## Unchanged-stream ZX0: measured CPU candidates
+
+The unchanged-stream [faster ZX0 CPU experiment](FASTER_ZX0.md) is now
+complete on all 188 retained blocks. Adapted Fast costs **183,122,436 T**
+versus **189,573,555 T**, saving **6,451,119 T (3.403%)**; producer+decoder
+saves **3.203%**. Tuned Turbo saves **2,300,609 T (1.214%)**. Both keep
+all **1,818,909 stream bytes and 7106 sector reads**, improve every complete
+block and preserve exact in-place input/output. Fast has 62 of 11584 calls
+slower by at most 69 T; tuned Turbo has none. Four test groups, including
+real AY IRQ code after every instruction and arbitrary demand targets, pass.
+
+Proceed to a separate Fast disk-integration comparison, retaining tuned
+Turbo as the smaller alternative. Fast occupies **401 code/state bytes
+(+87)**: 7C00h..7C7Dh helpers and 8DF2h..8F06h hot core. It reuses retired
+RAM without shrinking buffers or requiring prior-disk state. Both variants
+assume non-wrapping C000h..FDFFh output; they are not replacements for the
+old wrapping half-bank decoder. Rebuild all queue/bridge/producer/cold-start
+references and account for the direct-HL prototype's shifted core bounds
+if combined. Bootstrap compression and sector occupancy are unmeasured.
+
+The baseline executes 2253636 decoder T from bank 5; Fast executes 4530562.
+CPU savings therefore still require full ULA/ROM/disk/publication/AY
+measurement. Do not apply the CPU percentage to whole-player speed or
+declare a release. The [saved auditor](audit_faster_zx0.py) verifies code,
+streams and all CPU sums. Preserve these results before further branch,
+gamma or Mega experiments; the latter remain unmeasured.
+
 ## Avoid repeating rejected or completed experiments
 
 - [Positional no-op run tags](TAGGED_NOOP_RUNS.md) now use the existing

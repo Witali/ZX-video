@@ -21,6 +21,60 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — faster ZX0 prototypes preserve every compressed byte
+
+- **Objective/input:** test whether the decoder can be accelerated without
+  reducing compression after the `9f14ad9` profile. Use retained `a84451d`
+  data: all 188 blocks, 2965011 decoded bytes, three independent streams,
+  1818909 compressed bytes including headers and 7106 video sectors.
+- **Variants:** tuned Turbo simplifies non-wrapping C000h..FDFFh boundary
+  checks and synchronization. Adapt upstream spke/uniabis Fast with inline
+  token-boundary suspension, no persistent IX continuation and a shared
+  literal-copy entry. Keep the pinned original assembly and its notice;
+  identify the altered emitter explicitly. Existing defaults are unchanged.
+- **Fresh paired measurements:** 564 complete native block executions.
+  Decoder CPU **189,573,555 → 187,272,946 T** for tuned Turbo
+  (**-2,300,609 T / 1.214%**) and **→ 183,122,436 T** for Fast
+  (**-6,451,119 T / 3.403%**). Producer cost remains **11,831,304 T**;
+  Fast producer+decoder saves **3.203%**. Fast per-volume savings are
+  **1,845,707 / 2,210,048 / 2,395,364 T**. Every block improves in both
+  candidates. Of 11584 calls, Fast has 62 slower calls, by at most 69 T;
+  tuned Turbo has no slower calls. These are CPU, not elapsed playback gains.
+- **Compression/memory:** stream delta **0 bytes**, sector-read delta **0**,
+  carry-copy delta **0 bytes**. Fast code/state grows **314→401 bytes**;
+  tuned Turbo shrinks to **291 bytes**. Helpers/state reuse retired bank-5
+  RAM, hot cores fit the existing bank-2 reservation, private stack/buffers
+  are unchanged. Fast leaves three bytes before the preserved frame return.
+  Bank-5 decoder instruction totals grow **2,253,636→4,530,562 T**;
+  actual contention and compressed-bootstrap size are not measured.
+- **Path counts:** high-byte-below-target path **31→29 T**; equal-high /
+  lower-low path **56→57 T**; equal/greater-low suspend **75→74 T**;
+  greater-high suspend **55→58 T**. Synchronization **139→86/112 T**
+  (tuned/Fast). Absolute counts and exclusions are saved in the path probe;
+  full executed histograms use Zilog timing-table validation.
+- **Coverage:** four test groups pass for both variants: sector/header
+  edges, bank rotation/carry/retry, 90 synthetic gamma/offset sequences,
+  real AY IRQ code after every instruction, and unaligned/repeated demands
+  with caller-register clobbering. Full replay verifies every output byte,
+  input cursor/overlap digest, protected bank, stack and sector order.
+  Saved-data audit and regenerated code match. A control-flow readability
+  cleanup in the demand test was followed by rerunning that test successfully.
+- **Decision/limits:** retain Fast as the leading unchanged-stream CPU
+  candidate and tuned Turbo as a smaller comparison. Real TRD integration,
+  absolute references/cold overlays, independent boot/swap, bootstrap
+  sectors and complete Fuse nominal/fallback/AY gates remain to be tested.
+  No changed TRD or physical-drive measurement; no claim of smooth 8⅓ fps.
+  Preserve the current release and disk baseline.
+- **Reproduction/evidence:** [report and commands](toolkit/FASTER_ZX0.md),
+  [prototype emitter](toolkit/faster_zx0.py),
+  [benchmark](toolkit/benchmark_faster_zx0.py),
+  [tests](toolkit/test_faster_zx0.py),
+  [all blocks](toolkit/faster_zx0_cpu.json),
+  [summary](toolkit/faster_zx0_summary.json),
+  [path probe](toolkit/probe_faster_zx0_paths.py),
+  [path counts](toolkit/faster_zx0_paths.json),
+  [auditor](toolkit/audit_faster_zx0.py).
+
 ## 2026-09-27 — complete instruction profiles and seven-player delivery comparison
 
 - **Objective/input:** locate the largest CPU costs and elapsed stalls at

@@ -1,0 +1,66 @@
+{
+  "complete": true,
+  "release": false,
+  "cpu_report_sha256": "68b966f7e3d0f8d1f258cf46cf4408fedee8b5f46c4db6da5423287bd625201a",
+  "sources_verified": true,
+  "all_block_and_instruction_sums_match": true,
+  "unchanged_compressed_bytes": 1818909,
+  "variants": {
+    "baseline": {
+      "producer_tstates": 11831304,
+      "decoder_tstates": 189573555,
+      "total_tstates": 201404859,
+      "sector_reads": 7106,
+      "carry_copy_bytes": 96256,
+      "decoder_bank5_tstates": 2253636,
+      "decoder_bank2_tstates": 187319919,
+      "decoder_saving_percent": 0.0,
+      "producer_decoder_saving_percent": 0.0,
+      "decoder_calls": 11584,
+      "slower_calls": 0,
+      "largest_call_regression_tstates": 0,
+      "max_call_tstates": 55492
+    },
+    "turbo_tuned": {
+      "producer_tstates": 11831304,
+      "decoder_tstates": 187272946,
+      "total_tstates": 199104250,
+      "sector_reads": 7106,
+      "carry_copy_bytes": 96256,
+      "decoder_bank5_tstates": 4229378,
+      "decoder_bank2_tstates": 183043568,
+      "faster_blocks": 188,
+      "slower_blocks": 0,
+      "delta_tstates": -2300609,
+      "decoder_saving_percent": 1.2135706375290582,
+      "producer_decoder_saving_percent": 1.1422807828087207,
+      "decoder_calls": 11584,
+      "slower_calls": 0,
+      "largest_call_regression_tstates": 0,
+      "max_call_tstates": 55409
+    },
+    "fast": {
+      "producer_tstates": 11831304,
+      "decoder_tstates": 183122436,
+      "total_tstates": 194953740,
+      "sector_reads": 7106,
+      "carry_copy_bytes": 96256,
+      "decoder_bank5_tstates": 4530562,
+      "decoder_bank2_tstates": 178591874,
+      "faster_blocks": 188,
+      "slower_blocks": 0,
+      "delta_tstates": -6451119,
+      "decoder_saving_percent": 3.4029635620854397,
+      "producer_decoder_saving_percent": 3.2030602598321622,
+      "decoder_calls": 11584,
+      "slower_calls": 62,
+      "largest_call_regression_tstates": 69,
+      "max_call_tstates": 55458
+    }
+  },
+  "path_report_sha256": "1e4210181bc304a22b4ebdc4cba43589a9d2e164f25286730f043d5a27159046",
+  "audit_and_test_sources_lf": {
+    "audit_faster_zx0.py": "bd38eb258acb09dd11a4baa63c379f63aa4221199d8539b18e51ea95daac0638",
+    "test_faster_zx0.py": "bc57f8498d12eb4a859d1a7425e91f530022b252deac2ffa91e3b28c6fc21b00"
+  }
+}
