@@ -313,16 +313,26 @@ See [the saved verification](hl_mask_reader_summary.json).
    reads and complete selected playback. The saved free-input projection is
    hypothetical, not a feasibility proof or a substituted release criterion.
 
-A small concrete candidate for step 1 is the target setup for nonzero
-motion phases. With the new cache,
-`LD HL,(target); PUSH HL; EXX; POP HL; EXX` costs **45 T**.
-Loading alternate HL directly with
-`EXX; LD HL,(target); EXX` would cost **24 T**, if the common HL load moves
-to phase zero and no additional preservation is needed. The profile contains
-28,773 such entries: setup **1,294,785→690,552 T**, estimated **-604,233 T**.
-The earlier DE' allocation gave a smaller 489,141-T estimate.
-This is not implemented or IRQ-tested and will not alone resolve playback.
-Verify generated placement and all phases before adopting it.
+The [direct alternate-HL target-load hypothesis](DIRECT_MOTION_TARGET.md)
+is now **verified as a CPU prototype**. Replacing
+`LD HL,(target); PUSH HL; EXX; POP HL; EXX` (**45 T**) with
+`EXX; LD HL,(target); EXX` (**24 T**) and moving the common load to phase
+zero saves exactly **21 T** on each of **28,773** nonzero-phase entries.
+Setup totals are **1,294,785→690,552 T**; all 4221 exact compact/native
+frames confirm **-604,233 T**, or **0.059352%** of measured frame CPU.
+There are no slower frames. Five tests cover vectors/edges, mixed frames
+and real AY/publication IRQs, including EXX boundaries. The earlier DE'
+allocation's 489,141-T estimate remains historical.
+
+The prototype adds **3 code bytes**, leaving five bytes before the 8FC0h
+helper. It changes primary HL after phases 2/6; current callers overwrite
+it immediately, and the installer checks that contract. Integration must
+relocate the retired patch region reused by bank-2 ZX0 from
+8DF2h..8F09h to 8DF5h..8F0Ch and rebuild all metadata/references. The movie
+stream is unchanged; compressed bootstrap size and actual disk timing are
+not measured. Keep it optional until independent boot, sector budget and
+all three full playback runs pass. This small saving alone does not resolve
+the remaining publication deadlines.
 
 ## Avoid repeating rejected or completed experiments
 

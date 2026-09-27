@@ -21,6 +21,49 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — direct alternate-HL motion target loads confirmed in CPU tests
+
+- **Objective/input:** verify the planned 45-to-24-T pointer setup against
+  repository `5856133` and the complete two-byte Huffman-cache CPU baseline.
+  Use all 4221 authorized no-credits frames, original three table sets/raw
+  inputs and saved states. Compressed movie-stream delta is **0 bytes**.
+- **Change:** move the common `LD HL,(target)` into phase zero; use
+  `EXX; LD HL,(target); EXX` for phases 2/4/6. Save **21 T/entry**;
+  phase zero/clear paths have **0 T delta**. Add **3 bytes** of fixed code,
+  relocate the affected code/state references, and remove the two-byte
+  temporary stack transfer. No buffer, dictionary or new state allocation.
+- **Measured result:** **28,773** entries; setup **1,294,785→690,552 T**.
+  All frame stages total **1,018,049,241→1,017,445,008 T**, a saving of
+  **604,233 T (0.059352%)**. Per-volume savings: **283,542 / 173,712 /
+  146,979 T**. There are **3352 faster frames**, maximum **819 T/frame**,
+  and **zero slower frames**. The earlier executed motion histogram agrees.
+- **Coverage:** five specialized tests pass, including 1312 paired
+  vector/position cases, mixed complete frames, real AY IRQs after each
+  instruction, and both publication IRQ handlers at every new setup
+  boundary. Full movie CPU execution checks exact compact data, both
+  complete native screens, input/cursors/paging and every frame's delta.
+  The saved-report auditor passes; instruction costs were checked against
+  Zilog UM008011-0816. No changed TRD or full Fuse run was made.
+- **Corrections during verification:** an initial test import was fixed;
+  an overstrict register comparison exposed that primary HL differs after
+  phases 2/6. It is dead at current callers, which immediately reload it;
+  the prototype now rejects an unverified caller contract. The standalone
+  evidence auditor initially imported an unnecessary OpenCV dependency;
+  it now uses standard-library SHA-256 and runs without conversion packages.
+- **Decision:** hypothesis confirmed; retain as an optional CPU prototype.
+  Reconstruction ends at **8FBBh**, five bytes below the lookahead helper.
+  Disk integration must move bank-2 ZX0's reused region to
+  **8DF5h..8F0Ch**, rebuild references/boot metadata, measure compressed
+  bootstrap size and verify independent boot plus complete delivery.
+  IRQ cadence, ULA, ROM/physical disk latency and actual publication timing
+  are outside the CPU result. The retained disk baseline/release is unchanged.
+- **Reproduction/evidence:** [implementation and commands](toolkit/DIRECT_MOTION_TARGET.md),
+  [benchmark](toolkit/benchmark_direct_motion_target.py),
+  [tests](toolkit/test_direct_motion_target.py),
+  [frame report](toolkit/direct_motion_target_cpu.json),
+  [auditor](toolkit/audit_direct_motion_target.py),
+  [summary](toolkit/direct_motion_target_summary.json).
+
 ## 2026-09-27 — complete reservoir traces identify sustained input depletion
 
 - **Objective/input:** identify why the retained `a84451d` player remains
