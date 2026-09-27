@@ -21,6 +21,55 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — in-place ZX0: prove a larger decoded-packet reservoir
+
+- **Objective/baseline:** investigate a larger prepared-video reserve in the
+  three resident-AY banks without another full compressed-input copy. Use
+  the foreground resident variant at `da369e6`, retained through `d0aea1a`:
+  all 4221 frames, 2965011 video packet bytes, independent volume boundaries,
+  unchanged video fields and audio. Existing video slots provide 24576 decoded
+  bytes. No player hot path or root disk image changes in this experiment.
+- **Parameters/method:** optimal ZX0 at 8192/12288/15872/16384 output bytes
+  per block. Trace every input read/output write, including buffered bits,
+  literals, LZ history and EOF. Compute the exact overlap gap, then place
+  complete header/body sectors against the bank top. A shared final sector
+  must be saved in the existing 256-byte carry buffer before decoding.
+  Actual header acquisition/sector producer execution remains unimplemented.
+- **Full host result:** the 15872-byte variant safely fits all **188 blocks**,
+  giving **47616 decoded bytes (+23040, 93.75%)**, with smallest sector-aligned
+  margins **255/257/255 B**. Video changes **1832196→1818909 B (−13287)** and
+  runtime sectors **7158→7106 (−52)**. Whole packet streams compare exactly.
+  With the existing bootstrap and interleave held fixed, occupied sectors
+  would be **2461/2462/2461**, leaving **83/82/83**. These are conditional
+  estimates, not measured new TRDs. Three initial blocks contain 91/76/41
+  complete packets versus 52/31/15; these are not pre-rendered screen counts.
+- **Rejected limit:** full 16384-byte output fails for **180/183 blocks**, even
+  without sector-alignment padding. Required footprints reach 16388/16389/
+  16388 B. The three shorter final blocks fit. Its 1817544-B stream would save
+  another 1365 B but cannot use the tested overlap layout. The intermediate
+  12288-byte variant fits all 243 blocks at 1823215 B / 7124 sectors.
+- **Native verification/CPU:** all **364 baseline and 188 candidate blocks**
+  pass both separate and overlapping memory layouts using actual 126-byte
+  turbo-decoder opcodes: 1104 runs, 11860044 guarded output writes. Every
+  write's input cursor matches the independent host trace. Identical blocks
+  have **zero layout T-state delta**. Larger blocks increase uninterrupted
+  decoder CPU **160653056→162913389 T (+2260333, 1.407%)**. This excludes the
+  resumable wrapper, queue, carry traffic, IRQ, ULA, ROM and disk latency.
+  Six boundary/native tests pass, including deliberately unsafe placement,
+  EOF, literal tails, new offsets, all header alignments and pointer wrap.
+- **Decision:** retain 15872 bytes as a measured integration candidate, not
+  an accepted speed improvement or release. Implement the C000 output base,
+  larger length bounds, header/sector placement and queue ownership next;
+  then build and run all disks through EOF with exact frame deadlines and
+  AY at 50 Hz. Buffer size and fewer sectors cannot establish cadence alone.
+- **Evidence/reproduction:** [proof, layout, CPU counts and commands](toolkit/INPLACE_ZX0_RESERVOIR.md),
+  [storage probe](toolkit/probe_inplace_zx0.py),
+  [native benchmark](toolkit/benchmark_inplace_zx0.py),
+  [saved probe and archive hashes](toolkit/inplace_zx0_probe.json),
+  [CPU report](toolkit/inplace_zx0_cpu.json), and
+  [auditor](toolkit/audit_inplace_zx0.py). All 12 compressed streams are archived
+  in the repository (7153056 packed bytes); no source frames are changed.
+
 ## 2026-09-27 — uncontended half-row body: no playback gain
 
 - **Objective/baseline:** test whether removing opcode contention from the

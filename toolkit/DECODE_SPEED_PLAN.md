@@ -182,15 +182,29 @@ See [the saved verification](hl_mask_reader_summary.json).
    elapsed T, including producer work and disk service. Use these traces
    to distinguish burst buffering opportunities from sustained CPU cost;
    do not label all wait time removable overhead or fix only publication.
-   A separate new candidate is bank-local in-place ZX0 to use more of each
-   existing 16-KiB slot as prepared history. The resident player currently
-   reserves 8 KiB for input plus 8 KiB for output in each of banks 0/1/3.
-   Measure the unread-input/output overlap margin for every candidate block,
-   including EOF and disk-sector carry, before changing the decoder. Compare
-   larger ready reserves against copied bytes, compressed size, history
-   lifetime, pointer wrap and full frame/AY deadlines. The older 16-KiB
-   compression study used a different stream and separate input storage;
-   it does not validate this layout.
+   The [in-place ZX0 reservoir experiment](INPLACE_ZX0_RESERVOIR.md) now traces
+   all bytes of all three resident-video streams at 8/12/15.5/16 KiB block
+   sizes. **15872-byte blocks** safely increase decoded packet capacity from
+   **24576 to 47616 bytes**, with minimum sector-placement margins of
+   **255/257/255 bytes**. Video shrinks **1832196→1818909 B**, runtime sectors
+   **7158→7106**. Full 16-KiB output is rejected: **180/183 blocks** overwrite
+   unread input, even with exact-end placement. The old 16-KiB compression
+   study used another stream and separate input storage and does not prove
+   this layout. Preserve both results.
+   All 364 old and 188 new blocks also pass native turbo decoding in separate
+   and overlapping memory, with identical read/write traces and zero layout
+   instruction delta. Larger blocks increase naked-decoder cost
+   **160653056→162913389 T (+2260333)**. This excludes the coroutine, queue,
+   carry copies, IRQ/ULA and disk waits; only integrated delivery can decide
+   whether the reserve and sector savings repay that cost.
+   Next integrate the proven block-size candidate into the resumable decoder
+   and sector producer: output C000, relative-offset bias 4000, top-aligned
+   input after header acquisition, saved shared tail before decode, correct
+   FFFF/0000 handling and no E000-era input-region advance. Preserve live LZ
+   history until EOF and consumption release the slot. Count all control,
+   carry copies and paging; actual bootstrap capacity and full frame/AY
+   deadlines remain unverified. Larger decoded packet storage is not extra
+   native-screen buffering and cannot establish cadence on its own.
 
 A small concrete candidate for step 1 is the target setup for nonzero
 motion phases. With the new cache,
