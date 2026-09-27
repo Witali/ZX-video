@@ -106,9 +106,16 @@ See [the saved verification](hl_mask_reader_summary.json).
    ZX0 plus that audio totals **1869817 bytes**, **50128 fewer** than the
    existing mux; all 4221 packets and 25326 ticks round-trip. Estimated free
    sectors with old fixed overhead are 71/66/63; actual new TRDs are not yet
-   built. Implement and time the Z80 decoder in bank 4, keeping the ISR
-   unchanged and the other three video slots in banks 0/1/3. Account for
-   lookup/code RAM, reduced 24-KiB video history and sustained disk delivery.
+   built. The [Z80 decoder and paging bridge](RESIDENT_AUDIO_Z80.md) now
+   execute all 25326 records exactly. Code, expanded tables and data fit
+   in **14230/13215/13037 B**, leaving at least **2154 B** in bank 4.
+   Six-record batches write directly into the existing FIFO and never wait
+   for room. The ISR is unchanged. Including caller preservation and paging,
+   producer CPU is **9150603→52600652 T (+43450049)**; this is not yet a net
+   delivery comparison. Integrate the audio-free parser and three video
+   slots in banks 0/1/3, allocate the fixed bridge and split audio startup
+   loading into staging-sized sections. Measure saved video ZX0/copy work,
+   service frequency, reduced 24-KiB video history and sustained disk delivery.
    This is a format experiment, not a passed cadence or capacity gate.
    The frozen-producer FIFO model does not establish that resizing the
    existing AY queue fixes starvation; do not infer missing byte availability

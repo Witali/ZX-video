@@ -1,8 +1,10 @@
 # Separate resident AY data from the video delivery path
 
 Date: 2026-09-27. Baseline: the complete three-volume two-byte-cache player
-at `8bc6a09`. **Complete lossless storage prototype; no new Z80 decoder or
-playable TRDs yet.** The target remains the entire authorized 4221-frame
+at `8bc6a09`. **This report describes the lossless storage prototype.** The
+subsequent [Z80 decoder measurement](RESIDENT_AUDIO_Z80.md) verifies all
+records and audio-bank fit; integrated playable TRDs are still pending.
+The target remains the entire authorized 4221-frame
 edit, unchanged resolution, 25/3 fps, AY 50 Hz and independently bootable
 disks. This experiment changes packet framing, not sound or picture data.
 
@@ -118,7 +120,9 @@ code and expanded lookup tables fit. A compact binary tree or short-prefix
 table should be assembled and measured first. AYH1 itself needs no LZ
 history. Avoid replacing this saving with an uncounted decompression buffer.
 
-Next steps, in order:
+The original next steps are retained below. Steps 1 and 2 now have
+[complete Z80 CPU/RAM evidence](RESIDENT_AUDIO_Z80.md); integration and
+release checks in steps 3 through 5 remain pending.
 
 1. Implement the resident decoder and foreground FIFO filling on Z80.
    Keep the actual 50-Hz ISR consuming a prepared record without paging,

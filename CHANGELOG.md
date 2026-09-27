@@ -21,6 +21,50 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — resident AY Z80 decoder, complete records and bank fit
+
+- **Objective/baseline:** implement the `1cdb5f1` AYH1 storage prototype on
+  Z80 without changing its 25326 records, initial states, video data or
+  existing AY interrupt consumer. Prepare the resident-audio route toward
+  three independent disks with exact 25/3-fps delivery; no new TRDs yet.
+- **Implementation:** compile canonical tables into compact binary trees
+  and decode directly into the existing 31-record FIFO. Publish only a
+  complete record; return immediately on full/EOF; cap each call at six
+  records. Use AF' for the pair count. A 35-byte fixed-RAM bridge preserves
+  both register sets and restores the previous RAM bank using the existing
+  IRQ-safe paging helper. Its fixture address is not a player allocation.
+- **Memory:** the full bank-4 code/state/tables/payload images occupy
+  **14230/13215/13037 B**, leaving **2154/3169/3347 B**. This includes
+  407 B of code and 976/980/988 B of tree nodes. It excludes the fixed
+  bridge, existing FIFO, ISR and stack; the full three-slot layout is pending.
+- **CPU:** all original AY writes and states match. With one call per six
+  records, producer cost including preservation and two paging calls is
+  **9150603→52600652 T (+43450049)**. Bank-local decoding costs 50760296 T;
+  the bridge adds 436 T/call. Maximum six-record call: **22413 T**; mapped
+  initialization: **1056 T/volume**. Counts include RET and exclude the outer
+  CALL, IRQ/ULA, ROM and disk latency. This is more costly than enqueueing
+  already decoded records, not a net speedup claim. Reduced video ZX0/copy
+  work and independent audio availability still need combined measurement.
+- **Verification:** all 25326 records execute with memory guards and exact
+  bit consumption; every payload byte is read once. Every instruction and
+  an independent aggregate T-state formula agree. **20 tests pass**, including
+  nine new tests covering every mask/value, 24-bit codes, full-bank input
+  wrap, FIFO bounds, real fast AY IRQ after each instruction, and screen
+  publication during every paging instruction across all banks/screens.
+  Dirty-RAM fixture initialization is not a TR-DOS cold-boot test; manual
+  FIFO draining is not 50-Hz cadence evidence.
+- **Decision:** retain for integration. Allocate the fixed bridges, load
+  the audio bank in bounded bootstrap sections, remove audio from video
+  packets and reduce the video queue to three slots before a full Fuse run.
+  Actual disk capacity, sustained three-slot delivery and all release timing
+  gates remain unverified. Root release images are unchanged.
+- **Evidence/reproduction:** [implementation and cycle formulas](toolkit/RESIDENT_AUDIO_Z80.md),
+  [generator](toolkit/resident_audio_z80.py),
+  [full Z80 benchmark](toolkit/benchmark_resident_audio_z80.py),
+  [saved-result auditor](toolkit/audit_resident_audio_z80.py),
+  [tests](toolkit/test_resident_audio_z80.py), and
+  [complete CPU/RAM results](toolkit/resident_audio_z80.json).
+
 ## 2026-09-27 — resident AY format and complete lossless storage probe
 
 - **Objective/baseline:** investigate audio starvation and a longer
