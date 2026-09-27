@@ -20,9 +20,11 @@ def main():
     source = json.loads((ROOT/'resident_audio_probe.json').read_bytes())
     if not report['complete'] or report['release']:
         raise ValueError('incomplete or unexpected release report')
-    for name in ('source_sha256','reference_sha256'):
+    for name in ('source_sha256_lf','reference_sha256'):
         for filename, digest in report[name].items():
-            if sha((ROOT/filename).read_bytes()) != digest:
+            content = (ROOT/filename).read_bytes()
+            if name == 'source_sha256_lf': content = content.replace(b'\r\n',b'\n')
+            if sha(content) != digest:
                 raise ValueError(('source/input changed', filename))
     for saved, row in zip(report['volumes'], source['volumes'], strict=True):
         blob = bytes.fromhex(row['coded_hex'])

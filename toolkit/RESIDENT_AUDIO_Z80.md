@@ -144,6 +144,9 @@ are expected and are not playback results.
 The [quick auditor](audit_resident_audio_z80.py) rebuilds all three bank
 images and checks source hashes, generated listings and saved timing
 arithmetic. It does not substitute for replaying the complete CPU benchmark.
+Source hashes explicitly use LF-normalized bytes (`source_sha256_lf`), so
+Git's CRLF working-tree conversion does not invalidate identical Python
+code. Input/report hashes and generated image hashes remain byte-exact.
 
 ```powershell
 python -m unittest test_resident_audio_z80 test_ay_interrupt test_ay_huffman_stream test_audio_lookahead_profile -v

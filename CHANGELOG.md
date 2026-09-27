@@ -21,6 +21,23 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — portable source pins for the resident AY measurement
+
+- **Objective/baseline:** reproduce the `ac427ab` CPU report from the root
+  checkout after its complete worktree run and fast-forward to main.
+- **Failure:** the root audit rejected `validate_streaming_player.py`.
+  Root had LF and the worktree had CRLF; all source content matched after
+  newline normalization. No decoder, input or generated machine code differed.
+- **Change/result:** use an explicit `source_sha256_lf` field for normalized
+  Python source hashes. Keep input/report/image hashes byte-exact. Regenerate
+  the full 25326-record report and verify both checkouts; producer cost stays
+  **52600652 T**, delta **+43450049 T**, and minimum bank spare **2154 B**.
+- **Decision:** retain this source-pin policy for this report without
+  changing historical source files or their previous evidence hashes.
+  [Generator](toolkit/benchmark_resident_audio_z80.py),
+  [auditor](toolkit/audit_resident_audio_z80.py), and
+  [scope](toolkit/RESIDENT_AUDIO_Z80.md). Playback integration remains pending.
+
 ## 2026-09-27 — resident AY Z80 decoder, complete records and bank fit
 
 - **Objective/baseline:** implement the `1cdb5f1` AYH1 storage prototype on

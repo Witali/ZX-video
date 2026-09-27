@@ -319,7 +319,7 @@ def main():
         fill_tstates=sum(v['fill_tstates'] for v in volumes),
         old_enqueue_tstates=sum(v['old_enqueue_tstates'] for v in volumes),
         delta_producer_tstates=sum(v['delta_producer_tstates'] for v in volumes),
-        source_sha256={n:sha((ROOT/n).read_bytes()) for n in names},
+        source_sha256_lf={n:sha((ROOT/n).read_bytes().replace(b'\r\n',b'\n')) for n in names},
         reference_sha256={source.name:sha(source.read_bytes())},
         new_trds_built=False, full_cadence_verified=False, paging_wrapper_measured=True,
         warning='Manual FIFO consumption is not 50-Hz cadence. Fill includes all-register preservation and two paging calls, excludes outer CALL, IRQ/ULA, video integration, ROM and disk latency. Fixed-RAM wrapper test placement is not an integrated allocation.')
