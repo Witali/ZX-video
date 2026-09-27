@@ -1,0 +1,5809 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Count queue-control paths in the actual old/new cold-loaded machine code.\n\nIncludes CALL instructions and internal queue routines. Excludes callee bodies\nfor AY/drive service, decoder, sector supply and packet copy by intercepting\nthose entries. These isolated path counts are not a full playback CPU replay.\n",
+  "variants": {
+    "baseline": {
+      "trd_sha256": "a8ae9d68bef30a86f201469ba5c4b94abedf5426699f301b3c7112daf30aa4e9",
+      "metadata_sha256": "ee3f571ed95e91012819da4a6046e24f7af2abe22ab7a27ee78b1e9bfcaf7517",
+      "cases": [
+        {
+          "case": "full",
+          "tstates": 75,
+          "excluded_calls": {
+            "AY/drive hook": 1
+          },
+          "phase": 0,
+          "count": 3,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL service AY before a disk/decode step"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57359,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57362,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57364,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP idle"
+            },
+            {
+              "address": 57507,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "XOR A"
+            },
+            {
+              "address": 57508,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "eof_idle",
+          "tstates": 109,
+          "excluded_calls": {
+            "AY/drive hook": 1
+          },
+          "phase": 0,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL service AY before a disk/decode step"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57359,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57362,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57364,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP idle"
+            },
+            {
+              "address": 57367,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(blocks_left)"
+            },
+            {
+              "address": 57370,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57371,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57372,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP idle"
+            },
+            {
+              "address": 57507,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "XOR A"
+            },
+            {
+              "address": 57508,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "begin",
+          "tstates": 172,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "begin producer": 1
+          },
+          "phase": 1,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL service AY before a disk/decode step"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57359,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57362,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57364,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP idle"
+            },
+            {
+              "address": 57367,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(blocks_left)"
+            },
+            {
+              "address": 57370,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57371,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57372,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP idle"
+            },
+            {
+              "address": 57375,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(write_slot)"
+            },
+            {
+              "address": 57378,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24832"
+            },
+            {
+              "address": 57381,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57383,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (phase),A"
+            },
+            {
+              "address": 57386,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57504,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57506,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "header_wait",
+          "tstates": 96,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "sector prefix": 1
+          },
+          "phase": 1,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL service AY before a disk/decode step"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57389,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 1"
+            },
+            {
+              "address": 57391,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP decode"
+            },
+            {
+              "address": 57394,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24838"
+            },
+            {
+              "address": 57397,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57398,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57504,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57506,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "prefix_ready",
+          "tstates": 169,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "sector prefix": 1,
+            "begin decoder": 1
+          },
+          "phase": 2,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL service AY before a disk/decode step"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57389,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 1"
+            },
+            {
+              "address": 57391,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP decode"
+            },
+            {
+              "address": 57394,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24838"
+            },
+            {
+              "address": 57397,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57398,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57401,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD HL,C000"
+            },
+            {
+              "address": 57404,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (32045),HL"
+            },
+            {
+              "address": 57407,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24844"
+            },
+            {
+              "address": 57410,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,2"
+            },
+            {
+              "address": 57412,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (phase),A"
+            },
+            {
+              "address": 57415,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57504,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57506,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "decode_more",
+          "tstates": 302,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "decode prefix": 1
+          },
+          "phase": 2,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL service AY before a disk/decode step"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57389,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 1"
+            },
+            {
+              "address": 57391,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP decode"
+            },
+            {
+              "address": 57418,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(32043)"
+            },
+            {
+              "address": 57421,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,4000"
+            },
+            {
+              "address": 57424,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57425,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,quantum"
+            },
+            {
+              "address": 57428,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57429,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57433,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57434,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57436,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP quota_fits"
+            },
+            {
+              "address": 57443,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57444,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57447,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57448,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (32045),HL"
+            },
+            {
+              "address": 57451,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24853"
+            },
+            {
+              "address": 57454,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(32043)"
+            },
+            {
+              "address": 57457,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_end)"
+            },
+            {
+              "address": 57461,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57462,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57464,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57504,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57506,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "decode_eof",
+          "tstates": 562,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "decode prefix": 1
+          },
+          "phase": 0,
+          "count": 1,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 56110,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "INC A"
+            },
+            {
+              "address": 56111,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 56113,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "RET C"
+            },
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL service AY before a disk/decode step"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57389,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 1"
+            },
+            {
+              "address": 57391,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP decode"
+            },
+            {
+              "address": 57418,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(32043)"
+            },
+            {
+              "address": 57421,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,4000"
+            },
+            {
+              "address": 57424,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57425,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,quantum"
+            },
+            {
+              "address": 57428,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57429,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57433,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57434,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57436,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP quota_fits"
+            },
+            {
+              "address": 57439,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "EX DE,HL"
+            },
+            {
+              "address": 57440,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP quota"
+            },
+            {
+              "address": 57444,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57447,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57448,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (32045),HL"
+            },
+            {
+              "address": 57451,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24853"
+            },
+            {
+              "address": 57454,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(32043)"
+            },
+            {
+              "address": 57457,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_end)"
+            },
+            {
+              "address": 57461,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57462,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57464,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57467,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(write_slot)"
+            },
+            {
+              "address": 57470,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL descriptor"
+            },
+            {
+              "address": 57473,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57477,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD (HL),E"
+            },
+            {
+              "address": 57478,
+              "tstates": 6,
+              "count": 1,
+              "instruction": "INC HL"
+            },
+            {
+              "address": 57479,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD (HL),D"
+            },
+            {
+              "address": 57480,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(write_slot)"
+            },
+            {
+              "address": 57483,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL advance three-slot cursor"
+            },
+            {
+              "address": 57486,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (write_slot),A"
+            },
+            {
+              "address": 57489,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD HL,count"
+            },
+            {
+              "address": 57492,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "INC (HL)"
+            },
+            {
+              "address": 57493,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(blocks_left)"
+            },
+            {
+              "address": 57496,
+              "tstates": 6,
+              "count": 1,
+              "instruction": "DEC HL"
+            },
+            {
+              "address": 57497,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (blocks_left),HL"
+            },
+            {
+              "address": 57500,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "XOR A"
+            },
+            {
+              "address": 57501,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (phase),A"
+            },
+            {
+              "address": 57504,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57506,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57509,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "ADD A,A"
+            },
+            {
+              "address": 57510,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD L,A"
+            },
+            {
+              "address": 57511,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD H,0"
+            },
+            {
+              "address": 57513,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,lengths"
+            },
+            {
+              "address": 57516,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57517,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "take_ready",
+          "tstates": 764,
+          "excluded_calls": {
+            "packet copy": 1
+          },
+          "phase": 0,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 56110,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "INC A"
+            },
+            {
+              "address": 56111,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 56113,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "RET C"
+            },
+            {
+              "address": 57509,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "ADD A,A"
+            },
+            {
+              "address": 57510,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD L,A"
+            },
+            {
+              "address": 57511,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD H,0"
+            },
+            {
+              "address": 57513,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,lengths"
+            },
+            {
+              "address": 57516,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57517,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57518,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,B"
+            },
+            {
+              "address": 57519,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR C"
+            },
+            {
+              "address": 57520,
+              "tstates": 5,
+              "count": 1,
+              "instruction": "RET Z"
+            },
+            {
+              "address": 57521,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (pending),BC"
+            },
+            {
+              "address": 57525,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57529,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57532,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57533,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP have_slot"
+            },
+            {
+              "address": 57554,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(read_slot)"
+            },
+            {
+              "address": 57557,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL descriptor"
+            },
+            {
+              "address": 57560,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD E,(HL)"
+            },
+            {
+              "address": 57561,
+              "tstates": 6,
+              "count": 1,
+              "instruction": "INC HL"
+            },
+            {
+              "address": 57562,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD D,(HL)"
+            },
+            {
+              "address": 57563,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57566,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "EX DE,HL"
+            },
+            {
+              "address": 57567,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57568,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57570,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57574,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57575,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57576,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57578,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_fits"
+            },
+            {
+              "address": 57588,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP DE"
+            },
+            {
+              "address": 57589,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (slot_left),HL"
+            },
+            {
+              "address": 57592,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (copy_count),BC"
+            },
+            {
+              "address": 57596,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57599,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57600,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57602,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (pending),HL"
+            },
+            {
+              "address": 57605,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57608,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57609,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57610,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (position),HL"
+            },
+            {
+              "address": 57613,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57614,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57617,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57618,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57622,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(read_slot)"
+            },
+            {
+              "address": 57625,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24862"
+            },
+            {
+              "address": 57628,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57632,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(slot_left)"
+            },
+            {
+              "address": 57635,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57636,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57637,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            },
+            {
+              "address": 57640,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57643,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57644,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            },
+            {
+              "address": 57647,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD HL,count"
+            },
+            {
+              "address": 57650,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "DEC (HL)"
+            },
+            {
+              "address": 57651,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(read_slot)"
+            },
+            {
+              "address": 57654,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL advance three-slot cursor"
+            },
+            {
+              "address": 57657,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (read_slot),A"
+            },
+            {
+              "address": 57660,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD HL,0"
+            },
+            {
+              "address": 57663,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (position),HL"
+            },
+            {
+              "address": 57666,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57669,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57670,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57671,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_next"
+            },
+            {
+              "address": 57674,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57678,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "take_partial",
+          "tstates": 808,
+          "excluded_calls": {
+            "packet copy": 1
+          },
+          "phase": 2,
+          "count": 0,
+          "position": 256,
+          "instruction_histogram": [
+            {
+              "address": 57518,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,B"
+            },
+            {
+              "address": 57519,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR C"
+            },
+            {
+              "address": 57520,
+              "tstates": 5,
+              "count": 1,
+              "instruction": "RET Z"
+            },
+            {
+              "address": 57521,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (pending),BC"
+            },
+            {
+              "address": 57525,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57529,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57532,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57533,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP have_slot"
+            },
+            {
+              "address": 57536,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(phase)"
+            },
+            {
+              "address": 57539,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 2"
+            },
+            {
+              "address": 57541,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP demand"
+            },
+            {
+              "address": 57570,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57574,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57575,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57576,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57578,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_fits"
+            },
+            {
+              "address": 57588,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP DE"
+            },
+            {
+              "address": 57589,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (slot_left),HL"
+            },
+            {
+              "address": 57592,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (copy_count),BC"
+            },
+            {
+              "address": 57596,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57599,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57600,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57602,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (pending),HL"
+            },
+            {
+              "address": 57605,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57608,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57609,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57610,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (position),HL"
+            },
+            {
+              "address": 57613,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57614,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57617,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57618,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57622,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(read_slot)"
+            },
+            {
+              "address": 57625,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24862"
+            },
+            {
+              "address": 57628,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57632,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(slot_left)"
+            },
+            {
+              "address": 57635,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57636,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57637,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            },
+            {
+              "address": 57640,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57643,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57644,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            },
+            {
+              "address": 57666,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57669,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57670,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57671,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_next"
+            },
+            {
+              "address": 57674,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57678,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57856,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57859,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57863,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57867,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57868,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP demand_full"
+            },
+            {
+              "address": 57871,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57872,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57874,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP demand_fits"
+            },
+            {
+              "address": 57881,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57882,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57883,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(slice_output)"
+            },
+            {
+              "address": 57887,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "EX DE,HL"
+            },
+            {
+              "address": 57888,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD BC,4000"
+            },
+            {
+              "address": 57891,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57892,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57893,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57895,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP demand_ready"
+            },
+            {
+              "address": 57912,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57913,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(position)"
+            },
+            {
+              "address": 57917,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57918,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57920,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_available"
+            }
+          ]
+        },
+        {
+          "case": "take_need_decode",
+          "tstates": 1240,
+          "excluded_calls": {
+            "decode prefix": 1,
+            "packet copy": 1
+          },
+          "phase": 2,
+          "count": 0,
+          "position": 512,
+          "instruction_histogram": [
+            {
+              "address": 57451,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24853"
+            },
+            {
+              "address": 57454,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(32043)"
+            },
+            {
+              "address": 57457,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_end)"
+            },
+            {
+              "address": 57461,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57462,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57464,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57504,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57506,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57518,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,B"
+            },
+            {
+              "address": 57519,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR C"
+            },
+            {
+              "address": 57520,
+              "tstates": 5,
+              "count": 1,
+              "instruction": "RET Z"
+            },
+            {
+              "address": 57521,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (pending),BC"
+            },
+            {
+              "address": 57525,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57529,
+              "tstates": 13,
+              "count": 2,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57532,
+              "tstates": 4,
+              "count": 2,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57533,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "JP have_slot"
+            },
+            {
+              "address": 57536,
+              "tstates": 13,
+              "count": 2,
+              "instruction": "LD A,(phase)"
+            },
+            {
+              "address": 57539,
+              "tstates": 7,
+              "count": 2,
+              "instruction": "CP 2"
+            },
+            {
+              "address": 57541,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "JP demand"
+            },
+            {
+              "address": 57570,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57574,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57575,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57576,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57578,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_fits"
+            },
+            {
+              "address": 57588,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP DE"
+            },
+            {
+              "address": 57589,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (slot_left),HL"
+            },
+            {
+              "address": 57592,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (copy_count),BC"
+            },
+            {
+              "address": 57596,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57599,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57600,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57602,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (pending),HL"
+            },
+            {
+              "address": 57605,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57608,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57609,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57610,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (position),HL"
+            },
+            {
+              "address": 57613,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57614,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57617,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57618,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57622,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(read_slot)"
+            },
+            {
+              "address": 57625,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24862"
+            },
+            {
+              "address": 57628,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57632,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(slot_left)"
+            },
+            {
+              "address": 57635,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57636,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57637,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            },
+            {
+              "address": 57640,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57643,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57644,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            },
+            {
+              "address": 57666,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57669,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57670,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57671,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_next"
+            },
+            {
+              "address": 57674,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57678,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57856,
+              "tstates": 16,
+              "count": 2,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57859,
+              "tstates": 20,
+              "count": 2,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57863,
+              "tstates": 20,
+              "count": 2,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57867,
+              "tstates": 11,
+              "count": 2,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57868,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "JP demand_full"
+            },
+            {
+              "address": 57871,
+              "tstates": 4,
+              "count": 2,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57872,
+              "tstates": 15,
+              "count": 2,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57874,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "JP demand_fits"
+            },
+            {
+              "address": 57881,
+              "tstates": 11,
+              "count": 2,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57882,
+              "tstates": 11,
+              "count": 2,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57883,
+              "tstates": 20,
+              "count": 2,
+              "instruction": "LD DE,(slice_output)"
+            },
+            {
+              "address": 57887,
+              "tstates": 4,
+              "count": 2,
+              "instruction": "EX DE,HL"
+            },
+            {
+              "address": 57888,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "LD BC,4000"
+            },
+            {
+              "address": 57891,
+              "tstates": 11,
+              "count": 2,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57892,
+              "tstates": 4,
+              "count": 2,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57893,
+              "tstates": 15,
+              "count": 2,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57895,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "JP demand_ready"
+            },
+            {
+              "address": 57898,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57899,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57902,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57903,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (32045),HL"
+            },
+            {
+              "address": 57906,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL run_decode"
+            },
+            {
+              "address": 57909,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_next"
+            },
+            {
+              "address": 57912,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57913,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(position)"
+            },
+            {
+              "address": 57917,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57918,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57920,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_available"
+            }
+          ]
+        }
+      ]
+    },
+    "streaming": {
+      "trd_sha256": "477d8851f3173133f789a4f0596f7314d1f01aa4b39ac7a92f48dd6436c393c5",
+      "metadata_sha256": "0569ec932eb36793dcf9216f5928ac6cea264ca80e8fb6163483d09d4fe6d181",
+      "cases": [
+        {
+          "case": "full",
+          "tstates": 75,
+          "excluded_calls": {
+            "AY/drive hook": 1
+          },
+          "phase": 0,
+          "count": 3,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL audio and drive service"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57359,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57362,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57364,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP idle"
+            },
+            {
+              "address": 57502,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "XOR A"
+            },
+            {
+              "address": 57503,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "eof_idle",
+          "tstates": 109,
+          "excluded_calls": {
+            "AY/drive hook": 1
+          },
+          "phase": 0,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL audio and drive service"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57359,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57362,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57364,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP idle"
+            },
+            {
+              "address": 57367,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(blocks_left)"
+            },
+            {
+              "address": 57370,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57371,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57372,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP idle"
+            },
+            {
+              "address": 57502,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "XOR A"
+            },
+            {
+              "address": 57503,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "begin",
+          "tstates": 172,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "begin producer": 1
+          },
+          "phase": 1,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL audio and drive service"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57359,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57362,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57364,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP idle"
+            },
+            {
+              "address": 57367,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(blocks_left)"
+            },
+            {
+              "address": 57370,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57371,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57372,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP idle"
+            },
+            {
+              "address": 57375,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(write_slot)"
+            },
+            {
+              "address": 57378,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24832"
+            },
+            {
+              "address": 57381,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57383,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (phase),A"
+            },
+            {
+              "address": 57386,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57499,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57501,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "header_wait",
+          "tstates": 113,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "sector prefix": 1
+          },
+          "phase": 1,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL audio and drive service"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57389,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57391,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP supply_input"
+            },
+            {
+              "address": 57394,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 1"
+            },
+            {
+              "address": 57396,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP decode"
+            },
+            {
+              "address": 57399,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24838"
+            },
+            {
+              "address": 57402,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57403,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57499,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57501,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "prefix_ready",
+          "tstates": 250,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "sector prefix": 1,
+            "begin decoder": 1
+          },
+          "phase": 2,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL audio and drive service"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57389,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57391,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP supply_input"
+            },
+            {
+              "address": 57394,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 1"
+            },
+            {
+              "address": 57396,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP decode"
+            },
+            {
+              "address": 57399,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24838"
+            },
+            {
+              "address": 57402,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57403,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57406,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD HL,C000"
+            },
+            {
+              "address": 57409,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (36597),HL"
+            },
+            {
+              "address": 57412,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24844"
+            },
+            {
+              "address": 57415,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,2"
+            },
+            {
+              "address": 57417,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (phase),A"
+            },
+            {
+              "address": 57420,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP check_completion"
+            },
+            {
+              "address": 57499,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57501,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57953,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(input_needed)"
+            },
+            {
+              "address": 57956,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57957,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP await_input"
+            },
+            {
+              "address": 57960,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(finished)"
+            },
+            {
+              "address": 57963,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57964,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP block_ready"
+            },
+            {
+              "address": 57967,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            }
+          ]
+        },
+        {
+          "case": "decode_more",
+          "tstates": 328,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "decode prefix": 1
+          },
+          "phase": 2,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL audio and drive service"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57389,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57391,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP supply_input"
+            },
+            {
+              "address": 57394,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 1"
+            },
+            {
+              "address": 57396,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP decode"
+            },
+            {
+              "address": 57423,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(36595)"
+            },
+            {
+              "address": 57426,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,4000"
+            },
+            {
+              "address": 57429,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57430,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,quantum"
+            },
+            {
+              "address": 57433,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57434,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57438,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57439,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57441,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP quota_fits"
+            },
+            {
+              "address": 57448,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57449,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57452,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57453,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (36597),HL"
+            },
+            {
+              "address": 57456,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24853"
+            },
+            {
+              "address": 57459,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP check_completion"
+            },
+            {
+              "address": 57499,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57501,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57953,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(input_needed)"
+            },
+            {
+              "address": 57956,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57957,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP await_input"
+            },
+            {
+              "address": 57960,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(finished)"
+            },
+            {
+              "address": 57963,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57964,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP block_ready"
+            },
+            {
+              "address": 57967,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            }
+          ]
+        },
+        {
+          "case": "decode_eof",
+          "tstates": 578,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "decode prefix": 1
+          },
+          "phase": 0,
+          "count": 1,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 56110,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "INC A"
+            },
+            {
+              "address": 56111,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 56113,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "RET C"
+            },
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL audio and drive service"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57389,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57391,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP supply_input"
+            },
+            {
+              "address": 57394,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 1"
+            },
+            {
+              "address": 57396,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP decode"
+            },
+            {
+              "address": 57423,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(36595)"
+            },
+            {
+              "address": 57426,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,4000"
+            },
+            {
+              "address": 57429,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57430,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,quantum"
+            },
+            {
+              "address": 57433,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57434,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57438,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57439,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57441,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP quota_fits"
+            },
+            {
+              "address": 57444,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "EX DE,HL"
+            },
+            {
+              "address": 57445,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP quota"
+            },
+            {
+              "address": 57449,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57452,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57453,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (36597),HL"
+            },
+            {
+              "address": 57456,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24853"
+            },
+            {
+              "address": 57459,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP check_completion"
+            },
+            {
+              "address": 57462,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(write_slot)"
+            },
+            {
+              "address": 57465,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL descriptor"
+            },
+            {
+              "address": 57468,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57472,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD (HL),E"
+            },
+            {
+              "address": 57473,
+              "tstates": 6,
+              "count": 1,
+              "instruction": "INC HL"
+            },
+            {
+              "address": 57474,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD (HL),D"
+            },
+            {
+              "address": 57475,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(write_slot)"
+            },
+            {
+              "address": 57478,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL advance three-slot cursor"
+            },
+            {
+              "address": 57481,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (write_slot),A"
+            },
+            {
+              "address": 57484,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD HL,count"
+            },
+            {
+              "address": 57487,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "INC (HL)"
+            },
+            {
+              "address": 57488,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(blocks_left)"
+            },
+            {
+              "address": 57491,
+              "tstates": 6,
+              "count": 1,
+              "instruction": "DEC HL"
+            },
+            {
+              "address": 57492,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (blocks_left),HL"
+            },
+            {
+              "address": 57495,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "XOR A"
+            },
+            {
+              "address": 57496,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (phase),A"
+            },
+            {
+              "address": 57499,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57501,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57504,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "ADD A,A"
+            },
+            {
+              "address": 57505,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD L,A"
+            },
+            {
+              "address": 57506,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD H,0"
+            },
+            {
+              "address": 57508,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,lengths"
+            },
+            {
+              "address": 57511,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57512,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57953,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(input_needed)"
+            },
+            {
+              "address": 57956,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57957,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP await_input"
+            },
+            {
+              "address": 57960,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(finished)"
+            },
+            {
+              "address": 57963,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57964,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP block_ready"
+            }
+          ]
+        },
+        {
+          "case": "take_ready",
+          "tstates": 764,
+          "excluded_calls": {
+            "packet copy": 1
+          },
+          "phase": 0,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 56110,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "INC A"
+            },
+            {
+              "address": 56111,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 56113,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "RET C"
+            },
+            {
+              "address": 57504,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "ADD A,A"
+            },
+            {
+              "address": 57505,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD L,A"
+            },
+            {
+              "address": 57506,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD H,0"
+            },
+            {
+              "address": 57508,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,lengths"
+            },
+            {
+              "address": 57511,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57512,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57513,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,B"
+            },
+            {
+              "address": 57514,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR C"
+            },
+            {
+              "address": 57515,
+              "tstates": 5,
+              "count": 1,
+              "instruction": "RET Z"
+            },
+            {
+              "address": 57516,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (pending),BC"
+            },
+            {
+              "address": 57520,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57524,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57527,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57528,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP have_slot"
+            },
+            {
+              "address": 57549,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(read_slot)"
+            },
+            {
+              "address": 57552,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL descriptor"
+            },
+            {
+              "address": 57555,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD E,(HL)"
+            },
+            {
+              "address": 57556,
+              "tstates": 6,
+              "count": 1,
+              "instruction": "INC HL"
+            },
+            {
+              "address": 57557,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD D,(HL)"
+            },
+            {
+              "address": 57558,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57561,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "EX DE,HL"
+            },
+            {
+              "address": 57562,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57563,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57565,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57569,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57570,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57571,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57573,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_fits"
+            },
+            {
+              "address": 57583,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP DE"
+            },
+            {
+              "address": 57584,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (slot_left),HL"
+            },
+            {
+              "address": 57587,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (copy_count),BC"
+            },
+            {
+              "address": 57591,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57594,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57595,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57597,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (pending),HL"
+            },
+            {
+              "address": 57600,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57603,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57604,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57605,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (position),HL"
+            },
+            {
+              "address": 57608,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57609,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57612,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57613,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57617,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(read_slot)"
+            },
+            {
+              "address": 57620,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24862"
+            },
+            {
+              "address": 57623,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57627,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(slot_left)"
+            },
+            {
+              "address": 57630,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57631,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57632,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            },
+            {
+              "address": 57635,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57638,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57639,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP check_consumed_end"
+            },
+            {
+              "address": 57642,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD HL,count"
+            },
+            {
+              "address": 57645,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "DEC (HL)"
+            },
+            {
+              "address": 57646,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(read_slot)"
+            },
+            {
+              "address": 57649,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL advance three-slot cursor"
+            },
+            {
+              "address": 57652,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (read_slot),A"
+            },
+            {
+              "address": 57655,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD HL,0"
+            },
+            {
+              "address": 57658,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (position),HL"
+            },
+            {
+              "address": 57661,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57664,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57665,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57666,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_next"
+            },
+            {
+              "address": 57669,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57673,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            }
+          ]
+        },
+        {
+          "case": "take_partial",
+          "tstates": 891,
+          "excluded_calls": {
+            "packet copy": 1
+          },
+          "phase": 2,
+          "count": 0,
+          "position": 256,
+          "instruction_histogram": [
+            {
+              "address": 57513,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,B"
+            },
+            {
+              "address": 57514,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR C"
+            },
+            {
+              "address": 57515,
+              "tstates": 5,
+              "count": 1,
+              "instruction": "RET Z"
+            },
+            {
+              "address": 57516,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (pending),BC"
+            },
+            {
+              "address": 57520,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57524,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57527,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57528,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP have_slot"
+            },
+            {
+              "address": 57531,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(phase)"
+            },
+            {
+              "address": 57534,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 2"
+            },
+            {
+              "address": 57536,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP demand"
+            },
+            {
+              "address": 57565,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57569,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57570,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57571,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57573,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_fits"
+            },
+            {
+              "address": 57583,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP DE"
+            },
+            {
+              "address": 57584,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (slot_left),HL"
+            },
+            {
+              "address": 57587,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (copy_count),BC"
+            },
+            {
+              "address": 57591,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57594,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57595,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57597,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (pending),HL"
+            },
+            {
+              "address": 57600,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57603,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57604,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57605,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (position),HL"
+            },
+            {
+              "address": 57608,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57609,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57612,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57613,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57617,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(read_slot)"
+            },
+            {
+              "address": 57620,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24862"
+            },
+            {
+              "address": 57623,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57627,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(slot_left)"
+            },
+            {
+              "address": 57630,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57631,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57632,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            },
+            {
+              "address": 57635,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57638,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57639,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP check_consumed_end"
+            },
+            {
+              "address": 57661,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57664,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57665,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57666,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_next"
+            },
+            {
+              "address": 57669,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57673,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57856,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57859,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57863,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57867,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57868,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP demand_full"
+            },
+            {
+              "address": 57871,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57872,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57874,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP demand_fits"
+            },
+            {
+              "address": 57881,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57882,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57883,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(slice_output)"
+            },
+            {
+              "address": 57887,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "EX DE,HL"
+            },
+            {
+              "address": 57888,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD BC,4000"
+            },
+            {
+              "address": 57891,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57892,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57893,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57895,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP demand_ready"
+            },
+            {
+              "address": 57926,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57927,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(position)"
+            },
+            {
+              "address": 57931,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57932,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57934,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57935,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57936,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP need_step"
+            },
+            {
+              "address": 57939,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_available"
+            },
+            {
+              "address": 57978,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57981,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57985,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57986,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57988,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            }
+          ]
+        },
+        {
+          "case": "take_need_decode",
+          "tstates": 1362,
+          "excluded_calls": {
+            "decode prefix": 1,
+            "packet copy": 1
+          },
+          "phase": 2,
+          "count": 0,
+          "position": 512,
+          "instruction_histogram": [
+            {
+              "address": 57456,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24853"
+            },
+            {
+              "address": 57459,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP check_completion"
+            },
+            {
+              "address": 57499,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57501,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57513,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,B"
+            },
+            {
+              "address": 57514,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR C"
+            },
+            {
+              "address": 57515,
+              "tstates": 5,
+              "count": 1,
+              "instruction": "RET Z"
+            },
+            {
+              "address": 57516,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (pending),BC"
+            },
+            {
+              "address": 57520,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57524,
+              "tstates": 13,
+              "count": 2,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57527,
+              "tstates": 4,
+              "count": 2,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57528,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "JP have_slot"
+            },
+            {
+              "address": 57531,
+              "tstates": 13,
+              "count": 2,
+              "instruction": "LD A,(phase)"
+            },
+            {
+              "address": 57534,
+              "tstates": 7,
+              "count": 2,
+              "instruction": "CP 2"
+            },
+            {
+              "address": 57536,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "JP demand"
+            },
+            {
+              "address": 57565,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57569,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57570,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57571,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57573,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_fits"
+            },
+            {
+              "address": 57583,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP DE"
+            },
+            {
+              "address": 57584,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (slot_left),HL"
+            },
+            {
+              "address": 57587,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (copy_count),BC"
+            },
+            {
+              "address": 57591,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57594,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57595,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57597,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (pending),HL"
+            },
+            {
+              "address": 57600,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57603,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57604,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57605,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (position),HL"
+            },
+            {
+              "address": 57608,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57609,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57612,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57613,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57617,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(read_slot)"
+            },
+            {
+              "address": 57620,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24862"
+            },
+            {
+              "address": 57623,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57627,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(slot_left)"
+            },
+            {
+              "address": 57630,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57631,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57632,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            },
+            {
+              "address": 57635,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57638,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57639,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP check_consumed_end"
+            },
+            {
+              "address": 57661,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57664,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57665,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57666,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_next"
+            },
+            {
+              "address": 57669,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57673,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57856,
+              "tstates": 16,
+              "count": 2,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57859,
+              "tstates": 20,
+              "count": 2,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57863,
+              "tstates": 20,
+              "count": 2,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57867,
+              "tstates": 11,
+              "count": 2,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57868,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "JP demand_full"
+            },
+            {
+              "address": 57871,
+              "tstates": 4,
+              "count": 2,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57872,
+              "tstates": 15,
+              "count": 2,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57874,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "JP demand_fits"
+            },
+            {
+              "address": 57881,
+              "tstates": 11,
+              "count": 2,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57882,
+              "tstates": 11,
+              "count": 2,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57883,
+              "tstates": 20,
+              "count": 2,
+              "instruction": "LD DE,(slice_output)"
+            },
+            {
+              "address": 57887,
+              "tstates": 4,
+              "count": 2,
+              "instruction": "EX DE,HL"
+            },
+            {
+              "address": 57888,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "LD BC,4000"
+            },
+            {
+              "address": 57891,
+              "tstates": 11,
+              "count": 2,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57892,
+              "tstates": 4,
+              "count": 2,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57893,
+              "tstates": 15,
+              "count": 2,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57895,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "JP demand_ready"
+            },
+            {
+              "address": 57898,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57899,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57902,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57903,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (36597),HL"
+            },
+            {
+              "address": 57906,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(phase)"
+            },
+            {
+              "address": 57909,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57911,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP demand_supply"
+            },
+            {
+              "address": 57914,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL run_decode"
+            },
+            {
+              "address": 57917,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_next"
+            },
+            {
+              "address": 57926,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57927,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(position)"
+            },
+            {
+              "address": 57931,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57932,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57934,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57935,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57936,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP need_step"
+            },
+            {
+              "address": 57939,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_available"
+            },
+            {
+              "address": 57953,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(input_needed)"
+            },
+            {
+              "address": 57956,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57957,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP await_input"
+            },
+            {
+              "address": 57960,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(finished)"
+            },
+            {
+              "address": 57963,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57964,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP block_ready"
+            },
+            {
+              "address": 57967,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57978,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57981,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57985,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57986,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57988,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            }
+          ]
+        },
+        {
+          "case": "input_wait",
+          "tstates": 321,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "decode prefix": 1
+          },
+          "phase": 3,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL audio and drive service"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57389,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57391,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP supply_input"
+            },
+            {
+              "address": 57394,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 1"
+            },
+            {
+              "address": 57396,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP decode"
+            },
+            {
+              "address": 57423,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(36595)"
+            },
+            {
+              "address": 57426,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,4000"
+            },
+            {
+              "address": 57429,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57430,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,quantum"
+            },
+            {
+              "address": 57433,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57434,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57438,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57439,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57441,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP quota_fits"
+            },
+            {
+              "address": 57448,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57449,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57452,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57453,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (36597),HL"
+            },
+            {
+              "address": 57456,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24853"
+            },
+            {
+              "address": 57459,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP check_completion"
+            },
+            {
+              "address": 57499,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57501,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57953,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(input_needed)"
+            },
+            {
+              "address": 57956,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57957,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP await_input"
+            },
+            {
+              "address": 57970,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,3"
+            },
+            {
+              "address": 57972,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (phase),A"
+            },
+            {
+              "address": 57975,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            }
+          ]
+        },
+        {
+          "case": "supply",
+          "tstates": 112,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "sector prefix": 1
+          },
+          "phase": 2,
+          "count": 0,
+          "position": 0,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL audio and drive service"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57389,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57391,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP supply_input"
+            },
+            {
+              "address": 57499,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57501,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57942,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24838"
+            },
+            {
+              "address": 57945,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,2"
+            },
+            {
+              "address": 57947,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (phase),A"
+            },
+            {
+              "address": 57950,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            }
+          ]
+        },
+        {
+          "case": "take_need_input",
+          "tstates": 1837,
+          "excluded_calls": {
+            "AY/drive hook": 1,
+            "sector prefix": 1,
+            "decode prefix": 1,
+            "packet copy": 1
+          },
+          "phase": 2,
+          "count": 0,
+          "position": 512,
+          "instruction_histogram": [
+            {
+              "address": 57352,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL audio and drive service"
+            },
+            {
+              "address": 57355,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57356,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP active"
+            },
+            {
+              "address": 57389,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57391,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP supply_input"
+            },
+            {
+              "address": 57456,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24853"
+            },
+            {
+              "address": 57459,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP check_completion"
+            },
+            {
+              "address": 57499,
+              "tstates": 7,
+              "count": 2,
+              "instruction": "LD A,1"
+            },
+            {
+              "address": 57501,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "RET"
+            },
+            {
+              "address": 57513,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,B"
+            },
+            {
+              "address": 57514,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR C"
+            },
+            {
+              "address": 57515,
+              "tstates": 5,
+              "count": 1,
+              "instruction": "RET Z"
+            },
+            {
+              "address": 57516,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (pending),BC"
+            },
+            {
+              "address": 57520,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57524,
+              "tstates": 13,
+              "count": 3,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57527,
+              "tstates": 4,
+              "count": 3,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57528,
+              "tstates": 10,
+              "count": 3,
+              "instruction": "JP have_slot"
+            },
+            {
+              "address": 57531,
+              "tstates": 13,
+              "count": 3,
+              "instruction": "LD A,(phase)"
+            },
+            {
+              "address": 57534,
+              "tstates": 7,
+              "count": 3,
+              "instruction": "CP 2"
+            },
+            {
+              "address": 57536,
+              "tstates": 10,
+              "count": 3,
+              "instruction": "JP demand"
+            },
+            {
+              "address": 57565,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57569,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57570,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57571,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57573,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_fits"
+            },
+            {
+              "address": 57583,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP DE"
+            },
+            {
+              "address": 57584,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (slot_left),HL"
+            },
+            {
+              "address": 57587,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (copy_count),BC"
+            },
+            {
+              "address": 57591,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57594,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57595,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,BC"
+            },
+            {
+              "address": 57597,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (pending),HL"
+            },
+            {
+              "address": 57600,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57603,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57604,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57605,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD (position),HL"
+            },
+            {
+              "address": 57608,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57609,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57612,
+              "tstates": 11,
+              "count": 1,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57613,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57617,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(read_slot)"
+            },
+            {
+              "address": 57620,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24862"
+            },
+            {
+              "address": 57623,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD (destination),DE"
+            },
+            {
+              "address": 57627,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(slot_left)"
+            },
+            {
+              "address": 57630,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57631,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57632,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            },
+            {
+              "address": 57635,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(count)"
+            },
+            {
+              "address": 57638,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57639,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP check_consumed_end"
+            },
+            {
+              "address": 57661,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(pending)"
+            },
+            {
+              "address": 57664,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57665,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57666,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_next"
+            },
+            {
+              "address": 57669,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(destination)"
+            },
+            {
+              "address": 57673,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "RET"
+            },
+            {
+              "address": 57856,
+              "tstates": 16,
+              "count": 3,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57859,
+              "tstates": 20,
+              "count": 3,
+              "instruction": "LD BC,(pending)"
+            },
+            {
+              "address": 57863,
+              "tstates": 20,
+              "count": 3,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57867,
+              "tstates": 11,
+              "count": 3,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57868,
+              "tstates": 10,
+              "count": 3,
+              "instruction": "JP demand_full"
+            },
+            {
+              "address": 57871,
+              "tstates": 4,
+              "count": 3,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57872,
+              "tstates": 15,
+              "count": 3,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57874,
+              "tstates": 10,
+              "count": 3,
+              "instruction": "JP demand_fits"
+            },
+            {
+              "address": 57881,
+              "tstates": 11,
+              "count": 3,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57882,
+              "tstates": 11,
+              "count": 3,
+              "instruction": "PUSH HL"
+            },
+            {
+              "address": 57883,
+              "tstates": 20,
+              "count": 3,
+              "instruction": "LD DE,(slice_output)"
+            },
+            {
+              "address": 57887,
+              "tstates": 4,
+              "count": 3,
+              "instruction": "EX DE,HL"
+            },
+            {
+              "address": 57888,
+              "tstates": 10,
+              "count": 3,
+              "instruction": "LD BC,4000"
+            },
+            {
+              "address": 57891,
+              "tstates": 11,
+              "count": 3,
+              "instruction": "ADD HL,BC"
+            },
+            {
+              "address": 57892,
+              "tstates": 4,
+              "count": 3,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57893,
+              "tstates": 15,
+              "count": 3,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57895,
+              "tstates": 10,
+              "count": 3,
+              "instruction": "JP demand_ready"
+            },
+            {
+              "address": 57898,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57899,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "LD DE,C000"
+            },
+            {
+              "address": 57902,
+              "tstates": 11,
+              "count": 2,
+              "instruction": "ADD HL,DE"
+            },
+            {
+              "address": 57903,
+              "tstates": 16,
+              "count": 2,
+              "instruction": "LD (36597),HL"
+            },
+            {
+              "address": 57906,
+              "tstates": 13,
+              "count": 2,
+              "instruction": "LD A,(phase)"
+            },
+            {
+              "address": 57909,
+              "tstates": 7,
+              "count": 2,
+              "instruction": "CP 3"
+            },
+            {
+              "address": 57911,
+              "tstates": 10,
+              "count": 2,
+              "instruction": "JP demand_supply"
+            },
+            {
+              "address": 57914,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL run_decode"
+            },
+            {
+              "address": 57917,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_next"
+            },
+            {
+              "address": 57920,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL step"
+            },
+            {
+              "address": 57923,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_next"
+            },
+            {
+              "address": 57926,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "POP HL"
+            },
+            {
+              "address": 57927,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(position)"
+            },
+            {
+              "address": 57931,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57932,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57934,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "LD A,H"
+            },
+            {
+              "address": 57935,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR L"
+            },
+            {
+              "address": 57936,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP need_step"
+            },
+            {
+              "address": 57939,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP take_available"
+            },
+            {
+              "address": 57942,
+              "tstates": 17,
+              "count": 1,
+              "instruction": "CALL 24838"
+            },
+            {
+              "address": 57945,
+              "tstates": 7,
+              "count": 1,
+              "instruction": "LD A,2"
+            },
+            {
+              "address": 57947,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD (phase),A"
+            },
+            {
+              "address": 57950,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57953,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(input_needed)"
+            },
+            {
+              "address": 57956,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57957,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP await_input"
+            },
+            {
+              "address": 57960,
+              "tstates": 13,
+              "count": 1,
+              "instruction": "LD A,(finished)"
+            },
+            {
+              "address": 57963,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57964,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP block_ready"
+            },
+            {
+              "address": 57967,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP worked"
+            },
+            {
+              "address": 57978,
+              "tstates": 16,
+              "count": 1,
+              "instruction": "LD HL,(position)"
+            },
+            {
+              "address": 57981,
+              "tstates": 20,
+              "count": 1,
+              "instruction": "LD DE,(block_length)"
+            },
+            {
+              "address": 57985,
+              "tstates": 4,
+              "count": 1,
+              "instruction": "OR A"
+            },
+            {
+              "address": 57986,
+              "tstates": 15,
+              "count": 1,
+              "instruction": "SBC HL,DE"
+            },
+            {
+              "address": 57988,
+              "tstates": 10,
+              "count": 1,
+              "instruction": "JP retained"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "source_sha256_lf": {
+    "measure_inplace_streaming_queue.py": "75968015d7c8d89a52cbc75c68b10be20203b4074a8b948b1cbac41502a77310",
+    "validate_fast_sparse.py": "f164538eb5dee7ee2a4278add9bfee1c93d4c1d5814eab9dfafee9f0fcb9bf58",
+    "test_fap3_disk.py": "10b15844f094c585f7eac0d4bdaeb47f7656630db166d49231085582bb59f074"
+  }
+}

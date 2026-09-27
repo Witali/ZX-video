@@ -21,6 +21,44 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — sector-streaming in-place ZX0 is exact but slower overall
+
+- **Objective/baseline:** remove full-block acquisition bursts from `a84451d`
+  while preserving all 4221 authorized frames, resolution, exact video/AY
+  payloads, 25/3-fps deadlines and three independent boots.
+- **Parameters/implementation:** reuse the input-page-suspending ZX0 core
+  with C000 output and the same 15872-byte blocks in banks 0/1/3. Add a
+  49-byte prefix wrapper; decoder grows 314 -> 462 bytes. Queue phase 3
+  supplies a missing sector, and explicit EOF governs release. Preserve
+  three-slot rotation, all AY/drive hooks and cold bridge overlays. Check
+  loaded-input limits, every output byte, and future-sector overwrite safety.
+- **CPU evidence:** all 188 paired blocks match. Producer **11,831,304 ->
+  12,970,065 T**; decoder **189,573,555 -> 208,485,649 T**; combined
+  **201,404,859 -> 221,455,714 T (+20,050,855, about 9.96%)**. Both read
+  7106 sectors and copy 96256 carry bytes. All blocks produce early output;
+  6915 input waits occur. Instruction-table histograms and isolated actual
+  queue-control paths are measured separately; no full integrated CPU total
+  is claimed. The final measurement uses actual old/new disk starts.
+- **Full Fuse result:** 91/532/834 late frames, **1457 total versus 1321**;
+  bad fallback intervals **943 versus 783**. All 25326 AY records meet 50 Hz,
+  with zero underruns, missing/duplicate record fields or read retries.
+  Maximum lateness is 63/306/345 fields, with 2/8/2 recovered runs; disks
+  1/2 have unrecovered tails. Actual publication span rises by **3,687,220 T**.
+  Every disk reaches EOF. Occupancy remains 2462/2463/2462 sectors; video
+  remains 1,818,909 bytes. Neither video timing gate passes.
+- **Coverage/decision:** five boundary/IRQ tests, every full native block,
+  dirty-RAM boots, first full native/second compact frames, handoffs and
+  complete Fuse traces with 80 pixels/frame. Physical hardware and an
+  all-pixel Fuse run are unverified. An initial synthetic test-only wait-count
+  expectation was corrected; no decoding mismatch occurred. Smaller peak
+  transfer stalls do not offset the sustained CPU overhead. **Reject as the
+  default**, retain `a84451d` as the experimental baseline and preserve the
+  implementation/evidence for a cheaper future input guard. Root release
+  images stay unchanged. See [report and commands](toolkit/INPLACE_STREAMING.md),
+  [native benchmark](toolkit/benchmark_inplace_streaming.py),
+  [queue measurements](toolkit/measure_inplace_streaming_queue.py) and
+  [full evidence audit](toolkit/summarize_inplace_streaming.py).
+
 ## 2026-09-27 — periodic drive maintenance restores 50-Hz AY delivery
 
 - **Objective/baseline:** remove the remaining idle-drive delays from the

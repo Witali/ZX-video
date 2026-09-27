@@ -71,6 +71,18 @@ these configurations with generic converter defaults or root release images.
   improves by 1,701,794 T with unchanged disk layout. Keep the optional
   cache for measured work; all three timing gates still fail.
 
+The subsequent [larger-slot sector-streaming experiment](INPLACE_STREAMING.md)
+now has complete native-block and all-three-disk Fuse evidence. All 188
+blocks decode exactly, and the same three disks retain exact 50-Hz AY.
+However, decoder/producer CPU rises **201,404,859 -> 221,455,714 T** and
+late frames increase **1321 -> 1457**, bad intervals **783 -> 943**. Both
+video gates fail. Keep the complete-input periodic-drive player at `a84451d`
+as the larger-slot baseline. Do not enable this streamed variant by default.
+It reduces individual transfer peaks but increases sustained work. A future
+streamed decoder should avoid routine input-page checks when enough input
+is already resident, prove the lower CPU cost first, then repeat full cadence
+and AY verification. Preserve the previous and current rejected experiments.
+
 ## Method: replace indexed access when the whole path is faster
 
 Inspect the generated machine code and measured execution frequency.
