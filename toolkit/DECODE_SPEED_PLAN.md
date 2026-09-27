@@ -19,8 +19,9 @@ to the original schedule without dropped frames or accumulated drift.
 Measure actual screen-publication OUT timing as well as field counters.
 AY must update on every 50 Hz interrupt. A partial run cannot pass.
 
-For this speed work, keep the compressed movie stream byte-for-byte
-unchanged. Count bootstrap/code size separately: a larger bootstrap can
+For local decoder substitutions, keep the compressed movie stream byte-for-byte
+unchanged. The separately measured resident-audio format below changes
+framing while preserving every video field and AY record. Count bootstrap/code size separately: a larger bootstrap can
 still add disk sectors. Use all 128 KiB as useful, while accounting for both
 screens, code, stack, AY/IRQ, TR-DOS workspace, tables and disk buffers.
 
@@ -99,6 +100,19 @@ See [the saved verification](hl_mask_reader_summary.json).
 
 ## Prioritized work
 
+0. **Decouple AY delivery with a complete resident soundtrack.** The
+   [resident-audio prototype](RESIDENT_AUDIO.md) stores each volume's exact
+   AY records, tables and initial state in 13279/12262/12080 bytes. Video-only
+   ZX0 plus that audio totals **1869817 bytes**, **50128 fewer** than the
+   existing mux; all 4221 packets and 25326 ticks round-trip. Estimated free
+   sectors with old fixed overhead are 71/66/63; actual new TRDs are not yet
+   built. Implement and time the Z80 decoder in bank 4, keeping the ISR
+   unchanged and the other three video slots in banks 0/1/3. Account for
+   lookup/code RAM, reduced 24-KiB video history and sustained disk delivery.
+   This is a format experiment, not a passed cadence or capacity gate.
+   The frozen-producer FIFO model does not establish that resizing the
+   existing AY queue fixes starvation; do not infer missing byte availability
+   from a queue call's end timestamp alone.
 1. **Reduce repeated reconstruction state work.** Use the bank-aware
    histogram to inspect cache maintenance (112,146,097 T), control
    (66,807,315 T) and no-op traversal (74,830,741 T). Identify redundant

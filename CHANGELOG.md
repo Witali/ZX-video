@@ -21,6 +21,54 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — resident AY format and complete lossless storage probe
+
+- **Objective/baseline:** investigate audio starvation and a longer
+  preparation horizon after the complete `8bc6a09` three-disk run. Preserve
+  all 4221 frames, 25326 50-Hz ticks and independently initialized volumes.
+- **Trace experiment:** reconstruct produced-byte bounds from all 25955
+  queue calls. Of 845 AY underruns, the next record is definitely decoded
+  for **178**; **667** occur inside its producing call, where exact readiness
+  is unknown. A zero-cost foreground FIFO model with the original producer
+  times fixed still has **75/324/446** underruns for every tested capacity
+  12/18/31/63/127/255. This does not test a rescheduled producer. The initial
+  interpretation that most records were certainly not decoded was too
+  strong: the refined start/end bounds prove no such case. Preserve the
+  distinction between definite readiness and an active-call uncertainty.
+- **New host format:** AYH1 codes two register-mask bytes and eleven value
+  contexts with static canonical Huffman tables; constants use no bits.
+  Every empty tick, noise update, original register/value pair and each
+  disk's explicit initial state is retained. No LZ history or quality loss.
+  AY data plus serialized tables/state is **13279/12262/12080 B**, versus
+  **42450/37928/37986 B** in original records. Minimum free bank space before
+  executable code/expanded lookup tables is **3105 B**; runtime fit unproven.
+- **Complete storage:** remove only AY records from video packets, adjust
+  lengths, and recompress with optimal ZX0 v2 in <=8192-B blocks. All **364
+  blocks** decode exactly; recombining video and sound restores every old
+  FAP3 packet byte. Combined size **1919945→1869817 B (-50128)**, with
+  per-volume savings **17684/16766/15678 B**. Separately rounded data plus
+  the old fixed overhead estimates **2473/2478/2481** used sectors and
+  **71/66/63** free; this excludes the new player/bootstrap changes.
+- **Verification:** six format/model tests pass; all actual AY records and
+  packets round-trip; saved-source hashes, input archives, compressed block
+  hashes, initial states and storage arithmetic pass the independent audit.
+  Compressed blocks and audio bytes are saved for reproduction without
+  running the encoder again. Cache publication is atomic for parallel jobs.
+- **Decision:** pursue a resident decoder in bank 4 and video slots 0/1/3.
+  Measure executable Z80, IRQ safety and the reduced 24-KiB video history
+  before integrating. Current player delta **0 T**; no new Z80 decoder,
+  TRDs, full disk run or timing success is claimed. Existing releases remain
+  unchanged; exact nominal deadlines, fallback recovery and AY continuity
+  are still required. The new data-size margin may also fund faster lossless
+  video choices, but no such choices were changed in this experiment.
+- **Evidence/reproduction:** [report and implementation plan](toolkit/RESIDENT_AUDIO.md),
+  [AY codec](toolkit/ay_huffman_stream.py),
+  [trace profiler](toolkit/profile_audio_lookahead.py),
+  [audio probe](toolkit/probe_resident_audio.py),
+  [storage probe](toolkit/probe_resident_audio_storage.py),
+  [saved-result audit](toolkit/audit_resident_audio.py), and
+  [compact summary](toolkit/resident_audio_summary.json).
+
 ## 2026-09-27 — integrate the two-byte cache and measure all three disks
 
 - **Objective/baseline:** carry the `2995503` CPU prototype into real cold
