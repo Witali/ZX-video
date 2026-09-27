@@ -6,6 +6,9 @@ frames** and independently initialized volume boundaries are retained.
 This is a complete storage/memory-access experiment, **not a new playable
 format or a cadence pass**. No player instructions or root TRDs are changed.
 
+The subsequent [integrated player experiment](INPLACE_SLOT_PLAYER.md)
+implements this layout and records separate complete playback attempts.
+
 ## Why investigate this
 
 The current video slots use banks 0/1/3, each split into 8 KiB of compressed
@@ -136,8 +139,10 @@ must decide whether to keep this layout.
 3. Read the first header through existing fixed carry storage, calculate the
    top-aligned sector destination, and read each later sector once. Handle a
    header crossing a sector, input ending at 0000 after FFFF, and the last
-   shared sector. The current disk adapter assumes an E000 input limit and
-   advances regions there; that behavior must be replaced or bypassed.
+   shared sector. Integration corrected the earlier adapter assumption:
+   the E000 limit belongs to the old producer, while the disk adapter already
+   accepts pages through FF00 and advances its region only at FFFF/0000.
+   The producer must restore its owned slot after that final-page advance.
    Count header/carry copies, paging, code size and all producer T-states.
 4. Enforce slot ownership until output is consumed and ZX0 has read EOF.
    A consumed output prefix remains live LZ history until its block ends.

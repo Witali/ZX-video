@@ -197,13 +197,24 @@ See [the saved verification](hl_mask_reader_summary.json).
    **160653056→162913389 T (+2260333)**. This excludes the coroutine, queue,
    carry copies, IRQ/ULA and disk waits; only integrated delivery can decide
    whether the reserve and sector savings repay that cost.
-   Next integrate the proven block-size candidate into the resumable decoder
-   and sector producer: output C000, relative-offset bias 4000, top-aligned
-   input after header acquisition, saved shared tail before decode, correct
-   FFFF/0000 handling and no E000-era input-region advance. Preserve live LZ
-   history until EOF and consumption release the slot. Count all control,
-   carry copies and paging; actual bootstrap capacity and full frame/AY
-   deadlines remain unverified. Larger decoded packet storage is not extra
+   The [integrated larger-slot experiment](INPLACE_SLOT_PLAYER.md) now builds
+   and completes all three independent TRDs: **2461/2463/2462 sectors** used,
+   **83/81/82 free**. It changes the output base and queue bias, handles split
+   headers and the shared tail, and preserves live LZ history. The disk
+   adapter advances regions at FFFF/0000, not E000; the new producer restores
+   its owned slot. Full native producer/coroutine execution checks every
+   packet byte and counts **200004910 -> 201404951 T (+1400041)** with a frozen
+   idle clock, excluding ROM/IRQ/ULA and actual queue quotas.
+   The first complete run exposes long-idle disk failures: 15 read retries,
+   252 AY underruns. A 64-field pre-read SEEK/HLD check removes all retries,
+   but successful reads can still wait about 0.64 seconds. The corrected
+   complete run has **1496 late frames**, **914 invalid intervals**, and
+   **24 AY underruns**, versus 1745/1047/0 in the smaller resident baseline.
+   Preserve both attempts; neither is a release or cadence pass.
+   Next add **periodic drive maintenance while the queue is full**, before
+   idle shutdown, without consuming or rereading any sector. Count the
+   extra queue checks and ROM service, test state/IRQ preservation, then
+   repeat all three EOF runs. Larger decoded packet storage is not extra
    native-screen buffering and cannot establish cadence on its own.
 
 A small concrete candidate for step 1 is the target setup for nonzero

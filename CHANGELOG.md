@@ -21,6 +21,68 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-27 — integrate larger ZX0 slots and measure idle-drive limits
+
+- **Objective/baseline:** turn the `1ab9c2c` overlap proof into an actual
+  player using the smaller foreground resident-AY baseline at `da369e6`.
+  Retain all 4221 authorized frames, resolution, video packets, 25326 AY
+  records and independent boots. Increase prepared-packet capacity without
+  a full compressed-block copy or reduced frame rate.
+- **Implementation:** 15872-byte output/history slots at C000 in banks
+  0/1/3; total **24576 -> 47616 bytes**. Read split headers through BC00,
+  top-align body sectors, save the shared final sector before overlap,
+  retain history until EOF/consumption, and update six queue constants and
+  four bridge calls. Corrected the earlier adapter assumption: only the old
+  producer enforces E000; disk-region advance occurs at FFFF/0000.
+- **Actual capacity:** video **1832196 -> 1818909 B**, reads **7158 -> 7106**,
+  188 blocks. New independently bootable disks use **2461/2463/2462 sectors**,
+  leaving **83/81/82**. Every decoded video and AY byte matches the baseline.
+  This replaces the earlier conditional capacity estimate with actual builds.
+- **First complete attempt, rejected:** larger reserves create longer idle
+  gaps. There are **10/4/1 failed direct reads**, fallback waits up to about
+  1.50 seconds, **170/68/14 AY underruns**, **436/616/762 late frames** and
+  **229/337/491 invalid intervals**. Full source/build/TRD-metadata and Fuse
+  traces are preserved under `inplace_slot_evidence/initial`. A build-wrapper
+  source-hash collection error was corrected and the full build checks rerun.
+- **Second complete attempt:** a 16-bit 64-field pre-read idle check forces
+  cached SEEK/HLD, preserving the special uninitialized-drive path. Read
+  retries fall to **zero**, but successful reads still reach about 0.64 s.
+  Late frames become **137/553/806 (1496 total, baseline 1745)**; invalid
+  intervals **87/293/534 (914, baseline 1047)**. AY underruns remain **12/0/12**.
+  All records are exact, but 24 record-field gaps fail AY cadence. IRQ fields
+  have no missing/duplicates. Effective fps is **8.333333/8.021788/8.333333**;
+  maximum lateness **68/302/291 fields**. Recovered runs **8/10/6**; disk 2
+  has an unrecovered final run at local frames 1016..1296. Both timing gates
+  fail; all missed frames and actual OUT deviations are retained.
+- **CPU/memory:** producer **12248310 -> 11831396 T (-416914)**; resumable
+  ZX0 **187756600 -> 189573555 T (+1816955)**; combined measured stages
+  **200004910 -> 201404951 T (+1400041, 0.700%)**. These are all-block,
+  fixed-256-byte-quota counts with the idle clock frozen, separate from
+  ROM/IRQ/ULA/physical latency and actual queue behavior. Carry copying falls
+  **185088 -> 96256 B**. Final producer is **468 versus 368 bytes (+100)** in
+  existing retired space. All eleven operand substitutions retain T-states.
+  Added idle-check paths cost **128/177/161/153 T** including CALL; absolute
+  instruction listings and assumptions are saved.
+- **Verification:** six boundary/IRQ tests; all 364 old and 188 new blocks
+  execute with exact input/output traces and protected banks; dirty-RAM boots,
+  complete first native/second compact frames, resident-audio immutability,
+  wrong-disk/series rejection and both swaps pass. Both Fuse attempts cover
+  complete EOF on all three disks, all AY records and sector order, 80 screen
+  bytes per frame, progress, IRQ and actual publication timing. The unchanged
+  renderer reuses prior full-frame CPU evidence; this is not full-screen Fuse
+  comparison or physical-drive verification.
+- **Decision:** retain the optional larger reservoir for further work;
+  keep the root release unchanged. Add periodic SEEK/HLD while the queue is
+  full, before drive shutdown, then repeat full playback. Pre-read recovery
+  alone is insufficient; neither attempt qualifies as an accepted release.
+- **Evidence/reproduction:** [implementation, costs and commands](toolkit/INPLACE_SLOT_PLAYER.md),
+  [native benchmark](toolkit/benchmark_inplace_slot.py),
+  [build](toolkit/inplace_slot_player_build.json),
+  [CPU report](toolkit/inplace_slot_cpu.json),
+  [audited full comparison](toolkit/inplace_slot_summary.json),
+  [auditor](toolkit/summarize_inplace_slot.py), and
+  [updated plan](toolkit/DECODE_SPEED_PLAN.md).
+
 ## 2026-09-27 — in-place ZX0: prove a larger decoded-packet reservoir
 
 - **Objective/baseline:** investigate a larger prepared-video reserve in the
