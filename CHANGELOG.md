@@ -21,6 +21,47 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-28 — reproduce opposite dither phase and prototype five-level cells
+
+- **Objective/input:** investigate the user's reversed-dither blocks and
+  subsequent request for all five 2x2 coverages within every 8x8 cell. Audit
+  all 4221 current no-credits compact frames, unchanged resolution/AY.
+- **Diagnosis:** the same half-tone code produces complementary checkerboards
+  after an INK/PAPER reversal. Found **549212** matching half-tone boundary
+  samples across **4121** frames and **4204** temporal half-tone reversals
+  across **448** frames. These are phase opportunities, not perceptual scores.
+  Actual unchanged renderer opcodes reproduce frames **3478/3479/4063**;
+  forced dense output costs **154684 T** each, excluding IRQ/ULA/ROM/disk.
+- **Parameters/implementation:** add an explicit host reference that swaps
+  top/bottom pattern rows for darker INK. Preserve every 2x2 colour sum.
+  Regenerate n-2 native maps: **321** newly required cells on **108** frames
+  would otherwise be omitted after accounting for old dense-band promotion.
+  Add a separate five-level RGB quantizer and radix-5 packing prototype:
+  four samples in **10 bits**, patterns **3072→3840 bytes**, complete compact
+  frame **3840→4608 bytes**, proposed tables **512→2048 bytes**. All five
+  shades can coexist inside one attribute cell.
+- **Bounded storage results:** three **32-frame** XOR n-1 controls with carried
+  preceding predictors and optimal ZX0 blocks up to **15872 bytes**, including
+  four-byte block headers: **33827→45071** (629..661), **48338→62106**
+  (2857..2889), **32330→41874** (3855..3887). Every block round-trips. These
+  controls exclude FAP3 motion/Huffman/AY and do not estimate disk counts.
+- **Coverage:** eleven tests; all non-FLASH attributes, 256 packed patterns,
+  625 radix-5 words, five-level RGB selection, colour-sum equality and
+  alternating-screen replay. All 4221 transformed frames match the aligned
+  host reference. Three difficult before/after frames visually inspected.
+- **Decision/limits:** retain the reproduced defect, corrected host reference
+  and experimental format; implement/profile native phase correction first.
+  Fixed 10-bit packing increases storage in these controls and is not adopted
+  by default. Five-level native consumer and RAM placement remain unimplemented;
+  its Z80 cost is unmeasured. Production opcode delta **0 T**, no TRDs built,
+  replaced or promoted; no full playback/physical-drive verification. Original
+  movie RGB has not been requantized. Exact user-observed TRD/scene is unknown.
+- **Evidence/reproduction:** [findings and plan](toolkit/DITHER_PHASE.md),
+  [audit script](toolkit/audit_dither_phase.py), [report](toolkit/dither_phase_audit.json),
+  [comparison](toolkit/dither_phase_comparison.png),
+  [five-level prototype](toolkit/five_level_dither.py),
+  [phase tests](toolkit/test_dither_phase.py), [format tests](toolkit/test_five_level_dither.py).
+
 ## 2026-09-28 — calibrate foreground costs without another image-set search
 
 - **Objective/input:** explain the optimistic 64-frame-window estimates

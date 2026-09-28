@@ -57,6 +57,31 @@ screens, code, stack, AY/IRQ, TR-DOS workspace, tables and disk buffers.
 
 ## Current baseline and evidence
 
+### Dither phase regression and five-level alternative (2026-09-28)
+
+The [phase audit](DITHER_PHASE.md) reproduces opposite checkerboards caused
+by reversing INK/PAPER while retaining the same half-tone pattern. A host
+reference exchanges the two output scanlines for darker INK, preserving
+every logical pixel's mean colour. Native dirty maps must include attribute
+orientation changes relative to n-2: otherwise 321 cells across 108 frames
+in the current input would retain stale phase. Production code is unchanged.
+
+Implement and profile that correction with the existing two-bit stream first;
+include cold checkpoints, both screens, AY interruptions and actual output.
+Count added selector instructions and memory accesses before integrating it.
+
+The user also requested five independently selectable coverages inside every
+8x8 cell. The tested host alternative packs four radix-5 samples in ten bits
+and uses canonical endpoints with nested 2x2 patterns. It supports all five
+levels in one cell without Z80 division, but needs an unimplemented native
+consumer and a proposed 2048-byte lookup allocation. It grows uncompressed
+pattern data by 25% and was larger in all three 32-frame XOR/ZX0 controls.
+Those controls exclude the full motion/Huffman/AY pipeline and cannot predict
+TRD count. Keep the alternative out of converter defaults until the native
+cost, actual compression and original-RGB quality are measured. Investigate
+adaptive five-level cells within the existing bounded-window workflow;
+do not evaluate multiple complete image sets to choose a format.
+
 Use the [integrated Fast ZX0 player](FAST_ZX0_PLAYER.md) as the next
 experimental baseline. Full playback retains all 25326 AY records at 50 Hz
 and improves late frames **1321→1239** and bad intervals **783→744** against
