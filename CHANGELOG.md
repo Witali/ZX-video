@@ -21,6 +21,27 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-28 — retain BRIGHT and forbid FLASH in video attributes
+
+- **Objective/input:** clarify the user's six/seven-bit attribute proposal;
+  audit all 4221 no-credits states and the current volume-1 FAP3 source.
+- **Change:** explicitly require FLASH=0 in the generic encoder while
+  preserving INK, PAPER and BRIGHT. Keep existing sparse n-1 XOR/Huffman
+  corrections, dense raw-attribute escape and outer ZX0 unchanged.
+- **Results:** zero FLASH occurrences, 2351219 BRIGHT occurrences, 32135
+  changes after frame zero; 98.6780% of active attribute positions unchanged
+  between frames. 1763 frames have no attribute changes; 41 packets use
+  absolute attributes. No compressed-byte saving is claimed by these counts.
+- **Verification:** ten generic-converter tests pass, including exact
+  round-trip of a BRIGHT-only change and rejection of FLASH. The audit
+  checks states and packet flags, not a fresh full stream decode. Z80 delta
+  **0 T**; valid format bytes unchanged; no TRDs or playback run.
+- **Decision:** adopt the validation rule. Keep seven-bit dense packing as
+  a bounded measurement candidate; do not discard BRIGHT or temporal deltas.
+  [Format and command](toolkit/ATTRIBUTE_FORMAT.md),
+  [audit script](toolkit/audit_attributes.py),
+  [report](toolkit/attribute_format_audit.json).
+
 ## 2026-09-28 — measure the per-cell brightness-offset proposal
 
 - **Objective/input:** evaluate the user's new proposal before implementing

@@ -39,6 +39,21 @@ class GenericConverterTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'black'):
             encode(state, [AyFrame((1, 1, 1), (0, 0, 0))]*6)
 
+    def test_bright_roundtrips_but_flash_is_rejected(self):
+        states = np.zeros((2, 3840), dtype=np.uint8)
+        states[:, 3072:] = 1
+        states[:, 384:2688] = 0xaa
+        states[:, 3168:3744] = 7
+        states[1, 3168:3744] |= 0x40
+        original = states.copy()
+        audio = [AyFrame((1, 1, 1), (0, 0, 0))]*12
+        _, report = encode(states, audio)
+        self.assertTrue(report['exact_compact_frames'])
+        np.testing.assert_array_equal(states, original)
+        states[1, 3168] |= 0x80
+        with self.assertRaisesRegex(ValueError, 'FLASH=0'):
+            encode(states, audio)
+
     def test_bootstrap_all_preload_bank_counts(self):
         sections = [dict(bank=6, sector=21, buffer=0x4000, address=0xc000, sectors=1)]*6
         for sectors in (1, 64, 65, 128, 129, 192, 193, 256):

@@ -6,6 +6,13 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Attribute contract (2026-09-28):** keep seven colour bits (INK, PAPER,
+BRIGHT), require FLASH=0. Sparse temporal attribute deltas already avoid
+retransmitting unchanged colours; 98.6780% of active positions stay unchanged
+between frames in the edited movie. Consider seven-bit packing only for
+dense raw-attribute packets, measuring post-ZX0 sectors and unpacking costs
+in local windows. See [format and audit](ATTRIBUTE_FORMAT.md).
+
 **Automatic optimization workflow (2026-09-28):** the converter must apply
 optimizations automatically. Choose compression and advance preparation in
 a sliding time window, carrying the remaining disk capacity, predictor and

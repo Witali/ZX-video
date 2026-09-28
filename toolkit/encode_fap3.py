@@ -64,6 +64,11 @@ def encode(states, ay_frames):
     if (states.dtype != np.uint8 or states.ndim != 2 or states.shape[1] != 3840
             or not 0 < len(states) <= 0xffffffff or len(ay_frames) != len(states)*6):
         raise ValueError('expected N compact frames and exactly 6*N AY states')
+    # INK/PAPER use six bits and share BRIGHT. FLASH is outside the video
+    # format: its hardware timer would change displayed pixels independently
+    # of the six-field frame schedule. Keep all seven colour bits intact.
+    if np.any(states[:, 3072:] & 0x80):
+        raise ValueError('FAP3 requires FLASH=0; INK, PAPER and BRIGHT are preserved')
     # These are format invariants, not assumptions about a particular movie.
     if (np.any(states[:, :384]) or np.any(states[:, 2688:3072])
             or np.any(states[:, 3072:3168] != 1) or np.any(states[:, 3744:] != 1)):
