@@ -6,6 +6,17 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Automatic optimization workflow (2026-09-28):** the converter must apply
+optimizations automatically. Choose compression and advance preparation in
+a sliding time window, carrying the remaining disk capacity, predictor and
+reservoir state forward. Do not search by repeatedly building and playing
+whole alternative disk sets. Build one selected set and run complete EOF
+validation as the final gate; local estimates and window tests cannot pass
+that gate. Preserve original pixels/AY unless an explicitly authorized
+quality policy is selected. Use the completed
+[pressure-selection controls](PRESSURE_TOKEN_SELECTION.md) for calibration,
+not as the production search workflow.
+
 Fit the authorized edit in [movie_no_credits.json](movie_no_credits.json) on
 at most three independently bootable TRDs. Preserve the main story and
 post-credit scene through EOF, resolution, 25/3 fps and the existing 50 Hz

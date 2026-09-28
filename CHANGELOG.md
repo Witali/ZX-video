@@ -21,6 +21,49 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-28 — reserve-pressure control measurements and windowed-search requirement
+
+- **Objective/input:** spend lossless ZX0 expansion where reserve depletion
+  affects playback. Full `2881667` input, 4221 frames/188 blocks, compared
+  with unweighted token selection at `02e08b1`.
+- **Parameters:** Q8 empty-slot pressure from each block and the next two
+  with 1/2 and 1/4 decay; strength 4/16, 125-T/byte charge and four-sector
+  byte margin. Strength zero reproduces the old choices. No player opcode
+  changes (**0 T substitution delta**) or decoded video/AY changes.
+- **Results:** strength 4/16 combined native producer+decoder costs
+  **176082284 / 177156271 T**, versus Fast **194953740 T** and unweighted
+  **173275504 T**. Video **1880056 / 1880043 bytes**, 7344 reads; all three
+  disks use 2542 sectors with two free. Late frames **1111 / 1105**, versus
+  unweighted 1149; bad intervals **638 / 640**, versus 680. Publication spans
+  **1809997611 / 1810068518 T**, versus 1811203044 T. These are complete
+  observed runs, not matched-phase CPU attribution.
+- **Timing/recovery:** maximum lateness **58/218/205** and **57/219/206
+  fields**; recovery **3/3,9/10,5/5** and **3/3,8/9,5/5**. Each disk-2 run
+  stays late at EOF. All 25326 AY records remain exact at 50 Hz without
+  underruns/gaps/duplicates. Both video gates fail. Each missed frame and
+  actual OUT deviation is retained in the comparison.
+- **Coverage:** all selected blocks rerun through guarded native decoding
+  and real producer with ROM mocked; instruction sums, overlap, cursor,
+  output, protected RAM and sector order pass. Dirty-RAM startup and swap
+  code pass. Each disk cold-boots and completes in Fuse with all frames,
+  AY and sectors checked plus 80 pixel samples/frame. No hardware or full
+  Fuse pixel comparison; unchanged frame code/data retain their CPU proof.
+- **Correction:** initial selection stopped before writing evidence at a
+  one-element `max` boundary. List-based maximum fixes the final block;
+  subsequent zero-weight control and full runs pass.
+- **Decision/user clarification:** keep these completed comparisons as
+  control evidence. The user requires automatic optimization using a
+  **sliding time window**, not repeated complete image-set evaluation.
+  Carry memory/space/schedule state across windows and validate one final
+  selected set through EOF. Existing root TRDs are unchanged; no release.
+- **Evidence/reproduction:** [method and results](toolkit/PRESSURE_TOKEN_SELECTION.md),
+  [selector](toolkit/pressure_zx0_tokens.py), [choices](toolkit/pressure_zx0_tokens.json),
+  [builder](toolkit/build_pressure_token_player.py),
+  [summary](toolkit/pressure_token_summary.json),
+  [auditor](toolkit/summarize_pressure_token_player.py),
+  [strength-4 archive](toolkit/pressure_token_evidence/weight4/manifest.json),
+  [strength-16 archive](toolkit/pressure_token_evidence/weight16/manifest.json).
+
 ## 2026-09-28 — lossless Fast ZX0 token selection for faster reserve refill
 
 - **Objective/input:** fill the existing decoded reservoir faster. Compare
