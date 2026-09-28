@@ -21,20 +21,24 @@ INPUT = 0xa400
 
 
 class CellCPU(NativeCPU):
+    phase_patches = frozenset()
     def write8(self, address, value):
-        if self.guarding and machine.MASK <= address < machine.MASK+80:
+        if self.guarding and (machine.MASK <= address < machine.MASK+80 or address in self.phase_patches):
             return CPU.write8(self, address, value)
         return super().write8(address, value)
 
 
 class Harness:
-    def __init__(self, *, fast_mask_dispatch=False,gray_cells=False):
+    def __init__(self, *, fast_mask_dispatch=False,gray_cells=False,phase_aligned=False):
         self.fast_mask_dispatch = fast_mask_dispatch
         self.gray_cells=gray_cells
-        self.code, self.labels, self.listing, self.regions = machine.build(fast_mask_dispatch=fast_mask_dispatch,gray_cells=gray_cells)
+        self.phase_aligned=phase_aligned
+        self.code, self.labels, self.listing, self.regions = machine.build(fast_mask_dispatch=fast_mask_dispatch,gray_cells=gray_cells,phase_aligned=phase_aligned)
         self.cpu = CellCPU(b'', b'')
         self.cpu.state = self.labels['state'], self.labels['end']
+        self.cpu.phase_patches = machine.phase_patch_addresses(self.labels)
         for address, blob in [(machine.CODE, self.code)]+self.regions:
+            self.cpu.port_7ffd = 0x17
             for i, value in enumerate(blob):
                 self.cpu.write8(address+i, value)
         self.instructions = {r['address']: r for r in self.listing}
@@ -44,6 +48,8 @@ class Harness:
     def run(self, state, mask, index, interrupt=None):
         if len(state) != 3840 or len(mask) != 80 or any(state[:256]) or any(state[2816:3072]):
             raise ValueError('invalid frame/map or nonzero omitted rows')
+        if self.phase_aligned and any(v & 128 for v in state[3072:]):
+            raise ValueError('phase-aligned output does not support FLASH')
         cpu = self.cpu
         cpu.guarding = False
         target = 7 if index % 2 == 0 else 5
@@ -76,7 +82,11 @@ class Harness:
                 raise AssertionError('renderer did not return')
             if interrupt and cpu.pc != STOP:
                 irq += interrupt(cpu)
-        expected = b''.join(expand_compact_screen(state))
+        if self.phase_aligned:
+            from dither_phase import expand
+            expected = b''.join(expand(state, aligned=True))
+        else:
+            expected = b''.join(expand_compact_screen(state))
         self.expected_screens[target] = expected
         if any(bytes(cpu.banks[b][:6912]) != screen for b, screen in self.expected_screens.items()):
             raise AssertionError('native screen differs or visible screen changed')
@@ -84,9 +94,9 @@ class Harness:
                 or bytes(cpu.read8(machine.FRAME+i) for i in range(3840)) != state
                 or bytes(cpu.read8(INPUT+i) for i in range(80)) != mask
                 or sum(stages.values()) != cpu.tstates-before-irq
-                or sum(stages.values()) != machine.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch,gray_cells=self.gray_cells)):
+                or sum(stages.values()) != machine.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch,gray_cells=self.gray_cells,phase_aligned=self.phase_aligned)):
             raise AssertionError(('paging/stack/source/timing differs', sum(stages.values()),
-                machine.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch,gray_cells=self.gray_cells)))
+                machine.expected_tstates(mask, fast_mask_dispatch=self.fast_mask_dispatch,gray_cells=self.gray_cells,phase_aligned=self.phase_aligned)))
         return dict(index=index, target_bank=target, tstates=sum(stages.values()), stages=dict(stages),
                     output_sha256=sha(expected), page_writes=pages, irq_tstates=irq)
 

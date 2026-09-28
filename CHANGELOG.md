@@ -21,6 +21,32 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-28 — implement and measure optional native phase correction
+
+- **Objective/input:** implement the accepted phase correction without
+  changing compact colour coverage; current 4221-frame edited movie/FAP3.
+- **Change:** guarded self-modified dense page operands, separate sparse
+  Gray paths, 128-byte phase lookup and 490-byte bank-7 helper. Main code
+  shrinks by 19 bytes; net extra code/table memory 599 bytes. Regenerate
+  native update maps including attribute-only orientation changes.
+- **Results:** 251 raw bytes change on 108 frames, packet sizes unchanged.
+  Three optimal ZX0 windows: 27191→27191, 41794→41794, 26684→26677 bytes.
+  Isolated 18-band/full-attribute formula over all masks: 370074484→467859829
+  T (+97785345), maximum 137426→193819 T. Formula excludes attribute-group
+  savings, atomic paging, external calls, IRQ/ULA/TR-DOS and disk latency.
+- **Coverage:** 15 renderer/phase tests pass, including all 128×256
+  attribute/packed-byte pairs, sparse n-2 changes, guarded writes and AY
+  interrupts after every instruction. 96 real movie frames plus six seeds
+  match the native reference; exact instruction timing checked. Default
+  renderer bytes unchanged; no integrated RAM/cold-boot proof or full EOF.
+- **Decision:** retain as optional correctness/cost baseline, not default:
+  about 26.4% extra isolated output CPU is material. Compare with adaptive
+  five-level rendering/cheaper phase preparation. F900 helper conflicts with
+  the separate resumable-packet experiment. No new TRDs or release claim.
+  [Implementation/cycles](toolkit/PHASE_RENDERER.md),
+  [reproducer](toolkit/audit_phase_renderer.py),
+  [report](toolkit/phase_renderer_audit.json).
+
 ## 2026-09-28 — retain BRIGHT and forbid FLASH in video attributes
 
 - **Objective/input:** clarify the user's six/seven-bit attribute proposal;

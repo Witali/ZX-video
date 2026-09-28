@@ -14,14 +14,17 @@ from build_zxv_trd import MiniAssembler
 from build_long_video_trd import build_player_dither_tables
 
 CODE, FRAME, TABLE, MASK = 0x9000, 0x6400, 0x9e00, 0xbf20
+PHASE_TABLE, PHASE_HELPER, PHASE_LIMIT = 0x9880, 0xf900, 0xfb00
 
 
-def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False,attribute_group_counts=None,gray_cells=False):
+def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False,attribute_group_counts=None,gray_cells=False,phase_aligned=False):
     if len(mask) != 80:
         raise ValueError('expected 80 cell-mask bytes')
     if skip_black_borders and not fast_mask_dispatch:
         raise ValueError('black-border omission requires fast mask dispatch')
     if gray_cells and not fast_mask_dispatch: raise ValueError('Gray cells require fast mask dispatch')
+    if phase_aligned and not (fast_mask_dispatch and gray_cells):
+        raise ValueError('aligned phase requires fast dispatch and Gray cells')
     attribute_delta=0
     if attribute_group_counts is not None:
         if not constant_attribute_borders: raise ValueError('attribute groups require constant borders')
@@ -40,13 +43,16 @@ def expected_tstates(mask, *, fast_mask_dispatch=False, constant_attribute_borde
     # 80 LDI map transfers and 768 attrs (576 with constant borders); external CALL,
     # IRQ/ULA, mask ZX0 and disk delivery excluded. See instruction listing.
     if fast_mask_dispatch:
-        return 37584-2308*skip_black_borders+5853*dense+4*odd_dense+(296-35*gray_cells)*partial_cells-136*zero_masks-3240*constant_attribute_borders+attribute_delta
+        phase_delta = 395+43*bands+61*partial_cells+3068*dense if phase_aligned else 0
+        return 37584-2308*skip_black_borders+5853*dense+4*odd_dense+(296-35*gray_cells)*partial_cells-136*zero_masks-3240*constant_attribute_borders+attribute_delta+phase_delta
     return 58784+4793*dense+4*odd_dense+277*partial_cells-3240*constant_attribute_borders+attribute_delta
 
 
 def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_black_borders=False,page_entry=None,
-          preloaded_mask=False,attribute_groups=False,gray_cells=False):
+          preloaded_mask=False,attribute_groups=False,gray_cells=False,phase_aligned=False):
     if gray_cells and not fast_mask_dispatch: raise ValueError('Gray cells require fast mask dispatch')
+    if phase_aligned and not (fast_mask_dispatch and gray_cells):
+        raise ValueError('aligned phase requires fast dispatch and Gray cells')
     if skip_black_borders and not (fast_mask_dispatch and constant_attribute_borders):
         raise ValueError('black-border omission requires fast dispatch and initialized constant attributes')
     if attribute_groups and not constant_attribute_borders: raise ValueError('attribute groups require constant borders')
@@ -69,11 +75,15 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
              [0xc6 if amount >= 0 else 0xd6, abs(amount)], 7, stage)
         emit('LD '+reg+',A', [{'D': 0x57, 'E': 0x5f, 'L': 0x6f}[reg]], 4, stage)
 
-    def pixel(reverse=False, advance=False, stage='cell_pixels'):
+    def pixel(reverse=False, advance=False, stage='cell_pixels', inverted=False, column=None):
+        if column is not None:
+            a.labels[f'phase_load_{column}'] = a.pc+1
+            emit('LD B,phase page', [0x06, TABLE >> 8], 7, stage)
         emit('LD C,(HL)', [0x4e], 7, stage)
         emit('LD A,(BC)', [0x0a], 7, stage)
         emit('LD (DE),A', [0x12], 7, stage)
-        emit('DEC B' if reverse else 'INC B', [0x05 if reverse else 0x04], 4, stage)
+        if column is not None: a.labels[f'phase_toggle_{column}'] = a.pc
+        emit('DEC B' if reverse ^ inverted else 'INC B', [0x05 if reverse ^ inverted else 0x04], 4, stage)
         emit('DEC D' if reverse else 'INC D', [0x15 if reverse else 0x14], 4, stage)
         emit('LD A,(BC)', [0x0a], 7, stage)
         emit('LD (DE),A', [0x12], 7, stage)
@@ -84,7 +94,11 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
     def copy_map():
         imm('LD DE,map', 0x11, MASK, 10, 'map_copy')
         imm('LD BC,80', 0x01, 80, 10, 'map_copy')
-        for _ in range(80): emit('LDI', [0xed, 0xa0], 16, 'map_copy')
+        if phase_aligned:
+            # Free main-code space for both sparse phase paths. 395 extra T.
+            emit('LDIR', [0xed, 0xb0], [16, 21], 'map_copy')
+        else:
+            for _ in range(80): emit('LDI', [0xed, 0xa0], 16, 'map_copy')
 
     a.label('draw')
     ref('LD (screen_base),A', 0x32, 'screen_base', 13, 'control')
@@ -105,6 +119,12 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
     emit('LD A,band count', [0x3e, 18 if skip_black_borders else 20], 7, 'control')
     ref('LD (bands_left),A', 0x32, 'bands_left', 13, 'control')
     a.label('band')
+    if phase_aligned:
+        emit('LD A,D', [0x7a], 4, 'phase_band')
+        for _ in range(3): emit('RRCA', [0x0f], 4, 'phase_band')
+        emit('AND 3', [0xe6, 3], 7, 'phase_band')
+        emit('OR 70h', [0xf6, 0x70], 7, 'phase_band')
+        ref('LD (phase_attr_page),A', 0x32, 'phase_attr_page', 13, 'phase_band')
     emit('EXX', [0xd9], 4, 'band_dispatch')
     for i in range(4):
         emit('LD A,(HL)' if i == 0 else 'AND (HL)', [0x7e if i == 0 else 0xa6], 7, 'band_dispatch')
@@ -169,11 +189,14 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
     emit('LD B,dither_top_page', [0x06, TABLE >> 8], 7, 'partial_control')
     ref('JP band_done', 0xc3, 'band_done', 10, 'partial_control')
     a.label('dense')
+    if phase_aligned:
+        imm('CALL prepare phase columns', 0xcd, PHASE_HELPER, 17, 'phase_dense')
     emit('LD A,4', [0x3e, 4], 7, 'dense_control')
     ref('LD (dense_rows_left),A', 0x32, 'dense_rows_left', 13, 'dense_control')
     a.label('dense_row')
     for column in range(32):
-        pixel(reverse=bool(column & 1), advance=True, stage='dense_pixels')
+        pixel(reverse=bool(column & 1), advance=True, stage='dense_pixels',
+              column=column if phase_aligned else None)
     ref('JP NZ,dense_page_ready', 0xc2, 'dense_page_ready', 10, 'dense_control')
     emit('INC H', [0x24], 4, 'dense_control')
     a.label('dense_page_ready')
@@ -229,6 +252,18 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
         ref('JP mask_done', 0xc3, 'mask_done', 10, 'mask_skip')
         a.label('draw_cell')
         emit("EX AF,AF'", [0x08], 4, 'cell_control')
+        if phase_aligned:
+            a.labels['phase_attr_page'] = a.pc+1
+            emit('LD B,attribute page', [0x06, 0x70], 7, 'phase_cell')
+            emit('LD C,E', [0x4b], 4, 'phase_cell')
+            emit('LD A,(BC)', [0x0a], 7, 'phase_cell')
+            emit('OR 80h', [0xf6, 0x80], 7, 'phase_cell')
+            emit('LD C,A', [0x4f], 4, 'phase_cell')
+            emit('LD B,phase lookup', [0x06, PHASE_TABLE >> 8], 7, 'phase_cell')
+            emit('LD A,(BC)', [0x0a], 7, 'phase_cell')
+            emit('LD B,A', [0x47], 4, 'phase_cell')
+            emit('RRCA', [0x0f], 4, 'phase_cell')
+            ref('JP C,inverted_cell', 0xda, 'inverted_cell', 10, 'phase_cell')
         if gray_cells:
             # A compact cell begins with L bits 5/6 and D bits 0..2 zero.
             # Alternating top/bottom order leaves D at 1,2,7,4; each next
@@ -250,6 +285,16 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
             adjust('D', -6, 'cell_address')
         emit("EX AF,AF'", [0x08], 4, 'cell_control')
         emit('RET', [0xc9], 10, 'cell_control')
+        if phase_aligned:
+            a.label('inverted_cell')
+            for index, (source_bit, output_bit) in enumerate(((5,1),(6,2),(5,1),(6,2))):
+                pixel(reverse=bool(index & 1), inverted=True)
+                base = 0xc0 if index < 2 else 0x80
+                action = 'SET' if index < 2 else 'RES'
+                emit(f'{action} {source_bit},L', [0xcb, base+8*source_bit+5], 8, 'cell_address')
+                emit(f'{action} {output_bit},D', [0xcb, base+8*output_bit+2], 8, 'cell_address')
+            emit("EX AF,AF'", [0x08], 4, 'cell_control')
+            emit('RET', [0xc9], 10, 'cell_control')
     if preloaded_mask:
         # Same transfer as before, now callable after compact reconstruction.
         # BF20..BF6F survives reading metadata (BF80..BFBF) for the next packet.
@@ -261,4 +306,36 @@ def build(*, fast_mask_dispatch=False, constant_attribute_borders=False, skip_bl
     if a.pc > 0x9400:
         raise ValueError('renderer overlaps AY code')
     top, bottom = build_player_dither_tables()
-    return a.resolve(), a.labels, listing, [(TABLE, top+bottom)]
+    code, labels = a.resolve(), dict(a.labels)
+    regions = [(TABLE, top+bottom)]
+    if phase_aligned:
+        # This helper is bank-7 code, available only while rendering. It
+        # conflicts with the optional resumable packet helper at F900.
+        a = MiniAssembler(PHASE_HELPER)
+        emit('PUSH HL', [0xe5], 11, 'phase_dense')
+        imm('LD A,(phase_attr_page)', 0x3a, labels['phase_attr_page'], 13, 'phase_dense')
+        emit('LD H,A', [0x67], 4, 'phase_dense')
+        emit('LD L,E', [0x6b], 4, 'phase_dense')
+        emit('LD B,phase lookup', [0x06, PHASE_TABLE >> 8], 7, 'phase_dense')
+        for column in range(32):
+            emit('LD A,(HL)', [0x7e], 7, 'phase_dense')
+            emit('INC L', [0x2c], 4, 'phase_dense')
+            emit('OR 80h', [0xf6, 0x80], 7, 'phase_dense')
+            emit('LD C,A', [0x4f], 4, 'phase_dense')
+            emit('LD A,(BC)', [0x0a], 7, 'phase_dense')
+            if column & 1: emit('XOR 1', [0xee, 1], 7, 'phase_dense')
+            imm('LD (phase page operand),A', 0x32, labels[f'phase_load_{column}'], 13, 'phase_dense')
+            emit('XOR 9Ah', [0xee, 0x9a], 7, 'phase_dense')
+            imm('LD (phase toggle opcode),A', 0x32, labels[f'phase_toggle_{column}'], 13, 'phase_dense')
+        emit('POP HL', [0xe1], 10, 'phase_dense')
+        emit('RET', [0xc9], 10, 'phase_dense')
+        if a.pc > PHASE_LIMIT: raise ValueError('phase helper exceeds bank-7 reservation')
+        regions += [(PHASE_HELPER, a.resolve()),
+                    (PHASE_TABLE, bytes((TABLE >> 8)+int((attr & 7) < ((attr >> 3) & 7)) for attr in range(128)))]
+    return code, labels, listing, regions
+
+
+def phase_patch_addresses(labels):
+    """The exact 65 writable code bytes; all other opcodes remain protected."""
+    return {address for name, address in labels.items()
+            if name == 'phase_attr_page' or name.startswith(('phase_load_', 'phase_toggle_'))}

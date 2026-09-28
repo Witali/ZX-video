@@ -6,6 +6,15 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Native dither correction (2026-09-28):** an optional Z80 implementation
+now passes exhaustive attribute/byte tests, IRQ stress and 96 movie frames.
+The same-map overhead is `395 + 43*bands + 61*sparse_cells + 3068*dense_bands`;
+isolated full-movie output formula rises by about 26.4%. Keep this measured
+[correctness baseline](PHASE_RENDERER.md), not the default player. Compare
+adaptive five-level table expansion and cheaper phase preparation before
+paying this overhead in the final schedule. Native-map changes are small
+(251 bytes on 108 frames); full cold placement and EOF timing remain open.
+
 **Attribute contract (2026-09-28):** keep seven colour bits (INK, PAPER,
 BRIGHT), require FLASH=0. Sparse temporal attribute deltas already avoid
 retransmitting unchanged colours; 98.6780% of active positions stay unchanged

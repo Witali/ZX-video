@@ -72,8 +72,8 @@ class CellScreenTests(unittest.TestCase):
     def test_ay_irq_preserves_unrolled_flags_in_alternate_af(self):
         self.exercise_irq(fast=True)
 
-    def exercise_irq(self, fast=False,gray_cells=False):
-        h = Harness(fast_mask_dispatch=fast,gray_cells=gray_cells)
+    def exercise_irq(self, fast=False,gray_cells=False,phase_aligned=False):
+        h = Harness(fast_mask_dispatch=fast,gray_cells=gray_cells,phase_aligned=phase_aligned)
         a = MiniAssembler(0x9400)
         ay_interrupt.emit(a)
         playback_schedule.emit_clock(a, dos_irq=True, full_rom_clock=True, memory_clock=True, audio_irq=True)
@@ -120,7 +120,7 @@ class CellScreenTests(unittest.TestCase):
         for row in range(8, 12):
             state[row*32] = row
         state[12*32:16*32] = bytes(range(128))
-        state[3072:] = bytes(range(256))*3
+        state[3072:] = bytes(range(128))*6 if phase_aligned else bytes(range(256))*3
         mask = bytes([128, 0, 0, 0])+b'\xff'*4+bytes(72)
         for index in range(2):
             h.run(state, mask, index, interrupt)
