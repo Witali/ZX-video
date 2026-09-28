@@ -21,6 +21,45 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-28 — calibrate foreground costs without another image-set search
+
+- **Objective/input:** explain the optimistic 64-frame-window estimates
+  before selecting another final set. Use the archived Fast baseline and
+  four previously measured token selections, all 4221 frames each. No new
+  TRDs, Fuse runs, pixels or AY records; runtime instruction delta **0 T**.
+- **Changes/parameters:** move metadata expansion into packet acquisition,
+  matching actual parser order. Fit transport from 2710 nonwaiting baseline
+  transfers: **20.885080 T/byte + 3129.767723 T**, mean absolute residual
+  **1848.42 T**. Charge baseline mean entry gaps **3901 T before prepare**
+  (4215 observations), **5618 T before draw** (1483 observations). These
+  elapsed quantities include unseparated ULA/IRQ/service effects; they are
+  not deterministic instruction costs. Candidate publication labels are
+  excluded from fitting. Preserve carried state and original deadlines.
+- **Results:** baseline predicted lateness **653→903**, actual **1239**.
+  Held-out predictions: unweighted **641→835** / actual **1149**; pressure-4
+  **622→815** / **1111**; pressure-16 **622→819** / **1105**; window-selected
+  **595→825** / **1186**. Aggregate absolute publication error on the four
+  held-out sets **17273310436→11184085840 T (-35.25%)**. These are prediction
+  errors, not CPU savings. Per-window errors and false timing classifications
+  are saved. Metadata relocation alone slightly worsens error; retain that
+  intermediate control and the transport-only control in the report.
+- **Coverage:** source/input/manifest hashes, complete archived publication
+  coverage, four regression tests, saved-report regeneration and readback.
+  Calibration uses existing observations; it is not new emulator or hardware
+  validation. No candidate TRD set is selected or promoted by this experiment.
+- **Decision:** keep the correction as a separate model; it still
+  underestimates lateness. Measure queue-step control, background AY service
+  and variable decoder demand costs in bounded windows next. Do not declare
+  a timing pass or repeat full-set evaluation using this incomplete model.
+  Current generic-media integration and deeper prepared-command queue remain
+  unfinished. During this work the user's loading-screen request was handled
+  separately in the preceding focused change below.
+- **Evidence/reproduction:** [analysis and commands](toolkit/WINDOWED_MODEL_CALIBRATION.md),
+  [calibrated model](toolkit/calibrated_windowed_model.py),
+  [calibration script](toolkit/calibrate_windowed_model.py),
+  [report](toolkit/windowed_model_calibration.json),
+  [tests](toolkit/test_calibrated_windowed_model.py).
+
 ## 2026-09-28 — hide compressed screen staging during startup
 
 - **Objective/input:** implement the user's request that initial screen-RAM

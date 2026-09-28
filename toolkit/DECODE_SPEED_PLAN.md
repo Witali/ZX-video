@@ -28,6 +28,14 @@ Keep the current images: both video gates fail, and generic media frontend
 integration remains pending. Extend the same bounded workflow to other
 measured encoder/preparation choices rather than reinstating whole-set search.
 
+[Foreground-cost calibration](WINDOWED_MODEL_CALIBRATION.md) now corrects
+metadata placement and adds measured packet transport and entry costs.
+It reduces aggregate publication prediction error by **35.25%** across four
+held-out archived selections, without new TRDs or Fuse runs. It still predicts
+only **825** late frames for the observed **1186** of the window-selected set.
+Measure queue-step control, background AY service and variable demand costs
+in local windows next; do not treat this model as a release timing gate.
+
 Fit the authorized edit in [movie_no_credits.json](movie_no_credits.json) on
 at most three independently bootable TRDs. Preserve the main story and
 post-credit scene through EOF, resolution, 25/3 fps and the existing 50 Hz
