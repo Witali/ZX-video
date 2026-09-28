@@ -21,6 +21,32 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-28 — audit advance frame preparation in the current Fast reservoir
+
+- **Objective/input:** answer whether difficult-frame changes can be prepared
+  before publication. Reanalyze all 4221 frames of the `2881667` Fast preview,
+  using its committed TRDs, complete archived Fuse events and prior full-frame
+  CPU evidence. This is analysis, not another emulator or player run.
+- **Method:** reconstruct packet/block byte positions and check every queue
+  observation against slot ownership and the 47616-byte decoded capacity.
+  Measure packet/compact readiness relative to original nominal deadlines.
+  The two-byte Huffman cache and the larger packet reserve are kept distinct.
+- **Results:** median reserve **30148/9840/4 bytes**, median available complete
+  packets **50/11/0** (including the requested packet when it fits). Packet
+  starts with at most six ready bytes: **99/478/740**. Compact preparation
+  already finishes at least a frame period early for **1497/826/524 frames**.
+  The hardest 32-frame windows on disks 2/3 request **63230/52483 bytes** and
+  have **0..6 bytes** ready at every packet start. Advance work exists, but
+  sustained depletion remains. Player instruction/stream deltas **0 T / 0 B**.
+- **Decision:** retain advance preparation; prioritize faster refill, then
+  separately assess a deeper queue of resolved patch commands. Account for
+  predictor dependencies, all 128 KiB, enlarged commands and added copies.
+  No changed quality, TRDs or timing claim. The hypothetical free-input
+  sensitivity remains explicitly unimplemented and cannot pass a release.
+- **Evidence/reproduction:** [proposal and findings](toolkit/FRAME_PREPARATION_RESERVE.md),
+  [analyzer](toolkit/profile_fast_reservoir.py),
+  [per-frame report](toolkit/fast_reservoir_profile.json).
+
 ## 2026-09-27 — apply adapted Fast ZX0 to all three independent disks
 
 - **Objective/input:** integrate the unchanged-stream Fast decoder from

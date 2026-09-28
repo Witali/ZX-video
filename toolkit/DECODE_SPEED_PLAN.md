@@ -149,6 +149,15 @@ See [the saved verification](hl_mask_reader_summary.json).
 
 ## Prioritized work
 
+The user's advance-preparation proposal is recorded in
+[Frame preparation reserve](FRAME_PREPARATION_RESERVE.md). A fresh audit of
+the complete Fast traces confirms median decoded reserves **30148/9840/4 B**;
+the hardest disk-2/3 windows still have **0..6 B** at every packet start.
+The two-byte Huffman cache, 47616-byte decoded packet reservoir and one
+compact-frame lookahead are different resources. First improve refill speed;
+then assess a queue of predecoded changes with explicit n-1/n-2 dependencies,
+expanded-command capacity, paging/copy cost and full cadence verification.
+
 0. **Decouple AY delivery with a complete resident soundtrack.** The
    [resident-audio prototype](RESIDENT_AUDIO.md) stores each volume's exact
    AY records, tables and initial state in 13279/12262/12080 bytes. Video-only
