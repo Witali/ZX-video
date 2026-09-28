@@ -335,11 +335,21 @@ def build_driver(h, clock, ay_state, *, has_next=False, deferred=False, prefill_
 
 def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16), interleaved=False,
                     warm_set=False,continuation=False,preload_sectors=256,runtime_entry=None):
-    """Read section sectors and decompress from their optional byte offset."""
+    """Read/decompress sections while hiding normal-screen staging data.
+
+    Complete player layouts restore the shadow screen before runtime. Show
+    that screen with black INK/PAPER while the normal screen is used as an
+    input buffer (including its attributes). Forward screen decompression
+    restores valid bitmap pixels before their real attributes. Synthetic
+    layouts without a shadow-screen restore retain the legacy boot path.
+    """
     a = MiniAssembler(0x6000)
+    hidden_staging = (any(s['buffer']==0x4000 for s in sections)
+        and any(s['bank']==7 and s['address']==0xc000 and s.get('decoded_bytes',0)>=6912
+                for s in sections))
     def call(label): a.abs16(0xcd,label)
-    def page(bank):
-        a.emit(0x3e,0x10|bank,0x01); a.word(0x7ffd); a.emit(0xed,0x79)
+    def page(bank, *, shadow=hidden_staging):
+        a.emit(0x3e,0x10|bank|(8 if shadow else 0),0x01); a.word(0x7ffd); a.emit(0xed,0x79)
     if continuation and not warm_set: raise ValueError('continuation requires warm set')
     a.label('bootstrap')
     if warm_set:
@@ -349,6 +359,17 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
         else: a.emit(0xc3); a.word(0x6003)
     a.label('bootstrap_entry'); a.emit(0xf3,0x31); a.word(0x5ff0)
     a.emit(0xfd,0x21); a.word(0x5c3a); a.emit(0xed,0x56,0xfb)
+    if hidden_staging:
+        a.label('hide_staging_screen')
+        # Clear the hidden attributes before selecting the shadow display.
+        # Paging: 29 T. Fill: 40 + 21*767 - 5 = 16142 T. Total 16171 T.
+        # No bitmap copy, extra staging memory or runtime instruction cost.
+        page(7, shadow=False)
+        a.emit(0x21); a.word(0xd800)
+        a.emit(0x11); a.word(0xd801)
+        a.emit(0x01); a.word(767)
+        a.emit(0x36,0,0xed,0xb0)  # INK 0, PAPER 0, FLASH 0 on all 768 cells.
+        a.label('staging_attributes_hidden')
     for section in sections:
         page(section['bank'])
         a.emit(0x11); a.word(packed_sector(section['sector']))
@@ -370,7 +391,8 @@ def build_bootstrap(sections, video_sector, video_sectors, *, next_id=bytes(16),
         count = min(64,left)
         if not count: break
         page(bank); a.emit(0x21); a.word(0xc000); a.emit(0x06,count); call('read_n'); left -= count
-    page(7)
+    a.label('restore_boot_display')
+    page(7, shadow=False)
     # Runtime reader replaces only the no-longer-used bootstrap prefix.
     # A100 is temporary storage in the initially empty AY queue.
     if runtime_entry is None and a.pc<0x6100:

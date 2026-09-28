@@ -21,6 +21,41 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-28 — hide compressed screen staging during startup
+
+- **Objective/input:** implement the user's request that initial screen-RAM
+  staging be invisible. Use the current three Fast volumes (`2881667` payload,
+  4221 frames); retain every sector except the four-sector PLAYER bootstrap.
+- **Implementation:** the shared generator clears all 768 shadow attributes
+  to INK 0 / PAPER 0 / FLASH 0 and selects that display while bank 5 contains
+  compressed input. Normal staging can occupy 6912 bytes, including its
+  attributes, so clearing bank-5 attributes alone would not suffice. Forward
+  shadow restoration writes the valid bitmap before revealing its attributes.
+  Restore normal display/bank-7 mapping before runtime. Automatically active
+  for full player layouts; no new buffer or converter flag.
+- **Cost:** added startup code **20 bytes**, within existing 1024-byte PLAYER
+  padding, and **16171 T = 29 + 40 + 21*767 - 5**. Native boot costs
+  **3094770→3110941 / 3214643→3230814 / 3303161→3319332 T**. Runtime opcode
+  delta **0 T**, disk-sector delta **0**. Video, AY and quality are unchanged.
+- **Coverage:** three new unit tests, nine generic-converter tests and two
+  integrated-bootstrap tests pass. Native dirty-RAM boots guard every
+  staging write and all 6144 shadow bitmap writes per disk. Final RAM,
+  first native/second compact frames, AY bank and both mocked disk swaps pass.
+  Real Fuse/TR-DOS startup checks all 768 attributes and **91/92/94** read
+  entry/return page pairs without debugger memory writes. Actual startup
+  elapsed costs **19682980/19882186/20789220 T**, including ROM/disk/IRQ/ULA.
+  Evidence archival and readback audit pass.
+- **Decision/limits:** use this in subsequent generated disks. Keep existing
+  root previews and timing evidence unchanged. This verifies complete startup
+  only; it does not rerun the full movie or satisfy its video timing gates.
+  No physical-drive test. Historical evidence retains original source copies.
+- **Reproduction/evidence:** [design and commands](toolkit/HIDDEN_BOOTSTRAP.md),
+  [native checker](toolkit/check_hidden_bootstrap.py),
+  [Fuse checker](toolkit/measure_hidden_bootstrap_fuse.py),
+  [summary](toolkit/hidden_bootstrap_summary.json),
+  [archive](toolkit/hidden_bootstrap_evidence/manifest.json),
+  [auditor](toolkit/audit_hidden_bootstrap.py).
+
 ## 2026-09-28 — automatic selection over a carried 64-frame window
 
 - **Objective/input:** implement the user's bounded-window search instead

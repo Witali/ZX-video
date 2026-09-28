@@ -330,6 +330,14 @@ class Builder:
         image,directory,stats=place_files(files,f'FAP3-{part:02}')
         image=bytearray(image); image[15*256:15*256+16]=disk_id; image=bytes(image)
         metadata.update(directory=directory,stats=stats,trd_sha256=sha(image))
+        metadata['startup_display'] = dict(
+            hidden_screen_staging='hide_staging_screen' in boot_labels,
+            loading_display_bank=7 if 'hide_staging_screen' in boot_labels else 5,
+            loading_ink=0 if 'hide_staging_screen' in boot_labels else None,
+            loading_paper=0 if 'hide_staging_screen' in boot_labels else None,
+            additional_bootstrap_tstates=16171 if 'hide_staging_screen' in boot_labels else 0,
+            runtime_tstates_delta=0,
+            restores_valid_shadow_bitmap_before_attributes=True if 'hide_staging_screen' in boot_labels else None)
         return image,metadata
 
     def automatic_ends(self, max_frames=4096):
