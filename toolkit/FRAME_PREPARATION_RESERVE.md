@@ -89,6 +89,16 @@ schedule origin, or deliberately delay frames to make a buffering result pass.
 Any implemented variant still needs full independent boot, EOF, nominal and
 fallback recovery checks on all disks.
 
+### First refill experiment completed
+
+[Lossless ZX0 token selection](FAST_TOKEN_PLAYER.md) now completes all three
+disks. Faster refill raises disk-2 median reserve from 9840 to 12278 bytes
+and reduces disk-3 near-empty packet starts from 740 to 561. Overall late
+frames fall 1239→1149, but disk 1 regresses slightly and timing still fails.
+The experiment spends 61133 extra compressed bytes, retaining identical
+decoded pixels and AY. Keep it optional; deeper prepared-command buffering
+has not yet been implemented or validated by this experiment.
+
 ## Evidence and reproduction
 
 [All per-frame reserve/preparation records](fast_reservoir_profile.json).

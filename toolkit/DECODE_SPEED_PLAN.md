@@ -1,6 +1,6 @@
 # Decode-speed improvement plan
 
-Updated 2026-09-27. This is the current plan in English. Earlier proposals
+Updated 2026-09-28. This is the current plan in English. Earlier proposals
 and their dated results remain in the [historical plan](DECODE_SPEED_PLAN_ru.md)
 and [changelog](../CHANGELOG.md).
 
@@ -39,6 +39,14 @@ the HL-reader configuration at `074e1e7` remain historical comparisons.
 Generic converter defaults and the verified root release are separate.
 The new root `ZX-video-fast-preview_part01..03.trd` set contains the measured
 Fast experiment and is explicitly a preview.
+
+The [lossless token-selection experiment](FAST_TOKEN_PLAYER.md) speeds the
+Fast decoder by 12.0205%, spending 61133 extra stream bytes. Full playback
+reduces late frames 1239→1149 and bad intervals 744→680, with exact AY and
+unchanged decoded pixels. It remains optional: disk 1 regresses slightly,
+only two sectors per disk remain free, and both timing gates still fail.
+Use its reserve measurements to assess where advance work is useful before
+changing the queue or selecting larger streams as a default.
 
 - Current video stream: **1,818,909 compressed bytes**, 2,965,011 video-only
   packet bytes, 188 blocks, 7106 video sectors. The older muxed stream used

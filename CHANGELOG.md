@@ -21,6 +21,60 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-28 — lossless Fast ZX0 token selection for faster reserve refill
+
+- **Objective/input:** fill the existing decoded reservoir faster. Compare
+  the `2881667` Fast preview across all 4221 frames / 188 blocks / three
+  independently bootable disks. Decoded video and AY stay byte-exact.
+- **Parameters:** per-block minimum-match thresholds 0/2/3/4/5/6/8;
+  replace short references with merged literals. All 1316 candidates execute
+  natively with 256-byte output demands and pass all 256 overlap placements.
+  A one-block-per-volume smoke run and two existing test groups pass first.
+  Select measured CPU plus a 125-T/byte disk-service heuristic under capacity,
+  subtracting a four-sector byte margin. No player instructions change:
+  substitution delta **0 T**, with different execution counts.
+- **Size/CPU:** **1818909→1880042 bytes (+61133 / 3.361%)**, **7106→7344
+  video sectors (+238)**; all disks occupy **2542 sectors, two free** after
+  physical interleave. Every selected block matches its measured candidate.
+  Decoder **183122436→161110234 T (-22012202 / 12.0205%)**; producer
+  **11831304→12165270 T (+333966)**; combined **194953740→173275504 T
+  (-21678236 / 11.1197%)**. ROM/IRQ/ULA/physical disk costs are excluded
+  from those CPU totals. Carry copying remains 96256 bytes.
+- **Complete Fuse outcome:** late frames **1239→1149**, per disk **87/348/714**;
+  bad fallback intervals **744→680**, per disk **42/203/435**. AY remains
+  exact at 50 Hz: all **25326 records**, zero underruns/gaps/duplicates.
+  All frames and progress reach EOF. Summed publication span falls
+  **1812124850→1811203044 T (-921806 / 0.0509%)**. Actual read service
+  rises **7403381 T**, seek service **129770 T**; these elapsed measurements
+  must not be added again to overlapping stage durations.
+- **Recovery/reserve:** maximum lateness **65/235/214 fields**, maximum
+  actual deviations **4609027/16663380/15174309 T**; recovery **2/2,
+  10/11, 5/5** runs. Disk 2 remains late at EOF. Median ready bytes become
+  **30243/12278/10**, near-empty packet starts **95/313/561**. Faster refill
+  helps the reserve but neither nominal nor fallback video gate passes.
+- **Coverage:** all selected bytes/cursors, protected RAM, overlap and native
+  instruction sums; dirty-RAM boots, exact prime frames and immutable AY;
+  actual disk-swap code with ROM mocked. Independent complete Fuse boots
+  check every publication/sector/AY and 80 pixel samples per frame, without
+  RAM patches or fast-read retries. Prior unchanged full-frame CPU proof
+  remains applicable. No hardware, interactive replacement or full Fuse
+  pixel comparison; initial drive/IRQ phases were not matched.
+- **Decision:** retain as an optional measured experiment, not a new default
+  or root preview. Disk 1 regresses by one late frame and one bad interval,
+  with only two free sectors per disk. Prioritize useful reserve before hard
+  runs and assess the deeper prepared-command queue separately. Existing
+  root TRDs remain unchanged. No claim of smooth 8⅓-fps playback.
+- **Evidence/reproduction:** [report and commands](toolkit/FAST_TOKEN_PLAYER.md),
+  [candidate probe](toolkit/probe_fast_zx0_tokens.py),
+  [candidate measurements](toolkit/fast_zx0_tokens_probe.json),
+  [builder](toolkit/build_fast_token_player.py),
+  [build proof](toolkit/fast_token_player_build.json),
+  [native benchmark](toolkit/benchmark_fast_token_player.py),
+  [native results](toolkit/fast_token_player_cpu.json),
+  [auditor](toolkit/summarize_fast_token_player.py),
+  [summary](toolkit/fast_token_player_summary.json),
+  [full source/metadata/traces](toolkit/fast_token_player_evidence/manifest.json).
+
 ## 2026-09-28 — audit advance frame preparation in the current Fast reservoir
 
 - **Objective/input:** answer whether difficult-frame changes can be prepared
