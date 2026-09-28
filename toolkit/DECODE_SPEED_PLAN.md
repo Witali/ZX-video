@@ -82,6 +82,16 @@ cost, actual compression and original-RGB quality are measured. Investigate
 adaptive five-level cells within the existing bounded-window workflow;
 do not evaluate multiple complete image sets to choose a format.
 
+The user's [one-bit offset proposal](DITHER_OFFSET.md) is now measured as
+0/25/50/75% versus 25/50/75/100%. INK/PAPER orientation can encode that choice
+without extra bytes, but each cell still has only four levels. Cells with
+both extremes require clipping: 0.59517% of active logical samples changed
+on average. All three bounded XOR/ZX0 controls grew (0.7..3.7%), so retain
+the experiment without adopting it. If both endpoints must remain, the
+existing orientation already encodes 0/25/50/100% versus 0/50/75/100%.
+Continue native phase correction for those current quartets; a new stored
+selector is not required. The native phase implementation is still pending.
+
 Use the [integrated Fast ZX0 player](FAST_ZX0_PLAYER.md) as the next
 experimental baseline. Full playback retains all 25326 AY records at 50 Hz
 and improves late frames **1321→1239** and bad intervals **783→744** against

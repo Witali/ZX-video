@@ -21,6 +21,44 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-28 — measure the per-cell brightness-offset proposal
+
+- **Objective/input:** evaluate the user's new proposal before implementing
+  the native phase correction. All **4221** no-credits compact frames; same
+  resolution, palette endpoints and AY. Interpret the selector as
+  **0/25/50/75%** versus **25/50/75/100%**; separately verify that the existing
+  format already provides the endpoint-preserving alternative.
+- **Parameters/change:** minimize per-cell squared mean-colour error by
+  moving the less common endpoint one coverage step, retaining selectors
+  over temporal ties. Encode the selection in INK/PAPER orientation:
+  **0 extra bytes**, versus **96** for an explicit bit per full-frame cell.
+  Host frame size stays **3840 bytes**. There are still four selectable
+  values per cell; a shared bit does not permit all five inside one cell.
+- **Quality/results:** **106275** active cell occurrences have both extremes,
+  across **4136** frames. **231527** logical samples change, mean
+  **0.59517%** and worst frame **2.63672%**; mean native-pixel changes
+  **0.14879%**. Mean averaged-RGB MSE **23.47648**, maximum **107.01090**,
+  relative to phase-aligned compact frames, not original movie RGB.
+- **Compression controls:** same three **32-frame** windows, carried n-1
+  XOR predictors, optimal ZX0, **15872-byte** block cap and four-byte block
+  headers. Sizes **33827→35065**, **48338→48692**, **32330→32719** bytes.
+  All blocks round-trip; these **0.7..3.7%** increases exclude the full
+  FAP3/AY pipeline and cannot predict disk count or frame delivery.
+- **Coverage:** all frames round-trip and satisfy the chosen error minimum;
+  five new tests, plus eleven existing phase/five-level tests. All non-FLASH
+  attributes and packed bytes exercised. Worst MSE frames **3634/221/222**
+  visually inspected; some high-contrast details acquire extra stippling.
+- **Decision/limits:** keep the measured host experiment, do not switch
+  defaults: these controls add distortion without a size benefit. The
+  endpoint-preserving sets are already encoded by existing orientation;
+  native phase correction remains the next implementation step. Runtime
+  instruction delta **0 T**, no new native-consumer timing, no TRDs generated,
+  no complete playback or physical-drive verification. Goal remains unmet.
+- **Evidence:** [findings and commands](toolkit/DITHER_OFFSET.md),
+  [script](toolkit/probe_dither_offset.py), [tests](toolkit/test_dither_offset.py),
+  [report](toolkit/dither_offset_probe.json),
+  [comparison](toolkit/dither_offset_comparison.png).
+
 ## 2026-09-28 — reproduce opposite dither phase and prototype five-level cells
 
 - **Objective/input:** investigate the user's reversed-dither blocks and
