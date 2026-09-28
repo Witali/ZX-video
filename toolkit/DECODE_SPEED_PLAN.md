@@ -17,6 +17,17 @@ quality policy is selected. Use the completed
 [pressure-selection controls](PRESSURE_TOKEN_SELECTION.md) for calibration,
 not as the production search workflow.
 
+The first [windowed implementation](WINDOWED_OPTIMIZATION.md) is measured:
+64-frame lookahead, carried producer/consumer and disk-space state, 6198
+local comparisons in 3.215 seconds using cached costs. Search creates no
+alternative images; the automatic prepared-stream runner builds one selected
+set and checks all three disks through EOF. Actual lateness is **1186/4221**,
+versus **1239** for Fast, but the model predicts only **595** late frames.
+Calibrate that gap using local traces before another complete final run.
+Keep the current images: both video gates fail, and generic media frontend
+integration remains pending. Extend the same bounded workflow to other
+measured encoder/preparation choices rather than reinstating whole-set search.
+
 Fit the authorized edit in [movie_no_credits.json](movie_no_credits.json) on
 at most three independently bootable TRDs. Preserve the main story and
 post-credit scene through EOF, resolution, 25/3 fps and the existing 50 Hz

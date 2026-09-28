@@ -49,6 +49,12 @@ video data. Video still misses deadlines: this is an experimental preview,
 separate from the verified release and the generic converter defaults.
 Disk images are stored in Git LFS.
 
+An experimental [automatic windowed optimizer](toolkit/WINDOWED_OPTIMIZATION.md)
+selects ZX0 variants over 64 future frames using cached measurements, then
+builds and verifies one final set. It currently accepts prepared streams
+and profiles; integration with the video-file command above is pending.
+Its complete test still misses video deadlines.
+
 Historical documentation:
 
 - [Converter options, reports and verification](toolkit/GENERIC_CONVERTER_ru.md)

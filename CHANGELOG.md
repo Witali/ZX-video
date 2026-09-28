@@ -21,6 +21,59 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-28 — automatic selection over a carried 64-frame window
+
+- **Objective/input:** implement the user's bounded-window search instead
+  of evaluating multiple complete image sets. Reuse measured candidates
+  and profiles for Fast `2881667`: 4221 frames, 188 blocks, three independent
+  volumes and unchanged video/AY. This is prepared-stream automation;
+  integration with the generic video-file frontend remains pending.
+- **Parameters/workflow:** a 64-frame / 7.68-second horizon, at most two
+  local block choices, carried slot/producer/consumer/packet/schedule state,
+  and reserved space for all future blocks. Initial three blocks remain
+  size-first. Use 125 disk T/byte, 7 producer T/byte, measured 256-byte decode
+  slices scaled by 51/50, and a four-sector capacity margin. **6198 local
+  comparisons in 3.215 seconds** with cached costs; no alternative TRD builds
+  or complete Fuse runs. The automatic script builds one selected set and
+  performs exactly three final cold-start EOF runs.
+- **CPU/size:** instruction substitutions **0 T**; decoder
+  **183122436→171302085 T (-11820351)**, producer
+  **11831304→12083942 T (+252638)**, combined
+  **194953740→183386027 T (-11567713)**. Compressed video
+  **1818909→1866452 bytes**, sectors **7106→7292**. Occupied/free sectors
+  **2493/51, 2542/2, 2540/4**. Native costs exclude ROM/disk/IRQ/ULA.
+- **Actual final playback:** **1186** late frames (**89/382/715**) versus
+  Fast **1239**, unweighted **1149** and earlier pressure control **1105**.
+  Invalid fallback intervals **665**; maximum lateness **56/214/213 fields**;
+  actual maximum deviations **3970853/15174312/15103422 T**. Recovery
+  **3/3, 10/11, 5/5**; disk 2 remains late at EOF. Both video gates fail.
+  Summed publication span **1809713979 T**; read/seek elapsed service
+  **226573372/5110379 T**, including ROM/disk/IRQ/contention. All **25326 AY
+  records** remain exact at 50 Hz without gaps, duplicates or underruns.
+- **Model limitation:** baseline estimates **47/179/427** late frames versus
+  observed **86/404/749**; selected estimates **45/148/402** versus actual
+  **89/382/715**. The model underestimates lateness and cannot pass a timing
+  gate. Do not confuse cached-cost planning time with media conversion,
+  native candidate measurement or the final complete playback check.
+- **Coverage:** four model tests check bounded trials, capacity, carried
+  partial work and recovery to original deadlines. All selected native
+  blocks pass byte/overlap/cursor/protected-RAM checks and instruction-table
+  sums. Dirty-RAM boot, exact prime state and mocked-ROM swap checks pass.
+  All three final Fuse runs reach EOF and check all frames/AY/sectors plus
+  80 pixel samples per frame. No full-screen Fuse or physical-drive test.
+  The archived-evidence audit passes both write and independent readback.
+- **Decision:** retain the bounded automatic mechanism as an experiment;
+  calibrate windows against actual traces before another final-set run.
+  It does not yet outperform the best earlier control and disk 1 regresses
+  by three late frames. Root images and release remain unchanged.
+- **Evidence/reproduction:** [method and commands](toolkit/WINDOWED_OPTIMIZATION.md),
+  [planner](toolkit/windowed_zx0_planner.py),
+  [prepared-stream runner](toolkit/optimize_prepared_player.py),
+  [planning report](toolkit/windowed_tokens_plan.json),
+  [final summary](toolkit/windowed_player_summary.json),
+  [archive](toolkit/windowed_player_evidence/manifest.json),
+  [auditor](toolkit/audit_windowed_player.py).
+
 ## 2026-09-28 — reserve-pressure control measurements and windowed-search requirement
 
 - **Objective/input:** spend lossless ZX0 expansion where reserve depletion
