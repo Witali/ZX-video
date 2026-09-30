@@ -21,6 +21,35 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — reprofile current LZSA2 playback stages
+
+- **Objective/input:** user-requested bottleneck comparison, baseline
+  `de0a50d`; unchanged optional LZSA2 TRD, 192 frames (source windows
+  629/2857/3855), 21 blocks, 154956 bytes / 606 runtime sectors, original AY.
+- **Method/change:** fresh deterministic frame and decoder/producer probes,
+  plus real Fuse pipeline tracing through EOF. No native or stream change:
+  absolute instruction counts below, delta 0 T and 0 compressed bytes.
+- **Measured:** elapsed foreground interval 91220166 T: transfer 38845163
+  (42.58%), output 20858966 (22.87%), reconstruction 20133887 (22.07%),
+  metadata 3313930 (3.63%), mixed control/prefetch/wait 8068220 (8.84%).
+  Separately, CPU output 20246890 T, LZSA2 19412006 T, fragments 9090556 T;
+  packet LDI copies cost at least 5183040 T. Motion/spatial/cache handlers
+  consume 0 T on this fixture. Queue empty at 153/192 packet starts; worst
+  transfer 1249405 T. Disk windows are nested, never added to stage totals.
+- **Coverage/result:** all 21 guarded decoder blocks, 192 full compact/both
+  native screens in CPU model; complete Fuse EOF, 606 sectors, 1152 exact
+  AY ticks, 80 pixel samples/frame. Publication span repeats 90549516 T,
+  7.478465 fps, 134 missed deadlines, max 133 fields, 24 invalid fallback
+  intervals; late run 67..191 remains unrecovered. No full-movie/hardware
+  verification. Prior full captures remain valid for this unchanged image.
+- **Decision:** prioritize avoiding decoded-packet copies, then screen
+  writes and decoder parsing. Ideal removal of all LDIR repeat overhead
+  saves at most 995975 T before replacement overhead, far below packet-copy
+  cost. Do not optimize motion for this fixture or launch another codec sweep.
+  [Analysis](toolkit/LZSA2_STAGE_PROFILE.md),
+  [reproducer](toolkit/profile_lzsa2_stages.py),
+  [report/evidence index](toolkit/lzsa2_stage_profile.json).
+
 ## 2026-09-30 — accelerate LZSA2 flag dispatch without changing the stream
 
 - **Objective/input:** user-requested decoder acceleration, baseline

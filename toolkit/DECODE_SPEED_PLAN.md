@@ -6,6 +6,17 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Fresh LZSA2 stage profile (2026-09-30):** unchanged `de0a50d` test disk,
+192 frames. Real elapsed stages: packet transfer 42.58%, screen output
+22.87%, reconstruction 22.07%, metadata 3.63%, control/prefetch/wait 8.84%.
+Separate CPU: screen 20246890 T, LZSA2 19412006 T, fragments 9090556 T,
+packet-copy lower bound 5183040 T; motion/spatial/cache handlers 0 T on this
+fixture. Empty queue at 153/192 packet starts; transfer max 1249405 T.
+Prioritize packet-copy reduction, screen writes and decoder parsing; ideal
+LDIR-repeat removal is bounded by 995975 T before new loop overhead.
+Fresh full Fuse repeats 7.478465 fps and both failed timing gates. No player
+or stream change. [Profile and limits](LZSA2_STAGE_PROFILE.md).
+
 **Requested LZSA2 optimization (2026-09-30):** adopt restored upstream
 S/P token dispatch, verified independently with full CPU flags. Same stream:
 19844626 -> 19412006 T (-2.18%), 391 -> 384 bytes. Full Fuse publication

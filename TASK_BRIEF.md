@@ -49,7 +49,20 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: LZSA2 flag dispatch
+## Latest completed milestone: fresh LZSA2 stage profile
+
+User-requested profiling of unchanged `de0a50d`, same 192 frames/21 blocks.
+Elapsed Fuse: transfer 42.58%, draw 22.87%, reconstruction 22.07%, metadata
+3.63%, control/prefetch/wait 8.84%. Separate CPU: output 20246890 T, LZSA2
+19412006 T, fragments 9090556 T; packet-copy lower bound 5183040 T. Motion,
+spatial and motion-cache handlers execute zero times on this fixture; retain
+generic support. Empty queue at 153/192 packets, worst transfer 1249405 T.
+Fresh EOF/AY/pixel checks pass; playback still 7.478465 fps, 134 late frames,
+maximum 133 fields and final run unrecovered. No player/stream change.
+Reuse [profile, caveats and reproducer](toolkit/LZSA2_STAGE_PROFILE.md).
+Next: remove decoded packet copies; screen writes and LZSA2 parsing follow.
+
+## Previous milestone: LZSA2 flag dispatch
 
 User-requested LZSA2 optimization: restore upstream parity/sign dispatch
 and extend the component verifier. Same 21 blocks: 19844626 -> 19412006 T
@@ -114,7 +127,7 @@ No native speed/memory/cadence claim. See
 
 ## Next finite deliverable: avoid decoded packet copies
 
-Transfer remains the largest elapsed stage (39637293 T); packet starts find
+Transfer remains the largest elapsed stage (38845163 T); packet starts find
 an empty queue in 153/192 cases. Inspect using slot bytes directly instead
 of copying every packet into another buffer. First account for packets
 crossing blocks, slot lifetime, motion/Huffman pointers and IRQ paging.
