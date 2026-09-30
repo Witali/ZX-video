@@ -141,11 +141,21 @@ Do not add another entropy layer merely to reduce the five-byte cell size.
 The measured opportunity is a different symbol representation that can use
 the existing lookup operations. Keep Fast ZX0 while testing this direction.
 
-**Next finite deliverable:** integrate row-table packet consumption and
-one dictionary-transition boundary with exact native output, RAM/IRQ and
-end-to-end CPU accounting. Verify that the measured savings survive those
-costs before accepting the method. TRD rebuilding and full independent-boot
-EOF/cadence verification follow an integrated candidate.
+## Integrated test follow-up: timing does not pass
+
+The user's subsequent single-TRD request produced a 192-frame fixture with
+one 172-row book covering all full frames and cold seeds. It reuses FAP3
+packet consumption and the unchanged renderer, avoiding dictionary changes.
+The full real-Fuse run verifies pixels and AY but averages 6.7491 fps, with
+174 late frames and 5.38 seconds of accumulated delay. It fails both timing
+contracts; see [the test report](FIVE_LEVEL_TEST_TRD.md). The earlier probe
+numbers above remain valid only within their isolated scope.
+
+**Next finite deliverable:** profile packet/reconstruction/reservoir costs
+on that saved fixture before measuring one row-aware alternative. Legacy
+sub-byte motion operations do not retain their spatial meaning on arbitrary
+dictionary indices. Locate the dominant delivery cost before adding a
+dictionary-transition boundary or rebuilding a full disk set.
 
 ## Evidence and reproduction
 
@@ -166,6 +176,6 @@ python toolkit/audit_five_row_tables.py --cache .tmp/hybrid-five --zx0 <zx0.exe>
 ```
 
 Both compression probes are complete within their stated 96-frame scope.
-No new quantization, movie-wide dictionary search, TRDs or full playback
-were performed. Identical restored packets imply identical five-level
+Those two probes did not perform new quantization, movie-wide dictionary
+search, TRDs or full playback. Identical restored packets imply identical five-level
 pictures given the same seed; the tests do not replace cold-start validation.

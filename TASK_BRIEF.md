@@ -49,38 +49,35 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: lossless five-level dictionary comparison
+## Latest completed milestone: one five-level TRD, timing failure measured
 
-After `37578d8`, reuse the same 96-frame packet caches on `codex/dither-4x4`.
-Whole-cell dictionaries increase ZX0 bytes and are rejected. Learned row
-books contain 93–114 entries and use two 256-byte native lookup pages.
-Offline window selection (row books for 629/3855, hybrid for 2857) gives
-68648→65294 bytes and Fast ZX0 11380407→11181994 T. Book assets are included;
-install/transition/packet CPU, IRQ/ULA and physical latency are not.
+After `a7cdf98`, build one 192-frame montage (64 frames at 629/2857/3855),
+with original AY slices, five-level 2x2 pixels, one full-volume 172-row book
+and the integrated Fast ZX0 player. The separate `05d2bf4` fix removes the
+decoder's fixed Huffman-body placement assumption with 0 T cost change.
+The image is independently bootable and occupies 489 file sectors.
 
-The unchanged Z80 renderer passes nine synthetic dense/sparse checks on
-both banks with learned tables: 154684 T dense, 27101 T sparse, 0 T delta.
-Four dictionary tests pass. The pictures remain exactly the five-level
-2x2 output described in [HYBRID_FIVE_LEVEL.md](toolkit/HYBRID_FIVE_LEVEL.md).
-Use [FIVE_LEVEL_COMPRESSION_PLAN.md](toolkit/FIVE_LEVEL_COMPRESSION_PLAN.md)
-and its three reports as the handoff. Full seed rows and unchanged retained
-state were not included in book training; no integrated player is verified.
+All 192 frames reach EOF in real Fuse. AY records, sectors and sampled
+pixels are exact; six full screens match all 41472 bytes. Thirteen tests
+pass. **Cadence fails:** mean 6.7491 fps, 174 late frames, maximum 269 fields
+of accumulated delay, an unrecovered late run through EOF. Both nominal and
+fallback gates fail. Keep the root test image for visual inspection only.
 
-## Next technical milestone: row-table packets and one dictionary transition
+Read [FIVE_LEVEL_TEST_TRD.md](toolkit/FIVE_LEVEL_TEST_TRD.md), its summary,
+archived traces and per-frame quality before any additional runs. Do not
+repeat the earlier isolated compression tests or infer a playback pass from
+their byte/decoder savings. Full-movie capacity remains unverified.
 
-**Deliverable:** bounded packet consumption and a safe dictionary transition,
-with exact seed/native n-2 state, full affected CPU counts, RAM and IRQ checks.
-The existing hybrid stream is the fallback and compression reference. Load
-the table into the existing lookup path; keep five-byte escapes for general
-inputs. Preserve the old book while pending frames reference it, or account
-for translating/materializing retained state. Include seed rows when choosing
-the new book; keep independent cold boot. Do not shrink the disk buffer.
+## Next finite deliverable: locate delivery cost in the row-index prototype
 
-Reuse windows 629, 2857 and 3855 and cached exact packets. Count all new
-parsing, table installation, paging and output costs; keep ROM/drive timing
-separate. Stop with an integration/cost decision and focused commit. A full
-generic converter/player build and release TRDs follow a validated candidate;
-the current window byte/CPU savings do not prove cadence or disk count.
+If continuing optimization, profile the existing 192-frame fixture's packet
+handling, reconstruction and reservoir consumption; keep deterministic CPU
+separate from ROM/disk windows. The legacy sub-byte motion predictor treats
+dictionary indices as old packed pixels, so its suitability is unproven.
+Measure one bounded row-aware alternative against this saved baseline,
+preserving the exact five-level reference and independent boot. Do not
+expand into a dictionary transition or full disk set until delivery cost
+supports it. The requested single-image test is complete, not a release.
 
 ## Release gate and handoff
 

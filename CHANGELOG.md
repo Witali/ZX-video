@@ -21,6 +21,45 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — build and measure one five-level test TRD
+
+- **Objective/input:** user requested one image, actual frame cadence and
+  sampled picture quality. Three fresh 64-frame windows at 629/2857/3855,
+  original RGB, existing corresponding 50-Hz AY, fixed zoom 1.25 and 2x2
+  dither. This is a 192-frame montage, not a complete-movie release.
+- **Implementation:** one full-volume 172-row dictionary fits the existing
+  512-byte renderer tables. Preserve all quantized five-level pixels; retain
+  FAP3 motion/Huffman, Fast ZX0 and independent startup. No renderer opcode
+  changes, 0 T instruction delta. Startup tables use direct ZX0 compression.
+- **Build attempts:** the initial reference validator passed a NumPy view
+  where bytes were required; corrected and rerun. The next attempt lacked
+  the required format-specific series fingerprint; supplied a deterministic
+  raw-derived fingerprint. A subsequent native build exposed the fixed ZX0
+  placement assumption, repaired in the separate entry below. No failed
+  build is presented as a verified artifact.
+- **Capacity:** `ZX-video-five-level-test.trd` is 655360 bytes, independently
+  bootable, tracked in LFS. Files occupy 489 sectors / 125184 bytes; 2055
+  sectors remain free. Video is 112364 bytes in 439 padded sectors.
+- **Real-Fuse result:** whole test disk reaches EOF and 100% progress;
+  192 publications and all runtime sectors verified. **Timing fails:**
+  mean 6.7491 fps, 174 missed nominal deadlines, maximum 269 fields / 5.38 s
+  cumulative delay, 39 intervals outside fallback. Late run 14..57 recovers
+  at 58; run 62..191 does not recover. AY's 1152 records are exact with zero
+  missed/duplicate fields or underruns, but delayed video breaks A/V sync.
+- **Quality:** 80 offsets sampled on every frame without errors. Six full
+  screens from separate real-Fuse runs, covering both banks and hard cuts,
+  match all 41472 bytes including progress. All 192 host frames match the
+  independent five-level reference. Mean active-image RGB MSE improves by
+  10.016%, 1.196%, 7.494% versus four-code references; no frame worsens.
+  Visually inspected the contact sheet; palette/texture limits remain.
+- **Verification/decision:** thirteen decoder/dictionary tests, dirty-RAM
+  boot and prime checks pass. Preserve one visual prototype, reports and
+  reproduction scripts; reject promotion to playback default because both
+  timing gates fail. Do not extrapolate whole-movie capacity or fidelity.
+  [Report and commands](toolkit/FIVE_LEVEL_TEST_TRD.md),
+  [measurements](toolkit/five_level_test_summary.json),
+  [preview](toolkit/five_level_test_preview.png).
+
 ## 2026-09-30 — place Fast ZX0 from actual Huffman code bounds
 
 - **Objective/baseline:** build a newly trained FAP3 test after `a7cdf98`.

@@ -17,7 +17,7 @@ import time
 import numpy as np
 import disk_layout
 from bulk_frame_stream import read_packet
-from frame_output_pipeline import display_screen
+from row_dictionary_video import display_screen
 from probe_motion_entropy import Reader
 from probe_spatial_contexts import read_header
 from smoke_test_fuse import hidden_startupinfo
@@ -263,7 +263,7 @@ def main():
             if args.trace_pipeline:pipeline_events.append(dict(kind='native_done',tstate=v[0],page=v[1]))
             frame=m['frame_start']+native_count
             samples_at=v[2:] if target_samples else (v[2:2+len(samples)] if native_count%2 else v[2+len(samples):])
-            wanted=display_screen(states[frame].tobytes(),black_borders=True)
+            wanted=display_screen(states[frame].tobytes(),m)
             bad=[i for i,x in zip(samples,samples_at) if x!=wanted[i]]
             # Bar occupies bitmap offsets 10e0/11e0 and attribute 1ae0.
             bad=[i for i in bad if not (0x10e0<=i<0x1100 or 0x11e0<=i<0x1200 or 0x1ae0<=i<0x1b00)]
