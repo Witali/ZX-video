@@ -21,6 +21,37 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — analyze and specialize LZ4 short-run decoding
+
+- **Objective/input:** user-requested LZ4 improvement analysis; baseline
+  `e681055`, same 21 saved LZ4-HC12 blocks / 192 exact five-level frames,
+  323940 decoded bytes. One generic implementation and one fast candidate.
+- **Change:** resumable standard LZ4 ASM, guarded host overlap parser and
+  component profiler. Inline 1..14-byte literals and 4..18-byte matches;
+  avoid two `EX (SP),HL` operations for short matches. Keep 256-byte quota
+  checks on long copies, existing slot banks and unchanged stream bytes.
+- **Measured results:** decoder 19847554 -> 15657014 T (-4190540, -21.11%),
+  code/state 267 -> 280 bytes, maximum video slice 20126 -> 15338 T. Paths
+  save exactly 58/101 T on short literals/matches and add 19/22 on extended
+  paths; run counts reproduce the aggregate delta exactly. Versus LZSA2,
+  decoder/producer saves 3598927 T but adds 28492 bytes / 111 sectors.
+- **Analysis:** prioritize bounded codec selection and Z80-aware host
+  parsing. Ideal LDIR-repeat removal is limited to 1366050 T before new
+  overhead. Reject simple one-or-three-byte offsets: +18092 bytes estimated
+  from actual distances. No measured alternative-offset decoder or fps.
+- **Verification:** both variants pass all 21 banked/native blocks and 46
+  edges each, independent full-flags per-slice cycles, author LZ4 decoding,
+  overlap/cursor/bank/sector/EOF checks, nine malformed host cases and
+  synthetic IM1 runs (183/143 video interrupts). Initial assembler fixes,
+  a synthetic interrupt acceptance assumption and overlapping flat-test
+  input placement were corrected; affected checks reran successfully.
+- **Decision:** retain verified component experiment and plan; defer
+  production adoption pending actual disk/queue/publication timing. Current
+  TRD hash unchanged. No new boot, AY cadence, Fuse or full-movie release.
+- **Reproduction:** [analysis and commands](toolkit/LZ4_OPTIMIZATION.md),
+  [decoder](toolkit/resumable_lz4.py), [profile](toolkit/row_lz4_profile.json),
+  [evidence](toolkit/row_lz4_evidence).
+
 ## 2026-09-30 — test compiled COPY/FILL row output
 
 - **Objective/input:** reduce native pixel-output work toward smooth

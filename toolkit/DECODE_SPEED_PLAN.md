@@ -6,6 +6,18 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**LZ4 analysis and short-run prototype (2026-09-30):** same 21 saved blocks,
+identical compressed/decoded bytes. Inline short literal/match copies and
+avoid two stack exchanges on short matches: 19847554 -> 15657014 T (-21.11%),
+267 -> 280 bytes. All guarded banked blocks, 46 edge cases per variant and
+independent full-flags/synthetic-IRQ checks pass. Versus current LZSA2, save
+3598927 decoder/producer T but add 28492 bytes / 111 sectors. No candidate
+fps or full-movie claim; root TRD unchanged. Retain as an experiment pending
+actual delivery timing. Next: bounded codec selection with real disk costs,
+then a Z80-cost-aware standard LZ4 parse. Unrolled copies have at most
+1366050 T gross headroom. Reject simple one-or-three-byte offsets: estimated
++18092 bytes on the same parse. [Analysis and evidence](LZ4_OPTIMIZATION.md).
+
 **Compiled row output (2026-09-30):** reject the COPY/pattern-FILL/solid-FILL
 command format on the same 192 exact five-level frames. All bitmaps and
 1152 suffix/boundary cases pass. Optimistic output 20246890 -> 17743885 T,

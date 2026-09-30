@@ -49,7 +49,18 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: compiled row output feasibility
+## Latest completed milestone: LZ4 analysis and fast short runs
+
+Baseline `e681055`; unchanged 21 LZ4-HC12 blocks and 192-frame decoded input.
+Direct short copies and fewer stack exchanges reduce decoder 19847554 ->
+15657014 T (-21.11%), with identical compressed bytes and 13 extra code bytes.
+Independent full-flags/IRQ runs, guarded banked decoding and 46 edge cases
+per variant pass. Versus current LZSA2, decoder/producer saves 3598927 T but
+video grows by 28492 bytes / 111 sectors. Retain experimental component;
+no new disk or candidate playback claim. Root TRD unchanged. Reuse
+[analysis, plan and evidence](toolkit/LZ4_OPTIMIZATION.md), not a codec sweep.
+
+## Previous milestone: compiled row output feasibility
 
 Baseline `42bcc0f`, unchanged 192-frame five-level fixture. Native generated
 COPY/FILL runs pass all bitmaps and 1152 boundary cases. Their optimistic
@@ -166,13 +177,13 @@ No native speed/memory/cadence claim. See
 
 Keep the borrowed-literal image and exact five-level packet bytes. The
 compiled-output and whole-symbol-motion candidates regress total CPU.
-Reuse saved LZ4-HC data from the modern-codec assessment (183448 bytes vs
-154956 for current LZSA2); implement/measure one resumable native decoder
-with exact bytes, instruction costs, overlap, paging and slice bounds.
-Do not repeat the host codec sweep or ignore the earlier capacity rejection.
-Only consider selective fast blocks where total delivery, including added
-sectors, improves within the disk budget. If component evidence supports
-it, integrate one selected candidate and verify full Fuse publication/AY.
+The LZ4 short-run component is now verified: 15657014 decoder T, 183448
+bytes vs 19412006 T / 154956 bytes for LZSA2. Reuse its archived results.
+Next evaluate selective blocks in one difficult window, including added
+sectors and a concrete mixed-decoder placement/dispatch budget. Do not
+repeat the host codec sweep or ignore the earlier capacity rejection.
+Only integrate a candidate whose total delivery can improve within the
+disk budget, then verify full Fuse publication/AY with actual disk latency.
 Preserve the complete movie objective; a window or average fps cannot pass.
 
 ## Release gate and handoff
