@@ -21,6 +21,19 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — scope optimization work to reduce repeated model work
+
+- **Objective:** reduce token consumption while preserving engineering and
+  release checks, following the user's request for a more efficient task.
+- **Change:** add [a focused task brief](TASK_BRIEF.md) and an agent-rule
+  pointer. Define one deliverable, evidence reuse, bounded comparisons,
+  targeted tool output and risk-based verification. Scope the next technical
+  milestone to a five-level feasibility decision using existing work.
+- **Coverage/decision:** reviewed the documentation diff and starting state.
+  Mark older uncommitted five-level reports as preceding the latest source
+  changes. No technical experiments, player changes or TRDs in this change;
+  no measured token-saving claim. Keep full EOF release checks mandatory.
+
 ## 2026-09-28 — implement and measure optional native phase correction
 
 - **Objective/input:** implement the accepted phase correction without

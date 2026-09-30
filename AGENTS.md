@@ -1,5 +1,10 @@
 # Project rules
 
+- Use [TASK_BRIEF.md](TASK_BRIEF.md) to scope optimization milestones and
+  reuse evidence with minimal context. Finish the authorized deliverable
+  before opening another experiment. Its scope controls do not weaken any
+  correctness, timing or release requirement below.
+
 - Write and maintain project documentation and agent instruction files in
   English. Add a Russian translation only when the user explicitly requests
   it for the relevant document or task.
