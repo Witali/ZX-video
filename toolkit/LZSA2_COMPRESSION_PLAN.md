@@ -16,8 +16,10 @@ table and fallback/masks are counted. Host screens and native outer-codec
 checks pass. The subsequent native CB41 renderer now passes both screens,
 22 edges and independent timing/IRQ checks: 7910734 T versus the old frame
 component's 14295892 T. Supplied-packet ownership excludes delivery/paging
-costs; actual playback is still unmeasured. Integrate one timing-test disk,
-preserving brightness-before-dither ordering and independent cold boot.
+costs. The subsequent [independent window TRD](CELL_CODEBOOK_PLAYER.md) now
+passes real playback: zero late deadlines at 25/3 fps, exact AY and all full
+screens. Most sectors are prefetched; require 192 continuous frames next
+before claiming sustained delivery or whole-movie capacity.
 [Results, protocol and limits](CELL_CODEBOOK.md).
 
 **Reset-placement follow-up:** two bounded tail candidates retain all raw

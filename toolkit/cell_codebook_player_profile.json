@@ -1,0 +1,161 @@
+{
+  "complete": true,
+  "release": false,
+  "goal_achieved": false,
+  "date": "2026-09-30",
+  "baseline_commit": "d77b8ad",
+  "scope": "Independently cold-booted 64-frame CB41 window, source states 128..191. Not full-movie or sustained multi-volume proof.",
+  "trd_sha256": "dee53aefae57ae81c3e1ea4fc1708bcd86568886b0ada1c47da3c39098957d78",
+  "frames": 64,
+  "full_screens_compared_bytes": 442368,
+  "fps": 8.333332400609821,
+  "publication_span_tstates": 26803227,
+  "nominal_late_frames": 0,
+  "max_late_fields": 0,
+  "late_runs": [],
+  "actual_phase_tstates": [
+    0,
+    16
+  ],
+  "actual_interval_tstates": [
+    425435,
+    425456
+  ],
+  "bad_actual_intervals": 0,
+  "ay_ticks": 384,
+  "ay_records_exact": true,
+  "ay_field_gaps": 0,
+  "ay_field_duplicates": 0,
+  "audio_underruns": 0,
+  "progress_100_percent": true,
+  "dirty_ram_boot_exact": true,
+  "video_bytes": 42303,
+  "video_sectors": 166,
+  "used_sectors": 218,
+  "runtime_sectors_checked": 166,
+  "sectors_read_after_first_publication": 36,
+  "elapsed_timing": {
+    "bootstrap_tstates": 12039405,
+    "playback_tstates": 35922986,
+    "bootstrap_and_playback_tstates": 47962391,
+    "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+  },
+  "new_instruction_stages": {
+    "schedule": 81,
+    "cb41_packet": 23636,
+    "book_load": 54028,
+    "setup": 317653,
+    "bitmap_mask": 1053393,
+    "mode": 831934,
+    "dictionary": 2258800,
+    "cell_return": 559787,
+    "literal": 1850079,
+    "attribute_mask": 954576,
+    "attributes": 84512
+  },
+  "new_instruction_tstates": 7988479,
+  "memory": {
+    "screens": [
+      5,
+      7
+    ],
+    "video_slots": [
+      0,
+      1,
+      3
+    ],
+    "audio": 4,
+    "unused_legacy_huffman": 6,
+    "fixed_kernel": [
+      36864,
+      37204
+    ],
+    "rows": [
+      40448,
+      40960
+    ],
+    "book": [
+      43008,
+      45056
+    ],
+    "popcount": [
+      45056,
+      45312
+    ],
+    "packet": [
+      25600,
+      28696
+    ],
+    "stack_top": 40432,
+    "disk_stack_top": 39936
+  },
+  "startup_book_transposition_tstates": 54028,
+  "cycle_scope": "Instruction-table CPU with mocked disk and host-selected screen in CPU test; actual Fuse timing/IRQ/ROM/ULA is separate.",
+  "decision": "Retain independent CB41 test disk. The entire selected window meets exact six-field deadlines with exact pixels and AY. Expand to the full 192-frame fixture to test sustained disk delivery, then the edited movie; keep five brightness levels and independently bootable volumes.",
+  "limitations": [
+    "Only 64 frames, book learned on this window",
+    "130 of 166 runtime video sectors arrive before the first publication",
+    "Full movie, three-disk capacity and generic converter integration remain unverified"
+  ],
+  "archives": {
+    "build.json": {
+      "file": "build.json.gz",
+      "sha256": "463ed6136f017d167820dc862cb118d0f8eaae54408cc007f5563c271915ae2c",
+      "raw_sha256": "89a0705524bcb175d6a04c6aca5aa0982637250be812581feac0b5c067f95061"
+    },
+    "metadata.json": {
+      "file": "metadata.json.gz",
+      "sha256": "0e3d2a00280cf6766400cc7b29ad83d9ae5703a5ad9a46d9b8fb367788b59c24",
+      "raw_sha256": "425b4b27b521f0bc40f08ce59eca0f7f9eb4eb80513df75e53bf97767f7f6ac4"
+    },
+    "cpu.json": {
+      "file": "cpu.json.gz",
+      "sha256": "c641d502b8781bfadd5e52b934e10e977e3475e8fe5fa851301344afea362be4",
+      "raw_sha256": "8181532b71ea3949b739cce43170c3a2f1ebc64a41f62dbd53bc403193ae9178"
+    },
+    "timing.json": {
+      "file": "timing.json.gz",
+      "sha256": "7322227496177da0f745b2561b5fce859f1aa76888b810ed3e32eee3b821e5d2",
+      "raw_sha256": "baf0eb16acb0597ea5d5032c5ca82fd4fc0b0907338244da0428beb2fa72befb"
+    },
+    "timing.trace.txt": {
+      "file": "timing.trace.txt.gz",
+      "sha256": "d2a4e0bd2239b29fca86946647fd8be94dd442527a888e922b4a092abed7de5b",
+      "raw_sha256": "45a78bfc47e636417281f45235581f1c83cd261ddc9e3c7135aed7e87c8980a9"
+    },
+    "timing.debugger.txt": {
+      "file": "timing.debugger.txt.gz",
+      "sha256": "bf3607a2e59ae1972c325e2c19df2e9afb663d25410d90f05d23b8cae320446f",
+      "raw_sha256": "5b8a568e99b505176ebd322f3fe2946c3cf1e27b321060d2a20c44a54a4e9259"
+    },
+    "timing.stderr.txt": {
+      "file": "timing.stderr.txt.gz",
+      "sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "captures.json": {
+      "file": "captures.json.gz",
+      "sha256": "6ddb9059003275cafa050a974db3c5422e370c96e220e34b1cdb1b6a26c17b5e",
+      "raw_sha256": "b2c0e4d5b72cbcba6db60173a5dfe6fdec5db35aead83ea223d75bc2d58c369b"
+    },
+    "initial-build-before-progress-fix.json": {
+      "file": "initial-build-before-progress-fix.json.gz",
+      "sha256": "ba5905994cd33ce2f4ae06e03a1a4ea273315795fb1bc0ba4cea845d197f68e7",
+      "raw_sha256": "1dfee123c2ef87eb190ff70f75b7a11b642fecca3cb24e6cd5d660efaa1ec616"
+    },
+    "capture_traces": {
+      "file": "captures-traces.json.gz",
+      "sha256": "750ecc03509fef753d17d7669d074dc38d09cf84dc90c0ec5dc42eccaf114df3",
+      "raw_sha256": "7bb76547325a0aac4904c8595b89ead23297d2d07f3a179b7b2dbc03326e0748"
+    }
+  },
+  "source_sha256_lf": {
+    "cell_codebook_player.py": "99594a07e2dd652ea9dde43ede644b7e1413c090b48c071acdf422f13c291524",
+    "build_cell_codebook_trd.py": "14388844bdaa4387a36a0589a7800d8ab841594fea04cb883bae414bcd4ff017",
+    "cell_codebook_z80.py": "3b1d796d3501dca27f579983dc4f17b5aa1c289f50d87b622b25584b4fd00a83",
+    "capture_cell_codebook_fuse.py": "6d9a7732173cdd5bafde91f3a19e18e27e1d2a81981759183095ae8d302ebb68",
+    "capture_five_level_fuse.py": "70f82810feaa645d87b87b600356d4e055dc4614ad9f7126f6ac818ff9255b0b",
+    "row_dictionary_video.py": "036002a0dcbd3db486a63df2dc8254281f3998cf595194eca876d67b0399cd4e",
+    "summarize_cell_codebook_player.py": "3d471be78250b634c488e8b980278dbbcdc0d588073f6ff6dfd61479774512e0"
+  }
+}

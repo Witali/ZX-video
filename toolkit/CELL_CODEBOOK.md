@@ -4,7 +4,8 @@
 (source frames 3855..3918), with the original two preceding screen states.
 This is a new experimental inner video representation carried by unchanged
 standard LZSA2. The native component follow-up below uses baseline `d1f32d3`;
-complete player integration and actual candidate playback remain pending.
+the subsequent [integrated window disk](CELL_CODEBOOK_PLAYER.md) now passes
+actual playback. Full-movie release verification remains pending.
 
 ## Host/transport result: promote to native implementation
 
@@ -65,8 +66,8 @@ attributes do not change. The separate progress indicator is not encoded here.
 
 ## CB41 experimental wire layout
 
-All multibyte integers are little-endian. This format is not understood by
-the current player and is not enabled in the production converter.
+All multibyte integers are little-endian. The experimental CB41 player
+understands this format; the legacy player and production converter do not.
 
 - `CB41`, `u16 frame_count`, `u16 dictionary_entries` (0 or 256 in this probe).
 - For 256 entries: 256 consecutive eight-byte bitmap patterns, scanline order.
@@ -110,7 +111,7 @@ Every final disk must include its own book and starting state.
   load kernel; the follow-up below supplies those components. Complete packet
   transport, actual disk/ROM/ULA cadence and full-movie checks remain pending.
 
-The current root TRD is unchanged and still measures **7.683025 fps** with
+The older 192-frame root test TRD still measures **7.683025 fps** with
 118 missed deadlines. The overall smooth five-level 25/3-fps goal remains
 incomplete. Component results do not establish a new playback rate.
 
@@ -200,11 +201,10 @@ timed comparison of the interrupted version. Final independent checks pass.
   (**106 total**, zero unavailable events) while preserving both register
   sets. This is not a real AY handler or 50-Hz scheduling measurement.
 
-Retain the verified component. Next build one independently bootable CB41
-timing-test disk on the same selected window, including its initial states
-and book, packet delivery, existing AY50 and nominal six-field publication.
-Verify full RAM ownership, EOF, pixels, audio and actual deadlines before
-expanding to the edited movie. The current root TRD remains unchanged.
+Retain the verified component. The subsequent
+[integrated window test](CELL_CODEBOOK_PLAYER.md) supplies an independent
+disk, full screens, AY and actual deadline checks. Its next step is sustained
+delivery on the complete 192-frame fixture, then full-movie validation.
 
 ## Reproduction and retained evidence
 

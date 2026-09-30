@@ -21,6 +21,35 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — integrate CB41 and verify an independent 64-frame TRD
+
+- **Objective/input:** baseline `d77b8ad`, saved frames 128..191 (source
+  3855..3918), exact same 59396-byte CB41 stream, LZSA2 unchanged. Test actual
+  delivery, screen publication and AY instead of extrapolating component CPU.
+- **Change:** connect direct back-screen renderer to the existing disk/queue,
+  AY50 and six-field ISR; load the book once from the stream. Retire compact
+  reconstruction and extra-packet lookahead. Include both initial screens
+  and AY checkpoint for independent cold boot. Remap four IRQ operands to
+  fixed screen-state bytes, 13 -> 13 T each. No screen paging during drawing.
+- **Results:** full real-Fuse EOF, **8.3333324 fps**, **zero late frames**, all
+  six-field intervals, OUT phase 0..16 T, no late runs. Exact 384 AY ticks,
+  zero gaps/duplicates/underruns. All 166 sectors verified; stream 42303 bytes,
+  total file sectors 218. All 64 full published screens match (442368 bytes),
+  including attributes and progress. Dirty boot and integrated CPU checks pass.
+  Native draw remains 7910734 T; packet/wrapper instructions 23636 T, startup
+  transposition 54028 T. ROM/disk/IRQ/ULA are separate in actual elapsed time.
+- **Attempts:** first CPU video checks passed, but inspection found progress
+  code removed with the retired region. Restore it before Fuse, guard its
+  boundary and add all-progress-step checks. Do not distribute that image.
+  Remove unnecessary OpenCV imports from the archive script after a missing-
+  dependency attempt. These fixes and final full evidence are retained.
+- **Decision/limits:** retain separate LFS `ZX-video-cb41-test.trd`. This is
+  a 64-frame experiment: 130/166 video sectors arrive before first publication.
+  Next run all 192 saved frames without pipeline resets, then the full edited
+  movie and generic converter/volume integration. Full goal and three-disk
+  capacity remain unproven. Older root images are unchanged.
+  [Implementation, exact timings, reproduction and evidence](toolkit/CELL_CODEBOOK_PLAYER.md).
+
 ## 2026-09-30 — implement and verify native CB41 cell output
 
 - **Objective/input:** baseline `d1f32d3`, unchanged saved frames 128..191,

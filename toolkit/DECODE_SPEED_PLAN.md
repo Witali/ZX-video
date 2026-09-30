@@ -6,6 +6,15 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Integrated CB41 window (2026-09-30):** independent 64-frame TRD now passes
+real Fuse at 8.3333324 fps, zero missed deadlines, all 384 AY ticks and all
+64 full published screens. Standard LZSA2 stays 42303 bytes / 166 sectors;
+total file sectors 218. 130 video sectors arrive before first publication:
+test the complete 192-frame fixture next for sustained delivery, then the
+full edited movie and converter/volume integration. No full-movie success
+claim. Core draw is unchanged; new packet/wrappers cost 23636 T and startup
+book transposition 54028 T. [TRD and evidence](CELL_CODEBOOK_PLAYER.md).
+
 **Native CB41 output (2026-09-30):** 335-byte Z80 book renderer passes both
 full screens on all 64 saved frames, 22 synthetic variants and independent
 instruction/IRQ checks. Supplied-packet draw costs 7910734 T, versus 14295892 T

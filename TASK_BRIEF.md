@@ -49,7 +49,19 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: native CB41 cell output
+## Latest completed milestone: independently bootable CB41 window
+
+Baseline `d77b8ad`; exact 64 frames 128..191 and 42303-byte LZSA2 stream.
+New root `ZX-video-cb41-test.trd` (LFS) reaches EOF in real Fuse at 8.3333324 fps:
+zero late deadlines, every interval six fields, exact 384 AY ticks, no gaps,
+duplicates or underruns. All 64 full published screens (442368 bytes) and
+progress match. Dirty boot and integrated CPU checks pass. Total 218 sectors.
+Limit: 130/166 sectors arrive before the first frame; this does not prove
+long-run delivery or full-movie/three-disk success. Native draw remains
+7910734 T; packet/wrapper instructions add 23636 T, book load 54028 T once.
+[Disk, scripts and evidence](toolkit/CELL_CODEBOOK_PLAYER.md).
+
+## Previous milestone: native CB41 cell output
 
 Baseline `d1f32d3`; identical saved 64-frame payloads, rows and prior screens.
 335-byte native book renderer: 7910734 frame T versus 14295892 in the old
@@ -244,18 +256,17 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: integrated CB41 timing-test disk
+## Next finite deliverable: sustained CB41 playback on all 192 saved frames
 
 Keep current root images and LZSA2 syntax; do not repeat rejected search or
-reset sweeps. Connect the verified native CB41 renderer to packet delivery,
-existing AY50 and exact six-field publication. Use the same saved 64-frame
-window and include both required initial states and the book on the disk
-for independent cold boot. Replace old compact-frame users before assigning
-their RAM to the planar book; validate all 128 KiB ownership and startup.
-Measure copies, paging, packet decoding, actual disk/ROM latency and complete
-frame delivery. Check every published screen, EOF, AY continuity, nominal
-deadlines and fallback recovery. Reconstruct brightness before fixed-phase
-dithering. A component speedup or this window alone cannot pass release.
+reset sweeps. Encode the complete 192-frame three-scene fixture in CB41,
+supporting frame zero and its correct initial screen history. Use one book
+and one continuous pipeline through all scenes, exact original pixels,
+AY50 and six-field deadlines. Reuse the verified player; avoid new codec
+searches. Check cold boot, every screen, EOF, sectors, AY and actual timing.
+Exercise repeated slot turnover beyond prefill. Then expand to the full
+authorized movie edit, independently bootable disks and generic converter.
+Neither saved-window test can pass release.
 See [the exact format and evidence](toolkit/CELL_CODEBOOK.md).
 LZ4 selective decoding remains a separate measured option, with a capacity
 penalty and unresolved actual disk timing. A window cannot pass release.
