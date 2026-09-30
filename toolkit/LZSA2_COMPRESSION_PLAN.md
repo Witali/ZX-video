@@ -8,11 +8,20 @@ five-level video fixture. No image/audio change or whole-movie encode sweep.
 
 ## Conclusion
 
+**Reset-placement follow-up:** two bounded tail candidates retain all raw
+bytes and 21 blocks. Aligned cuts add 51 bytes and 2393 measured total
+component T. A shifted phase saves 73 bytes, still no sector, but adds 15336
+decoder/copy T before unmeasured producer/frame effects. Neither is adopted;
+the variable-block copy verifier is corrected and baseline-compatible.
+[Results and precise coverage](LZSA2_RESET_PLACEMENT.md). Close these reset
+heuristics; the separate codebook proposal below needs a bounded feasibility
+test before any native or default video-format change.
+
 **Full-block distance follow-up:** retaining command positions and lengths,
 an exact canonical-distance search on block 11 finds no smaller byte output
 and saves only 108 decoder T (7165 bytes unchanged). All banked/native and
 author checks pass; reject production integration or expansion of this pass.
-Next measure a few block-reset positions in one saved difficult window.
+The block-reset follow-up above is now complete.
 [Scope, accounting and evidence](LZSA2_DISTANCE_SELECTION.md).
 
 **Exact-oracle follow-up:** the existing compressor matches minimum size
@@ -194,7 +203,8 @@ Small transforms are real techniques: [IJG-related reduced-IDCT derivations](htt
 show a 2x2 sum/difference transform and a factored 4x4 transform. Their
 reduced-output examples do not justify lowering our existing logical
 resolution or establish Z80 performance. Keep this as a separate candidate;
-the active unchanged-video-format compressor task remains reset placement.
+the reset-placement task is now complete. A separate bounded codebook
+feasibility probe is next; current runtime formats remain unchanged.
 
 ## Plan for a meaningfully stronger compatible compressor
 

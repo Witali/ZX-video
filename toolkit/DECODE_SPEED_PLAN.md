@@ -6,6 +6,16 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Bounded LZSA2 reset placement (2026-09-30):** final five blocks of the saved
+192-frame stream. Aligned cuts add 51 bytes and 2393 decoder/producer/copy/
+frame T; shifted phase saves 73 bytes but adds 15336 decoder/copy T before
+unmeasured remaining effects. Both remain 606 sectors. Author/host/native
+changed-block checks pass; aligned also passes full banked transport and
+all compact/native frames. Correct the copy verifier's fixed-block assumption;
+do not adopt either placement or claim new fps. Next check exact ready-block
+coverage and compressed cost on one window, retaining LZSA2 and applying
+dither only after brightness reconstruction. [Evidence](LZSA2_RESET_PLACEMENT.md).
+
 **Full-block LZSA2 distance selection (2026-09-30):** same literal/match
 positions and lengths on complete block 11, exact canonical-offset search
 within original byte budget. Payload remains 7165 bytes; decoder saves

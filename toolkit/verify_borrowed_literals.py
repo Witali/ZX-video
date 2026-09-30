@@ -4,6 +4,7 @@ Host supplies frame fields; no claim about real disk/IRQ/ULA cadence. Compare
 unchanged frame data with the saved baseline. Actual playback is tested in Fuse.
 """
 import argparse
+from bisect import bisect_right
 from collections import Counter
 import gzip
 import json
@@ -133,11 +134,16 @@ def copy_cases(meta,video):
         else:assert actual==payload[:count]
         return dict(tstates=c.tstates,copy_bytes=writes,borrowed=bool(flag),histogram=[dict(pc=pc,tstates=t,count=n) for (pc,t),n in sorted(hist.items())])
     entries=machine.validate_video(video)
+    blocks=meta['blocks'];starts=[b['raw_start'] for b in blocks]
+    ends=[b['raw_end'] for b in blocks]
+    assert starts and starts[0]==0 and ends[-1]==len(video)
+    assert all(0<end-start<=15872 for start,end in zip(starts,ends))
+    assert starts[1:]==ends[:-1], 'non-contiguous decoded block metadata'
     for i,item in enumerate(entries):
         cursor=item['offset']; length_end=cursor+2
         while cursor<length_end:
-            block=cursor//15872;block_end=min((block+1)*15872,len(video));n=min(length_end,block_end)-cursor
-            args=(video[cursor:cursor+n],0xc000+cursor%15872,block%3,
+            block=bisect_right(starts,cursor)-1;block_end=ends[block];n=min(length_end,block_end)-cursor
+            args=(video[cursor:cursor+n],0xc000+cursor-starts[block],block%3,
                   machine.LENGTH+cursor-item['offset'],n,item['bytes'],block_end-cursor-n,1)
             before=run(q['bridge']['copy'],*args);after=run(lab['copy'],*args)
             total_before+=before['tstates'];total_after+=after['tstates']
@@ -146,8 +152,8 @@ def copy_cases(meta,video):
             cursor+=n
         start=item['offset']+2;end=start+item['bytes'];cursor=start;first=True
         while cursor<end:
-            block=cursor//15872; block_end=min((block+1)*15872,len(video));n=min(end,block_end)-cursor
-            dest=memory.INPUT+cursor-start;payload=video[cursor:cursor+n];source=0xc000+cursor%15872
+            block=bisect_right(starts,cursor)-1;block_end=ends[block];n=min(end,block_end)-cursor
+            dest=memory.INPUT+cursor-start;payload=video[cursor:cursor+n];source=0xc000+cursor-starts[block]
             args=payload,source,block%3,dest,n,item['bytes'],block_end-cursor-n,1
             before=run(q['bridge']['copy'],*args);after=run(lab['copy'],*args)
             total_before+=before['tstates'];total_after+=after['tstates'];bytes_saved+=before['copy_bytes']-after['copy_bytes']

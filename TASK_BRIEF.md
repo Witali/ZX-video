@@ -49,7 +49,19 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: full-block LZSA2 distance search
+## Latest completed milestone: bounded LZSA2 reset placement
+
+Baseline `8b03511`; last five blocks, affecting saved frames 151..191.
+Aligned packet boundaries: +51 bytes, same 606 sectors, +2393 total
+decoder/producer/copy/frame T. Shifted phase: -73 bytes, same sectors,
++15336 measured decoder/copy T; producer/frame effects not remeasured.
+All changed blocks pass author/host/native/IRQ checks. Aligned also passes
+full banked transport and all 192 exact compact/native frames. The copy
+verifier now uses actual block bounds and reproduces the old baseline.
+Reject both tested placements; retain current root TRD and 7.683025-fps
+failure. [Evidence and coverage](toolkit/LZSA2_RESET_PLACEMENT.md).
+
+## Previous milestone: full-block LZSA2 distance search
 
 Baseline `ca95df5`; block 11 of the unchanged 21-block five-level fixture.
 Fixed command positions/lengths, exact canonical distance DP under original
@@ -206,19 +218,20 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: bounded LZSA2 reset placement
+## Next finite deliverable: exact block-codebook feasibility
 
-The latest request prioritizes stronger compression without a format change.
-Keep the borrowed-literal image, decoder and exact five-level packet bytes.
-Table growth, the short-input oracle and full-block distance-only search
-show no meaningful gain in their measured scopes; do not repeat them.
-On one saved difficult window, test a small set of reset positions near
-packet boundaries, keeping each raw block at most 15872 bytes. Preserve
-the ordinary raw-block/header syntax and all decoded bytes. Charge headers,
-lost history, carry copies, in-place overlap, sectors and native T-states.
-Keep the baseline fallback; expand only a materially better candidate to
-actual playback. Do not promise ratio or cadence gains from a size estimate.
-See the compatible-compressor plan for dictionary limits.
+Keep current root images and LZSA2 token syntax. Table growth, distance-only
+search and two reset placements showed no meaningful gain; do not repeat
+these sweeps. Follow the user's table-driven transform question with a
+bounded, host-only check of 256 ready 4x4 logical block patterns on one saved
+32-64-frame window, using exact fallback for uncovered patterns. Measure
+coverage and actual post-LZSA2 cost including table, mode and position data;
+do not infer savings from index width. Reconstruct five brightness levels
+before fixed-phase dithering, as explicitly confirmed by the user.
+This is a separate experimental video representation: no default inner-format
+change, native integration or playback claim until the hypothesis earns it.
+If promising, count screen/paging costs and test actual cadence next.
+See the [transform/codebook analysis](toolkit/LZSA2_COMPRESSION_PLAN.md#separate-video-layer-proposal-table-driven-inverse-transforms).
 LZ4 selective decoding remains a separate measured option, with a capacity
 penalty and unresolved actual disk timing. A window cannot pass release.
 

@@ -21,6 +21,32 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — test bounded LZSA2 reset placement and correct copy profiling
+
+- **Objective/input:** baseline `8b03511`, same 192-frame five-level stream.
+  Change only the last five blocks (69988 raw bytes, frames 151..191), keeping
+  the prefix, 21-block count, native decoder and original LZSA2 syntax.
+- **Parameters:** greedily align feasible cuts to packet starts; follow up
+  with 4686 bytes of initial slack to vary reset phase within the same tail.
+  Keep every output block <=15872 bytes; no full-disk or codec sweep.
+- **Results:** aligned 154956 -> 155007 bytes, 606 sectors unchanged;
+  decoder +9263 T, copies -7046 T, producer +64 T, frames +112 T, net
+  **+2393 T**. Shifted 154883 bytes (-73), 606 sectors; decoder +12882 T,
+  copies +2454 T. Shifted producer/frame/playback effects are unmeasured.
+- **Verifier fix:** replace hardcoded offset/15872 calculations with
+  validated metadata block bounds. Every old copy case, including 45 edges,
+  reproduces exactly. New native copy cases pass for both layouts.
+- **Coverage:** all ten changed blocks pass original-author/host/native,
+  overlap proofs and 40 synthetic interrupts per candidate. Aligned also
+  passes full banked sector/EOF/cursor/timing checks and all 192 exact compact
+  frames/both native screens. No real disk, AY cadence or Fuse candidate run.
+- **Decision:** reject both heuristic placements as production changes;
+  preserve scripts/reports and the corrected verifier. Root TRD unchanged;
+  last measured 7.683025 fps still fails the goal. Next bounded feasibility
+  check: ready 4x4 logical block dictionary with exact fallback and the
+  confirmed brightness-before-dither ordering.
+  [Method, cycle accounting and evidence](toolkit/LZSA2_RESET_PLACEMENT.md).
+
 ## 2026-09-30 — clarify brightness-before-dither ordering
 
 - User clarification applied to the transform proposal: reconstruct

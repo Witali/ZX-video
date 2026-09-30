@@ -1,0 +1,204 @@
+{
+  "complete": true,
+  "release": false,
+  "date": "2026-09-30",
+  "baseline_commit": "8b03511",
+  "scope": "Two reset-placement candidates on the last five blocks, touching saved frames 151..191. Exact same full 192-frame input, 21 blocks and LZSA2 format.",
+  "baseline": {
+    "stream_bytes": 154956,
+    "sectors": 606,
+    "decoder_tstates": 19412006,
+    "producer_tstates": 1058423,
+    "frame_tstates": 43760146,
+    "copy_tstates": 1950856
+  },
+  "variants": {
+    "aligned": {
+      "byte_delta": 51,
+      "candidate_stream_bytes": 155007,
+      "candidate_sectors": 606,
+      "candidate_stream_sha256": "e72f63b8a5f9386507d777e12d68a76a05c24abeb2f92a7068e49b193c433b3e",
+      "decoder_delta_tstates": 9263,
+      "candidate_decoder_tstates": 19421269,
+      "first_slack": 0,
+      "cuts": [
+        253952,
+        268541,
+        283843,
+        298277,
+        313065,
+        323940
+      ],
+      "cut_decisions": [
+        {
+          "lower": 260452,
+          "upper": 269824,
+          "target": 269824,
+          "chosen": 268541,
+          "packet_aligned": true
+        },
+        {
+          "lower": 276324,
+          "upper": 284413,
+          "target": 284413,
+          "chosen": 283843,
+          "packet_aligned": true
+        },
+        {
+          "lower": 292196,
+          "upper": 299715,
+          "target": 299715,
+          "chosen": 298277,
+          "packet_aligned": true
+        },
+        {
+          "lower": 308068,
+          "upper": 314149,
+          "target": 314149,
+          "chosen": 313065,
+          "packet_aligned": true
+        }
+      ],
+      "first_affected_frame": 151,
+      "last_affected_frame": 191,
+      "changed_raw_bytes": 69988,
+      "pc_compression_seconds": 0.57697349996306,
+      "copy_tstates": 1943810,
+      "copy_delta_tstates": -7046,
+      "decoder_plus_copy_delta_tstates": 2217,
+      "borrowed_packets": 171,
+      "injected_tail_interrupts": 40,
+      "full_banked_transport_verified": true,
+      "all_frames_reverified": true,
+      "producer_tstates": 1058487,
+      "producer_delta_tstates": 64,
+      "frame_tstates": 43760258,
+      "frame_delta_tstates": 112,
+      "total_component_delta_tstates": 2393
+    },
+    "shifted": {
+      "byte_delta": -73,
+      "candidate_stream_bytes": 154883,
+      "candidate_sectors": 606,
+      "candidate_stream_sha256": "98e2dc22c755f5b71f8d147e557fd43ea428b177a5b32b3b776a981a748064c8",
+      "decoder_delta_tstates": 12882,
+      "candidate_decoder_tstates": 19424888,
+      "first_slack": 4686,
+      "cuts": [
+        253952,
+        263467,
+        278621,
+        292809,
+        308681,
+        323940
+      ],
+      "cut_decisions": [
+        {
+          "lower": 260452,
+          "upper": 269824,
+          "target": 265138,
+          "chosen": 263467,
+          "packet_aligned": true
+        },
+        {
+          "lower": 276324,
+          "upper": 279339,
+          "target": 279339,
+          "chosen": 278621,
+          "packet_aligned": true
+        },
+        {
+          "lower": 292196,
+          "upper": 294493,
+          "target": 294493,
+          "chosen": 292809,
+          "packet_aligned": true
+        },
+        {
+          "lower": 308068,
+          "upper": 308681,
+          "target": 308681,
+          "chosen": 308681,
+          "packet_aligned": false
+        }
+      ],
+      "first_affected_frame": 151,
+      "last_affected_frame": 191,
+      "changed_raw_bytes": 69988,
+      "pc_compression_seconds": 0.5656250999891199,
+      "copy_tstates": 1953310,
+      "copy_delta_tstates": 2454,
+      "decoder_plus_copy_delta_tstates": 15336,
+      "borrowed_packets": 171,
+      "injected_tail_interrupts": 40,
+      "full_banked_transport_verified": false,
+      "all_frames_reverified": false,
+      "producer_tstates": null,
+      "frame_tstates": null,
+      "total_component_delta_tstates": null,
+      "coverage_limit": "Independent native, author and per-write host overlap checks cover all five changed blocks; actual bridge copies cover all packets. No full banked transport, frame or playback rerun for this weaker candidate."
+    }
+  },
+  "evidence": [
+    {
+      "file": "aligned-probe.json.gz",
+      "sha256": "2d571e94a4b962b3657d7570e64d4aa39b163c6d8e85c17ca9acb01b2815e43f",
+      "raw_sha256": "ef2919b0d4ab5c9390327f8ea38910ed2094a4422c84c175ae8d402bd88a55c4"
+    },
+    {
+      "file": "aligned-copies.json.gz",
+      "sha256": "23c3a13ce5abf4be5eb05ecdb3ce00924951689f59f828a38ff96dd369d7c0ec",
+      "raw_sha256": "e5611c29368717aed3156a6db557e18f8895c7a08b1950971334fc3c692d2fca"
+    },
+    {
+      "file": "aligned-video.stream.gz",
+      "sha256": "5024f21cb00bbcfdffc47720de09e1f35ea9184ec1075f3051046b77e653ccd6",
+      "raw_sha256": "e72f63b8a5f9386507d777e12d68a76a05c24abeb2f92a7068e49b193c433b3e"
+    },
+    {
+      "file": "aligned-cpu.json.gz",
+      "sha256": "d91a8d2f038e68ac8accc4c05fdf027a28b615b742a0e2a68049af975315d3be",
+      "raw_sha256": "cf63362a09d15ee42e9359cdd4c10d9d997d6f91c12f50cfdc338177b9e5799d"
+    },
+    {
+      "file": "aligned-frames.json.gz",
+      "sha256": "32ca5dd0bdfb38908a9cff199c59d99a9cca3d29dc42243e8d72ef4576415e46",
+      "raw_sha256": "9bc8d57c5b18ef03fe9090923b3d70e0ac1a76cfbf8b1cf8ad221a6f983ef74c"
+    },
+    {
+      "file": "shifted-probe.json.gz",
+      "sha256": "5f8782bf232699f23755a35489019322c446d423689b716f8cd303c4afded73e",
+      "raw_sha256": "dd407fe2de77ce5fa30e0ba7a25d8d2c165969ba70f73e166526efeabef8aff1"
+    },
+    {
+      "file": "shifted-copies.json.gz",
+      "sha256": "04120783a954a0bbe8f28bbaf03c4d0ea1e48c0320d48f322c3f43252dd6c327",
+      "raw_sha256": "664344230dfd3aa0226438c0712c27314311eae895ffda2031ab001e51ca9448"
+    },
+    {
+      "file": "shifted-video.stream.gz",
+      "sha256": "e44b2a98f6e2e809a8a4c3005b5f3968e5e71519c95c9ca353516a5d5328c31a",
+      "raw_sha256": "98e2dc22c755f5b71f8d147e557fd43ea428b177a5b32b3b776a981a748064c8"
+    }
+  ],
+  "root_trd_unchanged": true,
+  "root_trd_sha256": "14788fa7b7272c1d8ae4d47e63804cd60998d8ee95032ce56c879a120226e2d5",
+  "current_measured_fps": 7.6830252011714135,
+  "candidate_playback_measured": false,
+  "goal_achieved": false,
+  "decision": "Do not adopt either tested placement. Aligned variant is 2393 component T slower and 51 bytes larger; shifted variant saves 73 bytes with no sector saving but adds 15336 measured decoder/copy T before unmeasured producer/frame effects. No broad claim that all reset placements are inferior.",
+  "verifier_change": "Packet-copy checks now use validated raw_start/raw_end metadata, replacing fixed 15872-byte division. Reproduces every retained baseline case exactly.",
+  "next": "Measure exact coverage and post-LZSA2 byte cost of a 256-entry 4x4 logical-block dictionary on one saved window, with exact fallback. Reconstruct five brightness levels before fixed-phase dithering; no default video-format change without native timing and quality evidence.",
+  "source_sha256_lf": {
+    "probe_lzsa2_resets.py": "6834d52c32d4b3871b89b5430d9088acf3265b814d796c13f7c18233fa91f467",
+    "check_lzsa2_reset_copies.py": "215e033cd93063451ab944cc40b70a48047879de7ad62d613e4db8a488bda302",
+    "summarize_lzsa2_resets.py": "8a4207ca24922ac13bc360fe49624436c23995b9d3a6f5e536084ccbcb837399",
+    "verify_borrowed_literals.py": "f8cc681cd878a6ba45dc0275c28fc7ea7d0a97ed51d84ceadcb548c6e01f5e0b",
+    "benchmark_row_lzsa.py": "3fc3c98695d1d9e3bfc086a079a8d2f67a17ddd0c2c187051767c6209113ede2",
+    "benchmark_inplace_slot.py": "f840275a215aa3f2c8dbc03a0cfd71ec60072bfc26f39a842f255d128a076a9e",
+    "verify_lzsa2_dispatch.py": "78074b0ee5ebcc07daa7614dae1904be5193787e26e559c86463ac9cd16f3f06",
+    "resumable_lzsa2.py": "141d3f843554a50eb3c20c4a764f1edd6294ff96a49be254e07cbbb35f23a3d2",
+    "lzsa2_oracle_host.py": "4f726445d6bc7980c1ee83b4570cc7b92166b8c37edbfd87c7d2bda4c446a12b",
+    "lzsa2_stream.py": "72969188dd7604a03eafc3c6a2932d5c96f210609ae02bcb2196c896adbaa7c2"
+  }
+}
