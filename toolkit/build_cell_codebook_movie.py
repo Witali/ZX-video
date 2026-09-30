@@ -47,6 +47,7 @@ def main():
         # Only this volume's two histories and display range use this table.
         states = np.zeros((prepared['frames'],3840), dtype=np.uint8)
         states[first:end] = local
+        np.savez_compressed(target/'states.npz',states=states)
         cell = (folder/'codebook.raw').read_bytes()
         stream = (folder/'codebook.stream').read_bytes()
         assert sha(cell) == volume['raw_sha256'] and sha(stream) == volume['stream_sha256']

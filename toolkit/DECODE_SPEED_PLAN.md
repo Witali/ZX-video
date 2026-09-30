@@ -6,6 +6,15 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Complete CB41 movie passes (2026-09-30):** all 4221 frames now fit three
+independent root TRDs at 2475/2505/2511 occupied sectors. Complete cold and
+actual-EOF-snapshot continuation Fuse runs have zero missed nominal deadlines,
+all six-field intervals and exact 25326 AY ticks. All 29175552 screen bytes
+match in read-only emulator passes. Cuts 1504/2832 came from saved block costs
+and 368-frame local probes, not whole-set searches. Kernel/packet listings
+unchanged, 0 T instruction delta. Integrate the passing path into the generic
+converter next; no further movie codec search. [Evidence](CELL_CODEBOOK_BALANCED.md).
+
 **Full CB41 preparation (2026-09-30):** all 4221 edited frames and existing
 AY are verified on the host; 289 rows require separate volume dictionaries.
 One bounded cut selection gives 249/256/246 rows and 1840522 LZSA2 video

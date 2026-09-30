@@ -5,21 +5,66 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
-**Current release:** `69754f3`, 14 TRDs, the complete 4971-frame movie,
+**Latest verified movie candidate (2026-09-30):** root LFS
+`ZX-video-five-level_part01..03.trd`, the full 4221-frame authorized edit,
+five brightness levels and unchanged AY50. All three disks pass full Fuse
+playback at 25/3 fps with zero missed deadlines, exact full screens and AY.
+Independent boots and predecessor-EOF snapshot continuations pass. Generic
+converter integration remains; see the latest entry and linked evidence.
+
+**Earlier release:** `69754f3`, 14 TRDs, the complete 4971-frame movie,
 AY at 50 Hz and video at 25/3 fps. The target is at most three disks, with
 only subtle pixel changes allowed. On September 19 the user authorized
 removing final credits while preserving the post-credit scene. Video jitter
 of up to 20 ms with compensation on subsequent frames was also authorized;
 AY remains at 50 Hz. The priority is an exact 120-ms frame schedule; the
-20-ms allowance is only a fallback. The target is not yet achieved and the
-verified root set still includes the credits. The separate experimental
+20-ms allowance is only a fallback. The earlier 14-disk set retains the
+credits and does not meet the new target. The separate experimental
 `ZX-video-optimized-preview_part01..04.trd` set from September 21 reaches EOF
 but fails timing. On September 24 a separate set of **three independently
 bootable TRDs** was built and played through all volumes. Capacity was
-achieved; video/AY timing still fails. It has not replaced the root release.
+achieved; video/AY timing failed. It did not replace the earlier root release.
 
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
+
+## 2026-09-30 — verify the entire five-level movie on three balanced CB41 disks
+
+- **Objective/input:** baseline `2a1686d`; same 4221 prepared frames and AY.
+  Move the 95-sector excess off volume 3 without any pixel/audio/FPS change.
+  Reuse saved packet/block costs, exact row unions and startup overhead.
+- **Selection:** evaluate 1089 nearby cut pairs via prefix counts and cost
+  estimates; 502 satisfy row limits. Select 1504/2832, verify seven local
+  windows (368 frames), reproduce old full raw streams exactly, and require
+  identical host screens. Window LZSA2 179881 -> 179421 bytes. Encode/build
+  only that chosen complete partition. Estimated sectors 2474/2505/2518;
+  actual **2475/2505/2511**, free **69/39/33**. Actual capacity, not estimates,
+  passes. Video 1840522 -> **1839554 bytes** (-968), 7187 sectors/185 blocks.
+- **Native/timing:** kernel and packet instruction listings match the prior
+  192-frame player exactly, **0 T instruction delta**. All three independently
+  booted images finish real Fuse playback: **4221 frames, zero nominal late
+  frames**, all 4218 intra-disk intervals six fields, actual OUT phase -3..21 T,
+  no fallback late runs or drift. All **25326 AY ticks** exact, no gaps,
+  duplicates or underruns. All 7187 runtime sectors exact, zero retries.
+  Elapsed bootstrap+runtime **666188838 / 594940974 / 620929017 T** includes
+  CPU/ROM/disk/IRQ/ULA, not BASIC loading PLAYER or human swap time.
+- **Complete images:** a new read-only Fuse verifier exports 1536-byte slices
+  at the shared native draw return in five full passes per volume, avoiding
+  thousands of emulator restarts and Windows' command-line limit. It makes
+  no debugger memory/paging/PC changes. All **29175552 screen bytes** match,
+  including BRIGHT, black fields and progress. Actual OUT/AY timing is checked
+  independently on the same image hashes. Existing full source quality and
+  visual review remain valid; no quantization or phase change is introduced.
+- **Disk transitions:** real prompt/selection/bootstrap opcodes with modeled
+  ROM verify both wrong-disk and wrong-series rejection and next-bank images.
+  A separate complete Fuse sequence resumes from actual predecessor EOF RAM
+  through SZX with other banks poisoned. Both next disks are accepted and all
+  subsequent frames/AY meet deadlines. The emulator/controller restart between
+  volumes; physical swapping is not claimed. All disks also cold boot alone.
+- **Decision:** install root `ZX-video-five-level_part01..03.trd` in Git LFS,
+  retain previous evidence and record the full-movie playback milestone as
+  verified. Overall converter goal stays active for generic integration;
+  preserve this passing fixture. [Scripts, audit, traces and disk links](toolkit/CELL_CODEBOOK_BALANCED.md).
 
 ## 2026-09-30 — prepare the full five-level edit and measure CB41 volume limits
 

@@ -49,7 +49,27 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: full movie prepared, first split exceeds volume 3
+## Latest completed milestone: complete movie passes on three CB41 disks
+
+Baseline `2a1686d`. Root LFS `ZX-video-five-level_part01..03.trd` contain all
+4221 authorized five-level frames and unchanged AY50. Cuts 1504/2832 were
+chosen from existing block costs and 368-frame boundary probes; only one
+full selected layout was built. Occupied sectors 2475/2505/2511, free 69/39/33.
+Video 1839554 bytes (-968). All disks boot independently and pass complete
+Fuse EOF playback: zero late nominal deadlines, all intervals six fields,
+25326 exact AY ticks, no gaps/underruns, 7187 exact sectors/no retries.
+All 29175552 screen bytes match in read-only Fuse slice passes. Both disk
+prompts/identity checks pass; actual predecessor-EOF snapshot continuations
+also play through EOF with zero late frames/exact AY. Physical swaps were
+not measured. Native kernel/packet opcodes are unchanged, instruction delta
+0 T. [Disks, complete evidence and commands](toolkit/CELL_CODEBOOK_BALANCED.md).
+
+Next integrate this passing path into the generic converter. Reuse
+`.tmp/cell-codebook-balanced/{windows,measured,build,continuation}` and the
+archived evidence; do not requantize the movie or repeat whole-set searches.
+Full-movie playback is verified; generic automatic conversion remains.
+
+## Previous milestone: full movie prepared, first split exceeds volume 3
 
 Baseline `2a9fa05`. All 4221 authorized five-level frames through source EOF
 and 25326 unchanged AY ticks are prepared. Independent fixed-dither raster
@@ -290,19 +310,19 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: rebalance full-movie CB41 disk capacity
+## Next finite deliverable: integrate verified CB41 into the generic converter
 
-Keep root images and LZSA2 syntax. The full five-level preparation is complete;
-reuse its hashed caches/streams and existing AY50. The chosen cuts 1472/2752
-produce 2425/2433/2639 occupied sectors, with 95 excess sectors in volume 3.
-Use saved frame/block costs and exact per-volume row unions (including two
-checkpoints) to select nearby boundary windows. Measure those windows before
-building one new chosen set; do not search by repeatedly encoding full sets.
-Account for resident AY and actual bootstrap/player overhead as well as video.
-Preserve all 4221 frames, resolution, raster and soundtrack. If capacity
-passes, verify actual EOF playback/deadlines/screens/AY on every independent
-disk, including disk switching, then integrate the generic converter.
-See [full evidence and reproduction](toolkit/CELL_CODEBOOK_MOVIE.md).
+Keep the passing root set and LZSA2/native ABI fixed. The current CB41 flow
+uses explicit movie preparation/measurement/build scripts, a saved source
+timeline and existing FAP3 AY/bootstrap scaffolding. Connect five-level
+preparation, exact row/cell books, bounded partition selection and independent
+volumes to `toolkit/convert_video.py` without hard-coding this source or cuts.
+Preserve existing generic input/EOF/audio behavior. Handle or explicitly
+reject row-table/AY/native-capacity limits without silently dropping frames
+or reducing five-level quality. Exercise short/silent/portrait/non-movie
+inputs and retain the full-movie evidence when unchanged. Complete native
+timing/content gates for changed player behavior; do not infer guarantees
+for arbitrary video from this movie. See [verified ABI and set](toolkit/CELL_CODEBOOK_BALANCED.md).
 
 ## Release gate and handoff
 

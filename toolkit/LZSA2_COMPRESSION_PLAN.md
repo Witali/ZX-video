@@ -8,6 +8,14 @@ five-level video fixture. No image/audio change or whole-movie encode sweep.
 
 ## Conclusion
 
+**Complete three-disk playback verified:** local cut rebalancing gives
+1839554 video bytes and 2475/2505/2511 occupied sectors. All 4221 five-level
+frames meet nominal six-field deadlines in real Fuse; all screen bytes,
+25326 AY ticks and disk sectors match. Independent boots and snapshot-based
+continuations pass. Standard LZSA2 and native instructions are unchanged.
+The remaining work is generic converter integration, not another full-movie
+compression search. [Verified set and bounded selection](CELL_CODEBOOK_BALANCED.md).
+
 **Full edited-movie preparation:** exact five-level frames and AY now cover
 all 4221 frames through EOF. Standard LZSA2 encodes one selected CB41 split
 in 1840522 bytes / 185 verified blocks. Volume-specific row tables fit, but

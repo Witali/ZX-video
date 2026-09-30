@@ -112,6 +112,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     for name in ('prepared', 'metadata', 'author', 'output'):
         p.add_argument('--'+name, type=Path, required=True)
+    p.add_argument('--partition-plan', type=Path, help='A saved, independently window-checked set of cuts')
     a = p.parse_args()
     a.output.mkdir(parents=True, exist_ok=True)
     prepared = json.loads(a.prepared.read_bytes())
@@ -138,7 +139,22 @@ def main():
     (a.output/'audio.bin').write_bytes(sound)
     labels = json.loads(a.metadata.read_bytes())['audio_labels']
     author = Author(a.author)
-    parts, selection = select_partition(words, prepared['three_equal_frame_partitions'])
+    if a.partition_plan:
+        plan = json.loads(a.partition_plan.read_bytes())
+        assert plan['complete'] and plan['host_windows_exact']
+        assert plan['preparation_sha256'] == file_sha(a.prepared)
+        bounds = plan['boundaries']
+        assert len(bounds)==4 and bounds[0]==0 and bounds[-1]==len(frames)
+        assert all(lo<hi for lo,hi in zip(bounds,bounds[1:]))
+        parts = []
+        for lo,hi in zip(bounds,bounds[1:]):
+            count = len(set(map(int,words[max(0,lo-2):hi].ravel())) | {0})
+            if count>256: raise ValueError('planned row dictionary exceeds native capacity')
+            parts.append(dict(start=lo,end=hi,rows_including_two_checkpoints=count,row_table_fits=True))
+        selection = dict(method='saved bounded-window capacity plan',plan_sha256=file_sha(a.partition_plan),
+                         selected_boundaries=bounds,compressed_candidates=1)
+    else:
+        parts, selection = select_partition(words, prepared['three_equal_frame_partitions'])
     print(json.dumps(dict(boundary_selection=selection)), flush=True)
     results = []
     for volume, part in enumerate(parts, 1):
@@ -178,7 +194,7 @@ def main():
                         video_alone_fits_trd=(len(stream)+255)//256 <= 2544)
         results.append(item)
         print(json.dumps({k:v for k,v in item.items() if k not in ('blocks','frames','screen_sha256')}), flush=True)
-    report = dict(complete=True, release=False, scope=__doc__, baseline_commit='2a9fa05',
+    report = dict(complete=True, release=False, scope=__doc__, baseline_commit='2a1686d' if a.partition_plan else '2a9fa05',
                   preparation_sha256=file_sha(a.prepared), frames=len(frames),
                   first_source_frame=int(mapping[0]), last_source_frame=int(mapping[-1]),
                   minimum_row_only_partition=minimum_row_segments(words),
