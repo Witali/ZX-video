@@ -8,6 +8,14 @@ five-level video fixture. No image/audio change or whole-movie encode sweep.
 
 ## Conclusion
 
+**Full edited-movie preparation:** exact five-level frames and AY now cover
+all 4221 frames through EOF. Standard LZSA2 encodes one selected CB41 split
+in 1840522 bytes / 185 verified blocks. Volume-specific row tables fit, but
+actual occupied disk sectors are 2425/2433/2639: the third exceeds capacity
+by 95 sectors. Rebalance using bounded cut windows and retained evidence;
+do not change LZSA2 syntax or lower image/audio quality. Full-movie timing
+remains unmeasured. [Preparation and capacity result](CELL_CODEBOOK_MOVIE.md).
+
 **Sustained CB41 follow-up:** all 192 saved frames now pass at 25/3 fps with
 zero late deadlines and exact full screens/AY. Stream 154956 -> 134349 bytes,
 606 -> 525 sectors; decoder 19412006 -> 12698715 T on unchanged opcodes.

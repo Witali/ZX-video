@@ -49,7 +49,28 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: sustained 192-frame CB41 playback
+## Latest completed milestone: full movie prepared, first split exceeds volume 3
+
+Baseline `2a9fa05`. All 4221 authorized five-level frames through source EOF
+and 25326 unchanged AY ticks are prepared. Independent fixed-dither raster
+matches all 29175552 host screen bytes. Original tail hold is preserved.
+The movie needs 289 rows overall; equal thirds overflow the middle table
+(259). A bounded row-only cut search selects 1472/2752; only that partition
+is compressed: 1840522 video bytes, 185 verified LZSA2 blocks. Tables need
+249/256/246 rows; resident AY 12681/13297/14467 bytes, all fit.
+Exact disk totals 2425/2433/2639 sectors: first two pass dirty cold bootstrap,
+third exceeds capacity by 95 sectors. Aggregate spare space is 135 sectors;
+this is not a successful three-disk set. No full-movie fps claim or root TRD
+update. [Full preparation, streams, evidence and preview](toolkit/CELL_CODEBOOK_MOVIE.md).
+
+Next rebalance the cuts using saved frame costs, row constraints and bounded
+boundary windows, then build one chosen complete set. Reuse
+`.tmp/cell-codebook-full/{prepared.json,measured,build}`; all scripts and
+hashed data are archived. Source path/tool commands are in the linked report.
+Do not requantize or repeat a whole-movie codec/layout sweep. Full-volume
+Fuse deadlines/screens/AY, disk switching and generic integration remain.
+
+## Previous milestone: sustained 192-frame CB41 playback
 
 Baseline `4006665`. Same complete three-scene fixture as the earlier
 7.683025-fps player, now **8.3333331 fps with zero missed deadlines**, all
@@ -269,21 +290,19 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: full edited movie preparation and CB41 volume plan
+## Next finite deliverable: rebalance full-movie CB41 disk capacity
 
-Keep current root images and LZSA2 syntax; do not repeat rejected search or
-reset sweeps. Prepare all 4221 frames of toolkit/movie_no_credits.json with
-the same five-level quantizer and existing AY50, preserving source mapping
-and the post-credit scene through EOF. Reuse build_five_level_test_trd.py's
-quantization contract; do not extrapolate capacity from selected scenes.
-Measure full-data row-book requirements (current native row indices require
-at most 256 entries per volume), exact CB41/LZSA2 capacity and AY bank limits.
-Choose one independently bootable partition, then build/play every volume
-and connect it to the generic converter. Preserve resolution and every frame;
-record capacity/timing failures honestly. The 192-frame fixture is not release.
-See [the exact format and evidence](toolkit/CELL_CODEBOOK.md).
-LZ4 selective decoding remains a separate measured option, with a capacity
-penalty and unresolved actual disk timing. A window cannot pass release.
+Keep root images and LZSA2 syntax. The full five-level preparation is complete;
+reuse its hashed caches/streams and existing AY50. The chosen cuts 1472/2752
+produce 2425/2433/2639 occupied sectors, with 95 excess sectors in volume 3.
+Use saved frame/block costs and exact per-volume row unions (including two
+checkpoints) to select nearby boundary windows. Measure those windows before
+building one new chosen set; do not search by repeatedly encoding full sets.
+Account for resident AY and actual bootstrap/player overhead as well as video.
+Preserve all 4221 frames, resolution, raster and soundtrack. If capacity
+passes, verify actual EOF playback/deadlines/screens/AY on every independent
+disk, including disk switching, then integrate the generic converter.
+See [full evidence and reproduction](toolkit/CELL_CODEBOOK_MOVIE.md).
 
 ## Release gate and handoff
 

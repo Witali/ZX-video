@@ -6,6 +6,16 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Full CB41 preparation (2026-09-30):** all 4221 edited frames and existing
+AY are verified on the host; 289 rows require separate volume dictionaries.
+One bounded cut selection gives 249/256/246 rows and 1840522 LZSA2 video
+bytes. Actual bootstrap/player/AY accounting gives 2425/2433/2639 sectors:
+third volume is 95 sectors too large despite aggregate free capacity. First
+two dirty cold bootstraps pass; full movie playback is unmeasured. Rebalance
+cuts using saved boundary windows before building one selected set, then
+verify every nominal deadline and all pixels/AY through EOF. No native opcode
+changes, 0 T instruction delta. [Evidence and next step](CELL_CODEBOOK_MOVIE.md).
+
 **Sustained CB41 fixture (2026-09-30):** all 192 frames now pass real Fuse at
 8.3333331 fps, zero late deadlines, all 1152 AY ticks and every complete screen.
 392/525 sectors are read during playback, with repeated slot turnover. Versus

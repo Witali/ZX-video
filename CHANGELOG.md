@@ -21,6 +21,44 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — prepare the full five-level edit and measure CB41 volume limits
+
+- **Objective/input:** baseline `2a9fa05`; extend the passing 192-frame CB41
+  fixture to the entire source-identified 4221-frame authorized edit, existing
+  AY50 and unchanged resolution/25:3 fps. Preserve source frames 0..4085 and
+  4836..4970, including the post-credit scene and EOF.
+- **Preparation:** original quantizer, penalty 100000, center zoom 1.25,
+  continuous palette history, five-level refinement then fixed-phase dither.
+  Hashed sequential 64-frame caches avoid repeated conversion. All 4221
+  frame-level errors/hashes retained; no refinement increases same-palette
+  RGB error. Mean MSE 834.5453 -> 743.7552 (-10.879%), not a perceptual score.
+- **Attempts/corrections:** plain FPS-to-EOF produced 4970 source frames and
+  was rejected. Restored the original ceil-to-six-fields final hold: 4971
+  source frames, 0.058333 s extension, identical unextended prefix. A duplicate
+  `ticks` field initially stopped the audio-report helper; fixed before saved
+  measurements. Equal thirds need 245/259/244 rows and fail the middle table.
+  Prefix counts check 64 nearby boundary pairs, 19 fit; choose 1472/2752.
+  Only this selected partition is encoded, without a full-image search.
+- **Measurements:** dictionaries 249/256/246 rows; resident AY including code
+  and trees 12681/13297/14467 bytes. Raw CB41 2906209 -> LZSA2 1840522 bytes,
+  7190 video sectors, 185 independent blocks. Exact occupied sectors including
+  startup/player/AY are **2425/2433/2639**: third exceeds its limit by **95
+  sectors / 24320 bytes**. Aggregate spare capacity 135 sectors does not prove
+  a feasible three-volume partition.
+- **Verification:** independent fixed-phase host raster matches all 4221
+  full screens / 29175552 bytes. Six source RGB samples agree with the old
+  fixture. All 25326 original AY states, edit mapping/join/EOF, host block
+  round trips and overlap proofs pass. First two fitting candidate images
+  pass dirty-RAM cold bootstrap; no third image is written. Native hot-path
+  opcodes unchanged, 0 T instruction delta. No new full-movie native timing,
+  actual IRQ/disk/publication or disk-swap check; no fps success claim.
+- **Review/decision:** inspected difficult scenes, post-credit action and
+  worst-error opening fade; existing Spectrum palette/colour-cell limitations
+  remain visible. Retain preparation and streams, reject this capacity split,
+  leave root TRDs unchanged. Next rebalance cuts using bounded windows and
+  saved frame costs, then verify one complete set through actual playback.
+  [Scripts, report, preview and archived evidence](toolkit/CELL_CODEBOOK_MOVIE.md).
+
 ## 2026-09-30 — sustain exact CB41 playback across all 192 saved frames
 
 - **Objective/input:** baseline `4006665`, all three original 64-frame scenes,
