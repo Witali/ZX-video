@@ -21,6 +21,28 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — assess table-driven inverse transforms for the video layer
+
+- **Objective/scope:** answer whether a simplified table-driven IDCT could
+  help; baseline `a977f1d`, existing five-level 128x96 logical image and
+  512-byte row dictionary. Design analysis only, no new codec experiment.
+- **Proposal:** distinguish basis-contribution tables (runtime accumulation)
+  from 256 complete 4x4 logical / 8x8 physical patterns (2048 bitmap bytes,
+  one-byte index before metadata). The latter moves reconstruction and
+  dithering to the PC; it is a codebook, not a general IDCT decoder.
+- **Estimates/limits:** a naive DC + three-AC direct sum needs 48 additions
+  per block, 405504 T for additions alone on a full 768-block redraw using
+  11-T 16-bit additions. This is neither a native measurement nor a lower
+  bound for factored/table-index algorithms. No size, quality or fps gain
+  has been measured. A complete-pattern index replaces four literal row
+  indices only where suitable; dictionary, fallback and LZSA2 costs matter.
+- **Decision:** retain as a separate video-format candidate with exact
+  fallback, fixed dither phase, attribute preservation and independent disk
+  initialization. LZSA2 syntax can stay unchanged, but new video commands
+  require decoder support. Main implementation/root TRDs remain unchanged;
+  do not displace the current reset-placement task without a measured result.
+  [Feasibility, estimates and verification plan](toolkit/LZSA2_COMPRESSION_PLAN.md#separate-video-layer-proposal-table-driven-inverse-transforms).
+
 ## 2026-09-30 — test exact fixed-command LZSA2 distance selection
 
 - **Objective/input:** follow the short-reset speed example on complete
