@@ -1,0 +1,163 @@
+{
+  "complete": true,
+  "release": false,
+  "date": "2026-09-30",
+  "baseline_commit": "c3d1125",
+  "scope": "Fixed 21 independent raw blocks / 323940 bytes from the 192-frame five-level fixture. Host compressor changes only. No player/disk release.",
+  "baseline": {
+    "raw_sha256": "5adefa050587757e9b203d3f8b9d4724e06f2fc3ddcbc8549fc87e7e0c2a01d6",
+    "stream_sha256": "1c8f598fa5fcc4ba2ac5f60355f6b3845cf5d8aa89f2ded328f5f98dd1b21bbc",
+    "decoded_bytes": 323940,
+    "stream_bytes": 154956,
+    "sector_reads": 606,
+    "decoder_tstates": 19412006,
+    "producer_tstates": 1058423,
+    "total_tstates": 20470429,
+    "max_slice_tstates": 19609
+  },
+  "variants": {
+    "wide": {
+      "stream_bytes": 154954,
+      "sector_reads": 606,
+      "decoder_tstates": 19412144,
+      "producer_tstates": 1058423,
+      "total_tstates": 20470567,
+      "max_slice_tstates": 19570,
+      "stream_sha256": "41793e0d5a6620dc11c09fbb07e056963974dd158eddea4abe6d3106b4027686",
+      "byte_delta": -2,
+      "decoder_delta_tstates": 138,
+      "saved_percent": 0.0012906889697720644,
+      "pc_seconds": {
+        "baseline": 6.917492100037634,
+        "wide": 30.25982439989457
+      },
+      "pc_time_ratio": 4.374392332118449,
+      "pc_timing_scope": "One sequential run including process/file overhead; not a rigorous PC benchmark.",
+      "improved_blocks": 2,
+      "regressed_blocks": 0,
+      "independent_slices_exact": true,
+      "injected_interrupts": 184
+    },
+    "deep": {
+      "stream_bytes": 154944,
+      "sector_reads": 606,
+      "decoder_tstates": 19412766,
+      "producer_tstates": 1058423,
+      "total_tstates": 20471189,
+      "max_slice_tstates": 19619,
+      "stream_sha256": "75cdaac3d83a53c90d0f04181c4e9fb5ea9e96c1727ec89d244a878b94b84683",
+      "byte_delta": -12,
+      "decoder_delta_tstates": 760,
+      "saved_percent": 0.007744133818632386,
+      "pc_seconds": {
+        "baseline": 10.058558799850289,
+        "wide": 40.59545220003929
+      },
+      "pc_time_ratio": 4.035911407173313,
+      "pc_timing_scope": "One sequential run including process/file overhead; not a rigorous PC benchmark.",
+      "improved_blocks": 10,
+      "regressed_blocks": 1,
+      "independent_slices_exact": true,
+      "injected_interrupts": 184
+    }
+  },
+  "native_machine_code_sha256": "5c31b544aabe773237a604a1dc04057420ad0eb84c1ec06948f2ad55a0c94dba",
+  "native_code_unchanged": true,
+  "format_unchanged": true,
+  "decoded_bytes_unchanged": true,
+  "root_trd_unchanged": true,
+  "root_trd_sha256": "14788fa7b7272c1d8ae4d47e63804cd60998d8ee95032ce56c879a120226e2d5",
+  "candidate_fps": null,
+  "table_allocation_estimate": {
+    "arrival_struct_bytes": 24,
+    "allocated_positions": 65537,
+    "baseline_arrival_bytes": 100664832,
+    "candidate_arrival_bytes": 402659328,
+    "baseline_match_bytes": 16777216,
+    "candidate_match_bytes": 33554432,
+    "scope": "Allocation requests derived from the pinned C structures and constants on MSVC x64; excludes other tables/runtime and is not measured peak working set."
+  },
+  "decision": "Reject table enlargement and this supplemental-search expansion as production defaults: 2/12 bytes saved, no sector saved, slightly more Z80 work. Keep reproducible prototypes and design a stronger state-aware parser.",
+  "next": "Compare a bounded exact parser on small adversarial inputs to expose pruning losses, then test an extended parser only on a saved difficult window. Retain baseline payloads whenever a candidate loses the required byte/time objective.",
+  "evidence": [
+    {
+      "file": "wide-probe.json.gz",
+      "sha256": "c8fabdc9a8b64e649f9cd4b4dcc7b3aa01d329c1abb30b87a50ec80a6eaff790",
+      "raw_sha256": "6dbbee9ce5fee421cc9ce8beade05c7cceb464578d5ddb1c4d67b170c6b0fe3e"
+    },
+    {
+      "file": "wide-build.json.gz",
+      "sha256": "ccc604802a3cb30809aee7594f41b437b56cdede6f5e2ad1138036f22ab9a90f",
+      "raw_sha256": "9422dc433ca4537d5e9633956d809042a6f4ee3d803992c7987b64a1a162575a"
+    },
+    {
+      "file": "wide-build.log.gz",
+      "sha256": "be1f3486e87d04c9f19be0883e3bf818260a7bdd7d30bf5d3307635b7475803b",
+      "raw_sha256": "5e8feec001c0d1621c1848b49f2b26062359b48f1a2e3f6843865a1591b1228c"
+    },
+    {
+      "file": "wide-cpu.json.gz",
+      "sha256": "fb6dba72bfff9ae556bc1338520868d084e71438d84c8e1ab9096a25ac79a5d7",
+      "raw_sha256": "7fb322d9f07ab78eaa8449706152c9218ffce10d33b7177f63085be65d96520d"
+    },
+    {
+      "file": "wide-verification.json.gz",
+      "sha256": "24f9e3d7e85b5e8cb2f5c3333bdb2aa20f70254a5f364348a8f2f4a7ad25ad3b",
+      "raw_sha256": "3b7ae1fd0cb9de8c3db7daedc18f4f351d421d8a1bfa2bc3c203ddc383d55fa2"
+    },
+    {
+      "file": "wide-wide.stream.gz",
+      "sha256": "13a096b72f19767b2cd902d07b28e5786e1d46e9f76a6339a8e5f3fd533bbfbc",
+      "raw_sha256": "41793e0d5a6620dc11c09fbb07e056963974dd158eddea4abe6d3106b4027686"
+    },
+    {
+      "file": "deep-probe.json.gz",
+      "sha256": "4e69e1b0142e0ea4694a30032e36960f20e8af01b152e24f0e87e12ae98e05b8",
+      "raw_sha256": "537425c852a95406392d01f3f3a3b52dbb51dfef0482b951bc9e3c8150bd638d"
+    },
+    {
+      "file": "deep-build.json.gz",
+      "sha256": "80bfaa3c9117be772c59781a31678e39dd15eb84579adc4a4f709e1bc19b204d",
+      "raw_sha256": "655981d96ec2847d52cebe784999188c16542bccda54c79e80cc3af429dc17b3"
+    },
+    {
+      "file": "deep-build.log.gz",
+      "sha256": "be1f3486e87d04c9f19be0883e3bf818260a7bdd7d30bf5d3307635b7475803b",
+      "raw_sha256": "5e8feec001c0d1621c1848b49f2b26062359b48f1a2e3f6843865a1591b1228c"
+    },
+    {
+      "file": "deep-cpu.json.gz",
+      "sha256": "df8394cd86c4a67fe4223911996cf842a3d7582f8423036d15bafcc0de881672",
+      "raw_sha256": "306d23591d13d5768c6701eed72e81690cee63207a349780893c60f07ce27f52"
+    },
+    {
+      "file": "deep-verification.json.gz",
+      "sha256": "fedcd29bdc2c2d24234b517c0dc9d8c609644062a6eafaeb5cddc2cc778713b6",
+      "raw_sha256": "57ac5195fe1f94fef1413e195c333396f926a99d0c917cd44f8dec9be0ed2c8c"
+    },
+    {
+      "file": "deep-wide.stream.gz",
+      "sha256": "c02a79bebe4ea466facb7f0f8a8db878fbb98ee6fec19ce7294ac50f87d6227e",
+      "raw_sha256": "75cdaac3d83a53c90d0f04181c4e9fb5ea9e96c1727ec89d244a878b94b84683"
+    },
+    {
+      "file": "deep-edges.json.gz",
+      "sha256": "a503f5dbc83c8f1ab24b58f918b4e92b6ef9606ba2a3da5182e75afa67eb5bb1",
+      "raw_sha256": "b058e99ae2cf6a8ef1dcad448ec4473f17c9c4ffff007584f90ecb67f04f373a"
+    }
+  ],
+  "deep_native_edge_cases": 27,
+  "size_only_best_of_estimate_bytes": 154943,
+  "best_of_scope": "Byte-count estimate only from independent saved payloads, not a newly built stream or disk. At equal size production selection must consider measured Z80 work.",
+  "source_sha256_lf": {
+    "probe_lzsa2_search.py": "5c83ed0caa5cc3ad658265ff05220fa4e0c17dbbebef135a057653c6086a89e2",
+    "verify_lzsa2_search.py": "aa5564ebd9c0f3c432a8d0fe89adf93a816c69ca97809158056b574fb2957cfa",
+    "summarize_lzsa2_search.py": "81eec8cf4a3f247f3cddd9fcc5e4924b107173c536cf2e20f70d5208eddc2a3f",
+    "benchmark_row_lzsa.py": "3fc3c98695d1d9e3bfc086a079a8d2f67a17ddd0c2c187051767c6209113ede2",
+    "resumable_lzsa2.py": "141d3f843554a50eb3c20c4a764f1edd6294ff96a49be254e07cbbb35f23a3d2",
+    "lzsa2_stream.py": "72969188dd7604a03eafc3c6a2932d5c96f210609ae02bcb2196c896adbaa7c2",
+    "test_row_lzsa.py": "6360b79310cd009590a6745f4d961ee23ef88cf8678c64cd74f6ae067e4ad11f",
+    "verify_lzsa2_dispatch.py": "78074b0ee5ebcc07daa7614dae1904be5193787e26e559c86463ac9cd16f3f06",
+    "build_lzsa_windows.cmd": "0abbfe12d96562cf130917738c7f36bcb96057ae2b6d1da38646b831e296a860"
+  }
+}

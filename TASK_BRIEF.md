@@ -49,7 +49,17 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: LZ4 analysis and fast short runs
+## Latest completed milestone: stronger standard LZSA2 search
+
+Baseline `c3d1125`, same 21 archived blocks. A larger host match/arrival
+search saves 2 bytes (+138 decoder T); a follow-up expanding supplemental
+limits saves 12 bytes (+760 T), still 606 sectors. All byte/overlap/bank/
+sector/cycle/independent IRQ checks and 27 deep-variant edges pass. Reject
+these changes as production defaults; preserve standard format and root TRD.
+[Prototypes, evidence and next parser plan](toolkit/LZSA2_COMPRESSION_PLAN.md)
+are saved. Simple table growth is not a meaningful capacity optimization.
+
+## Previous milestone: LZ4 analysis and fast short runs
 
 Baseline `e681055`; unchanged 21 LZ4-HC12 blocks and 192-frame decoded input.
 Direct short copies and fewer stack exchanges reduce decoder 19847554 ->
@@ -173,18 +183,18 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: faster outer decoding on difficult windows
+## Next finite deliverable: find a real LZSA2 parser loss
 
-Keep the borrowed-literal image and exact five-level packet bytes. The
-compiled-output and whole-symbol-motion candidates regress total CPU.
-The LZ4 short-run component is now verified: 15657014 decoder T, 183448
-bytes vs 19412006 T / 154956 bytes for LZSA2. Reuse its archived results.
-Next evaluate selective blocks in one difficult window, including added
-sectors and a concrete mixed-decoder placement/dispatch budget. Do not
-repeat the host codec sweep or ignore the earlier capacity rejection.
-Only integrate a candidate whose total delivery can improve within the
-disk budget, then verify full Fuse publication/AY with actual disk latency.
-Preserve the complete movie objective; a window or average fps cannot pass.
+The latest request prioritizes stronger compression without a format change.
+Keep the borrowed-literal image, decoder and exact five-level packet bytes.
+Build a small exact parser oracle for short repeat-offset/literal-threshold
+cases and saved video slices. Produce one reproducible suboptimal parse
+or establish no improvement within the tested scope. Only then extend a
+proven opportunity to a bounded difficult window. Do not repeat table or
+codec sweeps, promise a ratio gain, or deploy size savings that harm required
+delivery timing. See the compatible-compressor plan for dictionary limits.
+LZ4 selective decoding remains a separate measured option, with a capacity
+penalty and unresolved actual disk timing. A window cannot pass release.
 
 ## Release gate and handoff
 

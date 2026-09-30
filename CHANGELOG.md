@@ -21,6 +21,40 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — test stronger search with the unchanged LZSA2 format
+
+- **Objective/input:** analyze a stronger compatible compressor and larger
+  dictionaries/search tables; baseline `c3d1125`, pinned upstream `15ee2df`,
+  same 21 independent 15872-byte-or-smaller blocks / 192 five-level frames,
+  323940 decoded bytes. Existing `--prefer-ratio` already active.
+- **First attempt:** candidate matches 64 -> 128; first/final arrival
+  limits 32/64 -> 128/256 with matching index shifts. Host-only structures;
+  unchanged standard writer and C/Z80 decoders. Stream 154956 -> 154954
+  bytes (-2), still 606 sectors; decoder 19412006 -> 19412144 T (+138).
+  Observed sequential PC compression 6.92 -> 30.26 s; not a rigorous benchmark.
+- **Evidence-driven follow-up:** remaining supplement ceilings 15/46/63 ->
+  63/95/127, two insertion caps 12 -> 48 and match-length limits 16 -> 64.
+  Stream 154944 bytes (-12, 0.00774%), still 606 sectors; decoder 19412766 T
+  (+760). Ten blocks improve, one worsens by a byte. Observed PC compression
+  10.06 -> 40.60 s. Main host table allocations about 112 -> 416 MiB, source
+  estimate rather than measured working set. Size-only best-of estimate saves
+  13 bytes; not a new built stream or disk.
+- **Verification:** all baseline recompressions byte-identical; both 21-block
+  streams exact in original-author, host, guarded banked and independent
+  full-flags Z80 decoders. Input-cursor/overlap/bank/sector/EOF checks pass,
+  every independent slice agrees, 184 synthetic IM1 interrupts per candidate.
+  Deeper variant passes 27 native non-video edges. Player code and root TRD
+  unchanged. No real disk/ULA/AY schedule, Fuse or full-movie release test.
+- **Decision:** reject these increases as production defaults; retain
+  reproducible compatible prototypes. Next build a small exact parse oracle
+  to expose actual pruning losses, then test a stronger parser in a bounded
+  window. Plan separates host tables, runtime history and video dictionaries;
+  includes compatible block-boundary selection and a guarded history study.
+- **Reproduction:** [analysis and plan](toolkit/LZSA2_COMPRESSION_PLAN.md),
+  [probe/build script](toolkit/probe_lzsa2_search.py),
+  [summary](toolkit/lzsa2_search_profile.json),
+  [evidence](toolkit/lzsa2_search_evidence).
+
 ## 2026-09-30 — analyze and specialize LZ4 short-run decoding
 
 - **Objective/input:** user-requested LZ4 improvement analysis; baseline

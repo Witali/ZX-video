@@ -6,6 +6,17 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Stronger standard LZSA2 search (2026-09-30):** retain format and native
+decoder unchanged. On the same 21 blocks, wider host match/arrival tables
+save only 2 bytes (+138 decoder T); widening the remaining supplement
+limits saves 12 bytes (+760 T). Both still read 606 sectors. All guarded
+and independent CPU checks pass; 27 deep-variant edges pass. No production
+adoption, new disk or fps claim. Next use a small exact parser as an oracle
+for pruning losses, then one bounded host-parser candidate. Keep baseline
+payload fallback, nibble/EOD costs and byte/time selection. Larger runtime
+history needs a separate 128 KiB bank layout and independent disk start.
+[Compatible-compressor plan and evidence](LZSA2_COMPRESSION_PLAN.md).
+
 **LZ4 analysis and short-run prototype (2026-09-30):** same 21 saved blocks,
 identical compressed/decoded bytes. Inline short literal/match copies and
 avoid two stack exchanges on short matches: 19847554 -> 15657014 T (-21.11%),
