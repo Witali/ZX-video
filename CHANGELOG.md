@@ -21,6 +21,38 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — retain all five levels with the established 2x2 pattern
+
+- **Objective/baseline:** follow the user's request to keep the previous
+  dither scale and all five coverages after the 4x4 experiment. Use the
+  existing host prototypes and the same original-RGB windows 629, 2857 and
+  3855, 32 frames plus a seed each, on `codex/dither-4x4` after `b7604ab`.
+- **Parameters:** retain colour pairs and BRIGHT; introduce the missing
+  quarter shade only on lower squared RGB error. Compare fixed four-code,
+  uniform five-level, adaptive four/five-byte cells with endpoint orientation,
+  and the pending explicit canonical three-mode representation. Keep the
+  phase-aligned 2x2 pattern, logical resolution and FLASH=0.
+- **Results:** total ZX0 control bytes are 56146 / 82500 / 68648 / 69887
+  respectively. Adaptive hybrid adds 22.27% over four-code input and saves
+  16.79% versus uniform-five; canonical adds 1.80% over hybrid. Mean RGB
+  error falls 16.14%, 1.16% and 6.81% by window, with no worse frame among
+  the 96 measured. Five-byte cells average 6.05%, 1.06% and 3.16%.
+- **Coverage:** ten host tests pass, including previous 2x2 pattern identity,
+  all five levels in one cell, stable phase across representations, all 625
+  row words and per-sample error monotonicity. All window packets/ZX0 blocks
+  round trip; inspect frames 630/2876/3886. Reuse cached original RGB and
+  exact compressed blocks. Earlier retained-palette control hashes match.
+- **Historical attempts:** preserve both previously uncommitted reports;
+  their source hashes predate canonical mode. The broader palette-search
+  report was not rerun: four of 96 frames had increased error, so retain
+  the colour-pair-preserving policy. Do not infer its execution date.
+- **Decision/limits:** retain adaptive hybrid as the five-level compression
+  reference, canonical as a measured size alternative for native profiling.
+  Neither is a verified player format; no native RAM/timing, full playback
+  or TRDs. Existing player delta is 0 T. The prior 4x4 +56.19% used a
+  different percentage baseline (uniform five-level), not four-code input.
+  [Method, current/historical evidence and next step](toolkit/HYBRID_FIVE_LEVEL.md).
+
 ## 2026-09-30 — test adaptive 4x4 dithering on a separate branch
 
 - **Objective/baseline:** test the requested spatial pattern on branch

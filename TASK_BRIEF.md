@@ -49,49 +49,42 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: test adaptive 4x4 spatial dithering
+## Latest completed milestone: five levels with the previous 2x2 pattern
 
-The user requested a separate branch experiment, completed on
-`codex/dither-4x4` from `a3b4e4e`. The three 32-frame RGB windows show better
-regional tone but 30–38% higher logical 2x2 error, 2.7–3.3x grain and
-82500→128856 ZX0 cell-stream bytes. Seven tests pass; native integration,
-RAM/timing and release playback were not attempted. Reject this candidate
-as the default and retain its evidence in [SPATIAL_DITHER.md](toolkit/SPATIAL_DITHER.md).
-No further pattern search or TRD build is implied by this completed test.
+The user requested this follow-up on `codex/dither-4x4`, after `b7604ab`.
+Retain colour pairs and add the missing quarter shade only on lower local
+RGB error. Adaptive four/five-byte cells restore all five coverages exactly
+with the established phase-aligned 2x2 pattern. In three 32-frame RGB windows,
+mean error improves 1.16–16.14% with no worse frame. ZX0 control bytes are
+56146 for four-code input, 82500 for uniform-five, 68648 for adaptive hybrid,
+and 69887 for explicit canonical modes. Ten host tests pass.
 
-## Next technical milestone: decide the five-level representation
+Use [HYBRID_FIVE_LEVEL.md](toolkit/HYBRID_FIVE_LEVEL.md) and the current
+`hybrid_five_level_canonical_probe.json` as the handoff. The two older
+reports are historical: retained-palette control hashes match the new run;
+the broader palette search was not rerun and has four worse-error frames.
+The earlier [4x4 candidate](toolkit/SPATIAL_DITHER.md) remains rejected as
+the default. No native five-level consumer, timing or release is verified.
 
-**Deliverable:** one evidence-backed recommendation for supporting all five
-2x2 coverages within a cell while retaining temporal compression and fast
-decoding. This milestone is a feasibility decision, not a release build.
+## Next technical milestone: native adaptive five-level expansion
 
-**Starting state:**
+**Deliverable:** one bounded native implementation/profile of the chosen
+adaptive cell representation, with exact equivalence to the saved host
+2x2 patterns. Adaptive hybrid is the compression reference. Canonical modes
+cost 1.80% more in these windows and are an alternative only if avoiding
+endpoint-orientation work justifies the extra data.
 
-- Commit `0ab1891` preserves INK/PAPER/BRIGHT and rejects FLASH. Existing
-  attribute deltas remain in place; see [attribute storage](toolkit/ATTRIBUTE_FORMAT.md).
-- Commit `5a15085` adds an optional phase-aligned Z80 renderer. It is tested
-  locally but increases the stated isolated output formula by about 26.4%;
-  it is not enabled in the disk builders. See [measurements](toolkit/PHASE_RENDERER.md).
-- Uncommitted `toolkit/hybrid_five_level.py`, its probe and tests contain
-  adaptive four/five-level cell experiments. Two saved JSON reports predate
-  the latest canonical-quartet mode change: they are historical results,
-  not validation of the current source. Six host tests last passed on
-  September 28. No native five-level consumer or full playback is verified.
+Use the existing four-code renderer and its optional phase-aligned version
+as baselines; [PHASE_RENDERER.md](toolkit/PHASE_RENDERER.md) records the
+optional path's substantial overhead. Count absolute and delta T-states,
+account for tables/code/state/IRQ/paging and native n-2 changes, and verify
+both output banks and interrupts. Preserve seven attribute bits and FLASH=0.
+Reuse source windows 629, 2857 and 3855 with carried state; do not repeat
+host palette searches. Report unmeasured disk/ROM effects separately.
 
-**Bounded procedure:** inspect the existing prototypes and reports; identify
-which evidence is still valid. Reuse the three source windows starting at
-629, 2857 and 3855, each 32 frames with a carried seed. Use existing four-code
-and uniform five-level controls to assess the most promising adaptive
-candidate. Recompute only invalidated comparisons. Preserve colour pairs
-and BRIGHT where possible, keep FLASH=0, and retain separate attribute deltas.
-
-**Decision evidence:** post-ZX0 bytes, per-frame image error and inspected
-difficult frames, exact host reconstruction, and the proposed decoder/RAM
-requirements. Distinguish measured Z80 costs from estimates or unimplemented
-paths. These cell-stream controls omit parts of FAP3 and cannot establish
-disk count or cadence. Record the recommendation and its tradeoffs, then
-finish this milestone. Native integration and TRD rebuilding are subsequent
-milestones, not implied by this feasibility task.
+Finish with the native cost/RAM decision and focused commit. Integrating
+the format into the generic converter/player and building release TRDs
+remain subsequent work; host byte counts do not prove disk count or cadence.
 
 ## Release gate and handoff
 

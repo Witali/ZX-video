@@ -6,6 +6,16 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Five-level 2x2 decision (2026-09-30):** retain the palette-preserving
+adaptive four/five-byte cell candidate. In 96 RGB frames its exact five-level
+picture improves mean RGB error by 1.16–16.14%; ZX0 control bytes total
+68648 versus 56146 for four-code input and 82500 for uniform-five.
+The canonical three-mode alternative costs 1.80% more than adaptive hybrid;
+any CPU saving remains unmeasured. Ten host tests confirm the previous
+phase-aligned pattern and lossless representation changes. Next implement
+and profile native expansion, IRQ/n-2/RAM contracts and sector impact before
+TRD integration. [Results and reproduction](HYBRID_FIVE_LEVEL.md).
+
 **4x4 experiment (2026-09-30):** a bounded host prototype on branch
 `codex/dither-4x4` improves regional tone in 96 frames but increases logical
 2x2 error by 30–38%, grain by 2.7–3.3x and cell-stream ZX0 bytes by 56.19%
