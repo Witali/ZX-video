@@ -1,0 +1,529 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Archive one baseline and two bounded row-index speed attempts.\n\nValidate final full-screen captures separately from timed playback. Preserve\nthe exact five-level pixels and AY; a complete trace alone is not a release.\n",
+  "baseline_commit": "78541a5",
+  "frames": 192,
+  "states_sha256": "47b062996f9445403e6fc4c400c5d7be5666c6b46ee568fefc5a1b3d3081dbb0",
+  "variants": [
+    {
+      "variant": "baseline",
+      "trd_sha256": "889e4c5d370a8d92775ba852d51f65fe8b935cb5e6caa0ad9f72cac26f3e7cef",
+      "video_bytes": 112364,
+      "video_sectors": 439,
+      "used_sectors": 489,
+      "frame_cpu_tstates": 75788625,
+      "cpu_stages": {
+        "metadata/compiled_metadata": 3192091,
+        "handoff/handoff": 72960,
+        "reconstruct/control": 4197630,
+        "reconstruct/huffman": 14695551,
+        "reconstruct/static_edge": 67968,
+        "reconstruct/intra": 6769003,
+        "reconstruct/fast_fragment": 23744,
+        "reconstruct/noop_control": 2875228,
+        "reconstruct/patch": 7153010,
+        "reconstruct/inline_huffman": 69336,
+        "reconstruct/attribute_pass": 1142746,
+        "attribute_groups/attribute_groups": 284868,
+        "output/control": 19584,
+        "output/map_copy": 249600,
+        "output/paging": 14784,
+        "output/band_dispatch": 266112,
+        "output/dense_control": 399156,
+        "output/dense_pixels": 10340352,
+        "output/dense_address": 133056,
+        "output/band_control": 236352,
+        "output/attributes": 777678,
+        "reconstruct/cache": 9180764,
+        "reconstruct/motion": 5816836,
+        "output/partial_control": 466128,
+        "output/mask_dispatch": 104832,
+        "output/cell_dispatch": 867552,
+        "output/cell_control": 419616,
+        "output/cell_pixels": 4009664,
+        "output/cell_address": 1894464,
+        "output/mask_skip": 47960
+      },
+      "elapsed_stages": {
+        "transfer": 20142003,
+        "metadata": 3935957,
+        "prepare": 53877513,
+        "draw": 20845931
+      },
+      "mean_fps": 6.749116607773852,
+      "missed_deadlines": 174,
+      "max_late_fields": 269,
+      "late_runs": [
+        {
+          "start": 14,
+          "end": 57,
+          "recovered_at": 58
+        },
+        {
+          "start": 62,
+          "end": 191,
+          "recovered_at": null
+        }
+      ],
+      "bad_fallback_intervals": 39,
+      "nominal_pass": false,
+      "fallback_pass": false,
+      "interval_ms": {
+        "min": 59.998589721893154,
+        "mean": 148.1675392670157,
+        "max": 660.0011282224855
+      },
+      "exact_ay": true,
+      "ay_ticks": 1152,
+      "underruns": 0,
+      "pixel_errors": 0,
+      "full_cpu_screens_exact": true,
+      "checked_runtime_sectors": 439
+    },
+    {
+      "variant": "slack2",
+      "trd_sha256": "47613ab74548a6f4c67158e3c2fa621e5065e9847b79c6658bd65283af16c001",
+      "video_bytes": 113178,
+      "video_sectors": 443,
+      "used_sectors": 491,
+      "frame_cpu_tstates": 74872229,
+      "cpu_stages": {
+        "metadata/compiled_metadata": 3192128,
+        "handoff/handoff": 72960,
+        "reconstruct/control": 4187766,
+        "reconstruct/huffman": 14524170,
+        "reconstruct/static_edge": 67968,
+        "reconstruct/intra": 6309242,
+        "reconstruct/fast_fragment": 563041,
+        "reconstruct/noop_control": 2872082,
+        "reconstruct/patch": 7059605,
+        "reconstruct/inline_huffman": 66798,
+        "reconstruct/attribute_pass": 1142746,
+        "attribute_groups/attribute_groups": 284868,
+        "output/control": 19584,
+        "output/map_copy": 249600,
+        "output/paging": 14784,
+        "output/band_dispatch": 266112,
+        "output/dense_control": 399156,
+        "output/dense_pixels": 10340352,
+        "output/dense_address": 133056,
+        "output/band_control": 236352,
+        "output/attributes": 777678,
+        "reconstruct/cache": 9098365,
+        "reconstruct/motion": 5183600,
+        "output/partial_control": 466128,
+        "output/mask_dispatch": 104832,
+        "output/cell_dispatch": 867552,
+        "output/cell_control": 419616,
+        "output/cell_pixels": 4009664,
+        "output/cell_address": 1894464,
+        "output/mask_skip": 47960
+      },
+      "elapsed_stages": {
+        "transfer": 20372412,
+        "metadata": 3924163,
+        "prepare": 52962467,
+        "draw": 20852899
+      },
+      "mean_fps": 6.787491115849325,
+      "missed_deadlines": 172,
+      "max_late_fields": 261,
+      "late_runs": [
+        {
+          "start": 15,
+          "end": 55,
+          "recovered_at": 56
+        },
+        {
+          "start": 61,
+          "end": 191,
+          "recovered_at": null
+        }
+      ],
+      "bad_fallback_intervals": 40,
+      "nominal_pass": false,
+      "fallback_pass": false,
+      "interval_ms": {
+        "min": 60.00056411124274,
+        "mean": 147.32984293193715,
+        "max": 640.0016923337282
+      },
+      "exact_ay": true,
+      "ay_ticks": 1152,
+      "underruns": 0,
+      "pixel_errors": 0,
+      "full_cpu_screens_exact": true,
+      "checked_runtime_sectors": 443
+    },
+    {
+      "variant": "slack16",
+      "trd_sha256": "affcd34dac24c6698953dc4aa7e4379e4d8bbf4481d73850f253eee17bfaaad3",
+      "video_bytes": 148971,
+      "video_sectors": 582,
+      "used_sectors": 633,
+      "frame_cpu_tstates": 41965760,
+      "cpu_stages": {
+        "metadata/compiled_metadata": 2656588,
+        "handoff/handoff": 72960,
+        "reconstruct/control": 4156254,
+        "reconstruct/huffman": 1092655,
+        "reconstruct/static_edge": 67968,
+        "reconstruct/fast_fragment": 9090556,
+        "reconstruct/attribute_pass": 1142746,
+        "attribute_groups/attribute_groups": 284868,
+        "output/control": 19584,
+        "output/map_copy": 249600,
+        "output/paging": 14784,
+        "output/band_dispatch": 266112,
+        "output/dense_control": 399156,
+        "output/dense_pixels": 10340352,
+        "output/dense_address": 133056,
+        "output/band_control": 236352,
+        "output/attributes": 777678,
+        "reconstruct/noop_control": 2086154,
+        "reconstruct/patch": 1066420,
+        "reconstruct/inline_huffman": 1701,
+        "output/partial_control": 466128,
+        "output/mask_dispatch": 104832,
+        "output/cell_dispatch": 867552,
+        "output/cell_control": 419616,
+        "output/cell_pixels": 4009664,
+        "output/cell_address": 1894464,
+        "output/mask_skip": 47960
+      },
+      "elapsed_stages": {
+        "transfer": 45170386,
+        "metadata": 3235093,
+        "prepare": 20125309,
+        "draw": 20845138
+      },
+      "mean_fps": 7.126865671641791,
+      "missed_deadlines": 145,
+      "max_late_fields": 194,
+      "late_runs": [
+        {
+          "start": 43,
+          "end": 53,
+          "recovered_at": 54
+        },
+        {
+          "start": 57,
+          "end": 62,
+          "recovered_at": 63
+        },
+        {
+          "start": 64,
+          "end": 191,
+          "recovered_at": null
+        }
+      ],
+      "bad_fallback_intervals": 28,
+      "nominal_pass": false,
+      "fallback_pass": false,
+      "interval_ms": {
+        "min": 59.997461499407684,
+        "mean": 140.31413612565444,
+        "max": 420.0011282224855
+      },
+      "exact_ay": true,
+      "ay_ticks": 1152,
+      "underruns": 0,
+      "pixel_errors": 0,
+      "full_cpu_screens_exact": true,
+      "checked_runtime_sectors": 582
+    }
+  ],
+  "captures": [
+    {
+      "frame": 31,
+      "publication_tstate": 58570338,
+      "page": 17,
+      "nonce_exact": true,
+      "screen_sha256": "a9b269eb1eef490508b9f4d4aced2c5b42ba8d8790d246229a17c8a86b8c3dcb",
+      "trace_sha256": "7e154398a226bba9bc80eb837d94e7900b0924941c4c097832e9007b113e50d8",
+      "debugger_sha256": "804244ddb27ce96a947f1d2356b773477127c1c1e8b5428a747628df7c25cac0",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    },
+    {
+      "frame": 64,
+      "publication_tstate": 72751948,
+      "page": 24,
+      "nonce_exact": true,
+      "screen_sha256": "74f107d19f63b4fcda681648bd1e46d11b08a60862dea8202e69c0726fd116eb",
+      "trace_sha256": "608e5389c02391d871dc00d6622a534ac6af00a2ac6fabeae3bd551d3effc454",
+      "debugger_sha256": "8d5d78b8e2320c5722003aedc83817b87a85f6f0c76a2d04e070114959924d44",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    },
+    {
+      "frame": 95,
+      "publication_tstate": 90337127,
+      "page": 23,
+      "nonce_exact": true,
+      "screen_sha256": "687872d9d883dfa09d65491263cd8808341a8dbdeb745d73d57ac64cf1e72cd5",
+      "trace_sha256": "5afa9e15c4af68ed3202f96e3485ec9573f77be51a6b16c21ef6e7fe9006e9b4",
+      "debugger_sha256": "4e5b320d097a9725ffd4ca62cf793a720d6166c8d20881d94572fb0273ce5320",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    },
+    {
+      "frame": 128,
+      "publication_tstate": 107922302,
+      "page": 25,
+      "nonce_exact": true,
+      "screen_sha256": "dedbce6e540b03bf23d6966993fc161a6ccc17e796a8e46536ccbf5000845d22",
+      "trace_sha256": "f433e1a99264f8d78e5188c4e7d9528275a743578303fa2d185e0b95a5571876",
+      "debugger_sha256": "238de32b454d7a2d21c311d82a5c16f17b4b667f8f0e93283cd5a0adf7be05b7",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    },
+    {
+      "frame": 159,
+      "publication_tstate": 122883892,
+      "page": 17,
+      "nonce_exact": true,
+      "screen_sha256": "076f81bd4ea998f5a4a0a2551704c9b1aa86b81992629e8b7c1965cd5542632f",
+      "trace_sha256": "5b104b5435ed7785af2eec6c6eaf3155fd78d15119b0d0ee0b7dd8e1aa12f263",
+      "debugger_sha256": "3926bf5f28fa99781c1bc67d823f854a153054a0e66a6e7b9885b87b830d4afa",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    },
+    {
+      "frame": 191,
+      "publication_tstate": 140398169,
+      "page": 23,
+      "nonce_exact": true,
+      "screen_sha256": "03e2198aec4ebb88416e59b4ba2f9500f61920c88c27608d5a22e033ce7fe487",
+      "trace_sha256": "7f04b984805cdca56fad3ebc7ca726e8d65fc8856c6dc0b4d7d6fb1bee0f013b",
+      "debugger_sha256": "eef0af7dec1ec2d08cd6c7f2222ac8a46e4224b856c4fa145b81932a5001e455",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    }
+  ],
+  "frame_cpu_saved": 33822865,
+  "frame_cpu_saved_percent": 44.627891058849535,
+  "video_growth_percent": 32.57893987398099,
+  "fps_growth_percent": 5.597014925373123,
+  "selected_image": "ZX-video-five-level-fast-test.trd",
+  "selected_trd_sha256": "affcd34dac24c6698953dc4aa7e4379e4d8bbf4481d73850f253eee17bfaaad3",
+  "decision": "Optional experimental speed mode only: faster delivery, larger stream; both cadence gates still fail. Preserve default encoder.",
+  "measurement_limits": "Frame CPU excludes packet copy, ZX0, ULA, AY/IRQ and disk. Fuse elapsed phases include them. Never add these totals. 50-Hz normalization.",
+  "archives": [
+    {
+      "file": "baseline-cpu.json.gz",
+      "sha256": "0c9172b39e1f30561a011c6249398dc71e363412a550ae5f2ebbcf16ab3cce2b",
+      "raw_sha256": "f91d8d5dcfb4f33c992d47963083c1b0b6e0d0195cbb3493b164addffe58b427"
+    },
+    {
+      "file": "baseline-profile.json.gz",
+      "sha256": "f8e6979d282c47c6e07959fbb5bdffdd66130d548895449b471cbbc696a9f7a9",
+      "raw_sha256": "55112e83891bdc84bd0ae7f24cbbd46302dac63e98446ae5bc8fbe319c433564"
+    },
+    {
+      "file": "baseline-profile-trace.json.gz",
+      "sha256": "05ef18eb518d89cf416ba67c4884c9b756ed2084d3301fee21c745b5dff9f185",
+      "raw_sha256": "5c9c263ea6db10d41986a5a5b14201ee2bb0a7373c4b2c0b2d7f9d2e69b38962"
+    },
+    {
+      "file": "baseline-profile-trace.trace.txt.gz",
+      "sha256": "951fca864b3fae4bfb309b25eb4f44746fab7fe36d6032235e2215a597f5dcb7",
+      "raw_sha256": "19142bd32ef1634bcee1fd19a153fb7ba83fc8d670234d3bfa46d91125dbb76f"
+    },
+    {
+      "file": "baseline-profile-trace.debugger.txt.gz",
+      "sha256": "92768b74238fd0541fffefbcf9ea61bb323eb3d156693cd66349db8ba2b080a2",
+      "raw_sha256": "da869c28dcd48ff6b23cf66300129c3a04327442b19e01024f0352711bce46f8"
+    },
+    {
+      "file": "slack2-cpu.json.gz",
+      "sha256": "41f5ad1b98cc1fab941140fe8df7324cfc16a0fe89997a5b617db7a248b7bcf6",
+      "raw_sha256": "71bacd99b6274407586691155ef0f5651551e1e1a3efbf4680b0fbc9044d6033"
+    },
+    {
+      "file": "slack2-profile.json.gz",
+      "sha256": "e40ed45efdacf435cbe246ac4bbb8a08b79fe72e3b0b493916136f1562490cea",
+      "raw_sha256": "33e8104a9af6887524755336be73a165f29eb1832cb3165a2a12315abfda60e0"
+    },
+    {
+      "file": "slack2-timing.json.gz",
+      "sha256": "ff5ca5c1b0ba5192bddb10d38460ab1b4b39dd6f3618a46a62bbe95e49ae6fc8",
+      "raw_sha256": "f262239d55c48f966d5a3f3660d4bf01fa9ffb9a92d4c2d71f95889e957c0c74"
+    },
+    {
+      "file": "slack2-timing.trace.txt.gz",
+      "sha256": "0a40dbb4dfbc2c37c953a2d28e368291fdefa49534582272f1faa93bbc1b0370",
+      "raw_sha256": "3e802dcc39b1b2e7759d8420854215048d77cc8584543b90e164ab50e9aaba7a"
+    },
+    {
+      "file": "slack2-timing.debugger.txt.gz",
+      "sha256": "830dba881ba25f28ebf4510ddbc416651210a4e419379d74064031cc177a85a4",
+      "raw_sha256": "a856748cf32a3b87a9395711b966ae0f031548e494914191a8b81316df623e41"
+    },
+    {
+      "file": "slack2-metadata.json.gz",
+      "sha256": "00da1e5676523d2ade8000a0c2b92f46908b68164e4ce2b49aa592dfd1eacef1",
+      "raw_sha256": "4206b309f8799250d605291838476b594c37afff7b4ff1e89d2d263d6ee09918"
+    },
+    {
+      "file": "slack2-video.raw.gz",
+      "sha256": "46efc62d8369006af7855c61bacca6627e791e198978538cb0a85d6eca08490a",
+      "raw_sha256": "c05dbc6186fdfce7d7084655fea48b08d82640700bb86795e97f83829bef356b"
+    },
+    {
+      "file": "slack2-build.json.gz",
+      "sha256": "897d4936ed03a6b2400141a8541c417276ebc8767ba2266a1f7257ac4c24d5a8",
+      "raw_sha256": "0806713a5a82869f48811b97647e08ef22471702a41f69fb2b0a15b8afd4789e"
+    },
+    {
+      "file": "slack16-cpu.json.gz",
+      "sha256": "18d29d9654b317ae457b32db569e8bcf2c513fa5d5c8100159bb905c8208f24c",
+      "raw_sha256": "2560aa1e754c9dac02555f238606dcaba8e4745f0b45a4261505376d713df940"
+    },
+    {
+      "file": "slack16-profile.json.gz",
+      "sha256": "e9cf7a8c97992f723ac753dcc19aef725ef8b3ede16bbb81e10f83973050387b",
+      "raw_sha256": "5a1c66bfd63e599e78bd1e73f7f5312b8c25cf4491376991a021d62f71d0c9f6"
+    },
+    {
+      "file": "slack16-timing.json.gz",
+      "sha256": "bf96a74766b07a6385c1d6d87270626514033455372abb1ca211d18e964427d3",
+      "raw_sha256": "bac75c4e5086a188e58bf028013e622c7dc5c72d0c46d5e9f585736f32b3b9b0"
+    },
+    {
+      "file": "slack16-timing.trace.txt.gz",
+      "sha256": "46edb4cb1f174aec3545aaa89340799227938921cd2d270f5f0fd82943c267ec",
+      "raw_sha256": "801226ddafe38fecd1bf330bb5cfab51137538f3df7bfc2bbd8da470d8989b6e"
+    },
+    {
+      "file": "slack16-timing.debugger.txt.gz",
+      "sha256": "727939620eae20a60aecd707bd5cd3245c19744589a13aacb7e26df204ba4f6f",
+      "raw_sha256": "94082606c7556f46bc9f6b9e2ff353bd73af3bce90d3f731ae674b40def30f50"
+    },
+    {
+      "file": "slack16-metadata.json.gz",
+      "sha256": "a589890c614275bc8e49b27ffa6b462fd7ce3564af76fa30d1f2dd639fc54149",
+      "raw_sha256": "de2457ac4d40204f73d84f79a17d50392c7a372a3059e44f08d3776e442bab7a"
+    },
+    {
+      "file": "slack16-video.raw.gz",
+      "sha256": "e377b6039787549e938f98830431741647d63b248349ea97aa00a7b104623b62",
+      "raw_sha256": "198971aa8c9721afa876fe57101dfd021590132574baf636f4b090f536c8988c"
+    },
+    {
+      "file": "slack16-build.json.gz",
+      "sha256": "e3ce4ab09ef8a23fe68bc173911238b2ba399a95eac75151ac4c97e6f580b429",
+      "raw_sha256": "ef2c26c962f15918062746910eff1f5376dec3d26bedb99e022fab960ea5b9c0"
+    },
+    {
+      "file": "direct-frame-31.scr.gz",
+      "sha256": "675b20ba79a65fc40489522ae31657aae38c46f878c6acac58bfb5dd77a265b6",
+      "raw_sha256": "a9b269eb1eef490508b9f4d4aced2c5b42ba8d8790d246229a17c8a86b8c3dcb"
+    },
+    {
+      "file": "direct-frame-31.trace.txt.gz",
+      "sha256": "511891ef16d7ca08b485369b2929b440565bd44edc74026e31dcc1a829209a9b",
+      "raw_sha256": "7e154398a226bba9bc80eb837d94e7900b0924941c4c097832e9007b113e50d8"
+    },
+    {
+      "file": "direct-frame-31.debugger.txt.gz",
+      "sha256": "8b309f5d8679eaafcfc12e18733fc979d6de1b9b70232fd55dfa04d85ee3b6a0",
+      "raw_sha256": "804244ddb27ce96a947f1d2356b773477127c1c1e8b5428a747628df7c25cac0"
+    },
+    {
+      "file": "direct-frame-64.scr.gz",
+      "sha256": "984da01164207ca45a4bf8d6fca49a2ec145d491d768bb6e1f6e4b8877cea60b",
+      "raw_sha256": "74f107d19f63b4fcda681648bd1e46d11b08a60862dea8202e69c0726fd116eb"
+    },
+    {
+      "file": "direct-frame-64.trace.txt.gz",
+      "sha256": "aaa4ab7c227cd5a6b4fbbe706c53a721e7bbdff3ff36179a95f2e0dfc33d76d7",
+      "raw_sha256": "608e5389c02391d871dc00d6622a534ac6af00a2ac6fabeae3bd551d3effc454"
+    },
+    {
+      "file": "direct-frame-64.debugger.txt.gz",
+      "sha256": "cdf00e55a6a99ce421209d79d67a2c29388c05360adae6735944f912a89ae2cd",
+      "raw_sha256": "8d5d78b8e2320c5722003aedc83817b87a85f6f0c76a2d04e070114959924d44"
+    },
+    {
+      "file": "direct-frame-95.scr.gz",
+      "sha256": "7aaf6a3bcfc8f4def628aefb15da85ec0ccaa8d69ae4f807797ce95a2ed9b99b",
+      "raw_sha256": "687872d9d883dfa09d65491263cd8808341a8dbdeb745d73d57ac64cf1e72cd5"
+    },
+    {
+      "file": "direct-frame-95.trace.txt.gz",
+      "sha256": "3888ccbefb22c5304ab106794c56037f263c8cd4df7bc7a10e9658d97bc8029d",
+      "raw_sha256": "5afa9e15c4af68ed3202f96e3485ec9573f77be51a6b16c21ef6e7fe9006e9b4"
+    },
+    {
+      "file": "direct-frame-95.debugger.txt.gz",
+      "sha256": "83ea259728eee652035e85e9c991f2ad62f6967b90d7d2000c3c44798341bd2d",
+      "raw_sha256": "4e5b320d097a9725ffd4ca62cf793a720d6166c8d20881d94572fb0273ce5320"
+    },
+    {
+      "file": "direct-frame-128.scr.gz",
+      "sha256": "253c8c5ec62dea7c2044fb1e08bf79c66305d0d37b864b5284d0126e74918e95",
+      "raw_sha256": "dedbce6e540b03bf23d6966993fc161a6ccc17e796a8e46536ccbf5000845d22"
+    },
+    {
+      "file": "direct-frame-128.trace.txt.gz",
+      "sha256": "480c75176a583e1becca97b14bdeb49267a253a5e37ce69f5d363112683b5555",
+      "raw_sha256": "f433e1a99264f8d78e5188c4e7d9528275a743578303fa2d185e0b95a5571876"
+    },
+    {
+      "file": "direct-frame-128.debugger.txt.gz",
+      "sha256": "4ece6cbb68e246e21af383df96e7efdf2f340fb0c25ca18c5bb47a3408613498",
+      "raw_sha256": "238de32b454d7a2d21c311d82a5c16f17b4b667f8f0e93283cd5a0adf7be05b7"
+    },
+    {
+      "file": "direct-frame-159.scr.gz",
+      "sha256": "c0b7124a2f3a504f7bdf5fca11fb4ce68fba810eaf9cb37d75a7d073bac22c93",
+      "raw_sha256": "076f81bd4ea998f5a4a0a2551704c9b1aa86b81992629e8b7c1965cd5542632f"
+    },
+    {
+      "file": "direct-frame-159.trace.txt.gz",
+      "sha256": "4c80ef914d486a09acd6ba13c1c5bd2c8e851658d21d8939b4d28a1204a83bd4",
+      "raw_sha256": "5b104b5435ed7785af2eec6c6eaf3155fd78d15119b0d0ee0b7dd8e1aa12f263"
+    },
+    {
+      "file": "direct-frame-159.debugger.txt.gz",
+      "sha256": "7e040e4726c19c8e88714564142f459fc37d21f3d2dd7cd7a669288e39547e06",
+      "raw_sha256": "3926bf5f28fa99781c1bc67d823f854a153054a0e66a6e7b9885b87b830d4afa"
+    },
+    {
+      "file": "direct-frame-191.scr.gz",
+      "sha256": "a12c78206fcf232e98d784cf3ebc2360fca575924f14206c1bb1988870a40a29",
+      "raw_sha256": "03e2198aec4ebb88416e59b4ba2f9500f61920c88c27608d5a22e033ce7fe487"
+    },
+    {
+      "file": "direct-frame-191.trace.txt.gz",
+      "sha256": "3372ab1bf7a61ec10ae75be38af4e3a0a63573f0e3cb69b9ed249d1893cd1374",
+      "raw_sha256": "7f04b984805cdca56fad3ebc7ca726e8d65fc8856c6dc0b4d7d6fb1bee0f013b"
+    },
+    {
+      "file": "direct-frame-191.debugger.txt.gz",
+      "sha256": "9f1aa352c849264b8cee49e56f775717c4cf69611431877f478dbfa782ec3e49",
+      "raw_sha256": "eef0af7dec1ec2d08cd6c7f2222ac8a46e4224b856c4fa145b81932a5001e455"
+    },
+    {
+      "file": "tests.txt.gz",
+      "sha256": "6ebb7710012fb93815c3f57b75fc096340558d74567ff052afb90d2b95b3a860",
+      "raw_sha256": "b9bfc67be41bd80389058f5f6dad039a86968a403eb217e1dd3289f9f8c6ca93"
+    }
+  ],
+  "source_sha256_lf": {
+    "encode_fap3.py": "5427a840a202db114065afd2985b4167ba5910b5724821c4761651aff06db23b",
+    "optimize_row_fragments.py": "a267ef38734041f55576d3c784023dfd8e25f923f2ddfc2511249dee4809346e",
+    "profile_row_cpu.py": "2de0fb6bc472a14d544005d9a2276bf07607cf3134a76067d4b4b0262e72c4ae",
+    "profile_row_playback.py": "f205aace588abdb76b420ef1783a48969d33ccac0b23ed39284d638491fb7063",
+    "summarize_row_fragments.py": "342d3c58da8d9089e8eabd10d4dff462c40fef66022c4700a1adab35a15ad907",
+    "test_generic_converter.py": "16972876235dc7e0c723a2000e9499b095f5439bd85d4dfa2a60ab393b3f0183"
+  }
+}

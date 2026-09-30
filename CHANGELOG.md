@@ -21,6 +21,38 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — speed up row-index reconstruction with bounded fragments
+
+- **Objective/baseline:** improve playback after `78541a5`, limiting work to
+  its exact 192-frame five-level montage and saved AY. Reuse current CPU and
+  Fuse profilers; no re-quantization or movie-wide parameter search.
+- **Profile:** real reconstruction occupies 53877513 elapsed T; deterministic
+  frame work is 75788625 T. Huffman, cache and prediction dominate the latter.
+  Unlike packed pixels, row indices do not have meaningful two-bit subpixels.
+- **First attempt:** permit two extra local bytes to select an existing
+  fragment handler. CPU 75788625 -> 74872229 T (-916396); ZX0 112364 ->
+  113178 bytes. Actual fps 6.7491 -> 6.7875, late frames 174 -> 172, invalid
+  intervals 39 -> 40. Preserve this weak result rather than promote it.
+- **Follow-up:** the small saving justified one stronger allowance, 16 bytes,
+  first checked as a raw/ZX0/CPU window probe without another disk. It saves
+  **33822865 T**, reaching **41965760 T (-44.63%)**, with exact frames.
+  ZX0 grows to **148971 bytes (+32.58%)**. Only then build the final test.
+- **Full actual result:** **7.1269 fps (+5.60%)**, 145 missed deadlines, maximum
+  194 fields / 3.88 s late, 28 invalid fallback intervals. Runs 43..53 and
+  57..62 recover at 54 and 63; run 64..191 does not recover. All 192 frames,
+  582 runtime sectors and 1152 AY records verified; no audio field gaps,
+  duplicates or underruns. Both timing gates and A/V synchronization still fail.
+- **Quality/CPU checks:** every compact frame and both native screens checked
+  in the instruction-timed CPU harness; six real-Fuse full screens match all
+  41472 bytes. Eleven converter tests pass. Default raw encoding is identical;
+  no Z80 opcode changes, 0 T per-instruction delta. Elapsed transfer now
+  dominates (45170386 T); do not confuse it with CPU-only or disk-only time.
+- **Decision:** retain an opt-in speed experiment, keep the compact default.
+  Save `ZX-video-five-level-fast-test.trd` in LFS (633 used file sectors),
+  scripts, traces, both attempts and hashes. Not a whole-movie release.
+  [Analysis/reproduction](toolkit/ROW_FRAGMENT_SPEED.md),
+  [measurements](toolkit/row_fragment_optimization.json).
+
 ## 2026-09-30 — build and measure one five-level test TRD
 
 - **Objective/input:** user requested one image, actual frame cadence and

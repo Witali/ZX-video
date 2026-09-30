@@ -60,7 +60,9 @@ def train_tables(states, residual):
     return bytes(256), [bytes([8])*256]*2
 
 
-def encode(states, ay_frames):
+def encode(states, ay_frames, *, fragment_byte_slack=0):
+    if not isinstance(fragment_byte_slack,int) or not 0<=fragment_byte_slack<=16:
+        raise ValueError('fragment byte slack must be an integer in 0..16')
     if (states.dtype != np.uint8 or states.ndim != 2 or states.shape[1] != 3840
             or not 0 < len(states) <= 0xffffffff or len(ay_frames) != len(states)*6):
         raise ValueError('expected N compact frames and exactly 6*N AY states')
@@ -101,9 +103,12 @@ def encode(states, ay_frames):
             kind, payload = pack_fragment(values.tobytes())
             fields = np.flatnonzero(active[tile])
             bits = sum(tables[mapping[int(predictions[f])]][int(values[f])] for f in fields)
-            # Prefer a whole fragment when it costs no more than masked codes.
-            use_fragment = (force_literals or len(payload)*8 <= bits+8*np.count_nonzero(
-                active[tile].reshape(2, 8).any(axis=1))) and (len(fields) or vv[tile])
+            # By default prefer fragments only when local encoded size wins.
+            # Optional bounded speed tradeoff: bypass costly prediction or
+            # several Huffman writes. Final acceptance needs CPU+disk replay.
+            extra = fragment_byte_slack if vv[tile] or len(fields)>=3 else 0
+            use_fragment = (force_literals or len(payload)*8 <= bits+8*(extra+np.count_nonzero(
+                active[tile].reshape(2, 8).any(axis=1)))) and (len(fields) or vv[tile])
             if use_fragment:
                 vv[tile] = kind
                 literals += payload
@@ -155,7 +160,7 @@ def encode(states, ay_frames):
     checked_cells, checked_audio, _ = cell_audio_stream.unpack(restored)
     if checked_cells != cells or checked_audio != audio:
         raise AssertionError('FAP3 framing changed video or AY records')
-    return result, dict(frames=len(states), ay_ticks=len(ticks), contexts=len(tables),
+    return result, dict(frames=len(states), ay_ticks=len(ticks), contexts=len(tables),fragment_byte_slack=fragment_byte_slack,
         exact_compact_frames=True, exact_ay_records=True, additional_pixel_changes=False,
         max_payload_bytes=max(row['payload_bytes'] for row in rows),
         literal_fallback_frames=sum(row['literal_fallback'] for row in rows),

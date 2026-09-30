@@ -151,11 +151,16 @@ The full real-Fuse run verifies pixels and AY but averages 6.7491 fps, with
 contracts; see [the test report](FIVE_LEVEL_TEST_TRD.md). The earlier probe
 numbers above remain valid only within their isolated scope.
 
-**Next finite deliverable:** profile packet/reconstruction/reservoir costs
-on that saved fixture before measuring one row-aware alternative. Legacy
-sub-byte motion operations do not retain their spatial meaning on arbitrary
-dictionary indices. Locate the dominant delivery cost before adding a
-dictionary-transition boundary or rebuilding a full disk set.
+The [subsequent fragment-selection test](ROW_FRAGMENT_SPEED.md) profiles
+those costs and bypasses expensive prediction/Huffman through existing
+handlers. Its optional direct mode saves 44.63% frame-stage CPU, grows ZX0
+32.58%, and reaches 7.1269 fps. Both timing gates still fail; the compact
+default is preserved. This is another bounded result, not a release.
+
+**Next finite deliverable:** split the now-dominant transfer stage into ZX0,
+packet copies and physical/ROM windows, then compare one change that reduces
+transport or decoded volume. Reuse the saved fixture and exact pixels;
+avoid another allowance sweep, dictionary transition or full-set rebuild.
 
 ## Evidence and reproduction
 

@@ -30,9 +30,16 @@ class GenericConverterTests(unittest.TestCase):
         states[:, 3168:3744] = rng.integers(0, 128, (5, 576), dtype=np.uint8)
         states[2] = states[1]
         frames = [AyFrame((100+i, 200+i, 300+i), (i % 16, 8, 9), i % 32) for i in range(30)]
-        _, report = encode(states, frames)
-        self.assertTrue(report['exact_compact_frames'] and report['exact_ay_records'])
-        self.assertLess(report['max_payload_bytes'], 4704)
+        for slack in (0,2,16):
+            with self.subTest(fragment_byte_slack=slack):
+                _, report = encode(states, frames,fragment_byte_slack=slack)
+                self.assertTrue(report['exact_compact_frames'] and report['exact_ay_records'])
+                self.assertLess(report['max_payload_bytes'], 4704)
+
+    def test_invalid_fragment_slack_rejected(self):
+        for slack in (-1,17,1.5):
+            with self.assertRaisesRegex(ValueError,'fragment byte slack'):
+                encode(np.zeros((0,3840),dtype=np.uint8),[],fragment_byte_slack=slack)
 
     def test_nonblack_reserved_band_rejected(self):
         state = np.ones((1, 3840), dtype=np.uint8)

@@ -49,35 +49,34 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: one five-level TRD, timing failure measured
+## Latest completed milestone: faster optional row-fragment mode
 
-After `a7cdf98`, build one 192-frame montage (64 frames at 629/2857/3855),
-with original AY slices, five-level 2x2 pixels, one full-volume 172-row book
-and the integrated Fast ZX0 player. The separate `05d2bf4` fix removes the
-decoder's fixed Huffman-body placement assumption with 0 T cost change.
-The image is independently bootable and occupies 489 file sectors.
+After `78541a5`, profile the same 192-frame montage (64 frames at
+629/2857/3855), exact five-level states and original AY. Reconstruction was
+the largest elapsed phase. Allowing two extra local bytes for existing
+fragment handlers gives little gain; a subsequent 16-byte window probe
+justifies one final build. No Z80 opcode changes or re-quantization.
 
-All 192 frames reach EOF in real Fuse. AY records, sectors and sampled
-pixels are exact; six full screens match all 41472 bytes. Thirteen tests
-pass. **Cadence fails:** mean 6.7491 fps, 174 late frames, maximum 269 fields
-of accumulated delay, an unrecovered late run through EOF. Both nominal and
-fallback gates fail. Keep the root test image for visual inspection only.
+Frame CPU drops 75788625 -> 41965760 T (-44.63%), but ZX0 grows
+112364 -> 148971 bytes (+32.58%). Full real-Fuse playback improves
+6.7491 -> 7.1269 fps, 174 -> 145 late frames, 269 -> 194 maximum late fields.
+Both gates still fail; the final late run never recovers. AY and screen
+bytes are exact, including six complete Fuse captures. Eleven converter
+tests pass. Retain `ZX-video-five-level-fast-test.trd` as an optional speed
+experiment; generic encoding remains byte-identical by default.
 
-Read [FIVE_LEVEL_TEST_TRD.md](toolkit/FIVE_LEVEL_TEST_TRD.md), its summary,
-archived traces and per-frame quality before any additional runs. Do not
-repeat the earlier isolated compression tests or infer a playback pass from
-their byte/decoder savings. Full-movie capacity remains unverified.
+Read [ROW_FRAGMENT_SPEED.md](toolkit/ROW_FRAGMENT_SPEED.md), its JSON and
+archived CPU/Fuse traces. Do not repeat the allowance comparison or rebuild
+the whole movie. These results do not prove the three-disk target.
 
-## Next finite deliverable: locate delivery cost in the row-index prototype
+## Next finite deliverable: reduce row-fragment transport cost
 
-If continuing optimization, profile the existing 192-frame fixture's packet
-handling, reconstruction and reservoir consumption; keep deterministic CPU
-separate from ROM/disk windows. The legacy sub-byte motion predictor treats
-dictionary indices as old packed pixels, so its suitability is unproven.
-Measure one bounded row-aware alternative against this saved baseline,
-preserving the exact five-level reference and independent boot. Do not
-expand into a dictionary transition or full disk set until delivery cost
-supports it. The requested single-image test is complete, not a release.
+Transfer is now the largest elapsed stage (45170386 T); packet starts find
+an empty queue in 159/192 cases. Split it into Fast ZX0, packet copies and
+ROM/disk windows using the saved fixture. Keep deterministic counts separate
+from elapsed/IRQ/ULA time. Compare one bounded change that reduces transport
+or decoded bytes while retaining exact pixels, AY and independent boot.
+Do not start another allowance sweep or dictionary transition first.
 
 ## Release gate and handoff
 
