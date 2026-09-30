@@ -6,6 +6,17 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Requested native LZMA implementation (2026-09-30):** complete specialized
+Z80 ASM decoder, `lc=0, lp=0, pb=2`, existing raw 21-block stream unchanged.
+Unrolled EXX multiplication saves 462 T per adaptive bit: 2901892750 ->
+2305838368 T (-20.5402%), code 1345 -> 1464 bytes, probabilities 3886 bytes.
+All 42 video decodes, edge/error/guard/ABI tests and instruction timing checks
+pass. This is still 116.19x LZSA2 decoder CPU. Reject realtime integration
+of this implementation; retain the standalone source/evidence. Flat RAM and
+synthetic IM1 tests do not validate production paging, 50-Hz AY or disk/ULA.
+The earlier proposed LZMA feasibility probe is now resolved; return to
+packet-copy reduction. [Source, measurements and limits](LZMA_Z80.md).
+
 **Requested LZW/LZH follow-up (2026-09-30):** on the unchanged 21-block
 fixture, LZW10/11/12 and standard ncompress16 grow the stream by
 9.26%..24.36% versus ZX0. LH5 saves 2.18% (145725 bytes / 570 sectors).

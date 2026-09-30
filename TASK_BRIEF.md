@@ -49,7 +49,17 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: optional LZSA2 transport
+## Latest completed milestone: native LZMA feasibility
+
+The user-requested optimized Z80 ASM implementation is complete. Reuse
+[LZMA_Z80.md](toolkit/LZMA_Z80.md) and its benchmark: same 21 archived blocks,
+all native bytes exact, 2901892750 -> 2305838368 T (-20.5402%). Compressed
+size remains 133084 bytes, but decoder CPU is 116.19x LZSA2. Reject realtime
+integration of this implementation; keep the tested standalone decoder.
+No new TRD or production RAM/paging/AY/disk verification. The finite LZMA
+probe supersedes its earlier deferral below; return to packet-copy work.
+
+## Playback baseline: optional LZSA2 transport
 
 After `c6b8475`, reuse its exact 192-frame five-level montage (64 frames at
 629/2857/3855), fragment allowance 16 and original AY. Profile Fast ZX0 at

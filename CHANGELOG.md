@@ -21,6 +21,38 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — implement and optimize native Z80 LZMA1
+
+- **Objective/input:** user-requested optimized Z80 assembly decoder, based
+  on `08cd640` and the unchanged 21 LZMA1 blocks / 323940 raw video bytes /
+  192 frames archived by the modern-codec probe. No new video encoding.
+- **Parameters/change:** raw LZMA1 `lc=0, lp=0, pb=2`, 16-KiB dictionary
+  limit, output blocks <=15872 bytes, mandatory EOS. Specialize probability
+  storage to 3886 bytes; use direct/HL access, EXX for 32-bit arithmetic,
+  validated LDIR matches and an eleven-bit unrolled multiplication.
+- **Measured:** loop baseline 2901892750 T -> optimized 2305838368 T:
+  -596054382 T (-20.5402%). Exact saving is 462 T per adaptive bit;
+  multiplication is 1060+29h -> 598+29h T (h=probability popcount).
+  Code grows 1345 -> 1464 bytes (+119), scalar state is 64 bytes.
+  Compression stays 133084 bytes / 520 sectors. Native LZMA still takes
+  116.19x the existing LZSA2 decoder CPU; player hot-path change is 0 T.
+- **Verification:** all 42 native video block decodes exact; each variant
+  also passes 17 boundary/data cases, 27 malformed/truncated cases, 64
+  corrupted-stream checks, 8188 multiplication/product/timing checks,
+  nonaligned buffers and synthetic register-preserving IM1 interrupts.
+  Independently audit 1044897 executed instructions against the Zilog table.
+  Guard code/input/other RAM and uninitialized history; verify ABI on errors.
+- **Coverage/decision:** retain the working assembly as a standalone
+  experiment; reject this implementation for realtime playback. Flat RAM
+  placement uses the screen area, has no paging/yield integration, and the
+  synthetic IRQ is not a 50-Hz AY/IM2 test. No new TRD, physical disk/ULA
+  timing, full 128-KiB player allocation or release gate is claimed. Return
+  to the existing packet-copy work rather than another codec sweep.
+- **Reproduce/evidence:** [assembly](toolkit/lzma_z80.asm),
+  [benchmark](toolkit/benchmark_lzma_z80.py),
+  [report](toolkit/lzma_z80_benchmark.json),
+  [ABI, timing derivation and assessment](toolkit/LZMA_Z80.md).
+
 ## 2026-09-30 — compare requested LZW and LZH
 
 - **Objective/input:** user-requested follow-up to `e394688`; same exact
