@@ -8,6 +8,14 @@ five-level video fixture. No image/audio change or whole-movie encode sweep.
 
 ## Conclusion
 
+**Exact-oracle follow-up:** the existing compressor matches minimum size
+on all 1341 bounded short inputs tested, including 63 video excerpts. No
+general optimality claim. Some equal-sized alternatives differ in decoder
+cost (20 faster, 24 slower); next test cost-aware distance selection on one
+complete block before any broader parser work. The short-input reference
+and verification described below are now implemented.
+[Results and limits](LZSA2_EXACT_ORACLE.md).
+
 A stronger compatible compressor is possible in principle: the format does
 not prescribe how the encoder finds or selects matches. The current encoder
 already uses suffix-array matching, bounded dynamic programming, repeated

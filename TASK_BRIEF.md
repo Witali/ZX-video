@@ -49,7 +49,18 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: stronger standard LZSA2 search
+## Latest completed milestone: exact LZSA2 oracle
+
+Baseline `a63043a`. No size gap on 1341 short inputs, including 63 video
+excerpts; 126 independent complete-command enumerations and 531 guarded/
+independent native cases pass. Of 232 changed equal-size parses, 20 are faster,
+24 slower; a video excerpt saves 480 T (8784 -> 8304) at unchanged size.
+These independently reset short cases cannot be spliced into the full
+stream or treated as a playback improvement. Root TRD unchanged; goal still
+fails at last measured 7.683025 fps. Reuse the
+[oracle, exact evidence and limits](toolkit/LZSA2_EXACT_ORACLE.md).
+
+## Previous milestone: stronger standard LZSA2 search
 
 Baseline `c3d1125`, same 21 archived blocks. A larger host match/arrival
 search saves 2 bytes (+138 decoder T); a follow-up expanding supplemental
@@ -183,16 +194,18 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: find a real LZSA2 parser loss
+## Next finite deliverable: lower-cycle LZSA2 at the same size
 
 The latest request prioritizes stronger compression without a format change.
 Keep the borrowed-literal image, decoder and exact five-level packet bytes.
-Build a small exact parser oracle for short repeat-offset/literal-threshold
-cases and saved video slices. Produce one reproducible suboptimal parse
-or establish no improvement within the tested scope. Only then extend a
-proven opportunity to a bounded difficult window. Do not repeat table or
-codec sweeps, promise a ratio gain, or deploy size savings that harm required
-delivery timing. See the compatible-compressor plan for dictionary limits.
+The exact short-input oracle found no size loss in its tested scope, but
+equal-sized paths have different Z80 costs. On one complete difficult block,
+retain literal/match positions and lengths; optimize valid match distances
+under its original byte limit, carrying the actual last-offset/nibble state.
+Keep the baseline fallback and measure native/copy/sector effects before
+expanding a winning candidate to saved windows and actual playback. Do not
+repeat table or codec sweeps or promise a ratio/cadence gain from short cases.
+See the compatible-compressor plan for dictionary limits.
 LZ4 selective decoding remains a separate measured option, with a capacity
 penalty and unresolved actual disk timing. A window cannot pass release.
 

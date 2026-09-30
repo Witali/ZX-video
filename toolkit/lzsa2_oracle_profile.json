@@ -1,0 +1,461 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Compare the exact short-input LZSA2 oracle with the pinned author encoder.\n\nOne finite corpus: exhaustive small binary strings, seeded repeated/mutated\ninputs and short excerpts of saved video. No whole-movie parameter sweep.\n",
+  "baseline_commit": "a63043a",
+  "raw_sha256": "5adefa050587757e9b203d3f8b9d4724e06f2fc3ddcbc8549fc87e7e0c2a01d6",
+  "baseline_stream_sha256": "1c8f598fa5fcc4ba2ac5f60355f6b3845cf5d8aa89f2ded328f5f98dd1b21bbc",
+  "baseline_dll_blocks_exact": 21,
+  "cases": 1341,
+  "strict_improvements": 0,
+  "video_cases": 63,
+  "video_improvements": 0,
+  "saved_bytes_on_independent_short_cases": 0,
+  "changed_equal_size_parses": 232,
+  "faster_equal_size_parses": 20,
+  "slower_equal_size_parses": 24,
+  "video_faster_equal_size_parses": 7,
+  "best_of_decoder_saving_on_short_cases": 2786,
+  "speed_scope": "Standalone short blocks only, with a fresh offset/nibble reservoir and their own EOD. These savings cannot be added to a full video stream.",
+  "brute_serialization_cases": 126,
+  "native_cases": 531,
+  "writer_edges": [
+    {
+      "case": "literals-1",
+      "decoded_bytes": 1,
+      "payload_bytes": 4
+    },
+    {
+      "case": "literals-2",
+      "decoded_bytes": 2,
+      "payload_bytes": 5
+    },
+    {
+      "case": "literals-3",
+      "decoded_bytes": 3,
+      "payload_bytes": 6
+    },
+    {
+      "case": "literals-17",
+      "decoded_bytes": 17,
+      "payload_bytes": 20
+    },
+    {
+      "case": "literals-18",
+      "decoded_bytes": 18,
+      "payload_bytes": 22
+    },
+    {
+      "case": "literals-255",
+      "decoded_bytes": 255,
+      "payload_bytes": 259
+    },
+    {
+      "case": "literals-256",
+      "decoded_bytes": 256,
+      "payload_bytes": 262
+    },
+    {
+      "case": "literals-257",
+      "decoded_bytes": 257,
+      "payload_bytes": 263
+    },
+    {
+      "case": "literals-15872",
+      "decoded_bytes": 15872,
+      "payload_bytes": 15878
+    },
+    {
+      "case": "match-2",
+      "decoded_bytes": 3,
+      "payload_bytes": 5
+    },
+    {
+      "case": "match-3",
+      "decoded_bytes": 4,
+      "payload_bytes": 5
+    },
+    {
+      "case": "match-8",
+      "decoded_bytes": 9,
+      "payload_bytes": 5
+    },
+    {
+      "case": "match-9",
+      "decoded_bytes": 10,
+      "payload_bytes": 6
+    },
+    {
+      "case": "match-23",
+      "decoded_bytes": 24,
+      "payload_bytes": 6
+    },
+    {
+      "case": "match-24",
+      "decoded_bytes": 25,
+      "payload_bytes": 7
+    },
+    {
+      "case": "match-255",
+      "decoded_bytes": 256,
+      "payload_bytes": 7
+    },
+    {
+      "case": "match-256",
+      "decoded_bytes": 257,
+      "payload_bytes": 9
+    },
+    {
+      "case": "match-257",
+      "decoded_bytes": 258,
+      "payload_bytes": 9
+    },
+    {
+      "case": "match-15871",
+      "decoded_bytes": 15872,
+      "payload_bytes": 9
+    },
+    {
+      "case": "offset-1",
+      "decoded_bytes": 33,
+      "payload_bytes": 7
+    },
+    {
+      "case": "offset-2",
+      "decoded_bytes": 34,
+      "payload_bytes": 8
+    },
+    {
+      "case": "offset-31",
+      "decoded_bytes": 63,
+      "payload_bytes": 38
+    },
+    {
+      "case": "offset-32",
+      "decoded_bytes": 64,
+      "payload_bytes": 39
+    },
+    {
+      "case": "offset-33",
+      "decoded_bytes": 65,
+      "payload_bytes": 41
+    },
+    {
+      "case": "offset-511",
+      "decoded_bytes": 543,
+      "payload_bytes": 521
+    },
+    {
+      "case": "offset-512",
+      "decoded_bytes": 544,
+      "payload_bytes": 522
+    },
+    {
+      "case": "offset-513",
+      "decoded_bytes": 545,
+      "payload_bytes": 523
+    },
+    {
+      "case": "offset-8703",
+      "decoded_bytes": 8735,
+      "payload_bytes": 8713
+    },
+    {
+      "case": "offset-8704",
+      "decoded_bytes": 8736,
+      "payload_bytes": 8714
+    },
+    {
+      "case": "offset-8705",
+      "decoded_bytes": 8737,
+      "payload_bytes": 8716
+    }
+  ],
+  "elapsed_seconds": 9.610509300022386,
+  "dll_sha256": "69c0c28e0131a62216e12c1b7e45d66d315cc5dc6b6fc849ca25d607139de082",
+  "source_sha256_lf": {
+    "lzsa2_oracle.py": "039654e7a86477f5c8cf34755a68a8cb474053c87108ce6a7e6cc29c75564c5b",
+    "probe_lzsa2_oracle.py": "6c7c915a13d8679a50edfd62d09aacbd95fbf2db9bc78480b7ecffc5b91d93d0",
+    "lzsa2_oracle_host.py": "4f726445d6bc7980c1ee83b4570cc7b92166b8c37edbfd87c7d2bda4c446a12b",
+    "lzsa2_oracle_host.c": "de881ca0a5f256325fa20bd088fda91e6d06b3a864b119fe02b7c18e34e52786",
+    "build_lzsa_oracle_host.cmd": "9531c015103dde34735bd157c3873e0e8fa9cda741639225bfe4677c179c1831",
+    "summarize_lzsa2_oracle.py": "9167a8350307af3794daa2d5d3d35f5fb70656d0d4e7affeedd6bb48caae6edb"
+  },
+  "root_trd_unchanged": true,
+  "root_trd_sha256": "14788fa7b7272c1d8ae4d47e63804cd60998d8ee95032ce56c879a120226e2d5",
+  "current_measured_fps": 7.6830252011714135,
+  "current_missed_deadlines": 118,
+  "candidate_playback_measured": false,
+  "goal_achieved": false,
+  "decision": "No compression-size gap found in this bounded corpus. Retain the exact oracle as a verifier; do not replace the production parser. Some equal-size alternatives are faster, others slower.",
+  "next": "On one complete difficult LZSA2 block, optimize valid match distances while retaining command positions/lengths and the original byte budget. Preserve full last-offset/nibble state and verify actual decoder costs; short reset snippets cannot be spliced into production.",
+  "faster_examples": [
+    {
+      "case": "video-11-0",
+      "raw_hex": "010105010401010101010101010101012401012e01010101010101140101150122011f0101130101012014270127012701530553012201010115011501200120012e012601261501011501150140141f1426012e22202e2020011501150115010101010101010101020202020202020201010101050108070202020202020202",
+      "baseline_hex": "1f3f0101050104011e08242d2e92e814f8150122011fe9133a1f201427011905530553012f21e82041d22826f82c15189040141f1426012e22202e2020036f06ed020078428e360807e7f0e8",
+      "oracle_hex": "1f3f0101050104011a0824ed2ee814f829150122011f29133a1f201427011905530553012f21e920f8082e01262c15189840141f1426012e22202e202023ff06ed022281fe05010807e7f0e8",
+      "saved_bytes": 0,
+      "proof": {
+        "exact": true,
+        "canonical_nibbles": 151,
+        "bytes": 76,
+        "matches": [
+          [
+            6,
+            10,
+            1
+          ],
+          [
+            17,
+            2,
+            11
+          ],
+          [
+            20,
+            7,
+            11
+          ],
+          [
+            28,
+            2,
+            11
+          ],
+          [
+            35,
+            2,
+            11
+          ],
+          [
+            38,
+            3,
+            14
+          ],
+          [
+            45,
+            4,
+            2
+          ],
+          [
+            52,
+            3,
+            21
+          ],
+          [
+            55,
+            3,
+            27
+          ],
+          [
+            58,
+            3,
+            2
+          ],
+          [
+            62,
+            3,
+            2
+          ],
+          [
+            68,
+            2,
+            2
+          ],
+          [
+            71,
+            6,
+            16
+          ],
+          [
+            89,
+            2,
+            15
+          ],
+          [
+            91,
+            5,
+            2
+          ],
+          [
+            96,
+            8,
+            1
+          ],
+          [
+            105,
+            7,
+            1
+          ],
+          [
+            112,
+            4,
+            16
+          ],
+          [
+            120,
+            8,
+            16
+          ]
+        ],
+        "states": 41051,
+        "transitions": 41981,
+        "scope": "Minimum byte length for independently reset raw input, using canonical shortest offsets/lengths and upstream repeat-offset EOD; tie-breaking does not minimize Z80 cycles."
+      },
+      "baseline_decoder_tstates": 8784,
+      "oracle_decoder_tstates": 8304,
+      "decoder_delta_tstates": -480
+    },
+    {
+      "case": "mutated-253",
+      "raw_hex": "0102060300010401050102060300010401040108060f0c010401040102060300",
+      "baseline_hex": "1d6b01020603000104010501a11a08060f0cb203e7f0e8",
+      "oracle_hex": "1e6b010206030001040105fa37040108060f0c23e7f0e8",
+      "saved_bytes": 0,
+      "proof": {
+        "exact": true,
+        "canonical_nibbles": 45,
+        "bytes": 23,
+        "matches": [
+          [
+            9,
+            8,
+            9
+          ],
+          [
+            23,
+            4,
+            9
+          ],
+          [
+            27,
+            5,
+            18
+          ]
+        ],
+        "states": 333,
+        "transitions": 378,
+        "scope": "Minimum byte length for independently reset raw input, using canonical shortest offsets/lengths and upstream repeat-offset EOD; tie-breaking does not minimize Z80 cycles."
+      },
+      "baseline_decoder_tstates": 2495,
+      "oracle_decoder_tstates": 2130,
+      "decoder_delta_tstates": -365
+    },
+    {
+      "case": "mutated-4",
+      "raw_hex": "0401010102010301030e01010101010e0103040101010101030e030401030101010a0103040101010101010103060101",
+      "baseline_hex": "100401f4fa02010301030e01080eb8ea042101b72903eb0a246d0806e7f0e8",
+      "oracle_hex": "100401f4fa02010301030e01080eb7eb04f1030ee9032b0a246e2806e7f0e8",
+      "saved_bytes": 0,
+      "proof": {
+        "exact": true,
+        "canonical_nibbles": 61,
+        "bytes": 31,
+        "matches": [
+          [
+            2,
+            2,
+            1
+          ],
+          [
+            11,
+            4,
+            1
+          ],
+          [
+            16,
+            2,
+            9
+          ],
+          [
+            19,
+            5,
+            9
+          ],
+          [
+            26,
+            3,
+            9
+          ],
+          [
+            30,
+            3,
+            9
+          ],
+          [
+            34,
+            5,
+            18
+          ],
+          [
+            39,
+            6,
+            20
+          ],
+          [
+            46,
+            2,
+            4
+          ]
+        ],
+        "states": 2934,
+        "transitions": 3077,
+        "scope": "Minimum byte length for independently reset raw input, using canonical shortest offsets/lengths and upstream repeat-offset EOD; tie-breaking does not minimize Z80 cycles."
+      },
+      "baseline_decoder_tstates": 4106,
+      "oracle_decoder_tstates": 3752,
+      "decoder_delta_tstates": -354
+    },
+    {
+      "case": "mutated-30",
+      "raw_hex": "0007040b020504030d01020500080401020500050b0102050007040102050007",
+      "baseline_hex": "387d0007040b020504030d01fa04000804f1050b2123dfe7e8",
+      "oracle_hex": "387d0007040b020504030d01fa0f000804f2050bf30704e7e8",
+      "saved_bytes": 0,
+      "proof": {
+        "exact": true,
+        "canonical_nibbles": 50,
+        "bytes": 25,
+        "matches": [
+          [
+            10,
+            2,
+            6
+          ],
+          [
+            15,
+            4,
+            6
+          ],
+          [
+            21,
+            4,
+            6
+          ],
+          [
+            27,
+            5,
+            6
+          ]
+        ],
+        "states": 227,
+        "transitions": 251,
+        "scope": "Minimum byte length for independently reset raw input, using canonical shortest offsets/lengths and upstream repeat-offset EOD; tie-breaking does not minimize Z80 cycles."
+      },
+      "baseline_decoder_tstates": 2553,
+      "oracle_decoder_tstates": 2199,
+      "decoder_delta_tstates": -354
+    }
+  ],
+  "evidence": [
+    {
+      "file": "probe.json.gz",
+      "sha256": "5cd6466228cbbb92a66dd6df7b6d587aafe3082f8052652bfa0304a3534d0469",
+      "raw_sha256": "f085141e4c82df76c3624e8b37e3d30018a41c66978054fab7ba3ed7cde13f58"
+    },
+    {
+      "file": "cpu.json.gz",
+      "sha256": "55910dd624bee419bba9fed3d940a02228c065c3784f088b6abcfa564c69f1ac",
+      "raw_sha256": "453f68d3448b2c2dd6c79942254d7bb25e96ba72a81a54ef8eeb30ad493e8331"
+    }
+  ]
+}

@@ -6,6 +6,16 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Exact LZSA2 oracle (2026-09-30):** no minimum-size gap on 1341 bounded
+inputs, including 63 video excerpts; 126 exhaustive command-list checks and
+531 guarded/independent native cases pass. Of 232 different equal-sized
+parses, 20 are faster and 24 slower; a 128-byte example saves 480 T at the
+same size. These fresh-reset snippets do not predict full-block/playback
+savings. Next test cost-aware match-distance choice on one complete block,
+preserving command positions/lengths, actual reservoir state and byte budget.
+Do not expand the size-only search without a counterexample. Root image
+and failed timing result are unchanged. [Oracle and evidence](LZSA2_EXACT_ORACLE.md).
+
 **Stronger standard LZSA2 search (2026-09-30):** retain format and native
 decoder unchanged. On the same 21 blocks, wider host match/arrival tables
 save only 2 bytes (+138 decoder T); widening the remaining supplement

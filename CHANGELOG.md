@@ -21,6 +21,37 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — bound LZSA2 parser losses with an exact short-input oracle
+
+- **Objective/input:** continue toward smooth five-level 25/3 fps after
+  table expansion proved ineffective. Baseline `a63043a`; unchanged format,
+  native decoder and 21-block/192-frame saved video. One finite oracle corpus.
+- **Change:** exact host DP retaining position, previous offset and pending
+  literal length; exhaustive valid matches, shared nibble costs and upstream
+  EOD. Separate canonical serializer and local wrapper around the unmodified
+  author library. No production player or converter integration.
+- **Results:** no byte-size improvement on 1341 inputs (1022 exhaustive
+  binary, 256 seeded mutations and 63 video excerpts). All match the exact
+  minimum within this tested scope. Of 232 different equal-sized parses,
+  20 are faster, 24 slower and 188 equal on the unchanged decoder. Seven
+  faster cases are video excerpts; one 128-byte example costs 8784 -> 8304 T
+  (-480). Best-of 2786 T across standalone cases is not a full-stream saving.
+- **Verification:** separate complete-command enumeration on 126 inputs;
+  original-author/host round trips for all cases and 30 serializer boundaries;
+  DLL reproduces all 21 full baseline payloads. 531 native banked cases pass
+  byte/cursor/overlap/sector/EOF and short-read checks, with independent
+  full-flags agreement on every slice. Pinned upstream checkout stays clean;
+  root TRD hash unchanged. No new IRQ cadence, disk/Fuse or full-movie run.
+- **Decision:** retain oracle as a verifier; no default parser replacement
+  or broader constant sweep. Next test lower-cycle match-distance choices
+  on one complete block with real last-offset/nibble state and unchanged
+  byte budget, retaining the baseline fallback. The overall goal remains
+  active; existing 7.683025 fps / 118 late frames does not meet it.
+- **Reproduction:** [method and limits](toolkit/LZSA2_EXACT_ORACLE.md),
+  [oracle](toolkit/lzsa2_oracle.py), [comparison](toolkit/probe_lzsa2_oracle.py),
+  [summary](toolkit/lzsa2_oracle_profile.json),
+  [evidence](toolkit/lzsa2_oracle_evidence).
+
 ## 2026-09-30 — test stronger search with the unchanged LZSA2 format
 
 - **Objective/input:** analyze a stronger compatible compressor and larger
