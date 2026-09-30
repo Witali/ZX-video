@@ -49,7 +49,20 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: borrowed literal suffixes
+## Latest completed milestone: row-aligned motion feasibility
+
+Baseline `d0e4731`, same 192 exact five-level frames. Whole-symbol shifts
+produce 6540 motion commands, with cache active in 191 frames. Decoded
+volume drops 19.31%, LZSA2 size 2.14%, decoder CPU 26.76%. Existing cache
+and residual patches outweigh those savings: frame stages 41965760 ->
+63715325 T. Component model is at least 16933120 T worse than the current
+borrowed mode. Reject this selector for realtime adoption; retain its
+explicit experimental flag, scripts and [evidence](toolkit/ROW_ALIGNED_MOTION.md).
+All 192 compact/native CPU frames, AY and 17 blocks pass; no candidate TRD
+or actual cadence claim. Default encoding/root TRD unchanged. Return to
+native output below; any later motion selection must charge cache/patch CPU.
+
+## Previous milestone: borrowed literal suffixes
 
 Baseline `dacb24f`, unchanged 192-frame/21-block five-level fixture. Opt-in
 `build_row_lzsa.py --borrow-literals` copies packet prefixes and reads retained

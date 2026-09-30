@@ -21,6 +21,35 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — test motion on whole five-level dictionary symbols
+
+- **Objective/input:** test whether proper motion can reduce input work on
+  the smooth-five-level goal; baseline `d0e4731`, unchanged 192-frame windows
+  at 629/2857/3855, 172 row symbols, resolution and 1152 AY records.
+- **Change:** experimental `row_aligned_motion=True` restricts prediction
+  to 27 whole-symbol offsets, excludes spatial/sub-byte shifts, and removes
+  the 16-byte fragment allowance only for motion comparisons. One candidate;
+  default encoding is byte-identical. No native implementation change.
+- **Results:** 6540 motion commands; cache active in 191/192 frames. Decoded
+  volume 323940 -> 261389 bytes; LZSA2 154956 -> 151643 bytes (606 -> 593
+  sectors); decoder 19412006 -> 14216558 T. Frame stages grow 41965760 ->
+  63715325 T (+21749565), including 8753180 cache and 5481126 motion T.
+  With the stated copy lower bound, the candidate component model exceeds
+  the latest borrowed-literal baseline by 16933120 T. No elapsed fps claim.
+- **Verification:** default encoding exact; independent frame/AY round
+  trips, all 192 full compact and both native-screen CPU checks, all 17
+  native LZSA2 blocks with timing/cursor/sector/overlap checks; four targeted
+  and eleven existing converter tests pass. Current root TRD hash unchanged.
+- **Decision:** reject realtime adoption of this byte-count selector; keep
+  its opt-in reproduction and evidence. Avoid another disk build for this
+  clear CPU regression. Motion needs explicit cache/patch costs or a cheaper
+  reference buffer. Return to native output on the retained faster image.
+  This is a component experiment, not a playback or full-movie release.
+- **Reproduction:** [method and commands](toolkit/ROW_ALIGNED_MOTION.md),
+  [probe](toolkit/probe_row_aligned_motion.py),
+  [summary](toolkit/row_aligned_motion_profile.json) and
+  [saved evidence](toolkit/row_aligned_motion_evidence).
+
 ## 2026-09-30 — consume literal suffixes directly from retained LZSA2 slots
 
 - **Objective/input:** continue toward smooth five-level 25/3-fps playback;

@@ -1,0 +1,116 @@
+{
+  "complete": true,
+  "release": false,
+  "baseline_commit": "d0e4731",
+  "scope": "Archive a rejected row-motion comparison; do not infer a playback rate.",
+  "frames": 192,
+  "states_sha256": "47b062996f9445403e6fc4c400c5d7be5666c6b46ee568fefc5a1b3d3081dbb0",
+  "candidate_raw_sha256": "add8a60a0ebbe26fbbfec8335e41353ec063ebf59e6279b7ee514d8eac2c7343",
+  "candidate_stream_sha256": "f030db5b968c6bba3936df17a8086968b4a3afa854c0177e83032a229fd05659",
+  "baseline_trd_sha256": "14788fa7b7272c1d8ae4d47e63804cd60998d8ee95032ce56c879a120226e2d5",
+  "root_trd_unchanged": true,
+  "video_bytes": {
+    "baseline": 154956,
+    "candidate": 151643
+  },
+  "sectors": {
+    "baseline": 606,
+    "candidate": 593
+  },
+  "decoded_bytes": {
+    "baseline": 323940,
+    "candidate": 261389
+  },
+  "original_frame_tstates": 41965760,
+  "candidate_frame_tstates": 63715325,
+  "frame_delta_tstates": 21749565,
+  "original_transport_tstates": 20470429,
+  "candidate_transport_tstates": 15217002,
+  "transport_delta_tstates": -5253427,
+  "original_decoder_tstates": 19412006,
+  "candidate_decoder_tstates": 14216558,
+  "candidate_motion_tstates": 5481126,
+  "candidate_cache_tstates": 8753180,
+  "candidate_huffman_tstates": 7496560,
+  "motion_commands": 6540,
+  "cache_frames": 191,
+  "latest_baseline_component_pool_tstates": 66181431,
+  "candidate_component_pool_with_copy_lower_bound_tstates": 83114551,
+  "estimated_component_delta_tstates": 16933120,
+  "windows": [
+    {
+      "start": 0,
+      "end_exclusive": 64,
+      "baseline_frame_tstates": 13884089,
+      "candidate_frame_tstates": 20652763,
+      "motion": 1975
+    },
+    {
+      "start": 64,
+      "end_exclusive": 128,
+      "baseline_frame_tstates": 14281695,
+      "candidate_frame_tstates": 21642625,
+      "motion": 2302
+    },
+    {
+      "start": 128,
+      "end_exclusive": 192,
+      "baseline_frame_tstates": 13799976,
+      "candidate_frame_tstates": 21419937,
+      "motion": 2263
+    }
+  ],
+  "native_implementation_changed": false,
+  "per_instruction_timing_delta": 0,
+  "exact_all_compact_and_both_native_frames": true,
+  "exact_ay": true,
+  "actual_candidate_playback_measured": false,
+  "candidate_fps": null,
+  "decision": "Reject this existing-cache motion selection for realtime adoption. Keep experimental opt-in and exact evidence; root TRD unchanged.",
+  "assumptions": "Frame model excludes IRQ/ULA/ROM/disk. Transport uses fixed 256-byte demands and mocked ROM. Candidate packet copy is a 16-T-per-byte lower bound; latest baseline has measured borrowed bridges. Component pools are not elapsed playback or a cadence proof.",
+  "next": "Optimize native output on the retained borrowed-literal image. Revisit motion only with explicit cache/patch costs and fewer correction bytes.",
+  "evidence": [
+    {
+      "file": "input.fap3.gz",
+      "sha256": "6322601e0937d3b77faac52e0894610967514dc512d8b4203beb689539cda2eb",
+      "raw_sha256": "add8a60a0ebbe26fbbfec8335e41353ec063ebf59e6279b7ee514d8eac2c7343"
+    },
+    {
+      "file": "video.raw.gz",
+      "sha256": "744b6cd59a643203b06d6d431003402e2bf83048cb2bc2b4a54ee1ad92684d8f",
+      "raw_sha256": "92fc9ac8800fae99ebdf5f03be503cb3aafacb523814341586518e16980ea3ac"
+    },
+    {
+      "file": "video.stream.gz",
+      "sha256": "bdd461fcb8157204575fd79e28fef6aa2f62caa9e50616ea8b411e8cdedb647b",
+      "raw_sha256": "f030db5b968c6bba3936df17a8086968b4a3afa854c0177e83032a229fd05659"
+    },
+    {
+      "file": "probe.json.gz",
+      "sha256": "fa411734aca34758b4c40798e1b05bd9feda8439b541943f10f244644fb21e43",
+      "raw_sha256": "152740983f8479bbe9808a0aeea824372a153703c7a19ea04c74b14f3407e651"
+    },
+    {
+      "file": "frame.json.gz",
+      "sha256": "f16955b03c919b4d4b9f00d709516a951ccd8a50e79ea2ef61069c77d4ce3d78",
+      "raw_sha256": "bd60e75e786f20c696d9a4114e8dcdfdbc0c200b7011254f797e5c8415534736"
+    },
+    {
+      "file": "transport.json.gz",
+      "sha256": "43cf0fb9d9f42df3997cab590de638ca49b0fd5e31ec3f2e70a5b7be9b4946a6",
+      "raw_sha256": "614227c817b385f022d13acc7c4f7b55dab4c7a55ec9d50230364bcd12d20c95"
+    }
+  ],
+  "source_sha256_lf": {
+    "encode_fap3.py": "b7ad8edd9239ec5caafde2e4cd8c0cb37e3948be71267a04fd4aca6536f2c4fb",
+    "row_aligned_motion.py": "365b00267c99bec0511a268c52ed287e30269b2e545e62c085d08e8d9c43cab5",
+    "probe_row_aligned_motion.py": "1d99bf242bfd22d7635ba824f5e81344941182badb7b088da7955aa3b5d0a591",
+    "test_row_aligned_motion.py": "74b709a87801ab8b63c70a5b6b5385e321da479835841331e6750c345d828166",
+    "summarize_row_aligned_motion.py": "efe98c4c61d2ffd61ef5a4af0c235483f448f8eb416307c7150f68528591a4bf",
+    "profile_row_cpu.py": "2de0fb6bc472a14d544005d9a2276bf07607cf3134a76067d4b4b0262e72c4ae",
+    "benchmark_row_lzsa.py": "3fc3c98695d1d9e3bfc086a079a8d2f67a17ddd0c2c187051767c6209113ede2",
+    "causal_tile_z80.py": "4725324d2e908a92202eef9395594cf8f78b4a5674f252a2de8a2892ce637f92",
+    "resumable_lzsa2.py": "141d3f843554a50eb3c20c4a764f1edd6294ff96a49be254e07cbbb35f23a3d2",
+    "lzsa2_row_player.py": "a1d7690d376e1a09f8a14b5510c048fb54ad92746e789ee46a58a277ad39208a"
+  }
+}

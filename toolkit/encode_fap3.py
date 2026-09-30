@@ -60,7 +60,7 @@ def train_tables(states, residual):
     return bytes(256), [bytes([8])*256]*2
 
 
-def encode(states, ay_frames, *, fragment_byte_slack=0):
+def encode(states, ay_frames, *, fragment_byte_slack=0, row_aligned_motion=False):
     if not isinstance(fragment_byte_slack,int) or not 0<=fragment_byte_slack<=16:
         raise ValueError('fragment byte slack must be an integer in 0..16')
     if (states.dtype != np.uint8 or states.ndim != 2 or states.shape[1] != 3840
@@ -75,8 +75,14 @@ def encode(states, ay_frames, *, fragment_byte_slack=0):
     if (np.any(states[:, :384]) or np.any(states[:, 2688:3072])
             or np.any(states[:, 3072:3168] != 1) or np.any(states[:, 3744:] != 1)):
         raise ValueError('FAP3 requires black 24-pixel top/bottom borders with attribute 1')
-    vectors, residual = predict(states, 8, OFFSETS, 8)
-    vectors, residual = choose(states, vectors, residual)
+    if row_aligned_motion:
+        # Dictionary bytes are opaque row symbols, not four packed pixels.
+        # This opt-in experiment uses only existing phase-zero motion paths.
+        from row_aligned_motion import predict_rows
+        vectors, residual = predict_rows(states)
+    else:
+        vectors, residual = predict(states, 8, OFFSETS, 8)
+        vectors, residual = choose(states, vectors, residual)
     # The static-stripe shortcut promises unchanged top/bottom eight logical rows.
     vectors[:, :16] = vectors[:, -16:] = 0
     mapping, tables = train_tables(states, residual)
@@ -107,6 +113,8 @@ def encode(states, ay_frames, *, fragment_byte_slack=0):
             # Optional bounded speed tradeoff: bypass costly prediction or
             # several Huffman writes. Final acceptance needs CPU+disk replay.
             extra = fragment_byte_slack if vv[tile] or len(fields)>=3 else 0
+            if row_aligned_motion and 0 < vv[tile] < len(OFFSETS):
+                extra = 0  # Do not erase useful motion with the speed allowance.
             use_fragment = (force_literals or len(payload)*8 <= bits+8*(extra+np.count_nonzero(
                 active[tile].reshape(2, 8).any(axis=1)))) and (len(fields) or vv[tile])
             if use_fragment:
@@ -161,6 +169,7 @@ def encode(states, ay_frames, *, fragment_byte_slack=0):
     if checked_cells != cells or checked_audio != audio:
         raise AssertionError('FAP3 framing changed video or AY records')
     return result, dict(frames=len(states), ay_ticks=len(ticks), contexts=len(tables),fragment_byte_slack=fragment_byte_slack,
+        row_aligned_motion=row_aligned_motion,
         exact_compact_frames=True, exact_ay_records=True, additional_pixel_changes=False,
         max_payload_bytes=max(row['payload_bytes'] for row in rows),
         literal_fallback_frames=sum(row['literal_fallback'] for row in rows),

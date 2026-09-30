@@ -6,6 +6,18 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Row-aligned motion (2026-09-30):** reject the existing-cache candidate on
+the same 192 five-level frames. Correct whole-symbol shifts emit 6540 motion
+commands and activate the cache in 191 frames. Decoded bytes 323940 ->
+261389; LZSA2 bytes 154956 -> 151643; decoder 19412006 -> 14216558 T.
+However frame stages 41965760 -> 63715325 T, including 8753180 cache and
+5481126 motion T. Candidate component pool exceeds the latest borrowed
+baseline by at least 16933120 T in the stated model. All compact/native CPU
+frames, AY, blocks and targeted tests pass. No candidate TRD/Fuse run;
+current image retained. Keep the experimental selector opt-in; return to
+native output. A future motion selector must charge cache/patch costs.
+[Comparison, evidence and limits](ROW_ALIGNED_MOTION.md).
+
 **Borrowed literal suffixes (2026-09-30):** adopt the opt-in, host-validated
 fragment-only mode. Same 192 frames and 606 video sectors: avoid 226819 copied
 bytes in 171 packets. Copy bridges 5511858 -> 1950856 T; frame stages grow
