@@ -6,6 +6,16 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Five-level row dictionary (2026-09-30):** bounded changed-row sets fit
+in two 256-byte lookup pages. Reject the tested whole-cell dictionary;
+prefer row dictionaries only in windows with lower bytes and measured CPU.
+Offline selection gives 68648→65294 bytes and Fast ZX0 11380407→11181994 T.
+The existing renderer executes unchanged with learned table contents:
+dense 154684 T and sparse fixture 27101 T, both 0 T delta in nine checks.
+Book installation, seed/retained-state remapping and full packet consumption
+remain unmeasured. Prioritize that integrated boundary before release work;
+see [the compression plan and complete limitations](FIVE_LEVEL_COMPRESSION_PLAN.md).
+
 **Five-level 2x2 decision (2026-09-30):** retain the palette-preserving
 adaptive four/five-byte cell candidate. In 96 RGB frames its exact five-level
 picture improves mean RGB error by 1.16–16.14%; ZX0 control bytes total

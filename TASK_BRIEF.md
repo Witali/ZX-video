@@ -49,42 +49,38 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: five levels with the previous 2x2 pattern
+## Latest completed milestone: lossless five-level dictionary comparison
 
-The user requested this follow-up on `codex/dither-4x4`, after `b7604ab`.
-Retain colour pairs and add the missing quarter shade only on lower local
-RGB error. Adaptive four/five-byte cells restore all five coverages exactly
-with the established phase-aligned 2x2 pattern. In three 32-frame RGB windows,
-mean error improves 1.16–16.14% with no worse frame. ZX0 control bytes are
-56146 for four-code input, 82500 for uniform-five, 68648 for adaptive hybrid,
-and 69887 for explicit canonical modes. Ten host tests pass.
+After `37578d8`, reuse the same 96-frame packet caches on `codex/dither-4x4`.
+Whole-cell dictionaries increase ZX0 bytes and are rejected. Learned row
+books contain 93–114 entries and use two 256-byte native lookup pages.
+Offline window selection (row books for 629/3855, hybrid for 2857) gives
+68648→65294 bytes and Fast ZX0 11380407→11181994 T. Book assets are included;
+install/transition/packet CPU, IRQ/ULA and physical latency are not.
 
-Use [HYBRID_FIVE_LEVEL.md](toolkit/HYBRID_FIVE_LEVEL.md) and the current
-`hybrid_five_level_canonical_probe.json` as the handoff. The two older
-reports are historical: retained-palette control hashes match the new run;
-the broader palette search was not rerun and has four worse-error frames.
-The earlier [4x4 candidate](toolkit/SPATIAL_DITHER.md) remains rejected as
-the default. No native five-level consumer, timing or release is verified.
+The unchanged Z80 renderer passes nine synthetic dense/sparse checks on
+both banks with learned tables: 154684 T dense, 27101 T sparse, 0 T delta.
+Four dictionary tests pass. The pictures remain exactly the five-level
+2x2 output described in [HYBRID_FIVE_LEVEL.md](toolkit/HYBRID_FIVE_LEVEL.md).
+Use [FIVE_LEVEL_COMPRESSION_PLAN.md](toolkit/FIVE_LEVEL_COMPRESSION_PLAN.md)
+and its three reports as the handoff. Full seed rows and unchanged retained
+state were not included in book training; no integrated player is verified.
 
-## Next technical milestone: native adaptive five-level expansion
+## Next technical milestone: row-table packets and one dictionary transition
 
-**Deliverable:** one bounded native implementation/profile of the chosen
-adaptive cell representation, with exact equivalence to the saved host
-2x2 patterns. Adaptive hybrid is the compression reference. Canonical modes
-cost 1.80% more in these windows and are an alternative only if avoiding
-endpoint-orientation work justifies the extra data.
+**Deliverable:** bounded packet consumption and a safe dictionary transition,
+with exact seed/native n-2 state, full affected CPU counts, RAM and IRQ checks.
+The existing hybrid stream is the fallback and compression reference. Load
+the table into the existing lookup path; keep five-byte escapes for general
+inputs. Preserve the old book while pending frames reference it, or account
+for translating/materializing retained state. Include seed rows when choosing
+the new book; keep independent cold boot. Do not shrink the disk buffer.
 
-Use the existing four-code renderer and its optional phase-aligned version
-as baselines; [PHASE_RENDERER.md](toolkit/PHASE_RENDERER.md) records the
-optional path's substantial overhead. Count absolute and delta T-states,
-account for tables/code/state/IRQ/paging and native n-2 changes, and verify
-both output banks and interrupts. Preserve seven attribute bits and FLASH=0.
-Reuse source windows 629, 2857 and 3855 with carried state; do not repeat
-host palette searches. Report unmeasured disk/ROM effects separately.
-
-Finish with the native cost/RAM decision and focused commit. Integrating
-the format into the generic converter/player and building release TRDs
-remain subsequent work; host byte counts do not prove disk count or cadence.
+Reuse windows 629, 2857 and 3855 and cached exact packets. Count all new
+parsing, table installation, paging and output costs; keep ROM/drive timing
+separate. Stop with an integration/cost decision and focused commit. A full
+generic converter/player build and release TRDs follow a validated candidate;
+the current window byte/CPU savings do not prove cadence or disk count.
 
 ## Release gate and handoff
 

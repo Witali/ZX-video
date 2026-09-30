@@ -5,6 +5,12 @@ the requested five-level host feasibility experiment. **Retain palette
 endpoints and use adaptive four/five-byte cells as the compression
 reference for native implementation.** This is not enabled in the player.
 
+**Measured follow-up:** [the row-dictionary compression plan](FIVE_LEVEL_COMPRESSION_PLAN.md)
+uses the same exact five-level output and hybrid stream as its baseline.
+Bounded selection saves a further 4.886% of bytes with fewer Fast ZX0
+T-states; unchanged native lookup opcodes pass isolated rendering checks.
+Its dictionary-transition and integrated player costs remain outstanding.
+
 ## Pattern and quality contract
 
 Each logical sample still occupies 2x2 native pixels; the grid remains

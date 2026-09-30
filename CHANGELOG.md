@@ -21,6 +21,33 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — improve five-level symbols without extra lookup work
+
+- **Objective/baseline:** investigate compression without slowing decoding,
+  after `37578d8`. Reuse verified five-level/hybrid packet caches for the
+  same three 32-frame windows; no RGB requantization or whole-set search.
+- **Rejected attempt:** top-256 native whole-cell dictionaries hit only
+  44.36–54.24% of changed cells. Including 2050-byte books, ZX0 bytes grow
+  68648→77866 despite less isolated decoder CPU. Reject for this objective.
+- **Follow-up:** dictionary of four-sample rows. Only 114/93/112 different
+  changed rows occur; two 256-byte lookup pages cover all transmitted cells.
+  Include each book in the compressed stream; retain five-byte escapes.
+  Window bytes become 24536/21769/19222 versus 26926/21536/20186.
+- **Selection/results:** keep hybrid in window 2857. Offline chosen totals
+  are 68648→65294 bytes (-4.886%), Fast ZX0 11380407→11181994 T (-1.743%),
+  mocked producer 481172→452965 T, sector reads 270→257. No book-install,
+  packet-dispatch, seed-recoding, IRQ/ULA or physical disk timing is included.
+- **Native check:** unchanged renderer opcodes with learned tables match
+  nine dense/sparse fixtures on both output banks. Dense 154684→154684 T,
+  sparse fixture 27101→27101 T, delta 0 T. Four dictionary tests pass;
+  all 625 row words and measured packets/ZX0 blocks round trip. Correct
+  an initial byte-column error in the host audit reference and rerun it.
+- **Decision:** prioritize row-table integration with stable dictionary
+  lifetime, exact seed/n-2 handling and full delivery-cost gating. Further
+  ideas: complete-book fixed-width mode, partial-row updates, host-only
+  stable symbol selection. These remain proposals; no new player or TRDs.
+  [Plan, assumptions, scripts and reports](toolkit/FIVE_LEVEL_COMPRESSION_PLAN.md).
+
 ## 2026-09-30 — retain all five levels with the established 2x2 pattern
 
 - **Objective/baseline:** follow the user's request to keep the previous
