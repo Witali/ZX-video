@@ -21,6 +21,28 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — place Fast ZX0 from actual Huffman code bounds
+
+- **Objective/baseline:** build a newly trained FAP3 test after `a7cdf98`.
+  The first native build stopped with `retired patch-body bounds differ`:
+  its nine-context Huffman code places the retired body at 8DE0..8EF6,
+  eighteen bytes earlier than the retained 8DF2..8F08 layout.
+- **Change:** derive the fixed-bank decoder placement from the assembled
+  inline redirect and retained attribute RET. Carry these bounds through
+  in-place and Fast installation; retain range, size, operand and live-branch
+  validation. The original placement remains the standalone default.
+- **Timing:** only absolute addresses change, in uncontended bank 2. Every
+  instruction retains its timing-table cost (for example CALL 17 T, JP 10 T,
+  LD HL,(nn) 16 T). Real guarded Z80 execution of the same 15872-byte match
+  fixture takes **347057 -> 347057 T**, and the 2100-byte literal fixture
+  **46904 -> 46904 T**: both **0 T delta**, identical producer costs/sectors.
+  No compressed stream or buffer changes. ROM latency is outside this test.
+- **Verification/decision:** eleven decoder tests pass, covering old-layout
+  regression, byte-exact relocation, bounds, suspension, shared carry and AY
+  interrupts. Keep the fix; it removes a content-specific build assumption.
+  Reproduce with [test_dynamic_zx0_placement.py](toolkit/test_dynamic_zx0_placement.py),
+  `test_bank2_zx0.py` and `test_faster_zx0.py` via `python -m unittest`.
+
 ## 2026-09-30 — improve five-level symbols without extra lookup work
 
 - **Objective/baseline:** investigate compression without slowing decoding,

@@ -11,12 +11,13 @@ from build_fap3_trd import sha
 ORIGIN,LIMIT=0x8df2,0x8f09
 
 
-def build():
+def build(*,origin=ORIGIN,limit=LIMIT):
     a=local.assemble(dynamic_input=True,inline_literals=True)
     old=a.resolve();start,end=a.labels['slice_begin'],a.labels['end']
     split=start-local.CODE
-    if split!=35 or end-start!=LIMIT-ORIGIN:raise ValueError('ZX0 or retired region size changed')
-    def moved(address):return address+ORIGIN-start if start<=address<=end else address
+    if split!=35 or end-start!=limit-origin or not 0x8000<=origin<limit<0x9000:
+        raise ValueError('ZX0 or retired region size changed')
+    def moved(address):return address+origin-start if start<=address<=end else address
     blob=bytearray(old);absolute=[];relative=[]
     for pos,label in a.abs_fixups:
         before=a.labels[label];after=moved(before)
@@ -28,9 +29,9 @@ def build():
         before=int.from_bytes(old[pos:pos+1],'little',signed=True)
         if after!=before:raise ValueError('relative branch crosses split')
         relative.append(dict(operand=moved(local.CODE+pos),target=moved(a.labels[label]),displacement=after))
-    regions=[(local.CODE,bytes(blob[:split])),(ORIGIN,bytes(blob[split:]))]
+    regions=[(local.CODE,bytes(blob[:split])),(origin,bytes(blob[split:]))]
     labels={key:moved(value) for key,value in a.labels.items()}
-    return regions,labels,dict(enabled=True,old_origin=start,old_end=end,new_origin=ORIGIN,new_end=LIMIT,
+    return regions,labels,dict(enabled=True,old_origin=start,old_end=end,new_origin=origin,new_end=limit,
         prefix_bytes=split,core_and_state_bytes=len(blob)-split,code_bytes=len(blob),
         old_code_sha256=sha(old),code_sha256=sha(blob),absolute_operands=absolute,relative_branches=relative,
         regions=[dict(address=address,code_hex=data.hex(),bytes=len(data),sha256=sha(data)) for address,data in regions],
@@ -54,10 +55,10 @@ def install_player(read8,put,m,h):
     """Patch actual assembled references only, after the inline redirect exists."""
     if not m['inline_huffman_patches'].get('enabled'):
         return dict(enabled=False,reason='inline Huffman unavailable')
-    regions,labels,report=build();hp=m['inline_huffman_patches']
-    if hp['redirect_address']+3!=ORIGIN or h.frame.recon['attributes']!=LIMIT:
-        raise ValueError('retired patch-body bounds differ')
-    if bytes(read8(hp['redirect_address']+i) for i in range(3))!=bytes.fromhex(hp['redirect_bytes']) or read8(LIMIT)!=0xc9:
+    hp=m['inline_huffman_patches']
+    origin,limit=hp['redirect_address']+3,h.frame.recon['attributes']
+    regions,labels,report=build(origin=origin,limit=limit)
+    if bytes(read8(hp['redirect_address']+i) for i in range(3))!=bytes.fromhex(hp['redirect_bytes']) or read8(limit)!=0xc9:
         raise ValueError('inline redirect or retained empty-mask RET differs')
     import bulk_frame_z80 as packet
     _,_,_,packet_rows=packet.build(m['decoder_labels'],m['queue_labels'],h.frame.w,h.frame.draw,
@@ -67,7 +68,7 @@ def install_player(read8,put,m,h):
     rows.update({pc:r for pc,r in h.frame.instructions.items() if pc<0xc000})
     changes=[];entry_checks=0
     for pc,row in sorted(rows.items()):
-        if ORIGIN<=pc<LIMIT or row.get('phase')=='cold_init':continue
+        if origin<=pc<limit or row.get('phase')=='cold_init':continue
         opcode=read8(pc);name=row['instruction'];offset=None
         if name.startswith('LD ') and opcode in (0x01,0x11,0x21,0x31,0x22,0x2a,0x32,0x3a):offset=1
         if name.startswith('LD ') and opcode in (0xdd,0xfd) and read8(pc+1) in (0x21,0x22,0x2a):offset=2
@@ -78,10 +79,10 @@ def install_player(read8,put,m,h):
         before=read8(pc+offset)+256*read8(pc+offset+1)
         if branch:
             entry_checks+=1
-            if ORIGIN<=before<LIMIT:raise ValueError(('live branch enters retired body',hex(pc),hex(before)))
+            if origin<=before<limit:raise ValueError(('live branch enters retired body',hex(pc),hex(before)))
         if report['old_origin']<=before<report['old_end']:
             if before not in m['decoder_labels'].values():raise ValueError(('unrecognized ZX0 reference',hex(pc),hex(before)))
-            after=ORIGIN+before-report['old_origin']
+            after=origin+before-report['old_origin']
             put(pc+offset,after.to_bytes(2,'little'))
             changes.append(dict(address=pc,operand_address=pc+offset,instruction=name,old_operand=before,new_operand=after,
                 baseline_tstates=row['tstates'],tstates=row['tstates'],delta_tstates=0))

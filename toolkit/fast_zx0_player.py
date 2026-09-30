@@ -17,18 +17,19 @@ def install(read8, put, m):
             or not m['resident_audio']['foreground_audio'] or m.get('streaming_input')
             or m.get('fast_zx0')):
         raise ValueError('requires the unmodified complete-input keepalive player')
-    old_regions, old, _ = bank2_zx0.build()
+    placement=m['bank2_zx0'];origin,limit=placement['new_origin'],placement['new_end']
+    old_regions, old, _ = bank2_zx0.build(origin=origin,limit=limit)
     if old != m['decoder_labels']:
         raise ValueError('unsupported decoder layout')
     for at, data in old_regions:
         expected = data.replace(b'\x11\x00\xe0', b'\x11\x00\xc0')
         if bytes(read8(at+i) for i in range(len(data))) != expected:
             raise ValueError(('retained decoder differs', hex(at)))
-    regions, z, layout = faster_zx0.build('fast')
+    regions, z, layout = faster_zx0.build('fast',core=origin,core_limit=limit)
     prefix_end = old_regions[0][0]+len(old_regions[0][1])
     if any(read8(at) for at in range(prefix_end, layout['prefix_end'])):
         raise ValueError('Fast helper region is occupied')
-    if read8(faster_zx0.CORE_LIMIT) != 0xc9:
+    if read8(limit) != 0xc9:
         raise ValueError('preserved frame return differs')
     names = ('begin', 'slice_until', 'fatal', 'slice_output', 'slice_target',
              'slice_caller_sp', 'slice_decoder_sp', 'block_length', 'block_end',

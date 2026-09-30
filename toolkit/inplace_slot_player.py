@@ -8,7 +8,8 @@ from inplace_zx0 import trace, layout
 
 
 def decoder_patch(read8, put, m):
-    regions, labels, _ = bank2_zx0.build()
+    current=m['decoder_labels']
+    regions, labels, _ = bank2_zx0.build(origin=current['slice_begin'],limit=current['end'])
     if labels!=m['decoder_labels']: raise ValueError('unexpected resident decoder labels')
     sites = []
     for at, code in regions:

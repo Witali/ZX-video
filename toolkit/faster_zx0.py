@@ -18,9 +18,10 @@ STACK = 0x7be0
 UPSTREAM = Path(__file__).parent/'third_party/zx0/dzx0_fast.asm'
 
 
-def build(variant='fast'):
+def build(variant='fast',*,core=CORE,core_limit=CORE_LIMIT):
     if variant not in ('fast','turbo_tuned'): raise ValueError('unknown decoder')
-    cold, hot = MiniAssembler(PREFIX), MiniAssembler(CORE)
+    if not 0x8000<=core<core_limit<0x9000: raise ValueError('decoder core must stay in fixed bank 2')
+    cold, hot = MiniAssembler(PREFIX), MiniAssembler(core)
     sites = ('match','match3','slice') if variant == 'fast' else ('match','slice')
     patches = []
 
@@ -81,13 +82,13 @@ def build(variant='fast'):
     labels = cold.labels | hot.labels
     labels['last_offset_operand'] = labels[offset]+1
     # Existing producer uses only the block/stream/coroutine state labels.
-    regions=[(PREFIX,cold.resolve(labels)),(CORE,hot.resolve(labels))]
-    if cold.pc>PREFIX_LIMIT or hot.pc>CORE_LIMIT:
+    regions=[(PREFIX,cold.resolve(labels)),(core,hot.resolve(labels))]
+    if cold.pc>PREFIX_LIMIT or hot.pc>core_limit:
         raise ValueError(('decoder does not fit retired regions',hex(cold.pc),hex(hot.pc)))
     patched=[labels[n] for n in patches]+[labels[offset]+1,labels[offset]+2]
     report=dict(variant=variant,prefix_end=cold.pc,core_end=hot.pc,
         code_and_state_bytes=sum(len(data) for _,data in regions),
-        prefix_bytes=cold.pc-PREFIX,core_bytes=hot.pc-CORE,
+        prefix_bytes=cold.pc-PREFIX,core_bytes=hot.pc-core,
         extra_stream_bytes=0,extra_buffer_bytes=0,private_stack_unchanged=True,
         only_nonwrapping_inplace_blocks=True,max_decoded_bytes=15872,
         source_commit='ecde3a2ae05061fe06469ed46df81a33b7de7d86',
