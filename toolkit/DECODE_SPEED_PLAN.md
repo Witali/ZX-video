@@ -6,6 +6,17 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Compiled row output (2026-09-30):** reject the COPY/pattern-FILL/solid-FILL
+command format on the same 192 exact five-level frames. All bitmaps and
+1152 suffix/boundary cases pass. Optimistic output 20246890 -> 17743885 T,
+but command copies add 3231675 T and actual LZSA2/producer adds 8975251 T.
+Video grows 154956 -> 211907 bytes (606 -> 828 sectors). Component regression
+9703921 T, before new helper costs. No candidate TRD/Fuse run; current image
+retained. Next measure native LZ4-HC as a possible selective fast block mode,
+using saved blocks and counting their known capacity penalty. Do not reopen
+the whole-codec sweep or adopt it on CPU alone.
+[Implementation, evidence and limits](COMPILED_ROW_OUTPUT.md).
+
 **Row-aligned motion (2026-09-30):** reject the existing-cache candidate on
 the same 192 five-level frames. Correct whole-symbol shifts emit 6540 motion
 commands and activate the cache in 191 frames. Decoded bytes 323940 ->

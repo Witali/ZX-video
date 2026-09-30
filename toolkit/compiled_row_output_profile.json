@@ -1,0 +1,79 @@
+{
+  "complete": true,
+  "release": false,
+  "baseline_commit": "42bcc0f",
+  "baseline_trd_sha256": "14788fa7b7272c1d8ae4d47e63804cd60998d8ee95032ce56c879a120226e2d5",
+  "root_trd_unchanged": true,
+  "states_sha256": "47b062996f9445403e6fc4c400c5d7be5666c6b46ee568fefc5a1b3d3081dbb0",
+  "frames": 192,
+  "required_changed_row_symbols": 166533,
+  "baseline_written_row_symbols": 296000,
+  "candidate_written_row_symbols": 317464,
+  "video_bytes": {
+    "baseline": 154956,
+    "candidate": 211907
+  },
+  "sectors": {
+    "baseline": 606,
+    "candidate": 828
+  },
+  "decoded_bytes": {
+    "baseline": 323940,
+    "candidate": 477875
+  },
+  "command_bytes": 153935,
+  "stub_bytes": 579,
+  "max_packet_bytes": 3632,
+  "candidate_bitmap_tstates": 16931839,
+  "baseline_output_tstates": 20246890,
+  "optimistic_candidate_output_tstates": 17743885,
+  "estimated_output_delta_tstates": -2503005,
+  "command_copy_ldir_tstates": 3231675,
+  "decoder_tstates": {
+    "baseline": 19412006,
+    "candidate": 27976642
+  },
+  "producer_tstates": {
+    "baseline": 1058423,
+    "candidate": 1469038
+  },
+  "measured_transport_delta_tstates": 8975251,
+  "optimistic_component_delta_tstates": 9703921,
+  "all_192_bitmaps_and_both_screen_histories_exact": true,
+  "attributes_and_reconstruction_packet_bytes_unchanged": true,
+  "targeted_native_cases": 1152,
+  "actual_candidate_playback_measured": false,
+  "candidate_fps": null,
+  "decision": "Reject this compiled COPY/FILL row program format for integration: command volume and its transport/copy CPU exceed the renderer saving.",
+  "limitations": "Prototype only: no boot, full frame pipeline, real queues, AY interrupts, ULA or physical disk run. Output estimate keeps baseline attribute/paging/control work, drops all old bitmap dispatch, adds measured compiled bitmap CPU and LDIR command copies. It omits new copy/dispatch helper overhead and changed queue-copy costs. CPU pools are not elapsed playback.",
+  "next": "Measure native LZ4-HC decode costs on saved blocks as a possible selective fast block mode; its known size increase must be charged to total delivery and the disk budget before adoption.",
+  "evidence": [
+    {
+      "file": "probe.json.gz",
+      "sha256": "13df5ff0be6abb6f7539cba175313614e35acb7223f3c6fdfe0ea86408c6bb60",
+      "raw_sha256": "c8ba4f12ba8fca7a3bfe8f187e619a68ebba330e9f0adcf2daff9b48fa726515"
+    },
+    {
+      "file": "transport.json.gz",
+      "sha256": "73a867935262d55833296475814676ebb8063dda5b60766f8471a1b3c2e6f372",
+      "raw_sha256": "28c0b8f8544af401906799826a4c649d4dfeac94b6a9b5a8066c66f23086567f"
+    },
+    {
+      "file": "video.raw.gz",
+      "sha256": "4dbcdcebe78a90177c479c31b59d59f4d6dd8595931433f1bd9d40c7967e4f99",
+      "raw_sha256": "7be1c103ee9c580be04a17db60cb9a0c3663cc67799bf68631cf6bcab966ae7a"
+    },
+    {
+      "file": "video.stream.gz",
+      "sha256": "d0f9814dfb7f0fab05e588d1e3a0b6afacdd90e6097ff94727e031036eea4c5f",
+      "raw_sha256": "c0abd0902928ba67878aed1e5a13dc403af98facd5d51f625826d8266b6e976d"
+    }
+  ],
+  "source_sha256_lf": {
+    "probe_compiled_row_output.py": "fc165c85842480ce5dab7c429d67dd63297b166343f17e67593d30819e31784f",
+    "test_compiled_row_output.py": "2c81cef4019995a633b4c576873b0ddbb7eac46df2e890281dae22dc244ce2dd",
+    "summarize_compiled_row_output.py": "0c7d80cc5f463b3894567da6429a799e69800f8b7a98197700440a0380b12dd7",
+    "benchmark_row_lzsa.py": "3fc3c98695d1d9e3bfc086a079a8d2f67a17ddd0c2c187051767c6209113ede2",
+    "resumable_lzsa2.py": "141d3f843554a50eb3c20c4a764f1edd6294ff96a49be254e07cbbb35f23a3d2"
+  }
+}

@@ -21,6 +21,34 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — test compiled COPY/FILL row output
+
+- **Objective/input:** reduce native pixel-output work toward smooth
+  five-level 25/3 fps; baseline `42bcc0f`, retained borrowed-literal disk,
+  same 192 frames and 172-entry row dictionary. One command-layout probe.
+- **Change:** host-generated row COPY, patterned FILL and solid FILL runs;
+  execute real unrolled Z80 suffixes, verify both screen histories, append
+  the proposed command bytes to video packets and measure LZSA2 transport.
+  A single DP policy charges native work plus 81 T per command byte.
+- **Measurements:** native bitmap commands 16931839 T; optimistic complete
+  output 20246890 -> 17743885 T (-2503005). Commands total 153935 bytes,
+  with 3231675 T of LDIR copy work. LZSA2/producer grows by 8975251 T;
+  component regression 9703921 T before new helper/queue costs. Video grows
+  154956 -> 211907 bytes and 606 -> 828 sectors. No inferred playback rate.
+- **Verification:** all 192 bitmaps/both histories, unchanged input/code/
+  tables, all native instruction timings, 1152 suffix/address-boundary cases,
+  31 native LZSA2 blocks with overlap/cursor/sector checks. Other packet
+  fields reproduce the originals. Maximum packet 3632 bytes. Initial import
+  and cache-directory setup failures were fixed before completed results.
+- **Decision:** reject integration; retain the current TRD (hash checked).
+  No boot/IRQ/physical-disk/Fuse run or full-movie result for this format.
+  Next measure a selective fast outer decoder on saved blocks, charging its
+  disk cost; do not repeat this command expansion or the host codec sweep.
+- **Reproduction:** [method and commands](toolkit/COMPILED_ROW_OUTPUT.md),
+  [native probe](toolkit/probe_compiled_row_output.py),
+  [summary](toolkit/compiled_row_output_profile.json),
+  [evidence](toolkit/compiled_row_output_evidence).
+
 ## 2026-09-30 — test motion on whole five-level dictionary symbols
 
 - **Objective/input:** test whether proper motion can reduce input work on

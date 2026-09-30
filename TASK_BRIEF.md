@@ -49,7 +49,17 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: row-aligned motion feasibility
+## Latest completed milestone: compiled row output feasibility
+
+Baseline `42bcc0f`, unchanged 192-frame five-level fixture. Native generated
+COPY/FILL runs pass all bitmaps and 1152 boundary cases. Their optimistic
+output saving is 2503005 T, but command copying adds 3231675 T and measured
+LZSA2/producer adds 8975251 T. Compressed video grows 154956 -> 211907 bytes.
+Reject this command format; no new disk or actual cadence claim. Root image
+unchanged; exact scripts and [evidence](toolkit/COMPILED_ROW_OUTPUT.md) saved.
+Next bounded deliverable below measures a faster selective block decoder.
+
+## Previous milestone: row-aligned motion feasibility
 
 Baseline `d0e4731`, same 192 exact five-level frames. Whole-symbol shifts
 produce 6540 motion commands, with cache active in 191 frames. Decoded
@@ -152,17 +162,18 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: reduce native pixel output cost
+## Next finite deliverable: faster outer decoding on difficult windows
 
-Packet-copy reduction is implemented and verified for the eligible mode.
-Native output still costs 20246890 deterministic T: dense/cell pixel writes
-14350016 T and cell address computation 1894464 T. Inspect the generated
-row-table renderer for one exact-byte improvement, then compare with the
-borrowed-literal baseline in CPU and complete Fuse playback. Preserve both
-screen histories, 50-Hz AY, five levels and the nominal/fallback gates.
-Use the saved difficult windows; progress to complete-movie volumes when
-the candidate meets timing. The goal remains smooth 25/3 fps, not a passing
-component or average-speed result.
+Keep the borrowed-literal image and exact five-level packet bytes. The
+compiled-output and whole-symbol-motion candidates regress total CPU.
+Reuse saved LZ4-HC data from the modern-codec assessment (183448 bytes vs
+154956 for current LZSA2); implement/measure one resumable native decoder
+with exact bytes, instruction costs, overlap, paging and slice bounds.
+Do not repeat the host codec sweep or ignore the earlier capacity rejection.
+Only consider selective fast blocks where total delivery, including added
+sectors, improves within the disk budget. If component evidence supports
+it, integrate one selected candidate and verify full Fuse publication/AY.
+Preserve the complete movie objective; a window or average fps cannot pass.
 
 ## Release gate and handoff
 
