@@ -21,6 +21,15 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — clarify brightness-before-dither ordering
+
+- User clarification applied to the transform proposal: reconstruct
+  brightness, quantize to five levels, then apply fixed-phase dithering.
+  A fused table must reproduce that order; independently dithered basis
+  contributions must not be summed. Documentation only, no new measurement
+  or player/image change. The clarification preserves the proposed quality
+  gate and is recorded in the [plan](toolkit/LZSA2_COMPRESSION_PLAN.md#quality-and-compatibility-constraints).
+
 ## 2026-09-30 — assess table-driven inverse transforms for the video layer
 
 - **Objective/scope:** answer whether a simplified table-driven IDCT could

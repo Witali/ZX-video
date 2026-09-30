@@ -168,6 +168,12 @@ no established free 2 KiB; account for the existing row table and the full
 
 ### Quality and compatibility constraints
 
+- User-confirmed ordering: reconstruct brightness (and add any predicted
+  residual), round/clamp and quantize to the five brightness levels, then
+  apply the fixed-phase dither as the final display step. A lookup table
+  may fuse these steps only if its result is identical to that ordering.
+  Never dither separate basis contributions before adding them: dithering
+  is nonlinear. A runtime level-to-pattern lookup also preserves this order.
 - Transform logical brightness values before dithering, never dictionary
   index numbers or the binary dither texture. Preserve cell attributes and
   the fixed screen phase; do not let a block choose the opposite phase.
