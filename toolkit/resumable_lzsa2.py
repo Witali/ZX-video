@@ -2,7 +2,7 @@
 
 Port of third_party/lzsa/unlzsa2_fast.asm (zlib license notice retained there).
 Alterations: preserved AF' across suspension, token-boundary yield, byte-exact
-EOF without the upstream two-byte overread, Z/C branches for the CPU harness.
+EOF without the upstream two-byte overread, preserved fast S/P dispatch.
 Not the original decoder. Reuses the installed Fast ZX0 prefix/core regions.
 """
 from pathlib import Path
@@ -37,11 +37,12 @@ def build(*,core=0x8de0,core_limit=0x8ef7):
     a.label('MoreLiterals');emit('LD B,(HL)',(0x46,),7);inc();nibble('LiteralNibble',True)
     emit('INC A',(0x3c,),4);jr(0x28,'ManyLiterals');emit('SUB 238',(0xd6,238),7)
     a.label('CopyMoreLiterals');emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('LD B,0',(6,0),7)
-    ldi();ldi();ldir();emit('CP 128',(0xfe,128),7);jp(0xda,'Case0xx')
+    ldi();ldi();ldir();emit('OR A',(0xb7,),4);jp(0xf2,'Case0xx')
     emit('CP 192',(0xfe,192),7);jr(0x38,'Case10x')
     a.label('Case11x');emit('CP 224',(0xfe,224),7);jr(0x30,'MatchLen')
     emit('LD B,(HL)',(0x46,),7);inc();jr(0x18,'ReadOffsetC')
-    a.label('NoLiterals');emit('OR (HL)',(0xb6,),7);inc();emit('CP 128',(0xfe,128),7);jp(0xd2,'Case1xx')
+    a.label('Literals00or11');jr(0x20,'MoreLiterals')
+    a.label('NoLiterals');emit('OR (HL)',(0xb6,),7);inc();jp(0xfa,'Case1xx')
     a.label('Case0xx');emit('CP 64',(0xfe,64),7);jr(0x38,'Case00x')
     emit('DEC B',(5,),4);emit('CP 96',(0xfe,96),7);emit('RL B',(0xcb,0x10),8)
     a.label('ReadOffsetC');emit('LD C,(HL)',(0x4e,),7);inc()
@@ -55,11 +56,11 @@ def build(*,core=0x8de0,core_limit=0x8ef7):
     a.label('Yield');ld('LD A,(block_end+1)',0x3a,'block_end_high',13);emit('CP D',(0xba,),4);jr(0x20,'Suspend')
     ld('LD A,(block_end)',0x3a,'block_end',13);emit('CP E',(0xbb,),4);jp(0xca,'Token')
     a.label('Suspend');ld('CALL yield',0xcd,'slice_yield',17);jr(0x18,'ReadToken')
-    a.label('Token');emit('LD A,(HL)',(0x7e,),7);emit('AND 24',(0xe6,24),7);jp(0xca,'NoLiterals')
-    emit('CP 24',(0xfe,24),7);jp(0xca,'MoreLiterals')
+    # AND 24 has even parity for LL=00/11 and odd parity for LL=01/10.
+    a.label('Token');emit('LD A,(HL)',(0x7e,),7);emit('AND 24',(0xe6,24),7);jp(0xea,'Literals00or11')
     for _ in range(3):emit('RRCA',(0x0f,),4)
     emit('LD C,A',(0x4f,),4);emit('LD A,(HL)',(0x7e,),7)
-    a.label('NextUseBC');inc();ldir();emit('CP 128',(0xfe,128),7);jp(0xda,'Case0xx')
+    a.label('NextUseBC');inc();ldir();emit('OR A',(0xb7,),4);jp(0xf2,'Case0xx')
     a.label('Case1xx');emit('CP 192',(0xfe,192),7);jp(0xd2,'Case11x')
     a.label('Case10x');emit('LD C,A',(0x4f,),4);nibble('Offset13Nibble')
     emit('LD B,A',(0x47,),4);emit('LD A,C',(0x79,),4);emit('CP 160',(0xfe,160),7);emit('DEC B',(5,),4);emit('RL B',(0xcb,0x10),8);jp(0xc3,'ReadOffsetC')

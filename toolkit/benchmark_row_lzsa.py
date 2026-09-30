@@ -16,14 +16,10 @@ from inplace_zx0 import layout
 import inplace_slot_input_z80 as producer
 import lzsa2_stream
 import resumable_lzsa2
+from lzsa2_test_cpu import LogicalFlags
 
 
-class LzsaCPU(CountedCPU):
-    def instruction(self):
-        if CPU.read8(self,self.pc)==0x37:
-            self.pc=(self.pc+1)&65535;self.carry=True;return 4
-        return super().instruction()
-
+class LzsaCPU(LogicalFlags,CountedCPU):
     def read8(self,address):
         address &= 65535
         # LZSA2 inspects the token twice before advancing HL. Only decoder

@@ -1,5 +1,9 @@
 # Faster transport for exact five-level row video
 
+The later [flag-dispatch optimization](LZSA2_DISPATCH.md) updates the root
+experimental TRD and reduces decoder CPU by a further 432620 T. The original
+measurements below and their archived evidence remain the baseline.
+
 2026-09-30. Baseline `c6b8475`, same 192-frame montage: 64 frames starting
 at source positions 629, 2857 and 3855. Same 172-entry row dictionary,
 FAP3 fragment allowance 16, native pixels, attributes and 50 Hz AY.

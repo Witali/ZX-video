@@ -49,16 +49,20 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: C compiler comparison
+## Latest completed milestone: LZSA2 flag dispatch
 
-On the same 21 blocks, native C decoding costs 5359269651 T with z88dk,
-6286416196 T with SDCC and 8213010715 T with HI-TECH. z88dk saves 14.75%
-versus SDCC but remains 2.3242x fast ASM and 270.06x LZSA2. All 63 video
-block decodes are exact; edge/error/guard and bounded timing audits pass.
-Reject realtime C LZMA integration. Reuse [the comparison](toolkit/Z80_C_COMPILERS.md)
-and [security record](toolkit/Z88DK_SECURITY_CHECK.md). The downloaded
-Windows z88dk archive remains quarantined; the tested build is Linux/WSL
-from scanned sources. No new TRD or playback release. Next: packet copies.
+User-requested LZSA2 optimization: restore upstream parity/sign dispatch
+and extend the component verifier. Same 21 blocks: 19844626 -> 19412006 T
+(-432620, -2.18%), 391 -> 384 bytes, unchanged 154956-byte runtime stream.
+Full 192-frame Fuse: 7.449298 -> 7.478465 fps; missed nominal deadlines
+135 -> 134, maximum lateness 137 -> 133 fields. Both timing gates still fail;
+late run 67..191 does not recover. All bytes, sectors and AY pass; six full
+captures are exact. Independent full-flags CPU agrees on every old/new slice,
+including additional interrupted runs. Updated optional LFS test TRD; no
+full-movie release. Reuse [evidence](toolkit/LZSA2_DISPATCH.md).
+
+C LZMA remains rejected for realtime use; retain [its comparison](toolkit/Z80_C_COMPILERS.md)
+and [security record](toolkit/Z88DK_SECURITY_CHECK.md). Next: packet copies.
 
 ## Previous milestone: native LZMA feasibility
 

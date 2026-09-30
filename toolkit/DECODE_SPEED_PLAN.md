@@ -6,6 +6,15 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Requested LZSA2 optimization (2026-09-30):** adopt restored upstream
+S/P token dispatch, verified independently with full CPU flags. Same stream:
+19844626 -> 19412006 T (-2.18%), 391 -> 384 bytes. Full Fuse publication
+span improves 90904059 -> 90549516 elapsed T; fps 7.449298 -> 7.478465.
+Neither timing gate passes (134 late frames, maximum 133 fields, final late
+run unrecovered). Keep the updated optional test TRD and exact evidence.
+No extra sector, buffer or stack cost. Return to packet-copy reduction;
+unrolled match copying needs a separate bounded hypothesis. [Details](LZSA2_DISPATCH.md).
+
 **Requested compiler comparison (2026-09-30):** same portable C LZMA1
 decoder, same 21 blocks. z88dk/ZSDCC: 5359269651 T / 2344 code bytes;
 SDCC: 6286416196 T / 2443 bytes; HI-TECH: 8213010715 T / 2638 bytes.

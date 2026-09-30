@@ -21,6 +21,41 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — accelerate LZSA2 flag dispatch without changing the stream
+
+- **Objective/input:** user-requested decoder acceleration, baseline
+  `afc18fc`; reuse the archived 192-frame/21-block row-video fixture and
+  original 50-Hz AY. Keep identical resolution, pixels and compression.
+- **Change:** restore upstream `JP PE` token selection and sign-flag offset
+  checks; the earlier port had used slower comparisons for its limited
+  test CPU. Extend only the verifier's logical S/P flag flow. Core shrinks
+  257 -> 250 bytes in uncontended bank 2; total prefix/core/state 391 -> 384.
+- **Measured:** 19844626 -> 19412006 decoder T (-432620, -2.1800%), exactly
+  predicted by 19683 short-literal tokens saving 20 T and 4870 extended
+  tokens saving 8 T; no-literal dispatch is unchanged at 54 T. Producer
+  stays 1058423 T, runtime stream 154956 bytes / 606 sectors, disk 653 sectors.
+  Full Fuse span 90904059 -> 90549516 T; mean 7.449298 -> 7.478465 fps.
+  Missed nominal deadlines 135 -> 134, maximum lateness 137 -> 133 fields,
+  bad fallback intervals 27 -> 24. Final late run 67..191 remains unrecovered.
+- **Verification:** all 21 guarded blocks and 27 edge cases pass. Independent
+  full-flags native Z80 execution matches every old/new slice and all bytes;
+  separate IM1 runs pass with 185/184 injections. All 256 sign/parity token
+  inputs checked. Cold boot/priming, 192-frame EOF, 606 runtime sectors,
+  1152 exact AY ticks and 80 pixel samples/frame pass. Six full Fuse captures
+  match all 41472 bytes. Deterministic CPU is separate from disk/ROM/IRQ/ULA.
+- **Rejected setup attempt:** a changed temporary FAP3 file produced a
+  different 115271-byte video stream. Discarded before playback comparison;
+  retain its build record and rebuild from archived data. Added explicit
+  expected raw/video hash checks. Initial missing Python dependency was
+  resolved using the existing local packages, without installing new tools.
+- **Decision:** adopt the measurable CPU and full-delivery improvement;
+  update `ZX-video-five-level-lzsa2-test.trd` in LFS. No full-movie/physical
+  drive claim; both release timing gates still fail. Next: packet copies.
+  [Analysis and reproduction](toolkit/LZSA2_DISPATCH.md),
+  [hashed evidence](toolkit/lzsa2_dispatch.json),
+  [independent verifier](toolkit/verify_lzsa2_dispatch.py),
+  [capture/archive script](toolkit/summarize_lzsa2_dispatch.py).
+
 ## 2026-09-30 — attempt requested multi-engine compiler upload
 
 - **Objective/input:** user-authorized web antivirus check of the compiled
