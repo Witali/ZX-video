@@ -21,6 +21,23 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — assess eight-level spatial display options
+
+- **Objective/baseline:** assess the user's eight-level quality proposal
+  against the current 128x96 logical grid, unchanged 25/3 fps and 50 Hz AY.
+- **Analysis:** fixed two-colour 2x2 cells provide five dot-count averages;
+  4x4 spatial patterns provide seventeen on uniform regions. Three-bit
+  codes would increase full-frame pattern storage 3072→4608 bytes and
+  total state 3840→5376 bytes; these are arithmetic, not ZX0 measurements.
+- **Decision:** prefer a bounded comparison of adaptive host-generated
+  spatial dithering with stable phase against the five-level reference.
+  Eight-level precision is regional, not independent in every 2x2 sample.
+  Keep temporal alternation and uniform three-bit storage out of defaults.
+- **Coverage/limits:** reviewed current format/table definitions and the
+  original hardware manual; checked storage arithmetic and documentation
+  diff. No codec change, compression run, native timing or new TRDs;
+  runtime delta 0 T. [Assessment and next step](toolkit/EIGHT_LEVEL_ASSESSMENT.md).
+
 ## 2026-09-30 — scope optimization work to reduce repeated model work
 
 - **Objective:** reduce token consumption while preserving engineering and

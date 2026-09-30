@@ -1,10 +1,20 @@
 # Decode-speed improvement plan
 
-Updated 2026-09-28. This is the current plan in English. Earlier proposals
+Updated 2026-09-30. This is the current plan in English. Earlier proposals
 and their dated results remain in the [historical plan](DECODE_SPEED_PLAN_ru.md)
 and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
+
+**Eight-level assessment (2026-09-30):** fixed-colour 2x2 patterns have only
+five area averages. Prefer an adaptive, host-generated 4x4 spatial threshold
+pattern for richer gradients, retaining detail positions and fixed phase;
+it does not provide eight independent tones in every 2x2 sample. Uniform
+three-bit storage adds 50% pattern bytes before compression. Native fragment
+delivery may avoid runtime threshold work but remains unimplemented and
+untimed. See [options, arithmetic and the bounded comparison](EIGHT_LEVEL_ASSESSMENT.md).
+This assessment does not authorize a new release build or replace the
+pending five-level feasibility decision with an unrestricted search.
 
 **Native dither correction (2026-09-28):** an optional Z80 implementation
 now passes exhaustive attribute/byte tests, IRQ stress and 96 movie frames.
