@@ -21,6 +21,40 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — measure faster LZSA2 transport for five-level video
+
+- **Objective/baseline:** reduce transport cost after `c6b8475` on its same
+  192-frame montage and exact AY/pixels. No full-movie parameter sweep.
+- **Profile:** Fast ZX0 uses 25185674 decoder T plus 1024996 producer T;
+  packet-copy LDI alone has a 5183040-T lower bound. Disk/ROM/ULA timing is
+  recorded separately from deterministic CPU counts.
+- **Change:** optional resumable LZSA2 in the same bank regions and 15872-byte
+  slots. Preserve the spare nibble in AF', verify in-place overlap, remap
+  known operands, retain ZX0 bootstrap and independent cold boot.
+- **Corrected attempt:** the first 192-frame run passed content checks, but
+  a synthetic 257-byte match exposed skipped EOD after quota overshoot.
+  Fix the block-end yield guard; also accept a first repeat-offset EOD in
+  the independent host parser. Keep preliminary reports; repeat affected
+  CPU, build and complete Fuse checks after the fix.
+- **Final measurements:** decoder 19844626 T (-5341048 / -21.21%), producer
+  1058423 T (+33427), total transport CPU -5307621 T. Compressed video
+  148971 -> 154956 bytes (+4.02%), runtime sectors 582 -> 606, occupied
+  disk sectors 633 -> 653. Real mean fps 7.126866 -> 7.449298. Missed
+  deadlines 145 -> 135, maximum delay 194 -> 137 fields, invalid intervals
+  28 -> 27. Late runs 43..49 and 56..58 recover; 67..191 does not.
+- **Coverage:** all 21 native blocks and instruction costs; 27 boundary cases;
+  dirty-RAM cold boot/priming; all 192 real-Fuse frames to EOF, 606 sectors,
+  1152 exact AY ticks with no underruns/gaps/duplicates. Six complete screen
+  captures match all 41472 bytes. Existing reconstruction evidence is reused
+  only for identical FAP3 bytes and dictionary. Physical hardware untested.
+- **Decision:** keep a faster optional experiment and root LFS image
+  `ZX-video-five-level-lzsa2-test.trd`; leave the generic default unchanged.
+  Both timing gates still fail. Neither full-movie capacity nor smooth
+  8 1/3 fps is achieved. Next inspect packet copies on this saved fixture.
+- **Reproduce:** [transport report and scripts](toolkit/ROW_LZSA_TRANSPORT.md),
+  [summary](toolkit/row_lzsa_optimization.json),
+  [archived evidence](toolkit/row_lzsa_evidence).
+
 ## 2026-09-30 — speed up row-index reconstruction with bounded fragments
 
 - **Objective/baseline:** improve playback after `78541a5`, limiting work to

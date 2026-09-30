@@ -49,34 +49,40 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: faster optional row-fragment mode
+## Latest completed milestone: optional LZSA2 transport
 
-After `78541a5`, profile the same 192-frame montage (64 frames at
-629/2857/3855), exact five-level states and original AY. Reconstruction was
-the largest elapsed phase. Allowing two extra local bytes for existing
-fragment handlers gives little gain; a subsequent 16-byte window probe
-justifies one final build. No Z80 opcode changes or re-quantization.
+After `c6b8475`, reuse its exact 192-frame five-level montage (64 frames at
+629/2857/3855), fragment allowance 16 and original AY. Profile Fast ZX0 at
+25185674 T and the producer at 1024996 T; packet-copy LDI alone costs at
+least 5183040 T. Compare one outer codec with unchanged decoded bytes.
 
-Frame CPU drops 75788625 -> 41965760 T (-44.63%), but ZX0 grows
-112364 -> 148971 bytes (+32.58%). Full real-Fuse playback improves
-6.7491 -> 7.1269 fps, 174 -> 145 late frames, 269 -> 194 maximum late fields.
-Both gates still fail; the final late run never recovers. AY and screen
-bytes are exact, including six complete Fuse captures. Eleven converter
-tests pass. Retain `ZX-video-five-level-fast-test.trd` as an optional speed
-experiment; generic encoding remains byte-identical by default.
+Resumable LZSA2 reduces decoder CPU to 19844626 T (-21.21%), total transport
+CPU by 5307621 T, while video grows 148971 -> 154956 bytes (+4.02%). Real
+Fuse improves 7.126866 -> 7.449298 fps, 145 -> 135 missed deadlines,
+194 -> 137 maximum late fields. Both timing gates still fail; run 67..191
+never recovers. This does not prove full-movie capacity or smooth 8 1/3 fps.
 
-Read [ROW_FRAGMENT_SPEED.md](toolkit/ROW_FRAGMENT_SPEED.md), its JSON and
-archived CPU/Fuse traces. Do not repeat the allowance comparison or rebuild
-the whole movie. These results do not prove the three-disk target.
+All 21 blocks, 27 boundary cases, cold boot, 192-frame EOF and AY pass.
+Six full Fuse captures match all 41472 bytes. An EOD/quota corner case was
+fixed and affected checks repeated; preliminary reports remain archived.
+Keep `ZX-video-five-level-lzsa2-test.trd` as an optional LFS experiment;
+generic encoding remains unchanged. Token-boundary yields do not provide a
+universal slice-time bound on arbitrary videos.
 
-## Next finite deliverable: reduce row-fragment transport cost
+Read [ROW_LZSA_TRANSPORT.md](toolkit/ROW_LZSA_TRANSPORT.md), its JSON and
+archived evidence. Reuse [ROW_FRAGMENT_SPEED.md](toolkit/ROW_FRAGMENT_SPEED.md)
+for unchanged frame CPU and FAP3 data. Do not repeat codec/allowance sweeps.
 
-Transfer is now the largest elapsed stage (45170386 T); packet starts find
-an empty queue in 159/192 cases. Split it into Fast ZX0, packet copies and
-ROM/disk windows using the saved fixture. Keep deterministic counts separate
-from elapsed/IRQ/ULA time. Compare one bounded change that reduces transport
-or decoded bytes while retaining exact pixels, AY and independent boot.
-Do not start another allowance sweep or dictionary transition first.
+## Next finite deliverable: avoid decoded packet copies
+
+Transfer remains the largest elapsed stage (39637293 T); packet starts find
+an empty queue in 153/192 cases. Inspect using slot bytes directly instead
+of copying every packet into another buffer. First account for packets
+crossing blocks, slot lifetime, motion/Huffman pointers and IRQ paging.
+Compare one bounded candidate on the saved fixture, measuring deterministic
+CPU separately from full disk/ULA/IRQ delivery. Preserve exact pixels,
+AY, independent boot and every timing gate. Do not build the whole movie
+or start dictionary transitions before resolving this hypothesis.
 
 ## Release gate and handoff
 

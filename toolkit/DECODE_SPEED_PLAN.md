@@ -6,15 +6,28 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Integrated five-level transport (2026-09-30):** on the exact 192-frame
+row-dictionary montage, optional fragments reduced frame work to 41965760 T.
+Replacing only its outer Fast ZX0 with resumable LZSA2 now reduces decoder
+25185674 -> 19844626 T; total transport CPU saves 5307621 T. Video grows
+148971 -> 154956 bytes. Real fps improves 7.126866 -> 7.449298, but 135
+deadlines are missed and the last late run never recovers. Keep the optional
+test image; do not promote it as a release or change the generic default.
+All 21 native blocks, 27 boundary cases, full test EOF, AY and six complete
+captures pass content checks. Next inspect avoiding packet-buffer copies,
+including cross-block ownership and IRQ paging, on this existing fixture.
+See [measurement and limitations](ROW_LZSA_TRANSPORT.md).
+
 **Five-level row dictionary (2026-09-30):** bounded changed-row sets fit
 in two 256-byte lookup pages. Reject the tested whole-cell dictionary;
 prefer row dictionaries only in windows with lower bytes and measured CPU.
 Offline selection gives 68648→65294 bytes and Fast ZX0 11380407→11181994 T.
 The existing renderer executes unchanged with learned table contents:
 dense 154684 T and sparse fixture 27101 T, both 0 T delta in nine checks.
-Book installation, seed/retained-state remapping and full packet consumption
-remain unmeasured. Prioritize that integrated boundary before release work;
-see [the compression plan and complete limitations](FIVE_LEVEL_COMPRESSION_PLAN.md).
+The fixed whole-volume dictionary, seed state and packet consumption have
+since been integrated in the 192-frame fixture above. Dynamic book changes
+and whole-movie five-level delivery remain unverified. See
+[the compression plan and initial limitations](FIVE_LEVEL_COMPRESSION_PLAN.md).
 
 **Five-level 2x2 decision (2026-09-30):** retain the palette-preserving
 adaptive four/five-byte cell candidate. In 96 RGB frames its exact five-level
