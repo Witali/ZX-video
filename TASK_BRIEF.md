@@ -49,7 +49,18 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: native LZMA feasibility
+## Latest completed milestone: C compiler comparison
+
+On the same 21 blocks, native C decoding costs 5359269651 T with z88dk,
+6286416196 T with SDCC and 8213010715 T with HI-TECH. z88dk saves 14.75%
+versus SDCC but remains 2.3242x fast ASM and 270.06x LZSA2. All 63 video
+block decodes are exact; edge/error/guard and bounded timing audits pass.
+Reject realtime C LZMA integration. Reuse [the comparison](toolkit/Z80_C_COMPILERS.md)
+and [security record](toolkit/Z88DK_SECURITY_CHECK.md). The downloaded
+Windows z88dk archive remains quarantined; the tested build is Linux/WSL
+from scanned sources. No new TRD or playback release. Next: packet copies.
+
+## Previous milestone: native LZMA feasibility
 
 The user-requested optimized Z80 ASM implementation is complete. Reuse
 [LZMA_Z80.md](toolkit/LZMA_Z80.md) and its benchmark: same 21 archived blocks,

@@ -6,6 +6,15 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Requested compiler comparison (2026-09-30):** same portable C LZMA1
+decoder, same 21 blocks. z88dk/ZSDCC: 5359269651 T / 2344 code bytes;
+SDCC: 6286416196 T / 2443 bytes; HI-TECH: 8213010715 T / 2638 bytes.
+z88dk saves 14.75% versus SDCC but is 2.3242x fast ASM and 270.06x LZSA2
+decoder CPU. All three are exact on the fixture and pass bounded timing,
+edge and error checks. Reject realtime C LZMA integration; retain tools
+for other C components and return to packet-copy reduction. Do not turn
+this into an open-ended compiler-option sweep. [Evidence](Z80_C_COMPILERS.md).
+
 **Requested native LZMA implementation (2026-09-30):** complete specialized
 Z80 ASM decoder, `lc=0, lp=0, pb=2`, existing raw 21-block stream unchanged.
 Unrolled EXX multiplication saves 462 T per adaptive bit: 2901892750 ->

@@ -21,6 +21,38 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — compare native C decoder toolchains
+
+- **Objective/input:** user-requested HI-TECH, SDCC and z88dk comparison;
+  baseline `3608253`, same 21 LZMA1 blocks / 192-frame fixture, no re-encoding.
+- **Parameters:** one portable C decoder, `lc=lp=0, pb=2`; optimize for
+  speed with SDCC 4.6.0, HI-TECH C 3.09-21 and source-built z88dk 2.4 /
+  ZSDCC 4.5.0. Scripts pin downloads, preserve flags and save generated code.
+- **Measured:** SDCC 6286416196 T / 2443 code bytes; HI-TECH 8213010715 T /
+  2638 bytes; z88dk 5359269651 T / 2344 bytes. z88dk saves 927146545 T
+  (-14.7484%) versus SDCC, but adds 3053431283 T versus specialized fast
+  ASM. Compression remains 133084 bytes / 520 sectors. C scalar/model
+  storage is 29/3886 bytes; observed stacks are 69/87/70 bytes respectively.
+- **Verification:** all 63 video block decodes exact, plus six data and
+  24 malformed cases per compiler, memory guards and ABI checks. Complete
+  instruction timing audits on a 14-byte sample agree with continuous runs.
+  Completed SDCC/HI-TECH results were reused only after identity checks.
+- **Unsuccessful setup attempts:** SourceForge returned an HTML landing
+  page; NSIS extraction lacked the expected cc1.exe filename; HI-TECH
+  rejected unsupported C syntax; a misplaced ORG gap stalled initial ZXCC
+  bootstrap; shell quoting interrupted the first z88dk invocation; stepping
+  a DD prefix separately caused a bounded timing-audit mismatch. Fixed
+  reproducing scripts and reran affected checks. The separate Defender
+  quarantine investigation is recorded below.
+- **Decision/limits:** z88dk is best among these tested C configurations,
+  but remains 270.06x the LZSA2 decoder CPU. Reject realtime C LZMA
+  integration. Player hot-path delta 0 T; no production RAM/IRQ/AY/disk/ULA
+  or TRD release claim. Return to packet-copy reduction. See
+  [assessment and reproduction](toolkit/Z80_C_COMPILERS.md),
+  [benchmark](toolkit/z80_c_compiler_benchmark.json),
+  [build script](toolkit/build_z80_c_decoders.py) and
+  [guarded harness](toolkit/benchmark_z80_c_compilers.py).
+
 ## 2026-09-30 — investigate z88dk Defender detection
 
 - **Objective/input:** inspect the user-reported alert during the requested
