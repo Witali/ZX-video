@@ -21,6 +21,28 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — investigate z88dk Defender detection
+
+- **Objective/input:** inspect the user-reported alert during the requested
+  compiler comparison. The Windows ZIP came from the official z88dk v2.4
+  GitHub release, not a third-party download site.
+- **Observed:** Defender detected `Trojan:Win32/Qwexlafiba!rfn` at 17:17:13
+  UTC+02:00 and successfully quarantined the ZIP at 17:17:35. Extraction
+  failed with zero files; no executable from that archive ran.
+- **Checks:** updated signatures to 1.459.485.0; completed custom scans of
+  the source archive and the source-built Linux tool tree, with both scan
+  IDs matched to completion events. No new threats detected. The source
+  archive SHA-256 matches the official release API. Exclusions could not
+  be inspected with this process's Windows privileges; VirusTotal lookup
+  was unavailable. HTTPS verification of the extra upstream SDCC source
+  dependency failed; its observed HTTP download hash is only a local pin.
+- **Decision:** leave the Windows archive quarantined; do not label the
+  alert a false positive. Continue the bounded compiler experiment with
+  the scanned source build. No antivirus exceptions or security bypass.
+  See [assessment](toolkit/Z88DK_SECURITY_CHECK.md),
+  [scan script](toolkit/scan_z88dk.ps1) and
+  [saved evidence](toolkit/z88dk_security_check.json).
+
 ## 2026-09-30 — implement and optimize native Z80 LZMA1
 
 - **Objective/input:** user-requested optimized Z80 assembly decoder, based
