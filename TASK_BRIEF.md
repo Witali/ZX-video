@@ -49,7 +49,19 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: exact LZSA2 oracle
+## Latest completed milestone: full-block LZSA2 distance search
+
+Baseline `ca95df5`; block 11 of the unchanged 21-block five-level fixture.
+Fixed command positions/lengths, exact canonical distance DP under original
+byte limit. Minimum size remains 7165 bytes; decoder saves only 108 T
+(944426 -> 944318), with unchanged 154956-byte stream / 606 sectors.
+3214 cost boundaries, 187 exhaustive layouts / 2716 serialized alternatives,
+all author/banked/independent slices and 184 synthetic interrupts pass.
+Reject integration or broader distance-only search; keep prototype/evidence.
+Root TRD unchanged; last actual 7.683025 fps still fails both timing gates.
+[Details and reproduction](toolkit/LZSA2_DISTANCE_SELECTION.md).
+
+## Previous milestone: exact LZSA2 oracle
 
 Baseline `a63043a`. No size gap on 1341 short inputs, including 63 video
 excerpts; 126 independent complete-command enumerations and 531 guarded/
@@ -194,17 +206,18 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: lower-cycle LZSA2 at the same size
+## Next finite deliverable: bounded LZSA2 reset placement
 
 The latest request prioritizes stronger compression without a format change.
 Keep the borrowed-literal image, decoder and exact five-level packet bytes.
-The exact short-input oracle found no size loss in its tested scope, but
-equal-sized paths have different Z80 costs. On one complete difficult block,
-retain literal/match positions and lengths; optimize valid match distances
-under its original byte limit, carrying the actual last-offset/nibble state.
-Keep the baseline fallback and measure native/copy/sector effects before
-expanding a winning candidate to saved windows and actual playback. Do not
-repeat table or codec sweeps or promise a ratio/cadence gain from short cases.
+Table growth, the short-input oracle and full-block distance-only search
+show no meaningful gain in their measured scopes; do not repeat them.
+On one saved difficult window, test a small set of reset positions near
+packet boundaries, keeping each raw block at most 15872 bytes. Preserve
+the ordinary raw-block/header syntax and all decoded bytes. Charge headers,
+lost history, carry copies, in-place overlap, sectors and native T-states.
+Keep the baseline fallback; expand only a materially better candidate to
+actual playback. Do not promise ratio or cadence gains from a size estimate.
 See the compatible-compressor plan for dictionary limits.
 LZ4 selective decoding remains a separate measured option, with a capacity
 penalty and unresolved actual disk timing. A window cannot pass release.

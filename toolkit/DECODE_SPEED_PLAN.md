@@ -6,13 +6,23 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Full-block LZSA2 distance selection (2026-09-30):** same literal/match
+positions and lengths on complete block 11, exact canonical-offset search
+within original byte budget. Payload remains 7165 bytes; decoder saves
+108 T, and all 21 blocks remain 154956 bytes / 606 sectors. Model boundaries,
+exhaustive tiny layouts, author, guarded banked and independent IRQ checks
+pass. Reject integration/expansion: no meaningful capacity or speed gain.
+Root image and last 7.683025-fps timing failure remain unchanged. Next test
+a few reset boundaries on a saved window, retaining syntax and raw bytes.
+[Evidence and limits](LZSA2_DISTANCE_SELECTION.md).
+
 **Exact LZSA2 oracle (2026-09-30):** no minimum-size gap on 1341 bounded
 inputs, including 63 video excerpts; 126 exhaustive command-list checks and
 531 guarded/independent native cases pass. Of 232 different equal-sized
 parses, 20 are faster and 24 slower; a 128-byte example saves 480 T at the
 same size. These fresh-reset snippets do not predict full-block/playback
-savings. Next test cost-aware match-distance choice on one complete block,
-preserving command positions/lengths, actual reservoir state and byte budget.
+savings. The completed full-block distance test above preserves command
+positions/lengths, actual reservoir state and byte budget.
 Do not expand the size-only search without a counterexample. Root image
 and failed timing result are unchanged. [Oracle and evidence](LZSA2_EXACT_ORACLE.md).
 

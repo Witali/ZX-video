@@ -1,0 +1,97 @@
+{
+  "complete": true,
+  "release": false,
+  "commands": 2194,
+  "candidate_distances": 75520,
+  "max_distances": 3026,
+  "peak_states": 370,
+  "transitions": 153219,
+  "baseline_bytes": 7165,
+  "candidate_bytes": 7165,
+  "baseline_nibbles": 14329,
+  "candidate_nibbles": 14330,
+  "minimum_nibbles": 14329,
+  "baseline_token_tstates": 864303,
+  "candidate_token_tstates": 864195,
+  "modeled_delta_tstates": -108,
+  "changed_distances": 320,
+  "raw_sha256": "5ba688980a0675fd758549a853f31cf0ce24f6c20bbfc701efc2478a7c2bfa7a",
+  "baseline_sha256": "5764c0143ffb7d7c51b017a77f0789236001a638c258ffeedcc00190a168953a",
+  "candidate_sha256": "34ec72e0b2bc312f0a1454409a78f3203d3ae87a0ff5a1520df17738686e3f35",
+  "seconds": 0.402858900022693,
+  "scope": "Fixed command positions and lengths; canonical offsets only; modeled token CPU optimum under original physical byte budget. Excludes invariant quota/wrapper costs and real IRQ/ULA/disk effects.",
+  "block": 11,
+  "baseline_stream_sha256": "1c8f598fa5fcc4ba2ac5f60355f6b3845cf5d8aa89f2ded328f5f98dd1b21bbc",
+  "candidate_stream_sha256": "4439a7094fe17338a41604b42edfa969fb5536bd7c64fcc3d5b8eb2ff024a3cd",
+  "date": "2026-09-30",
+  "baseline_commit": "ca95df5",
+  "baseline": {
+    "stream_bytes": 154956,
+    "decoder_tstates": 19412006,
+    "producer_tstates": 1058423,
+    "total_tstates": 20470429,
+    "sector_reads": 606
+  },
+  "candidate": {
+    "stream_bytes": 154956,
+    "decoder_tstates": 19411898,
+    "producer_tstates": 1058423,
+    "total_tstates": 20470321,
+    "sector_reads": 606
+  },
+  "token_boundary_cases": 3214,
+  "exhaustive_layouts": 187,
+  "serialized_alternatives": 2716,
+  "author_video_roundtrips": 21,
+  "independent_slices_exact": true,
+  "isolated_short_sector_retry": true,
+  "injected_interrupts": 184,
+  "native_machine_code_sha256": "5c31b544aabe773237a604a1dc04057420ad0eb84c1ec06948f2ad55a0c94dba",
+  "root_trd_unchanged": true,
+  "root_trd_sha256": "14788fa7b7272c1d8ae4d47e63804cd60998d8ee95032ce56c879a120226e2d5",
+  "current_measured_fps": 7.6830252011714135,
+  "candidate_playback_measured": false,
+  "goal_achieved": false,
+  "decision": "Do not integrate or broaden this distance-only search: unchanged size and only 108 decoder T saved on the selected complete block. Retain the prototype and verified model as bounded evidence.",
+  "next": "Measure a small set of independent-block reset positions on a saved difficult window, retaining LZSA2 format and decoded bytes. Account for headers, overlap, sectors and native cycles before any playback integration.",
+  "evidence": [
+    {
+      "file": "probe.json.gz",
+      "sha256": "b150599fdb13cbd3ca95c1e4971f0aa9dac3080df7855764f88bd6650e799fd9",
+      "raw_sha256": "9c7a192ebb4e9f8636980fa384e81665b1d438d7318fdd4018ae3d02c8ad0486"
+    },
+    {
+      "file": "cpu.json.gz",
+      "sha256": "0131535e3f3f15ada3811dffb566b76d501f207442b43ee8ff3d879cd13f77bd",
+      "raw_sha256": "2aeec98c94740bffebb0a7e044a8966cb5f110ce4197d6bb5eba3e40812011d4"
+    },
+    {
+      "file": "verification.json.gz",
+      "sha256": "fc3d4c7c79701655bbf99b1bd57e0ad4663c50b13dbb71cc84765254c0923e89",
+      "raw_sha256": "f0a62b23e194c25dbab8a896a9ac2d24ad90ac1a838404ce554806398eb18fca"
+    },
+    {
+      "file": "checks.json.gz",
+      "sha256": "60dc2f5c18843e88d52e91f4f0a2cffb36f01172444d5195a8206255edbc1874",
+      "raw_sha256": "63b05dfa2eaa05fdfbd3dd067272409bff936e8b24d9fbff131f8557a8b10030"
+    },
+    {
+      "file": "video.stream.gz",
+      "sha256": "0ce58854a210532411e81d3196c365148a66ddafb3d1f602d0b4184ac24c4863",
+      "raw_sha256": "4439a7094fe17338a41604b42edfa969fb5536bd7c64fcc3d5b8eb2ff024a3cd"
+    }
+  ],
+  "source_sha256_lf": {
+    "lzsa2_distance_cost.py": "0968ff5bb13371e9a8aa57a9cb521474925b873d897097699c05a0540be8caaf",
+    "optimize_lzsa2_distances.py": "9118a97719b926b4b6d82ae88215e803c636bb147b2bbef2f5b6d68edaca6140",
+    "verify_lzsa2_distances.py": "07e322bb17811131b0e2ce56b741620a1567ff1397f5e923b95eaddfceb97c2a",
+    "lzsa2_oracle.py": "039654e7a86477f5c8cf34755a68a8cb474053c87108ce6a7e6cc29c75564c5b",
+    "lzsa2_stream.py": "72969188dd7604a03eafc3c6a2932d5c96f210609ae02bcb2196c896adbaa7c2",
+    "resumable_lzsa2.py": "141d3f843554a50eb3c20c4a764f1edd6294ff96a49be254e07cbbb35f23a3d2",
+    "benchmark_row_lzsa.py": "3fc3c98695d1d9e3bfc086a079a8d2f67a17ddd0c2c187051767c6209113ede2",
+    "verify_lzsa2_search.py": "aa5564ebd9c0f3c432a8d0fe89adf93a816c69ca97809158056b574fb2957cfa",
+    "verify_lzsa2_dispatch.py": "78074b0ee5ebcc07daa7614dae1904be5193787e26e559c86463ac9cd16f3f06",
+    "lzsa2_oracle_host.py": "4f726445d6bc7980c1ee83b4570cc7b92166b8c37edbfd87c7d2bda4c446a12b",
+    "lzsa2_oracle_host.c": "de881ca0a5f256325fa20bd088fda91e6d06b3a864b119fe02b7c18e34e52786"
+  }
+}

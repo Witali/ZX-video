@@ -8,11 +8,18 @@ five-level video fixture. No image/audio change or whole-movie encode sweep.
 
 ## Conclusion
 
+**Full-block distance follow-up:** retaining command positions and lengths,
+an exact canonical-distance search on block 11 finds no smaller byte output
+and saves only 108 decoder T (7165 bytes unchanged). All banked/native and
+author checks pass; reject production integration or expansion of this pass.
+Next measure a few block-reset positions in one saved difficult window.
+[Scope, accounting and evidence](LZSA2_DISTANCE_SELECTION.md).
+
 **Exact-oracle follow-up:** the existing compressor matches minimum size
 on all 1341 bounded short inputs tested, including 63 video excerpts. No
 general optimality claim. Some equal-sized alternatives differ in decoder
-cost (20 faster, 24 slower); next test cost-aware distance selection on one
-complete block before any broader parser work. The short-input reference
+cost (20 faster, 24 slower); the complete-block distance follow-up above
+found only a negligible saving. The short-input reference
 and verification described below are now implemented.
 [Results and limits](LZSA2_EXACT_ORACLE.md).
 

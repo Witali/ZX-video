@@ -21,6 +21,31 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — test exact fixed-command LZSA2 distance selection
+
+- **Objective/input:** follow the short-reset speed example on complete
+  block 11 of the same 192-frame/21-block fixture, baseline `ca95df5`.
+  Preserve LZSA2 format, literal/match positions and lengths, and byte budget.
+- **Change:** host DP over previous offset and used nibbles, exhaustive
+  canonical source distances, backward size bound and native token-cost
+  table. No beam/candidate cap; 2194 commands, 75520 distance alternatives,
+  peak 370 states. No production decoder/converter integration.
+- **Results:** payload 7165 -> 7165 bytes; exact minimum 14329 nibbles.
+  Candidate uses 14330 nibbles and changes 320 offsets, mostly cost-neutral.
+  Block decoder 944426 -> 944318 T (-108); full stream decoder 19412006 ->
+  19411898 T. Producer stays 1058423 T, stream 154956 bytes / 606 sectors.
+- **Verification:** 3214 direct native cost boundary cases; 187 fixed layouts
+  versus 2716 exhaustive serialized alternatives. All 21 author round trips,
+  guarded banked overlap/cursor/sector/EOF/short-read checks and independent
+  per-slice timings pass; 184 synthetic interrupts. Root TRD hash unchanged.
+  No new Fuse, actual AY cadence or full-movie release run.
+- **Decision:** reject integration/expansion of this distance-only pass:
+  zero capacity benefit and only 0.00056% less stream decoder CPU. Preserve
+  scripts/evidence, close this hypothesis, and next test a few reset positions
+  on one window. Overall five-level 25/3-fps goal remains incomplete;
+  last actual run is still 7.683025 fps with 118 missed nominal deadlines.
+  [Implementation, cycle accounting and evidence](toolkit/LZSA2_DISTANCE_SELECTION.md).
+
 ## 2026-09-30 — bound LZSA2 parser losses with an exact short-input oracle
 
 - **Objective/input:** continue toward smooth five-level 25/3 fps after
