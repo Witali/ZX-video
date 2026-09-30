@@ -21,6 +21,31 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — compare requested LZW and LZH
+
+- **Objective/input:** user-requested follow-up to `e394688`; same exact
+  323940 video bytes, 192-frame montage and 21 blocks of at most 15872 bytes.
+- **Parameters:** GIF-compatible LZW with 10/11/12-bit table limits and
+  early full-table clears; standard ncompress `.Z` with 16-bit limit; LZH
+  LH5 with 8-KiB dictionary, using pinned libdragon/LHa encoder code.
+- **Measured:** versus 148971-byte ZX0, bounded LZW is 185256/173571/166730
+  bytes (+24.36%/+16.51%/+11.92%). Standard LZW is 162770 (+9.26%).
+  LH5 is 145725 (-2.18%), 570 sectors: 12 fewer than ZX0, 36 fewer than
+  LZSA2. Count block headers; exclude temporary GIF/LHA oracle wrappers.
+- **Verification:** 105 video block round trips with independent Pillow,
+  7-Zip or lhafile decoders; 30 additional LZW boundary checks and 3 LH5
+  cases. Saved source/binary hashes and all compressed candidates. MSVC
+  host adaptation completes existing forward array sizes without changing
+  the compression algorithm. No player change (0 T), TRD, native timing,
+  in-place proof, full memory map or playback/cadence claim.
+- **Decision:** reject these LZW variants for capacity; retain LH5's small
+  storage gain as unverified for speed. Keep packet-copy work as the next
+  implementation priority rather than adopting a new decoder on size alone.
+- **Reproduce/evidence:** [assessment](toolkit/LZW_LZH_ASSESSMENT.md),
+  [comparison script](toolkit/probe_lzw_lzh.py),
+  [results](toolkit/lzw_lzh_probe.json),
+  [candidate streams](toolkit/lzw_lzh_evidence).
+
 ## 2026-09-30 — compare requested LZMA, bzip2 and modern outer codecs
 
 - **Objective/input:** user-requested codec comparison after `11778ed`,

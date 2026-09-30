@@ -81,6 +81,12 @@ See [MODERN_CODEC_ASSESSMENT.md](toolkit/MODERN_CODEC_ASSESSMENT.md).
 Defer heavy-decoder integration pending a bounded Z80 cost/memory probe;
 retain packet-copy reduction as the next implementation task.
 
+The requested LZW/LZH follow-up finds LH5 at 145725 bytes (-2.18% versus
+ZX0); tested LZW limits produce 162770..185256 bytes (+9.26%..+24.36%).
+All 105 video round trips plus 33 extra cases pass independent decoders.
+No native speed/memory/cadence claim. See
+[LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
+
 ## Next finite deliverable: avoid decoded packet copies
 
 Transfer remains the largest elapsed stage (39637293 T); packet starts find

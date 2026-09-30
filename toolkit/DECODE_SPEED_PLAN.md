@@ -6,6 +6,14 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Requested LZW/LZH follow-up (2026-09-30):** on the unchanged 21-block
+fixture, LZW10/11/12 and standard ncompress16 grow the stream by
+9.26%..24.36% versus ZX0. LH5 saves 2.18% (145725 bytes / 570 sectors).
+105 independent video round trips and 33 extra cases pass. Reject tested
+LZW settings for capacity; defer LH5 adoption pending native costs, bank/
+overlap proof and actual deadlines. Player delta is 0 T; keep packet-copy
+work priority. [Details and reproduction](LZW_LZH_ASSESSMENT.md).
+
 **Requested modern-codec assessment (2026-09-30):** same 21 blocks/192 frames,
 294 exact PC round trips. LZMA1 extreme lc=0 reaches 133084 bytes (-10.66%
 versus ZX0), Brotli-11 132043 (-11.36%), Zstd-19 137607 (-7.63%). Weak LZMA
