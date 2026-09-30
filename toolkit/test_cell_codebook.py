@@ -41,11 +41,23 @@ def main():
     check('all_active_cells_literal_and_attributes',[fallback]*576,attrs=True)
     for count in (1,7,8,9,15,16,17):
         check('mode_mask_boundary_'+str(count),[book[i] if i%2 else fallback for i in range(count)])
+    # Changing future frames must never change the two synthetic cold-start
+    # predictors (NumPy's negative-index wrap previously hid this hazard).
+    cold=np.stack([base.copy() for _ in range(5)])
+    first,_,_=encode(changes(cold,0,2),book,words)
+    for i in (3,4):
+        put(cold[i],0,fallback);cold[i,3168:3744]^=64
+    changed,_,_=encode(changes(cold,0,2),book,words)
+    assert first==changed,'cold start borrowed future video state'
+    for start in (0,1):
+        data,_,_=encode(changes(cold,start,3),book,words)
+        decode_check(data,cold,start,3,words,meta)
     assert next(r for r in outcomes if r['case']=='every_dictionary_index' and r['variant']=='dictionary')['book_cells']==256
     assert next(r for r in outcomes if r['case']=='all_active_cells_literal_and_attributes' and r['variant']=='dictionary')['literal_cells']==576
     result=dict(complete=True,release=False,scope=__doc__,cases=len(outcomes),rows=outcomes,
         every_dictionary_index_used=True,all_active_cells_literal_and_attributes=True,
-        maximum_packet_bytes=max(r['packet_bytes'] for r in outcomes),full_host_screens_exact=True)
+        maximum_packet_bytes=max(r['packet_bytes'] for r in outcomes),full_host_screens_exact=True,
+        frame_zero_history_independent_of_tail=True,cold_start_indices_checked=[0,1])
     save(a.output,result);print(json.dumps({k:v for k,v in result.items() if k not in ('scope','rows')}))
 
 

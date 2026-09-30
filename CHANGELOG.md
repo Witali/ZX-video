@@ -21,6 +21,38 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — sustain exact CB41 playback across all 192 saved frames
+
+- **Objective/input:** baseline `4006665`, all three original 64-frame scenes,
+  same five-level states/AY as the earlier 7.683025-fps fixture. One dictionary
+  and continuous producer across all scenes, including frame zero.
+- **Change:** explicit black-row/first-attribute checkpoints before frame
+  zero; support arbitrary selected fixture lengths without another codec
+  sweep. Share startup semantics across encoder, host decoder, builder and
+  CPU check. Generalize evidence archiving and add source/Fuse preview script.
+- **Results:** real Fuse **8.3333331 fps**, **zero late deadlines**, all
+  six-field intervals, no late runs; exact 1152 AY records without gaps,
+  duplicates or underruns. Video **154956 -> 134349 bytes (-13.30%)**, sectors
+  **606 -> 525**, total file sectors 572. **392 sectors** read during playback;
+  133 before first publication. All 192 full screens match (1327104 bytes).
+- **CPU/codec:** unchanged native opcodes, delta 0 per instruction. Decoder
+  19412006 -> 12698715 T (-34.58%), producer 1058423 -> 855775 T; 12 blocks
+  versus 21. Native draw 24524522 T, packet/wrappers 70740 T, startup book
+  54028 T. Actual timing separately includes ROM/disk/IRQ/ULA. Old frame
+  reconstruction/output cost 43760146 T has a different ownership scope.
+- **Coverage:** dirty cold boot, all CPU frames/progress, all runtime sectors,
+  host/author overlap proofs and independent full-flags slices pass; 121
+  synthetic interrupts, none unavailable. 22 boundaries and new start-0/1,
+  future-history independence tests pass. Previous 64-frame raw/stream hashes
+  reproduce exactly. Visually inspect frames 31/95/159/191 against saved RGB.
+  Preview initially used a states-only NPZ without RGB; use the full cache
+  after verifying the identical state hash. No player change was needed.
+- **Decision/limits:** update root LFS `ZX-video-cb41-test.trd` to this 192-frame
+  experiment; preserve old evidence/Git version. Next prepare the full 4221-
+  frame edit, row-book/capacity plan and independently bootable volumes, then
+  integrate the generic converter. The full goal and three-disk fit remain
+  unproven. [Report, preview, scripts and evidence](toolkit/CELL_CODEBOOK_SUSTAINED.md).
+
 ## 2026-09-30 — integrate CB41 and verify an independent 64-frame TRD
 
 - **Objective/input:** baseline `d77b8ad`, saved frames 128..191 (source

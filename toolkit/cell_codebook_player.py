@@ -14,6 +14,7 @@ from frame_output_pipeline import display_screen
 from disk_progress_z80 import reference_screen
 import fap3_disk_z80 as disk
 import cell_codebook_z80 as native
+from probe_cell_codebook import history_state
 
 PACKET,INPUT,LENGTH=0xdc00,0x6400,0xba58
 
@@ -61,8 +62,8 @@ class Builder(PreviousBuilder):
     def __init__(self,*args,cell_raw,cell_start,**kwargs):
         super().__init__(*args,**kwargs)
         count,entries=struct.unpack_from('<HH',cell_raw,4)
-        if cell_raw[:4]!=b'CB41' or entries!=256 or cell_start<2:
-            raise ValueError('this bounded builder needs a 256-entry book and two prior states')
+        if cell_raw[:4]!=b'CB41' or entries!=256 or cell_start<0:
+            raise ValueError('this builder needs a 256-entry book and a nonnegative start')
         at=2056
         for _ in range(count):
             length=struct.unpack_from('<H',cell_raw,at)[0]
@@ -120,7 +121,7 @@ class Builder(PreviousBuilder):
         # Cold boot stores the exact required histories, independently of
         # anything left in RAM by another disk. No compact frame survives.
         for b,frame in ((7,start-2),(5,start-1)):
-            banks[b][:6912]=reference_screen(display_screen(self.states[frame].tobytes(),black_borders=True),0,end-start)
+            banks[b][:6912]=reference_screen(display_screen(history_state(self.states,frame).tobytes(),black_borders=True),0,end-start)
         m.update(packet_labels=p,clock_labels=c,clock_end=c['end'],driver_end=dl['end'],
             native_ready_pcs=[r['address']+3 for r in crows if r['instruction'] in ('CALL native zero','CALL draw_compact')])
         retired_ranges=[(r['start'],r['end']) for r in retired]

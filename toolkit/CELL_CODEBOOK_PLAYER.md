@@ -2,7 +2,8 @@
 
 2026-09-30, baseline `d77b8ad`. The [native component](CELL_CODEBOOK.md) now
 runs through actual disk delivery, AY50 and publication in a separate
-[64-frame TRD](../ZX-video-cb41-test.trd). **The full-movie goal is incomplete.**
+64-frame TRD (commit `4006665`). The root path now holds the verified
+[192-frame successor](CELL_CODEBOOK_SUSTAINED.md). **The full-movie goal is incomplete.**
 
 ## Complete window result
 
@@ -92,7 +93,7 @@ uses only the standard library. Final player bytes were unaffected by it.
 
 ## Artifact, reproduction and next step
 
-The separate LFS test image is [ZX-video-cb41-test.trd](../ZX-video-cb41-test.trd),
+The 64-frame LFS image in commit `4006665` is `ZX-video-cb41-test.trd`,
 SHA-256 `dee53aefae57ae81c3e1ea4fc1708bcd86568886b0ada1c47da3c39098957d78`.
 Older root images remain available. [Summary](cell_codebook_player_profile.json)
 and [hashed evidence](cell_codebook_player_evidence/) contain build metadata,

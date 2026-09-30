@@ -37,6 +37,18 @@ def cell_rows(state):
     return [bytes(rows[y*4:y*4+4,x]) for y in range(3,21) for x in range(32)]
 
 
+def history_state(states,index):
+    """Frame-zero checkpoints have black row symbols and first-frame attributes.
+
+    Both are stored by the independent bootstrap. Never let a negative NumPy
+    index silently borrow the final frames of the clip as initial history.
+    """
+    if index>=0:return states[index]
+    if index not in (-2,-1):raise ValueError('invalid initial history index')
+    state=states[0].copy();state[:3072]=0
+    return state
+
+
 def bitmap(pattern,words):
     """Scalar brightness reconstruction followed by the agreed final dither."""
     result=bytearray()
@@ -52,9 +64,9 @@ def bitmap(pattern,words):
 def changes(states,start,count):
     rows=[]
     for i in range(start,start+count):
-        current=cell_rows(states[i]);previous=cell_rows(states[i-2])
+        current=cell_rows(states[i]);previous=cell_rows(history_state(states,i-2))
         changed=[j for j in range(CELLS) if current[j]!=previous[j]]
-        attrs=bytes(states[i,3072:]);old_attrs=bytes(states[i-2,3072:])
+        attrs=bytes(states[i,3072:]);old_attrs=bytes(history_state(states,i-2)[3072:])
         # Black fields are not part of the proposed frame update.
         assert attrs[:96]==old_attrs[:96] and attrs[672:]==old_attrs[672:]
         ca=[j for j in range(CELLS) if attrs[96+j]!=old_attrs[96+j]]
@@ -86,7 +98,7 @@ def decode_check(data,states,start,count,words,book_meta):
     at=8;table=[data[at+i*8:at+(i+1)*8] for i in range(entries)];at+=entries*8
     checked=[]
     with reference_tables(book_meta):
-        screens=[bytearray(display_screen(states[start-2+p].tobytes(),black_borders=True)) for p in (0,1)]
+        screens=[bytearray(display_screen(history_state(states,start-2+p).tobytes(),black_borders=True)) for p in (0,1)]
         initial=bytes(screens[0]+screens[1])
         for i in range(count):
             n=struct.unpack_from('<H',data,at)[0];at+=2;end=at+n
@@ -108,7 +120,7 @@ def decode_check(data,states,start,count,words,book_meta):
             assert bytes(screen)==expected,('native screen differs',i)
             # The undisplayed bank remains the exact previous publication.
             other=start+i-1
-            assert bytes(screens[1-i%2])==display_screen(states[other].tobytes(),black_borders=True)
+            assert bytes(screens[1-i%2])==display_screen(history_state(states,other).tobytes(),black_borders=True)
             checked.append(sha(screen))
     assert at==len(data)
     return initial,checked
@@ -142,9 +154,10 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for n in ('states','metadata','video','author','output'):p.add_argument('--'+n,type=Path,required=True)
     p.add_argument('--start',type=int,default=128);p.add_argument('--count',type=int,default=64)
+    p.add_argument('--candidate-only',action='store_true',help='Encode only the selected book candidate, without another codec/layout sweep')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
     with np.load(a.states,allow_pickle=False) as f:states=f['states']
-    assert 2<=a.start and 32<=a.count<=64 and a.start+a.count<=len(states)
+    assert 0<=a.start and 32<=a.count and a.start+a.count<=len(states)
     m=json.loads(a.metadata.read_bytes());meta=m['row_dictionary'];words=meta['words']
     assert sha(states.tobytes())==m['states_sha256']
     source=a.video.read_bytes();retained=json.loads((ROOT/'borrowed_literals_profile.json').read_bytes())
@@ -162,7 +175,7 @@ def main():
     initial,checks=decode_check(raw,states,a.start,a.count,words,meta)
     initial2,checks2=decode_check(control,states,a.start,a.count,words,meta)
     assert initial==initial2 and checks==checks2
-    variants={'current':packet_window(source,a.start,a.count),'direct_rows':control,'codebook':raw}
+    variants={'codebook':raw} if a.candidate_only else {'current':packet_window(source,a.start,a.count),'direct_rows':control,'codebook':raw}
     author=Author(a.author);results={}
     for name,data in variants.items():
         packed,blocks=compress(data,author)
@@ -170,7 +183,8 @@ def main():
         results[name]=dict(raw_bytes=len(data),compressed_bytes=len(packed),sectors=(len(packed)+255)//256,
             raw_sha256=sha(data),stream_sha256=sha(packed),blocks=blocks)
     (a.output/'initial-screens.bin').write_bytes(initial)
-    report=dict(complete=True,release=False,scope=__doc__,baseline_commit='63947dd',start=a.start,count=a.count,
+    report=dict(complete=True,release=False,scope=__doc__,baseline_commit='4006665',start=a.start,count=a.count,
+        candidate_only=a.candidate_only,initial_history='Stored earlier states, or black row symbols plus first-frame attributes before frame zero',
         states_sha256=sha(states.tobytes()),source_video_sha256=sha(source),initial_screens_sha256=sha(initial),
         dictionary_entries=len(book),dictionary_bitmap_bytes=len(table),dictionary_row_keys=[list(k) for k in book],
         dictionary_selection='Most frequent exact changed-cell patterns in this same bounded window; not a generalization or full-volume claim.',

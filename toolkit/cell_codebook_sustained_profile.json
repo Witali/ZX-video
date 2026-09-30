@@ -1,0 +1,230 @@
+{
+  "complete": true,
+  "release": false,
+  "goal_achieved": false,
+  "date": "2026-09-30",
+  "baseline_commit": "4006665",
+  "scope": "Independently cold-booted 192-frame CB41 fixture, source states 0..191. Not full-movie or multi-volume proof.",
+  "trd_sha256": "1d7eb8d0291887f8c47c953c305526100b78677620d0eb14baad96d0e27a6847",
+  "frames": 192,
+  "full_screens_compared_bytes": 1327104,
+  "exact_deadlines_verified": true,
+  "all_intervals_six_fields": true,
+  "fps": 8.33333312823181,
+  "publication_span_tstates": 81260570,
+  "nominal_late_frames": 0,
+  "max_late_fields": 0,
+  "late_runs": [],
+  "actual_phase_tstates": [
+    -1,
+    19
+  ],
+  "actual_interval_tstates": [
+    425434,
+    425468
+  ],
+  "bad_actual_intervals": 0,
+  "ay_ticks": 1152,
+  "ay_records_exact": true,
+  "ay_field_gaps": 0,
+  "ay_field_duplicates": 0,
+  "audio_underruns": 0,
+  "progress_100_percent": true,
+  "dirty_ram_boot_exact": true,
+  "video_bytes": 134349,
+  "video_sectors": 525,
+  "used_sectors": 572,
+  "runtime_sectors_checked": 525,
+  "sectors_read_after_first_publication": 392,
+  "sectors_complete_before_first_publication": 133,
+  "sectors_crossing_first_publication": 0,
+  "elapsed_timing": {
+    "bootstrap_tstates": 11490799,
+    "playback_tstates": 90718720,
+    "bootstrap_and_playback_tstates": 102209519,
+    "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+  },
+  "new_instruction_stages": {
+    "schedule": 81,
+    "cb41_packet": 70740,
+    "book_load": 54028,
+    "setup": 952925,
+    "bitmap_mask": 3178239,
+    "mode": 2624731,
+    "dictionary": 6367400,
+    "cell_return": 1754181,
+    "literal": 6618612,
+    "attribute_mask": 2849910,
+    "attributes": 178524
+  },
+  "new_instruction_tstates": 24649371,
+  "memory": {
+    "screens": [
+      5,
+      7
+    ],
+    "video_slots": [
+      0,
+      1,
+      3
+    ],
+    "audio": 4,
+    "unused_legacy_huffman": 6,
+    "fixed_kernel": [
+      36864,
+      37204
+    ],
+    "rows": [
+      40448,
+      40960
+    ],
+    "book": [
+      43008,
+      45056
+    ],
+    "popcount": [
+      45056,
+      45312
+    ],
+    "packet": [
+      25600,
+      28696
+    ],
+    "stack_top": 40432,
+    "disk_stack_top": 39936
+  },
+  "startup_book_transposition_tstates": 54028,
+  "cycle_scope": "Instruction-table CPU with mocked disk and host-selected screen in CPU test; actual Fuse timing/IRQ/ROM/ULA is separate.",
+  "decision": "Retain verified fixture. Proceed to the complete authorized movie edit and generic converter integration with independently bootable volumes.",
+  "limitations": [
+    "Only 192 frames, book learned on this fixture",
+    "133 of 525 runtime video sectors complete before the first publication",
+    "Full movie, three-disk capacity and generic converter integration remain unverified"
+  ],
+  "archives": {
+    "build.json": {
+      "file": "build.json.gz",
+      "sha256": "29d51c3b866783075d67bf6db0baa968dee9b419c15cd49330d73247fab4de93",
+      "raw_sha256": "bb92867688f9510f0d96356ea215847b1659765c1437bdc5da44ab7e61d883c8"
+    },
+    "metadata.json": {
+      "file": "metadata.json.gz",
+      "sha256": "4ad05fb7d09039300ce9b6c4173d15f235df3572f04e4300ad6f6b8c1fcaabcb",
+      "raw_sha256": "dec809c9d4626b581984ba33cb09c3714f7540473e7ea9a79e8a1ef3a70aee5b"
+    },
+    "cpu.json": {
+      "file": "cpu.json.gz",
+      "sha256": "961b6ce8377c241e44e5ccd7e8ad19b84cd62a4c3df814f9a439f4f531be30a8",
+      "raw_sha256": "72fa946fd41dd70047b2d8ff9c50174b7b2ed7df5659f3c7a3aa49dea7f4456c"
+    },
+    "timing.json": {
+      "file": "timing.json.gz",
+      "sha256": "1e15572d6dffd7875671198799bd86d3f23597d20cbbe1d6bae9c468aeabb85e",
+      "raw_sha256": "adaa091fbbff542ea7506cbfdddf85713096def98d78173a260101614a7007ee"
+    },
+    "timing.trace.txt": {
+      "file": "timing.trace.txt.gz",
+      "sha256": "dbc8946f87e835e80f29837aed17e31eb0ce6cb9dd96f824a53ac3ca3750f2a7",
+      "raw_sha256": "55066197e7fe18afc9359789355b4a39df31795ff42c5ad124de5bc1e1c756a1"
+    },
+    "timing.debugger.txt": {
+      "file": "timing.debugger.txt.gz",
+      "sha256": "b57fd72e0abde9417a2ec11d23c5e6e1c215a148c3d7b92661c63545195ff064",
+      "raw_sha256": "fdfdf77697618500f5901ea66f32ddb9ece0b9e3a85f30bcba1a9c827dd53ec9"
+    },
+    "timing.stderr.txt": {
+      "file": "timing.stderr.txt.gz",
+      "sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "captures.json": {
+      "file": "captures.json.gz",
+      "sha256": "c48c416960fc3db0fb5b691c59264a7b62737c07d8e55737cad17b3714fbd7ad",
+      "raw_sha256": "0d3d5b3204957261a38c0da8f4cd5c6816f5a16d6af151e1df5f913a997617bc"
+    },
+    "transport.json": {
+      "file": "transport.json.gz",
+      "sha256": "c1617b0ea56b74750c9e58805f7f8c0ac1d3125f5944be52bff611f8a3cd8c0a",
+      "raw_sha256": "7d500bef2acf3ca4a842dc9fea2f5c245cf698162bea8a389465a023ca131a6c"
+    },
+    "independent.json": {
+      "file": "independent.json.gz",
+      "sha256": "fb235a5d68584c8b20fa43919add7374325fd302f7ba350751ae69169efffa17",
+      "raw_sha256": "bbb8d8fa62bfa9ee1fb1d64ecd437b2645880d2201ccda5f40346a039655708d"
+    },
+    "baseline-transport.json": {
+      "file": "baseline-transport.json.gz",
+      "sha256": "4c9af04d90f4e74b00392e021a3e943d70b96f3f8773a4eb7ebc970346c110a0",
+      "raw_sha256": "7cfed46ab4b26af3335e288a7477a89685743d24dab8e4d5a61f9af90c778476"
+    },
+    "baseline-profile.json": {
+      "file": "baseline-profile.json.gz",
+      "sha256": "01de893a54beb397c345d66dc6c3bca3d1c7fc4df6c36f96769b59000ba584e7",
+      "raw_sha256": "60e9a3ee275876fb3e87f5603775ce098bc5217bdd76ddc2210195df5226b718"
+    },
+    "probe.json": {
+      "file": "probe.json.gz",
+      "sha256": "92e29a523c533466dfc7779d58f45605c5067d64324630dbf9537b61cbaedf82",
+      "raw_sha256": "479ba39ed5300c8332177b746ef630261cda4f60590793d1b641be190191ab9e"
+    },
+    "tests.json": {
+      "file": "tests.json.gz",
+      "sha256": "62cd1d53b8546f9e547f570a931bea96f21da91dde162ddf5706533555e64467",
+      "raw_sha256": "0dcd84f6ba7a4aa0fd322529c601c3d327691ce17847df7bdcb45e236c7849ba"
+    },
+    "compatibility.json": {
+      "file": "compatibility.json.gz",
+      "sha256": "bb81064b947d96253df715e9e704e6a93ac14f5450b98c2ab9635a854953ee44",
+      "raw_sha256": "1dba7c45aef57b9dfa0dea7b50c7210c0283a7de3319fe364679da19a3b9f4c4"
+    },
+    "codebook.raw": {
+      "file": "codebook.raw.gz",
+      "sha256": "2cb52b98fb575680e7abe78a322a2aa4979e98025de604749cfe1b04ff42103b",
+      "raw_sha256": "f51a7088595463be199bd17557242c62a0aecd1938d3ed81ee91cb9a2d137bc8"
+    },
+    "codebook.stream": {
+      "file": "codebook.stream.gz",
+      "sha256": "730c2396b9650125d11d86999572ded9918e37ec15ea1046fe86b5fb12efd9af",
+      "raw_sha256": "88491532ab558501ad7eb0fbe443120772e3a98a1d683968e6d9193b92e013c8"
+    },
+    "capture_traces": {
+      "file": "captures-traces.json.gz",
+      "sha256": "6a49f0d60e63bf4eedfd24ed340855cc5f0de1de8f8d242d13633e9fc61db704",
+      "raw_sha256": "9da76355f76dfcbb67d0337654d2085891e964a3a55876b30fb8160d4f0c3cec"
+    }
+  },
+  "source_sha256_lf": {
+    "cell_codebook_player.py": "7e435bd6c8ba29541aca93078cc134e70a9850066a76a86029e29314f71aad07",
+    "build_cell_codebook_trd.py": "75170d2040d694a8d7046551d82cc109474bdbdab5803256f351389833142640",
+    "cell_codebook_z80.py": "3b1d796d3501dca27f579983dc4f17b5aa1c289f50d87b622b25584b4fd00a83",
+    "probe_cell_codebook.py": "7adc56fde80b7b56c497c9bbb8974a43150ec785ad119ed0f96e0c1ff58c27a8",
+    "capture_cell_codebook_fuse.py": "6d9a7732173cdd5bafde91f3a19e18e27e1d2a81981759183095ae8d302ebb68",
+    "capture_five_level_fuse.py": "70f82810feaa645d87b87b600356d4e055dc4614ad9f7126f6ac818ff9255b0b",
+    "row_dictionary_video.py": "036002a0dcbd3db486a63df2dc8254281f3998cf595194eca876d67b0399cd4e",
+    "summarize_cell_codebook_player.py": "34e32529519e3492c0b5ec7c6c70feb2dad510387e1789b654fae75f16202c2b"
+  },
+  "comparison": {
+    "baseline": "Same complete saved fixture with borrowed-literal FAP3 player",
+    "previous_video_bytes": 154956,
+    "video_bytes": 134349,
+    "video_delta": -20607,
+    "previous_sectors": 606,
+    "video_sectors": 525,
+    "previous_fps": 7.6830252011714135,
+    "previous_late_frames": 118,
+    "previous_decoder_tstates": 19412006,
+    "decoder_tstates": 12698715,
+    "decoder_delta": -6713291,
+    "previous_producer_tstates": 1058423,
+    "producer_tstates": 855775,
+    "producer_delta": -202648,
+    "previous_frame_component_tstates": 43760146,
+    "native_frame_tstates": 24524522,
+    "frame_component_delta": -19235624,
+    "frame_comparison_caveat": "Old includes reconstruction/paging; new is native draw only. Real playback above includes all delivery costs.",
+    "blocks": 12,
+    "maximum_slice_tstates": 21537,
+    "independent_interrupts": 121,
+    "unavailable_interrupt_events": 0
+  }
+}

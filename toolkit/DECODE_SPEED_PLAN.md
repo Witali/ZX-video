@@ -6,6 +6,16 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Sustained CB41 fixture (2026-09-30):** all 192 frames now pass real Fuse at
+8.3333331 fps, zero late deadlines, all 1152 AY ticks and every complete screen.
+392/525 sectors are read during playback, with repeated slot turnover. Versus
+the same borrowed-literal fixture: -20607 compressed bytes (-13.30%), -81
+sectors, decoder -6713291 T (-34.58%). Start-zero checkpoints are explicit;
+all 12 independent blocks and 121 synthetic interrupts pass. No native opcode
+changes. Next prepare the entire 4221-frame authorized edit and measure its
+row-book/capacity constraints before a chosen independent volume set. Full
+movie and three-disk goal remain unproven. [Evidence](CELL_CODEBOOK_SUSTAINED.md).
+
 **Integrated CB41 window (2026-09-30):** independent 64-frame TRD now passes
 real Fuse at 8.3333324 fps, zero missed deadlines, all 384 AY ticks and all
 64 full published screens. Standard LZSA2 stays 42303 bytes / 166 sectors;

@@ -8,6 +8,13 @@ five-level video fixture. No image/audio change or whole-movie encode sweep.
 
 ## Conclusion
 
+**Sustained CB41 follow-up:** all 192 saved frames now pass at 25/3 fps with
+zero late deadlines and exact full screens/AY. Stream 154956 -> 134349 bytes,
+606 -> 525 sectors; decoder 19412006 -> 12698715 T on unchanged opcodes.
+All 12 blocks pass independent decoding/IRQ checks. 392 sectors arrive during
+playback. This supports full edited-movie preparation; it does not establish
+its capacity or release timing. [Complete evidence](CELL_CODEBOOK_SUSTAINED.md).
+
 **Exact ready-cell follow-up:** a separate video representation, carried by
 unchanged LZSA2, now saves 17.09% compressed bytes and 38.25% decoder CPU on
 one exact 64-frame window. Most ratio gain comes from direct cell deltas;

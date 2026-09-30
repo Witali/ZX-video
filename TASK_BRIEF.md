@@ -49,7 +49,20 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: independently bootable CB41 window
+## Latest completed milestone: sustained 192-frame CB41 playback
+
+Baseline `4006665`. Same complete three-scene fixture as the earlier
+7.683025-fps player, now **8.3333331 fps with zero missed deadlines**, all
+six-field intervals and 1152 exact AY ticks. All 192 full Fuse screens match
+(1327104 bytes), dirty boot/progress/sector checks pass. 392 of 525 sectors
+are read during playback. Video 154956 -> 134349 bytes (-13.30%); decoder
+19412006 -> 12698715 T (-34.58%). All 12 independent blocks and 121 synthetic
+interrupts pass. Frame-zero checkpoints are explicit; old 64-frame bytes
+remain compatible. Root LFS `ZX-video-cb41-test.trd` now contains 192 frames.
+Full movie, three-disk capacity and generic converter remain unverified.
+[Evidence, preview and reproduction](toolkit/CELL_CODEBOOK_SUSTAINED.md).
+
+## Previous milestone: independently bootable CB41 window
 
 Baseline `d77b8ad`; exact 64 frames 128..191 and 42303-byte LZSA2 stream.
 New root `ZX-video-cb41-test.trd` (LFS) reaches EOF in real Fuse at 8.3333324 fps:
@@ -256,17 +269,18 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: sustained CB41 playback on all 192 saved frames
+## Next finite deliverable: full edited movie preparation and CB41 volume plan
 
 Keep current root images and LZSA2 syntax; do not repeat rejected search or
-reset sweeps. Encode the complete 192-frame three-scene fixture in CB41,
-supporting frame zero and its correct initial screen history. Use one book
-and one continuous pipeline through all scenes, exact original pixels,
-AY50 and six-field deadlines. Reuse the verified player; avoid new codec
-searches. Check cold boot, every screen, EOF, sectors, AY and actual timing.
-Exercise repeated slot turnover beyond prefill. Then expand to the full
-authorized movie edit, independently bootable disks and generic converter.
-Neither saved-window test can pass release.
+reset sweeps. Prepare all 4221 frames of toolkit/movie_no_credits.json with
+the same five-level quantizer and existing AY50, preserving source mapping
+and the post-credit scene through EOF. Reuse build_five_level_test_trd.py's
+quantization contract; do not extrapolate capacity from selected scenes.
+Measure full-data row-book requirements (current native row indices require
+at most 256 entries per volume), exact CB41/LZSA2 capacity and AY bank limits.
+Choose one independently bootable partition, then build/play every volume
+and connect it to the generic converter. Preserve resolution and every frame;
+record capacity/timing failures honestly. The 192-frame fixture is not release.
 See [the exact format and evidence](toolkit/CELL_CODEBOOK.md).
 LZ4 selective decoding remains a separate measured option, with a capacity
 penalty and unresolved actual disk timing. A window cannot pass release.

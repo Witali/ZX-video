@@ -4,8 +4,9 @@
 (source frames 3855..3918), with the original two preceding screen states.
 This is a new experimental inner video representation carried by unchanged
 standard LZSA2. The native component follow-up below uses baseline `d1f32d3`;
-the subsequent [integrated window disk](CELL_CODEBOOK_PLAYER.md) now passes
-actual playback. Full-movie release verification remains pending.
+the subsequent [integrated window disk](CELL_CODEBOOK_PLAYER.md) and
+[complete 192-frame fixture](CELL_CODEBOOK_SUSTAINED.md) now pass actual
+playback. Full-movie release verification remains pending.
 
 ## Host/transport result: promote to native implementation
 

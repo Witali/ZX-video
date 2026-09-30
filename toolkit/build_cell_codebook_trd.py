@@ -13,6 +13,7 @@ from frame_output_pipeline import display_screen
 from disk_progress_z80 import reference_screen
 import disk_progress_z80 as progress
 from cell_codebook_player import Builder
+from probe_cell_codebook import history_state
 import fap3_disk_z80 as disk
 
 
@@ -36,7 +37,7 @@ def verify(image,m,states):
     until(c,m['clock_labels']['start'])
     first=m['frame_start'];count=m['frames'];base=m['cell_codebook']['screen_base']
     expected={7:reference_screen(display_screen(states[first].tobytes(),black_borders=True),0,count),
-              5:reference_screen(display_screen(states[first-1].tobytes(),black_borders=True),0,count)}
+              5:reference_screen(display_screen(history_state(states,first-1).tobytes(),black_borders=True),0,count)}
     assert all(bytes(c.banks[b][:6912])==s for b,s in expected.items()),'primed screens differ'
     frames=[];minimum=c.sp
     immutable=[(b,lo,bytes(c.banks[b][lo:hi])) for b,lo,hi in
@@ -97,12 +98,12 @@ def main():
         # The generic cold test contains no runtime LZSA instructions.
         cold=check_cold(image,m,b.expected_banks)
         cpu=verify(image,m,states);save(a.output/'cpu.json',cpu)
-    report=dict(complete=True,release=False,baseline_commit='d77b8ad',trd_sha256=sha(image),
+    report=dict(complete=True,release=False,baseline_commit='4006665',trd_sha256=sha(image),
         states_sha256=sha(states.tobytes()),cell_raw_sha256=sha(cell),first=start,frames=end-start,
         video_bytes=m['video_bytes'],video_sectors=m['video_sectors'],used_sectors=m['used_sectors'],
         cold=cold,cpu_all_frames_exact=cpu['all_native_screens_exact'],real_playback_measured=False,
         source_sha256_lf={n:sha((Path(__file__).parent/n).read_bytes().replace(b'\r\n',b'\n'))
-            for n in ('cell_codebook_player.py','build_cell_codebook_trd.py','cell_codebook_z80.py')})
+            for n in ('cell_codebook_player.py','build_cell_codebook_trd.py','cell_codebook_z80.py','probe_cell_codebook.py')})
     save(a.output/'build.json',report)
     print(json.dumps({k:v for k,v in report.items() if k not in ('cold','source_sha256_lf')}),flush=True)
 
