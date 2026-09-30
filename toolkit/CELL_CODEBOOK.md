@@ -1,11 +1,12 @@
-# Exact cell-codebook feasibility
+# Exact cell-codebook feasibility and native output
 
 2026-09-30, baseline `63947dd`. One saved 64-frame window, indices 128..191
 (source frames 3855..3918), with the original two preceding screen states.
 This is a new experimental inner video representation carried by unchanged
-standard LZSA2. No native cell renderer or player integration exists yet.
+standard LZSA2. The native component follow-up below uses baseline `d1f32d3`;
+complete player integration and actual candidate playback remain pending.
 
-## Result: promote to native implementation
+## Host/transport result: promote to native implementation
 
 | Same 64-frame window | Current packets | Direct cells, literal rows | Direct cells + 256-entry book |
 | --- | ---: | ---: | ---: |
@@ -83,7 +84,7 @@ all-literal/all-attribute case is **3096 bytes**, before its two-byte length.
 This fits the present 4704-byte packet workspace by size only; ownership,
 copying and streaming integration have not been implemented.
 
-## Fairness, verification and limits
+## Host/transport fairness, verification and limits
 
 All three comparisons begin with fresh LZSA2 resets and use blocks at most
 15872 bytes. This local baseline is a freshly compressed copy of the same
@@ -105,24 +106,107 @@ Every final disk must include its own book and starting state.
 - The independent full-flags Z80 core agrees on every decoder slice;
   synthetic runs inject 60/53/37 interrupts for the three variants, with
   zero unavailable events. This is not actual 50-Hz AY verification.
-- No native cell output, complete packet transport, dictionary-load kernel,
-  actual disk/ROM/ULA cadence or full-movie run is claimed. A 2-KiB dictionary
-  still needs an explicit bank allocation, including the retained row table.
+- This first experiment did not include native cell output or a dictionary-
+  load kernel; the follow-up below supplies those components. Complete packet
+  transport, actual disk/ROM/ULA cadence and full-movie checks remain pending.
 
 The current root TRD is unchanged and still measures **7.683025 fps** with
 118 missed deadlines. The overall smooth five-level 25/3-fps goal remains
-incomplete. The promising component result justifies the next implementation;
-it does not establish a new playback rate.
+incomplete. Component results do not establish a new playback rate.
 
-## Next implementation and evidence
+## Native component follow-up, 2026-09-30
 
-Build a real Z80 CB41 cell renderer and verify all masks, dictionary and
-literal paths, attributes, cursors, stack, preserved input and bank state.
-Count every instruction and compare complete frame work with the old path.
-Consider transposing the book into eight 256-byte scanline pages at startup
-to avoid multiplying each index by eight. Account for that load and RAM;
-keep the original transmitted eight-byte pattern layout initially.
-Then integrate packet delivery and actual deadlines on one selected window.
+[cell_codebook_z80.py](cell_codebook_z80.py) now assembles the renderer. Both
+variants use the same exact 64-frame payloads and prior screens above.
+
+| Frame-processing component | Old borrowed-literal path | CB41 literal-only | CB41 with book |
+| --- | ---: | ---: | ---: |
+| Total CPU T for 64 frames | 14295892 | 7198585 | **7910734** |
+| Difference from old component | 0 | -7097307 | **-6385158 (-44.66%)** |
+| Mean native draw T | — | 112477.89 | 123605.22 |
+| Maximum native draw T | — | 180208 | 191369 |
+| Code bytes, excluding three state bytes | — | 244 | 335 |
+
+**Scope:** the old component includes reconstruction, metadata, output and
+associated paging in the full borrowed-literal fixture. CB41 receives an
+already accessible validated payload and mapped target screen. This is
+not a complete delivery comparison: packet acquisition/copying, caller
+paging, publication, real AY/IRQ, ULA contention and disk/ROM latency are
+excluded. The source/input hashes and instruction histograms are archived.
+
+Book output costs **712149 T more** than literal-only output on this window,
+including mask counting and mode parsing. Adding their separately measured
+LZSA2/producer components gives literal-only **12886680 T**, book **12107210 T**
+(book saves **779470 T**). These hypothetical sums omit the costs above and
+startup. They justify an integrated test, not an fps prediction.
+
+### Registers, memory and absolute instruction costs
+
+- Main HL streams pixel/attribute values; DE addresses the target screen;
+  BC indexes row/book pages. Alternate HL scans masks, DE scans mode bytes,
+  B holds the mode-bit sentinel and C counts mask groups. AF' protects the
+  rotating cell mask during each changed-cell write.
+- Entry: HL points to the validated frame payload without its length word;
+  A is `40h` or `C0h` for the already mapped back screen. Return HL points
+  exactly past the payload. Both AF/BC/DE/HL sets are clobbered; IX/IY/SP are
+  preserved. No paging, screen publication, DI/EI or packet copy occurs.
+  IRQ code must preserve any working registers it touches in either set.
+- Provisional fixed-bank layout: code/state at `9000h`, existing 512-byte
+  row table at `9E00h`, 2048-byte book at `A800h`, 256-byte popcount table at
+  `B000h`. Book/popcount **replace part of the old compact-frame allocation**;
+  integration must remove its old users and validate the full 128 KiB map.
+- Native startup transposes 256 consecutive eight-byte patterns into eight
+  scanline pages. This avoids per-cell multiplication and costs **54028 T**
+  once per book. Its cost is separate from the frame totals. Formula:
+  `7 + 256*(7 + 8*(7+6+7) + 7*4 + 4) + 255*12 + 7 + 10`.
+
+Instruction costs use the [Zilog Z80 CPU manual](https://www.zilog.com/docs/z80/um0080.pdf),
+with no wait states. Every executed instruction is checked against its
+declared timing, then total time is checked in an independent full-flags core.
+
+| Changed-cell work, excluding caller CALL/mask scan | Absolute T |
+| --- | ---: |
+| Dictionary load and eight writes, including jump to common return | 200 |
+| Four row-index loads and eight writes | 231 |
+| Common screen-pointer restore / AF exchange / RET | 29 |
+| Book mode selection, dictionary / literal, no refill | 39 / 44 |
+| Book mode selection, dictionary / literal, with refill | 55 / 60 |
+| Literal-only AF exchange | 4 |
+
+Thus the complete dictionary helper costs **268/284 T**, versus **304/320 T**
+for its fallback and **264 T** for a literal-only helper; taken CALL adds
+17 T in each case. The prepared bitmap saves 31 T in the write body, but
+mode selection and mask counting must also be charged.
+
+The first banked run stopped at unsupported `SCF` (opcode `37h`); the
+literal-only 64-frame path had passed. Inspection showed that instruction
+was redundant: a drained sentinel is B=1, so `SRL B` already sets carry;
+`LD A,(DE)` and `INC DE` preserve it for `RRA`. Removing SCF reduces refill
+by **4 T**, **9768 T** over 2442 refills in this window, and code 336 -> 335
+bytes relative to the initial assembly. This delta is derived, not a full
+timed comparison of the interrupted version. Final independent checks pass.
+
+### Native verification and next step
+
+- Both variants reproduce all 64 complete screens exactly and preserve the
+  other screen, row/book tables, code, payload, stack pointer and paging contract.
+  Guards reject reads outside supplied input/tables/code/stack and writes
+  outside the active screen area/state/stack. Black fields are untouched.
+- 22 native synthetic variants cover all book indices, full literal output,
+  BRIGHT, unchanged/attribute-only frames and mode boundaries. The largest
+  synthetic draw costs 240190 T.
+- Independent full-flags runs agree on every frame and loader cycle count.
+  Separate IM1 tests inject 40/61 window interrupts plus five edge interrupts
+  (**106 total**, zero unavailable events) while preserving both register
+  sets. This is not a real AY handler or 50-Hz scheduling measurement.
+
+Retain the verified component. Next build one independently bootable CB41
+timing-test disk on the same selected window, including its initial states
+and book, packet delivery, existing AY50 and nominal six-field publication.
+Verify full RAM ownership, EOF, pixels, audio and actual deadlines before
+expanding to the edited movie. The current root TRD remains unchanged.
+
+## Reproduction and retained evidence
 
 Use [probe_cell_codebook.py](probe_cell_codebook.py) with `--states
 toolkit/five_level_test_evidence/states.npz --metadata
@@ -139,3 +223,15 @@ with `--work .tmp/cell-codebook --output toolkit/cell_codebook_profile.json
 
 [Summary](cell_codebook_profile.json) and [hashed evidence](cell_codebook_evidence/)
 retain all payloads, initial screens, per-frame checks, timings and provenance.
+
+For the native follow-up, run [verify_cell_codebook_z80.py](verify_cell_codebook_z80.py)
+with `--work .tmp/cell-codebook --states toolkit/five_level_test_evidence/states.npz
+--metadata .tmp/borrowed-literals/metadata.json --baseline-frames
+.tmp/borrowed-literals/cpu.json --output .tmp/cell-codebook/native.json`.
+It requires the existing NumPy/Z80 Python packages used by previous native
+checks. Then run [summarize_cell_codebook_native.py](summarize_cell_codebook_native.py)
+with `--input .tmp/cell-codebook/native.json --output
+toolkit/cell_codebook_native_profile.json --evidence toolkit/cell_codebook_evidence`.
+[Native summary](cell_codebook_native_profile.json) and
+[complete native evidence](cell_codebook_evidence/native.json.gz) retain
+per-frame results, assembled bytes, instruction listings/histograms and hashes.

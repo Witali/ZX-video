@@ -1,0 +1,91 @@
+{
+  "complete": true,
+  "release": false,
+  "date": "2026-09-30",
+  "baseline_commit": "d1f32d3",
+  "scope": "64 saved frames (128..191), native CB41 draw only with caller-supplied packets/mapped target. Exact unchanged video and LZSA2 bytes.",
+  "states_sha256": "47b062996f9445403e6fc4c400c5d7be5666c6b46ee568fefc5a1b3d3081dbb0",
+  "variants": {
+    "direct_rows": {
+      "frame_tstates": 7198585,
+      "mean_frame_tstates": 112477.890625,
+      "min_frame_tstates": 87985,
+      "max_frame_tstates": 180208,
+      "delta_vs_old_frame_component": -7097307,
+      "stages": {
+        "setup": 10112,
+        "bitmap_mask": 1053393,
+        "mode": 77212,
+        "literal": 4458993,
+        "cell_return": 559787,
+        "attribute_mask": 954576,
+        "attributes": 84512
+      },
+      "code_bytes": 244,
+      "state_bytes": 3,
+      "book_loader_tstates": 0,
+      "injected_interrupts": 40,
+      "hypothetical_component_sum": 12886680
+    },
+    "codebook": {
+      "frame_tstates": 7910734,
+      "mean_frame_tstates": 123605.21875,
+      "min_frame_tstates": 97347,
+      "max_frame_tstates": 191369,
+      "delta_vs_old_frame_component": -6385158,
+      "stages": {
+        "setup": 317653,
+        "bitmap_mask": 1053393,
+        "mode": 831934,
+        "dictionary": 2258800,
+        "cell_return": 559787,
+        "literal": 1850079,
+        "attribute_mask": 954576,
+        "attributes": 84512
+      },
+      "code_bytes": 335,
+      "state_bytes": 3,
+      "book_loader_tstates": 54028,
+      "injected_interrupts": 61,
+      "hypothetical_component_sum": 12107210
+    }
+  },
+  "baseline_frame_tstates": 14295892,
+  "baseline_scope": "Existing frame reconstruction/metadata/output on these frames in the full borrowed-literal fixture. Ownership and paging differ from the new standalone draw ABI; not an integrated delivery comparison.",
+  "edges": 22,
+  "maximum_synthetic_frame_tstates": 240190,
+  "edge_interrupts": 5,
+  "root_trd_unchanged": true,
+  "root_trd_sha256": "14788fa7b7272c1d8ae4d47e63804cd60998d8ee95032ce56c879a120226e2d5",
+  "current_measured_fps": 7.6830252011714135,
+  "actual_playback_measured": false,
+  "goal_achieved": false,
+  "excluded_costs": [
+    "Packet acquisition/copying",
+    "Caller paging and screen publication",
+    "Real AY/IRQ and ULA contention",
+    "TR-DOS ROM and physical latency",
+    "Cold-boot/start-state integration"
+  ],
+  "decision": "Retain verified native CB41 output and proceed to one integrated timing-test disk. Both dictionary and row-literal paths are exact; the book renderer is slower than literal-only but its previously measured decoder savings outweigh that component difference.",
+  "next": "Integrate the verified CB41 path with packet delivery, existing 50-Hz AY and exact six-field publication, with a complete RAM map and independent cold boot. Run the selected window through actual EOF/AY/pixel/deadline checks before expanding to the full edited movie.",
+  "frame_component_saving_percent": 44.66428537652635,
+  "dictionary_vs_literal_render_delta": 712149,
+  "dictionary_vs_literal_combined_delta": -779470,
+  "component_sum_caveat": "Sums use separate fixed-demand transport and supplied-packet render tests. They exclude the costs above and are not measured frame-delivery time or a cadence guarantee.",
+  "evidence": {
+    "file": "native.json.gz",
+    "sha256": "cfc8fa5e1654e00879609bf792875607d5c7e34fe7abf127cc06a8245a1a6cf3",
+    "raw_sha256": "a1322222d2245894e77e9f26fcfaddf0078fe5db70d3d45592202a4b0b2303ef"
+  },
+  "source_sha256_lf": {
+    "cell_codebook_z80.py": "3b1d796d3501dca27f579983dc4f17b5aa1c289f50d87b622b25584b4fd00a83",
+    "verify_cell_codebook_z80.py": "a2dfa0d8d20613b4afa74c5528ab0208f7c0c87137de6f564df38f8295496cd2",
+    "probe_cell_codebook.py": "d19ae7066bade6c04fb9a82bb3a5b0b3fb75f85312daca25beb04e59be68830b",
+    "test_cell_codebook.py": "905678ad5dc8016f93b8e8a8b42d23883d38d9576a0343d06dd6289f26286bdc",
+    "benchmark_compact_screen.py": "d5745f2bb87b6e8d09e411681140dcc2b25fea5d82b427cb5ecae61d60b2e021",
+    "validate_fast_sparse.py": "f164538eb5dee7ee2a4278add9bfee1c93d4c1d5814eab9dfafee9f0fcb9bf58",
+    "row_dictionary_video.py": "036002a0dcbd3db486a63df2dc8254281f3998cf595194eca876d67b0399cd4e",
+    "summarize_cell_codebook_native.py": "91c61348aefbe1c393e13cadd01b52a813812636025e3f760afd428f7ee8d67e"
+  }
+}

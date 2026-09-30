@@ -49,7 +49,20 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: exact cell-codebook feasibility
+## Latest completed milestone: native CB41 cell output
+
+Baseline `d1f32d3`; identical saved 64-frame payloads, rows and prior screens.
+335-byte native book renderer: 7910734 frame T versus 14295892 in the old
+reconstruction/output component (-44.66%). Input is supplied and target
+already mapped; delivery/paging/real IRQ/ULA/disk are excluded. Transposition
+costs 54028 T once. Book output adds 712149 T versus literal-only, while its
+separate transport savings produce a hypothetical net -779470 T. All screens,
+22 native edges, instruction timings and 106 synthetic interrupts pass.
+Retain component; integrate one timing-test disk next. Current root TRD and
+last measured 7.683025-fps failure remain unchanged. No candidate fps claim.
+[Native ABI, provisional RAM map and evidence](toolkit/CELL_CODEBOOK.md).
+
+## Previous milestone: exact cell-codebook feasibility
 
 Baseline `63947dd`; saved frames 128..191, identical prior screen history.
 New direct-cell representation with a 256-entry book covers 58.51% of 19303
@@ -58,8 +71,8 @@ bytes (-17.09%), 200 -> 166 sectors, decoder 6353724 -> 3923387 T (-38.25%).
 Literal-cell control costs 42675 bytes / 5393835 decoder T, isolating the
 book's main benefit as reduced raw volume. All host full screens, 22 edges,
 17 author/banked/independent blocks and 150 synthetic interrupts pass.
-Promote to native implementation, not production adoption. No CB41 renderer
-or real candidate playback yet; root TRD and 7.683025-fps failure unchanged.
+Promote to native implementation, not production adoption. This stage did
+not include a CB41 renderer or actual playback; native follow-up is above.
 [Format, scope and reproduction](toolkit/CELL_CODEBOOK.md).
 
 ## Previous milestone: bounded LZSA2 reset placement
@@ -231,18 +244,18 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: native CB41 cell output
+## Next finite deliverable: integrated CB41 timing-test disk
 
 Keep current root images and LZSA2 syntax; do not repeat rejected search or
-reset sweeps. Implement the promising exact CB41 path on real Z80 opcodes:
-both masks, dictionary and row-literal modes, attributes, source extents,
-both back-screen histories, stack/input/bank guards and complete timings.
-Use the saved 64-frame payload and 22 boundary cases. Reconstruct brightness
-before fixed-phase dithering; no DCT approximation or pixel loss is needed.
-Consider an eight-page planar book to avoid per-cell index multiplication,
-accounting for startup transposition and the full 128 KiB layout. Then check
-packet delivery and actual publication/AY timing before any production
-adoption. A component speedup or this window alone cannot pass release.
+reset sweeps. Connect the verified native CB41 renderer to packet delivery,
+existing AY50 and exact six-field publication. Use the same saved 64-frame
+window and include both required initial states and the book on the disk
+for independent cold boot. Replace old compact-frame users before assigning
+their RAM to the planar book; validate all 128 KiB ownership and startup.
+Measure copies, paging, packet decoding, actual disk/ROM latency and complete
+frame delivery. Check every published screen, EOF, AY continuity, nominal
+deadlines and fallback recovery. Reconstruct brightness before fixed-phase
+dithering. A component speedup or this window alone cannot pass release.
 See [the exact format and evidence](toolkit/CELL_CODEBOOK.md).
 LZ4 selective decoding remains a separate measured option, with a capacity
 penalty and unresolved actual disk timing. A window cannot pass release.

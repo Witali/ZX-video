@@ -21,6 +21,36 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — implement and verify native CB41 cell output
+
+- **Objective/input:** baseline `d1f32d3`, unchanged saved frames 128..191,
+  both prior screens, exact CB41 payloads and standard LZSA2 bytes. Implement
+  native cell output without changing brightness-before-dither ordering.
+- **Change:** 335-byte Z80 book renderer, masks/attributes, exact row fallback,
+  alternate registers and an eight-page planar book. Book/popcount provisionally
+  replace obsolete compact-frame RAM; full player integration remains pending.
+  Native 2048-byte book transposition costs 54028 T once.
+- **Results:** book draw 7910734 T versus old frame component 14295892 T,
+  -6385158 T (-44.66%). Literal-only draw 7198585 T; book output adds 712149 T,
+  but separate decoder/producer savings exceed that by 779470 T. Means are
+  112477.89/123605.22 T, maxima 180208/191369 T for literal/book. The old
+  component includes different reconstruction/ownership/paging; new draw
+  assumes supplied payload and mapped target, so this is not delivery time.
+- **Interrupted attempt:** the first book run stopped at unsupported SCF in
+  the small banked CPU. SRL of the exhausted sentinel already sets carry;
+  remove the redundant SCF, saving 4 T per refill (9768 T derived over this
+  window) and one code byte. Final full-flags independent checks pass.
+- **Verification:** both full screens on all 64 frames, all 22 native boundary
+  variants, guarded read/write regions, preserved input/code/tables, IX/IY/SP,
+  paging and exact per-instruction/independent-core timings pass. Synthetic
+  IM1 checks inject 106 interrupts, zero unavailable events. Maximum synthetic
+  draw 240190 T. Source/payload identities and instruction histograms retained.
+- **Decision/limits:** keep component and proceed to one independently
+  bootable timing-test disk. Copies, caller paging/publication, actual AY/IRQ,
+  ULA, ROM/disk and startup integration remain unmeasured. No new TRD or fps
+  claim; root image stays at last measured 7.683025 fps, goal incomplete.
+  [Implementation, cycle accounting, scripts and evidence](toolkit/CELL_CODEBOOK.md).
+
 ## 2026-09-30 — exact 4x4 logical-cell codebook feasibility
 
 - **Objective/input:** baseline `63947dd`, saved frames 128..191 (64 frames,

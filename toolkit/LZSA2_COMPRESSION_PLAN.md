@@ -13,8 +13,11 @@ unchanged LZSA2, now saves 17.09% compressed bytes and 38.25% decoder CPU on
 one exact 64-frame window. Most ratio gain comes from direct cell deltas;
 the 256-entry book further cuts raw volume/decoder work. Its full 2048-byte
 table and fallback/masks are counted. Host screens and native outer-codec
-checks pass; no native CB41 output or actual playback exists yet. Proceed
-to that implementation, preserving brightness-before-dither ordering.
+checks pass. The subsequent native CB41 renderer now passes both screens,
+22 edges and independent timing/IRQ checks: 7910734 T versus the old frame
+component's 14295892 T. Supplied-packet ownership excludes delivery/paging
+costs; actual playback is still unmeasured. Integrate one timing-test disk,
+preserving brightness-before-dither ordering and independent cold boot.
 [Results, protocol and limits](CELL_CODEBOOK.md).
 
 **Reset-placement follow-up:** two bounded tail candidates retain all raw
@@ -23,8 +26,8 @@ component T. A shifted phase saves 73 bytes, still no sector, but adds 15336
 decoder/copy T before unmeasured producer/frame effects. Neither is adopted;
 the variable-block copy verifier is corrected and baseline-compatible.
 [Results and precise coverage](LZSA2_RESET_PLACEMENT.md). Close these reset
-heuristics; the separate codebook proposal below needs a bounded feasibility
-test before any native or default video-format change.
+heuristics; the separate codebook proposal has now passed bounded host and
+native feasibility, but still needs integrated playback before default use.
 
 **Full-block distance follow-up:** retaining command positions and lengths,
 an exact canonical-distance search on block 11 finds no smaller byte output

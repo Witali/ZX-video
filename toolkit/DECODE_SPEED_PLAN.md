@@ -6,14 +6,24 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Native CB41 output (2026-09-30):** 335-byte Z80 book renderer passes both
+full screens on all 64 saved frames, 22 synthetic variants and independent
+instruction/IRQ checks. Supplied-packet draw costs 7910734 T, versus 14295892 T
+for the old reconstruction/output component (-44.66%); ownership/paging
+differ, so this is not a full delivery comparison. Book setup is 54028 T.
+Book rendering costs 712149 T more than literal-only, but separate transport
+savings exceed that by 779470 T. Preserve the current root image. Next
+integrate one cold-bootable timing-test disk with actual packet delivery,
+AY50 and six-field publication. [Accounting and evidence](CELL_CODEBOOK.md).
+
 **Exact cell-codebook feasibility (2026-09-30):** same saved 64-frame window
 with both prior screens supplied. Direct-cell deltas + a 256-entry exact
 book, including table/header/masks/fallback, reduce LZSA2 51022 -> 42303 bytes
 and decoder 6353724 -> 3923387 T. Control without a book isolates its raw-
 volume benefit. All host screens, 22 boundaries and 17 guarded/independent
-codec blocks pass. No new native renderer or actual fps claim. Implement
-and time native CB41 cell output next; retain exact brightness before
-dithering and independently bootable disk requirements. [Evidence](CELL_CODEBOOK.md).
+codec blocks pass. This feasibility stage did not measure native output or
+fps; the follow-up above supplies native output. Retain exact brightness
+before dithering and independently bootable disk requirements. [Evidence](CELL_CODEBOOK.md).
 
 **Bounded LZSA2 reset placement (2026-09-30):** final five blocks of the saved
 192-frame stream. Aligned cuts add 51 bytes and 2393 decoder/producer/copy/
