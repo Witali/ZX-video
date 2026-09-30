@@ -21,6 +21,20 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — attempt requested multi-engine compiler upload
+
+- **Objective/input:** user-authorized web antivirus check of the compiled
+  tool. Actual artifact: source-built Linux/WSL `z88dk-zsdcc`, 25538352 bytes,
+  with its SHA-256 recorded in [the security assessment](toolkit/Z88DK_SECURITY_CHECK.md).
+  No Windows z88dk EXE was built; its downloaded ZIP remains quarantined.
+- **Attempt/result:** VirusTotal's upload page opened, but three supported
+  browser file-chooser paths timed out. No file was submitted, no scanner
+  result exists, and this cannot support a malware-free or false-positive
+  conclusion. Preserve the local Defender findings separately.
+- **Decision:** record the technical blocker and the exact local artifact
+  for manual upload. Do not restore the quarantined archive or claim that
+  opening the upload page completed the requested verification.
+
 ## 2026-09-30 — compare native C decoder toolchains
 
 - **Objective/input:** user-requested HI-TECH, SDCC and z88dk comparison;

@@ -68,3 +68,25 @@ locally in the existing Ubuntu/WSL environment, not taken from the flagged ZIP.
 
 Keep the Windows ZIP quarantined. Continue the component experiment using
 the scanned source-built Linux tools; retain the above supply-chain limits.
+
+## Requested multi-engine upload attempt
+
+The user subsequently authorized uploading the compiled executable to a
+multi-engine web scanner. The compiler actually built and run here is the
+Linux/WSL ELF executable `z88dk-zsdcc`, not a Windows PE `.exe`:
+
+- Local file: `.tmp/z80-c-compilers/z88dk-source/z88dk/bin/z88dk-zsdcc`
+- Size: 25538352 bytes
+- SHA-256: `e7b325206d3cd5b4da53b45282748cacec7d2cefe6485f25145ce9efaf2735cf`
+- Destination attempted: [VirusTotal upload](https://www.virustotal.com/gui/home/upload)
+
+The site opened, but all three supported file-chooser attempts timed out
+(accessibility button, Playwright button and direct file-input attempt).
+The file selection/upload did not complete; **no file was submitted and
+no multi-engine verdict was obtained**. This is an interrupted verification,
+not a clean result. The Windows archive was not restored or uploaded.
+
+Manual continuation: open the upload page, choose the above local file,
+complete submission, then verify the report's SHA-256 matches this record.
+Keep any verdict for the Linux compiler separate from the quarantined
+Windows ZIP, which is a different artifact.
