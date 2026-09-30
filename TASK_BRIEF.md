@@ -49,6 +49,16 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
+## Latest completed milestone: test adaptive 4x4 spatial dithering
+
+The user requested a separate branch experiment, completed on
+`codex/dither-4x4` from `a3b4e4e`. The three 32-frame RGB windows show better
+regional tone but 30–38% higher logical 2x2 error, 2.7–3.3x grain and
+82500→128856 ZX0 cell-stream bytes. Seven tests pass; native integration,
+RAM/timing and release playback were not attempted. Reject this candidate
+as the default and retain its evidence in [SPATIAL_DITHER.md](toolkit/SPATIAL_DITHER.md).
+No further pattern search or TRD build is implied by this completed test.
+
 ## Next technical milestone: decide the five-level representation
 
 **Deliverable:** one evidence-backed recommendation for supporting all five

@@ -5,6 +5,11 @@ or release. Baseline: the current 128x96 logical/256x192 native layout,
 128x72 active picture, 25/3 fps and 50 Hz AY; existing five-level experiments
 remain separate and incomplete.
 
+**Measured follow-up:** the user subsequently authorized a branch experiment.
+See [the adaptive 4x4 results](SPATIAL_DITHER.md): better regional tone, but
+higher fine-scale error, grain and compressed size. The tested candidate
+is retained for comparison and is not recommended as the default.
+
 ## Physical limit
 
 An 8x8 attribute cell has two endpoint colours and shared BRIGHT. FLASH is

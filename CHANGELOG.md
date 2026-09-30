@@ -21,6 +21,31 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — test adaptive 4x4 dithering on a separate branch
+
+- **Objective/baseline:** test the requested spatial pattern on branch
+  `codex/dither-4x4` from `a3b4e4e`, preserving the 128x96 logical grid.
+  Compare with nearest five-level coverage using the same colour pairs;
+  original RGB windows 629, 2857 and 3855, 32 frames plus a seed each.
+- **Parameters:** fixed 4x4 Bayer phase, eight target dot counts, RGB range
+  <=32 and strictly lower 4x4 mean error to select a tile. Host-generated
+  native cells escape from five-byte to eight-byte payloads; attributes,
+  BRIGHT and FLASH=0 are retained. No temporal alternation.
+- **Results:** aligned tone error falls 18.75–30.68%, sliding tone error
+  15.35–23.87%; logical 2x2 error rises 30.35–37.90%, grain 2.70–3.28x,
+  temporal residual error 29.28–52.64%. ZX0 cell streams total
+  82500→128856 bytes (+56.19%); equal-layout native XOR control also grows
+  99215→139074 bytes. These are bounded controls, not release-size estimates.
+- **Coverage:** seven tests pass, 96 movie frames plus three seeds decode
+  exactly, all compressed blocks round trip. Inspect three movie examples
+  and synthetic ramp/bars/edge. Fix an initial border assertion and unsigned
+  edge-metric subtraction; regenerate the saved report with caches. No
+  native consumer/RAM/timing verification, full playback or TRDs; existing
+  player change 0 T.
+- **Decision:** retain the experiment, reject enabling this candidate by
+  default because texture and size costs outweigh regional tone accuracy.
+  [Method, reproduction and evidence](toolkit/SPATIAL_DITHER.md).
+
 ## 2026-09-30 — assess eight-level spatial display options
 
 - **Objective/baseline:** assess the user's eight-level quality proposal

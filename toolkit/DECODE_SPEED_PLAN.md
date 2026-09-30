@@ -6,6 +6,14 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**4x4 experiment (2026-09-30):** a bounded host prototype on branch
+`codex/dither-4x4` improves regional tone in 96 frames but increases logical
+2x2 error by 30–38%, grain by 2.7–3.3x and cell-stream ZX0 bytes by 56.19%
+overall. Do not enable this candidate. See [results and reproduction](SPATIAL_DITHER.md).
+Native costs remain unmeasured; existing player code is unchanged (0 T delta).
+Complete the five-level representation decision before revisiting richer
+patterns; this result does not rule out every alternative 4x4 method.
+
 **Eight-level assessment (2026-09-30):** fixed-colour 2x2 patterns have only
 five area averages. Prefer an adaptive, host-generated 4x4 spatial threshold
 pattern for richer gradients, retaining detail positions and fixed phase;
