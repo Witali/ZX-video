@@ -1,0 +1,179 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Exact 4x4 logical-cell dictionary feasibility on one retained video window.\n\nExperimental inner format only: two-screen deltas, optional 256-entry bitmap\ncodebook and four row-index fallback. Brightness precedes fixed dithering.\nNo native cell renderer, disk image, IRQ schedule or playback claim.\n",
+  "baseline_commit": "63947dd",
+  "start": 128,
+  "count": 64,
+  "states_sha256": "47b062996f9445403e6fc4c400c5d7be5666c6b46ee568fefc5a1b3d3081dbb0",
+  "source_video_sha256": "5adefa050587757e9b203d3f8b9d4724e06f2fc3ddcbc8549fc87e7e0c2a01d6",
+  "initial_screens_sha256": "1d3830769ec917a1cdaa22e45ce2ea95f51f08d30c395c16a7253b83d5bbb275",
+  "dictionary_entries": 256,
+  "dictionary_bitmap_bytes": 2048,
+  "dictionary_selection": "Most frequent exact changed-cell patterns in this same bounded window; not a generalization or full-volume claim.",
+  "changed_cells": 19303,
+  "book_cells": 11294,
+  "unique_changed_patterns": 5010,
+  "full_native_screens_host_exact": true,
+  "brightness_before_dither": true,
+  "lossy_pixel_changes": 0,
+  "audio_change": false,
+  "native_render_cycles_measured": false,
+  "actual_playback_measured": false,
+  "comparison_scope": "Fresh LZSA2 resets for all three payload windows. New header and complete 2048-byte table are included in codebook bytes. Existing 512-byte row table, AY, player code and supplied prior screen/predictor history are common/excluded. This is not a cold-boot disk capacity estimate.",
+  "author_dll_sha256": "69c0c28e0131a62216e12c1b7e45d66d315cc5dc6b6fc849ca25d607139de082",
+  "source_sha256_lf": {
+    "probe_cell_codebook.py": "d19ae7066bade6c04fb9a82bb3a5b0b3fb75f85312daca25beb04e59be68830b",
+    "row_dictionary_video.py": "036002a0dcbd3db486a63df2dc8254281f3998cf595194eca876d67b0399cd4e",
+    "five_level_dither.py": "ff26f1a4ceebd99448c21881b452f6d27f7887cfdfd47a8fb740e52d31f0fdd3",
+    "lzsa2_oracle_host.py": "4f726445d6bc7980c1ee83b4570cc7b92166b8c37edbfd87c7d2bda4c446a12b",
+    "lzsa2_stream.py": "72969188dd7604a03eafc3c6a2932d5c96f210609ae02bcb2196c896adbaa7c2",
+    "inplace_zx0.py": "c2675a2f2ffb938060f3568888c2e94d7e9300e88ab8a1afca000bd25ca48106",
+    "test_cell_codebook.py": "905678ad5dc8016f93b8e8a8b42d23883d38d9576a0343d06dd6289f26286bdc",
+    "summarize_cell_codebook.py": "02839dc833217282d856a7f7a79744e817448eca5ebfcb6aa6e0aa31adcfaac0",
+    "benchmark_row_lzsa.py": "3fc3c98695d1d9e3bfc086a079a8d2f67a17ddd0c2c187051767c6209113ede2",
+    "verify_lzsa2_search.py": "aa5564ebd9c0f3c432a8d0fe89adf93a816c69ca97809158056b574fb2957cfa",
+    "verify_lzsa2_dispatch.py": "78074b0ee5ebcc07daa7614dae1904be5193787e26e559c86463ac9cd16f3f06",
+    "resumable_lzsa2.py": "141d3f843554a50eb3c20c4a764f1edd6294ff96a49be254e07cbbb35f23a3d2"
+  },
+  "date": "2026-09-30",
+  "variants": {
+    "current": {
+      "raw_bytes": 105999,
+      "compressed_bytes": 51022,
+      "sectors": 200,
+      "raw_sha256": "5c270a74e2479b0abbd89e13ea52c13e252fcd95bb00e401c1a69caa1274c60e",
+      "stream_sha256": "bc9a78f809c8735d2a70f78692780d124777c7d30061a8560f29756fdf409c9c",
+      "block_count": 7,
+      "injected_interrupts": 60,
+      "decoder_tstates": 6353724,
+      "producer_tstates": 350445,
+      "total_tstates": 6704169,
+      "max_slice_tstates": 19190,
+      "carry_copy_bytes": 3584
+    },
+    "direct_rows": {
+      "raw_bytes": 88788,
+      "compressed_bytes": 42675,
+      "sectors": 167,
+      "raw_sha256": "e43bc40c3c6771e0d6c56dfca784bda9798a484a322cc6c5c737dce381e9f1ba",
+      "stream_sha256": "06762da2e31b2d69a9784a175089e4cf3589f297a8b3591ebf18017fcec81f1b",
+      "block_count": 6,
+      "injected_interrupts": 53,
+      "decoder_tstates": 5393835,
+      "producer_tstates": 294260,
+      "total_tstates": 5688095,
+      "max_slice_tstates": 19348,
+      "carry_copy_bytes": 3072
+    },
+    "codebook": {
+      "raw_bytes": 59396,
+      "compressed_bytes": 42303,
+      "sectors": 166,
+      "raw_sha256": "62ab0aab2331464f75aa5d9c0b0b38a225d2ffca9c751db89c601bd2679d77fb",
+      "stream_sha256": "a8487459b0b9d834a73625d8adc1dce21ff069bfaebf724f5782132a77672946",
+      "block_count": 4,
+      "injected_interrupts": 37,
+      "decoder_tstates": 3923387,
+      "producer_tstates": 273089,
+      "total_tstates": 4196476,
+      "max_slice_tstates": 21530,
+      "carry_copy_bytes": 2048
+    }
+  },
+  "coverage_percent": 58.50904004558877,
+  "host_boundary_cases": 22,
+  "maximum_synthetic_packet_bytes": 3096,
+  "maximum_window_packet_bytes": 1333,
+  "root_trd_unchanged": true,
+  "root_trd_sha256": "14788fa7b7272c1d8ae4d47e63804cd60998d8ee95032ce56c879a120226e2d5",
+  "current_measured_fps": 7.6830252011714135,
+  "goal_achieved": false,
+  "decision": "Promote this exact separate inner-format candidate to a native-renderer prototype. Most compressed-size saving comes from direct cell deltas; the dictionary substantially reduces decoded volume and LZSA2 CPU beyond that control. No production/player/disk adoption yet.",
+  "next": "Implement and verify native cell output including both masks, dictionary/literal modes, all attributes, source cursors, stack and bank safety. Keep brightness-before-dither semantics and account for dictionary RAM/loading, packet transport and real schedule before integration.",
+  "evidence": [
+    {
+      "file": "probe.json.gz",
+      "sha256": "f1137166d4e15a3c014a33e4c874fe0e52307eced94354d22df9975a50c81124",
+      "raw_sha256": "1dfd1361e2532be6ff1bd29d734469c3ae9c0e3c670d2cd102fe0a1573b5ea40"
+    },
+    {
+      "file": "tests.json.gz",
+      "sha256": "0500b6bec7713f3ffd19827c27cda4e38ebcbdae8614cd2c934735ba354226fa",
+      "raw_sha256": "9d8299c7eea37258a163f15a255855518783537701c370fb9bef31c79efcd77d"
+    },
+    {
+      "file": "initial-screens.bin.gz",
+      "sha256": "3d8920081f4861d2b4c84a162f034e8f7d1261664c4597c474cff81b196e8c38",
+      "raw_sha256": "1d3830769ec917a1cdaa22e45ce2ea95f51f08d30c395c16a7253b83d5bbb275"
+    },
+    {
+      "file": "current.raw.gz",
+      "sha256": "9b07df58be422675ec1f9f38c94a12eb7d6f94d06c5dba42f856ff2811998729",
+      "raw_sha256": "5c270a74e2479b0abbd89e13ea52c13e252fcd95bb00e401c1a69caa1274c60e"
+    },
+    {
+      "file": "current.stream.gz",
+      "sha256": "46972c7dfa3e1a12f54a3a1ef0b9ae458cf14819fd70b48980fcf85f53ad937f",
+      "raw_sha256": "bc9a78f809c8735d2a70f78692780d124777c7d30061a8560f29756fdf409c9c"
+    },
+    {
+      "file": "current-cpu.json.gz",
+      "sha256": "c22380de09659710d13e20fef865e43ec70ae38f932583ecc2c1e9c23171a1b1",
+      "raw_sha256": "af6bbfc3b857f6c1cf63a5715675af8da8851d047e3b509a311c43763a5c2f99"
+    },
+    {
+      "file": "current-verification.json.gz",
+      "sha256": "a7c345874ebe57e3a798d940543fd2f94710c31e5b26a3d35cd38c012bda1b36",
+      "raw_sha256": "7e751fb48ba10a877f3d9c248b37910d6f5668537301bc3341c6c022ba27aa2c"
+    },
+    {
+      "file": "direct_rows.raw.gz",
+      "sha256": "4757e15afc8ad01354829e46cdcebc016f4c8a8f1db2add819731bd0bac9741e",
+      "raw_sha256": "e43bc40c3c6771e0d6c56dfca784bda9798a484a322cc6c5c737dce381e9f1ba"
+    },
+    {
+      "file": "direct_rows.stream.gz",
+      "sha256": "456e39aea5675850a9c7dd8babf01ed682b5e03fcd7d0211d33aedea2dbb9783",
+      "raw_sha256": "06762da2e31b2d69a9784a175089e4cf3589f297a8b3591ebf18017fcec81f1b"
+    },
+    {
+      "file": "direct_rows-cpu.json.gz",
+      "sha256": "764d448b929a058fbde14b33359af74a6e2b0e7fc43d5de4d2b2bfc580888412",
+      "raw_sha256": "9dec43592f862f260f1ea58d944ebd3db2355eebc9a0e54961681d21c7021f27"
+    },
+    {
+      "file": "direct_rows-verification.json.gz",
+      "sha256": "9632a5b4550cb95a31e42722434cc9bda6eef465c0f06fd938bfdef0ed513e6a",
+      "raw_sha256": "fb0a94ad79684065d2c066826c901f6457bac6827104776a3316f4d7cec0eac0"
+    },
+    {
+      "file": "codebook.raw.gz",
+      "sha256": "d7d9674f8855eb42a9ab4bd8c0098b7f73381dc9cd3686526bc159d100473681",
+      "raw_sha256": "62ab0aab2331464f75aa5d9c0b0b38a225d2ffca9c751db89c601bd2679d77fb"
+    },
+    {
+      "file": "codebook.stream.gz",
+      "sha256": "8a6f85f6805b42ca3557b9a3c68980d6f1f2ea7ee0e2910a7de4e737ba4dff34",
+      "raw_sha256": "a8487459b0b9d834a73625d8adc1dce21ff069bfaebf724f5782132a77672946"
+    },
+    {
+      "file": "codebook-cpu.json.gz",
+      "sha256": "f8e21bc78525d996339292f271f3256633fc37cab4e9d6df7027519047a41d4a",
+      "raw_sha256": "5f1946f99ee87814f96b84988cc59e0f7fbb170964799e409ac1b8d2d4a4d4ff"
+    },
+    {
+      "file": "codebook-verification.json.gz",
+      "sha256": "de76215f385f543d6cce9c66dcef16fd17dff621bad0d15dabd903b4e5addc16",
+      "raw_sha256": "40c227508f3092439188d22bb067228ae578b30af7f23c7e9244e6322a815d04"
+    }
+  ],
+  "deltas": {
+    "bytes_vs_current": -8719,
+    "bytes_vs_control": -372,
+    "byte_saving_percent": 17.08870683234683,
+    "decoder_vs_current": -2430337,
+    "decoder_saving_percent": 38.2505913067675,
+    "transport_component_vs_current": -2507693
+  }
+}

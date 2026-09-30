@@ -8,6 +8,15 @@ five-level video fixture. No image/audio change or whole-movie encode sweep.
 
 ## Conclusion
 
+**Exact ready-cell follow-up:** a separate video representation, carried by
+unchanged LZSA2, now saves 17.09% compressed bytes and 38.25% decoder CPU on
+one exact 64-frame window. Most ratio gain comes from direct cell deltas;
+the 256-entry book further cuts raw volume/decoder work. Its full 2048-byte
+table and fallback/masks are counted. Host screens and native outer-codec
+checks pass; no native CB41 output or actual playback exists yet. Proceed
+to that implementation, preserving brightness-before-dither ordering.
+[Results, protocol and limits](CELL_CODEBOOK.md).
+
 **Reset-placement follow-up:** two bounded tail candidates retain all raw
 bytes and 21 blocks. Aligned cuts add 51 bytes and 2393 measured total
 component T. A shifted phase saves 73 bytes, still no sector, but adds 15336
@@ -203,8 +212,9 @@ Small transforms are real techniques: [IJG-related reduced-IDCT derivations](htt
 show a 2x2 sum/difference transform and a factored 4x4 transform. Their
 reduced-output examples do not justify lowering our existing logical
 resolution or establish Z80 performance. Keep this as a separate candidate;
-the reset-placement task is now complete. A separate bounded codebook
-feasibility probe is next; current runtime formats remain unchanged.
+the reset-placement task is now complete. The bounded exact codebook
+probe in [CELL_CODEBOOK.md](CELL_CODEBOOK.md) is promising and native output
+is next; current production runtime formats remain unchanged.
 
 ## Plan for a meaningfully stronger compatible compressor
 

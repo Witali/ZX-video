@@ -49,7 +49,20 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: bounded LZSA2 reset placement
+## Latest completed milestone: exact cell-codebook feasibility
+
+Baseline `63947dd`; saved frames 128..191, identical prior screen history.
+New direct-cell representation with a 256-entry book covers 58.51% of 19303
+changed cells exactly. Including its 2048-byte table: 51022 -> 42303 LZSA2
+bytes (-17.09%), 200 -> 166 sectors, decoder 6353724 -> 3923387 T (-38.25%).
+Literal-cell control costs 42675 bytes / 5393835 decoder T, isolating the
+book's main benefit as reduced raw volume. All host full screens, 22 edges,
+17 author/banked/independent blocks and 150 synthetic interrupts pass.
+Promote to native implementation, not production adoption. No CB41 renderer
+or real candidate playback yet; root TRD and 7.683025-fps failure unchanged.
+[Format, scope and reproduction](toolkit/CELL_CODEBOOK.md).
+
+## Previous milestone: bounded LZSA2 reset placement
 
 Baseline `8b03511`; last five blocks, affecting saved frames 151..191.
 Aligned packet boundaries: +51 bytes, same 606 sectors, +2393 total
@@ -218,20 +231,19 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: exact block-codebook feasibility
+## Next finite deliverable: native CB41 cell output
 
-Keep current root images and LZSA2 token syntax. Table growth, distance-only
-search and two reset placements showed no meaningful gain; do not repeat
-these sweeps. Follow the user's table-driven transform question with a
-bounded, host-only check of 256 ready 4x4 logical block patterns on one saved
-32-64-frame window, using exact fallback for uncovered patterns. Measure
-coverage and actual post-LZSA2 cost including table, mode and position data;
-do not infer savings from index width. Reconstruct five brightness levels
-before fixed-phase dithering, as explicitly confirmed by the user.
-This is a separate experimental video representation: no default inner-format
-change, native integration or playback claim until the hypothesis earns it.
-If promising, count screen/paging costs and test actual cadence next.
-See the [transform/codebook analysis](toolkit/LZSA2_COMPRESSION_PLAN.md#separate-video-layer-proposal-table-driven-inverse-transforms).
+Keep current root images and LZSA2 syntax; do not repeat rejected search or
+reset sweeps. Implement the promising exact CB41 path on real Z80 opcodes:
+both masks, dictionary and row-literal modes, attributes, source extents,
+both back-screen histories, stack/input/bank guards and complete timings.
+Use the saved 64-frame payload and 22 boundary cases. Reconstruct brightness
+before fixed-phase dithering; no DCT approximation or pixel loss is needed.
+Consider an eight-page planar book to avoid per-cell index multiplication,
+accounting for startup transposition and the full 128 KiB layout. Then check
+packet delivery and actual publication/AY timing before any production
+adoption. A component speedup or this window alone cannot pass release.
+See [the exact format and evidence](toolkit/CELL_CODEBOOK.md).
 LZ4 selective decoding remains a separate measured option, with a capacity
 penalty and unresolved actual disk timing. A window cannot pass release.
 

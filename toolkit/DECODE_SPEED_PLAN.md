@@ -6,6 +6,15 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Exact cell-codebook feasibility (2026-09-30):** same saved 64-frame window
+with both prior screens supplied. Direct-cell deltas + a 256-entry exact
+book, including table/header/masks/fallback, reduce LZSA2 51022 -> 42303 bytes
+and decoder 6353724 -> 3923387 T. Control without a book isolates its raw-
+volume benefit. All host screens, 22 boundaries and 17 guarded/independent
+codec blocks pass. No new native renderer or actual fps claim. Implement
+and time native CB41 cell output next; retain exact brightness before
+dithering and independently bootable disk requirements. [Evidence](CELL_CODEBOOK.md).
+
 **Bounded LZSA2 reset placement (2026-09-30):** final five blocks of the saved
 192-frame stream. Aligned cuts add 51 bytes and 2393 decoder/producer/copy/
 frame T; shifted phase saves 73 bytes but adds 15336 decoder/copy T before

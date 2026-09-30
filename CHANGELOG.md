@@ -21,6 +21,34 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — exact 4x4 logical-cell codebook feasibility
+
+- **Objective/input:** baseline `63947dd`, saved frames 128..191 (64 frames,
+  source 3855..3918), retaining both prior screen states and exact five-level
+  output. Test ready cells with exact fallback, not approximate DCT.
+- **Change:** experimental CB41 direct back-screen cell deltas, bitmap and
+  attribute masks, 256 observed exact patterns, one-bit mode selection and
+  four-row-index fallback. Reconstruct brightness before fixed dithering.
+  A literal-only direct-cell control isolates the dictionary contribution.
+- **Results:** current/control/book raw bytes 105999/88788/59396; LZSA2 bytes
+  51022/42675/42303, including the book's complete 2048-byte table and metadata.
+  Sectors 200/167/166. The book covers 11294 of 19303 changed cells (58.51%).
+  Decoder T 6353724/5393835/3923387; producer T 350445/294260/273089. Versus
+  current, -17.09% bytes, -38.25% decoder CPU, -2507693 decoder/producer T.
+  Maximum slice rises 19190 -> 21530 T; realtime scheduling remains untested.
+- **Verification:** both representations restore all 64 complete host
+  screens and retained other screens exactly. 22 edge variants cover every
+  book index, full fallback, BRIGHT and mode-mask boundaries. All 17 blocks
+  pass author/host overlap, guarded banked sector/EOF/timing and independent
+  per-slice checks, with 60/53/37 synthetic interrupts. Largest synthetic
+  packet is 3096 bytes, window maximum 1333 bytes.
+- **Decision/limits:** promote to native cell-output implementation. No
+  player, disk, actual fps or cold-boot/full-movie capacity claim: fresh
+  window compression and supplied prior history are explicit. Common AY,
+  row table and existing player are outside the comparison. Root TRD stays
+  unchanged at last measured 7.683025 fps; goal remains incomplete.
+  [Format, exact checks, scripts and evidence](toolkit/CELL_CODEBOOK.md).
+
 ## 2026-09-30 — test bounded LZSA2 reset placement and correct copy profiling
 
 - **Objective/input:** baseline `8b03511`, same 192-frame five-level stream.
