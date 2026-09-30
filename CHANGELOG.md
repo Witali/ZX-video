@@ -21,6 +21,42 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — consume literal suffixes directly from retained LZSA2 slots
+
+- **Objective/input:** continue toward smooth five-level 25/3-fps playback;
+  baseline `dacb24f`, same 192 frames/21 blocks, fragment allowance 16,
+  172-entry row table, original 50-Hz AY. One transport candidate.
+- **Change:** optional `--borrow-literals` keeps metadata/Huffman in fixed
+  RAM and borrows a retained slot's literal suffix. Crossing/released-slot
+  packets keep normal copying. Host validation excludes motion/spatial
+  commands before reusing their code RAM. No format, compressed video,
+  slot/buffer size or native pixel changes; 243 bytes of new code/state.
+- **Measured CPU:** 171 borrowed packets avoid 226819 copied bytes. Copy
+  bridges 5511858 -> 1950856 T (-3561002); frame stages 41965760 -> 43760146 T
+  (+1794386 for bridges/paging), net component -1766616 T. Every new
+  executed instruction is checked against its timing row. CPU fixture
+  excludes ROM/disk/IRQ/ULA and does not replay the real producer schedule.
+- **Real delivery:** full Fuse span 90549516 -> 88138641 elapsed T, fps
+  7.478465 -> 7.683025; missed deadlines 134 -> 118, maximum 133 -> 99 fields.
+  Invalid fallback intervals remain 24. Late runs 43 and 67 recover on the
+  next frames; 76..191 remains late. Video stays 154956 bytes / 606 sectors,
+  disk stays 653 occupied sectors. Read/seek windows measured separately.
+- **Verification:** all 192 compact/both native frames and input/cursor/
+  bank/stack guards; 45 native copy edge cases; five host contract tests
+  including eight rejected vectors; dirty-RAM cold boot/priming; actual EOF,
+  all sectors, 1152 exact AY ticks, 80 pixel samples per frame and six full
+  captures (41472 exact bytes). No full-movie/hardware timing claim.
+- **Rejected setup attempts:** memory guards rejected helpers at 7800h
+  (resident initializer/producer) and DF00h (disk driver) before native
+  execution. Final code uses host-excluded motion RAM. Verifier setup fixed
+  a block-list/count mismatch and host-write guard state; retained results
+  follow the fixes. No changes to the successfully built native candidate.
+- **Decision:** adopt as optional validated mode and update the existing
+  LFS test disk. Both release timing gates still fail; continue with native
+  pixel output. [Details](toolkit/BORROWED_LITERALS.md),
+  [CPU verifier](toolkit/verify_borrowed_literals.py),
+  [summary/evidence](toolkit/borrowed_literals_profile.json).
+
 ## 2026-09-30 — reprofile current LZSA2 playback stages
 
 - **Objective/input:** user-requested bottleneck comparison, baseline

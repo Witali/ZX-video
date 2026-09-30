@@ -49,7 +49,21 @@ No routine confirmation is needed for authorized, reversible work. Ask only
 when missing information or a genuine permission boundary prevents a sound
 decision. These scope controls must not reduce verification or hide failures.
 
-## Latest completed milestone: fresh LZSA2 stage profile
+## Latest completed milestone: borrowed literal suffixes
+
+Baseline `dacb24f`, unchanged 192-frame/21-block five-level fixture. Opt-in
+`build_row_lzsa.py --borrow-literals` copies packet prefixes and reads retained
+literal bytes directly from slots. Host validation requires temporal/whole
+fragments and no motion cache; other streams retain the normal builder.
+Copy bridges save 3561002 T; frame paging adds 1794386 T, net -1766616 T.
+Real Fuse improves 7.478465 -> 7.683025 fps, 134 -> 118 missed deadlines,
+maximum 133 -> 99 fields. Final run 76..191 stays late. All 192 full CPU
+frames, 45 copy edge cases, host contract checks, cold boot, AY/EOF and six
+full captures pass. Same compressed bytes / 606 sectors, updated optional
+LFS test TRD. Both timing gates still fail; full movie remains unverified.
+Reuse [implementation, evidence and reproduction](toolkit/BORROWED_LITERALS.md).
+
+## Previous milestone: fresh LZSA2 stage profile
 
 User-requested profiling of unchanged `de0a50d`, same 192 frames/21 blocks.
 Elapsed Fuse: transfer 42.58%, draw 22.87%, reconstruction 22.07%, metadata
@@ -125,16 +139,17 @@ All 105 video round trips plus 33 extra cases pass independent decoders.
 No native speed/memory/cadence claim. See
 [LZW_LZH_ASSESSMENT.md](toolkit/LZW_LZH_ASSESSMENT.md); keep the same next task.
 
-## Next finite deliverable: avoid decoded packet copies
+## Next finite deliverable: reduce native pixel output cost
 
-Transfer remains the largest elapsed stage (38845163 T); packet starts find
-an empty queue in 153/192 cases. Inspect using slot bytes directly instead
-of copying every packet into another buffer. First account for packets
-crossing blocks, slot lifetime, motion/Huffman pointers and IRQ paging.
-Compare one bounded candidate on the saved fixture, measuring deterministic
-CPU separately from full disk/ULA/IRQ delivery. Preserve exact pixels,
-AY, independent boot and every timing gate. Do not build the whole movie
-or start dictionary transitions before resolving this hypothesis.
+Packet-copy reduction is implemented and verified for the eligible mode.
+Native output still costs 20246890 deterministic T: dense/cell pixel writes
+14350016 T and cell address computation 1894464 T. Inspect the generated
+row-table renderer for one exact-byte improvement, then compare with the
+borrowed-literal baseline in CPU and complete Fuse playback. Preserve both
+screen histories, 50-Hz AY, five levels and the nominal/fallback gates.
+Use the saved difficult windows; progress to complete-movie volumes when
+the candidate meets timing. The goal remains smooth 25/3 fps, not a passing
+component or average-speed result.
 
 ## Release gate and handoff
 

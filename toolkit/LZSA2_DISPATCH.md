@@ -1,5 +1,9 @@
 # Faster LZSA2 token dispatch
 
+The later [borrowed-literal experiment](BORROWED_LITERALS.md) updates the
+root test TRD. This report and its archived images/results describe the
+earlier flag-dispatch-only baseline.
+
 2026-09-30; baseline `afc18fc`. **Adopt the restored S/P flag dispatch** in
 [resumable_lzsa2.py](resumable_lzsa2.py). This recovers an optimization
 already present in the credited spke & uniabis upstream decoder. Our port

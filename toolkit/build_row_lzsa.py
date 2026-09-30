@@ -21,13 +21,18 @@ def main():
     for name in ('raw','states','metadata','options','zx0','lzsa','output'):p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--expected-raw-sha256',help='Reject a stale or different comparison fixture before building')
     p.add_argument('--expected-video-sha256',help='Require identical compressed runtime video')
+    p.add_argument('--borrow-literals',action='store_true',help='Experimental retained-slot literal suffix, validated fragment-only stream')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
     raw=a.raw.read_bytes();m=json.loads(a.metadata.read_text())
     if a.expected_raw_sha256 and sha(raw)!=a.expected_raw_sha256:raise ValueError('comparison raw identity differs')
     with np.load(a.states,allow_pickle=False) as data:states=data['states']
     options=json.loads(a.options.read_text())['contract']['options'];options['startup_delta']=False
     with reference_tables(m['row_dictionary']):
-        b=Builder(raw,states,a.zx0.resolve(),a.output/'zx0',row_dictionary=m['row_dictionary'],
+        builder_type=Builder
+        if a.borrow_literals:
+            from borrowed_literals import Builder as BorrowedBuilder
+            builder_type=BorrowedBuilder
+        b=builder_type(raw,states,a.zx0.resolve(),a.output/'zx0',row_dictionary=m['row_dictionary'],
             lzsa=a.lzsa.resolve(),series_fingerprint=b'AYH1R5L2'+bytes.fromhex(sha(raw))[:6],**options)
         if a.expected_video_sha256 and sha(b.stream(0,len(states))[0])!=a.expected_video_sha256:
             raise ValueError('comparison video identity differs')

@@ -1,5 +1,9 @@
 # Current LZSA2 playback: where the time goes
 
+The root test image was subsequently updated with
+[borrowed literal suffixes](BORROWED_LITERALS.md). The measurements below
+remain the unchanged `de0a50d`/`dacb24f` baseline, available in Git history.
+
 2026-09-30, baseline `de0a50d`. Fresh profiling of the unchanged optional
 `ZX-video-five-level-lzsa2-test.trd`: 192 frames, three 64-frame source windows
 at 629/2857/3855, 21 LZSA2 blocks, 154956 video bytes, 606 runtime sectors,

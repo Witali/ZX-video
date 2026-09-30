@@ -6,6 +6,17 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Borrowed literal suffixes (2026-09-30):** adopt the opt-in, host-validated
+fragment-only mode. Same 192 frames and 606 video sectors: avoid 226819 copied
+bytes in 171 packets. Copy bridges 5511858 -> 1950856 T; frame stages grow
+41965760 -> 43760146 T from paging; net component saving 1766616 T.
+Real Fuse 7.478465 -> 7.683025 fps, 134 -> 118 late frames, max 133 -> 99
+fields. All full CPU frames, 45 copy edge cases, cold boot, AY/EOF and six
+full captures pass. Both timing gates still fail. Code reuses motion RAM
+only after validating that this stream cannot execute motion/spatial paths.
+No compression loss or buffer reduction. Next: native pixel output.
+[Implementation, timing and limits](BORROWED_LITERALS.md).
+
 **Fresh LZSA2 stage profile (2026-09-30):** unchanged `de0a50d` test disk,
 192 frames. Real elapsed stages: packet transfer 42.58%, screen output
 22.87%, reconstruction 22.07%, metadata 3.63%, control/prefetch/wait 8.84%.

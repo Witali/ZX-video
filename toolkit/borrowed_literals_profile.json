@@ -1,0 +1,1025 @@
+{
+  "complete": true,
+  "release": false,
+  "baseline_commit": "dacb24f",
+  "trd_sha256": "14788fa7b7272c1d8ae4d47e63804cd60998d8ee95032ce56c879a120226e2d5",
+  "raw_sha256": "198971aa8c9721afa876fe57101dfd021590132574baf636f4b090f536c8988c",
+  "video_sha256": "5adefa050587757e9b203d3f8b9d4724e06f2fc3ddcbc8549fc87e7e0c2a01d6",
+  "stream_sha256": "1c8f598fa5fcc4ba2ac5f60355f6b3845cf5d8aa89f2ded328f5f98dd1b21bbc",
+  "unchanged_video_bytes": 154956,
+  "unchanged_video_sectors": 606,
+  "used_sectors": 653,
+  "fps": 7.6830252011714135,
+  "baseline_fps": 7.478465152701644,
+  "publication_span_tstates": 88138641,
+  "baseline_publication_span_tstates": 90549516,
+  "elapsed_delta_tstates": -2410875,
+  "missed_nominal_deadlines": 118,
+  "baseline_missed_nominal_deadlines": 134,
+  "max_late_fields": 99,
+  "baseline_max_late_fields": 133,
+  "bad_actual_intervals": 24,
+  "late_runs": [
+    {
+      "start": 43,
+      "end": 43,
+      "recovered_at": 44
+    },
+    {
+      "start": 67,
+      "end": 67,
+      "recovered_at": 68
+    },
+    {
+      "start": 76,
+      "end": 191,
+      "recovered_at": null
+    }
+  ],
+  "ay_ticks": 1152,
+  "ay_exact": true,
+  "borrowed_packets_cpu_fixture": 171,
+  "copied_bytes_saved_cpu_fixture": 226819,
+  "copy_cpu": {
+    "baseline_tstates": 5511858,
+    "tstates": 1950856,
+    "delta_tstates": -3561002
+  },
+  "frame_cpu": {
+    "baseline_frame_tstates": 41965760,
+    "frame_tstates": 43760146,
+    "frame_delta_tstates": 1794386
+  },
+  "component_net_delta_tstates": -1766616,
+  "edge_cases": 45,
+  "generated": {
+    "enabled": true,
+    "experimental": true,
+    "regions": [
+      {
+        "address": 34939,
+        "code_hex": "3ac188b7ca8b882ac288225979cd8097c30079f5c53e16c3a088f5c53ac188b7c2a0883e16cd8097c1f1c9cd8e88cd00eccd9588c93a5c79b7c2f88ecd8e88cdf88ecd9588c9000000"
+      },
+      {
+        "address": 35195,
+        "code_hex": "f5af32c1887afe64c21a8a7bb7c21a8af1321e8ae52a58bab7ed42e1c2148ae52a5ee17cb5e1c2ab893a51e1b7c2148a221f8ae5eb0922218aebe11100640118013a1e8acd1e61e52a0164ed5b036419111a011922238aed5b58bab7ed52d2078a2a238a11e8fe19444de11118653a1e8acd1e612b2b22c2883a1e8afe02dafd893cf61032c188ed5b218ac92a58ba11e8fe19444de11118653a1e8ac31e61f1c31e6100000000000000"
+      }
+    ],
+    "labels": {
+      "prepare": 34939,
+      "prepare_run": 34955,
+      "page_huffman": 34958,
+      "page_literals": 34965,
+      "page_common": 34976,
+      "patch": 34982,
+      "attributes": 34992,
+      "state": 35009,
+      "borrowed_page": 35009,
+      "borrowed_pointer": 35010,
+      "fixed_end": 35012,
+      "copy": 35195,
+      "eligible": 35243,
+      "page_ready": 35325,
+      "copy_rest": 35335,
+      "fallback": 35348,
+      "fallback_pop": 35354,
+      "region": 35358,
+      "source": 35359,
+      "virtual_end": 35361,
+      "prefix": 35363,
+      "end": 35365
+    },
+    "listing": [
+      {
+        "address": 34939,
+        "instruction": "LD A,(borrowed_page)",
+        "tstates": 13,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34942,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34943,
+        "instruction": "JP prepare_run",
+        "tstates": 10,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34946,
+        "instruction": "LD HL,(literal pointer)",
+        "tstates": 16,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34949,
+        "instruction": "LD (wrapper literal pointer),HL",
+        "tstates": 16,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34952,
+        "instruction": "CALL 38784",
+        "tstates": 17,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34955,
+        "instruction": "JP 30976",
+        "tstates": 10,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34958,
+        "instruction": "PUSH AF",
+        "tstates": 11,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34959,
+        "instruction": "PUSH BC",
+        "tstates": 11,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34960,
+        "instruction": "LD A,16h",
+        "tstates": 7,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34962,
+        "instruction": "JP page_common",
+        "tstates": 10,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34965,
+        "instruction": "PUSH AF",
+        "tstates": 11,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34966,
+        "instruction": "PUSH BC",
+        "tstates": 11,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34967,
+        "instruction": "LD A,(borrowed_page)",
+        "tstates": 13,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34970,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34971,
+        "instruction": "JP page_common",
+        "tstates": 10,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34974,
+        "instruction": "LD A,16h",
+        "tstates": 7,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34976,
+        "instruction": "CALL 38784",
+        "tstates": 17,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34979,
+        "instruction": "POP BC",
+        "tstates": 10,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34980,
+        "instruction": "POP AF",
+        "tstates": 10,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34981,
+        "instruction": "RET",
+        "tstates": 10,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34982,
+        "instruction": "CALL page_huffman",
+        "tstates": 17,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34985,
+        "instruction": "CALL 60416",
+        "tstates": 17,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34988,
+        "instruction": "CALL page_literals",
+        "tstates": 17,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34991,
+        "instruction": "RET",
+        "tstates": 10,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34992,
+        "instruction": "LD A,(31068)",
+        "tstates": 13,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34995,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34996,
+        "instruction": "JP 36600",
+        "tstates": 10,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 34999,
+        "instruction": "CALL page_huffman",
+        "tstates": 17,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 35002,
+        "instruction": "CALL 36600",
+        "tstates": 17,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 35005,
+        "instruction": "CALL page_literals",
+        "tstates": 17,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 35008,
+        "instruction": "RET",
+        "tstates": 10,
+        "phase": "borrowed_literals"
+      },
+      {
+        "address": 35195,
+        "instruction": "PUSH AF",
+        "tstates": 11,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35196,
+        "instruction": "XOR A",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35197,
+        "instruction": "LD (borrowed page),A",
+        "tstates": 13,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35200,
+        "instruction": "LD A,D",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35201,
+        "instruction": "CP input high",
+        "tstates": 7,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35203,
+        "instruction": "JP fallback_pop",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35206,
+        "instruction": "LD A,E",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35207,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35208,
+        "instruction": "JP fallback_pop",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35211,
+        "instruction": "POP AF",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35212,
+        "instruction": "LD (region),A",
+        "tstates": 13,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35215,
+        "instruction": "PUSH HL",
+        "tstates": 11,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35216,
+        "instruction": "LD HL,(47704)",
+        "tstates": 16,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35219,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35220,
+        "instruction": "SBC HL,BC",
+        "tstates": 15,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35222,
+        "instruction": "POP HL",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35223,
+        "instruction": "JP fallback",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35226,
+        "instruction": "PUSH HL",
+        "tstates": 11,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35227,
+        "instruction": "LD HL,(57694)",
+        "tstates": 16,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35230,
+        "instruction": "LD A,H",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35231,
+        "instruction": "OR L",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35232,
+        "instruction": "POP HL",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35233,
+        "instruction": "JP eligible",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35236,
+        "instruction": "LD A,(57681)",
+        "tstates": 13,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35239,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35240,
+        "instruction": "JP fallback",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35243,
+        "instruction": "LD (source),HL",
+        "tstates": 16,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35246,
+        "instruction": "PUSH HL",
+        "tstates": 11,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35247,
+        "instruction": "EX DE,HL",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35248,
+        "instruction": "ADD HL,BC",
+        "tstates": 11,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35249,
+        "instruction": "LD (virtual_end),HL",
+        "tstates": 16,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35252,
+        "instruction": "EX DE,HL",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35253,
+        "instruction": "POP HL",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35254,
+        "instruction": "LD DE,packet",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35257,
+        "instruction": "LD BC,280",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35260,
+        "instruction": "LD A,(region)",
+        "tstates": 13,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35263,
+        "instruction": "CALL 24862",
+        "tstates": 17,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35266,
+        "instruction": "PUSH HL",
+        "tstates": 11,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35267,
+        "instruction": "LD HL,(25601)",
+        "tstates": 16,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35270,
+        "instruction": "LD DE,(coded length)",
+        "tstates": 20,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35274,
+        "instruction": "ADD HL,DE",
+        "tstates": 11,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35275,
+        "instruction": "LD DE,282",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35278,
+        "instruction": "ADD HL,DE",
+        "tstates": 11,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35279,
+        "instruction": "LD (prefix),HL",
+        "tstates": 16,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35282,
+        "instruction": "LD DE,(packet length)",
+        "tstates": 20,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35286,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35287,
+        "instruction": "SBC HL,DE",
+        "tstates": 15,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35289,
+        "instruction": "JP copy_rest",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35292,
+        "instruction": "LD HL,(prefix)",
+        "tstates": 16,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35295,
+        "instruction": "LD DE,-280",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35298,
+        "instruction": "ADD HL,DE",
+        "tstates": 11,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35299,
+        "instruction": "LD B,H",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35300,
+        "instruction": "LD C,L",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35301,
+        "instruction": "POP HL",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35302,
+        "instruction": "LD DE,prefix suffix",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35305,
+        "instruction": "LD A,(region)",
+        "tstates": 13,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35308,
+        "instruction": "CALL 24862",
+        "tstates": 17,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35311,
+        "instruction": "DEC HL",
+        "tstates": 6,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35312,
+        "instruction": "DEC HL",
+        "tstates": 6,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35313,
+        "instruction": "LD (35010),HL",
+        "tstates": 16,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35316,
+        "instruction": "LD A,(region)",
+        "tstates": 13,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35319,
+        "instruction": "CP 2",
+        "tstates": 7,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35321,
+        "instruction": "JP page_ready",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35324,
+        "instruction": "INC A",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35325,
+        "instruction": "OR 10h",
+        "tstates": 7,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35327,
+        "instruction": "LD (borrowed page),A",
+        "tstates": 13,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35330,
+        "instruction": "LD DE,(virtual end)",
+        "tstates": 20,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35334,
+        "instruction": "RET",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35335,
+        "instruction": "LD HL,(47704)",
+        "tstates": 16,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35338,
+        "instruction": "LD DE,-280",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35341,
+        "instruction": "ADD HL,DE",
+        "tstates": 11,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35342,
+        "instruction": "LD B,H",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35343,
+        "instruction": "LD C,L",
+        "tstates": 4,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35344,
+        "instruction": "POP HL",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35345,
+        "instruction": "LD DE,suffix",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35348,
+        "instruction": "LD A,(region)",
+        "tstates": 13,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35351,
+        "instruction": "JP 24862",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35354,
+        "instruction": "POP AF",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      },
+      {
+        "address": 35355,
+        "instruction": "JP 24862",
+        "tstates": 10,
+        "phase": "borrowed_packet"
+      }
+    ],
+    "patches": [
+      {
+        "address": 57625,
+        "before_hex": "cd1e61",
+        "code_hex": "cd7b89",
+        "name": "borrow packet literal suffix",
+        "baseline_tstates": 17,
+        "tstates": 17
+      },
+      {
+        "address": 32521,
+        "before_hex": "cd0079",
+        "code_hex": "cd7b88",
+        "name": "map borrowed literals for preparation",
+        "baseline_tstates": 17,
+        "tstates": 17
+      },
+      {
+        "address": 36317,
+        "before_hex": "c300ec",
+        "code_hex": "c3a688",
+        "name": "page Huffman patches",
+        "baseline_tstates": 10,
+        "tstates": 10
+      },
+      {
+        "address": 33222,
+        "before_hex": "cdf88e",
+        "code_hex": "cdb088",
+        "name": "page coded attributes",
+        "baseline_tstates": 17,
+        "tstates": 17
+      }
+    ],
+    "overwritten": [
+      {
+        "address": 34939,
+        "bytes": 73,
+        "before_sha256": "ff7e3eee9077b24bc2f7d0c6d9431b1e5c6585007e484d5c510e48ac885a7253",
+        "previous_use": "host-excluded motion handler"
+      },
+      {
+        "address": 35195,
+        "bytes": 170,
+        "before_sha256": "da59a745559c04eafb2e18894be75128a00bfe44f058583576ec10f92fe56eaa",
+        "previous_use": "host-excluded motion handler"
+      }
+    ],
+    "code_and_state_bytes": 243,
+    "extra_buffer_bytes": 0,
+    "readable_huffman_lookahead_bytes": 2,
+    "compressed_video_delta_bytes": 0,
+    "ownership": "Borrow only when the take call retains its slot; reconstruct before another packet read.",
+    "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+    "validated_packets": 192,
+    "video_sha256": "5adefa050587757e9b203d3f8b9d4724e06f2fc3ddcbc8549fc87e7e0c2a01d6"
+  },
+  "captures": [
+    {
+      "frame": 0,
+      "publication_tstate": 44388737,
+      "page": 31,
+      "nonce_exact": true,
+      "screen_sha256": "60e255c52179dfcb6e3aeb40e7b113d918f1cb8c3e6cb75106f99f60edb743c6",
+      "trace_sha256": "001a4e6561d10a5e5103b04e690a4b8e542166736483184ea1d6bd83a31a020b",
+      "debugger_sha256": "b5b72172ed24a549ce026b6909ff51310474aebd3cbc87ad31f7becd1553f1bf",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    },
+    {
+      "frame": 1,
+      "publication_tstate": 44814185,
+      "page": 23,
+      "nonce_exact": true,
+      "screen_sha256": "7e40ced9f2ebfdf8fd75eb44d0aa38b7095750b6b0680788237e04a9d779a813",
+      "trace_sha256": "2368a4ef7c284be9df7c228ddd5d2698eabf7931e02838a7cd9f0d09c01e4941",
+      "debugger_sha256": "ce0b2fbe1a13270c3f91e78d9e8840ff5e6620d9840edaa3b26192761477338b",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    },
+    {
+      "frame": 63,
+      "publication_tstate": 71191969,
+      "page": 17,
+      "nonce_exact": true,
+      "screen_sha256": "e8d01cc75ab49d7da9c455883ea62c005a3ba75963ef703339e42b1355a493ad",
+      "trace_sha256": "5ae91c7398a71238cd4efc019e98dbd31ffd6497488f9258103b10e80b093a87",
+      "debugger_sha256": "d3127661812f831152b32d53f752c3de666644a29b1b5902994d88ffa95cd314",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    },
+    {
+      "frame": 64,
+      "publication_tstate": 71617412,
+      "page": 25,
+      "nonce_exact": true,
+      "screen_sha256": "74f107d19f63b4fcda681648bd1e46d11b08a60862dea8202e69c0726fd116eb",
+      "trace_sha256": "a254f20ad8f8a1afc9903f106c455f2b25471ce24b9fc5ba5d3c82d6f37fe889",
+      "debugger_sha256": "1fd44e282b4728f1b0204a9c6543fea0341f838a5805407237dd86df98a1c7d0",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    },
+    {
+      "frame": 128,
+      "publication_tstate": 102604207,
+      "page": 25,
+      "nonce_exact": true,
+      "screen_sha256": "dedbce6e540b03bf23d6966993fc161a6ccc17e796a8e46536ccbf5000845d22",
+      "trace_sha256": "5e4ba4acfb3c33244bf661d287dac7d3eb27cc02d93c294fe84b5300e354e4e7",
+      "debugger_sha256": "2c569cb49437470b38def7ddade11d512eca9adbcae941748eb837d0c654db6f",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    },
+    {
+      "frame": 191,
+      "publication_tstate": 132527378,
+      "page": 23,
+      "nonce_exact": true,
+      "screen_sha256": "03e2198aec4ebb88416e59b4ba2f9500f61920c88c27608d5a22e033ce7fe487",
+      "trace_sha256": "9c68dc6a84d9bd74e4fd66e73e8d69b228ab5ed0f1714e6fc57b321daedf67f5",
+      "debugger_sha256": "360849e803bb7a3d14260448879aa8d0928b02d3424a2043f58d735fdae480b5",
+      "exit_code": 77,
+      "compared_bytes": 6912,
+      "mismatches": 0
+    }
+  ],
+  "evidence": [
+    {
+      "file": "metadata.json.gz",
+      "sha256": "bd313369b7eb1bfc6a09cf27a0087ae1016ee51b2b5beb7533f39e92add35e11",
+      "raw_sha256": "7a48e4f6cdfc2e300092c38a09ed92c8a4f1837099da6e3319d0bbea8f25bd27"
+    },
+    {
+      "file": "build.json.gz",
+      "sha256": "deddfc32a32ba13d8f6b7a744b45337c13f83cacb1dd984f4ff61c72e3c261e7",
+      "raw_sha256": "0e9bf6fc7c2a2af4ae0b4fc6a196a47c6f0c5294dc9254895f22973ac810cd26"
+    },
+    {
+      "file": "cpu.json.gz",
+      "sha256": "c6cd4b1df14a422cded61c786f8fdff16d8f3b71e278492cb5cea0b6f305acf4",
+      "raw_sha256": "d8fb80c8b290f4156d65e0e88d7a605572eed220d03f918ca79defefc39469a7"
+    },
+    {
+      "file": "timing.json.gz",
+      "sha256": "4a1753be3b4c26c687109809ff20e312d338077d863f16ae38f064a56d2a8827",
+      "raw_sha256": "e634492b24b2a9930a4262859b4f35d179f1c3d44a8d7ee362c202796449b473"
+    },
+    {
+      "file": "timing.trace.txt.gz",
+      "sha256": "ff1542a03329d511c8ee6a3abee6aa44a14efe02074968c1a1a016b993857ceb",
+      "raw_sha256": "98a2b9b197e19d0439df3e7c4d785f2f67e4e2be201023eac9e18c81b480e557"
+    },
+    {
+      "file": "timing.debugger.txt.gz",
+      "sha256": "bf0a6392ac8ba9ce1d29fde340eceddbd603a24ce93329ebe94e6f246ea23bf9",
+      "raw_sha256": "d565a9b4e5cb29ed96213e1cd3d489aaf2991fd5e5720dee2879acd766b4a8cb"
+    },
+    {
+      "file": "captures.json.gz",
+      "sha256": "c161f9213586d3d99a339f14f5d3ef954ba0d342380da55438a8625226cacc52",
+      "raw_sha256": "23b657d13ea820c82950a3f926a03f5db366d50ded63850b19da10d9e0e95e3a"
+    },
+    {
+      "file": "frame-0.debugger.txt.gz",
+      "sha256": "f28afcd0fab2fc13707e54116d0070c45d62a9c1e5d2bf2d074565ebc9e14ae9",
+      "raw_sha256": "b5b72172ed24a549ce026b6909ff51310474aebd3cbc87ad31f7becd1553f1bf"
+    },
+    {
+      "file": "frame-0.scr.gz",
+      "sha256": "fc184479c41531eee9f0e37a81866ef8546da9956d8b925174138f62e249a757",
+      "raw_sha256": "60e255c52179dfcb6e3aeb40e7b113d918f1cb8c3e6cb75106f99f60edb743c6"
+    },
+    {
+      "file": "frame-0.trace.txt.gz",
+      "sha256": "036005a362e68b13caca7ca36c3752aade6fb8a71270bf2a05aa250beff1e34d",
+      "raw_sha256": "001a4e6561d10a5e5103b04e690a4b8e542166736483184ea1d6bd83a31a020b"
+    },
+    {
+      "file": "frame-1.debugger.txt.gz",
+      "sha256": "76e0e249c993dfa70a205b19dd541cb2703bc52aea3c8a8e9296ec23e7a2eef5",
+      "raw_sha256": "ce0b2fbe1a13270c3f91e78d9e8840ff5e6620d9840edaa3b26192761477338b"
+    },
+    {
+      "file": "frame-1.scr.gz",
+      "sha256": "0b8b987407790471be5a23aae66b39d94b2666d59a33808c1645df612c799408",
+      "raw_sha256": "7e40ced9f2ebfdf8fd75eb44d0aa38b7095750b6b0680788237e04a9d779a813"
+    },
+    {
+      "file": "frame-1.trace.txt.gz",
+      "sha256": "a605d9836350774a17c93b742c21a2fca38651a55649cac24bb191cf901e96ac",
+      "raw_sha256": "2368a4ef7c284be9df7c228ddd5d2698eabf7931e02838a7cd9f0d09c01e4941"
+    },
+    {
+      "file": "frame-128.debugger.txt.gz",
+      "sha256": "ca4b143430269fc9fc18c63d6350e6ecf7dcc2905872d734e9cd380155609f14",
+      "raw_sha256": "2c569cb49437470b38def7ddade11d512eca9adbcae941748eb837d0c654db6f"
+    },
+    {
+      "file": "frame-128.scr.gz",
+      "sha256": "253c8c5ec62dea7c2044fb1e08bf79c66305d0d37b864b5284d0126e74918e95",
+      "raw_sha256": "dedbce6e540b03bf23d6966993fc161a6ccc17e796a8e46536ccbf5000845d22"
+    },
+    {
+      "file": "frame-128.trace.txt.gz",
+      "sha256": "d0a2d5b8f8b37e7ad298e3b2f6f02a14e3247087a3defda646c5ef3e138d1a94",
+      "raw_sha256": "5e4ba4acfb3c33244bf661d287dac7d3eb27cc02d93c294fe84b5300e354e4e7"
+    },
+    {
+      "file": "frame-191.debugger.txt.gz",
+      "sha256": "1b33ab1a11e151d48df6f7aea346093a7eedf11e2ba6022d611c101967223ce1",
+      "raw_sha256": "360849e803bb7a3d14260448879aa8d0928b02d3424a2043f58d735fdae480b5"
+    },
+    {
+      "file": "frame-191.scr.gz",
+      "sha256": "a12c78206fcf232e98d784cf3ebc2360fca575924f14206c1bb1988870a40a29",
+      "raw_sha256": "03e2198aec4ebb88416e59b4ba2f9500f61920c88c27608d5a22e033ce7fe487"
+    },
+    {
+      "file": "frame-191.trace.txt.gz",
+      "sha256": "7155be95710cd9b60cc68bacb4319e1012a89d29c2c394c47385236696714f3a",
+      "raw_sha256": "9c68dc6a84d9bd74e4fd66e73e8d69b228ab5ed0f1714e6fc57b321daedf67f5"
+    },
+    {
+      "file": "frame-63.debugger.txt.gz",
+      "sha256": "72f5492f0d0dcad943500fe2de250316d146d22fc63e3f0ae7d6856ea20e32c1",
+      "raw_sha256": "d3127661812f831152b32d53f752c3de666644a29b1b5902994d88ffa95cd314"
+    },
+    {
+      "file": "frame-63.scr.gz",
+      "sha256": "12fad3138613d89d4ecaeb589cc45160aa1f78aefe5dd4a2825152d123b43459",
+      "raw_sha256": "e8d01cc75ab49d7da9c455883ea62c005a3ba75963ef703339e42b1355a493ad"
+    },
+    {
+      "file": "frame-63.trace.txt.gz",
+      "sha256": "91430ac60954d38b0bd64b063b4a544defb486a46fb89f483c1f2855129c4432",
+      "raw_sha256": "5ae91c7398a71238cd4efc019e98dbd31ffd6497488f9258103b10e80b093a87"
+    },
+    {
+      "file": "frame-64.debugger.txt.gz",
+      "sha256": "9b5e88ac2edb275c0a3ce8e84eb1698dc5157a300bdb0d2a2944b7ddfc80e8d7",
+      "raw_sha256": "1fd44e282b4728f1b0204a9c6543fea0341f838a5805407237dd86df98a1c7d0"
+    },
+    {
+      "file": "frame-64.scr.gz",
+      "sha256": "984da01164207ca45a4bf8d6fca49a2ec145d491d768bb6e1f6e4b8877cea60b",
+      "raw_sha256": "74f107d19f63b4fcda681648bd1e46d11b08a60862dea8202e69c0726fd116eb"
+    },
+    {
+      "file": "frame-64.trace.txt.gz",
+      "sha256": "d22cff013935ae0326385fa45eb62551d5f2cf8ffee790f0a43a7fb33f2a88dd",
+      "raw_sha256": "a254f20ad8f8a1afc9903f106c455f2b25471ce24b9fc5ba5d3c82d6f37fe889"
+    }
+  ],
+  "source_sha256_lf": {
+    "borrowed_literals.py": "c3ba9a5cc4552c1829dda892b78aa84e9a50af70e91cc7f976d6669f8fd997e8",
+    "verify_borrowed_literals.py": "34bb9df7d384889607a93b5244cbbccca77e7ed2575dd2ee3679c07f6cacb937",
+    "build_row_lzsa.py": "d915fda319dd5e81271a914fc65979cb46c37800738561cb5cbe886159a260e4",
+    "summarize_borrowed_literals.py": "f3bfed08f18a28aeba76f4f6c9dd1923f2065a60e3342dcd9d393276b0891ca8"
+  },
+  "decision": "Adopt as opt-in host-validated fragment-only transport. Keep general player support; both timing gates still fail."
+}
