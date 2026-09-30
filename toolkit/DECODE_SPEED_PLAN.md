@@ -6,6 +6,16 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Requested modern-codec assessment (2026-09-30):** same 21 blocks/192 frames,
+294 exact PC round trips. LZMA1 extreme lc=0 reaches 133084 bytes (-10.66%
+versus ZX0), Brotli-11 132043 (-11.36%), Zstd-19 137607 (-7.63%). Weak LZMA
+and bzip2 save only 1.26%/1.47%; LZ4-HC grows 23.14%. These are host storage
+results, with 0 T change to the native player. Standard bzip2 does not fit
+RAM; other new decoders require native cost, memory and overlap proofs.
+LZMA lc=0 is the most interesting future small cost probe, not an accepted
+replacement. Preserve the packet-copy work priority and avoid repeating the
+codec sweep. [Assessment and source-backed constraints](MODERN_CODEC_ASSESSMENT.md).
+
 **Integrated five-level transport (2026-09-30):** on the exact 192-frame
 row-dictionary montage, optional fragments reduced frame work to 41965760 T.
 Replacing only its outer Fast ZX0 with resumable LZSA2 now reduces decoder

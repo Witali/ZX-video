@@ -73,6 +73,14 @@ Read [ROW_LZSA_TRANSPORT.md](toolkit/ROW_LZSA_TRANSPORT.md), its JSON and
 archived evidence. Reuse [ROW_FRAGMENT_SPEED.md](toolkit/ROW_FRAGMENT_SPEED.md)
 for unchanged frame CPU and FAP3 data. Do not repeat codec/allowance sweeps.
 
+The subsequent user-requested modern-codec assessment reuses all 21 blocks:
+LZMA1 extreme lc=0 saves 10.66% versus ZX0, Brotli-11 11.36%, Zstd-19 7.63%.
+bzip2 saves only 1.47% and its standard decoder exceeds RAM; LZ4-HC grows
+23.14%. All 294 new PC round trips pass; no new native performance claim.
+See [MODERN_CODEC_ASSESSMENT.md](toolkit/MODERN_CODEC_ASSESSMENT.md).
+Defer heavy-decoder integration pending a bounded Z80 cost/memory probe;
+retain packet-copy reduction as the next implementation task.
+
 ## Next finite deliverable: avoid decoded packet copies
 
 Transfer remains the largest elapsed stage (39637293 T); packet starts find

@@ -21,6 +21,33 @@ achieved; video/AY timing still fails. It has not replaced the root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-09-30 — compare requested LZMA, bzip2 and modern outer codecs
+
+- **Objective/input:** user-requested codec comparison after `11778ed`,
+  allowing expensive PC encoding. Reuse the exact 192-frame video-only
+  stream (323940 bytes), all 21 existing blocks and fixed boundaries.
+- **Parameters:** LZMA1 presets 0/9-extreme with lc=3 and lc=0, LZMA2
+  extreme lc=0; bzip2 1/9, DEFLATE 1/9, LZ4 default/HC12, Zstd 1/19,
+  Brotli 1/11. Limit history/window to 16 KiB where configurable.
+- **Measured:** ZX0 baseline 148971 bytes. LZMA1 fast 147096 (-1.26%),
+  extreme lc=0 133084 (-10.66%); bzip2 both levels 146779 (-1.47%);
+  DEFLATE-9 144862 (-2.76%), LZ4-HC12 183448 (+23.14%), Zstd-19
+  137607 (-7.63%), Brotli-11 132043 (-11.36%). Include all block headers;
+  exclude unimplemented decoder/bootstrap overhead.
+- **Coverage:** 294 new exact PC block round trips, input/output hashes and
+  archived candidates. Native player remains unchanged (0 T delta); no
+  new TRD, Z80 speed, overlap proof, memory map or cadence result. PC decode
+  times are not Z80 estimates. Official decoder sources inform RAM analysis.
+- **Decision:** defer heavy-decoder integration. LZMA lc=0 merits a future
+  bounded native cost probe (5504-byte SDK probability array plus history
+  and other state), but 32-bit arithmetic may consume disk savings. Reject
+  bzip2's standard 350-KB minimum allocation and tiny saving, and LZ4's size
+  increase, for this player. Continue the known packet-copy bottleneck first.
+- **Evidence/reproduce:** [assessment](toolkit/MODERN_CODEC_ASSESSMENT.md),
+  [script](toolkit/probe_modern_codecs.py),
+  [all results](toolkit/modern_codec_probe.json),
+  [candidate streams](toolkit/modern_codec_evidence).
+
 ## 2026-09-30 — measure faster LZSA2 transport for five-level video
 
 - **Objective/baseline:** reduce transport cost after `c6b8475` on its same
