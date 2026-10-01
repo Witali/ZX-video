@@ -2,12 +2,27 @@
 
 The user rejected the YM2149 speech test as unintelligible and requested a
 different path: **one-bit PDM on the beeper, at least 40 kHz**. This subproject
-stores the original speech as a noise-shaped bitstream and writes ULA port
-FE bit 4 directly. It does not fit the voice to tone generators.
+supports both a precomputed noise-shaped bitstream and direct conversion of
+unsigned PCM8 to PDM in Z80 registers. Both write ULA port FE bit 4 directly.
+They do not fit the voice to tone generators.
 
-## Current test: 8 kHz / 8-bit PCM, faster PDM, continuous repeat
+## Current test: convert PCM to PDM while playing
 
-The latest user request converts the demonstration to **8000 Hz, 8-bit mono
+[Live conversion TRD](../ZX-audiobook-PDM-live-test.trd) stores the actual
+8 kHz /8-bit mono PCM bytes. Z80 converts them while playing, with no PDM
+buffer or lookup table. The excerpt loops after the initial disk load.
+See [method, timing, comparison and reproduction](PCM_LIVE.md),
+[measured listening WAV](pcm-live-preview/beeper-preview.wav) and
+[complete verification](pcm-live-preview/verification.json).
+
+The previous disks already contained packed PDM, eight output bits per
+byte; they did not expand it into a separate RAM buffer after loading.
+The new disk changes the stored representation to PCM and moves modulation
+from the host computer into the Spectrum playback loop.
+
+## Previous test: 8 kHz / 8-bit source, precomputed PDM, continuous repeat
+
+The preceding user request converted the demonstration to **8000 Hz, 8-bit mono
 PCM**, raises the PDM rate, saves a TRD and repeats playback continuously.
 
 - [Looping test TRD](../ZX-audiobook-PDM-8k8-test.trd).

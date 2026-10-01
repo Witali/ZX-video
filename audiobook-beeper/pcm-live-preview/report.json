@@ -1,0 +1,178 @@
+{
+  "complete": true,
+  "preview_only": true,
+  "date": "2026-10-02",
+  "baseline_commit": "55c1a8c",
+  "source_pcm_wav": "C:\\Work\\ZX-video\\audiobook-beeper\\preview-8k8-loop\\pcm8k-preview.wav",
+  "source_pcm_wav_sha256": "66c59f685f002273787e556d77a372c026c6e52607ddbc666cdbcd26858b489c",
+  "source_pcm_sha256": "e54102705d441b1618d62e25099852cabc51f955475726f6d34fc2ee5bca390e",
+  "original_audiobook_sha256": "a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779",
+  "source_start_seconds": 60,
+  "source_sample_rate_hz": 8000,
+  "bits_per_pcm_sample": 8,
+  "channels": 1,
+  "original_pcm_samples": 82865,
+  "silence_padding_samples": 79,
+  "stored_pcm_bytes": 82944,
+  "old_pdm_bytes": 98304,
+  "saved_payload_bytes": 15360,
+  "disk_storage": "raw unsigned PCM8 in PCM0..PCM5; gzip only archives evidence on the host",
+  "precomputed_pdm_on_disk": false,
+  "pdm_buffer_bytes": 0,
+  "pdm_lookup_table_bytes": 0,
+  "runtime_disk_reads": 0,
+  "native_pdm_conversion": true,
+  "repeat": true,
+  "oversample": 10,
+  "quarter_nops": 0,
+  "steady": true,
+  "modulator": {
+    "order": 1,
+    "accumulator_bits": 8,
+    "initial_accumulator": 128,
+    "initial_pipeline": 0,
+    "pipeline_delay_bits": 3,
+    "recurrence": "sum=error+PCM; carry=sum>>8; error=sum&255; E=((E>>1)|(carry<<7))&0xF7; output=(E>>4)&1"
+  },
+  "timing": {
+    "complete": true,
+    "cold_boot": true,
+    "cycles_verified": 2,
+    "bits_verified": 1658881,
+    "every_pdm_bit_exact": true,
+    "all_pcm_values_exact": true,
+    "bank_sequence": [
+      0,
+      4,
+      6,
+      1,
+      3,
+      7,
+      0,
+      4,
+      6,
+      1,
+      3,
+      7,
+      0
+    ],
+    "startup_sector_reads": 324,
+    "runtime_disk_reads": 0,
+    "average_pdm_rate_hz": 78783.41116253009,
+    "average_pcm_rate_hz": 7878.341116253009,
+    "pcm_clock_error_percent": -1.5207360468373898,
+    "minimum_instantaneous_pdm_rate_hz": 59115.0,
+    "maximum_instantaneous_pdm_rate_hz": 84450.0,
+    "interval_histogram_tstates": {
+      "42": 11,
+      "43": 108210,
+      "44": 1089240,
+      "45": 1915,
+      "46": 47296,
+      "47": 41725,
+      "48": 285499,
+      "49": 79253,
+      "50": 55,
+      "51": 4715,
+      "52": 209,
+      "53": 740,
+      "58": 10,
+      "59": 1,
+      "60": 1
+    },
+    "pcm_interval_min_tstates": 439,
+    "pcm_interval_max_tstates": 478,
+    "loop_hold_tstates": [
+      49,
+      49
+    ],
+    "cycle_durations_seconds": [
+      10.528162902816543,
+      10.52804646310863
+    ],
+    "first_out_phase_tstates": 1059,
+    "native_tstates_per_cycle": 36579024,
+    "additional_ula_tstates": 1526221,
+    "trd_sha256": "12163ecf5f206ac60e685cb96269cf7d5d46e458968f86a6517dca6d6cae8793",
+    "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+    "physical_hardware_tested": false
+  },
+  "deterministic_timing": {
+    "conversion_kernel_tstates": 32,
+    "ordinary_four_sample_tstates": 1764,
+    "additional_page_tstates": 2,
+    "additional_bank_tstates": 12,
+    "maximum_native_hold_tstates": 58,
+    "baseline_precomputed_kernel_tstates": 30,
+    "kernel_delta_tstates": 2,
+    "baseline_precomputed_slot_tstates": 46,
+    "ordinary_average_slot_tstates": 44.1,
+    "excludes": "ULA, ROM and disk; measured separately"
+  },
+  "duration_seconds": 10.528162902816543,
+  "metrics": {
+    "waveform_correlation": 0.9521158532310238,
+    "reconstruction_snr_db": 9.869772654960796,
+    "scope": "same actual-timing PCM holds, pipeline aligned, same 4.5 kHz filters; not intelligibility"
+  },
+  "preview_common_gain": 0.5843535378334758,
+  "preview_scope": "first loop actual port holds; 192 kHz integration, 44100 Hz/16-bit mono WAV; not physical speaker",
+  "limits": [
+    "first-order modulator, unlike the previous host second-order modulator",
+    "PCM is held between updates; no band-limited interpolation in Z80",
+    "fixed software clock; actual PCM rate and ULA jitter are measured, not assumed to be exactly 8 kHz",
+    "paging alias targets original Spectrum 128/+2, not +2A/+3"
+  ],
+  "producer_sources_sha256_lf": {
+    "pcm_player.py": "ae9a472204c21339675b81013c9c01d865c2f5731abfbd51ba6317a6475bd07d",
+    "verify_pcm.py": "355f0b00453095607b12de64bdf0b94c72cdf61686a0a69abad0419a00e0cb71",
+    "build_pcm.py": "6fc57322073b483e92ca78707b6526584af6a91d9242deb8e46d38de01400681",
+    "build_pdm.py": "6d9fd77e2bd2f9eaf45f8c6c0ef502ed60c76520b9e90dbf7cadf9930a4cc018"
+  },
+  "artifacts": {
+    "audiobook-preview.trd": {
+      "bytes": 655360,
+      "sha256": "12163ecf5f206ac60e685cb96269cf7d5d46e458968f86a6517dca6d6cae8793"
+    },
+    "beeper-preview.wav": {
+      "bytes": 928628,
+      "sha256": "54de2012efbdeedaa3d7eb7a30e796480d8a4ef2f6415f90ee5aff1ce07e4768"
+    },
+    "original-preview.wav": {
+      "bytes": 928628,
+      "sha256": "9ec6bff961a9a13d471e54f83aa0d3393881cac095a114b1381f666878ea6e4f"
+    },
+    "output-times.u32.gz": {
+      "bytes": 2660926,
+      "sha256": "85b2101d09369dcd6ee6fa78a979b9b14d25e5fc09116b5542c55affc66ccaaa"
+    },
+    "pcm8k-preview.wav": {
+      "bytes": 82909,
+      "sha256": "66c59f685f002273787e556d77a372c026c6e52607ddbc666cdbcd26858b489c"
+    },
+    "player.json": {
+      "bytes": 19121,
+      "sha256": "a245ae4b51dfa6392eb1f6c2cc9f53e8cab118a5408324754fbdc5a28dc8011e"
+    },
+    "soundtrack.pcm.gz": {
+      "bytes": 43696,
+      "sha256": "dbbfdf059d629b85ee88e8b478f85fc091539960dc3ddb66601c08a5645cb885"
+    },
+    "verification-work/fuse-debugger.txt": {
+      "bytes": 1126,
+      "sha256": "aff80626864a4320298b173610bbd724792f34b8905d518e0d595fec78d6c9a8"
+    },
+    "verification-work/fuse-trace.txt.gz": {
+      "bytes": 6152544,
+      "sha256": "43319d4dbb56392455f3e4a4cbebf62b9212c799bf59f94b439a388b07e4a0fe"
+    },
+    "verification.json": {
+      "bytes": 2404,
+      "sha256": "95843532ada166112fac5c605383c7d5f7e4609ddb1c1e8e0fa86034529796f1"
+    },
+    "wideband-preview.wav": {
+      "bytes": 928628,
+      "sha256": "6b300185ecb3190653d46ab2611d63c9bf1d394815b19edebd24c62bcf44f055"
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "complete": true,
+  "native": {
+    "complete": true,
+    "cycles_verified": 2,
+    "bits_verified": 1658881,
+    "all_pcm_values_exact": true,
+    "every_pdm_bit_exact": true,
+    "accumulator_exact": true,
+    "stack_and_code_intact": true,
+    "bank_sequence": [
+      0,
+      4,
+      6,
+      1,
+      3,
+      7,
+      0,
+      4,
+      6,
+      1,
+      3,
+      7,
+      0
+    ],
+    "interval_histogram_tstates": {
+      "42": 12,
+      "43": 124416,
+      "44": 1450848,
+      "46": 42120,
+      "49": 41472,
+      "58": 12
+    },
+    "cycle_tstates": 36579024,
+    "pdm_buffer_bytes": 0,
+    "scope": "independent Z80; integer/FIFO reference; no ULA or ROM/disk latency"
+  },
+  "fuse": {
+    "complete": true,
+    "cold_boot": true,
+    "cycles_verified": 2,
+    "bits_verified": 1658881,
+    "every_pdm_bit_exact": true,
+    "all_pcm_values_exact": true,
+    "bank_sequence": [
+      0,
+      4,
+      6,
+      1,
+      3,
+      7,
+      0,
+      4,
+      6,
+      1,
+      3,
+      7,
+      0
+    ],
+    "startup_sector_reads": 324,
+    "runtime_disk_reads": 0,
+    "average_pdm_rate_hz": 78783.41116253009,
+    "average_pcm_rate_hz": 7878.341116253009,
+    "pcm_clock_error_percent": -1.5207360468373898,
+    "minimum_instantaneous_pdm_rate_hz": 59115.0,
+    "maximum_instantaneous_pdm_rate_hz": 84450.0,
+    "interval_histogram_tstates": {
+      "42": 11,
+      "43": 108210,
+      "44": 1089240,
+      "45": 1915,
+      "46": 47296,
+      "47": 41725,
+      "48": 285499,
+      "49": 79253,
+      "50": 55,
+      "51": 4715,
+      "52": 209,
+      "53": 740,
+      "58": 10,
+      "59": 1,
+      "60": 1
+    },
+    "pcm_interval_min_tstates": 439,
+    "pcm_interval_max_tstates": 478,
+    "loop_hold_tstates": [
+      49,
+      49
+    ],
+    "cycle_durations_seconds": [
+      10.528162902816543,
+      10.52804646310863
+    ],
+    "first_out_phase_tstates": 1059,
+    "native_tstates_per_cycle": 36579024,
+    "additional_ula_tstates": 1526221,
+    "trd_sha256": "12163ecf5f206ac60e685cb96269cf7d5d46e458968f86a6517dca6d6cae8793",
+    "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+    "physical_hardware_tested": false
+  },
+  "verification_sources_sha256_lf": {
+    "verify_pcm.py": "355f0b00453095607b12de64bdf0b94c72cdf61686a0a69abad0419a00e0cb71",
+    "pcm_player.py": "ae9a472204c21339675b81013c9c01d865c2f5731abfbd51ba6317a6475bd07d"
+  }
+}

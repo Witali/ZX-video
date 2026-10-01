@@ -5,6 +5,72 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: convert resident PCM8 to beeper PDM directly on the Z80
+
+- User scope: return to one-bit sound, remove the proposed expanded PDM RAM
+  stage and minimize live conversion CPU cost. Baseline `55c1a8c`; reuse the
+  exact 82865-byte 8000 Hz /8-bit mono passage from the looping 8k8 test,
+  beginning at source second 60. Clarification: the older player already
+  loaded packed PDM and shifted it directly; it had no decompressed buffer.
+  The new player stores raw PCM and performs modulation during playback.
+- Implement a branchless first-order integrator in A and a three-slot output
+  pipeline in E. `ADD A,D` 4 + `RR E` 8 + `RES 3,E` 8 + `OUT(C),E` 12 gives
+  **32 T/pulse**, versus the previous precomputed kernel's 30 T (**+2 T**).
+  No amplitude LUT or PDM RAM buffer. Unroll four samples and distribute
+  paging/pointer work across output slots. Use original 128/+2 paging aliases
+  10FD..17FD, explicitly excluding +2A/+3. [Instruction and RAM contract](audiobook-beeper/PCM_LIVE.md).
+- First complete candidate: 13 pulses/sample, four NOPs per four samples,
+  **1744 T/4 samples**, 14 extra T/page and 36 extra T/bank. Deterministic
+  cycle 36168336 T. Cold Fuse verifies 2156545 exact outputs over two loops
+  and the first bit of loop 3, every PCM value, all banks and both wraps.
+  Actual PDM **104428.484 Hz**, minimum 56300 Hz; PCM 8032.960 Hz (+0.4120%).
+  SNR **6.5376 dB**, correlation 0.904615: unequal holds degrade reconstruction.
+  Preserve its disk, WAVs, full trace and compressed exact producers in
+  [fast experiment](audiobook-beeper/experiments/pcm-live-fast/report.json).
+- One bounded correction follows the measured failure. The same fast bits
+  give SNR 12.7522 dB with ideal uniform holds versus 6.7833 with native CPU
+  timing and 6.5376 with real Fuse holds. These ideal/native schedules are
+  diagnostics, not hardware evidence. Select 10 pulses/sample and mostly
+  44-T holds. Kernel stays 32 T, with 12-T register/flag-neutral padding;
+  ordinary **1764 T/4 samples =44.1 T/pulse**, versus old 46 T (-1.9 average).
+  Page/bank overhead becomes 2/12 T; deterministic loop **36579024 T**.
+  [Reproducing comparison](audiobook-beeper/compare_pcm.py) and
+  [saved result](audiobook-beeper/pcm-comparison.json).
+- The first steady verification attempt was rejected by its strict count
+  gate: Fuse completes the instruction at an exit breakpoint, so stopping
+  on OUT recorded 1658882 writes instead of 1658881. Preserve the unaccepted
+  trace/script/disk and reason in
+  [stop experiment](audiobook-beeper/experiments/pcm-live-stop-extra/interrupted.json).
+  Move the stop to a non-I/O instruction and rerun the full test. No player
+  byte changed for this harness fix; no partial run is accepted.
+- Final verification: ten beeper tests pass, including all 256 PCM values,
+  all six full banks, a partial final bank, exact native timing, accumulator,
+  stack/code guards and the preserved fast trim mode. Full cold Fuse checks
+  **1658881 exact outputs**, two loops and first pulse of loop 3, all input
+  bytes and bank switches. **324 startup reads /zero runtime reads**; no
+  reload, mute or accumulator reset at either wrap. Actual average PDM
+  **78783.411 Hz**, minimum 59115 Hz, maximum 84450 Hz; holds 42..60 T, both wrap
+  holds 49 T. Durations 10.5281629/10.5280465 s. Actual PCM 7878.341 Hz is
+  **-1.5207%** versus the 8 kHz source; report the slight speed/pitch change.
+  ULA adds 1526221 T over two loops, kept separate from deterministic CPU
+  counts and startup ROM/disk. [Full report](audiobook-beeper/pcm-live-preview/report.json)
+  and [verification](audiobook-beeper/pcm-live-preview/verification.json).
+- On the same PCM bytes, schedule-aligned conversion SNR improves
+  **6.5376 ->9.8698 dB**, correlation **0.904615 ->0.952116**. The clock and
+  oversampling ratio differ; these proxies are not listener acceptance.
+  First-order live conversion lacks the prior host encoder's second-order
+  area feedback, dither and band-limited interpolation. Do not claim that
+  moving it to Z80 improves quality over the older precomputed-PDM disk.
+- Decision: deliver the steadier looping
+  [ZX-audiobook-PDM-live-test.trd](ZX-audiobook-PDM-live-test.trd) in Git LFS,
+  keeping the faster archive for comparison. Image 655360 bytes, 368 occupied
+  sectors versus 428; raw PCM 82944 bytes (79 midpoint padding samples), down
+  15360 bytes /15.625% versus 98304 precomputed PDM bytes. SHA-256
+  `12163ecf5f206ac60e685cb96269cf7d5d46e458968f86a6517dca6d6cae8793`.
+  Independent boot verified; resident excerpt only, no physical hardware
+  recording or full-book/disk-streaming claim. Existing movie/AY/PDM disks
+  remain unchanged. [Delivery integrity](audiobook-beeper/delivery-pcm-live.json).
+
 ## 2026-10-02: preserve vocal pitch in a new AY50 speech candidate
 
 - User scope: revisit speech on AY/YM2149 after recognizing the rabbit's

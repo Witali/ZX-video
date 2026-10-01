@@ -1,0 +1,186 @@
+{
+  "complete": true,
+  "preview_only": true,
+  "date": "2026-10-02",
+  "baseline_commit": "55c1a8c",
+  "source_pcm_wav": "C:\\Work\\ZX-video\\audiobook-beeper\\preview-8k8-loop\\pcm8k-preview.wav",
+  "source_pcm_wav_sha256": "66c59f685f002273787e556d77a372c026c6e52607ddbc666cdbcd26858b489c",
+  "source_pcm_sha256": "e54102705d441b1618d62e25099852cabc51f955475726f6d34fc2ee5bca390e",
+  "original_audiobook_sha256": "a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779",
+  "source_start_seconds": 60,
+  "source_sample_rate_hz": 8000,
+  "bits_per_pcm_sample": 8,
+  "channels": 1,
+  "original_pcm_samples": 82865,
+  "silence_padding_samples": 79,
+  "stored_pcm_bytes": 82944,
+  "old_pdm_bytes": 98304,
+  "saved_payload_bytes": 15360,
+  "disk_storage": "raw unsigned PCM8 in PCM0..PCM5; gzip only archives evidence on the host",
+  "precomputed_pdm_on_disk": false,
+  "pdm_buffer_bytes": 0,
+  "pdm_lookup_table_bytes": 0,
+  "runtime_disk_reads": 0,
+  "native_pdm_conversion": true,
+  "repeat": true,
+  "oversample": 13,
+  "quarter_nops": 4,
+  "modulator": {
+    "order": 1,
+    "accumulator_bits": 8,
+    "initial_accumulator": 128,
+    "initial_pipeline": 0,
+    "pipeline_delay_bits": 3,
+    "recurrence": "sum=error+PCM; carry=sum>>8; error=sum&255; E=((E>>1)|(carry<<7))&0xF7; output=(E>>4)&1"
+  },
+  "timing": {
+    "complete": true,
+    "cold_boot": true,
+    "cycles_verified": 2,
+    "bits_verified": 2156545,
+    "every_pdm_bit_exact": true,
+    "all_pcm_values_exact": true,
+    "bank_sequence": [
+      0,
+      4,
+      6,
+      1,
+      3,
+      7,
+      0,
+      4,
+      6,
+      1,
+      3,
+      7,
+      0
+    ],
+    "startup_sector_reads": 324,
+    "runtime_disk_reads": 0,
+    "average_pdm_rate_hz": 104428.484025753,
+    "average_pcm_rate_hz": 8032.960309673308,
+    "pcm_clock_error_percent": 0.4120038709163554,
+    "minimum_instantaneous_pdm_rate_hz": 56300.0,
+    "maximum_instantaneous_pdm_rate_hz": 110840.625,
+    "interval_histogram_tstates": {
+      "32": 1711749,
+      "33": 23010,
+      "34": 9666,
+      "35": 30352,
+      "36": 109195,
+      "37": 15087,
+      "38": 7981,
+      "42": 8,
+      "43": 95667,
+      "44": 1034,
+      "45": 12,
+      "46": 31037,
+      "47": 13478,
+      "48": 52716,
+      "49": 36220,
+      "50": 10,
+      "51": 8651,
+      "52": 5804,
+      "53": 4797,
+      "54": 52,
+      "55": 6,
+      "58": 10,
+      "60": 1,
+      "63": 1
+    },
+    "pcm_interval_min_tstates": 427,
+    "pcm_interval_max_tstates": 518,
+    "loop_hold_tstates": [
+      49,
+      49
+    ],
+    "cycle_durations_seconds": [
+      10.325496348924412,
+      10.32542107192196
+    ],
+    "first_out_phase_tstates": 1057,
+    "native_tstates_per_cycle": 36168336,
+    "additional_ula_tstates": 910067,
+    "trd_sha256": "5be8fbedf3dc76d1492bf50378276a88e10ea250685ab08682f2eb28c51fb390",
+    "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+    "physical_hardware_tested": false
+  },
+  "deterministic_timing": {
+    "conversion_kernel_tstates": 32,
+    "ordinary_four_sample_tstates": 1744,
+    "additional_page_tstates": 14,
+    "additional_bank_tstates": 36,
+    "maximum_native_hold_tstates": 58,
+    "baseline_precomputed_kernel_tstates": 30,
+    "kernel_delta_tstates": 2,
+    "baseline_precomputed_slot_tstates": 46,
+    "ordinary_average_slot_tstates": 33.53846153846154,
+    "excludes": "ULA, ROM and disk; measured separately"
+  },
+  "duration_seconds": 10.325496348924412,
+  "metrics": {
+    "waveform_correlation": 0.9046154516116803,
+    "reconstruction_snr_db": 6.537635546060768,
+    "scope": "same actual-timing PCM holds, pipeline aligned, same 4.5 kHz filters; not intelligibility"
+  },
+  "preview_common_gain": 0.6661537140724876,
+  "preview_scope": "first loop actual port holds; 192 kHz integration, 44100 Hz/16-bit mono WAV; not physical speaker",
+  "limits": [
+    "first-order modulator, unlike the previous host second-order modulator",
+    "PCM is held between updates; no band-limited interpolation in Z80",
+    "fixed software clock; actual PCM rate and ULA jitter are measured, not assumed to be exactly 8 kHz",
+    "paging alias targets original Spectrum 128/+2, not +2A/+3"
+  ],
+  "producer_sources_sha256_lf": {
+    "pcm_player.py": "187dc91bbe0107de1ae9fcb1d0b8be8452bb336eb760ce42f1c8159bf6c53336",
+    "verify_pcm.py": "8575c3deec05f7cf78bf0f5259ec1c3e57a116cbf73af6382722fdf503cf92cd",
+    "build_pcm.py": "f7b38eb442c264283e004adf76edeb2df6d7e5c877dcd5277f503a6a7f295360",
+    "build_pdm.py": "6d9fd77e2bd2f9eaf45f8c6c0ef502ed60c76520b9e90dbf7cadf9930a4cc018"
+  },
+  "artifacts": {
+    "audiobook-preview.trd": {
+      "bytes": 655360,
+      "sha256": "5be8fbedf3dc76d1492bf50378276a88e10ea250685ab08682f2eb28c51fb390"
+    },
+    "beeper-preview.wav": {
+      "bytes": 910754,
+      "sha256": "734b796dd57550e66abbe332d76cdefc5bfdc1f124a7db8df838441159181d1e"
+    },
+    "original-preview.wav": {
+      "bytes": 910754,
+      "sha256": "9849cd21c69985e21cb8948c1de3bd0e591c0b7dfcc0c3563e93813c40314a42"
+    },
+    "output-times.u32.gz": {
+      "bytes": 3253171,
+      "sha256": "116d38b8fb323c1ed4d13c288d22e5dd120216a33819926245430c1da9a20371"
+    },
+    "pcm8k-preview.wav": {
+      "bytes": 82909,
+      "sha256": "66c59f685f002273787e556d77a372c026c6e52607ddbc666cdbcd26858b489c"
+    },
+    "player.json": {
+      "bytes": 23979,
+      "sha256": "91558d81e655c4e1dc682e78bd73e00f58e009fd2e9305f2ce046302cb6192f3"
+    },
+    "soundtrack.pcm.gz": {
+      "bytes": 43696,
+      "sha256": "dbbfdf059d629b85ee88e8b478f85fc091539960dc3ddb66601c08a5645cb885"
+    },
+    "verification-work/fuse-debugger.txt": {
+      "bytes": 1126,
+      "sha256": "189de531f1c19ca37de54b0779841a8d6ba364139499bf3f04591e53c8574bff"
+    },
+    "verification-work/fuse-trace.txt.gz": {
+      "bytes": 6746836,
+      "sha256": "1d8f124fc761ecd5c23eb4fa28ad7321ecd5ca6ae36feda1755ffaaf6966ea23"
+    },
+    "verification.json": {
+      "bytes": 2582,
+      "sha256": "4d642559add35451e9eaf71f70a51c3437e91e2c4d36155809fd09b46609e4ef"
+    },
+    "wideband-preview.wav": {
+      "bytes": 910754,
+      "sha256": "0e495df42db271cc6d0837a5515934ea9713056a12650aa50b75b118cd708845"
+    }
+  }
+}
