@@ -302,3 +302,51 @@ trace to diagnose remaining stalls. Part 4's 1170-byte audio overflow is
 still incompatible with this four-slot allocation. No full-movie timing,
 continuation or release-image claim follows. [Evidence](four_video_slots_report.json),
 [guard and archive script](verify_four_video_slots.py).
+
+## CB46: one changed row-pair per literal cell (2026-10-01)
+
+Mode 3 now has an explicitly different wire header, CB46. Its two bytes
+are a row selector 0..3 and one index into the current mutable row table.
+Write the two corresponding physical scanline bytes and retain the other
+six bytes of that back-screen cell. Modes 0/1/2 retain CB44 meanings.
+The host uses this only when exactly one of the four logical rows differs
+from frame n-2, and the cell otherwise uses a four-index literal. Never
+apply a partial update against the front screen or a previous table index.
+The builder rejects out-of-range selectors and wrong packet extents.
+
+The existing book branch adds `JR C,partial_row`: 7 T for a book cell,
+12 T when taken. The partial body loads selector, advances HL, doubles A,
+adds D, sets D, loads table page and index, expands the two table bytes
+with one B/D increment, then jumps to the unchanged cell return. Its body
+cost is 93 T; the original four-row literal body costs 231 T. Mode dispatch
+adds 7 T relative to a literal, hence **-131 T**. No-refill cell costs:
+book 288, literal 317, front 299, partial 186 T. Same bitmap masks/mode-byte
+count mean the whole-renderer delta is exactly
+`7*book_cells - 131*partial_cells`. Exclude outer services, IRQs, ULA and
+disk latency. Thirty-two independent full-flags component cases verify all
+selectors, both screens, mode-byte boundaries and IRQ preservation.
+
+On the three cached windows: 121912/127989/188005 ->
+117701/124058/185681 compressed bytes (10466 saved, 2.39%), with exact
+screens. Full selected partition: 608061/604926/626506/623005 video bytes,
+59832 fewer bytes; all 5066 host screens match. With the actual shared-AY
+bootstrap and three slots, capacities are 2464/2475/2542/2543 sectors.
+All four dirty-RAM cold loads pass. This proves capacity, not playback.
+
+The complete four-slot difficult-window run preserves 1769472 screen bytes,
+1280 AY ticks and 726 sector contents. Disk size 793 ->780 sectors. Misses
+37 ->31, beyond-one-field misses 36 ->29, maximum 43 ->28 fields. All late
+runs recover but 12 intervals remain invalid. The window still fails both
+timing gates. Every renderer delta matches the formula; complete draw-call
+costs also reflect different outer drive service when the shorter stream
+reaches EOF. The verifier records that separately. Some book-heavy frames
+become slower; the measured mean draw and total window delivery improve.
+
+Reproduce host probes with `probe_partial_row_cells.py` and the single
+selected full partition with `measure_partial_row_four.py`. Cached native
+rebuild accepts `--cell-probe WINDOW.json`, validating the matching global
+histories, initial row table, all host screens and every in-place block.
+Retain shared audio/four-slot flags as appropriate; two-bank AY still
+precludes a fourth slot. [Evidence](partial_row_report.json),
+[native/size verifier](verify_partial_row_cells.py). Generic CLI integration
+and complete four-disk timing/EOF continuation are still required.

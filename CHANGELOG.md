@@ -35,6 +35,52 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — exact partial-row cells fit the selected four-volume capacity
+
+- Objective: remove the remaining 21504-byte total excess and reduce work
+  on literal cells. Baseline `a6a2081`, same refined five-level pixels,
+  original square-aware AY50, 10 fps and [0,1312,2672,3744,5066] cuts.
+  Inspecting startup sections showed that frame-payload changes offered
+  a broader saving than altering only the independent screen histories.
+- Add CB46: retain CB44 modes 0..2, and use mode 3 for one changed row-pair
+  of a literal cell. Store row 0..3 plus its mutable row-table index instead
+  of four indices. Preserve the other three pairs in the actual back
+  screen. Static book, attributes, row replacements and outer LZSA2 format
+  stay unchanged. The builder validates selectors and complete extents.
+- Reuse three cached 256-frame windows at 0/2560/4096. Compressed sizes
+  121912/127989/188005 -> 117701/124058/185681 bytes: 10466 saved (2.39%).
+  All 768 host screens are exact. Encode only the existing full partition:
+  608061/604926/626506/623005 video bytes, saving 59832 bytes, with all 5066
+  host screens exact. No image resampling, sound changes or candidate-set sweep.
+- Actual complete startup/video sizes with shared AY and three video slots
+  are **2464/2475/2542/2543 sectors**, all <=2544. Every candidate passes
+  dirty-RAM cold loading. Total 10024 leaves 152 sectors across four disks.
+  Capacity images were built and checked in memory; no root set is published.
+- Fifteen regression tests pass, including 32 independent full-flags native
+  cases on both screens and IRQ tests. No-refill cell costs: book 281 ->288
+  T, full literal 317 ->317, front 299 ->299, partial 317 ->186 (-131).
+  Whole-renderer delta is exactly `7*book_cells - 131*partial_cells` T.
+  The first test caught a 10-T arithmetic error in the expected partial
+  cost (196 instead of 186); machine code was unchanged, failure archived.
+- Full four-slot [4096,4352) native/cold/Fuse replay verifies 1769472 screen
+  bytes, 1280 AY ticks and 726 runtime sectors, with no writes to AY bank 6.
+  Diagnostic size 793 ->780 sectors. Renderer-only deltas match the formula
+  on all 255 separately measured draws. An initial whole-wrapper assertion
+  caught 124 T of changed disk-service work near EOF; count that separately,
+  rather than attributing it to rendering or weakening the exact formula.
+- Timing: 37 ->31 nominal misses, 36 ->29 beyond one field, maximum
+  43 ->28 fields, 12 invalid intervals. All late runs recover, last at
+  local frame 254. Mean complete draw call 122715.74 ->121326.16 T; 39
+  frames are slower because their book-cell surcharge exceeds partial-cell
+  savings. Both timing gates still fail. Keep this measured size/aggregate
+  improvement; do not label it a zero-late release.
+- Reproduce with [window probe](toolkit/probe_partial_row_cells.py),
+  [selected partition](toolkit/measure_partial_row_four.py), cached rebuild
+  `--cell-probe FILE.json`, and [verifier](toolkit/verify_partial_row_cells.py).
+  [Complete evidence](toolkit/partial_row_report.json). Generic CLI selection,
+  fourth-slot allocation for part 4's 1170-byte audio tail, complete movie
+  timing and actual EOF continuation remain outstanding.
+
 ## 2026-10-01 — reclaim a fourth video slot with bank-6 AY
 
 - Objective: address measured empty-queue stalls. Baseline `5751e6e`, same

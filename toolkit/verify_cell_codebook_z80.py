@@ -46,8 +46,8 @@ class GuardedCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self,table,rows,initial,dictionary,*,front_reuse=False,fast_masks=False):
-        self.regions,self.labels,self.meta=machine.build(dictionary=dictionary,front_reuse=front_reuse,fast_masks=fast_masks)
+    def __init__(self,table,rows,initial,dictionary,*,front_reuse=False,fast_masks=False,partial_rows=False):
+        self.regions,self.labels,self.meta=machine.build(dictionary=dictionary,front_reuse=front_reuse,fast_masks=fast_masks,partial_rows=partial_rows)
         self.c=GuardedCPU(b'',b'');self.c.guarding=False;self.c.port_7ffd=0x17
         self.c.state=self.labels['state'],self.labels['end'];self.rows=rows;self.table=table
         for at,data in self.regions+[(machine.ROWS,rows)]:self.install(at,data)

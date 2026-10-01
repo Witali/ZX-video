@@ -5,6 +5,7 @@ volume boundaries. A failed capacity build is valid input for another capacity
 probe. This is not a shortcut around full timing/content release gates.
 """
 import argparse
+import gzip
 import json
 from pathlib import Path
 import shutil
@@ -41,9 +42,10 @@ def main():
     p.add_argument('--verify',choices=('cpu','cold','none'),default='cpu')
     p.add_argument('--shared-audio',action='store_true',help='experimental fixed AY decoder/trees and shared payload')
     p.add_argument('--four-video-slots',action='store_true',help='requires shared one-bank AY; use bank 4 as a fourth video slot')
+    p.add_argument('--cell-probe',type=Path,help='validated replacement window JSON with sibling .raw.gz/.stream.gz')
     a=p.parse_args();m=json.loads(a.metadata.read_bytes());source=a.metadata.parent;stem=a.metadata.stem
     if a.output.exists() and any(a.output.iterdir()):p.error('output must be new or empty')
-    if m['cell_codebook']['wire'] not in ('CB42','CB44'):p.error('cached rebuild needs dynamic rows')
+    if m['cell_codebook']['wire'] not in ('CB42','CB44','CB46'):p.error('cached rebuild needs dynamic rows')
     work=a.output/'work';folder=work/stem;folder.mkdir(parents=True)
     previous=source/'work'/stem
     raw=(source/'work/stream.raw').read_bytes();assert sha(raw)==m['raw_sha256']
@@ -61,6 +63,18 @@ def main():
     if 'trd_sha256' not in m:identity=b'CB44TST1'+bytes.fromhex(sha(cell))[:6]
     for name in ('codebook.raw','codebook.stream','audio.ayh1','states.npz','rows.json','dynamic-rows.json'):
         if (previous/name).exists():shutil.copyfile(previous/name,folder/name)
+    if a.cell_probe:
+        probe=json.loads(a.cell_probe.read_bytes())
+        assert probe['rows']==rows and probe['details'][0]['frame']==start and len(probe['details'])==end-start
+        cell=gzip.decompress(a.cell_probe.with_suffix('.raw.gz').read_bytes())
+        coded=gzip.decompress(a.cell_probe.with_suffix('.stream.gz').read_bytes())
+        assert sha(cell)==probe['raw_sha256'] and sha(coded)==probe['stream_sha256']
+        from dynamic_row_dictionary import decode_check
+        assert decode_check(cell,frames,start,end,rows)['screen_sha256']==probe['proof']['screen_sha256']
+        cache_check=verify_cached_blocks(coded,cell,probe['blocks'])
+        (folder/'codebook.raw').write_bytes(cell);(folder/'codebook.stream').write_bytes(coded)
+        write_json(folder/'cell-probe.json',probe)
+    blocks=probe['blocks'] if a.cell_probe else m['blocks']
     shutil.copyfile(source/'work/stream.raw',work/'stream.raw')
     write_json(a.output/'partition.json',partition)
     write_json(a.output/'cache-checks.json',cache_check)
@@ -72,7 +86,7 @@ def main():
         b=Builder(raw,build_states,a.zx0.resolve(),work/'zx0',row_dictionary=rows,lzsa=a.lzsa.resolve(),
             series_fingerprint=identity,cell_raw=cell,cell_start=start,frame_fields=m['frame_fields'],
             reference_frames=frames,shared_audio=a.shared_audio,four_slots=a.four_video_slots,**OPTIONS)
-        b.ends=ends;b.inplace_streams[start,end]=coded,m['blocks'];b.resident_streams[start,end]=b'',audio
+        b.ends=ends;b.inplace_streams[start,end]=coded,blocks;b.resident_streams[start,end]=b'',audio
         image,meta=b.volume(start,end,part);write_json(a.output/(stem+'.json'),meta)
         if image is None:
             manifest['failure']=f'Capacity: {meta["used_sectors"]} sectors / 2544'

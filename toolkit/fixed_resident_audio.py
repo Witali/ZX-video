@@ -77,7 +77,7 @@ def build(data,audio,*,core_limit,batch=31,first_bank_bytes=16384,single_bank=4)
 def install(banks,m,sections,data,compress,*,four_slots=False):
     """Replace resident segments after the cell player has retired old code."""
     old=m['resident_audio'];cell=m['cell_codebook']
-    if cell['wire']!='CB44' or not cell.get('obsolete_fixed_ranges'):
+    if cell['wire'] not in ('CB44','CB46') or not cell.get('obsolete_fixed_ranges'):
         raise ValueError('fixed AY integration requires the retired CB44 reconstruction')
     compiled=build(data,m['audio_labels'],core_limit=m['decoder_labels']['start'],batch=old['compiled']['batch'],
         single_bank=6 if four_slots else 4)
@@ -135,7 +135,7 @@ def install(banks,m,sections,data,compress,*,four_slots=False):
     cell['memory']['fixed_audio']=[dict(start=r['address'],end=r['address']+len(bytes.fromhex(r['data_hex']))) for r in compiled['regions']]
     cell['memory']['bank6_audio_tail_bytes']=compiled['bank6_reserved_bytes']
     old['previous_bank_bytes']=[s['image_bytes'] for s in old['compiled'].get('segments',[old['compiled']])]
-    old.update(compiled=compiled,format='video-only CB44 + fixed AYH1',banks=compiled['banks'],
+    old.update(compiled=compiled,format='video-only '+cell['wire']+' + fixed AYH1',banks=compiled['banks'],
         shared_fixed=True,startup_sections=len(payload_sections),audio_isr_changed=False,
         bank6_reserved_bytes=compiled['bank6_reserved_bytes'])
     old.pop('segment_boundary_ticks',None)

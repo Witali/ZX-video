@@ -93,14 +93,15 @@ class Builder(PreviousBuilder):
         self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
         count,entries=struct.unpack_from('<HH',cell_raw,4)
-        self.front_reuse=cell_raw[:4]==b'CB44'
+        self.front_reuse=cell_raw[:4] in (b'CB44',b'CB46')
+        self.partial_rows=cell_raw[:4]==b'CB46'
         self.shared_audio=shared_audio
         self.four_slots=four_slots
         if four_slots and not shared_audio:raise ValueError('four slots require shared fixed AY')
         if shared_audio and not self.front_reuse:raise ValueError('shared fixed audio requires CB44')
-        self.dynamic_rows=cell_raw[:4] in (b'CB42',b'CB44')
+        self.dynamic_rows=cell_raw[:4] in (b'CB42',b'CB44',b'CB46')
         self.reference_frames=reference_frames
-        if cell_raw[:4] not in (b'CB41',b'CB42',b'CB44') or entries!=256 or cell_start<0:
+        if cell_raw[:4] not in (b'CB41',b'CB42',b'CB44',b'CB46') or entries!=256 or cell_start<0:
             raise ValueError('this builder needs a 256-entry book and a nonnegative start')
         if self.dynamic_rows and reference_frames is None:
             raise ValueError('CB42 needs independent five-level reference frames')
@@ -116,8 +117,16 @@ class Builder(PreviousBuilder):
             if self.front_reuse:
                 cells=sum(b.bit_count() for b in cell_raw[at+2:at+74])
                 modes=cell_raw[at+146:at+146+(cells+3)//4]
-                if len(modes)!=(cells+3)//4 or any((modes[i//4]>>((i%4)*2))&3==3 for i in range(cells)):
-                    raise ValueError('native CB44 supports same-position front reuse only')
+                if len(modes)!=(cells+3)//4:raise ValueError('truncated cell modes')
+                cursor=at+146+len(modes)
+                for i in range(cells):
+                    mode=(modes[i//4]>>((i%4)*2))&3
+                    if mode==3:
+                        if not self.partial_rows:raise ValueError('native CB44 supports same-position front reuse only')
+                        if cursor+2>at+2+length or cell_raw[cursor]>=4:raise ValueError('invalid partial row selector')
+                    cursor+=(4,1,0,2)[mode]
+                attrs=sum(b.bit_count() for b in cell_raw[at+74:at+146])
+                if cursor+attrs!=at+2+length:raise ValueError('cell payload extent differs')
             at+=2+length
         if at!=len(cell_raw):raise ValueError('CB41 frame extents differ')
         self.cell_raw=cell_raw;self.cell_start=cell_start;self.cell_end=cell_start+count
@@ -134,7 +143,7 @@ class Builder(PreviousBuilder):
         def put(at,data):
             if (at&16383)+len(data)>16384:raise ValueError('cross-bank CB41 install')
             banks[bank(at)][at&16383:(at&16383)+len(data)]=data
-        regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse,fast_masks=self.front_reuse)
+        regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse,fast_masks=self.front_reuse,partial_rows=self.partial_rows)
         screen_base,saved_page=labels['end'],labels['end']+1
         retired=[];patches=[]
         obsolete=[]
@@ -237,6 +246,9 @@ class Builder(PreviousBuilder):
                 update_handler_excludes='queue take body, dispatch, length read, IRQ, contention and disk latency',
                 wire='8001h..8100h, then count triples: index, top, bottom',
                 prior_screen_copies_required=False,pixel_changes=0)
+        if self.partial_rows:
+            m['cell_codebook']['partial_rows']=dict(enabled=True,mode=3,payload='row-pair 0..3, row-table index',
+                unchanged_pairs_remain_in_back_screen=True,pixel_changes=0)
         retired_keys=('compiled_masks','hl_mask_reader','compact_cursor','cached_huffman_lookahead',
                       'inline_huffman_patches','inline_literals')
         m['cell_codebook']['retired_metadata']={key:m[key] for key in retired_keys if key in m}

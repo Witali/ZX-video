@@ -21,6 +21,37 @@ during playback. Completion requires a full, independently bootable set of
 at most four TRDs, unchanged media coverage and complete timing/content gates.
 Do not substitute a short fixture, the previous soundtrack or reduced fps.
 
+### Current checkpoint: CB46 capacity fits; timing remains open
+
+Latest exact mode: CB46 mode 3 stores one changed row-pair within a literal
+cell, using selector 0..3 plus a row-table index. Other CB44 modes, the
+mutable row table, colour attributes and LZSA2 stay unchanged. Three cached
+256-frame windows save 10466 bytes (2.39%). The one selected full partition
+saves 59832 video bytes, with all 5066 host screens and original AY exact.
+Actual native capacity with shared AY/three video slots is now
+**2464/2475/2542/2543 sectors**, all fitting 2544; all four dirty-RAM cold
+loads pass. Do not rebalance or re-encode this partition just for capacity.
+Reuse `.tmp/partial-row-four/` and `.tmp/partial-row-four-capacity/`.
+
+The four-slot [4096,4352) native/cold/Fuse window verifies every screen,
+1280 AY ticks and all 726 runtime sectors. Size 780 sectors. There are
+31 nominal misses, 29 beyond one field, maximum 28 fields, 12 invalid
+intervals; all late runs recover, last at local frame 254. Both timing
+gates still fail. Reuse `.tmp/partial-row-window/`,
+`.tmp/partial-row-profile.json` and [evidence](toolkit/partial_row_report.json).
+Fifteen tests / 32 independent native cases pass. Exact renderer delta:
+`7*book_cells - 131*partial_cells` T. No-refill partial cell 186 vs317 T;
+book 288 vs281 T. Not every frame is faster; use measured total delivery.
+
+Next scope: resolve the remaining stalls (30 empty-queue packet entries,
+late run 226..253) on this cached window. Also allocate part 4's 1170-byte
+AY overflow so it can use four slots; B700h..BA00h remains unaudited.
+Only then build the full four-disk set and run complete cold/continuation
+timing and content gates before replacing the root release images.
+CB46 is currently available to the cached rebuilder via `--cell-probe`;
+generic converter CLI selection still needs integration before completion.
+Earlier experiments and constraints below are retained for provenance.
+
 The CB42 implementation keeps the 256-slot / 512-byte row table, but adds
 lossless replacement records. The host chooses farthest-next-use eviction
 among rows not needed by the current frame; index zero stays black. Already

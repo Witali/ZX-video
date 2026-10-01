@@ -14,8 +14,9 @@ from build_zxv_trd import MiniAssembler
 CODE, ROWS, BOOK, POPCOUNT = 0x9000,0x9e00,0xa800,0xb000
 
 
-def build(*,dictionary=True,front_reuse=False,fast_masks=False):
+def build(*,dictionary=True,front_reuse=False,fast_masks=False,partial_rows=False):
     if front_reuse and not dictionary:raise ValueError('front reuse requires the cell book')
+    if partial_rows and not front_reuse:raise ValueError('partial rows require front-reuse modes')
     a=MiniAssembler(CODE);listing=[];stage='setup'
     def emit(name,blob,t):listing.append(dict(address=a.pc,instruction=name,tstates=t,stage=stage));a.emit(*blob)
     def fixed(name,op,value,t):
@@ -103,6 +104,7 @@ def build(*,dictionary=True,front_reuse=False,fast_masks=False):
             emit('LD A,B',[0x78],4);emit('XOR 80h',[0xee,0x80],7);emit('LD B,A',[0x47],4)
             labelop('JP copy cell',0xc3,'copy_cell',10)
             stage='mode';a.label('book_mode');emit('SRL B',[0xcb,0x38],8);exx()
+            if partial_rows:jr(0x38,'partial_row')
         else:exx();jr(0x30,'literal')
         stage='dictionary'
         emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6);emit('LD B,book page',[6,BOOK>>8],7)
@@ -111,6 +113,15 @@ def build(*,dictionary=True,front_reuse=False,fast_masks=False):
         for i in range(8):
             emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
             if i<7:emit('INC B',[4],4);emit('INC D',[0x14],4)
+        jr(0x18,'cell_done')
+    if partial_rows:
+        stage='partial_row';a.label('partial_row')
+        emit('LD A,(HL)',[0x7e],7);emit('INC HL',[0x23],6)
+        emit('ADD A,A',[0x87],4);emit('ADD A,D',[0x82],4);emit('LD D,A',[0x57],4)
+        emit('LD B,row page',[6,ROWS>>8],7);emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6)
+        emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
+        emit('INC B',[4],4);emit('INC D',[0x14],4)
+        emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
         jr(0x18,'cell_done')
     stage='literal';a.label('literal');emit('LD B,row page',[6,ROWS>>8],7)
     for i in range(4):
@@ -132,7 +143,7 @@ def build(*,dictionary=True,front_reuse=False,fast_masks=False):
     a.label('state');a.label('packet');a.word(0);a.label('screen_high');a.emit(0);a.label('end')
     if a.pc>0x9d00:raise ValueError('renderer exceeds provisional code allocation')
     regions=[(CODE,a.resolve()),(POPCOUNT,bytes(i.bit_count() for i in range(256)))]
-    return regions,a.labels,dict(dictionary=dictionary,front_reuse=front_reuse,fast_masks=fast_masks,instruction_listing=listing,code_bytes=len(regions[0][1])-3,
+    return regions,a.labels,dict(dictionary=dictionary,front_reuse=front_reuse,fast_masks=fast_masks,**(dict(partial_rows=True) if partial_rows else {}),instruction_listing=listing,code_bytes=len(regions[0][1])-3,
         state_bytes=3,book_bytes=2048,popcount_bytes=256,row_table_bytes=512,
         layout_scope='Component-only: reuses obsolete compact-frame range A800..B0FF; integration must remove old frame consumers.',
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf')

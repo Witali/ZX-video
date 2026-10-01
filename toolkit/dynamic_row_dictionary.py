@@ -137,7 +137,7 @@ def encode(frames, start, end, *, cell_window=None, book_front_reuse=False):
 
 def decode_check(data, frames, start, end, row_meta):
     """Independent byte parser checks both physical screens after every frame."""
-    if data[:4] not in (b'CB42',b'CB43',b'CB44',b'CB45') or struct.unpack_from('<HH',data,4)!=(end-start,256):
+    if data[:4] not in (b'CB42',b'CB43',b'CB44',b'CB45',b'CB46') or struct.unpack_from('<HH',data,4)!=(end-start,256):
         raise ValueError('invalid dynamic dictionary header')
     cache = bytearray.fromhex(row_meta['tables_hex'])
     if len(cache)!=512 or cache[0] or cache[256]:
@@ -168,7 +168,7 @@ def decode_check(data, frames, start, end, row_meta):
                 seen.add(index); cache[index]=top; cache[256+index]=bottom
             if is_book:book_updates+=count
             else:updates+=count
-        front_modes=data[:4] in (b'CB44',b'CB45')
+        front_modes=data[:4] in (b'CB44',b'CB45',b'CB46')
         if not 144<=length<=(3168 if front_modes else 3096):
             raise ValueError('invalid frame packet length')
         stop=at+length
@@ -178,7 +178,14 @@ def decode_check(data, frames, start, end, row_meta):
         target=screens[(frame-start)%2]
         for j,cell in enumerate(cells):
             mode=(modes[j//4]>>((j%4)*2))&3 if front_modes else (modes[j//8]>>(j%8))&1
-            if mode>=2:
+            if mode==3 and data[:4]==b'CB46':
+                row,index=data[at:at+2];at+=2
+                if row>=4:raise ValueError('partial row outside cell')
+                y,x=divmod(cell,32)
+                for line,value in enumerate((cache[index],cache[256+index])):
+                    target[spectrum_bitmap_offset(x,(y+3)*8+row*2+line)]=value
+                continue
+            elif mode>=2:
                 source=cell
                 if mode==3:
                     offset=data[at];at+=1;source+=offset if offset<128 else offset-256
