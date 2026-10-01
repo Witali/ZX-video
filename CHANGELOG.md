@@ -5,6 +5,19 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: publish the YM2149 test disk in the project root
+
+- The user requested a TRD to listen in an emulator. Baseline `7950579`;
+  publish [ZX-audiobook-YM2149-test.trd](ZX-audiobook-YM2149-test.trd) as a
+  byte-identical copy of the verified 24-second [60,84) audiobook candidate.
+  It retains 50 Hz register playback and the existing independent cold boot.
+- The 655360-byte image has SHA-256
+  `190ce25bfc5e113d2c7f499df3c6971219f44cca024733a2a5f60e6fccfc49ab`, matching
+  the saved [full native/Fuse verification](audiobook-ay/ym2149-preview/verification.json).
+  Reuse its 1200-tick /13200-write, zero-missed-field evidence; no re-encoding
+  or player change (0 T delta), and no redundant emulator run. Store the
+  root image in Git LFS and document drive A / `RUN "boot"` startup.
+
 ## 2026-10-01: improve LPC parameters and check 50 Hz YM2149 mono playback
 
 - Objective and input: after accepting the full host LPC2 reference as clear,

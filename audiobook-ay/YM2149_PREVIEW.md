@@ -12,6 +12,11 @@ Spectrum mixing. The new diagnostic uses the same **[60,84) second** passage.
 - [Original, matched level](ym2149-preview/original-preview.wav).
 - [Full LPC2 software reference, matched level](ym2149-preview/lpc-reference-preview.wav).
 - [Bootable Spectrum 128 + Beta Disk diagnostic TRD](ym2149-preview/audiobook-preview.trd).
+- [Root-level test disk](../ZX-audiobook-YM2149-test.trd), an identical copy
+  provided for convenient emulator loading. Mount it in drive A of a
+  Spectrum 128 with Beta Disk/TR-DOS. If it does not autostart, enter TR-DOS
+  and run `RUN "boot"`. Playback begins after loading and stops after the
+  24-second excerpt; reset and boot again to replay.
 
 All four WAVs are 24 seconds, mono, 44100 Hz, with common RMS 0.0560742 and
 no sample clipping. The TRD plays the first file's register sequence. It does
