@@ -1,0 +1,215 @@
+{
+  "date": "2026-10-01",
+  "source": "C:\\Work\\HLV-codec\\out\\sources\\big_buck_bunny_1080p_h264\\big_buck_bunny_1080p_h264.mov",
+  "source_mix": "FFmpeg mono downmix, matching the generic converter",
+  "update_rate_hz": 50,
+  "metric_rate_hz": 50,
+  "onset_tolerance_seconds": 0.02,
+  "scope": "offline synthesis comparison; no new TRD or full movie verification",
+  "windows": [
+    {
+      "start_seconds": 60,
+      "duration_seconds": 8,
+      "context_seconds": [
+        1,
+        1
+      ],
+      "source_pcm_sha256": "ea79c20b329713a724c2a3adc22dc62982579430c6d2cfc8cca3e8bd49ff112e",
+      "metrics": {
+        "before": {
+          "semitone_spectral_cosine": 0.8949961204405354,
+          "chroma_cosine": 0.9674804921758962,
+          "loudness_correlation": 0.9832316100347942,
+          "rhythm_onset_f1": 0.6875,
+          "onsets": {
+            "reference": 16,
+            "candidate": 16,
+            "matched": 11,
+            "precision": 0.6875,
+            "recall": 0.6875,
+            "f1": 0.6875
+          },
+          "evaluated_frames": 400
+        },
+        "after": {
+          "semitone_spectral_cosine": 0.8915355550526707,
+          "chroma_cosine": 0.9652809785607507,
+          "loudness_correlation": 0.9021839489060036,
+          "rhythm_onset_f1": 0.5625,
+          "onsets": {
+            "reference": 16,
+            "candidate": 16,
+            "matched": 9,
+            "precision": 0.5625,
+            "recall": 0.5625,
+            "f1": 0.5625
+          },
+          "evaluated_frames": 400
+        }
+      },
+      "fit": {
+        "model": "ay_square_register_fit_v1",
+        "tone_harmonics": "odd 1/h through 31, below 0.48 sample rate, actual integer AY periods",
+        "noise_attenuation_register_steps": 1,
+        "nominal_noise_attenuation_db": 3.0102999566398125,
+        "changed_tone_registers": 730,
+        "noise_ticks": 49,
+        "fit_squared_error_before": 14.303294552728282,
+        "fit_squared_error_after": 12.614277641666515,
+        "gain": 3.0574341942529992,
+        "native_instruction_delta_tstates": 0,
+        "limitations": "Phase-independent magnitude fit; nominal 3 dB levels; no analogue filter model."
+      },
+      "noise_ticks": 38,
+      "noise_level_squared_sum": {
+        "before": 0.35546875,
+        "after": 0.177734375
+      },
+      "artifacts": {
+        "before.ay": "f37c9320782a956fb1b2fb206e4e1dee1c3bbc9b41798331ff6375ecb27bcfa7",
+        "after.ay": "8f4cfa4f64161ee3a9858409c2503da2294f8758ed27bedbc35863a8b35fa259",
+        "analysis.npz": "26a513e39dff0c819a615c79077b0a12a4d8a667221e1cbd31c7e51645a7ce00",
+        "original.wav": "804b28e667c2140bc9fd99092cefe086ae232b1913fe3a56279a795ef06467e2",
+        "before.wav": "0f3ff374378f60f804d37e25f690a8934c14d34a874bdd0d8d00dd6a6af04106",
+        "after.wav": "366d954051c928e33b07b4699e9f5e745c73a8d83c181053ea4344e72b948a0d"
+      },
+      "preview_common_rms": 0.07318261917595362
+    },
+    {
+      "start_seconds": 170,
+      "duration_seconds": 8,
+      "context_seconds": [
+        1,
+        1
+      ],
+      "source_pcm_sha256": "cf9c04f0e68314d868659078333fc64a5cc6916c189202e8089ad7b6d0c4330b",
+      "metrics": {
+        "before": {
+          "semitone_spectral_cosine": 0.8675504779874503,
+          "chroma_cosine": 0.9704500830323048,
+          "loudness_correlation": 0.9941281194646536,
+          "rhythm_onset_f1": 0.9629629629629629,
+          "onsets": {
+            "reference": 14,
+            "candidate": 13,
+            "matched": 13,
+            "precision": 1.0,
+            "recall": 0.9285714285714286,
+            "f1": 0.9629629629629629
+          },
+          "evaluated_frames": 322
+        },
+        "after": {
+          "semitone_spectral_cosine": 0.8687429827486435,
+          "chroma_cosine": 0.9707016567256971,
+          "loudness_correlation": 0.826513343877581,
+          "rhythm_onset_f1": 0.8461538461538461,
+          "onsets": {
+            "reference": 14,
+            "candidate": 12,
+            "matched": 11,
+            "precision": 0.9166666666666666,
+            "recall": 0.7857142857142857,
+            "f1": 0.8461538461538461
+          },
+          "evaluated_frames": 322
+        }
+      },
+      "fit": {
+        "model": "ay_square_register_fit_v1",
+        "tone_harmonics": "odd 1/h through 31, below 0.48 sample rate, actual integer AY periods",
+        "noise_attenuation_register_steps": 1,
+        "nominal_noise_attenuation_db": 3.0102999566398125,
+        "changed_tone_registers": 587,
+        "noise_ticks": 173,
+        "fit_squared_error_before": 9.537217654306183,
+        "fit_squared_error_after": 7.637545177050582,
+        "gain": 1.078748292787825,
+        "native_instruction_delta_tstates": 0,
+        "limitations": "Phase-independent magnitude fit; nominal 3 dB levels; no analogue filter model."
+      },
+      "noise_ticks": 98,
+      "noise_level_squared_sum": {
+        "before": 7.6282958984375,
+        "after": 3.814147949218751
+      },
+      "artifacts": {
+        "before.ay": "89cb656ebfdccd3f18402dd443c5f0809441bce4f9952b0c74f3585c84ed03ab",
+        "after.ay": "15f19075dab48f5151cc62bdeccc7eb37704646ef3681d77bfe5d4f47a1a275f",
+        "analysis.npz": "00a2d36515c0b92144d1807d7e57a15cbf0334b43091d3ad1cbdcc038cf362d2",
+        "original.wav": "c72b3ac5824f463db7e1c062387d342b24ad63802defd74f3a24eb10315024ce",
+        "before.wav": "c3693c85a9551d9942b810f223f212664d46469244eec551bded030c70021359",
+        "after.wav": "3fa88795ad7bb6742d7df904dfe7b3fa059c5848fdb7ffbe5854c43d18ace37e"
+      },
+      "preview_common_rms": 0.05059665214033177
+    },
+    {
+      "start_seconds": 430,
+      "duration_seconds": 8,
+      "context_seconds": [
+        1,
+        1
+      ],
+      "source_pcm_sha256": "6264719f9352b73882fca5e81b672d94b7703da8ce7aff6e9bbd9737796ef4e5",
+      "metrics": {
+        "before": {
+          "semitone_spectral_cosine": 0.85590636281662,
+          "chroma_cosine": 0.9689042692869098,
+          "loudness_correlation": 0.9819080645194707,
+          "rhythm_onset_f1": 0.7777777777777778,
+          "onsets": {
+            "reference": 16,
+            "candidate": 20,
+            "matched": 14,
+            "precision": 0.7,
+            "recall": 0.875,
+            "f1": 0.7777777777777778
+          },
+          "evaluated_frames": 400
+        },
+        "after": {
+          "semitone_spectral_cosine": 0.8618665645651954,
+          "chroma_cosine": 0.9686787851194036,
+          "loudness_correlation": 0.8917126567066267,
+          "rhythm_onset_f1": 0.7647058823529411,
+          "onsets": {
+            "reference": 16,
+            "candidate": 18,
+            "matched": 13,
+            "precision": 0.7222222222222222,
+            "recall": 0.8125,
+            "f1": 0.7647058823529411
+          },
+          "evaluated_frames": 400
+        }
+      },
+      "fit": {
+        "model": "ay_square_register_fit_v1",
+        "tone_harmonics": "odd 1/h through 31, below 0.48 sample rate, actual integer AY periods",
+        "noise_attenuation_register_steps": 1,
+        "nominal_noise_attenuation_db": 3.0102999566398125,
+        "changed_tone_registers": 1020,
+        "noise_ticks": 181,
+        "fit_squared_error_before": 32.703869007616355,
+        "fit_squared_error_after": 26.527397231691204,
+        "gain": 0.8381426816331584,
+        "native_instruction_delta_tstates": 0,
+        "limitations": "Phase-independent magnitude fit; nominal 3 dB levels; no analogue filter model."
+      },
+      "noise_ticks": 171,
+      "noise_level_squared_sum": {
+        "before": 9.8076171875,
+        "after": 4.90380859375
+      },
+      "artifacts": {
+        "before.ay": "19974e54e01d0cf9106903398457a102173ec52751a338bd22f98a3241a40cc6",
+        "after.ay": "523cee5901eea417b2a40492cd7c702e8697918861f47e454bdaedb5a8af158a",
+        "analysis.npz": "d10718e7aa03360204dab7e21642b11a166ea7e419f00f050aa1e866f9987e20",
+        "original.wav": "8bc685d0271772884a36488f1158b83ca181a598627881b673e0854e553ed8bb",
+        "before.wav": "06134b3a602f44165454937dd20b502758dec189940e41deeae3159795a8b598",
+        "after.wav": "e6b35d4cc3f1dbee2e5ec55723d00ebe92f2d394f6caa423bf09be508ffd8be0"
+      },
+      "preview_common_rms": 0.1
+    }
+  ]
+}

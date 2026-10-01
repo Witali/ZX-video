@@ -92,6 +92,18 @@ optional prototype; defaults/TRDs remain unchanged and full-player timing
 is unverified. Next address boundaries within these RGB bounds before a
 release gate. [Comparison and evidence](toolkit/FAITHFUL_COLOUR.md).
 
+## Audio conversion integrated: square harmonics and quieter noise
+
+On 2026-10-01 the user authorized audio changes and requested flexible frequency
+selection inside the converter. `convert_video.py` now automatically fits
+integer AY periods and nearby volume levels against odd square harmonics,
+recovers isolated off-grid tones and lowers noise by one nominal 3 dB step.
+AY remains 50 Hz. Three eight-second source windows improve spectral/chroma
+and onset proxies; 27 tests, 2400 isolated native AY ticks and one complete
+five-frame CLI/CPU fixture pass. Audio bytes +75.79%, audio CPU +27.42% in
+these windows. No full-film timing/capacity claim; root TRDs and cached AY stay
+at the verified baseline. Reuse [audio evidence and reproduction](toolkit/AY_SQUARE_FIT.md).
+
 ## Working method
 
 1. **Define one deliverable.** State the problem, baseline, hypothesis and

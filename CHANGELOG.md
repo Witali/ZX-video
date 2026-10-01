@@ -28,6 +28,43 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — integrate square-aware AY frequency fitting and quieter noise
+
+- User requested slightly less noise, modeling AY's square-wave harmonics,
+  flexible accurate frequency selection, and automatic converter integration.
+  Baseline `c4a28ec`; generic mono downmix of three eight-second source windows
+  at 60/170/430 s, one second of context each side, AY50.
+- Rejected an unconstrained volume fit: despite a lower fitting loss, loudness
+  correlations dropped to 0.9022/0.8265/0.8917. A subsequent 0.25 dB tone-power
+  guard retained dynamics but fixed pitches left the effects-heavy window
+  worse spectrally after quieter noise. Both measurement sets are archived.
+- Selected joint integer-period/volume search: +/-50 cents by default, two
+  coordinate passes, odd 1/h harmonics through 31, <=1 tone-volume step,
+  0.001 score hysteresis, one nominal 3.0103 dB noise attenuation step. Preserve
+  rests and the existing noise decisions. CLI settings permit noise steps 0/1
+  and a tuning radius 0..100 cents. A CLI sine fixture exposed 22 falsely silent
+  off-grid ticks in the legacy note analysis; added conservative single-peak
+  recovery. Movie-window output is unchanged by that recovery fix.
+- Spectral cosine improves 0.8950->0.9084, 0.8676->0.8780, 0.8559->0.8634.
+  Chroma and onset proxies improve in all windows; loudness correlation falls
+  slightly in two. Noise squared level halves on the same 307/1200 noise ticks.
+  These are signal proxies and short-window results, not perceived accuracy.
+- AYH1 bytes 2924->5140 (+75.79%). Native instructions/layout unchanged, 0 T
+  instruction delta; data-dependent producer/paging/consumer work rises
+  3,297,668->4,201,955 T (+904,287 / +27.42%). All 2400 old/new native ticks and
+  register values pass with guarded memory and instruction-table checks.
+  Initial profiling failed because its formula assumed complete batches;
+  adding the explicit 41 T partial-batch EOF path matches measured timing.
+- 27 unit/regression tests pass. The actual generic CLI creates a temporary
+  independently initialized five-frame/30-tick TRD with complete CPU replay
+  and exact screens/AY. No physical delivery/Fuse or full-movie verification;
+  root images/prepared movie audio are unchanged. Existing capacity and release
+  gates remain mandatory, particularly because audio storage has increased.
+- Adopt the host converter change. [Algorithm, limits and reproduction](toolkit/AY_SQUARE_FIT.md),
+  [probe script](toolkit/probe_ay_square_fit.py), [native profiler](toolkit/profile_ay_square_fit.py),
+  [hashed evidence](toolkit/ay_square_fit_evidence/index.json). Documentation and
+  scripts are saved in English as requested.
+
 ## 2026-10-01 — jointly select colour and grain against a monochrome reference
 
 - User requested colour plus reselected grain that brings output closer to

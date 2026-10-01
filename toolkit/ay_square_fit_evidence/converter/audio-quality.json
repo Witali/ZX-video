@@ -1,0 +1,63 @@
+{
+  "source_audio": true,
+  "ticks": 30,
+  "noise_ticks": 2,
+  "synthesis": "three AY voices, optional noise on B, 50 Hz",
+  "chip_fit": {
+    "model": "ay_square_register_fit_v2",
+    "tone_harmonics": "odd 1/h through 31, below 0.48 sample rate, actual integer AY periods",
+    "noise_attenuation_register_steps": 1,
+    "nominal_noise_attenuation_db": 3.0102999566398125,
+    "changed_tone_registers": 8,
+    "noise_ticks": 2,
+    "tuned_period_registers": 16,
+    "tuning_radius_cents": 50.0,
+    "frequency_score_hysteresis": 0.001,
+    "fit_spectral_cosine_sum_before": 22.38635161007933,
+    "fit_spectral_cosine_sum_after": 26.963115218284347,
+    "tone_power_tolerance_db": 0.25,
+    "maximum_tone_register_change": 1,
+    "native_instruction_delta_tstates": 0,
+    "limitations": "Phase-independent magnitude fit; nominal 3 dB levels; no analogue filter model.",
+    "recovered_isolated_tone_ticks": 22
+  },
+  "metrics": {
+    "semitone_spectral_cosine": 0.9136356002793609,
+    "chroma_cosine": 0.9214222637132183,
+    "loudness_correlation": 0.23984163454540466,
+    "rhythm_onset_f1": 0.0,
+    "onsets": {
+      "reference": 0,
+      "candidate": 0,
+      "matched": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "evaluated_frames": 5
+  },
+  "metric_note": "signal proxies, not a perceptual accuracy percentage",
+  "command": [
+    "C:\\Work\\ZX-video\\.worktree\\audio-fidelity\\.tmp\\bin\\ffmpeg.exe",
+    "-v",
+    "error",
+    "-nostdin",
+    "-copyts",
+    "-i",
+    "C:\\Work\\ZX-video\\.tmp\\ay-square-converter\\source.avi",
+    "-map",
+    "0:1",
+    "-vn",
+    "-af",
+    "asetpts=PTS-(0)/TB,aresample=22050:async=1:first_pts=0,apad",
+    "-t",
+    "0.6",
+    "-ac",
+    "1",
+    "-ar",
+    "22050",
+    "-f",
+    "f32le",
+    "-"
+  ]
+}

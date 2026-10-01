@@ -1,0 +1,87 @@
+{
+  "source": "C:\\Work\\ZX-video\\.tmp\\ay-square-converter\\source.avi",
+  "source_sha256": "fab41b1d3b33aeeff76e42b6c56f7a8e62798f424134d37c8bdf86f7f694c73d",
+  "complete": true,
+  "release": false,
+  "video_fps": "25/3",
+  "frame_fields": 6,
+  "ay_hz": 50,
+  "native_resolution": [
+    256,
+    192
+  ],
+  "active_resolution": [
+    256,
+    144
+  ],
+  "logical_resolution": [
+    128,
+    96
+  ],
+  "disk_profile": "portable",
+  "executables": {
+    "ffmpeg": "C:\\Work\\ZX-video\\.worktree\\audio-fidelity\\.tmp\\bin\\ffmpeg.exe",
+    "ffprobe": "C:\\Work\\ZX-video\\.worktree\\audio-fidelity\\.tmp\\bin\\ffprobe.exe",
+    "zx0": "C:\\Work\\ZX-video\\.worktree\\compression\\.tmp\\ZX0\\win\\zx0.exe"
+  },
+  "player_baseline": "00313d3",
+  "player_hot_path_changed": false,
+  "player_hot_path_delta_tstates": 0,
+  "inline_matches": false,
+  "fast_noop_scan": false,
+  "static_cache_borders": false,
+  "carry_huffman": false,
+  "register_fragments": false,
+  "cached_huffman_byte": false,
+  "irq_safe_paging": false,
+  "startup_delta": false,
+  "timing_verified": false,
+  "verification": "cpu",
+  "video_codec": "fap3",
+  "input": {
+    "video_stream": 0,
+    "audio_stream": 1,
+    "decoded_frames": 5,
+    "encoded_frames": 5,
+    "tail_repeated_frames": 0,
+    "encoded_seconds": 0.6,
+    "fit": "contain",
+    "crop": false,
+    "command": [
+      "C:\\Work\\ZX-video\\.worktree\\audio-fidelity\\.tmp\\bin\\ffmpeg.exe",
+      "-v",
+      "error",
+      "-nostdin",
+      "-y",
+      "-i",
+      "C:\\Work\\ZX-video\\.tmp\\ay-square-converter\\source.avi",
+      "-map",
+      "0:0",
+      "-an",
+      "-vf",
+      "setpts=PTS-STARTPTS,fps=25/3:start_time=0:round=up:eof_action=pass,scale=w='max(1,round(min(128,72*dar)))':h='max(1,round(min(72,128/dar)))':flags=area,setsar=1,pad=128:72:(ow-iw)/2:(oh-ih)/2:black",
+      "-pix_fmt",
+      "rgb24",
+      "-f",
+      "rawvideo",
+      "C:\\Work\\ZX-video\\.tmp\\ay-square-converter\\final\\work\\frames.rgb"
+    ]
+  },
+  "frames": 5,
+  "ay_ticks": 30,
+  "volumes": [
+    {
+      "file": "ZX-video_part01.trd",
+      "metadata": "ZX-video_part01.json",
+      "frames": 5,
+      "frame_start": 0,
+      "frame_end_exclusive": 5,
+      "used_sectors": 30,
+      "free_sectors": 2514,
+      "sha256": "8daca1663318e2aad4fec1d4e05ea583c681724477c970c700f6b500773a6325"
+    }
+  ],
+  "duration_seconds": 0.6,
+  "stream_sha256": "f0d86ff2e8b968d0121f007e0389f6e24fdf12ed403ccee987186ff781412977",
+  "states_sha256": "3764ca05cdfccf9fcddadee20971c47c2cea661906416fce096f251ef7e9f812"
+}

@@ -1,6 +1,6 @@
 """Joint harmonic analysis and three-voice arrangement for the fixed AY stream.
 
-Offline only: the player still receives nine register bytes per video frame.
+Offline only: the player still receives nine register bytes per AY update.
 Harmonic templates compete for the same spectrum, so one instrument's partials
 do not independently become three voices. Silence is an explicit track state.
 """
@@ -181,7 +181,40 @@ def arrange_noise(magnitude, rms, explained, volumes, sample_rate=22050):
     return periods, result, share
 
 
-def analyse(source: Path, start: float, duration: float, fps: float, *, noise=False):
+def arrange_for_chip(magnitude, rms, sample_rate=22050, *, noise=True, square_fit=True,
+                     noise_steps=1, tuning_cents=50):
+    """Track instrument pitches, then fit the output chip's square harmonics.
+
+    square_fit=False reproduces the previous converter for controlled A/B tests.
+    The generic converter calls this at 50 Hz, independently of video cadence.
+    """
+    amplitude, explained = decompose(magnitude, sample_rate)
+    periods, volumes, paths = arrange(amplitude, rms, explained)
+    recovered = 0
+    if square_fit:
+        from ay_square_fit import recover_isolated_tones
+        recovered = recover_isolated_tones(magnitude, rms, periods, volumes, paths, sample_rate)
+    noise_periods = np.zeros(len(rms), dtype=int)
+    if noise:
+        noise_periods, volumes, _ = arrange_noise(magnitude, rms, explained, volumes, sample_rate)
+    fit = dict(model='legacy_instrument_amplitude')
+    if square_fit:
+        from ay_square_fit import refine
+        periods, volumes, fit = refine(magnitude, periods, volumes, noise_periods,
+                                      sample_rate, noise_steps=noise_steps, tuning_cents=tuning_cents)
+        fit['recovered_isolated_tone_ticks'] = recovered
+    # Noise-only B and silent channels retain unused tone periods on disk.
+    for voice in range(3):
+        previous = 1
+        for i in range(len(rms)):
+            if not volumes[i, voice] or (voice == 1 and noise_periods[i]):
+                periods[i, voice] = previous
+            else:
+                previous = periods[i, voice]
+    return periods, volumes, paths, noise_periods, explained, fit
+
+
+def analyse(source: Path, start: float, duration: float, fps: float, *, noise=False, square_fit=True):
     import build_long_video_trd as video
     ffmpeg = shutil.which('ffmpeg')
     if not ffmpeg: raise RuntimeError('ffmpeg is not available')
@@ -189,16 +222,8 @@ def analyse(source: Path, start: float, duration: float, fps: float, *, noise=Fa
     if count<1: raise ValueError('audio duration must contain at least one frame')
     samples = video.decode_analysis_audio(ffmpeg, source, start, duration, rate, True)
     magnitude, rms = spectra(samples, rate, fps, count)
-    amplitude, explained = decompose(magnitude, rate)
-    periods, volumes, paths = arrange(amplitude, rms, explained)
-    noise_periods = np.zeros(count, dtype=int)
-    if noise:
-        noise_periods, volumes, _ = arrange_noise(magnitude, rms, explained, volumes, rate)
-        # A noise-only channel need not change its unused tone period.
-        previous = 1
-        for i in range(count):
-            if noise_periods[i]: periods[i,1] = previous
-            else: previous = periods[i,1]
+    periods, volumes, paths, noise_periods, explained, fit = arrange_for_chip(
+        magnitude, rms, rate, noise=noise, square_fit=square_fit)
     frames = [video.AyFrame(tuple(map(int,p)), tuple(map(int,v)), int(n))
               for p,v,n in zip(periods, volumes, noise_periods)]
     changes = np.diff(paths[:, 2])
@@ -220,7 +245,7 @@ def analyse(source: Path, start: float, duration: float, fps: float, *, noise=Fa
                  source_loud_dbfs=float(np.percentile(audible,98)) if len(audible) else -70.,
                  master_volume_min=int(peak_volumes.min()),master_volume_max=int(peak_volumes.max()),
                  master_volume_mean=float(peak_volumes.mean()),
-                 volume_model='nominal_3dB_steps', frames=count,
+                 volume_model='nominal_3dB_steps', frames=count, chip_fit=fit,
                  noise_frames=int(np.count_nonzero(noise_periods)),
                  noise_seconds=float(np.count_nonzero(noise_periods)/fps),
                  noise_mode='channel_B_replaces_weaker_harmony' if noise else 'disabled',

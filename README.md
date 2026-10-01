@@ -24,6 +24,16 @@ with a 256×144 active area, a target rate of 25/3 fps and AY synthesis at
 automatic continuation after inserting the next disk. Inputs without an
 audio track produce silence.
 
+Audio conversion automatically fits the selected AY periods and volume levels
+against square-wave harmonics. Frequencies can fall between musical notes;
+the default search spans 50 cents either side of the tracked pitch. Noise is
+one nominal 3 dB volume step quieter. `--ay-noise-steps 0` retains its previous
+level; `--ay-tuning-cents 0` disables period refinement (range: 0..100).
+The `audio-quality.json` report records the model and settings. This improves
+the measured audio windows but increases audio storage and register activity;
+new full-movie images still need capacity and playback checks.
+[Audio comparison, tests and reproduction](toolkit/AY_SQUARE_FIT.md).
+
 By default, all frames and Z80 timings are checked with ideal data delivery.
 **Playback timing with disk reads is checked separately in Fuse**:
 

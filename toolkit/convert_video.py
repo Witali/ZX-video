@@ -141,7 +141,8 @@ def write_video_preview(images, states, quality, path):
     quality['preview'] = path.name
 
 
-def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS):
+def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS, *,
+                  noise_steps=1, tuning_cents=50):
     ticks, rate = count*fields_for_fps(fps), 22050
     if sound is None:
         frames = [video.AyFrame((1, 1, 1), (0, 0, 0))]*ticks
@@ -159,13 +160,8 @@ def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS):
         samples = np.pad(samples[:sample_count], (0, max(0, sample_count-len(samples))))
         print(f'AY analysis: {ticks} updates at 50 Hz', flush=True)
         magnitude, rms = ay.spectra(samples, rate, 50, ticks)
-        amplitude, explained = ay.decompose(magnitude, rate)
-        periods, volumes, _ = ay.arrange(amplitude, rms, explained)
-        noise, volumes, _ = ay.arrange_noise(magnitude, rms, explained, volumes, rate)
-        previous = 1
-        for i in range(ticks):
-            if noise[i]: periods[i, 1] = previous
-            else: previous = periods[i, 1]
+        periods, volumes, _, noise, _, fit = ay.arrange_for_chip(
+            magnitude, rms, rate, noise_steps=noise_steps, tuning_cents=tuning_cents)
         frames = [video.AyFrame(tuple(map(int, p)), tuple(map(int, v)), int(n))
                   for p, v, n in zip(periods, volumes, noise)]
         import compare_ay_fidelity as quality
@@ -174,7 +170,7 @@ def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS):
         metrics = quality.compare(quality.features(samples, rate, float(fps), count),
                                   quality.features(rendered, rate, float(fps), count))
         report = dict(source_audio=True, ticks=ticks, noise_ticks=int(np.count_nonzero(noise)),
-            synthesis='three AY voices, optional noise on B, 50 Hz', metrics=metrics,
+            synthesis='three AY voices, optional noise on B, 50 Hz', chip_fit=fit, metrics=metrics,
             metric_note='signal proxies, not a perceptual accuracy percentage', command=command)
     (directory/'ay.bin').write_bytes(b''.join(frame.serialize() for frame in frames))
     return frames, report
@@ -190,6 +186,10 @@ def main(argv=None):
     parser.add_argument('--lzsa', help='LZSA executable for --video-codec cb41; defaults to PATH')
     parser.add_argument('--fps', choices=('25/3', '10'), default='25/3',
         help='video rate; 10 requires CB41, AY always remains 50 Hz')
+    parser.add_argument('--ay-noise-steps', type=int, choices=(0, 1), default=1,
+        help='noise attenuation in nominal 3 dB AY volume steps (default: 1)')
+    parser.add_argument('--ay-tuning-cents', type=float, default=50,
+        help='integer AY period search around each tracked pitch, 0..100 cents (default: 50)')
     for name in ('ffmpeg', 'ffprobe', 'zx0'):
         parser.add_argument('--'+name, help='executable path; defaults to PATH')
     parser.add_argument('--max-frames-per-disk', type=int, default=4096, help='upper bound, 1..10922; size may split sooner')
@@ -209,6 +209,8 @@ def main(argv=None):
     parser.add_argument('--verification-timeout', type=float, default=1800, help='Fuse timeout in seconds per disk')
     parser.add_argument('--cached-huffman-byte', action='store_true', help='Cache current Huffman byte in B; requires --carry-huffman')
     args = parser.parse_args(argv)
+    if not 0 <= args.ay_tuning_cents <= 100:
+        parser.error('--ay-tuning-cents must be in 0..100')
     args.frame_fields = fields_for_fps(args.fps)
     if args.fps == '10' and args.video_codec != 'cb41':
         parser.error('--fps 10 requires --video-codec cb41')
@@ -271,7 +273,8 @@ def main(argv=None):
         else:
             write_video_preview(images, states, quality, output/'video-preview.png')
         write_json(output/'video-quality.json', quality)
-        ay_frames, audio = convert_audio(source, executables['ffmpeg'], work, picture, sound, len(states), Fraction(args.fps))
+        ay_frames, audio = convert_audio(source, executables['ffmpeg'], work, picture, sound,
+            len(states), Fraction(args.fps), noise_steps=args.ay_noise_steps, tuning_cents=args.ay_tuning_cents)
         write_json(output/'audio-quality.json', audio)
         raw, codec = encode(states, scaffold_audio(ay_frames, args.frame_fields))
         codec.update(build_envelope_fields=6, runtime_frame_fields=args.frame_fields,

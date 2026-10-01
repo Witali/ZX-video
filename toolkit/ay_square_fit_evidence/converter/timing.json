@@ -1,0 +1,54 @@
+{
+  "complete": true,
+  "all_nominal_deadlines_met": false,
+  "release": false,
+  "profile": "instruction counts with ideal input; optional complete Fuse measurements",
+  "player_hot_path_changed": false,
+  "player_hot_path_delta_tstates": 0,
+  "disks": [
+    {
+      "file": "ZX-video_part01.trd",
+      "cpu_report": "timing/ZX-video_part01.cpu.json",
+      "cpu_complete": true
+    }
+  ],
+  "disk_adapter_instruction_tstates": {
+    "same_track": {
+      "tstates": 739,
+      "code_bytes": 155,
+      "seek_bytes": 0,
+      "restore_calls": 1,
+      "full_calls": 1,
+      "direct_calls": 0,
+      "fallback_calls": 0
+    },
+    "track_change": {
+      "tstates": 739,
+      "code_bytes": 155,
+      "seek_bytes": 0,
+      "restore_calls": 1,
+      "full_calls": 1,
+      "direct_calls": 0,
+      "fallback_calls": 0
+    },
+    "track_wrap": {
+      "tstates": 750,
+      "code_bytes": 155,
+      "seek_bytes": 0,
+      "restore_calls": 1,
+      "full_calls": 1,
+      "direct_calls": 0,
+      "fallback_calls": 0
+    },
+    "ring_wrap": {
+      "tstates": 787,
+      "code_bytes": 155,
+      "seek_bytes": 0,
+      "restore_calls": 1,
+      "full_calls": 1,
+      "direct_calls": 0,
+      "fallback_calls": 0
+    }
+  },
+  "disk_adapter_excludes": "ROM execution, IRQ, ULA contention and physical latency; includes paging"
+}

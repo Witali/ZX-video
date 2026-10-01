@@ -1,0 +1,350 @@
+{
+  "date": "2026-10-01",
+  "source": "C:\\Work\\HLV-codec\\out\\sources\\big_buck_bunny_1080p_h264\\big_buck_bunny_1080p_h264.mov",
+  "source_mix": "FFmpeg mono downmix, matching the generic converter",
+  "update_rate_hz": 50,
+  "metric_rate_hz": 50,
+  "onset_tolerance_seconds": 0.02,
+  "scope": "offline synthesis comparison; no new TRD or full movie verification",
+  "windows": [
+    {
+      "start_seconds": 60,
+      "duration_seconds": 8,
+      "context_seconds": [
+        1,
+        1
+      ],
+      "source_pcm_sha256": "ea79c20b329713a724c2a3adc22dc62982579430c6d2cfc8cca3e8bd49ff112e",
+      "metrics": {
+        "before": {
+          "semitone_spectral_cosine": 0.8949961204405354,
+          "chroma_cosine": 0.9674804921758962,
+          "loudness_correlation": 0.9832316100347942,
+          "rhythm_onset_f1": 0.6875,
+          "onsets": {
+            "reference": 16,
+            "candidate": 16,
+            "matched": 11,
+            "precision": 0.6875,
+            "recall": 0.6875,
+            "f1": 0.6875
+          },
+          "evaluated_frames": 400
+        },
+        "quieter_only": {
+          "semitone_spectral_cosine": 0.8956162071414582,
+          "chroma_cosine": 0.9682306958399842,
+          "loudness_correlation": 0.9843035957010504,
+          "rhythm_onset_f1": 0.6875,
+          "onsets": {
+            "reference": 16,
+            "candidate": 16,
+            "matched": 11,
+            "precision": 0.6875,
+            "recall": 0.6875,
+            "f1": 0.6875
+          },
+          "evaluated_frames": 400
+        },
+        "square_only": {
+          "semitone_spectral_cosine": 0.9075980651542491,
+          "chroma_cosine": 0.9741127023630364,
+          "loudness_correlation": 0.9813663881399741,
+          "rhythm_onset_f1": 0.7428571428571429,
+          "onsets": {
+            "reference": 16,
+            "candidate": 19,
+            "matched": 13,
+            "precision": 0.6842105263157895,
+            "recall": 0.8125,
+            "f1": 0.7428571428571429
+          },
+          "evaluated_frames": 400
+        },
+        "after": {
+          "semitone_spectral_cosine": 0.908359638647998,
+          "chroma_cosine": 0.9749268133569783,
+          "loudness_correlation": 0.9825133834326368,
+          "rhythm_onset_f1": 0.7428571428571429,
+          "onsets": {
+            "reference": 16,
+            "candidate": 19,
+            "matched": 13,
+            "precision": 0.6842105263157895,
+            "recall": 0.8125,
+            "f1": 0.7428571428571429
+          },
+          "evaluated_frames": 400
+        }
+      },
+      "fit": {
+        "model": "ay_square_register_fit_v2",
+        "tone_harmonics": "odd 1/h through 31, below 0.48 sample rate, actual integer AY periods",
+        "noise_attenuation_register_steps": 1,
+        "nominal_noise_attenuation_db": 3.0102999566398125,
+        "changed_tone_registers": 235,
+        "noise_ticks": 49,
+        "tuned_period_registers": 946,
+        "tuning_radius_cents": 50.0,
+        "frequency_score_hysteresis": 0.001,
+        "fit_spectral_cosine_sum_before": 375.31324825157196,
+        "fit_spectral_cosine_sum_after": 396.01602461708626,
+        "tone_power_tolerance_db": 0.25,
+        "maximum_tone_register_change": 1,
+        "native_instruction_delta_tstates": 0,
+        "limitations": "Phase-independent magnitude fit; nominal 3 dB levels; no analogue filter model.",
+        "recovered_isolated_tone_ticks": 0
+      },
+      "noise_ticks": 38,
+      "noise_level_squared_sum": {
+        "before": 0.35546875,
+        "after": 0.177734375
+      },
+      "artifacts": {
+        "before.ay": "f37c9320782a956fb1b2fb206e4e1dee1c3bbc9b41798331ff6375ecb27bcfa7",
+        "quieter_only.ay": "851d089bff62bb5eeda5d282ae2e2cb7c4aa34e9781e995573254a2cee0ce5ec",
+        "square_only.ay": "2faa7537dc18948bfaea1f2bd99721dce2fca355b98ef8f3db1f3eea29254104",
+        "after.ay": "8d3f0a7d5a41c4591adfb737a5d4f3e773394ecb57f4805cd50b7695bec2f282",
+        "analysis.npz": "77afd40529d6dae4fa52282eb8271503618fffd5cda5ddd75cb7e356e07cd64b",
+        "original.wav": "804b28e667c2140bc9fd99092cefe086ae232b1913fe3a56279a795ef06467e2",
+        "before.wav": "0f3ff374378f60f804d37e25f690a8934c14d34a874bdd0d8d00dd6a6af04106",
+        "quieter_only.wav": "ae43fca5aa4c12c432c1ed42dca6b5751379bb9435df4d5f989435ed61b5dded",
+        "square_only.wav": "15e61d6f3a852baf86ca8d13ca94047323670a733ef2566ca60894bedb92a6d8",
+        "after.wav": "839f141c7d5b93f25c42b1edac4f383e4e274eb25be12bdb2992b83f428b4392"
+      },
+      "resident_ayh1_bytes": {
+        "before": 919,
+        "quieter_only": 920,
+        "square_only": 1679,
+        "after": 1679
+      },
+      "preview_common_rms": 0.07318261917595362
+    },
+    {
+      "start_seconds": 170,
+      "duration_seconds": 8,
+      "context_seconds": [
+        1,
+        1
+      ],
+      "source_pcm_sha256": "cf9c04f0e68314d868659078333fc64a5cc6916c189202e8089ad7b6d0c4330b",
+      "metrics": {
+        "before": {
+          "semitone_spectral_cosine": 0.8675504779874503,
+          "chroma_cosine": 0.9704500830323048,
+          "loudness_correlation": 0.9941281194646536,
+          "rhythm_onset_f1": 0.9629629629629629,
+          "onsets": {
+            "reference": 14,
+            "candidate": 13,
+            "matched": 13,
+            "precision": 1.0,
+            "recall": 0.9285714285714286,
+            "f1": 0.9629629629629629
+          },
+          "evaluated_frames": 322
+        },
+        "quieter_only": {
+          "semitone_spectral_cosine": 0.8675120656509753,
+          "chroma_cosine": 0.9695075729631885,
+          "loudness_correlation": 0.9950117340381637,
+          "rhythm_onset_f1": 0.9285714285714286,
+          "onsets": {
+            "reference": 14,
+            "candidate": 14,
+            "matched": 13,
+            "precision": 0.9285714285714286,
+            "recall": 0.9285714285714286,
+            "f1": 0.9285714285714286
+          },
+          "evaluated_frames": 322
+        },
+        "square_only": {
+          "semitone_spectral_cosine": 0.8767464454862073,
+          "chroma_cosine": 0.9761311827856631,
+          "loudness_correlation": 0.9939966703085343,
+          "rhythm_onset_f1": 1.0,
+          "onsets": {
+            "reference": 14,
+            "candidate": 14,
+            "matched": 14,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "evaluated_frames": 322
+        },
+        "after": {
+          "semitone_spectral_cosine": 0.8780184246879595,
+          "chroma_cosine": 0.9760723859643058,
+          "loudness_correlation": 0.9946446695403035,
+          "rhythm_onset_f1": 1.0,
+          "onsets": {
+            "reference": 14,
+            "candidate": 14,
+            "matched": 14,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "evaluated_frames": 322
+        }
+      },
+      "fit": {
+        "model": "ay_square_register_fit_v2",
+        "tone_harmonics": "odd 1/h through 31, below 0.48 sample rate, actual integer AY periods",
+        "noise_attenuation_register_steps": 1,
+        "nominal_noise_attenuation_db": 3.0102999566398125,
+        "changed_tone_registers": 166,
+        "noise_ticks": 173,
+        "tuned_period_registers": 693,
+        "tuning_radius_cents": 50.0,
+        "frequency_score_hysteresis": 0.001,
+        "fit_spectral_cosine_sum_before": 248.57796743401482,
+        "fit_spectral_cosine_sum_after": 261.3313043758446,
+        "tone_power_tolerance_db": 0.25,
+        "maximum_tone_register_change": 1,
+        "native_instruction_delta_tstates": 0,
+        "limitations": "Phase-independent magnitude fit; nominal 3 dB levels; no analogue filter model.",
+        "recovered_isolated_tone_ticks": 0
+      },
+      "noise_ticks": 98,
+      "noise_level_squared_sum": {
+        "before": 7.6282958984375,
+        "after": 3.814147949218751
+      },
+      "artifacts": {
+        "before.ay": "89cb656ebfdccd3f18402dd443c5f0809441bce4f9952b0c74f3585c84ed03ab",
+        "quieter_only.ay": "74a6e3c0b858a1567bedba117da14fc53fd869d0a227de842ab66b4d06762c31",
+        "square_only.ay": "a9b596bf8c43bb12df3e7997b70438d77ae2fdea22d32b4dc1c89a9487543d16",
+        "after.ay": "ea18346043e602bf4c37f51e0dbdb13dcfc62f6f141d32243381830a6440020a",
+        "analysis.npz": "53432238231f321bc3e8df11857061bba7d2cbe104e383763bd0ee86fd817d15",
+        "original.wav": "c72b3ac5824f463db7e1c062387d342b24ad63802defd74f3a24eb10315024ce",
+        "before.wav": "c3693c85a9551d9942b810f223f212664d46469244eec551bded030c70021359",
+        "quieter_only.wav": "4f3345e0e4f64712f1f693d1579e0f96ae1e2113a60c2b6977609607c615314b",
+        "square_only.wav": "279fd7518fb121447630336c286085c1bf4887f0d29b1c5b0134be199b2bc2f2",
+        "after.wav": "826e1b4e1f29b817c652e61ac3ac0a7fa221be3575b120a38e08ebc1af987841"
+      },
+      "resident_ayh1_bytes": {
+        "before": 933,
+        "quieter_only": 928,
+        "square_only": 1576,
+        "after": 1570
+      },
+      "preview_common_rms": 0.05059665214033177
+    },
+    {
+      "start_seconds": 430,
+      "duration_seconds": 8,
+      "context_seconds": [
+        1,
+        1
+      ],
+      "source_pcm_sha256": "6264719f9352b73882fca5e81b672d94b7703da8ce7aff6e9bbd9737796ef4e5",
+      "metrics": {
+        "before": {
+          "semitone_spectral_cosine": 0.85590636281662,
+          "chroma_cosine": 0.9689042692869098,
+          "loudness_correlation": 0.9819080645194707,
+          "rhythm_onset_f1": 0.7777777777777778,
+          "onsets": {
+            "reference": 16,
+            "candidate": 20,
+            "matched": 14,
+            "precision": 0.7,
+            "recall": 0.875,
+            "f1": 0.7777777777777778
+          },
+          "evaluated_frames": 400
+        },
+        "quieter_only": {
+          "semitone_spectral_cosine": 0.8476751757360064,
+          "chroma_cosine": 0.966204371326249,
+          "loudness_correlation": 0.9787817230784928,
+          "rhythm_onset_f1": 0.8,
+          "onsets": {
+            "reference": 16,
+            "candidate": 19,
+            "matched": 14,
+            "precision": 0.7368421052631579,
+            "recall": 0.875,
+            "f1": 0.8
+          },
+          "evaluated_frames": 400
+        },
+        "square_only": {
+          "semitone_spectral_cosine": 0.8711525034694013,
+          "chroma_cosine": 0.9754905816453692,
+          "loudness_correlation": 0.9805340732631708,
+          "rhythm_onset_f1": 0.8,
+          "onsets": {
+            "reference": 16,
+            "candidate": 19,
+            "matched": 14,
+            "precision": 0.7368421052631579,
+            "recall": 0.875,
+            "f1": 0.8
+          },
+          "evaluated_frames": 400
+        },
+        "after": {
+          "semitone_spectral_cosine": 0.8633558241406066,
+          "chroma_cosine": 0.9731218232820464,
+          "loudness_correlation": 0.9773575981088958,
+          "rhythm_onset_f1": 0.8571428571428571,
+          "onsets": {
+            "reference": 16,
+            "candidate": 19,
+            "matched": 15,
+            "precision": 0.7894736842105263,
+            "recall": 0.9375,
+            "f1": 0.8571428571428571
+          },
+          "evaluated_frames": 400
+        }
+      },
+      "fit": {
+        "model": "ay_square_register_fit_v2",
+        "tone_harmonics": "odd 1/h through 31, below 0.48 sample rate, actual integer AY periods",
+        "noise_attenuation_register_steps": 1,
+        "nominal_noise_attenuation_db": 3.0102999566398125,
+        "changed_tone_registers": 285,
+        "noise_ticks": 181,
+        "tuned_period_registers": 937,
+        "tuning_radius_cents": 50.0,
+        "frequency_score_hysteresis": 0.001,
+        "fit_spectral_cosine_sum_before": 252.4050824458624,
+        "fit_spectral_cosine_sum_after": 267.3034863091344,
+        "tone_power_tolerance_db": 0.25,
+        "maximum_tone_register_change": 1,
+        "native_instruction_delta_tstates": 0,
+        "limitations": "Phase-independent magnitude fit; nominal 3 dB levels; no analogue filter model.",
+        "recovered_isolated_tone_ticks": 0
+      },
+      "noise_ticks": 171,
+      "noise_level_squared_sum": {
+        "before": 9.8076171875,
+        "after": 4.90380859375
+      },
+      "artifacts": {
+        "before.ay": "19974e54e01d0cf9106903398457a102173ec52751a338bd22f98a3241a40cc6",
+        "quieter_only.ay": "edf0a3688b906669cdda1170be55412361d78469adf1ba326d0c7470d26759fd",
+        "square_only.ay": "f1217f9c13e621808f3ab617e424d2ae9c4cabc6cc899c335fe8d8157d7c8500",
+        "after.ay": "da1c1a51741545009160dfe98d49c6753aa9ba5382e72fc0cc34a99cf2b6e23f",
+        "analysis.npz": "7df2ffee688efe4b31b7e413e541118ffde3a09eaf0bca3f5d458d8d9a1d0d0a",
+        "original.wav": "8bc685d0271772884a36488f1158b83ca181a598627881b673e0854e553ed8bb",
+        "before.wav": "06134b3a602f44165454937dd20b502758dec189940e41deeae3159795a8b598",
+        "quieter_only.wav": "5f2db94da7718190fbf5717a8b9b263518a484ccb388cc9025fc52777663529e",
+        "square_only.wav": "9855e96cc1b3f2f2900b98cf4d7b2b6a05c73f0d2ce79fcbfe384dc13e318ec6",
+        "after.wav": "69317496e061fd49cb9c49e79d8a82f333558d1c4f043673e7022d8870cfd5fa"
+      },
+      "resident_ayh1_bytes": {
+        "before": 1072,
+        "quieter_only": 1069,
+        "square_only": 1896,
+        "after": 1891
+      },
+      "preview_common_rms": 0.1
+    }
+  ]
+}
