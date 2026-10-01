@@ -28,6 +28,40 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — jointly select colour and grain against a monochrome reference
+
+- User requested colour plus reselected grain that brings output closer to
+  the source. Baseline `756ecd0`; four cached 32-frame windows at movie
+  0/704/3392/4288. Search all 56 canonical colour/BRIGHT pairs and five
+  per-sample coverages, including normal white, with fixed phase. Guard
+  per-sample average RGB and physical RGB error against monochrome; the
+  latter assumes each source sample is constant across its 2x2 footprint.
+- Initial pointwise luma guard restored little colour in many scenes.
+  One targeted follow-up bounds luma error per character cell while keeping
+  both pointwise RGB bounds. Objective: RGB + 2*luma + 0.03*pattern variance;
+  previous-pair allowance 4/sample, explicit monochrome fallback. Recompute
+  density for each tested palette; no contours or global contrast boost.
+- All guards pass on 128 frames. Mean RGB MSE: monochrome 1218.566, old
+  colour 638.461, joint 584.912 (-52.00% / -8.39%). Luma MSE 372.521 ->
+  240.085; physical RGB MSE 12024.326 -> 9605.304. However, cell-boundary
+  residual MSE worsens 300.853 -> 493.336 (old colour 466.763). Inspect
+  frames 10/714/3402/4298; retain visible-block limitations and both attempts.
+- Exact LZSA2 window bytes: monochrome 44018 -> joint 52489 (+19.24%);
+  old colour 39467. Row counts 64/105/91/133 fit locally. Native code and
+  format unchanged: 0 T instruction delta, book loader 54028 -> 54028 T.
+  Output mean 88292.625 -> 93924.086 T (+5631.461 / +6.38%); maxima
+  199451 -> 217610 T. Excludes LZSA2/copies/paging/IRQ/ULA/disk latency.
+- All 256 native baseline/joint draws, 1769472 screen bytes, timing/guard
+  checks, 16 independent-emulator checks and nine tests pass. Save a
+  pixel/timeline-checked host GIF, full per-frame metrics and source hashes.
+  A final cached rerun only synchronized guarantee documentation/provenance.
+- Decision: retain the cell-luma variant as the preferred optional prototype,
+  not a default or new TRD. Source-error guards do not ensure perceptual or
+  cell-boundary improvement. Next constrain boundary error, then validate
+  whole-volume capacity and full playback. Existing root images/AY unchanged.
+  [Method, limits and reproduction](toolkit/FAITHFUL_COLOUR.md),
+  [evidence index](toolkit/faithful_colour_report.json).
+
 ## 2026-10-01 — compare source-derived contours for monochrome objects
 
 - User requested more distinguishable object outlines. Baseline `0cbfa17`;

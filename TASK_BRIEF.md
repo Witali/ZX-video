@@ -80,6 +80,18 @@ tests pass. Keep this as an optional prototype: no new TRD/default change,
 full-player timing or full-volume capacity claim. A host comparison GIF is
 saved. [Evidence and next gate](toolkit/MONOCHROME_CONTOURS.md).
 
+## Joint colour and grain prototype completed
+
+At the user's request, compare joint colour/coverage selection against the
+monochrome source reference on 128 cached frames. The selected version guards
+average and physical-model RGB error per 2x2 sample and luma error per cell.
+RGB MSE drops 52.00% versus monochrome / 8.39% versus old colour, but boundary
+residual error increases. Bytes +19.24% and output CPU +6.38% versus mono;
+local row tables fit. All 256 native draws and nine tests pass. Keep this
+optional prototype; defaults/TRDs remain unchanged and full-player timing
+is unverified. Next address boundaries within these RGB bounds before a
+release gate. [Comparison and evidence](toolkit/FAITHFUL_COLOUR.md).
+
 ## Working method
 
 1. **Define one deliverable.** State the problem, baseline, hypothesis and
