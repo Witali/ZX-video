@@ -5,6 +5,67 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: invisible attribute removal saves bytes within every original decoder budget
+
+- Objective: improve compression at unchanged decoding cost on cached CB46
+  data. Baseline `32c6649`; original [4096,4352) window and complete part 4
+  [3744,5066), fixed bitmap/dither, mutable row table, static cell book,
+  AY50 and 10 fps. No new video preparation or whole-set image sweep.
+- Encoder-only transform: retain the previous physical attribute through
+  an entire constant-attribute run on the same back-screen parity when its
+  used INK/PAPER RGB colours remain identical throughout. Check future
+  visibility, not just the first frame. BRIGHT remains significant except
+  for black. No bitmap bit, dither phase, visible RGB pixel or AY value changes.
+  No later attribute write is added relative to the original stream.
+- Recompress the affected raw blocks with the existing pinned LZSA2 and keep
+  each original output extent after deleted bytes. The existing short-match
+  fitter enforces original Z80 CPU budgets. If any block still exceeds its
+  byte or CPU budget, freeze all overlapping original frame packets, replan
+  attribute histories and measure again. Do not splice alternatives with
+  inconsistent physical histories. The frozen frame set only grows.
+- Window: the unfitted transform saves 77 bytes but slows blocks 3/4 by 886/101 T.
+  Fitting costs one byte and removes those regressions. Accepted result:
+  **185681 ->185605 bytes** (-76; still 726 video sectors), **16049945
+  ->16036695 decoder T** (-13250), all 16 blocks no larger or slower.
+  Removing 133 attribute writes saves 5562 renderer T. Window coverage is host
+  RGB/packet proofs plus independent decoder execution, not physical playback.
+- Full part 4: the first candidate removes 787 writes and saves 268 bytes /
+  50063 decoder T overall, but blocks 1/4/5/10/18/48/49/54 violate an individual
+  budget. One fallback iteration freezes 238 frames. Final accepted result:
+  **623005 ->622695 bytes** (-310), **2434 ->2433 video sectors**,
+  **55808156 ->55754985 decoder T** (-53171), all 55 blocks no larger or
+  slower. Removing 718 writes saves 33337 renderer T. This is a small gain,
+  not evidence that larger compression gains remain available by this method.
+- Renderer instructions are unchanged. Exact fast attribute-mask accounting:
+  nonempty group 233 T +23 T per write; empty group 94 T, or 93 when E wraps.
+  A removed write saves 23 T while its group remains nonempty; removing the
+  last write also saves 139/140 T. Five tests cover 49152 colour/usage cases,
+  future visibility, parity, all 16 restoration subsets, boundary mapping,
+  complete restoration, and 24 guarded/independent native renderer executions.
+  Decoder counts use identical non-streaming instructions and 256-byte output
+  quotas, excluding TR-DOS, physical reads, IRQ and ULA contention.
+- One full part 4 TRD uses the previously verified direct-header player.
+  Occupancy **2544 ->2543 sectors**. Dirty-RAM boot, complete guarded native
+  playback and full Fuse screen capture pass (1322 frames /9137664 screen
+  bytes); 6610 AY ticks and 2433 runtime sectors are exact. Physical attributes
+  match the transformed reference; independent RGB comparison proves its
+  picture is identical to the original, including borders and dither.
+- Actual timing remains unsuitable for release: 22 nominal misses before
+  and after; 20 ->21 beyond one field; maximum 15 fields, actual 1063627 T;
+  invalid intervals 13 ->11. Runs 378,593..602,615..625 recover at 379/603/626.
+  Deterministic CPU savings do not imply improved physical publication timing.
+- Decision: retain this guarded host pass and cached rebuild option
+  `--invisible-attributes-probe`; do not change converter defaults or root
+  release images. Four-volume timing and preceding-EOF continuation gates
+  remain open. No image quality tradeoff or relaxed timing requirement.
+- Reproduce with [host transform](toolkit/invisible_attribute_writes.py),
+  [probe](toolkit/probe_invisible_attributes.py),
+  [automatic budget fallback](toolkit/fit_invisible_attribute_budgets.py),
+  [tests](toolkit/test_invisible_attributes.py), cached rebuilder and
+  [archive verifier](toolkit/verify_invisible_attributes.py).
+  [Report](toolkit/invisible_attributes_report.json) retains both unsuccessful
+  passes, accepted streams, pixel proofs, full playback and separate profiles.
+
 ## 2026-10-01: earlier prefix admission preserves content but worsens delivery
 
 - Objective: finish the bounded scheduling test after the direct header

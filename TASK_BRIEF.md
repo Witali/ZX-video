@@ -131,15 +131,30 @@ unchanged. Keep `--early-lzsa2-prefix` disabled. Reuse
 `.tmp/early-lzsa2-prefix-window/`, `.tmp/early-lzsa2-prefix-part04/` and
 [evidence](toolkit/early_lzsa2_prefix_report.json); do not repeat this sweep.
 
-Next bounded scope: encoder-only removal of invisible attribute changes in
-uniform cells. An unchanged bitmap may not use INK or PAPER; retain its
-previous physical attribute only when every visible RGB pixel stays exact
-until the next original write on that back-screen parity. Do not add attribute
-writes on later frames. Reuse the saved window, preserve row/cell dictionaries
-and bitmap operations, then compare compressed size and independent decoder
-T-states before building any candidate. Pixel RGB equivalence is separate
-from physical screen-byte equality. Generic CLI integration and four-volume
-cold/continuation release checks remain open.
+Invisible attribute removal is implemented with future-visibility checks
+and conservative per-block fallback. The bitmap/dither and every rendered
+RGB pixel stay exact; only unused attribute bits differ. No later write is
+added. Window: 185681 ->185605 bytes (no sector saved),16049945 ->16036695 T,
+133 removed writes /5562 renderer T saved. Full part 4 first failed 8 block
+budgets; freezing 238 overlapping frames and replanning histories yields
+**622695 bytes /2433 video sectors**, 55 blocks individually no larger or
+slower, 55754985 decoder T (-53171), 718 removed writes /33337 renderer T saved.
+Reuse `.tmp/invisible-attributes-part04-guarded/round01/` and
+[evidence](toolkit/invisible_attributes_report.json). Do not repeat this search.
+
+One full direct-header playback build is at
+`.tmp/invisible-attributes-playback-part04/`: 2543 occupied sectors, complete
+cold/native/Fuse screens and AY checks. Actual timing still fails: 22 nominal
+misses, 21 beyond one field, max 15, 11 bad intervals; runs 378,593..602,615..625
+recover at 379/603/626. This is a small encoder saving, not a release fix.
+Keep defaults/root images unchanged. The opt-in cached rebuilder accepts
+`--invisible-attributes-probe <selected folder>` and rechecks RGB equivalence.
+
+Next scope: consolidate guarded host candidate selection in the generic
+converter, reusing the saved window and explicit original byte/CPU budgets.
+Select only candidates with measured benefit; keep original data otherwise.
+Do not repeatedly rebuild disk sets for tiny host estimates. Four-volume
+cold/continuation release checks and the sustained timing problem remain open.
 
 The sector-streaming LZSA2 experiment remains unselected. Eager
 prefix decoding produces 27 late frames / maximum 40 fields in the complete

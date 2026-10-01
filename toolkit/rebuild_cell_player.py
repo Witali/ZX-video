@@ -44,6 +44,7 @@ def main():
     p.add_argument('--four-video-slots',action='store_true',help='requires shared AY in bank 6/fixed RAM; use bank 4 as a fourth video slot')
     p.add_argument('--cell-probe',type=Path,help='validated replacement window JSON with sibling .raw.gz/.stream.gz')
     p.add_argument('--dictionary-probe',type=Path,help='validated numbering variant folder from probe_dictionary_numbering.py')
+    p.add_argument('--invisible-attributes-probe',type=Path,help='validated no-slower hidden-attribute candidate folder')
     p.add_argument('--inline-cells',action='store_true',help='experimental CB46 unrolled cell renderer, same video bytes')
     p.add_argument('--sector-cache',action='store_true',help='prefetch compressed sectors in spare bank-7 RAM')
     p.add_argument('--streaming-lzsa2',action='store_true',help='guarded input-prefix decoding; retain exact LZSA2 bytes')
@@ -51,7 +52,7 @@ def main():
     p.add_argument('--direct-lzsa2-header',action='store_true',help='direct token-entry input guard; requires streaming LZSA2')
     p.add_argument('--early-lzsa2-prefix',action='store_true',help='start prefix decoding with one ready slot; requires direct LZSA2 header')
     a=p.parse_args();m=json.loads(a.metadata.read_bytes());source=a.metadata.parent;stem=a.metadata.stem
-    if a.cell_probe and a.dictionary_probe:p.error('choose one replacement probe')
+    if sum(bool(x) for x in (a.cell_probe,a.dictionary_probe,a.invisible_attributes_probe))>1:p.error('choose one replacement probe')
     if a.output.exists() and any(a.output.iterdir()):p.error('output must be new or empty')
     if m['cell_codebook']['wire'] not in ('CB42','CB44','CB46'):p.error('cached rebuild needs dynamic rows')
     work=a.output/'work';folder=work/stem;folder.mkdir(parents=True)
@@ -100,6 +101,32 @@ def main():
         cache_check=verify_cached_blocks(coded,cell,blocks)
         (folder/'codebook.raw').write_bytes(cell);(folder/'codebook.stream').write_bytes(coded)
         write_json(folder/'rows.json',rows);write_json(folder/'dictionary-probe.json',candidate)
+    if a.invisible_attributes_probe:
+        probe_dir=a.invisible_attributes_probe
+        candidate=json.loads((probe_dir/'report.json').read_bytes())
+        assert candidate['complete'] and candidate['host_candidate_eligible']
+        assert candidate['every_block_no_larger_or_slower']
+        assert candidate['metadata_sha256']==sha(a.metadata.read_bytes())
+        assert candidate['baseline_raw_sha256']==sha(cell) and candidate['baseline_stream_sha256']==sha(coded)
+        assert candidate['original_states_sha256']==sha(frames.tobytes())
+        assert json.loads((probe_dir/'rows.json').read_bytes())==rows
+        from invisible_attribute_writes import transform_states,transform_stream,verify_rgb
+        from dynamic_row_dictionary import decode_check
+        original_frames=frames
+        with np.load(probe_dir/'states.npz',allow_pickle=False) as saved:frames=saved['states']
+        assert sha(frames.tobytes())==candidate['states_sha256']
+        frozen=set(candidate['frozen_frames'])
+        assert np.array_equal(frames,transform_states(original_frames,start,end,frozen))
+        changed,_,details=transform_stream(cell,original_frames,frames,start,end,frozen)
+        cell=(probe_dir/'video.raw').read_bytes();coded=(probe_dir/'video.stream').read_bytes()
+        assert changed==cell and sha(cell)==candidate['raw_sha256'] and sha(coded)==candidate['stream_sha256']
+        assert details==candidate['details']
+        assert verify_rgb(original_frames,frames,start,end)==candidate['rgb_proof']
+        assert decode_check(cell,frames,start,end,rows)==candidate['proof']
+        blocks=candidate['blocks'];cache_check=verify_cached_blocks(coded,cell,blocks)
+        (folder/'codebook.raw').write_bytes(cell);(folder/'codebook.stream').write_bytes(coded)
+        np.savez_compressed(folder/'states.npz',states=frames)
+        write_json(folder/'invisible-attributes-probe.json',candidate)
     shutil.copyfile(source/'work/stream.raw',work/'stream.raw')
     write_json(a.output/'partition.json',partition)
     write_json(a.output/'cache-checks.json',cache_check)

@@ -6,7 +6,34 @@ compression time if useful. Baseline `c3d1125`, upstream compressor revision
 21 independent raw blocks, 323940 decoded bytes, from the saved 192-frame
 five-level video fixture. No image/audio change or whole-movie encode sweep.
 
-## Conclusion
+## 2026-10-01: same-cost CB46 host selection
+
+The current refined-colour/AY50, 10-fps milestone supersedes the historical
+25/3-fps results below. See [current brief](../TASK_BRIEF.md) for the open
+four-disk timing gate.
+
+Invisible attribute writes can be removed without changing the bitmap,
+dither phase or any rendered RGB pixel. Retain an old physical attribute
+only when all its used colours stay exact until the next original write
+on the same screen parity. Preserve BRIGHT and check future visibility.
+This introduces no new decoder operation and never adds a later write.
+
+Compression and decoder costs are not monotonic even when raw bytes are
+removed. Keep original block extents mapped through deletions, measure each
+block with the independent Z80 core, and enforce its original byte/CPU
+budgets. The existing short-match fitter recovers small CPU regressions.
+For remaining failures, restore overlapping original frame packets and
+replan histories; do not splice streams whose attribute histories differ.
+
+Measured window saving: 76 bytes and 13250 decoder T. Full part 4 after one
+fallback iteration: 310 bytes (one video sector), 53171 decoder T and 33337
+renderer T; every block meets both budgets. Five tests include 49152 colour
+cases, 16 restoration subsets and 24 independent native renderer executions.
+Full part 4 playback retains exact RGB/AY but still misses 22 nominal deadlines.
+Retain the host pass as opt-in; it is not a new release or a timing solution.
+[Scripts, exact measurements and playback evidence](invisible_attributes_report.json).
+
+## Historical conclusion (25/3 fps)
 
 **Complete three-disk playback verified:** local cut rebalancing gives
 1839554 video bytes and 2475/2505/2511 occupied sectors. All 4221 five-level
