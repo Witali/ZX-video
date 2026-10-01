@@ -35,6 +35,34 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — four dynamic-row volumes still exceed storage capacity
+
+- Objective: select four refined A/V cuts after removing static-row and
+  single-bank AY limits. Baseline `d22f72e`; all 5066 original refined frames
+  and 25330 ticks. No quality, cadence or native instruction changes (0 T).
+- Extend the converter's window planner with minimax dynamic programming,
+  a 16-frame boundary grid and an optional static-row constraint. Existing
+  three-volume static planning stays unchanged. Eleven tests pass, including
+  an independent exhaustive small-input minimax oracle and two-screen row
+  history constraints. No candidate disk sets are built during planning.
+- Measure 159 32-frame CB42 windows, choose [0,1312,2672,3744,5066], and
+  compress only that full partition. Exact video sizes are
+  654636/647466/650028/644924 bytes, or 2558/2530/2540/2520 sectors. The
+  10148-sector sum leaves just 28 sectors (7168 bytes) out of four disks'
+  10176 sectors for every player, bootstrap and audio segment. The first
+  volume's video alone exceeds its 2544-sector limit. No final TRD emitted.
+- The four volumes require 11/15/2/6 row replacements. All frames and LZSA2
+  blocks decode exactly on the host. AY bank pairs
+  [10327,10475], [11040,12135], [10094,8991], [13327,11381] all fit. Host
+  checks do not establish actual CPU, boot, disk latency or playback timing.
+- Decision: retain reusable planner and exact failure evidence; this selected
+  partition fails capacity, not proof that four disks are impossible. Next
+  evaluate dynamic whole-cell book replacement on bounded windows, counting
+  replacement bytes and CPU as well as literal savings. Root TRDs unchanged.
+  [Probe](toolkit/probe_four_dynamic_disks.py),
+  [planner tests](toolkit/test_balanced_volumes.py),
+  [saved measurements and encoded streams](toolkit/four_dynamic_report.json).
+
 ## 2026-10-01 — fit exact resident AY across banks 4 and 6
 
 - Objective: remove the audio RAM obstacle to four refined A/V volumes,

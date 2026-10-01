@@ -56,8 +56,18 @@ The final helper occupies the checked fixed gap 78A0h..7900h.
 Refill overhead is 486 T (+50), switch refill 645 T (+209), EOF refill
 516 T (+80), excluding the decoder body, outer service, IRQ/contention/ROM.
 Initialization adds 40 T; the AY consumer and row renderer add 0 T.
-Next choose four video cuts by bounded window costs and verify actual capacity
-and sustained playback; dynamic rows alone do not prove the final target.
+Four cuts were then selected by minimax planning over 159 short CB42 windows:
+[0,1312,2672,3744,5066]. Only this full partition was encoded. Video alone
+uses 2558/2530/2540/2520 sectors (10148 total), leaving 28 of the four disks'
+10176 sectors for all sound/startup. The first video already exceeds one
+disk. Do not build this oversized candidate. All 5066 host screens and LZSA2
+blocks round-trip exactly; this is not native timing or a release check.
+Eleven planner/generic tests pass. Reuse `.tmp/four-dynamic-probe/` and
+[the archived streams/window costs](toolkit/four_dynamic_report.json).
+Next test a dynamically replaceable whole-cell book in bounded windows,
+so scene-local repeated cells can use one index instead of four row indices.
+Count replacement payload and update CPU, and retain unchanged source
+pixels/AY. A positive host result still needs native code and full timing.
 Reuse `.tmp/dynamic-rows-probe/`, `.tmp/dynamic-rows-fixture/` and
 `.tmp/dynamic-rows-window/`; do not rebuild the previous 15-image set.
 Saved [native/Fuse proof and archives](toolkit/dynamic_rows_report.json).

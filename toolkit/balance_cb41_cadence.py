@@ -1,5 +1,49 @@
-"""Choose three cuts from window costs and exact row unions, no TRD sweeps."""
+"""Choose volume cuts from window costs and optional row unions, no TRD sweeps."""
 import numpy as np
+
+
+def balanced_parts(costs, max_frames, volumes, *, sets=None, grid=16):
+    """Minimize the largest local-window byte sum without encoding candidates.
+
+    A missing row-set constraint means the caller uses a dynamic dictionary.
+    Exact resident audio, final disk capacity and delivery remain later gates.
+    """
+    count=len(costs)
+    if not 1<=volumes<=count or max_frames<1 or grid<1:
+        raise ValueError('invalid volume planning bounds')
+    if not np.all(np.isfinite(costs)) or np.any(np.asarray(costs)<0):
+        raise ValueError('invalid local byte costs')
+    edges=[0]+list(range(grid if count>2*grid else 1,count,grid if count>2*grid else 1))+[count]
+    cumulative=np.r_[0,np.cumsum(costs)]
+    prefix=None
+    if sets is not None:
+        if len(sets)!=count:raise ValueError('row-set extent differs')
+        present=np.zeros((count,625),dtype=np.int32)
+        for i,values in enumerate(sets):present[i,list(values|{0})]=1
+        prefix=np.vstack([np.zeros(625,dtype=np.int32),present.cumsum(axis=0)])
+    # Each state records minimax cost, sum of squares (tie-break) and cuts.
+    previous={0:(0.,0.,[0])};tested=0
+    for part in range(volumes):
+        current={}
+        for hi in edges[1:]:
+            if hi==count and part!=volumes-1:continue
+            best=None
+            for lo,(peak,square,cuts) in previous.items():
+                if not 0<hi-lo<=max_frames:continue
+                tested+=1
+                if prefix is not None and np.count_nonzero(prefix[hi]-prefix[max(0,lo-2)])>256:continue
+                amount=float(cumulative[hi]-cumulative[lo])
+                candidate=(max(peak,amount),square+amount*amount,cuts+[hi])
+                if best is None or candidate<best:best=candidate
+            if best is not None:current[hi]=best
+        previous=current
+    if count not in previous:raise ValueError('no valid volume cuts on the selected grid')
+    peak,_,cuts=previous[count]
+    return list(zip(cuts,cuts[1:])),dict(method='minimax dynamic programming over local-window costs',
+        volumes=volumes,grid_frames=grid,transitions_tested=tested,boundaries=cuts,
+        dynamic_row_dictionary=sets is None,estimated_peak_video_bytes=peak,
+        estimated_video_bytes=[float(cumulative[hi]-cumulative[lo]) for lo,hi in zip(cuts,cuts[1:])],
+        exact_final_capacity_required=True,whole_movie_candidates_compressed=0)
 
 
 def three_parts(sets, costs, max_frames):

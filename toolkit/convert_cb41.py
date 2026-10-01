@@ -106,9 +106,12 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6
         all_costs.extend(costs)
     balance = None
     if target_volumes is not None:
-        if target_volumes != 3: raise ValueError('bounded movie planner currently supports a target of three volumes')
-        from balance_cb41_cadence import three_parts
-        initial, balance = three_parts(sets,all_costs,max_frames)
+        from balance_cb41_cadence import three_parts,balanced_parts
+        if target_volumes==3 and not dynamic_rows:
+            initial,balance=three_parts(sets,all_costs,max_frames)
+        else:
+            initial,balance=balanced_parts(all_costs,max_frames,target_volumes,
+                sets=None if dynamic_rows else sets)
     parts, audio_probes = [], []
 
     def add(lo, hi):
