@@ -1,0 +1,533 @@
+{
+  "date": "2026-10-02",
+  "complete": true,
+  "scope": "feasibility microbenchmarks only",
+  "decoder_implemented": false,
+  "audio_quality_verified": false,
+  "fuse_verified": false,
+  "physical_hardware_tested": false,
+  "cpu_clock_hz": 3546900,
+  "baseline_commit": "4b2f8ea",
+  "source_files_sha256": {
+    "C:\\Work\\LPC-sound-codec\\arduino\\Lpc2AvrDecoder\\src\\Lpc2AvrDecoder.cpp": "c434269b0a6ac27be205d558071d6f5a54c0e57d05dc2dbbf35c38dd30a08a44",
+    "C:\\Work\\LPC-sound-codec\\arduino\\Lpc2AvrDecoder\\src\\Lpc2AvrDecoder.h": "b11d59fb4ab880054a594e4c6811b65e6c3da2aa61fc59d49c58b2114893fae8",
+    "C:\\Work\\ZX-video\\audiobook-ay\\lpc-probe\\lpc2-core.js.gz": "d0374ab9d5d1c6145d6813cac54f8c4c115f2306b886ea04d9238ebeacaaad0e",
+    "C:\\Work\\ZX-video\\audiobook-ay\\ym2149-preview\\lpc\\lpc2-analysis.json": "c1935fa6c451347e8c3dea284cb3cf46dc151c91fc56938cbf603b6587db4ecb",
+    "C:\\Work\\ZX-video\\audiobook-beeper\\pcm-live-full\\verification.json": "bfe2a75ec4588bdc71737f383b32bcbc3847e02b5c2f18f2b32e28a80faf7fc5"
+  },
+  "source_pcm_hz": 8000,
+  "source_lpc_order": 10,
+  "host_reference_feedback_products_per_sample": 10,
+  "host_reference_postfilter_products_per_sample": 20,
+  "avr_feedback_products_per_sample": 10,
+  "avr_internal_format": "16-bit Q11 history/coefficient, 32-bit product",
+  "pdm_kernel_tstates": 32,
+  "pdm_with_register_isolation_tstates": 48,
+  "register_isolation_delta_tstates": 16,
+  "tests": 420,
+  "budgets": [
+    {
+      "pcm_hz": 8000,
+      "pdm_hz": 40000,
+      "cpu_tstates_per_sample": 443.3625,
+      "pdm_kernel_only_tstates_per_sample": 160.0,
+      "optimistic_remaining_tstates_per_sample": 283.3625,
+      "remaining_with_register_isolation_tstates_per_sample": 203.3625
+    },
+    {
+      "pcm_hz": 8000,
+      "pdm_hz": 80000,
+      "cpu_tstates_per_sample": 443.3625,
+      "pdm_kernel_only_tstates_per_sample": 320.0,
+      "optimistic_remaining_tstates_per_sample": 123.3625,
+      "remaining_with_register_isolation_tstates_per_sample": -36.6375
+    },
+    {
+      "pcm_hz": 6000,
+      "pdm_hz": 40000,
+      "cpu_tstates_per_sample": 591.15,
+      "pdm_kernel_only_tstates_per_sample": 213.33333333333334,
+      "optimistic_remaining_tstates_per_sample": 377.81666666666666,
+      "remaining_with_register_isolation_tstates_per_sample": 271.15
+    },
+    {
+      "pcm_hz": 6000,
+      "pdm_hz": 80000,
+      "cpu_tstates_per_sample": 591.15,
+      "pdm_kernel_only_tstates_per_sample": 426.6666666666667,
+      "optimistic_remaining_tstates_per_sample": 164.48333333333332,
+      "remaining_with_register_isolation_tstates_per_sample": -48.85
+    },
+    {
+      "pcm_hz": 4000,
+      "pdm_hz": 40000,
+      "cpu_tstates_per_sample": 886.725,
+      "pdm_kernel_only_tstates_per_sample": 320.0,
+      "optimistic_remaining_tstates_per_sample": 566.725,
+      "remaining_with_register_isolation_tstates_per_sample": 406.725
+    },
+    {
+      "pcm_hz": 4000,
+      "pdm_hz": 80000,
+      "cpu_tstates_per_sample": 886.725,
+      "pdm_kernel_only_tstates_per_sample": 640.0,
+      "optimistic_remaining_tstates_per_sample": 246.725,
+      "remaining_with_register_isolation_tstates_per_sample": -73.275
+    }
+  ],
+  "kernels": {
+    "order4-product16-mac-only": {
+      "mac_tstates": 196,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 58,
+      "chunk_tstates": [
+        32,
+        26,
+        25,
+        29,
+        25,
+        26,
+        18,
+        15
+      ],
+      "measured_kernel_tstates": 196,
+      "output_intervals_tstates": [],
+      "steady_decoder_span_tstates": 196,
+      "prepared_table_bytes": 2048,
+      "state_bits": 8,
+      "product_bits": 16,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 32825
+      }
+    },
+    "order4-product16-interleaved": {
+      "mac_tstates": 196,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 157,
+      "chunk_tstates": [
+        32,
+        26,
+        25,
+        29,
+        25,
+        26,
+        18,
+        15
+      ],
+      "measured_kernel_tstates": 628,
+      "output_intervals_tstates": [
+        80,
+        74,
+        73,
+        77,
+        73,
+        74,
+        66,
+        63
+      ],
+      "steady_decoder_span_tstates": 580,
+      "prepared_table_bytes": 2048,
+      "state_bits": 8,
+      "product_bits": 16,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 32924
+      },
+      "optimistic_pcm_rate_ceiling_hz": 6115.3448275862065,
+      "native_minimum_pdm_rate_hz": 44336.25,
+      "note": "ceiling excludes all other decoder/player work; not an implemented audio mode"
+    },
+    "order4-product8-mac-only": {
+      "mac_tstates": 124,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 50,
+      "chunk_tstates": [
+        32,
+        30,
+        32,
+        30
+      ],
+      "measured_kernel_tstates": 124,
+      "output_intervals_tstates": [],
+      "steady_decoder_span_tstates": 124,
+      "prepared_table_bytes": 1024,
+      "state_bits": 8,
+      "product_bits": 8,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 32817
+      }
+    },
+    "order4-product8-interleaved": {
+      "mac_tstates": 124,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 105,
+      "chunk_tstates": [
+        32,
+        30,
+        32,
+        30
+      ],
+      "measured_kernel_tstates": 364,
+      "output_intervals_tstates": [
+        80,
+        78,
+        80,
+        78
+      ],
+      "steady_decoder_span_tstates": 316,
+      "prepared_table_bytes": 1024,
+      "state_bits": 8,
+      "product_bits": 8,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 32872
+      },
+      "optimistic_pcm_rate_ceiling_hz": 11224.367088607594,
+      "native_minimum_pdm_rate_hz": 44336.25,
+      "note": "ceiling excludes all other decoder/player work; not an implemented audio mode"
+    },
+    "order6-product16-mac-only": {
+      "mac_tstates": 294,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 75,
+      "chunk_tstates": [
+        32,
+        26,
+        25,
+        29,
+        25,
+        26,
+        18,
+        29,
+        25,
+        26,
+        18,
+        15
+      ],
+      "measured_kernel_tstates": 294,
+      "output_intervals_tstates": [],
+      "steady_decoder_span_tstates": 294,
+      "prepared_table_bytes": 3072,
+      "state_bits": 8,
+      "product_bits": 16,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 32842
+      }
+    },
+    "order6-product16-interleaved": {
+      "mac_tstates": 294,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 218,
+      "chunk_tstates": [
+        32,
+        26,
+        25,
+        29,
+        25,
+        26,
+        18,
+        29,
+        25,
+        26,
+        18,
+        15
+      ],
+      "measured_kernel_tstates": 918,
+      "output_intervals_tstates": [
+        80,
+        74,
+        73,
+        77,
+        73,
+        74,
+        66,
+        77,
+        73,
+        74,
+        66,
+        63
+      ],
+      "steady_decoder_span_tstates": 870,
+      "prepared_table_bytes": 3072,
+      "state_bits": 8,
+      "product_bits": 16,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 32985
+      },
+      "optimistic_pcm_rate_ceiling_hz": 4076.896551724138,
+      "native_minimum_pdm_rate_hz": 44336.25,
+      "note": "ceiling excludes all other decoder/player work; not an implemented audio mode"
+    },
+    "order6-product8-mac-only": {
+      "mac_tstates": 186,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 63,
+      "chunk_tstates": [
+        32,
+        30,
+        32,
+        30,
+        32,
+        30
+      ],
+      "measured_kernel_tstates": 186,
+      "output_intervals_tstates": [],
+      "steady_decoder_span_tstates": 186,
+      "prepared_table_bytes": 1536,
+      "state_bits": 8,
+      "product_bits": 8,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 32830
+      }
+    },
+    "order6-product8-interleaved": {
+      "mac_tstates": 186,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 140,
+      "chunk_tstates": [
+        32,
+        30,
+        32,
+        30,
+        32,
+        30
+      ],
+      "measured_kernel_tstates": 522,
+      "output_intervals_tstates": [
+        80,
+        78,
+        80,
+        78,
+        80,
+        78
+      ],
+      "steady_decoder_span_tstates": 474,
+      "prepared_table_bytes": 1536,
+      "state_bits": 8,
+      "product_bits": 8,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 32907
+      },
+      "optimistic_pcm_rate_ceiling_hz": 7482.911392405063,
+      "native_minimum_pdm_rate_hz": 44336.25,
+      "note": "ceiling excludes all other decoder/player work; not an implemented audio mode"
+    },
+    "order10-product16-mac-only": {
+      "mac_tstates": 490,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 109,
+      "chunk_tstates": [
+        32,
+        26,
+        25,
+        29,
+        25,
+        26,
+        18,
+        29,
+        25,
+        26,
+        18,
+        29,
+        25,
+        26,
+        18,
+        29,
+        25,
+        26,
+        18,
+        15
+      ],
+      "measured_kernel_tstates": 490,
+      "output_intervals_tstates": [],
+      "steady_decoder_span_tstates": 490,
+      "prepared_table_bytes": 5120,
+      "state_bits": 8,
+      "product_bits": 16,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 32876
+      }
+    },
+    "order10-product16-interleaved": {
+      "mac_tstates": 490,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 340,
+      "chunk_tstates": [
+        32,
+        26,
+        25,
+        29,
+        25,
+        26,
+        18,
+        29,
+        25,
+        26,
+        18,
+        29,
+        25,
+        26,
+        18,
+        29,
+        25,
+        26,
+        18,
+        15
+      ],
+      "measured_kernel_tstates": 1498,
+      "output_intervals_tstates": [
+        80,
+        74,
+        73,
+        77,
+        73,
+        74,
+        66,
+        77,
+        73,
+        74,
+        66,
+        77,
+        73,
+        74,
+        66,
+        77,
+        73,
+        74,
+        66,
+        63
+      ],
+      "steady_decoder_span_tstates": 1450,
+      "prepared_table_bytes": 5120,
+      "state_bits": 8,
+      "product_bits": 16,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 33107
+      },
+      "optimistic_pcm_rate_ceiling_hz": 2446.137931034483,
+      "native_minimum_pdm_rate_hz": 44336.25,
+      "note": "ceiling excludes all other decoder/player work; not an implemented audio mode"
+    },
+    "order10-product8-mac-only": {
+      "mac_tstates": 310,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 89,
+      "chunk_tstates": [
+        32,
+        30,
+        32,
+        30,
+        32,
+        30,
+        32,
+        30,
+        32,
+        30
+      ],
+      "measured_kernel_tstates": 310,
+      "output_intervals_tstates": [],
+      "steady_decoder_span_tstates": 310,
+      "prepared_table_bytes": 2560,
+      "state_bits": 8,
+      "product_bits": 8,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 32856
+      }
+    },
+    "order10-product8-interleaved": {
+      "mac_tstates": 310,
+      "instructions_verified": true,
+      "arithmetic_and_registers_exact": true,
+      "code_bytes": 210,
+      "chunk_tstates": [
+        32,
+        30,
+        32,
+        30,
+        32,
+        30,
+        32,
+        30,
+        32,
+        30
+      ],
+      "measured_kernel_tstates": 838,
+      "output_intervals_tstates": [
+        80,
+        78,
+        80,
+        78,
+        80,
+        78,
+        80,
+        78,
+        80,
+        78
+      ],
+      "steady_decoder_span_tstates": 790,
+      "prepared_table_bytes": 2560,
+      "state_bits": 8,
+      "product_bits": 8,
+      "cases_verified": 35,
+      "labels": {
+        "begin": 32791,
+        "end": 32977
+      },
+      "optimistic_pcm_rate_ceiling_hz": 4489.7468354430375,
+      "native_minimum_pdm_rate_hz": 44336.25,
+      "note": "ceiling excludes all other decoder/player work; not an implemented audio mode"
+    }
+  },
+  "exclusions": [
+    "LPC bitstream and repeat parsing",
+    "LSF decoding/interpolation and LSF-to-LPC conversion",
+    "excitation, gain, pitch and noise",
+    "coefficient table generation/loading/replacement",
+    "history update and sample saturation",
+    "postfilter and deemphasis",
+    "loop and bank control",
+    "ULA memory/IO contention",
+    "TR-DOS and disk latency"
+  ],
+  "conclusions": [
+    "Full existing LPC2 at 8 kHz with >=40 kHz PDM is not supported by these measured kernels.",
+    "Even optimistic 10-tap byte-table MAC alone costs 310 T; adding only five 32-T PDM kernels costs 470 T >443.3625 T.",
+    "The 16-bit-product table kernel costs 490 T before any PDM; original 16-bit state requires more work.",
+    "Four-tap/4 kHz synthesis with prepared tables has arithmetic headroom; this does not verify a decoder or voice quality.",
+    "Prepared per-frame tables would consume excessive storage; table reuse or another multiply method must also be solved.",
+    "A PCM buffer cannot repair a sustained CPU deficit; the beeper still needs bounded output intervals."
+  ],
+  "timing_reference": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "producer_sha256_lf": "c1aaf86383eff8fe202225509aa937250b8c181027ec667a6f567ca54142a963"
+}

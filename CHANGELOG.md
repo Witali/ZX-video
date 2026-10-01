@@ -5,6 +5,66 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: measure whether LPC synthesis can share the beeper PDM loop
+
+Objective: answer the user's request to optimize the existing LPC decoder
+for simultaneous LPC synthesis and live PDM. Baseline is `4b2f8ea`, 8 kHz
+source PCM and a 32-T first-order PDM kernel, with the previous >=40 kHz
+output requirement. Read the user's external `C:/Work/LPC-sound-codec`
+without modifying it. Its AVR implementation uses ten 16-bit Q11 feedback
+products and a hardware PWM timer; the accepted host LPC2 reference also
+has a twenty-product formant postfilter. Hardware PWM does not represent
+the software beeper workload on the Spectrum. LSF conversion can move to
+preparation, but feedback synthesis is still required for every sample.
+
+At 3546900 T/s, 8 kHz allows **443.3625 T/sample**. Five 32-T PDM kernels
+consume 160 T, leaving at most 283.3625 T before any other work. The isolated
+register layout in this probe adds EXX/EX AF/EX AF/EXX, 16 T per pulse:
+**48 T instead of 32 T**. Five such pulses leave 203.3625 T. This is a
+measured implementation choice, not a universal minimum for all layouts.
+
+Built and executed native Z80 lookup/accumulate kernels at orders 4, 6 and
+10, both with and without interleaved PDM. The deliberately favorable
+16-bit-product kernel uses **49 T/tap, 490 T/order-10 sample**, assuming
+ready tables and only 8-bit history. This alone exceeds the 8 kHz budget;
+the real AVR decoder's 16-bit history is not implemented by this shortcut.
+The first 8-bit-product/accumulator trial cost **31 T/tap, 310 T/sample**.
+Fusing LD A,(HL)/ADD A,E/LD E,A into ADD A,(HL) reduces it to **23 T/tap,
+230 T/sample: -8 T/tap, -80 T/order-10 sample**. Even 230+5*48=470 T exceeds
+443.3625, with excitation, history update and frame work still excluded.
+
+To check output gaps rather than average CPU demand alone, split work at
+instruction boundaries into <=32-T chunks between 48-T isolated PDM slots.
+The final order-10 byte kernel spans **614 T** with eight pulse intervals,
+an optimistic 5776.710 samples/s ceiling. Its 16-bit-product counterpart
+spans **1450 T**, ceiling 2446.138 samples/s. Native output intervals stay
+at most 80 T (44336.25 outputs/s minimum at the 128 clock). These are native
+CPU measurements, **not Fuse/ULA timing, a complete LPC decoder, audio
+quality evidence or a playable release**. The short final chunk and initial
+PDM pulse are accounted separately in the saved measured totals.
+
+Verification: **420 deterministic arithmetic/register/PDM/timing cases per
+version, 840 total**, including zero, signed extremes and seeded random data.
+The old 31-T trial remains in [initial evidence](audiobook-beeper/lpc-budget/report.json)
+with its exact producer; the optimized version is in
+[final evidence](audiobook-beeper/lpc-budget-fast/report.json).
+Reproduce with `python audiobook-beeper/probe_lpc_budget.py --output build/lpc-budget`.
+The [probe](audiobook-beeper/probe_lpc_budget.py) records source fingerprints,
+timing assumptions, opcode dumps and all excluded work. Instruction costs
+follow the [Zilog manual](https://www.zilog.com/docs/z80/um0080.pdf).
+
+Decision: the examined kernels do not establish full LPC2 at 8 kHz plus
+>=40 kHz PDM on the stock Spectrum. This is not an impossibility proof for
+every possible algorithm. A separately re-encoded, reduced-order profile
+around 4 kHz is a reasonable next bounded quality/timing experiment; no
+sample-rate or LPC-order change is silently applied to the current disk.
+It must solve coefficient-table reuse as well: ten prepared 512-byte tables
+per 20 ms frame would require 256000 bytes/s before interpolation, worse
+than PCM storage, and generating/replacing them also costs CPU. Byte-table
+arithmetic wraps and loses precision; it is not a validated stable LPC
+filter or preservation of the accepted voice. A PCM buffer cannot repair a
+sustained CPU deficit. Current TRD and player remain unchanged.
+
 ## 2026-10-02: fill all eight banks with resident live PCM
 
 Objective: fulfill the user's request to fill all possible memory, retaining
