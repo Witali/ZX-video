@@ -47,6 +47,8 @@ def reference_tables(metadata):
 
 def display_screen(state, metadata):
     from frame_output_pipeline import display_screen as legacy
+    if metadata.get('cell_codebook',{}).get('dynamic_rows',{}).get('enabled'):
+        return b''.join(five.expand(state))
     if 'row_dictionary' not in metadata:
         return legacy(state,black_borders=True)
     with reference_tables(metadata['row_dictionary']):

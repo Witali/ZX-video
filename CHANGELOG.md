@@ -35,6 +35,53 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — dynamically replace row dictionary entries during playback
+
+- User rejected 15 disks and requested at most four, then explicitly requested
+  row eviction/replacement during playback. Baseline `1d59d25`, unchanged
+  full refined A/V preparation. Keep the full edit, image and AY50 at 10 fps.
+- Added CB42: retain the 256-slot, 512-byte row cache and physical cell book,
+  and send lossless `(index, top byte, bottom byte)` replacement batches before
+  frame packets. The host evicts the farthest future literal-row use while
+  preserving every row needed by the current frame. Index zero stays black.
+  Existing physical screen histories need no rewrite or copy when a row is
+  evicted. The renderer and ordinary CB41 frame payload are unchanged.
+- Z80 accounting: normal packet dispatch +18 T (BIT 7,H: 8 T; JP NZ: 10 T),
+  renderer +0 T. A row control handler costs `207 + 74*N` T, excluding queue
+  body, dispatch, length read, IRQs, contention and disk latency. Native
+  execution of eight batches / 369 replacements measures exactly 28962 T,
+  agreeing with that formula. Packet code/state grow 102 -> 166 bytes
+  (+63 code, +1 state), inside the existing allocation. No extra row-table
+  RAM or screen copy is introduced.
+- Fifteen unit/regression tests pass. A 12-frame synthetic fixture uses more
+  than 256 literal rows over time, exercises real eviction/reuse, and passes
+  CPU execution plus complete Fuse screens/AY. A bounded real [4216,4280)
+  window retains both actual predecessor screens, all 64 images and 320 AY
+  ticks. Across the two complete Fuse runs, all 525312 screen bytes and 380 AY
+  ticks match, with zero nominal misses or underruns. Independent cold boots
+  pass. These are component/window checks, not the full four-disk release.
+- Bounded lossless compression comparison: 62916 -> 63118 bytes (+202 / 0.32%)
+  including each full cell book, exact LZSA2 round trips and safe in-place
+  layouts. This real window needs no replacement after initial cache load;
+  the synthetic fixture supplies the 369-replacement timing/IRQ coverage.
+- The initial complete-capture attempt stopped at the reference hash gate:
+  inherited volume metadata overwrote the five-level reference hash with
+  the build-only compact placeholder hash. Fix the final metadata assignment,
+  preserve both original metadata files, and complete the checks using the
+  unchanged images and correct independent references. No timing or pixel
+  comparison was weakened. A fresh native build produces the identical
+  verified TRD and the correct reference hash without metadata repair.
+  [Verification and evidence](toolkit/dynamic_rows_report.json),
+  [encoder](toolkit/dynamic_row_dictionary.py),
+  [probe](toolkit/probe_dynamic_rows.py), [verifier](toolkit/verify_dynamic_rows.py).
+- Four equal parts still need 17489/18632/19202/21012 bytes for resident AY,
+  beyond the current 16-KiB allocation. Their whole-part row counts are
+  267/271/258/261, now representable through replacement. Adopt the dynamic
+  row mechanism for the four-disk effort. Next test lossless prediction of
+  refined period bytes to remove the independent audio-memory constraint;
+  then measure one selected four-volume stream and complete full playback.
+  Root disks remain the previous verified preview until that gate passes.
+
 ## 2026-10-01 — publish the complete refined colour/AY50 preview on 15 disks
 
 - User-authorized deliverable: new colour/grain and square-aware sound,

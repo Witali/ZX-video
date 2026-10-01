@@ -1,0 +1,763 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Complete native/Fuse window checks and preserve the interrupted hash-gate attempt.",
+  "whole_movie_verified": false,
+  "fresh_builder_check": {
+    "reference_hash_correct_without_repair": true,
+    "identical_verified_trd": true,
+    "trd_sha256": "c6c7d609ed8c6642cb11f580c40a6dac0793107158efbbaa48329799db50d831"
+  },
+  "runs": [
+    {
+      "name": "fixture",
+      "frames": 12,
+      "trd_sha256": "c6c7d609ed8c6642cb11f580c40a6dac0793107158efbbaa48329799db50d831",
+      "row_updates": 369,
+      "update_batches": 8,
+      "row_update_cpu_tstates": 28962,
+      "full_screens_exact": true,
+      "compared_bytes": 82944,
+      "cpu_all_native_screens_exact": true,
+      "timing": {
+        "complete": true,
+        "nominal_deadlines_met": true,
+        "missed_nominal_frame_indices": [],
+        "missed_nominal_frames": 0,
+        "fallback_one_field_met": true,
+        "late_runs": [],
+        "late_runs_recovered": true,
+        "maximum_deviation_tstates": 0,
+        "publication_intervals_tstates": [
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540
+        ],
+        "actual_ay_50hz": true,
+        "ay_missing_fields": 0,
+        "runtime_disk_reads": 119,
+        "disk_read_service_tstates": 3868909,
+        "disk_read_min_tstates": 22347,
+        "disk_read_max_tstates": 155700,
+        "seek_service_tstates": 88730,
+        "startup_and_playback_timing": {
+          "bootstrap_tstates": 9285393,
+          "playback_tstates": 10090784,
+          "bootstrap_and_playback_tstates": 19376177,
+          "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+        },
+        "disk_latency_note": "Fuse call intervals combine ROM execution, physical emulation, IRQs and contention; no artificial separation",
+        "partial_run_passes": false
+      },
+      "states_sha256": "36a87190e4eabd09185d0097bbc3816e6c94291f2ce1aacbf4f594d71dfad567"
+    },
+    {
+      "name": "window",
+      "frames": 64,
+      "trd_sha256": "be6cae892b6ed73f6919e9829be75bca0ad8d9eb62f0af1809daeb44b53c1a53",
+      "row_updates": 0,
+      "update_batches": 0,
+      "row_update_cpu_tstates": 0,
+      "full_screens_exact": true,
+      "compared_bytes": 442368,
+      "cpu_all_native_screens_exact": true,
+      "timing": {
+        "complete": true,
+        "nominal_deadlines_met": true,
+        "missed_nominal_frame_indices": [],
+        "missed_nominal_frames": 0,
+        "fallback_one_field_met": true,
+        "late_runs": [],
+        "late_runs_recovered": true,
+        "maximum_deviation_tstates": 11,
+        "publication_intervals_tstates": [
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354543,
+          354536,
+          354540,
+          354548,
+          354532,
+          354542,
+          354541,
+          354538,
+          354537,
+          354545,
+          354542,
+          354544,
+          354537,
+          354537,
+          354538,
+          354543,
+          354548,
+          354530,
+          354536,
+          354541,
+          354548,
+          354532,
+          354549,
+          354534,
+          354546,
+          354534,
+          354538,
+          354541,
+          354537,
+          354542,
+          354539,
+          354541,
+          354538,
+          354544,
+          354545,
+          354534,
+          354543,
+          354534,
+          354543,
+          354538,
+          354542,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540
+        ],
+        "actual_ay_50hz": true,
+        "ay_missing_fields": 0,
+        "runtime_disk_reads": 247,
+        "disk_read_service_tstates": 9696055,
+        "disk_read_min_tstates": 22340,
+        "disk_read_max_tstates": 1409601,
+        "seek_service_tstates": 155622,
+        "startup_and_playback_timing": {
+          "bootstrap_tstates": 12161023,
+          "playback_tstates": 33552427,
+          "bootstrap_and_playback_tstates": 45713450,
+          "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+        },
+        "disk_latency_note": "Fuse call intervals combine ROM execution, physical emulation, IRQs and contention; no artificial separation",
+        "partial_run_passes": false
+      },
+      "states_sha256": "ea5a4ab11f38a11555764f689f615f6e83c73f2f6d7048c01a18e3d9f4392aaf"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "fixture-metadata-before-reference-fix.json.gz",
+      "raw_sha256": "b6f5b1091645f4f7ffb5f4b7505dd40eb77667434a3c6934d7999a5896a2d925",
+      "archive_sha256": "9e42e80e435e1087be1b7a477749cc8efbe25792ce73eb8efc78a7a6dedbe687",
+      "raw_bytes": 2319928,
+      "archive_bytes": 99489
+    },
+    {
+      "file": "window-metadata-before-reference-fix.json.gz",
+      "raw_sha256": "1c22a60dc523e27d123aa6d2f591a1b038c4f5cdd533fb2de435b3ccbc96eb46",
+      "archive_sha256": "b24135aaa09cabe422e18d8b7a3f04b947788773531e5be030814d878446335a",
+      "raw_bytes": 2327299,
+      "archive_bytes": 102499
+    },
+    {
+      "file": "fixture-conversion.json.gz",
+      "raw_sha256": "7aa86bfb77ab034379862048145623b59275786735d91300734a52ee6540424f",
+      "archive_sha256": "a1d4fb4774d59632a5eec2c95a10b08dc9879c819e9fff4a6945b4e5ede09f35",
+      "raw_bytes": 2549,
+      "archive_bytes": 1127
+    },
+    {
+      "file": "fixture-partition.json.gz",
+      "raw_sha256": "c5971611e379a3c6422d24a155baee5d70d38d55a8e7d3e082eabf7ceaf8bf52",
+      "archive_sha256": "9bfb9fdfae1c9d7f24d817f694e1c679a8a7cbeca44d3925486e9c1e3e8c95c7",
+      "raw_bytes": 2857,
+      "archive_bytes": 719
+    },
+    {
+      "file": "fixture-timing.json.gz",
+      "raw_sha256": "d2cd4fcdb19ab2b9ab3d9c723ff30075851f6ccce9a1e4dcde4e7d5f46040cb5",
+      "archive_sha256": "13ff96b1eeaeb7db910d2ca74143def2079ea0f7b1be7fed7a5ae2caae279662",
+      "raw_bytes": 1864,
+      "archive_bytes": 695
+    },
+    {
+      "file": "fixture-volumes.json.gz",
+      "raw_sha256": "5354f0107f611aeb4403348ce26d4a9a9940b8d3b76507f1b11c39e1724d7637",
+      "archive_sha256": "4523cf776004fa21eb16656b2b47e1a56add0a02d43a5d398ca5cb8857d75293",
+      "raw_bytes": 434,
+      "archive_bytes": 261
+    },
+    {
+      "file": "fixture-work-five-states.npz.gz",
+      "raw_sha256": "a18e89725b1f1b3d8c313350595dae98189946920d509987a5ad6cf35e07c58a",
+      "archive_sha256": "ef1ce9181b71872bd4eeea64b74bf36cd6cbf009c0ab2875e032e32fe9c362c3",
+      "raw_bytes": 34398,
+      "archive_bytes": 34431
+    },
+    {
+      "file": "fixture-work-scaffold.json.gz",
+      "raw_sha256": "00f853e6f188b435dd078bfdf83f435e485f00fac9742d3299a3041e9927982c",
+      "archive_sha256": "9137d821b5465d33e402bf189a73c4e43ed74c9bddbb13450c9ccb9df05c0539",
+      "raw_bytes": 1668,
+      "archive_bytes": 379
+    },
+    {
+      "file": "fixture-work-stream.raw.gz",
+      "raw_sha256": "ec28765a1ede9c7409a73270b44b5dbd408de1e090e174a466e446597fb270dc",
+      "archive_sha256": "b58d8d75642be7a5f9e9e89096fa0fd1c6be0ecf1af623b6522841d17ccefbfe",
+      "raw_bytes": 6083,
+      "archive_bytes": 237
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-audio.ayh1.gz",
+      "raw_sha256": "f296ef1c0b0b9b2f593c26d0b8c4693fb5d350391c6b1d4994d3ddc88afb4042",
+      "archive_sha256": "ca7456fd746ae71102a90453304a333a3963de3768306d782085b59506f87db2",
+      "raw_bytes": 94,
+      "archive_bytes": 52
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_sha256": "6cefc78105839501343a1a11cb4ecfd992c38a6cf8e02bd256842034e9980a22",
+      "archive_sha256": "2b49c33ccc4facc8d265c06e49ee3832b09cb1c53d40011d65a928dfe0a45d60",
+      "raw_bytes": 24375,
+      "archive_bytes": 4130
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-0-1536.trace.txt.gz",
+      "raw_sha256": "dd546754a1155a4d7c13322de474eb4bd85e911a2f32f5df7a58072f456639fe",
+      "archive_sha256": "6cf1d33c472ab71b6bccc5eb7ba02821de745ff193f0336c1934a15af2c33e18",
+      "raw_bytes": 39236,
+      "archive_bytes": 13644
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_sha256": "768179bf0032d6109a2c1baae22d67f7ff05e70a9bfe47ee93b808de5042f828",
+      "archive_sha256": "44e527c976f830c78871a90065a1b533ea2b284e7f3c18265264e901a204a917",
+      "raw_bytes": 25485,
+      "archive_bytes": 4006
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_sha256": "ce74f3605a186b900ec148430a90c9774644b6197fd51be40c5aeedf5cd079a7",
+      "archive_sha256": "a7325d3979f39b431405d7a0019f749258901618d47f589361f0231f3f7f2067",
+      "raw_bytes": 47121,
+      "archive_bytes": 18282
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_sha256": "74707cc81a3f2dde9239651cf3432935e8fff3a32621b1b5fdcde3007ce2a153",
+      "archive_sha256": "105a5c99ec49c03146b5e6c0d4e91402c5c3e346f32689af05181a0418e326bd",
+      "raw_bytes": 25485,
+      "archive_bytes": 3989
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_sha256": "22175a6b0523a47a7ebeaa355d210985b6587cafa665b4b833ed5dba67a1e6f5",
+      "archive_sha256": "7f80109e6f960ea6a3a1c25f90afe837806c5ecaef4be15d5781514a0540d9ee",
+      "raw_bytes": 47797,
+      "archive_bytes": 18403
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_sha256": "2c84372abe37e7cd044a88e35e13882a1baa3cfe2deef284d9c0f098ac074aea",
+      "archive_sha256": "82426ba1633adb6406b0e18b3a63d000ebbd5d71d37bb317dd035dfe6711a236",
+      "raw_bytes": 25485,
+      "archive_bytes": 4025
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_sha256": "9d4e44bf8ba49e64542fa915e94f739e5094d92c606fa2b362e0f7eac6734131",
+      "archive_sha256": "4740e37b46e5b54ef1d8686f02cddb1524da5def6d90b1302b618d17fd54ab8b",
+      "raw_bytes": 39209,
+      "archive_bytes": 13759
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_sha256": "0437165bae674b8a7d766c61c3d00059c5fefc36c59ac5f7d0dc60e17cdfdb74",
+      "archive_sha256": "c8daddd786848ce9fff5a21e37ba12f1f468f109d2f63c380aa339a635b70bab",
+      "raw_bytes": 13005,
+      "archive_bytes": 2043
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_sha256": "0e66ed96552cdb0e78a8df1b1567b966b0e90bc6d5925683fc82b31a1e045d1f",
+      "archive_sha256": "47b7967f471eb34c9180e446b35465f880358d04e8c177c1e184d7001f67ff60",
+      "raw_bytes": 25201,
+      "archive_bytes": 710
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-captures-progress.json.gz",
+      "raw_sha256": "817eebee85e225bc8d9dfe84ca185155575da253188e6dd80e093b3dc88f7e22",
+      "archive_sha256": "4e001ac1ccacb50f47d5479837dee758f33e1147be17de64b909c81bd3953699",
+      "raw_bytes": 14435,
+      "archive_bytes": 3003
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-codebook.raw.gz",
+      "raw_sha256": "08bf577d7c848f92b32de35c63d47ec3a16c095155fc18a1b520690916db6e44",
+      "archive_sha256": "3fde9acf11ae92f9b7ba09b0273aec86aa196f4d59066fe5a3859598323d91a0",
+      "raw_bytes": 37283,
+      "archive_bytes": 29725
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-codebook.stream.gz",
+      "raw_sha256": "0dc4ef03f134b0c1b2d7bebdfab99df87322d6dde36d2fa85a726e2ca0ac5790",
+      "archive_sha256": "4e87d30d35409f17bd218c18778437007fe257ea9253eccd2d5fa4b30a6d44ac",
+      "raw_bytes": 30369,
+      "archive_bytes": 29629
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-cpu.json.gz",
+      "raw_sha256": "9f3a350642dccc97aae14339125387d494d02e466c6795b80c788ec9a76f4a10",
+      "archive_sha256": "e7a60334bbadfc8dbdbf4fb38eaf4b1a65c41160cea7fb5fa8e434d44cb8964a",
+      "raw_bytes": 33026,
+      "archive_bytes": 2210
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-dynamic-rows.json.gz",
+      "raw_sha256": "4496013b634919b5b43ce9d497919176b9908fdc0b58b8c65aa0513f31dde226",
+      "archive_sha256": "cd40594930339456435b486aa72b311da18f600789966aad97182354327b5faa",
+      "raw_bytes": 3936,
+      "archive_bytes": 898
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-rows.json.gz",
+      "raw_sha256": "532ff04e019bd6a6a9c9b8f9c14c6282d840b54ae7457eab5b721b6a79aa203b",
+      "archive_sha256": "a9721edd555fedea9516a4ae10d4a1fae2e9f81d45568a5828a55aa45b7ed9e9",
+      "raw_bytes": 3737,
+      "archive_bytes": 965
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-screens.json.gz",
+      "raw_sha256": "a3b84d3fefeb5a1b8c031166bc6bd44396b33c950bc59547eda753d4551a0dd9",
+      "archive_sha256": "b2142dd11f976327d02837da650084cd3182616dc7c1bd93a84a2fc65c117ba8",
+      "raw_bytes": 16600,
+      "archive_bytes": 4288
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-states.npz.gz",
+      "raw_sha256": "9a9e3742666ba388aa0a7d7b001267f5b604d3208998d451128a814734aea3a8",
+      "archive_sha256": "cdd8163a93b413d2eb05b6f595d6e224594483852274965c589d676196a5f9fb",
+      "raw_bytes": 34388,
+      "archive_bytes": 34421
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-timing.debugger.txt.gz",
+      "raw_sha256": "e833d0abf57bc510c6a293099bce61ee26e7c5b7e86268723045ae371b6290d1",
+      "archive_sha256": "e78f849ce0566f985c1d11b46e690d60f639d803df816ec7cd9176e92ebeeaad",
+      "raw_bytes": 13389,
+      "archive_bytes": 1873
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-timing.json.gz",
+      "raw_sha256": "65d23e0b9faca18e2ca3c20d38d78fc53a255458283520c9989e6c78208ae448",
+      "archive_sha256": "36f5a30dec6b754f5e43f894e2a4dbdf08a3024f624ad6ada44f4668bd48d654",
+      "raw_bytes": 49946,
+      "archive_bytes": 5791
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-timing.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "fixture-work-ZX-video-dynamic_part01-timing.trace.txt.gz",
+      "raw_sha256": "9ac4255c5b6e7b7ab9b937998db675fd405ee9ba024485f97445b1990f48373d",
+      "archive_sha256": "2fd5e3eb340be3645fabf68a83203b5fc5bce363a548604e102b18c39aa0182b",
+      "raw_bytes": 108185,
+      "archive_bytes": 45694
+    },
+    {
+      "file": "fixture-ZX-video-dynamic_part01.json.gz",
+      "raw_sha256": "22d331d99aee88ea23fef9e8c659ce11097e38818efb0fe24544e21ea924134f",
+      "archive_sha256": "54c9869a612ba7c09cd8746ec60505984ca806619b9f21a41fa2ee95efb62e94",
+      "raw_bytes": 2320267,
+      "archive_bytes": 99658
+    },
+    {
+      "file": "fixture-ZX-video-dynamic_part01.trd",
+      "raw_sha256": "c6c7d609ed8c6642cb11f580c40a6dac0793107158efbbaa48329799db50d831",
+      "archive_sha256": "c6c7d609ed8c6642cb11f580c40a6dac0793107158efbbaa48329799db50d831",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "window-conversion.json.gz",
+      "raw_sha256": "c12003eb62a8b55edcf98409bc93f33bd264631805d29fbca8a8c4f3e9d4659b",
+      "archive_sha256": "b65b7becf079aa68e3122fdb0e5d7dda9ffe73aff403e34e33fa869f96f087a2",
+      "raw_bytes": 1390,
+      "archive_bytes": 536
+    },
+    {
+      "file": "window-partition.json.gz",
+      "raw_sha256": "13422965efbd4784b2f52d6663dc2c4dd269b116196dcf3cc219578c4d476e76",
+      "archive_sha256": "ebe60303ac7440d6bee3b706d8d22815afba8fcc1ee1cdf449b2ac5499b5c292",
+      "raw_bytes": 30987,
+      "archive_bytes": 3101
+    },
+    {
+      "file": "window-timing.json.gz",
+      "raw_sha256": "610075fa119a1a3a6b5e531538c2a9e1756da20b1c769a2954e6e5f12c46e210",
+      "archive_sha256": "e199e00fcb95b0c9a2de7251e839f51a4b57fb8a905bd00578f3c5b720ca906b",
+      "raw_bytes": 296,
+      "archive_bytes": 183
+    },
+    {
+      "file": "window-volumes.json.gz",
+      "raw_sha256": "4a4ee4c80428ded35f89da03db6e4bcc0341340593655bcaf5cb7deb59da65f6",
+      "archive_sha256": "6f6903f6cc8cba1142020b74c1dff49f2c76a18b61aa1303ad257fe8878b4e1f",
+      "raw_bytes": 439,
+      "archive_bytes": 266
+    },
+    {
+      "file": "window-work-five-states.npz.gz",
+      "raw_sha256": "54ecfd9dc136604d2b0ac5d93b93df062aff971c0b2f0ec4b82bf570f70e9896",
+      "archive_sha256": "c3666ca9d21e3bbdc1377687e3fbb2e7943496d0dd306f7e04b590a007c4f37f",
+      "raw_bytes": 3437839,
+      "archive_bytes": 3352416
+    },
+    {
+      "file": "window-work-scaffold.json.gz",
+      "raw_sha256": "4478be1168c8d3713fcf68e04bca1c81c6f27d1dcff03a9b17a4df3630e163d8",
+      "archive_sha256": "3edebf05d5434623e0c9f53b2b99e5cec6a16f9f1d75e0b53fdd79a73d472c6f",
+      "raw_bytes": 500946,
+      "archive_bytes": 19194
+    },
+    {
+      "file": "window-work-stream.raw.gz",
+      "raw_sha256": "66531dc6ace1bbeec7f57f9f48457c2354e9de5bb9dd6d911d0bf0865c11baff",
+      "archive_sha256": "149489513c07b353b20d19baba61a4093b7e6130db16eff12025fc60cacd67ab",
+      "raw_bytes": 1635441,
+      "archive_bytes": 118603
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-audio.ayh1.gz",
+      "raw_sha256": "071e6aec822e25970a1059f6049f9b0ebaf02d648d451c777b56c501a96d1322",
+      "archive_sha256": "bf8aa62bef1a3c71f5f3414dab8e3643ef1a7ceb6a61c7f7b1e9264d38771cad",
+      "raw_bytes": 1619,
+      "archive_bytes": 1553
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_sha256": "1b18798e2c9376aa75ba09b13bd5f2561ca5cb95597c36a4335c12065594a619",
+      "archive_sha256": "5e3b2325994f7d339a3dfadf5794c75026c2912c83bcb9b1fe9e10c8295ba8bd",
+      "raw_bytes": 24375,
+      "archive_bytes": 4130
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-0-1536.trace.txt.gz",
+      "raw_sha256": "36bff6c43120ee69a21622bcf1ed68daaff32a0ddd258e3eb4de17bf9d217c0f",
+      "archive_sha256": "7552bb959c77aa2a2d541885bc4db66c3246197271bd1b6abeca210eff09ea44",
+      "raw_bytes": 200710,
+      "archive_bytes": 15853
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_sha256": "ac10764574dc4b9e0566d250b02750e6836f861a4a2f6d16e1ebd8bf5ce7170e",
+      "archive_sha256": "6053521ac80cb74680d6f87139b1110c05fb3af8d6bed8a7300b774d0e3a3d4c",
+      "raw_bytes": 25485,
+      "archive_bytes": 4006
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_sha256": "e0050e8a343dedf6650190560b8e095c0ecd2b2b0247a58c76c27508f7c72626",
+      "archive_sha256": "9a8a28dbb10a14c8b89734f94c170900a71c5d36fb1981dddeccb3dd0e62dd8b",
+      "raw_bytes": 240258,
+      "archive_bytes": 25882
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_sha256": "a815c9d627783ad85cd4246b23c69a928e9fe48b1cac9ccb3e515b75f8dc163e",
+      "archive_sha256": "be5ffcf465b1318d719d591b9713788f163036491e428616ccadd3003da1c0ad",
+      "raw_bytes": 25486,
+      "archive_bytes": 3990
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_sha256": "ae2bf74167472f071278e394198f5e883f6056ae10bf7b8f89216cf9c2704937",
+      "archive_sha256": "ab104bb29ce9d8fc2017abd4a84e7edb97cfa00d2c189c5ada7536c66ec7c944",
+      "raw_bytes": 242897,
+      "archive_bytes": 28236
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_sha256": "76922fc4eecfda48cff32091e50b817d59a8f7754e12f8f3fd28cbe630293cf3",
+      "archive_sha256": "8256f988cd288fa5fa3589bf32cd2c858b68ba649a5e6477bef7df2eae217527",
+      "raw_bytes": 25485,
+      "archive_bytes": 4024
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_sha256": "8e664f05bd6e13e26702e13680f62bc919b4bb6a61eef76e547868880576f4f3",
+      "archive_sha256": "c8428dd3a924a423574eaf1f46d6b7e5afd93c793fb74bc5096e5a32fe2cf9fc",
+      "raw_bytes": 197474,
+      "archive_bytes": 19496
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_sha256": "956736c15f17dfc62bba280d99bff620cb77c5cf9fc4e5752cfdbd2bdbf57bee",
+      "archive_sha256": "e7c0c77d9fc712fcad5207a3c4d1c4f38f7980dca31229d7aafed48303b24d71",
+      "raw_bytes": 13006,
+      "archive_bytes": 2044
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_sha256": "c10431d223eb39db28056da94e3ae32be7ffa04ad0d5073c3df11c2c4e483669",
+      "archive_sha256": "a2444fffe445b20166e06a0e0a9500a7a684b57fc96a3f1bc3931046ccae64e8",
+      "raw_bytes": 134445,
+      "archive_bytes": 9264
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-captures-progress.json.gz",
+      "raw_sha256": "f77e2670053d28192b6cefd3ee03c4b93aee012617e9c8fad5fe15175b756bb9",
+      "archive_sha256": "afb2fec41ac0c0b7990a4ee08b2417b3a41755f074e80a291b4e598b820f8e32",
+      "raw_bytes": 69037,
+      "archive_bytes": 14902
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-codebook.raw.gz",
+      "raw_sha256": "26fd81e7627f9dfe85ea908236da98d3d5079cd29690c536f8b85eed78b332e3",
+      "archive_sha256": "b5de46bd91bbcfeab2a9ba1aa112648e544e209653488f98b5453c9f9e5c2dd1",
+      "raw_bytes": 85220,
+      "archive_bytes": 57378
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-codebook.stream.gz",
+      "raw_sha256": "521a6d402aba531a0996836bf068da3cc35ada3b641f6f32abee6f6e59f827b6",
+      "archive_sha256": "e38375c890c02913a1ab98632bce1aba9827b43cec94321673415723b3c89d74",
+      "raw_bytes": 63118,
+      "archive_bytes": 60444
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-cpu.json.gz",
+      "raw_sha256": "3ece33f4dd811c007f29f640f347c7e84092b691b97dc2e17c60598347f7c2bf",
+      "archive_sha256": "206da77fc231cc55a4f407fac6685c74b3ceb9444bf85911c1589d0949f2876d",
+      "raw_bytes": 59518,
+      "archive_bytes": 4466
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-dynamic-rows.json.gz",
+      "raw_sha256": "b9971906e763e34818712eabf42b78f696512cddb94b5c92d1af04ac5e5eaf23",
+      "archive_sha256": "7c6260a9cc38a029c42dc422e6e49cdf50feef3833708e59c3e7113f793baa1c",
+      "raw_bytes": 19978,
+      "archive_bytes": 3993
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-rows.json.gz",
+      "raw_sha256": "ae435771d6dde182db0d0565b329da012777b26cdb93695ff6d7dde9916510dd",
+      "archive_sha256": "a508f33641afc48d7d2867d33b60f6e4b377ac3fba74616e9c5bda5a9ce83846",
+      "raw_bytes": 3659,
+      "archive_bytes": 913
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-screens.json.gz",
+      "raw_sha256": "7d93c023bbf9104fc59bbf8294a4db45aedf11e5a8f37e1eda470e4e521c7e15",
+      "archive_sha256": "67d224ce84e2f0a107720f62109bf8564def333f622e57cdad98ceb24008afb5",
+      "raw_bytes": 74950,
+      "archive_bytes": 18386
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-states.npz.gz",
+      "raw_sha256": "e0cfd8527f9c8626b76e0d5250ff61b1074920c1ba696cd4e1b98b06b0e06544",
+      "archive_sha256": "60205bd6f304b7176fac8e59992ca479754be7f3baf79974e4e7a8f9802d45ee",
+      "raw_bytes": 3437829,
+      "archive_bytes": 3352405
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-timing.debugger.txt.gz",
+      "raw_sha256": "5688f805cb4e176190ad2a9b78feb6045c8fd8da8d45042108e7bb7f527421e4",
+      "archive_sha256": "51ffd5848166d5f0d7fbe4632f69b0431269ec53aa5e610efb52433639b88e4b",
+      "raw_bytes": 13389,
+      "archive_bytes": 1874
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-timing.json.gz",
+      "raw_sha256": "baeb8c6e1c2b9f19122d00d0b0913bb561347e94610ad15d56235d272f57220e",
+      "archive_sha256": "4050fe960c6c40eb09ac41969ad71026cfe81f251f5e4ce21f4566db7fc8b008",
+      "raw_bytes": 91526,
+      "archive_bytes": 10345
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-timing.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "window-work-ZX-video-dynamic_part09-timing.trace.txt.gz",
+      "raw_sha256": "edf9011a1f9835a107cbc4c4ec4713373bb1c4c069f0e3838025b467878ca651",
+      "archive_sha256": "e564ba7959acc24ff801ef61884efe024290e225c88b45c77d08db7f9f34e61b",
+      "raw_bytes": 278020,
+      "archive_bytes": 101529
+    },
+    {
+      "file": "window-ZX-video-dynamic_part09.json.gz",
+      "raw_sha256": "513a8651c68d7b69caf86f64386cb907fe9d12f6b353686e27114bcbe090bf58",
+      "archive_sha256": "0a2088ebf612172f8bc330c77802069665a30f78dd2db0cd830c304e68d67146",
+      "raw_bytes": 2327638,
+      "archive_bytes": 102662
+    },
+    {
+      "file": "window-ZX-video-dynamic_part09.trd",
+      "raw_sha256": "be6cae892b6ed73f6919e9829be75bca0ad8d9eb62f0af1809daeb44b53c1a53",
+      "archive_sha256": "be6cae892b6ed73f6919e9829be75bca0ad8d9eb62f0af1809daeb44b53c1a53",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "probe-dynamic.raw.gz",
+      "raw_sha256": "26fd81e7627f9dfe85ea908236da98d3d5079cd29690c536f8b85eed78b332e3",
+      "archive_sha256": "b5de46bd91bbcfeab2a9ba1aa112648e544e209653488f98b5453c9f9e5c2dd1",
+      "raw_bytes": 85220,
+      "archive_bytes": 57378
+    },
+    {
+      "file": "probe-dynamic.stream.gz",
+      "raw_sha256": "521a6d402aba531a0996836bf068da3cc35ada3b641f6f32abee6f6e59f827b6",
+      "archive_sha256": "e38375c890c02913a1ab98632bce1aba9827b43cec94321673415723b3c89d74",
+      "raw_bytes": 63118,
+      "archive_bytes": 60444
+    },
+    {
+      "file": "probe-report.json.gz",
+      "raw_sha256": "3e5db79f2e2d185bcff9ba6f595aad24795f01b8cf83d61e4fdbcc09a7843054",
+      "archive_sha256": "da96df82a0487c8af47c39a13119b643298d637c234b8c9a2ec3e32fbb978ef6",
+      "raw_bytes": 86242,
+      "archive_bytes": 14482
+    },
+    {
+      "file": "probe-static.raw.gz",
+      "raw_sha256": "f18292375a8fbaf0fbe1619f187dd82609e2487af88574120f92c8eb80c70f6c",
+      "archive_sha256": "cf92298599e63257baa231bb951c837777099b02c8a7422b6ea37aaf8e69263d",
+      "raw_bytes": 85220,
+      "archive_bytes": 57159
+    },
+    {
+      "file": "probe-static.stream.gz",
+      "raw_sha256": "c66cd2601d8c873dfa334cc41e74f01f400407045aeda12e41a5b282f4ab6f4c",
+      "archive_sha256": "69e0f16e5ff6a2b31b231f3ab1ff7245c5cd7fac7ce6242e443d243c66d8868a",
+      "raw_bytes": 62916,
+      "archive_bytes": 60298
+    },
+    {
+      "file": "fresh-build-metadata.json.gz",
+      "raw_sha256": "4a62b387de6b18394757dbe5ff86f543a443138705d81f4e0cdab7a9389c2583",
+      "archive_sha256": "55881adfc1d45cafe5ce2efa7d01736dc38d8e98128750be223cdbf892a6d62d",
+      "raw_bytes": 2320099,
+      "archive_bytes": 99562
+    },
+    {
+      "file": "fresh-build-cpu-and-cold.json.gz",
+      "raw_sha256": "d2cd4fcdb19ab2b9ab3d9c723ff30075851f6ccce9a1e4dcde4e7d5f46040cb5",
+      "archive_sha256": "13ff96b1eeaeb7db910d2ca74143def2079ea0f7b1be7fed7a5ae2caae279662",
+      "raw_bytes": 1864,
+      "archive_bytes": 695
+    },
+    {
+      "file": "tests.txt.gz",
+      "raw_sha256": "9b430ef84c1593ea1fbab68a31e21846b3ba3d4778fe15de222d91e3c2663391",
+      "archive_sha256": "85c49ef77d6e308dd706c2937d2a308d8bc694a7bbb138b45a1195cbb8bd006c",
+      "raw_bytes": 170,
+      "archive_bytes": 105
+    }
+  ],
+  "source_sha256_lf": {
+    "dynamic_row_dictionary.py": "fd7b2cf0b988bfa8419a60d001c628e9183a170361c9c3317c40de1d20b42770",
+    "cell_codebook_player.py": "ac1bb26f6024adbf534f5cef94c2ad81d807d91ae44eecfc4174850690edd1c3",
+    "convert_cb41.py": "336428aa61d744a28dbc32f1bf886d13c95899dc654313991ff9d7944c635697",
+    "build_cell_codebook_trd.py": "968b40fb49c66d14de9b7d13f53172d5d1bc2664e45523505a1bf1c81858651d",
+    "row_dictionary_video.py": "e634fee6d04f3e2269b1968e3b63ac31db7844a859b070ef52452ca1a8f134e4",
+    "verify_dynamic_rows.py": "3b18bc6a4c35d98a07004dd9850bd22783637ea4e30ccd7afde14094aa70808a"
+  }
+}

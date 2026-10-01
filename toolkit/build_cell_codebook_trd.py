@@ -36,12 +36,19 @@ def verify(image,m,states):
     c.banks[5][:6912]=b'\xa7'*6912;c.banks[5][0x2400:]=b'\xa7'*(16384-0x2400)
     until(c,m['clock_labels']['start'])
     first=m['frame_start'];count=m['frames'];base=m['cell_codebook']['screen_base']
-    expected={7:reference_screen(display_screen(states[first].tobytes(),black_borders=True),0,count),
-              5:reference_screen(display_screen(history_state(states,first-1).tobytes(),black_borders=True),0,count)}
+    dynamic=m['cell_codebook'].get('dynamic_rows',{}).get('enabled',False)
+    def expected_screen(index):
+        if dynamic:
+            from dynamic_row_dictionary import screen
+            return screen(states,index)
+        return display_screen(history_state(states,index).tobytes(),black_borders=True)
+    expected={7:reference_screen(expected_screen(first),0,count),
+              5:reference_screen(expected_screen(first-1),0,count)}
     assert all(bytes(c.banks[b][:6912])==s for b,s in expected.items()),'primed screens differ'
     frames=[];minimum=c.sp
     immutable=[(b,lo,bytes(c.banks[b][lo:hi])) for b,lo,hi in
-        ((2,0x1e00,0x2000),(2,0x2800,0x3100),(7,0x1c00,0x1c00+m['packet_labels']['state']-0xdc00))]
+        ((2,0x1e00,0x2000),(2,0x2800,0x3100),(7,0x1c00,0x1c00+m['packet_labels']['state']-0xdc00))
+        if not (dynamic and b==2 and lo==0x1e00)]
     def call(pc):
         nonlocal minimum
         c.pc=pc;c.sp=0x9df0;c.push(0x100);steps=c.steps;before=c.tstates;cost=Counter()
@@ -63,7 +70,7 @@ def verify(image,m,states):
     for i in range(1,count):
         b=7 if i%2==0 else 5;c.write8(base,0xc0 if b==7 else 0x40)
         rendered=call(m['packet_labels']['draw_bridge'])
-        expected[b]=reference_screen(display_screen(states[first+i].tobytes(),black_borders=True),i,count)
+        expected[b]=reference_screen(expected_screen(first+i),i,count)
         assert all(bytes(c.banks[k][:6912])==s for k,s in expected.items()),('screens',i)
         for bank,lo,data in immutable:assert bytes(c.banks[bank][lo:lo+len(data)])==data,('immutable',bank,lo)
         advance_progress(i+1)

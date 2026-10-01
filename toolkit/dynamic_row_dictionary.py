@@ -1,0 +1,169 @@
+"""CB42: exact CB41 cells with a mutable 256-entry row cache.
+
+The encoder knows future literal-row uses and evicts the farthest next use.
+Screen history and the physical cell book never depend on cache indices.
+Control words 8001h..8100h replace 1..256 rows before the next frame;
+each replacement is (index, top byte, bottom byte). Ordinary frame packets
+retain CB41's masks, mode bits, cell indices and four-row literal fallback.
+"""
+from collections import Counter, deque
+import struct
+
+import numpy as np
+
+import five_level_dither as five
+from build_fap3_trd import sha
+from build_zxv_trd import spectrum_bitmap_offset
+from probe_cell_codebook import mask, indices
+
+
+def patterns(frame):
+    words = five.unpack_words(frame[:3840].tobytes()).astype('<u2')
+    return np.ascontiguousarray(words[12:84].reshape(18,4,32).transpose(0,2,1).reshape(576,4))
+
+
+def screen(frames, index):
+    if index >= 0:
+        return b''.join(five.expand(frames[index].tobytes()))
+    if index not in (-2,-1):
+        raise ValueError('invalid initial screen history')
+    return bytes(6144) + frames[0,3840:].tobytes()
+
+
+def bitmap(key):
+    words = np.frombuffer(key, '<u2')
+    return bytes(value for word in words for value in (five.TOP[word],five.BOTTOM[word]))
+
+
+def encode(frames, start, end):
+    if not 0 <= start < end <= len(frames) or end-start > 10922:
+        raise ValueError('invalid volume extent')
+    current = np.stack([patterns(frame) for frame in frames[start:end]])
+    previous = np.concatenate((np.stack([patterns(frames[i]) if i>=0 else
+        np.zeros((576,4),dtype='<u2') for i in (start-2,start-1)]),current[:-2]),axis=0)[:end-start]
+    changed = np.any(current != previous,axis=2)
+    counts = Counter(current[f,c].tobytes() for f,c in zip(*np.nonzero(changed)))
+    book = sorted(counts,key=lambda key:(-counts[key],key))[:256]
+    book += [bytes(8)]*(256-len(book))
+    lookup = {key:i for i,key in enumerate(book)}
+    required, coded, literal = [], [], []
+    for f in range(end-start):
+        cells = np.flatnonzero(changed[f]).tolist()
+        modes = [j for j,c in enumerate(cells) if current[f,c].tobytes() in lookup]
+        raw_cells = [c for c in cells if current[f,c].tobytes() not in lookup]
+        used = set(map(int,current[f,raw_cells].ravel()))
+        if len(used | {0}) > 256:
+            raise ValueError('one frame needs more than 256 literal rows')
+        required.append(used); coded.append(modes); literal.append(raw_cells)
+    future = {word:deque() for word in range(625)}
+    for f, words in enumerate(required):
+        for word in words:
+            future[word].append(f)
+    # Index zero remains black for borders and legacy bootstrap compatibility.
+    first_use = sorted((w for w in range(1,625) if future[w]),key=lambda w:(future[w][0],w))
+    cache = [0]+first_use[:255]
+    cache += [None]*(256-len(cache))
+    initial = cache.copy()
+    slots = {w:i for i,w in enumerate(cache) if w is not None}
+    tables = bytes(five.TOP[w] if w is not None else 0 for w in cache)
+    tables += bytes(five.BOTTOM[w] if w is not None else 0 for w in cache)
+    row_meta = dict(words=[w if w is not None else 0 for w in cache],entries=256,
+        tables_hex=tables.hex(),sha256=sha(tables),ram_bytes=512,table_address=0x9e00,
+        lifetime='Mutable CB42 cache; index zero is permanently black')
+    table = b''.join(map(bitmap,book))
+    output = bytearray(b'CB42'+struct.pack('<HH',end-start,256)+table)
+    details = []
+    for f, needed in enumerate(required):
+        patches = []
+        for word in sorted(needed - slots.keys()):
+            available = [i for i,w in enumerate(cache) if i and w not in needed]
+            def next_use(i):
+                old = cache[i]
+                return (end-start+1 if old is None or not future[old] else future[old][0],i)
+            victim = max(available,key=next_use)
+            old = cache[victim]
+            if old is not None:
+                del slots[old]
+            cache[victim]=word; slots[word]=victim
+            patches.append((victim,five.TOP[word],five.BOTTOM[word]))
+        if patches:
+            output += struct.pack('<H',0x8000|len(patches))
+            output += bytes(value for patch in patches for value in patch)
+        for word in needed:
+            assert future[word].popleft() == f
+        absolute = start+f
+        cells = np.flatnonzero(changed[f]).tolist()
+        attrs = frames[absolute,3936:4512]
+        old_attrs = frames[absolute-2,3936:4512] if absolute>=2 else frames[0,3936:4512]
+        attr_changed = np.flatnonzero(attrs!=old_attrs).tolist()
+        payload = bytearray(mask(cells,576)+mask(attr_changed,576)+mask(coded[f],len(cells)))
+        for cell in cells:
+            key = current[f,cell].tobytes()
+            payload += bytes([lookup[key]]) if key in lookup else bytes(slots[int(w)] for w in current[f,cell])
+        payload += bytes(attrs[c] for c in attr_changed)
+        assert 144 <= len(payload) <= 3096
+        output += struct.pack('<H',len(payload))+payload
+        details.append(dict(frame=absolute,changed_cells=len(cells),book_cells=len(coded[f]),
+            literal_cells=len(literal[f]),attribute_cells=len(attr_changed),packet_bytes=len(payload),
+            row_updates=len(patches),row_update_bytes=3*len(patches)+(2 if patches else 0)))
+    return dict(raw=bytes(output),rows=row_meta,details=details,
+        row_updates=sum(d['row_updates'] for d in details),initial_cache=initial,
+        unique_literal_rows=len({w for s in required for w in s}),
+        unique_changed_patterns=len(counts),raw_sha256=sha(output))
+
+
+def decode_check(data, frames, start, end, row_meta):
+    """Independent byte parser checks both physical screens after every frame."""
+    if data[:4]!=b'CB42' or struct.unpack_from('<HH',data,4)!=(end-start,256):
+        raise ValueError('invalid CB42 header')
+    cache = bytearray.fromhex(row_meta['tables_hex'])
+    if len(cache)!=512 or cache[0] or cache[256]:
+        raise ValueError('invalid initial row cache')
+    book = [data[8+i*8:16+i*8] for i in range(256)]
+    screens = [bytearray(screen(frames,start-2)),bytearray(screen(frames,start-1))]
+    at, updates, hashes = 2056, 0, []
+    for frame in range(start,end):
+        while True:
+            length, = struct.unpack_from('<H',data,at); at+=2
+            if not length & 0x8000:
+                break
+            count=length & 0x7fff
+            if not 1<=count<=256:
+                raise ValueError('invalid row update count')
+            seen = set()
+            for _ in range(count):
+                index, top, bottom = data[at:at+3]; at+=3
+                if index in seen or index==0 and (top or bottom):
+                    raise ValueError('invalid row replacement')
+                seen.add(index); cache[index]=top; cache[256+index]=bottom
+            updates+=count
+        if not 144<=length<=3096:
+            raise ValueError('invalid frame packet length')
+        stop=at+length
+        cells=indices(data[at:at+72],576); attrs=indices(data[at+72:at+144],576); at+=144
+        modes=data[at:at+(len(cells)+7)//8]; at+=len(modes)
+        target=screens[(frame-start)%2]
+        for j,cell in enumerate(cells):
+            if modes[j//8]&(1<<(j%8)):
+                raster=book[data[at]]; at+=1
+            else:
+                raster=bytes(b for index in data[at:at+4] for b in (cache[index],cache[256+index])); at+=4
+            y,x=divmod(cell,32)
+            for line,value in enumerate(raster):
+                target[spectrum_bitmap_offset(x,(y+3)*8+line)]=value
+        for cell in attrs:
+            target[6240+cell]=data[at]; at+=1
+        assert at==stop and bytes(target)==screen(frames,frame),frame
+        assert bytes(screens[1-(frame-start)%2])==screen(frames,frame-1),('other screen',frame)
+        hashes.append(sha(target))
+    assert at==len(data)
+    return dict(complete=True,frames=end-start,row_updates=updates,screen_sha256=hashes,
+                both_screens_exact=True,pixel_changes=0)
+
+
+def representation(frames,start,end):
+    result=encode(frames,start,end)
+    proof=decode_check(result['raw'],frames,start,end,result['rows'])
+    return dict(result,first=max(0,start-2),start=start,end=end,
+        screen_sha256=proof['screen_sha256'],full_host_screens_exact=True,
+        dynamic_proof=proof)

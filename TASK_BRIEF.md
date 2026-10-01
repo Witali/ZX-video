@@ -12,7 +12,42 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
-## Active deliverable: 10 fps
+## Active milestone: at most four refined A/V disks
+
+The user rejected the 15-disk count and requested at most four disks, keeping
+the refined picture, new AY50 soundtrack and 10 fps. On this goal turn they
+specifically requested a dynamic row dictionary with eviction/replacement
+during playback. Completion requires a full, independently bootable set of
+at most four TRDs, unchanged media coverage and complete timing/content gates.
+Do not substitute a short fixture, the previous soundtrack or reduced fps.
+
+The CB42 implementation keeps the 256-slot / 512-byte row table, but adds
+lossless replacement records. The host chooses farthest-next-use eviction
+among rows not needed by the current frame; index zero stays black. Already
+rendered physical screen histories and the physical cell book are independent
+of row indices. Fifteen unit/regression tests pass. A 12-frame synthetic
+native playback with 369 row replacements preserves both screens exactly.
+Full Fuse checks of that fixture and the 64-frame real window pass: 525312
+screen bytes, 380 AY ticks and zero late frames. Ordinary packet parsing
+adds 18 T; drawing is unchanged. Row replacement costs 207 + 74*N T excluding
+the queue body, dispatch, length read, IRQs, contention and disk latency.
+
+One bounded real [4216,4280) comparison costs 62916 bytes static / 63118 bytes
+dynamic, with exact pixels and original two-screen history. No full-size or
+full-timing claim follows. Equal movie quarters need 267/271/258/261 distinct
+rows and 17489/18632/19202/21012 resident audio bytes. Dynamic rows remove the
+first constraint. Audio's 16-KiB bank is still a separate obstacle; investigate
+lossless prediction of the newly refined AY period bytes before allocating
+more memory. Keep bank 6 available for another solution or video buffering.
+Reuse `.tmp/dynamic-rows-probe/`, `.tmp/dynamic-rows-fixture/` and
+`.tmp/dynamic-rows-window/`; do not rebuild the previous 15-image set.
+Saved [native/Fuse proof and archives](toolkit/dynamic_rows_report.json).
+An initial full-capture gate caught a build-only placeholder hash overwriting
+the correct five-level reference hash. The parent-volume metadata override
+is fixed; recovered checks preserve the original failed metadata. This did
+not change any generated player/data bytes or relax the pixel comparison.
+
+## Earlier deliverable: 10 fps
 
 Develop this track on **`codex/cb41-10fps`**, as requested on 2026-10-01.
 The branch retains `5ae85fc` and `d2d7e1b`, including all tests, LFS fixtures

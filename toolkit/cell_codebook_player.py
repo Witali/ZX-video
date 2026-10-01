@@ -19,7 +19,7 @@ from probe_cell_codebook import history_state
 PACKET,INPUT,LENGTH=0xdc00,0x6400,0xba58
 
 
-def packet_code(m,labels,screen_base):
+def packet_code(m,labels,screen_base,*,dynamic_rows=False):
     a=MiniAssembler(PACKET);rows=[];e,n=helpers(a,rows,'cb41_packet')
     q,z=m['queue_labels'],m['decoder_labels']
     service=m['inplace_keepalive']['wrapper']
@@ -35,7 +35,11 @@ def packet_code(m,labels,screen_base):
     n('LD HL,book',0x21,INPUT+8,10);n('CALL transpose book',0xcd,labels['load_book'],17)
     e('LD A,1',[0x3e,1],7);n('LD (initialized),A',0x32,'initialized',13)
     a.label('body');take(2,LENGTH)
-    n('LD HL,(length)',0x2a,LENGTH,16);n('LD DE,minimum',0x11,144,10)
+    n('LD HL,(length)',0x2a,LENGTH,16)
+    if dynamic_rows:
+        e('BIT 7,H (row update)',[0xcb,0x7c],8)
+        n('JP NZ,row_updates',0xc2,'row_updates',10)
+    n('LD DE,minimum',0x11,144,10)
     e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15);n('JP C,fatal',0xda,z['fatal'],10)
     n('LD DE,range',0x11,3096-144+1,10);e('OR A',[0xb7],4)
     e('SBC HL,DE',[0xed,0x52],15);n('JP NC,fatal',0xd2,z['fatal'],10)
@@ -52,23 +56,57 @@ def packet_code(m,labels,screen_base):
     e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15)
     n('JP NZ,fatal',0xc2,z['fatal'],10);e('RET',[0xc9],10)
     a.label('prepare_bridge');e('RET',[0xc9],10)
+    if dynamic_rows:
+        re,rn=helpers(a,rows,'cb42_row_updates')
+        a.label('row_updates')
+        re('RES 7,H',[0xcb,0xbc],8);re('LD A,H',[0x7c],4);re('OR L',[0xb5],4)
+        rn('JP Z,fatal',0xca,z['fatal'],10)
+        rn('LD DE,257',0x11,257,10);re('PUSH HL',[0xe5],11)
+        re('OR A',[0xb7],4);re('SBC HL,DE',[0xed,0x52],15);re('POP HL',[0xe1],10)
+        rn('JP NC,fatal',0xd2,z['fatal'],10)
+        re('LD A,L',[0x7d],4);rn('LD (patch_count),A',0x32,'patch_count',13)
+        re('LD D,H',[0x54],4);re('LD E,L',[0x5d],4)
+        re('ADD HL,HL',[0x29],11);re('ADD HL,DE',[0x19],11)
+        re('LD B,H',[0x44],4);re('LD C,L',[0x4d],4)
+        rn('LD DE,patch data',0x11,INPUT,10);rn('CALL queue take',0xcd,q['take'],17)
+        rn('LD HL,patch data',0x21,INPUT,10);re('LD D,row page',[0x16,native.ROWS>>8],7)
+        rn('LD A,(patch_count)',0x3a,'patch_count',13);re('LD B,A',[0x47],4)
+        a.label('replace_row')
+        for name,blob,t in (('LD E,(HL)',[0x5e],7),('INC HL',[0x23],6),
+                ('LD A,(HL)',[0x7e],7),('INC HL',[0x23],6),('LD (DE),A',[0x12],7),
+                ('INC D',[0x14],4),('LD A,(HL)',[0x7e],7),('INC HL',[0x23],6),
+                ('LD (DE),A',[0x12],7),('DEC D',[0x15],4)):
+            re(name,blob,t)
+        rows.append(dict(address=a.pc,instruction='DJNZ replace_row',tstates=[8,13],phase='cb42_row_updates'))
+        a.rel8(0x10,'replace_row');rn('JP body',0xc3,'body',10)
     a.label('state');a.label('initialized');a.emit(0)
-    a.label('payload_end');a.word(0);a.label('end')
+    a.label('payload_end');a.word(0)
+    if dynamic_rows:a.label('patch_count');a.emit(0)
+    a.label('end')
     if a.pc>CLOCK:raise ValueError('CB41 packet code overlaps clock')
     return a.resolve(),dict(a.labels),rows
 
 
 class Builder(PreviousBuilder):
-    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,**kwargs):
+    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,**kwargs):
         if frame_fields not in (5,6):raise ValueError('CB41 supports five or six fields per frame')
         self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
         count,entries=struct.unpack_from('<HH',cell_raw,4)
-        if cell_raw[:4]!=b'CB41' or entries!=256 or cell_start<0:
+        self.dynamic_rows=cell_raw[:4]==b'CB42'
+        self.reference_frames=reference_frames
+        if cell_raw[:4] not in (b'CB41',b'CB42') or entries!=256 or cell_start<0:
             raise ValueError('this builder needs a 256-entry book and a nonnegative start')
+        if self.dynamic_rows and reference_frames is None:
+            raise ValueError('CB42 needs independent five-level reference frames')
         at=2056
         for _ in range(count):
             length=struct.unpack_from('<H',cell_raw,at)[0]
+            while self.dynamic_rows and length&0x8000:
+                replacements=length&0x7fff
+                if not 1<=replacements<=256:raise ValueError('invalid CB42 row replacement count')
+                at+=2+3*replacements
+                length=struct.unpack_from('<H',cell_raw,at)[0]
             if not 144<=length<=3096:raise ValueError('CB41 payload outside native contract')
             at+=2+length
         if at!=len(cell_raw):raise ValueError('CB41 frame extents differ')
@@ -120,7 +158,7 @@ class Builder(PreviousBuilder):
         m['video_cadence']=dict(fields_per_frame=self.frame_fields,ay_hz=50,
             deadline_increment_pc=pc,previous_tstates=10,tstates=10,delta_tstates=0,
             schedule_origin_preserved=True)
-        code,p,rows=packet_code(m,labels,screen_base);put(PACKET,code)
+        code,p,rows=packet_code(m,labels,screen_base,dynamic_rows=self.dynamic_rows);put(PACKET,code)
         # The old clock was retired above; its progress target is a constant
         # from the unchanged progress component.
         import disk_progress_z80
@@ -138,13 +176,18 @@ class Builder(PreviousBuilder):
         # Cold boot stores the exact required histories, independently of
         # anything left in RAM by another disk. No compact frame survives.
         for b,frame in ((7,start-2),(5,start-1)):
-            banks[b][:6912]=reference_screen(display_screen(history_state(self.states,frame).tobytes(),black_borders=True),0,end-start)
+            if self.dynamic_rows:
+                from dynamic_row_dictionary import screen
+                initial=screen(self.reference_frames,frame)
+            else:
+                initial=display_screen(history_state(self.states,frame).tobytes(),black_borders=True)
+            banks[b][:6912]=reference_screen(initial,0,end-start)
         m.update(packet_labels=p,clock_labels=c,clock_end=c['end'],driver_end=dl['end'],
             native_ready_pcs=[r['address']+3 for r in crows if r['instruction'] in ('CALL native zero','CALL draw_compact')])
         retired_ranges=[(r['start'],r['end']) for r in retired]
         m['slot_queue_instruction_listing']=[r for r in m['slot_queue_instruction_listing']
             if not any(lo<=r['address']<hi for lo,hi in retired_ranges)]+rows+crows+progress_rows+layout['instruction_listing']
-        m['cell_codebook']=dict(enabled=True,experimental=True,wire='CB41',raw_sha256=sha(self.cell_raw),
+        m['cell_codebook']=dict(enabled=True,experimental=True,wire='CB42' if self.dynamic_rows else 'CB41',raw_sha256=sha(self.cell_raw),
             raw_bytes=len(self.cell_raw),native_labels=labels,screen_base=screen_base,saved_page=saved_page,
             native=layout,packet_listing=rows,clock_listing=crows,irq_patches=patches,retired=retired,
             header_bytes=2056,book_loaded_from_stream=True,initial_frames=[start-2,start-1],
@@ -154,6 +197,13 @@ class Builder(PreviousBuilder):
                 popcount=[0xb000,0xb100],packet=[INPUT,INPUT+3096],stack_top=0x9df0,
                 disk_stack_top=disk.DISK_STACK),
             delivery_measured=False,release=False)
+        if self.dynamic_rows:
+            m['cell_codebook']['dynamic_rows']=dict(enabled=True,slots=256,mutable_bytes=512,
+                ordinary_packet_delta_tstates=18,renderer_delta_tstates=0,
+                update_handler_tstates='207 + 74 * replaced_rows',
+                update_handler_excludes='queue take body, dispatch, length read, IRQ, contention and disk latency',
+                wire='8001h..8100h, then count triples: index, top, bottom',
+                prior_screen_copies_required=False,pixel_changes=0)
         retired_keys=('compiled_masks','hl_mask_reader','compact_cursor','cached_huffman_lookahead',
                       'inline_huffman_patches','inline_literals')
         m['cell_codebook']['retired_metadata']={key:m[key] for key in retired_keys if key in m}
@@ -172,6 +222,7 @@ class Builder(PreviousBuilder):
 
     def volume(self,start,end,part):
         image,m=super().volume(start,end,part)
+        if self.dynamic_rows:m['states_sha256']=sha(self.reference_frames.tobytes())
         m.update(frame_fields=self.frame_fields,fps='10' if self.frame_fields==5 else '25/3',
             duration_seconds=(end-start)*self.frame_fields/50,
             ay_ticks=(end-start)*self.frame_fields)
