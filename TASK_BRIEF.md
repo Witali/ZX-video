@@ -106,7 +106,7 @@ five-frame CLI/CPU fixture pass. Audio bytes +75.79%, audio CPU +27.42% in
 these windows. No full-film timing/capacity claim; root TRDs and cached AY stay
 at the verified baseline. Reuse [audio evidence and reproduction](toolkit/AY_SQUARE_FIT.md).
 
-## Refined full-movie rebuild in progress
+## Refined full-movie rebuild completed (fallback preview)
 
 The user requested new root TRDs with the joint colour/grain selector and
 square-aware AY fitting. Full preparation is cached in
@@ -122,8 +122,29 @@ the final series identity and real preceding histories passed with zero
 misses. Explicit timing-driven cuts preserve every frame and AY tick; they
 do not claim a minimum disk count. Reuse
 [the archived failed run and probe](toolkit/refined_av_attempt_report.json).
-The selected 15-disk rebuild is in `.tmp/refined-av-final/`; do not treat
-incomplete timing or a successful build as a release.
+The selected complete rebuild is now published as root LFS
+`ZX-video-refined_part01..15.trd`. Extra disks are authorized for this set.
+All 5066 frames / 35016192 screen bytes, 25330 AY ticks and 10126 runtime
+sector reads pass cold Fuse playback. All 15 independent boots, 14 prompt
+transitions and 14 actual-predecessor-EOF snapshot continuations pass.
+Both cold and sequential runs have four isolated late frames: disk 1 frame
+1040, disk 3 frame 159, disk 8 frames 92/95 (zero-based). Every late frame
+recovers on the next frame. Maximum phase is 70916 T cold / 70915 T resumed,
+one 70908-T field plus instruction-level variation. AY has no missing or
+duplicate fields or underruns. The one-field fallback passes; nominal
+zero-late timing does not, so this is a full-movie preview, not a strict
+release. Keep the verified three-disk 25/3-fps compatibility set.
+
+Reuse `.tmp/refined-av-final/`, the 544-file
+[final archive and report](toolkit/refined_av_movie_report.json), and the
+[integrity/LFS check](toolkit/refined_av_archive_check.json). The failed run
+and probe have another 268 authenticated artifacts. All 35 relevant tests
+pass. [Finalization](toolkit/finish_refined_av.py) verifies actual EOF
+continuations before publishing, and
+[archive verification](toolkit/verify_refined_av_archive.py) checks hashes,
+source identities and staged LFS pointers. No physical floppy drive test
+or minimum-disk-count claim follows. This deliverable is complete; further
+disk-count or zero-late optimization is a separate milestone.
 
 ## Working method
 

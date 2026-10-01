@@ -5,7 +5,14 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
-**Latest verified movie candidate (2026-09-30):** root LFS
+**Latest refined A/V preview (2026-10-01):** root LFS
+`ZX-video-refined_part01..15.trd`, 5066 frames at 10 fps and new AY50 sound.
+Complete cold and predecessor-EOF playback pass the one-field fallback:
+four isolated late frames per full run, all recovered on the next frame.
+Full screens and sound are exact. This is not a zero-late release; the user
+authorized extra disks to retain the new picture, sound and 10 fps.
+
+**Verified zero-late compatibility set (2026-09-30):** root LFS
 `ZX-video-five-level_part01..03.trd`, the full 4221-frame authorized edit,
 five brightness levels and unchanged AY50. All three disks pass full Fuse
 playback at 25/3 fps with zero missed deadlines, exact full screens and AY.
@@ -27,6 +34,61 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
+
+## 2026-10-01 — publish the complete refined colour/AY50 preview on 15 disks
+
+- User-authorized deliverable: new colour/grain and square-aware sound,
+  unchanged resolution, 10 fps, additional independently bootable disks
+  permitted. Publish root `ZX-video-refined_part01..15.trd` through Git LFS;
+  each image is 655360 bytes. The full authorized edit is 5066 frames /
+  25330 AY ticks / 506.6 s. The post-credit scene and source audio EOF remain.
+- Reuse preparation from the preceding attempt. Based on its failed timing
+  regions and the passing bounded probe, select exclusive frame ends
+  `1158,1957,2753,3584,3672,3710,3902,4216,4280,4344,4408,4472,4680,4893,5066`.
+  The final set uses 11088 sectors in total. Several parts are deliberately
+  short so their data can be loaded before playback. Fifteen disks is a
+  measured working partition, not a minimum-size result. No further image,
+  audio or frame-rate reduction was made to repair timing.
+- Full cold Fuse verification: all 35016192 screen bytes, 25330 AY updates
+  and 10126 runtime sector reads match. All 15 dirty-RAM independent boots
+  and 14 next-disk/wrong-disk/wrong-series/bootstrap checks pass. Separate
+  sequential tests carry actual predecessor EOF RAM through all 14 changes;
+  every volume reaches EOF with exact AY and no gaps, duplicates or underruns.
+  Screen verification is exhaustive in cold runs; sequential runs additionally
+  check native pixel samples and timing. Emulator/controller state restarts
+  between snapshot continuations; physical drive swaps are not verified.
+- Four nominal misses per full run, identical cold/resumed indices:
+  disk 1 frame 1040 -> recovery 1041; disk 3 frame 159 -> 160;
+  disk 8 frames 92 -> 93 and 95 -> 96 (zero-based). Each is one field late;
+  no accumulated drift or dropped frames. Maximum measured phase is
+  70916 T cold / 70915 T resumed; one field is 70908 T, with a few T of
+  actual publication instruction variation. Cold publication intervals are
+  283622..425457 T, the permitted 4..6-field recovery range with that
+  variation. The nominal zero-late gate fails; the authorized one-field
+  fallback passes on every complete cold and resumed volume.
+- Save as a complete **preview**, preserving the three-disk zero-late
+  25/3-fps compatibility set. The image and sound models are those measured
+  in the preceding entry; sky colour bands remain visible and no perceptual
+  accuracy percentage is claimed. Native hot-path instructions remain
+  unchanged from the 10-fps baseline (0 T instruction delta).
+- Verification includes 35 relevant unit/regression tests, eight visually
+  inspected source/average/physical-dither samples, 544 authenticated final
+  artifacts and 268 archived failed-run/probe artifacts. Rechecked every
+  archive/raw hash and saved source identity, plus all 39 staged LFS pointers
+  for root and archived TRDs. [Final report](toolkit/refined_av_movie_report.json),
+  [image samples](toolkit/refined_av_movie_evidence/preview.png),
+  [final integrity check](toolkit/refined_av_archive_check.json),
+  [attempt integrity check](toolkit/refined_av_attempt_check.json).
+- Reproduce from the hashed 10-fps RGB preparation with
+  [prepare_refined_av.py](toolkit/prepare_refined_av.py), then
+  [build_cb41_cadence_movie.py](toolkit/build_cb41_cadence_movie.py)
+  using the ends above with `--volume-cuts`, `--prefix ZX-video-refined`,
+  `--verify fuse` and `--verification-timeout 600`.
+  [finish_refined_av.py](toolkit/finish_refined_av.py) performs EOF
+  continuations, archives the full evidence and publishes only after its
+  timing gate; `--allow-fallback` explicitly permits this preview.
+  [verify_refined_av_archive.py](toolkit/verify_refined_av_archive.py)
+  with `--index` authenticates the saved artifacts and LFS entries.
 
 ## 2026-10-01 — full refined A/V preparation and timing-driven disk cuts
 

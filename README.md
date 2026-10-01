@@ -70,6 +70,34 @@ fit three disks or meet the timing target; `--verify fuse` measures every
 frame's deadline, full screen, AY tick and disk read. See
 [generic CB41 details and checks](toolkit/GENERIC_CB41.md).
 
+## Refined colour and sound at 10 fps
+
+The latest complete movie preview is **15 independently bootable root TRDs**,
+[`ZX-video-refined_part01.trd`](ZX-video-refined_part01.trd) through
+[`ZX-video-refined_part15.trd`](ZX-video-refined_part15.trd), stored in Git LFS.
+Play them in numeric order or start any disk independently. The next-disk
+prompt is in English. The authorized edit retains the post-credit scene:
+5066 frames, 506.6 seconds, and 25330 AY updates at 50 Hz.
+
+This set jointly chooses colour and five-level dither, fits AY square-wave
+harmonics and reduces noise by one nominal 3 dB step. Full-movie average
+frame RGB MSE is 6.76% below the old colour selector; visible colour bands
+remain in smooth skies. The new sound is an AY approximation of the source.
+
+All full screens and AY records match in complete Fuse playback. Cold runs
+have four isolated one-field (about 20 ms) late frames, each recovered by
+the next frame. Actual predecessor-EOF continuations across all disks also
+pass, with the same four late frames and no AY gaps or underruns. Physical
+floppy swaps were not tested. The one-field fallback passes; **zero-late 10-fps playback
+is not achieved**, so this is a preview rather than the strict release.
+Extra disks were explicitly authorized to preserve quality and 10 fps.
+Several short disks preload difficult scenes; 15 is not a minimum-size claim.
+The previous three-disk compatibility set remains available below.
+
+[Complete timing, continuation and quality evidence](toolkit/refined_av_movie_report.json) ·
+[Failed eight-disk attempt and bounded probe](toolkit/refined_av_attempt_report.json) ·
+[Reproduction and decisions](CHANGELOG.md)
+
 ## Verified three-disk movie
 
 The root LFS `ZX-video-five-level_part01..03.trd` images contain the authorized
