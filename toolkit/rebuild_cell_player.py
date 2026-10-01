@@ -41,7 +41,7 @@ def main():
     for name in ('metadata','output','zx0','lzsa'):p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--verify',choices=('cpu','cold','none'),default='cpu')
     p.add_argument('--shared-audio',action='store_true',help='experimental fixed AY decoder/trees and shared payload')
-    p.add_argument('--four-video-slots',action='store_true',help='requires shared one-bank AY; use bank 4 as a fourth video slot')
+    p.add_argument('--four-video-slots',action='store_true',help='requires shared AY in bank 6/fixed RAM; use bank 4 as a fourth video slot')
     p.add_argument('--cell-probe',type=Path,help='validated replacement window JSON with sibling .raw.gz/.stream.gz')
     a=p.parse_args();m=json.loads(a.metadata.read_bytes());source=a.metadata.parent;stem=a.metadata.stem
     if a.output.exists() and any(a.output.iterdir()):p.error('output must be new or empty')

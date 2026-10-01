@@ -1,4 +1,4 @@
-"""Restore the original four-slot queue after relocating all AY payload to bank 6."""
+"""Restore four video slots with AY payload in bank 6 and optional fixed RAM tail."""
 
 from inplace_slot_input_z80 import MAX_OUTPUT
 
@@ -6,7 +6,7 @@ from inplace_slot_input_z80 import MAX_OUTPUT
 def install(banks,m):
     audio=m['resident_audio'];q=m['queue_labels'];p=m['producer_labels']
     if not audio.get('shared_fixed') or audio['banks']!=[6]:
-        raise ValueError('four slots require fixed audio code/trees and payload only in bank 6')
+        raise ValueError('four slots require fixed audio code/trees and bank 6 as the only paged audio bank')
     if audio['video_slot_banks']!=[0,1,3]:raise ValueError('unexpected original slot map')
     rows=m['slot_queue_instruction_listing'];patches=[];removed=[];added=[]
     def replace(at,before,after,listing,previous,total):

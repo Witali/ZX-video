@@ -350,3 +350,43 @@ Retain shared audio/four-slot flags as appropriate; two-bank AY still
 precludes a fourth slot. [Evidence](partial_row_report.json),
 [native/size verifier](verify_partial_row_cells.py). Generic CLI integration
 and complete four-disk timing/EOF continuation are still required.
+
+## Fixed AY overflow with four slots (2026-10-01)
+
+The fixed-tail option supersedes the one-bank restriction above. Keep the
+first 16384 coded AY bytes in bank 6 and place overflow after the last fixed
+Huffman node. The allocator checks an exclusive BA00h limit; packet length
+at BA58h and later workspace remain allocated. B700h..BA00h was first guarded
+against every native read/write/fetch over the complete existing 256-frame
+window. The selected fourth volume needs 1170 overflow bytes at B398h..B82Ah,
+with 5200 total fixed decoder/tree/payload bytes. Video slots remain 0/1/3/4.
+There is no new audio format, output change, or compressed video change.
+
+After a payload read, `LD A,IXH; OR A; JR NZ` detects IX wrapping from FFFFh.
+The boundary loads `IX=fixed_tail`; `SCF; RL B` restores the sentinel. No
+bank switch or mutable payload-bank variable is needed. Ordinary reads
+remain 65 T. First wrap is 251 ->74 T (-177), including the old 92-T page
+body; the final byte is 92 ->65 T (-27). A fixed-bank bridge is 442 ->436 T
+(-6 per refill); initialization saves 20 T. AY consumer instructions do not
+change. All counts exclude outer service, IRQs, contention and ROM/disk.
+The complete fourth-volume component replay verifies all 6610 records:
+fill 20308726 ->20307238 T (-1488), init 1076 ->1056 T, consumer 4088727 T
+unchanged. Twenty tests pass, including independent full-flags Z80 runs
+and interrupts across the payload boundary.
+
+The cached capacity tool accepts `--four-video-slots --parts 4 --write-images`
+to build only this diagnostic volume, retaining the original series and
+frame cuts. It still uses 2543/2544 sectors and passes dirty-RAM cold loading.
+Full Fuse playback compares 9137664 screen bytes, 6610 AY ticks and 2434
+runtime sectors exactly, with zero missing/duplicate AY fields or underruns.
+Timing fails: 60 missed nominal frames, 57 beyond one field, maximum 42
+fields, 34 invalid actual intervals. Local late runs 39, 568, 577..632, 683
+and 921 recover at 40, 569, 633, 684 and 922 respectively. No full-set or
+predecessor-EOF continuation claim follows from this single-volume check.
+
+Reproduction uses `measure_shared_audio_capacity.py`,
+`benchmark_fixed_resident_audio.py --fixed-tail`, `verify_cached_cell_player.py`,
+`measure_fap3_fuse.py --trace-pipeline`, `capture_cell_codebook_full.py` and
+`verify_fixed_audio_tail.py`. The diagnostic TRD and complete evidence are
+archived in [the fixed-tail report](fixed_audio_tail_report.json). Root
+release images remain unchanged while timing is unresolved.

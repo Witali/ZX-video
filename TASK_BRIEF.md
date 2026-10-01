@@ -43,9 +43,25 @@ Fifteen tests / 32 independent native cases pass. Exact renderer delta:
 `7*book_cells - 131*partial_cells` T. No-refill partial cell 186 vs317 T;
 book 288 vs281 T. Not every frame is faster; use measured total delivery.
 
-Next scope: resolve the remaining stalls (30 empty-queue packet entries,
-late run 226..253) on this cached window. Also allocate part 4's 1170-byte
-AY overflow so it can use four slots; B700h..BA00h remains unaudited.
+Part 4's 1170-byte AY overflow now occupies checked fixed B398h..B82Ah;
+the first 16384 payload bytes remain in bank 6. Four video slots work on this
+full volume at unchanged **2543 sectors**. Twenty tests and all 6610 native
+AY ticks pass; fill saves 1488 T and init 20 T versus bank-spanning shared AY.
+The complete cold/Fuse volume preserves 9137664 screen bytes, all AY50 ticks
+and all 2434 runtime sectors. It misses 60 deadlines (57 beyond one field),
+maximum 42 fields, 34 invalid intervals; all late runs recover. Reuse
+`.tmp/fixed-audio-tail-part04/` and [evidence](toolkit/fixed_audio_tail_report.json).
+The smaller cached window above remains useful; do not compare its 31 misses
+directly with the full volume's 60 as if the scope were identical.
+All 1322 native frames pass guards on bank 6, the fixed payload and unused
+RAM. `.tmp/fixed-audio-tail-profile.json` records 70 empty-queue entries;
+active draw/disk/decoder elapsed 125.55M/72.02M/58.65M T within 468.51M T.
+Packet stages overlap those totals. Retain the full trace for burst analysis.
+
+Next scope: resolve producer starvation and rendering cost on the cached
+window, using the new full-part trace for context. Full part 4's main late
+run is local 577..632 (global 4321..4376), recovered at 633; the window's
+late run is 226..253. Avoid re-encoding or building a full set for each trial.
 Only then build the full four-disk set and run complete cold/continuation
 timing and content gates before replacing the root release images.
 CB46 is currently available to the cached rebuilder via `--cell-probe`;

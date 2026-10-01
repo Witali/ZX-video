@@ -8,8 +8,8 @@ from build_fap3_trd import sha
 from convert_video import write_json
 
 
-def measure(data,fixed):
-    h=Harness(data,paging=True,batch=31,fixed=fixed);calls=[];consumer=0
+def measure(data,fixed,*,fixed_tail=False):
+    h=Harness(data,paging=True,batch=31,fixed=fixed,single_bank=6 if fixed_tail else 4,fixed_tail=fixed_tail);calls=[];consumer=0
     while h.consumed<len(h.records):
         cycles,count=h.fill_wrapped();assert count>0
         calls.append(dict(tstates=cycles,ticks=count))
@@ -27,9 +27,10 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--input',action='append',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--fixed-tail',action='store_true',help='compare bank-6 plus fixed tail against the bank-spanning shared model')
     a=p.parse_args();rows=[]
     for path in a.input:
-        data=path.read_bytes();before=measure(data,False);after=measure(data,True)
+        data=path.read_bytes();before=measure(data,a.fixed_tail);after=measure(data,True,fixed_tail=a.fixed_tail)
         for key in ('records','initial','records_sha256','consumer_tstates'):assert before[key]==after[key]
         rows.append(dict(input=path.name,input_sha256=sha(data),before=before,after=after,
             fill_delta_tstates=after['fill_tstates']-before['fill_tstates']))

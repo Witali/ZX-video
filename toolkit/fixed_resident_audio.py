@@ -1,4 +1,4 @@
-"""One exact AYH1 forest in fixed RAM, coded payload in bank 4 and a bank-6 tail."""
+"""One exact AYH1 forest in fixed RAM, with a paged payload and optional fixed tail."""
 import struct
 
 import ay_huffman_stream as wire
@@ -8,6 +8,7 @@ import resident_audio_z80 as resident
 from pipelined_frame_z80 import PAGE,SHADOW
 
 ORIGIN,ROOTS,TAIL,TAIL_END=0x8000,0x8200,0xb100,0xb700
+FIXED_PAYLOAD_END=0xba00
 
 
 def single_stream(data):
@@ -43,35 +44,42 @@ def forest(trees,core_limit):
     return regions
 
 
-def build(data,audio,*,core_limit,batch=31,first_bank_bytes=16384,single_bank=4):
+def build(data,audio,*,core_limit,batch=31,first_bank_bytes=16384,single_bank=4,fixed_tail=False):
     data=single_stream(data);initial,records,trees,payload=resident.tables(data)
     if not 1<=first_bank_bytes<=16384:raise ValueError('invalid first payload capacity')
     if len(payload)>first_bank_bytes+1536:raise ValueError('shared AY overflow exceeds reserved 1536-byte tail')
     regions=forest(trees,core_limit)
     first=min(first_bank_bytes,len(payload));overflow=payload[first:]
     if single_bank not in (4,6):raise ValueError('shared AY single bank must be 4 or 6')
-    if overflow and single_bank!=4:raise ValueError('four video slots require one-bank AY')
+    if overflow and single_bank!=4 and not fixed_tail:raise ValueError('four video slots require one-bank AY')
     start=0x10000-first_bank_bytes
     segments=[dict(bank=single_bank,address=start,data_hex=payload[:first].hex(),bytes=first)]
     second=0x10000-len(overflow) if overflow else None
-    if overflow:segments.append(dict(bank=6,address=second,data_hex=overflow.hex(),bytes=len(overflow)))
+    in_fixed=bool(overflow and fixed_tail)
+    if in_fixed:
+        second=max([TAIL]+[at+len(blob) for at,blob in regions if at>=TAIL])
+        if second+len(overflow)>FIXED_PAYLOAD_END:raise ValueError('fixed AY payload tail overlaps BA00h workspace')
+        regions.append((second,overflow))
+    if overflow:segments.append(dict(bank=2 if in_fixed else 6,address=second,data_hex=overflow.hex(),bytes=len(overflow)))
     code,labels,listing=resident.code(audio,len(records),initial,ROOTS,start,batch=batch,origin=ORIGIN,
-        payload_overflow=second,page_entry=PAGE)
+        payload_overflow=second,page_entry=PAGE,fixed_overflow=in_fixed)
     if labels['end']>ROOTS:raise ValueError('fixed AY decoder overlaps roots')
     regions=[(ORIGIN,code),*regions]
     return dict(enabled=True,wire='AYH1',origin=ORIGIN,ticks=len(records),batch=batch,
         labels=labels,listing=listing,regions=[dict(address=at,data_hex=blob.hex()) for at,blob in regions],
-        payload_segments=segments,banks=[s['bank'] for s in segments],
+        payload_segments=segments,banks=[s['bank'] for s in segments if s['address']>=0xc000],
         payload_bank_address=labels.get('payload_bank'),payload_address=start,payload_bytes=len(payload),
-        bank6_reserved_bytes=len(overflow),code_bytes=labels['code_end']-ORIGIN,
+        bank6_reserved_bytes=0 if in_fixed else len(overflow),code_bytes=labels['code_end']-ORIGIN,
         fixed_bytes=sum(len(blob) for _,blob in regions),fixed_limit=core_limit,
         input_bits=struct.unpack_from('<I',data,8)[0],ayh1_sha256=sha(data),
         initial_registers=initial.hex(),records_sha256=sha(b''.join(records)),
         normal_refill_byte_delta_tstates=28 if overflow else 0,
-        first_bank_switch_byte_delta_tstates=214 if overflow else 0,
-        final_bank_wrap_byte_delta_tstates=55 if overflow else 0,
-        init_delta_tstates=20 if overflow else 0,
-        timing_scope='Against one AYH1 model; includes 92-T page body at wrap, excludes outer bridge/IRQ/ULA')
+        first_bank_switch_byte_delta_tstates=37 if in_fixed else 214 if overflow else 0,
+        final_bank_wrap_byte_delta_tstates=0 if in_fixed else 55 if overflow else 0,
+        init_delta_tstates=20 if overflow and not in_fixed else 0,
+        **(dict(fixed_payload_bytes=len(overflow),fixed_payload_range=[second,second+len(overflow)]) if in_fixed else {}),
+        timing_scope=('Against one AYH1 model; fixed tail uses no page call; excludes outer bridge/IRQ/ULA'
+            if in_fixed else 'Against one AYH1 model; includes 92-T page body at wrap, excludes outer bridge/IRQ/ULA'))
 
 
 def install(banks,m,sections,data,compress,*,four_slots=False):
@@ -80,10 +88,14 @@ def install(banks,m,sections,data,compress,*,four_slots=False):
     if cell['wire'] not in ('CB44','CB46') or not cell.get('obsolete_fixed_ranges'):
         raise ValueError('fixed AY integration requires the retired CB44 reconstruction')
     compiled=build(data,m['audio_labels'],core_limit=m['decoder_labels']['start'],batch=old['compiled']['batch'],
-        single_bank=6 if four_slots else 4)
+        single_bank=6 if four_slots else 4,fixed_tail=four_slots)
     def put(at,blob):
         if not 0x4000<=at<at+len(blob)<=0xc000:raise ValueError('fixed AY region must stay mapped')
         bank=5 if at<0x8000 else 2;lo=at&16383;banks[bank][lo:lo+len(blob)]=blob
+    if compiled.get('fixed_payload_bytes'):
+        cell['retired'].append(dict(start=TAIL_END,end=FIXED_PAYLOAD_END,
+            sha256=sha(bytes(banks[2][TAIL_END-0x8000:FIXED_PAYLOAD_END-0x8000]))))
+        put(TAIL_END,bytes(FIXED_PAYLOAD_END-TAIL_END))
     for region in compiled['regions']:
         at=region['address'];blob=bytes.fromhex(region['data_hex'])
         if any(banks[2][at-0x8000:at-0x8000+len(blob)]):raise ValueError('fixed AY allocation is not retired/zero')
@@ -107,6 +119,7 @@ def install(banks,m,sections,data,compress,*,four_slots=False):
     for bank in (4,6):banks[bank][:]=bytes(16384)
     payload_sections=[]
     for part in compiled['payload_segments']:
+        if part['bank']==2:continue  # Included in the ordinary fixed-bank startup section.
         at=part['address'];raw=bytes.fromhex(part['data_hex']);lo=at&16383
         banks[part['bank']][lo:lo+len(raw)]=raw
         offset=0
@@ -121,7 +134,7 @@ def install(banks,m,sections,data,compress,*,four_slots=False):
                 decoded_bytes=length,compressed_bytes=len(coded),sectors=sectors(coded),sha256=sha(piece),data=padded(coded)))
             offset+=length
     # Guard only the gaps left after installing the new fixed decoder/forest.
-    ranges=[(r['start'],r['end']) for r in cell['obsolete_fixed_ranges']]+[(TAIL,TAIL_END)]
+    ranges=[(r['start'],r['end']) for r in cell['obsolete_fixed_ranges']]+[(TAIL,FIXED_PAYLOAD_END if compiled.get('fixed_payload_bytes') else TAIL_END)]
     for region in compiled['regions']:
         start=region['address'];end=start+len(bytes.fromhex(region['data_hex']));remaining=[]
         for lo,hi in ranges:

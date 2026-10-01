@@ -34,6 +34,29 @@ def data():
 
 
 class FixedResidentAudioTests(unittest.TestCase):
+    def test_fixed_payload_tail_without_paging_at_wrap(self):
+        blob=data();payload=resident.tables(blob)[3]
+        for limit in (1,33,len(payload)-1):
+            old=Harness(blob,paging=True,batch=31,fixed=True,single_bank=6)
+            new=Harness(blob,paging=True,batch=31,fixed=True,single_bank=6,first_bank_bytes=limit,fixed_tail=True)
+            self.assertEqual(new.build['banks'],[6])
+            self.assertEqual(new.build['payload_segments'][-1]['bank'],2)
+            self.assertEqual(new.init_tstates,old.init_tstates)
+            while old.consumed<len(old.records):
+                a,n=old.fill_wrapped();first=len(new.cpu.payload_reads)
+                before=[bytes(b) for b in new.cpu.banks];page=new.cpu.port_7ffd
+                b,k=new.fill_wrapped();reads=new.cpu.payload_reads[first:]
+                self.assertEqual((b-a,k),(28*len(reads)+9*reads.count((6,65535)),n))
+                independent_fill(before,page,new,b)
+                for _ in range(n):old.consume();new.consume()
+            old.finish();new.finish()
+
+    def test_interrupts_across_fixed_payload_boundary(self):
+        h=Harness(data(),paging=True,batch=1,fixed=True,single_bank=6,first_bank_bytes=1,fixed_tail=True)
+        while h.cpu.published<len(h.records):h.fill_wrapped(h.interrupt)
+        while h.consumed<len(h.records):h.consume()
+        h.finish();self.assertGreater(h.cpu.irq_count,1000)
+
     def test_one_bank_can_move_to_six_without_extra_cycles(self):
         blob=data();old=Harness(blob,paging=True,batch=31,fixed=True)
         new=Harness(blob,paging=True,batch=31,fixed=True,single_bank=6)

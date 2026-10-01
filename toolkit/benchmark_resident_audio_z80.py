@@ -43,6 +43,9 @@ class CheckedCPU(TraceCPU):
         self.irq_count = 0
 
     def read8(self, at):
+        if self.checking and hasattr(self,'fixed_payloads') and 2 in self.fixed_payloads:
+            part=self.fixed_payloads[2]
+            if part['address']<=at<part['address']+part['bytes']:self.payload_reads.append((2,at))
         if self.checking and at>=resident.ORIGIN and hasattr(self,'fixed_payloads'):
             bank=self.port_7ffd&7
             part=self.fixed_payloads.get(bank)
@@ -98,7 +101,7 @@ class CheckedCPU(TraceCPU):
 
 
 class Harness:
-    def __init__(self, blob, batch=6, *, paging=False,fixed=False,first_bank_bytes=16384,single_bank=4):
+    def __init__(self, blob, batch=6, *, paging=False,fixed=False,first_bank_bytes=16384,single_bank=4,fixed_tail=False):
         self.paging = paging
         self.fixed=fixed
         if fixed:
@@ -123,7 +126,7 @@ class Harness:
         a.label('fatal'); a.emit(0x76)
         if a.pc >= 0xb900: raise AssertionError('test AY placement overlaps clock/stack')
         self.audio = a.labels
-        self.build = (fixed_resident_audio.build(blob,self.audio,batch=batch,core_limit=0x8d74,first_bank_bytes=first_bank_bytes,single_bank=single_bank)
+        self.build = (fixed_resident_audio.build(blob,self.audio,batch=batch,core_limit=0x8d74,first_bank_bytes=first_bank_bytes,single_bank=single_bank,fixed_tail=fixed_tail)
             if fixed else banked.build(blob,self.audio,batch=batch) if self.banked else resident.build(blob, self.audio, batch=batch))
         self.labels = self.build['labels']
         c = self.cpu = CheckedCPU()

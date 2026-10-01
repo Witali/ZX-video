@@ -35,6 +35,43 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — fixed AY overflow enables four buffers on the last volume
+
+- Objective: let the selected fourth volume use all four video slots while
+  keeping exact refined pixels, square-aware AY50, 10 fps and the existing
+  [0,1312,2672,3744,5066] cuts. Baseline `13879a8`; cached CB46/LZSA2 and AYB1
+  inputs, no movie preparation or full candidate-set sweep.
+- Guard B700h..BA00h against native accesses across the complete 256-frame
+  window, then allocate the 1170-byte fourth-volume AY overflow after its
+  fixed forest at B398h..B82Ah. First 16384 coded bytes remain in bank 6;
+  video banks 0/1/3/4 retain 63488 decoded bytes. Reject allocation overflow.
+  The AY wire format, video blocks and rendering instructions stay identical.
+- Twenty tests pass, including independent full-flags cycle comparisons and
+  IRQ injection across the pointer boundary. All 6610 native AY records and
+  chip updates are exact. Ordinary payload reads stay 65 T; first wrap
+  251 ->74 (-177), final byte 92 ->65 (-27), bridge 442 ->436 (-6/refill),
+  init 1076 ->1056 (-20). Total fill 20308726 ->20307238 T (-1488); consumer
+  remains 4088727 T. These CPU counts exclude IRQ/ULA/ROM/physical disk.
+- Build only cached part 4: **2543/2544 sectors**, unchanged capacity, dirty-RAM
+  cold boot passes. Full Fuse checks preserve all 1322 screens (9137664 bytes),
+  6610 AY ticks and 2434 runtime sectors, with no audio gaps, duplicates or
+  underruns. There are 60 nominal misses, 57 beyond one field, maximum 42
+  fields, 34 invalid intervals. All five late runs recover, the longest at
+  local frame 633. Both nominal and fallback gates fail.
+- Decision: retain the fixed allocation as a prerequisite for the four-slot
+  last disk. It is not a released four-disk set; root images are unchanged.
+  Reuse the complete trace to address producer starvation and rendering cost.
+  Guarded native playback checks all 1322 frames and prevents runtime writes
+  to bank 6 or the fixed payload. The trace records 70 empty-queue packet
+  entries: active elapsed 468.51M T, drawing 125.55M, disk service 72.02M,
+  decoder bridges 58.65M. Packet stages overlap those and are not additive.
+  Full-set timing and actual predecessor-EOF continuation remain required.
+  [Implementation and cycle calculation](toolkit/CB44_DYNAMIC.md),
+  [capacity/rebuild tool](toolkit/measure_shared_audio_capacity.py),
+  [verifier](toolkit/verify_fixed_audio_tail.py),
+  [report](toolkit/fixed_audio_tail_report.json),
+  [archive check](toolkit/fixed_audio_tail_archive_check.json).
+
 ## 2026-10-01 — exact partial-row cells fit the selected four-volume capacity
 
 - Objective: remove the remaining 21504-byte total excess and reduce work

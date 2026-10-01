@@ -22,6 +22,7 @@ def verify(image,m,states):
              +m['cell_codebook']['native']['instruction_listing'])
     rows={r['address']:r for r in listing};hist=Counter();stages=Counter()
     retired=[(r['start'],r['end']) for r in m['cell_codebook'].get('obsolete_fixed_ranges',[])]
+    fixed_payload=m.get('resident_audio',{}).get('compiled',{}).get('fixed_payload_range')
     class TrackedCPU(LzsaDiskCPU):
         tracking=False
         def check_retired(self,address):
@@ -32,6 +33,8 @@ def verify(image,m,states):
             return super().read8(address)
         def write8(self,address,value):
             self.check_retired(address)
+            if self.tracking and fixed_payload:
+                assert not fixed_payload[0]<=address&65535<fixed_payload[1],('write to fixed AY payload',hex(self.pc),hex(address))
             if self.tracking and m.get('four_video_slots',{}).get('enabled') and address&65535>=0xc000:
                 assert self.port_7ffd&7!=6,('write to immutable AY bank',hex(self.pc),hex(address))
             return super().write8(address,value)
@@ -95,6 +98,7 @@ def verify(image,m,states):
         new_instruction_stages=dict(stages),new_instruction_tstates=sum(stages.values()),
         retired_ranges_guarded=retired,retired_runtime_reads_writes_or_fetches=0,
         immutable_audio_bank_guarded=6 if m.get('four_video_slots',{}).get('enabled') else None,
+        immutable_fixed_audio_payload_guarded=fixed_payload,
         histogram=[dict(pc=pc,tstates=t,count=n) for (pc,t),n in sorted(hist.items())])
 
 
