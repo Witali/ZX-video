@@ -28,6 +28,19 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — isolate 10-fps development on its own branch
+
+- At the user's request, moved the two unpublished 10-fps commits
+  (`5ae85fc`, `d2d7e1b`) onto `codex/cb41-10fps` and selected that branch
+  in the existing checkout. Local `main` returns to `a878583`, retaining
+  the verified 25/3-fps implementation and read-only cadence assessment.
+- Verified the remote main still points to `d751ce8`; no published history
+  was rewritten. All experiment commits, LFS fixtures, preparation caches
+  and unrelated untracked files are preserved. No runtime code, stream,
+  image or timing result changed; validation consists of branch ancestry,
+  references and the working-tree diff. Further 10-fps work belongs on the
+  new branch. The movie capacity decision remains unresolved.
+
 ## 2026-10-01 — verify a sustained 10-fps window; reject oversized movie partition
 
 - Baseline `5ae85fc`; requested 10 fps with unchanged resolution, five levels

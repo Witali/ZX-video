@@ -14,6 +14,13 @@ converter must also support other videos.
 
 ## Active deliverable: 10 fps
 
+Develop this track on **`codex/cb41-10fps`**, as requested on 2026-10-01.
+The branch retains `5ae85fc` and `d2d7e1b`, including all tests, LFS fixtures
+and failed-capacity evidence. Local `main` stays at `a878583`: the verified
+25/3-fps implementation plus its read-only cadence assessment. Keep further
+10-fps changes on this branch; merge only when requested. The working
+directory and ignored preparation caches remain in the repository root.
+
 Resample the original at 10 fps, retain the authorized edit and all existing
 AY ticks, and publish every frame on five-field deadlines. First validate
 short fixtures and a difficult movie window; build one selected complete
