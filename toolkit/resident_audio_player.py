@@ -125,7 +125,9 @@ def install(read8, put, metadata, coded_audio, h, *, batch=6, foreground_audio=F
                 replace(at,b'\xcd'+frame_entries[helper].to_bytes(2,'little'),
                     b'\xcd'+hl[helper].to_bytes(2,'little'),17,17,'service AY before '+name)
                 added.append(row);matched.append(name)
-        expected=set(targets)-({'CALL compact one','CALL reconstruct pending packet'} if m['frames']==1 else set())
+        # The priming call is omitted for one frame, but the (unreached)
+        # play_one loop still contains its reconstruction service call.
+        expected=set(targets)-({'CALL compact one'} if m['frames']==1 else set())
         if set(matched)!=expected:raise ValueError(('frame service hook layout differs',matched))
     for base,hi in ((q['step'],q['active']),(p['begin'],p['step'])):
         candidates=[r for r in queue_rows if base<=r['address']<hi and r['instruction']=='CP 4']

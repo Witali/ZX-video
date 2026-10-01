@@ -40,20 +40,34 @@ accuracy is not claimed.
 [Full-frame CPU profile](toolkit/FRAME_HOTSPOTS.md) ·
 [Experiment history](CHANGELOG.md)
 
-## Current three-disk experiment
+## Five brightness levels with CB41/LZSA2
 
-The root `ZX-video-fast-preview_part01..03.trd` images use the
-[adapted Fast ZX0 player](toolkit/FAST_ZX0_PLAYER.md). Each boots independently.
-All 4221 frames complete in Fuse with exact 50-Hz AY and unchanged compressed
-video data. Video still misses deadlines: this is an experimental preview,
-separate from the verified release and the generic converter defaults.
-Disk images are stored in Git LFS.
+Select `--video-codec cb41` to use five levels, fixed 2×2 dithering and the
+player used by the verified three-disk movie. Install the LZSA executable
+in addition to ZX0; `--lzsa PATH` overrides its location. This mode selects
+the player optimizations automatically and requires the verified TR-DOS 5.03
+ROM. The existing FAP3 command remains available as the default.
 
-An experimental [automatic windowed optimizer](toolkit/WINDOWED_OPTIMIZATION.md)
-selects ZX0 variants over 64 future frames using cached measurements, then
-builds and verifies one final set. It currently accepts prepared streams
-and profiles; integration with the video-file command above is pending.
-Its complete test still misses video deadlines.
+```powershell
+python toolkit/convert_video.py "C:/Video/example.mp4" --output "build/five-level" --video-codec cb41 --lzsa "C:/Tools/lzsa.exe" --trdos-rom "C:/Program Files (x86)/Fuse/roms/trdos.rom" --verify fuse --fuse "C:/Program Files (x86)/Fuse/fuse.exe"
+```
+
+CB41 selects volume boundaries using 32-frame compression windows and exact
+row/AY memory checks, then builds one final set. It retains the complete
+input, aspect ratio and all five brightness levels. Native table/capacity
+limits produce an explicit error. Arbitrary videos are not guaranteed to
+fit three disks or meet the timing target; `--verify fuse` measures every
+frame's deadline, full screen, AY tick and disk read. See
+[generic CB41 details and checks](toolkit/GENERIC_CB41.md).
+
+## Verified three-disk movie
+
+The root LFS `ZX-video-five-level_part01..03.trd` images contain the authorized
+4221-frame edit with five brightness levels. Every disk boots independently
+and completes at 25/3 fps with zero late frames, exact full screens and 50-Hz
+AY. The next-disk prompt and continuation are checked. See the
+[complete measurement and limitations](toolkit/CELL_CODEBOOK_BALANCED.md).
+The older Fast ZX0 preview images are historical experiments.
 
 Historical documentation:
 

@@ -10,7 +10,7 @@ dates of earlier attempts are not assigned that reconstruction date.
 five brightness levels and unchanged AY50. All three disks pass full Fuse
 playback at 25/3 fps with zero missed deadlines, exact full screens and AY.
 Independent boots and predecessor-EOF snapshot continuations pass. Generic
-converter integration remains; see the latest entry and linked evidence.
+CB41 conversion was integrated on 2026-10-01; see the latest entry and evidence.
 
 **Earlier release:** `69754f3`, 14 TRDs, the complete 4971-frame movie,
 AY at 50 Hz and video at 25/3 fps. The target is at most three disks, with
@@ -27,6 +27,50 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
+
+## 2026-10-01 — connect the verified five-level player to generic video input
+
+- **Objective/input:** baseline `9885483`; integrate CB41 into
+  `convert_video.py` without movie-specific paths/cuts or changing the passing
+  root set. Preserve generic aspect ratio, EOF/audio handling and all five
+  levels. Existing FAP3 remains the default; select `--video-codec cb41`.
+- **Implementation:** reuse palette conversion and exact five-level refinement;
+  use exact row/cell books, both cold histories and deterministic padding for
+  books with fewer than 256 observed patterns. Automatically select the
+  verified native profile, measure 32-frame windows for partition costs, check
+  row/AY limits and build one chosen disk set. Reject native/capacity limits
+  explicitly without reducing quality or dropping frames. Actual disk size
+  remains a gate; a failed estimate can require a smaller frame cap on retry.
+- **Measured verification:** five generated inputs cover single-frame silence,
+  portrait, moving colour plus sound across three disks, non-square pixels
+  and an audio tail. All **20 frames / 120 AY ticks / seven independent TRDs**
+  pass full Fuse playback with **zero late nominal deadlines**, no AY gaps,
+  duplicates or underruns, exact sectors and **138240 full screen bytes**.
+  Both prompt/identity/bootstrap transitions pass with modeled ROM. Colour
+  exercises every level 0..4. Native dirty boots/full CPU screens pass; 19
+  host/planner/legacy unit tests pass. Reviewed the colour reference preview.
+- **Reuse/cycles:** the generic representation reproduces every saved CB41 byte
+  and all host screen hashes for the **4221-frame** movie. All three root LFS
+  images retain their hashes. Kernel and packet listings are identical.
+  LZSA2 retains identical instructions and absolute T-state tables, **0 T
+  instruction delta**; smaller scaffold tables can relocate its core within
+  uncontended bank 2. Both placements are reassembled and compared exactly.
+  Complete prior movie disk/AY/publication evidence remains applicable.
+- **Failed attempts/fixes:** a sandboxed unit run could not access installed
+  OpenCV; the same local dependencies passed with access enabled. The first
+  one-frame build exposed an incorrect inherited host guard: the unused
+  playback loop retains a reconstruction call. Corrected the expected set;
+  no Z80 opcode change. An initial archive check demanded identical LZSA2
+  address operands and stopped; corrected it to validate exact reassembly
+  and instruction timings at each placement. No failed check was accepted.
+- **Decision/limits:** adopt opt-in generic CB41. Short fixtures prove generic
+  input integration, not sustained delivery or universal cadence. The full
+  movie proves sustained 25/3 fps on three disks. Arbitrary videos require
+  their own complete Fuse gate; physical drive swaps were not measured.
+  Test TRDs are Git LFS files; root movie images are unchanged. See
+  [instructions](toolkit/GENERIC_CB41.md), [reproducer](toolkit/check_generic_cb41.py),
+  [report](toolkit/generic_cb41_profile.json) and
+  [archived evidence](toolkit/generic_cb41_evidence/).
 
 ## 2026-09-30 — verify the entire five-level movie on three balanced CB41 disks
 

@@ -184,6 +184,9 @@ def main(argv=None):
     parser.add_argument('input', type=Path, help='local video file; format detected by FFmpeg')
     parser.add_argument('--output', type=Path, required=True, help='new or empty output directory')
     parser.add_argument('--prefix', default='ZX-video', help='safe basename of numbered TRD files')
+    parser.add_argument('--video-codec', choices=('fap3', 'cb41'), default='fap3',
+        help='cb41: five brightness levels and the verified LZSA2 player; requires TR-DOS 5.03')
+    parser.add_argument('--lzsa', help='LZSA executable for --video-codec cb41; defaults to PATH')
     for name in ('ffmpeg', 'ffprobe', 'zx0'):
         parser.add_argument('--'+name, help='executable path; defaults to PATH')
     parser.add_argument('--max-frames-per-disk', type=int, default=4096, help='upper bound, 1..10922; size may split sooner')
@@ -213,6 +216,13 @@ def main(argv=None):
         if args.output.exists() and (not args.output.is_dir() or any(args.output.iterdir())):
             raise ValueError('--output must be new or empty; existing files are never overwritten')
         executables = {name: executable(getattr(args, name), name) for name in ('ffmpeg', 'ffprobe', 'zx0')}
+        if args.video_codec == 'cb41':
+            if any(getattr(args, name) for name in ('inline_matches', 'fast_noop_scan',
+                    'static_cache_borders', 'carry_huffman', 'register_fragments',
+                    'irq_safe_paging', 'startup_delta', 'cached_huffman_byte')):
+                raise ValueError('CB41 selects its verified optimizations automatically; omit FAP3 optimization flags')
+            executables['lzsa'] = executable(args.lzsa, 'lzsa')
+            args.disk_profile = 'trdos503'
         fast = args.disk_profile == 'trdos503'
         if fast and (not args.trdos_rom or sha(args.trdos_rom.read_bytes()) != disk.TRDOS_503_SHA256):
             raise ValueError('trdos503 requires --trdos-rom with the verified TR-DOS 5.03 hash')
@@ -240,18 +250,35 @@ def main(argv=None):
         cached_huffman_byte=args.cached_huffman_byte,
         irq_safe_paging=args.irq_safe_paging,
         startup_delta=args.startup_delta,
-        timing_verified=False, verification=args.verify)
+        timing_verified=False, verification=args.verify, video_codec=args.video_codec)
+    if args.video_codec == 'cb41':
+        manifest.update(player_baseline='9885483', player_hot_path_changed=False,
+                        player_hot_path_delta_tstates=0, brightness_levels=5)
     write_json(output/'conversion.json', manifest)
     try:
         images, manifest['input'] = decode_video(source, executables['ffmpeg'], work, probe, picture, sound)
         states, quality = convert_frames(images, work)
-        write_video_preview(images, states, quality, output/'video-preview.png')
+        if args.video_codec == 'cb41':
+            from generic_cell_codebook import prepare_frames, write_preview
+            five_states, quality = prepare_frames(images, states, work)
+            write_preview(images, five_states, quality, output/'video-preview.png')
+        else:
+            write_video_preview(images, states, quality, output/'video-preview.png')
         write_json(output/'video-quality.json', quality)
         ay_frames, audio = convert_audio(source, executables['ffmpeg'], work, picture, sound, len(states))
         write_json(output/'audio-quality.json', audio)
         raw, codec = encode(states, ay_frames)
         (work/'stream.raw').write_bytes(raw)
         write_json(output/'codec.json', codec)
+        if args.video_codec == 'cb41':
+            from convert_cb41 import build
+            records = build(five_states, ay_frames, raw, states, args, executables, output, manifest)
+            manifest['complete'] = True
+            write_json(output/'conversion.json', manifest)
+            print(f'Created {len(records)} five-level TRD(s) in {output}', flush=True)
+            print('Exact 8 1/3 fps: '+('verified in Fuse' if manifest['timing_verified']
+                                     else 'not verified; see timing.json'), flush=True)
+            return
         builder = Builder(raw, states, Path(executables['zx0']), work/'zx0',
             fast_disk=fast, cached_seek=fast, interleaved=fast, inline_matches=args.inline_matches,
             startup_delta=args.startup_delta,fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging,static_cache_borders=args.static_cache_borders,carry_huffman=args.carry_huffman,register_fragments=args.register_fragments,cached_huffman_byte=args.cached_huffman_byte)

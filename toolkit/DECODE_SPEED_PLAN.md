@@ -1,10 +1,22 @@
 # Decode-speed improvement plan
 
-Updated 2026-09-30. This is the current plan in English. Earlier proposals
+Updated 2026-10-01. This is the current plan in English. Earlier proposals
 and their dated results remain in the [historical plan](DECODE_SPEED_PLAN_ru.md)
 and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
+
+**Generic CB41 integration passes (2026-10-01):** `convert_video.py
+--video-codec cb41` uses five-level preparation, exact row/cell dictionaries,
+32-frame partition probes and the passing native profile automatically.
+Five generated input cases / seven independent disks pass all 20 frames,
+120 AY ticks and 138240 screen bytes in Fuse, with zero late deadlines.
+Both disk transitions and 19 unit tests pass. The shared representation
+reproduces every saved byte of all 4221 movie frames; root disk hashes are
+unchanged. Kernel/packet listings and LZSA2 instruction costs are unchanged,
+0 T delta (LZSA2 address operands may relocate within bank 2). Generic
+integration is complete; each new input still needs its own timing gate.
+[Evidence and capacity limits](GENERIC_CB41.md).
 
 **Complete CB41 movie passes (2026-09-30):** all 4221 frames now fit three
 independent root TRDs at 2475/2505/2511 occupied sectors. Complete cold and

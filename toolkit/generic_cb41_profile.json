@@ -1,0 +1,2353 @@
+{
+  "complete": true,
+  "release": false,
+  "date": "2026-10-01",
+  "baseline_commit": "9885483",
+  "scope": "Generic opt-in CB41 conversion and exact reuse of the unchanged full-movie representation",
+  "generic_converter_integrated": true,
+  "cases": [
+    {
+      "name": "single",
+      "frames": 1,
+      "ay_ticks": 6,
+      "volumes": 1,
+      "source_sha256": "def975450a75186c91890ef820c4c7366411a931442117fd99e94d4034022508",
+      "conversion_sha256": "61c44609cf1b180acc2ad081db7cf518769b2c8aa1139c7da5820a1a93d89d05",
+      "native_screens_exact": true,
+      "dirty_cold_boots_exact": true,
+      "actual_fuse_nominal_deadlines_met": true,
+      "compared_full_fuse_bytes": 6912,
+      "native_geometry": null,
+      "used_sectors": [
+        29
+      ],
+      "brightness_levels_used": [
+        0
+      ]
+    },
+    {
+      "name": "portrait",
+      "frames": 3,
+      "ay_ticks": 18,
+      "volumes": 1,
+      "source_sha256": "31d69f25ac2305c020456f0e15567c6fdc0a05484c101d5cb5db32c9761448e1",
+      "conversion_sha256": "2c0885b69d14ad82595ae059310122d1ff8919e4d286707caf7381d4dc2179f8",
+      "native_screens_exact": true,
+      "dirty_cold_boots_exact": true,
+      "actual_fuse_nominal_deadlines_met": true,
+      "compared_full_fuse_bytes": 20736,
+      "native_geometry": [
+        37,
+        91,
+        0,
+        72
+      ],
+      "used_sectors": [
+        29
+      ],
+      "brightness_levels_used": [
+        0,
+        4
+      ]
+    },
+    {
+      "name": "colour",
+      "frames": 9,
+      "ay_ticks": 54,
+      "volumes": 3,
+      "source_sha256": "774e42feb2d439e1c522e11f729be4c91f256e40d155bd18e5b0451f90b2fbab",
+      "conversion_sha256": "7ad7850a0a647bc51f39b9e49f1cf81e2d4b723c14451af3993c9bb13acaa879",
+      "native_screens_exact": true,
+      "dirty_cold_boots_exact": true,
+      "actual_fuse_nominal_deadlines_met": true,
+      "compared_full_fuse_bytes": 62208,
+      "native_geometry": null,
+      "used_sectors": [
+        41,
+        47,
+        43
+      ],
+      "brightness_levels_used": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "name": "anamorphic",
+      "frames": 2,
+      "ay_ticks": 12,
+      "volumes": 1,
+      "source_sha256": "3d8b35ebd1dd76cce6aa24d22e8f40ca59524c65bb2993c02504cb0af6ae31e2",
+      "conversion_sha256": "31bf90cc50f5c4c49a2d8f664423af3f2434cd6f2b674925f5c4d7fe640df4d5",
+      "native_screens_exact": true,
+      "dirty_cold_boots_exact": true,
+      "actual_fuse_nominal_deadlines_met": true,
+      "compared_full_fuse_bytes": 13824,
+      "native_geometry": [
+        0,
+        128,
+        4,
+        68
+      ],
+      "used_sectors": [
+        29
+      ],
+      "brightness_levels_used": [
+        0,
+        4
+      ]
+    },
+    {
+      "name": "audio-tail",
+      "frames": 5,
+      "ay_ticks": 30,
+      "volumes": 1,
+      "source_sha256": "662a451430a5db7a374a68bbaa7b02d69e38c12b30585896829d952f0c923aec",
+      "conversion_sha256": "bde2cff5ad452f25900f6d57108802675cb15023ad18c8a8e6e5afd71d77738e",
+      "native_screens_exact": true,
+      "dirty_cold_boots_exact": true,
+      "actual_fuse_nominal_deadlines_met": true,
+      "compared_full_fuse_bytes": 34560,
+      "native_geometry": null,
+      "used_sectors": [
+        29
+      ],
+      "brightness_levels_used": [
+        0,
+        4
+      ]
+    }
+  ],
+  "disks": [
+    {
+      "case": "single",
+      "part": 1,
+      "frames": 1,
+      "trd_sha256": "9cb8331b1a09659fa5d20e56fcd83f21edc109ef7d61e9833eeae29496761669",
+      "used_sectors": 29,
+      "ay_ticks": 6,
+      "nominal_late_frames": 0,
+      "actual_phase_tstates": [
+        0
+      ],
+      "full_screen_bytes": 6912,
+      "video_sectors": 1,
+      "native_and_packet_identical": true,
+      "lzsa2_same_instructions_and_tstates": true,
+      "lzsa2_core": 36212,
+      "previous_lzsa2_core": 36338
+    },
+    {
+      "case": "portrait",
+      "part": 1,
+      "frames": 3,
+      "trd_sha256": "72021eb408ff81e4117baab569421c29eac5fe323a8beec90758669d7a5996f8",
+      "used_sectors": 29,
+      "ay_ticks": 18,
+      "nominal_late_frames": 0,
+      "actual_phase_tstates": [
+        0,
+        0,
+        0
+      ],
+      "full_screen_bytes": 20736,
+      "video_sectors": 1,
+      "native_and_packet_identical": true,
+      "lzsa2_same_instructions_and_tstates": true,
+      "lzsa2_core": 36212,
+      "previous_lzsa2_core": 36338
+    },
+    {
+      "case": "colour",
+      "part": 1,
+      "frames": 4,
+      "trd_sha256": "6fca2d29d42637caade75855f57fb741e6dc227c29a9c976e982671f246bff69",
+      "used_sectors": 41,
+      "ay_ticks": 24,
+      "nominal_late_frames": 0,
+      "actual_phase_tstates": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "full_screen_bytes": 27648,
+      "video_sectors": 9,
+      "native_and_packet_identical": true,
+      "lzsa2_same_instructions_and_tstates": true,
+      "lzsa2_core": 36248,
+      "previous_lzsa2_core": 36338
+    },
+    {
+      "case": "colour",
+      "part": 2,
+      "frames": 4,
+      "trd_sha256": "1e0e25f2660604d3cb55c1e2f34ff6488c8964590e0019e1a5d1944fb998a405",
+      "used_sectors": 47,
+      "ay_ticks": 24,
+      "nominal_late_frames": 0,
+      "actual_phase_tstates": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "full_screen_bytes": 27648,
+      "video_sectors": 9,
+      "native_and_packet_identical": true,
+      "lzsa2_same_instructions_and_tstates": true,
+      "lzsa2_core": 36248,
+      "previous_lzsa2_core": 36338
+    },
+    {
+      "case": "colour",
+      "part": 3,
+      "frames": 1,
+      "trd_sha256": "b1053857e4463e34ba28787ac3e524d6f27d01dcbc6b58d1fba1966e3be837a9",
+      "used_sectors": 43,
+      "ay_ticks": 6,
+      "nominal_late_frames": 0,
+      "actual_phase_tstates": [
+        0
+      ],
+      "full_screen_bytes": 6912,
+      "video_sectors": 3,
+      "native_and_packet_identical": true,
+      "lzsa2_same_instructions_and_tstates": true,
+      "lzsa2_core": 36248,
+      "previous_lzsa2_core": 36338
+    },
+    {
+      "case": "anamorphic",
+      "part": 1,
+      "frames": 2,
+      "trd_sha256": "c7f7e308e9716a4484022d09f08678869d5d3b3b5633f0298f8a0f8c68af1784",
+      "used_sectors": 29,
+      "ay_ticks": 12,
+      "nominal_late_frames": 0,
+      "actual_phase_tstates": [
+        0,
+        0
+      ],
+      "full_screen_bytes": 13824,
+      "video_sectors": 1,
+      "native_and_packet_identical": true,
+      "lzsa2_same_instructions_and_tstates": true,
+      "lzsa2_core": 36212,
+      "previous_lzsa2_core": 36338
+    },
+    {
+      "case": "audio-tail",
+      "part": 1,
+      "frames": 5,
+      "trd_sha256": "f040bba7c54d378640ebda2cf00d7517c1ebe2e969641e3fdacd41ec13effc50",
+      "used_sectors": 29,
+      "ay_ticks": 30,
+      "nominal_late_frames": 0,
+      "actual_phase_tstates": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "full_screen_bytes": 34560,
+      "video_sectors": 1,
+      "native_and_packet_identical": true,
+      "lzsa2_same_instructions_and_tstates": true,
+      "lzsa2_core": 36212,
+      "previous_lzsa2_core": 36338
+    }
+  ],
+  "frames": 20,
+  "ay_ticks": 120,
+  "compared_full_fuse_bytes": 138240,
+  "nominal_late_frames": 0,
+  "native_instruction_delta_tstates": 0,
+  "disk_swaps": [
+    {
+      "from_part": 1,
+      "to_part": 2,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    },
+    {
+      "from_part": 2,
+      "to_part": 3,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    }
+  ],
+  "movie": {
+    "frames": 4221,
+    "volumes": [
+      {
+        "start": 0,
+        "end": 1504,
+        "raw_sha256": "75b8f9bb2d034b24d3213c34e532073d019735848740ab5c2ef23a38a0f6fc2c",
+        "bytes": 978013,
+        "full_host_screens_exact": true
+      },
+      {
+        "start": 1504,
+        "end": 2832,
+        "raw_sha256": "6f308b996c0b1551103c0553d24a726ddf30681c8a918748a7cd2fdbc7227938",
+        "bytes": 953188,
+        "full_host_screens_exact": true
+      },
+      {
+        "start": 2832,
+        "end": 4221,
+        "raw_sha256": "abd6c645f1f6f26f28240cfe016b172ca912d955dd65d52b3fa66ca169a6b45c",
+        "bytes": 974018,
+        "full_host_screens_exact": true
+      }
+    ],
+    "states_archive_sha256": "81b0fdc4bf644c9c68cc2e53d660428d3fe42d2c59c5a0a2b95a31a49100b032",
+    "measurements_sha256": "e18aa0e79a64c93a4f676f10669fe2e5e25fa07df1ef2e5496d7010e440785a0",
+    "compressed_streams_or_root_images_changed": false,
+    "playback_evidence_reused": "cell_codebook_balanced_profile.json"
+  },
+  "movie_playback_evidence_sha256": "efcea3d37669efd7cd1c45050700674bbd5c319502fc6197003cddbcc807c2d1",
+  "root_movie_images_unchanged": true,
+  "movie_archive_hashes_verified": 84,
+  "limits": [
+    "No universal cadence or three-disk guarantee for arbitrary input.",
+    "Row/AY/native capacity failures are explicit and preserve quality.",
+    "32-frame size estimates can require a smaller max-frames-per-disk on retry.",
+    "Short synthetic cases do not prove sustained disk delivery; full movie evidence does.",
+    "Physical disk swaps were not measured."
+  ],
+  "source_sha256_lf": {
+    "generic_cell_codebook.py": "f86d5a94dc43e492664d1dff38b6a9494c337d27754cb49c20ab8fbd95c395c6",
+    "convert_cb41.py": "c535ad87a203850f3b0456e065cf213e1f000a2a72e2109543737566a7195fff",
+    "convert_video.py": "3843cc306ceb9c2e03406df9ff604619b26fbee41795c31e6ccd46dfd3687513",
+    "check_generic_cb41.py": "fa2bf9db1ae43f6dd3c51259dc1310b0985b892f43b8d8f7b0b2c65cae41de15",
+    "resident_audio_player.py": "e34e9117499e69a7bf7a369a678401d717d7dc9177626dedb7519328c2f76921",
+    "resumable_lzsa2.py": "141d3f843554a50eb3c20c4a764f1edd6294ff96a49be254e07cbbb35f23a3d2",
+    "test_generic_cell_codebook.py": "98e87f52357642ef0ac33dcc73eaf26287333a7de9effd228291c801903891f4",
+    "summarize_generic_cb41.py": "4eb8247e103f8b345e3a9e229fdbec019a24b4f555e4f0426a511f7e8a9b2610"
+  },
+  "artifacts": [
+    {
+      "file": "single-audio-quality.json.gz",
+      "bytes": 66,
+      "sha256": "ae047c886b346a7a7fade5b9f820cec9ea77d528f4b9fe52901e0eab45121d3c",
+      "stored_bytes": 76,
+      "stored_sha256": "fa761cf94af4bac79f90f97307da535f665935664d457c4bc1dc45d941e2376c"
+    },
+    {
+      "file": "single-codec.json.gz",
+      "bytes": 425,
+      "sha256": "c3b7b1955cd1ec9fc6224f1e5a1401af0bcfa9ea7f2f6157a49d56e6960ba786",
+      "stored_bytes": 225,
+      "stored_sha256": "46bd8ad0ebc33b0254d5fb72cfd8aac9a80e2a11ce586ae95bbf9fcdf0b642b0"
+    },
+    {
+      "file": "single-conversion.json.gz",
+      "bytes": 4020,
+      "sha256": "61c44609cf1b180acc2ad081db7cf518769b2c8aa1139c7da5820a1a93d89d05",
+      "stored_bytes": 1538,
+      "stored_sha256": "00663d668c5c59a72b5b03263e8ae00af3c1690bda53331f0aee394f43ab5488"
+    },
+    {
+      "file": "single-partition.json.gz",
+      "bytes": 2787,
+      "sha256": "831fa8b98d611a6b00b77e3e990b9952e4cee889f38065245c34c7d011b548ea",
+      "stored_bytes": 688,
+      "stored_sha256": "6ee9a30f40b0dfcd590e18a9b8e56bcd571e4292fc49a0957db11a7d3ab78217"
+    },
+    {
+      "file": "single-timing.json.gz",
+      "bytes": 2964,
+      "sha256": "6e277b37615074d60db2c3bc2810b9c5ff87a964bf9a082ea4f314c7e097ee3f",
+      "stored_bytes": 1111,
+      "stored_sha256": "279cd486219d96247df6b88ecc78b60dd0ab13cb2f2a24af83f046a84fd0568f"
+    },
+    {
+      "file": "single-video-preview.png.gz",
+      "bytes": 2318,
+      "sha256": "2ebbceda0a8b72abf5e1063ef75b1728a38eca2c73c8e3189f4b99159d0d00ab",
+      "stored_bytes": 2048,
+      "stored_sha256": "f39b88b21df77b3c40cb4a09ab579c746dee831f97b7b09f29726ad4e05c3fd4"
+    },
+    {
+      "file": "single-video-quality.json.gz",
+      "bytes": 597,
+      "sha256": "14a3b9f15168e6a5a1cf3e70099765d5422d725aa136a41db74fe5c08810c184",
+      "stored_bytes": 329,
+      "stored_sha256": "ee1a3fb243a7aaba6a96f93993cfd5a516e3ff2e6f92222fcfae704b08758426"
+    },
+    {
+      "file": "single-volumes.json.gz",
+      "bytes": 405,
+      "sha256": "89b25965305a205f3aa2bb9203117df1fe451bcd47c59f6cdc39afb545cb3854",
+      "stored_bytes": 248,
+      "stored_sha256": "a59c1b65aaf1e3c6545ce0c4ce18fd2543f93d99a1450c3c915183d0e461bd54"
+    },
+    {
+      "file": "single-work-ay.bin.gz",
+      "bytes": 54,
+      "sha256": "ea4c7422cf5fd9b5a0b93f0378dd0ddec6a8d853271d202e5fd5160e92386350",
+      "stored_bytes": 29,
+      "stored_sha256": "963dce199dfe0e985be7b7a24836ecfb52e4595def5395d75d9a6e472bc86131"
+    },
+    {
+      "file": "single-work-conversion.npz.gz",
+      "bytes": 4106,
+      "sha256": "62296aba3d0423cd6d1b8439335fc0d1549cbb928cc42ddb6a96e2c921a50458",
+      "stored_bytes": 196,
+      "stored_sha256": "799805ca8a69f099800284341e124314548efa0d8268e641058642fdb70e6346"
+    },
+    {
+      "file": "single-work-five-states.npy.gz",
+      "bytes": 4736,
+      "sha256": "bcb7b5d8c442a3767b2011ab9524b8b9c3fa69602633e23abfe85be73eff36b7",
+      "stored_bytes": 124,
+      "stored_sha256": "3de64093b5982b0f79c65eb12d4161ba2ca42f5106fce95ed7fb83967689006d"
+    },
+    {
+      "file": "single-work-frames.rgb.gz",
+      "bytes": 27648,
+      "sha256": "0a182a88ffcf20dcc892515a01db9af1a707814b982b9c21e1d9b3b4b203ceef",
+      "stored_bytes": 62,
+      "stored_sha256": "e46dcdf1454de1806cc43966868e0c89d0d0edc5cd5b8a7d19d4f6a4473a5e33"
+    },
+    {
+      "file": "single-work-states.npy.gz",
+      "bytes": 3968,
+      "sha256": "c9bd27e85ef754c4b7f8bc1669f447a08a197c9445302ef0543afccc69e9c785",
+      "stored_bytes": 119,
+      "stored_sha256": "5b952c636b89c9a2159998b887ac6a5e5608db4521c79e303783daf53c332248"
+    },
+    {
+      "file": "single-work-stream.raw.gz",
+      "bytes": 2827,
+      "sha256": "28572759bae9b250fcf2c6a36336cc7ed5279208f1ef9e3443f766e66ae01700",
+      "stored_bytes": 208,
+      "stored_sha256": "a34cb75854fff11ce57b30cc54d92efdb4cb14c6b1aaa95f1d789cae512b8c6a"
+    },
+    {
+      "file": "single-work-ZX-video_part01-audio.ayh1.gz",
+      "bytes": 81,
+      "sha256": "4c1e7d4750bdfafe9e7fc1c11c3daf93df232e5274b5af47c4dfb4565911695b",
+      "stored_bytes": 57,
+      "stored_sha256": "ed5ebfe6ae0a7391e493cfdf05b161d14677483ca0099562cf0fbf85cf0da099"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-0-1536.debugger.txt.gz",
+      "bytes": 24375,
+      "sha256": "066b97d5aac5fd9cbe990c0399e154601ad18c031fd3330f7b30878010c12c1f",
+      "stored_bytes": 4130,
+      "stored_sha256": "bb2e8da590ba262fa41c8cd03dae1562369ac4e0060769efb61284714b04fb97"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-0-1536.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-0-1536.trace.txt.gz",
+      "bytes": 2109,
+      "sha256": "bb015448ea92b184dead7dfcf9fda0fb5fa54b254f1e28bd745411c422300a57",
+      "stored_bytes": 434,
+      "stored_sha256": "fb294072014a07cc070af136f8078ae03bc96bb1f412021e719964a735161703"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-1536-3072.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "cddb7ffea00cf415d62b86cb9306f4b4b988d2b7be6677c739d9baa4be57f7e6",
+      "stored_bytes": 4007,
+      "stored_sha256": "7e9d25f806be20a7602242eec2047275e208abfc1ce8b3289951461dc694a106"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-1536-3072.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-1536-3072.trace.txt.gz",
+      "bytes": 2108,
+      "sha256": "0320afd111ef3f2badb0382b21ecce6d75aa1b3229da0016e589ce3d9d2ca4da",
+      "stored_bytes": 432,
+      "stored_sha256": "bbed1828409e786ca66286f2017556ab22829e6aa0824a965cfcae1a4bcdb967"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-3072-4608.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "ac4c85cb73159a3c0cb8cd54038ddd358087a90648041edb6ee81ff88c7b6fe3",
+      "stored_bytes": 3991,
+      "stored_sha256": "b9ed7e05d00e6a883d8b740a7d804f0b91fe7686a399ce4e14e866bba994d20f"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-3072-4608.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-3072-4608.trace.txt.gz",
+      "bytes": 2109,
+      "sha256": "f7dd8c49dba9880591dc4063f62dfe22c17b1bd3fdeca868db702e19f0071821",
+      "stored_bytes": 433,
+      "stored_sha256": "f8b68a9f4ade9f579b25a9566bc1b7e6c1de5643b2ac6a8693ba437ec02565f4"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-4608-6144.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "4f253fea39c4142df99fb0287f7b8fb29faf95d7d90fdc808c5ad53c1bad7f69",
+      "stored_bytes": 4026,
+      "stored_sha256": "753f38e233df3023c3e347d5a3e8295c0a45ccf165c41e1904255b7d57b8d50a"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-4608-6144.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-4608-6144.trace.txt.gz",
+      "bytes": 2109,
+      "sha256": "de3b8d7725454a823ca023f1648c343f50a4b869010cde5f731a9ad6bc33d854",
+      "stored_bytes": 435,
+      "stored_sha256": "e44563e9b2ea6271750f19e15e30fb93d719a1903845f415f65e884f82b31e4c"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-6144-6912.debugger.txt.gz",
+      "bytes": 13005,
+      "sha256": "d2985bd83de897ec5aedf64660a2f1f22484d7fd5b7e9de7851806039555b26c",
+      "stored_bytes": 2044,
+      "stored_sha256": "f7648a40250bcdfa3c8bbc52bd2a17ddc345b606e71c220130d8f9f37cca7795"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-6144-6912.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-bytes-6144-6912.trace.txt.gz",
+      "bytes": 2501,
+      "sha256": "3d85d715a09a6d33ab185f1b1e5f9a9c0c216f7f08402ecb1ab3df978c3409c8",
+      "stored_bytes": 445,
+      "stored_sha256": "be9eb03b0203b4659e84e1cad2e820dd65ba6e9924a8af94e1acb7a47cb4eb8d"
+    },
+    {
+      "file": "single-work-ZX-video_part01-captures-progress.json.gz",
+      "bytes": 2925,
+      "sha256": "8db43cca1e5036ded79921bab09012226bcfe3e5383b3d980fdf1bd67832acec",
+      "stored_bytes": 827,
+      "stored_sha256": "5d8ee6fc73c9308acb0144e5c06973c299502dd9a1b079ad5093cdf7671918a8"
+    },
+    {
+      "file": "single-work-ZX-video_part01-codebook.raw.gz",
+      "bytes": 2202,
+      "sha256": "dc73641ac3b7f55a0085b025a91d91df19dea338312756279121357b55810ddc",
+      "stored_bytes": 46,
+      "stored_sha256": "7b05c8184f900a57cccc3d8d3358d38bfea9f9ea72be98aa066eb11447ef8d6a"
+    },
+    {
+      "file": "single-work-ZX-video_part01-codebook.stream.gz",
+      "bytes": 25,
+      "sha256": "9cafb3f5d92ff596918b130cf0a5d53ff909d294db6c1be3e187a7663512ef01",
+      "stored_bytes": 46,
+      "stored_sha256": "1ef938409da6edcc399d18684abfbb2f01d9cea23e3b4b6313c68b50c8f1d2a2"
+    },
+    {
+      "file": "single-work-ZX-video_part01-cpu.json.gz",
+      "bytes": 15508,
+      "sha256": "61f549da2603968e3f67d432efba9094d7c435cc39748a7d399429dfc4b662ae",
+      "stored_bytes": 1174,
+      "stored_sha256": "0508cab4521d64baed8c7a66a741b3834d552c854d4f8e49bddced3abc583f10"
+    },
+    {
+      "file": "single-work-ZX-video_part01-rows.json.gz",
+      "bytes": 1350,
+      "sha256": "2572aa0fe22ce178268e0dfa6c5ffe2ffbf90987e0e4c76c3b817525afe4f973",
+      "stored_bytes": 255,
+      "stored_sha256": "00a46e7d370853902b2a1eac1ca5046ee322fbba949e0c97a7e5f8d7a474d6f6"
+    },
+    {
+      "file": "single-work-ZX-video_part01-screens.json.gz",
+      "bytes": 4296,
+      "sha256": "56b5ef0370624abc8448ee22c25b8010585b1d3124db82e41096a3a100cadc04",
+      "stored_bytes": 1606,
+      "stored_sha256": "47f8758c4fa63734d73a8d4f9f7ccba58a84129ca324d3153658bd0f74848989"
+    },
+    {
+      "file": "single-work-ZX-video_part01-states.npz.gz",
+      "bytes": 239,
+      "sha256": "ec2a86532a00d402c2dc2f5d45b83d537406397146deda3273d029278d015062",
+      "stored_bytes": 201,
+      "stored_sha256": "f513b775952563a3ea50481048e13ae054fa4f900187ff5b506a00884a5a6a1a"
+    },
+    {
+      "file": "single-work-ZX-video_part01-timing.debugger.txt.gz",
+      "bytes": 13389,
+      "sha256": "8b2882f578aff54689310cae15ec300b34b9a443af704b80f9ad9c850e78fca5",
+      "stored_bytes": 1875,
+      "stored_sha256": "d05b87058babff9cf816a741e2e816768218cbe1436cde590c451e1fd538f6f0"
+    },
+    {
+      "file": "single-work-ZX-video_part01-timing.json.gz",
+      "bytes": 18297,
+      "sha256": "454510ea4b95c239ac913eacdd4f5c4dc6b005401a77c29a97e8d40467ab4da4",
+      "stored_bytes": 2876,
+      "stored_sha256": "7042f9c026c366eaef43dffd962b6d0892c7302b15b9f668b64a7f6f3d0e2810"
+    },
+    {
+      "file": "single-work-ZX-video_part01-timing.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "single-work-ZX-video_part01-timing.trace.txt.gz",
+      "bytes": 2629,
+      "sha256": "86f5ab4239df59ad468a6db94a13b0239d420cda74c39503e94194bb74dcd765",
+      "stored_bytes": 643,
+      "stored_sha256": "49f0ca094e1c4b8242682131637770b647501f70a34873572974a76d864f5f3d"
+    },
+    {
+      "file": "single-ZX-video_part01.json.gz",
+      "bytes": 2303250,
+      "sha256": "883a2b617a05d7462a1273b3c4d43782e2d30458f6c6f7ca78fe08997f998f02",
+      "stored_bytes": 97195,
+      "stored_sha256": "53185d199befaf234d0f17502bdbe39a7069dc66bc8ca758b6f0bf014d865a37"
+    },
+    {
+      "file": "single-ZX-video_part01.trd",
+      "bytes": 655360,
+      "sha256": "9cb8331b1a09659fa5d20e56fcd83f21edc109ef7d61e9833eeae29496761669",
+      "stored_bytes": 655360,
+      "stored_sha256": "9cb8331b1a09659fa5d20e56fcd83f21edc109ef7d61e9833eeae29496761669"
+    },
+    {
+      "file": "single-source.mkv.gz",
+      "bytes": 782,
+      "sha256": "def975450a75186c91890ef820c4c7366411a931442117fd99e94d4034022508",
+      "stored_bytes": 539,
+      "stored_sha256": "753c555e1001507bc087ac54adac7cc340505ecbabf0468bd972d985e3a459d7"
+    },
+    {
+      "file": "single-run.log.gz",
+      "bytes": 3640,
+      "sha256": "1c062f34c45e8125a0f1ba2b1a5523e753103348dfc4a8ccc30016749b5ac71f",
+      "stored_bytes": 1732,
+      "stored_sha256": "ca5bd93fbed72db19dd54697f0437d0be88410ccdc30547e3812557260b2e918"
+    },
+    {
+      "file": "portrait-audio-quality.json.gz",
+      "bytes": 67,
+      "sha256": "461126ad0be15fe8ea67a2e1f5353863f4420270c88a1e752578c252782e0b62",
+      "stored_bytes": 77,
+      "stored_sha256": "184b27af1effa3c19e0cbeaca369ac8d8a2f07a49c1db050960f19d28b9e01cf"
+    },
+    {
+      "file": "portrait-codec.json.gz",
+      "bytes": 618,
+      "sha256": "40dae0e4f4c7e5df5171b08be9c7fbf63d7b917c0670822d9cf8ca15116f1759",
+      "stored_bytes": 246,
+      "stored_sha256": "14700823f47c6efe4afdf5dd34d6b513dab973fbc64fa542cf5d320847555565"
+    },
+    {
+      "file": "portrait-conversion.json.gz",
+      "bytes": 4027,
+      "sha256": "2c0885b69d14ad82595ae059310122d1ff8919e4d286707caf7381d4dc2179f8",
+      "stored_bytes": 1539,
+      "stored_sha256": "86d36d030a18fef1dbf51984d7a985f34d7f1386a80de09e97c44da8729b8651"
+    },
+    {
+      "file": "portrait-partition.json.gz",
+      "bytes": 2790,
+      "sha256": "c2f3503f2f3545c4fc5d18bd9bace6ffd964c0851ef2660003e9064de333103a",
+      "stored_bytes": 689,
+      "stored_sha256": "66af084a381c4841a948380bb7bfbbd7589cbf7083be6e21a3922e12fe3895da"
+    },
+    {
+      "file": "portrait-timing.json.gz",
+      "bytes": 3013,
+      "sha256": "7a2210b91adffe9e78aaaedde2ee3fee174fb14bf302eb3a1bf5f7f14793bae7",
+      "stored_bytes": 1123,
+      "stored_sha256": "2b935de12544314b663e2a2185242db8bf27e84b34ea81cf7ecd4e624352e531"
+    },
+    {
+      "file": "portrait-video-preview.png.gz",
+      "bytes": 7713,
+      "sha256": "29e21a648249946d29e3f43876b1747b0d5086e0ad5bb3206114910d09dd60c8",
+      "stored_bytes": 4941,
+      "stored_sha256": "a8f7ff486b0a7d0cf791ff70588120f424ea5391c2acfa0c5f8a21566231a02f"
+    },
+    {
+      "file": "portrait-video-quality.json.gz",
+      "bytes": 680,
+      "sha256": "91891821d7a3d0898b17f6fe43a66b1f0f92fc620345970a57788d0544d22b33",
+      "stored_bytes": 342,
+      "stored_sha256": "2280556fbbf0938b0aaefc1a9ba48c445304f5ac81daad6293d7c80c8cf5ea2c"
+    },
+    {
+      "file": "portrait-volumes.json.gz",
+      "bytes": 405,
+      "sha256": "a4e68c5c88d9ff04cbe0ac5caf63e5aeb3917d3835263f00b5c935e9ca3d232a",
+      "stored_bytes": 251,
+      "stored_sha256": "399601d30d0fade41d5a68aee74b355756639d24dc09832f01006b6edb7d22fb"
+    },
+    {
+      "file": "portrait-work-ay.bin.gz",
+      "bytes": 162,
+      "sha256": "655666815ba91b24fe5911dab67f90f8d07eefff5550b35ab674b20057ae2c06",
+      "stored_bytes": 29,
+      "stored_sha256": "02e0809771fa6dfce83fdb7867effd68e7d433ce8f7f43e9c9f84a292c6d843a"
+    },
+    {
+      "file": "portrait-work-conversion.npz.gz",
+      "bytes": 11786,
+      "sha256": "4845d19a0d8a43f266d0f8838f6859511c29b5f053342b04e40843be0ac5dd62",
+      "stored_bytes": 274,
+      "stored_sha256": "558ea0281ef1d615c2c1c5eba97b69d3da0bfb1b94ec592bea85aa12b63b63d1"
+    },
+    {
+      "file": "portrait-work-five-states.npy.gz",
+      "bytes": 13952,
+      "sha256": "8fcd33567bff87540e5e73821d60acd85150c7c4322b3ee47a6a54927ce156b9",
+      "stored_bytes": 209,
+      "stored_sha256": "8b18771238e3a4d466051914018ec18e29520437f5c79ed6c3d91f8467628046"
+    },
+    {
+      "file": "portrait-work-frames.rgb.gz",
+      "bytes": 82944,
+      "sha256": "83ffb996f14f70b43aab1dd2aeeff1cb297dfe5c4d938ed5b97799ddf2cdc5b2",
+      "stored_bytes": 402,
+      "stored_sha256": "2fdca9f25e63214410079347f5a536e814277dc78997b43581a0b9aedcd48741"
+    },
+    {
+      "file": "portrait-work-states.npy.gz",
+      "bytes": 11648,
+      "sha256": "173560432605850820fb315126011061b6742a1cf5a3e3092557ba6a4f3b4d48",
+      "stored_bytes": 185,
+      "stored_sha256": "ae1a4bc75c757ae166858a01217f47a39b0ccdac35bac8deeba02833413fa816"
+    },
+    {
+      "file": "portrait-work-stream.raw.gz",
+      "bytes": 3431,
+      "sha256": "90aba13a5771ad7e46f89301d0e048e2dc15996f052c81a8e007d0dc8b7906aa",
+      "stored_bytes": 294,
+      "stored_sha256": "ad98c6a1dd15a04abd601c140a1ef84a967c11cc1cd0ac0dd7c2e76342dcaffb"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-audio.ayh1.gz",
+      "bytes": 84,
+      "sha256": "276886207cfeb5debe994ab33083032be12c08c596805ebde151ca4937ae4fe3",
+      "stored_bytes": 58,
+      "stored_sha256": "eec5b98544bfa0da7c57b9e5c8be28b3cb7a645d6f72fd892a883096611ea3f4"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-0-1536.debugger.txt.gz",
+      "bytes": 24374,
+      "sha256": "82f4c38867ef3e5c22ad450fd4b71c84b6089f4fd3bee56d64e116e8790e276a",
+      "stored_bytes": 4130,
+      "stored_sha256": "90359f1e7e2096150dab854011254d46eb91ffc0d13e20efa2b509c82345f08e"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-0-1536.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-0-1536.trace.txt.gz",
+      "bytes": 7582,
+      "sha256": "377f652e677ddcc96ce90a5cb672e0b260bf0da2a6b997b15ebb94ea3f652b97",
+      "stored_bytes": 527,
+      "stored_sha256": "fc22a9fbcdedac9ccde714157db8c61cb1acf1e3327e77a454d62fd386983de9"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-1536-3072.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "e40a9b18da1ce058780fbfe74f8d5a0ab9e4aad25b1cf634d33fb53d4b4dfe76",
+      "stored_bytes": 4006,
+      "stored_sha256": "c21a09fb55218b480814f139efb725a3e79ca311a6bb75ff210bffa2c56429fc"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-1536-3072.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-1536-3072.trace.txt.gz",
+      "bytes": 8519,
+      "sha256": "5ac0ec9f797315f2cc18f6a3aaacb09045d97ec4ef621262be71bb027e7ee3b1",
+      "stored_bytes": 526,
+      "stored_sha256": "a443ffde9c6a581d6ef365bdcfcf645b82750ba183e5456ccad89dd4f5d9e220"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-3072-4608.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "0c5474c038f6e54b74af69798286cd4b593e0169549821b4d2da494a34153695",
+      "stored_bytes": 3992,
+      "stored_sha256": "346b616e2fae6048787e17a904c2255e86c9d46755837f7db97d4e40afa1a806"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-3072-4608.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-3072-4608.trace.txt.gz",
+      "bytes": 8629,
+      "sha256": "7b995a2260dbce5464b181329c8f0ce6ed57604a41f12401158ab07a5317caeb",
+      "stored_bytes": 548,
+      "stored_sha256": "8a11b9b6410999958ca355bb3a04044e72935c3a0b0e6407b80c19c4c414cfef"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-4608-6144.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "5af00c5306bba2b245419042a8376a0b70672e5d858be38fa2e1edfefdd83156",
+      "stored_bytes": 4025,
+      "stored_sha256": "056613db1f1a8ec24c269e0be68e9115153276c3b7a81da526e6bc48fe671cbf"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-4608-6144.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-4608-6144.trace.txt.gz",
+      "bytes": 7582,
+      "sha256": "b8942c210faddf6639e3bb24f9a46dd00867cb97d4f73dfe9d6174ca1e0f6cef",
+      "stored_bytes": 532,
+      "stored_sha256": "f584f7f4d98adebdad94c6c3d3102f0a90339ed75764d414713b0502bb5c92bc"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-6144-6912.debugger.txt.gz",
+      "bytes": 13005,
+      "sha256": "0c756595b78c00afb967107e276044d4158a5a87eb079a36787b1d49d9881e2f",
+      "stored_bytes": 2047,
+      "stored_sha256": "8b17d24bc273c24a5476004d62e5362df5c7baf31982156377b868aa76eaa48f"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-6144-6912.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-bytes-6144-6912.trace.txt.gz",
+      "bytes": 6581,
+      "sha256": "a3d03f2a379ba19138dbbb60e999a1fe052e3f7a99bb5e77958a14ff519391d9",
+      "stored_bytes": 521,
+      "stored_sha256": "3d2af403b21fd4caf4ec332ab460adea32d1dd1f6700c47b36ea2c2a7b8e0e69"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-captures-progress.json.gz",
+      "bytes": 5014,
+      "sha256": "bb958b18b418cafec7b293419227859b8498392f070ea6009d046c7e57091219",
+      "stored_bytes": 1107,
+      "stored_sha256": "252b983e6e6fc581223781886484e8ee45af70e8dc2cd4f236da242738ff858a"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-codebook.raw.gz",
+      "bytes": 3062,
+      "sha256": "1afd9c29017fc29d84ed4734f71e4784c855a1f981618736560dd2d38df1300b",
+      "stored_bytes": 80,
+      "stored_sha256": "c77c74a11137e1e3f49b81b7019c6d8e47f883318d90461118bb03f81eaa9db4"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-codebook.stream.gz",
+      "bytes": 62,
+      "sha256": "e2d9067dc4f13cce8e345adcb6a995ac507fd39451d8aae61fdc68ae889bce45",
+      "stored_bytes": 85,
+      "stored_sha256": "3e2a9092b463b0882bc7b0911e8d10a6a5663fdf30799b63808c3857d837cc79"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-cpu.json.gz",
+      "bytes": 20915,
+      "sha256": "cae06ed38c41549933271adad33f57ec470daa18261866010339286527434229",
+      "stored_bytes": 1585,
+      "stored_sha256": "4e24b7511a4304d19234356eb2283be7453da40bca9c5bf64517691caadde61e"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-rows.json.gz",
+      "bytes": 1380,
+      "sha256": "73e99c322babed8930e08b27e194b845a941fff4f849d5b221d53160c201c0bf",
+      "stored_bytes": 275,
+      "stored_sha256": "cdb8c84da9774084ab80668365905399177ee45982e2632b3071952a86dc4fcf"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-screens.json.gz",
+      "bytes": 6530,
+      "sha256": "5599cdbd93fa918d907bb58a3ccb551536bcf8de3086d8bbd81daf0f6d095e9b",
+      "stored_bytes": 1984,
+      "stored_sha256": "8d8a3bff75e9933af43625ef7ebc780de1236193974cda1a42ac1e14a16de019"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-states.npz.gz",
+      "bytes": 320,
+      "sha256": "b4696fb19d1061ef6ce1d63e6daa45ea21f78dff7f7bc705ade06126ac65363b",
+      "stored_bytes": 266,
+      "stored_sha256": "378c5710aafe872686f5ffeb110e7e53b50918f8245d08e86129df2b8ac329f7"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-timing.debugger.txt.gz",
+      "bytes": 13389,
+      "sha256": "6b4c9a4e534dc936ccb19c201b27cc07c51abb254c368964c5c05441fe487326",
+      "stored_bytes": 1875,
+      "stored_sha256": "3e13ddccc217680355310656573d8d88c72ff5c80d71f946bf1c2ed295b16d8f"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-timing.json.gz",
+      "bytes": 18720,
+      "sha256": "d024a230533699a85c69b92716a43746e1822c81d63ac5e3791fb486dc919dc2",
+      "stored_bytes": 2994,
+      "stored_sha256": "140ff99ea013f29b631f6ccea51e1dfbcc29e7586e98c52fd47909d16789b191"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-timing.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "portrait-work-ZX-video_part01-timing.trace.txt.gz",
+      "bytes": 3904,
+      "sha256": "12ebf257760f326e6644ad6a1bf358d2c747612f2800b38fc1bb89643cc9855e",
+      "stored_bytes": 843,
+      "stored_sha256": "65fb671cf082f64f78c70ee38c72b5adc32b3ccc8ac61afc24ec6cd7e39625cc"
+    },
+    {
+      "file": "portrait-ZX-video_part01.json.gz",
+      "bytes": 2303790,
+      "sha256": "6a5184c5d0a875894a7ad94fda4e8f64d5bcca654acf19ff80fda009e96c466d",
+      "stored_bytes": 97247,
+      "stored_sha256": "179551f823b49238374ca29a0b39e654da48b51572a03795ad2cc93f541d1140"
+    },
+    {
+      "file": "portrait-ZX-video_part01.trd",
+      "bytes": 655360,
+      "sha256": "72021eb408ff81e4117baab569421c29eac5fe323a8beec90758669d7a5996f8",
+      "stored_bytes": 655360,
+      "stored_sha256": "72021eb408ff81e4117baab569421c29eac5fe323a8beec90758669d7a5996f8"
+    },
+    {
+      "file": "portrait-source.mkv.gz",
+      "bytes": 2422,
+      "sha256": "31d69f25ac2305c020456f0e15567c6fdc0a05484c101d5cb5db32c9761448e1",
+      "stored_bytes": 926,
+      "stored_sha256": "a41d02aaab5fefd6eec5d39c4d0e4e4f96a95899dde800343c48dbf5291b1373"
+    },
+    {
+      "file": "portrait-run.log.gz",
+      "bytes": 3660,
+      "sha256": "1156a532f63d091790b09e1766fc46210df11af649e9bb19890dd9935dff9108",
+      "stored_bytes": 1758,
+      "stored_sha256": "ea2564c62627420942c6c0a3c6ae09a630f757babc16bf514c5eb5d0e5a64a83"
+    },
+    {
+      "file": "colour-audio-quality.json.gz",
+      "bytes": 1038,
+      "sha256": "5e124acd3b0da107c81f6b5383abeabaf93cf8a9d420cf664349c83a3dcf7fee",
+      "stored_bytes": 549,
+      "stored_sha256": "d065cb4e82784661c11d4db389de5004bbe9575457af7e7588c71868f7ab6b48"
+    },
+    {
+      "file": "colour-codec.json.gz",
+      "bytes": 1239,
+      "sha256": "931d2fdd85d11058c165b0721cf729c7bc39514ebf290afc3e345bd36c6e9ace",
+      "stored_bytes": 304,
+      "stored_sha256": "666dad82e093a612e931830d8ae76b0f4d6aee3413f567cf386845ad4270b58c"
+    },
+    {
+      "file": "colour-conversion.json.gz",
+      "bytes": 4876,
+      "sha256": "7ad7850a0a647bc51f39b9e49f1cf81e2d4b723c14451af3993c9bb13acaa879",
+      "stored_bytes": 1702,
+      "stored_sha256": "b945a1ea261dcef136d8720446de3a5561fadd8cf9ed4028877dc4ba169b8418"
+    },
+    {
+      "file": "colour-disk-swaps.json.gz",
+      "bytes": 489,
+      "sha256": "de6a2ca434a6fad59bed4c29c4c2a3892c1684fbc44755c88e6378691e254c9a",
+      "stored_bytes": 154,
+      "stored_sha256": "29fc5d2d167fa4952297c9cdb56866529f667bcb216164438cd5ca985061ca97"
+    },
+    {
+      "file": "colour-partition.json.gz",
+      "bytes": 7435,
+      "sha256": "90b36f02bca3f40c812aba142e04d5f31e5756b430a28943ab4ac56e32541279",
+      "stored_bytes": 1093,
+      "stored_sha256": "7650f46aeff7a627f04f1613f4d836bda031d2f88924573a10a663122d386d78"
+    },
+    {
+      "file": "colour-timing.json.gz",
+      "bytes": 8593,
+      "sha256": "bd5be089e6ea3d0b41035f538b8acb2459663a74051519fd9b78110f19735ccc",
+      "stored_bytes": 1662,
+      "stored_sha256": "cef9ba21825b5d0aba3a779a7230b1ea501def7b83abce70f6793c8743584a2c"
+    },
+    {
+      "file": "colour-video-preview.png.gz",
+      "bytes": 59063,
+      "sha256": "0b91d50c8eac7aaaae040305f78af331cf3fcf7229ff5d8bdb5b413d05cd46fb",
+      "stored_bytes": 55380,
+      "stored_sha256": "500ca6eed7dc0b458a3701548ff44b222a2c4988559babd100f3df15c9fac685"
+    },
+    {
+      "file": "colour-video-quality.json.gz",
+      "bytes": 1097,
+      "sha256": "926e28a383c10992c373cf324e41da83c70f0b419b84a6ee8999761ee703843b",
+      "stored_bytes": 601,
+      "stored_sha256": "c8023bfe318b24f985f5948577636b502adb650d8ae98836b5665f3fb2836bf4"
+    },
+    {
+      "file": "colour-volumes.json.gz",
+      "bytes": 1211,
+      "sha256": "f35e4eaad8e7a1014d81d631a4440e3a85135c6e37610b01b8a182b7e5ce20b5",
+      "stored_bytes": 402,
+      "stored_sha256": "c208aff694c2d9f57249896a2a6f749a5ac75b3592ff8c756c72b0902b07aabb"
+    },
+    {
+      "file": "colour-work-ay.bin.gz",
+      "bytes": 486,
+      "sha256": "804c06ae16c61bf67dd02f3fb43fc721fc625d90b597f2031fa6143af884bd99",
+      "stored_bytes": 46,
+      "stored_sha256": "0de43b74dab42a289e12f515483ba9062251c26cd10aeee7b8175200f3836c9d"
+    },
+    {
+      "file": "colour-work-conversion.npz.gz",
+      "bytes": 34826,
+      "sha256": "8fdb64fb61e543edee99387ff37cfe3e18128de0f41ce66e7637a0f6a130fda6",
+      "stored_bytes": 4263,
+      "stored_sha256": "f759ee190351f572ae15a38159ee1ea50fc596341637e394b60bc7a628ed106d"
+    },
+    {
+      "file": "colour-work-five-states.npy.gz",
+      "bytes": 41600,
+      "sha256": "1057473db079c3044f61fe8b3164f1c92abc2340c74531bfd683974337a2d821",
+      "stored_bytes": 5239,
+      "stored_sha256": "b099616988ad62879de0e4709972d45ac5ef0dd08fdb417a3e2a88e986ea39b4"
+    },
+    {
+      "file": "colour-work-frames.rgb.gz",
+      "bytes": 248832,
+      "sha256": "94357446e3693ba498b5eb24e31f486b4be3128d4f10222e02db2ff7f4887ddd",
+      "stored_bytes": 25787,
+      "stored_sha256": "247db2d453b9f046d387ccf6f8089a0efea12f7bd8c586b301618994cc53f866"
+    },
+    {
+      "file": "colour-work-states.npy.gz",
+      "bytes": 34688,
+      "sha256": "f6e0beb000d139008997ed0f9115ce00784a236a5938b02314f07497fb556b92",
+      "stored_bytes": 4156,
+      "stored_sha256": "cb482a74e6118f3ae4278e38dd5132aaf44aa6caf2de54b3b5bf5af04ff2dd1e"
+    },
+    {
+      "file": "colour-work-stream.raw.gz",
+      "bytes": 7474,
+      "sha256": "2546de1f29e27a64f3cf399946163b1edcbba1d0d9e4cab69219df206a6161d3",
+      "stored_bytes": 3994,
+      "stored_sha256": "bd91ce6d2522f6a1612fa93cad2f7b9b57fb96a35b881266099eaef2aa7e198c"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-audio.ayh1.gz",
+      "bytes": 97,
+      "sha256": "6b8c059e8777b1e0e29fcd0b62ca83b5e6fdebcb07cb75c3247c43cd5dad05df",
+      "stored_bytes": 77,
+      "stored_sha256": "f6d9a0f1d4045f84c3361414237c569eb7cb3bafaa9058ac934c39826f13aa20"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-0-1536.debugger.txt.gz",
+      "bytes": 24375,
+      "sha256": "f273441f4ee773e7a9761acef4e7e5bfd513341ddda79a30ae5dce8fc105f290",
+      "stored_bytes": 4130,
+      "stored_sha256": "ba920dbecc4cdd237afbda197aa2e9a704c185dfc730d3a5ebd115330095e464"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-0-1536.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-0-1536.trace.txt.gz",
+      "bytes": 12777,
+      "sha256": "ff4e429c3e793a675a93d6373bff8dcc6527451750a12493b4539334804ab1f3",
+      "stored_bytes": 1502,
+      "stored_sha256": "da0d55de07c4ee1f4716bc8b11b32beabbdc0bf2049e96d5c001cde2bcf8e970"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-1536-3072.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "c4fc4ee2037bc628fe9586dac93eae1781da73f9dcf0f174b34d8b69558dcc8b",
+      "stored_bytes": 4007,
+      "stored_sha256": "2e190dc29fd75c4dfc7339bc0d095f681ae171e22eaeadd9c411b3ca11618b62"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-1536-3072.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-1536-3072.trace.txt.gz",
+      "bytes": 14952,
+      "sha256": "a507f54ab6a6a6e4ff5f85e5e624efaed166d655fd31ddbac6650b3da4bb4143",
+      "stored_bytes": 1845,
+      "stored_sha256": "ea25d0235d2522a3cd5e397868b679d69881280387a103cad5da4999a2c7b64a"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-3072-4608.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "9c94a36baf7f50479b21a6ace62dbfc8fc30796edd5ada16df5c6ba6160a593b",
+      "stored_bytes": 3991,
+      "stored_sha256": "6d70821e38d3582f1543e9329bd2657b7a2573aee8da6d3ce8effa290a3b9a61"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-3072-4608.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-3072-4608.trace.txt.gz",
+      "bytes": 15640,
+      "sha256": "bea9c657002e4761629bea8af82773d089193048ab7e32dd4098c67685b808cc",
+      "stored_bytes": 1624,
+      "stored_sha256": "8ad6b21ea184b622522bbe6aa5c585d20bb4ba65b8a133e3eb842edeef87da2c"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-4608-6144.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "35ad90ff1cb1f3976d2959d59674afc4bd1c821fd63756e36087ca5d3ad4be17",
+      "stored_bytes": 4025,
+      "stored_sha256": "6cce4325b3e2f28bf4a706599954f4da4ccba39c905f377f467b2ee1b924862c"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-4608-6144.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-4608-6144.trace.txt.gz",
+      "bytes": 13507,
+      "sha256": "d8b415abf5619b0f9efc8cbf4db195846724e83e7c2100726597c65adda87496",
+      "stored_bytes": 819,
+      "stored_sha256": "19de7d934f162eb9c3157f7310dd5ae173eb7d5b885be4da9d22abb9ba4866e5"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-6144-6912.debugger.txt.gz",
+      "bytes": 13005,
+      "sha256": "d259ffc67edacffaa25c4492fecccc129dfc9874fe6c9ee509ec5fb893e4da81",
+      "stored_bytes": 2045,
+      "stored_sha256": "5b2cea7bec74444089048adc1f8922e02de4215401824ca23eb490d874291a3a"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-6144-6912.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-bytes-6144-6912.trace.txt.gz",
+      "bytes": 8921,
+      "sha256": "2ef4aa97ddc12394b8d00259c55c5474baae59342db1c2cf999c1d9f0435797b",
+      "stored_bytes": 1022,
+      "stored_sha256": "087aa7a8d7077c5e2b96e125ca01c6867ecab68fd46a0c217eff8d6fe35c7c17"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-captures-progress.json.gz",
+      "bytes": 6060,
+      "sha256": "aaf7c0587f4c6532f31ccce59c374130311c720d830e4b697393df02db2e8beb",
+      "stored_bytes": 1609,
+      "stored_sha256": "c17d66bc1a87d93e742e43fa230d250ff7db30cab0cc67b1ee48de174864ef81"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-codebook.raw.gz",
+      "bytes": 4544,
+      "sha256": "b61ba5d5f298f5c2e906ded85bc7a47d1b888e99dab982f67be31780ab286959",
+      "stored_bytes": 2109,
+      "stored_sha256": "8c40e3419f7469fb90676f11e5607416704b1278bc500b40f171ada752eb35fa"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-codebook.stream.gz",
+      "bytes": 2081,
+      "sha256": "e4c49c18e61ea4d47a9de6f6280ea29832c03a808bd1474b5a3e9b063b31f435",
+      "stored_bytes": 2091,
+      "stored_sha256": "eeb9e78c0b669d47714e8099ec571b22cb77a73ea085c79717ecb8a2415ac7e5"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-cpu.json.gz",
+      "bytes": 26057,
+      "sha256": "9646afba50ec8703e9c4240520c3a79da1ae52ac628dcf56d8c482ea02507551",
+      "stored_bytes": 1920,
+      "stored_sha256": "e000e29c278c8fd093a9f8d27dc873d4b5de70dc805b45e2a9b5b97f525e6cc9"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-rows.json.gz",
+      "bytes": 2491,
+      "sha256": "163b50234980a5dded79dce39958e658710f1dcb8ddd686c7298361c6b29e363",
+      "stored_bytes": 775,
+      "stored_sha256": "f4a851ec483627c0647af36c44888c7df6c2dfc475d12490c54a62bf62ae9a02"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-screens.json.gz",
+      "bytes": 7648,
+      "sha256": "d16e8317a3fc0a2d79ef9dcd569cadebe50074f91fe4c5dd9efe22fa32a4e48e",
+      "stored_bytes": 2535,
+      "stored_sha256": "e5cb0a0cd7ad27332bc15c2ff80af596042263be69fa26c9a6b80617766b215b"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-states.npz.gz",
+      "bytes": 2243,
+      "sha256": "4a1eb048a4cc610ef1d86b5f3f1d818798058f05ec605631c66b48d92c9b693f",
+      "stored_bytes": 2183,
+      "stored_sha256": "5c7e298ef8d761038e89f5e98fcbea3f58a0730283c7527047870b309b74bbc1"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-timing.debugger.txt.gz",
+      "bytes": 13389,
+      "sha256": "a80a856f8457699495f6ddcff726b4884d5f1af63f655e68533f8603683e670a",
+      "stored_bytes": 1874,
+      "stored_sha256": "60f130e192a45e3b57509341d4db7f03e54384f4aa47685286e147a3e82d5edf"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-timing.json.gz",
+      "bytes": 20790,
+      "sha256": "ec6fc8a464d70ac679e0db98be357b5ee0ed2ee1acb427862b8a0ac422504560",
+      "stored_bytes": 3230,
+      "stored_sha256": "93d57b0273a239bbd2e36c024d14754eae435be3477a0a8833c519f58141ebee"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-timing.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part01-timing.trace.txt.gz",
+      "bytes": 11219,
+      "sha256": "c4212fe57ef5e73a7a8181757473e178ae56a17456bd1a8db5c56b21805383af",
+      "stored_bytes": 4002,
+      "stored_sha256": "a79824e2a674197919f87063ba6cf02216b1b030da6de848034b6b1bac3f2b66"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-audio.ayh1.gz",
+      "bytes": 53,
+      "sha256": "017b92145f7f4ce471b01cff71a1a9e937aac88d52172af05b4b01f2c9f9b80a",
+      "stored_bytes": 41,
+      "stored_sha256": "0ccb638007afe84c48e4ea484aa60ebfa4bb06aeeb0bfa4c56dc2d70577dc119"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-0-1536.debugger.txt.gz",
+      "bytes": 24375,
+      "sha256": "4f9ceb1b91691b46e54f4239c150990980924543147245731fd19363e0a0cdab",
+      "stored_bytes": 4130,
+      "stored_sha256": "0f9c67e5916f343dfd9c58363d1d248214e44cc332cadb73afc0fb085affad2c"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-0-1536.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-0-1536.trace.txt.gz",
+      "bytes": 12638,
+      "sha256": "abf0935a90f120106aeb2105cbe09f2f0c3e5eb11677328905614945760ee1b0",
+      "stored_bytes": 1456,
+      "stored_sha256": "9c71df9f3cc39ca59d7c6e641708dfb87a27be0cf59d66c7c64e9a01c567fbe4"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-1536-3072.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "2673768ff5c76bb588be86eb6030cd7f2c56a0239b79f87d86de5432923b16a4",
+      "stored_bytes": 4007,
+      "stored_sha256": "115abce74ebdde1b04c86d30c81f088ce524ed4c00d204d46102552633a888fa"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-1536-3072.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-1536-3072.trace.txt.gz",
+      "bytes": 14763,
+      "sha256": "ded1e9373e0573b5049e2a65d0e3b00eb6a11ead4bec9d6e10011ea4874eeb27",
+      "stored_bytes": 1839,
+      "stored_sha256": "ffbb01ddd9f18128e62010e66f4c69ee2487a7f07cad91dadbcb5f3ee012eaa9"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-3072-4608.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "d4b28ea72d2520178fef7b92cdac5cda0a69b7cbe78e8bb406eee5bcd4799b70",
+      "stored_bytes": 3991,
+      "stored_sha256": "6d7eb0d175426af222732d24f8b43bccbac31e217593a6d644c0b943d586a29c"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-3072-4608.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-3072-4608.trace.txt.gz",
+      "bytes": 15324,
+      "sha256": "63c98ac5cf754ee793b11322c69e0d9481a7642a24f1c947fdb95b435599e10f",
+      "stored_bytes": 1820,
+      "stored_sha256": "f67f66c5cc27e507f41a490e7275754b826a99aacc9449b68f4c6d48569f9234"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-4608-6144.debugger.txt.gz",
+      "bytes": 25484,
+      "sha256": "322261660cbf6a87ed35c029df2b8b767809060f16d910b104263a2b71682ed6",
+      "stored_bytes": 4024,
+      "stored_sha256": "af05ebb0a46be3f580819e0d6835a28dedd21ba706690030df05110827b86fb6"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-4608-6144.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-4608-6144.trace.txt.gz",
+      "bytes": 13210,
+      "sha256": "8aa0038220659f25dc3b58763df8f6f1e762ed9710400403ca2463fcbc03642a",
+      "stored_bytes": 1153,
+      "stored_sha256": "3bd3daa082dbc433191456c08b5e53d881fecec21ed51fee37397679bf590d66"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-6144-6912.debugger.txt.gz",
+      "bytes": 13004,
+      "sha256": "eb7f0455670336ef47b54e27327e6ece14e3ffcee4959a7a2f57d67ece056489",
+      "stored_bytes": 2044,
+      "stored_sha256": "44231dd7f689d384731c7c871c3df768f8b589c97cf9c69f1fb5412b1376e768"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-6144-6912.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-bytes-6144-6912.trace.txt.gz",
+      "bytes": 8922,
+      "sha256": "b66ab21c3491ad9b87e377dc99a99e24f7a93758c6aa5f1a0930a8ac6c07435f",
+      "stored_bytes": 1045,
+      "stored_sha256": "f0eed11e9393390c85cfb11957d395219474e7761448d1ce42ecebf286153497"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-captures-progress.json.gz",
+      "bytes": 6058,
+      "sha256": "e43024c579ed8c51055f40ab95c5f10071052ed72723631d2c094045f321b192",
+      "stored_bytes": 1625,
+      "stored_sha256": "afc933869bfb069ef3d197ce2a910f1b52ebe67d6b8f318369e4aec59594193c"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-codebook.raw.gz",
+      "bytes": 3717,
+      "sha256": "c453c7f45cbe0ff4681b6e65a3c9914f16119e17ca1f476a981968cb97583d4d",
+      "stored_bytes": 2125,
+      "stored_sha256": "4077f6ffc795f4a8d5a2d477b3fb54d5b6e11efa6e147ae265936303729cbc02"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-codebook.stream.gz",
+      "bytes": 2136,
+      "sha256": "3ffcac935f78e7033eb4ce78e49ca177961ffa74583bde48e6bf0194364cc63c",
+      "stored_bytes": 2141,
+      "stored_sha256": "a212c0958244585efdf3d67dbc316952bd79e4ef4c97be977a9efa785c259be6"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-cpu.json.gz",
+      "bytes": 25853,
+      "sha256": "b4c965d3ed51a163d474be2b31b78982a12dce9651cb35fa0135e84bd0b9734e",
+      "stored_bytes": 1923,
+      "stored_sha256": "0e8783cbd7aa1b4ccc9ba13fd267740fc8d7292c0684d4488d5f4f3837a1a96a"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-rows.json.gz",
+      "bytes": 2604,
+      "sha256": "ae548df15a91114f3206a80a209681c1cd30762572e2869546ed6594ab4f7ee5",
+      "stored_bytes": 812,
+      "stored_sha256": "61989fd38e2db395a0a19dbdd144fc30e162c471ab6510a34cdf9668f556ce88"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-screens.json.gz",
+      "bytes": 7646,
+      "sha256": "e70043bd7b2a553d5adc01790f362d65b231142f575dbcf78b5632885d1a6ada",
+      "stored_bytes": 2554,
+      "stored_sha256": "b792198eddf832d4092846c757bf248c1a0d3820d99118a830669bf6837becb1"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-states.npz.gz",
+      "bytes": 3199,
+      "sha256": "b9e61869765ad1cb071273070d533999eb5191ebbcc9113a0126b001f1b33e8f",
+      "stored_bytes": 3160,
+      "stored_sha256": "2f0da135d9e93e5a799b07188c579d4af3d8404d6ad3abce31cc6967547e3eb3"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-timing.debugger.txt.gz",
+      "bytes": 13389,
+      "sha256": "053fbc8b9d8c786f30f36c97954b0057731a508a205d2578a64f4eb8ab522282",
+      "stored_bytes": 1872,
+      "stored_sha256": "03853a6d734a4373738890455951fdabf1368970763f6422fe001f54fa4325fa"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-timing.json.gz",
+      "bytes": 20791,
+      "sha256": "5639e5ac6972af7bd33fabb79f336c370fdaf274bad634ed2cdc414bdee78f04",
+      "stored_bytes": 3227,
+      "stored_sha256": "bc3b42b2a7a0b320603345312d4d89445399ec7ead8cce130494d5c6b2565834"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-timing.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part02-timing.trace.txt.gz",
+      "bytes": 10924,
+      "sha256": "99bdf8bbe22634fb41d5ad7df94ce8efe05935c89ec9f6607a4d57aed133052d",
+      "stored_bytes": 3961,
+      "stored_sha256": "469a9350e2094ce81b1b2a647f36ee3e9d6bf60dce6f7ab09f40b3d4e4debafc"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-audio.ayh1.gz",
+      "bytes": 76,
+      "sha256": "1ecfcdb9afe6f2f1e52d804722107737ee7050ed5558b983cfc96395461c3800",
+      "stored_bytes": 73,
+      "stored_sha256": "3d2d764b7de0f3b499edbb8170045e3df2a9ad95a3f6ea8271d9b9270a7e13f2"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-0-1536.debugger.txt.gz",
+      "bytes": 24374,
+      "sha256": "582c8a0df4fdae6e33d9439f9ba9fd436665e7ee51479954bf87b83f948efa60",
+      "stored_bytes": 4130,
+      "stored_sha256": "5385ddaee3ed190aac89c1ea120b40e153535acb84ae4210f7b9caad11d9357c"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-0-1536.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-0-1536.trace.txt.gz",
+      "bytes": 3568,
+      "sha256": "084a668f6239d6c24430e42a921a47d29f00a0edbdd75842769ea06ac487f28b",
+      "stored_bytes": 859,
+      "stored_sha256": "6fae2bd5d6a491a452758cc81f91ad844ee3da82de191bee52aec8bbdcb81834"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-1536-3072.debugger.txt.gz",
+      "bytes": 25484,
+      "sha256": "e4907260ee05ebe9c994aed02acade67769e725fe39139be6f8413179af3b42f",
+      "stored_bytes": 4006,
+      "stored_sha256": "14a4b42539fdd1b9a02da85fbd6743ae513b28105733f2c165017a32310b68e9"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-1536-3072.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-1536-3072.trace.txt.gz",
+      "bytes": 4123,
+      "sha256": "87a82b8d4b848b2d036c1c1b84683155784923cf77d3e55c58a36b3e213abf30",
+      "stored_bytes": 942,
+      "stored_sha256": "244184802ba047550016d5f3567f7b636ae58c17314b70c1e357403c20a075fe"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-3072-4608.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "68748949976acb71dc8102b8de56762c26baa1d97aadbec99f3c7f56be7837fa",
+      "stored_bytes": 3992,
+      "stored_sha256": "c0464132b47a755493d13936a5d84436c8691d89b41d93380622a90c6bb952fd"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-3072-4608.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-3072-4608.trace.txt.gz",
+      "bytes": 4210,
+      "sha256": "4b0083e8fd3171efdadb6b2d2baab3d0ba1dc0f457c88d6b9f16d96396244fac",
+      "stored_bytes": 856,
+      "stored_sha256": "31dd84b09be95466556fe5707b81b0f8951df5554d9ee04eec8c7531e1fadce7"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-4608-6144.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "5fe123e818b94d6f1fd6c2a5168131cac8c39e0e384ab7837eeab48356ff7670",
+      "stored_bytes": 4024,
+      "stored_sha256": "4820aba360941b1eb5fc8c3ca863ff98c335c4cdabae4eb341b95834689398ab"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-4608-6144.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-4608-6144.trace.txt.gz",
+      "bytes": 3720,
+      "sha256": "a9f8811113d2c6fcff55f9492a82488353f75592eb5d5f45d7c289dc65fe5959",
+      "stored_bytes": 715,
+      "stored_sha256": "eff63cc3ba4cdd948b7be71f1c588c4de55bb72a6953b5daadf23f6142332f81"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-6144-6912.debugger.txt.gz",
+      "bytes": 13005,
+      "sha256": "d4ab5b72a7ced2679411cbedf403736b42a07d9d5270ddd94e1b4fcb23eaeae4",
+      "stored_bytes": 2044,
+      "stored_sha256": "d89d847ef47cf4bcaab01ca1131635ae89eadc6fb88310264d267652ae507563"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-6144-6912.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-bytes-6144-6912.trace.txt.gz",
+      "bytes": 2638,
+      "sha256": "1a0855265d6aa36250532f58ef1e13226e75d13707cc664eb2e68fc446469020",
+      "stored_bytes": 771,
+      "stored_sha256": "b1c04be6d05c017b84e74cbc13bbfee7b5a7dd78f57d2503ad07a9a8c97c72a3"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-captures-progress.json.gz",
+      "bytes": 2923,
+      "sha256": "31a755085ba313232774684b78afc5a5f382c3c636ee8a4ea95776f0eacc4153",
+      "stored_bytes": 937,
+      "stored_sha256": "f17d758829d3445b5e3e7a9e33471516e54f57f54fc043ca728ac1717861d971"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-codebook.raw.gz",
+      "bytes": 2473,
+      "sha256": "fdf68cf7ad316531a1e90b9ff2f00e55e632c31cb45923bb61a63f9f93253a2f",
+      "stored_bytes": 764,
+      "stored_sha256": "989966d3a0c15f1c5371a1423d41230a0ac52cacc21d7d40991742b8021736bd"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-codebook.stream.gz",
+      "bytes": 744,
+      "sha256": "970b19c2debd64e35375719aebe01f661d23fdcb08f3f36d12e615aaa3ec0c6b",
+      "stored_bytes": 767,
+      "stored_sha256": "06afecee3030d53fdc7155f2094132615acd61d688010ade09bc8a3728362a64"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-cpu.json.gz",
+      "bytes": 21064,
+      "sha256": "e305337d84cf5f132d7c4a910486b4b29b0963e11ead1885be738d6290e4b100",
+      "stored_bytes": 1515,
+      "stored_sha256": "d5e45c11a726a10e4b70e79ef9c8dfdf8cc44f7991ac1889f8ae23b89a0e3a30"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-rows.json.gz",
+      "bytes": 2476,
+      "sha256": "c779aac212e6afc76adaadbd11725e829a945c8aac2022bf5eecedaeec85d196",
+      "stored_bytes": 751,
+      "stored_sha256": "a3818749fc245f30a9eb8d44158ce304b7a89fbe5452fbb5cbb5a9930a4aedb1"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-screens.json.gz",
+      "bytes": 4294,
+      "sha256": "063a28217ed1cb53561ae61865a2e063c770152abf6bf2a0ffc01a61031633e9",
+      "stored_bytes": 1717,
+      "stored_sha256": "a928fd04af577c848d9b9f806f147da3bab6346eaeb561e15b9621fed7b80b49"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-states.npz.gz",
+      "bytes": 2073,
+      "sha256": "f340991e9f8da78c73cae15ee1a1ae04a5008393824e529e0f2733c851e81d29",
+      "stored_bytes": 2010,
+      "stored_sha256": "e43a42b37ae050e384b54b971de8597da8cfc6372499ed449baf88e0155e2804"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-timing.debugger.txt.gz",
+      "bytes": 13389,
+      "sha256": "d7b6fc9fcd92a4b763a3e8843e0ba3cdcbac2231d088187a523618d8bfc083e6",
+      "stored_bytes": 1875,
+      "stored_sha256": "be40f377ae8b28fd15665332e56b7dacb7140d0d3a32553cbfc920d0a7ed2784"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-timing.json.gz",
+      "bytes": 18781,
+      "sha256": "c29030845e49388cea02557a1662f40e34fae890577838402a811e75e0f4a6e0",
+      "stored_bytes": 2963,
+      "stored_sha256": "ea8390217ab86ec6cb02990becb317f3721f04e7854ff8af49d570b594f48f01"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-timing.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "colour-work-ZX-video_part03-timing.trace.txt.gz",
+      "bytes": 4564,
+      "sha256": "f2e74ef6b3991069a9318537ebdc48e91822be4bcb935343ef42b8bb8e4d7a62",
+      "stored_bytes": 1745,
+      "stored_sha256": "c7e4b66db32435bf50f41e2b50a7660239be782dde5d6b5b8f28d02485b06e2f"
+    },
+    {
+      "file": "colour-ZX-video_part01.json.gz",
+      "bytes": 2312620,
+      "sha256": "2cfa64bcdf8f4d51aa8df9215158c518e1b4d66d3a6cd544b917e02f2b26553a",
+      "stored_bytes": 98228,
+      "stored_sha256": "c76068e2e41e010cf6013f33d652f11e29eb9d29bf42efad48219388c4ed0a45"
+    },
+    {
+      "file": "colour-ZX-video_part01.trd",
+      "bytes": 655360,
+      "sha256": "6fca2d29d42637caade75855f57fb741e6dc227c29a9c976e982671f246bff69",
+      "stored_bytes": 655360,
+      "stored_sha256": "6fca2d29d42637caade75855f57fb741e6dc227c29a9c976e982671f246bff69"
+    },
+    {
+      "file": "colour-ZX-video_part02.json.gz",
+      "bytes": 2312699,
+      "sha256": "9b9df17b577c6a03a802a35569371fa06aac43aedbdfe0256e12f68029a74346",
+      "stored_bytes": 98244,
+      "stored_sha256": "a3c3658fb4a9ae193b9860f256dec9e5e9ac9d3dd2f99c93d494a49ddf32c2ef"
+    },
+    {
+      "file": "colour-ZX-video_part02.trd",
+      "bytes": 655360,
+      "sha256": "1e0e25f2660604d3cb55c1e2f34ff6488c8964590e0019e1a5d1944fb998a405",
+      "stored_bytes": 655360,
+      "stored_sha256": "1e0e25f2660604d3cb55c1e2f34ff6488c8964590e0019e1a5d1944fb998a405"
+    },
+    {
+      "file": "colour-ZX-video_part03.json.gz",
+      "bytes": 2312091,
+      "sha256": "390317884228800a0cdf1608ff62864510e9380597bbeb90c6e6775dddda84c0",
+      "stored_bytes": 98164,
+      "stored_sha256": "1015c9864662b445e37b928b71b5c5de03c745b1ef95e83e5f0d7d85f61a616b"
+    },
+    {
+      "file": "colour-ZX-video_part03.trd",
+      "bytes": 655360,
+      "sha256": "b1053857e4463e34ba28787ac3e524d6f27d01dcbc6b58d1fba1966e3be837a9",
+      "stored_bytes": 655360,
+      "stored_sha256": "b1053857e4463e34ba28787ac3e524d6f27d01dcbc6b58d1fba1966e3be837a9"
+    },
+    {
+      "file": "colour-source.mkv.gz",
+      "bytes": 139379,
+      "sha256": "774e42feb2d439e1c522e11f729be4c91f256e40d155bd18e5b0451f90b2fbab",
+      "stored_bytes": 91276,
+      "stored_sha256": "6514747bd34eb2afb9da1452186a9c965413467250a433325d1f127a9a9c1985"
+    },
+    {
+      "file": "colour-run.log.gz",
+      "bytes": 11019,
+      "sha256": "c4522fd52ee39036bb4b36145f5edc9720a01efa1f4ebbc8eb8f1ae950be79a3",
+      "stored_bytes": 2493,
+      "stored_sha256": "fca019ffc9dec2b564099bfb7c40dd4e68a62943964dab765a27e71451524ba8"
+    },
+    {
+      "file": "anamorphic-audio-quality.json.gz",
+      "bytes": 67,
+      "sha256": "6c3a3424d752fa43508f10ea03452f631e9737cef49e9149a74d74073f4c6cee",
+      "stored_bytes": 77,
+      "stored_sha256": "02c4d7245a5ad7bc72d64fbdaa24650cc892fae2e1eb44221d9d803a70043dce"
+    },
+    {
+      "file": "anamorphic-codec.json.gz",
+      "bytes": 539,
+      "sha256": "f87b3f8ad6ab7bd9297aa185a5427b3e30890b79aecbe6d8c8c3b93999831fc6",
+      "stored_bytes": 246,
+      "stored_sha256": "c72363b9c31954ec086433b59f4f9b0358ae5e91cd0f6be5c9ae948be9cf38e6"
+    },
+    {
+      "file": "anamorphic-conversion.json.gz",
+      "bytes": 4033,
+      "sha256": "31bf90cc50f5c4c49a2d8f664423af3f2434cd6f2b674925f5c4d7fe640df4d5",
+      "stored_bytes": 1535,
+      "stored_sha256": "b1ecd642048b220902fe99846998bf06515a4283b4d5e8be4a98a02b3947f1b6"
+    },
+    {
+      "file": "anamorphic-partition.json.gz",
+      "bytes": 2790,
+      "sha256": "bc5923f503da9c14d1885b295f9d55fc0f55a39f8ae567fb36c37adfc36e0718",
+      "stored_bytes": 689,
+      "stored_sha256": "82a7d487f66150745a07f375d308ad1cb628fd2c0e9abcb1c783d2876bdf77c5"
+    },
+    {
+      "file": "anamorphic-timing.json.gz",
+      "bytes": 2994,
+      "sha256": "f08ef3232e37ddfe4ec9eb361f054c63a4f175d44c89312f34f28a60fc41abdf",
+      "stored_bytes": 1116,
+      "stored_sha256": "1a3e7ed9f937d0a8cba3ceab725e9e9ddad2f909d885551eed0147ef7472911c"
+    },
+    {
+      "file": "anamorphic-video-preview.png.gz",
+      "bytes": 5058,
+      "sha256": "52c8e64d00fc94064a9d9306fe43db218fb43e651ff29f77d82b3631dde37903",
+      "stored_bytes": 3749,
+      "stored_sha256": "b8e2b626815b2c192e5b8bac9fc3d79cb9472d3a20cfc773343096c34b4c72b5"
+    },
+    {
+      "file": "anamorphic-video-quality.json.gz",
+      "bytes": 730,
+      "sha256": "378b4a6f7e15948d36680f51300c9916f7cce03c0e77facb5ec20333f70637ee",
+      "stored_bytes": 343,
+      "stored_sha256": "60c08361cf67e9d892043a4b39dae85f4034057e17d19a4a5b293de6a822801a"
+    },
+    {
+      "file": "anamorphic-volumes.json.gz",
+      "bytes": 405,
+      "sha256": "3127f0a725c5061cae756a9e13b7d74c02ba8e1a0a3a0f8f43692c5db68b2bb4",
+      "stored_bytes": 250,
+      "stored_sha256": "28dfb557871db9c07bc4a3a2a0bf64ec3d894e0809701eafb7ef038ef53967e4"
+    },
+    {
+      "file": "anamorphic-work-ay.bin.gz",
+      "bytes": 108,
+      "sha256": "e7bf9973d21fbf8182116a4dcb3e0b4d1510a38a64498245ea5ceb653778095c",
+      "stored_bytes": 29,
+      "stored_sha256": "50b4009aca2d29acf34e5c0762cfbf14d94024ab229cc47735851995bcb9349a"
+    },
+    {
+      "file": "anamorphic-work-conversion.npz.gz",
+      "bytes": 7946,
+      "sha256": "a591c087ae3cf8eceec584fc4969897af980b5a3f5c46d2e3cc51a0122cf2c29",
+      "stored_bytes": 233,
+      "stored_sha256": "768efc94fdd917ad0451982941fd4a15ba94ae6104026c2a141fba1c8da4afed"
+    },
+    {
+      "file": "anamorphic-work-five-states.npy.gz",
+      "bytes": 9344,
+      "sha256": "49e94b0ed4dac051660917c56743f71add7b25482a0827755c6114ea17686b1a",
+      "stored_bytes": 169,
+      "stored_sha256": "fd4be8c919aba4679d2c7443ce803343d96755dcd8d9b69c5871f702d7ce11a7"
+    },
+    {
+      "file": "anamorphic-work-frames.rgb.gz",
+      "bytes": 55296,
+      "sha256": "6213f6c434d9ec31b93457281010d39a66207db4d1778b2250962a2c6a7dc59e",
+      "stored_bytes": 101,
+      "stored_sha256": "af8cde69503fcd1d52e9fd3fec35b00935ea710a1d17be9c68774c59120f2aac"
+    },
+    {
+      "file": "anamorphic-work-states.npy.gz",
+      "bytes": 7808,
+      "sha256": "fb77b1c56b71c6df4eccdd8f15c97c0a116ac5a4e9d983749a23be08f7b16019",
+      "stored_bytes": 153,
+      "stored_sha256": "bf5bd594d9752bd74324e25d823dd05b7abd9d8b1b7a76c30f70515b77120a2f"
+    },
+    {
+      "file": "anamorphic-work-stream.raw.gz",
+      "bytes": 3124,
+      "sha256": "04cd6cf5f21f8ef6d3fe390a1638dfdde708dc044ecdf5fd140922d3aa009ffa",
+      "stored_bytes": 249,
+      "stored_sha256": "651c45e7aa13b570e103202ba0db5e6491e1f1190f796d075a4bf769bfc4dae5"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-audio.ayh1.gz",
+      "bytes": 82,
+      "sha256": "e4f7f38588f86af9af44a1e24de5aac566a58871a76dd54d48eef58e899a6a6f",
+      "stored_bytes": 58,
+      "stored_sha256": "c6e111e327627110811d38faafc77d1ced9c626dd8dbecd6917eacdc2bfff6bd"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-0-1536.debugger.txt.gz",
+      "bytes": 24375,
+      "sha256": "722e0461cb77a92b517a2f4e690dcc6ef7d417c4cf45c51970b5a547c8f7147f",
+      "stored_bytes": 4130,
+      "stored_sha256": "ef8c6b811f885d608ddb398564a37bd115e19429f4dbee9363f97b653c07cf83"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-0-1536.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-0-1536.trace.txt.gz",
+      "bytes": 6364,
+      "sha256": "f162e6fe7cb235ca88b5e5a85109a7aa412205285c56b4283748096e6b78d235",
+      "stored_bytes": 497,
+      "stored_sha256": "68655aca0bc98b7ec1f2ef0f0348a9c5c7724bdbdf5c51f7f02e0919e0f8b302"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-1536-3072.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "d99a5bb0cfdf31c4c92d0814897c4883be116fbd0d24d1f697d76211cb35b729",
+      "stored_bytes": 4007,
+      "stored_sha256": "fbb028d3fe595b27dfba7bbbf5a4a2ff65dd741968faa417b227e07929cbd53f"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-1536-3072.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-1536-3072.trace.txt.gz",
+      "bytes": 8156,
+      "sha256": "dd589d683ddbee4a00e659ca70586e4279185733c36eb8d30d35f3b83614d0b3",
+      "stored_bytes": 493,
+      "stored_sha256": "9a52618719290b9e6f2b688d6afe0658f9ac97502935bcdc2163b5998ee86257"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-3072-4608.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "aa48650b1ec8445c5341764aba3c30f54f33f85d508b7b463c2732fd25202d74",
+      "stored_bytes": 3990,
+      "stored_sha256": "957d7133d8b6cc619af28057a49c48d2baa334ea979cd28c4ca519dcf949d4cb"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-3072-4608.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-3072-4608.trace.txt.gz",
+      "bytes": 8212,
+      "sha256": "003dcda2738038865d6421ef30f29f92ac8bb8756758f95195256c52b0f720ff",
+      "stored_bytes": 499,
+      "stored_sha256": "ada823a7c781c8558509d72bb83ecd41eb0a6eb721cdba505875e5b1b5b7c8e0"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-4608-6144.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "ecdc2bffd4a15deb3f1afbf43859745c05bc79b63870a4f114d3527caf74d780",
+      "stored_bytes": 4025,
+      "stored_sha256": "8930b3015d13f7302cd73e62a8fbf5d8361c17d9748ac238a28f9c93cbab391b"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-4608-6144.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-4608-6144.trace.txt.gz",
+      "bytes": 6364,
+      "sha256": "3af7de9d46e450f9cd6f5f80c0f04505d6f36a3a03f88c995aa9045f91af05d8",
+      "stored_bytes": 497,
+      "stored_sha256": "1be09dfc3ae02914ed115ecafb3a2e439c2b5b658a8a6439b40f0ad614d96792"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-6144-6912.debugger.txt.gz",
+      "bytes": 13005,
+      "sha256": "8e10e70425fa1f3c53b6abf44746d96fb3b5678c981d3cf07de1564555785c33",
+      "stored_bytes": 2046,
+      "stored_sha256": "f8c5b930455aba5438681440a56e9ad3cd61787c2752f279fcd4590f6f928755"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-6144-6912.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-bytes-6144-6912.trace.txt.gz",
+      "bytes": 4716,
+      "sha256": "a3b8603f87aa8311149a08a168875d93ec72cbeef2cb270a90b509340af56271",
+      "stored_bytes": 481,
+      "stored_sha256": "6c96ede09f83cdb9e878f5e69c51ed40627f0e1082557d21086f5fe5d10cd7af"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-captures-progress.json.gz",
+      "bytes": 3970,
+      "sha256": "9ebac9c7491e1d2bc6738c0d3cdfaa9056b6c490acb949292d0501353b190aee",
+      "stored_bytes": 1024,
+      "stored_sha256": "3c815f5103261f549d08036b33929dd609e1d7d8bbfeaf362cbe18f798b694a2"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-codebook.raw.gz",
+      "bytes": 3500,
+      "sha256": "1f814f7319de1bd33c1a9429ab87c4e49613e3a8a953d7e3687ce21c1b09e442",
+      "stored_bytes": 68,
+      "stored_sha256": "0fb691417c0a117dbcad6718a21741d9ea44693060138ba827121ad6682afd17"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-codebook.stream.gz",
+      "bytes": 44,
+      "sha256": "1e2db8a405c09003b93b94a5cfc601ebb45646e35c6f26f6fd7071dd6d826da1",
+      "stored_bytes": 67,
+      "stored_sha256": "4e925703358fe16201464c705377815412a48f849f75b007a5301e087427a87f"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-cpu.json.gz",
+      "bytes": 20718,
+      "sha256": "87ad94cc67ea9213fc649aeed4fda0177df6d6f0059c7bc37b882aec9a53c669",
+      "stored_bytes": 1557,
+      "stored_sha256": "50e71af6917841814f3a70336318c714092e92269b78c191e2ad89e53296b8cf"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-rows.json.gz",
+      "bytes": 1360,
+      "sha256": "246c7c2df80b890a2ab5b0bb7d31d2d062ad7e2a05a055901a464cd5b637a2f2",
+      "stored_bytes": 265,
+      "stored_sha256": "a1ef7ad94c47bd6c48c4305c7e59a8b79b0674ab8cfecb4399b7154d39cb67f6"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-screens.json.gz",
+      "bytes": 5414,
+      "sha256": "7e293c3ccc56fab8bd8565ccfd994b2992fe693189d8a53248f12fadd86ceb22",
+      "stored_bytes": 1848,
+      "stored_sha256": "c70fa6624dfc5cd9e10f526fdf00c94d9af1ec41eb1d42c701050e1768b48890"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-states.npz.gz",
+      "bytes": 282,
+      "sha256": "760ee376387ec88cf3e056c092c450cbc3c2129211645dce4b07c3d201667307",
+      "stored_bytes": 254,
+      "stored_sha256": "f410c8c5a21d3545bcc06b316c9268c4bdbbe2a087f109bd64c6efd76832dda7"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-timing.debugger.txt.gz",
+      "bytes": 13389,
+      "sha256": "a69413b668a869f5b036e2dc736a3de488d3cc4ed654ff3fe7e9181ef6ef966e",
+      "stored_bytes": 1873,
+      "stored_sha256": "60ed5046e7a10c3bea66f11818fbcb16eb6fd65f976572efaa467ef1506fc7b8"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-timing.json.gz",
+      "bytes": 18518,
+      "sha256": "830c7aeede014932611184df9a6b6dcf3f5efdcee180d6cf9becab4373f72c26",
+      "stored_bytes": 2949,
+      "stored_sha256": "68d88f1c28777cf0f6039bf5386f9ddc4181ca6e595a0788143ec4cd982f5100"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-timing.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "anamorphic-work-ZX-video_part01-timing.trace.txt.gz",
+      "bytes": 3330,
+      "sha256": "c7cd0d0af6286850f6595e0a93c22add795a2ab985dee7698f32bdb5b8f9f849",
+      "stored_bytes": 749,
+      "stored_sha256": "fea33f4115e5f9d455bb489e04a2bdf4e47c3951e70b5898384c7b49f2999a28"
+    },
+    {
+      "file": "anamorphic-ZX-video_part01.json.gz",
+      "bytes": 2303763,
+      "sha256": "1d0e6ae5ea709a9b1e7819f172798e3a3f19fc189d22364868f1f8c13404d144",
+      "stored_bytes": 97238,
+      "stored_sha256": "d569ec1c2bd0a59b91f3b22cb2dd9f989a30190d3f1d03468a4fa9a4a9356e36"
+    },
+    {
+      "file": "anamorphic-ZX-video_part01.trd",
+      "bytes": 655360,
+      "sha256": "c7f7e308e9716a4484022d09f08678869d5d3b3b5633f0298f8a0f8c68af1784",
+      "stored_bytes": 655360,
+      "stored_sha256": "c7f7e308e9716a4484022d09f08678869d5d3b3b5633f0298f8a0f8c68af1784"
+    },
+    {
+      "file": "anamorphic-source.mkv.gz",
+      "bytes": 1549,
+      "sha256": "3d8b35ebd1dd76cce6aa24d22e8f40ca59524c65bb2993c02504cb0af6ae31e2",
+      "stored_bytes": 808,
+      "stored_sha256": "d1db1433503cfe10dc228c3689a26472d7896acf79b457b5c145803902ee311e"
+    },
+    {
+      "file": "anamorphic-run.log.gz",
+      "bytes": 3663,
+      "sha256": "ed7a14f5880892cf88683241aa528c5964dca6b8bac761c1220d2eacdbb733e1",
+      "stored_bytes": 1759,
+      "stored_sha256": "d521333af1117185f7f5d6e87f4e3fd2405228dd832a511fbbd2acff26a019f0"
+    },
+    {
+      "file": "audio-tail-audio-quality.json.gz",
+      "bytes": 1040,
+      "sha256": "5e536d9a3b27bd13d96658e869d3da6bcbc5c954dd92343fb2e41edeb7eedb45",
+      "stored_bytes": 547,
+      "stored_sha256": "ba0f973f313ca9f4030308d70de524a48de75f1d9fe0a4cc9e1595959ff58d7d"
+    },
+    {
+      "file": "audio-tail-codec.json.gz",
+      "bytes": 810,
+      "sha256": "132cb79a5cc8b1855fd8a40fb50fefcf48d22a364378e38933c64509403d65cb",
+      "stored_bytes": 256,
+      "stored_sha256": "49cdb6ad28b0cd0756f30be594e051becfb83f386b0481ca213edafc165db1af"
+    },
+    {
+      "file": "audio-tail-conversion.json.gz",
+      "bytes": 4028,
+      "sha256": "bde2cff5ad452f25900f6d57108802675cb15023ad18c8a8e6e5afd71d77738e",
+      "stored_bytes": 1534,
+      "stored_sha256": "8d2076f8acfed809f09e5c8e287972f79aa0adb4957d302353125bd8b42b37ee"
+    },
+    {
+      "file": "audio-tail-partition.json.gz",
+      "bytes": 2793,
+      "sha256": "7fedae9b43f763cded9b60d70119be76b76c86a3302b53b4c6f3e5a2e36e16c2",
+      "stored_bytes": 715,
+      "stored_sha256": "2e5c39396bcecf48f2522fc7255915077cc71407e8ec8010ed666dc63ffb5115"
+    },
+    {
+      "file": "audio-tail-timing.json.gz",
+      "bytes": 3051,
+      "sha256": "f85e71baf427a9e5e581ad6fa2ada8ac783261cb1f0515b68cf6b7e59b77029d",
+      "stored_bytes": 1126,
+      "stored_sha256": "16940c3e81475927bec6dd9c7d06c684c215a3702170b3218cd92048946dc48e"
+    },
+    {
+      "file": "audio-tail-video-preview.png.gz",
+      "bytes": 12720,
+      "sha256": "773d11e1d7f8f01d219d5e7825f0f69a9e19951c15a768fac45ca0215cb521cf",
+      "stored_bytes": 7630,
+      "stored_sha256": "866e8a77b1048f5d75afb7133b1c72e11c51e7ba8d3d47256d479d17d25051c4"
+    },
+    {
+      "file": "audio-tail-video-quality.json.gz",
+      "bytes": 748,
+      "sha256": "ce338a740070303f078494d1ef7133f3b201898df334e583c4e8d42efd4d0bc2",
+      "stored_bytes": 349,
+      "stored_sha256": "db5521819c3c450ff5de008cb0a1ad2448c043613a3f9d521faa0517a35d039b"
+    },
+    {
+      "file": "audio-tail-volumes.json.gz",
+      "bytes": 405,
+      "sha256": "1413f9123163857cac05a87940048caa60e72a0fec543383c08ced4e6f2d8ebd",
+      "stored_bytes": 249,
+      "stored_sha256": "60279f00401c4f5ad9ff4826892293fe5b229ece23e37ec9a525ebdef1bcfc99"
+    },
+    {
+      "file": "audio-tail-work-ay.bin.gz",
+      "bytes": 270,
+      "sha256": "c31383fc26dd97dbe3ddb1a2364d34919e2a309fde75995fba851b1cbeb8619d",
+      "stored_bytes": 44,
+      "stored_sha256": "274159cdac856429ecbb1a1cde4569479d7190adee3fd59a71a57839ec9c23d2"
+    },
+    {
+      "file": "audio-tail-work-conversion.npz.gz",
+      "bytes": 19466,
+      "sha256": "2a25ff35c787a49d261ca8fba9119893fb54594f10bf1f2da1fa5fabd5e86264",
+      "stored_bytes": 305,
+      "stored_sha256": "ba24c8dad3d046f322d1966bf05c158691514e7f0309e84ccf4c6ee2c7a6a1cc"
+    },
+    {
+      "file": "audio-tail-work-five-states.npy.gz",
+      "bytes": 23168,
+      "sha256": "ff593dd1ea3de71084de70e0e99f514cd0465f49c7827366e191ce1268b57db1",
+      "stored_bytes": 243,
+      "stored_sha256": "366f1b5b3253c839e7c6c347135dd63717557a545b17d2e9cb4041af498a7b55"
+    },
+    {
+      "file": "audio-tail-work-frames.rgb.gz",
+      "bytes": 138240,
+      "sha256": "02d05a463bdee0dd66b602d3862e81902d62085c3571aa3423e6d2fafa3203e3",
+      "stored_bytes": 644,
+      "stored_sha256": "86f93a2542fc93d5e727f4d3037cf48d238e90ef60c3be002897bc1a61d6bf32"
+    },
+    {
+      "file": "audio-tail-work-states.npy.gz",
+      "bytes": 19328,
+      "sha256": "8d904deb10c60a6cbe35cd4eca514c7c46f524248741306ca54cd72d4c1766ac",
+      "stored_bytes": 214,
+      "stored_sha256": "8ff0065100ba7c55d541444dde73de6ce1db883f7be7e0c488c8314382c3819f"
+    },
+    {
+      "file": "audio-tail-work-stream.raw.gz",
+      "bytes": 4040,
+      "sha256": "aa363b200d930a7f5f9a61e7590a6f44fd75d8fdf741d15f6de5026b95d4e165",
+      "stored_bytes": 312,
+      "stored_sha256": "79c29b06b4a7ba320f33183a3a19115149510a414a9672a81658b8f383975efe"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-audio.ayh1.gz",
+      "bytes": 104,
+      "sha256": "965410066817e433e6cb309ed7bd03a86fb30ff5942606913f97256d0dcfc3e5",
+      "stored_bytes": 87,
+      "stored_sha256": "34558fa8787bd26290583e4793e3ca6eea4a75b33f3298ae7d1ed2ee520c047e"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-0-1536.debugger.txt.gz",
+      "bytes": 24375,
+      "sha256": "9d7f41da5a46cf097923ad64a28a25583674eb4b6b5662049dfa02d2d1d9c72f",
+      "stored_bytes": 4131,
+      "stored_sha256": "155d56aa7ca6512de2ceadaee11ab4045d6b3a0f18c96cd5223d152b71ae4943"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-0-1536.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-0-1536.trace.txt.gz",
+      "bytes": 13777,
+      "sha256": "c23ecb320e2ccc458f45d1d9947c50f69e3f042a2fbb29d6d2a8bebc530de2f4",
+      "stored_bytes": 593,
+      "stored_sha256": "f6c976ae837ee758f1f3a37b4415169d6446c61aa33821cb53a472b6efa4e381"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-1536-3072.debugger.txt.gz",
+      "bytes": 25486,
+      "sha256": "ee420af54881aaf15c43a9034579e9d4ad2fa607450714d5102db01fc742c7cd",
+      "stored_bytes": 4006,
+      "stored_sha256": "cf958b0eb352fc7328635608ca1118a0fe92c436d49383c888007a632b422fca"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-1536-3072.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-1536-3072.trace.txt.gz",
+      "bytes": 15937,
+      "sha256": "d8ffc97a136b681e74507af51e34f77a85c69cfab9651f13f5eb8902e8fe1da3",
+      "stored_bytes": 589,
+      "stored_sha256": "f29c31d2b6dc00e603b3da997bb0062c604fe4855ca2cf024140dce97350476c"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-3072-4608.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "dfcd70fe08d722eaad219c5ea1ddd430c28475b4fd03ad48152bfdba9cf6c6f5",
+      "stored_bytes": 3989,
+      "stored_sha256": "171a82481d4d99be79723b2991046f2f040aac85d4eded65d9b88f944d9d2dda"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-3072-4608.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-3072-4608.trace.txt.gz",
+      "bytes": 16156,
+      "sha256": "df8fd02a89b0d05c74d1c25a0b8866fbb7b4b51a1c0c9ad7f277eff434583a7d",
+      "stored_bytes": 625,
+      "stored_sha256": "f5b2f0ca6c2496f844412df08dfb486e56c1108b8347a22fe7903e82e21fa7ee"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-4608-6144.debugger.txt.gz",
+      "bytes": 25485,
+      "sha256": "c5a60474a1b5b20e06f9889efc1e59da777af0d60c2cc7d043d4aa7cf2e5b639",
+      "stored_bytes": 4025,
+      "stored_sha256": "dd5fff447269207868daec8b68befc0ed1045b2ba095b968fedd92079853c89e"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-4608-6144.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-4608-6144.trace.txt.gz",
+      "bytes": 13777,
+      "sha256": "1246e40d46717fe27adeb0e10f6b6bfdb16025a9f33de433a8f2b4d65f2612b7",
+      "stored_bytes": 596,
+      "stored_sha256": "282ab5a3b02b80ada31380d7a02452ae64aa65b476156862511aef0c61863d61"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-6144-6912.debugger.txt.gz",
+      "bytes": 13005,
+      "sha256": "262a031dfa15f9bebb9eb43f11dd0919300c8aa1b8f7b7db831b6e0a1870030a",
+      "stored_bytes": 2044,
+      "stored_sha256": "9b86acd29a646169a5f8b0b52176461524d05a25d8d1ee373a9f1d846fc9a9a2"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-6144-6912.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-bytes-6144-6912.trace.txt.gz",
+      "bytes": 10787,
+      "sha256": "dca1a1f36017c86278c11ca995654e52ff5b2839296b379f00e86247846c4540",
+      "stored_bytes": 570,
+      "stored_sha256": "b2df20d046f7011977af42777dc4b0623b195769a9211bc19824d71df931f479"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-captures-progress.json.gz",
+      "bytes": 7106,
+      "sha256": "a2c0d45b1fd39417caf0a432f1c511bb7fd23ff48c9d82b94fd1128ab72115c0",
+      "stored_bytes": 1253,
+      "stored_sha256": "b6ef1bfba5bea7efa2417bdb4a2f3cb157a2f8c9a102f32dbae54d7c41aefd0f"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-codebook.raw.gz",
+      "bytes": 3516,
+      "sha256": "dc4f88c35b82c6c691d8f2438fdaeef4fd0cad8799a17bf741ecf253cf092dc7",
+      "stored_bytes": 74,
+      "stored_sha256": "892b55369fbddaf24dffdcd4758e5ac2e857ad4b9e6d2581905402bc3bfb4967"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-codebook.stream.gz",
+      "bytes": 52,
+      "sha256": "084b76fe0368d1990dac5a13ee2b00bf503d299c8e41a1b2768542ac1d8450f6",
+      "stored_bytes": 75,
+      "stored_sha256": "d397fc324fab37af31b2a1e9f3705c37924ba7ea60bf6f1aaa9f5d273abc7ed3"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-cpu.json.gz",
+      "bytes": 21857,
+      "sha256": "7346a070c3419ba42cdd381dd6d5960a3c0735ef91bfdb2b2831616a1577f456",
+      "stored_bytes": 1627,
+      "stored_sha256": "78c8bf56c8c1bcc22c01198eaf433e12435c870e6605adf4c15e07e3ecfd8a77"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-rows.json.gz",
+      "bytes": 1360,
+      "sha256": "246c7c2df80b890a2ab5b0bb7d31d2d062ad7e2a05a055901a464cd5b637a2f2",
+      "stored_bytes": 265,
+      "stored_sha256": "a1ef7ad94c47bd6c48c4305c7e59a8b79b0674ab8cfecb4399b7154d39cb67f6"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-screens.json.gz",
+      "bytes": 8766,
+      "sha256": "daacccd5ad7eac3b87970b22420e793158c6e2f1e04914a9d73ebb63b456a389",
+      "stored_bytes": 2217,
+      "stored_sha256": "42c66a30acaac7d17494ed2c5638a238460ddcd2cd6b54bb9a20ac23cb6102a2"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-states.npz.gz",
+      "bytes": 374,
+      "sha256": "fa931038423e6d7bd4146d33384ceecfb5e97ed3633e6b239ca97894e35070e8",
+      "stored_bytes": 341,
+      "stored_sha256": "e7a6f848d93f7c5f7c3817c5fc3fc4ce56993124f58df099ce1cb75eefeb619b"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-timing.debugger.txt.gz",
+      "bytes": 13389,
+      "sha256": "bb0b22c4b7be6ef18b2cc222a58285a6b7782301fd5dd59367badf4fb3112680",
+      "stored_bytes": 1873,
+      "stored_sha256": "20613ef4aa2df06340504bd8abe4cafd95a23da5c0e900a75777bbaf9901d8e6"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-timing.json.gz",
+      "bytes": 19126,
+      "sha256": "2e018ed55eeae8db2335ad659be7ef925091d25a4ac18cd78302a571a187e073",
+      "stored_bytes": 3083,
+      "stored_sha256": "2603eb3ab74c3d5336eb540f3df09d827bd471464fe881ec37fe07624e2cb1a0"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-timing.stderr.txt.gz",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 20,
+      "stored_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "audio-tail-work-ZX-video_part01-timing.trace.txt.gz",
+      "bytes": 5382,
+      "sha256": "575b7b3a5b91785d3d6736d7d2edd10bc3c4fd76afd0efc47aba3e84fd28513a",
+      "stored_bytes": 991,
+      "stored_sha256": "6cfaeb1805ddfac8649ea021dbe577205820462273a61c8ad870c6c2c7068c40"
+    },
+    {
+      "file": "audio-tail-ZX-video_part01.json.gz",
+      "bytes": 2303835,
+      "sha256": "8565ebbe4cca38388962e0a7bce49e266699c159fc227f78da654f1fba930e12",
+      "stored_bytes": 97286,
+      "stored_sha256": "156bb0e8de7e39cbb968a186f68a306efbf675d4b96ed592ecf0e4c144b4c804"
+    },
+    {
+      "file": "audio-tail-ZX-video_part01.trd",
+      "bytes": 655360,
+      "sha256": "f040bba7c54d378640ebda2cf00d7517c1ebe2e969641e3fdacd41ec13effc50",
+      "stored_bytes": 655360,
+      "stored_sha256": "f040bba7c54d378640ebda2cf00d7517c1ebe2e969641e3fdacd41ec13effc50"
+    },
+    {
+      "file": "audio-tail-source.mkv.gz",
+      "bytes": 23838,
+      "sha256": "662a451430a5db7a374a68bbaa7b02d69e38c12b30585896829d952f0c923aec",
+      "stored_bytes": 2534,
+      "stored_sha256": "1168403df6dc81b367fb7417ea35ad20eb4ac0dff1a0eb61d7933a9c2276c873"
+    },
+    {
+      "file": "audio-tail-run.log.gz",
+      "bytes": 3696,
+      "sha256": "dcb45a03fadb6bd6dccfc49a4820ecb9e929227edcaea4389f439bc6b8f0e94b",
+      "stored_bytes": 1780,
+      "stored_sha256": "2e31647fc1a0964baa87614388601c3b217f1d781db5ebb7835d30213fa08725"
+    },
+    {
+      "file": "checks.json.gz",
+      "bytes": 4479,
+      "sha256": "721be3941007198de3a9b666817ff3aed4b9f1dbddc3fe4d907f69ac60bebe9c",
+      "stored_bytes": 1504,
+      "stored_sha256": "c38d18911cab395d87afbc73d88826f09b67a802f047b99ad6be18d5bf8f736c"
+    },
+    {
+      "file": "initial-single-failure.json.gz",
+      "bytes": 2340,
+      "sha256": "e95f48261da134690151ffb19b92a34fd05fb9461159d302c8b52f66a3028e8e",
+      "stored_bytes": 976,
+      "stored_sha256": "4ffeae48c74a835a1728cf702529e0cda778224e285b786e5da739a4dfabe3e6"
+    },
+    {
+      "file": "initial-single-failure.log.gz",
+      "bytes": 3080,
+      "sha256": "07899e3ff5be4b08bf31d569ff76da78ce4e133aaec7f22578d6e519898ccf6f",
+      "stored_bytes": 813,
+      "stored_sha256": "95c00e6de0310119345730f52fed763ad9f4daf4636f2846508bb2e091b35f86"
+    }
+  ]
+}
