@@ -5,6 +5,39 @@ the verified five-level renderer and LZSA2 transport to ordinary video input.
 The existing FAP3 default is unchanged. No movie name, source-frame numbers,
 crop, credit edit or volume boundaries are embedded in the new path.
 
+## Experimental guarded CB46 profile (2026-10-01)
+
+Add `--guarded-cb46` to select the current experimental delivery profile as
+one unit: dynamic rows, front reuse, partial row pairs, inline cells, four
+video slots, fixed AY trees/tail, compressed-sector cache, streaming LZSA2
+and the direct header guard. Example:
+
+```powershell
+python toolkit/convert_video.py "C:/Video/example.mkv" --output "build/example-cb46" --video-codec cb41 --fps 10 --guarded-cb46 --lzsa "C:/Tools/lzsa.exe" --trdos-rom "C:/Tools/Fuse/roms/trdos.rom" --verify fuse --fuse "C:/Tools/Fuse/fuse.exe"
+```
+
+The host removes invisible attribute writes only when every used RGB colour
+remains exact until the next original write on the same physical screen.
+Bitmap bits, dither phase and AY stay unchanged. Each selected LZSA2 block
+must be no larger and no slower than its original block in independent Z80
+execution. Failed blocks restore overlapping original packets, then replan
+attribute histories. No byte saving means the original stream is retained.
+Unchanged blocks reuse their measured encoding; repeated candidates are cached.
+Each volume saves this decision in `work/<volume>/compression-selection.json`.
+
+Planning uses the existing short windows and checks the actual fixed AY
+forest/payload against both the decoder and the B900h cache helper. Short
+inputs can place the legacy decoder differently; after retiring that unused
+renderer, the CB46 profile fixes LZSA2 at 8D74h. Public entries/state and all
+instruction T-states stay unchanged; relocation is recorded in metadata.
+
+This profile has complete cold/native/Fuse checks on five short generic input
+types, including a three-disk fixture, plus exact reproduction of the accepted
+256-frame movie compression window. Those tests do not establish sustained
+four-disk movie delivery: the saved full fourth-volume candidate still misses
+22 nominal deadlines. Keep per-input full timing verification. Default profiles
+and root release disks are unchanged. [Evidence](generic_guarded_cb46_report.json).
+
 ## Command and output
 
 ```powershell

@@ -52,9 +52,9 @@ def model(matches,n,costs):
     return choices,old_bytes,old_cycles
 
 
-def fit(payload,raw,byte_budget,cpu_budget,costs,regions,z,native):
+def fit(payload,raw,byte_budget,cpu_budget,costs,regions,z,native,*,source=0x4000):
     _,rows,_=parse(payload,len(raw));matches=[(r['position'],r['length'],r['distance']) for r in rows]
-    current=execute(regions,z,native,payload,raw);steps=[];original=payload
+    current=execute(regions,z,native,payload,raw,source=source);steps=[];original=payload
     while current['tstates']>cpu_budget:
         choices,size,ticks=model(matches,len(raw),costs);assert size==len(payload)
         allowed=[c for c in choices if c['bytes']<=byte_budget]
@@ -64,7 +64,7 @@ def fit(payload,raw,byte_budget,cpu_budget,costs,regions,z,native):
         assert len(coded)==chosen['bytes'] and lzsa2_stream.trace(coded,limit=len(raw))[0]==raw
         _,actual_size,actual_ticks=model(matches,len(raw),costs)
         assert actual_size==len(coded) and actual_ticks==chosen['token_tstates']
-        measured=execute(regions,z,native,coded,raw)
+        measured=execute(regions,z,native,coded,raw,source=source)
         steps.append(dict(chosen,native_before=current['tstates'],native_after=measured['tstates']))
         payload,current=coded,measured
     return payload,current,dict(steps=steps,removed_matches=len(steps),before_bytes=len(original),after_bytes=len(payload),

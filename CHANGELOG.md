@@ -5,6 +5,63 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: generic converter selects the guarded four-slot CB46 profile
+
+- Objective: connect the measured compression/delivery components to the
+  ordinary video converter without movie-specific paths or cuts. Baseline
+  `7cfbacf`. Keep default profiles unchanged; add opt-in `--guarded-cb46`.
+- The profile selects dynamic rows, front reuse, partial row pairs, inline
+  cells, four video slots, fixed AY trees/tail, compressed-sector cache and
+  direct-header streaming LZSA2 as a unit. Planning retains the existing
+  32-frame probes and checks the actual AY forest/tail, including its B900h
+  cache-helper boundary. It does not build alternate complete disk sets.
+- The generic host selector removes invisible attribute writes, measures
+  every block with the independent Z80 core and enforces its original byte
+  and CPU budgets. It restores failed frame packets, replans histories and
+  retains the original stream if no byte saving remains. Unchanged blocks
+  reuse their encoding; repeated candidates are cached. The flat measurement
+  input moved to 2000h so near-incompressible blocks cannot overlap the
+  7C00h wrapper; this is not a player RAM-layout change. The existing fitter
+  retains its previous default input address for other callers.
+- Saved movie window [4096,4352): the generic representation and accepted
+  output reproduce the earlier candidate exactly: 185681 ->185605 bytes,
+  16049945 ->16036695 decoder T, unchanged rendered RGB and row/cell books.
+  Only nine distinct blocks are recompressed. Reuse
+  `.tmp/generic-guarded-window/`; no new movie TRD was built.
+- The first generated colour fixture failed before writing an image:
+  its inherited LZSA2 core starts at 8D98h and overlaps the inline renderer.
+  The new opt-in build-time relocation pins it to 8D74h after retiring the
+  unused legacy renderer. Public entries/state and producer bytes stay
+  fixed. Every listed instruction keeps its absolute T-state count: the
+  old/new timing arrays are archived, per-instruction and total deltas zero.
+  The final 222-byte cold wrapper and 251-byte streaming core are identical
+  to the measured full-volume decoder. No new playback opcode is introduced.
+- Verification: 21 focused tests pass, including unchanged default modes,
+  real independent decoder costs, forced CPU-budget fallback, both screen
+  histories, exact RGB, fixed AY limits and the B900h collision boundary.
+  Five generated media cases (single frame, portrait, colour, non-square
+  pixels and longer audio tail) produce seven independently bootable test
+  TRDs. All 23 frames /158976 screen bytes and 115 AY ticks pass complete
+  native/cold/Fuse checks with zero nominal misses. The colour case spans
+  three disks; both modeled-ROM swap/bootstrap checks pass. This does not
+  claim full preceding-EOF Fuse continuation for the movie.
+- Decision: retain the generic profile as experimental. These short tests
+  prove converter integration, not sustained delivery of the movie. Root
+  releases remain unchanged; full part 4 still has 22 nominal misses, and
+  the four-volume cold/continuation release gates remain open.
+- Reproduce with [selector](toolkit/guarded_cb46.py),
+  [window check](toolkit/check_guarded_cb46.py), `check_generic_cb41.py
+  --fps 10 --guarded-cb46`, [tests](toolkit/test_guarded_cb46.py) and
+  [archive verifier](toolkit/verify_guarded_cb46.py).
+  [Report](toolkit/generic_guarded_cb46_report.json) retains the failed
+  placement attempt and all successful checks; test TRDs use Git LFS.
+- Next bounded timing investigation: the current cached-seek helper always
+  issues SEEK and sets the delayed READ command 84h after changing logical
+  track, including a side change on the same cylinder. Check the actual
+  ROM/controller requirements before attempting to omit that work. Compare
+  the same window and complete part 4 if a guarded path is feasible; keep
+  codec/media bytes unchanged and account separately for CPU and disk time.
+
 ## 2026-10-01: invisible attribute removal saves bytes within every original decoder budget
 
 - Objective: improve compression at unchanged decoding cost on cached CB46

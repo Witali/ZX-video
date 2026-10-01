@@ -88,7 +88,7 @@ def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False):
 
 
 class Builder(PreviousBuilder):
-    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,inline_cells=False,sector_cache=False,streaming_lzsa2=False,optional_read_gate=False,direct_lzsa2_header=False,early_lzsa2_prefix=False,**kwargs):
+    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,inline_cells=False,sector_cache=False,streaming_lzsa2=False,optional_read_gate=False,direct_lzsa2_header=False,early_lzsa2_prefix=False,fixed_cell_decoder=False,**kwargs):
         if frame_fields not in (5,6):raise ValueError('CB41 supports five or six fields per frame')
         self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
@@ -113,6 +113,8 @@ class Builder(PreviousBuilder):
         if shared_audio and not self.front_reuse:raise ValueError('shared fixed audio requires CB44')
         self.dynamic_rows=cell_raw[:4] in (b'CB42',b'CB44',b'CB46')
         self.reference_frames=reference_frames
+        self.fixed_cell_decoder=fixed_cell_decoder
+        if fixed_cell_decoder and not self.front_reuse:raise ValueError('fixed cell decoder requires retired CB44/46 reconstruction')
         if cell_raw[:4] not in (b'CB41',b'CB42',b'CB44',b'CB46') or entries!=256 or cell_start<0:
             raise ValueError('this builder needs a 256-entry book and a nonnegative start')
         if self.dynamic_rows and reference_frames is None:
@@ -157,6 +159,9 @@ class Builder(PreviousBuilder):
             banks[bank(at)][at&16383:(at&16383)+len(data)]=data
         regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse,fast_masks=self.front_reuse,partial_rows=self.partial_rows,inline_cells=self.inline_cells)
         origin=regions[0][0]
+        if self.fixed_cell_decoder:
+            from fixed_cell_decoder import install
+            install(read,put,m)
         if self.inline_cells and m['lzsa2']['layout']['core_end']>origin:
             raise ValueError('unrolled cell renderer overlaps the LZSA2 core')
         screen_base,saved_page=labels['end'],labels['end']+1
@@ -164,7 +169,8 @@ class Builder(PreviousBuilder):
         obsolete=[]
         if self.front_reuse:
             core=m['decoder_labels']['start']
-            if not 0x8000<core<native.CODE or core!=m['pre_fast_bank2_zx0']['new_origin']:
+            expected_core=m.get('cell_core_relocation',{}).get('new_origin',m['pre_fast_bank2_zx0']['new_origin'])
+            if not 0x8000<core<native.CODE or core!=expected_core:
                 raise ValueError('unexpected fixed LZSA2 core; cannot retire legacy reconstruction')
             obsolete=[dict(start=0x8000,end=core,reason='legacy motion/patch reconstruction replaced by CB44')]
         spans=[(origin,0x9400),(0xa800,0xb700),(PACKET,0xe000)]

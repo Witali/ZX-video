@@ -28,8 +28,9 @@ def main():
     for name in ('ffmpeg', 'ffprobe', 'zx0', 'lzsa'):
         p.add_argument('--'+name)
     p.add_argument('--fuse', type=Path)
-    p.add_argument('--only', help='run one named generated case')
+    p.add_argument('--only', help='comma-separated generated case names')
     p.add_argument('--fps', choices=('25/3', '10'), default='25/3')
+    p.add_argument('--guarded-cb46',action='store_true',help='exercise the experimental generic four-slot profile')
     p.add_argument('--movie-states', type=Path)
     p.add_argument('--movie-measurements', type=Path)
     a = p.parse_args()
@@ -40,6 +41,7 @@ def main():
     a.output.mkdir(parents=True, exist_ok=False)
     report = dict(complete=False, release=False, baseline_commit='9885483', cases=[],
                   native_instruction_delta_tstates=0, actual_fuse_requested=bool(a.fuse))
+    if a.guarded_cb46:report.update(baseline_commit='7cfbacf',profile='cb46-guarded-v1')
     a.report.parent.mkdir(parents=True, exist_ok=True)
     write_json(a.report, report)
     cases = [
@@ -54,10 +56,12 @@ def main():
                        '-f', 'lavfi', '-i', 'sine=frequency=330:sample_rate=22050:duration=0.5'],
                        ['-c:v', 'ffv1', '-c:a', 'pcm_s16le'], 5, []),
     ]
+    selected=set(a.only.split(',')) if a.only else {c[0] for c in cases}
+    if selected-{c[0] for c in cases}:p.error('unknown generated case name')
     for name, inputs, encoding, count, extra in cases:
         if fields == 5:
             count = dict(single=1, portrait=4, colour=10, anamorphic=3, **{'audio-tail':5})[name]
-        if a.only and name != a.only:
+        if name not in selected:
             continue
         source = a.output/(name+'.mkv')
         subprocess.run([tools['ffmpeg'], '-v', 'error', '-nostdin', '-y', *inputs,
@@ -70,6 +74,7 @@ def main():
             command += ['--'+key, value]
         if a.fuse:
             command += ['--fuse', str(a.fuse)]
+        if a.guarded_cb46:command+=['--guarded-cb46']
         with (a.output/(name+'.log')).open('w', encoding='utf-8') as log:
             result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT)
         if result.returncode:

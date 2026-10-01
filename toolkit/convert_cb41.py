@@ -31,8 +31,10 @@ WINDOW = 32
 VIDEO_BUDGET = (2544-160)*256
 
 
-def video_encoder(dynamic_rows=False,front_reuse=False):
-    if front_reuse:
+def video_encoder(dynamic_rows=False,front_reuse=False,guarded_cb46=False):
+    if guarded_cb46:
+        from guarded_cb46 import representation as selected
+    elif front_reuse:
         from front_cell_reuse import representation as selected
     elif dynamic_rows:
         from dynamic_row_dictionary import representation as selected
@@ -58,7 +60,7 @@ def pack_blocks(raw, codec, cache):
 
 
 def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6, target_volumes=None,
-                 volume_cuts=None, dynamic_rows=False, audio_banks=1,front_reuse=False):
+                 volume_cuts=None, dynamic_rows=False, audio_banks=1,front_reuse=False,guarded_cb46=False):
     """Measure short windows once; choose cuts without building candidate sets.
 
     Exact row unions include both histories. Window byte costs select an
@@ -66,10 +68,18 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6
     Final TRD capacity is a separate gate, never inferred from this estimate.
     """
     sets = row_sets(frames)
+    if guarded_cb46:audio_banks=2
     audio_options=dict(frame_fields=frame_fields)
     if audio_banks!=1:audio_options['audio_banks']=audio_banks
-    dynamic_rows=dynamic_rows or front_reuse
-    represent=video_encoder(dynamic_rows,front_reuse)
+    dynamic_rows=dynamic_rows or front_reuse or guarded_cb46
+    represent=video_encoder(dynamic_rows,front_reuse,guarded_cb46)
+    def selected_audio(lo,hi):
+        coded,report=audio_size(audio,lo,hi,labels,**audio_options)
+        if guarded_cb46:
+            from guarded_cb46 import audio_fits
+            fixed=audio_fits(coded,labels)
+            report=dict(report,fixed_audio=fixed,resident_fits=report['resident_fits'] and fixed['resident_fits'])
+        return coded,report
     if volume_cuts is not None:
         if target_volumes is not None:
             raise ValueError('explicit cuts and balanced target are mutually exclusive')
@@ -80,7 +90,7 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6
         for lo, hi in zip(ends,ends[1:]):
             rows = len({0}.union(*sets[max(0,lo-2):hi]))
             if rows > 256 and not dynamic_rows: raise ValueError(f'explicit volume {lo}..{hi} needs {rows} rows')
-            coded, report = audio_size(audio,lo,hi,labels,**audio_options)
+            coded, report = selected_audio(lo,hi)
             if not report['resident_fits']: raise ValueError('explicit volume exceeds resident audio bank')
             parts.append(dict(start=lo,end=hi,audio=coded,audio_report=report))
             probes.append(dict(start=lo,end=hi,rows=rows,**report))
@@ -122,7 +132,7 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6
     parts, audio_probes = [], []
 
     def add(lo, hi):
-        coded, report = audio_size(audio, lo, hi, labels, **audio_options)
+        coded, report = selected_audio(lo,hi)
         audio_probes.append(dict(start=lo, end=hi, **report))
         if not report['resident_fits']:
             if hi-lo == 1:
@@ -160,12 +170,17 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     scaffold = LegacyBuilder(raw, compact, Path(executables['zx0']), work/'zx0')
     # Resolve the real audio ABI, rather than borrowing labels from a movie.
     labels = player_harness(bytes(4), scaffold.tables, scaffold.mapping, 1).audio
-    front_reuse=getattr(args,'front_reuse',False)
+    guarded=getattr(args,'guarded_cb46',False)
+    front_reuse=getattr(args,'front_reuse',False) or guarded
     dynamic_rows=getattr(args,'dynamic_rows',False) or front_reuse
-    audio_banks=getattr(args,'audio_banks',1)
-    represent=video_encoder(dynamic_rows,front_reuse)
+    audio_banks=2 if guarded else getattr(args,'audio_banks',1)
+    player_options={}
+    if guarded:
+        from guarded_cb46 import PLAYER_OPTIONS,select
+        player_options=PLAYER_OPTIONS
+    represent=video_encoder(dynamic_rows,front_reuse,guarded)
     parts, plan = plan_volumes(frames, audio, labels, codec, cache, args.max_frames_per_disk,
-        frame_fields, getattr(args,'target_volumes',None), getattr(args,'volume_cuts',None),dynamic_rows,audio_banks,front_reuse)
+        frame_fields, getattr(args,'target_volumes',None), getattr(args,'volume_cuts',None),dynamic_rows,audio_banks,front_reuse,guarded)
     only = getattr(args,'only_volume',None)
     if only is not None and not 1 <= only <= len(parts): raise ValueError('invalid selected volume')
     write_json(output/'partition.json', plan)
@@ -174,9 +189,10 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     if dynamic_rows:identity_options['dynamic_rows']=True
     if front_reuse:identity_options['front_reuse']=True
     if audio_banks!=1:identity_options['audio_banks']=audio_banks
+    if guarded:identity_options['profile']='cb46-guarded-v1'
     identity = sha(frames.tobytes()+b''.join(f.serialize() for f in audio)
                    +json.dumps(identity_options, sort_keys=True).encode())
-    fingerprint = (b'CB44GEN1' if front_reuse else b'CB42GEN1' if dynamic_rows else b'CB41GEN1')+bytes.fromhex(identity)[:6]
+    fingerprint = (b'CB46GEN1' if guarded else b'CB44GEN1' if front_reuse else b'CB42GEN1' if dynamic_rows else b'CB41GEN1')+bytes.fromhex(identity)[:6]
     records = []
     timing = dict(complete=False, release=False, all_nominal_deadlines_met=False,
         player_hot_path_changed=frame_fields!=6, player_hot_path_delta_tstates=0,
@@ -188,6 +204,10 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
         timing.update(player_hot_path_changed=True,player_hot_path_delta_tstates=None,
             audio_banks=[4,6],audio_refill_bridge_normal_delta_tstates=50)
     if front_reuse:timing.update(front_reuse=True,renderer_delta_tstates=None)
+    if guarded:
+        timing.update(profile='cb46-guarded-v1',unchanged_native_baseline='7cfbacf',
+            player_hot_path_changed=False,player_hot_path_delta_tstates=0,
+            cycle_scope='Same measured player opcodes; build-time relocation preserves every instruction timing. Data-dependent counts are per volume.')
     write_json(output/'timing.json', timing)
     for number, part in enumerate(parts, 1):
         if only is not None and number != only: continue
@@ -211,18 +231,31 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
             states = np.zeros((len(frames), 3840), dtype=np.uint8)
             states[chosen['first']:hi] = chosen['states']
             builder_states=states
-        np.savez_compressed(folder/'states.npz', states=states)
         packed, blocks = pack_blocks(chosen['raw'], codec, cache)
+        if guarded:
+            candidate=select(chosen['raw'],packed,blocks,chosen['rows'],frames,lo,hi,codec,cache)
+            states=candidate['states'];packed=candidate['stream'];blocks=candidate['blocks']
+            chosen=dict(chosen,raw=candidate['raw'],raw_sha256=sha(candidate['raw']))
+            builder_states[:,3072:]=states[:,3840:]
+            (folder/'codebook.raw').write_bytes(chosen['raw'])
+            write_json(folder/'compression-selection.json',candidate['report'])
+        np.savez_compressed(folder/'states.npz', states=states)
         (folder/'codebook.stream').write_bytes(packed)
         with reference_tables(chosen['rows']):
             builder = Builder(raw, builder_states, Path(executables['zx0']), work/'zx0',
                 row_dictionary=chosen['rows'], lzsa=Path(executables['lzsa']),
                 series_fingerprint=fingerprint, cell_raw=chosen['raw'], cell_start=lo,
-                frame_fields=frame_fields,reference_frames=frames if dynamic_rows else None, **OPTIONS)
+                frame_fields=frame_fields,reference_frames=states if dynamic_rows else None, **player_options,**OPTIONS)
             builder.ends = ends
             builder.inplace_streams[lo, hi] = packed, blocks
             builder.resident_streams[lo, hi] = b'', part['audio']
             image, metadata = builder.volume(lo, hi, number)
+            if guarded:
+                from guarded_cb46 import CORE
+                if image is not None:assert metadata['decoder_labels']['start']==CORE
+                metadata['compression_selection']=dict(profile='cb46-guarded-v1',
+                    report='work/'+stem+'/compression-selection.json',
+                    selected=candidate['report']['selected'],rendered_rgb_identical=True)
             write_json(output/(stem+'.json'), metadata)
             if image is None:
                 raise ValueError(f'CB41 disk {number} needs {metadata["used_sectors"]} sectors; '
@@ -292,6 +325,11 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
             cycle_note='Ordinary packet +18 T; renderer 0 T delta; row controls measured separately')
     if audio_banks==2:manifest.update(audio_banks=[4,6],audio_wire='AYB1',player_hot_path_changed=True,player_hot_path_delta_tstates=None)
     if front_reuse:manifest.update(front_reuse=True,wire='CB44',cycle_note='Counted CB44 mode reader and front copy; data-dependent timing')
+    if guarded:
+        manifest.update(profile='cb46-guarded-v1',wire='CB46',native_options=dict(OPTIONS,**player_options),
+            player_baseline='7cfbacf',audio_banks=[6],audio_wire='AYH1',
+            encoder_selection='Per-original-block compressed bytes and independent decoder T-states; original fallback',
+            cycle_note='Reuses the measured CB46 inline/four-slot/cache/direct-header opcodes unchanged; data-dependent costs are recorded per volume')
     if only is not None:
         manifest.update(whole_movie=False, selected_volume=only, source_movie_frames=len(frames),
                         frames=sum(r['frames'] for r in records), ay_ticks=sum(r['frames'] for r in records)*frame_fields,

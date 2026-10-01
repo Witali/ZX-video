@@ -150,11 +150,32 @@ recover at 379/603/626. This is a small encoder saving, not a release fix.
 Keep defaults/root images unchanged. The opt-in cached rebuilder accepts
 `--invisible-attributes-probe <selected folder>` and rechecks RGB equivalence.
 
-Next scope: consolidate guarded host candidate selection in the generic
-converter, reusing the saved window and explicit original byte/CPU budgets.
-Select only candidates with measured benefit; keep original data otherwise.
-Do not repeatedly rebuild disk sets for tiny host estimates. Four-volume
-cold/continuation release checks and the sustained timing problem remain open.
+Generic consolidation is complete as opt-in `convert_video.py --video-codec
+cb41 --guarded-cb46 --fps 10`. It selects the measured player components as
+one profile and enforces per-original-block byte/CPU budgets automatically;
+otherwise it keeps original packets/streams. The saved window reproduces
+185605 bytes and 16036695 T exactly, with nine distinct recompressions.
+The initial short-video build exposed an 8D98h decoder/renderer overlap;
+build-time relocation now pins the unchanged decoder to 8D74h, preserving
+public entries, producer bytes and every instruction's absolute T-state count.
+The generic planner checks actual fixed AY trees/tail and the B900h cache gap.
+Twenty-one tests plus five generated media cases pass: seven test TRDs,
+23 frames /158976 full screen bytes, 115 AY ticks, zero nominal misses and
+both modeled-ROM swaps of a three-disk fixture. These are integration checks,
+not sustained movie evidence. Reuse `.tmp/generic-guarded-window/`,
+`.tmp/generic-guarded-colour-fixed/`, `.tmp/generic-guarded-edge-cases/` and
+[archive](toolkit/generic_guarded_cb46_report.json). Defaults/root releases
+remain unchanged; do not repeat these fixture builds.
+
+Next bounded scope: investigate cached disk seeks on side-only changes.
+`fap3_disk_z80.build_cached_seek` currently always issues SEEK and sets READ
+command 84h for every logical-track change, including the same cylinder.
+Inspect the actual TR-DOS 5.03 ROM/controller requirements; only then test
+skipping unnecessary SEEK/settle work while preserving side selection and
+head-loaded keepalive. Count deterministic branch costs separately from
+ROM/physical latency. Reuse the same window first, then full part 4 if useful;
+preserve codec/media bytes and do not rebuild the whole movie. Four-volume
+cold/continuation release checks and sustained timing remain open.
 
 The sector-streaming LZSA2 experiment remains unselected. Eager
 prefix decoding produces 27 late frames / maximum 40 fields in the complete
