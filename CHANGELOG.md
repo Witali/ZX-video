@@ -28,6 +28,36 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — compare source-derived contours for monochrome objects
+
+- User requested more distinguishable object outlines. Baseline `0cbfa17`;
+  reuse three 32-frame windows from the monochrome preview, starting at
+  local 0/64/160 (movie 4128/4192/4288). Detect edges in smoothed source RGB
+  before grayscale/dither, preserving equal-luma colour boundaries. No
+  semantic segmentation, player instruction, format or default change.
+- Initial 5x5 sigma-0.9 Canny 60/120, minimum component 6 and full one-shade
+  darkening changes 11.25–19.11% of samples. It overtraces foliage and needs
+  210/342/282 dictionary rows; two windows exceed 256. The one encodable
+  window grows 9563 -> 18810 bytes. Reject and preserve this failed attempt.
+- One targeted follow-up: 7x7 sigma-1.4, Canny 100/200, minimum component 12,
+  luma reduction capped at 24 before quantization. Mean 2.11% samples change;
+  luma MSE 337.197 -> 368.405 (+9.26%). Exact LZSA2 window bytes
+  58241 -> 61369 (+5.37%), dictionaries 111/171/140 fit. Inspected three
+  static comparisons and saved a decoded-pixel/timing-checked host GIF;
+  object recognizability and motion-compensated flicker are not scored.
+- All 192 baseline/soft native draws, 1327104 screen bytes and instruction
+  timing/guard checks pass; 12 independent-emulator frame checks and eight
+  tests pass. Identical native code: 0 T instruction delta, book loader
+  54028 -> 54028 T. Data-dependent output mean 113522.833 -> 116020.792 T
+  (+2497.958, +2.20%); maxima 203692 -> 204075 T. These exclude LZSA2,
+  packet copy, paging, IRQ/ULA and disk latency.
+- Decision: retain optional soft prototype and reject strong tracing. No
+  new TRD or full-player run; prior root disks are unchanged. Check selected
+  whole-volume row capacity and complete playback before disk integration.
+  [Method, comparison and reproduction](toolkit/MONOCHROME_CONTOURS.md),
+  [evidence index](toolkit/monochrome_contours_report.json),
+  [probe](toolkit/probe_monochrome_contours.py).
+
 ## 2026-10-01 — build a monochrome comparison disk
 
 - At the user's request, convert the same difficult 10-fps window

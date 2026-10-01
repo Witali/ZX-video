@@ -69,6 +69,17 @@ zero-late timing does not. This is a visual preview, not the complete movie
 or a replacement release. The prepared builder accepts `--monochrome`;
 ordinary colour defaults are unchanged. [Evidence and reproduction](toolkit/MONOCHROME_PREVIEW.md).
 
+## Optional contour experiment completed
+
+Source-RGB contours were compared on 96 cached monochrome frames. Strong
+tracing overdraws texture and exceeds the 256-row limit in two windows;
+reject it. A softened pre-dither variant changes 2.11% of samples, costs
+5.37% more window bytes and 2.20% more native output T-states, and fits all
+three window dictionaries. All 192 baseline/soft native draws and eight
+tests pass. Keep this as an optional prototype: no new TRD/default change,
+full-player timing or full-volume capacity claim. A host comparison GIF is
+saved. [Evidence and next gate](toolkit/MONOCHROME_CONTOURS.md).
+
 ## Working method
 
 1. **Define one deliverable.** State the problem, baseline, hypothesis and
