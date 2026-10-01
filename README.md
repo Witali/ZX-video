@@ -31,7 +31,7 @@ one nominal 3 dB volume step quieter. `--ay-noise-steps 0` retains its previous
 level; `--ay-tuning-cents 0` disables period refinement (range: 0..100).
 The `audio-quality.json` report records the model and settings. This improves
 the measured audio windows but increases audio storage and register activity;
-new full-movie images still need capacity and playback checks.
+the four-disk refined movie below has complete capacity and playback checks.
 [Audio comparison, tests and reproduction](toolkit/AY_SQUARE_FIT.md).
 
 By default, all frames and Z80 timings are checked with ideal data delivery.
@@ -80,9 +80,9 @@ four-volume partition exceeds capacity. They are optional development modes.
 
 ## Refined colour and sound at 10 fps
 
-The latest complete movie preview is **15 independently bootable root TRDs**,
+The latest complete movie preview is **4 independently bootable root TRDs**,
 [`ZX-video-refined_part01.trd`](ZX-video-refined_part01.trd) through
-[`ZX-video-refined_part15.trd`](ZX-video-refined_part15.trd), stored in Git LFS.
+[`ZX-video-refined_part04.trd`](ZX-video-refined_part04.trd), stored in Git LFS.
 Play them in numeric order or start any disk independently. The next-disk
 prompt is in English. The authorized edit retains the post-credit scene:
 5066 frames, 506.6 seconds, and 25330 AY updates at 50 Hz.
@@ -92,17 +92,24 @@ harmonics and reduces noise by one nominal 3 dB step. Full-movie average
 frame RGB MSE is 6.76% below the old colour selector; visible colour bands
 remain in smooth skies. The new sound is an AY approximation of the source.
 
-All full screens and AY records match in complete Fuse playback. Cold runs
-have four isolated one-field (about 20 ms) late frames, each recovered by
-the next frame. Actual predecessor-EOF continuations across all disks also
-pass, with the same four late frames and no AY gaps or underruns. Physical
-floppy swaps were not tested. The one-field fallback passes; **zero-late 10-fps playback
-is not achieved**, so this is a preview rather than the strict release.
-Extra disks were explicitly authorized to preserve quality and 10 fps.
-Several short disks preload difficult scenes; 15 is not a minimum-size claim.
-The previous three-disk compatibility set remains available below.
+The four-disk set preserves every rendered pixel and AY register state of
+the previous 15-disk preview. Dynamic rows, partial row updates, four video
+buffers and side-only disk selection reduce storage and delivery stalls.
+All full screens, AY records, sectors and publication times are verified.
+Cold runs have one late frame on disk 3; sequential playback has one on disk 3
+and one on disk 4. Each is at most20 ms late and the next frame restores the
+original schedule. There are no dropped frames, accumulated drift, audio
+gaps or underruns. The explicitly authorized one-field fallback passes;
+**zero-late 10-fps playback is not achieved**. Physical floppy swaps were not
+tested. The previous three-disk compatibility set remains available below.
 
-[Complete timing, continuation and quality evidence](toolkit/refined_av_movie_report.json) ·
+For other videos, select the same player components automatically with
+`--video-codec cb41 --guarded-cb46 --fps 10 --verify fuse`. Disk count and
+timing depend on the input and are measured by the converter.
+
+[Four-disk usage, timings and reproduction](ZX-video-refined.md) ·
+[Complete four-disk evidence](toolkit/refined_four_report.json) ·
+[Historical 15-disk evidence](toolkit/refined_av_movie_report.json) ·
 [Failed eight-disk attempt and bounded probe](toolkit/refined_av_attempt_report.json) ·
 [Reproduction and decisions](CHANGELOG.md)
 

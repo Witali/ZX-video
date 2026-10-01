@@ -5,6 +5,65 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: deliver the full refined movie on four independent disks
+
+- Objective: replace the 15-disk refined movie with at most 4 disks, retaining
+  the complete authorized edit, refined RGB, square-aware AY50 and10 fps.
+  Baseline `f1476a2`. Build one coherent set from accepted cached CB46 streams
+  with boundaries0/1312/2672/3744/5066. Reuse the guarded part 4 attribute
+  stream; no media quantization, compression sweep or alternate partition.
+- New scripts: `build_cached_cell_set.py` authenticates cached media and
+  creates a common content-derived series ID plus independent cold state;
+  `check_cached_cell_set.py` runs native verification concurrently with serial
+  Fuse cold runs, predecessor-EOF continuations and full screen captures;
+  `finish_cached_cell_set.py` audits all gates, archives evidence and installs
+  only the expected numbered refined images. Wrong disks/series are rejected
+  at all 3 boundaries. The root-hash guard preserves unrelated changes.
+- Capacity: **2464/2476/2542/2543 occupied sectors**, each within 2544, leaving
+  80/68/2/1 sectors. Total video 2462188 bytes; four TRDs total 2621440 bytes.
+  First 3 volumes reuse 608061/604926/626506 video bytes, part 4 reuses 622695.
+  Decoder, renderer, packet and side-reader machine bytes match the passing
+  full part 4 baseline exactly; instruction delta 0 T. Build-time identity
+  changes only ID data. Per-volume CPU histograms and disk/IRQ/ULA elapsed
+  profiles are retained separately.
+- Fidelity: every prepared chunk is hash-checked and its five-level states
+  compared with the canonical 5066-frame movie. Independent full-frame RGB
+  proof preserves every visible pixel, including both screen histories;
+  only unused attribute bits differ. All25330 AY register states and every
+  disk-boundary checkpoint match the prepared refined soundtrack. The
+ 90-second credits cut is unchanged; retained source frame 0 through 5965
+  includes the post-credit scene and source EOF. The8 difficult/source/EOF
+  comparison samples were inspected; existing sky colour bands remain and
+  no new visible change is introduced. Frame-level quality metrics are saved.
+- Complete verification:4 dirty-RAM cold boots,4 native full-volume replays,
+  all 5066 cold Fuse frames and all 5066 sequential frames; each mode compares
+  **35016192 screen bytes** and25330 AY ticks. Continuation captures now load
+  the exact same predecessor-EOF snapshot as the timing run and verify its
+  hash, closing the previous cold-only full-screen capture scope. No dropped
+  frames, read retries, AY gaps/duplicates or audio underruns occur. Physical
+  drive/controller state across swaps was not measured; emulator restarts
+  retain actual predecessor RAM and deliberately poison the other banks.
+- Timing: the strict zero-late target is **not achieved**. Cold disks have
+  0/0/1/0 misses, maximum actual 70907 T. Sequential playback has 0/0/1/1,
+  maximum 70908 T (20 ms). Disk3 local 933 recovers at 934; continuation disk 4
+  local 576 recovers at 577. All field intervals stay 4..6 and the original
+  schedule is restored immediately. The disk 3 trace identifies a new-cylinder
+  read overlapping publication, followed by 227523 T of elapsed drawing.
+- Decision: use the user's already authorized one-field fallback to deliver
+  the four-disk set. The explicit `--allow-fallback` gate rejects even 1 T
+  beyond 70908 T;4 regression tests also reject absent recovery, invalid field
+  counts, incomplete playback and sound gaps. Every nominal miss remains
+  listed. The report retains `release: false` /`preview_only: true` for the
+  unachieved zero-late target, and separately marks the authorized delivery.
+  This is the complete movie, not a smaller timing fixture or reduced-fps set.
+- Root `ZX-video-refined_part01..04.trd` replace the prior preview; obsolete
+  refined parts 5..15 are removed after verifying all new copies. Images use
+  Git LFS. Historical evidence, other experiments and the verified three-disk
+  25/3-fps compatibility set remain intact. See [usage](ZX-video-refined.md),
+  [report](toolkit/refined_four_report.json), [gate tests](toolkit/test_cached_set_gate.py)
+  and `.tmp/refined-four-candidate/` for reproduction. Future zero-late work
+  should reuse the recorded isolated stalls before attempting another build.
+
 ## 2026-10-01: skip redundant disk SEEK and settling on side-only changes
 
 - Objective: improve sustained delivery without increasing compressed bytes

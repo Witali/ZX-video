@@ -12,14 +12,28 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
-## Active milestone: at most four refined A/V disks
+## Completed delivery: four refined A/V disks
 
 The user rejected the 15-disk count and requested at most four disks, keeping
-the refined picture, new AY50 soundtrack and 10 fps. On this goal turn they
-specifically requested a dynamic row dictionary with eviction/replacement
-during playback. Completion requires a full, independently bootable set of
-at most four TRDs, unchanged media coverage and complete timing/content gates.
-Do not substitute a short fixture, the previous soundtrack or reduced fps.
+the refined picture, new AY50 soundtrack and 10 fps. The full 5066-frame movie
+now fits four independently bootable root `ZX-video-refined_part01..04.trd`
+images: 2464/2476/2542/2543 occupied sectors. The dynamic dictionary replaces
+rows throughout playback; every rendered RGB pixel and all 25330 AY states
+remain exact. Full native, cold Fuse, actual predecessor-EOF continuation and
+complete screen-byte checks pass for the entire set.
+
+The user's explicit one-field fallback is used: cold starts have one nominal
+miss (disk 3 local 933, recovered at 934); sequential playback adds disk 4 local
+576, recovered at 577. Actual maxima are70907/70908 T, with no excess beyond
+20 ms, invalid field intervals, drift, dropped frames or AY gaps. This is
+**not zero-late playback**. The delivery report keeps `release: false` and
+`preview_only: true`, with `user_authorized_delivery: true` and the explicit
+fallback gate. Root parts 5..15 are retired; historical evidence and the
+three-disk 25/3-fps compatibility set remain intact. See
+[usage](ZX-video-refined.md), [full report](toolkit/refined_four_report.json)
+and `.tmp/refined-four-candidate/`. Do not repeat complete-set measurements
+without a material change. The four-disk delivery objective is satisfied;
+zero-late playback and the longer-term three-disk target remain future work.
 
 ### Current checkpoint: CB46 capacity fits; timing remains open
 
@@ -124,7 +138,7 @@ Earlier prefix admission is tested and rejected. Starting with one completed
 slot remaining costs 30 vs27 T (+3) per incomplete-input admission; decoder
 instructions and complete-input bypass remain identical. Forty independent
 admission cases pass. Window misses increase 2 ->14, max1 ->10 fields,
-invalid intervals 0 ->6; recovered at124/252. Full part4 misses increase
+invalid intervals 0 ->6; recovered at124/252. Full part 4 misses increase
 22 ->48 (47 beyond one field), max15 ->30, invalid intervals13 ->32; runs
 378,585..609,611..632 recover at379/610/633. Exact media and occupancy are
 unchanged. Keep `--early-lzsa2-prefix` disabled. Reuse
@@ -190,13 +204,13 @@ Eight component tests include 2560 geometry and1024 independent full-flags
 cases. No physical drive was measured; standard CPU clock and the SA460
 200 us side-select contract are explicit assumptions.
 
-Next bounded scope: build one coherent four-volume candidate from the
-already cached CB46 streams, using the selected player, then verify parts
-1..3 and full preceding-EOF continuations. Reuse the proven part-4 stream;
-do not requantize media or sweep alternate full sets. Ensure a shared series
-identity, correct volume headers and independently bootable cold states;
-the separately rebuilt experiment files are not yet a coherent release set.
-Publish root LFS images only after every full-set content/timing gate passes.
+The coherent four-volume build and full cold/continuation gates are now
+complete, as recorded above. Its media-derived common ID, independent cold
+states and next-disk validation are verified. For future zero-late work, reuse
+the disk 3 local 933 trace: optional cylinder acquisition crosses publication
+and delays drawing, despite an available decoded slot. Avoid another whole
+set sweep until a bounded scheduling change proves useful. Previously
+rejected generic read gates remain disabled; do not assume they now pass.
 
 The sector-streaming LZSA2 experiment remains unselected. Eager
 prefix decoding produces 27 late frames / maximum 40 fields in the complete

@@ -23,7 +23,7 @@ from row_dictionary_video import display_screen
 from smoke_test_fuse import hidden_startupinfo
 
 
-def capture_pass(fuse, trd, metadata, lo, hi, folder, timeout):
+def capture_pass(fuse, trd, metadata, lo, hi, folder, timeout, continuation_snapshot=None):
     lab = metadata['player_labels']
     draws = [row['address']+3 for row in metadata['cell_codebook']['packet_listing']
              if row['instruction']=='CALL native draw']
@@ -44,8 +44,9 @@ def capture_pass(fuse, trd, metadata, lo, hi, folder, timeout):
         f'breakpoint {lab["fatal"]}','commands 4','print 198','print $n','exit 78','end',
         'condition 4 $running==1']
     script = '\n'.join(lines)
+    media=['--betadisk',str(trd.resolve()),'--snapshot',str(continuation_snapshot.resolve())] if continuation_snapshot else [str(trd.resolve())]
     command = [str(fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions',
-               '--speed','10000','--machine','128','--beta128','--debugger-command',script,str(trd.resolve())]
+               '--speed','10000','--machine','128','--beta128','--debugger-command',script]+media
     if len(subprocess.list2cmdline(command))>=32760:
         raise ValueError('full-screen slice exceeds Windows command-line limit')
     prefix = folder/f'bytes-{lo}-{hi}'
@@ -84,6 +85,7 @@ def main():
     for name in ('fuse','trd','metadata','states','timing','work','output'):
         p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--timeout',type=float,default=180)
+    p.add_argument('--continuation-snapshot',type=Path,help='Use the same actual predecessor EOF snapshot as the timing run')
     a = p.parse_args()
     a.work.mkdir(parents=True,exist_ok=True)
     metadata = json.loads(a.metadata.read_bytes())
@@ -91,6 +93,8 @@ def main():
     identity = sha(a.trd.read_bytes())
     assert identity == metadata['trd_sha256'] == timing['trd_sha256']
     assert timing['complete'] and timing['frames']==metadata['frames']
+    snapshot_sha256=sha(a.continuation_snapshot.read_bytes()) if a.continuation_snapshot else None
+    assert timing.get('continuation_snapshot_sha256')==snapshot_sha256,'screen capture must match cold/continuation timing mode'
     with np.load(a.states,allow_pickle=False) as cache:
         states = cache['states']
     assert sha(states.tobytes())==metadata['states_sha256']
@@ -100,7 +104,7 @@ def main():
     passes = []
     for lo in range(0,6912,1536):
         hi = min(lo+1536,6912)
-        frames,report = capture_pass(a.fuse,a.trd,metadata,lo,hi,a.work,a.timeout)
+        frames,report = capture_pass(a.fuse,a.trd,metadata,lo,hi,a.work,a.timeout,a.continuation_snapshot)
         for i,(data,wanted) in enumerate(zip(frames,expected,strict=True)):
             if data!=wanted[lo:hi]:
                 bad = [lo+j for j,(x,y) in enumerate(zip(data,wanted[lo:hi])) if x!=y]
@@ -119,6 +123,7 @@ def main():
         debugger_pokes=0,debugger_paging_changes=0,debugger_cpu_jumps=0,
         passes=passes,screen_sha256=screens,states_sha256=metadata['states_sha256'],
         timing_sha256=sha(a.timing.read_bytes()),
+        continuation_snapshot_sha256=snapshot_sha256,
         source_sha256_lf={name:sha(Path(__file__).with_name(name).read_bytes().replace(b'\r\n',b'\n'))
             for name in ('capture_cell_codebook_full.py','row_dictionary_video.py','disk_progress_z80.py')})
     save(a.output,result)

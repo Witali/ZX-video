@@ -327,9 +327,9 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     if front_reuse:manifest.update(front_reuse=True,wire='CB44',cycle_note='Counted CB44 mode reader and front copy; data-dependent timing')
     if guarded:
         manifest.update(profile='cb46-guarded-v1',wire='CB46',native_options=dict(OPTIONS,**player_options),
-            player_baseline='7cfbacf',audio_banks=[6],audio_wire='AYH1',
+            player_baseline='f1476a2',audio_banks=[6],audio_wire='AYH1',
             encoder_selection='Per-original-block compressed bytes and independent decoder T-states; original fallback',
-            cycle_note='Reuses the measured CB46 inline/four-slot/cache/direct-header opcodes unchanged; data-dependent costs are recorded per volume')
+            cycle_note='Reuses the measured CB46 decoder/renderer and side-only disk reader; helper costs and hardware assumptions are in SIDE_ONLY_SEEK.md; data-dependent costs are recorded per volume')
     if only is not None:
         manifest.update(whole_movie=False, selected_volume=only, source_movie_frames=len(frames),
                         frames=sum(r['frames'] for r in records), ay_ticks=sum(r['frames'] for r in records)*frame_fields,
