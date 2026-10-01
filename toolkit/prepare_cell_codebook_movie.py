@@ -22,6 +22,7 @@ import hybrid_five_level as hybrid
 from build_five_level_test_trd import save, source_audio
 from prepare_edited_movie import frame_map
 from probe_hybrid_five_level import error
+from video_cadence import fields_for_fps
 
 ROOT = Path(__file__).resolve().parent
 CHUNK = 64
@@ -43,6 +44,7 @@ def main():
         p.add_argument('--'+name, type=Path, required=True)
     p.add_argument('--timeline', type=Path, default=ROOT/'movie_no_credits.json')
     p.add_argument('--audio-reference', type=Path, default=ROOT/'no_credits_timeline.json')
+    p.add_argument('--fps', choices=('25/3', '10'), default='25/3')
     a = p.parse_args()
     a.work.mkdir(parents=True, exist_ok=True)
     timeline = json.loads(a.timeline.read_bytes())
@@ -50,6 +52,17 @@ def main():
     if timeline['frame_rate'] != [25, 3] or timeline['audio_rate_hz'] != 50:
         raise ValueError('this preparation uses exactly six AY ticks per video frame')
     mapping = frame_map(timeline['source_frames'], timeline['remove_frames'])
+    original_frames = len(mapping)
+    fps = Fraction(a.fps)
+    fields = fields_for_fps(fps)
+    source_count = timeline['source_frames']
+    if fields == 5:
+        # Resample the original source, never duplicate the old 8 1/3-fps
+        # frames. Evaluate the authorized cuts on the new sampling grid.
+        source_count = math.ceil(Fraction(source_count*3, 25)*fps)
+        cuts = [[math.ceil(Fraction(lo*3,25)*fps), math.ceil(Fraction(hi*3,25)*fps)]
+                for lo,hi in timeline['remove_frames']]
+        mapping = frame_map(source_count, cuts)
     if reference['timeline'] != timeline:
         raise ValueError('audio reference belongs to a different timeline')
     source_hash = file_sha(a.source)
@@ -57,8 +70,14 @@ def main():
         raise ValueError('source video identity differs')
     audio = source_audio(a.audio_raw.read_bytes())
     sound = b''.join(frame.serialize() for frame in audio)
-    if len(audio) != len(mapping)*6 or sha(sound) != reference['ay_sha256']:
+    if len(audio) != original_frames*6 or sha(sound) != reference['ay_sha256']:
         raise ValueError('edited soundtrack differs from the reviewed AY reference')
+    original_audio_ticks = len(audio)
+    original_audio_sha256 = sha(sound)
+    if len(mapping)*fields < len(audio):
+        raise ValueError('new cadence would truncate the reviewed soundtrack')
+    audio += [video.AyFrame((1,1,1),(0,0,0))]*(len(mapping)*fields-len(audio))
+    sound = b''.join(frame.serialize() for frame in audio)
     registers = b''.join(map(ay_interrupt.registers, audio))
     (a.work/'audio.bin').write_bytes(sound)
     (a.work/'registers.bin').write_bytes(registers)
@@ -66,10 +85,10 @@ def main():
                'build_zxv_trd.py', 'five_level_dither.py', 'hybrid_five_level.py',
                'dither_phase.py', 'probe_hybrid_five_level.py', 'prepare_edited_movie.py')
     contract = dict(source_sha256=source_hash, ffmpeg_sha256=file_sha(a.ffmpeg),
-                    timeline=timeline, zoom=1.25, attr_change_penalty=100000,
+                    timeline=timeline, fps=a.fps, frame_fields=fields, zoom=1.25, attr_change_penalty=100000,
                     quantizer='ordered4 followed by exact hybrid five-level refinement',
                     palette_history='continuous across retained frames, including the edit join',
-                    final_interval='same ceil-to-six-fields policy as build_full_movie.py; hold source EOF',
+                    final_interval='ceil reviewed duration to whole video fields; hold source EOF, pad AY with silence',
                     chunk_frames=CHUNK,
                     source_sha256_lf={name: sha((ROOT/name).read_bytes().replace(b'\r\n', b'\n'))
                                       for name in sources})
@@ -91,25 +110,25 @@ def main():
             raise ValueError('source duration differs from reviewed full-movie frame count')
         command = [str(a.ffmpeg.resolve()), '-v', 'error', '-nostdin', '-y',
                    '-i', str(a.source.resolve()), '-an', '-vf',
-                   'tpad=stop_mode=clone:stop_duration=0.12,fps=25/3,scale=256:144:flags=area',
-                   '-frames:v', str(timeline['source_frames']), '-pix_fmt', 'rgb24',
+                   f'tpad=stop_mode=clone:stop_duration=0.2,fps={fps},scale=256:144:flags=area',
+                   '-frames:v', str(source_count), '-pix_fmt', 'rgb24',
                    '-f', 'rawvideo', str(partial.resolve())]
         print('Decoding source through EOF', flush=True)
         subprocess.run(command, check=True)
         size = partial.stat().st_size
-        if size != timeline['source_frames']*FRAME_BYTES:
-            raise ValueError(('source EOF/frame count mismatch', size, timeline['source_frames']))
+        if size != source_count*FRAME_BYTES:
+            raise ValueError(('source EOF/frame count mismatch', size, source_count))
         partial.replace(decoded)
         save(decode_report, dict(frames=size//FRAME_BYTES, sha256=file_sha(decoded), bytes=size,
                                 decoded_to_eof=True, command=command, source_duration_seconds=float(duration),
-                                tail_hold_seconds=float(Fraction(timeline['source_frames']*3, 25)-duration),
+                                tail_hold_seconds=float(Fraction(source_count,1)/fps-duration),
                                 duration_probe=probe, ffprobe_sha256=file_sha(ffprobe)))
     decoded_meta = json.loads(decode_report.read_bytes())
-    if (decoded.stat().st_size != timeline['source_frames']*FRAME_BYTES
+    if (decoded.stat().st_size != source_count*FRAME_BYTES
             or file_sha(decoded) != decoded_meta['sha256']):
         raise ValueError('decoded RGB cache changed')
     rgb = np.memmap(decoded, dtype=np.uint8, mode='r',
-                    shape=(timeline['source_frames'], 144, 256, 3))
+                    shape=(source_count, 144, 256, 3))
     attrs = None
     chunks, rows, qualities = [], [], []
     started = time.monotonic()
@@ -170,11 +189,13 @@ def main():
                                row_table_fits=len(local)<=256))
     np.savez_compressed(a.work/'words.npz', words=words, source_frames=mapping)
     report = dict(complete=True, release=False, scope=__doc__, baseline_commit='2a9fa05',
-                  contract=contract, frames=len(mapping), source_frames=timeline['source_frames'],
+                  contract=contract, frames=len(mapping), source_frames=source_count,
                   first_source_frame=int(mapping[0]), last_source_frame=int(mapping[-1]),
                   source_frame_map_sha256=sha(mapping.astype('<i8').tobytes()),
                   decoded_source=decoded_meta, chunks=chunks, quality=qualities,
                   ay_ticks=len(audio), ay_sha256=sha(sound), ay_registers_sha256=sha(registers),
+                  original_audio_ticks=original_audio_ticks, original_audio_sha256=original_audio_sha256,
+                  original_audio_preserved_exact=True, silent_tail_ticks=len(audio)-original_audio_ticks,
                   edited_audio_reference_sha256=file_sha(a.audio_reference),
                   input_audio_fap3_sha256=file_sha(a.audio_raw),
                   joins=[dict(output_frame=int(i), before=int(mapping[i-1]), after=int(mapping[i]))

@@ -48,14 +48,16 @@ def pack_blocks(raw, codec, cache):
     return bytes(stream), blocks
 
 
-def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6):
+def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6, target_volumes=None):
     """Measure short windows once; choose cuts without building candidate sets.
 
     Exact row unions include both histories. Window byte costs select an
     initial size partition; exact resident AY sizes may split it further.
     Final TRD capacity is a separate gate, never inferred from this estimate.
     """
-    row_parts = row_partitions(row_sets(frames), max_frames)
+    sets = row_sets(frames)
+    row_parts = row_partitions(sets, max_frames)
+    all_costs = []
     windows, initial = [], []
     for part in row_parts:
         start, stop = part['start'], part['end']
@@ -76,6 +78,12 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6
                 lo, amount = index, 0
             amount += cost
         initial.append((lo, stop))
+        all_costs.extend(costs)
+    balance = None
+    if target_volumes is not None:
+        if target_volumes != 3: raise ValueError('bounded movie planner currently supports a target of three volumes')
+        from balance_cb41_cadence import three_parts
+        initial, balance = three_parts(sets,all_costs,max_frames)
     parts, audio_probes = [], []
 
     def add(lo, hi):
@@ -101,6 +109,7 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6
         boundaries=[0]+[p['end'] for p in parts],
         candidate_disk_sets_built=0, final_disk_capacity_verified=False,
         minimum_volume_count_claimed=False, quality_reduced=False)
+    if balance is not None: report['balanced_target'] = balance
     return parts, report
 
 
@@ -116,7 +125,8 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     scaffold = LegacyBuilder(raw, compact, Path(executables['zx0']), work/'zx0')
     # Resolve the real audio ABI, rather than borrowing labels from a movie.
     labels = player_harness(bytes(4), scaffold.tables, scaffold.mapping, 1).audio
-    parts, plan = plan_volumes(frames, audio, labels, codec, cache, args.max_frames_per_disk, frame_fields)
+    parts, plan = plan_volumes(frames, audio, labels, codec, cache, args.max_frames_per_disk,
+        frame_fields, getattr(args,'target_volumes',None))
     write_json(output/'partition.json', plan)
     ends = [p['end'] for p in parts]
     identity = sha(frames.tobytes()+b''.join(f.serialize() for f in audio)

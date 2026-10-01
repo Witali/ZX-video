@@ -13,6 +13,13 @@ window and one selected complete movie set. Preserve the old release until
 full EOF timing/content/cold-boot gates pass. Source 24-to-10-fps sampling
 judder remains separate from publication timing. [Details](CB41_10FPS.md).
 
+The subsequent 256-frame difficult window passes all five-field deadlines,
+screens and AY. Full resampling is complete (5066 frames), but the selected
+three-volume partition needs 2782 sectors for disk 1 versus 2544 available.
+No full-movie replacement was emitted. Preserve caches and the old release;
+resolve the requested rate versus disk-count preference before another full
+build. This capacity failure does not establish the minimum disk count.
+
 **Generic CB41 integration passes (2026-10-01):** `convert_video.py
 --video-codec cb41` uses five-level preparation, exact row/cell dictionaries,
 32-frame partition probes and the passing native profile automatically.

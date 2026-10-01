@@ -28,6 +28,40 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — verify a sustained 10-fps window; reject oversized movie partition
+
+- Baseline `5ae85fc`; requested 10 fps with unchanged resolution, five levels
+  and original AY. Resampled the source through EOF to **5066 frames**,
+  retaining the authorized credit cut and post-credit scene. All 25326 old
+  AY states remain byte-exact; four silent ticks complete the final frame.
+  Independently checked all host screens (35016192 bytes), audio prefix and
+  source identity. Inspected nine sample pictures. Same-palette mean RGB
+  error: four levels 834.069, five levels 743.070, no frame worsened; this
+  does not measure perceptual fidelity or eliminate 24-to-10-fps judder.
+- Sustained window `[4128,4384)`: **256 frames, 1280 AY ticks, 570 real Fuse
+  sector reads**, every nominal five-field deadline met, zero audio gaps or
+  underruns, all 1769472 screen bytes exact. Actual OUT phase range 0..18 T.
+  Dirty cold boot passes. Native kernel/packet listings remain identical;
+  deadline operand costs 10 -> 10 T, delta 0. Save the passing window TRD
+  with LFS and complete trace/capture evidence.
+- Full movie planning used **159 local 32-frame windows**, 26529 cut pairs
+  and 424 row-valid candidates. Selected `[0,1808,3408,5066]`; AY banks need
+  13117/13611/13756 bytes. No full-image variant sweep. The first actual
+  stream is 692152 bytes / 2704 video sectors; startup/audio bring it to
+  **2782 sectors**, exceeding 2544 by **238 sectors / 60928 bytes**.
+  The builder rejected the volume without emitting a truncated TRD. The
+  other volumes were not encoded and full-movie 10-fps timing is unverified.
+- Decision: preserve the verified root 25/3-fps set and all prepared inputs.
+  The selected three-volume attempt is rejected, not a proof that every
+  three-volume encoding must fail. Asked the user to prioritize four disks
+  at unchanged quality/10 fps, the old three-disk rate, or more compression.
+  Twelve affected planner/cadence tests pass; full trace and failed-capacity
+  archives are authenticated. The existing dark-opening palette artifact
+  remains outside this cadence change.
+- [Results and reproduction](toolkit/CB41_10FPS.md),
+  [window evidence](toolkit/cb41_10fps_window.json),
+  [full preparation and failed capacity](toolkit/cb41_10fps_movie_attempt.json).
+
 ## 2026-10-01 — add a five-field CB41 mode with independent 50-Hz AY
 
 - Objective: implement the requested 10 fps without accelerating the source

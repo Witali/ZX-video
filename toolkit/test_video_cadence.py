@@ -38,5 +38,16 @@ class CadenceTests(unittest.TestCase):
         self.assertFalse(bad['fallback_one_field_met'])
         self.assertEqual(bad['missed_nominal_frame_indices'],[1,2])
 
+    def test_three_volume_window_balance_keeps_rows_and_coverage(self):
+        from balance_cb41_cadence import three_parts
+        sets=[{0,i//16+1} for i in range(96)]
+        costs=[1]*32+[6]*32+[1]*32
+        parts,report=three_parts(sets,costs,64)
+        self.assertEqual([i for lo,hi in parts for i in range(lo,hi)],list(range(96)))
+        self.assertLessEqual(max(report['estimated_video_bytes']),128)
+        self.assertEqual(sum(report['estimated_video_bytes']),sum(costs))
+        self.assertEqual(report['whole_movie_candidates_compressed'],0)
+        with self.assertRaises(ValueError):three_parts([set(range(257))]*48,[1]*48,64)
+
 
 if __name__ == '__main__': unittest.main()

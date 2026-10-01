@@ -23,6 +23,22 @@ three-disk 25/3-fps set remains the compatibility baseline until this passes.
 Record actual disk count; do not label an oversized or late candidate a
 release. Avoid unrelated codec experiments.
 
+Implemented in `5ae85fc`: `convert_video.py --video-codec cb41 --fps 10`,
+five-field video and independent AY50. All 23 short fixture frames pass.
+The 256-frame difficult window `[4128,4384)` also passes full Fuse timing,
+all 1769472 screen bytes and 1280 AY ticks, zero nominal misses or underruns.
+Full preparation is complete: 5066 frames, all 25326 original AY ticks plus
+four silent tail ticks. Reuse `.tmp/cb41-10fps-movie/prepared/` and the saved
+reports; do not redo quantization or compression probes without a reason.
+
+One selected three-volume plan `[0,1808,3408,5066]` failed actual capacity:
+first volume 2782 sectors / 2544 maximum. No new full-movie TRD was emitted;
+later volumes were not encoded. All 159 window costs are cached in
+`.tmp/cb41-10fps-full/partition.json`. This is not an impossibility proof.
+A user preference question is pending: four disks at 10 fps/unchanged quality,
+retain the verified three-disk 25/3-fps set, or further compression into three.
+[Evidence, limits and reproduction](toolkit/CB41_10FPS.md).
+
 ## Working method
 
 1. **Define one deliverable.** State the problem, baseline, hypothesis and
