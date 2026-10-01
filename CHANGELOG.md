@@ -35,6 +35,44 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — exact front-screen reuse reduces the selected movie stream
+
+- Objective: reduce repeated payload after the dynamic-cell result in
+  `7ea4b4d`. Baseline CB42 compares against the physical back screen two
+  frames ago. Host-only CB44 adds two-bit cell modes for literals, book
+  indices and exact copies from the immutable previous front screen. All
+  picture samples, attributes and AY records stay unchanged.
+- Three 256-frame windows at 0/2560/4096: CB42 totals 453253 bytes;
+  same-position reuse 438082; neighbour reuse 437973; same-position reuse
+  with the static book fitted only to non-reused patterns 437906 (-3.386%).
+  All flags, row controls and LZSA2 framing are included. Neighbour copying
+  saves only 109 bytes beyond same-position copies, so leave it host-only.
+- Additional host-only CB45 XORs attribute bytes with the old back screen.
+  It increases all three refitted windows to 123345/129101/190866 bytes,
+  totaling 443312. Reject this variant. No native code changed (0 T); no
+  proposed native cycle reduction or playback claim is inferred from size.
+- Nineteen tests pass, covering settled cells, spatial sources, independent
+  two-screen histories, one-frame book fitting, attribute prediction and
+  byte-identical old CB42 fixture data. All window screens are host-exact.
+- After the bounded result, encode only one full CB44 partition, retaining
+  the selected cuts [0,1312,2672,3744,5066]. Exact video sizes:
+  628680/622126/637883/633641 bytes, a 74724-byte (2.877%) saving versus
+  the full CB42 candidate. Video uses 2456/2431/2492/2476 sectors, 9855
+  total. All 5066 screens and every LZSA2 block round-trip exactly; original
+  AY streams/sizes are retained. This leaves 321 sectors for all boot/audio.
+- Decision: retain same-position reuse and refitted static books as the next
+  native candidate. CB44/45 are not accepted by the player or converter yet;
+  no new root images were emitted. Four-disk capacity, native T-states,
+  complete timing, cold boots and continuations remain unverified. The next
+  bounded native/Fuse gate must precede any release build. Further startup
+  savings may be available by retiring obsolete reconstruction code; that
+  memory/reachability hypothesis has not been implemented or measured.
+  [Front reuse](toolkit/front_cell_reuse.py),
+  [window comparison](toolkit/probe_front_cell_reuse.py),
+  [full selected stream measurement](toolkit/measure_front_four.py),
+  [bounded evidence](toolkit/front_cell_report.json),
+  [full encoded streams](toolkit/front_four_report.json).
+
 ## 2026-10-01 — dynamic whole-cell replacement has insufficient size benefit
 
 - Objective: recover startup/audio space for four disks after the capacity

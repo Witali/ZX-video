@@ -71,11 +71,31 @@ bytes. Static books total 453253 bytes; replacements every 32 frames cost
 in both cases. Fifteen tests pass, including exact old CB42 fixture bytes.
 Do not implement this weak CB43 variant in the native player yet. Reuse
 `.tmp/dynamic-cell-probe/` and [evidence](toolkit/dynamic_cell_report.json).
-Next measure bounded lossless reuse of cells from the immutable front
-screen (especially same-position matches) before proposing new native
-code. CB41/42 currently compare against the back screen two frames ago;
-one-frame reuse may avoid retransmitting cells that have just settled.
-Count flags, LZSA2 bytes and copies; no quality or timing claim until tested.
+Host-only CB44 now measures exact reuse from the immutable front screen.
+On the same three windows: 453253 baseline bytes, 438082 with same-position
+copies, 437973 adding neighbour moves, 437906 refitting the static book to
+non-reused cells. CB45 XOR attributes worsen all three windows (443312 total).
+Keep only same-position reuse and book refitting for native development;
+neighbour modes and XOR are prototypes, not proposed runtime requirements.
+Nineteen tests pass; all compared screens are exact, including old CB42
+fixture bytes. [Bounded evidence](toolkit/front_cell_report.json).
+
+One full CB44 partition with the existing four cuts is encoded on the host:
+628680/622126/637883/633641 video bytes; 2456/2431/2492/2476 sectors (9855
+total). This saves 74724 bytes versus CB42, with all 5066 exact screens and
+unchanged AY. Only 321 sectors remain for all boot/audio; final capacity is
+not established. Reuse `.tmp/front-four/` and [exact streams](toolkit/front_four_report.json).
+No native CB44/45 player exists yet; root TRDs remain the prior CB41 set,
+and CB42 remains available in the verified dynamic-row fixtures/converter.
+Next implement and count a same-position CB44 kernel, verify a bounded
+native/Fuse window, and measure complete startup/audio capacity before
+building a final set. The 2-bit mode reader needs a different mode-mask length
+and a maximum packet size of 3168. Source screen is destination XOR 8000h;
+it stays immutable during drawing, and attributes still use ordinary CB42
+updates. Do not enable unsupported neighbour mode 3 in the native builder.
+If startup overhead prevents four disks, audit obsolete reconstruction code
+still loaded below the current 8DF2h LZSA2 core before changing image quality;
+this is a hypothesis requiring reachability, cold boot and continuation checks.
 Reuse `.tmp/dynamic-rows-probe/`, `.tmp/dynamic-rows-fixture/` and
 `.tmp/dynamic-rows-window/`; do not rebuild the previous 15-image set.
 Saved [native/Fuse proof and archives](toolkit/dynamic_rows_report.json).

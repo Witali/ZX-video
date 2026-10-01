@@ -35,7 +35,7 @@ def bitmap(key):
     return bytes(value for word in words for value in (five.TOP[word],five.BOTTOM[word]))
 
 
-def encode(frames, start, end, *, cell_window=None):
+def encode(frames, start, end, *, cell_window=None, book_front_reuse=False):
     if not 0 <= start < end <= len(frames) or end-start > 10922:
         raise ValueError('invalid volume extent')
     current = np.stack([patterns(frame) for frame in frames[start:end]])
@@ -43,7 +43,14 @@ def encode(frames, start, end, *, cell_window=None):
         np.zeros((576,4),dtype='<u2') for i in (start-2,start-1)]),current[:-2]),axis=0)[:end-start]
     changed = np.any(current != previous,axis=2)
     counts = Counter(current[f,c].tobytes() for f,c in zip(*np.nonzero(changed)))
-    book = sorted(counts,key=lambda key:(-counts[key],key))[:256]
+    book_counts=counts
+    if book_front_reuse:
+        if cell_window is not None:raise ValueError('front-reuse book fitting requires a static cell book')
+        front=np.concatenate((previous[1:2] if end-start>1 else np.stack([
+            patterns(frames[start-1]) if start else np.zeros((576,4),dtype='<u2')]),current[:-1]),axis=0)
+        novel=changed & np.any(current!=front,axis=2)
+        book_counts=Counter(current[f,c].tobytes() for f,c in zip(*np.nonzero(novel)))
+    book = sorted(book_counts,key=lambda key:(-book_counts[key],key))[:256]
     book += [bytes(8)]*(256-len(book))
     lookup = {key:i for i,key in enumerate(book)}
     cell_updates=[[] for _ in range(end-start)]
@@ -130,7 +137,7 @@ def encode(frames, start, end, *, cell_window=None):
 
 def decode_check(data, frames, start, end, row_meta):
     """Independent byte parser checks both physical screens after every frame."""
-    if data[:4] not in (b'CB42',b'CB43') or struct.unpack_from('<HH',data,4)!=(end-start,256):
+    if data[:4] not in (b'CB42',b'CB43',b'CB44',b'CB45') or struct.unpack_from('<HH',data,4)!=(end-start,256):
         raise ValueError('invalid dynamic dictionary header')
     cache = bytearray.fromhex(row_meta['tables_hex'])
     if len(cache)!=512 or cache[0] or cache[256]:
@@ -161,14 +168,24 @@ def decode_check(data, frames, start, end, row_meta):
                 seen.add(index); cache[index]=top; cache[256+index]=bottom
             if is_book:book_updates+=count
             else:updates+=count
-        if not 144<=length<=3096:
+        front_modes=data[:4] in (b'CB44',b'CB45')
+        if not 144<=length<=(3168 if front_modes else 3096):
             raise ValueError('invalid frame packet length')
         stop=at+length
         cells=indices(data[at:at+72],576); attrs=indices(data[at+72:at+144],576); at+=144
-        modes=data[at:at+(len(cells)+7)//8]; at+=len(modes)
+        mode_bits=2 if front_modes else 1
+        modes=data[at:at+(mode_bits*len(cells)+7)//8]; at+=len(modes)
         target=screens[(frame-start)%2]
         for j,cell in enumerate(cells):
-            if modes[j//8]&(1<<(j%8)):
+            mode=(modes[j//4]>>((j%4)*2))&3 if front_modes else (modes[j//8]>>(j%8))&1
+            if mode>=2:
+                source=cell
+                if mode==3:
+                    offset=data[at];at+=1;source+=offset if offset<128 else offset-256
+                if not 0<=source<576:raise ValueError('front source outside active picture')
+                sy,sx=divmod(source,32);front=screens[1-(frame-start)%2]
+                raster=bytes(front[spectrum_bitmap_offset(sx,(sy+3)*8+line)] for line in range(8))
+            elif mode==1:
                 raster=book[data[at]]; at+=1
             else:
                 raster=bytes(b for index in data[at:at+4] for b in (cache[index],cache[256+index])); at+=4
@@ -176,7 +193,7 @@ def decode_check(data, frames, start, end, row_meta):
             for line,value in enumerate(raster):
                 target[spectrum_bitmap_offset(x,(y+3)*8+line)]=value
         for cell in attrs:
-            target[6240+cell]=data[at]; at+=1
+            target[6240+cell]=data[at]^(target[6240+cell] if data[:4]==b'CB45' else 0); at+=1
         assert at==stop and bytes(target)==screen(frames,frame),frame
         assert bytes(screens[1-(frame-start)%2])==screen(frames,frame-1),('other screen',frame)
         hashes.append(sha(target))
@@ -185,8 +202,8 @@ def decode_check(data, frames, start, end, row_meta):
                 both_screens_exact=True,pixel_changes=0)
 
 
-def representation(frames,start,end,*,cell_window=None):
-    result=encode(frames,start,end,cell_window=cell_window)
+def representation(frames,start,end,*,cell_window=None,book_front_reuse=False):
+    result=encode(frames,start,end,cell_window=cell_window,book_front_reuse=book_front_reuse)
     proof=decode_check(result['raw'],frames,start,end,result['rows'])
     return dict(result,first=max(0,start-2),start=start,end=end,
         screen_sha256=proof['screen_sha256'],full_host_screens_exact=True,

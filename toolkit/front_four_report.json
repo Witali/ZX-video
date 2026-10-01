@@ -1,0 +1,248 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Encode one selected CB44 four-volume partition after bounded reuse probes.\n\nKeeps exact frames, original AY and cuts. Size only: no native CB44 player,\nfinal boot/startup sector accounting or complete playback verification.\n",
+  "native_implemented": false,
+  "whole_movie_timing_verified": false,
+  "final_disk_capacity_verified": false,
+  "candidate_partitions_encoded": 1,
+  "pixel_changes": 0,
+  "ay_changed": false,
+  "prepared_sha256": "af443756dccf670a9468b6a7e4a0f76ab0a3bf29b22251902dcef8b2c070b392",
+  "frames_sha256": "ea5a4ab11f38a11555764f689f615f6e83c73f2f6d7048c01a18e3d9f4392aaf",
+  "ay_sha256": "f9c5d26e9a9b72bf1e9192dbe08d61927dc902deb9f4126ae8340163aab389df",
+  "baseline_report_sha256": "aeab26d940269e4692c70fc9ad51c80fd930cd0653f2ee85bf3bc9c5f4175571",
+  "boundaries": [
+    0,
+    1312,
+    2672,
+    3744,
+    5066
+  ],
+  "volumes": [
+    {
+      "start": 0,
+      "end": 1312,
+      "raw_bytes": 852280,
+      "video_bytes": 628680,
+      "video_sectors": 2456,
+      "baseline_video_bytes": 654636,
+      "delta_bytes": -25956,
+      "front_same_cells": 68608,
+      "original_audio": {
+        "wire": "AYB1",
+        "ayh1_bytes": 16984,
+        "resident_bytes": 20802,
+        "resident_fits": true,
+        "bank_bytes": [
+          10327,
+          10475
+        ],
+        "banks": [
+          4,
+          6
+        ],
+        "spare_bank_bytes": 11966,
+        "register_roundtrip_exact": true,
+        "initial_sha256": "71b6c1d53832f789a7f2435a7c629245fa3761ad8487775ebf4957330213a706",
+        "ticks": 6560
+      },
+      "host_screens_exact": true
+    },
+    {
+      "start": 1312,
+      "end": 2672,
+      "raw_bytes": 856401,
+      "video_bytes": 622126,
+      "video_sectors": 2431,
+      "baseline_video_bytes": 647466,
+      "delta_bytes": -25340,
+      "front_same_cells": 71596,
+      "original_audio": {
+        "wire": "AYB1",
+        "ayh1_bytes": 19145,
+        "resident_bytes": 23175,
+        "resident_fits": true,
+        "bank_bytes": [
+          11040,
+          12135
+        ],
+        "banks": [
+          4,
+          6
+        ],
+        "spare_bank_bytes": 9593,
+        "register_roundtrip_exact": true,
+        "initial_sha256": "b79ef435e9a677909b8b02d02da418aa4e2c21113833025b628984ccc3ef7a5b",
+        "ticks": 6800
+      },
+      "host_screens_exact": true
+    },
+    {
+      "start": 2672,
+      "end": 3744,
+      "raw_bytes": 851117,
+      "video_bytes": 637883,
+      "video_sectors": 2492,
+      "baseline_video_bytes": 650028,
+      "delta_bytes": -12145,
+      "front_same_cells": 55268,
+      "original_audio": {
+        "wire": "AYB1",
+        "ayh1_bytes": 15235,
+        "resident_bytes": 19085,
+        "resident_fits": true,
+        "bank_bytes": [
+          10094,
+          8991
+        ],
+        "banks": [
+          4,
+          6
+        ],
+        "spare_bank_bytes": 13683,
+        "register_roundtrip_exact": true,
+        "initial_sha256": "19eba40b6188d8f7ea0140e73170ce98cfd60c5a254ad2713cf5dc9b5c5b12f7",
+        "ticks": 5360
+      },
+      "host_screens_exact": true
+    },
+    {
+      "start": 3744,
+      "end": 5066,
+      "raw_bytes": 901832,
+      "video_bytes": 633641,
+      "video_sectors": 2476,
+      "baseline_video_bytes": 644924,
+      "delta_bytes": -11283,
+      "front_same_cells": 58846,
+      "original_audio": {
+        "wire": "AYB1",
+        "ayh1_bytes": 20606,
+        "resident_bytes": 24708,
+        "resident_fits": true,
+        "bank_bytes": [
+          13327,
+          11381
+        ],
+        "banks": [
+          4,
+          6
+        ],
+        "spare_bank_bytes": 8060,
+        "register_roundtrip_exact": true,
+        "initial_sha256": "cb8c57c3074558620d0df9db2177c9568021b0d97ee00f6d8f4bc9d8c7952b3d",
+        "ticks": 6610
+      },
+      "host_screens_exact": true
+    }
+  ],
+  "video_sectors": 9855,
+  "available_sectors": 10176,
+  "source_sha256_lf": {
+    "dynamic_row_dictionary.py": "43ca2fcb6f6b4caf37ab2384e27a7118f78b89cd297301e46520878e77a9d12d",
+    "front_cell_reuse.py": "e45cb16e84b5d1d59fa5b014615f69a9ed5a2811d74cf1798c28a9d96dd156df",
+    "measure_front_four.py": "82bdf39635bfaf73cfee1c55e5e39b742b04b7dac4a1bddb8d110700609c3a97"
+  },
+  "artifacts": [
+    {
+      "file": "part01.json.gz",
+      "raw_sha256": "d1dc22d9f26f0dd75736c408005ee5879ce7c1985d30a2328a5a1458d3258473",
+      "archive_sha256": "3e87b8e294f437f47ed466a0458e1d06d5222ffa9254a5abc8fc48e6a0684bbe",
+      "raw_bytes": 406642,
+      "archive_bytes": 78154
+    },
+    {
+      "file": "part01.raw.gz",
+      "raw_sha256": "2af224d6692c0cc97fa83a28cbe703f5ba360cb965a21770b5eb83c4bb2d6fa1",
+      "archive_sha256": "8732edb3bd749e20d7251a55bcce1233fd6e431dfa1d8847020ff817e445363b",
+      "raw_bytes": 852280,
+      "archive_bytes": 569916
+    },
+    {
+      "file": "part01.stream.gz",
+      "raw_sha256": "367572c48e28a5f04a777822911c1632b4ef10ed3f5b113f9423fbbd3fe884dd",
+      "archive_sha256": "1792a73972a4363459cefa5a7058d87654e97766e6e950436747d7aa7ab3c29b",
+      "raw_bytes": 628680,
+      "archive_bytes": 604128
+    },
+    {
+      "file": "part02.json.gz",
+      "raw_sha256": "a579437deba112c13da42d66e6cf703f9ae2024c1543acf96be24b0682ff40a0",
+      "archive_sha256": "86032b6ab9807da71c9289532938d1a91ef8989b427df1aa3c872a812b90ed2e",
+      "raw_bytes": 420373,
+      "archive_bytes": 81186
+    },
+    {
+      "file": "part02.raw.gz",
+      "raw_sha256": "f3ce6ff5d97e60a8e87df3f2ebf12b0b9f0cdf6c5e768b09c330b08b51e4670c",
+      "archive_sha256": "8d9be7f39a69ce1142ba746717f705dea9a968db49ac631fa1400e42190459ca",
+      "raw_bytes": 856401,
+      "archive_bytes": 561496
+    },
+    {
+      "file": "part02.stream.gz",
+      "raw_sha256": "65cb275f80d48489974262af988e7abfc76dbb48836610a2a3d50e467f8f04d4",
+      "archive_sha256": "92cd8e48a388010a6a5bdc2e1eeae57962171d069667978072b8f62490a48d0b",
+      "raw_bytes": 622126,
+      "archive_bytes": 595759
+    },
+    {
+      "file": "part03.json.gz",
+      "raw_sha256": "5a77782ab51cbc555e44ac40184bf80a8f04dadd3ba82140c4fba666d8e9b5af",
+      "archive_sha256": "28aedc2a178c841d0d81d4cedb288db8a03cb05191dc3580c79d7f3fab364f97",
+      "raw_bytes": 344554,
+      "archive_bytes": 65997
+    },
+    {
+      "file": "part03.raw.gz",
+      "raw_sha256": "08b70153d7cf8303b3124c131d348cf9c12ae8cb514090c36fccaafe763b91ae",
+      "archive_sha256": "b3be25e7a0b27287910674a0d63ccabf818fdff526aa0aa06203ca9603ca5dfb",
+      "raw_bytes": 851117,
+      "archive_bytes": 571930
+    },
+    {
+      "file": "part03.stream.gz",
+      "raw_sha256": "8e317d01ef89e44ebd51221cc5e1b9a25cff0ea20c498646ee3ecfffb8e8238b",
+      "archive_sha256": "eadcf857ce46d4d1842d899f3c21c75f2a8e263850da3601a06bef581bf4cbb2",
+      "raw_bytes": 637883,
+      "archive_bytes": 612631
+    },
+    {
+      "file": "part04.json.gz",
+      "raw_sha256": "e965049bf37183133a35c98bd4896ef06ef63a5b95fc154abf8b24245c53f561",
+      "archive_sha256": "a58325f4b4c40069548c0732d300feb5f9f83d67899da4769bf6b1cbd486fbd3",
+      "raw_bytes": 413370,
+      "archive_bytes": 78239
+    },
+    {
+      "file": "part04.raw.gz",
+      "raw_sha256": "ac2807d3b65cedabf82c6a0795f516698e68bb6490efb85d0d451442a22ef60a",
+      "archive_sha256": "8959d933bb9c177f2578272d7ffc46dd9aa9ca7e6aeab740de6ffe31c365552e",
+      "raw_bytes": 901832,
+      "archive_bytes": 570854
+    },
+    {
+      "file": "part04.stream.gz",
+      "raw_sha256": "ccf1d9f65febb32114d2fcb267f8e520074fbbd51d53f3bf86dc40b531b5d79f",
+      "archive_sha256": "74f53e8d9eda513ec418d1eb223e8c99f6e62f1d2ab6d4c7c8e12ed9709b9d35",
+      "raw_bytes": 633641,
+      "archive_bytes": 606725
+    },
+    {
+      "file": "report.json.gz",
+      "raw_sha256": "2d9c55bb36e705c569d0f8f23e2175c32249b039deaa4af7cc5bb79638fcbd63",
+      "archive_sha256": "18894276c40bc06b2a876661de20d7242f926c0f06e5ddddeb993b05944c2e92",
+      "raw_bytes": 4396,
+      "archive_bytes": 1407
+    },
+    {
+      "file": "volumes.json.gz",
+      "raw_sha256": "61c35104b87e3f827154b5e97aa144a4e05e1069b4e3bcb5bb2a48956e6a6224",
+      "archive_sha256": "25dd2d21291438a1a826d56f3ce12807baea0ae39ab139888e2ebf60fd7a4320",
+      "raw_bytes": 2839,
+      "archive_bytes": 701
+    }
+  ],
+  "decision": "Retain the lossless CB44 candidate for native work; 9855 video sectors leave only 321 for all boot/audio, so four complete disks are not established."
+}
