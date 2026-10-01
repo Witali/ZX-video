@@ -35,6 +35,28 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — reject period-byte prediction as a sufficient audio-bank fix
+
+- Objective: remove the independent 16-KiB AY bank obstacle to four refined
+  A/V disks. Baseline `85f3527`; all 25330 original refined ticks, equal video
+  quarters [0,1266,2533,3800,5066]. No audio, image or cadence changes.
+- A host-only AYD1 prototype codes modulo-256 differences for frequency low
+  registers 0/2/4, leaving masks and other registers unchanged. It uses the
+  existing context Huffman coder after prediction. All four independent
+  initial states and every original tick record round-trip exactly.
+- Baseline native resident sizes: 17489/18632/19202/21012 bytes. Predicted
+  sizes with a conservative extra 256-byte code/alignment reserve:
+  16639/17689/18611/20468 bytes. These are host estimates; no native predictor
+  was implemented or timed. Even the sum without that reserve exceeds four
+  16-KiB banks, so this does not solve the present allocation problem.
+- Keep the probe and exact coded evidence; do not change the player/audio
+  default for this insufficient saving. Native instruction delta is 0 T.
+  Next use currently unused bank 6 for a second resident audio segment and
+  preserve the exact original AY records. Four-disk capacity and complete
+  timing remain open. [Probe](toolkit/probe_ay_period_delta.py),
+  [host prototype](toolkit/ay_period_delta.py),
+  [saved comparison and payloads](toolkit/ay_period_delta_probe/report.json).
+
 ## 2026-10-01 — dynamically replace row dictionary entries during playback
 
 - User rejected 15 disks and requested at most four, then explicitly requested

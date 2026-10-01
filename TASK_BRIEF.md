@@ -36,9 +36,18 @@ One bounded real [4216,4280) comparison costs 62916 bytes static / 63118 bytes
 dynamic, with exact pixels and original two-screen history. No full-size or
 full-timing claim follows. Equal movie quarters need 267/271/258/261 distinct
 rows and 17489/18632/19202/21012 resident audio bytes. Dynamic rows remove the
-first constraint. Audio's 16-KiB bank is still a separate obstacle; investigate
-lossless prediction of the newly refined AY period bytes before allocating
-more memory. Keep bank 6 available for another solution or video buffering.
+first constraint. Audio's 16-KiB bank is still a separate obstacle. Lossless
+low-period-byte prediction was tested on all 25330 ticks and is insufficient:
+four estimated resident sizes with a 256-byte native-code reserve are
+16639/17689/18611/20468 bytes. This host prototype is not enabled in the player.
+Reuse [the exact round-trip comparison](toolkit/ay_period_delta_probe/report.json).
+Next use the currently unused bank 6 for a second resident audio segment,
+retaining the original exact AY tick records and existing interrupt consumer.
+Switch segments in the fixed-RAM foreground bridge without resetting the
+global AY count/FIFO or register state. Verify the two-bank allocation,
+initialization, boundary continuity and every new instruction's T-states.
+Then choose four video cuts by bounded window costs and verify actual capacity
+and sustained playback; dynamic rows alone do not prove the final target.
 Reuse `.tmp/dynamic-rows-probe/`, `.tmp/dynamic-rows-fixture/` and
 `.tmp/dynamic-rows-window/`; do not rebuild the previous 15-image set.
 Saved [native/Fuse proof and archives](toolkit/dynamic_rows_report.json).
