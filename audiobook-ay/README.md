@@ -1,5 +1,10 @@
 # AY audiobook preview
 
+**Listening feedback (2026-10-01):** the user found this first preview
+completely unintelligible. The original files remain for comparison, not as
+an accepted speech result. See the [LPC2 reuse comparison](LPC2_COMPARISON.md)
+for a 24-second diagnostic based on the existing LPC codec.
+
 A separate audio-only subproject. The first **120 seconds** of the supplied
 O. Henry recording (1977) are converted with the same refined three-voice,
 square-aware AY synthesizer used by the movie. The user selected compact

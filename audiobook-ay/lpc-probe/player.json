@@ -1,0 +1,93 @@
+{
+  "origin": 32768,
+  "ticks": 1200,
+  "duration_seconds": 24.0,
+  "player_labels": {
+    "start": 32768,
+    "clear_ay": 32822,
+    "ready": 32876,
+    "wait_field": 32877,
+    "field_start": 32878,
+    "tick_start": 32887,
+    "write_register": 32891,
+    "ay_out": 32899,
+    "tick_end": 32907,
+    "finished": 32948,
+    "finished_wait": 32982,
+    "irq": 32985,
+    "read_n": 32988,
+    "disk_call": 32997,
+    "sector_ok": 33015,
+    "remaining": 33022,
+    "disk_position": 33024,
+    "bank_pointer": 33026,
+    "bank_table": 33028
+  },
+  "sections": [
+    {
+      "bank": 0,
+      "sector": 60,
+      "sectors": 52,
+      "bytes": 13200
+    }
+  ],
+  "directory": [
+    {
+      "name": "boot",
+      "type": "B",
+      "field1": 67,
+      "length": 67,
+      "sectors": 1,
+      "sector": 0,
+      "track": 1
+    },
+    {
+      "name": "PLAYER",
+      "type": "C",
+      "field1": 32768,
+      "length": 11008,
+      "sectors": 43,
+      "sector": 1,
+      "track": 1
+    },
+    {
+      "name": "AUDIO0",
+      "type": "C",
+      "field1": 49152,
+      "length": 13200,
+      "sectors": 52,
+      "sector": 12,
+      "track": 3
+    }
+  ],
+  "capacity": {
+    "used_sectors": 96,
+    "free_sectors": 2448,
+    "first_free_track": 7,
+    "first_free_sector": 0
+  },
+  "registers_sha256": "da64f7f235710761369166a67a94802c4447db12777773c67f33d56f74c715ba",
+  "timing": {
+    "tick_start_to_tick_end_tstates": 867,
+    "field_check_tstates": 38,
+    "irq_body_tstates": 18,
+    "im2_ack_tstates": 19,
+    "register_loop_continue_tstates": 78,
+    "register_loop_last_tstates": 73,
+    "nominal_field_tstates": 70908,
+    "excludes": "ULA contention, HALT wait and boot-only TR-DOS/physical latency"
+  },
+  "memory": {
+    "bank_5": "screen, BASIC and TR-DOS workspace",
+    "bank_2": "8000 code; 9000..AAFF screen; B800 stack top; BDBD vector; BE00..BF00 IM2 table",
+    "data_banks": [
+      0,
+      4,
+      6,
+      1,
+      3
+    ],
+    "bank_7": "spare; never required from a preceding disk",
+    "runtime_disk_reads": 0
+  }
+}

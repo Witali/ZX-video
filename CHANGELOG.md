@@ -5,6 +5,45 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: reuse LPC2 for a bounded audiobook speech comparison
+
+- User feedback: the first movie-style audiobook AY preview is completely
+  unintelligible. The user pointed to `C:/Work/LPC-sound-codec` as a possible
+  foundation. Baseline `8cb13c1`; use only the same source interval [60,84),
+  preserving the rejected two-minute preview for comparison.
+- Found the separate LPC2 Improved codec (HEAD `360af14`) and reused its
+  existing DSP through a headless [bridge](audiobook-ay/lpc2_bridge.js), with
+  source/core hashes and an archived exact core. The LPC repository remains
+  unchanged. Settings: 8 kHz, order 10, 20 ms frames / 32 ms analysis, .85
+  pre-emphasis, .38 voicing, .05 repeats, .65 pitch smoothing, .35 postfilter,
+  4 dB brightness and 70 Hz DC block. One 1200-frame LPC2 file is 4114 bytes;
+  unpack/repack is bit-exact. A full LPC2 reference WAV is provided separately.
+- One candidate maps LPC2 envelope resonances to three AY periods without
+  musical-note quantization, and nonvoiced modes to noise on B. It reuses
+  the resident player unchanged (hot-path delta 0 T). It is not a native LPC
+  decoder or PCM/DAC player. [Probe](audiobook-ay/probe_lpc2.py) and
+  [comparison](audiobook-ay/LPC2_COMPARISON.md) preserve the original, previous
+  AY, full LPC2 reference and candidate AY as equal-RMS 24-second WAVs.
+- Results at 10 Hz: old AY / full LPC2 / LPC2-to-AY spectral cosine
+  0.847394 / 0.874207 / 0.588041, loudness correlation
+  0.981217 / 0.809145 / 0.781854, onset F1 0.765432 / 0.840580 / 0.656250.
+  These proxies do not prove speech intelligibility; no new sample has been
+  accepted by a listener. The formant mapping worsens all listed proxies.
+- Complete candidate verification: all 1200 fields and 13200 actual AY
+  writes match through EOF in native execution and cold Fuse. No missed or
+  duplicate fields; first OUT 150..153 T, intervals 70905..70909 T. All native
+  ticks cost 974 T. One diagnostic TRD uses 96 sectors, with 52 startup reads
+  and zero runtime reads. Five tests pass, including known LPC resonances,
+  silence/nonvoiced modes, all bank boundaries, maximum length and IRQ state.
+  [Full evidence](audiobook-ay/lpc-probe/verification.json) is archived; physical
+  hardware and complete LPC decoding on Z80 remain untested.
+- Decision: do not promote the AY formant mapping or rebuild the two-minute
+  preview with it. Keep the bounded diagnostic and LPC2 reference for listening.
+  The reusable foundation is the LPC speech model/bitstream. Preserving the
+  full filter requires sample synthesis and rapid AY volume output; the
+  approximately 443 T/sample budget at 8 kHz still needs a native feasibility
+  test. No unsupported quality improvement or Z80 throughput is claimed.
+
 ## 2026-10-01: add a two-minute compact AY audiobook subproject
 
 - Objective: add a separate folder for the supplied O. Henry recording.
