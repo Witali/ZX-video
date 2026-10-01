@@ -35,6 +35,46 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — shared fixed-RAM AY model, exact four-volume capacity
+
+- Objective: reclaim bank 6 and reduce duplicated sound tables for the
+  four-disk goal. Baseline `9893f79`; reuse the exact cached CB44 video,
+  refined AY and selected cuts [0,1312,2672,3744,5066], without re-preparing
+  frames or encoding alternative whole-disk candidates.
+- Implement an opt-in fixed-RAM Huffman decoder/forest and one exact AYH1
+  model per volume. Additional B100h..B700h storage passes guarded native
+  replay of all 256 real-window frames with zero reads/writes/fetches before
+  reuse. Actual fixed storage is 3860/3940/3932/4053 bytes. Payloads occupy
+  bank 4; part 4 alone needs a 1170-byte tail in bank 6. The video queue
+  still has three slots; freed bank space is not yet a throughput gain.
+- Seventeen tests pass, including independent full-flags Z80 execution,
+  every forced payload boundary and instruction-by-instruction IRQ stress.
+  Initial tests caught missing SCF emulation, a stress-run instruction guard
+  and an incorrect unbounded expectation for the 16-bit IRQ clock. Add the
+  exact opcode model, use single-record batches for stress, and compare the
+  counter modulo 65536. Preserve the final failed clock run in the evidence.
+- Every one of the 25330 original AY ticks passes native decoding and chip
+  comparison. Total fill cost increases 69212242 -> 70408859 T (+1196617),
+  excluding real IRQ/ULA/ROM/disk. The shared model saves storage, not CPU.
+  A normal payload-byte refill is 37 -> 65 T when spanning is enabled;
+  the first bank switch costs 251 T and final wrap 92 T. See the exact
+  bridge/init accounting in [CB44_DYNAMIC.md](toolkit/CB44_DYNAMIC.md).
+- Complete real [4096,4352) cold/Fuse playback verifies 1769472 screen bytes,
+  1280 AY ticks and all 735 runtime sectors. Diagnostic size 796 -> 793
+  sectors. Timing still fails: 108 nominal misses, all beyond one field,
+  maximum 82 fields, no AY underruns. This is not a release or timing pass.
+- Actual complete startup/video capacity is **2543/2541/2588/2588** sectors,
+  versus 2544 per TRD. Parts 1 and 2 also pass dirty-RAM cold loading.
+  Total 10260 exceeds 10176 by 84 sectors (21504 bytes). Parts 3/4 do not
+  fit, and changing cuts alone cannot eliminate this total excess.
+- Keep this measured opt-in implementation for further development; root
+  images are unchanged. Full-movie timing, native integrated bank-6 tail
+  playback and actual EOF continuation remain unverified for this layout.
+  Reproduce with [cached rebuild](toolkit/rebuild_cell_player.py),
+  [native AY benchmark](toolkit/benchmark_fixed_resident_audio.py) and
+  [capacity measurement](toolkit/measure_shared_audio_capacity.py).
+  [Saved report and evidence](toolkit/shared_audio_report.json).
+
 ## 2026-10-01 — retire unused reconstruction and measure shared AY tables
 
 - Objective: reduce startup storage and reclaim fixed RAM for the four-disk

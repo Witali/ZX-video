@@ -64,12 +64,15 @@ def tree_bytes(trees, origin):
     return struct.pack('<13H', *roots), bytes(result)
 
 
-def code(audio, ticks, initial, roots, payload, *, batch=6, total_ticks=None):
+def code(audio, ticks, initial, roots, payload, *, batch=6, total_ticks=None,
+         origin=ORIGIN,payload_overflow=None,page_entry=None):
     if not 1 <= batch <= 31:
         raise ValueError('batch must be 1..31')
     if (ay_interrupt.QUEUE_BASE, ay_interrupt.QUEUE_SLOTS, ay_interrupt.SLOT_BYTES) != (0xa000,32,32):
         raise ValueError('AY FIFO address contract changed')
-    a, listing = MiniAssembler(ORIGIN), []
+    if payload_overflow is not None and (origin>=0xc000 or page_entry is None):
+        raise ValueError('spanning payload requires fixed code and a paging entry')
+    a, listing = MiniAssembler(origin), []
     stage = 'init'
 
     def emit(name, blob, timing):
@@ -106,6 +109,8 @@ def code(audio, ticks, initial, roots, payload, *, batch=6, total_ticks=None):
     absolute('LD HL,payload', 0x21, payload, 10)
     absolute('LD (source),HL', 0x22, 'source', 16)
     emit('LD A,80h', [0x3e, 0x80], 7); store('bit_buffer')
+    if payload_overflow is not None:
+        emit('LD A,bank 4',[0x3e,0x14],7);store('payload_bank')
     absolute('LD HL,initial', 0x21, 'initial', 10)
     absolute('LD DE,0B00h', 0x11, 0x0b00, 10)
     a.label('init_register')
@@ -179,7 +184,17 @@ def code(audio, ticks, initial, roots, payload, *, batch=6, total_ticks=None):
     emit('SLA B', [0xcb, 0x20], 8)
     branch('JR NZ,have_bit', 0x20, 'have_bit')
     emit('LD B,(IX+0)', [0xdd, 0x46, 0], 19)
-    emit('INC IX', [0xdd, 0x23], 10); emit('RL B', [0xcb, 0x10], 8)
+    emit('INC IX', [0xdd, 0x23], 10)
+    if payload_overflow is not None:
+        emit('LD A,IXH',[0xdd,0x7c],8);emit('OR A',[0xb7],4)
+        branch('JR NZ,payload_byte_ready',0x20,'payload_byte_ready')
+        load('payload_bank');emit('CP bank 4',[0xfe,0x14],7)
+        branch('JR NZ,payload_byte_ready',0x20,'payload_byte_ready')
+        emit('LD A,bank 6',[0x3e,0x16],7);store('payload_bank')
+        emit('PUSH BC',[0xc5],11);absolute('CALL payload page',0xcd,page_entry,17);emit('POP BC',[0xc1],10)
+        absolute('LD IX,overflow',(0xdd,0x21),payload_overflow,14)
+        a.label('payload_byte_ready');emit('SCF sentinel',[0x37],4)
+    emit('RL B', [0xcb, 0x10], 8)
     a.label('have_bit')
     branch('JR NC,child', 0x30, 'child')
     emit('INC HL', [0x23], 6); emit('INC HL', [0x23], 6)
@@ -190,6 +205,7 @@ def code(audio, ticks, initial, roots, payload, *, batch=6, total_ticks=None):
     for name, size in (('source', 2), ('remaining', 2), ('bit_buffer', 1),
                        ('next_index', 1), ('high_mask', 1), ('emitted', 1)):
         a.label(name); a.emit(*bytes(size))
+    if payload_overflow is not None:a.label('payload_bank');a.emit(0x14)
     a.label('state_end'); a.label('initial'); a.emit(*initial)
     a.label('end')
     return a.resolve(audio), dict(a.labels), listing

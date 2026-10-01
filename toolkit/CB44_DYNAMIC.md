@@ -221,3 +221,50 @@ audit. Fixed tables plus a bank-spanning reader could free most/all bank 6
 for a fourth video slot. Native paging/bit-reader changes, slot-specific
 in-place bounds, sustained timing and actual startup size are unverified.
 This is the next bounded implementation, not an accepted four-disk result.
+
+## Shared fixed-RAM AY implementation (2026-10-01)
+
+Baseline `9893f79`; `rebuild_cell_player.py --shared-audio` opts in for CB44.
+Decode an existing AYB1 to its exact initial state and records, encode one
+AYH1 model, and place code at 8000h, roots at 8200h and four-byte tree nodes
+up to the actual LZSA2 origin, then B100h..B700h. A full 256-frame guarded
+replay proves that the additional tail was unused in the baseline. Payload
+resides in bank 4; at most 1536 additional bytes may reside at the top of
+bank 6. Reject larger streams rather than silently overflowing. Original
+source audio hashes and records remain available in build metadata.
+
+At a payload-byte refill, the baseline `LD B,(IX+0); INC IX; RL B` costs
+19+10+8 = 37 T. Spanning adds `LD A,IXH; OR A; JR NZ; SCF`, 28 T on the
+ordinary path: 65 T total. SCF restores the bit-reader sentinel carry.
+The first bank-4 wrap adds 214 T (251 total), including the 92-T paging
+body, preservation of BC and loading the overflow pointer. Final bank-6
+wrap adds 55 T (92 total); remaining records prevent reading beyond EOF.
+One-bank compilation omits all these additions. Spanning init adds 20 T.
+
+The direct fixed bridge costs 436 T (one bank) / 442 T (spanning), versus
+the previous two-segment bridge's 486 T ordinary / 645 T switch / 516 T
+EOF. These include caller preservation, resident CALL, two 92-T page calls
+and RET, excluding resident body and outer CALL. For one identical global
+model, each spanning refill's measured delta is
+`6 + 28*bytes_read + 186*bank4_wraps + 27*bank6_wraps` T. Independent
+full-flags Z80 tests validate every boundary and all preserved registers.
+IRQs, contention, TR-DOS and physical disk are excluded from CPU counts.
+
+All 25330 native AY records/chip updates are exact. Against the original
+two-model volumes, fill totals are 69212242 -> 70408859 T (+1196617), since
+global Huffman distributions and wrap checks change decoding work. This
+layout saves space; it is not an AY speed optimization. Seventeen tests
+pass, including IRQs after every instruction and exact 16-bit clock wrap.
+
+The complete real 256-frame window preserves 1769472 Fuse screen bytes,
+1280 AY records and all runtime sectors. It shrinks 796 -> 793 sectors but
+still misses 108 nominal deadlines, all beyond one field, maximum 82.
+Selected full-volume capacity is 2543/2541/2588/2588 sectors, 84 sectors
+over four disks in total. The first two pass dirty-RAM cold startup.
+
+Full-movie playback, integrated overflow playback and EOF continuation
+remain outstanding. The video queue still has three slots. Future reuse of
+bank 6 must protect the audio tail from compressed input as well as output,
+or first prove another fixed allocation for the tail. No root release image
+has been replaced. [Evidence](shared_audio_report.json),
+[verifier](verify_shared_audio.py), [capacity script](measure_shared_audio_capacity.py).

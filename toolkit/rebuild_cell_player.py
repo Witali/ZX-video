@@ -39,6 +39,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('metadata','output','zx0','lzsa'):p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--verify',choices=('cpu','cold','none'),default='cpu')
+    p.add_argument('--shared-audio',action='store_true',help='experimental fixed AY decoder/trees and shared payload')
     a=p.parse_args();m=json.loads(a.metadata.read_bytes());source=a.metadata.parent;stem=a.metadata.stem
     if a.output.exists() and any(a.output.iterdir()):p.error('output must be new or empty')
     if m['cell_codebook']['wire'] not in ('CB42','CB44'):p.error('cached rebuild needs dynamic rows')
@@ -69,7 +70,7 @@ def main():
     with reference_tables(rows):
         b=Builder(raw,build_states,a.zx0.resolve(),work/'zx0',row_dictionary=rows,lzsa=a.lzsa.resolve(),
             series_fingerprint=identity,cell_raw=cell,cell_start=start,frame_fields=m['frame_fields'],
-            reference_frames=frames,**OPTIONS)
+            reference_frames=frames,shared_audio=a.shared_audio,**OPTIONS)
         b.ends=ends;b.inplace_streams[start,end]=coded,m['blocks'];b.resident_streams[start,end]=b'',audio
         image,meta=b.volume(start,end,part);write_json(a.output/(stem+'.json'),meta)
         if image is None:

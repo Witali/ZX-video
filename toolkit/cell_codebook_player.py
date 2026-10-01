@@ -88,12 +88,14 @@ def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False):
 
 
 class Builder(PreviousBuilder):
-    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,**kwargs):
+    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,**kwargs):
         if frame_fields not in (5,6):raise ValueError('CB41 supports five or six fields per frame')
         self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
         count,entries=struct.unpack_from('<HH',cell_raw,4)
         self.front_reuse=cell_raw[:4]==b'CB44'
+        self.shared_audio=shared_audio
+        if shared_audio and not self.front_reuse:raise ValueError('shared fixed audio requires CB44')
         self.dynamic_rows=cell_raw[:4] in (b'CB42',b'CB44')
         self.reference_frames=reference_frames
         if cell_raw[:4] not in (b'CB41',b'CB42',b'CB44') or entries!=256 or cell_start<0:
@@ -238,6 +240,10 @@ class Builder(PreviousBuilder):
         m['cell_codebook']['retired_metadata']={key:m[key] for key in retired_keys if key in m}
         for key in retired_keys:
             if key in m:m[key]=dict(enabled=False,replaced_by='cell_codebook')
+        if self.shared_audio:
+            import fixed_resident_audio
+            _,sound=self.separated(start,end)
+            sections=fixed_resident_audio.install(banks,m,sections,sound,self.compress)
         result=[]
         for s in sections:
             lo=s['address']&16383;raw=bytes(banks[s['bank']][lo:lo+s['decoded_bytes']])

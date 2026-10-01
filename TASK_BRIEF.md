@@ -135,19 +135,27 @@ Reuse `.tmp/front-retired-core/`, `.tmp/front-retired-fixture/`,
 `rebuild_cell_player.py` reuses existing metadata/scaffold/raw/LZSA2/AY;
 use it for player-only changes instead of preparing/encoding again.
 
-Next scoped implementation: shared fixed-RAM AY decoder/trees, one AYH1
-model per volume and a bank-spanning coded payload. The exact host probe
-checks all 25330 ticks for the selected four cuts. Payloads are
-14137/16118/12516/17554 bytes; only part 4 needs bank-6 overflow (1170 bytes).
-Trees plus a 512-byte code reserve need 3946/4026/4018/4106 fixed bytes.
-The freed 3444 bytes alone are insufficient. Consider the additional
-B100h..B700h retired tail after the current book/popcount, but validate it
-with guards before allocation. Single-model trees+payload total 74373 vs
-83674 bytes for two segments; these are pre-startup-compression sizes.
-Do not claim a native saving or speedup yet. If validated, bank 6 can hold
-another video slot (with a reserved tail in part 4), attacking the measured
-queue starvation as well as duplicate audio tables. Count boundary paging,
-preserve the AY FIFO/IRQ and prove in-place input/output bounds per slot.
+Shared fixed-RAM AY is now implemented behind `rebuild_cell_player.py
+--shared-audio`. The B100h..B700h gap passes a full native access guard.
+Seventeen tests pass; all 25330 selected-volume ticks are native/chip exact.
+Fixed storage is 3860/3940/3932/4053 bytes. Payloads are
+14137/16118/12516/17554 bytes, with only part 4 using a 1170-byte bank-6 tail.
+AY fill costs 69212242 -> 70408859 T (+1196617); this saves storage, not CPU.
+Real 256-frame cold/Fuse content is fully exact; size 796 -> 793 sectors.
+Timing still fails: 108 misses, all beyond one field, maximum 82 fields.
+Complete four-volume capacity is 2543/2541/2588/2588 sectors: 84 sectors
+(21504 bytes) over the total available 10176. The first two volumes pass
+dirty-RAM cold loading; no four-disk release or whole-movie timing claim.
+Reuse `.tmp/shared-audio-window/`, `.tmp/shared-audio-four-capacity/` and
+[the saved evidence](toolkit/shared_audio_report.json).
+Next scoped step: use the freed bank 6 for video lookahead. The queue still
+has three slots. Either protect its 1170-byte AY tail from BOTH compressed
+input and decoded output, or audit further fixed-RAM space for that tail
+before restoring a full fourth slot. B700h..BA00h is not yet audited.
+Count instructions, preserve AY FIFO/IRQ and all in-place bounds; prove
+sustained delivery on the cached difficult window before full builds.
+In parallel capacity work, target the remaining total sector excess;
+moving volume cuts alone cannot remove it. Do not reduce media quality.
 Retain full image/AY, 10 fps and the entire edit; do not rebuild all four
 TRDs until a bounded test and complete capacity checks support the candidate.
 Reuse `.tmp/dynamic-rows-probe/`, `.tmp/dynamic-rows-fixture/` and

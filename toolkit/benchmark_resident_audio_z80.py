@@ -43,7 +43,13 @@ class CheckedCPU(TraceCPU):
         self.irq_count = 0
 
     def read8(self, at):
-        if self.checking and at >= resident.ORIGIN:
+        if self.checking and at>=resident.ORIGIN and hasattr(self,'fixed_payloads'):
+            bank=self.port_7ffd&7
+            part=self.fixed_payloads.get(bank)
+            if part is None or not part['address']<=at<part['address']+part['bytes']:
+                raise AssertionError(('unloaded fixed-audio payload read',bank,at,self.pc))
+            self.payload_reads.append((bank,at))
+        elif self.checking and at >= resident.ORIGIN:
             bank=self.port_7ffd&7
             part=getattr(self,'images',{}).get(bank)
             end=resident.ORIGIN+part['image_bytes'] if part else self.image_end
@@ -92,8 +98,13 @@ class CheckedCPU(TraceCPU):
 
 
 class Harness:
-    def __init__(self, blob, batch=6, *, paging=False):
+    def __init__(self, blob, batch=6, *, paging=False,fixed=False,first_bank_bytes=16384):
         self.paging = paging
+        self.fixed=fixed
+        if fixed:
+            import fixed_resident_audio
+            if not paging:raise ValueError('fixed audio harness needs paging')
+            blob=fixed_resident_audio.single_stream(blob)
         self.banked=blob[:4]==b'AYB1'
         if self.banked:
             import banked_resident_audio as banked
@@ -112,15 +123,25 @@ class Harness:
         a.label('fatal'); a.emit(0x76)
         if a.pc >= 0xb900: raise AssertionError('test AY placement overlaps clock/stack')
         self.audio = a.labels
-        self.build = banked.build(blob,self.audio,batch=batch) if self.banked else resident.build(blob, self.audio, batch=batch)
+        self.build = (fixed_resident_audio.build(blob,self.audio,batch=batch,core_limit=0x8d74,first_bank_bytes=first_bank_bytes)
+            if fixed else banked.build(blob,self.audio,batch=batch) if self.banked else resident.build(blob, self.audio, batch=batch))
         self.labels = self.build['labels']
         c = self.cpu = CheckedCPU()
         # Dirty all RAM first. Only the explicit code/data sections get loaded.
         for bank in c.banks: bank[:] = b'\xa5'*16384
         c.port_7ffd, c.sp = 0x14, STACK
         for i, v in enumerate(a.resolve()): c.write8(0xa500+i, v)
-        image = bytes.fromhex(self.build['image_hex'])
-        for i, v in enumerate(image): c.write8(resident.ORIGIN+i, v)
+        image=bytes.fromhex(self.build.get('image_hex',''))
+        if fixed:
+            for region in self.build['regions']:
+                address=region['address'];data=bytes.fromhex(region['data_hex'])
+                assert not (address<a.pc and address+len(data)>0xa500),'test audio code overlaps fixed tree'
+                for i,v in enumerate(data):c.write8(address+i,v)
+            c.fixed_payloads={s['bank']:s for s in self.build['payload_segments']}
+            for part in self.build['payload_segments']:
+                at=part['address']&16383;c.banks[part['bank']][at:at+part['bytes']]=bytes.fromhex(part['data_hex'])
+        else:
+            for i, v in enumerate(image): c.write8(resident.ORIGIN+i, v)
         if self.banked:
             c.images={part['bank']:part for part in self.build['segments']}
             for part in self.build['segments']:
@@ -140,10 +161,11 @@ class Harness:
                 c.extra_mutable.add(self.segment_hooks['labels']['active_bank'])
             self.bridge = resident.bridge(0x9300,self.segment_hooks['labels']['fill'] if self.banked else self.labels['fill'],
                 page=video.PAGE,shadow=video.SHADOW,
-                bank_address=self.segment_hooks['labels']['active_bank'] if self.banked else None)
+                bank_address=self.segment_hooks['labels']['active_bank'] if self.banked else self.build.get('payload_bank_address'))
             for i, v in enumerate(bytes.fromhex(self.bridge['code_hex'])): c.write8(0x9300+i, v)
             extra_listing = [dict(row,stage='paging') for row in extra_listing]+self.bridge['listing']
             if self.banked:extra_listing += [dict(row,stage='segment') for row in self.segment_hooks['listing']]
+        if fixed:c.extra_mutable.update(range(self.labels['state'],self.labels['state_end']))
         self.run('setup_clock', self.audio, check=False)
         c.labels, c.audio = self.labels, self.audio
         c.records = self.records
@@ -241,8 +263,8 @@ class Harness:
         if c.tstates-start != 133+routine+(75 if self.paging else 0):
             raise AssertionError('IRQ cycle count differs')
         c.irq_count += 1
-        if word(c, self.audio['elapsed_fields']) != c.irq_count or not c.iff1:
-            raise AssertionError('IRQ clock differs')
+        if word(c, self.audio['elapsed_fields']) != (c.irq_count&65535) or not c.iff1:
+            raise AssertionError(('IRQ clock differs',word(c,self.audio['elapsed_fields']),c.irq_count,c.iff1))
         c.mode = mode
         return c.tstates-start
 
@@ -250,6 +272,18 @@ class Harness:
         c = self.cpu
         if self.consumed != len(self.records) or c.published != len(self.records):
             raise AssertionError('incomplete record coverage')
+        if self.fixed:
+            assert not word(c,self.labels['remaining']) and not word(c,self.audio['audio_remaining'])
+            assert not c.read8(self.audio['audio_enabled'])
+            expected=[(p['bank'],at) for p in self.build['payload_segments'] for at in range(p['address'],p['address']+p['bytes'])]
+            assert c.payload_reads==expected
+            buffer=c.read8(self.labels['bit_buffer']);assert buffer
+            unread=7-((buffer&-buffer).bit_length()-1)
+            assert len(expected)*8-unread==self.build['input_bits']
+            last=self.build['payload_segments'][-1]
+            assert word(c,self.labels['source'])==(last['address']+last['bytes'])&65535
+            assert c.sp==STACK and c.min_sp>=0xbfa0
+            return
         if self.banked:
             if word(c,self.audio['audio_remaining']) or c.read8(self.audio['audio_enabled']):raise AssertionError('AY not finished')
             expected_reads=[]

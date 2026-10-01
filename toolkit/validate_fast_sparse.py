@@ -82,6 +82,8 @@ class CPU(MemoryCPU):
         if op == 0x76:
             self.halts += 1
             return 4
+        if op == 0x37:
+            self.carry = True; return 4
         if op == 0xDD:
             q = self.fetch8()
             if q in (0x22, 0x2A):
@@ -99,6 +101,8 @@ class CPU(MemoryCPU):
                 self.push(self.ix); return 15
             if q == 0xE1:
                 self.ix = self.pop(); return 14
+            if q == 0x7C:
+                self.a = self.ix >> 8; return 8
             if q & 0xC7 == 0x46:
                 displacement = self.rel()
                 self.put((q >> 3) & 7, self.read8(self.ix + displacement)); return 19
