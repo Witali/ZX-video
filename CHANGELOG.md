@@ -28,6 +28,49 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — full refined A/V preparation and timing-driven disk cuts
+
+- User requested new disks with the joint colour/grain selector and the
+  square-aware AY soundtrack, then explicitly authorized extra disks to keep
+  these changes and 10 fps. Baseline `2fb8833`; reuse hashed source RGB from
+  the completed 10-fps preparation and the authorized no-credits edit.
+- Prepared all 5066 frames and 25330 AY50 ticks (506.6 s). Retain the entire
+  post-credit scene and original audio EOF; append 120 ms of silence to fill
+  the final video slots. Audio uses the generic FFmpeg mono downmix, one
+  nominal 3 dB noise attenuation step and +/-50-cent integer-period fitting.
+  The new soundtrack intentionally differs from the previous release.
+- Full-movie average frame RGB MSE improves 743.069974 -> 692.854994
+  (6.76% lower). Every active sample passes the monochrome average/physical
+  RGB guards, every cell passes the luma guard, and independent host screen
+  expansion agrees. Maximum per-frame row count is 142. This is not a
+  perceptual accuracy score; smooth sky colour bands remain visible in the
+  inspected difficult samples. Palette history is continuous across disks.
+- The initial complete eight-disk Fuse run has exact full screens and AY,
+  but 207 missed nominal deadlines. Volumes 4/6/7 violate the one-field
+  fallback: 30/153/22 late frames and maximum phase 2694504/7232616/850900 T.
+  Volume 6 ends before its late run recovers. Reject that set for publication;
+  preserve all evidence instead of hiding the failed attempt.
+- A bounded 64-frame probe at global frames [4216,4280), with the planned
+  final series identity and both real preceding screens, passes native replay,
+  all 442368 Fuse screen bytes, 320 AY ticks and exact nominal deadlines.
+  Maximum actual phase is 16 T (instruction-level publication variation).
+  This supports finer disk cuts around measured heavy regions; it is not a
+  complete-set timing result or a proof of a minimum disk count.
+- Added explicit validated cuts and single-volume diagnostic builds. Cuts
+  must cover every frame exactly once, include EOF, respect both predictor
+  histories, row-table capacity and resident AY memory. A diagnostic volume
+  keeps the complete set's identity and is marked as a partial movie.
+  Thirty-five relevant unit/regression tests pass. Native renderer/packet
+  instructions are unchanged: 0 T instruction delta; the existing 10-fps
+  cadence immediate remains `LD DE,5`, 10 T (versus 10 T at `LD DE,6`).
+  Fuse disk-call times include ROM, contention, IRQs and emulated latency;
+  they are not reported as deterministic decoder CPU costs.
+- Reproduction: [preparation](toolkit/prepare_refined_av.py),
+  [builder](toolkit/build_cb41_cadence_movie.py),
+  [cut tests](toolkit/test_refined_av.py),
+  [authenticated failed-run and probe archive](toolkit/refined_av_attempt_report.json).
+  The selected complete timing repair is recorded separately after its gate.
+
 ## 2026-10-01 — integrate square-aware AY frequency fitting and quieter noise
 
 - User requested slightly less noise, modeling AY's square-wave harmonics,

@@ -60,3 +60,8 @@
   when a later attempt supersedes them. Update the changelog in the same
   focused commit as the completed experiment or change. Never invent missing
   historical dates or measurements.
+
+- For the refined colour + square-aware AY rebuild requested on 2026-10-01,
+  the user explicitly permits additional disks to retain the new image,
+  new sound and 10 fps. Report the actual count; the three-disk objective
+  remains a later optimization goal, not a cap on this authorized rebuild.

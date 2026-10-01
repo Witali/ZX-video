@@ -29,6 +29,9 @@ def main():
     p.add_argument('--count', type=int)
     p.add_argument('--max-frames-per-disk', type=int, default=4096)
     p.add_argument('--target-volumes', type=int, choices=(3,), help='balance three volumes with local window costs')
+    p.add_argument('--volume-cuts', type=lambda s:list(map(int,s.split(','))),
+        help='explicit exclusive frame ends, including EOF, for measured timing repairs')
+    p.add_argument('--only-volume', type=int, help='build/verify one selected volume with the final series identity')
     p.add_argument('--verify', choices=('cpu','fuse','none'), default='fuse')
     p.add_argument('--verification-timeout', type=float, default=1800)
     p.add_argument('--prefix', default='ZX-video-10fps')

@@ -68,8 +68,8 @@ def main():
         for path in sorted(run.rglob('*')):
             if not path.is_file(): continue
             relative = path.relative_to(run)
-            if any(part in ('zx0','lzsa') for part in relative.parts): continue
-            if path.suffix not in ('.json','.txt','.raw','.stream','.npz','.ayh1','.trd'): continue
+            if any(part in ('zx0','lzsa','continuation-input') for part in relative.parts): continue
+            if path.suffix not in ('.json','.txt','.raw','.stream','.npz','.ayh1','.trd','.ram','.szx','.log'): continue
             archive(path, run.name+'-'+str(relative).replace('\\','-').replace('/','-'))
         runs.append(dict(name=run.name,frames=manifest['frames'],ay_ticks=manifest['ay_ticks'],
             video_fps=manifest['video_fps'],disks=disks,

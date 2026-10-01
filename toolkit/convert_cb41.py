@@ -48,7 +48,8 @@ def pack_blocks(raw, codec, cache):
     return bytes(stream), blocks
 
 
-def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6, target_volumes=None):
+def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6, target_volumes=None,
+                 volume_cuts=None):
     """Measure short windows once; choose cuts without building candidate sets.
 
     Exact row unions include both histories. Window byte costs select an
@@ -56,6 +57,23 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6
     Final TRD capacity is a separate gate, never inferred from this estimate.
     """
     sets = row_sets(frames)
+    if volume_cuts is not None:
+        if target_volumes is not None:
+            raise ValueError('explicit cuts and balanced target are mutually exclusive')
+        ends = [0]+list(volume_cuts)
+        if ends[-1] != len(frames) or any(not 0 < b-a <= max_frames for a,b in zip(ends,ends[1:])):
+            raise ValueError('explicit cuts must cover every frame once, ending at EOF')
+        parts, probes = [], []
+        for lo, hi in zip(ends,ends[1:]):
+            rows = len({0}.union(*sets[max(0,lo-2):hi]))
+            if rows > 256: raise ValueError(f'explicit volume {lo}..{hi} needs {rows} rows')
+            coded, report = audio_size(audio,lo,hi,labels,frame_fields=frame_fields)
+            if not report['resident_fits']: raise ValueError('explicit volume exceeds resident audio bank')
+            parts.append(dict(start=lo,end=hi,audio=coded,audio_report=report))
+            probes.append(dict(start=lo,end=hi,rows=rows,**report))
+        return parts, dict(method='explicit cuts after bounded timing diagnosis', boundaries=ends,
+            audio_probes=probes, windows=[], candidate_disk_sets_built=0,
+            final_disk_capacity_verified=False, minimum_volume_count_claimed=False, quality_reduced=False)
     row_parts = row_partitions(sets, max_frames)
     all_costs = []
     windows, initial = [], []
@@ -126,7 +144,9 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     # Resolve the real audio ABI, rather than borrowing labels from a movie.
     labels = player_harness(bytes(4), scaffold.tables, scaffold.mapping, 1).audio
     parts, plan = plan_volumes(frames, audio, labels, codec, cache, args.max_frames_per_disk,
-        frame_fields, getattr(args,'target_volumes',None))
+        frame_fields, getattr(args,'target_volumes',None), getattr(args,'volume_cuts',None))
+    only = getattr(args,'only_volume',None)
+    if only is not None and not 1 <= only <= len(parts): raise ValueError('invalid selected volume')
     write_json(output/'partition.json', plan)
     ends = [p['end'] for p in parts]
     identity = sha(frames.tobytes()+b''.join(f.serialize() for f in audio)
@@ -138,6 +158,7 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
         unchanged_native_baseline='9885483', disks=[])
     write_json(output/'timing.json', timing)
     for number, part in enumerate(parts, 1):
+        if only is not None and number != only: continue
         lo, hi = part['start'], part['end']
         print(f'CB41 disk {number}/{len(parts)}: frames {lo}..{hi-1}', flush=True)
         chosen = representation(frames, lo, hi)
@@ -208,8 +229,9 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     if args.verify != 'none' and len(records) > 1:
         from test_fap3_disk import verify_swaps
         verify_swaps(output, output/'disk-swaps.json')
-    plan['final_disk_capacity_verified'] = True
-    plan['final_disk_sets_built'] = 1
+    plan['final_disk_capacity_verified'] = only is None
+    plan['final_disk_sets_built'] = int(only is None)
+    plan['verified_volume_indices'] = [only] if only is not None else list(range(1,len(parts)+1))
     write_json(output/'partition.json', plan)
     timing['complete'] = args.verify != 'none'
     timing['all_nominal_deadlines_met'] = args.verify == 'fuse' and all(
@@ -223,4 +245,8 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
         compression=codec.identity, native_options=OPTIONS,
         independently_bootable=True, brightness_levels=5,
         player_baseline='9885483', player_hot_path_changed=frame_fields!=6, player_hot_path_delta_tstates=0)
+    if only is not None:
+        manifest.update(whole_movie=False, selected_volume=only, source_movie_frames=len(frames),
+                        frames=sum(r['frames'] for r in records), ay_ticks=sum(r['frames'] for r in records)*frame_fields,
+                        duration_seconds=sum(r['frames'] for r in records)*frame_fields/50)
     return records

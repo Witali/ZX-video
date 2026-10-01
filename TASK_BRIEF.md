@@ -42,8 +42,10 @@ One selected three-volume plan `[0,1808,3408,5066]` failed actual capacity:
 first volume 2782 sectors / 2544 maximum. No new full-movie TRD was emitted;
 later volumes were not encoded. All 159 window costs are cached in
 `.tmp/cb41-10fps-full/partition.json`. This is not an impossibility proof.
-A user preference question is pending: four disks at 10 fps/unchanged quality,
-retain the verified three-disk 25/3-fps set, or further compression into three.
+The earlier disk-count preference is resolved: on 2026-10-01 the user
+authorized additional disks for the refined colour and sound rebuild,
+retaining the new image, new AY soundtrack and 10 fps. Do not reduce these
+to enforce the earlier three-disk cap on this rebuild.
 [Evidence, limits and reproduction](toolkit/CB41_10FPS.md).
 
 ## Latest scoped result: cell colours and contrast
@@ -103,6 +105,25 @@ and onset proxies; 27 tests, 2400 isolated native AY ticks and one complete
 five-frame CLI/CPU fixture pass. Audio bytes +75.79%, audio CPU +27.42% in
 these windows. No full-film timing/capacity claim; root TRDs and cached AY stay
 at the verified baseline. Reuse [audio evidence and reproduction](toolkit/AY_SQUARE_FIT.md).
+
+## Refined full-movie rebuild in progress
+
+The user requested new root TRDs with the joint colour/grain selector and
+square-aware AY fitting. Full preparation is cached in
+`.tmp/refined-av-movie/`: 5066 frames, 25330 AY ticks, 506.6 seconds including
+120 ms of silent tail padding. The authorized credits cut retains the
+post-credit scene through source EOF. Mean frame RGB MSE is 692.855 versus
+743.070 for the former colour selector; all per-sample RGB and per-cell luma
+guards pass. This is a numerical comparison, not a perceptual percentage.
+
+An eight-disk complete Fuse run had 207 missed nominal deadlines and failed
+the one-field fallback on three volumes. A targeted 64-frame probe with
+the final series identity and real preceding histories passed with zero
+misses. Explicit timing-driven cuts preserve every frame and AY tick; they
+do not claim a minimum disk count. Reuse
+[the archived failed run and probe](toolkit/refined_av_attempt_report.json).
+The selected 15-disk rebuild is in `.tmp/refined-av-final/`; do not treat
+incomplete timing or a successful build as a release.
 
 ## Working method
 
