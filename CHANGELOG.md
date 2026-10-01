@@ -5,6 +5,46 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: earlier prefix admission preserves content but worsens delivery
+
+- Objective: finish the bounded scheduling test after the direct header
+  optimization. Baseline `3fa1167`; unchanged CB46/LZSA2 streams, four slots,
+  inline cells, sector cache, 10 fps and AY50. Test the same [4096,4352)
+  window and complete part 4 [3744,5066), without rebuilding the movie.
+- Opt-in `--early-lzsa2-prefix` requires the direct header guard. Prefix
+  decoding may start with one completed slot remaining; two or more retain
+  the complete-input preference. The incomplete-input count test changes
+  `LD A,(count); OR A; JP NZ` (13+4+10=27 T) to
+  `LD A,(count); CP 2; JP NC` (13+7+10=30 T), delta +3 T. Complete-input
+  bypass delta is zero. Decoder machine code is identical, although changed
+  scheduling changes how often its guards and suspensions execute.
+- Two independent Z80 tests cover 40 admission cases: counts 0..3,
+  complete/partial input, available/unavailable prefixes, both variants,
+  exact costs, stack and count preservation.
+- Window: 2 ->14 nominal misses, all 14 beyond one field, maximum 1 ->10
+  fields (709079 actual T), invalid intervals 0 ->6. Runs 123 and 239..251
+  recover at 124/252. Video remains 185681 bytes, 726 runtime sectors and
+  781 occupied sectors.
+- Full part 4: 22 ->48 misses, 20 ->47 beyond one field, maximum 15 ->30
+  fields (2127250 actual T), invalid intervals 13 ->32. Runs 378,
+  585..609 and 611..632 recover at 379/610/633. Video remains 623005 bytes,
+  2434 runtime sectors and 2544 occupied sectors.
+- Both scopes pass dirty-RAM boot, complete native playback with frontier,
+  sector-cache and retired-memory guards, full Fuse screen comparison
+  (1769472/9137664 bytes), exact AY50 (1280/6610 ticks), and disk-sector
+  checks. Profiles separate physical disk/IRQ/ULA elapsed time from the
+  deterministic instruction counts above.
+- Decision: reject earlier admission and keep its option disabled. Exact
+  content does not offset worse timing. Root releases are unchanged; no
+  four-volume release or preceding-EOF continuation is claimed.
+- Reproduce with [admission tests](toolkit/test_early_lzsa2_prefix.py), cached
+  rebuilder with `--early-lzsa2-prefix`, existing full native/Fuse tools and
+  `verify_streaming_bypass_playback.py --early-prefix`. Saved
+  [report](toolkit/early_lzsa2_prefix_report.json) includes the builds/traces.
+- Next: test removing invisible attribute writes on the host, preserving
+  every rendered RGB pixel and introducing no later writes. Keep the same
+  renderer/codec and require measured compression and CPU benefit.
+
 ## 2026-10-01: direct LZSA2 header guard saves 50 T and improves complete part-4 delivery
 
 - Objective: improve the remaining input-prefix path without changing

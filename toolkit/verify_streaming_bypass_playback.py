@@ -15,12 +15,18 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('root','output','evidence'):p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--direct-header',action='store_true',help='verify direct guard against the saved branch-bypass player')
-    a=p.parse_args();tmp=a.root/'.tmp';a.evidence.mkdir(parents=True,exist_ok=True)
+    p.add_argument('--early-prefix',action='store_true',help='verify one-ready-slot admission against the direct-header baseline')
+    a=p.parse_args()
+    if a.direct_header and a.early_prefix:p.error('choose one baseline comparison')
+    tmp=a.root/'.tmp';a.evidence.mkdir(parents=True,exist_ok=True)
     cases=[('window','streaming-lzsa2-bypass-window','sector-cache-window','ZX-video-front_part07','cache-timing.json'),
            ('part04','streaming-bypass-part04','sector-cache-part04-capacity','part04','timing.json')]
     if a.direct_header:
         cases=[('window','direct-lzsa2-header-window','streaming-lzsa2-bypass-window','ZX-video-front_part07','timing.json'),
                ('part04','direct-lzsa2-header-part04','streaming-bypass-part04','part04','timing.json')]
+    if a.early_prefix:
+        cases=[('window','early-lzsa2-prefix-window','direct-lzsa2-header-window','ZX-video-front_part07','timing.json'),
+               ('part04','early-lzsa2-prefix-part04','direct-lzsa2-header-part04','part04','timing.json')]
     artifacts=[];variants={}
     def archive(path,name):
         raw=path.read_bytes();data=raw if path.suffix=='.trd' else gzip.compress(raw,mtime=0)
@@ -32,6 +38,9 @@ def main():
         folder=tmp/directory;oldfolder=tmp/baseline;work=folder/'work'/stem;oldwork=oldfolder/'work'/stem
         m=read(folder/(stem+'.json'));old=read(oldfolder/(stem+'.json'))
         if a.direct_header:assert m['lzsa2']['layout']['direct_header_guard']
+        if a.early_prefix:
+            assert m['streaming_input']['prefix_start_max_ready_slots']==1
+            assert m['lzsa2']['regions']==old['lzsa2']['regions']
         assert m['cell_codebook']['native']==old['cell_codebook']['native']
         hashes={}
         for file in ('codebook.raw','codebook.stream','audio.ayh1','rows.json','states.npz'):
@@ -81,7 +90,7 @@ def main():
         artifacts=artifacts,source_sha256_lf={name:sha(Path(__file__).with_name(name).read_bytes().replace(b'\r\n',b'\n')) for name in
             ('resumable_lzsa2.py','streaming_lzsa2_player.py','inplace_streaming_core.py','streaming_slot_queue.py',
              'build_cell_codebook_trd.py','verify_cached_cell_player.py','profile_cell_delivery.py','verify_streaming_bypass_playback.py')})
-    if a.direct_header:
+    if a.direct_header and not a.early_prefix:
         previous=read(tmp/'streaming-lzsa2-tests.json');current=read(tmp/'direct-lzsa2-header-tests.json')
         assert previous['complete'] and current['complete'] and previous['stream_sha256']==current['stream_sha256']
         assert current['cases']==40 and all(x['exact'] for c in current['independent'] for x in c['full_flags'])
@@ -109,6 +118,19 @@ def main():
                 'long-literal guards are unchanged. Quota/producer/IRQ/ULA/physical effects are measured separately.')
         result['decoder_costs'].pop('available_prefix_header_including_call_tstates')
         for name in ('test_direct_lzsa2_header.py','test_streaming_lzsa2.py','cell_codebook_player.py','rebuild_cell_player.py'):
+            result['source_sha256_lf'][name]=sha(Path(__file__).with_name(name).read_bytes().replace(b'\r\n',b'\n'))
+    if a.early_prefix:
+        log=tmp/'early-lzsa2-prefix-tests.log';assert log.read_text().strip().endswith('OK')
+        archive(log,log.name)
+        result.update(baseline_commit='3fa1167',scope='Begin prefix decoding with one completed slot remaining; exact direct-header stream/player baseline.',
+            decoder_code_identical=True,component_admission_cases=40,
+            decoder_costs=dict(instruction_delta_tstates=0,
+                scope='Decoder instructions are identical. Changed scheduling can change how often input guards and suspensions run.'),
+            admission_costs=dict(previous_tstates=27,tstates=30,delta_tstates=3,full_input_bypass_delta_tstates=0),
+            decision='Reject earlier prefix admission: window misses increase from 2 to 14 and full part 4 from 22 to 48. '
+                'Maximum delays grow from 1 to 10 and from 15 to 30 fields respectively. All content remains exact. '
+                'Keep this option disabled; retain the direct-header baseline and do not publish root images.')
+        for name in ('test_early_lzsa2_prefix.py','cell_codebook_player.py','rebuild_cell_player.py'):
             result['source_sha256_lf'][name]=sha(Path(__file__).with_name(name).read_bytes().replace(b'\r\n',b'\n'))
     write_json(a.output,result)
     print(json.dumps(dict(complete=True,artifacts=len(artifacts),variants={name:v['timing_after'] for name,v in variants.items()},release=False)))

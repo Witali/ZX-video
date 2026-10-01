@@ -120,13 +120,26 @@ passes. Reuse `.tmp/direct-lzsa2-header-window/`,
 `.tmp/direct-lzsa2-header-part04/` and
 [direct-header evidence](toolkit/direct_lzsa2_header_report.json).
 
-Next scope: with the cheaper prefix guard, test starting prefix decoding
-while one completed slot remains instead of waiting for count zero. Keep
-the complete-input preference with two or more ready slots, preserve all
-media bytes and compare with this direct-header baseline. Check component
-admission and then the same window AND full part 4. Do not sweep formats,
-read-gate margins or rebuild the whole set. Generic CLI integration and
-four-volume cold/continuation release checks remain open.
+Earlier prefix admission is tested and rejected. Starting with one completed
+slot remaining costs 30 vs27 T (+3) per incomplete-input admission; decoder
+instructions and complete-input bypass remain identical. Forty independent
+admission cases pass. Window misses increase 2 ->14, max1 ->10 fields,
+invalid intervals 0 ->6; recovered at124/252. Full part4 misses increase
+22 ->48 (47 beyond one field), max15 ->30, invalid intervals13 ->32; runs
+378,585..609,611..632 recover at379/610/633. Exact media and occupancy are
+unchanged. Keep `--early-lzsa2-prefix` disabled. Reuse
+`.tmp/early-lzsa2-prefix-window/`, `.tmp/early-lzsa2-prefix-part04/` and
+[evidence](toolkit/early_lzsa2_prefix_report.json); do not repeat this sweep.
+
+Next bounded scope: encoder-only removal of invisible attribute changes in
+uniform cells. An unchanged bitmap may not use INK or PAPER; retain its
+previous physical attribute only when every visible RGB pixel stays exact
+until the next original write on that back-screen parity. Do not add attribute
+writes on later frames. Reuse the saved window, preserve row/cell dictionaries
+and bitmap operations, then compare compressed size and independent decoder
+T-states before building any candidate. Pixel RGB equivalence is separate
+from physical screen-byte equality. Generic CLI integration and four-volume
+cold/continuation release checks remain open.
 
 The sector-streaming LZSA2 experiment remains unselected. Eager
 prefix decoding produces 27 late frames / maximum 40 fields in the complete

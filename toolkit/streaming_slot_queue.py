@@ -15,7 +15,8 @@ CODE, BRIDGE, LIMIT = 0xe000, 0x6100, 0xf000
 DEMAND, DEMAND_LIMIT = 0xe200, 0xe300
 
 
-def build(z, p, blocks, *, quantum=256, partial_consumption=False, demand_decode=False,defer_while_buffered=False):
+def build(z, p, blocks, *, quantum=256, partial_consumption=False, demand_decode=False,defer_while_buffered=False,early_prefix=False):
+    if early_prefix and not defer_while_buffered:raise ValueError('early prefix requires buffered deferral')
     if not demand_decode:raise ValueError('streaming input requires demand consumption')
     if not 1 <= blocks <= 65535 or not 1 <= quantum <= 8192:
         raise ValueError('invalid block count or decode quantum')
@@ -63,9 +64,12 @@ def build(z, p, blocks, *, quantum=256, partial_consumption=False, demand_decode
     if defer_while_buffered:
         # With completed slots still queued, amortize decoder checks by
         # loading the whole block. Expose a prefix only when the consumer
-        # would otherwise have to wait for the remaining input sectors.
+        # would otherwise wait for input, or one slot earlier in the opt-in
+        # admission experiment. Complete-input decoding always takes priority.
         n('LD A,(all_loaded)',0x3a,z['all_loaded'],13);e('OR A',[0xb7],4);j(0xc2,'begin_ready')
-        load('count');e('OR A',[0xb7],4);j(0xc2,'worked')
+        a.label('prefix_admission');load('count')
+        if early_prefix:e('CP 2',[0xfe,2],7);j(0xd2,'worked')
+        else:e('OR A',[0xb7],4);j(0xc2,'worked')
         a.label('begin_ready')
     # Starting at zero output suspends before the first literal; no full
     # block reconstruction is hidden in the final input operation.

@@ -12,7 +12,7 @@ import resumable_lzsa2
 import streaming_slot_queue as queue
 
 
-def install(banks,m,*,direct_header=False):
+def install(banks,m,*,direct_header=False,early_prefix=False):
     if not m.get('four_video_slots',{}).get('enabled') or m['cell_codebook']['wire']!='CB46':
         raise ValueError('streaming LZSA2 requires four-slot CB46')
     if m.get('compressed_sector_cache') or m.get('streaming_input'):
@@ -28,7 +28,7 @@ def install(banks,m,*,direct_header=False):
         core_limit=m['cell_codebook']['memory']['fixed_kernel'][0],streaming=True,direct_header=direct_header)
     pregions,p,prows=input_prefix(z,m['disk_labels'],elapsed_fields=m['player_labels']['elapsed_fields'],
         origin=layout['prefix_end'],patch_guards=True)
-    qregions,q,qrows=queue.build(z,p,len(m['blocks']),demand_decode=True,defer_while_buffered=True)
+    qregions,q,qrows=queue.build(z,p,len(m['blocks']),demand_decode=True,defer_while_buffered=True,early_prefix=early_prefix)
     if q['step']!=oldq['step'] or q['prefill']!=oldq['prefill'] or p['end']!=oldp['end']:
         raise ValueError('public entry or producer state moved')
     if any(read(at) for at in range(oldlayout['prefix_end'],p['prefix_end'])):
@@ -103,4 +103,6 @@ def install(banks,m,*,direct_header=False):
         maximum_sectors_per_input_step=1,header_guard_bytes=32,entire_literal_run_guarded=True,
         defer_prefix_while_completed_slots_available=True,
         **(dict(direct_header_guard=True) if direct_header else {}),
+        **(dict(prefix_start_max_ready_slots=1,prefix_admission_tstates_before=27,
+            prefix_admission_tstates=30,prefix_admission_delta_tstates=3) if early_prefix else {}),
         scope='Instruction listings count deterministic CPU only; full physical timing requires Fuse')
