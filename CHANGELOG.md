@@ -35,6 +35,35 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — dynamic whole-cell replacement has insufficient size benefit
+
+- Objective: recover startup/audio space for four disks after the capacity
+  failure in `0863674`. Three bounded 256-frame windows start at 0, 2560,
+  4096. The refined pixels, 10-fps samples and AY stream are unchanged.
+- Host-only CB43 adds cell replacement controls (slot plus eight physical
+  bitmap bytes). Choose scene-local cells every 32 or 64 frames only when
+  expected literal-byte savings exceed replacement cost plus a 12-byte
+  margin. Keep the existing 256-cell/2048-byte book and dynamic row cache.
+  Ordinary frame packets retain their CB41/42 layout. Native code is not
+  implemented/enabled; existing player instruction delta is 0 T.
+- All replacement overhead is included in LZSA2 streams. Static window
+  sizes: 127287/135750/190216 bytes. Dynamic32: 127614/135875/191528.
+  Dynamic64: 126717/134621/191497. Totals: 453253 / 455017 / 452835 bytes;
+  dynamic64 saves only 418 bytes (0.092%), and grows the difficult window.
+  Lower raw packet size alone did not translate into useful compression.
+- Fifteen tests pass, including replacements across different scenes, both
+  physical screen histories and byte-identical old CB42 fixture output.
+  All three variants preserve every host-decoded screen. No native update
+  timing, disk playback or whole-film capacity claim follows from this probe.
+- Decision: preserve the prototype and evidence, keep native CB42. This
+  particular update policy does not justify new native complexity for the
+  required storage reduction. Next measure front-screen cell reuse in short
+  windows; no existing pixel or AY quality should change.
+  [Book planner](toolkit/dynamic_cell_dictionary.py),
+  [probe](toolkit/probe_dynamic_cell_dictionary.py),
+  [tests](toolkit/test_dynamic_cell_dictionary.py),
+  [results and exact streams](toolkit/dynamic_cell_report.json).
+
 ## 2026-10-01 — four dynamic-row volumes still exceed storage capacity
 
 - Objective: select four refined A/V cuts after removing static-row and

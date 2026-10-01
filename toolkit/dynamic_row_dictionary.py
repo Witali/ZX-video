@@ -35,7 +35,7 @@ def bitmap(key):
     return bytes(value for word in words for value in (five.TOP[word],five.BOTTOM[word]))
 
 
-def encode(frames, start, end):
+def encode(frames, start, end, *, cell_window=None):
     if not 0 <= start < end <= len(frames) or end-start > 10922:
         raise ValueError('invalid volume extent')
     current = np.stack([patterns(frame) for frame in frames[start:end]])
@@ -46,11 +46,20 @@ def encode(frames, start, end):
     book = sorted(counts,key=lambda key:(-counts[key],key))[:256]
     book += [bytes(8)]*(256-len(book))
     lookup = {key:i for i,key in enumerate(book)}
+    cell_updates=[[] for _ in range(end-start)]
+    if cell_window is not None:
+        from dynamic_cell_dictionary import plan
+        book,symbols,cell_updates=plan(current,changed,cell_window)
+        book=[key if key is not None else bytes(8) for key in book]
+    else:
+        symbols=np.full(changed.shape,-1,dtype=np.int16)
+        for f,c in zip(*np.nonzero(changed)):
+            symbols[f,c]=lookup.get(current[f,c].tobytes(),-1)
     required, coded, literal = [], [], []
     for f in range(end-start):
         cells = np.flatnonzero(changed[f]).tolist()
-        modes = [j for j,c in enumerate(cells) if current[f,c].tobytes() in lookup]
-        raw_cells = [c for c in cells if current[f,c].tobytes() not in lookup]
+        modes = [j for j,c in enumerate(cells) if symbols[f,c]>=0]
+        raw_cells = [c for c in cells if symbols[f,c]<0]
         used = set(map(int,current[f,raw_cells].ravel()))
         if len(used | {0}) > 256:
             raise ValueError('one frame needs more than 256 literal rows')
@@ -71,9 +80,12 @@ def encode(frames, start, end):
         tables_hex=tables.hex(),sha256=sha(tables),ram_bytes=512,table_address=0x9e00,
         lifetime='Mutable CB42 cache; index zero is permanently black')
     table = b''.join(map(bitmap,book))
-    output = bytearray(b'CB42'+struct.pack('<HH',end-start,256)+table)
+    output = bytearray((b'CB42' if cell_window is None else b'CB43')+struct.pack('<HH',end-start,256)+table)
     details = []
     for f, needed in enumerate(required):
+        if cell_updates[f]:
+            output+=struct.pack('<H',0xc000|len(cell_updates[f]))
+            for slot,key in cell_updates[f]:output+=bytes([slot])+bitmap(key)
         patches = []
         for word in sorted(needed - slots.keys()):
             available = [i for i,w in enumerate(cache) if i and w not in needed]
@@ -98,45 +110,57 @@ def encode(frames, start, end):
         attr_changed = np.flatnonzero(attrs!=old_attrs).tolist()
         payload = bytearray(mask(cells,576)+mask(attr_changed,576)+mask(coded[f],len(cells)))
         for cell in cells:
-            key = current[f,cell].tobytes()
-            payload += bytes([lookup[key]]) if key in lookup else bytes(slots[int(w)] for w in current[f,cell])
+            symbol=int(symbols[f,cell])
+            payload += bytes([symbol]) if symbol>=0 else bytes(slots[int(w)] for w in current[f,cell])
         payload += bytes(attrs[c] for c in attr_changed)
         assert 144 <= len(payload) <= 3096
         output += struct.pack('<H',len(payload))+payload
         details.append(dict(frame=absolute,changed_cells=len(cells),book_cells=len(coded[f]),
             literal_cells=len(literal[f]),attribute_cells=len(attr_changed),packet_bytes=len(payload),
             row_updates=len(patches),row_update_bytes=3*len(patches)+(2 if patches else 0)))
+        if cell_window is not None:
+            details[-1].update(cell_updates=len(cell_updates[f]),
+                cell_update_bytes=9*len(cell_updates[f])+(2 if cell_updates[f] else 0))
     return dict(raw=bytes(output),rows=row_meta,details=details,
         row_updates=sum(d['row_updates'] for d in details),initial_cache=initial,
         unique_literal_rows=len({w for s in required for w in s}),
-        unique_changed_patterns=len(counts),raw_sha256=sha(output))
+        unique_changed_patterns=len(counts),raw_sha256=sha(output),
+        cell_updates=sum(map(len,cell_updates)))
 
 
 def decode_check(data, frames, start, end, row_meta):
     """Independent byte parser checks both physical screens after every frame."""
-    if data[:4]!=b'CB42' or struct.unpack_from('<HH',data,4)!=(end-start,256):
-        raise ValueError('invalid CB42 header')
+    if data[:4] not in (b'CB42',b'CB43') or struct.unpack_from('<HH',data,4)!=(end-start,256):
+        raise ValueError('invalid dynamic dictionary header')
     cache = bytearray.fromhex(row_meta['tables_hex'])
     if len(cache)!=512 or cache[0] or cache[256]:
         raise ValueError('invalid initial row cache')
     book = [data[8+i*8:16+i*8] for i in range(256)]
     screens = [bytearray(screen(frames,start-2)),bytearray(screen(frames,start-1))]
-    at, updates, hashes = 2056, 0, []
+    at, updates, book_updates, hashes = 2056, 0, 0, []
     for frame in range(start,end):
         while True:
             length, = struct.unpack_from('<H',data,at); at+=2
             if not length & 0x8000:
                 break
-            count=length & 0x7fff
+            is_book=bool(length&0x4000)
+            if is_book and data[:4]!=b'CB43':raise ValueError('invalid row update count (cell replacement requires CB43)')
+            count=length & 0x3fff
             if not 1<=count<=256:
                 raise ValueError('invalid row update count')
             seen = set()
             for _ in range(count):
+                if is_book:
+                    index=data[at];at+=1
+                    if index in seen:raise ValueError('duplicate cell replacement')
+                    seen.add(index);book[index]=data[at:at+8];at+=8
+                    continue
                 index, top, bottom = data[at:at+3]; at+=3
                 if index in seen or index==0 and (top or bottom):
                     raise ValueError('invalid row replacement')
                 seen.add(index); cache[index]=top; cache[256+index]=bottom
-            updates+=count
+            if is_book:book_updates+=count
+            else:updates+=count
         if not 144<=length<=3096:
             raise ValueError('invalid frame packet length')
         stop=at+length
@@ -157,12 +181,12 @@ def decode_check(data, frames, start, end, row_meta):
         assert bytes(screens[1-(frame-start)%2])==screen(frames,frame-1),('other screen',frame)
         hashes.append(sha(target))
     assert at==len(data)
-    return dict(complete=True,frames=end-start,row_updates=updates,screen_sha256=hashes,
+    return dict(complete=True,frames=end-start,row_updates=updates,cell_updates=book_updates,screen_sha256=hashes,
                 both_screens_exact=True,pixel_changes=0)
 
 
-def representation(frames,start,end):
-    result=encode(frames,start,end)
+def representation(frames,start,end,*,cell_window=None):
+    result=encode(frames,start,end,cell_window=cell_window)
     proof=decode_check(result['raw'],frames,start,end,result['rows'])
     return dict(result,first=max(0,start-2),start=start,end=end,
         screen_sha256=proof['screen_sha256'],full_host_screens_exact=True,

@@ -64,10 +64,18 @@ disk. Do not build this oversized candidate. All 5066 host screens and LZSA2
 blocks round-trip exactly; this is not native timing or a release check.
 Eleven planner/generic tests pass. Reuse `.tmp/four-dynamic-probe/` and
 [the archived streams/window costs](toolkit/four_dynamic_report.json).
-Next test a dynamically replaceable whole-cell book in bounded windows,
-so scene-local repeated cells can use one index instead of four row indices.
-Count replacement payload and update CPU, and retain unchanged source
-pixels/AY. A positive host result still needs native code and full timing.
+A host-only CB43 whole-cell replacement experiment then tested three
+256-frame windows at 0/2560/4096, with exact pixels and all replacement
+bytes. Static books total 453253 bytes; replacements every 32 frames cost
+455017 (+0.39%), every 64 cost 452835 (-0.09%). The difficult window grows
+in both cases. Fifteen tests pass, including exact old CB42 fixture bytes.
+Do not implement this weak CB43 variant in the native player yet. Reuse
+`.tmp/dynamic-cell-probe/` and [evidence](toolkit/dynamic_cell_report.json).
+Next measure bounded lossless reuse of cells from the immutable front
+screen (especially same-position matches) before proposing new native
+code. CB41/42 currently compare against the back screen two frames ago;
+one-frame reuse may avoid retransmitting cells that have just settled.
+Count flags, LZSA2 bytes and copies; no quality or timing claim until tested.
 Reuse `.tmp/dynamic-rows-probe/`, `.tmp/dynamic-rows-fixture/` and
 `.tmp/dynamic-rows-window/`; do not rebuild the previous 15-image set.
 Saved [native/Fuse proof and archives](toolkit/dynamic_rows_report.json).
