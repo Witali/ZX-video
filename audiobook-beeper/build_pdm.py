@@ -61,9 +61,39 @@ def write_wav(path,samples,rate=44100):
         out.setnchannels(1); out.setsampwidth(2); out.setframerate(rate); out.writeframes(data.tobytes())
 
 
-def put_disk(directory,packed):
+def pcm8k(signal,ffmpeg,path):
+    """Round-trip through an actual unsigned 8-bit, 8000 Hz mono WAV.
+
+    Resampling applies antialiasing before quantization and band-limited
+    interpolation afterwards. PDM receives only this decoded 8-bit signal.
+    """
+    down=subprocess.run([ffmpeg,'-v','error','-nostdin','-f','f32le','-ar',str(RATE),'-ac','1',
+        '-i','-','-ar','8000','-f','f32le','-'],input=signal.astype('<f4').tobytes(),
+        capture_output=True,check=True).stdout
+    samples=np.frombuffer(down,'<f4')
+    data=np.clip(np.rint(samples.astype(float)*128+128),0,255).astype(np.uint8).tobytes()
+    with wave.open(str(path),'wb') as out:
+        out.setnchannels(1); out.setsampwidth(1); out.setframerate(8000); out.writeframes(data)
+    with wave.open(str(path),'rb') as saved:
+        if (saved.getnchannels(),saved.getsampwidth(),saved.getframerate())!=(1,1,8000):
+            raise AssertionError('PCM format mismatch')
+        if saved.readframes(saved.getnframes())!=data: raise AssertionError('PCM bytes changed')
+    up=subprocess.run([ffmpeg,'-v','error','-nostdin','-f','u8','-ar','8000','-ac','1',
+        '-i','-','-ar',str(RATE),'-f','f32le','-'],input=data,capture_output=True,check=True).stdout
+    restored=np.frombuffer(up,'<f4').astype(float)
+    # A fractional final 8-kHz sample is zero-padded/truncated at the faded edge.
+    if abs(len(restored)-len(signal))>RATE//8000:
+        raise AssertionError('PCM resampling length mismatch')
+    restored=np.pad(restored,(0,max(0,len(signal)-len(restored))))[:len(signal)]
+    return restored,dict(sample_rate_hz=8000,bits_per_sample=8,channels=1,codec='PCM unsigned 8-bit',
+        samples=len(data),duration_seconds=len(data)/8000,quantization='round to nearest, (u8-128)/128',
+        data_sha256=sha(data),file=path.name,antialiasing='FFmpeg sample-rate converter',
+        pdm_input='band-limited reconstruction of these exact 8-bit PCM bytes')
+
+
+def put_disk(directory,packed,bit_tstates=BIT_TSTATES,repeat=False):
     directory.mkdir(parents=True,exist_ok=True)
-    disk,metadata=build_disk(packed)
+    disk,metadata=build_disk(packed,bit_tstates,repeat)
     (directory/'audiobook-preview.trd').write_bytes(disk)
     (directory/'soundtrack.pdm.gz').write_bytes(gzip.compress(packed,mtime=0))
     save(directory/'player.json',metadata)
@@ -75,6 +105,9 @@ def main():
     p.add_argument('input',type=Path); p.add_argument('--ffmpeg',required=True)
     p.add_argument('--fuse',type=Path,required=True); p.add_argument('--output',type=Path,required=True)
     p.add_argument('--start',type=float,default=60); p.add_argument('--kib',type=int,default=96)
+    p.add_argument('--bit-tstates',type=int,choices=(52,46),default=52)
+    p.add_argument('--pcm8k',action='store_true',help='quantize source to 8000 Hz, unsigned 8-bit mono before PDM')
+    p.add_argument('--repeat',action='store_true',help='loop the resident bitstream without disk reloads')
     p.add_argument('--resume-render',action='store_true',help='reuse complete, matching pilot/speech verification after a render-only interruption')
     args=p.parse_args()
     if not 1<=args.kib<=96 or args.start<0: p.error('need 1..96 KiB and nonnegative start')
@@ -87,7 +120,7 @@ def main():
     # measures ULA delays and every bank boundary before encoding speech.
     pilot=args.output/'timing-pilot'
     def reuse(directory,packed):
-        disk,metadata=build_disk(packed)
+        disk,metadata=build_disk(packed,args.bit_tstates,args.repeat)
         proof=json.loads((directory/'verification.json').read_bytes())
         if (disk!=(directory/'audiobook-preview.trd').read_bytes() or
             sha(disk)!=proof['fuse']['trd_sha256'] or not proof['complete'] or
@@ -101,7 +134,7 @@ def main():
     if args.resume_render:
         _,pilot_report=reuse(pilot,b'\x55'*(args.kib*1024))
     else:
-        put_disk(pilot,b'\x55'*(args.kib*1024))
+        put_disk(pilot,b'\x55'*(args.kib*1024),args.bit_tstates,args.repeat)
         print('Measuring complete PDM output schedule in cold Fuse',flush=True)
         pilot_report=verify(pilot,args.fuse)
     times=np.frombuffer(gzip.decompress((pilot/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)
@@ -121,6 +154,9 @@ def main():
     t=np.arange(count)/RATE
     envelope=np.minimum(1,np.minimum(t/.020,(duration-t)/.020))
     original*=np.maximum(0,envelope)
+    source_pcm=dict(sample_rate_hz=RATE,representation='floating-point working signal',channels=1)
+    if args.pcm8k:
+        original,source_pcm=pcm8k(original,args.ffmpeg,args.output/'pcm8k-preview.wav')
     centres=(times[:-1]+np.diff(times)/2)/CPU_CLOCK
     samples=np.interp(centres,t,original,left=0,right=0)
     bits,modulator=sigma_delta(samples,np.diff(times))
@@ -130,8 +166,8 @@ def main():
     if args.resume_render:
         metadata,final=reuse(args.output,packed)
     else:
-        metadata=put_disk(args.output,packed)
-        print('Checking every speech bit and actual output interval through EOF',flush=True)
+        metadata=put_disk(args.output,packed,args.bit_tstates,args.repeat)
+        print('Checking every speech bit and actual output interval through '+('two complete loops' if args.repeat else 'EOF'),flush=True)
         final=verify(args.output,args.fuse)
     actual_times=np.frombuffer(gzip.decompress((args.output/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)
     max_deviation=int(np.max(abs(actual_times-times)))
@@ -167,6 +203,8 @@ def main():
     report=dict(complete=True,preview_only=True,source=str(args.input.resolve()),source_sha256=source_hash,
         start_seconds=args.start,duration_seconds=duration,source_pcm_sha256=sha(raw),
         original_source_sha256=archived['source_sha256'],source_gain=gain,edge_fade_seconds=.020,
+        pdm_source_pcm=source_pcm,working_sample_rate_hz=RATE,
+        listening_wav=dict(sample_rate_hz=44100,bits_per_sample=16,channels=1),
         source_filter='70 Hz highpass; two 2-pole 3800 Hz lowpasses',modulator=modulator,
         packed_bytes=len(packed),bits=len(bits),bit_order='MSB first',output='ULA FE bit 4; MIC and border bits zero',
         nominal_cpu_bit_rate_hz=metadata['nominal_bit_rate_hz'],actual_timing=final['fuse'],
@@ -175,7 +213,7 @@ def main():
         preview_scope='actual FE hold times integrated at 192 kHz, resampled to 44100; no physical speaker model',
         beeper_preview_filter='70 Hz highpass; two 2-pole 4500 Hz lowpasses; ideal reconstruction for listening',
         wideband_preview_filter='70 Hz highpass and sample-rate-conversion antialiasing only',
-        irq_during_playback=False,runtime_disk_reads=0,ay_enabled=False,
+        irq_during_playback=False,runtime_disk_reads=0,ay_enabled=False,repeat=args.repeat,
         native_tests='test_pdm.py: all 256 byte values, six banks, partial bank, stack/code guards and invalid lengths',
         producer_sources_sha256_lf={name:sha((HERE/name).read_bytes().replace(b'\r\n',b'\n'))
             for name in ('pdm_player.py','verify_pdm.py','build_pdm.py')},

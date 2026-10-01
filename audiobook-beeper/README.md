@@ -5,7 +5,72 @@ different path: **one-bit PDM on the beeper, at least 40 kHz**. This subproject
 stores the original speech as a noise-shaped bitstream and writes ULA port
 FE bit 4 directly. It does not fit the voice to tone generators.
 
-## Test disk and listening files
+## Current test: 8 kHz / 8-bit PCM, faster PDM, continuous repeat
+
+The latest user request converts the demonstration to **8000 Hz, 8-bit mono
+PCM**, raises the PDM rate, saves a TRD and repeats playback continuously.
+
+- [Looping test TRD](../ZX-audiobook-PDM-8k8-test.trd).
+- [Exact archived disk](preview-8k8-loop/audiobook-preview.trd).
+- [Actual 8000 Hz / unsigned 8-bit mono WAV](preview-8k8-loop/pcm8k-preview.wav).
+- [Reconstructed beeper listening WAV](preview-8k8-loop/beeper-preview.wav).
+- [Complete build report](preview-8k8-loop/report.json) and
+  [two-cycle native/cold-Fuse verification](preview-8k8-loop/verification.json).
+
+Boot in **Spectrum 128 + Beta Disk/TR-DOS**, drive A, with `RUN "boot"` if
+needed. Enable beeper audio and normal emulation speed. After preloading
+96 KiB, the excerpt beginning at source time 60 seconds repeats from RAM.
+Reset to stop. The prior 52-T disk below remains unchanged.
+
+The complete cold-Fuse check measures **75923.916 bit/s average**, versus
+66915.539 before (+13.46%). All measured intervals remain at least
+**62226.316 bit/s**. The two cycles last 10.3581434 and 10.3581747 seconds;
+their output schedules differ slightly with ULA phase. Both repeat holds
+are 48 T (13.53 microseconds). Every one of **1572865 writes** matches the
+two full bitstreams plus the first bit of the third cycle. There are 384
+startup sector reads and zero runtime reads. The 640 KiB TRD occupies
+428 sectors. [Delivery integrity check](delivery-8k8.json).
+
+The original recording is **AAC, 44100 Hz, stereo, 127999 bit/s**, verified
+with FFprobe; see [source-format evidence](source-format.json). AAC has no
+fixed PCM word length: `fltp` is the decoder output format. In this new build,
+antialiasing precedes conversion to 8000 Hz and nearest-level quantization
+to unsigned 8-bit PCM. The saved 8-bit bytes are reconstructed at 192 kHz
+for the modulator. PDM receives only that reconstructed signal. The TRD
+stores packed **one-bit PDM**, while the listening WAV is 44100 Hz /16-bit
+mono. These are different stages, not contradictory sampling rates.
+
+The 46-T kernel has the same 30-T output operation plus 16-T housekeeping:
+**368 T/byte**, versus the baseline's **416 T/byte** (-48 T/byte, -6 T/bit).
+The nominal ordinary-bit rate is **77106.522 bit/s**. The final bit of each
+repeat has a **48-T** deterministic hold: LD D,E 4 + NOP 4 + JP 10 + the
+next 30-T output kernel. Thus a complete cycle costs `bits*46+2` T before
+ULA contention; the final byte costs 370 T (-46 T versus the old 416).
+No reload, interrupt, mute, or additional pause is inserted at the wrap.
+The existing 20-ms audio fades remain at the two excerpt edges.
+
+| Interval after output | 46-T path: work before next 30-T kernel |
+|---|---|
+| Bit 1 | INC HL 6 + padding 10 |
+| Bit 2 | LD A,H 4 + OR L 4 + NOP 4 + EX AF,AF' 4 |
+| Bit 3 | EX AF,AF' 4 + JR Z taken 12; or JR not taken 7 + untaken RET C 5 |
+| Normal bits 4, 5, 7 | Padding 16 |
+| Normal bit 6 | LD E,(HL) 7 + padding 9 |
+| Normal bit 8 | LD D,E 4 + JR 12 |
+| Boundary bit 4 | LD E,next-bank 7 + padding 9 |
+| Boundary bit 5 | OUT (C),E 12 + NOP 4 |
+| Boundary bit 6 | LD HL,next-address-1 10 + INC HL 6 |
+| Boundary bit 7 | LD E,(HL) 7 + padding 9 |
+| Boundary bit 8 | LD D,E 4 + JR 12; final repeat uses the 48-T path above |
+
+The complete single-pass 46-T /8-bit conversion finished before the user
+requested repetition. Its [report and artifacts](preview-8k8/report.json),
+including exact compressed producer sources, are retained as evidence.
+It measured 75924.035 bit/s average and 62226.316 minimum. The looping disk
+is the current delivery; its two full cycles also check both repeat edges.
+This is a resident demonstration, not a continuous two-minute/full-book stream.
+
+## Original 52-T test disk and listening files
 
 - [Root test TRD](../ZX-audiobook-PDM-test.trd).
 - [Identical archived TRD](preview/audiobook-preview.trd).
@@ -24,7 +89,7 @@ The final payload uses all six available data banks: **96 KiB /786432 bits**.
 Longer continuous playback requires another delivery strategy; disk reads
 are not attempted during this resident test.
 
-## Measured playback
+## Original 52-T measured playback
 
 | Property | Final speech run |
 |---|---:|
@@ -75,7 +140,7 @@ All three WAVs use the same scalar gain; no original audio is mixed into
 the reconstructed beeper signal. Actual speakers and emulator sound filters
 can change the sound. No physical hardware recording is claimed.
 
-## One bounded improvement
+## Earlier 64-T to 52-T improvement
 
 The first complete implementation used 64 T/bit and 80 KiB: average 54823.104
 bit/s, minimum 44336.25 bit/s, 11.954084 seconds. It met the frequency gate,
@@ -94,7 +159,7 @@ The SNR improvement is **4.5713 dB**. These measurements support choosing the
 faster version; they are not listener acceptance or a percentage of speech
 quality. [Comparison script](compare_previews.py) · [result](comparison.json).
 
-## Z80 cost and memory contract
+## Original 52-T cost and shared memory contract
 
 Instruction costs follow the [Zilog Z80 manual](https://www.zilog.com/docs/z80/um0080.pdf).
 The output kernel is `RLC D` (8 T), `SBC A,A` (4 T), `AND 16` (7 T),
@@ -132,6 +197,7 @@ slots while the current byte remains in D; no bit is skipped at a bank edge.
 python audiobook-beeper/build_pdm.py "C:/Audio/book.m4a" --ffmpeg "C:/Tools/ffmpeg.exe" --fuse "C:/Program Files (x86)/Fuse/fuse.exe" --output "build/beeper-pdm" --start 60 --kib 96
 python -m unittest discover -s audiobook-beeper -p "test_*.py"
 python audiobook-beeper/compare_previews.py
+python audiobook-beeper/build_pdm.py "C:/Audio/book.m4a" --ffmpeg "C:/Tools/ffmpeg.exe" --fuse "C:/Program Files (x86)/Fuse/fuse.exe" --output "build/beeper-8k8-loop" --bit-tstates 46 --pcm8k --repeat
 ```
 
 Use the project's Python environment with NumPy, Pillow and the independent

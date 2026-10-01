@@ -5,6 +5,61 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: faster beeper PDM from 8 kHz /8-bit audio, looping TRD
+
+- Scope: baseline `7b612af`, the verified 52-T resident audiobook test.
+  The user asked to raise PDM frequency, identify the source format, convert
+  audio to 8 kHz /8 bits, save the current TRD, and repeat it continuously.
+  Keep the same source passage beginning at 60 seconds and 96 KiB payload.
+  FFprobe confirms AAC, 44100 Hz, stereo, 127999 bit/s; decoder `fltp` does
+  not specify an original PCM bit depth. [Source evidence](audiobook-beeper/source-format.json).
+- One faster player: distribute housekeeping across 16-T slots and use
+  relative branches. Output kernel stays 30 T; ordinary output is **46 T/bit,
+  368 T/byte**, versus 52 /416: **-6 T/bit, -48 T/byte**. Boundary flag test
+  costs 34 T across slots. The opt-in repeat path prepares bank 0 while the
+  last byte plays; its absolute return costs **48 T** for the final bit
+  (final byte 370 T, -46 versus 416). Total deterministic repeat cost is
+  `786432*46+2` T. ULA, ROM and disk are excluded from these CPU counts;
+  [instruction table and memory contract](audiobook-beeper/README.md) record
+  the details. The default 52-T disk still reproduces byte for byte.
+- Host conversion: existing 70 Hz highpass/two 3800 Hz lowpasses, peak 0.65,
+  20 ms edge fades; antialiased resampling to 8000 Hz, nearest-level unsigned
+  8-bit quantization, then band-limited reconstruction of those exact bytes
+  at 192 kHz for the second-order PDM modulator. Save the actual 8-bit WAV;
+  listening WAVs remain 44100 Hz /16-bit mono. TRD data is packed one-bit PDM.
+- The first single-pass build completed before the repeat request:
+  **75924.035 bit/s average, 62226.316 minimum, 10.3581429 s**. Full native
+  and cold Fuse checks pass 786432 bits. Retain its disk, reports, WAVs and
+  compressed exact producer sources in [preview-8k8](audiobook-beeper/preview-8k8/report.json).
+- The first loop-verification harness stalled before collecting a trace;
+  terminate that specific Fuse process and retain the
+  [interrupted pilot/script](audiobook-beeper/experiments/loop-debugger-interrupted/timing-pilot/verification-work/fuse-debugger.txt).
+  Replace inline breakpoint conditions with the existing `condition id`
+  syntax, then rerun the complete pilot and speech checks. This interrupted
+  attempt does not count as playback evidence.
+- Final looping delivery: cold Fuse verifies **1572865 exact writes** (two
+  complete cycles plus the first bit of cycle 3), both repeat edges, all
+  thirteen bank selections, 384 startup reads and **zero runtime reads**.
+  Actual average **75923.916 bit/s** (+13.46% versus 66915.539), minimum
+  **62226.316**, maximum 77106.522. Intervals are 46/47/48/49/50/57 T;
+  both wrap holds are 48 T. Cycle durations are 10.3581434 and 10.3581747 s.
+  Pilot and speech first-cycle timestamps agree exactly. Six native/DSP
+  tests cover all byte values, partial/full banks, both rates, two repeats,
+  stack/code guards, DC preservation and hold integration. See
+  [complete verification](audiobook-beeper/preview-8k8-loop/verification.json).
+- First-cycle reconstruction correlation 0.981439, SNR 14.1700 dB against
+  this build's converted PCM using the same explicit 4.5 kHz filter. These
+  are not directly comparable to the old higher-resolution source metric,
+  a listener acceptance score, or a physical speaker recording.
+- Decision: deliver [ZX-audiobook-PDM-8k8-test.trd](ZX-audiobook-PDM-8k8-test.trd)
+  in Git LFS, SHA-256
+  `db99485573022ba5eb015fc87e6d02edf191dcfe4aea2c1166b6ef40e2a8a4a5`,
+  655360 bytes /428 occupied sectors. Independently bootable, repeats from
+  RAM until reset; no streaming/full-book claim. The old disk is unchanged.
+  [Integrity check](audiobook-beeper/delivery-8k8.json) authenticates 38 saved
+  artifacts, exact producer sources and PCM formats. Reproduce with
+  `build_pdm.py --bit-tstates 46 --pcm8k --repeat` and the documented paths.
+
 ## 2026-10-01: switch audiobook speech to high-rate beeper PDM
 
 - User feedback/scope: the YM2149 test TRD is also unintelligible. The user
