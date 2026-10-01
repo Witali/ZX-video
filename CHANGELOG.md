@@ -53,6 +53,8 @@ dates of earlier attempts are not assigned that reconstruction date.
   `3aa0a4d1f7e40e9943330d5dcbc44f0495990f91b8d660b42ec9521005d40dad`,
   identical to the verified final disk. Deliver the roughly 12-second test
   for listening; no physical recording or longer streaming claim is made.
+- Archive follow-up: pin debugger scripts to LF so the saved artifact hashes
+  also survive a Windows checkout with `core.autocrlf`; audio/code are unchanged.
 
 ## 2026-10-01: publish the YM2149 test disk in the project root
 
