@@ -28,6 +28,44 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — diagnose coloured cells and reduced solid black/white coverage
+
+- Baseline `7124c9f`, prepared 10-fps edit; four 32-frame windows starting
+  at 0, 704, 3392 and 4288. Reproduced all baseline bytes with original
+  four-code palette history. The missing fifth shade shifts endpoint
+  thresholds; solid active-image 2x2 black/bright-white coverage changes
+  from 9.03/13.59% (four levels) to 7.45/12.78% (five). The old palette
+  search also excludes normal white and penalizes attribute changes by
+  100000, retaining unsuitable cell colours in some source transitions.
+- First tested full five-level palette search, normal white and bounded
+  previous-palette retention (64 RGB MSE/component, never worse than the
+  baseline cell). Mean RGB MSE 638.461 -> 373.287; compressed window bytes
+  39467 -> 46882 (+18.79%). Dark opening colour cast improves, but its
+  boundary-residual metric worsens 51.954 -> 93.771. Defer default adoption.
+- To address the user's contrast clarification, tested a fixed 12..243
+  stretch used only for adjacent-level black/white decisions, alone and
+  after palette repair. Endpoint-only solid coverage becomes 11.78/14.41%,
+  MSE 665.018 (+4.16%, 115/128 frames worse), bytes 42041 (+6.52%). Some
+  shadow detail is lost. Combined result: MSE 410.349, bytes 50693 (+28.44%),
+  two frames worse than baseline. Inspect frames 8/710/3398/4318; preserve
+  all per-frame measurements and both partially successful alternatives.
+- No player/format/AY changes: instruction delta 0 T, book loader
+  54028 -> 54028 T. Data-dependent endpoint-only output mean rises from
+  84330.070 to 86339.375 T (+2009.305); sample maximum 204903 -> 206222 T.
+  All 256 baseline/endpoint native draws and 1769472 screen bytes match;
+  every instruction timing/guard passes, plus 16 independent-emulator
+  frame checks and 17 unit/regression tests. Fixed a repetition-versus-
+  tiling mistake in the initial unit fixture before the passing run.
+- Decision: retain reproducible research functions, defer defaults/TRDs.
+  Window dictionaries fit, but whole-volume capacity, full LZSA2/I/O timing,
+  actual publication, AY and full EOF playback for these candidates are
+  unverified. Next consider cell-boundary, temporal and packet-cost terms
+  together. No full-movie variants were generated or existing images replaced.
+- [Results, limits and reproduction](toolkit/CELL_PALETTE_QUALITY.md),
+  [hashed evidence index](toolkit/cell_palette_quality_report.json),
+  [probe](toolkit/probe_cell_palette_quality.py),
+  [native profile](toolkit/profile_cell_palette_quality.py).
+
 ## 2026-10-01 — isolate 10-fps development on its own branch
 
 - At the user's request, moved the two unpublished 10-fps commits

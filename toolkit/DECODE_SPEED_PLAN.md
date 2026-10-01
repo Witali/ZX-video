@@ -257,6 +257,17 @@ since been integrated in the 192-frame fixture above. Dynamic book changes
 and whole-movie five-level delivery remain unverified. See
 [the compression plan and initial limitations](FIVE_LEVEL_COMPRESSION_PLAN.md).
 
+**Palette and contrast diagnosis (2026-10-01):** a 128-frame comparison
+confirms reduced solid black/white coverage after five-level refinement.
+Endpoint bias restores some coverage but increases LZSA2 bytes by 6.52%
+and measured CB41 output work by 2.38%; RGB MSE rises 4.16%. A complete
+five-level palette search reduces RGB/chroma error but costs 18.79% more
+bytes and worsens opening-scene cell boundaries. Keep both experimental;
+native code has 0 T instruction delta, but payload cost is not constant.
+Next compare one local colour/endpoint selector with spatial, temporal and
+packet-cost constraints, then measure total delivery and full-volume row
+capacity before any release. [Evidence and scoped plan](CELL_PALETTE_QUALITY.md).
+
 **Five-level 2x2 decision (2026-09-30):** retain the palette-preserving
 adaptive four/five-byte cell candidate. In 96 RGB frames its exact five-level
 picture improves mean RGB error by 1.16–16.14%; ZX0 control bytes total

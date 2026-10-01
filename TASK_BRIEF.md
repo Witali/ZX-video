@@ -46,6 +46,18 @@ A user preference question is pending: four disks at 10 fps/unchanged quality,
 retain the verified three-disk 25/3-fps set, or further compression into three.
 [Evidence, limits and reproduction](toolkit/CB41_10FPS.md).
 
+## Latest scoped result: cell colours and contrast
+
+The user reported conspicuous coloured cells and fewer solid black/white
+areas. The completed 128-frame probe on `codex/cb41-10fps` reproduces the
+baseline and confirms lower endpoint coverage. A palette repair improves
+RGB error but costs 18.79% more bytes and worsens dark-scene cell seams.
+An endpoint-only bias restores coverage at +6.52% bytes, +2.38% measured
+output CPU and +4.16% RGB MSE. Seventeen tests and 256 native frame draws
+pass. These are experimental selectors; defaults/root images are unchanged,
+and full playback for their data is unverified. Reuse the saved RGB windows,
+states, streams and metrics. [Decision and next bounded milestone](toolkit/CELL_PALETTE_QUALITY.md).
+
 ## Working method
 
 1. **Define one deliverable.** State the problem, baseline, hypothesis and
