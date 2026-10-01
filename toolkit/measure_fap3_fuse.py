@@ -147,6 +147,10 @@ def main():
     if args.trace_queue_calls:
         from queue_call_trace import configure
         configure(m,args.raw.read_bytes(),event,lines,stamp,mem)
+    if args.trace_pipeline and m.get('compressed_sector_cache',{}).get('enabled'):
+        cache=m['compressed_sector_cache']['labels']
+        for key,tag in (('prefetch',190),('write_index_ready',191),('take_sector',192),('copied',193)):
+            event(cache[key],tag,[stamp,f'[{cache["count"]}]',f'[{cache["read_index"]}]',f'[{cache["write_index"]}]'])
     if args.trace_pipeline and m.get('ready_packet_guard',{}).get('enabled'):
         guard=m['ready_packet_guard'];q=m['queue_labels'];ay=guard['audio_labels']
         descriptor=f'{q["lengths"]}+2*[{q["read_slot"]}]'
@@ -252,7 +256,7 @@ def main():
         if tag not in widths or pos+widths[tag]>len(nums): raise ValueError(f'bad trace at {pos}: {nums[pos-1:pos+3]} / {output[-300:]}')
         parsed.append((tag,nums[pos:pos+widths[tag]])); pos+=widths[tag]
     pubs=[]; writes=[]; ticks=[]; underruns=[]; reads=[]; final=None; failure=None
-    irq_entries=[];field_samples=[];paging_samples=[];pipeline_events=[];queue_events=[];enqueue_events=[];guard_events=[]
+    irq_entries=[];field_samples=[];paging_samples=[];pipeline_events=[];queue_events=[];enqueue_events=[];guard_events=[];cache_events=[]
     rom_return_states=[]
     image=args.trd.read_bytes(); pending=None; errors=[]; native_count=0; retries=0; read_kind=None
     boot_started=player_started=None;nonces=[]
@@ -345,6 +349,9 @@ def main():
             seek_calls.append(dict(kind={121:'side',123:'seek',125:'keepalive'}[tag],tstates=v[0]-seek_pending[1],
                 start_tstate=seek_pending[1],end_tstate=v[0]))
             seek_pending=None
+        elif tag in (190,191,192,193):
+            cache_events.append(dict(kind={190:'prefetch',191:'loaded',192:'take',193:'copied'}[tag],
+                **dict(zip(('tstate','count','read_index','write_index'),v))))
         elif tag==199: final=v
         elif tag==198: failure=v
     for read in reads:
@@ -437,6 +444,7 @@ def main():
     if args.trace_fields or args.trace_paging: report['irq_entries']=irq_entries
     if args.trace_fields:report.update(field_samples=field_samples,rom_return_states=rom_return_states)
     if args.trace_pipeline:report['pipeline_events']=pipeline_events
+    if cache_events:report['sector_cache_events']=cache_events
     if guard_events:report['optional_packet_events']=guard_events
     if args.trace_paging: report['paging_samples']=paging_samples
     if args.export_warm_ram:
@@ -446,7 +454,7 @@ def main():
             args.export_warm_ram.parent.mkdir(parents=True,exist_ok=True)
             args.export_warm_ram.write_bytes(warm_ram)
     args.output.write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','pipeline_events','slot_queue_fixture','uncontended_frame','inline_huffman_patches','queue_call_events','audio_enqueue_events','optional_packet_events','rom_return_states')}),flush=True)
+    print(json.dumps({k:v for k,v in report.items() if k not in ('reads','publications','actual_phase_tstates','audio_underrun_tstates','audio_tick_tstates','seek_calls','pixel_sample_offsets','late_runs','errors','irq_entries','field_samples','paging_samples','pipeline_events','slot_queue_fixture','uncontended_frame','inline_huffman_patches','queue_call_events','audio_enqueue_events','optional_packet_events','rom_return_states','sector_cache_events')}),flush=True)
     if not complete: raise SystemExit(1)
 
 

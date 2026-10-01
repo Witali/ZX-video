@@ -35,6 +35,54 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — prefetch compressed sectors while decoded slots are full
+
+- Objective: reduce the remaining whole-block input stall with unchanged
+  CB46/LZSA2 bytes, refined pixels, AY50 and 10 fps. Baseline `dd71448`; reuse
+  the complete [4096,4352) window and cached full part 4 for cold capacity.
+- Audit bank 7 E300h..FFFFh over all 256 native frames: no runtime access.
+  Add opt-in `rebuild_cell_player.py --sector-cache`, requiring four-slot
+  CB46. Use E400h..FFFFh for 28 compressed sectors (7168 bytes), E300h for
+  a 54-byte prefetch routine, and B900h for an 84-byte fixed helper/state.
+  Reject collisions with resident AY. Cache state is initialized by the
+  ordinary independent bootstrap; unread cache data may remain dirty.
+- When all decoded slots are full, queue service can acquire another sector.
+  The consumer copies a cached sector through BC00 to its original input
+  address. Physical reads share the existing cursor/remaining count, so
+  no sector is reordered or read twice. The decoder and renderer do not
+  change. This deliberately adds copying to move physical I/O earlier.
+- Two test methods pass, including 100-sector FIFO/full/empty/EOF scenarios,
+  wraparound and independent full-flags Z80 checks of cache hits. Native
+  guards prohibit reading unfilled cache entries, overwriting occupied entries,
+  executing cached data, or writing bank 6. Complete window playback passes.
+  The first test expected the EOF idle path to cost 88 T; instruction summation
+  and emulation both give 78 T. Correct the expectation only; archive that failure.
+- CPU costs: miss adds 27 T; cached header 4718 T, cached body 8991 T, each
+  +4 on index wrap. These include existing copy/page bodies. Prefetch adds
+  219 T around the existing physical-read body (+4 on wrap). Full-cache idle
+  14 ->44 T; EOF idle 14 ->78 T. Exclude outer caller, IRQ, ULA and physical
+  read/ROM time. These are scheduling gains, not a reduction of total CPU work.
+- Full cold/Fuse checks preserve 1769472 screen bytes, 1280 AY ticks and all
+  726 runtime sectors. Window size 780 ->781 sectors. Nominal misses 13 ->8,
+  all beyond one field; maximum 17 ->8 fields, bad intervals 7 ->4. The sole
+  late run 237..244 recovers at 245. A second complete run with additional
+  cache tracing also has eight misses and four bad intervals, maximum seven
+  fields; retain both measurements. Both timing gates still fail.
+- The second trace verifies 112 enqueues and 112 dequeues, four read/write
+  cursor wraps, and zero final occupancy. Queue-empty packet entries fall
+  22 ->14; longest empty wait 1.38M ->0.81M T. Actual cached part 4 still fits
+  **2543/2544 sectors** and independently cold-boots; revised full-part playback
+  is not verified. No root images are replaced.
+- Decision: retain the opt-in prefetcher. The remaining stall precedes
+  block 14, whose compressed input is 12492 bytes, larger than the 7168-byte
+  cache; its last sectors still block all decoding. Next evaluate guarded
+  incremental LZSA2 input with the existing sector-streaming queue pattern,
+  preserving bytes and in-place overlap proofs. Avoid full-set recoding.
+  [Implementation](toolkit/compressed_sector_cache.py),
+  [tests](toolkit/test_compressed_sector_cache.py),
+  [verifier](toolkit/verify_sector_cache.py), [report](toolkit/sector_cache_report.json),
+  [archive check](toolkit/sector_cache_archive_check.json).
+
 ## 2026-10-01 — inline cell drawing halves the remaining window misses
 
 - Objective: reduce rendering cost without changing CB46/LZSA2/AY bytes or

@@ -13,15 +13,19 @@ def main():
     for name in ('metadata','trd','states','output'):p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--start',type=lambda n:int(n,0),default=0xb100)
     p.add_argument('--end',type=lambda n:int(n,0),default=0xb700)
+    p.add_argument('--bank',type=int,choices=range(8),help='guard a pageable bank instead of fixed bank 2')
     a=p.parse_args();m=json.loads(a.metadata.read_bytes());image=a.trd.read_bytes()
-    if not 0x8000<=a.start<a.end<=0xc000:p.error('guard must be within fixed bank 2')
+    if a.bank is None:
+        if not 0x8000<=a.start<a.end<=0xc000:p.error('guard must be within fixed bank 2')
+    elif not 0xc000<=a.start<a.end<=0x10000:p.error('banked guard must be within C000h..10000h')
     assert sha(image)==m['trd_sha256']
     with np.load(a.states,allow_pickle=False) as saved:states=saved['states']
     assert sha(states.tobytes())==m['states_sha256']
-    m['cell_codebook']['obsolete_fixed_ranges'].append(dict(start=a.start,end=a.end,reason='proposed fixed-RAM allocation'))
+    if a.bank is None:m['cell_codebook']['obsolete_fixed_ranges'].append(dict(start=a.start,end=a.end,reason='proposed fixed-RAM allocation'))
+    else:m['additional_banked_guards']=[dict(bank=a.bank,start=a.start,end=a.end)]
     result=verify(image,m,states)
     result.update(trd_sha256=sha(image),metadata_sha256=sha(a.metadata.read_bytes()),
-        extra_guard=[a.start,a.end],scope=f'Unmodified existing TRD; extra native read/write/fetch guard for {a.start:04X}h..{a.end:04X}h')
+        extra_guard=[a.start,a.end],extra_bank=a.bank,scope=f'Unmodified existing TRD; extra native read/write/fetch guard for {a.start:04X}h..{a.end:04X}h')
     write_json(a.output,result)
     print(json.dumps(dict(complete=result['complete'],frames=result['frames_checked'],guards=result['retired_ranges_guarded'])))
 

@@ -19,28 +19,40 @@ import fap3_disk_z80 as disk
 
 def verify(image,m,states):
     listing=(m['cell_codebook']['packet_listing']+m['cell_codebook']['clock_listing']
-             +m['cell_codebook']['native']['instruction_listing'])
+             +m['cell_codebook']['native']['instruction_listing']+m.get('compressed_sector_cache',{}).get('listing',[]))
     rows={r['address']:r for r in listing};hist=Counter();stages=Counter()
     retired=[(r['start'],r['end']) for r in m['cell_codebook'].get('obsolete_fixed_ranges',[])]
     fixed_payload=m.get('resident_audio',{}).get('compiled',{}).get('fixed_payload_range')
+    banked_guards=m.get('additional_banked_guards',[])
+    cache=m.get('compressed_sector_cache')
     class TrackedCPU(LzsaDiskCPU):
         tracking=False
         def check_retired(self,address):
             if self.tracking:
                 assert not any(lo<=address&65535<hi for lo,hi in retired),('retired access',hex(self.pc),hex(address))
+                assert not any(g['bank']==self.port_7ffd&7 and g['start']<=address&65535<g['end'] for g in banked_guards),('retired banked access',hex(self.pc),hex(address))
         def read8(self,address):
             self.check_retired(address)
+            if self.tracking and cache and self.port_7ffd&7==7 and cache['start']<=address&65535<cache['end']:
+                count=super().read8(cache['labels']['count']);first=super().read8(cache['labels']['read_index'])
+                sector=((address&65535)-cache['start'])//256
+                assert 0<count<=cache['sectors'] and (sector-first)%cache['sectors']<count,('read beyond cached sectors',hex(self.pc),hex(address),count,first)
             return super().read8(address)
         def write8(self,address,value):
             self.check_retired(address)
             if self.tracking and fixed_payload:
                 assert not fixed_payload[0]<=address&65535<fixed_payload[1],('write to fixed AY payload',hex(self.pc),hex(address))
+            if self.tracking and cache and self.port_7ffd&7==7 and cache['start']<=address&65535<cache['end']:
+                count=super().read8(cache['labels']['count']);target=super().read8(cache['labels']['write_index'])
+                assert count<cache['sectors'] and ((address&65535)-cache['start'])//256==target,('overwrite cached sector',hex(self.pc),hex(address))
             if self.tracking and m.get('four_video_slots',{}).get('enabled') and address&65535>=0xc000:
                 assert self.port_7ffd&7!=6,('write to immutable AY bank',hex(self.pc),hex(address))
             return super().write8(address,value)
         def step(self):
             pc,t=self.pc,self.tstates
             if pc==disk.DRIVER:self.tracking=True
+            if self.tracking and cache and self.port_7ffd&7==7:
+                assert not cache['start']<=pc<cache['end'],('execute cached data',hex(pc))
             super().step()
             if self.tracking and pc in rows:
                 r=rows[pc];dt=self.tstates-t;wanted=r['tstates']
@@ -99,6 +111,8 @@ def verify(image,m,states):
         retired_ranges_guarded=retired,retired_runtime_reads_writes_or_fetches=0,
         immutable_audio_bank_guarded=6 if m.get('four_video_slots',{}).get('enabled') else None,
         immutable_fixed_audio_payload_guarded=fixed_payload,
+        **(dict(additional_banked_guards=banked_guards) if banked_guards else {}),
+        **(dict(sector_cache_fifo_bounds_guarded=True) if cache else {}),
         histogram=[dict(pc=pc,tstates=t,count=n) for (pc,t),n in sorted(hist.items())])
 
 

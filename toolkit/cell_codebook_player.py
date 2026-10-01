@@ -88,7 +88,7 @@ def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False):
 
 
 class Builder(PreviousBuilder):
-    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,inline_cells=False,**kwargs):
+    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,inline_cells=False,sector_cache=False,**kwargs):
         if frame_fields not in (5,6):raise ValueError('CB41 supports five or six fields per frame')
         self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
@@ -98,6 +98,8 @@ class Builder(PreviousBuilder):
         self.shared_audio=shared_audio
         self.four_slots=four_slots
         self.inline_cells=inline_cells
+        self.sector_cache=sector_cache
+        if sector_cache and not (self.partial_rows and four_slots):raise ValueError('sector cache requires four-slot CB46')
         if inline_cells and not self.partial_rows:raise ValueError('inline cells require CB46')
         if four_slots and not shared_audio:raise ValueError('four slots require shared fixed AY')
         if shared_audio and not self.front_reuse:raise ValueError('shared fixed audio requires CB44')
@@ -263,6 +265,9 @@ class Builder(PreviousBuilder):
             import fixed_resident_audio
             _,sound=self.separated(start,end)
             sections=fixed_resident_audio.install(banks,m,sections,sound,self.compress,four_slots=self.four_slots)
+        if self.sector_cache:
+            import compressed_sector_cache
+            compressed_sector_cache.install(banks,m)
         result=[]
         for s in sections:
             lo=s['address']&16383;raw=bytes(banks[s['bank']][lo:lo+s['decoded_bytes']])

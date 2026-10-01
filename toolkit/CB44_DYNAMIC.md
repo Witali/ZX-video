@@ -426,3 +426,43 @@ to compare subsequent changes against these same streams and input histories.
 The complete trace records 22 empty-queue packet entries and a 1.38M-T
 maximum empty wait. Resolving that stall remains necessary for the four-disk
 release; this optimization does not establish whole-movie timing or continuation.
+
+## Compressed-sector lookahead (2026-10-01)
+
+`--sector-cache` adds a 28-sector (7168-byte) ring in previously unused bank 7
+at E400h..FFFFh, with prefetch code E300h..E336h and a fixed copy helper/state
+at B900h..B954h. The former bank-7 area passes a complete native access audit.
+The builder rejects overlap with AY; part 4's fixed audio ends at B82Ah.
+The bootstrap loads the zeroed ring state, so a disk remains independently
+bootable even when the data area contains arbitrary RAM.
+
+Original queue idle branches can prefetch one sector when the decoded slots
+are full. The original physical cursor and sector count are used for both
+prefetches and misses. A hit copies bank 7 ->BC00, restores the requested
+slot bank, and copies BC00 ->the original compressed-input destination.
+A header request already targets BC00 and needs only the first copy. No
+decoder, packet, video, audio or block-format changes occur.
+
+All counts use the Z80 instruction table and independent full-flags runs.
+A miss adds 27 T. A header hit costs 4718 T, a body hit 8991 T, plus 4 T
+when the read cursor wraps; both include paging/copy bodies. Prefetch costs
+219 T around the unchanged physical-read body (+4 at write wrap). Full-ring
+idle costs 44 vs14 T, and EOF idle 78 vs14 T. Outer calls, IRQ, ULA and ROM/
+physical disk latency are excluded. The extra copies consume more CPU, but
+the earlier disk service reduces the measured playback stall.
+
+The complete 256-frame window remains byte-exact for screens, AY and disk.
+Native guards verify ring occupancy on all reads/writes and prohibit code
+execution in the data area. A full real trace confirms 112 cached sectors,
+four wraps of each cursor and empty occupancy at EOF. The original run has
+eight late frames, maximum eight fields; the additionally traced run has
+eight late frames, maximum seven fields. Both have four invalid intervals;
+local run 237..244 recovers at 245. Report both; neither is a timing pass.
+The window grows by one startup sector to 781. Full part 4 cold capacity
+remains 2543, without a new full-volume playback/continuation claim.
+
+The residual stall waits for all 12492 compressed bytes of block 14. A next
+experiment should adapt the existing guarded sector-streaming queue to LZSA2,
+checking token headers and literal runs before access rather than requiring
+the entire block first. Retain byte-identical streams and full overlap proofs.
+[Evidence](sector_cache_report.json), [verifier](verify_sector_cache.py).

@@ -71,9 +71,32 @@ boot (revised full-part playback not run). Reuse `.tmp/inline-cell-window/`,
 [evidence](toolkit/inline_cells_report.json). Do not rebuild from the older
 window without `--inline-cells` when comparing the next player change.
 
-Next scope: resolve the remaining input stall on this latest cached window
-(22 empty-queue packet entries, longest empty wait 1.38M T), using the
-full-part trace for context. Full part 4's preceding renderer's main late
+The next completed opt-in is `--sector-cache`: audit bank 7 E300h..FFFFh,
+then use 28 sectors at E400h..FFFFh, prefetch code E300h..E336h and fixed
+helper/state B900h..B954h. When decoded slots are full, read compressed input
+ahead. Cache hits copy through BC00, adding CPU work but reducing I/O stalls.
+Complete window native/Fuse screens, AY, disk sequence and FIFO guards pass.
+Two runs have eight late frames, all beyond one field; maximum 8 /7 fields,
+four invalid intervals. Run 237..244 recovers at 245. Trace proves 112 cached
+sectors, four cursor wraps and zero final occupancy. Window 781 sectors;
+part 4 cold capacity remains 2543. Reuse `.tmp/sector-cache-window/`,
+`.tmp/sector-cache-profile.json`, `.tmp/sector-cache-part04-capacity/` and
+[evidence](toolkit/sector_cache_report.json). Keep all four flags:
+`--shared-audio --four-video-slots --inline-cells --sector-cache`.
+
+Next scope: remove the complete-input gate before decoding. The remaining
+stall is block 14 (12492 compressed bytes) while the cache holds only 7168;
+14 queue-empty entries and longest empty wait 0.81M T remain. Reuse existing
+`inplace_streaming_core.py` and `streaming_slot_queue.py` as design references
+(they implement ZX0, not LZSA2). `inplace_streaming_player.py` preserves AY/
+drive hooks and safely remaps external queue operands. A LZSA2 variant must
+guard token headers AND entire literal runs against the loaded input frontier,
+preserve AF' and the suspended decoder stack, save the shared sector before
+it can be overwritten, and keep explicit EOF completion. Retain existing
+LZSA2 bytes and in-place proofs; first validate boundaries in a component
+fixture, then reuse this complete window. The core ends at 8E6Eh and the
+inline renderer starts at 8E80h, so helper placement must be checked.
+Full part 4's preceding renderer's main late
 run is local 577..632 (global 4321..4376), recovered at 633. Avoid re-encoding
 or building a full set for each trial. Preserve exact stream bytes for
 player-only changes; compare native counts separately from real disk service.
