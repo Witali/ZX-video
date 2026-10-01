@@ -5,6 +5,31 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: fix live-PCM silence after the first bank
+
+Objective: diagnose the user's early silence in Fuse (reported model 128)
+without changing the 82944-byte PCM excerpt. Explicit 128/Beta sound playback
+passed, but automatic disk startup reproduced silence after the first bank.
+The debugger proved that the 10FD..17FD aliases changed 1FFD while 7FFD stayed
+at 10h. Automatic model identity is not inferred from its A timing code.
+
+Use BC'=7FFD and EXX/LD E,n/OUT(C),E/EXX: 27 T versus 26 T, +1 T per
+bank, +6 T per excerpt. Kernel 32 T and ordinary block 1764 T stay unchanged.
+Native and cold Spectrum 128 checks cover 1658881 exact outputs, two loops,
+PCM order, accumulator, code/stack, all paging latches and 324 startup reads,
+zero runtime reads. Actual PDM is 78783.428 Hz average /51404.348 Hz minimum;
+first loop 10.528161 seconds. Eleven beeper tests passed, including rejection
+of legacy aliases by the stricter port model. The separate normal-speed,
+sound-enabled automatic run now has signal throughout both loops, correct
+7FFD and unchanged 1FFD. No physical hardware test is claimed.
+
+Decision: replace the root live disk with the corrected image and preserve
+the original sources and diagnostic evidence. See [details and reproduction](audiobook-beeper/PAGING_FIX.md),
+[build](audiobook-beeper/pcm-live-fixed/report.json),
+[full verification](audiobook-beeper/pcm-live-fixed/verification.json) and
+[sound capture](audiobook-beeper/paging-fix-evidence/fixed-short-auto/report.json).
+The user's subsequent full-memory request is a separate capacity change.
+
 ## 2026-10-02: consolidate the complete audiobook chat work log
 
 The user requested preservation of everything done in this chat. This entry

@@ -26,7 +26,7 @@ def main():
     if sha(raw)!=prior['pdm_source_pcm']['data_sha256']: raise ValueError('comparison PCM changed')
     padding=(-len(raw))%256; pcm=raw+bytes([128])*padding
     disk,meta=build_disk(pcm,args.quarter_nops if args.fast else 0,steady=not args.fast)
-    args.output.mkdir(parents=True)
+    args.output.mkdir(parents=True,exist_ok=True)
     (args.output/'audiobook-preview.trd').write_bytes(disk)
     (args.output/'soundtrack.pcm.gz').write_bytes(gzip.compress(pcm,mtime=0))
     (args.output/'pcm8k-preview.wav').write_bytes(args.input.read_bytes())
@@ -57,7 +57,7 @@ def main():
     metrics=dict(waveform_correlation=float(np.corrcoef(ref,candidate)[0,1]),
         reconstruction_snr_db=float(10*np.log10(np.mean(ref**2)/np.mean((candidate-ref)**2))),
         scope='same actual-timing PCM holds, pipeline aligned, same 4.5 kHz filters; not intelligibility')
-    report=dict(complete=True,preview_only=True,date='2026-10-02',baseline_commit='55c1a8c',
+    report=dict(complete=True,preview_only=True,date='2026-10-02',baseline_commit='e06cec8',
         source_pcm_wav=str(args.input.resolve()),source_pcm_wav_sha256=sha(args.input.read_bytes()),source_pcm_sha256=sha(raw),
         original_audiobook_sha256=prior['source_sha256'],source_start_seconds=60,source_sample_rate_hz=8000,
         bits_per_pcm_sample=8,channels=1,original_pcm_samples=len(raw),silence_padding_samples=padding,
@@ -71,7 +71,7 @@ def main():
         limits=['first-order modulator, unlike the previous host second-order modulator',
                 'PCM is held between updates; no band-limited interpolation in Z80',
                 'fixed software clock; actual PCM rate and ULA jitter are measured, not assumed to be exactly 8 kHz',
-                'paging alias targets original Spectrum 128/+2, not +2A/+3'],
+                'standard 7FFD paging; native and machine-specific emulator gates define verified compatibility'],
         producer_sources_sha256_lf={name:sha((HERE/name).read_bytes().replace(b'\r\n',b'\n')) for name in
             ('pcm_player.py','verify_pcm.py','build_pcm.py','build_pdm.py')},
         artifacts={f.relative_to(args.output).as_posix():dict(bytes=f.stat().st_size,sha256=sha(f.read_bytes()))

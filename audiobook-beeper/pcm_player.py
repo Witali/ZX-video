@@ -26,7 +26,7 @@ def screen(count,oversample):
     return bytes(data)+bytes([0x47])*768
 
 
-def player(sections,quarter_nops=0,steady=True):
+def player(sections,quarter_nops=0,steady=True,canonical_paging=True):
     a=MiniAssembler(ORIGIN); outs=[]
     oversample=OVERSAMPLE if steady else 13
     def pad():
@@ -51,7 +51,10 @@ def player(sections,quarter_nops=0,steady=True):
         word(0x01,0xfffd); a.emit(0x3e,register,0xed,0x79)
         word(0x01,0xbffd); a.emit(0xaf,0xed,0x79)
     page(sections[0]['bank']); a.emit(0xfb,0x76,0xf3)
-    a.label('ready'); word(0x01,0x10fe); word(0x21,sections[0]['address'])
+    a.label('ready')
+    if canonical_paging:
+        a.emit(0xd9); word(0x01,0x7ffd); a.emit(0xd9) # BC' is the complete paging address.
+    word(0x01,0x10fe); word(0x21,sections[0]['address'])
     a.emit(0x3e,128,0x1e,0) # A modulo error, E three-bit output pipeline.
     a.label('playback')
     for i,s in enumerate(sections):
@@ -78,11 +81,16 @@ def player(sections,quarter_nops=0,steady=True):
         for bit in range(2,oversample):
             pulse(f'out_{i}_bank_{bit}')
             if bit==2:
-                # Original Spectrum 128 paging decodes A15=0,A1=0.
-                # 10FD..17FD aliases 7FFD, avoiding BC changes/ULA contention.
-                # EX AF 4 + LD A,n 7 + OUT(n),A 11 + EX AF 4 = 26 T.
-                a.emit(0x08,0x3e,0x10|next_section['bank'])
-                a.label(f'page_{i}'); a.emit(0xd3,0xfd,0x08)
+                if canonical_paging:
+                    # Preserve PCM, accumulator and pipeline in the other set.
+                    # EXX 4 + LD E,n 7 + OUT(C),E 12 + EXX 4 = 27 T.
+                    # The former 26-T alias can address 1FFD on other models.
+                    a.emit(0xd9,0x1e,0x10|next_section['bank'])
+                    a.label(f'page_{i}'); a.emit(0xed,0x59,0xd9)
+                else:
+                    # Historical reproduction only; unsafe on extended decoders.
+                    a.emit(0x08,0x3e,0x10|next_section['bank'])
+                    a.label(f'page_{i}'); a.emit(0xd3,0xfd,0x08)
             if bit==3: word(0x21,next_section['address']) # 10 T, in a separate slot.
             if 3<bit<oversample-1: pad()
         a.abs16(0xc3,f'loop_{(i+1)%len(sections)}')
@@ -98,7 +106,7 @@ def player(sections,quarter_nops=0,steady=True):
     return code+bytes(4096-len(code))+screen(sum(s['bytes'] for s in sections),oversample),a.labels,outs,len(code)
 
 
-def build_disk(pcm,quarter_nops=0,steady=True):
+def build_disk(pcm,quarter_nops=0,steady=True,canonical_paging=True):
     if not pcm or len(pcm)%256 or len(pcm)>98304: raise ValueError('need 1..384 PCM sectors')
     if quarter_nops not in range(9): raise ValueError('quarter_nops must be 0..8')
     if steady and quarter_nops: raise ValueError('clock trim is only available for the fast experiment')
@@ -111,29 +119,32 @@ def build_disk(pcm,quarter_nops=0,steady=True):
         basic_line(20,b'\xf9 \xc0 \xb0 "15619":\xea:\xef "PLAYER" \xaf'),
         basic_line(30,b'\xf9 \xc0 \xb0 "32768"')])
     boot=TrdFile('boot','B',basic,autostart_line=10)
-    draft,_,_,_=player(sections,quarter_nops,steady)
+    draft,_,_,_=player(sections,quarter_nops,steady,canonical_paging)
     track,sector=calculate_file_start([boot,TrdFile('PLAYER','C',draft,start=ORIGIN)])
     position=track*16+sector
     for s in sections: s['sector']=position; position+=s['sectors']
-    code,labels,outs,code_bytes=player(sections,quarter_nops,steady)
+    code,labels,outs,code_bytes=player(sections,quarter_nops,steady,canonical_paging)
     files=[boot,TrdFile('PLAYER','C',code,start=ORIGIN)]
     for i,s in enumerate(sections):
         files.append(TrdFile(f'PCM{i}','C',pcm[i*BANK_BYTES:i*BANK_BYTES+s['bytes']],start=s['address']))
     disk,directory,capacity=place_files(files,'LIVEPDM')
     ordinary,page_extra,bank_extra=(441,2,12) if steady else (432+quarter_nops,14,36)
+    bank_extra+=int(canonical_paging)
     cycles=len(pcm)*ordinary+page_extra*(len(pcm)//256)+bank_extra*len(sections)
     return disk,dict(origin=ORIGIN,format='unsigned PCM8; no PDM bytes on disk',source_sample_rate_hz=8000,
         pcm_samples=len(pcm),pcm_sha256=hashlib.sha256(pcm).hexdigest(),oversample=oversample,
         bits_per_cycle=len(pcm)*oversample,quarter_nops=quarter_nops,steady=steady,repeat=True,
+        canonical_paging=canonical_paging,paging_value_register='e' if canonical_paging else 'a',
         sections=sections,player_labels=labels,output_labels=outs,code_bytes=code_bytes,directory=directory,capacity=capacity,
         cpu_clock_hz=CPU_CLOCK,deterministic_cycle_tstates=cycles,
         nominal_pcm_rate_hz=len(pcm)*CPU_CLOCK/cycles,nominal_pdm_rate_hz=len(pcm)*oversample*CPU_CLOCK/cycles,
         timing=dict(conversion_kernel_tstates=32,ordinary_four_sample_tstates=4*ordinary,
-            additional_page_tstates=page_extra,additional_bank_tstates=bank_extra,maximum_native_hold_tstates=max(58,32+4*quarter_nops),
+            additional_page_tstates=page_extra,additional_bank_tstates=bank_extra,maximum_native_hold_tstates=max(58+int(canonical_paging),32+4*quarter_nops),
+            paging_work_tstates=26+int(canonical_paging),paging_work_delta_tstates=int(canonical_paging),
             baseline_precomputed_kernel_tstates=30,kernel_delta_tstates=2,baseline_precomputed_slot_tstates=46,
             ordinary_average_slot_tstates=ordinary/oversample,excludes='ULA, ROM and disk; measured separately'),
         modulator=dict(order=1,accumulator_bits=8,initial_accumulator=128,initial_pipeline=0,pipeline_delay_bits=3,
             recurrence='sum=error+PCM; carry=sum>>8; error=sum&255; E=((E>>1)|(carry<<7))&0xF7; output=(E>>4)&1'),
         memory=dict(bank_2='8000..8FFF code, 9000..AAFF screen staging, B800 stack',bank_5='screen/BASIC/TR-DOS',
             payload_banks=[s['bank'] for s in sections],pcm_bytes=len(pcm),pdm_buffer_bytes=0,pdm_lookup_table_bytes=0,
-            runtime_disk_reads=0),paging_alias='10FD..17FD, original Spectrum 128 A15=0/A1=0 decoder')
+            runtime_disk_reads=0),paging_port='7FFD via BC\'' if canonical_paging else '10FD..17FD alias (legacy only)')

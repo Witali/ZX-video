@@ -11,7 +11,7 @@ class LiveTests(unittest.TestCase):
             with self.subTest(size=size):
                 pcm=bytes(range(256))*(size//256)
                 disk,meta=build_disk(pcm)
-                proof=native_check(disk,meta,pcm)
+                proof=native_check(disk,meta,pcm,strict_paging=True)
                 self.assertTrue(proof['all_pcm_values_exact'])
                 self.assertEqual(proof['bits_verified'],size*10*2+1)
                 self.assertEqual(proof['cycle_tstates'],meta['deterministic_cycle_tstates'])
@@ -28,6 +28,15 @@ class LiveTests(unittest.TestCase):
             self.assertTrue(np.all(bits[:3]==0))
             self.assertLess(abs(float(bits[3:].mean())-amplitude/256),1/1000)
             self.assertTrue(0<=error<256)
+
+    def test_reject_legacy_alias_on_strict_paging(self):
+        pcm=bytes(range(256))*65
+        disk,meta=build_disk(pcm,canonical_paging=False)
+        with self.assertRaisesRegex(AssertionError,'noncanonical paging port'):
+            native_check(disk,meta,pcm,strict_paging=True)
+        disk,fixed=build_disk(pcm)
+        self.assertTrue(native_check(disk,fixed,pcm,strict_paging=True)['every_pdm_bit_exact'])
+        self.assertEqual(fixed['deterministic_cycle_tstates']-meta['deterministic_cycle_tstates'],len(meta['sections']))
 
     def test_invalid_payloads(self):
         for n in (0,1,255,257,98560):

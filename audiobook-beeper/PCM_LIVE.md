@@ -1,5 +1,10 @@
 # Convert PCM8 to beeper PDM on the Z80
 
+**Paging correction, 2026-10-02:** the current root disk uses the complete
+7FFD address. See [diagnosis and verified correction](PAGING_FIX.md).
+The measurements and alias description below document the original
+`pcm-live-preview` build; they are retained as its historical baseline.
+
 The independently bootable [test disk](../ZX-audiobook-PDM-live-test.trd)
 stores unsigned **8000 Hz /8-bit mono PCM** and converts it directly to
 beeper pulses during playback. No prepared PDM payload, expanded PDM RAM

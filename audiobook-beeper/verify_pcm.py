@@ -35,13 +35,13 @@ def native_intervals(meta):
     total=0
     for section in meta['sections']:
         total+=section['bytes']; sample=total-1
-        out[sample*oversample+2]=58
+        out[sample*oversample+2]=58+int(meta.get('canonical_paging',False))
         out[sample*oversample+3]=42
     assert int(out.sum())==meta['deterministic_cycle_tstates']
     return out
 
 
-def native_check(disk,meta,pcm):
+def native_check(disk,meta,pcm,strict_paging=False):
     from z80 import Z80Machine
     oversample=meta['oversample']
     expected,error=reference(pcm,oversample=oversample); budget=100_000_000
@@ -60,12 +60,15 @@ def native_check(disk,meta,pcm):
             if machine.d!=pcm[(index//oversample)%len(pcm)]: raise AssertionError('wrong PCM sample/order')
             bits.append((value>>4)&1); times.append(budget-machine.ticks_to_stop)
             if len(bits)==len(expected): machine.set_breakpoint(endpoint)
+        elif port==0x7ffd and 0x10<=value<=0x17:
+            load_bank(value&7)
         elif port&255==253 and port>>8==value and 0x10<=value<=0x17:
+            if strict_paging: raise AssertionError(f'noncanonical paging port {port:04x}')
             load_bank(value&7)
         else: raise AssertionError(f'unexpected port/value {port:04x}/{value}')
     load_bank(meta['sections'][0]['bank'])
     machine.set_output_callback(output)
-    machine.pc=labels['playback']; machine.sp=0xb800
+    machine.pc=labels['ready']; machine.sp=0xb800
     machine.hl=meta['sections'][0]['address']; machine.bc=0x10fe; machine.a=128; machine.e=0
     machine.ticks_to_stop=budget
     while machine.pc!=endpoint or len(bits)!=len(expected):
@@ -84,12 +87,13 @@ def native_check(disk,meta,pcm):
         scope='independent Z80; integer/FIFO reference; no ULA or ROM/disk latency')
 
 
-def fuse_check(fuse,directory,meta,pcm):
+def fuse_check(fuse,directory,meta,pcm,machine='128'):
     work=directory/'verification-work'; work.mkdir(exist_ok=True)
     oversample=meta['oversample']
     labels=meta['player_labels']; expected,_=reference(pcm,oversample=oversample)
     lines=['base 10','set $r 0','set $bits 0']; widths={}; event_count=0
-    stamp='spectrum:frames*70908+ula:tstates'
+    clock,field_tstates=(CPU_CLOCK,70908) if machine=='128' else (3500000,69888)
+    stamp=f'spectrum:frames*{field_tstates}+ula:tstates'
     def event(breakpoint,tag,expressions,after=(),condition='',stop=False):
         nonlocal event_count
         event_count+=1; widths[tag]=len(expressions)
@@ -101,7 +105,8 @@ def fuse_check(fuse,directory,meta,pcm):
     # One port breakpoint covers hundreds of unrolled output instructions.
     event('port write 4350',140,[stamp,'z80:e','z80:d'],['set $bits $bits+1'],condition='$r==1')
     for name,address in labels.items():
-        if re.fullmatch(r'page_\d+',name): event(address+2,150,[stamp,'z80:a'])
+        if re.fullmatch(r'page_\d+',name):
+            event(address+2,150,[stamp,'z80:'+meta.get('paging_value_register','a'),'ula:mem7ffd','ula:mem1ffd'])
     event(labels['disk_call'],102,[stamp,'$r'])
     # Fuse completes the instruction at an exit breakpoint. Stop on ADD/RR,
     # not OUT, or its port callback would append an unwanted extra pulse.
@@ -109,7 +114,7 @@ def fuse_check(fuse,directory,meta,pcm):
     event(labels['out_0_0_0']+stop_offset,200,[stamp],condition=f'$bits=={len(expected)}',stop=True)
     script='\n'.join(lines); (work/'fuse-debugger.txt').write_text(script,encoding='utf-8',newline='\n')
     command=[str(fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions','--speed','10000',
-        '--machine','128','--beta128','--debugger-command',script,str((directory/'audiobook-preview.trd').resolve())]
+        '--machine',machine,'--beta128','--debugger-command',script,str((directory/'audiobook-preview.trd').resolve())]
     epoch=time.time()
     result=subprocess.run(command,cwd=fuse.parent,capture_output=True,env=dict(os.environ,SDL_VIDEODRIVER='dummy'),
         startupinfo=hidden_startupinfo(),timeout=300)
@@ -135,35 +140,39 @@ def fuse_check(fuse,directory,meta,pcm):
     if not np.array_equal(np.frombuffer(inputs,dtype=np.uint8),wanted_pcm): raise AssertionError('Fuse PCM read order mismatch')
     expected_pages=[s['bank'] for s in meta['sections']]*2+[meta['sections'][0]['bank']]
     if [meta['sections'][0]['bank']]+[r[1]&7 for r in pages]!=expected_pages: raise AssertionError('wrong Fuse banks')
+    if any(r[1]!=r[2] for r in pages): raise AssertionError('paging write did not reach 7FFD latch')
+    if meta.get('canonical_paging',False) and len({r[3] for r in pages})!=1:
+        raise AssertionError('unexpected 1FFD latch changes during playback')
     if len(reads)!=len(pcm)//256 or any(r[1] for r in reads): raise AssertionError('runtime or missing disk reads')
     timeline=np.asarray(times,dtype=np.int64); timeline-=timeline[0]
     intervals=np.diff(timeline); deterministic=np.tile(native_intervals(meta),2)
-    if np.any(intervals<deterministic) or CPU_CLOCK/int(intervals.max())<40000:
+    if np.any(intervals<deterministic) or clock/int(intervals.max())<40000:
         raise AssertionError(f'bad real cadence {Counter(intervals)}')
     (directory/'output-times.u32.gz').write_bytes(gzip.compress(timeline.astype('<u4').tobytes(),mtime=0))
-    n=meta['bits_per_cycle']; durations=np.diff(timeline[::n])/CPU_CLOCK
-    sample_intervals=np.diff(timeline[::oversample]); rate=2*len(pcm)*CPU_CLOCK/int(timeline[-1])
-    return dict(complete=True,cold_boot=True,cycles_verified=2,bits_verified=len(expected),every_pdm_bit_exact=True,
+    n=meta['bits_per_cycle']; durations=np.diff(timeline[::n])/clock
+    sample_intervals=np.diff(timeline[::oversample]); rate=2*len(pcm)*clock/int(timeline[-1])
+    return dict(complete=True,cold_boot=True,machine=machine,cpu_clock_hz=clock,field_tstates=field_tstates,
+        paging_latches_verified=True,cycles_verified=2,bits_verified=len(expected),every_pdm_bit_exact=True,
         all_pcm_values_exact=True,bank_sequence=expected_pages,startup_sector_reads=len(reads),runtime_disk_reads=0,
         average_pdm_rate_hz=rate*oversample,average_pcm_rate_hz=rate,pcm_clock_error_percent=(rate/8000-1)*100,
-        minimum_instantaneous_pdm_rate_hz=CPU_CLOCK/int(intervals.max()),
-        maximum_instantaneous_pdm_rate_hz=CPU_CLOCK/int(intervals.min()),
+        minimum_instantaneous_pdm_rate_hz=clock/int(intervals.max()),
+        maximum_instantaneous_pdm_rate_hz=clock/int(intervals.min()),
         interval_histogram_tstates=dict(sorted(Counter(map(int,intervals)).items())),
         pcm_interval_min_tstates=int(sample_intervals.min()),pcm_interval_max_tstates=int(sample_intervals.max()),
         loop_hold_tstates=list(map(int,intervals[n-1::n])),cycle_durations_seconds=durations.tolist(),
-        first_out_phase_tstates=int(times[0]%70908),native_tstates_per_cycle=int(deterministic[:n].sum()),
+        first_out_phase_tstates=int(times[0]%field_tstates),native_tstates_per_cycle=int(deterministic[:n].sum()),
         additional_ula_tstates=int(timeline[-1]-deterministic.sum()),
         trd_sha256=hashlib.sha256((directory/'audiobook-preview.trd').read_bytes()).hexdigest(),
         fuse_sha256=hashlib.sha256(fuse.read_bytes()).hexdigest(),physical_hardware_tested=False)
 
 
-def verify(directory,fuse):
+def verify(directory,fuse,machine='128'):
     meta=json.loads((directory/'player.json').read_bytes())
     pcm=gzip.decompress((directory/'soundtrack.pcm.gz').read_bytes())
     assert hashlib.sha256(pcm).hexdigest()==meta['pcm_sha256']
-    native=native_check((directory/'audiobook-preview.trd').read_bytes(),meta,pcm)
+    native=native_check((directory/'audiobook-preview.trd').read_bytes(),meta,pcm,strict_paging=meta.get('canonical_paging',False))
     print(json.dumps(dict(native=native)),flush=True)
-    actual=fuse_check(fuse,directory,meta,pcm)
+    actual=fuse_check(fuse,directory,meta,pcm,machine)
     report=dict(complete=True,native=native,fuse=actual,verification_sources_sha256_lf={
         name:hashlib.sha256(Path(__file__).with_name(name).read_bytes().replace(b'\r\n',b'\n')).hexdigest()
         for name in ('verify_pcm.py','pcm_player.py')})
@@ -173,4 +182,5 @@ def verify(directory,fuse):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__); p.add_argument('directory',type=Path); p.add_argument('--fuse',type=Path,required=True)
-    args=p.parse_args(); verify(args.directory,args.fuse)
+    p.add_argument('--machine',choices=('128','scorpion'),default='128')
+    args=p.parse_args(); verify(args.directory,args.fuse,args.machine)

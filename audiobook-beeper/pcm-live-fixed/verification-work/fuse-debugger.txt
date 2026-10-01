@@ -1,0 +1,88 @@
+base 10
+set $r 0
+set $bits 0
+breakpoint 32975
+commands 1
+print 100
+print spectrum:frames*70908+ula:tstates
+set $r 1
+continue
+end
+breakpoint port write 4350
+commands 2
+print 140
+print spectrum:frames*70908+ula:tstates
+print z80:e
+print z80:d
+set $bits $bits+1
+continue
+end
+condition 2 $r==1
+breakpoint 33450
+commands 3
+print 150
+print spectrum:frames*70908+ula:tstates
+print z80:e
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33976
+commands 4
+print 150
+print spectrum:frames*70908+ula:tstates
+print z80:e
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 34502
+commands 5
+print 150
+print spectrum:frames*70908+ula:tstates
+print z80:e
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 35028
+commands 6
+print 150
+print spectrum:frames*70908+ula:tstates
+print z80:e
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 35554
+commands 7
+print 150
+print spectrum:frames*70908+ula:tstates
+print z80:e
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 36080
+commands 8
+print 150
+print spectrum:frames*70908+ula:tstates
+print z80:e
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 36155
+commands 9
+print 102
+print spectrum:frames*70908+ula:tstates
+print $r
+continue
+end
+breakpoint 33000
+commands 10
+print 200
+print spectrum:frames*70908+ula:tstates
+exit 77
+end
+condition 10 $bits==1658881
