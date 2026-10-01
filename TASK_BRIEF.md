@@ -148,12 +148,22 @@ Complete four-volume capacity is 2543/2541/2588/2588 sectors: 84 sectors
 dirty-RAM cold loading; no four-disk release or whole-movie timing claim.
 Reuse `.tmp/shared-audio-window/`, `.tmp/shared-audio-four-capacity/` and
 [the saved evidence](toolkit/shared_audio_report.json).
-Next scoped step: use the freed bank 6 for video lookahead. The queue still
-has three slots. Either protect its 1170-byte AY tail from BOTH compressed
-input and decoded output, or audit further fixed-RAM space for that tail
-before restoring a full fourth slot. B700h..BA00h is not yet audited.
-Count instructions, preserve AY FIFO/IRQ and all in-place bounds; prove
-sustained delivery on the cached difficult window before full builds.
+Four video slots are now opt-in for one-bank AY: cached rebuild flags
+`--shared-audio --four-video-slots`. Move AY to bank 6 and restore video
+banks [0,1,3,4], using their original mapper and in-place layout. Spanning
+audio is rejected. Capacity 47616 -> 63488 decoded bytes; cursor cost
+39/47 -> 11 T; admission and AY relocation add 0 T. Eighteen tests pass.
+Complete native/cold/Fuse checks preserve all 256 screens and 1280 AY ticks.
+Real-window timing improves 108 -> 37 misses (36 beyond one field), maximum
+82 -> 43 fields, 15 invalid intervals; size stays 793 sectors. Still fails
+both timing gates. Reuse `.tmp/four-video-slots-window/` and
+[the evidence](toolkit/four_video_slots_report.json); do not repeat builds.
+Next scoped step: inspect the remaining 41 empty-queue packet entries and
+late runs in the full saved pipeline profile, and handle full part 4's
+1170-byte audio overflow. Protect it from BOTH compressed input and output,
+or first audit further fixed RAM (B700h..BA00h is not yet audited). The old
+plan's suggested video map [0,1,3,6] would require new paging code; the
+implemented one-bank case instead retains the original [0,1,3,4] mapper.
 In parallel capacity work, target the remaining total sector excess;
 moving volume cuts alone cannot remove it. Do not reduce media quality.
 Retain full image/AY, 10 fps and the entire edit; do not rebuild all four

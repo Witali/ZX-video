@@ -35,6 +35,39 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — reclaim a fourth video slot with bank-6 AY
+
+- Objective: address measured empty-queue stalls. Baseline `5751e6e`, same
+  complete 256-frame [4096,4352) window and exact raw/LZSA2/AY streams.
+  `--shared-audio --four-video-slots` places a one-bank AY payload in bank 6
+  and restores the original video map [0,1,3,4]. Reject spanning audio.
+  This avoids changing slot paging, block layout or compressed data.
+- Decoded capacity increases 47616 -> 63488 bytes. Restore two admission
+  checks (7 -> 7 T) and two cursor sites (39/47 -> 11 T, -28/-36 T per
+  execution). Loading the constant AY bank changes 14h -> 16h at 7 T;
+  decoder, IRQ consumer, drawing and packet instructions stay unchanged.
+  Old component metadata remains historical; `four_video_slots.patches`
+  and the final queue listing describe installed instructions.
+- Eighteen tests pass, including independent full-flags Z80 verification
+  that AY relocation has exactly zero CPU-cycle delta, and rejection of
+  audio that would overlap bank 4. Complete cold/Fuse replay verifies all
+  1769472 screen bytes, 1280 AY records and 735 runtime sectors.
+- Timing improves 108 -> 37 nominal misses, 108 -> 36 beyond one field,
+  maximum 82 -> 43 fields; 15 actual intervals remain invalid. Image size
+  stays 793 sectors. Both timing gates still fail; keep root releases.
+- Full pipeline trace sees an empty queue at 41/256 packet entries, down
+  from the earlier three-slot pre-shared-audio profile's 115/256. Within
+  91.66M active elapsed T, drawing uses 33.37M, disk service 17.92M and
+  decode bridges 14.37M. These elapsed values include IRQ/ULA/ROM effects
+  and overlap packet intervals; do not add the packet total again.
+- The initial integrated CPU build predated the explicit immutable-AY-bank
+  guard. Re-run the complete native window with that guard in the verifier;
+  keep both CPU reports. Generic conversion and full-movie timing/actual
+  continuation for this opt-in layout remain outstanding. Selected part 4
+  still requires an audio-tail allocation before it can use four slots.
+  [Report/evidence](toolkit/four_video_slots_report.json),
+  [reproducer/verifier](toolkit/verify_four_video_slots.py).
+
 ## 2026-10-01 — shared fixed-RAM AY model, exact four-volume capacity
 
 - Objective: reclaim bank 6 and reduce duplicated sound tables for the

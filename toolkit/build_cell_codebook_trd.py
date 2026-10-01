@@ -32,6 +32,8 @@ def verify(image,m,states):
             return super().read8(address)
         def write8(self,address,value):
             self.check_retired(address)
+            if self.tracking and m.get('four_video_slots',{}).get('enabled') and address&65535>=0xc000:
+                assert self.port_7ffd&7!=6,('write to immutable AY bank',hex(self.pc),hex(address))
             return super().write8(address,value)
         def step(self):
             pc,t=self.pc,self.tstates
@@ -92,6 +94,7 @@ def verify(image,m,states):
         minimum_sp=minimum,frames=frames,mocked_sector_reads=c.dos_reads,all_progress_steps_exact=True,
         new_instruction_stages=dict(stages),new_instruction_tstates=sum(stages.values()),
         retired_ranges_guarded=retired,retired_runtime_reads_writes_or_fetches=0,
+        immutable_audio_bank_guarded=6 if m.get('four_video_slots',{}).get('enabled') else None,
         histogram=[dict(pc=pc,tstates=t,count=n) for (pc,t),n in sorted(hist.items())])
 
 

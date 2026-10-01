@@ -98,7 +98,7 @@ class CheckedCPU(TraceCPU):
 
 
 class Harness:
-    def __init__(self, blob, batch=6, *, paging=False,fixed=False,first_bank_bytes=16384):
+    def __init__(self, blob, batch=6, *, paging=False,fixed=False,first_bank_bytes=16384,single_bank=4):
         self.paging = paging
         self.fixed=fixed
         if fixed:
@@ -123,7 +123,7 @@ class Harness:
         a.label('fatal'); a.emit(0x76)
         if a.pc >= 0xb900: raise AssertionError('test AY placement overlaps clock/stack')
         self.audio = a.labels
-        self.build = (fixed_resident_audio.build(blob,self.audio,batch=batch,core_limit=0x8d74,first_bank_bytes=first_bank_bytes)
+        self.build = (fixed_resident_audio.build(blob,self.audio,batch=batch,core_limit=0x8d74,first_bank_bytes=first_bank_bytes,single_bank=single_bank)
             if fixed else banked.build(blob,self.audio,batch=batch) if self.banked else resident.build(blob, self.audio, batch=batch))
         self.labels = self.build['labels']
         c = self.cpu = CheckedCPU()
@@ -161,7 +161,8 @@ class Harness:
                 c.extra_mutable.add(self.segment_hooks['labels']['active_bank'])
             self.bridge = resident.bridge(0x9300,self.segment_hooks['labels']['fill'] if self.banked else self.labels['fill'],
                 page=video.PAGE,shadow=video.SHADOW,
-                bank_address=self.segment_hooks['labels']['active_bank'] if self.banked else self.build.get('payload_bank_address'))
+                bank_address=self.segment_hooks['labels']['active_bank'] if self.banked else self.build.get('payload_bank_address'),
+                bank=single_bank if fixed else 4)
             for i, v in enumerate(bytes.fromhex(self.bridge['code_hex'])): c.write8(0x9300+i, v)
             extra_listing = [dict(row,stage='paging') for row in extra_listing]+self.bridge['listing']
             if self.banked:extra_listing += [dict(row,stage='segment') for row in self.segment_hooks['listing']]

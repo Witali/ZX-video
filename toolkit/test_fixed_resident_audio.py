@@ -34,6 +34,19 @@ def data():
 
 
 class FixedResidentAudioTests(unittest.TestCase):
+    def test_one_bank_can_move_to_six_without_extra_cycles(self):
+        blob=data();old=Harness(blob,paging=True,batch=31,fixed=True)
+        new=Harness(blob,paging=True,batch=31,fixed=True,single_bank=6)
+        self.assertEqual(new.build['banks'],[6])
+        self.assertEqual(old.init_tstates,new.init_tstates)
+        while old.consumed<len(old.records):
+            a,n=old.fill_wrapped();before=[bytes(b) for b in new.cpu.banks];page=new.cpu.port_7ffd
+            b,k=new.fill_wrapped();self.assertEqual((a,n),(b,k));independent_fill(before,page,new,b)
+            for _ in range(n):old.consume();new.consume()
+        old.finish();new.finish()
+        with self.assertRaisesRegex(ValueError,'four video slots require one-bank AY'):
+            Harness(blob,paging=True,fixed=True,single_bank=6,first_bank_bytes=1)
+
     def test_fixed_forest_has_identical_one_bank_cycles(self):
         blob=data();old=Harness(blob,paging=True,batch=31);new=Harness(blob,paging=True,batch=31,fixed=True)
         self.assertTrue(any(r['address']==0xb100 for r in new.build['regions']))

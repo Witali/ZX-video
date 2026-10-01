@@ -268,3 +268,37 @@ bank 6 must protect the audio tail from compressed input as well as output,
 or first prove another fixed allocation for the tail. No root release image
 has been replaced. [Evidence](shared_audio_report.json),
 [verifier](verify_shared_audio.py), [capacity script](measure_shared_audio_capacity.py).
+
+## Fourth video slot for one-bank AY (2026-10-01)
+
+`rebuild_cell_player.py --shared-audio --four-video-slots` adds an explicit
+bounded experiment. Move the coded AY payload to bank 6, leaving the fixed
+decoder/trees where they were. Restore original queue capacity and cursors
+for video banks **0,1,3,4**. Both producer and copy/disk paging already use
+this map; no new bank mapping helper or block format is necessary. Audio
+requiring two banks is rejected before image generation.
+
+Memory: four slots of up to 15872 bytes, 63488 vs 47616 decoded bytes.
+Admission `CP 3` -> `CP 4` stays 7 T at both sites. Cursor `CALL helper`
+(17 + 22/30 = 39/47 T) -> `INC A; AND 3` (4+7 = 11 T), saving 28/36 T
+at each producer/consumer advance. AY bridge's `LD A,14h` -> `LD A,16h`
+stays 7 T. All other active code remains identical. Earlier component
+metadata records the previous installation; the final queue listing and
+`four_video_slots.patches` carry these exact overrides.
+
+Eighteen tests pass. Full-flags independent CPU checks verify all caller
+registers, exact AY records and zero cycle delta for relocation. Complete
+native replay additionally guards bank 6 against every runtime write.
+Complete cold/Fuse playback verifies all 1769472 screen bytes, 1280 AY
+ticks and 735 sector contents. Same difficult [4096,4352) window, same
+793 sectors. Nominal misses fall 108 -> 37, beyond-one-field misses
+108 -> 36, maximum 82 -> 43 fields. Fifteen intervals remain invalid.
+This is a significant bounded improvement, not a zero-late/fallback pass.
+
+The full trace has 41 empty-queue packet entries. Active elapsed 91.66M T
+includes draw 33.37M, disk service 17.92M and decoder bridges 14.37M;
+packet intervals overlap these and must not be summed again. Reuse this
+trace to diagnose remaining stalls. Part 4's 1170-byte audio overflow is
+still incompatible with this four-slot allocation. No full-movie timing,
+continuation or release-image claim follows. [Evidence](four_video_slots_report.json),
+[guard and archive script](verify_four_video_slots.py).

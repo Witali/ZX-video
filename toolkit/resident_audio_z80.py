@@ -242,7 +242,7 @@ def build(data, audio, *, batch=6, total_ticks=None, preinitialized=False):
         timing_scope='Bank already mapped; caller saves, paging, IRQ, ULA, ROM and disk excluded.')
 
 
-def bridge(origin, target, *, page, shadow, bank_address=None):
+def bridge(origin, target, *, page, shadow, bank_address=None,bank=4):
     """Fixed-RAM caller, preserving all registers and the previous RAM bank.
 
 Use the existing restartable 92-T paging helper. It merges the latest IRQ
@@ -261,7 +261,8 @@ The return value is deliberately discarded, so AF and AF' both survive.
     e("EX AF,AF'", [0x08], 4); e("PUSH AF (save AF')", [0xf5], 11)
     e("EX AF,AF'", [0x08], 4)
     n('LD A,(page shadow)', 0x3a, shadow, 13); e('PUSH AF (page)', [0xf5], 11)
-    if bank_address is None:e('LD A,14h', [0x3e,0x14], 7)
+    if not 0<=bank<=7:raise ValueError('invalid resident bank')
+    if bank_address is None:e(f'LD A,{0x10|bank:02x}h', [0x3e,0x10|bank], 7)
     else:n('LD A,(resident bank)',0x3a,bank_address,13)
     n('CALL page', 0xcd, page, 17)
     n('CALL resident entry', 0xcd, target, 17)

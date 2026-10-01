@@ -43,14 +43,16 @@ def forest(trees,core_limit):
     return regions
 
 
-def build(data,audio,*,core_limit,batch=31,first_bank_bytes=16384):
+def build(data,audio,*,core_limit,batch=31,first_bank_bytes=16384,single_bank=4):
     data=single_stream(data);initial,records,trees,payload=resident.tables(data)
     if not 1<=first_bank_bytes<=16384:raise ValueError('invalid first payload capacity')
     if len(payload)>first_bank_bytes+1536:raise ValueError('shared AY overflow exceeds reserved 1536-byte tail')
     regions=forest(trees,core_limit)
     first=min(first_bank_bytes,len(payload));overflow=payload[first:]
+    if single_bank not in (4,6):raise ValueError('shared AY single bank must be 4 or 6')
+    if overflow and single_bank!=4:raise ValueError('four video slots require one-bank AY')
     start=0x10000-first_bank_bytes
-    segments=[dict(bank=4,address=start,data_hex=payload[:first].hex(),bytes=first)]
+    segments=[dict(bank=single_bank,address=start,data_hex=payload[:first].hex(),bytes=first)]
     second=0x10000-len(overflow) if overflow else None
     if overflow:segments.append(dict(bank=6,address=second,data_hex=overflow.hex(),bytes=len(overflow)))
     code,labels,listing=resident.code(audio,len(records),initial,ROOTS,start,batch=batch,origin=ORIGIN,
@@ -72,12 +74,13 @@ def build(data,audio,*,core_limit,batch=31,first_bank_bytes=16384):
         timing_scope='Against one AYH1 model; includes 92-T page body at wrap, excludes outer bridge/IRQ/ULA')
 
 
-def install(banks,m,sections,data,compress):
+def install(banks,m,sections,data,compress,*,four_slots=False):
     """Replace resident segments after the cell player has retired old code."""
     old=m['resident_audio'];cell=m['cell_codebook']
     if cell['wire']!='CB44' or not cell.get('obsolete_fixed_ranges'):
         raise ValueError('fixed AY integration requires the retired CB44 reconstruction')
-    compiled=build(data,m['audio_labels'],core_limit=m['decoder_labels']['start'],batch=old['compiled']['batch'])
+    compiled=build(data,m['audio_labels'],core_limit=m['decoder_labels']['start'],batch=old['compiled']['batch'],
+        single_bank=6 if four_slots else 4)
     def put(at,blob):
         if not 0x4000<=at<at+len(blob)<=0xc000:raise ValueError('fixed AY region must stay mapped')
         bank=5 if at<0x8000 else 2;lo=at&16383;banks[bank][lo:lo+len(blob)]=blob
@@ -92,7 +95,8 @@ def install(banks,m,sections,data,compress):
         previous=old[key];origin=previous['origin'];before=bytes.fromhex(previous['code_hex'])
         actual=bytes(banks[5 if origin<0x8000 else 2][origin&16383:(origin&16383)+len(before)])
         if actual!=before:raise ValueError('unexpected old resident bridge bytes')
-        current=resident.bridge(origin,target,page=PAGE,shadow=SHADOW,bank_address=bank_address)
+        current=resident.bridge(origin,target,page=PAGE,shadow=SHADOW,bank_address=bank_address,
+            bank=compiled['payload_segments'][0]['bank'])
         blob=bytes.fromhex(current['code_hex'])
         if len(blob)>len(before):raise ValueError('fixed AY bridge exceeds old allocation')
         put(origin,blob+bytes(len(before)-len(blob)));replacements.append((origin,origin+len(before)))
@@ -145,6 +149,9 @@ def install(banks,m,sections,data,compress):
     old['code_regions']=kept+new_regions
     m['slot_queue_instruction_listing']=[r for r in m['slot_queue_instruction_listing']
         if not any(lo<=r['address']<hi for lo,hi in replacements)]+new_rows
+    if four_slots:
+        from four_video_slots import install as install_slots
+        install_slots(banks,m)
     retained=[s for s in sections if s['bank'] not in (4,6)]
     assert retained[-1]['bank']==5 and retained[-1]['address']==0x4000
     return retained[:-1]+payload_sections+retained[-1:]
