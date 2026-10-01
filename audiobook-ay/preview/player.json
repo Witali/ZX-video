@@ -1,0 +1,153 @@
+{
+  "origin": 32768,
+  "ticks": 6000,
+  "duration_seconds": 120.0,
+  "player_labels": {
+    "start": 32768,
+    "clear_ay": 32910,
+    "ready": 32964,
+    "wait_field": 32965,
+    "field_start": 32966,
+    "tick_start": 32975,
+    "write_register": 32979,
+    "ay_out": 32987,
+    "tick_end": 32995,
+    "finished": 33036,
+    "finished_wait": 33070,
+    "irq": 33073,
+    "read_n": 33076,
+    "disk_call": 33085,
+    "sector_ok": 33103,
+    "remaining": 33110,
+    "disk_position": 33112,
+    "bank_pointer": 33114,
+    "bank_table": 33116
+  },
+  "sections": [
+    {
+      "bank": 0,
+      "sector": 60,
+      "sectors": 64,
+      "bytes": 16379
+    },
+    {
+      "bank": 4,
+      "sector": 124,
+      "sectors": 64,
+      "bytes": 16379
+    },
+    {
+      "bank": 6,
+      "sector": 188,
+      "sectors": 64,
+      "bytes": 16379
+    },
+    {
+      "bank": 1,
+      "sector": 252,
+      "sectors": 64,
+      "bytes": 16379
+    },
+    {
+      "bank": 3,
+      "sector": 316,
+      "sectors": 2,
+      "bytes": 484
+    }
+  ],
+  "directory": [
+    {
+      "name": "boot",
+      "type": "B",
+      "field1": 67,
+      "length": 67,
+      "sectors": 1,
+      "sector": 0,
+      "track": 1
+    },
+    {
+      "name": "PLAYER",
+      "type": "C",
+      "field1": 32768,
+      "length": 11008,
+      "sectors": 43,
+      "sector": 1,
+      "track": 1
+    },
+    {
+      "name": "AUDIO0",
+      "type": "C",
+      "field1": 49152,
+      "length": 16379,
+      "sectors": 64,
+      "sector": 12,
+      "track": 3
+    },
+    {
+      "name": "AUDIO1",
+      "type": "C",
+      "field1": 49152,
+      "length": 16379,
+      "sectors": 64,
+      "sector": 12,
+      "track": 7
+    },
+    {
+      "name": "AUDIO2",
+      "type": "C",
+      "field1": 49152,
+      "length": 16379,
+      "sectors": 64,
+      "sector": 12,
+      "track": 11
+    },
+    {
+      "name": "AUDIO3",
+      "type": "C",
+      "field1": 49152,
+      "length": 16379,
+      "sectors": 64,
+      "sector": 12,
+      "track": 15
+    },
+    {
+      "name": "AUDIO4",
+      "type": "C",
+      "field1": 49152,
+      "length": 484,
+      "sectors": 2,
+      "sector": 12,
+      "track": 19
+    }
+  ],
+  "capacity": {
+    "used_sectors": 302,
+    "free_sectors": 2242,
+    "first_free_track": 19,
+    "first_free_sector": 14
+  },
+  "registers_sha256": "a36464322ef822253b8ba38c9158a5d074a134da8aa7cf9a9996db0e09e871e3",
+  "timing": {
+    "tick_start_to_tick_end_tstates": 867,
+    "field_check_tstates": 38,
+    "irq_body_tstates": 18,
+    "im2_ack_tstates": 19,
+    "register_loop_continue_tstates": 78,
+    "register_loop_last_tstates": 73,
+    "nominal_field_tstates": 70908,
+    "excludes": "ULA contention, HALT wait and boot-only TR-DOS/physical latency"
+  },
+  "memory": {
+    "bank_5": "screen, BASIC and TR-DOS workspace",
+    "bank_2": "8000 code; 9000..AAFF screen; B800 stack top; BDBD vector; BE00..BF00 IM2 table",
+    "data_banks": [
+      0,
+      4,
+      6,
+      1,
+      3
+    ],
+    "bank_7": "spare; never required from a preceding disk",
+    "runtime_disk_reads": 0
+  }
+}

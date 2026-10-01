@@ -1,0 +1,36 @@
+base 10
+set $r 0
+breakpoint 32964
+commands 1
+print 100
+print spectrum:frames*70908+ula:tstates
+set $r 1
+continue
+end
+breakpoint 32989
+commands 2
+print 140
+print spectrum:frames*70908+ula:tstates
+print z80:d
+print z80:e
+continue
+end
+breakpoint 32995
+commands 3
+print 143
+print spectrum:frames*70908+ula:tstates
+continue
+end
+breakpoint 33085
+commands 4
+print 102
+print spectrum:frames*70908+ula:tstates
+print $r
+continue
+end
+breakpoint 33070
+commands 5
+print 200
+print spectrum:frames*70908+ula:tstates
+exit 77
+end

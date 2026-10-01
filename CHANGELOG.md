@@ -5,6 +5,50 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: add a two-minute compact AY audiobook subproject
+
+- Objective: add a separate folder for the supplied O. Henry recording.
+  The user explicitly selected compact AY synthesis as in the movie, then
+  requested a two-minute preview. Baseline `c7e1554`; source duration
+  667.596916 seconds, SHA-256 recorded in the [report](audiobook-ay/preview/report.json).
+  Deliver only source interval [0,120), with one second of analysis context.
+  Full-book conversion and PCM/DAC playback are outside this selected scope.
+- Added [audiobook-ay](audiobook-ay/README.md), a reproducible bounded audio
+  converter, a resident Spectrum 128 player, comparison WAVs and one cold-
+  bootable TRD. Reuse the movie's square-aware synthesizer unchanged: 50 Hz,
+  three tone voices, optional noise on B, one-step noise attenuation and
+  50-cent period refinement. Original and AY WAVs share RMS 0.0603964.
+  The WAV is the existing approximate renderer, not a physical AY capture.
+- Capacity: 6000 ticks, 54000 packed bytes / 25039 gzip archive bytes,
+  66000 resident register bytes. One TRD uses 302 of 2544 sectors. Five
+  data banks hold whole eleven-register records; screen, fixed code, stack,
+  IRQ table and TR-DOS workspace are accounted for; bank 7 is spare.
+  All 258 audio sectors load before playback, with zero runtime disk reads.
+- Complete verification: all 66000 register values and their order match in
+  independent native Z80 replay and real Fuse cold boot through EOF. All
+  6000 fields are consecutive; no dropped/duplicated AY ticks or drift.
+  Actual first-OUT phases are 150..153 T; adjacent intervals 70905..70911 T.
+  All four bank changes and the final full-field hold pass. Native EOF
+  mutes every channel. Physical hardware and full-book delivery are untested.
+- CPU: ordinary field work 974 T, near-bank-end 992 T, bank change 1091 T,
+  exact-boundary EOF 1007 T. IRQ body 18 T plus 19 T IM2 acknowledge and
+  10 T vector jump; HALT/ULA/boot ROM/disk latency are separate. The existing
+  movie hot path changes by 0 T. The old queued eleven-write audio routine
+  is 1280 T; this separate no-queue foreground path is 974 T (-306 T), with
+  its different contract documented. Zilog instruction sums and independent
+  CPU execution agree. An initial boundary-test expectation was 4 T low;
+  it was corrected to 1007 T without changing the generated player.
+- Quality proxies at 10 Hz: spectral cosine 0.850804, chroma cosine
+  0.960339, loudness correlation 0.989443, onset F1 0.807198. These are
+  not speech intelligibility or accuracy percentages. Listening judgment
+  remains with the user; the tonal/noise approximation changes the voice.
+- Decision: deliver the complete requested preview and await sound feedback
+  before another encoder experiment or full-book streaming milestone.
+  [Builder](audiobook-ay/build_preview.py), [verifier](audiobook-ay/verify_preview.py),
+  [native boundary tests](audiobook-ay/test_player.py),
+  [full playback evidence](audiobook-ay/preview/verification.json) and compressed
+  actual-OUT trace are preserved. TRD and comparison WAVs use Git LFS.
+
 ## 2026-10-01: deliver the full refined movie on four independent disks
 
 - Objective: replace the 15-disk refined movie with at most 4 disks, retaining

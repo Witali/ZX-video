@@ -7,6 +7,9 @@ a particular movie or remove credits automatically.
 
 ## Usage
 
+An audio-only subproject provides a [two-minute O. Henry AY preview](audiobook-ay/README.md),
+with comparison WAVs and an independently bootable Spectrum 128 TRD.
+
 Install Python 3.11+, FFmpeg/ffprobe and the ZX0 v2 compressor in `PATH`.
 
 ```powershell

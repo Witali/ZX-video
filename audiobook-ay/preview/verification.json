@@ -1,0 +1,46 @@
+{
+  "complete": true,
+  "native": {
+    "complete": true,
+    "ticks": 6000,
+    "register_writes": 66000,
+    "registers_exact": true,
+    "bank_sequence": [
+      0,
+      4,
+      6,
+      1,
+      3
+    ],
+    "eof_mutes": true,
+    "deterministic_field_work_tstates": {
+      "974": 5908,
+      "992": 88,
+      "1091": 4
+    },
+    "scope": "independent Z80 core; no ULA, IRQ, HALT or disk latency"
+  },
+  "fuse": {
+    "complete": true,
+    "cold_boot": true,
+    "ticks": 6000,
+    "register_writes": 66000,
+    "every_register_exact": true,
+    "missing_or_duplicate_fields": [],
+    "runtime_disk_reads": 0,
+    "startup_sector_reads": 258,
+    "first_out_phase_min_tstates": 150,
+    "first_out_phase_max_tstates": 153,
+    "first_out_interval_min_tstates": 70905,
+    "first_out_interval_max_tstates": 70911,
+    "first_out_to_eof_tstates": 425448084,
+    "trd_sha256": "645493363fa952e0b67d0f7fa0ef1d8a5e6d4732c89a4d962745f6573ace3c85",
+    "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+    "hardware_tested": false
+  },
+  "verification_sources_sha256_lf": {
+    "verify_preview.py": "5ee0ad413b05bbeefb7eab689704ad4c0c71f7a3fb425b2365aafab6c37e6fa3",
+    "player.py": "31278b45cb9cef9ea00dc5810d051473dca570fe5f069c922d1e60b098cc7449",
+    "build_preview.py": "f118a96cc1d6ff36e7a834558f15614c72bc53ecdf3a317c82378a4ccaf50d29"
+  }
+}
