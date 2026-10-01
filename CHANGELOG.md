@@ -5,6 +5,47 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: complete branch-bypass LZSA2 playback, window gain does not pass full-volume timing
+
+- Objective: finish verification of the existing, previously cold/component-only
+  decoder before another implementation experiment. Baseline `2c3bf78`; exact
+  sector-cache streams, CB46, four slots, inline renderer, AY50 and 10 fps.
+  The optional-read admission gate is disabled.
+- The [4096,4352) window improves from eight nominal misses/max7 fields/four
+  invalid intervals to two isolated misses/max1/zero invalid intervals.
+  Local frames 123 and 232 recover at 124 and 233. Actual OUT deviation reaches
+  70914 T, six T beyond one 70908-T field: the strict actual-OUT fallback still
+  fails. This distinction is not rounded away. Occupancy stays 781 sectors.
+- Full part 4 [3744,5066) changes from 29 nominal misses/28 beyond one field/
+  max23/23 invalid intervals to 31/30/max21/17. Runs 378, 591..603, 614..629,
+  687 recover at 379/604/630/688. The long late run extends beyond the short
+  window's EOF. Actual maximum deviation is 1489065 T. Full part 4 occupies
+  2544/2544 sectors, versus 2543 before; extra bootstrap code costs one sector,
+  while raw packets, compressed LZSA2, AY and dictionary bytes stay identical.
+- Both builds pass dirty-RAM boot, every native screen with input-frontier,
+  cache and retired-memory guards, every Fuse screen byte (1769472 window /
+  9137664 full disk), exact AY (1280/6610 ticks) and runtime sectors (726/2434).
+  This is full cold playback evidence for these two scopes, not evidence for
+  the other disks or actual preceding-EOF continuation.
+- No new decoder instructions were introduced in this follow-up. Existing
+  completed-input branches cost +0 T per token/long16 and -2 T per long8
+  versus the original decoder; available-prefix guards still cost 96 T per
+  header and 135 T per long literal including CALL. These deterministic
+  instruction costs remain separate from real decoder/paging/IRQ/ULA elapsed
+  times in the saved profiles. Prefix checks remain a target during starvation.
+- Decision: retain as an unselected experiment; the window improvement does
+  not meet full-volume timing. Do not combine it with the rejected read gate
+  or publish new root images. Next inspect the token-entry header guard:
+  AF is overwritten by token decoding, so a direct guard-to-token branch may
+  remove CALL/RET and AF saves. Preliminary available-header count 96 ->46 T
+  is a hypothesis requiring independent native, interrupt and full playback
+  checks; preserve the zero-overhead complete-input path and current bytes.
+- Reproduce with cached `rebuild_cell_player.py --streaming-lzsa2`,
+  `verify_cached_cell_player.py`, `measure_fap3_fuse.py --trace-pipeline`,
+  `capture_cell_codebook_full.py`, `profile_cell_delivery.py` and
+  [archive verifier](toolkit/verify_streaming_bypass_playback.py).
+  [Report and evidence](toolkit/streaming_bypass_playback_report.json).
+
 ## 2026-10-01: optional track-read admission removes isolated misses but starves the queue
 
 - Objective: prevent the measured background track read from delaying the next

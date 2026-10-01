@@ -88,14 +88,34 @@ Reuse [evidence](toolkit/optional_read_gate_report.json),
 `.tmp/optional-read-safe-window/` (four fields) and
 `.tmp/optional-read-last-field-window/` (two fields).
 
-Next scope: complete native/Fuse verification of the already-built final
-streaming branch-bypass variant at `.tmp/streaming-lzsa2-bypass-window/`.
-It has component/cold evidence but no full playback evidence; compare against
-the sector-cache window's original stream (8 misses /max7, not the renumbered
-9/max6 window). This removes the previous guard overhead once input is complete.
-Do not add another decoder variant or rebuild the movie first. Then address
-burst supply using the complete-volume profile. Generic CLI integration and
-four-volume cold/continuation release checks remain open.
+The final branch-bypass variant now has complete cold/native/Fuse content
+evidence for both the saved 256-frame window and full part 4. The window
+improves 8 misses /max7 /4 bad intervals ->2 /max1 /0; local 123 and 232 recover
+at 124/233. Actual OUT deviation reaches 70914 T (six T beyond one field), so
+strict fallback does not pass. Full part 4 changes 29 /max23 /23 bad intervals
+->31 /max21 /17, with late runs 378, 591..603, 614..629 and 687 recovering at
+379/604/630/688. All native/Fuse screens, AY and sectors are exact; used
+capacity is 2544 sectors (one extra bootstrap sector, same video bytes).
+Do not select this for release or combine it with the rejected read gate.
+Reuse `.tmp/streaming-lzsa2-bypass-window/`, `.tmp/streaming-bypass-part04/`
+and [full evidence](toolkit/streaming_bypass_playback_report.json).
+
+Next scope: optimize the existing input-prefix header check during queue
+starvation, retaining the zero-overhead completed-input path and all media
+bytes. At token entry, AF is about to be overwritten: replacing the
+CALL/save/restore/RET guard with a direct branch to the token body may reduce
+the available-header path from 96 to 46 T. This is only a timing-table
+hypothesis; first verify register/flag liveness, independent Z80 cases and
+interrupt/input-boundary suspension. Then reuse the saved window and full
+part 4 (the short window ends before the complete difficult scene). Do not
+start another format, margin sweep or full-set rebuild. Generic CLI
+integration and four-volume cold/continuation release checks remain open.
+
+Guard implementation references: `resumable_lzsa2.py` currently CALLs
+`guard_header` at `Token`; `inplace_streaming_core.py` and the independent
+test patch completed-token targets to `Token+3`. A direct guard must use
+explicit guarded/body labels in both production and tests, preserve AF'
+and HL/DE/BC across suspension, and leave long-literal checks intact.
 
 The sector-streaming LZSA2 experiment remains unselected. Eager
 prefix decoding produces 27 late frames / maximum 40 fields in the complete
@@ -103,8 +123,8 @@ prefix decoding produces 27 late frames / maximum 40 fields in the complete
 13 /9, versus the sector-cache baseline's 8 /7 (an earlier baseline run was
 8 /8). Native screens, AY and sector sequence remain exact. The final variant
 bypasses all guard branches after complete input, retaining zero per-token
-overhead, but has component and cold checks only. Verify that existing final
-variant as scoped above; keep `--streaming-lzsa2` opt-in. Reuse
+overhead; its full playback follow-up is recorded above. Keep
+`--streaming-lzsa2` opt-in. Reuse
 [evidence](toolkit/streaming_lzsa2_report.json); root release disks are unchanged.
 
 Latest exact mode: CB46 mode 3 stores one changed row-pair within a literal
