@@ -1,0 +1,800 @@
+{
+  "complete": true,
+  "release": false,
+  "date": "2026-10-01",
+  "baseline_commit": "bc615ab",
+  "scope": "One cached CB46 [4096,4352) window. Host encoding only; unchanged decoder, renderer, AY and physical image content.",
+  "default_player_changed": false,
+  "pixel_changes": 0,
+  "decoder_code_identical": true,
+  "renderer_code_identical": true,
+  "renderer_tstates_delta_per_frame": 0,
+  "full_native_frames": 256,
+  "full_fuse_screen_bytes": 1769472,
+  "cold": {
+    "cold_sections": [
+      {
+        "bank": 2,
+        "offset": 0,
+        "bytes": 16384,
+        "sha256": "c648dfb650526f17a525b97f0758aa8a14bed479a91127ab44d12ceb1669df76"
+      },
+      {
+        "bank": 7,
+        "offset": 0,
+        "bytes": 9216,
+        "sha256": "b10f0efb3abf17fb5cb936cf3e5bac519640888b1f5f2378b1c92291ab047fc9"
+      },
+      {
+        "bank": 5,
+        "offset": 13824,
+        "bytes": 2560,
+        "sha256": "6efb047a1cbb2e11db9d300a91c7cbe033bc4e86f18df45d6fb9190beb800851"
+      },
+      {
+        "bank": 6,
+        "offset": 0,
+        "bytes": 3900,
+        "sha256": "4e97bbecd61ebe112c369ff1349a1433999261fff3aa98544c72d20d16aaaaf8"
+      },
+      {
+        "bank": 5,
+        "offset": 0,
+        "bytes": 6912,
+        "sha256": "0da79a1c90b1dadd7a5ec94ef721046591b9933ae732e5917b6ee5c8b5e8aa2b"
+      }
+    ],
+    "mocked_boot_tstates": 1795866,
+    "boot_sectors": 51,
+    "dirty_ram_boot_exact": true
+  },
+  "distance_only": {
+    "bytes_saved": 0,
+    "decoder_delta_tstates": -731,
+    "brute": {
+      "layouts": 187,
+      "alternatives": 2716
+    }
+  },
+  "variants": {
+    "rows": {
+      "bytes": 185794,
+      "sectors": 726,
+      "bytes_delta": 113,
+      "decoder_delta_tstates": -39130,
+      "host_candidate_eligible": false
+    },
+    "aligned": {
+      "bytes": 183568,
+      "sectors": 718,
+      "bytes_delta": -2113,
+      "decoder_delta_tstates": 15250,
+      "host_candidate_eligible": false
+    },
+    "flat": {
+      "bytes": 183911,
+      "sectors": 719,
+      "bytes_delta": -1770,
+      "decoder_delta_tstates": -25830,
+      "host_candidate_eligible": true
+    },
+    "budgeted": {
+      "bytes": 183997,
+      "sectors": 719,
+      "bytes_delta": -1684,
+      "decoder_delta_tstates": -70966,
+      "host_candidate_eligible": true
+    }
+  },
+  "selected": "budgeted",
+  "video_before_bytes": 185681,
+  "video_after_bytes": 183997,
+  "total_sectors_before": 781,
+  "total_sectors_after": 777,
+  "decoder_before_tstates": 16049945,
+  "decoder_after_tstates": 15978979,
+  "max_slice_before_tstates": 22323,
+  "max_slice_after_tstates": 22104,
+  "slower_individual_blocks": 0,
+  "every_block_within_original_byte_and_cpu_budget": true,
+  "short_matches_removed": 167,
+  "next_packet_cpu_before": 18323355,
+  "next_packet_cpu_after": 18274558,
+  "timing_before": {
+    "nominal_late_frames": 8,
+    "actual_out_over_one_field": 8,
+    "max_late_fields": 7,
+    "bad_actual_intervals": 4,
+    "late_runs": [
+      {
+        "start": 237,
+        "end": 244,
+        "recovered_at": 245
+      }
+    ]
+  },
+  "timing_after": {
+    "nominal_late_frames": 9,
+    "actual_out_over_one_field": 9,
+    "max_late_fields": 6,
+    "bad_actual_intervals": 2,
+    "late_runs": [
+      {
+        "start": 123,
+        "end": 123,
+        "recovered_at": 124
+      },
+      {
+        "start": 237,
+        "end": 244,
+        "recovered_at": 245
+      }
+    ]
+  },
+  "trd_sha256": "c0e9e19d59614d66f9fd5bbcd74a2374a7244a6f0d848cbc72869dcfd6770f18",
+  "decision": "Retain budgeted dictionary numbering as a measured compression improvement: every block is no larger and no slower to decode; pixels and AY are exact. Do not claim a release: physical timing still fails both gates. The extra isolated late frame remains despite improved maximum lateness/interval counts. Full-volume and continuation checks remain required before generic integration or replacing root images.",
+  "artifacts": [
+    {
+      "file": "lzsa2-same-cost-report.json.gz",
+      "raw_sha256": "990b3c34cdc356bf50bc74730d5a368880ba1166f3b604c9c343eb98f61ecd6f",
+      "archive_sha256": "61b4fd8869cc09b599849e99acd992f7dc9e0d0591e8992dae340356e99bc2b4",
+      "raw_bytes": 9417040,
+      "archive_bytes": 470521
+    },
+    {
+      "file": "lzsa2-same-cost-video.stream.gz",
+      "raw_sha256": "51483ce2ebc47fe7d81e65e2738d495436ddb94ae939bd2283117a060fb0312c",
+      "archive_sha256": "45f291f2ef7531d43a3c9c63e0db4b25877d5bedad37e861ec3ebf3a9763feaa",
+      "raw_bytes": 185681,
+      "archive_bytes": 177188
+    },
+    {
+      "file": "dictionary-numbering-aligned-rows.json.gz",
+      "raw_sha256": "9e841f8e49eb6a5b2197d6cd299bfca20150ff7e273083ee378b198a4cb3fd4e",
+      "archive_sha256": "829907adb8f9adf9dbb21b3d118c749eb9266210f11ac7ca7acc2fa94d7cde1c",
+      "raw_bytes": 3702,
+      "archive_bytes": 1148
+    },
+    {
+      "file": "dictionary-numbering-aligned-video.raw.gz",
+      "raw_sha256": "4be20904872b20cb9f7f08e4331aebcee1b9f1b8caed3fe29f39c8869d9d5a92",
+      "archive_sha256": "baaab166ecaecdeda0eae88d50886a50177b2d03ffbc0fee476b62a98e8c7ef7",
+      "raw_bytes": 238161,
+      "archive_bytes": 165652
+    },
+    {
+      "file": "dictionary-numbering-aligned-video.stream.gz",
+      "raw_sha256": "54a2e6a692b7e13116a04aadeab3f0b72e7af26df98bf455ec7058b46613318d",
+      "archive_sha256": "7c3f9925a07cef6e1cfc962af900449f3b96be96cb96364def0bdf95f7a1522f",
+      "raw_bytes": 183568,
+      "archive_bytes": 175374
+    },
+    {
+      "file": "dictionary-numbering-budgeted-rows.json.gz",
+      "raw_sha256": "9e841f8e49eb6a5b2197d6cd299bfca20150ff7e273083ee378b198a4cb3fd4e",
+      "archive_sha256": "829907adb8f9adf9dbb21b3d118c749eb9266210f11ac7ca7acc2fa94d7cde1c",
+      "raw_bytes": 3702,
+      "archive_bytes": 1148
+    },
+    {
+      "file": "dictionary-numbering-budgeted-video.raw.gz",
+      "raw_sha256": "b40bd7079f29913358b2e3bcf7bda8055f5d975443cc8dc308e82c3148425a00",
+      "archive_sha256": "7cee044f9da2f8b8a6c2a64cb5a8f8fd31a51f69e7bcba622cb6bf2ec832e901",
+      "raw_bytes": 238161,
+      "archive_bytes": 166075
+    },
+    {
+      "file": "dictionary-numbering-budgeted-video.stream.gz",
+      "raw_sha256": "df7f35cb7ed41f0b7c51d75cca6ed659fd76d89c393065c8e97eb5c4f73e084a",
+      "archive_sha256": "b7061b450af79f686d59ff8d29ee25a22dfa850b3f67b45cf270ab2d771030fe",
+      "raw_bytes": 183997,
+      "archive_bytes": 175780
+    },
+    {
+      "file": "dictionary-numbering-flat-rows.json.gz",
+      "raw_sha256": "9e841f8e49eb6a5b2197d6cd299bfca20150ff7e273083ee378b198a4cb3fd4e",
+      "archive_sha256": "829907adb8f9adf9dbb21b3d118c749eb9266210f11ac7ca7acc2fa94d7cde1c",
+      "raw_bytes": 3702,
+      "archive_bytes": 1148
+    },
+    {
+      "file": "dictionary-numbering-flat-video.raw.gz",
+      "raw_sha256": "b40bd7079f29913358b2e3bcf7bda8055f5d975443cc8dc308e82c3148425a00",
+      "archive_sha256": "7cee044f9da2f8b8a6c2a64cb5a8f8fd31a51f69e7bcba622cb6bf2ec832e901",
+      "raw_bytes": 238161,
+      "archive_bytes": 166075
+    },
+    {
+      "file": "dictionary-numbering-flat-video.stream.gz",
+      "raw_sha256": "9876d86902c939e18b0242e7037e228bdc6b0a0f1fde5a4aae9667e35d2ce9d7",
+      "archive_sha256": "405c104f12155d54e64e773ab4aaed41c6aa655e847b9ece1ecf12f5459bcdc7",
+      "raw_bytes": 183911,
+      "archive_bytes": 175751
+    },
+    {
+      "file": "dictionary-numbering-report.json.gz",
+      "raw_sha256": "6ca14e681b789fe46abb7cf55be7045f653fbcb4c62bf3d6eb0b786fc7d429c9",
+      "archive_sha256": "7b55e8545e819f08933159e4deadf7597ad5d464cc45e4ca7c674d77dc61191e",
+      "raw_bytes": 376076,
+      "archive_bytes": 83103
+    },
+    {
+      "file": "dictionary-numbering-rows-rows.json.gz",
+      "raw_sha256": "9e841f8e49eb6a5b2197d6cd299bfca20150ff7e273083ee378b198a4cb3fd4e",
+      "archive_sha256": "829907adb8f9adf9dbb21b3d118c749eb9266210f11ac7ca7acc2fa94d7cde1c",
+      "raw_bytes": 3702,
+      "archive_bytes": 1148
+    },
+    {
+      "file": "dictionary-numbering-rows-video.raw.gz",
+      "raw_sha256": "9a51120181cd1880a1d51a34c11a5b86ebc26b316d60646a7c88032f2b88c145",
+      "archive_sha256": "d0404ccecc790d02301ead548669a5492c42c8f1da353d3cf4a79cd34057a5ea",
+      "raw_bytes": 238161,
+      "archive_bytes": 167081
+    },
+    {
+      "file": "dictionary-numbering-rows-video.stream.gz",
+      "raw_sha256": "658bf351edbe2eb01ea0593b680341e8dd2ef7fd3a36c3ff62687f9ff8d76267",
+      "archive_sha256": "cd049a19a848c87cf9ad8dd934ff95fca522f52aa35898bc88ae3bca976df6dd",
+      "raw_bytes": 185794,
+      "archive_bytes": 177195
+    },
+    {
+      "file": "dictionary-numbering-window-cache-checks.json.gz",
+      "raw_sha256": "bc469c4466a3c7cf87699eb3676b2cb8105e4d180eea867e48b70751593d4824",
+      "archive_sha256": "536d4c2ba0ea35b75218804e9681a0fc90e60206ff6a61613c5395b9d6ef35c7",
+      "raw_bytes": 180,
+      "archive_bytes": 150
+    },
+    {
+      "file": "dictionary-numbering-window-conversion.json.gz",
+      "raw_sha256": "eb6a0820d264b6f0d110f4cf9db6ffc53d9c124425913b6ab7e34be3e15abda4",
+      "archive_sha256": "00eca1008c2cb1a10a59424e7ed949ef0cc9d848fb5bc32b38867c3ef49d2e32",
+      "raw_bytes": 402,
+      "archive_bytes": 272
+    },
+    {
+      "file": "dictionary-numbering-window-partition.json.gz",
+      "raw_sha256": "2bf9dbe4f0c01907ff8b63478081d911ef43ae544a1413a38519dff4f34fe1dd",
+      "archive_sha256": "c09b2a8bba60463493970caca9de6e3a3faef26799e9139c73310c6a2bcd7ad9",
+      "raw_bytes": 4878,
+      "archive_bytes": 1142
+    },
+    {
+      "file": "dictionary-numbering-window-timing.json.gz",
+      "raw_sha256": "541d41ab932a1e2e3e9bd6383f5162d03453a96aae5f57426b1f2082a9aecd88",
+      "archive_sha256": "e27494a3fc9c643cb9e451660ad99e51d4e950f0204fb6ad91882477cd2c8ede",
+      "raw_bytes": 1339,
+      "archive_bytes": 520
+    },
+    {
+      "file": "dictionary-numbering-window-volumes.json.gz",
+      "raw_sha256": "31cb79b9be83857434b365fbed150b19f2ed95fec85b3957052cafcc54e8fa18",
+      "archive_sha256": "4a9af29c16ff4acd0c6fb5b62064370627af41414c104df0f3c06db2563b1710",
+      "raw_bytes": 434,
+      "archive_bytes": 261
+    },
+    {
+      "file": "dictionary-numbering-window-work-stream.raw.gz",
+      "raw_sha256": "66531dc6ace1bbeec7f57f9f48457c2354e9de5bb9dd6d911d0bf0865c11baff",
+      "archive_sha256": "149489513c07b353b20d19baba61a4093b7e6130db16eff12025fc60cacd67ab",
+      "raw_bytes": 1635441,
+      "archive_bytes": 118603
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-audio.ayh1.gz",
+      "raw_sha256": "5892310808b77cd0f423096d553947050b613418160e3ed89b1797e76a309ad2",
+      "archive_sha256": "c03a453c57bde1f93575488dcd2c1129a51b5493a6de7b700de3361e38f79060",
+      "raw_bytes": 5949,
+      "archive_bytes": 5569
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_sha256": "e90c0ad39f64732328760d0df835b80aedb68caca5584fd3afa73b9d43db6ae4",
+      "archive_sha256": "5b2d9928fcd5e408495d2d0a094f4654f8bb16c9aa90720fe9892b39a533a084",
+      "raw_bytes": 24375,
+      "archive_bytes": 4130
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-0-1536.trace.txt.gz",
+      "raw_sha256": "836f1a743e3176dfd3b88d0b75c3f5941b342038e31dd452c86e1337792c421c",
+      "archive_sha256": "a6c5ed0dd890262cb54327c20eefc441dd31a3181a19f4b2d45d2f09cabaab13",
+      "raw_bytes": 782193,
+      "archive_bytes": 44928
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_sha256": "0d540da0d09fe7cf1f61127aa9eeee80eeb416c6708d66f49775a76961ec38c2",
+      "archive_sha256": "ed1c6e02318afa34a97a2f061ca618c486805e0239870e87900d9535b71bedbd",
+      "raw_bytes": 25485,
+      "archive_bytes": 4005
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_sha256": "0eeb0ec1643fc11481b754c4aafb39348d4a0163bf9b2adf03cd97231061cdff",
+      "archive_sha256": "7cde8d8b4ef22d5b9963bc9f55d2eac8c19b7824a8c96699683f6be63469a762",
+      "raw_bytes": 941762,
+      "archive_bytes": 81814
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_sha256": "7b913ef7f6f0d25955dbd7205e7538ddb4f0df558e22a60b619687683cdeb999",
+      "archive_sha256": "d44c7a9a1debb85221b5b549effca0dd319036d35391e2ea04796b3c2e23870f",
+      "raw_bytes": 25485,
+      "archive_bytes": 3989
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_sha256": "53fbbe84b1ea4e2f7ee70a15a61211417e67df89d999cc467cee9729aa4736aa",
+      "archive_sha256": "8f03ade20e298c35ccecc374fedae615b5c50686959861bba3b4484db888a188",
+      "raw_bytes": 961122,
+      "archive_bytes": 88533
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_sha256": "3a5bceeb90983696cc7a3668160a711e40620bdf4216e2524f4ba4a2cebb4a83",
+      "archive_sha256": "ae4d926389017fdbc6278e8467b193b502299cab5bbac5f5ade314190689caa4",
+      "raw_bytes": 25485,
+      "archive_bytes": 4025
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_sha256": "58bc9fb59bee584d7b0ad8474588e8dfa007f1cace6d5ac8798fb084e4f176af",
+      "archive_sha256": "9950f57aff1921c2ab04e8a5c2fa471727e1d7325ace0baa749f4c16da07b1ce",
+      "raw_bytes": 789368,
+      "archive_bytes": 60601
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_sha256": "1fc010c7e9aff4835f2333d20e0a333ad110ce8e3e38f8813663fdb9c72e3c94",
+      "archive_sha256": "6faf8364deedc92361c5f52237f27be5825ec5de2ba9f02b57d7dab884979084",
+      "raw_bytes": 13005,
+      "archive_bytes": 2042
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_sha256": "3cbdb5f565d20d507b60681e6dfc12459fd44fccda384af4e47a66202956a645",
+      "archive_sha256": "d97bd43e99c6a027fc9dbdbd5c8f37684a2b944e7f0e2be2637647ba9b645d7b",
+      "raw_bytes": 535320,
+      "archive_bytes": 30649
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-captures-progress.json.gz",
+      "raw_sha256": "68791ad7f6f769805659546196960796e81669f70e968f690784af0e872a93c6",
+      "archive_sha256": "f555f2be61daec31c787691b23e676f440065e584c82a832aceac487c119a89d",
+      "raw_bytes": 271995,
+      "archive_bytes": 64067
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-codebook.raw.gz",
+      "raw_sha256": "b40bd7079f29913358b2e3bcf7bda8055f5d975443cc8dc308e82c3148425a00",
+      "archive_sha256": "7cee044f9da2f8b8a6c2a64cb5a8f8fd31a51f69e7bcba622cb6bf2ec832e901",
+      "raw_bytes": 238161,
+      "archive_bytes": 166075
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-codebook.stream.gz",
+      "raw_sha256": "9876d86902c939e18b0242e7037e228bdc6b0a0f1fde5a4aae9667e35d2ce9d7",
+      "archive_sha256": "405c104f12155d54e64e773ab4aaed41c6aa655e847b9ece1ecf12f5459bcdc7",
+      "raw_bytes": 183911,
+      "archive_bytes": 175751
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-cpu.json.gz",
+      "raw_sha256": "75279278c5fc028ca2585795fcbde7dc013feaf1fecf417bae773bba21dc289e",
+      "archive_sha256": "83b44813161cffe50de7bf9de5d052ac1f134381dddd066a0b35fb0ab670b73b",
+      "raw_bytes": 252913,
+      "archive_bytes": 17341
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-dictionary-probe.json.gz",
+      "raw_sha256": "fe7c886b204b75bb1f1e2ab542303fd6b1e280b5aa3d0f35ab84f631bb960bf7",
+      "archive_sha256": "2c83c7700024bce9492acfb2add4e010171bb9c37b0619701fd416e098bd7799",
+      "raw_bytes": 65657,
+      "archive_bytes": 18739
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-dynamic-rows.json.gz",
+      "raw_sha256": "bc32f8d1d7a596ecdb01d12456e8fa9fbf1db628528dd85d7f912d00f33a23ca",
+      "archive_sha256": "f7bee1cd8c37ae4933cd8b1d6afa0ee663b95061de6922fe5ca60a99e8ed181a",
+      "raw_bytes": 103972,
+      "archive_bytes": 16678
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-rows.json.gz",
+      "raw_sha256": "9e841f8e49eb6a5b2197d6cd299bfca20150ff7e273083ee378b198a4cb3fd4e",
+      "archive_sha256": "829907adb8f9adf9dbb21b3d118c749eb9266210f11ac7ca7acc2fa94d7cde1c",
+      "raw_bytes": 3702,
+      "archive_bytes": 1148
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-screens.json.gz",
+      "raw_sha256": "2218ba4dc3d5c0935aeb414039ef689aadee1da2f95be835cf6eeb8b43e11024",
+      "archive_sha256": "133fe3ce1baef86f49d5c2f2c2dec7ad995df83e85a3eb0e28234c5b925f372d",
+      "raw_bytes": 291734,
+      "archive_bytes": 75061
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-states.npz.gz",
+      "raw_sha256": "e0cfd8527f9c8626b76e0d5250ff61b1074920c1ba696cd4e1b98b06b0e06544",
+      "archive_sha256": "60205bd6f304b7176fac8e59992ca479754be7f3baf79974e4e7a8f9802d45ee",
+      "raw_bytes": 3437829,
+      "archive_bytes": 3352405
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-timing.debugger.txt.gz",
+      "raw_sha256": "7c57ea5c8656d33bfb2b0d85c0a1bd6ce42367e66934b8e3f77e5924cf26425f",
+      "archive_sha256": "e20abeaca98ec54631c0ad951d2c790c40ceb0f733ed09b006b108000aa68996",
+      "raw_bytes": 15317,
+      "archive_bytes": 2092
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-timing.json.gz",
+      "raw_sha256": "95655bf6c115d62178b7b29baf91a469339a31cf7595cfea924e5e55e8c0fb5d",
+      "archive_sha256": "ae0589397dc1ccc835c49260cc7f3f029ceda2937e634eb7e316de57d758f8e5",
+      "raw_bytes": 993460,
+      "archive_bytes": 63027
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-timing.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-numbering-window-work-ZX-video-front_part07-timing.trace.txt.gz",
+      "raw_sha256": "10fbab827cb125962728fbb243b95545e0bea491a854426a0865b26de8f061e3",
+      "archive_sha256": "1b959485ff5d7265949a27fbda54781506491f384b091ef95dbd9d5b8a9f4de2",
+      "raw_bytes": 1065210,
+      "archive_bytes": 343576
+    },
+    {
+      "file": "dictionary-numbering-window-ZX-video-front_part07.json.gz",
+      "raw_sha256": "6e3188f868f983ab252901e16fd7a010a938546bcedd3f80dc4c87ba42079040",
+      "archive_sha256": "569dd0a0e25606c56b04d810cac13cb16343b1ee5796c9692131412ef05466bf",
+      "raw_bytes": 2246344,
+      "archive_bytes": 109171
+    },
+    {
+      "file": "dictionary-numbering-window-ZX-video-front_part07.trd",
+      "raw_sha256": "d039bf22bb99fcd6402129db9d0bab53120614d1cf08e3b20978b2c3a776fe6b",
+      "archive_sha256": "d039bf22bb99fcd6402129db9d0bab53120614d1cf08e3b20978b2c3a776fe6b",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "dictionary-budgeted-window-cache-checks.json.gz",
+      "raw_sha256": "a914a6de7e2c195d1005b0a7613257f98e526b48fbc85c8530b692988b2bc22c",
+      "archive_sha256": "8c0e40ec79da18659da2935de16abb91faae978faaa648e303c55fb65535179d",
+      "raw_bytes": 180,
+      "archive_bytes": 150
+    },
+    {
+      "file": "dictionary-budgeted-window-conversion.json.gz",
+      "raw_sha256": "c6e3e85dcea1e582058749312b6c56eef39a10a55c506f3c41cdbae2990ebbbd",
+      "archive_sha256": "79ba2436c05e88479c187d5ea861c93b39b8dd5f6e4d19a87c6e4f4a86c1b233",
+      "raw_bytes": 402,
+      "archive_bytes": 272
+    },
+    {
+      "file": "dictionary-budgeted-window-partition.json.gz",
+      "raw_sha256": "2bf9dbe4f0c01907ff8b63478081d911ef43ae544a1413a38519dff4f34fe1dd",
+      "archive_sha256": "c09b2a8bba60463493970caca9de6e3a3faef26799e9139c73310c6a2bcd7ad9",
+      "raw_bytes": 4878,
+      "archive_bytes": 1142
+    },
+    {
+      "file": "dictionary-budgeted-window-timing.json.gz",
+      "raw_sha256": "541d41ab932a1e2e3e9bd6383f5162d03453a96aae5f57426b1f2082a9aecd88",
+      "archive_sha256": "e27494a3fc9c643cb9e451660ad99e51d4e950f0204fb6ad91882477cd2c8ede",
+      "raw_bytes": 1339,
+      "archive_bytes": 520
+    },
+    {
+      "file": "dictionary-budgeted-window-volumes.json.gz",
+      "raw_sha256": "4fb9b793e4fbcf495e1d249901244d405fa2d455e38971cb5f5ba6786ea11b2a",
+      "archive_sha256": "c3a36d136eb44c492d8d0c66ce5fe0609e755ede7a4537d696bf513b809c20e4",
+      "raw_bytes": 434,
+      "archive_bytes": 260
+    },
+    {
+      "file": "dictionary-budgeted-window-work-stream.raw.gz",
+      "raw_sha256": "66531dc6ace1bbeec7f57f9f48457c2354e9de5bb9dd6d911d0bf0865c11baff",
+      "archive_sha256": "149489513c07b353b20d19baba61a4093b7e6130db16eff12025fc60cacd67ab",
+      "raw_bytes": 1635441,
+      "archive_bytes": 118603
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-audio.ayh1.gz",
+      "raw_sha256": "5892310808b77cd0f423096d553947050b613418160e3ed89b1797e76a309ad2",
+      "archive_sha256": "c03a453c57bde1f93575488dcd2c1129a51b5493a6de7b700de3361e38f79060",
+      "raw_bytes": 5949,
+      "archive_bytes": 5569
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_sha256": "b4adc299ffd82607d5815044db6cd66737d31220464a6fd430937a21e160ecf8",
+      "archive_sha256": "b6eb84fa7336c3b5b129170e43bf0799a4420b1e9e4a53af53ad5b56c1a8dc7b",
+      "raw_bytes": 24374,
+      "archive_bytes": 4129
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-0-1536.trace.txt.gz",
+      "raw_sha256": "a06ed4da467646db7201f8ce0ab2459d181e2ba368c8cd6fa7ea90b0d2fa4d27",
+      "archive_sha256": "b94d27d06a33cbf76c383240fc26ee863866e124ab7c35097557304293fd2e22",
+      "raw_bytes": 782192,
+      "archive_bytes": 44912
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_sha256": "8a46dfb29c1d6f01f5d29c29880d3ff04999d6ccf52a5df4a6649715af28fb0a",
+      "archive_sha256": "f3f11852064413ac4ce9c3de95d92f91f891f6469cf09e43761a43a3f7dc11c5",
+      "raw_bytes": 25485,
+      "archive_bytes": 4006
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_sha256": "1d4adc8fde48ea13eb68f82263c1d43f148e180aa74cb4242f8e01978fa8d63f",
+      "archive_sha256": "cfefc14a0538b4de51db4ae2a819a65d926feb85fbe333b981a6c04bc620669c",
+      "raw_bytes": 941762,
+      "archive_bytes": 81824
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_sha256": "d2f9cfcc8e0a50aae9952483111eeacf6e8f7dd76e7420e8944f5e345cd1f54c",
+      "archive_sha256": "9aa32c8998815c23840ec848255cd54444d69aca5c1392cf966135213c408888",
+      "raw_bytes": 25485,
+      "archive_bytes": 3989
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_sha256": "81b4f47c7faa63b49dea9ceb2c8cb6d639abe831b36674640d4f4b5ebd12a059",
+      "archive_sha256": "569025a3b48e9c62024e7b60a56dcf53dcfd26aaa56cf8b80b2a03306540cf47",
+      "raw_bytes": 961122,
+      "archive_bytes": 88532
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_sha256": "4c7ea8d18b587a298a43bec87bdcdde99b095dd369f23c9ad6a90e85130d71fe",
+      "archive_sha256": "a3cc858c13b04641010b804622720eaf0f5ce1ca7ee3e7372f06d1d24edd955a",
+      "raw_bytes": 25485,
+      "archive_bytes": 4026
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_sha256": "5ffead9cf0f98e1aa99877fd656b90caddde56098af30c3e4fa53b7faf0b19fe",
+      "archive_sha256": "a4e36b0643a5a42ffe54109f8227da63501dd6e38a8b617b250e58f63c9b00e2",
+      "raw_bytes": 789368,
+      "archive_bytes": 60617
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_sha256": "5b0655f97fc087e3c874d35ec8f485ea3b185d28e08d9a34041f900bd6435bf0",
+      "archive_sha256": "5c7a5c495a2fdac0b095b95ae8b7f04443d96a5a16a46a6d04cd55404e4bb49d",
+      "raw_bytes": 13005,
+      "archive_bytes": 2043
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_sha256": "1481baa14c35b9d5d512b3baf9193456aac8c8bf6f5e7aafac798633c5745bdd",
+      "archive_sha256": "bd86159d3ba38a303e84a516bf043586a3a0c6d70d1716f14770c43e9a1e5ef4",
+      "raw_bytes": 535320,
+      "archive_bytes": 30653
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-captures-progress.json.gz",
+      "raw_sha256": "ed32d62e84c50e32e40c42e6adad4c33f7e2ff03d4dacd8e9648a76955dced14",
+      "archive_sha256": "03bd4abb357b69edfc6f8e6a7ab7584ac1a08ef867c14458b319440925c5ec49",
+      "raw_bytes": 271994,
+      "archive_bytes": 64070
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-codebook.raw.gz",
+      "raw_sha256": "b40bd7079f29913358b2e3bcf7bda8055f5d975443cc8dc308e82c3148425a00",
+      "archive_sha256": "7cee044f9da2f8b8a6c2a64cb5a8f8fd31a51f69e7bcba622cb6bf2ec832e901",
+      "raw_bytes": 238161,
+      "archive_bytes": 166075
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-codebook.stream.gz",
+      "raw_sha256": "df7f35cb7ed41f0b7c51d75cca6ed659fd76d89c393065c8e97eb5c4f73e084a",
+      "archive_sha256": "b7061b450af79f686d59ff8d29ee25a22dfa850b3f67b45cf270ab2d771030fe",
+      "raw_bytes": 183997,
+      "archive_bytes": 175780
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-cpu.json.gz",
+      "raw_sha256": "74d843903f4511f1a79a31e740c6ec615d479791c9ed929cce2931be91a0fad6",
+      "archive_sha256": "4f0b6a2d2a5eeeb63dea3706d4eb9e785e732dad28123d54d49949897f681238",
+      "raw_bytes": 252913,
+      "archive_bytes": 17332
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-dictionary-probe.json.gz",
+      "raw_sha256": "0cf0899a4f285587af0300d791640ee61d39d3c4b08968e3c80b3872096ee88a",
+      "archive_sha256": "5f88a051eb4318e124ccf52f1e18d4ee3d1616da5414af4a8b6116f43af7fdb8",
+      "raw_bytes": 115748,
+      "archive_bytes": 23223
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-dynamic-rows.json.gz",
+      "raw_sha256": "bc32f8d1d7a596ecdb01d12456e8fa9fbf1db628528dd85d7f912d00f33a23ca",
+      "archive_sha256": "f7bee1cd8c37ae4933cd8b1d6afa0ee663b95061de6922fe5ca60a99e8ed181a",
+      "raw_bytes": 103972,
+      "archive_bytes": 16678
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-rows.json.gz",
+      "raw_sha256": "9e841f8e49eb6a5b2197d6cd299bfca20150ff7e273083ee378b198a4cb3fd4e",
+      "archive_sha256": "829907adb8f9adf9dbb21b3d118c749eb9266210f11ac7ca7acc2fa94d7cde1c",
+      "raw_bytes": 3702,
+      "archive_bytes": 1148
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-screens.json.gz",
+      "raw_sha256": "98a422cc1566247c39fedba6e27cc207bcce189de7c7ef094ed228ca08ee3dd5",
+      "archive_sha256": "579e36d2e2382b76d08584865d410e66433628972db70458e86486bc5e346bf0",
+      "raw_bytes": 291733,
+      "archive_bytes": 75060
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-states.npz.gz",
+      "raw_sha256": "e0cfd8527f9c8626b76e0d5250ff61b1074920c1ba696cd4e1b98b06b0e06544",
+      "archive_sha256": "60205bd6f304b7176fac8e59992ca479754be7f3baf79974e4e7a8f9802d45ee",
+      "raw_bytes": 3437829,
+      "archive_bytes": 3352405
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-timing.debugger.txt.gz",
+      "raw_sha256": "8bff184a46b1ad0f86bd4ab4aad04ff35daef8b06534e70a0385fd550c060dbd",
+      "archive_sha256": "40b93ae884c3e62e4f323d822414c2a256c95be774df8e7678a6aad9832fb40c",
+      "raw_bytes": 15317,
+      "archive_bytes": 2091
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-timing.json.gz",
+      "raw_sha256": "2956befb1f8cbce9a65c121e74f2c4486e8a103e62f3cf0f5c53839f5ed509a3",
+      "archive_sha256": "38c8dea7fe33da28f2c381244eabc07c0a01d28e355973a5016e34966b358419",
+      "raw_bytes": 992591,
+      "archive_bytes": 62904
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-timing.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "dictionary-budgeted-window-work-ZX-video-front_part07-timing.trace.txt.gz",
+      "raw_sha256": "6bac13b0a770dfe5cff7254e73ffe4404c820612fd8842ed1426f63e97ba220f",
+      "archive_sha256": "b9d68efcad29499296829f967ffe16be0d4505cf44a2100c6ffb38a68fad32b5",
+      "raw_bytes": 1065226,
+      "archive_bytes": 343646
+    },
+    {
+      "file": "dictionary-budgeted-window-ZX-video-front_part07.json.gz",
+      "raw_sha256": "fb0f9ed2f027fe37a05656d0634b512d5d8a5c54add56708da8efd6178968b28",
+      "archive_sha256": "38b511788d94552fb6a744edd6f1ef12f132d3a7ce72e36b0bf8d2014a917508",
+      "raw_bytes": 2246344,
+      "archive_bytes": 109192
+    },
+    {
+      "file": "dictionary-budgeted-window-ZX-video-front_part07.trd",
+      "raw_sha256": "c0e9e19d59614d66f9fd5bbcd74a2374a7244a6f0d848cbc72869dcfd6770f18",
+      "archive_sha256": "c0e9e19d59614d66f9fd5bbcd74a2374a7244a6f0d848cbc72869dcfd6770f18",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "dictionary-numbering-tests.log.gz",
+      "raw_sha256": "c518342937c8d83514b7519b57053001047f8da295f0b5cd6fab8f3a86cdab57",
+      "archive_sha256": "51ae3385ddf0f4620ac6793fe302c856563706fd87f5f4f3c1d9909c36bb6880",
+      "raw_bytes": 431,
+      "archive_bytes": 187
+    },
+    {
+      "file": "dictionary-numbering-profile.json.gz",
+      "raw_sha256": "02b657693e81bf1368cb0ae2387855396eeaa8711f4a3f7475177141cf14aac2",
+      "archive_sha256": "128704f938c05f5f87f3daef64d3083a537e069eaa07ef26e8280fb360c56d70",
+      "raw_bytes": 133788,
+      "archive_bytes": 13313
+    },
+    {
+      "file": "lzsa2-same-cost.log.gz",
+      "raw_sha256": "22f7aedb2ba30189027c22edb330ebe812b918afd486127c1d0a754b226247d4",
+      "archive_sha256": "0e30728a01b56ef316ebcfda0866e68bd17a7a61bae4f8191c21fdb8a4170ba2",
+      "raw_bytes": 426,
+      "archive_bytes": 180
+    },
+    {
+      "file": "dictionary-budgeted.log.gz",
+      "raw_sha256": "f8dbce594971d34d20f81391071100f89745018b755bd4395304245463ab202a",
+      "archive_sha256": "f423577ac533771f734e94fe08dc8904d19cf8f9caf99785e66928a034928d8b",
+      "raw_bytes": 730,
+      "archive_bytes": 251
+    }
+  ],
+  "source_sha256_lf": {
+    "optimize_lzsa2_distances.py": "01fd09f44175df05c4c7b1712082c4950e4a5f76de6c2e228dcc54c5b58b5fbd",
+    "probe_lzsa2_same_cost.py": "b2b284600475feff5cff020b4e68674b06e3595a34e0d2f7e285b588927f6150",
+    "probe_dictionary_numbering.py": "bed77bb032f3069f206b0f364ef9f663e87637032edfa0af71a70d11e358ec69",
+    "test_dictionary_numbering.py": "17cfba533f75e694138883dd46ead35c1b4b88b18c612dee4ab841f989fdf457",
+    "fit_lzsa2_cpu_budget.py": "c445a7a1966c4d9632844c818a8d6ae6ba01816ce13590bf329b43d38b2b5353",
+    "rebuild_cell_player.py": "deff7202da6a0367ce04d87858edc4a7cdaa45a0f473db701124746b52b280ae",
+    "verify_same_cost_compression.py": "5df9546d7847cb7c853229441bcf60dc140e48348b69a48192ee319666585ad1",
+    "resumable_lzsa2.py": "ff5d44f4f20302f1611d662c484d245a292d70a70a7cd1b13eaa7cd6a4b8cd3d",
+    "lzsa2_distance_cost.py": "0968ff5bb13371e9a8aa57a9cb521474925b873d897097699c05a0540be8caaf"
+  }
+}

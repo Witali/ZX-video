@@ -43,10 +43,12 @@ def main():
     p.add_argument('--shared-audio',action='store_true',help='experimental fixed AY decoder/trees and shared payload')
     p.add_argument('--four-video-slots',action='store_true',help='requires shared AY in bank 6/fixed RAM; use bank 4 as a fourth video slot')
     p.add_argument('--cell-probe',type=Path,help='validated replacement window JSON with sibling .raw.gz/.stream.gz')
+    p.add_argument('--dictionary-probe',type=Path,help='validated numbering variant folder from probe_dictionary_numbering.py')
     p.add_argument('--inline-cells',action='store_true',help='experimental CB46 unrolled cell renderer, same video bytes')
     p.add_argument('--sector-cache',action='store_true',help='prefetch compressed sectors in spare bank-7 RAM')
     p.add_argument('--streaming-lzsa2',action='store_true',help='guarded input-prefix decoding; retain exact LZSA2 bytes')
     a=p.parse_args();m=json.loads(a.metadata.read_bytes());source=a.metadata.parent;stem=a.metadata.stem
+    if a.cell_probe and a.dictionary_probe:p.error('choose one replacement probe')
     if a.output.exists() and any(a.output.iterdir()):p.error('output must be new or empty')
     if m['cell_codebook']['wire'] not in ('CB42','CB44','CB46'):p.error('cached rebuild needs dynamic rows')
     work=a.output/'work';folder=work/stem;folder.mkdir(parents=True)
@@ -78,6 +80,23 @@ def main():
         (folder/'codebook.raw').write_bytes(cell);(folder/'codebook.stream').write_bytes(coded)
         write_json(folder/'cell-probe.json',probe)
     blocks=probe['blocks'] if a.cell_probe else m['blocks']
+    if a.dictionary_probe:
+        folder_probe=a.dictionary_probe
+        numbering=json.loads((folder_probe.parent/'report.json').read_bytes())
+        candidate=numbering['variants'][folder_probe.name]
+        assert numbering['complete'] and candidate['host_candidate_eligible']
+        assert numbering['metadata_sha256']==sha(a.metadata.read_bytes())
+        assert numbering['stream_sha256']==sha(coded) and numbering['raw_sha256']==sha(cell)
+        cell=(folder_probe/'video.raw').read_bytes();coded=(folder_probe/'video.stream').read_bytes()
+        rows=json.loads((folder_probe/'rows.json').read_bytes())
+        assert sha(cell)==candidate['raw_sha256'] and sha(coded)==candidate['stream_sha256']
+        from dynamic_row_dictionary import decode_check
+        assert decode_check(cell,frames,start,end,rows)==candidate['proof']
+        keys=('raw_start','raw_end','decoded_bytes','codec','compressed_bytes','sha256','inplace_proof','inplace_layout')
+        blocks=[{key:b[key] for key in keys} for b in candidate['blocks']]
+        cache_check=verify_cached_blocks(coded,cell,blocks)
+        (folder/'codebook.raw').write_bytes(cell);(folder/'codebook.stream').write_bytes(coded)
+        write_json(folder/'rows.json',rows);write_json(folder/'dictionary-probe.json',candidate)
     shutil.copyfile(source/'work/stream.raw',work/'stream.raw')
     write_json(a.output/'partition.json',partition)
     write_json(a.output/'cache-checks.json',cache_check)

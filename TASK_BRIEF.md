@@ -29,6 +29,39 @@ existing player. Compare compressed bytes/sectors AND measured native cycles;
 do not accept a smaller stream that increases decoding cost. Reuse one saved
 window before any full-set rebuild. Dynamic row replacement is already working.
 
+Latest encoder result: align row indices with their raster bytes and uniform
+cell-book indices with the matching row index, then remove selected two-byte
+LZSA2 matches only as needed to meet each original block's CPU budget.
+The unchanged [4096,4352) window shrinks **185681 ->183997 video bytes**,
+**726 ->719 video sectors**, **781 ->777 total occupied sectors**. Every one
+of 16 blocks is no larger and no slower to decode. Independent decoder totals
+are **16049945 ->15978979 T**; maximum 256-byte-quota slice 22323 ->22104 T.
+Renderer code and every frame's counted renderer operations are identical.
+All 256 native/Fuse screens (1769472 bytes), 1280 AY ticks and 719 runtime
+sectors are exact. Timing still fails: nine late frames, all over one field,
+maximum six fields, two invalid intervals; runs 123..123 and 237..244 recover
+at 124 and 245. Compare with the baseline's eight misses / maximum 7 (or8)
+fields / four invalid intervals. Do not describe aggregate CPU gains as an
+every-frame delivery guarantee. Root images remain unchanged.
+
+Reuse `.tmp/dictionary-numbering/budgeted/`, `.tmp/dictionary-budgeted-window/`
+and [evidence](toolkit/same_cost_compression_report.json). Reproduce with
+`probe_dictionary_numbering.py --variants flat`, `fit_lzsa2_cpu_budget.py`,
+then `rebuild_cell_player.py --dictionary-probe <directory>/budgeted` and
+the existing four flags (without `--streaming-lzsa2`). The budget fitter is
+encoder-only and measures every accepted block with the independent Z80 core.
+Do not rerun the unsuccessful distance-only search: exact 187-layout checking
+and all 16 real blocks saved zero bytes (731 T only). General book/raster
+alignment was also rejected because it increased decoder work.
+
+Next scope: apply only the measured flat-numbering/budget-fitting method to
+one cached complete volume, retaining its raw packet lengths, media, cuts and
+original player. Reject candidates that fail original byte/CPU budgets; do
+not silently relax them. Check full disk timing and the new frame-123 stall's
+physical-read phase before selecting this for the whole movie. Generic CLI
+integration and complete four-volume cold/continuation release checks remain
+outstanding; this window alone is not a four-disk release.
+
 The sector-streaming LZSA2 experiment is now parked, not selected. Eager
 prefix decoding produces 27 late frames / maximum 40 fields in the complete
 256-frame window; deferring prefixes while completed slots remain gives

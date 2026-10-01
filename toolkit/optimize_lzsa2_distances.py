@@ -74,9 +74,14 @@ def evaluate(rows,distances,tail,costs):
     return units,cycles
 
 
-def optimize(payload,n,costs):
+def optimize(payload,n,costs,*,objective='cycles'):
     if not 0<=n<=15872:raise ValueError('input exceeds the native independent-block limit')
+    if objective not in ('cycles','size-no-slower-tokens'):raise ValueError('unknown objective')
     start=time.perf_counter();raw,rows,tail=parse(payload,n)
+    strict=objective=='size-no-slower-tokens'
+    limits=[costs.token(r['literals'],r['length'],r['mode'],r['pending']) for r in rows]
+    old_prefix=sum(body_units(r)+(0 if r['mode']==7 else offset_extra(r['distance'])) for r in rows)
+    tail_limit=costs.token(tail,0,7,old_prefix&1)
     choices=[candidates(raw,r['position'],r['length']) for r in rows]
     assert all(r['distance'] in c for r,c in zip(rows,choices))
     budget=2*len(payload);suffix=[None]*(len(rows)+1)
@@ -105,15 +110,21 @@ def optimize(payload,n,costs):
             for used,values in top.items():
                 v=values[0] if values[0][1]!=d else values[1] if len(values)>1 else None
                 if v is not None:
-                    ticks=v[0]+costs.token(row['literals'],row['length'],kind,used&1)
+                    token=costs.token(row['literals'],row['length'],kind,used&1)
+                    if strict and token>limits[i]:continue
+                    ticks=v[0]+token
                     offer(d,used+base+extra,ticks,v[2])
             for used,(ticks,path) in by_distance.get(d,[]):
-                offer(d,used+base,ticks+costs.token(row['literals'],row['length'],7,used&1),path)
+                token=costs.token(row['literals'],row['length'],7,used&1)
+                if strict and token>limits[i]:continue
+                offer(d,used+base,ticks+token,path)
         if not new:raise AssertionError(('baseline path lost',i))
         states=new;peak=max(peak,len(states))
     final_units=2*tail+literal_extra(tail)+5
-    used,value=min(((used,v) for (_,used),v in states.items() if used+final_units<=budget),
-        key=lambda pair:(pair[1][0]+costs.token(tail,0,7,pair[0]&1),pair[0]))
+    used,value=min(((used,v) for (_,used),v in states.items() if used+final_units<=budget
+            and (not strict or costs.token(tail,0,7,used&1)<=tail_limit)),
+        key=lambda pair:(((pair[0]+final_units+1)//2,pair[1][0]+costs.token(tail,0,7,pair[0]&1),pair[0])
+            if strict else (pair[1][0]+costs.token(tail,0,7,pair[0]&1),pair[0])))
     chosen=[];path=value[1]
     while path is not None:d,path=path;chosen.append(d)
     chosen.reverse();assert len(chosen)==len(rows)
@@ -123,7 +134,7 @@ def optimize(payload,n,costs):
     assert (new_units+1)//2==len(result)<=len(payload)
     assert old_t>=new_t and old_units<=budget
     assert lzsa2_stream.trace(result,limit=n)[0]==raw
-    return result,dict(complete=True,release=False,commands=len(rows),candidate_distances=sum(map(len,choices)),
+    report=dict(complete=True,release=False,commands=len(rows),candidate_distances=sum(map(len,choices)),
         max_distances=max(map(len,choices),default=0),peak_states=peak,transitions=transitions,
         baseline_bytes=len(payload),candidate_bytes=len(result),baseline_nibbles=old_units,candidate_nibbles=new_units,
         minimum_nibbles=lookup(suffix[0],0),baseline_token_tstates=old_t,candidate_token_tstates=new_t,
@@ -131,6 +142,17 @@ def optimize(payload,n,costs):
         raw_sha256=sha(raw),baseline_sha256=sha(payload),candidate_sha256=sha(result),
         seconds=time.perf_counter()-start,rows=[dict(r,candidate_distance=d) for r,d in zip(rows,chosen)],
         scope='Fixed command positions and lengths; canonical offsets only; modeled token CPU optimum under original physical byte budget. Excludes invariant quota/wrapper costs and real IRQ/ULA/disk effects.')
+    if strict:
+        units=last=0;deltas=[]
+        for row,d,limit in zip(rows,chosen,limits):
+            deltas.append(costs.token(row['literals'],row['length'],mode(d,last),units&1)-limit)
+            units+=body_units(row)+(0 if d==last else offset_extra(d));last=d
+        deltas.append(costs.token(tail,0,7,units&1)-tail_limit)
+        assert max(deltas)<=0
+        report.update(objective=objective,token_delta_tstates=deltas,
+            scope='Minimum physical bytes at fixed command positions/lengths, with no slower individual token or EOF. '
+                'Canonical offsets; unchanged decoder. Independent complete native replay is still required.')
+    return result,report
 
 
 def main():

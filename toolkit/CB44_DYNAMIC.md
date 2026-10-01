@@ -466,3 +466,39 @@ experiment should adapt the existing guarded sector-streaming queue to LZSA2,
 checking token headers and literal runs before access rather than requiring
 the entire block first. Retain byte-identical streams and full overlap proofs.
 [Evidence](sector_cache_report.json), [verifier](verify_sector_cache.py).
+
+## Encoder-only dictionary numbering and CPU budgets (2026-10-01)
+
+CB46 dictionary numbers need not reflect the order in which the host first
+encountered patterns. Renumber row slots toward their raster-byte values,
+retaining slot zero as black. Give uniform physical cell-book entries the
+same number as their corresponding row. Rewrite all literal/partial row
+indices, row-replacement indices and cell-book indices with the same bijections.
+Reorder the initial physical tables. Masks, modes, attribute bytes, packet
+lengths and replacement counts stay identical, so drawing gains/loses **0 T**.
+This is a host encoding choice, not a new wire format or decoder.
+
+The flat-cell variant saves 1770 bytes in the 256-frame test window, but eight
+individual LZSA2 blocks decode more slowly. `fit_lzsa2_cpu_budget.py` repairs
+that by replacing selected two-byte matches with literals. Its host model
+accounts for repeat offsets and nibble phase, including effects on the full
+suffix. Each accepted block is independently executed on the unchanged Z80
+decoder. The final stream removes 167 short matches, costs 86 bytes relative
+to the first candidate, and still saves **1684 bytes /7 video sectors** while
+every block is at or below its original byte and CPU budget.
+
+Deterministic decoder cost is **16049945 ->15978979 T** (-70966), maximum
+256-byte-quota slice **22323 ->22104 T**. Code is byte-identical; all 255
+post-prime frames have identical renderer instruction totals. Actual total
+disk occupancy is **781 ->777 sectors**, because startup grows by three.
+The complete cold/native/Fuse window preserves every screen byte and AY tick.
+Nine frames are late (one additional isolated miss), maximum six fields,
+two invalid intervals, with recovery at frames 124 and 245. Physical delivery
+is a separate acceptance gate; neither timing gate passes yet. Keep this
+option experimental until full-volume and continuation checks pass.
+
+Scripts: [numbering](probe_dictionary_numbering.py),
+[CPU-budget fitting](fit_lzsa2_cpu_budget.py),
+[evidence verifier](verify_same_cost_compression.py).
+[Saved report](same_cost_compression_report.json) includes rejected variants,
+exact streams, tests and the LFS diagnostic TRDs.

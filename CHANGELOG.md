@@ -5,6 +5,58 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: improve compression without increasing any block's decoder cost
+
+- User priority: better compression at unchanged unpacking cost. Baseline
+  `bc615ab`, one cached CB46 [4096,4352) window, 256 frames /16 LZSA2 blocks,
+  185681 video bytes, refined colour and original AY50. Reuse raw packets;
+  do not re-prepare media or change the player.
+- A new distance-only objective minimizes bytes while forbidding slower
+  individual tokens/EOF. All 187 exhaustive short layouts /2716 alternatives
+  and every native 256-byte decode slice pass. It saves **0 bytes**, 731 T;
+  reject as a compression improvement and do not broaden that search.
+- Renumbering rows toward their raster bytes alone costs 113 extra bytes,
+  saves 39130 T: reject. Also aligning all book entries saves 2113 bytes but
+  adds 15250 decoder T: reject under the user's cost constraint. Restricting
+  book alignment to uniform cells saves 1770 bytes and 25830 total T, but
+  eight blocks are slower. Full native/Fuse screens and AY are exact; this
+  intermediate candidate has nine misses, maximum seven fields, four invalid
+  intervals. Preserve its evidence instead of claiming unchanged local cost.
+- Added `fit_lzsa2_cpu_budget.py`: greedily replace selected two-byte matches
+  with literals, accounting for repeat-offset and nibble-phase effects on the
+  whole suffix. Independently execute each resulting block on the unchanged
+  Z80 decoder; enforce its original payload-byte and decoder-T budgets.
+  Removing 167 matches uses 86 bytes of the numbering gain. Final video is
+  **183997 bytes (-1684, -0.91%)**, **719 vs726 sectors**; every block is no
+  larger and no slower. Native decoder total **15978979 vs16049945 T**
+  (-70966, -0.44%); maximum fixed-quota slice **22104 vs22323 T**. Quota
+  boundaries may change, so this does not prove every frame's delivery cost.
+- The decoder and renderer machine code remain identical. Renderer stage
+  counts match on all 255 post-prime frames, **0 T change per frame**. Two
+  test methods cover dynamic eviction/replacement, independent volume history,
+  unchanged non-index packet bytes and exact short-match cost predictions
+  against full reserialization. The numbering harness initially lacked its
+  compressor scratch directory; initialization was fixed before measurements.
+- Rebuilt the selected window with `--dictionary-probe .../budgeted` and the
+  existing shared-AY/four-slot/inline-cell/sector-cache flags. Dirty-RAM cold
+  boot, all 256 native frames and all **1769472 Fuse screen bytes** pass;
+  all 1280 AY ticks and 719 runtime sectors are exact, with no audio gaps,
+  duplicates or underruns. Total occupied sectors **781 ->777**: three extra
+  startup sectors offset part of the seven-sector video saving. TRD physical
+  file size remains the standard 655360 bytes.
+- Timing remains incomplete for release: **nine nominal misses**, all beyond
+  one field, maximum six fields, two invalid intervals. Local late runs
+  123..123 and 237..244 recover at 124 and 245. Baseline has eight misses,
+  maximum 7/8 fields, four bad intervals. The new isolated miss is not hidden
+  by improved aggregate CPU, maximum lateness or interval counts.
+- Decision: retain this encoder-only method as a measured compression gain,
+  with strict per-block byte/CPU budgets; keep generic defaults and root
+  images unchanged pending complete-volume physical timing/continuation.
+  [Numbering probe](toolkit/probe_dictionary_numbering.py),
+  [budget fitter](toolkit/fit_lzsa2_cpu_budget.py),
+  [verifier](toolkit/verify_same_cost_compression.py),
+  [reports, exact streams and LFS diagnostic images](toolkit/same_cost_compression_report.json).
+
 ## 2026-10-01: guarded LZSA2 sector prefixes, parked after compression priority
 
 - Objective/input: reduce the CB46 input stall using the unchanged 256-frame
