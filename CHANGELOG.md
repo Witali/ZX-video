@@ -35,6 +35,43 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — retire unused reconstruction and measure shared AY tables
+
+- Objective: reduce startup storage and reclaim fixed RAM for the four-disk
+  goal. Baseline `e747b02`; same 256-frame [4096,4352) video, original AY,
+  plus a two-volume six-frame fixture for independent boot/continuation.
+- CB44 retires 8000h..8D74h (3444 bytes). Derive the end from the actual
+  LZSA2 core origin; the earlier 8DF2h planning value was not this build's
+  address. Active native/packet/clock instructions are identical: 0 T delta,
+  confirmed on all 255 separately called real frame draws. A guarded CPU
+  rejects any access/fetch in the freed range; all 268 frames pass.
+- Full Fuse cold playback confirms 1852416 screen bytes and 1340 AY ticks.
+  The fixture also passes actual predecessor-EOF continuation with poisoned
+  unrelated RAM and zero late frames/AY gaps. Physical drive swaps remain
+  untested. The real window has 113 misses, 110 beyond one field, maximum
+  82 fields, 51 invalid intervals and no AY underruns. Disk alignment
+  changed; this is not a runtime speedup or timing pass.
+- Diagnostic capacity 798 -> 796 sectors. First full selected volume needs
+  2556 / 2544, 12 sectors over capacity (previous pre-mask candidate 2558).
+  Video and AY streams remain byte-identical. Keep root images unchanged.
+- Add cached player-only rebuilding to avoid repeating preparation and
+  compression. Generalize continuation input to the converter manifest;
+  the movie-specific publication wrapper initially rejected fixture metadata
+  for missing `ay_ticks`, before any continuation run. No metadata was
+  invented; direct generic continuation then completed successfully.
+- Next-step host probe checks all 25330 original AY ticks with one global
+  model per selected volume. Trees+payload: 83674 -> 74373 bytes before
+  startup compression. Payloads 14137/16118/12516/17554 bytes; only part 4
+  overflows one bank by 1170. Trees plus a reserved 512-byte decoder require
+  3946/4026/4018/4106 fixed bytes, exceeding the newly freed interval alone.
+  Audit the B100h..B700h gap and implement a fixed decoder before claiming
+  bank 6 as another video slot. Native size, paging and throughput unverified.
+- Decision: retain guarded retirement; develop shared fixed audio/extra
+  video buffering next, preserving quality and cadence. [Rebuilding](toolkit/rebuild_cell_player.py),
+  [audio sizing](toolkit/probe_shared_resident_audio.py),
+  [verification/archive](toolkit/verify_retired_cell_code.py),
+  [complete evidence](toolkit/retired_cell_report.json).
+
 ## 2026-10-01 — skip empty masks and inline CB44 attribute writes
 
 - Objective: reduce the measured drawing cost from `0bb033f`, retaining

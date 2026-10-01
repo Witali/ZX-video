@@ -27,20 +27,32 @@ def main():
     p.add_argument('--mode',choices=('mock','fuse'),required=True)
     a = p.parse_args()
     a.output.mkdir(parents=True,exist_ok=True)
-    capacity = json.loads((a.build/'capacity.json').read_bytes())
-    assert capacity['all_volumes_fit']
-    volumes = capacity['volumes']
+    if (a.build/'volumes.json').exists():
+        volumes=[]
+        for number,record in enumerate(json.loads((a.build/'volumes.json').read_bytes()),1):
+            meta_path=a.build/record['metadata'];meta=json.loads(meta_path.read_bytes())
+            assert meta['part']==number and meta['trd_sha256']==record['sha256']
+            assert meta['used_sectors']<=2544 and meta['independently_bootable']
+            volumes.append(dict(volume=number,trd_sha256=record['sha256'],frames=meta['frames'],
+                image_path=a.build/record['file'],meta_path=meta_path,states_path=a.build/record['states']))
+        assert volumes
+    else:
+        capacity = json.loads((a.build/'capacity.json').read_bytes())
+        assert capacity['all_volumes_fit']
+        volumes = capacity['volumes']
+        for row in volumes:
+            folder=a.build/f'volume-{row["volume"]}'
+            row.update(image_path=folder/'candidate.trd',meta_path=folder/'metadata.json',states_path=folder/'states.npz')
     if a.mode=='mock':
         stage = a.output/'mock'
         stage.mkdir(exist_ok=True)
         records = []
         for row in volumes:
-            folder = a.build/f'volume-{row["volume"]}'
-            image = folder/'candidate.trd'
+            image = row['image_path']
             assert sha(image.read_bytes())==row['trd_sha256']
             name = f'part-{row["volume"]}.trd'
             shutil.copyfile(image,stage/name)
-            shutil.copyfile(folder/'metadata.json',(stage/name).with_suffix('.json'))
+            shutil.copyfile(row['meta_path'],(stage/name).with_suffix('.json'))
             records.append(dict(part=row['volume'],file=name))
         save(stage/'volumes.json',records)
         verify_swaps(stage,a.output/'swaps.json')
@@ -48,11 +60,10 @@ def main():
     records, previous = [], None
     for row in volumes:
         part = row['volume']
-        folder = a.build/f'volume-{part}'
         target = a.output/f'part-{part}.json'
         command = [sys.executable,str(ROOT/'measure_fap3_fuse.py'),'--fuse',str(a.fuse.resolve()),
-            '--trd',str((folder/'candidate.trd').resolve()),'--metadata',str((folder/'metadata.json').resolve()),
-            '--states',str((folder/'states.npz').resolve()),'--raw',str(a.raw.resolve()),
+            '--trd',str(row['image_path'].resolve()),'--metadata',str(row['meta_path'].resolve()),
+            '--states',str(row['states_path'].resolve()),'--raw',str(a.raw.resolve()),
             '--output',str(target.resolve()),'--timeout','180']
         if previous is not None:
             snapshot = a.output/f'resume-{part}.szx'

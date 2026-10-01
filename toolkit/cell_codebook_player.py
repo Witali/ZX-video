@@ -133,7 +133,15 @@ class Builder(PreviousBuilder):
         regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse,fast_masks=self.front_reuse)
         screen_base,saved_page=labels['end'],labels['end']+1
         retired=[];patches=[]
-        for lo,hi in ((native.CODE,0x9400),(0xa800,0xb700),(PACKET,0xe000)):
+        obsolete=[]
+        if self.front_reuse:
+            core=m['decoder_labels']['start']
+            if not 0x8000<core<native.CODE or core!=m['pre_fast_bank2_zx0']['new_origin']:
+                raise ValueError('unexpected fixed LZSA2 core; cannot retire legacy reconstruction')
+            obsolete=[dict(start=0x8000,end=core,reason='legacy motion/patch reconstruction replaced by CB44')]
+        spans=[(native.CODE,0x9400),(0xa800,0xb700),(PACKET,0xe000)]
+        spans += [(r['start'],r['end']) for r in obsolete]
+        for lo,hi in spans:
             retired.append(dict(start=lo,end=hi,sha256=sha(bytes(read(at) for at in range(lo,hi)))))
             put(lo,bytes(hi-lo))
         for at,data in regions:put(at,data)
@@ -203,6 +211,9 @@ class Builder(PreviousBuilder):
                 popcount=[0xb000,0xb100],packet=[INPUT,INPUT+(3168 if self.front_reuse else 3096)],stack_top=0x9df0,
                 disk_stack_top=disk.DISK_STACK),
             delivery_measured=False,release=False)
+        if obsolete:
+            m['cell_codebook']['obsolete_fixed_ranges']=obsolete
+            m['cell_codebook']['retirement_cpu_delta_tstates']=0
         if self.front_reuse:
             m['cell_codebook']['front_reuse']=dict(enabled=True,source='opposite physical screen, same cell',
                 native_modes=[0,1,2],pixel_changes=0,setup_delta_tstates=-16,

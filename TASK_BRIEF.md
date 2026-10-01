@@ -120,9 +120,36 @@ original result. Queue empty at 115/256 packet entries. Next reduce native
 mask/render overhead and inspect producer scheduling on this cached window;
 an extra buffer alone does not establish sustainable delivery. See
 [implementation, cycles and reproduction](toolkit/CB44_DYNAMIC.md).
-If startup overhead prevents four disks, audit obsolete reconstruction code
-still loaded below the current 8DF2h LZSA2 core before changing image quality;
-this is a hypothesis requiring reachability, cold boot and continuation checks.
+The next completed step retires old reconstruction at 8000h..8D74h in this
+layout (derive the upper bound from decoder metadata, never hardcode it).
+Guarded native execution of 268 frames makes zero reads/writes/fetches in
+those 3444 bytes. Cold Fuse screens/AY are exact for the real 256-frame
+window and two six-frame fixture disks; actual predecessor-EOF continuation
+also passes at zero late frames for the fixture. The real window remains
+late: 113 misses, maximum 82 fields, reflecting changed disk alignment.
+Active instructions/draw T-states and video/AY streams are unchanged.
+Diagnostic capacity improves 798 -> 796 sectors. The first full selected
+volume now needs 2556 / 2544 sectors (12 over); still no four-disk release.
+Reuse `.tmp/front-retired-core/`, `.tmp/front-retired-fixture/`,
+`.tmp/front-retired-capacity/` and [guarded evidence](toolkit/retired_cell_report.json).
+`rebuild_cell_player.py` reuses existing metadata/scaffold/raw/LZSA2/AY;
+use it for player-only changes instead of preparing/encoding again.
+
+Next scoped implementation: shared fixed-RAM AY decoder/trees, one AYH1
+model per volume and a bank-spanning coded payload. The exact host probe
+checks all 25330 ticks for the selected four cuts. Payloads are
+14137/16118/12516/17554 bytes; only part 4 needs bank-6 overflow (1170 bytes).
+Trees plus a 512-byte code reserve need 3946/4026/4018/4106 fixed bytes.
+The freed 3444 bytes alone are insufficient. Consider the additional
+B100h..B700h retired tail after the current book/popcount, but validate it
+with guards before allocation. Single-model trees+payload total 74373 vs
+83674 bytes for two segments; these are pre-startup-compression sizes.
+Do not claim a native saving or speedup yet. If validated, bank 6 can hold
+another video slot (with a reserved tail in part 4), attacking the measured
+queue starvation as well as duplicate audio tables. Count boundary paging,
+preserve the AY FIFO/IRQ and prove in-place input/output bounds per slot.
+Retain full image/AY, 10 fps and the entire edit; do not rebuild all four
+TRDs until a bounded test and complete capacity checks support the candidate.
 Reuse `.tmp/dynamic-rows-probe/`, `.tmp/dynamic-rows-fixture/` and
 `.tmp/dynamic-rows-window/`; do not rebuild the previous 15-image set.
 Saved [native/Fuse proof and archives](toolkit/dynamic_rows_report.json).

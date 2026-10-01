@@ -21,8 +21,18 @@ def verify(image,m,states):
     listing=(m['cell_codebook']['packet_listing']+m['cell_codebook']['clock_listing']
              +m['cell_codebook']['native']['instruction_listing'])
     rows={r['address']:r for r in listing};hist=Counter();stages=Counter()
+    retired=[(r['start'],r['end']) for r in m['cell_codebook'].get('obsolete_fixed_ranges',[])]
     class TrackedCPU(LzsaDiskCPU):
         tracking=False
+        def check_retired(self,address):
+            if self.tracking:
+                assert not any(lo<=address&65535<hi for lo,hi in retired),('retired access',hex(self.pc),hex(address))
+        def read8(self,address):
+            self.check_retired(address)
+            return super().read8(address)
+        def write8(self,address,value):
+            self.check_retired(address)
+            return super().write8(address,value)
         def step(self):
             pc,t=self.pc,self.tstates
             if pc==disk.DRIVER:self.tracking=True
@@ -81,6 +91,7 @@ def verify(image,m,states):
         actual_irq_or_cadence=False,scope='Native packets/queue/copies/LZSA2/draw with mocked ROM, host-selected back screen after first prime; not scheduling.',
         minimum_sp=minimum,frames=frames,mocked_sector_reads=c.dos_reads,all_progress_steps_exact=True,
         new_instruction_stages=dict(stages),new_instruction_tstates=sum(stages.values()),
+        retired_ranges_guarded=retired,retired_runtime_reads_writes_or_fetches=0,
         histogram=[dict(pc=pc,tstates=t,count=n) for (pc,t),n in sorted(hist.items())])
 
 

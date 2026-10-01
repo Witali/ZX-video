@@ -168,3 +168,56 @@ constraint is producer stalls/capacity; do not rebuild all volumes merely
 to repeat this test. Reuse `.tmp/front-fast-masks/` and its identical video
 stream. [Per-frame/whole-player evidence](front_fast_masks_report.json),
 [reproduction and exact comparison](compare_fast_cell_masks.py).
+
+## Follow-up: retire old fixed reconstruction
+
+Baseline `e747b02`. CB44 clears the old motion/patch code from 8000h to the
+current LZSA2 core origin, obtained from metadata. In this build the origin
+is **8D74h**, freeing 3444 bytes. Earlier planning mentioned a different
+origin; it is not a valid hardcoded allocation boundary. Active render,
+packet and clock listings remain identical (0 T instruction delta).
+
+`build_cell_codebook_trd.py` now rejects every read, write and instruction
+fetch in the retired range after player entry. Complete 256-frame replay
+and two six-frame disks pass with zero accesses. All 255 separately called
+draws have identical CPU costs. Disk-start alignment changes packet/ROM
+paths, so their differences are recorded separately.
+
+Complete Fuse cold playback compares 1852416 screen bytes and 1340 AY ticks
+across the three diagnostic images. The two-disk fixture's actual EOF
+snapshot continuation also passes, zero nominal misses or AY gaps. This
+does not simulate a physical floppy swap. The real window has 113 misses
+(110 beyond one field), maximum 82 fields and 51 invalid intervals. It
+still fails timing; do not infer a speedup from startup code removal.
+
+The real diagnostic disk shrinks 798 -> 796 used sectors. First-volume
+capacity of the full selected partition is now **2556 / 2544**, still 12
+sectors too large. Video and AY are byte-identical. No new root release set.
+
+Rebuild from caches with `rebuild_cell_player.py --metadata OLD.json
+--output NEW --zx0 PATH --lzsa PATH --verify cpu`; this reuses global
+histories, raw/LZSA2 video and sound. `--verify none` is suitable only for a
+capacity probe. No preparation or video recompression is performed.
+The continuation verifier now accepts the generic converter's `volumes.json`
+as well as its older capacity layout. The movie publication wrapper requires
+movie-specific metadata and initially rejected the synthetic fixture; direct
+generic continuation verification avoids fabricating those fields.
+
+[`retired_cell_report.json`](retired_cell_report.json) archives all guarded
+replay, cold/full-screen playback, actual EOF continuation and capacity data.
+
+### Next audio-memory candidate (host estimate only)
+
+`probe_shared_resident_audio.py` recodes the exact four AYB1 streams with one
+AYH1 model per volume. All 25330 tick records and initial states are exact.
+Trees+payload shrink 83674 -> 74373 bytes before startup compression. The
+single payloads use 14137/16118/12516/17554 bytes, so only volume 4 needs
+1170 bytes beyond one bank. Native table trees plus a **reserved, unmeasured**
+512-byte decoder allowance need 3946/4026/4018/4106 bytes. The newly freed
+3444-byte interval is insufficient by itself.
+
+The proposed additional B100h..B700h gap after book/popcount needs a guard
+audit. Fixed tables plus a bank-spanning reader could free most/all bank 6
+for a fourth video slot. Native paging/bit-reader changes, slot-specific
+in-place bounds, sustained timing and actual startup size are unverified.
+This is the next bounded implementation, not an accepted four-disk result.
