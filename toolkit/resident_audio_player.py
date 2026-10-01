@@ -20,6 +20,7 @@ import resident_audio_z80 as resident
 from zx0_codec import decompress
 
 HELPERS = 0xdb20
+SEGMENT_HOOKS = 0x78a0
 
 
 def service(audio, refill, *, threshold=24):
@@ -61,8 +62,18 @@ def bank_helpers(audio, queue, service_entry, *, frame_entries=None):
 def install(read8, put, metadata, coded_audio, h, *, batch=6, foreground_audio=False):
     """Install into the already generated, cold-bootable baseline RAM image."""
     m=metadata; audio=m['audio_labels']; q=m['queue_labels']; p=m['producer_labels']
-    compiled=resident.build(coded_audio,audio,batch=batch)
+    banked=coded_audio[:4]==b'AYB1'
+    if banked:
+        import banked_resident_audio
+        compiled=banked_resident_audio.build(coded_audio,audio,batch=batch)
+    else:compiled=resident.build(coded_audio,audio,batch=batch)
     patches=[]; added=[]; removed=[]
+    free=next((r for r in m['retired_fixed_code'] if r['end']-r['start']>=35),None)
+    if free is None: raise ValueError('no fixed RAM for resident initializer/segment bridge')
+    # The in-place producer uses 7823h..789Fh. This following fixed-RAM gap
+    # ends before the old 7900h frame wrapper, and remains mapped during AY.
+    segment_hooks=banked_resident_audio.hooks(SEGMENT_HOOKS,compiled,page=PAGE) if banked else None
+    if banked and segment_hooks['labels']['end']>0x7900:raise ValueError('audio segment helper overlaps frame wrapper')
 
     def replace(address,before,after,old_ticks,new_ticks,reason):
         current=bytes(read8(address+i) for i in range(len(before)))
@@ -76,7 +87,8 @@ def install(read8, put, metadata, coded_audio, h, *, batch=6, foreground_audio=F
     # Reuse the old enqueue routine's fixed, uncontended RAM.
     origin=audio['audio_enqueue_six']
     guard, guard_labels, guard_rows=service(audio,0)
-    refill=resident.bridge(origin+len(guard),compiled['labels']['fill'],page=PAGE,shadow=SHADOW)
+    refill=resident.bridge(origin+len(guard),segment_hooks['labels']['fill'] if banked else compiled['labels']['fill'],
+        page=PAGE,shadow=SHADOW,bank_address=segment_hooks['labels']['active_bank'] if banked else None)
     guard,guard_labels,guard_rows=service(audio,refill['origin'])
     payload=guard+bytes.fromhex(refill['code_hex'])
     if origin+len(payload)>audio['audio_start']:
@@ -87,10 +99,11 @@ def install(read8, put, metadata, coded_audio, h, *, batch=6, foreground_audio=F
     added+=guard_rows+refill['listing']; removed.append((origin,audio['audio_start']))
 
     # Initialization runs once before setup_clock, with interrupts disabled.
-    free=next((r for r in m['retired_fixed_code'] if r['end']-r['start']>=35),None)
-    if free is None: raise ValueError('no fixed RAM for resident initializer bridge')
-    init=resident.bridge(free['start'],compiled['labels']['init'],page=PAGE,shadow=SHADOW)
+    init=resident.bridge(free['start'],segment_hooks['labels']['init'] if banked else compiled['labels']['init'],page=PAGE,shadow=SHADOW)
     blob=bytes.fromhex(init['code_hex'])
+    if banked:
+        assert len(blob)==35
+        added+=segment_hooks['listing']
     if any(read8(i) for i in range(init['origin'],init['origin']+len(blob))):
         raise ValueError('initializer bridge space is not retired')
     put(init['origin'],blob); added+=init['listing']
@@ -102,6 +115,11 @@ def install(read8, put, metadata, coded_audio, h, *, batch=6, foreground_audio=F
         frame_entries={name:m['packet_labels'][target] for name,target in
             (('frame_service','next_frame'),('prepare_service','prepare_bridge'),('draw_service','draw_bridge'))}
     code,hl,rows=bank_helpers(audio,q,guard_labels['service'],frame_entries=frame_entries)
+    if banked:
+        segment_code=bytes.fromhex(segment_hooks['code_hex'])
+        if any(read8(SEGMENT_HOOKS+i) for i in range(len(segment_code))):
+            raise ValueError('audio segment helper space is occupied')
+        put(SEGMENT_HOOKS,segment_code)
     if any(read8(i) for i in range(HELPERS,HELPERS+len(code))):
         raise ValueError('retired ring-reader tail is not free')
     put(HELPERS,code); added+=rows
@@ -162,7 +180,8 @@ def install(read8, put, metadata, coded_audio, h, *, batch=6, foreground_audio=F
             added.append(row)
         if name.startswith('LD DE,') and any(lo<=at<hi for lo,hi in removed):
             added.append(row)
-    put(resident.ORIGIN,bytes.fromhex(compiled['image_hex']),4)
+    for segment in compiled['segments'] if banked else [compiled]:
+        put(resident.ORIGIN,bytes.fromhex(segment['image_hex']),segment['bank'])
     m['slot_queue_instruction_listing']=[r for r in queue_rows
         if not any(lo<=r['address']<hi for lo,hi in removed)]+added
     m['resident_audio']=dict(enabled=True,format='video-only FAP3 packets + resident AYH1',
@@ -178,6 +197,11 @@ def install(read8, put, metadata, coded_audio, h, *, batch=6, foreground_audio=F
         queue_cursor_tstates_after=[39,47],queue_cursor_delta_tstates=[28,36],
         packet_parser_delta_excluding_removed_enqueue_tstates=-7,
         audio_isr_changed=False)
+    if banked:
+        m['resident_audio'].update(format='video-only packets + two-bank AYB1',banks=[4,6],
+            segment_hooks=segment_hooks,segment_boundary_ticks=compiled['segment_ticks'][0],
+            global_tick_counter_preserved=True,fifo_preserved_at_boundary=True)
+        m['resident_audio']['code_regions'].append(dict(address=SEGMENT_HOOKS,code_hex=segment_hooks['code_hex']))
     return compiled
 
 
@@ -235,6 +259,7 @@ class Builder(PreviousBuilder):
         # Recompress modified existing sections without changing startup order.
         changed=[]
         for s in sections:
+            if sound[:4]==b'AYB1' and s['bank']==6:continue
             raw=bytes(banks[s['bank']][s['address']&16383:(s['address']&16383)+s['decoded_bytes']])
             if sha(raw)==s['sha256']:
                 changed.append(s);continue
@@ -243,18 +268,20 @@ class Builder(PreviousBuilder):
             changed.append(dict(s,data=padded(packed),compressed_bytes=len(packed),
                 sectors=sectors(packed),sha256=sha(raw)))
         # Load bank 4 before the last section restores the visible screen.
-        image=bytes.fromhex(compiled['image_hex']);audio_sections=[];at=0
-        while at<len(image):
-            length=min(8192,len(image)-at)
-            while True:
-                raw=image[at:at+length];packed=self.compress(raw)
-                if len(padded(packed))<=6912:break
-                length-=256
-                if length<=0:raise ValueError('audio startup staging cannot fit')
-            audio_sections.append(dict(bank=4,address=0xc000+at,buffer=0x4000,
-                decoded_bytes=len(raw),compressed_bytes=len(packed),sectors=sectors(packed),
-                sha256=sha(raw),data=padded(packed)))
-            at+=len(raw)
+        audio_sections=[]
+        for segment in compiled.get('segments',[compiled]):
+            image=bytes.fromhex(segment['image_hex']);at=0
+            while at<len(image):
+                length=min(8192,len(image)-at)
+                while True:
+                    raw=image[at:at+length];packed=self.compress(raw)
+                    if len(padded(packed))<=6912:break
+                    length-=256
+                    if length<=0:raise ValueError('audio startup staging cannot fit')
+                audio_sections.append(dict(bank=segment['bank'],address=0xc000+at,buffer=0x4000,
+                    decoded_bytes=len(raw),compressed_bytes=len(packed),sectors=sectors(packed),
+                    sha256=sha(raw),data=padded(packed)))
+                at+=len(raw)
         result=changed[:-1]+audio_sections+changed[-1:]
         m['resident_audio']['startup_sections']=len(audio_sections)
         m['resident_audio']['coded_audio_sha256']=sha(sound)

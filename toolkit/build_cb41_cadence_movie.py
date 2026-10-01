@@ -33,6 +33,7 @@ def main():
         help='explicit exclusive frame ends, including EOF, for measured timing repairs')
     p.add_argument('--only-volume', type=int, help='build/verify one selected volume with the final series identity')
     p.add_argument('--dynamic-rows',action='store_true',help='CB42 lossless row replacement during playback')
+    p.add_argument('--audio-banks',type=int,choices=(1,2),default=1,help='resident AY banks: 4 or 4+6')
     p.add_argument('--verify', choices=('cpu','fuse','none'), default='fuse')
     p.add_argument('--verification-timeout', type=float, default=1800)
     p.add_argument('--prefix', default='ZX-video-10fps')

@@ -44,16 +44,21 @@ class CheckedCPU(TraceCPU):
 
     def read8(self, at):
         if self.checking and at >= resident.ORIGIN:
-            if self.port_7ffd & 7 != 4 or not resident.ORIGIN <= at < self.image_end:
+            bank=self.port_7ffd&7
+            part=getattr(self,'images',{}).get(bank)
+            end=resident.ORIGIN+part['image_bytes'] if part else self.image_end
+            payload=part['payload_address'] if part else self.payload
+            if (bank not in self.images if hasattr(self,'images') else bank!=4) or not resident.ORIGIN <= at < end:
                 raise AssertionError(('unloaded audio read', at, self.pc))
-            if self.payload <= at < self.image_end:
-                self.payload_reads.append(at)
+            if payload <= at < end:
+                self.payload_reads.append((bank,at) if hasattr(self,'images') else at)
         return super().read8(at)
 
     def write8(self, at, value):
         if self.checking and self.mode in ('init', 'fill'):
             if at >= resident.ORIGIN:
-                if self.port_7ffd & 7 != 4 or not self.labels['state'] <= at < self.labels['state_end']:
+                bank=self.port_7ffd&7
+                if (bank not in self.images if hasattr(self,'images') else bank!=4) or not self.labels['state'] <= at < self.labels['state_end']:
                     raise AssertionError(('immutable bank write', at, self.pc))
             elif ay_interrupt.QUEUE_BASE <= at < ay_interrupt.QUEUE_BASE+1024:
                 index = self.read8(self.audio['audio_write_index'])
@@ -89,7 +94,12 @@ class CheckedCPU(TraceCPU):
 class Harness:
     def __init__(self, blob, batch=6, *, paging=False):
         self.paging = paging
-        self.initial, self.records = ay_huffman_stream.decode(blob)
+        self.banked=blob[:4]==b'AYB1'
+        if self.banked:
+            import banked_resident_audio as banked
+            if not paging:raise ValueError('two-bank harness needs paging')
+            self.initial,self.records=banked.decode(blob)
+        else:self.initial, self.records = ay_huffman_stream.decode(blob)
         a = MiniAssembler(0xa500)
         ay_interrupt.emit(a)
         playback_schedule.emit_clock(a, dos_irq=True, full_rom_clock=True,
@@ -102,7 +112,7 @@ class Harness:
         a.label('fatal'); a.emit(0x76)
         if a.pc >= 0xb900: raise AssertionError('test AY placement overlaps clock/stack')
         self.audio = a.labels
-        self.build = resident.build(blob, self.audio, batch=batch)
+        self.build = banked.build(blob,self.audio,batch=batch) if self.banked else resident.build(blob, self.audio, batch=batch)
         self.labels = self.build['labels']
         c = self.cpu = CheckedCPU()
         # Dirty all RAM first. Only the explicit code/data sections get loaded.
@@ -111,6 +121,10 @@ class Harness:
         for i, v in enumerate(a.resolve()): c.write8(0xa500+i, v)
         image = bytes.fromhex(self.build['image_hex'])
         for i, v in enumerate(image): c.write8(resident.ORIGIN+i, v)
+        if self.banked:
+            c.images={part['bank']:part for part in self.build['segments']}
+            for part in self.build['segments']:
+                raw=bytes.fromhex(part['image_hex']);c.banks[part['bank']][:len(raw)]=raw
         extra_listing = []
         c.extra_mutable = set()
         if paging:
@@ -120,9 +134,16 @@ class Harness:
                 for i, v in enumerate(data): c.write8(address+i, v)
             c.write8(video.SHADOW, c.port_7ffd)
             c.extra_mutable = {video.REQUEST_OPERAND,video.SHADOW}
-            self.bridge = resident.bridge(0x9300, self.labels['fill'], page=video.PAGE, shadow=video.SHADOW)
+            if self.banked:
+                self.segment_hooks=banked.hooks(0x7800,self.build,page=video.PAGE)
+                for i,v in enumerate(bytes.fromhex(self.segment_hooks['code_hex'])):c.write8(0x7800+i,v)
+                c.extra_mutable.add(self.segment_hooks['labels']['active_bank'])
+            self.bridge = resident.bridge(0x9300,self.segment_hooks['labels']['fill'] if self.banked else self.labels['fill'],
+                page=video.PAGE,shadow=video.SHADOW,
+                bank_address=self.segment_hooks['labels']['active_bank'] if self.banked else None)
             for i, v in enumerate(bytes.fromhex(self.bridge['code_hex'])): c.write8(0x9300+i, v)
             extra_listing = [dict(row,stage='paging') for row in extra_listing]+self.bridge['listing']
+            if self.banked:extra_listing += [dict(row,stage='segment') for row in self.segment_hooks['listing']]
         self.run('setup_clock', self.audio, check=False)
         c.labels, c.audio = self.labels, self.audio
         c.records = self.records
@@ -130,7 +151,7 @@ class Harness:
         c.image_end, c.payload = resident.ORIGIN+len(image), self.build['payload_address']
         c.listing = {row['address']: row for row in self.build['listing']+extra_listing}
         c.checking = True
-        self.init_tstates = self.run('init')
+        self.init_tstates = self.run('init',self.segment_hooks['labels'] if self.banked else None)
         if bytes(c.ay[:11]) != self.initial or c.writes != list(enumerate(self.initial)):
             raise AssertionError('initial registers not written exactly')
         c.writes.clear()
@@ -229,6 +250,22 @@ class Harness:
         c = self.cpu
         if self.consumed != len(self.records) or c.published != len(self.records):
             raise AssertionError('incomplete record coverage')
+        if self.banked:
+            if word(c,self.audio['audio_remaining']) or c.read8(self.audio['audio_enabled']):raise AssertionError('AY not finished')
+            expected_reads=[]
+            for part in self.build['segments']:
+                bank=c.banks[part['bank']];labels=part['labels']
+                def state_word(name):
+                    at=labels[name]-resident.ORIGIN;return bank[at]|bank[at+1]<<8
+                source=state_word('source');buffer=bank[labels['bit_buffer']-resident.ORIGIN]
+                assert buffer and not state_word('remaining')
+                unread=7-((buffer&-buffer).bit_length()-1)
+                assert ((source-part['payload_address'])&65535)*8-unread==part['input_bits']
+                assert source==part['payload_end']&65535
+                expected_reads += [(part['bank'],at) for at in range(part['payload_address'],part['payload_end'])]
+            assert c.payload_reads==expected_reads
+            assert c.sp==STACK and c.min_sp>=0xbfa0
+            return
         bank = c.banks[4]
         def state_word(name):
             at = self.labels[name]-resident.ORIGIN

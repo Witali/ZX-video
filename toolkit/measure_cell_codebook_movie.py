@@ -23,11 +23,28 @@ from row_dictionary_video import encode_states
 import resident_audio_z80 as resident
 
 
-def audio_size(frames, start, end, labels, frame_fields=6):
+def audio_size(frames, start, end, labels, frame_fields=6, audio_banks=1):
     # Retain the actual global change records; initialize from the prior tick.
     records = ay_interrupt.encode_ticks(frames)
     selected = records[start*frame_fields:end*frame_fields]
     initial = ay_interrupt.registers(frames[start*frame_fields-1]) if start else bytes(11)
+    if audio_banks==2:
+        import banked_resident_audio as banked
+        data=banked.encode(selected,initial)
+        assert banked.decode(data)==(initial,selected)
+        sizes=[]
+        for segment in banked.segments(data):
+            first,ticks,trees,payload=resident.tables(segment)
+            _,layout,_=resident.code(labels,len(ticks),first,0,0,total_ticks=len(selected))
+            roots=(layout['end']+255)&~255
+            _,nodes=resident.tree_bytes(trees,roots+26)
+            sizes.append(roots-resident.ORIGIN+26+len(nodes)+len(payload))
+        fits=all(size<=16384 for size in sizes)
+        if fits:assert [s['image_bytes'] for s in banked.build(data,labels)['segments']]==sizes
+        return data,dict(wire='AYB1',ayh1_bytes=len(data),resident_bytes=sum(sizes),resident_fits=fits,
+            bank_bytes=sizes,banks=[4,6],spare_bank_bytes=32768-sum(sizes),
+            register_roundtrip_exact=True,initial_sha256=sha(initial),ticks=len(selected))
+    if audio_banks!=1:raise ValueError('audio bank count must be one or two')
     data, metadata = ay_huffman_stream.encode(selected, initial)
     decoded_initial, decoded = ay_huffman_stream.decode(data)
     assert decoded_initial == initial and decoded == selected

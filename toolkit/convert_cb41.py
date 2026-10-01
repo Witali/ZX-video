@@ -49,7 +49,7 @@ def pack_blocks(raw, codec, cache):
 
 
 def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6, target_volumes=None,
-                 volume_cuts=None, dynamic_rows=False):
+                 volume_cuts=None, dynamic_rows=False, audio_banks=1):
     """Measure short windows once; choose cuts without building candidate sets.
 
     Exact row unions include both histories. Window byte costs select an
@@ -57,6 +57,8 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6
     Final TRD capacity is a separate gate, never inferred from this estimate.
     """
     sets = row_sets(frames)
+    audio_options=dict(frame_fields=frame_fields)
+    if audio_banks!=1:audio_options['audio_banks']=audio_banks
     if dynamic_rows:
         from dynamic_row_dictionary import representation as represent
     else:
@@ -71,7 +73,7 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6
         for lo, hi in zip(ends,ends[1:]):
             rows = len({0}.union(*sets[max(0,lo-2):hi]))
             if rows > 256 and not dynamic_rows: raise ValueError(f'explicit volume {lo}..{hi} needs {rows} rows')
-            coded, report = audio_size(audio,lo,hi,labels,frame_fields=frame_fields)
+            coded, report = audio_size(audio,lo,hi,labels,**audio_options)
             if not report['resident_fits']: raise ValueError('explicit volume exceeds resident audio bank')
             parts.append(dict(start=lo,end=hi,audio=coded,audio_report=report))
             probes.append(dict(start=lo,end=hi,rows=rows,**report))
@@ -110,7 +112,7 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6
     parts, audio_probes = [], []
 
     def add(lo, hi):
-        coded, report = audio_size(audio, lo, hi, labels, frame_fields=frame_fields)
+        coded, report = audio_size(audio, lo, hi, labels, **audio_options)
         audio_probes.append(dict(start=lo, end=hi, **report))
         if not report['resident_fits']:
             if hi-lo == 1:
@@ -149,18 +151,20 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     # Resolve the real audio ABI, rather than borrowing labels from a movie.
     labels = player_harness(bytes(4), scaffold.tables, scaffold.mapping, 1).audio
     dynamic_rows=getattr(args,'dynamic_rows',False)
+    audio_banks=getattr(args,'audio_banks',1)
     if dynamic_rows:
         from dynamic_row_dictionary import representation as represent
     else:
         represent=representation
     parts, plan = plan_volumes(frames, audio, labels, codec, cache, args.max_frames_per_disk,
-        frame_fields, getattr(args,'target_volumes',None), getattr(args,'volume_cuts',None),dynamic_rows)
+        frame_fields, getattr(args,'target_volumes',None), getattr(args,'volume_cuts',None),dynamic_rows,audio_banks)
     only = getattr(args,'only_volume',None)
     if only is not None and not 1 <= only <= len(parts): raise ValueError('invalid selected volume')
     write_json(output/'partition.json', plan)
     ends = [p['end'] for p in parts]
     identity_options=dict(options=OPTIONS, ends=ends, frame_fields=frame_fields)
     if dynamic_rows:identity_options['dynamic_rows']=True
+    if audio_banks!=1:identity_options['audio_banks']=audio_banks
     identity = sha(frames.tobytes()+b''.join(f.serialize() for f in audio)
                    +json.dumps(identity_options, sort_keys=True).encode())
     fingerprint = (b'CB42GEN1' if dynamic_rows else b'CB41GEN1')+bytes.fromhex(identity)[:6]
@@ -171,6 +175,9 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     if dynamic_rows:
         timing.update(player_hot_path_changed=True,player_hot_path_delta_tstates=None,
             ordinary_packet_delta_tstates=18,renderer_delta_tstates=0)
+    if audio_banks==2:
+        timing.update(player_hot_path_changed=True,player_hot_path_delta_tstates=None,
+            audio_banks=[4,6],audio_refill_bridge_normal_delta_tstates=50)
     write_json(output/'timing.json', timing)
     for number, part in enumerate(parts, 1):
         if only is not None and number != only: continue
@@ -273,6 +280,7 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
         manifest.update(dynamic_row_dictionary=True,wire='CB42',player_hot_path_changed=True,
             player_hot_path_delta_tstates=None,
             cycle_note='Ordinary packet +18 T; renderer 0 T delta; row controls measured separately')
+    if audio_banks==2:manifest.update(audio_banks=[4,6],audio_wire='AYB1',player_hot_path_changed=True,player_hot_path_delta_tstates=None)
     if only is not None:
         manifest.update(whole_movie=False, selected_volume=only, source_movie_frames=len(frames),
                         frames=sum(r['frames'] for r in records), ay_ticks=sum(r['frames'] for r in records)*frame_fields,

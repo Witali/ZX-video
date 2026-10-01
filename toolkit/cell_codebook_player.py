@@ -197,6 +197,9 @@ class Builder(PreviousBuilder):
                 popcount=[0xb000,0xb100],packet=[INPUT,INPUT+3096],stack_top=0x9df0,
                 disk_stack_top=disk.DISK_STACK),
             delivery_measured=False,release=False)
+        if 'segments' in m['resident_audio']['compiled']:
+            m['cell_codebook']['memory']['audio']=[4,6]
+            del m['cell_codebook']['memory']['unused_legacy_huffman']
         if self.dynamic_rows:
             m['cell_codebook']['dynamic_rows']=dict(enabled=True,slots=256,mutable_bytes=512,
                 ordinary_packet_delta_tstates=18,renderer_delta_tstates=0,

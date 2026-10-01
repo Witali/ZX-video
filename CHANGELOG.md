@@ -35,6 +35,43 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — fit exact resident AY across banks 4 and 6
+
+- Objective: remove the audio RAM obstacle to four refined A/V volumes,
+  baseline `0e7b825`. Keep every original AY record, image and 10-fps frame.
+  Add optional `--audio-banks 2` to the prepared converter. AYB1 contains two
+  independently Huffman-coded segments; the foreground bridge switches at
+  the segment boundary without resetting the FIFO, global count or AY state.
+  Bank 6 replaces an obsolete entropy table. Video banks 0/1/3 and the two
+  physical screens retain their allocations. Both segments load at cold boot.
+- All 25330 ticks round-trip exactly. Four equal quarters need native bank
+  pairs [9984,10234], [10481,11067], [11784,9975], [13123,10802] bytes.
+  Every individual bank fits 16384 bytes. This solves resident memory only;
+  it does not establish four-disk capacity or whole-movie playback timing.
+- Deterministic old refill bridge: 436 T. New ordinary refill: 486 T (+50),
+  one bank-switch refill: 645 T (+209), EOF refill: 516 T (+80). Initialization
+  adds 40 T. These exclude the resident decode body and outer service call;
+  per-tick decode/AY consumer instructions are unchanged. Generated listings
+  and native instruction execution check all counts. IRQ/contention/ROM/disk
+  delays are separate and included in actual Fuse playback measurements.
+- Verification: 33 tests, including FIFO wrap/backpressure, every-instruction
+  IRQ injection through the boundary, preserved caller registers and paging.
+  Complete Fuse cold playback of a 12-frame fixture with 369 row replacements
+  and real [4216,4280) movie window: 525312 exact screen bytes, 380 exact AY
+  ticks, zero missed nominal deadlines, gaps, duplicates or underruns.
+  Previous frame histories are preserved. This remains a bounded test.
+- Two intermediate placements failed integration: 7823h conflicted with the
+  later in-place producer; DB80h was paged out during audio execution. Both
+  failed reports are archived. The accepted helper uses checked fixed RAM
+  at 78A0h, below the old 7900h wrapper; a new guard rejects pageable placement.
+- Decision: retain this optional allocation for the four-volume experiment.
+  Root release/preview disks and one-bank defaults are unchanged. Next choose
+  four cuts using short-window costs and measure capacity and complete timing.
+  [Encoder/native helpers](toolkit/banked_resident_audio.py),
+  [tests](toolkit/test_banked_resident_audio.py),
+  [verification/archive script](toolkit/verify_banked_resident_audio.py),
+  [saved report and reproduction inputs](toolkit/banked_audio_report.json).
+
 ## 2026-10-01 — reject period-byte prediction as a sufficient audio-bank fix
 
 - Objective: remove the independent 16-KiB AY bank obstacle to four refined

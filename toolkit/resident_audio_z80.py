@@ -64,7 +64,7 @@ def tree_bytes(trees, origin):
     return struct.pack('<13H', *roots), bytes(result)
 
 
-def code(audio, ticks, initial, roots, payload, *, batch=6):
+def code(audio, ticks, initial, roots, payload, *, batch=6, total_ticks=None):
     if not 1 <= batch <= 31:
         raise ValueError('batch must be 1..31')
     if (ay_interrupt.QUEUE_BASE, ay_interrupt.QUEUE_SLOTS, ay_interrupt.SLOT_BYTES) != (0xa000,32,32):
@@ -100,6 +100,8 @@ def code(audio, ticks, initial, roots, payload, *, batch=6):
         absolute('LD ('+name+'),HL', 0x22, name, 16)
     absolute('LD HL,ticks', 0x21, ticks, 10)
     for name in ('remaining', 'audio_remaining'):
+        if name=='audio_remaining' and total_ticks is not None:
+            absolute('LD HL,total ticks',0x21,total_ticks,10)
         absolute('LD ('+name+'),HL', 0x22, name, 16)
     absolute('LD HL,payload', 0x21, payload, 10)
     absolute('LD (source),HL', 0x22, 'source', 16)
@@ -193,15 +195,21 @@ def code(audio, ticks, initial, roots, payload, *, batch=6):
     return a.resolve(audio), dict(a.labels), listing
 
 
-def build(data, audio, *, batch=6):
+def build(data, audio, *, batch=6, total_ticks=None, preinitialized=False):
     initial, records, trees, payload = tables(data)
-    blob, labels, _ = code(audio, len(records), initial, 0, 0, batch=batch)
+    blob, labels, _ = code(audio, len(records), initial, 0, 0, batch=batch,total_ticks=total_ticks)
     roots = (labels['end']+255) & ~255
     table_roots, nodes = tree_bytes(trees, roots+26)
     payload_start = roots+26+len(nodes)
     if payload_start+len(payload) > LIMIT:
         raise ValueError('resident code, lookup and payload exceed one 16-KiB bank')
-    blob, labels, listing = code(audio, len(records), initial, roots, payload_start, batch=batch)
+    blob, labels, listing = code(audio, len(records), initial, roots, payload_start, batch=batch,total_ticks=total_ticks)
+    if preinitialized:
+        state=bytearray(blob)
+        for key,value in (('source',payload_start),('remaining',len(records))):
+            at=labels[key]-ORIGIN;state[at:at+2]=value.to_bytes(2,'little')
+        state[labels['bit_buffer']-ORIGIN]=0x80
+        blob=bytes(state)
     image = blob+bytes(roots-ORIGIN-len(blob))+table_roots+nodes+payload
     assert len(image) <= 16384
     return dict(origin=ORIGIN, bank=4, batch=batch, ticks=len(records),
@@ -218,7 +226,7 @@ def build(data, audio, *, batch=6):
         timing_scope='Bank already mapped; caller saves, paging, IRQ, ULA, ROM and disk excluded.')
 
 
-def bridge(origin, target, *, page, shadow):
+def bridge(origin, target, *, page, shadow, bank_address=None):
     """Fixed-RAM caller, preserving all registers and the previous RAM bank.
 
 Use the existing restartable 92-T paging helper. It merges the latest IRQ
@@ -237,7 +245,9 @@ The return value is deliberately discarded, so AF and AF' both survive.
     e("EX AF,AF'", [0x08], 4); e("PUSH AF (save AF')", [0xf5], 11)
     e("EX AF,AF'", [0x08], 4)
     n('LD A,(page shadow)', 0x3a, shadow, 13); e('PUSH AF (page)', [0xf5], 11)
-    e('LD A,14h', [0x3e,0x14], 7); n('CALL page', 0xcd, page, 17)
+    if bank_address is None:e('LD A,14h', [0x3e,0x14], 7)
+    else:n('LD A,(resident bank)',0x3a,bank_address,13)
+    n('CALL page', 0xcd, page, 17)
     n('CALL resident entry', 0xcd, target, 17)
     e('POP AF (page)', [0xf1], 10); n('CALL page', 0xcd, page, 17)
     e("EX AF,AF'", [0x08], 4); e("POP AF (restore AF')", [0xf1], 10)

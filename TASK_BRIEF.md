@@ -41,12 +41,22 @@ low-period-byte prediction was tested on all 25330 ticks and is insufficient:
 four estimated resident sizes with a 256-byte native-code reserve are
 16639/17689/18611/20468 bytes. This host prototype is not enabled in the player.
 Reuse [the exact round-trip comparison](toolkit/ay_period_delta_probe/report.json).
-Next use the currently unused bank 6 for a second resident audio segment,
-retaining the original exact AY tick records and existing interrupt consumer.
-Switch segments in the fixed-RAM foreground bridge without resetting the
-global AY count/FIFO or register state. Verify the two-bank allocation,
-initialization, boundary continuity and every new instruction's T-states.
-Then choose four video cuts by bounded window costs and verify actual capacity
+The optional `--audio-banks 2` now uses bank 6 for a second exact AYH1
+segment (AYB1 wrapper). The fixed-RAM producer changes banks without resetting
+the global AY counter, FIFO or chip state; the interrupt consumer is unchanged.
+Equal-quarter native bank sizes are [9984,10234], [10481,11067],
+[11784,9975], [13123,10802], all within their individual 16-KiB limits.
+Thirty-three tests and full Fuse playback of the dynamic-row fixture and
+real 64-frame window pass: 525312 exact screen bytes, 380 exact AY ticks,
+zero late frames/underruns. Reuse `.tmp/banked-audio-fixture-fixed-ram/` and
+`.tmp/banked-audio-window/`; [evidence](toolkit/banked_audio_report.json).
+Two incorrect helper placements were caught before acceptance and are
+archived: a later producer overwrite, then a helper in pageable memory.
+The final helper occupies the checked fixed gap 78A0h..7900h.
+Refill overhead is 486 T (+50), switch refill 645 T (+209), EOF refill
+516 T (+80), excluding the decoder body, outer service, IRQ/contention/ROM.
+Initialization adds 40 T; the AY consumer and row renderer add 0 T.
+Next choose four video cuts by bounded window costs and verify actual capacity
 and sustained playback; dynamic rows alone do not prove the final target.
 Reuse `.tmp/dynamic-rows-probe/`, `.tmp/dynamic-rows-fixture/` and
 `.tmp/dynamic-rows-window/`; do not rebuild the previous 15-image set.
