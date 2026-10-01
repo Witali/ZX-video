@@ -28,6 +28,31 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — assess maximum frame rate from saved complete CB41 traces
+
+- **Objective/input:** answer the maximum-fps question from baseline `d751ce8`,
+  reusing all three unchanged movie TRDs and their full Fuse traces. No new
+  codec/player or candidate disk set is built.
+- **Method/results:** authenticate root images, archives, debugger scripts and
+  traces; recover native-ready timestamps and cross-check every publication.
+  All 4221 frames / 4218 intra-disk intervals are covered. Previous OUT to
+  native-ready is 30.448 ms mean, 105.171 ms max; minimum readiness margin
+  is 14.828 ms. Comparing the existing trace with 120/100/80/60/40-ms budgets
+  gives 0/2/18/187/956 exceeding intervals. These are not faster-rate replays.
+  The two above 100 ms are frames 3506/3615 on disk 3. Disk read service
+  averages 8.74..8.75 ms per sector, max 43.93 ms, including ROM/CPU/IRQ/drive.
+- **Coverage/decision:** current 8 1/3 fps remains the only complete confirmed
+  rate; 10 fps is a useful next test, not a promised maximum. Readiness slack
+  can contain packet/prefetch work, so its reciprocal cannot estimate a
+  sustainable rate. Higher-fps source sampling and AY scheduling need a
+  separate verified candidate. Player/root images unchanged, **0 T code delta**.
+- **Initial failure:** trace parser rejected abbreviated `com`/`pr` commands;
+  extended parsing to match the archived scripts, then verified full counts
+  and publication identities. No partial result accepted. See
+  [analysis](toolkit/CB41_CADENCE_HEADROOM.md),
+  [script](toolkit/assess_cb41_cadence.py) and
+  [report](toolkit/cb41_cadence_headroom.json).
+
 ## 2026-10-01 — connect the verified five-level player to generic video input
 
 - **Objective/input:** baseline `9885483`; integrate CB41 into
