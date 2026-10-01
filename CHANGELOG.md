@@ -35,6 +35,45 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — inline cell drawing halves the remaining window misses
+
+- Objective: reduce rendering cost without changing CB46/LZSA2/AY bytes or
+  disk capacity. Baseline `d4e878c`; reuse the exact [4096,4352) difficult
+  window and the cached fourth volume, preserving refined pixels and 10 fps.
+- Add opt-in `rebuild_cell_player.py --inline-cells`. Emit the eight bitmap
+  bit handlers directly: replace taken `CALL C` plus `RET` (17+10 T) with
+  `JP NC` (10 T), saving **17 T per changed cell**. Unchanged-cell dispatch
+  remains 10 T; mode refills, row table, attributes and payload stay identical.
+  Dispatch-inclusive no-refill costs: book 305 ->288, literal 334 ->317,
+  front 316 ->299, partial 203 ->186 T. Exclude IRQ, ULA, outer service and disk.
+- Renderer code grows 424 ->1340 bytes, placed at 8E80h..93BFh (exclusive).
+  Its state follows the code; screen state ends at 93C1h, before 9400h audio
+  allocation. The preceding LZSA2 core ends at 8E6Eh. Guard the extra
+  8E80h..9000h region over the complete old 256-frame native window before use;
+  no accesses occur. Existing generator defaults reproduce the old metadata.
+- Four test methods pass, including 28 new independent full-flags sparse/dense
+  cases, both screens, all modes and IRQ preservation. Complete guarded native
+  replay preserves every screen, bank 6 and other allocations. Every one of
+  the 255 post-prime kernel deltas equals `-17*changed_cells`; mean kernel
+  120828.65 ->115969.25 T (-4.02%). Complete draw mean 121326.16 ->116466.76 T.
+- Complete cold/Fuse verification retains all 1769472 screen bytes, 1280 AY
+  ticks and 726 runtime sectors. Window size remains **780 sectors**. Nominal
+  misses **31 ->13**, beyond-one-field misses **29 ->13**, maximum **28 ->17
+  fields**, invalid actual intervals **12 ->7**. Only local run 237..249
+  remains late, recovered at 250. Both timing gates still fail.
+- The native startup of cached full part 4 still fits **2543/2544 sectors**
+  and cold-boots exactly; full playback of that revised volume was not run.
+  Trace of the window shows 22 empty-queue entries (previously 30), draw
+  elapsed 31.79M T, disk service 17.38M, decode bridge 13.55M. Active elapsed
+  remains about 90.66M T because both runs regain the original deadline at
+  the end; these stage intervals must not be summed with overlapping packet work.
+- Decision: retain the opt-in optimization; continue on the cached window
+  to remove the remaining input stall. No root release change or four-disk
+  timing/continuation claim. [Cycle/layout notes](toolkit/CB44_DYNAMIC.md),
+  [tests](toolkit/test_inline_cells.py), [verifier](toolkit/verify_inline_cells.py),
+  [report](toolkit/inline_cells_report.json),
+  [archive check](toolkit/inline_cells_archive_check.json).
+
 ## 2026-10-01 — fixed AY overflow enables four buffers on the last volume
 
 - Objective: let the selected fourth volume use all four video slots while

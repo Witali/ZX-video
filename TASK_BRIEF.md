@@ -58,10 +58,25 @@ RAM. `.tmp/fixed-audio-tail-profile.json` records 70 empty-queue entries;
 active draw/disk/decoder elapsed 125.55M/72.02M/58.65M T within 468.51M T.
 Packet stages overlap those totals. Retain the full trace for burst analysis.
 
-Next scope: resolve producer starvation and rendering cost on the cached
-window, using the new full-part trace for context. Full part 4's main late
-run is local 577..632 (global 4321..4376), recovered at 633; the window's
-late run is 226..253. Avoid re-encoding or building a full set for each trial.
+Latest bounded optimization: opt-in `rebuild_cell_player.py --inline-cells`
+inlines the eight CB46 cell handlers, saving exactly 17 T per changed cell.
+The additional 8E80h..9000h gap is fully native-guarded; renderer ends at
+93BFh, and screen state at 93C1h, leaving the 9400h audio allocation intact.
+Four test methods / 28 new independent cases and all 256 native/Fuse frames
+pass exact content checks. Window remains 780 sectors; misses 31 ->13,
+beyond-one 29 ->13, maximum 28 ->17 fields, bad intervals 12 ->7. Local run
+237..249 recovers at 250. Full part 4 remains 2543 sectors with exact cold
+boot (revised full-part playback not run). Reuse `.tmp/inline-cell-window/`,
+`.tmp/inline-cell-profile.json`, `.tmp/inline-cell-part04-capacity/` and
+[evidence](toolkit/inline_cells_report.json). Do not rebuild from the older
+window without `--inline-cells` when comparing the next player change.
+
+Next scope: resolve the remaining input stall on this latest cached window
+(22 empty-queue packet entries, longest empty wait 1.38M T), using the
+full-part trace for context. Full part 4's preceding renderer's main late
+run is local 577..632 (global 4321..4376), recovered at 633. Avoid re-encoding
+or building a full set for each trial. Preserve exact stream bytes for
+player-only changes; compare native counts separately from real disk service.
 Only then build the full four-disk set and run complete cold/continuation
 timing and content gates before replacing the root release images.
 CB46 is currently available to the cached rebuilder via `--cell-probe`;

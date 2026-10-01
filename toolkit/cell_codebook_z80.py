@@ -12,12 +12,16 @@ frame, not additional claimed free RAM in the existing production player.
 from build_zxv_trd import MiniAssembler
 
 CODE, ROWS, BOOK, POPCOUNT = 0x9000,0x9e00,0xa800,0xb000
+INLINE_CODE = 0x8e80
 
 
-def build(*,dictionary=True,front_reuse=False,fast_masks=False,partial_rows=False):
+def build(*,dictionary=True,front_reuse=False,fast_masks=False,partial_rows=False,inline_cells=False):
     if front_reuse and not dictionary:raise ValueError('front reuse requires the cell book')
     if partial_rows and not front_reuse:raise ValueError('partial rows require front-reuse modes')
-    a=MiniAssembler(CODE);listing=[];stage='setup'
+    if inline_cells and not (dictionary and front_reuse and fast_masks and partial_rows):
+        raise ValueError('inline cells require the complete CB46 renderer')
+    origin=INLINE_CODE if inline_cells else CODE
+    a=MiniAssembler(origin);listing=[];stage='setup'
     def emit(name,blob,t):listing.append(dict(address=a.pc,instruction=name,tstates=t,stage=stage));a.emit(*blob)
     def fixed(name,op,value,t):
         if isinstance(op,int):op=[op]
@@ -28,6 +32,53 @@ def build(*,dictionary=True,front_reuse=False,fast_masks=False,partial_rows=Fals
         listing.append(dict(address=a.pc,instruction='JR '+label,tstates=12 if op==0x18 else [7,12],stage=stage));a.rel8(op,label)
     def exx():emit('EXX',[0xd9],4)
     def exaf():emit("EX AF,AF'",[8],4)
+    def cell(suffix='',fallthrough=False):
+        nonlocal stage
+        def name(label):return label+suffix
+        stage='mode';a.label(name('cell'));exaf()
+        if dictionary:
+            exx();emit('SRL B',[0xcb,0x38],8);jr(0x20,name('mode_ready'))
+            # SRL of the drained B=1 sentinel supplies the incoming carry.
+            emit('LD A,(DE)',[0x1a],7);emit('INC DE',[0x13],6)
+            emit('RRA',[0x1f],4);emit('LD B,A',[0x47],4)
+            a.label(name('mode_ready'))
+            if front_reuse:
+                jr(0x38,name('book_mode'));emit('SRL B',[0xcb,0x38],8);exx()
+                labelop('JP NC,literal',0xd2,name('literal'),10)
+                stage='front_source'
+                emit('LD B,D',[0x42],4);emit('LD C,E',[0x4b],4)
+                emit('LD A,B',[0x78],4);emit('XOR 80h',[0xee,0x80],7);emit('LD B,A',[0x47],4)
+                labelop('JP copy cell',0xc3,name('copy_cell'),10)
+                stage='mode';a.label(name('book_mode'));emit('SRL B',[0xcb,0x38],8);exx()
+                if partial_rows:jr(0x38,name('partial_row'))
+            else:exx();jr(0x30,name('literal'))
+            stage='dictionary'
+            emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6);emit('LD B,book page',[6,BOOK>>8],7)
+            a.label(name('copy_cell'))
+            if front_reuse:stage='cell_copy'
+            for i in range(8):
+                emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
+                if i<7:emit('INC B',[4],4);emit('INC D',[0x14],4)
+            jr(0x18,name('cell_done'))
+        if partial_rows:
+            stage='partial_row';a.label(name('partial_row'))
+            emit('LD A,(HL)',[0x7e],7);emit('INC HL',[0x23],6)
+            emit('ADD A,A',[0x87],4);emit('ADD A,D',[0x82],4);emit('LD D,A',[0x57],4)
+            emit('LD B,row page',[6,ROWS>>8],7);emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6)
+            emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
+            emit('INC B',[4],4);emit('INC D',[0x14],4)
+            emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
+            jr(0x18,name('cell_done'))
+        stage='literal';a.label(name('literal'));emit('LD B,row page',[6,ROWS>>8],7)
+        for i in range(4):
+            emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6)
+            emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
+            emit('INC B',[4],4);emit('INC D',[0x14],4)
+            emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7);emit('DEC B',[5],4)
+            if i<3:emit('INC D',[0x14],4)
+        stage='cell_return';a.label(name('cell_done'))
+        emit('LD A,D',[0x7a],4);emit('AND F8h',[0xe6,0xf8],7);emit('LD D,A',[0x57],4);exaf()
+        if not fallthrough:emit('RET',[0xc9],10)
     a.label('draw');labelop('LD (screen_high),A',0x32,'screen_high',13)
     labelop('LD (packet),HL',0x22,'packet',16)
     if dictionary:
@@ -54,8 +105,14 @@ def build(*,dictionary=True,front_reuse=False,fast_masks=False,partial_rows=Fals
     exx();emit('LD A,(HL)',[0x7e],7);emit('INC HL',[0x23],6);exx()
     if fast_masks:
         emit('OR A',[0xb7],4);labelop('JP Z,empty_bitmap',0xca,'empty_bitmap',10)
-    for _ in range(8):
-        emit('RRCA',[0x0f],4);labelop('CALL C,cell',0xdc,'cell', [10,17]);emit('INC E',[0x1c],4)
+    for bit in range(8):
+        emit('RRCA',[0x0f],4)
+        if inline_cells:
+            labelop('JP NC,skip inline cell',0xd2,'skip_cell_'+str(bit),10)
+            cell('_'+str(bit),fallthrough=True)
+            a.label('skip_cell_'+str(bit));stage='bitmap_mask'
+        else:labelop('CALL C,cell',0xdc,'cell', [10,17])
+        emit('INC E',[0x1c],4)
     if fast_masks:a.label('bitmap_advance')
     jr(0x20,'same_band');emit('LD A,D',[0x7a],4);emit('ADD A,8',[0xc6,8],7);emit('LD D,A',[0x57],4)
     a.label('same_band');exx();emit('DEC C',[0x0d],4);exx();labelop('JP NZ,bitmap_group',0xc2,'bitmap_group',10)
@@ -85,53 +142,7 @@ def build(*,dictionary=True,front_reuse=False,fast_masks=False,partial_rows=Fals
         emit('LD A,E',[0x7b],4);emit('ADD A,8',[0xc6,8],7);emit('LD E,A',[0x5f],4)
         jr(0x30,'empty_attributes_advanced');emit('INC D',[0x14],4)
         a.label('empty_attributes_advanced');labelop('JP attribute_advance',0xc3,'attribute_advance',10)
-    stage='mode';a.label('cell');exaf()
-    if dictionary:
-        exx();emit('SRL B',[0xcb,0x38],8);jr(0x20,'mode_ready')
-        # A drained sentinel is exactly B=1, so SRL already sets carry.
-        # LD/INC DE preserve it; RRA inserts the next sentinel without SCF.
-        emit('LD A,(DE)',[0x1a],7);emit('INC DE',[0x13],6)
-        emit('RRA',[0x1f],4);emit('LD B,A',[0x47],4)
-        a.label('mode_ready')
-        if front_reuse:
-            # Two bits always consume the sentinel in pairs. Modes are
-            # 00 literal, 01 book, 10 same-position front; 11 is rejected
-            # by the builder, as spatial copying is not a native feature.
-            jr(0x38,'book_mode');emit('SRL B',[0xcb,0x38],8);exx()
-            labelop('JP NC,literal',0xd2,'literal',10)
-            stage='front_source'
-            emit('LD B,D',[0x42],4);emit('LD C,E',[0x4b],4)
-            emit('LD A,B',[0x78],4);emit('XOR 80h',[0xee,0x80],7);emit('LD B,A',[0x47],4)
-            labelop('JP copy cell',0xc3,'copy_cell',10)
-            stage='mode';a.label('book_mode');emit('SRL B',[0xcb,0x38],8);exx()
-            if partial_rows:jr(0x38,'partial_row')
-        else:exx();jr(0x30,'literal')
-        stage='dictionary'
-        emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6);emit('LD B,book page',[6,BOOK>>8],7)
-        a.label('copy_cell')
-        if front_reuse:stage='cell_copy'
-        for i in range(8):
-            emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
-            if i<7:emit('INC B',[4],4);emit('INC D',[0x14],4)
-        jr(0x18,'cell_done')
-    if partial_rows:
-        stage='partial_row';a.label('partial_row')
-        emit('LD A,(HL)',[0x7e],7);emit('INC HL',[0x23],6)
-        emit('ADD A,A',[0x87],4);emit('ADD A,D',[0x82],4);emit('LD D,A',[0x57],4)
-        emit('LD B,row page',[6,ROWS>>8],7);emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6)
-        emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
-        emit('INC B',[4],4);emit('INC D',[0x14],4)
-        emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
-        jr(0x18,'cell_done')
-    stage='literal';a.label('literal');emit('LD B,row page',[6,ROWS>>8],7)
-    for i in range(4):
-        emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6)
-        emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
-        emit('INC B',[4],4);emit('INC D',[0x14],4)
-        emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7);emit('DEC B',[5],4)
-        if i<3:emit('INC D',[0x14],4)
-    stage='cell_return';a.label('cell_done')
-    emit('LD A,D',[0x7a],4);emit('AND F8h',[0xe6,0xf8],7);emit('LD D,A',[0x57],4);exaf();emit('RET',[0xc9],10)
+    if not inline_cells:cell()
     stage='attributes';a.label('attribute');exaf();emit('LD A,(HL)',[0x7e],7)
     emit('LD (DE),A',[0x12],7);emit('INC HL',[0x23],6);exaf();emit('RET',[0xc9],10)
     stage='book_load';a.label('load_book');emit('LD C,0',[0x0e,0],7)
@@ -141,9 +152,10 @@ def build(*,dictionary=True,front_reuse=False,fast_masks=False,partial_rows=Fals
         if i<7:emit('INC B',[4],4)
     emit('INC C',[0x0c],4);jr(0x20,'book_entry');emit('RET',[0xc9],10)
     a.label('state');a.label('packet');a.word(0);a.label('screen_high');a.emit(0);a.label('end')
-    if a.pc>0x9d00:raise ValueError('renderer exceeds provisional code allocation')
-    regions=[(CODE,a.resolve()),(POPCOUNT,bytes(i.bit_count() for i in range(256)))]
+    if a.pc>(0x9400 if inline_cells else 0x9d00):raise ValueError('renderer exceeds provisional code allocation')
+    regions=[(origin,a.resolve()),(POPCOUNT,bytes(i.bit_count() for i in range(256)))]
     return regions,a.labels,dict(dictionary=dictionary,front_reuse=front_reuse,fast_masks=fast_masks,**(dict(partial_rows=True) if partial_rows else {}),instruction_listing=listing,code_bytes=len(regions[0][1])-3,
         state_bytes=3,book_bytes=2048,popcount_bytes=256,row_table_bytes=512,
+        **(dict(inline_cells=True,origin=origin,cell_delta_tstates=-17) if inline_cells else {}),
         layout_scope='Component-only: reuses obsolete compact-frame range A800..B0FF; integration must remove old frame consumers.',
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf')

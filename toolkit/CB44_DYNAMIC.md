@@ -390,3 +390,39 @@ Reproduction uses `measure_shared_audio_capacity.py`,
 `verify_fixed_audio_tail.py`. The diagnostic TRD and complete evidence are
 archived in [the fixed-tail report](fixed_audio_tail_report.json). Root
 release images remain unchanged while timing is unresolved.
+
+## Inline cell drawing (2026-10-01)
+
+`rebuild_cell_player.py --inline-cells` selects an unrolled CB46 renderer.
+Each of the eight bitmap bits has a local handler. The former conditional
+CALL and RET cost 27 T when the cell changes and 10 T when it does not.
+A conditional JP over the local handler costs 10 T in either case. Thus
+the exact whole-frame kernel difference is **-17 times changed bitmap cells**.
+RRCA/INC E, mode-byte refills and every drawing instruction stay the same.
+Dispatch-inclusive no-refill cell costs are book 305 ->288, full literal
+334 ->317, front 316 ->299 and partial 203 ->186 T. IRQ, ULA, outer frame
+service, ROM and physical disk latency are outside those CPU counts.
+
+Code grows 424 ->1340 bytes and moves from 9000h to 8E80h, ending at 93BFh.
+Three renderer-state bytes are included in that address span; two screen
+state bytes end at 93C1h. The existing LZSA2 core ends at 8E6Eh. The builder
+rejects overlap and preserves audio at 9400h and above. Before installation,
+the entire additional 8E80h..9000h gap passed a 256-frame native access guard.
+The default generator remains byte/listing compatible with the old renderer.
+
+Twenty-eight new independent full-flags cases cover sparse/dense masks,
+both screens, all four modes, mode boundaries and interrupts. Every native
+frame in the real 256-frame window is exact; all 255 post-prime deltas match
+the formula. Mean kernel cost falls 120828.65 ->115969.25 T. The complete
+cold/Fuse run preserves every screen byte and AY tick. Nominal misses fall
+31 ->13, all remaining misses exceed one field; maximum lateness falls
+28 ->17 fields. The remaining local late run 237..249 recovers at 250, but
+seven actual publication intervals fail the fallback bound. Neither timing
+gate passes. The window remains 780 sectors; cached full part 4 still fits
+2543 sectors and passes cold startup, without a new full-part playback claim.
+
+Use [the verifier](verify_inline_cells.py) and [saved evidence](inline_cells_report.json)
+to compare subsequent changes against these same streams and input histories.
+The complete trace records 22 empty-queue packet entries and a 1.38M-T
+maximum empty wait. Resolving that stall remains necessary for the four-disk
+release; this optimization does not establish whole-movie timing or continuation.

@@ -88,7 +88,7 @@ def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False):
 
 
 class Builder(PreviousBuilder):
-    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,**kwargs):
+    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,inline_cells=False,**kwargs):
         if frame_fields not in (5,6):raise ValueError('CB41 supports five or six fields per frame')
         self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
@@ -97,6 +97,8 @@ class Builder(PreviousBuilder):
         self.partial_rows=cell_raw[:4]==b'CB46'
         self.shared_audio=shared_audio
         self.four_slots=four_slots
+        self.inline_cells=inline_cells
+        if inline_cells and not self.partial_rows:raise ValueError('inline cells require CB46')
         if four_slots and not shared_audio:raise ValueError('four slots require shared fixed AY')
         if shared_audio and not self.front_reuse:raise ValueError('shared fixed audio requires CB44')
         self.dynamic_rows=cell_raw[:4] in (b'CB42',b'CB44',b'CB46')
@@ -143,7 +145,10 @@ class Builder(PreviousBuilder):
         def put(at,data):
             if (at&16383)+len(data)>16384:raise ValueError('cross-bank CB41 install')
             banks[bank(at)][at&16383:(at&16383)+len(data)]=data
-        regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse,fast_masks=self.front_reuse,partial_rows=self.partial_rows)
+        regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse,fast_masks=self.front_reuse,partial_rows=self.partial_rows,inline_cells=self.inline_cells)
+        origin=regions[0][0]
+        if self.inline_cells and m['lzsa2']['layout']['core_end']>origin:
+            raise ValueError('unrolled cell renderer overlaps the LZSA2 core')
         screen_base,saved_page=labels['end'],labels['end']+1
         retired=[];patches=[]
         obsolete=[]
@@ -152,7 +157,7 @@ class Builder(PreviousBuilder):
             if not 0x8000<core<native.CODE or core!=m['pre_fast_bank2_zx0']['new_origin']:
                 raise ValueError('unexpected fixed LZSA2 core; cannot retire legacy reconstruction')
             obsolete=[dict(start=0x8000,end=core,reason='legacy motion/patch reconstruction replaced by CB44')]
-        spans=[(native.CODE,0x9400),(0xa800,0xb700),(PACKET,0xe000)]
+        spans=[(origin,0x9400),(0xa800,0xb700),(PACKET,0xe000)]
         spans += [(r['start'],r['end']) for r in obsolete]
         for lo,hi in spans:
             retired.append(dict(start=lo,end=hi,sha256=sha(bytes(read(at) for at in range(lo,hi)))))
@@ -220,7 +225,7 @@ class Builder(PreviousBuilder):
             header_bytes=2056,book_loaded_from_stream=True,initial_frames=[start-2,start-1],
             compact_frame_removed=True,packet_ahead=False,packet_capacity=3168 if self.front_reuse else 3096,
             memory=dict(screens=[5,7],video_slots=[0,1,3],audio=4,unused_legacy_huffman=6,
-                fixed_kernel=[native.CODE,saved_page+1],rows=[0x9e00,0xa000],book=[0xa800,0xb000],
+                fixed_kernel=[origin,saved_page+1],rows=[0x9e00,0xa000],book=[0xa800,0xb000],
                 popcount=[0xb000,0xb100],packet=[INPUT,INPUT+(3168 if self.front_reuse else 3096)],stack_top=0x9df0,
                 disk_stack_top=disk.DISK_STACK),
             delivery_measured=False,release=False)

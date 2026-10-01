@@ -46,8 +46,8 @@ class GuardedCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self,table,rows,initial,dictionary,*,front_reuse=False,fast_masks=False,partial_rows=False):
-        self.regions,self.labels,self.meta=machine.build(dictionary=dictionary,front_reuse=front_reuse,fast_masks=fast_masks,partial_rows=partial_rows)
+    def __init__(self,table,rows,initial,dictionary,*,front_reuse=False,fast_masks=False,partial_rows=False,inline_cells=False):
+        self.regions,self.labels,self.meta=machine.build(dictionary=dictionary,front_reuse=front_reuse,fast_masks=fast_masks,partial_rows=partial_rows,inline_cells=inline_cells)
         self.c=GuardedCPU(b'',b'');self.c.guarding=False;self.c.port_7ffd=0x17
         self.c.state=self.labels['state'],self.labels['end'];self.rows=rows;self.table=table
         for at,data in self.regions+[(machine.ROWS,rows)]:self.install(at,data)
@@ -87,7 +87,7 @@ class Harness:
         assert c.port_7ffd==(0x17 if target==0xc0 else 0x1f)
         assert bytes(c.read8(source+i) for i in range(len(payload)))==payload
         for at,data in self.regions:
-            size=self.labels['state']-at if at==machine.CODE else len(data)
+            size=self.labels['state']-at if at==self.regions[0][0] else len(data)
             assert bytes(c.read8(at+i) for i in range(size))==data[:size]
         assert bytes(c.read8(machine.ROWS+i) for i in range(512))==self.rows
         if not loading and self.meta['dictionary']:
