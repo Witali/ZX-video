@@ -11,6 +11,10 @@ chip-constrained preview: 50 Hz, three tone channels, one shared noise source,
 Spectrum-style mono sum, and a fully verified diagnostic TRD. Do not confuse
 the full LPC decoder's voice with what those chip registers can reproduce.
 
+**Subsequent feedback (2026-10-01):** the user also rejected the YM2149 TRD
+as unintelligible and requested beeper PDM at >=40 kHz. The new
+[beeper subproject](../audiobook-beeper/README.md) provides that separate test.
+
 A separate audio-only subproject. The first **120 seconds** of the supplied
 O. Henry recording (1977) are converted with the same refined three-voice,
 square-aware AY synthesizer used by the movie. The user selected compact

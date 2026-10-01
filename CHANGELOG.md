@@ -5,6 +5,55 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: switch audiobook speech to high-rate beeper PDM
+
+- User feedback/scope: the YM2149 test TRD is also unintelligible. The user
+  requested PDM on the beeper with a carrier of at least 40 kHz. Baseline
+  `2a22f77`; preserve the AY history and implement a separate
+  [audiobook-beeper](audiobook-beeper/README.md) subproject. Use a bounded
+  resident excerpt beginning at the same source time 60 seconds, not a
+  streaming/two-minute/full-book release. Source identity is authenticated.
+- Initial implementation: 64 deterministic T/bit, 80 KiB, second-order
+  area-weighted error-feedback PDM. A complete timing pilot and speech run
+  verify all 655360 bits in independent Z80 and cold Fuse. Actual average
+  54823.104 bit/s, minimum 44336.25, 11.954084 s; 320 startup reads, zero
+  runtime reads. The first render-only gate expected identical pilot/speech
+  timestamps and stopped on a one-T startup difference after full playback
+  had already passed. Retain the disk, reports, waveforms and exact producer
+  snapshots in [the 64-T archive](audiobook-beeper/experiments/pdm64/report.json).
+  Resume rendering with a bounded three-T startup allowance, actual final
+  timestamps and the unchanged every-interval >=40 kHz gate.
+- One follow-up addresses quantization noise by shortening the output cycle.
+  Spread pointer-wrap preparation and page switching over several output
+  slots, preserving the wrap-test flags with AF'. Kernel 30 T + housekeeping
+  22 T = **52 T/bit /416 T/byte**, versus 64 /512: **-12 T/bit /-96 T/byte**.
+  Final sample hold is 52 T. Source table/assumptions are documented; existing
+  movie and AY player code is unchanged. Native tests verify every byte value,
+  all six banks, partial banks, invalid sizes and stack/code integrity.
+- Final build uses 96 KiB in banks 0,4,6,1,3,7; banks 2 and 5 retain code,
+  stack, display, BASIC and TR-DOS workspace. Both complete independent Z80
+  and cold Fuse runs verify **786432 exact speech bits**. Actual intervals
+  52/53/55/56/60 T give **66915.539 bit/s average, 59115 minimum**. Duration
+  **11.7526065 s**, 384 startup reads, zero runtime reads, final mute exact.
+  The 428-sector TRD boots independently. No IRQ runs during PDM. Pilot/speech
+  phase differs by two T (0.564 us), without accumulating drift.
+  [Full evidence](audiobook-beeper/preview/verification.json).
+- Audio preparation: mono, 70 Hz highpass, two two-pole 3800 Hz lowpasses,
+  peak 0.65, 20 ms edge fades, fixed small TPDF dither. Reconstruct the final
+  measured port hold times at 192 kHz and provide filtered and wideband WAVs.
+  The 4500 Hz listening filter is explicit, not a physical speaker model.
+  Four tests pass, including nonuniform-slot DC preservation and exact hold
+  integration. Packing/unpacking and every actual output bit are exact.
+- On the common [60.1,70.1) passage with identical reconstruction filters,
+  waveform correlation improves **0.907986 ->0.964705** and SNR **6.6909
+  ->11.2622 dB** (+4.5713 dB). [Comparison](audiobook-beeper/comparison.json)
+  supports selecting 52 T; it is not a perceptual intelligibility score.
+- Decision/delivery: publish [ZX-audiobook-PDM-test.trd](ZX-audiobook-PDM-test.trd)
+  in Git LFS, SHA-256
+  `3aa0a4d1f7e40e9943330d5dcbc44f0495990f91b8d660b42ec9521005d40dad`,
+  identical to the verified final disk. Deliver the roughly 12-second test
+  for listening; no physical recording or longer streaming claim is made.
+
 ## 2026-10-01: publish the YM2149 test disk in the project root
 
 - The user requested a TRD to listen in an emulator. Baseline `7950579`;

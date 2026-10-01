@@ -1,5 +1,10 @@
 # YM2149 audiobook check at 50 Hz
 
+**Later listener decision (2026-10-01): rejected as unintelligible.** The user
+requested [beeper PDM at >=40 kHz](../audiobook-beeper/README.md) instead.
+The measurements and pending-listener wording below preserve the state when
+this YM experiment was first delivered; they are not a current acceptance.
+
 The user accepted the **software-decoded LPC2 reference**, then requested
 better fidelity and an actual AY-compatible generator check. The final
 constraints are **one register state per 50 Hz interrupt** and typical
