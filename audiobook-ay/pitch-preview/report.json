@@ -1,0 +1,128 @@
+{
+  "complete": true,
+  "preview_only": true,
+  "date": "2026-10-02",
+  "baseline_commit": "5c9200a",
+  "source_sha256": "a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779",
+  "source_pcm_sha256": "82b70890e3885e9d94952977fa0b92285dc6028a27f4fcaf8abc3a355a39653c",
+  "start_seconds": 60,
+  "duration_seconds": 24,
+  "analysis_sha256": "c1935fa6c451347e8c3dea284cb3cf46dc151c91fc56938cbf603b6587db4ecb",
+  "chip": "YM2149",
+  "clock_hz": 1773450,
+  "update_rate_hz": 50,
+  "ticks": 1200,
+  "mixing": "equal mono sum; three tone generators; one shared noise source",
+  "method": "channel A anchors LPC F0; B/C jointly fit harmonic square-wave power; no musical-note quantization",
+  "analysis_window_ms": 32,
+  "pitch_anchor_floor": "0.01 * weighted target sum / weighted fundamental template sum",
+  "fit_frequency_emphasis_exponent": 0.35,
+  "maximum_harmonic_index": 24,
+  "voiced_frames": 894,
+  "noise_frames": 132,
+  "silence_frames": 174,
+  "envelope_enabled": false,
+  "high_rate_pcm_volume_output": false,
+  "player_hot_path_delta_tstates": 0,
+  "native_lpc_decoder": false,
+  "disk_timing_verified": true,
+  "candidate_listener_accepted": false,
+  "decision": "bounded listening candidate; no intelligibility claim",
+  "metrics": {
+    "previous": {
+      "semitone_spectral_cosine": 0.6668730166663647,
+      "chroma_cosine": 0.8462200217720424,
+      "loudness_correlation": 0.8748080487005843,
+      "rhythm_onset_f1": 0.7575757575757576,
+      "onsets": {
+        "reference": 34,
+        "candidate": 32,
+        "matched": 25,
+        "precision": 0.78125,
+        "recall": 0.7352941176470589,
+        "f1": 0.7575757575757576
+      },
+      "evaluated_frames": 226
+    },
+    "candidate": {
+      "semitone_spectral_cosine": 0.92621789210293,
+      "chroma_cosine": 0.9812013389049815,
+      "loudness_correlation": 0.8707880129772966,
+      "rhythm_onset_f1": 0.7941176470588235,
+      "onsets": {
+        "reference": 34,
+        "candidate": 34,
+        "matched": 27,
+        "precision": 0.7941176470588235,
+        "recall": 0.7941176470588235,
+        "f1": 0.7941176470588235
+      },
+      "evaluated_frames": 226
+    }
+  },
+  "equal_rms_preview": 0.07613913958854127,
+  "metrics_scope": "signal proxies; source passage and chip renderer match previous build",
+  "registers_sha256": "277af4bc71a3ccb5cd76f6d71032a9adc1d402533f469430ae07fd11347542cf",
+  "packed_sha256": "4231de000a325763ccccd803e17ad71b30c582bbf354f1b4f56907739ad1c17b",
+  "producer_sources_sha256_lf": {
+    "pitch_aware_ay.py": "b974d2b78a3bc1e3d4868e90467825ad4228fe9f986921f4838c256920355776",
+    "probe_pitch_aware.py": "42608de4f749550f9680791d6211332f90725a97fc7b70d7973453da50985aac",
+    "render_ym2149.js": "585122fbf9d5bc4af4a0af9086f2bb285ba4a45f6984381d8a275e616ea1d009",
+    "player.py": "31278b45cb9cef9ea00dc5810d051473dca570fe5f069c922d1e60b098cc7449"
+  },
+  "artifacts": {
+    "audiobook-preview.trd": {
+      "bytes": 655360,
+      "sha256": "37e0ae4d8876e5441c0f21cb87f0152bd98b5cc13dfe78e05fba6da1cfdf66a6"
+    },
+    "candidate-preview.wav": {
+      "bytes": 2116844,
+      "sha256": "8249f776ee2827371624574e5bffad2ee716bd6e7bfa3745f5562de59c0e4e7f"
+    },
+    "candidate-registers.gz": {
+      "bytes": 4604,
+      "sha256": "c7fa8eff474a613b189c4789f53752ba59c1bffd3b8a0b173e8292a5cc6e6d3f"
+    },
+    "candidate-render.json": {
+      "bytes": 828,
+      "sha256": "36e031351fb4b6562560ffa3bb154afd660b95717286da0ca6aeaea7c2caa329"
+    },
+    "fit.json": {
+      "bytes": 282051,
+      "sha256": "a7ec6e5447ab3295296991ee89403e515cfbf88635a66e9ad0d763e3208a8bdf"
+    },
+    "original-preview.wav": {
+      "bytes": 2116844,
+      "sha256": "8f43e3cbf06328635e1f670a15e06b978a5e20958a0be34e8c43ee5117682cb4"
+    },
+    "player.json": {
+      "bytes": 2037,
+      "sha256": "3dda4b8f942049450faa3325ff4ae2fe766c61e6a04b758fd1ffd5db493ef62c"
+    },
+    "previous-preview.wav": {
+      "bytes": 2116844,
+      "sha256": "69c60481cd0f08066e40b7accea0273b5e9b4b13048d5b1288a19173d0c1f1f4"
+    },
+    "previous-registers.gz": {
+      "bytes": 5474,
+      "sha256": "2f20b309e055afb69ff30e41bc97d0fc0a72ae16534c04ca7f42ad9040679caa"
+    },
+    "previous-render.json": {
+      "bytes": 828,
+      "sha256": "5dfc0114c979984b833c075501b36bc4ea169ac24700581ee18301fa5706def9"
+    },
+    "soundtrack.ay9.gz": {
+      "bytes": 4455,
+      "sha256": "ecbe8f9dcdfaddd94e28ad137efe7782d04d31b8ac808a181c8b07fc56ea928e"
+    },
+    "verification.json": {
+      "bytes": 1312,
+      "sha256": "ea03e86f22680b6b4f10d02ecdd0cc5c10f55ecd7403412f92c3f66f15f785af"
+    },
+    "verification-work/fuse-trace.txt.gz": {
+      "bytes": 66652,
+      "sha256": "cc1e76128f932c97f532e5150294a9304b3384870a7dc96698b4fab7278142cd"
+    }
+  },
+  "verification": "verification.json"
+}

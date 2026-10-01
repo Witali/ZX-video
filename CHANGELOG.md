@@ -5,6 +5,50 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: preserve vocal pitch in a new AY50 speech candidate
+
+- User scope: revisit speech on AY/YM2149 after recognizing the rabbit's
+  exclamation on movie disk 1, approximately after its first third. Baseline
+  `5c9200a`; compare one offline encoder against the rejected 24-second
+  YM2149 LPC/formant mapping on the identical audiobook [60,84) passage.
+  Keep three tones/shared noise, mono mixing and **50 Hz** register updates.
+- Inspect unchanged movie encoder and saved registers. It tracks bass,
+  harmony and melody; the previous speech mapper ignores LPC `pitch_hz`
+  and places independent tones at formants. Opening source images and disk
+  1's 131.2-second duration locate a bounded [36,52) movie comparison around
+  the user's approximate cue. Authenticate full source and register hashes,
+  render with phase history from time zero, and retain original/AY clips.
+  Across 800 states, average active tones 2.1825, 125 noise states, median
+  lowest active tone 143.39 Hz. The mixed soundtrack is not an isolated vocal
+  stem and these numbers do not identify the vocal generator by themselves.
+  [Movie evidence](audiobook-ay/pitch-preview/movie-cue/report.json).
+- One candidate: keep tracked F0 on A, fit two additional harmonic tone
+  periods and nonnegative powers to the short-time source spectrum, including
+  the odd harmonics of actual integer-period squares. Use the YM DAC table,
+  32-ms analysis windows and unchanged 20-ms states. Fit shared-noise period
+  on unvoiced/transient frames. No envelope, high-rate volume writes, PCM
+  playback, fourth channel or native LPC synthesis is added. Of 1200 states,
+  894 are voiced, 132 noise and 174 silent.
+- Equal-source/equal-renderer result: spectral cosine **0.666873 ->0.926218**,
+  chroma **0.846220 ->0.981201**, onset F1 **0.757576 ->0.794118**; loudness
+  correlation declines slightly **0.874808 ->0.870788**. Prior values reproduce
+  exactly. These signal proxies support a listening candidate, not a claim
+  that speech is intelligible. [Report](audiobook-ay/pitch-preview/report.json).
+- Verification: ten Python tests and existing YM tone/noise/mixer/DAC tests
+  pass. Full independent Z80 and cold Fuse agree on all 1200 ticks /13200
+  writes, with no missing/duplicate fields, exact final hold/mute, 52 startup
+  sectors and zero runtime reads. The unchanged native hot path remains
+  **974 T/tick, delta 0 T**. First OUT phase 150..153 T, intervals70905..70909 T.
+  CPU counts exclude IRQ/ULA/ROM/disk; actual playback is measured separately.
+  [Verification](audiobook-ay/pitch-preview/verification.json).
+- Decision: deliver matched original/previous/new WAVs and
+  [ZX-audiobook-YM2149-voice-test.trd](ZX-audiobook-YM2149-voice-test.trd)
+  in Git LFS. Independently bootable 655360-byte image, 96 occupied sectors,
+  SHA-256 `37e0ae4d8876e5441c0f21cb87f0152bd98b5cc13dfe78e05fba6da1cfdf66a6`.
+  Listener acceptance remains open; no physical recording or full-book
+  conversion is claimed. Existing movie/AY/PDM releases remain unchanged.
+  [Method and reproduction](audiobook-ay/PITCH_AWARE_PREVIEW.md).
+
 ## 2026-10-02: faster beeper PDM from 8 kHz /8-bit audio, looping TRD
 
 - Scope: baseline `7b612af`, the verified 52-T resident audiobook test.

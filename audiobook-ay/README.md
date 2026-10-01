@@ -1,5 +1,11 @@
 # AY audiobook preview
 
+**New experiment (2026-10-02):** after the user's observation about the rabbit's
+recognizable vocal effect, a [pitch-preserving AY50 candidate](PITCH_AWARE_PREVIEW.md)
+retains the vocal fundamental and fits two harmonic square waves. It includes
+a new 24-second listening comparison and fully verified test TRD. Acceptance
+of its speech intelligibility remains pending.
+
 **Listening feedback (2026-10-01):** the user found this first preview
 completely unintelligible. The original files remain for comparison, not as
 an accepted speech result. See the [LPC2 reuse comparison](LPC2_COMPARISON.md)
