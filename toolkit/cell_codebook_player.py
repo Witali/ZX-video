@@ -59,7 +59,9 @@ def packet_code(m,labels,screen_base):
 
 
 class Builder(PreviousBuilder):
-    def __init__(self,*args,cell_raw,cell_start,**kwargs):
+    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,**kwargs):
+        if frame_fields not in (5,6):raise ValueError('CB41 supports five or six fields per frame')
+        self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
         count,entries=struct.unpack_from('<HH',cell_raw,4)
         if cell_raw[:4]!=b'CB41' or entries!=256 or cell_start<0:
@@ -103,6 +105,21 @@ class Builder(PreviousBuilder):
                     patches.append(dict(address=pc,old_operand=int.from_bytes(old,'little'),new_operand=target,
                         previous_tstates=13,tstates=13,delta_tstates=0))
         if len(patches)!=4:raise ValueError('unexpected IRQ screen-state references')
+        # The resident stream owns the AY tick count independently of video.
+        # Only the immediate deadline increment changes: LD DE,nn stays 10 T.
+        steps=[r for r in m['slot_queue_instruction_listing']
+               if VIDEO<=r['address']<PAGE and r['instruction']=='LD DE,6']
+        if len(steps)!=1:raise ValueError('unexpected video deadline increment')
+        step=steps[0];pc=step['address']
+        if bytes(read(pc+i) for i in range(3))!=b'\x11\x06\x00':
+            raise ValueError('video deadline instruction changed')
+        put(pc+1,self.frame_fields.to_bytes(2,'little'))
+        step['instruction']=f'LD DE,{self.frame_fields}'
+        if m['resident_audio']['compiled']['ticks']!=(end-start)*self.frame_fields:
+            raise ValueError('resident AY count does not match video duration')
+        m['video_cadence']=dict(fields_per_frame=self.frame_fields,ay_hz=50,
+            deadline_increment_pc=pc,previous_tstates=10,tstates=10,delta_tstates=0,
+            schedule_origin_preserved=True)
         code,p,rows=packet_code(m,labels,screen_base);put(PACKET,code)
         # The old clock was retired above; its progress target is a constant
         # from the unchanged progress component.
@@ -152,3 +169,10 @@ class Builder(PreviousBuilder):
             if len(padded(coded))>capacity:raise ValueError('CB41 startup staging overflow')
             result.append(dict(s,data=padded(coded),compressed_bytes=len(coded),sectors=sectors(coded),sha256=sha(raw)))
         return result,m
+
+    def volume(self,start,end,part):
+        image,m=super().volume(start,end,part)
+        m.update(frame_fields=self.frame_fields,fps='10' if self.frame_fields==5 else '25/3',
+            duration_seconds=(end-start)*self.frame_fields/50,
+            ay_ticks=(end-start)*self.frame_fields)
+        return image,m

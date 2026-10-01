@@ -19,6 +19,7 @@ import build_long_video_trd as video
 from build_fap3_trd import Builder, sha
 from encode_fap3 import encode
 import fap3_disk_z80 as disk
+from video_cadence import fields_for_fps, scaffold_audio
 
 FPS = Fraction(25, 3)
 HERE = Path(__file__).resolve().parent
@@ -61,10 +62,10 @@ def rational(value, default=Fraction(0)):
         return default
 
 
-def decode_video(source, ffmpeg, directory, probe, picture, sound):
+def decode_video(source, ffmpeg, directory, probe, picture, sound, fps=FPS):
     # Fit display aspect (including non-square source pixels); never crop/zoom.
     # EOF pass + upward rounding retains even a one-frame, sub-120 ms clip.
-    filters = ("setpts=PTS-STARTPTS,fps=25/3:start_time=0:round=up:eof_action=pass,"
+    filters = (f"setpts=PTS-STARTPTS,fps={fps}:start_time=0:round=up:eof_action=pass,"
                "scale=w='max(1,round(min(128,72*dar)))':h='max(1,round(min(72,128/dar)))':flags=area,"
                "setsar=1,pad=128:72:(ow-iw)/2:(oh-ih)/2:black")
     path = directory/'frames.rgb'
@@ -80,7 +81,7 @@ def decode_video(source, ffmpeg, directory, probe, picture, sound):
             for s in (picture, sound) if s and rational(s.get('duration')) > 0]
     if not ends:
         ends = [rational(probe.get('format', {}).get('duration'))]
-    wanted = max(count, math.ceil(max(ends, default=Fraction(0))*FPS))
+    wanted = max(count, math.ceil(max(ends, default=Fraction(0))*fps))
     if wanted > 0xffffffff:
         raise ValueError('input exceeds the 32-bit FAP3 frame count')
     if wanted > count:
@@ -92,7 +93,7 @@ def decode_video(source, ffmpeg, directory, probe, picture, sound):
     return np.memmap(path, dtype=np.uint8, mode='r', shape=(wanted, 72, 128, 3)), dict(
         video_stream=picture['index'], audio_stream=sound['index'] if sound else None,
         decoded_frames=count, encoded_frames=wanted, tail_repeated_frames=wanted-count,
-        encoded_seconds=float(Fraction(wanted, 1)/FPS), fit='contain', crop=False, command=command)
+        encoded_seconds=float(Fraction(wanted, 1)/fps), fit='contain', crop=False, command=command)
 
 
 def convert_frames(images, directory):
@@ -140,13 +141,13 @@ def write_video_preview(images, states, quality, path):
     quality['preview'] = path.name
 
 
-def convert_audio(source, ffmpeg, directory, picture, sound, count):
-    ticks, rate = count*6, 22050
+def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS):
+    ticks, rate = count*fields_for_fps(fps), 22050
     if sound is None:
         frames = [video.AyFrame((1, 1, 1), (0, 0, 0))]*ticks
         report = dict(source_audio=False, ticks=ticks, silence=True)
     else:
-        duration = Fraction(count, 1)/FPS
+        duration = Fraction(count, 1)/fps
         start = rational(picture.get('start_time'))
         # Keep audio offsets relative to the first video PTS; fill gaps and tail.
         filters = f'asetpts=PTS-({float(start):.12g})/TB,aresample={rate}:async=1:first_pts=0,apad'
@@ -170,8 +171,8 @@ def convert_audio(source, ffmpeg, directory, picture, sound, count):
         import compare_ay_fidelity as quality
         rendered = ay.render(frames, 50, rate)
         quality.write_wav(directory/'audio-preview.wav', rendered, rate)
-        metrics = quality.compare(quality.features(samples, rate, float(FPS), count),
-                                  quality.features(rendered, rate, float(FPS), count))
+        metrics = quality.compare(quality.features(samples, rate, float(fps), count),
+                                  quality.features(rendered, rate, float(fps), count))
         report = dict(source_audio=True, ticks=ticks, noise_ticks=int(np.count_nonzero(noise)),
             synthesis='three AY voices, optional noise on B, 50 Hz', metrics=metrics,
             metric_note='signal proxies, not a perceptual accuracy percentage', command=command)
@@ -187,6 +188,8 @@ def main(argv=None):
     parser.add_argument('--video-codec', choices=('fap3', 'cb41'), default='fap3',
         help='cb41: five brightness levels and the verified LZSA2 player; requires TR-DOS 5.03')
     parser.add_argument('--lzsa', help='LZSA executable for --video-codec cb41; defaults to PATH')
+    parser.add_argument('--fps', choices=('25/3', '10'), default='25/3',
+        help='video rate; 10 requires CB41, AY always remains 50 Hz')
     for name in ('ffmpeg', 'ffprobe', 'zx0'):
         parser.add_argument('--'+name, help='executable path; defaults to PATH')
     parser.add_argument('--max-frames-per-disk', type=int, default=4096, help='upper bound, 1..10922; size may split sooner')
@@ -206,6 +209,9 @@ def main(argv=None):
     parser.add_argument('--verification-timeout', type=float, default=1800, help='Fuse timeout in seconds per disk')
     parser.add_argument('--cached-huffman-byte', action='store_true', help='Cache current Huffman byte in B; requires --carry-huffman')
     args = parser.parse_args(argv)
+    args.frame_fields = fields_for_fps(args.fps)
+    if args.fps == '10' and args.video_codec != 'cb41':
+        parser.error('--fps 10 requires --video-codec cb41')
     if args.cached_huffman_byte and not args.carry_huffman: parser.error('--cached-huffman-byte requires --carry-huffman')
     try:
         if not args.input.is_file(): raise ValueError('input video file does not exist')
@@ -237,7 +243,7 @@ def main(argv=None):
     with source.open('rb') as stream:
         source_hash = hashlib.file_digest(stream, 'sha256').hexdigest()
     manifest = dict(source=str(source), source_sha256=source_hash, complete=False, release=False,
-        video_fps='25/3', ay_hz=50, native_resolution=[256, 192], active_resolution=[256, 144],
+        video_fps=args.fps, frame_fields=args.frame_fields, ay_hz=50, native_resolution=[256, 192], active_resolution=[256, 144],
         logical_resolution=[128, 96], disk_profile=args.disk_profile, executables=executables,
         player_baseline='ab76fa1' if args.cached_huffman_byte else '7152e10' if args.register_fragments else '0cf64be' if args.carry_huffman else '6e724f4' if args.static_cache_borders else '00fb0fd' if args.irq_safe_paging else '491db7b' if args.fast_noop_scan else '80ab9d9' if args.inline_matches else '00313d3',
         player_hot_path_changed=args.inline_matches or args.fast_noop_scan or args.irq_safe_paging or args.static_cache_borders or args.carry_huffman or args.register_fragments or args.cached_huffman_byte,
@@ -256,7 +262,7 @@ def main(argv=None):
                         player_hot_path_delta_tstates=0, brightness_levels=5)
     write_json(output/'conversion.json', manifest)
     try:
-        images, manifest['input'] = decode_video(source, executables['ffmpeg'], work, probe, picture, sound)
+        images, manifest['input'] = decode_video(source, executables['ffmpeg'], work, probe, picture, sound, Fraction(args.fps))
         states, quality = convert_frames(images, work)
         if args.video_codec == 'cb41':
             from generic_cell_codebook import prepare_frames, write_preview
@@ -265,9 +271,11 @@ def main(argv=None):
         else:
             write_video_preview(images, states, quality, output/'video-preview.png')
         write_json(output/'video-quality.json', quality)
-        ay_frames, audio = convert_audio(source, executables['ffmpeg'], work, picture, sound, len(states))
+        ay_frames, audio = convert_audio(source, executables['ffmpeg'], work, picture, sound, len(states), Fraction(args.fps))
         write_json(output/'audio-quality.json', audio)
-        raw, codec = encode(states, ay_frames)
+        raw, codec = encode(states, scaffold_audio(ay_frames, args.frame_fields))
+        codec.update(build_envelope_fields=6, runtime_frame_fields=args.frame_fields,
+                     runtime_ay_ticks=len(ay_frames))
         (work/'stream.raw').write_bytes(raw)
         write_json(output/'codec.json', codec)
         if args.video_codec == 'cb41':
@@ -276,7 +284,7 @@ def main(argv=None):
             manifest['complete'] = True
             write_json(output/'conversion.json', manifest)
             print(f'Created {len(records)} five-level TRD(s) in {output}', flush=True)
-            print('Exact 8 1/3 fps: '+('verified in Fuse' if manifest['timing_verified']
+            print(f'Exact {args.fps} fps: '+('verified in Fuse' if manifest['timing_verified']
                                      else 'not verified; see timing.json'), flush=True)
             return
         builder = Builder(raw, states, Path(executables['zx0']), work/'zx0',

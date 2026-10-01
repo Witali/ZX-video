@@ -16,14 +16,15 @@
 - Current target: the movie without final credits on at most three TRDs,
   retaining the entire main story and post-credit scene through EOF. Use
   toolkit/movie_no_credits.json for the user-authorized edit. Keep unchanged
-  resolution, 25/3 fps and the existing 50 Hz AY soundtrack. The primary
+  resolution and the existing 50 Hz AY soundtrack. On 2026-10-01 the user
+  requested 10 fps; retain 25/3 fps as the verified compatibility mode. The primary
   optimization target is every frame published on its exact nominal
-  six-field deadline (120 ms intervals), with zero late frames. Prepare
+  five-field deadline (100 ms intervals), with zero late frames. Prepare
   data ahead of time; do not deliberately schedule late frames to consume
   the jitter allowance. Report every missed nominal deadline separately
   from compliance with the fallback allowance. As a fallback, the user
   permits up to one 50 Hz field (20 ms) of video jitter: publish on the
-  nominal six-field deadline or one field later, with 5..7 fields between
+  nominal five-field deadline or one field later, with 4..6 fields between
   frames and no accumulated schedule drift or dropped frames. After a late
   frame, compensate on the next ready frame and return to the original
   deadlines; never shift the schedule origin to the delayed publication.

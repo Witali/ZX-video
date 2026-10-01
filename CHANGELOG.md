@@ -28,6 +28,31 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — add a five-field CB41 mode with independent 50-Hz AY
+
+- Objective: implement the requested 10 fps without accelerating the source
+  or sound. Baseline `a878583`; retain the verified 25/3-fps compatibility mode.
+- `convert_video.py --video-codec cb41 --fps 10` resamples the source and
+  builds five real AY ticks per video frame. A build-only six-record envelope
+  preserves legacy checkpoint assembly; its empty padding is never played.
+  The native deadline operand changes 6 to 5: `LD DE,nn`, **10 -> 10 T (0 T)**.
+  CB41/LZSA2 syntax, drawing, memory, paging and disk routines stay identical.
+- Complete Fuse fixtures: single, portrait, colour/sound over three disks,
+  anamorphic and audio tail. **23 frames, 115 AY ticks, 158976 screen bytes,
+  seven independent disks**, zero nominal misses or audio gaps/underruns.
+  Cold dirty-RAM checks, both prompt transitions, 19 regression tests and
+  three new cadence/audio tests pass. Actual streams/traces/disks are saved;
+  the archiver verifies hashes and unchanged native kernel/packet listings.
+- Decision: keep the opt-in mode and continue full-movie resampling/window
+  tests. Short fixtures do not prove sustained movie playback or disk count.
+  The original is 24 fps: 10-fps selection has alternating 2/3-frame steps;
+  exact display deadlines are distinct from source-sampling motion judder.
+  No interpolation experiment is included. Root release images are unchanged.
+- [Implementation, cycles and limits](toolkit/CB41_10FPS.md),
+  [fixture results](toolkit/cb41_10fps_fixtures.json),
+  [reproduction](toolkit/check_generic_cb41.py),
+  [archive checks](toolkit/summarize_cb41_cadence.py).
+
 ## 2026-10-01 — assess maximum frame rate from saved complete CB41 traces
 
 - **Objective/input:** answer the maximum-fps question from baseline `d751ce8`,

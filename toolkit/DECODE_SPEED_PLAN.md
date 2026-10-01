@@ -6,6 +6,13 @@ and [changelog](../CHANGELOG.md).
 
 ## Objective and acceptance criteria
 
+**Requested 10 fps (2026-10-01):** the opt-in five-field CB41 mode passes
+23 fixture frames with exact AY50 and screens. Native deadline increment:
+10 -> 10 T, delta 0. Continue with original-source resampling, one difficult
+window and one selected complete movie set. Preserve the old release until
+full EOF timing/content/cold-boot gates pass. Source 24-to-10-fps sampling
+judder remains separate from publication timing. [Details](CB41_10FPS.md).
+
 **Generic CB41 integration passes (2026-10-01):** `convert_video.py
 --video-codec cb41` uses five-level preparation, exact row/cell dictionaries,
 32-frame partition probes and the passing native profile automatically.

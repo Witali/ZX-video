@@ -90,7 +90,7 @@ class GenericCellCodebookTests(unittest.TestCase):
         def packed(raw, codec, cache):
             count = struct.unpack_from('<H', raw, 4)[0]
             return bytes(100*count), []
-        def sound(audio, lo, hi, labels):
+        def sound(audio, lo, hi, labels, frame_fields=6):
             return bytes([lo, hi]), dict(resident_fits=hi-lo <= 4)
         with patch.object(pipeline, 'pack_blocks', side_effect=packed), \
                 patch.object(pipeline, 'audio_size', side_effect=sound), \

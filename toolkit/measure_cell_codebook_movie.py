@@ -23,16 +23,16 @@ from row_dictionary_video import encode_states
 import resident_audio_z80 as resident
 
 
-def audio_size(frames, start, end, labels):
+def audio_size(frames, start, end, labels, frame_fields=6):
     # Retain the actual global change records; initialize from the prior tick.
     records = ay_interrupt.encode_ticks(frames)
-    selected = records[start*6:end*6]
-    initial = ay_interrupt.registers(frames[start*6-1]) if start else bytes(11)
+    selected = records[start*frame_fields:end*frame_fields]
+    initial = ay_interrupt.registers(frames[start*frame_fields-1]) if start else bytes(11)
     data, metadata = ay_huffman_stream.encode(selected, initial)
     decoded_initial, decoded = ay_huffman_stream.decode(data)
     assert decoded_initial == initial and decoded == selected
     registers = bytearray(initial)
-    for tick, frame in zip(decoded, frames[start*6:end*6], strict=True):
+    for tick, frame in zip(decoded, frames[start*frame_fields:end*frame_fields], strict=True):
         for i in range(1, len(tick), 2):
             registers[tick[i]] = tick[i+1]
         assert bytes(registers) == ay_interrupt.registers(frame)

@@ -29,9 +29,11 @@ def main():
         p.add_argument('--'+name)
     p.add_argument('--fuse', type=Path)
     p.add_argument('--only', help='run one named generated case')
+    p.add_argument('--fps', choices=('25/3', '10'), default='25/3')
     p.add_argument('--movie-states', type=Path)
     p.add_argument('--movie-measurements', type=Path)
     a = p.parse_args()
+    fields = 5 if a.fps == '10' else 6
     if bool(a.movie_states) != bool(a.movie_measurements):
         p.error('supply both saved movie inputs or neither')
     tools = {n: executable(getattr(a, n), n) for n in ('ffmpeg', 'ffprobe', 'zx0', 'lzsa')}
@@ -53,6 +55,8 @@ def main():
                        ['-c:v', 'ffv1', '-c:a', 'pcm_s16le'], 5, []),
     ]
     for name, inputs, encoding, count, extra in cases:
+        if fields == 5:
+            count = dict(single=1, portrait=4, colour=10, anamorphic=3, **{'audio-tail':5})[name]
         if a.only and name != a.only:
             continue
         source = a.output/(name+'.mkv')
@@ -60,7 +64,7 @@ def main():
                         *encoding, str(source)], check=True)
         target = a.output/(name+'-out')
         command = [sys.executable, str(Path(__file__).with_name('convert_video.py')), str(source),
-            '--output', str(target), '--video-codec', 'cb41', '--trdos-rom', str(a.trdos_rom),
+            '--output', str(target), '--video-codec', 'cb41', '--fps', a.fps, '--trdos-rom', str(a.trdos_rom),
             '--verify', 'fuse' if a.fuse else 'cpu', *extra]
         for key, value in tools.items():
             command += ['--'+key, value]
@@ -74,7 +78,7 @@ def main():
         quality = json.loads((target/'video-quality.json').read_bytes())
         timing = json.loads((target/'timing.json').read_bytes())
         assert conversion['complete'] and conversion['frames'] == count
-        assert conversion['ay_ticks'] == 6*count and conversion['brightness_levels'] == 5
+        assert conversion['ay_ticks'] == fields*count and conversion['brightness_levels'] == 5
         assert quality['refinement_never_increased_rgb_error']
         assert sum(r['frames'] for r in conversion['volumes']) == count
         assert all(r['free_sectors'] >= 0 for r in conversion['volumes'])
@@ -92,7 +96,7 @@ def main():
         if name == 'colour':
             swaps = json.loads((target/'disk-swaps.json').read_bytes())
             assert len(swaps) == 2 and all(s['bootstrap_ram_exact'] for s in swaps)
-        row = dict(name=name, frames=count, ay_ticks=count*6, volumes=len(conversion['volumes']),
+        row = dict(name=name, fps=a.fps, frames=count, ay_ticks=count*fields, volumes=len(conversion['volumes']),
             source_sha256=digest(source), conversion_sha256=digest(target/'conversion.json'),
             native_screens_exact=True, dirty_cold_boots_exact=True,
             actual_fuse_nominal_deadlines_met=conversion['timing_verified'],

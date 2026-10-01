@@ -6,10 +6,22 @@ chat. This document scopes work; it does not start an automatic goal.
 ## Project objective
 
 Fit the authorized movie edit on at most three independently bootable TRDs,
-keeping resolution, 25/3 fps and 50 Hz AY. Prioritize exact six-field video
+keeping resolution and 50 Hz AY. The user requested 10 fps on 2026-10-01;
+prioritize exact five-field video
 deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
+
+## Active deliverable: 10 fps
+
+Resample the original at 10 fps, retain the authorized edit and all existing
+AY ticks, and publish every frame on five-field deadlines. First validate
+short fixtures and a difficult movie window; build one selected complete
+set using window-based planning. Confirm full EOF timing, screen bytes,
+sound and cold boots before replacing the verified root images. The prior
+three-disk 25/3-fps set remains the compatibility baseline until this passes.
+Record actual disk count; do not label an oversized or late candidate a
+release. Avoid unrelated codec experiments.
 
 ## Working method
 

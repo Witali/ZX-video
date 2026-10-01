@@ -16,6 +16,11 @@ CB41 additionally needs the LZSA executable. Tool paths can be supplied
 explicitly. The trusted TR-DOS 5.03 ROM must have the existing required hash.
 The output directory must be new or empty.
 
+Add `--fps 10` for one frame every five 50-Hz fields. The default remains
+`--fps 25/3`. FFmpeg samples the source at the requested rate; its duration
+and the AY update frequency do not accelerate. The selected input still
+needs a complete Fuse verification to establish smooth playback.
+
 - Generic input selection, display aspect, letterboxing, EOF/tail hold,
   audio alignment, silence and AY synthesis are reused unchanged. Complete
   input is retained; the movie-specific authorized credit edit is separate.

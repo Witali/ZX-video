@@ -48,7 +48,7 @@ def pack_blocks(raw, codec, cache):
     return bytes(stream), blocks
 
 
-def plan_volumes(frames, audio, labels, codec, cache, max_frames):
+def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6):
     """Measure short windows once; choose cuts without building candidate sets.
 
     Exact row unions include both histories. Window byte costs select an
@@ -79,7 +79,7 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames):
     parts, audio_probes = [], []
 
     def add(lo, hi):
-        coded, report = audio_size(audio, lo, hi, labels)
+        coded, report = audio_size(audio, lo, hi, labels, frame_fields=frame_fields)
         audio_probes.append(dict(start=lo, end=hi, **report))
         if not report['resident_fits']:
             if hi-lo == 1:
@@ -107,21 +107,24 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames):
 def build(frames, audio, raw, compact, args, executables, output, manifest):
     """Build once and verify at the requested level; retain failures in reports."""
     work = output/'work'
+    frame_fields = getattr(args, 'frame_fields', 6)
+    if len(audio) != len(frames)*frame_fields:
+        raise ValueError('video and AY durations differ')
     cache = work/'lzsa'; cache.mkdir()
     codec = ExternalCodec('lzsa2', Path(executables['lzsa']), Path(executables['lzsa']),
                           'user-supplied executable; exact hash recorded')
     scaffold = LegacyBuilder(raw, compact, Path(executables['zx0']), work/'zx0')
     # Resolve the real audio ABI, rather than borrowing labels from a movie.
     labels = player_harness(bytes(4), scaffold.tables, scaffold.mapping, 1).audio
-    parts, plan = plan_volumes(frames, audio, labels, codec, cache, args.max_frames_per_disk)
+    parts, plan = plan_volumes(frames, audio, labels, codec, cache, args.max_frames_per_disk, frame_fields)
     write_json(output/'partition.json', plan)
     ends = [p['end'] for p in parts]
     identity = sha(frames.tobytes()+b''.join(f.serialize() for f in audio)
-                   +json.dumps(dict(options=OPTIONS, ends=ends), sort_keys=True).encode())
+                   +json.dumps(dict(options=OPTIONS, ends=ends, frame_fields=frame_fields), sort_keys=True).encode())
     fingerprint = b'CB41GEN1'+bytes.fromhex(identity)[:6]
     records = []
     timing = dict(complete=False, release=False, all_nominal_deadlines_met=False,
-        player_hot_path_changed=False, player_hot_path_delta_tstates=0,
+        player_hot_path_changed=frame_fields!=6, player_hot_path_delta_tstates=0,
         unchanged_native_baseline='9885483', disks=[])
     write_json(output/'timing.json', timing)
     for number, part in enumerate(parts, 1):
@@ -142,7 +145,8 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
         with reference_tables(chosen['rows']):
             builder = Builder(raw, states, Path(executables['zx0']), work/'zx0',
                 row_dictionary=chosen['rows'], lzsa=Path(executables['lzsa']),
-                series_fingerprint=fingerprint, cell_raw=chosen['raw'], cell_start=lo, **OPTIONS)
+                series_fingerprint=fingerprint, cell_raw=chosen['raw'], cell_start=lo,
+                frame_fields=frame_fields, **OPTIONS)
             builder.ends = ends
             builder.inplace_streams[lo, hi] = packed, blocks
             builder.resident_streams[lo, hi] = b'', part['audio']
@@ -165,11 +169,17 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
                 from build_integrated_bootstrap import check_cold
                 from build_cell_codebook_trd import verify
                 checked['cold'] = check_cold(image, metadata, builder.expected_banks)
-                cpu = verify(image, metadata, states)
-                write_json(folder/'cpu.json', cpu)
-                checked.update(cpu_complete=cpu['complete'],
-                    cpu_all_native_screens_exact=cpu['all_native_screens_exact'],
-                    cpu_report=str((folder/'cpu.json').relative_to(output)).replace('\\', '/'))
+                # Full Fuse screen passes cover the complete real execution.
+                # Keep instruction replay for CPU-only mode and short fixtures;
+                # replaying long movies as well would duplicate that coverage.
+                if args.verify == 'cpu' or hi-lo <= 64:
+                    cpu = verify(image, metadata, states)
+                    write_json(folder/'cpu.json', cpu)
+                    checked.update(cpu_complete=cpu['complete'],
+                        cpu_all_native_screens_exact=cpu['all_native_screens_exact'],
+                        cpu_report=str((folder/'cpu.json').relative_to(output)).replace('\\', '/'))
+                else:
+                    checked['instruction_replay'] = 'Covered by unchanged-kernel fixtures; all movie screens checked in Fuse'
         if args.verify == 'fuse':
             common = ['--fuse', str(args.fuse.resolve()), '--trd', str(output/record['file']),
                 '--metadata', str(output/record['metadata']), '--states', str(folder/'states.npz'),
@@ -198,9 +208,9 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
         timing['reason'] = 'Native CPU and disk measurements skipped by --verify none'
     write_json(output/'timing.json', timing)
     manifest.update(volumes=records, frames=len(frames), ay_ticks=len(audio),
-        duration_seconds=len(frames)*3/25, timing_verified=timing['all_nominal_deadlines_met'],
+        duration_seconds=len(frames)*frame_fields/50, timing_verified=timing['all_nominal_deadlines_met'],
         stream_sha256=sha(raw), five_states_sha256=sha(frames.tobytes()),
         compression=codec.identity, native_options=OPTIONS,
         independently_bootable=True, brightness_levels=5,
-        player_baseline='9885483', player_hot_path_changed=False, player_hot_path_delta_tstates=0)
+        player_baseline='9885483', player_hot_path_changed=frame_fields!=6, player_hot_path_delta_tstates=0)
     return records

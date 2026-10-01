@@ -346,11 +346,15 @@ def main():
     wanted_sectors=[m['video_start_sector']+p for p in positions[min(m.get('runtime_video_preload_sectors',256),m['video_sectors']):]]
     if pending is not None or seek_pending is not None or accepted!=wanted_sectors:
         errors.append(dict(error='runtime sector sequence incomplete or duplicated'))
-    raw=args.raw.read_bytes(); r=Reader(raw); _,_,count,_,_=read_header(r,magic=b'FAP3')
+    raw=args.raw.read_bytes()
+    if hashlib.sha256(raw).hexdigest()!=m['raw_sha256']:
+        raise ValueError('AY reference envelope identity differs from disk metadata')
+    r=Reader(raw); _,_,count,_,_=read_header(r,magic=b'FAP3')
+    fields=m.get('frame_fields',6)
     expected=[]
     for i in range(count):
         _,detail=read_packet(r,stored_guards=False)
-        if m['frame_start']<=i<m['frame_end_exclusive']: expected+=detail['ticks']
+        if m['frame_start']<=i<m['frame_end_exclusive']: expected+=detail['ticks'][:fields]
     actual=[]; cursor=0
     for timestamp in ticks:
         changed=[]
@@ -358,7 +362,7 @@ def main():
             changed+=writes[cursor][1:]; cursor+=1
         actual.append(bytes([len(changed)//2]+changed))
     ay_exact=actual==expected
-    offsets=[q['tstate']-pubs[0]['tstate']-6*i*FIELD for i,q in enumerate(pubs)]
+    offsets=[q['tstate']-pubs[0]['tstate']-fields*i*FIELD for i,q in enumerate(pubs)]
     intervals=[b['tstate']-a['tstate'] for a,b in zip(pubs,pubs[1:])]
     runs=[]; first=None
     for i,q in enumerate(pubs):
@@ -371,9 +375,9 @@ def main():
         errors.append(dict(error='continuation ID was not accepted exactly once'))
     if args.export_warm_ram and (not warm_dump_complete or len(warm_ram)!=49152):
         errors.append(dict(error='warm RAM export incomplete',bytes=len(warm_ram)))
-    complete=bool(nonces==[nonce] and final and final[1]==m['frames'] and final[2]==6*m['frames'] and len(pubs)==m['frames']
+    complete=bool(nonces==[nonce] and final and final[1]==m['frames'] and final[2]==fields*m['frames'] and len(pubs)==m['frames']
         and native_count==m['frames'] and ay_exact and not errors and progress_complete)
-    report=dict(scope=__doc__,part=m['part'],complete=complete,release=False,exit_code=completed.returncode,
+    report=dict(scope=__doc__,part=m['part'],frame_fields=fields,complete=complete,release=False,exit_code=completed.returncode,
         runtime_seconds=time.monotonic()-started,trd_sha256=hashlib.sha256(image).hexdigest(),
         final=final[:4] if final else None,failure=failure,frames=len(pubs),native_frames_sampled=native_count,
         progress_100_percent=progress_complete,ay_ticks=len(ticks),ay_records_exact=ay_exact,
@@ -391,7 +395,7 @@ def main():
         pixel_sample_offsets=samples,pixel_samples_per_frame=len(samples),full_pixel_comparison=False,
         nominal_late_frames=sum(q['late_fields']>0 for q in pubs),max_late_fields=max((q['late_fields'] for q in pubs),default=0),
         actual_out_over_one_field=sum(x>FIELD for x in offsets),max_actual_deviation_tstates=max(offsets,default=0),
-        bad_actual_intervals=sum(x<5*FIELD-64 or x>7*FIELD+64 for x in intervals),
+        bad_actual_intervals=sum(x<(fields-1)*FIELD-64 or x>(fields+1)*FIELD+64 for x in intervals),
         late_runs=runs,publications=pubs,actual_phase_tstates=offsets,reads=reads,
         audio_underrun_tstates=underruns,
         rom_sha256=hashlib.sha256((args.fuse.parent/'roms/trdos.rom').read_bytes()).hexdigest())

@@ -114,6 +114,7 @@ def cpu_profile(builder, start, end):
 
 
 def summarize_fuse(report):
+    fields = report.get('frame_fields', 6)
     complete = report['complete']
     pubs = report['publications']
     phases = report['actual_phase_tstates']
@@ -132,7 +133,7 @@ def summarize_fuse(report):
         missed_nominal_frame_indices=missed, missed_nominal_frames=len(missed),
         fallback_one_field_met=complete and sound_ok and recovery
             and all(-64 <= p <= FIELD+64 for p in phases)
-            and all(5*FIELD-64 <= t <= 7*FIELD+64 for t in intervals),
+            and all((fields-1)*FIELD-64 <= t <= (fields+1)*FIELD+64 for t in intervals),
         late_runs=report['late_runs'], late_runs_recovered=recovery,
         maximum_deviation_tstates=max(map(abs, phases), default=0),
         publication_intervals_tstates=intervals, actual_ay_50hz=sound_ok,
