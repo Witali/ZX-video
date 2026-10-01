@@ -49,11 +49,12 @@ def input_prefix(z, d, *, elapsed_fields, origin,patch_guards=False):
     if patch_guards:
         e('OR A',[0xb7],4);e('LD A,PUSH AF',[0x3e,0xf5],7);jump(0xca,'set_guards')
         e('LD A,RET',[0x3e,0xc9],7);a.label('set_guards')
-        store(z['guard_header']);store(z['guard_literals'])
+        if 'header_patch' in z:store(z['header_patch'])
+        store(z['guard_literals'])
         # OR's zero flag still describes all_loaded. Once complete, the
         # original jumps bypass the input guards with zero per-token cost.
         for key,active,complete,operands in (
-                ('token',z['Token'],z['Token']+3,('token_high_target','token_low_target','token_end_target')),
+                ('token',z['token_guard'],z['token_body'],('token_high_target','token_low_target','token_end_target')),
                 ('long8',z['guard_long8'],z['CopyMoreLiterals'],('long8_target',)),
                 ('long16',z['guard_long16'],z['NextUseBC'],('long16_target',))):
             n('LD HL,guarded '+key,0x21,active,10);jump(0xca,'set_'+key)

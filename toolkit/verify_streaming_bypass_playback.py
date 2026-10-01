@@ -14,9 +14,13 @@ def read(path):return json.loads(path.read_bytes())
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('root','output','evidence'):p.add_argument('--'+key,type=Path,required=True)
+    p.add_argument('--direct-header',action='store_true',help='verify direct guard against the saved branch-bypass player')
     a=p.parse_args();tmp=a.root/'.tmp';a.evidence.mkdir(parents=True,exist_ok=True)
     cases=[('window','streaming-lzsa2-bypass-window','sector-cache-window','ZX-video-front_part07','cache-timing.json'),
            ('part04','streaming-bypass-part04','sector-cache-part04-capacity','part04','timing.json')]
+    if a.direct_header:
+        cases=[('window','direct-lzsa2-header-window','streaming-lzsa2-bypass-window','ZX-video-front_part07','timing.json'),
+               ('part04','direct-lzsa2-header-part04','streaming-bypass-part04','part04','timing.json')]
     artifacts=[];variants={}
     def archive(path,name):
         raw=path.read_bytes();data=raw if path.suffix=='.trd' else gzip.compress(raw,mtime=0)
@@ -27,6 +31,7 @@ def main():
     for name,directory,baseline,stem,tracefile in cases:
         folder=tmp/directory;oldfolder=tmp/baseline;work=folder/'work'/stem;oldwork=oldfolder/'work'/stem
         m=read(folder/(stem+'.json'));old=read(oldfolder/(stem+'.json'))
+        if a.direct_header:assert m['lzsa2']['layout']['direct_header_guard']
         assert m['cell_codebook']['native']==old['cell_codebook']['native']
         hashes={}
         for file in ('codebook.raw','codebook.stream','audio.ayh1','rows.json','states.npz'):
@@ -76,6 +81,35 @@ def main():
         artifacts=artifacts,source_sha256_lf={name:sha(Path(__file__).with_name(name).read_bytes().replace(b'\r\n',b'\n')) for name in
             ('resumable_lzsa2.py','streaming_lzsa2_player.py','inplace_streaming_core.py','streaming_slot_queue.py',
              'build_cell_codebook_trd.py','verify_cached_cell_player.py','profile_cell_delivery.py','verify_streaming_bypass_playback.py')})
+    if a.direct_header:
+        previous=read(tmp/'streaming-lzsa2-tests.json');current=read(tmp/'direct-lzsa2-header-tests.json')
+        assert previous['complete'] and current['complete'] and previous['stream_sha256']==current['stream_sha256']
+        assert current['cases']==40 and all(x['exact'] for c in current['independent'] for x in c['full_flags'])
+        assert (tmp/'direct-lzsa2-header-unit.log').read_text().strip().endswith('OK')
+        for name in ('direct-lzsa2-header-unit.log','direct-lzsa2-header-tests.json','direct-lzsa2-header-tests.log'):
+            archive(tmp/name,name)
+        result.update(baseline_commit='ca70859',scope='Direct AF-dead header guard: same compressed/media bytes on window and full part 4.',
+            component_cases=40,independent_full_flags_cases=240,
+            component_previous_tstates=previous['candidate']['total_tstates'],
+            component_current_tstates=current['candidate']['total_tstates'],
+            component_delta_tstates=current['candidate']['total_tstates']-previous['candidate']['total_tstates'],
+            component_scope='Same 40 blocks; deliberately forced one-sector supplies and fixed output quotas, mocked ROM. Not real playback costs.',
+            header_liveness_cases=512,default_streaming_code_unchanged=True,
+            decision='Retain the opt-in direct header optimization with exact content evidence; assess complete-volume actual OUT deadlines separately. '
+                'Do not replace root images or claim the four-volume objective from this single-volume result.')
+        result['decoder_costs'].update(previous_available_prefix_header_tstates=96,
+            available_prefix_header_tstates=46,available_prefix_header_delta_tstates=-50,
+            direct_guard_has_call=False,
+            input_wait_entry_tstates=dict(previous=98,current=63,delta=-35),
+            overflow_wait_entry_tstates=dict(previous=89,current=51,delta=-38),
+            partial_resume_low_high_tstates=dict(previous=12,current=31,delta=19),
+            partial_resume_equal_high_tstates=dict(previous=12,current=59,delta=47),
+            scope='Independent Z80 measurements at guard/body/input_wait boundaries. Resume now rechecks the output quota '
+                'so completed input follows the patched direct path. CALL/RET/AF saves are eliminated on available headers; '
+                'long-literal guards are unchanged. Quota/producer/IRQ/ULA/physical effects are measured separately.')
+        result['decoder_costs'].pop('available_prefix_header_including_call_tstates')
+        for name in ('test_direct_lzsa2_header.py','test_streaming_lzsa2.py','cell_codebook_player.py','rebuild_cell_player.py'):
+            result['source_sha256_lf'][name]=sha(Path(__file__).with_name(name).read_bytes().replace(b'\r\n',b'\n'))
     write_json(a.output,result)
     print(json.dumps(dict(complete=True,artifacts=len(artifacts),variants={name:v['timing_after'] for name,v in variants.items()},release=False)))
 

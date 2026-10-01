@@ -100,22 +100,33 @@ Do not select this for release or combine it with the rejected read gate.
 Reuse `.tmp/streaming-lzsa2-bypass-window/`, `.tmp/streaming-bypass-part04/`
 and [full evidence](toolkit/streaming_bypass_playback_report.json).
 
-Next scope: optimize the existing input-prefix header check during queue
-starvation, retaining the zero-overhead completed-input path and all media
-bytes. At token entry, AF is about to be overwritten: replacing the
-CALL/save/restore/RET guard with a direct branch to the token body may reduce
-the available-header path from 96 to 46 T. This is only a timing-table
-hypothesis; first verify register/flag liveness, independent Z80 cases and
-interrupt/input-boundary suspension. Then reuse the saved window and full
-part 4 (the short window ends before the complete difficult scene). Do not
-start another format, margin sweep or full-set rebuild. Generic CLI
-integration and four-volume cold/continuation release checks remain open.
+The direct header guard is now implemented as opt-in
+`--streaming-lzsa2 --direct-lzsa2-header`. Independent Z80 tests confirm
+96 ->46 T per available header, saving 50 T. AF is dead at token entry;
+AF', HL/DE/BC and suspension remain exact. Explicit `token_guard` and
+`token_body` labels replace `Token+3`. Defaults generate identical archived
+decoder bytes. Three unit tests /512 AF cases, 40 component blocks and 240
+independent full-flags cases pass. Forced-prefix component totals fall
+25878233 ->23879878 T. See exact wait/resume path deltas in the changelog.
 
-Guard implementation references: `resumable_lzsa2.py` currently CALLs
-`guard_header` at `Token`; `inplace_streaming_core.py` and the independent
-test patch completed-token targets to `Token+3`. A direct guard must use
-explicit guarded/body labels in both production and tests, preserve AF'
-and HL/DE/BC across suspension, and leave long-literal checks intact.
+Both cached scopes have complete cold/native/Fuse screens, AY and sector
+verification. Window [4096,4352): two isolated misses, max1, no invalid
+intervals, recovered at 124/243; actual max70917 T still exceeds one field.
+Full part 4: 31 ->22 misses, 30 ->20 beyond one field, max21 ->15 fields,
+17 ->13 invalid intervals; runs 378, 593..601, 615..625 and 685 recover at
+379/602/626/686. Streams and occupancy remain unchanged: window 781 sectors,
+part 4 2544. Retain the speed improvement as opt-in; neither timing gate
+passes. Reuse `.tmp/direct-lzsa2-header-window/`,
+`.tmp/direct-lzsa2-header-part04/` and
+[direct-header evidence](toolkit/direct_lzsa2_header_report.json).
+
+Next scope: with the cheaper prefix guard, test starting prefix decoding
+while one completed slot remains instead of waiting for count zero. Keep
+the complete-input preference with two or more ready slots, preserve all
+media bytes and compare with this direct-header baseline. Check component
+admission and then the same window AND full part 4. Do not sweep formats,
+read-gate margins or rebuild the whole set. Generic CLI integration and
+four-volume cold/continuation release checks remain open.
 
 The sector-streaming LZSA2 experiment remains unselected. Eager
 prefix decoding produces 27 late frames / maximum 40 fields in the complete

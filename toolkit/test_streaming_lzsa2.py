@@ -34,10 +34,10 @@ class StreamingCPU(LzsaCPU):
 
 
 class Harness(streaming.Harness):
-    def __init__(self,stream,first):
+    def __init__(self,stream,first,*,direct_header=False):
         base.Harness.__init__(self,stream,first,inplace=True)
         c=self.cpu;c.__class__=StreamingCPU;c.decoder_histogram=Counter()
-        regions,self.z,self.layout=resumable_lzsa2.build(core=0x8d74,core_limit=0x8e80,streaming=True)
+        regions,self.z,self.layout=resumable_lzsa2.build(core=0x8d74,core_limit=0x8e80,streaming=True,direct_header=direct_header)
         for at,data in regions:install(c,at,data)
         c.zlabels=self.z;c.patched=set(self.layout['patched_addresses'])
         c.token_rereads={r['address']+1 for r in self.layout['instruction_listing']
@@ -47,8 +47,8 @@ class Harness(streaming.Harness):
         self.regions=regions;self.instructions.update({r['address']:r for r in rows})
 
 
-def independent(payload,expected,*,offset=0,interrupts=False):
-    regions,z,report=resumable_lzsa2.build(core=0x8d74,core_limit=0x8e80,streaming=True)
+def independent(payload,expected,*,offset=0,interrupts=False,direct_header=False):
+    regions,z,report=resumable_lzsa2.build(core=0x8d74,core_limit=0x8e80,streaming=True,direct_header=direct_header)
     _,proof=lzsa2_stream.trace(payload,limit=len(expected))
     place=inplace_layout(len(payload),len(expected),proof['minimum_input_start'],offset)
     assert place['sector_aligned_fits']
@@ -94,10 +94,11 @@ def independent(payload,expected,*,offset=0,interrupts=False):
         assert bytes(m.memory[output:high])==previous
         m.memory[z['input_high']]=(loaded>>8)&255;m.memory[z['all_loaded']]=int(loaded==0x10000)
         for name in ('header_frontier','literal_frontier'):m.memory[z[name]]=(loaded>>8)&255
-        for name in ('guard_header','guard_literals'):m.memory[z[name]]=0xc9 if loaded==0x10000 else 0xf5
+        for name in ('header_patch','guard_literals'):
+            if name in z:m.memory[z[name]]=0xc9 if loaded==0x10000 else 0xf5
         for target,partial,full in (
-                ('token_high_target',z['Token'],z['Token']+3),('token_low_target',z['Token'],z['Token']+3),
-                ('token_end_target',z['Token'],z['Token']+3),('long8_target',z['guard_long8'],z['CopyMoreLiterals']),
+                ('token_high_target',z['token_guard'],z['token_body']),('token_low_target',z['token_guard'],z['token_body']),
+                ('token_end_target',z['token_guard'],z['token_body']),('long8_target',z['guard_long8'],z['CopyMoreLiterals']),
                 ('long16_target',z['guard_long16'],z['NextUseBC'])):
             put_word(m,z[target],full if loaded==0x10000 else partial)
     supply();first=True;cost=[];waits=[];irqs=0
@@ -136,7 +137,8 @@ def cases():
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--stream',type=Path);p.add_argument('--raw',type=Path);a=p.parse_args()
+    p.add_argument('--stream',type=Path);p.add_argument('--raw',type=Path)
+    p.add_argument('--direct-header',action='store_true');a=p.parse_args()
     samples=list(cases())
     if a.stream:
         data=a.stream.read_bytes();raw=a.raw.read_bytes();at=out=0;index=0
@@ -145,14 +147,14 @@ def main():
             samples.append((f'real-{index}',data[at:at+size],raw[out:out+n]));at+=size;out+=n;index+=1
         assert out==len(raw)
     stream=b''.join(struct.pack('<HH',len(raw),len(payload))+payload for _,payload,raw in samples)
-    new=Harness(stream,57);old,oldlayout=old_fixture(stream,57,0x8d74,0x8e80)
+    new=Harness(stream,57,direct_header=a.direct_header);old,oldlayout=old_fixture(stream,57,0x8d74,0x8e80)
     replay=[]
     with patch.object(streaming,'trace',lzsa2_stream.trace),patch.object(base,'trace',lzsa2_stream.trace):
         for i,(name,payload,raw) in enumerate(samples):
             assert lzsa2_stream.trace(payload,limit=len(raw))[0]==raw
             old.block(payload,raw,i);new.block(payload,raw,i,short=i==1)
             row=dict(case=name,payload_sha256=sha(payload),raw_sha256=sha(raw),
-                full_flags=[independent(payload,raw,offset=offset,interrupts=offset==253) for offset in (0,1,252,253,254,255)])
+                full_flags=[independent(payload,raw,offset=offset,interrupts=offset==253,direct_header=a.direct_header) for offset in (0,1,252,253,254,255)])
             replay.append(row);print(name,'exact',flush=True)
     for h,layout in ((old,oldlayout),(new,new.layout)):
         rows={r['address']:r for r in layout['instruction_listing']}

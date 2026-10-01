@@ -88,7 +88,7 @@ def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False):
 
 
 class Builder(PreviousBuilder):
-    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,inline_cells=False,sector_cache=False,streaming_lzsa2=False,optional_read_gate=False,**kwargs):
+    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,inline_cells=False,sector_cache=False,streaming_lzsa2=False,optional_read_gate=False,direct_lzsa2_header=False,**kwargs):
         if frame_fields not in (5,6):raise ValueError('CB41 supports five or six fields per frame')
         self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
@@ -100,6 +100,8 @@ class Builder(PreviousBuilder):
         self.inline_cells=inline_cells
         self.sector_cache=sector_cache
         self.streaming_lzsa2=streaming_lzsa2
+        self.direct_lzsa2_header=direct_lzsa2_header
+        if direct_lzsa2_header and not streaming_lzsa2:raise ValueError('direct header requires streaming LZSA2')
         self.optional_read_gate=optional_read_gate
         if optional_read_gate and not sector_cache:raise ValueError('optional read gate requires sector cache')
         if streaming_lzsa2 and not (self.partial_rows and four_slots):raise ValueError('streaming LZSA2 requires four-slot CB46')
@@ -271,7 +273,7 @@ class Builder(PreviousBuilder):
             sections=fixed_resident_audio.install(banks,m,sections,sound,self.compress,four_slots=self.four_slots)
         if self.streaming_lzsa2:
             import streaming_lzsa2_player
-            streaming_lzsa2_player.install(banks,m)
+            streaming_lzsa2_player.install(banks,m,direct_header=self.direct_lzsa2_header)
         if self.sector_cache:
             import compressed_sector_cache
             compressed_sector_cache.install(banks,m)

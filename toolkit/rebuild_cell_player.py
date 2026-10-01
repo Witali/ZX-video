@@ -48,6 +48,7 @@ def main():
     p.add_argument('--sector-cache',action='store_true',help='prefetch compressed sectors in spare bank-7 RAM')
     p.add_argument('--streaming-lzsa2',action='store_true',help='guarded input-prefix decoding; retain exact LZSA2 bytes')
     p.add_argument('--optional-read-gate',action='store_true',help='defer optional track-changing reads near publication; requires sector cache')
+    p.add_argument('--direct-lzsa2-header',action='store_true',help='direct token-entry input guard; requires streaming LZSA2')
     a=p.parse_args();m=json.loads(a.metadata.read_bytes());source=a.metadata.parent;stem=a.metadata.stem
     if a.cell_probe and a.dictionary_probe:p.error('choose one replacement probe')
     if a.output.exists() and any(a.output.iterdir()):p.error('output must be new or empty')
@@ -108,7 +109,7 @@ def main():
     with reference_tables(rows):
         b=Builder(raw,build_states,a.zx0.resolve(),work/'zx0',row_dictionary=rows,lzsa=a.lzsa.resolve(),
             series_fingerprint=identity,cell_raw=cell,cell_start=start,frame_fields=m['frame_fields'],
-            reference_frames=frames,shared_audio=a.shared_audio,four_slots=a.four_video_slots,inline_cells=a.inline_cells,sector_cache=a.sector_cache,streaming_lzsa2=a.streaming_lzsa2,optional_read_gate=a.optional_read_gate,**OPTIONS)
+            reference_frames=frames,shared_audio=a.shared_audio,four_slots=a.four_video_slots,inline_cells=a.inline_cells,sector_cache=a.sector_cache,streaming_lzsa2=a.streaming_lzsa2,optional_read_gate=a.optional_read_gate,direct_lzsa2_header=a.direct_lzsa2_header,**OPTIONS)
         b.ends=ends;b.inplace_streams[start,end]=coded,blocks;b.resident_streams[start,end]=b'',audio
         image,meta=b.volume(start,end,part);write_json(a.output/(stem+'.json'),meta)
         if image is None:

@@ -12,7 +12,8 @@ from build_fap3_trd import sha
 PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
-def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False):
+def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False):
+    if direct_header and not streaming:raise ValueError('direct header requires streaming input')
     cold=MiniAssembler(PREFIX);a=MiniAssembler(core);rows=[]
     def emit(name,code,t):rows.append(dict(address=a.pc,instruction=name,tstates=t));a.emit(*code)
     def ld(name,op,target,t):
@@ -58,18 +59,19 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False):
     emit('ADD HL,DE',(0x19,),11);ldi();ldir();emit('POP HL',(0xe1,),10)
     a.label('ReadToken');emit('LD A,D',(0x7a,),4);a.labels['high_operand']=a.pc+1;emit('CP high',(0xfe,0),7)
     if streaming:a.labels['token_high_target']=a.pc+1
-    jp(0xda,'Token')
+    jp(0xda,'guard_header' if direct_header else 'Token')
     jr(0x20,'Yield');emit('LD A,E',(0x7b,),4);a.labels['low_operand']=a.pc+1;emit('CP low',(0xfe,0),7)
     if streaming:a.labels['token_low_target']=a.pc+1
-    jp(0xda,'Token')
+    jp(0xda,'guard_header' if direct_header else 'Token')
     a.label('Yield');ld('LD A,(block_end+1)',0x3a,'block_end_high',13);emit('CP D',(0xba,),4);jr(0x20,'Suspend')
     ld('LD A,(block_end)',0x3a,'block_end',13);emit('CP E',(0xbb,),4)
     if streaming:a.labels['token_end_target']=a.pc+1
-    jp(0xca,'Token')
+    jp(0xca,'guard_header' if direct_header else 'Token')
     a.label('Suspend');ld('CALL yield',0xcd,'slice_yield',17);jr(0x18,'ReadToken')
     # AND 24 has even parity for LL=00/11 and odd parity for LL=01/10.
     a.label('Token')
-    if streaming:ld('CALL guard_header',0xcd,'guard_header',17)
+    if streaming and not direct_header:ld('CALL guard_header',0xcd,'guard_header',17)
+    a.label('token_body')
     emit('LD A,(HL)',(0x7e,),7);emit('AND 24',(0xe6,24),7);jp(0xea,'Literals00or11')
     for _ in range(3):emit('RRCA',(0x0f,),4)
     emit('LD C,A',(0x4f,),4);emit('LD A,(HL)',(0x7e,),7)
@@ -114,11 +116,20 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False):
         # literals take separate guarded continuations, preserving the fast
         # normal path. The input wrapper patches both guard entries to RET
         # once the final sector and shared carry have been saved.
-        cold.label('guard_header');cold.emit(0xf5,0x7d,0xc6,31,0x7c,0xce,0)
+        cold.label('guard_header')
+        if not direct_header:cold.label('header_patch');cold.emit(0xf5)
+        cold.emit(0x7d,0xc6,31,0x7c,0xce,0)
         cold.rel8(0x38,'header_short');cold.emit(0xfe);cold.label('header_frontier');cold.emit(0)
-        cold.rel8(0x38,'header_ready')
-        cold.label('header_short');cold.emit(0xf1);cold.abs16(0xcd,'input_wait');cold.rel8(0x18,'guard_header')
-        cold.label('header_ready');cold.emit(0xf1,0xc9)
+        if direct_header:
+            # AF is dead at token entry: LD A,(HL)/AND replaces it. AF' holds
+            # the nibble reservoir and is left untouched. Re-enter ReadToken
+            # after input_wait so a newly complete block bypasses the guard.
+            cold.abs16(0xda,'token_body');cold.label('header_short')
+            cold.abs16(0xcd,'input_wait');cold.abs16(0xc3,'ReadToken')
+        else:
+            cold.rel8(0x38,'header_ready')
+            cold.label('header_short');cold.emit(0xf1);cold.abs16(0xcd,'input_wait');cold.rel8(0x18,'guard_header')
+            cold.label('header_ready');cold.emit(0xf1,0xc9)
         cold.label('guard_long8');cold.emit(0x4f,0x78,0x06,0)
         cold.abs16(0xcd,'guard_literals');cold.abs16(0xc3,'copy_long8')
         cold.label('guard_long16');cold.emit(0x23)
@@ -138,10 +149,11 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False):
         for label in ('input_high','all_loaded','input_needed','finished'):cold.label(label);cold.emit(0)
     cold.label('end')
     labels=cold.labels|a.labels;labels['block_end_high']=labels['block_end']+1
+    if streaming:labels['token_guard']=labels['guard_header'] if direct_header else labels['Token']
     if a.pc>core_limit or cold.pc>PREFIX_LIMIT:raise ValueError(('LZSA2 does not fit',hex(a.pc),hex(cold.pc)))
     regions=[(PREFIX,cold.resolve(labels)),(core,a.resolve(labels))]
     # Fixed cold-wrapper timings from Zilog UM0080; data starts at state.
-    cold_ops={0xcd:('CALL nn',3,17),0xc3:('JP nn',3,10),0xc2:('JP NZ,nn',3,10),
+    cold_ops={0xcd:('CALL nn',3,17),0xc3:('JP nn',3,10),0xc2:('JP NZ,nn',3,10),0xda:('JP C,nn',3,10),
         0x2a:('LD HL,(nn)',3,16),0x21:('LD HL,nn',3,10),0x11:('LD DE,nn',3,10),
         0x31:('LD SP,nn',3,10),0x32:('LD (nn),A',3,13),0xb7:('OR A',1,4),
         0xd0:('RET NC',1,[5,11]),0xc9:('RET',1,10),0x20:('JR NZ,e',2,[7,12]),
@@ -165,13 +177,15 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False):
         rows.append(dict(address=PREFIX+pos,instruction=name,tstates=t));pos+=size
     if streaming:
         for row in rows:
-            if row['address'] in (labels['guard_header'],labels['guard_literals']):
+            if row['address'] in ([labels['header_patch']] if 'header_patch' in labels else [])+[labels['guard_literals']]:
                 row.update(instruction='PUSH AF / RET when all input loaded',tstates=[10,11])
     return regions,labels,dict(prefix_end=cold.pc,core_end=a.pc,code_bytes=sum(len(b) for _,b in regions),
         patched_addresses=[labels[k] for k in ('high_operand','low_operand','offset')]+[labels['offset']+1]
-            +([labels[k] for k in ('guard_header','guard_literals','header_frontier','literal_frontier')]
+            +([labels[k] for k in (('header_patch',) if 'header_patch' in labels else ())+('guard_literals','header_frontier','literal_frontier')]
               +[labels[k]+i for k in ('token_high_target','token_low_target','token_end_target','long8_target','long16_target') for i in (0,1)]
               if streaming else []),
-        instruction_listing=rows,upstream_commit='15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5',
+        instruction_listing=rows,**(dict(direct_header_guard=True,available_header_tstates=46,
+            previous_available_header_tstates=96,available_header_delta_tstates=-50) if direct_header else {}),
+        upstream_commit='15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5',
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         upstream_sha256=sha((Path(__file__).parent/'third_party/lzsa/unlzsa2_fast.asm').read_bytes()))

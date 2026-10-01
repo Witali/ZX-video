@@ -5,6 +5,55 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: direct LZSA2 header guard saves 50 T and improves complete part-4 delivery
+
+- Objective: improve the remaining input-prefix path without changing
+  compressed data or the completed-input fast path. Baseline `ca70859`;
+  branch-bypass CB46/LZSA2, four slots, sector cache, inline renderer, AY50,
+  10 fps. Reused the exact 256-frame window and full part 4.
+- New opt-in `--direct-lzsa2-header` requires `--streaming-lzsa2`. The quota
+  branches enter a guard directly, then jump to the token body. Token parsing
+  overwrites AF, so the header guard can omit CALL/RET/PUSH AF/POP AF. AF',
+  HL/DE/BC and the private decoder stack remain preserved across suspension.
+  Long-literal guards are unchanged. Explicit `token_guard`/`token_body`
+  labels replace the fragile `Token+3` assumption in producer and tests.
+- Independent Z80 checks confirm the available-header path **96 ->46 T**,
+  delta -50. Frontier-wait entry **98 ->63 T**, delta -35; overflow-wait entry
+  **89 ->51 T**, delta -38. After input_wait, rechecking the output quota costs
+  **12 ->31/59 T**, delta +19/+47, depending on its high-byte comparison.
+  That re-entry is necessary when the last sector has switched to the complete
+  input path. Completed-token/long16 deltas remain 0 and long8 remains -2 T
+  versus the original non-streaming decoder. ROM/IRQ/ULA/disk costs are excluded.
+- Three unit tests cover 512 AF/register cases, both archived default decoder
+  variants byte-for-byte, frontier/overflow waits and resume costs. Forty
+  component blocks and 240 independent full-flags in-place cases pass, including
+  six stream alignments, injected interrupts, long literals and all offset
+  widths. With the same deliberately forced sector-prefix workload, total
+  component cost falls **25878233 ->23879878 T**, saving 1998355 T. This is
+  not a physical-playback timing estimate.
+- Window [4096,4352): two nominal misses remain, at 123/242, recovered at
+  124/243; max one field, zero invalid intervals, actual maximum 70917 T.
+  This still exceeds the strict 70908-T fallback by nine T. Capacity remains
+  781 sectors and video remains 185681 bytes.
+- Full part 4 [3744,5066): **31 ->22 nominal misses**, **30 ->20** beyond one
+  field, **21 ->15 maximum fields**, **17 ->13 invalid intervals**. Runs 378,
+  593..601, 615..625 and 685 recover at 379/602/626/686. Maximum actual deviation
+  is 1063618 T. Capacity stays 2544 sectors and video stays 623005 bytes.
+- Both scopes pass dirty-RAM cold boot, every native screen with input-frontier,
+  cache and retired-memory guards, full Fuse screen-byte capture (1769472 /
+  9137664 bytes), exact AY50 (1280/6610 ticks) and runtime sectors (726/2434).
+  Retain this measured speed improvement as opt-in, not a release: complete
+  four-volume timing and preceding-EOF continuations remain unverified.
+- Reproduce with [unit tests](toolkit/test_direct_lzsa2_header.py),
+  `test_streaming_lzsa2.py --direct-header`, cached rebuilder, existing native/
+  Fuse verifiers and `verify_streaming_bypass_playback.py --direct-header`.
+  [Report](toolkit/direct_lzsa2_header_report.json) preserves exact inputs and
+  traces. Root images and converter defaults remain unchanged.
+- Next bounded scheduling question: with cheaper prefix checks, can decoding
+  begin while one completed slot remains, instead of waiting for count zero?
+  Preserve the full-input fast path with two or more slots. Check the same
+  window and full part 4; do not sweep other formats or rebuild the whole set.
+
 ## 2026-10-01: complete branch-bypass LZSA2 playback, window gain does not pass full-volume timing
 
 - Objective: finish verification of the existing, previously cold/component-only
