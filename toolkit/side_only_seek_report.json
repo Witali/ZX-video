@@ -1,0 +1,2565 @@
+{
+  "complete": true,
+  "release": false,
+  "date": "2026-10-01",
+  "baseline_commit": "23dc128",
+  "scope": "Verify and archive side-only disk reads against exact saved media baselines.",
+  "variants": {
+    "window": {
+      "frames": 256,
+      "frame_start": 4096,
+      "frame_end_exclusive": 4352,
+      "video_bytes": 185681,
+      "used_sectors": 781,
+      "runtime_sectors": 726,
+      "exact_media_sha256": {
+        "codebook.raw": "2fd4e116364e7dc550b793ea837ca891b0233d50987ab9fa2d591aed11035cef",
+        "codebook.stream": "28b91b61ac8e442c078ceac768efe2e21aac0361da033cc5db065b7b6f0ec3bc",
+        "audio.ayh1": "5892310808b77cd0f423096d553947050b613418160e3ed89b1797e76a309ad2",
+        "states.npz": "e0cfd8527f9c8626b76e0d5250ff61b1074920c1ba696cd4e1b98b06b0e06544",
+        "rows.json": "260163c8ccc79f0472378a9b317c22f26fc03af80355bf8356d2e32fcbd67971"
+      },
+      "decoder_renderer_packet_code_identical": true,
+      "cold": {
+        "cold_sections": [
+          {
+            "bank": 2,
+            "offset": 0,
+            "bytes": 16384,
+            "sha256": "3f91087c8b16e26c87711c9610a6ec5f67be79921755a1aa0c83b6a82f4eafd3"
+          },
+          {
+            "bank": 7,
+            "offset": 0,
+            "bytes": 9216,
+            "sha256": "fc9c4521783eb6bd27c10c17772e1136699f329420c971c25c0f3577eaefe135"
+          },
+          {
+            "bank": 5,
+            "offset": 13824,
+            "bytes": 2560,
+            "sha256": "78eb91d050c0ec941d07d39bb50d6e55c1925e5e847c9fae30e92df2c28e9c14"
+          },
+          {
+            "bank": 6,
+            "offset": 0,
+            "bytes": 3900,
+            "sha256": "4e97bbecd61ebe112c369ff1349a1433999261fff3aa98544c72d20d16aaaaf8"
+          },
+          {
+            "bank": 5,
+            "offset": 0,
+            "bytes": 6912,
+            "sha256": "0da79a1c90b1dadd7a5ec94ef721046591b9933ae732e5917b6ee5c8b5e8aa2b"
+          }
+        ],
+        "mocked_boot_tstates": 1808709,
+        "boot_sectors": 51,
+        "dirty_ram_boot_exact": true
+      },
+      "native_screens_exact": true,
+      "fuse_screen_bytes": 1769472,
+      "ay_ticks": 1280,
+      "timing": {
+        "before": {
+          "nominal_late_frames": 2,
+          "max_late_fields": 1,
+          "max_actual_deviation_tstates": 70917,
+          "actual_out_over_one_field": 2,
+          "bad_actual_intervals": 0,
+          "late_runs": [
+            {
+              "start": 123,
+              "end": 123,
+              "recovered_at": 124
+            },
+            {
+              "start": 242,
+              "end": 242,
+              "recovered_at": 243
+            }
+          ]
+        },
+        "after": {
+          "nominal_late_frames": 0,
+          "max_late_fields": 0,
+          "max_actual_deviation_tstates": 16,
+          "actual_out_over_one_field": 0,
+          "bad_actual_intervals": 0,
+          "late_runs": []
+        }
+      },
+      "trajectory": {
+        "before": {
+          "first_sector": 68,
+          "last_sector": 796,
+          "sectors": 726,
+          "logical_tracks": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49
+          ],
+          "first_cylinder": 2,
+          "last_cylinder": 24,
+          "cylinder_steps": 22,
+          "minimum_cylinder_steps": 22,
+          "backward_steps": 0,
+          "same_cylinder_side_changes": 23,
+          "rom_calls": {
+            "side": 45,
+            "seek": 45,
+            "keepalive": 4
+          },
+          "read_elapsed_tstates": 23045185,
+          "rom_call_elapsed_tstates": {
+            "side": 4821,
+            "seek": 483803,
+            "keepalive": 1580
+          },
+          "scope": "Runtime sector traversal; cold bootstrap and physical drive experiments are separate."
+        },
+        "after": {
+          "first_sector": 68,
+          "last_sector": 796,
+          "sectors": 726,
+          "logical_tracks": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49
+          ],
+          "first_cylinder": 2,
+          "last_cylinder": 24,
+          "cylinder_steps": 22,
+          "minimum_cylinder_steps": 22,
+          "backward_steps": 0,
+          "same_cylinder_side_changes": 23,
+          "rom_calls": {
+            "side": 45,
+            "seek": 22,
+            "keepalive": 4
+          },
+          "read_elapsed_tstates": 20582578,
+          "rom_call_elapsed_tstates": {
+            "side": 3930,
+            "seek": 475620,
+            "keepalive": 1580
+          },
+          "scope": "Runtime sector traversal; cold bootstrap and physical drive experiments are separate."
+        }
+      },
+      "elapsed_profile": {
+        "complete": true,
+        "release": false,
+        "scope": "Profile exact cell-player stage boundaries in a complete real Fuse run.\n\nElapsed residuals include IRQs, contention and control code. They are not\ndeterministic CPU times. Report the independent CPU replay separately.\n",
+        "frame_fields": 5,
+        "nominal_frame_tstates": 354540,
+        "nominal_late_frames": 0,
+        "max_late_fields": 0,
+        "stages": {
+          "packet": {
+            "elapsed": {
+              "count": 256,
+              "total": 7479383,
+              "mean": 29216.33984375,
+              "p50": 21948,
+              "p90": 60423,
+              "p99": 80787,
+              "max": 107617
+            },
+            "disk_service": {
+              "count": 256,
+              "total": 0,
+              "mean": 0.0,
+              "p50": 0,
+              "p90": 0,
+              "p99": 0,
+              "max": 0
+            },
+            "residual": {
+              "count": 256,
+              "total": 7479383,
+              "mean": 29216.33984375,
+              "p50": 21948,
+              "p90": 60423,
+              "p99": 80787,
+              "max": 107617
+            },
+            "empty_wait": {
+              "count": 256,
+              "total": 6753,
+              "mean": 26.37890625,
+              "p50": 0,
+              "p90": 0,
+              "p99": 947,
+              "max": 984
+            }
+          },
+          "draw": {
+            "elapsed": {
+              "count": 256,
+              "total": 31649270,
+              "mean": 123629.9609375,
+              "p50": 113716,
+              "p90": 204778,
+              "p99": 226832,
+              "max": 248078
+            },
+            "disk_service": {
+              "count": 256,
+              "total": 395,
+              "mean": 1.54296875,
+              "p50": 0,
+              "p90": 0,
+              "p99": 0,
+              "max": 395
+            },
+            "residual": {
+              "count": 256,
+              "total": 31648875,
+              "mean": 123628.41796875,
+              "p50": 113716,
+              "p90": 204778,
+              "p99": 226832,
+              "max": 248078
+            },
+            "empty_wait": {
+              "count": 256,
+              "total": 0,
+              "mean": 0.0,
+              "p50": 0,
+              "p90": 0,
+              "p99": 0,
+              "max": 0
+            }
+          }
+        },
+        "sector_elapsed": {
+          "count": 726,
+          "total": 20582578,
+          "mean": 28350.658402203855,
+          "p50": 23354,
+          "p90": 24486,
+          "p99": 133337,
+          "max": 134473
+        },
+        "active_elapsed": 90650451,
+        "active_disk_service": 14810514,
+        "decode_slices": {
+          "count": 948,
+          "total": 18244068,
+          "mean": 19244.79746835443,
+          "p50": 20112,
+          "p90": 23420,
+          "p99": 25195,
+          "max": 29361
+        },
+        "active_decode_elapsed": 13555858,
+        "decode_scope": "Queue decoder bridge through its return: includes LZSA2, paging, IRQ and ULA; overlaps packet stages",
+        "disk_service_all": 21063708,
+        "disk_service_in_stages": 395,
+        "empty_wait": {
+          "count": 15,
+          "total": 6753,
+          "mean": 450.2,
+          "p50": 473,
+          "p90": 482,
+          "p99": 504,
+          "max": 504
+        },
+        "queue_at_packet": {
+          "4": 75,
+          "3": 49,
+          "2": 85,
+          "1": 40,
+          "0": 7
+        },
+        "deterministic_cpu": {
+          "scope": "Native packets/queue/copies/LZSA2/draw with mocked ROM, host-selected back screen after first prime; not scheduling.",
+          "stages": {
+            "slot_queue": 1189611,
+            "slot_bridge": 4209242,
+            "inplace_slot_input": 789817,
+            "inplace_streaming_input": 261728,
+            "compressed_sector_cache": 34466,
+            "null": 17900024,
+            "schedule": 81,
+            "cb41_packet": 98900,
+            "book_load": 54028,
+            "setup": 1266536,
+            "bitmap_mask": 3450733,
+            "mode": 4531950,
+            "front_source": 496056,
+            "cell_copy": 6900660,
+            "cell_return": 1387931,
+            "literal": 7102557,
+            "partial_row": 368745,
+            "dictionary": 466100,
+            "attribute_mask": 3675539
+          },
+          "draw": {
+            "count": 255,
+            "total": 29699024,
+            "mean": 116466.76078431372,
+            "p50": 106961,
+            "p90": 190000,
+            "p99": 215910,
+            "max": 217987
+          },
+          "next_packet": {
+            "count": 254,
+            "total": 20865299,
+            "mean": 82146.84645669292,
+            "p50": 69672,
+            "p90": 178174,
+            "p99": 229764,
+            "max": 260013
+          }
+        },
+        "trd_sha256": "ade8ae1b672604e572ec9236f6f472f7eccf061a47f48ea9486a36c81439713b"
+      }
+    },
+    "part04": {
+      "frames": 1322,
+      "frame_start": 3744,
+      "frame_end_exclusive": 5066,
+      "video_bytes": 622695,
+      "used_sectors": 2543,
+      "runtime_sectors": 2433,
+      "exact_media_sha256": {
+        "codebook.raw": "0d222ff69a49f9e0292aea83041931443e485a69f2860b4f414236f3deb3954f",
+        "codebook.stream": "d1652981d3175e1d12bcd2b06bb7d48ff104ba556c13d5f367a76a5b8f2a39c6",
+        "audio.ayh1": "5021c0f9d53abc7c26df1f2eab6f749a9db84426a186aeda9fed3f58793752b0",
+        "states.npz": "59c377d3b6791415d5f7fa47ae4d05da69217d4f8bca18023ca43c8457591769",
+        "rows.json": "46845c7c8f47578ff5fb1874fadc2187ebb918a7af936aae13bb15c6671d86e0"
+      },
+      "decoder_renderer_packet_code_identical": true,
+      "cold": {
+        "cold_sections": [
+          {
+            "bank": 2,
+            "offset": 0,
+            "bytes": 16384,
+            "sha256": "9a2d79ccfa6ec8d9294b82aaac3556b6c28c022ae425b6891ab60fb46e5893f7"
+          },
+          {
+            "bank": 7,
+            "offset": 0,
+            "bytes": 9216,
+            "sha256": "adea84e05941963edd3b21b7206df9507adf0a3349809c5850bc66078489ef88"
+          },
+          {
+            "bank": 5,
+            "offset": 13824,
+            "bytes": 2560,
+            "sha256": "78eb91d050c0ec941d07d39bb50d6e55c1925e5e847c9fae30e92df2c28e9c14"
+          },
+          {
+            "bank": 6,
+            "offset": 0,
+            "bytes": 6656,
+            "sha256": "dad5572c1e7f8281e91b42d3c5b1a380ac5aef3c1a1a45c623483d83f14d0152"
+          },
+          {
+            "bank": 6,
+            "offset": 6656,
+            "bytes": 6912,
+            "sha256": "d9f47b6c39b0ff9cf9290f32968456037101c58bca0c750e8d16f42f20afef36"
+          },
+          {
+            "bank": 6,
+            "offset": 13568,
+            "bytes": 2816,
+            "sha256": "8b56a3925954910e6b262be8cd77baafec4a0446c93fe4d7f550a7604257aac3"
+          },
+          {
+            "bank": 5,
+            "offset": 0,
+            "bytes": 6912,
+            "sha256": "8a00fd08c3b08a62c05dce54f483eb2ed3deedbbd2898e0e6abdc2d12812f939"
+          }
+        ],
+        "mocked_boot_tstates": 2239943,
+        "boot_sectors": 111,
+        "dirty_ram_boot_exact": true
+      },
+      "native_screens_exact": true,
+      "fuse_screen_bytes": 9137664,
+      "ay_ticks": 6610,
+      "timing": {
+        "before": {
+          "nominal_late_frames": 22,
+          "max_late_fields": 15,
+          "max_actual_deviation_tstates": 1063627,
+          "actual_out_over_one_field": 21,
+          "bad_actual_intervals": 11,
+          "late_runs": [
+            {
+              "start": 378,
+              "end": 378,
+              "recovered_at": 379
+            },
+            {
+              "start": 593,
+              "end": 602,
+              "recovered_at": 603
+            },
+            {
+              "start": 615,
+              "end": 625,
+              "recovered_at": 626
+            }
+          ]
+        },
+        "after": {
+          "nominal_late_frames": 0,
+          "max_late_fields": 0,
+          "max_actual_deviation_tstates": 19,
+          "actual_out_over_one_field": 0,
+          "bad_actual_intervals": 0,
+          "late_runs": []
+        }
+      },
+      "trajectory": {
+        "before": {
+          "first_sector": 126,
+          "last_sector": 2551,
+          "sectors": 2433,
+          "logical_tracks": [
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159
+          ],
+          "first_cylinder": 3,
+          "last_cylinder": 79,
+          "cylinder_steps": 76,
+          "minimum_cylinder_steps": 76,
+          "backward_steps": 0,
+          "same_cylinder_side_changes": 76,
+          "rom_calls": {
+            "side": 152,
+            "seek": 152,
+            "keepalive": 22
+          },
+          "read_elapsed_tstates": 75447149,
+          "rom_call_elapsed_tstates": {
+            "side": 12987,
+            "seek": 1674204,
+            "keepalive": 8725
+          },
+          "scope": "Runtime sector traversal; cold bootstrap and physical drive experiments are separate."
+        },
+        "after": {
+          "first_sector": 126,
+          "last_sector": 2551,
+          "sectors": 2433,
+          "logical_tracks": [
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110,
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159
+          ],
+          "first_cylinder": 3,
+          "last_cylinder": 79,
+          "cylinder_steps": 76,
+          "minimum_cylinder_steps": 76,
+          "backward_steps": 0,
+          "same_cylinder_side_changes": 76,
+          "rom_calls": {
+            "side": 152,
+            "seek": 76,
+            "keepalive": 29
+          },
+          "read_elapsed_tstates": 67412095,
+          "rom_call_elapsed_tstates": {
+            "side": 13166,
+            "seek": 1640199,
+            "keepalive": 11734
+          },
+          "scope": "Runtime sector traversal; cold bootstrap and physical drive experiments are separate."
+        }
+      },
+      "elapsed_profile": {
+        "complete": true,
+        "release": false,
+        "scope": "Profile exact cell-player stage boundaries in a complete real Fuse run.\n\nElapsed residuals include IRQs, contention and control code. They are not\ndeterministic CPU times. Report the independent CPU replay separately.\n",
+        "frame_fields": 5,
+        "nominal_frame_tstates": 354540,
+        "nominal_late_frames": 0,
+        "max_late_fields": 0,
+        "stages": {
+          "packet": {
+            "elapsed": {
+              "count": 1322,
+              "total": 27851300,
+              "mean": 21067.549167927384,
+              "p50": 13496,
+              "p90": 45219,
+              "p99": 82718,
+              "max": 202557
+            },
+            "disk_service": {
+              "count": 1322,
+              "total": 71880,
+              "mean": 54.37216338880484,
+              "p50": 0,
+              "p90": 0,
+              "p99": 0,
+              "max": 23773
+            },
+            "residual": {
+              "count": 1322,
+              "total": 27779420,
+              "mean": 21013.17700453858,
+              "p50": 13496,
+              "p90": 45219,
+              "p99": 81926,
+              "max": 179591
+            },
+            "empty_wait": {
+              "count": 1322,
+              "total": 1011895,
+              "mean": 765.4273827534039,
+              "p50": 0,
+              "p90": 0,
+              "p99": 984,
+              "max": 137732
+            }
+          },
+          "draw": {
+            "elapsed": {
+              "count": 1322,
+              "total": 121070085,
+              "mean": 91581.00226928896,
+              "p50": 72781,
+              "p90": 183501,
+              "p99": 227155,
+              "max": 258003
+            },
+            "disk_service": {
+              "count": 1322,
+              "total": 1614,
+              "mean": 1.220877458396369,
+              "p50": 0,
+              "p90": 0,
+              "p99": 0,
+              "max": 429
+            },
+            "residual": {
+              "count": 1322,
+              "total": 121068471,
+              "mean": 91579.78139183056,
+              "p50": 72781,
+              "p90": 183501,
+              "p99": 227155,
+              "max": 258003
+            },
+            "empty_wait": {
+              "count": 1322,
+              "total": 0,
+              "mean": 0.0,
+              "p50": 0,
+              "p90": 0,
+              "p99": 0,
+              "max": 0
+            }
+          }
+        },
+        "sector_elapsed": {
+          "count": 2433,
+          "total": 67412095,
+          "mean": 27707.39621866009,
+          "p50": 23350,
+          "p90": 24483,
+          "p99": 133351,
+          "max": 134473
+        },
+        "active_elapsed": 468516460,
+        "active_disk_service": 63831218,
+        "decode_slices": {
+          "count": 3336,
+          "total": 63435913,
+          "mean": 19015.56145083933,
+          "p50": 19355,
+          "p90": 22969,
+          "p99": 26139,
+          "max": 116301
+        },
+        "active_decode_elapsed": 59146957,
+        "decode_scope": "Queue decoder bridge through its return: includes LZSA2, paging, IRQ and ULA; overlaps packet stages",
+        "disk_service_all": 69077194,
+        "disk_service_in_stages": 73494,
+        "empty_wait": {
+          "count": 61,
+          "total": 1011895,
+          "mean": 16588.44262295082,
+          "p50": 480,
+          "p90": 67788,
+          "p99": 122955,
+          "max": 137732
+        },
+        "queue_at_packet": {
+          "4": 611,
+          "3": 370,
+          "2": 194,
+          "1": 118,
+          "0": 29
+        },
+        "deterministic_cpu": {
+          "scope": "Native packets/queue/copies/LZSA2/draw with mocked ROM, host-selected back screen after first prime; not scheduling.",
+          "stages": {
+            "slot_queue": 5457511,
+            "slot_bridge": 15518135,
+            "inplace_slot_input": 2159670,
+            "inplace_streaming_input": 877973,
+            "compressed_sector_cache": 80555,
+            "null": 63185509,
+            "schedule": 81,
+            "cb41_packet": 510660,
+            "book_load": 54028,
+            "setup": 6540789,
+            "bitmap_mask": 15807549,
+            "mode": 15842363,
+            "dictionary": 1592580,
+            "cell_copy": 24925500,
+            "cell_return": 4847280,
+            "front_source": 1941918,
+            "literal": 23221506,
+            "partial_row": 1499067,
+            "attribute_mask": 16034461,
+            "cb42_row_updates": 1272
+          },
+          "draw": {
+            "count": 1321,
+            "total": 112883377,
+            "mean": 85452.97274791825,
+            "p50": 66894,
+            "p90": 173434,
+            "p99": 214291,
+            "max": 224259
+          },
+          "next_packet": {
+            "count": 1320,
+            "total": 88485294,
+            "mean": 67034.31363636363,
+            "p50": 50659,
+            "p90": 147691,
+            "p99": 221425,
+            "max": 275333
+          }
+        },
+        "trd_sha256": "35d3fb870245a91294af794134e10a7762c0cfbd7ea31c9c80fc1bb380b475e5"
+      }
+    }
+  },
+  "unit_tests": 8,
+  "geometry_cases": 2560,
+  "independent_full_flags_cases": 1024,
+  "ram_instruction_timings": {
+    "same_track": {
+      "before": {
+        "tstates": 896,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "seek_helper_tstates": 0,
+        "restore_calls": 1,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "after": {
+        "tstates": 896,
+        "code_bytes": 227,
+        "seek_bytes": 107,
+        "seek_helper_tstates": 0,
+        "restore_calls": 1,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 0
+    },
+    "side_one": {
+      "before": {
+        "tstates": 1351,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "seek_helper_tstates": 401,
+        "restore_calls": 1,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "after": {
+        "tstates": 1959,
+        "code_bytes": 227,
+        "seek_bytes": 107,
+        "seek_helper_tstates": 1009,
+        "restore_calls": 1,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 608
+    },
+    "side_zero": {
+      "before": {
+        "tstates": 1341,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "seek_helper_tstates": 391,
+        "restore_calls": 1,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "after": {
+        "tstates": 1949,
+        "code_bytes": 227,
+        "seek_bytes": 107,
+        "seek_helper_tstates": 999,
+        "restore_calls": 1,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 608
+    },
+    "cylinder": {
+      "before": {
+        "tstates": 1341,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "seek_helper_tstates": 391,
+        "restore_calls": 1,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "after": {
+        "tstates": 1406,
+        "code_bytes": 227,
+        "seek_bytes": 107,
+        "seek_helper_tstates": 456,
+        "restore_calls": 1,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 65
+    },
+    "head_reload": {
+      "before": {
+        "tstates": 1351,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "seek_helper_tstates": 401,
+        "restore_calls": 1,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "after": {
+        "tstates": 1416,
+        "code_bytes": 227,
+        "seek_bytes": 107,
+        "seek_helper_tstates": 466,
+        "restore_calls": 1,
+        "full_calls": 0,
+        "direct_calls": 1,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 65
+    },
+    "cold": {
+      "before": {
+        "tstates": 841,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "seek_helper_tstates": 0,
+        "restore_calls": 1,
+        "full_calls": 1,
+        "direct_calls": 0,
+        "fallback_calls": 0
+      },
+      "after": {
+        "tstates": 841,
+        "code_bytes": 227,
+        "seek_bytes": 107,
+        "seek_helper_tstates": 0,
+        "restore_calls": 1,
+        "full_calls": 1,
+        "direct_calls": 0,
+        "fallback_calls": 0
+      },
+      "delta_tstates": 0
+    },
+    "side_short_retry": {
+      "before": {
+        "tstates": 1478,
+        "code_bytes": 227,
+        "seek_bytes": 89,
+        "seek_helper_tstates": 401,
+        "restore_calls": 1,
+        "full_calls": 1,
+        "direct_calls": 1,
+        "fallback_calls": 1
+      },
+      "after": {
+        "tstates": 2086,
+        "code_bytes": 227,
+        "seek_bytes": 107,
+        "seek_helper_tstates": 1009,
+        "restore_calls": 1,
+        "full_calls": 1,
+        "direct_calls": 1,
+        "fallback_calls": 1
+      },
+      "delta_tstates": 608
+    }
+  },
+  "settle_loop_tstates": 717,
+  "extra_stack_bytes": 2,
+  "generic_fixture": [
+    {
+      "file": "ZX-video_part01.trd",
+      "frames": 4,
+      "used_sectors": 31,
+      "zero_late": true
+    },
+    {
+      "file": "ZX-video_part02.trd",
+      "frames": 4,
+      "used_sectors": 42,
+      "zero_late": true
+    },
+    {
+      "file": "ZX-video_part03.trd",
+      "frames": 2,
+      "used_sectors": 41,
+      "zero_late": true
+    }
+  ],
+  "modeled_rom_swaps": [
+    {
+      "from_part": 1,
+      "to_part": 2,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    },
+    {
+      "from_part": 2,
+      "to_part": 3,
+      "prompt_exact": true,
+      "wrong_disk_rejected": true,
+      "wrong_series_rejected": true,
+      "correct_disk_accepted": true,
+      "bootstrap_ram_exact": true,
+      "rom_mocked": true
+    }
+  ],
+  "sources": {
+    "drive": "https://deramp.com/downloads/floppy_drives/shugart/SA410-460%20Service%20manual.pdf",
+    "controller": "https://www.abc80.net/archive/luxor/diskdrives/drives/western-digital-FD1791.pdf",
+    "rom": "https://github.com/programandala-net/tr-dos",
+    "z80": "https://www.zilog.com/docs/z80/um0080.pdf"
+  },
+  "limitations": [
+    "Only the saved window and full part 4 have sustained new-player evidence.",
+    "Parts 1..3 and actual preceding-EOF continuation gates remain open; root releases unchanged.",
+    "Drive settling is based on the SA460 200 us contract at standard 3.5469 MHz; no physical drive tested.",
+    "Runtime cylinder distance already was minimal. The saving removes redundant commands and settle delays, not physical forward steps.",
+    "ROM/physical/IRQ/ULA elapsed time is separate from deterministic RAM instruction counts."
+  ],
+  "artifacts": [
+    {
+      "file": "window-cache-checks.json.gz",
+      "raw_bytes": 180,
+      "raw_sha256": "9b5c0d145b9139ca11b7c254e61481c55e9e71234766509a883e09af271ec7e3",
+      "archive_bytes": 149,
+      "archive_sha256": "db9c303ca5f265db7a8e48ef9d62cf89eb4ea020efbd7314805dd02bbe718006"
+    },
+    {
+      "file": "window-conversion.json.gz",
+      "raw_bytes": 402,
+      "raw_sha256": "bf07577564c5702ba5c5c5c6f7eb6f0b33248619c88f21ac2918a4bb2483325d",
+      "archive_bytes": 273,
+      "archive_sha256": "90dcd11776d0a3ce1ae780abd0bfedd4bb5e2f04946501d295f898f3d2ad58ba"
+    },
+    {
+      "file": "window-partition.json.gz",
+      "raw_bytes": 4878,
+      "raw_sha256": "2bf9dbe4f0c01907ff8b63478081d911ef43ae544a1413a38519dff4f34fe1dd",
+      "archive_bytes": 1142,
+      "archive_sha256": "c09b2a8bba60463493970caca9de6e3a3faef26799e9139c73310c6a2bcd7ad9"
+    },
+    {
+      "file": "window-profile.json.gz",
+      "raw_bytes": 133146,
+      "raw_sha256": "5c87a26ba7557069e7dd60f62a3a39e7e0c8855a5e61cb35494534bfc710cb6b",
+      "archive_bytes": 12928,
+      "archive_sha256": "6231b32f8b1a8902b7e924336d9cc489c90992f4e9c5a4f1754415b677b98cf8"
+    },
+    {
+      "file": "window-timing.json.gz",
+      "raw_bytes": 1339,
+      "raw_sha256": "db46cdb4174aab3c3d0a3bb11158ec8fdcd51d287a39d2969efbd5c5420752a9",
+      "archive_bytes": 518,
+      "archive_sha256": "67116b7b99d1c2d4d7699386479858a25472ec53f6e7b4cce10525993bd4e02f"
+    },
+    {
+      "file": "window-volumes.json.gz",
+      "raw_bytes": 434,
+      "raw_sha256": "fcdec433163dc0be1dc6bb9be37f2b6081139a4a42465f65cb485b64974ddfeb",
+      "archive_bytes": 260,
+      "archive_sha256": "808090436af41c382a73e1ac9346a9e1f830a68cf6fc21a4a8dc5f90a3d9e6a1"
+    },
+    {
+      "file": "window-work-stream.raw.gz",
+      "raw_bytes": 1635441,
+      "raw_sha256": "66531dc6ace1bbeec7f57f9f48457c2354e9de5bb9dd6d911d0bf0865c11baff",
+      "archive_bytes": 118603,
+      "archive_sha256": "149489513c07b353b20d19baba61a4093b7e6130db16eff12025fc60cacd67ab"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-audio.ayh1.gz",
+      "raw_bytes": 5949,
+      "raw_sha256": "5892310808b77cd0f423096d553947050b613418160e3ed89b1797e76a309ad2",
+      "archive_bytes": 5569,
+      "archive_sha256": "c03a453c57bde1f93575488dcd2c1129a51b5493a6de7b700de3361e38f79060"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_bytes": 24375,
+      "raw_sha256": "91ddc5990d943b9a74d7421f1b32ac790600c0f370fd193f92e2e21f1be6efbe",
+      "archive_bytes": 4131,
+      "archive_sha256": "60822400cfb97c46ef47e97b5de916442676f6c16e134d85f3946ae3a7922e45"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-0-1536.trace.txt.gz",
+      "raw_bytes": 782193,
+      "raw_sha256": "a5d4facfd55d16408cc63576cf5c7594c3e457cbb821e0d4a4982ff77428785c",
+      "archive_bytes": 44903,
+      "archive_sha256": "53d6e207463f9684a914585a50678489421e3cce38574f30650d4580d274ca9a"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_bytes": 25486,
+      "raw_sha256": "e550035bf7fee107c87e833ca359677277e12e4f3e533b951f88046b139118ca",
+      "archive_bytes": 4005,
+      "archive_sha256": "5f7bdb558ba8ed999c32a44737a71a1921d6c8c4f324e201932f8c8307da36bb"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_bytes": 941762,
+      "raw_sha256": "861cd4b82180802ff31308f5d1b4dd6e83c79b9c4e46f56f4b3a5cc540e25386",
+      "archive_bytes": 81804,
+      "archive_sha256": "8f994e907cf9e824d6b9bd201f1006a0231fc5cba7d32d44820280aefa0ad826"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_bytes": 25484,
+      "raw_sha256": "b9600dfc30b1dad324a7b375c5737891ece0ffbf89355d28fab5cf132d0da8be",
+      "archive_bytes": 3989,
+      "archive_sha256": "660951fd61fdd33611687d3c0148ce64cc74989589aa65ea87a69ee78d620b15"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_bytes": 961121,
+      "raw_sha256": "5d6239151bcead83b9239b16f0a231b73f34d97ce33ff428b6ea0b7ebd983330",
+      "archive_bytes": 88527,
+      "archive_sha256": "9bd19a4ac16c850ce25642449e8f2ff7c74af91e73cc25705ba25c19a7322e54"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_bytes": 25485,
+      "raw_sha256": "ed055cb700daa28587a4633eca8e69f7a1f6e6e3b41accbbd37251f1d1b83d29",
+      "archive_bytes": 4024,
+      "archive_sha256": "d3318ccc63ac2d6b3e685d4a9ef0998188a631d0c4166a0af1910a5f5a213388"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_bytes": 789368,
+      "raw_sha256": "e111504fb9a21adf3825c69f6e9034fe2e6d1f95801850b24c948e3db1f1f865",
+      "archive_bytes": 60600,
+      "archive_sha256": "a62ca623678e14a936815e547ec9b2615060f542227473649d92098093ebc79a"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_bytes": 13005,
+      "raw_sha256": "166f162409a800dd75907a47e028f73652615de11bc05ffd9e9ca7f718dd97e1",
+      "archive_bytes": 2042,
+      "archive_sha256": "71a353382aa09c409dd89c4119c2ee9f590102bf66ef768ec003d99c36c53f03"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_bytes": 535320,
+      "raw_sha256": "d36c37e6e109ca2048054a046f9d830b5d8d6f2ea4c514cba91818b18c031b9c",
+      "archive_bytes": 30661,
+      "archive_sha256": "7ef2873ab1deb121c3ffb3470f51ed18b022a21b7fefd9e0815361dcb10129cf"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-captures-progress.json.gz",
+      "raw_bytes": 271990,
+      "raw_sha256": "4c0f1797fb03b6ff82e2385ae99bef9bff14dc568601987488a8fabb3bed4d2c",
+      "archive_bytes": 64086,
+      "archive_sha256": "c642c09ec1e8ee51c0448f6407def136e9860e33218a5aa76851e16d93394023"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-codebook.raw.gz",
+      "raw_bytes": 238161,
+      "raw_sha256": "2fd4e116364e7dc550b793ea837ca891b0233d50987ab9fa2d591aed11035cef",
+      "archive_bytes": 166436,
+      "archive_sha256": "32a29ea99e8c962df4c7b82d95d6a1df472a4a53eb9431b43af53d128ebc9110"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-codebook.stream.gz",
+      "raw_bytes": 185681,
+      "raw_sha256": "28b91b61ac8e442c078ceac768efe2e21aac0361da033cc5db065b7b6f0ec3bc",
+      "archive_bytes": 177104,
+      "archive_sha256": "fd8f7308fdb85f7f4ec945e2d32330d5293d1fb16c864a30169280e46fa60201"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-cpu.json.gz",
+      "raw_bytes": 352173,
+      "raw_sha256": "2ecb7aa2861e4be46876529bfdfa708597f14b0741a3af5ea5f1d23ca59415e0",
+      "archive_bytes": 23945,
+      "archive_sha256": "60c51684ac2b6acd1f5dbc8c749107f7d18f7e13003692eca992b5c034153c12"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-dynamic-rows.json.gz",
+      "raw_bytes": 103972,
+      "raw_sha256": "bc32f8d1d7a596ecdb01d12456e8fa9fbf1db628528dd85d7f912d00f33a23ca",
+      "archive_bytes": 16678,
+      "archive_sha256": "f7bee1cd8c37ae4933cd8b1d6afa0ee663b95061de6922fe5ca60a99e8ed181a"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-rows.json.gz",
+      "raw_bytes": 3702,
+      "raw_sha256": "260163c8ccc79f0472378a9b317c22f26fc03af80355bf8356d2e32fcbd67971",
+      "archive_bytes": 1006,
+      "archive_sha256": "69de6782eaaa5b80560f680f3f3a374e524ff844153b42c55baa6a638f94da52"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-screens.json.gz",
+      "raw_bytes": 291729,
+      "raw_sha256": "58dc5dcb652a5c07b0fe12b3f19d3f947735cdfe58a19bb6ab853b67d9919f32",
+      "archive_bytes": 75065,
+      "archive_sha256": "613b505e5cc954079a1fe34c69d04864494eb31801645e9f19e05d0b528c1155"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-states.npz.gz",
+      "raw_bytes": 3437829,
+      "raw_sha256": "e0cfd8527f9c8626b76e0d5250ff61b1074920c1ba696cd4e1b98b06b0e06544",
+      "archive_bytes": 3352405,
+      "archive_sha256": "60205bd6f304b7176fac8e59992ca479754be7f3baf79974e4e7a8f9802d45ee"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-timing.debugger.txt.gz",
+      "raw_bytes": 15317,
+      "raw_sha256": "71c807b07f0f13850386ce3ad382c8956dd79835fdd0ce26063dc9dfb6e0924b",
+      "archive_bytes": 2092,
+      "archive_sha256": "caa10ceab2b63b4ce56dc14938a9ea25aa24bb9ec93ef890ac59a4795d5a6ba8"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-timing.json.gz",
+      "raw_bytes": 1128839,
+      "raw_sha256": "4bf8178f587b4cd2275c323024e585d5b7d40a2b79ebb885c11da09d77c29e85",
+      "archive_bytes": 73222,
+      "archive_sha256": "151b5d8c0093e15362e94a03aa99b596668a2cbae22ef11be98f5a3d043c513f"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-timing.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "window-work-ZX-video-front_part07-timing.trace.txt.gz",
+      "raw_bytes": 1073342,
+      "raw_sha256": "58b4103bc9eacf5df5ca4df6e2467278ec135d4a8ac14839df3765cbdefaf069",
+      "archive_bytes": 345383,
+      "archive_sha256": "f024167adb55feb3b8bf825393a8f97cc4a6f0381932b06a125754a19afd6df0"
+    },
+    {
+      "file": "window-ZX-video-front_part07.json.gz",
+      "raw_bytes": 2425253,
+      "raw_sha256": "753a17b878f1a99760e7c51ddb83645ebd4240da541105911ba69c77681e27a4",
+      "archive_bytes": 124256,
+      "archive_sha256": "490b69df15b5ef18acbf78f9a1f301f01b853d4c2b0487e36693f276b6708013"
+    },
+    {
+      "file": "window-ZX-video-front_part07.trd",
+      "raw_bytes": 655360,
+      "raw_sha256": "ade8ae1b672604e572ec9236f6f472f7eccf061a47f48ea9486a36c81439713b",
+      "archive_bytes": 655360,
+      "archive_sha256": "ade8ae1b672604e572ec9236f6f472f7eccf061a47f48ea9486a36c81439713b"
+    },
+    {
+      "file": "window-baseline-ZX-video-front_part07.json.gz",
+      "raw_bytes": 2415441,
+      "raw_sha256": "4e05ab0274191a22387be7c87de8ec550c69f15529d9287da13756ca38d0c70e",
+      "archive_bytes": 123197,
+      "archive_sha256": "a9c70cc0ebe3a1fe6c141fb0e2ffe17739c956baf68fb269ee7a676cc41b282d"
+    },
+    {
+      "file": "window-baseline-timing.json.gz",
+      "raw_bytes": 1144172,
+      "raw_sha256": "c213f58fe21edccdd079f2a927f2989299fe70eef8782a0f15237d63ce0b7143",
+      "archive_bytes": 73991,
+      "archive_sha256": "4b8e683d7e91b4c8a0497be5565187e7b35ebec1ab96a69074886f0771ba0783"
+    },
+    {
+      "file": "part04-cache-checks.json.gz",
+      "raw_bytes": 180,
+      "raw_sha256": "ba6347a9a81bf619ebd9becdf3e279e33b6c511e618e64942cd174dea92fc3ff",
+      "archive_bytes": 150,
+      "archive_sha256": "5b471a75124645a8777166252320f2b400680890494ff6480242c0b279ffa4c1"
+    },
+    {
+      "file": "part04-conversion.json.gz",
+      "raw_bytes": 402,
+      "raw_sha256": "a6db6fa00b0398b2276026fec98e3b3e83f29aedd01c8475c8487b14d6750b3e",
+      "archive_bytes": 274,
+      "archive_sha256": "89c932def0acc7edd5f10e321a8b1953f625d1447bca9b4247930bb25f31e7dd"
+    },
+    {
+      "file": "part04-part04.json.gz",
+      "raw_bytes": 2672447,
+      "raw_sha256": "960d007a7a669479bffabc3ce1436efd614136715cf9cd561ce022589ae898aa",
+      "archive_bytes": 168503,
+      "archive_sha256": "9e77fc04dec2f22a09558960eae280068c2399cb7d9ce39f0ffa98ce51dfd9a9"
+    },
+    {
+      "file": "part04-part04.trd",
+      "raw_bytes": 655360,
+      "raw_sha256": "35d3fb870245a91294af794134e10a7762c0cfbd7ea31c9c80fc1bb380b475e5",
+      "archive_bytes": 655360,
+      "archive_sha256": "35d3fb870245a91294af794134e10a7762c0cfbd7ea31c9c80fc1bb380b475e5"
+    },
+    {
+      "file": "part04-partition.json.gz",
+      "raw_bytes": 81,
+      "raw_sha256": "d972dbec88a55806c5ba3520f2bff4bdccb8ac75f256ce2c3c747601121aebc2",
+      "archive_bytes": 75,
+      "archive_sha256": "df71d83c3d19e752a2efc1817519aed050ea62bca5744a97abde681397252712"
+    },
+    {
+      "file": "part04-profile.json.gz",
+      "raw_bytes": 671663,
+      "raw_sha256": "3dd1648abda9ba4cf78fd3932d0a08d6e9954f1ef238cc2d9e99f69b7cde6635",
+      "archive_bytes": 58574,
+      "archive_sha256": "11c372b934ab96fd55d3e59e77216ee8639986f610a29abaac177db531a7f4ed"
+    },
+    {
+      "file": "part04-timing.json.gz",
+      "raw_bytes": 1723,
+      "raw_sha256": "072f62031a98ee4b518e69d6a4149305e67baf02b20edf965dad484759f8243f",
+      "archive_bytes": 604,
+      "archive_sha256": "e20834b8eec56fd5a675b01df7e845bd5283cf902e07da0bb74810dc42415496"
+    },
+    {
+      "file": "part04-volumes.json.gz",
+      "raw_bytes": 388,
+      "raw_sha256": "4cdee7935c09f952f86a5902870ced1c10b2d2208d284de476df3a6850aa4de6",
+      "archive_bytes": 246,
+      "archive_sha256": "d0cd6f80003a498f230898eba94a28d02da80dd249aac2e0d8f321621db0b520"
+    },
+    {
+      "file": "part04-work-part04-audio.ayh1.gz",
+      "raw_bytes": 20606,
+      "raw_sha256": "5021c0f9d53abc7c26df1f2eab6f749a9db84426a186aeda9fed3f58793752b0",
+      "archive_bytes": 19851,
+      "archive_sha256": "ae18e64e3db3490cc366ff222ba75a3c7657fb0216f607f57481e8e98b555a93"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_bytes": 24375,
+      "raw_sha256": "4f45f8a1ea31921297c42a2fceecfdb08b0dc2e92469d53356aabafcd1a521e9",
+      "archive_bytes": 4130,
+      "archive_sha256": "1d5895302c9cd4982e8c2e450b7318b802e08782e0891947bfde939abaeac94d"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-0-1536.trace.txt.gz",
+      "raw_bytes": 4111219,
+      "raw_sha256": "10b409eb64116c2af906ac844ccddbc5692e25555adf6141868621b29489ff02",
+      "archive_bytes": 191085,
+      "archive_sha256": "e314ecb37a1de4021acfb6603376f28fea43bbbd00ea6841a632912b7ec49136"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_bytes": 25485,
+      "raw_sha256": "0943fea2cd38f14e1cb94b1b6369aa3e2467f82f2b424848d522c12f081adccd",
+      "archive_bytes": 4006,
+      "archive_sha256": "5aa63eba325a9b4c6bc6859ecb3634f11abaab275b583f232efbfa8bb25a3421"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_bytes": 4950980,
+      "raw_sha256": "7b9e1969082a0e34bbe37eb1407fa37ab8b2da15707b85e100b6577c7e645059",
+      "archive_bytes": 297677,
+      "archive_sha256": "f5242e3646f7287fdc33fb254dd1f32f923d03b659140b6e521c7f155d0f9f74"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_bytes": 25485,
+      "raw_sha256": "0e481460bdbadca03df27f01379f740d54e313c6abae0bd6c83a96092224ad46",
+      "archive_bytes": 3989,
+      "archive_sha256": "3802f187704c189004e46276a99445a63135e396520e5f7bb3e3901d7085d1c8"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_bytes": 5032927,
+      "raw_sha256": "f06b98dc23cb9880d856b084b56e0eef8710fdd3be0d50cd316351dbb71e491e",
+      "archive_bytes": 302986,
+      "archive_sha256": "c7cd1aee3c02a136a7792fa1d108da6fdcb6fa5965ccf34639cd2ef28901ed6e"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_bytes": 25485,
+      "raw_sha256": "643f61d1b2ca349c0cbfd9b075549d4e9e6c24221c896afad4151c794577aed6",
+      "archive_bytes": 4025,
+      "archive_sha256": "f49399a66cd2ac994fc4e600f111efc22c10b76874064bb6e701268857950dd2"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_bytes": 4135591,
+      "raw_sha256": "64bc3ed86d46ca1773888591d73b2d94e56845d8ed318c38e8833d14ee3a9c2b",
+      "archive_bytes": 202116,
+      "archive_sha256": "9851267bea9287bef83e7095fd6421f8075b44c0647cc56405c62c9b2f4145e5"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_bytes": 13005,
+      "raw_sha256": "beddf1037036e881e5954379476d1e75afdfb2c5d436207ca07209834c5068dc",
+      "archive_bytes": 2042,
+      "archive_sha256": "59b4cf0c84f10e47758782223a48b8e24c8f30010c15802be638e89cbbeff64e"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "part04-work-part04-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_bytes": 2763671,
+      "raw_sha256": "4abcc0abf8fad32aeb04c2b9c7628edee6a80abb857a6472f8a0b0595da97720",
+      "archive_bytes": 112656,
+      "archive_sha256": "d09e83f4a1445b20203e4a656ece5603357bd244920b1ca323a3da57e3e65efd"
+    },
+    {
+      "file": "part04-work-part04-captures-progress.json.gz",
+      "raw_bytes": 1403665,
+      "raw_sha256": "ee510bc8f860bb8eb845598a7b49a5266e2d25ddcf5d64e45244863a6ebb868e",
+      "archive_bytes": 318181,
+      "archive_sha256": "af2a48b6aab9275908d0a4c505b187ef305d54c8ab6cbd9ce5ceb61089ecd2f1"
+    },
+    {
+      "file": "part04-work-part04-codebook.raw.gz",
+      "raw_bytes": 868876,
+      "raw_sha256": "0d222ff69a49f9e0292aea83041931443e485a69f2860b4f414236f3deb3954f",
+      "archive_bytes": 561367,
+      "archive_sha256": "3b085dd777a9df5920bed378f6c454e0ee69a3b101ff386256167a32271ed142"
+    },
+    {
+      "file": "part04-work-part04-codebook.stream.gz",
+      "raw_bytes": 622695,
+      "raw_sha256": "d1652981d3175e1d12bcd2b06bb7d48ff104ba556c13d5f367a76a5b8f2a39c6",
+      "archive_bytes": 594590,
+      "archive_sha256": "f60a65a665558555d6f4ee2d09e2fd3b9cb46c6bdef469c82d3db2fd6f3a2598"
+    },
+    {
+      "file": "part04-work-part04-cpu.json.gz",
+      "raw_bytes": 1198949,
+      "raw_sha256": "de51d6a1774f6179cde2741514ec3315d8d870470c0403b406d14fb347709e51",
+      "archive_bytes": 81479,
+      "archive_sha256": "001acb8fe15153d840c62e9a6c2efd39c6fd529ceb9dce051b3c9379181e9678"
+    },
+    {
+      "file": "part04-work-part04-rows.json.gz",
+      "raw_bytes": 3809,
+      "raw_sha256": "46845c7c8f47578ff5fb1874fadc2187ebb918a7af936aae13bb15c6671d86e0",
+      "archive_bytes": 1266,
+      "archive_sha256": "3947d170f59e476d874456bb061117a555e0500e233f7b548a7232af064c7561"
+    },
+    {
+      "file": "part04-work-part04-screens.json.gz",
+      "raw_bytes": 1500157,
+      "raw_sha256": "6c23f99ba5d27c6c11330477dd4ed8f2ee7149335ccd040d3fd6aed42f0d3f94",
+      "archive_bytes": 369635,
+      "archive_sha256": "ac439b9c5f5b611c01834eea3de672561c98ecfb1b6e8ad15a755c6ef193e7f7"
+    },
+    {
+      "file": "part04-work-part04-states.npz.gz",
+      "raw_bytes": 3439333,
+      "raw_sha256": "59c377d3b6791415d5f7fa47ae4d05da69217d4f8bca18023ca43c8457591769",
+      "archive_bytes": 3353823,
+      "archive_sha256": "b23b2f04eca7cfe50d0f703b1e09302229f24cb8339270744a1f518f860c43a4"
+    },
+    {
+      "file": "part04-work-part04-timing.debugger.txt.gz",
+      "raw_bytes": 15317,
+      "raw_sha256": "3a0cc5229382e67db0f68642cefef723dfb7ecb1c1fb373292c49190c021b030",
+      "archive_bytes": 2094,
+      "archive_sha256": "1ca6aa2298ba4d6b853ea646502caec64ed93d896951df60448f42ea8604958b"
+    },
+    {
+      "file": "part04-work-part04-timing.json.gz",
+      "raw_bytes": 4393902,
+      "raw_sha256": "4ac60598e7afc93b1a0de3fc3a2d87f9878f3ede2c1031327bc36bf5d3c0f7dc",
+      "archive_bytes": 268260,
+      "archive_sha256": "16748115f779a8b84b16f6324740c4dcbf6f99d0fa1b1b67bc9e9357a7358cd7"
+    },
+    {
+      "file": "part04-work-part04-timing.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "part04-work-part04-timing.trace.txt.gz",
+      "raw_bytes": 4200700,
+      "raw_sha256": "f0c3d53d51f5ac58d530b9eb430bb051c4dd383e42ae4600327e2158e05680f8",
+      "archive_bytes": 1244995,
+      "archive_sha256": "b54364ddfbe31eeb83fcb31b77c703add922bd9c93874533c45353fa077c0914"
+    },
+    {
+      "file": "part04-work-stream.raw.gz",
+      "raw_bytes": 1635441,
+      "raw_sha256": "66531dc6ace1bbeec7f57f9f48457c2354e9de5bb9dd6d911d0bf0865c11baff",
+      "archive_bytes": 118603,
+      "archive_sha256": "149489513c07b353b20d19baba61a4093b7e6130db16eff12025fc60cacd67ab"
+    },
+    {
+      "file": "part04-baseline-part04.json.gz",
+      "raw_bytes": 2662665,
+      "raw_sha256": "10793353da20d271774ed81c65660479cb437b023f8ab09b6b44c8e25bc3d0e6",
+      "archive_bytes": 167472,
+      "archive_sha256": "391d4648b1a1d9884b4517f8f0f72e048209e47ff2cc075d6ac4576e77ff6f0e"
+    },
+    {
+      "file": "part04-baseline-timing.json.gz",
+      "raw_bytes": 4422807,
+      "raw_sha256": "fccb1a2bb4e9a1d148e4a06d5fbb66d1338ddcb84878e9f725bda17721b3ccb8",
+      "archive_bytes": 269615,
+      "archive_sha256": "e87b17fc0159194f9a8ba0258ad476ef9f23971b2a9308ffe5d83f96c44ab0e6"
+    },
+    {
+      "file": "generic-audio-quality.json.gz",
+      "raw_bytes": 1836,
+      "raw_sha256": "b85d42ee8361c99a33ff9dc1d35526089db74dd8063a84b619677d1e64ff1f68",
+      "archive_bytes": 885,
+      "archive_sha256": "c89817396edda757ba867c48858ade1fc8bb7a380cdd05e7acf1ad5a698313bf"
+    },
+    {
+      "file": "generic-codec.json.gz",
+      "raw_bytes": 1410,
+      "raw_sha256": "177dff4ed6cdc6a239906bfae6464945b6fb6b715d821514e6ac263dbbcdacfe",
+      "archive_bytes": 344,
+      "archive_sha256": "2e5b0d723aae6800c945fe26cbfae9b706c6fc6432efafa6d586956cd41385a1"
+    },
+    {
+      "file": "generic-conversion.json.gz",
+      "raw_bytes": 5572,
+      "raw_sha256": "d3a0a5055f0fc4c109f76a3136af4cdd926282853a7a28a8ef5c781a368fa39e",
+      "archive_bytes": 1965,
+      "archive_sha256": "2c24f63ac81cbc54743f3b86b252ac503ebfd45c5c2fecd7d741118ac3f0faa6"
+    },
+    {
+      "file": "generic-disk-swaps.json.gz",
+      "raw_bytes": 489,
+      "raw_sha256": "de6a2ca434a6fad59bed4c29c4c2a3892c1684fbc44755c88e6378691e254c9a",
+      "archive_bytes": 154,
+      "archive_sha256": "29fc5d2d167fa4952297c9cdb56866529f667bcb216164438cd5ca985061ca97"
+    },
+    {
+      "file": "generic-partition.json.gz",
+      "raw_bytes": 3937,
+      "raw_sha256": "07a58731dd7495eead08ccf3595275eaa4b62e89a94c3322d2486d9c683cf09a",
+      "archive_bytes": 1139,
+      "archive_sha256": "98c6a2e547431b5b8d20e52b4e9baa88b41f0a9ca523988cd7221ca489c9d84e"
+    },
+    {
+      "file": "generic-timing.json.gz",
+      "raw_bytes": 8201,
+      "raw_sha256": "e5cd47d59eb24eeb2e735ab0f1fbb42eacaed0e1fd395c04235f9195a49cd159",
+      "archive_bytes": 1750,
+      "archive_sha256": "e8becf18cf1aa944635c3775a62755f7c3fd65ad9260dbacfb4adf02d218ac16"
+    },
+    {
+      "file": "generic-video-quality.json.gz",
+      "raw_bytes": 1145,
+      "raw_sha256": "4a0bd6e30a726d5d2fc554f129058aec0524d22a3a23f80e241341bde4b58d26",
+      "archive_bytes": 624,
+      "archive_sha256": "0821b3f2ddec6c68ead64b3499cec796b8cc77f60a7c305b98cbf87b453560f9"
+    },
+    {
+      "file": "generic-volumes.json.gz",
+      "raw_bytes": 1212,
+      "raw_sha256": "f900f6bb53aebe1309086d96d56a88e7bfd38022f2494da511d302796d123084",
+      "archive_bytes": 394,
+      "archive_sha256": "6528c52220e4ebadd1110768cd7534bf4e0c77660f932ac547f7f58d7597216a"
+    },
+    {
+      "file": "generic-work-conversion.npz.gz",
+      "raw_bytes": 38666,
+      "raw_sha256": "0c61128610760baeee2957ea5ed7ac4277598156551fa9e4bb0827191dc359c6",
+      "archive_bytes": 4469,
+      "archive_sha256": "6c4d8ac5f1ccb0a3602dc4f880d04dd5a940be13d23494eaf716cec77b1f2aaa"
+    },
+    {
+      "file": "generic-work-stream.raw.gz",
+      "raw_bytes": 7933,
+      "raw_sha256": "a601c2348e80f5828e6f2a98fe0b9b5f64ffe1ffb8a47a0b8120991dcc618a30",
+      "archive_bytes": 4248,
+      "archive_sha256": "1968571f646688cb816f4f94886a2198d58d96a899436c6e13ebff0901648113"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-audio.ayh1.gz",
+      "raw_bytes": 158,
+      "raw_sha256": "e26c61677ccfc62196dbf925a44fc4dbb5f8f96cefa7083018df2209a8418510",
+      "archive_bytes": 100,
+      "archive_sha256": "bda509cd38903d80ac644ee61e5196c4979d545c5d4b6cca233dfa79b57860b6"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_bytes": 24375,
+      "raw_sha256": "6e75f04e19538f8136c55e170106b5b2d4702f0d807cde92090ec214b5f20209",
+      "archive_bytes": 4130,
+      "archive_sha256": "939fe9086ac4bd600c0ad2b7136702b786f9570582cb62675e44c2be9f31349f"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-0-1536.trace.txt.gz",
+      "raw_bytes": 12772,
+      "raw_sha256": "05186288e26d0a71817b204825b422a2f591d538011cb1ceea7f14eaa1bbf226",
+      "archive_bytes": 1433,
+      "archive_sha256": "4282254dac133599444388d788982c65a97dd2d944d9fc46c2e9e58189d66e11"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_bytes": 25485,
+      "raw_sha256": "78337d770e5e9e207aa5d6ed277c508d6ad66b16fd5aa5284e0f892964ea73ad",
+      "archive_bytes": 4005,
+      "archive_sha256": "a261e0c75c90f68bb66f7722c6bdcd8323ddc92a6177a09ddade1b5e6291099b"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_bytes": 15059,
+      "raw_sha256": "032491007bc60c99e9c79b64cd0f4a32921d4a78271c996c807db5d7785b8442",
+      "archive_bytes": 1850,
+      "archive_sha256": "376e6123320502723606a504412f9c287e65725c1adbf51a45639c17037c9045"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_bytes": 25485,
+      "raw_sha256": "814cc8733f1809e425b36d0683d3b9aaf2b86b6a22411ad976f87f11f3a207c5",
+      "archive_bytes": 3989,
+      "archive_sha256": "685a7d298cac78517c0fbab5d0a741fa75f47df8b15fdf4138568c158b1365d0"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_bytes": 15763,
+      "raw_sha256": "0b8ab6852c827a438d7956e4bce81c6a76f02f46639a105b11cdf397ceeda5c7",
+      "archive_bytes": 1633,
+      "archive_sha256": "0d0365b2fb78c1b51a1736384b01c30e00692fb5504191852f11aaf0e5f6481c"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_bytes": 25485,
+      "raw_sha256": "474bb7b1f5ad4795be5b1aec944f2600d1cbd543cade75698eb07dfbd8b129e5",
+      "archive_bytes": 4024,
+      "archive_sha256": "24be64b1316fef225914c1fe8f546599fdfd97ee0c0edf98a1c33ca39a393702"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_bytes": 13524,
+      "raw_sha256": "9e422c7f440bbc228302c3041f547d6c63c6532b5caad9120b36d095186fdf8e",
+      "archive_bytes": 784,
+      "archive_sha256": "f9787e79620e68c3f96805804d1a1b58b2f815490c329e08c708b32f9808ec00"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_bytes": 13006,
+      "raw_sha256": "b90df194255435fb331ed0c39517013d82d8980cc64b698c0cf2a605840c0277",
+      "archive_bytes": 2041,
+      "archive_sha256": "222127c3b0de6af1c54d1cce4111526858d90c514883af4ce238ce84144197d9"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_bytes": 8918,
+      "raw_sha256": "d709f1e4a3929e8f19a3923bc77c5bb45b680486cb1b4b3c65ca3267ff318ca3",
+      "archive_bytes": 983,
+      "archive_sha256": "e1fedd085598bfe5a81580c4bf7ffc73ebb7fad016399459cb54ab63479e873f"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-captures-progress.json.gz",
+      "raw_bytes": 6061,
+      "raw_sha256": "2462e52f80a712d6b09671d17e02aeaeb8246584b67dbfd00554ea8b1ba2766f",
+      "archive_bytes": 1627,
+      "archive_sha256": "8f26d8173b1079cbc8664bda2c82180620115c0fa131664ab357f3252cf597b0"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-codebook.raw.gz",
+      "raw_bytes": 4125,
+      "raw_sha256": "66ac1e49309335e8f5cac7576dd27a2a46b74ed52d884d8f54b137939d6de0e9",
+      "archive_bytes": 2099,
+      "archive_sha256": "228dce910c72c14efdcb874c34f5c170dff3abb62cdd76590995e484fc21c65b"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-codebook.stream.gz",
+      "raw_bytes": 2071,
+      "raw_sha256": "289676e21cf6b12cf165f30148151225f2e07fb86e62eda356bfe274e05af839",
+      "archive_bytes": 2074,
+      "archive_sha256": "945ea3e55cdba6d359b47653139654a16c6b59f782d5ec6a27727c0136644ca4"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-compression-selection.json.gz",
+      "raw_bytes": 2500,
+      "raw_sha256": "89cbff246e9d4ad55d6d32199c1da7b7b83aeddc51957083b77613c30365aba3",
+      "archive_bytes": 1093,
+      "archive_sha256": "fe38e5c5c5ff9034e3dea4a20d96ff500910e9d8abaf6c9126e2923f0793a790"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-cpu.json.gz",
+      "raw_bytes": 131885,
+      "raw_sha256": "28c29b79a6c2be32560f694b2daa69fc891e9be66baf779c32a86ef7de586d94",
+      "archive_bytes": 7527,
+      "archive_sha256": "121ac2f2a2bf9069b76c7f053be66ba54cf12d0d9d7a657939e7c52d8b44d680"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-dynamic-rows.json.gz",
+      "raw_bytes": 2539,
+      "raw_sha256": "6d1825272020cc6e8efe0b30cc652eaeae4c590ebd408050e5b7068f1ba48589",
+      "archive_bytes": 592,
+      "archive_sha256": "22342d3a44906defb7768c11e62398bcf957f92a363c37f8dba126ef98cbe096"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-rows.json.gz",
+      "raw_bytes": 3416,
+      "raw_sha256": "db1cd8b96f5713be73e375eefddbef5bc2abc5f2e84b17ca38030a1156beee22",
+      "archive_bytes": 432,
+      "archive_sha256": "989c5ab0b855b519cd451662ec80a4d82eecb948ff8ae732fa7f482d9a41693a"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-screens.json.gz",
+      "raw_bytes": 7649,
+      "raw_sha256": "62d0ee20b1d629594668b1005b4c93472d82193561b22df7e18d0d9067838e9f",
+      "archive_bytes": 2552,
+      "archive_sha256": "1aeb399dcdd70d2533d9533aa6f7060707e3f82deb4d72133d270558ed67d5ff"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-states.npz.gz",
+      "raw_bytes": 5946,
+      "raw_sha256": "d88e3f7e431c9a920b1f422ca75ecc95524d0b5d4d21b1b79d6a3b1bbc0358b9",
+      "archive_bytes": 5888,
+      "archive_sha256": "d0d774c585ae3a25a6927e2fa2380f7c0f6116f324bb2e789996bceb1bd4ecc4"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-timing.debugger.txt.gz",
+      "raw_bytes": 13386,
+      "raw_sha256": "c251a26fa436b5bbe6db270eaf401dfb55fe243ab21cd4dad359c2143b78100d",
+      "archive_bytes": 1871,
+      "archive_sha256": "cd1fae9cfdc4f06cbd8f49187efa0c34d61da41db7004fbe83e1846cf42f14db"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-timing.json.gz",
+      "raw_bytes": 135657,
+      "raw_sha256": "4e7049ba0c2879fb017abf17efacaac8939a854d4ef8c33a8b3061cb715c4cb4",
+      "archive_bytes": 12309,
+      "archive_sha256": "f931290365d3e24b6b6a7737e33e57761a6b24e1b7d4d0d7063c3826975cd392"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-timing.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part01-timing.trace.txt.gz",
+      "raw_bytes": 11128,
+      "raw_sha256": "ddfb09ae3cd99e6d85ed1e82f8ee48cac2bc349e1a5d99b979a52a53d9665193",
+      "archive_bytes": 3935,
+      "archive_sha256": "8488a5d41f63f05b1f6e979e327c7887d697f26dfb21c7a330f9a037650d168e"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-audio.ayh1.gz",
+      "raw_bytes": 118,
+      "raw_sha256": "9dcf7d81b13226d50cca6122632654e53a2109cb16dd677329b0b151a5e91d9f",
+      "archive_bytes": 53,
+      "archive_sha256": "91dd7945399520e7f964bec195322df87bf5c5d86ee95fdb4b1bc792d2ee349a"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_bytes": 24375,
+      "raw_sha256": "588f06938eb1aa197bc3bafdf6b0fbc6520ac235eb879d9c54b7ed0eaa2e86d7",
+      "archive_bytes": 4133,
+      "archive_sha256": "c46684c51172024c5bb60283fe8a1848d855fa7476719a4ca0982f3a8a9da7b3"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-0-1536.trace.txt.gz",
+      "raw_bytes": 12668,
+      "raw_sha256": "5b32b0fd25e1518dfff9aac527cfd38d71564cc4a38265c23270ba8b39df37cd",
+      "archive_bytes": 1379,
+      "archive_sha256": "b85c8e255896b640663fd0062d058fcc2b50f0e114eec57ee88117dc7e5ae3a6"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_bytes": 25485,
+      "raw_sha256": "c70fd60fd9bdd49ab2028138045afe1bf8cdb92587970654972d73e1e704b4b8",
+      "archive_bytes": 4004,
+      "archive_sha256": "330ce537968f862b75d19c0199b1fdeb63560e8289b076901a63778ed8ee2279"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_bytes": 14758,
+      "raw_sha256": "de55ae80942fc01f09987034f25f83439f0c78d5d62364c8a954967d49f90772",
+      "archive_bytes": 1848,
+      "archive_sha256": "67ca72a10dce560c5b64de9847e096166617b6f3c4216fe8f615557932788461"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_bytes": 25485,
+      "raw_sha256": "42a8dc11b7467733e009506b25c6117ce716c98450896720481e9888f01ac085",
+      "archive_bytes": 3990,
+      "archive_sha256": "5a8bd329c7e0f80a92dcddea76967276d4eb18e6dea520da169d291bd3cc9f5d"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_bytes": 15277,
+      "raw_sha256": "0d39262b9009e1d3e8ca84f204c315aa85c3b17511429fa9fdcfe242ac7bc464",
+      "archive_bytes": 1687,
+      "archive_sha256": "508d4d2973a9b4670bbee336db5a4264b497ab753c0dc3dbce85ead21303cb56"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_bytes": 25486,
+      "raw_sha256": "0b6a44305cc70a3771e17b41b0145d4b7e85e85c0da6e1a06ffb1af023ef735f",
+      "archive_bytes": 4025,
+      "archive_sha256": "0bfc1d3fdf6f0fa7f0b8d9c843826fddf307e2ea376b5c8d8703689a186dd190"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_bytes": 13241,
+      "raw_sha256": "a592970f5416850b5da1601a2f092ca729142d7159c504a1d0c74edfad456254",
+      "archive_bytes": 1024,
+      "archive_sha256": "1dc16aca85d6fc0f7b12106aab2042a5a0b83609dff67266ae0d0c2b2c78eb2c"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_bytes": 13005,
+      "raw_sha256": "e51efe5c4e98a96522fde0b3bd4253452e24266eda7faa4684479af104bf79f1",
+      "archive_bytes": 2043,
+      "archive_sha256": "3808bb78eabc12cab45d43be7a8f9366aaebaa4f9c0550ac878846698b2262d7"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_bytes": 8919,
+      "raw_sha256": "01e37d1c48cacf0af251e8a1547b2c74b7e038c89cf472ddb34dbf0cd2857706",
+      "archive_bytes": 1026,
+      "archive_sha256": "eeb2b3460040f2168f9aa05887c17b396be19c2138ca585f42ee0975c05c78c0"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-captures-progress.json.gz",
+      "raw_bytes": 6061,
+      "raw_sha256": "e8591d2e5c34b13753f83f4d28e92962b57ddf0a68efb9fe249267dd3246d8de",
+      "archive_bytes": 1609,
+      "archive_sha256": "c9f8769f5de578236da2a868bf272019e35d52fabb1c2bcdc512a488697f46c7"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-codebook.raw.gz",
+      "raw_bytes": 3444,
+      "raw_sha256": "0b67c492d430f408df653227e9a7ae65a135a5cf67dfd6164ae1eaebddd9567c",
+      "archive_bytes": 1912,
+      "archive_sha256": "2923d7b55165f76ebb7a4aea4efeca6f2b09285049acbd62b4e29ba29af9aa11"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-codebook.stream.gz",
+      "raw_bytes": 1896,
+      "raw_sha256": "c1e33b0e5d8a1ce14242e82f0cac51583e8c7e2dd530d709938b82ecac5762f7",
+      "archive_bytes": 1910,
+      "archive_sha256": "eb08223d2a01f139374e0231d253792a8df01fecf0fb6bbde82fc497939a425a"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-compression-selection.json.gz",
+      "raw_bytes": 3845,
+      "raw_sha256": "27e35b37bde38e2f4107d80626210e2be254a1e7ef123b96934d6ebeef719505",
+      "archive_bytes": 1399,
+      "archive_sha256": "ac5a94c1b16cf3b3f40b9ef3e8718cab676e0dfcbf07d7c13a6befd06bd1c06c"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-cpu.json.gz",
+      "raw_bytes": 114344,
+      "raw_sha256": "6af0fc0a45cf1d9e2ef1348a7dc8825a0ac29b3c88b6397ce2009b50a923b66c",
+      "archive_bytes": 6808,
+      "archive_sha256": "ca9877bb8b56a532d7f74a6bf7dadac61e7bb93f631ac0dc3b425f4e6b56ca50"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-dynamic-rows.json.gz",
+      "raw_bytes": 2536,
+      "raw_sha256": "439ef3713abb6dafa71b0582aa68650e4bec5bb5ecb0f7b99d3d270dcacd3fe7",
+      "archive_bytes": 560,
+      "archive_sha256": "dc5b348a52f978aab353a8fc9cb6ea3cd4238ab0c5bef47963f4e18cb3c256af"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-rows.json.gz",
+      "raw_bytes": 3364,
+      "raw_sha256": "7371ddc4785b98d64e3fb2302396b65faf97d01399b7cfc72d1bc18877ab8faf",
+      "archive_bytes": 330,
+      "archive_sha256": "603ca7ef16f810a925dd47bf01a7b1e1c793c85fd09cb28ffa87d687880680db"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-screens.json.gz",
+      "raw_bytes": 7649,
+      "raw_sha256": "355a7a2a658a6fada46e8f384f82c2bee469d54502fd06cb8f6c5c56d3e06d75",
+      "archive_bytes": 2539,
+      "archive_sha256": "a27e9b16843f871ecee953f358aa563accc6cc22569abe5408bf57885c0274ca"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-states.npz.gz",
+      "raw_bytes": 5948,
+      "raw_sha256": "2bf84cfa4a17221372b27be706e6e53b560989a3b79c6e03a8ba84e978adaff0",
+      "archive_bytes": 5886,
+      "archive_sha256": "2ec0bd5db0a16c1f98aee39c6c45ed0715978815d965fc1ae761bcdbbbde29d2"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-timing.debugger.txt.gz",
+      "raw_bytes": 13389,
+      "raw_sha256": "6dcaf55dca5fc8fd144e1135fb6ad918dd14582bfc837941bd38dfc2ed1e084a",
+      "archive_bytes": 1872,
+      "archive_sha256": "70abd428924f99583aff2cccb708168bf66d5d091f2142170f5214eb47af99c3"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-timing.json.gz",
+      "raw_bytes": 135551,
+      "raw_sha256": "b81eb197bf1b40b1b8727dd7c9987b5f540f66480c8561da1c9c2e9a2bed36a0",
+      "archive_bytes": 12322,
+      "archive_sha256": "b33cc96462bcf0dcd81bedce6ec58a84ea80fc075b69078f3f379aa6d84f3753"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-timing.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part02-timing.trace.txt.gz",
+      "raw_bytes": 10103,
+      "raw_sha256": "43f40579465c9e8973526dbbaf5a5a03849befcbfd20a85d22d52683abcf96fd",
+      "archive_bytes": 3585,
+      "archive_sha256": "086563b95ad16d5e24c2fd014d6572984ef6cc6570d616b1025962618bd42012"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-audio.ayh1.gz",
+      "raw_bytes": 130,
+      "raw_sha256": "b4928f31760d77444c28a381a6f8c2f68ed4af64a8877bb32af4b5c112babe0a",
+      "archive_bytes": 77,
+      "archive_sha256": "5a602fc86a07ccb0cc4f558964961306c944b0e2af5a176a37b71d0b35d0d5d9"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_bytes": 24374,
+      "raw_sha256": "73a8451580e568c8ce08ea171902237d559049cc5d8b07ec1c0546f296864a6f",
+      "archive_bytes": 4129,
+      "archive_sha256": "e71e384a58e858787f50c6a057980e7a7549076447747eb365b476339674daa5"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-0-1536.trace.txt.gz",
+      "raw_bytes": 6581,
+      "raw_sha256": "a44aa587c1f707c9dadfab237bc1669c46f1e13763a5010281d7247d4453f01a",
+      "archive_bytes": 1012,
+      "archive_sha256": "267513a3ac2f05fe523547ab5d296282a7ff66234f86d3fabd9664e1384fbd8b"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_bytes": 25484,
+      "raw_sha256": "14ad7ef3f26a245873e51b4bf251dd42a516c06db1a32f10ae857a38e3b5239a",
+      "archive_bytes": 4006,
+      "archive_sha256": "18037a989e821216ff52296a3d02ae0f09ed4460a7836b8b56ca0791c7bb89a3"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_bytes": 7698,
+      "raw_sha256": "4d8382957c34eba74c21657aa71351679686379bd3886af21f10d701627af7c6",
+      "archive_bytes": 1252,
+      "archive_sha256": "1d87365965e1dffb02ebae5967847dc73fb4f308a80886e27921385ec16c8f2d"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_bytes": 25486,
+      "raw_sha256": "43191e5718fddb7db62a897c9c1dea7d7320c5ae7cd7c6b986114b9aca329059",
+      "archive_bytes": 3989,
+      "archive_sha256": "85dc07036543c085510045bf69f40f79dada38230301958c973f64ba8019181f"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_bytes": 7906,
+      "raw_sha256": "6fec9e42b98531206e003147b1a257511b19d35fb5f4f22477985cba8e58a3c2",
+      "archive_bytes": 1240,
+      "archive_sha256": "3d81ae11b13e643009a0510aceced3a5b9b922f661c8f73891043ab4bf6738e8"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_bytes": 25485,
+      "raw_sha256": "16edb76df21fd02ba9be81deb08be8a6e7536cf819559edc2c34aab7d42dc4d9",
+      "archive_bytes": 4024,
+      "archive_sha256": "a0e57d2601bc6b5db4d15e202b1c711413bbe9f9bf4a08858687ce0f73c2f000"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_bytes": 6830,
+      "raw_sha256": "87dd3fc47a745f74e02ac9980dad01dbc09b071d5ca8981c2632b6fc24e2f880",
+      "archive_bytes": 897,
+      "archive_sha256": "80781725b63421edf64286d59e10673d6c8aa99af88f23f2229011ba1573192d"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_bytes": 13005,
+      "raw_sha256": "02ff5288e80f8262e8482a35f040733f3d6d0e01b57662d79c2b4ef846cd840c",
+      "archive_bytes": 2046,
+      "archive_sha256": "8895f7657c45a97fd7a7a2a126eae6affeb6a117c82119f5ae74052b7ee0e4b0"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_bytes": 4731,
+      "raw_sha256": "d99d2903c1e4d7969e28021bc72972e8443e269e54e7fff3c110f469b54115a1",
+      "archive_bytes": 875,
+      "archive_sha256": "4828fb5fb39e1db5e02953181ee991e5b3ccd93975ba290be6701b128e5d0646"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-captures-progress.json.gz",
+      "raw_bytes": 3969,
+      "raw_sha256": "a7dec0dd24115944a1ef8fe3038e5459ad989cecdbdd93ea3be02f610a9202fa",
+      "archive_bytes": 1163,
+      "archive_sha256": "55686bf96fa3282f3128801bf0d1dd4c4c29aacc3376c27f18e6cf36701297a5"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-codebook.raw.gz",
+      "raw_bytes": 2800,
+      "raw_sha256": "66b286ae8a0e2db68196cc65959e6df6e86a28884439098445310b265597ab28",
+      "archive_bytes": 1193,
+      "archive_sha256": "819f912111447c52b3127b4b5dbe859166c01fb27bceaf4044d3e4ea96d4ae8b"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-codebook.stream.gz",
+      "raw_bytes": 1162,
+      "raw_sha256": "01ec8956d2b2a229f7e04421fc082d3a5dbc1c2fb1c84cb2f4619d396a6301bd",
+      "archive_bytes": 1185,
+      "archive_sha256": "66246f8dd53ff75ad8d9ff7481270a4ed6e35c934c842461b9a8b3533de11c66"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-compression-selection.json.gz",
+      "raw_bytes": 2180,
+      "raw_sha256": "1547a5209abc1ae1c688008541d4ad5bb17366cca310e49ceaca1a9022cb0fd7",
+      "archive_bytes": 924,
+      "archive_sha256": "9fd8048438e0bc77c2cd37b3563a04e81a4861f2a7c8e62b6e26494f5b845acc"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-cpu.json.gz",
+      "raw_bytes": 113293,
+      "raw_sha256": "12f9eae06205646526031e66bdfd430f180aecbb2dd168f2310670bc98ce40cc",
+      "archive_bytes": 6671,
+      "archive_sha256": "ef51a9f91a8cf27c840e457fc7fdd3d8c486844b051df9a2941a96112dca533b"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-dynamic-rows.json.gz",
+      "raw_bytes": 1401,
+      "raw_sha256": "cc8c26fafd64cf2ee4b2ac23ca6504f5d751629b311e05ef4c8fd396c9562d2f",
+      "archive_bytes": 428,
+      "archive_sha256": "57c3c15f4ec3a09a9373fe09e7c90fe56c82e03ba6c5281ad0c7088750955b9d"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-rows.json.gz",
+      "raw_bytes": 3338,
+      "raw_sha256": "ed2b2d3344296990c9c1075c01579cdcca03c354da5696a8d25c101a8df1274f",
+      "archive_bytes": 258,
+      "archive_sha256": "f93c2a1f87f7dc63357e551ce4bd9aea613287cffd9a94aa6ec7aeac679db55c"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-screens.json.gz",
+      "raw_bytes": 5413,
+      "raw_sha256": "5a2f5cc10695818461304e1a641314fc1c8fcf80b505da91112383509cd2b532",
+      "archive_bytes": 2003,
+      "archive_sha256": "9596bacc53ece6d4a954ba736aa8b23496b8d3174362359c0fc03602ca0dc812"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-states.npz.gz",
+      "raw_bytes": 5946,
+      "raw_sha256": "d88e3f7e431c9a920b1f422ca75ecc95524d0b5d4d21b1b79d6a3b1bbc0358b9",
+      "archive_bytes": 5888,
+      "archive_sha256": "d0d774c585ae3a25a6927e2fa2380f7c0f6116f324bb2e789996bceb1bd4ecc4"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-timing.debugger.txt.gz",
+      "raw_bytes": 13390,
+      "raw_sha256": "25ec05f41da4b3bad850682c574f8a8149edc1619b7c8d02cdcf4a5e77ef4931",
+      "archive_bytes": 1870,
+      "archive_sha256": "b581bd160d89887403443b9f1f6db6ae57ede2d8b220c60dcac95437a17ef6a0"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-timing.json.gz",
+      "raw_bytes": 134477,
+      "raw_sha256": "6232a9a14d3dfa0a21afac6781512c780d00aec42db8dc8432dfd3e389b923db",
+      "archive_bytes": 12185,
+      "archive_sha256": "d53b47b6fe64f8c29f325119457114788c8a9d8014d2b0a2d692d3ecf53c2fea"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-timing.stderr.txt.gz",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_bytes": 20,
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e"
+    },
+    {
+      "file": "generic-work-ZX-video_part03-timing.trace.txt.gz",
+      "raw_bytes": 6574,
+      "raw_sha256": "75e1dd95bed8a16ac782b15ac2eae0cb3566e891f8504a5479547d82b1ccf5c6",
+      "archive_bytes": 2435,
+      "archive_sha256": "6b7cecd1ac80453f8e46a935df7723f685fafb6ed9e7a0173eec423e4dccff1d"
+    },
+    {
+      "file": "generic-ZX-video_part01.json.gz",
+      "raw_bytes": 2406635,
+      "raw_sha256": "453973f304ed8a808b8406a5e5c092baca1e71cc2aa16d9df6733d4257466701",
+      "archive_bytes": 114135,
+      "archive_sha256": "9bc79ab025d412bed78f8120df74dc2ccbc168bc297a99ffdf5cae79a603c29f"
+    },
+    {
+      "file": "generic-ZX-video_part01.trd",
+      "raw_bytes": 655360,
+      "raw_sha256": "4e354e3d17e32550ceb4dd876eba0cb6021d90aad1030cba456a9854f27b3182",
+      "archive_bytes": 655360,
+      "archive_sha256": "4e354e3d17e32550ceb4dd876eba0cb6021d90aad1030cba456a9854f27b3182"
+    },
+    {
+      "file": "generic-ZX-video_part02.json.gz",
+      "raw_bytes": 2407428,
+      "raw_sha256": "e51538a35a39f58be4918467b53720617f9944b2b273690c864947cb3cd1f943",
+      "archive_bytes": 114143,
+      "archive_sha256": "5376f92894c53813c25312eb878f88c3260b8f0b11fa8e516f287c3385beddbf"
+    },
+    {
+      "file": "generic-ZX-video_part02.trd",
+      "raw_bytes": 655360,
+      "raw_sha256": "d42ae3c99499fab65a5302a57ff771025f1da6645dda95e7da3498a16a3b1bc2",
+      "archive_bytes": 655360,
+      "archive_sha256": "d42ae3c99499fab65a5302a57ff771025f1da6645dda95e7da3498a16a3b1bc2"
+    },
+    {
+      "file": "generic-ZX-video_part03.json.gz",
+      "raw_bytes": 2406533,
+      "raw_sha256": "07a13506a96b73885061e93157c5cc72f0f84e08d9f99d6e0f715b72e18d2aa6",
+      "archive_bytes": 113914,
+      "archive_sha256": "25646930c0b84937bc3d7cea3d3c477eb00444be0ab6ff01a986b1456775bbaa"
+    },
+    {
+      "file": "generic-ZX-video_part03.trd",
+      "raw_bytes": 655360,
+      "raw_sha256": "fbcde3fb98379631f7dfaac7ba59652328e116727677c9931e48225b2f2e52cb",
+      "archive_bytes": 655360,
+      "archive_sha256": "fbcde3fb98379631f7dfaac7ba59652328e116727677c9931e48225b2f2e52cb"
+    },
+    {
+      "file": "generic-source.mkv.gz",
+      "raw_bytes": 139379,
+      "raw_sha256": "636d4e1201fa2c88be8ccb7e2cb8fe308f579c19534efe7d2afcc29fa0be775b",
+      "archive_bytes": 91276,
+      "archive_sha256": "1422acd7f409d7cef33497af21943c604fb5395af967a9f0c2fab97d801cc3f9"
+    },
+    {
+      "file": "generic-checks.json.gz",
+      "raw_bytes": 1207,
+      "raw_sha256": "623d936249cc4c3a21a04d742c28909b1f0c2c3d21f5909d2eb878397c282848",
+      "archive_bytes": 642,
+      "archive_sha256": "b7ce72810887fa02514e574e21fe0c4fd596358a9c4d0924b1b34f094e0e7653"
+    },
+    {
+      "file": "unit-tests.log.gz",
+      "raw_bytes": 111,
+      "raw_sha256": "a0507b7e23a403993df3815b576a8e4aa273750c2c336113d7d69052d475cc20",
+      "archive_bytes": 59,
+      "archive_sha256": "c662aed7fc2b486384c86e3a883e38d75642373b0f70b7c6ca72e7ab32904c55"
+    },
+    {
+      "file": "initial-metadata-guard-failure.log.gz",
+      "raw_bytes": 1391,
+      "raw_sha256": "c4ec47508ae72a28307034d40b5dbcfadc9bb7098b271ec82a5e82d86ec7879f",
+      "archive_bytes": 475,
+      "archive_sha256": "81829777dcbb627d5e708bce63fc4bf022229ea319885df0a68a8087ce17a123"
+    }
+  ],
+  "source_sha256_lf": {
+    "fap3_disk_z80.py": "de181774bb330dbbed00ddcbe06f449aa86b24e6ab8856d913f349715a85a386",
+    "side_only_seek.py": "c1be2fd4d25d4b44611d1e5a8cf1ba5504ed7d7dff4cc112ef048cdd5f5ab18c",
+    "test_side_only_seek.py": "94f94fdf351488a804fcdaff874d423e40ccf5d4f5144666e2949d156c16fb2e",
+    "benchmark_fap3_disk.py": "ab7282e5e296580b892c7d5e16fa08d5371b68e792b0f29eff02689876e2b2d7",
+    "cell_codebook_player.py": "5d4aea6fd527cfa67238634bf68251602e48489ca2519cbabb3187a55e18582e",
+    "rebuild_cell_player.py": "33580cdd8d7e5c7cfad55b7a1d5baed570c98cb902bedf170e2f2f76ce261412",
+    "guarded_cb46.py": "7f6da4ca1614169875ac403b3d280b7498d370b1699e5bb7f3fb58976117957a",
+    "check_generic_cb41.py": "bbc3757d025313076a2207c48d2cff75685bb17fa2372d8f7b80870f486b68dc",
+    "analyze_side_only_seek.py": "c57724ca0cd294d9bc302be66a8cc1edd33345f65adfb62ef35249e9d1279a01",
+    "measure_fap3_fuse.py": "ce29aa189fdc55b014c9c6cc94f4d573b12b2a8c86be3926447497138f409f06",
+    "profile_cell_delivery.py": "b8ce30e49985ddc897628f0348b8f58b697255b6f04037fd20b9e575b6143953"
+  }
+}

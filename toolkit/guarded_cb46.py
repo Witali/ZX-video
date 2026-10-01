@@ -15,7 +15,8 @@ import lzsa2_stream
 
 CORE=0x8d74
 PLAYER_OPTIONS=dict(shared_audio=True,four_slots=True,inline_cells=True,
-    sector_cache=True,streaming_lzsa2=True,direct_lzsa2_header=True,fixed_cell_decoder=True)
+    sector_cache=True,streaming_lzsa2=True,direct_lzsa2_header=True,fixed_cell_decoder=True,
+    side_only_seek=True)
 
 
 def representation(frames,start,end):

@@ -88,7 +88,7 @@ def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False):
 
 
 class Builder(PreviousBuilder):
-    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,inline_cells=False,sector_cache=False,streaming_lzsa2=False,optional_read_gate=False,direct_lzsa2_header=False,early_lzsa2_prefix=False,fixed_cell_decoder=False,**kwargs):
+    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,inline_cells=False,sector_cache=False,streaming_lzsa2=False,optional_read_gate=False,direct_lzsa2_header=False,early_lzsa2_prefix=False,fixed_cell_decoder=False,side_only_seek=False,**kwargs):
         if frame_fields not in (5,6):raise ValueError('CB41 supports five or six fields per frame')
         self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
@@ -101,6 +101,8 @@ class Builder(PreviousBuilder):
         self.sector_cache=sector_cache
         self.streaming_lzsa2=streaming_lzsa2
         self.direct_lzsa2_header=direct_lzsa2_header
+        self.side_only_seek=side_only_seek
+        if side_only_seek and not (self.fast_disk and self.cached_seek):raise ValueError('side-only seek requires fast cached reads')
         self.early_lzsa2_prefix=early_lzsa2_prefix
         if early_lzsa2_prefix and not direct_lzsa2_header:raise ValueError('early prefix requires direct LZSA2 header')
         if direct_lzsa2_header and not streaming_lzsa2:raise ValueError('direct header requires streaming LZSA2')
@@ -288,6 +290,9 @@ class Builder(PreviousBuilder):
         if self.optional_read_gate:
             import optional_read_gate
             optional_read_gate.install(banks,m)
+        if self.side_only_seek:
+            import side_only_seek
+            side_only_seek.install(banks,m)
         result=[]
         for s in sections:
             lo=s['address']&16383;raw=bytes(banks[s['bank']][lo:lo+s['decoded_bytes']])

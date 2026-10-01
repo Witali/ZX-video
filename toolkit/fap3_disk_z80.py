@@ -255,12 +255,18 @@ def build_deferred(disk_labels, limit, *,keepalive_fields=0,elapsed_fields=None,
     return a.resolve(),dict(a.labels),rows
 
 
-def build_cached_seek(disk_labels):
+def build_cached_seek(disk_labels, *, side_only=False):
     """Known 5.03 side/SEEK entries; HL is the pending sector destination."""
     a=MiniAssembler(CACHED_SEEK); listing=[]
     e,n=helpers(a,listing,'cached_seek')
     a.label('cached_seek')
-    e('PUSH HL',[0xe5],11); e('LD A,D',[0x7a],4)
+    e('PUSH HL',[0xe5],11)
+    if side_only:
+        # FE (idle head reload) and FF (unknown) cannot match a valid
+        # cylinder. Preserve the decision across the ROM side selector.
+        n('LD A,(cached_track)',0x3a,disk_labels['cached_track'],13)
+        e('XOR D',[0xaa],4); e('AND FEh',[0xe6,0xfe],7); e('PUSH AF',[0xf5],11)
+    e('LD A,D',[0x7a],4)
     n('LD (ROM_track),A',0x32,0x5cf5,13)
     n('LD (cached_track),A',0x32,disk_labels['cached_track'],13)
     n('LD HL,slow_irq',0x21,0xbd00,10); n('LD (irq_vector),HL',0x22,0xbdbe,16)
@@ -272,6 +278,8 @@ def build_cached_seek(disk_labels):
     e('LD A,BEh',[0x3e,0xbe],7); e('LD I,A',[0xed,0x47],9); e('IM 2',[0xed,0x5e],8); e('EI',[0xfb],4)
     a.label('seek_side_enter'); n('JP ROM trampoline',0xc3,0x3d2f,10)
     a.label('seek_side_return'); e('EI',[0xfb],4)
+    if side_only:
+        e('POP AF',[0xf1],10); n('JP Z,side_settle',0xca,'side_settle',10)
     n('LD A,(ROM_drive)',0x3a,0x5cf6,13); e('LD E,A',[0x5f],4); e('LD D,0',[0x16,0],7)
     n('LD HL,drive_step_rates',0x21,0x5cfa,10); e('ADD HL,DE',[0x19],11)
     e('LD A,(HL)',[0x7e],7); e('AND 3',[0xe6,3],7); e('LD B,A',[0x47],4)
@@ -280,8 +288,19 @@ def build_cached_seek(disk_labels):
     n('LD HL,seek_503',0x21,0x3e44,10); e('PUSH HL',[0xe5],11); e('EI',[0xfb],4)
     a.label('seek_enter'); n('JP ROM trampoline',0xc3,0x3d2f,10)
     a.label('seek_return'); e('EI',[0xfb],4)
+    if side_only:
+        e('LD A,84h',[0x3e,0x84],7); n('LD (ROM_command),A',0x32,0x5cfe,13)
+        n('JP restore_irq',0xc3,'restore_irq',10)
+        a.label('side_settle')
+        # 7 + 54*13 + 8 = 717 T, >200 us at 3.5469 MHz. IRQ/ULA only
+        # lengthen the minimum. No seek/step has occurred on this path.
+        e('LD B,55',[0x06,55],7); a.label('side_settle_loop')
+        listing.append(dict(address=a.pc,instruction='DJNZ side_settle_loop',tstates=[8,13],phase='cached_seek'))
+        a.rel8(0x10,'side_settle_loop')
+        a.label('restore_irq')
     n('LD HL,fast_irq',0x21,0xbd80,10); n('LD (irq_vector),HL',0x22,0xbdbe,16)
-    e('LD A,84h',[0x3e,0x84],7); n('LD (ROM_command),A',0x32,0x5cfe,13)
+    if not side_only:
+        e('LD A,84h',[0x3e,0x84],7); n('LD (ROM_command),A',0x32,0x5cfe,13)
     e('POP HL',[0xe1],10); e('RET',[0xc9],10)
     a.label('end')
     if a.pc>0x9b00: raise ValueError('cached seek overlaps row-low table')

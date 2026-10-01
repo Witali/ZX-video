@@ -5,6 +5,62 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: skip redundant disk SEEK and settling on side-only changes
+
+- Objective: improve sustained delivery without increasing compressed bytes
+  or decoder cost, then fulfill the user's explicit request to minimize disk
+  head travel. Baseline `23dc128`; reuse the direct-header 256-frame window
+  [4096,4352) and accepted invisible-attribute part 4 [3744,5066). No new
+  media preparation, packet format, interleave or full-set sweep.
+- The existing runtime order already traverses consecutive logical tracks,
+  with minimum one-way cylinder travel. The redundant work was SEEK plus
+  READ 84h settling at every side change. The opt-in helper now compares
+  physical cylinders, selects the side, waits 717 T (>200 us at3.5469 MHz),
+  and uses READ 80h when the cylinder remains unchanged. Real cylinder
+  changes retain the drive's step rate, SEEK/HLD and READ84. FFh cold state,
+  FEh idle recovery, periodic head-loaded maintenance and short-read fallback
+  remain intact. The generic `--guarded-cb46` profile selects this automatically.
+- Hardware evidence: pinned TR-DOS 5.03 bytes at1FEBh/1FF6h/3E44h, FD179x
+  E-bit semantics, and the Shugart SA460 manual's200 us side-select minimum.
+  This is a standard-clock, emulator-verified implementation; no physical
+  drive or turbo mode was tested. Source links and assumptions are in
+  [SIDE_ONLY_SEEK.md](toolkit/SIDE_ONLY_SEEK.md).
+- Exact RAM helper counts, excluding ROM/controller/IRQ/ULA: side1
+  **401 ->1009 T (+608)**, side0 **391 ->999 (+608)**, cylinder-side0
+  **391 ->456 (+65)**, FEh recovery-side1 **401 ->466 (+65)**. Same-track and
+  cold adapter paths change by0 T. The explicit short pause increases RAM
+  work but replaces the long controller delay. Decoder/renderer opcodes and
+  timing tables change by0 T. Helper89 ->107 bytes, extra stack2 bytes;
+  startup still occupies the same number of sectors.
+- Window:185681 video bytes /781 occupied sectors unchanged. Read-path SEEKs
+  **45 ->22**, nominal misses **2 ->0**, maximum actual OUT deviation
+  **70917 ->16 T**, zero invalid intervals. Full part4:622695 video bytes,
+  2433 runtime sectors /2543 occupied unchanged; SEEKs **152 ->76**, nominal
+  misses **22 ->0**, actual deviation **1063627 ->19 T**, invalid intervals
+  **11 ->0**. No late runs remain. Keepalive calls are separate and stay on
+  the last-read cylinder; they are not physical backward motion.
+- Verification:8 component tests pass, including2560 geometry/drive/bank
+  combinations, sentinels, corrupted short-read fallback,1024 independent
+  full-AF cases, minimum delay, exact default bytes and existing real-AY IRQ
+  keepalive checks. Both scopes pass dirty cold boots, complete native and
+  complete Fuse screen-byte comparison:1578 frames /10907136 screen bytes,
+  7890 exact AY ticks, no read retries or audio underruns. The generic
+  converter also passes a fresh10-frame/50-tick colour fixture on3 independent
+  disks (31/42/41 occupied sectors), zero misses and both modeled-ROM swaps.
+- Initial window build stopped before producing a TRD because the install
+  guard expected a top-level `cached_seek` flag not yet present during RAM
+  construction. Corrected it to validate actual seek labels, pinned ROM
+  identity, old machine bytes, free space and active keepalive; the builder
+  also requires its fast/cached options. The failed log is preserved.
+- Decision: retain and enable this in the guarded profile. It fixes the
+  previously failing full part4 timing while preserving compression and
+  media. Root releases remain unchanged: parts1..3 and actual preceding-EOF
+  continuation of one coherent four-volume set remain unverified.
+  Reproduce with [analyzer](toolkit/analyze_side_only_seek.py),
+  [tests](toolkit/test_side_only_seek.py) and the cached rebuilder; reuse
+  `.tmp/side-only-seek-window-fixed/`, `.tmp/side-only-seek-part04/`,
+  `.tmp/side-only-seek-generic/` and [hashed evidence](toolkit/side_only_seek_report.json).
+
 ## 2026-10-01: generic converter selects the guarded four-slot CB46 profile
 
 - Objective: connect the measured compression/delivery components to the

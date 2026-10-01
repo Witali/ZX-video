@@ -33,7 +33,7 @@ class ShortReadCPU(DiskCPU):
         return cycles
 
 
-def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cached_seek=False,drive=0,interleaved=False,irq_safe_paging=False,fast_return_irq=False,poison_irq=False):
+def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cached_seek=False,drive=0,interleaved=False,irq_safe_paging=False,fast_return_irq=False,poison_irq=False,side_only_seek=False):
     data=b''.join(bytes([i%251])*256 for i in range(2560))
     cpu=ShortReadCPU(b'',data);cpu.poison_rom=True;cpu.short_once=short;cpu.port_7ffd=0x1f
     regions,_,vl=video.build_video(dict(saved_page=0x8000,screen_base=0x8001),
@@ -44,7 +44,7 @@ def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cac
     install(cpu,disk.DISK,code)
     seek_bytes=0
     if cached_seek:
-        seek_code,seek_labels,seek_rows=disk.build_cached_seek(l)
+        seek_code,seek_labels,seek_rows=disk.build_cached_seek(l,side_only=side_only_seek)
         install(cpu,disk.CACHED_SEEK,seek_code); rows+=seek_rows; seek_bytes=len(seek_code)
     # The actual player installs IM2 before entering the adapter.
     cpu.i=0xbe;cpu.im=2;cpu.iff1=True;word(cpu,0xbdbe,0xbd80)
@@ -62,12 +62,13 @@ def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cac
     saved={name:i+1 for i,name in enumerate(('ix','iy','alt_a','alt_b','alt_c','alt_d','alt_e','alt_h','alt_l'))}
     saved.update(alt_z=True,alt_carry=True)
     for name,value in saved.items(): setattr(cpu,name,value)
-    instructions={r['address']:r for r in rows+vl}; visits={}
+    instructions={r['address']:r for r in rows+vl}; visits={}; seek_tstates=0
     while cpu.pc!=0x5f00:
         pc=cpu.pc;before=cpu.tstates;cpu.step();ticks=cpu.tstates-before
         wanted=instructions[pc]['tstates']
         assert ticks in (wanted if isinstance(wanted,list) else [wanted]),(hex(pc),ticks,wanted)
         visits[pc]=visits.get(pc,0)+1
+        if disk.CACHED_SEEK<=pc<0x9b00:seek_tstates+=ticks
         assert cpu.steps<500
     assert {n:getattr(cpu,n) for n in saved}==saved
     assert cpu.sp==0x7bc0 and word(cpu,l['remaining'])==6
@@ -83,12 +84,13 @@ def run(*,fast_disk,track=3,sector=1,region=0,high=0xc0,cached=3,short=False,cac
     assert cpu.i==0xbe and cpu.im==2 and cpu.iff1
     if fast_disk: assert cpu.read8(l['cached_track'])==track
     if cached_seek and cached not in (255,track):
-        assert [c[0] for c in cpu.seek_calls]==[0x1ff6 if track&1 else 0x1feb,0x3e44],cpu.seek_calls
-        assert cpu.seek_calls[-1][1:]==(track//2,drive),cpu.seek_calls
-        if not short: assert cpu.read8(0x5cfe)==0x84
+        side_only=side_only_seek and cached//2==track//2
+        assert [c[0] for c in cpu.seek_calls]==[0x1ff6 if track&1 else 0x1feb]+([] if side_only else [0x3e44]),cpu.seek_calls
+        if not side_only: assert cpu.seek_calls[-1][1:]==(track//2,drive),cpu.seek_calls
+        if not short: assert cpu.read8(0x5cfe)==(0x80 if side_only else 0x84)
     else: assert not cpu.seek_calls
     return dict(tstates=cpu.tstates,code_bytes=len(code),
-        seek_bytes=seek_bytes,
+        seek_bytes=seek_bytes,seek_helper_tstates=seek_tstates,
         restore_calls=visits.get(l['disk_finish'],0),
         full_calls=visits.get(l['disk_full_call'],0),
         direct_calls=visits.get(l.get('fast_read_enter'),0),

@@ -167,15 +167,36 @@ not sustained movie evidence. Reuse `.tmp/generic-guarded-window/`,
 [archive](toolkit/generic_guarded_cb46_report.json). Defaults/root releases
 remain unchanged; do not repeat these fixture builds.
 
-Next bounded scope: investigate cached disk seeks on side-only changes.
-`fap3_disk_z80.build_cached_seek` currently always issues SEEK and sets READ
-command 84h for every logical-track change, including the same cylinder.
-Inspect the actual TR-DOS 5.03 ROM/controller requirements; only then test
-skipping unnecessary SEEK/settle work while preserving side selection and
-head-loaded keepalive. Count deterministic branch costs separately from
-ROM/physical latency. Reuse the same window first, then full part 4 if useful;
-preserve codec/media bytes and do not rebuild the whole movie. Four-volume
-cold/continuation release checks and sustained timing remain open.
+Side-only disk reads now pass the saved window and full part 4. Runtime
+tracks already follow the minimum one-way cylinder path; remove redundant
+same-cylinder SEEK and READ-84 settling, retaining a 717 T (>200 us) side
+pause. Actual cylinder changes, FEh idle recovery, FFh dispatcher, periodic
+head maintenance and short-read retry stay intact. Decoder/renderer/media
+bytes are unchanged. RAM helper side paths cost 401 ->1009 T (side 1) and
+391 ->999 T (side 0); cylinder-side-0 costs 391 ->456 T. These small CPU
+increases replace much longer controller waits; ROM/IRQ/ULA are separate.
+Helper 89 ->107 bytes, two extra stack bytes, no extra disk sector.
+
+Window [4096,4352): 45 ->22 read-path SEEKs, **2 ->0 nominal misses**, actual
+OUT phase deviation at most16 T. Full part 4 [3744,5066), with the accepted
+invisible-attribute stream: 152 ->76 SEEKs, **22 ->0 nominal misses**, max19 T,
+zero bad intervals/retries/AY underruns. Full cold/native/Fuse screen-byte
+checks pass for both scopes; 781/2543 occupied sectors are unchanged.
+Generic `--guarded-cb46` enables this automatically; a new three-disk colour
+fixture passes all ten frames, 50 AY ticks and both modeled-ROM swaps.
+Reuse `.tmp/side-only-seek-window-fixed/`, `.tmp/side-only-seek-part04/`,
+[method](toolkit/SIDE_ONLY_SEEK.md) and [evidence](toolkit/side_only_seek_report.json).
+Eight component tests include 2560 geometry and1024 independent full-flags
+cases. No physical drive was measured; standard CPU clock and the SA460
+200 us side-select contract are explicit assumptions.
+
+Next bounded scope: build one coherent four-volume candidate from the
+already cached CB46 streams, using the selected player, then verify parts
+1..3 and full preceding-EOF continuations. Reuse the proven part-4 stream;
+do not requantize media or sweep alternate full sets. Ensure a shared series
+identity, correct volume headers and independently bootable cold states;
+the separately rebuilt experiment files are not yet a coherent release set.
+Publish root LFS images only after every full-set content/timing gate passes.
 
 The sector-streaming LZSA2 experiment remains unselected. Eager
 prefix decoding produces 27 late frames / maximum 40 fields in the complete

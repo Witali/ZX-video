@@ -7,6 +7,13 @@ crop, credit edit or volume boundaries are embedded in the new path.
 
 ## Experimental guarded CB46 profile (2026-10-01)
 
+The profile now also enables [same-cylinder side selection](SIDE_ONLY_SEEK.md)
+with a 200 microsecond minimum pause. Cylinder moves and idle head recovery
+retain full SEEK/settle behavior. This changes disk-service timing only;
+compressed bytes and decoder/renderer instructions are unchanged. Full
+part 4 now meets all nominal deadlines; the complete four-volume release
+and preceding-EOF continuations still require verification.
+
 Add `--guarded-cb46` to select the current experimental delivery profile as
 one unit: dynamic rows, front reuse, partial row pairs, inline cells, four
 video slots, fixed AY trees/tail, compressed-sector cache, streaming LZSA2
