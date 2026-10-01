@@ -123,14 +123,23 @@ def main():
         q,z,packet=m['queue_labels'],m['decoder_labels'],m['packet_labels']
         queue_state=[stamp,'ula:mem7ffd',f'[{q["count"]}]',f'[{q["phase"]}]',
             mem(q['blocks_left']),mem(q['position']),mem(z['slice_output'])]
-        for label,tag in (('read_packet',160),('packet_ready',161),('prepare_bridge',162),('draw_bridge',163)):
+        cell_player=m.get('cell_codebook',{}).get('enabled',False)
+        stages=[('read_packet',160),('packet_ready',161),('draw_bridge',163)]
+        if not cell_player:stages.append(('prepare_bridge',162))
+        for label,tag in stages:
             event(packet[label],tag,queue_state)
-        event(packet['video_payload_ready'],167,queue_state)
-        prepare_calls={'CALL compact zero','CALL compact one','CALL reconstruct pending packet'}
-        returns=[row['address']+3 for row in m['slot_queue_instruction_listing']
-                 if row['instruction'] in prepare_calls]
-        if len(returns)!=2+int(m['frames']>1):raise ValueError('unexpected clock preparation call sites')
-        for pc in returns:event(pc,164,queue_state)
+        if cell_player:
+            call=next(row for row in m['slot_queue_instruction_listing'] if row['address']==q['run_decode'])
+            if not call['instruction'].startswith('CALL '):raise ValueError('unexpected decoder bridge call')
+            event(q['run_decode'],168,queue_state)
+            event(q['run_decode']+3,169,queue_state)
+        if not cell_player:
+            event(packet['video_payload_ready'],167,queue_state)
+            prepare_calls={'CALL compact zero','CALL compact one','CALL reconstruct pending packet'}
+            returns=[row['address']+3 for row in m['slot_queue_instruction_listing']
+                     if row['instruction'] in prepare_calls]
+            if len(returns)!=2+int(m['frames']>1):raise ValueError('unexpected clock preparation call sites')
+            for pc in returns:event(pc,164,queue_state)
         event(q['take_next'],165,queue_state,after=['set $qwait 1'])
         lines[-1]=f'condition {len(events)} $running == 1 && [{q["count"]}]==0 && $qwait==0'
         event(q['take_available'],166,queue_state,after=['set $qwait 0'])
@@ -280,10 +289,10 @@ def main():
         elif tag in (176,177,178):
             enqueue_events.append(dict(kind={176:'enqueue_start',177:'enqueue_end',178:'enqueue_full'}[tag],
                 tstate=v[0],write_index=v[1],read_index=v[2]))
-        elif tag in (160,161,162,163,164,165,166,167):
+        elif tag in (160,161,162,163,164,165,166,167,168,169):
             pipeline_events.append(dict(kind={160:'packet_start',161:'packet_ready',162:'prepare_start',
                 163:'draw_start',164:'prepare_end',167:'video_payload_ready',
-                165:'empty_wait_start',166:'empty_wait_end'}[tag],
+                165:'empty_wait_start',166:'empty_wait_end',168:'decode_start',169:'decode_end'}[tag],
                 **dict(zip(('tstate','page','count','phase','blocks_left','position','slice_output'),v))))
         elif tag==180:guard_events.append(dict(kind='start',**dict(zip(('tstate','count','position','length','audio_read','audio_write'),v))))
         elif tag==181:guard_events.append(dict(kind='end',tstate=v[0],accepted=v[1]))

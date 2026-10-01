@@ -13,6 +13,15 @@ from dynamic_row_dictionary import patterns,decode_check
 from probe_cell_codebook import indices
 
 
+def representation(frames,start,end):
+    from dynamic_row_dictionary import representation as rows
+    base=rows(frames,start,end,book_front_reuse=True)
+    result=encode(base,frames,start,end)
+    return dict(base,**{k:v for k,v in result.items() if k not in ('details','proof')},
+        details=[dict(old,**new) for old,new in zip(base['details'],result['details'])],
+        dynamic_proof=result['proof'],front_reuse=True)
+
+
 def encode(base,frames,start,end,*,neighbours=False):
     raw=base['raw'];assert raw[:4]==b'CB42'
     output=bytearray(b'CB44'+raw[4:2056]);at=2056;details=[]

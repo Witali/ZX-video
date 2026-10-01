@@ -35,6 +35,43 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — native CB44 preserves pixels but fails sustained delivery
+
+- Objective: integrate the selected exact front-cell reuse after `3bb7aa9`
+  without changing image or AY data. CB44 adds two-bit native modes to CB42
+  dynamic rows; unsupported neighbour mode 3 is rejected. Generic/prepared
+  converters expose front reuse, dynamic rows and one/two resident AY banks.
+- Book/literal cells change from 268/304 to 281/317 T; front cells cost
+  299 T, excluding caller/refill. Setup saves 16 T; mode refill is every four
+  cells instead of eight. The complete counted delta and 20 boundary cases
+  are saved with the report. Twenty-eight tests pass, including independent
+  full-flags/IRQ replay, old formats and guarded accesses.
+- Synthetic 12-frame native/Fuse playback is exact and zero-late. Complete
+  real [4096,4352) playback preserves 1769472 screen bytes, 1280 AY records
+  and 735 sectors, but misses 116 nominal deadlines: 115 exceed one field,
+  maximum 89 fields, 54 invalid intervals. No AY underruns. Reject as a
+  release. An initial cut list failed the two-bank audio limit before TRD
+  generation; corrected cuts retain the real preceding screen histories.
+- Complete native first-volume capacity at cuts [0,1312,2672,3744,5066]
+  is 2558 sectors / 2544 maximum: 2456 video and 102 startup/audio. This
+  failed build emitted no image. Root images remain the previous set.
+- Extend read-only Fuse tracing for cell-player packet/draw/decode calls;
+  the old tracer expected retired reconstruction calls and initially stopped
+  before emulator launch. Additional complete tracing reports 117 misses,
+  same 89-field maximum, exact AY and pixels sampled against reference.
+  Do not replace the original full-screen run's result with this separate
+  bootstrap/rotation phase. Of 95.017M active elapsed T, drawing takes
+  35.103M, disk service 19.159M and decoder bridge slices 15.205M. Packet
+  intervals overlap disk/decode; residuals include IRQ/ULA/control. They
+  are not deterministic CPU measurements. Empty queue at 115/256 entries.
+- Decision: retain the exact optional format, prioritize rendering and
+  producer delivery before a final four-disk build. No claim that more
+  buffering alone solves throughput. Preserve all failed capacity/timing
+  evidence and reproducing scripts. [Implementation and cycle formula](toolkit/CB44_DYNAMIC.md),
+  [native/Fuse report](toolkit/front_native_report.json),
+  [window verifier](toolkit/verify_player_windows.py),
+  [stage profiler](toolkit/profile_cell_delivery.py).
+
 ## 2026-10-01 — exact front-screen reuse reduces the selected movie stream
 
 - Objective: reduce repeated payload after the dynamic-cell result in

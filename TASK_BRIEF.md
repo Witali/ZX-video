@@ -85,14 +85,30 @@ One full CB44 partition with the existing four cuts is encoded on the host:
 total). This saves 74724 bytes versus CB42, with all 5066 exact screens and
 unchanged AY. Only 321 sectors remain for all boot/audio; final capacity is
 not established. Reuse `.tmp/front-four/` and [exact streams](toolkit/front_four_report.json).
-No native CB44/45 player exists yet; root TRDs remain the prior CB41 set,
-and CB42 remains available in the verified dynamic-row fixtures/converter.
-Next implement and count a same-position CB44 kernel, verify a bounded
-native/Fuse window, and measure complete startup/audio capacity before
-building a final set. The 2-bit mode reader needs a different mode-mask length
-and a maximum packet size of 3168. Source screen is destination XOR 8000h;
-it stays immutable during drawing, and attributes still use ordinary CB42
-updates. Do not enable unsupported neighbour mode 3 in the native builder.
+Native CB44 now supports exact same-position front copies; neighbour mode 3
+is rejected before building. Generic and prepared conversion accept
+`--front-reuse` (implies dynamic rows), `--dynamic-rows`, `--audio-banks 2`.
+Twenty-eight tests pass. The 12-frame fixture is fully exact/zero-late, but
+the complete 256-frame [4096,4352) window fails timing: 116 nominal misses,
+115 beyond one field, maximum 89 fields. All 1769472 screen bytes and 1280
+AY records are exact. Root images stay unchanged; this is not a release.
+Native book/literal cells cost 281/317 T versus 268/304 T; front cells 299 T,
+excluding caller/refill. Full counted formula and twenty boundary cases are
+in [native evidence](toolkit/front_native_report.json).
+
+The first complete selected volume fails capacity: 2558 sectors versus 2544,
+including 2456 video and 102 startup/audio sectors. No full-set TRDs were
+emitted. Reuse `.tmp/front-four-native-capacity/` and the exact cached video.
+The complete real Fuse pipeline trace finds drawing 35.10M T, active disk
+service 19.16M T and active LZSA2 bridge slices 15.21M T within 95.02M T
+from first packet to last publication. Decoder slices include paging/IRQs/
+contention; these are not deterministic CPU counts. Packet intervals overlap
+disk/decode and must not be added again. An independently booted trace has
+117 misses, same maximum 89; report both runs rather than replacing the
+original result. Queue empty at 115/256 packet entries. Next reduce native
+mask/render overhead and inspect producer scheduling on this cached window;
+an extra buffer alone does not establish sustainable delivery. See
+[implementation, cycles and reproduction](toolkit/CB44_DYNAMIC.md).
 If startup overhead prevents four disks, audit obsolete reconstruction code
 still loaded below the current 8DF2h LZSA2 core before changing image quality;
 this is a hypothesis requiring reachability, cold boot and continuation checks.

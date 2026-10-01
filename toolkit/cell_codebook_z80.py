@@ -14,7 +14,8 @@ from build_zxv_trd import MiniAssembler
 CODE, ROWS, BOOK, POPCOUNT = 0x9000,0x9e00,0xa800,0xb000
 
 
-def build(*,dictionary=True):
+def build(*,dictionary=True,front_reuse=False):
+    if front_reuse and not dictionary:raise ValueError('front reuse requires the cell book')
     a=MiniAssembler(CODE);listing=[];stage='setup'
     def emit(name,blob,t):listing.append(dict(address=a.pc,instruction=name,tstates=t,stage=stage));a.emit(*blob)
     def fixed(name,op,value,t):
@@ -36,8 +37,9 @@ def build(*,dictionary=True):
         emit('LD L,A',[0x6f],4);emit('LD A,(HL)',[0x7e],7);emit('ADD A,E',[0x83],4);emit('LD E,A',[0x5f],4)
         jr(0x30,'count_no_carry');emit('INC D',[0x14],4);a.label('count_no_carry')
         listing.append(dict(address=a.pc,instruction='DJNZ count',tstates=[8,13],stage=stage));a.rel8(0x10,'count')
-        fixed('LD HL,7',0x21,7,10);emit('ADD HL,DE',[0x19],11)
-        for _ in range(3):emit('SRL H',[0xcb,0x3c],8);emit('RR L',[0xcb,0x1d],8)
+        rounding=3 if front_reuse else 7
+        fixed(f'LD HL,{rounding}',0x21,rounding,10);emit('ADD HL,DE',[0x19],11)
+        for _ in range(2 if front_reuse else 3):emit('SRL H',[0xcb,0x3c],8);emit('RR L',[0xcb,0x1d],8)
         labelop('LD BC,(packet)',[0xed,0x4b],'packet',20);emit('ADD HL,BC',[9],11)
         fixed('LD BC,144',1,144,10);emit('ADD HL,BC',[9],11)
     else:
@@ -69,9 +71,23 @@ def build(*,dictionary=True):
         # LD/INC DE preserve it; RRA inserts the next sentinel without SCF.
         emit('LD A,(DE)',[0x1a],7);emit('INC DE',[0x13],6)
         emit('RRA',[0x1f],4);emit('LD B,A',[0x47],4)
-        a.label('mode_ready');exx();jr(0x30,'literal')
+        a.label('mode_ready')
+        if front_reuse:
+            # Two bits always consume the sentinel in pairs. Modes are
+            # 00 literal, 01 book, 10 same-position front; 11 is rejected
+            # by the builder, as spatial copying is not a native feature.
+            jr(0x38,'book_mode');emit('SRL B',[0xcb,0x38],8);exx()
+            labelop('JP NC,literal',0xd2,'literal',10)
+            stage='front_source'
+            emit('LD B,D',[0x42],4);emit('LD C,E',[0x4b],4)
+            emit('LD A,B',[0x78],4);emit('XOR 80h',[0xee,0x80],7);emit('LD B,A',[0x47],4)
+            labelop('JP copy cell',0xc3,'copy_cell',10)
+            stage='mode';a.label('book_mode');emit('SRL B',[0xcb,0x38],8);exx()
+        else:exx();jr(0x30,'literal')
         stage='dictionary'
         emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6);emit('LD B,book page',[6,BOOK>>8],7)
+        a.label('copy_cell')
+        if front_reuse:stage='cell_copy'
         for i in range(8):
             emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
             if i<7:emit('INC B',[4],4);emit('INC D',[0x14],4)
@@ -96,7 +112,7 @@ def build(*,dictionary=True):
     a.label('state');a.label('packet');a.word(0);a.label('screen_high');a.emit(0);a.label('end')
     if a.pc>0x9d00:raise ValueError('renderer exceeds provisional code allocation')
     regions=[(CODE,a.resolve()),(POPCOUNT,bytes(i.bit_count() for i in range(256)))]
-    return regions,a.labels,dict(dictionary=dictionary,instruction_listing=listing,code_bytes=len(regions[0][1])-3,
+    return regions,a.labels,dict(dictionary=dictionary,front_reuse=front_reuse,instruction_listing=listing,code_bytes=len(regions[0][1])-3,
         state_bytes=3,book_bytes=2048,popcount_bytes=256,row_table_bytes=512,
         layout_scope='Component-only: reuses obsolete compact-frame range A800..B0FF; integration must remove old frame consumers.',
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf')

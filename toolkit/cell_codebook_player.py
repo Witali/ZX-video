@@ -19,7 +19,7 @@ from probe_cell_codebook import history_state
 PACKET,INPUT,LENGTH=0xdc00,0x6400,0xba58
 
 
-def packet_code(m,labels,screen_base,*,dynamic_rows=False):
+def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False):
     a=MiniAssembler(PACKET);rows=[];e,n=helpers(a,rows,'cb41_packet')
     q,z=m['queue_labels'],m['decoder_labels']
     service=m['inplace_keepalive']['wrapper']
@@ -41,7 +41,7 @@ def packet_code(m,labels,screen_base,*,dynamic_rows=False):
         n('JP NZ,row_updates',0xc2,'row_updates',10)
     n('LD DE,minimum',0x11,144,10)
     e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15);n('JP C,fatal',0xda,z['fatal'],10)
-    n('LD DE,range',0x11,3096-144+1,10);e('OR A',[0xb7],4)
+    n('LD DE,range',0x11,(3168 if front_reuse else 3096)-144+1,10);e('OR A',[0xb7],4)
     e('SBC HL,DE',[0xed,0x52],15);n('JP NC,fatal',0xd2,z['fatal'],10)
     n('LD DE,packet',0x11,INPUT,10);n('LD BC,(length)',(0xed,0x4b),LENGTH,20)
     n('CALL queue take',0xcd,q['take'],17)
@@ -93,9 +93,10 @@ class Builder(PreviousBuilder):
         self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
         count,entries=struct.unpack_from('<HH',cell_raw,4)
-        self.dynamic_rows=cell_raw[:4]==b'CB42'
+        self.front_reuse=cell_raw[:4]==b'CB44'
+        self.dynamic_rows=cell_raw[:4] in (b'CB42',b'CB44')
         self.reference_frames=reference_frames
-        if cell_raw[:4] not in (b'CB41',b'CB42') or entries!=256 or cell_start<0:
+        if cell_raw[:4] not in (b'CB41',b'CB42',b'CB44') or entries!=256 or cell_start<0:
             raise ValueError('this builder needs a 256-entry book and a nonnegative start')
         if self.dynamic_rows and reference_frames is None:
             raise ValueError('CB42 needs independent five-level reference frames')
@@ -107,7 +108,12 @@ class Builder(PreviousBuilder):
                 if not 1<=replacements<=256:raise ValueError('invalid CB42 row replacement count')
                 at+=2+3*replacements
                 length=struct.unpack_from('<H',cell_raw,at)[0]
-            if not 144<=length<=3096:raise ValueError('CB41 payload outside native contract')
+            if not 144<=length<=(3168 if self.front_reuse else 3096):raise ValueError('cell payload outside native contract')
+            if self.front_reuse:
+                cells=sum(b.bit_count() for b in cell_raw[at+2:at+74])
+                modes=cell_raw[at+146:at+146+(cells+3)//4]
+                if len(modes)!=(cells+3)//4 or any((modes[i//4]>>((i%4)*2))&3==3 for i in range(cells)):
+                    raise ValueError('native CB44 supports same-position front reuse only')
             at+=2+length
         if at!=len(cell_raw):raise ValueError('CB41 frame extents differ')
         self.cell_raw=cell_raw;self.cell_start=cell_start;self.cell_end=cell_start+count
@@ -124,7 +130,7 @@ class Builder(PreviousBuilder):
         def put(at,data):
             if (at&16383)+len(data)>16384:raise ValueError('cross-bank CB41 install')
             banks[bank(at)][at&16383:(at&16383)+len(data)]=data
-        regions,labels,layout=native.build(dictionary=True)
+        regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse)
         screen_base,saved_page=labels['end'],labels['end']+1
         retired=[];patches=[]
         for lo,hi in ((native.CODE,0x9400),(0xa800,0xb700),(PACKET,0xe000)):
@@ -158,7 +164,7 @@ class Builder(PreviousBuilder):
         m['video_cadence']=dict(fields_per_frame=self.frame_fields,ay_hz=50,
             deadline_increment_pc=pc,previous_tstates=10,tstates=10,delta_tstates=0,
             schedule_origin_preserved=True)
-        code,p,rows=packet_code(m,labels,screen_base,dynamic_rows=self.dynamic_rows);put(PACKET,code)
+        code,p,rows=packet_code(m,labels,screen_base,dynamic_rows=self.dynamic_rows,front_reuse=self.front_reuse);put(PACKET,code)
         # The old clock was retired above; its progress target is a constant
         # from the unchanged progress component.
         import disk_progress_z80
@@ -187,16 +193,25 @@ class Builder(PreviousBuilder):
         retired_ranges=[(r['start'],r['end']) for r in retired]
         m['slot_queue_instruction_listing']=[r for r in m['slot_queue_instruction_listing']
             if not any(lo<=r['address']<hi for lo,hi in retired_ranges)]+rows+crows+progress_rows+layout['instruction_listing']
-        m['cell_codebook']=dict(enabled=True,experimental=True,wire='CB42' if self.dynamic_rows else 'CB41',raw_sha256=sha(self.cell_raw),
+        m['cell_codebook']=dict(enabled=True,experimental=True,wire=self.cell_raw[:4].decode(),raw_sha256=sha(self.cell_raw),
             raw_bytes=len(self.cell_raw),native_labels=labels,screen_base=screen_base,saved_page=saved_page,
             native=layout,packet_listing=rows,clock_listing=crows,irq_patches=patches,retired=retired,
             header_bytes=2056,book_loaded_from_stream=True,initial_frames=[start-2,start-1],
-            compact_frame_removed=True,packet_ahead=False,packet_capacity=3096,
+            compact_frame_removed=True,packet_ahead=False,packet_capacity=3168 if self.front_reuse else 3096,
             memory=dict(screens=[5,7],video_slots=[0,1,3],audio=4,unused_legacy_huffman=6,
                 fixed_kernel=[native.CODE,saved_page+1],rows=[0x9e00,0xa000],book=[0xa800,0xb000],
-                popcount=[0xb000,0xb100],packet=[INPUT,INPUT+3096],stack_top=0x9df0,
+                popcount=[0xb000,0xb100],packet=[INPUT,INPUT+(3168 if self.front_reuse else 3096)],stack_top=0x9df0,
                 disk_stack_top=disk.DISK_STACK),
             delivery_measured=False,release=False)
+        if self.front_reuse:
+            m['cell_codebook']['front_reuse']=dict(enabled=True,source='opposite physical screen, same cell',
+                native_modes=[0,1,2],pixel_changes=0,setup_delta_tstates=-16,
+                unchanged_cell_path_delta_tstates=13,extra_mode_byte_refill_tstates=16,
+                no_refill_cell_tstates_before=dict(book=268,literal=304),
+                no_refill_cell_tstates_after=dict(book=281,literal=317,front=299),
+                renderer_delta_formula='-16 + 13*N + 16*(ceil(N/4)-ceil(N/8)) + 18*(front_from_book-front_from_literal)',
+                renderer_delta_assumptions='Same book and changed cells; excludes IRQ, ULA and unchanged bitmap/attribute mask loops',
+                drawing_timing_requires_execution=True)
         if 'segments' in m['resident_audio']['compiled']:
             m['cell_codebook']['memory']['audio']=[4,6]
             del m['cell_codebook']['memory']['unused_legacy_huffman']

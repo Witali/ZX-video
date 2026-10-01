@@ -70,6 +70,14 @@ fit three disks or meet the timing target; `--verify fuse` measures every
 frame's deadline, full screen, AY tick and disk read. See
 [generic CB41 details and checks](toolkit/GENERIC_CB41.md).
 
+Experimental `--dynamic-rows` allows dictionary entries to be evicted and
+replaced throughout playback (CB42). `--front-reuse` includes dynamic rows
+and copies unchanged cells from the previous front screen (CB44).
+`--audio-banks 2` gives resident AY two banks. These retain exact prepared
+pixels/audio; the current long CB44 test fails 10-fps timing and its first
+four-volume partition exceeds capacity. They are optional development modes.
+[Implementation and measured limits](toolkit/CB44_DYNAMIC.md).
+
 ## Refined colour and sound at 10 fps
 
 The latest complete movie preview is **15 independently bootable root TRDs**,

@@ -184,6 +184,9 @@ def main(argv=None):
     parser.add_argument('--video-codec', choices=('fap3', 'cb41'), default='fap3',
         help='cb41: five brightness levels and the verified LZSA2 player; requires TR-DOS 5.03')
     parser.add_argument('--lzsa', help='LZSA executable for --video-codec cb41; defaults to PATH')
+    parser.add_argument('--dynamic-rows',action='store_true',help='CB42 mutable row cache for the CB41 pipeline')
+    parser.add_argument('--front-reuse',action='store_true',help='CB44 same-position front-cell reuse; includes dynamic rows')
+    parser.add_argument('--audio-banks',type=int,choices=(1,2),default=1,help='CB41-family resident AY banks: 4 or 4+6')
     parser.add_argument('--fps', choices=('25/3', '10'), default='25/3',
         help='video rate; 10 requires CB41, AY always remains 50 Hz')
     parser.add_argument('--ay-noise-steps', type=int, choices=(0, 1), default=1,
@@ -214,6 +217,8 @@ def main(argv=None):
     args.frame_fields = fields_for_fps(args.fps)
     if args.fps == '10' and args.video_codec != 'cb41':
         parser.error('--fps 10 requires --video-codec cb41')
+    if args.video_codec!='cb41' and (args.dynamic_rows or args.front_reuse or args.audio_banks!=1):
+        parser.error('dynamic rows, front reuse and resident audio banks require --video-codec cb41')
     if args.cached_huffman_byte and not args.carry_huffman: parser.error('--cached-huffman-byte requires --carry-huffman')
     try:
         if not args.input.is_file(): raise ValueError('input video file does not exist')

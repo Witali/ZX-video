@@ -1,0 +1,7248 @@
+{
+  "complete": true,
+  "release": false,
+  "whole_movie_timing_verified": false,
+  "scope": "Complete native/Fuse window checks and archive evidence for player revisions.",
+  "runs": [
+    {
+      "build": "front-native-fixture",
+      "wire": "CB44",
+      "start": 0,
+      "frames": 12,
+      "cold": {
+        "cold_sections": [
+          {
+            "bank": 2,
+            "offset": 0,
+            "bytes": 16384,
+            "sha256": "b457ecd1fb65424258adeefeb2e1c1f49e9ed7c3fd3123b47feb9e572d85e891"
+          },
+          {
+            "bank": 7,
+            "offset": 0,
+            "bytes": 9216,
+            "sha256": "3aeb49cf581828becaac484b43502ef98fd94f530e2b65d2aa6df335ab42eafe"
+          },
+          {
+            "bank": 5,
+            "offset": 13824,
+            "bytes": 2560,
+            "sha256": "3c431215080ea2404a409547036aca28f85456a007bbf782186c6c526ecafcdf"
+          },
+          {
+            "bank": 4,
+            "offset": 0,
+            "bytes": 554,
+            "sha256": "56288ea3ab1d52919a7c2319ac0e52c998133312c585628547135ab4d11d7196"
+          },
+          {
+            "bank": 6,
+            "offset": 0,
+            "bytes": 538,
+            "sha256": "c8dace96c705d6dab411fe57aedafe91995ddeae6f98aeaf2d260df1e5f767c3"
+          },
+          {
+            "bank": 5,
+            "offset": 0,
+            "bytes": 6912,
+            "sha256": "1901d17634fa9100ba72135d680475394681f58b8f16826e6ff6ac653c9ed40f"
+          }
+        ],
+        "mocked_boot_tstates": 1347495,
+        "boot_sectors": 25,
+        "dirty_ram_boot_exact": true
+      },
+      "trd_sha256": "b0208dfcaa3f8f19a41ce110bcb2367a788309952fb8a00313beb46bfe651ec7",
+      "used_sectors": 144,
+      "video_bytes": 30398,
+      "complete_native_screens": true,
+      "new_instruction_stages": {
+        "schedule": 81,
+        "cb41_packet": 5284,
+        "book_load": 54028,
+        "setup": 59352,
+        "bitmap_mask": 220560,
+        "mode": 420352,
+        "literal": 1537536,
+        "cell_return": 200448,
+        "dictionary": 5120,
+        "cell_copy": 46080,
+        "attribute_mask": 208320,
+        "attributes": 175104,
+        "cb42_row_updates": 28962
+      },
+      "full_fuse_screens_exact": true,
+      "compared_bytes": 82944,
+      "timing": {
+        "complete": true,
+        "nominal_deadlines_met": true,
+        "missed_nominal_frame_indices": [],
+        "missed_nominal_frames": 0,
+        "fallback_one_field_met": true,
+        "late_runs": [],
+        "late_runs_recovered": true,
+        "maximum_deviation_tstates": 1,
+        "publication_intervals_tstates": [
+          354540,
+          354539,
+          354541,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540
+        ],
+        "actual_ay_50hz": true,
+        "ay_missing_fields": 0,
+        "runtime_disk_reads": 119,
+        "disk_read_service_tstates": 3929131,
+        "disk_read_min_tstates": 22279,
+        "disk_read_max_tstates": 154580,
+        "seek_service_tstates": 67087,
+        "startup_and_playback_timing": {
+          "bootstrap_tstates": 8588497,
+          "playback_tstates": 10149588,
+          "bootstrap_and_playback_tstates": 18738085,
+          "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+        },
+        "disk_latency_note": "Fuse call intervals combine ROM execution, physical emulation, IRQs and contention; no artificial separation",
+        "partial_run_passes": false
+      }
+    },
+    {
+      "build": "front-native-window-fixed",
+      "wire": "CB44",
+      "start": 4096,
+      "frames": 256,
+      "cold": {
+        "cold_sections": [
+          {
+            "bank": 2,
+            "offset": 0,
+            "bytes": 16384,
+            "sha256": "7e1b068d01373ebb345bdd71cf130a94bf56ef5bf8989fd6572a74fa827e0281"
+          },
+          {
+            "bank": 7,
+            "offset": 0,
+            "bytes": 9216,
+            "sha256": "4fdb095a9e1da4ebd79a829bfe75eeca9e39fc9295b271d711ce02cd8f42f5ee"
+          },
+          {
+            "bank": 5,
+            "offset": 13824,
+            "bytes": 2560,
+            "sha256": "3c431215080ea2404a409547036aca28f85456a007bbf782186c6c526ecafcdf"
+          },
+          {
+            "bank": 4,
+            "offset": 0,
+            "bytes": 4648,
+            "sha256": "30f47a0609c2a8a01e81a14e2d0bb4ed75d07ec01f7be06e84d618e0d637f06e"
+          },
+          {
+            "bank": 6,
+            "offset": 0,
+            "bytes": 4227,
+            "sha256": "de6d131e0787220b56c95b6924a032345d2ec4130007e5715bf567e04c782d4c"
+          },
+          {
+            "bank": 5,
+            "offset": 0,
+            "bytes": 6912,
+            "sha256": "0da79a1c90b1dadd7a5ec94ef721046591b9933ae732e5917b6ee5c8b5e8aa2b"
+          }
+        ],
+        "mocked_boot_tstates": 2099211,
+        "boot_sectors": 60,
+        "dirty_ram_boot_exact": true
+      },
+      "trd_sha256": "fac870614b9e21cc225a5e124d7e834951b0ef8e9f27a6cd78231c5d40adc64a",
+      "used_sectors": 797,
+      "video_bytes": 188005,
+      "complete_native_screens": true,
+      "new_instruction_stages": {
+        "schedule": 81,
+        "cb41_packet": 98900,
+        "book_load": 54028,
+        "setup": 1266536,
+        "bitmap_mask": 4184431,
+        "mode": 4341060,
+        "front_source": 496056,
+        "cell_copy": 6900660,
+        "cell_return": 2118421,
+        "literal": 8018472,
+        "dictionary": 466100,
+        "attribute_mask": 3939040,
+        "attributes": 993472
+      },
+      "full_fuse_screens_exact": true,
+      "compared_bytes": 1769472,
+      "timing": {
+        "complete": true,
+        "nominal_deadlines_met": false,
+        "missed_nominal_frame_indices": [
+          78,
+          111,
+          123,
+          129,
+          135,
+          136,
+          137,
+          138,
+          139,
+          140,
+          141,
+          142,
+          143,
+          144,
+          145,
+          146,
+          147,
+          148,
+          149,
+          150,
+          151,
+          152,
+          153,
+          154,
+          155,
+          156,
+          157,
+          158,
+          159,
+          168,
+          169,
+          170,
+          171,
+          172,
+          173,
+          174,
+          175,
+          176,
+          177,
+          178,
+          179,
+          180,
+          181,
+          182,
+          183,
+          184,
+          185,
+          186,
+          187,
+          188,
+          189,
+          190,
+          191,
+          192,
+          193,
+          194,
+          195,
+          196,
+          197,
+          198,
+          199,
+          200,
+          201,
+          202,
+          203,
+          204,
+          205,
+          206,
+          207,
+          208,
+          209,
+          210,
+          212,
+          213,
+          214,
+          215,
+          216,
+          217,
+          218,
+          219,
+          220,
+          221,
+          222,
+          223,
+          224,
+          225,
+          226,
+          227,
+          228,
+          229,
+          230,
+          231,
+          232,
+          233,
+          234,
+          235,
+          236,
+          237,
+          238,
+          239,
+          240,
+          241,
+          242,
+          243,
+          244,
+          245,
+          246,
+          247,
+          248,
+          249,
+          250,
+          251,
+          252,
+          253,
+          254,
+          255
+        ],
+        "missed_nominal_frames": 116,
+        "fallback_one_field_met": false,
+        "late_runs": [
+          {
+            "start": 78,
+            "end": 78,
+            "recovered_at": 79
+          },
+          {
+            "start": 111,
+            "end": 111,
+            "recovered_at": 112
+          },
+          {
+            "start": 123,
+            "end": 123,
+            "recovered_at": 124
+          },
+          {
+            "start": 129,
+            "end": 129,
+            "recovered_at": 130
+          },
+          {
+            "start": 135,
+            "end": 159,
+            "recovered_at": 160
+          },
+          {
+            "start": 168,
+            "end": 210,
+            "recovered_at": 211
+          },
+          {
+            "start": 212,
+            "end": 255,
+            "recovered_at": null
+          }
+        ],
+        "late_runs_recovered": false,
+        "maximum_deviation_tstates": 6310813,
+        "publication_intervals_tstates": [
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354541,
+          354544,
+          354533,
+          354542,
+          354545,
+          354551,
+          354521,
+          354551,
+          354532,
+          354543,
+          354539,
+          354538,
+          354538,
+          354539,
+          354543,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354537,
+          354546,
+          354540,
+          354537,
+          354551,
+          354534,
+          354538,
+          354540,
+          354535,
+          354545,
+          354535,
+          354542,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354543,
+          354540,
+          354543,
+          354537,
+          354544,
+          354537,
+          354536,
+          425445,
+          283633,
+          354544,
+          354539,
+          354537,
+          354544,
+          354538,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354540,
+          354543,
+          354537,
+          354541,
+          354549,
+          354528,
+          354547,
+          354547,
+          354532,
+          354549,
+          425443,
+          283622,
+          354548,
+          354535,
+          354545,
+          354531,
+          354541,
+          354541,
+          354545,
+          354534,
+          354542,
+          354541,
+          425457,
+          283626,
+          354533,
+          354541,
+          354546,
+          354542,
+          425448,
+          283625,
+          354539,
+          354541,
+          354539,
+          354544,
+          992709,
+          283634,
+          354547,
+          354532,
+          354540,
+          354543,
+          354534,
+          354554,
+          283625,
+          425460,
+          283614,
+          1843609,
+          425449,
+          354544,
+          212719,
+          212737,
+          141808,
+          212720,
+          212725,
+          141821,
+          212721,
+          141819,
+          212717,
+          141833,
+          141805,
+          212722,
+          354537,
+          354548,
+          354529,
+          354552,
+          354528,
+          354540,
+          354543,
+          779985,
+          425456,
+          354550,
+          354524,
+          354539,
+          354543,
+          354539,
+          354546,
+          354532,
+          2127241,
+          425453,
+          354542,
+          354532,
+          212727,
+          283636,
+          283629,
+          283627,
+          212724,
+          212733,
+          212718,
+          212727,
+          283629,
+          283633,
+          212726,
+          212723,
+          1914520,
+          283624,
+          212728,
+          212720,
+          425448,
+          283634,
+          212727,
+          141811,
+          212731,
+          141810,
+          212724,
+          141822,
+          141808,
+          212725,
+          141824,
+          212720,
+          212725,
+          212729,
+          212716,
+          2127240,
+          425447,
+          354542,
+          425447,
+          283635,
+          425450,
+          354532,
+          354546,
+          425442,
+          354541,
+          2339978,
+          354525,
+          425452,
+          283629,
+          425450,
+          354538,
+          354541,
+          354549,
+          354537,
+          425445,
+          2127237,
+          354540,
+          354556,
+          354525,
+          354540,
+          283631,
+          354542,
+          283630,
+          354546,
+          354540,
+          354533,
+          283631,
+          992716,
+          212722,
+          212727,
+          212724,
+          141817,
+          212727,
+          141814,
+          212731,
+          141815,
+          141805,
+          141820,
+          141813
+        ],
+        "actual_ay_50hz": true,
+        "ay_missing_fields": 0,
+        "runtime_disk_reads": 735,
+        "disk_read_service_tstates": 22963089,
+        "disk_read_min_tstates": 22297,
+        "disk_read_max_tstates": 155723,
+        "seek_service_tstates": 510724,
+        "startup_and_playback_timing": {
+          "bootstrap_tstates": 14139872,
+          "playback_tstates": 103525156,
+          "bootstrap_and_playback_tstates": 117665028,
+          "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+        },
+        "disk_latency_note": "Fuse call intervals combine ROM execution, physical emulation, IRQs and contention; no artificial separation",
+        "partial_run_passes": false
+      }
+    }
+  ],
+  "failed_builds": [
+    {
+      "build": "front-native-window",
+      "failure": "ValueError: explicit volume exceeds resident audio bank"
+    },
+    {
+      "build": "front-four-native-capacity",
+      "failure": "ValueError: CB41 disk 1 needs 2558 sectors; maximum 2544. Local-window size estimate was insufficient. Retry with a smaller --max-frames-per-disk; no image/frame/quality was truncated."
+    }
+  ],
+  "cycle_cases": [
+    {
+      "cells": 0,
+      "target": 7,
+      "baseline_tstates": 33984,
+      "candidate_tstates": 33968,
+      "delta_tstates": -16,
+      "front_from_book": 0,
+      "front_from_literal": 0
+    },
+    {
+      "cells": 0,
+      "target": 5,
+      "baseline_tstates": 33984,
+      "candidate_tstates": 33968,
+      "delta_tstates": -16,
+      "front_from_book": 0,
+      "front_from_literal": 0
+    },
+    {
+      "cells": 1,
+      "target": 7,
+      "baseline_tstates": 34311,
+      "candidate_tstates": 34290,
+      "delta_tstates": -21,
+      "front_from_book": 0,
+      "front_from_literal": 1
+    },
+    {
+      "cells": 1,
+      "target": 5,
+      "baseline_tstates": 34311,
+      "candidate_tstates": 34290,
+      "delta_tstates": -21,
+      "front_from_book": 0,
+      "front_from_literal": 1
+    },
+    {
+      "cells": 3,
+      "target": 7,
+      "baseline_tstates": 34897,
+      "candidate_tstates": 34902,
+      "delta_tstates": 5,
+      "front_from_book": 0,
+      "front_from_literal": 1
+    },
+    {
+      "cells": 3,
+      "target": 5,
+      "baseline_tstates": 34897,
+      "candidate_tstates": 34902,
+      "delta_tstates": 5,
+      "front_from_book": 0,
+      "front_from_literal": 1
+    },
+    {
+      "cells": 4,
+      "target": 7,
+      "baseline_tstates": 35172,
+      "candidate_tstates": 35208,
+      "delta_tstates": 36,
+      "front_from_book": 1,
+      "front_from_literal": 1
+    },
+    {
+      "cells": 4,
+      "target": 5,
+      "baseline_tstates": 35172,
+      "candidate_tstates": 35208,
+      "delta_tstates": 36,
+      "front_from_book": 1,
+      "front_from_literal": 1
+    },
+    {
+      "cells": 5,
+      "target": 7,
+      "baseline_tstates": 35483,
+      "candidate_tstates": 35548,
+      "delta_tstates": 65,
+      "front_from_book": 1,
+      "front_from_literal": 1
+    },
+    {
+      "cells": 5,
+      "target": 5,
+      "baseline_tstates": 35483,
+      "candidate_tstates": 35548,
+      "delta_tstates": 65,
+      "front_from_book": 1,
+      "front_from_literal": 1
+    },
+    {
+      "cells": 7,
+      "target": 7,
+      "baseline_tstates": 36069,
+      "candidate_tstates": 36142,
+      "delta_tstates": 73,
+      "front_from_book": 1,
+      "front_from_literal": 2
+    },
+    {
+      "cells": 7,
+      "target": 5,
+      "baseline_tstates": 36069,
+      "candidate_tstates": 36142,
+      "delta_tstates": 73,
+      "front_from_book": 1,
+      "front_from_literal": 2
+    },
+    {
+      "cells": 8,
+      "target": 7,
+      "baseline_tstates": 36344,
+      "candidate_tstates": 36430,
+      "delta_tstates": 86,
+      "front_from_book": 1,
+      "front_from_literal": 2
+    },
+    {
+      "cells": 8,
+      "target": 5,
+      "baseline_tstates": 36344,
+      "candidate_tstates": 36430,
+      "delta_tstates": 86,
+      "front_from_book": 1,
+      "front_from_literal": 2
+    },
+    {
+      "cells": 9,
+      "target": 7,
+      "baseline_tstates": 36671,
+      "candidate_tstates": 36770,
+      "delta_tstates": 99,
+      "front_from_book": 1,
+      "front_from_literal": 2
+    },
+    {
+      "cells": 9,
+      "target": 5,
+      "baseline_tstates": 36671,
+      "candidate_tstates": 36770,
+      "delta_tstates": 99,
+      "front_from_book": 1,
+      "front_from_literal": 2
+    },
+    {
+      "cells": 575,
+      "target": 7,
+      "baseline_tstates": 203627,
+      "candidate_tstates": 212238,
+      "delta_tstates": 8611,
+      "front_from_book": 96,
+      "front_from_literal": 96
+    },
+    {
+      "cells": 575,
+      "target": 5,
+      "baseline_tstates": 203627,
+      "candidate_tstates": 212238,
+      "delta_tstates": 8611,
+      "front_from_book": 96,
+      "front_from_literal": 96
+    },
+    {
+      "cells": 576,
+      "target": 7,
+      "baseline_tstates": 203902,
+      "candidate_tstates": 212526,
+      "delta_tstates": 8624,
+      "front_from_book": 96,
+      "front_from_literal": 96
+    },
+    {
+      "cells": 576,
+      "target": 5,
+      "baseline_tstates": 203902,
+      "candidate_tstates": 212526,
+      "delta_tstates": 8624,
+      "front_from_book": 96,
+      "front_from_literal": 96
+    }
+  ],
+  "profile": {
+    "complete": true,
+    "release": false,
+    "scope": "Profile exact cell-player stage boundaries in a complete real Fuse run.\n\nElapsed residuals include IRQs, contention and control code. They are not\ndeterministic CPU times. Report the independent CPU replay separately.\n",
+    "frames": [
+      {
+        "frame": 4096,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 47934074,
+            "end": 48050134,
+            "elapsed": 116060,
+            "disk_service": 0,
+            "residual": 116060,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 48050186,
+            "end": 48138137,
+            "elapsed": 87951,
+            "disk_service": 0,
+            "residual": 87951,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4097,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 48138174,
+            "end": 48152066,
+            "elapsed": 13892,
+            "disk_service": 0,
+            "residual": 13892,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 48218954,
+            "end": 48312234,
+            "elapsed": 93280,
+            "disk_service": 0,
+            "residual": 93280,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4098,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 48312354,
+            "end": 48333440,
+            "elapsed": 21086,
+            "disk_service": 0,
+            "residual": 21086,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 48573587,
+            "end": 48674405,
+            "elapsed": 100818,
+            "disk_service": 0,
+            "residual": 100818,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4099,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 48674528,
+            "end": 48696644,
+            "elapsed": 22116,
+            "disk_service": 0,
+            "residual": 22116,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 48927805,
+            "end": 49034348,
+            "elapsed": 106543,
+            "disk_service": 0,
+            "residual": 106543,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4100,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 49034500,
+            "end": 49058026,
+            "elapsed": 23526,
+            "disk_service": 0,
+            "residual": 23526,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 49282834,
+            "end": 49422420,
+            "elapsed": 139586,
+            "disk_service": 0,
+            "residual": 139586,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4101,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 49422503,
+            "end": 49442937,
+            "elapsed": 20434,
+            "disk_service": 0,
+            "residual": 20434,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 49636958,
+            "end": 49757517,
+            "elapsed": 120559,
+            "disk_service": 0,
+            "residual": 120559,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4102,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 49757622,
+            "end": 49778527,
+            "elapsed": 20905,
+            "disk_service": 0,
+            "residual": 20905,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 49991664,
+            "end": 50113403,
+            "elapsed": 121739,
+            "disk_service": 0,
+            "residual": 121739,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4103,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 50113486,
+            "end": 50135247,
+            "elapsed": 21761,
+            "disk_service": 0,
+            "residual": 21761,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 50346287,
+            "end": 50474592,
+            "elapsed": 128305,
+            "disk_service": 0,
+            "residual": 128305,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4104,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 50474675,
+            "end": 50554738,
+            "elapsed": 80063,
+            "disk_service": 0,
+            "residual": 80063,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 50701008,
+            "end": 50934593,
+            "elapsed": 233585,
+            "disk_service": 0,
+            "residual": 233585,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4105,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 50934702,
+            "end": 50957529,
+            "elapsed": 22827,
+            "disk_service": 0,
+            "residual": 22827,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 51055367,
+            "end": 51312255,
+            "elapsed": 256888,
+            "disk_service": 0,
+            "residual": 256888,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4106,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 51312370,
+            "end": 51325302,
+            "elapsed": 12932,
+            "disk_service": 425,
+            "residual": 12507,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 51409990,
+            "end": 51470911,
+            "elapsed": 60921,
+            "disk_service": 0,
+            "residual": 60921,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4107,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 51470994,
+            "end": 51482774,
+            "elapsed": 11780,
+            "disk_service": 0,
+            "residual": 11780,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 51764281,
+            "end": 51838183,
+            "elapsed": 73902,
+            "disk_service": 0,
+            "residual": 73902,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4108,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 51838266,
+            "end": 51860600,
+            "elapsed": 22334,
+            "disk_service": 0,
+            "residual": 22334,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 52119154,
+            "end": 52240609,
+            "elapsed": 121455,
+            "disk_service": 0,
+            "residual": 121455,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4109,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 52240702,
+            "end": 52301552,
+            "elapsed": 60850,
+            "disk_service": 0,
+            "residual": 60850,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 52473527,
+            "end": 52629170,
+            "elapsed": 155643,
+            "disk_service": 0,
+            "residual": 155643,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4110,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 52629266,
+            "end": 52657542,
+            "elapsed": 28276,
+            "disk_service": 0,
+            "residual": 28276,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 52827818,
+            "end": 53010451,
+            "elapsed": 182633,
+            "disk_service": 0,
+            "residual": 182633,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4111,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 53010604,
+            "end": 53033104,
+            "elapsed": 22500,
+            "disk_service": 0,
+            "residual": 22500,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 53198158,
+            "end": 53325938,
+            "elapsed": 127780,
+            "disk_service": 0,
+            "residual": 127780,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4112,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 53326021,
+            "end": 53348733,
+            "elapsed": 22712,
+            "disk_service": 0,
+            "residual": 22712,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 53553756,
+            "end": 53682099,
+            "elapsed": 128343,
+            "disk_service": 0,
+            "residual": 128343,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4113,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 53682182,
+            "end": 53707034,
+            "elapsed": 24852,
+            "disk_service": 0,
+            "residual": 24852,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 53912147,
+            "end": 54047265,
+            "elapsed": 135118,
+            "disk_service": 0,
+            "residual": 135118,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4114,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 54047367,
+            "end": 54097168,
+            "elapsed": 49801,
+            "disk_service": 0,
+            "residual": 49801,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 54251510,
+            "end": 54380709,
+            "elapsed": 129199,
+            "disk_service": 0,
+            "residual": 129199,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4115,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 54380792,
+            "end": 54402066,
+            "elapsed": 21274,
+            "disk_service": 0,
+            "residual": 21274,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 54608433,
+            "end": 54769218,
+            "elapsed": 160785,
+            "disk_service": 0,
+            "residual": 160785,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4116,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 54769370,
+            "end": 54797061,
+            "elapsed": 27691,
+            "disk_service": 0,
+            "residual": 27691,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 54976881,
+            "end": 55110957,
+            "elapsed": 134076,
+            "disk_service": 0,
+            "residual": 134076,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4117,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 55111062,
+            "end": 55135022,
+            "elapsed": 23960,
+            "disk_service": 0,
+            "residual": 23960,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 55358410,
+            "end": 55477353,
+            "elapsed": 118943,
+            "disk_service": 0,
+            "residual": 118943,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4118,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 55477458,
+            "end": 55503202,
+            "elapsed": 25744,
+            "disk_service": 0,
+            "residual": 25744,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 55664755,
+            "end": 55781086,
+            "elapsed": 116331,
+            "disk_service": 0,
+            "residual": 116331,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4119,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 55781242,
+            "end": 55802293,
+            "elapsed": 21051,
+            "disk_service": 0,
+            "residual": 21051,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 56018907,
+            "end": 56142169,
+            "elapsed": 123262,
+            "disk_service": 0,
+            "residual": 123262,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4120,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 56142252,
+            "end": 56163752,
+            "elapsed": 21500,
+            "disk_service": 0,
+            "residual": 21500,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 56382491,
+            "end": 56512724,
+            "elapsed": 130233,
+            "disk_service": 0,
+            "residual": 130233,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4121,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 56512807,
+            "end": 56581424,
+            "elapsed": 68617,
+            "disk_service": 0,
+            "residual": 68617,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 56732157,
+            "end": 56956378,
+            "elapsed": 224221,
+            "disk_service": 0,
+            "residual": 224221,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4122,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 56956470,
+            "end": 56976822,
+            "elapsed": 20352,
+            "disk_service": 0,
+            "residual": 20352,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 57098226,
+            "end": 57354973,
+            "elapsed": 256747,
+            "disk_service": 0,
+            "residual": 256747,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4123,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 57355056,
+            "end": 57362676,
+            "elapsed": 7620,
+            "disk_service": 0,
+            "residual": 7620,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 57444581,
+            "end": 57501322,
+            "elapsed": 56741,
+            "disk_service": 0,
+            "residual": 56741,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4124,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 57501405,
+            "end": 57509431,
+            "elapsed": 8026,
+            "disk_service": 0,
+            "residual": 8026,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 57798970,
+            "end": 57855237,
+            "elapsed": 56267,
+            "disk_service": 0,
+            "residual": 56267,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4125,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 57855320,
+            "end": 57864434,
+            "elapsed": 9114,
+            "disk_service": 0,
+            "residual": 9114,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 58146001,
+            "end": 58203644,
+            "elapsed": 57643,
+            "disk_service": 0,
+            "residual": 57643,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4126,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 58203727,
+            "end": 58210785,
+            "elapsed": 7058,
+            "disk_service": 0,
+            "residual": 7058,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 58500790,
+            "end": 58560527,
+            "elapsed": 59737,
+            "disk_service": 0,
+            "residual": 59737,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4127,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 58560610,
+            "end": 58567346,
+            "elapsed": 6736,
+            "disk_service": 0,
+            "residual": 6736,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 58855330,
+            "end": 58907785,
+            "elapsed": 52455,
+            "disk_service": 0,
+            "residual": 52455,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4128,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 58907878,
+            "end": 58916128,
+            "elapsed": 8250,
+            "disk_service": 0,
+            "residual": 8250,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 59210217,
+            "end": 59264208,
+            "elapsed": 53991,
+            "disk_service": 0,
+            "residual": 53991,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4129,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 59264318,
+            "end": 59271952,
+            "elapsed": 7634,
+            "disk_service": 0,
+            "residual": 7634,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 59564244,
+            "end": 59619422,
+            "elapsed": 55178,
+            "disk_service": 0,
+            "residual": 55178,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4130,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 59619518,
+            "end": 59628316,
+            "elapsed": 8798,
+            "disk_service": 0,
+            "residual": 8798,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 59919033,
+            "end": 60008821,
+            "elapsed": 89788,
+            "disk_service": 0,
+            "residual": 89788,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4131,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 60008904,
+            "end": 60020223,
+            "elapsed": 11319,
+            "disk_service": 0,
+            "residual": 11319,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 60273324,
+            "end": 60336668,
+            "elapsed": 63344,
+            "disk_service": 0,
+            "residual": 63344,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4132,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 60336751,
+            "end": 60344885,
+            "elapsed": 8134,
+            "disk_service": 0,
+            "residual": 8134,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 60628031,
+            "end": 60682521,
+            "elapsed": 54490,
+            "disk_service": 0,
+            "residual": 54490,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4133,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 60682623,
+            "end": 60690678,
+            "elapsed": 8055,
+            "disk_service": 0,
+            "residual": 8055,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 60982570,
+            "end": 61038514,
+            "elapsed": 55944,
+            "disk_service": 0,
+            "residual": 55944,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4134,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 61038638,
+            "end": 61045546,
+            "elapsed": 6908,
+            "disk_service": 0,
+            "residual": 6908,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 61337110,
+            "end": 61395037,
+            "elapsed": 57927,
+            "disk_service": 0,
+            "residual": 57927,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4135,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 61395120,
+            "end": 61403478,
+            "elapsed": 8358,
+            "disk_service": 0,
+            "residual": 8358,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 61691567,
+            "end": 61748780,
+            "elapsed": 57213,
+            "disk_service": 0,
+            "residual": 57213,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4136,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 61748863,
+            "end": 61756145,
+            "elapsed": 7282,
+            "disk_service": 0,
+            "residual": 7282,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 62046049,
+            "end": 62105383,
+            "elapsed": 59334,
+            "disk_service": 0,
+            "residual": 59334,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4137,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 62105466,
+            "end": 62112524,
+            "elapsed": 7058,
+            "disk_service": 0,
+            "residual": 7058,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 62400730,
+            "end": 62455058,
+            "elapsed": 54328,
+            "disk_service": 0,
+            "residual": 54328,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4138,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 62455154,
+            "end": 62464550,
+            "elapsed": 9396,
+            "disk_service": 0,
+            "residual": 9396,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 62840208,
+            "end": 62928565,
+            "elapsed": 88357,
+            "disk_service": 0,
+            "residual": 88357,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4139,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 62928658,
+            "end": 62939804,
+            "elapsed": 11146,
+            "disk_service": 0,
+            "residual": 11146,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 63124296,
+            "end": 63182910,
+            "elapsed": 58614,
+            "disk_service": 0,
+            "residual": 58614,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4140,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 63182993,
+            "end": 63191665,
+            "elapsed": 8672,
+            "disk_service": 0,
+            "residual": 8672,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 63590037,
+            "end": 63653222,
+            "elapsed": 63185,
+            "disk_service": 0,
+            "residual": 63185,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4141,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 63653350,
+            "end": 63663653,
+            "elapsed": 10303,
+            "disk_service": 0,
+            "residual": 10303,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 63820342,
+            "end": 63884672,
+            "elapsed": 64330,
+            "disk_service": 0,
+            "residual": 64330,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4142,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 63884755,
+            "end": 63893102,
+            "elapsed": 8347,
+            "disk_service": 0,
+            "residual": 8347,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 64316291,
+            "end": 64372360,
+            "elapsed": 56069,
+            "disk_service": 0,
+            "residual": 56069,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4143,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 64372443,
+            "end": 64380873,
+            "elapsed": 8430,
+            "disk_service": 0,
+            "residual": 8430,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 64538804,
+            "end": 64629016,
+            "elapsed": 90212,
+            "disk_service": 0,
+            "residual": 90212,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4144,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 64629099,
+            "end": 64641726,
+            "elapsed": 12627,
+            "disk_service": 0,
+            "residual": 12627,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 64900746,
+            "end": 64966231,
+            "elapsed": 65485,
+            "disk_service": 0,
+            "residual": 65485,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4145,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 64966314,
+            "end": 64980422,
+            "elapsed": 14108,
+            "disk_service": 0,
+            "residual": 14108,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 65242842,
+            "end": 65313761,
+            "elapsed": 70919,
+            "disk_service": 0,
+            "residual": 70919,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4146,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 65313844,
+            "end": 65322282,
+            "elapsed": 8438,
+            "disk_service": 0,
+            "residual": 8438,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 65607897,
+            "end": 65675782,
+            "elapsed": 67885,
+            "disk_service": 0,
+            "residual": 67885,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4147,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 65675874,
+            "end": 65720614,
+            "elapsed": 44740,
+            "disk_service": 0,
+            "residual": 44740,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 65947570,
+            "end": 66012523,
+            "elapsed": 64953,
+            "disk_service": 0,
+            "residual": 64953,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4148,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 66012606,
+            "end": 66023063,
+            "elapsed": 10457,
+            "disk_service": 0,
+            "residual": 10457,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 66319402,
+            "end": 66390005,
+            "elapsed": 70603,
+            "disk_service": 0,
+            "residual": 70603,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4149,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 66390128,
+            "end": 66403678,
+            "elapsed": 13550,
+            "disk_service": 0,
+            "residual": 13550,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 66654961,
+            "end": 66730180,
+            "elapsed": 75219,
+            "disk_service": 0,
+            "residual": 75219,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4150,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 66730263,
+            "end": 66742388,
+            "elapsed": 12125,
+            "disk_service": 0,
+            "residual": 12125,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 67009584,
+            "end": 67095558,
+            "elapsed": 85974,
+            "disk_service": 0,
+            "residual": 85974,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4151,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 67095678,
+            "end": 67111725,
+            "elapsed": 16047,
+            "disk_service": 0,
+            "residual": 16047,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 67364539,
+            "end": 67483622,
+            "elapsed": 119083,
+            "disk_service": 0,
+            "residual": 119083,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4152,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 67483750,
+            "end": 67496434,
+            "elapsed": 12684,
+            "disk_service": 0,
+            "residual": 12684,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 67719343,
+            "end": 67803278,
+            "elapsed": 83935,
+            "disk_service": 0,
+            "residual": 83935,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4153,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 67803406,
+            "end": 67821586,
+            "elapsed": 18180,
+            "disk_service": 0,
+            "residual": 18180,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 68073204,
+            "end": 68164612,
+            "elapsed": 91408,
+            "disk_service": 0,
+            "residual": 91408,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4154,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 68164695,
+            "end": 68182078,
+            "elapsed": 17383,
+            "disk_service": 0,
+            "residual": 17383,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 68427744,
+            "end": 68522301,
+            "elapsed": 94557,
+            "disk_service": 0,
+            "residual": 94557,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4155,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 68522403,
+            "end": 68567600,
+            "elapsed": 45197,
+            "disk_service": 0,
+            "residual": 45197,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 68782284,
+            "end": 68880567,
+            "elapsed": 98283,
+            "disk_service": 0,
+            "residual": 98283,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4156,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 68880682,
+            "end": 68900913,
+            "elapsed": 20231,
+            "disk_service": 0,
+            "residual": 20231,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 69137157,
+            "end": 69241274,
+            "elapsed": 104117,
+            "disk_service": 395,
+            "residual": 103722,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4157,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 69241402,
+            "end": 69259378,
+            "elapsed": 17976,
+            "disk_service": 0,
+            "residual": 17976,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 69491696,
+            "end": 69587195,
+            "elapsed": 95499,
+            "disk_service": 0,
+            "residual": 95499,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4158,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 69587347,
+            "end": 69607185,
+            "elapsed": 19838,
+            "disk_service": 0,
+            "residual": 19838,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 69845821,
+            "end": 69949833,
+            "elapsed": 104012,
+            "disk_service": 0,
+            "residual": 104012,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4159,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 69949922,
+            "end": 69968169,
+            "elapsed": 18247,
+            "disk_service": 0,
+            "residual": 18247,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 70200610,
+            "end": 70331376,
+            "elapsed": 130766,
+            "disk_service": 0,
+            "residual": 130766,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4160,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 70331459,
+            "end": 70342379,
+            "elapsed": 10920,
+            "disk_service": 0,
+            "residual": 10920,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 70555331,
+            "end": 70639021,
+            "elapsed": 83690,
+            "disk_service": 0,
+            "residual": 83690,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4161,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 70639139,
+            "end": 70685242,
+            "elapsed": 46103,
+            "disk_service": 0,
+            "residual": 46103,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 70909524,
+            "end": 71134969,
+            "elapsed": 225445,
+            "disk_service": 0,
+            "residual": 225445,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4162,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 71135052,
+            "end": 71161118,
+            "elapsed": 26066,
+            "disk_service": 0,
+            "residual": 26066,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 71264562,
+            "end": 71491899,
+            "elapsed": 227337,
+            "disk_service": 0,
+            "residual": 227337,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4163,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 71492052,
+            "end": 71537493,
+            "elapsed": 45441,
+            "disk_service": 0,
+            "residual": 45441,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 71618438,
+            "end": 71692535,
+            "elapsed": 74097,
+            "disk_service": 0,
+            "residual": 74097,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4164,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 71692618,
+            "end": 71703458,
+            "elapsed": 10840,
+            "disk_service": 0,
+            "residual": 10840,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 71973477,
+            "end": 72047373,
+            "elapsed": 73896,
+            "disk_service": 0,
+            "residual": 73896,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4165,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 72047456,
+            "end": 72090902,
+            "elapsed": 43446,
+            "disk_service": 0,
+            "residual": 43446,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 72327684,
+            "end": 72409739,
+            "elapsed": 82055,
+            "disk_service": 0,
+            "residual": 82055,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4166,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 72409822,
+            "end": 72426542,
+            "elapsed": 16720,
+            "disk_service": 0,
+            "residual": 16720,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 72682307,
+            "end": 72767905,
+            "elapsed": 85598,
+            "disk_service": 0,
+            "residual": 85598,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4167,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 72767998,
+            "end": 72785202,
+            "elapsed": 17204,
+            "disk_service": 0,
+            "residual": 17204,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 73036681,
+            "end": 73122201,
+            "elapsed": 85520,
+            "disk_service": 0,
+            "residual": 85520,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4168,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 73122303,
+            "end": 73142210,
+            "elapsed": 19907,
+            "disk_service": 0,
+            "residual": 19907,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 73525374,
+            "end": 73620169,
+            "elapsed": 94795,
+            "disk_service": 0,
+            "residual": 94795,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4169,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 73620262,
+            "end": 73643687,
+            "elapsed": 23425,
+            "disk_service": 0,
+            "residual": 23425,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 73748414,
+            "end": 73897768,
+            "elapsed": 149354,
+            "disk_service": 0,
+            "residual": 149354,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4170,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 73897851,
+            "end": 73921742,
+            "elapsed": 23891,
+            "disk_service": 0,
+            "residual": 23891,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 74106557,
+            "end": 74226911,
+            "elapsed": 120354,
+            "disk_service": 0,
+            "residual": 120354,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4171,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 74226994,
+            "end": 74239812,
+            "elapsed": 12818,
+            "disk_service": 0,
+            "residual": 12818,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 74528842,
+            "end": 74652245,
+            "elapsed": 123403,
+            "disk_service": 0,
+            "residual": 123403,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4172,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 74652380,
+            "end": 74663655,
+            "elapsed": 11275,
+            "disk_service": 0,
+            "residual": 11275,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 74821912,
+            "end": 74906781,
+            "elapsed": 84869,
+            "disk_service": 0,
+            "residual": 84869,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4173,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 74906870,
+            "end": 74978481,
+            "elapsed": 71611,
+            "disk_service": 0,
+            "residual": 71611,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 75189573,
+            "end": 75423429,
+            "elapsed": 233856,
+            "disk_service": 0,
+            "residual": 233856,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4174,
+        "late_fields": 1,
+        "stages": {
+          "packet": {
+            "start": 75423518,
+            "end": 75440058,
+            "elapsed": 16540,
+            "disk_service": 0,
+            "residual": 16540,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 75653270,
+            "end": 75883212,
+            "elapsed": 229942,
+            "disk_service": 0,
+            "residual": 229942,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4175,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 75883295,
+            "end": 75889390,
+            "elapsed": 6095,
+            "disk_service": 0,
+            "residual": 6095,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 75969528,
+            "end": 76005348,
+            "elapsed": 35820,
+            "disk_service": 0,
+            "residual": 35820,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4176,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 76005431,
+            "end": 76010513,
+            "elapsed": 5082,
+            "disk_service": 0,
+            "residual": 5082,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 76240554,
+            "end": 76275841,
+            "elapsed": 35287,
+            "disk_service": 0,
+            "residual": 35287,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4177,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 76275974,
+            "end": 76282902,
+            "elapsed": 6928,
+            "disk_service": 0,
+            "residual": 6928,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 76587095,
+            "end": 76654207,
+            "elapsed": 67112,
+            "disk_service": 0,
+            "residual": 67112,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4178,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 76654290,
+            "end": 76659324,
+            "elapsed": 5034,
+            "disk_service": 0,
+            "residual": 5034,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 76949545,
+            "end": 76984417,
+            "elapsed": 34872,
+            "disk_service": 0,
+            "residual": 34872,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4179,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 76984568,
+            "end": 76991622,
+            "elapsed": 7054,
+            "disk_service": 0,
+            "residual": 7054,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 77306276,
+            "end": 77341448,
+            "elapsed": 35172,
+            "disk_service": 0,
+            "residual": 35172,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4180,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 77341598,
+            "end": 77350690,
+            "elapsed": 9092,
+            "disk_service": 0,
+            "residual": 9092,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 77649175,
+            "end": 77696198,
+            "elapsed": 47023,
+            "disk_service": 0,
+            "residual": 47023,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4181,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 77696326,
+            "end": 77703396,
+            "elapsed": 7070,
+            "disk_service": 0,
+            "residual": 7070,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 78000324,
+            "end": 78047417,
+            "elapsed": 47093,
+            "disk_service": 0,
+            "residual": 47093,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4182,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 78047540,
+            "end": 78054470,
+            "elapsed": 6930,
+            "disk_service": 0,
+            "residual": 6930,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 78354864,
+            "end": 78389784,
+            "elapsed": 34920,
+            "disk_service": 0,
+            "residual": 34920,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4183,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 78389926,
+            "end": 78399066,
+            "elapsed": 9140,
+            "disk_service": 0,
+            "residual": 9140,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 78709404,
+            "end": 78752932,
+            "elapsed": 43528,
+            "disk_service": 0,
+            "residual": 43528,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4184,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 78753015,
+            "end": 78764234,
+            "elapsed": 11219,
+            "disk_service": 0,
+            "residual": 11219,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 79064291,
+            "end": 79118910,
+            "elapsed": 54619,
+            "disk_service": 0,
+            "residual": 54619,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4185,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 79119030,
+            "end": 79130911,
+            "elapsed": 11881,
+            "disk_service": 0,
+            "residual": 11881,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 79418650,
+            "end": 79525109,
+            "elapsed": 106459,
+            "disk_service": 0,
+            "residual": 106459,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4186,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 79525218,
+            "end": 79543713,
+            "elapsed": 18495,
+            "disk_service": 0,
+            "residual": 18495,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 79773107,
+            "end": 79864917,
+            "elapsed": 91810,
+            "disk_service": 0,
+            "residual": 91810,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4187,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 79865022,
+            "end": 79885318,
+            "elapsed": 20296,
+            "disk_service": 0,
+            "residual": 20296,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 80127730,
+            "end": 80230828,
+            "elapsed": 103098,
+            "disk_service": 0,
+            "residual": 103098,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4188,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 80230911,
+            "end": 80248233,
+            "elapsed": 17322,
+            "disk_service": 0,
+            "residual": 17322,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 80482271,
+            "end": 80579296,
+            "elapsed": 97025,
+            "disk_service": 0,
+            "residual": 97025,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4189,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 80579448,
+            "end": 80619440,
+            "elapsed": 39992,
+            "disk_service": 0,
+            "residual": 39992,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 80836478,
+            "end": 80923767,
+            "elapsed": 87289,
+            "disk_service": 0,
+            "residual": 87289,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4190,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 80923902,
+            "end": 80944410,
+            "elapsed": 20508,
+            "disk_service": 0,
+            "residual": 20508,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 81191184,
+            "end": 81292656,
+            "elapsed": 101472,
+            "disk_service": 0,
+            "residual": 101472,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4191,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 81292766,
+            "end": 81308510,
+            "elapsed": 15744,
+            "disk_service": 0,
+            "residual": 15744,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 81545724,
+            "end": 81644435,
+            "elapsed": 98711,
+            "disk_service": 0,
+            "residual": 98711,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4192,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 81644518,
+            "end": 81659939,
+            "elapsed": 15421,
+            "disk_service": 0,
+            "residual": 15421,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 81900860,
+            "end": 81982722,
+            "elapsed": 81862,
+            "disk_service": 0,
+            "residual": 81862,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4193,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 81982805,
+            "end": 81999969,
+            "elapsed": 17164,
+            "disk_service": 0,
+            "residual": 17164,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 82254721,
+            "end": 82368449,
+            "elapsed": 113728,
+            "disk_service": 0,
+            "residual": 113728,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4194,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 82368584,
+            "end": 82384544,
+            "elapsed": 15960,
+            "disk_service": 0,
+            "residual": 15960,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 82609676,
+            "end": 82697657,
+            "elapsed": 87981,
+            "disk_service": 0,
+            "residual": 87981,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4195,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 82697806,
+            "end": 82716702,
+            "elapsed": 18896,
+            "disk_service": 0,
+            "residual": 18896,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 82963884,
+            "end": 83056724,
+            "elapsed": 92840,
+            "disk_service": 0,
+            "residual": 92840,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4196,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 83056874,
+            "end": 83074065,
+            "elapsed": 17191,
+            "disk_service": 0,
+            "residual": 17191,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 83318923,
+            "end": 83410562,
+            "elapsed": 91639,
+            "disk_service": 0,
+            "residual": 91639,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4197,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 83410690,
+            "end": 83454108,
+            "elapsed": 43418,
+            "disk_service": 0,
+            "residual": 43418,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 83672881,
+            "end": 83762130,
+            "elapsed": 89249,
+            "disk_service": 0,
+            "residual": 89249,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4198,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 83762250,
+            "end": 83783010,
+            "elapsed": 20760,
+            "disk_service": 0,
+            "residual": 20760,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 84102566,
+            "end": 84235903,
+            "elapsed": 133337,
+            "disk_service": 0,
+            "residual": 133337,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4199,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 84235986,
+            "end": 84249826,
+            "elapsed": 13840,
+            "disk_service": 0,
+            "residual": 13840,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 84402815,
+            "end": 84501177,
+            "elapsed": 98362,
+            "disk_service": 0,
+            "residual": 98362,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4200,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 84501305,
+            "end": 84542022,
+            "elapsed": 40717,
+            "disk_service": 0,
+            "residual": 40717,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 84747655,
+            "end": 84975157,
+            "elapsed": 227502,
+            "disk_service": 0,
+            "residual": 227502,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4201,
+        "late_fields": 1,
+        "stages": {
+          "packet": {
+            "start": 84975301,
+            "end": 85007658,
+            "elapsed": 32357,
+            "disk_service": 0,
+            "residual": 32357,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 85217715,
+            "end": 85448968,
+            "elapsed": 231253,
+            "disk_service": 0,
+            "residual": 231253,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4202,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 85449051,
+            "end": 85522072,
+            "elapsed": 73021,
+            "disk_service": 0,
+            "residual": 73021,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 85522293,
+            "end": 85688714,
+            "elapsed": 166421,
+            "disk_service": 0,
+            "residual": 166421,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4203,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 85688810,
+            "end": 85734180,
+            "elapsed": 45370,
+            "disk_service": 0,
+            "residual": 45370,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 85811615,
+            "end": 86017989,
+            "elapsed": 206374,
+            "disk_service": 0,
+            "residual": 206374,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4204,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 86018072,
+            "end": 86093543,
+            "elapsed": 75471,
+            "disk_service": 0,
+            "residual": 75471,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 86171372,
+            "end": 86382901,
+            "elapsed": 211529,
+            "disk_service": 0,
+            "residual": 211529,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4205,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 86383008,
+            "end": 86431604,
+            "elapsed": 48596,
+            "disk_service": 0,
+            "residual": 48596,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 86534424,
+            "end": 86746163,
+            "elapsed": 211739,
+            "disk_service": 0,
+            "residual": 211739,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4206,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 86746246,
+            "end": 86818830,
+            "elapsed": 72584,
+            "disk_service": 0,
+            "residual": 72584,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 86871324,
+            "end": 87078946,
+            "elapsed": 207622,
+            "disk_service": 0,
+            "residual": 207622,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4207,
+        "late_fields": 1,
+        "stages": {
+          "packet": {
+            "start": 87079029,
+            "end": 87122870,
+            "elapsed": 43841,
+            "disk_service": 0,
+            "residual": 43841,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 87357590,
+            "end": 87618929,
+            "elapsed": 261339,
+            "disk_service": 0,
+            "residual": 261339,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4208,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 87619012,
+            "end": 87655053,
+            "elapsed": 36041,
+            "disk_service": 0,
+            "residual": 36041,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 87655538,
+            "end": 87888230,
+            "elapsed": 232692,
+            "disk_service": 0,
+            "residual": 232692,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4209,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 87888326,
+            "end": 87924458,
+            "elapsed": 36132,
+            "disk_service": 0,
+            "residual": 36132,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 87951506,
+            "end": 88169139,
+            "elapsed": 217633,
+            "disk_service": 0,
+            "residual": 217633,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4210,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 88169254,
+            "end": 88205710,
+            "elapsed": 36456,
+            "disk_service": 0,
+            "residual": 36456,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 88283188,
+            "end": 88460962,
+            "elapsed": 177774,
+            "disk_service": 0,
+            "residual": 177774,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4211,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 88461054,
+            "end": 88491606,
+            "elapsed": 30552,
+            "disk_service": 0,
+            "residual": 30552,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 88645705,
+            "end": 88819591,
+            "elapsed": 173886,
+            "disk_service": 0,
+            "residual": 173886,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4212,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 88819674,
+            "end": 88846321,
+            "elapsed": 26647,
+            "disk_service": 0,
+            "residual": 26647,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 89009327,
+            "end": 89172542,
+            "elapsed": 163215,
+            "disk_service": 0,
+            "residual": 163215,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4213,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 89172625,
+            "end": 89229670,
+            "elapsed": 57045,
+            "disk_service": 0,
+            "residual": 57045,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 89348639,
+            "end": 89494556,
+            "elapsed": 145917,
+            "disk_service": 0,
+            "residual": 145917,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4214,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 89494639,
+            "end": 89513358,
+            "elapsed": 18719,
+            "disk_service": 0,
+            "residual": 18719,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 89715222,
+            "end": 89839373,
+            "elapsed": 124151,
+            "disk_service": 0,
+            "residual": 124151,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4215,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 89839456,
+            "end": 89893142,
+            "elapsed": 53686,
+            "disk_service": 0,
+            "residual": 53686,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 90063473,
+            "end": 90164830,
+            "elapsed": 101357,
+            "disk_service": 0,
+            "residual": 101357,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4216,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 90164954,
+            "end": 90184024,
+            "elapsed": 19070,
+            "disk_service": 0,
+            "residual": 19070,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 90431234,
+            "end": 90561519,
+            "elapsed": 130285,
+            "disk_service": 0,
+            "residual": 130285,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4217,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 90561602,
+            "end": 90581710,
+            "elapsed": 20108,
+            "disk_service": 0,
+            "residual": 20108,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 90782739,
+            "end": 90882094,
+            "elapsed": 99355,
+            "disk_service": 0,
+            "residual": 99355,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4218,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 90882186,
+            "end": 90899828,
+            "elapsed": 17642,
+            "disk_service": 0,
+            "residual": 17642,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 91128564,
+            "end": 91231911,
+            "elapsed": 103347,
+            "disk_service": 0,
+            "residual": 103347,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4219,
+        "late_fields": 1,
+        "stages": {
+          "packet": {
+            "start": 91232064,
+            "end": 91277030,
+            "elapsed": 44966,
+            "disk_service": 0,
+            "residual": 44966,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 91614414,
+            "end": 91870459,
+            "elapsed": 256045,
+            "disk_service": 0,
+            "residual": 256045,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4220,
+        "late_fields": 1,
+        "stages": {
+          "packet": {
+            "start": 91870542,
+            "end": 91910270,
+            "elapsed": 39728,
+            "disk_service": 0,
+            "residual": 39728,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 91910741,
+            "end": 92185708,
+            "elapsed": 274967,
+            "disk_service": 0,
+            "residual": 274967,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4221,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 92185791,
+            "end": 92224808,
+            "elapsed": 39017,
+            "disk_service": 0,
+            "residual": 39017,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 92277960,
+            "end": 92468840,
+            "elapsed": 190880,
+            "disk_service": 0,
+            "residual": 190880,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4222,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 92468923,
+            "end": 92536819,
+            "elapsed": 67896,
+            "disk_service": 0,
+            "residual": 67896,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 92537040,
+            "end": 92723605,
+            "elapsed": 186565,
+            "disk_service": 0,
+            "residual": 186565,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4223,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 92723698,
+            "end": 92759668,
+            "elapsed": 35970,
+            "disk_service": 0,
+            "residual": 35970,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 92891267,
+            "end": 93087071,
+            "elapsed": 195804,
+            "disk_service": 0,
+            "residual": 195804,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4224,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 93087154,
+            "end": 93161742,
+            "elapsed": 74588,
+            "disk_service": 0,
+            "residual": 74588,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 93265829,
+            "end": 93460859,
+            "elapsed": 195030,
+            "disk_service": 0,
+            "residual": 195030,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4225,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 93460942,
+            "end": 93501242,
+            "elapsed": 40300,
+            "disk_service": 0,
+            "residual": 40300,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 93607093,
+            "end": 93804324,
+            "elapsed": 197231,
+            "disk_service": 0,
+            "residual": 197231,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4226,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 93804407,
+            "end": 93879494,
+            "elapsed": 75087,
+            "disk_service": 0,
+            "residual": 75087,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 94036855,
+            "end": 94231866,
+            "elapsed": 195011,
+            "disk_service": 0,
+            "residual": 195011,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4227,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 94231949,
+            "end": 94266597,
+            "elapsed": 34648,
+            "disk_service": 0,
+            "residual": 34648,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 94320104,
+            "end": 94505541,
+            "elapsed": 185437,
+            "disk_service": 0,
+            "residual": 185437,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4228,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 94505695,
+            "end": 94587370,
+            "elapsed": 81675,
+            "disk_service": 0,
+            "residual": 81675,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 94666513,
+            "end": 94857513,
+            "elapsed": 191000,
+            "disk_service": 0,
+            "residual": 191000,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4229,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 94857618,
+            "end": 94887426,
+            "elapsed": 29808,
+            "disk_service": 0,
+            "residual": 29808,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 95018951,
+            "end": 95208961,
+            "elapsed": 190010,
+            "disk_service": 0,
+            "residual": 190010,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4230,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 95209094,
+            "end": 95286294,
+            "elapsed": 77200,
+            "disk_service": 0,
+            "residual": 77200,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 95389904,
+            "end": 95569338,
+            "elapsed": 179434,
+            "disk_service": 0,
+            "residual": 179434,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4231,
+        "late_fields": 9,
+        "stages": {
+          "packet": {
+            "start": 95569458,
+            "end": 96456634,
+            "elapsed": 887176,
+            "disk_service": 687293,
+            "residual": 199883,
+            "empty_wait": 855111
+          },
+          "draw": {
+            "start": 96456944,
+            "end": 96672602,
+            "elapsed": 215658,
+            "disk_service": 0,
+            "residual": 215658,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4232,
+        "late_fields": 8,
+        "stages": {
+          "packet": {
+            "start": 96672685,
+            "end": 96813862,
+            "elapsed": 141177,
+            "disk_service": 0,
+            "residual": 141177,
+            "empty_wait": 111125
+          },
+          "draw": {
+            "start": 96814558,
+            "end": 96985183,
+            "elapsed": 170625,
+            "disk_service": 0,
+            "residual": 170625,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4233,
+        "late_fields": 8,
+        "stages": {
+          "packet": {
+            "start": 96985266,
+            "end": 97147449,
+            "elapsed": 162183,
+            "disk_service": 0,
+            "residual": 162183,
+            "empty_wait": 128432
+          },
+          "draw": {
+            "start": 97147670,
+            "end": 97352385,
+            "elapsed": 204715,
+            "disk_service": 0,
+            "residual": 204715,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4234,
+        "late_fields": 8,
+        "stages": {
+          "packet": {
+            "start": 97352468,
+            "end": 97498488,
+            "elapsed": 146020,
+            "disk_service": 0,
+            "residual": 146020,
+            "empty_wait": 114175
+          },
+          "draw": {
+            "start": 97499892,
+            "end": 97676283,
+            "elapsed": 176391,
+            "disk_service": 0,
+            "residual": 176391,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4235,
+        "late_fields": 8,
+        "stages": {
+          "packet": {
+            "start": 97676398,
+            "end": 97840138,
+            "elapsed": 163740,
+            "disk_service": 0,
+            "residual": 163740,
+            "empty_wait": 123237
+          },
+          "draw": {
+            "start": 97840374,
+            "end": 98052039,
+            "elapsed": 211665,
+            "disk_service": 0,
+            "residual": 211665,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4236,
+        "late_fields": 8,
+        "stages": {
+          "packet": {
+            "start": 98052174,
+            "end": 98195681,
+            "elapsed": 143507,
+            "disk_service": 0,
+            "residual": 143507,
+            "empty_wait": 107708
+          },
+          "draw": {
+            "start": 98196152,
+            "end": 98373732,
+            "elapsed": 177580,
+            "disk_service": 0,
+            "residual": 177580,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4237,
+        "late_fields": 8,
+        "stages": {
+          "packet": {
+            "start": 98373842,
+            "end": 98533950,
+            "elapsed": 160108,
+            "disk_service": 0,
+            "residual": 160108,
+            "empty_wait": 124245
+          },
+          "draw": {
+            "start": 98534255,
+            "end": 98737529,
+            "elapsed": 203274,
+            "disk_service": 0,
+            "residual": 203274,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4238,
+        "late_fields": 8,
+        "stages": {
+          "packet": {
+            "start": 98737638,
+            "end": 98905955,
+            "elapsed": 168317,
+            "disk_service": 0,
+            "residual": 168317,
+            "empty_wait": 127636
+          },
+          "draw": {
+            "start": 98906176,
+            "end": 99082297,
+            "elapsed": 176121,
+            "disk_service": 0,
+            "residual": 176121,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4239,
+        "late_fields": 8,
+        "stages": {
+          "packet": {
+            "start": 99082390,
+            "end": 99219573,
+            "elapsed": 137183,
+            "disk_service": 0,
+            "residual": 137183,
+            "empty_wait": 110092
+          },
+          "draw": {
+            "start": 99219861,
+            "end": 99428490,
+            "elapsed": 208629,
+            "disk_service": 0,
+            "residual": 208629,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4240,
+        "late_fields": 7,
+        "stages": {
+          "packet": {
+            "start": 99428642,
+            "end": 99584465,
+            "elapsed": 155823,
+            "disk_service": 0,
+            "residual": 155823,
+            "empty_wait": 122365
+          },
+          "draw": {
+            "start": 99585151,
+            "end": 99759745,
+            "elapsed": 174594,
+            "disk_service": 0,
+            "residual": 174594,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4241,
+        "late_fields": 7,
+        "stages": {
+          "packet": {
+            "start": 99759828,
+            "end": 99899274,
+            "elapsed": 139446,
+            "disk_service": 0,
+            "residual": 139446,
+            "empty_wait": 105968
+          },
+          "draw": {
+            "start": 99899495,
+            "end": 100106066,
+            "elapsed": 206571,
+            "disk_service": 0,
+            "residual": 206571,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4242,
+        "late_fields": 28,
+        "stages": {
+          "packet": {
+            "start": 100106162,
+            "end": 101796394,
+            "elapsed": 1690232,
+            "disk_service": 1352732,
+            "residual": 337500,
+            "empty_wait": 1654381
+          },
+          "draw": {
+            "start": 101796704,
+            "end": 101961224,
+            "elapsed": 164520,
+            "disk_service": 0,
+            "residual": 164520,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4243,
+        "late_fields": 29,
+        "stages": {
+          "packet": {
+            "start": 101961307,
+            "end": 102113869,
+            "elapsed": 152562,
+            "disk_service": 0,
+            "residual": 152562,
+            "empty_wait": 116525
+          },
+          "draw": {
+            "start": 102114090,
+            "end": 102346638,
+            "elapsed": 232548,
+            "disk_service": 0,
+            "residual": 232548,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4244,
+        "late_fields": 29,
+        "stages": {
+          "packet": {
+            "start": 102346758,
+            "end": 102477210,
+            "elapsed": 130452,
+            "disk_service": 0,
+            "residual": 130452,
+            "empty_wait": 79036
+          },
+          "draw": {
+            "start": 102477882,
+            "end": 102715617,
+            "elapsed": 237735,
+            "disk_service": 0,
+            "residual": 237735,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4245,
+        "late_fields": 27,
+        "stages": {
+          "packet": {
+            "start": 102715756,
+            "end": 102797786,
+            "elapsed": 82030,
+            "disk_service": 0,
+            "residual": 82030,
+            "empty_wait": 60140
+          },
+          "draw": {
+            "start": 102798083,
+            "end": 102900962,
+            "elapsed": 102879,
+            "disk_service": 0,
+            "residual": 102879,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4246,
+        "late_fields": 25,
+        "stages": {
+          "packet": {
+            "start": 102901045,
+            "end": 103012175,
+            "elapsed": 111130,
+            "disk_service": 0,
+            "residual": 111130,
+            "empty_wait": 62074
+          },
+          "draw": {
+            "start": 103012462,
+            "end": 103117924,
+            "elapsed": 105462,
+            "disk_service": 0,
+            "residual": 105462,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4247,
+        "late_fields": 22,
+        "stages": {
+          "packet": {
+            "start": 103118007,
+            "end": 103196627,
+            "elapsed": 78620,
+            "disk_service": 0,
+            "residual": 78620,
+            "empty_wait": 59747
+          },
+          "draw": {
+            "start": 103196914,
+            "end": 103302241,
+            "elapsed": 105327,
+            "disk_service": 0,
+            "residual": 105327,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4248,
+        "late_fields": 20,
+        "stages": {
+          "packet": {
+            "start": 103302324,
+            "end": 103382683,
+            "elapsed": 80359,
+            "disk_service": 0,
+            "residual": 80359,
+            "empty_wait": 64682
+          },
+          "draw": {
+            "start": 103383168,
+            "end": 103489631,
+            "elapsed": 106463,
+            "disk_service": 0,
+            "residual": 106463,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4249,
+        "late_fields": 18,
+        "stages": {
+          "packet": {
+            "start": 103489786,
+            "end": 103591267,
+            "elapsed": 101481,
+            "disk_service": 0,
+            "residual": 101481,
+            "empty_wait": 57856
+          },
+          "draw": {
+            "start": 103591488,
+            "end": 103696033,
+            "elapsed": 104545,
+            "disk_service": 0,
+            "residual": 104545,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4250,
+        "late_fields": 15,
+        "stages": {
+          "packet": {
+            "start": 103696166,
+            "end": 103774506,
+            "elapsed": 78340,
+            "disk_service": 0,
+            "residual": 78340,
+            "empty_wait": 57790
+          },
+          "draw": {
+            "start": 103774818,
+            "end": 103871425,
+            "elapsed": 96607,
+            "disk_service": 0,
+            "residual": 96607,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4251,
+        "late_fields": 13,
+        "stages": {
+          "packet": {
+            "start": 103871508,
+            "end": 103942569,
+            "elapsed": 71061,
+            "disk_service": 0,
+            "residual": 71061,
+            "empty_wait": 54850
+          },
+          "draw": {
+            "start": 103942790,
+            "end": 104040259,
+            "elapsed": 97469,
+            "disk_service": 0,
+            "residual": 97469,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4252,
+        "late_fields": 10,
+        "stages": {
+          "packet": {
+            "start": 104040412,
+            "end": 104126106,
+            "elapsed": 85694,
+            "disk_service": 0,
+            "residual": 85694,
+            "empty_wait": 40220
+          },
+          "draw": {
+            "start": 104126778,
+            "end": 104217737,
+            "elapsed": 90959,
+            "disk_service": 0,
+            "residual": 90959,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4253,
+        "late_fields": 8,
+        "stages": {
+          "packet": {
+            "start": 104217846,
+            "end": 104291170,
+            "elapsed": 73324,
+            "disk_service": 0,
+            "residual": 73324,
+            "empty_wait": 54616
+          },
+          "draw": {
+            "start": 104291480,
+            "end": 104384296,
+            "elapsed": 92816,
+            "disk_service": 0,
+            "residual": 92816,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4254,
+        "late_fields": 5,
+        "stages": {
+          "packet": {
+            "start": 104384379,
+            "end": 104442239,
+            "elapsed": 57860,
+            "disk_service": 0,
+            "residual": 57860,
+            "empty_wait": 45762
+          },
+          "draw": {
+            "start": 104463378,
+            "end": 104548919,
+            "elapsed": 85541,
+            "disk_service": 0,
+            "residual": 85541,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4255,
+        "late_fields": 2,
+        "stages": {
+          "packet": {
+            "start": 104549074,
+            "end": 104596572,
+            "elapsed": 47498,
+            "disk_service": 0,
+            "residual": 47498,
+            "empty_wait": 33068
+          },
+          "draw": {
+            "start": 104596793,
+            "end": 104707669,
+            "elapsed": 110876,
+            "disk_service": 0,
+            "residual": 110876,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4256,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 104707802,
+            "end": 104773019,
+            "elapsed": 65217,
+            "disk_service": 0,
+            "residual": 65217,
+            "empty_wait": 47644
+          },
+          "draw": {
+            "start": 104773716,
+            "end": 104868741,
+            "elapsed": 95025,
+            "disk_service": 0,
+            "residual": 95025,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4257,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 104868824,
+            "end": 104937966,
+            "elapsed": 69142,
+            "disk_service": 0,
+            "residual": 69142,
+            "empty_wait": 53966
+          },
+          "draw": {
+            "start": 104958655,
+            "end": 105051477,
+            "elapsed": 92822,
+            "disk_service": 0,
+            "residual": 92822,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4258,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 105051616,
+            "end": 105103094,
+            "elapsed": 51478,
+            "disk_service": 0,
+            "residual": 51478,
+            "empty_wait": 36628
+          },
+          "draw": {
+            "start": 105306756,
+            "end": 105399099,
+            "elapsed": 92343,
+            "disk_service": 0,
+            "residual": 92343,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4259,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 105399214,
+            "end": 105417827,
+            "elapsed": 18613,
+            "disk_service": 0,
+            "residual": 18613,
+            "empty_wait": 895
+          },
+          "draw": {
+            "start": 105687555,
+            "end": 105783515,
+            "elapsed": 95960,
+            "disk_service": 0,
+            "residual": 95960,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4260,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 105783598,
+            "end": 105832965,
+            "elapsed": 49367,
+            "disk_service": 0,
+            "residual": 49367,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 106012114,
+            "end": 106100837,
+            "elapsed": 88723,
+            "disk_service": 0,
+            "residual": 88723,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4261,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 106100920,
+            "end": 106118762,
+            "elapsed": 17842,
+            "disk_service": 0,
+            "residual": 17842,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 106482352,
+            "end": 106601596,
+            "elapsed": 119244,
+            "disk_service": 0,
+            "residual": 119244,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4262,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 106601742,
+            "end": 106620142,
+            "elapsed": 18400,
+            "disk_service": 0,
+            "residual": 18400,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 106723819,
+            "end": 106810601,
+            "elapsed": 86782,
+            "disk_service": 0,
+            "residual": 86782,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4263,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 106810684,
+            "end": 106829079,
+            "elapsed": 18395,
+            "disk_service": 0,
+            "residual": 18395,
+            "empty_wait": 0
+          },
+          "draw": {
+            "start": 107085828,
+            "end": 107198714,
+            "elapsed": 112886,
+            "disk_service": 0,
+            "residual": 112886,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4264,
+        "late_fields": 6,
+        "stages": {
+          "packet": {
+            "start": 107198842,
+            "end": 107944224,
+            "elapsed": 745382,
+            "disk_service": 502465,
+            "residual": 242917,
+            "empty_wait": 703036
+          },
+          "draw": {
+            "start": 107944929,
+            "end": 108183695,
+            "elapsed": 238766,
+            "disk_service": 0,
+            "residual": 238766,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4265,
+        "late_fields": 7,
+        "stages": {
+          "packet": {
+            "start": 108183850,
+            "end": 108349508,
+            "elapsed": 165658,
+            "disk_service": 0,
+            "residual": 165658,
+            "empty_wait": 122983
+          },
+          "draw": {
+            "start": 108349729,
+            "end": 108622363,
+            "elapsed": 272634,
+            "disk_service": 0,
+            "residual": 272634,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4266,
+        "late_fields": 7,
+        "stages": {
+          "packet": {
+            "start": 108622446,
+            "end": 108767567,
+            "elapsed": 145121,
+            "disk_service": 0,
+            "residual": 145121,
+            "empty_wait": 111368
+          },
+          "draw": {
+            "start": 108767788,
+            "end": 108947510,
+            "elapsed": 179722,
+            "disk_service": 0,
+            "residual": 179722,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4267,
+        "late_fields": 7,
+        "stages": {
+          "packet": {
+            "start": 108947664,
+            "end": 109117433,
+            "elapsed": 169769,
+            "disk_service": 0,
+            "residual": 169769,
+            "empty_wait": 107065
+          },
+          "draw": {
+            "start": 109117654,
+            "end": 109292421,
+            "elapsed": 174767,
+            "disk_service": 0,
+            "residual": 174767,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4268,
+        "late_fields": 7,
+        "stages": {
+          "packet": {
+            "start": 109292526,
+            "end": 109451674,
+            "elapsed": 159148,
+            "disk_service": 0,
+            "residual": 159148,
+            "empty_wait": 122807
+          },
+          "draw": {
+            "start": 109452338,
+            "end": 109635367,
+            "elapsed": 183029,
+            "disk_service": 0,
+            "residual": 183029,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4269,
+        "late_fields": 7,
+        "stages": {
+          "packet": {
+            "start": 109635450,
+            "end": 109829163,
+            "elapsed": 193713,
+            "disk_service": 0,
+            "residual": 193713,
+            "empty_wait": 124545
+          },
+          "draw": {
+            "start": 109829384,
+            "end": 110015412,
+            "elapsed": 186028,
+            "disk_service": 0,
+            "residual": 186028,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4270,
+        "late_fields": 7,
+        "stages": {
+          "packet": {
+            "start": 110015522,
+            "end": 110182467,
+            "elapsed": 166945,
+            "disk_service": 0,
+            "residual": 166945,
+            "empty_wait": 127641
+          },
+          "draw": {
+            "start": 110182688,
+            "end": 110369236,
+            "elapsed": 186548,
+            "disk_service": 0,
+            "residual": 186548,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4271,
+        "late_fields": 7,
+        "stages": {
+          "packet": {
+            "start": 110369319,
+            "end": 110554639,
+            "elapsed": 185320,
+            "disk_service": 0,
+            "residual": 185320,
+            "empty_wait": 121045
+          },
+          "draw": {
+            "start": 110554860,
+            "end": 110741957,
+            "elapsed": 187097,
+            "disk_service": 0,
+            "residual": 187097,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4272,
+        "late_fields": 7,
+        "stages": {
+          "packet": {
+            "start": 110742066,
+            "end": 110897987,
+            "elapsed": 155921,
+            "disk_service": 0,
+            "residual": 155921,
+            "empty_wait": 121111
+          },
+          "draw": {
+            "start": 110898472,
+            "end": 111083560,
+            "elapsed": 185088,
+            "disk_service": 0,
+            "residual": 185088,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4273,
+        "late_fields": 33,
+        "stages": {
+          "packet": {
+            "start": 111083643,
+            "end": 113061198,
+            "elapsed": 1977555,
+            "disk_service": 1555818,
+            "residual": 421737,
+            "empty_wait": 1898105
+          },
+          "draw": {
+            "start": 113061503,
+            "end": 113249739,
+            "elapsed": 188236,
+            "disk_service": 0,
+            "residual": 188236,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4274,
+        "late_fields": 33,
+        "stages": {
+          "packet": {
+            "start": 113249822,
+            "end": 113401209,
+            "elapsed": 151387,
+            "disk_service": 0,
+            "residual": 151387,
+            "empty_wait": 120031
+          },
+          "draw": {
+            "start": 113401495,
+            "end": 113614838,
+            "elapsed": 213343,
+            "disk_service": 0,
+            "residual": 213343,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4275,
+        "late_fields": 33,
+        "stages": {
+          "packet": {
+            "start": 113614934,
+            "end": 113760630,
+            "elapsed": 145696,
+            "disk_service": 0,
+            "residual": 145696,
+            "empty_wait": 113515
+          },
+          "draw": {
+            "start": 113760968,
+            "end": 113975115,
+            "elapsed": 214147,
+            "disk_service": 0,
+            "residual": 214147,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4276,
+        "late_fields": 33,
+        "stages": {
+          "packet": {
+            "start": 113975262,
+            "end": 114099393,
+            "elapsed": 124131,
+            "disk_service": 0,
+            "residual": 124131,
+            "empty_wait": 81202
+          },
+          "draw": {
+            "start": 114099864,
+            "end": 114319269,
+            "elapsed": 219405,
+            "disk_service": 0,
+            "residual": 219405,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4277,
+        "late_fields": 31,
+        "stages": {
+          "packet": {
+            "start": 114319382,
+            "end": 114421091,
+            "elapsed": 101709,
+            "disk_service": 0,
+            "residual": 101709,
+            "empty_wait": 73873
+          },
+          "draw": {
+            "start": 114421426,
+            "end": 114559038,
+            "elapsed": 137612,
+            "disk_service": 0,
+            "residual": 137612,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4278,
+        "late_fields": 30,
+        "stages": {
+          "packet": {
+            "start": 114559189,
+            "end": 114685218,
+            "elapsed": 126029,
+            "disk_service": 0,
+            "residual": 126029,
+            "empty_wait": 80343
+          },
+          "draw": {
+            "start": 114685530,
+            "end": 114835798,
+            "elapsed": 150268,
+            "disk_service": 0,
+            "residual": 150268,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4279,
+        "late_fields": 29,
+        "stages": {
+          "packet": {
+            "start": 114835922,
+            "end": 114939643,
+            "elapsed": 103721,
+            "disk_service": 0,
+            "residual": 103721,
+            "empty_wait": 80745
+          },
+          "draw": {
+            "start": 114939864,
+            "end": 115095061,
+            "elapsed": 155197,
+            "disk_service": 0,
+            "residual": 155197,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4280,
+        "late_fields": 28,
+        "stages": {
+          "packet": {
+            "start": 115095144,
+            "end": 115222199,
+            "elapsed": 127055,
+            "disk_service": 0,
+            "residual": 127055,
+            "empty_wait": 80580
+          },
+          "draw": {
+            "start": 115222684,
+            "end": 115372481,
+            "elapsed": 149797,
+            "disk_service": 0,
+            "residual": 149797,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4281,
+        "late_fields": 26,
+        "stages": {
+          "packet": {
+            "start": 115372564,
+            "end": 115466834,
+            "elapsed": 94270,
+            "disk_service": 0,
+            "residual": 94270,
+            "empty_wait": 72177
+          },
+          "draw": {
+            "start": 115467131,
+            "end": 115608861,
+            "elapsed": 141730,
+            "disk_service": 0,
+            "residual": 141730,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4282,
+        "late_fields": 24,
+        "stages": {
+          "packet": {
+            "start": 115608963,
+            "end": 115697798,
+            "elapsed": 88835,
+            "disk_service": 0,
+            "residual": 88835,
+            "empty_wait": 65372
+          },
+          "draw": {
+            "start": 115698095,
+            "end": 115849903,
+            "elapsed": 151808,
+            "disk_service": 0,
+            "residual": 151808,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4283,
+        "late_fields": 22,
+        "stages": {
+          "packet": {
+            "start": 115849986,
+            "end": 115936969,
+            "elapsed": 86983,
+            "disk_service": 0,
+            "residual": 86983,
+            "empty_wait": 68689
+          },
+          "draw": {
+            "start": 115937190,
+            "end": 116069400,
+            "elapsed": 132210,
+            "disk_service": 0,
+            "residual": 132210,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4284,
+        "late_fields": 20,
+        "stages": {
+          "packet": {
+            "start": 116069483,
+            "end": 116151215,
+            "elapsed": 81732,
+            "disk_service": 0,
+            "residual": 81732,
+            "empty_wait": 65456
+          },
+          "draw": {
+            "start": 116151686,
+            "end": 116277618,
+            "elapsed": 125932,
+            "disk_service": 0,
+            "residual": 125932,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4285,
+        "late_fields": 19,
+        "stages": {
+          "packet": {
+            "start": 116277701,
+            "end": 116411075,
+            "elapsed": 133374,
+            "disk_service": 0,
+            "residual": 133374,
+            "empty_wait": 79141
+          },
+          "draw": {
+            "start": 116411410,
+            "end": 116551282,
+            "elapsed": 139872,
+            "disk_service": 0,
+            "residual": 139872,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4286,
+        "late_fields": 18,
+        "stages": {
+          "packet": {
+            "start": 116551418,
+            "end": 116643328,
+            "elapsed": 91910,
+            "disk_service": 0,
+            "residual": 91910,
+            "empty_wait": 72238
+          },
+          "draw": {
+            "start": 116643549,
+            "end": 116787404,
+            "elapsed": 143855,
+            "disk_service": 0,
+            "residual": 143855,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4287,
+        "late_fields": 16,
+        "stages": {
+          "packet": {
+            "start": 116787487,
+            "end": 116869900,
+            "elapsed": 82413,
+            "disk_service": 0,
+            "residual": 82413,
+            "empty_wait": 64897
+          },
+          "draw": {
+            "start": 116870121,
+            "end": 117030339,
+            "elapsed": 160218,
+            "disk_service": 0,
+            "residual": 160218,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4288,
+        "late_fields": 14,
+        "stages": {
+          "packet": {
+            "start": 117030492,
+            "end": 117118713,
+            "elapsed": 88221,
+            "disk_service": 0,
+            "residual": 88221,
+            "empty_wait": 64061
+          },
+          "draw": {
+            "start": 117119417,
+            "end": 117251977,
+            "elapsed": 132560,
+            "disk_service": 0,
+            "residual": 132560,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4289,
+        "late_fields": 36,
+        "stages": {
+          "packet": {
+            "start": 117252121,
+            "end": 119035787,
+            "elapsed": 1783666,
+            "disk_service": 1482992,
+            "residual": 300674,
+            "empty_wait": 1758441
+          },
+          "draw": {
+            "start": 119036074,
+            "end": 119172590,
+            "elapsed": 136516,
+            "disk_service": 0,
+            "residual": 136516,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4290,
+        "late_fields": 35,
+        "stages": {
+          "packet": {
+            "start": 119172718,
+            "end": 119298165,
+            "elapsed": 125447,
+            "disk_service": 0,
+            "residual": 125447,
+            "empty_wait": 68412
+          },
+          "draw": {
+            "start": 119298453,
+            "end": 119440679,
+            "elapsed": 142226,
+            "disk_service": 0,
+            "residual": 142226,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4291,
+        "late_fields": 33,
+        "stages": {
+          "packet": {
+            "start": 119440762,
+            "end": 119528426,
+            "elapsed": 87664,
+            "disk_service": 0,
+            "residual": 87664,
+            "empty_wait": 64201
+          },
+          "draw": {
+            "start": 119528723,
+            "end": 119665098,
+            "elapsed": 136375,
+            "disk_service": 0,
+            "residual": 136375,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4292,
+        "late_fields": 31,
+        "stages": {
+          "packet": {
+            "start": 119665249,
+            "end": 119747855,
+            "elapsed": 82606,
+            "disk_service": 0,
+            "residual": 82606,
+            "empty_wait": 60569
+          },
+          "draw": {
+            "start": 119748540,
+            "end": 119877552,
+            "elapsed": 129012,
+            "disk_service": 0,
+            "residual": 129012,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4293,
+        "late_fields": 32,
+        "stages": {
+          "packet": {
+            "start": 119877662,
+            "end": 120045594,
+            "elapsed": 167932,
+            "disk_service": 0,
+            "residual": 167932,
+            "empty_wait": 105865
+          },
+          "draw": {
+            "start": 120045815,
+            "end": 120272848,
+            "elapsed": 227033,
+            "disk_service": 0,
+            "residual": 227033,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4294,
+        "late_fields": 31,
+        "stages": {
+          "packet": {
+            "start": 120272931,
+            "end": 120364722,
+            "elapsed": 91791,
+            "disk_service": 0,
+            "residual": 91791,
+            "empty_wait": 65670
+          },
+          "draw": {
+            "start": 120365027,
+            "end": 120597713,
+            "elapsed": 232686,
+            "disk_service": 0,
+            "residual": 232686,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4295,
+        "late_fields": 29,
+        "stages": {
+          "packet": {
+            "start": 120597822,
+            "end": 120705786,
+            "elapsed": 107964,
+            "disk_service": 0,
+            "residual": 107964,
+            "empty_wait": 57542
+          },
+          "draw": {
+            "start": 120706098,
+            "end": 120793793,
+            "elapsed": 87695,
+            "disk_service": 0,
+            "residual": 87695,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4296,
+        "late_fields": 26,
+        "stages": {
+          "packet": {
+            "start": 120793902,
+            "end": 120871494,
+            "elapsed": 77592,
+            "disk_service": 0,
+            "residual": 77592,
+            "empty_wait": 57509
+          },
+          "draw": {
+            "start": 120872190,
+            "end": 120965545,
+            "elapsed": 93355,
+            "disk_service": 0,
+            "residual": 93355,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4297,
+        "late_fields": 24,
+        "stages": {
+          "packet": {
+            "start": 120965628,
+            "end": 121034401,
+            "elapsed": 68773,
+            "disk_service": 0,
+            "residual": 68773,
+            "empty_wait": 52376
+          },
+          "draw": {
+            "start": 121034622,
+            "end": 121126138,
+            "elapsed": 91516,
+            "disk_service": 0,
+            "residual": 91516,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4298,
+        "late_fields": 21,
+        "stages": {
+          "packet": {
+            "start": 121126291,
+            "end": 121194117,
+            "elapsed": 67826,
+            "disk_service": 0,
+            "residual": 67826,
+            "empty_wait": 53390
+          },
+          "draw": {
+            "start": 121194338,
+            "end": 121310304,
+            "elapsed": 115966,
+            "disk_service": 0,
+            "residual": 115966,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4299,
+        "late_fields": 19,
+        "stages": {
+          "packet": {
+            "start": 121310414,
+            "end": 121378511,
+            "elapsed": 68097,
+            "disk_service": 0,
+            "residual": 68097,
+            "empty_wait": 50255
+          },
+          "draw": {
+            "start": 121378846,
+            "end": 121470397,
+            "elapsed": 91551,
+            "disk_service": 0,
+            "residual": 91551,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4300,
+        "late_fields": 16,
+        "stages": {
+          "packet": {
+            "start": 121470480,
+            "end": 121532784,
+            "elapsed": 62304,
+            "disk_service": 0,
+            "residual": 62304,
+            "empty_wait": 49626
+          },
+          "draw": {
+            "start": 121554984,
+            "end": 121644751,
+            "elapsed": 89767,
+            "disk_service": 0,
+            "residual": 89767,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4301,
+        "late_fields": 13,
+        "stages": {
+          "packet": {
+            "start": 121644834,
+            "end": 121695823,
+            "elapsed": 50989,
+            "disk_service": 0,
+            "residual": 50989,
+            "empty_wait": 36648
+          },
+          "draw": {
+            "start": 121696112,
+            "end": 121787707,
+            "elapsed": 91595,
+            "disk_service": 0,
+            "residual": 91595,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4302,
+        "late_fields": 11,
+        "stages": {
+          "packet": {
+            "start": 121787790,
+            "end": 121884403,
+            "elapsed": 96613,
+            "disk_service": 0,
+            "residual": 96613,
+            "empty_wait": 57645
+          },
+          "draw": {
+            "start": 121884624,
+            "end": 121976282,
+            "elapsed": 91658,
+            "disk_service": 0,
+            "residual": 91658,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4303,
+        "late_fields": 8,
+        "stages": {
+          "packet": {
+            "start": 121976378,
+            "end": 122070838,
+            "elapsed": 94460,
+            "disk_service": 0,
+            "residual": 94460,
+            "empty_wait": 70844
+          },
+          "draw": {
+            "start": 122071148,
+            "end": 122174155,
+            "elapsed": 103007,
+            "disk_service": 0,
+            "residual": 103007,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4304,
+        "late_fields": 6,
+        "stages": {
+          "packet": {
+            "start": 122174238,
+            "end": 122251418,
+            "elapsed": 77180,
+            "disk_service": 0,
+            "residual": 77180,
+            "empty_wait": 60082
+          },
+          "draw": {
+            "start": 122251903,
+            "end": 122353372,
+            "elapsed": 101469,
+            "disk_service": 0,
+            "residual": 101469,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4305,
+        "late_fields": 4,
+        "stages": {
+          "packet": {
+            "start": 122353455,
+            "end": 122464582,
+            "elapsed": 111127,
+            "disk_service": 0,
+            "residual": 111127,
+            "empty_wait": 66765
+          },
+          "draw": {
+            "start": 122464803,
+            "end": 122575672,
+            "elapsed": 110869,
+            "disk_service": 0,
+            "residual": 110869,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4306,
+        "late_fields": 2,
+        "stages": {
+          "packet": {
+            "start": 122575755,
+            "end": 122657970,
+            "elapsed": 82215,
+            "disk_service": 0,
+            "residual": 82215,
+            "empty_wait": 61706
+          },
+          "draw": {
+            "start": 122658191,
+            "end": 122764201,
+            "elapsed": 106010,
+            "disk_service": 0,
+            "residual": 106010,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4307,
+        "late_fields": 0,
+        "stages": {
+          "packet": {
+            "start": 122764294,
+            "end": 122829959,
+            "elapsed": 65665,
+            "disk_service": 0,
+            "residual": 65665,
+            "empty_wait": 51885
+          },
+          "draw": {
+            "start": 122830294,
+            "end": 122919917,
+            "elapsed": 89623,
+            "disk_service": 0,
+            "residual": 89623,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4308,
+        "late_fields": 25,
+        "stages": {
+          "packet": {
+            "start": 122920015,
+            "end": 124900562,
+            "elapsed": 1980547,
+            "disk_service": 1552016,
+            "residual": 428531,
+            "empty_wait": 1907579
+          },
+          "draw": {
+            "start": 124901234,
+            "end": 125132962,
+            "elapsed": 231728,
+            "disk_service": 0,
+            "residual": 231728,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4309,
+        "late_fields": 26,
+        "stages": {
+          "packet": {
+            "start": 125133086,
+            "end": 125284201,
+            "elapsed": 151115,
+            "disk_service": 0,
+            "residual": 151115,
+            "empty_wait": 108016
+          },
+          "draw": {
+            "start": 125284422,
+            "end": 125558017,
+            "elapsed": 273595,
+            "disk_service": 0,
+            "residual": 273595,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4310,
+        "late_fields": 26,
+        "stages": {
+          "packet": {
+            "start": 125558161,
+            "end": 125711817,
+            "elapsed": 153656,
+            "disk_service": 0,
+            "residual": 153656,
+            "empty_wait": 115198
+          },
+          "draw": {
+            "start": 125712038,
+            "end": 125910625,
+            "elapsed": 198587,
+            "disk_service": 0,
+            "residual": 198587,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4311,
+        "late_fields": 27,
+        "stages": {
+          "packet": {
+            "start": 125910708,
+            "end": 126089022,
+            "elapsed": 178314,
+            "disk_service": 0,
+            "residual": 178314,
+            "empty_wait": 114543
+          },
+          "draw": {
+            "start": 126089366,
+            "end": 126291368,
+            "elapsed": 202002,
+            "disk_service": 0,
+            "residual": 202002,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4312,
+        "late_fields": 26,
+        "stages": {
+          "packet": {
+            "start": 126291451,
+            "end": 126440027,
+            "elapsed": 148576,
+            "disk_service": 0,
+            "residual": 148576,
+            "empty_wait": 116754
+          },
+          "draw": {
+            "start": 126440512,
+            "end": 126637168,
+            "elapsed": 196656,
+            "disk_service": 0,
+            "residual": 196656,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4313,
+        "late_fields": 27,
+        "stages": {
+          "packet": {
+            "start": 126637251,
+            "end": 126823758,
+            "elapsed": 186507,
+            "disk_service": 0,
+            "residual": 186507,
+            "empty_wait": 117939
+          },
+          "draw": {
+            "start": 126824046,
+            "end": 127021020,
+            "elapsed": 196974,
+            "disk_service": 0,
+            "residual": 196974,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4314,
+        "late_fields": 27,
+        "stages": {
+          "packet": {
+            "start": 127021130,
+            "end": 127180562,
+            "elapsed": 159432,
+            "disk_service": 0,
+            "residual": 159432,
+            "empty_wait": 122301
+          },
+          "draw": {
+            "start": 127180859,
+            "end": 127378039,
+            "elapsed": 197180,
+            "disk_service": 0,
+            "residual": 197180,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4315,
+        "late_fields": 28,
+        "stages": {
+          "packet": {
+            "start": 127378122,
+            "end": 127576553,
+            "elapsed": 198431,
+            "disk_service": 0,
+            "residual": 198431,
+            "empty_wait": 131328
+          },
+          "draw": {
+            "start": 127576774,
+            "end": 127777331,
+            "elapsed": 200557,
+            "disk_service": 0,
+            "residual": 200557,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4316,
+        "late_fields": 28,
+        "stages": {
+          "packet": {
+            "start": 127777414,
+            "end": 127934580,
+            "elapsed": 157166,
+            "disk_service": 0,
+            "residual": 157166,
+            "empty_wait": 126104
+          },
+          "draw": {
+            "start": 127935265,
+            "end": 128164917,
+            "elapsed": 229652,
+            "disk_service": 0,
+            "residual": 229652,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4317,
+        "late_fields": 28,
+        "stages": {
+          "packet": {
+            "start": 128165054,
+            "end": 128334433,
+            "elapsed": 169379,
+            "disk_service": 0,
+            "residual": 169379,
+            "empty_wait": 128285
+          },
+          "draw": {
+            "start": 128334654,
+            "end": 128537089,
+            "elapsed": 202435,
+            "disk_service": 0,
+            "residual": 202435,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4318,
+        "late_fields": 56,
+        "stages": {
+          "packet": {
+            "start": 128537222,
+            "end": 130639958,
+            "elapsed": 2102736,
+            "disk_service": 1690438,
+            "residual": 412298,
+            "empty_wait": 2035438
+          },
+          "draw": {
+            "start": 130640280,
+            "end": 130841356,
+            "elapsed": 201076,
+            "disk_service": 0,
+            "residual": 201076,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4319,
+        "late_fields": 56,
+        "stages": {
+          "packet": {
+            "start": 130841439,
+            "end": 131036257,
+            "elapsed": 194818,
+            "disk_service": 0,
+            "residual": 194818,
+            "empty_wait": 127352
+          },
+          "draw": {
+            "start": 131036478,
+            "end": 131234549,
+            "elapsed": 198071,
+            "disk_service": 0,
+            "residual": 198071,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4320,
+        "late_fields": 57,
+        "stages": {
+          "packet": {
+            "start": 131234684,
+            "end": 131396521,
+            "elapsed": 161837,
+            "disk_service": 0,
+            "residual": 161837,
+            "empty_wait": 128098
+          },
+          "draw": {
+            "start": 131397006,
+            "end": 131613830,
+            "elapsed": 216824,
+            "disk_service": 0,
+            "residual": 216824,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4321,
+        "late_fields": 56,
+        "stages": {
+          "packet": {
+            "start": 131613913,
+            "end": 131765854,
+            "elapsed": 151941,
+            "disk_service": 0,
+            "residual": 151941,
+            "empty_wait": 123133
+          },
+          "draw": {
+            "start": 131766164,
+            "end": 131956227,
+            "elapsed": 190063,
+            "disk_service": 0,
+            "residual": 190063,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4322,
+        "late_fields": 57,
+        "stages": {
+          "packet": {
+            "start": 131956310,
+            "end": 132109183,
+            "elapsed": 152873,
+            "disk_service": 0,
+            "residual": 152873,
+            "empty_wait": 121339
+          },
+          "draw": {
+            "start": 132109404,
+            "end": 132330059,
+            "elapsed": 220655,
+            "disk_service": 0,
+            "residual": 220655,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4323,
+        "late_fields": 57,
+        "stages": {
+          "packet": {
+            "start": 132330211,
+            "end": 132494613,
+            "elapsed": 164402,
+            "disk_service": 0,
+            "residual": 164402,
+            "empty_wait": 128675
+          },
+          "draw": {
+            "start": 132494899,
+            "end": 132686598,
+            "elapsed": 191699,
+            "disk_service": 0,
+            "residual": 191699,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4324,
+        "late_fields": 57,
+        "stages": {
+          "packet": {
+            "start": 132686718,
+            "end": 132874457,
+            "elapsed": 187739,
+            "disk_service": 0,
+            "residual": 187739,
+            "empty_wait": 127023
+          },
+          "draw": {
+            "start": 132874928,
+            "end": 133064616,
+            "elapsed": 189688,
+            "disk_service": 0,
+            "residual": 189688,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4325,
+        "late_fields": 57,
+        "stages": {
+          "packet": {
+            "start": 133064726,
+            "end": 133228245,
+            "elapsed": 163519,
+            "disk_service": 0,
+            "residual": 163519,
+            "empty_wait": 125296
+          },
+          "draw": {
+            "start": 133228466,
+            "end": 133413255,
+            "elapsed": 184789,
+            "disk_service": 0,
+            "residual": 184789,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4326,
+        "late_fields": 57,
+        "stages": {
+          "packet": {
+            "start": 133413402,
+            "end": 133604065,
+            "elapsed": 190663,
+            "disk_service": 0,
+            "residual": 190663,
+            "empty_wait": 130856
+          },
+          "draw": {
+            "start": 133604286,
+            "end": 133792379,
+            "elapsed": 188093,
+            "disk_service": 0,
+            "residual": 188093,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4327,
+        "late_fields": 58,
+        "stages": {
+          "packet": {
+            "start": 133792462,
+            "end": 133949207,
+            "elapsed": 156745,
+            "disk_service": 0,
+            "residual": 156745,
+            "empty_wait": 123244
+          },
+          "draw": {
+            "start": 133949428,
+            "end": 134165184,
+            "elapsed": 215756,
+            "disk_service": 0,
+            "residual": 215756,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4328,
+        "late_fields": 83,
+        "stages": {
+          "packet": {
+            "start": 134165267,
+            "end": 136109058,
+            "elapsed": 1943791,
+            "disk_service": 1555987,
+            "residual": 387804,
+            "empty_wait": 1907322
+          },
+          "draw": {
+            "start": 136109761,
+            "end": 136302467,
+            "elapsed": 192706,
+            "disk_service": 0,
+            "residual": 192706,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4329,
+        "late_fields": 83,
+        "stages": {
+          "packet": {
+            "start": 136302602,
+            "end": 136488316,
+            "elapsed": 185714,
+            "disk_service": 0,
+            "residual": 185714,
+            "empty_wait": 121134
+          },
+          "draw": {
+            "start": 136488537,
+            "end": 136681435,
+            "elapsed": 192898,
+            "disk_service": 0,
+            "residual": 192898,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4330,
+        "late_fields": 83,
+        "stages": {
+          "packet": {
+            "start": 136681588,
+            "end": 136846765,
+            "elapsed": 165177,
+            "disk_service": 0,
+            "residual": 165177,
+            "empty_wait": 126961
+          },
+          "draw": {
+            "start": 136846986,
+            "end": 137040665,
+            "elapsed": 193679,
+            "disk_service": 0,
+            "residual": 193679,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4331,
+        "late_fields": 83,
+        "stages": {
+          "packet": {
+            "start": 137040748,
+            "end": 137209883,
+            "elapsed": 169135,
+            "disk_service": 0,
+            "residual": 169135,
+            "empty_wait": 114972
+          },
+          "draw": {
+            "start": 137210104,
+            "end": 137399183,
+            "elapsed": 189079,
+            "disk_service": 0,
+            "residual": 189079,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4332,
+        "late_fields": 83,
+        "stages": {
+          "packet": {
+            "start": 137399335,
+            "end": 137541367,
+            "elapsed": 142032,
+            "disk_service": 0,
+            "residual": 142032,
+            "empty_wait": 104954
+          },
+          "draw": {
+            "start": 137542057,
+            "end": 137729496,
+            "elapsed": 187439,
+            "disk_service": 0,
+            "residual": 187439,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4333,
+        "late_fields": 82,
+        "stages": {
+          "packet": {
+            "start": 137729606,
+            "end": 137872770,
+            "elapsed": 143164,
+            "disk_service": 0,
+            "residual": 143164,
+            "empty_wait": 111628
+          },
+          "draw": {
+            "start": 137873108,
+            "end": 138055110,
+            "elapsed": 182002,
+            "disk_service": 0,
+            "residual": 182002,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4334,
+        "late_fields": 82,
+        "stages": {
+          "packet": {
+            "start": 138055193,
+            "end": 138196089,
+            "elapsed": 140896,
+            "disk_service": 0,
+            "residual": 140896,
+            "empty_wait": 109841
+          },
+          "draw": {
+            "start": 138196310,
+            "end": 138379221,
+            "elapsed": 182911,
+            "disk_service": 0,
+            "residual": 182911,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4335,
+        "late_fields": 81,
+        "stages": {
+          "packet": {
+            "start": 138379323,
+            "end": 138515409,
+            "elapsed": 136086,
+            "disk_service": 0,
+            "residual": 136086,
+            "empty_wait": 105506
+          },
+          "draw": {
+            "start": 138515695,
+            "end": 138690274,
+            "elapsed": 174579,
+            "disk_service": 0,
+            "residual": 174579,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4336,
+        "late_fields": 81,
+        "stages": {
+          "packet": {
+            "start": 138690357,
+            "end": 138822690,
+            "elapsed": 132333,
+            "disk_service": 0,
+            "residual": 132333,
+            "empty_wait": 97970
+          },
+          "draw": {
+            "start": 138823394,
+            "end": 138998405,
+            "elapsed": 175011,
+            "disk_service": 0,
+            "residual": 175011,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4337,
+        "late_fields": 81,
+        "stages": {
+          "packet": {
+            "start": 138998540,
+            "end": 139162370,
+            "elapsed": 163830,
+            "disk_service": 0,
+            "residual": 163830,
+            "empty_wait": 123210
+          },
+          "draw": {
+            "start": 139162692,
+            "end": 139392644,
+            "elapsed": 229952,
+            "disk_service": 0,
+            "residual": 229952,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4338,
+        "late_fields": 81,
+        "stages": {
+          "packet": {
+            "start": 139392727,
+            "end": 139513111,
+            "elapsed": 120384,
+            "disk_service": 0,
+            "residual": 120384,
+            "empty_wait": 88974
+          },
+          "draw": {
+            "start": 139513400,
+            "end": 139748360,
+            "elapsed": 234960,
+            "disk_service": 0,
+            "residual": 234960,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4339,
+        "late_fields": 80,
+        "stages": {
+          "packet": {
+            "start": 139748443,
+            "end": 139853014,
+            "elapsed": 104571,
+            "disk_service": 0,
+            "residual": 104571,
+            "empty_wait": 82201
+          },
+          "draw": {
+            "start": 139853324,
+            "end": 139983537,
+            "elapsed": 130213,
+            "disk_service": 0,
+            "residual": 130213,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4340,
+        "late_fields": 89,
+        "stages": {
+          "packet": {
+            "start": 139983620,
+            "end": 140881889,
+            "elapsed": 898269,
+            "disk_service": 706284,
+            "residual": 191985,
+            "empty_wait": 875342
+          },
+          "draw": {
+            "start": 140882360,
+            "end": 141002157,
+            "elapsed": 119797,
+            "disk_service": 0,
+            "residual": 119797,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4341,
+        "late_fields": 87,
+        "stages": {
+          "packet": {
+            "start": 141002246,
+            "end": 141086375,
+            "elapsed": 84129,
+            "disk_service": 0,
+            "residual": 84129,
+            "empty_wait": 60032
+          },
+          "draw": {
+            "start": 141086710,
+            "end": 141210358,
+            "elapsed": 123648,
+            "disk_service": 0,
+            "residual": 123648,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4342,
+        "late_fields": 85,
+        "stages": {
+          "packet": {
+            "start": 141210450,
+            "end": 141296874,
+            "elapsed": 86424,
+            "disk_service": 0,
+            "residual": 86424,
+            "empty_wait": 63452
+          },
+          "draw": {
+            "start": 141297212,
+            "end": 141412305,
+            "elapsed": 115093,
+            "disk_service": 0,
+            "residual": 115093,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4343,
+        "late_fields": 83,
+        "stages": {
+          "packet": {
+            "start": 141412407,
+            "end": 141498726,
+            "elapsed": 86319,
+            "disk_service": 0,
+            "residual": 86319,
+            "empty_wait": 62482
+          },
+          "draw": {
+            "start": 141499031,
+            "end": 141615098,
+            "elapsed": 116067,
+            "disk_service": 0,
+            "residual": 116067,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4344,
+        "late_fields": 80,
+        "stages": {
+          "packet": {
+            "start": 141615181,
+            "end": 141693234,
+            "elapsed": 78053,
+            "disk_service": 0,
+            "residual": 78053,
+            "empty_wait": 60253
+          },
+          "draw": {
+            "start": 141693937,
+            "end": 141805192,
+            "elapsed": 111255,
+            "disk_service": 0,
+            "residual": 111255,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4345,
+        "late_fields": 78,
+        "stages": {
+          "packet": {
+            "start": 141805275,
+            "end": 141878587,
+            "elapsed": 73312,
+            "disk_service": 0,
+            "residual": 73312,
+            "empty_wait": 55252
+          },
+          "draw": {
+            "start": 141878808,
+            "end": 141985587,
+            "elapsed": 106779,
+            "disk_service": 0,
+            "residual": 106779,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4346,
+        "late_fields": 75,
+        "stages": {
+          "packet": {
+            "start": 141985722,
+            "end": 142053450,
+            "elapsed": 67728,
+            "disk_service": 0,
+            "residual": 67728,
+            "empty_wait": 50274
+          },
+          "draw": {
+            "start": 142053755,
+            "end": 142158403,
+            "elapsed": 104648,
+            "disk_service": 0,
+            "residual": 104648,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4347,
+        "late_fields": 73,
+        "stages": {
+          "packet": {
+            "start": 142158486,
+            "end": 142222221,
+            "elapsed": 63735,
+            "disk_service": 0,
+            "residual": 63735,
+            "empty_wait": 46174
+          },
+          "draw": {
+            "start": 142222506,
+            "end": 142316333,
+            "elapsed": 93827,
+            "disk_service": 0,
+            "residual": 93827,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4348,
+        "late_fields": 70,
+        "stages": {
+          "packet": {
+            "start": 142316416,
+            "end": 142380787,
+            "elapsed": 64371,
+            "disk_service": 0,
+            "residual": 64371,
+            "empty_wait": 50555
+          },
+          "draw": {
+            "start": 142403076,
+            "end": 142493041,
+            "elapsed": 89965,
+            "disk_service": 0,
+            "residual": 89965,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4349,
+        "late_fields": 67,
+        "stages": {
+          "packet": {
+            "start": 142493134,
+            "end": 142533005,
+            "elapsed": 39871,
+            "disk_service": 0,
+            "residual": 39871,
+            "empty_wait": 26478
+          },
+          "draw": {
+            "start": 142533226,
+            "end": 142620786,
+            "elapsed": 87560,
+            "disk_service": 0,
+            "residual": 87560,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4350,
+        "late_fields": 64,
+        "stages": {
+          "packet": {
+            "start": 142620906,
+            "end": 142675132,
+            "elapsed": 54226,
+            "disk_service": 0,
+            "residual": 54226,
+            "empty_wait": 41221
+          },
+          "draw": {
+            "start": 142675353,
+            "end": 142759390,
+            "elapsed": 84037,
+            "disk_service": 0,
+            "residual": 84037,
+            "empty_wait": 0
+          }
+        }
+      },
+      {
+        "frame": 4351,
+        "late_fields": 61,
+        "stages": {
+          "packet": {
+            "start": 142759482,
+            "end": 142813082,
+            "elapsed": 53600,
+            "disk_service": 0,
+            "residual": 53600,
+            "empty_wait": 40501
+          },
+          "draw": {
+            "start": 142813303,
+            "end": 142898542,
+            "elapsed": 85239,
+            "disk_service": 0,
+            "residual": 85239,
+            "empty_wait": 0
+          }
+        }
+      }
+    ],
+    "frame_fields": 5,
+    "nominal_frame_tstates": 354540,
+    "nominal_late_frames": 117,
+    "max_late_fields": 89,
+    "stages": {
+      "packet": {
+        "elapsed": {
+          "count": 256,
+          "total": 30452277,
+          "mean": 118954.20703125,
+          "p50": 50989,
+          "p90": 164402,
+          "p99": 1943791,
+          "max": 2102736
+        },
+        "disk_service": {
+          "count": 256,
+          "total": 11086450,
+          "mean": 43306.4453125,
+          "p50": 0,
+          "p90": 0,
+          "p99": 1552016,
+          "max": 1690438
+        },
+        "residual": {
+          "count": 256,
+          "total": 19365827,
+          "mean": 75647.76171875,
+          "p50": 50989,
+          "p90": 164402,
+          "p99": 387804,
+          "max": 428531
+        },
+        "empty_wait": {
+          "count": 256,
+          "total": 22886621,
+          "mean": 89400.86328125,
+          "p50": 0,
+          "p90": 123210,
+          "p99": 1898105,
+          "max": 2035438
+        }
+      },
+      "draw": {
+        "elapsed": {
+          "count": 256,
+          "total": 35102592,
+          "mean": 137119.5,
+          "p50": 123403,
+          "p90": 219405,
+          "p99": 261339,
+          "max": 274967
+        },
+        "disk_service": {
+          "count": 256,
+          "total": 395,
+          "mean": 1.54296875,
+          "p50": 0,
+          "p90": 0,
+          "p99": 0,
+          "max": 395
+        },
+        "residual": {
+          "count": 256,
+          "total": 35102197,
+          "mean": 137117.95703125,
+          "p50": 123403,
+          "p90": 219405,
+          "p99": 261339,
+          "max": 274967
+        },
+        "empty_wait": {
+          "count": 256,
+          "total": 0,
+          "mean": 0.0,
+          "p50": 0,
+          "p90": 0,
+          "p99": 0,
+          "max": 0
+        }
+      }
+    },
+    "sector_elapsed": {
+      "count": 735,
+      "total": 22966217,
+      "mean": 31246.5537414966,
+      "p50": 23352,
+      "p90": 24494,
+      "p99": 154774,
+      "max": 155723
+    },
+    "active_elapsed": 95016783,
+    "active_disk_service": 19159369,
+    "decode_slices": {
+      "count": 647,
+      "total": 18749572,
+      "mean": 28979.2457496136,
+      "p50": 20256,
+      "p90": 67530,
+      "p99": 123982,
+      "max": 128716
+    },
+    "active_decode_elapsed": 15205131,
+    "decode_scope": "Queue decoder bridge through its return: includes LZSA2, paging, IRQ and ULA; overlaps packet stages",
+    "disk_service_all": 23476951,
+    "disk_service_in_stages": 11086845,
+    "empty_wait": {
+      "count": 239,
+      "total": 22886621,
+      "mean": 95759.92050209205,
+      "p50": 34044,
+      "p90": 121925,
+      "p99": 1797635,
+      "max": 1988411
+    },
+    "queue_at_packet": {
+      "3": 65,
+      "2": 50,
+      "1": 26,
+      "0": 115
+    },
+    "deterministic_cpu": {
+      "scope": "Native packets/queue/copies/LZSA2/draw with mocked ROM, host-selected back screen after first prime; not scheduling.",
+      "stages": {
+        "schedule": 81,
+        "cb41_packet": 98900,
+        "book_load": 54028,
+        "setup": 1266536,
+        "bitmap_mask": 4184431,
+        "mode": 4341060,
+        "front_source": 496056,
+        "cell_copy": 6900660,
+        "cell_return": 2118421,
+        "literal": 8018472,
+        "dictionary": 466100,
+        "attribute_mask": 3939040,
+        "attributes": 993472
+      },
+      "draw": {
+        "count": 255,
+        "total": 32764166,
+        "mean": 128486.92549019608,
+        "p50": 117833,
+        "p90": 203899,
+        "p99": 229989,
+        "max": 232322
+      },
+      "next_packet": {
+        "count": 254,
+        "total": 20242550,
+        "mean": 79695.07874015748,
+        "p50": 65754,
+        "p90": 151774,
+        "p99": 267491,
+        "max": 281436
+      }
+    },
+    "trd_sha256": "fac870614b9e21cc225a5e124d7e834951b0ef8e9f27a6cd78231c5d40adc64a",
+    "inputs": {
+      "trace": {
+        "path": ".tmp\\front-pipeline-decoder\\timing.json",
+        "sha256": "5287203912ed7ff23701b0cd5b1856d95e3a1b975d0853bd46a14b37c0d0013b"
+      },
+      "metadata": {
+        "path": ".tmp\\front-native-window-fixed\\ZX-video-front_part07.json",
+        "sha256": "5ef9eac7bd9646652b0ddd2f6f59d7fdcc3ca39f7822e37af582c9d5d0b4c400"
+      },
+      "cpu": {
+        "path": ".tmp\\front-native-window-fixed\\work\\ZX-video-front_part07\\cpu.json",
+        "sha256": "9bdf32e2c35f9bb42edf4c65da75968f7ee71dc0b5c73dbd137728681b10b35f"
+      }
+    },
+    "source_sha256_lf": "b8ce30e49985ddc897628f0348b8f58b697255b6f04037fd20b9e575b6143953"
+  },
+  "cycles": {
+    "no_refill_before": {
+      "book": 268,
+      "literal": 304
+    },
+    "no_refill_after": {
+      "book": 281,
+      "literal": 317,
+      "front": 299
+    },
+    "formula": "-16 + 13*N + 16*(ceil(N/4)-ceil(N/8)) + 18*(front_from_book-front_from_literal)",
+    "scope": "Renderer against the same book and changed cells; IRQ, ULA, packet copy, audio and disk excluded"
+  },
+  "artifacts": [
+    {
+      "file": "front-native-window-conversion.json.gz",
+      "raw_sha256": "30e24c7d0169062017ef4d7b3efc3d767316fcd190eda88cc1c4ecc12a05984d",
+      "archive_sha256": "0f3e4199a9a079ceea191d6d01fcea88f6475fb30a4e22bb3e43182ad9036b72",
+      "raw_bytes": 427,
+      "archive_bytes": 290
+    },
+    {
+      "file": "front-four-native-capacity-conversion.json.gz",
+      "raw_sha256": "3fe89ea18e632bd254ed47a2eae6612596730b28f8a052300270d265c5a32d87",
+      "archive_sha256": "bcef0de5d333d1b6739148a654b4204ec98f9b6fa49120f04716e2b1f3873350",
+      "raw_bytes": 556,
+      "archive_bytes": 380
+    },
+    {
+      "file": "front-four-native-capacity-partition.json.gz",
+      "raw_sha256": "fb849c09883ffdf3a6e645ff52172dac013056bb5f9f02890c5f9e1016c0edf4",
+      "archive_sha256": "fab73b432cd4e64f92a0e891579bb0af71087394e96344262dd921aa15792765",
+      "raw_bytes": 2304,
+      "archive_bytes": 694
+    },
+    {
+      "file": "front-four-native-capacity-timing.json.gz",
+      "raw_sha256": "398dc26a59bbe17a075ddb608b2643a477bfb7a6d470c3fecacda111713c193b",
+      "archive_sha256": "ef9f4c3346e220d0084ce9401717e5c7292bbe70ab3b0af58cea79402f8a47d1",
+      "raw_bytes": 415,
+      "archive_bytes": 235
+    },
+    {
+      "file": "front-four-native-capacity-ZX-video-front_part01.json.gz",
+      "raw_sha256": "2f5f028182283dd0c2beea529b125304acc07e8846a2c1fcaa5b8baf76df174c",
+      "archive_sha256": "a362e760853cdd500c9b7ac2340eef9eed8e0da067c1dc184cb99c8f3fff2d6a",
+      "raw_bytes": 2529231,
+      "archive_bytes": 146888
+    },
+    {
+      "file": "front-native-fixture-conversion.json.gz",
+      "raw_sha256": "fb090d2ca3d3ed6044c7ad4c2a9bb202e981bf21e64e74ccba8bb9ac1916ee07",
+      "archive_sha256": "756e58cdba29d6eddc782b28f1defeb2988b857dc36be4ca81db0dca747a78d3",
+      "raw_bytes": 2619,
+      "archive_bytes": 1135
+    },
+    {
+      "file": "front-native-fixture-partition.json.gz",
+      "raw_sha256": "768f41cf4b84496d95a93d0f834ecda19ec18241bb560af378ee3d4f82528679",
+      "archive_sha256": "a525d7504b987dd10539f374dccf44f6c2bec0993d3417aa651b877947500123",
+      "raw_bytes": 1356,
+      "archive_bytes": 619
+    },
+    {
+      "file": "front-native-fixture-timing.json.gz",
+      "raw_sha256": "729676b81ae204069d29f83a557c64353d7131012a35be7750aad3976e0e047e",
+      "archive_sha256": "f78def09676f10db14c453cfcd71bed809798176465c3879b0afff7606f2d525",
+      "raw_bytes": 3398,
+      "archive_bytes": 1230
+    },
+    {
+      "file": "front-native-fixture-volumes.json.gz",
+      "raw_sha256": "c750588e6b3275feb683a4739c900ae813fa1a43b719379c33d445fe3cdd66f9",
+      "archive_sha256": "f010f6503292567a4627a17186826d5cb829af4e02ea6f78b80420d81156e234",
+      "raw_bytes": 428,
+      "archive_bytes": 258
+    },
+    {
+      "file": "front-native-fixture-work-five-states.npz.gz",
+      "raw_sha256": "a18e89725b1f1b3d8c313350595dae98189946920d509987a5ad6cf35e07c58a",
+      "archive_sha256": "ef1ce9181b71872bd4eeea64b74bf36cd6cbf009c0ab2875e032e32fe9c362c3",
+      "raw_bytes": 34398,
+      "archive_bytes": 34431
+    },
+    {
+      "file": "front-native-fixture-work-scaffold.json.gz",
+      "raw_sha256": "00f853e6f188b435dd078bfdf83f435e485f00fac9742d3299a3041e9927982c",
+      "archive_sha256": "9137d821b5465d33e402bf189a73c4e43ed74c9bddbb13450c9ccb9df05c0539",
+      "raw_bytes": 1668,
+      "archive_bytes": 379
+    },
+    {
+      "file": "front-native-fixture-work-stream.raw.gz",
+      "raw_sha256": "ec28765a1ede9c7409a73270b44b5dbd408de1e090e174a466e446597fb270dc",
+      "archive_sha256": "b58d8d75642be7a5f9e9e89096fa0fd1c6be0ecf1af623b6522841d17ccefbfe",
+      "raw_bytes": 6083,
+      "archive_bytes": 237
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-audio.ayh1.gz",
+      "raw_sha256": "81c6bacb0bd5cc59e165c83f7dab52be4d59afc6962dc76734002980a5c151c8",
+      "archive_sha256": "a2dfcef5793a51f944ca97bc60580e1615a4f9dee0a26b017df6cf5bdd3fea2f",
+      "raw_bytes": 152,
+      "archive_bytes": 69
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_sha256": "c89379337ccaba20c515712fb3e82a5dfd3262c244ad359aa12916101e9015e9",
+      "archive_sha256": "e808de68a9030bf1fadf098570ca8917e4f6bb8d09d82bd0c1aeb48853a2ecf2",
+      "raw_bytes": 24375,
+      "archive_bytes": 4131
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-0-1536.trace.txt.gz",
+      "raw_sha256": "a4d7176a8f8bace41315ac35fb54bb5aaebe54c185edff67b669b06061dc7431",
+      "archive_sha256": "f38535b1f21c2eb938215d46a0a50673236679716461c3bffdc5ff6e99845d2a",
+      "raw_bytes": 39237,
+      "archive_bytes": 13647
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_sha256": "9b343275fca797c4d8b41fa0645279c634feb1078d2ca6a0fff9f5da3f634942",
+      "archive_sha256": "f8407b5584cc4a0588038a02c5151f947c3ae041667f4301e2ccd1dadd61f2eb",
+      "raw_bytes": 25485,
+      "archive_bytes": 4008
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_sha256": "ea820bff0ea890165a428b2c6365b24efdcf6c288fdb168069c0c0637ea707f5",
+      "archive_sha256": "afce12f2ab4d55724260f511130ec78ea61605ce1ae1bc77e6c8acdd3ae5bfbf",
+      "raw_bytes": 47122,
+      "archive_bytes": 18285
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_sha256": "e73d6a4f0473efe89c900c1119a8d3ecc1cdfb1e3b272231b7bb721db53a655a",
+      "archive_sha256": "b4508ec875270bb27716f39b97d099ae1c216ef59eb0ccff7eeb8c059d0ffeea",
+      "raw_bytes": 25485,
+      "archive_bytes": 3990
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_sha256": "f9a002b4cc27213bceb9aa3ff5402ee7067ea0b27812799ed37efaee16f64219",
+      "archive_sha256": "44b7660f3902adbf7b0f86b106e8226b3378c51dc6b272a10d9070c79159d912",
+      "raw_bytes": 47798,
+      "archive_bytes": 18407
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_sha256": "7dc6b04ee0ba4299d8acc0eaab82e0558db8269719ba13c6166b8e1d65bdb4e5",
+      "archive_sha256": "a8d1991ebf943d19f350331db68916c1ca49aa0356f14c54b756f84b2a68bf5b",
+      "raw_bytes": 25485,
+      "archive_bytes": 4024
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_sha256": "eeb12ad9ddf948df5e0ed1b6f12ce899731a25f85604d806632ed5f5fd9acafe",
+      "archive_sha256": "a66d511599341317d4801b6594180604b7b246468ac9344133d7d2c499e037ee",
+      "raw_bytes": 39209,
+      "archive_bytes": 13770
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_sha256": "e0e2ef69d801f00f05340d392aaf52c82badb3d949734ff41b3b71fa51eb5a7b",
+      "archive_sha256": "906c2a8efd076a0d63ebaeca41f6740899d79ce986e22f310af116f075dd2841",
+      "raw_bytes": 13006,
+      "archive_bytes": 2042
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_sha256": "b34a261c2b3e22ea91cf2839fed38cace3fedf2ba827f78a57c6e76cec324bc6",
+      "archive_sha256": "1386d3d0c110db0f5ff10144c2f0b2bab8894d17289a4be88b6d0a52eae4f787",
+      "raw_bytes": 25202,
+      "archive_bytes": 713
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-captures-progress.json.gz",
+      "raw_sha256": "0eb1cfbb1bfa69a94c30fe8d81903a2638ae55f4ad31f7cb1c49a96ecc85ce83",
+      "archive_sha256": "131de5de73aaf3a0faa0bbcd6ec834a2d3ed310fd21976eff81dc7534ba7cd46",
+      "raw_bytes": 14436,
+      "archive_bytes": 2997
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-codebook.raw.gz",
+      "raw_sha256": "8418e1ce18a4c448f443f56291ad9d934727cf09ced6e12accd2552495462315",
+      "archive_sha256": "072abce7873fc4ec53f514b3ee4059b8c82199a241e4739a299a5fe002b81dcc",
+      "raw_bytes": 38147,
+      "archive_bytes": 29794
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-codebook.stream.gz",
+      "raw_sha256": "3d044d71b36cb57d609fd595a71b2cada2e057f81e7ed8ae03ddca9dba395f87",
+      "archive_sha256": "d3f1cb824c15c951eef3c816c7e69c915923570b784a74be5e96f0038fb9dc4a",
+      "raw_bytes": 30398,
+      "archive_bytes": 29666
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-cpu.json.gz",
+      "raw_sha256": "60d7fbe5eb0e59577a26ddfb5f7209486b5908ad714c2919bb405c7cf0198313",
+      "archive_sha256": "81ebe01fde4593ff86b7045e16b2d02113a7f0b5cbfe8f38775d18979c605c9f",
+      "raw_bytes": 33415,
+      "archive_bytes": 2277
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-dynamic-rows.json.gz",
+      "raw_sha256": "ecee07fedff648bd078a1471c2249f16c3523b6910faa9d28ec28d25e684fad6",
+      "archive_sha256": "3f22b9de5b4bacdaeb3d0d7313ca0c3c5d4eb91e9a0f5efa155f7cf2ec4aaf12",
+      "raw_bytes": 5124,
+      "archive_bytes": 987
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-rows.json.gz",
+      "raw_sha256": "532ff04e019bd6a6a9c9b8f9c14c6282d840b54ae7457eab5b721b6a79aa203b",
+      "archive_sha256": "a9721edd555fedea9516a4ae10d4a1fae2e9f81d45568a5828a55aa45b7ed9e9",
+      "raw_bytes": 3737,
+      "archive_bytes": 965
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-screens.json.gz",
+      "raw_sha256": "5250187cb45c59e579fc2940deb571e842cc0241094aabbdf103d1651db2369b",
+      "archive_sha256": "459d463a30866e0b042511e2c87159e8041a77579f1798638770e699594ec0ee",
+      "raw_bytes": 16601,
+      "archive_bytes": 4288
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-states.npz.gz",
+      "raw_sha256": "9a9e3742666ba388aa0a7d7b001267f5b604d3208998d451128a814734aea3a8",
+      "archive_sha256": "cdd8163a93b413d2eb05b6f595d6e224594483852274965c589d676196a5f9fb",
+      "raw_bytes": 34388,
+      "archive_bytes": 34421
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-timing.debugger.txt.gz",
+      "raw_sha256": "7c8b4193575090e22edce0750a61010960d460bbc7daadc5f72a70922f5f53ef",
+      "archive_sha256": "8fff306764ac0607395504fc71b404a4fe21741fd064c6eba4fd8531cfc157c1",
+      "raw_bytes": 13388,
+      "archive_bytes": 1874
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-timing.json.gz",
+      "raw_sha256": "dcc8bbaa6b2237fad5eb9fa07c4af5093f256c22c3ddccf29f792e570350a6be",
+      "archive_sha256": "1cd83f4b6b685085f166cda5b5051cd0ab1e39e6bbcddbba6cff3fafa4e51969",
+      "raw_bytes": 49692,
+      "archive_bytes": 5771
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-timing.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-fixture-work-ZX-video-front_part01-timing.trace.txt.gz",
+      "raw_sha256": "134ba98d1b6597df0fc4c26b6ab447189243509ddac635452e017b24119ff302",
+      "archive_sha256": "ce0a98373ea1dd2c382d547c068e1ab0c747109d9c1f81d450a46883eff9efb9",
+      "raw_bytes": 108181,
+      "archive_bytes": 45664
+    },
+    {
+      "file": "front-native-fixture-ZX-video-front_part01.json.gz",
+      "raw_sha256": "2940a6d05ffacd401ebb6367b77e69b1152c35761bbf8974ad61db32755e19ec",
+      "archive_sha256": "d85c50240a69dd2b0f6cb9a7a33ab5717dc6890871b8474d50532367ecada4b0",
+      "raw_bytes": 2418160,
+      "archive_bytes": 105898
+    },
+    {
+      "file": "front-native-fixture-ZX-video-front_part01.trd",
+      "raw_sha256": "b0208dfcaa3f8f19a41ce110bcb2367a788309952fb8a00313beb46bfe651ec7",
+      "archive_sha256": "b0208dfcaa3f8f19a41ce110bcb2367a788309952fb8a00313beb46bfe651ec7",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "front-native-window-fixed-conversion.json.gz",
+      "raw_sha256": "ebf19737a9412fb5a819cb1629a803d2f7c7b2bf3c01c65717b456726ff1d4ec",
+      "archive_sha256": "ee906017ffedede62ced3687e4244ed5401c8085335ae6051391151f200a9289",
+      "raw_bytes": 2690,
+      "archive_bytes": 1163
+    },
+    {
+      "file": "front-native-window-fixed-partition.json.gz",
+      "raw_sha256": "2bf9dbe4f0c01907ff8b63478081d911ef43ae544a1413a38519dff4f34fe1dd",
+      "archive_sha256": "c09b2a8bba60463493970caca9de6e3a3faef26799e9139c73310c6a2bcd7ad9",
+      "raw_bytes": 4878,
+      "archive_bytes": 1142
+    },
+    {
+      "file": "front-native-window-fixed-timing.json.gz",
+      "raw_sha256": "9c9681ba59b174a03d5ba898aaa68e1e0d733302e8aa530578de4b7dda2af59a",
+      "archive_sha256": "9ef409c7305460af5c92ebc894e3fea7efa4e2df32b45a5969b1ee00d331f6a8",
+      "raw_bytes": 1980,
+      "archive_bytes": 740
+    },
+    {
+      "file": "front-native-window-fixed-volumes.json.gz",
+      "raw_sha256": "8be727442dc9c425f307816c51009765c54bc830bb9f782484ea81e87b335b9a",
+      "archive_sha256": "d939aae3aa410b39befe03ec6121a96d0b3813baa8e0c1c2550976573570c81f",
+      "raw_bytes": 434,
+      "archive_bytes": 263
+    },
+    {
+      "file": "front-native-window-fixed-work-five-states.npz.gz",
+      "raw_sha256": "54ecfd9dc136604d2b0ac5d93b93df062aff971c0b2f0ec4b82bf570f70e9896",
+      "archive_sha256": "c3666ca9d21e3bbdc1377687e3fbb2e7943496d0dd306f7e04b590a007c4f37f",
+      "raw_bytes": 3437839,
+      "archive_bytes": 3352416
+    },
+    {
+      "file": "front-native-window-fixed-work-scaffold.json.gz",
+      "raw_sha256": "4478be1168c8d3713fcf68e04bca1c81c6f27d1dcff03a9b17a4df3630e163d8",
+      "archive_sha256": "3edebf05d5434623e0c9f53b2b99e5cec6a16f9f1d75e0b53fdd79a73d472c6f",
+      "raw_bytes": 500946,
+      "archive_bytes": 19194
+    },
+    {
+      "file": "front-native-window-fixed-work-stream.raw.gz",
+      "raw_sha256": "66531dc6ace1bbeec7f57f9f48457c2354e9de5bb9dd6d911d0bf0865c11baff",
+      "archive_sha256": "149489513c07b353b20d19baba61a4093b7e6130db16eff12025fc60cacd67ab",
+      "raw_bytes": 1635441,
+      "archive_bytes": 118603
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-audio.ayh1.gz",
+      "raw_sha256": "5892310808b77cd0f423096d553947050b613418160e3ed89b1797e76a309ad2",
+      "archive_sha256": "c03a453c57bde1f93575488dcd2c1129a51b5493a6de7b700de3361e38f79060",
+      "raw_bytes": 5949,
+      "archive_bytes": 5569
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_sha256": "fd20df67392d969294f863d918bb2fa67330d277f66487b63b41e6285ec98ead",
+      "archive_sha256": "9bb5957b0a550c47d4b02fa8acd25704f93ae091cad4ec42b3e65ae72d2ec65a",
+      "raw_bytes": 24375,
+      "archive_bytes": 4130
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-0-1536.trace.txt.gz",
+      "raw_sha256": "6537a664e79985481b528be92f5d23dd6592bcc6faceb191e09689c77250b2a8",
+      "archive_sha256": "c1079244b8d5061c28c59f250f700542ab49dc4214c827d6a93303c539f96fef",
+      "raw_bytes": 782192,
+      "archive_bytes": 44890
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_sha256": "ae3084d61d163322d900605d1b841882edc210fc782a12d8db304d8927c2ae1e",
+      "archive_sha256": "4869d24ef885c3ffa4289eeba320b4518166c316a6263fe88087efd8e858f3ea",
+      "raw_bytes": 25485,
+      "archive_bytes": 4009
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_sha256": "209ba64687fb90fd8e179514fab12880282533a4866da94b2ce531bf0578e7d0",
+      "archive_sha256": "ff2ec8171eb172079b250ebf6303df78f4644a971f440f71e8615b0e6025bfba",
+      "raw_bytes": 941761,
+      "archive_bytes": 81792
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_sha256": "5d251d674be026934f0974d4bf08e02758004afd4066bd61a72bda4cd8110c60",
+      "archive_sha256": "26ef5d1599220d76c142fc411821ceb4696a5d09a5537e5237febc47b5a10a76",
+      "raw_bytes": 25485,
+      "archive_bytes": 3990
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_sha256": "074a1e8660db35473902d3b2f6981e6d67d6a5a25c24b7d7411fa17d559efab9",
+      "archive_sha256": "ee3bd4594f447e584d30dc0950d997bcba7a272cacac15b30a9fc46f23d12505",
+      "raw_bytes": 961122,
+      "archive_bytes": 88517
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_sha256": "51cc8d069cce21956f6387090f4a0bb283a8697ee647aad60219fa83347c409e",
+      "archive_sha256": "8e8858e99c30cc6d29d01d422548b1e6643f10698d2587ca6408b3c7513a766c",
+      "raw_bytes": 25484,
+      "archive_bytes": 4025
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_sha256": "1cbffabc9f944bb973518bce148e98a5ff606328e8ee784805b83f80e2fdc6b6",
+      "archive_sha256": "1c93eb6c80b9bca556be561b15be00e4c44ecf1207d958e691eb91f4b6f9c859",
+      "raw_bytes": 789367,
+      "archive_bytes": 60586
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_sha256": "d3143694d7140eaf65a6d0551c66e730e7fa386e6fd238623f03bee4b90d04bf",
+      "archive_sha256": "ee8ac5c670bccf4f61d09b90430eb090a4e410f8e6395fa0ba1043a429ea347c",
+      "raw_bytes": 13005,
+      "archive_bytes": 2042
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_sha256": "d6d0f6c41c86765ccba8cb8eb74beac50ee27609b8bc89f69a2f774c9277979a",
+      "archive_sha256": "edb4e4e36132ec1ff9446467734ca7796521d85af5b25171ec122fdfe6824b9b",
+      "raw_bytes": 535320,
+      "archive_bytes": 30644
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-captures-progress.json.gz",
+      "raw_sha256": "b07da0761bb5354912b9e8a2bad90acabe418ed6c39ffd5c0876eadea7f51b61",
+      "archive_sha256": "03c364d4572167e637bba1fe092331fc1c5836b17e0f4eee99cd7e6bb4d4e525",
+      "raw_bytes": 271971,
+      "archive_bytes": 64051
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-codebook.raw.gz",
+      "raw_sha256": "692b11aadc672826ed3a74aaaf589f1b0b1b60e8cbb9bb723807721634ccebe2",
+      "archive_sha256": "7083533bcc38871cdf2f9bbc389d5450379fb561f2469a92dfe40dca48e91270",
+      "raw_bytes": 246091,
+      "archive_bytes": 168754
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-codebook.stream.gz",
+      "raw_sha256": "b75fa5fe1577a40b0bc2ed6d5e3162d83531cfe1a97a2737ee611d7f841d20ec",
+      "archive_sha256": "ea7da94312104638d9f235e032d744328da0715e3f40eb4e44e5974bd24e80c4",
+      "raw_bytes": 188005,
+      "archive_bytes": 179710
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-cpu.json.gz",
+      "raw_sha256": "9bdf32e2c35f9bb42edf4c65da75968f7ee71dc0b5c73dbd137728681b10b35f",
+      "archive_sha256": "09e5db2580acd707395e6654a12463fa23df25d7d06649a7db7d2c0779dad50f",
+      "raw_bytes": 180638,
+      "archive_bytes": 13483
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-dynamic-rows.json.gz",
+      "raw_sha256": "bc32f8d1d7a596ecdb01d12456e8fa9fbf1db628528dd85d7f912d00f33a23ca",
+      "archive_sha256": "f7bee1cd8c37ae4933cd8b1d6afa0ee663b95061de6922fe5ca60a99e8ed181a",
+      "raw_bytes": 103972,
+      "archive_bytes": 16678
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-rows.json.gz",
+      "raw_sha256": "260163c8ccc79f0472378a9b317c22f26fc03af80355bf8356d2e32fcbd67971",
+      "archive_sha256": "69de6782eaaa5b80560f680f3f3a374e524ff844153b42c55baa6a638f94da52",
+      "raw_bytes": 3702,
+      "archive_bytes": 1006
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-screens.json.gz",
+      "raw_sha256": "aea57761d9caab42e1515485376cd58f8fee7caec7db0e7ff0c7aeb9409260d2",
+      "archive_sha256": "349e46370d8fda60e8016fd14dbc1472bad63415e51d51c23d37defab23863b8",
+      "raw_bytes": 291710,
+      "archive_bytes": 75038
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-states.npz.gz",
+      "raw_sha256": "e0cfd8527f9c8626b76e0d5250ff61b1074920c1ba696cd4e1b98b06b0e06544",
+      "archive_sha256": "60205bd6f304b7176fac8e59992ca479754be7f3baf79974e4e7a8f9802d45ee",
+      "raw_bytes": 3437829,
+      "archive_bytes": 3352405
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-timing.debugger.txt.gz",
+      "raw_sha256": "9635db7343504bc02499d8155ff6d405634827ea732f5350cfd1d4b4d91846c4",
+      "archive_sha256": "86367fb31acea5ce2ad509aa4bef1adbb6585f8b9ec73c712a7586bd9b1abab9",
+      "raw_bytes": 13389,
+      "archive_bytes": 1874
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-timing.json.gz",
+      "raw_sha256": "c32944517e67a2995d927a62060163bb34397302306e3777f1adeb955a24b859",
+      "archive_sha256": "5b135456bebcda46cef25f5adaf1c1731b9fc47a3a268ca30c94b6df3267e146",
+      "raw_bytes": 253153,
+      "archive_bytes": 27468
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-timing.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "front-native-window-fixed-work-ZX-video-front_part07-timing.trace.txt.gz",
+      "raw_sha256": "016893f2473f9f91f0a6ca60d0066ed699f1c87225f0504491d7c6a2c10f1734",
+      "archive_sha256": "d5b60087ac460de49ca4089ba0898d46014b9a870cbb2b471f7a8303241918ad",
+      "raw_bytes": 894992,
+      "archive_bytes": 314299
+    },
+    {
+      "file": "front-native-window-fixed-ZX-video-front_part07.json.gz",
+      "raw_sha256": "5ef9eac7bd9646652b0ddd2f6f59d7fdcc3ca39f7822e37af582c9d5d0b4c400",
+      "archive_sha256": "8a9b79d254d7a18283b4fbc5b109370b4893798bdb81916f9d32caf25b132b17",
+      "raw_bytes": 2455594,
+      "archive_bytes": 122203
+    },
+    {
+      "file": "front-native-window-fixed-ZX-video-front_part07.trd",
+      "raw_sha256": "fac870614b9e21cc225a5e124d7e834951b0ef8e9f27a6cd78231c5d40adc64a",
+      "archive_sha256": "fac870614b9e21cc225a5e124d7e834951b0ef8e9f27a6cd78231c5d40adc64a",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "tests.txt.gz",
+      "raw_sha256": "0d6d3374c551526bfa271ca8ec8dd5260268a390c976e8d8eba711c4d33f03dc",
+      "archive_sha256": "c23f68b1e686a17428d50916f048a415be5250fcfd8c6e59c6d27ed84567ec5b",
+      "raw_bytes": 183,
+      "archive_bytes": 105
+    },
+    {
+      "file": "profile-profile.json.gz",
+      "raw_sha256": "7df6720f6c27bec6c26b8236502132240f7c7f55bd6dca1af43b57396659fcca",
+      "archive_sha256": "89a2f6344a62fec9a3628ad296af9c0783f9dd424cc4247b0f4cdb0a31ba0e63",
+      "raw_bytes": 134509,
+      "archive_bytes": 14091
+    },
+    {
+      "file": "profile-timing.debugger.txt.gz",
+      "raw_sha256": "679c2c91c7068e8989266e4ae705273ff6ce77c370415c14c4dec0833aa9610a",
+      "archive_sha256": "c08c9399753b735973096fa566d7b24a05e5efaffa5a4da35b24782497ebfdb6",
+      "raw_bytes": 14833,
+      "archive_bytes": 2028
+    },
+    {
+      "file": "profile-timing.json.gz",
+      "raw_sha256": "5287203912ed7ff23701b0cd5b1856d95e3a1b975d0853bd46a14b37c0d0013b",
+      "archive_sha256": "cfabafd113fc0544b1c124f8bd0636257a1e1b5cda02d689c579688cfff4e6ce",
+      "raw_bytes": 808640,
+      "archive_bytes": 54254
+    },
+    {
+      "file": "profile-timing.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "profile-timing.trace.txt.gz",
+      "raw_sha256": "5f2eb3c4b1a58408089c37ad6c22606e578c7d92ba96b2c212486f7cd497548c",
+      "archive_sha256": "a5ca24fbd6be04ffe964af4a88471f4bdd2397406825fba1e407cb2984de21ee",
+      "raw_bytes": 1030549,
+      "archive_bytes": 338655
+    }
+  ],
+  "source_sha256_lf": {
+    "cell_codebook_z80.py": "8a7b6cd4b1fa5d634b838ac6bc234073ea54778662d1c83dac78b84e3d62e599",
+    "cell_codebook_player.py": "b569f1a831033597185a6512c1f28e588c70ab889703422d373e462a1c141542",
+    "front_cell_reuse.py": "a077748a35e8d0d4af5a2f6c4c8804a620c552c9c9872caed5503acce7ef75d4",
+    "convert_cb41.py": "699c86e815e688a4232a52d984e3c90372cd2f35940696fe419f865da4b2a100",
+    "build_cb41_cadence_movie.py": "ad978a7f7a92f21c983954c17c23f820371e1b5d7991689d3d09a8674481c310",
+    "convert_video.py": "01a46f8caa824092a435987b2831936d0b0d15d4760b1f5c8bc7958b0d006462",
+    "verify_cell_codebook_z80.py": "e98168beff7447f670b0f0a668fa85c40973585591a6908cd35f52716419bd72",
+    "test_front_cell_z80.py": "8843442dc0601e015c1007ea4a470d302cbe38ddb7c77d1243a1f57ea38960a9",
+    "verify_player_windows.py": "015c9cec6cf6cbf1772f8377901fe52ff6990d4768cc30b17da6ae2417c394ef",
+    "measure_fap3_fuse.py": "9d485a8e825b06c93c6513bc4680061d1409a56ac904f1845d637deba250c6bd",
+    "profile_cell_delivery.py": "b8ce30e49985ddc897628f0348b8f58b697255b6f04037fd20b9e575b6143953"
+  }
+}

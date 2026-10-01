@@ -31,6 +31,15 @@ WINDOW = 32
 VIDEO_BUDGET = (2544-160)*256
 
 
+def video_encoder(dynamic_rows=False,front_reuse=False):
+    if front_reuse:
+        from front_cell_reuse import representation as selected
+    elif dynamic_rows:
+        from dynamic_row_dictionary import representation as selected
+    else:selected=representation
+    return selected
+
+
 def pack_blocks(raw, codec, cache):
     stream, blocks = bytearray(), []
     for lo in range(0, len(raw), 15872):
@@ -49,7 +58,7 @@ def pack_blocks(raw, codec, cache):
 
 
 def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6, target_volumes=None,
-                 volume_cuts=None, dynamic_rows=False, audio_banks=1):
+                 volume_cuts=None, dynamic_rows=False, audio_banks=1,front_reuse=False):
     """Measure short windows once; choose cuts without building candidate sets.
 
     Exact row unions include both histories. Window byte costs select an
@@ -59,10 +68,8 @@ def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6
     sets = row_sets(frames)
     audio_options=dict(frame_fields=frame_fields)
     if audio_banks!=1:audio_options['audio_banks']=audio_banks
-    if dynamic_rows:
-        from dynamic_row_dictionary import representation as represent
-    else:
-        represent=representation
+    dynamic_rows=dynamic_rows or front_reuse
+    represent=video_encoder(dynamic_rows,front_reuse)
     if volume_cuts is not None:
         if target_volumes is not None:
             raise ValueError('explicit cuts and balanced target are mutually exclusive')
@@ -153,24 +160,23 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     scaffold = LegacyBuilder(raw, compact, Path(executables['zx0']), work/'zx0')
     # Resolve the real audio ABI, rather than borrowing labels from a movie.
     labels = player_harness(bytes(4), scaffold.tables, scaffold.mapping, 1).audio
-    dynamic_rows=getattr(args,'dynamic_rows',False)
+    front_reuse=getattr(args,'front_reuse',False)
+    dynamic_rows=getattr(args,'dynamic_rows',False) or front_reuse
     audio_banks=getattr(args,'audio_banks',1)
-    if dynamic_rows:
-        from dynamic_row_dictionary import representation as represent
-    else:
-        represent=representation
+    represent=video_encoder(dynamic_rows,front_reuse)
     parts, plan = plan_volumes(frames, audio, labels, codec, cache, args.max_frames_per_disk,
-        frame_fields, getattr(args,'target_volumes',None), getattr(args,'volume_cuts',None),dynamic_rows,audio_banks)
+        frame_fields, getattr(args,'target_volumes',None), getattr(args,'volume_cuts',None),dynamic_rows,audio_banks,front_reuse)
     only = getattr(args,'only_volume',None)
     if only is not None and not 1 <= only <= len(parts): raise ValueError('invalid selected volume')
     write_json(output/'partition.json', plan)
     ends = [p['end'] for p in parts]
     identity_options=dict(options=OPTIONS, ends=ends, frame_fields=frame_fields)
     if dynamic_rows:identity_options['dynamic_rows']=True
+    if front_reuse:identity_options['front_reuse']=True
     if audio_banks!=1:identity_options['audio_banks']=audio_banks
     identity = sha(frames.tobytes()+b''.join(f.serialize() for f in audio)
                    +json.dumps(identity_options, sort_keys=True).encode())
-    fingerprint = (b'CB42GEN1' if dynamic_rows else b'CB41GEN1')+bytes.fromhex(identity)[:6]
+    fingerprint = (b'CB44GEN1' if front_reuse else b'CB42GEN1' if dynamic_rows else b'CB41GEN1')+bytes.fromhex(identity)[:6]
     records = []
     timing = dict(complete=False, release=False, all_nominal_deadlines_met=False,
         player_hot_path_changed=frame_fields!=6, player_hot_path_delta_tstates=0,
@@ -181,6 +187,7 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     if audio_banks==2:
         timing.update(player_hot_path_changed=True,player_hot_path_delta_tstates=None,
             audio_banks=[4,6],audio_refill_bridge_normal_delta_tstates=50)
+    if front_reuse:timing.update(front_reuse=True,renderer_delta_tstates=None)
     write_json(output/'timing.json', timing)
     for number, part in enumerate(parts, 1):
         if only is not None and number != only: continue
@@ -284,6 +291,7 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
             player_hot_path_delta_tstates=None,
             cycle_note='Ordinary packet +18 T; renderer 0 T delta; row controls measured separately')
     if audio_banks==2:manifest.update(audio_banks=[4,6],audio_wire='AYB1',player_hot_path_changed=True,player_hot_path_delta_tstates=None)
+    if front_reuse:manifest.update(front_reuse=True,wire='CB44',cycle_note='Counted CB44 mode reader and front copy; data-dependent timing')
     if only is not None:
         manifest.update(whole_movie=False, selected_volume=only, source_movie_frames=len(frames),
                         frames=sum(r['frames'] for r in records), ay_ticks=sum(r['frames'] for r in records)*frame_fields,

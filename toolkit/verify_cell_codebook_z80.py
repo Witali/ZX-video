@@ -46,8 +46,8 @@ class GuardedCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self,table,rows,initial,dictionary):
-        self.regions,self.labels,self.meta=machine.build(dictionary=dictionary)
+    def __init__(self,table,rows,initial,dictionary,*,front_reuse=False):
+        self.regions,self.labels,self.meta=machine.build(dictionary=dictionary,front_reuse=front_reuse)
         self.c=GuardedCPU(b'',b'');self.c.guarding=False;self.c.port_7ffd=0x17
         self.c.state=self.labels['state'],self.labels['end'];self.rows=rows;self.table=table
         for at,data in self.regions+[(machine.ROWS,rows)]:self.install(at,data)
@@ -55,6 +55,7 @@ class Harness:
         self.instructions={r['address']:r for r in self.meta['instruction_listing']};self.hist=Counter()
         self.base_reads=[(at,at+len(data)) for at,data in self.regions]+[(machine.ROWS,machine.ROWS+512),
             (machine.BOOK,machine.BOOK+2048),(STACK-128,STACK)]
+        if front_reuse:self.base_reads += [(0x4000,0x5b00),(0xc000,0xdb00)]
         self.loader=None
         if dictionary:
             self.loader=self.run('load_book',table,0x6400,0xc0,loading=True)
