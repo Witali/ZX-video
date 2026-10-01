@@ -5,6 +5,139 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: consolidate the complete audiobook chat work log
+
+The user requested preservation of everything done in this chat. This entry
+records the conversation's decisions, chronological milestones and current
+handoff state; the detailed experiment entries below retain the parameters,
+instruction counts, measurements, verification coverage and rejected attempts.
+This is a documentation checkpoint at implementation commit `453b93e`, not
+a new audio experiment. Dates below come from existing entries and Git history.
+
+### Source, original objective and user feedback
+
+- The supplied source is O. Henry's 1977 recording of the two short stories
+  "Dorogo kak pamyat" and "Oborotnaya storona", file ID `1bqRZ3gM55s`, under
+  `C:/Work/AudioBooksDownloader/Audiobooks`. The
+  [source-format record](audiobook-beeper/source-format.json) preserves its
+  full original filename/path and SHA-256
+  `a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779`.
+  The source is AAC, 44100 Hz, stereo, 667.596916 seconds. AAC does not have
+  a fixed original PCM bit depth; FFprobe's `fltp` describes decoder output.
+- The initial request was a separate audiobook subproject using the existing
+  movie's AY approach. When asked to choose, the user explicitly selected
+  compact AY synthesis and then requested at least a two-minute preview.
+  That 120-second preview was delivered and rejected as unintelligible.
+- The user proposed the existing LPC codec and supplied
+  `C:/Work/LPC-sound-codec`. The software-decoded LPC2 comparison was judged
+  sufficiently clear; the next request was to preserve more sound detail.
+  This acceptance applies to the full software LPC reference, not AY replay.
+- The user then specified the real chip constraints: three tone generators,
+  one shared noise generator, updates on the 50 Hz interrupt and typical
+  Spectrum mixing. The modeled A/B/C outputs were summed equally to mono;
+  shared noise is routed through those channels, not a fourth analogue output.
+  After requesting and trying the resulting TRD, the user again reported
+  that nothing was intelligible and selected beeper PDM at at least 40 kHz.
+- Subsequent requests were to increase PDM frequency, identify the source
+  sample format, convert the input to 8 kHz /8 bits, save a TRD and repeat
+  the demo continuously. Those changes were completed before the AY revisit.
+- The later AY revisit was motivated by the recognizable rabbit exclamation
+  in the movie. The user's location cue was the first part/first disk,
+  approximately after its first third. The bounded [36,52) movie comparison
+  is an approximate investigation around that cue, not a user-confirmed
+  exact timestamp or an isolated vocal stem. A new pitch-aware AY candidate
+  was delivered; no listening acceptance of that candidate was received.
+- The latest implementation request returned to the beeper and asked for
+  PCM-to-PDM conversion while playing, with minimum Z80 conversion cost.
+  The presumed previous expansion into a PDM RAM buffer was corrected:
+  the old disks already stored packed PDM and shifted it directly. The new
+  format stores raw PCM and moves modulation from the host into the Z80 loop.
+
+### Completed work in chronological order
+
+| Date / commit | Work and measured outcome | Saved evidence / disposition |
+|---|---|---|
+| 2026-10-01 / `8cb13c1` | Created `audiobook-ay`; reused the movie synthesizer for [0,120). One bootable TRD, 6000 consecutive AY fields, 66000 exact register writes, 302 occupied sectors. | [Initial AY report](audiobook-ay/preview/report.json), [verification](audiobook-ay/preview/verification.json). User rejected intelligibility; preserve the original comparison. |
+| 2026-10-01 / `621dadf` | Reused LPC2 Improved from external commit `360af14` through a headless bridge, without editing that repository. Compared original, previous AY, full LPC2 and a formant-to-AY mapping on [60,84). LPC2 uses 4114 bytes; the AY mapping worsened the listed proxies. | [LPC comparison](audiobook-ay/LPC2_COMPARISON.md), [report](audiobook-ay/lpc-probe/report.json). Full software LPC was later accepted as clear; the AY mapping was not selected. |
+| 2026-10-01 / `7950579` | Tried 10 ms /exact-repeat LPC: 12601 bytes, improved host reconstruction. After the explicit 50 Hz requirement, selected 20 ms /exact-repeat analysis, 6461 LPC bytes, and a YM2149/Ayumi mono model. Verified 1200 fields /13200 writes; native player remains 974 T/tick. | [100 Hz host experiment](audiobook-ay/lpc-detail/report.json), [50 Hz chip experiment](audiobook-ay/YM2149_PREVIEW.md). The 100 Hz profile was not selected for AY; neither mapping executes a native LPC filter. |
+| 2026-10-01 / `2a22f77` | Published the already verified 24-second YM2149 test as a root TRD, with no player/encoding change or redundant emulator run. | [YM2149 test disk](ZX-audiobook-YM2149-test.trd). User rejected speech intelligibility and switched to the beeper. |
+| 2026-10-01 / `912c0d8` | Created `audiobook-beeper`; host-generated second-order PDM. Improved the first 64-T player (54.823 kHz average) to 52 T (66.916 kHz), with a verified 11.753-second resident excerpt and 96 KiB packed PDM. | [64-T archive](audiobook-beeper/experiments/pdm64/report.json), [selected 52-T report](audiobook-beeper/preview/report.json), [comparison](audiobook-beeper/comparison.json), [root disk](ZX-audiobook-PDM-test.trd). Minimum actual rates exceed 40 kHz. |
+| 2026-10-01 / `7b612af` | Pinned saved debugger scripts to LF so artifact hashes survive Windows Git checkouts. | Archive-integrity correction only; audio, player and timing unchanged. |
+| 2026-10-02 / `5c9200a` | Verified the original AAC format, produced exact 8000 Hz /unsigned 8-bit mono PCM, shortened packed-PDM playback to 46 T and added continuous repeat. Average PDM 75.924 kHz; 10.358-second loops, both wrap holds 48 T. | [Single-pass archive](audiobook-beeper/preview-8k8/report.json), [looping report](audiobook-beeper/preview-8k8-loop/report.json), [root disk](ZX-audiobook-PDM-8k8-test.trd). Two full loops plus the next first bit are exact. |
+| 2026-10-02 / `55c1a8c` | Inspected the rabbit cue and added a 50 Hz AY candidate retaining F0 and fitting two additional harmonic square waves. On [60,84), spectral cosine rises 0.666873 ->0.926218; full 1200-field replay remains exact at unchanged 974 T/tick. | [Movie comparison](audiobook-ay/pitch-preview/movie-cue/report.json), [AY candidate](audiobook-ay/PITCH_AWARE_PREVIEW.md), [root disk](ZX-audiobook-YM2149-voice-test.trd). Signal proxies improve, but listener acceptance remains open. |
+| 2026-10-02 / `453b93e` | Added live PCM8-to-PDM conversion without a PDM buffer/LUT. Four-instruction kernel costs 32 T. Preserved the fast 13-pulse version (104.428 kHz) and selected the steadier 10-pulse version (78.783 kHz) after diagnosing unequal pulse-area error. | [Fast archive](audiobook-beeper/experiments/pcm-live-fast/report.json), [comparison](audiobook-beeper/pcm-comparison.json), [method](audiobook-beeper/PCM_LIVE.md), [selected root disk](ZX-audiobook-PDM-live-test.trd). Both variants have full native/cold-Fuse evidence. |
+
+### Rejected, corrected and interrupted attempts are retained
+
+- The initial AY boundary-test expectation was four T-states low; it was
+  corrected to 1007 T without changing player bytes. See the original
+  two-minute experiment entry below and its native tests.
+- The first LPC-to-AY formant mapping failed the measured comparison and
+  was not promoted. The 10 ms LPC refinement remains a host-only experiment
+  after the 50 Hz clarification. The full LPC reference and the restricted
+  chip rendering must not be substituted for each other in quality claims.
+- The 64-T PDM render gate initially rejected a one-T pilot/speech startup
+  difference after full playback verification. Rendering resumed with the
+  documented three-T startup allowance; the every-interval 40 kHz gate stayed
+  unchanged. The selected 52-T candidate and its equal-window comparison
+  retain independent complete checks.
+- The first repeated-PDM debugger harness stalled before collecting its
+  trace. Its [saved script and pilot](audiobook-beeper/experiments/loop-debugger-interrupted/timing-pilot/verification-work/fuse-debugger.txt)
+  remain archived. Separate breakpoint conditions fixed the harness, after
+  which the complete looping test passed.
+- The fast live converter is correct but was not selected as the primary
+  listening disk: uneven output holds reduce reconstruction SNR to 6.5376 dB.
+  The same bits under an ideal uniform schedule score 12.7522 dB; that is an
+  offline diagnostic, not a measured hardware result. The steadier selected
+  converter scores 9.8698 dB, with the same exact PCM input bytes and each
+  version's own schedule-aligned reference. See the saved comparison above.
+- The first steady live-PDM verification logged one extra output because
+  Fuse finishes the instruction at an exit breakpoint. The strict count
+  gate rejected it. Preserve [that unaccepted run](audiobook-beeper/experiments/pcm-live-stop-extra/interrupted.json);
+  moving the stop to a non-I/O instruction fixed the harness, without changing
+  the player, and the complete verification was repeated successfully.
+
+### Current state for resuming this chat
+
+The selected live-conversion image is
+[ZX-audiobook-PDM-live-test.trd](ZX-audiobook-PDM-live-test.trd), SHA-256
+`12163ecf5f206ac60e685cb96269cf7d5d46e458968f86a6517dca6d6cae8793`.
+It contains 82944 PCM bytes, including 79 midpoint padding samples, versus
+98304 bytes in the previous packed-PDM demo. The TRD has 368 occupied sectors
+instead of 428. The player preloads 324 sectors and performs no disk reads
+during sound. Both loop transitions retain the accumulator/pipeline, without
+an inserted reload or mute. The six data banks, code, stack, screen and
+TR-DOS workspace are accounted for in the method document.
+
+Its full cold-Fuse run verifies 1658881 exact outputs over two loops and the
+first pulse of the third; ten beeper tests pass. Average PDM is 78783.411 Hz,
+minimum instantaneous rate 59115 Hz, with approximately 10.528-second loops.
+The stored PCM format is exactly 8000 Hz /8-bit mono, but this fixed software
+clock plays it at 7878.341 Hz (-1.5207%, slightly slower/lower-pitched).
+The preserved fast disk averages 104428.484 PDM pulses/s and 8032.960 PCM
+samples/s (+0.4120%). These are emulator measurements, not nominal CPU-only
+estimates. Deterministic T-states and ULA delays remain recorded separately.
+
+Boot the live test in original Spectrum 128/+2 with Beta Disk/TR-DOS, drive A,
+using `RUN "boot"` if required; reset stops the loop. Its paging alias does
+not support +2A/+3. PDM runs with interrupts disabled, superseding the earlier
+AY-only 50 Hz output constraint for this separate beeper path. The newest
+[listening preview](audiobook-beeper/pcm-live-preview/beeper-preview.wav)
+integrates measured port holds through the documented filter; it is not a
+recording of a physical speaker. Earlier TRDs/WAVs remain available above.
+
+The full audiobook has not been converted, and a two-minute beeper stream
+has not been built; the completed two-minute preview belongs to the original
+AY experiment. There is no native Z80 LPC decoder, runtime disk-streaming
+PDM solution or physical-hardware verification in this chat. The newer
+pitch-aware AY and live PDM versions have not received listener acceptance.
+Metrics cannot establish intelligibility, and SNRs from different reference
+signals/filters are not interchangeable. No claim is made that the small
+first-order live modulator preserves all quality of the previous offline
+second-order encoder. Movie release files and the external LPC repository
+remain unchanged. This log request does not authorize or start another
+codec experiment; resume from the saved evidence after further user direction.
+
 ## 2026-10-02: convert resident PCM8 to beeper PDM directly on the Z80
 
 - User scope: return to one-bit sound, remove the proposed expanded PDM RAM
