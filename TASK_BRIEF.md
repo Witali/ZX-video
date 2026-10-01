@@ -74,20 +74,37 @@ wait, with three complete slots available. Between publications a physical
 read consumes 136605 elapsed T and drawing takes 225965 T. Full part 4's
 isolated frame 378 similarly has four ready slots and 156777 disk T. These
 are optional-background-read admission stalls, distinct from sustained
-queue depletion in the longer late runs. Next scope: test admission of
-optional reads near publication using the cached 256-frame window and exact
-original compressed bytes. Preserve AY and required reads; then address the
-burst supply constraint using the saved complete-volume profile. Generic CLI
-integration and four-volume cold/continuation release checks remain open.
+queue depletion in the longer late runs.
 
-The sector-streaming LZSA2 experiment is now parked, not selected. Eager
+Optional-read admission is now tested and rejected. On the same 256-frame
+budgeted stream, a four-field margin gives 30 misses /max38 /15 bad intervals
+and an unrecovered tail. A two-field margin gives 11 /max15 /7, recovered at
+248; baseline 9 /max6 /2, recovered at 124 and 245. Both eliminate the isolated
+frame-123 miss but starve the following burst. Both variants preserve all
+256 native/Fuse screens, 1280 AY ticks, 719 runtime sectors and 777 occupied
+sectors. There are 1680 admission tests plus instruction-boundary publication
+race checks. Keep `--optional-read-gate` disabled; do not sweep more margins.
+Reuse [evidence](toolkit/optional_read_gate_report.json),
+`.tmp/optional-read-safe-window/` (four fields) and
+`.tmp/optional-read-last-field-window/` (two fields).
+
+Next scope: complete native/Fuse verification of the already-built final
+streaming branch-bypass variant at `.tmp/streaming-lzsa2-bypass-window/`.
+It has component/cold evidence but no full playback evidence; compare against
+the sector-cache window's original stream (8 misses /max7, not the renumbered
+9/max6 window). This removes the previous guard overhead once input is complete.
+Do not add another decoder variant or rebuild the movie first. Then address
+burst supply using the complete-volume profile. Generic CLI integration and
+four-volume cold/continuation release checks remain open.
+
+The sector-streaming LZSA2 experiment remains unselected. Eager
 prefix decoding produces 27 late frames / maximum 40 fields in the complete
 256-frame window; deferring prefixes while completed slots remain gives
 13 /9, versus the sector-cache baseline's 8 /7 (an earlier baseline run was
 8 /8). Native screens, AY and sector sequence remain exact. The final variant
 bypasses all guard branches after complete input, retaining zero per-token
-overhead, but has component and cold checks only. No further decoder trials
-are in the current scope. Keep `--streaming-lzsa2` opt-in. Reuse
+overhead, but has component and cold checks only. Verify that existing final
+variant as scoped above; keep `--streaming-lzsa2` opt-in. Reuse
 [evidence](toolkit/streaming_lzsa2_report.json); root release disks are unchanged.
 
 Latest exact mode: CB46 mode 3 stores one changed row-pair within a literal

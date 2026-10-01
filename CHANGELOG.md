@@ -5,6 +5,47 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: optional track-read admission removes isolated misses but starves the queue
+
+- Objective: prevent the measured background track read from delaying the next
+  draw, without changing LZSA2 bytes, AY or pixels. Baseline `d3127c0`, cached
+  dictionary-budgeted CB46 [4096,4352), 256 frames, 183997 video bytes,
+  719 runtime sectors, 777 occupied sectors, four decoded slots and sector cache.
+- Added opt-in `rebuild_cell_player.py --optional-read-gate`. A bank-7 helper
+  E340h..E38Ah wraps only the clock's optional queue step. With at least two
+  ready slots, it can defer a track-changing physical read near publication;
+  decode quanta and available cached input pass through. Required packet
+  acquisition and startup prefill retain the existing path.
+- The first cold-only prototype read READY before both counters. Inspection
+  found a publication race, so the measured variants read READY after both
+  counters. Two tests cover 1680 state combinations, counter wrap and simulated
+  register-preserving publication updates at every instruction boundary.
+  These component injections do not stand in for real AY interrupt timing.
+- Deterministic gate cost is 0 ->30..301 T per optional step (delta +30..301),
+  depending on its path. The patched CALL remains 17 ->17 T, delta 0. Exact
+  measured paths: 30/77/91/104/148/168/205/225/230/244/262/287/301 T, excluding
+  unchanged queue work, IRQ/ULA/ROM and physical latency. Decoder and renderer
+  machine code are identical; no compressed bytes or sectors are added.
+- A four-field admission threshold gives 30 nominal misses, all beyond one
+  field, maximum 38 fields and 15 invalid intervals. Runs 224 and 227..255;
+  the latter does not recover before EOF. A two-field threshold (only the
+  final field deferred) gives 11 misses, all beyond one field, maximum 15,
+  seven invalid intervals; run 237..247 recovers at 248. Compare baseline
+  nine misses/max6/two bad intervals, recovered at 124 and 245. Both remove
+  frame 123's isolated miss but worsen sustained delivery: **reject both**.
+- Both measured variants pass dirty cold boot, all 256 native screens with
+  memory/cache guards, all 1769472 Fuse screen bytes, 1280 exact AY ticks and
+  719 real sectors. No full-volume or continuation run is claimed. The optional
+  experiment stays disabled; root disks and generic converter defaults are
+  unchanged. Reproduce with [tests](toolkit/test_optional_read_gate.py), cached
+  rebuilder, existing native/Fuse verifiers and
+  [archive verifier](toolkit/verify_optional_read_gate.py).
+  [Report](toolkit/optional_read_gate_report.json) records both failures.
+- Next: test the already-built final branch-bypass streaming decoder, whose
+  complete-input fast path has no per-token guard overhead. Its earlier
+  guarded predecessors failed timing, but the final variant has only component
+  and cold evidence. Use its saved window before any full-set rebuild.
+
 ## 2026-10-01: full-volume dictionary budgets and delivery profiling
 
 - Objective: validate the encoder-only compression improvement on one full

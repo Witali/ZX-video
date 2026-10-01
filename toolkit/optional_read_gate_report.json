@@ -1,0 +1,695 @@
+{
+  "complete": true,
+  "release": false,
+  "date": "2026-10-01",
+  "baseline_commit": "d3127c0",
+  "scope": "Archive exact-stream optional-read admission tests and complete window runs.",
+  "frames": 256,
+  "frame_start": 4096,
+  "frame_end_exclusive": 4352,
+  "source_hashes": {
+    "codebook.raw": "b40bd7079f29913358b2e3bcf7bda8055f5d975443cc8dc308e82c3148425a00",
+    "codebook.stream": "df7f35cb7ed41f0b7c51d75cca6ed659fd76d89c393065c8e97eb5c4f73e084a",
+    "audio.ayh1": "5892310808b77cd0f423096d553947050b613418160e3ed89b1797e76a309ad2",
+    "rows.json": "9e841f8e49eb6a5b2197d6cd299bfca20150ff7e273083ee378b198a4cb3fd4e",
+    "states.npz": "e0cfd8527f9c8626b76e0d5250ff61b1074920c1ba696cd4e1b98b06b0e06544"
+  },
+  "trd_sha256": "6a46b0157c7078201444323248b398d4eed666b4f3119871ff70f36598fc6306",
+  "decoder_code_identical": true,
+  "renderer_code_identical": true,
+  "used_sectors_before": 777,
+  "used_sectors_after": 777,
+  "video_bytes": 183997,
+  "pixel_changes": 0,
+  "ay_changes": 0,
+  "cold": {
+    "cold_sections": [
+      {
+        "bank": 2,
+        "offset": 0,
+        "bytes": 16384,
+        "sha256": "c648dfb650526f17a525b97f0758aa8a14bed479a91127ab44d12ceb1669df76"
+      },
+      {
+        "bank": 7,
+        "offset": 0,
+        "bytes": 9216,
+        "sha256": "157fd6c54a320bd8d4e8c3a18d5ae4a4394b7f9e9491267c74f7c9c9e49fb879"
+      },
+      {
+        "bank": 5,
+        "offset": 13824,
+        "bytes": 2560,
+        "sha256": "6efb047a1cbb2e11db9d300a91c7cbe033bc4e86f18df45d6fb9190beb800851"
+      },
+      {
+        "bank": 6,
+        "offset": 0,
+        "bytes": 3900,
+        "sha256": "4e97bbecd61ebe112c369ff1349a1433999261fff3aa98544c72d20d16aaaaf8"
+      },
+      {
+        "bank": 5,
+        "offset": 0,
+        "bytes": 6912,
+        "sha256": "0da79a1c90b1dadd7a5ec94ef721046591b9933ae732e5917b6ee5c8b5e8aa2b"
+      }
+    ],
+    "mocked_boot_tstates": 1803883,
+    "boot_sectors": 51,
+    "dirty_ram_boot_exact": true
+  },
+  "component_state_cases": 1680,
+  "publication_races": "At every gate instruction boundary; register-preserving publication state updates, not actual IRQ timing",
+  "gate": {
+    "enabled": true,
+    "labels": {
+      "step": 58176,
+      "physical": 58204,
+      "idle": 58248,
+      "end": 58250
+    },
+    "code_hex": "3a51e1fe02da08e0fe04ca5ce33a50e1fe02ca08e03a4fb9b7c208e03aea60473ae260b8ca08e02ac497ed5b65953ac097b7ca88e3b7ed52cb7cc288e37cb7c208e07dfe02d208e0afc9",
+    "listing": [
+      {
+        "address": 58176,
+        "instruction": "LD A,(57681)",
+        "tstates": 13,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58179,
+        "instruction": "CP 2",
+        "tstates": 7,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58181,
+        "instruction": "JP 57352",
+        "tstates": 10,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58184,
+        "instruction": "CP 4",
+        "tstates": 7,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58186,
+        "instruction": "JP physical",
+        "tstates": 10,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58189,
+        "instruction": "LD A,(57680)",
+        "tstates": 13,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58192,
+        "instruction": "CP 2",
+        "tstates": 7,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58194,
+        "instruction": "JP 57352",
+        "tstates": 10,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58197,
+        "instruction": "LD A,(47439)",
+        "tstates": 13,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58200,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58201,
+        "instruction": "JP 57352",
+        "tstates": 10,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58204,
+        "instruction": "LD A,(24810)",
+        "tstates": 13,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58207,
+        "instruction": "LD B,A",
+        "tstates": 4,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58208,
+        "instruction": "LD A,(24802)",
+        "tstates": 13,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58211,
+        "instruction": "CP B",
+        "tstates": 4,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58212,
+        "instruction": "JP 57352",
+        "tstates": 10,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58215,
+        "instruction": "LD HL,(deadline)",
+        "tstates": 16,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58218,
+        "instruction": "LD DE,(elapsed fields)",
+        "tstates": 20,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58222,
+        "instruction": "LD A,(38848)",
+        "tstates": 13,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58225,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58226,
+        "instruction": "JP idle",
+        "tstates": 10,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58229,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58230,
+        "instruction": "SBC HL,DE",
+        "tstates": 15,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58232,
+        "instruction": "BIT 7,H",
+        "tstates": 8,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58234,
+        "instruction": "JP idle",
+        "tstates": 10,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58237,
+        "instruction": "LD A,H",
+        "tstates": 4,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58238,
+        "instruction": "OR A",
+        "tstates": 4,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58239,
+        "instruction": "JP 57352",
+        "tstates": 10,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58242,
+        "instruction": "LD A,L",
+        "tstates": 4,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58243,
+        "instruction": "CP 2 fields",
+        "tstates": 7,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58245,
+        "instruction": "JP 57352",
+        "tstates": 10,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58248,
+        "instruction": "XOR A",
+        "tstates": 4,
+        "phase": "optional_read_gate"
+      },
+      {
+        "address": 58249,
+        "instruction": "RET",
+        "tstates": 10,
+        "phase": "optional_read_gate"
+      }
+    ],
+    "patch": {
+      "address": 56900,
+      "before_hex": "cd08e0",
+      "after_hex": "cd40e3",
+      "previous_tstates": 17,
+      "tstates": 17,
+      "delta_tstates": 0
+    },
+    "minimum_ready_slots": 2,
+    "minimum_fields_before_track_read": 2,
+    "compressed_stream_changed": false,
+    "decoder_changed": false,
+    "timing_scope": "Gate overhead only, excluding unchanged queue step, IRQ, ULA and physical disk service"
+  },
+  "gate_tstates_before": 0,
+  "gate_tstates_after": [
+    30,
+    77,
+    91,
+    104,
+    148,
+    168,
+    205,
+    225,
+    230,
+    244,
+    262,
+    287,
+    301
+  ],
+  "cycle_scope": "Additional deterministic background-step admission instructions only; unchanged CALL costs 17 T before/after; excludes queued work, IRQ/ULA/ROM/physical disk latency",
+  "full_native_frames": 256,
+  "full_fuse_screen_bytes": 1769472,
+  "fuse_ay_ticks": 1280,
+  "fuse_runtime_sectors": 719,
+  "timing_before": {
+    "nominal_late_frames": 9,
+    "actual_out_over_one_field": 9,
+    "max_late_fields": 6,
+    "bad_actual_intervals": 2,
+    "late_runs": [
+      {
+        "start": 123,
+        "end": 123,
+        "recovered_at": 124
+      },
+      {
+        "start": 237,
+        "end": 244,
+        "recovered_at": 245
+      }
+    ]
+  },
+  "timing_after": {
+    "nominal_late_frames": 11,
+    "actual_out_over_one_field": 11,
+    "max_late_fields": 15,
+    "bad_actual_intervals": 7,
+    "late_runs": [
+      {
+        "start": 237,
+        "end": 247,
+        "recovered_at": 248
+      }
+    ]
+  },
+  "rejected_four_field_timing": {
+    "nominal_late_frames": 30,
+    "actual_out_over_one_field": 30,
+    "max_late_fields": 38,
+    "bad_actual_intervals": 15,
+    "late_runs": [
+      {
+        "start": 224,
+        "end": 224,
+        "recovered_at": 225
+      },
+      {
+        "start": 227,
+        "end": 255,
+        "recovered_at": null
+      }
+    ]
+  },
+  "selected": false,
+  "decision": "Reject both admission thresholds. The isolated frame-123 miss disappears, but reduced read-ahead increases sustained starvation: four fields gives 30 misses/max38/unrecovered EOF, two fields gives 11 misses/max15/recovery248, versus 9/max6/recovery245. Retain default player and exact-stream cached baselines. Resume verification of the already-built branch-bypass streaming decoder before another format or memory-layout experiment.",
+  "release_checks_pending": [
+    "complete volume",
+    "all four volumes",
+    "preceding-disk EOF continuations"
+  ],
+  "artifacts": [
+    {
+      "file": "cache-checks.json.gz",
+      "raw_sha256": "a914a6de7e2c195d1005b0a7613257f98e526b48fbc85c8530b692988b2bc22c",
+      "archive_sha256": "8c0e40ec79da18659da2935de16abb91faae978faaa648e303c55fb65535179d",
+      "raw_bytes": 180,
+      "archive_bytes": 150
+    },
+    {
+      "file": "conversion.json.gz",
+      "raw_sha256": "8d347141b6ebb96d40dfb3b8214ca9cd2d4c2670d7fddb2c591a8a4d5ec56e0a",
+      "archive_sha256": "f40165f933e1f84fde7f60e81fad717194805ec81c3afb0575c579d373ca7b6d",
+      "raw_bytes": 402,
+      "archive_bytes": 273
+    },
+    {
+      "file": "partition.json.gz",
+      "raw_sha256": "2bf9dbe4f0c01907ff8b63478081d911ef43ae544a1413a38519dff4f34fe1dd",
+      "archive_sha256": "c09b2a8bba60463493970caca9de6e3a3faef26799e9139c73310c6a2bcd7ad9",
+      "raw_bytes": 4878,
+      "archive_bytes": 1142
+    },
+    {
+      "file": "timing.json.gz",
+      "raw_sha256": "6abda18bf69b963b900708944419a030ed9369e02978bd3345308f719e1a67e2",
+      "archive_sha256": "236d932f99de1b2cb286d0cf498a28175b417dc878846ba581ac77ae8219a4ab",
+      "raw_bytes": 1339,
+      "archive_bytes": 519
+    },
+    {
+      "file": "volumes.json.gz",
+      "raw_sha256": "a74923c714140a4fb3d9c7cbd395d6e7f0585a1217a4a17301805511d300f401",
+      "archive_sha256": "bfa7445081f4de1201adab5988c21efdda0dc5361f4e3fadf173142db18786fd",
+      "raw_bytes": 434,
+      "archive_bytes": 261
+    },
+    {
+      "file": "work-stream.raw.gz",
+      "raw_sha256": "66531dc6ace1bbeec7f57f9f48457c2354e9de5bb9dd6d911d0bf0865c11baff",
+      "archive_sha256": "149489513c07b353b20d19baba61a4093b7e6130db16eff12025fc60cacd67ab",
+      "raw_bytes": 1635441,
+      "archive_bytes": 118603
+    },
+    {
+      "file": "work-ZX-video-front_part07-audio.ayh1.gz",
+      "raw_sha256": "5892310808b77cd0f423096d553947050b613418160e3ed89b1797e76a309ad2",
+      "archive_sha256": "c03a453c57bde1f93575488dcd2c1129a51b5493a6de7b700de3361e38f79060",
+      "raw_bytes": 5949,
+      "archive_bytes": 5569
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-0-1536.debugger.txt.gz",
+      "raw_sha256": "77c1cf0681ff232b6a5d108c8b76cd82f72a3ad8430b89097abb5cb2e7e483fd",
+      "archive_sha256": "3c19e529ee1ce7e083ddac647507d39d8aa6b6ea78c90fe64e4f28577f407b0f",
+      "raw_bytes": 24374,
+      "archive_bytes": 4130
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-0-1536.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-0-1536.trace.txt.gz",
+      "raw_sha256": "494b4df09f598b52cb3a837d4079f48dd1501659b646a52abae61c87d0c02283",
+      "archive_sha256": "01ec87f3308ee5b9da56d54dd247afba8bad2cb4f1be582f881ef5759c43b5b8",
+      "raw_bytes": 782192,
+      "archive_bytes": 44911
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-1536-3072.debugger.txt.gz",
+      "raw_sha256": "8dd9003a883599ae0fb90968b3939f1cb42083dda919c72048e97335461ec41b",
+      "archive_sha256": "d03c5c0f197d27e636e1f0fa10320217939eaa3316cc1c8959d1e4ad87abc57b",
+      "raw_bytes": 25485,
+      "archive_bytes": 4005
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-1536-3072.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-1536-3072.trace.txt.gz",
+      "raw_sha256": "593079af547969a1222f46d788757f3c0e75f9ba1c27f92cda0e2c33da665536",
+      "archive_sha256": "4f733cdc9c3d507d76380874dafdcec5766052b7a7a0bf1402f144f781a56c5a",
+      "raw_bytes": 941762,
+      "archive_bytes": 81806
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-3072-4608.debugger.txt.gz",
+      "raw_sha256": "88ed81f0c008fb67e46264ba012edf695f05595ec99beded1eeb39d3dfac8cd3",
+      "archive_sha256": "641c8a9b49d4b1b5155a8152ed36e5853cbdfc59318dad1bf321b65ca74170a2",
+      "raw_bytes": 25485,
+      "archive_bytes": 3990
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-3072-4608.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-3072-4608.trace.txt.gz",
+      "raw_sha256": "29e544fe6aaec45f719e604495b8495f00744e8dd3a46eb1f67aefeae667fd2f",
+      "archive_sha256": "3076e8d56c3068656b39ced03bbe58c47db0cb6b2d936f02b1bb3f1df763fd01",
+      "raw_bytes": 961122,
+      "archive_bytes": 88527
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-4608-6144.debugger.txt.gz",
+      "raw_sha256": "aec607196f16478af707734ec55e0a14b2894c38b1aaea551145417f598096f6",
+      "archive_sha256": "be00541e62f124752c5fe441a44ef00a31af81e9a00830a1ba1785ae2dfeb8d6",
+      "raw_bytes": 25485,
+      "archive_bytes": 4026
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-4608-6144.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-4608-6144.trace.txt.gz",
+      "raw_sha256": "b06ec45c89b30e1beb0481aee9631d94f90932c284c31a369e92180707df88f9",
+      "archive_sha256": "601c98008319f1ae6db06153a8f6a6d4121a52cd8df3c6abd19bf051d1dd9a75",
+      "raw_bytes": 789368,
+      "archive_bytes": 60602
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-6144-6912.debugger.txt.gz",
+      "raw_sha256": "e8fa0a512fe0234ad9ea268223e3a1a8c7696528f9fa03259385f881a6baaf95",
+      "archive_sha256": "a25544f8ad12c6541dfbd554fc941765a8d60c465c9590929d7bfdd2a0f5a623",
+      "raw_bytes": 13005,
+      "archive_bytes": 2043
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-6144-6912.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-bytes-6144-6912.trace.txt.gz",
+      "raw_sha256": "431695eb11e68492befeef220ef120cf8dae5ebed60f9d70a31ed1a3ac91a1f9",
+      "archive_sha256": "1ac0718dfb89d4c5d44185a022f7255ab6efaebddd9f538473a9a1145b6050e2",
+      "raw_bytes": 535319,
+      "archive_bytes": 30650
+    },
+    {
+      "file": "work-ZX-video-front_part07-captures-progress.json.gz",
+      "raw_sha256": "30a4722ad7a551b2d2f4a08b6e14fdcd9c3ab727d7ac964636fe11f8bdf245c3",
+      "archive_sha256": "b4a2c76058328c52e8b45ee57fdc55bf07fdfff7d4c13a1a4ce9e8f8860ee174",
+      "raw_bytes": 271994,
+      "archive_bytes": 64072
+    },
+    {
+      "file": "work-ZX-video-front_part07-codebook.raw.gz",
+      "raw_sha256": "b40bd7079f29913358b2e3bcf7bda8055f5d975443cc8dc308e82c3148425a00",
+      "archive_sha256": "7cee044f9da2f8b8a6c2a64cb5a8f8fd31a51f69e7bcba622cb6bf2ec832e901",
+      "raw_bytes": 238161,
+      "archive_bytes": 166075
+    },
+    {
+      "file": "work-ZX-video-front_part07-codebook.stream.gz",
+      "raw_sha256": "df7f35cb7ed41f0b7c51d75cca6ed659fd76d89c393065c8e97eb5c4f73e084a",
+      "archive_sha256": "b7061b450af79f686d59ff8d29ee25a22dfa850b3f67b45cf270ab2d771030fe",
+      "raw_bytes": 183997,
+      "archive_bytes": 175780
+    },
+    {
+      "file": "work-ZX-video-front_part07-cpu.json.gz",
+      "raw_sha256": "79991b076f1d0050e658e37cfd7fab0e12f9d2d1face0ff799ddae90f484eabd",
+      "archive_sha256": "0d26fe4c896dad98671599a82718cc01a02738221fdaed13f60fb65391e104ad",
+      "raw_bytes": 252913,
+      "archive_bytes": 17327
+    },
+    {
+      "file": "work-ZX-video-front_part07-dynamic-rows.json.gz",
+      "raw_sha256": "bc32f8d1d7a596ecdb01d12456e8fa9fbf1db628528dd85d7f912d00f33a23ca",
+      "archive_sha256": "f7bee1cd8c37ae4933cd8b1d6afa0ee663b95061de6922fe5ca60a99e8ed181a",
+      "raw_bytes": 103972,
+      "archive_bytes": 16678
+    },
+    {
+      "file": "work-ZX-video-front_part07-rows.json.gz",
+      "raw_sha256": "9e841f8e49eb6a5b2197d6cd299bfca20150ff7e273083ee378b198a4cb3fd4e",
+      "archive_sha256": "829907adb8f9adf9dbb21b3d118c749eb9266210f11ac7ca7acc2fa94d7cde1c",
+      "raw_bytes": 3702,
+      "archive_bytes": 1148
+    },
+    {
+      "file": "work-ZX-video-front_part07-screens.json.gz",
+      "raw_sha256": "ba843fa15337131e3c17afeb4a2e1b6ab3f31c7b00a73deed62253795fd09349",
+      "archive_sha256": "6b7d9dda4caf732d8d6763aca2e9cfb9c677e3daf0994afce10dc2ded8136a70",
+      "raw_bytes": 291733,
+      "archive_bytes": 75053
+    },
+    {
+      "file": "work-ZX-video-front_part07-states.npz.gz",
+      "raw_sha256": "e0cfd8527f9c8626b76e0d5250ff61b1074920c1ba696cd4e1b98b06b0e06544",
+      "archive_sha256": "60205bd6f304b7176fac8e59992ca479754be7f3baf79974e4e7a8f9802d45ee",
+      "raw_bytes": 3437829,
+      "archive_bytes": 3352405
+    },
+    {
+      "file": "work-ZX-video-front_part07-timing.debugger.txt.gz",
+      "raw_sha256": "7fc270da1b51626d782fd112eb1c09cf7219d00b667a957f0b4f7adc27ad190f",
+      "archive_sha256": "7e044cc09c4ad0021a82301286f99fbc3619d9f3974f76e4ccafccd4c2334f0b",
+      "raw_bytes": 15317,
+      "archive_bytes": 2093
+    },
+    {
+      "file": "work-ZX-video-front_part07-timing.json.gz",
+      "raw_sha256": "7ef0060a01b30d27fb0182a2766095538408d344cec04ffc850f605eae096682",
+      "archive_sha256": "544cc2415f4ec388b260a1d7ba8329e75f2c67ba89933d7b6778441b368c4758",
+      "raw_bytes": 996047,
+      "archive_bytes": 63134
+    },
+    {
+      "file": "work-ZX-video-front_part07-timing.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "work-ZX-video-front_part07-timing.trace.txt.gz",
+      "raw_sha256": "a8ffc613337ff27d543090ebdd8bc43ebfa28a9171f73dbdbf94a5a1ce682392",
+      "archive_sha256": "4109271299fd93b8cae53d510b84606ab73cd590d6dafc571a83b31c2211c78a",
+      "raw_bytes": 1066242,
+      "archive_bytes": 343813
+    },
+    {
+      "file": "ZX-video-front_part07.json.gz",
+      "raw_sha256": "74bf5d47a116427d8a873722e54cfd3329a98585e01b6f310b3b51824d72c2bd",
+      "archive_sha256": "046fb1fef8945b7c71af255b3e473e541531e0207045c2b84e5851604dafd23a",
+      "raw_bytes": 2256307,
+      "archive_bytes": 110050
+    },
+    {
+      "file": "ZX-video-front_part07.trd",
+      "raw_sha256": "6a46b0157c7078201444323248b398d4eed666b4f3119871ff70f36598fc6306",
+      "archive_sha256": "6a46b0157c7078201444323248b398d4eed666b4f3119871ff70f36598fc6306",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "optional-read-gate-tests.log.gz",
+      "raw_sha256": "a63df53349f45690209c186877a3adee9c1f29a316d891455d2c35079a63bab3",
+      "archive_sha256": "474aca1c484c849af33963dd951c90b94ce122da85865dca8b6bb0ba6336464e",
+      "raw_bytes": 480,
+      "archive_bytes": 231
+    },
+    {
+      "file": "optional-read-last-field-build.log.gz",
+      "raw_sha256": "cc15bf0d08df3a9f02e931eed024dd37b3da1c70df958886006c7cae3e967bc2",
+      "archive_sha256": "ba3dfe1d003e87fa5d17f49964c0cc21231b38db728fea9ee7fd703f033b7606",
+      "raw_bytes": 81,
+      "archive_bytes": 90
+    },
+    {
+      "file": "superseded-early-ready-metadata.json.gz",
+      "raw_sha256": "1d069f906d437e98c034d05a3dc89f3f753913d71c220b6e1b48236b8d335da5",
+      "archive_sha256": "a79d50ce021d553b346a255c953cd400e902dd23e4a5e927f75647b331026a27",
+      "raw_bytes": 2256306,
+      "archive_bytes": 110046
+    },
+    {
+      "file": "superseded-early-ready-cold.json.gz",
+      "raw_sha256": "567a6631ab6f9f44aa28f7680552a14d2cf9de8c0dd6d8cd48073f2948fad781",
+      "archive_sha256": "07621b533860b90a1bbd60a648e2b7d13eb8cd6ef64e361ae470a4a61bd95a67",
+      "raw_bytes": 1339,
+      "archive_bytes": 519
+    },
+    {
+      "file": "rejected-four-field-ZX-video-front_part07.json.gz",
+      "raw_sha256": "19d0625a3bcfc8464316eb75b900e263bc36575fb837b43a0964220d6ac9246e",
+      "archive_sha256": "09a4ff2fa1992bde5aa1b0acc389845bd21d8725710dcc91fddde7bc5cbcb555",
+      "raw_bytes": 2256307,
+      "archive_bytes": 110048
+    },
+    {
+      "file": "rejected-four-field-timing.json.gz",
+      "raw_sha256": "108f09753593bedc86915c213780eebc0fb1f01f9e4cfabb8e8f96236799317b",
+      "archive_sha256": "424d41a1505d42d471da8c21b9360199355999c785ae2c95107b13b2a56d0882",
+      "raw_bytes": 1339,
+      "archive_bytes": 519
+    },
+    {
+      "file": "rejected-four-field-work-ZX-video-front_part07-cpu.json.gz",
+      "raw_sha256": "52aae693b619744c7b8c55dff7a2d2693e466657768c981791e8b009404d6744",
+      "archive_sha256": "e9550881a40925560bee87a62c62a550bd3445602b854373c50361baca1c7e19",
+      "raw_bytes": 252913,
+      "archive_bytes": 17333
+    },
+    {
+      "file": "rejected-four-field-work-ZX-video-front_part07-timing.json.gz",
+      "raw_sha256": "a18fc00db6d7716c2347438447abb29536d05974d973cf2de9126c2743e70fa0",
+      "archive_sha256": "62596a0ed9a5c091107ea3d3d4f37fea1a33151327e9a2b52f032f280e984098",
+      "raw_bytes": 993230,
+      "archive_bytes": 62934
+    },
+    {
+      "file": "rejected-four-field-work-ZX-video-front_part07-timing.trace.txt.gz",
+      "raw_sha256": "6afeffba56504cf0360285ac29e69d56f2354b44bb4d2197be2e4b073e7b3221",
+      "archive_sha256": "d4e40575b9fc14b9a6998dd26e946805cea4f24086812ccf4ca2cdc2a7bad9e7",
+      "raw_bytes": 1065308,
+      "archive_bytes": 343391
+    },
+    {
+      "file": "rejected-four-field-work-ZX-video-front_part07-screens.json.gz",
+      "raw_sha256": "0240b9a8f8f9569062c589aa79aab086907e6dd523990eba3b9439217aad9995",
+      "archive_sha256": "5c9e1ea9cb692f3adaf4e28b90ee1a74180fb20f57c44d6ee8c6595e50a6f8f6",
+      "raw_bytes": 291733,
+      "archive_bytes": 75067
+    }
+  ],
+  "source_sha256_lf": {
+    "optional_read_gate.py": "7e37826128b7860398ec7db77dcdf3577fd7f775427c4bbf91be35d8199151c1",
+    "test_optional_read_gate.py": "801c6aaaf7018798d961049ccd13bad9857634b9c9b89c35324c434b1f8acbdd",
+    "cell_codebook_player.py": "c148d39e714dfc92633f14f9564a126b5349521de4bf550e9aff2d301d80a2c0",
+    "rebuild_cell_player.py": "3658e0d592920b490be6a1eafc6d25cadc8ceddf836dc894d05f8e6f4ec78326",
+    "verify_optional_read_gate.py": "2ec98dd62ad7806d87a3bbc294ddf92b9a604d5af8b6324755bb875f0993a465"
+  }
+}
