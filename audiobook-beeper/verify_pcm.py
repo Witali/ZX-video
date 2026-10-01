@@ -35,6 +35,9 @@ def native_intervals(meta):
     total=0
     for section in meta['sections']:
         total+=section['bytes']; sample=total-1
+        if meta.get('full_ram',False):
+            out[sample*oversample+1]=54 # INC H 4 + JP Z 10 + JP(IX) 8 + kernel 32.
+            out[sample*oversample+4]=46 # LD IX,nn 14 + kernel 32 (was JR 12).
         out[sample*oversample+2]=58+int(meta.get('canonical_paging',False))
         out[sample*oversample+3]=42
     assert int(out.sum())==meta['deterministic_cycle_tstates']
@@ -44,15 +47,27 @@ def native_intervals(meta):
 def native_check(disk,meta,pcm,strict_paging=False):
     from z80 import Z80Machine
     oversample=meta['oversample']
-    expected,error=reference(pcm,oversample=oversample); budget=100_000_000
+    expected,error=reference(pcm,oversample=oversample)
+    budget=2*meta['deterministic_cycle_tstates']+1_000_000
     machine=Z80Machine(); machine.memory[:]=b'\xa5'*65536
     code=extract_player(disk); machine.set_memory_block(ORIGIN,code)
     labels=meta['player_labels']; endpoint=labels['out_0_0_0']+2
-    bits=bytearray(); times=array('I'); pages=[]
+    bits=bytearray(); times=array('I'); pages=[]; banks={}; offset=0
+    reserve=meta.get('code_reserve',4096); full_ram=meta.get('full_ram',False)
+    for section in meta['sections']:
+        part=pcm[offset:offset+section['bytes']]; offset+=section['bytes']
+        bank=bytearray(b'\xa5'*BANK_BYTES)
+        bank[section['address']-0xc000:]=part
+        if full_ram and section['bank']==2:
+            bank[:reserve]=code[:reserve]
+            machine.set_memory_block(0x8000,bank)
+        elif full_ram and section['bank']==5:
+            bank[:6912]=code[reserve:reserve+6912]
+            machine.set_memory_block(0x4000,bank)
+        banks[section['bank']]=bank
+    fixed_before=bytes(machine.memory[0x4000:0xc000])
     def load_bank(bank):
-        index=next(i for i,s in enumerate(meta['sections']) if s['bank']==bank)
-        s=meta['sections'][index]; part=pcm[index*BANK_BYTES:index*BANK_BYTES+s['bytes']]
-        machine.set_memory_block(0xc000,b'\xa5'*(s['address']-0xc000)+part); pages.append(bank)
+        machine.set_memory_block(0xc000,banks[bank]); pages.append(bank)
     def output(port,value):
         if port==0x10fe:
             index=len(bits)
@@ -68,7 +83,8 @@ def native_check(disk,meta,pcm,strict_paging=False):
         else: raise AssertionError(f'unexpected port/value {port:04x}/{value}')
     load_bank(meta['sections'][0]['bank'])
     machine.set_output_callback(output)
-    machine.pc=labels['ready']; machine.sp=0xb800
+    stack=meta.get('stack_top',0xb800)
+    machine.pc=labels['ready']; machine.sp=stack
     machine.hl=meta['sections'][0]['address']; machine.bc=0x10fe; machine.a=128; machine.e=0
     machine.ticks_to_stop=budget
     while machine.pc!=endpoint or len(bits)!=len(expected):
@@ -77,9 +93,9 @@ def native_check(disk,meta,pcm,strict_paging=False):
     intervals=np.diff(np.asarray(times,dtype=np.int64))
     if not np.array_equal(intervals,np.tile(native_intervals(meta),2)): raise AssertionError(f'native timing mismatch {Counter(intervals)}')
     expected_pages=[s['bank'] for s in meta['sections']]*2+[meta['sections'][0]['bank']]
-    if pages!=expected_pages or machine.sp!=0xb800 or machine.a!=error:
+    if pages!=expected_pages or machine.sp!=stack or machine.a!=error:
         raise AssertionError('paging/stack/accumulator mismatch')
-    if bytes(machine.memory[ORIGIN:ORIGIN+len(code)])!=code: raise AssertionError('code/screen changed')
+    if bytes(machine.memory[0x4000:0xc000])!=fixed_before: raise AssertionError('fixed memory changed')
     return dict(complete=True,cycles_verified=2,bits_verified=len(bits),all_pcm_values_exact=True,
         every_pdm_bit_exact=True,accumulator_exact=True,stack_and_code_intact=True,bank_sequence=pages,
         interval_histogram_tstates=dict(sorted(Counter(map(int,intervals)).items())),
@@ -91,7 +107,7 @@ def fuse_check(fuse,directory,meta,pcm,machine='128'):
     work=directory/'verification-work'; work.mkdir(exist_ok=True)
     oversample=meta['oversample']
     labels=meta['player_labels']; expected,_=reference(pcm,oversample=oversample)
-    lines=['base 10','set $r 0','set $bits 0']; widths={}; event_count=0
+    lines=['base 10','set $r 0','set $bits 0','set $loading 0']; widths={}; event_count=0
     clock,field_tstates=(CPU_CLOCK,70908) if machine=='128' else (3500000,69888)
     stamp=f'spectrum:frames*{field_tstates}+ula:tstates'
     def event(breakpoint,tag,expressions,after=(),condition='',stop=False):
@@ -101,7 +117,10 @@ def fuse_check(fuse,directory,meta,pcm,machine='128'):
         lines.extend(f'print {x}' for x in expressions); lines.extend(after)
         lines.extend(['exit 77' if stop else 'continue','end'])
         if condition: lines.append(f'condition {event_count} {condition}')
-    event(labels['ready'],100,[stamp],['set $r 1'])
+    event(labels['start'],101,[],['set $loading 1'])
+    event(labels['ready'],100,[stamp,'z80:sp'],['set $r 1'])
+    if meta.get('full_ram',False):
+        event('write 24319',199,[stamp,'z80:sp'],condition='$loading==1 && z80:sp<24320',stop=True)
     # One port breakpoint covers hundreds of unrolled output instructions.
     event('port write 4350',140,[stamp,'z80:e','z80:d'],['set $bits $bits+1'],condition='$r==1')
     for name,address in labels.items():
@@ -111,7 +130,7 @@ def fuse_check(fuse,directory,meta,pcm,machine='128'):
     # Fuse completes the instruction at an exit breakpoint. Stop on ADD/RR,
     # not OUT, or its port callback would append an unwanted extra pulse.
     stop_offset=4 if meta.get('steady',False) else 3
-    event(labels['out_0_0_0']+stop_offset,200,[stamp],condition=f'$bits=={len(expected)}',stop=True)
+    event(labels['out_0_0_0']+stop_offset,200,[stamp,'z80:sp'],condition=f'$bits=={len(expected)}',stop=True)
     script='\n'.join(lines); (work/'fuse-debugger.txt').write_text(script,encoding='utf-8',newline='\n')
     command=[str(fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions','--speed','10000',
         '--machine',machine,'--beta128','--debugger-command',script,str((directory/'audiobook-preview.trd').resolve())]
@@ -133,8 +152,11 @@ def fuse_check(fuse,directory,meta,pcm,machine='128'):
         elif tag==200: ends.append(row)
         elif tag==150: pages.append(row)
         elif tag==102: reads.append(row)
+        elif tag==199: raise AssertionError('startup stack exceeded its reserved 256 bytes')
     actual=np.frombuffer(values,dtype=np.uint8)
     if len(ready)!=1 or len(ends)!=1 or len(actual)!=len(expected): raise AssertionError('incomplete Fuse PCM')
+    if ready[0][1]!=meta.get('stack_top',0xb800) or ends[0][1]!=ready[0][1]:
+        raise AssertionError('Fuse stack did not return to its reserved top')
     if np.any(actual&15) or not np.array_equal((actual>>4)&1,expected): raise AssertionError('Fuse PDM mismatch')
     wanted_pcm=np.r_[np.tile(np.repeat(np.frombuffer(pcm,dtype=np.uint8),oversample),2),pcm[0]]
     if not np.array_equal(np.frombuffer(inputs,dtype=np.uint8),wanted_pcm): raise AssertionError('Fuse PCM read order mismatch')
@@ -153,6 +175,7 @@ def fuse_check(fuse,directory,meta,pcm,machine='128'):
     sample_intervals=np.diff(timeline[::oversample]); rate=2*len(pcm)*clock/int(timeline[-1])
     return dict(complete=True,cold_boot=True,machine=machine,cpu_clock_hz=clock,field_tstates=field_tstates,
         paging_latches_verified=True,cycles_verified=2,bits_verified=len(expected),every_pdm_bit_exact=True,
+        stack_top_verified=ready[0][1],startup_stack_guard_passed=True if meta.get('full_ram',False) else None,
         all_pcm_values_exact=True,bank_sequence=expected_pages,startup_sector_reads=len(reads),runtime_disk_reads=0,
         average_pdm_rate_hz=rate*oversample,average_pcm_rate_hz=rate,pcm_clock_error_percent=(rate/8000-1)*100,
         minimum_instantaneous_pdm_rate_hz=clock/int(intervals.max()),

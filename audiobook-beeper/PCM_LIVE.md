@@ -1,7 +1,8 @@
 # Convert PCM8 to beeper PDM on the Z80
 
-**Paging correction, 2026-10-02:** the current root disk uses the complete
-7FFD address. See [diagnosis and verified correction](PAGING_FIX.md).
+**Current version, 2026-10-02:** the root disk uses all eight banks for
+118.5 KiB PCM. See [full-memory delivery](FULL_MEMORY.md) and
+[paging diagnosis and verified correction](PAGING_FIX.md).
 The measurements and alias description below document the original
 `pcm-live-preview` build; they are retained as its historical baseline.
 

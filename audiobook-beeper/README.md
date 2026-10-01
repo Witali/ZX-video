@@ -10,10 +10,13 @@ They do not fit the voice to tone generators.
 
 [Live conversion TRD](../ZX-audiobook-PDM-live-test.trd) stores the actual
 8 kHz /8-bit mono PCM bytes. Z80 converts them while playing, with no PDM
-buffer or lookup table. The excerpt loops after the initial disk load.
-See [method, timing, comparison and reproduction](PCM_LIVE.md),
-[measured listening WAV](pcm-live-preview/beeper-preview.wav) and
-[complete verification](pcm-live-preview/verification.json).
+buffer or lookup table. All eight RAM banks provide **121344 PCM bytes
+(118.5 KiB)**, with a **15.402-second** repeating excerpt after the initial
+disk load. The early-silence paging bug is corrected using the full 7FFD port.
+See [memory, timing and reproduction](FULL_MEMORY.md),
+[actual Fuse sound](pcm-live-full/sound-128/fuse-preview.wav) and
+[complete verification](pcm-live-full/verification.json).
+The [original method and comparisons](PCM_LIVE.md) remain archived.
 
 The previous disks already contained packed PDM, eight output bits per
 byte; they did not expand it into a separate RAM buffer after loading.

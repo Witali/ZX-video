@@ -3,11 +3,34 @@ from __future__ import annotations
 import argparse,gzip,json,subprocess,wave
 from pathlib import Path
 import numpy as np
-from pcm_player import build_disk,CPU_CLOCK
+from pcm_player import build_disk,full_ram_layout,CPU_CLOCK
 from verify_pcm import verify,reference,save
-from build_pdm import sha,reconstruct,write_wav,RATE
+from build_pdm import sha,reconstruct,write_wav,pcm8k,RATE
 
 HERE=Path(__file__).resolve().parent
+
+
+def prepare_full_memory(source,ffmpeg,out):
+    original=json.loads((HERE/'source-format.json').read_bytes())
+    if sha(source.read_bytes())!=original['source_sha256']: raise ValueError('source audiobook changed')
+    sections,reserve=full_ram_layout(); samples=sum(s['bytes'] for s in sections)
+    duration=samples/8000
+    result=subprocess.run([ffmpeg,'-v','error','-nostdin','-ss','59','-i',str(source.resolve()),
+        '-t',str(duration+2),'-map','0:a:0','-ac','1','-af',
+        'highpass=f=70,lowpass=f=3800:p=2,lowpass=f=3800:p=2','-ar',str(RATE),'-f','f32le','-'],
+        capture_output=True,check=True)
+    count=samples*(RATE//8000)
+    signal=np.frombuffer(result.stdout,'<f4').astype(float)[RATE:RATE+count]
+    if len(signal)!=count: raise ValueError('source ends before full RAM excerpt')
+    gain=.65/max(float(np.max(abs(signal))),1e-12); signal*=gain
+    t=np.arange(count)/RATE
+    signal*=np.maximum(0,np.minimum(1,np.minimum(t/.020,(duration-t)/.020)))
+    path=out/'pcm8k-preview.wav'
+    _,prepared=pcm8k(signal,ffmpeg,path)
+    if prepared['samples']!=samples: raise AssertionError('PCM does not exactly fill RAM')
+    prepared.update(pdm_input='raw PCM bytes, held by Z80 for ten PDM outputs',source_gain=gain,
+                    edge_fade_seconds=.020,code_reserve=reserve)
+    return path,prepared
 
 
 def main():
@@ -16,20 +39,25 @@ def main():
     p.add_argument('--fuse',type=Path,required=True); p.add_argument('--output',type=Path,required=True)
     p.add_argument('--quarter-nops',type=int,default=4)
     p.add_argument('--fast',action='store_true',help='reproduce the noisier 13-pulse speed experiment')
+    p.add_argument('--fill-memory',action='store_true',help='input is original audiobook; fill all available PCM RAM')
     args=p.parse_args()
     if args.output.exists() and any(args.output.iterdir()): p.error('output must be empty')
-    with wave.open(str(args.input),'rb') as wav:
+    if args.fill_memory and args.fast: p.error('full memory uses the steady ten-pulse player')
+    args.output.mkdir(parents=True,exist_ok=True)
+    wav_path=args.input; prepared=None
+    if args.fill_memory: wav_path,prepared=prepare_full_memory(args.input,args.ffmpeg,args.output)
+    with wave.open(str(wav_path),'rb') as wav:
         if (wav.getframerate(),wav.getsampwidth(),wav.getnchannels())!=(8000,1,1):
             p.error('input must be unsigned PCM8, mono, 8000 Hz')
         raw=wav.readframes(wav.getnframes())
     prior=json.loads((HERE/'preview-8k8-loop/report.json').read_bytes())
-    if sha(raw)!=prior['pdm_source_pcm']['data_sha256']: raise ValueError('comparison PCM changed')
+    if not args.fill_memory and sha(raw)!=prior['pdm_source_pcm']['data_sha256']: raise ValueError('comparison PCM changed')
     padding=(-len(raw))%256; pcm=raw+bytes([128])*padding
-    disk,meta=build_disk(pcm,args.quarter_nops if args.fast else 0,steady=not args.fast)
+    disk,meta=build_disk(pcm,args.quarter_nops if args.fast else 0,steady=not args.fast,full_ram=args.fill_memory)
     args.output.mkdir(parents=True,exist_ok=True)
     (args.output/'audiobook-preview.trd').write_bytes(disk)
     (args.output/'soundtrack.pcm.gz').write_bytes(gzip.compress(pcm,mtime=0))
-    (args.output/'pcm8k-preview.wav').write_bytes(args.input.read_bytes())
+    if not args.fill_memory: (args.output/'pcm8k-preview.wav').write_bytes(args.input.read_bytes())
     save(args.output/'player.json',meta)
     print('Verifying live conversion, every PCM value and every output bit over two loops',flush=True)
     proof=verify(args.output,args.fuse)
@@ -57,12 +85,13 @@ def main():
     metrics=dict(waveform_correlation=float(np.corrcoef(ref,candidate)[0,1]),
         reconstruction_snr_db=float(10*np.log10(np.mean(ref**2)/np.mean((candidate-ref)**2))),
         scope='same actual-timing PCM holds, pipeline aligned, same 4.5 kHz filters; not intelligibility')
-    report=dict(complete=True,preview_only=True,date='2026-10-02',baseline_commit='e06cec8',
-        source_pcm_wav=str(args.input.resolve()),source_pcm_wav_sha256=sha(args.input.read_bytes()),source_pcm_sha256=sha(raw),
+    report=dict(complete=True,preview_only=True,date='2026-10-02',baseline_commit='9f636b2',
+        source_pcm_wav=str(wav_path.resolve()),source_pcm_wav_sha256=sha(wav_path.read_bytes()),source_pcm_sha256=sha(raw),
         original_audiobook_sha256=prior['source_sha256'],source_start_seconds=60,source_sample_rate_hz=8000,
         bits_per_pcm_sample=8,channels=1,original_pcm_samples=len(raw),silence_padding_samples=padding,
-        stored_pcm_bytes=len(pcm),old_pdm_bytes=98304,saved_payload_bytes=98304-len(pcm),
-        disk_storage='raw unsigned PCM8 in PCM0..PCM5; gzip only archives evidence on the host',
+        stored_pcm_bytes=len(pcm),prior_live_pcm_bytes=82944,pcm_capacity_increase_bytes=len(pcm)-82944,
+        full_ram=args.fill_memory,memory=meta['memory'],source_preparation=prepared,
+        disk_storage=f'raw unsigned PCM8 in PCM0..PCM{len(meta["sections"])-1}; gzip only archives evidence on the host',
         precomputed_pdm_on_disk=False,pdm_buffer_bytes=0,pdm_lookup_table_bytes=0,runtime_disk_reads=0,
         native_pdm_conversion=True,repeat=True,oversample=oversample,quarter_nops=meta['quarter_nops'],steady=meta['steady'],
         modulator=meta['modulator'],timing=proof['fuse'],deterministic_timing=meta['timing'],
@@ -77,7 +106,7 @@ def main():
         artifacts={f.relative_to(args.output).as_posix():dict(bytes=f.stat().st_size,sha256=sha(f.read_bytes()))
             for f in sorted(args.output.rglob('*')) if f.is_file() and f.name!='fuse-stderr.txt'})
     save(args.output/'report.json',report)
-    print(json.dumps(dict(duration=duration,timing=proof['fuse'],metrics=metrics,saved_bytes=report['saved_payload_bytes'])),flush=True)
+    print(json.dumps(dict(duration=duration,timing=proof['fuse'],metrics=metrics,pcm_bytes=len(pcm))),flush=True)
 
 
 if __name__=='__main__': main()

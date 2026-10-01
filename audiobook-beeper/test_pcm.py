@@ -1,7 +1,7 @@
 """Check on-the-fly conversion, all byte values, paging and loop continuity."""
 import unittest
 import numpy as np
-from pcm_player import build_disk
+from pcm_player import build_disk,full_ram_layout
 from verify_pcm import native_check,reference
 
 
@@ -43,6 +43,21 @@ class LiveTests(unittest.TestCase):
             with self.assertRaises(ValueError): build_disk(bytes(n))
         with self.assertRaises(ValueError): build_disk(bytes(256),9)
         with self.assertRaises(ValueError): build_disk(bytes(256),1)
+
+    def test_full_ram_including_fixed_bank_aliases(self):
+        sections,reserve=full_ram_layout()
+        pcm=b''.join(bytes((j*17+s['bank']*31+(j//256))%256 for j in range(s['bytes'])) for s in sections)
+        disk,meta=build_disk(pcm,full_ram=True)
+        self.assertEqual(set(s['bank'] for s in sections),set(range(8)))
+        self.assertEqual(len(pcm)+reserve+6912+1280,131072)
+        self.assertLess(meta['code_bytes'],reserve+1)
+        self.assertLess(reserve-meta['code_bytes'],256)
+        self.assertEqual(meta['stack_top'],0x6000)
+        proof=native_check(disk,meta,pcm,strict_paging=True)
+        self.assertTrue(proof['every_pdm_bit_exact'])
+        self.assertEqual(proof['cycle_tstates'],441*len(pcm)+2*(len(pcm)//256)+23*8)
+        for wrong in (pcm[:-256],pcm+bytes(256)):
+            with self.assertRaises(ValueError): build_disk(wrong,full_ram=True)
 
 
 if __name__=='__main__': unittest.main()

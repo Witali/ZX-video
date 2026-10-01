@@ -5,6 +5,57 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: fill all eight banks with resident live PCM
+
+Objective: fulfill the user's request to fill all possible memory, retaining
+on-the-fly PDM, indefinite repeat and the verified paging correction from
+`9f636b2`. Baseline: 82944 stored PCM bytes, six data banks, 3414 code bytes
+and a 10.528-second excerpt. The same authenticated audiobook now supplies
+[60,75.168) at 8000 Hz /8-bit mono, freshly normalized and edge-faded with the
+established filters. There is no added sector-padding silence.
+
+The new shared ordinary loop reduces code to 1396 bytes in a 1536-byte
+reservation. Reuse screen staging for PCM after copying the display; move
+SP from B800 to 6000. Six full data banks supply 98304 bytes, bank 2 adds
+14848 and bank 5 adds 8192: **121344 PCM bytes /118.5 KiB**, +38400 /46.296%.
+Exact RAM accounting: PCM 121344 +code 1536 +screen 6912 +workspace/stack
+1280 =131072 bytes. Code reservation includes 140 alignment bytes; no whole
+sectors remain unassigned. This is full use of the chosen safe layout,
+not audio overwriting code or the TR-DOS workspace.
+
+Hot-path comparison: kernel stays 32 T and ordinary four-sample block 1764 T.
+Sharing adds JP(IX) 8 T and replaces JR padding 12 T with LD IX,nn 14 T:
+**+10 T per bank boundary** versus the paging-corrected baseline. Canonical
+paging remains 27 T (itself +1 versus the original alias). New cycle formula
+`441*N +2*(N/256) +23*B` gives **53513836 deterministic T per loop**. Actual
+Spectrum 128 PDM averages **78783.119 Hz**, minimum **60116.949 Hz**; actual
+PCM is 7878.312 Hz, -1.5211% versus source. Loops take 15.402261 and
+15.402308 seconds, both wrap holds 49 T. ULA adds 2233052 T across two
+loops; 474 disk sectors are acquired before playback, none during it.
+
+Verification: twelve native beeper tests pass, including bank-specific
+patterns in all eight banks, fixed-bank aliases and capacity bounds. Cold
+Fuse Spectrum 128 verifies **2426881 exact outputs**, every PCM input and
+PDM bit, two complete loops plus the next bit, all paging latches and the
+5F00 stack-boundary guard. Separate normal-speed, sound-enabled recordings
+on explicit 128 and automatic startup observe both loop wraps, correct
+7FFD, unchanged 1FFD and signal in every full half-second audio window.
+Startup lasts 26.254 /23.590 seconds respectively in those two recordings;
+ROM/disk time is separate from the playback CPU counts. No physical hardware
+test is claimed. Reconstruction SNR 9.9713 dB /correlation 0.953164 concerns
+the new longer input; it is not a same-passage quality improvement claim.
+
+Decision: publish the independently bootable root
+[live test TRD](ZX-audiobook-PDM-live-test.trd), SHA-256
+`fd234adcb7fc84989616638135d3d58c66994b0c76e980d01a9125a7a49fd79e`.
+Retain the isolated short paging fix and all older experiments. See
+[memory map, cycle counts and reproduction](audiobook-beeper/FULL_MEMORY.md),
+[build](audiobook-beeper/pcm-live-full/report.json),
+[full verification](audiobook-beeper/pcm-live-full/verification.json),
+[128 sound capture](audiobook-beeper/pcm-live-full/sound-128/report.json),
+[automatic sound capture](audiobook-beeper/pcm-live-full/sound-auto/report.json)
+and [delivery evidence index](audiobook-beeper/pcm-live-full/delivery.json).
+
 ## 2026-10-02: fix live-PCM silence after the first bank
 
 Objective: diagnose the user's early silence in Fuse (reported model 128)
