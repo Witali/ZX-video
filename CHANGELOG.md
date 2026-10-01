@@ -5,6 +5,46 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: full-volume dictionary budgets and delivery profiling
+
+- Objective: validate the encoder-only compression improvement on one full
+  disk toward the four-volume goal, retaining per-block byte/CPU budgets,
+  exact pixels, AY50 and 10 fps. Baseline commit `3237312`; cached CB46 part 4
+  [3744,5066), 1322 frames, 55 LZSA2 blocks, original four-slot/cache player.
+- Flat numbering plus the existing short-match CPU fitter reduces video
+  623005 ->619749 bytes (2434 ->2421 logical sectors), saving 348712 native
+  decoder T-states overall. Six blocks (2/5/17/18/32/33) exceed the original
+  byte limits by 9/26/22/16/52/56 bytes. All CPU limits pass. Decision:
+  **reject this full-volume candidate**, retain the bounded-window result;
+  no candidate TRD was built and no guards were relaxed.
+- Completed the original cache player's full native replay and real Fuse
+  timing run: 1322 exact native screens, cache/memory guards, 6610 exact AY
+  ticks and 2434 exact runtime sectors. The disk occupies 2543/2544 sectors.
+  Fuse full-screen-byte capture and continuation were not performed here.
+  Timing fails: 29 nominal misses, 28 beyond one field, maximum 23 fields,
+  23 invalid actual intervals. Runs 378, 588..599, 603..608 and 617..626 recover
+  at 379/600/609/627. This is not a release or evidence for all four disks.
+- Full-volume active elapsed time is 468502967 T; physical disk service
+  71347152 T, decoder bridge 58784640 T, inclusive draw phases 121154041 T.
+  These measured phases include IRQ/ULA effects and can overlap; do not sum
+  them as disjoint instruction counts. Packet acquisition has 6552623 T
+  empty-queue wait; difficult late runs operate mainly at zero/one ready slot.
+- Investigated the previous window's extra isolated miss (local frame 123):
+  three ready slots, no packet disk service or empty wait, 136605 elapsed T
+  in disk service between publications and 225965 T drawing. Full part 4's
+  isolated frame 378 has four ready slots, 156777 disk T and 216445 draw T.
+  This separates optional-read admission near publication from sustained
+  starvation. Next: test a deadline-aware optional-read gate on the saved
+  window without changing compressed bytes, then address burst supply.
+- Reproduce with `probe_dictionary_numbering.py --variants flat`,
+  `fit_lzsa2_cpu_budget.py`, `verify_cached_cell_player.py`,
+  `measure_fap3_fuse.py --trace-pipeline`, `profile_cell_delivery.py` and
+  [delivery window analysis](toolkit/analyze_cb46_delivery_windows.py).
+  [Verifier](toolkit/verify_full_volume_dictionary_probe.py) and
+  [report](toolkit/full_volume_dictionary_report.json) archive the rejected
+  candidate, exact inputs, native counts and full baseline trace. Root release
+  images and converter defaults remain unchanged.
+
 ## 2026-10-01: improve compression without increasing any block's decoder cost
 
 - User priority: better compression at unchanged unpacking cost. Baseline

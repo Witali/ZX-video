@@ -54,13 +54,31 @@ Do not rerun the unsuccessful distance-only search: exact 187-layout checking
 and all 16 real blocks saved zero bytes (731 T only). General book/raster
 alignment was also rejected because it increased decoder work.
 
-Next scope: apply only the measured flat-numbering/budget-fitting method to
-one cached complete volume, retaining its raw packet lengths, media, cuts and
-original player. Reject candidates that fail original byte/CPU budgets; do
-not silently relax them. Check full disk timing and the new frame-123 stall's
-physical-read phase before selecting this for the whole movie. Generic CLI
-integration and complete four-volume cold/continuation release checks remain
-outstanding; this window alone is not a four-disk release.
+Full-volume follow-up is complete and rejected: on part 4 [3744,5066), the
+same numbering/fitter saves 3256 bytes and 348712 decoder T-states overall,
+but blocks 2/5/17/18/32/33 exceed their original byte budgets by
+9/26/22/16/52/56 bytes. Do not build this candidate or relax the block guards.
+Reuse `.tmp/dictionary-part04/` and
+[full-volume evidence](toolkit/full_volume_dictionary_report.json).
+
+The existing four-slot/cache part 4 now has a complete native/Fuse timing
+baseline: 1322 exact native screens, 6610 real AY ticks, 2434 exact runtime
+sectors, 2543 occupied sectors. Full Fuse screen-byte capture was not run.
+There are 29 nominal misses /28 beyond one field, maximum 23 fields, 23 bad
+intervals. Runs 378, 588..599, 603..608 and 617..626 recover at
+379/600/609/627. Reuse `.tmp/sector-cache-part04-capacity/work/part04/`
+and `.tmp/sector-cache-part04-profile.json`; do not rerun this baseline.
+
+New frame-123 diagnosis: packet acquisition has zero disk service or empty
+wait, with three complete slots available. Between publications a physical
+read consumes 136605 elapsed T and drawing takes 225965 T. Full part 4's
+isolated frame 378 similarly has four ready slots and 156777 disk T. These
+are optional-background-read admission stalls, distinct from sustained
+queue depletion in the longer late runs. Next scope: test admission of
+optional reads near publication using the cached 256-frame window and exact
+original compressed bytes. Preserve AY and required reads; then address the
+burst supply constraint using the saved complete-volume profile. Generic CLI
+integration and four-volume cold/continuation release checks remain open.
 
 The sector-streaming LZSA2 experiment is now parked, not selected. Eager
 prefix decoding produces 27 late frames / maximum 40 fields in the complete

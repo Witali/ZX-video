@@ -1,0 +1,413 @@
+{
+  "complete": true,
+  "release": false,
+  "date": "2026-10-01",
+  "baseline_commit": "3237312",
+  "scope": "Archive the full-volume dictionary rejection and complete baseline profiling.\n\nThis is an experiment checkpoint, not release acceptance. No candidate TRD\nis built when an original per-block byte or CPU budget is exceeded.\n",
+  "frames": 1322,
+  "frame_start": 3744,
+  "frame_end_exclusive": 5066,
+  "baseline_trd_sha256": "02aac909f9a56ac27d89d42f52d48fa4dc5ec7e4a5a04ba1c237ec3ab20346c4",
+  "baseline_used_sectors": 2543,
+  "baseline_video_bytes": 623005,
+  "candidate_video_bytes": 619749,
+  "baseline_video_sectors": 2434,
+  "candidate_video_sectors": 2421,
+  "baseline_decoder_tstates": 55808156,
+  "candidate_decoder_tstates": 55459444,
+  "failing_blocks": [
+    {
+      "block": 2,
+      "bytes": 9549,
+      "byte_budget": 9540,
+      "byte_excess": 9,
+      "decoder_tstates": 892149,
+      "cpu_budget": 903341
+    },
+    {
+      "block": 5,
+      "bytes": 10834,
+      "byte_budget": 10808,
+      "byte_excess": 26,
+      "decoder_tstates": 958950,
+      "cpu_budget": 974248
+    },
+    {
+      "block": 17,
+      "bytes": 13601,
+      "byte_budget": 13579,
+      "byte_excess": 22,
+      "decoder_tstates": 1107333,
+      "cpu_budget": 1115120
+    },
+    {
+      "block": 18,
+      "bytes": 12680,
+      "byte_budget": 12664,
+      "byte_excess": 16,
+      "decoder_tstates": 1091941,
+      "cpu_budget": 1109109
+    },
+    {
+      "block": 32,
+      "bytes": 11692,
+      "byte_budget": 11640,
+      "byte_excess": 52,
+      "decoder_tstates": 1001163,
+      "cpu_budget": 1015149
+    },
+    {
+      "block": 33,
+      "bytes": 9833,
+      "byte_budget": 9777,
+      "byte_excess": 56,
+      "decoder_tstates": 926855,
+      "cpu_budget": 945996
+    }
+  ],
+  "candidate_built": false,
+  "candidate_selected": false,
+  "native_screens_exact": 1322,
+  "fuse_timing_frames": 1322,
+  "fuse_runtime_sectors": 2434,
+  "fuse_ay_ticks": 6610,
+  "fuse_full_screen_capture": false,
+  "timing": {
+    "nominal_late_frames": 29,
+    "actual_out_over_one_field": 28,
+    "max_late_fields": 23,
+    "bad_actual_intervals": 23,
+    "late_runs": [
+      {
+        "start": 378,
+        "end": 378,
+        "recovered_at": 379
+      },
+      {
+        "start": 588,
+        "end": 599,
+        "recovered_at": 600
+      },
+      {
+        "start": 603,
+        "end": 608,
+        "recovered_at": 609
+      },
+      {
+        "start": 617,
+        "end": 626,
+        "recovered_at": 627
+      }
+    ]
+  },
+  "profile": {
+    "active_elapsed": 468502967,
+    "active_disk_service": 71347152,
+    "active_decode_elapsed": 58784640,
+    "stages": {
+      "packet": {
+        "elapsed": {
+          "count": 1322,
+          "total": 33805106,
+          "mean": 25571.1845688351,
+          "p50": 13706,
+          "p90": 47785,
+          "p99": 107581,
+          "max": 1823293
+        },
+        "disk_service": {
+          "count": 1322,
+          "total": 3726714,
+          "mean": 2818.996974281392,
+          "p50": 0,
+          "p90": 0,
+          "p99": 0,
+          "max": 1387348
+        },
+        "residual": {
+          "count": 1322,
+          "total": 30078392,
+          "mean": 22752.187594553707,
+          "p50": 13706,
+          "p90": 47785,
+          "p99": 107581,
+          "max": 437587
+        },
+        "empty_wait": {
+          "count": 1322,
+          "total": 6552623,
+          "mean": 4956.5983358547655,
+          "p50": 0,
+          "p90": 0,
+          "p99": 72666,
+          "max": 1762282
+        }
+      },
+      "draw": {
+        "elapsed": {
+          "count": 1322,
+          "total": 121154041,
+          "mean": 91644.50907715583,
+          "p50": 72520,
+          "p90": 184376,
+          "p99": 225450,
+          "max": 253000
+        },
+        "disk_service": {
+          "count": 1322,
+          "total": 2370,
+          "mean": 1.7927382753403933,
+          "p50": 0,
+          "p90": 0,
+          "p99": 0,
+          "max": 395
+        },
+        "residual": {
+          "count": 1322,
+          "total": 121151671,
+          "mean": 91642.71633888049,
+          "p50": 72520,
+          "p90": 184376,
+          "p99": 225450,
+          "max": 253000
+        },
+        "empty_wait": {
+          "count": 1322,
+          "total": 0,
+          "mean": 0.0,
+          "p50": 0,
+          "p90": 0,
+          "p99": 0,
+          "max": 0
+        }
+      }
+    },
+    "queue_at_packet": {
+      "4": 599,
+      "3": 369,
+      "2": 180,
+      "1": 128,
+      "0": 46
+    }
+  },
+  "isolated_window_miss": {
+    "local_frame": 123,
+    "global_frame": 4219,
+    "late_fields": 1,
+    "packet_elapsed": 45467,
+    "packet_disk": 0,
+    "packet_decode": 0,
+    "packet_empty_wait": 0,
+    "draw_elapsed": 225965,
+    "since_previous_publication": 425456,
+    "since_previous_disk": 136605,
+    "queue_count_at_packet": 3
+  },
+  "decision": "Reject full-volume renumbering: six blocks exceed their original byte budgets. Do not relax the guards or build a candidate disk. The complete existing four-slot/cache baseline preserves all native screens and real AY/sectors but fails timing. Isolated misses occur with ready data while background physical reads delay the next draw; prolonged late runs exhaust the queue. Next isolate optional read admission near publication on the saved 256-frame window, retaining original compressed bytes, then address sustained burst supply.",
+  "artifacts": [
+    {
+      "file": "baseline-part04.json.gz",
+      "raw_sha256": "54592b00140b361a7feb9e4c454c1248de40747b8986fc292ce79a1ad65a4e22",
+      "archive_sha256": "7a83d0cb23e0bbcd2dfe9d567e723bd560f50e357b9c04262585e636b84c254a",
+      "raw_bytes": 2321822,
+      "archive_bytes": 132429
+    },
+    {
+      "file": "baseline-part04.trd",
+      "raw_sha256": "02aac909f9a56ac27d89d42f52d48fa4dc5ec7e4a5a04ba1c237ec3ab20346c4",
+      "archive_sha256": "02aac909f9a56ac27d89d42f52d48fa4dc5ec7e4a5a04ba1c237ec3ab20346c4",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "baseline-timing.json.gz",
+      "raw_sha256": "77b29506d399724287bcd0dc4b5c8c15d8ad895ee6575e5d33188f1035ace48a",
+      "archive_sha256": "b70fa9da8da6b160228c646705196473a222a45cc854bec3873317aefac2fc20",
+      "raw_bytes": 1723,
+      "archive_bytes": 603
+    },
+    {
+      "file": "baseline-partition.json.gz",
+      "raw_sha256": "d972dbec88a55806c5ba3520f2bff4bdccb8ac75f256ce2c3c747601121aebc2",
+      "archive_sha256": "df71d83c3d19e752a2efc1817519aed050ea62bca5744a97abde681397252712",
+      "raw_bytes": 81,
+      "archive_bytes": 75
+    },
+    {
+      "file": "baseline-cache-checks.json.gz",
+      "raw_sha256": "f81322043c821d81ae5e6ea16089e391bb9d12e5b28fcd8a400b1963d7c260a5",
+      "archive_sha256": "2c8eebbbfc70a1b16dab81ab72f3558c14254ef76f22450da4c70ea7ae1889f3",
+      "raw_bytes": 180,
+      "archive_bytes": 150
+    },
+    {
+      "file": "baseline-work-cpu.json.gz",
+      "raw_sha256": "35bda868db76da240ed8510079f43d9dc893ce28f17a3567215fa52bdc111ea5",
+      "archive_sha256": "e11401407e6d45c5b7377e0ce6e0ae43b28d53de1a7b08b78fcbb9917d426771",
+      "raw_bytes": 899086,
+      "archive_bytes": 61183
+    },
+    {
+      "file": "baseline-work-timing.json.gz",
+      "raw_sha256": "6bce2c0075c3b3dfa4a7347bc0070b33345bcf694b172c8606ad367ec47994cc",
+      "archive_sha256": "86ab0eb9cd60cca1e44d7a82f55705c8298b11b1e1446dcc5ba8bd0ca26cd277",
+      "raw_bytes": 4257112,
+      "archive_bytes": 258527
+    },
+    {
+      "file": "baseline-work-timing.trace.txt.gz",
+      "raw_sha256": "69fa0f577e79a4da83c8fa5cafa48b1d30be08366cceab328cd7dafd5508ad51",
+      "archive_sha256": "a3ed03bc45473473c4066ef4cec6d35f71a4856c85c2327ac47ed483f582ad3d",
+      "raw_bytes": 4196164,
+      "archive_bytes": 1244355
+    },
+    {
+      "file": "baseline-work-timing.debugger.txt.gz",
+      "raw_sha256": "60e0e57ddee8bde20bce58df4237ba7cb34b5871bdfcefbf302d2087a44fc917",
+      "archive_sha256": "6f0a37952d2c139b13b47c10ec4f17ff66020b9868740c0f27277a5e627f824e",
+      "raw_bytes": 15317,
+      "archive_bytes": 2092
+    },
+    {
+      "file": "baseline-work-timing.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "baseline-work-codebook.raw.gz",
+      "raw_sha256": "fd96242ee12b1543fe9766e1466a960ca38c40bf551a8d7180fedd7744ae1668",
+      "archive_sha256": "4b4bc4ff61b2e08a590c90aabf9ba1ca53c318a7de6ef63baaad66fef8c38a5f",
+      "raw_bytes": 869594,
+      "archive_bytes": 561724
+    },
+    {
+      "file": "baseline-work-codebook.stream.gz",
+      "raw_sha256": "5c6d892c23a9478669d14b860426dab51ad8756ee37dc18eb1bb75a2ad52ff46",
+      "archive_sha256": "2dd711059c9fb44b3287fffb2d9e2d64a4502aaa01cab63c5d45b92713e24e50",
+      "raw_bytes": 623005,
+      "archive_bytes": 594879
+    },
+    {
+      "file": "baseline-work-rows.json.gz",
+      "raw_sha256": "46845c7c8f47578ff5fb1874fadc2187ebb918a7af936aae13bb15c6671d86e0",
+      "archive_sha256": "3947d170f59e476d874456bb061117a555e0500e233f7b548a7232af064c7561",
+      "raw_bytes": 3809,
+      "archive_bytes": 1266
+    },
+    {
+      "file": "baseline-work-states.npz.gz",
+      "raw_sha256": "e0cfd8527f9c8626b76e0d5250ff61b1074920c1ba696cd4e1b98b06b0e06544",
+      "archive_sha256": "60205bd6f304b7176fac8e59992ca479754be7f3baf79974e4e7a8f9802d45ee",
+      "raw_bytes": 3437829,
+      "archive_bytes": 3352405
+    },
+    {
+      "file": "baseline-work-audio.ayh1.gz",
+      "raw_sha256": "5021c0f9d53abc7c26df1f2eab6f749a9db84426a186aeda9fed3f58793752b0",
+      "archive_sha256": "ae18e64e3db3490cc366ff222ba75a3c7657fb0216f607f57481e8e98b555a93",
+      "raw_bytes": 20606,
+      "archive_bytes": 19851
+    },
+    {
+      "file": "dictionary-budgeted-rows.json.gz",
+      "raw_sha256": "f4182c511cfe51537d4a52a5b5a8ced8c4d99f74ef9bafb3fc17f934d428bd07",
+      "archive_sha256": "e2fea433855f68ab5a9c6fcf6718d96f65c96b5c15239e62e0d2d28d88652670",
+      "raw_bytes": 3809,
+      "archive_bytes": 1307
+    },
+    {
+      "file": "dictionary-budgeted-video.raw.gz",
+      "raw_sha256": "fe768849d6bef32e87b72b2b971d8134c9ebb7d220ceb05e8ab85cc11f69653a",
+      "archive_sha256": "bab47da326ace17873f7f041ad4693db04bd8f62bbb14a485b3b7a2362f42616",
+      "raw_bytes": 869594,
+      "archive_bytes": 561830
+    },
+    {
+      "file": "dictionary-budgeted-video.stream.gz",
+      "raw_sha256": "63ed51e83d44edd1b67ff13635429b0bc5de31400618eed3fad23a06729aa081",
+      "archive_sha256": "4d24382cd3d3f0e6e8037bcf6963c0f8805a3e9d61a2edb03243ebc5dfc7a07a",
+      "raw_bytes": 619749,
+      "archive_bytes": 592630
+    },
+    {
+      "file": "dictionary-flat-rows.json.gz",
+      "raw_sha256": "f4182c511cfe51537d4a52a5b5a8ced8c4d99f74ef9bafb3fc17f934d428bd07",
+      "archive_sha256": "e2fea433855f68ab5a9c6fcf6718d96f65c96b5c15239e62e0d2d28d88652670",
+      "raw_bytes": 3809,
+      "archive_bytes": 1307
+    },
+    {
+      "file": "dictionary-flat-video.raw.gz",
+      "raw_sha256": "fe768849d6bef32e87b72b2b971d8134c9ebb7d220ceb05e8ab85cc11f69653a",
+      "archive_sha256": "bab47da326ace17873f7f041ad4693db04bd8f62bbb14a485b3b7a2362f42616",
+      "raw_bytes": 869594,
+      "archive_bytes": 561830
+    },
+    {
+      "file": "dictionary-flat-video.stream.gz",
+      "raw_sha256": "4e48e3d3b514b8b8104eb4945828ea8e812815c6bdd7dd3a8be0967441cf042e",
+      "archive_sha256": "b388854d1688683ce10e54bcbaebf2ed1d50378b07a0447171a6c5d474f78481",
+      "raw_bytes": 619690,
+      "archive_bytes": 592595
+    },
+    {
+      "file": "dictionary-report.json.gz",
+      "raw_sha256": "bebd08a0677b27ef0baef52780a281c19fae388aa1c7ce2953c2cf21883547df",
+      "archive_sha256": "1d7dc67bfaab2fd46d683d5a28cd50b601449b2a5a152e267095703103bba97a",
+      "raw_bytes": 648560,
+      "archive_bytes": 161510
+    },
+    {
+      "file": "dictionary-part04.log.gz",
+      "raw_sha256": "534ba05979193507427ff1184c96b0d805c167658eba28ccd19bdfef91d917a7",
+      "archive_sha256": "edc07f0bb7a89509d997a8b963163334fc0e3641ff9c0f221219077534c3ed27",
+      "raw_bytes": 130,
+      "archive_bytes": 128
+    },
+    {
+      "file": "dictionary-part04-budgeted.log.gz",
+      "raw_sha256": "9b3c2d9a549f2fe3dfc96b5f1f160c63ccb539c0beaf1c08448cfc7634ad945b",
+      "archive_sha256": "7fa8dfa16441898dcea18a654cf878af62d802214550b1e631a0d681501028c9",
+      "raw_bytes": 2269,
+      "archive_bytes": 496
+    },
+    {
+      "file": "sector-cache-part04-profile.json.gz",
+      "raw_sha256": "2ee78abb52a3906a3c3b14a16b30c614887a16c88437d20263620702b7e3ae3f",
+      "archive_sha256": "ab35cc9ca591bfef2fdf4154c1bcf210ff4c3dfe295374dae4428303541fe8c6",
+      "raw_bytes": 672310,
+      "archive_bytes": 59102
+    },
+    {
+      "file": "part04-delivery-windows.json.gz",
+      "raw_sha256": "1558c044000f146a1856cadd96eaa006d793cc50f0708b072be5b8d63f8ad59f",
+      "archive_sha256": "a286746f78b6409b11980b67e5d99bf42cfe0cd8a9095559fd173a9cec49fe9c",
+      "raw_bytes": 17217,
+      "archive_bytes": 2724
+    },
+    {
+      "file": "dictionary-delivery-windows.json.gz",
+      "raw_sha256": "96beb14a7d6778e4f1e332617839f5107af254d3d6404febe36bc25e8088a8f4",
+      "archive_sha256": "5c4b5579f6aba69dc29743fdf2bfbda1c4901d8fb3f048b73e286d238dd60171",
+      "raw_bytes": 6827,
+      "archive_bytes": 1641
+    },
+    {
+      "file": "baseline-delivery-windows.json.gz",
+      "raw_sha256": "e326ce5b1648f5af753e403451b63d9f65b2ba6306aed0f23004fc906ef62b2c",
+      "archive_sha256": "ab87027b92287da3b99bbab7696f9c8c7fe437360efab06a2235b45b0e657444",
+      "raw_bytes": 5233,
+      "archive_bytes": 1375
+    }
+  ],
+  "source_sha256_lf": {
+    "probe_dictionary_numbering.py": "bed77bb032f3069f206b0f364ef9f663e87637032edfa0af71a70d11e358ec69",
+    "fit_lzsa2_cpu_budget.py": "c445a7a1966c4d9632844c818a8d6ae6ba01816ce13590bf329b43d38b2b5353",
+    "verify_cached_cell_player.py": "eae1511013aaa834dfe603f0047d84609e7223acfbff2858ae3a4c474c06357c",
+    "profile_cell_delivery.py": "b8ce30e49985ddc897628f0348b8f58b697255b6f04037fd20b9e575b6143953",
+    "analyze_cb46_delivery_windows.py": "f671a9784377901498aa5318f305832fb3bfd09d0bc3cb0f644d6a6579525f69",
+    "verify_full_volume_dictionary_probe.py": "6e766d812d891e8efa241f52a7917173627d3bfe82b2400be065a536535fc3bb"
+  }
+}
