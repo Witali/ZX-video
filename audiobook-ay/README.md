@@ -5,6 +5,12 @@ completely unintelligible. The original files remain for comparison, not as
 an accepted speech result. See the [LPC2 reuse comparison](LPC2_COMPARISON.md)
 for a 24-second diagnostic based on the existing LPC codec.
 
+The user subsequently accepted the **full host LPC2 reference** as intelligible.
+The latest [YM2149 listening check](YM2149_PREVIEW.md) provides a new 24-second
+chip-constrained preview: 50 Hz, three tone channels, one shared noise source,
+Spectrum-style mono sum, and a fully verified diagnostic TRD. Do not confuse
+the full LPC decoder's voice with what those chip registers can reproduce.
+
 A separate audio-only subproject. The first **120 seconds** of the supplied
 O. Henry recording (1977) are converted with the same refined three-voice,
 square-aware AY synthesizer used by the movie. The user selected compact

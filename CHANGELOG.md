@@ -5,6 +5,46 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: improve LPC parameters and check 50 Hz YM2149 mono playback
+
+- Objective and input: after accepting the full host LPC2 reference as clear,
+  the user requested better preservation, then explicitly constrained the
+  chip check to three tones/shared noise, one update per 50 Hz interrupt and
+  typical Spectrum mixing. Baseline `621dadf`; reuse the exact [60,84) source
+  passage and unchanged external LPC2 DSP. The accepted reference was not AY.
+- First bounded host candidate: 10 ms hop and exact-only coefficient repeats,
+  otherwise unchanged. 4114 ->12601 LPC bytes, 1200 ->2400 frames; spectral
+  cosine 0.874207 ->0.896003, loudness correlation 0.809145 ->0.920091, onset
+  F1 0.840580 ->0.869565. The baseline stream and metrics reproduce exactly.
+  Independent Python frame parsing, round-trip packing and all 192000 finite
+  decoded samples pass. Retain [evidence](audiobook-ay/lpc-detail/report.json)
+  but do not select 100 Hz updates after the user's cadence clarification.
+- Final candidate keeps 20 ms frames and removes approximate LSF repeats:
+  4114 ->6461 LPC bytes; repeat frames 516 ->11, unchanged excitation/pitch/
+  silence classifications. Map LPC formants to chip periods and actual YM
+  fixed-volume levels. Render with vendored, unmodified MIT Ayumi JS revision
+  `3a1fb9120cc2c5ef8f538af59b46701e4c2305bb`: 1773450 Hz, 50 state updates/s,
+  three tone channels, one shared LFSR, true Boolean mixer, equal mono sum.
+  No full LPC filter or high-rate DAC output is attributed to the chip.
+- Same-chip old/new proxies: spectral cosine 0.596526 ->0.666873, loudness
+  correlation 0.858975 ->0.874808, onset F1 0.711864 ->0.757576. Full software
+  LPC remains at 0.889800 spectral cosine. These are not perceptual quality
+  percentages. Save equal-RMS original, old mapping, new YM and full LPC WAVs
+  in [the listening comparison](audiobook-ay/YM2149_PREVIEW.md).
+- Native hot path is unchanged: 974 T/tick, delta 0 T. Complete independent
+  Z80 and cold Fuse playback verify 1200 ticks /13200 exact writes, no missing
+  or duplicate fields, final full-field hold, 52 startup and zero runtime
+  sector reads. First OUT phase 150..153 T, intervals 70905..70909 T. The
+  diagnostic TRD uses 96 sectors. Seven Python tests plus chip period, shared
+  noise taps, all 16 mixer combinations, DAC, silence and sample-count checks
+  pass. [Timing evidence](audiobook-ay/ym2149-preview/verification.json).
+- Decision: deliver this 24-second **50 Hz mono chip-model candidate** for
+  listening, without claiming it preserves the accepted full LPC clarity.
+  The disk replays prepared register states; no native LPC decoder exists.
+  Ideal 20 ms/atomic waveform updates, sequential native OUTs and physical
+  analogue loading are distinguished. No physical hardware was recorded.
+  The original two-minute disk and movie releases remain unchanged.
+
 ## 2026-10-01: reuse LPC2 for a bounded audiobook speech comparison
 
 - User feedback: the first movie-style audiobook AY preview is completely

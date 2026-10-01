@@ -1,0 +1,247 @@
+{
+  "complete": true,
+  "host_codec_comparison_only": true,
+  "native_lpc_decoder": false,
+  "native_timing_verified": false,
+  "ay_output_verified": false,
+  "candidate_listener_accepted": false,
+  "baseline_listener_accepted": true,
+  "source_sha256": "a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779",
+  "start_seconds": 60,
+  "duration_seconds": 24,
+  "objective": "preserve faster speech transitions using 10 ms frames and exact-only coefficient repeats",
+  "profiles": {
+    "baseline": {
+      "source": "C:\\Work\\LPC-sound-codec\\index.html",
+      "source_sha256": "3e530f062339f82c52d60bcca08a0e7bbb91b71227d362a25d9a75f5e0973e7d",
+      "extracted_core_sha256": "8378cdd0e87f73e0740a80de6a40c4b5f1d8712e2dd39a562433fdbe11ac7fd2",
+      "input_pcm_sha256": "82b70890e3885e9d94952977fa0b92285dc6028a27f4fcaf8abc3a355a39653c",
+      "profile": "baseline",
+      "config": {
+        "frameMs": 20,
+        "windowMs": 32,
+        "pre": 0.85,
+        "voicing": 0.38,
+        "repeat": 0.05,
+        "pitchSmooth": 0.65
+      },
+      "normalization_gain": 1.3342132110403992,
+      "quantized_frames_sha256": "06bd155435f6af9ac1d0587aaa98b41fa6e9aeedaff08c751c1e345bf0135e1b",
+      "postfilter": 0.35,
+      "brightness_db": 4,
+      "highpass_hz": 70,
+      "bitstream_roundtrip": true,
+      "stats": {
+        "version": 1,
+        "codec": "lpc2",
+        "frames": 1200,
+        "payloadBits": 32622,
+        "payloadBytes": 4078,
+        "voiced": 793,
+        "mixed": 103,
+        "transient": 111,
+        "repeatFrames": 516,
+        "silence": 174,
+        "avgPitch": 186.79477764346316,
+        "actualBytes": 4114
+      },
+      "meta": {
+        "codec": "lpc2",
+        "ver": 1,
+        "order": 10,
+        "sr": 8000,
+        "H": 160,
+        "W": 256,
+        "frameCount": 1200,
+        "samples": 192000,
+        "payloadBits": 32622,
+        "pre": 0.8500000238418579,
+        "voicing": 0.3799999952316284
+      }
+    },
+    "detail": {
+      "source": "C:\\Work\\LPC-sound-codec\\index.html",
+      "source_sha256": "3e530f062339f82c52d60bcca08a0e7bbb91b71227d362a25d9a75f5e0973e7d",
+      "extracted_core_sha256": "8378cdd0e87f73e0740a80de6a40c4b5f1d8712e2dd39a562433fdbe11ac7fd2",
+      "input_pcm_sha256": "82b70890e3885e9d94952977fa0b92285dc6028a27f4fcaf8abc3a355a39653c",
+      "profile": "detail",
+      "config": {
+        "frameMs": 10,
+        "windowMs": 32,
+        "pre": 0.85,
+        "voicing": 0.38,
+        "repeat": 0,
+        "pitchSmooth": 0.65
+      },
+      "normalization_gain": 1.3342132110403992,
+      "quantized_frames_sha256": "fe0e3740cfcf0292fdb75a310bde1a1015254f61df5d32aa97623c88d684391d",
+      "postfilter": 0.35,
+      "brightness_db": 4,
+      "highpass_hz": 70,
+      "bitstream_roundtrip": true,
+      "stats": {
+        "version": 1,
+        "codec": "lpc2",
+        "frames": 2400,
+        "payloadBits": 100515,
+        "payloadBytes": 12565,
+        "voiced": 1601,
+        "mixed": 176,
+        "transient": 234,
+        "repeatFrames": 72,
+        "silence": 340,
+        "avgPitch": 185.18594258340946,
+        "actualBytes": 12601
+      },
+      "meta": {
+        "codec": "lpc2",
+        "ver": 1,
+        "order": 10,
+        "sr": 8000,
+        "H": 80,
+        "W": 256,
+        "frameCount": 2400,
+        "samples": 192000,
+        "payloadBits": 100515,
+        "pre": 0.8500000238418579,
+        "voicing": 0.3799999952316284
+      }
+    }
+  },
+  "independent_bitstream_checks": {
+    "baseline": {
+      "rate": 8000,
+      "hop": 160,
+      "window": 256,
+      "samples": 192000,
+      "frames": 1200,
+      "payload_bits": 32622,
+      "quantized_frames_sha256": "06bd155435f6af9ac1d0587aaa98b41fa6e9aeedaff08c751c1e345bf0135e1b",
+      "repeat_frames": 516,
+      "silent_frames": 174,
+      "finite_output_samples": 192000
+    },
+    "detail": {
+      "rate": 8000,
+      "hop": 80,
+      "window": 256,
+      "samples": 192000,
+      "frames": 2400,
+      "payload_bits": 100515,
+      "quantized_frames_sha256": "fe0e3740cfcf0292fdb75a310bde1a1015254f61df5d32aa97623c88d684391d",
+      "repeat_frames": 72,
+      "silent_frames": 340,
+      "finite_output_samples": 192000
+    }
+  },
+  "metrics": {
+    "baseline": {
+      "semitone_spectral_cosine": 0.8742072646419196,
+      "chroma_cosine": 0.9518943347406057,
+      "loudness_correlation": 0.809145059495078,
+      "rhythm_onset_f1": 0.8405797101449275,
+      "onsets": {
+        "reference": 34,
+        "candidate": 35,
+        "matched": 29,
+        "precision": 0.8285714285714286,
+        "recall": 0.8529411764705882,
+        "f1": 0.8405797101449275
+      },
+      "evaluated_frames": 226
+    },
+    "detail": {
+      "semitone_spectral_cosine": 0.8960032889210479,
+      "chroma_cosine": 0.9657533093570108,
+      "loudness_correlation": 0.9200908901859456,
+      "rhythm_onset_f1": 0.8695652173913043,
+      "onsets": {
+        "reference": 34,
+        "candidate": 35,
+        "matched": 30,
+        "precision": 0.8571428571428571,
+        "recall": 0.8823529411764706,
+        "f1": 0.8695652173913043
+      },
+      "evaluated_frames": 226
+    }
+  },
+  "metrics_scope": "signal proxies, not a measurement of intelligibility or perceived quality",
+  "equal_rms_preview": 0.04752569742041263,
+  "preview_checks": {
+    "original": {
+      "samples": 529200,
+      "rms": 0.04752569742041263,
+      "peak": 0.5582067492442281
+    },
+    "baseline": {
+      "samples": 529200,
+      "rms": 0.04752569742041263,
+      "peak": 0.9000000000000001
+    },
+    "detail": {
+      "samples": 529200,
+      "rms": 0.047525697420412634,
+      "peak": 0.8227696971374648
+    }
+  },
+  "player_hot_path_changed": false,
+  "player_hot_path_delta_tstates": 0,
+  "native_cost_note": "No native LPC decoder exists. LPC polynomial updates double; no CPU feasibility claim.",
+  "producer_sources_sha256_lf": {
+    "compare_lpc2_detail.py": "c72efa68109ad6c7b70e2ce8ed55bf5106f97106b1dcd9edd5e2c81f59ee77d4",
+    "lpc2_bridge.js": "25be5e2932bb4812f1c145daccc93b2c59dd891ef2789c94115c079a2da8ac82",
+    "lpc2_stream.py": "c792505ce34852656c6dcbf25fcbd10c09b02bb11631d5d91b48a45e3b1af1ca"
+  },
+  "artifacts": {
+    "baseline/lpc2-analysis.json": {
+      "bytes": 542510,
+      "sha256": "67534db0f87371e64195914c2906145782c849b498d25eaaa4ad658ed76ca68f"
+    },
+    "baseline/lpc2-core.js.gz": {
+      "bytes": 8276,
+      "sha256": "d0374ab9d5d1c6145d6813cac54f8c4c115f2306b886ea04d9238ebeacaaad0e"
+    },
+    "baseline/reference.lp2": {
+      "bytes": 4114,
+      "sha256": "92340ee3e144f103cdfa0648392c281dd507d96d635c13315c138bec99a94349"
+    },
+    "baseline-preview.wav": {
+      "bytes": 1058444,
+      "sha256": "12d1047fa4e7192596a2ea212f2ca2188244f2a3ea7333e1c62adf7c1f65ee28"
+    },
+    "detail/lpc2-analysis.json": {
+      "bytes": 1084419,
+      "sha256": "8d76040fbabbda68ebcc99775d85a277a3c85bb98f57fff6b3eb260cec692b4b"
+    },
+    "detail/lpc2-core.js.gz": {
+      "bytes": 8276,
+      "sha256": "d0374ab9d5d1c6145d6813cac54f8c4c115f2306b886ea04d9238ebeacaaad0e"
+    },
+    "detail/reference.lp2": {
+      "bytes": 12601,
+      "sha256": "5cbc087eae05e949ac406789ee4a1db3047ae0e5484b097b57884a08f32eb268"
+    },
+    "detail-preview.wav": {
+      "bytes": 1058444,
+      "sha256": "b0efd97767bb61ac5ed25a5f37624699e0df950026460b58dc9e4059483623a9"
+    },
+    "original-preview.wav": {
+      "bytes": 1058444,
+      "sha256": "5fbb89114362c21341e6bf031cb83147399592ee015650f971dfd090b85e4a42"
+    },
+    "producer-sources/compare_lpc2_detail.py.gz": {
+      "bytes": 2454,
+      "sha256": "c26cef254fdc4df85fe6fdfb19ee2ed38ad576a3362a5c3255864a748ec19f44"
+    },
+    "producer-sources/lpc2_bridge.js.gz": {
+      "bytes": 1790,
+      "sha256": "130407486dc97723e00f593ca7cff58521e051135df0fbc1f233db4571124c4c"
+    },
+    "producer-sources/lpc2_stream.py.gz": {
+      "bytes": 994,
+      "sha256": "206edfde38f0ab739d4952c2304c54da656ad660259edb90f9b5744a61ca9312"
+    }
+  },
+  "producer_source_archives": "producer-sources/"
+}

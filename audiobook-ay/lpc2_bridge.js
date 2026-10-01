@@ -6,8 +6,9 @@ const vm = require('vm');
 const crypto = require('crypto');
 const zlib = require('zlib');
 
-const [sourcePath, pcmPath, outputPath] = process.argv.slice(2);
-if (!outputPath) throw new Error('Usage: node lpc2_bridge.js index.html input.f32 output-directory');
+const [sourcePath, pcmPath, outputPath, profile = 'baseline'] = process.argv.slice(2);
+if (!outputPath) throw new Error('Usage: node lpc2_bridge.js index.html input.f32 output-directory [baseline|detail|detail50]');
+if (!['baseline', 'detail', 'detail50'].includes(profile)) throw new Error('Unknown LPC2 profile');
 const html = fs.readFileSync(sourcePath, 'utf8');
 function section(start, end) {
   const a = html.indexOf(start), b = html.indexOf(end, a + start.length);
@@ -26,6 +27,9 @@ const input = fs.readFileSync(pcmPath);
 if (input.length % 4) throw new Error('Truncated float PCM');
 const samples = new Float32Array(input.buffer.slice(input.byteOffset, input.byteOffset + input.byteLength));
 const config = {frameMs:20, windowMs:32, pre:.85, voicing:.38, repeat:.05, pitchSmooth:.65};
+// Same bitstream and decoder. Exact coefficient repeats remain lossless.
+if (profile === 'detail') Object.assign(config, {frameMs:10, repeat:0});
+if (profile === 'detail50') Object.assign(config, {frameMs:20, repeat:0});
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 async function main() {
   const normalized = api.normalizeInput(samples, 'peak', -1, 18);
@@ -47,9 +51,12 @@ async function main() {
     pitch_hz:frame.mode === 1 || frame.mode === 2 ? 8000 / api.qLpc2Pitch(frame.pitch,8000) : 0,
     coefficients:Array.from(api.lsfToLpc(api.decodeLpc2FrameLsf(frame)))
   }));
+  // Canonical integer representation for an independent Python bitstream reader.
+  const integers = decoded.frames.map(f => [f.energy,f.mode,f.pitch,+f.repeat,f.energy ? f.lsfq : []]);
   fs.writeFileSync(path.join(outputPath, 'lpc2-analysis.json'), JSON.stringify({
     source:sourcePath, source_sha256:sha(Buffer.from(html)), extracted_core_sha256:sha(Buffer.from(code)),
-    input_pcm_sha256:sha(input), config, normalization_gain:normalized.gain,
+    input_pcm_sha256:sha(input), profile, config, normalization_gain:normalized.gain,
+    quantized_frames_sha256:sha(Buffer.from(JSON.stringify(integers))),
     postfilter:.35, brightness_db:4, highpass_hz:70,
     bitstream_roundtrip:true, stats:decoded.stats, meta:decoded.meta, frames
   }, null, 2) + '\n');

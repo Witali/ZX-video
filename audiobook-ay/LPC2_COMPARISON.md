@@ -7,6 +7,13 @@ This comparison uses its **LPC2 Improved** implementation from `index.html`
 project is read-only and unchanged. This is a completed 24-second diagnostic,
 not a replacement two-minute release or a native Z80 LPC decoder.
 
+**Later listener feedback (2026-10-01):** the user accepted the full LPC2
+reference as sufficiently clear, then requested more faithful sound and a
+check on YM2149 with 50 Hz interrupt updates and typical Spectrum mixing.
+See the [new chip-constrained preview](YM2149_PREVIEW.md). The historical
+measurements and pending-listener statements below describe this experiment
+at its original completion; the AY formant sample was not accepted.
+
 ## Listen to the same passage
 
 Source interval: **60..84 seconds** of the same audiobook. All four files

@@ -1,0 +1,180 @@
+{
+  "complete": true,
+  "preview_only": true,
+  "source_sha256": "a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779",
+  "source_pcm_sha256": "82b70890e3885e9d94952977fa0b92285dc6028a27f4fcaf8abc3a355a39653c",
+  "start_seconds": 60,
+  "duration_seconds": 24,
+  "ticks": 1200,
+  "update_rate_hz": 50,
+  "chip": "YM2149",
+  "clock_hz": 1773450,
+  "mixing": "equal mono A+B+C; no stereo expansion",
+  "three_tone_generators": true,
+  "shared_noise_generators": 1,
+  "high_rate_pcm_volume_output": false,
+  "offline_lpc_profile": {
+    "frameMs": 20,
+    "windowMs": 32,
+    "pre": 0.85,
+    "voicing": 0.38,
+    "repeat": 0,
+    "pitchSmooth": 0.65
+  },
+  "lpc_bytes": 6461,
+  "independent_lpc_bitstream_check": {
+    "rate": 8000,
+    "hop": 160,
+    "window": 256,
+    "samples": 192000,
+    "frames": 1200,
+    "payload_bits": 51393,
+    "quantized_frames_sha256": "4662e150270424c4652eb5484846c3d7ded6445d4a04c2780154c0e9b6e886d6",
+    "repeat_frames": 11,
+    "silent_frames": 174
+  },
+  "baseline_listener_accepted": false,
+  "candidate_listener_accepted": false,
+  "selected_as_quality_improvement": false,
+  "decision": "50 Hz hardware-constrained listening candidate; full LPC clarity is not preserved by assumption",
+  "metrics": {
+    "baseline": {
+      "semitone_spectral_cosine": 0.5965255611099024,
+      "chroma_cosine": 0.8044843001150969,
+      "loudness_correlation": 0.8589750891877204,
+      "rhythm_onset_f1": 0.711864406779661,
+      "onsets": {
+        "reference": 34,
+        "candidate": 25,
+        "matched": 21,
+        "precision": 0.84,
+        "recall": 0.6176470588235294,
+        "f1": 0.711864406779661
+      },
+      "evaluated_frames": 226
+    },
+    "ym2149": {
+      "semitone_spectral_cosine": 0.6668730166663647,
+      "chroma_cosine": 0.8462200217720424,
+      "loudness_correlation": 0.8748080487005843,
+      "rhythm_onset_f1": 0.7575757575757576,
+      "onsets": {
+        "reference": 34,
+        "candidate": 32,
+        "matched": 25,
+        "precision": 0.78125,
+        "recall": 0.7352941176470589,
+        "f1": 0.7575757575757576
+      },
+      "evaluated_frames": 226
+    },
+    "lpc-reference": {
+      "semitone_spectral_cosine": 0.889799632811116,
+      "chroma_cosine": 0.9629111574518905,
+      "loudness_correlation": 0.8231839741570149,
+      "rhythm_onset_f1": 0.8888888888888888,
+      "onsets": {
+        "reference": 34,
+        "candidate": 38,
+        "matched": 32,
+        "precision": 0.8421052631578947,
+        "recall": 0.9411764705882353,
+        "f1": 0.8888888888888888
+      },
+      "evaluated_frames": 226
+    }
+  },
+  "metrics_scope": "signal proxies only; not a perceptual speech score",
+  "native_lpc_decoder": false,
+  "pcm_dac_player": false,
+  "disk_timing_verified": true,
+  "player_hot_path_delta_tstates": 0,
+  "registers_sha256": "32c7865c1e05f445349c7706412ac5bd81facffb4cc1ebcd5353e0cbade55f25",
+  "packed_sha256": "c5918c50b910e9a5b25464610b0496d5b632e7d9bf6c64d3d7bd59961a2b25d8",
+  "equal_rms_preview": 0.056074222143511224,
+  "preview_peak": {
+    "baseline": 0.3044497676349683,
+    "ym2149": 0.2745075433554962,
+    "original": 0.6628233547408674,
+    "lpc-reference": 0.9
+  },
+  "limitations": [
+    "Ayumi chip simulation, not a physical recording or exact analogue circuit model",
+    "Preview uses atomic 50 Hz updates; TRD writes R0..R10 sequentially within each interrupt field",
+    "LPC runs only on the host; the Spectrum replays precomputed chip register states"
+  ],
+  "producer_sources_sha256_lf": {
+    "probe_ym2149.py": "c74ca994d6ef1398786022771c44701a2514e74937fb64e8122498c2ee80aacc",
+    "render_ym2149.js": "585122fbf9d5bc4af4a0af9086f2bb285ba4a45f6984381d8a275e616ea1d009",
+    "probe_lpc2.py": "e3ae1d9812768cf3bcdbe5ba74d67dfb2475b7854de6d023d723e70115438ed6",
+    "lpc2_bridge.js": "1e5c66ef8092708df3ee69ad653d7cab639528e1c3aa8f9235cbd41b7b4e059d",
+    "lpc2_stream.py": "c792505ce34852656c6dcbf25fcbd10c09b02bb11631d5d91b48a45e3b1af1ca"
+  },
+  "artifacts": {
+    "audiobook-preview.trd": {
+      "bytes": 655360,
+      "sha256": "190ce25bfc5e113d2c7f499df3c6971219f44cca024733a2a5f60e6fccfc49ab"
+    },
+    "baseline-preview.wav": {
+      "bytes": 2116844,
+      "sha256": "502c249cfca6702a58e4a913fac8c986e0b38b31ec2fb66c62bacc0420c6d108"
+    },
+    "baseline-registers.gz": {
+      "bytes": 4217,
+      "sha256": "0e1f53b5587eff4f3b34274b79f609ddb176cbfb640873bdfc1c1ff1923ffa59"
+    },
+    "baseline-render.json": {
+      "bytes": 828,
+      "sha256": "7ad16a6ba51b46d30f37898fe01687acba012487d6be3d93a8f1b29763f11bf5"
+    },
+    "lpc/lpc2-analysis.json": {
+      "bytes": 542647,
+      "sha256": "c1935fa6c451347e8c3dea284cb3cf46dc151c91fc56938cbf603b6587db4ecb"
+    },
+    "lpc/lpc2-core.js.gz": {
+      "bytes": 8276,
+      "sha256": "d0374ab9d5d1c6145d6813cac54f8c4c115f2306b886ea04d9238ebeacaaad0e"
+    },
+    "lpc/reference.lp2": {
+      "bytes": 6461,
+      "sha256": "541cf0248a38b5a37d330fbad93a824ee639f0c37b22900522f96597f221c8aa"
+    },
+    "lpc-reference-preview.wav": {
+      "bytes": 2116844,
+      "sha256": "e5ba8875aa78701b2b7ab2f2bf952d3508a146a749e6a08c4343fa6e7023e7d9"
+    },
+    "original-preview.wav": {
+      "bytes": 2116844,
+      "sha256": "561c8915b0e7068655c883fcaef311e26939ddcb9fde756f3044fd0966647e39"
+    },
+    "player.json": {
+      "bytes": 2037,
+      "sha256": "b3945bc94e77cb0d3d4faf1db82e8592b5c8fa73c2f8dcb801fb0a4ab63acbdf"
+    },
+    "soundtrack.ay9.gz": {
+      "bytes": 5313,
+      "sha256": "3351713132a987d3cce854b863c2d0c8be94fc7eb6e83b1a991f0ca13a4bd029"
+    },
+    "ym2149-preview.wav": {
+      "bytes": 2116844,
+      "sha256": "7d96a5aebd28c950ee750196e52303f4fcc426763f2b8803b6e25708d2449c10"
+    },
+    "ym2149-registers.gz": {
+      "bytes": 5474,
+      "sha256": "2f20b309e055afb69ff30e41bc97d0fc0a72ae16534c04ca7f42ad9040679caa"
+    },
+    "ym2149-render.json": {
+      "bytes": 828,
+      "sha256": "5dfc0114c979984b833c075501b36bc4ea169ac24700581ee18301fa5706def9"
+    },
+    "verification.json": {
+      "bytes": 1312,
+      "sha256": "dc0d4972f7cc648ccc0aa501e154a33317633a52b0cd97be9e87215ecc733a43"
+    },
+    "verification-work/fuse-trace.txt.gz": {
+      "bytes": 64750,
+      "sha256": "d4209e047cdd7dc008d2349a626af4f0e0f4579d1605c57640d6678f82e4bb81"
+    }
+  },
+  "verification": "verification.json"
+}

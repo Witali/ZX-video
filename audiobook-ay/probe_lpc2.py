@@ -22,7 +22,7 @@ from build_preview import save, sha
 from player import build_disk
 
 
-def formant_frames(records, samples, rate=8000):
+def formant_frames(records, samples, rate=8000, *, hop=160, clock_hz=ay.AY_CLOCK, levels=ay.LEVELS):
     """Map the decoded LPC2 spectral envelope and excitation class onto AY.
 
     LPC2 remains an offline analyser. AY has no LPC synthesis filter. This
@@ -32,7 +32,9 @@ def formant_frames(records, samples, rate=8000):
     frequency = np.arange(150, 3901, 10, dtype=float)
     w = 2*np.pi*frequency/rate
     exponent = np.exp(-1j*w[:, None]*np.arange(11))
-    rms = np.array([np.sqrt(np.mean(samples[i*160:(i+1)*160]**2)) for i in range(len(records))])
+    if len(samples) != len(records)*hop:
+        raise ValueError('LPC records and source samples do not cover the same interval')
+    rms = np.array([np.sqrt(np.mean(samples[i*hop:(i+1)*hop]**2)) for i in range(len(records))])
     peak = max(float(np.percentile(rms, 98)), 1e-12)
     frames, details = [], []
     previous = np.array([500., 1500., 2600.])
@@ -54,7 +56,7 @@ def formant_frames(records, samples, rate=8000):
             selected.append(float(f))
         current = np.array(selected)
         previous = current.copy()
-        periods = np.clip(np.rint(ay.AY_CLOCK/(16*current)), 1, 4095).astype(int)
+        periods = np.clip(np.rint(clock_hz/(16*current)), 1, 4095).astype(int)
         # Integrate de-emphasised spectral power around each selected resonance.
         power = (envelope / np.maximum(abs(1-.85*np.exp(-1j*w)), 1e-8))**2
         boundaries = [150, (current[0]+current[1])/2, (current[1]+current[2])/2, 3901]
@@ -62,15 +64,15 @@ def formant_frames(records, samples, rate=8000):
                              for j in range(3)])
         strength /= max(float(np.linalg.norm(strength)), 1e-12)
         level = min(.9, .85*rms[i]/peak)
-        volumes = np.argmin(abs(ay.LEVELS[None, :]-level*strength[:, None]), axis=1)
+        volumes = np.argmin(abs(levels[None, :]-level*strength[:, None]), axis=1)
         noise = 0
         if record['mode'] in (0, 3):
             # AY cannot reproduce LPC's filtered noise. Use only B for these
             # consonants instead of retaining unrelated bass/melody tones.
             volumes[:] = 0
-            volumes[1] = np.argmin(abs(ay.LEVELS-level))
+            volumes[1] = np.argmin(abs(levels-level))
             centroid = float(np.sum(frequency*power)/max(np.sum(power), 1e-12))
-            noise = int(np.clip(round(ay.AY_CLOCK/(16*max(centroid*4, 1000))), 1, 31))
+            noise = int(np.clip(round(clock_hz/(16*max(centroid*4, 1000))), 1, 31))
         if record['energy'] == 0:
             volumes[:] = 0
             noise = 0
