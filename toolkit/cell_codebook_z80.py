@@ -14,7 +14,7 @@ from build_zxv_trd import MiniAssembler
 CODE, ROWS, BOOK, POPCOUNT = 0x9000,0x9e00,0xa800,0xb000
 
 
-def build(*,dictionary=True,front_reuse=False):
+def build(*,dictionary=True,front_reuse=False,fast_masks=False):
     if front_reuse and not dictionary:raise ValueError('front reuse requires the cell book')
     a=MiniAssembler(CODE);listing=[];stage='setup'
     def emit(name,blob,t):listing.append(dict(address=a.pc,instruction=name,tstates=t,stage=stage));a.emit(*blob)
@@ -51,8 +51,11 @@ def build(*,dictionary=True,front_reuse=False):
     labelop('LD A,(screen_high)',0x3a,'screen_high',13);emit('LD D,A',[0x57],4);emit('LD E,96',[0x1e,96],7)
     stage='bitmap_mask';a.label('bitmap_group')
     exx();emit('LD A,(HL)',[0x7e],7);emit('INC HL',[0x23],6);exx()
+    if fast_masks:
+        emit('OR A',[0xb7],4);labelop('JP Z,empty_bitmap',0xca,'empty_bitmap',10)
     for _ in range(8):
         emit('RRCA',[0x0f],4);labelop('CALL C,cell',0xdc,'cell', [10,17]);emit('INC E',[0x1c],4)
+    if fast_masks:a.label('bitmap_advance')
     jr(0x20,'same_band');emit('LD A,D',[0x7a],4);emit('ADD A,8',[0xc6,8],7);emit('LD D,A',[0x57],4)
     a.label('same_band');exx();emit('DEC C',[0x0d],4);exx();labelop('JP NZ,bitmap_group',0xc2,'bitmap_group',10)
     stage='attribute_mask'
@@ -60,10 +63,27 @@ def build(*,dictionary=True,front_reuse=False):
     emit('LD D,A',[0x57],4);emit('LD E,96',[0x1e,96],7)
     exx();emit('LD C,72',[0x0e,72],7);exx()
     a.label('attribute_group');exx();emit('LD A,(HL)',[0x7e],7);emit('INC HL',[0x23],6);exx()
-    for _ in range(8):
-        emit('RRCA',[0x0f],4);labelop('CALL C,attribute',0xdc,'attribute',[10,17]);emit('INC DE',[0x13],6)
+    if fast_masks:
+        emit('OR A',[0xb7],4);labelop('JP Z,empty_attributes',0xca,'empty_attributes',10)
+    for bit in range(8):
+        emit('RRCA',[0x0f],4)
+        if fast_masks:
+            jr(0x30,'attribute_skip_'+str(bit))
+            exaf();emit('LD A,(HL)',[0x7e],7);emit('LD (DE),A',[0x12],7)
+            emit('INC HL',[0x23],6);exaf();a.label('attribute_skip_'+str(bit))
+        else:labelop('CALL C,attribute',0xdc,'attribute',[10,17])
+        emit('INC DE',[0x13],6)
+    if fast_masks:a.label('attribute_advance')
     exx();emit('DEC C',[0x0d],4);exx();labelop('JP NZ,attribute_group',0xc2,'attribute_group',10)
     emit('RET',[0xc9],10)
+    if fast_masks:
+        stage='bitmap_mask';a.label('empty_bitmap')
+        emit('LD A,E',[0x7b],4);emit('ADD A,8',[0xc6,8],7);emit('LD E,A',[0x5f],4)
+        labelop('JP bitmap_advance',0xc3,'bitmap_advance',10)
+        stage='attribute_mask';a.label('empty_attributes')
+        emit('LD A,E',[0x7b],4);emit('ADD A,8',[0xc6,8],7);emit('LD E,A',[0x5f],4)
+        jr(0x30,'empty_attributes_advanced');emit('INC D',[0x14],4)
+        a.label('empty_attributes_advanced');labelop('JP attribute_advance',0xc3,'attribute_advance',10)
     stage='mode';a.label('cell');exaf()
     if dictionary:
         exx();emit('SRL B',[0xcb,0x38],8);jr(0x20,'mode_ready')
@@ -112,7 +132,7 @@ def build(*,dictionary=True,front_reuse=False):
     a.label('state');a.label('packet');a.word(0);a.label('screen_high');a.emit(0);a.label('end')
     if a.pc>0x9d00:raise ValueError('renderer exceeds provisional code allocation')
     regions=[(CODE,a.resolve()),(POPCOUNT,bytes(i.bit_count() for i in range(256)))]
-    return regions,a.labels,dict(dictionary=dictionary,front_reuse=front_reuse,instruction_listing=listing,code_bytes=len(regions[0][1])-3,
+    return regions,a.labels,dict(dictionary=dictionary,front_reuse=front_reuse,fast_masks=fast_masks,instruction_listing=listing,code_bytes=len(regions[0][1])-3,
         state_bytes=3,book_bytes=2048,popcount_bytes=256,row_table_bytes=512,
         layout_scope='Component-only: reuses obsolete compact-frame range A800..B0FF; integration must remove old frame consumers.',
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf')

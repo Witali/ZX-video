@@ -95,8 +95,19 @@ AY records are exact. Root images stay unchanged; this is not a release.
 Native book/literal cells cost 281/317 T versus 268/304 T; front cells 299 T,
 excluding caller/refill. Full counted formula and twenty boundary cases are
 in [native evidence](toolkit/front_native_report.json).
+Follow-up CB44 mask skipping and inline attribute writes reduce every draw
+in this window: average 128487 -> 122716 T (-4.49%), with identical video/AY
+streams. Ten tests / 24 independent component cases pass; 255 measured
+frame deltas match the exact formula (frame zero is bootstrap-primed).
+Full Fuse screens and AY remain exact, but 110 frames are late (108 beyond
+one field), maximum 82 fields. This is an improvement, not a timing pass.
+Code grows 57 bytes; this diagnostic image uses one extra startup sector
+(797 -> 798), video unchanged at 735 sectors. The builder enables it for
+CB44 automatically, CB41/42 defaults stay unchanged. Reuse
+`.tmp/front-fast-masks/` and [evidence](toolkit/front_fast_masks_report.json).
 
-The first complete selected volume fails capacity: 2558 sectors versus 2544,
+The first complete selected volume before mask optimization fails capacity:
+2558 sectors versus 2544,
 including 2456 video and 102 startup/audio sectors. No full-set TRDs were
 emitted. Reuse `.tmp/front-four-native-capacity/` and the exact cached video.
 The complete real Fuse pipeline trace finds drawing 35.10M T, active disk

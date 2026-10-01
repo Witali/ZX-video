@@ -46,6 +46,10 @@ formerly literal, whole-renderer delta is:
 
 `-16 + 13*N + 16*(ceil(N/4)-ceil(N/8)) + 18*(B-L)`.
 
+This mode-reader comparison disables `fast_masks` in both kernels. The
+current CB44 builder also enables the mask optimization below automatically;
+add its separate delta when comparing whole renderers.
+
 This excludes packet copying, row controls, paging, AY/IRQ, ULA contention
 and disk/ROM. CB42 adds 18 T per ordinary packet and 207+74*N T per row
 replacement handler, with its documented queue/dispatch exclusions.
@@ -119,3 +123,48 @@ Use a new output directory if rebuilding. The analogous capacity probe uses
 cuts `1312,2672,3744,5066`, `--only-volume 1 --verify none`.
 [`front_native_report.json`](front_native_report.json) and its hashed evidence
 preserve complete native/Fuse data, failed builds and diagnostic TRDs in LFS.
+
+## Follow-up: skip empty groups and inline attributes
+
+Baseline `0bb033f`. CB44 now bypasses eight bit tests for zero bitmap/attribute
+mask bytes and inlines each changed attribute write. CB41/CB42 defaults and
+all encoded video/AY bytes stay identical. Standalone assembly retains
+`fast_masks=False` for direct baseline comparisons.
+
+Counted body costs exclude mask fetch and the shared group tail:
+
+| Path | Before | After | Delta |
+| --- | ---: | ---: | ---: |
+| Empty bitmap group | 144 T | 39 T | -105 T |
+| Empty attribute group, no E wrap | 160 T | 51 T | -109 T |
+| Empty attribute group, E wraps | 160 T | 50 T | -110 T |
+| Nonempty bitmap group | original body | original +14 T | +14 T |
+| Nonempty attributes, k set bits | 160+45k T | 190+23k T | 30-22k T |
+
+Per frame, with Zb/Za zero bitmap/attribute mask groups, C empty attribute
+groups that wrap E, and A changed attributes, the exact delta is
+`3168 - 119*Zb - 139*Za - C - 22*A`. Both renderers perform identical writes
+and consume identical payloads. Sparse nonempty groups can be slower; the
+formula does not claim every possible frame improves.
+
+Ten tests pass, including 24 guarded/independent full-flags cases spanning
+all 256 mask byte values, both screens, CB41/44 modes and IRQ injection.
+On the same real 256-frame window every draw improves. The 255 separately
+called frames average 128487 -> 122716 T (-4.49%), maximum 232322 -> 227162 T.
+All 255 measured differences equal the formula; frame zero is primed by the
+bootstrap and its delta is reported separately as a formula, not a call
+measurement. Next-packet calls total -434 T due to the changed sector/track
+alignment; those are not attributed to mask optimization.
+
+Native code grows 348 -> 405 bytes, increasing this diagnostic image's used
+sectors 797 -> 798. Video remains exactly 188005 bytes / 735 sectors, and AY
+bytes are unchanged. Full Fuse playback confirms all 1769472 screen bytes,
+1280 AY ticks and sector contents. Misses are 110 (108 beyond one field),
+maximum 82 fields, versus 116/89 in the original baseline run. It still fails
+fallback and zero-late timing. No full-movie capacity/timing claim follows.
+
+Retain this measured rendering improvement for CB44 development. The next
+constraint is producer stalls/capacity; do not rebuild all volumes merely
+to repeat this test. Reuse `.tmp/front-fast-masks/` and its identical video
+stream. [Per-frame/whole-player evidence](front_fast_masks_report.json),
+[reproduction and exact comparison](compare_fast_cell_masks.py).

@@ -20,6 +20,7 @@ def main():
     p.add_argument('--build',type=Path,action='append',required=True)
     p.add_argument('--failed-build',type=Path,action='append',default=[])
     p.add_argument('--profile',type=Path,help='Directory containing the additional complete pipeline trace and analysis')
+    p.add_argument('--mask-comparison',type=Path,help='Exact mask-path stream and per-frame CPU comparison')
     for name in ('fuse','tests','evidence','output'):p.add_argument('--'+name,type=Path,required=True)
     a=p.parse_args();root=Path(__file__).resolve().parent
     a.evidence.mkdir(parents=True,exist_ok=True);artifacts=[];runs=[];failed=[]
@@ -38,7 +39,8 @@ def main():
         m=json.loads(meta_path.read_bytes());work=folder/'work'/image.stem;c=m['cell_codebook']
         front=c['wire']=='CB44';dynamic=c.get('dynamic_rows',{}).get('enabled',False)
         assert sha(image.read_bytes())==m['trd_sha256']==record['sha256']
-        _,labels,native=cell_codebook_z80.build(dictionary=True,front_reuse=front)
+        fast_masks=c['native'].get('fast_masks',False)
+        _,labels,native=cell_codebook_z80.build(dictionary=True,front_reuse=front,fast_masks=fast_masks)
         assert labels==c['native_labels'] and native['instruction_listing']==c['native']['instruction_listing']
         _,_,listing=packet_code(m,labels,c['screen_base'],dynamic_rows=dynamic,front_reuse=front)
         assert listing==c['packet_listing']
@@ -58,7 +60,7 @@ def main():
                 '--timing',str(timing.resolve()),'--work',str((work/'captures').resolve()),'--output',str(screens.resolve())],check=True)
         visual=json.loads(screens.read_bytes());assert visual['complete'] and visual['full_screens_exact']
         assert visual['trd_sha256']==measured['trd_sha256']==m['trd_sha256']
-        runs.append(dict(build=folder.name,wire=c['wire'],start=m['frame_start'],frames=m['frames'],cold=cold,
+        runs.append(dict(build=folder.name,wire=c['wire'],fast_masks=fast_masks,start=m['frame_start'],frames=m['frames'],cold=cold,
             trd_sha256=m['trd_sha256'],used_sectors=m['used_sectors'],video_bytes=m['video_bytes'],
             complete_native_screens=True,new_instruction_stages=cpu['new_instruction_stages'],
             full_fuse_screens_exact=True,compared_bytes=visual['compared_bytes'],timing=summarize_fuse(measured)))
@@ -73,17 +75,24 @@ def main():
         assert profile['complete'] and profile['trd_sha256'] in [r['trd_sha256'] for r in runs]
         for path in sorted(a.profile.iterdir()):
             if path.is_file():archive(path,'profile-'+path.name)
+    mask_comparison=None
+    if a.mask_comparison:
+        mask_comparison=json.loads(a.mask_comparison.read_bytes())
+        assert mask_comparison['complete'] and mask_comparison['trd_sha256_after'] in [r['trd_sha256'] for r in runs]
+        archive(a.mask_comparison,'mask-comparison.json')
     from test_front_cell_z80 import FrontCellZ80Tests
     cases=FrontCellZ80Tests();cases.test_modes_both_screens_and_counted_tstates()
     report=dict(complete=True,release=False,whole_movie_timing_verified=False,scope=__doc__,runs=runs,
-        failed_builds=failed,cycle_cases=cases.case_results,profile=profile,
+        failed_builds=failed,cycle_cases=cases.case_results,profile=profile,mask_comparison=mask_comparison,
         cycles=dict(no_refill_before=dict(book=268,literal=304),no_refill_after=dict(book=281,literal=317,front=299),
             formula='-16 + 13*N + 16*(ceil(N/4)-ceil(N/8)) + 18*(front_from_book-front_from_literal)',
-            scope='Renderer against the same book and changed cells; IRQ, ULA, packet copy, audio and disk excluded'),
+            scope='CB44 mode reader against CB41, both with fast_masks=False; IRQ, ULA, packet copy, audio and disk excluded',
+            fast_mask_formula='3168-119*zero_bitmap_groups-139*zero_attribute_groups-empty_attribute_carries-22*changed_attributes'),
         artifacts=artifacts,source_sha256_lf={name:sha((root/name).read_bytes().replace(b'\r\n',b'\n')) for name in
             ('cell_codebook_z80.py','cell_codebook_player.py','front_cell_reuse.py','convert_cb41.py',
              'build_cb41_cadence_movie.py','convert_video.py','verify_cell_codebook_z80.py',
-             'test_front_cell_z80.py','verify_player_windows.py','measure_fap3_fuse.py','profile_cell_delivery.py')})
+             'test_front_cell_z80.py','verify_player_windows.py','measure_fap3_fuse.py','profile_cell_delivery.py',
+             'test_fast_cell_masks.py','compare_fast_cell_masks.py')})
     write_json(a.output,report)
     print(json.dumps(dict(complete=True,runs=[dict(build=r['build'],frames=r['frames'],
         late=r['timing']['missed_nominal_frames'],fallback=r['timing']['fallback_one_field_met']) for r in runs])))

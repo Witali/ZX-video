@@ -130,7 +130,7 @@ class Builder(PreviousBuilder):
         def put(at,data):
             if (at&16383)+len(data)>16384:raise ValueError('cross-bank CB41 install')
             banks[bank(at)][at&16383:(at&16383)+len(data)]=data
-        regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse)
+        regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse,fast_masks=self.front_reuse)
         screen_base,saved_page=labels['end'],labels['end']+1
         retired=[];patches=[]
         for lo,hi in ((native.CODE,0x9400),(0xa800,0xb700),(PACKET,0xe000)):

@@ -35,6 +35,35 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — skip empty masks and inline CB44 attribute writes
+
+- Objective: reduce the measured drawing cost from `0bb033f`, retaining
+  exact video/AY data. Empty bitmap groups cost 144 -> 39 T; empty attribute
+  groups 160 -> 51 T (50 with E wrap). Nonempty bitmap groups add 14 T;
+  a nonempty attribute group with k changes costs 160+45k -> 190+23k T.
+  The full frame formula is saved in [CB44 documentation](toolkit/CB44_DYNAMIC.md).
+- Ten tests pass, including 24 independently replayed component cases over
+  every mask byte value, both screens, full flags and IRQ preservation.
+  The same real [4096,4352) window has byte-identical raw/compressed video
+  and AY. All 255 separately called frame draws match their calculated
+  delta: average 128487 -> 122716 T (-4.49%), worst 232322 -> 227162 T.
+  Frame zero is bootstrap-primed and has formula-only separate accounting.
+- Code grows 348 -> 405 bytes. The diagnostic disk uses 797 -> 798 sectors;
+  the 188005-byte video still uses 735. An initial comparison incorrectly
+  expected unchanged packet CPU costs; the extra startup sector shifts
+  track/side boundaries. Report those measured differences separately
+  (-434 T total), without crediting them to the renderer.
+- Complete cold native/Fuse playback preserves 1769472 screen bytes, 1280
+  AY ticks and all sectors. Timing improves to 110 nominal misses, 108 over
+  one field and maximum 82 fields (baseline 116 misses / maximum 89).
+  Fifty intervals remain invalid; no AY underruns. Both timing gates fail.
+- Decision: retain this bounded rendering improvement automatically for
+  CB44; keep CB41/42 defaults unchanged. Do not call it a four-disk release
+  or replace root images. No full-volume capacity claim after code growth.
+  [Exact comparison script](toolkit/compare_fast_cell_masks.py),
+  [tests](toolkit/test_fast_cell_masks.py),
+  [full evidence](toolkit/front_fast_masks_report.json).
+
 ## 2026-10-01 — native CB44 preserves pixels but fails sustained delivery
 
 - Objective: integrate the selected exact front-cell reuse after `3bb7aa9`

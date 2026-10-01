@@ -1,8 +1,8 @@
-"""Host-only CB44: reuse exact cells from the immutable previous front screen.
+"""CB44: reuse exact cells from the immutable previous front screen.
 
 Two-bit modes: 0 four row indices; 1 cell-book index; 2 same front position;
 3 signed one-byte front-cell displacement. Attributes remain unchanged.
-No Spectrum player accepts CB44 yet.
+The native player supports modes 0..2; neighbour mode 3 is a host prototype.
 """
 import struct
 
