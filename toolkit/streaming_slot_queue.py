@@ -15,7 +15,7 @@ CODE, BRIDGE, LIMIT = 0xe000, 0x6100, 0xf000
 DEMAND, DEMAND_LIMIT = 0xe200, 0xe300
 
 
-def build(z, p, blocks, *, quantum=256, partial_consumption=False, demand_decode=False):
+def build(z, p, blocks, *, quantum=256, partial_consumption=False, demand_decode=False,defer_while_buffered=False):
     if not demand_decode:raise ValueError('streaming input requires demand consumption')
     if not 1 <= blocks <= 65535 or not 1 <= quantum <= 8192:
         raise ValueError('invalid block count or decode quantum')
@@ -60,6 +60,13 @@ def build(z, p, blocks, *, quantum=256, partial_consumption=False, demand_decode
     a.label('active');e('CP 3',[0xfe,3],7);j(0xca,'supply_input')
     e('CP 1',[0xfe,1],7);j(0xc2,'decode')
     call(b['input_step']);e('OR A',[0xb7],4);j(0xca,'worked')
+    if defer_while_buffered:
+        # With completed slots still queued, amortize decoder checks by
+        # loading the whole block. Expose a prefix only when the consumer
+        # would otherwise have to wait for the remaining input sectors.
+        n('LD A,(all_loaded)',0x3a,z['all_loaded'],13);e('OR A',[0xb7],4);j(0xc2,'begin_ready')
+        load('count');e('OR A',[0xb7],4);j(0xc2,'worked')
+        a.label('begin_ready')
     # Starting at zero output suspends before the first literal; no full
     # block reconstruction is hidden in the final input operation.
     n('LD HL,E000',0x21,0xe000,10);ws(z['slice_target']);call(b['begin_decode'])

@@ -5,6 +5,48 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-01: guarded LZSA2 sector prefixes, parked after compression priority
+
+- Objective/input: reduce the CB46 input stall using the unchanged 256-frame
+  [4096,4352) stream, 185681 video bytes, shared AY and four decoded slots.
+  Baseline `bc615ab` uses a compressed-sector cache; complete Fuse runs had
+  eight nominal misses, maximum eight/seven fields, four invalid intervals.
+- Added opt-in `rebuild_cell_player.py --streaming-lzsa2`, a guarded LZSA2
+  coroutine and explicit input-wait/EOF queue states. Guard whole literal
+  runs, preserve AF', and save shared-sector carry before final decoding.
+  The first component implementation failed when called again after early
+  EOF; a finished check fixed that. The failure log is archived.
+- The initial safe guard costs 38125210 vs 21322803 deterministic T across
+  40 component blocks and was rejected. Guard 32-byte token prefixes and
+  separately check only long literals instead. All 40 producer/component
+  cases and 240 independent full-flags replays pass, including six sector
+  alignments, synthetic IRQs, caller clobbers and in-place input/output.
+- Eager guarded decoding passes all 256 native frames, dirty cold boot,
+  1280 real AY ticks, 726 real sectors and Fuse pixel samples. It regresses
+  to 27 late frames, all over one field, maximum 40 fields, 19 invalid
+  intervals; the last run 229..255 has no recovery inside this window.
+  Active decoder elapsed grows 13571059 ->17613460 T; active physical disk
+  service stays 16630787 ->16621892 T. These elapsed stage measurements
+  include IRQ/ULA; they are separate from deterministic instruction sums.
+- A hybrid policy delays prefix decoding while completed blocks remain.
+  Same full native/Fuse coverage, but 13 late frames, maximum nine fields,
+  six invalid intervals. Runs 180..180 and 240..251 recover at 181 and 252.
+  Both variants remain 781 sectors and fail both timing gates.
+- Final host-installed branch bypass restores original token and long-16
+  branches after complete input (0 T extra), and long-8 branches save 2 T.
+  Active input guards cost 96 T per header and 135 T per long literal call.
+  All 40 components total 25878233 vs 21322803 T (+4555430); these deliberately
+  stream every block, not the hybrid playback schedule. The final variant
+  passes dirty cold boot at 781 sectors; its full native/Fuse playback is
+  **not verified**. Prefix/helper ends at 7D4Fh, hot core at 8E72h.
+- Decision: keep a reproducible opt-in experiment, not a release or default.
+  The user redirected work to improving compression at the same decoding
+  cost. Pause decoder experiments and optimize encoder decisions instead.
+  Default decoder bytes, all media bytes and root TRDs are unchanged.
+  [Verifier](toolkit/verify_streaming_lzsa2.py),
+  [component test](toolkit/test_streaming_lzsa2.py),
+  [saved reports and LFS diagnostic images](toolkit/streaming_lzsa2_report.json).
+
 **Latest refined A/V preview (2026-10-01):** root LFS
 `ZX-video-refined_part01..15.trd`, 5066 frames at 10 fps and new AY50 sound.
 Complete cold and predecessor-EOF playback pass the one-field fallback:

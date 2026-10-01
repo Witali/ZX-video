@@ -29,7 +29,7 @@ def decoder():
         regions=[dict(address=at,code_hex=data.hex(),sha256=sha(data)) for at,data in result])
 
 
-def input_prefix(z, d, *, elapsed_fields, origin):
+def input_prefix(z, d, *, elapsed_fields, origin,patch_guards=False):
     regions, p, rows = producer.build(z,d,elapsed_fields=elapsed_fields)
     a=MiniAssembler(origin);e,n=helpers(a,rows,'inplace_streaming_input')
     def load(label):n('LD A,('+str(label)+')',0x3a,label,13)
@@ -42,9 +42,24 @@ def input_prefix(z, d, *, elapsed_fields, origin):
     # No pages remain: this call can only save carry, never read again.
     call(p['step'])
     a.label('frontier');load(p['destination_high']);store(z['input_high'])
+    if patch_guards:store(z['header_frontier']);store(z['literal_frontier'])
     load(p['phase']);e('CP 2',[0xfe,2],7);e('LD A,0',[0x3e,0],7);jump(0xc2,'flag')
     e('INC A',[0x3c],4)
-    a.label('flag');store(z['all_loaded']);e('LD A,1',[0x3e,1],7);e('RET',[0xc9],10)
+    a.label('flag');store(z['all_loaded'])
+    if patch_guards:
+        e('OR A',[0xb7],4);e('LD A,PUSH AF',[0x3e,0xf5],7);jump(0xca,'set_guards')
+        e('LD A,RET',[0x3e,0xc9],7);a.label('set_guards')
+        store(z['guard_header']);store(z['guard_literals'])
+        # OR's zero flag still describes all_loaded. Once complete, the
+        # original jumps bypass the input guards with zero per-token cost.
+        for key,active,complete,operands in (
+                ('token',z['Token'],z['Token']+3,('token_high_target','token_low_target','token_end_target')),
+                ('long8',z['guard_long8'],z['CopyMoreLiterals'],('long8_target',)),
+                ('long16',z['guard_long16'],z['NextUseBC'],('long16_target',))):
+            n('LD HL,guarded '+key,0x21,active,10);jump(0xca,'set_'+key)
+            n('LD HL,complete '+key,0x21,complete,10);a.label('set_'+key)
+            for operand in operands:n('LD ('+operand+'),HL',0x22,z[operand],16)
+    e('LD A,1',[0x3e,1],7);e('RET',[0xc9],10)
     a.label('prefix_end')
     if a.pc>producer.CODE:raise ValueError('streaming prefix exceeds free decoder-helper tail')
     p=dict(p,legacy_step=p['step'],step=a.labels['prefix_step'],prefix_step=a.labels['prefix_step'],prefix_end=a.pc)

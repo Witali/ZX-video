@@ -1,0 +1,473 @@
+{
+  "complete": true,
+  "release": false,
+  "baseline_commit": "bc615ab",
+  "date": "2026-10-01",
+  "scope": "Archive rejected/partial streaming-decoder experiments without release claims.",
+  "variants": {
+    "window": {
+      "cold": {
+        "cold_sections": [
+          {
+            "bank": 2,
+            "offset": 0,
+            "bytes": 16384,
+            "sha256": "05efd651d884f32397b98aea2e3262b65f57c55f97c35422999729b4965f5bb0"
+          },
+          {
+            "bank": 7,
+            "offset": 0,
+            "bytes": 9216,
+            "sha256": "1c801da0a289c90a97406489d9ce048e87d4f28a6cbabdb8d25bfbc4706f4f82"
+          },
+          {
+            "bank": 5,
+            "offset": 13824,
+            "bytes": 2560,
+            "sha256": "ea16d781a3a89ce3e22cbf7a9d678896bc039130bfd7912650dd05e3f13dba7a"
+          },
+          {
+            "bank": 6,
+            "offset": 0,
+            "bytes": 3900,
+            "sha256": "4e97bbecd61ebe112c369ff1349a1433999261fff3aa98544c72d20d16aaaaf8"
+          },
+          {
+            "bank": 5,
+            "offset": 0,
+            "bytes": 6912,
+            "sha256": "0da79a1c90b1dadd7a5ec94ef721046591b9933ae732e5917b6ee5c8b5e8aa2b"
+          }
+        ],
+        "mocked_boot_tstates": 1803327,
+        "boot_sectors": 51,
+        "dirty_ram_boot_exact": true
+      },
+      "used_sectors": 781,
+      "trd_sha256": "0c6e9ab7e9b5beba21ab7eb5c5656fe64ff269c1473cc6c134f577d92a7726fb",
+      "video_bytes": 185681,
+      "full_native_verified": false,
+      "full_fuse_verified": false
+    },
+    "fast-window": {
+      "cold": {
+        "cold_sections": [
+          {
+            "bank": 2,
+            "offset": 0,
+            "bytes": 16384,
+            "sha256": "70aef35527d284f47d20ea914157e42481bf53c1b85fb970fe1c8a061ddb655e"
+          },
+          {
+            "bank": 7,
+            "offset": 0,
+            "bytes": 9216,
+            "sha256": "32019f323987100722fc9188f2d193336a5cb8102419f5347aa5c51d44c218c4"
+          },
+          {
+            "bank": 5,
+            "offset": 13824,
+            "bytes": 2560,
+            "sha256": "207bbacc2b2d2001b6290cbac6d9b7476c9c627de5944d7a8f5301fc15fde6c8"
+          },
+          {
+            "bank": 6,
+            "offset": 0,
+            "bytes": 3900,
+            "sha256": "4e97bbecd61ebe112c369ff1349a1433999261fff3aa98544c72d20d16aaaaf8"
+          },
+          {
+            "bank": 5,
+            "offset": 0,
+            "bytes": 6912,
+            "sha256": "0da79a1c90b1dadd7a5ec94ef721046591b9933ae732e5917b6ee5c8b5e8aa2b"
+          }
+        ],
+        "mocked_boot_tstates": 1806059,
+        "boot_sectors": 51,
+        "dirty_ram_boot_exact": true
+      },
+      "used_sectors": 781,
+      "trd_sha256": "35bada5efe65025b370dc5b21118ac551706f41e6ce81346f73851cbfc50f9d3",
+      "video_bytes": 185681,
+      "full_native_verified": true,
+      "full_fuse_verified": true,
+      "full_fuse_screens_verified": false,
+      "timing": {
+        "frames": 256,
+        "ay_ticks": 1280,
+        "nominal_late_frames": 27,
+        "actual_out_over_one_field": 27,
+        "max_late_fields": 40,
+        "bad_actual_intervals": 19,
+        "late_runs": [
+          {
+            "start": 229,
+            "end": 255,
+            "recovered_at": null
+          }
+        ]
+      }
+    },
+    "hybrid-window": {
+      "cold": {
+        "cold_sections": [
+          {
+            "bank": 2,
+            "offset": 0,
+            "bytes": 16384,
+            "sha256": "70aef35527d284f47d20ea914157e42481bf53c1b85fb970fe1c8a061ddb655e"
+          },
+          {
+            "bank": 7,
+            "offset": 0,
+            "bytes": 9216,
+            "sha256": "7cc04f85a2cd36cec91fc3cb1cd602b9fd868b8c01155142c235e4d385038f3a"
+          },
+          {
+            "bank": 5,
+            "offset": 13824,
+            "bytes": 2560,
+            "sha256": "207bbacc2b2d2001b6290cbac6d9b7476c9c627de5944d7a8f5301fc15fde6c8"
+          },
+          {
+            "bank": 6,
+            "offset": 0,
+            "bytes": 3900,
+            "sha256": "4e97bbecd61ebe112c369ff1349a1433999261fff3aa98544c72d20d16aaaaf8"
+          },
+          {
+            "bank": 5,
+            "offset": 0,
+            "bytes": 6912,
+            "sha256": "0da79a1c90b1dadd7a5ec94ef721046591b9933ae732e5917b6ee5c8b5e8aa2b"
+          }
+        ],
+        "mocked_boot_tstates": 1805832,
+        "boot_sectors": 51,
+        "dirty_ram_boot_exact": true
+      },
+      "used_sectors": 781,
+      "trd_sha256": "69fc92160ccd87e884a32300a6a7dc7baa30c768ea4eca3485275daec986067d",
+      "video_bytes": 185681,
+      "full_native_verified": true,
+      "full_fuse_verified": true,
+      "full_fuse_screens_verified": false,
+      "timing": {
+        "frames": 256,
+        "ay_ticks": 1280,
+        "nominal_late_frames": 13,
+        "actual_out_over_one_field": 13,
+        "max_late_fields": 9,
+        "bad_actual_intervals": 6,
+        "late_runs": [
+          {
+            "start": 180,
+            "end": 180,
+            "recovered_at": 181
+          },
+          {
+            "start": 240,
+            "end": 251,
+            "recovered_at": 252
+          }
+        ]
+      }
+    },
+    "bypass-window": {
+      "cold": {
+        "cold_sections": [
+          {
+            "bank": 2,
+            "offset": 0,
+            "bytes": 16384,
+            "sha256": "70aef35527d284f47d20ea914157e42481bf53c1b85fb970fe1c8a061ddb655e"
+          },
+          {
+            "bank": 7,
+            "offset": 0,
+            "bytes": 9216,
+            "sha256": "7cc04f85a2cd36cec91fc3cb1cd602b9fd868b8c01155142c235e4d385038f3a"
+          },
+          {
+            "bank": 5,
+            "offset": 13824,
+            "bytes": 2560,
+            "sha256": "41fafe6de858ec1b4c0b51d8bc733c8eb3d7f7c608a84cd1a20ca964f9c96174"
+          },
+          {
+            "bank": 6,
+            "offset": 0,
+            "bytes": 3900,
+            "sha256": "4e97bbecd61ebe112c369ff1349a1433999261fff3aa98544c72d20d16aaaaf8"
+          },
+          {
+            "bank": 5,
+            "offset": 0,
+            "bytes": 6912,
+            "sha256": "0da79a1c90b1dadd7a5ec94ef721046591b9933ae732e5917b6ee5c8b5e8aa2b"
+          }
+        ],
+        "mocked_boot_tstates": 1808644,
+        "boot_sectors": 51,
+        "dirty_ram_boot_exact": true
+      },
+      "used_sectors": 781,
+      "trd_sha256": "9d005b62f27b447fdd6b945c361044850bfa546d83236252f3ae4eb6a8256d6b",
+      "video_bytes": 185681,
+      "full_native_verified": false,
+      "full_fuse_verified": false
+    }
+  },
+  "all_compressed_and_raw_media_unchanged": true,
+  "default_decoder_code_unchanged": true,
+  "component_cases": 40,
+  "independent_full_flags_cases": 240,
+  "component_cpu_baseline": 21322803,
+  "component_cpu_candidate": 25878233,
+  "component_cpu_delta": 4555430,
+  "decoder_guard_tstates": {
+    "available_header_including_call": 96,
+    "available_long_literals_including_call": 135,
+    "completed_token_branches_delta": 0,
+    "completed_long16_branch_delta": 0,
+    "completed_long8_branch_delta": -2
+  },
+  "decision": "Keep opt-in prototype only. Eager and hybrid measured variants regress timing versus the sector-cache baseline. Final branch-bypass variant has component and cold checks only; playback remains unverified. User redirected work to better compression at unchanged decoding cost; stop decoder experiments.",
+  "limitations": [
+    "No new release; root TRDs unchanged.",
+    "No final-bypass native whole-window or Fuse run.",
+    "Component totals deliberately force prefix waits; they are not playback or full-set timing.",
+    "Measured variants compare all native screens but only sampled Fuse pixels."
+  ],
+  "artifacts": [
+    {
+      "file": "window-ZX-video-front_part07.json.gz",
+      "raw_sha256": "1ffb84ff21e033c9395cbcd6886313e5207192e8c54d2fab2c2f0f9971177546",
+      "archive_sha256": "ff84179d8a13a7e105f0552a196cf9785e151646ab120c9a5b996a2c093dc9dc",
+      "raw_bytes": 2400417,
+      "archive_bytes": 121852
+    },
+    {
+      "file": "window-ZX-video-front_part07.trd",
+      "raw_sha256": "0c6e9ab7e9b5beba21ab7eb5c5656fe64ff269c1473cc6c134f577d92a7726fb",
+      "archive_sha256": "0c6e9ab7e9b5beba21ab7eb5c5656fe64ff269c1473cc6c134f577d92a7726fb",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "window-timing.json.gz",
+      "raw_sha256": "8813a49063135baabdcb1c4a1c265028f35950d0d39d6a4e3a45adb439e7f1ba",
+      "archive_sha256": "cb962bfba4c9edde93361996097612d58c1b3c5dd813a85768967f3230861d2c",
+      "raw_bytes": 1339,
+      "archive_bytes": 519
+    },
+    {
+      "file": "fast-window-ZX-video-front_part07.json.gz",
+      "raw_sha256": "a38ce1d533ddd8c6c75ae2f92a34d1a4f96c09d7ddebdab11826cbb3c5788ab7",
+      "archive_sha256": "f38c2b339177314f29c3698d90006377553419fa635ea8e534e26c62d37fcc7a",
+      "raw_bytes": 2408427,
+      "archive_bytes": 122557
+    },
+    {
+      "file": "fast-window-ZX-video-front_part07.trd",
+      "raw_sha256": "35bada5efe65025b370dc5b21118ac551706f41e6ce81346f73851cbfc50f9d3",
+      "archive_sha256": "35bada5efe65025b370dc5b21118ac551706f41e6ce81346f73851cbfc50f9d3",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "fast-window-timing.json.gz",
+      "raw_sha256": "97667a6ba7907f003f088d151f1935d23b2f80bad9894705f9e41ca271479ed7",
+      "archive_sha256": "5de072e20304d9e01ea486fdeffb072ca39899fa42db9ad633533f2b65f31139",
+      "raw_bytes": 1339,
+      "archive_bytes": 516
+    },
+    {
+      "file": "fast-window-work-ZX-video-front_part07-cpu.json.gz",
+      "raw_sha256": "6d46f5a56f5d16b9d952b7a43bf8acc44dce82cb255b07b92ebf3fbdf4963a39",
+      "archive_sha256": "d3849abb2183353b3ebe7bfae8da85798c4ea3606f4bc87a65514669f0617c7d",
+      "raw_bytes": 351224,
+      "archive_bytes": 23892
+    },
+    {
+      "file": "fast-window-work-ZX-video-front_part07-timing.json.gz",
+      "raw_sha256": "03dd6cef33f17f75adf0003bea55e5ea8c091144ae6c176727a3f7c83c2debce",
+      "archive_sha256": "f624cb240961c0effd17aeee81528072d8d598fc20cfe70406c3d17bd2d01956",
+      "raw_bytes": 1345143,
+      "archive_bytes": 83206
+    },
+    {
+      "file": "fast-window-work-ZX-video-front_part07-timing.trace.txt.gz",
+      "raw_sha256": "de9f7bda48bb2e3e4ea3ab41d7859d98d9a58c42ae1f471a6b0d698d141c1f91",
+      "archive_sha256": "1a8cf0ae9e484e3b90d8db195c82dd196ec2bb18be74e61f38b2023f21cd191c",
+      "raw_bytes": 1129065,
+      "archive_bytes": 356379
+    },
+    {
+      "file": "fast-window-work-ZX-video-front_part07-timing.debugger.txt.gz",
+      "raw_sha256": "8a57d794973833887d9d988fbc2ec9a6cffc1dc5d8d6fdd1d59bccf3984822b3",
+      "archive_sha256": "2afc9e080f6c9aec0a8fdb1758a80b0530d2ee50178cc255db16beddd73f8571",
+      "raw_bytes": 15317,
+      "archive_bytes": 2092
+    },
+    {
+      "file": "fast-window-work-ZX-video-front_part07-timing.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "hybrid-window-ZX-video-front_part07.json.gz",
+      "raw_sha256": "ab6e517b4560acc8b3d8989b86d0f5f2b197b441fb034fc6de92de363dc56e41",
+      "archive_sha256": "4198e8575ce46919ab51583563f36d8b8662fb946a5dadcce0f1e83d1b4e0dde",
+      "raw_bytes": 2410133,
+      "archive_bytes": 122653
+    },
+    {
+      "file": "hybrid-window-ZX-video-front_part07.trd",
+      "raw_sha256": "69fc92160ccd87e884a32300a6a7dc7baa30c768ea4eca3485275daec986067d",
+      "archive_sha256": "69fc92160ccd87e884a32300a6a7dc7baa30c768ea4eca3485275daec986067d",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "hybrid-window-timing.json.gz",
+      "raw_sha256": "6290d6dbf79741ca92f1467da2aed1ec6d2100eb9ca4929cd904c23a4ef040bd",
+      "archive_sha256": "6d31ed565b362a249351fb99247a581d5e423fb270d48094ee47119b78308914",
+      "raw_bytes": 1339,
+      "archive_bytes": 518
+    },
+    {
+      "file": "hybrid-window-work-ZX-video-front_part07-cpu.json.gz",
+      "raw_sha256": "e87badcb905efa28141f054cde2e1c7bc0ed86870bcbbb690b34dc4324146a7a",
+      "archive_sha256": "a14e634861ed881fabcb49fcc4b181bfd2c4499042d1ce3974236ed527b1d410",
+      "raw_bytes": 351689,
+      "archive_bytes": 23914
+    },
+    {
+      "file": "hybrid-window-work-ZX-video-front_part07-timing.json.gz",
+      "raw_sha256": "aa175724dee5c53562f7875242821a683f21b20aa42cd0a663bb080bf6879519",
+      "archive_sha256": "9fc4757a850ad9f6ed7ee85f315fd69651f4ca215dabdc19c716736b4d56ee32",
+      "raw_bytes": 1146813,
+      "archive_bytes": 74029
+    },
+    {
+      "file": "hybrid-window-work-ZX-video-front_part07-timing.trace.txt.gz",
+      "raw_sha256": "0d01c7b959426394f916eac05e0e5a2670efd39359874b18af208c3b7b156be9",
+      "archive_sha256": "617c95f220a2ad04166c864828aee9e49aa0c3b0600f4bc7cd6d974663d408d2",
+      "raw_bytes": 1078537,
+      "archive_bytes": 346802
+    },
+    {
+      "file": "hybrid-window-work-ZX-video-front_part07-timing.debugger.txt.gz",
+      "raw_sha256": "4036479ed23e212cce4520783376fe66f96d62392da1ee22cc902ddfd7b5a293",
+      "archive_sha256": "ccddda7c1ee0436e6c801c733d36518bd88940c06c55c4b0df0b3b7ac95a3934",
+      "raw_bytes": 15317,
+      "archive_bytes": 2095
+    },
+    {
+      "file": "hybrid-window-work-ZX-video-front_part07-timing.stderr.txt.gz",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "46b50c321b39e89a491b6727a01628c34245605a30beb3e7414c5e01cff90e6e",
+      "raw_bytes": 0,
+      "archive_bytes": 20
+    },
+    {
+      "file": "bypass-window-ZX-video-front_part07.json.gz",
+      "raw_sha256": "fec8d6e2c52722e209198d264cb982d35e784b557014ebae1a61771229be8712",
+      "archive_sha256": "dceb16b6ba66c2c5f9b19ed35c37eb950b155ed683dfbce478d3c17fb33eedea",
+      "raw_bytes": 2417222,
+      "archive_bytes": 123226
+    },
+    {
+      "file": "bypass-window-ZX-video-front_part07.trd",
+      "raw_sha256": "9d005b62f27b447fdd6b945c361044850bfa546d83236252f3ae4eb6a8256d6b",
+      "archive_sha256": "9d005b62f27b447fdd6b945c361044850bfa546d83236252f3ae4eb6a8256d6b",
+      "raw_bytes": 655360,
+      "archive_bytes": 655360
+    },
+    {
+      "file": "bypass-window-timing.json.gz",
+      "raw_sha256": "318cdf10106111559b51bcd1a6694dc7dd67ecc8996863410573345479243386",
+      "archive_sha256": "f9601d2d3936f3a33a392f32eaf3e12f9a03778ff02f4981303fe1e1b983f85c",
+      "raw_bytes": 1339,
+      "archive_bytes": 518
+    },
+    {
+      "file": "streaming-lzsa2-tests.json.gz",
+      "raw_sha256": "b728117e10e82d729984809e7a82051436d55604b78aebadd6e7e98a1c5005e2",
+      "archive_sha256": "e81ad574c35f8fabed9f517f238faf825b1d07b5d3a2f7fc6f1b660da4a9eba2",
+      "raw_bytes": 934272,
+      "archive_bytes": 64669
+    },
+    {
+      "file": "streaming-lzsa2-tests.log.gz",
+      "raw_sha256": "74c2f35970a612ef6a044414ade2ea1cb73e2a8c3f9b40cbd67a3cdfa618d053",
+      "archive_sha256": "be4bb239ab7f26a232bcdfb246865d7f415e1f61ea10a4bf3f9be6a5fff0b09b",
+      "raw_bytes": 741,
+      "archive_bytes": 220
+    },
+    {
+      "file": "streaming-lzsa2-tests-initial.log.gz",
+      "raw_sha256": "3cd651acc8ba5edb932db2c8fd27ccbf802c7c9fb0b2765fe86a87cc46c02f71",
+      "archive_sha256": "4388cbe9b0d0a604147bafc2da5fdac9aa54578c08005220f414d84707031cc7",
+      "raw_bytes": 2036,
+      "archive_bytes": 585
+    },
+    {
+      "file": "streaming-lzsa2-tests-slow.json.gz",
+      "raw_sha256": "dc9701cd2b6b1f5497fd45c8688b6dbea70df4a30d0454922cbd6da62626a5cf",
+      "archive_sha256": "847836f9de20dca79509ebdfc83d0c4270eb9cf3e66a5b04365b9de0d1afe5d1",
+      "raw_bytes": 929982,
+      "archive_bytes": 64524
+    },
+    {
+      "file": "streaming-lzsa2-tests-fast.json.gz",
+      "raw_sha256": "52a9087182570c1458fae8d6fa40ca363c6fefa1e89e2cb57ef848d3fc29c54c",
+      "archive_sha256": "be5627801a76d2cdd298dacb0f6a107c479c1662c17cbce52e10f7f01f405151",
+      "raw_bytes": 932099,
+      "archive_bytes": 64420
+    },
+    {
+      "file": "resumable_lzsa2-slow.py.gz",
+      "raw_sha256": "52845b81b4e3f22e6c99335d1553af4be1dbd2487b8c6f8b433e438729ab9291",
+      "archive_sha256": "e3e1321edfc4af91052789af94c813625c3bd480c49a646f434bd0e00edb9304",
+      "raw_bytes": 10509,
+      "archive_bytes": 3367
+    },
+    {
+      "file": "resumable_lzsa2-fast.py.gz",
+      "raw_sha256": "f78e0efed5630241833b0394a7c9942800b119536760868f3807e80b293d8bd2",
+      "archive_sha256": "b682bc5a222d2a0e514e82825fb06832be94f39d4739d91e58dee0a6b8f323ac",
+      "raw_bytes": 11481,
+      "archive_bytes": 3603
+    },
+    {
+      "file": "inplace_streaming_core-fast.py.gz",
+      "raw_sha256": "a3de88a0e461c23b41b58a5ca466d60d70abbfab7b5cf6c9b7fd474aaa333ef9",
+      "archive_sha256": "ee49b99bdeb92532621fe05157f1fce8ac1949d234668c8133cdb130bf32aace",
+      "raw_bytes": 3169,
+      "archive_bytes": 1391
+    },
+    {
+      "file": "streaming-lzsa2-fast-profile.json.gz",
+      "raw_sha256": "1edf82cb782e5cc566904a03c7041be3d7deca9cceb70d653bc0153433284963",
+      "archive_sha256": "f56adad79d240ad4bd51098c9cd488d2b6ad52dc0b5bf7fe6cba752fc2e98a9a",
+      "raw_bytes": 134324,
+      "archive_bytes": 13809
+    }
+  ],
+  "source_sha256_lf": {
+    "resumable_lzsa2.py": "ff5d44f4f20302f1611d662c484d245a292d70a70a7cd1b13eaa7cd6a4b8cd3d",
+    "streaming_lzsa2_player.py": "6a59fc857b426d9d79823718a30027588ffe8ce613a5ba87a724f5649d26d159",
+    "streaming_slot_queue.py": "2ae2d739cbb39e8df9f1ff9c8e1ccc042b97a82f17f064e4dcb2df7d0125b7d4",
+    "inplace_streaming_core.py": "877875c9bc30e64646b1e5377f2efc0e82691bf5527f29d276231f55f91adb20",
+    "test_streaming_lzsa2.py": "620e8a25d185725b70815577c1e44c60e842f08ff20aafb5d8b743ac41ff296f",
+    "build_cell_codebook_trd.py": "e0870e1aadcc619ed0a83327ee9d11bd5822f0b759c487183cdd42c7645f6ab8",
+    "cell_codebook_player.py": "4bda936365c285caa7d8e5b53aa99d313929fd0ee0f666d1ba3f599b5447bcc7",
+    "rebuild_cell_player.py": "bc83023375931221e812bf2bac569a0bd5410e1391e829c9a8caae1d4605bdad",
+    "verify_streaming_lzsa2.py": "f1615cc0e7d3fb3c9af6e2942af96625113a3e1221bd7479501aa2d54375eebc"
+  }
+}

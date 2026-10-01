@@ -45,6 +45,7 @@ def main():
     p.add_argument('--cell-probe',type=Path,help='validated replacement window JSON with sibling .raw.gz/.stream.gz')
     p.add_argument('--inline-cells',action='store_true',help='experimental CB46 unrolled cell renderer, same video bytes')
     p.add_argument('--sector-cache',action='store_true',help='prefetch compressed sectors in spare bank-7 RAM')
+    p.add_argument('--streaming-lzsa2',action='store_true',help='guarded input-prefix decoding; retain exact LZSA2 bytes')
     a=p.parse_args();m=json.loads(a.metadata.read_bytes());source=a.metadata.parent;stem=a.metadata.stem
     if a.output.exists() and any(a.output.iterdir()):p.error('output must be new or empty')
     if m['cell_codebook']['wire'] not in ('CB42','CB44','CB46'):p.error('cached rebuild needs dynamic rows')
@@ -87,7 +88,7 @@ def main():
     with reference_tables(rows):
         b=Builder(raw,build_states,a.zx0.resolve(),work/'zx0',row_dictionary=rows,lzsa=a.lzsa.resolve(),
             series_fingerprint=identity,cell_raw=cell,cell_start=start,frame_fields=m['frame_fields'],
-            reference_frames=frames,shared_audio=a.shared_audio,four_slots=a.four_video_slots,inline_cells=a.inline_cells,sector_cache=a.sector_cache,**OPTIONS)
+            reference_frames=frames,shared_audio=a.shared_audio,four_slots=a.four_video_slots,inline_cells=a.inline_cells,sector_cache=a.sector_cache,streaming_lzsa2=a.streaming_lzsa2,**OPTIONS)
         b.ends=ends;b.inplace_streams[start,end]=coded,blocks;b.resident_streams[start,end]=b'',audio
         image,meta=b.volume(start,end,part);write_json(a.output/(stem+'.json'),meta)
         if image is None:

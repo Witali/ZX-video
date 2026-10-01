@@ -23,6 +23,22 @@ Do not substitute a short fixture, the previous soundtrack or reduced fps.
 
 ### Current checkpoint: CB46 capacity fits; timing remains open
 
+Latest user steering (2026-10-01): improve compression at unchanged decoding
+cost. Prioritize host-side encoding decisions, identical pixels/AY and the
+existing player. Compare compressed bytes/sectors AND measured native cycles;
+do not accept a smaller stream that increases decoding cost. Reuse one saved
+window before any full-set rebuild. Dynamic row replacement is already working.
+
+The sector-streaming LZSA2 experiment is now parked, not selected. Eager
+prefix decoding produces 27 late frames / maximum 40 fields in the complete
+256-frame window; deferring prefixes while completed slots remain gives
+13 /9, versus the sector-cache baseline's 8 /7 (an earlier baseline run was
+8 /8). Native screens, AY and sector sequence remain exact. The final variant
+bypasses all guard branches after complete input, retaining zero per-token
+overhead, but has component and cold checks only. No further decoder trials
+are in the current scope. Keep `--streaming-lzsa2` opt-in. Reuse
+[evidence](toolkit/streaming_lzsa2_report.json); root release disks are unchanged.
+
 Latest exact mode: CB46 mode 3 stores one changed row-pair within a literal
 cell, using selector 0..3 plus a row-table index. Other CB44 modes, the
 mutable row table, colour attributes and LZSA2 stay unchanged. Three cached
@@ -84,7 +100,7 @@ part 4 cold capacity remains 2543. Reuse `.tmp/sector-cache-window/`,
 [evidence](toolkit/sector_cache_report.json). Keep all four flags:
 `--shared-audio --four-video-slots --inline-cells --sector-cache`.
 
-Next scope: remove the complete-input gate before decoding. The remaining
+Previous decoder scope (parked by the steering above): remove the complete-input gate before decoding. The remaining
 stall is block 14 (12492 compressed bytes) while the cache holds only 7168;
 14 queue-empty entries and longest empty wait 0.81M T remain. Reuse existing
 `inplace_streaming_core.py` and `streaming_slot_queue.py` as design references
