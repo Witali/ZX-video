@@ -58,6 +58,17 @@ pass. These are experimental selectors; defaults/root images are unchanged,
 and full playback for their data is unverified. Reuse the saved RGB windows,
 states, streams and metrics. [Decision and next bounded milestone](toolkit/CELL_PALETTE_QUALITY.md).
 
+## Monochrome visual preview completed
+
+At the user's request, root `ZX-video-monochrome-preview.trd` contains the
+256-frame `[4128,4384)` window with fixed black/BRIGHT-white attributes and
+five dither coverages, 10 fps and original AY50. Full screens, AY, sector
+reads and independent boot pass; 669 sectors used. Two frames (80/115) are
+one field late, recovering on 81/116. The authorized fallback passes but
+zero-late timing does not. This is a visual preview, not the complete movie
+or a replacement release. The prepared builder accepts `--monochrome`;
+ordinary colour defaults are unchanged. [Evidence and reproduction](toolkit/MONOCHROME_PREVIEW.md).
+
 ## Working method
 
 1. **Define one deliverable.** State the problem, baseline, hypothesis and

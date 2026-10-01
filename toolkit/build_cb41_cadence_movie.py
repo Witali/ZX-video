@@ -32,6 +32,8 @@ def main():
     p.add_argument('--verify', choices=('cpu','fuse','none'), default='fuse')
     p.add_argument('--verification-timeout', type=float, default=1800)
     p.add_argument('--prefix', default='ZX-video-10fps')
+    p.add_argument('--monochrome', action='store_true',
+        help='quantize cached source RGB to five fixed black/BRIGHT-white coverages')
     a = p.parse_args()
     meta = json.loads(a.prepared.read_bytes())
     a.frame_fields = meta['contract']['frame_fields']
@@ -46,7 +48,7 @@ def main():
     a.output = a.output.resolve()
     a.output.mkdir(parents=True, exist_ok=True)
     work = a.output/'work'; work.mkdir()
-    frames = []
+    frames, images, quality = [], [], []
     for chunk in meta['chunks']:
         if chunk['end'] <= a.start or chunk['start'] >= stop:
             continue
@@ -57,6 +59,16 @@ def main():
             for index in range(lo,hi):
                 frame = saved['five_states'][index-chunk['start']].copy()
                 assert sha(independent_screen(frame.tobytes())) == meta['quality'][index]['screen_sha256']
+                if a.monochrome:
+                    import monochrome_five_level as mono
+                    import five_level_dither as five
+                    image = saved['images'][index-chunk['start']].copy()
+                    frame = np.frombuffer(mono.encode(image), dtype=np.uint8).copy()
+                    screen = independent_screen(frame.tobytes())
+                    assert screen == b''.join(five.expand(frame.tobytes()))
+                    images.append(image)
+                    quality.append(dict(frame=index, source_frame=int(saved['source_frames'][index-chunk['start']]),
+                                        screen_sha256=sha(screen), **mono.quality(image,frame)))
                 frames.append(frame)
     frames = np.stack(frames)
     np.savez_compressed(work/'five-states.npz',five_states=frames)
@@ -75,6 +87,19 @@ def main():
         video_fps=meta['contract']['fps'],frame_fields=a.frame_fields,ay_hz=50,
         prepared_range=[a.start,stop],whole_movie=a.start==0 and stop==meta['frames'],
         independent_host_screens_exact=True,scaffold_is_runtime_video=False)
+    if a.monochrome:
+        images = np.stack(images)
+        np.savez_compressed(work/'monochrome-inputs.npz',images=images)
+        samples = mono.preview(images,frames,a.start,a.output/'monochrome-preview.png')
+        write_json(a.output/'monochrome-quality.json',dict(frames=quality,
+            preview_frames=samples, input_rgb_sha256=sha(images.tobytes()),
+            method='encoded Rec.709 Y = (2126 R + 7152 G + 722 B)/10000; nearest of five fixed coverages',
+            active_attribute=71, flash=False, contrast_stretch=False,
+            mean_luma_mse=float(np.mean([q['luma_mse'] for q in quality])),
+            metric_limits='luma error after intentionally discarding colour; no colour-fidelity or perceptual percentage claim'))
+        manifest.update(monochrome=True, palette='black and BRIGHT white; five fixed-phase 2x2 coverages',
+            source_rgb_unchanged=True, colour_removed_by_user_request=True,
+            quality_report='monochrome-quality.json', preview='monochrome-preview.png')
     write_json(a.output/'conversion.json',manifest)
     try:
         build(frames,audio,raw,compact,a,tools,a.output,manifest)

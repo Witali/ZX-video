@@ -28,6 +28,37 @@ achieved; video/AY timing failed. It did not replace the earlier root release.
 Current documentation and new entries are maintained in English. Dated
 historical entries below retain their original text and measurements.
 
+## 2026-10-01 — build a monochrome comparison disk
+
+- At the user's request, convert the same difficult 10-fps window
+  `[4128,4384)` (256 frames / 25.6 s), baseline `1a0c7d0`, to fixed black
+  and BRIGHT white. Quantize cached RGB with encoded Rec.709 luma and the
+  existing five fixed-phase 2x2 coverages; no contrast stretch. Keep source
+  resolution, black bands, progress, frame selection and all 1280 original
+  AY ticks. Add explicit `--monochrome` to the prepared-movie builder.
+- One selected image: root LFS `ZX-video-monochrome-preview.trd`, 669 used
+  sectors / 1875 free, 178 row entries, 159862 video bytes. The colour
+  comparison used 618 sectors / 145814 video bytes; grayscale patterns
+  cost more despite constant attributes. Do not extrapolate to the movie.
+- Complete Fuse checks pass all 1769472 screen bytes, 1280 AY ticks and
+  625 runtime sector reads; independent dirty-RAM boot passes. Thirteen
+  tests pass and four source/grayscale/rendered samples were inspected.
+  Mean grayscale luma MSE 337.807; colour loss is explicitly authorized.
+- Exact five-field timing fails on local frames 80 and 115, each one field
+  late; recovery on 81 and 116, 4..6-field spacing and no schedule drift.
+  Maximum actual OUT deviation 70912 T (one field + 4 T phase); AY remains
+  exact with no underruns. The authorized one-field fallback passes.
+  Save this as a tested visual preview with disclosed jitter, not a new
+  zero-late release. Existing root colour TRDs are unchanged.
+- Native renderer/packet listings and cadence metadata match the colour
+  window exactly: 0 T instruction delta, `LD DE,5` 10 -> 10 T, codebook
+  loading 54028 -> 54028 T. Full measurements include real Fuse TR-DOS,
+  emulated disk, IRQ and ULA cost; no physical-drive or full-movie claim.
+- [Image, results and reproduction](toolkit/MONOCHROME_PREVIEW.md),
+  [authenticated report](toolkit/monochrome_preview_report.json),
+  [quantizer](toolkit/monochrome_five_level.py),
+  [finalizer and archive gate](toolkit/finalize_monochrome_preview.py).
+
 ## 2026-10-01 — diagnose coloured cells and reduced solid black/white coverage
 
 - Baseline `7124c9f`, prepared 10-fps edit; four 32-frame windows starting
