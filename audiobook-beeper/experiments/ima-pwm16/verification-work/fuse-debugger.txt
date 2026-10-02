@@ -1,0 +1,196 @@
+base 10
+set $r 0
+set $edges 0
+set $loading 0
+breakpoint 32768
+commands 1
+print 101
+set $loading 1
+continue
+end
+breakpoint 33019
+commands 2
+print 100
+print spectrum:frames*70908+ula:tstates
+print z80:sp
+set $r 1
+set $loading 0
+continue
+end
+breakpoint write 24319
+commands 3
+print 199
+print spectrum:frames*70908+ula:tstates
+print z80:sp
+exit 77
+end
+condition 3 $loading==1 && z80:sp<24320
+breakpoint 33413
+commands 4
+print 140
+print spectrum:frames*70908+ula:tstates
+print z80:a
+print z80:b
+set $edges $edges+1
+continue
+end
+breakpoint 33297
+commands 5
+print 141
+print spectrum:frames*70908+ula:tstates
+print z80:a
+set $edges $edges+1
+continue
+end
+breakpoint 33669
+commands 6
+print 140
+print spectrum:frames*70908+ula:tstates
+print z80:a
+print z80:b
+set $edges $edges+1
+continue
+end
+breakpoint 33553
+commands 7
+print 141
+print spectrum:frames*70908+ula:tstates
+print z80:a
+set $edges $edges+1
+continue
+end
+breakpoint 33669
+commands 8
+print 120
+print z80:ix
+continue
+end
+breakpoint 33362
+commands 9
+print 121
+print z80:hl
+continue
+end
+breakpoint 33925
+commands 10
+print 140
+print spectrum:frames*70908+ula:tstates
+print z80:a
+print z80:b
+set $edges $edges+1
+continue
+end
+breakpoint 33809
+commands 11
+print 141
+print spectrum:frames*70908+ula:tstates
+print z80:a
+set $edges $edges+1
+continue
+end
+breakpoint 34181
+commands 12
+print 140
+print spectrum:frames*70908+ula:tstates
+print z80:a
+print z80:b
+set $edges $edges+1
+continue
+end
+breakpoint 34065
+commands 13
+print 141
+print spectrum:frames*70908+ula:tstates
+print z80:a
+set $edges $edges+1
+continue
+end
+breakpoint 34181
+commands 14
+print 120
+print z80:ix
+continue
+end
+breakpoint 33874
+commands 15
+print 121
+print z80:hl
+continue
+end
+breakpoint 33433
+commands 16
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33457
+commands 17
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33690
+commands 18
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33714
+commands 19
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33945
+commands 20
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33969
+commands 21
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 34202
+commands 22
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 34226
+commands 23
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33078
+commands 24
+print 102
+print $r
+continue
+end
+breakpoint 33413
+commands 25
+print 200
+print spectrum:frames*70908+ula:tstates
+exit 77
+end
+condition 25 $edges==1847297

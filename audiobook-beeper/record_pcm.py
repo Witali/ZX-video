@@ -141,7 +141,7 @@ def main():
         event(labels[f'page_{i}']+2, 150, ['spectrum:frames', 'ula:tstates',
               'z80:'+meta.get('paging_value_register', 'a'), 'ula:mem7ffd', 'ula:mem1ffd'],
               ['set $wraps $wraps+1'] if i == len(meta['sections'])-1 else [])
-    event(labels['out_0_0_0']+(4 if meta.get('steady', False) else 3), 200,
+    event(labels['out_0_0_0']+meta.get('record_stop_offset',4 if meta.get('steady', False) else 3), 200,
           ['spectrum:frames', 'ula:tstates'], condition='$wraps==2', stop=True)
     script = '\n'.join(lines)
     (out/'fuse-debugger.txt').write_text(script, encoding='utf-8', newline='\n')

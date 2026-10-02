@@ -6,6 +6,80 @@ supports both a precomputed noise-shaped bitstream and direct conversion of
 unsigned PCM8 to PDM in Z80 registers. Both write ULA port FE bit 4 directly.
 They do not fit the voice to tone generators.
 
+## Additional experiment: live PWM
+
+[Try the PWM disk](../ZX-audiobook-IMA-ADPCM-PWM-test.trd) on **Fuse / Spectrum
+128 / Beta Disk**. It independently boots, preloads the same 115456 IMA bytes,
+decodes them on the Z80 and loops without a PCM or pulse buffer. The primary
+PDM disk below remains unchanged. This PWM experiment does **not** meet the
+older 40 kHz PDM-output target.
+
+[ima-pwm-player.asm](ima-pwm-player.asm) emits two PWM periods per source
+sample, with 16 pulse widths. Two complementary NOP ladders give a 4-T width
+step: high 68..128 T within a 226-T period. IMA decoding runs between edges.
+Main L retains the current width while A decodes; IYL retains the next width.
+The only RET is provably untaken after AND clears carry. The source explicitly
+encodes ED71 (`OUT (C),0`) because pyz80 lacks its mnemonic: this assumes the
+standard **NMOS Z80** used by the target Spectrum 128, not a CMOS replacement.
+Python only prepares constants/table/screen data and packages the independently
+assembled binary. Guarded IMA additions must never require saturation.
+
+Measured over two full Fuse cycles: **15606.400 PWM periods/s**, **7803.200
+PCM samples/s**, first loop 29.591941 s. The source remains 8000 Hz / 8-bit mono
+before IMA encoding; playback is 2.46% slower, so pitch is correspondingly lower.
+This first candidate does not resample or alter the cached audio to hide that.
+PWM carrier frequency is not the same quantity as PDM port writes per second:
+PWM has two output edges per period; the PDM baseline writes 48287.384 bits/s.
+
+| CPU timing, excluding ULA and startup ROM/disk | Uniform PDM | PWM |
+|---|---:|---:|
+| Ordinary sample, T |438|452 (+14)|
+| Extra at a non-bank page edge, T |74|0|
+| Extra at a bank edge, T |361|89 (final121)|
+| Full loop, T |101175126|104372968 (+3197842)|
+
+The final-bank overhead is **121 T**, including 32 T to reset the IMA seed;
+other seven bank transitions cost 89 T. Thus the exact PWM loop is
+`452*230912 + 7*89 + 121`. ULA adds 1173527 T over the two measured loops.
+Normal periods are mostly 226 or 228 T, with longer bank transitions; no claim
+of perfect wall-clock PWM timing or 40 kHz output follows. Code occupies 1484
+bytes within the unchanged 1536-byte code reserve; all 128 KiB allocations and
+451 preload sectors remain unchanged, with no playback disk reads.
+
+- [Actual Fuse recording, first-loop-length prefix](experiments/ima-pwm16/result-preview.wav)
+  has no added filter, gain or pitch correction and begins at the ready marker.
+- [PWM with the common listening filter](experiments/ima-pwm16/pwm-bandlimited-preview.wav)
+  and [PDM with that same filter](experiments/ima-pwm16/pdm-bandlimited-preview.wav)
+  use 70 Hz HP and two 4.5 kHz two-pole LPs. PWM's fixed AC slope is compensated
+  by 226/64, then both use the same 0.793961 gain; peaks are not independently
+  normalized. The PWM modulation range is about 10.96 dB quieter before this
+  compensation. The two files retain their actual playback speeds.
+- [Full verification](experiments/ima-pwm16/verification.json),
+  [build/audio report](experiments/ima-pwm16/report.json), and
+  [delivery checks](experiments/ima-pwm16/delivery.json).
+
+The filtered, measured-schedule SNR is 13.5337 dB versus 11.7832 dB for PDM.
+This modest improvement includes quantization, edge timing and phase error;
+it is **not a perceptual quality guarantee**. A 15.6 kHz PWM carrier can itself
+be audible. Keep PWM as a listening experiment and PDM as the main option.
+No RC model or physical hardware measurement is involved.
+
+Native checks cover 1847297 exact edges, all 461824 predictors/indices, widths,
+periods, bank sequence and protected memory across two loops. Cold Fuse checks
+all selectors/states/timings, latches, startup stack and disk reads; normal-speed
+Fuse recording confirms both wraps and continuous sound. Component tests cover
+11124 unclipped transitions across both nibbles and all 16 widths, including
+hostile initial flags. Existing general/uniform PDM disks rebuild identically;
+packaging the separately assembled PWM binary reproduces the tested disk.
+
+```powershell
+python -m unittest discover -s audiobook-beeper -p test_ima_pwm.py
+python audiobook-beeper/build_pwm.py --output build/ima-pwm --fuse <fuse.exe> --ffmpeg <ffmpeg.exe> --record
+# Reassemble from the prepared assembly directory, then package separately:
+python -m pyz80.pyz80 --obj=player.bin --lstfile=player.lst -s '.*' ima-player.asm
+python audiobook-beeper/pack_ima.py build/ima-pwm --output build/ima-pwm/repacked.trd
+```
+
 ## Current test: uniform timing with the original PDM model
 
 Use [uniform-timing TRD](../ZX-audiobook-IMA-ADPCM-uniform-test.trd) on
@@ -443,8 +517,8 @@ gate. The independent Z80 run verifies exact bits and 52-T intervals without
 ULA; the complete cold Fuse run adds real emulated memory/I/O delays. These
 are full-excerpt checks, not an extrapolation from a short timing loop.
 
-[Complete report](preview/report.json) ·
-[Native and cold Fuse verification](preview/verification.json) ·
+[Complete report](preview/report.json) Â·
+[Native and cold Fuse verification](preview/verification.json) Â·
 [Compressed actual output times](preview/output-times.u32.gz).
 
 PDM occupies the CPU continuously. Interrupts are disabled during playback;
@@ -494,7 +568,7 @@ uses 52 T/bit. Compare the same **[60.1,70.1)** passage, with identical filters:
 
 The SNR improvement is **4.5713 dB**. These measurements support choosing the
 faster version; they are not listener acceptance or a percentage of speech
-quality. [Comparison script](compare_previews.py) · [result](comparison.json).
+quality. [Comparison script](compare_previews.py) Â· [result](comparison.json).
 
 ## Original 52-T cost and shared memory contract
 

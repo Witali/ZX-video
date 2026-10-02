@@ -5,6 +5,62 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: add an independently bootable live PWM comparison
+
+Objective: try PWM alongside the original non-RC PDM player. Baseline is the
+uniform disk `9c316c9acad7eb44e0fa72a61f628d95d8f079f98c4f4133c6b42b3b80e884d8`,
+with identical 115456 IMA bytes /230912 samples, source 60..88.864 s. No source
+re-encoding, RAM unpacking or change to existing PDM disks is used.
+
+The externally compiled [PWM source](audiobook-beeper/ima-pwm-player.asm)
+interleaves guarded IMA decoding with two 226-T PWM periods per sample.
+Complementary 15-NOP ladders produce 16 widths, high 68..128 T in 4-T steps.
+Main L retains the width while A is scratch; the second stage's 5-T RET C is
+never taken after AND15. The input guard proves no predictor saturation is
+needed. Since pyz80 lacks the ED71 mnemonic, that instruction is explicitly
+encoded and commented in ASM; it outputs zero on the target NMOS Z80.
+Python prepares data and packages the separately assembled binary.
+
+Compared with uniform PDM: ordinary sample 438 ->452 T (+14); non-bank page
+extra 74 ->0 T; bank extra 361 ->89 T, final 121 T. Full loop 101175126 ->
+104372968 T (+3197842), exactly `452*230912+7*89+121`. Counts exclude ULA,
+TR-DOS and physical disk latency. Code 1193 ->1484 bytes still fits the
+1536-byte reserve. All 128 KiB allocations and 451 preload sectors are
+unchanged, with no playback reads.
+
+[Full native and cold Fuse128 verification](audiobook-beeper/experiments/ima-pwm16/verification.json)
+passes two cycles: 1847297 native edge values/widths/periods, 461824 exact
+predictors and indices, all Fuse width selectors, paging latches, native
+memory guards and startup stack bounds. Component tests cover 11124 safe
+low/high transitions and all 16 widths, including initial flags FFh. The
+independent packer reproduces the disk; both old general and uniform PDM
+disks rebuild byte-for-byte unchanged.
+
+Measured carrier 15606.400 Hz, PCM 7803.200 Hz, first loop 29.591941 s;
+ULA adds 1173527 T over two loops. Playback is 2.46% slower than the 8000-Hz
+source, without pitch correction. This does not meet the earlier 40-kHz PDM
+target. At 40 kHz a 3.5454-MHz Z80 has only about 89 T per PWM period for
+width selection, output and decoding; this budget observation is not a
+proof that all other PWM implementations are impossible.
+
+[Matched-filter comparison](audiobook-beeper/experiments/ima-pwm16/report.json)
+gives 13.5337 dB PWM SNR vs 11.7832 dB PDM (+1.7505 dB), using 70-Hz HP and
+two 4.5-kHz LPs with no fitted delay. PWM's narrower AC range is 10.9586 dB
+quieter; comparison applies the fixed 226/64 correction and one common
+0.793961 gain. Actual Fuse recording has no added filter, gain or pitch
+correction: 59.186689 s, two wraps, every half-second window contains signal.
+The delivered WAV is a first-loop-length prefix aligned to ready, not
+exactly the first OUT. A 15.6-kHz carrier may itself be audible; better
+filtered error does not establish better raw sound. Physical hardware and
+CMOS-Z80 replacements are untested.
+
+Decision: retain PWM as a separate listening experiment and uniform PDM as
+the main option. The [PWM TRD](ZX-audiobook-IMA-ADPCM-PWM-test.trd), SHA256
+`1d4845cd98c9b13063f98181ee8fd2de886fed7776a3a8c57f9969b84dc1182f`, independently
+boots and loops. [Reproduction](audiobook-beeper/build_pwm.py),
+[tests](audiobook-beeper/test_ima_pwm.py), [usage](audiobook-beeper/README.md)
+and [delivery checks](audiobook-beeper/experiments/ima-pwm16/delivery.json).
+
 ## 2026-10-02: keep ordinary PDM and equalize native output timing
 
 The user chose the original non-RC modulator and requested better command

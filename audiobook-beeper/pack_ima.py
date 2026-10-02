@@ -14,7 +14,7 @@ def pack(directory,output):
     meta=json.loads((directory/'player.json').read_bytes())
     blob=(directory/'assembly/player.bin').read_bytes()
     packed=gzip.decompress((directory/'soundtrack.ima.gz').read_bytes())
-    if meta.get('uniform_timing'):
+    if meta.get('uniform_timing') or meta.get('pwm'):
         require_unclipped(packed,meta['initial_predictor'],meta['initial_index'])
     if len(blob)!=meta['resident_reserve']+6912 or len(packed)!=meta['packed_bytes']:
         raise ValueError('binary or payload no longer fits the prepared memory layout')

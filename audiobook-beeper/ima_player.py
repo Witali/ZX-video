@@ -6,10 +6,10 @@ from pdm_player import ORIGIN,CPU_CLOCK,BANKS,BANK_BYTES
 from ima_codec import decoder_table,require_unclipped
 
 
-def screen(samples):
+def screen(samples,title='IMA ADPCM / LIVE PDM'):
     from PIL import Image,ImageDraw,ImageFont
     im=Image.new('1',(256,192)); draw=ImageDraw.Draw(im); font=ImageFont.load_default(size=13)
-    for y,text in ((25,'IMA ADPCM / LIVE PDM'),(54,'4-BIT AUDIO IN MEMORY'),(83,'DECODE AND PLAY ON Z80'),
+    for y,text in ((25,title),(54,'4-BIT AUDIO IN MEMORY'),(83,'DECODE AND PLAY ON Z80'),
                    (112,'8000 Hz / MONO SOURCE'),(141,f'{samples} SAMPLES'),(168,'LOOP / RESET TO STOP')):
         box=draw.textbbox((0,0),text,font=font)
         draw.text(((256-(box[2]-box[0]))//2,y),text,font=font,fill=1)
@@ -20,7 +20,7 @@ def screen(samples):
     return bytes(data)+bytes([0x47])*768
 
 
-def program(sections,initial_predictor=0,initial_index=0,assembly_dir=None,uniform=False):
+def program(sections,initial_predictor=0,initial_index=0,assembly_dir=None,uniform=False,pwm=False):
     """Assemble authoritative ASM externally, then read its unchanged binary.
 
     Python emits only constants/table/screen data. It does not emit or patch
@@ -28,22 +28,25 @@ def program(sections,initial_predictor=0,initial_index=0,assembly_dir=None,unifo
     """
     import ast,subprocess,sys,tempfile
     from pathlib import Path
+    if uniform and pwm: raise ValueError('select one modulation variant')
     if not -32768<=initial_predictor<=32767 or not 0<=initial_index<=88:
         raise ValueError('invalid IMA initial state')
     if [s['bank'] for s in sections]!=[0,4,6,1,3,7,2,5]:
         raise ValueError('ASM requires the documented eight-bank layout')
     def assemble(work):
         work.mkdir(parents=True,exist_ok=True)
-        source=Path(__file__).with_name('ima-uniform-player.asm' if uniform else 'ima-player.asm').read_text()
+        source_name='ima-pwm-player.asm' if pwm else 'ima-uniform-player.asm' if uniform else 'ima-player.asm'
+        source=Path(__file__).with_name(source_name).read_text()
         (work/'ima-player.asm').write_text(source,encoding='utf-8',newline='\n')
         config=[f'initial_predictor: EQU {initial_predictor}',f'initial_index: EQU {initial_index}']
         for i,s in enumerate(sections):
             config.extend([f'disk_{i}: EQU {(s["sector"]//16)*256+s["sector"]%16}',
                            f'address_{i}: EQU {s["address"]}',f'sectors_{i}: EQU {s["sectors"]}'])
         (work/'config.inc').write_text('\n'.join(config)+'\n',encoding='ascii')
-        table=decoder_table(0x8600,sign_tags=not uniform)
+        table=decoder_table(0x8600,sign_tags=not (uniform or pwm))
         (work/'decoder-table.bin').write_bytes(table)
-        (work/'screen.bin').write_bytes(screen(2*sum(s['bytes'] for s in sections)))
+        (work/'screen.bin').write_bytes(screen(2*sum(s['bytes'] for s in sections),
+                                              'IMA ADPCM / LIVE PWM' if pwm else 'IMA ADPCM / LIVE PDM'))
         command=[sys.executable,'-m','pyz80.pyz80','--obj=player.bin','--lstfile=player.lst','-s','.*','ima-player.asm']
         result=subprocess.run(command,cwd=work,capture_output=True,text=True)
         (work/'assembler.log').write_text(result.stdout+result.stderr,encoding='utf-8')
@@ -56,7 +59,8 @@ def program(sections,initial_predictor=0,initial_index=0,assembly_dir=None,unifo
             table_base=symbols['tables'],table_bytes=len(table),player_labels=symbols,
             output_labels=[k for k in symbols if '_out' in k],
             sample_labels=[k for k in symbols if k.endswith('_clipped')],
-            mutable_addresses=[symbols['bank_candidate'],symbols['disk_position'],symbols['disk_position']+1],
+            mutable_addresses=([symbols['bank_jump']+1,symbols['bank_jump']+2] if pwm else [symbols['bank_candidate']])+
+                              [symbols['disk_position'],symbols['disk_position']+1],
             assembly=dict(assembler='pyz80 1.3.0',command=command[1:],
                 source_sha256_lf=hashlib.sha256(source.replace('\r\n','\n').encode()).hexdigest(),
                 binary_sha256=hashlib.sha256(blob).hexdigest(),binary_bytes=len(blob),
@@ -77,10 +81,11 @@ def layout():
     return sections,reserve
 
 
-def build_disk(packed,initial_predictor=0,initial_index=0,assembly_dir=None,uniform=False):
+def build_disk(packed,initial_predictor=0,initial_index=0,assembly_dir=None,uniform=False,pwm=False):
+    if uniform and pwm: raise ValueError('select one modulation variant')
     sections,reserve=layout()
     if len(packed)!=sum(s['bytes'] for s in sections): raise ValueError('IMA payload must fill available sectors')
-    guard=require_unclipped(packed,initial_predictor,initial_index) if uniform else None
+    guard=require_unclipped(packed,initial_predictor,initial_index) if uniform or pwm else None
     basic=b''.join([basic_line(10,b'\xfd \xb0 "32767"'),
         basic_line(20,b'\xf9 \xc0 \xb0 "15619":\xea:\xef "PLAYER" \xaf'),
         basic_line(30,b'\xf9 \xc0 \xb0 "32768"')])
@@ -89,13 +94,13 @@ def build_disk(packed,initial_predictor=0,initial_index=0,assembly_dir=None,unif
     track,sector=calculate_file_start([boot,TrdFile('PLAYER','C',draft,start=ORIGIN)])
     position=track*16+sector
     for s in sections: s['sector']=position; position+=s['sectors']
-    blob,meta=program(sections,initial_predictor,initial_index,assembly_dir,uniform=uniform)
+    blob,meta=program(sections,initial_predictor,initial_index,assembly_dir,uniform=uniform,pwm=pwm)
     files=[boot,TrdFile('PLAYER','C',blob,start=ORIGIN)]; offset=0
     for i,s in enumerate(sections):
         files.append(TrdFile(f'IMA{i}','C',packed[offset:offset+s['bytes']],start=s['address'])); offset+=s['bytes']
     disk,directory,capacity=place_files(files,'IMAPDM')
     # recorder's first output label and safe stop offset; not the PCM player's verifier.
-    meta['player_labels']['out_0_0_0']=meta['player_labels']['high_out0']
+    meta['player_labels']['out_0_0_0']=meta['player_labels']['high_first_rise' if pwm else 'high_out0']
     meta.update(origin=ORIGIN,sections=sections,directory=directory,capacity=capacity,
         format='IMA ADPCM4, low nibble first, reference shift/add rounding (IMA-WAV); headerless resident stream',
         initial_predictor=initial_predictor,initial_index=initial_index,packed_bytes=len(packed),pcm_samples=2*len(packed),
@@ -109,4 +114,11 @@ def build_disk(packed,initial_predictor=0,initial_index=0,assembly_dir=None,unif
     if uniform:
         meta.update(uniform_timing=True,saturation_guard=guard,ordinary_low_tstates=438,
                     ordinary_high_tstates=438,maximum_native_hold_tstates=77)
+    if pwm:
+        for key in ('pdm_kernel_tstates','pdm_isolated_tstates','pdm_isolation_delta_tstates','maximum_native_hold_tstates','pdm_input_bits'):
+            meta.pop(key)
+        meta.update(pwm=True,saturation_guard=guard,pwm_bits=4,pwm_levels=16,pwm_periods_per_sample=2,record_stop_offset=2,
+                    pwm_period_tstates=226,pwm_high_min_tstates=68,pwm_high_step_tstates=4,
+                    ordinary_low_tstates=452,ordinary_high_tstates=452,pcm_clock_nominal_hz=CPU_CLOCK/452,
+                    pwm_carrier_nominal_hz=CPU_CLOCK/226)
     return disk,meta

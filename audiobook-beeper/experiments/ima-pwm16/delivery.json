@@ -1,0 +1,54 @@
+{
+  "separate_packer_exact": true,
+  "existing_pdm_disks_rebuild_identically": true,
+  "root_trd_sha256": "1d4845cd98c9b13063f98181ee8fd2de886fed7776a3a8c57f9969b84dc1182f",
+  "native": {
+    "complete": true,
+    "cycles": 2,
+    "edges": 1847297,
+    "exact_widths_and_periods": true,
+    "exact_predictors_and_indices": 461824,
+    "memory_guards_passed": true,
+    "cycle_tstates": 104372968,
+    "ordinary_sample_tstates": 452,
+    "scope": "Independent Z80 CPU; no ULA, TR-DOS or disk latency"
+  },
+  "render": {
+    "filter": "highpass=f=70,lowpass=f=4500:p=2,lowpass=f=4500:p=2",
+    "scope": "Measured Fuse edge times, integrated port holds; identical IMA bytes; no speaker or RC model",
+    "same_filter": true,
+    "common_gain": 0.793960565655376,
+    "pwm_fixed_ac_gain": 3.53125,
+    "pwm_uncompensated_ac_gain_db": -10.958569303270275,
+    "pwm_snr_db": 13.533705538680934,
+    "pwm_correlation": 0.9785223288544936,
+    "pdm_saved_snr_db": 11.783161185225918,
+    "time_alignment": "same sample boundaries; no fitted delay, equalization or pitch correction",
+    "excluded_edge_seconds": 0.1,
+    "pwm_duration_seconds": 29.591940849756124,
+    "pdm_duration_seconds": 28.70224054808424
+  },
+  "component_tests": {
+    "passed": true,
+    "tests": 2,
+    "safe_transitions": 11124,
+    "width_cases": [
+      696,
+      696,
+      696,
+      696,
+      695,
+      695,
+      695,
+      695,
+      695,
+      695,
+      695,
+      695,
+      695,
+      695,
+      695,
+      695
+    ]
+  }
+}
