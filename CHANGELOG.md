@@ -5,6 +5,18 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: apply a 20 kHz low-pass to the exported TRD playback WAV
+
+At the user's request, process the existing first-loop Fuse128 recording
+`listen-original-vs-ima/result-preview.wav` with one forward pass of FFmpeg's
+second-order Butterworth low-pass, cutoff 20000 Hz, Q=1/sqrt(2). Save
+[result-lowpass-20k-preview.wav](audiobook-beeper/listen-original-vs-ima/result-lowpass-20k-preview.wav)
+without extra gain or normalization. Source fingerprint, unchanged 44.1 kHz
+mono PCM16 format and 1281283-frame duration are checked; output has no
+full-scale samples. Parameters, command and input/output hashes are in
+[lowpass-20k.json](audiobook-beeper/listen-original-vs-ima/lowpass-20k.json).
+This is offline WAV processing; the tested player and TRD remain unchanged.
+
 ## 2026-10-02: export original and actual IMA playback for listening
 
 At the user's request, export two directly playable WAVs of the same excerpt

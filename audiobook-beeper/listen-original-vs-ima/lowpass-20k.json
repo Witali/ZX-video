@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-02",
+  "input": "result-preview.wav",
+  "output": "result-lowpass-20k-preview.wav",
+  "cutoff_hz": 20000,
+  "filter": "Second-order Butterworth low-pass, Q=1/sqrt(2); one forward pass",
+  "filter_spec": "lowpass=f=20000:p=2:t=q:w=0.7071067811865476",
+  "command": [
+    "C:/Users/rudol/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.1.1-full_build/bin/ffmpeg.exe",
+    "-v",
+    "error",
+    "-nostdin",
+    "-n",
+    "-i",
+    "C:\\Work\\ZX-video\\audiobook-beeper\\listen-original-vs-ima\\result-preview.wav",
+    "-map",
+    "0:a:0",
+    "-af",
+    "lowpass=f=20000:p=2:t=q:w=0.7071067811865476",
+    "-c:a",
+    "pcm_s16le",
+    "C:\\Work\\ZX-video\\audiobook-beeper\\listen-original-vs-ima\\result-lowpass-20k-preview.wav"
+  ],
+  "extra_gain_or_normalization": false,
+  "files": {
+    "result-preview.wav": {
+      "sample_rate_hz": 44100,
+      "channels": 1,
+      "bits": 16,
+      "frames": 1281283,
+      "seconds": 29.054036281179137,
+      "peak_abs_pcm": 7053,
+      "full_scale_samples": 0,
+      "sha256": "a5f9488b51c0d2c470da8eeb898356d3c2534de2dd4ec456fc41405928a3b4cf"
+    },
+    "result-lowpass-20k-preview.wav": {
+      "sample_rate_hz": 44100,
+      "channels": 1,
+      "bits": 16,
+      "frames": 1281283,
+      "seconds": 29.054036281179137,
+      "peak_abs_pcm": 7049,
+      "full_scale_samples": 0,
+      "sha256": "fd37f40b8766688ebb9e3e8c77e94f349a9f3f6a3da07f556eef3229802d6f6a"
+    }
+  },
+  "verification": "Source fingerprint and WAV rate/channel/bit-depth/frame-count checked; no full-scale output samples",
+  "scope": "Offline filtering of the existing Fuse128 WAV; no player or TRD changes"
+}
