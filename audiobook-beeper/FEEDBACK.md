@@ -135,6 +135,73 @@ counted high bits. A short boot trace identified the duplicate timestamps.
 Using one breakpoint fixed the verifier; complete runs pass. This was a
 debugger-counter defect, not a playback freeze.
 
+## Follow-up: 20-dB target and a small output buffer
+
+This 2026-10-02 follow-up records a feasibility discussion, not another
+implemented player. Reuse the saved [SNR assessment](SNR_ASSESSMENT.md) and
+[live feedback report](experiments/ima-feedback64/report.json); no new
+audio, native timing or Fuse measurements were made for this discussion.
+
+The current total SNR of 14.0291 dB needs approximately **3.95 times less
+error power** to reach 20 dB. The fixed IMA stream's ideal decoded-waveform
+reference is approximately 23.6 dB under the common listening filter. If
+codec and modulation errors are approximately uncorrelated, then
+`10^(-S_total/10) = 10^(-S_codec/10) + 10^(-S_modulator/10)` estimates a
+required modulation SNR of **22.49 dB** for a 20-dB total. This is an error
+budget estimate, not an exact identity for these potentially correlated
+errors. The codec reference/model uses the original 28.864-second excerpt;
+the current live player uses its 26.624-second prefix with a new end fade.
+
+Saved host models give 16.5686 dB total for full-precision damped feedback
+at 64 kHz, 19.6798 dB for first-order PDM at 128 kHz, and **21.5165 dB** for
+second-order feedback at 128 kHz with half amplitude. Thus 20 dB is an
+algorithmically demonstrated target under the existing filter, but is
+not demonstrated by a live Spectrum implementation. Increasing only the
+current table's precision at 64 kHz does not establish that target.
+
+A small buffer could hold either packed PDM bits or ready port bytes:
+
+| Representation | Total 1-KiB capacity at 128 kHz | Each 512-byte half |
+|---|---:|---:|
+| Eight PDM bits per byte | 64 ms | 32 ms |
+| One port value (0 or 16) per byte | 8 ms | 4 ms |
+
+These are nominal capacities, not measured refill deadlines. All 128 KiB
+is already allocated. Taking 1024 bytes from the 4-kB/s IMA payload would
+cost **0.256 seconds** of nominal source capacity, before any additional
+code/alignment changes. The buffer's address, contention, paging visibility
+and stack/table boundaries still need a concrete allocation. A banked
+payload location cannot simply be assumed suitable for a fixed output
+buffer.
+
+Ready port bytes permit a **16-T OUTI**, compared with the current 30-T
+bit-extraction/output core: **-14 T per output** for the consumer operation
+alone. OUTI also advances HL and decrements B. Its port address/register
+effects, loop/control costs and Spectrum ULA waits must be included in
+a real implementation. Timings follow the
+[Zilog manual](https://www.zilog.com/docs/z80/um0080.pdf).
+Packed storage still requires bit extraction. Expanding into ready bytes
+adds producer work and memory writes; the 14-T consumer saving is not a
+whole-player saving.
+
+At the 3546900-Hz CPU clock, 128-kHz output permits **27.7102 T per pulse**,
+or only **11.7102 T** after OUTI for all remaining average work. The existing
+30-T consumer alone exceeds that period. The stock beeper has no autonomous
+buffer reader: Z80 must interleave future IMA/PDM preparation with current
+output. Two alternating buffers provide scheduling slack, not parallel
+execution. Playing a whole block and then pausing to refill would interrupt
+the pulse stream. A prefilled buffer cannot sustain a producer whose
+long-term rate is lower than consumption.
+
+Buffering may make output intervals more uniform by preparing work before
+page/bank transitions. Identical bits at identical times have identical
+modeled output regardless of buffering. No SNR gain or 128-kHz throughput
+is established here; the older ordinary-PDM uniform-reclocking experiment
+gained only 0.055 dB and must not be generalized into a prediction for this
+feedback player. A useful next experiment would prove the combined producer,
+consumer and memory budget, then measure whole-chain SNR with the same
+filter. That experiment remains unimplemented; retain all existing disks.
+
 ## Reproduction and retained evidence
 
 Use the existing Python environment with NumPy, Pillow, pyz80 and z80:

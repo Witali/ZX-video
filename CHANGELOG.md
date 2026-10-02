@@ -5,6 +5,35 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: record 20-dB target and PDM buffer feasibility
+
+The user asked whether 20-dB total SNR is possible and whether a small
+predecoded PDM buffer could improve speed/quality, then requested saving
+and pushing the current progress. Reuse the completed feedback player's
+14.0291-dB result and the original full-excerpt host models; this follow-up
+is analysis only, with no new player, TRD, WAV or runtime measurements.
+
+Record the **3.95x error-power reduction** needed for 20 dB and the
+approximately **22.49-dB modulation budget** assuming uncorrelated errors
+and the fixed codec's 23.6-dB reference. The saved 128-kHz second-order
+host model reaches 21.5165 dB, but no live implementation proves that rate
+or quality. Full-precision damped feedback at 64 kHz reaches only 16.5686 dB.
+
+Compare a proposed 1-KiB buffer split into two halves: packed bits hold
+32 ms per half at 128 kHz; ready port bytes hold 4 ms. Reclaiming 1 KiB
+from IMA would cost 0.256 s before layout/code changes. A ready-byte OUTI
+costs 16 T versus the existing 30-T output core (-14 T), excluding producer,
+control and ULA costs. At 128 kHz only 27.7102 T is available per pulse.
+The Z80 must interleave production/output; buffering does not supply a
+second processor or eliminate sustained refill costs. Memory placement
+and total timing remain unresolved. See the
+[saved calculations and limitations](audiobook-beeper/FEEDBACK.md#follow-up-20-db-target-and-a-small-output-buffer).
+
+Decision: preserve the verified feedback preview and the theoretical
+buffer proposal as a continuation checkpoint. Do not claim an SNR gain,
+a buffered player or a new release. Verification reuses existing reports
+and checks documentation/diff only; no unchanged playback tests rerun.
+
 ## 2026-10-02: implement live IMA feedback PDM near 64 kHz
 
 The user requested a playable version of the 64-kHz damped-feedback model
