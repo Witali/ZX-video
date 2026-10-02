@@ -1,0 +1,59 @@
+{
+  "cutoff_hz": 20000,
+  "resistance_ohms": 1000,
+  "capacitance_farads": 7.957747154594767e-09,
+  "time_constant_seconds": 7.957747154594767e-06,
+  "topology": "ideal unloaded series R, shunt C; output across C",
+  "analog_transfer": "H(f)=1/(1+j*2*pi*f*R*C)",
+  "analog_slope_db_per_octave": -6.020599913279624,
+  "internal_rate_hz": 705600,
+  "interpolation": "exact first-order-hold RC step; SOXR 28-bit up/down sampling",
+  "coefficients": {
+    "a": 0.8368630670046356,
+    "b0": 0.08398834115239795,
+    "b1": 0.07914859184296641
+  },
+  "modeled_rc_at_cutoff_db": -3.0332883477899153,
+  "ideal_rc_at_cutoff_db": -3.010299956639812,
+  "response_check_scope": "RC stage alone; excludes antialias resamplers and final PCM16 quantization",
+  "extra_gain_or_normalization": false,
+  "input": {
+    "sample_rate_hz": 44100,
+    "channels": 1,
+    "bits": 16,
+    "frames": 1281283,
+    "duration_seconds": 29.054036281179137,
+    "peak_abs_pcm": 7053,
+    "full_scale_samples": 0,
+    "sha256": "a5f9488b51c0d2c470da8eeb898356d3c2534de2dd4ec456fc41405928a3b4cf"
+  },
+  "output": {
+    "sample_rate_hz": 44100,
+    "channels": 1,
+    "bits": 16,
+    "frames": 1281283,
+    "duration_seconds": 29.054036281179137,
+    "peak_abs_pcm": 6993,
+    "full_scale_samples": 0,
+    "sha256": "c73e1f986a4a554b3973cf4002386f9fcca72b999076d7a8a9c2c58e849c0efc"
+  },
+  "command": [
+    "C:/Users/rudol/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.1.1-full_build/bin/ffmpeg.exe",
+    "-v",
+    "error",
+    "-nostdin",
+    "-n",
+    "-i",
+    "C:\\Work\\ZX-video\\audiobook-beeper\\listen-original-vs-ima\\result-preview.wav",
+    "-map",
+    "0:a:0",
+    "-af",
+    "aresample=705600:resampler=soxr:precision=28,biquad=b0=0.08398834115239795:b1=0.079148591842966409:b2=0:a0=1:a1=-0.83686306700463564:a2=0:precision=f64,aresample=44100:resampler=soxr:precision=28",
+    "-c:a",
+    "pcm_s16le",
+    "C:\\Work\\ZX-video\\audiobook-beeper\\listen-original-vs-ima\\result-rc-20k-preview.wav"
+  ],
+  "verification": "Stable pole, unity DC gain, cutoff error <0.03 dB; unchanged WAV format/frame count; no full-scale output",
+  "scope": "Offline RC filtering of existing Fuse WAV; not a complete Spectrum speaker circuit model",
+  "producer_sha256_lf": "7bab3fc23ffa700e44258d99f3cdfca9b5a705f8478a4640bfce837120162682"
+}

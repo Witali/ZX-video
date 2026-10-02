@@ -5,6 +5,27 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: simulate an RC low-pass on the TRD playback WAV
+
+The user requested a filter emulating an RC circuit. Retain the preceding
+20000 Hz cutoff and process the unfiltered `result-preview.wav` with an
+ideal unloaded series-R/shunt-C model, taking output across C. R=1000 ohms
+and C=7.957747 nF give tau=7.957747 microseconds. This is one physical pole,
+with a -6.0206 dB/octave asymptote and unity DC gain; it is not a cascade
+with the preceding second-order Butterworth export.
+
+[apply_rc_filter.py](audiobook-beeper/apply_rc_filter.py) solves
+`tau*dy/dt+y=x` exactly for linearly interpolated input at 705600 Hz (16x),
+using a double-precision IIR stage between SOXR up/down sampling. The RC
+stage evaluates to -3.033288 dB at 20 kHz versus the analog -3.010300 dB;
+this check excludes the resamplers and final PCM16 quantization. Verified
+stable pole/unity DC gain, unchanged 44.1 kHz mono PCM16 format and
+1281283 frames, and no full-scale output samples. No gain normalization.
+Save [RC listening WAV](audiobook-beeper/listen-original-vs-ima/result-rc-20k-preview.wav)
+and [parameters, command and hashes](audiobook-beeper/listen-original-vs-ima/result-rc-20k-preview.json).
+Player, TRD and prior listening files remain unchanged; this is an offline
+RC model, not a complete Spectrum speaker-circuit simulation.
+
 ## 2026-10-02: apply a 20 kHz low-pass to the exported TRD playback WAV
 
 At the user's request, process the existing first-loop Fuse128 recording
