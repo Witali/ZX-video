@@ -117,6 +117,11 @@ def fuse_check(fuse,out,meta,packed):
         if condition:lines.append(f'condition {eid} {condition}')
     event(labels['start'],101,[],['set $loading 1'])
     event(labels['ready'],100,[stamp,'z80:sp'],['set $r 1','set $loading 0'])
+    message=meta.get('loading_message')
+    if message:
+        attrs=[f'[{message["attribute_address"]+i}]' for i in range(message['attribute_bytes'])]
+        event(labels['loading_visible'],103,[stamp,*attrs])
+        event(labels['loading_hidden'],104,[stamp,*attrs])
     event('write 24319',199,[stamp,'z80:sp'],condition='$loading==1 && z80:sp<24320',stop=True)
     # Fuse treats the 8-bit port 254 as a low-byte match, covering both
     # 00FE and 10FE. Adding a second 10FE breakpoint double-counts ones.
@@ -125,7 +130,7 @@ def fuse_check(fuse,out,meta,packed):
         if label.endswith('_sample'):event(labels[label],120,['z80:ix'])
         if label.endswith('_state'):event(labels[label],121,['z80:hl'])
     for i in range(len(meta['sections'])):event(labels[f'page_{i}']+2,150,['z80:a','ula:mem7ffd','ula:mem1ffd'])
-    event(labels['disk_call'],102,['$r'])
+    event(labels['disk_call'],102,['$r',stamp,'+'.join(attrs)] if message else ['$r'])
     event(labels['high_out0']+2,200,[stamp],condition=f'$bits=={len(expected)}',stop=True)
     script='\n'.join(lines);(work/'fuse-debugger.txt').write_text(script,encoding='utf-8',newline='\n')
     command=[str(fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions','--speed','10000',
@@ -140,13 +145,18 @@ def fuse_check(fuse,out,meta,packed):
     if result.returncode!=77:raise AssertionError(f'Fuse did not finish: {result.returncode}')
     numbers=iter(int(s.strip(),0) for s in result.stdout.decode().splitlines() if re.fullmatch(r'(?:-?\d+|0x[\da-fA-F]+)',s.strip()))
     times=array('I');values=bytearray();predictors=[];states=[];pages=[];reads=[];ready=[];ends=[]
+    loading_shown=[];loading_hidden=[];loading_reads=[]
     for tag in numbers:
         row=[next(numbers) for _ in range(widths[tag])]
         if tag==140:times.append(row[0]);values.append(row[1])
         elif tag==120:predictors.append(row[0])
         elif tag==121:states.append((row[0]-meta['table_base'])//64)
         elif tag==150:pages.append(row)
-        elif tag==102:reads.append(row[0])
+        elif tag==102:
+            reads.append(row[0])
+            if message:loading_reads.append(row[1:])
+        elif tag==103:loading_shown.append(row)
+        elif tag==104:loading_hidden.append(row)
         elif tag==100:ready.append(row)
         elif tag==200:ends.append(row)
         elif tag==199:raise AssertionError('startup stack overflow')
@@ -159,6 +169,18 @@ def fuse_check(fuse,out,meta,packed):
     assert len(pages)==len(wanted_pages) and all(p[0]==p[1]==b for p,b in zip(pages,wanted_pages))
     assert len({p[2] for p in pages})==1
     assert len(reads)==len(packed)//256 and not any(reads)
+    loading_proof=None
+    if message:
+        assert len(loading_shown)==len(loading_hidden)==1
+        assert loading_shown[0][1:]==[message['visible_attribute']]*message['attribute_bytes']
+        assert loading_hidden[0][1:]==[message['hidden_attribute']]*message['attribute_bytes']
+        assert all(loading_shown[0][0]<=t<loading_hidden[0][0] and
+                   total==message['visible_attribute']*message['attribute_bytes'] for t,total in loading_reads)
+        assert loading_hidden[0][0]<ready[0][0]
+        loading_proof=dict(text=message['text'],shown_before_first_audio_read=True,
+                           checked_audio_reads=len(loading_reads),hidden_before_playback=True,
+                           visible_attribute_bytes_verified=message['attribute_bytes'],
+                           hidden_attribute_bytes_verified=message['attribute_bytes'])
     timeline=np.asarray(times,dtype=np.int64);timeline-=timeline[0]
     actual=np.diff(timeline);native=np.tile(intervals(meta),2);assert np.all(actual>=native)
     (out/'output-times.u32.gz').write_bytes(gzip.compress(timeline.astype('<u4').tobytes(),mtime=0))
@@ -172,7 +194,8 @@ def fuse_check(fuse,out,meta,packed):
                 interval_histogram_tstates=dict(sorted(Counter(map(int,actual)).items())),
                 additional_ula_tstates=int(actual.sum()-native.sum()),native_tstates_per_cycle=int(native[:n].sum()),
                 trd_sha256=hashlib.sha256((out/'audiobook-preview.trd').read_bytes()).hexdigest(),
-                fuse_sha256=hashlib.sha256(fuse.read_bytes()).hexdigest(),physical_hardware_tested=False)
+                fuse_sha256=hashlib.sha256(fuse.read_bytes()).hexdigest(),physical_hardware_tested=False,
+                loading_message=loading_proof)
 
 
 if __name__=='__main__':

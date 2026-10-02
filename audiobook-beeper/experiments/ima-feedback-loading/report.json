@@ -1,0 +1,237 @@
+{
+  "date": "2026-10-02",
+  "scope": "Loading status only; playback algorithm and CPU timing unchanged",
+  "complete": true,
+  "verification": {
+    "complete": true,
+    "native": {
+      "complete": true,
+      "cycles_verified": 2,
+      "bits_verified": 3407985,
+      "pcm16_samples_verified": 425984,
+      "every_pdm_bit_exact": true,
+      "every_predictor_and_index_exact": true,
+      "memory_guards_passed": true,
+      "bank_sequence": [
+        0,
+        4,
+        6,
+        1,
+        3,
+        7,
+        5,
+        0,
+        4,
+        6,
+        1,
+        3,
+        7,
+        5,
+        0
+      ],
+      "cycle_tstates": 92289184,
+      "maximum_hold_tstates": 80,
+      "interval_histogram_tstates": {
+        "44": 213020,
+        "48": 14,
+        "49": 425984,
+        "51": 14,
+        "52": 159744,
+        "53": 851968,
+        "54": 28,
+        "56": 851982,
+        "58": 425984,
+        "59": 425984,
+        "62": 52416,
+        "65": 14,
+        "80": 832
+      },
+      "scope": "Z80 CPU; excludes ULA, ROM and disk latency"
+    },
+    "fuse": {
+      "complete": true,
+      "cold_boot": true,
+      "machine": "128",
+      "cycles_verified": 2,
+      "bits_verified": 3407985,
+      "pcm16_samples_verified": 425984,
+      "every_pdm_bit_exact": true,
+      "every_predictor_and_index_exact": true,
+      "paging_latches_verified": true,
+      "startup_stack_guard_passed": true,
+      "startup_sector_reads": 416,
+      "runtime_disk_reads": 0,
+      "cycle_durations_seconds": [
+        26.65845188756379,
+        26.658388169951223
+      ],
+      "average_pdm_rate_hz": 63919.4670262467,
+      "average_pcm_rate_hz": 7989.670797077883,
+      "maximum_hold_tstates": 85,
+      "minimum_instantaneous_pdm_rate_hz": 41728.23529411765,
+      "interval_histogram_tstates": {
+        "44": 128282,
+        "45": 9884,
+        "48": 59604,
+        "49": 235564,
+        "50": 100,
+        "51": 13467,
+        "52": 99250,
+        "53": 642376,
+        "54": 11523,
+        "55": 91011,
+        "56": 706476,
+        "57": 47291,
+        "58": 447308,
+        "59": 722270,
+        "60": 641,
+        "61": 25356,
+        "62": 42083,
+        "63": 5433,
+        "64": 101856,
+        "65": 74,
+        "66": 13056,
+        "67": 4247,
+        "80": 561,
+        "81": 36,
+        "84": 156,
+        "85": 79
+      },
+      "additional_ula_tstates": 4531132,
+      "native_tstates_per_cycle": 92289184,
+      "trd_sha256": "38823c7b5a75877863649d848658452ef1586ae5014a71153d7379f3e91b5d72",
+      "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+      "physical_hardware_tested": false,
+      "loading_message": {
+        "text": "Loading audio data",
+        "shown_before_first_audio_read": true,
+        "checked_audio_reads": 416,
+        "hidden_before_playback": true,
+        "visible_attribute_bytes_verified": 96,
+        "hidden_attribute_bytes_verified": 96
+      }
+    }
+  },
+  "render": {
+    "scope": "Measured full Fuse timing; integrated port output, not a speaker or RC model",
+    "filter": "highpass=f=70,lowpass=f=4500:p=2,lowpass=f=4500:p=2",
+    "common_gain": 0.793960565655376,
+    "excluded_edge_seconds": 0.1,
+    "feedback_modulator_snr_db": 14.56602634237829,
+    "feedback_total_snr_db": 14.029210385933705,
+    "old_pdm_modulator_snr_db": 11.828180150877056,
+    "old_pdm_total_snr_db": 11.553211265306022,
+    "ordinary_same_timing_model_modulator_snr_db": 13.635337637071,
+    "duration_seconds": 26.65845188756379,
+    "old_duration_seconds": 26.467564633905663,
+    "time_alignment": "each reference follows its own sample schedule; no fitted phase/gain or tempo correction"
+  },
+  "source_sha256_lf": {
+    "ima-feedback-player.asm": "963cfa55952bedcbadf4c3597cf1f1d28d251e548546fc88b658e0e03429d2dc",
+    "feedback_player.py": "3699f9259efc53a56111b0527a90bc6b1741d30a0b9941110b89d94f38fc0c23",
+    "verify_feedback.py": "8a0a2da060ee227b850b0ac3d0456587bdeb56f07e80d5bc2e2d12cd8a3fdab5",
+    "build_feedback.py": "b728b374c4f3e6750fa68c77fa83b694c695a1e9b4769d55469f399ea3b9787e",
+    "test_feedback.py": "079c41003cbb07334ba8ab72763965a7d02e369d3022dd028a1f2f48c24dcc59",
+    "pack_ima.py": "66fad999c40c5c1102a4185f60b030d7c43f2cda5a406d4e356850f30a180662",
+    "ima_codec.py": "263d52677e423e9f9f55636b84fe108aa3eed1751bf1c09ce751b65a22f3349b",
+    "ima_player.py": "d560a95e3bd67a467788c41506536845e5c365004279d6fa4d5bec2b07c194d5",
+    "pdm_player.py": "12c1e553961fdcd40112a0d48105ce7dd934fa245212024b269f4eab2f5ff0b8",
+    "record_pcm.py": "8dd8c4482c2133adcb5bc13ee2f2043c0b4f2175a656a7a0c7d7220668cc5129",
+    "build_pdm.py": "6d9fd77e2bd2f9eaf45f8c6c0ef502ed60c76520b9e90dbf7cadf9930a4cc018",
+    "assess_snr.py": "d4e76b7212a971176ed3d3550e7dec721a217599b9487ef3606a2f6e92de9bc8",
+    "verify_ima.py": "04d8b5711bd512d96a9cf3715fc323c6117c01e9165f252f7826306362f70f4c"
+  },
+  "predecessor": "../ima-feedback64/report.json",
+  "full_local_evidence": "C:/Work/ZX-video/.tmp/feedback-loading/report.json",
+  "native_hot_path_delta_tstates": 0,
+  "artifacts": {
+    "output-times.u32.gz": {
+      "sha256": "e3e42c9d10049be1fb58b318fd6b4ab829cad588b37ad076df74fe9aa9a00c20",
+      "bytes": 5899082
+    },
+    "player.json": {
+      "sha256": "54ba532ea4309d4c24ecc1b0a93718c3f81d2a7d87e14b17bd83cc902c7792c8",
+      "bytes": 11187
+    },
+    "status-preview.png": {
+      "sha256": "fb8f0a2c43943c6c393623fc9e53dcd7f55e1344a93667b9c3f72b4257f187f9",
+      "bytes": 4051
+    },
+    "verification.json": {
+      "sha256": "af92856fa307b7c50ba6b35310288b788ffbd3d83948b35b67f9d531e4b45150",
+      "bytes": 2596
+    },
+    "assembly/assembler.log": {
+      "sha256": "f406dab41d95e0b53e284014b58f9e8c462b7a32132a4687c686e75da949d3db",
+      "bytes": 4079
+    },
+    "assembly/config.inc": {
+      "sha256": "9303c0ae403ae11722e2729b2350e52d7c04c62960168eadbd16fb800d1cf0ba",
+      "bytes": 487
+    },
+    "assembly/player.asm": {
+      "sha256": "963cfa55952bedcbadf4c3597cf1f1d28d251e548546fc88b658e0e03429d2dc",
+      "bytes": 8498
+    },
+    "assembly/player.bin": {
+      "sha256": "20ae559eb21f5df6c859b9879258b2269291efeeab473490175cc53838f283ce",
+      "bytes": 23296
+    },
+    "assembly/screen.bin": {
+      "sha256": "ba167528b22117d8939e64e38844313d52dbe817d457f455891b27ab4e2f9e97",
+      "bytes": 6912
+    },
+    "producer-source/assess_snr.py.gz": {
+      "sha256": "bd7a6dea1a2d0e9344fff8fb2d2e471007cc348bef17ef4a66cf5062535c178c",
+      "bytes": 4530
+    },
+    "producer-source/build_feedback.py.gz": {
+      "sha256": "adc2f2dab99c485d87008fddf6c7c2978c42c43d2b045be4bb5e56968a6a11ac",
+      "bytes": 2674
+    },
+    "producer-source/build_pdm.py.gz": {
+      "sha256": "b9af3cfd146c2b725b52c6bb75cbb16e602548e5fe66006588fe06533d5937ac",
+      "bytes": 5062
+    },
+    "producer-source/feedback_player.py.gz": {
+      "sha256": "f1e06af952394553b8c7b01f1b5344ed2c06f0455c12a2855c8e2c24b4790a30",
+      "bytes": 3347
+    },
+    "producer-source/ima_codec.py.gz": {
+      "sha256": "186e25bd17b734f6696cef7f27c1608f13baac016bf327784f68c712ce5291f6",
+      "bytes": 1947
+    },
+    "producer-source/ima_player.py.gz": {
+      "sha256": "0861d15535e0999185dc2abc2423ad8e97a4b25a8347708dd5e7eb34466e633a",
+      "bytes": 3387
+    },
+    "producer-source/ima-feedback-player.asm.gz": {
+      "sha256": "60cc2a642948a22c284eaacec9f9cecedb357318b1bf977466afee16b8e72bd5",
+      "bytes": 2741
+    },
+    "producer-source/pack_ima.py.gz": {
+      "sha256": "a4be810bc2d285aabc57650d9acaecc54f3b9ab2c0ad45475e2eda3b5077fa7e",
+      "bytes": 1022
+    },
+    "producer-source/pdm_player.py.gz": {
+      "sha256": "7a7e9923bbc5055c39e5c54fb9e7eecd1d6d9ad84d45d1e69da2d481bad07d48",
+      "bytes": 3524
+    },
+    "producer-source/record_pcm.py.gz": {
+      "sha256": "db946ed91ff46ae23ac2aba0e9541c354a6186eb40e28fa710e34cbec6ece6d4",
+      "bytes": 3238
+    },
+    "producer-source/test_feedback.py.gz": {
+      "sha256": "22dff88a05b700a0cd691fc84943517416455ebf06651eebe0a2bc58afac58c7",
+      "bytes": 1450
+    },
+    "producer-source/verify_feedback.py.gz": {
+      "sha256": "05241793b4754bb0712d85f318a8dcbcf5ff52026a2ce098bd6df3b267bf593c",
+      "bytes": 4531
+    },
+    "producer-source/verify_ima.py.gz": {
+      "sha256": "0c652616172a590b913f81d4a3144d553e0c5d1ee3d26b3c83266c1a065a7c65",
+      "bytes": 4233
+    }
+  }
+}

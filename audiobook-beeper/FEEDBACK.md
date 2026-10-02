@@ -6,6 +6,14 @@ PDM while playing, and loops. Measured average output is **63919.47 Hz**,
 approximately 64 kHz but **80.53 Hz below a strict 64000-Hz target**. The
 original non-RC accumulator-PDM disk remains available unchanged.
 
+The current disk shows **Loading audio data** while reading the audio and
+hides the message before playback. The message is startup-only: native
+playback timing is unchanged (0 T delta). The
+[loading-status verification](experiments/ima-feedback-loading/report.json)
+covers all 416 audio reads and two complete cold Fuse playback cycles.
+The original audio/algorithm reports below remain the baseline; this UI
+rebuild measures 14.0292 dB total SNR, a negligible change from its ULA phase.
+
 On the common prepared source prefix and the established listening filter,
 total reconstruction SNR improves **11.5532 ->14.0291 dB** (+2.4759 dB).
 Modulation-only SNR improves **11.8282 ->14.5659 dB**. This is a working

@@ -12,6 +12,22 @@ HERE=Path(__file__).resolve().parent
 INITIAL_STATE=34
 
 
+def loading_screen(samples):
+    """Ready image hides the startup-only message in its top 24 pixel rows."""
+    from PIL import Image, ImageDraw, ImageFont
+    from pcm_player import spectrum_bitmap_offset
+    data=bytearray(screen(samples,'IMA / FEEDBACK PDM'))
+    tile=Image.new('1',(256,24));draw=ImageDraw.Draw(tile)
+    font=ImageFont.load_default(size=13);text='Loading audio data'
+    box=draw.textbbox((0,0),text,font=font)
+    draw.text(((256-(box[2]-box[0]))//2,4),text,font=font,fill=1)
+    for y in range(24):
+        for x in range(256):
+            if tile.getpixel((x,y)):data[spectrum_bitmap_offset(x//8,y)]|=128>>(x&7)
+    data[6144:6144+96]=bytes(96)
+    return bytes(data)
+
+
 def transition(pcm6,state):
     """Eight beta=.5 decisions; quantize/clamp history only at block end.
 
@@ -59,7 +75,7 @@ def program(sections,work):
     (work/'pointer-low.bin').write_bytes(bytes((x&4)<<5 for x in range(256)))
     (work/'pointer-high.bin').write_bytes(bytes(0xa0+(x>>3) for x in range(256)))
     (work/'feedback.bin').write_bytes(feedback_table())
-    (work/'screen.bin').write_bytes(screen(sum(s['bytes'] for s in sections)*2,'IMA / FEEDBACK PDM'))
+    (work/'screen.bin').write_bytes(loading_screen(sum(s['bytes'] for s in sections)*2))
     command=[sys.executable,'-m','pyz80.pyz80','--obj=player.bin','--lstfile=player.lst','-s','.*','player.asm']
     result=subprocess.run(command,cwd=work,capture_output=True,text=True)
     (work/'assembler.log').write_text(result.stdout+result.stderr)
@@ -98,6 +114,8 @@ def build_disk(packed,work):
               output_labels=[k for k in labels if '_out' in k],
               mutable_addresses=[labels['bank_jump']+1,labels['bank_jump']+2,labels['disk_position'],labels['disk_position']+1],
               feedback=True,ordinary_low_tstates=428,ordinary_high_tstates=[436,436,436,446],
+              loading_message=dict(text='Loading audio data',attribute_address=0x5800,
+                                   attribute_bytes=96,visible_attribute=0x47,hidden_attribute=0),
               ordinary_mean_tstates=433.25,ordinary_slots=8,unrolled_input_bytes=4,
               model=dict(beta=.5,pcm_levels=64,recent_error_bins=16,older_error_bins=4,
                          state_quantization='clipped midpoint bins over [-.5,.5], once per eight-bit block',rc=False),

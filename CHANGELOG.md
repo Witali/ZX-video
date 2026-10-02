@@ -5,6 +5,36 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: show audio-loading status before feedback playback
+
+The user requested an English message while audio data loads, disappearing
+when loading finishes. Add **Loading audio data** in the unused top 24 pixel
+rows of the feedback player's screen. The ready image contains hidden black
+attributes; two startup loops reveal/hide 96 attributes around the existing
+audio reads. The two loops add 20 code bytes (1740 ->1760), remaining within
+the 1792-byte reserve. No playback hot-path instruction or native cycle count
+changes: 92289184 T/loop, **0 T delta**.
+
+Full native and cold Fuse128 verification covers two cycles, 3407985 output
+bits and 425984 predictors/indices, memory guards, paging and no runtime disk
+reads. Fuse checks the message before loading, throughout all 416 audio
+reads, and verifies all 96 attributes hidden before playback. Visually inspect
+the [before/after screen](audiobook-beeper/experiments/ima-feedback-loading/status-preview.png).
+Actual output is 63919.4670 Hz; total SNR is 14.029210 dB under the same filter.
+Measured ULA overhead differs by one T across two loops; native timing and
+the encoded audio are unchanged. No physical hardware test or new sound
+algorithm is claimed.
+
+Update the root feedback TRD, SHA256
+`38823c7b5a75877863649d848658452ef1586ae5014a71153d7379f3e91b5d72`.
+Preserve the original feedback experiment and WAV. The
+[new report](audiobook-beeper/experiments/ima-feedback-loading/report.json)
+archives metadata, compiled binary, source snapshots and full output times;
+the complete raw debugger trace remains in `.tmp/feedback-loading`.
+Reproduce with `build_feedback.py --output <empty-directory> --fuse <fuse>
+--ffmpeg <ffmpeg>`. Decision: deliver the requested startup UI change;
+the separate active 20-dB goal remains unfinished.
+
 ## 2026-10-02: record 20-dB target and PDM buffer feasibility
 
 The user asked whether 20-dB total SNR is possible and whether a small
