@@ -5,6 +5,68 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: optimize error-feedback PWM past 40 kHz average
+
+The user requested at least 40 kHz PWM after the 15.606-kHz experiment.
+Retain identical IMA input (115456 bytes /230912 samples, source 60..88.864 s),
+full 128 KiB allocation, independent boot and live decoding. The new
+[fast assembly](audiobook-beeper/ima-pwm-fast-player.asm) uses two widths
+with an 8-bit first-order error accumulator, distributing intermediate
+levels between successive PWM periods. It is an additional experiment,
+not a replacement of the original non-RC PDM model.
+
+The first fully checked version used 30/42-T pulses and 12-T JR balancing.
+Native sample 433 T /loop 100027154 T; cold Fuse measured **39929.767 Hz**,
+below target, and 7982.559 PCM samples/s. It was rejected. Preserve its
+[verification](audiobook-beeper/experiments/ima-pwm40-jr-attempt/verification.json),
+ASM/verifier snapshots and assembled binary; full trace/timestamps remain
+in `.tmp/ima-pwm-fast/`, with hashes in the saved evidence index.
+
+Replacing each path's JR with JP cuts the kernel 58 ->56 T (-2), changing
+wide pulses 42 ->40 T. Narrow pulses remain 30 T. The first all-JP expansion
+exceeded the 1536-byte code reserve by 81 bytes; sharing the last two stages
+across seven bank tails fits 1342 bytes, versus the JR build's 1513, without
+taking audio RAM. The shared jump adds 3 T per nonfinal bank. Native ordinary
+periods are 84/84/84/87/84 T: sample 433 ->423 T. Page extra 84 T, bank extra
+511 T (final 508). Exact loop `423*230912+84*443+511*7+508` =97717073 T,
+-2310081 versus JR, -6655895 versus the 16-width PWM. Deterministic counts
+exclude ULA, TR-DOS and disk latency; measured ULA adds 2839565 T over two loops.
+
+[Full native and cold Fuse128 verification](audiobook-beeper/experiments/ima-pwm40/verification.json)
+passes two cycles, 4620205 edges, every PCM8 value and PWM width choice,
+461824 exact predictors/indices, paging latches, startup stack and native
+memory guards. All native pulse widths and periods match the independent
+reference. Tests cover 11124 safe transitions across both nibbles, all 256
+PCM8 levels and accumulator phases, 28055 narrow /27565 wide pulses.
+The separate binary packer reproduces the disk; previous general/uniform
+PDM and 16-width PWM disks still rebuild byte-for-byte unchanged.
+
+Actual average carrier is **41325.200 Hz**; all 111 complete half-second
+windows measure 41320..41330 Hz. This satisfies the average-frequency target,
+not an every-period floor: 343781 /2310102 periods (14.882%) exceed 25 us;
+maximum 98 T /27.642 us, equivalent to 36192.857 Hz. Period counts are not
+confused with the twice-as-large FE write rate. Actual PCM is 8261.527 Hz,
+3.27% above the unchanged 8-kHz source; first loop 27.950218 s. No pitch
+correction, resampling or physical hardware measurement was performed.
+
+Normal-speed Fuse audio capture lasts 55.907392 s with two wraps, correct
+latches and signal in every half-second window. Delivered WAV is the first
+loop-length prefix aligned to ready, without added gain/filter. The fixed
+nominal PWM AC range is 18.5474 dB quieter than full-scale PDM. Under the
+same 70-Hz HP /two 4.5-kHz LP comparison, fixed PWM compensation 8.46 and
+common gain 0.604277, SNR is **6.9781 dB** versus PDM 11.7832 and slower PWM
+13.5337. Frequency improved; audio quality did not. Keep this as a test
+option and retain uniform PDM as the primary version.
+
+The separate [PWM40 TRD](ZX-audiobook-IMA-ADPCM-PWM40-test.trd), SHA256
+`6dd21e62b2965477835b63d69cf36f32e1fb83dc4f1bc7468c0a9e9259bcffd9`, boots
+independently and loops, with the same 451 startup sectors and no playback
+reads. [Build](audiobook-beeper/build_pwm.py) (`--fast --record`),
+[tests](audiobook-beeper/test_ima_pwm_fast.py),
+[report](audiobook-beeper/experiments/ima-pwm40/report.json),
+[rate windows](audiobook-beeper/experiments/ima-pwm40/rate-windows.json), and
+[delivery checks](audiobook-beeper/experiments/ima-pwm40/delivery.json).
+
 ## 2026-10-02: add an independently bootable live PWM comparison
 
 Objective: try PWM alongside the original non-RC PDM player. Baseline is the

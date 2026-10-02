@@ -1,0 +1,23 @@
+{
+  "decision": "Rejected: measured average PWM carrier39929.767 Hz is below40000 Hz.",
+  "cached_full_evidence": ".tmp\\ima-pwm-fast",
+  "artifacts": {
+    "audiobook-preview.trd": {
+      "sha256": "827f46f86990519f71d25262018b2a45016dd90e2c64d13947fcd4749a9909da",
+      "bytes": 655360
+    },
+    "output-times.u32.gz": {
+      "sha256": "4a0f54a16d73fbd6b2a4d2ee6445a4503d5d6019afc9019ccc5861423009de2a",
+      "bytes": 7635518
+    },
+    "verification-work/fuse-trace.txt.gz": {
+      "sha256": "a0c030cafd796209f152e834e2461cfc825740862d5faaf0f75ddfc158ba831d",
+      "bytes": 26724453
+    }
+  },
+  "same_packed_audio_as": "../ima-uniform73/soundtrack.ima.gz",
+  "date": "2026-10-02",
+  "objective": "At least40000 PWM periods/s average with live IMA decoding",
+  "baseline": "15.606-kHz sixteen-width PWM on the same IMA stream",
+  "coverage": "Two complete native and cold Fuse128 loops; no normal-speed sound capture of this rejected variant"
+}

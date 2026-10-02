@@ -13,7 +13,8 @@ from verify_pdm import save
 HERE=Path(__file__).resolve().parent
 SOURCES=('ima-pwm-player.asm','ima_player.py','ima_codec.py','verify_pwm.py',
          'build_pwm.py','test_ima_pwm.py','pack_ima.py','record_pcm.py',
-         'build_pdm.py','verify_pdm.py','verify_ima.py')
+         'build_pdm.py','verify_pdm.py','verify_ima.py',
+         'ima-pwm-fast-player.asm','verify_pwm_fast.py','test_ima_pwm_fast.py')
 
 
 def sha(blob):return hashlib.sha256(blob).hexdigest()
@@ -21,11 +22,20 @@ def sha(blob):return hashlib.sha256(blob).hexdigest()
 
 def render(out,baseline,ffmpeg):
     packed=gzip.decompress((out/'soundtrack.ima.gz').read_bytes())
-    meta=json.loads((out/'player.json').read_bytes());pcm,_,holds=reference(packed,meta)
+    meta=json.loads((out/'player.json').read_bytes())
+    if meta.get('pwm_fast'):
+        from verify_pwm_fast import reference as fast_reference
+        pcm,_,levels,_,periods,all_holds=fast_reference(packed,meta)
+        holds=all_holds[:2*len(periods)]
+        ideal=np.repeat(levels[:len(periods)].astype(float)/256,2)
+        compensation=(meta['ordinary_low_tstates']/meta['pwm_periods_per_sample'])/meta['pwm_high_step_tstates']
+    else:
+        pcm,_,holds=reference(packed,meta)
+        ideal=np.repeat(((pcm.astype(np.int32)+32768)>>8)/256,4)
+        compensation=226/64
     times=np.frombuffer(gzip.decompress((out/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[:len(holds)+1]
     bits=np.tile(np.array([1,0],dtype=np.uint8),len(holds)//2)
-    pcm8=((pcm.astype(np.int32)+32768)>>8)/256
-    signals={'pwm':reconstruct(bits,times),'reference':reconstruct(np.repeat(pcm8,4),times)}
+    signals={'pwm':reconstruct(bits,times),'reference':reconstruct(ideal,times)}
     oldmeta=json.loads((baseline/'player.json').read_bytes())
     oldpacked=gzip.decompress((baseline/'soundtrack.ima.gz').read_bytes())
     if oldpacked!=packed:raise ValueError('comparison requires identical IMA bytes')
@@ -39,16 +49,16 @@ def render(out,baseline,ffmpeg):
                             '-af',filt,'-ar','44100','-f','f32le','-'],
                            input=signal.astype('<f4').tobytes(),capture_output=True,check=True).stdout
         filtered[name]=np.frombuffer(raw,'<f4').astype(float)
-    # PWM uses only64/226 of the full-scale AC span. Compensate this fixed
-    # transfer slope for comparison, not by individually normalizing peaks.
-    filtered['pwm']*=226/64
+    # Compensate the nominal fixed transfer slope for comparison, rather
+    # than individually normalizing peaks. Real ULA waits remain in the signal.
+    filtered['pwm']*=compensation
     common_gain=min(1.,.9/max(float(np.max(abs(s))) for s in filtered.values()))
     for name in ('pwm','pdm'):write_wav(out/f'{name}-bandlimited-preview.wav',filtered[name]*common_gain)
     a=filtered['reference'][4410:-4410];b=filtered['pwm'][4410:-4410]
     prior=json.loads((baseline/'report.json').read_bytes())['render']
     return dict(filter=filt,scope='Measured Fuse edge times, integrated port holds; identical IMA bytes; no speaker or RC model',
-                same_filter=True,common_gain=common_gain,pwm_fixed_ac_gain=226/64,
-                pwm_uncompensated_ac_gain_db=float(20*np.log10(64/226)),
+                same_filter=True,common_gain=common_gain,pwm_fixed_ac_gain=compensation,
+                pwm_uncompensated_ac_gain_db=float(-20*np.log10(compensation)),
                 pwm_snr_db=float(10*np.log10(np.mean(a*a)/np.mean((a-b)**2))),
                 pwm_correlation=float(np.corrcoef(a,b)[0,1]),pdm_saved_snr_db=prior['pdm_snr_db'],
                 time_alignment='same sample boundaries; no fitted delay, equalization or pitch correction',
@@ -92,18 +102,24 @@ def main():
     p.add_argument('--baseline',type=Path,default=HERE/'experiments/ima-uniform73')
     p.add_argument('--fuse',required=True,type=Path);p.add_argument('--ffmpeg',required=True)
     p.add_argument('--record',action='store_true',help='also record two loops at normal speed')
+    p.add_argument('--fast',action='store_true',help='two-width error-feedback PWM above40 kHz average in the measured target')
     args=p.parse_args();out=args.output.resolve()
     if out.exists() and any(out.iterdir()):p.error('output must be new or empty')
     out.mkdir(parents=True,exist_ok=True)
     packed=gzip.decompress((args.baseline/'soundtrack.ima.gz').read_bytes())
     old=json.loads((args.baseline/'player.json').read_bytes())
     if sha(packed)!=old['packed_sha256']:raise ValueError('baseline stream changed')
-    disk,meta=build_disk(packed,old['initial_predictor'],old['initial_index'],out/'assembly',pwm=True)
+    disk,meta=build_disk(packed,old['initial_predictor'],old['initial_index'],out/'assembly',pwm='fast' if args.fast else True)
     (out/'audiobook-preview.trd').write_bytes(disk)
     (out/'soundtrack.ima.gz').write_bytes(gzip.compress(packed,mtime=0));save(out/'player.json',meta)
-    native=native_check(disk,meta,packed);print(json.dumps(native),flush=True)
-    actual=fuse_check(args.fuse,out,meta,packed)
+    if args.fast:
+        from verify_pwm_fast import native_check as check_native,fuse_check as check_fuse
+    else:check_native,check_fuse=native_check,fuse_check
+    native=check_native(disk,meta,packed);print(json.dumps(native),flush=True)
+    actual=check_fuse(args.fuse,out,meta,packed)
     save(out/'verification.json',dict(complete=True,native=native,fuse=actual))
+    if args.fast and actual['average_pwm_carrier_hz']<40000:
+        raise ValueError('verified playback is below the 40-kHz average PWM target; evidence retained')
     if args.record:
         import sys
         subprocess.run([sys.executable,str(HERE/'record_pcm.py'),str(out),'--fuse',str(args.fuse),

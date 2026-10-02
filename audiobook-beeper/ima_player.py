@@ -35,7 +35,7 @@ def program(sections,initial_predictor=0,initial_index=0,assembly_dir=None,unifo
         raise ValueError('ASM requires the documented eight-bank layout')
     def assemble(work):
         work.mkdir(parents=True,exist_ok=True)
-        source_name='ima-pwm-player.asm' if pwm else 'ima-uniform-player.asm' if uniform else 'ima-player.asm'
+        source_name='ima-pwm-fast-player.asm' if pwm=='fast' else 'ima-pwm-player.asm' if pwm else 'ima-uniform-player.asm' if uniform else 'ima-player.asm'
         source=Path(__file__).with_name(source_name).read_text()
         (work/'ima-player.asm').write_text(source,encoding='utf-8',newline='\n')
         config=[f'initial_predictor: EQU {initial_predictor}',f'initial_index: EQU {initial_index}']
@@ -59,7 +59,7 @@ def program(sections,initial_predictor=0,initial_index=0,assembly_dir=None,unifo
             table_base=symbols['tables'],table_bytes=len(table),player_labels=symbols,
             output_labels=[k for k in symbols if '_out' in k],
             sample_labels=[k for k in symbols if k.endswith('_clipped')],
-            mutable_addresses=([symbols['bank_jump']+1,symbols['bank_jump']+2] if pwm else [symbols['bank_candidate']])+
+            mutable_addresses=([symbols['bank_jump']+1,symbols['bank_jump']+2] if pwm is True else [symbols['bank_candidate']])+
                               [symbols['disk_position'],symbols['disk_position']+1],
             assembly=dict(assembler='pyz80 1.3.0',command=command[1:],
                 source_sha256_lf=hashlib.sha256(source.replace('\r\n','\n').encode()).hexdigest(),
@@ -100,7 +100,7 @@ def build_disk(packed,initial_predictor=0,initial_index=0,assembly_dir=None,unif
         files.append(TrdFile(f'IMA{i}','C',packed[offset:offset+s['bytes']],start=s['address'])); offset+=s['bytes']
     disk,directory,capacity=place_files(files,'IMAPDM')
     # recorder's first output label and safe stop offset; not the PCM player's verifier.
-    meta['player_labels']['out_0_0_0']=meta['player_labels']['high_first_rise' if pwm else 'high_out0']
+    meta['player_labels']['out_0_0_0']=meta['player_labels']['high_first_rise' if pwm is True else 'high_out0']
     meta.update(origin=ORIGIN,sections=sections,directory=directory,capacity=capacity,
         format='IMA ADPCM4, low nibble first, reference shift/add rounding (IMA-WAV); headerless resident stream',
         initial_predictor=initial_predictor,initial_index=initial_index,packed_bytes=len(packed),pcm_samples=2*len(packed),
@@ -121,4 +121,10 @@ def build_disk(packed,initial_predictor=0,initial_index=0,assembly_dir=None,unif
                     pwm_period_tstates=226,pwm_high_min_tstates=68,pwm_high_step_tstates=4,
                     ordinary_low_tstates=452,ordinary_high_tstates=452,pcm_clock_nominal_hz=CPU_CLOCK/452,
                     pwm_carrier_nominal_hz=CPU_CLOCK/226)
+        if pwm=='fast':
+            meta.update(pwm_fast=True,pwm_bits=1,pwm_levels=2,pwm_periods_per_sample=5,
+                        pwm_error_feedback=True,pwm_period_tstates=[84,84,84,87,84],
+                        pwm_high_min_tstates=30,pwm_high_step_tstates=10,
+                        ordinary_low_tstates=423,ordinary_high_tstates=423,
+                        pcm_clock_nominal_hz=CPU_CLOCK/423,pwm_carrier_nominal_hz=5*CPU_CLOCK/423)
     return disk,meta

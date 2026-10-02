@@ -6,6 +6,69 @@ supports both a precomputed noise-shaped bitstream and direct conversion of
 unsigned PCM8 to PDM in Z80 registers. Both write ULA port FE bit 4 directly.
 They do not fit the voice to tone generators.
 
+## Fast PWM experiment: above 40 kHz on average
+
+Use [PWM40 TRD](../ZX-audiobook-IMA-ADPCM-PWM40-test.trd) on Fuse / Spectrum
+128 / Beta Disk. It boots independently, decodes the unchanged IMA stream
+on the Z80, fills the same RAM allocation and repeats continuously.
+
+[The fast modulator](ima-pwm-fast-player.asm) selects **30-T or 40-T high
+pulses**. An 8-bit error accumulator distributes these widths over successive
+periods to represent intermediate PCM8 amplitudes. This is PWM with first-order
+error feedback, not the 16-width PWM below. The two branches take the same
+time: a balancing JP executes before or after the falling edge.
+
+The measured two-loop average is **41325.200 PWM periods/s**. All 111 complete
+half-second windows are **41320..41330 Hz**. This meets the average-frequency
+target, but it is not a fixed 25-us-period guarantee: 343781 of 2310102 periods
+(14.882%) exceed 25 us; the longest is 98 T /27.642 us, equivalent to 36192.857
+Hz. ULA waits and the decoder schedule remain visible in individual periods.
+There are two FE writes per period; the reported frequency counts periods,
+not writes. See [window measurements](experiments/ima-pwm40/rate-windows.json).
+
+The first fast attempt with JR balancing measured 39929.767 Hz and failed
+the target. JP takes 10 T instead of JR's 12 T, reducing each kernel from
+58 to 56 T. Sharing two tail stages among seven banks recovers code space
+at a cost of 3 T on each nonfinal bank transition. Ordinary periods are
+`84,84,84,87,84` T; sample cost 433 ->423 T. A page adds 84 T; nonfinal/final
+bank extras are 511/508 T. Full native loop 100027154 ->97717073 T
+(-2310081), versus 104372968 for the first 16-width PWM and 101175126 for
+uniform PDM. Code occupies 1342 of the existing 1536 reserved bytes.
+ROM/disk latency and the measured 2839565 ULA wait T over two loops are
+separate. Payload stays 115456 bytes /230912 samples, with 451 preload
+sectors and no runtime reads.
+
+The source stays 8 kHz, but actual playback is 8261.527 samples/s, 3.27%
+faster, with a first-loop duration of 27.950218 s. No pitch correction or
+source re-encoding is applied. The nominal AC modulation span is 18.55 dB
+quieter than full-scale PDM. After matching this fixed slope and using the
+same listening filter, SNR is **6.9781 dB**, versus 11.7832 dB for PDM and
+13.5337 dB for the slower PWM. The frequency improvement is not an audio
+quality improvement; keep uniform PDM as the main version.
+
+- [Actual Fuse audio](experiments/ima-pwm40/result-preview.wav): first-loop-length
+  prefix aligned to ready, without added filtering, gain or pitch correction.
+- [Filtered PWM](experiments/ima-pwm40/pwm-bandlimited-preview.wav) and
+  [matched-filter PDM](experiments/ima-pwm40/pdm-bandlimited-preview.wav):
+  70-Hz HP /two 4.5-kHz LPs, PWM fixed gain 8.46 and common gain 0.604277.
+- [Verification](experiments/ima-pwm40/verification.json),
+  [complete report](experiments/ima-pwm40/report.json),
+  [delivery checks](experiments/ima-pwm40/delivery.json), and
+  [rejected JR attempt](experiments/ima-pwm40-jr-attempt/verification.json).
+
+Both complete native/Fuse loops pass: 4620205 edges, every width choice,
+461824 predictors/indices, PCM8 values, paging and startup checks. Native
+execution additionally checks every pulse width/period and protected memory.
+Component tests cover 11124 safe transitions, all 256 PCM8 levels and all
+256 initial accumulator phases. Normal-speed sound capture passes both wraps;
+all half-second windows contain signal. Existing PDM and 16-width PWM disks
+rebuild identically. Physical hardware remains untested.
+
+```powershell
+python -m unittest discover -s audiobook-beeper -p test_ima_pwm_fast.py
+python audiobook-beeper/build_pwm.py --fast --record --output build/ima-pwm40 --fuse <fuse.exe> --ffmpeg <ffmpeg.exe>
+```
+
 ## Additional experiment: live PWM
 
 [Try the PWM disk](../ZX-audiobook-IMA-ADPCM-PWM-test.trd) on **Fuse / Spectrum
