@@ -5,6 +5,30 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: improve offline IMA encoding for the active 20-dB goal
+
+Keep the complete current 212992-sample /26.624-second PCM8 source and the
+unchanged four-bit IMA format. The new opt-in [beam encoder](audiobook-beeper/ima_beam.py)
+retains 32 distinct predictor/index states over 64-sample blocks, minimizes
+PCM16 squared error, and carries the selected state between blocks. Forbid
+saturating transitions so the guarded Z80 decoder remains valid. This changes
+only offline encoding; no playback instruction or decoder T-state changes.
+
+On the identical source, raw codec SNR improves **22.322176 ->24.156331 dB**
+(+1.834155 dB), with the same **106496 bytes**. Predictor range is -29027..29889,
+with zero saturation. The [independent verifier](audiobook-beeper/verify_ima_beam.py)
+compares every PCM16 sample against FFmpeg IMA WAV decoding, using four
+correctly seeded WAV blocks: all 212992 samples are exact. This is codec
+quality, not the whole playback SNR and not a new TRD release.
+
+[Encoding report and source identity](audiobook-beeper/experiments/ima-beam32/report.json),
+[FFmpeg proof](audiobook-beeper/experiments/ima-beam32/verification.json), and
+[encoded stream](audiobook-beeper/experiments/ima-beam32/soundtrack.ima.gz).
+Reproduce with `ima_beam.py experiments/ima-feedback64/source-preview.wav
+--output <new-directory>` and `verify_ima_beam.py <new-directory> --ffmpeg <ffmpeg>`
+from `audiobook-beeper`. Decision: retain this encoding improvement as an input
+for the next PDM player; the 20-dB whole-chain goal remains active.
+
 ## 2026-10-02: show audio-loading status before feedback playback
 
 The user requested an English message while audio data loads, disappearing
