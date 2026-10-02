@@ -1,0 +1,100 @@
+base 10
+set $wraps 0
+breakpoint 33019
+commands 1
+print 100
+print spectrum:frames
+print ula:tstates
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33456
+commands 2
+print 150
+print spectrum:frames
+print ula:tstates
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33531
+commands 3
+print 150
+print spectrum:frames
+print ula:tstates
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33606
+commands 4
+print 150
+print spectrum:frames
+print ula:tstates
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33681
+commands 5
+print 150
+print spectrum:frames
+print ula:tstates
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33756
+commands 6
+print 150
+print spectrum:frames
+print ula:tstates
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33831
+commands 7
+print 150
+print spectrum:frames
+print ula:tstates
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33906
+commands 8
+print 150
+print spectrum:frames
+print ula:tstates
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33981
+commands 9
+print 150
+print spectrum:frames
+print ula:tstates
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+set $wraps $wraps+1
+continue
+end
+breakpoint 33257
+commands 10
+print 200
+print spectrum:frames
+print ula:tstates
+exit 77
+end
+condition 10 $wraps==2

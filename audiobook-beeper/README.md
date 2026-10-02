@@ -6,7 +6,99 @@ supports both a precomputed noise-shaped bitstream and direct conversion of
 unsigned PCM8 to PDM in Z80 registers. Both write ULA port FE bit 4 directly.
 They do not fit the voice to tone generators.
 
-## Current test: convert PCM to PDM while playing
+## Current test: IMA ADPCM decoded directly to beeper PDM
+
+[IMA ADPCM test disk](../ZX-audiobook-IMA-ADPCM-test.trd) holds **230912 samples**
+in **115456 compressed bytes**, exactly 2:1 against the requested unsigned
+8 kHz /8-bit mono PCM. A complete loop takes **29.054 seconds** in Fuse 128;
+the source excerpt is 28.864 seconds starting at 01:00. The actual decoded
+sample rate is 7947.667 Hz. All eight RAM banks are used. There is no expanded
+PCM/PDM buffer, no disk access during playback, and the excerpt repeats.
+
+Use Spectrum 128 + Beta Disk/TR-DOS, normal speed, beeper audio enabled.
+The initial preload takes about 26 seconds in the tested Fuse setup. Run
+`RUN "boot"` from TR-DOS if needed. Reset to stop.
+
+- [Commented, authoritative ASM source](ima-player.asm),
+  [assembler listing](ima-preview/assembly/player.lst),
+  [assembled binary](ima-preview/assembly/player.bin).
+- [Actual Fuse sound](ima-preview/sound-128/fuse-preview.wav).
+- [Before](ima-preview/noise-before-preview.wav) and
+  [after](ima-preview/noise-after-preview.wav), with matched reference loudness.
+- [Complete verification](ima-preview/verification.json),
+  [noise comparison](ima-preview/noise-comparison.json),
+  [build report](ima-preview/report.json).
+
+The first-order PDM loop is now **40 T instead of 48 T per pulse**. The main
+BC/DE remain dedicated to the output; EXX is needed only around table work.
+Ordinary native holds are **72..74 T**, versus 56..81 T in the first working
+IMA version. Low/high nibble decoding takes **439/437 T**, average 438 T,
+versus 439/453 T, average 446 T (-8 T/sample), and the earlier PCM8 player's
+441 T/sample (-3 T/sample). Extra pulses cover page and bank transitions.
+Exact loop cost is `438*N + 76*(pages-banks) + 362*banks` = **101176020 T**,
+versus 102995498 T (-1819478 T). Instruction counts and register contracts
+are documented beside the assembly. ROM/disk startup time is excluded.
+
+Cold Fuse adds ULA contention: average PDM **47702.626 writes/s**, minimum
+**41728.235 writes/s**, maximum hold **85 T**. Two complete loops check every
+one of **2771911 output bits**, 461824 predictors and step indices, the paging
+latches and startup stack guard. No runtime sector reads occur. The separate
+native tests cover 4272 predictor/index/nibble cases and two full loops of
+nonrepeating random nibbles. FFmpeg independently decodes all 230912 samples
+exactly; the format uses standard IMA-WAV shift/add rounding, low nibble first.
+
+The 4-bit stream is lossy. Its predictor retains 16 bits and only its high
+byte feeds PDM. Input remains 8 kHz /8-bit mono; the original file is 44.1 kHz
+stereo AAC. Before encoding, quiet speech receives 4x gain and a lookahead
+peak limiter at 0.85 (5 ms attack /100 ms release, delay compensated).
+This changes loudness dynamics; it does not restore missing information.
+
+Measured-schedule reconstruction gives PDM SNR **-1.075 ->11.507 dB**.
+At unchanged speech level, the ASM change alone gives **+1.394 dB**; the
+remaining improvement comes from raising speech above the modulation noise.
+The largest modeled idle tone in 1..8 kHz falls **10.716 dB**. Comparison WAVs
+match speech RMS, use common attenuation and the same 70 Hz highpass /two
+4.5 kHz lowpasses. These are reconstruction metrics, not a physical-speaker
+test or a claim that all noise is gone. ADPCM's own SNR is 22.412 dB against
+the conditioned PCM8 input.
+
+RAM: code/table reservation 7424 bytes (1322 code, 5696 table plus padding),
+screen 6912, TR-DOS workspace/stack 1280, ADPCM 115456; total **131072**.
+Code/tables stay at 8000..9CFF; bank-2 audio at 9D00..BFFF, bank-5 audio at
+6000..7FFF. The loader SP is 6000. Playback repurposes SP as a read-only table
+cursor with interrupts disabled; no playback PUSH/CALL/RET is permitted.
+
+### Separate assembly and disk packaging
+
+The ASM is the maintained source. Python writes data constants, the lookup
+table and screen, runs the external **pyz80 1.3.0** assembler, then reads the
+resulting binary. It neither generates nor patches Z80 instructions.
+The saved assembly directory contains every input for a separate rebuild:
+
+```powershell
+cd audiobook-beeper/ima-preview/assembly
+python -m pyz80.pyz80 --obj=player.bin --lstfile=player.lst -s '.*' ima-player.asm
+cd ../../..
+python audiobook-beeper/pack_ima.py audiobook-beeper/ima-preview --output build/ima-test.trd
+```
+
+Create the output parent directory first. The packer consumes `player.bin`
+without invoking an assembler. An edited binary needs fresh native/Fuse checks
+and updated symbols before claiming the saved timing verification.
+
+Full rebuild (Python with NumPy, Pillow, z80 and pyz80 installed):
+
+```powershell
+python audiobook-beeper/build_ima.py --output build/ima-new --ffmpeg <ffmpeg.exe> --fuse <fuse.exe>
+python audiobook-beeper/test_ima.py
+python audiobook-beeper/record_pcm.py build/ima-new --output build/ima-sound --fuse <fuse.exe> --machine 128
+```
+
+`--speech-gain 1` retains the former input level. Use a fresh directory unless
+resuming the same build. Source authentication uses `source-format.json`.
+This remains a resident preview, not a two-minute/full-book disk streamer.
+
+## Previous test: convert PCM to PDM while playing
 
 [Live conversion TRD](../ZX-audiobook-PDM-live-test.trd) stores the actual
 8 kHz /8-bit mono PCM bytes. Z80 converts them while playing, with no PDM

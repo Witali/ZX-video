@@ -1,0 +1,764 @@
+{
+  "complete": true,
+  "preview_only": true,
+  "physical_hardware_tested": false,
+  "preparation": {
+    "source": {
+      "verified_date": "2026-10-02",
+      "source": "C:\\Work\\AudioBooksDownloader\\Audiobooks\\003 - \u041e. \u0413\u0435\u043d\u0440\u0438. \u041a\u043e\u0440\u043e\u0442\u043a\u0438\u0435 \u0440\u0430\u0441\u0441\u043a\u0430\u0437\u044b \uff02\u0414\u043e\u0440\u043e\u0433\u043e \u043a\u0430\u043a \u043f\u0430\u043c\u044f\u0442\u044c\uff02 \u0438 \uff02\u041e\u0431\u043e\u0440\u043e\u0442\u043d\u0430\u044f \u0441\u0442\u043e\u0440\u043e\u043d\u0430\uff02 (1977) [1bqRZ3gM55s].m4a",
+      "source_sha256": "a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779",
+      "tool": "FFprobe 8.1.1",
+      "stream": {
+        "codec_name": "aac",
+        "sample_rate": 44100,
+        "channels": 2,
+        "channel_layout": "stereo",
+        "sample_fmt": "fltp",
+        "bits_per_sample": 0,
+        "bit_rate": 127999
+      },
+      "interpretation": "AAC source has no fixed PCM word length; fltp describes floating-point decoder output, not original PCM bit depth."
+    },
+    "source_start_seconds": 60,
+    "source_duration_seconds": 28.864,
+    "source_pcm": {
+      "sample_rate_hz": 8000,
+      "bits_per_sample": 8,
+      "channels": 1,
+      "codec": "PCM unsigned 8-bit",
+      "samples": 230912,
+      "duration_seconds": 28.864,
+      "quantization": "round to nearest, (u8-128)/128",
+      "data_sha256": "742edf0652f2a7ffbcbdc38d92985a76cfbf37bce659d8924848e7699e2d77ca",
+      "file": "pcm8k-preview.wav",
+      "antialiasing": "FFmpeg sample-rate converter",
+      "pdm_input": "high byte of live IMA PCM16 predictor; six PDM slots/sample plus bank-tail holds"
+    },
+    "source_gain": 0.9246234673393592,
+    "edge_fade_seconds": 0.02,
+    "ffmpeg_decode": {
+      "complete": true,
+      "tool": "ffmpeg version 8.1.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+      "blocks": [
+        {
+          "packed_offset": 0,
+          "bytes": 32764,
+          "decoded_samples": 65528,
+          "exact": true
+        },
+        {
+          "packed_offset": 32764,
+          "bytes": 32764,
+          "decoded_samples": 65528,
+          "exact": true
+        },
+        {
+          "packed_offset": 65528,
+          "bytes": 32764,
+          "decoded_samples": 65528,
+          "exact": true
+        },
+        {
+          "packed_offset": 98292,
+          "bytes": 17164,
+          "decoded_samples": 34328,
+          "exact": true
+        }
+      ],
+      "decoded_samples": 230912,
+      "every_sample_exact": true
+    },
+    "level_conditioning": {
+      "filter": "volume=4,alimiter=limit=0.85:attack=5:release=100:level=0:latency=1",
+      "before_rms": 0.053702756600853524,
+      "after_rms": 0.1967937045347077,
+      "purpose": "raise quiet speech above first-order PDM noise; peak limiting changes dynamics"
+    },
+    "compression_snr_db": 22.41166927530752,
+    "compression_ratio_to_pcm8": 2,
+    "compression_ratio_to_pcm16": 4,
+    "input_pcm_bytes": 230912,
+    "compressed_bytes": 115456
+  },
+  "player": {
+    "code_bytes": 1322,
+    "code_reserve": 1536,
+    "resident_reserve": 7424,
+    "table_base": 34304,
+    "table_bytes": 5696,
+    "player_labels": {
+      "initial_predictor": 0,
+      "initial_index": 0,
+      "disk_0": 1033,
+      "address_0": 49152,
+      "sectors_0": 64,
+      "disk_1": 2057,
+      "address_1": 49152,
+      "sectors_1": 64,
+      "disk_2": 3081,
+      "address_2": 49152,
+      "sectors_2": 64,
+      "disk_3": 4105,
+      "address_3": 49152,
+      "sectors_3": 64,
+      "disk_4": 5129,
+      "address_4": 49152,
+      "sectors_4": 64,
+      "disk_5": 6153,
+      "address_5": 49152,
+      "sectors_5": 64,
+      "disk_6": 7177,
+      "address_6": 56576,
+      "sectors_6": 35,
+      "disk_7": 7692,
+      "address_7": 57344,
+      "sectors_7": 32,
+      "PULSE": 32768,
+      "LOAD_BANK": 32768,
+      "SILENCE_AY": 32768,
+      "start": 32768,
+      "ready": 33019,
+      "prime_negative": 33063,
+      "prime_done": 33070,
+      "DECODE_HEAD": 33088,
+      "low": 33088,
+      "low_out0": 33094,
+      "low_out1": 33111,
+      "low_out2": 33126,
+      "low_state": 33131,
+      "low_out3": 33142,
+      "low_positive": 33152,
+      "low_positive_out4": 33158,
+      "low_positive_clip": 33168,
+      "low_positive_clipped": 33172,
+      "low_positive_out5": 33180,
+      "low_positive_next": 33188,
+      "low_negative": 33191,
+      "low_negative_out4": 33197,
+      "low_negative_clip": 33207,
+      "low_negative_clipped": 33211,
+      "low_negative_out5": 33219,
+      "low_negative_next": 33227,
+      "high": 33230,
+      "high_out0": 33236,
+      "high_out1": 33253,
+      "high_out2": 33268,
+      "high_state": 33273,
+      "high_out3": 33284,
+      "high_positive": 33294,
+      "high_positive_out4": 33300,
+      "high_positive_clip": 33310,
+      "high_positive_clipped": 33314,
+      "high_positive_out5": 33322,
+      "high_positive_address_ok": 33335,
+      "high_negative": 33341,
+      "high_negative_out4": 33347,
+      "high_negative_clip": 33357,
+      "high_negative_clipped": 33361,
+      "high_negative_out5": 33369,
+      "high_negative_address_ok": 33382,
+      "page_finish": 33388,
+      "page_out6": 33394,
+      "page_next": 33402,
+      "bank_dispatch": 33405,
+      "BANK_TAIL": 33407,
+      "bank_tail_0": 33407,
+      "bank_0_out6": 33413,
+      "bank_0_out7": 33432,
+      "page_0": 33438,
+      "bank_0_out8": 33447,
+      "bank_next_0": 33458,
+      "bank_0_out9": 33464,
+      "bank_0_out10": 33481,
+      "bank_tail_1": 33487,
+      "bank_1_out6": 33493,
+      "bank_1_out7": 33512,
+      "page_1": 33518,
+      "bank_1_out8": 33527,
+      "bank_next_1": 33538,
+      "bank_1_out9": 33544,
+      "bank_1_out10": 33561,
+      "bank_tail_2": 33567,
+      "bank_2_out6": 33573,
+      "bank_2_out7": 33592,
+      "page_2": 33598,
+      "bank_2_out8": 33607,
+      "bank_next_2": 33618,
+      "bank_2_out9": 33624,
+      "bank_2_out10": 33641,
+      "bank_tail_3": 33647,
+      "bank_3_out6": 33653,
+      "bank_3_out7": 33672,
+      "page_3": 33678,
+      "bank_3_out8": 33687,
+      "bank_next_3": 33698,
+      "bank_3_out9": 33704,
+      "bank_3_out10": 33721,
+      "bank_tail_4": 33727,
+      "bank_4_out6": 33733,
+      "bank_4_out7": 33752,
+      "page_4": 33758,
+      "bank_4_out8": 33767,
+      "bank_next_4": 33778,
+      "bank_4_out9": 33784,
+      "bank_4_out10": 33801,
+      "bank_tail_5": 33807,
+      "bank_5_out6": 33813,
+      "bank_5_out7": 33832,
+      "page_5": 33838,
+      "bank_5_out8": 33847,
+      "bank_next_5": 33858,
+      "bank_5_out9": 33864,
+      "bank_5_out10": 33881,
+      "bank_tail_6": 33887,
+      "bank_6_out6": 33893,
+      "bank_6_out7": 33912,
+      "page_6": 33918,
+      "bank_6_out8": 33927,
+      "bank_next_6": 33938,
+      "bank_6_out9": 33944,
+      "bank_6_out10": 33961,
+      "bank_tail_7": 33967,
+      "bank_7_out6": 33973,
+      "bank_7_out7": 33992,
+      "page_7": 33998,
+      "bank_7_out8": 34007,
+      "bank_next_7": 34018,
+      "bank_7_out9": 34024,
+      "bank_7_out10": 34042,
+      "bank_finish": 34048,
+      "bank_candidate": 34049,
+      "read_n": 34054,
+      "disk_call": 34063,
+      "sector_ok": 34081,
+      "disk_position": 34088,
+      "code_end": 34090,
+      "tables": 34304,
+      "screen_data": 40192,
+      "player_end": 47104,
+      "out_0_0_0": 33236
+    },
+    "output_labels": [
+      "low_out0",
+      "low_out1",
+      "low_out2",
+      "low_out3",
+      "low_positive_out4",
+      "low_positive_out5",
+      "low_negative_out4",
+      "low_negative_out5",
+      "high_out0",
+      "high_out1",
+      "high_out2",
+      "high_out3",
+      "high_positive_out4",
+      "high_positive_out5",
+      "high_negative_out4",
+      "high_negative_out5",
+      "page_out6",
+      "bank_0_out6",
+      "bank_0_out7",
+      "bank_0_out8",
+      "bank_0_out9",
+      "bank_0_out10",
+      "bank_1_out6",
+      "bank_1_out7",
+      "bank_1_out8",
+      "bank_1_out9",
+      "bank_1_out10",
+      "bank_2_out6",
+      "bank_2_out7",
+      "bank_2_out8",
+      "bank_2_out9",
+      "bank_2_out10",
+      "bank_3_out6",
+      "bank_3_out7",
+      "bank_3_out8",
+      "bank_3_out9",
+      "bank_3_out10",
+      "bank_4_out6",
+      "bank_4_out7",
+      "bank_4_out8",
+      "bank_4_out9",
+      "bank_4_out10",
+      "bank_5_out6",
+      "bank_5_out7",
+      "bank_5_out8",
+      "bank_5_out9",
+      "bank_5_out10",
+      "bank_6_out6",
+      "bank_6_out7",
+      "bank_6_out8",
+      "bank_6_out9",
+      "bank_6_out10",
+      "bank_7_out6",
+      "bank_7_out7",
+      "bank_7_out8",
+      "bank_7_out9",
+      "bank_7_out10"
+    ],
+    "sample_labels": [
+      "low_positive_clipped",
+      "low_negative_clipped",
+      "high_positive_clipped",
+      "high_negative_clipped"
+    ],
+    "mutable_addresses": [
+      34049,
+      34088,
+      34089
+    ],
+    "assembly": {
+      "assembler": "pyz80 1.3.0",
+      "command": [
+        "-m",
+        "pyz80.pyz80",
+        "--obj=player.bin",
+        "--lstfile=player.lst",
+        "-s",
+        ".*",
+        "ima-player.asm"
+      ],
+      "source_sha256_lf": "1e2fc0a9796c35a50889317f69a4b34f2daef010ff8c79e6a7909f06d3727fe8",
+      "binary_sha256": "72ddeee4da65d24317dcbe97e496c448242387b22db0e15bb18c25b9330e9ce9",
+      "binary_bytes": 14336,
+      "instruction_bytes_emitted_by_python": false
+    },
+    "origin": 32768,
+    "sections": [
+      {
+        "bank": 0,
+        "bytes": 16384,
+        "sectors": 64,
+        "address": 49152,
+        "sector": 73
+      },
+      {
+        "bank": 4,
+        "bytes": 16384,
+        "sectors": 64,
+        "address": 49152,
+        "sector": 137
+      },
+      {
+        "bank": 6,
+        "bytes": 16384,
+        "sectors": 64,
+        "address": 49152,
+        "sector": 201
+      },
+      {
+        "bank": 1,
+        "bytes": 16384,
+        "sectors": 64,
+        "address": 49152,
+        "sector": 265
+      },
+      {
+        "bank": 3,
+        "bytes": 16384,
+        "sectors": 64,
+        "address": 49152,
+        "sector": 329
+      },
+      {
+        "bank": 7,
+        "bytes": 16384,
+        "sectors": 64,
+        "address": 49152,
+        "sector": 393
+      },
+      {
+        "bank": 2,
+        "bytes": 8960,
+        "sectors": 35,
+        "address": 56576,
+        "sector": 457
+      },
+      {
+        "bank": 5,
+        "bytes": 8192,
+        "sectors": 32,
+        "address": 57344,
+        "sector": 492
+      }
+    ],
+    "directory": [
+      {
+        "name": "boot",
+        "type": "B",
+        "field1": 67,
+        "length": 67,
+        "sectors": 1,
+        "sector": 0,
+        "track": 1
+      },
+      {
+        "name": "PLAYER",
+        "type": "C",
+        "field1": 32768,
+        "length": 14336,
+        "sectors": 56,
+        "sector": 1,
+        "track": 1
+      },
+      {
+        "name": "IMA0",
+        "type": "C",
+        "field1": 49152,
+        "length": 16384,
+        "sectors": 64,
+        "sector": 9,
+        "track": 4
+      },
+      {
+        "name": "IMA1",
+        "type": "C",
+        "field1": 49152,
+        "length": 16384,
+        "sectors": 64,
+        "sector": 9,
+        "track": 8
+      },
+      {
+        "name": "IMA2",
+        "type": "C",
+        "field1": 49152,
+        "length": 16384,
+        "sectors": 64,
+        "sector": 9,
+        "track": 12
+      },
+      {
+        "name": "IMA3",
+        "type": "C",
+        "field1": 49152,
+        "length": 16384,
+        "sectors": 64,
+        "sector": 9,
+        "track": 16
+      },
+      {
+        "name": "IMA4",
+        "type": "C",
+        "field1": 49152,
+        "length": 16384,
+        "sectors": 64,
+        "sector": 9,
+        "track": 20
+      },
+      {
+        "name": "IMA5",
+        "type": "C",
+        "field1": 49152,
+        "length": 16384,
+        "sectors": 64,
+        "sector": 9,
+        "track": 24
+      },
+      {
+        "name": "IMA6",
+        "type": "C",
+        "field1": 56576,
+        "length": 8960,
+        "sectors": 35,
+        "sector": 9,
+        "track": 28
+      },
+      {
+        "name": "IMA7",
+        "type": "C",
+        "field1": 57344,
+        "length": 8192,
+        "sectors": 32,
+        "sector": 12,
+        "track": 30
+      }
+    ],
+    "capacity": {
+      "used_sectors": 508,
+      "free_sectors": 2036,
+      "first_free_track": 32,
+      "first_free_sector": 12
+    },
+    "format": "IMA ADPCM4, low nibble first, reference shift/add rounding (IMA-WAV); headerless resident stream",
+    "initial_predictor": 0,
+    "initial_index": 0,
+    "packed_bytes": 115456,
+    "pcm_samples": 230912,
+    "source_sample_rate_hz": 8000,
+    "predictor_bits": 16,
+    "pdm_input_bits": 8,
+    "repeat": true,
+    "steady": true,
+    "paging_value_register": "a",
+    "canonical_paging": true,
+    "stack_top": 24576,
+    "pdm_kernel_tstates": 32,
+    "pdm_isolated_tstates": 40,
+    "pdm_isolation_delta_tstates": 8,
+    "ordinary_low_tstates": 439,
+    "ordinary_high_tstates": 437,
+    "maximum_native_hold_tstates": 79,
+    "memory": {
+      "total_ram_bytes": 131072,
+      "adpcm_bytes": 115456,
+      "resident_code_and_tables": 7424,
+      "screen_bytes": 6912,
+      "workspace_stack_bytes": 1280,
+      "pcm_buffer_bytes": 0,
+      "pdm_buffer_bytes": 0
+    },
+    "pcm_clock_nominal_hz": 8097.945205479452,
+    "packed_sha256": "c9f3161b3c7fc40c141c8b30d0d2d82eaa41ef14353ad98ec6704957c545beca"
+  },
+  "verification": {
+    "complete": true,
+    "native": {
+      "complete": true,
+      "cycles_verified": 2,
+      "bits_verified": 2771911,
+      "pcm16_samples_verified": 461824,
+      "all_predictors_exact": true,
+      "all_pcm8_values_exact": true,
+      "every_pdm_bit_exact": true,
+      "memory_guards_passed": true,
+      "cycle_tstates": 101176020,
+      "maximum_hold_tstates": 79,
+      "bank_sequence": [
+        0,
+        4,
+        6,
+        1,
+        3,
+        7,
+        2,
+        5,
+        0,
+        4,
+        6,
+        1,
+        3,
+        7,
+        2,
+        5,
+        0
+      ],
+      "scope": "Z80 CPU execution; no ULA or ROM/disk latency"
+    },
+    "fuse": {
+      "complete": true,
+      "cold_boot": true,
+      "machine": "128",
+      "cycles_verified": 2,
+      "bits_verified": 2771911,
+      "pcm16_samples_verified": 461824,
+      "every_predictor_and_index_exact": true,
+      "every_pdm_bit_exact": true,
+      "every_pcm8_value_exact": true,
+      "paging_latches_verified": true,
+      "startup_stack_guard_passed": true,
+      "startup_sector_reads": 451,
+      "runtime_disk_reads": 0,
+      "cycle_durations_seconds": [
+        29.05404747807945,
+        29.054074262031634
+      ],
+      "average_pcm_rate_hz": 7947.666972708404,
+      "average_pdm_rate_hz": 47702.62601839694,
+      "minimum_instantaneous_pdm_rate_hz": 41728.23529411765,
+      "maximum_hold_tstates": 85,
+      "interval_histogram_tstates": {
+        "67": 15,
+        "71": 15,
+        "72": 974511,
+        "73": 262126,
+        "74": 651798,
+        "75": 161696,
+        "76": 136991,
+        "77": 117247,
+        "78": 32627,
+        "79": 333641,
+        "80": 101221,
+        "82": 12,
+        "83": 4,
+        "84": 1,
+        "85": 5
+      },
+      "additional_ula_tstates": 3751657,
+      "native_tstates_per_cycle": 101176020,
+      "trd_sha256": "f349d949e6ca6a2c59605bb2caab17706da81dd05f520a1cd8927cdb3f9b69b5",
+      "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+      "physical_hardware_tested": false
+    },
+    "sources_sha256_lf": {
+      "ima-player.asm": "1e2fc0a9796c35a50889317f69a4b34f2daef010ff8c79e6a7909f06d3727fe8",
+      "ima_player.py": "f4dc97592af5ddb13f328943f83e98ffc3a52a9345a9a8406247965706a29159",
+      "ima_codec.py": "c3c8006b2ba93dac9daeb0531799f6406e687d778197cf68476d67157205c53f",
+      "verify_ima.py": "ad0efacf8d82f26e26f96bc10e073d1ad55d2fef41bcc01ade302d1b872c1f8b",
+      "build_ima.py": "9f78331ab05354bac9a67f44d6a46d1d1bb0177bcb9565b73fa43ad89f2e5d51",
+      "test_ima.py": "e0fce16d79b1a6c3a20f9d933637d4f386584f1ca02e351feded47950b8328d3"
+    }
+  },
+  "render": {
+    "scope": "actual Fuse FE holds; same 70 Hz HP / two 4.5 kHz 2-pole LPs; no speaker model",
+    "common_gain": 0.7984440923417235,
+    "pdm_snr_db": 11.506551123473752,
+    "pdm_correlation": 0.9664282205802418,
+    "excluded_edge_seconds": 0.1
+  },
+  "sources_sha256_lf": {
+    "ima-player.asm": "1e2fc0a9796c35a50889317f69a4b34f2daef010ff8c79e6a7909f06d3727fe8",
+    "ima_player.py": "f4dc97592af5ddb13f328943f83e98ffc3a52a9345a9a8406247965706a29159",
+    "ima_codec.py": "c3c8006b2ba93dac9daeb0531799f6406e687d778197cf68476d67157205c53f",
+    "verify_ima.py": "ad0efacf8d82f26e26f96bc10e073d1ad55d2fef41bcc01ade302d1b872c1f8b",
+    "build_ima.py": "9f78331ab05354bac9a67f44d6a46d1d1bb0177bcb9565b73fa43ad89f2e5d51",
+    "test_ima.py": "e0fce16d79b1a6c3a20f9d933637d4f386584f1ca02e351feded47950b8328d3"
+  },
+  "artifacts": {
+    "assembly/assembler.log": {
+      "bytes": 3266,
+      "sha256": "31e88e215382e4596c48edd2131e0ae87d0028bf4b6d662e7f3361a4bdff38e7"
+    },
+    "assembly/config.inc": {
+      "bytes": 520,
+      "sha256": "dd39a2e6273fb66fa13dffdb2f7389ca18495562ca59431b3bb50f599507db4d"
+    },
+    "assembly/decoder-table.bin": {
+      "bytes": 5696,
+      "sha256": "78dee6ac3f69560d99431fc296d754ff5cb90288c49e87b870e92848ddb9b732"
+    },
+    "assembly/ima-player.asm": {
+      "bytes": 10390,
+      "sha256": "1e2fc0a9796c35a50889317f69a4b34f2daef010ff8c79e6a7909f06d3727fe8"
+    },
+    "assembly/player.bin": {
+      "bytes": 14336,
+      "sha256": "72ddeee4da65d24317dcbe97e496c448242387b22db0e15bb18c25b9330e9ce9"
+    },
+    "assembly/player.lst": {
+      "bytes": 83045,
+      "sha256": "3046b169a3c0eab0e457d4b0fc8c99430883fb8696c852f4a91bcbf05f1f74af"
+    },
+    "assembly/screen.bin": {
+      "bytes": 6912,
+      "sha256": "bbcbf874c4ae4b284c6da71d74f7858806318fbfaf45ce1d80fe60ff070f163b"
+    },
+    "audiobook-preview.trd": {
+      "bytes": 655360,
+      "sha256": "f349d949e6ca6a2c59605bb2caab17706da81dd05f520a1cd8927cdb3f9b69b5"
+    },
+    "beeper-preview.wav": {
+      "bytes": 2562612,
+      "sha256": "ccede568baca0f31ae2d17f6f6fb134ea95e124cac55fad9e6d4ddd668d7752b"
+    },
+    "decoded-held-preview.wav": {
+      "bytes": 2562612,
+      "sha256": "cd4f1822edaddc49640be3312c8668d000b271d51ec54b3226bc7145d32b6725"
+    },
+    "decoded-preview.wav": {
+      "bytes": 461868,
+      "sha256": "5be2d857bb43af54e3e5ff11a88768d303d6fa80416a73fef28393ad981efa9f"
+    },
+    "noise-after-preview.wav": {
+      "bytes": 2562612,
+      "sha256": "1b151934411b4a204c79fd9d25d1f9f1a31f6fe6a0caae875205e728f0cd95bd"
+    },
+    "noise-before-preview.wav": {
+      "bytes": 2596228,
+      "sha256": "dc41fb6ce201dbadb66f29add295201b69bd210c3a0484ac482c1a4f2ebe236f"
+    },
+    "noise-comparison.json": {
+      "bytes": 1885,
+      "sha256": "2aabbd0a3898c35b982dbca1ce05cf5b92250cc7a75f631fd62da5277edf2542"
+    },
+    "output-times.u32.gz": {
+      "bytes": 5139653,
+      "sha256": "5c372a375719055cca5c4735759fb01813e225adefe0be3499585035e89e19c0"
+    },
+    "pcm8k-preview.wav": {
+      "bytes": 230956,
+      "sha256": "d6c19939eb731e332ee4223bd8e6a1febff0ee2469fe97fcf2ad69a9b9e8b6a8"
+    },
+    "player.json": {
+      "bytes": 9468,
+      "sha256": "a06b91e19ef0c12297339ed8857323970a231583fa1f2a31af2de414b3b97bf2"
+    },
+    "preparation.json": {
+      "bytes": 2835,
+      "sha256": "c4b55b18f7be036b8aafe5e7966d5f7ada089ee40c0094121e2daab134daa426"
+    },
+    "producer-source/build_ima.py.gz": {
+      "bytes": 3430,
+      "sha256": "93d134ac33fa6c2653c3403506bd9c0d24b40401f8a13278995eeeae664ea809"
+    },
+    "producer-source/ima-player.asm.gz": {
+      "bytes": 3668,
+      "sha256": "b7dbb962b547dc56b6250b2b1e3b228f76e4687c8b10a051d06fed44ffe3f691"
+    },
+    "producer-source/ima_codec.py.gz": {
+      "bytes": 1684,
+      "sha256": "34ee16a106f32ef9008d86aa67dfbad8a279b8709cfea5d7b0cac8f8f9526e6c"
+    },
+    "producer-source/ima_player.py.gz": {
+      "bytes": 2909,
+      "sha256": "d523a6bf94c22ccbacb25e563932fd8c64850c5aa6772b1f381e24a96efe93fb"
+    },
+    "producer-source/test_ima.py.gz": {
+      "bytes": 1160,
+      "sha256": "30526daf47770cfeccf5639ad12774047d9b01dc577e9a42a5ca1266fd4490fb"
+    },
+    "producer-source/verify_ima.py.gz": {
+      "bytes": 4138,
+      "sha256": "24a1550cdd3ac1610aa977aca92ed92e408ed615d4803c6b60fe416208cd0989"
+    },
+    "sound-128/capture.fmf.gz": {
+      "bytes": 4262445,
+      "sha256": "d1beb9aab1fb04bb07a99ecef95fce96fb8b24bdc7e66c53badd3dcf9ea4444b"
+    },
+    "sound-128/fuse-debugger.txt": {
+      "bytes": 1393,
+      "sha256": "1a43fc5c96ec44fa2b29e5f96729677d9aa1274d044474b30fdde5a6dcf85fd2"
+    },
+    "sound-128/fuse-preview.wav": {
+      "bytes": 5125074,
+      "sha256": "598b721a96a4ea448e1b02e12fcc139442eec7d64ee2a55a949558c41f88bffd"
+    },
+    "sound-128/fuse-trace.txt.gz": {
+      "bytes": 582,
+      "sha256": "8d3b9ce0e3dc2049ea54a90319dcc2f90eb0008ce12b95728750b915a91ade30"
+    },
+    "sound-auto/capture.fmf.gz": {
+      "bytes": 4218662,
+      "sha256": "da6597dd161dbee864de2c26edc333c3adaf09bfa201008841c3b643a54b4c96"
+    },
+    "sound-auto/fuse-debugger.txt": {
+      "bytes": 1393,
+      "sha256": "1a43fc5c96ec44fa2b29e5f96729677d9aa1274d044474b30fdde5a6dcf85fd2"
+    },
+    "sound-auto/fuse-preview.wav": {
+      "bytes": 5135382,
+      "sha256": "e800cf133f67c5a7c5665d8fefa2ccd92f5f77cdf5784d91bbffb9bb9b67c073"
+    },
+    "sound-auto/fuse-trace.txt.gz": {
+      "bytes": 577,
+      "sha256": "0b2320dd2c626e1f1ed450e79c67a8133ddd02cc30cea1f609ab2597735a31ff"
+    },
+    "soundtrack.ima.gz": {
+      "bytes": 100614,
+      "sha256": "c0c5876eb76ca4bc04b42e615011dd97b453d3769b23f0f9ed99839640c56902"
+    },
+    "verification-work/fuse-debugger.txt": {
+      "bytes": 1912,
+      "sha256": "9b1957ff04226ac6ba1f2bc81429d48d796adf7e6b06b36eea4aedfe2e435c9d"
+    },
+    "verification-work/fuse-trace.txt.gz": {
+      "bytes": 15654378,
+      "sha256": "1f02d90b0e85bf0d17c06499b82ab13094e5006cea3376ef39fecf73c5914536"
+    },
+    "verification.json": {
+      "bytes": 2473,
+      "sha256": "35183f13d0157fe035de7e20a9badca5dbeec202bbef64f16956e6854032f512"
+    }
+  }
+}

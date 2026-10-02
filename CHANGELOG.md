@@ -5,6 +5,92 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: IMA ADPCM, standalone commented ASM and quieter live PDM
+
+Objective: implement the user's IMA ADPCM request, compile the commented ASM
+separately and package its binary with Python, then address the reported
+whistling/noise. Baseline: published PCM8 live player (`4b2f8ea`, 121344 samples,
+15.402 s, 441 T/sample, 32-T PDM kernel). Input remains the authenticated
+O. Henry recording at source 60 s, prepared as 8000 Hz unsigned PCM8 mono.
+The final resident excerpt contains 230912 samples /28.864 source seconds,
+stored in 115456 IMA bytes: 2:1 versus PCM8, 4:1 versus decoded PCM16.
+
+Implementation: [ima-player.asm](audiobook-beeper/ima-player.asm) is the
+authoritative source, with register contracts, saturation, paging, SP usage
+and instruction-cycle comments. External pyz80 1.3.0 compiles it to
+`player.bin`; [pack_ima.py](audiobook-beeper/pack_ima.py) independently packages
+that existing binary without emitting/patching Z80 instructions. The first
+ASM migration matched all 14336 bytes of the Python prototype. Final code
+is 1322 bytes, with 5696 bytes of transition tables. Code/table reservation
+7424 + ADPCM 115456 + screen 6912 + workspace/stack 1280 = all 131072 bytes.
+There are no decoded PCM or PDM buffers. Playback uses SP only for read-only
+table POPs, IRQs disabled, canonical 7FFD paging and an endless RAM loop.
+
+Intermediate attempts retained rather than presented as releases:
+
+- The initial integer-product delta rounding failed independent FFmpeg
+  comparison at decoded sample 49 (-13 versus -11). Replaced it with exact
+  IMA reference shift/add rounding. All 230912 samples now match FFmpeg's
+  IMA-WAV decoder. This host-table correction changes no Z80 instruction time.
+- [First timing attempt](audiobook-beeper/experiments/ima-first/failure.json):
+  native 438/452 T per low/high sample, 48-T isolated PDM, max native hold 81 T.
+  Two full Fuse loops had exact content but max actual hold **94 T**, failing
+  >=40 kHz. Ordinary read slots mixed contended memory with ULA I/O.
+- [Tag clearing moved](audiobook-beeper/experiments/ima-tag-tail/failure.json):
+  replace 7-T AND during address formation with 8-T RES in the tail: +1 T/sample,
+  input slot 81 ->74 T. Native 439/453 T; one Fuse interval still reached
+  **90 T** from combined 7FFD and FE I/O contention. This also fails the gate.
+- Loading only the already-zero pointer's high byte changes bank setup
+  LD DE,nn 10 T ->LD D,n 7 T (-3 T/bank). The
+  [first timing-valid version](audiobook-beeper/experiments/ima-unbalanced/report.json)
+  passed every bit through two loops, max87 T, average PDM47069.611/s and
+  29.435 s/loop. It was superseded for sound quality, not correctness:
+  reconstructed PDM SNR was **-1.075 dB** on this quiet speech excerpt.
+  Temporary pyz80 macro/DS/indirection syntax errors emitted no accepted disk.
+
+Final optimization keeps PDM BC/DE in the main register bank, input in HL
+and table/delta in alternate HL/BC. Removing EXX from each PDM pulse changes
+**48 ->40 T (-8 T/pulse)**. Redistributed lookup/padding gives ordinary holds
+**72..74 T instead of 56..81 T**, low/high **439/437 T**, mean **438 T**:
+-8 T/sample versus the first timing-valid IMA, -3 T versus PCM8. One extra
+pulse covers each non-bank 256-byte crossing (+76 T); five extra pulses
+cover a bank crossing (+362 T). Full native loop cost is
+`438*230912 +76*(451-8) +362*8` = **101176020 T**, down from 102995498
+(-1819478 T). Native bank holds are 67..79 T. Exact paths are reproduced by
+[verify_ima.py](audiobook-beeper/verify_ima.py); costs follow the
+[Zilog instruction table](https://www.zilog.com/docs/z80/um0080.pdf).
+
+Quality: use 4x pre-encoding gain with a 0.85 lookahead peak limiter, 5 ms
+attack,100 ms release, delay compensated. RMS rises .05370 ->.19679;
+this deliberately changes loudness dynamics. ADPCM SNR against that PCM8
+is **22.412 dB**. On complete measured Fuse schedules, with identical 70 Hz
+HP/two 4.5 kHz LP reconstruction, PDM SNR rises **-1.075 ->11.507 dB**.
+The matched-input ASM-only improvement is **1.394 dB**; most of the combined
+12.581 dB comes from level conditioning. The largest modeled idle tone in
+1..8 kHz falls **10.716 dB**. These are reconstruction metrics, not a claim
+of noise-free playback or physical-speaker measurements. The
+[comparison script](audiobook-beeper/compare_ima_noise.py) and
+[saved comparison](audiobook-beeper/ima-preview/noise-comparison.json) include
+before/after WAVs with matched speech loudness and common attenuation.
+
+Final verification: 4272 native predictor/index/nibble cases and two complete
+seeded nonrepeating loops; then two complete real-speech native/cold-Fuse128
+loops. All **2771911 bits**, **461824 PCM16 predictors/step indices**, every
+PCM8 value, all eight banks/repeat transitions and the startup stack guard
+pass. Fuse measures **29.054047/29.054074 s**, **7947.667 samples/s**,
+**47702.626 PDM writes/s average**, **41728.235/s minimum**, max **85 T**.
+There are 451 preload sector reads and zero runtime reads. CPU counts above
+exclude the measured 3751657 ULA T-states across two cycles and approximately
+26 s of ROM/disk startup. Actual Fuse audio is also captured at normal speed.
+See [complete evidence](audiobook-beeper/ima-preview/verification.json).
+
+Decision: deliver [ZX-audiobook-IMA-ADPCM-test.trd](ZX-audiobook-IMA-ADPCM-test.trd),
+a separately bootable, looping 640 KiB TRD occupying 508 sectors. Keep all
+earlier root PCM/PDM disks unchanged. This is a roughly 29-second resident
+preview, not a full-book or two-minute streaming release. Reproduction,
+binary/listing links and listening instructions are in the
+[subproject README](audiobook-beeper/README.md).
+
 ## 2026-10-02: measure whether LPC synthesis can share the beeper PDM loop
 
 Objective: answer the user's request to optimize the existing LPC decoder
