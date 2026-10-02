@@ -1,0 +1,183 @@
+{
+  "date": "2026-10-02",
+  "host_experiment_complete": true,
+  "release": false,
+  "z80_ported": false,
+  "trd_sha256": "f349d949e6ca6a2c59605bb2caab17706da81dd05f520a1cd8927cdb3f9b69b5",
+  "duration_seconds": 29.05404747807945,
+  "source_start_seconds": 60,
+  "slots": 1385955,
+  "pdm_rate_hz": 47702.64800612267,
+  "cutoff_hz": 20000,
+  "resistance_ohms": 1000,
+  "capacitance_farads": 7.957747154594767e-09,
+  "tau_seconds": 7.957747154594767e-06,
+  "initial_capacitor_voltage": 0,
+  "internal_render_rate_hz": 705600,
+  "generator": "RC capacitor model plus damped error feedback on voltage area; causal one-slot bit choice",
+  "reference": "same RC driven by delayed decoded PCM8; not unfiltered original AAC",
+  "target_delay_slots": 3,
+  "generator_state": {
+    "feedback_weight": 0.5,
+    "peak_voltage_error": 0.9021754190379468,
+    "peak_error_feedback_seconds": 2.6310047237923724e-05,
+    "peak_error_feedback_in_average_slots": 1.2550589224151354,
+    "final_voltage_error": 0.4326209066483927,
+    "final_error_feedback_seconds": 5.034679202958061e-06,
+    "final_integral_error_seconds": 3.8358959475232984e-06
+  },
+  "differing_bits": 672940,
+  "packed_bit_order": "MSB first; ignore padding bits beyond slots",
+  "common_listening_gain": 0.550861119613465,
+  "independent_normalization": false,
+  "unscaled_render_peaks": {
+    "reference": 1.049975037574768,
+    "baseline": 1.5837645530700684,
+    "rc-aware": 1.576751470565796,
+    "same-feedback-no-rc": 1.6338056325912476
+  },
+  "listening_filters": "ideal 20000 Hz RC and SOXR antialias resampling only",
+  "speech_preview_and_analysis_filters": "70 Hz highpass, two 2-pole 4.5 kHz lowpasses after RC",
+  "excluded_edge_seconds": 0.1,
+  "metrics": {
+    "baseline": {
+      "wideband": {
+        "snr_db": -5.830837246790075,
+        "error_rms": 0.3834085379886963,
+        "correlation": 0.45500676008161406,
+        "dc_error": 2.047008625591582e-06
+      },
+      "speech_band": {
+        "snr_db": 11.763436608875818,
+        "error_rms": 0.049956389915142244,
+        "correlation": 0.9682659058000839,
+        "dc_error": -2.3632630797147966e-08
+      }
+    },
+    "rc-aware": {
+      "wideband": {
+        "snr_db": -8.877735142005804,
+        "error_rms": 0.5445110212280129,
+        "correlation": 0.3385472107805201,
+        "dc_error": 7.654571912577328e-08
+      },
+      "speech_band": {
+        "snr_db": 14.108417026845046,
+        "error_rms": 0.03813660474833333,
+        "correlation": 0.9811789191045015,
+        "dc_error": 7.099794330537236e-07
+      }
+    },
+    "same-feedback-no-rc": {
+      "wideband": {
+        "snr_db": -8.023031704229794,
+        "error_rms": 0.49348221189762675,
+        "correlation": 0.3688766591972963,
+        "dc_error": 2.3929673429318086e-07
+      },
+      "speech_band": {
+        "snr_db": 13.551055124313734,
+        "error_rms": 0.040664002265667944,
+        "correlation": 0.978651927550529,
+        "dc_error": -1.421776771025339e-08
+      }
+    }
+  },
+  "validation": {
+    "analytic_step_state_error": 1.1102230246251565e-16,
+    "analytic_step_area_error_seconds": 3.3881317890172014e-21,
+    "analytic_bin_error": 2.8365298110344384e-08,
+    "dc_voltage_checks": [
+      {
+        "target": 0.0,
+        "mean_voltage_error": 0.0
+      },
+      {
+        "target": 0.125,
+        "mean_voltage_error": -6.172490608988312e-06
+      },
+      {
+        "target": 0.5,
+        "mean_voltage_error": -8.487934668574183e-06
+      },
+      {
+        "target": 0.875,
+        "mean_voltage_error": 6.172490261817789e-06
+      },
+      {
+        "target": 1.0,
+        "mean_voltage_error": 0.0
+      }
+    ],
+    "double_render_rate_difference_rms": 0.0003017987938173462,
+    "double_render_rate_difference_peak": 0.001085042953491211
+  },
+  "independent_area_error_difference_seconds": -6.6808554072297064e-12,
+  "sources": {
+    "player.json": "a06b91e19ef0c12297339ed8857323970a231583fa1f2a31af2de414b3b97bf2",
+    "verification.json": "35183f13d0157fe035de7e20a9badca5dbeec202bbef64f16956e6854032f512",
+    "soundtrack.ima.gz": "c0c5876eb76ca4bc04b42e615011dd97b453d3769b23f0f9ed99839640c56902",
+    "output-times.u32.gz": "5c372a375719055cca5c4735759fb01813e225adefe0be3499585035e89e19c0"
+  },
+  "producer_sha256_lf": "e530847d07da42feb90c089a9d4d85a450fac999bb8599aee98ddc4f3df58ea6",
+  "model_reference": "https://openstax.org/books/university-physics-volume-2/pages/10-5-rc-circuits",
+  "limitations": [
+    "New bits generated on PC, not by Z80 or Fuse",
+    "Saved baseline timings assumed; no new cycle counts or TRD",
+    "Ideal unloaded RC, not a measured Spectrum speaker circuit"
+  ],
+  "files": {
+    "baseline-rc-preview.wav": {
+      "sample_rate_hz": 44100,
+      "channels": 1,
+      "bits": 16,
+      "frames": 1281283,
+      "duration_seconds": 29.054036281179137,
+      "peak_abs_pcm": 28587,
+      "full_scale_samples": 0,
+      "sha256": "172dfc70bc839a125b8129b495271cca6e8f036ecc951ce70af4dd0f143804a3"
+    },
+    "baseline-speech-preview.wav": {
+      "sample_rate_hz": 44100,
+      "channels": 1,
+      "bits": 16,
+      "frames": 1281283,
+      "duration_seconds": 29.054036281179137,
+      "peak_abs_pcm": 20297,
+      "full_scale_samples": 0,
+      "sha256": "14a1b34b2594ee2cb814ddee22fb25825df982f5ccf602d472fc1c10e64c5cc9"
+    },
+    "rc-aware-rc-preview.wav": {
+      "sample_rate_hz": 44100,
+      "channels": 1,
+      "bits": 16,
+      "frames": 1281283,
+      "duration_seconds": 29.054036281179137,
+      "peak_abs_pcm": 28460,
+      "full_scale_samples": 0,
+      "sha256": "78e610641a7019148f9e55fc94fcc185555e5e4198ca47eedb71bc91c47778d8"
+    },
+    "rc-aware-speech-preview.wav": {
+      "sample_rate_hz": 44100,
+      "channels": 1,
+      "bits": 16,
+      "frames": 1281283,
+      "duration_seconds": 29.054036281179137,
+      "peak_abs_pcm": 19609,
+      "full_scale_samples": 0,
+      "sha256": "9f4532088616aaa5df58d6cab4be13958ed53f4f434b237065e2fc65499b7c5d"
+    }
+  },
+  "speech_band_snr_change_db": 2.3449804179692286,
+  "rc_model_only_snr_change_db": 0.5573619025313121,
+  "bitstreams": {
+    "baseline.pdm.gz": {
+      "sha256": "27fc2322e95cde3ce5bd68fa3283f4c457e9345e47788bb41bd3092b83f139c5",
+      "bits": 1385955
+    },
+    "rc-aware.pdm.gz": {
+      "sha256": "c159490b4416206f690c5ebe87b0b17087162e25e227ac9bac43adae81e29a76",
+      "bits": 1385955
+    }
+  }
+}

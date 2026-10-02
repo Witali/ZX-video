@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-02",
+  "scope": "one register-only fixed-point term, not a complete RC/PDM port",
+  "cases": 2025,
+  "tstates": 62,
+  "baseline_extrapolation_tstates": 0,
+  "delta_tstates": 62,
+  "formula": "e+floor((e-older)/2)",
+  "code_bytes_excluding_final_nop": 12,
+  "instruction_tstates": [
+    4,
+    4,
+    4,
+    15,
+    8,
+    8,
+    11,
+    4,
+    4
+  ],
+  "binary_sha256": "00ecf63cf1eb8611b6a281422acc4c07dc70c6ef3070749f06369946ede57ba4",
+  "source_sha256_lf": "7d7f823ba1f6c12f70579e7fa9c09c19a66650fe68cf0ded642c55cf32949200",
+  "additional_cpu_fraction_at_47702_626_pdm_hz": 0.8338444309115002,
+  "excluded": [
+    "RC-state update",
+    "bit decision and OUT",
+    "IMA decoder",
+    "register spills",
+    "table or alternate implementation",
+    "ULA and bank boundaries"
+  ],
+  "decision": "Direct arithmetic is too expensive for the current live schedule; a future Z80 port needs a different representation or lookup tables. 62 T is a measured implementation cost, not a lower bound on all implementations."
+}

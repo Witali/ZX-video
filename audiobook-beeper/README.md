@@ -169,6 +169,95 @@ The script compiles the standalone ASM externally into ignored `.tmp`
 build directories, checks the source stream and release hash, and writes
 the JSON report. It neither rebuilds nor overwrites the current TRD.
 
+### Additional generator: internal RC feedback (2026-10-02)
+
+The user requested a generator that models the external capacitor and
+chooses the next bit to charge/discharge it towards the desired voltage.
+This changes the PDM bits themselves. It is a **host-side experiment** in
+[rc_pdm_experiment.py](rc_pdm_experiment.py), not a new Z80 player or TRD.
+The working live IMA disk remains unchanged.
+
+The model uses the earlier RC parameters: R=1000 ohms, C=7.957747 nF,
+tau=7.957747 microseconds, cutoff=20 kHz. It follows the
+[exponential RC response](https://openstax.org/books/university-physics-volume-2/pages/10-5-rc-circuits)
+exactly for each constant port hold. Target voltage is the same RC applied
+to the decoded PCM8 level, including the existing three-slot output delay.
+The new generator uses capacitor-voltage error `w` and feedback-area states
+`e, older`. For a hold of duration `h` and desired unipolar level `x`:
+
+```text
+a = exp(-h/tau); c = tau*(1-a); k = h-c
+g = (1+beta)*e - beta*older + c*w + k*x
+bit = 1 if g >= k/2 else 0
+older, e = e, g-k*bit
+w = a*w + (1-a)*(x-bit)
+```
+
+The final candidate uses beta=0.5. Beta=0 integrates voltage error once;
+beta=1 applies full second-order error feedback. Intermediate beta damps
+the additional feedback. This is an ideal, unloaded circuit model; no
+physical Spectrum speaker response is claimed.
+
+Reuse the verified first-loop Fuse128 schedule: **1385955 holds over
+29.054047 seconds**, approximately 47.7 kHz. The same decoded IMA stream
+drives all variants. New bit generation uses those measured hold lengths
+as an offline assumption; the actual timing of a future Z80 implementation
+has not been measured.
+
+| Generator | Speech-band SNR after common RC/filter | Difference from current |
+|---|---:|---:|
+| Current live PDM | 11.7634 dB | 0 |
+| RC feedback, beta=0 | 11.7566 dB | -0.0069 dB |
+| RC feedback, beta=1 | 7.9194 dB | -3.8441 dB |
+| Same beta=0.5/timing, internal RC bypassed | 13.5511 dB | +1.7876 dB |
+| **RC feedback, beta=0.5** | **14.1084 dB** | **+2.3450 dB** |
+
+The internal RC model itself contributes **+0.5574 dB** versus the matched
+beta=0.5 control. The total speech-band error RMS decreases about 24%.
+This is not an overall noise reduction: wideband SNR after RC alone worsens
+from -5.8308 to -8.8777 dB as more noise moves outside the speech band.
+Metrics exclude 0.1 s at each edge and compare to decoded PCM through the
+same RC, not to the original AAC. No separate loudness normalization.
+
+- Speech-band listening: [current](rc-pdm-preview/baseline-speech-preview.wav)
+  and [RC-aware](rc-pdm-preview/rc-aware-speech-preview.wav). Both additionally
+  use the same 70 Hz highpass and two two-pole 4.5 kHz lowpasses.
+- RC-only listening: [current](rc-pdm-preview/baseline-rc-preview.wav) and
+  [RC-aware](rc-pdm-preview/rc-aware-rc-preview.wav). These have only the
+  modeled 20 kHz RC and export antialiasing, so the extra hiss is retained.
+- [Final report](rc-pdm-preview/report.json) includes checks, hashes,
+  matched-control metrics and packed candidate bitstreams.
+- Historical reports/source snapshots: [beta0](rc-feedback-preview/report.json),
+  [beta1](rc-feedback-order2-preview/report.json),
+  [initial beta0.5](rc-feedback-damped-preview/report.json).
+
+Validation covers analytic charging, DC levels 0/.125/.5/.875/1, independently
+summed capacitor-area error, rail limits, output lengths and clipping. Each
+PCM export bin integrates the analytic RC waveform exactly, then SOXR
+resamples to 44.1 kHz PCM16. Bins are centred on sample timestamps. Doubling
+the export rate 705600 ->1411200 Hz changes the full candidate WAV by
+0.000302 RMS before listening gain. The preliminary left-edge bin export
+failed that convergence check due to its half-bin timing shift; archived
+early reports precede this final export validation.
+
+A direct 16-bit arithmetic port is costly. The separately assembled
+[cost probe](rc-feedback-cost.asm) computes just `e+floor((e-older)/2)`
+in **62 T**, versus no such term in the current player (**+62 T/pulse**).
+[Native check](probe_rc_cost.py) verifies 2025 signed cases and exact timing;
+see [cost report](rc-pdm-preview/z80-cost.json). This excludes the RC update,
+quantizer, PDM output, register spills and IMA work. At the current rate
+that term alone consumes another 83.38% of a 3.5469 MHz CPU. It is not a
+lower bound on all implementations: a future live port needs different
+fixed-point state/table design and complete native/Fuse validation. No
+claim is made that the floating-point host generator fits the live player.
+
+Reproduce into an empty directory using the project Python dependencies:
+
+```powershell
+python audiobook-beeper/rc_pdm_experiment.py --ffmpeg <ffmpeg.exe> --output build/rc-pdm --feedback-weight 0.5
+python audiobook-beeper/probe_rc_cost.py
+```
+
 ## Previous test: convert PCM to PDM while playing
 
 [Live conversion TRD](../ZX-audiobook-PDM-live-test.trd) stores the actual

@@ -5,6 +5,66 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: RC-aware PDM generation with a capacitor model inside feedback
+
+Objective: implement the user's additional generator experiment. The user
+clarified that RC must affect bit selection, not just filter an existing WAV:
+model capacitor voltage internally and choose charging/discharging bits.
+Reuse the current IMA payload and its fully verified first-loop Fuse128
+schedule: 1385955 holds, 29.054047 s, source 60..88.864 s, approximately 47.7 kHz.
+No change to the existing live player/TRD or its Z80 timing is claimed.
+
+[Generator](audiobook-beeper/rc_pdm_experiment.py) models the earlier ideal
+20 kHz RC (R=1000 ohms, C=7.957747 nF) with exact exponential transitions and
+integrates capacitor-voltage error to retain DC tracking. Desired voltage
+is the same RC applied to delayed decoded PCM8. Three bounded candidates:
+
+- [Beta0](audiobook-beeper/rc-feedback-preview/report.json): first-order area
+  feedback gives speech-band SNR 11.7566 dB versus baseline 11.7634 dB. Reject
+  as a quality upgrade; preserve its report, bits, audio and source snapshot.
+- [Beta1](audiobook-beeper/rc-feedback-order2-preview/report.json): full
+  second-order feedback worsens to 7.9194 dB; peak internal error reaches
+  7.418 average slots. Reject this aggressive setting.
+- [Beta0.5](audiobook-beeper/rc-pdm-preview/report.json): damped feedback
+  reaches 14.1084 dB, **+2.3450 dB**, about 24% lower speech-band error RMS.
+  A matched timing/beta control with the internal RC bypassed reaches
+  13.5511 dB: the RC model's isolated contribution is **+0.5574 dB**.
+  Wideband SNR after RC alone worsens -5.8308 ->-8.8777 dB. Retain as an
+  additional experimental generator, not an unconditional quality replacement.
+
+Save equal-gain 44.1 kHz PCM16 comparison WAVs with RC alone and with the
+same 70 Hz highpass/two 4.5 kHz two-pole speech filters. Keep the new PDM bits
+packed separately. Full source/timing artifacts authenticate against the
+existing build report. Checks cover analytic RC charging, five DC levels,
+capacitor rail limits, independent integrated-error/state identities, full
+loop length, all exports unclipped, and rendering-rate convergence. Doubling
+705600 ->1411200 Hz changes the candidate by 0.000302 RMS before gain.
+
+Intermediate verification/export attempts are retained as history: an
+initial fixed 0.8 listening gain hit the clipping guard after antialias
+resampling; use one common peak-safe gain, not independent normalization.
+The first convergence run failed the 5e-4 RMS gate because export bins began
+at sample timestamps, giving rate-dependent half-bin shifts. Centre the bins
+and pass the unchanged gate. Its incomplete export remains under ignored
+`.tmp/rc-pdm-precenter/`; earlier candidate reports/source snapshots predate
+the final waveform-export checks. The initial beta0.5 result is preserved in
+[its report](audiobook-beeper/rc-feedback-damped-preview/report.json).
+
+The commented, externally assembled [Z80 cost probe](audiobook-beeper/rc-feedback-cost.asm)
+measures only one direct 16-bit extrapolation term: **62 T**, versus baseline
+0 T for that absent term (**+62 T/pulse**), 2025 signed cases verified by
+[runner](audiobook-beeper/probe_rc_cost.py). At 47.7 kHz this alone adds 83.38%
+CPU before RC update, quantizer, IMA and register allocation. This is a cost
+for one implementation, not a universal lower bound. Save the exact counts
+and exclusions in [cost report](audiobook-beeper/rc-pdm-preview/z80-cost.json).
+Decision: deliver the host-model listening comparison; a practical live port
+requires a separate compact fixed-point/table design and full timing checks.
+The user's frequency follow-up is answered by this distinction: the host
+comparison fixes PDM timing at the baseline rate, whereas a naive live port
+would slow down. No unchanged-rate claim is made for execution on Z80.
+The root TRD stays at SHA256
+`f349d949e6ca6a2c59605bb2caab17706da81dd05f520a1cd8927cdb3f9b69b5`.
+
 ## 2026-10-02: higher IMA/PDM rate, guarded CPU feasibility study
 
 Objective: answer whether the current IMA decoder can increase PDM rate

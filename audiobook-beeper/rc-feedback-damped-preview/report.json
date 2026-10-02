@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-02",
+  "host_experiment_complete": true,
+  "release": false,
+  "z80_ported": false,
+  "trd_sha256": "f349d949e6ca6a2c59605bb2caab17706da81dd05f520a1cd8927cdb3f9b69b5",
+  "duration_seconds": 29.05404747807945,
+  "source_start_seconds": 60,
+  "slots": 1385955,
+  "pdm_rate_hz": 47702.64800612267,
+  "cutoff_hz": 20000,
+  "resistance_ohms": 1000,
+  "capacitance_farads": 7.957747154594767e-09,
+  "tau_seconds": 7.957747154594767e-06,
+  "initial_capacitor_voltage": 0,
+  "internal_render_rate_hz": 705600,
+  "generator": "RC capacitor model plus damped error feedback on voltage area; causal one-slot bit choice",
+  "reference": "same RC driven by delayed decoded PCM8; not unfiltered original AAC",
+  "target_delay_slots": 3,
+  "generator_state": {
+    "feedback_weight": 0.5,
+    "peak_voltage_error": 0.9021754190379468,
+    "peak_error_feedback_seconds": 2.6310047237923724e-05,
+    "peak_error_feedback_in_average_slots": 1.2550589224151354,
+    "final_voltage_error": 0.4326209066483927,
+    "final_error_feedback_seconds": 5.034679202958061e-06,
+    "final_integral_error_seconds": 3.8358959475232984e-06
+  },
+  "differing_bits": 672940,
+  "packed_bit_order": "MSB first; ignore padding bits beyond slots",
+  "common_listening_gain": 0.5744422758628088,
+  "independent_normalization": false,
+  "listening_filters": "ideal 20000 Hz RC and SOXR antialias resampling only",
+  "analysis_filters": "70 Hz highpass, two 2-pole 4.5 kHz lowpasses; metrics only",
+  "excluded_edge_seconds": 0.1,
+  "metrics": {
+    "baseline": {
+      "wideband": {
+        "snr_db": -5.830837932019995,
+        "error_rms": 0.3834085705853797,
+        "correlation": 0.4550067094898175,
+        "dc_error": 2.035086588253356e-06
+      },
+      "speech_band": {
+        "snr_db": 11.763434250213916,
+        "error_rms": 0.04995639683442454,
+        "correlation": 0.9682658875280762,
+        "dc_error": -6.051650837790423e-07
+      }
+    },
+    "rc-aware": {
+      "wideband": {
+        "snr_db": -8.877734816108088,
+        "error_rms": 0.5445110041345991,
+        "correlation": 0.3385472407450496,
+        "dc_error": 1.1356896236460072e-07
+      },
+      "speech_band": {
+        "snr_db": 14.108414159899674,
+        "error_rms": 0.03813661226218867,
+        "correlation": 0.9811789026065418,
+        "dc_error": 2.556816909342996e-07
+      }
+    }
+  },
+  "independent_area_error_difference_seconds": -6.6808554072297064e-12,
+  "sources": {
+    "player.json": "a06b91e19ef0c12297339ed8857323970a231583fa1f2a31af2de414b3b97bf2",
+    "verification.json": "35183f13d0157fe035de7e20a9badca5dbeec202bbef64f16956e6854032f512",
+    "soundtrack.ima.gz": "c0c5876eb76ca4bc04b42e615011dd97b453d3769b23f0f9ed99839640c56902",
+    "output-times.u32.gz": "5c372a375719055cca5c4735759fb01813e225adefe0be3499585035e89e19c0"
+  },
+  "producer_sha256_lf": "3631a80959fe0d880d00368f210193956fef961462a20674ff1cd7d1f6f67c7b",
+  "model_reference": "https://openstax.org/books/university-physics-volume-2/pages/10-5-rc-circuits",
+  "limitations": [
+    "New bits generated on PC, not by Z80 or Fuse",
+    "Saved baseline timings assumed; no new cycle counts or TRD",
+    "Ideal unloaded RC, not a measured Spectrum speaker circuit"
+  ],
+  "files": {
+    "baseline-rc-preview.wav": {
+      "sample_rate_hz": 44100,
+      "channels": 1,
+      "bits": 16,
+      "frames": 1281283,
+      "duration_seconds": 29.054036281179137,
+      "peak_abs_pcm": 29404,
+      "full_scale_samples": 0,
+      "sha256": "afd8d31b587c86724abd4a2db589620afa2ab217871585ee13d468dc7d6a2883"
+    },
+    "rc-aware-rc-preview.wav": {
+      "sample_rate_hz": 44100,
+      "channels": 1,
+      "bits": 16,
+      "frames": 1281283,
+      "duration_seconds": 29.054036281179137,
+      "peak_abs_pcm": 29490,
+      "full_scale_samples": 0,
+      "sha256": "60b54726226a8bc91770baa2e6e79baf0f49bf52aa12babb9c78b7958cb7d7e4"
+    }
+  },
+  "speech_band_snr_change_db": 2.344979909685758
+}
