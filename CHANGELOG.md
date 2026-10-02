@@ -5,6 +5,70 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: keep ordinary PDM and equalize native output timing
+
+The user chose the original non-RC modulator and requested better command
+selection for uniform timing. Baseline: the working general IMA disk at
+SHA256 `f349d949e6ca6a2c59605bb2caab17706da81dd05f520a1cd8927cdb3f9b69b5`,
+six accumulator-PDM slots per sample, 230912 samples /115456 IMA bytes,
+source 60..88.864 s. Keep identical encoded audio, PCM8 values, PDM bit
+sequence, slot counts, eight-bank allocation and all 128 KiB RAM use.
+
+[ima-uniform-player.asm](audiobook-beeper/ima-uniform-player.asm) separates
+nibble preparation, table addressing and both table POPs into equal slots.
+Use documented 5-T untaken `RET C` only after proven carry clears, 6-T
+`INC SP` only on a dead table cursor, and 9-T `LD A,R` only into dead scratch
+A. The comments identify flags, register lifetimes and every counted path.
+Saturation and row-sign tags are omitted only after a host audit proves all
+raw sums stay in PCM16 (-29878..30985 for this stream). Builder and separate
+binary packer both reject streams needing clipping. The general saturating
+player remains available and rebuilds to its exact previous disk bytes.
+
+Native ordinary holds become **[73,73,73,73,73,73] T**, versus low
+74/72/74/73/72/74 and high 74/72/74/73/72/72. Low/high sample costs change
+439/437 ->438/438 T: unchanged 438-T average. Page overhead 76 ->74 T;
+bank overhead 362 ->361 T. Full-loop CPU cost **101176020 ->101175126 T**
+(-894 T), maximum native hold 79 ->77 T. Keep the short 67-T paging slot
+for ULA I/O headroom. Code size 1322 ->1193 bytes; reservation and payload
+remain unchanged for an exact audio comparison. ROM and disk latency are
+excluded from these deterministic counts.
+
+[Complete native/cold Fuse128 verification](audiobook-beeper/experiments/ima-uniform73/verification.json)
+passes two loops: 2771911 exact PDM bits, 461824 exact PCM16 predictions and
+indices, correct paging latches, startup stack bound, 451 startup sectors
+and no runtime disk reads. Measured PDM increases **47702.626 ->48287.384 Hz**
+(+1.226%); PCM playback 7947.667 ->8045.093 Hz. First loop 29.054047 ->
+28.702241 s, retaining every sample. ULA waits over two loops fall
+3751657 ->1257540 T. Actual interval standard deviation **2.5544 ->1.1910 T**;
+the longest rare hold remains 85 T /minimum 41728.235 writes/s. Native
+equality is not a claim of perfectly equal wall-clock intervals on Spectrum.
+
+[Matched timing/noise comparison](audiobook-beeper/experiments/ima-uniform73/timing-comparison.json)
+finds 78.75% of first-loop intervals exactly 73 T and a 53.37% drop in their
+standard deviation. Synthetic midscale's largest 1..8 kHz idle tone falls
+9.656 dB with the same reconstruction filter. Speech reconstruction SNR
+changes modestly 11.5066 ->11.7832 dB; no source gain/filter changes or RC
+model. These modeled metrics are not listener approval or a physical-speaker
+measurement.
+
+[Native tests](audiobook-beeper/test_ima_uniform.py) cover 11124 safe
+transitions across both nibble paths, including hostile starting flags,
+memory guards, 438-T counts and overflow rejection. The general decoder's
+4272 transitions and two random full loops still pass. Separately packaging
+the compiled binary reproduces the candidate disk exactly. A normal-speed
+Fuse128 recording verifies two wraps, all paging latches and signal in
+every half-second window. Save an unchanged PCM first-loop-length prefix as
+[listening WAV](audiobook-beeper/experiments/ima-uniform73/result-preview.wav).
+
+Decision: accept the uniform ordinary-PDM variant and deliver it separately
+as [ZX-audiobook-IMA-ADPCM-uniform-test.trd](ZX-audiobook-IMA-ADPCM-uniform-test.trd),
+SHA256 `9c316c9acad7eb44e0fa72a61f628d95d8f079f98c4f4133c6b42b3b80e884d8`.
+The former root disk and RC research remain intact. Reproduce with
+[build_uniform_ima.py](audiobook-beeper/build_uniform_ima.py),
+[compare_uniform_ima.py](audiobook-beeper/compare_uniform_ima.py) and the
+existing recorder/packer. See [build report](audiobook-beeper/experiments/ima-uniform73/report.json)
+and [delivery evidence](audiobook-beeper/experiments/ima-uniform73/delivery.json).
+
 ## 2026-10-02: RC-aware PDM generation with a capacitor model inside feedback
 
 Objective: implement the user's additional generator experiment. The user

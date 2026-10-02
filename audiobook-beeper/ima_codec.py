@@ -47,7 +47,24 @@ def encode(pcm8,predictor=0,index=0):
     return bytes(out)
 
 
-def decoder_table(base):
+def require_unclipped(packed,predictor=0,index=0):
+    """Prove all raw additions fit PCM16 for the guarded uniform player."""
+    if not -32768<=predictor<=32767 or not 0<=index<=88 or not packed:
+        raise ValueError('invalid guarded IMA seed or empty input')
+    minimum=32767;maximum=-32768
+    for i,byte in enumerate(packed):
+        for half,code in enumerate((byte&15,byte>>4)):
+            step=STEPS[index]
+            diff=(step>>3)+(step if code&4 else 0)+(step>>1 if code&2 else 0)+(step>>2 if code&1 else 0)
+            predictor+=-diff if code&8 else diff
+            if not -32768<=predictor<=32767:
+                raise ValueError(f'uniform player requires saturation at sample {2*i+half}: {predictor}')
+            minimum=min(minimum,predictor);maximum=max(maximum,predictor)
+            index=max(0,min(88,index+INDEX[code&7]))
+    return dict(samples=2*len(packed),saturation_events=0,raw_min=minimum,raw_max=maximum)
+
+
+def decoder_table(base,sign_tags=True):
     """Four bytes/state+code: signed modular delta; next row plus sign tag.
 
     Row is 64-byte aligned. Pointer bit 0 records negative NONZERO delta,
@@ -61,7 +78,7 @@ def decoder_table(base):
             negative=bool(code&8 and diff)
             next_index=max(0,min(88,index+INDEX[code&7]))
             result+=struct.pack('<HH',(-diff if negative else diff)&65535,
-                                (base+64*next_index)|int(negative))
+                                (base+64*next_index)|int(negative and sign_tags))
     return bytes(result)
 
 

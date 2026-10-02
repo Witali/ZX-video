@@ -29,16 +29,22 @@ def reference(packed,meta):
 
 def intervals(meta):
     parts=[]; offset=0
+    uniform=meta.get('uniform_timing',False)
     for s in meta['sections']:
         for byte in range(s['bytes']):
             # First input sample is primed; while holding it, decode the high nibble.
-            if byte==s['bytes']-1: high=[74,72,74,73,72,72,79,67,73,72,71]
+            if uniform:
+                if byte==s['bytes']-1:high=[73,73,73,73,73,72,77,67,73,72,73]
+                elif byte%256==255:high=[73,73,73,73,73,74,73]
+                else:high=[73]*6
+            elif byte==s['bytes']-1: high=[74,72,74,73,72,72,79,67,73,72,71]
             elif byte%256==255: high=[74,72,74,73,72,74,74]
             else: high=[74,72,74,73,72,72]
-            parts.extend(high); parts.extend([74,72,74,73,72,74])
+            parts.extend(high); parts.extend([73]*6 if uniform else [74,72,74,73,72,74])
         offset+=s['bytes']
     result=np.array(parts,dtype=np.int64)
-    assert result.sum()==438*(2*offset)+76*(offset//256-len(meta['sections']))+362*len(meta['sections'])
+    page_cost,bank_cost=(74,361) if uniform else (76,362)
+    assert result.sum()==438*(2*offset)+page_cost*(offset//256-len(meta['sections']))+bank_cost*len(meta['sections'])
     return result
 
 

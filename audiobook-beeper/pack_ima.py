@@ -7,12 +7,15 @@ with an updated symbol map. This packer does not certify playback timing.
 import argparse,gzip,json
 from pathlib import Path
 from pcm_player import TrdFile,basic_line,place_files,calculate_file_start
+from ima_codec import require_unclipped
 
 
 def pack(directory,output):
     meta=json.loads((directory/'player.json').read_bytes())
     blob=(directory/'assembly/player.bin').read_bytes()
     packed=gzip.decompress((directory/'soundtrack.ima.gz').read_bytes())
+    if meta.get('uniform_timing'):
+        require_unclipped(packed,meta['initial_predictor'],meta['initial_index'])
     if len(blob)!=meta['resident_reserve']+6912 or len(packed)!=meta['packed_bytes']:
         raise ValueError('binary or payload no longer fits the prepared memory layout')
     basic=b''.join([basic_line(10,b'\xfd \xb0 "32767"'),

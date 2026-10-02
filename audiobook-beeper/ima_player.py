@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 from pcm_player import TrdFile,basic_line,place_files,calculate_file_start,spectrum_bitmap_offset
 from pdm_player import ORIGIN,CPU_CLOCK,BANKS,BANK_BYTES
-from ima_codec import decoder_table
+from ima_codec import decoder_table,require_unclipped
 
 
 def screen(samples):
@@ -20,7 +20,7 @@ def screen(samples):
     return bytes(data)+bytes([0x47])*768
 
 
-def program(sections,initial_predictor=0,initial_index=0,assembly_dir=None):
+def program(sections,initial_predictor=0,initial_index=0,assembly_dir=None,uniform=False):
     """Assemble authoritative ASM externally, then read its unchanged binary.
 
     Python emits only constants/table/screen data. It does not emit or patch
@@ -34,14 +34,14 @@ def program(sections,initial_predictor=0,initial_index=0,assembly_dir=None):
         raise ValueError('ASM requires the documented eight-bank layout')
     def assemble(work):
         work.mkdir(parents=True,exist_ok=True)
-        source=Path(__file__).with_name('ima-player.asm').read_text()
+        source=Path(__file__).with_name('ima-uniform-player.asm' if uniform else 'ima-player.asm').read_text()
         (work/'ima-player.asm').write_text(source,encoding='utf-8',newline='\n')
         config=[f'initial_predictor: EQU {initial_predictor}',f'initial_index: EQU {initial_index}']
         for i,s in enumerate(sections):
             config.extend([f'disk_{i}: EQU {(s["sector"]//16)*256+s["sector"]%16}',
                            f'address_{i}: EQU {s["address"]}',f'sectors_{i}: EQU {s["sectors"]}'])
         (work/'config.inc').write_text('\n'.join(config)+'\n',encoding='ascii')
-        table=decoder_table(0x8600)
+        table=decoder_table(0x8600,sign_tags=not uniform)
         (work/'decoder-table.bin').write_bytes(table)
         (work/'screen.bin').write_bytes(screen(2*sum(s['bytes'] for s in sections)))
         command=[sys.executable,'-m','pyz80.pyz80','--obj=player.bin','--lstfile=player.lst','-s','.*','ima-player.asm']
@@ -77,9 +77,10 @@ def layout():
     return sections,reserve
 
 
-def build_disk(packed,initial_predictor=0,initial_index=0,assembly_dir=None):
+def build_disk(packed,initial_predictor=0,initial_index=0,assembly_dir=None,uniform=False):
     sections,reserve=layout()
     if len(packed)!=sum(s['bytes'] for s in sections): raise ValueError('IMA payload must fill available sectors')
+    guard=require_unclipped(packed,initial_predictor,initial_index) if uniform else None
     basic=b''.join([basic_line(10,b'\xfd \xb0 "32767"'),
         basic_line(20,b'\xf9 \xc0 \xb0 "15619":\xea:\xef "PLAYER" \xaf'),
         basic_line(30,b'\xf9 \xc0 \xb0 "32768"')])
@@ -88,7 +89,7 @@ def build_disk(packed,initial_predictor=0,initial_index=0,assembly_dir=None):
     track,sector=calculate_file_start([boot,TrdFile('PLAYER','C',draft,start=ORIGIN)])
     position=track*16+sector
     for s in sections: s['sector']=position; position+=s['sectors']
-    blob,meta=program(sections,initial_predictor,initial_index,assembly_dir)
+    blob,meta=program(sections,initial_predictor,initial_index,assembly_dir,uniform=uniform)
     files=[boot,TrdFile('PLAYER','C',blob,start=ORIGIN)]; offset=0
     for i,s in enumerate(sections):
         files.append(TrdFile(f'IMA{i}','C',packed[offset:offset+s['bytes']],start=s['address'])); offset+=s['bytes']
@@ -105,4 +106,7 @@ def build_disk(packed,initial_predictor=0,initial_index=0,assembly_dir=None):
         memory=dict(total_ram_bytes=131072,adpcm_bytes=len(packed),resident_code_and_tables=reserve,
                     screen_bytes=6912,workspace_stack_bytes=1280,pcm_buffer_bytes=0,pdm_buffer_bytes=0),
         pcm_clock_nominal_hz=CPU_CLOCK/438,packed_sha256=hashlib.sha256(packed).hexdigest())
+    if uniform:
+        meta.update(uniform_timing=True,saturation_guard=guard,ordinary_low_tstates=438,
+                    ordinary_high_tstates=438,maximum_native_hold_tstates=77)
     return disk,meta

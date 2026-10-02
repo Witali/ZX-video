@@ -6,7 +6,74 @@ supports both a precomputed noise-shaped bitstream and direct conversion of
 unsigned PCM8 to PDM in Z80 registers. Both write ULA port FE bit 4 directly.
 They do not fit the voice to tone generators.
 
-## Current test: IMA ADPCM decoded directly to beeper PDM
+## Current test: uniform timing with the original PDM model
+
+Use [uniform-timing TRD](../ZX-audiobook-IMA-ADPCM-uniform-test.trd) on
+Spectrum 128 with Beta Disk/TR-DOS. It retains the original accumulator PDM
+model, six pulses per sample, the same IMA bytes, all 128 KiB RAM allocation
+and endless playback. The RC-feedback experiment is retained as research
+only; it is not used in this disk.
+
+[ima-uniform-player.asm](ima-uniform-player.asm) redistributes IMA work and
+uses flag-safe 5/6/9-T instructions where their exact duration is useful.
+The ordinary native interval is now **73 T for every pulse**, rather than
+72..74 T. Low/high sample costs become 438/438 T instead of 439/437 T, so the
+ordinary average stays 438 T. Page overhead falls 76 ->74 T, bank overhead
+362 ->361 T; a full native loop costs 101175126 T versus 101176020 (-894 T).
+Maximum native hold falls 79 ->77 T. The intentionally short paging slot
+retains headroom for two contended port writes.
+
+Safe 5-T `RET C` instructions are never taken: comments identify each carry
+clear and native tests cover both nibble paths. Six-T `INC SP` changes only
+a dead table cursor before its replacement; 9-T `LD A,R` reads into dead
+scratch A after publishing the sample. Playback still never uses the stack
+for a real return, call or interrupt. The same separately compiled binary
+can be packaged by [pack_ima.py](pack_ima.py).
+
+To free scheduling space, this variant omits predictor saturation only after
+the host checks **all 230912 raw IMA additions**, including the seed: none
+clips (-29878..30985). Both the builder and separate packer reject streams
+requiring saturation. The general saturating player below remains available
+for other inputs. The transition table contains clean, untagged row pointers.
+
+| Complete two-loop Fuse 128 measurement | Before | Uniform candidate |
+|---|---:|---:|
+| Average PDM writes/s | 47702.626 | **48287.384** |
+| Actual decoded samples/s | 7947.667 | 8045.093 |
+| Interval standard deviation, T | 2.5544 | **1.1910** |
+| Longest actual interval, T | 85 | 85 |
+| Minimum instantaneous PDM writes/s | 41728.235 | 41728.235 |
+| Extra ULA wait T over two loops | 3751657 | **1257540** |
+
+The first loop lasts 28.702241 s, with all source samples retained. Playback
+is now 0.56% faster than the intended 8 kHz source, compared with 0.65% slower
+before. ULA waits still prevent perfectly equal wall-clock pulse intervals:
+about 78.75% are exactly 73 T. First-loop interval spread drops 53.37%; the
+worst rare bank/ULA pause does not worsen. PDM frequency increases 1.226%.
+The modeled midscale idle tone falls 9.66 dB, while speech reconstruction
+SNR improves modestly 11.5066 ->11.7832 dB at the same input level and filter.
+These are measured-schedule metrics, not a claim that all noise is removed.
+
+- [Actual Fuse audio, first loop](experiments/ima-uniform73/result-preview.wav).
+- [All-bit native/Fuse verification](experiments/ima-uniform73/verification.json).
+- [Timing and idle-tone comparison](experiments/ima-uniform73/timing-comparison.json).
+- [Build report](experiments/ima-uniform73/report.json) and
+  [delivery checks](experiments/ima-uniform73/delivery.json).
+
+All 2771911 PDM bits, 461824 PCM16 predictions and indices, paging latches,
+startup stack bounds and two seamless wraps pass. There are 451 startup
+sector reads and zero playback reads. Native transition tests additionally
+cover 11124 safe low/high cases, with unchanged memory and 438-T paths; the
+general decoder's 4272 cases and random two-loop regression also pass.
+Cold boot is independent of previous disks. Physical hardware is untested.
+
+```powershell
+python audiobook-beeper/test_ima_uniform.py
+python audiobook-beeper/build_uniform_ima.py --input audiobook-beeper/ima-preview --output build/ima-uniform --fuse <fuse.exe> --ffmpeg <ffmpeg.exe>
+python audiobook-beeper/compare_uniform_ima.py --before audiobook-beeper/ima-preview --after build/ima-uniform --ffmpeg <ffmpeg.exe>
+```
+
+## Previous test: general IMA ADPCM decoded directly to beeper PDM
 
 [IMA ADPCM test disk](../ZX-audiobook-IMA-ADPCM-test.trd) holds **230912 samples**
 in **115456 compressed bytes**, exactly 2:1 against the requested unsigned
