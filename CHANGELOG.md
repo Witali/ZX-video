@@ -5,6 +5,51 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: assess achievable beeper SNR and separate codec error
+
+The user requested an analysis of maximum achievable SNR on the Spectrum.
+Baseline: the unchanged uniform-PDM disk, 230912 prepared PCM8 samples at
+8 kHz and 115456 IMA bytes, source excerpt 60..88.864 seconds. Authenticate
+source PCM, packed IMA and complete saved Fuse output times. This is a host
+analysis; no player, disk, hot-path instruction or memory allocation changed.
+
+[Reproducing script](audiobook-beeper/assess_snr.py) evaluates the complete
+excerpt with the established 70-Hz HP /two 4.5-kHz LP filter, and separately
+with a Welch 70–3800-Hz measurement band. Use exact pulse-area reconstruction,
+the same reference delay/schedule and no fitted gain/phase. SNR includes
+reconstruction distortion and excludes tempo error against a fixed 8-kHz
+clock. Current modulation-only 11.783161 dB is reproduced within 1e-9 dB;
+total SNR relative to prepared PCM8 before IMA is **11.5163 dB**. Independent
+IMA decode reproduces **22.4117 dB** raw codec SNR; the filtered ideal decoded
+waveform gives approximately **23.6 dB** against prepared PCM8.
+
+Eleven bounded comparisons separate timing, frequency, feedback and format.
+Uniform reclocking of the same bits adds only **0.055 dB** modulation SNR.
+Ideal first-order output at 64/72/96/128 kHz gives total SNR
+**14.3178 /15.3583 /17.7634 /19.6798 dB**. Damped beta=0.5 feedback at 64 kHz
+gives **16.5686 dB**, but native cost is unresolved. True second-order feedback
+at half amplitude gives only **10.5743 dB** at 64 kHz, so it is not an automatic
+improvement; at 128 kHz it gives **21.5165 dB**. Removing IMA at that rate gives
+**25.8117 dB** with the listening filter, or **29.9542 dB** in the selected
+70–3800-Hz band. These rates/algorithms are models, not verified players.
+
+Numerical verification on the first five seconds of the no-IMA 128-kHz
+candidate raises integration rate 192 ->768 kHz and changes the score by
+**0.0915 dB**. This convergence check is partial; the eleven primary
+comparisons cover the full excerpt. No analog noise, speaker or physical
+hardware was measured. The first script launch lacked SciPy; replace that
+dependency with explicit NumPy Welch calculation before obtaining results.
+
+Decision: complete the analysis and retain the current player. Existing
+native probes suggest 64 kHz as the next practical target and 72 kHz as tight,
+with **14–16 dB total SNR** a modeled target rather than a release guarantee.
+Do not call the ideal 8-bit full-scale-sine figure (~50 dB), fixed-IMA
+reference (~23 dB), or a host-only 30-dB band result a hardware maximum.
+[Assessment and assumptions](audiobook-beeper/SNR_ASSESSMENT.md),
+[full report](audiobook-beeper/experiments/snr-assessment/report.json),
+[numerical check](audiobook-beeper/experiments/snr-assessment/numerical-check.json)
+and [archived producer](audiobook-beeper/experiments/snr-assessment/assess_snr.py.gz).
+
 ## 2026-10-02: optimize error-feedback PWM past 40 kHz average
 
 The user requested at least 40 kHz PWM after the 15.606-kHz experiment.

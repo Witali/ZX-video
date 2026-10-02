@@ -6,6 +6,11 @@ supports both a precomputed noise-shaped bitstream and direct conversion of
 unsigned PCM8 to PDM in Z80 registers. Both write ULA port FE bit 4 directly.
 They do not fit the voice to tone generators.
 
+The [SNR assessment](SNR_ASSESSMENT.md) distinguishes the current 11.5-dB
+total reconstruction SNR, modeled improvements, codec limits and unverified
+higher-rate playback. The recent PDM/PWM comparisons below report modulation
+error alone.
+
 ## Fast PWM experiment: above 40 kHz on average
 
 Use [PWM40 TRD](../ZX-audiobook-IMA-ADPCM-PWM40-test.trd) on Fuse / Spectrum

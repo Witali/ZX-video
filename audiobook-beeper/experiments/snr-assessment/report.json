@@ -1,0 +1,267 @@
+{
+  "date": "2026-10-02",
+  "scope": "Analysis only; no new player, disk or physical hardware test",
+  "reference": "Prepared, conditioned PCM8 before IMA; not a clean studio reference or original noisy tape",
+  "source_samples": 230912,
+  "source_duration_seconds": 28.864,
+  "source_rms": 0.19673606048600836,
+  "input_pcm_sha256": "742edf0652f2a7ffbcbdc38d92985a76cfbf37bce659d8924848e7699e2d77ca",
+  "packed_sha256": "c9f3161b3c7fc40c141c8b30d0d2d82eaa41ef14353ad98ec6704957c545beca",
+  "cpu_clock_hz": 3546900,
+  "codec_raw_pcm16_snr_db": 22.41166927530752,
+  "ideal_pcm8_full_scale_sine_snr_db": 49.925711895,
+  "ideal_pcm8_speech_snr_estimate_db": 38.81369126684128,
+  "filter": "highpass=f=70,lowpass=f=4500:p=2,lowpass=f=4500:p=2",
+  "band_measurement": "Welch/Hann 65536 at 192000 Hz, 50% overlap; integrate 70..3800 Hz; no physical brick-wall filter implied",
+  "edges_excluded_seconds": 0.1,
+  "rows": [
+    {
+      "name": "current_actual",
+      "status": "saved full Fuse timing",
+      "pdm_rate_hz": 48287.34529202135,
+      "metrics": {
+        "common_listening_filter": {
+          "modulator_snr_db": 11.783161185225918,
+          "total_snr_db": 11.51631448460716,
+          "codec_snr_db": 23.58978942924491
+        },
+        "band_70_3800_hz": {
+          "modulator_snr_db": 12.651943104261427,
+          "total_snr_db": 12.308453452686159,
+          "codec_snr_db": 23.342383860992438
+        },
+        "band_70_3000_hz_modulator_snr_db": 15.114618938619511
+      }
+    },
+    {
+      "name": "same_bits_uniform_timing",
+      "status": "host model; same bits, per-sample weights and total duration, ideal uniform output",
+      "pdm_rate_hz": 48287.34529202135,
+      "metrics": {
+        "common_listening_filter": {
+          "modulator_snr_db": 11.838225278313914,
+          "total_snr_db": 11.568500788347233,
+          "codec_snr_db": 23.59053380758573
+        },
+        "band_70_3800_hz": {
+          "modulator_snr_db": 12.723990513469785,
+          "total_snr_db": 12.376226217555665,
+          "codec_snr_db": 23.367139267994375
+        },
+        "band_70_3000_hz_modulator_snr_db": 15.207522010292703
+      }
+    },
+    {
+      "name": "first_order_48000",
+      "status": "ideal timing model; not a player",
+      "pdm_rate_hz": 48000.0,
+      "slots_per_sample": 6,
+      "metrics": {
+        "common_listening_filter": {
+          "modulator_snr_db": 11.745719581807545,
+          "total_snr_db": 11.47601500773401,
+          "codec_snr_db": 23.578416799831597
+        },
+        "band_70_3800_hz": {
+          "modulator_snr_db": 12.663606319994233,
+          "total_snr_db": 12.309885194622819,
+          "codec_snr_db": 23.33779765175096
+        },
+        "band_70_3000_hz_modulator_snr_db": 15.170170580457986
+      }
+    },
+    {
+      "name": "first_order_64000",
+      "status": "ideal timing model; not a player",
+      "pdm_rate_hz": 64000.00000000001,
+      "slots_per_sample": 8,
+      "metrics": {
+        "common_listening_filter": {
+          "modulator_snr_db": 14.852094149304925,
+          "total_snr_db": 14.317788820773487,
+          "codec_snr_db": 23.578479327697753
+        },
+        "band_70_3800_hz": {
+          "modulator_snr_db": 15.719680217249019,
+          "total_snr_db": 15.039852192153926,
+          "codec_snr_db": 23.337856034010116
+        },
+        "band_70_3000_hz_modulator_snr_db": 18.1953912189377
+      }
+    },
+    {
+      "name": "damped_feedback_64000",
+      "status": "host-only algorithm, unknown complete Z80 cost",
+      "pdm_rate_hz": 64000.00000000001,
+      "generator": {
+        "beta": 0.5,
+        "input_gain": 1,
+        "peak_error_state": 1.1806802312409896,
+        "z80_ported": false,
+        "rc_model": false
+      },
+      "metrics": {
+        "common_listening_filter": {
+          "modulator_snr_db": 17.57843809687597,
+          "total_snr_db": 16.56856670398245,
+          "codec_snr_db": 23.578479327697753
+        },
+        "band_70_3800_hz": {
+          "modulator_snr_db": 19.201559991717037,
+          "total_snr_db": 17.72544625219451,
+          "codec_snr_db": 23.337856034010116
+        },
+        "band_70_3000_hz_modulator_snr_db": 21.878471108494836
+      }
+    },
+    {
+      "name": "second_order_half_gain_64000",
+      "status": "host-only second-order model, half amplitude; not ported",
+      "pdm_rate_hz": 64000.00000000001,
+      "generator": {
+        "beta": 1,
+        "input_gain": 0.5,
+        "peak_error_state": 1.28125,
+        "z80_ported": false,
+        "rc_model": false
+      },
+      "metrics": {
+        "common_listening_filter": {
+          "modulator_snr_db": 10.791071883149892,
+          "total_snr_db": 10.57429124640652,
+          "codec_snr_db": 23.578417045332895
+        },
+        "band_70_3800_hz": {
+          "modulator_snr_db": 16.876278873129394,
+          "total_snr_db": 15.9780612618598,
+          "codec_snr_db": 23.337856034010116
+        },
+        "band_70_3000_hz_modulator_snr_db": 22.022479362537126
+      }
+    },
+    {
+      "name": "first_order_72000",
+      "status": "ideal timing model; not a player",
+      "pdm_rate_hz": 72000.0,
+      "slots_per_sample": 9,
+      "metrics": {
+        "common_listening_filter": {
+          "modulator_snr_db": 16.065104853854088,
+          "total_snr_db": 15.358297630018834,
+          "codec_snr_db": 23.578453240154893
+        },
+        "band_70_3800_hz": {
+          "modulator_snr_db": 16.907250090710132,
+          "total_snr_db": 16.017796867877003,
+          "codec_snr_db": 23.337875494330707
+        },
+        "band_70_3000_hz_modulator_snr_db": 19.379410903100876
+      }
+    },
+    {
+      "name": "first_order_96000",
+      "status": "ideal timing model; not a player",
+      "pdm_rate_hz": 96000.0,
+      "slots_per_sample": 12,
+      "metrics": {
+        "common_listening_filter": {
+          "modulator_snr_db": 19.07184356632309,
+          "total_snr_db": 17.763426644703625,
+          "codec_snr_db": 23.578464051490617
+        },
+        "band_70_3800_hz": {
+          "modulator_snr_db": 19.93509367100202,
+          "total_snr_db": 18.31076362134198,
+          "codec_snr_db": 23.337914414305054
+        },
+        "band_70_3000_hz_modulator_snr_db": 22.368845580765164
+      }
+    },
+    {
+      "name": "first_order_128000",
+      "status": "ideal timing model; not a player",
+      "pdm_rate_hz": 128000.00000000001,
+      "slots_per_sample": 16,
+      "metrics": {
+        "common_listening_filter": {
+          "modulator_snr_db": 21.928365099265523,
+          "total_snr_db": 19.67979833579294,
+          "codec_snr_db": 23.582176724433452
+        },
+        "band_70_3800_hz": {
+          "modulator_snr_db": 22.75144781298828,
+          "total_snr_db": 20.034320344546515,
+          "codec_snr_db": 23.34168643797033
+        },
+        "band_70_3000_hz_modulator_snr_db": 25.12747047466968
+      }
+    },
+    {
+      "name": "second_order_half_gain_128000",
+      "status": "host-only second-order model, half amplitude; not ported",
+      "pdm_rate_hz": 128000.00000000001,
+      "generator": {
+        "beta": 1,
+        "input_gain": 0.5,
+        "peak_error_state": 1.3203125,
+        "z80_ported": false,
+        "rc_model": false
+      },
+      "metrics": {
+        "common_listening_filter": {
+          "modulator_snr_db": 25.746555206732587,
+          "total_snr_db": 21.516490473653903,
+          "codec_snr_db": 23.58212304494497
+        },
+        "band_70_3800_hz": {
+          "modulator_snr_db": 29.92789131448295,
+          "total_snr_db": 22.470086324718107,
+          "codec_snr_db": 23.34168643797033
+        },
+        "band_70_3000_hz_modulator_snr_db": 33.91610681699034
+      }
+    },
+    {
+      "name": "pcm8_without_ima_second_order_128000",
+      "status": "host-only changed format, short or streamed precomputed output; no verified playback kernel",
+      "pdm_rate_hz": 128000.00000000001,
+      "generator": {
+        "beta": 1,
+        "input_gain": 0.5,
+        "peak_error_state": 1.3203125,
+        "z80_ported": false,
+        "rc_model": false
+      },
+      "metrics": {
+        "common_listening_filter": {
+          "modulator_snr_db": 25.8116636303671,
+          "total_snr_db": 25.8116636303671,
+          "codec_snr_db": null
+        },
+        "band_70_3800_hz": {
+          "modulator_snr_db": 29.95418231779442,
+          "total_snr_db": 29.95418231779442,
+          "codec_snr_db": null
+        },
+        "band_70_3000_hz_modulator_snr_db": 34.02755901438856
+      }
+    }
+  ],
+  "limitations": [
+    "SNR means signal-to-reconstruction-error including distortion, not isolated random noise.",
+    "Same filter is applied to output and each reference; no fitted phase/gain correction.",
+    "Each reference follows its row sample schedule, excluding tempo and sample-clock error against a fixed 8000-Hz clock.",
+    "Pulse areas are integrated at 192000 Hz before filtering; these are numerical reconstructions, not analog measurements.",
+    "Codec-only row is the perfect-decoded-waveform reference, not a universal bound for every codec or modulator.",
+    "First-order closed-form white-error scaling does not predict idle tones or correlated error exactly.",
+    "Higher-order feedback and rates are host models; no stable finite-word Z80 implementation is claimed.",
+    "The existing packed-bit player and IMA kernels do not establish 96/128-kHz feasibility.",
+    "Actual analog speaker/amplifier noise and distortion were not measured."
+  ],
+  "references": [
+    "https://www.analog.com/media/en/training-seminars/tutorials/MT-001.pdf",
+    "https://www.analog.com/media/en/training-seminars/tutorials/MT-022.pdf",
+    "https://www.zilog.com/docs/z80/um0080.pdf"
+  ],
+  "producer_sha256_lf": "d4e76b7212a971176ed3d3550e7dec721a217599b9487ef3606a2f6e92de9bc8"
+}
