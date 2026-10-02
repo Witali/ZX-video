@@ -98,7 +98,7 @@ def summarize(movie, trace, meta, out):
     for offset in range(0, len(pcm)-22050+1, 22050):
         segment = pcm[offset:offset+22050].astype(float)/32768
         windows.append(dict(start_seconds=offset/44100, ac_rms=float(np.std(segment))))
-    expected = [s['bank'] | 0x10 for s in meta['sections'][1:]+meta['sections'][:1]]*2
+    expected = [s['bank'] | meta.get('paging_base',0x10) for s in meta['sections'][1:]+meta['sections'][:1]]*2
     actual = events[150]
     return dict(recording_complete=True, two_wraps_observed=True, timing_code=timing,
                 startup_seconds=start/44100, recorded_playback_seconds=len(pcm)/44100,
@@ -141,8 +141,11 @@ def main():
         event(labels[f'page_{i}']+2, 150, ['spectrum:frames', 'ula:tstates',
               'z80:'+meta.get('paging_value_register', 'a'), 'ula:mem7ffd', 'ula:mem1ffd'],
               ['set $wraps $wraps+1'] if i == len(meta['sections'])-1 else [])
-    event(labels['out_0_0_0']+meta.get('record_stop_offset',4 if meta.get('steady', False) else 3), 200,
-          ['spectrum:frames', 'ula:tstates'], condition='$wraps==2', stop=True)
+    stops=meta.get('record_stop_addresses')
+    if stops is None:
+        stops=[labels['out_0_0_0']+meta.get('record_stop_offset',4 if meta.get('steady', False) else 3)]
+    for address in stops:
+        event(address,200,['spectrum:frames','ula:tstates'],condition='$wraps==2',stop=True)
     script = '\n'.join(lines)
     (out/'fuse-debugger.txt').write_text(script, encoding='utf-8', newline='\n')
     movie_path = out/'capture.fmf'

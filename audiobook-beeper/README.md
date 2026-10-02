@@ -11,6 +11,14 @@ total reconstruction SNR, modeled improvements, codec limits and unverified
 higher-rate playback. The recent PDM/PWM comparisons below report modulation
 error alone.
 
+## Packet PDM disk
+
+The [new packet TRD](../ZX-audiobook-IMA-ADPCM-packet-test.trd) plays a
+25.72-second loop using compact output codebooks and live IMA decoding.
+Stock Fuse128 measures 116.25 kHz average output and 17.26 dB total SNR;
+the 20-dB native model is reduced by ULA contention. Playback is about
+9.18% slower than the source. [Actual WAV and complete details](PACKET.md).
+
 ## Live feedback PDM experiment
 
 The [separate feedback TRD](../ZX-audiobook-IMA-ADPCM-feedback-test.trd)

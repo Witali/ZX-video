@@ -12,11 +12,11 @@ HERE=Path(__file__).resolve().parent
 INITIAL_STATE=34
 
 
-def loading_screen(samples):
+def loading_screen(samples,title='IMA / FEEDBACK PDM'):
     """Ready image hides the startup-only message in its top 24 pixel rows."""
     from PIL import Image, ImageDraw, ImageFont
     from pcm_player import spectrum_bitmap_offset
-    data=bytearray(screen(samples,'IMA / FEEDBACK PDM'))
+    data=bytearray(screen(samples,title))
     tile=Image.new('1',(256,24));draw=ImageDraw.Draw(tile)
     font=ImageFont.load_default(size=13);text='Loading audio data'
     box=draw.textbbox((0,0),text,font=font)

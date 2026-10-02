@@ -5,6 +5,54 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: deliver the bootable compact packet-PDM disk
+
+The user requested a disk with the new output method. Deliver the compact
+version of the already executed packet kernel, retaining live IMA decoding,
+stock Spectrum128/Beta Disk, preload status and continuous looping. The
+unimplemented direct-pointer 434-T proposal is outside this delivery.
+
+[ASM](audiobook-beeper/packet-player.asm) compiles 156/82 used eight-output
+sequences, with a duration-aware 32-state integral-feedback table. Balance
+both nibble paths to **468 T/sample**: +18/+8 T versus the probe's 450/460-T
+paths, mean +13 T; +34.75 T versus the old 433.25-T eight-output player.
+There are 16 outputs per sample. Non-bank page/bank extras are 18/131 T.
+Full native loop is **87467201 T**; two Fuse loops add **7532826 ULA T**.
+Preload ROM/disk execution is separate, with 420 sectors and no runtime I/O.
+
+Use shadow screen bank 7 and all 128 KiB: 93440 bytes of IMA, 6912 screen,
+16384 bank-5 tables/workspace, 14336 bank-2 resident code/tables. Source is
+the same prepared prefix shortened to **186880 samples /23.36 seconds**,
+with a 20-ms final fade and 128 silent samples. Beam32 encoding ends exactly
+at predictor/index 0/0 for seamless decoder looping. Modulator state carries
+across loops. This shorter scope is not an identical-source comparison to
+the earlier 26.624-second probe.
+
+[Native and cold Fuse verification](audiobook-beeper/experiments/ima-packet/report.json)
+checks two complete loops, **5980161 bits /373760 predictors and indices**,
+every native interval, protected native RAM, paging, loading message and
+shadow screen selection. All 2048 table entries match an independent exact
+rational recurrence. FFmpeg independently confirms all 186880 IMA samples.
+Normal-speed Fuse recording covers two wraps, with correct paging and signal
+in every complete half-second window. Actual mean output is **116245.69 Hz**,
+PCM rate 7265.36 Hz, loop 25.72223 seconds; pitch/speed is about 9.18% lower
+than the 8000-Hz input. Maximum hold is 192 T at a bank transition.
+
+Measured total SNR is **17.2551 dB**, modulation 18.0449 dB, codec 25.1981 dB
+under the established 70-Hz HP/two 4.5-kHz LP filters, excluding 0.1-second
+edges and following actual sample timing. CPU-only model gives 20.4512 dB;
+ULA contention prevents reproducing that score in Fuse. Do not claim a
+20-dB stock-machine result or physical-hardware testing. Keep the new disk
+as a separate listening experiment; existing root images are unchanged.
+
+The first full debugger launch hit Windows error 206 (command line length),
+before Fuse ran. Replacing per-codebook stop breakpoints with one port stop
+fixed the harness without changing the player. The full corrected run passes.
+[Disk](ZX-audiobook-IMA-ADPCM-packet-test.trd),
+[actual WAV](audiobook-beeper/experiments/ima-packet/result-preview.wav),
+[reproduction, memory and instruction counts](audiobook-beeper/PACKET.md).
+TRD SHA256: `53b0b19a0fb7bb8b77ef48c990827b7dbc65a2bf0be14fd787a681b970d3ad87`.
+
 ## 2026-10-02: probe integral-feedback PDM packets toward 20 dB
 
 The user made 20-dB SNR the active goal. Preserve the complete current

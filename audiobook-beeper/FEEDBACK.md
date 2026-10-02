@@ -300,6 +300,21 @@ IMA rows need 5696 bytes, and code plus pointer pages/startup must fit the
 fixed banks while preserving loading UI, workspace, audio capacity and
 seamless paging. Do not claim this layout or a complete 20-dB player exists.
 
+## Bootable packet follow-up, 2026-10-02
+
+The user requested a disk using the new output method. The compact balanced
+kernel is now delivered as a [separate packet TRD](../ZX-audiobook-IMA-ADPCM-packet-test.trd),
+with full native/cold Fuse checks and actual audio capture. This supersedes
+the earlier statement that no bootable packet player exists. It uses the
+already executed two-stage lookup approach; the proposed direct-pointer
+434-T kernel remains unimplemented.
+
+Ordinary cost is 468 T/sample with 16 outputs, plus explicit page/bank tails.
+The complete shorter 23.36-second source plays in 25.72223 seconds. Actual
+average output is 116245.69 Hz and total SNR is 17.2551 dB, versus 20.4512 dB
+in its CPU-only model. The ULA-dependent result does not meet 20 dB.
+See [memory, timing, source scope and reproduction](PACKET.md).
+
 ## Reproduction and retained evidence
 
 Use the existing Python environment with NumPy, Pillow, pyz80 and z80:
