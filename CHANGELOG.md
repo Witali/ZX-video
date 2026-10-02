@@ -5,6 +5,20 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: export original and actual IMA playback for listening
+
+At the user's request, export two directly playable WAVs of the same excerpt
+in [listen-original-vs-ima](audiobook-beeper/listen-original-vs-ima/report.json).
+The original is source 60..88.864 s, decoded directly from the authenticated
+AAC to 44.1 kHz stereo PCM16, with no gain/filtering or codec preprocessing.
+The result is the first approximately 29.054 s loop of the existing Fuse128
+capture of TRD `f349d949e6ca6a2c59605bb2caab17706da81dd05f520a1cd8927cdb3f9b69b5`,
+44.1 kHz mono PCM16, with no additional processing. The small duration
+difference reflects the measured Spectrum playback rate; it is not corrected
+by time stretching. Verified the source hash, WAV headers/durations and exact
+prefix equality with the Fuse capture. The report retains commands and hashes.
+No player or TRD changes; reuse the complete playback evidence below.
+
 ## 2026-10-02: IMA ADPCM, standalone commented ASM and quieter live PDM
 
 Objective: implement the user's IMA ADPCM request, compile the commented ASM

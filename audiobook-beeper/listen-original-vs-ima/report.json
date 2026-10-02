@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-02",
+  "source_start_seconds": 60,
+  "source_sha256": "a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779",
+  "original": "AAC decoded directly to stereo PCM16 WAV; no gain, filtering, sample-rate change or ADPCM/PDM processing",
+  "result": "First loop cropped from actual Fuse128 audio capture; PCM bytes unchanged, no extra filtering or normalization",
+  "original_export_command": [
+    "C:/Users/rudol/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.1.1-full_build/bin/ffmpeg.exe",
+    "-v",
+    "error",
+    "-nostdin",
+    "-n",
+    "-ss",
+    "60",
+    "-i",
+    "C:\\Work\\AudioBooksDownloader\\Audiobooks\\003 - \u041e. \u0413\u0435\u043d\u0440\u0438. \u041a\u043e\u0440\u043e\u0442\u043a\u0438\u0435 \u0440\u0430\u0441\u0441\u043a\u0430\u0437\u044b \uff02\u0414\u043e\u0440\u043e\u0433\u043e \u043a\u0430\u043a \u043f\u0430\u043c\u044f\u0442\u044c\uff02 \u0438 \uff02\u041e\u0431\u043e\u0440\u043e\u0442\u043d\u0430\u044f \u0441\u0442\u043e\u0440\u043e\u043d\u0430\uff02 (1977) [1bqRZ3gM55s].m4a",
+    "-t",
+    "28.864",
+    "-map",
+    "0:a:0",
+    "-ar",
+    "44100",
+    "-ac",
+    "2",
+    "-c:a",
+    "pcm_s16le",
+    "C:\\Work\\ZX-video\\audiobook-beeper\\listen-original-vs-ima\\original-preview.wav"
+  ],
+  "result_source": "audiobook-beeper/ima-preview/sound-128/fuse-preview.wav",
+  "result_frames": 1281283,
+  "trd_sha256": "f349d949e6ca6a2c59605bb2caab17706da81dd05f520a1cd8927cdb3f9b69b5",
+  "files": {
+    "original-preview.wav": {
+      "sample_rate": 44100,
+      "bits": 16,
+      "channels": 2,
+      "frames": 1272902,
+      "seconds": 28.863990929705217,
+      "sha256": "8b574e0b9451d3c3f1b87619c3ba6d39bf248617e126fb005b38f56c4cb4262a"
+    },
+    "result-preview.wav": {
+      "sample_rate": 44100,
+      "bits": 16,
+      "channels": 1,
+      "frames": 1281283,
+      "seconds": 29.054036281179137,
+      "sha256": "a5f9488b51c0d2c470da8eeb898356d3c2534de2dd4ec456fc41405928a3b4cf"
+    }
+  }
+}
