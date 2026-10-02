@@ -98,6 +98,77 @@ python audiobook-beeper/record_pcm.py build/ima-new --output build/ima-sound --f
 resuming the same build. Source authentication uses `source-format.json`.
 This remains a resident preview, not a two-minute/full-book disk streamer.
 
+### Higher PDM rate: CPU feasibility study (2026-10-02)
+
+The verified disk above still uses six ordinary pulses per PCM sample.
+[Probe ASM](ima-rate-probe.asm), [runner](probe_ima_rate.py) and
+[saved results](ima-rate-probe.json) explore eight to ten pulses without
+changing that release. This is a CPU microbenchmark, not a new playable TRD.
+
+The exact current IMA payload needs **zero predictor saturations** across
+230912 samples, with raw sums in **-29878..30985**. A host-side build guard
+can therefore authorize a decoder without saturation for this payload and
+its exact initial predictor/index. This is not true of arbitrary IMA data:
+for example, predictor 32760, index 0 and code 7 produces 32771 before the
+required clamp to 32767. Recheck the decoded recurrence after every encoding
+change; bounding input PCM peaks alone does not prove that IMA cannot
+overshoot. A future integrated builder must reject unsafe streams or select
+the general saturating player, and preserve/reset the checked initial state.
+
+Without saturation, table row pointers need no sign tag. Remove BIT/RES on
+that tag and the sign/clipping branches, allow PDM to own the main accumulator
+for most of the sample, and use `LD D,IXH` (8 T) instead of `LD A,IXH` plus
+`LD D,A` (12 T). Seven of eight pulses now use **32 T rather than 40 T**;
+the one saved-A pulse remains 40 T, with another 8 T of AF swaps around the
+address calculation. No prediction precision or compressed samples change.
+
+Instruction costs follow the [Zilog Z80 manual](https://www.zilog.com/docs/z80/um0080.pdf);
+the undocumented `LD D,IXH` (DD 54) is additionally checked by executing the
+assembled bytes. Deterministic ordinary sample totals are:
+
+| Kernel | Pulses/sample | Low/high T | Mean T | Difference from current 438 T | Remaining budget at 8 kHz |
+|---|---:|---:|---:|---:|---:|
+| Current general decoder | 6 | 439/437 | 438 | 0 | 5.3625 T |
+| Guarded, unpadded | 8 | 393/407 | 400 | -38 | 43.3625 T |
+| Guarded, padded | 8 | 437/437 | 437 | -1 | 6.3625 T |
+| Guarded, unpadded | 9 | 425/439 | 432 | -6 | 11.3625 T |
+| Guarded, unpadded | 10 | 457/471 | 464 | +26 | -20.6375 T |
+
+The 128K CPU budget is 3546900/8000 = **443.3625 T/sample**. The remainder
+must cover ULA waits, amortized page/bank work and cadence padding; it is not
+spare capacity already measured in Fuse. The eight-slot padded probe holds
+are `[58,60,56,50,55,52,56,50]` T, summing to 437 T. This equalizes low/high
+sample lengths but does not make individual PDM holds equal. The unpadded
+variants have holds as short as 32 T. More writes alone do not establish
+better audio: uneven hold times must be addressed and listening/noise checks
+repeated for any integrated candidate.
+
+All four assembled variants execute the entire real payload in **902
+independent blocks of at most 128 bytes**. Every PCM16 predictor, step index,
+PCM8 level, PDM bit and counted interval matches its reference, and memory
+is unchanged. Each block starts with the correct IMA seed but resets the
+PDM accumulator/pipeline. Real page/bank tails, seamless loops, cold boot,
+ULA contention and audio quality are explicitly **not verified** here.
+
+At unchanged approximately 8 kHz speech, eight slots target approximately
+**64 kHz PDM** (about one third more than current 47.7 kHz); nine target
+approximately **72 kHz**, with much less timing margin. Ten slots cannot
+reach 8 kHz speech in this kernel even before contention. Removing delays
+without retiming would speed up the speech, so the unpadded native rates
+in the JSON are throughput measurements, not proposed playback rates.
+The next practical integration target is eight slots; nine remains an
+experiment requiring tighter scheduling and potentially unrolling jumps.
+
+Reproduce using the existing Python environment with pyz80, NumPy and z80:
+
+```powershell
+python audiobook-beeper/probe_ima_rate.py
+```
+
+The script compiles the standalone ASM externally into ignored `.tmp`
+build directories, checks the source stream and release hash, and writes
+the JSON report. It neither rebuilds nor overwrites the current TRD.
+
 ## Previous test: convert PCM to PDM while playing
 
 [Live conversion TRD](../ZX-audiobook-PDM-live-test.trd) stores the actual

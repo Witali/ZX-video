@@ -5,6 +5,51 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: higher IMA/PDM rate, guarded CPU feasibility study
+
+Objective: answer whether the current IMA decoder can increase PDM rate
+while retaining approximately 8 kHz speech. Scope is investigation, not a
+replacement release. Baseline: `ima-player.asm`, ordinary 439/437 T samples,
+six pulses, 40-T saved-A modulator, and the previously verified Fuse128
+average 47702.626 PDM writes/s. Reuse its full cold-boot evidence. Input is
+the same 115456-byte stream /230912 samples from source 60..88.864 s.
+
+The complete decoded stream has **zero saturations**, raw predictor sums
+**-29878..30985**. Investigate a build-guarded fast path with untagged table
+rows and no saturation logic; retain the existing general player for now.
+The user additionally asked whether the constraint can be enforced while
+preparing/filling the stream: yes, by validating every decoded addition and
+the initial state; reject/re-encode or use the general decoder on failure.
+Input peak limiting alone does not prove that ADPCM predictions cannot clip.
+
+[Standalone probe ASM](audiobook-beeper/ima-rate-probe.asm) gives main A to
+PDM except during address formation, using 32 T for most pulses instead of
+40, and `LD D,IXH` at 8 T instead of 12 T for the PCM8 update. Exact native
+low/high counts: eight unpadded slots **393/407 T** (mean400, **-38** from438);
+eight padded slots **437/437 T** (mean437, **-1**); nine **425/439 T**
+(mean432, **-6**); ten **457/471 T** (mean464, **+26**). At 3546900 Hz,
+8 kHz permits 443.3625 T/sample before allocating ULA and boundary overhead.
+The eight-slot padded ordinary hold pattern is 58/60/56/50/55/52/56/50 T;
+equal sample lengths do not imply equal PDM hold times or improved sound.
+
+[Runner](audiobook-beeper/probe_ima_rate.py) compiles all variants with
+external pyz80, then executes all 230912 samples in 902 independent blocks
+per variant. All predictor/index/PCM8 values, PDM bits, memory guards and
+instruction-table interval counts pass. Deliberately unsafe positive and
+negative predictor examples also trigger the host guard. Block PDM state resets; page/bank
+tails, continuous loops, ULA, TR-DOS/cold boot and audible quality are
+**excluded**, not passed. Save hashes, counts, baseline Fuse evidence and
+coverage in [report](audiobook-beeper/ima-rate-probe.json); reproduce with
+`python audiobook-beeper/probe_ima_rate.py`. Temporary listings/binaries
+remain in ignored `.tmp/ima-rate-probe/`.
+
+Decision: about 64 kHz with eight slots is the next practical integration
+target; about 72 kHz with nine is plausible but has only 11.3625 T/sample
+remaining before ULA/boundary costs in this probe. Ten already exceeds the
+8 kHz CPU budget and is rejected for this kernel. No full Spectrum timing
+or audio improvement is claimed. Keep the working root TRD unchanged at
+SHA256 `f349d949e6ca6a2c59605bb2caab17706da81dd05f520a1cd8927cdb3f9b69b5`.
+
 ## 2026-10-02: simulate an RC low-pass on the TRD playback WAV
 
 The user requested a filter emulating an RC circuit. Retain the preceding
