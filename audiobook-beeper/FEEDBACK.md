@@ -210,6 +210,96 @@ feedback player. A useful next experiment would prove the combined producer,
 consumer and memory budget, then measure whole-chain SNR with the same
 filter. That experiment remains unimplemented; retain all existing disks.
 
+## Active 20-dB work: packet codebooks and better IMA encoding
+
+Checkpoint on 2026-10-02: **the goal is not yet achieved by a complete
+player**. The loading-message TRD above remains the delivered player.
+After the 19.9686-dB report, the user accepted approximately 20 dB provided
+it works on a real computer. Interpret this as a stock Spectrum 128,
+no-turbo playback requirement, not permission to deliver only a host model.
+Full native/Fuse evidence is still needed; any physical-machine measurement
+must be reported separately and must not be inferred from emulator results.
+The new work keeps the complete current 212992-sample source and the same
+listening filter; no bandwidth reduction or gain/phase fitting is used.
+
+The opt-in [beam encoder](ima_beam.py) improves raw IMA codec SNR from
+22.322176 to 24.156331 dB with identical 106496-byte size and unchanged
+decoder work. All decoded samples match independent FFmpeg decoding. See
+[input/encoding identity](experiments/ima-beam32/report.json) and
+[verification](experiments/ima-beam32/verification.json).
+
+[Packet model probe](probe_feedback_packets.py) evaluates 16 PDM decisions
+per PCM sample. A useful state coordinate is `q = recent - beta*older`:
+`u = x + q + beta*recent`, `q_next = q + x - bit`, `recent_next = u - bit`.
+For beta=0.5, 64 midpoint PCM bins and 16 equally spaced decisions, q stays
+on a 1/8 lattice at packet boundaries. A table uses 16 q states in [-1,7/8]
+and two recent-error bins. It preserves q exactly when the state is not
+clipped; recent error is rounded. These are finite/clipped models, not a
+claim of exact infinite-precision feedback for every input.
+
+| Complete source comparison | Total SNR | Scope |
+|---|---:|---|
+| Independent recent/older rounding, 64 states, 128 kHz | 20.2173 dB | Ideal host timing, old IMA |
+| Same approach, 32 states | 18.9547 dB | Rejected smaller table |
+| Integral-coordinate table, 32 states, 128 kHz | 20.6333 dB | Ideal host timing, old IMA |
+| Integral table, balanced estimated 460-T sample | 19.8787 dB | Duration-aware host model, old IMA |
+| Same estimated schedule with beam IMA | 20.5970 dB | Host model only |
+| Alternating verified 450/460-T kernel schedule with beam IMA | **19.9686 dB** | Host table on native timing; no ULA/paging |
+
+Increasing the rectangular state count to 128 gave only 20.0592 dB; a
+coarsely quantized true second-order 64-state table gave 15.1348 dB. Doubling
+the integral table's recent bins also failed to improve the tested scores.
+Keep these results rather than assuming that more states always help.
+[All saved model reports](experiments/ima-packet-probe/integral-uniform.json).
+
+The separate [ASM microkernel](ima-packet-probe.asm) selects code containing
+eight constant OUT instructions, twice per sample. It does not copy expanded
+PDM bytes into a buffer. The producer table supplies a first code pointer,
+the second byte pattern, and the next feedback state. Main-bank output costs
+12 T (OUT (C),D or the NMOS ED71 zero-output instruction), versus the old
+30-T extraction/output core; three alternate-bank outputs use 18 T
+(LD A,n / OUT (FE),A) to reduce register swaps. Python emits data only.
+
+[Independent Z80 probe](probe_packet_cpu.py) checks the entire original and
+beam streams in 208 independent <=512-byte blocks each: 212992 samples,
+3408080 outputs, every predictor/index/bit, exact intervals, no RAM writes.
+All 2048 uniform-table entries also match a separate integer recurrence.
+Code is 26621 bytes with a 26624-byte reserve; the producer table is 8192
+bytes, excluding decoder/pointer tables and startup. Counts are **450/460 T,
+mean 455 T/sample**, +21.75 versus the 433.25-T live feedback baseline, but
+with 16 instead of eight outputs. CPU-only rates are **124726.15 Hz PDM**
+and **7795.38 samples/s**. This is not continuous playback, a 128-kHz proof,
+or a bootable disk. There is no refill, paging, ULA or full-loop coverage.
+[Original stream proof](experiments/ima-packet-probe/native-original.json),
+[beam stream proof](experiments/ima-packet-probe/native-beam32.json).
+
+An initial duration-aware measurement accidentally reused the accumulator
+player's three-pulse latency. Moving bits across unequal holds invalidated
+the assigned pulse areas and produced spurious 11.4-dB results. The packet
+measurement now has zero output latency; preserve the invalid report with
+that explicit designation. Uniform-clock results are unaffected by this
+unequal-hold bug. Initial assembly attempts also exposed pyz80's COMET
+`&1` hex syntax: use `& 1` for bitwise AND. The final ASM has explicit
+macro invocations and accounts for omitted final DS padding in the binary.
+
+Next implementation direction, **not yet implemented or verified**: replace
+the second pattern lookup with a direct second code pointer. A six-byte
+entry can contain two pointers and a POP-DE word holding constant D=16 and
+the next state offset. Use alternate DE for the compressed input cursor,
+IY for the second dispatch, and keep main BC at 00FE. A hand-scheduled
+candidate estimates 431/437 T, mean **434 T/sample**, before paging/ULA.
+Its low holds are 36/28/28/31/31/23/16/31/27/28/26/22/30/31/27/16 T;
+the high path changes the fourteenth hold to 37 T. Recount and execute it
+before treating those numbers as evidence.
+
+Compile only patterns actually present in the complete lookup table to
+reduce code RAM: the initial uniform table needs 151 first patterns and 96
+second patterns. The proposed duration-aware 434-T table needs 165/96.
+Direct-table layout still needs resolution: a dense 6-byte table is 12 KiB,
+IMA rows need 5696 bytes, and code plus pointer pages/startup must fit the
+fixed banks while preserving loading UI, workspace, audio capacity and
+seamless paging. Do not claim this layout or a complete 20-dB player exists.
+
 ## Reproduction and retained evidence
 
 Use the existing Python environment with NumPy, Pillow, pyz80 and z80:

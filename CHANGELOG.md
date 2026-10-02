@@ -5,6 +5,54 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: probe integral-feedback PDM packets toward 20 dB
+
+The user made 20-dB SNR the active goal. Preserve the complete current
+26.624-second source, live IMA decoding, and the established listening
+filter. Do not substitute a host model for a verified player. The separate
+loading-message request was completed without replacing this goal.
+
+The [bounded model probe](audiobook-beeper/probe_feedback_packets.py) compares
+four rectangular-state tables at 128 kHz: total SNR 20.2173 /18.9547 /20.0592
+/15.1348 dB for 64/32/128-state damped and 64-state half-gain second-order
+variants. Transform the state to accumulated error q plus recent error;
+16 q states and two recent bins give **20.6333 dB** at ideal 128 kHz in 8 KiB.
+Four recent bins give only 20.5197 dB; retain the smaller model.
+
+Duration-aware generation on an estimated balanced 460-T schedule gives
+19.8787 dB with old IMA, or **20.5970 dB** with the separately verified beam
+encoding. The first weighted measurement wrongly applied the old three-slot
+pipeline delay across unequal holds and reported about 11.4 dB. Correct it
+to the packet design's zero latency; preserve the invalid report. These are
+host models, not live-player improvements.
+
+The [separately assembled packet kernel](audiobook-beeper/ima-packet-probe.asm)
+uses constant-output codebooks instead of extracting each PDM bit. The
+[native verifier](audiobook-beeper/probe_packet_cpu.py) checks both complete
+IMA streams in 208 independent blocks each: 212992 PCM samples, 3408080
+outputs, exact predictor/index/bit/timing, unchanged RAM, and 2048 table
+entries against an independent integer recurrence. CPU cost is 450/460 T,
+mean **455 T/sample**, +21.75 vs the live feedback baseline; 16 instead of
+eight outputs gives **124726.15 Hz** before ULA/paging. Code occupies 26621
+bytes (reserve 26624), plus an 8192-byte producer table and other tables.
+Initial assembly attempts failed on COMET bitwise syntax; explicit macros,
+spaced `& 1`, and the assembler's omitted trailing DS bytes are now handled.
+
+On the verified alternating native schedule, the duration-aware host table
+with beam IMA gives **19.9686 dB**, not 20 dB; the larger recent-error table
+gives 19.8284 dB. No cold Fuse, runtime refill, paging, memory-allocation or
+loop proof exists for the new kernel. Current release images are unchanged
+by this experiment. [Saved reports and binary](audiobook-beeper/experiments/ima-packet-probe/native-beam32.json),
+[exact-schedule model](audiobook-beeper/experiments/ima-packet-probe/beam32-native-schedule.json),
+[continuation checkpoint](audiobook-beeper/FEEDBACK.md#active-20-db-work-packet-codebooks-and-better-ima-encoding).
+Decision: keep the goal active; next remove the intermediate second-pattern
+lookup using direct code pointers, compact unused templates, and prove the
+complete memory/timing design before a new TRD. The 434-T estimate in the
+checkpoint is an unimplemented design, not a native result.
+After this report, the user accepted approximately 20 dB if achieved on a
+real computer. Preserve stock-hardware feasibility and full-playback checks;
+no physical-machine test has been performed.
+
 ## 2026-10-02: improve offline IMA encoding for the active 20-dB goal
 
 Keep the complete current 212992-sample /26.624-second PCM8 source and the
