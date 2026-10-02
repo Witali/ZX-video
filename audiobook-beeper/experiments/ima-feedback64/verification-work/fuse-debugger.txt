@@ -1,0 +1,201 @@
+base 10
+set $r 0
+set $bits 0
+set $loading 0
+breakpoint 32768
+commands 1
+print 101
+set $loading 1
+continue
+end
+breakpoint 32997
+commands 2
+print 100
+print spectrum:frames*70908+ula:tstates
+print z80:sp
+set $r 1
+set $loading 0
+continue
+end
+breakpoint write 24319
+commands 3
+print 199
+print spectrum:frames*70908+ula:tstates
+print z80:sp
+exit 77
+end
+condition 3 $loading==1 && z80:sp<24320
+breakpoint port write 254
+commands 4
+print 140
+print spectrum:frames*70908+ula:tstates
+print z80:a
+set $bits $bits+1
+continue
+end
+condition 4 $r==1
+breakpoint 33097
+commands 5
+print 121
+print z80:hl
+continue
+end
+breakpoint 33109
+commands 6
+print 120
+print z80:ix
+continue
+end
+breakpoint 33190
+commands 7
+print 121
+print z80:hl
+continue
+end
+breakpoint 33202
+commands 8
+print 120
+print z80:ix
+continue
+end
+breakpoint 33285
+commands 9
+print 121
+print z80:hl
+continue
+end
+breakpoint 33297
+commands 10
+print 120
+print z80:ix
+continue
+end
+breakpoint 33378
+commands 11
+print 121
+print z80:hl
+continue
+end
+breakpoint 33390
+commands 12
+print 120
+print z80:ix
+continue
+end
+breakpoint 33473
+commands 13
+print 121
+print z80:hl
+continue
+end
+breakpoint 33485
+commands 14
+print 120
+print z80:ix
+continue
+end
+breakpoint 33566
+commands 15
+print 121
+print z80:hl
+continue
+end
+breakpoint 33578
+commands 16
+print 120
+print z80:ix
+continue
+end
+breakpoint 33661
+commands 17
+print 121
+print z80:hl
+continue
+end
+breakpoint 33673
+commands 18
+print 120
+print z80:ix
+continue
+end
+breakpoint 33754
+commands 19
+print 121
+print z80:hl
+continue
+end
+breakpoint 33766
+commands 20
+print 120
+print z80:ix
+continue
+end
+breakpoint 33839
+commands 21
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33932
+commands 22
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 34025
+commands 23
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 34118
+commands 24
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 34211
+commands 25
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 34304
+commands 26
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 34397
+commands 27
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 34481
+commands 28
+print 102
+print $r
+continue
+end
+breakpoint 33151
+commands 29
+print 200
+print spectrum:frames*70908+ula:tstates
+exit 77
+end
+condition 29 $bits==3407985

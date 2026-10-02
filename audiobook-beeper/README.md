@@ -11,6 +11,16 @@ total reconstruction SNR, modeled improvements, codec limits and unverified
 higher-rate playback. The recent PDM/PWM comparisons below report modulation
 error alone.
 
+## Live feedback PDM experiment
+
+The [separate feedback TRD](../ZX-audiobook-IMA-ADPCM-feedback-test.trd)
+uses an 8-KiB state table while decoding IMA live. It plays a 26.6-second
+preview in a loop, with **63.919 kHz measured average output**. Total SNR
+on the matched source prefix improves **11.55 ->14.03 dB**; the ideal host
+model's 16.6 dB is not reproduced by this finite-state implementation.
+[Actual Fuse WAV](experiments/ima-feedback64/result-preview.wav),
+[algorithm, timings and verification](FEEDBACK.md).
+
 ## Fast PWM experiment: above 40 kHz on average
 
 Use [PWM40 TRD](../ZX-audiobook-IMA-ADPCM-PWM40-test.trd) on Fuse / Spectrum

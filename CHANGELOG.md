@@ -5,6 +5,94 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-02: implement live IMA feedback PDM near 64 kHz
+
+The user requested a playable version of the 64-kHz damped-feedback model
+from the SNR assessment. Baseline is the unchanged uniform PDM disk and
+prepared 8-kHz PCM audiobook excerpt starting at 60 seconds. A direct
+arithmetic feedback term does not fit the live decoding budget. Implement
+an **8192-byte table** which produces eight PDM bits and the next feedback
+state for each decoded IMA sample. Authoritative instructions remain in
+[separately assembled, commented ASM](audiobook-beeper/ima-feedback-player.asm);
+Python only prepares data and packages the assembled binary.
+
+The beta=0.5 recurrence is approximated with 64 PCM bins and 64 history
+states. Recent/older errors are quantized at block boundaries into 16/4
+midpoint bins over [-0.5,0.5]. It contains no RC model. An earlier 8/8-bin
+allocation gave 16.1552 dB modulation SNR at ideal 64 kHz on the full
+28.864-second source, versus 16.3805 dB for 16/4; choose the latter. Both
+are below the original full-precision model. Native code retains exact
+PCM16 IMA prediction and generates PDM live without PCM/PDM buffers.
+
+Use all 128 KiB: 106496 bytes IMA, 16384 resident code/tables, 6912 screen,
+1280 startup workspace/stack. The new source holds 212992 samples /26.624 s,
+with a new final 20-ms fade; verify that preceding IMA bytes match the old
+prefix. The table takes the former bank-2 sound capacity. Every disk is
+independently bootable; all 416 audio sectors load before playback.
+
+The first integrated kernel passed two full native/Fuse cycles at
+**63306.105 Hz**, total SNR **13.6214 dB** versus the matched old prefix's
+11.5532 dB. Its low/high paths were 428/446 T, mean 437, full loop
+93087904 T. A table using average slot-area weights gave 14.1048 versus
+14.1061 dB modulation SNR on that measured schedule; retain unweighted
+feedback because this did not improve quality. Preserve the first kernel's
+[verification](audiobook-beeper/experiments/ima-feedback-initial/verification.json),
+source/binary snapshots and evidence index; full traces remain in
+`.tmp/feedback-live`.
+
+Unroll four input bytes to remove three ordinary high-path branches.
+Unit execution rejected an early 6-T estimate for INC IY (actual 10 T);
+use 8-T INC IYL where group alignment proves that no carry is possible.
+Final low paths take 428 T, high paths 436/436/436/446 T, mean
+**433.25 T**, -3.75 vs first feedback and -4.75 vs standard six-slot PDM.
+The pulse kernel is 30 T (8+4+7+11), versus the previous isolated PDM's
+40 T. A page adds 18 T, a bank 434 T including one duplicate eight-bit
+block. Exact loop `433.25*212992+18*(416-7)+434*7` =**92289184 T**, saving
+**798720 T** against the first feedback attempt. Counts exclude ULA,
+TR-DOS and disk latency. Code is 1740 bytes in a 1792-byte reserve.
+
+Final full cold Fuse128 verification measures **63919.467 Hz average**,
+80.533 Hz below a strict 64-kHz target. PCM is **7989.671 samples/s**,
+0.1291% slow; no pitch correction. Loop durations 26.658452/26.658388 s,
+maximum hold 85 T (minimum instantaneous rate 41728.235 Hz). Measured ULA
+adds 4531131 T across both loops. The result is approximately 64 kHz,
+not a uniform-clock or every-period 64-kHz guarantee.
+
+The [tests](audiobook-beeper/test_feedback.py) pass all 16384 PCM8/history
+combinations against an independent Q16 reference and assembled lookup,
+44496 safe IMA transitions across all eight paths, exact cycle counts,
+memory guards and rejection of unsafe predictors. The
+[full native/Fuse verifier](audiobook-beeper/verify_feedback.py) checks
+3407985 bits, 425984 predictors/indices, every paging latch, fixed and
+paged RAM guards, startup stack and zero runtime disk reads over two loops.
+The first full Fuse instrumentation run timed out because port-FE already
+matches both output levels and the added 10FE breakpoint double-counted
+ones; a short trace exposed duplicate timestamps. The corrected single
+breakpoint completes both cycles. This was an instrumentation failure.
+
+Using the established common 70-Hz HP /two 4.5-kHz LP filter on matched
+source prefixes, total reconstruction SNR is **14.0291 vs11.5532 dB**
+(+2.4759); modulation-only is **14.5659 vs11.8282 dB**. First-order PDM
+modeled on the new exact schedule scores 13.6354 dB modulation SNR, so
+feedback itself contributes about 0.93 dB. Quantization and nonuniform
+holds keep the final result below the ideal host model's 16.6 dB total.
+Metrics include distortion and exclude tempo error against a fixed 8-kHz
+clock. Actual normal-speed Fuse audio captures both wraps with signal in
+every half-second window; delivered WAV contains 1175638 mono PCM16 frames
+at 44100 Hz, peak 6921, no full-scale samples. No physical hardware test.
+
+Decision: deliver the separate looping
+[feedback TRD](ZX-audiobook-IMA-ADPCM-feedback-test.trd), SHA256
+`606fcd747e53398c73a01347beb10488d2afe86c984a9bc402e855d0d6060cbd`, and
+[actual Fuse WAV](audiobook-beeper/experiments/ima-feedback64/result-preview.wav).
+Retain original PDM and both PWM disks byte-for-byte unchanged. Independent
+binary packaging reproduces the new disk; the packer now applies its
+existing saturation guard to this feedback format too.
+[Builder](audiobook-beeper/build_feedback.py),
+[algorithm/timing notes](audiobook-beeper/FEEDBACK.md),
+[complete report](audiobook-beeper/experiments/ima-feedback64/report.json),
+[delivery checks](audiobook-beeper/experiments/ima-feedback64/delivery.json).
+
 ## 2026-10-02: assess achievable beeper SNR and separate codec error
 
 The user requested an analysis of maximum achievable SNR on the Spectrum.
