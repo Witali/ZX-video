@@ -60,5 +60,7 @@ above are project inferences unless accompanied by a local measurement.
 
 Reuse the [strict 10:1 study](TEN_TO_ONE_CODECS.md), the earlier
 [dense-codec measurements](DENSE_CODECS.md), and the rejected
-[LPC preloader evidence](LPC_PRELOAD.md). None of these candidate studies
+[LPC preloader evidence](LPC_PRELOAD.md). The selected candidates now have
+[three verified decoder optimization rounds each](DECODER_OPTIMIZATION_ROUNDS.md).
+None of these candidate studies
 constitutes a newly qualified playback disk.

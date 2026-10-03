@@ -1,0 +1,116 @@
+                 	
+                 	; PVQ3x512 half-last predictor: independent decoder CPU/buffer probe.
+                 	; Eight nine-bit indices = high-bit header (LSB first), then8 low bytes.
+                 	; Dictionary rows:3 signed residual bytes +1 guard; address9000+4*index.
+                 	; The PC rejects overflowing reconstructed samples, so ADD A,B is sufficient.
+                 	; R0: sample iterator + memory history. R1: IXH history. R2: address tables.
+                 	; R3: one dispatch per vector; store three PCM bytes and update history once.
+                 	; Test caller: mainDE output, mainBC sample/vector count; alternateDE input.
+                 	
+8000              	optimization: EQU 0
+8000              	        INCLUDE "pvq-config.inc"
+8000              	        ORG 0x8000
+8000              	loop:   IF optimization < 3
+8000 CD 0E 80     	        CALL next_sample
+8003 12           	        LD (DE),A
+8004 13           	        INC DE
+8005              	        ELSE
+8005              	        CALL next_vector
+8005              	        ENDIF
+8005 0B           	        DEC BC
+8006 78           	        LD A,B
+8007 B1           	        OR C
+8008 C2 00 80     	        JP NZ,loop
+                 	complete:
+800B C3 0B 80     	        JP complete
+                 	
+800E              	        IF optimization < 3
+                 	next_sample:
+800E D9           	        EXX
+800F FD 25        	        DEC IYH
+8011 20 26        	        JR NZ,have_vector
+8013 FD 26 03     	        LD IYH,3
+8016              	        ELSE
+                 	next_vector:
+8016              	        EXX
+8016              	        ENDIF
+8016 FD 2D        	        DEC IYL
+8018 20 06        	        JR NZ,have_header
+801A 1A           	        LD A,(DE)
+801B 13           	        INC DE
+801C 4F           	        LD C,A
+801D FD 2E 08     	        LD IYL,8
+                 	have_header:
+8020 1A           	        LD A,(DE)
+8021 13           	        INC DE
+8022 6F           	        LD L,A
+8023              	        IF optimization < 2
+8023 26 00        	        LD H,0
+8025 29           	        ADD HL,HL
+8026 29           	        ADD HL,HL
+8027 7C           	        LD A,H
+8028 F6 90        	        OR 0x90
+802A 67           	        LD H,A
+802B              	        ELSE
+802B              	        LD H,0x88
+802B              	        LD A,(HL)
+802B              	        INC H
+802B              	        LD H,(HL)
+802B              	        LD L,A
+802B              	        ENDIF
+802B CB 39        	        SRL C
+802D 30 02        	        JR NC,low_half
+802F CB D4        	        SET 2,H
+                 	low_half:
+8031              	        IF optimization == 0
+8031 3A 41 80     	        LD A,(last_pcm)
+8034              	        ELSE
+8034              	        LD A,IXH
+8034              	        ENDIF
+8034 CB 3F        	        SRL A
+8036 C6 40        	        ADD A,64
+8038 47           	        LD B,A
+                 	have_vector:
+8039              	        IF optimization < 3
+8039 7E           	        LD A,(HL)
+803A 2C           	        INC L
+803B 80           	        ADD A,B
+803C              	        IF optimization == 0
+803C 32 41 80     	        LD (last_pcm),A
+803F              	        ELSE
+803F              	        LD IXH,A
+803F              	        ENDIF
+803F D9           	        EXX
+8040 C9           	        RET
+8041              	        ELSE
+8041              	        LD A,(HL)
+8041              	        INC L
+8041              	        ADD A,B
+8041              	        EXX
+8041              	        LD (DE),A
+8041              	        INC DE
+8041              	        EXX
+8041              	        LD A,(HL)
+8041              	        INC L
+8041              	        ADD A,B
+8041              	        EXX
+8041              	        LD (DE),A
+8041              	        INC DE
+8041              	        EXX
+8041              	        LD A,(HL)
+8041              	        ADD A,B
+8041              	        LD IXH,A
+8041              	        EXX
+8041              	        LD (DE),A
+8041              	        INC DE
+8041              	        RET
+8041              	        ENDIF
+8041 80           	last_pcm: DB 128
+                 	code_end:
+8042              	        IF optimization >= 2
+8042              	        DS 0x8800-$
+8042              	        MDAT "pointer-low.bin"
+8042              	        MDAT "pointer-high.bin"
+8042              	        ENDIF
+8042              	        DS 0x9000-$
+9000 FF F4 EC A5 F6 07 17 A5 F5 03 20 A5 E6 C7 B3 A5 2A 2A 27 A5 E4 A8 91 A5 00 00 FF A5 1A 4A 5E A5 38 13 BB A5 01 FD FE A5 D9 E5 05 A5 09 0C 0D A5 07 25 13 A5 0F 02 F1 A5 EB E3 E2 A5 20 2A 11 A5 21 2F 35 A5 E0 D3 E5 A5 1B FB F5 A5 FC E7 BE A5 09 01 F7 A5 04 F6 F1 A5 0E 08 FC A5 0B 22 38 A5 CE BC BD A5 F8 F7 F7 A5 18 FB D2 A5 1F 0D 1E A5 FD 0D 0D A5 53 6B 35 A5 16 11 08 A5 FE 0B 00 A5 0B 0C 09 A5 FC E7 F3 A5 04 06 08 A5 30 41 1C A5 DF FB FA A5 0D 1A 14 A5 FD FB 10 A5 03 13 2B A5 E1 DF E1 A5 15 1F 24 A5 EA FB 20 A5 12 3A 3C A5 0A 39 4B A5 E4 ED F5 A5 1B 15 16 A5 08 0A 17 A5 E8 12 FE A5 FC C6 BF A5 10 28 3E A5 FF FF FF A5 08 1A 4B A5 04 FF F8 A5 FC 1B 18 A5 04 D2 A6 A5 FB F2 D6 A5 1A 26 1F A5 E8 0B 36 A5 FF E9 00 A5 02 27 F1 A5 1A 2F 3A A5 D4 D2 D4 A5 FC FC FC A5 1A 0D FC A5 E9 D3 D6 A5 08 05 FB A5 07 14 F8 A5 30 2E F1 A5 0D 30 09 A5 1D 0C F2 A5 E7 D6 C9 A5 1B 27 2E A5 11 13 12 A5 BC D8 30 A5 15 22 12 A5 BF B2 BF A5 50 54 28 A5 25 71 71 A5 EE DB F2 A5 0E D8 D1 A5 0D 17 1D A5 4D 49 15 A5 22 44 3D A5 04 05 05 A5 0A F6 DF A5 3A 0E D5 A5 0E D8 B4 A5 13 2D 33 A5 FF FB 08 A5 BD B8 D4 A5 F7 D4 B7 A5 E0 F1 1F A5 E2 D9 D2 A5 EA DA E2 A5 2A F5 D5 A5 1E 16 09 A5 00 01 01 A5 F3 E3 E9 A5 11 0E 1A A5 CC D9 12 A5 E8 E9 F0 A5 FD 59 7F A5 2B 06 CF A5 E6 F3 02 A5 F1 E3 CB A5 01 04 07 A5 E6 BD A6 A5 D7 C9 C9 A5 F1 E9 F4 A5 02 F8 1C A5 D4 01 3E A5 05 1F 2D A5 D6 D2 DC A5 15 F4 01 A5 FC F9 F6 A5 F6 12 17 A5 F8 13 3F A5 EB E1 DB A5 C3 97 B5 A5 04 01 CA A5 0C 09 04 A5 1E 25 27 A5 30 37 02 A5 15 07 F5 A5 17 13 29 A5 F5 11 2E A5 FD 02 FF A5 44 59 51 A5 EC 20 51 A5 FD E7 D7 A5 EC 05 22 A5 F6 FE 02 A5 EA E7 07 A5 DD D3 CD A5 F8 B0 89 A5 13 FD 09 A5 11 EC C5 A5 01 1D 36 A5 F0 C9 AE A5 07 EF 0C A5 F2 E4 D8 A5 F0 F1 F3 A5 FB F6 FD A5 FA 29 2C A5 DD F3 0E A5 16 10 DB A5 CC C4 DE A5 05 09 0C A5 E6 BF D7 A5 E6 E6 E7 A5 1B 12 03 A5 DD D4 04 A5 04 F9 EC A5 F5 EA 0E A5 FA FD 00 A5 35 38 31 A5 D3 C0 F0 A5 0A 1E 05 A5 12 1E 1C A5 01 04 18 A5 2E 18 02 A5 E1 E6 ED A5 FE 02 04 A5 2C 0D F2 A5 D2 D8 E2 A5 C7 D1 DE A5 E1 C5 CC A5 0C 0F 11 A5 44 6E 59 A5 E6 F2 EB A5 0A 14 21 A5 F6 E5 D2 A5 11 FE EB A5 00 FD FB A5 1D 1B 11 A5 32 49 3A A5 15 18 14 A5 14 05 00 A5 F6 F2 F2 A5 F7 EF EA A5 04 32 5A A5 E9 F3 FB A5 40 39 0B A5 DD E2 E9 A5 FA F9 FA A5 08 2D 26 A5 07 FF 0D A5 04 03 03 A5 00 0A F7 A5 00 06 26 A5 E1 E5 D4 A5 25 07 FE A5 07 06 05 A5 FB 05 11 A5 01 02 04 A5 07 F0 F9 A5 2C 1E 18 A5 07 FF FD A5 0E 12 03 A5 EE 05 05 A5 B9 E6 E9 A5 ED E9 E5 A5 F2 D7 00 A5 0A 12 1A A5 2B E9 A2 A5 04 14 1B A5 04 2D 4B A5 01 D7 C4 A5 11 24 32 A5 03 0E 16 A5 CD 9E A3 A5 29 3B 36 A5 22 51 51 A5 09 FF E9 A5 FE E6 CA A5 14 0F FA A5 FD 0A 15 A5 E2 DD FB A5 F0 FB 08 A5 FF EE DF A5 0C 02 FE A5 E7 F9 10 A5 35 2F 20 A5 CA C1 CC A5 13 0C 02 A5 0E 0E 0D A5 F3 FF 0E A5 F9 F9 06 A5 31 26 0B A5 00 FF 01 A5 DF F0 C4 A5 AF B0 EB A5 E1 FB 19 A5 FD FB E9 A5 F6 FE FA A5 F5 F1 1E A5 EA 00 F5 A5 FD F2 E6 A5 DC D9 DC A5 F2 EC EA A5 EB 06 17 A5 25 20 0F A5 EC DE D4 A5 11 0C 08 A5 E3 0F 4F A5 F6 1C 30 A5 06 04 00 A5 FE 03 0C A5 E9 09 E1 A5 E1 CE F2 A5 2A 46 EC A5 25 56 09 A5 D6 E1 FB A5 ED 24 6A A5 05 EF D6 A5 DF C7 BD A5 1D 19 CC A5 1D E9 B6 A5 E7 A3 9E A5 1D FD BC A5 24 14 10 A5 FA 00 06 A5 FA F3 EE A5 E4 F9 08 A5 0B F7 E8 A5 E4 DD D9 A5 36 20 F4 A5 FE 14 32 A5 E8 1A 23 A5 42 D6 D8 A5 09 EC E0 A5 FE FB F9 A5 FE FD FE A5 F6 00 17 A5 D3 9F E5 A5 40 0D E7 A5 A8 93 CB A5 11 13 36 A5 25 3B 22 A5 0D 05 0C A5 F8 06 03 A5 1F 23 36 A5 F9 F2 04 A5 EF F2 F8 A5 13 52 73 A5 F1 24 41 A5 DD D3 D6 A5 02 08 10 A5 1D EF C7 A5 CE AF DE A5 23 23 21 A5 0E 1E 2C A5 10 01 DF A5 CB B0 CB A5 C9 02 70 A5 27 27 1B A5 14 18 1A A5 12 2B 53 A5 F3 DC D4 A5 08 0C 11 A5 FB 0C 1D A5 FE D1 D3 A5 F0 CD CB A5 1B D0 F7 A5 0C F9 F8 A5 33 1A E4 A5 2D F8 B7 A5 28 CF DA A5 E2 D7 BC A5 EA E5 FB A5 F4 F5 F7 A5 31 5B 4F A5 D1 EA 15 A5 17 14 0F A5 1E 20 07 A5 FE 17 E0 A5 10 11 F1 A5 08 15 0D A5 22 36 44 A5 05 04 F2 A5 03 01 FF A5 D6 D7 EB A5 DA DE F0 A5 FB E9 E8 A5 F7 EF FA A5 D6 96 87 A5 34 38 42 A5 F3 09 0F A5 EF E6 DF A5 E4 CF D1 A5 24 06 10 A5 19 3E 50 A5 F2 3C 38 A5 D4 A9 91 A5 EB C8 BE A5 09 FC F1 A5 FD 06 09 A5 08 19 27 A5 FD 19 0D A5 04 11 22 A5 E6 E5 E0 A5 03 0E 11 A5 ED E8 EA A5 04 DF E4 A5 23 2F 2A A5 C5 F7 24 A5 03 26 40 A5 E0 FE 2A A5 21 27 FB A5 F3 F0 EE A5 EC F4 06 A5 F6 FE 07 A5 20 01 E3 A5 20 1F 19 A5 C8 BF 05 A5 F9 F6 F3 A5 EE C4 EC A5 02 0D 1C A5 F0 F5 FE A5 FC FF 03 A5 08 FA 03 A5 EE ED EE A5 DE BE B1 A5 E5 EC FC A5 01 01 00 A5 02 07 0B A5 28 42 49 A5 0A BA B9 A5 C5 D9 FF A5 E1 EC 07 A5 22 51 31 A5 D8 F2 06 A5 03 F3 E5 A5 14 2D 26 A5 16 3C 2B A5 11 F0 D3 A5 40 7E 68 A5 E5 95 B8 A5 EE EE FF A5 E0 CE C6 A5 2B F3 ED A5 F4 DC C9 A5 09 DF C1 A5 21 15 FD A5 E1 E5 F4 A5 2B 30 17 A5 CE D1 F1 A5 12 C6 95 A5 F3 F4 E6 A5 CA EA FA A5 ED D3 C1 A5 F3 0E 23 A5 E4 07 0D A5 08 11 15 A5 EF 04 2D A5 F8 E9 DD A5 16 F1 AA A5 CA DB 22 A5 47 1D D1 A5 FC 21 52 A5 E0 E5 36 A5 24 D9 AE A5 10 FE 17 A5 F2 EF DB A5 DB E4 11 A5 C1 9F A6 A5 15 1E FA A5 FD 14 24 A5 16 0A 11 A5 EE FC 13 A5 01 FB F4 A5 1A 06 08 A5 D6 CA E4 A5 06 0A E8 A5 FE F7 F1 A5 FD D2 F1 A5 DC EB FB A5 47 34 EE A5 F8 E0 DE A5 0A 06 01 A5 B1 A2 BD A5 F9 18 FE A5 0D 25 20 A5 EE FB 00 A5 F8 02 0C A5 18 E8 E5 A5 F3 F9 02 A5 F4 F8 F1 A5 D0 EF 38 A5 2E 59 66 A5 38 3A 26 A5 01 3C 6B A5 17 08 EA A5 CB C9 D1 A5 02 02 01 A5 14 19 21 A5 15 19 0A A5 05 1C 1F A5 2A 30 2F A5 FD FF 01 A5 00 00 00 A5 04 0B 07 A5 10 02 F8 A5 D4 BB B4 A5 01 05 FE A5 11 42 05 A5 13 F7 E1 A5 08 08 08 A5 04 3D 2C A5 BE C1 E5 A5 D0 E2 F0 A5 CF F5 E2 A5 F5 B6 B2 A5 F0 F4 0D A5 E4 EE 12 A5 F8 9C 8F A5 11 15 17 A5 E1 B1 C6 A5 F4 F7 FB A5 0E 1B 24 A5 22 40 0D A5 F7 09 FA A5 1A 1F 21 A5 0D 08 22 A5 FE F5 F7 A5 09 EA F1 A5 D2 A3 BA A5 01 00 FD A5 F9 01 F0 A5 F7 C0 9B A5 E4 E0 EA A5 1A 28 E3 A5 01 FB DE A5 12 11 0C A5 EB EE F4 A5 D1 B1 A8 A5 05 E6 CF A5 04 12 05 A5 F8 D9 C0 A5 EB DA CD A5 D5 C8 D6 A5 D9 04 04 A5 03 F5 FF A5 07 0B FF A5 03 FD 04 A5 03 FB F8 A5 1F 15 EB A5 C2 D2 CA A5 FE FA 01 A5 11 C6 D1 A5 41 4E 39 A5 F8 FA FF A5 0D 12 16 A5 0F E6 B5 A5 FD 01 FA A5 18 2F 1B A5 FF 00 03 A5 FE 02 07 A5 D1 16 28 A5 F8 EE E4 A5 15 23 2B A5 00 06 03 A5 07 01 05 A5 13 2F 45 A5 DB DC E4 A5 04 01 FC A5 FA B5 CE A5 E9 B5 9D A5 19 1C 1A A5 D7 C2 BD A5 F3 E9 E3 A5 	        MDAT "dictionary.bin"

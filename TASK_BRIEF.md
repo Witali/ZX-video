@@ -14,6 +14,16 @@ converter must also support other videos.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
+Three optimization rounds for each selected decoder are complete. Exact
+IMA3-to-IMA expansion falls from 58750730 T / 16.564 s to 6657930 T / 1.877 s;
+PVQ3x512-to-PCM falls from 31352427 T / 8.839 s to 17460865 T / 4.923 s.
+Full input matches independent references at every round. These are native
+CPU/buffer measurements, excluding disk, ULA and final bank integration;
+PVQ additionally excludes IMA re-encoding. No new qualified TRD is produced.
+Reuse [the round-by-round evidence](audiobook-beeper/DECODER_OPTIMIZATION_ROUNDS.md).
+The exact IMA subset expansion is the preferred next integration candidate,
+because it avoids a separate PCM-to-IMA encoding stage.
+
 Latest scope: compression of 5:1..10:1 relative to mono 8-kHz PCM16;
 higher ratios are welcome when sound preservation permits. The user chose
 three-bit IMA and predictive VQ for three Z80 optimization rounds each.

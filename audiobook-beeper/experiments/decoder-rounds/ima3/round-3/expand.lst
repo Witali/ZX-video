@@ -1,0 +1,184 @@
+                 	
+                 	; Expand MSB-first three-bit codes to the even IMA nibbles (code <<1).
+                 	; Eight source codes occupy3 bytes and become4 low-nibble-first IMA bytes.
+                 	; This special transport is bit-exact for the project's step6 ADPCM3.
+                 	; It is not the generic ADPCM-XQ / WAV three-bit format.
+                 	; Independent CPU benchmark: HL=inputC000, DE=output4000, IX=group count.
+                 	; Version0: bit loop; version1: unrolled extraction; version2: byte algebra;
+                 	; version3: four fixed256-byte lookup tables. All produce identical bytes.
+                 	
+8000              	optimization: EQU 3
+8000              	groups: EQU 4096
+8000              	        INCLUDE "expand-config.inc"
+8000              	        ORG 0x8000
+8000 F3           	start:  DI
+8001 31 F0 BF     	        LD SP,0xBFF0
+8004 21 00 C0     	        LD HL,0xC000
+8007 11 00 40     	        LD DE,0x4000
+800A DD 21 00 10  	        LD IX,groups
+800E 06 01        	        LD B,1
+                 	group_loop:
+8010              	        IF optimization < 2
+8010              	        LD IYL,4
+                 	pair_loop:
+8010              	        CALL code
+8010              	        LD IYH,A
+8010              	        CALL code
+8010              	        RLCA
+8010              	        RLCA
+8010              	        RLCA
+8010              	        RLCA
+8010              	        OR IYH
+8010              	        LD (DE),A
+8010              	        INC DE
+8010              	        DEC IYL
+8010              	        JR NZ,pair_loop
+8010              	        ELSE
+8010 7E           	        LD A,(HL)
+8011 23           	        INC HL
+8012 47           	        LD B,A
+8013 7E           	        LD A,(HL)
+8014 23           	        INC HL
+8015 4F           	        LD C,A
+8016 7E           	        LD A,(HL)
+8017 23           	        INC HL
+8018 FD 67        	        LD IYH,A
+801A              	        IF optimization == 2
+801A              	        LD A,B
+801A              	        RRCA
+801A              	        RRCA
+801A              	        RRCA
+801A              	        RRCA
+801A              	        AND 0x0E
+801A              	        LD IYL,A
+801A              	        LD A,B
+801A              	        RLCA
+801A              	        RLCA
+801A              	        RLCA
+801A              	        AND 0xE0
+801A              	        OR IYL
+801A              	        LD (DE),A
+801A              	        INC DE
+801A              	        LD A,B
+801A              	        AND 3
+801A              	        RLCA
+801A              	        RLCA
+801A              	        LD B,A
+801A              	        LD A,C
+801A              	        RLCA
+801A              	        AND 0xE0
+801A              	        OR B
+801A              	        LD B,A
+801A              	        LD A,C
+801A              	        RLCA
+801A              	        RLCA
+801A              	        AND 2
+801A              	        OR B
+801A              	        LD (DE),A
+801A              	        INC DE
+801A              	        LD A,C
+801A              	        AND 14
+801A              	        LD B,A
+801A              	        LD A,C
+801A              	        RRCA
+801A              	        AND 128
+801A              	        OR B
+801A              	        LD B,A
+801A              	        LD A,IYH
+801A              	        RRCA
+801A              	        AND 0x60
+801A              	        OR B
+801A              	        LD (DE),A
+801A              	        INC DE
+801A              	        LD A,IYH
+801A              	        RRCA
+801A              	        RRCA
+801A              	        AND 14
+801A              	        LD B,A
+801A              	        LD A,IYH
+801A              	        RRCA
+801A              	        RRCA
+801A              	        RRCA
+801A              	        AND 0xE0
+801A              	        OR B
+801A              	        LD (DE),A
+801A              	        INC DE
+801A              	        ELSE
+801A E5           	        PUSH HL
+801B 68           	        LD L,B
+801C 26 90        	        LD H,0x90
+801E 7E           	        LD A,(HL)
+801F 12           	        LD (DE),A
+8020 13           	        INC DE
+8021 78           	        LD A,B
+8022 E6 03        	        AND 3
+8024 07           	        RLCA
+8025 07           	        RLCA
+8026 47           	        LD B,A
+8027 69           	        LD L,C
+8028 24           	        INC H
+8029 7E           	        LD A,(HL)
+802A B0           	        OR B
+802B 12           	        LD (DE),A
+802C 13           	        INC DE
+802D 69           	        LD L,C
+802E 24           	        INC H
+802F 46           	        LD B,(HL)
+8030 FD 7C        	        LD A,IYH
+8032 0F           	        RRCA
+8033 E6 60        	        AND 0x60
+8035 B0           	        OR B
+8036 12           	        LD (DE),A
+8037 13           	        INC DE
+8038 FD 7C        	        LD A,IYH
+803A 6F           	        LD L,A
+803B 24           	        INC H
+803C 7E           	        LD A,(HL)
+803D 12           	        LD (DE),A
+803E 13           	        INC DE
+803F E1           	        POP HL
+8040              	        ENDIF
+8040              	        ENDIF
+8040 DD 2B        	        DEC IX
+8042 DD 7C        	        LD A,IXH
+8044 DD B5        	        OR IXL
+8046 C2 10 80     	        JP NZ,group_loop
+                 	complete:
+8049 C3 49 80     	        JP complete
+                 	
+804C              	        IF optimization < 2
+804C              	code:   XOR A
+804C              	        IF optimization == 0
+804C              	        PUSH DE
+804C              	        LD E,3
+                 	code_bit:
+804C              	        CALL read_bit
+804C              	        RLA
+804C              	        DEC E
+804C              	        JR NZ,code_bit
+804C              	        POP DE
+804C              	        ELSE
+804C              	        CALL read_bit
+804C              	        RLA
+804C              	        CALL read_bit
+804C              	        RLA
+804C              	        CALL read_bit
+804C              	        RLA
+804C              	        ENDIF
+804C              	        ADD A,A
+804C              	        RET
+                 	read_bit:
+804C              	        DEC B
+804C              	        JR NZ,bit_ready
+804C              	        LD C,(HL)
+804C              	        INC HL
+804C              	        LD B,8
+                 	bit_ready:
+804C              	        SLA C
+804C              	        RET
+804C              	        ENDIF
+                 	code_end:
+804C              	        IF optimization == 3
+804C              	        DS 0x9000-$
+9000 00 00 00 00 20 20 20 20 40 40 40 40 60 60 60 60 80 80 80 80 A0 A0 A0 A0 C0 C0 C0 C0 E0 E0 E0 E0 02 02 02 02 22 22 22 22 42 42 42 42 62 62 62 62 82 82 82 82 A2 A2 A2 A2 C2 C2 C2 C2 E2 E2 E2 E2 04 04 04 04 24 24 24 24 44 44 44 44 64 64 64 64 84 84 84 84 A4 A4 A4 A4 C4 C4 C4 C4 E4 E4 E4 E4 06 06 06 06 26 26 26 26 46 46 46 46 66 66 66 66 86 86 86 86 A6 A6 A6 A6 C6 C6 C6 C6 E6 E6 E6 E6 08 08 08 08 28 28 28 28 48 48 48 48 68 68 68 68 88 88 88 88 A8 A8 A8 A8 C8 C8 C8 C8 E8 E8 E8 E8 0A 0A 0A 0A 2A 2A 2A 2A 4A 4A 4A 4A 6A 6A 6A 6A 8A 8A 8A 8A AA AA AA AA CA CA CA CA EA EA EA EA 0C 0C 0C 0C 2C 2C 2C 2C 4C 4C 4C 4C 6C 6C 6C 6C 8C 8C 8C 8C AC AC AC AC CC CC CC CC EC EC EC EC 0E 0E 0E 0E 2E 2E 2E 2E 4E 4E 4E 4E 6E 6E 6E 6E 8E 8E 8E 8E AE AE AE AE CE CE CE CE EE EE EE EE 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 40 60 60 60 60 60 60 60 60 60 60 60 60 60 60 60 60 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 80 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 A0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 C0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 E0 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 22 22 22 22 22 22 22 22 22 22 22 22 22 22 22 22 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 42 62 62 62 62 62 62 62 62 62 62 62 62 62 62 62 62 82 82 82 82 82 82 82 82 82 82 82 82 82 82 82 82 A2 A2 A2 A2 A2 A2 A2 A2 A2 A2 A2 A2 A2 A2 A2 A2 C2 C2 C2 C2 C2 C2 C2 C2 C2 C2 C2 C2 C2 C2 C2 C2 E2 E2 E2 E2 E2 E2 E2 E2 E2 E2 E2 E2 E2 E2 E2 E2 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 80 02 82 04 84 06 86 08 88 0A 8A 0C 8C 0E 8E 00 20 40 60 80 A0 C0 E0 02 22 42 62 82 A2 C2 E2 04 24 44 64 84 A4 C4 E4 06 26 46 66 86 A6 C6 E6 08 28 48 68 88 A8 C8 E8 0A 2A 4A 6A 8A AA CA EA 0C 2C 4C 6C 8C AC CC EC 0E 2E 4E 6E 8E AE CE EE 00 20 40 60 80 A0 C0 E0 02 22 42 62 82 A2 C2 E2 04 24 44 64 84 A4 C4 E4 06 26 46 66 86 A6 C6 E6 08 28 48 68 88 A8 C8 E8 0A 2A 4A 6A 8A AA CA EA 0C 2C 4C 6C 8C AC CC EC 0E 2E 4E 6E 8E AE CE EE 00 20 40 60 80 A0 C0 E0 02 22 42 62 82 A2 C2 E2 04 24 44 64 84 A4 C4 E4 06 26 46 66 86 A6 C6 E6 08 28 48 68 88 A8 C8 E8 0A 2A 4A 6A 8A AA CA EA 0C 2C 4C 6C 8C AC CC EC 0E 2E 4E 6E 8E AE CE EE 00 20 40 60 80 A0 C0 E0 02 22 42 62 82 A2 C2 E2 04 24 44 64 84 A4 C4 E4 06 26 46 66 86 A6 C6 E6 08 28 48 68 88 A8 C8 E8 0A 2A 4A 6A 8A AA CA EA 0C 2C 4C 6C 8C AC CC EC 0E 2E 4E 6E 8E AE CE EE 	        MDAT "lookup.bin"
+9400              	        ENDIF

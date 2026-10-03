@@ -5,6 +5,42 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: three native optimization rounds each for IMA3 and PVQ3
+
+Under the relaxed 5:1..10:1 preference, optimize only the user-selected
+three-bit IMA and predictive VQ decoders. Reuse the complete 186880-sample
+control and existing dense-codec payloads; do not retrain or change quality
+while comparing CPU cost. Discover that ADPCM3-step6 is an exact subset of
+ordinary IMA: expand each code with `nibble = code << 1`, avoiding PCM
+synthesis and re-encoding. Independent predictor/index checks pass and
+the final state is 0/0. Compression is 5.331:1 including 32-byte framing,
+or 5.254:1 if the fixed 1024-byte lookup is charged too.
+
+IMA expansion baseline and rounds 1..3 cost 2515/1947/397/285 T per eight
+samples. Unroll bit extraction, substitute byte algebra, then four lookup
+tables. Full native totals are 58750730/45482250/9274250/6657930 T, including
+55 T setup per chunk; final 1.877 s versus 16.564 s baseline. All 93440
+output bytes, code/input/table protection and buffer guards pass. An initial
+round-3 `LD L,IYH` was rejected by the assembler and replaced by two valid
+loads; setup accounting was corrected from 64 to 55 T before final reports.
+
+PVQ3x512 rounds keep history in IXH, replace address arithmetic with 512
+lookup bytes, then dispatch/store once per three-sample vector. Totals are
+31352427/30106547/29172137/17460865 T: final 4.923 s versus 8.839 s baseline.
+Verify all 186880 source samples plus two vector-padding samples, exact
+instruction-path histograms, input/table protection and output guards.
+The reproduction script now creates a fresh output directory itself.
+
+These are native CPU/buffer proofs, excluding disk/ROM, ULA, full resident
+bank management and (for PVQ) subsequent IMA encoding. No new disk or final
+PDM SNR is claimed. Existing codec-only SNR is 20.999 dB for IMA3 and
+22.185 dB for PVQ3, reused from the prior study. Ordinary playback remains
+423 T/sample, delta 0. Preserve all four assembled versions, WAV previews,
+cycle deltas, scripts and reports in
+[DECODER_OPTIMIZATION_ROUNDS.md](audiobook-beeper/DECODER_OPTIMIZATION_ROUNDS.md).
+Prefer exact IMA expansion for the next integration, with full cold-start
+and playback validation still required.
+
 ## 2026-10-03: 10:1 waveform codec study rejects low-fidelity candidates
 
 After the LPC rejection, the user prioritizes fast preparation and sound

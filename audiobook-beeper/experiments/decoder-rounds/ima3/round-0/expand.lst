@@ -1,0 +1,184 @@
+                 	
+                 	; Expand MSB-first three-bit codes to the even IMA nibbles (code <<1).
+                 	; Eight source codes occupy3 bytes and become4 low-nibble-first IMA bytes.
+                 	; This special transport is bit-exact for the project's step6 ADPCM3.
+                 	; It is not the generic ADPCM-XQ / WAV three-bit format.
+                 	; Independent CPU benchmark: HL=inputC000, DE=output4000, IX=group count.
+                 	; Version0: bit loop; version1: unrolled extraction; version2: byte algebra;
+                 	; version3: four fixed256-byte lookup tables. All produce identical bytes.
+                 	
+8000              	optimization: EQU 0
+8000              	groups: EQU 4096
+8000              	        INCLUDE "expand-config.inc"
+8000              	        ORG 0x8000
+8000 F3           	start:  DI
+8001 31 F0 BF     	        LD SP,0xBFF0
+8004 21 00 C0     	        LD HL,0xC000
+8007 11 00 40     	        LD DE,0x4000
+800A DD 21 00 10  	        LD IX,groups
+800E 06 01        	        LD B,1
+                 	group_loop:
+8010              	        IF optimization < 2
+8010 FD 2E 04     	        LD IYL,4
+                 	pair_loop:
+8013 CD 33 80     	        CALL code
+8016 FD 67        	        LD IYH,A
+8018 CD 33 80     	        CALL code
+801B 07           	        RLCA
+801C 07           	        RLCA
+801D 07           	        RLCA
+801E 07           	        RLCA
+801F FD B4        	        OR IYH
+8021 12           	        LD (DE),A
+8022 13           	        INC DE
+8023 FD 2D        	        DEC IYL
+8025 20 EC        	        JR NZ,pair_loop
+8027              	        ELSE
+8027              	        LD A,(HL)
+8027              	        INC HL
+8027              	        LD B,A
+8027              	        LD A,(HL)
+8027              	        INC HL
+8027              	        LD C,A
+8027              	        LD A,(HL)
+8027              	        INC HL
+8027              	        LD IYH,A
+8027              	        IF optimization == 2
+8027              	        LD A,B
+8027              	        RRCA
+8027              	        RRCA
+8027              	        RRCA
+8027              	        RRCA
+8027              	        AND 0x0E
+8027              	        LD IYL,A
+8027              	        LD A,B
+8027              	        RLCA
+8027              	        RLCA
+8027              	        RLCA
+8027              	        AND 0xE0
+8027              	        OR IYL
+8027              	        LD (DE),A
+8027              	        INC DE
+8027              	        LD A,B
+8027              	        AND 3
+8027              	        RLCA
+8027              	        RLCA
+8027              	        LD B,A
+8027              	        LD A,C
+8027              	        RLCA
+8027              	        AND 0xE0
+8027              	        OR B
+8027              	        LD B,A
+8027              	        LD A,C
+8027              	        RLCA
+8027              	        RLCA
+8027              	        AND 2
+8027              	        OR B
+8027              	        LD (DE),A
+8027              	        INC DE
+8027              	        LD A,C
+8027              	        AND 14
+8027              	        LD B,A
+8027              	        LD A,C
+8027              	        RRCA
+8027              	        AND 128
+8027              	        OR B
+8027              	        LD B,A
+8027              	        LD A,IYH
+8027              	        RRCA
+8027              	        AND 0x60
+8027              	        OR B
+8027              	        LD (DE),A
+8027              	        INC DE
+8027              	        LD A,IYH
+8027              	        RRCA
+8027              	        RRCA
+8027              	        AND 14
+8027              	        LD B,A
+8027              	        LD A,IYH
+8027              	        RRCA
+8027              	        RRCA
+8027              	        RRCA
+8027              	        AND 0xE0
+8027              	        OR B
+8027              	        LD (DE),A
+8027              	        INC DE
+8027              	        ELSE
+8027              	        PUSH HL
+8027              	        LD L,B
+8027              	        LD H,0x90
+8027              	        LD A,(HL)
+8027              	        LD (DE),A
+8027              	        INC DE
+8027              	        LD A,B
+8027              	        AND 3
+8027              	        RLCA
+8027              	        RLCA
+8027              	        LD B,A
+8027              	        LD L,C
+8027              	        INC H
+8027              	        LD A,(HL)
+8027              	        OR B
+8027              	        LD (DE),A
+8027              	        INC DE
+8027              	        LD L,C
+8027              	        INC H
+8027              	        LD B,(HL)
+8027              	        LD A,IYH
+8027              	        RRCA
+8027              	        AND 0x60
+8027              	        OR B
+8027              	        LD (DE),A
+8027              	        INC DE
+8027              	        LD A,IYH
+8027              	        LD L,A
+8027              	        INC H
+8027              	        LD A,(HL)
+8027              	        LD (DE),A
+8027              	        INC DE
+8027              	        POP HL
+8027              	        ENDIF
+8027              	        ENDIF
+8027 DD 2B        	        DEC IX
+8029 DD 7C        	        LD A,IXH
+802B DD B5        	        OR IXL
+802D C2 10 80     	        JP NZ,group_loop
+                 	complete:
+8030 C3 30 80     	        JP complete
+                 	
+8033              	        IF optimization < 2
+8033 AF           	code:   XOR A
+8034              	        IF optimization == 0
+8034 D5           	        PUSH DE
+8035 1E 03        	        LD E,3
+                 	code_bit:
+8037 CD 41 80     	        CALL read_bit
+803A 17           	        RLA
+803B 1D           	        DEC E
+803C 20 F9        	        JR NZ,code_bit
+803E D1           	        POP DE
+803F              	        ELSE
+803F              	        CALL read_bit
+803F              	        RLA
+803F              	        CALL read_bit
+803F              	        RLA
+803F              	        CALL read_bit
+803F              	        RLA
+803F              	        ENDIF
+803F 87           	        ADD A,A
+8040 C9           	        RET
+                 	read_bit:
+8041 05           	        DEC B
+8042 20 04        	        JR NZ,bit_ready
+8044 4E           	        LD C,(HL)
+8045 23           	        INC HL
+8046 06 08        	        LD B,8
+                 	bit_ready:
+8048 CB 21        	        SLA C
+804A C9           	        RET
+804B              	        ENDIF
+                 	code_end:
+804B              	        IF optimization == 3
+804B              	        DS 0x9000-$
+804B              	        MDAT "lookup.bin"
+804B              	        ENDIF
