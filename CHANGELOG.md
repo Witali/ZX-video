@@ -5,6 +5,51 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: waveform-aware IMA reaches 21.01 dB in two complete Fuse loops
+
+Continue the 20-dB goal without shortening the original 186880-sample,
+8000-Hz PCM8 control excerpt or expanding its 93440-byte IMA payload.
+Change only the PC encoder: beam search carries decoder/modulator state
+and six analytic filter states, scoring the actual filtered PDM waveform.
+The analog baseline reproduces 19.00195 dB versus the established
+18.99410-dB FFmpeg measurement; final acceptance still uses the original
+fixed 8-kHz reference and the unchanged 70/4500-Hz comparison filter.
+
+Record the failed initial-prefix search: width 16, uniform prior and weight
+0.00001 yield 9.83315 dB with excessive control excursions. A compensated
+prior and weight 0.1 give 18.19550 dB at width 32; width 64 plus quantized filter
+history gives 18.36698 dB. These three results use the old timeline only;
+none is a new disk or a 20-dB claim for the different, quieter prefix.
+
+On the original complete excerpt, width 32/weight 0.1 predicts 21.99406 dB.
+Build the ordinary live-IMA player, freeze the old hot-row layout and
+recalibrate the changed stream in four phase probes. Complete cold Fuse
+execution measures **21.010690/21.010690 dB**, not the optimistic host score.
+Both loops take **82891452 T /23.37011249 s**, with zero repeat-phase drift
+and **-0.043271%** speed error. All **5985253 PDM outputs /373760 predictors
+and indices** pass both native and Fuse checks. Memory, paging, 425 preload
+sectors, zero playback reads and loading indicators pass. Independent
+FFmpeg IMA reconstruction checks all 186880 predictors. Normal-speed Fuse
+capture records 46.74943 s, two wraps and signal in every half-second window.
+
+Ordinary instructions remain **423 T/sample**, page/bank extras **14/140 T**,
+each delta 0. The calibrated silent tail changes from 1274 pairs/212-T pad to
+1273 pairs/69-T pad: added native work 66495 ->66300 T. Native loop totals
+79122727 ->79122532 T (-195 T); ULA contributes 7537840 T across two loops.
+Average PDM rate 128053.56 writes/s is not a uniform clock. Full 128-KiB RAM
+allocation, source length and live decoding are unchanged. Archive 89 hashed
+artifacts and 23 producer sources, keeping bulky raw traces locally by hash.
+
+Accept the 20-dB result for this complete emulator-verified benchmark. It is
+not a physical hardware measurement, a guarantee for arbitrary recordings
+or a default-converter replacement. Keep the separate new disk; historical
+root disks remain unchanged. The denser PVQ study still requires integrated
+PDM scheduling before it can claim real-time playback. Reproduce with
+[encoder](audiobook-beeper/ima_waveform_encoder.py) and
+[full verifier](audiobook-beeper/verify_waveform_disk.py); see
+[method, disk and WAVs](audiobook-beeper/WAVEFORM_IMA.md) and
+[archived report](audiobook-beeper/experiments/ima-waveform/report.json).
+
 ## 2026-10-03: locate the remaining PDM noise and reject coarse corrections
 
 Continue the 20-dB goal from both complete saved timelines. On the older

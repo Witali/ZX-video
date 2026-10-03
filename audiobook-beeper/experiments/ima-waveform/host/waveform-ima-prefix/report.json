@@ -1,0 +1,19 @@
+{
+  "scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n",
+  "input": "audiobook-beeper\\experiments\\audio-converter",
+  "samples": 186880,
+  "beam_width": 16,
+  "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state",
+  "baseline_model_snr_db": 15.815853832723072,
+  "host_fixed_clock_snr_db": 9.833146282882758,
+  "elapsed_seconds": 29.484000000054948,
+  "ordinary_native_tstate_delta": 0,
+  "new_timeline_verified": false,
+  "saturation_guard": {
+    "samples": 186880,
+    "saturation_events": 0,
+    "raw_min": -32758,
+    "raw_max": 32767
+  },
+  "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"
+}

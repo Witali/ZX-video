@@ -12,6 +12,27 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## Separate audio subproject checkpoint (2026-10-03)
+
+The waveform-aware PC encoder retains the complete original 186880-sample
+control excerpt and 93440-byte live IMA stream. Two complete cold Fuse 128
+loops now measure **21.01069 dB** against the original 8-kHz PCM8 clock,
+at **-0.04327%** speed error; native/Fuse bits, predictors, memory, paging,
+loading and normal-speed sound capture pass. Ordinary player cost remains
+423 T/sample (delta 0). This is an input-specific emulator result, not a
+physical hardware test or a guarantee for every recording. The different
+initial-prefix host probes remain below 20 dB and lack new execution traces.
+The generic converter default and root historical disks are unchanged.
+Reuse [the complete evidence and new disk](audiobook-beeper/WAVEFORM_IMA.md).
+
+For the user's denser-compression request, the completed
+[codec study](audiobook-beeper/DENSE_CODECS.md) selects predictive VQ3x1024
+as the next implementation candidate: 13.38% fewer bytes including the book,
+0.625-dB codec loss, 100.25 versus 131 native decoder T/sample on average.
+Its 216-T boundary path needs prefetch/interleaving; the separate 8196-sample
+native probe does not prove full real-time PDM playback. Do not repeat the
+size/quality sweep or present the candidate as an integrated player.
+
 ## Completed delivery: four refined A/V disks
 
 The user rejected the 15-disk count and requested at most four disks, keeping

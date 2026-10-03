@@ -51,6 +51,9 @@
 /audiobook-beeper/**/*.gz -text
 /audiobook-beeper/**/*.wav filter=lfs diff=lfs merge=lfs -text
 /audiobook-beeper/**/fuse-debugger.txt text eol=lf
+# Preserve the raw debugger trace bytes authenticated by this experiment.
+/audiobook-beeper/experiments/ima-waveform/**/*.txt -text
+/audiobook-beeper/experiments/ima-waveform/**/phase-trace.txt -diff
 # Preserve byte hashes recorded in experiment evidence indexes.
 toolkit/generic_cb41_profile.json text eol=lf
 toolkit/generic_cb41_evidence/*.gz -text

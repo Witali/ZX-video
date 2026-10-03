@@ -6,6 +6,12 @@ stream, compensates voice timing and verifies two complete loops. The
 [denser-codec study](DENSE_CODECS.md) compares compression and native Z80
 decoder costs; predictive VQ is not yet an integrated playback mode.
 
+The [waveform-aware IMA encoder](WAVEFORM_IMA.md) now measures **21.01 dB**
+on both complete cold Fuse loops of the original control excerpt, at
+**-0.043%** speed error and unchanged decoder/modulator instruction cost.
+Its separate TRD and WAVs are linked there. This is an input-specific,
+emulator-verified experiment; it is not yet the general converter default.
+
 The user rejected the YM2149 speech test as unintelligible and requested a
 different path: **one-bit PDM on the beeper, at least 40 kHz**. This subproject
 supports both a precomputed noise-shaped bitstream and direct conversion of
@@ -26,8 +32,9 @@ before interpreting the SNR figures below as end-to-end voice quality.
 The [direct-pointer follow-up](DIRECT.md) fixes playback speed while retaining
 the complete source: **+0.042%** overall, worst **0.112%** on checked 0.1-second
 windows. It measures **18.85 dB** total SNR and **128.05 kHz** average output.
-Use [its separate TRD](../ZX-audiobook-IMA-ADPCM-direct-test.trd) for listening;
-the 20-dB goal remains open.
+Use [its historical TRD](../ZX-audiobook-IMA-ADPCM-direct-test.trd) to reproduce
+that checkpoint; the newer waveform-aware result above supersedes its
+quality measurement on the complete control excerpt.
 
 The [new packet TRD](../ZX-audiobook-IMA-ADPCM-packet-test.trd) plays a
 25.72-second loop using compact output codebooks and live IMA decoding.
