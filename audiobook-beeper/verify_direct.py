@@ -9,10 +9,11 @@ from verify_packet import rational_tables,native_check,fuse_check
 from verify_pcm import save
 
 
-def reference(packed,cycles=2):
+def reference(packed,cycles=2,model=None):
     pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)
     levels=((pcm.astype(np.int32)+32768)>>8).astype('u1')
-    words,nxt=rational_tables(HOLDS,integral_table(64,2,holds=HOLDS))
+    model=model or dict(holds=HOLDS,beta=.5,extent=1.)
+    words,nxt=rational_tables(model['holds'],integral_table(64,2,holds=model['holds'],beta=model['beta'],extent=model['extent']),model['beta'],model['extent'])
     state=16;output=np.empty(len(pcm)*cycles+1,dtype='>u2')
     for i in range(len(output)):
         value=int(levels[i%len(pcm)])//4;output[i]=words[value,state];state=int(nxt[value,state])
@@ -32,10 +33,12 @@ if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('directory',type=Path);p.add_argument('--fuse',type=Path)
     p.add_argument('--probe',action='store_true');a=p.parse_args();out=a.directory.resolve()
     meta=json.loads((out/'player.json').read_bytes());packed=gzip.decompress((out/'soundtrack.ima.gz').read_bytes())
+    from functools import partial
+    ref=partial(reference,model=meta.get('model'))
     if a.fuse:
-        report=fuse_check(a.fuse,out,meta,packed,a.probe,reference,intervals)
+        report=fuse_check(a.fuse,out,meta,packed,a.probe,ref,intervals)
         save(out/('probe.json' if a.probe else 'fuse.json'),report)
     else:
-        report=native_check((out/'audiobook-preview.trd').read_bytes(),meta,packed,reference,intervals)
+        report=native_check((out/'audiobook-preview.trd').read_bytes(),meta,packed,ref,intervals)
         save(out/'native.json',report)
     print(json.dumps(report),flush=True)

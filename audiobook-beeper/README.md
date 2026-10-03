@@ -13,6 +13,10 @@ error alone.
 
 ## Packet PDM disk
 
+**Voice-flutter follow-up:** accurate mean speed did not eliminate periodic
+within-frame timing errors. See [the diagnosis and updated quality gate](VOICE_TIMING.md)
+before interpreting the SNR figures below as end-to-end voice quality.
+
 The [direct-pointer follow-up](DIRECT.md) fixes playback speed while retaining
 the complete source: **+0.042%** overall, worst **0.112%** on checked 0.1-second
 windows. It measures **18.85 dB** total SNR and **128.05 kHz** average output.

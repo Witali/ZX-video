@@ -1,5 +1,10 @@
 # Direct packet pointers: accurate playback speed
 
+**New user feedback, 2026-10-03:** the mean speed is accurate, but the user
+hears voice flutter. [Clock-aware analysis](VOICE_TIMING.md) finds periodic
+within-frame sample timing errors hidden by the earlier SNR reference.
+This remains an experiment, not an accepted clean-voice release.
+
 Use [the direct-player TRD](../ZX-audiobook-IMA-ADPCM-direct-test.trd) with
 Spectrum 128 and Beta Disk/TR-DOS, without turbo. The English loading
 message disappears before playback, and the audio repeats automatically.

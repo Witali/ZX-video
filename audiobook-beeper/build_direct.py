@@ -1,29 +1,36 @@
 """Build and validate direct packet playback on the complete unchanged source."""
 import argparse,gzip,json,subprocess,sys
 from pathlib import Path
+from functools import partial
 import numpy as np
-from direct_player import HERE,prepare
+from direct_player import HERE,prepare,MEASURED_MODEL
 from verify_direct import reference,intervals
 from verify_packet import native_check,fuse_check
 from verify_pcm import save
-from build_packet import finish
+from build_packet import finish,render
+from analyze_voice_jitter import analyze
 
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path)
     p.add_argument('--fuse',required=True,type=Path);p.add_argument('--ffmpeg',required=True)
-    p.add_argument('--finish-only',action='store_true');a=p.parse_args();out=a.output.resolve()
+    p.add_argument('--finish-only',action='store_true');p.add_argument('--measured-model',action='store_true')
+    a=p.parse_args();out=a.output.resolve()
     if not a.finish_only:
         if out.exists() and any(out.iterdir()):p.error('output must be empty')
-        prepare(out);meta=json.loads((out/'player.json').read_bytes())
+        prepare(out,MEASURED_MODEL if a.measured_model else None);meta=json.loads((out/'player.json').read_bytes())
+        ref=partial(reference,model=meta.get('model'))
         packed=gzip.decompress((out/'soundtrack.ima.gz').read_bytes())
-        save(out/'native.json',native_check((out/'audiobook-preview.trd').read_bytes(),meta,packed,reference,intervals))
-        save(out/'fuse.json',fuse_check(a.fuse,out,meta,packed,False,reference,intervals))
+        save(out/'native.json',native_check((out/'audiobook-preview.trd').read_bytes(),meta,packed,ref,intervals))
+        save(out/'fuse.json',fuse_check(a.fuse,out,meta,packed,False,ref,intervals))
         subprocess.run([sys.executable,str(HERE/'record_pcm.py'),str(out),'--fuse',str(a.fuse),
                         '--output',str(out/'sound-128'),'--machine','128'],check=True)
-    report=finish(out,a.ffmpeg,reference,intervals)
+    meta=json.loads((out/'player.json').read_bytes());ref=partial(reference,model=meta.get('model'))
+    report=finish(out,a.ffmpeg,ref,intervals)
     report['date']='2026-10-03'
-    rate=report['fuse']['average_pcm_rate_hz'];snr=report['render']['total_snr_db']
+    report['second_loop_render']=render(out,a.ffmpeg,False,ref,intervals,loop=1)
+    rate=report['fuse']['average_pcm_rate_hz']
+    snr=min(report['render']['total_snr_db'],report['second_loop_render']['total_snr_db'])
     timeline=np.frombuffer(gzip.decompress((out/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[::16]
     windows=[]
     for samples in (800,8000):
@@ -36,8 +43,11 @@ def main():
     report['acceptance']=dict(source_speed_error_percent=(rate/8000-1)*100,
                               speed_within_two_percent=abs(rate/8000-1)<=.02,
                               speed_windows=windows,
-                              measured_total_snr_db=snr,snr_at_least_20_db=snr>=20,
+                              minimum_measured_total_snr_db=snr,both_loops_snr_at_least_20_db=snr>=20,
                               physical_hardware_tested=False)
+    report['voice_clock']=analyze(out,a.ffmpeg)
+    report['acceptance']['fixed_mean_clock_total_snr_db']=report['voice_clock']['fixed_mean_clock_total_snr_db']
+    report['acceptance']['voice_clock_quality_passes']=report['voice_clock']['fixed_mean_clock_total_snr_db']>=20
     save(out/'report.json',report);print(json.dumps(report['acceptance']),flush=True)
 
 

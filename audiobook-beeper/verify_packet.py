@@ -19,15 +19,15 @@ from smoke_test_fuse import hidden_startupinfo
 from verify_pcm import extract_player, save
 
 
-def rational_tables(holds=HOLDS,expected_tables=None):
+def rational_tables(holds=HOLDS,expected_tables=None,beta=.5,extent=1.):
     words=np.empty((64,32),dtype='<u2');successors=np.empty((64,32),dtype='u1')
     for value in range(64):
         for state in range(32):
             x=Fraction(2*value+1,128);q=Fraction(state//2-8,8)
-            recent=Fraction(2*(state%2)-1,2);word=0
+            recent=Fraction(2*(state%2)-1,2)*Fraction(extent);word=0
             for hold in holds:
                 weight=Fraction(hold*16,sum(holds))
-                u=x+q/weight+recent/2;bit=int(u>=Fraction(1,2))
+                u=x+q/weight+recent*Fraction(beta);bit=int(u>=Fraction(1,2))
                 recent=u-bit;q+=weight*(x-bit);word=word*2+bit
             code=max(0,min(15,(q*8+Fraction(17,2)).__floor__()))
             words[value,state]=word;successors[value,state]=code*2+int(recent>=0)

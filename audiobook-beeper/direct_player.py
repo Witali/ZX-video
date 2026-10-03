@@ -10,10 +10,14 @@ from verify_pcm import save
 
 HERE=Path(__file__).resolve().parent
 HOLDS=[36,28,28,31,24,26,22,20,22,26,22,30,31,27,34,16]
+MEASURED_MODEL=dict(holds=[288,231,225,248,192,218,204,170,215,226,177,240,248,216,291,156],
+                    beta=.5,extent=.5,weight_units='eighth T-state; rounded ordinary Fuse means',
+                    calibration='experiments/ima-direct/output-times.u32.gz')
 
 
-def layout(packed):
-    words,nxt,_=integral_table(64,2,holds=HOLDS)
+def layout(packed,model=None):
+    model=model or dict(holds=HOLDS,beta=.5,extent=1.)
+    words,nxt,_=integral_table(64,2,holds=model['holds'],beta=model['beta'],extent=model['extent'])
     reachable={16}
     while True:
         expanded=reachable|set(map(int,nxt[:,sorted(reachable)].ravel()))
@@ -44,9 +48,9 @@ def layout(packed):
     return words,nxt,states,first,second,pointers,pages,rows,sections,hot,float(counts[hot].sum()/counts.sum())
 
 
-def build_disk(packed,work):
+def build_disk(packed,work,model=None):
     work=Path(work).resolve();work.mkdir(parents=True,exist_ok=True)
-    words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage=layout(packed)
+    words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage=layout(packed,model)
     assert len(packed)==sum(s['bytes'] for s in sections)
     pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)
     memory=bytearray(65536)
@@ -88,7 +92,7 @@ def build_disk(packed,work):
     for i,s in enumerate(sections):
         files.append(TrdFile(f'IMA{i}','C',packed[offset:offset+s['bytes']],start=s['address']));offset+=s['bytes']
     disk,directory,capacity=place_files(files,'IMADIR')
-    meta=dict(direct=True,origin=0x8000,player_labels=labels,sections=sections,directory=directory,capacity=capacity,
+    meta=dict(direct=True,model=model or dict(holds=HOLDS,beta=.5,extent=1.),origin=0x8000,player_labels=labels,sections=sections,directory=directory,capacity=capacity,
               first_addresses=list(first.values()),second_addresses=list(second.values()),
               first_patterns=len(first),second_patterns=len(second),resident_reserve=14336,
               decoder_rows=[rows[i] for i in range(89)],hot_indices=hot,hot_coverage=coverage,
@@ -104,12 +108,12 @@ def build_disk(packed,work):
     return disk,meta
 
 
-def prepare(out):
+def prepare(out,model=None):
     import shutil
     out=Path(out);out.mkdir(parents=True,exist_ok=True)
     source=HERE/'experiments/ima-packet'
     packed=gzip.decompress((source/'soundtrack.ima.gz').read_bytes())
-    disk,meta=build_disk(packed,out/'assembly')
+    disk,meta=build_disk(packed,out/'assembly',model)
     for name in ('source-preview.wav','soundtrack.ima.gz'):shutil.copy2(source/name,out/name)
     (out/'audiobook-preview.trd').write_bytes(disk);save(out/'player.json',meta)
     print(json.dumps({k:meta[k] for k in ('first_patterns','second_patterns','hot_coverage','ordinary_tstates','binary_sha256')}),flush=True)
@@ -117,4 +121,5 @@ def prepare(out):
 
 if __name__=='__main__':
     import argparse
-    p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path);prepare(p.parse_args().output)
+    p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path);p.add_argument('--measured-model',action='store_true')
+    a=p.parse_args();prepare(a.output,MEASURED_MODEL if a.measured_model else None)

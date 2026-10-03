@@ -5,6 +5,44 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: expose voice flutter despite 20.09-dB warped-clock score
+
+Continue from the complete direct-player source and real Fuse timeline.
+A bounded 14-case table probe compares native/mean/median/partial/double
+weights, beta 0.25..0.75, and four alternate recent-error extents. The
+selected table uses eighth-T rounded mean weights, beta 0.5 and recent
+representatives +/-0.25. It needs 122/86 code patterns and the same RAM
+reserve. Correct the ordinary-sample filter from old slot 15 to direct
+slot 14; the selected rounded weights and results are unchanged.
+
+The new opt-in `--measured-model` disk passes two complete native and cold
+Fuse loops, **5980161 exact bits /373760 predictors and indices**, all
+native timings/RAM guards, paging and loading checks. FFmpeg confirms every
+IMA sample and normal-speed capture passes two wraps. The PCM8/IMA bytes
+are identical to the prior source. Native cost remains **423 T/sample,
+79056232 T/loop (0 delta)**; actual ULA overhead is 7529824 T over two loops.
+Mean rate is 8003.3267 samples/s (+0.0416%), with all previously checked
+0.1-second/one-second windows within +/-2%. Both loops score at least
+**20.08555 dB** under the old warped-reference measurement.
+
+During that sound capture the user reported trembling voice, not merely
+a high whistle. [New timing analysis](audiobook-beeper/analyze_voice_jitter.py)
+finds -0.2614..+0.2005 ms sample-clock error and a strong 50-Hz component
+(0.0910-ms amplitude). Five-millisecond speed ranges are 7657..8385 Hz.
+Using a uniform reference at the measured mean rate yields only
+**8.4298 dB**, with 8.5984 dB from clock warping alone. Same source, filter,
+edges and first-sample phase; no fitted gain/delay or audio alignment.
+The earlier warped reference excluded precisely this error.
+
+Decision: **do not mark the goal complete or promote this candidate**.
+Retain it as a fully executed modulation experiment, but require clock-aware
+quality and suppression of audible flutter for the final voice player.
+Physical hardware remains untested. Root TRDs are unchanged by this attempt.
+[Method and continuation](audiobook-beeper/VOICE_TIMING.md),
+[candidate report](audiobook-beeper/experiments/ima-direct-weighted/report.json),
+[diagnostic](audiobook-beeper/experiments/ima-direct-weighted/voice-jitter.json).
+Candidate TRD SHA256: `e90f56c1e5cf13f37522e11cf882352b25fadd069733959038fb6f8d12fbb8e7`.
+
 ## 2026-10-03: direct packet pointers fix speed and reach 18.85 dB
 
 Keep the exact 186880-sample PCM8 source and 93440-byte IMA stream from the

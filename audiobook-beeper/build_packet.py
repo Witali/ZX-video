@@ -18,12 +18,14 @@ from verify_packet import reference,intervals,native_check,fuse_check
 from verify_pcm import save
 
 
-def render(out,ffmpeg,native=False,reference_fn=reference,intervals_fn=intervals):
+def render(out,ffmpeg,native=False,reference_fn=reference,intervals_fn=intervals,loop=0):
     meta=json.loads((out/'player.json').read_bytes())
     packed=gzip.decompress((out/'soundtrack.ima.gz').read_bytes())
-    pcm,indices,levels,bits=reference_fn(packed,cycles=1);n=len(pcm)*16
+    pcm,indices,levels,bits=reference_fn(packed,cycles=loop+1);n=len(pcm)*16
+    bits=bits[loop*n:(loop+1)*n]
     times=(np.r_[0,np.cumsum(intervals_fn(meta))] if native else
-           np.frombuffer(gzip.decompress((out/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[:n+1])
+           np.frombuffer(gzip.decompress((out/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[loop*n:(loop+1)*n+1])
+    times=times-times[0]
     with wave.open(str(out/'source-preview.wav'),'rb') as w:source=np.frombuffer(w.readframes(w.getnframes()),'u1')
     filtered={}
     for name,values in [('packet',bits[:n]),('decoded',np.repeat(levels,16)/256),('source',np.repeat(source,16)/256)]:
@@ -35,7 +37,7 @@ def render(out,ffmpeg,native=False,reference_fn=reference,intervals_fn=intervals
     def snr(a,b):
         ref=filtered[b][4410:-4410];actual=filtered[a][4410:-4410]
         return ratio(ref,actual-ref)
-    if not native:
+    if not native and loop==0:
         for key in ('packet','source'):write_wav(out/(key+'-bandlimited-preview.wav'),filtered[key])
     return dict(scope='Native timing model, no ULA' if native else 'Integrated actual Fuse output timing; not a physical speaker measurement',
                 total_snr_db=snr('packet','source'),modulator_snr_db=snr('packet','decoded'),codec_snr_db=snr('decoded','source'),
@@ -71,7 +73,7 @@ def finish(out,ffmpeg,reference_fn=reference,intervals_fn=intervals):
     for name in ('packet-player.asm','packet_player.py','verify_packet.py','build_packet.py','feedback_player.py',
                  'ima_beam.py','ima_codec.py','ima_player.py','pcm_player.py','pdm_player.py','record_pcm.py',
                  'build_pdm.py','assess_snr.py','probe_feedback_packets.py')+(
-                 ('direct-player.asm','direct_player.py','verify_direct.py','build_direct.py') if reference_fn is not reference else ()):
+                 ('direct-player.asm','direct_player.py','verify_direct.py','build_direct.py','analyze_voice_jitter.py') if reference_fn is not reference else ()):
         data=(HERE/name).read_bytes().replace(b'\r\n',b'\n');hashes[name]=hashlib.sha256(data).hexdigest()
         (archive/(name+'.gz')).write_bytes(gzip.compress(data,mtime=0))
     report['source_sha256_lf']=hashes
