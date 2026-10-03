@@ -71,3 +71,34 @@ The initial diagnostic probe selected ordinary samples using slot 15 from
 the older kernel. Direct playback's page extension is on slot 14. Correct
 that filter and rerun the bounded probe. Rounded weights and the selected
 candidate remain unchanged; the retained prior probe is marked superseded.
+
+## Bounded source compensation: first loop improves, repeat still fails
+
+The [offline probe](precompensate_voice.py) reconstructs the original PCM8
+with radius-16 Lanczos interpolation at the measured sample-hold centers,
+then re-encodes with the existing beam-32 IMA encoder. The original source
+remains the quality reference; the compensated PCM is a separate file. All
+186880 samples and 93440 compressed bytes remain present. Freeze the pilot's
+25 hot IMA rows to avoid changing the memory layout while compensating.
+There are no ASM instruction changes: 423 T/sample, 79056232 T/loop,
+zero native timing delta. The source already ends with 128 silence samples;
+retain these and verify terminal predictor/index 0/0.
+
+The old-timeline host estimate is **19.5984 dB**. Two full native and cold
+Fuse loops again verify every bit, predictor/index, paging, loading UI and
+native RAM/timing. The independently measured first loop scores **19.6064
+dB**, but the second only **13.8469 dB**. Long-term speed is still within
+0.043% of 8 kHz. Compensation works for the calibrated phase, but a loop
+does not occupy an integer number of video fields. It restarts at a different
+ULA phase, so a first-loop score alone cannot qualify a looping player.
+
+Decision: retain this partial success as evidence, not a root delivery.
+Require both-loop clock-aware acceptance. Next fix repeat phase before
+spending more effort on small modulation-noise gains. No normal-speed
+audible capture or physical measurement was run for this rejected candidate;
+its preview WAVs integrate the newly measured Fuse port events.
+[Evidence](experiments/ima-direct-precomp/report.json).
+
+```powershell
+python audiobook-beeper/precompensate_voice.py --pilot build/ima-direct-weighted --output build/ima-direct-precomp --ffmpeg <ffmpeg.exe> --fuse <fuse.exe>
+```

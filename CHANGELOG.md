@@ -5,6 +5,33 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: precompensate voice timing; reject changing repeat phase
+
+From the weighted direct player's complete 186880-sample source and measured
+Fuse timeline, evaluate radius-16 Lanczos reconstruction at actual hold
+centers and re-encode IMA with beam 32. Preserve the original PCM as the
+quality reference, all 93440 compressed bytes of capacity, terminal state
+0/0, and the original hot-row placement. No assembly instructions change:
+**423 T/sample, 79056232 T/loop, zero CPU delta**. The frozen-layout build
+also reproduces the previous disk byte for byte on its original input.
+
+The host estimate is **19.5984 dB**. Full native and independent cold Fuse
+verification passes two loops /5980161 bits /373760 predictors and indices,
+native timing/RAM guards, complete paging and loading-message checks.
+Actual clock-aware scores are **19.6064 dB on the first loop, 13.8469 dB on
+the second**, despite mean speed remaining within 0.043% of 8 kHz. The disk
+does not restart at the same ULA phase; the source compensation is therefore
+insufficient for continuous clean playback. Extend clock-aware acceptance
+to both loops and save integrated-port previews, not a claimed speaker test.
+
+Decision: retain the useful first-loop improvement, reject this candidate
+as final and keep root TRDs unchanged. Fix repeat phase next; do not hide
+the second-loop regression behind the host estimate. No audible Fuse
+capture or physical hardware test was run for this attempt.
+[Script](audiobook-beeper/precompensate_voice.py),
+[method](audiobook-beeper/VOICE_TIMING.md),
+[evidence](audiobook-beeper/experiments/ima-direct-precomp/report.json).
+
 ## 2026-10-03: expose voice flutter despite 20.09-dB warped-clock score
 
 Continue from the complete direct-player source and real Fuse timeline.

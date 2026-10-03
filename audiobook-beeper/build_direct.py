@@ -46,8 +46,9 @@ def main():
                               minimum_measured_total_snr_db=snr,both_loops_snr_at_least_20_db=snr>=20,
                               physical_hardware_tested=False)
     report['voice_clock']=analyze(out,a.ffmpeg)
+    report['second_loop_voice_clock']=analyze(out,a.ffmpeg,loop=1)
     report['acceptance']['fixed_mean_clock_total_snr_db']=report['voice_clock']['fixed_mean_clock_total_snr_db']
-    report['acceptance']['voice_clock_quality_passes']=report['voice_clock']['fixed_mean_clock_total_snr_db']>=20
+    report['acceptance']['voice_clock_quality_passes']=min(report[k]['fixed_mean_clock_total_snr_db'] for k in ('voice_clock','second_loop_voice_clock'))>=20
     save(out/'report.json',report);print(json.dumps(report['acceptance']),flush=True)
 
 

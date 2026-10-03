@@ -15,7 +15,7 @@ MEASURED_MODEL=dict(holds=[288,231,225,248,192,218,204,170,215,226,177,240,248,2
                     calibration='experiments/ima-direct/output-times.u32.gz')
 
 
-def layout(packed,model=None):
+def layout(packed,model=None,hot_indices=None):
     model=model or dict(holds=HOLDS,beta=.5,extent=1.)
     words,nxt,_=integral_table(64,2,holds=model['holds'],beta=model['beta'],extent=model['extent'])
     reachable={16}
@@ -38,7 +38,9 @@ def layout(packed,model=None):
     pages=[fixed+(i-28)*256 if 28<=i<32 else 0x4000+i*256 for i in range(64)]
     _,indices=decode(packed)
     counts=np.bincount(np.r_[0,indices[:-1]],minlength=89)
-    hot=sorted(range(89),key=lambda i:(-int(counts[i]),i))[:25]
+    hot=(sorted(range(89),key=lambda i:(-int(counts[i]),i))[:25]
+         if hot_indices is None else list(hot_indices))
+    assert len(hot)==25 and len(set(hot))==25 and all(0<=i<89 for i in hot)
     slots=[fixed+i*256+j for i in range(4) for j in (128,192)]+[extra+i*64 for i in range(17)]
     cold_slots=[p+j for p in pages if p<0x8000 for j in (128,192)]
     rows={i:a for i,a in zip(hot,slots)}
@@ -48,9 +50,9 @@ def layout(packed,model=None):
     return words,nxt,states,first,second,pointers,pages,rows,sections,hot,float(counts[hot].sum()/counts.sum())
 
 
-def build_disk(packed,work,model=None):
+def build_disk(packed,work,model=None,hot_indices=None):
     work=Path(work).resolve();work.mkdir(parents=True,exist_ok=True)
-    words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage=layout(packed,model)
+    words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage=layout(packed,model,hot_indices)
     assert len(packed)==sum(s['bytes'] for s in sections)
     pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)
     memory=bytearray(65536)

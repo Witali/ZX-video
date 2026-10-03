@@ -13,10 +13,12 @@ from verify_direct import reference
 from pdm_player import CPU_CLOCK
 
 
-def analyze(out,ffmpeg):
+def analyze(out,ffmpeg,loop=0):
     meta=json.loads((out/'player.json').read_bytes());packed=gzip.decompress((out/'soundtrack.ima.gz').read_bytes())
-    pcm,_,levels,bits=reference(packed,cycles=1,model=meta.get('model'));n=len(pcm);count=n*16
-    t=np.frombuffer(gzip.decompress((out/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[:count+1]
+    pcm,_,levels,bits=reference(packed,cycles=loop+1,model=meta.get('model'));n=len(pcm);count=n*16
+    bits=bits[loop*count:(loop+1)*count]
+    t=np.frombuffer(gzip.decompress((out/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[loop*count:(loop+1)*count+1]
+    t=t-t[0]
     sample_t=t[::16];ideal=np.linspace(0,int(t[-1]),n+1)
     jitter=(sample_t-ideal)/CPU_CLOCK
     with wave.open(str(out/'source-preview.wav'),'rb') as w:source=np.frombuffer(w.readframes(w.getnframes()),'u1')
@@ -39,7 +41,7 @@ def analyze(out,ffmpeg):
     folded=totals/np.maximum(1,np.bincount(bins,minlength=100))
     centered=jitter[:-1]-jitter[:-1].mean()
     amplitudes={str(hz):float(2*abs(np.mean(centered*np.exp(-2j*np.pi*hz*sample_t[:-1]/CPU_CLOCK)))) for hz in (25,50,100,150,200,250)}
-    report=dict(scope=__doc__,source_samples=n,source_rate_hz=8000,actual_mean_rate_hz=n*CPU_CLOCK/t[-1],
+    report=dict(scope=__doc__,loop_index=loop,source_samples=n,source_rate_hz=8000,actual_mean_rate_hz=n*CPU_CLOCK/t[-1],
                 warped_clock_total_snr_db=ratio(warped,output-warped),
                 fixed_mean_clock_total_snr_db=ratio(fixed,output-fixed),
                 clock_only_snr_db=ratio(fixed,warped-fixed),filter=FILTER,
@@ -47,15 +49,18 @@ def analyze(out,ffmpeg):
                                     mean=float(jitter.mean()),standard_deviation=float(jitter.std()),peak_to_peak=float(np.ptp(jitter))),
                 jitter_line_amplitude_seconds=amplitudes,folded_field_jitter_seconds=folded.tolist(),speed_windows=windows,
                 physical_hardware_tested=False)
-    (out/'voice-jitter.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
-    write_wav(out/'uniform-clock-source-preview.wav',filtered['source_fixed'])
-    write_wav(out/'warped-clock-source-preview.wav',filtered['source_warped'])
+    prefix='' if loop==0 else f'loop-{loop+1}-'
+    (out/(prefix+'voice-jitter.json')).write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
+    write_wav(out/(prefix+'uniform-clock-source-preview.wav'),filtered['source_fixed'])
+    write_wav(out/(prefix+'warped-clock-source-preview.wav'),filtered['source_warped'])
+    write_wav(out/(prefix+'clock-aware-output-preview.wav'),filtered['output'])
     return report
 
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('directory',type=Path);p.add_argument('--ffmpeg',required=True)
-    a=p.parse_args();report=analyze(a.directory,a.ffmpeg)
+    p.add_argument('--loop',type=int,choices=(0,1),default=0)
+    a=p.parse_args();report=analyze(a.directory,a.ffmpeg,a.loop)
     print(json.dumps({k:v for k,v in report.items() if k!='folded_field_jitter_seconds'}),flush=True)
 
 
