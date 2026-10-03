@@ -1,0 +1,24 @@
+base 10
+set $started 0
+breakpoint 32768
+commands 1
+print spectrum:frames*70908+ula:tstates
+continue
+end
+breakpoint 33004
+condition 2 $started==0
+commands 2
+print spectrum:frames*70908+ula:tstates
+set $started 1
+continue
+end
+breakpoint 32826
+commands 3
+print spectrum:frames*70908+ula:tstates
+continue
+end
+breakpoint 32975
+commands 4
+print spectrum:frames*70908+ula:tstates
+exit 77
+end

@@ -19,6 +19,11 @@ def measure(out,fuse,target_fields=None):
            'breakpoint port write 254',f'condition 3 $r==1 && ($bits==1 || $bits=={n+1} || $bits=={2*n+1})',
            'commands 3','print '+stamp,'continue','end',
            'breakpoint port write 254',f'condition 4 $bits>={2*n+1}', 'commands 4','exit 77','end']
+    if 'lpc_preload' in meta:
+        lines.insert(1,'set $unpacked 0')
+        lines += [f"breakpoint {meta['lpc_preload']['labels']['unpack_complete']}",
+                  'condition 5 $unpacked==0','commands 5','set $unpacked 1','continue','end',
+                  'condition 1 $unpacked==1']
     script='\n'.join(lines);(out/'phase-debugger.txt').write_text(script,encoding='utf-8',newline='\n')
     result=subprocess.run([str(fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions','--speed','10000',
                            '--machine','128','--beta128','--debugger-command',script,str((out/'audiobook-preview.trd').resolve())],

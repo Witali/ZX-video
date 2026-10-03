@@ -5,6 +5,35 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: LPC-to-IMA preload with progress is correct but rejected as too slow
+
+Create the user-requested `codex/lpc-ima-preload` branch and separate
+`.worktree/lpc-ima-preload` checkout. On the unchanged full 186880-sample
+8-kHz control excerpt, implement LPS1 storage (32736 bytes), actual Z80
+ten-stage lattice synthesis and standard IMA encoding into all 93440 audio
+bytes. Sector-count and emitted-byte progress bars each reach 32 verified
+steps. The independently bootable experimental disk loads its own code,
+LPC and playback tables. Existing player hot-path cost remains 423 T/sample,
+delta0; the generic converter default and root disks are unchanged.
+
+An initial low-gain host attempt produced PCM111..150; fixed normalization
+produces PCM32..224, without counted forward lattice clips or IMA saturation.
+A two-billion-T native budget stopped after 170400 correct samples; raising
+only that harness limit verifies every PCM/IMA byte and final paged RAM.
+Complete native preparation costs 2192183887 T (618.056 s), excluding ROM,
+disk and contention. Cold Fuse conversion takes657.181 s. The initial timing
+question compared with compressed LPC loading (5.326 s); the user clarified
+that the limit is twice a complete raw128-KiB read. A real512-sector cold
+Fuse benchmark gives19.952 s, so the correct limit is39.904 s.
+
+Reject LPC preload: it fails that limit and the user finds LPC changes the
+sound too much. A cold phase probe reaches playback, but complete PDM bits,
+final-loop calibration and physical hardware are not qualified for this
+rejected disk. Preserve the attempt, progress implementation, inputs,
+standalone assembler sources and reports in
+[LPC_PRELOAD.md](audiobook-beeper/LPC_PRELOAD.md). The next authorized work is
+an alternative-codec study; do not promote this prototype to a release.
+
 ## 2026-10-03: waveform-aware IMA reaches 21.01 dB in two complete Fuse loops
 
 Continue the 20-dB goal without shortening the original 186880-sample,

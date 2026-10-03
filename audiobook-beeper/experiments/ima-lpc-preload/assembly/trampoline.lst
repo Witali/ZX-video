@@ -1,0 +1,39 @@
+                 	
+                 	; Runs in temporary bank5 workspace after the final IMA byte is produced.
+                 	; It may overwrite the old decoder in bank2, then enters the normal player.
+                 	
+8000              	lpc_disk: EQU 3343
+8000              	player_disk: EQU 1032
+8000              	lpc_bytes: EQU 32736
+8000              	lpc_first_sectors: EQU 64
+8000              	lpc_second_sectors: EQU 64
+8000              	frame_count: EQU 1168
+8000              	last_frame_samples: EQU 32
+8000              	trampoline_size: EQU 0
+8000              	        INCLUDE "lpc-config.inc"
+6000              	        ORG 0x6000
+6000 F3           	        DI
+6001 31 F0 5F     	        LD SP,0x5FF0
+6004 FD 21 3A 5C  	        LD IY,0x5C3A
+6008 11 08 04     	        LD DE,player_disk
+600B 21 00 80     	        LD HL,0x8000
+600E 06 38        	        LD B,56
+6010 C5           	loop:   PUSH BC
+6011 D5           	        PUSH DE
+6012 E5           	        PUSH HL
+6013 01 05 01     	        LD BC,0x0105
+6016 FB           	        EI
+6017 CD 13 3D     	        CALL 0x3D13
+601A F3           	        DI
+601B E1           	        POP HL
+601C D1           	        POP DE
+601D C1           	        POP BC
+601E 24           	        INC H
+601F 1C           	        INC E
+6020 CB 63        	        BIT 4,E
+6022 28 03        	        JR Z,sector_ok
+6024 1E 00        	        LD E,0
+6026 14           	        INC D
+                 	sector_ok:
+6027 10 E7        	        DJNZ loop
+6029 C3 00 80     	        JP 0x8000

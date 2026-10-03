@@ -78,7 +78,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
     track,sector=calculate_file_start([boot,TrdFile('PLAYER','C',bytes(23296),start=0x8000)])
     lower=track*16+sector;upper=lower+28;pos=upper+32
     for s in sections:s['sector']=pos;pos+=s['sectors']
-    constants=dict(first_base=0x8400,pcm_high=pointers,resident_reserve=14336,decoder_seed=rows[0],
+    constants=dict(lpc_preloaded=0,screen_disk=0,first_base=0x8400,pcm_high=pointers,resident_reserve=14336,decoder_seed=rows[0],
                    initial_feedback_offset=states.index(16)*6,lower_disk=lower//16*256+lower%16,upper_disk=upper//16*256+upper%16,
                    final_section_index=len(sections)-1)
     assert 0<=idle_pairs<=1530 and idle_pad>=0 and (idle_pairs or idle_pad==0)

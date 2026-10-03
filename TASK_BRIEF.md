@@ -14,6 +14,15 @@ converter must also support other videos.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
+In the separate `codex/lpc-ima-preload` worktree, the actual LPC-to-IMA
+preloader and both progress bars pass complete native byte/RAM checks but
+are **rejected**: cold Fuse conversion takes657.181 s. The corrected user
+limit is twice a raw128-KiB read:19.952*2=39.904 s. The user subsequently
+rejects LPC timbre changes and requests alternative waveform codecs with
+10:1 compression relative to mono8-kHz PCM16; PC encoding cost is unrestricted.
+Do not treat the LPC prototype as a playback release. Reuse
+[its evidence](audiobook-beeper/LPC_PRELOAD.md).
+
 The waveform-aware PC encoder retains the complete original 186880-sample
 control excerpt and 93440-byte live IMA stream. Two complete cold Fuse 128
 loops now measure **21.01069 dB** against the original 8-kHz PCM8 clock,

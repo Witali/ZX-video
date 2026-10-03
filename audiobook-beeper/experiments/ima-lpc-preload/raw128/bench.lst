@@ -1,0 +1,43 @@
+                 	
+8000              	        ORG 0x8000
+8000 F3           	start:  DI
+8001 31 00 60     	        LD SP,0x6000
+8004 FD 21 3A 5C  	        LD IY,0x5C3A
+8008 3E 13        	        LD A,19
+800A 01 FD 7F     	        LD BC,0x7FFD
+800D ED 79        	        OUT (C),A
+800F 11 02 01     	        LD DE,258
+8012 21 00 C0     	        LD HL,0xC000
+8015 01 00 02     	        LD BC,512
+                 	read_begin:
+8018 C5           	loop:   PUSH BC
+8019 D5           	        PUSH DE
+801A E5           	        PUSH HL
+801B 01 05 01     	        LD BC,0x0105
+801E FB           	        EI
+                 	disk_call:
+801F CD 13 3D     	        CALL 0x3D13
+8022 F3           	        DI
+8023 E1           	        POP HL
+8024 D1           	        POP DE
+8025 C1           	        POP BC
+8026 24           	        INC H
+8027 7C           	        LD A,H
+8028 B7           	        OR A
+8029 20 02        	        JR NZ,destination_ready
+802B 26 C0        	        LD H,0xC0
+                 	destination_ready:
+802D 1C           	        INC E
+802E CB 63        	        BIT 4,E
+8030 28 03        	        JR Z,sector_ready
+8032 1E 00        	        LD E,0
+8034 14           	        INC D
+                 	sector_ready:
+8035 0B           	        DEC BC
+8036 78           	        LD A,B
+8037 B1           	        OR C
+8038 20 DE        	        JR NZ,loop
+                 	read_end:
+803A C3 3A 80     	        JP read_end
+803D              	        ASSERT $ <= 0x8100
+803D              	        DS 0x8100-$
