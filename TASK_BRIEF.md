@@ -14,6 +14,19 @@ converter must also support other videos.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
+The user made **20 dB final PDM SNR mandatory** after the IMA3 preview,
+then requested Speex. The [Speex audition](audiobook-beeper/SPEEX_STUDY.md)
+is complete on the same full source: fixed-point decoding at 18.2/24.6k
+without optional highpass/enhancement gives 24.752/27.823 dB, or
+21.054/22.037 dB after the existing IMA encoder, at 6.946:1/5.155:1 with
+a 32-byte framing allowance. These are **before PDM**. A verified exact
+Z80 lookup product costs 111 T; synthesis products alone project58.484 s,
+exceeding39.904 s before other work. Reject that strategy, not all possible
+ports. Reuse the saved30 API cases,10 FFmpeg cases and1376146 arithmetic
+checks. No Speex TRD or final20-dB release has been produced. The active
+end-to-end objective remains unmet; keep the original complete source,
+fixed-clock two-loop quality gate, speed and preparation limits.
+
 The requested independently bootable IMA3 disk is now integrated as a
 [listening preview](audiobook-beeper/IMA3_PRELOAD.md). It expands 70080
 audio bytes into the unchanged 93440-byte resident IMA allocation with

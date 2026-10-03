@@ -12,11 +12,13 @@ automatic task schedule or a promise that the unported codecs fit Z80.
   PCM16 bytes for the ratio. This does not recover lost 16-bit precision.
 - PC encoding complexity is unrestricted. Spectrum preparation must take
   at most twice the measured raw 128-KiB read: **39.904 s** in cold Fuse 128.
-- Preserve voice timbre and waveform. Suggested codec SNR 25..30 dB and
-  final PDM 20 dB are evaluation targets, not newly approved hard gates;
-  also compare listening, clipping, active-window error and speed (within 2%).
+- Preserve voice timbre and waveform. Codec SNR 25..30 dB remains advice;
+  the user subsequently made **final PDM >=20 dB mandatory**. Verify both
+  complete cold Fuse loops against the same source and clock. Also compare
+  listening, clipping, active-window error and speed (within 2%).
 - The user selected only three-bit IMA and predictive VQ for three decoder
-  optimization rounds each. Other formats remain future research.
+  optimization rounds each. The later Speex request adds a host audition
+  and Z80 feasibility screen; a full Speex decoder is not implemented.
 
 Latest integration: the [IMA3 preload preview](IMA3_PRELOAD.md) passes
 complete cold startup and two-loop playback checks. Its PC-compensated
@@ -36,7 +38,7 @@ quality results are input-specific; codec SNR is not final beeper SNR.
 | ITU G.726, 16/24 kbit/s | 8:1 / 5.33:1 | Now fits the relaxed rate range. Local 16-kbit/s codec SNR 16.481 dB; existing downstream IMA guard rejected saturation. Test a better preparation/encoding path before any port. |
 | QOA | About 25.6 kbit/s; about 5:1 payload | Header overhead makes actual compression slightly less than 5:1. Four-tap LMS decoder needs products; measure quality and integer cost before Z80 work. |
 | WavPack hybrid, 2..3 bits/sample | Nominal 8:1..5.33:1 before overhead | Waveform candidate. First measure actual streams and fixed-point decoder cost; the nominal setting alone does not prove a Z80 fit. |
-| Speex narrowband | 11/15/18.2/24.6 kbit/s | Standard speech listening reference. CELP/LPC includes excitation information, unlike our simple LPC synthesis. Fixed-point availability is not a Z80 timing proof. |
+| Speex narrowband | Measured 18.2k /6.946:1; 24.6k /5.155:1 with framing allowance | [Audition complete](SPEEX_STUDY.md). Disable optional highpass and enhancement: fixed-point codec SNR 24.752/27.823 dB, after IMA 21.054/22.037 dB. Exact table multiplication alone projects 58.484 s for synthesis, above 39.904 s before other work. Reject that strategy; no full Z80 port or PDM qualification. |
 | Opus narrowband | Roughly 12..24 kbit/s as audition settings | Quality reference before porting. Narrowband speech may use LP-only mode; do not assume MDCT is required in every stream. Entropy decoding and synthesis still need a timing study. |
 | ITU G.729 / G.729A | 8 kbit/s; 16:1 | Strong compression, CS-ACELP speech model. No local quality or Z80 timing proof; lower priority than waveform-preserving options. |
 | CVSD | Candidate 8/12/16-kbit/s streams | Small-state one-bit adaptive waveform approach; not locally measured. Compare quality with DFPWM before allocating port work. |

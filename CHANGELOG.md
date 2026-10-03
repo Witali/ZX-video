@@ -5,6 +5,48 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: Speex audition and exact Z80 arithmetic feasibility
+
+After the user makes final PDM SNR >=20 dB mandatory and requests Speex,
+test the unchanged186880-sample control, hash
+`ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304`.
+Preserve all speech, fixed8-kHz clock/gain and the standard comparison filter.
+Run10 initial FFmpeg cases at8/11/15/18.2/24.6 kbit/s using both decoders,
+then30 controlled API cases with unmodified Speex1.2.1, complexity10,
+CBR and no VAD/DTX. Compare highpass/enhancement options and float/fixed
+decoding. Include the silent flush frame and a32-byte framing allowance.
+
+Default processing has poor waveform scores even after its disclosed
+79-sample fitted integer delay. Controlled tests remove only the declared
+40+40-sample latency. With both optional filters disabled, fixed-point
+18.2k/24.6k scores24.752/27.823 dB; existing threshold IMA yields
+21.054/22.037 dB at6.946:1/5.155:1 relative to PCM16. Record all rejected
+IMA saturation paths. These scores exclude PDM and are not release passes.
+
+Compile and execute an optimistic exact signed16x16 table-product kernel.
+Every1376146 input pair is exact; all calls cost128 T (111 T plus17 CALL),
+using1792 bytes per coefficient. Ten products/sample for the full source
+project207436800 T /58.484 s without calls;67.441 s with calls. Exclude
+table generation, argument setup, MAC/state work, excitation, LSP, IMA,
+disk, ROM, ULA and paging explicitly. This fails39.903992 s already and
+rejects this strategy, not every conceivable Speex implementation. A full
+decoder has not been ported or timed. Existing PDM stays423 T/sample,
+delta0; no TRD, cold Fuse PDM or physical hardware qualification is added.
+
+Initial host build attempts fail on Windows command quoting, compiler
+discovery and localized log decoding. Correct the helper and preserve
+successful raw logs; no upstream codec algorithm is changed. Save the
+official source archive/license, build hashes, compressed frames, reports,
+and selected audition WAVs. The IMA waveform-search extension considered
+before the user's Speex steering was not implemented or measured.
+
+Decision: retain24.6k as the best fidelity reference and18.2k as the more
+compact audition; defer a full port under the current startup budget.
+The final20-dB objective remains unmet. Reproduce using the three Speex
+probe scripts and host builder linked in
+[the study](audiobook-beeper/SPEEX_STUDY.md), with
+[saved evidence](audiobook-beeper/experiments/speex/manifest.json).
+
 ## 2026-10-03: bootable IMA3 preload disk and voice-timing correction
 
 Create the requested new-compression TRD on the unchanged full 186880-sample
