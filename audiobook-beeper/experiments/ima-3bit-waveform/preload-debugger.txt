@@ -1,0 +1,89 @@
+base 10
+set $stage 0
+set $chunk 0
+breakpoint 32768
+commands 1
+print 1
+print spectrum:frames*70908+ula:tstates
+continue
+end
+condition 1 $stage==0
+breakpoint 32967
+commands 2
+print 2
+print spectrum:frames*70908+ula:tstates
+print z80:de
+print z80:hl
+print ula:mem7ffd
+continue
+end
+condition 2 $stage==0
+breakpoint 32971
+commands 3
+print 3
+print spectrum:frames*70908+ula:tstates
+continue
+end
+condition 3 $stage==0
+breakpoint 32849
+commands 4
+print 4
+print spectrum:frames*70908+ula:tstates
+continue
+end
+condition 4 $stage==0
+breakpoint 32863
+commands 5
+print 5
+print spectrum:frames*70908+ula:tstates
+set $chunk $chunk+1
+continue
+end
+condition 5 $stage==0
+breakpoint 32937
+commands 6
+print 11
+print [(z80:de-4)&65535]
+print [(z80:de-3)&65535]
+print [(z80:de-2)&65535]
+print [(z80:de-1)&65535]
+continue
+end
+condition 6 $stage==0
+breakpoint 33034
+commands 7
+print 6
+print [33065]
+continue
+end
+condition 7 $stage==0
+breakpoint 33057
+commands 8
+print 7
+print [33068]
+continue
+end
+condition 8 $stage==0
+breakpoint 32887
+commands 9
+print 8
+print spectrum:frames*70908+ula:tstates
+set $stage 1
+continue
+end
+condition 9 $stage==0
+breakpoint 32768
+commands 10
+print 9
+print spectrum:frames*70908+ula:tstates
+set $stage 2
+continue
+end
+condition 10 $stage==1
+breakpoint 32899
+commands 11
+print 10
+print spectrum:frames*70908+ula:tstates
+exit 77
+end
+condition 11 $stage==2

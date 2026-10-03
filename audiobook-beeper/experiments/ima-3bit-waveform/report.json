@@ -1,0 +1,671 @@
+{
+  "date": "2026-10-03",
+  "complete": true,
+  "quality_gate_passed": true,
+  "scope": "Same full control source, IMA3 transport, waveform-aware PC encoding, unchanged live PDM player",
+  "source_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+  "source_samples": 186880,
+  "audit": {
+    "complete": true,
+    "full_original_source": true,
+    "ima3_bytes": 70080,
+    "resident_ima_bytes": 93440,
+    "pcm16_audio_ratio": 5.333333333333333,
+    "all_native_and_cold_fuse_samples_verified": true,
+    "all_preload_bytes_and_progress_verified": true,
+    "full_128k_ram_accounted": true,
+    "independent_cold_boot": true,
+    "no_playback_disk_reads": true,
+    "original_8000hz_clock_without_fitted_gain_or_delay": true,
+    "two_loop_snr_db": [
+      20.07106693755109,
+      20.07106693755109
+    ],
+    "minimum_required_snr_db": 20,
+    "speed_error_percent": -0.04327104802073212,
+    "phase_deltas_tstates": [
+      0,
+      0
+    ],
+    "maximum_startup_seconds": 60,
+    "normal_startup_seconds": 27.254263038548753,
+    "normal_sound_capture_complete": true,
+    "trd_sha256": "5556a64f54ad932e8b65f96f6f55b4bffafae9e5bbec0ba025463fe0c2b34f89",
+    "physical_hardware_tested": false
+  },
+  "quality": {
+    "two_loop_clock_aware_snr_db": [
+      20.07106693755109,
+      20.07106693755109
+    ],
+    "minimum_snr_db": 20.07106693755109,
+    "snr_at_least_20_db": true,
+    "mean_prepared_sample_rate_hz": 7996.538316158341,
+    "mean_speed_error_percent": -0.04327104802073212,
+    "speed_within_two_percent": true,
+    "reference_rate_hz": 8000,
+    "physical_hardware_tested": false,
+    "complete_trace_phase_deltas_tstates": [
+      0,
+      0
+    ]
+  },
+  "preloader": {
+    "complete": true,
+    "cold_boot": true,
+    "machine": "128",
+    "every_expanded_byte_exact": true,
+    "bytes_verified": 93440,
+    "compressed_sector_reads": 274,
+    "progress_load": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "progress_unpack": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "real_rom_read_tstates": 39178411,
+    "real_rom_read_seconds": 11.045817756350615,
+    "expansion_tstates": 6862361,
+    "expansion_seconds": 1.9347489356903211,
+    "preloader_to_player_ready_seconds": 18.683670811130845,
+    "maximum_decode_seconds": 60.0,
+    "raw128_twice_seconds": 39.903991654684376,
+    "preparation_limit_source": "explicit requested limit",
+    "decode_time_accepted": true,
+    "entire_preparation_within_decode_limit": true,
+    "scope": "Cold Fuse; real disk/ROM, all expanded blocks, progress and handoff; BASIC boot precedes the measured interval",
+    "physical_hardware_tested": false
+  },
+  "recording": {
+    "recording_complete": true,
+    "two_wraps_observed": true,
+    "timing_code": "B",
+    "startup_seconds": 27.254263038548753,
+    "recorded_playback_seconds": 46.749410430839,
+    "paging_latches_match": true,
+    "secondary_paging_unchanged": true,
+    "paging_events": [
+      [
+        1567,
+        57822,
+        28,
+        28,
+        0
+      ],
+      [
+        1772,
+        43222,
+        30,
+        30,
+        0
+      ],
+      [
+        1977,
+        28866,
+        25,
+        25,
+        0
+      ],
+      [
+        2182,
+        14449,
+        27,
+        27,
+        0
+      ],
+      [
+        2387,
+        902,
+        31,
+        31,
+        0
+      ],
+      [
+        2505,
+        29086,
+        26,
+        26,
+        0
+      ],
+      [
+        2531,
+        1107,
+        24,
+        24,
+        0
+      ],
+      [
+        2736,
+        57822,
+        28,
+        28,
+        0
+      ],
+      [
+        2941,
+        43222,
+        30,
+        30,
+        0
+      ],
+      [
+        3146,
+        28866,
+        25,
+        25,
+        0
+      ],
+      [
+        3351,
+        14449,
+        27,
+        27,
+        0
+      ],
+      [
+        3556,
+        902,
+        31,
+        31,
+        0
+      ],
+      [
+        3674,
+        29086,
+        26,
+        26,
+        0
+      ],
+      [
+        3700,
+        1107,
+        24,
+        24,
+        0
+      ]
+    ],
+    "paging_event_fields": [
+      "frame",
+      "tstates",
+      "intended_value",
+      "7ffd",
+      "1ffd"
+    ],
+    "half_second_windows": [
+      {
+        "start_seconds": 0.0,
+        "ac_rms": 0.027428835943514772
+      },
+      {
+        "start_seconds": 0.5,
+        "ac_rms": 0.04213344264388082
+      },
+      {
+        "start_seconds": 1.0,
+        "ac_rms": 0.024743054578300987
+      },
+      {
+        "start_seconds": 1.5,
+        "ac_rms": 0.04000751557426119
+      },
+      {
+        "start_seconds": 2.0,
+        "ac_rms": 0.039833244517811395
+      },
+      {
+        "start_seconds": 2.5,
+        "ac_rms": 0.03184010914510337
+      },
+      {
+        "start_seconds": 3.0,
+        "ac_rms": 0.036587389028606476
+      },
+      {
+        "start_seconds": 3.5,
+        "ac_rms": 0.04243527607263189
+      },
+      {
+        "start_seconds": 4.0,
+        "ac_rms": 0.031383640423142505
+      },
+      {
+        "start_seconds": 4.5,
+        "ac_rms": 0.01843884825620919
+      },
+      {
+        "start_seconds": 5.0,
+        "ac_rms": 0.025350325531955525
+      },
+      {
+        "start_seconds": 5.5,
+        "ac_rms": 0.0222097656937271
+      },
+      {
+        "start_seconds": 6.0,
+        "ac_rms": 0.006815401632452572
+      },
+      {
+        "start_seconds": 6.5,
+        "ac_rms": 0.048829119050680464
+      },
+      {
+        "start_seconds": 7.0,
+        "ac_rms": 0.0354162571269611
+      },
+      {
+        "start_seconds": 7.5,
+        "ac_rms": 0.0325552074386709
+      },
+      {
+        "start_seconds": 8.0,
+        "ac_rms": 0.01456869222527328
+      },
+      {
+        "start_seconds": 8.5,
+        "ac_rms": 0.008863093011793645
+      },
+      {
+        "start_seconds": 9.0,
+        "ac_rms": 0.0030127586137845253
+      },
+      {
+        "start_seconds": 9.5,
+        "ac_rms": 0.029090882449214966
+      },
+      {
+        "start_seconds": 10.0,
+        "ac_rms": 0.022937970289539193
+      },
+      {
+        "start_seconds": 10.5,
+        "ac_rms": 0.025701477973678406
+      },
+      {
+        "start_seconds": 11.0,
+        "ac_rms": 0.020349436198365666
+      },
+      {
+        "start_seconds": 11.5,
+        "ac_rms": 0.009072710325641217
+      },
+      {
+        "start_seconds": 12.0,
+        "ac_rms": 0.03596680394410673
+      },
+      {
+        "start_seconds": 12.5,
+        "ac_rms": 0.04325152712680875
+      },
+      {
+        "start_seconds": 13.0,
+        "ac_rms": 0.04896498562050577
+      },
+      {
+        "start_seconds": 13.5,
+        "ac_rms": 0.03836732184090225
+      },
+      {
+        "start_seconds": 14.0,
+        "ac_rms": 0.0395625420689173
+      },
+      {
+        "start_seconds": 14.5,
+        "ac_rms": 0.030181613157406684
+      },
+      {
+        "start_seconds": 15.0,
+        "ac_rms": 0.025667428246250554
+      },
+      {
+        "start_seconds": 15.5,
+        "ac_rms": 0.042842385694782756
+      },
+      {
+        "start_seconds": 16.0,
+        "ac_rms": 0.02759750479878242
+      },
+      {
+        "start_seconds": 16.5,
+        "ac_rms": 0.0354366700761133
+      },
+      {
+        "start_seconds": 17.0,
+        "ac_rms": 0.028447106732516506
+      },
+      {
+        "start_seconds": 17.5,
+        "ac_rms": 0.020296416726397284
+      },
+      {
+        "start_seconds": 18.0,
+        "ac_rms": 0.005159587279542573
+      },
+      {
+        "start_seconds": 18.5,
+        "ac_rms": 0.015091917751545333
+      },
+      {
+        "start_seconds": 19.0,
+        "ac_rms": 0.03755849552394768
+      },
+      {
+        "start_seconds": 19.5,
+        "ac_rms": 0.040142886576004344
+      },
+      {
+        "start_seconds": 20.0,
+        "ac_rms": 0.040306036360558635
+      },
+      {
+        "start_seconds": 20.5,
+        "ac_rms": 0.04066519444050741
+      },
+      {
+        "start_seconds": 21.0,
+        "ac_rms": 0.033987879120209445
+      },
+      {
+        "start_seconds": 21.5,
+        "ac_rms": 0.031420595734875774
+      },
+      {
+        "start_seconds": 22.0,
+        "ac_rms": 0.04169793003274883
+      },
+      {
+        "start_seconds": 22.5,
+        "ac_rms": 0.04571618145853908
+      },
+      {
+        "start_seconds": 23.0,
+        "ac_rms": 0.04021087342222437
+      },
+      {
+        "start_seconds": 23.5,
+        "ac_rms": 0.03423387753183495
+      },
+      {
+        "start_seconds": 24.0,
+        "ac_rms": 0.03622670725521937
+      },
+      {
+        "start_seconds": 24.5,
+        "ac_rms": 0.026963732114777803
+      },
+      {
+        "start_seconds": 25.0,
+        "ac_rms": 0.043465973584556714
+      },
+      {
+        "start_seconds": 25.5,
+        "ac_rms": 0.03813594789858877
+      },
+      {
+        "start_seconds": 26.0,
+        "ac_rms": 0.03286736619237267
+      },
+      {
+        "start_seconds": 26.5,
+        "ac_rms": 0.03874728698511847
+      },
+      {
+        "start_seconds": 27.0,
+        "ac_rms": 0.03897192264376638
+      },
+      {
+        "start_seconds": 27.5,
+        "ac_rms": 0.029068304148034966
+      },
+      {
+        "start_seconds": 28.0,
+        "ac_rms": 0.0218724718942765
+      },
+      {
+        "start_seconds": 28.5,
+        "ac_rms": 0.02766897543831624
+      },
+      {
+        "start_seconds": 29.0,
+        "ac_rms": 0.01171725001866821
+      },
+      {
+        "start_seconds": 29.5,
+        "ac_rms": 0.02583956541543997
+      },
+      {
+        "start_seconds": 30.0,
+        "ac_rms": 0.050429127837451834
+      },
+      {
+        "start_seconds": 30.5,
+        "ac_rms": 0.028031230576642155
+      },
+      {
+        "start_seconds": 31.0,
+        "ac_rms": 0.027216373226627788
+      },
+      {
+        "start_seconds": 31.5,
+        "ac_rms": 0.01563357340019043
+      },
+      {
+        "start_seconds": 32.0,
+        "ac_rms": 0.006134277909621078
+      },
+      {
+        "start_seconds": 32.5,
+        "ac_rms": 0.009365738436645971
+      },
+      {
+        "start_seconds": 33.0,
+        "ac_rms": 0.027917417151952527
+      },
+      {
+        "start_seconds": 33.5,
+        "ac_rms": 0.028029229652041313
+      },
+      {
+        "start_seconds": 34.0,
+        "ac_rms": 0.02449039876723601
+      },
+      {
+        "start_seconds": 34.5,
+        "ac_rms": 0.015440431057173682
+      },
+      {
+        "start_seconds": 35.0,
+        "ac_rms": 0.007075539524086057
+      },
+      {
+        "start_seconds": 35.5,
+        "ac_rms": 0.048310867927328624
+      },
+      {
+        "start_seconds": 36.0,
+        "ac_rms": 0.04034015191987171
+      },
+      {
+        "start_seconds": 36.5,
+        "ac_rms": 0.04707286169281376
+      },
+      {
+        "start_seconds": 37.0,
+        "ac_rms": 0.03771111561632924
+      },
+      {
+        "start_seconds": 37.5,
+        "ac_rms": 0.03609067090781921
+      },
+      {
+        "start_seconds": 38.0,
+        "ac_rms": 0.025271723362325076
+      },
+      {
+        "start_seconds": 38.5,
+        "ac_rms": 0.03397635447456065
+      },
+      {
+        "start_seconds": 39.0,
+        "ac_rms": 0.03620081832515298
+      },
+      {
+        "start_seconds": 39.5,
+        "ac_rms": 0.03547041931376646
+      },
+      {
+        "start_seconds": 40.0,
+        "ac_rms": 0.034845160020588836
+      },
+      {
+        "start_seconds": 40.5,
+        "ac_rms": 0.022022511035304598
+      },
+      {
+        "start_seconds": 41.0,
+        "ac_rms": 0.017079594032473184
+      },
+      {
+        "start_seconds": 41.5,
+        "ac_rms": 0.003306524575537471
+      },
+      {
+        "start_seconds": 42.0,
+        "ac_rms": 0.015240538602587924
+      },
+      {
+        "start_seconds": 42.5,
+        "ac_rms": 0.03983934783096003
+      },
+      {
+        "start_seconds": 43.0,
+        "ac_rms": 0.038828249046880176
+      },
+      {
+        "start_seconds": 43.5,
+        "ac_rms": 0.043010451780048656
+      },
+      {
+        "start_seconds": 44.0,
+        "ac_rms": 0.041213233168980436
+      },
+      {
+        "start_seconds": 44.5,
+        "ac_rms": 0.028561227768464335
+      },
+      {
+        "start_seconds": 45.0,
+        "ac_rms": 0.04097302004742294
+      },
+      {
+        "start_seconds": 45.5,
+        "ac_rms": 0.04242757627399741
+      },
+      {
+        "start_seconds": 46.0,
+        "ac_rms": 0.04385697700586342
+      }
+    ],
+    "all_half_second_windows_have_signal": true,
+    "scope": "Fuse sound generator capture, not physical sound-card loopback; sparse trace is not an all-bit check",
+    "date": "2026-10-03",
+    "requested_machine": "128",
+    "elapsed_seconds": 74.35900000005495,
+    "source_trd_sha256": "5556a64f54ad932e8b65f96f6f55b4bffafae9e5bbec0ba025463fe0c2b34f89",
+    "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+    "recorder_sha256_lf": "0a2501668a4f6a64ae14224eb0605991ecf7940a9c02cfbf0144cf72ee8f4a8f"
+  },
+  "playback_tstates": {
+    "ordinary": 423,
+    "ordinary_delta": 0,
+    "page_extra": 14,
+    "page_delta": 0,
+    "bank_extra": 140,
+    "bank_delta": 0,
+    "native_cycle": 79122532,
+    "previous_native_cycle": 79122530,
+    "cycle_delta": 2,
+    "reason": "Silent phase pad69 T replaces67 T; ordinary playback instructions unchanged"
+  },
+  "minimum_margin_db": 0.07106693755109106,
+  "large_local_evidence": [
+    {
+      "path": ".tmp/ima3-waveform32-disk/calibration/phase-03/verification-work/fuse-trace.txt.gz",
+      "bytes": 36905148,
+      "sha256": "33e0504ae34ad11b4c6605eaba32742eda2db1115aabcbb2a084ecebdb135b27",
+      "included_in_git": false
+    },
+    {
+      "path": ".tmp/ima3-waveform32-disk/sound-128/capture.fmf.gz",
+      "bytes": 3378999,
+      "sha256": "8eb504d714308d9b0cd2a6c12f63bfd8f7483a7fdc272db398c363073330021c",
+      "included_in_git": false
+    }
+  ],
+  "wider_host_candidate": "20.518986 dB on old timeline only; not executed as a new disk and not selected",
+  "limitations": [
+    "Input-specific emulator result; not a guarantee for other recordings",
+    "20.071 dB does not establish subjective transparency or physical hardware SNR"
+  ]
+}

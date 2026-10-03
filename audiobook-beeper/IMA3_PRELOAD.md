@@ -1,5 +1,10 @@
 # Three-bit IMA disk with fast expansion
 
+Later result (2026-10-03): the [waveform-aware IMA3 disk](IMA3_WAVEFORM.md)
+now reaches **20.071 dB on both complete cold Fuse loops**, preserving this
+storage/player architecture. The measurements below describe the earlier
+18-dB preview and remain historical evidence.
+
 This experiment stores the project's three-bit IMA subset on disk, expands
 small blocks directly into resident four-bit IMA, then runs the existing
 direct PDM player. It preserves the complete 186880-sample control excerpt

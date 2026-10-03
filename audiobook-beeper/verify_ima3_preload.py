@@ -3,6 +3,7 @@ import argparse
 import gzip
 import hashlib
 import json
+import math
 from pathlib import Path
 import re
 import subprocess
@@ -81,8 +82,10 @@ def native(path):
     return report
 
 
-def cold(path, fuse, raw128):
+def cold(path, fuse, raw128, maximum_seconds=None):
     """Full cold disk path, byte checks at every expanded block, real ROM timing."""
+    if maximum_seconds is not None and (not math.isfinite(maximum_seconds) or maximum_seconds <= 0):
+        raise ValueError('preparation limit must be positive and finite')
     meta = json.loads((path/'player.json').read_bytes()); info = meta['preload']; labels = info['labels']
     packed = gzip.decompress((path/'soundtrack.ima.gz').read_bytes())
     stamp = 'spectrum:frames*70908+ula:tstates'
@@ -126,17 +129,22 @@ def cold(path, fuse, raw128):
     rom = sum(b[0]-a[0] for a,b in zip(events[2],events[3]))
     conversion = sum(b[0]-a[0] for a,b in zip(events[4],events[5]))
     total = events[10][0][0]-events[1][0][0]
-    limit = json.loads(raw128.read_bytes())['maximum_decode_seconds']
+    raw_limit = json.loads(raw128.read_bytes())['maximum_decode_seconds']
+    limit = raw_limit if maximum_seconds is None else maximum_seconds
     report = dict(complete=True, cold_boot=True, machine='128', every_expanded_byte_exact=True,
         bytes_verified=offset, compressed_sector_reads=len(events[2]), progress_load=list(range(1,33)),
         progress_unpack=list(range(1,33)), real_rom_read_tstates=rom, real_rom_read_seconds=rom/3546900,
         expansion_tstates=conversion, expansion_seconds=conversion/3546900,
         preloader_to_player_ready_seconds=total/3546900, maximum_decode_seconds=limit,
+        raw128_twice_seconds=raw_limit,
+        preparation_limit_source=('twice measured raw128 read' if maximum_seconds is None else 'explicit requested limit'),
         decode_time_accepted=conversion/3546900<=limit,
         entire_preparation_within_decode_limit=total/3546900<=limit,
         scope='Cold Fuse; real disk/ROM, all expanded blocks, progress and handoff; BASIC boot precedes the measured interval',
         physical_hardware_tested=False)
     assert report['decode_time_accepted']
+    if maximum_seconds is not None:
+        assert report['entire_preparation_within_decode_limit'], 'explicit preparation limit exceeded'
     save(path/'preload-fuse.json', report); print(json.dumps(report), flush=True)
     return report
 
@@ -144,6 +152,7 @@ def cold(path, fuse, raw128):
 if __name__ == '__main__':
     p=argparse.ArgumentParser(description=__doc__); p.add_argument('directory',type=Path)
     p.add_argument('--fuse',type=Path); p.add_argument('--raw128-report',type=Path)
+    p.add_argument('--maximum-preparation-seconds',type=float)
     a=p.parse_args()
-    if a.fuse: cold(a.directory.resolve(),a.fuse,a.raw128_report)
+    if a.fuse: cold(a.directory.resolve(),a.fuse,a.raw128_report,a.maximum_preparation_seconds)
     else: native(a.directory.resolve())

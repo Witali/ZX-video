@@ -14,6 +14,25 @@ converter must also support other videos.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
+Latest user clarification: allow **60 seconds** for Spectrum audio
+preparation. This supersedes the earlier39.904-s limit below; retain the
+old raw128 benchmark and measured results as historical evidence. The user
+also permits later decoder optimization. Final PDM >=20 dB, full-source
+preservation and speed within2% remain mandatory.
+
+**Completed delivery:** the [IMA3 waveform disk](audiobook-beeper/IMA3_WAVEFORM.md)
+now measures **20.07106694 dB in both full cold Fuse loops**, on the same
+complete186880-sample source and unchanged comparison filter/clock.
+It retains70080 compressed bytes,93440 resident bytes, all128 KiB RAM,
+progress and looping playback. Native/Fuse all-bit, every preload byte,
+FFmpeg IMA and normal sound capture checks pass. Both phase deltas are0 T,
+speed error is-0.043271%, and normal boot to audio is27.254263 s (<60 s).
+Ordinary playback remains423 T/sample, delta0; silent cycle padding adds2 T.
+Use `ZX-audiobook-IMA3-waveform-test.trd` and the saved completion audit.
+The 20-dB goal is satisfied for this input in Fuse, not certified on physical
+hardware or arbitrary recordings. Reuse the proof; do not repeat tests or
+promote the unexecuted width128 host candidate without a new task reason.
+
 The user made **20 dB final PDM SNR mandatory** after the IMA3 preview,
 then requested Speex. The [Speex audition](audiobook-beeper/SPEEX_STUDY.md)
 is complete on the same full source: fixed-point decoding at 18.2/24.6k
@@ -23,11 +42,10 @@ a 32-byte framing allowance. These are **before PDM**. A verified exact
 Z80 lookup product costs 111 T; synthesis products alone project58.484 s,
 exceeding39.904 s before other work. Reject that strategy, not all possible
 ports. Reuse the saved30 API cases,10 FFmpeg cases and1376146 arithmetic
-checks. No Speex TRD or final20-dB release has been produced. The active
-end-to-end objective remains unmet; keep the original complete source,
-fixed-clock two-loop quality gate, speed and preparation limits.
+checks. No Speex TRD has been produced. The later IMA3 waveform result above
+satisfies the final20-dB objective without claiming a completed Speex port.
 
-The requested independently bootable IMA3 disk is now integrated as a
+The earlier independently bootable IMA3 disk was integrated as a
 [listening preview](audiobook-beeper/IMA3_PRELOAD.md). It expands 70080
 audio bytes into the unchanged 93440-byte resident IMA allocation with
 progress, then loops through the existing PDM player. Cold Fuse expansion
@@ -54,7 +72,7 @@ higher ratios are welcome when sound preservation permits. The user chose
 three-bit IMA and predictive VQ for three Z80 optimization rounds each.
 Keep the [research backlog](audiobook-beeper/CODEC_RESEARCH_BACKLOG.md)
 for other formats. PC encoding complexity is unrestricted. The startup
-budget remains 39.904 s; the 25..30-dB codec quality target is advice.
+budget is now60 s; the 25..30-dB codec quality target is advice.
 
 The follow-up10:1 study is complete; no new decoder is selected for release.
 The best simple VQ at11.107:1 measures14.213dB before IMA,13.744dB after,

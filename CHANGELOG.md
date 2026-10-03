@@ -5,6 +5,54 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: IMA3 waveform disk passes the mandatory 20-dB gate
+
+Preserve the complete original186880-sample source and its hash
+`ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304`.
+Extend PC waveform-aware beam search with the even-nibble IMA3 alphabet,
+including exact silent settling. Keep default four-bit behavior byte-identical
+on the regression fixtures. The selected width32 /64-sample /weight0.1 search
+scores20.208549 dB on the old pilot clock; a newly assembled, calibrated and
+fully executed IMA3 disk confirms **20.07106694 dB in each cold Fuse loop**.
+Baseline was18.171046/18.152640 dB. No fitted delay, gain, source shortening
+or comparison-filter change is used. This meets the user's minimum20-dB
+requirement for the control excerpt in the emulator, not every recording
+or physical hardware.
+
+During the work, the user increases preparation allowance from39.904 to
+**60 s** and permits later decoder optimization. Add an explicit verifier
+limit override while preserving the historical raw128 benchmark. Actual
+cold expansion is1.934749 s; compressed-data ROM reads11.045818 s;
+preloader entry to ready18.683671 s. Normal reset/boot to audio is27.254263 s,
+and the two-loop sound capture lasts46.749410 s with matching paging latches.
+
+Transport remains70080 bytes (+64 sector padding), expanding to93440 IMA
+bytes. The473-sector bootable disk accounts for all131072 RAM bytes and
+uses no full PCM/PDM buffer. Expansion remains285 T/eight samples and
+6896434 native T total, delta0. Ordinary PDM remains423 T/sample, page14 T,
+bank140 T extra, each delta0. Silent calibration uses1273 pairs /69 T pad
+instead of67 T; native cycle79122530 ->79122532 T, delta+2 T. Complete Fuse
+cycles are82891452 T each, phase0/0, speed error-0.043271%.
+
+Each native/cold Fuse playback check covers5985253 outputs and373760
+predictor/index samples. All preload bytes, seven output banks, progress
+steps, RAM guards, loading display and zero runtime disk reads pass.
+Independent FFmpeg verifies all186880 IMA samples. Normal recording checks
+both wraps and audio activity; the recorded disk hash matches the full trace.
+
+A width128 host search started while the full width32 check was pending
+scores20.518986 dB on the pilot schedule. Preserve it as an unexecuted
+candidate; once width32 passes the actual required gate, finish that delivery
+instead of promoting a host-only score. The acceptance margin is0.071 dB,
+so no large-margin or perceptual-transparency claim is made.
+
+Save the separate `ZX-audiobook-IMA3-waveform-test.trd`, normal WAV, complete
+[audit and evidence](audiobook-beeper/experiments/ima-3bit-waveform/completion-audit.json),
+producer snapshots, timings and both host trials. Keep the prior18-dB disk.
+Reproduce with [the commands and methodology](audiobook-beeper/IMA3_WAVEFORM.md).
+Decision: deliver the verified compressed disk; the requested20-dB goal is
+achieved within the new60-s budget. A Speex port remains separate research.
+
 ## 2026-10-03: Speex audition and exact Z80 arithmetic feasibility
 
 After the user makes final PDM SNR >=20 dB mandatory and requests Speex,

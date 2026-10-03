@@ -1,0 +1,36 @@
+                 	
+                 	; Temporary bank5 trampoline: replace the preloader without overwriting
+                 	; any of the seven resident IMA sections, including bank2 B800..BFFF.
+                 	
+8000              	audio_disk: EQU 3335
+8000              	player_disk: EQU 1024
+8000              	chunk_count: EQU 13
+8000              	trampoline_size: EQU 0
+8000              	        INCLUDE "ima3-config.inc"
+6000              	        ORG 0x6000
+6000 F3           	        DI
+6001 31 F0 5F     	        LD SP,0x5FF0
+6004 FD 21 3A 5C  	        LD IY,0x5C3A
+6008 11 00 04     	        LD DE,player_disk
+600B 21 00 80     	        LD HL,0x8000
+600E 06 38        	        LD B,56
+6010 C5           	loop:   PUSH BC
+6011 D5           	        PUSH DE
+6012 E5           	        PUSH HL
+6013 01 05 01     	        LD BC,0x0105
+6016 FB           	        EI
+                 	disk_call:
+6017 CD 13 3D     	        CALL 0x3D13
+601A F3           	        DI
+601B E1           	        POP HL
+601C D1           	        POP DE
+601D C1           	        POP BC
+601E 24           	        INC H
+601F 1C           	        INC E
+6020 CB 63        	        BIT 4,E
+6022 28 03        	        JR Z,sector_ok
+6024 1E 00        	        LD E,0
+6026 14           	        INC D
+                 	sector_ok:
+6027 10 E7        	        DJNZ loop
+6029 C3 00 80     	        JP 0x8000

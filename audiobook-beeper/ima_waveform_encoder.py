@@ -5,11 +5,11 @@ decoder nor proves that a new byte stream retains the pilot's ULA timeline.
 The scoring model is an analog approximation to the existing listening filter;
 the final host score still uses the unchanged FFmpeg measurement pipeline.
 """
-import argparse,gzip,json,time
+import argparse,gzip,hashlib,json,time
 from pathlib import Path
 import numpy as np
 from ima_codec import STEPS,INDEX,decode,require_unclipped
-from ima_beam import encode as encode_pcm
+from ima_beam import encode as encode_pcm,code_alphabet
 from probe_packet_area import context
 from probe_reconstruction_error import wav8,filtered
 from verify_direct import reference
@@ -98,8 +98,10 @@ def prepare(path):
     return meta,t,words,nxt,source,desired,features,ids
 
 
-def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regularization=.1,history_bins=0):
-    steps=np.asarray(STEPS,dtype=np.int64)[:,None];codes=np.arange(16)
+def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regularization=.1,history_bins=0,
+                    allowed_codes=None):
+    codes=code_alphabet(allowed_codes);branches=len(codes)
+    steps=np.asarray(STEPS,dtype=np.int64)[:,None]
     delta=(steps>>3)+steps*((codes&4)!=0)+(steps>>1)*((codes&2)!=0)+(steps>>2)*((codes&1)!=0)
     delta*=np.where(codes&8,-1,1)
     successor=np.clip(np.arange(89)[:,None]+np.asarray(INDEX)[codes&7],0,88)
@@ -110,7 +112,7 @@ def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regul
         for sample in range(start,stop):
             a,l,response,endpoint,weights=features[ids[sample]]
             predicted=(preds[:,None]+delta[indices]).ravel();next_indices=successor[indices].ravel()
-            valid=(predicted>=-32768)&(predicted<=32767);parent=np.repeat(np.arange(len(preds)),16)
+            valid=(predicted>=-32768)&(predicted<=32767);parent=np.repeat(np.arange(len(preds)),branches)
             level=np.clip((predicted+32768)//1024,0,63)
             word_index=level*32+qs[parent]
             observed=(states@l.T)[parent]+response[word_index]
@@ -134,12 +136,12 @@ def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regul
                 order=np.lexsort((candidates,score[candidates],key));ordered=candidates[order]
                 ordered=ordered[np.r_[True,key[order][1:]!=key[order][:-1]]]
             best=ordered[np.lexsort((ordered,score[ordered]))[:width]]
-            paths=paths[parent[best]].copy();paths[:,sample-start]=best%16
+            paths=paths[parent[best]].copy();paths[:,sample-start]=codes[best%branches]
             states=next_filters[best]
             preds,indices,qs,costs=predicted[best],next_indices[best],new_q[best],score[best]
         chosen[start:stop]=paths[0];pred,index,q=int(preds[0]),int(indices[0]),int(qs[0]);filter_state=states[0]
         if stop%16384==0:print(json.dumps(dict(encoded_samples=stop,total_samples=len(source))),flush=True)
-    tail=encode_pcm(np.full(128,128,dtype='u1'),width=32,predictor=pred,index=index)
+    tail=encode_pcm(np.full(128,128,dtype='u1'),width=32,predictor=pred,index=index,allowed_codes=codes)
     tbytes=np.frombuffer(tail,'u1');chosen[-128::2]=tbytes&15;chosen[-127::2]=tbytes>>4
     packed=bytes((chosen[::2]|(chosen[1::2]<<4)).tolist())
     pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)
@@ -154,6 +156,7 @@ def main():
     p.add_argument('--regularization',type=float,default=.1)
     p.add_argument('--prior',choices=('compensated','uniform'),default='compensated')
     p.add_argument('--history-bins',type=int,default=0)
+    p.add_argument('--ima3',action='store_true',help='Restrict every nibble, including the guard, to the exact IMA3 subset')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
     started=time.monotonic();meta,t,words,nxt,source,desired,features,ids=prepare(a.input)
     baseline=gzip.decompress((a.input/'soundtrack.ima.gz').read_bytes());pcm,_=decode(baseline)
@@ -167,7 +170,11 @@ def main():
     baseline_model_snr=10*np.log10(signal/noise)
     print(json.dumps(dict(model_prepared=True,unique_packet_shapes=len(features),baseline_model_snr_db=baseline_model_snr)),flush=True)
     prior=wav8(a.input/'compensated-pcm.wav') if a.prior=='compensated' else source
-    packed=encode_waveform(prior,desired,features,ids,nxt,a.width,regularization=a.regularization,history_bins=a.history_bins)
+    codes=np.arange(0,16,2) if a.ima3 else None
+    packed=encode_waveform(prior,desired,features,ids,nxt,a.width,regularization=a.regularization,
+                           history_bins=a.history_bins,allowed_codes=codes)
+    if a.ima3:
+        assert not np.any(np.frombuffer(packed,'u1')&0x11)
     (a.output/'soundtrack.ima.gz').write_bytes(gzip.compress(packed,mtime=0))
     _,_,_,outbits=reference(packed,cycles=1,model=meta['model'],idle_pairs=meta['loop_idle_pairs'])
     actual=filtered(reconstruct(outbits[:len(t)-1],t),a.ffmpeg)
@@ -177,6 +184,9 @@ def main():
     snr=ratio(ref,actual[4410:-4410]-ref)
     write_wav(a.output/'waveform-preview.wav',actual)
     report=dict(scope=__doc__,input=str(a.input),samples=len(source),beam_width=a.width,
+                allowed_ima_nibbles=code_alphabet(codes).tolist(),ima3_subset=a.ima3,
+                source_sha256=hashlib.sha256(source.tobytes()).hexdigest(),
+                packed_sha256=hashlib.sha256(packed).hexdigest(),
                 merge_rule=('Retain discrete decoder state plus quantized filter history' if a.history_bins else
                             'Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state'),
                 history_bins=a.history_bins,

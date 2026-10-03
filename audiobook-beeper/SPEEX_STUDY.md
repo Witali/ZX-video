@@ -1,5 +1,13 @@
 # Speex audition and Z80 feasibility checkpoint
 
+Later user clarification (2026-10-03): preparation may take **60 seconds**,
+and the decoder can be optimized subsequently. The historical39.904-s
+threshold below is retained with its measurements. The tested product
+strategy alone takes58.484 s, leaving only1.516 s for all other decoding,
+IMA conversion and preparation work under the new limit; it is still not
+a qualified full decoder. The separate [IMA3 waveform disk](IMA3_WAVEFORM.md)
+subsequently meets the final20-dB requirement with fast preparation.
+
 Measured 2026-10-03 at the user's request. This is a complete host codec
 audition and an exact Z80 arithmetic probe, **not a Speex playback TRD**.
 The mandatory final-PDM target remains at least 20 dB in both complete cold
