@@ -5,6 +5,27 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: diagnose packet timing noise; require playback speed within 2%
+
+Resume the 20-dB goal from the verified packet disk. The user rejects its
+9.18% slow playback and permits at most **+/-2%** speed/pitch deviation.
+The existing disk remains an experiment failing that new acceptance gate.
+
+Reuse all 186880 source samples and the saved first-loop Fuse timestamps.
+[Host diagnosis](audiobook-beeper/probe_packet_contention.py) compares five
+duration weight choices without rebuilding a disk. Native/median weights
+reproduce 17.2551 dB. Mean measured ordinary holds yield **17.8286 dB**;
+half/double corrections yield 17.7080/17.6347 dB. Mean weights require
+154/80 code patterns and an estimated 14080-byte resident reserve. These
+are host models on the old trace, not native or Fuse proofs of a new table.
+[Complete measurements](audiobook-beeper/experiments/ima-packet-contention/report.json).
+
+Decision: do not deliver a mean-weight rebuild; the gain is insufficient
+and does not address speed. Reduce the cycle itself and its exposure to
+contended memory before another full bootable candidate. This probe changes
+no player instruction or T-state count. The previous goal turn made concrete
+progress by delivering and verifying the packet disk; 20 dB remains open.
+
 ## 2026-10-02: deliver the bootable compact packet-PDM disk
 
 The user requested a disk with the new output method. Deliver the compact

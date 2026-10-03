@@ -1,5 +1,9 @@
 # Bootable packet PDM experiment
 
+Acceptance update, 2026-10-03: the user requires playback speed/pitch within
+**+/-2%** of the original. This delivered experiment fails that gate as well
+as the 20-dB SNR goal; do not treat it as the accepted final player.
+
 Use [the separate TRD](../ZX-audiobook-IMA-ADPCM-packet-test.trd) with
 Spectrum 128 and Beta Disk/TR-DOS, without turbo. Start the boot program
 (`RUN` in TR-DOS if automatic disk boot is disabled). Loading takes about
