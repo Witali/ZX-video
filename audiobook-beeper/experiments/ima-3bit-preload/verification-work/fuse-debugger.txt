@@ -1,0 +1,2033 @@
+base 10
+set $r 0
+set $bits 0
+set $preloadstage 0
+breakpoint 32899
+commands 1
+print 100
+print spectrum:frames*70908+ula:tstates
+print z80:sp
+set $r 1
+continue
+end
+condition 1 $preloadstage==2
+breakpoint 32809
+commands 2
+print 103
+print spectrum:frames*70908+ula:tstates
+print ula:mem7ffd
+print [55296]
+print [55297]
+print [55298]
+print [55299]
+print [55300]
+print [55301]
+print [55302]
+print [55303]
+print [55304]
+print [55305]
+print [55306]
+print [55307]
+print [55308]
+print [55309]
+print [55310]
+print [55311]
+print [55312]
+print [55313]
+print [55314]
+print [55315]
+print [55316]
+print [55317]
+print [55318]
+print [55319]
+print [55320]
+print [55321]
+print [55322]
+print [55323]
+print [55324]
+print [55325]
+print [55326]
+print [55327]
+print [55328]
+print [55329]
+print [55330]
+print [55331]
+print [55332]
+print [55333]
+print [55334]
+print [55335]
+print [55336]
+print [55337]
+print [55338]
+print [55339]
+print [55340]
+print [55341]
+print [55342]
+print [55343]
+print [55344]
+print [55345]
+print [55346]
+print [55347]
+print [55348]
+print [55349]
+print [55350]
+print [55351]
+print [55352]
+print [55353]
+print [55354]
+print [55355]
+print [55356]
+print [55357]
+print [55358]
+print [55359]
+print [55360]
+print [55361]
+print [55362]
+print [55363]
+print [55364]
+print [55365]
+print [55366]
+print [55367]
+print [55368]
+print [55369]
+print [55370]
+print [55371]
+print [55372]
+print [55373]
+print [55374]
+print [55375]
+print [55376]
+print [55377]
+print [55378]
+print [55379]
+print [55380]
+print [55381]
+print [55382]
+print [55383]
+print [55384]
+print [55385]
+print [55386]
+print [55387]
+print [55388]
+print [55389]
+print [55390]
+print [55391]
+continue
+end
+condition 2 $preloadstage==2
+breakpoint 32850
+commands 3
+print 104
+print spectrum:frames*70908+ula:tstates
+print ula:mem7ffd
+print [55296]
+print [55297]
+print [55298]
+print [55299]
+print [55300]
+print [55301]
+print [55302]
+print [55303]
+print [55304]
+print [55305]
+print [55306]
+print [55307]
+print [55308]
+print [55309]
+print [55310]
+print [55311]
+print [55312]
+print [55313]
+print [55314]
+print [55315]
+print [55316]
+print [55317]
+print [55318]
+print [55319]
+print [55320]
+print [55321]
+print [55322]
+print [55323]
+print [55324]
+print [55325]
+print [55326]
+print [55327]
+print [55328]
+print [55329]
+print [55330]
+print [55331]
+print [55332]
+print [55333]
+print [55334]
+print [55335]
+print [55336]
+print [55337]
+print [55338]
+print [55339]
+print [55340]
+print [55341]
+print [55342]
+print [55343]
+print [55344]
+print [55345]
+print [55346]
+print [55347]
+print [55348]
+print [55349]
+print [55350]
+print [55351]
+print [55352]
+print [55353]
+print [55354]
+print [55355]
+print [55356]
+print [55357]
+print [55358]
+print [55359]
+print [55360]
+print [55361]
+print [55362]
+print [55363]
+print [55364]
+print [55365]
+print [55366]
+print [55367]
+print [55368]
+print [55369]
+print [55370]
+print [55371]
+print [55372]
+print [55373]
+print [55374]
+print [55375]
+print [55376]
+print [55377]
+print [55378]
+print [55379]
+print [55380]
+print [55381]
+print [55382]
+print [55383]
+print [55384]
+print [55385]
+print [55386]
+print [55387]
+print [55388]
+print [55389]
+print [55390]
+print [55391]
+continue
+end
+condition 3 $preloadstage==2
+breakpoint port write 254
+commands 4
+print 140
+print spectrum:frames*70908+ula:tstates
+print z80:pc
+print z80:a
+print z80:d
+print z80:b
+set $bits $bits+1
+continue
+end
+condition 4 $preloadstage==2 && ($r==1)
+breakpoint port write 254
+commands 5
+print 200
+print spectrum:frames*70908+ula:tstates
+exit 77
+end
+condition 5 $preloadstage==2 && ($bits>=5985253)
+breakpoint 33815
+commands 6
+print 120
+print z80:ix
+continue
+end
+condition 6 $preloadstage==2
+breakpoint 33812
+commands 7
+print 121
+print z80:hl
+continue
+end
+condition 7 $preloadstage==2
+breakpoint 33856
+commands 8
+print 120
+print z80:ix
+continue
+end
+condition 8 $preloadstage==2
+breakpoint 33853
+commands 9
+print 121
+print z80:hl
+continue
+end
+condition 9 $preloadstage==2
+breakpoint 33897
+commands 10
+print 120
+print z80:ix
+continue
+end
+condition 10 $preloadstage==2
+breakpoint 33894
+commands 11
+print 121
+print z80:hl
+continue
+end
+condition 11 $preloadstage==2
+breakpoint 33938
+commands 12
+print 120
+print z80:ix
+continue
+end
+condition 12 $preloadstage==2
+breakpoint 33935
+commands 13
+print 121
+print z80:hl
+continue
+end
+condition 13 $preloadstage==2
+breakpoint 33979
+commands 14
+print 120
+print z80:ix
+continue
+end
+condition 14 $preloadstage==2
+breakpoint 33976
+commands 15
+print 121
+print z80:hl
+continue
+end
+condition 15 $preloadstage==2
+breakpoint 34020
+commands 16
+print 120
+print z80:ix
+continue
+end
+condition 16 $preloadstage==2
+breakpoint 34017
+commands 17
+print 121
+print z80:hl
+continue
+end
+condition 17 $preloadstage==2
+breakpoint 34061
+commands 18
+print 120
+print z80:ix
+continue
+end
+condition 18 $preloadstage==2
+breakpoint 34058
+commands 19
+print 121
+print z80:hl
+continue
+end
+condition 19 $preloadstage==2
+breakpoint 34102
+commands 20
+print 120
+print z80:ix
+continue
+end
+condition 20 $preloadstage==2
+breakpoint 34099
+commands 21
+print 121
+print z80:hl
+continue
+end
+condition 21 $preloadstage==2
+breakpoint 34143
+commands 22
+print 120
+print z80:ix
+continue
+end
+condition 22 $preloadstage==2
+breakpoint 34140
+commands 23
+print 121
+print z80:hl
+continue
+end
+condition 23 $preloadstage==2
+breakpoint 34184
+commands 24
+print 120
+print z80:ix
+continue
+end
+condition 24 $preloadstage==2
+breakpoint 34181
+commands 25
+print 121
+print z80:hl
+continue
+end
+condition 25 $preloadstage==2
+breakpoint 34225
+commands 26
+print 120
+print z80:ix
+continue
+end
+condition 26 $preloadstage==2
+breakpoint 34222
+commands 27
+print 121
+print z80:hl
+continue
+end
+condition 27 $preloadstage==2
+breakpoint 34266
+commands 28
+print 120
+print z80:ix
+continue
+end
+condition 28 $preloadstage==2
+breakpoint 34263
+commands 29
+print 121
+print z80:hl
+continue
+end
+condition 29 $preloadstage==2
+breakpoint 34307
+commands 30
+print 120
+print z80:ix
+continue
+end
+condition 30 $preloadstage==2
+breakpoint 34304
+commands 31
+print 121
+print z80:hl
+continue
+end
+condition 31 $preloadstage==2
+breakpoint 34348
+commands 32
+print 120
+print z80:ix
+continue
+end
+condition 32 $preloadstage==2
+breakpoint 34345
+commands 33
+print 121
+print z80:hl
+continue
+end
+condition 33 $preloadstage==2
+breakpoint 34389
+commands 34
+print 120
+print z80:ix
+continue
+end
+condition 34 $preloadstage==2
+breakpoint 34386
+commands 35
+print 121
+print z80:hl
+continue
+end
+condition 35 $preloadstage==2
+breakpoint 34430
+commands 36
+print 120
+print z80:ix
+continue
+end
+condition 36 $preloadstage==2
+breakpoint 34427
+commands 37
+print 121
+print z80:hl
+continue
+end
+condition 37 $preloadstage==2
+breakpoint 34471
+commands 38
+print 120
+print z80:ix
+continue
+end
+condition 38 $preloadstage==2
+breakpoint 34468
+commands 39
+print 121
+print z80:hl
+continue
+end
+condition 39 $preloadstage==2
+breakpoint 34512
+commands 40
+print 120
+print z80:ix
+continue
+end
+condition 40 $preloadstage==2
+breakpoint 34509
+commands 41
+print 121
+print z80:hl
+continue
+end
+condition 41 $preloadstage==2
+breakpoint 34553
+commands 42
+print 120
+print z80:ix
+continue
+end
+condition 42 $preloadstage==2
+breakpoint 34550
+commands 43
+print 121
+print z80:hl
+continue
+end
+condition 43 $preloadstage==2
+breakpoint 34594
+commands 44
+print 120
+print z80:ix
+continue
+end
+condition 44 $preloadstage==2
+breakpoint 34591
+commands 45
+print 121
+print z80:hl
+continue
+end
+condition 45 $preloadstage==2
+breakpoint 34635
+commands 46
+print 120
+print z80:ix
+continue
+end
+condition 46 $preloadstage==2
+breakpoint 34632
+commands 47
+print 121
+print z80:hl
+continue
+end
+condition 47 $preloadstage==2
+breakpoint 34676
+commands 48
+print 120
+print z80:ix
+continue
+end
+condition 48 $preloadstage==2
+breakpoint 34673
+commands 49
+print 121
+print z80:hl
+continue
+end
+condition 49 $preloadstage==2
+breakpoint 34717
+commands 50
+print 120
+print z80:ix
+continue
+end
+condition 50 $preloadstage==2
+breakpoint 34714
+commands 51
+print 121
+print z80:hl
+continue
+end
+condition 51 $preloadstage==2
+breakpoint 34758
+commands 52
+print 120
+print z80:ix
+continue
+end
+condition 52 $preloadstage==2
+breakpoint 34755
+commands 53
+print 121
+print z80:hl
+continue
+end
+condition 53 $preloadstage==2
+breakpoint 34799
+commands 54
+print 120
+print z80:ix
+continue
+end
+condition 54 $preloadstage==2
+breakpoint 34796
+commands 55
+print 121
+print z80:hl
+continue
+end
+condition 55 $preloadstage==2
+breakpoint 34840
+commands 56
+print 120
+print z80:ix
+continue
+end
+condition 56 $preloadstage==2
+breakpoint 34837
+commands 57
+print 121
+print z80:hl
+continue
+end
+condition 57 $preloadstage==2
+breakpoint 34881
+commands 58
+print 120
+print z80:ix
+continue
+end
+condition 58 $preloadstage==2
+breakpoint 34878
+commands 59
+print 121
+print z80:hl
+continue
+end
+condition 59 $preloadstage==2
+breakpoint 34922
+commands 60
+print 120
+print z80:ix
+continue
+end
+condition 60 $preloadstage==2
+breakpoint 34919
+commands 61
+print 121
+print z80:hl
+continue
+end
+condition 61 $preloadstage==2
+breakpoint 34963
+commands 62
+print 120
+print z80:ix
+continue
+end
+condition 62 $preloadstage==2
+breakpoint 34960
+commands 63
+print 121
+print z80:hl
+continue
+end
+condition 63 $preloadstage==2
+breakpoint 35004
+commands 64
+print 120
+print z80:ix
+continue
+end
+condition 64 $preloadstage==2
+breakpoint 35001
+commands 65
+print 121
+print z80:hl
+continue
+end
+condition 65 $preloadstage==2
+breakpoint 35045
+commands 66
+print 120
+print z80:ix
+continue
+end
+condition 66 $preloadstage==2
+breakpoint 35042
+commands 67
+print 121
+print z80:hl
+continue
+end
+condition 67 $preloadstage==2
+breakpoint 35086
+commands 68
+print 120
+print z80:ix
+continue
+end
+condition 68 $preloadstage==2
+breakpoint 35083
+commands 69
+print 121
+print z80:hl
+continue
+end
+condition 69 $preloadstage==2
+breakpoint 35127
+commands 70
+print 120
+print z80:ix
+continue
+end
+condition 70 $preloadstage==2
+breakpoint 35124
+commands 71
+print 121
+print z80:hl
+continue
+end
+condition 71 $preloadstage==2
+breakpoint 35168
+commands 72
+print 120
+print z80:ix
+continue
+end
+condition 72 $preloadstage==2
+breakpoint 35165
+commands 73
+print 121
+print z80:hl
+continue
+end
+condition 73 $preloadstage==2
+breakpoint 35209
+commands 74
+print 120
+print z80:ix
+continue
+end
+condition 74 $preloadstage==2
+breakpoint 35206
+commands 75
+print 121
+print z80:hl
+continue
+end
+condition 75 $preloadstage==2
+breakpoint 35250
+commands 76
+print 120
+print z80:ix
+continue
+end
+condition 76 $preloadstage==2
+breakpoint 35247
+commands 77
+print 121
+print z80:hl
+continue
+end
+condition 77 $preloadstage==2
+breakpoint 35291
+commands 78
+print 120
+print z80:ix
+continue
+end
+condition 78 $preloadstage==2
+breakpoint 35288
+commands 79
+print 121
+print z80:hl
+continue
+end
+condition 79 $preloadstage==2
+breakpoint 35332
+commands 80
+print 120
+print z80:ix
+continue
+end
+condition 80 $preloadstage==2
+breakpoint 35329
+commands 81
+print 121
+print z80:hl
+continue
+end
+condition 81 $preloadstage==2
+breakpoint 35373
+commands 82
+print 120
+print z80:ix
+continue
+end
+condition 82 $preloadstage==2
+breakpoint 35370
+commands 83
+print 121
+print z80:hl
+continue
+end
+condition 83 $preloadstage==2
+breakpoint 35414
+commands 84
+print 120
+print z80:ix
+continue
+end
+condition 84 $preloadstage==2
+breakpoint 35411
+commands 85
+print 121
+print z80:hl
+continue
+end
+condition 85 $preloadstage==2
+breakpoint 35455
+commands 86
+print 120
+print z80:ix
+continue
+end
+condition 86 $preloadstage==2
+breakpoint 35452
+commands 87
+print 121
+print z80:hl
+continue
+end
+condition 87 $preloadstage==2
+breakpoint 35496
+commands 88
+print 120
+print z80:ix
+continue
+end
+condition 88 $preloadstage==2
+breakpoint 35493
+commands 89
+print 121
+print z80:hl
+continue
+end
+condition 89 $preloadstage==2
+breakpoint 35537
+commands 90
+print 120
+print z80:ix
+continue
+end
+condition 90 $preloadstage==2
+breakpoint 35534
+commands 91
+print 121
+print z80:hl
+continue
+end
+condition 91 $preloadstage==2
+breakpoint 35578
+commands 92
+print 120
+print z80:ix
+continue
+end
+condition 92 $preloadstage==2
+breakpoint 35575
+commands 93
+print 121
+print z80:hl
+continue
+end
+condition 93 $preloadstage==2
+breakpoint 35619
+commands 94
+print 120
+print z80:ix
+continue
+end
+condition 94 $preloadstage==2
+breakpoint 35616
+commands 95
+print 121
+print z80:hl
+continue
+end
+condition 95 $preloadstage==2
+breakpoint 35660
+commands 96
+print 120
+print z80:ix
+continue
+end
+condition 96 $preloadstage==2
+breakpoint 35657
+commands 97
+print 121
+print z80:hl
+continue
+end
+condition 97 $preloadstage==2
+breakpoint 35701
+commands 98
+print 120
+print z80:ix
+continue
+end
+condition 98 $preloadstage==2
+breakpoint 35698
+commands 99
+print 121
+print z80:hl
+continue
+end
+condition 99 $preloadstage==2
+breakpoint 35742
+commands 100
+print 120
+print z80:ix
+continue
+end
+condition 100 $preloadstage==2
+breakpoint 35739
+commands 101
+print 121
+print z80:hl
+continue
+end
+condition 101 $preloadstage==2
+breakpoint 35783
+commands 102
+print 120
+print z80:ix
+continue
+end
+condition 102 $preloadstage==2
+breakpoint 35780
+commands 103
+print 121
+print z80:hl
+continue
+end
+condition 103 $preloadstage==2
+breakpoint 35824
+commands 104
+print 120
+print z80:ix
+continue
+end
+condition 104 $preloadstage==2
+breakpoint 35821
+commands 105
+print 121
+print z80:hl
+continue
+end
+condition 105 $preloadstage==2
+breakpoint 35865
+commands 106
+print 120
+print z80:ix
+continue
+end
+condition 106 $preloadstage==2
+breakpoint 35862
+commands 107
+print 121
+print z80:hl
+continue
+end
+condition 107 $preloadstage==2
+breakpoint 35906
+commands 108
+print 120
+print z80:ix
+continue
+end
+condition 108 $preloadstage==2
+breakpoint 35903
+commands 109
+print 121
+print z80:hl
+continue
+end
+condition 109 $preloadstage==2
+breakpoint 35947
+commands 110
+print 120
+print z80:ix
+continue
+end
+condition 110 $preloadstage==2
+breakpoint 35944
+commands 111
+print 121
+print z80:hl
+continue
+end
+condition 111 $preloadstage==2
+breakpoint 35988
+commands 112
+print 120
+print z80:ix
+continue
+end
+condition 112 $preloadstage==2
+breakpoint 35985
+commands 113
+print 121
+print z80:hl
+continue
+end
+condition 113 $preloadstage==2
+breakpoint 36029
+commands 114
+print 120
+print z80:ix
+continue
+end
+condition 114 $preloadstage==2
+breakpoint 36026
+commands 115
+print 121
+print z80:hl
+continue
+end
+condition 115 $preloadstage==2
+breakpoint 36070
+commands 116
+print 120
+print z80:ix
+continue
+end
+condition 116 $preloadstage==2
+breakpoint 36067
+commands 117
+print 121
+print z80:hl
+continue
+end
+condition 117 $preloadstage==2
+breakpoint 36111
+commands 118
+print 120
+print z80:ix
+continue
+end
+condition 118 $preloadstage==2
+breakpoint 36108
+commands 119
+print 121
+print z80:hl
+continue
+end
+condition 119 $preloadstage==2
+breakpoint 36152
+commands 120
+print 120
+print z80:ix
+continue
+end
+condition 120 $preloadstage==2
+breakpoint 36149
+commands 121
+print 121
+print z80:hl
+continue
+end
+condition 121 $preloadstage==2
+breakpoint 36193
+commands 122
+print 120
+print z80:ix
+continue
+end
+condition 122 $preloadstage==2
+breakpoint 36190
+commands 123
+print 121
+print z80:hl
+continue
+end
+condition 123 $preloadstage==2
+breakpoint 36234
+commands 124
+print 120
+print z80:ix
+continue
+end
+condition 124 $preloadstage==2
+breakpoint 36231
+commands 125
+print 121
+print z80:hl
+continue
+end
+condition 125 $preloadstage==2
+breakpoint 36275
+commands 126
+print 120
+print z80:ix
+continue
+end
+condition 126 $preloadstage==2
+breakpoint 36272
+commands 127
+print 121
+print z80:hl
+continue
+end
+condition 127 $preloadstage==2
+breakpoint 36316
+commands 128
+print 120
+print z80:ix
+continue
+end
+condition 128 $preloadstage==2
+breakpoint 36313
+commands 129
+print 121
+print z80:hl
+continue
+end
+condition 129 $preloadstage==2
+breakpoint 36357
+commands 130
+print 120
+print z80:ix
+continue
+end
+condition 130 $preloadstage==2
+breakpoint 36354
+commands 131
+print 121
+print z80:hl
+continue
+end
+condition 131 $preloadstage==2
+breakpoint 36398
+commands 132
+print 120
+print z80:ix
+continue
+end
+condition 132 $preloadstage==2
+breakpoint 36395
+commands 133
+print 121
+print z80:hl
+continue
+end
+condition 133 $preloadstage==2
+breakpoint 36439
+commands 134
+print 120
+print z80:ix
+continue
+end
+condition 134 $preloadstage==2
+breakpoint 36436
+commands 135
+print 121
+print z80:hl
+continue
+end
+condition 135 $preloadstage==2
+breakpoint 36480
+commands 136
+print 120
+print z80:ix
+continue
+end
+condition 136 $preloadstage==2
+breakpoint 36477
+commands 137
+print 121
+print z80:hl
+continue
+end
+condition 137 $preloadstage==2
+breakpoint 36521
+commands 138
+print 120
+print z80:ix
+continue
+end
+condition 138 $preloadstage==2
+breakpoint 36518
+commands 139
+print 121
+print z80:hl
+continue
+end
+condition 139 $preloadstage==2
+breakpoint 36562
+commands 140
+print 120
+print z80:ix
+continue
+end
+condition 140 $preloadstage==2
+breakpoint 36559
+commands 141
+print 121
+print z80:hl
+continue
+end
+condition 141 $preloadstage==2
+breakpoint 36603
+commands 142
+print 120
+print z80:ix
+continue
+end
+condition 142 $preloadstage==2
+breakpoint 36600
+commands 143
+print 121
+print z80:hl
+continue
+end
+condition 143 $preloadstage==2
+breakpoint 36644
+commands 144
+print 120
+print z80:ix
+continue
+end
+condition 144 $preloadstage==2
+breakpoint 36641
+commands 145
+print 121
+print z80:hl
+continue
+end
+condition 145 $preloadstage==2
+breakpoint 36685
+commands 146
+print 120
+print z80:ix
+continue
+end
+condition 146 $preloadstage==2
+breakpoint 36682
+commands 147
+print 121
+print z80:hl
+continue
+end
+condition 147 $preloadstage==2
+breakpoint 36726
+commands 148
+print 120
+print z80:ix
+continue
+end
+condition 148 $preloadstage==2
+breakpoint 36723
+commands 149
+print 121
+print z80:hl
+continue
+end
+condition 149 $preloadstage==2
+breakpoint 36767
+commands 150
+print 120
+print z80:ix
+continue
+end
+condition 150 $preloadstage==2
+breakpoint 36764
+commands 151
+print 121
+print z80:hl
+continue
+end
+condition 151 $preloadstage==2
+breakpoint 36808
+commands 152
+print 120
+print z80:ix
+continue
+end
+condition 152 $preloadstage==2
+breakpoint 36805
+commands 153
+print 121
+print z80:hl
+continue
+end
+condition 153 $preloadstage==2
+breakpoint 36849
+commands 154
+print 120
+print z80:ix
+continue
+end
+condition 154 $preloadstage==2
+breakpoint 36846
+commands 155
+print 121
+print z80:hl
+continue
+end
+condition 155 $preloadstage==2
+breakpoint 36890
+commands 156
+print 120
+print z80:ix
+continue
+end
+condition 156 $preloadstage==2
+breakpoint 36887
+commands 157
+print 121
+print z80:hl
+continue
+end
+condition 157 $preloadstage==2
+breakpoint 36931
+commands 158
+print 120
+print z80:ix
+continue
+end
+condition 158 $preloadstage==2
+breakpoint 36928
+commands 159
+print 121
+print z80:hl
+continue
+end
+condition 159 $preloadstage==2
+breakpoint 36972
+commands 160
+print 120
+print z80:ix
+continue
+end
+condition 160 $preloadstage==2
+breakpoint 36969
+commands 161
+print 121
+print z80:hl
+continue
+end
+condition 161 $preloadstage==2
+breakpoint 37013
+commands 162
+print 120
+print z80:ix
+continue
+end
+condition 162 $preloadstage==2
+breakpoint 37010
+commands 163
+print 121
+print z80:hl
+continue
+end
+condition 163 $preloadstage==2
+breakpoint 37054
+commands 164
+print 120
+print z80:ix
+continue
+end
+condition 164 $preloadstage==2
+breakpoint 37051
+commands 165
+print 121
+print z80:hl
+continue
+end
+condition 165 $preloadstage==2
+breakpoint 37095
+commands 166
+print 120
+print z80:ix
+continue
+end
+condition 166 $preloadstage==2
+breakpoint 37092
+commands 167
+print 121
+print z80:hl
+continue
+end
+condition 167 $preloadstage==2
+breakpoint 37136
+commands 168
+print 120
+print z80:ix
+continue
+end
+condition 168 $preloadstage==2
+breakpoint 37133
+commands 169
+print 121
+print z80:hl
+continue
+end
+condition 169 $preloadstage==2
+breakpoint 37177
+commands 170
+print 120
+print z80:ix
+continue
+end
+condition 170 $preloadstage==2
+breakpoint 37174
+commands 171
+print 121
+print z80:hl
+continue
+end
+condition 171 $preloadstage==2
+breakpoint 37218
+commands 172
+print 120
+print z80:ix
+continue
+end
+condition 172 $preloadstage==2
+breakpoint 37215
+commands 173
+print 121
+print z80:hl
+continue
+end
+condition 173 $preloadstage==2
+breakpoint 37259
+commands 174
+print 120
+print z80:ix
+continue
+end
+condition 174 $preloadstage==2
+breakpoint 37256
+commands 175
+print 121
+print z80:hl
+continue
+end
+condition 175 $preloadstage==2
+breakpoint 37300
+commands 176
+print 120
+print z80:ix
+continue
+end
+condition 176 $preloadstage==2
+breakpoint 37297
+commands 177
+print 121
+print z80:hl
+continue
+end
+condition 177 $preloadstage==2
+breakpoint 37341
+commands 178
+print 120
+print z80:ix
+continue
+end
+condition 178 $preloadstage==2
+breakpoint 37338
+commands 179
+print 121
+print z80:hl
+continue
+end
+condition 179 $preloadstage==2
+breakpoint 37382
+commands 180
+print 120
+print z80:ix
+continue
+end
+condition 180 $preloadstage==2
+breakpoint 37379
+commands 181
+print 121
+print z80:hl
+continue
+end
+condition 181 $preloadstage==2
+breakpoint 37423
+commands 182
+print 120
+print z80:ix
+continue
+end
+condition 182 $preloadstage==2
+breakpoint 37420
+commands 183
+print 121
+print z80:hl
+continue
+end
+condition 183 $preloadstage==2
+breakpoint 37464
+commands 184
+print 120
+print z80:ix
+continue
+end
+condition 184 $preloadstage==2
+breakpoint 37461
+commands 185
+print 121
+print z80:hl
+continue
+end
+condition 185 $preloadstage==2
+breakpoint 37505
+commands 186
+print 120
+print z80:ix
+continue
+end
+condition 186 $preloadstage==2
+breakpoint 37502
+commands 187
+print 121
+print z80:hl
+continue
+end
+condition 187 $preloadstage==2
+breakpoint 37546
+commands 188
+print 120
+print z80:ix
+continue
+end
+condition 188 $preloadstage==2
+breakpoint 37543
+commands 189
+print 121
+print z80:hl
+continue
+end
+condition 189 $preloadstage==2
+breakpoint 37587
+commands 190
+print 120
+print z80:ix
+continue
+end
+condition 190 $preloadstage==2
+breakpoint 37584
+commands 191
+print 121
+print z80:hl
+continue
+end
+condition 191 $preloadstage==2
+breakpoint 37628
+commands 192
+print 120
+print z80:ix
+continue
+end
+condition 192 $preloadstage==2
+breakpoint 37625
+commands 193
+print 121
+print z80:hl
+continue
+end
+condition 193 $preloadstage==2
+breakpoint 37669
+commands 194
+print 120
+print z80:ix
+continue
+end
+condition 194 $preloadstage==2
+breakpoint 37666
+commands 195
+print 121
+print z80:hl
+continue
+end
+condition 195 $preloadstage==2
+breakpoint 37710
+commands 196
+print 120
+print z80:ix
+continue
+end
+condition 196 $preloadstage==2
+breakpoint 37707
+commands 197
+print 121
+print z80:hl
+continue
+end
+condition 197 $preloadstage==2
+breakpoint 37751
+commands 198
+print 120
+print z80:ix
+continue
+end
+condition 198 $preloadstage==2
+breakpoint 37748
+commands 199
+print 121
+print z80:hl
+continue
+end
+condition 199 $preloadstage==2
+breakpoint 37792
+commands 200
+print 120
+print z80:ix
+continue
+end
+condition 200 $preloadstage==2
+breakpoint 37789
+commands 201
+print 121
+print z80:hl
+continue
+end
+condition 201 $preloadstage==2
+breakpoint 37833
+commands 202
+print 120
+print z80:ix
+continue
+end
+condition 202 $preloadstage==2
+breakpoint 37830
+commands 203
+print 121
+print z80:hl
+continue
+end
+condition 203 $preloadstage==2
+breakpoint 37874
+commands 204
+print 120
+print z80:ix
+continue
+end
+condition 204 $preloadstage==2
+breakpoint 37871
+commands 205
+print 121
+print z80:hl
+continue
+end
+condition 205 $preloadstage==2
+breakpoint 37915
+commands 206
+print 120
+print z80:ix
+continue
+end
+condition 206 $preloadstage==2
+breakpoint 37912
+commands 207
+print 121
+print z80:hl
+continue
+end
+condition 207 $preloadstage==2
+breakpoint 37956
+commands 208
+print 120
+print z80:ix
+continue
+end
+condition 208 $preloadstage==2
+breakpoint 37953
+commands 209
+print 121
+print z80:hl
+continue
+end
+condition 209 $preloadstage==2
+breakpoint 37997
+commands 210
+print 120
+print z80:ix
+continue
+end
+condition 210 $preloadstage==2
+breakpoint 37994
+commands 211
+print 121
+print z80:hl
+continue
+end
+condition 211 $preloadstage==2
+breakpoint 38038
+commands 212
+print 120
+print z80:ix
+continue
+end
+condition 212 $preloadstage==2
+breakpoint 38035
+commands 213
+print 121
+print z80:hl
+continue
+end
+condition 213 $preloadstage==2
+breakpoint 38079
+commands 214
+print 120
+print z80:ix
+continue
+end
+condition 214 $preloadstage==2
+breakpoint 38076
+commands 215
+print 121
+print z80:hl
+continue
+end
+condition 215 $preloadstage==2
+breakpoint 38120
+commands 216
+print 120
+print z80:ix
+continue
+end
+condition 216 $preloadstage==2
+breakpoint 38117
+commands 217
+print 121
+print z80:hl
+continue
+end
+condition 217 $preloadstage==2
+breakpoint 38161
+commands 218
+print 120
+print z80:ix
+continue
+end
+condition 218 $preloadstage==2
+breakpoint 38158
+commands 219
+print 121
+print z80:hl
+continue
+end
+condition 219 $preloadstage==2
+breakpoint 38202
+commands 220
+print 120
+print z80:ix
+continue
+end
+condition 220 $preloadstage==2
+breakpoint 38199
+commands 221
+print 121
+print z80:hl
+continue
+end
+condition 221 $preloadstage==2
+breakpoint 38243
+commands 222
+print 120
+print z80:ix
+continue
+end
+condition 222 $preloadstage==2
+breakpoint 38240
+commands 223
+print 121
+print z80:hl
+continue
+end
+condition 223 $preloadstage==2
+breakpoint 38284
+commands 224
+print 120
+print z80:ix
+continue
+end
+condition 224 $preloadstage==2
+breakpoint 38281
+commands 225
+print 121
+print z80:hl
+continue
+end
+condition 225 $preloadstage==2
+breakpoint 38325
+commands 226
+print 120
+print z80:ix
+continue
+end
+condition 226 $preloadstage==2
+breakpoint 38322
+commands 227
+print 121
+print z80:hl
+continue
+end
+condition 227 $preloadstage==2
+breakpoint 38366
+commands 228
+print 120
+print z80:ix
+continue
+end
+condition 228 $preloadstage==2
+breakpoint 38363
+commands 229
+print 121
+print z80:hl
+continue
+end
+condition 229 $preloadstage==2
+breakpoint 38407
+commands 230
+print 120
+print z80:ix
+continue
+end
+condition 230 $preloadstage==2
+breakpoint 38404
+commands 231
+print 121
+print z80:hl
+continue
+end
+condition 231 $preloadstage==2
+breakpoint 38448
+commands 232
+print 120
+print z80:ix
+continue
+end
+condition 232 $preloadstage==2
+breakpoint 38445
+commands 233
+print 121
+print z80:hl
+continue
+end
+condition 233 $preloadstage==2
+breakpoint 38489
+commands 234
+print 120
+print z80:ix
+continue
+end
+condition 234 $preloadstage==2
+breakpoint 38486
+commands 235
+print 121
+print z80:hl
+continue
+end
+condition 235 $preloadstage==2
+breakpoint 38530
+commands 236
+print 120
+print z80:ix
+continue
+end
+condition 236 $preloadstage==2
+breakpoint 38527
+commands 237
+print 121
+print z80:hl
+continue
+end
+condition 237 $preloadstage==2
+breakpoint 38571
+commands 238
+print 120
+print z80:ix
+continue
+end
+condition 238 $preloadstage==2
+breakpoint 38568
+commands 239
+print 121
+print z80:hl
+continue
+end
+condition 239 $preloadstage==2
+breakpoint 38612
+commands 240
+print 120
+print z80:ix
+continue
+end
+condition 240 $preloadstage==2
+breakpoint 38609
+commands 241
+print 121
+print z80:hl
+continue
+end
+condition 241 $preloadstage==2
+breakpoint 38653
+commands 242
+print 120
+print z80:ix
+continue
+end
+condition 242 $preloadstage==2
+breakpoint 38650
+commands 243
+print 121
+print z80:hl
+continue
+end
+condition 243 $preloadstage==2
+breakpoint 38694
+commands 244
+print 120
+print z80:ix
+continue
+end
+condition 244 $preloadstage==2
+breakpoint 38691
+commands 245
+print 121
+print z80:hl
+continue
+end
+condition 245 $preloadstage==2
+breakpoint 38735
+commands 246
+print 120
+print z80:ix
+continue
+end
+condition 246 $preloadstage==2
+breakpoint 38732
+commands 247
+print 121
+print z80:hl
+continue
+end
+condition 247 $preloadstage==2
+breakpoint 38776
+commands 248
+print 120
+print z80:ix
+continue
+end
+condition 248 $preloadstage==2
+breakpoint 38773
+commands 249
+print 121
+print z80:hl
+continue
+end
+condition 249 $preloadstage==2
+breakpoint 32997
+commands 250
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+condition 250 $preloadstage==2
+breakpoint 33023
+commands 251
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+condition 251 $preloadstage==2
+breakpoint 33049
+commands 252
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+condition 252 $preloadstage==2
+breakpoint 33075
+commands 253
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+condition 253 $preloadstage==2
+breakpoint 33101
+commands 254
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+condition 254 $preloadstage==2
+breakpoint 33127
+commands 255
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+condition 255 $preloadstage==2
+breakpoint 33153
+commands 256
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+condition 256 $preloadstage==2
+breakpoint 33272
+commands 257
+print 102
+print $r
+print spectrum:frames*70908+ula:tstates
+print ula:mem7ffd
+print z80:sp
+continue
+end
+condition 257 $preloadstage==2
+breakpoint 32887
+condition 258 $preloadstage==0
+commands 258
+set $preloadstage 1
+continue
+end
+breakpoint 32768
+condition 259 $preloadstage==1
+commands 259
+set $preloadstage 2
+continue
+end

@@ -5,6 +5,53 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: bootable IMA3 preload disk and voice-timing correction
+
+Create the requested new-compression TRD on the unchanged full 186880-sample
+8-kHz control. Store 70080 bytes of the even-nibble IMA3 subset, plus 64
+sector-padding bytes, and expand thirteen blocks through a 6144-byte buffer
+into all 93440 resident IMA bytes. Preserve independent cold boot, seven-bank
+allocation, progress bars, disappearing loading message and looping PDM.
+Occupied file sectors fall from 517 to 473 including the new preloader:
+25% audio-payload saving, but 44 sectors / 11264 bytes net disk saving.
+
+The final full native preloader costs 6896434 T, 238504 T more than the
+standalone round-3 benchmark; its expansion core remains 285 T/eight samples.
+Cold Fuse checks every expanded byte and all progress steps. Real compressed
+data ROM service is 11.064859 s, expansion is 1.935179 s including ULA,
+and preloader entry to player-ready is 18.720633 s. Initial BASIC/bootstrap
+loading precedes that interval. Conversion is within the 39.903992-s limit.
+
+The uncorrected pilot passes full native/Fuse bits but fails fixed-clock
+fidelity at -3.004 dB; its warped-reference score is 18.522 dB. The user
+hears added voice vibration during its normal-speed recording. Apply the
+existing Lanczos timing compensation on PC, re-encode IMA3 with beam32,
+freeze the hot-row layout and recalibrate. The new complete traces measure
+18.171/18.153 dB at -0.04327% speed error. This improves the timing-related
+error; it is not a claim of perceptual transparency or attainment of 20 dB.
+Keep the pilot reports and recording for comparison instead of discarding
+the unsuccessful first result.
+
+For each final playback check, verify all 5985253 outputs and 373760
+predictors/indices over two loops, exact native timing, paging and RAM guards.
+FFmpeg independently reproduces all 186880 IMA samples. Actual Fuse cycles
+are 82891450/82891452 T (-2/0 T from 1169 fields). Native playback remains
+423 T/sample, +14 T/page and +140 T/bank, each delta0. The final silent tail
+uses 1273 pairs and 67 T padding; cycle79122530 T is 2 T below the pilot.
+The final normal-speed capture checks both wraps, paging and audio activity.
+
+An initial full-trace run pauses in the debugger before execution because
+Fuse rejects underscores in variable names. Confirm with a minimal parser
+probe, stop only the owned process, rename the variable and rerun fully.
+This is a harness failure, not a player failure. Preserve the correction
+in both the all-bit verifier and the audio recorder.
+
+Deliver this as a listening preview, not a 20-dB release or a physical
+hardware qualification. Keep the higher-fidelity four-bit player as the
+existing quality reference. See [IMA3_PRELOAD.md](audiobook-beeper/IMA3_PRELOAD.md),
+its scripts, archived reports and WAVs. No claim of longer resident playback
+follows from the smaller disk payload.
+
 ## 2026-10-03: three native optimization rounds each for IMA3 and PVQ3
 
 Under the relaxed 5:1..10:1 preference, optimize only the user-selected

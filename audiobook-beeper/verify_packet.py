@@ -140,6 +140,9 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
     count=33 if probe else len(expected)
     work=out/('fuse-probe' if probe else 'verification-work');work.mkdir(exist_ok=True)
     lines=['base 10','set $r 0','set $bits 0'];widths={};eid=0
+    preload=meta.get('preload',meta.get('lpc_preload'))
+    # Fuse debugger identifiers accept letters/digits, not underscores.
+    if preload:lines.append('set $preloadstage 0')
     stamp='spectrum:frames*70908+ula:tstates'
     def event(where,tag,expressions,after=(),condition='',stop=False):
         nonlocal eid
@@ -147,6 +150,7 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
         lines.extend([f'breakpoint {where}',f'commands {eid}',f'print {tag}'])
         lines.extend('print '+s for s in expressions);lines.extend(after)
         lines.extend(['exit 77' if stop else 'continue','end'])
+        if preload:condition='$preloadstage==2'+(' && ('+condition+')' if condition else '')
         if condition:lines.append(f'condition {eid} {condition}')
     event(labels['ready'],100,[stamp,'z80:sp'],['set $r 1'])
     attrs=[f'[{0xd800+i}]' for i in range(96)]
@@ -160,6 +164,12 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
             event(address+20,121,['z80:hl'])
     for i in range(7):event(labels[f'page_{i}']+2,150,['z80:a','ula:mem7ffd','ula:mem1ffd'])
     event(labels['disk_call'],102,['$r',stamp,'ula:mem7ffd','z80:sp'])
+    if preload:
+        handoff=preload['labels'].get('handoff',preload['labels']['unpack_complete'])
+        lines += [f'breakpoint {handoff}',f'condition {eid+1} $preloadstage==0',f'commands {eid+1}',
+                  'set $preloadstage 1','continue','end','breakpoint 32768',
+                  f'condition {eid+2} $preloadstage==1',f'commands {eid+2}',
+                  'set $preloadstage 2','continue','end']
     script='\n'.join(lines);(work/'fuse-debugger.txt').write_text(script,encoding='utf-8',newline='\n')
     command=[str(fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions','--speed','10000',
              '--machine','128','--beta128','--debugger-command',script,str((out/'audiobook-preview.trd').resolve())]
@@ -207,10 +217,12 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
     wanted=[s['bank']+24 for s in meta['sections'][1:]+meta['sections'][:1]]*2
     assert len(pages)==len(wanted) and all(r[0]==r[1]==b for r,b in zip(pages,wanted))
     assert len({r[2] for r in pages})==1
-    assert len(reads)==meta.get('preload_table_sectors',55)+len(packed)//256 and all(r[0]==0 and r[2]&8 and 0x5f00<=r[3]<0x6000 for r in reads)
+    assert len(reads)==meta.get('playback_preload_sector_reads',meta.get('preload_table_sectors',55)+len(packed)//256) and all(r[0]==0 and r[2]&8 and 0x5f00<=r[3]<0x6000 for r in reads)
     assert len(shown)==len(hidden)==1 and shown[0][1]==hidden[0][1]==31
     assert shown[0][2:]==[0x47]*96 and hidden[0][2:]==[0]*96
-    assert all(shown[0][0]<=r[1]<hidden[0][0]<ready[0][0] for r in reads)
+    display_reads=meta.get('loading_display_sector_reads',0)
+    assert all(r[1]<shown[0][0] for r in reads[:display_reads])
+    assert all(shown[0][0]<=r[1]<hidden[0][0]<ready[0][0] for r in reads[display_reads:])
     timeline=np.asarray(times,dtype=np.int64);timeline-=timeline[0]
     actual=np.diff(timeline);native=np.tile(intervals_fn(meta),2)
     assert np.all(actual>=native)
@@ -225,7 +237,9 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
                 maximum_hold_tstates=int(actual.max()),minimum_instantaneous_pdm_rate_hz=CPU_CLOCK/int(actual.max()),
                 additional_ula_tstates=int(actual.sum()-native.sum()),native_tstates_per_cycle=int(native[:n].sum()),
                 interval_histogram_tstates=dict(sorted(Counter(map(int,actual)).items())),
-                loading_message=dict(shown_before_reads=True,hidden_before_playback=True,shadow_screen_selected_during_all_reads=True),
+                loading_message=dict(shown_before_reads=display_reads==0,shown_before_table_and_payload_reads=True,
+                                     display_sector_reads_before_message=display_reads,
+                                     hidden_before_playback=True,shadow_screen_selected_during_all_reads=True),
                 trd_sha256=hashlib.sha256((out/'audiobook-preview.trd').read_bytes()).hexdigest(),
                 fuse_sha256=hashlib.sha256(fuse.read_bytes()).hexdigest(),physical_hardware_tested=False)
 

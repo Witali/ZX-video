@@ -14,15 +14,27 @@ converter must also support other videos.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
+The requested independently bootable IMA3 disk is now integrated as a
+[listening preview](audiobook-beeper/IMA3_PRELOAD.md). It expands 70080
+audio bytes into the unchanged 93440-byte resident IMA allocation with
+progress, then loops through the existing PDM player. Cold Fuse expansion
+takes 1.935179 s; full native and two-loop cold-Fuse checks pass. The user
+reported vibration in the first uncorrected test; PC timing compensation
+raises fixed-clock SNR from -3.004 to 18.171/18.153 dB. Speed error is
+-0.04327%; final phase deltas are -2/0 T. It remains below the 20-dB goal;
+do not replace the 21-dB four-bit quality reference or claim vibration-free
+physical playback. Reuse this evidence rather than rerunning the pilot.
+
 Three optimization rounds for each selected decoder are complete. Exact
 IMA3-to-IMA expansion falls from 58750730 T / 16.564 s to 6657930 T / 1.877 s;
 PVQ3x512-to-PCM falls from 31352427 T / 8.839 s to 17460865 T / 4.923 s.
 Full input matches independent references at every round. These are native
 CPU/buffer measurements, excluding disk, ULA and final bank integration;
-PVQ additionally excludes IMA re-encoding. No new qualified TRD is produced.
+PVQ additionally excludes IMA re-encoding. These standalone probes did not
+qualify a disk; the later IMA3 integration is described above.
 Reuse [the round-by-round evidence](audiobook-beeper/DECODER_OPTIMIZATION_ROUNDS.md).
-The exact IMA subset expansion is the preferred next integration candidate,
-because it avoids a separate PCM-to-IMA encoding stage.
+The exact IMA subset expansion was chosen for integration because it avoids
+a separate PCM-to-IMA encoding stage.
 
 Latest scope: compression of 5:1..10:1 relative to mono 8-kHz PCM16;
 higher ratios are welcome when sound preservation permits. The user chose

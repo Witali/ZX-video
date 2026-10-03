@@ -18,6 +18,11 @@ automatic task schedule or a promise that the unported codecs fit Z80.
 - The user selected only three-bit IMA and predictive VQ for three decoder
   optimization rounds each. Other formats remain future research.
 
+Latest integration: the [IMA3 preload preview](IMA3_PRELOAD.md) passes
+complete cold startup and two-loop playback checks. Its PC-compensated
+output measures 18.171/18.153 dB and stays within the startup/speed limits,
+but does not meet the 20-dB goal. PVQ remains unintegrated.
+
 ## Candidates and priority
 
 Nominal ratios exclude overhead unless a measured total is given. Local
@@ -25,7 +30,7 @@ quality results are input-specific; codec SNR is not final beeper SNR.
 
 | Format / approach | Rate or compression | Status and next useful step |
 |---|---|---|
-| Project ADPCM3-step6 / IMA subset | 24 kbit/s; 5.331:1 including 32-byte framing | Selected. Exact expansion to the existing four-bit IMA stream is possible by `nibble = code << 1`. Existing codec SNR 20.999 dB. Three native optimization rounds completed; integrate and validate separately. |
+| Project ADPCM3-step6 / IMA subset | 24 kbit/s; 5.331:1 with the study's 32-byte framing allowance | Integrated preview. Exact expansion uses `nibble = code << 1`. Prior codec SNR 20.999 dB; the final PC-compensated disk measures 18.171/18.153 dB end to end. Startup, speed and two-loop execution pass; further fidelity improvement remains open. |
 | Predictive VQ3x512, half-last predictor | 5.217:1 including 1536-byte book and 32-byte framing | Selected. Existing codec SNR 22.185 dB. Three native PCM decoder rounds completed. Still needs fast IMA encoding, resident-bank integration and complete startup/playback checks. |
 | ADPCM-XQ, 2-/3-/4-bit variants | Nominal 8:1 / 5.33:1 / 4:1 | Prioritize expensive PC search/noise shaping. Four-bit is the quality baseline outside the preferred ratio. Generic three-bit formats are not necessarily our exact IMA subset. |
 | ITU G.726, 16/24 kbit/s | 8:1 / 5.33:1 | Now fits the relaxed rate range. Local 16-kbit/s codec SNR 16.481 dB; existing downstream IMA guard rejected saturation. Test a better preparation/encoding path before any port. |

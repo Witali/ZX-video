@@ -127,7 +127,7 @@ def representable_pad(value):
     return value >= 0 and any(value >= 7 * b and (value - 7 * b) % 4 == 0 for b in range(4))
 
 
-def calibrate(out, packed, source, fuse, hot=None):
+def calibrate(out, packed, source, fuse, hot=None, writer=write_candidate):
     """Bounded search; never reuse a phase calibration for a different stream."""
     attempts = []
     pairs = pad = 0
@@ -135,7 +135,7 @@ def calibrate(out, packed, source, fuse, hot=None):
     tried = set()
     for number in range(24):
         work = out / f'phase-{number:02d}'
-        disk, meta = write_candidate(work, packed, source, hot, pairs, pad)
+        disk, meta = writer(work, packed, source, hot, pairs, pad)
         if hot is None:
             hot = meta['hot_indices']
         probe = measure(work, fuse, fields)
