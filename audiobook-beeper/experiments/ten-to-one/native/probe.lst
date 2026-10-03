@@ -1,0 +1,262 @@
+                 	
+                 	; Full-input CPU probe: VQ7x512 (or predictive VQ7) -> PCM8 -> IMA nibbles.
+                 	; This is not a release player. Port01 is a test sink, not a sound output.
+                 	; IMA arithmetic is assembled from the separately maintained LPC prototype.
+                 	; It is identical to that baseline, allowing its cost to be measured directly.
+                 	; Alternate HL=vector, DE=input cursor, C=high index bits, B=predictor.
+                 	; IYH=samples left in vector, IYL=indices left in high-bit header.
+                 	
+8000              	predictive: EQU 0
+8000              	first_segment_samples: EQU 55680
+8000              	segment_count: EQU 3
+8000              	        INCLUDE "vq-config.inc"
+8000              	        ORG 0x8000
+8000 F3           	start:  DI
+8001 31 F0 5F     	        LD SP,0x5FF0
+8004 DD 21 80 D9  	        LD IX,first_segment_samples
+8008 FD 21 01 01  	        LD IY,0x0101
+800C 3E 13        	        LD A,19
+800E 01 FD 7F     	        LD BC,0x7FFD
+8011 ED 79        	        OUT (C),A
+8013 D9           	        EXX
+8014 11 00 C0     	        LD DE,0xC000
+8017 06 80        	        LD B,128
+8019 D9           	        EXX
+                 	sample_loop:
+801A CD 45 80     	        CALL next_pcm
+                 	pcm_ready:
+801D CD 83 80     	        CALL encode_ima
+                 	ima_ready:
+8020 D3 01        	        OUT (1),A
+8022 DD 2B        	        DEC IX
+8024 DD 7C        	        LD A,IXH
+8026 DD B5        	        OR IXL
+8028 C2 1A 80     	        JP NZ,sample_loop
+802B 3A 40 81     	        LD A,(segments_left)
+802E 3D           	        DEC A
+802F 32 40 81     	        LD (segments_left),A
+8032 C2 1A 80     	        JP NZ,sample_loop    ; IX=0 deliberately counts another 65536 samples
+8035 06 80        	        LD B,128
+                 	guard_loop:
+8037 C5           	        PUSH BC
+8038 3E 80        	        LD A,128
+                 	guard_pcm_ready:
+803A CD 83 80     	        CALL encode_ima
+                 	guard_ima_ready:
+803D D3 01        	        OUT (1),A
+803F C1           	        POP BC
+8040 10 F5        	        DJNZ guard_loop
+                 	complete:
+8042 C3 42 80     	        JP complete
+                 	
+                 	next_pcm:
+8045 D9           	        EXX
+8046 FD 25        	        DEC IYH
+8048 20 21        	        JR NZ,have_vector
+804A FD 26 07     	        LD IYH,7
+804D FD 2D        	        DEC IYL
+804F 20 07        	        JR NZ,have_header
+8051 CD 6F 80     	        CALL read_byte
+8054 4F           	        LD C,A
+8055 FD 2E 08     	        LD IYL,8
+                 	have_header:
+8058 CD 6F 80     	        CALL read_byte
+805B 6F           	        LD L,A
+805C 26 00        	        LD H,0
+805E 29           	        ADD HL,HL
+805F 29           	        ADD HL,HL
+8060 29           	        ADD HL,HL
+8061 7C           	        LD A,H
+8062 F6 90        	        OR 0x90
+8064 67           	        LD H,A
+8065 CB 39        	        SRL C
+8067 30 02        	        JR NC,low_half
+8069 CB DC        	        SET 3,H
+                 	low_half:
+806B              	        IF predictive
+806B              	        LD A,(last_pcm)
+806B              	        SRL A
+806B              	        ADD A,64
+806B              	        LD B,A
+806B              	        ENDIF
+                 	have_vector:
+806B 7E           	        LD A,(HL)
+806C 2C           	        INC L               ; seven values fit inside an aligned eight-byte row
+806D              	        IF predictive
+806D              	        ADD A,B             ; PC encoder rejects all overflowing vectors
+806D              	        LD (last_pcm),A
+806D              	        ENDIF
+806D D9           	        EXX
+806E C9           	        RET
+                 	
+                 	read_byte:
+806F 1A           	        LD A,(DE)
+8070 13           	        INC DE
+8071 CB 7A        	        BIT 7,D
+8073 C0           	        RET NZ
+8074 F5           	        PUSH AF
+8075 C5           	        PUSH BC
+8076 3E 17        	        LD A,23
+8078 01 FD 7F     	        LD BC,0x7FFD
+807B ED 79        	        OUT (C),A
+807D 11 00 C0     	        LD DE,0xC000
+8080 C1           	        POP BC
+8081 F1           	        POP AF
+8082 C9           	        RET
+                 	
+                 	
+8083              	QUANTIZE: MACRO
+8083              	        OR A
+8083              	        SBC HL,DE
+8083              	        JR C,quant_skip_\0
+8083              	        PUSH HL
+8083              	        LD H,B
+8083              	        LD L,C
+8083              	        ADD HL,DE
+8083              	        LD B,H
+8083              	        LD C,L
+8083              	        POP HL
+8083              	        LD A,(ima_code)
+8083              	        OR \0
+8083              	        LD (ima_code),A
+8083              	        JR quant_done_\0
+8083              	quant_skip_\0: ASSERT 1
+8083              	        ADD HL,DE
+8083              	quant_done_\0: ASSERT 1
+8083              	        ENDM
+                 	encode_ima:
+8083 67           	        LD H,A
+8084 2E 00        	        LD L,0
+8086 ED 5B 42 81  	        LD DE,(ima_predictor)
+808A B7           	        OR A
+808B ED 52        	        SBC HL,DE
+808D 3E 00        	        LD A,0
+808F 30 09        	        JR NC,ima_magnitude
+8091 EB           	        EX DE,HL
+8092 21 00 00     	        LD HL,0
+8095 B7           	        OR A
+8096 ED 52        	        SBC HL,DE
+8098 3E 08        	        LD A,8
+                 	ima_magnitude:
+809A 32 45 81     	        LD (ima_code),A
+809D E5           	        PUSH HL
+809E 3A 44 81     	        LD A,(ima_index)
+80A1 87           	        ADD A,A
+80A2 6F           	        LD L,A
+80A3 26 A0        	        LD H,steps >> 8
+80A5 5E           	        LD E,(HL)
+80A6 2C           	        INC L
+80A7 56           	        LD D,(HL)
+80A8 42           	        LD B,D
+80A9 4B           	        LD C,E
+80AA CB 38        	        SRL B
+80AC CB 19        	        RR C
+80AE CB 38        	        SRL B
+80B0 CB 19        	        RR C
+80B2 CB 38        	        SRL B
+80B4 CB 19        	        RR C
+80B6 E1           	        POP HL
+80B7 B7           		OR A
+80B8 ED 52        		SBC HL,DE
+80BA 38 11        		JR C,quant_skip_4
+80BC E5           		PUSH HL
+80BD 60           		LD H,B
+80BE 69           		LD L,C
+80BF 19           		ADD HL,DE
+80C0 44           		LD B,H
+80C1 4D           		LD C,L
+80C2 E1           		POP HL
+80C3 3A 45 81     		LD A,(ima_code)
+80C6 F6 04        		OR 4
+80C8 32 45 81     		LD (ima_code),A
+80CB 18 01        		JR quant_done_4
+80CD              	quant_skip_4:	ASSERT 1
+80CD 19           		ADD HL,DE
+80CE              	quant_done_4:	ASSERT 1
+80CE              	        QUANTIZE 4
+80CE CB 3A        	        SRL D
+80D0 CB 1B        	        RR E
+80D2 B7           		OR A
+80D3 ED 52        		SBC HL,DE
+80D5 38 11        		JR C,quant_skip_2
+80D7 E5           		PUSH HL
+80D8 60           		LD H,B
+80D9 69           		LD L,C
+80DA 19           		ADD HL,DE
+80DB 44           		LD B,H
+80DC 4D           		LD C,L
+80DD E1           		POP HL
+80DE 3A 45 81     		LD A,(ima_code)
+80E1 F6 02        		OR 2
+80E3 32 45 81     		LD (ima_code),A
+80E6 18 01        		JR quant_done_2
+80E8              	quant_skip_2:	ASSERT 1
+80E8 19           		ADD HL,DE
+80E9              	quant_done_2:	ASSERT 1
+80E9              	        QUANTIZE 2
+80E9 CB 3A        	        SRL D
+80EB CB 1B        	        RR E
+80ED B7           		OR A
+80EE ED 52        		SBC HL,DE
+80F0 38 11        		JR C,quant_skip_1
+80F2 E5           		PUSH HL
+80F3 60           		LD H,B
+80F4 69           		LD L,C
+80F5 19           		ADD HL,DE
+80F6 44           		LD B,H
+80F7 4D           		LD C,L
+80F8 E1           		POP HL
+80F9 3A 45 81     		LD A,(ima_code)
+80FC F6 01        		OR 1
+80FE 32 45 81     		LD (ima_code),A
+8101 18 01        		JR quant_done_1
+8103              	quant_skip_1:	ASSERT 1
+8103 19           		ADD HL,DE
+8104              	quant_done_1:	ASSERT 1
+8104              	        QUANTIZE 1
+8104 2A 42 81     	        LD HL,(ima_predictor)
+8107 3A 45 81     	        LD A,(ima_code)
+810A CB 5F        	        BIT 3,A
+810C 28 05        	        JR Z,ima_add
+810E B7           	        OR A
+810F ED 42        	        SBC HL,BC
+8111 18 01        	        JR ima_updated
+                 	ima_add:
+8113 09           	        ADD HL,BC
+                 	ima_updated:
+8114 22 42 81     	        LD (ima_predictor),HL
+8117 3A 45 81     	        LD A,(ima_code)
+811A E6 07        	        AND 7
+811C FE 04        	        CP 4
+811E 3A 44 81     	        LD A,(ima_index)
+8121 30 06        	        JR NC,ima_index_up
+8123 B7           	        OR A
+8124 28 13        	        JR Z,ima_index_ready
+8126 3D           	        DEC A
+8127 18 10        	        JR ima_index_ready
+                 	ima_index_up:
+8129 4F           	        LD C,A
+812A 3A 45 81     	        LD A,(ima_code)
+812D E6 07        	        AND 7
+812F D6 03        	        SUB 3
+8131 87           	        ADD A,A
+8132 81           	        ADD A,C
+8133 FE 59        	        CP 89
+8135 38 02        	        JR C,ima_index_ready
+8137 3E 58        	        LD A,88
+                 	ima_index_ready:
+8139 32 44 81     	        LD (ima_index),A
+813C 3A 45 81     	        LD A,(ima_code)
+813F C9           	        RET
+8140              	        INCLUDE "ima-encoder.inc"
+8140 03           	segments_left: DB segment_count
+8141 80           	last_pcm: DB 128
+8142 00 80        	ima_predictor: DW 32768
+8144 00           	ima_index: DB 0
+8145 00           	ima_code: DB 0
+8146              	        ASSERT $ < 0x9000
+8146              	        DS 0x9000-$
+9000 64 5E 5B 56 4F 4C 50 A5 77 76 76 75 75 77 78 A5 C2 BE B3 A7 9A 8C 7F A5 1F 2B 44 59 6F 88 9B A5 8D 76 66 5B 4A 3B 3C A5 C7 E7 CA 90 68 4E 58 A5 A9 A7 A0 98 91 88 7F A5 50 5B 66 73 7D 82 86 A5 34 51 8F B5 98 6A 62 A5 93 9F AE BA C1 C4 C2 A5 7C 81 88 8D 91 96 99 A5 74 7F 87 93 A0 B2 BA A5 51 58 5D 6D 7A 6F 66 A5 A3 95 81 6E 5E 52 49 A5 9C 90 84 84 8A 87 7C A5 79 73 80 A0 B0 B4 BC A5 3D 38 3A 3C 41 4C 58 A5 86 8C 96 A6 BE 99 5C A5 7C 7F 84 88 8C 8E 8D A5 CF C7 BD AD 8F 71 5E A5 80 80 80 80 80 80 80 A5 95 55 24 22 39 59 6C A5 9C 88 70 61 5C 5C 5B A5 9E 97 91 88 7C 75 71 A5 D4 C6 9A 82 7B 80 8C A5 8C 8F 99 A5 7E 5D 6C A5 8E 6D 84 8C 61 6A 8C A5 A0 62 76 72 3F 53 76 A5 9F B0 B0 A1 7F 6E 72 A5 AC 7C 55 5D 84 94 81 A5 9C 94 7B 6F 6F 5A 46 A5 BA BD BF BB B0 A1 92 A5 71 69 66 6F 82 96 9F A5 89 89 89 88 86 84 83 A5 7A 7C 7F 83 86 88 89 A5 79 74 6D 68 65 62 62 A5 D8 BA A9 B9 D4 D2 B1 A5 92 97 8F 98 AF AE A5 A5 8C 8C 9F 9E 8A 9A A7 A5 74 70 6D 70 79 83 8D A5 74 71 6E 6B 6A 6A 6C A5 9A A1 A8 AE AA 9E 92 A5 93 9A AA 80 51 60 7A A5 AF B8 AF A2 91 95 A6 A5 8D 97 A2 A8 98 78 6A A5 66 5B 50 48 49 4F 57 A5 8A 92 AE C8 89 49 47 A5 C6 94 5F 71 4D 2A 4D A5 65 6B 75 83 91 A2 B1 A5 AE 76 3C 36 5D A9 DC A5 48 4A 5F 85 96 A5 BF A5 98 90 3E 30 5D 79 97 A5 B5 A8 74 85 A5 84 71 A5 9C 9E 9E 93 85 80 7D A5 77 68 58 4A 40 3C 3D A5 9D 9F 62 2C 18 41 9F A5 92 7C 6C 72 8C A6 AB A5 4D 51 6C 91 9B 88 84 A5 92 81 6F 66 64 6C 74 A5 45 44 46 4D 5C 5F 5F A5 93 8B 6C 5E 60 73 93 A5 76 75 74 75 73 6B 66 A5 7B 5C 49 3D 2C 27 31 A5 70 67 69 79 8F 93 89 A5 94 A1 AE B6 B8 B8 B0 A5 B2 97 5E 5C 76 84 77 A5 7E 7B 7D 83 8D 9A A3 A5 AC C6 D3 B0 77 48 31 A5 63 79 A7 CD E2 DD D0 A5 5A 4F 47 40 40 42 46 A5 9A 93 8B 7E 71 66 5C A5 6B 70 76 7C 83 8A 8F A5 71 8C A1 AB BC CE D0 A5 68 5E 5D 6F 7D 7C 7B A5 70 72 78 A0 A0 4C 16 A5 82 82 80 82 86 8C 91 A5 A5 D2 BF 7F 9F 9B 78 A5 C3 C6 A1 75 58 4B 57 A5 E5 C0 6C 39 4F 98 CF A5 B3 A6 9C 8E 74 5A 44 A5 8C 74 54 35 23 1A 1B A5 9A 9A 99 96 90 87 7C A5 56 38 22 20 21 27 39 A5 2A 2E 47 6D 93 AD B7 A5 A3 AD AC 9C 85 64 4C A5 85 B3 B9 96 70 59 65 A5 21 1E 34 4F 62 69 65 A5 C7 93 55 3F 61 90 A9 A5 8B AD A3 4E 5B 64 2E A5 34 50 60 6D 94 AC B6 A5 B4 99 7E 5C 3F 2D 1E A5 79 5B 45 3C 39 46 5D A5 84 82 80 7D 7A 79 79 A5 70 77 65 4A 45 51 63 A5 6D 6F 74 71 64 54 4E A5 64 72 8B 99 98 8D 84 A5 9E 95 83 73 70 78 83 A5 33 29 1C 26 3E 50 65 A5 73 6C 64 60 5F 5D 5E A5 43 4C 5E 70 81 93 A0 A5 8C 9B 8F 67 5E 68 6D A5 58 75 3B 3A 84 7C 70 A5 BE DD BE 8D 78 96 BE A5 77 57 50 75 A5 AB 8E A5 44 43 47 4C 54 64 75 A5 A2 AF C0 B3 A0 A0 97 A5 8E 98 A3 A5 9F 93 87 A5 6D 9E BC AC A7 AB B5 A5 90 A6 9A 52 39 4B 55 A5 7E 7F 80 81 82 82 82 A5 83 82 81 80 7F 7E 7D A5 9A 9C 89 75 75 8E AD A5 6A 64 5E 5B 59 59 5B A5 34 39 45 54 61 6D 7C A5 B0 B0 AB 9C 8E 81 71 A5 B9 9B 69 52 5F 67 5A A5 4F 5C 60 60 76 87 78 A5 78 7C 85 43 42 69 44 A5 77 84 9E 9F 99 A6 B8 A5 9D 94 6B 81 8F 6D 6F A5 D0 D0 C9 B4 9F 98 88 A5 77 65 82 72 5E 82 89 A5 66 73 96 BB D0 CB AB A5 6E 6F 7B 87 88 7D 76 A5 9E A2 A3 A0 9D 99 94 A5 72 78 6E 6C 87 87 71 A5 BD A7 8F 87 79 70 72 A5 85 79 82 83 7A 82 81 A5 7B 7B 7B 7C 7C 7E 7F A5 B8 B9 B2 AC A6 9C 91 A5 6B 88 74 66 83 93 88 A5 7C A6 BC AE 99 8C 90 A5 85 79 66 56 57 66 77 A5 85 70 48 6D 92 78 71 A5 6C 60 5A 61 81 AA C6 A5 92 65 5E 7A 74 60 6C A5 8A 88 83 7B 74 6D 68 A5 24 28 53 92 C1 BF A7 A5 E6 B9 84 78 80 76 58 A5 88 8D 94 9C A6 A0 8C A5 6D 69 23 1C 3D 4F 62 A5 73 75 78 7B 7E 81 84 A5 91 90 8D 86 7C 70 67 A5 57 60 6F 84 96 A0 A6 A5 7A 89 99 A4 AF B8 BA A5 95 89 95 BB E0 E6 BE A5 AB A4 99 90 85 7C 77 A5 72 79 76 65 50 3E 3E A5 82 75 68 59 4E 49 47 A5 8E 7B 5C 46 40 46 4F A5 BD A4 9C B2 A4 85 8A A5 7E 79 72 6D 6B 69 6A A5 31 64 7A 7B 82 8B A9 A5 7D 74 91 6A 96 6C 98 A5 5F 61 66 6B 71 79 80 A5 7A 7C 80 8E 8F 72 59 A5 5A 40 34 3C 53 71 97 A5 97 A9 BD CD D7 DA D4 A5 85 99 AB B5 B1 A7 9F A5 8F 8A 84 80 7F 81 84 A5 B4 AC 9F 8F 7E 6F 63 A5 96 A7 C1 CC A6 6F 48 A5 C2 8C AB A5 6F 6F 87 A5 7B 80 8E 79 4D 56 6A A5 95 81 63 3E 24 24 34 A5 C1 B6 B0 AB 94 79 67 A5 86 8D 8A 8E 9B B7 D4 A5 A3 A3 92 7B 68 62 6B A5 5D 73 8D A2 B0 BB CA A5 63 6E 7A 83 8C 96 9C A5 94 90 89 84 7F 79 74 A5 6C 61 57 57 5E 66 6E A5 51 2B 1D 26 5A 98 B4 A5 A8 AB AC A5 9C 8E 7D A5 55 63 75 84 84 77 75 A5 5A 41 39 44 6B 9A AC A5 84 77 48 29 27 40 73 A5 A8 AB AA AA A8 A1 99 A5 5D 5C 69 8A AC B9 B7 A5 5C 6D 83 96 A5 B0 B7 A5 4F 73 74 72 94 A8 A1 A5 83 7F 79 86 82 79 83 A5 98 99 8F 6B 40 28 29 A5 B5 CB BD 9D 80 79 83 A5 44 42 44 45 4A 57 65 A5 A9 A8 9B 8E 8D 96 9C A5 91 81 74 67 58 4C 46 A5 7D 65 6A 77 6B 6F 80 A5 BB 9C 7B 76 83 91 97 A5 CC CD 90 57 3A 5E 9F A5 7F 7E 7D 7D 7D 7C 7C A5 60 5F 61 63 69 6F 75 A5 BC 89 67 86 73 43 4B A5 CE D4 E6 D9 B3 A6 98 A5 56 69 76 70 73 87 8C A5 B0 B9 B9 B0 A1 8C 76 A5 92 81 7E 91 B5 D7 C4 A5 3C 67 8A 9E B3 CA D1 A5 50 3B 23 1E 31 58 81 A5 96 98 97 96 94 91 8E A5 60 4F 43 46 54 63 70 A5 91 8B 87 83 94 90 57 A5 9A A0 A4 96 85 77 66 A5 9D A7 B5 D0 D9 C0 A7 A5 6B 73 7F 8C 97 9E A1 A5 99 A4 AB A6 93 83 7B A5 87 97 9A 8A 93 99 88 A5 98 9A 9A 9B 9B 99 96 A5 62 5A 76 86 73 7E 95 A5 8D 95 8E 7C 6C 6D 76 A5 5C 61 7D 93 7D 59 54 A5 A6 A9 AB B0 B2 AE A8 A5 82 87 89 76 5F 52 4D A5 6C 61 6C 83 A4 87 3B A5 6C 85 A6 80 46 45 49 A5 AE B5 B8 B8 B5 AE A6 A5 33 46 7C C8 E6 C0 83 A5 9C 75 4C 73 71 5A 81 A5 A1 B6 B0 88 5F 51 5D A5 71 78 7F 86 8D 91 93 A5 59 67 5E 51 62 6F 62 A5 A1 8F 84 94 9F 98 8E A5 86 8E 64 45 5E 54 3E A5 89 A3 B0 8B 76 8C 99 A5 CB AD 76 4E 3F 47 5C A5 84 78 6D 64 5C 55 54 A5 77 83 91 9B 9A 91 89 A5 C8 CA B3 90 7C 70 66 A5 5A 56 55 59 5E 68 73 A5 94 93 92 90 8B 87 84 A5 7A 7B 7C 7F 81 82 83 A5 3F 46 54 63 6A 6E 6E A5 81 86 8D 94 99 9D A0 A5 64 5C 8B 8C 32 1A 4C A5 74 77 7B 80 85 88 8A A5 39 40 4F 61 72 83 93 A5 62 82 86 65 78 90 7B A5 87 7A 70 78 89 91 8A A5 AF 9F 91 9F BB C9 B3 A5 B5 A7 93 7A 67 59 4D A5 83 84 92 AA CD CE 8F A5 7A 95 7A 4F 82 8B 5D A5 32 3A 48 5F 77 91 AB A5 A2 99 8D 88 90 9E A9 A5 82 89 91 A7 AD A4 A5 A5 7C 54 35 3A 54 76 8E A5 C5 D0 B4 7F 4A 30 3B A5 84 A5 C0 C8 BC A5 90 A5 70 8E 8F 4D 1B 28 5C A5 51 61 6B 3D 30 49 5C A5 B6 BD 5A 50 5A 20 2E A5 B6 B9 84 6C 7E 56 2C A5 87 74 5F 4D 41 35 2D A5 74 7D 8E 92 84 8E A8 A5 90 93 94 90 87 7B 74 A5 A7 9F 92 85 79 6C 5D A5 89 91 77 57 4B 56 7E A5 8C 89 84 7F 7B 77 72 A5 64 78 8C 88 73 6B 6A A5 CC CA C6 BB A6 8A 6D A5 2C 41 5B 7A 94 76 61 A5 CA B0 82 72 8D BC CE A5 5F 67 70 7B 84 8D 95 A5 99 A3 A9 AC AD AC A7 A5 87 94 7A 7C 99 93 87 A5 8B 8B 8B 8D 8F 90 90 A5 7F 7F 7F 7F 7F 7F 7F A5 CC D7 DF E0 DC D7 CD A5 84 7F 78 72 73 7F 89 A5 38 46 66 86 99 99 8F A5 9C 8B 74 5C 4C 42 3E A5 7F 8E 92 84 74 78 88 A5 5B 5E 64 6E 79 85 92 A5 88 90 95 99 9F A4 A6 A5 69 79 93 AB B9 B5 B0 A5 43 40 38 28 23 27 2C A5 70 65 64 70 75 65 55 A5 8B 74 50 52 69 6F 71 A5 CE D8 D5 D0 CE BA 9E A5 7A 71 70 6F 78 96 AE A5 B0 8A 5E 53 48 2C 22 A5 72 71 78 83 86 8D 9A A5 54 7A 67 49 70 93 8D A5 7C 82 88 87 7F 76 75 A5 61 68 85 A2 AD A8 99 A5 6D 88 A2 AB 9E 8E 85 A5 85 86 87 88 88 88 88 A5 A8 C2 D3 CC B8 A1 88 A5 9D 98 91 8A 85 80 7B A5 41 2C 32 48 64 75 66 A5 47 69 76 A6 AF 6B 6A A5 40 3E 3F 4C 66 7C 89 A5 85 80 7B 75 70 6B 68 A5 8C A3 9C 8C AA B2 76 A5 4F 4F 51 52 55 5E 67 A5 28 36 87 CD C1 82 52 A5 64 5A 51 4B 48 46 45 A5 3A 37 45 5A 60 46 3B A5 9D 75 49 2C 25 40 75 A5 74 7D A8 CC C5 9A 71 A5 A5 AF B1 B5 C3 D2 D4 A5 4A 51 5C 67 74 83 8F A5 54 3D 4B 6C 8F A8 A8 A5 79 66 52 46 4A 5D 71 A5 3C 54 86 62 5C 86 94 A5 A4 98 84 69 55 43 35 A5 67 7A 80 70 65 6F 80 A5 33 46 70 8F A4 B8 C5 A5 90 80 72 6E 74 87 9D A5 7B BE E6 D6 B1 AD B1 A5 38 29 36 54 82 97 7E A5 7D 7D 82 94 A7 AA 9C A5 75 69 61 58 50 4D 4C A5 9D AB B1 70 62 88 6B A5 68 60 59 5B 69 7B 83 A5 50 5F 66 5F 54 59 6E A5 8B 7E 7B 8A 92 83 71 A5 8F 92 93 95 97 98 98 A5 63 62 6A 62 59 69 82 A5 38 4B 5B 5A 43 3B 52 A5 7F 81 83 85 85 86 86 A5 C4 B6 A0 79 56 3E 2B A5 50 40 37 38 46 61 7D A5 77 62 4D 45 45 43 47 A5 85 8B 90 93 95 96 95 A5 8F 7C 7A 9D 97 89 A0 A5 3B 82 C5 C6 6E 36 80 A5 6F 7A 88 8B 87 84 84 A5 A1 9D AB BF C8 A9 7F A5 2A 58 90 A6 73 62 9F A5 7A 4A 2A 1F 34 64 99 A5 5F 55 4D 3D 32 33 3B A5 46 4F 68 8F B6 B2 A6 A5 AF BD C7 CF D1 CE CA A5 CB CC 9A 62 5F 8E B7 A5 7A 72 65 64 6E 75 79 A5 6C 6B 6C 6D 71 75 7A A5 8A 4D 2D 14 38 A0 E3 A5 4A 42 40 42 45 4A 53 A5 AF AC AB A4 9A 94 8D A5 9C C5 E1 D2 94 63 4A A5 D5 E5 CA 9F A8 96 61 A5 61 5E 5E 60 61 63 69 A5 C3 C2 C3 C2 B9 AE A2 A5 8D 96 A0 A5 AA AF AD A5 8C 8D 8D 8C 8C 8A 87 A5 69 8F 82 85 96 8C 8D A5 D0 D9 8E 46 2A 36 62 A5 20 20 28 2F 3E 5A 75 A5 8E 9C B4 BD AA 88 6C A5 84 A0 D4 CC 7A 97 A7 A5 33 2F 32 38 44 54 65 A5 9D 9E 9F 9B 95 90 8A A5 91 B2 BD 96 58 2C 1B A5 AD 75 46 34 46 74 A3 A5 6C 6A 69 57 38 2B 33 A5 A4 B1 6E 2D 39 64 BF A5 54 84 B2 C0 B6 A8 9F A5 7B 87 7B 7C 86 7E 7C A5 6A 69 69 6A 6C 6F 72 A5 50 51 57 60 66 61 5E A5 3C 53 62 41 50 83 78 A5 66 68 6C 72 77 7D 82 A5 4E 3D 2C 28 34 3F 4E A5 80 7E 75 87 9E A0 9A A5 6A 4F 50 6B 81 91 91 A5 A1 A8 9B 99 A4 9C 84 A5 BE BA B2 90 72 62 54 A5 4E 51 56 60 6C 76 82 A5 84 82 83 7A 5A 32 26 A5 92 A9 A7 97 A7 B4 9E A5 76 83 8B 7D 79 89 92 A5 84 87 8E 95 93 87 7E A5 A4 9A 6D 4F 62 94 B9 A5 A5 A1 96 8D 85 76 67 A5 36 57 A0 81 76 9C A4 A5 A6 67 40 57 8B BA C0 A5 89 63 48 37 57 97 C8 A5 57 46 39 36 37 37 3D A5 99 96 90 7F 59 40 45 A5 58 49 5E 8E C2 DB CE A5 99 A2 7E 68 83 79 5F A5 64 40 2D 32 6A B4 DF A5 33 5A A3 D8 CF 9C 73 A5 9E 69 44 47 4F 54 5C A5 9B 90 92 A5 9B 91 9F A5 4C 39 38 51 83 B2 C1 A5 5E 77 95 A8 9B 6C 49 A5 48 29 49 7E B1 B6 7C A5 37 4B 7C AE BE B1 9A A5 94 C0 75 33 6D 4D 1F A5 4A 60 75 89 9F B1 BC A5 83 81 7E 79 76 74 72 A5 55 4D 4A 4B 4E 51 58 A5 B9 AD 9E 95 98 A2 A5 A5 8C 91 94 A4 AF 77 49 A5 5A 61 74 72 66 66 6C A5 CD A8 68 39 2D 5A 97 A5 A2 4E 3A 80 BA A0 5F A5 82 A9 B2 98 71 6E 8A A5 99 96 8E 84 82 8A 90 A5 83 9E 98 60 3A 61 96 A5 48 41 65 65 5E 7B 91 A5 E6 95 70 94 86 7E 68 A5 87 91 9B 9F 9E 9C 9B A5 86 83 86 87 75 5C 54 A5 A1 A1 B9 B2 5F 43 58 A5 AB A4 95 83 78 7D 8B A5 96 79 90 AD 99 9B B3 A5 4A 4B 4E 57 62 6B 75 A5 73 86 96 9C A4 AB A8 A5 81 8E 9F B3 BB B8 AC A5 2B 25 2E 43 5D 75 88 A5 84 84 84 84 84 83 82 A5 7B 7C 88 62 55 75 75 A5 67 6C 72 78 7E 83 87 A5 C2 CA CE CE C8 BF B4 A5 81 82 82 82 81 81 81 A5 54 2C 30 62 9A B7 A1 A5 37 36 3A 45 54 64 72 A5 8F 92 92 92 90 8F 8D A5 74 72 71 71 71 71 73 A5 6F 7F 7F 68 72 75 67 A5 CF B7 83 60 64 80 8D A5 A5 94 AC B5 9F A4 B4 A5 6C 69 65 64 65 67 6A A5 72 99 BC AF 8C 6E 60 A5 51 59 62 67 6A 73 7F A5 83 7C 76 6F 67 60 5E A5 95 89 80 7D 83 8D 93 A5 77 92 89 71 7A B2 CB A5 6F 70 72 75 77 7B 7E A5 79 B3 D0 B9 81 66 7C A5 A9 B2 BB C0 C1 BF B8 A5 9C 8D 72 4E 34 2D 31 A5 50 3E 38 35 3D 4E 65 A5 6C 79 88 93 9E A5 A8 A5 8D 82 78 75 73 75 7B A5 35 38 52 73 86 8D 8F A5 95 97 95 90 73 49 37 A5 6C 6D 73 8E 73 59 79 A5 89 4E 48 5B 60 71 85 A5 88 9C B3 7E 3F 30 44 A5 52 64 85 98 9C 9C 9F A5 AD BA CB CC C6 BB A4 A5 83 AD B4 A7 B5 C5 BA A5 62 87 3C 47 84 58 5F A5 D7 DA D0 C5 B9 A4 87 A5 68 75 93 82 81 A8 A9 A5 BC 62 9A 86 8A 7F 9E A5 3D 33 37 37 32 37 48 A5 B0 B3 A6 9C A3 B6 C2 A5 6B 62 59 4F 55 70 86 A5 76 66 68 83 A3 BF CC A5 5A 58 64 78 8B 81 5C A5 BE BA A4 98 91 7F 6A A5 8B 69 58 5C 6B 8E A5 A5 61 58 54 54 55 58 60 A5 64 47 5B 71 61 62 7E A5 75 73 72 67 57 57 66 A5 94 9A 9F A2 A3 A3 A0 A5 34 22 1D 1E 27 39 4F A5 5F 5A 61 7E 7A 3E 2C A5 A1 9D 97 91 8D 8B 8A A5 69 50 3B 2D 25 2A 35 A5 74 59 42 58 87 A6 AB A5 8E 7E 77 7D 75 4F 37 A5 87 A6 80 3D 1E 3A 80 A5 83 86 8A 8C 8D 8E 8F A5 78 93 BB E0 A6 77 A3 A5 7E 7A 77 74 72 71 72 A5 45 47 4F 5C 6A 79 83 A5 78 77 77 78 7A 7C 7E A5 90 6E 78 91 7D 72 88 A5 C1 A9 87 60 42 39 44 A5 46 61 88 A7 A5 90 85 A5 9B 8E 84 7E 74 6C 6A A5 A5 C0 DC DB B7 87 65 A5 93 AE 8E 7B 93 8B 74 A5 5A 52 4E 58 6C 88 9C A5 8C 96 9E AA B3 BA C0 A5 7D 7C 7A 7A 79 79 79 A5 7A 79 8C A5 6F 3F 55 A5 58 7D A2 AB 87 6E 70 A5 87 86 85 83 80 7D 7B A5 B8 E0 DD BB 93 83 85 A5 71 8A 9B 95 84 7D 7E A5 52 5C 69 78 86 93 9E A5 8D 89 86 86 98 AC AD A5 8E 86 7C 70 65 59 52 A5 65 92 A4 86 5F 50 6C A5 AA 8D 70 80 A5 B4 AE A5 90 87 7B 73 6E 66 5F A5 9A B5 C0 B5 AD B1 AF A5 7E 7F 84 7D 83 7C 83 A5 83 82 7E 7B 7D 81 83 A5 B6 9A 73 57 55 71 96 A5 8F 8E 8C 88 85 81 7D A5 A2 A1 9E A1 A4 A3 A6 A5 5F 2E 7C 94 63 5B 96 A5 68 87 8B 7C 8C A0 8B A5 BF B5 91 6F 59 65 7F A5 65 3E 3E 5A 6E 79 7D A5 6C 6F 7E 95 B5 A1 73 A5 CF C8 A2 7A 65 64 6D A5 CA B4 92 96 93 68 4E A5 81 8E 88 61 4C 52 5C A5 AB 9B 9B 97 70 5C 64 A5 7A 80 86 79 7D 87 7A A5 78 79 7B 7E 7B 73 6B A5 60 4C 3C 39 42 4C 55 A5 9F 92 86 79 67 5A 55 A5 	        MDAT "dictionary.bin"
+A000              	        ASSERT $ == 0xA000
+A000 07 00 08 00 09 00 0A 00 0B 00 0C 00 0D 00 0E 00 10 00 11 00 13 00 15 00 17 00 19 00 1C 00 1F 00 22 00 25 00 29 00 2D 00 32 00 37 00 3C 00 42 00 49 00 50 00 58 00 61 00 6B 00 76 00 82 00 8F 00 9D 00 AD 00 BE 00 D1 00 E6 00 FD 00 17 01 33 01 51 01 73 01 98 01 C1 01 EE 01 20 02 56 02 92 02 D4 02 1C 03 6C 03 C3 03 24 04 8E 04 02 05 83 05 10 06 AB 06 56 07 12 08 E0 08 C3 09 BD 0A D0 0B FF 0C 4C 0E BA 0F 4C 11 07 13 EE 14 06 17 54 19 DC 1B A5 1E B6 21 15 25 CA 28 DF 2C 5B 31 4B 36 B9 3B B2 41 44 48 7E 4F 71 57 2F 60 CE 69 62 74 FF 7F 	steps: MDAT "ima-steps.bin"
+                 	code_end:

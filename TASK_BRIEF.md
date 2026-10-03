@@ -14,6 +14,25 @@ converter must also support other videos.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
+Latest scope: compression of 5:1..10:1 relative to mono 8-kHz PCM16;
+higher ratios are welcome when sound preservation permits. The user chose
+three-bit IMA and predictive VQ for three Z80 optimization rounds each.
+Keep the [research backlog](audiobook-beeper/CODEC_RESEARCH_BACKLOG.md)
+for other formats. PC encoding complexity is unrestricted. The startup
+budget remains 39.904 s; the 25..30-dB codec quality target is advice.
+
+The follow-up10:1 study is complete; no new decoder is selected for release.
+The best simple VQ at11.107:1 measures14.213dB before IMA,13.744dB after,
+and41.946s for the full native decode/IMA probe before ULA and final writes.
+It fails the user's fidelity intent and39.904s startup limit. Encoding
+complexity on PC is unrestricted. Proposed codec25..30dB / finalPDM20dB
+quality gates are recommendations; preserve the same source and report
+rate/quality/CPU separately. Reuse the
+[measured study and primary-source shortlist](audiobook-beeper/TEN_TO_ONE_CODECS.md)
+instead of repeating its dictionary/DFPWM sweep. ADPCM-XQ-style PC search
+is the practical next direction; Speex11k and Opus12k are listening
+references, with no verified Z80 decoder here.
+
 In the separate `codex/lpc-ima-preload` worktree, the actual LPC-to-IMA
 preloader and both progress bars pass complete native byte/RAM checks but
 are **rejected**: cold Fuse conversion takes657.181 s. The corrected user

@@ -5,6 +5,44 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: 10:1 waveform codec study rejects low-fidelity candidates
+
+After the LPC rejection, the user prioritizes fast preparation and sound
+preservation, defines10:1 relative to mono8-kHz PCM16, permits unlimited PC
+encoding complexity and asks for research on existing codecs. Reuse the
+complete186880-sample PCM8 control signal; its PCM16 storage denominator
+is373760bytes, not newly recovered16-bit precision. Include every book and
+a32-byte framing allowance. Compare FFmpeg DFPWM8/12k and G.72616k, five
+ordinary VQ sizes, shape/gain VQ and predictive VQ. G.7266k/12k is rejected
+by FFmpeg and not called a supported mode. The best simple qualifying VQ
+uses33652bytes (11.107:1), but delivers only14.213dB codec SNR /13.744dB
+after IMA. VQ8/1024 is48bytes over the10:1 limit. No row reaches the proposed
+25..30dB codec fidelity target; that target is advice, not user approval.
+
+The full native VQ7-to-IMA probe verifies186880 PCM values and IMA nibbles,
+both input banks and read-only tables. Decoder paths are49/203/206/262/265T
+excluding CALL; the actual input-wrap path is288T. Total148778057T /41.946s
+already exceeds the39.904s budget before ULA and final output-RAM handling.
+An initial harness frame-yield handling error was fixed; the full run then
+passed exact output checks. Reject this candidate for fidelity and startup;
+do not present it as a working TRD. No player hot-path change:423T/sample,
+delta0. The ordinary baseline disk rebuild is byte-identical.
+
+Research official ADPCM-XQ, G.726, Speex, G.729, Opus, QOA, CVSD/DFPWM,
+WavPack and Codec2 documentation. Select high-effort ADPCM encoding as the
+best immediate Z80 architecture fit, with Speex11k/Opus12k as prospective
+listening references, not proven Z80 ports. No candidate is claimed to
+meet all requirements. Preserve measured reports, payloads and WAVs in
+[TEN_TO_ONE_CODECS.md](audiobook-beeper/TEN_TO_ONE_CODECS.md).
+
+The user subsequently relaxes the preferred ratio to 5:1..10:1, with
+higher compression welcome if fidelity survives, and selects three-bit
+IMA and predictive VQ for three optimization rounds each. Preserve the
+[format backlog](audiobook-beeper/CODEC_RESEARCH_BACKLOG.md), including
+previously rate-excluded options, source links, measured failures and
+unmeasured candidates. This does not authorize or schedule every listed
+port; the selected decoder rounds are a separate experiment.
+
 ## 2026-10-03: LPC-to-IMA preload with progress is correct but rejected as too slow
 
 Create the user-requested `codex/lpc-ima-preload` branch and separate

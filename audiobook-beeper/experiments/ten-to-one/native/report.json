@@ -1,0 +1,54 @@
+{
+  "scope": "Full VQ7-to-IMA native CPU proof; excludes ROM, ULA and output-RAM banking.\n\nThe decoder reads the real regrouped nine-bit stream from two input banks.\nIt emits nibbles to a test port; it does not claim an integrated TRD, final\nresident IMA layout, loading progress or real PDM playback. The unchanged\nbaseline IMA encoder is included rather than estimated from a C routine.\n",
+  "complete": true,
+  "codec": "vq7x512",
+  "pcm_samples_verified": 186880,
+  "ima_nibbles_verified": 186880,
+  "every_pcm_and_ima_exact": true,
+  "source_input_pages": [
+    3,
+    7
+  ],
+  "total_native_tstates": 148778057,
+  "cpu_only_seconds": 41.94594068059432,
+  "phases": {
+    "vq_decoder_tstates": 13491868,
+    "ima_encoder_tstates": 120150227
+  },
+  "decoder_call_excluded_histogram": {
+    "49": 160073,
+    "203": 13008,
+    "206": 10335,
+    "262": 1802,
+    "265": 1533,
+    "288": 1
+  },
+  "ima_call_excluded_histogram": {
+    "538": 14012,
+    "549": 31128,
+    "599": 30279,
+    "626": 30954,
+    "662": 5893,
+    "665": 82,
+    "676": 29051,
+    "703": 10685,
+    "712": 5973,
+    "739": 4468,
+    "753": 10195,
+    "789": 4888,
+    "816": 4304,
+    "866": 4968
+  },
+  "vq_mean_tstates": 72.2448380740233,
+  "ima_mean_tstates": 642.9271564640411,
+  "regrouped_payload_bytes": 30036,
+  "stored_dictionary_bytes": 3584,
+  "expanded_dictionary_ram_bytes": 4096,
+  "container_allowance_bytes": 32,
+  "pcm16_to_grouped_codec_ratio": 11.10662070605016,
+  "dictionary_steps_readonly": true,
+  "original_ima_encoder_source_sha256": "b71554201d8ba982c03a8fc3eb05c7a8610cd6adf344ee1fa7bb506455201327",
+  "binary_sha256": "b2b6b1c43fe46dc8fd0b5ca27d6be6ac4138d1fd2023d44c97776f9c6bd89b1b",
+  "integrated_trd_verified": false,
+  "physical_hardware_tested": false
+}
