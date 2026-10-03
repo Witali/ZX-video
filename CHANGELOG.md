@@ -5,6 +5,36 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: compare denser audio codecs and execute a PVQ decoder
+
+Study the unchanged 186880-sample /8-kHz source with ten codec/predictor
+choices, counting recording-specific dictionary bytes. A three-sample,
+1024-entry predictive vector dictionary with half-last-sample prediction
+uses **80940 bytes vs93440 IMA bytes (-13.38%)**, with codec-only SNR
+**24.34763 vs24.97253 dB**. The 512-entry version saves23.35% but scores
+22.18453 dB; 3-bit ADPCM saves25% but scores20.99909 dB. Retain IMA as the
+verified default; select PVQ1024 as a candidate for future PDM integration.
+Byte-Huffman IMA payload saves11.08% before its book; gzip saves13.19%.
+Neither lossless compressor has a live decoder timing result here.
+
+Compile the standalone PVQ Z80 probe externally and execute8196 samples,
+checking every decoded byte, interval and all memory. Decoder body paths
+are **51/193/216 T**, averaging **100.25 T vs131 T (-30.75 T)** for IMA;
+the worst boundary increases by85 T and must be scheduled ahead of time.
+Test-only OUT/JP adds21 T, excluded from decoder comparisons. The probe
+uses4096 RAM bytes for the3072-byte book plus512 pointer bytes; no final
+RAM-capacity or PDM-rate claim follows from the mean. No ULA, disk, physical
+hardware or complete PDM player test was performed for PVQ. The first
+INCBIN assembly failed; replacing it with supported MDAT fixed the build.
+Full-source host quality and partial-source native coverage are separate.
+Root disks are unchanged; this does not satisfy the20-dB end-to-end goal.
+The measured quality table uses packed indices; full native five-byte group
+alignment adds two bytes (80942 total rather than80940), explicitly accounted
+for separately from dictionary RAM expansion.
+[Method/reproduction](audiobook-beeper/DENSE_CODECS.md),
+[comparison](audiobook-beeper/experiments/dense-codecs/report.json),
+[native evidence](audiobook-beeper/experiments/dense-codecs/native/report.json).
+
 ## 2026-10-03: stabilize compensated voice across repeated playback
 
 Extend the complete 186880-sample /93440-byte speech experiment with a

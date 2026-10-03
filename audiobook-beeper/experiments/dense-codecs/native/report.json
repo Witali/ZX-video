@@ -1,0 +1,28 @@
+{
+  "scope": "Execute a PVQ decoder CPU probe; no PDM, ULA or TRD timing claim.",
+  "samples_verified": 8196,
+  "complete_input_samples": 186880,
+  "partial_source_probe": true,
+  "every_pcm_byte_exact": true,
+  "all_memory_unchanged": true,
+  "header_layout": "four 10-bit indices: one low-first high-field byte then four low bytes",
+  "decoder_body_tstates": {
+    "within_vector": 51,
+    "new_vector": 193,
+    "new_header_and_vector": 216,
+    "mean_per_12_samples": 100.25
+  },
+  "test_driver_excluded_tstates": 21,
+  "ima_direct_decoder_and_nibble_control_tstates": 131,
+  "mean_delta_tstates": -30.75,
+  "worst_delta_tstates": 85,
+  "dictionary_data_bytes": 3072,
+  "dictionary_probe_ram_bytes": 4096,
+  "pointer_table_bytes": 512,
+  "full_source_grouped_payload_bytes": 77870,
+  "full_source_grouped_payload_over_bitpacked_bytes": 2,
+  "all_source_codec_quality_report": ".tmp\\dense-codec-repro\\report.json",
+  "binary_sha256": "13012ccea683de43e1f4145e05c3c945f05fa5de212a100ce5c330db0aa7486d",
+  "real_time_pdm_verified": false,
+  "decision": "Promising average CPU budget; boundary work must be prefetched/interleaved before a PDM player can qualify."
+}
