@@ -5,6 +5,43 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: measured instruction cost on eight external TR-DOS disks
+
+Answer the user's request for an empirical Z80 instruction average using
+five games (Dizzy, Elite, Exolon, R-Type, Renegade), Aeon, the 63 BIT
+credits/menu and Beta Commander 5.02+. Download exact SCL archive versions
+from Virtual TR-DOS; preserve URLs and hashes. Instrument a separate,
+pinned Fuse libretro core on Pentagon 128K, with existing ROMs, to count
+completed instructions, nominal/elapsed T, HALT idle cycles, block-repeat
+continuations and RAM/ROM/TR-DOS attribution. Player code is unchanged.
+
+The eight visually checked 1500-frame windows total 245.76 emulated seconds,
+79425697 instructions/iterations and 698325097 nominal T: 8.792181 T per
+instruction, with per-program means 7.432900..10.362469. Equal-program mean
+is 8.742091; five-game pooled mean is 8.870355. Counting whole repeating
+block operations once gives 8.903544. HALT idle is 18.792692% of selected
+elapsed time; including it and interrupt-entry time gives 10.829744 T per
+executed instruction as a throughput measure. Observed nominal costs span
+4..23 T. Preserve separate startup windows and actual TR-DOS ROM counters.
+
+An independent 2073-instruction fixture matches 20705 nominal T and its
+complete histogram, with 735 extra contended T versus zero for uncontended
+data, correct block repeats and HALT handling. All final histogram counts,
+weighted T sums and clock decompositions reconcile. This is a bounded
+emulator convenience sample, not a population average, hardware timing,
+complete-game test or player release. Pentagon has no ULA contention;
+original Sinclair 128K elapsed overhead is not measured by this sample.
+
+Exploratory attempts are retained locally: F Commander 5.5 returned to the
+Spectrum menu, including a local boot-name experiment, so replace it with
+Beta Commander. Initial model-comparison validation loaded the same 48K
+snapshot twice; correct the final test to an explicit two-address-region
+48K comparison. Resolve startup trainers, game controls and R-Type's sixth
+Detach key before final sampling; do not count failed menu pilots as play.
+Accept the measured result for the requested informational survey. Reuse
+[scripts, methodology and compact evidence](toolkit/instruction_survey/README.md)
+instead of rerunning the study without a new sampling question.
+
 ## 2026-10-03: three native optimization rounds each for IMA3 and PVQ3
 
 Under the relaxed 5:1..10:1 preference, optimize only the user-selected
