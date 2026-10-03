@@ -5,6 +5,34 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: locate the remaining PDM noise and reject coarse corrections
+
+Continue the 20-dB goal from both complete saved timelines. On the older
+excerpt, timing target /IMA16 /six-bit level /PDM stages score
+25.25390/22.58842/21.49069/18.99410 dB. On the initial prefix they score
+28.95125/25.07499/20.58585/15.80350 dB. The latter has half the source RMS;
+the main remaining error is amplitude selection/modulation, not a missing
+gain correction. Both baseline final scores reproduce exactly.
+
+Reject greedy packet-area steering: unrestricted six-bit controls score
+12.08682 dB; feedback0.5/1 worsens this to11.87138/10.67521 dB. Nonlinear
+64-level maps help only modestly: weak/medium/strong give
+19.36783/19.33124/19.23206 dB on the old excerpt and
+16.54155/16.56011/16.56071 dB on the initial prefix. They fit the existing
+counted state/pattern bounds (14080..14336 resident bytes, unchanged planned
+423-T paths), but their new contention has not been executed or verified.
+
+A bounded robust-word search uses only the medium palette's10320 supported
+pattern combinations and16 feedback states. Error-energy plus covariance
+weights0/4/16/64 score15.78310/15.82289/16.20488/16.35899 dB, all worse
+than its original16.56011 dB. Reject that cost function; do not continue
+this weight sweep. All candidates are host-only on old clocks; no new TRD,
+runtime, physical hardware or20-dB success is claimed. Native code remains
+unchanged (423 T/sample, zero delta). Next optimize the actual filtered
+waveform in the PC encoder while retaining the live IMA decoder.
+[Method and reproduction](audiobook-beeper/RECONSTRUCTION_ERROR.md),
+[evidence](audiobook-beeper/experiments/reconstruction-error/manifest.json).
+
 ## 2026-10-03: general audio-to-TRD conversion with per-input timing checks
 
 Implement the requested one-disk converter for arbitrary FFmpeg-readable

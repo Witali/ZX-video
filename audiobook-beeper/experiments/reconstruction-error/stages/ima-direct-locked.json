@@ -1,0 +1,157 @@
+{
+  "scope": "Separate timing reconstruction, codec, six-bit selection and PDM errors.\n\nUses saved complete Fuse timelines. Fitted gain is a diagnosis only, never\nthe acceptance score. This does not assemble or verify a new player.\n",
+  "input": "audiobook-beeper\\experiments\\ima-direct-locked",
+  "samples": 186880,
+  "rows": [
+    {
+      "stage": "timing_target",
+      "fixed_clock_snr_db": 25.25390203353306,
+      "error_rms": 0.01053122765232217,
+      "diagnostic_fitted_gain": 0.9986504463626417,
+      "diagnostic_gain_corrected_snr_db": 25.256553974734732
+    },
+    {
+      "stage": "ima_pcm16",
+      "fixed_clock_snr_db": 22.588420891397448,
+      "error_rms": 0.014313737818248046,
+      "diagnostic_fitted_gain": 0.9999748231243601,
+      "diagnostic_gain_corrected_snr_db": 22.588421388278398
+    },
+    {
+      "stage": "six_bit_level",
+      "fixed_clock_snr_db": 21.490685544446414,
+      "error_rms": 0.016242011939977555,
+      "diagnostic_fitted_gain": 0.9984073894796038,
+      "diagnostic_gain_corrected_snr_db": 21.492232375009728
+    },
+    {
+      "stage": "pdm",
+      "fixed_clock_snr_db": 18.994102946483416,
+      "error_rms": 0.02165055109079248,
+      "diagnostic_fitted_gain": 0.9949794574297179,
+      "diagnostic_gain_corrected_snr_db": 19.002772614740795
+    }
+  ],
+  "one_second_windows": [
+    {
+      "start_seconds": 0.1,
+      "signal_rms": 0.20484692906269197,
+      "snr_db": 20.69662463351453
+    },
+    {
+      "start_seconds": 1.1,
+      "signal_rms": 0.20862211201495817,
+      "snr_db": 20.832583305001542
+    },
+    {
+      "start_seconds": 2.1,
+      "signal_rms": 0.2109941582467143,
+      "snr_db": 20.46788389160873
+    },
+    {
+      "start_seconds": 3.1,
+      "signal_rms": 0.219937422639643,
+      "snr_db": 20.58725765373795
+    },
+    {
+      "start_seconds": 4.1,
+      "signal_rms": 0.15144705865728147,
+      "snr_db": 17.218763110002005
+    },
+    {
+      "start_seconds": 5.1,
+      "signal_rms": 0.11950156734783034,
+      "snr_db": 15.890369336486646
+    },
+    {
+      "start_seconds": 6.1,
+      "signal_rms": 0.22176880703024007,
+      "snr_db": 20.385155498702776
+    },
+    {
+      "start_seconds": 7.1,
+      "signal_rms": 0.16288694701768655,
+      "snr_db": 17.88847829923299
+    },
+    {
+      "start_seconds": 8.1,
+      "signal_rms": 0.06965539060057349,
+      "snr_db": 13.161463270912197
+    },
+    {
+      "start_seconds": 9.1,
+      "signal_rms": 0.12735644064624918,
+      "snr_db": 16.607276655832607
+    },
+    {
+      "start_seconds": 10.1,
+      "signal_rms": 0.15390392906767533,
+      "snr_db": 18.07504263841239
+    },
+    {
+      "start_seconds": 11.1,
+      "signal_rms": 0.07703945318288238,
+      "snr_db": 13.70798052433331
+    },
+    {
+      "start_seconds": 12.1,
+      "signal_rms": 0.25230027038131997,
+      "snr_db": 20.787155445166384
+    },
+    {
+      "start_seconds": 13.1,
+      "signal_rms": 0.2653057474261287,
+      "snr_db": 21.015562051373742
+    },
+    {
+      "start_seconds": 14.1,
+      "signal_rms": 0.18238165336167786,
+      "snr_db": 19.62169206163248
+    },
+    {
+      "start_seconds": 15.1,
+      "signal_rms": 0.21470455970744234,
+      "snr_db": 20.1473585414394
+    },
+    {
+      "start_seconds": 16.1,
+      "signal_rms": 0.22239743304274165,
+      "snr_db": 19.92875498778615
+    },
+    {
+      "start_seconds": 17.1,
+      "signal_rms": 0.13497757881245256,
+      "snr_db": 17.475267261713732
+    },
+    {
+      "start_seconds": 18.1,
+      "signal_rms": 0.06523930493961747,
+      "snr_db": 13.070041801163905
+    },
+    {
+      "start_seconds": 19.1,
+      "signal_rms": 0.2221757402222613,
+      "snr_db": 20.021673424364582
+    },
+    {
+      "start_seconds": 20.1,
+      "signal_rms": 0.2477039799046226,
+      "snr_db": 20.51041016141378
+    },
+    {
+      "start_seconds": 21.1,
+      "signal_rms": 0.20693604781204988,
+      "snr_db": 19.784647908324658
+    },
+    {
+      "start_seconds": 22.1,
+      "signal_rms": 0.2544540820464981,
+      "snr_db": 16.92606326897008
+    }
+  ],
+  "source_rms": 0.1928297786036891,
+  "pdm_relative_to_six_bit_snr_db": 22.398836869237275,
+  "filter": "highpass=f=70,lowpass=f=4500:p=2,lowpass=f=4500:p=2",
+  "reference_rate_hz": 8000,
+  "new_player_verified": false
+}
