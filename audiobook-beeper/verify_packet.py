@@ -93,10 +93,17 @@ def native_check(disk,meta,packed,reference_fn=reference,intervals_fn=intervals)
     def output(port,value):
         nonlocal checked
         if port&255==254:
-            i=len(bits);sample=i//16
+            i=len(bits);sample=i//16;slot=i%16
+            pairs=meta.get('loop_idle_pairs',0)
+            if pairs:
+                cycle,local=divmod(i,meta['outputs_per_cycle']);at=(meta['pcm_samples']-3)*16+15
+                if at<=local<at+pairs*2:slot=-1
+                else:
+                    if local>=at:local-=pairs*2
+                    sample=cycle*meta['pcm_samples']+local//16;slot=local%16
             assert value in (0,16), (i,port,value)
             assert not 0x4000<=port<0x8000, ('contended output port',hex(port))
-            if i%16==4:
+            if slot==4:
                 nxt=(sample+1)%len(pcm)
                 assert m.ix==int(pcm[nxt])+32768, (sample,'predictor',m.ix,int(pcm[nxt])+32768)
                 assert m.alt_hl==decoder_rows[int(indices[nxt])],(sample,'index')
@@ -208,7 +215,7 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
     actual=np.diff(timeline);native=np.tile(intervals_fn(meta),2)
     assert np.all(actual>=native)
     (out/'output-times.u32.gz').write_bytes(gzip.compress(timeline.astype('<u4').tobytes(),mtime=0))
-    n=meta['pcm_samples']*16
+    n=meta.get('outputs_per_cycle',meta['pcm_samples']*16)
     return dict(complete=True,cold_boot=True,machine='128',cycles_verified=2,bits_verified=len(bits),
                 pcm16_samples_verified=len(samples),every_pdm_bit_exact=True,every_predictor_and_index_exact=True,
                 paging_latches_verified=True,startup_sector_reads=len(reads),runtime_disk_reads=0,

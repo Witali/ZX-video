@@ -50,7 +50,7 @@ def layout(packed,model=None,hot_indices=None):
     return words,nxt,states,first,second,pointers,pages,rows,sections,hot,float(counts[hot].sum()/counts.sum())
 
 
-def build_disk(packed,work,model=None,hot_indices=None):
+def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
     work=Path(work).resolve();work.mkdir(parents=True,exist_ok=True)
     words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage=layout(packed,model,hot_indices)
     assert len(packed)==sum(s['bytes'] for s in sections)
@@ -75,6 +75,11 @@ def build_disk(packed,work,model=None,hot_indices=None):
     for s in sections:s['sector']=pos;pos+=s['sectors']
     constants=dict(first_base=0x8400,pcm_high=pointers,resident_reserve=14336,decoder_seed=rows[0],
                    initial_feedback_offset=states.index(16)*6,lower_disk=lower//16*256+lower%16,upper_disk=upper//16*256+upper%16)
+    assert 0<=idle_pairs<=1530 and idle_pad>=0 and (idle_pairs or idle_pad==0)
+    loads=next((b for b in range(4) if idle_pad>=7*b and (idle_pad-7*b)%4==0),None)
+    assert loads is not None,'padding must be a nonnegative sum of 4-T NOP and 7-T LD A,n'
+    constants.update(loop_idle_pairs=idle_pairs,idle_pad_loads=loads,idle_pad_nops=(idle_pad-7*loads)//4)
+    for i in range(6):constants[f'idle_count_{i}']=min(255,max(0,idle_pairs-255*i))
     for i in range(256):constants.update({f'first_address_{i}':first.get(i,-1),f'second_address_{i}':second.get(i,-1)})
     for i,s in enumerate(sections):constants.update({f'disk_{i}':s['sector']//16*256+s['sector']%16,f'address_{i}':s['address'],f'sectors_{i}':s['sectors']})
     (work/'config.inc').write_text(''.join(f'{k}: EQU {v}\n' for k,v in constants.items()))
@@ -97,6 +102,8 @@ def build_disk(packed,work,model=None,hot_indices=None):
     meta=dict(direct=True,model=model or dict(holds=HOLDS,beta=.5,extent=1.),origin=0x8000,player_labels=labels,sections=sections,directory=directory,capacity=capacity,
               first_addresses=list(first.values()),second_addresses=list(second.values()),
               first_patterns=len(first),second_patterns=len(second),resident_reserve=14336,
+              loop_idle_pairs=idle_pairs,loop_idle_pad_tstates=idle_pad,
+              outputs_per_cycle=len(packed)*32+idle_pairs*2,
               decoder_rows=[rows[i] for i in range(89)],hot_indices=hot,hot_coverage=coverage,
               feedback_states=states,packet_pages=pages,pcm_samples=len(packed)*2,packed_bytes=len(packed),
               ordinary_holds_tstates=HOLDS,ordinary_tstates=sum(HOLDS),page_extra_tstates=14,bank_extra_tstates=140,

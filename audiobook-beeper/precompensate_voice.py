@@ -11,15 +11,15 @@ import numpy as np
 from direct_player import build_disk
 from ima_beam import encode
 from ima_codec import decode
-from verify_direct import reference,intervals
+from verify_direct import reference,intervals,sample_positions
 from verify_packet import native_check,fuse_check
 from verify_pcm import save
 from analyze_voice_jitter import analyze
 
 
-def compensate(source,times,radius=16):
+def compensate(source,times,radius=16,period=None):
     """Lanczos interpolation at actual hold centers, in original sample units."""
-    n=len(source);period=times[-1]/n
+    n=len(source);period=times[-1]/n if period is None else period
     positions=(times[:-1]+times[1:])/(2*period)-.5
     centers=np.floor(positions).astype(np.int64)
     offsets=np.arange(-radius+1,radius+1)
@@ -47,16 +47,18 @@ def main():
         assert (w.getnchannels(),w.getsampwidth(),w.getframerate())==(1,1,8000)
         source=np.frombuffer(w.readframes(w.getnframes()),'u1')
     n=len(source)
-    times=np.frombuffer(gzip.decompress((pilot/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[:n*16+1:16]
-    target=compensate(source,times)
+    times=np.frombuffer(gzip.decompress((pilot/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[sample_positions(meta)]
+    fixed_rate=8000 if meta.get('loop_idle_pairs',0) else None
+    target=compensate(source,times,period=3546900/fixed_rate if fixed_rate else None)
     # The delivered source already has 128 silence samples. Keep its loop guard.
     assert np.all(source[-128:]==128)
-    target[-128:]=128
+    if not fixed_rate:target[-128:]=128
     with wave.open(str(out/'compensated-pcm.wav'),'wb') as w:
         w.setparams((1,1,8000,0,'NONE','not compressed'));w.writeframes(target.tobytes())
     started=time.monotonic();packed=encode(target)
     pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)
-    disk,new_meta=build_disk(packed,out/'assembly',meta['model'],meta['hot_indices'])
+    disk,new_meta=build_disk(packed,out/'assembly',meta['model'],meta['hot_indices'],meta.get('loop_idle_pairs',0),meta.get('loop_idle_pad_tstates',0))
+    if fixed_rate:new_meta['compensated_reference_rate_hz']=fixed_rate
     save(out/'player.json',new_meta);(out/'audiobook-preview.trd').write_bytes(disk)
     (out/'soundtrack.ima.gz').write_bytes(gzip.compress(packed,mtime=0))
     shutil.copy2(pilot/'source-preview.wav',out/'source-preview.wav')
@@ -70,7 +72,7 @@ def main():
                 host_fixed_mean_clock_snr_db=estimate['fixed_mean_clock_total_snr_db'])
     save(out/'precompensation.json',report);print(json.dumps(report),flush=True)
     if a.fuse:
-        ref=partial(reference,model=new_meta['model'])
+        ref=partial(reference,model=new_meta['model'],idle_pairs=new_meta.get('loop_idle_pairs',0))
         save(out/'native.json',native_check(disk,new_meta,packed,ref,intervals))
         save(out/'fuse.json',fuse_check(a.fuse,out,new_meta,packed,False,ref,intervals))
         actual=analyze(out,a.ffmpeg)

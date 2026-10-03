@@ -5,6 +5,36 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: stabilize compensated voice across repeated playback
+
+Extend the complete 186880-sample /93440-byte speech experiment with a
+balanced high-frequency idle tail; keep every source sample, live IMA
+decoding, the loading UI, all RAM accounting and 423-T ordinary samples.
+The final 1274 output pairs /five groups /212-T pad add **66495 CPU T per
+loop**, for **79122727 native T**. ULA separately adds 7537450 T over two
+loops. Full native/cold Fuse checks pass **5985257 bits /373760 predictors
+and indices**, all native timing/RAM, paging and loading checks. FFmpeg
+independently confirms all IMA samples; normal-speed capture passes two wraps.
+
+Both actual loops are exactly **82891452 T /1169 fields /23.37011249 s**;
+the PCM-count equivalent is -0.04327% from 8 kHz. Compensated speech is
+compared with the explicitly chosen original 8-kHz clock, zero-extended in
+the silent tail. Both loops score **18.99410 dB**; 20 dB remains open.
+The 0.1-s PCM-count windows crossing the added silence fail the old window
+gate (worst -16.55%); retain this result and distinguish it from voice pitch.
+One-second windows stay within 1.91%. Physical hardware was not measured.
+
+Record the unsupported DS syntax repair, rejected 600-pair calibration,
+reverted JR page-branch probe, full 1270/222 pilot, and re-encoded stream
+whose phase drift required the final 1274/212 adjustment. A bounded beta
+and extent probe found no worthwhile executable improvement; keep its
+host-only scores separate from the final measured table. Root TRDs are
+not replaced by this checkpoint. The user's next requested deliverable is
+a generic one-disk initial-fragment converter, with a study of denser
+codecs that still decode in real time alongside PDM.
+[Method and timing](audiobook-beeper/VOICE_TIMING.md),
+[report](audiobook-beeper/experiments/ima-direct-locked/report.json).
+
 ## 2026-10-03: precompensate voice timing; reject changing repeat phase
 
 From the weighted direct player's complete 186880-sample source and measured

@@ -102,3 +102,60 @@ its preview WAVs integrate the newly measured Fuse port events.
 ```powershell
 python audiobook-beeper/precompensate_voice.py --pilot build/ima-direct-weighted --output build/ima-direct-precomp --ffmpeg <ffmpeg.exe> --fuse <fuse.exe>
 ```
+
+## Stable repeats with a balanced idle tail
+
+The [ASM](direct-player.asm) now optionally emits alternating output levels
+in the already silent tail, before the final two source samples. Each pair
+costs 52 native T: OUT=12, JP=10, NOP=4, OUT=12, DEC A=4, JP NZ=10.
+Both high and low ordinary holds are 26 T. Each group of up to 255 pairs
+adds LD A,n=7 T; the final padding uses 4-T NOP and 7-T LD A,n instructions.
+A/flags are scratch here; the extracted IMA nibble remains in AF'. No
+interrupt, ROM call, extra disk read, or audio pre-expansion is introduced.
+
+The final full-source candidate uses 1274 pairs, five groups and 212 T of
+padding: **66495 additional native T/loop**, giving **79122727 T/loop**.
+All ordinary decoding remains **423 T/sample**. Full native and cold Fuse
+checks pass two loops, **5985257 exact outputs /373760 predictors and
+indices**, complete paging/loading checks and native RAM/timing guards.
+Actual ULA overhead is 7537450 T across both loops, separate from the
+66495-T deterministic increment and preload disk/ROM time.
+
+Both final Fuse loops are **82891452 T =1169 video fields =23.37011249 s**,
+with exactly repeated phase. The physical PCM-count equivalent is
+7996.5383 Hz (-0.04327%); the compensated speech reference is explicitly
+the original **8000-Hz clock**, with zero extension for the silent loop tail.
+Do not stretch the original reference across that appended pause. No fitted
+phase or gain is used. The two nominal-clock scores are both **18.99410 dB**.
+The repeat regression is fixed; **20 dB is still not achieved**.
+
+Windows crossing the appended silence show a 16.55% apparent PCM-clock
+slowdown over 0.1 s; this is explicitly reported, not hidden as a passing
+window. One-second windows remain within 1.91%. The source compensation
+and fixed 8-kHz reference measure voice timing separately from that pause.
+Normal-speed Fuse sound capture covers two wraps; physical hardware is
+unmeasured. [Report](experiments/ima-direct-locked/report.json) and
+[recording](experiments/ima-direct-locked/result-preview.wav).
+
+The first padded assembly used unsupported two-argument DS syntax; change
+to pyz80's zero-filled one-argument DS. A 600-pair phase-only probe did not
+align the loop. A shorter JR page branch saved 3 T on ordinary pages but
+did not improve actual loop phase and was reverted. A 1270-pair/222-T pilot
+settled within three T of the first cold phase, then repeated exactly.
+Re-encoding changed the endpoint: first/second-loop scores became
+18.9942/13.0362 dB until the final 1274/212 calibration above. Therefore a
+general converter must recalibrate **after final encoding**, as well as
+verify both loops; a saved schedule for another input is insufficient.
+
+Bounded host feedback probes do not justify another layout: beta 0.625
+gains only 0.0033 dB over 0.5 on the pre-calibration trace and does not fit
+the existing reserve; beta 0.375/0.75 are worse. On the locked trace, extents
+0.25/0.375/0.5/0.625 give 18.9867/19.0096/18.9941/18.9542 dB. These are
+host estimates, not executed alternate tables. Retain 0.5 for this verified
+checkpoint rather than describing a 0.0155-dB host gain as a new release.
+
+The next deliverable is a source-independent converter: accept ordinary
+FFmpeg-readable audio, retain its initial fragment that fits one resident
+TRD, disclose truncation, and produce previews and measured quality. The
+user also requested better compression with real-time memory decoding;
+compare that quality/CPU tradeoff before selecting a new default codec.

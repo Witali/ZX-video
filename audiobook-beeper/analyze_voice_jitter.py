@@ -9,22 +9,31 @@ from pathlib import Path
 import numpy as np
 from build_pdm import reconstruct,RATE,write_wav
 from assess_snr import FILTER,ratio
-from verify_direct import reference
+from verify_direct import reference,expand_samples,sample_positions
 from pdm_player import CPU_CLOCK
 
 
 def analyze(out,ffmpeg,loop=0):
     meta=json.loads((out/'player.json').read_bytes());packed=gzip.decompress((out/'soundtrack.ima.gz').read_bytes())
-    pcm,_,levels,bits=reference(packed,cycles=loop+1,model=meta.get('model'));n=len(pcm);count=n*16
+    pcm,_,levels,bits=reference(packed,cycles=loop+1,model=meta.get('model'),idle_pairs=meta.get('loop_idle_pairs',0));n=len(pcm);count=meta.get('outputs_per_cycle',n*16)
     bits=bits[loop*count:(loop+1)*count]
     t=np.frombuffer(gzip.decompress((out/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[loop*count:(loop+1)*count+1]
     t=t-t[0]
-    sample_t=t[::16];ideal=np.linspace(0,int(t[-1]),n+1)
+    sample_t=t[sample_positions(meta)];ideal=np.linspace(0,int(t[-1]),n+1)
     jitter=(sample_t-ideal)/CPU_CLOCK
     with wave.open(str(out/'source-preview.wav'),'rb') as w:source=np.frombuffer(w.readframes(w.getnframes()),'u1')
+    fixed_edges=ideal;fixed_values=source/256
+    reference_rate=meta.get('compensated_reference_rate_hz')
+    if reference_rate:
+        # Explicit encoder-selected original clock, never fitted to the output.
+        # A phase-lock filler lengthens only the already silent loop boundary.
+        period=CPU_CLOCK/reference_rate
+        segments=int(np.ceil(t[-1]/period))
+        fixed_edges=np.r_[np.arange(segments)*period,t[-1]]
+        fixed_values=np.pad(source/256,(0,max(0,segments-n)),constant_values=.5)[:segments]
     signals={'output':reconstruct(bits[:count],t),
-             'source_warped':reconstruct(np.repeat(source,16)/256,t),
-             'source_fixed':reconstruct(source/256,ideal)}
+             'source_warped':reconstruct(expand_samples(meta,source)/256,t),
+             'source_fixed':reconstruct(fixed_values,fixed_edges)}
     filtered={}
     for name,signal in signals.items():
         run=subprocess.run([ffmpeg,'-v','error','-nostdin','-f','f32le','-ar',str(RATE),'-ac','1','-i','-',
@@ -42,6 +51,8 @@ def analyze(out,ffmpeg,loop=0):
     centered=jitter[:-1]-jitter[:-1].mean()
     amplitudes={str(hz):float(2*abs(np.mean(centered*np.exp(-2j*np.pi*hz*sample_t[:-1]/CPU_CLOCK)))) for hz in (25,50,100,150,200,250)}
     report=dict(scope=__doc__,loop_index=loop,source_samples=n,source_rate_hz=8000,actual_mean_rate_hz=n*CPU_CLOCK/t[-1],
+                uniform_reference_rate_hz=reference_rate or n*CPU_CLOCK/t[-1],
+                reference_clock='Explicit encoder-selected original rate; zero-padded silent loop tail' if reference_rate else 'Measured mean rate',
                 warped_clock_total_snr_db=ratio(warped,output-warped),
                 fixed_mean_clock_total_snr_db=ratio(fixed,output-fixed),
                 clock_only_snr_db=ratio(fixed,warped-fixed),filter=FILTER,

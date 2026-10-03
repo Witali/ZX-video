@@ -4,7 +4,7 @@ from pathlib import Path
 from functools import partial
 import numpy as np
 from direct_player import HERE,prepare,MEASURED_MODEL
-from verify_direct import reference,intervals
+from verify_direct import reference,intervals,sample_positions
 from verify_packet import native_check,fuse_check
 from verify_pcm import save
 from build_packet import finish,render
@@ -19,19 +19,21 @@ def main():
     if not a.finish_only:
         if out.exists() and any(out.iterdir()):p.error('output must be empty')
         prepare(out,MEASURED_MODEL if a.measured_model else None);meta=json.loads((out/'player.json').read_bytes())
-        ref=partial(reference,model=meta.get('model'))
+        ref=partial(reference,model=meta.get('model'),idle_pairs=meta.get('loop_idle_pairs',0))
         packed=gzip.decompress((out/'soundtrack.ima.gz').read_bytes())
         save(out/'native.json',native_check((out/'audiobook-preview.trd').read_bytes(),meta,packed,ref,intervals))
         save(out/'fuse.json',fuse_check(a.fuse,out,meta,packed,False,ref,intervals))
         subprocess.run([sys.executable,str(HERE/'record_pcm.py'),str(out),'--fuse',str(a.fuse),
                         '--output',str(out/'sound-128'),'--machine','128'],check=True)
-    meta=json.loads((out/'player.json').read_bytes());ref=partial(reference,model=meta.get('model'))
+    meta=json.loads((out/'player.json').read_bytes());ref=partial(reference,model=meta.get('model'),idle_pairs=meta.get('loop_idle_pairs',0))
     report=finish(out,a.ffmpeg,ref,intervals)
     report['date']='2026-10-03'
     report['second_loop_render']=render(out,a.ffmpeg,False,ref,intervals,loop=1)
     rate=report['fuse']['average_pcm_rate_hz']
     snr=min(report['render']['total_snr_db'],report['second_loop_render']['total_snr_db'])
-    timeline=np.frombuffer(gzip.decompress((out/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[::16]
+    all_times=np.frombuffer(gzip.decompress((out/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)
+    positions=sample_positions(meta);count=meta.get('outputs_per_cycle',meta['pcm_samples']*16)
+    timeline=all_times[np.r_[positions[:-1],positions+count]]
     windows=[]
     for samples in (800,8000):
         starts=np.arange(0,len(timeline)-samples,100)
