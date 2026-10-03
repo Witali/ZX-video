@@ -9,6 +9,7 @@ from probe_feedback_packets import integral_table
 from verify_pcm import save
 
 HERE=Path(__file__).resolve().parent
+MAX_PACKED_BYTES=93440
 HOLDS=[36,28,28,31,24,26,22,20,22,26,22,30,31,27,34,16]
 MEASURED_MODEL=dict(holds=[288,231,225,248,192,218,204,170,215,226,177,240,248,216,291,156],
                     beta=.5,extent=.5,weight_units='eighth T-state; rounded ordinary Fuse means',
@@ -45,8 +46,12 @@ def layout(packed,model=None,hot_indices=None):
     cold_slots=[p+j for p in pages if p<0x8000 for j in (128,192)]
     rows={i:a for i,a in zip(hot,slots)}
     for i,a in zip([i for i in range(89) if i not in rows],cold_slots):rows[i]=a
-    sections=[dict(bank=b,address=0xc000,bytes=16384,sectors=64) for b in (0,4,6,1,3)]
-    sections += [dict(bank=7,address=0xdb00,bytes=9472,sectors=37),dict(bank=2,address=0xf800,bytes=2048,sectors=8)]
+    assert 256<=len(packed)<=MAX_PACKED_BYTES and len(packed)%256==0
+    sections=[];remaining=len(packed)
+    for bank,capacity in [(b,16384) for b in (0,4,6,1,3)]+[(7,9472),(2,2048)]:
+        size=min(remaining,capacity)
+        if size:sections.append(dict(bank=bank,address=0x10000-size,bytes=size,sectors=size//256))
+        remaining-=size
     return words,nxt,states,first,second,pointers,pages,rows,sections,hot,float(counts[hot].sum()/counts.sum())
 
 
@@ -74,14 +79,19 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
     lower=track*16+sector;upper=lower+28;pos=upper+32
     for s in sections:s['sector']=pos;pos+=s['sectors']
     constants=dict(first_base=0x8400,pcm_high=pointers,resident_reserve=14336,decoder_seed=rows[0],
-                   initial_feedback_offset=states.index(16)*6,lower_disk=lower//16*256+lower%16,upper_disk=upper//16*256+upper%16)
+                   initial_feedback_offset=states.index(16)*6,lower_disk=lower//16*256+lower%16,upper_disk=upper//16*256+upper%16,
+                   final_section_index=len(sections)-1)
     assert 0<=idle_pairs<=1530 and idle_pad>=0 and (idle_pairs or idle_pad==0)
     loads=next((b for b in range(4) if idle_pad>=7*b and (idle_pad-7*b)%4==0),None)
     assert loads is not None,'padding must be a nonnegative sum of 4-T NOP and 7-T LD A,n'
     constants.update(loop_idle_pairs=idle_pairs,idle_pad_loads=loads,idle_pad_nops=(idle_pad-7*loads)//4)
     for i in range(6):constants[f'idle_count_{i}']=min(255,max(0,idle_pairs-255*i))
     for i in range(256):constants.update({f'first_address_{i}':first.get(i,-1),f'second_address_{i}':second.get(i,-1)})
-    for i,s in enumerate(sections):constants.update({f'disk_{i}':s['sector']//16*256+s['sector']%16,f'address_{i}':s['address'],f'sectors_{i}':s['sectors']})
+    for i in range(7):
+        s=sections[i] if i<len(sections) else dict(sector=0,address=0xc000,sectors=0)
+        successor=(i+1)%len(sections);nxt_section=sections[successor]
+        constants.update({f'disk_{i}':s['sector']//16*256+s['sector']%16,f'address_{i}':s['address'],f'sectors_{i}':s['sectors'],
+                          f'next_bank_{i}':nxt_section['bank'],f'next_address_{i}':nxt_section['address'],f'next_tail_{i}':f'bank_tail_{successor}'})
     (work/'config.inc').write_text(''.join(f'{k}: EQU {v}\n' for k,v in constants.items()))
     for name,data in [('pcm-high',memory[pointers:pointers+256]),('fixed-pages',memory[pointers+256:pointers+1280]),
                       ('decoder-extra',memory[pointers+1280:pointers+1280+1088]),
@@ -113,7 +123,8 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
               source_sample_rate_hz=8000,cpu_clock_hz=3546900,saturation_guard=require_unclipped(packed),
               packed_sha256=hashlib.sha256(packed).hexdigest(),binary_sha256=hashlib.sha256(blob).hexdigest(),
               assembly=dict(instruction_bytes_emitted_by_python=False,assembler='pyz80 1.3.0'),
-              memory=dict(total_ram_bytes=131072,adpcm_bytes=len(packed),shadow_screen_bytes=6912,bank5_tables_and_workspace_bytes=16384,bank2_resident_bytes=14336,pcm_buffer_bytes=0,pdm_buffer_bytes=0))
+              memory=dict(total_ram_bytes=131072,adpcm_bytes=len(packed),shadow_screen_bytes=6912,bank5_tables_and_workspace_bytes=16384,bank2_resident_bytes=14336,
+                          unused_audio_capacity_bytes=MAX_PACKED_BYTES-len(packed),pcm_buffer_bytes=0,pdm_buffer_bytes=0))
     return disk,meta
 
 

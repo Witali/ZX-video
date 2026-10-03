@@ -1,0 +1,240 @@
+{
+  "binary_regressions": [
+    {
+      "name": "ima-direct-weighted",
+      "identical": true,
+      "sha256": "e90f56c1e5cf13f37522e11cf882352b25fadd069733959038fb6f8d12fbb8e7"
+    },
+    {
+      "name": "ima-direct-locked",
+      "identical": true,
+      "sha256": "40c2f29e5dd5976dc2450e8e74a4ac0b38a8c8a996e26831f8729ade92b2d757"
+    }
+  ],
+  "variable_lengths": [
+    {
+      "packed_bytes": 256,
+      "sections": [
+        {
+          "bank": 0,
+          "address": 65280,
+          "bytes": 256,
+          "sectors": 1,
+          "sector": 168
+        }
+      ],
+      "native": {
+        "complete": true,
+        "cycles_verified": 2,
+        "bits_verified": 16397,
+        "pcm16_samples_verified": 1024,
+        "every_pdm_bit_exact": true,
+        "every_predictor_and_index_exact": true,
+        "memory_guards_passed": true,
+        "every_output_port_uncontended": true,
+        "bank_sequence": [
+          0,
+          0,
+          0
+        ],
+        "cycle_tstates": 216891,
+        "maximum_hold_tstates": 173,
+        "rational_table_cases": 2048,
+        "interval_histogram_tstates": {
+          "16": 1024,
+          "20": 1024,
+          "22": 3072,
+          "24": 1024,
+          "26": 2058,
+          "27": 1024,
+          "28": 2048,
+          "30": 1024,
+          "31": 2048,
+          "34": 1022,
+          "36": 1024,
+          "46": 2,
+          "173": 2
+        },
+        "scope": "Continuous Z80 execution; excludes ULA contention, disk and ROM"
+      },
+      "fuse": {
+        "complete": true,
+        "cold_boot": true,
+        "machine": "128",
+        "cycles_verified": 2,
+        "bits_verified": 16397,
+        "pcm16_samples_verified": 1024,
+        "every_pdm_bit_exact": true,
+        "every_predictor_and_index_exact": true,
+        "paging_latches_verified": true,
+        "startup_sector_reads": 61,
+        "runtime_disk_reads": 0,
+        "cycle_durations_seconds": [
+          0.06389805181989906,
+          0.06417012038681666
+        ],
+        "average_pdm_rate_hz": 128025.56417792161,
+        "average_pcm_rate_hz": 7995.741505134894,
+        "maximum_hold_tstates": 177,
+        "minimum_instantaneous_pdm_rate_hz": 20038.98305084746,
+        "additional_ula_tstates": 20463,
+        "native_tstates_per_cycle": 216891,
+        "interval_histogram_tstates": {
+          "16": 421,
+          "18": 12,
+          "20": 422,
+          "21": 16,
+          "22": 3022,
+          "23": 3,
+          "24": 1005,
+          "25": 38,
+          "26": 1172,
+          "27": 1312,
+          "28": 2575,
+          "29": 1,
+          "30": 1326,
+          "31": 2283,
+          "32": 679,
+          "33": 3,
+          "34": 449,
+          "35": 16,
+          "36": 1031,
+          "37": 2,
+          "38": 554,
+          "39": 21,
+          "40": 29,
+          "46": 2,
+          "173": 1,
+          "177": 1
+        },
+        "loading_message": {
+          "shown_before_reads": true,
+          "hidden_before_playback": true,
+          "shadow_screen_selected_during_all_reads": true
+        },
+        "trd_sha256": "33d38bf7ed718ccecff8115f54ea9a23c172fdad512d98fe216ca07d3fd97313",
+        "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+        "physical_hardware_tested": false
+      }
+    },
+    {
+      "packed_bytes": 16640,
+      "sections": [
+        {
+          "bank": 0,
+          "address": 49152,
+          "bytes": 16384,
+          "sectors": 64,
+          "sector": 168
+        },
+        {
+          "bank": 4,
+          "address": 65280,
+          "bytes": 256,
+          "sectors": 1,
+          "sector": 232
+        }
+      ],
+      "native": {
+        "complete": true,
+        "cycles_verified": 2,
+        "bits_verified": 1064973,
+        "pcm16_samples_verified": 66560,
+        "every_pdm_bit_exact": true,
+        "every_predictor_and_index_exact": true,
+        "memory_guards_passed": true,
+        "every_output_port_uncontended": true,
+        "bank_sequence": [
+          0,
+          4,
+          0,
+          4,
+          0
+        ],
+        "cycle_tstates": 14078777,
+        "maximum_hold_tstates": 174,
+        "rational_table_cases": 2048,
+        "interval_histogram_tstates": {
+          "16": 66560,
+          "20": 66560,
+          "22": 199680,
+          "24": 66560,
+          "26": 133130,
+          "27": 66560,
+          "28": 133120,
+          "30": 66560,
+          "31": 133120,
+          "34": 66430,
+          "36": 66560,
+          "46": 2,
+          "48": 126,
+          "173": 2,
+          "174": 2
+        },
+        "scope": "Continuous Z80 execution; excludes ULA contention, disk and ROM"
+      },
+      "fuse": {
+        "complete": true,
+        "cold_boot": true,
+        "machine": "128",
+        "cycles_verified": 2,
+        "bits_verified": 1064973,
+        "pcm16_samples_verified": 66560,
+        "every_pdm_bit_exact": true,
+        "every_predictor_and_index_exact": true,
+        "paging_latches_verified": true,
+        "startup_sector_reads": 125,
+        "runtime_disk_reads": 0,
+        "cycle_durations_seconds": [
+          4.158332346556148,
+          4.158240717246046
+        ],
+        "average_pdm_rate_hz": 128054.18672208636,
+        "average_pcm_rate_hz": 8003.296488754699,
+        "maximum_hold_tstates": 178,
+        "minimum_instantaneous_pdm_rate_hz": 19926.404494382023,
+        "additional_ula_tstates": 1340499,
+        "native_tstates_per_cycle": 14078777,
+        "interval_histogram_tstates": {
+          "16": 26786,
+          "18": 556,
+          "20": 26822,
+          "21": 942,
+          "22": 197085,
+          "23": 178,
+          "24": 66460,
+          "25": 1128,
+          "26": 67426,
+          "27": 93288,
+          "28": 168155,
+          "29": 9,
+          "30": 93294,
+          "31": 143530,
+          "32": 43124,
+          "33": 243,
+          "34": 28288,
+          "35": 498,
+          "36": 67111,
+          "37": 13,
+          "38": 37589,
+          "39": 478,
+          "40": 1835,
+          "42": 2,
+          "46": 2,
+          "48": 50,
+          "52": 76,
+          "173": 2,
+          "178": 2
+        },
+        "loading_message": {
+          "shown_before_reads": true,
+          "hidden_before_playback": true,
+          "shadow_screen_selected_during_all_reads": true
+        },
+        "trd_sha256": "cb32aedc85fbec1f63d06b2dbda06fb6d5280be8fdb326f06d9f24f87e257d1a",
+        "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+        "physical_hardware_tested": false
+      }
+    }
+  ]
+}

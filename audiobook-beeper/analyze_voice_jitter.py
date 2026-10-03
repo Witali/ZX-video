@@ -39,9 +39,15 @@ def analyze(out,ffmpeg,loop=0):
         run=subprocess.run([ffmpeg,'-v','error','-nostdin','-f','f32le','-ar',str(RATE),'-ac','1','-i','-',
                             '-af',FILTER,'-ar','44100','-f','f32le','-'],input=signal.astype('<f4').tobytes(),capture_output=True,check=True)
         filtered[name]=np.frombuffer(run.stdout,'<f4').astype(float)
-    output=filtered['output'][4410:-4410];fixed=filtered['source_fixed'][4410:-4410];warped=filtered['source_warped'][4410:-4410]
+    edge=min(4410,len(filtered['output'])//10)
+    window=slice(edge,-edge if edge else None)
+    output=filtered['output'][window];fixed=filtered['source_fixed'][window];warped=filtered['source_warped'][window]
+    def measured_snr(signal,error):
+        # A silent reference has no meaningful SNR; do not emit -Infinity.
+        return ratio(signal,error) if np.any(source!=128) else None
     windows=[]
     for size in (1,8,40,80,160,800):
+        if size>n:continue
         starts=np.arange(n-size+1);rates=size*CPU_CLOCK/(sample_t[starts+size]-sample_t[starts])
         windows.append(dict(source_samples=size,nominal_ms=size/8,min_hz=float(rates.min()),max_hz=float(rates.max())))
     # Fold the error in time into one 50-Hz field (phase origin is arbitrary).
@@ -53,9 +59,9 @@ def analyze(out,ffmpeg,loop=0):
     report=dict(scope=__doc__,loop_index=loop,source_samples=n,source_rate_hz=8000,actual_mean_rate_hz=n*CPU_CLOCK/t[-1],
                 uniform_reference_rate_hz=reference_rate or n*CPU_CLOCK/t[-1],
                 reference_clock='Explicit encoder-selected original rate; zero-padded silent loop tail' if reference_rate else 'Measured mean rate',
-                warped_clock_total_snr_db=ratio(warped,output-warped),
-                fixed_mean_clock_total_snr_db=ratio(fixed,output-fixed),
-                clock_only_snr_db=ratio(fixed,warped-fixed),filter=FILTER,
+                warped_clock_total_snr_db=measured_snr(warped,output-warped),
+                fixed_mean_clock_total_snr_db=measured_snr(fixed,output-fixed),
+                clock_only_snr_db=measured_snr(fixed,warped-fixed),filter=FILTER,
                 jitter_seconds=dict(minimum=float(jitter.min()),maximum=float(jitter.max()),
                                     mean=float(jitter.mean()),standard_deviation=float(jitter.std()),peak_to_peak=float(np.ptp(jitter))),
                 jitter_line_amplitude_seconds=amplitudes,folded_field_jitter_seconds=folded.tolist(),speed_windows=windows,

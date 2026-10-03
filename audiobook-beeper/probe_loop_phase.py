@@ -10,7 +10,7 @@ from smoke_test_fuse import hidden_startupinfo
 from verify_pcm import save
 
 
-def measure(out,fuse):
+def measure(out,fuse,target_fields=None):
     meta=json.loads((out/'player.json').read_bytes());n=meta['outputs_per_cycle']
     stamp='spectrum:frames*70908+ula:tstates'
     lines=['base 10','set $r 0','set $bits 0',f"breakpoint {meta['player_labels']['ready']}",
@@ -28,9 +28,10 @@ def measure(out,fuse):
     times=[int(s,0) for s in result.stdout.decode().splitlines() if re.fullmatch(r'(?:\d+|0x[\da-fA-F]+)',s)]
     assert len(times)==3,times
     periods=[times[i+1]-times[i] for i in range(2)]
+    if target_fields is None:target_fields=(max(periods)+70907)//70908
     report=dict(scope=__doc__,first_output_absolute_tstates=times,field_phases=[t%70908 for t in times],
-                cycle_tstates=periods,target_cycle_tstates=1169*70908,
-                deltas_from_target=[t-1169*70908 for t in periods],exact_repeat_phase=all(t==1169*70908 for t in periods),
+                cycle_tstates=periods,target_cycle_tstates=target_fields*70908,
+                deltas_from_target=[t-target_fields*70908 for t in periods],exact_repeat_phase=all(t==target_fields*70908 for t in periods),
                 idle_pairs=meta['loop_idle_pairs'],idle_pad_tstates=meta['loop_idle_pad_tstates'])
     save(out/'phase-probe.json',report);print(json.dumps(report),flush=True);return report
 
@@ -39,6 +40,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--input',required=True,type=Path)
     p.add_argument('--output',required=True,type=Path);p.add_argument('--pairs',type=int,required=True)
     p.add_argument('--pad',type=int,default=0);p.add_argument('--fuse',required=True,type=Path)
+    p.add_argument('--fields',type=int)
     a=p.parse_args();out=a.output.resolve()
     if out.exists() and any(out.iterdir()):p.error('output must be empty')
     out.mkdir(parents=True);meta=json.loads((a.input/'player.json').read_bytes())
@@ -47,7 +49,7 @@ def main():
     if 'compensated_reference_rate_hz' in meta:new_meta['compensated_reference_rate_hz']=meta['compensated_reference_rate_hz']
     (out/'audiobook-preview.trd').write_bytes(disk);save(out/'player.json',new_meta)
     for name in ('source-preview.wav','soundtrack.ima.gz'):shutil.copy2(a.input/name,out/name)
-    measure(out,a.fuse)
+    measure(out,a.fuse,a.fields)
 
 
 if __name__=='__main__':main()

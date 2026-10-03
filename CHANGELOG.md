@@ -5,6 +5,51 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: general audio-to-TRD conversion with per-input timing checks
+
+Implement the requested one-disk converter for arbitrary FFmpeg-readable
+local audio, retaining its initial resident fragment and explicitly reporting
+truncation. Prepare mono 8-kHz PCM8 with fixed peak normalization, short edge
+fades and a silent loop guard; encode with beam-32 IMA. Keep IMA as the
+verified default while the denser PVQ decoder remains a separate candidate.
+For each encoded stream, calibrate the silent tail against real Fuse loop
+periods, measure the complete timeline, compensate source timing, re-encode
+and recalibrate. Compare up to two compensation passes against the original
+prepared 8-kHz clock, requiring both repeats and +/-2% mean speed.
+
+Generalize the existing player to 256..93440 compressed bytes, loading only
+used banks and right-aligning a partial final bank. All executed instruction
+paths retain their counts: **423 T/sample, +14 T/page, +140 T/bank; delta 0**.
+The prior weighted and phase-locked full disks reproduce byte for byte.
+Minimum 256-byte and partial-bank 16640-byte payloads pass two complete native
+and cold-Fuse loops with exact bits/predictors, protected memory, paging,
+loading indicators and no runtime reads. One-second M4A and 37-ms silent
+stereo WAV conversions pass; silence reports null SNR. Existing output
+directories are rejected without modifications. A source-snapshot test's
+initial expected count was corrected from 20 to the actual 19 files; all
+archive digests then passed.
+
+The full run uses the actual audiobook's first **23.344 seconds**, not the
+older comparison excerpt, filling 93440 IMA bytes. The first compensation
+pass measures 15.40508/15.40829 dB; the second wins with
+**15.80350/15.80023 dB**. Mean prepared-sample speed is **-0.04327%** from
+8 kHz. The output still does not meet 20 dB; do not compare this different
+source directly with the older 18.99410-dB checkpoint. The final native loop
+costs 79122946 T, with 7537011 additional ULA T across two loops. Compared
+with the prior excerpt's 79122727 T, the 219-T increase comes entirely from
+the newly calibrated idle tail (1281 pairs, six groups, 60-T pad); ordinary
+playback code is unchanged. Full checks cover 5985285 bits / 373760 predictors
+and indices, 425 startup sectors and zero runtime reads. Normal-speed capture
+and full native/cold-Fuse evidence accompany the final disk; no physical
+hardware claim is made. The full-trace repeat-phase guard was added while
+the long conversion ran and is also applied to its saved final trace;
+this additional post-check is recorded separately from emulator execution.
+New conversions save producer sources at startup and also retain the
+uncompensated pilot if its measured quality is better.
+[Usage and timing](audiobook-beeper/CONVERTER.md),
+[converter](audiobook-beeper/convert_audio.py),
+[evidence](audiobook-beeper/experiments/audio-converter/report.json).
+
 ## 2026-10-03: compare denser audio codecs and execute a PVQ decoder
 
 Study the unchanged 186880-sample /8-kHz source with ten codec/predictor

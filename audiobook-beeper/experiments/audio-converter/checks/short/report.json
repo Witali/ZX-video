@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-03",
+  "complete": true,
+  "preview_only": true,
+  "profile": "IMA beam32 / measured-weight direct PDM / per-input loop-phase calibration and clock compensation",
+  "source": {
+    "input": "C:\\Work\\AudioBooksDownloader\\Audiobooks\\003 - \u041e. \u0413\u0435\u043d\u0440\u0438. \u041a\u043e\u0440\u043e\u0442\u043a\u0438\u0435 \u0440\u0430\u0441\u0441\u043a\u0430\u0437\u044b \uff02\u0414\u043e\u0440\u043e\u0433\u043e \u043a\u0430\u043a \u043f\u0430\u043c\u044f\u0442\u044c\uff02 \u0438 \uff02\u041e\u0431\u043e\u0440\u043e\u0442\u043d\u0430\u044f \u0441\u0442\u043e\u0440\u043e\u043d\u0430\uff02 (1977) [1bqRZ3gM55s].m4a",
+    "sample_rate_hz": 8000,
+    "channels": 1,
+    "pcm_bits": 8,
+    "retained_input_samples": 8000,
+    "retained_input_seconds": 1.0,
+    "truncated": true,
+    "truncation_reason": "requested duration or resident RAM capacity",
+    "maximum_packed_bytes": 93440,
+    "prepared_samples": 8192,
+    "short_input_repetitions": 1,
+    "silence_guard_samples": 128,
+    "fixed_gain": 2.243494354615952,
+    "original_peak": 0.3795697093009949,
+    "edge_fade_samples": 80,
+    "peak_target_fraction": 0.8515625,
+    "quality_reference": "Prepared PCM8, with the same gain/fades/padding",
+    "source_sha256": "0681967cd904a5a3ecc049529c515e717df757db31ab97be60c9e976d80c515e",
+    "input_media": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "aac",
+          "sample_rate": "44100",
+          "channels": 2,
+          "bits_per_sample": 0
+        }
+      ],
+      "format": {
+        "duration": "667.596916"
+      }
+    }
+  },
+  "selected_variant": {
+    "directory": "compensated-1\\phase-03",
+    "two_loop_clock_aware_snr_db": [
+      19.00870250357685,
+      18.995813558691925
+    ],
+    "minimum_snr_db": 18.995813558691925,
+    "snr_at_least_20_db": false,
+    "mean_prepared_sample_rate_hz": 7880.257809756144,
+    "mean_speed_error_percent": -1.4967773780482085,
+    "speed_within_two_percent": true,
+    "reference_rate_hz": 8000,
+    "physical_hardware_tested": false
+  },
+  "variants": [
+    {
+      "directory": "compensated-1\\phase-03",
+      "two_loop_clock_aware_snr_db": [
+        19.00870250357685,
+        18.995813558691925
+      ],
+      "minimum_snr_db": 18.995813558691925,
+      "snr_at_least_20_db": false,
+      "mean_prepared_sample_rate_hz": 7880.257809756144,
+      "mean_speed_error_percent": -1.4967773780482085,
+      "speed_within_two_percent": true,
+      "reference_rate_hz": 8000,
+      "physical_hardware_tested": false
+    }
+  ],
+  "independent_ima": {
+    "decoder": "FFmpeg IMA WAV",
+    "samples": 8192,
+    "every_sample_exact": true
+  },
+  "recording": null,
+  "wav_scope": "Integrated Fuse port events with measurement filter",
+  "trd_sha256": "9bdf5fe89f818ac64728c948547f143c39f4c63e02b1b642196dc20f74acf816",
+  "timing": {
+    "ordinary_native_tstates": 423,
+    "delta_from_verified_player": 0,
+    "source_reference_rate_hz": 8000,
+    "physical_hardware_tested": false
+  },
+  "limitations": [
+    "8-kHz mono PCM8 reference; quality is not measured against full-band original input",
+    "Bounded search over the verified IMA architecture, not a universal codec optimum",
+    "20-dB end-to-end goal passes only when measured on both loops"
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "date": "2026-10-03",
+  "complete": true,
+  "preview_only": true,
+  "profile": "IMA beam32 / measured-weight direct PDM / per-input loop-phase calibration and clock compensation",
+  "source": {
+    "input": "C:\\Work\\ZX-video\\.tmp\\generic-audio-inputs\\silent short stereo.wav",
+    "sample_rate_hz": 8000,
+    "channels": 1,
+    "pcm_bits": 8,
+    "retained_input_samples": 296,
+    "retained_input_seconds": 0.037,
+    "truncated": false,
+    "truncation_reason": null,
+    "maximum_packed_bytes": 93440,
+    "prepared_samples": 8192,
+    "short_input_repetitions": 16,
+    "silence_guard_samples": 128,
+    "fixed_gain": 1.0,
+    "original_peak": 0.0,
+    "edge_fade_samples": 80,
+    "peak_target_fraction": 0.8515625,
+    "quality_reference": "Prepared PCM8, with the same gain/fades/padding",
+    "source_sha256": "e78ff88013c3fd671404fefcf0e73bd7a80bf08e6cec8fde0327ca6365718132",
+    "input_media": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "pcm_s16le",
+          "sample_rate": "44100",
+          "channels": 2,
+          "bits_per_sample": 16
+        }
+      ],
+      "format": {
+        "duration": "0.037007"
+      }
+    }
+  },
+  "selected_variant": {
+    "directory": "compensated-1\\phase-03",
+    "two_loop_clock_aware_snr_db": [
+      null,
+      null
+    ],
+    "minimum_snr_db": null,
+    "snr_at_least_20_db": false,
+    "mean_prepared_sample_rate_hz": 7880.257809756144,
+    "mean_speed_error_percent": -1.4967773780482085,
+    "speed_within_two_percent": true,
+    "reference_rate_hz": 8000,
+    "physical_hardware_tested": false,
+    "complete_trace_phase_deltas_tstates": [
+      -2,
+      0
+    ]
+  },
+  "variants": [
+    {
+      "directory": "compensated-1\\phase-03",
+      "two_loop_clock_aware_snr_db": [
+        null,
+        null
+      ],
+      "minimum_snr_db": null,
+      "snr_at_least_20_db": false,
+      "mean_prepared_sample_rate_hz": 7880.257809756144,
+      "mean_speed_error_percent": -1.4967773780482085,
+      "speed_within_two_percent": true,
+      "reference_rate_hz": 8000,
+      "physical_hardware_tested": false,
+      "complete_trace_phase_deltas_tstates": [
+        -2,
+        0
+      ]
+    }
+  ],
+  "independent_ima": {
+    "decoder": "FFmpeg IMA WAV",
+    "samples": 8192,
+    "every_sample_exact": true
+  },
+  "recording": null,
+  "wav_scope": "Integrated Fuse port events with measurement filter",
+  "trd_sha256": "199e27aba4837fc9581888c1b8a6a445efb5a612046b06404a0c4820dfced0a5",
+  "timing": {
+    "ordinary_native_tstates": 423,
+    "delta_from_verified_player": 0,
+    "source_reference_rate_hz": 8000,
+    "physical_hardware_tested": false
+  },
+  "limitations": [
+    "8-kHz mono PCM8 reference; quality is not measured against full-band original input",
+    "Bounded search over the verified IMA architecture, not a universal codec optimum",
+    "20-dB end-to-end goal passes only when measured on both loops"
+  ]
+}
