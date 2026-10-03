@@ -19,19 +19,19 @@ from smoke_test_fuse import hidden_startupinfo
 from verify_pcm import extract_player, save
 
 
-def rational_tables():
+def rational_tables(holds=HOLDS,expected_tables=None):
     words=np.empty((64,32),dtype='<u2');successors=np.empty((64,32),dtype='u1')
     for value in range(64):
         for state in range(32):
             x=Fraction(2*value+1,128);q=Fraction(state//2-8,8)
             recent=Fraction(2*(state%2)-1,2);word=0
-            for hold in HOLDS:
-                weight=Fraction(hold*16,sum(HOLDS))
+            for hold in holds:
+                weight=Fraction(hold*16,sum(holds))
                 u=x+q/weight+recent/2;bit=int(u>=Fraction(1,2))
                 recent=u-bit;q+=weight*(x-bit);word=word*2+bit
             code=max(0,min(15,(q*8+Fraction(17,2)).__floor__()))
             words[value,state]=word;successors[value,state]=code*2+int(recent>=0)
-    a,b,*_=layout()
+    a,b,*_=(layout() if expected_tables is None else expected_tables)
     assert np.array_equal(words,a) and np.array_equal(successors,b), 'table differs from rational recurrence'
     return words,successors
 
@@ -58,19 +58,25 @@ def intervals(meta):
     return holds
 
 
-def native_check(disk,meta,packed):
+def native_check(disk,meta,packed,reference_fn=reference,intervals_fn=intervals):
     from z80 import Z80Machine
-    pcm,indices,levels,expected=reference(packed)
-    timing=intervals(meta);budget=int(timing.sum()*2+1000000)
+    pcm,indices,levels,expected=reference_fn(packed)
+    timing=intervals_fn(meta);budget=int(timing.sum()*2+1000000)
     labels=meta['player_labels'];blob=extract_player(disk)
     m=Z80Machine();m.memory[:]=b'\xa5'*65536
     m.set_memory_block(0x8000,blob[:16384])
-    m.set_memory_block(0x4000,decoder_table(0x4000,False))
-    words,successors,first,second,ids,_,_,_=layout()
-    import struct
-    table=b''.join(struct.pack('<HBB',first[int(words[v,s])>>8],int(successors[v,s])*4,ids[int(words[v,s])&255])
-                   for v in range(64) for s in range(32))
-    m.set_memory_block(0x6000,table)
+    if meta.get('direct'):
+        for key,address,count in [('lower_disk',0x4000,28),('upper_disk',0x6000,32)]:
+            location=labels[key];sector=(location>>8)*16+(location&255)
+            m.set_memory_block(address,disk[sector*256:(sector+count)*256])
+    else:
+        m.set_memory_block(0x4000,decoder_table(0x4000,False))
+        words,successors,first,second,ids,_,_,_=layout()
+        import struct
+        table=b''.join(struct.pack('<HBB',first[int(words[v,s])>>8],int(successors[v,s])*4,ids[int(words[v,s])&255])
+                       for v in range(64) for s in range(32))
+        m.set_memory_block(0x6000,table)
+    decoder_rows=meta.get('decoder_rows',[0x4000+i*64 for i in range(89)])
     banks={};offset=0
     for s in meta['sections']:
         data=bytearray(b'\xa5'*16384);data[s['address']-0xc000:]=packed[offset:offset+s['bytes']]
@@ -93,7 +99,7 @@ def native_check(disk,meta,packed):
             if i%16==4:
                 nxt=(sample+1)%len(pcm)
                 assert m.ix==int(pcm[nxt])+32768, (sample,'predictor',m.ix,int(pcm[nxt])+32768)
-                assert m.alt_hl==0x4000+int(indices[nxt])*64,(sample,'index')
+                assert m.alt_hl==decoder_rows[int(indices[nxt])],(sample,'index')
                 checked+=1
             bits.append(value>>4);times.append(budget-m.ticks_to_stop)
             if len(bits)==len(expected):m.set_breakpoint(m.pc)
@@ -121,8 +127,8 @@ def native_check(disk,meta,packed):
                 scope='Continuous Z80 execution; excludes ULA contention, disk and ROM')
 
 
-def fuse_check(fuse,out,meta,packed,probe=False):
-    pcm,indices,levels,expected=reference(packed)
+def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals_fn=intervals):
+    pcm,indices,levels,expected=reference_fn(packed)
     labels=meta['player_labels'];blob=extract_player((out/'audiobook-preview.trd').read_bytes())
     count=33 if probe else len(expected)
     work=out/('fuse-probe' if probe else 'verification-work');work.mkdir(exist_ok=True)
@@ -139,7 +145,7 @@ def fuse_check(fuse,out,meta,packed,probe=False):
     attrs=[f'[{0xd800+i}]' for i in range(96)]
     event(labels['loading_visible'],103,[stamp,'ula:mem7ffd',*attrs])
     event(labels['loading_hidden'],104,[stamp,'ula:mem7ffd',*attrs])
-    event('port write 254',140,[stamp,'z80:pc','z80:a','z80:d'],['set $bits $bits+1'],condition='$r==1')
+    event('port write 254',140,[stamp,'z80:pc','z80:a','z80:d']+(['z80:b'] if meta.get('direct') else []),['set $bits $bits+1'],condition='$r==1')
     event('port write 254',200,[stamp],condition=f'$bits>={count}',stop=True)
     for address in meta['first_addresses']:
         if not probe:
@@ -163,9 +169,10 @@ def fuse_check(fuse,out,meta,packed,probe=False):
     for tag in numbers:
         row=[next(numbers) for _ in range(widths[tag])]
         if tag==140:
-            tick,pc,a,d=row
+            tick,pc,a,d=row[:4]
             op=blob[pc-2-0x8000:pc-0x8000]
             if op==b'\xed\x51':value=d
+            elif op==b'\xed\x41' and meta.get('direct'):value=row[4]
             elif op==b'\xed\x71':value=0
             elif op==b'\xd3\xfe':value=a
             else:raise AssertionError(('unknown output instruction',row,op.hex()))
@@ -186,18 +193,19 @@ def fuse_check(fuse,out,meta,packed,probe=False):
     bits=bits[:count];times=times[:count]
     assert np.array_equal(np.frombuffer(bits,'u1'),expected),'Fuse PDM mismatch'
     expected_pcm=np.tile(np.r_[pcm[1:],pcm[:1]].astype(np.int32)+32768,2)
-    expected_index=np.tile(np.r_[indices[1:],indices[:1]].astype(np.int32)*64+0x4000,2)
+    row_addresses=np.array(meta.get('decoder_rows',[0x4000+i*64 for i in range(89)]))
+    expected_index=np.tile(row_addresses[np.r_[indices[1:],indices[:1]]],2)
     assert np.array_equal(samples,expected_pcm),'Fuse predictor mismatch'
     assert np.array_equal(states,expected_index),'Fuse index mismatch'
     wanted=[s['bank']+24 for s in meta['sections'][1:]+meta['sections'][:1]]*2
     assert len(pages)==len(wanted) and all(r[0]==r[1]==b for r,b in zip(pages,wanted))
     assert len({r[2] for r in pages})==1
-    assert len(reads)==55+len(packed)//256 and all(r[0]==0 and r[2]&8 and 0x5f00<=r[3]<0x6000 for r in reads)
+    assert len(reads)==meta.get('preload_table_sectors',55)+len(packed)//256 and all(r[0]==0 and r[2]&8 and 0x5f00<=r[3]<0x6000 for r in reads)
     assert len(shown)==len(hidden)==1 and shown[0][1]==hidden[0][1]==31
     assert shown[0][2:]==[0x47]*96 and hidden[0][2:]==[0]*96
     assert all(shown[0][0]<=r[1]<hidden[0][0]<ready[0][0] for r in reads)
     timeline=np.asarray(times,dtype=np.int64);timeline-=timeline[0]
-    actual=np.diff(timeline);native=np.tile(intervals(meta),2)
+    actual=np.diff(timeline);native=np.tile(intervals_fn(meta),2)
     assert np.all(actual>=native)
     (out/'output-times.u32.gz').write_bytes(gzip.compress(timeline.astype('<u4').tobytes(),mtime=0))
     n=meta['pcm_samples']*16

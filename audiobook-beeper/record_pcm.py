@@ -13,6 +13,7 @@ import re
 import subprocess
 import time
 import wave
+from datetime import date
 from pathlib import Path
 
 import numpy as np
@@ -165,7 +166,7 @@ def main():
     movie = movie_path.read_bytes()
     (out/'capture.fmf.gz').write_bytes(gzip.compress(movie, mtime=0))
     report = summarize(movie, result.stdout.decode(errors='replace'), meta, out)
-    report.update(date='2026-10-02', requested_machine=args.machine, elapsed_seconds=time.monotonic()-start,
+    report.update(date=date.today().isoformat(), requested_machine=args.machine, elapsed_seconds=time.monotonic()-start,
                   source_trd_sha256=hashlib.sha256((args.input/'audiobook-preview.trd').read_bytes()).hexdigest(),
                   fuse_sha256=hashlib.sha256(args.fuse.read_bytes()).hexdigest(),
                   recorder_sha256_lf=hashlib.sha256(Path(__file__).read_bytes().replace(b'\r\n', b'\n')).hexdigest())

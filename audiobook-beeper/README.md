@@ -13,6 +13,12 @@ error alone.
 
 ## Packet PDM disk
 
+The [direct-pointer follow-up](DIRECT.md) fixes playback speed while retaining
+the complete source: **+0.042%** overall, worst **0.112%** on checked 0.1-second
+windows. It measures **18.85 dB** total SNR and **128.05 kHz** average output.
+Use [its separate TRD](../ZX-audiobook-IMA-ADPCM-direct-test.trd) for listening;
+the 20-dB goal remains open.
+
 The [new packet TRD](../ZX-audiobook-IMA-ADPCM-packet-test.trd) plays a
 25.72-second loop using compact output codebooks and live IMA decoding.
 Stock Fuse128 measures 116.25 kHz average output and 17.26 dB total SNR;

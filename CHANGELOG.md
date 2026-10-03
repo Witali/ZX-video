@@ -5,6 +5,48 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-03: direct packet pointers fix speed and reach 18.85 dB
+
+Keep the exact 186880-sample PCM8 source and 93440-byte IMA stream from the
+packet disk. The user requires +/-2% playback speed while the 20-dB goal
+remains active. [Direct ASM](audiobook-beeper/direct-player.asm) uses six-byte
+table entries and POP HL/IY/DE, with alternate DE as the input cursor.
+Exhaustive closure over all PCM bins safely reduces 32 mathematical states
+to 18 reachable states, compiling 128/86 first/second code patterns.
+
+Interleave IMA rows in unused packet-page space. Relocate four packet pages
+outside TR-DOS workspace and place 25 popular IMA rows (65.175% of operations)
+in uncontended bank 2. Keep identical audio capacity and full 128-KiB memory
+accounting. Both nibble paths cost **423 T**, down **45 T** from the packet
+baseline. Page/bank extras are 14/140 T. Full native loop is **79056232 T**,
+down **8410969 T**; Fuse adds **7529822 ULA T** across two loops. Preload uses
+425 table/audio sectors; no runtime disk reads. [Complete timing/memory](audiobook-beeper/DIRECT.md).
+
+Full native/cold Fuse checks pass two loops: **5980161 bits /373760 exact
+predictors and indices**, every native interval and protected RAM, paging,
+loading UI and all actual output timestamps. All 2048 mathematical table
+entries match exact rational arithmetic. FFmpeg independently confirms all
+186880 IMA samples. Normal-speed sound capture covers two wraps with correct
+paging and no silent half-second window. Its legacy literal date is corrected
+to the observed 2026-10-03 capture date; future recorder runs use local date.
+
+Measured rate is **8003.3268 samples/s (+0.0416%)**, with **128053.23 outputs/s**.
+First-loop duration is 23.35034 s for 23.36 s of unchanged source. Every
+sliding 0.1-second and one-second window (100-sample hop, two full loops)
+passes +/-2%: worst errors **0.1112% /0.0501%**. No resampling/pitch correction
+was used. Total SNR rises **17.2551 ->18.8455 dB**, while the CPU-only model
+is 21.1982 dB under the same listening filter and edge exclusion. Thus the
+speed gate passes but 20 dB remains unachieved; no physical hardware claim.
+
+The first assembler attempt failed on macro labels without explicit ASSERT.
+The first native timing assertion revealed a missing 10-T JP in the bank
+estimate; correcting metadata (not instructions) produced exact counts.
+Decision: retain this fully verified separate listening disk and continue
+the quality work from its real ULA timing. [Report](audiobook-beeper/experiments/ima-direct/report.json),
+[TRD](ZX-audiobook-IMA-ADPCM-direct-test.trd),
+[actual WAV](audiobook-beeper/experiments/ima-direct/result-preview.wav).
+TRD SHA256: `9ce319e8b9352a96ed965d87ff3d1d8698df7d788221563758d306d23c053013`.
+
 ## 2026-10-03: diagnose packet timing noise; require playback speed within 2%
 
 Resume the 20-dB goal from the verified packet disk. The user rejects its

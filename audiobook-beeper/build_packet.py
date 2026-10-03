@@ -18,11 +18,11 @@ from verify_packet import reference,intervals,native_check,fuse_check
 from verify_pcm import save
 
 
-def render(out,ffmpeg,native=False):
+def render(out,ffmpeg,native=False,reference_fn=reference,intervals_fn=intervals):
     meta=json.loads((out/'player.json').read_bytes())
     packed=gzip.decompress((out/'soundtrack.ima.gz').read_bytes())
-    pcm,indices,levels,bits=reference(packed,cycles=1);n=len(pcm)*16
-    times=(np.r_[0,np.cumsum(intervals(meta))] if native else
+    pcm,indices,levels,bits=reference_fn(packed,cycles=1);n=len(pcm)*16
+    times=(np.r_[0,np.cumsum(intervals_fn(meta))] if native else
            np.frombuffer(gzip.decompress((out/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[:n+1])
     with wave.open(str(out/'source-preview.wav'),'rb') as w:source=np.frombuffer(w.readframes(w.getnframes()),'u1')
     filtered={}
@@ -43,7 +43,7 @@ def render(out,ffmpeg,native=False):
                 alignment='reference follows actual sample boundaries; no fitted delay/gain or pitch correction')
 
 
-def finish(out,ffmpeg):
+def finish(out,ffmpeg,reference_fn=reference,intervals_fn=intervals):
     native=json.loads((out/'native.json').read_bytes());fuse=json.loads((out/'fuse.json').read_bytes())
     assert native['complete'] and fuse['complete']
     packed=gzip.decompress((out/'soundtrack.ima.gz').read_bytes());pcm,indices=decode(packed)
@@ -62,14 +62,16 @@ def finish(out,ffmpeg):
     assert len(raw)==count*2
     with wave.open(str(out/'result-preview.wav'),'wb') as w:w.setparams(params);w.writeframes(raw)
     report=dict(date='2026-10-02',complete=True,preview_only=True,physical_hardware_tested=False,
-                native=native,fuse=fuse,render=render(out,ffmpeg),native_render=render(out,ffmpeg,True),
+                native=native,fuse=fuse,render=render(out,ffmpeg,False,reference_fn,intervals_fn),
+                native_render=render(out,ffmpeg,True,reference_fn,intervals_fn),
                 independent_ima=dict(decoder='FFmpeg IMA WAV',samples=len(pcm),blocks=blocks,every_sample_exact=True),
                 delivery=dict(scope='Actual Fuse sound generator, first loop from ready; no added filter or gain',
                               wav_frames=count,sample_rate_hz=params.framerate,pcm_sha256=hashlib.sha256(raw).hexdigest()))
     archive=out/'producer-source';archive.mkdir(exist_ok=True);hashes={}
     for name in ('packet-player.asm','packet_player.py','verify_packet.py','build_packet.py','feedback_player.py',
                  'ima_beam.py','ima_codec.py','ima_player.py','pcm_player.py','pdm_player.py','record_pcm.py',
-                 'build_pdm.py','assess_snr.py','probe_feedback_packets.py'):
+                 'build_pdm.py','assess_snr.py','probe_feedback_packets.py')+(
+                 ('direct-player.asm','direct_player.py','verify_direct.py','build_direct.py') if reference_fn is not reference else ()):
         data=(HERE/name).read_bytes().replace(b'\r\n',b'\n');hashes[name]=hashlib.sha256(data).hexdigest()
         (archive/(name+'.gz')).write_bytes(gzip.compress(data,mtime=0))
     report['source_sha256_lf']=hashes
