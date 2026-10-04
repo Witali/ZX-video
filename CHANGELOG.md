@@ -1,5 +1,16 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round 04, compact symmetric LPC
+
+Complete TODO item 4: exact signed16 LSP interpolation, descending half-
+polynomial recurrence and shifts for constant endpoints. General Q14 calls
+fall from 50 to 20 per LPC reconstruction; no polynomial-array clearing is
+needed. Full speech is 2759257254 T, delta -330262705 T versus round 03.
+Code/state fall to 6152/1356 bytes; table arena remains 16 KiB. Every sample,
+all extra fixtures, primitives and memory guards pass. First-frame table
+audit is 2016616 T, delta -291502 T. Accept, with real time still rejected.
+See [round 04 report](audiobook-beeper/speex-port/rounds/04/REPORT.md).
+
 ## 2026-10-04: Speex round 03, register arithmetic and coefficient tables
 
 Complete TODO item 3. On the original full speech control, register-based

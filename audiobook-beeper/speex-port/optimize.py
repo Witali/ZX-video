@@ -591,6 +591,93 @@ ld b,(hl)
     return d,f
 
 
+def compact_lpc(d):
+    # Original LSP vectors are multiples of 16. Divide before weighting so
+    # every intermediate fits signed16 and both reference roundings are exact.
+    begin=d.index('jp nz,exc_subframe')+len('jp nz,exc_subframe')
+    end=d.index('ld hl,#lsp\nld de,#old_lsp',begin)
+    interpolation='\n; Exact quarter interpolation: original codebook LSPs are multiples of 16.\n'
+    for sub in range(4):
+        for i in range(10):
+            if sub==3:
+                interpolation+=f'ld hl,(lsp+{2*i})\nld (interp+{2*i}),hl\n'
+                continue
+            for name,weight in [('old_lsp',3-sub),('lsp',sub+1)]:
+                interpolation+=f'ld hl,({name}+{2*i})\n'+('srl h\nrr l\n'*2)
+                if weight==2:interpolation+='add hl,hl\n'
+                if weight==3:interpolation+='ld d,h\nld e,l\nadd hl,hl\nadd hl,de\n'
+                if name=='old_lsp':interpolation+='ld b,h\nld c,l\n'
+            interpolation+=f'add hl,bc\nld (interp+{2*i}),hl\n'
+        interpolation+=f'''call enforce_margin
+call _zx_speex_lpc
+ld hl,#excitation+{288+80*sub}
+ld de,#_pcm+{80*sub}
+call _zx_speex_filter
+ld hl,#next_lpc
+ld de,#_zx_lpc
+ld bc,#20
+ldir
+'''
+    d=d[:begin]+interpolation+d[end:]
+    d=d.replace('polynomial_p: .ds 312','polynomial_p: .ds 24').replace('polynomial_q: .ds 312','polynomial_q: .ds 24')
+    d=d.replace('old_p: .ds 4\nold_q: .ds 4\n','')
+    start=d.index('_zx_speex_lpc::');end=d.index('.globl _mul_s8',start)
+    code='''_zx_speex_lpc::
+; Each polynomial is palindromic. Keep coefficients 0..degree/2 only;
+; update descending so all previous-stage operands remain available.
+; Each Q14 product keeps the original signed16 high-part truncation.
+'''
+    for i in range(10):code+=f'ld hl,(interp+{2*i})\ncall cosine\nex de,hl\nadd hl,hl\nadd hl,hl\nld (frequency+{2*i}),hl\n'
+    def add(at):return f'ld bc,({at})\nex de,hl\nadd hl,bc\nex de,hl\nld bc,({at}+2)\nadc hl,bc\n'
+    def save(at):return f'ld ({at}),de\nld ({at}+2),hl\n'
+    for name,k in [('polynomial_p',0),('polynomial_q',1)]:
+        code+=f'ld hl,#0\nld ({name}),hl\nld hl,#16\nld ({name}+2),hl\n'
+        code+=f'ld de,(frequency+{2*k})\ncall negative_frequency64\n'+save(name+'+4')
+    for stage in range(1,5):
+        for j in range(stage+1,0,-1):
+            for name,k in [('polynomial_p',0),('polynomial_q',1)]:
+                if j==1:
+                    code+=f'ld de,(frequency+{(2*stage+k)*2})\ncall negative_frequency64\n'
+                else:
+                    code+=f'ld hl,(frequency+{(2*stage+k)*2})\nld de,#{name}+{4*(j-1)}\ncall mulq14\ncall neg32\n'
+                previous=j if j<=stage else 2*stage-j
+                code+=add(f'{name}+{4*previous}')
+                if j>=2:code+=add(f'{name}+{4*(j-2)}')
+                code+=save(f'{name}+{4*j}')
+    for j in range(1,11):
+        previous=min(j-1,11-j);current=min(j,10-j)
+        code+=f'ld de,(polynomial_q+{4*previous})\nld hl,(polynomial_q+{4*previous+2})\ncall neg32\n'
+        code+=add(f'polynomial_p+{4*previous}')+add(f'polynomial_p+{4*current}')+add(f'polynomial_q+{4*current}')
+        code+=f'''ld bc,#128
+ex de,hl
+add hl,bc
+ex de,hl
+jr nc,compact_round_{j}
+inc hl
+compact_round_{j}:
+ld e,d
+ld d,l
+ld l,h
+ld a,h
+add a,a
+sbc a,a
+ld h,a
+call _zx_clip
+ld (next_lpc+{2*(j-1)}),de
+'''
+    code+='''ret
+; DE signed frequency -> HL:DE = -frequency*64. The constant polynomial
+; endpoint is 2^20, so its Q14 product is an exact shift, not a general multiply.
+negative_frequency64:
+ld a,d
+add a,a
+sbc a,a
+ld h,a
+ld l,a
+'''+('sla e\nrl d\nrl l\n'*6)+'jp neg32\n\n'
+    return d[:start]+code+d[end:]
+
+
 def optimize(folder,variant):
     d=(folder/'decoder.s').read_text()
     d=stage1(d)
@@ -598,6 +685,7 @@ def optimize(folder,variant):
     f=(folder/'filter.s').read_text()
     if variant in ('pure-r3-register','pure-r3','pure-r4'):f=register_multiplier(f)
     if variant in ('pure-r3','pure-r4'):d,f=coefficient_tables(d,f)
+    if variant=='pure-r4':d=compact_lpc(d)
     d=d.replace('_entry::','; Entry: packet count at B000; resets state/stack, disables IRQ, clobbers all registers.\n_entry::')
     d=d.replace('_zx_speex_decode::','; Decode one validated 20-byte packet. Carry reports an unsupported mode.\n; Excitation precedes four delayed 40-sample synthesis blocks. All scratch is private.\n_zx_speex_decode::')
     d=d.replace('_zx_speex_lpc::','; Interpolated LSP angles -> next_lpc, preserving upstream fixed-point rounding.\n; P/Q polynomial arithmetic wraps at 32 bits; final coefficients saturate symmetrically.\n_zx_speex_lpc::')

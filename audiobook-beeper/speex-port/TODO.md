@@ -14,8 +14,9 @@ item with a focused commit and a report under `rounds/` before continuing.
   with per-coefficient nibble tables, including preparation costs. Select
   the faster complete decoder within the 16-KiB table allocation.
   Completed: [round 03](rounds/03/REPORT.md), 3089519959 T, delta -847132343 T.
-- [ ] **4. LPC and interpolation.** Exploit polynomial symmetry and known
+- [x] **4. LPC and interpolation.** Exploit polynomial symmetry and known
   constants, reduce temporary storage, and use exact 16-bit interpolation.
+  Completed: [round 04](rounds/04/REPORT.md), 2759257254 T, delta -330262705 T.
 - [ ] **5. Final verification.** Compare the entire speech stream and
   additional fixtures with the independent reference; verify arithmetic,
   RAM boundaries, actual OUT timing and instruction-table cycle counts.
