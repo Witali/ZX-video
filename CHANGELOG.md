@@ -1,5 +1,22 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex item 06, select optimized decoder and reject real time
+
+Complete the six-item worklist and select `pure-r4` as the default. A fresh
+offline build exactly reproduces the verified image. Original assembly
+4536172045 T falls to 2759257254 T, delta -1776914791 T, 1.644x faster and
+39.17% fewer T. Audio and 23360-byte compressed input are unchanged. Code/state
+are 6152/1356 bytes; table payload is 16010 in a 16384-byte arena.
+
+Real time FAIL: 14764.861 T/sample is 33.748x the 437.5-T budget. Actual OUT
+intervals are 5473..889303 T; all 186879 subsequent outputs miss their nominal
+deadlines, maximum lateness 2676721156.5 T. Synthesis alone remains over
+budget. Do not add pacing or claim a playback release. CPU results exclude
+ULA/disk/hardware. Record approximate oscillator/periodic synthesis as a
+separate possible next experiment, not an implemented replacement. See
+[decision and final profile](audiobook-beeper/speex-port/rounds/06/REPORT.md)
+and the completed [TODO](audiobook-beeper/speex-port/TODO.md).
+
 ## 2026-10-04: Speex item 05, final exactness and timing audit
 
 Complete the final verification item without changing decoder instructions.

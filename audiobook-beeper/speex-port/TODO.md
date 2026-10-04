@@ -22,9 +22,11 @@ item with a focused commit and a report under `rounds/` before continuing.
   RAM boundaries, actual OUT timing and instruction-table cycle counts.
   Completed: [round 05](rounds/05/REPORT.md), 1074400 PCM samples plus arithmetic
   and instruction checks; no mismatches.
-- [ ] **6. Real-time decision.** Reconcile the complete profile against
+- [x] **6. Real-time decision.** Reconcile the complete profile against
   437.5 T/sample and 70000 T/frame. Record an explicit pass/fail and assess
   the next approximate-synthesis experiment if the exact decoder still fails.
+  Completed: [round 06](rounds/06/REPORT.md). Select `pure-r4`: 1.644x faster,
+  identical audio, but 33.75x over the real-time CPU budget. Real-time FAIL.
 
 Each report must identify its input and binary, changes, full-stream T-states
 and delta, code/state/table bytes, checks and limitations, rejected variants,
@@ -34,3 +36,9 @@ speech synthesis is a separate result and cannot pass an exact-decoder check.
 
 Baseline: 186880 samples, 4536172045 T, 24273.181 T/sample, 12658 table bytes,
 10122 code bytes and 1885 state bytes. ULA/disk/hardware time is excluded.
+
+All six items are complete. This closes the requested optimization worklist;
+it does not claim the original real-time playback objective was achieved.
+The default build now selects `pure-r4`; every earlier variant remains
+reproducible. Approximate synthesis is documented as a separate next
+experiment, not silently substituted for exact Speex decoding.

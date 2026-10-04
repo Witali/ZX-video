@@ -1,5 +1,60 @@
 # Speex mode 3 on a 3.5 MHz Z80
 
+## Latest result: optimization worklist completed
+
+The selected default is now **`pure-r4`**, a complete Z80 assembly decoder.
+All six [TODO items](TODO.md) have reports and commits. The original
+`pure-fast` implementation and evidence below are preserved as the baseline.
+
+| Stage | Full speech T-states | T/sample |
+| --- | ---: | ---: |
+| Original assembly | 4536172045 | 24273.181 |
+| 1. Exact 24-bit excitation | 4128347261 | 22090.899 |
+| 2. Cached innovation tables | 3936652302 | 21065.134 |
+| 3. Coefficient tables | 3089519959 | 16532.106 |
+| 4. Compact LPC/interpolation | 2759257254 | 14764.861 |
+
+This is **1.644x faster, 39.17% fewer T**, with identical PCM16/PCM8.
+Real time still fails by **33.75x** against 437.5 T/sample. At nominal 3.5 MHz,
+the 23.36-second speech input needs 788.36 seconds of CPU time. No output
+pacing, ULA/disk timing or physical hardware qualification is claimed.
+
+Current ready-to-load [image](rounds/04/player.ihx),
+[decoder assembly](rounds/04/decoder.s), [filter assembly](rounds/04/filter.s)
+and [symbols](rounds/04/player.map) are under `rounds/04`. The entry/count/status,
+input-bank order and port contract described below remain the same. Current
+code occupies `8000..9807` (6152 bytes), state `B000..B54B` (1356), and the
+stack reserve remains `BF00..BFFF`. Static tables are unchanged; dynamic
+coefficient tables use `7200..7BFF`, and two innovation tables use a reserve
+at `7C00..7FFF`. The **entire table arena is exactly 16 KiB**, with 16010
+useful bytes. Code/state/input are additional RAM.
+
+Reports: [01](rounds/01/REPORT.md), [02](rounds/02/REPORT.md),
+[03, including the register-only candidate](rounds/03/REPORT.md),
+[04](rounds/04/REPORT.md), [05 final verification](rounds/05/REPORT.md),
+[06 real-time decision](rounds/06/REPORT.md). The selected binary passes
+1074400 complete-stream PCM16/PCM8 samples, separate arithmetic/LPC checks,
+RAM guards and instruction timing audits. Its output audio is identical to
+the previously supplied comparison file.
+
+To build and check the selected version:
+
+```powershell
+python audiobook-beeper/speex-port/build.py --skip-host
+python audiobook-beeper/speex-port/verify.py --native-only --restore-fixture
+python audiobook-beeper/speex-port/check_round.py --variant pure-r4
+python audiobook-beeper/speex-port/final_checks.py
+```
+
+The last two commands require the host-generated fixtures and the round03
+binary: build host DLLs as described below, run `check_streams.py --variant
+pure-r4` to generate signal fixtures, and build `--variant pure-r3` for the
+independent LPC recurrence comparison. Retain the same Python runtime.
+Historical `save_evidence.py` refreshes **baseline** snapshots only; round
+reports are archived separately with `report_round.py`.
+
+## Original implementation and baseline evidence
+
 **Working assembly decoder; real-time target failed.** This experiment reads
 Speex frames from RAM and writes unsigned PCM8 directly to port `0xFB`.
 The complete speech fixture matches the upstream fixed-point decoder at every
@@ -18,7 +73,7 @@ real-time player. Output intervals are not paced to 8 kHz. There is no PDM.
   load image and addresses. The image contains tables and code, not input audio.
 - [make_decoder.py](make_decoder.py) and [make_asm.py](make_asm.py) generate the
   unrolled assembly and tables. **No C code or C runtime is linked into the
-  default `pure-fast` target.** SDCC is used only as the assembler/linker driver.
+  baseline `pure-fast` target.** SDCC is used only as the assembler/linker driver.
 - [decoder.c](decoder.c), [player.c](player.c) and [reference.c](reference.c)
   preserve a host oracle and the initial compiled-C timing baseline.
 
@@ -51,7 +106,7 @@ The nominal CPU comparison uses the requested 3,500,000 Hz clock.
 | `6000..60FF`, fixed bank 5 | Signed-nibble pair sums | 256 |
 | `6100..64FF`, fixed bank 5 | Quarter-square multiplication | 1024 |
 | `6500..71FF`, fixed bank 5 | Expanded LSP, pitch, energy and innovation tables | 3328 |
-| `8000..A789`, fixed bank 2 | Default assembly code | 10122 |
+| `8000..A789`, fixed bank 2 | Baseline assembly code | 10122 |
 | `B000..B75C`, fixed bank 2 | State, frame buffer and scratch | 1885 |
 | `BF00..BFFF`, fixed bank 2 | Reserved stack; initial SP=`BFFE` | 256 |
 | `C000..FFFF`, banks 0,1,3,4,6,7 | Consecutive compressed input | Up to 98300 |
@@ -95,13 +150,13 @@ losslessness relative to the original speech.
 | Complete assembly, ordinary quarter-square multiply | 5033419430 | 26933.965 | -5050341733 |
 | Complete assembly, zero/8-bit operand fast paths | 4536172045 | 24273.181 | -497247385 |
 
-Default assembly saves 5547589118 T versus the C baseline. The fast operand
+Baseline assembly saves 5547589118 T versus the C baseline. The fast operand
 paths save 9.88% versus ordinary assembly on this input, but are slightly
 slower for full-width operands. This is input-dependent, not a universal
 worst-case improvement. A signed 16x16 multiply costs 50..1310 T across the
 saved test set; an unsigned 8x8 multiply costs 142 or 145 T including return.
 
-At 8 kHz, each sample has 437.5 T and each frame 70000 T. In the default
+At 8 kHz, each sample has 437.5 T and each frame 70000 T. In the baseline
 speech run, synthesis alone uses 13259.530 T/sample, LPC reconstruction
 3874.784 T/sample, and the remainder 7138.867 T/sample. Even a free synthesis
 filter would leave this implementation far outside the available budget.
@@ -164,7 +219,7 @@ worktree root (supply your tool paths). The saved build used SDCC 4.6.0
 revision 16555 and the native checks used Python 3.12.14:
 
 ```powershell
-python audiobook-beeper/speex-port/build.py --skip-host --sdcc C:/path/to/sdcc.exe
+python audiobook-beeper/speex-port/build.py --skip-host --variant pure-fast --sdcc C:/path/to/sdcc.exe
 python audiobook-beeper/speex-port/build.py --skip-host --variant pure-asm --sdcc C:/path/to/sdcc.exe
 ```
 
@@ -174,7 +229,7 @@ audit imports the existing timing harness and also requires `pyz80==1.3.0`
 and NumPy. Set `PYTHONPATH` to that installed runtime when necessary:
 
 ```powershell
-python audiobook-beeper/speex-port/verify.py --native-only --restore-fixture
+python audiobook-beeper/speex-port/verify.py --native-only --restore-fixture --variant pure-fast
 python audiobook-beeper/speex-port/verify.py --native-only --variant pure-asm
 python audiobook-beeper/speex-port/check_primitives.py
 ```

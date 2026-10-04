@@ -14,12 +14,15 @@ converter must also support other videos.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
-Follow-up on 2026-10-04: the separate `codex/speex-port` worktree now contains
-a complete assembly Speex narrowband mode-3 decoder with direct PCM8 port
-output. It is **not real time**: 24273.181 T/sample versus a 437.5-T budget at
-3.5 MHz/8 kHz. Tables occupy 12658 bytes. The full 186880-sample speech
-fixture matches libspeex at PCM16/PCM8, with additional arithmetic, signal,
-memory and six-bank capacity checks. Reuse the
+Follow-up on 2026-10-04: the separate `codex/speex-port` worktree contains a
+complete assembly Speex narrowband mode-3 decoder with direct PCM8 port
+output. Its six-item optimization worklist is complete, with a report and
+focused commit for every item. The selected `pure-r4` is 1.644x faster than
+the original assembly, at 14764.861 T/sample, but **not real time** against
+the 437.5-T budget at 3.5 MHz/8 kHz. The table arena is exactly 16 KiB (16010
+useful bytes); code/state are 6152/1356 bytes. All 1074400 tested PCM16/PCM8
+samples match, including speech, signal/capacity and random mode-3 packets,
+with arithmetic/LPC, memory and instruction-timing checks. Reuse the
 [implementation and evidence](audiobook-beeper/speex-port/README.md).
 The user's sine-table synthesis suggestion is documented as an unimplemented
 approximate alternative; a 388-T four-oscillator kernel estimate excludes

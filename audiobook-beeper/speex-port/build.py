@@ -43,7 +43,7 @@ def main():
     p.add_argument('--sdcc',type=Path,default=Path('C:/Work/ZX-video/.tmp/z80-c-compilers/sdcc/bin/sdcc.exe'))
     p.add_argument('--vcvars',type=Path,default=Path('C:/Program Files/Microsoft Visual Studio/18/Community/VC/Auxiliary/Build/vcvars64.bat'))
     p.add_argument('--host-only',action='store_true')
-    p.add_argument('--variant',choices=['z80','asm','table','pure-asm','pure-fast','pure-r1','pure-r2','pure-r3-register','pure-r3','pure-r4'],default='pure-fast')
+    p.add_argument('--variant',choices=['z80','asm','table','pure-asm','pure-fast','pure-r1','pure-r2','pure-r3-register','pure-r3','pure-r4'],default='pure-r4')
     p.add_argument('--skip-host',action='store_true')
     a=p.parse_args();out=a.output.resolve();out.mkdir(parents=True,exist_ok=True)
     source=out/'speex-1.2.1'

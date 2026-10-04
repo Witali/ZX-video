@@ -33,6 +33,7 @@ def control_cases(folder):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,default=ROOT/'build/speex-port')
+    p.add_argument('--variant',default='pure-r4')
     a=p.parse_args();out=a.output.resolve();n=3200;rng=random.Random(711)
     cases={
         'silence':bytes([128])*n,
@@ -50,9 +51,9 @@ def main():
         with wave.open(str(wav),'wb') as w:
             w.setparams((1,1,8000,0,'NONE','not compressed'));w.writeframes(pcm)
         host=host_fixture(target,wav,out/'host')
-        z80=native(target,'pure-fast',out/'pure-fast')
+        z80=native(target,a.variant,out/a.variant)
         results[name]=dict(host=host,z80={k:v for k,v in z80.items() if k!='out_intervals_histogram'})
-    results['control_cases']=control_cases(out/'pure-fast')
+    results['control_cases']=control_cases(out/a.variant)
     (out/'stream-checks.json').write_text(json.dumps(results,indent=2)+'\n')
     print('Seven complete streams and five control cases passed.',flush=True)
 
