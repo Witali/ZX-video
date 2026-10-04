@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round 01, exact 24-bit excitation
+
+Complete TODO item 1 on the original 186880-sample speech control. Replace
+scaled pitch products with signed8x16 and bounded signed24 arithmetic,
+preserving every PCM16/PCM8 sample. Full native cost is 4128347261 T versus
+4536172045 T, delta -407824784 T; tables remain 12658 bytes. All seven extra
+fixtures, 12048 multiplier cases, 5056 energy/shape cases and memory guards
+pass. First-frame instruction audit is 2289590 T, delta -71629 T. Correct
+the audit's handling of an index prefix split by an emulator frame yield.
+Accept the speedup; real time still fails, excluding ULA/disk/hardware.
+See [round 01 report and reproduction](audiobook-beeper/speex-port/rounds/01/REPORT.md).
+
 ## 2026-10-04: require comments for Z80 routines and complex code
 
 At the user's request, add a project rule requiring useful comments for

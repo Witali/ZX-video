@@ -4,8 +4,9 @@ Authorized on 2026-10-04. Continue in `codex/speex-port`. Preserve the
 `bbb7ebd` exact decoder and its evidence as the baseline. Complete each
 item with a focused commit and a report under `rounds/` before continuing.
 
-- [ ] **1. Excitation arithmetic.** Remove the common factor 128; use signed
+- [x] **1. Excitation arithmetic.** Remove the common factor 128; use signed
   8x16 products and bounded 24-bit arithmetic. Preserve PCM16/PCM8 exactly.
+  Completed: [round 01](rounds/01/REPORT.md), 4128347261 T, delta -407824784 T.
 - [ ] **2. Innovation tables.** Build and cache the two exact energy tables
   with additions; include construction time and RAM in the measurement.
 - [ ] **3. Synthesis multiplication.** Compare a register-based multiplier

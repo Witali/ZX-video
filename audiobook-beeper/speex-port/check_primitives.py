@@ -86,6 +86,11 @@ def audit(folder,payload,reference):
         pc=m.pc;before=m.frame_tick;expected=timing(m);op=bytes(m.memory[pc:pc+2]).hex()
         m.ticks_to_stop=5 if m.memory[pc] in (0xdd,0xfd) else 1
         m.run();actual=(m.frame_tick-before)%100000
+        # The emulator can yield at a frame boundary between an index prefix
+        # and its opcode. Finish that same instruction before auditing it.
+        if m.memory[pc] in (0xdd,0xfd) and actual==4 and m.pc==(pc+1)&65535:
+            before=m.frame_tick;m.ticks_to_stop=1;m.run()
+            actual+=(m.frame_tick-before)%100000
         assert actual==expected,(hex(pc),op,actual,expected)
         total+=actual;counts[str(expected)]+=1
     assert seen==[(x>>8)+128 for x in struct.unpack('<160h',reference[:320])]
