@@ -25,8 +25,13 @@ a clean 48-kHz control has a one-sample range and no clear improvement.
 Windows output changes frequency balance and level; registered Realtek
 effects are a hypothesis, not a confirmed cause. No settings were changed.
 One small-buffer 48-kHz capture reported discontinuities and is rejected;
-the enlarged-buffer repeat is clean. Await identification of the symptom
-in the newly provided **actual Windows-output WAV**, not more codec tuning.
+the enlarged-buffer repeat is clean. The user also hears **no vibration in
+the actual Windows-output WAV**. Thus the reported symptom was not reproduced
+in this controlled run. No stored Fuse config or active process was found;
+the user's former unsaved settings remain unknown. A manual launcher with
+the measured audio/machine options is available in the study for a visible
+run without recording/debugger. Its listening result is pending; it is not
+a verified fix. Do not resume blind codec tuning.
 The earlier `host_audio_muted: true` FMF metadata was incorrect for native
 Win32 (the SDL environment flag is ignored); the recorder is corrected.
 

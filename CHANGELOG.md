@@ -1,5 +1,26 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Record the clean host-output audition and prepare an interactive comparison
+
+The user also hears no vibration in the actual Windows-output excerpt.
+The symptom has therefore not been reproduced in the controlled capture;
+do not attribute it to the codec or call the issue fixed. Confirm the root
+overlap TRD's hash is unchanged. No active Fuse process or USERPROFILE
+fuse.cfg is present, so the previous session's unsaved settings cannot be
+recovered. Check both saved speaker channels: their first eight seconds
+differ by at most one PCM16 unit (correlation >0.999999999), ruling out a
+substantial stereo difference being lost by the mono audition.
+
+Add an [interactive launcher](audiobook-beeper/experiments/fuse-host-output/manual-launch.cmd)
+using the measured machine/audio options, with a visible window and without
+FMF/debugger instrumentation. It rejects concurrent Fuse instances and
+does not save settings. Verify its printed command and archived hashes;
+no new audible run or interactive listening acceptance is claimed. Update
+the [study](audiobook-beeper/experiments/fuse-host-output/README.md) and brief
+with the user's answer; await whether the ordinary launch still reproduces
+the issue. No production or Z80 change: 427.375 T/sample, delta 0 T, unchanged
++14/+140 T page/bank extras and memory use.
+
 ## 2026-10-04: Compare installed Fuse with its actual Windows audio output
 
 The user hears no vibration in the short modeled IMA3/IMA4 controls and

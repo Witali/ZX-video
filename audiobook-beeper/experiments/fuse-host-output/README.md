@@ -1,9 +1,11 @@
 # Fuse host-output investigation, 2026-10-04
 
 The user hears no vibration in either short modeled IMA3/IMA4 WAV, but
-reports it when playing the TRD in **the Program Files Fuse**. The listening
-defect remains unresolved. Stop treating the codec-control SNR difference
-as identification of that symptom.
+reported it when playing the TRD in **the Program Files Fuse**. After the
+actual Windows-output WAV was supplied, the user also heard no vibration
+in that recording. The reported symptom has not been reproduced in this
+controlled run. Its cause remains unresolved; neither a fix nor a clean
+ordinary interactive session has been established.
 
 ## Two installations, one generated signal
 
@@ -81,8 +83,28 @@ bypass and the user's listening identification remain outstanding.
 These files preserve captured level and have no extra listening filter.
 Replaying a loopback WAV passes it through the user's output chain again;
 it is a diagnostic audition, not a measurement of the loudspeaker's acoustic
-output. The user has been asked whether the first file contains the same
-symptom. No answer has arrived at this checkpoint.
+output. The user answered **no vibration** for the first file. The follow-up
+question is whether an ordinary interactive TRD launch still has the symptom.
+
+## Interactive comparison follow-up
+
+The root disk hash is still identical. Read-only inspection finds neither
+a running Fuse process nor `C:/Users/rudol/fuse.cfg`; this cannot recover
+unsaved settings from the user's earlier session. No Windows setting is
+changed. The recorded first eight seconds' left/right PCM16 samples differ
+by at most one integer unit in all three valid runs; mono audition therefore
+did not discard a substantial stereo difference. See `stereo-check.json`.
+
+Double-click [manual-launch.cmd](manual-launch.cmd) to launch the installed
+Fuse interactively with the measured run's explicit settings: Spectrum 128
+with Beta 128, 100% speed, 44.1 kHz, 16-bit output. It uses this checkout's
+same TRD, prevents a second concurrent Fuse instance, and disables settings
+autosave. It does not start FMF recording or the debugger and does not hide
+the window. This is a comparison aid, **not a tested fix**. The command has
+been checked with `manual-launch.cmd --print-command`; user listening in
+this interactive mode remains pending. Other in-memory settings from a
+previous session are not known. Do not repeat codec tuning without first
+reproducing the complaint under the user's actual playback conditions.
 
 ## Rejected attempt and reporting correction
 

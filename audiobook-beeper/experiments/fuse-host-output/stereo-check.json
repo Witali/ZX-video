@@ -1,0 +1,31 @@
+{
+  "scope": "Check whether the mono audition hid a significant channel difference.",
+  "seconds": 8,
+  "sample_rate": 48000,
+  "runs": [
+    {
+      "run": "win32-44100",
+      "frames": 384000,
+      "maximum_pcm16_channel_difference": 1.0,
+      "rms_pcm16_channel_difference": 0.11967838846954226,
+      "rms_pcm16_mono": 3576.234398797964,
+      "channel_correlation": 0.9999999994400594
+    },
+    {
+      "run": "sdl-44100",
+      "frames": 384000,
+      "maximum_pcm16_channel_difference": 1.0,
+      "rms_pcm16_channel_difference": 0.12135304899342249,
+      "rms_pcm16_mono": 3575.142803937883,
+      "channel_correlation": 0.9999999994239587
+    },
+    {
+      "run": "win32-48000-buffered",
+      "frames": 384000,
+      "maximum_pcm16_channel_difference": 1.0,
+      "rms_pcm16_channel_difference": 0.1174933508756985,
+      "rms_pcm16_mono": 3423.5270104345796,
+      "channel_correlation": 0.9999999994111178
+    }
+  ]
+}
