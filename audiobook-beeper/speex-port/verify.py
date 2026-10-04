@@ -50,13 +50,13 @@ def image(path):
             data.update((address+i,v) for i,v in enumerate(row[4:4+row[0]]))
     return data
 
-def native(out,variant='pure-r16',binary=None,require_exact=True):
+def native(out,variant='pure-r16',binary=None,require_exact=True,profile=None):
     from z80 import Z80Machine
     folder=out/variant
     folder.mkdir(parents=True,exist_ok=True)
     binary=binary or folder
     mapping=(binary/'player.map').read_text()
-    symbols={name:int(addr,16) for addr,name in re.findall(r'([0-9A-F]{8})\s+(_\w+)\s',mapping)}
+    symbols={name:int(addr,16) for addr,name in re.findall(r'([0-9A-F]{8})\s+(\w+)\s',mapping)}
     memory=image(binary/'player.ihx');payload=(out/'input.spxraw').read_bytes()
     assert len(payload)%20==0 and 0<len(payload)<=4915*20
     samples=struct.unpack('<'+'h'*((out/'reference.pcm16').stat().st_size//2),(out/'reference.pcm16').read_bytes())
@@ -104,7 +104,7 @@ def native(out,variant='pure-r16',binary=None,require_exact=True):
         elapsed+=delta
         last_remaining=m.ticks_to_stop;last_frame_tick=m.frame_tick
         return elapsed
-    phases=Counter();phase_starts={};returns={}
+    phases=Counter();exclusive=Counter();calls=Counter();active=[];returns=set()
     def output(port,value):
         nonlocal current
         if port==0x7ffd:
@@ -126,22 +126,31 @@ def native(out,variant='pure-r16',binary=None,require_exact=True):
             events.append(clock())
     m.set_output_callback(output);m.pc=symbols['_entry'];m.sp=0xbffe
     m.set_breakpoint(symbols['_complete'])
-    watches={symbols[k]:k for k in ('_zx_speex_filter','_zx_speex_lpc') if k in symbols}
+    names=profile if profile is not None else ('_zx_speex_filter','_zx_speex_lpc')
+    if profile is not None:assert all(k in symbols for k in names)
+    watches={symbols[k]:k for k in names if k in symbols}
     for address in watches:m.set_breakpoint(address)
     while True:
         event=m.run()
         if m.pc==symbols['_complete']:break
         tick=clock()
+        # A tail call can share its caller's return address. Close every
+        # matching activation before considering a new entry at this PC.
+        while active and m.pc==active[-1]['return_address']:
+            frame=active.pop();span=tick-frame['start'];name=frame['name']
+            phases[name]+=span;exclusive[name]+=span-frame['children']
+            if active:active[-1]['children']+=span
         if m.pc in watches:
-            name=watches[m.pc];phase_starts[name]=tick
+            name=watches[m.pc];calls[name]+=1
             ret=int.from_bytes(m.memory[m.sp:m.sp+2],'little')
-            returns[ret]=name;m.set_breakpoint(ret);m.step_over_breakpoint()
-        elif m.pc in returns:
-            name=returns[m.pc];phases[name]+=tick-phase_starts[name];m.step_over_breakpoint()
+            active.append(dict(name=name,start=tick,return_address=ret,children=0))
+            returns.add(ret);m.set_breakpoint(ret)
+        if m.pc in watches or m.pc in returns:m.step_over_breakpoint()
         if event&m._TICKS_LIMIT_HIT:
             clock();m.ticks_to_stop=budget;last_remaining=budget
             assert elapsed<100_000_000_000,'CPU timeout'
     total=clock()
+    assert not active,'profile activation did not return'
     assert len(events)==len(expected)
     assert int.from_bytes(m.memory[symbols['_status']:symbols['_status']+2],'little')==0
     assert all(m.memory[a]==v for a,v in memory.items() if a not in smc),'static code/table changed'
@@ -167,6 +176,10 @@ def native(out,variant='pure-r16',binary=None,require_exact=True):
                 phases_tstates=dict(phases),
                 binary_sha256=sha(bytes(memory[a] for a in sorted(memory))),
                 clock_hz=3500000,ula_contention_included=False,physical_hardware_tested=False)
+    if profile is not None:
+        report['profile']=dict(calls=dict(calls),inclusive_tstates=dict(phases),
+                               exclusive_tstates=dict(exclusive),unprofiled_tstates=total-sum(exclusive.values()),
+                               callee_intervals_exclude_caller_call_instruction=True)
     (folder/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     (folder/'out-times.u64.gz').write_bytes(gzip.compress(struct.pack('<'+'Q'*len(events),*events),mtime=0))
     if not require_exact:

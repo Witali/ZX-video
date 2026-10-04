@@ -1,0 +1,115 @@
+{
+  "complete": true,
+  "samples": 186880,
+  "every_pcm8_exact": true,
+  "every_pcm16_exact": true,
+  "total_tstates": 2164784952,
+  "seconds_at_3_5_mhz": 618.5099862857143,
+  "mean_total_tstates_per_sample": 11583.823587328767,
+  "first_out_tstates": 671272,
+  "last_out_tstates": 2164783948,
+  "min_out_interval": 4606,
+  "max_out_interval": 791809,
+  "nominal_late_samples": 186879,
+  "max_lateness_tstates": 2082353113.5,
+  "real_time": false,
+  "pages": [
+    0,
+    1
+  ],
+  "code_rodata_bytes": 19595,
+  "bss_bytes": 1041,
+  "code_bytes": 6937,
+  "tables_bytes": 12658,
+  "all_cpu_writes_inside_declared_regions": true,
+  "input_static_code_static_tables_unchanged": true,
+  "writable_immediate_addresses": [
+    39002,
+    39011,
+    39028,
+    39041
+  ],
+  "pcm16_output_buffer": false,
+  "initial_state_fill": 165,
+  "dynamic_table_reserved_bytes": 3584,
+  "dynamic_table_regions": [
+    [
+      31744,
+      32768
+    ],
+    [
+      29184,
+      31744
+    ]
+  ],
+  "table_arena_span_bytes": 16384,
+  "phases_tstates": {
+    "_mul_s8": 300146569,
+    "mulq12": 2623963,
+    "_build_innovation": 76611649,
+    "_zx_clip": 22835639,
+    "cosine": 30846551,
+    "_zx_mul_table": 167043802,
+    "mulq14": 212922842,
+    "_zx_speex_lpc": 317769021,
+    "_prepare_coefficients": 266709277,
+    "_split_nibbles": 29713920,
+    "_coefficient_product": 500838400,
+    "_zx_speex_filter": 1130838416,
+    "_zx_speex_decode": 2163236360
+  },
+  "binary_sha256": "e7a699a3a309338f322b050c46e376d676df405f9bd1ceaee9990d286f71130b",
+  "clock_hz": 3500000,
+  "ula_contention_included": false,
+  "physical_hardware_tested": false,
+  "profile": {
+    "calls": {
+      "_zx_speex_decode": 1168,
+      "_build_innovation": 1578,
+      "mulq12": 1578,
+      "_mul_s8": 562373,
+      "_zx_clip": 420480,
+      "_zx_speex_lpc": 4672,
+      "cosine": 46720,
+      "mulq14": 93440,
+      "_zx_mul_table": 186880,
+      "_zx_speex_filter": 4672,
+      "_prepare_coefficients": 4672,
+      "_split_nibbles": 186880,
+      "_coefficient_product": 1868800
+    },
+    "inclusive_tstates": {
+      "_mul_s8": 300146569,
+      "mulq12": 2623963,
+      "_build_innovation": 76611649,
+      "_zx_clip": 22835639,
+      "cosine": 30846551,
+      "_zx_mul_table": 167043802,
+      "mulq14": 212922842,
+      "_zx_speex_lpc": 317769021,
+      "_prepare_coefficients": 266709277,
+      "_split_nibbles": 29713920,
+      "_coefficient_product": 500838400,
+      "_zx_speex_filter": 1130838416,
+      "_zx_speex_decode": 2163236360
+    },
+    "exclusive_tstates": {
+      "_mul_s8": 300146569,
+      "mulq12": 837918,
+      "_build_innovation": 73987686,
+      "_zx_clip": 22835639,
+      "cosine": 30846551,
+      "_zx_mul_table": 167043802,
+      "mulq14": 45879040,
+      "_zx_speex_lpc": 71462988,
+      "_prepare_coefficients": 266709277,
+      "_split_nibbles": 29713920,
+      "_coefficient_product": 500838400,
+      "_zx_speex_filter": 323412412,
+      "_zx_speex_decode": 329522158
+    },
+    "unprofiled_tstates": 1548592,
+    "callee_intervals_exclude_caller_call_instruction": true,
+    "every_saved_out_timestamp_unchanged": true
+  }
+}

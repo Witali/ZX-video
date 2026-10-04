@@ -31,11 +31,17 @@ comparison and report throughput separately from instantaneous OUT gaps.
   complete decoding measurements, not faster different-format playback.
   Round16: synthesis/preparation 6051.147 T/sample, LPC 1700.391, remaining
   decode 3832.286. Average deficit is still 26.477x; goal remains active.
-- [ ] **17. Split the remaining hot-path profile.** Measure coefficient
+- [x] **17. Split the remaining hot-path profile.** Measure coefficient
   preparation, sample products, innovation construction and excitation work
   separately on the complete unchanged input; reconcile their inclusive and
   exclusive times before selecting the next exact optimization. Preserve
   the same average-throughput goal without adding output pacing.
+  [Round17](rounds/17/REPORT.md): full trace and PCM unchanged, nested times
+  reconcile. Coefficient products cost 23.136%, signed 8x16 products 13.865%.
+- [ ] **18. Combined-register signed 8x16 multiplication.** Replace separate
+  shifts with an A:HL accumulator, compare fixed eight steps with leading-bit
+  skipping, and retain the fastest exact complete-stream implementation.
+  Preserve signs, -32768 handling, all tables and the PCM8 port contract.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

@@ -1,5 +1,16 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round17 profiles nested work without changing CPU execution
+
+Observe function entry/return in the unchanged round16 complete speech run.
+Inclusive/exclusive accounting reconciles to 2164784952 T, delta 0; all
+186880 PCM16/PCM8 values and every archived output timestamp stay exact.
+Coefficient products use 23.136% and signed 8x16 products 13.865% of total
+CPU; coefficient preparation uses 12.320%. Expected call counts and old
+phase totals pass. Choose a combined-register signed8x16 algorithm with
+leading-bit skipping as the next no-extra-table experiment. No timing or
+hardware release claim. [Profile](audiobook-beeper/speex-port/rounds/17/REPORT.md).
+
 ## 2026-10-04: Speex round16 omits zero partial-product bytes
 
 On round15's unchanged complete mode-3 input, skip the guaranteed zero low
