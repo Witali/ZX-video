@@ -1,0 +1,10 @@
+{"encoded_samples": 16384, "total_samples": 32896}
+{"encoded_samples": 32768, "total_samples": 32896}
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\.tmp\probe-standard-ima3.py", line 29, in <module>
+    packed=encoder.encode_waveform(prior,desired,features,ids,nxt,width=256,block_size=128,commit_size=64,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "audiobook-beeper\ima_waveform_encoder.py", line 174, in encode_waveform
+    pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

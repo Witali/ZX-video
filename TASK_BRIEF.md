@@ -14,7 +14,17 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
-The latest speech-vibration fix is complete: [overlapping waveform search](audiobook-beeper/experiments/ima-3bit-overlap/README.md)
+The user still hears unwanted vibration throughout the overlap test disk.
+The listening defect is **unresolved**. The [residual study](audiobook-beeper/experiments/ima-3bit-residual/README.md)
+records seven bounded host controls and diagnostic WAVs: four-bit coding on
+the same saved PDM clock improves a 4.096-s control from 21.600309 to
+23.899006 dB, but is not a new executable disk or proof that flutter is gone.
+Other three-bit controls are rejected as worse or immaterial. Await the
+user's listening comparison before attributing the reported symptom to
+high-frequency noise, codec resolution, or emulator audio. No new player or
+TRD is released. Reuse these reports instead of repeating the same probes.
+
+The narrower boundary-error correction is complete: [overlapping waveform search](audiobook-beeper/experiments/ima-3bit-overlap/README.md)
 commits 64 samples of each 128/256-sample horizon. The automatic converter
 uses it by default. On the unchanged sequential speech fixture, boundary
 noise/interior noise falls from 1.835..1.840 to 0.999; both final parts measure

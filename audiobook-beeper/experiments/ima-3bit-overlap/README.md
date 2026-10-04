@@ -1,5 +1,9 @@
 # Speech boundary-error correction, 2026-10-04
 
+Follow-up: the user still hears unwanted voice vibration throughout this
+disk. The boundary correction below remains measured, but is insufficient
+as a listening fix. See the [residual investigation](../ima-3bit-residual/README.md).
+
 The user reported voice vibration in the latest sequential speech TRD.
 The unchanged 186880-sample, 8-kHz PCM8 reference is used throughout this
 experiment. The final test contains the same excerpt twice, with a disk

@@ -1,5 +1,45 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Investigate residual vibration without declaring a new fix
+
+The user still hears vibration throughout `ZX-audiobook-IMA3-overlap-test.trd`.
+Verify its SHA-256 against the previously executed release and retain that
+full native/Fuse coverage; the boundary correction is insufficient for
+subjective acceptance. Mark the listening defect unresolved in TASK_BRIEF.
+No production code, table, or TRD changes. Native cost remains 427.375
+T/sample, delta 0 T, with unchanged +14/+140 T page/bank extras and memory.
+
+On the final first-part timeline, fixed-clock decomposition measures
+20.434944 dB excluding the silent guard, with 16.608981/9.382802/-2.488953 dB
+in the 1–2/2–3/3–4-kHz bands. Intermediate IMA is a deliberately precompensated
+control and cannot isolate ordinary codec quality. An initial diagnostic
+failed for missing source-silence padding past EOF; only the padded reference
+produced valid measurements. Field-folded error power is a diagnostic, not
+proof of pitch modulation. Save an eight-second normal Fuse WAV and an
+additional 3500-Hz low-pass control for the user's pending listening answer.
+
+Bound the new host probes to 32768 active samples plus 128 silent guard
+samples, on the same PDM clock, width 256/horizon 128/commit 64. Current
+three-bit SNR is 21.600309 dB. Lower control-prior weight gives 21.651526 dB
+(immaterial); derivative weights 0.12/0.4 give 20.853030/19.715455 dB (reject:
+worse main speech band). WAV-IMA3 gives 21.207448 dB; quarter-step delta with
+project step6 adaptation gives 21.581862 dB (reject: no overall improvement).
+The first WAV-IMA3 attempt fails its terminal guard because it has no
+zero-delta code; retry with an exact six-sample terminal constraint passes.
+
+A full four-bit alphabet on the hypothetical unchanged clock gives
+23.899006 dB, 2.298697 dB above the three-bit control, but cannot be played
+by the current three-bit disk. Save its comparison WAV as a diagnostic,
+not a new release or a claim that the reported vibration is eliminated.
+Consolidate the reproducing script and rerender all seven saved carriers:
+each original SNR and band score matches within 1e-10 dB; all terminal,
+unclipped-addition and level-range checks pass. A fresh consolidated-script
+baseline encode reproduces every carrier byte and 21.600309 dB in 46.562 s.
+Archive original reports,
+failed-run logs and scripts in the [residual study](audiobook-beeper/experiments/ima-3bit-residual/README.md).
+The next decision depends on listening identification of the remaining
+symptom; no new full player verification is claimed for these host controls.
+
 ## 2026-10-04: Document the direct IMA3-to-PDM pipeline
 
 At the user's request, save the chat's decoding explanation and diagrams in
