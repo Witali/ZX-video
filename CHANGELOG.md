@@ -1,5 +1,12 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: require comments for Z80 routines and complex code
+
+At the user's request, add a project rule requiring useful comments for
+major assembly routines and difficult blocks, including generated assembly.
+Cover calling conventions and non-obvious arithmetic, layout and timing
+without narrating every instruction. No player code or timing changes.
+
 This log preserves accepted, rejected and incomplete experiments. Detailed
 calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown

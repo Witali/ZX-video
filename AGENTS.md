@@ -1,5 +1,13 @@
 # Project rules
 
+- Comment Z80 assembly at the level of major routines and non-obvious code
+  blocks. Explain the purpose and algorithm; document register inputs,
+  outputs and important clobbers where they help callers. Explain tricky
+  fixed-point arithmetic, rounding, overflow bounds, memory layouts and
+  timing-dependent sequences. Do not mechanically comment every instruction.
+  Apply this rule to generated assembly as well as handwritten sources;
+  maintain the comments in the generators so regeneration preserves them.
+
 - Use [TASK_BRIEF.md](TASK_BRIEF.md) to scope optimization milestones and
   reuse evidence with minimal context. Finish the authorized deliverable
   before opening another experiment. Its scope controls do not weaken any
