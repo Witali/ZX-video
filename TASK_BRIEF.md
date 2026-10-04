@@ -14,7 +14,22 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
-The latest AY follow-up is [persistent components + mixed noise](ay-converter/analysis/tracked50/README.md).
+The latest AY follow-up is [chip-model noise colour fitting](ay-converter/analysis/noise_colour/README.md).
+The music profile searches 31 noise periods and three bounded shared-level
+choices using valid-rate Ayumi simulation, retaining all tone/channel IDs,
+noise events/routes and the 20-ms grid. On the complete Entertainer example,
+both cold Fuse loops improve unpooled spectral error at all three resolutions;
+noisy-state error falls about 9–12%. Most benefit is level correction; colour
+adds a small, mixed incremental gain. Full 34232 writes /3112 fields pass,
+zero misses; 19 tests pass. Player binary unchanged, 974 T ordinary /delta 0.
+Use `ZX-music-Entertainer-AY-noise-colour-test.trd` and the saved normal WAV,
+matched spectrograms and complete evidence. Early invalid-rate model drafts
+are explicitly rejected and archived; do not reuse them as quality evidence.
+Default legacy remains byte exact; `--profile music --noise-fit heuristic`
+reproduces the preceding tracked50 arrangement. Physical hardware and listening
+acceptance remain unclaimed. Reuse the completed proof rather than retuning.
+
+The preceding AY follow-up is [persistent components + mixed noise](ay-converter/analysis/tracked50/README.md).
 The user requires continued sounds to stay on their original channels despite
 small pitch/amplitude changes. The current optional `--profile music` tracks
 three dominant fundamentals by pitch, with 289 component lifetimes /zero
@@ -24,7 +39,7 @@ on 415 ticks without disabling an active tone. All changes remain on the
 14 regression tests pass. Player binary unchanged, 974 T ordinary /delta 0.
 Cosine spectral similarity improves, but weak-spectrum error and some rhythm
 proxies regress. Reuse the complete plots, every-state audit and normal WAV.
-Latest listening disk: `ZX-music-Entertainer-AY-tracked50-test.trd`. The AY9
+Previous listening disk: `ZX-music-Entertainer-AY-tracked50-test.trd`. The AY9
 mixer extension needs the standalone reader; old legacy bytes remain exact.
 
 The [50-Hz AY music improvement](ay-converter/analysis/music50/README.md) is

@@ -1,5 +1,57 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Fit AY noise colour with the actual chip simulator
+
+After `4ab6d7f`, the user asks for an accurate online noise-generator model
+and an implemented colour fit on the unchanged 31.12-s /1556-state Entertainer
+example. Consult the General Instrument description, hardware-verified MAME
+LFSR and Ayumi sources. Add 93 continuous YM2149 candidates: R6 1..31 and
+shared carrier volume unchanged/down one/down two. Fit three STFT scales
+with narrow 50-Hz power smoothing and a .15-dB period/volume jump penalty.
+All output remains at 50 Hz /20 ms. Preserve every tone period, component ID,
+mixer and noise route/presence, and the other channels' volumes. Default
+legacy remains exact; music can reproduce tracked50 with `--noise-fit heuristic`.
+
+Reject and retain the early shape-only, pooled-band and unpooled drafts:
+they used Ayumi at an invalid 22050-Hz rate, and one calibration also aliased
+44.1-kHz audio. Both discarded disks completed native/Fuse checks, but timing
+correctness did not validate their model. An apparently passing synthetic
+test also had an invalid-rate reference and is rejected. Add a clock/64
+sample-rate guard, render all final references/candidates at 44100 Hz, and
+low-pass resample identically. Archive failed tests, source snapshots and
+measurements in the [discarded record](ay-converter/analysis/noise_colour/evidence/discarded/README.md).
+
+Four valid complete host ablations isolate level and period changes. Joint
+log errors at 512/2048/8192 fall 10.88844/9.78226/7.91031 ->
+10.56307/9.15825/7.27228. Most benefit is level correction. Compared with
+level-only, R6 adds small short/long-window gains and a .00652-dB medium-window
+regression; period-only is worse. Select the bounded joint fit, not a claim
+of universal timbre improvement. R6 changes on 301 noisy states; volume drops
+two steps on 411 and one on four. Noise remains enabled in all 415 states;
+289 component lifetimes have zero migrations and no active tone is disabled.
+
+Full cold Fuse verifies 34232 writes /3112 fields, zero misses/duplicates,
+67 startup sectors, no runtime reads and correct loading-message handling.
+Both complete loops improve unpooled spectral cosine and log error at all
+three scales versus tracked50. First-loop log errors fall
+9.77503/9.45849/8.12608 ->9.56216/9.06411/7.65117; the same noisy intervals
+improve about 9–12%. Fine onset F1 improves in loop one but slightly regresses
+in loop two; pooled semitone cosine slightly regresses. Inspect full/busy
+spectrograms and the corrected noise-floor figure. No listening acceptance
+or physical-hardware result is claimed.
+
+All 19 tests pass, including the full 131071-state LFSR, 31 divisors, mixer
+truth table, anti-aliasing and unseen-phase period/volume recovery. The player
+binary is unchanged: 974 ->974 T ordinary, delta 0, unchanged special paths
+and 17116 resident bytes. Legacy disk/streams/WAVs reproduce byte for byte;
+177 retained image hashes remain unchanged. Publish the verified LFS disk
+`ZX-music-Entertainer-AY-noise-colour-test.trd` and its normal two-loop WAV.
+See [method and reproduction](ay-converter/analysis/noise_colour/README.md),
+[valid ablations](ay-converter/analysis/noise_colour/evidence/host/results.json),
+[state audit](ay-converter/analysis/noise_colour/evidence/comparison/noise-audit.json),
+[execution proof](ay-converter/analysis/noise_colour/evidence/release/verification.json)
+and [completion audit](ay-converter/analysis/noise_colour/evidence/completion.json).
+
 ## 2026-10-04: Preserve component channels and mix independently detected noise
 
 Following `c886631`, the user requires three dominant tonal components to

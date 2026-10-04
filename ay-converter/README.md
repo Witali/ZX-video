@@ -47,6 +47,9 @@ the report explicitly records that disk timing has not been verified.
 - `--profile music`: use the new note-oriented preset for keyboard-like music.
   Small frequency/amplitude changes keep a component on its original channel.
   Noise can coexist with tones; its period and routing are fitted separately.
+  By default, its colour and shared channel level are then refined against
+  93 continuous Ayumi renders. `--noise-fit heuristic` reproduces the earlier
+  music noise fit; it does not affect the default `legacy` profile.
   Pitch holding can suppress intentional bends/vibrato; keep `legacy` for
   those sources until separately evaluated. The selected target curve is YM2149.
 
@@ -73,6 +76,7 @@ Spectrum recording. Similarity metrics do not establish listening acceptance.
 | `music_player.py`, `ay-player.asm` | TRD packaging and separately assembled Z80 player |
 | `trd.py` | Disk directory, BASIC boot and Spectrum screen addressing |
 | `render_ym2149.js`, `vendor/ayumi-js/` | YM2149 model, source and license |
+| `noise_colour.py`, `render_noise_candidates.js` | Chip-model noise-period/shared-level fitting, narrow spectral smoothing and temporal regularization |
 | `verify_preview.py`, `fmf_audio.py` | Complete native/Fuse execution checks and recording parser |
 | `support.py` | Report helpers and hidden Windows process startup |
 | `test_music_player.py` | Bank boundaries, capacity, looping, EOF and CPU timing tests |
@@ -105,8 +109,10 @@ initial six host probes. The [implemented 50-Hz follow-up](analysis/music50/READ
 compares seven fixed arrangements, selects the optional `music` profile and
 qualifies its entire new TRD in cold Fuse. The subsequent
 [persistent-channel and mixed-noise revision](analysis/tracked50/README.md)
-implements the user's channel-identity requirement and is the current music
-profile. Both include original/old/new WAVs, matched spectrograms and complete
+implements the user's channel-identity requirement. The current
+[noise-colour refinement](analysis/noise_colour/README.md) uses the actual
+chip simulator to fit R6 and the carrier's shared level, retaining those
+channel identities. These milestones include WAVs, spectrograms and complete
 measurements, including regressions.
 
 Every conversion now reports full-bin spectrogram comparisons with 512,
@@ -130,3 +136,13 @@ The file grid is exactly 20 ms. The existing Spectrum 128 player applies one
 state per interrupt: 70908 T at a 3546900-Hz CPU in Fuse, about 19.99154 ms.
 The small fixed clock difference is reported in the listening comparison;
 no second update within a field or faster sound format is introduced.
+
+The noise fit renders at 44100 Hz, above Ayumi's required `clock/64` limit,
+then low-pass resamples to the analysis rate. It compares three STFT scales
+with approximately 50-Hz frequency smoothing, because individual random FFT
+peaks are not a stable noise colour. The independent quality comparisons
+remain unpooled. R6 is searched over 1..31, and the already selected noise
+carrier's volume can drop by at most two steps; its tone remains enabled.
+No noise event, carrier, note period, component ID or other-channel volume
+is changed. `noise-fit.json.gz` records every fitted state and the objective.
+The actual combined tone/noise level remains a physical hardware compromise.

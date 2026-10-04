@@ -13,6 +13,11 @@ vm.runInNewContext(core+'\nglobalThis.chipApi={Ayumi,YM_DAC_TABLE,AY_DAC_TABLE};
 const {Ayumi, YM_DAC_TABLE, AY_DAC_TABLE} = context.chipApi;
 
 function createChip(clock = 1773450, sampleRate = 44100, isYM = true) {
+  // Ayumi's interpolator requires one internal step or less per oversample.
+  // The JS port omits the validity return present in the original C API.
+  if (!Number.isFinite(clock) || !Number.isFinite(sampleRate) || clock<=0 || sampleRate<=clock/64) {
+    throw new Error('Ayumi requires sampleRate > clock/64; render at 44100 Hz then low-pass resample');
+  }
   const chip = new Ayumi();
   chip.configure(isYM, clock, sampleRate);
   for (let channel=0; channel<3; channel++) {
