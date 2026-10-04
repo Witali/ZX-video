@@ -5,6 +5,57 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-04: Generic AY converter and looping music disk
+
+The user asks to convert the same music with the AY method used by the movie
+and to provide a reusable script. Existing `audiobook-ay/build_preview.py`
+already accepts arbitrary audio but has an audiobook screen and a one-shot
+player. Add [convert_audio.py](audiobook-ay/convert_audio.py) around the
+unchanged movie analyser/square fit, plus a separate, commented
+[ASM player](audiobook-ay/ay-player.asm). Python supplies constants/data and
+packages the assembled binary; it emits no instructions. The generic CLI
+handles arbitrary FFmpeg input, a bounded initial excerpt, title/start/duration,
+looping by default or optional one-shot playback, chip-model previews and
+optional complete native/Fuse verification with normal-speed WAV capture.
+
+Use the same original The Entertainer recording and requested 31.128-s initial
+interval as the preceding PDM experiment. The 50-Hz grid retains 31.12 s /
+1556 ticks; no 8-kHz intermediate is used. Resident audio is 17116 register
+bytes, AY9 is 14004 bytes before archive gzip. Six audio banks raise capacity
+to 8934 ticks / 178.68 s; fixed code, screen, stack, IM2 and TR-DOS banks are
+accounted separately. Full capacity is native-tested with synthetic data,
+not claimed as a complete longer recording. Mono Ayumi YM2149 rendering uses
+the actual three tone generators, one shared noise generator and chip DAC
+levels. No original waveform is added to the synthesis.
+
+The ordinary path remains 974 native T (delta 0 from the earlier AY player);
+near-bank, bank-change and exact-boundary EOF costs remain 992/1091/1007 T.
+Restart adds 105 T once per repeat, giving a 1079-T first repeated field;
+tick zero is published on the original next interrupt, with no extra silent
+field. Five unit tests cover the old player, IRQ preservation, one-tick loops,
+all important bank/EOF boundaries, and both complete six-bank repeats.
+Initial assembler directive syntax errors were corrected before these tests
+passed; no failing binary was delivered. Loading-message clearing is boot-only
+and adds zero playback T-states.
+
+The first complete prototype passed two cold Fuse repeats before adding the
+loading label; preserve its reports and disk under
+`audiobook-ay/music-preview/attempts/before-loading-label`. The final disk
+again passes all 34232 register writes / 3112 nominal fields, no missing or
+duplicate fields, 67 startup reads and zero runtime reads. First-OUT phases
+are 150..255 T and intervals 70805..71010 T, including wrap. The loading
+message is shown before payload reads and cleared before playback; all 768
+bitmap bytes in its area are checked. Normal startup is 10.677687 s and the
+two-repeat Fuse WAV is 62.226236 s. Clock-derived tempo error is +0.042308%.
+ROM/disk loading and ULA waits are separate from deterministic CPU counts.
+
+Musical signal proxies are spectral cosine 0.892788, chroma cosine 0.975713,
+loudness correlation 0.995346 and onset F1 0.887097. These are not waveform
+SNR, percentages of fidelity, or listener acceptance. Deliver
+`ZX-music-Entertainer-AY.trd` and the actual Fuse WAV as a listening comparison.
+See [instructions and evidence](audiobook-ay/CONVERTER.md). Physical hardware
+has not been tested. Existing movie, audiobook and beeper releases are retained.
+
 ## 2026-10-04: Public-domain music example with direct packed IMA3
 
 The user requests a recognizable melody on TRD, selects an unrestricted

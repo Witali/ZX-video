@@ -14,6 +14,16 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
+The user also requested a movie-style AY version of the same music. The
+[generic AY converter](audiobook-ay/CONVERTER.md) and separately assembled
+looping player are complete. The 31.12-s The Entertainer example uses 17116
+resident bytes; full cold Fuse checks cover 34232 writes / 3112 fields over
+two repeats with no missed fields, loading-message hiding and a normal WAV.
+Ordinary cost stays 974 T (delta 0); loop restart adds 105 T once per repeat.
+Use `ZX-music-Entertainer-AY.trd`. The chip arrangement's musical similarity
+metrics are not comparable to PDM waveform SNR; listening acceptance remains
+with the user. Reuse this evidence instead of repeating the conversion.
+
 The separate [public-domain music example](audiobook-beeper/experiments/ima-3bit-entertainer/README.md)
 uses The Entertainer by Scott Joplin, performed by IE. The user explicitly
 accepts the best found music result below 20 dB. Three automatic searches

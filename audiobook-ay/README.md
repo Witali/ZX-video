@@ -1,5 +1,14 @@
 # AY audiobook preview
 
+**Music and arbitrary audio (2026-10-04):** use
+[convert_audio.py](convert_audio.py) and [the converter guide](CONVERTER.md).
+The existing movie synthesizer now has an audio-oriented command that builds
+a looping TRD, renders a YM2149 preview, and optionally verifies and records
+the disk in Fuse. The public-domain The Entertainer example uses the same
+initial passage as the beeper comparison, rounded down to a 20-ms AY tick.
+The earlier audiobook previews and their listening feedback below remain
+historical evidence.
+
 **New experiment (2026-10-02):** after the user's observation about the rabbit's
 recognizable vocal effect, a [pitch-preserving AY50 candidate](PITCH_AWARE_PREVIEW.md)
 retains the vocal fundamental and fits two harmonic square waves. It includes

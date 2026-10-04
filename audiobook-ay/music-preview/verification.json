@@ -1,0 +1,66 @@
+{
+  "complete": true,
+  "native": {
+    "complete": true,
+    "ticks": 3112,
+    "cycles_verified": 2,
+    "register_writes": 34232,
+    "registers_exact": true,
+    "bank_sequence": [
+      0,
+      4,
+      0,
+      4
+    ],
+    "eof_mutes": false,
+    "seamless_loop": true,
+    "deterministic_field_work_tstates": {
+      "974": 3065,
+      "992": 44,
+      "1079": 1,
+      "1091": 2
+    },
+    "scope": "independent Z80 core; no ULA, IRQ, HALT or disk latency"
+  },
+  "fuse": {
+    "complete": true,
+    "cold_boot": true,
+    "ticks": 3112,
+    "register_writes": 34232,
+    "cycles_verified": 2,
+    "recording": {
+      "complete": true,
+      "source": "normal-speed Fuse sound generator",
+      "startup_seconds": 10.677687074829931,
+      "duration_seconds": 62.2262358276644,
+      "cycles": 2,
+      "output": "fuse-preview.wav",
+      "sample_rate_hz": 44100,
+      "physical_sound_card_recording": false
+    },
+    "loading_message": {
+      "shown_before_payload_reads": true,
+      "hidden_before_playback": true,
+      "bitmap_bytes_verified": 768
+    },
+    "every_register_exact": true,
+    "missing_or_duplicate_fields": [],
+    "runtime_disk_reads": 0,
+    "startup_sector_reads": 67,
+    "first_out_phase_min_tstates": 150,
+    "first_out_phase_max_tstates": 255,
+    "first_out_interval_min_tstates": 70805,
+    "first_out_interval_max_tstates": 71010,
+    "first_out_to_eof_tstates": 220665592,
+    "trd_sha256": "c6139c9c5cd4c18df82d3b1f208064790487a48db3883b26f916d00765fc177c",
+    "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+    "hardware_tested": false
+  },
+  "verification_sources_sha256_lf": {
+    "verify_preview.py": "4687079d691a9920f06750ae6f8da03dd125b4505ecf46d9a5f48420ba55ebf4",
+    "player.py": "31278b45cb9cef9ea00dc5810d051473dca570fe5f069c922d1e60b098cc7449",
+    "build_preview.py": "f118a96cc1d6ff36e7a834558f15614c72bc53ecdf3a317c82378a4ccaf50d29",
+    "music_player.py": "5f143b1d82db83490752ab7756fc101539503155809d81adc3b5d1d0393eb325",
+    "ay-player.asm": "153b5ec0b34c8f069ef62dc2c9204fb8ef75a11b1d38835a7ec023c4914e6d90"
+  }
+}
