@@ -3,6 +3,12 @@
 Follow-up: the user still hears unwanted voice vibration throughout this
 disk. The boundary correction below remains measured, but is insufficient
 as a listening fix. See the [residual investigation](../ima-3bit-residual/README.md).
+The later [real host-output study](../fuse-host-output/README.md) corrects one
+metadata error: `normal/report.json` originally claimed `host_audio_muted:
+true`, but its native Win32 build ignores `SDL_AUDIODRIVER=dummy`. Preserve
+that report as an original run record; the mute claim is withdrawn. Its
+FMF/WAV still correctly records internal Fuse PCM, before Windows processing.
+The recording script now reports mute status as unverified.
 
 The user reported voice vibration in the latest sequential speech TRD.
 The unchanged 186880-sample, 8-kHz PCM8 reference is used throughout this

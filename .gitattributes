@@ -555,3 +555,8 @@ toolkit/generic_guarded_cb46_evidence/*.gz -text
 /audiobook-beeper/experiments/ima-3bit-residual/** -text -whitespace
 /audiobook-beeper/experiments/ima-3bit-residual/*.md text eol=lf
 /audiobook-beeper/experiments/ima-3bit-residual/*.py text eol=lf
+# Preserve recorded host-output evidence and PCM hashes.
+/audiobook-beeper/experiments/fuse-host-output/** -text -whitespace
+/audiobook-beeper/experiments/fuse-host-output/**/*.gz filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/fuse-host-output/*.md text eol=lf
+/audiobook-beeper/experiments/fuse-host-output/*.py text eol=lf

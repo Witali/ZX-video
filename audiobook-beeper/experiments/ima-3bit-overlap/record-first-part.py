@@ -63,7 +63,13 @@ pcm = raw[start:]
 with wave.open(str(out/'result-preview.wav'), 'wb') as stream:
     stream.setparams((1, 2, 44100, 0, 'NONE', 'not compressed'))
     stream.writeframes(pcm.tobytes())
-report = dict(normal_fuse_sound=True, speed_percent=100, host_audio_muted=True,
+# SDL_AUDIODRIVER does not select or mute the native Win32 DirectSound driver.
+# FMF records generated PCM before host-device processing; it cannot prove
+# that the speaker was muted, nor capture Windows APO/driver alterations.
+report = dict(normal_fuse_sound=True, speed_percent=100, host_audio_muted=None,
+              host_audio_mute_verified=False,
+              mute_request='SDL_AUDIODRIVER=dummy; applies only to SDL builds',
+              audio_capture_stage='FMF PCM before host audio-device processing',
               first_part_reached_exit=True, events=observed, output_samples=len(pcm),
               playback_seconds=len(pcm)/44100, partial_final_guard_frame_omitted=True,
               audio_timebase_unmodified=True, trd_sha256=hashlib.sha256(a.disk.read_bytes()).hexdigest(),

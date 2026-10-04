@@ -14,14 +14,30 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
+The user clarified that neither short modeled WAV has audible vibration;
+the symptom occurs when playing the TRD in **Program Files Fuse 1.9.0**.
+The [host-output study](audiobook-beeper/experiments/fuse-host-output/README.md)
+tests that native DirectSound build and `tools/fuse-1.9.0-sdl/fuse.exe` with
+real WASAPI speaker-loopback capture. Their interior 19.8 seconds of generated
+speech are byte-exact after identical resampling. Both valid 44.1-kHz runs
+have only a two-sample (0.042-ms) range in coarse 100-ms-window alignment;
+a clean 48-kHz control has a one-sample range and no clear improvement.
+Windows output changes frequency balance and level; registered Realtek
+effects are a hypothesis, not a confirmed cause. No settings were changed.
+One small-buffer 48-kHz capture reported discontinuities and is rejected;
+the enlarged-buffer repeat is clean. Await identification of the symptom
+in the newly provided **actual Windows-output WAV**, not more codec tuning.
+The earlier `host_audio_muted: true` FMF metadata was incorrect for native
+Win32 (the SDL environment flag is ignored); the recorder is corrected.
+
 The user still hears unwanted vibration throughout the overlap test disk.
 The listening defect is **unresolved**. The [residual study](audiobook-beeper/experiments/ima-3bit-residual/README.md)
 records seven bounded host controls and diagnostic WAVs: four-bit coding on
 the same saved PDM clock improves a 4.096-s control from 21.600309 to
 23.899006 dB, but is not a new executable disk or proof that flutter is gone.
-Other three-bit controls are rejected as worse or immaterial. Await the
-user's listening comparison before attributing the reported symptom to
-high-frequency noise, codec resolution, or emulator audio. No new player or
+Other three-bit controls are rejected as worse or immaterial. The subsequent
+user comparison found no flutter in either short modeled control; proceed
+with the actual host-output investigation above. No new player or
 TRD is released. Reuse these reports instead of repeating the same probes.
 
 The narrower boundary-error correction is complete: [overlapping waveform search](audiobook-beeper/experiments/ima-3bit-overlap/README.md)

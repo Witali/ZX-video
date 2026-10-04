@@ -1,5 +1,49 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Compare installed Fuse with its actual Windows audio output
+
+The user hears no vibration in the short modeled IMA3/IMA4 controls and
+identifies the Program Files Fuse as the source of the TRD listening symptom.
+Inspect both local 1.9.0 installations: native DirectSound in Program Files
+and SDL 1.2.14 under tools. Read official source and record the unchanged
+overlap TRD from cold boot to first-part exit with concurrent internal FMF
+and WASAPI default-speaker loopback. No microphone or saved settings changes.
+Computer Use lists the native window, but its capture/activation fails;
+CLI test windows are hidden, so foreground rendering load is not reproduced.
+
+Three valid captures cover native/SDL at 44.1 kHz and native at 48 kHz.
+All have zero capture warnings. Generated native/SDL speech matches exactly
+for 950400 PCM16 samples after identical resampling. Coarse 100-ms local
+alignment has a 0.041667-ms range in both 44.1-kHz runs and 0.020833 ms at
+48 kHz; this excludes large persistent slips in these captures, not faster
+modulation. Windows output differs in frequency response/level. A stationary
+257-tap model trained on seconds 1–10 gives held-out diagnostic residuals
+18.384191/19.710173/19.668173 dB. These are not source SNR. No clear benefit
+from changing the emulator backend or sample rate is established.
+
+Reject an initial 48-kHz recording with a 10-ms capture buffer because its
+discontinuity warnings invalidate the apparent 654-ms drift. Repeat with
+a 100-ms recorder buffer successfully; output buffering is unchanged.
+Correct decimal/hex debugger parsing and recover SDL's redirected stdout.
+Read-only registry inspection finds registered Realtek APOs but establishes
+neither active effects nor causality. Effects-bypass testing is outstanding.
+Save the actual-output WAV for the user's pending symptom identification.
+
+Withdraw the earlier overlap report's unverified `host_audio_muted: true`:
+native DirectSound ignores `SDL_AUDIODRIVER=dummy`. Correct the recording
+script for future reports; preserve the historical JSON and audio bytes.
+Refresh only the overlap README/recorder manifest entries, including the
+README addition from the preceding residual-study commit. Archive scripts,
+valid/rejected reports and captures in the [host-output study](audiobook-beeper/experiments/fuse-host-output/README.md).
+Player/TRD unchanged: 427.375 T/sample, delta 0 T; +14/+140 T page/bank
+extras, RAM and payload unchanged. The listening defect remains unresolved;
+this diagnostic checkpoint is not a new release or physical playback proof.
+Offline replay reproduces all three saved analysis/transfer reports within
+1e-8 and the exact cross-build PCM comparison. Authenticate 37 new artifacts
+and four inputs; the prior overlap (124 artifacts) and residual (44 artifacts,
+21 inputs) audits also pass. No additional audible run is needed for this
+archive verification.
+
 ## 2026-10-04: Investigate residual vibration without declaring a new fix
 
 The user still hears vibration throughout `ZX-audiobook-IMA3-overlap-test.trd`.
