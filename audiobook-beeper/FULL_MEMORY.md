@@ -1,6 +1,11 @@
 # Full-memory live PCM preview
 
-The current [bootable TRD](../ZX-audiobook-PDM-live-test.trd) uses all eight
+**Disk retirement (2026-10-04):** obsolete speech TRDs described below
+were removed at the user's request. Links marked "retired" lead to the
+[removal inventory](retired-disks.json), with exact paths, hashes and the recovery
+commit. Measurements, WAVs and build instructions remain historical evidence.
+
+The current [bootable TRD (retired)](retired-disks.json) uses all eight
 128K RAM banks. It stores **121344 bytes (118.5 KiB)** of unsigned
 **8000 Hz /8-bit mono PCM**, converts it to beeper PDM while playing and loops
 continuously. This adds **38400 bytes /46.296%** over the previous 82944-byte

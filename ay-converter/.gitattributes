@@ -1,0 +1,33 @@
+*.py text eol=lf
+*.asm text eol=lf
+*.js text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+LICENSE text eol=lf
+*.gz -text
+analysis/music50/evidence/**/*.bin -text -diff
+analysis/music50/evidence/**/*.wav filter=lfs diff=lfs merge=lfs -text
+analysis/music50/evidence/**/*.png -text
+analysis/music50/evidence/**/capture.fmf.gz filter=lfs diff=lfs merge=lfs -text
+analysis/music50/evidence/**/fuse-trace.txt.gz -text
+analysis/music50/evidence/**/*.txt -text -diff
+analysis/music50/evidence/**/*.lst -text -diff -whitespace
+analysis/music50/evidence/**/*.log -text -diff
+analysis/music50/evidence/**/*.inc -text
+analysis/tracked50/evidence/**/*.bin -text -diff
+analysis/tracked50/evidence/**/*.wav filter=lfs diff=lfs merge=lfs -text
+analysis/tracked50/evidence/**/*.png -text
+analysis/tracked50/evidence/**/capture.fmf.gz filter=lfs diff=lfs merge=lfs -text
+analysis/tracked50/evidence/**/*.txt -text -diff
+analysis/tracked50/evidence/**/*.lst -text -diff -whitespace
+analysis/tracked50/evidence/**/*.log -text -diff
+analysis/tracked50/evidence/**/*.inc -text
+analysis/noise_colour/evidence/**/*.bin -text -diff
+analysis/noise_colour/evidence/**/*.wav filter=lfs diff=lfs merge=lfs -text
+analysis/noise_colour/evidence/**/*.png -text
+analysis/noise_colour/evidence/**/capture.fmf.gz filter=lfs diff=lfs merge=lfs -text
+analysis/noise_colour/evidence/**/*.txt -text -diff
+analysis/noise_colour/evidence/**/*.lst -text -diff -whitespace
+analysis/noise_colour/evidence/**/*.log -text -diff
+analysis/noise_colour/evidence/**/*.inc -text

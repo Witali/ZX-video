@@ -1,0 +1,67 @@
+{
+  "complete": true,
+  "native": {
+    "complete": true,
+    "ticks": 3112,
+    "cycles_verified": 2,
+    "register_writes": 34232,
+    "registers_exact": true,
+    "bank_sequence": [
+      0,
+      4,
+      0,
+      4
+    ],
+    "eof_mutes": false,
+    "seamless_loop": true,
+    "deterministic_field_work_tstates": {
+      "974": 3065,
+      "992": 44,
+      "1079": 1,
+      "1091": 2
+    },
+    "scope": "independent Z80 core; no ULA, IRQ, HALT or disk latency"
+  },
+  "fuse": {
+    "complete": true,
+    "cold_boot": true,
+    "ticks": 3112,
+    "register_writes": 34232,
+    "cycles_verified": 2,
+    "recording": {
+      "complete": true,
+      "source": "normal-speed Fuse sound generator",
+      "startup_seconds": 10.677687074829931,
+      "duration_seconds": 62.2262358276644,
+      "cycles": 2,
+      "output": "fuse-preview.wav",
+      "sample_rate_hz": 44100,
+      "physical_sound_card_recording": false
+    },
+    "loading_message": {
+      "shown_before_payload_reads": true,
+      "hidden_before_playback": true,
+      "bitmap_bytes_verified": 768
+    },
+    "every_register_exact": true,
+    "missing_or_duplicate_fields": [],
+    "runtime_disk_reads": 0,
+    "startup_sector_reads": 67,
+    "first_out_phase_min_tstates": 150,
+    "first_out_phase_max_tstates": 255,
+    "first_out_interval_min_tstates": 70805,
+    "first_out_interval_max_tstates": 71010,
+    "first_out_to_eof_tstates": 220665592,
+    "trd_sha256": "a7d36854c41ca7f408619ffb32f6218aeb28324c397cdf30ff131e4d6f6a8691",
+    "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+    "hardware_tested": false
+  },
+  "verification_sources_sha256_lf": {
+    "verify_preview.py": "41a1930cbdd706ace0a5195835041f5d2e087e7ee36b21327ae0f8cddab10562",
+    "music_player.py": "28f980e677e628613dcb856626a776c61f763943e8e1004829d91b4644b7b7c4",
+    "ay-player.asm": "153b5ec0b34c8f069ef62dc2c9204fb8ef75a11b1d38835a7ec023c4914e6d90",
+    "trd.py": "9150fe8dab69c9d7e70d3956d534484f316bbe450dd5158c858727a0687ae28c",
+    "support.py": "e36a4fb8d07b97a86a411aa24de8f05e20d31d871eb0942bd4972bbc814069a6",
+    "fmf_audio.py": "a3ecbdaa98607ea5f2a93d97541615e9bd028848affe777516d15d451d73ae58"
+  }
+}

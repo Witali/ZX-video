@@ -1,0 +1,297 @@
+{
+  "date": "2026-10-04",
+  "complete": true,
+  "source_sha256": "08dc5241de419edf9693ad20797389cb735d9b6fc06bfb6936568bb707f13077",
+  "duration_ticks": 1556,
+  "update_rate_hz": 50,
+  "fixed_clock_mapping_ratio": 0.9995770954918379,
+  "actual_loop_seconds": 31.106839211705996,
+  "alignment": "One fixed known clock mapping for both full captures, not estimated from signal; no time warp, pitch shift or local gain. Raw-time first-31.12-s scores also saved.",
+  "normalization": "One global RMS per complete loop; STFT union support above source-relative -60 dB; 50..8000 Hz",
+  "comparisons": {
+    "Previous AY": {
+      "capture_sha256": "cd24e7247a06a2d48925c84b900c7b8c0f81c88e794dd05e8e8127ad4e1d407c",
+      "loops": [
+        {
+          "stft": {
+            "512": {
+              "window_ms": 23.219954648526077,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.8184606683280076,
+              "sqrt_magnitude_cosine": 0.8423272370709891,
+              "log_magnitude_mae_db": 9.927759712643017,
+              "spectral_convergence": 0.6015094411407258,
+              "active_frames": 1556
+            },
+            "2048": {
+              "window_ms": 92.87981859410431,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.8055621217016979,
+              "sqrt_magnitude_cosine": 0.7981977462560216,
+              "log_magnitude_mae_db": 9.269983665062613,
+              "spectral_convergence": 0.6304950618063341,
+              "active_frames": 1556
+            },
+            "8192": {
+              "window_ms": 371.51927437641723,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.7987171716254793,
+              "sqrt_magnitude_cosine": 0.8015665547552818,
+              "log_magnitude_mae_db": 7.784898242631088,
+              "spectral_convergence": 0.64599144735727,
+              "active_frames": 1556
+            }
+          },
+          "onset_20ms": {
+            "reference": 92,
+            "candidate": 178,
+            "matched": 85,
+            "precision": 0.47752808988764045,
+            "recall": 0.9239130434782609,
+            "f1": 0.6296296296296297
+          },
+          "metrics": {
+            "semitone_spectral_cosine": 0.876122282082502,
+            "chroma_cosine": 0.958871013546117,
+            "loudness_correlation": 0.9738350509523818,
+            "rhythm_onset_f1": 0.9133858267716536,
+            "onsets": {
+              "reference": 63,
+              "candidate": 64,
+              "matched": 58,
+              "precision": 0.90625,
+              "recall": 0.9206349206349206,
+              "f1": 0.9133858267716536
+            },
+            "evaluated_frames": 310
+          }
+        },
+        {
+          "stft": {
+            "512": {
+              "window_ms": 23.219954648526077,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.824997977820049,
+              "sqrt_magnitude_cosine": 0.8520977696375731,
+              "log_magnitude_mae_db": 9.679414707134109,
+              "spectral_convergence": 0.604148465103001,
+              "active_frames": 1556
+            },
+            "2048": {
+              "window_ms": 92.87981859410431,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.8067766686273435,
+              "sqrt_magnitude_cosine": 0.7999549488453253,
+              "log_magnitude_mae_db": 9.246143091467832,
+              "spectral_convergence": 0.6327062198289909,
+              "active_frames": 1556
+            },
+            "8192": {
+              "window_ms": 371.51927437641723,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.7972854819537324,
+              "sqrt_magnitude_cosine": 0.8024778392321053,
+              "log_magnitude_mae_db": 7.780378622969415,
+              "spectral_convergence": 0.6466984035862997,
+              "active_frames": 1556
+            }
+          },
+          "onset_20ms": {
+            "reference": 92,
+            "candidate": 167,
+            "matched": 83,
+            "precision": 0.49700598802395207,
+            "recall": 0.9021739130434783,
+            "f1": 0.640926640926641
+          },
+          "metrics": {
+            "semitone_spectral_cosine": 0.8759414668060568,
+            "chroma_cosine": 0.9580061084199721,
+            "loudness_correlation": 0.9704062354645588,
+            "rhythm_onset_f1": 0.896,
+            "onsets": {
+              "reference": 63,
+              "candidate": 62,
+              "matched": 56,
+              "precision": 0.9032258064516129,
+              "recall": 0.8888888888888888,
+              "f1": 0.896
+            },
+            "evaluated_frames": 310
+          }
+        }
+      ],
+      "raw_first_31_12s_stft": {
+        "512": {
+          "window_ms": 23.219954648526077,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.8157915561841397,
+          "sqrt_magnitude_cosine": 0.8355143504527895,
+          "log_magnitude_mae_db": 10.303276119313937,
+          "spectral_convergence": 0.611622648963662,
+          "active_frames": 1556
+        },
+        "2048": {
+          "window_ms": 92.87981859410431,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.8008237182536979,
+          "sqrt_magnitude_cosine": 0.7919833310045759,
+          "log_magnitude_mae_db": 9.434206637810437,
+          "spectral_convergence": 0.6364081977007746,
+          "active_frames": 1556
+        },
+        "8192": {
+          "window_ms": 371.51927437641723,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.7957564956869967,
+          "sqrt_magnitude_cosine": 0.7973874207187478,
+          "log_magnitude_mae_db": 7.790119367619496,
+          "spectral_convergence": 0.6507358634920768,
+          "active_frames": 1556
+        }
+      }
+    },
+    "Music profile AY": {
+      "capture_sha256": "fd81f9a04baae641be91586bfaf4aecd771438ed0d18a6329cd7b2e8df74a8b3",
+      "loops": [
+        {
+          "stft": {
+            "512": {
+              "window_ms": 23.219954648526077,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.8265072208030625,
+              "sqrt_magnitude_cosine": 0.8511046199960953,
+              "log_magnitude_mae_db": 9.775028171115723,
+              "spectral_convergence": 0.5925162599515598,
+              "active_frames": 1556
+            },
+            "2048": {
+              "window_ms": 92.87981859410431,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.812483624435444,
+              "sqrt_magnitude_cosine": 0.807420058484091,
+              "log_magnitude_mae_db": 9.458487744247787,
+              "spectral_convergence": 0.6171160407648022,
+              "active_frames": 1556
+            },
+            "8192": {
+              "window_ms": 371.51927437641723,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.8022369017978682,
+              "sqrt_magnitude_cosine": 0.8086876114702606,
+              "log_magnitude_mae_db": 8.126083324782325,
+              "spectral_convergence": 0.6351925172251611,
+              "active_frames": 1556
+            }
+          },
+          "onset_20ms": {
+            "reference": 92,
+            "candidate": 174,
+            "matched": 86,
+            "precision": 0.4942528735632184,
+            "recall": 0.9347826086956522,
+            "f1": 0.6466165413533834
+          },
+          "metrics": {
+            "semitone_spectral_cosine": 0.8850359193387026,
+            "chroma_cosine": 0.9579515876258857,
+            "loudness_correlation": 0.9727341878166812,
+            "rhythm_onset_f1": 0.8709677419354839,
+            "onsets": {
+              "reference": 63,
+              "candidate": 61,
+              "matched": 54,
+              "precision": 0.8852459016393442,
+              "recall": 0.8571428571428571,
+              "f1": 0.8709677419354839
+            },
+            "evaluated_frames": 310
+          }
+        },
+        {
+          "stft": {
+            "512": {
+              "window_ms": 23.219954648526077,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.8284559031155209,
+              "sqrt_magnitude_cosine": 0.8575956296048282,
+              "log_magnitude_mae_db": 9.648932554505654,
+              "spectral_convergence": 0.6002047970584251,
+              "active_frames": 1556
+            },
+            "2048": {
+              "window_ms": 92.87981859410431,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.8132953684211506,
+              "sqrt_magnitude_cosine": 0.8088216679808654,
+              "log_magnitude_mae_db": 9.465161049005166,
+              "spectral_convergence": 0.6201044715922339,
+              "active_frames": 1556
+            },
+            "8192": {
+              "window_ms": 371.51927437641723,
+              "hop_ms": 20,
+              "magnitude_cosine": 0.8022721427500653,
+              "sqrt_magnitude_cosine": 0.8092645618202081,
+              "log_magnitude_mae_db": 8.116740795927873,
+              "spectral_convergence": 0.6348169083809851,
+              "active_frames": 1556
+            }
+          },
+          "onset_20ms": {
+            "reference": 92,
+            "candidate": 173,
+            "matched": 84,
+            "precision": 0.48554913294797686,
+            "recall": 0.9130434782608695,
+            "f1": 0.6339622641509434
+          },
+          "metrics": {
+            "semitone_spectral_cosine": 0.8844897185488455,
+            "chroma_cosine": 0.9581427641510657,
+            "loudness_correlation": 0.9724215313585344,
+            "rhythm_onset_f1": 0.8780487804878049,
+            "onsets": {
+              "reference": 63,
+              "candidate": 60,
+              "matched": 54,
+              "precision": 0.9,
+              "recall": 0.8571428571428571,
+              "f1": 0.8780487804878049
+            },
+            "evaluated_frames": 310
+          }
+        }
+      ],
+      "raw_first_31_12s_stft": {
+        "512": {
+          "window_ms": 23.219954648526077,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.8190823091366808,
+          "sqrt_magnitude_cosine": 0.8427108501678235,
+          "log_magnitude_mae_db": 10.241329332989958,
+          "spectral_convergence": 0.6088305935766768,
+          "active_frames": 1556
+        },
+        "2048": {
+          "window_ms": 92.87981859410431,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.8086143451663244,
+          "sqrt_magnitude_cosine": 0.8015023792268838,
+          "log_magnitude_mae_db": 9.658504405525608,
+          "spectral_convergence": 0.6222079352752946,
+          "active_frames": 1556
+        },
+        "8192": {
+          "window_ms": 371.51927437641723,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.7996430042790295,
+          "sqrt_magnitude_cosine": 0.8049000956656185,
+          "log_magnitude_mae_db": 8.146224580671436,
+          "spectral_convergence": 0.6400075250004094,
+          "active_frames": 1556
+        }
+      }
+    }
+  }
+}

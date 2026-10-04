@@ -1,0 +1,20 @@
+test_choices_preserve_tones_routing_and_other_volumes (test_noise_colour.NoiseTests.test_choices_preserve_tones_routing_and_other_volumes) ... ok
+Noise colour: render and compare 31 periods, volume delta -2
+Noise colour: render and compare 31 periods, volume delta -1
+Noise colour: render and compare 31 periods, volume delta 0
+test_digital_model_and_unseen_noise_phase (test_noise_colour.NoiseTests.test_digital_model_and_unseen_noise_phase) ... FAIL
+test_no_noise_is_exact_and_needs_no_renderer (test_noise_colour.NoiseTests.test_no_noise_is_exact_and_needs_no_renderer) ... ok
+test_path_suppresses_weak_chatter_but_resets_at_gaps (test_noise_colour.NoiseTests.test_path_suppresses_weak_chatter_but_resets_at_gaps) ... ok
+
+======================================================================
+FAIL: test_digital_model_and_unseen_noise_phase (test_noise_colour.NoiseTests.test_digital_model_and_unseen_noise_phase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\ay-converter\test_noise_colour.py", line 49, in test_digital_model_and_unseen_noise_phase
+    self.assertLess(abs(float(np.median(fitted[10:-10,6]))-23),4)
+AssertionError: 4.0 not less than 4
+
+----------------------------------------------------------------------
+Ran 4 tests in 10.244s
+
+FAILED (failures=1)

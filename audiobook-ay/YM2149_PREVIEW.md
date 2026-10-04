@@ -1,5 +1,10 @@
 # YM2149 audiobook check at 50 Hz
 
+**Disk retirement (2026-10-04):** obsolete speech TRDs described below
+were removed at the user's request. Links marked "retired" lead to the
+[removal inventory](../audiobook-beeper/retired-disks.json), with exact paths, hashes and the recovery
+commit. Measurements, WAVs and build instructions remain historical evidence.
+
 **Later listener decision (2026-10-01): rejected as unintelligible.** The user
 requested [beeper PDM at >=40 kHz](../audiobook-beeper/README.md) instead.
 The measurements and pending-listener wording below preserve the state when
@@ -16,8 +21,8 @@ Spectrum mixing. The new diagnostic uses the same **[60,84) second** passage.
 - [Previous formant mapping through the same YM2149 model](ym2149-preview/baseline-preview.wav).
 - [Original, matched level](ym2149-preview/original-preview.wav).
 - [Full LPC2 software reference, matched level](ym2149-preview/lpc-reference-preview.wav).
-- [Bootable Spectrum 128 + Beta Disk diagnostic TRD](ym2149-preview/audiobook-preview.trd).
-- [Root-level test disk](../ZX-audiobook-YM2149-test.trd), an identical copy
+- [Bootable Spectrum 128 + Beta Disk diagnostic TRD (retired)](../audiobook-beeper/retired-disks.json).
+- [Root-level test disk (retired)](../audiobook-beeper/retired-disks.json), an identical copy
   provided for convenient emulator loading. Mount it in drive A of a
   Spectrum 128 with Beta Disk/TR-DOS. If it does not autostart, enter TR-DOS
   and run `RUN "boot"`. Playback begins after loading and stops after the

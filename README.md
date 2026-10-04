@@ -12,6 +12,10 @@ defaults to packed IMA3 and direct beeper PDM, accepted by the user in Fuse.
 Use `--codec ima4` for the historical four-bit mode. The accepted
 [speech reference disk](ZX-audiobook-IMA3-overlap-test.trd) and a separate
 [AY preview](audiobook-ay/README.md) remain available.
+[Standalone AY music conversion](ay-converter/README.md) includes all its
+project sources in one portable folder.
+[Obsolete speech previews were retired](audiobook-beeper/retired-disks.json);
+comparison WAVs and experiment reports remain available.
 
 Install Python 3.11+, FFmpeg/ffprobe and the ZX0 v2 compressor in `PATH`.
 

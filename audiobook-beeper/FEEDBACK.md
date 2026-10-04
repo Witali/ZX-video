@@ -1,6 +1,11 @@
 # Live block-feedback PDM preview
 
-The separate [feedback TRD](../ZX-audiobook-IMA-ADPCM-feedback-test.trd)
+**Disk retirement (2026-10-04):** obsolete speech TRDs described below
+were removed at the user's request. Links marked "retired" lead to the
+[removal inventory](retired-disks.json), with exact paths, hashes and the recovery
+commit. Measurements, WAVs and build instructions remain historical evidence.
+
+The separate [feedback TRD (retired)](retired-disks.json)
 boots on Spectrum 128 / Beta Disk, decodes IMA in registers, converts it to
 PDM while playing, and loops. Measured average output is **63919.47 Hz**,
 approximately 64 kHz but **80.53 Hz below a strict 64000-Hz target**. The
@@ -303,7 +308,7 @@ seamless paging. Do not claim this layout or a complete 20-dB player exists.
 ## Bootable packet follow-up, 2026-10-02
 
 The user requested a disk using the new output method. The compact balanced
-kernel is now delivered as a [separate packet TRD](../ZX-audiobook-IMA-ADPCM-packet-test.trd),
+kernel is now delivered as a [separate packet TRD (retired)](retired-disks.json),
 with full native/cold Fuse checks and actual audio capture. This supersedes
 the earlier statement that no bootable packet player exists. It uses the
 already executed two-stage lookup approach; the proposed direct-pointer

@@ -1,0 +1,172 @@
+{
+  "date": "2026-10-04",
+  "repository_commit": "2a55226933f12f529cee8256d82ccf48b16d8039",
+  "purpose": "Self-contained audio-to-AY source bundle; original experiment sources and evidence remain in place.",
+  "origins": [
+    {
+      "source": "audiobook-ay/convert_audio.py",
+      "destination": "convert_audio.py",
+      "source_sha256_lf": "760670c551c55c73985a107a90ac48b6ca0d6d6e2325794618f068fd19d1b651",
+      "method": "copy, with local import/path adaptations where needed"
+    },
+    {
+      "source": "audiobook-ay/music_player.py",
+      "destination": "music_player.py",
+      "source_sha256_lf": "5f143b1d82db83490752ab7756fc101539503155809d81adc3b5d1d0393eb325",
+      "method": "copy, with local import/path adaptations where needed"
+    },
+    {
+      "source": "audiobook-ay/ay-player.asm",
+      "destination": "ay-player.asm",
+      "source_sha256_lf": "153b5ec0b34c8f069ef62dc2c9204fb8ef75a11b1d38835a7ec023c4914e6d90",
+      "method": "copy, with local import/path adaptations where needed"
+    },
+    {
+      "source": "audiobook-ay/verify_preview.py",
+      "destination": "verify_preview.py",
+      "source_sha256_lf": "4687079d691a9920f06750ae6f8da03dd125b4505ecf46d9a5f48420ba55ebf4",
+      "method": "copy, with local import/path adaptations where needed"
+    },
+    {
+      "source": "audiobook-ay/render_ym2149.js",
+      "destination": "render_ym2149.js",
+      "source_sha256_lf": "585122fbf9d5bc4af4a0af9086f2bb285ba4a45f6984381d8a275e616ea1d009",
+      "method": "copy, with local import/path adaptations where needed"
+    },
+    {
+      "source": "audiobook-ay/test_music_player.py",
+      "destination": "test_music_player.py",
+      "source_sha256_lf": "b689de17dfcc83b5871836a7fa91aa98c08046c5498193a0c3f2b3867ad23a9b",
+      "method": "copy, with local import/path adaptations where needed"
+    },
+    {
+      "source": "audiobook-ay/vendor/ayumi-js/ayumi.js",
+      "destination": "vendor/ayumi-js/ayumi.js",
+      "source_sha256_lf": "ded3df8aa2a063bd873ec0fedf167a2f2873034467a94aaa17441feb888b1ba8",
+      "method": "copy, with local import/path adaptations where needed"
+    },
+    {
+      "source": "audiobook-ay/vendor/ayumi-js/LICENSE",
+      "destination": "vendor/ayumi-js/LICENSE",
+      "source_sha256_lf": "e45be409a54a64d7473d15d7d5638959c6c7e6ce90a9f013a7f89351709a3acf",
+      "method": "copy, with local import/path adaptations where needed"
+    },
+    {
+      "source": "audiobook-ay/vendor/ayumi-js/README.md",
+      "destination": "vendor/ayumi-js/README.md",
+      "source_sha256_lf": "f36636219e8cdbe5e170d6188979d9aef1a657de8b29067a6f7865e6c32ba401",
+      "method": "copy, with local import/path adaptations where needed"
+    },
+    {
+      "source": "toolkit/ay_square_fit.py",
+      "destination": "ay_square_fit.py",
+      "source_sha256_lf": "bb375ba76fe2bece8a9c5b94a638c0a874e8af26fc037fc9ec880c2c58b656ea",
+      "method": "copy, with local import/path adaptations where needed"
+    },
+    {
+      "source": "toolkit/ay_fidelity.py",
+      "definitions": [
+        "spectra",
+        "harmonic_dictionary",
+        "decompose",
+        "track",
+        "arrange",
+        "arrange_noise",
+        "arrange_for_chip"
+      ],
+      "source_sha256_lf": "1d2c7f277489381b5a85784d142e65118a9218fa9ea38856c1efc57ddf274698",
+      "destination": "ay_fidelity.py"
+    },
+    {
+      "source": "toolkit/compare_ay_fidelity.py",
+      "definitions": [
+        "features",
+        "compare",
+        "onsets",
+        "match_onsets",
+        "write_wav"
+      ],
+      "source_sha256_lf": "18ced5a00a6e9b15c2480a3c1c08c8cdb0faa30e7ef24171a0a8edc3f4535fab",
+      "destination": "quality.py"
+    },
+    {
+      "source": "toolkit/build_long_video_trd.py",
+      "definitions": [
+        "AyFrame"
+      ],
+      "source_sha256_lf": "d4e864cd1a61b0282aef7cbea039c545c6774941c45684726e13f5a49a6a1575",
+      "destination": "ay_format.py"
+    },
+    {
+      "source": "toolkit/ay_interrupt.py",
+      "definitions": [
+        "registers"
+      ],
+      "source_sha256_lf": "60dfefcbb4a670669025e3da85c20850f3ecc57083b2de2e25124bca9598ded4",
+      "destination": "ay_format.py"
+    },
+    {
+      "source": "toolkit/build_zxv_trd.py",
+      "definitions": [
+        "TrdFile",
+        "basic_line",
+        "spectrum_bitmap_offset",
+        "add_trd_file",
+        "parse_trd_directory"
+      ],
+      "source_sha256_lf": "2bb53b92ac7ca01ba095ea05cc4ca0511cf5f8ab4cd6ad764c3b58135d2085d7",
+      "destination": "trd.py"
+    },
+    {
+      "source": "toolkit/build_streaming_trd.py",
+      "definitions": [
+        "place_files",
+        "calculate_file_start"
+      ],
+      "source_sha256_lf": "690f03916e6a10f8a36c2205e6160520651902dcd8c403ccebac1c2e16cbb555",
+      "destination": "trd.py"
+    },
+    {
+      "source": "audiobook-ay/player.py",
+      "definitions": [
+        "boot_basic"
+      ],
+      "source_sha256_lf": "31278b45cb9cef9ea00dc5810d051473dca570fe5f069c922d1e60b098cc7449",
+      "destination": "trd.py"
+    },
+    {
+      "source": "audiobook-ay/build_preview.py",
+      "definitions": [
+        "sha",
+        "save"
+      ],
+      "source_sha256_lf": "f118a96cc1d6ff36e7a834558f15614c72bc53ecdf3a317c82378a4ccaf50d29",
+      "destination": "support.py"
+    },
+    {
+      "source": "toolkit/smoke_test_fuse.py",
+      "definitions": [
+        "hidden_startupinfo"
+      ],
+      "source_sha256_lf": "cd328929de8a738127454e28473d9360d1c6d327d26b1b01a665646746bb87cd",
+      "destination": "support.py"
+    },
+    {
+      "source": "audiobook-beeper/record_pcm.py",
+      "definitions": [
+        "read_fmf"
+      ],
+      "source_sha256_lf": "0a2501668a4f6a64ae14224eb0605991ecf7940a9c02cfbf0144cf72ee8f4a8f",
+      "destination": "fmf_audio.py"
+    },
+    {
+      "source": "audiobook-ay/test_player.py",
+      "definitions": [
+        "fixture"
+      ],
+      "source_sha256_lf": "e6c497f7f973d16d4d7386bb007691cf2abad10700de4081c4fe5b7d97de652b",
+      "destination": "test_music_player.py"
+    }
+  ],
+  "note": "Extracted function/class syntax trees match their origins; only base. qualification was removed from TRD helpers. Runtime imports and provenance paths in entry points were adapted locally."
+}

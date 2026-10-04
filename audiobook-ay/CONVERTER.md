@@ -1,5 +1,11 @@
 # Convert arbitrary audio to an AY music disk
 
+**Standalone sources (2026-10-04):** [ay-converter](../ay-converter/README.md)
+contains the complete converter, analyser, assembly player, renderer and
+verification code without imports from other project folders. Use that folder
+for independent conversion. The commands and measurements below preserve the
+original integrated experiment and its evidence.
+
 `convert_audio.py` uses the existing movie analyser in `toolkit/ay_fidelity.py`
 and its square-wave spectral fit in `toolkit/ay_square_fit.py`, unchanged.
 It accepts FFmpeg audio input, downmixes to mono, selects three tonal voices

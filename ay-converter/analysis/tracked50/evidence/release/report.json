@@ -1,0 +1,207 @@
+{
+  "complete": true,
+  "preview_only": true,
+  "source": "C:\\Work\\ZX-video\\audiobook-beeper\\experiments\\ima-3bit-entertainer\\original.ogg",
+  "source_sha256": "08dc5241de419edf9693ad20797389cb735d9b6fc06bfb6936568bb707f13077",
+  "title": "THE ENTERTAINER",
+  "start_seconds": 0.0,
+  "requested_duration_seconds": 31.128,
+  "duration_seconds": 31.12,
+  "duration_grid_seconds": 0.02,
+  "ticks": 1556,
+  "maximum_duration_seconds": 178.68,
+  "update_rate_hz": 50,
+  "loop_playback": true,
+  "analysis_sample_rate_hz": 22050,
+  "source_mix": "FFmpeg mono downmix",
+  "profile": "music",
+  "sound_quantum_ms": 20,
+  "mode": "note-oriented music AY synthesis",
+  "square_fit": {
+    "model": "persistent_components_and_shared_noise_v2",
+    "tone_harmonics": "odd 1/h through 31, below 0.48 sample rate, actual integer AY periods",
+    "noise_attenuation_register_steps": 1,
+    "nominal_noise_attenuation_db": 3.0102999566398125,
+    "changed_tone_registers": 1230,
+    "noise_ticks": 415,
+    "tuned_period_registers": 1660,
+    "tuning_radius_cents": 50.0,
+    "frequency_score_hysteresis": 0.001,
+    "fit_spectral_cosine_sum_before": 1245.5760309983511,
+    "fit_spectral_cosine_sum_after": 1264.0670393045468,
+    "tone_power_tolerance_db": 0.25,
+    "maximum_tone_register_change": 1,
+    "native_instruction_delta_tstates": 0,
+    "limitations": "Estimated fundamentals and noise; AY Boolean mixer shares one volume with the tone and cannot add an independently controlled fourth voice. No listening acceptance implied.",
+    "update_rate_hz": 50,
+    "selection": "dominant",
+    "volume_curve": "YM2149 Ayumi",
+    "channel_assignment": "pitch continuity, 2-semitone gate; amplitude rank never changes channel",
+    "component_count": 289,
+    "component_channel_migrations": 0,
+    "tone_plus_noise_ticks": 398,
+    "noise_only_ticks": 17,
+    "channel_states_file": "channel-states.json.gz",
+    "analysis_context_component_count": 303,
+    "note_events_file": "note-events.json"
+  },
+  "noise_ticks": 415,
+  "analysis_context_before_seconds": 0.0,
+  "analysis_context_after_seconds": 1.0079818594104308,
+  "packed_bytes": 14004,
+  "register_bytes": 17116,
+  "registers_sha256": "670e0c1b0c4061326fef99b27fdb37266378d46689ea698baa124eb8180d9d6e",
+  "packed_format": "AY9 extended six-bit mixer",
+  "preview_model": "YM2149 Ayumi, three tones, one shared noise generator, equal mono sum",
+  "metrics": {
+    "semitone_spectral_cosine": 0.9030166271367361,
+    "chroma_cosine": 0.9743302350277543,
+    "loudness_correlation": 0.9908177170298268,
+    "rhythm_onset_f1": 0.8503937007874016,
+    "onsets": {
+      "reference": 63,
+      "candidate": 64,
+      "matched": 54,
+      "precision": 0.84375,
+      "recall": 0.8571428571428571,
+      "f1": 0.8503937007874016
+    },
+    "evaluated_frames": 310
+  },
+  "metrics_scope": "spectral, pitch-class, loudness and rhythm proxies; not waveform SNR or listening acceptance",
+  "spectrogram_metrics": {
+    "512": {
+      "window_ms": 23.219954648526077,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.83882196695447,
+      "sqrt_magnitude_cosine": 0.8285749089009171,
+      "log_magnitude_mae_db": 10.888438392695493,
+      "spectral_convergence": 0.5575482181482114,
+      "active_frames": 1556
+    },
+    "2048": {
+      "window_ms": 92.87981859410431,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.8306268049629696,
+      "sqrt_magnitude_cosine": 0.7955755128005267,
+      "log_magnitude_mae_db": 9.78225949058648,
+      "spectral_convergence": 0.5689898251035693,
+      "active_frames": 1556
+    },
+    "8192": {
+      "window_ms": 371.51927437641723,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.8223052829883092,
+      "sqrt_magnitude_cosine": 0.7991278965756875,
+      "log_magnitude_mae_db": 7.910308172219913,
+      "spectral_convergence": 0.5872951787174744,
+      "active_frames": 1556
+    }
+  },
+  "spectrogram_scope": "50..8000 Hz linear bins, global equal RMS, no time warp or pitch alignment; common source-relative -60 dB floor; 20-ms hop",
+  "equal_rms_preview": 0.11602345908356423,
+  "original_source_not_mixed_into_synthesis": true,
+  "high_rate_pcm_volume_output": false,
+  "disk_timing_verified": true,
+  "hardware_tested": false,
+  "producer_sources_sha256_lf": {
+    "ay_fidelity.py": "72f7d965b29a5e0ddeb9eff593ec398c1bb26c37d7b1bf7b6d7f774310c0d822",
+    "ay_format.py": "8847cccfdda7dd65716c1e3ee638a816548dc996d16849d1c910d0d3e81cbaba",
+    "ay_square_fit.py": "985717aa5e3f8491b486be70fed3652766ac47a31d157144738ea93cb6d52c4c",
+    "channel_tracking.py": "a64036843a2c8addba8ce0e9879ab963a704ceecb7d9a6dd29a3e67a2f499117",
+    "convert_audio.py": "41f9899b2f6ea2f3585de51e3d9f6cfb8dd35baafb007a9808117ad70482f5d3",
+    "fmf_audio.py": "a3ecbdaa98607ea5f2a93d97541615e9bd028848affe777516d15d451d73ae58",
+    "music_player.py": "28f980e677e628613dcb856626a776c61f763943e8e1004829d91b4644b7b7c4",
+    "music_profile.py": "c042ed6e43b54e6d7c9ab59d193f4d36c601096e6224290f03134a1488295c66",
+    "quality.py": "7427f1b44a719c316e5fe3228788c739b04bfb0249a9472ee6517dd831ace368",
+    "spectrogram.py": "ea120711a5396e39cb692c6de061af7f8e39b200121c387553e254f76be4aa6f",
+    "support.py": "e36a4fb8d07b97a86a411aa24de8f05e20d31d871eb0942bd4972bbc814069a6",
+    "test_channel_tracking.py": "39bbdc7e68ad8ec1e058d61e8e9e40b44663254258506720ad1059d7967ced5a",
+    "test_music_player.py": "a9c12d1dffd47c0df2fd21a9e9575a1d02e535299d87c7c8ff611843a881518e",
+    "test_music_profile.py": "4ee0732130024e17f3d3d45e0b0fa5b4618367dfe67325b1b49d2d520de5367d",
+    "trd.py": "9150fe8dab69c9d7e70d3956d534484f316bbe450dd5158c858727a0687ae28c",
+    "verify_preview.py": "41a1930cbdd706ace0a5195835041f5d2e087e7ee36b21327ae0f8cddab10562",
+    "ay-player.asm": "153b5ec0b34c8f069ef62dc2c9204fb8ef75a11b1d38835a7ec023c4914e6d90",
+    "render_ym2149.js": "585122fbf9d5bc4af4a0af9086f2bb285ba4a45f6984381d8a275e616ea1d009",
+    "vendor/ayumi-js/ayumi.js": "ded3df8aa2a063bd873ec0fedf167a2f2873034467a94aaa17441feb888b1ba8"
+  },
+  "artifacts": {
+    "assembly/assembler.log": {
+      "bytes": 718,
+      "sha256": "4829d15196938b9352dfe0462cc316719b22bef068d7a5ba1f746c029752ffd0"
+    },
+    "assembly/ay-player.asm": {
+      "bytes": 4390,
+      "sha256": "153b5ec0b34c8f069ef62dc2c9204fb8ef75a11b1d38835a7ec023c4914e6d90"
+    },
+    "assembly/config.inc": {
+      "bytes": 235,
+      "sha256": "57802b616f47ba796828f4197ee4278e668c29de54ef01e74b4c1b8f3cca4729"
+    },
+    "assembly/player.bin": {
+      "bytes": 11008,
+      "sha256": "c62fb8ce55962ebb61969f1722e2e3221959d1e304ccb6e3ed2a84f8797b807a"
+    },
+    "assembly/player.lst": {
+      "bytes": 31588,
+      "sha256": "90118b4a4e1b56de675f7ec0179ccb2b875e17014678011af4844f5b0041c0ae"
+    },
+    "assembly/screen.bin": {
+      "bytes": 6912,
+      "sha256": "a99b576afb7c7fd5dd17e579e6f922aacc87d0d80f61a144cff1292713c9872e"
+    },
+    "audio-preview.trd": {
+      "bytes": 655360,
+      "sha256": "2e6a14a9637a9fae6d7546826473148de1e3b263a8b58717abfcbfe61f79e8d4"
+    },
+    "ay-preview.wav": {
+      "bytes": 2744828,
+      "sha256": "6f51c119a640700e7f567dbc30cca777664d814c7fad2cdeb14d0bc9b64f1973"
+    },
+    "channel-states.json.gz": {
+      "bytes": 33345,
+      "sha256": "3ec15d48127db79d5572158e7d57d088c48bb8979238efd45063e28e48cbb81b"
+    },
+    "chip-render.json": {
+      "bytes": 828,
+      "sha256": "2e52b1b518f7cff64c70abbcf3641d1cc57379e5f2d0f9beab7cea0791a2b30c"
+    },
+    "note-events.json": {
+      "bytes": 65909,
+      "sha256": "21fff6947019b79f32b7bb90cdad88e6d74bb1475e360e385e3e07fa956988bc"
+    },
+    "original-preview.wav": {
+      "bytes": 1372436,
+      "sha256": "c27ccd5700b8c2232d661155556bce148a3976cc95b241cf46fb598ffc960469"
+    },
+    "player.json": {
+      "bytes": 3290,
+      "sha256": "8950eedfd22faea396fe01f756f8ecab0660784768c31095f9cfde6288bfbd6e"
+    },
+    "registers.gz": {
+      "bytes": 4224,
+      "sha256": "8fdcee2d6cfac2df46e88d0062e6107dfa5b88a2828db5b317f1736315c24390"
+    },
+    "soundtrack.ay9.gz": {
+      "bytes": 4511,
+      "sha256": "a63289114534ed1e325b45009a735ab4509711d458673c1fe17ba15e0031d39b"
+    },
+    "verification.json": {
+      "bytes": 2200,
+      "sha256": "78bd841fa6f3120eee93aa2078e2aefd8e93ca4589cb79724a5690df0c4792b0"
+    },
+    "verification-work/fuse-trace.txt.gz": {
+      "bytes": 165128,
+      "sha256": "2b940f9270f63117950559e24d10862bfab69cd7566ed5efefb21b4bdefdeebb"
+    },
+    "fuse-preview.wav": {
+      "bytes": 5488398,
+      "sha256": "fd81f9a04baae641be91586bfaf4aecd771438ed0d18a6329cd7b2e8df74a8b3"
+    },
+    "verification-work/capture.fmf.gz": {
+      "bytes": 3196182,
+      "sha256": "d3387e8c6d7dfdd36516ee349587f530d13beb1e98621e953e5337b7d5f7accd"
+    }
+  },
+  "verification": "verification.json"
+}

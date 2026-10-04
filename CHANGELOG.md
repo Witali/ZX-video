@@ -1,5 +1,261 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Fit AY noise colour with the actual chip simulator
+
+After `4ab6d7f`, the user asks for an accurate online noise-generator model
+and an implemented colour fit on the unchanged 31.12-s /1556-state Entertainer
+example. Consult the General Instrument description, hardware-verified MAME
+LFSR and Ayumi sources. Add 93 continuous YM2149 candidates: R6 1..31 and
+shared carrier volume unchanged/down one/down two. Fit three STFT scales
+with narrow 50-Hz power smoothing and a .15-dB period/volume jump penalty.
+All output remains at 50 Hz /20 ms. Preserve every tone period, component ID,
+mixer and noise route/presence, and the other channels' volumes. Default
+legacy remains exact; music can reproduce tracked50 with `--noise-fit heuristic`.
+
+Reject and retain the early shape-only, pooled-band and unpooled drafts:
+they used Ayumi at an invalid 22050-Hz rate, and one calibration also aliased
+44.1-kHz audio. Both discarded disks completed native/Fuse checks, but timing
+correctness did not validate their model. An apparently passing synthetic
+test also had an invalid-rate reference and is rejected. Add a clock/64
+sample-rate guard, render all final references/candidates at 44100 Hz, and
+low-pass resample identically. Archive failed tests, source snapshots and
+measurements in the [discarded record](ay-converter/analysis/noise_colour/evidence/discarded/README.md).
+
+Four valid complete host ablations isolate level and period changes. Joint
+log errors at 512/2048/8192 fall 10.88844/9.78226/7.91031 ->
+10.56307/9.15825/7.27228. Most benefit is level correction. Compared with
+level-only, R6 adds small short/long-window gains and a .00652-dB medium-window
+regression; period-only is worse. Select the bounded joint fit, not a claim
+of universal timbre improvement. R6 changes on 301 noisy states; volume drops
+two steps on 411 and one on four. Noise remains enabled in all 415 states;
+289 component lifetimes have zero migrations and no active tone is disabled.
+
+Full cold Fuse verifies 34232 writes /3112 fields, zero misses/duplicates,
+67 startup sectors, no runtime reads and correct loading-message handling.
+Both complete loops improve unpooled spectral cosine and log error at all
+three scales versus tracked50. First-loop log errors fall
+9.77503/9.45849/8.12608 ->9.56216/9.06411/7.65117; the same noisy intervals
+improve about 9–12%. Fine onset F1 improves in loop one but slightly regresses
+in loop two; pooled semitone cosine slightly regresses. Inspect full/busy
+spectrograms and the corrected noise-floor figure. No listening acceptance
+or physical-hardware result is claimed.
+
+All 19 tests pass, including the full 131071-state LFSR, 31 divisors, mixer
+truth table, anti-aliasing and unseen-phase period/volume recovery. The player
+binary is unchanged: 974 ->974 T ordinary, delta 0, unchanged special paths
+and 17116 resident bytes. Legacy disk/streams/WAVs reproduce byte for byte;
+177 retained image hashes remain unchanged. Publish the verified LFS disk
+`ZX-music-Entertainer-AY-noise-colour-test.trd` and its normal two-loop WAV.
+See [method and reproduction](ay-converter/analysis/noise_colour/README.md),
+[valid ablations](ay-converter/analysis/noise_colour/evidence/host/results.json),
+[state audit](ay-converter/analysis/noise_colour/evidence/comparison/noise-audit.json),
+[execution proof](ay-converter/analysis/noise_colour/evidence/release/verification.json)
+and [completion audit](ay-converter/analysis/noise_colour/evidence/completion.json).
+
+## 2026-10-04: Preserve component channels and mix independently detected noise
+
+Following `c886631`, the user requires three dominant tonal components to
+retain their hardware channels under small frequency/amplitude changes and
+asks to detect/add noise separately. Keep the exact 20-ms quantum. Add
+dominant fundamental selection with retention hysteresis and pitch-based
+permutation matching independent of amplitude rank. The current optional
+music profile records persistent component IDs and all states at 50 Hz.
+Independently estimate broadband noise energy/colour and route it through
+the AY mixer without disabling active tones, using one stable route per
+noise event. Fit the occupied channel's shared volume to the Boolean mix;
+independent tone/noise levels remain a hardware limitation.
+
+Four predetermined complete host variants use the same Entertainer source
+and 31.12-s /1556-tick scope. Select dominant tracked tones + noise. Its
+unpooled 512/2048/8192-window cosine rises .83381/.82558/.81513 ->
+.83882/.83063/.82231 versus v1. Role-selected tracking is weaker; disabling
+noise has better tonal cosine but omits the user's noise requirement. Log
+error and fine onset F1 regress against v1; preserve the tradeoff and all
+variants rather than claiming universal improvement.
+
+The selected CLI stream exactly matches the host candidate. Its 289 estimated
+component lifetimes have zero channel migrations. Noise uses 415 ticks,
+398 mixed with a tone /17 on a free channel; zero active tones disabled and
+zero routing changes within a noise event. Extend AY9 using unused high bits
+and an explicit marker, preserving legacy bytes. R0..R10 and the Z80 player
+binary are unchanged: 974 ->974 T ordinary, delta 0, 17116 resident bytes.
+Legacy movie readers need the new marker decoder for extended streams.
+
+All 14 regression tests pass, including all 32×64 noise/mixer encodings,
+independent decoding and native execution of all 64 mixer states, amplitude
+swaps, small pitch changes, released-channel reuse and noise/pure-tone tests.
+Full cold Fuse passes two loops: 34232 exact writes /3112 fields, zero missed
+fields, 67 startup sectors, no runtime reads, correct loading-message hiding.
+Startup 10.677687 s; normal WAV 62.226236 s. The complete default CLI still
+reproduces the original disk/streams/WAVs byte for byte; 176 prior image hashes
+are unchanged. New LFS disk: `ZX-music-Entertainer-AY-tracked50-test.trd`.
+
+Compare actual Fuse sound against the original legacy disk at all three STFT
+scales: first-loop cosine .81846/.80556/.79872 ->.82651/.81248/.80224, also
+improved in loop two. Medium/long-window log-magnitude error worsens; finer
+onset F1 is .62963 ->.64662 and .64093 ->.63396. Visually inspect full and
+fixed-region plots plus channel tracks. Deliver the requested behavior as
+a listening preview, with spectral/rhythm limitations stated. No subjective
+acceptance, perfect source separation or physical-hardware result is claimed.
+
+Save [implementation and reproduction](ay-converter/analysis/tracked50/README.md),
+[four-variant results](ay-converter/analysis/tracked50/evidence/results.json),
+[channel/mixer audit](ay-converter/analysis/tracked50/evidence/comparison/channel-audit.json),
+[complete native/Fuse proof](ay-converter/analysis/tracked50/evidence/release/verification.json),
+normal sound, every 20-ms state, comparison WAV and readable spectrograms.
+The existing spectrum-analysis methods and original disks remain available.
+
+## 2026-10-04: Implement and qualify a 20-ms AY music profile
+
+The user authorizes the proposed music improvements at 50 Hz, excludes
+100-Hz playback, fixes the sound quantum at 20 ms and requests spectrogram
+comparison. Baseline `8bcc3c3`, unchanged 31.128-s Entertainer request /1556
+states /31.12-s output, source SHA-256
+`08dc5241de419edf9693ad20797389cb735d9b6fc06bfb6936568bb707f13077`.
+Add an optional `--profile music` to the standalone folder, retaining the
+exact old default stream. Implement joint beam voice allocation, attack
+evidence, faster note envelopes, held note periods, YM2149 DAC calibration
+and transient-limited tonal noise. The file grid and existing player remain
+unchanged. No recording-specific score or waveform is added.
+
+Seven predetermined full host comparisons select joint voices + 0.5 envelope
+blend + transient noise. Host unpooled STFT cosine at 512/2048-sample windows
+rises .83076/.82366 -> .83381/.82558; 8192 decreases .81797 -> .81513.
+Spectral convergence decreases at all three scales; finer onset F1 rises
+.65891 -> .74783, though the sequential combined candidate reaches .78414.
+Noise falls 243 ->109 ticks. Individual calibration, envelope, noise and
+joint variants trade off; reject universal/default replacement. Short harmony
+runs increase 34 ->51 and repeated-attack bass tuning remains imperfect.
+Archive every variant, including those not selected; no open-ended tuning.
+
+The selected CLI stream exactly matches the host candidate. Full cold Fuse
+passes both loops: 34232 register writes /3112 fields, zero missed fields,
+67 startup sectors, no runtime disk reads, correct loading-message handling.
+Startup 10.677687 s; normal captured WAV 62.226236 s. Player binary identical:
+ordinary 974 ->974 T, delta 0; 17116 resident bytes. Eight regression tests
+pass, plus complete native offset/one-shot CLI playback and event clipping.
+All 175 prior image hashes remain unchanged. New independently bootable LFS
+preview: `ZX-music-Entertainer-AY-music50-test.trd`.
+
+Full Fuse spectrogram comparison uses equal global RMS, unpooled bins,
+three resolutions and the same fixed known clock correction for both disks;
+raw-time results are also retained. First-loop log-magnitude MAE improves
+9.92776/9.26998/7.78490 ->9.71170/9.13648/7.64777 dB, with improvements in
+both loops. Fine onset F1 rises .62963/.64093 ->.77533/.74894. Long-window
+cosine falls in both loops and second-loop long-window convergence slightly
+worsens. Inspect complete and fixed-region spectrograms: changes are modest,
+with remaining timbre/polyphony errors. Fix cropped detail-figure margins
+before delivery. No subjective or physical-hardware acceptance is claimed.
+
+Save [implementation, decisions and reproduction](ay-converter/analysis/music50/README.md),
+[seven-variant report](ay-converter/analysis/music50/evidence/results.json),
+[complete native/Fuse proof](ay-converter/analysis/music50/evidence/release/verification.json),
+[actual-sound spectral report](ay-converter/analysis/music50/evidence/comparison/fuse-spectrogram.json),
+normal sound, comparison WAV, readable figures and hash audit in the same
+focused change. Decision: deliver this optional 20-ms music preview and keep
+the old disk/default; reuse this complete evidence for any later work.
+
+## 2026-10-04: Analyse Entertainer AY accuracy with six bounded host probes
+
+At the user's request, review the standalone AY converter and propose ways
+to improve melodic and timbral accuracy using the unchanged Entertainer
+example. Baseline is `e604de3`, original source SHA-256
+`08dc5241de419edf9693ad20797389cb735d9b6fc06bfb6936568bb707f13077`,
+31.128-s request /31.12-s AY output. Reproduce every baseline register byte
+and the archived coarse metrics before comparing six fixed variants:
+baseline, no noise, no fine tuning, median pitch per note run, YM2149 volume
+curve, and no-noise/no-tuning/YM combined. This is one bounded analysis;
+the production algorithm, assembly and existing release disks are unchanged.
+
+The baseline uses noise for 243/1556 ticks. Its period changes within its own
+fixed note labels number 279/134/197 for bass/harmony/melody. The 185.76-ms
+analysis window and a 371.52-ms /10-Hz legacy metric obscure short events;
+the old onset match tolerance is 100 ms. The nominal volume curve differs
+from the actual rendering model by up to 2.57 dB. These findings motivate
+note/onset-aware tracking, stable keyboard-note pitches, chip calibration
+and separate music/effects noise policies before raising the update rate.
+
+With the added 92.88-ms-window /10-ms-hop /20-ms-tolerance signal-onset proxy,
+baseline F1 is 0.65891; median-note pitch gives 0.70000 and YM calibration
+0.69636. Spectral cosines are 0.89279 /0.89205 /0.89214 respectively. Pitch
+holding mainly removes extra detections, rather than recovering more source
+attacks. The combined switches score 0.88766 spectral / 0.68807 finer F1;
+reject automatic adoption because metrics trade off. Noise removal also
+loses matched source events. No result is a subjective preference or an
+annotated-note accuracy score; no candidate dominates all measurements.
+
+Save the [review and staged recommendations](ay-converter/analysis/entertainer/README.md),
+[reproducing probe](ay-converter/analysis/entertainer/probe.py),
+[complete report](ay-converter/analysis/entertainer/results.json) and six
+compressed register streams. All six full host renders complete. Reuse the
+existing full baseline native/Fuse evidence; candidates have no new Fuse or
+physical-hardware qualification. Ordinary player work stays 974 T, delta 0 T,
+with the same 17116-byte excerpt and 550 bytes/s. Faster-rate costs in the
+review are explicitly estimates requiring a new scheduler and complete
+timing qualification. Decision: deliver the analysis and prioritize the
+note/attack and chip-model work; do not replace the current release.
+
+## 2026-10-04: Preserve the AY converter as an independent source folder
+
+At the user's request, retain audio-to-AY conversion in
+[ay-converter](ay-converter/README.md), including all project source required
+for analysis, AY/register formats, TRD packaging, separate Z80 assembly,
+Ayumi rendering, metrics, native/Fuse verification and FMF audio extraction.
+Baseline is `2a55226933f12f529cee8256d82ccf48b16d8039`. Extract the required
+audio routines and disk helpers from the movie/beeper modules; replace parent
+imports with local modules. Preserve the original experiments and evidence.
+Include third-party Ayumi source/license, Python requirements, native tests,
+source provenance and standalone instructions. No synthesizer or player
+algorithm is changed; the ordinary field path is 974 ->974 T, delta 0 T,
+with the existing 105-T loop-restart extra.
+
+Validation runs a copied source folder from a separate directory with only
+external Python packages on PYTHONPATH. Convert the full unchanged 31.128-s
+The Entertainer request to 1556 AY ticks /31.12 s, then execute both complete
+cold Fuse repeats and capture normal-speed sound. All 34232 writes and
+3112 nominal fields pass, with zero missed/duplicate fields, 67 startup
+sector reads and zero runtime reads. The final TRD, player binary, screen,
+both register streams and all three WAVs are byte-identical to the previous
+verified example. TRD SHA-256 remains
+`c6139c9c5cd4c18df82d3b1f208064790487a48db3883b26f916d00765fc177c`.
+All 27 extracted function/class syntax trees match their origins, allowing
+only removal of the local TRD helpers' former `base.` qualification. Both
+native tests pass, covering bank edges, six-bank capacity, looping and EOF.
+See the [saved verification](ay-converter/verification.json) and
+[source manifest](ay-converter/SOURCE_MANIFEST.json). Physical hardware and
+new listening acceptance are not claimed. Accept this source separation;
+the conversion result and existing release images remain unchanged.
+
+## 2026-10-04: Retire obsolete speech preview disk images
+
+At the user's request, remove 24 obsolete speech TRDs from the current
+checkout: 12 root listening previews and 12 archived copies/earlier builds.
+Baseline is `9dbe81c20912e18a0b79fb724cdcbeed72cbd0df`. The selected files total
+15728640 bytes (15 MiB); this is checkout image size, not Git/LFS storage
+reclaimed. The [retirement inventory](audiobook-beeper/retired-disks.json)
+records each exact path, SHA-256, reason and recovery commit. Selection
+covers rejected early AY speech and superseded PDM/IMA/PWM speech previews;
+it is not a new cross-codec SNR measurement.
+
+Retain current overlap speech, qualified IMA3 and four-bit waveform
+baselines, both music examples, the pending pitch-aware AY candidate,
+movie releases and calibration/correctness fixtures. Keep the old
+`ima-preview/audiobook-preview.trd` needed by two research scripts and point
+those scripts to that exact archived copy instead of its retired root alias.
+The existing PDM rebuild regression now checks the archived report's SHA-256,
+preserving exact-byte verification without the duplicate TRD fixture.
+Sources, WAVs, traces, historical reports and earlier log entries remain.
+Update active links and identify retired disks in their historical guides.
+
+Verification: all 24 selected images match their HEAD LFS identities before
+removal; all 175 other tracked TRD hashes are unchanged afterward; no Markdown
+link outside this historical log targets a deleted image. The retained ADPCM
+baseline matches its Fuse proof. All six existing `test_pdm.py` tests pass
+with the bundled Python 3.12 and project packages on PYTHONPATH; initial
+default-interpreter attempts lacked compatible NumPy. Syntax and diff checks
+pass. No player hot path changes (0 T delta), new audio measurements, history
+rewrites, LFS pruning or worktree cleanup are included.
+
 ## 2026-10-04: Make accepted IMA3 playback the general converter default
 
 At the user's request, launch the installed Program Files Fuse visibly with

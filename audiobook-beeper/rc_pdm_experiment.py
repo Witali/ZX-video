@@ -188,7 +188,7 @@ def main():
             raise AssertionError(f'baseline artifact changed: {name}')
     meta = json.loads((source / 'player.json').read_bytes())
     proof = json.loads((source / 'verification.json').read_bytes())
-    disk = HERE.parent / 'ZX-audiobook-IMA-ADPCM-test.trd'
+    disk = source / 'audiobook-preview.trd'
     if sha(disk.read_bytes()) != proof['fuse']['trd_sha256']:
         raise AssertionError('release disk changed')
     packed = gzip.decompress((source / 'soundtrack.ima.gz').read_bytes())

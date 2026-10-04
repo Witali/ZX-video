@@ -1,5 +1,14 @@
 # AY audiobook preview
 
+The maintained standalone audio conversion entry point is
+[ay-converter](../ay-converter/README.md), with all required project sources
+in one portable folder. The older speech experiments below remain archived.
+
+**Disk retirement (2026-10-04):** obsolete speech TRDs described below
+were removed at the user's request. Links marked "retired" lead to the
+[removal inventory](../audiobook-beeper/retired-disks.json), with exact paths, hashes and the recovery
+commit. Measurements, WAVs and build instructions remain historical evidence.
+
 **Music and arbitrary audio (2026-10-04):** use
 [convert_audio.py](convert_audio.py) and [the converter guide](CONVERTER.md).
 The existing movie synthesizer now has an audio-oriented command that builds
@@ -41,7 +50,7 @@ The complete 667.596916-second audiobook has not been converted.
 - [AY preview](preview/ay-preview.wav): 120-second mono WAV, 22050 Hz.
 - [Original excerpt](preview/original-preview.wav): the same source interval,
   downmixed to mono and matched to the AY preview's RMS for comparison.
-- [Spectrum disk](preview/audiobook-preview.trd): one independently bootable
+- [Spectrum disk (retired)](../audiobook-beeper/retired-disks.json): one independently bootable
   TRD. Open in **Spectrum 128 + Beta Disk** mode and run `boot` in TR-DOS
   if the emulator does not autostart it. The sound starts after preloading,
   plays once, then all three channels are muted. Reset to replay.
