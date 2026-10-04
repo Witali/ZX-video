@@ -1,5 +1,15 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Authorize further Speex and waveform playback experiments
+
+Save the user's six follow-up directions in the
+[new worklist](audiobook-beeper/speex-port/FOLLOWUP_TODO.md), based on the
+complete `pure-r4` speech result (2759257254 T, 186880 samples). Compare
+specialized multiplication, table construction and port-only output before
+trying approximate synthesis, periodic waves and predictive VQ. Preserve
+separate exactness, quality, rate and timing claims. This commit records
+scope only; it adds no decoder or measured speedup.
+
 ## 2026-10-04: Speex item 06, select optimized decoder and reject real time
 
 Complete the six-item worklist and select `pure-r4` as the default. A fresh
