@@ -1,5 +1,25 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round40 meets the below-8000 intermediate target
+
+On unchanged round39 speech, inspect small signed feedback populations and
+choose byte-magnitude products fused with subtractive state updates. This
+avoids a cached correction table and preparation; that alternative was not
+implemented. Full speech 1518690395 ->1487605573 T (-31084822, 2.047%),
+7960.218 T/sample. Both binaries pass 196608 feedback cases, instruction
+audits and 128 full arbitrary-state filter calls. A wrong runtime path and
+comment-match assertion first stopped host setup/build. The first native
+candidate failed at sample 100 (-61 versus -69) due to an intermediate-byte
+borrow bug; corrected and verified with 327680 dedicated negate cases.
+All 1094880 complete PCM16/PCM8 samples, every fixture/OUT cost proof and
+fresh default identity pass. Low/high tone regress by 34212/33010 T
+(0.154%/0.140%); other full fixtures improve or stay unchanged. Select for
+speech and random/all-pitch gains, without a universal speed claim. Code
++902 to 10527, state and 14140 useful table bytes unchanged. Real-time deficit
+is still 18.195x; ULA/hardware unverified. Next inspect negative 12-bit
+subtractive synthesis; below 7800 is an unachieved intermediate target.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/40/REPORT.md).
+
 ## 2026-10-04: Speex round39 omits zero top feedback partials
 
 Inspect unchanged round38 speech: 3340 zero, 58289 top-zero and 125251 general

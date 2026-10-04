@@ -12,16 +12,15 @@ Baseline: exact mode-3 Speex `pure-r9`, 2510789186 T for 186880 samples,
 already emitted without pacing. Retain the complete upstream PCM16/PCM8
 comparison and report throughput separately from instantaneous OUT gaps.
 
-Round35 achieves the **below-8500 T/sample intermediate target** on the
-same complete 186880-sample speech. Round39 now measures 8126.554 T/sample,
-exact PCM16/PCM8 and 14140 useful table bytes in the same 16-KiB arena. This is an input-specific milestone;
-the overall objective still needs 437.5 T/sample. Continue optimizing the
-actual decoder without adding output pacing or changing the input format.
+Round40 achieves the **below-8000 T/sample intermediate target** on the
+same complete 186880-sample speech: 7960.218 T/sample, exact PCM16/PCM8
+and 14140 useful table bytes in the same 16-KiB arena. This is an input-specific
+milestone; the overall objective still needs 437.5 T/sample. Continue
+optimizing the actual decoder without pacing or changing its input format.
 
-The next intermediate target is **below 8000 T/sample** on the same full
-speech, requiring another 1.56% reduction from round39. Keep exact PCM,
-all stream gates and the 16-KiB table limit. This is a target to investigate,
-not a measured result or a guarantee of real-time feasibility.
+The next intermediate target is **below 7800 T/sample** on the same full
+speech. Keep exact PCM, all stream gates and the 16-KiB table limit. This
+is a target to investigate, not a measured result or a real-time guarantee.
 
 - [x] **15. Register-based coefficient table construction.** Replace four
   byte stores and repeated step loads with 32-bit register accumulation and
@@ -280,13 +279,25 @@ not a measured result or a guarantee of real-time feasibility.
   arbitrary-history feedback cases, instruction audits and 128 complete
   filter calls; 1094880 full samples pass. Every OUT and fixture cost
   reconciles. Code +581, state/tables unchanged. Real-time deficit 18.575x.
-- [ ] **40. Combine upper partials for small signed feedback.** For 1..255,
+- [x] **40. Combine upper partials for small signed feedback.** For 1..255,
   both upper partials vanish; for signed -256..-1, their sum equals
   -256*coefficient. Inspect a low-byte kernel with a cached negative
   correction. Count eligible populations first and include dispatch,
   correction preparation on changed LPC pages, code size and table RAM.
   Preserve general/zero paths, arbitrary histories and full-stream gates.
-  No implementation or additional saving is measured.
+  [Round40](rounds/40/REPORT.md) selects magnitude products fused with
+  subtractive state updates, avoiding the correction table. Speech saves
+  31084822 T: 7960.218 T/sample (-2.047%), below-8000 target met. All 196608
+  feedback cases per binary, 327680 negate cases and 1094880 complete samples
+  pass after fixing an initial borrow bug. Two tones regress by about 0.15%;
+  all other checked full fixtures improve or stay unchanged. Every cost/OUT
+  delta reconciles. Code +902; state/tables unchanged. Real-time deficit 18.195x.
+- [ ] **41. Extend subtractive synthesis to negative 12-bit feedback.** Count
+  -4095..-256 values and inspect a positive-magnitude three-part product
+  subtracted from history. Include dispatch/normalization and code-space
+  costs; retain the -4096/general fallbacks and existing short kernels.
+  Check signed boundaries, arbitrary histories, SP and complete streams.
+  This candidate is unimplemented and has no measured saving.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.
