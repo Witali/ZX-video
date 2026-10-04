@@ -648,23 +648,32 @@ _synthesis_shift_end::
     return d,f
 
 
+def split_word_product(d, f):
+    """Replace the serial 32-bit accumulator with two byte/word partials."""
+    from word_product import generate
+    start=f.index('; Exact register-based signed16x16')
+    stop=f.index('; Unsigned A*C',start)
+    return d,f[:start]+generate()+f[stop:]
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'))
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'))
-    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=excitation_shift(d,f)
-    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=innovation_registers(d,f)
-    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=zero_feedback(d,f)
-    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'))
-    if variant in ('pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=pitch_accumulator(d,f)
-    if variant in ('pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=shared_pitch_history(d,f)
-    if variant in ('pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=constant_pitch_products(d,f,folder,'binary' if variant=='pure-r28-binary' else 'chain',variant in ('pure-r29','pure-r30'))
-    if variant=='pure-r30':d,f=synthesis_shift(d,f)
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'))
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'))
+    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=excitation_shift(d,f)
+    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=innovation_registers(d,f)
+    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=zero_feedback(d,f)
+    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'))
+    if variant in ('pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=pitch_accumulator(d,f)
+    if variant in ('pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=shared_pitch_history(d,f)
+    if variant in ('pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=constant_pitch_products(d,f,folder,'binary' if variant=='pure-r28-binary' else 'chain',variant in ('pure-r29','pure-r30','pure-r31'))
+    if variant in ('pure-r30','pure-r31'):d,f=synthesis_shift(d,f)
+    if variant=='pure-r31':d,f=split_word_product(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')

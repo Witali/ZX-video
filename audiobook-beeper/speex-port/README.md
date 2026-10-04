@@ -2,7 +2,7 @@
 
 ## Latest result: exact Speex improved; separate VQ playback meets nominal CPU timing
 
-The selected exact default is **`pure-r30`**. Both the initial [TODO](TODO.md)
+The selected exact default is **`pure-r31`**. Both the initial [TODO](TODO.md)
 and six-item [follow-up worklist](FOLLOWUP_TODO.md) are complete, with reports
 and focused commits. Original generators and evidence remain reproducible.
 The exact decoder retains Speex mode-3 packets and emits identical PCM8.
@@ -33,22 +33,23 @@ throughput; no uniform per-sample output schedule is required.
 | 28. Constant pitch-gain chains | 1693838136 | 9063.774 |
 | 29. Direct signed24 pitch results | 1680861924 | 8994.338 |
 | 30. Shorter synthesis shift | 1675816164 | 8967.338 |
+| 31. Two-part general word products | 1635360657 | 8750.860 |
 
-Round 30 uses **33.26% fewer T than round 09**, 2.707x faster than original
+Round 31 uses **34.87% fewer T than round 09**, 2.774x faster than original
 assembly. Internal PCM16 and emitted PCM8 stay exact. Real time still fails
-by **20.50x** against 437.5 T/sample: 23.36 seconds of speech needs 478.80
+by **20.002x** against 437.5 T/sample: 23.36 seconds of speech needs 467.25
 seconds of nominal CPU time. No pacing is added to this Speex decoder.
 The **below-9000 T/sample intermediate target is met**, preserving the same
-PCM and table budget. The latest synthesis shift saves another 27 T/sample
-and 12 code bytes; every OUT timestamp difference confirms the saving.
-Next investigate the general signed16x16 LPC product, about 10% of current
-CPU using the unchanged kernel's prior measured profile. That next candidate
-is unimplemented. See the [current report](rounds/30/REPORT.md).
+PCM and table budget. Two unsigned byte/word partials reduce the general
+multiplier's cost by 24.22%, saving 40455507 T and 39 code bytes overall.
+Next investigate sharing coefficient preparation between the two products
+inside Q14 multiplication, retaining exact signed truncation and rounding.
+That next candidate is unimplemented. See the [current report](rounds/31/REPORT.md).
 
-Current [image](rounds/30/player.ihx), [decoder](rounds/30/decoder.s),
-[filter](rounds/30/filter.s) and [map](rounds/30/player.map) are under
-`rounds/30`. Entry/count/status, input-bank order and port contract below
-remain unchanged. Code is `8000..A2C1` (8898 bytes), state `B000..B410`
+Current [image](rounds/31/player.ihx), [decoder](rounds/31/decoder.s),
+[filter](rounds/31/filter.s) and [map](rounds/31/player.map) are under
+`rounds/31`. Entry/count/status, input-bank order and port contract below
+remain unchanged. Code is `8000..A29A` (8859 bytes), state `B000..B410`
 (1041), stack reserve `BF00..BFFF`. The PCM16 output buffer is removed;
 `_last_pcm16` exposes the existing feedback sample for verification. All
 code writes are forbidden during playback. Retained standalone product
@@ -59,10 +60,12 @@ code/state/input are additional RAM. Gain triples now hold routine pointers.
 
 The final exact binary passes **1094880 complete-stream samples**, arithmetic,
 memory guards, instruction audits and a fresh default-build identity check.
-Both prior and new shift blocks pass **393216 signed24 cases**, every
-**1572864 signed32 rounding boundary case**, and 128 complete filter calls.
-See [standard verification](rounds/30/unpaced-checks.json),
-[shift, rounding and every OUT delta](rounds/30/synthesis-shift-checks.json),
+All **16777216 unsigned8x16 input pairs** and **2228224 signed products**
+pass, with instruction costs and register/memory contracts. All 186880 real
+operand pairs match; isolated costs reconcile exactly with the full saving.
+See [standard verification](rounds/31/unpaced-checks.json),
+[products and observed operand/cost comparison](rounds/31/word-product-checks.json),
+[prior exact synthesis shift](rounds/30/synthesis-shift-checks.json),
 [prior exact constant products](rounds/29/constant-pitch-checks.json),
 [prior sum/address checks](rounds/29/direct-pitch-checks.json),
 [complete coefficient-domain checks](rounds/24/coefficient-step-checks.json),
@@ -77,7 +80,7 @@ The follow-up also implements three distinct alternatives:
 
 | Candidate | CPU T/sample | Stored bytes / PCM8 ratio | Decision |
 | --- | ---: | ---: | --- |
-| Exact Speex round 30 | 8967.338 | 23360 / 8:1 | Selected exact decoder; too slow |
+| Exact Speex round 31 | 8750.860 | 23360 / 8:1 | Selected exact decoder; too slow |
 | Approximate Speex round 10 | 11781.204 | 23360 / 8:1 | Rejected: still too slow, added error |
 | Periodic wave/noise round 11 | 222.625, kernel only | 54320 / 3.440:1 | Not selected; loading/pacing unimplemented |
 | PVQ3x1024 round 12 | 90.418 before pacing | 80974 / 2.308:1 | Previous nominal CPU baseline |
@@ -100,14 +103,14 @@ To build and check the selected version:
 ```powershell
 python audiobook-beeper/speex-port/build.py --skip-host
 python audiobook-beeper/speex-port/verify.py --native-only --restore-fixture
-python audiobook-beeper/speex-port/check_round.py --variant pure-r30
-python audiobook-beeper/speex-port/check_synthesis_shift.py
-python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r30 --previous pure-r29 --check-default
+python audiobook-beeper/speex-port/check_round.py --variant pure-r31
+python audiobook-beeper/speex-port/check_word_product.py
+python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r31 --previous pure-r30 --check-default
 ```
 
 The stream checks require the host-generated fixtures: build host DLLs
-as described below and run `check_streams.py --variant pure-r30` to generate
-them. Keep the pure-r29 build/report and archived random-packet fixtures
+as described below and run `check_streams.py --variant pure-r31` to generate
+them. Keep the pure-r30 build/report/OUT trace and archived random-packet fixtures
 available for `check_unpaced.py`. Retain the same Python runtime. `finish_followup.py`
 reproduces the historical round09 checkpoint. `final_checks.py` reproduces historical
 round-04 LPC evidence and needs `pure-r3` and `pure-r4` builds explicitly.

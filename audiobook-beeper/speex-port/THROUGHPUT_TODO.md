@@ -164,13 +164,26 @@ comparison and report throughput separately from instantaneous OUT gaps.
   8967.338 T/sample. Every OUT delta agrees. Both versions pass 393216 shifts,
   1572864 rounding boundaries and 128 filter calls; selected 1094880 complete
   samples pass. Code -12, tables/state unchanged, average deficit 20.497x.
-- [ ] **31. Compare a faster general signed16x16 product.** The unchanged
+- [x] **31. Compare a faster general signed16x16 product.** The unchanged
   LPC kernel's prior full profile reports 167043802 T / 186880 calls, about
   9.97% of current total CPU. Observe current operands and prototype two
   unsigned8x16 combined-register products with exact combination/sign handling.
   Include zero/byte paths, setup, calls, carries and register preservation.
   Compare instruction costs and complete speech before selecting; retain all
-  PCM, memory and complete-stream gates. No speedup is yet measured.
+  PCM, memory and complete-stream gates before selection.
+  [Round31](rounds/31/REPORT.md) selects two unsigned partials: 40455507 T
+  saved (-2.414%), 8750.860 T/sample. All 16777216 unsigned and 2228224 signed
+  products, instruction formulas/guards and 1094880 full-stream samples pass.
+  All observed operands match; isolated costs reconcile with the total delta.
+  Code -39, table/state unchanged. Average real-time deficit still 20.002x.
+- [ ] **32. Share coefficient preparation inside Q14 multiplication.** The
+  two signed16 products in MULT16_32_Q14 use the same coefficient. Reuse the
+  archived operand trace to quantify repeated normalization and sign work,
+  then prototype a fused path only with a plausible total saving. Preserve
+  high-argument signed16 truncation and negative fractional rounding exactly.
+  Include argument extraction, scratch/stack, calls and final combination;
+  compare complete CPU with unchanged general multiplier and table contracts.
+  This next candidate is unimplemented and unmeasured.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

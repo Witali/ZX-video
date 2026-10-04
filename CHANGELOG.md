@@ -1,5 +1,21 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round31 combines two unsigned byte/word products
+
+On unchanged round30 speech, replace general signed16x16 bit-serial products
+with two unsigned8x16 partials and exact carry/sign combination; retain byte
+and zero paths. Multiplier 167043802 -> 126588295 T (-24.219%); full speech
+1675816164 -> 1635360657 T (-40455507, 2.414%), 8750.860 T/sample. All 186880
+operands match, and isolated instruction costs reconcile with the complete
+delta. All 16777216 unsigned and 2228224 signed products, boundary instruction/
+register/write checks and 1094880 complete-stream samples pass; fresh default
+identity matches. Code -39 bytes, table/state/payload unchanged, at most four
+additional stack bytes within the existing reserve. Select pure-r31; still
+20.002x over average real-time budget, no ULA/hardware claim. Next investigate
+shared coefficient normalization inside Q14, preserving exact high-part
+truncation and negative fractional rounding. No next speedup is measured.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/31/REPORT.md).
+
 ## 2026-10-04: Speex round30 shortens the exact synthesis shift
 
 On unchanged round29 speech, replace signed24 >>5 with sign extension,

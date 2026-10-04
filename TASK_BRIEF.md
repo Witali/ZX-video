@@ -16,8 +16,8 @@ converter must also support other videos.
 
 Active throughput goal clarified on 2026-10-04: consecutive sample writes
 are permitted; do not spend further work on output pacing. Exact Speex
-default is now pure-r30: 1675816164 T / 8967.338 T/sample, 33.255%
-fewer T than round09, but still 20.497x over the average 437.5-T budget.
+default is now pure-r31: 1635360657 T / 8750.860 T/sample, 34.867%
+fewer T than round09, but still 20.002x over the average 437.5-T budget.
 Round17 reconciles nested costs with unchanged OUT traces; round18 selects
 combined-register multiplication after comparing three candidates. All
 1074400 PCM16/PCM8 samples and 589824 extra product/cycle cases pass.
@@ -30,7 +30,7 @@ holds offsets in index halves and borrows SP for first-part reads. It saves
 98139844 T versus round22 including setup; 7719 arbitrary histories and 128
 filter calls per variant pass. Round24 adds a pre-negated table step and saves
 12603144 T; all 65536 coefficients and 262144 negations pass after fixing
-an initial borrow bug. Code/state 8898/1041 bytes, tables still 16 KiB;
+an initial borrow bug. Code/state 8859/1041 bytes, tables still 16 KiB;
 fresh default build matches and every playback code write is forbidden.
 The below-10000 intermediate target is met. Round25 reconciles the full
 profile with identical PCM/OUT traces: inline feedback 35.880%, decoder
@@ -48,12 +48,15 @@ Round29 returns A:HL directly, saving 12976212 T and 325 code bytes:
 Round30 confirms the 93-T synthesis shift, saving exactly 27 T/sample;
 every OUT delta agrees. Both versions pass 393216 isolated shifts, 1572864
 rounding boundaries and 128 filter calls; selected 1094880 full samples pass.
-Next prototype a general signed16x16 product from two unsigned byte/word
-partials, counting all setup/sign/carry costs. No speedup yet measured.
+Round31 selects two unsigned partials for signed16x16: -40455507 T, code -39.
+All 16777216 unsigned and 2228224 signed products, actual operand/cost
+reconciliation, instruction/memory guards and 1094880 complete samples pass.
+Next investigate sharing coefficient normalization in the two Q14 products;
+retain high-part truncation and negative fractional rounding. Unmeasured.
 The average real-time goal is still unmet.
 The broader goal remains active. Use the
 [throughput worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md) and
-[round30 report](audiobook-beeper/speex-port/rounds/30/REPORT.md), not the
+[round31 report](audiobook-beeper/speex-port/rounds/31/REPORT.md), not the
 historical PVQ scheduling milestone, to select the next optimization.
 
 Latest optimization milestone on 2026-10-04: selected PVQ round13 retains
