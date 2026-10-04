@@ -341,17 +341,50 @@ ret
     return d,f
 
 
+def zero_feedback(d, f):
+    """A zero synthesis output shifts state exactly, for arbitrary old history."""
+    f=replace_once(f,'asm_n: .ds 2\n','')
+    f=replace_once(f,'    ld (asm_n),hl\n', '''; A still equals H after the signed negation, so this test needs only OR L.
+; Feedback n=-y in HL: a zero product shifts the following nine 32-bit states
+; and clears the final state, even when earlier history is nonzero.
+.globl _filter_feedback_start, _filter_emit
+_filter_feedback_start::
+    or a,l
+    jp z,filter_zero_feedback
+''')
+    f=replace_once(f,'    ld a,(asm_y+1)\n','_filter_emit::\n    ld a,(asm_y+1)\n')
+    # Keep the handler after the normal filter return, outside its fallthrough.
+    begin=f.index('_filter_emit::')
+    end=f.index('    ret\n',begin)+len('    ret\n')
+    f=f[:end]+'''
+; Zero-feedback update; preserves IX/IY and SP, clobbers AF/BC/DE/HL.
+; Source is four bytes ahead of destination, so forward LDIR's overlap is safe.
+; No coefficient products are used; their cached nibble operands can stay old.
+filter_zero_feedback:
+    ld hl,#_zx_memory+4
+    ld de,#_zx_memory
+    ld bc,#36
+    ldir
+    ld hl,#0
+    ld (_zx_memory+36),hl
+    ld (_zx_memory+38),hl
+    jp _filter_emit
+'''+f[end:]
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20'):d,f=register_preparation(d,f)
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20'))
-    if variant in ('pure-r19','pure-r20'):d,f=excitation_shift(d,f)
-    if variant=='pure-r20':d,f=innovation_registers(d,f)
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22'):d,f=register_preparation(d,f)
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22'))
+    if variant in ('pure-r19','pure-r20','pure-r22'):d,f=excitation_shift(d,f)
+    if variant in ('pure-r20','pure-r22'):d,f=innovation_registers(d,f)
+    if variant=='pure-r22':d,f=zero_feedback(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')

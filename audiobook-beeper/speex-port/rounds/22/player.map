@@ -1,0 +1,138 @@
+ASxxxx Linker V05.50.4-SDLD,  page 1.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+.  .ABS.                            00000000    00000000 =           0. bytes (ABS,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     00000000  .__.ABS.                           speex_filter
+     00000000  l__QTABLE
+     00000000  l__TABLES
+     00000000  s__QTABLE
+     00000000  s__QTABLE0
+     00000000  s__TABLES
+     00000000  s__TABLES0
+     00000000  s__TABLES1
+     00000000  s__TABLES2
+     00000100  l__TABLES1
+     00000400  l__QTABLE0
+     0000040F  l__DATA
+     00000D00  l__TABLES2
+     00001B0B  l__CODE
+     00001F72  l__TABLES0
+     00007200  _coefficient_start                 speex_decode
+     00007C00  _coefficient_end                   speex_decode
+     00007C00  _innovation_start                  speex_decode
+     00008000  _innovation_end                    speex_decode
+     00008000  s__CODE
+     0000B000  s__DATA
+ASxxxx Linker V05.50.4-SDLD,  page 2.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               00008000    00001B0B =        6923. bytes (REL,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     00008000  _entry                             speex_decode
+     00008082  _complete                          speex_decode
+     000080C2  _zx_clip                           speex_decode
+     000080F7  mulq14                             speex_decode
+     0000814A  cosine                             speex_decode
+     000081C0  _zx_speex_decode                   speex_decode
+     00008416  _exc_shift_start                   speex_decode
+     00008423  _exc_shift_end                     speex_decode
+     0000889A  enforce_margin                     speex_decode
+     00008A51  _zx_speex_lpc                      speex_decode
+     00009256  _mul_s8                            speex_decode
+     000092EB  mulq12                             speex_decode
+     00009385  _build_innovation                  speex_decode
+     000093EE  _innov_register_loop               speex_decode
+     00009408  _innov_register_done               speex_decode
+     00009409  _prepare_coefficients              speex_decode
+     0000980B  _split_nibbles                     speex_decode
+     00009832  _coefficient_product               speex_decode
+     00009834  _smc0                              speex_decode
+     0000983D  _smc1                              speex_decode
+     0000984E  _smc2                              speex_decode
+     0000985B  _smc3                              speex_decode
+     0000986A  _zx_speex_filter                   speex_filter
+     000098C7  _filter_feedback_start             speex_filter
+     000099BB  _filter_emit                       speex_filter
+     000099E3  _zx_mul_table                      speex_filter
+     00009AEC  _zx_mul8                           speex_filter
+ASxxxx Linker V05.50.4-SDLD,  page 3.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_DATA                               0000B000    0000040F =        1039. bytes (REL,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     0000B000  _packet_count                      speex_decode
+     0000B002  _status                            speex_decode
+     0000B004  excitation                         speex_decode
+     0000B2C8  lsp                                speex_decode
+     0000B2DC  interp                             speex_decode
+     0000B2F0  next_lpc                           speex_decode
+     0000B304  _zx_lpc                            speex_decode
+     0000B318  _zx_memory                         speex_decode
+     0000B384  _pcm                               speex_decode
+     0000B3FE  coef_cache_ptr                     speex_decode
+     0000B403  _last_pcm16                        speex_filter
+
+ASxxxx Linker V05.50.4-SDLD,  page 4.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_TABLES0                            00000000    00001F72 =        8050. bytes (ABS,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+ASxxxx Linker V05.50.4-SDLD,  page 5.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_TABLES1                            00000000    00000100 =         256. bytes (ABS,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+ASxxxx Linker V05.50.4-SDLD,  page 6.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_TABLES2                            00000000    00000D00 =        3328. bytes (ABS,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+ASxxxx Linker V05.50.4-SDLD,  page 7.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_QTABLE0                            00000000    00000400 =        1024. bytes (ABS,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+ASxxxx Linker V05.50.4-SDLD,  page 8.
+
+Files Linked                              [ module(s) ]
+
+decoder.rel                               [ speex_decode ]
+filter.rel                                [ speex_filter ]
+
+ASxxxx Linker V05.50.4-SDLD,  page 9.
+
+User Base Address Definitions
+
+_CODE = 0x8000
+_DATA = 0xb000
+
+

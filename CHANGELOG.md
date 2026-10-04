@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round22 bypasses zero-feedback products exactly
+
+Apply the round21-selected state-copy shortcut on unchanged round20 speech,
+reuse A=H for its zero test and remove unread asm_n. Feedback block costs
+4138 -> 847 T when zero, 4138 -> 4136 otherwise. Full speech saves exactly
+11359020 T: 1973053274 -> 1961694254, 10497.080 T/sample, meeting the
+below-10500 intermediate target. All 1074400 exact PCM16/PCM8 samples,
+4650 independent arbitrary-history cases per variant, memory/instruction
+audits and fresh default identity pass. Code +24 bytes, state -2, tables
+unchanged. Select pure-r22; still 23.993x over the average real-time budget.
+Next proposed target is below 10000 T/sample, beginning with the full cost
+of inline products. No pacing, ULA or hardware claim.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/22/REPORT.md).
+
 ## 2026-10-04: Speex round21 selects zero-feedback bypass from actual counts
 
 Profile unchanged round20 speech arguments: 3340 zero feedback samples,

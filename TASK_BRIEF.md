@@ -16,17 +16,22 @@ converter must also support other videos.
 
 Active throughput goal clarified on 2026-10-04: consecutive sample writes
 are permitted; do not spend further work on output pacing. Exact Speex
-default is now pure-r20: 1973053274 T / 10557.862 T/sample, 21.417%
-fewer T than round09, but still 24.132x over the average 437.5-T budget.
+default is now pure-r22: 1961694254 T / 10497.080 T/sample, 21.869%
+fewer T than round09, but still 23.993x over the average 437.5-T budget.
 Round17 reconciles nested costs with unchanged OUT traces; round18 selects
 combined-register multiplication after comparing three candidates. All
 1074400 PCM16/PCM8 samples and 589824 extra product/cycle cases pass.
 Rounds19/20 replace the seven-bit excitation shift and retain innovation
 table state in registers; 396800 isolated shifts and all 64 table energies
-pass. Code/state 6899/1041 bytes, tables still 16 KiB; fresh
-default build matches. The goal remains active. Use the
+pass. Round21 rejects unprofitable zero guards; round22 selects zero-feedback
+state copy and removes an unread store, saving exactly 11359020 T. All
+4650 arbitrary-history checks per variant pass. Code/state 6923/1039 bytes,
+tables still 16 KiB; fresh default build matches. The below-10500 intermediate
+target is met; the proposed next target is below 10000 T/sample. First count
+the complete cost of inline coefficient products with register-held offsets.
+The broader goal remains active. Use the
 [throughput worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md) and
-[round20 report](audiobook-beeper/speex-port/rounds/20/REPORT.md), not the
+[round22 report](audiobook-beeper/speex-port/rounds/22/REPORT.md), not the
 historical PVQ scheduling milestone, to select the next optimization.
 
 Latest optimization milestone on 2026-10-04: selected PVQ round13 retains

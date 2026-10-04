@@ -70,11 +70,23 @@ comparison and report throughput separately from instantaneous OUT gaps.
   [Round21](rounds/21/REPORT.md) rejects zero-word and zero-gain guards:
   forecast slowdowns 11.95M T and at least 8.96M T. Observe 3340 zero
   feedback samples; select only the state-copy path for a prototype.
-- [ ] **22. Zero-feedback state copy and dead-store removal.** Reuse A=H
+- [x] **22. Zero-feedback state copy and dead-store removal.** Reuse A=H
   after negation for a 14-T zero test. Remove the unread `asm_n` store/state,
   copy the nine following history words and zero the final word when y=0.
   Verify arbitrary nonzero history with zero feedback, every exact stream,
   and both ordinary and zero path T-states. Predicted full saving 11359020 T.
+  [Round22](rounds/22/REPORT.md) confirms exactly that saving: 10497.080
+  T/sample, achieving the intermediate below-10500 target. All 1074400
+  samples and 4650 arbitrary-history checks per variant pass.
+- [ ] **23. Inline coefficient products with register-held offsets.**
+  Count all register saves, nibble setup, products and memory updates before
+  implementing. Investigate replacing the per-tap CALL/RET and writable
+  immediates with inline products and offsets in spare registers. Preserve
+  the input cursor and IX/IY contract; do not use DD-prefixed LD L,IXH as
+  though it addressed ordinary L. Verify exact products and full streams.
+  Next proposed milestone: below 10000 T/sample on the same full speech,
+  with exact PCM and the same 16-KiB table arena. Not yet achieved; this
+  candidate alone has not been shown to reach it.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.
