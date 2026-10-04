@@ -153,13 +153,24 @@ comparison and report throughput separately from instantaneous OUT gaps.
   better than the original estimate. All 4259840 products, 200187 additions
   and 163840 history cases per variant plus 1094880 full-stream samples pass.
   Code -325, table/state unchanged; average real-time deficit still 20.558x.
-- [ ] **30. Shorten the synthesis feedback shift.** Replace five signed24
+- [x] **30. Shorten the synthesis feedback shift.** Replace five signed24
   right shifts after byte discard with three left shifts in sign-extended
   A:E:HL, then select the upper three bytes. Count 93 versus 120 T, saving
   27 T/sample: predicted 8967.338 T/sample on the unchanged full speech.
   Verify signed extrema, every rounding boundary, register/flag assumptions,
   memory and complete streams. Preserve exact Speex and the table budget;
-  this next candidate is unimplemented and unmeasured.
+  require an executed result before selection.
+  [Round30](rounds/30/REPORT.md) confirms exactly -27 T/sample,
+  8967.338 T/sample. Every OUT delta agrees. Both versions pass 393216 shifts,
+  1572864 rounding boundaries and 128 filter calls; selected 1094880 complete
+  samples pass. Code -12, tables/state unchanged, average deficit 20.497x.
+- [ ] **31. Compare a faster general signed16x16 product.** The unchanged
+  LPC kernel's prior full profile reports 167043802 T / 186880 calls, about
+  9.97% of current total CPU. Observe current operands and prototype two
+  unsigned8x16 combined-register products with exact combination/sign handling.
+  Include zero/byte paths, setup, calls, carries and register preservation.
+  Compare instruction costs and complete speech before selecting; retain all
+  PCM, memory and complete-stream gates. No speedup is yet measured.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

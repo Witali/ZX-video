@@ -621,22 +621,50 @@ pitch_gains:
     return d,f
 
 
+def synthesis_shift(d, f):
+    """Replace signed24 >>5 with sign extension, three left shifts and byte selection."""
+    f=replace_once(f,'filter_sample:\n','filter_sample:\n.globl _synthesis_round_start\n_synthesis_round_start::\n')
+    f=replace_once(f,'    ; Signed 32-bit >>13: discard eight bits, then shift the remaining 24 five times.',
+                   '    ; Signed 32-bit >>13: discard eight bits, then compute signed24 >>5.')
+    old='    sra e\n    rr h\n    rr l\n'*5
+    new='''; E:HL holds the signed24 upper bytes of the rounded 32-bit state.
+; Sign-extend into A:E:HL, shift left three, and discard the low byte:
+; (sign_extend(x)<<3)>>8 equals arithmetic x>>5 exactly, including negatives.
+; ADD HL,HL / RL E / RLA carries across all four bytes. No 32-bit overflow
+; is possible for signed24 x. Output E:HL; clobber AF, preserve D/BC,
+; IX/IY, all alternates and SP. Later excitation sign extension overwrites
+; flags before their next use, so the old shift's final carry is not needed.
+.globl _synthesis_shift_start, _synthesis_shift_end
+_synthesis_shift_start::
+ld a,e
+add a,a
+sbc a,a
+'''+('add hl,hl\nrl e\nrla\n'*3)+'''ld l,h
+ld h,e
+ld e,a
+_synthesis_shift_end::
+'''
+    f=replace_once(f,old,new)
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29'))
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29'))
-    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29'):d,f=excitation_shift(d,f)
-    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29'):d,f=innovation_registers(d,f)
-    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29'):d,f=zero_feedback(d,f)
-    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29'))
-    if variant in ('pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29'):d,f=pitch_accumulator(d,f)
-    if variant in ('pure-r27','pure-r28-binary','pure-r28','pure-r29'):d,f=shared_pitch_history(d,f)
-    if variant in ('pure-r28-binary','pure-r28','pure-r29'):d,f=constant_pitch_products(d,f,folder,'binary' if variant=='pure-r28-binary' else 'chain',variant=='pure-r29')
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'))
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'))
+    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=excitation_shift(d,f)
+    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=innovation_registers(d,f)
+    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=zero_feedback(d,f)
+    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'))
+    if variant in ('pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=pitch_accumulator(d,f)
+    if variant in ('pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=shared_pitch_history(d,f)
+    if variant in ('pure-r28-binary','pure-r28','pure-r29','pure-r30'):d,f=constant_pitch_products(d,f,folder,'binary' if variant=='pure-r28-binary' else 'chain',variant in ('pure-r29','pure-r30'))
+    if variant=='pure-r30':d,f=synthesis_shift(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')

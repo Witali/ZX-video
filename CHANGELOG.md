@@ -1,5 +1,20 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round30 shortens the exact synthesis shift
+
+On unchanged round29 speech, replace signed24 >>5 with sign extension,
+three left shifts and byte selection: 120 -> 93 T. Full speech 1680861924 ->
+1675816164 T (-5045760, 0.300%), 8967.338 T/sample. Every OUT timestamp
+saves exactly 27*(sample_index+1) T. Both versions pass 393216 isolated shifts,
+1572864 rounding boundary cases and 128 arbitrary-state filter calls, with
+independent instruction/register/write checks. Selected 1094880 full-stream
+PCM samples and fresh default identity pass. Code -12 bytes, state/tables/
+payload unchanged. Select pure-r30; still 20.497x over the average real-time
+budget, with no ULA/hardware claim. Next investigate a two-byte-partial
+signed16x16 LPC multiplier; the unchanged kernel's prior profile represents
+about 10% of current CPU, but the next candidate's speedup is unmeasured.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/30/REPORT.md).
+
 ## 2026-10-04: Speex round29 returns signed24 pitch products directly
 
 On unchanged round28 speech, return constants in A:HL and consume that
