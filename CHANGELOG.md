@@ -1,5 +1,18 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Document the direct IMA3-to-PDM pipeline
+
+At the user's request, save the chat's decoding explanation and diagrams in
+[the audio documentation](audiobook-beeper/IMA3_PDM_PIPELINE.md), with the
+requested Russian description retained in a linked translation. Cover the
+three-byte/eight-code packing, IMA delta/index table, biased predictor,
+six-byte PDM dispatch entries, 17 reachable feedback states, PC table
+construction and FIRST/SECOND/TAIL output pipeline. Link the guide from
+IMA3_DIRECT and reference the current source and verified profile. This is
+documentation only: player, timing, tables and release images are unchanged;
+no new performance measurements are claimed. Check local links, diagram
+fences and the patch before committing.
+
 ## 2026-10-04: Remove periodic speech encoder boundary-error bursts
 
 The user reported voice vibration in the latest sequential speech TRD.

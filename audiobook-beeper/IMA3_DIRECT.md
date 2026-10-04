@@ -4,6 +4,10 @@ Measured 2026-10-04. This subproject removes the Spectrum-side IMA3-to-IMA4
 expansion. Three-bit codes stay packed in RAM and are decoded as the PDM
 outputs are emitted. There is no complete PCM, IMA4 or PDM buffer.
 
+See [the illustrated decoding pipeline](IMA3_PDM_PIPELINE.md)
+([Russian version](IMA3_PDM_PIPELINE.ru.md)) for bit packing, IMA state
+transitions, PDM feedback tables and interleaved Z80 output.
+
 The subsequent [speech boundary-error fix](experiments/ima-3bit-overlap/README.md)
 uses overlapping PC search windows by default. It improves this reference to
 about 20.44 dB and removes the measured excess error at 128-sample boundaries.
