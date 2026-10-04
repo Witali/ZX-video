@@ -227,6 +227,6 @@ def arrange(features, *, joint=False, envelope_blend=0., noise_policy='legacy', 
 
 
 def convert(samples, sample_rate=22050):
-    """Selected music preset; every output state lasts exactly 20 ms."""
-    return arrange(analyse(samples, sample_rate), joint=True,
-                   envelope_blend=.5, noise_policy='transients')
+    """Persistent components and mixed noise; each state lasts exactly 20 ms."""
+    from channel_tracking import arrange as tracked_arrangement
+    return tracked_arrangement(analyse(samples,sample_rate))

@@ -7,8 +7,9 @@ not import `toolkit`, `audiobook-ay` or `audiobook-beeper`, and does not need
 the movie, old speech disks or archived experiment data.
 
 The existing square-wave-aware analyser is preserved as the default `legacy`
-profile. The optional `music` profile adds note lifetimes, stable note pitches,
-short-window envelopes, joint voice allocation and calibrated YM2149 volumes.
+profile. The optional `music` profile tracks three dominant harmonic components
+on persistent channels, with note lifetimes, stable note pitches, short-window
+envelopes, calibrated YM2149 volumes and independently detected mixed noise.
 Both use three tonal voices, shared noise, fixed channel volumes, and R0..R10
 updates at nominal 50 Hz. **Every exported sound state lasts 20 ms**: pitch,
 volume and noise changes occur only on that grid, with no sub-tick events.
@@ -44,7 +45,8 @@ the report explicitly records that disk timing has not been verified.
 - `--once`: mute at EOF; the default repeats from RAM.
 - `--output DIRECTORY`: a new or empty destination.
 - `--profile music`: use the new note-oriented preset for keyboard-like music.
-  It limits tonal-source noise to attacks while retaining broadband effects.
+  Small frequency/amplitude changes keep a component on its original channel.
+  Noise can coexist with tones; its period and routing are fitted separately.
   Pitch holding can suppress intentional bends/vibrato; keep `legacy` for
   those sources until separately evaluated. The selected target curve is YM2149.
 
@@ -64,7 +66,7 @@ Spectrum recording. Similarity metrics do not establish listening acceptance.
 | --- | --- |
 | `convert_audio.py` | FFmpeg input, analysis, assembly, preview and verification CLI |
 | `ay_fidelity.py`, `ay_square_fit.py` | Harmonic analysis, pitch tracking and square-wave fit |
-| `music_profile.py` | Optional 20-ms note/envelope and joint-voice music arrangement |
+| `music_profile.py`, `channel_tracking.py` | Optional 20-ms note/envelope, persistent-channel and shared-noise arrangement |
 | `ay_format.py` | Packed AY state format and R0..R10 conversion |
 | `quality.py` | Independent comparison metrics and WAV output |
 | `spectrogram.py` | Unpooled, time-aligned STFT comparison at three window sizes |
@@ -101,8 +103,11 @@ the preserved musical example and the separate-folder execution check.
 The [Entertainer accuracy review](analysis/entertainer/README.md) records the
 initial six host probes. The [implemented 50-Hz follow-up](analysis/music50/README.md)
 compares seven fixed arrangements, selects the optional `music` profile and
-qualifies its entire new TRD in cold Fuse. It includes original/old/new WAVs,
-matched spectrograms and complete measurements, including regressions.
+qualifies its entire new TRD in cold Fuse. The subsequent
+[persistent-channel and mixed-noise revision](analysis/tracked50/README.md)
+implements the user's channel-identity requirement and is the current music
+profile. Both include original/old/new WAVs, matched spectrograms and complete
+measurements, including regressions.
 
 Every conversion now reports full-bin spectrogram comparisons with 512,
 2048 and 8192-sample Hann windows, a 20-ms hop and one global RMS match.
@@ -111,6 +116,15 @@ not establish correct notes or a preferred timbre. The music profile also
 writes `note-events.json`: integer start/end ticks, exclusive end, one held
 period per estimated note. The register stream still specifies all channels
 every 20 ms, including repeated states. These are not annotated source notes.
+`channel-states.json.gz` additionally records the complete state on every
+tick, persistent component IDs and detected noise/routing. AY has one shared
+noise period; a combined tone/noise channel also shares one volume control.
+
+The standalone AY9 extension stores a six-bit mixer in previously unused
+period high bits, with a marker in byte 5 bit 7. Legacy nine-byte records keep
+their exact bytes and meaning. The new reader accepts both; older movie AY9
+readers do not understand the mixer extension. The eleven-byte R0..R10 stream
+and player binary are unchanged. See the revision document for the bit layout.
 
 The file grid is exactly 20 ms. The existing Spectrum 128 player applies one
 state per interrupt: 70908 T at a 3546900-Hz CPU in Fuse, about 19.99154 ms.

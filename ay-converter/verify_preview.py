@@ -24,8 +24,11 @@ def expected_registers(packed):
     for i in range(0, len(packed), 9):
         row = packed[i:i+9]
         noise = (row[1] >> 4) | (row[3] & 16)
+        # Decode independently of AyFrame so producer and verifier cannot
+        # agree merely by calling the same packing implementation.
+        mixer = ((row[3] >> 5) | (((row[5] >> 4) & 7) << 3)) if row[5] & 128 else (0x2a if noise else 0x38)
         output.extend((row[0], row[1] & 15, row[2], row[3] & 15,
-                       row[4], row[5] & 15, noise, 0x2a if noise else 0x38,
+                       row[4], row[5] & 15, noise, mixer,
                        *row[6:9]))
     return bytes(output)
 

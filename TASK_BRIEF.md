@@ -14,6 +14,19 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
+The latest AY follow-up is [persistent components + mixed noise](ay-converter/analysis/tracked50/README.md).
+The user requires continued sounds to stay on their original channels despite
+small pitch/amplitude changes. The current optional `--profile music` tracks
+three dominant fundamentals by pitch, with 289 component lifetimes /zero
+migrations in the full Entertainer excerpt. Separately detected noise is mixed
+on 415 ticks without disabling an active tone. All changes remain on the
+20-ms grid. Full cold Fuse passes 34232 writes /3112 fields, zero misses;
+14 regression tests pass. Player binary unchanged, 974 T ordinary /delta 0.
+Cosine spectral similarity improves, but weak-spectrum error and some rhythm
+proxies regress. Reuse the complete plots, every-state audit and normal WAV.
+Latest listening disk: `ZX-music-Entertainer-AY-tracked50-test.trd`. The AY9
+mixer extension needs the standalone reader; old legacy bytes remain exact.
+
 The [50-Hz AY music improvement](ay-converter/analysis/music50/README.md) is
 complete as an optional `--profile music` in the standalone converter.
 The user fixes the sound quantum at 20 ms and excludes 100-Hz playback.

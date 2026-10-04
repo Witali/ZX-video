@@ -55,6 +55,25 @@ def convert(args):
         magnitude, rms = ay.spectra(samples, rate, 50, count)
         periods, volumes, notes, noise, explained, fit = ay.arrange_for_chip(magnitude, rms, rate)
     lo = round(before*50)
+    mixers = fit.pop('mixers', [None]*len(periods))
+    component_tracks = fit.pop('component_tracks', None)
+    if component_tracks is not None:
+        shares = fit.pop('noise_shares')
+        carriers = fit.pop('noise_carriers')
+        base_volumes = fit.pop('base_tone_volumes')
+        states = [dict(tick=i-lo, component_ids=component_tracks[i],
+                       periods=list(map(int,periods[i])), volumes=list(map(int,volumes[i])),
+                       tone_volumes=base_volumes[i], mixer=int(mixers[i]),
+                       noise_period=int(noise[i]), noise_share=float(shares[i]),
+                       noise_channel=int(carriers[i])) for i in range(lo,lo+ticks)]
+        (out/'channel-states.json.gz').write_bytes(gzip.compress(json.dumps(dict(
+            quantum_ms=20,update_rate_hz=50,states=states),separators=(',',':')).encode(),mtime=0))
+        fit['channel_states_file'] = 'channel-states.json.gz'
+        fit['analysis_context_component_count'] = fit['component_count']
+        fit['component_count'] = len({track for state in states for track in state['component_ids'] if track})
+        fit['noise_ticks'] = sum(bool(state['noise_period']) for state in states)
+        fit['tone_plus_noise_ticks'] = sum(bool(state['noise_period'] and state['tone_volumes'][state['noise_channel']]) for state in states)
+        fit['noise_only_ticks'] = fit['noise_ticks']-fit['tone_plus_noise_ticks']
     if profile == 'music':
         # Analysis includes context; exported note intervals refer only to the
         # selected excerpt, with integer ticks and exclusive end boundaries.
@@ -66,8 +85,8 @@ def convert(args):
         save(out/'note-events.json', dict(update_rate_hz=50, quantum_ms=20,
              duration_ticks=ticks, end_tick_exclusive=True, estimated_not_ground_truth=True, events=events))
         fit['note_events_file'] = 'note-events.json'
-    frames = [AyFrame(tuple(map(int, p)), tuple(map(int, v)), int(n))
-              for p, v, n in zip(periods[lo:lo+ticks], volumes[lo:lo+ticks], noise[lo:lo+ticks])]
+    frames = [AyFrame(tuple(map(int,p)),tuple(map(int,v)),int(n),None if m is None else int(m))
+              for p,v,n,m in zip(periods[lo:lo+ticks],volumes[lo:lo+ticks],noise[lo:lo+ticks],mixers[lo:lo+ticks])]
     assert len(frames) == ticks
     packed = b''.join(f.serialize() for f in frames)
     registers = b''.join(frame_registers(f) for f in frames)
@@ -112,6 +131,7 @@ def convert(args):
         analysis_context_before_seconds=before,
         analysis_context_after_seconds=(len(samples)-first-ticks*441)/rate,
         packed_bytes=len(packed), register_bytes=len(registers), registers_sha256=sha(registers),
+        packed_format='AY9 extended six-bit mixer' if component_tracks is not None else 'AY9 legacy noise-only B',
         preview_model='YM2149 Ayumi, three tones, one shared noise generator, equal mono sum',
         metrics=metrics, metrics_scope='spectral, pitch-class, loudness and rhythm proxies; not waveform SNR or listening acceptance',
         spectrogram_metrics=stft,
@@ -141,7 +161,7 @@ def main():
     parser.add_argument('--title', help='short player-screen title; defaults to the input filename')
     parser.add_argument('--once', action='store_true', help='stop and mute at EOF instead of looping')
     parser.add_argument('--profile', choices=('legacy', 'music'), default='legacy',
-                        help='legacy preserves the original converter; music holds note pitch, models fast envelopes and uses joint voices at 50 Hz')
+                        help='legacy preserves the original converter; music tracks dominant tones on persistent channels and mixes detected noise at 50 Hz')
     parser.add_argument('--ffmpeg', default=shutil.which('ffmpeg'))
     parser.add_argument('--node', default=shutil.which('node'))
     parser.add_argument('--fuse', type=Path, help='also verify every output field and capture normal Fuse audio')

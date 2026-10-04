@@ -1,5 +1,58 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Preserve component channels and mix independently detected noise
+
+Following `c886631`, the user requires three dominant tonal components to
+retain their hardware channels under small frequency/amplitude changes and
+asks to detect/add noise separately. Keep the exact 20-ms quantum. Add
+dominant fundamental selection with retention hysteresis and pitch-based
+permutation matching independent of amplitude rank. The current optional
+music profile records persistent component IDs and all states at 50 Hz.
+Independently estimate broadband noise energy/colour and route it through
+the AY mixer without disabling active tones, using one stable route per
+noise event. Fit the occupied channel's shared volume to the Boolean mix;
+independent tone/noise levels remain a hardware limitation.
+
+Four predetermined complete host variants use the same Entertainer source
+and 31.12-s /1556-tick scope. Select dominant tracked tones + noise. Its
+unpooled 512/2048/8192-window cosine rises .83381/.82558/.81513 ->
+.83882/.83063/.82231 versus v1. Role-selected tracking is weaker; disabling
+noise has better tonal cosine but omits the user's noise requirement. Log
+error and fine onset F1 regress against v1; preserve the tradeoff and all
+variants rather than claiming universal improvement.
+
+The selected CLI stream exactly matches the host candidate. Its 289 estimated
+component lifetimes have zero channel migrations. Noise uses 415 ticks,
+398 mixed with a tone /17 on a free channel; zero active tones disabled and
+zero routing changes within a noise event. Extend AY9 using unused high bits
+and an explicit marker, preserving legacy bytes. R0..R10 and the Z80 player
+binary are unchanged: 974 ->974 T ordinary, delta 0, 17116 resident bytes.
+Legacy movie readers need the new marker decoder for extended streams.
+
+All 14 regression tests pass, including all 32×64 noise/mixer encodings,
+independent decoding and native execution of all 64 mixer states, amplitude
+swaps, small pitch changes, released-channel reuse and noise/pure-tone tests.
+Full cold Fuse passes two loops: 34232 exact writes /3112 fields, zero missed
+fields, 67 startup sectors, no runtime reads, correct loading-message hiding.
+Startup 10.677687 s; normal WAV 62.226236 s. The complete default CLI still
+reproduces the original disk/streams/WAVs byte for byte; 176 prior image hashes
+are unchanged. New LFS disk: `ZX-music-Entertainer-AY-tracked50-test.trd`.
+
+Compare actual Fuse sound against the original legacy disk at all three STFT
+scales: first-loop cosine .81846/.80556/.79872 ->.82651/.81248/.80224, also
+improved in loop two. Medium/long-window log-magnitude error worsens; finer
+onset F1 is .62963 ->.64662 and .64093 ->.63396. Visually inspect full and
+fixed-region plots plus channel tracks. Deliver the requested behavior as
+a listening preview, with spectral/rhythm limitations stated. No subjective
+acceptance, perfect source separation or physical-hardware result is claimed.
+
+Save [implementation and reproduction](ay-converter/analysis/tracked50/README.md),
+[four-variant results](ay-converter/analysis/tracked50/evidence/results.json),
+[channel/mixer audit](ay-converter/analysis/tracked50/evidence/comparison/channel-audit.json),
+[complete native/Fuse proof](ay-converter/analysis/tracked50/evidence/release/verification.json),
+normal sound, every 20-ms state, comparison WAV and readable spectrograms.
+The existing spectrum-analysis methods and original disks remain available.
+
 ## 2026-10-04: Implement and qualify a 20-ms AY music profile
 
 The user authorizes the proposed music improvements at 50 Hz, excludes
