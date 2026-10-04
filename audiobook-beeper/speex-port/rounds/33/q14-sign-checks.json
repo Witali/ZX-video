@@ -1,0 +1,166 @@
+{
+  "audits": {
+    "pure-r32": {
+      "cases": 374,
+      "instructions": 53937,
+      "minimum_tstates": 672,
+      "maximum_tstates": 2312,
+      "every_instruction_matches_timing_table": true,
+      "all_registers_input_and_writes_guarded": true
+    },
+    "pure-r33": {
+      "cases": 374,
+      "instructions": 49241,
+      "minimum_tstates": 594,
+      "maximum_tstates": 2279,
+      "every_instruction_matches_timing_table": true,
+      "all_registers_input_and_writes_guarded": true
+    }
+  },
+  "speech": {
+    "calls": 93440,
+    "unique_pairs": 84220,
+    "operands_sha256": "28e21475a3e06c55e7380b36470747eac002bc232ca857fc175bc18869583be2",
+    "operand_archive": "rounds/32/observed-q14-operands.i16i32.gz",
+    "saving_histogram": {
+      "30": 30557,
+      "33": 47,
+      "77": 2500,
+      "78": 20390,
+      "208": 35853,
+      "211": 4093
+    },
+    "every_call_faster": true,
+    "variants": [
+      {
+        "variant": "pure-r32",
+        "q14_tstates": 167108120,
+        "minimum_call_tstates": 1092,
+        "maximum_call_tstates": 2225,
+        "full_tstates": 1630001442,
+        "binary_sha256": "19582a1aff55a679abe762f4485a6a1d24f4791cdd572043222dd397b0579415"
+      },
+      {
+        "variant": "pure-r33",
+        "q14_tstates": 156085892,
+        "minimum_call_tstates": 976,
+        "maximum_call_tstates": 2082,
+        "full_tstates": 1618979214,
+        "binary_sha256": "b74f241d3902cb049cd0f168b83172dc944c5be1e57367d42d9fc89ccd21ccce"
+      }
+    ],
+    "total_saving": 11022228,
+    "every_operand_unchanged": true,
+    "profile_preserves_every_uninstrumented_out": true,
+    "baseline_image_identity_verified": true,
+    "isolated_costs_and_full_delta_reconcile": true,
+    "full_filter_assembly_unchanged": true,
+    "complete_pcm16_and_pcm8_samples": 186880
+  },
+  "domains": {
+    "q14_cases": 1343488,
+    "all_signed16_coefficients_against_arguments": 12,
+    "all_14bit_fractions_against_coefficient_high_pairs": 32,
+    "random_signed32_cases": 32768,
+    "minimum_q14_tstates": 594,
+    "maximum_q14_tstates": 2279,
+    "paths": {
+      "negative/high_False/rounding_borrow_False": 163853,
+      "nonnegative/high_False/carry_False": 269252,
+      "negative/high_True/rounding_borrow_False": 163857,
+      "negative/high_True/rounding_borrow_True": 237626,
+      "nonnegative/high_True/carry_False": 334789,
+      "negative/high_False/rounding_borrow_True": 171981,
+      "nonnegative/high_False/carry_True": 1047,
+      "nonnegative/high_True/carry_True": 1083
+    },
+    "saving_histogram": {
+      "30": 171981,
+      "33": 163853,
+      "77": 2130,
+      "78": 604041,
+      "208": 237626,
+      "211": 163857
+    },
+    "minimum_saving_tstates": 30,
+    "maximum_saving_tstates": 211,
+    "exact_results_rounding_and_instruction_formulas": true,
+    "register_contracts_input_and_writes_guarded": true
+  },
+  "all_pitches": {
+    "complete": true,
+    "samples": 20480,
+    "every_pcm8_exact": true,
+    "every_pcm16_exact": true,
+    "total_tstates": 178916116,
+    "seconds_at_3_5_mhz": 51.118890285714286,
+    "mean_total_tstates_per_sample": 8736.1384765625,
+    "first_out_tstates": 448694,
+    "last_out_tstates": 178915098,
+    "min_out_interval": 1285,
+    "max_out_interval": 475043,
+    "nominal_late_samples": 20479,
+    "max_lateness_tstates": 169506841.5,
+    "real_time": false,
+    "pages": [
+      0
+    ],
+    "code_rodata_bytes": 21704,
+    "bss_bytes": 1041,
+    "code_bytes": 9046,
+    "tables_bytes": 12658,
+    "all_cpu_writes_inside_declared_regions": true,
+    "input_static_code_static_tables_unchanged": true,
+    "every_code_write_forbidden": true,
+    "all_code_bytes_unchanged": true,
+    "writable_immediate_addresses": [],
+    "pcm16_output_buffer": false,
+    "initial_state_fill": 165,
+    "dynamic_table_reserved_bytes": 3584,
+    "dynamic_table_regions": [
+      [
+        31744,
+        32768
+      ],
+      [
+        29184,
+        31744
+      ]
+    ],
+    "table_arena_span_bytes": 16384,
+    "phases_tstates": {
+      "_zx_speex_lpc": 28614670,
+      "_zx_speex_filter": 111553374
+    },
+    "binary_sha256": "b74f241d3902cb049cd0f168b83172dc944c5be1e57367d42d9fc89ccd21ccce",
+    "clock_hz": 3500000,
+    "ula_contention_included": false,
+    "physical_hardware_tested": false,
+    "payload_sha256": "b97d08b10ed8256cef215a4be68b4ec45e702d5cfbfe3141013d618bdf19348a",
+    "reference_pcm16_sha256": "3754000a24d50eaff7df9873f06bc3e8a2f1ff6d2d55179eb85dac49e919fc4e",
+    "first_speech_frame_audit": {
+      "scope": "1 complete frame(s), including startup, packet parsing, LPC and port output",
+      "tstates": 1081400,
+      "instructions": 136589,
+      "instruction_tstate_histogram": {
+        "4": 62611,
+        "5": 20,
+        "6": 3451,
+        "7": 18520,
+        "8": 6452,
+        "10": 7426,
+        "11": 14305,
+        "12": 2643,
+        "13": 2580,
+        "14": 11,
+        "15": 3272,
+        "16": 5733,
+        "17": 1632,
+        "19": 280,
+        "20": 2716,
+        "21": 4937
+      },
+      "every_instruction_matches_zilog_table": true
+    }
+  }
+}

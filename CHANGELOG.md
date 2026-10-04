@@ -1,5 +1,23 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round33 combines Q14 by coefficient sign
+
+On unchanged round32 speech, split Q14 on coefficient sign, restore only
+the high product's final sign, and add floor or subtract ceiling of the
+unsigned fractional product. Remove the sign scratch traffic and double
+negation. Q14 167108120 -> 156085892 T; full speech 1630001442 -> 1618979214
+T (-11022228, 0.676%), 8663.202 T/sample. All Q14 inputs save 30..211 nominal
+T; the 93440-call trace and weighted isolated instruction costs reconcile
+with the full saving. All 1343488 Q14 cases, 374 boundary instruction audits
+per binary and 1094880 complete PCM16/PCM8 samples pass, as does fresh
+default identity. Reuse unchanged unsigned helper/filter evidence. Code +8
+bytes, state/table/payload unchanged; select pure-r33. Real-time deficit
+remains 19.802x with no ULA/hardware claim. Below-8500 target is unmet.
+Next remove 64 cancelling EXX pairs per changed coefficient page; predicted
+512 T/page is not implemented or measured. No failed or reverted candidate
+occurred in this round.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/33/REPORT.md).
+
 ## 2026-10-04: Speex round32 shares Q14 coefficient normalization
 
 On unchanged round31 speech, normalize the repeated Q14 coefficient once,

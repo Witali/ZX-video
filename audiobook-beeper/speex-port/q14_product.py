@@ -139,3 +139,108 @@ q14_negative_exact:
 '''+finish+'''jp neg32
 q14_positive_tail:
 '''+finish+'ret\n\n'
+
+
+def q14_signed_tails():
+    """Dispatch on coefficient sign once and add/subtract the low fraction."""
+    prepare='''ld (qcoef),hl
+ex de,hl
+ld de,#qarg
+ld bc,#4
+ldir
+ld hl,(qarg+2)
+add hl,hl
+add hl,hl
+ld a,(qarg+1)
+rlca
+rlca
+and a,#3
+or a,l
+ld l,a
+ld de,(qcoef)
+'''
+    negate16='xor a,a\nsub a,l\nld l,a\nsbc a,a\nsub a,h\nld h,a\n'
+    fractional='''ld (qtemp),de
+ld (qtemp+2),hl
+ld hl,(qarg)
+ld a,h
+and a,#63
+ld h,a
+ld de,(qcoef)
+call _q14_unsigned
+; P=c*lo is below 2^29. Extract Q=floor(P/16384) into HL.
+; DE retains the original low word, including all 14 remainder bits.
+add hl,hl
+add hl,hl
+ld a,d
+rlca
+rlca
+and a,#3
+or a,l
+ld l,a
+'''
+    return '''; Exact MULT16_32_Q14: a*int16(b>>14) + floor(a*(b&16383)/16384).
+; Input HL=signed16 a, DE=pointer to little-endian signed32 b; return HL:DE.
+; Split once on a's sign. Both bodies prepare |a| once and restore only the
+; sign of the high product. The negative body subtracts ceil(|a|*lo/16384),
+; avoiding the old high-product negation followed by whole-result negation.
+; Preserve IX/IY, alternate AF/BC/DE/HL and caller SP. Clobber ordinary
+; AF/BC/DE/HL and qcoef/qarg/qtemp. Nonreentrant, as in the prior scratch path.
+; _q14_sign aliases the old unused slot for checker compatibility; no access.
+.globl _q14_unsigned, _q14_sign, _q14_scratch_start, _q14_scratch_end
+_q14_sign = s8_sign
+_q14_scratch_start = qcoef
+_q14_scratch_end = qtemp+4
+mulq14:
+bit 7,h
+jp nz,q33_negative
+; a >= 0: high product has hi's sign; the fractional term is nonnegative.
+'''+prepare+'''bit 7,h
+jr z,q33_positive_high_positive
+'''+negate16+'''call _q14_unsigned
+call neg32
+jp q33_positive_high_ready
+q33_positive_high_positive:
+call _q14_unsigned
+q33_positive_high_ready:
+'''+fractional+'''; Add unsigned Q to the signed32 high product. Only low-word overflow can
+; change the upper word. EX/LD preserve carry; INC HL is modulo16, as needed.
+ld de,(qtemp)
+add hl,de
+ex de,hl
+ld hl,(qtemp+2)
+jr nc,q33_positive_return
+inc hl
+q33_positive_return:
+ret
+q33_negative:
+; a < 0: |a|=32768 remains a valid unsigned magnitude. For hi < 0 the
+; high product is already positive; negate it only when hi is nonnegative.
+'''+negate16+prepare+'''bit 7,h
+jr nz,q33_negative_high_negative
+call _q14_unsigned
+call neg32
+jp q33_negative_high_ready
+q33_negative_high_negative:
+'''+negate16+'''call _q14_unsigned
+q33_negative_high_ready:
+'''+fractional+'''; Subtract ceil(P/16384) from signed32 a*hi. Keep Q in BC and form
+; R=(D&63)|E from the untouched low product word. ADD A,255 sets carry
+; exactly when R != 0, supplying the rounding borrow for the low SBC.
+; The upper SBC propagates its borrow. All intervening LD/EX preserve it.
+; This handles exact fractions and a=-32768 without special saturation.
+ld b,h
+ld c,l
+ld hl,(qtemp)
+ld a,d
+and a,#63
+or a,e
+add a,#255
+sbc hl,bc
+ex de,hl
+ld hl,(qtemp+2)
+ld bc,#0
+sbc hl,bc
+ret
+
+'''

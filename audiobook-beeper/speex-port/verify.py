@@ -221,7 +221,7 @@ if __name__=='__main__':
     p.add_argument('--source',type=Path,default=Path('C:/Work/ZX-video/audiobook-beeper/experiments/ima-waveform/source-preview.wav'))
     p.add_argument('--host-only',action='store_true');p.add_argument('--native-only',action='store_true')
     p.add_argument('--restore-fixture',action='store_true',help='Restore the saved speech packets and independent PCM16 reference')
-    p.add_argument('--variant',default='pure-r32');a=p.parse_args()
+    p.add_argument('--variant',default='pure-r33');a=p.parse_args()
     if a.restore_fixture:
         a.output.mkdir(parents=True,exist_ok=True)
         for name in ('input.spxraw','reference.pcm16'):

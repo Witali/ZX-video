@@ -12,11 +12,11 @@ Baseline: exact mode-3 Speex `pure-r9`, 2510789186 T for 186880 samples,
 already emitted without pacing. Retain the complete upstream PCM16/PCM8
 comparison and report throughput separately from instantaneous OUT gaps.
 
-Next intermediate target after round32: **below 8500 T/sample** on the same
+Next intermediate target after round33: **below 8500 T/sample** on the same
 complete 186880-sample speech, exact PCM16/PCM8 and unchanged 16-KiB table
-arena. Current 8722.182 T/sample needs another 41521442 T saving to reach
-8500 (about 2.55%). This is an unachieved target, not a forecast; round33
-alone is not expected to close the gap. Real time still needs 437.5 T/sample.
+arena. Current 8663.202 T/sample needs another 30499214 T saving to reach
+8500 (about 1.88%). This is an unachieved target, not a forecast; the next
+builder simplification alone is not expected to close the gap. Real time still needs 437.5 T/sample.
 
 - [x] **15. Register-based coefficient table construction.** Replace four
   byte stores and repeated step loads with 32-bit register accumulation and
@@ -194,13 +194,23 @@ alone is not expected to close the gap. Real time still needs 437.5 T/sample.
   products and 1094880 complete samples pass. Every checked full fixture
   improves, but 40193 individual speech calls regress. Code +179 bytes;
   table/state unchanged. Average real-time deficit remains 19.936x.
-- [ ] **33. Avoid double Q14 sign reversal.** Negative coefficient/negative
+- [x] **33. Avoid double Q14 sign reversal.** Negative coefficient/negative
   high-part inputs occur 39946 times in the saved trace. The current path
   negates the high product and later negates the combined result. Compare
   a positive high product minus the rounded fractional contribution, with
   all sign/zero/remainder boundaries and setup costs included. Preserve
-  truncation, exact PCM, memory and complete-stream gates. This candidate
-  is unimplemented; do not claim its saving in advance.
+  truncation, exact PCM, memory and complete-stream gates.
+  [Round33](rounds/33/REPORT.md) selects sign-specific tails: -11022228 T,
+  8663.202 T/sample (-0.676%). Every Q14 input saves 30..211 nominal T.
+  All 1343488 arithmetic cases and 1094880 complete samples pass. Code +8;
+  table/state unchanged, average real-time deficit still 19.802x.
+- [ ] **34. Remove cancelling register-bank exchanges in table preparation.**
+  The changed-page builder contains 64 adjacent EXX/EXX pairs. Each pair is
+  an 8-T identity; removing them predicts 512 T/page and 22882304 T on the
+  saved 44692 changed pages, about 8540.76 T/sample. Restrict removal to this
+  builder, verify every coefficient/table entry, flags, cache, memory and SP,
+  then reconcile full playback with the estimate. This is unimplemented;
+  8500 and average real time remain unmet.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.
