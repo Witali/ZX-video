@@ -1,5 +1,46 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Remove periodic speech encoder boundary-error bursts
+
+The user reported voice vibration in the latest sequential speech TRD.
+Keep the unchanged 186880-sample PCM8/8-kHz reference and the same two-part
+test scope. Analysis of the actual old disk found noise/signal power in the
+first eight samples after a 128-sample boundary 1.8353057/1.8399391 times
+the block-interior value. The waveform encoder committed complete search
+windows without future costs for their delayed filter response. Commit 64
+samples per 128/256-sample horizon instead, carrying exact decoder/PDM/filter
+state. The generic converter applies this automatically; old standalone
+probes keep full-block commits unless requested otherwise.
+
+Bounded 4.096-s active-speech probes: baseline 21.371719 dB /20.938 s;
+overlap 21.600309 dB /41.468 s; overlap with extra quantized filter history
+21.584004 dB /62.125 s. Reject history as slower without improvement. Full
+overlap encoding takes 236.812 s; host 20.436321 dB is then independently
+verified in complete native/Fuse loops at 20.436321/20.436366 dB, phase 0/0 T.
+An early normal-Fuse/trace comparison gave an invalid -6.55-dB diagnostic
+residual when it assumed an exact normal audio clock. Observed FMF chunks
+and local Blip_Buffer source expose the 815/65536 clock factor; correcting
+that clock and fitting the stationary transfer gives a 27.66-dB residual.
+This fitted diagnostic is not source SNR and changes no delivery/acceptance
+audio. Preserve its reports/script snapshots and reject the initial result.
+
+Final independently bootable `ZX-audiobook-IMA3-overlap-test.trd`: both parts
+measure 20.436046 dB (baseline 20.161979/20.161096), speed -0.271723%, full
+5980094 native/Fuse live pulses exact, zero reads during audio, 32-step UI
+and automatic transition to EOF pass. Loading pause 19.818222 s; normal
+first-part Fuse WAV captured at 100% speed. Boundary/interior error ratio
+falls to 0.999314 at 128 samples and 0.993068 at 64; boundary error power falls
+about 47%. Initial comparison-script parsing required support for archived
+Fuse command abbreviations; the corrected parser uses the full original
+trace, not inferred times. All 20 player/table binaries match the old final
+layout. Native 427.375 T/sample, delta 0 T; page/bank +14/+140 T and 13312-byte
+reservation /70080-byte payload /94458-byte capacity are unchanged. Added
+exact output-time evidence, a reproducible boundary diagnostic and three
+tests; all eight tests including disk planning pass. Physical hardware and
+subjective listening are not claimed. The measured periodic excess is fixed;
+remaining codec/modulation noise is not eliminated. See the
+[experiment, scripts and complete reports](audiobook-beeper/experiments/ima-3bit-overlap/README.md).
+
 ## 2026-10-04: Merge completed audio conversion work into main
 
 At the user's request, merge `codex/lpc-ima-preload` through `d969aae` into

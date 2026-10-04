@@ -1,0 +1,21 @@
+import runpy,json
+from pathlib import Path
+import numpy as np
+lib=runpy.run_path('.tmp/diagnose-vibration.py');wav=lib['wav'];metrics=lib['metrics']
+s=wav(Path('audiobook-beeper/experiments/ima-3bit-series/reload/fuse/part-01-output.wav'))
+y=wav(Path('.tmp/vibration-normal/first-part.wav'));n=min(len(s),len(y));s=s[:n];y=y[:n]
+y=np.interp(np.arange(len(y))/44100*3546900*815/65536,np.arange(len(y)),y)
+fftlen=1<<(2*n-1).bit_length();cc=np.fft.irfft(np.fft.rfft(y,fftlen)*np.conj(np.fft.rfft(s,fftlen)),fftlen)
+lags=np.arange(-256,257);lag=int(lags[np.argmax(cc[lags%fftlen])]);print('lag',lag)
+if lag>0:y=y[lag:];s=s[:-lag]
+elif lag<0:s=s[-lag:];y=y[:lag]
+size=8192;window=np.hanning(size);cross=np.zeros(size//2+1,dtype=complex);power=np.zeros(size//2+1)
+for i in range(4410,len(s)-size-4410,size//2):
+ a=np.fft.rfft(s[i:i+size]*window);b=np.fft.rfft(y[i:i+size]*window)
+ cross+=b*np.conj(a);power+=abs(a)**2
+h=cross/np.maximum(power,power.max()*1e-7)
+length=1<<(len(s)+size-1).bit_length();freq=np.fft.rfftfreq(length)
+hh=np.interp(freq,np.fft.rfftfreq(size),h.real)+1j*np.interp(freq,np.fft.rfftfreq(size),h.imag)
+expected=np.fft.irfft(np.fft.rfft(s,length)*hh,length)[:len(s)]
+r=metrics(expected,y);r['scope']='Diagnostic only: actual normal Fuse audio against trace, after fitting stationary transfer function and integer delay';r['delay_samples']=lag
+print(json.dumps(r,indent=2));Path('.tmp/vibration-normal/diagnosis.json').write_text(json.dumps(r,indent=2))

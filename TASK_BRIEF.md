@@ -14,6 +14,17 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
+The latest speech-vibration fix is complete: [overlapping waveform search](audiobook-beeper/experiments/ima-3bit-overlap/README.md)
+commits 64 samples of each 128/256-sample horizon. The automatic converter
+uses it by default. On the unchanged sequential speech fixture, boundary
+noise/interior noise falls from 1.835..1.840 to 0.999; both final parts measure
+20.436046 dB, speed -0.271723%. Every native/Fuse output through EOF passes;
+normal Fuse WAV is saved. Player/table binaries are unchanged, 427.375
+T/sample, delta 0 T, unchanged RAM/payload/capacity. Use
+`ZX-audiobook-IMA3-overlap-test.trd` for the new listening test. This removes
+the measured periodic boundary excess; residual IMA/PDM noise remains and
+subjective acceptance is with the user. Reuse its complete evidence.
+
 The [sequential converter](audiobook-beeper/IMA3_SERIES.md) now defaults to
 one TRD; `--disk-mode all` retains the whole selected track on numbered,
 independently bootable volumes, and `--disk-mode preview` keeps the old

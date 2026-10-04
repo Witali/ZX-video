@@ -99,14 +99,24 @@ def prepare(path):
 
 
 def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regularization=.1,history_bins=0,
-                    allowed_codes=None,level_bounds=None):
+                    allowed_codes=None,level_bounds=None,commit_size=None):
+    """Search a horizon, then accept its prefix and reconsider the future.
+
+    Committing a whole horizon can introduce periodic errors at its end:
+    the filter responds after the search has stopped considering the cost.
+    A shorter commit keeps future context across those decision boundaries.
+    None preserves the historical full-block search for reproducible probes.
+    """
+    commit_size=block_size if commit_size is None else commit_size
+    if not 1<=commit_size<=block_size:raise ValueError('commit size must be within the lookahead block')
     codes=code_alphabet(allowed_codes);branches=len(codes)
+    branch_for_code={int(code):branch for branch,code in enumerate(codes)}
     steps=np.asarray(STEPS,dtype=np.int64)[:,None]
     delta=(steps>>3)+steps*((codes&4)!=0)+(steps>>1)*((codes&2)!=0)+(steps>>2)*((codes&1)!=0)
     delta*=np.where(codes&8,-1,1)
     successor=np.clip(np.arange(89)[:,None]+np.asarray(INDEX)[codes&7],0,88)
     chosen=np.empty(len(source),dtype='u1');pred=index=0;q=16;filter_state=np.zeros(6)
-    for start in range(0,len(ids),block_size):
+    for start in range(0,len(ids),commit_size):
         stop=min(len(ids),start+block_size);preds=np.array([pred]);indices=np.array([index]);qs=np.array([q])
         states=filter_state[None,:].copy();costs=np.zeros(1);paths=np.zeros((1,stop-start),dtype='u1')
         for sample in range(start,stop):
@@ -141,8 +151,20 @@ def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regul
             paths=paths[parent[best]].copy();paths[:,sample-start]=codes[best%branches]
             states=next_filters[best]
             preds,indices,qs,costs=predicted[best],next_indices[best],new_q[best],score[best]
-        chosen[start:stop]=paths[0];pred,index,q=int(preds[0]),int(indices[0]),int(qs[0]);filter_state=states[0]
-        if stop%16384==0:print(json.dumps(dict(encoded_samples=stop,total_samples=len(source))),flush=True)
+        committed=min(stop,start+commit_size)
+        chosen[start:committed]=paths[0,:committed-start]
+        if committed==stop:
+            pred,index,q=int(preds[0]),int(indices[0]),int(qs[0]);filter_state=states[0]
+        else:
+            # The best lookahead path is known, but its final state belongs
+            # to uncommitted future samples. Replay only the accepted prefix
+            # to carry the exact IMA, PDM and analog-filter state forward.
+            for sample,code in enumerate(chosen[start:committed],start):
+                branch=branch_for_code[int(code)];pred+=int(delta[index,branch]);index=int(successor[index,branch])
+                level=(pred+32768)//(65536//nxt.shape[0]);word=level*32+q
+                aa,_,_,endpoint,_=features[ids[sample]]
+                filter_state=aa@filter_state+endpoint[word];q=int(nxt[level,q])
+        if committed%16384==0:print(json.dumps(dict(encoded_samples=committed,total_samples=len(source))),flush=True)
     bounds=((-32768,32767) if level_bounds is None else
             (level_bounds[0]*(65536//nxt.shape[0])-32768,
              (level_bounds[1]+1)*(65536//nxt.shape[0])-32769))
@@ -159,11 +181,15 @@ def main():
     p.add_argument('--output',type=Path,required=True);p.add_argument('--ffmpeg',required=True)
     p.add_argument('--width',type=int,default=16)
     p.add_argument('--block-size',type=int,choices=(64,128,256),default=64)
+    p.add_argument('--commit-size',type=int,help='Commit only this prefix, retaining future samples as lookahead')
     p.add_argument('--regularization',type=float,default=.1)
     p.add_argument('--prior',choices=('compensated','uniform'),default='compensated')
     p.add_argument('--history-bins',type=int,default=0)
     p.add_argument('--ima3',action='store_true',help='Restrict every nibble, including the guard, to the exact IMA3 subset')
-    a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
+    a=p.parse_args()
+    if a.commit_size is not None and not 1<=a.commit_size<=a.block_size:
+        p.error('--commit-size must be within --block-size')
+    a.output.mkdir(parents=True,exist_ok=True)
     started=time.monotonic();meta,t,words,nxt,source,desired,features,ids=prepare(a.input)
     baseline=gzip.decompress((a.input/'soundtrack.ima.gz').read_bytes());pcm,_=decode(baseline)
     state=np.zeros(6);q=16;noise=signal=0.
@@ -180,7 +206,7 @@ def main():
     packed=encode_waveform(prior,desired,features,ids,nxt,a.width,regularization=a.regularization,
                            block_size=a.block_size,
                            history_bins=a.history_bins,allowed_codes=codes,
-                           level_bounds=meta['model'].get('level_bounds'))
+                           level_bounds=meta['model'].get('level_bounds'),commit_size=a.commit_size)
     if a.ima3:
         assert not np.any(np.frombuffer(packed,'u1')&0x11)
     (a.output/'soundtrack.ima.gz').write_bytes(gzip.compress(packed,mtime=0))
@@ -193,6 +219,7 @@ def main():
     write_wav(a.output/'waveform-preview.wav',actual)
     report=dict(scope=__doc__,input=str(a.input),samples=len(source),beam_width=a.width,
                 block_size=a.block_size,
+                commit_size=a.commit_size or a.block_size,
                 allowed_ima_nibbles=code_alphabet(codes).tolist(),ima3_subset=a.ima3,
                 source_sha256=hashlib.sha256(source.tobytes()).hexdigest(),
                 packed_sha256=hashlib.sha256(packed).hexdigest(),

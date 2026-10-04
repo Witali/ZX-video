@@ -4,6 +4,11 @@ Measured 2026-10-04. This subproject removes the Spectrum-side IMA3-to-IMA4
 expansion. Three-bit codes stay packed in RAM and are decoded as the PDM
 outputs are emitted. There is no complete PCM, IMA4 or PDM buffer.
 
+The subsequent [speech boundary-error fix](experiments/ima-3bit-overlap/README.md)
+uses overlapping PC search windows by default. It improves this reference to
+about 20.44 dB and removes the measured excess error at 128-sample boundaries.
+The earlier disk and measurements below remain historical baselines.
+
 The [compact table placement](IMA3_MEMORY.md) now frees 1024 bytes without
 changing playback instructions. The automatic converter uses it by default;
 maximum resident capacity is 94458 bytes /251888 samples /31.486 s. The
@@ -72,6 +77,12 @@ and put `audiobook-beeper` and `toolkit` on PYTHONPATH.
 The bounded search tries beam widths 256/512 with 128-sample horizons, then
 width 1024 with a 256-sample horizon; regularization remains 0.03. It stops
 only after a new disk passes the requested target on both complete loops.
+Each new waveform search commits 64 samples, retaining future context from
+the rest of its horizon. This avoids periodically accepting end-of-window
+decisions without considering their delayed filter response. It costs more
+PC encoding time (roughly twice for the first 128-sample search), with no
+additional Z80 instructions, RAM or disk payload. Direct encoder invocations
+can use `--commit-size`; omitting it preserves historical full-block probes.
 Extending the horizon from 64 to 128 samples improved the full-source host
 score from 19.950829 to 20.159645 dB at width 256, with zero extra Z80 work.
 The superseded width-1024/64-sample search was interrupted and preserved;

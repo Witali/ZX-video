@@ -179,6 +179,8 @@ def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=Fa
         count=(len(pcm)-3)*16+15
         assert len(bits)==count and np.array_equal(bits,wanted[:count]),('pulse mismatch',i,len(bits),count)
         times=np.cumsum(pulse>>1);times-=times[0]
+        # Preserve actual disk timing for reproducible boundary-noise analysis.
+        (out/f'part-{i+1:02d}-times.u32.gz').write_bytes(gzip.compress(times.astype('<u4').tobytes(),mtime=0))
         old_times=np.frombuffer(gzip.decompress((selected/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[:count]
         delta=times-(old_times-old_times[0])
         # HALT can enter the ROM IRQ at one of four T-state offsets. Cold

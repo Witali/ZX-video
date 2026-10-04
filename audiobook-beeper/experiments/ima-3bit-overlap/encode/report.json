@@ -1,0 +1,37 @@
+{
+  "scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n",
+  "input": "audiobook-beeper\\experiments\\ima-3bit-direct",
+  "samples": 186880,
+  "beam_width": 256,
+  "block_size": 128,
+  "commit_size": 64,
+  "allowed_ima_nibbles": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14
+  ],
+  "ima3_subset": true,
+  "source_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+  "packed_sha256": "cd351bba81745a93d50d1c3fff5c3975b1e9760ee62aa470a3ad8b2d3cd503c5",
+  "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state",
+  "history_bins": 0,
+  "baseline_model_snr_db": 20.152895792011556,
+  "host_fixed_clock_snr_db": 20.43632101482426,
+  "control_prior": "compensated",
+  "control_regularization": 0.03,
+  "elapsed_seconds": 236.81200000003446,
+  "ordinary_native_tstate_delta": 0,
+  "new_timeline_verified": false,
+  "saturation_guard": {
+    "samples": 186880,
+    "saturation_events": 0,
+    "raw_min": -30252,
+    "raw_max": 30632
+  },
+  "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"
+}

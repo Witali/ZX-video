@@ -52,10 +52,13 @@ def stage(path,operation):
 
 
 def host_search(pilot,out,width,weight,block_size,ffmpeg):
+    # Keep future filter response in every decision. Full-horizon commits
+    # caused periodic error bursts in the speech reference at block edges.
     subprocess.run([sys.executable,str(HERE/'ima_waveform_encoder.py'),
                     '--input',str(pilot),'--output',str(out),'--ima3',
                     '--width',str(width),'--regularization',str(weight),
-                    '--block-size',str(block_size),'--ffmpeg',ffmpeg],check=True)
+                    '--block-size',str(block_size),'--commit-size','64',
+                    '--ffmpeg',ffmpeg],check=True)
     return json.loads((out/'report.json').read_bytes())
 
 

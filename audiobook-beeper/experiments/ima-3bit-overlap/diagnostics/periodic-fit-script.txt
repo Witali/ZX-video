@@ -1,0 +1,33 @@
+import json,wave
+from pathlib import Path
+import numpy as np
+from build_pdm import write_wav
+
+def wav(path):
+    with wave.open(str(path),'rb') as w:
+        assert w.getframerate()==44100 and w.getnchannels()==1 and w.getsampwidth()==2
+        return np.frombuffer(w.readframes(w.getnframes()),'<i2').astype(float)/32768
+
+def metrics(source,output):
+    n=min(len(source),len(output));s=source[:n];e=output[:n]-s
+    ds=np.gradient(s)*44100
+    keep=slice(4410,n-4410);s=s[keep];e=e[keep];ds=ds[keep]
+    t=(np.arange(len(s))+4410)/44100
+    # Linearized amplitude and delay errors. Diagnostic only; neither fitted
+    # correction is applied to acceptance scores or rendered audio.
+    rows=[]
+    for hz in (25,31.25,50,62.5,100,125,150,187.5,200,250,500):
+        sin=np.sin(2*np.pi*hz*t);cos=np.cos(2*np.pi*hz*t)
+        m=np.array([s,ds/10000,s*sin,s*cos,ds/10000*sin,ds/10000*cos])
+        coef=np.linalg.solve(m@m.T,m@e)
+        rows.append(dict(hz=hz,gain_modulation_peak_percent=float(np.hypot(*coef[2:4])*100),
+                         delay_modulation_peak_us=float(np.hypot(*coef[4:6])*100),
+                         pitch_modulation_peak_cents=float(np.hypot(*coef[4:6])/10000*2*np.pi*hz*1200/np.log(2))))
+    return dict(snr_db=float(10*np.log10(np.mean(s*s)/np.mean(e*e))),periodic=rows)
+
+base=Path('audiobook-beeper/experiments/ima-3bit-direct')
+source=wav(base/'uniform-clock-source-preview.wav')
+output=wav(Path('audiobook-beeper/experiments/ima-3bit-series/reload/fuse/part-01-output.wav'))
+report=metrics(source,output)
+print(json.dumps(report,indent=2));Path('.tmp/vibration-baseline.json').write_text(json.dumps(report,indent=2))
+write_wav(Path('.tmp/vibration-error.wav'),(output[:min(len(output),len(source))]-source[:min(len(output),len(source))])*4)

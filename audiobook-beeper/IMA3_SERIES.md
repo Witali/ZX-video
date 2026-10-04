@@ -23,6 +23,12 @@ selected prefix in every mode. `--resume` requires unchanged source, tools,
 settings and producer files; completed per-part searches are hash checked
 and reused, then the final volumes are verified again.
 
+The [overlapping encoder](experiments/ima-3bit-overlap/README.md) is now used
+automatically during waveform search. It reduces periodic block-boundary
+errors without changing the player. For the updated speech listening test,
+use [ZX-audiobook-IMA3-overlap-test.trd](../ZX-audiobook-IMA3-overlap-test.trd).
+It retains the same two 23.36-s excerpts and loading pause as the earlier test.
+
 ## Playback and capacity
 
 Load the disk through TR-DOS. The player displays `LOADING AUDIO DATA` and
