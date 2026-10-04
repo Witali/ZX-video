@@ -13,13 +13,13 @@ already emitted without pacing. Retain the complete upstream PCM16/PCM8
 comparison and report throughput separately from instantaneous OUT gaps.
 
 Round35 achieves the **below-8500 T/sample intermediate target** on the
-same complete 186880-sample speech. Round38 now measures 8316.154 T/sample,
+same complete 186880-sample speech. Round39 now measures 8126.554 T/sample,
 exact PCM16/PCM8 and 14140 useful table bytes in the same 16-KiB arena. This is an input-specific milestone;
 the overall objective still needs 437.5 T/sample. Continue optimizing the
 actual decoder without adding output pacing or changing the input format.
 
 The next intermediate target is **below 8000 T/sample** on the same full
-speech, requiring another 3.80% reduction from round38. Keep exact PCM,
+speech, requiring another 1.56% reduction from round39. Keep exact PCM,
 all stream gates and the 16-KiB table limit. This is a target to investigate,
 not a measured result or a guarantee of real-time feasibility.
 
@@ -267,14 +267,26 @@ not a measured result or a guarantee of real-time feasibility.
   cases per binary and 1094880 full samples pass. Every OUT delta matches.
   Code +2, state/tables unchanged; retired upper-argument writes forbidden.
   All full fixtures improve by 22.5 T/sample. Real-time deficit is 19.008x.
-- [ ] **39. Specialize synthesis for a zero top feedback nibble.** Count
+- [x] **39. Specialize synthesis for a zero top feedback nibble.** Count
   eligible samples using n=(-y)&65535, retaining the separate n=0 path.
   A zero top nibble makes its partial product zero at all ten taps. Compare
   one sample-level dispatch plus a kernel that omits those additions,
   including code-space cost. Preserve signed top-nibble behavior, arbitrary
   filter histories, SP restoration and full-stream gates. Inspect eligible
-  frequency before building one candidate; no implementation or measured
-  saving exists yet.
+  frequency before building one candidate.
+  [Round39](rounds/39/REPORT.md) selects 653 T savings on 58289 eligible
+  speech samples, +21 T on other nonzero samples and unchanged zero paths:
+  -35432446 T, 8126.554 T/sample (-2.280%). Both binaries pass 196608
+  arbitrary-history feedback cases, instruction audits and 128 complete
+  filter calls; 1094880 full samples pass. Every OUT and fixture cost
+  reconciles. Code +581, state/tables unchanged. Real-time deficit 18.575x.
+- [ ] **40. Combine upper partials for small signed feedback.** For 1..255,
+  both upper partials vanish; for signed -256..-1, their sum equals
+  -256*coefficient. Inspect a low-byte kernel with a cached negative
+  correction. Count eligible populations first and include dispatch,
+  correction preparation on changed LPC pages, code size and table RAM.
+  Preserve general/zero paths, arbitrary histories and full-stream gates.
+  No implementation or additional saving is measured.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

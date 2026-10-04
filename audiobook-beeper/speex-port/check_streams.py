@@ -33,7 +33,7 @@ def control_cases(folder):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,default=ROOT/'build/speex-port')
-    p.add_argument('--variant',default='pure-r38')
+    p.add_argument('--variant',default='pure-r39')
     a=p.parse_args();out=a.output.resolve();n=3200;rng=random.Random(711)
     cases={
         'silence':bytes([128])*n,

@@ -1,5 +1,24 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round39 omits zero top feedback partials
+
+Inspect unchanged round38 speech: 3340 zero, 58289 top-zero and 125251 general
+feedback words. Select one specialized synthesis kernel: 653 T saved on
+eligible samples, +21 T on general nonzero, zero unchanged. Complete speech
+1554122841 ->1518690395 T (-35432446, 2.280%), 8126.554 T/sample. Both binaries
+pass all 65536 words with three coefficient arrays (196608 cases), arbitrary
+histories, instruction audits and 128 full filter calls. All 1094880 complete
+PCM16/PCM8 samples, fresh default identity, per-OUT and every fixture-cost
+prediction pass. No checked full fixture regresses; other inputs can regress.
+Only forty history bytes are writable in the feedback block. Code +581 to
+9625; state and 14140 useful table bytes unchanged. Initial Python variant
+wiring failed before assembly, leaving no image for the attempted verifier;
+fixed before the first native build. No native arithmetic/PCM failure or
+reverted native candidate. Select pure-r39, still 18.575x over average real
+time; no ULA/hardware qualification. Next inspect combined upper partials
+for small signed feedback; no additional implementation or saving measured.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/39/REPORT.md).
+
 ## 2026-10-04: Speex round38 reads private Q14 arguments directly
 
 On unchanged round37 speech, replace four-byte LDIR plus high-word reload

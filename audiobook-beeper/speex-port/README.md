@@ -2,7 +2,7 @@
 
 ## Latest result: exact Speex improved; separate VQ playback meets nominal CPU timing
 
-The selected exact default is **`pure-r38`**. Both the initial [TODO](TODO.md)
+The selected exact default is **`pure-r39`**. Both the initial [TODO](TODO.md)
 and six-item [follow-up worklist](FOLLOWUP_TODO.md) are complete, with reports
 and focused commits. Original generators and evidence remain reproducible.
 The exact decoder retains Speex mode-3 packets and emits identical PCM8.
@@ -41,22 +41,24 @@ throughput; no uniform per-sample output schedule is required.
 | 36. Direct exact cosine with polynomial fallback | 1566795471 | 8383.965 |
 | 37. Fuse Q14 product and caller negation | 1558327641 | 8338.654 |
 | 38. Direct private Q14 argument reads | 1554122841 | 8316.154 |
+| 39. Omit zero top feedback partials | 1518690395 | 8126.554 |
 
-Round 38 uses **38.10% fewer T than round 09**, 2.919x faster than the
+Round 39 uses **39.51% fewer T than round 09**, 2.987x faster than the
 initial pure-fast assembly baseline. Internal PCM16 and emitted PCM8 stay
-exact. Real time still fails by **19.008x** against 437.5 T/sample:
-23.36 seconds of speech needs 444.04 seconds of nominal CPU time. No pacing
-is added. Direct Q14 argument reads save exactly 45 T/call, 4204800 T
-(0.270%) over complete speech. Every full fixture improves by 22.5 T/sample.
-Code grows by two bytes; table/state sizes stay unchanged. The below-8000
-intermediate target remains open. Next inspect a synthesis path omitting
-zero top-nibble partials; no next implementation or saving is measured.
-See the [current report](rounds/38/REPORT.md).
+exact. Real time still fails by **18.575x** against 437.5 T/sample:
+23.36 seconds of speech needs 433.91 seconds of nominal CPU time. No pacing
+is added. Omitting zero top feedback partials saves 35432446 T (2.280%)
+over speech. Eligible samples save 653 T, general nonzero samples cost
+21 T extra, and zero samples are unchanged. No checked full fixture regresses.
+Code grows by 581 bytes; table/state sizes stay unchanged. The below-8000
+intermediate target remains open. Next inspect combining the upper partials
+for small signed feedback; no additional implementation or saving is measured.
+See the [current report](rounds/39/REPORT.md).
 
-Current [image](rounds/38/player.ihx), [decoder](rounds/38/decoder.s),
-[filter](rounds/38/filter.s) and [map](rounds/38/player.map) are under
-`rounds/38`. Entry/count/status, input-bank order and port contract below
-remain unchanged. Code is `8000..A353` (9044 bytes), state `B000..B410`
+Current [image](rounds/39/player.ihx), [decoder](rounds/39/decoder.s),
+[filter](rounds/39/filter.s) and [map](rounds/39/player.map) are under
+`rounds/39`. Entry/count/status, input-bank order and port contract below
+remain unchanged. Code is `8000..A598` (9625 bytes), state `B000..B410`
 (1041), stack reserve `BF00..BFFF`. The PCM16 output buffer is removed;
 `_last_pcm16` exposes the existing feedback sample for verification. All
 code writes are forbidden during playback. Retained standalone product
@@ -67,14 +69,15 @@ code/state/input are additional RAM. Gain triples now hold routine pointers.
 
 The final exact binary passes **1094880 complete-stream samples**, arithmetic,
 memory guards, instruction audits and a fresh default-build identity check.
-The direct Q14 entry passes **1343488 arithmetic cases** and both binaries
-pass **18384 pointer/arithmetic cases** across page boundaries and the
-FFFF->0000 wrap. Independent instruction audits, register/input guards and
-write protection of the retired upper-argument bytes pass. Every observed
-operand is unchanged; isolated costs explain the full saving and every OUT
-delta. Other decoder and filter sources remain unchanged.
-See [standard verification](rounds/38/unpaced-checks.json),
-[Q14 argument domains and pointer/cost proofs](rounds/38/q14-argument-checks.json),
+Both binaries pass **196608 feedback cases**, covering all 65536 words
+with arbitrary histories and three coefficient arrays. Independent instruction
+audits and 128 complete arbitrary-state filter calls per binary pass. The
+feedback block writes only forty history bytes and preserves real SP and all
+alternate registers. Every OUT delta matches its sample-class prediction;
+full-fixture costs reconcile with the same formulas. decoder.s is unchanged.
+See [standard verification](rounds/39/unpaced-checks.json),
+[feedback domains, class inspection and timing proofs](rounds/39/top-zero-checks.json),
+[prior Q14 argument/pointer domains](rounds/38/q14-argument-checks.json),
 [prior fused-Q14 domains and caller audits](rounds/37/q14-negated-checks.json),
 [prior exact cosine domains](rounds/36/direct-cosine-checks.json),
 [prior builder domains and address/mask checks](rounds/35/next-step-checks.json),
@@ -96,7 +99,7 @@ The follow-up also implements three distinct alternatives:
 
 | Candidate | CPU T/sample | Stored bytes / PCM8 ratio | Decision |
 | --- | ---: | ---: | --- |
-| Exact Speex round 38 | 8316.154 | 23360 / 8:1 | Selected exact decoder; too slow |
+| Exact Speex round 39 | 8126.554 | 23360 / 8:1 | Selected exact decoder; too slow |
 | Approximate Speex round 10 | 11781.204 | 23360 / 8:1 | Rejected: still too slow, added error |
 | Periodic wave/noise round 11 | 222.625, kernel only | 54320 / 3.440:1 | Not selected; loading/pacing unimplemented |
 | PVQ3x1024 round 12 | 90.418 before pacing | 80974 / 2.308:1 | Previous nominal CPU baseline |
@@ -119,14 +122,15 @@ To build and check the selected version:
 ```powershell
 python audiobook-beeper/speex-port/build.py --skip-host
 python audiobook-beeper/speex-port/verify.py --native-only --restore-fixture
-python audiobook-beeper/speex-port/check_round.py --variant pure-r38
-python audiobook-beeper/speex-port/check_q14_argument.py
-python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r38 --previous pure-r37 --check-default
+python audiobook-beeper/speex-port/check_round.py --variant pure-r39
+python audiobook-beeper/speex-port/check_top_zero_feedback.py
+python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r39 --previous pure-r38 --check-default
+python audiobook-beeper/speex-port/check_top_zero_feedback.py --reconcile-fixtures
 ```
 
 The stream checks require the host-generated fixtures: build host DLLs
-as described below and run `check_streams.py --variant pure-r38` to generate
-them. Keep the pure-r37 build/report/OUT trace and archived random-packet fixtures
+as described below and run `check_streams.py --variant pure-r39` to generate
+them. Keep the pure-r38 build/report/OUT trace and archived random-packet fixtures
 available for `check_unpaced.py`. Retain the same Python runtime. `finish_followup.py`
 reproduces the historical round09 checkpoint. `final_checks.py` reproduces historical
 round-04 LPC evidence and needs `pure-r3` and `pure-r4` builds explicitly.

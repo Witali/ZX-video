@@ -16,8 +16,8 @@ converter must also support other videos.
 
 Active throughput goal clarified on 2026-10-04: consecutive sample writes
 are permitted; do not spend further work on output pacing. Exact Speex
-default is now pure-r38: 1554122841 T / 8316.154 T/sample, 38.102%
-fewer T than round09, but still 19.008x over the average 437.5-T budget.
+default is now pure-r39: 1518690395 T / 8126.554 T/sample, 39.513%
+fewer T than round09, but still 18.575x over the average 437.5-T budget.
 Round17 reconciles nested costs with unchanged OUT traces; round18 selects
 combined-register multiplication after comparing three candidates. All
 1074400 PCM16/PCM8 samples and 589824 extra product/cycle cases pass.
@@ -30,7 +30,7 @@ holds offsets in index halves and borrows SP for first-part reads. It saves
 98139844 T versus round22 including setup; 7719 arbitrary histories and 128
 filter calls per variant pass. Round24 adds a pre-negated table step and saves
 12603144 T; all 65536 coefficients and 262144 negations pass after fixing
-an initial borrow bug. Code/state 9044/1041 bytes, useful tables 14140 bytes within 16 KiB;
+an initial borrow bug. Code/state 9625/1041 bytes, useful tables 14140 bytes within 16 KiB;
 fresh default build matches and every playback code write is forbidden.
 The below-10000 intermediate target is met. Round25 reconciles the full
 profile with identical PCM/OUT traces: inline feedback 35.880%, decoder
@@ -77,14 +77,19 @@ improve, but 6773 individual speech calls regress.
 Round38 reads Q14 arguments directly: exactly 45 T/call, -4204800 T, code +2.
 All 1343488 arithmetic cases, 18384 pointer cases per binary and 1094880
 full samples pass; every OUT delta reconciles. State/tables unchanged; the
-retired upper argument bytes are write-protected. Next inspect a synthesis
-kernel omitting zero top-nibble partials of n=(-y)&65535. Count eligible
-inputs first; no next implementation or saving is measured.
+retired upper argument bytes are write-protected.
+Round39 omits zero top feedback partials: -35432446 T, code +581, state/
+tables unchanged. Eligible samples save 653 T, other nonzero samples pay
+21 T and zero samples are unchanged. Both binaries pass 196608 feedback
+cases and 128 arbitrary-state filter calls; all 1094880 complete samples,
+all fixture cost predictions and every OUT delta pass. No full fixture
+regresses. Next inspect combining upper partials for small signed feedback,
+including negative correction-table preparation; not implemented or measured.
 The next intermediate target is below 8000 T/sample on the same full speech.
 The average real-time goal is still unmet.
 The broader goal remains active. Use the
 [throughput worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md) and
-[round38 report](audiobook-beeper/speex-port/rounds/38/REPORT.md), not the
+[round39 report](audiobook-beeper/speex-port/rounds/39/REPORT.md), not the
 historical PVQ scheduling milestone, to select the next optimization.
 
 Latest optimization milestone on 2026-10-04: selected PVQ round13 retains
