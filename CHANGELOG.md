@@ -1,5 +1,18 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round20 retains innovation state in registers
+
+Replace memory-held recurrence state with ordinary/alternate registers and
+scale the fractional remainder by sixteen so carry supplies the quotient
+increment. All table bytes stay exact. Loop 352 -> 137 T (132 last); setup
+20 -> 216 T; net -28189 T/table for every energy. Full speech 2017535516 ->
+1973053274 T (-44482242), 10557.862 T/sample. All 1074400 PCM16/PCM8 samples,
+8448 builder entries per variant, exact write guards, SP/IX/IY and instruction
+audits pass; fresh default rebuild matches. Code -15, state/tables unchanged.
+Select pure-r20, retaining unpaced output; still 24.132x over average budget,
+no ULA/hardware claim. Next measure zero frequencies before adding branches.
+[Report](audiobook-beeper/speex-port/rounds/20/REPORT.md).
+
 ## 2026-10-04: Speex round19 replaces seven-bit signed24 shifts
 
 Replace seven arithmetic right shifts with one left shift, byte selection

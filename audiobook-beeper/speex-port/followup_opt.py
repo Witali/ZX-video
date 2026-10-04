@@ -289,16 +289,69 @@ _exc_shift_end::
     return d,f
 
 
+def innovation_registers(d, f):
+    start=d.index('ld a,#132\nld (table_count),a\ninnov_build_loop:')
+    end=d.index('\nret\n',start)+len('\nret\n')
+    code='''; Hold the 12-bit remainder and fraction scaled by sixteen in
+; alternate HL/DE. ADD HL,DE now produces exactly the quotient carry,
+; leaving the next remainder scaled in HL. Alternate BC is the output cursor.
+; Ordinary HL/C hold the signed24 value, DE its integer step, B the count.
+; Both register sets are clobbered; IX/IY and the real stack are preserved.
+ld hl,(table_rem)
+add hl,hl
+add hl,hl
+add hl,hl
+add hl,hl
+ld de,(table_frac)
+ex de,hl
+add hl,hl
+add hl,hl
+add hl,hl
+add hl,hl
+ex de,hl
+ld bc,(table_out)
+exx
+ld hl,(table_value)
+ld de,(table_step)
+ld a,(table_value+2)
+ld c,a
+ld b,#132
+.globl _innov_register_loop, _innov_register_done
+_innov_register_loop::
+'''
+    for reg in ('l','h','c'):
+        code+=f'ld a,{reg}\nexx\nld (bc),a\ninc bc\nexx\n'
+    code+='''; EXX preserves flags: fractional carry feeds the integer ADC,
+; whose carry then advances the signed24 high byte without changing rounding.
+exx
+add hl,de
+exx
+adc hl,de
+ld a,c
+adc a,#0
+ld c,a
+djnz _innov_register_loop
+_innov_register_done::
+ret
+'''
+    d=d[:start]+code+d[end:]
+    d=d.replace('; Clobbers AF/BC/DE/HL. Tables hold signed24 floor(shape*energy/4096), shape -65..66.',
+                '; Clobbers both ordinary/alternate AF/BC/DE/HL sets; preserves IX/IY.\n'
+                '; Tables hold signed24 floor(shape*energy/4096), shape -65..66.')
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19'):d,f=register_preparation(d,f)
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19'))
-    if variant=='pure-r19':d,f=excitation_shift(d,f)
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20'):d,f=register_preparation(d,f)
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20'))
+    if variant in ('pure-r19','pure-r20'):d,f=excitation_shift(d,f)
+    if variant=='pure-r20':d,f=innovation_registers(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')

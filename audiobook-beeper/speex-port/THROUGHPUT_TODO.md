@@ -54,11 +54,19 @@ comparison and report throughput separately from instantaneous OUT gaps.
   signed24 extremes, rounding boundaries and all complete reference streams.
   [Round19](rounds/19/REPORT.md) confirms -132 T/sample: 10795.888 T/sample,
   all 1074400 PCM samples and 396800 isolated signed24 cases pass.
-- [ ] **20. Register-held innovation table construction.** Keep the signed24
+- [x] **20. Register-held innovation table construction.** Keep the signed24
   value, integer increment, fractional remainder and destination in ordinary
   and alternate registers. Scale the 12-bit fraction/remainder by sixteen
   so ADD's carry supplies the quotient increment. Preserve every table byte,
   table caching and all complete-stream output; include setup in timing.
+  [Round20](rounds/20/REPORT.md): -28189 T per table, -44482242 T on the
+  complete speech, 10557.862 T/sample. All 1074400 PCM samples and every
+  innovation entry pass, including complete instruction/guard checks.
+- [ ] **21. Measure profitable zero shortcuts.** Count actual zero feedback,
+  zero pitch gains and zero history words on the complete current input.
+  Estimate both skipped work and the extra branch cost on nonzero data;
+  prototype only paths with a measured net benefit. Do not sacrifice the
+  ordinary nonzero path to optimize synthetic silence alone.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.
