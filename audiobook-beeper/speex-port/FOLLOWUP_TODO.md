@@ -8,8 +8,9 @@ Target: mono 8-kHz PCM8 to an 8-bit port on a nominal 3.5-MHz Z80.
 - [x] **7. Specialized table multiplication.** Patch four immediate offsets
   once per sample. Check exact products, full speech and allowed code writes.
   Selected: [round 07](rounds/07/REPORT.md), -400 T/sample, exact output.
-- [ ] **8. Coefficient table preparation.** Avoid rebuilding unchanged pages;
+- [x] **8. Coefficient table preparation.** Avoid rebuilding unchanged pages;
   reduce loop overhead. Include construction in complete decoder timing.
+  Selected: [round 08](rounds/08/REPORT.md), -157151780 T on full speech.
 - [ ] **9. Port-only output.** Remove validation-only PCM16 stores and unused
   pointer work. Preserve internal precision and every PCM8 output.
 - [ ] **10. Approximate synthesis.** Try reduced sample precision with compact

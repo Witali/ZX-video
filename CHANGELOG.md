@@ -1,5 +1,14 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex item 08, faster coefficient page construction
+
+Unroll 16-entry loops and retain unchanged coefficient pages on the same
+complete speech. 2684505254 T becomes 2527353474 T (-157151780); code +513
+bytes, state +3, tables unchanged. Full speech, signal/capacity fixtures,
+products, entries, ten isolated page changes and first-frame instruction
+audit pass. Select the exact change; no real-time claim. See
+[round 08](audiobook-beeper/speex-port/rounds/08/REPORT.md).
+
 ## 2026-10-04: Speex item 07, patch exact product lookup offsets
 
 On the unchanged 186880-sample speech, replace repeated offset loads with

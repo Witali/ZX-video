@@ -18,8 +18,58 @@ def immediate_offsets(d, f):
     return d,f
 
 
+def faster_preparation(d, f):
+    d += '\n.globl coef_cache_ptr\n'
+    d=d.replace('state_end:', 'coef_cache_ptr: .ds 2\ncoef_force: .ds 1\nstate_end:')
+    d=replace_once(d,'coef_rebuild:\nld a,#1',
+        'coef_rebuild:\nld a,(coef_valid)\nld (coef_force),a\nld a,#1')
+    d=replace_once(d,'ld hl,#_zx_lpc\nld de,#coef_old\nld bc,#20\nldir',
+        'ld hl,#coef_old\nld (coef_cache_ptr),hl')
+    d=replace_once(d,'ld (coef_ptr),hl\nld (coef_step),de', '''ld (coef_ptr),hl
+; Compare each page independently. First use always builds, even for zero.
+ld hl,(coef_cache_ptr)
+ld a,(hl)
+ld (hl),e
+inc hl
+xor a,e
+ld c,a
+ld a,(hl)
+ld (hl),d
+inc hl
+xor a,d
+or a,c
+ld b,a
+ld (coef_cache_ptr),hl
+ld a,(coef_force)
+or a,a
+jr z,coef_changed
+ld a,b
+or a,a
+jr nz,coef_changed
+ld hl,(coef_out)
+inc h
+ld (coef_out),hl
+jp coef_next
+coef_changed:
+ld (coef_step),de''')
+    start=d.index('ld a,#16\nld (coef_count),a\ncoef_build_loop:')
+    end=d.index('coef_group_done:',start)
+    body=''.join('ld a,'+r+'\nexx\nld (hl),a\ninc hl\nexx\n' for r in ('e','d','l','h'))
+    body+='ld bc,(coef_step)\nex de,hl\nadd hl,bc\nex de,hl\nld bc,(coef_step+2)\nadc hl,bc\n'
+    unrolled='; Sixteen additions replace per-entry counters and branches.\n'
+    for i in range(16):
+        unrolled+=body
+        if i==7:
+            unrolled+='ld a,(coef_group)\ncp #3\njr nz,coef_unsigned_midpoint\ncall neg32\ncoef_unsigned_midpoint:\n'
+    d=d[:start]+unrolled+d[end:]
+    d=replace_once(d,'ld (coef_out),hl\nexx\nld a,(coef_taps)',
+                   'ld (coef_out),hl\nexx\ncoef_next:\nld a,(coef_taps)')
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
+    if variant!='pure-r7':d,f=faster_preparation(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')
