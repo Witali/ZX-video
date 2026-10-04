@@ -118,13 +118,24 @@ comparison and report throughput separately from instantaneous OUT gaps.
   [Round26](rounds/26/REPORT.md) confirms exactly that saving: 9817.773
   T/sample. All 1074400 PCM samples, 200187 sums, 1037 writebacks and
   589824 helper-preservation cases pass. Tables/state unchanged, code -23.
-- [ ] **27. Share history addressing for pitch >=41.** For all 40 samples
+- [x] **27. Share history addressing for pitch >=41.** For all 40 samples
   in these subframes, the three history indices remain negative and adjacent.
   Prototype one advancing IX cursor, preserving the general smaller-pitch
   path. Include dispatch/setup in costs and verify threshold 40/41, all
   pitch values, every frame, register contracts and all complete streams.
   The current input has 3519 eligible subframes out of 4672; speedup is not
   yet measured. Do not add output pacing or change Speex packets.
+  [Round27](rounds/27/REPORT.md) dispatches once per subframe and duplicates
+  the sample loop: -43983608 T on speech, 9582.415 T/sample (-2.397%).
+  All 81920 history cases per variant and 1094880 complete-stream samples
+  pass. General subframes cost one extra T/sample; tables/state unchanged.
+- [ ] **28. Specialize the finite pitch-gain multipliers.** Generate exact
+  signed24 constant multiplication routines; compare shift/add/subtract
+  chains including indirect-call/setup costs. Consider replacing the existing
+  192-byte gain triples with same-size routine-pointer triples. Keep the
+  generic energy multiplier, table budget and all input/PCM semantics.
+  Verify all constant/word domains, register contracts, memory and full streams
+  before selecting; no speedup has yet been measured.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

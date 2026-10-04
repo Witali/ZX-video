@@ -50,7 +50,7 @@ def image(path):
             data.update((address+i,v) for i,v in enumerate(row[4:4+row[0]]))
     return data
 
-def native(out,variant='pure-r26',binary=None,require_exact=True,profile=None,entry_observer=None,blocks=None):
+def native(out,variant='pure-r27',binary=None,require_exact=True,profile=None,entry_observer=None,blocks=None):
     from z80 import Z80Machine
     folder=out/variant
     folder.mkdir(parents=True,exist_ok=True)
@@ -221,7 +221,7 @@ if __name__=='__main__':
     p.add_argument('--source',type=Path,default=Path('C:/Work/ZX-video/audiobook-beeper/experiments/ima-waveform/source-preview.wav'))
     p.add_argument('--host-only',action='store_true');p.add_argument('--native-only',action='store_true')
     p.add_argument('--restore-fixture',action='store_true',help='Restore the saved speech packets and independent PCM16 reference')
-    p.add_argument('--variant',default='pure-r26');a=p.parse_args()
+    p.add_argument('--variant',default='pure-r27');a=p.parse_args()
     if a.restore_fixture:
         a.output.mkdir(parents=True,exist_ok=True)
         for name in ('input.spxraw','reference.pcm16'):

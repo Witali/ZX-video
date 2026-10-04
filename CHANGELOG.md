@@ -1,5 +1,21 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round27 shares long-period history addressing
+
+On unchanged round26 speech, dispatch once per 40-sample subframe. For pitch
+>=41 use one advancing IX history cursor and a duplicate loop with unchanged
+clamp/innovation logic; retain the general smaller-period path. Save 316 T
+per fast sample minus 128 T/subframe setup; general path adds 40 T/subframe.
+Complete 1834745357 -> 1790761749 T (-43983608, 2.397%), 9582.415 T/sample.
+All 81920 address/sum cases per variant, 20480 additional upstream samples
+covering every pitch and the standard 1074400 samples pass, with guards,
+instruction audits and fresh default identity. Silence costs one extra
+T/sample; accept the tradeoff for the measured full-speech improvement.
+Code +299 bytes, state/tables unchanged. Select pure-r27; still 21.903x
+over average real-time budget, no ULA/hardware claim. Next investigate
+constant pitch-gain multipliers and same-size pointer triples.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/27/REPORT.md).
+
 ## 2026-10-04: Speex round26 retains pitch accumulation in alternate registers
 
 On unchanged round24 speech, replace RAM accumulation after each active

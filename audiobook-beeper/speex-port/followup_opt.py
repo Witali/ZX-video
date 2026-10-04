@@ -519,20 +519,84 @@ _pitch_flush_end::
     return d,f
 
 
+def shared_pitch_history(d, f):
+    """Dispatch once per subframe; long periods use adjacent history via IX."""
+    shape_start=d.index('exc_shape:\n');sample_start=d.index('exc_sample:\n',shape_start)
+    tail_start=d.index('; S=sum(gain8*history16)',sample_start)
+    subframe_end=d.index('ld hl,#sub_count\ndec (hl)\njp nz,exc_subframe',tail_start)
+    shape=d[shape_start+len('exc_shape:\n'):sample_start]
+    tail=d[tail_start:subframe_end]
+    init=d[d.index('_pitch_init_start::\n')+len('_pitch_init_start::\n'):d.index('_pitch_init_end::')]
+    flush=d[d.index('_pitch_flush_start::\n')+len('_pitch_flush_start::\n'):d.index('_pitch_flush_end::')]
+    additions=[d[d.index(f'_pitch_add_{tap}_start::\n')+len(f'_pitch_add_{tap}_start::\n'):
+                 d.index(f'_pitch_add_{tap}_end::')] for tap in range(3)]
+    # The common innovation/clamp arithmetic is copied exactly. Rename all its
+    # internal labels and loop targets, keeping external routines/data shared.
+    labels=re.findall(r'^(\w+)::?',tail,re.M)
+    mapping={label:'pitch27_fast_'+label for label in labels}
+    mapping.update(exc_sample='_pitch27_fast_sum_start',exc_shape='exc_shape_fast')
+    tail=re.sub(r'\b('+'|'.join(map(re.escape,mapping))+r')\b',lambda m:mapping[m[0]],tail)
+    tail=replace_once(tail,'ld hl,#sample_index\ninc (hl)\n','')
+    fast='''; For pitch >=41 and j=0..39, j-(pitch+1-k) is always negative.
+; The three history words are adjacent; no wrap/skip test is needed. IX
+; advances one word per sample and survives getbits, signed8 multiply and clip.
+; Duplicate the sample/shape loop to avoid a per-sample dispatch. Its clamp,
+; innovation and output-history arithmetic remain identical to the general path.
+exc_shape_fast:
+'''+shape+'''.globl _pitch27_fast_sum_start, _pitch27_fast_sum_end
+_pitch27_fast_sum_start::
+'''+init
+    for tap in range(3):
+        fast+=f'ld e,{2*tap}(ix)\nld d,{2*tap+1}(ix)\nld a,(gain_current+{4-2*tap})\ncall _mul_s8\n'+additions[tap]
+    fast+='inc ix\ninc ix\n'+flush+'_pitch27_fast_sum_end::\n'+tail
+    # General subframes jump over the fast loop once; fast subframes fall through.
+    d=d[:subframe_end]+'jp pitch27_subframe_done\n'+fast+'pitch27_subframe_done:\n'+d[subframe_end:]
+    dispatch='''; Choose one complete 40-sample path per subframe. IX is scratch for
+; packet decoding, as it already is during LSP reconstruction. No new RAM state.
+.globl _pitch27_setup, _pitch27_general_ready, _pitch27_fast_ready
+.globl _pitch27_period, _pitch27_exc_ptr, _pitch27_sample_index, _pitch27_gains
+_pitch27_period = pitch
+_pitch27_exc_ptr = exc_ptr
+_pitch27_sample_index = sample_index
+_pitch27_gains = gain_current
+_pitch27_general_ready = exc_shape
+_pitch27_fast_ready = exc_shape_fast
+_pitch27_setup::
+ld a,(pitch)
+cp #41
+jp c,exc_shape
+; IX=e-2*(pitch+1). ADD HL,HL cannot carry for pitch<=144; subsequent
+; EX/LD preserve that clear carry for SBC, so no extra carry-clear is needed.
+ld l,a
+ld h,#0
+inc hl
+add hl,hl
+ex de,hl
+ld hl,(exc_ptr)
+sbc hl,de
+push hl
+pop ix
+jp exc_shape_fast
+'''
+    d=d[:shape_start]+dispatch+d[shape_start:]
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26'))
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'))
-    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=excitation_shift(d,f)
-    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=innovation_registers(d,f)
-    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=zero_feedback(d,f)
-    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26'))
-    if variant=='pure-r26':d,f=pitch_accumulator(d,f)
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26','pure-r27'))
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'))
+    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=excitation_shift(d,f)
+    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=innovation_registers(d,f)
+    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=zero_feedback(d,f)
+    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26','pure-r27'))
+    if variant in ('pure-r26','pure-r27'):d,f=pitch_accumulator(d,f)
+    if variant=='pure-r27':d,f=shared_pitch_history(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')
