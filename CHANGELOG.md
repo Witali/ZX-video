@@ -1,5 +1,23 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round28 specializes exact pitch-gain products
+
+On unchanged round27 speech, replace the 192-byte gain triples with same-size
+routine-pointer triples and generate 65 constant multiplication routines.
+Compare binary Horner with bounded add/subtract chains, including the +7-T
+indirect-call cost. Selected chains save exactly 96923613 T: 1790761749 ->
+1693838136 T, 9063.774 T/sample (-5.412%). Binary saves 94418524 T and is
+retained as a comparison. All 4259840 products per candidate, instruction/
+register/write guards and 1094880 selected complete-stream samples pass;
+fresh default identity matches. Initial generator placement caused an import
+failure; an obsolete checker profile key then interrupted final reporting.
+Both harness issues were fixed and both candidates rerun to completion.
+Code +1616 bytes, state/tables/payload unchanged. Select pure-r28, still
+20.717x over the average real-time budget; no ULA/hardware claim. Next target
+below 9000 T/sample with direct A:HL pitch returns; the 8994.833-T estimate
+has not been implemented or executed.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/28/REPORT.md).
+
 ## 2026-10-04: Speex round27 shares long-period history addressing
 
 On unchanged round26 speech, dispatch once per 40-sample subframe. For pitch

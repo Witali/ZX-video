@@ -582,21 +582,47 @@ jp exc_shape_fast
     return d,f
 
 
+def constant_pitch_products(d, f, folder, strategy):
+    """Replace the gain book with same-size target triples and constant routines."""
+    import json
+    from constant_pitch import gains,label,generate
+    code,plan=generate(strategy)
+    begin=d.index('pitch_gains:\n');end=d.index('energy_table:',begin)
+    book=gains()
+    table='''; Same 32x3 word book layout, now immutable code pointers. The existing
+; gain_current scratch holds a selected pointer triple instead of gain values.
+.globl _pitch_gain_targets
+_pitch_gain_targets = pitch_gains
+pitch_gains:
+'''
+    for row in range(32):table+='.dw '+','.join(label(g) for g in book[3*row:3*row+3])+f' ; Book {row}\n'
+    d=d[:begin]+table+d[end:]
+    for offset in (0,2,4):
+        old=f'ld a,(gain_current+{offset})\ncall _mul_s8'
+        assert d.count(old)==2
+        d=d.replace(old,f'ld hl,(gain_current+{offset})\ncall _pitch_indirect')
+    point=d.index('\n.area _TABLES (ABS)')
+    d=d[:point]+'\n'+code+d[point:]
+    (folder/'constant-pitch-plan.json').write_text(json.dumps(plan,indent=2)+'\n',newline='\n')
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26','pure-r27'))
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'))
-    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=excitation_shift(d,f)
-    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=innovation_registers(d,f)
-    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=zero_feedback(d,f)
-    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26','pure-r27'))
-    if variant in ('pure-r26','pure-r27'):d,f=pitch_accumulator(d,f)
-    if variant=='pure-r27':d,f=shared_pitch_history(d,f)
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28'))
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28'))
+    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28'):d,f=excitation_shift(d,f)
+    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28'):d,f=innovation_registers(d,f)
+    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28'):d,f=zero_feedback(d,f)
+    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28'))
+    if variant in ('pure-r26','pure-r27','pure-r28-binary','pure-r28'):d,f=pitch_accumulator(d,f)
+    if variant in ('pure-r27','pure-r28-binary','pure-r28'):d,f=shared_pitch_history(d,f)
+    if variant in ('pure-r28-binary','pure-r28'):d,f=constant_pitch_products(d,f,folder,'binary' if variant=='pure-r28-binary' else 'chain')
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')

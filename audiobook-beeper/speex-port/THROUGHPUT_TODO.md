@@ -129,13 +129,25 @@ comparison and report throughput separately from instantaneous OUT gaps.
   the sample loop: -43983608 T on speech, 9582.415 T/sample (-2.397%).
   All 81920 history cases per variant and 1094880 complete-stream samples
   pass. General subframes cost one extra T/sample; tables/state unchanged.
-- [ ] **28. Specialize the finite pitch-gain multipliers.** Generate exact
+- [x] **28. Specialize the finite pitch-gain multipliers.** Generate exact
   signed24 constant multiplication routines; compare shift/add/subtract
   chains including indirect-call/setup costs. Consider replacing the existing
   192-byte gain triples with same-size routine-pointer triples. Keep the
   generic energy multiplier, table budget and all input/PCM semantics.
   Verify all constant/word domains, register contracts, memory and full streams
-  before selecting; no speedup has yet been measured.
+  before selection.
+  [Round28](rounds/28/REPORT.md) selects bounded add/subtract chains over
+  binary Horner: 9063.774 T/sample, 96923613 fewer T (-5.412%). All 4259840
+  products per candidate and 1094880 selected complete-stream samples pass.
+  Code +1616, tables/state unchanged; average real-time deficit still 20.717x.
+- [ ] **29. Return pitch products directly as A:HL.** The accumulator uses
+  only signed24, so avoid the constant helper's signed32 conversion and
+  subsequent high-byte reload. Keep the ordinary 24-T saving separate from
+  zero's proposed 10 T and identity's 4 T. On observed counts the estimate
+  is 12883810 T, or 8994.833 T/sample: aim for **below 9000 T/sample** on
+  the unchanged full speech. Verify every constant/word, modulo24 sums,
+  skipped taps, registers, memory and full streams. This is unimplemented;
+  an instruction estimate does not pass the milestone or real-time goal.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.
