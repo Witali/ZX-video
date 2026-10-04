@@ -35,7 +35,28 @@ def specialized(folder):
                 value=int.from_bytes(m.memory[0x7c00+3*i:0x7c03+3*i],'little',signed=True)
                 assert value==q((i-65)*4,e,14),(i,e,value)
                 table_entries+=1
-    return dict(signed8x16_cases=len(pairs),min_mul_t=min(costs),max_mul_t=max(costs),energy_shape_pairs=count,innovation_table_entries=table_entries)
+    coefficient_entries=0;coefficient_products=0
+    if '_prepare_coefficients' in s:
+        edges=[-32768,-32767,-8192,-257,-1,0,1,255,8192,32767]
+        for batch in range(64):
+            coefficients=edges if batch==0 else [rng.randrange(-32768,32768) for _ in range(10)]
+            m.memory[s['_zx_lpc']:s['_zx_lpc']+20]=struct.pack('<10h',*coefficients)
+            call(m,s['_prepare_coefficients'],budget=1000000)
+            for tap,coef in enumerate(coefficients):
+                for part in range(4):
+                    for nibble in range(16):
+                        at=0x7200+tap*256+part*64+nibble*4
+                        digit=nibble-16 if part==3 and nibble>=8 else nibble
+                        want=(coef*digit<<(4*part))&0xffffffff
+                        assert int.from_bytes(m.memory[at:at+4],'little')==want
+                        coefficient_entries+=1
+                for x in edges+[rng.randrange(-32768,32768) for _ in range(10)]:
+                    call(m,s['_split_nibbles'],hl=x&65535)
+                    call(m,s['_coefficient_product'],a=0x72+tap)
+                    assert (m.hl<<16|m.de)==(coef*x)&0xffffffff,(coef,x,m.hl,m.de)
+                    coefficient_products+=1
+    return dict(signed8x16_cases=len(pairs),min_mul_t=min(costs),max_mul_t=max(costs),energy_shape_pairs=count,innovation_table_entries=table_entries,
+                coefficient_entries=coefficient_entries,coefficient_products=coefficient_products)
 
 
 def main():
@@ -43,6 +64,7 @@ def main():
     p.add_argument('--variant',required=True);p.add_argument('--output',type=Path,default=ROOT/'build/speex-port')
     p.add_argument('--skip-speech',action='store_true');a=p.parse_args();out=a.output;folder=out/a.variant
     result=dict(specialized=specialized(folder))
+    if a.variant in ('pure-r3-register','pure-r3','pure-r4'):result['general_primitives']=primitives(folder)
     result['audit']=audit(folder,(out/'input.spxraw').read_bytes(),(out/'reference.pcm16').read_bytes())
     if not a.skip_speech:native(out,a.variant)
     fixtures={}

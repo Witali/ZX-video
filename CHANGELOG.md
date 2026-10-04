@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round 03, register arithmetic and coefficient tables
+
+Complete TODO item 3. On the original full speech control, register-based
+signed multiplication measures 3408073402 T; adding exact per-coefficient
+nibble tables measures 3089519959 T, delta -847132343 T versus round 02.
+Select the latter despite its larger startup cost (2308118 T first frame).
+Include table construction; the aligned table arena is exactly 16 KiB.
+Both candidates pass every PCM16/PCM8 value, all extra fixtures and guards;
+the selected variant also passes 40960 coefficient entries and 12800
+coefficient products. Instruction audits and all general arithmetic checks
+pass. Clarify dynamic-table write/immutability metadata in round 02 without
+changing measurements. Real time still fails. See
+[round 03 report](audiobook-beeper/speex-port/rounds/03/REPORT.md).
+
 ## 2026-10-04: Speex round 02, cached innovation tables
 
 Complete TODO item 2 with exact quotient/remainder table generation and

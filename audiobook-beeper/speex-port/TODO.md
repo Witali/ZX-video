@@ -10,9 +10,10 @@ item with a focused commit and a report under `rounds/` before continuing.
 - [x] **2. Innovation tables.** Build and cache the two exact energy tables
   with additions; include construction time and RAM in the measurement.
   Completed: [round 02](rounds/02/REPORT.md), 3936652302 T, delta -191694959 T.
-- [ ] **3. Synthesis multiplication.** Compare a register-based multiplier
+- [x] **3. Synthesis multiplication.** Compare a register-based multiplier
   with per-coefficient nibble tables, including preparation costs. Select
   the faster complete decoder within the 16-KiB table allocation.
+  Completed: [round 03](rounds/03/REPORT.md), 3089519959 T, delta -847132343 T.
 - [ ] **4. LPC and interpolation.** Exploit polynomial symmetry and known
   constants, reduce temporary storage, and use exact 16-bit interpolation.
 - [ ] **5. Final verification.** Compare the entire speech stream and

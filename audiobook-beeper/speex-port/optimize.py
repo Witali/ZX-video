@@ -350,12 +350,258 @@ ld l,(hl)''')
     return d
 
 
+def register_multiplier(f):
+    start=f.index('_zx_mul_table::')
+    stop=f.index('; Unsigned A*C',start)
+    code='''; Exact register-based signed16x16 -> HL:DE, preserving IX/IY.
+; BC:HL shifts as a 32-bit accumulator; incoming multiplier bits select adds.
+_zx_mul_table::
+ld a,h
+or a,l
+jr z,reg_zero
+ld a,d
+or a,e
+jr nz,reg_nonzero
+reg_zero:
+ld hl,#0
+ld de,#0
+ret
+reg_nonzero:
+ld a,h
+xor a,d
+and a,#128
+ld (mul_sign),a
+bit 7,h
+jr z,reg_a_positive
+xor a,a
+sub a,l
+ld l,a
+sbc a,a
+sub a,h
+ld h,a
+reg_a_positive:
+bit 7,d
+jr z,reg_b_positive
+xor a,a
+sub a,e
+ld e,a
+sbc a,a
+sub a,d
+ld d,a
+reg_b_positive:
+ld a,h
+or a,a
+jr z,reg_byte
+ld a,d
+or a,a
+jr nz,reg_word
+ex de,hl
+reg_byte:
+ld b,l
+ld c,#0
+ld hl,#0
+jp reg_last8
+reg_word:
+ld b,h
+ld c,l
+ld hl,#0
+'''
+    for i in range(16):
+        if i==8:code+='reg_last8:\n'
+        code+=f'''add hl,hl
+rl c
+rl b
+jr nc,reg_bit_{i}
+add hl,de
+jr nc,reg_bit_{i}
+inc bc
+reg_bit_{i}:
+'''
+    code+='''ex de,hl
+ld h,b
+ld l,c
+ld a,(mul_sign)
+or a,a
+ret z
+xor a,a
+sub a,e
+ld e,a
+ld a,#0
+sbc a,d
+ld d,a
+ld a,#0
+sbc a,l
+ld l,a
+ld a,#0
+sbc a,h
+ld h,a
+ret
+
+'''
+    return f[:start]+code+f[stop:]
+
+
+def coefficient_tables(d,f):
+    d=d.replace('state_end:', '''coef_valid: .ds 1
+coef_old: .ds 20
+coef_ptr: .ds 2
+coef_out: .ds 2
+coef_step: .ds 4
+coef_taps: .ds 1
+coef_group: .ds 1
+coef_count: .ds 1
+coef_nibbles: .ds 4
+state_end:''')
+    code='''
+.globl _coefficient_start, _coefficient_end, _prepare_coefficients
+.globl _split_nibbles, _coefficient_product
+_coefficient_start = 0x7200
+_coefficient_end = 0x7c00
+; Build ten coefficient pages if LPC changed. Each page holds four 16x32-bit
+; partial-product tables, shifted 0/4/8/12 bits; the top nibble is signed.
+; Clobbers both ordinary and alternate AF/BC/DE/HL sets; preserves IX/IY.
+_prepare_coefficients::
+ld a,(coef_valid)
+or a,a
+jr z,coef_rebuild
+ld hl,#_zx_lpc
+ld de,#coef_old
+ld b,#20
+coef_compare:
+ld a,(de)
+cp a,(hl)
+jr nz,coef_rebuild
+inc hl
+inc de
+djnz coef_compare
+ret
+coef_rebuild:
+ld a,#1
+ld (coef_valid),a
+ld hl,#_zx_lpc
+ld de,#coef_old
+ld bc,#20
+ldir
+ld hl,#_zx_lpc
+ld (coef_ptr),hl
+ld hl,#0x7200
+ld (coef_out),hl
+ld a,#10
+ld (coef_taps),a
+coef_tap:
+ld hl,(coef_ptr)
+ld e,(hl)
+inc hl
+ld d,(hl)
+inc hl
+ld (coef_ptr),hl
+ld (coef_step),de
+ld a,d
+add a,a
+sbc a,a
+ld h,a
+ld l,a
+ld (coef_step+2),hl
+ld hl,(coef_out)
+exx
+xor a,a
+ld (coef_group),a
+coef_group_start:
+ld hl,#0
+ld de,#0
+ld a,#16
+ld (coef_count),a
+coef_build_loop:
+'''
+    for reg in ('e','d','l','h'):
+        code+=f'ld a,{reg}\nexx\nld (hl),a\ninc hl\nexx\n'
+    code+='''ld bc,(coef_step)
+ex de,hl
+add hl,bc
+ex de,hl
+ld bc,(coef_step+2)
+adc hl,bc
+ld a,(coef_count)
+dec a
+ld (coef_count),a
+jr z,coef_group_done
+cp #8
+jr nz,coef_build_loop
+ld a,(coef_group)
+cp #3
+jr nz,coef_build_loop
+; At nibble 8, current value is +8*step. Flip it for signed digits -8..-1.
+call neg32
+jr coef_build_loop
+coef_group_done:
+ld a,(coef_group)
+inc a
+ld (coef_group),a
+cp #4
+jr z,coef_tap_done
+; Sixteen increments already formed the next group's step = previous*16.
+ld (coef_step),de
+ld (coef_step+2),hl
+jp coef_group_start
+coef_tap_done:
+exx
+ld (coef_out),hl
+exx
+ld a,(coef_taps)
+dec a
+ld (coef_taps),a
+jp nz,coef_tap
+ret
+
+; HL signed sample multiplier. Split it once for all ten taps; clobbers AF only.
+_split_nibbles::
+'''
+    for i,reg in enumerate(('l','l','h','h')):
+        code+=f'ld a,{reg}\n'
+        code+=('and a,#15\nadd a,a\nadd a,a\n' if i%2==0 else 'and a,#240\nrrca\nrrca\n')
+        if i:code+=f'or a,#{64*i}\n'
+        code+=f'ld (coef_nibbles+{i}),a\n'
+    code+='''ret
+; A=coefficient page; four cached offsets -> exact signed32 HL:DE.
+; Byte additions propagate carry in order, preserving the reference wrap semantics.
+_coefficient_product::
+ld h,a
+ld a,(coef_nibbles)
+ld l,a
+ld e,(hl)
+inc l
+ld d,(hl)
+inc l
+ld c,(hl)
+inc l
+ld b,(hl)
+'''
+    for i in range(1,4):
+        code+=f'ld a,(coef_nibbles+{i})\nld l,a\n'
+        for j,reg in enumerate(('e','d','c','b')):
+            code+=f'ld a,{reg}\n'+('add' if j==0 else 'adc')+f' a,(hl)\nld {reg},a\n'
+            if j!=3:code+='inc l\n'
+    code+='ld h,b\nld l,c\nret\n'
+    d=d.replace('.area _TABLES (ABS)',code+'\n.area _TABLES (ABS)')
+    f=f.replace('.module speex_filter','.module speex_filter\n.globl _prepare_coefficients, _split_nibbles, _coefficient_product')
+    f=replace_once(f,'    ld (asm_count),a','    ld (asm_count),a\n    call _prepare_coefficients')
+    f=replace_once(f,'    ld (asm_n),hl','    ld (asm_n),hl\n    call _split_nibbles')
+    for i in range(10):
+        f=replace_once(f,f'    ld hl,(_zx_lpc+{2*i})\n    ld de,(asm_n)\n    call _zx_mul_table',f'    ld a,#{0x72+i}\n    call _coefficient_product')
+    return d,f
+
+
 def optimize(folder,variant):
     d=(folder/'decoder.s').read_text()
     d=stage1(d)
     if variant!='pure-r1':d=stage2(d)
+    f=(folder/'filter.s').read_text()
+    if variant in ('pure-r3-register','pure-r3','pure-r4'):f=register_multiplier(f)
+    if variant in ('pure-r3','pure-r4'):d,f=coefficient_tables(d,f)
     d=d.replace('_entry::','; Entry: packet count at B000; resets state/stack, disables IRQ, clobbers all registers.\n_entry::')
     d=d.replace('_zx_speex_decode::','; Decode one validated 20-byte packet. Carry reports an unsupported mode.\n; Excitation precedes four delayed 40-sample synthesis blocks. All scratch is private.\n_zx_speex_decode::')
     d=d.replace('_zx_speex_lpc::','; Interpolated LSP angles -> next_lpc, preserving upstream fixed-point rounding.\n; P/Q polynomial arithmetic wraps at 32 bits; final coefficients saturate symmetrically.\n_zx_speex_lpc::')
     d=d.replace('enforce_margin:','; Enforce ordered LSP spacing exactly as upstream before the cosine conversion.\nenforce_margin:')
     (folder/'decoder.s').write_text(d,newline='\n')
+    f=f.replace('_zx_speex_filter::','; HL excitation input, DE PCM16 output; 40 samples and direct PCM8 OUT.\n; Preserves IX/IY; AF/BC/DE/HL and private scratch are clobbered.\n_zx_speex_filter::')
+    (folder/'filter.s').write_text(f,newline='\n')

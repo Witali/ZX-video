@@ -31,12 +31,12 @@ def machine(folder):
     m.set_breakpoint(0x7f00)
     return m
 
-def call(m,address,**regs):
+def call(m,address,budget=100000,**regs):
     for k,v in regs.items():setattr(m,k,v)
-    m.sp=0xbffc;m.memory[m.sp:m.sp+2]=b'\x00\x7f';m.pc=address;m.ticks_to_stop=100000
+    m.sp=0xbffc;m.memory[m.sp:m.sp+2]=b'\x00\x7f';m.pc=address;m.ticks_to_stop=budget
     while m.pc!=0x7f00:
         e=m.run();assert not(e&m._TICKS_LIMIT_HIT),'primitive timeout'
-    return 100000-m.ticks_to_stop
+    return budget-m.ticks_to_stop
 
 def primitives(folder):
     s=symbols(folder);m=machine(folder);eight=Counter();sixteen=Counter()

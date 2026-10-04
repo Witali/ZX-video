@@ -149,7 +149,7 @@ def native(out,variant='pure-fast',binary=None):
                 real_time=total<=len(events)*437.5 and max(intervals)<=438,
                 pages=pages,code_rodata_bytes=len(memory),bss_bytes=bss_size,
                 code_bytes=sum(a>=0x8000 for a in memory),tables_bytes=sum(a<0x8000 for a in memory),
-                all_cpu_writes_inside_state_or_stack=True,input_code_tables_unchanged=True,
+                all_cpu_writes_inside_declared_regions=True,input_code_static_tables_unchanged=True,
                 initial_state_fill=state_fill,
                 dynamic_table_reserved_bytes=sum(hi-lo for lo,hi in dynamic),
                 dynamic_table_regions=dynamic,
