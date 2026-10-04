@@ -1,5 +1,35 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Retire obsolete speech preview disk images
+
+At the user's request, remove 24 obsolete speech TRDs from the current
+checkout: 12 root listening previews and 12 archived copies/earlier builds.
+Baseline is `9dbe81c20912e18a0b79fb724cdcbeed72cbd0df`. The selected files total
+15728640 bytes (15 MiB); this is checkout image size, not Git/LFS storage
+reclaimed. The [retirement inventory](audiobook-beeper/retired-disks.json)
+records each exact path, SHA-256, reason and recovery commit. Selection
+covers rejected early AY speech and superseded PDM/IMA/PWM speech previews;
+it is not a new cross-codec SNR measurement.
+
+Retain current overlap speech, qualified IMA3 and four-bit waveform
+baselines, both music examples, the pending pitch-aware AY candidate,
+movie releases and calibration/correctness fixtures. Keep the old
+`ima-preview/audiobook-preview.trd` needed by two research scripts and point
+those scripts to that exact archived copy instead of its retired root alias.
+The existing PDM rebuild regression now checks the archived report's SHA-256,
+preserving exact-byte verification without the duplicate TRD fixture.
+Sources, WAVs, traces, historical reports and earlier log entries remain.
+Update active links and identify retired disks in their historical guides.
+
+Verification: all 24 selected images match their HEAD LFS identities before
+removal; all 175 other tracked TRD hashes are unchanged afterward; no Markdown
+link outside this historical log targets a deleted image. The retained ADPCM
+baseline matches its Fuse proof. All six existing `test_pdm.py` tests pass
+with the bundled Python 3.12 and project packages on PYTHONPATH; initial
+default-interpreter attempts lacked compatible NumPy. Syntax and diff checks
+pass. No player hot path changes (0 T delta), new audio measurements, history
+rewrites, LFS pruning or worktree cleanup are included.
+
 ## 2026-10-04: Document the direct IMA3-to-PDM pipeline
 
 At the user's request, save the chat's decoding explanation and diagrams in

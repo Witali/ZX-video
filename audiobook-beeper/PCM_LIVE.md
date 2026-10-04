@@ -1,18 +1,23 @@
 # Convert PCM8 to beeper PDM on the Z80
 
+**Disk retirement (2026-10-04):** obsolete speech TRDs described below
+were removed at the user's request. Links marked "retired" lead to the
+[removal inventory](retired-disks.json), with exact paths, hashes and the recovery
+commit. Measurements, WAVs and build instructions remain historical evidence.
+
 **Current version, 2026-10-02:** the root disk uses all eight banks for
 118.5 KiB PCM. See [full-memory delivery](FULL_MEMORY.md) and
 [paging diagnosis and verified correction](PAGING_FIX.md).
 The measurements and alias description below document the original
 `pcm-live-preview` build; they are retained as its historical baseline.
 
-The independently bootable [test disk](../ZX-audiobook-PDM-live-test.trd)
+The independently bootable [test disk (retired)](retired-disks.json)
 stores unsigned **8000 Hz /8-bit mono PCM** and converts it directly to
 beeper pulses during playback. No prepared PDM payload, expanded PDM RAM
 buffer or PDM lookup table is used. The accumulator and output pipeline
 occupy registers A and E; D holds the current PCM byte.
 
-The earlier [8k8 disk](../ZX-audiobook-PDM-8k8-test.trd) stored already
+The earlier [8k8 disk (retired)](retired-disks.json) stored already
 packed PDM, eight pulses per byte. It loaded those bytes and shifted them
 directly to the beeper; there was no separate decompression buffer.
 

@@ -1,5 +1,10 @@
 # Three-bit IMA disk with fast expansion
 
+**Disk retirement (2026-10-04):** obsolete speech TRDs described below
+were removed at the user's request. Links marked "retired" lead to the
+[removal inventory](retired-disks.json), with exact paths, hashes and the recovery
+commit. Measurements, WAVs and build instructions remain historical evidence.
+
 Later result (2026-10-03): the [waveform-aware IMA3 disk](IMA3_WAVEFORM.md)
 now reaches **20.071 dB on both complete cold Fuse loops**, preserving this
 storage/player architecture. The measurements below describe the earlier
@@ -16,7 +21,7 @@ reset. The screen shows **LOADING AUDIO DATA**, disk-reading progress and
 IMA expansion progress; the loading message disappears before playback.
 The excerpt repeats automatically without disk access during playback.
 
-Disk: [ZX-audiobook-IMA3-PDM-test.trd](../ZX-audiobook-IMA3-PDM-test.trd).
+Disk: [ZX-audiobook-IMA3-PDM-test.trd (retired)](retired-disks.json).
 Saved [results](experiments/ima-3bit-preload/report.json) and
 [Fuse audio](experiments/ima-3bit-preload/result-preview.wav).
 

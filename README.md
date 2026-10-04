@@ -7,8 +7,11 @@ a particular movie or remove credits automatically.
 
 ## Usage
 
-An audio-only subproject provides a [two-minute O. Henry AY preview](audiobook-ay/README.md),
-with comparison WAVs and an independently bootable Spectrum 128 TRD.
+For audio-only speech, use the [automatic IMA3 converter](audiobook-beeper/IMA3_DIRECT.md)
+and the latest [overlap speech disk](ZX-audiobook-IMA3-overlap-test.trd).
+[AY music conversion](audiobook-ay/CONVERTER.md) is also available.
+[Obsolete speech previews were retired](audiobook-beeper/retired-disks.json);
+comparison WAVs and experiment reports remain available.
 
 Install Python 3.11+, FFmpeg/ffprobe and the ZX0 v2 compressor in `PATH`.
 

@@ -190,7 +190,7 @@ def main():
         variants[name] = measure(blob, labels, packed, meta['initial_predictor'],
                                  meta['initial_index'], slots, balanced)
         print(name, json.dumps(variants[name]), flush=True)
-    release = (HERE.parent / 'ZX-audiobook-IMA-ADPCM-test.trd').read_bytes()
+    release = (baseline / 'audiobook-preview.trd').read_bytes()
     baseline_verification = json.loads((baseline / 'verification.json').read_bytes())
     if sha(release) != baseline_verification['fuse']['trd_sha256']:
         raise AssertionError('release image is no longer the verified baseline')

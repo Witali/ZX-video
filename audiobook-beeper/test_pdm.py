@@ -2,6 +2,8 @@
 import unittest
 import numpy as np
 import gzip
+import hashlib
+import json
 from pathlib import Path
 
 from pdm_player import build_disk, BANK_BYTES, BANKS, BIT_TSTATES
@@ -27,7 +29,9 @@ class PlayerTests(unittest.TestCase):
         directory=Path(__file__).resolve().parent/'preview'
         packed=gzip.decompress((directory/'soundtrack.pdm.gz').read_bytes())
         disk,_=build_disk(packed)
-        self.assertEqual(disk,(directory/'audiobook-preview.trd').read_bytes())
+        report=json.loads((directory/'report.json').read_bytes())
+        self.assertEqual(hashlib.sha256(disk).hexdigest(),
+                         report['artifacts']['audiobook-preview.trd']['sha256'])
 
     def test_repeat_preserves_two_cycles_and_both_wraps(self):
         for period in (52,46):

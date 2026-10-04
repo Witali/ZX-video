@@ -1,10 +1,15 @@
 # Bootable packet PDM experiment
 
+**Disk retirement (2026-10-04):** obsolete speech TRDs described below
+were removed at the user's request. Links marked "retired" lead to the
+[removal inventory](retired-disks.json), with exact paths, hashes and the recovery
+commit. Measurements, WAVs and build instructions remain historical evidence.
+
 Acceptance update, 2026-10-03: the user requires playback speed/pitch within
 **+/-2%** of the original. This delivered experiment fails that gate as well
 as the 20-dB SNR goal; do not treat it as the accepted final player.
 
-Use [the separate TRD](../ZX-audiobook-IMA-ADPCM-packet-test.trd) with
+Use [the separate TRD (retired)](retired-disks.json) with
 Spectrum 128 and Beta Disk/TR-DOS, without turbo. Start the boot program
 (`RUN` in TR-DOS if automatic disk boot is disabled). Loading takes about
 26 seconds in the checked Fuse setup. **Loading audio data** disappears

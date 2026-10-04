@@ -1,5 +1,10 @@
 # Beeper PDM audiobook preview
 
+**Disk retirement (2026-10-04):** obsolete speech TRDs described below
+were removed at the user's request. Links marked "retired" lead to the
+[removal inventory](retired-disks.json), with exact paths, hashes and the recovery
+commit. Measurements, WAVs and build instructions remain historical evidence.
+
 For a new recording, use the [automatic packed IMA3 converter](IMA3_DIRECT.md).
 It defaults to [one TRD with sequential RAM-sized parts](IMA3_SERIES.md).
 Use `--disk-mode all` for the entire track on numbered TRDs, or
@@ -36,11 +41,11 @@ before interpreting the SNR figures below as end-to-end voice quality.
 The [direct-pointer follow-up](DIRECT.md) fixes playback speed while retaining
 the complete source: **+0.042%** overall, worst **0.112%** on checked 0.1-second
 windows. It measures **18.85 dB** total SNR and **128.05 kHz** average output.
-Use [its historical TRD](../ZX-audiobook-IMA-ADPCM-direct-test.trd) to reproduce
+Use [its historical TRD (retired)](retired-disks.json) to reproduce
 that checkpoint; the newer waveform-aware result above supersedes its
 quality measurement on the complete control excerpt.
 
-The [new packet TRD](../ZX-audiobook-IMA-ADPCM-packet-test.trd) plays a
+The [new packet TRD (retired)](retired-disks.json) plays a
 25.72-second loop using compact output codebooks and live IMA decoding.
 Stock Fuse128 measures 116.25 kHz average output and 17.26 dB total SNR;
 the 20-dB native model is reduced by ULA contention. Playback is about
@@ -48,7 +53,7 @@ the 20-dB native model is reduced by ULA contention. Playback is about
 
 ## Live feedback PDM experiment
 
-The [separate feedback TRD](../ZX-audiobook-IMA-ADPCM-feedback-test.trd)
+The [separate feedback TRD (retired)](retired-disks.json)
 uses an 8-KiB state table while decoding IMA live. It plays a 26.6-second
 preview in a loop, with **63.919 kHz measured average output**. Total SNR
 on the matched source prefix improves **11.55 ->14.03 dB**; the ideal host
@@ -58,7 +63,7 @@ model's 16.6 dB is not reproduced by this finite-state implementation.
 
 ## Fast PWM experiment: above 40 kHz on average
 
-Use [PWM40 TRD](../ZX-audiobook-IMA-ADPCM-PWM40-test.trd) on Fuse / Spectrum
+Use [PWM40 TRD (retired)](retired-disks.json) on Fuse / Spectrum
 128 / Beta Disk. It boots independently, decodes the unchanged IMA stream
 on the Z80, fills the same RAM allocation and repeats continuously.
 
@@ -121,7 +126,7 @@ python audiobook-beeper/build_pwm.py --fast --record --output build/ima-pwm40 --
 
 ## Additional experiment: live PWM
 
-[Try the PWM disk](../ZX-audiobook-IMA-ADPCM-PWM-test.trd) on **Fuse / Spectrum
+[Try the PWM disk (retired)](retired-disks.json) on **Fuse / Spectrum
 128 / Beta Disk**. It independently boots, preloads the same 115456 IMA bytes,
 decodes them on the Z80 and loops without a PCM or pulse buffer. The primary
 PDM disk below remains unchanged. This PWM experiment does **not** meet the
@@ -195,7 +200,7 @@ python audiobook-beeper/pack_ima.py build/ima-pwm --output build/ima-pwm/repacke
 
 ## Current test: uniform timing with the original PDM model
 
-Use [uniform-timing TRD](../ZX-audiobook-IMA-ADPCM-uniform-test.trd) on
+Use [uniform-timing TRD (retired)](retired-disks.json) on
 Spectrum 128 with Beta Disk/TR-DOS. It retains the original accumulator PDM
 model, six pulses per sample, the same IMA bytes, all 128 KiB RAM allocation
 and endless playback. The RC-feedback experiment is retained as research
@@ -262,7 +267,7 @@ python audiobook-beeper/compare_uniform_ima.py --before audiobook-beeper/ima-pre
 
 ## Previous test: general IMA ADPCM decoded directly to beeper PDM
 
-[IMA ADPCM test disk](../ZX-audiobook-IMA-ADPCM-test.trd) holds **230912 samples**
+[IMA ADPCM test disk (retired)](retired-disks.json) holds **230912 samples**
 in **115456 compressed bytes**, exactly 2:1 against the requested unsigned
 8 kHz /8-bit mono PCM. A complete loop takes **29.054 seconds** in Fuse 128;
 the source excerpt is 28.864 seconds starting at 01:00. The actual decoded
@@ -514,7 +519,7 @@ python audiobook-beeper/probe_rc_cost.py
 
 ## Previous test: convert PCM to PDM while playing
 
-[Live conversion TRD](../ZX-audiobook-PDM-live-test.trd) stores the actual
+[Live conversion TRD (retired)](retired-disks.json) stores the actual
 8 kHz /8-bit mono PCM bytes. Z80 converts them while playing, with no PDM
 buffer or lookup table. All eight RAM banks provide **121344 PCM bytes
 (118.5 KiB)**, with a **15.402-second** repeating excerpt after the initial
@@ -534,8 +539,8 @@ from the host computer into the Spectrum playback loop.
 The preceding user request converted the demonstration to **8000 Hz, 8-bit mono
 PCM**, raises the PDM rate, saves a TRD and repeats playback continuously.
 
-- [Looping test TRD](../ZX-audiobook-PDM-8k8-test.trd).
-- [Exact archived disk](preview-8k8-loop/audiobook-preview.trd).
+- [Looping test TRD (retired)](retired-disks.json).
+- [Exact archived disk (retired)](retired-disks.json).
 - [Actual 8000 Hz / unsigned 8-bit mono WAV](preview-8k8-loop/pcm8k-preview.wav).
 - [Reconstructed beeper listening WAV](preview-8k8-loop/beeper-preview.wav).
 - [Complete build report](preview-8k8-loop/report.json) and
@@ -596,8 +601,8 @@ This is a resident demonstration, not a continuous two-minute/full-book stream.
 
 ## Original 52-T test disk and listening files
 
-- [Root test TRD](../ZX-audiobook-PDM-test.trd).
-- [Identical archived TRD](preview/audiobook-preview.trd).
+- [Root test TRD (retired)](retired-disks.json).
+- [Identical archived TRD (retired)](retired-disks.json).
 - [PDM with a 4.5 kHz reconstruction filter](preview/beeper-preview.wav).
 - [PDM wideband output](preview/wideband-preview.wav).
 - [Prepared original with the same reconstruction filter](preview/original-preview.wav).
