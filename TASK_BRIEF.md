@@ -14,6 +14,16 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
+The separate [public-domain music example](audiobook-beeper/experiments/ima-3bit-entertainer/README.md)
+uses The Entertainer by Scott Joplin, performed by IE. The user explicitly
+accepts the best found music result below 20 dB. Three automatic searches
+select a 31.128-s excerpt at 17.837011/17.836344 dB in complete cold Fuse
+loops, with -0.328930% speed error and 0/0-T phase errors. The full 93432-byte
+audio capacity now contains real music. This remains a listening preview
+under the converter's unchanged 20-dB gate; no global optimum or physical
+hardware claim is made. Use `ZX-music-Entertainer-IMA3.trd`. The player hot
+path is unchanged, delta 0 T. Do not replace the audiobook reference below.
+
 The direct packed-IMA3 implementation now passes the same complete original
 186880-sample reference at **20.159645 /20.159651 dB** in two cold Fuse loops,
 without Spectrum-side IMA3-to-IMA4 expansion. Resident audio is70080 bytes,

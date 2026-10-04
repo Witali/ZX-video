@@ -1,0 +1,113 @@
+[
+  {
+    "directory": "encode-1",
+    "scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n",
+    "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\.tmp\\entertainer-ima3\\pilot",
+    "samples": 249152,
+    "beam_width": 256,
+    "block_size": 128,
+    "allowed_ima_nibbles": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14
+    ],
+    "ima3_subset": true,
+    "source_sha256": "b4a8d5f02beee1d819570b7324fc721f277d4fce787a0e355c1e3b611ba21252",
+    "packed_sha256": "43a76a4feafc63514731c86810c725188616088c0a83d6c0ae76025620febb01",
+    "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state",
+    "history_bins": 0,
+    "baseline_model_snr_db": -3.2792915802618943,
+    "host_fixed_clock_snr_db": 17.598735391250738,
+    "control_prior": "compensated",
+    "control_regularization": 0.03,
+    "elapsed_seconds": 200.5,
+    "ordinary_native_tstate_delta": 0,
+    "new_timeline_verified": false,
+    "saturation_guard": {
+      "samples": 249152,
+      "saturation_events": 0,
+      "raw_min": -26213,
+      "raw_max": 26067
+    },
+    "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"
+  },
+  {
+    "directory": "encode-2",
+    "scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n",
+    "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\.tmp\\entertainer-ima3\\pilot",
+    "samples": 249152,
+    "beam_width": 512,
+    "block_size": 128,
+    "allowed_ima_nibbles": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14
+    ],
+    "ima3_subset": true,
+    "source_sha256": "b4a8d5f02beee1d819570b7324fc721f277d4fce787a0e355c1e3b611ba21252",
+    "packed_sha256": "b0893743a85ddd30e9adabc14fea28f5e00370a0c4c56cd0bb830fcbbaa28269",
+    "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state",
+    "history_bins": 0,
+    "baseline_model_snr_db": -3.2792915802618943,
+    "host_fixed_clock_snr_db": 17.66321322840495,
+    "control_prior": "compensated",
+    "control_regularization": 0.03,
+    "elapsed_seconds": 324.48400000005495,
+    "ordinary_native_tstate_delta": 0,
+    "new_timeline_verified": false,
+    "saturation_guard": {
+      "samples": 249152,
+      "saturation_events": 0,
+      "raw_min": -27076,
+      "raw_max": 28939
+    },
+    "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"
+  },
+  {
+    "directory": "encode-3",
+    "scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n",
+    "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\.tmp\\entertainer-ima3\\pilot",
+    "samples": 249152,
+    "beam_width": 1024,
+    "block_size": 256,
+    "allowed_ima_nibbles": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14
+    ],
+    "ima3_subset": true,
+    "source_sha256": "b4a8d5f02beee1d819570b7324fc721f277d4fce787a0e355c1e3b611ba21252",
+    "packed_sha256": "f93ca75ca07ca6ae74f0a822c1be9f85c1062bfad81c480a30556ea9970f909c",
+    "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state",
+    "history_bins": 0,
+    "baseline_model_snr_db": -3.2792915802618943,
+    "host_fixed_clock_snr_db": 17.83701086613708,
+    "control_prior": "compensated",
+    "control_regularization": 0.03,
+    "elapsed_seconds": 1000.6720000000205,
+    "ordinary_native_tstate_delta": 0,
+    "new_timeline_verified": false,
+    "saturation_guard": {
+      "samples": 249152,
+      "saturation_events": 0,
+      "raw_min": -27071,
+      "raw_max": 26126
+    },
+    "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"
+  }
+]

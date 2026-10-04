@@ -5,6 +5,48 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-04: Public-domain music example with direct packed IMA3
+
+The user requests a recognizable melody on TRD, selects an unrestricted
+recording instead of Queen, and explicitly accepts the highest found SNR
+even below 20 dB. Use Scott Joplin's The Entertainer, performed by IE; the
+source page separately declares the composition public domain and the
+recording dedicated to the public domain with a permission fallback.
+Preserve the exact downloaded Ogg, attribution, page revision, URL and hash
+in [the music example](audiobook-beeper/experiments/ima-3bit-entertainer/README.md).
+
+Run the unchanged automatic converter from acf1682 on the initial 31.128 s
+of stereo 44.1-kHz Vorbis, preparing 249152 mono 8-kHz PCM8 samples with the
+128-sample guard. This fills 93432 bytes of packed IMA3 across all seven
+resident audio banks. No IMA4, full PCM or PDM expansion buffer is added.
+The Z80 hot path stays 427.375 native T/sample, delta 0 T; page/bank extras
+remain +14/+140 T. The selected native loop costs 106544136 T; the actual
+Fuse loop costs 110829204 T including ULA effects. Disk/ROM startup remains
+separate, with 425 startup sector reads and zero runtime disk reads.
+
+The uncompensated pilot measures -3.279182/-3.279105 dB and is rejected for
+delivery. Automatic host searches at width 256/horizon 128, width 512/horizon 128
+and width 1024/horizon 256, all regularization 0.03, score 17.598735, 17.663213
+and 17.837011 dB. Execute the selected third candidate on a new cold-booted
+disk: complete loops measure 17.837011/17.836344 dB, -0.328930% speed error,
+127652.897 mean PDM outputs/s and 0/0-T phase errors. Full native and Fuse
+verification covers 7977485 outputs and 498304 predictor/index samples;
+memory guards, all banks, 32 loading progress steps and message hiding pass.
+Normal-speed Fuse capture confirms two wraps, correct paging latches,
+26.454422-s cold startup and a 62.505964-s WAV, with signal in every half-second
+window. Integrity-checked resume reuses all six stages and returns the
+expected quality-status exit code 2 without replaying the audio.
+The source and comparison filter stay fixed; no fitted gain/delay/time
+stretch is used. First/second search results remain host estimates only.
+
+Deliver `ZX-music-Entertainer-IMA3.trd` as the user-authorized listening
+preview. The converter correctly retains its 20-dB gate failure and exit code 2;
+do not claim 20 dB, a universal maximum, or physical-hardware verification.
+Keep the existing 20.1596-dB audiobook release unchanged. The source, TRD,
+WAVs and large trace data use Git LFS; reproduction commands, full selected
+trace, timing data, measurements and unsuccessful search results are saved
+with the example.
+
 ## 2026-10-04: Packed IMA3 playback, uniform table timing and automatic conversion
 
 The user requests removal of the IMA3-to-IMA4 conversion, optionally higher
