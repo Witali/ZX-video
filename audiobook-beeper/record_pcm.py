@@ -125,6 +125,9 @@ def main():
     meta = json.loads((args.input/'player.json').read_bytes())
     labels = meta['player_labels']
     lines = ['base 10', 'set $wraps 0']
+    preload = meta.get('preload', meta.get('lpc_preload'))
+    # Keep the debugger variable name free of underscores (Fuse lexer).
+    if preload: lines.append('set $preloadstage 0')
     event_id = 0
 
     def event(address, tag, expressions, after=(), condition='', stop=False):
@@ -134,6 +137,7 @@ def main():
         lines.extend('print '+x for x in expressions)
         lines.extend(after)
         lines.extend(['exit 77' if stop else 'continue', 'end'])
+        if preload: condition = '$preloadstage==2'+(' && ('+condition+')' if condition else '')
         if condition:
             lines.append(f'condition {event_id} {condition}')
 
@@ -147,6 +151,12 @@ def main():
         stops=[labels['out_0_0_0']+meta.get('record_stop_offset',4 if meta.get('steady', False) else 3)]
     for address in stops:
         event(address,200,['spectrum:frames','ula:tstates'],condition='$wraps==2',stop=True)
+    if preload:
+        handoff = preload['labels'].get('handoff', preload['labels']['unpack_complete'])
+        lines += [f'breakpoint {handoff}', f'condition {event_id+1} $preloadstage==0', f'commands {event_id+1}',
+                  'set $preloadstage 1', 'continue', 'end', 'breakpoint 32768',
+                  f'condition {event_id+2} $preloadstage==1', f'commands {event_id+2}',
+                  'set $preloadstage 2', 'continue', 'end']
     script = '\n'.join(lines)
     (out/'fuse-debugger.txt').write_text(script, encoding='utf-8', newline='\n')
     movie_path = out/'capture.fmf'

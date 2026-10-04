@@ -1,0 +1,5805 @@
+{
+  "scope": "Compare stock Speex API options and integer decoding on the full source.\n\nNo library algorithms are patched. Disabling the optional highpass and\nperceptual enhancement is a supported API configuration, not a new codec.\nThe known 40+40 sample codec latency is removed; no fitted gain or timing.\n",
+  "date": "2026-10-03",
+  "complete": true,
+  "source_pcm8_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+  "samples": 186880,
+  "seconds": 23.36,
+  "pcm16_denominator_bytes": 373760,
+  "filter": "highpass=f=70,lowpass=f=4500:p=2,lowpass=f=4500:p=2",
+  "source_release": "Speex 1.2.1",
+  "encoder_arithmetic": "floating point, highest complexity 10",
+  "native_z80_tested": false,
+  "integrated_pdm_tested": false,
+  "end_to_end_20db_verified": false,
+  "rows": [
+    {
+      "name": "speex-8000-hp1-enh1-float",
+      "bitrate_bps": 8000,
+      "highpass": 1,
+      "enhancement": 1,
+      "arithmetic": "float",
+      "frame_bits": 160,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 20,
+      "payload_bytes": 23380,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 23412,
+      "pcm16_to_codec_ratio": 15.964462668716898,
+      "payload_sha256": "2cdfb355f84232828900deea284edd84f42a8d5efc8b580245de393eefdf07d5",
+      "codec": {
+        "filtered_snr_db": 2.3007986992709406,
+        "raw_pcm16_snr_db": 2.2569668254112933,
+        "peak_abs_pcm16_error": 29602,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 3.0899922198212386
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 2.581031436162271
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 2.973059147615053
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 4.306564126034383
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 2.598359398165944
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 4.830576714663879
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 4.147542719025279
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 3.1421927167854378
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 1.963477990688448
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 1.352670866842762
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 2.0587080211722415
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 0.44614724462849503
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 3.136227287739421
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 1.4712992653383492
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 2.112276913570778
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 1.1916442957728786
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 0.32517015707444274
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 0.38389850860235825
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 1.120707122978845
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 3.8163949870887075
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 2.4377040374199552
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 2.091131694373446
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 2.0293796452209873
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-8000-hp1-enh1-fixed",
+      "bitrate_bps": 8000,
+      "highpass": 1,
+      "enhancement": 1,
+      "arithmetic": "fixed",
+      "frame_bits": 160,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 20,
+      "payload_bytes": 23380,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 23412,
+      "pcm16_to_codec_ratio": 15.964462668716898,
+      "payload_sha256": "2cdfb355f84232828900deea284edd84f42a8d5efc8b580245de393eefdf07d5",
+      "codec": {
+        "filtered_snr_db": 2.3033634394484532,
+        "raw_pcm16_snr_db": 2.259669080203887,
+        "peak_abs_pcm16_error": 29676,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 3.0881822325599555
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 2.5770996573446108
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 2.9746131896089527
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 4.302904329301694
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 2.603446777577039
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 4.832801768653141
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 4.142976795957806
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 3.14680070828378
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 1.9527822313052097
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 1.3621141090635456
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 2.0588014445341645
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 0.4525800346151096
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 3.1362728301720444
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 1.4746112415622776
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 2.114596776549241
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 1.1979844129844737
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 0.3316126531844135
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 0.3886713138408384
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 1.1173395943921747
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 3.8164115700334813
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 2.4428559337056295
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 2.094797744979841
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 2.0314178098204487
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-8000-hp0-enh1-float",
+      "bitrate_bps": 8000,
+      "highpass": 0,
+      "enhancement": 1,
+      "arithmetic": "float",
+      "frame_bits": 160,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 20,
+      "payload_bytes": 23380,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 23412,
+      "pcm16_to_codec_ratio": 15.964462668716898,
+      "payload_sha256": "359ece7a0e8f35ce0ec4ab3516b8331bdbedec74b39c3b4e49806038367b4076",
+      "codec": {
+        "filtered_snr_db": 13.200626403930366,
+        "raw_pcm16_snr_db": 12.95301589279951,
+        "peak_abs_pcm16_error": 18989,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 14.645643797519742
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 15.759128963597526
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 14.51526491079376
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 13.502082971395279
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 11.845743344212813
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 11.837229999126855
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 14.202001053425432
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 11.61102123603743
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 15.404965748326543
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 13.371178530956202
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 12.760925152346417
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 12.147162482026852
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 14.893614768489375
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 13.742304013952024
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 12.510948286840122
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 12.279651887546919
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 13.207504336142684
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 12.39664045442809
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 14.556453206743882
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 12.607030787756175
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 14.745548870714858
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 10.449540673283156
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 12.54618403879633
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-8000-hp0-enh1-fixed",
+      "bitrate_bps": 8000,
+      "highpass": 0,
+      "enhancement": 1,
+      "arithmetic": "fixed",
+      "frame_bits": 160,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 20,
+      "payload_bytes": 23380,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 23412,
+      "pcm16_to_codec_ratio": 15.964462668716898,
+      "payload_sha256": "359ece7a0e8f35ce0ec4ab3516b8331bdbedec74b39c3b4e49806038367b4076",
+      "codec": {
+        "filtered_snr_db": 13.222477004201762,
+        "raw_pcm16_snr_db": 12.97389456122065,
+        "peak_abs_pcm16_error": 18915,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 14.663819531566682
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 15.797803691058796
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 14.54151759604639
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 13.51209427420523
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 11.872858669222527
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 11.86565401614136
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 14.202046930260641
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 11.625103989524757
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 15.529959041171706
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 13.384513230549794
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 12.791741626109213
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 12.179559682529868
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 14.91214153285479
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 13.762018449738209
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 12.53967647021046
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 12.303638102695984
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 13.233417630216614
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 12.440966514127796
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 14.564712301316526
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 12.627203301784817
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 14.786401680904635
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 10.47604043197136
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 12.554222448873332
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-8000-hp0-enh0-float",
+      "bitrate_bps": 8000,
+      "highpass": 0,
+      "enhancement": 0,
+      "arithmetic": "float",
+      "frame_bits": 160,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 20,
+      "payload_bytes": 23380,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 23412,
+      "pcm16_to_codec_ratio": 15.964462668716898,
+      "payload_sha256": "359ece7a0e8f35ce0ec4ab3516b8331bdbedec74b39c3b4e49806038367b4076",
+      "codec": {
+        "filtered_snr_db": 14.508641819935914,
+        "raw_pcm16_snr_db": 14.155470997472817,
+        "peak_abs_pcm16_error": 15810,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 15.376192313764976
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 16.973080179662034
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 15.502395835439632
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 14.855879689080806
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 13.363075632147341
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 13.092662848693433
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 14.411193163317703
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 12.359397132980853
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 18.117108249718928
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 14.103025649218015
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 14.324681478827266
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 14.104901886106777
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 15.361919397629327
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 14.71021530709043
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 14.355536285350386
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 13.776070159784236
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 15.537573358196004
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 14.91917405263038
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 14.623927881117034
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 14.153665812792314
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 15.385069497810868
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 12.113091026296946
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 14.63927311183124
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-8000-hp0-enh0-fixed",
+      "bitrate_bps": 8000,
+      "highpass": 0,
+      "enhancement": 0,
+      "arithmetic": "fixed",
+      "frame_bits": 160,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 20,
+      "payload_bytes": 23380,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 23412,
+      "pcm16_to_codec_ratio": 15.964462668716898,
+      "payload_sha256": "359ece7a0e8f35ce0ec4ab3516b8331bdbedec74b39c3b4e49806038367b4076",
+      "codec": {
+        "filtered_snr_db": 14.50614341187843,
+        "raw_pcm16_snr_db": 14.153408926523944,
+        "peak_abs_pcm16_error": 15825,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 15.373983480318149
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 16.97730380028045
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 15.501796594666352
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 14.85678563458196
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 13.363777137154626
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 13.094082929142164
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 14.40626417841585
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 12.357767413173272
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 18.13185863879921
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 14.095291926807326
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 14.325141899853119
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 14.09714645603643
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 15.362090205123032
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 14.701922354731881
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 14.355331080753857
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 13.774935610911395
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 15.529749061814941
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 14.906709840214237
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 14.6175372945389
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 14.153054829626019
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 15.385914077820637
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 12.110159248854433
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 14.634522585271517
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-11000-hp1-enh1-float",
+      "bitrate_bps": 11000,
+      "highpass": 1,
+      "enhancement": 1,
+      "arithmetic": "float",
+      "frame_bits": 220,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 28,
+      "payload_bytes": 32732,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 32764,
+      "pcm16_to_codec_ratio": 11.407642534489073,
+      "payload_sha256": "58e51b6fcbb3c1084d6baae69aae834985ce21ca703648e3d7a037eaac2589a9",
+      "codec": {
+        "filtered_snr_db": 2.4070259014662025,
+        "raw_pcm16_snr_db": 2.363451117193733,
+        "peak_abs_pcm16_error": 31255,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 3.4420739062507906
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 2.6849586720653837
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 2.9176114947505996
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 4.481204420893618
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 2.8265821798099555
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 5.027549075006528
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 4.262946506023306
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 3.282303836624662
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 1.863403810124042
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 1.5190565568133736
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 2.1085441869633916
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 0.4612670863189627
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 3.328784102716657
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 1.529303181506596
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 2.191223473350055
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 1.3287195452496654
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 0.4797753744385827
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 0.26819352931272955
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 1.6531958851590751
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 3.957747876989286
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 2.415345367575257
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 2.1181295356440706
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 2.0675682948192704
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-11000-hp1-enh1-fixed",
+      "bitrate_bps": 11000,
+      "highpass": 1,
+      "enhancement": 1,
+      "arithmetic": "fixed",
+      "frame_bits": 220,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 28,
+      "payload_bytes": 32732,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 32764,
+      "pcm16_to_codec_ratio": 11.407642534489073,
+      "payload_sha256": "58e51b6fcbb3c1084d6baae69aae834985ce21ca703648e3d7a037eaac2589a9",
+      "codec": {
+        "filtered_snr_db": 2.4102931892405906,
+        "raw_pcm16_snr_db": 2.366868129962996,
+        "peak_abs_pcm16_error": 31211,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 3.441359853116572
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 2.67689358019914
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 2.9193934454341344
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 4.477916911728154
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 2.8327261906139483
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 5.026807630154662
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 4.255335978130396
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 3.2823455042285254
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 1.866028648214699
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 1.5269676710951403
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 2.1144570275486263
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 0.46510570633926723
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 3.327810503008845
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 1.536450248431733
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 2.1994107694482263
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 1.3364374623166473
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 0.48589218502664766
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 0.26982431311273625
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 1.6713937265885273
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 3.9553906950230115
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 2.4207957963902142
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 2.124459157128658
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 2.071121238300448
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-11000-hp0-enh1-float",
+      "bitrate_bps": 11000,
+      "highpass": 0,
+      "enhancement": 1,
+      "arithmetic": "float",
+      "frame_bits": 220,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 28,
+      "payload_bytes": 32732,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 32764,
+      "pcm16_to_codec_ratio": 11.407642534489073,
+      "payload_sha256": "31506479b74a51f2dd1f21bc5855c17466843c4eda5f78adb5856dd8c07d29f4",
+      "codec": {
+        "filtered_snr_db": 15.983773876918988,
+        "raw_pcm16_snr_db": 15.747309606480385,
+        "peak_abs_pcm16_error": 12152,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 16.961956222415864
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 18.188872722186723
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 17.21173176228419
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 15.859680373119996
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 14.365024464378639
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 14.304976314785051
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 17.305638012397115
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 14.770938151448833
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 16.238797344828633
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 16.68525671889878
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 15.443542520329657
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 14.697773606019487
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 18.05483409581576
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 16.79248141029821
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 15.808936233877837
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 14.850956195309744
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 15.824239679875479
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 14.565065619059537
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 17.378583434032947
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 15.24482047951372
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 17.430264249565674
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 13.659843155084264
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 15.430157669818833
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -31606,
+        "raw_max": 32449
+      },
+      "after_ima": {
+        "filtered_snr_db": 15.333369677652154,
+        "raw_pcm16_snr_db": 14.978453671162356,
+        "peak_abs_pcm16_error": 20098,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 16.370824984545383
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 17.491139429665893
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 16.61960468267521
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 15.266490733857372
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 13.691319817138686
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 13.349497108144766
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 16.40531797447863
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 13.873411123107903
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 15.915456942121454
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 14.445266804777045
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 14.709401720637551
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 14.159103498344617
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 17.038312301278726
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 16.077015402074245
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 15.347969592898625
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 14.41387694235825
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 15.04111802011693
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 14.227309867098617
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 16.586647037801132
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 14.72786320229874
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 16.62270372292798
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 13.3391957095943
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 15.032181143136057
+          }
+        ]
+      }
+    },
+    {
+      "name": "speex-11000-hp0-enh1-fixed",
+      "bitrate_bps": 11000,
+      "highpass": 0,
+      "enhancement": 1,
+      "arithmetic": "fixed",
+      "frame_bits": 220,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 28,
+      "payload_bytes": 32732,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 32764,
+      "pcm16_to_codec_ratio": 11.407642534489073,
+      "payload_sha256": "31506479b74a51f2dd1f21bc5855c17466843c4eda5f78adb5856dd8c07d29f4",
+      "codec": {
+        "filtered_snr_db": 16.031874317597428,
+        "raw_pcm16_snr_db": 15.793751602640562,
+        "peak_abs_pcm16_error": 12057,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 16.995737666524757
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 18.199377147499973
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 17.238588138096464
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 15.881181824278446
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 14.406112268528528
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 14.355702844822659
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 17.336583578733887
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 14.805663516851224
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 16.35194420471067
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 16.74407765041312
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 15.503347346493452
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 14.731528367969219
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 18.08167944360813
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 16.824697948420738
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 15.87772327667629
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 14.893845264133994
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 15.988158749048978
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 14.648164770107348
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 17.402032738714954
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 15.31403747273596
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 17.468275456272266
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 13.706996658509345
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 15.45209429852754
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -32515,
+        "raw_max": 32018
+      },
+      "after_ima": {
+        "filtered_snr_db": 15.354687380423966,
+        "raw_pcm16_snr_db": 14.998798958104523,
+        "peak_abs_pcm16_error": 20950,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 16.463075920535296
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 17.53616546673445
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 16.66627570000552
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 15.365591477482454
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 13.696740549698367
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 13.309149258372363
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 16.374968941162226
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 13.919151863099025
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 16.011266121533573
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 14.38092074445937
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 14.735086153974574
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 14.109787800454399
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 17.04167638624957
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 16.136455468355972
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 15.392981732525296
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 14.44701650496668
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 15.109236860287048
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 14.227335863093362
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 16.57739042920669
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 14.72502526654159
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 16.589711880399495
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 13.320476838877779
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 15.018048360457204
+          }
+        ]
+      }
+    },
+    {
+      "name": "speex-11000-hp0-enh0-float",
+      "bitrate_bps": 11000,
+      "highpass": 0,
+      "enhancement": 0,
+      "arithmetic": "float",
+      "frame_bits": 220,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 28,
+      "payload_bytes": 32732,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 32764,
+      "pcm16_to_codec_ratio": 11.407642534489073,
+      "payload_sha256": "31506479b74a51f2dd1f21bc5855c17466843c4eda5f78adb5856dd8c07d29f4",
+      "codec": {
+        "filtered_snr_db": 18.705822042421175,
+        "raw_pcm16_snr_db": 18.243864466399135,
+        "peak_abs_pcm16_error": 13071,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 19.688220674491912
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 20.818526913912642
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 19.635830493922292
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 19.434587883503912
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 17.201386557008583
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 17.19540109836945
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 18.501128277842767
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 16.652489189756643
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 21.648361481872488
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 18.356357128764486
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 18.970712597766465
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 17.616421442868223
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 20.10647048316129
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 18.97368348778237
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 18.92222327472132
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 17.67635628451933
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 19.851323288620524
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 18.525489332283495
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 18.966219676250226
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 18.48805337700157
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 19.33472117579131
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 16.09135282075542
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 19.120006486280186
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -29932,
+        "raw_max": 29767
+      },
+      "after_ima": {
+        "filtered_snr_db": 17.53784536360875,
+        "raw_pcm16_snr_db": 16.950350581508417,
+        "peak_abs_pcm16_error": 18727,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 18.717240092540774
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 19.920428776994427
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 18.723965885030278
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 18.21153520087395
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 15.720490544997785
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 15.366519414760218
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 17.555097623416845
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 15.354504445483219
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 20.480008931580645
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 15.003960653196518
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 17.50435112228876
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 16.510337767226794
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 18.556297610260614
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 17.658922694534247
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 18.125415790281213
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 16.684625571422625
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 18.219872008883414
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 17.62382097678544
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 17.867851010951064
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 17.463787848911604
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 18.182926121217417
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 15.501732563768403
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 18.170598684254685
+          }
+        ]
+      }
+    },
+    {
+      "name": "speex-11000-hp0-enh0-fixed",
+      "bitrate_bps": 11000,
+      "highpass": 0,
+      "enhancement": 0,
+      "arithmetic": "fixed",
+      "frame_bits": 220,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 28,
+      "payload_bytes": 32732,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 32764,
+      "pcm16_to_codec_ratio": 11.407642534489073,
+      "payload_sha256": "31506479b74a51f2dd1f21bc5855c17466843c4eda5f78adb5856dd8c07d29f4",
+      "codec": {
+        "filtered_snr_db": 18.701931347647665,
+        "raw_pcm16_snr_db": 18.24069366793369,
+        "peak_abs_pcm16_error": 13046,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 19.686344111160288
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 20.813901750008263
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 19.62451002657946
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 19.434300267910423
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 17.196946175164708
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 17.192703745612402
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 18.50687753021894
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 16.65439426028794
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 21.637761780804922
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 18.357141200260486
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 18.972689111551134
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 17.59451990626803
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 20.103674408629196
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 18.964596892506236
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 18.918722223551526
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 17.677016569370466
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 19.854360247955285
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 18.512511372621383
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 18.962465122901854
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 18.478456283283695
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 19.323923346475173
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 16.083630014481752
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 19.116897478304868
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -30114,
+        "raw_max": 29710
+      },
+      "after_ima": {
+        "filtered_snr_db": 17.525826143131948,
+        "raw_pcm16_snr_db": 16.934147973339456,
+        "peak_abs_pcm16_error": 18864,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 18.75976514125808
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 19.883396321704858
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 18.644529181254324
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 18.15441239391535
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 15.654817711173132
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 15.28227173894085
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 17.48142435312117
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 15.442048530630785
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 20.46586738669692
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 15.044586762126285
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 17.407964032577972
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 16.323792985528137
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 18.490832273175396
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 17.714174201315657
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 18.13114803583743
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 16.672704295670904
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 18.316801596798044
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 17.545536716889416
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 17.845190703998174
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 17.400535209787286
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 18.246825310640983
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 15.482194573850936
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 18.161458231190842
+          }
+        ]
+      }
+    },
+    {
+      "name": "speex-15000-hp1-enh1-float",
+      "bitrate_bps": 15000,
+      "highpass": 1,
+      "enhancement": 1,
+      "arithmetic": "float",
+      "frame_bits": 300,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 38,
+      "payload_bytes": 44422,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 44454,
+      "pcm16_to_codec_ratio": 8.4077923246502,
+      "payload_sha256": "c167e815e8c4dcbcb2679ee753d445331e720eb45518226cef07579947604d3f",
+      "codec": {
+        "filtered_snr_db": 2.5285604671035102,
+        "raw_pcm16_snr_db": 2.485542871048768,
+        "peak_abs_pcm16_error": 30280,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 3.45175754631654
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 2.779422491262916
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 3.0867398554792125
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 4.627660576565707
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 3.086061831449686
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 5.0672599049584
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 4.352115538180773
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 3.45446109198639
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 2.0274343657694835
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 1.7277772207370055
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 2.2049684479500544
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 0.6804550427235696
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 3.3936890436817446
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 1.5142911547573217
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 2.4088555450340423
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 1.4611450494732066
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 0.5914406816488794
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 0.22975329004865885
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 1.6832292427187863
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 4.18316956110094
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 2.5767825587090547
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 2.2453867573035855
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 2.201499577337251
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-15000-hp1-enh1-fixed",
+      "bitrate_bps": 15000,
+      "highpass": 1,
+      "enhancement": 1,
+      "arithmetic": "fixed",
+      "frame_bits": 300,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 38,
+      "payload_bytes": 44422,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 44454,
+      "pcm16_to_codec_ratio": 8.4077923246502,
+      "payload_sha256": "c167e815e8c4dcbcb2679ee753d445331e720eb45518226cef07579947604d3f",
+      "codec": {
+        "filtered_snr_db": 2.5315661410680974,
+        "raw_pcm16_snr_db": 2.488656233795657,
+        "peak_abs_pcm16_error": 30264,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 3.450280884809849
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 2.7827367418603233
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 3.0747414715090478
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 4.627698087776768
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 3.095407153190065
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 5.068845033058241
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 4.355572965621797
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 3.4565368514760806
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 2.0286044044493026
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 1.726840709087931
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 2.2013826235683043
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 0.6894491816484891
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 3.3965507778693094
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 1.516592664257377
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 2.41145747704094
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 1.4695636134400611
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 0.5976811282660255
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 0.22896142498238073
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 1.6889774379940115
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 4.184069171601409
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 2.57859576084891
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 2.2545141086957727
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 2.209870975571553
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-15000-hp0-enh1-float",
+      "bitrate_bps": 15000,
+      "highpass": 0,
+      "enhancement": 1,
+      "arithmetic": "float",
+      "frame_bits": 300,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 38,
+      "payload_bytes": 44422,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 44454,
+      "pcm16_to_codec_ratio": 8.4077923246502,
+      "payload_sha256": "072b383dc91683c0e7b2c68858c2ddf7dbd4325e95d2e2963a4d92b9c1735ad8",
+      "codec": {
+        "filtered_snr_db": 19.04127991677531,
+        "raw_pcm16_snr_db": 18.767226096908143,
+        "peak_abs_pcm16_error": 11607,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 19.420460081619723
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 20.79378101522542
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 19.935021895480666
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 18.779573618341633
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 17.491714159994842
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 17.56109550267413
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 21.10581229964021
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 17.59976136742193
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 19.561007800253563
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 19.374236969494383
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 18.978375788475972
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 19.335116452343584
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 21.230933176105843
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 19.552016683716783
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 18.7365849194454
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 17.82279525343879
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 19.641217824171882
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 18.327520459115057
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 18.628366734544144
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 18.317412497893898
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 19.743250277620767
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 16.257190242678558
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 19.170709035198655
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -32727,
+        "raw_max": 32573
+      },
+      "after_ima": {
+        "filtered_snr_db": 17.776817139165548,
+        "raw_pcm16_snr_db": 17.297894704472466,
+        "peak_abs_pcm16_error": 16040,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 18.316024193089163
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 19.87123596136358
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 18.915309665630893
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 17.800921245473592
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 16.2353253064366
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 15.596963673731452
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 19.023030777419546
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 15.801346102195573
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 18.819978939039178
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 16.40992836565959
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 17.407197925840986
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 17.877042816777053
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 19.49794596296043
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 18.181426365068308
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 17.746600612845825
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 16.91059851768578
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 18.179145237180748
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 17.414025749155332
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 17.62432559637272
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 17.175145753146378
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 18.309600117954595
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 15.512154542819978
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 18.156765726134935
+          }
+        ]
+      }
+    },
+    {
+      "name": "speex-15000-hp0-enh1-fixed",
+      "bitrate_bps": 15000,
+      "highpass": 0,
+      "enhancement": 1,
+      "arithmetic": "fixed",
+      "frame_bits": 300,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 38,
+      "payload_bytes": 44422,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 44454,
+      "pcm16_to_codec_ratio": 8.4077923246502,
+      "payload_sha256": "072b383dc91683c0e7b2c68858c2ddf7dbd4325e95d2e2963a4d92b9c1735ad8",
+      "codec": {
+        "filtered_snr_db": 19.119737652246933,
+        "raw_pcm16_snr_db": 18.841045539344506,
+        "peak_abs_pcm16_error": 11574,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 19.532561350646574
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 20.857150450311433
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 20.019915501951786
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 18.865209390332808
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 17.578672255692467
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 17.658075291411418
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 21.136990688555876
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 17.659358662749607
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 19.76131419024473
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 19.409444170242697
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 19.05415771868331
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 19.435148136809477
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 21.28650242856248
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 19.600974689782667
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 18.826564040512793
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 17.89427433296161
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 19.72696553731136
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 18.408443531561947
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 18.68112706835929
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 18.375294940227604
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 19.7784609403785
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 16.37766322737175
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 19.299584828689966
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-15000-hp0-enh0-float",
+      "bitrate_bps": 15000,
+      "highpass": 0,
+      "enhancement": 0,
+      "arithmetic": "float",
+      "frame_bits": 300,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 38,
+      "payload_bytes": 44422,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 44454,
+      "pcm16_to_codec_ratio": 8.4077923246502,
+      "payload_sha256": "072b383dc91683c0e7b2c68858c2ddf7dbd4325e95d2e2963a4d92b9c1735ad8",
+      "codec": {
+        "filtered_snr_db": 21.64936135502498,
+        "raw_pcm16_snr_db": 21.12529033311793,
+        "peak_abs_pcm16_error": 9518,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 22.587981618574673
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 23.91916977331813
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 22.6557143803456
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 22.041859726420796
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 20.117676066200453
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 19.979709243698334
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 21.909688295407605
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 19.18343611404382
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 24.185383480585926
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 20.700337570356616
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 21.691427778451924
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 21.416315293313502
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 22.977636688873186
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 21.3884019894564
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 21.81090897109115
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 21.302044119865254
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 22.77627642092758
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 21.80220208832577
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 21.574252313215794
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 21.379648218374143
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 22.18546367728948
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 19.000699015163043
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 22.178410892372497
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-15000-hp0-enh0-fixed",
+      "bitrate_bps": 15000,
+      "highpass": 0,
+      "enhancement": 0,
+      "arithmetic": "fixed",
+      "frame_bits": 300,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 38,
+      "payload_bytes": 44422,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 44454,
+      "pcm16_to_codec_ratio": 8.4077923246502,
+      "payload_sha256": "072b383dc91683c0e7b2c68858c2ddf7dbd4325e95d2e2963a4d92b9c1735ad8",
+      "codec": {
+        "filtered_snr_db": 21.642791713207515,
+        "raw_pcm16_snr_db": 21.119571419365613,
+        "peak_abs_pcm16_error": 9511,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 22.587895009657387
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 23.922434157674296
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 22.65281052573904
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 22.018044595685808
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 20.118359741906158
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 19.977810684643693
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 21.902502315310606
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 19.182854990042927
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 24.163435248754467
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 20.692382579051344
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 21.694510419889774
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 21.418904525739826
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 22.976547528465254
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 21.383467930277753
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 21.805441146892036
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 21.29636430203069
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 22.746913109760673
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 21.788774359545616
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 21.52580076293262
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 21.37167299682604
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 22.17568806005631
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 18.99502468525348
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 22.179902720308682
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -31877,
+        "raw_max": 31637
+      },
+      "after_ima": {
+        "filtered_snr_db": 19.542763483781552,
+        "raw_pcm16_snr_db": 18.819944370201927,
+        "peak_abs_pcm16_error": 15292,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 20.754393734882054
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 22.17890823260301
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 20.969512173004404
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 20.10253111608291
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 17.52656316468377
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 17.098595389965137
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 19.612526087052892
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 16.69271229575187
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 22.29239910906403
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 16.643704327020487
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 19.138208434930306
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 18.90946869867119
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 20.43594545902003
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 19.4007340460441
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 20.29814714069397
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 19.28940254342693
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 20.414299019300156
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 20.06915485266746
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 19.781524074938797
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 19.446791121752835
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 20.00742398658859
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 17.608534636069397
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 20.276328418314307
+          }
+        ]
+      }
+    },
+    {
+      "name": "speex-18200-hp1-enh1-float",
+      "bitrate_bps": 18200,
+      "highpass": 1,
+      "enhancement": 1,
+      "arithmetic": "float",
+      "frame_bits": 364,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 46,
+      "payload_bytes": 53774,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 53806,
+      "pcm16_to_codec_ratio": 6.946437200312233,
+      "payload_sha256": "00ac5dd4a418e3dd7964b76eded60e67528a33e84b5a226f7dfbe8908b1261e4",
+      "codec": {
+        "filtered_snr_db": 2.5753057258473144,
+        "raw_pcm16_snr_db": 2.533537970492544,
+        "peak_abs_pcm16_error": 30196,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 3.473387244550068
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 2.9020404051185142
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 3.1215516195896846
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 4.644498911568917
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 3.158888715830315
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 5.083107096287515
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 4.417953079681468
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 3.6307738179159506
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 1.999121964829739
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 1.7666505121616343
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 2.235935354992975
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 0.697079797513897
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 3.515907205464228
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 1.5679019553814733
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 2.464102955868179
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 1.5107871861744857
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 0.6157992409484272
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 0.20332011875370706
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 1.7459958429601703
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 4.243193676234523
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 2.5991023555021533
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 2.2490074145323553
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 2.2181853417802886
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-18200-hp1-enh1-fixed",
+      "bitrate_bps": 18200,
+      "highpass": 1,
+      "enhancement": 1,
+      "arithmetic": "fixed",
+      "frame_bits": 364,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 46,
+      "payload_bytes": 53774,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 53806,
+      "pcm16_to_codec_ratio": 6.946437200312233,
+      "payload_sha256": "00ac5dd4a418e3dd7964b76eded60e67528a33e84b5a226f7dfbe8908b1261e4",
+      "codec": {
+        "filtered_snr_db": 2.5783013854825794,
+        "raw_pcm16_snr_db": 2.53659959807086,
+        "peak_abs_pcm16_error": 30186,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 3.4695564332135658
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 2.9048004450728486
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 3.1244907878495267
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 4.648195610209511
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 3.163783140518588
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 5.086126756878903
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 4.422215333133202
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 3.6339856798220005
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 1.9966557463868355
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 1.7677415032963166
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 2.222671991420943
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 0.709545527535327
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 3.5153409197678425
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 1.5666478070749392
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 2.4684716276756182
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 1.5137080551315867
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 0.6229574384875988
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 0.2005347819205551
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 1.7551779518273003
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 4.243581912267921
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 2.6009877366702994
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 2.2615204282790757
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 2.2279804190275048
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-18200-hp0-enh1-float",
+      "bitrate_bps": 18200,
+      "highpass": 0,
+      "enhancement": 1,
+      "arithmetic": "float",
+      "frame_bits": 364,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 46,
+      "payload_bytes": 53774,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 53806,
+      "pcm16_to_codec_ratio": 6.946437200312233,
+      "payload_sha256": "cd704a65e540d82e9f504ab3e7944125c1bdbb2551e31d058335a11ca95b821c",
+      "codec": {
+        "filtered_snr_db": 21.744759488561414,
+        "raw_pcm16_snr_db": 21.453247615277945,
+        "peak_abs_pcm16_error": 7210,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 21.879628649519873
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 23.43984269372386
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 22.41408626086237
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 21.39240101822058
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 20.483156893907257
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 19.928494773716707
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 23.474060553680275
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 20.55504618225544
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 21.36221178505277
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 22.29963350774167
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 21.735044756798754
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 20.925693481931926
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 24.165566909412743
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 22.224469067652585
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 21.25573710072162
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 20.92787336428962
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 22.573503704415746
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 20.299039727414225
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 21.696524692613522
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 20.81233783516033
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 22.587756721913472
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 19.272322224665444
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 21.730922486109215
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -31654,
+        "raw_max": 31302
+      },
+      "after_ima": {
+        "filtered_snr_db": 19.54948422729015,
+        "raw_pcm16_snr_db": 18.96191189964934,
+        "peak_abs_pcm16_error": 18289,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 20.239542315875934
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 21.81879755260658
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 20.624854234026113
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 19.778579942432806
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 17.770778364864835
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 17.137869780898946
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 20.62230823719336
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 17.51304187073758
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 20.082029960593736
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 16.278215523022542
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 19.112136805264416
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 18.40151673092138
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 21.175681718833758
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 20.006101480419034
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 19.822619595864563
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 19.096800650670012
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 19.816963684576088
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 18.939971869338983
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 19.948887516957317
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 19.138734482569358
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 20.11561604848901
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 17.747996369706406
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 19.925085534945847
+          }
+        ]
+      }
+    },
+    {
+      "name": "speex-18200-hp0-enh1-fixed",
+      "bitrate_bps": 18200,
+      "highpass": 0,
+      "enhancement": 1,
+      "arithmetic": "fixed",
+      "frame_bits": 364,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 46,
+      "payload_bytes": 53774,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 53806,
+      "pcm16_to_codec_ratio": 6.946437200312233,
+      "payload_sha256": "cd704a65e540d82e9f504ab3e7944125c1bdbb2551e31d058335a11ca95b821c",
+      "codec": {
+        "filtered_snr_db": 21.867313981577055,
+        "raw_pcm16_snr_db": 21.56816203459038,
+        "peak_abs_pcm16_error": 7176,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 22.03307955387915
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 23.547993380516374
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 22.5658553838146
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 21.558562062868315
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 20.623666500322013
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 20.081511537865048
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 23.547318069416185
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 20.642966704630595
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 21.61581977155302
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 22.354636808908626
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 21.85179063820165
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 21.049553791639852
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 24.246108560325016
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 22.28730503770013
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 21.39961442712457
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 21.063186588957382
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 22.713708186132138
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 20.43809531806847
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 21.849746769352066
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 20.927132375357083
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 22.67991202614377
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 19.412620263551727
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 21.876731243259403
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -31237,
+        "raw_max": 31526
+      },
+      "after_ima": {
+        "filtered_snr_db": 19.597501616072066,
+        "raw_pcm16_snr_db": 18.990837178362952,
+        "peak_abs_pcm16_error": 19759,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 20.340181534166582
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 21.948088564724493
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 20.522409275809665
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 19.856728436762936
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 17.720791138414207
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 17.238520289564182
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 20.29857704332432
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 17.59883091451225
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 20.293056471793285
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 16.331250767465132
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 19.086056678026313
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 18.53285193346754
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 21.173802832028983
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 20.193993256726984
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 19.835371796304386
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 19.04325632817282
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 19.818468239990516
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 19.010108358715406
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 19.94528458795208
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 19.107311580028036
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 20.2086095572609
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 17.966686581684282
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 20.10212753555116
+          }
+        ]
+      }
+    },
+    {
+      "name": "speex-18200-hp0-enh0-float",
+      "bitrate_bps": 18200,
+      "highpass": 0,
+      "enhancement": 0,
+      "arithmetic": "float",
+      "frame_bits": 364,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 46,
+      "payload_bytes": 53774,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 53806,
+      "pcm16_to_codec_ratio": 6.946437200312233,
+      "payload_sha256": "cd704a65e540d82e9f504ab3e7944125c1bdbb2551e31d058335a11ca95b821c",
+      "codec": {
+        "filtered_snr_db": 24.761335385385266,
+        "raw_pcm16_snr_db": 24.175047403030383,
+        "peak_abs_pcm16_error": 6692,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 25.97757813402492
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 26.74739959915953
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 25.64838805087543
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 25.347426431058526
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 23.44936590821744
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 23.379907050808693
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 25.230044347044167
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 22.239628046746695
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 26.358889295474768
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 23.781432282850076
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 25.065242920788506
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 24.511315288681356
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 26.020648125716015
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 24.362160648458996
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 24.53893387058318
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 24.84506593656932
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 26.23658103964264
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 24.34357573009082
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 24.660715077706836
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 24.329333289572602
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 25.22177279600558
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 22.218926286039043
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 25.088382204331037
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -29935,
+        "raw_max": 30099
+      },
+      "after_ima": {
+        "filtered_snr_db": 21.10741715997435,
+        "raw_pcm16_snr_db": 20.284383830737216,
+        "peak_abs_pcm16_error": 16799,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 22.816963635175775
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 23.84340050018573
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 22.529703260053896
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 21.76483069699829
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 18.78645941119767
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 18.669173928339514
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 21.152221209098137
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 18.241786697093627
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 23.264998071938795
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 17.292741904425416
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 20.40257080699103
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 20.108441090781824
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 22.004796107898255
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 21.084738652237967
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 21.823390284412923
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 20.90526427999031
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 21.480619341540425
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 21.619842958046206
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 21.30301364964231
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 21.268710907088824
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 21.479142274379768
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 19.734951561032304
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 21.848639548897598
+          }
+        ]
+      }
+    },
+    {
+      "name": "speex-18200-hp0-enh0-fixed",
+      "bitrate_bps": 18200,
+      "highpass": 0,
+      "enhancement": 0,
+      "arithmetic": "fixed",
+      "frame_bits": 364,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 46,
+      "payload_bytes": 53774,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 53806,
+      "pcm16_to_codec_ratio": 6.946437200312233,
+      "payload_sha256": "cd704a65e540d82e9f504ab3e7944125c1bdbb2551e31d058335a11ca95b821c",
+      "codec": {
+        "filtered_snr_db": 24.752391301646696,
+        "raw_pcm16_snr_db": 24.1674829969701,
+        "peak_abs_pcm16_error": 6699,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 25.9434433033176
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 26.72213519045009
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 25.632249804086214
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 25.330783320254756
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 23.446863447018394
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 23.372595488137755
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 25.230758569061145
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 22.234123501975457
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 26.376684529668744
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 23.780206473039584
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 25.045980424556515
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 24.49189072837086
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 26.013204020907985
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 24.34098317176238
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 24.530830272318084
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 24.82984193865746
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 26.240670519069056
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 24.293396602454415
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 24.651513221970966
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 24.334326281187323
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 25.204638499877102
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 22.23002640391981
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 25.090173291188073
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -29864,
+        "raw_max": 30082
+      },
+      "after_ima": {
+        "filtered_snr_db": 21.053854108911786,
+        "raw_pcm16_snr_db": 20.248310874975026,
+        "peak_abs_pcm16_error": 17701,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 22.795925570452393
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 23.38914935147111
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 22.602166690506607
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 21.74842013203203
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 18.954841447344812
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 18.703594581822948
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 21.134593593358552
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 17.920116057308324
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 23.283641896640464
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 17.04915424199031
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 20.49639025263826
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 20.026073435598025
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 21.99560375805604
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 21.026155238448148
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 21.81484323681577
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 20.791850991730914
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 21.669987540101282
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 21.53614356155616
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 21.189420164889803
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 21.157223724719096
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 21.362543333675305
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 19.738522657070142
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 21.86061692572366
+          }
+        ]
+      }
+    },
+    {
+      "name": "speex-24600-hp1-enh1-float",
+      "bitrate_bps": 24600,
+      "highpass": 1,
+      "enhancement": 1,
+      "arithmetic": "float",
+      "frame_bits": 492,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 62,
+      "payload_bytes": 72478,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 72510,
+      "pcm16_to_codec_ratio": 5.154599365604744,
+      "payload_sha256": "f0c983645ff845df956eac4167ebfdc0d5c8d0c359f51dabd70080cfeac59be6",
+      "codec": {
+        "filtered_snr_db": 2.63918141391259,
+        "raw_pcm16_snr_db": 2.59809053381504,
+        "peak_abs_pcm16_error": 29700,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 3.623159729005544
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 2.9422440174602054
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 3.186884981664382
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 4.656483096579983
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 3.2698979592059283
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 5.2173577237747635
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 4.461449270817176
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 3.7048195327448057
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 2.0424276082747763
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 1.814173906739538
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 2.2421956945829233
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 0.7375866630998941
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 3.510627576381352
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 1.6641471170653976
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 2.538740750668956
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 1.5864989494370663
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 0.688350453217132
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 0.17764231293333577
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 1.8807013524604834
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 4.264292641845781
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 2.6974415881105966
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 2.360681510953952
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 2.2798611958829436
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-24600-hp1-enh1-fixed",
+      "bitrate_bps": 24600,
+      "highpass": 1,
+      "enhancement": 1,
+      "arithmetic": "fixed",
+      "frame_bits": 492,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 62,
+      "payload_bytes": 72478,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 72510,
+      "pcm16_to_codec_ratio": 5.154599365604744,
+      "payload_sha256": "f0c983645ff845df956eac4167ebfdc0d5c8d0c359f51dabd70080cfeac59be6",
+      "codec": {
+        "filtered_snr_db": 2.6417615479245167,
+        "raw_pcm16_snr_db": 2.60078176942721,
+        "peak_abs_pcm16_error": 29701,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 3.61667431875258
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 2.94191015435981
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 3.1771328216089145
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 4.6565803691531755
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 3.280394786498333
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 5.218785167669006
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 4.467133570806768
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 3.7100684742218855
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 2.0441655147259854
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 1.815792022836202
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 2.2429896114413306
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 0.7499954420370312
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 3.512009325966186
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 1.6643056518769317
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 2.5416953892782312
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 1.5942221610207987
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 0.6948435401893773
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 0.17445612181325512
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 1.887497781344639
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 4.260695871484652
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 2.69997088209679
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 2.3664808094621725
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 2.2877626971073926
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-24600-hp0-enh1-float",
+      "bitrate_bps": 24600,
+      "highpass": 0,
+      "enhancement": 1,
+      "arithmetic": "float",
+      "frame_bits": 492,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 62,
+      "payload_bytes": 72478,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 72510,
+      "pcm16_to_codec_ratio": 5.154599365604744,
+      "payload_sha256": "e4d0c8e6f391e96af30193e3ada466ad1ea7eb2edca55258f38c140fdf898301",
+      "codec": {
+        "filtered_snr_db": 24.761081628449368,
+        "raw_pcm16_snr_db": 24.44860655371582,
+        "peak_abs_pcm16_error": 5652,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 25.073208260118093
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 26.157887415760605
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 25.610844405249132
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 24.83208148147363
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 23.107493789221053
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 23.187336621700986
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 26.157120767454686
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 23.692708100331053
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 24.40588804213053
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 25.300706508264913
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 24.821880777180006
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 23.855494773219974
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 27.622360585456182
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 25.23074411320604
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 24.270639335234986
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 23.92548176795438
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 25.43459967763921
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 23.8808054320527
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 24.490549325394845
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 23.817342739541267
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 25.453646719857478
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 22.28527783293859
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 24.523615438308298
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-24600-hp0-enh1-fixed",
+      "bitrate_bps": 24600,
+      "highpass": 0,
+      "enhancement": 1,
+      "arithmetic": "fixed",
+      "frame_bits": 492,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 62,
+      "payload_bytes": 72478,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 72510,
+      "pcm16_to_codec_ratio": 5.154599365604744,
+      "payload_sha256": "e4d0c8e6f391e96af30193e3ada466ad1ea7eb2edca55258f38c140fdf898301",
+      "codec": {
+        "filtered_snr_db": 24.937519099049517,
+        "raw_pcm16_snr_db": 24.612160917630213,
+        "peak_abs_pcm16_error": 5604,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 25.258679533184033
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 26.21992716254363
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 25.858151283421435
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 25.058972943483994
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 23.318103867626373
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 23.376417782920637
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 26.242328321364443
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 23.8452958788955
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 24.685607056306388
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 25.43786768795592
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 25.03698035855072
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 23.97430754486283
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 27.743865089488846
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 25.356261259774865
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 24.463526612789455
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 24.078518762886976
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 25.630388652455363
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 24.096363874539698
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 24.552298135253444
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 24.009515312427624
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 25.552326964838265
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 22.50442838666951
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 24.773814945825755
+          }
+        ]
+      },
+      "ima_guard_rejected": "IMA encoder would require player saturation"
+    },
+    {
+      "name": "speex-24600-hp0-enh0-float",
+      "bitrate_bps": 24600,
+      "highpass": 0,
+      "enhancement": 0,
+      "arithmetic": "float",
+      "frame_bits": 492,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 62,
+      "payload_bytes": 72478,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 72510,
+      "pcm16_to_codec_ratio": 5.154599365604744,
+      "payload_sha256": "e4d0c8e6f391e96af30193e3ada466ad1ea7eb2edca55258f38c140fdf898301",
+      "codec": {
+        "filtered_snr_db": 27.845728009082258,
+        "raw_pcm16_snr_db": 27.215084532625127,
+        "peak_abs_pcm16_error": 5062,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 28.717255751130423
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 29.46565576583662
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 28.947374944334676
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 28.337592791414426
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 26.416066198803065
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 26.340839568297447
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 28.148924605664654
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 25.901657510050274
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 29.48514375806414
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 27.404770148914853
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 28.183374761513136
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 27.10654311192856
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 29.395949959752933
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 27.401317350576946
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 27.592125097837478
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 27.44268757016366
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 29.31520681607968
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 27.59719725369773
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 26.74743410054701
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 27.40708934599747
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 28.66677997239197
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 25.174626791953578
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 28.347272057821776
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -30221,
+        "raw_max": 30499
+      },
+      "after_ima": {
+        "filtered_snr_db": 21.986372106782017,
+        "raw_pcm16_snr_db": 21.096239404908978,
+        "peak_abs_pcm16_error": 19392,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 23.855375610526572
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 24.818751730287623
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 23.78667664841869
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 22.93148606593474
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 19.843603162525262
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 19.0656637837864
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 22.188210974399922
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 18.841224567618358
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 24.406306243303337
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 17.143427871603475
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 21.227413289670316
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 21.234426786204157
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 22.727758760819746
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 22.19698784066534
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 23.405501137518584
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 21.752887851820955
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 22.23097259199006
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 23.307636527514006
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 22.381974860147977
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 21.547418062655026
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 22.028202598684405
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 21.243186729272978
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 22.933873589174244
+          }
+        ]
+      }
+    },
+    {
+      "name": "speex-24600-hp0-enh0-fixed",
+      "bitrate_bps": 24600,
+      "highpass": 0,
+      "enhancement": 0,
+      "arithmetic": "fixed",
+      "frame_bits": 492,
+      "encoder_complexity": 10,
+      "encode_latency_samples": 40,
+      "decode_latency_samples": 40,
+      "declared_latency_removed_samples": 80,
+      "frames": 1169,
+      "frame_bytes": 62,
+      "payload_bytes": 72478,
+      "framing_allowance_bytes": 32,
+      "proposed_storage_bytes": 72510,
+      "pcm16_to_codec_ratio": 5.154599365604744,
+      "payload_sha256": "e4d0c8e6f391e96af30193e3ada466ad1ea7eb2edca55258f38c140fdf898301",
+      "codec": {
+        "filtered_snr_db": 27.823170942497594,
+        "raw_pcm16_snr_db": 27.194802976303084,
+        "peak_abs_pcm16_error": 5063,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 28.673162526901386
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 29.39197251114022
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 28.918688860726654
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 28.354869199694235
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 26.416678936267182
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 26.33453712165764
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 28.117711240607747
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 25.892738131039067
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 29.38699668033399
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 27.407290252296228
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 28.181758961027636
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 27.071222079661904
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 29.385853025880447
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 27.383174778383324
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 27.557016844374434
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 27.412827705131733
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 29.25688827288578
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 27.558211268363593
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 26.714989292204127
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 27.380644008580262
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 28.616895026294152
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 25.164486871093082
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 28.336375440858465
+          }
+        ]
+      },
+      "ima_saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -30062,
+        "raw_max": 30499
+      },
+      "after_ima": {
+        "filtered_snr_db": 22.03689890845598,
+        "raw_pcm16_snr_db": 21.134883318310766,
+        "peak_abs_pcm16_error": 19354,
+        "windows": [
+          {
+            "start_seconds": 0.1,
+            "reference_rms": 0.206472132121276,
+            "snr_db": 23.653777764134823
+          },
+          {
+            "start_seconds": 1.1,
+            "reference_rms": 0.20958246940854833,
+            "snr_db": 24.960600040691602
+          },
+          {
+            "start_seconds": 2.1,
+            "reference_rms": 0.2124087338592025,
+            "snr_db": 23.754977859603873
+          },
+          {
+            "start_seconds": 3.1,
+            "reference_rms": 0.22174620749595034,
+            "snr_db": 22.80984450267949
+          },
+          {
+            "start_seconds": 4.1,
+            "reference_rms": 0.15333666559384915,
+            "snr_db": 19.985431492570754
+          },
+          {
+            "start_seconds": 5.1,
+            "reference_rms": 0.12178457047091275,
+            "snr_db": 19.389728886115186
+          },
+          {
+            "start_seconds": 6.1,
+            "reference_rms": 0.22397623563861677,
+            "snr_db": 22.227014605542994
+          },
+          {
+            "start_seconds": 7.1,
+            "reference_rms": 0.16476221436427257,
+            "snr_db": 19.06572678439658
+          },
+          {
+            "start_seconds": 8.1,
+            "reference_rms": 0.06987077257593058,
+            "snr_db": 24.428499913610104
+          },
+          {
+            "start_seconds": 9.1,
+            "reference_rms": 0.12859988118908455,
+            "snr_db": 17.033285421656007
+          },
+          {
+            "start_seconds": 10.1,
+            "reference_rms": 0.1553856390806435,
+            "snr_db": 21.138526034263627
+          },
+          {
+            "start_seconds": 11.1,
+            "reference_rms": 0.07755509073869006,
+            "snr_db": 21.277907893585937
+          },
+          {
+            "start_seconds": 12.1,
+            "reference_rms": 0.25495755688912997,
+            "snr_db": 22.97078847558927
+          },
+          {
+            "start_seconds": 13.1,
+            "reference_rms": 0.2676376370570419,
+            "snr_db": 22.187976676327168
+          },
+          {
+            "start_seconds": 14.1,
+            "reference_rms": 0.18435780720204686,
+            "snr_db": 23.404326091999543
+          },
+          {
+            "start_seconds": 15.1,
+            "reference_rms": 0.2163557552810995,
+            "snr_db": 21.938858916687586
+          },
+          {
+            "start_seconds": 16.1,
+            "reference_rms": 0.22376856799321368,
+            "snr_db": 22.28457136508449
+          },
+          {
+            "start_seconds": 17.1,
+            "reference_rms": 0.13596163162002067,
+            "snr_db": 23.074582343956255
+          },
+          {
+            "start_seconds": 18.1,
+            "reference_rms": 0.0656595657843185,
+            "snr_db": 22.314162382297233
+          },
+          {
+            "start_seconds": 19.1,
+            "reference_rms": 0.22420332577782284,
+            "snr_db": 21.73616293288696
+          },
+          {
+            "start_seconds": 20.1,
+            "reference_rms": 0.24997873434092407,
+            "snr_db": 22.116149056794406
+          },
+          {
+            "start_seconds": 21.1,
+            "reference_rms": 0.21047605745665598,
+            "snr_db": 21.107958744661047
+          },
+          {
+            "start_seconds": 22.1,
+            "reference_rms": 0.2572394221305445,
+            "snr_db": 23.01223179283516
+          }
+        ]
+      }
+    }
+  ],
+  "libraries": {
+    "float": "b38fe7b1da4adbeb10c6bc9db874926b7f295f841a94d65b4b345634ab1c8728",
+    "fixed": "e195ce22da54dd1270e33c2ed00f05c90a92c0593a9f2f8ef2a2843f5a81e8d6"
+  }
+}

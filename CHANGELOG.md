@@ -1,5 +1,16 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Merge completed audio conversion work into main
+
+At the user's request, merge `codex/lpc-ima-preload` through `d969aae` into
+main, retaining its independently completed Speex assembly work through
+`9ef19e9`. Resolve only overlapping additions to this log and TASK_BRIEF;
+preserve both histories and identify the earlier codec studies as historical.
+Player and converter source bytes are unchanged by conflict resolution.
+All five sequential planning/CLI tests pass using main's modules; all 481
+archived series evidence hashes and the final TRD hash match. Reuse the
+completed native/Fuse evidence rather than repeat playback experiments.
+
 ## 2026-10-04: Speex item 06, select optimized decoder and reject real time
 
 Complete the six-item worklist and select `pure-r4` as the default. A fresh
@@ -161,6 +172,281 @@ See [README and reproduction](audiobook-beeper/speex-port/README.md),
 [instruction audit](audiobook-beeper/speex-port/check_primitives.py), and
 [saved evidence manifest](audiobook-beeper/speex-port/evidence/manifest.json).
 
+## 2026-10-04: Sequential audio parts; one TRD by default
+
+The user requests one or many disks, maximum-RAM load/play cycles, and
+explicitly selects one TRD as the default. Add `--disk-mode single|all|preview`
+to the [automatic converter](audiobook-beeper/IMA3_SERIES.md), a separately
+assembled transient TR-DOS controller, per-volume identity headers, automatic
+part transitions, next-disk/Space prompts and wrong-disk rejection. Each disk
+is independently bootable. All mode covers each source sample once; single
+mode stops before the next whole RAM part that cannot fit. Keep global gain,
+short edge fades and silent guards. Final quality decisions include complete
+execution of the actual published volumes. Disk reads cause audible pauses.
+
+The controller replaces bank-5 PDM tables only after sound stops. Its 57-byte
+resident exit fits existing 64-byte padding: bank-2 reservation remains
+13312 bytes and maximum packed audio 94458 bytes /251888 samples. Source
+capacity excluding the guard is 31.470 s per full part, 157.350 s for five
+parts per TRD. Shared tables are stored once per disk. Ordinary phases remain
+417/413/458/413/417/446/409/446 T, **427.375 T/sample, delta 0 T**; page/bank
+extras +14/+140 T are unchanged. Only the final silent guard exits: 61 native
+T to clear the beeper versus 103 T to the former next output without filler
+(-42 T), or 22005 T with the reference's filler (-21944 T). These are stop
+versus continue endpoints, not an increased sustained PDM rate.
+
+Two copies of the unchanged 186880-sample reference verify all **5980094**
+live bits natively and in complete cold Fuse 128 playback. Final-disk SNR is
+20.161979 /20.161096 dB, speed about -0.27172%, and automatic loading pause
+19.798231 s. A two-disk short fixture verifies both independent boots,
+predecessor-RAM continuation and wrong-disk rejection; no disk calls occur
+during audio. The final all-seven-bank synthetic-tail fixture verifies
+4030175 bits, RAM guards and EOF; cold ready takes 28.608176 s. Its 18.563389-dB
+score is below target and is not promoted as a quality release. The ordinary
+stereo-input CLI test creates one TRD at 20.978697 dB; silent default/all CLI
+tests verify output names and nonapplicable SNR. Five planning/CLI tests pass.
+The legacy compact looping disk remains byte-identical.
+
+Retain development findings: corrected assembler string/padding syntax;
+corrected signed-marker/Windows-newline trace parsing; exact clock reuse
+rejected after a three-T HALT/IRQ alignment difference, replaced with bounded
+clock checks and actual-waveform measurement; superseded 251200-sample
+reservation passed but wasted 256 bytes, removed after measuring the stub.
+The larger final capacity was tested afresh. No physical hardware or real
+drive swap is certified. Full counts, inputs, source snapshots, raw traces,
+reports and reproducing scripts are in the
+[series experiment](audiobook-beeper/experiments/ima-3bit-series/README.md).
+Save `ZX-audiobook-IMA3-sequential-test.trd` in LFS as a clearly labelled
+two-repeat loading test; preserve previous release disks.
+
+## 2026-10-04: Reduce IMA3 table overhead without changing output timing
+
+The user requests smaller auxiliary table allocations. Audit the current
+PDM/IMA3 player; the recent AY player's service tables are already small.
+Use the complete unchanged 186880-sample audiobook reference from
+`ima-3bit-direct`, baseline TRD SHA-256
+`601ba65fa7a12b4b6c67f384ba5ed32530bee95816bb86d8effcc0c7de7d34c0`.
+Do not run another codec/quality search. The source uses 88 of 89 IMA indices
+and all 120 legal PCM control levels, so retain the complete tables.
+
+[The compact layout](audiobook-beeper/IMA3_MEMORY.md) relocates 352 bytes of
+the 2848-byte IMA table into existing aligned code gaps and reduces trailing
+reservation padding from 736 to 64 bytes. Bank 2's reservation falls from
+14336 to 13312 bytes: **1024 physical bytes reclaimed**. Maximum IMA3 payload
+grows from 93432 to 94458 bytes, including two formerly unusable remainder
+bytes, giving 251888 samples /31.486 s instead of 249152 /31.144 s. All 89
+rows, 712 transitions and PDM feedback states remain exact. The converter
+automatically uses the new capacity. Larger external loop fillers skip the
+startup gap; a 300-T fixture reserves 13568 bytes. Assembly assertions check
+every gap; the maximum normal 1530-pair /260-T filler with seven banks ends
+startup at 8365, before the first relocated row at 8380.
+
+The original binary and disk reproduce byte for byte. Pulse/extraction
+instruction bytes and addresses remain identical. Native phase totals stay
+417/413/458/413/417/446/409/446 T, mean **427.375 T/sample, delta 0 T**;
+page/bank extras remain +14/+140 T, delta 0. Complete new native and cold
+Fuse 128 reference runs verify all **5981841 outputs /373760 predictor-index
+samples** over two repeats. Every relative Fuse timestamp equals the old
+trace. This exact waveform/clock equivalence reuses the prior
+20.159645/20.159651-dB quality and -0.299133% speed result; it is not a new
+encoder search, subjective listening approval or physical-hardware test.
+
+A separate full-capacity fixture appends synthetic silence and verifies
+**8060417 outputs /503776 samples**, all seven banks, native RAM guards and
+complete cold Fuse loading into the reclaimed bank-2 region. It makes 429
+startup sector reads and zero runtime reads; both loading UI checks pass.
+This uncalibrated fixture proves capacity, not additional real audio or a
+quality-qualified 31.486-s release. The retained 64-level model also passes
+262145 native outputs /16384 samples. Accept the compact placement and save
+`ZX-audiobook-IMA3-compact-tables.trd` in LFS; retain existing root disks.
+
+[Reproducing verifier](audiobook-beeper/verify_ima3_memory.py),
+[comparison and full evidence](audiobook-beeper/experiments/ima-3bit-memory/comparison.json),
+[completion audit](audiobook-beeper/experiments/ima-3bit-memory/completion-audit.json).
+No additional table/codec experiment is opened by this change.
+
+## 2026-10-04: Generic AY converter and looping music disk
+
+The user asks to convert the same music with the AY method used by the movie
+and to provide a reusable script. Existing `audiobook-ay/build_preview.py`
+already accepts arbitrary audio but has an audiobook screen and a one-shot
+player. Add [convert_audio.py](audiobook-ay/convert_audio.py) around the
+unchanged movie analyser/square fit, plus a separate, commented
+[ASM player](audiobook-ay/ay-player.asm). Python supplies constants/data and
+packages the assembled binary; it emits no instructions. The generic CLI
+handles arbitrary FFmpeg input, a bounded initial excerpt, title/start/duration,
+looping by default or optional one-shot playback, chip-model previews and
+optional complete native/Fuse verification with normal-speed WAV capture.
+
+Use the same original The Entertainer recording and requested 31.128-s initial
+interval as the preceding PDM experiment. The 50-Hz grid retains 31.12 s /
+1556 ticks; no 8-kHz intermediate is used. Resident audio is 17116 register
+bytes, AY9 is 14004 bytes before archive gzip. Six audio banks raise capacity
+to 8934 ticks / 178.68 s; fixed code, screen, stack, IM2 and TR-DOS banks are
+accounted separately. Full capacity is native-tested with synthetic data,
+not claimed as a complete longer recording. Mono Ayumi YM2149 rendering uses
+the actual three tone generators, one shared noise generator and chip DAC
+levels. No original waveform is added to the synthesis.
+
+The ordinary path remains 974 native T (delta 0 from the earlier AY player);
+near-bank, bank-change and exact-boundary EOF costs remain 992/1091/1007 T.
+Restart adds 105 T once per repeat, giving a 1079-T first repeated field;
+tick zero is published on the original next interrupt, with no extra silent
+field. Five unit tests cover the old player, IRQ preservation, one-tick loops,
+all important bank/EOF boundaries, and both complete six-bank repeats.
+Initial assembler directive syntax errors were corrected before these tests
+passed; no failing binary was delivered. Loading-message clearing is boot-only
+and adds zero playback T-states.
+
+The first complete prototype passed two cold Fuse repeats before adding the
+loading label; preserve its reports and disk under
+`audiobook-ay/music-preview/attempts/before-loading-label`. The final disk
+again passes all 34232 register writes / 3112 nominal fields, no missing or
+duplicate fields, 67 startup reads and zero runtime reads. First-OUT phases
+are 150..255 T and intervals 70805..71010 T, including wrap. The loading
+message is shown before payload reads and cleared before playback; all 768
+bitmap bytes in its area are checked. Normal startup is 10.677687 s and the
+two-repeat Fuse WAV is 62.226236 s. Clock-derived tempo error is +0.042308%.
+ROM/disk loading and ULA waits are separate from deterministic CPU counts.
+
+Musical signal proxies are spectral cosine 0.892788, chroma cosine 0.975713,
+loudness correlation 0.995346 and onset F1 0.887097. These are not waveform
+SNR, percentages of fidelity, or listener acceptance. Deliver
+`ZX-music-Entertainer-AY.trd` and the actual Fuse WAV as a listening comparison.
+See [instructions and evidence](audiobook-ay/CONVERTER.md). Physical hardware
+has not been tested. Existing movie, audiobook and beeper releases are retained.
+
+## 2026-10-04: Public-domain music example with direct packed IMA3
+
+The user requests a recognizable melody on TRD, selects an unrestricted
+recording instead of Queen, and explicitly accepts the highest found SNR
+even below 20 dB. Use Scott Joplin's The Entertainer, performed by IE; the
+source page separately declares the composition public domain and the
+recording dedicated to the public domain with a permission fallback.
+Preserve the exact downloaded Ogg, attribution, page revision, URL and hash
+in [the music example](audiobook-beeper/experiments/ima-3bit-entertainer/README.md).
+
+Run the unchanged automatic converter from acf1682 on the initial 31.128 s
+of stereo 44.1-kHz Vorbis, preparing 249152 mono 8-kHz PCM8 samples with the
+128-sample guard. This fills 93432 bytes of packed IMA3 across all seven
+resident audio banks. No IMA4, full PCM or PDM expansion buffer is added.
+The Z80 hot path stays 427.375 native T/sample, delta 0 T; page/bank extras
+remain +14/+140 T. The selected native loop costs 106544136 T; the actual
+Fuse loop costs 110829204 T including ULA effects. Disk/ROM startup remains
+separate, with 425 startup sector reads and zero runtime disk reads.
+
+The uncompensated pilot measures -3.279182/-3.279105 dB and is rejected for
+delivery. Automatic host searches at width 256/horizon 128, width 512/horizon 128
+and width 1024/horizon 256, all regularization 0.03, score 17.598735, 17.663213
+and 17.837011 dB. Execute the selected third candidate on a new cold-booted
+disk: complete loops measure 17.837011/17.836344 dB, -0.328930% speed error,
+127652.897 mean PDM outputs/s and 0/0-T phase errors. Full native and Fuse
+verification covers 7977485 outputs and 498304 predictor/index samples;
+memory guards, all banks, 32 loading progress steps and message hiding pass.
+Normal-speed Fuse capture confirms two wraps, correct paging latches,
+26.454422-s cold startup and a 62.505964-s WAV, with signal in every half-second
+window. Integrity-checked resume reuses all six stages and returns the
+expected quality-status exit code 2 without replaying the audio.
+The source and comparison filter stay fixed; no fitted gain/delay/time
+stretch is used. First/second search results remain host estimates only.
+
+Deliver `ZX-music-Entertainer-IMA3.trd` as the user-authorized listening
+preview. The converter correctly retains its 20-dB gate failure and exit code 2;
+do not claim 20 dB, a universal maximum, or physical-hardware verification.
+Keep the existing 20.1596-dB audiobook release unchanged. The source, TRD,
+WAVs and large trace data use Git LFS; reproduction commands, full selected
+trace, timing data, measurements and unsuccessful search results are saved
+with the example.
+
+## 2026-10-04: Packed IMA3 playback, uniform table timing and automatic conversion
+
+The user requests removal of the IMA3-to-IMA4 conversion, optionally higher
+PDM frequency, at least20 dB final SNR, asks whether25 dB is possible, and
+requires the complete conversion workflow to run automatically. Keep the
+same complete186880-sample source/hash as the previous20.071-dB delivery.
+
+Implement a separate assembler player that consumes eight little-endian
+three-bit codes from each three bytes in resident RAM. Reorder packet
+entries to defer the FIRST pointer and use eight extraction phases. There
+is no resident IMA4, PCM or PDM expansion buffer. Resident audio falls from
+93440 to70080 bytes; full available capacity is93432 IMA3 bytes /249152
+samples (31.144 s at8 kHz, including the guard). The new native capacity
+probe covers7972865 bits and498304 predictor/index samples over seven banks
+twice, with synthetic silence after the original clip; no longer real audio
+or physical-machine verification is implied.
+
+The unpadded408.375-T prototype (+2.8701% speed) is rejected. The420.375,
+422.375,423.875 and425.875-T padding trials retain complete native/Fuse
+verification but fail quality on the unchanged old encoded data. A measured
+64-level model gives19.288/19.654-dB host estimates, but a real new disk falls
+to2.604/2.598 dB because signal-dependent table contention changes its sample
+schedule by0.766 ms. Preserve every meaningful attempt and assembly input in
+[the ledger](audiobook-beeper/experiments/ima-3bit-direct/attempts.json).
+
+Move all120 supported128-level PDM rows into the same contended bank5 memory
+class (two rows/page), keep all89 compact IMA rows in uncontended bank2, and
+constrain offline control levels to4..123 with feedback clipping3..12. This
+does not attenuate, crop or replace the source reference. Exact-rational
+checking covers4096 table cases. A rejected earlier128-level model needed
+22 states /132 bytes per row; it also exposed a floating-point tie error.
+The corrected model and table-layout guards are independently checked.
+
+Ordinary cost is427.375 T/sample, **+4.375 T** from the prior423-T player and
++1.5 T from the padded64-level direct experiment. Page and bank overhead
+remain+14/+140 T. Loading progress has zero playback cost. The full width256
+candidate takes79891688 native T per cycle, then83104176 T including actual
+ULA waits:23.430087 s, -0.299133% speed and127652.961 mean PDM outputs/s.
+This does not improve the previous128053.556-Hz mean rate. Runtime disk
+reads remain zero;32 loading progress steps and message hiding pass.
+Uniform-memory sample schedules differ by only0..3 T (<0.846 microseconds)
+across the tested changed payload/model, versus the old0.766-ms discrepancy.
+
+A width256/reg0.03 host estimate19.952800 dB becomes19.944257/19.943702 dB in
+complete cold disk loops, still below20. Width512/reg0.01 scores19.938054 dB
+on that earlier host schedule. Do not label these as passing releases.
+The source clock, integration rate, filter, edge exclusions, amplitude and
+full excerpt remain unchanged; no gain, delay or time-scale fitting is used.
+
+Add `convert_ima3_audio.py`: arbitrary FFmpeg input, bounded initial excerpt,
+separate assembler, automatic cold timing calibration, waveform search,
+complete native/two-loop Fuse checks, best measured candidate, WAV and TRD.
+It supports an explicit25-dB target and integrity-checked resumable stages.
+Below-target results return exit2 and remain previews. A stereo24/16k
+input-path smoke test gives20.948752/20.949015 dB and -1.134646% speed; a
+separate25-dB invocation gives20.948905/20.948362 dB and correctly fails its
+target. These2-s tests do not replace full-source acceptance. All three
+completed stages resume without recalculation; modified cached data is
+rejected. Default4-bit encoding remains byte-identical on regression fixtures.
+
+The earlier no-IMA, ideal128-kHz host study's25.81 dB concerns another input
+and algorithm, not this TRD or physical hardware. Keep that distinction in
+[the implementation notes](audiobook-beeper/IMA3_DIRECT.md).
+
+The completed automatic run extends the PC horizon to128 samples at
+width256/weight0.03: host20.159645 dB, then **20.159645 /20.159651 dB** on
+both complete new cold-Fuse loops, phase0/0 T. This satisfies the20-dB gate
+on the unchanged full source. No additional Z80 work is introduced. The
+superseded width1024/64-sample search was interrupted after65536 samples
+of progress and is preserved as incomplete. The final automatic stereo24
+smoke test measures21.116910/21.115089 dB; it remains a separate short input.
+
+Normal100%-speed recording confirms both wraps, matching paging latches,
+continuous activity and **22.815238 s** cold boot to audio (<60 s); recorded
+playback is46.869388 s. Complete-run resume reuses all four hashed stages,
+including the sound capture. Cross-run pilot reuse checks the exact source,
+player, tools and remaining producers; a one-sample source change is rejected.
+
+Save `ZX-audiobook-IMA3-direct-test.trd` (SHA256
+`601ba65fa7a12b4b6c67f384ba5ed32530bee95816bb86d8effcc0c7de7d34c0`),
+normal WAV, pilot, assembly, producer snapshots, per-attempt results and
+[completion audit](audiobook-beeper/experiments/ima-3bit-direct/completion-audit.json).
+Decision: deliver direct packed IMA3 and the automatic converter.25 dB is
+not achieved; no physical-hardware or arbitrary-recording SNR guarantee is
+made. Keep the earlier expanding disk and all rejected evidence.
+A final whitespace-only source cleanup leaves the Python AST and entire
+rebuilt TRD byte-identical; its proof and original measured producer bytes
+are archived. No additional playback verification is needed for that cleanup.
+
 ## 2026-10-03: measured instruction cost on eight external TR-DOS disks
 
 Answer the user's request for an empirical Z80 instruction average using
@@ -197,6 +483,143 @@ Detach key before final sampling; do not count failed menu pilots as play.
 Accept the measured result for the requested informational survey. Reuse
 [scripts, methodology and compact evidence](toolkit/instruction_survey/README.md)
 instead of rerunning the study without a new sampling question.
+
+## 2026-10-03: IMA3 waveform disk passes the mandatory 20-dB gate
+
+Preserve the complete original186880-sample source and its hash
+`ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304`.
+Extend PC waveform-aware beam search with the even-nibble IMA3 alphabet,
+including exact silent settling. Keep default four-bit behavior byte-identical
+on the regression fixtures. The selected width32 /64-sample /weight0.1 search
+scores20.208549 dB on the old pilot clock; a newly assembled, calibrated and
+fully executed IMA3 disk confirms **20.07106694 dB in each cold Fuse loop**.
+Baseline was18.171046/18.152640 dB. No fitted delay, gain, source shortening
+or comparison-filter change is used. This meets the user's minimum20-dB
+requirement for the control excerpt in the emulator, not every recording
+or physical hardware.
+
+During the work, the user increases preparation allowance from39.904 to
+**60 s** and permits later decoder optimization. Add an explicit verifier
+limit override while preserving the historical raw128 benchmark. Actual
+cold expansion is1.934749 s; compressed-data ROM reads11.045818 s;
+preloader entry to ready18.683671 s. Normal reset/boot to audio is27.254263 s,
+and the two-loop sound capture lasts46.749410 s with matching paging latches.
+
+Transport remains70080 bytes (+64 sector padding), expanding to93440 IMA
+bytes. The473-sector bootable disk accounts for all131072 RAM bytes and
+uses no full PCM/PDM buffer. Expansion remains285 T/eight samples and
+6896434 native T total, delta0. Ordinary PDM remains423 T/sample, page14 T,
+bank140 T extra, each delta0. Silent calibration uses1273 pairs /69 T pad
+instead of67 T; native cycle79122530 ->79122532 T, delta+2 T. Complete Fuse
+cycles are82891452 T each, phase0/0, speed error-0.043271%.
+
+Each native/cold Fuse playback check covers5985253 outputs and373760
+predictor/index samples. All preload bytes, seven output banks, progress
+steps, RAM guards, loading display and zero runtime disk reads pass.
+Independent FFmpeg verifies all186880 IMA samples. Normal recording checks
+both wraps and audio activity; the recorded disk hash matches the full trace.
+
+A width128 host search started while the full width32 check was pending
+scores20.518986 dB on the pilot schedule. Preserve it as an unexecuted
+candidate; once width32 passes the actual required gate, finish that delivery
+instead of promoting a host-only score. The acceptance margin is0.071 dB,
+so no large-margin or perceptual-transparency claim is made.
+
+Save the separate `ZX-audiobook-IMA3-waveform-test.trd`, normal WAV, complete
+[audit and evidence](audiobook-beeper/experiments/ima-3bit-waveform/completion-audit.json),
+producer snapshots, timings and both host trials. Keep the prior18-dB disk.
+Reproduce with [the commands and methodology](audiobook-beeper/IMA3_WAVEFORM.md).
+Decision: deliver the verified compressed disk; the requested20-dB goal is
+achieved within the new60-s budget. A Speex port remains separate research.
+
+## 2026-10-03: Speex audition and exact Z80 arithmetic feasibility
+
+After the user makes final PDM SNR >=20 dB mandatory and requests Speex,
+test the unchanged186880-sample control, hash
+`ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304`.
+Preserve all speech, fixed8-kHz clock/gain and the standard comparison filter.
+Run10 initial FFmpeg cases at8/11/15/18.2/24.6 kbit/s using both decoders,
+then30 controlled API cases with unmodified Speex1.2.1, complexity10,
+CBR and no VAD/DTX. Compare highpass/enhancement options and float/fixed
+decoding. Include the silent flush frame and a32-byte framing allowance.
+
+Default processing has poor waveform scores even after its disclosed
+79-sample fitted integer delay. Controlled tests remove only the declared
+40+40-sample latency. With both optional filters disabled, fixed-point
+18.2k/24.6k scores24.752/27.823 dB; existing threshold IMA yields
+21.054/22.037 dB at6.946:1/5.155:1 relative to PCM16. Record all rejected
+IMA saturation paths. These scores exclude PDM and are not release passes.
+
+Compile and execute an optimistic exact signed16x16 table-product kernel.
+Every1376146 input pair is exact; all calls cost128 T (111 T plus17 CALL),
+using1792 bytes per coefficient. Ten products/sample for the full source
+project207436800 T /58.484 s without calls;67.441 s with calls. Exclude
+table generation, argument setup, MAC/state work, excitation, LSP, IMA,
+disk, ROM, ULA and paging explicitly. This fails39.903992 s already and
+rejects this strategy, not every conceivable Speex implementation. A full
+decoder has not been ported or timed. Existing PDM stays423 T/sample,
+delta0; no TRD, cold Fuse PDM or physical hardware qualification is added.
+
+Initial host build attempts fail on Windows command quoting, compiler
+discovery and localized log decoding. Correct the helper and preserve
+successful raw logs; no upstream codec algorithm is changed. Save the
+official source archive/license, build hashes, compressed frames, reports,
+and selected audition WAVs. The IMA waveform-search extension considered
+before the user's Speex steering was not implemented or measured.
+
+Decision: retain24.6k as the best fidelity reference and18.2k as the more
+compact audition; defer a full port under the current startup budget.
+The final20-dB objective remains unmet. Reproduce using the three Speex
+probe scripts and host builder linked in
+[the study](audiobook-beeper/SPEEX_STUDY.md), with
+[saved evidence](audiobook-beeper/experiments/speex/manifest.json).
+
+## 2026-10-03: bootable IMA3 preload disk and voice-timing correction
+
+Create the requested new-compression TRD on the unchanged full 186880-sample
+8-kHz control. Store 70080 bytes of the even-nibble IMA3 subset, plus 64
+sector-padding bytes, and expand thirteen blocks through a 6144-byte buffer
+into all 93440 resident IMA bytes. Preserve independent cold boot, seven-bank
+allocation, progress bars, disappearing loading message and looping PDM.
+Occupied file sectors fall from 517 to 473 including the new preloader:
+25% audio-payload saving, but 44 sectors / 11264 bytes net disk saving.
+
+The final full native preloader costs 6896434 T, 238504 T more than the
+standalone round-3 benchmark; its expansion core remains 285 T/eight samples.
+Cold Fuse checks every expanded byte and all progress steps. Real compressed
+data ROM service is 11.064859 s, expansion is 1.935179 s including ULA,
+and preloader entry to player-ready is 18.720633 s. Initial BASIC/bootstrap
+loading precedes that interval. Conversion is within the 39.903992-s limit.
+
+The uncorrected pilot passes full native/Fuse bits but fails fixed-clock
+fidelity at -3.004 dB; its warped-reference score is 18.522 dB. The user
+hears added voice vibration during its normal-speed recording. Apply the
+existing Lanczos timing compensation on PC, re-encode IMA3 with beam32,
+freeze the hot-row layout and recalibrate. The new complete traces measure
+18.171/18.153 dB at -0.04327% speed error. This improves the timing-related
+error; it is not a claim of perceptual transparency or attainment of 20 dB.
+Keep the pilot reports and recording for comparison instead of discarding
+the unsuccessful first result.
+
+For each final playback check, verify all 5985253 outputs and 373760
+predictors/indices over two loops, exact native timing, paging and RAM guards.
+FFmpeg independently reproduces all 186880 IMA samples. Actual Fuse cycles
+are 82891450/82891452 T (-2/0 T from 1169 fields). Native playback remains
+423 T/sample, +14 T/page and +140 T/bank, each delta0. The final silent tail
+uses 1273 pairs and 67 T padding; cycle79122530 T is 2 T below the pilot.
+The final normal-speed capture checks both wraps, paging and audio activity.
+
+An initial full-trace run pauses in the debugger before execution because
+Fuse rejects underscores in variable names. Confirm with a minimal parser
+probe, stop only the owned process, rename the variable and rerun fully.
+This is a harness failure, not a player failure. Preserve the correction
+in both the all-bit verifier and the audio recorder.
+
+Deliver this as a listening preview, not a 20-dB release or a physical
+hardware qualification. Keep the higher-fidelity four-bit player as the
+existing quality reference. See [IMA3_PRELOAD.md](audiobook-beeper/IMA3_PRELOAD.md),
+its scripts, archived reports and WAVs. No claim of longer resident playback
+follows from the smaller disk payload.
 
 ## 2026-10-03: three native optimization rounds each for IMA3 and PVQ3
 

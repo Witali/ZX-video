@@ -1,0 +1,115 @@
+{
+  "date": "2026-10-04",
+  "complete": true,
+  "source": {
+    "input": ".tmp\\ima3-converter-input-stereo24.wav",
+    "sample_rate_hz": 8000,
+    "channels": 1,
+    "pcm_bits": 8,
+    "retained_input_samples": 16000,
+    "retained_input_seconds": 2.0,
+    "truncated": false,
+    "truncation_reason": null,
+    "requested_duration_seconds": null,
+    "maximum_packed_bytes": 93432,
+    "prepared_samples": 16128,
+    "maximum_prepared_samples": 249152,
+    "short_input_repetitions": 1,
+    "silence_guard_samples": 128,
+    "fixed_gain": 1.0085492880323028,
+    "original_peak": 0.8443439602851868,
+    "edge_fade_samples": 80,
+    "peak_target_fraction": 0.8515625,
+    "quality_reference": "Prepared PCM8, with the same gain/fades/padding",
+    "source_sha256": "ae3cd43debe3c32e80ee7eaadee5c186f079fab1c8d317bd5de80c03d1ac888c",
+    "input_media": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "pcm_s24le",
+          "sample_rate": "16000",
+          "channels": 2,
+          "bits_per_sample": 24
+        }
+      ],
+      "format": {
+        "duration": "2.000000"
+      }
+    }
+  },
+  "selected": {
+    "directory": "disk-encode-1",
+    "two_loop_clock_aware_snr_db": [
+      20.948905092732147,
+      20.948361689144875
+    ],
+    "minimum_snr_db": 20.948361689144875,
+    "snr_at_least_20_db": true,
+    "mean_prepared_sample_rate_hz": 7909.226654005504,
+    "mean_speed_error_percent": -1.1346668249311964,
+    "speed_within_two_percent": true,
+    "reference_rate_hz": 8000,
+    "physical_hardware_tested": false,
+    "complete_trace_phase_deltas_tstates": [
+      1,
+      0
+    ]
+  },
+  "candidates": [
+    {
+      "directory": "pilot",
+      "two_loop_clock_aware_snr_db": [
+        -3.7353769654529416,
+        -3.7368951061703433
+      ],
+      "minimum_snr_db": -3.7368951061703433,
+      "snr_at_least_20_db": false,
+      "mean_prepared_sample_rate_hz": 7909.226107230619,
+      "mean_speed_error_percent": -1.134673659617258,
+      "speed_within_two_percent": true,
+      "reference_rate_hz": 8000,
+      "physical_hardware_tested": false,
+      "complete_trace_phase_deltas_tstates": [
+        2,
+        0
+      ]
+    },
+    {
+      "directory": "disk-encode-1",
+      "two_loop_clock_aware_snr_db": [
+        20.948905092732147,
+        20.948361689144875
+      ],
+      "minimum_snr_db": 20.948361689144875,
+      "snr_at_least_20_db": true,
+      "mean_prepared_sample_rate_hz": 7909.226654005504,
+      "mean_speed_error_percent": -1.1346668249311964,
+      "speed_within_two_percent": true,
+      "reference_rate_hz": 8000,
+      "physical_hardware_tested": false,
+      "complete_trace_phase_deltas_tstates": [
+        1,
+        0
+      ]
+    }
+  ],
+  "target_snr_db": 25.0,
+  "target_applicable": true,
+  "target_met": false,
+  "quality_gate_passed": false,
+  "preview_only": true,
+  "search_attempts": 1,
+  "bounded_search": true,
+  "recording": null,
+  "trd_sha256": "b296a10982c108a6c45e1c84b194e8dfbc02e1b0678610ce962530b25bf7d9b5",
+  "physical_hardware_tested": false,
+  "source_reference": "Prepared 8-kHz PCM8, no fitted gain/delay/time stretch; unchanged 70 Hz..4.5 kHz filter",
+  "spectrum_expansion": false,
+  "pcm_buffer_bytes": 0,
+  "pdm_buffer_bytes": 0,
+  "limitations": [
+    "Target is measured per input; it is not guaranteed for arbitrary audio.",
+    "25 dB remains a requested search target, not an established hardware capability."
+  ]
+}

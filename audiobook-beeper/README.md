@@ -1,8 +1,12 @@
 # Beeper PDM audiobook preview
 
-For a new recording, use the [general audio-to-TRD converter](CONVERTER.md).
-It retains the initial fragment that fits RAM, calibrates each encoded
-stream, compensates voice timing and verifies two complete loops. The
+For a new recording, use the [automatic packed IMA3 converter](IMA3_DIRECT.md).
+It defaults to [one TRD with sequential RAM-sized parts](IMA3_SERIES.md).
+Use `--disk-mode all` for the entire track on numbered TRDs, or
+`--disk-mode preview` for the former looping RAM demo. Audio remains packed
+three-bit IMA through playback. The script searches the PC encoding and
+verifies the quality and timing of the complete resulting disks in Fuse.
+The [four-bit converter](CONVERTER.md) remains available. The
 [denser-codec study](DENSE_CODECS.md) compares compression and native Z80
 decoder costs; predictive VQ is not yet an integrated playback mode.
 

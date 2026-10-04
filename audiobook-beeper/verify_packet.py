@@ -19,17 +19,18 @@ from smoke_test_fuse import hidden_startupinfo
 from verify_pcm import extract_player, save
 
 
-def rational_tables(holds=HOLDS,expected_tables=None,beta=.5,extent=1.):
-    words=np.empty((64,32),dtype='<u2');successors=np.empty((64,32),dtype='u1')
-    for value in range(64):
+def rational_tables(holds=HOLDS,expected_tables=None,beta=.5,extent=1.,q_clip=(0,15)):
+    bins=expected_tables[0].shape[0] if expected_tables is not None else 64
+    words=np.empty((bins,32),dtype='<u2');successors=np.empty((bins,32),dtype='u1')
+    for value in range(bins):
         for state in range(32):
-            x=Fraction(2*value+1,128);q=Fraction(state//2-8,8)
+            x=Fraction(2*value+1,2*bins);q=Fraction(state//2-8,8)
             recent=Fraction(2*(state%2)-1,2)*Fraction(extent);word=0
             for hold in holds:
                 weight=Fraction(hold*16,sum(holds))
                 u=x+q/weight+recent*Fraction(beta);bit=int(u>=Fraction(1,2))
                 recent=u-bit;q+=weight*(x-bit);word=word*2+bit
-            code=max(0,min(15,(q*8+Fraction(17,2)).__floor__()))
+            code=max(q_clip[0],min(q_clip[1],(q*8+Fraction(17,2)).__floor__()))
             words[value,state]=word;successors[value,state]=code*2+int(recent>=0)
     a,b,*_=(layout() if expected_tables is None else expected_tables)
     assert np.array_equal(words,a) and np.array_equal(successors,b), 'table differs from rational recurrence'
@@ -79,7 +80,10 @@ def native_check(disk,meta,packed,reference_fn=reference,intervals_fn=intervals)
     decoder_rows=meta.get('decoder_rows',[0x4000+i*64 for i in range(89)])
     banks={};offset=0
     for s in meta['sections']:
-        data=bytearray(b'\xa5'*16384);data[s['address']-0xc000:]=packed[offset:offset+s['bytes']]
+        data=bytearray(b'\xa5'*16384)
+        payload=(disk[s['sector']*256:(s['sector']+s['sectors'])*256]
+                 if meta.get('packed_ima3_direct') else packed[offset:offset+s['bytes']])
+        data[s['address']-0xc000:]=payload
         if s['bank']==7:data[:6912]=blob[16384:]
         if s['bank']==2:m.set_memory_block(s['address']-0x4000,data[s['address']-0xc000:])
         banks[s['bank']]=data;offset+=s['bytes']
@@ -129,7 +133,8 @@ def native_check(disk,meta,packed,reference_fn=reference,intervals_fn=intervals)
     return dict(complete=True,cycles_verified=2,bits_verified=len(bits),pcm16_samples_verified=checked,
                 every_pdm_bit_exact=True,every_predictor_and_index_exact=True,memory_guards_passed=True,
                 every_output_port_uncontended=True,bank_sequence=pages,cycle_tstates=int(timing.sum()),
-                maximum_hold_tstates=int(actual.max()),rational_table_cases=2048,
+                maximum_hold_tstates=int(actual.max()),
+                rational_table_cases=meta.get('model',{}).get('pcm_bins',64)*32,
                 interval_histogram_tstates=dict(sorted(Counter(map(int,actual)).items())),
                 scope='Continuous Z80 execution; excludes ULA contention, disk and ROM')
 
@@ -140,6 +145,9 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
     count=33 if probe else len(expected)
     work=out/('fuse-probe' if probe else 'verification-work');work.mkdir(exist_ok=True)
     lines=['base 10','set $r 0','set $bits 0'];widths={};eid=0
+    preload=meta.get('preload',meta.get('lpc_preload'))
+    # Fuse debugger identifiers accept letters/digits, not underscores.
+    if preload:lines.append('set $preloadstage 0')
     stamp='spectrum:frames*70908+ula:tstates'
     def event(where,tag,expressions,after=(),condition='',stop=False):
         nonlocal eid
@@ -147,11 +155,16 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
         lines.extend([f'breakpoint {where}',f'commands {eid}',f'print {tag}'])
         lines.extend('print '+s for s in expressions);lines.extend(after)
         lines.extend(['exit 77' if stop else 'continue','end'])
+        if preload:condition='$preloadstage==2'+(' && ('+condition+')' if condition else '')
         if condition:lines.append(f'condition {eid} {condition}')
     event(labels['ready'],100,[stamp,'z80:sp'],['set $r 1'])
     attrs=[f'[{0xd800+i}]' for i in range(96)]
     event(labels['loading_visible'],103,[stamp,'ula:mem7ffd',*attrs])
     event(labels['loading_hidden'],104,[stamp,'ula:mem7ffd',*attrs])
+    if meta.get('loading_progress_steps'):
+        progress_attrs=[f'[{0xd8a0+i}]' for i in range(32)]
+        event(labels['load_progress_event'],105,
+              [stamp,'ula:mem7ffd',f'[{labels["load_progress"]}]',*progress_attrs])
     event('port write 254',140,[stamp,'z80:pc','z80:a','z80:d']+(['z80:b'] if meta.get('direct') else []),['set $bits $bits+1'],condition='$r==1')
     event('port write 254',200,[stamp],condition=f'$bits>={count}',stop=True)
     for address in meta['first_addresses']:
@@ -160,6 +173,12 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
             event(address+20,121,['z80:hl'])
     for i in range(7):event(labels[f'page_{i}']+2,150,['z80:a','ula:mem7ffd','ula:mem1ffd'])
     event(labels['disk_call'],102,['$r',stamp,'ula:mem7ffd','z80:sp'])
+    if preload:
+        handoff=preload['labels'].get('handoff',preload['labels']['unpack_complete'])
+        lines += [f'breakpoint {handoff}',f'condition {eid+1} $preloadstage==0',f'commands {eid+1}',
+                  'set $preloadstage 1','continue','end','breakpoint 32768',
+                  f'condition {eid+2} $preloadstage==1',f'commands {eid+2}',
+                  'set $preloadstage 2','continue','end']
     script='\n'.join(lines);(work/'fuse-debugger.txt').write_text(script,encoding='utf-8',newline='\n')
     command=[str(fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions','--speed','10000',
              '--machine','128','--beta128','--debugger-command',script,str((out/'audiobook-preview.trd').resolve())]
@@ -167,12 +186,14 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
         result=subprocess.run(command,cwd=fuse.parent,capture_output=True,startupinfo=hidden_startupinfo(),timeout=600)
     except subprocess.TimeoutExpired as e:
         (work/'timeout-trace.txt.gz').write_bytes(gzip.compress(e.stdout or b'',mtime=0));raise
-    (work/'fuse-trace.txt.gz').write_bytes(gzip.compress(result.stdout,mtime=0))
+    # Multi-million-line pulse traces are diagnostic data. A fast lossless
+    # compression level avoids delaying subsequent quality measurements.
+    (work/'fuse-trace.txt.gz').write_bytes(gzip.compress(result.stdout,compresslevel=1,mtime=0))
     (work/'fuse-stderr.txt').write_bytes(result.stderr)
     if result.returncode!=77:raise AssertionError(('Fuse failed',result.returncode,result.stderr[:1000]))
     numbers=iter(int(s.strip(),0) for s in result.stdout.decode().splitlines() if re.fullmatch(r'(?:-?\d+|0x[\da-fA-F]+)',s.strip()))
     times=array('I');bits=bytearray();samples=[];states=[];pages=[];reads=[];ready=[];ends=[];shown=[];hidden=[]
-    port_rows=[]
+    port_rows=[];progress=[]
     for tag in numbers:
         row=[next(numbers) for _ in range(widths[tag])]
         if tag==140:
@@ -192,6 +213,7 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
         elif tag==102:reads.append(row)
         elif tag==103:shown.append(row)
         elif tag==104:hidden.append(row)
+        elif tag==105:progress.append(row)
         elif tag==100:ready.append(row)
         elif tag==200:ends.append(row)
     if probe:return dict(port_rows=port_rows,ready=ready,reads=len(reads),shown=shown,hidden=hidden)
@@ -207,10 +229,19 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
     wanted=[s['bank']+24 for s in meta['sections'][1:]+meta['sections'][:1]]*2
     assert len(pages)==len(wanted) and all(r[0]==r[1]==b for r,b in zip(pages,wanted))
     assert len({r[2] for r in pages})==1
-    assert len(reads)==meta.get('preload_table_sectors',55)+len(packed)//256 and all(r[0]==0 and r[2]&8 and 0x5f00<=r[3]<0x6000 for r in reads)
+    assert len(reads)==meta.get('playback_preload_sector_reads',meta.get('preload_table_sectors',55)+len(packed)//256) and all(r[0]==0 and r[2]&8 and 0x5f00<=r[3]<0x6000 for r in reads)
     assert len(shown)==len(hidden)==1 and shown[0][1]==hidden[0][1]==31
     assert shown[0][2:]==[0x47]*96 and hidden[0][2:]==[0]*96
-    assert all(shown[0][0]<=r[1]<hidden[0][0]<ready[0][0] for r in reads)
+    display_reads=meta.get('loading_display_sector_reads',0)
+    assert all(r[1]<shown[0][0] for r in reads[:display_reads])
+    assert all(shown[0][0]<=r[1]<hidden[0][0]<ready[0][0] for r in reads[display_reads:])
+    if meta.get('loading_progress_steps'):
+        assert len(progress)==32
+        for i,row in enumerate(progress,1):
+            assert row[1]==31 and row[2]==i
+            assert row[3:]==[0x20]*i+[0x08]*(32-i)
+            assert shown[0][0]<row[0]<hidden[0][0]
+        assert reads[-1][1]<progress[-1][0], '100 percent precedes the last sector'
     timeline=np.asarray(times,dtype=np.int64);timeline-=timeline[0]
     actual=np.diff(timeline);native=np.tile(intervals_fn(meta),2)
     assert np.all(actual>=native)
@@ -225,7 +256,10 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
                 maximum_hold_tstates=int(actual.max()),minimum_instantaneous_pdm_rate_hz=CPU_CLOCK/int(actual.max()),
                 additional_ula_tstates=int(actual.sum()-native.sum()),native_tstates_per_cycle=int(native[:n].sum()),
                 interval_histogram_tstates=dict(sorted(Counter(map(int,actual)).items())),
-                loading_message=dict(shown_before_reads=True,hidden_before_playback=True,shadow_screen_selected_during_all_reads=True),
+                loading_message=dict(shown_before_reads=display_reads==0,shown_before_table_and_payload_reads=True,
+                                     display_sector_reads_before_message=display_reads,
+                                     hidden_before_playback=True,shadow_screen_selected_during_all_reads=True),
+                loading_progress_steps_verified=len(progress),
                 trd_sha256=hashlib.sha256((out/'audiobook-preview.trd').read_bytes()).hexdigest(),
                 fuse_sha256=hashlib.sha256(fuse.read_bytes()).hexdigest(),physical_hardware_tested=False)
 

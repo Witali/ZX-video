@@ -1,0 +1,68 @@
+{
+  "complete": true,
+  "disk_mode": "single",
+  "disks": [
+    "audio.trd"
+  ],
+  "part_count": 1,
+  "source_samples": 16000,
+  "retained_source_samples": 16000,
+  "full_source_retained": true,
+  "parts": [
+    {
+      "start": 0,
+      "stop": 16000,
+      "samples": 16128,
+      "sectors": 115
+    }
+  ],
+  "fixed_gain": 1.0085492880323028,
+  "sample_rate_hz": 8000,
+  "silence_guard_samples": 128,
+  "edge_fade_samples": 80,
+  "maximum_prepared_samples_per_part": 251200,
+  "quality_gate_passed": true,
+  "preview_only": false,
+  "loading_between_parts": true,
+  "simultaneous_disk_and_audio": false,
+  "verification": {
+    "complete": true,
+    "volumes": [
+      {
+        "complete": true,
+        "volume": 1,
+        "from_actual_predecessor_ram": false,
+        "parts": [
+          {
+            "part": 1,
+            "bits_verified": 258015,
+            "predictor_index_samples_verified": 16126,
+            "every_live_bit_identical": true,
+            "timing_delta_from_qualified_part_tstates": [
+              0,
+              1
+            ],
+            "fixed_clock_snr_db": 20.97869711739463,
+            "source_silent": false,
+            "filter": "highpass=f=70,lowpass=f=4500:p=2,lowpass=f=4500:p=2",
+            "speed_error_percent": -0.265527873441318,
+            "start_tstates": 53465620,
+            "stop_tstates": 60634623
+          }
+        ],
+        "automatic_part_transitions": 0,
+        "between_part_pause_seconds": [],
+        "runtime_disk_reads_during_audio": 0,
+        "total_sector_calls": 187,
+        "loading_ui_checked": true,
+        "first_ready_seconds": 15.073901153119625,
+        "ended_at": "end_of_audio",
+        "terminal_ram_sha256": "e3e4945fd556c5afdcf1dcaaa35792f514b2f77edf802825036f9d29e440caf6",
+        "trd_sha256": "8b899bc8cf323b0ccf5cff1b299682377991aa7925445c6cd91c522d46427de6",
+        "physical_hardware_tested": false
+      }
+    ],
+    "continuations": []
+  },
+  "physical_hardware_tested": false
+}

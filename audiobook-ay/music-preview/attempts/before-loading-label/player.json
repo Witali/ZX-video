@@ -1,0 +1,140 @@
+{
+  "origin": 32768,
+  "ticks": 1556,
+  "duration_seconds": 31.12,
+  "loop_playback": true,
+  "disk_filename": "audio-preview.trd",
+  "player_labels": {
+    "total_ticks": 1556,
+    "loop_playback": 1,
+    "disk_0": 780,
+    "sectors_0": 64,
+    "disk_1": 1804,
+    "sectors_1": 3,
+    "disk_2": 0,
+    "sectors_2": 0,
+    "disk_3": 0,
+    "sectors_3": 0,
+    "disk_4": 0,
+    "sectors_4": 0,
+    "disk_5": 0,
+    "sectors_5": 0,
+    "LOAD_BANK": 32768,
+    "start": 32768,
+    "clear_ay": 32844,
+    "ready": 32898,
+    "wait_field": 32899,
+    "field_start": 32900,
+    "tick_start": 32909,
+    "write_register": 32913,
+    "ay_out": 32921,
+    "tick_end": 32929,
+    "finished": 32970,
+    "finished_wait": 32996,
+    "irq": 32999,
+    "read_n": 33002,
+    "disk_call": 33011,
+    "sector_ok": 33029,
+    "remaining": 33036,
+    "disk_position": 33038,
+    "bank_pointer": 33040,
+    "bank_table": 33042,
+    "code_end": 33048,
+    "screen_data": 36864
+  },
+  "sections": [
+    {
+      "bank": 0,
+      "sector": 60,
+      "sectors": 64,
+      "bytes": 16379
+    },
+    {
+      "bank": 4,
+      "sector": 124,
+      "sectors": 3,
+      "bytes": 737
+    }
+  ],
+  "directory": [
+    {
+      "name": "boot",
+      "type": "B",
+      "field1": 67,
+      "length": 67,
+      "sectors": 1,
+      "sector": 0,
+      "track": 1
+    },
+    {
+      "name": "PLAYER",
+      "type": "C",
+      "field1": 32768,
+      "length": 11008,
+      "sectors": 43,
+      "sector": 1,
+      "track": 1
+    },
+    {
+      "name": "AUDIO0",
+      "type": "C",
+      "field1": 49152,
+      "length": 16379,
+      "sectors": 64,
+      "sector": 12,
+      "track": 3
+    },
+    {
+      "name": "AUDIO1",
+      "type": "C",
+      "field1": 49152,
+      "length": 737,
+      "sectors": 3,
+      "sector": 12,
+      "track": 7
+    }
+  ],
+  "capacity": {
+    "used_sectors": 111,
+    "free_sectors": 2433,
+    "first_free_track": 7,
+    "first_free_sector": 15
+  },
+  "assembly": {
+    "assembler": "pyz80",
+    "instruction_bytes_emitted_by_python": false,
+    "source_sha256_lf": "2a85515225a24d6290ffdc5a5ff7bf2cdfd947e8442fc4afbbb519dfee805be3",
+    "binary_sha256": "6b14e732f49862ecce04e83c987699c69966b0b177ff78c0ae9188766a117a14"
+  },
+  "registers_sha256": "cf78b35e636abc58c8dbaf4e3404e6335fcbf62ee4624b6d9f1619664254e83d",
+  "timing": {
+    "ordinary_field_work_tstates": 974,
+    "ordinary_delta_tstates": 0,
+    "near_boundary_tstates": 992,
+    "bank_change_tstates": 1091,
+    "exact_boundary_eof_tstates": 1007,
+    "loop_restart_extra_tstates": 105,
+    "loop_first_field_tstates": 1079,
+    "tick_start_to_tick_end_tstates": 867,
+    "irq_body_tstates": 18,
+    "im2_ack_tstates": 19,
+    "vector_jump_tstates": 10,
+    "nominal_field_tstates": 70908,
+    "excludes": "ULA contention, HALT wait, boot ROM and physical disk latency"
+  },
+  "memory": {
+    "bank_5": "display, BASIC and TR-DOS workspace",
+    "bank_2": "8000..8FFF code; 9000..AAFF screen copy; stack below B800; BDBD vector; BE00..BF00 IM2",
+    "data_banks": [
+      0,
+      4,
+      6,
+      1,
+      3,
+      7
+    ],
+    "capacity_register_bytes": 98274,
+    "unused_data_tail_bytes_per_bank": 5,
+    "runtime_disk_reads": 0
+  }
+}

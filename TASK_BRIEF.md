@@ -1,6 +1,6 @@
 # Focused optimization task
 
-Updated 2026-10-01. Use this brief to continue the project in this or a new
+Updated 2026-10-04. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
 ## Project objective
@@ -11,6 +11,76 @@ prioritize exact five-field video
 deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
+
+## Direct IMA3 / automatic converter checkpoint (2026-10-04)
+
+The [sequential converter](audiobook-beeper/IMA3_SERIES.md) now defaults to
+one TRD; `--disk-mode all` retains the whole selected track on numbered,
+independently bootable volumes, and `--disk-mode preview` keeps the old
+looping RAM demo. It loads/plays successive RAM-sized parts with audible
+disk pauses. The 57-byte exit fits existing padding: no extra RAM, no new
+per-sample cost, unchanged 94458-byte /251888-sample capacity. Five full
+parts hold 157.35 seconds of source on one disk. Full native/Fuse tests cover
+automatic loading, both cold disk boots, actual-RAM continuation, wrong disk,
+all seven banks and CLI defaults. The root
+`ZX-audiobook-IMA3-sequential-test.trd` deliberately plays the same 23.36-s
+reference twice; measured 20.161979/20.161096 dB and a 19.798231-s load pause.
+The synthetic full-capacity fixture is a correctness test below 20 dB,
+not a longer quality release. Reuse the [archived evidence](audiobook-beeper/experiments/ima-3bit-series/README.md).
+
+The [compact IMA3 table layout](audiobook-beeper/IMA3_MEMORY.md) is complete.
+It reuses 352 code-gap bytes and removes excess padding, reclaiming 1024
+physical RAM bytes with all decoder/PDM states retained. Fixed reservation
+is 13312 bytes; automatic capacity is 94458 packed bytes /251888 samples /
+31.486 s. Pulse instructions and 427.375 T/sample are unchanged, delta 0 T.
+Two full cold Fuse reference loops have exactly the old 5981841 bits and
+relative timestamps, preserving the existing 20.159645/20.159651-dB result.
+Native and cold Fuse verify the new full seven-bank capacity with a synthetic
+tail (8060417 outputs), not a longer real recording. Use
+`ZX-audiobook-IMA3-compact-tables.trd`; retain earlier disks as baselines.
+Reuse this proof instead of repeating the encoder search or quality checks.
+
+The user also requested a movie-style AY version of the same music. The
+[generic AY converter](audiobook-ay/CONVERTER.md) and separately assembled
+looping player are complete. The 31.12-s The Entertainer example uses 17116
+resident bytes; full cold Fuse checks cover 34232 writes / 3112 fields over
+two repeats with no missed fields, loading-message hiding and a normal WAV.
+Ordinary cost stays 974 T (delta 0); loop restart adds 105 T once per repeat.
+Use `ZX-music-Entertainer-AY.trd`. The chip arrangement's musical similarity
+metrics are not comparable to PDM waveform SNR; listening acceptance remains
+with the user. Reuse this evidence instead of repeating the conversion.
+
+The separate [public-domain music example](audiobook-beeper/experiments/ima-3bit-entertainer/README.md)
+uses The Entertainer by Scott Joplin, performed by IE. The user explicitly
+accepts the best found music result below 20 dB. Three automatic searches
+select a 31.128-s excerpt at 17.837011/17.836344 dB in complete cold Fuse
+loops, with -0.328930% speed error and 0/0-T phase errors. The full 93432-byte
+audio capacity now contains real music. This remains a listening preview
+under the converter's unchanged 20-dB gate; no global optimum or physical
+hardware claim is made. Use `ZX-music-Entertainer-IMA3.trd`. The player hot
+path is unchanged, delta 0 T. Do not replace the audiobook reference below.
+
+The direct packed-IMA3 implementation now passes the same complete original
+186880-sample reference at **20.159645 /20.159651 dB** in two cold Fuse loops,
+without Spectrum-side IMA3-to-IMA4 expansion. Resident audio is70080 bytes,
+no PCM/PDM buffer; speed error-0.299133%, phase0/0 T, mean PDM127652.961 Hz.
+Native427.375 T/sample is+4.375 T from the expanding player's423 T; page/
+bank extras stay+14/+140 T. All5981841 outputs and373760 predictor/index
+samples pass native/Fuse checks;32 loading progress steps and message hiding
+pass. Normal cold boot to sound is22.815238 s; actual two-loop WAV and
+completion audit are saved. Full93432-byte /249152-sample capacity is native-tested across seven
+banks with a synthetic tail, not a longer real-source release.
+
+Use [the automatic converter and evidence](audiobook-beeper/IMA3_DIRECT.md).
+It handles FFmpeg input, preparation, separate assembly, calibration,
+waveform search, complete quality checks, TRD and normal WAV automatically.
+The selected width256 /128-sample /weight0.03 horizon scores20.159645 dB
+on the pilot schedule and passes the newly executed disk. Default four-bit
+encoding remains unchanged. A25-dB target is supported but not achieved
+by this full-source IMA3 delivery; below-target runs return exit2 and remain
+previews. Reuse the saved complete checks and hashed pilot rather than
+repeating tuning experiments. The previous expanding20.071-dB disk remains
+historical. New disk: `ZX-audiobook-IMA3-direct-test.trd`.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
@@ -29,22 +99,67 @@ approximate alternative; a 388-T four-oscillator kernel estimate excludes
 parameter extraction, noise, scheduling and ULA contention. It is not a
 verified Speex playback result. Prefer assembly for further Z80 programs.
 
+### Earlier preload and codec studies (2026-10-03)
+
+Latest user clarification: allow **60 seconds** for Spectrum audio
+preparation. This supersedes the earlier39.904-s limit below; retain the
+old raw128 benchmark and measured results as historical evidence. The user
+also permits later decoder optimization. Final PDM >=20 dB, full-source
+preservation and speed within2% remain mandatory.
+
+**Completed delivery:** the [IMA3 waveform disk](audiobook-beeper/IMA3_WAVEFORM.md)
+now measures **20.07106694 dB in both full cold Fuse loops**, on the same
+complete186880-sample source and unchanged comparison filter/clock.
+It retains70080 compressed bytes,93440 resident bytes, all128 KiB RAM,
+progress and looping playback. Native/Fuse all-bit, every preload byte,
+FFmpeg IMA and normal sound capture checks pass. Both phase deltas are0 T,
+speed error is-0.043271%, and normal boot to audio is27.254263 s (<60 s).
+Ordinary playback remains423 T/sample, delta0; silent cycle padding adds2 T.
+Use `ZX-audiobook-IMA3-waveform-test.trd` and the saved completion audit.
+The 20-dB goal is satisfied for this input in Fuse, not certified on physical
+hardware or arbitrary recordings. Reuse the proof; do not repeat tests or
+promote the unexecuted width128 host candidate without a new task reason.
+
+The user made **20 dB final PDM SNR mandatory** after the IMA3 preview,
+then requested Speex. The [Speex audition](audiobook-beeper/SPEEX_STUDY.md)
+is complete on the same full source: fixed-point decoding at 18.2/24.6k
+without optional highpass/enhancement gives 24.752/27.823 dB, or
+21.054/22.037 dB after the existing IMA encoder, at 6.946:1/5.155:1 with
+a 32-byte framing allowance. These are **before PDM**. A verified exact
+Z80 lookup product costs 111 T; synthesis products alone project58.484 s,
+exceeding39.904 s before other work. Reject that strategy, not all possible
+ports. Reuse the saved30 API cases,10 FFmpeg cases and1376146 arithmetic
+checks. No Speex TRD has been produced. The later IMA3 waveform result above
+satisfies the final20-dB objective without claiming a completed Speex port.
+
+The earlier independently bootable IMA3 disk was integrated as a
+[listening preview](audiobook-beeper/IMA3_PRELOAD.md). It expands 70080
+audio bytes into the unchanged 93440-byte resident IMA allocation with
+progress, then loops through the existing PDM player. Cold Fuse expansion
+takes 1.935179 s; full native and two-loop cold-Fuse checks pass. The user
+reported vibration in the first uncorrected test; PC timing compensation
+raises fixed-clock SNR from -3.004 to 18.171/18.153 dB. Speed error is
+-0.04327%; final phase deltas are -2/0 T. It remains below the 20-dB goal;
+do not replace the 21-dB four-bit quality reference or claim vibration-free
+physical playback. Reuse this evidence rather than rerunning the pilot.
+
 Three optimization rounds for each selected decoder are complete. Exact
 IMA3-to-IMA expansion falls from 58750730 T / 16.564 s to 6657930 T / 1.877 s;
 PVQ3x512-to-PCM falls from 31352427 T / 8.839 s to 17460865 T / 4.923 s.
 Full input matches independent references at every round. These are native
 CPU/buffer measurements, excluding disk, ULA and final bank integration;
-PVQ additionally excludes IMA re-encoding. No new qualified TRD is produced.
+PVQ additionally excludes IMA re-encoding. These standalone probes did not
+qualify a disk; the later IMA3 integration is described above.
 Reuse [the round-by-round evidence](audiobook-beeper/DECODER_OPTIMIZATION_ROUNDS.md).
-The exact IMA subset expansion is the preferred next integration candidate,
-because it avoids a separate PCM-to-IMA encoding stage.
+The exact IMA subset expansion was chosen for integration because it avoids
+a separate PCM-to-IMA encoding stage.
 
 Latest scope: compression of 5:1..10:1 relative to mono 8-kHz PCM16;
 higher ratios are welcome when sound preservation permits. The user chose
 three-bit IMA and predictive VQ for three Z80 optimization rounds each.
 Keep the [research backlog](audiobook-beeper/CODEC_RESEARCH_BACKLOG.md)
 for other formats. PC encoding complexity is unrestricted. The startup
-budget remains 39.904 s; the 25..30-dB codec quality target is advice.
+budget is now60 s; the 25..30-dB codec quality target is advice.
 
 The follow-up10:1 study is complete; no new decoder is selected for release.
 The best simple VQ at11.107:1 measures14.213dB before IMA,13.744dB after,

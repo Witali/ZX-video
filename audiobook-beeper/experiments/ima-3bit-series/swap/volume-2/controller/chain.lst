@@ -1,0 +1,218 @@
+                 	
+                 	; Transient TR-DOS controller. Never resident during PDM playback.
+                 	; Bank 5: 4000..47FF code, 4800 header, 4A00 incoming header.
+                 	; It loads a complete independently runnable PLAYER into bank 2/bank 0,
+                 	; then that player's normal loader fills the audio banks and replaces us.
+                 	
+8000              	initial_volume: EQU 2
+8000              	header_disk: EQU 265
+8000              	        INCLUDE "chain-config.inc"
+4000              	        ORG 0x4000
+4000 C3 22 40     	        JP cold_start
+4003 31           	        DEFM "IMA3CHN1"
+                 	resume_entry:
+400B              	        ASSERT $ == 0x400B
+400B F3           	        DI
+400C 31 00 60     	        LD SP,0x6000
+400F FD 21 3A 5C  	        LD IY,0x5C3A
+4013 ED 56        	        IM 1
+4015 32 5C 41     	        LD (slot),A
+4018 22 5D 41     	        LD (expected_volume),HL
+401B FB           	        EI
+401C CD 90 40     	        CALL read_header
+401F C3 29 40     	        JP choose_part
+                 	cold_start:
+4022 21 02 00     	        LD HL,initial_volume
+4025 AF           	        XOR A
+4026 C3 0B 40     	        JP resume_entry
+                 	
+                 	choose_part:
+4029 3A 5C 41     	        LD A,(slot)
+402C 21 1C 48     	        LD HL,0x481C
+402F BE           	        CP (HL)
+4030 38 37        	        JR C,load_part
+4032 2A 5D 41     	        LD HL,(expected_volume)
+4035 ED 5B 1A 48  	        LD DE,(0x481A)          ; number of disks in this series
+4039 B7           	        OR A
+403A ED 52        	        SBC HL,DE
+403C 28 22        	        JR Z,end_audio
+403E 2A 5D 41     	        LD HL,(expected_volume)
+4041 23           	        INC HL
+4042 22 5D 41     	        LD (expected_volume),HL
+4045 21 80 48     	        LD HL,0x4880           ; INSERT DISK NNNN
+4048 CD F3 40     	        CALL show
+404B 21 8C 41     	        LD HL,space_message
+404E 11 60 C0     	        LD DE,0xC060
+4051 CD 19 41     	        CALL print
+                 	swap_prompt:
+4054 CD E2 40     	        CALL wait_space
+                 	key_accepted:
+4057 CD 90 40     	        CALL read_header
+405A AF           	        XOR A
+405B 32 5C 41     	        LD (slot),A
+405E 18 C9        	        JR choose_part
+                 	end_audio:
+4060 21 B4 41     	        LD HL,end_message
+4063 CD F3 40     	        CALL show
+                 	finished:
+4066 76           	        HALT
+4067 18 FD        	        JR finished
+                 	
+                 	load_part:
+4069 21 79 41     	        LD HL,loading_message
+406C CD F3 40     	        CALL show
+406F 3A 5C 41     	        LD A,(slot)
+4072 87           	        ADD A,A
+4073 6F           	        LD L,A
+4074 26 00        	        LD H,0
+4076 11 20 48     	        LD DE,0x4820
+4079 19           	        ADD HL,DE
+407A 5E           	        LD E,(HL)
+407B 23           	        INC HL
+407C 56           	        LD D,(HL)
+407D 01 FD 7F     	        LD BC,0x7FFD
+4080 3E 18        	        LD A,24                ; bank 0 with the shadow screen still visible
+4082 ED 79        	        OUT (C),A
+4084 21 00 80     	        LD HL,0x8000
+4087 06 5B        	        LD B,91                ; 16 KiB player + 6912-byte screen
+4089 CD 36 41     	        CALL read_n
+                 	player_loaded:
+408C F3           	        DI
+408D C3 00 80     	        JP 0x8000
+                 	
+                 	read_header:
+4090 11 09 01     	        LD DE,header_disk
+4093 21 00 4A     	        LD HL,0x4A00
+4096 06 02        	        LD B,2
+4098 CD 36 41     	        CALL read_n
+409B 21 00 4A     	        LD HL,0x4A00
+409E 11 61 41     	        LD DE,identity
+40A1 06 18        	        LD B,24                ; magic and 128-bit series identity
+                 	check_identity:
+40A3 1A           	        LD A,(DE)
+40A4 BE           	        CP (HL)
+40A5 20 27        	        JR NZ,wrong_disk
+40A7 23           	        INC HL
+40A8 13           	        INC DE
+40A9 10 F8        	        DJNZ check_identity
+40AB ED 5B 5D 41  	        LD DE,(expected_volume)
+40AF 7E           	        LD A,(HL)
+40B0 BB           	        CP E
+40B1 20 1B        	        JR NZ,wrong_disk
+40B3 23           	        INC HL
+40B4 7E           	        LD A,(HL)
+40B5 BA           	        CP D
+40B6 20 16        	        JR NZ,wrong_disk
+40B8 3A 1C 4A     	        LD A,(0x4A1C)
+40BB B7           	        OR A
+40BC 28 10        	        JR Z,wrong_disk
+40BE FE 21        	        CP 33
+40C0 30 0C        	        JR NC,wrong_disk
+40C2 21 00 4A     	        LD HL,0x4A00
+40C5 11 00 48     	        LD DE,0x4800
+40C8 01 00 02     	        LD BC,512
+40CB ED B0        	        LDIR
+                 	header_accepted:
+40CD C9           	        RET
+                 	wrong_disk:
+40CE 21 9D 41     	        LD HL,wrong_message
+40D1 CD F3 40     	        CALL show
+40D4 21 8C 41     	        LD HL,space_message
+40D7 11 60 C0     	        LD DE,0xC060
+40DA CD 19 41     	        CALL print
+                 	wrong_disk_prompt:
+40DD CD E2 40     	        CALL wait_space
+40E0 18 AE        	        JR read_header
+                 	
+                 	wait_space:
+40E2 01 FE 7F     	        LD BC,0x7FFE
+                 	key_release:
+40E5 ED 78        	        IN A,(C)
+40E7 E6 01        	        AND 1
+40E9 28 FA        	        JR Z,key_release
+                 	key_press:
+40EB 76           	        HALT
+40EC ED 78        	        IN A,(C)
+40EE E6 01        	        AND 1
+40F0 20 F9        	        JR NZ,key_press
+40F2 C9           	        RET
+                 	
+                 	show:
+40F3 E5           	        PUSH HL
+40F4 01 FD 7F     	        LD BC,0x7FFD
+40F7 3E 1F        	        LD A,31
+40F9 ED 79        	        OUT (C),A
+40FB 21 00 C0     	        LD HL,0xC000
+40FE 11 01 C0     	        LD DE,0xC001
+4101 01 FF 17     	        LD BC,6143
+4104 36 00        	        LD (HL),0
+4106 ED B0        	        LDIR
+4108 21 00 D8     	        LD HL,0xD800
+410B 11 01 D8     	        LD DE,0xD801
+410E 01 FF 02     	        LD BC,767
+4111 36 47        	        LD (HL),0x47
+4113 ED B0        	        LDIR
+4115 E1           	        POP HL
+4116 11 40 C0     	        LD DE,0xC040
+                 	print:
+4119 7E           	        LD A,(HL)
+411A B7           	        OR A
+411B C8           	        RET Z
+411C 23           	        INC HL
+411D E5           	        PUSH HL
+411E 6F           	        LD L,A
+411F 26 00        	        LD H,0
+4121 29           	        ADD HL,HL
+4122 29           	        ADD HL,HL
+4123 29           	        ADD HL,HL
+4124 01 00 3C     	        LD BC,0x3C00           ; 48K ROM font, selected by paging value 31
+4127 09           	        ADD HL,BC
+4128 D5           	        PUSH DE
+4129 06 08        	        LD B,8
+                 	glyph:
+412B 7E           	        LD A,(HL)
+412C 12           	        LD (DE),A
+412D 23           	        INC HL
+412E 14           	        INC D
+412F 10 FA        	        DJNZ glyph
+4131 D1           	        POP DE
+4132 1C           	        INC E
+4133 E1           	        POP HL
+4134 18 E3        	        JR print
+                 	
+                 	; Same sector progression as the proven player loader. ROM/disk latency
+                 	; belongs to the between-part pause, not the PDM CPU timing budget.
+                 	read_n:
+4136 ED 53 5F 41  	        LD (disk_position),DE
+                 	read_next:
+413A C5           	        PUSH BC
+413B E5           	        PUSH HL
+413C ED 5B 5F 41  	        LD DE,(disk_position)
+4140 01 05 01     	        LD BC,0x0105
+                 	disk_call:
+4143 CD 13 3D     	        CALL 0x3D13
+4146 E1           	        POP HL
+4147 C1           	        POP BC
+4148 24           	        INC H
+4149 ED 5B 5F 41  	        LD DE,(disk_position)
+414D 1C           	        INC E
+414E CB 63        	        BIT 4,E
+4150 28 03        	        JR Z,sector_ok
+4152 1E 00        	        LD E,0
+4154 14           	        INC D
+                 	sector_ok:
+4155 ED 53 5F 41  	        LD (disk_position),DE
+4159 10 DF        	        DJNZ read_next
+415B C9           	        RET
+415C 00           	slot: DEFB 0
+415D 00 00        	expected_volume: DEFW 0
+415F 00 00        	disk_position: DEFW 0
+4161 49 4D 41 33 56 4F 4C 31 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 	identity: MDAT "identity.bin"
+4179 00           	loading_message: DEFM "LOADING AUDIO DATA",0
+418C 00           	space_message: DEFM "THEN PRESS SPACE",0
+419D 00           	wrong_message: DEFM "WRONG DISK - TRY AGAIN",0
+41B4 00           	end_message: DEFM "END OF AUDIO",0
+                 	code_end:
+41C1              	        ASSERT $ <= 0x47FF
+41C1              	        DS 0x47FF-$
+47FF 00           	        DEFB 0

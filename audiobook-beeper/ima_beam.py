@@ -18,11 +18,25 @@ import numpy as np
 from ima_codec import STEPS, INDEX, decode, require_unclipped
 
 
-def encode(pcm8, width=32, block_samples=64, predictor=0, index=0):
+def code_alphabet(allowed_codes=None):
+    """Use actual IMA nibbles; a restricted alphabet keeps the same decoder."""
+    codes = np.arange(16) if allowed_codes is None else np.asarray(allowed_codes)
+    if (codes.ndim != 1 or not len(codes) or not np.issubdtype(codes.dtype, np.integer)
+            or np.any(codes < 0) or np.any(codes > 15) or len(np.unique(codes)) != len(codes)):
+        raise ValueError('allowed codes must be unique IMA nibbles')
+    return codes.astype(np.int64)
+
+
+def encode(pcm8, width=32, block_samples=64, predictor=0, index=0, allowed_codes=None,
+           predictor_bounds=(-32768,32767)):
     if len(pcm8) % 2 or width < 1 or block_samples < 2 or block_samples % 2:
         raise ValueError('need even samples/block length and a positive beam width')
+    lower,upper=predictor_bounds
+    if not -32768<=lower<=predictor<=upper<=32767:
+        raise ValueError('predictor must be inside valid signed PCM16 bounds')
     steps = np.asarray(STEPS, dtype=np.int64)[:, None]
-    codes = np.arange(16)
+    codes = code_alphabet(allowed_codes)
+    branches = len(codes)
     delta = ((steps >> 3) + (steps * ((codes & 4) != 0)) +
              ((steps >> 1) * ((codes & 2) != 0)) + ((steps >> 2) * ((codes & 1) != 0)))
     delta *= np.where(codes & 8, -1, 1)
@@ -38,8 +52,8 @@ def encode(pcm8, width=32, block_samples=64, predictor=0, index=0):
         for position, sample in enumerate(block):
             predicted = (preds[:, None] + delta[indices]).reshape(-1)
             next_indices = successor[indices].reshape(-1)
-            score = (costs[:, None] + (predicted.reshape(-1, 16) - sample) ** 2).reshape(-1)
-            valid = (predicted >= -32768) & (predicted <= 32767)
+            score = (costs[:, None] + (predicted.reshape(-1, branches) - sample) ** 2).reshape(-1)
+            valid = (predicted >= lower) & (predicted <= upper)
             ids = np.flatnonzero(valid)
             # Merge equivalent decoder states before beam pruning. Otherwise
             # duplicate code paths can consume the entire beam without looking ahead.
@@ -49,8 +63,8 @@ def encode(pcm8, width=32, block_samples=64, predictor=0, index=0):
             unique = np.r_[True, key[order][1:] != key[order][:-1]]
             ordered = ordered[unique]
             best = ordered[np.lexsort((ordered, score[ordered]))[:width]]
-            paths = paths[best // 16].copy()
-            paths[:, position] = best % 16
+            paths = paths[best // branches].copy()
+            paths[:, position] = codes[best % branches]
             preds, indices, costs = predicted[best], next_indices[best], score[best]
         chosen[start:start + len(block)] = paths[0]
         predictor, index = int(preds[0]), int(indices[0])

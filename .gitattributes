@@ -1,4 +1,14 @@
 # Disk images belong in Git LFS, including uppercase file extensions.
+/audiobook-beeper/experiments/ima-3bit-series/**/*.bin -text -diff
+/audiobook-beeper/experiments/ima-3bit-series/**/*.txt -text -diff
+/audiobook-beeper/experiments/ima-3bit-series/**/*.szx filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/ima-3bit-memory/**/*.gz filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/ima-3bit-memory/**/*.bin -text -diff
+/audiobook-beeper/experiments/ima-3bit-memory/**/*.txt -text -diff
+/audiobook-beeper/experiments/ima-3bit-entertainer/*.ogg filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/ima-3bit-entertainer/**/*.bin -text -diff
+/audiobook-beeper/experiments/ima-3bit-entertainer/**/*.gz filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/ima-3bit-entertainer/**/*.txt text eol=lf
 *.[tT][rR][dD] filter=lfs diff=lfs merge=lfs -text
 *.[sS][cC][lL] filter=lfs diff=lfs merge=lfs -text
 *.[fF][dD][iI] filter=lfs diff=lfs merge=lfs -text
@@ -9,6 +19,16 @@
 /audiobook-ay/preview/*.gz -text
 /audiobook-ay/preview/verification-work/*.gz -text
 /audiobook-ay/*.py text eol=lf
+/audiobook-ay/*.asm text eol=lf
+/audiobook-ay/music-preview/**/*.wav filter=lfs diff=lfs merge=lfs -text
+/audiobook-ay/music-preview/**/*.gz -text
+/audiobook-ay/music-preview/**/*.json text eol=lf
+/audiobook-ay/music-preview/**/*.txt text eol=lf
+/audiobook-ay/music-preview/**/*.asm text eol=lf
+/audiobook-ay/music-preview/**/*.inc -text -diff
+/audiobook-ay/music-preview/**/*.lst -text -diff
+/audiobook-ay/music-preview/**/*.log -text -diff
+/audiobook-ay/music-preview/**/*.bin -text -diff
 /audiobook-ay/*.md text eol=lf
 /audiobook-ay/preview/*.json text eol=lf
 /audiobook-ay/*.js text eol=lf
@@ -52,10 +72,28 @@
 /audiobook-beeper/**/*.lps -text
 /audiobook-beeper/experiments/ima-lpc-preload/**/*.txt -text -diff
 /audiobook-beeper/experiments/ima-lpc-preload/**/*.bin -text -diff
+/audiobook-beeper/experiments/ima-3bit-preload/**/*.bin -text -diff
+/audiobook-beeper/experiments/ima-3bit-preload/**/*.txt -text -diff
+/audiobook-beeper/experiments/ima-3bit-waveform/**/*.txt -text -diff
+/audiobook-beeper/experiments/ima-3bit-waveform/**/*.bin -text -diff
+/audiobook-beeper/experiments/ima-3bit-direct/**/*.bin -text -diff
+/audiobook-beeper/experiments/ima-3bit-direct/**/*.txt -text -diff
+# Keep measured assembler snapshots byte-exact for their recorded hashes.
+/audiobook-beeper/experiments/ima-3bit-series/**/*.asm -text -whitespace
+/audiobook-beeper/experiments/ima-3bit-series/**/*.gz filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/ima-3bit-memory/**/*.asm -text -whitespace
+/audiobook-beeper/experiments/ima-3bit-entertainer/**/*.asm -text -whitespace
+/audiobook-beeper/experiments/ima-3bit-direct/**/*.asm -text -whitespace
 /audiobook-beeper/experiments/ten-to-one/**/*.bin -text -diff
 /audiobook-beeper/experiments/ten-to-one/**/*.inc -text -diff
 /audiobook-beeper/experiments/ten-to-one/**/*.lst -text -diff
 /audiobook-beeper/experiments/ten-to-one/**/*.log -text -diff
+/audiobook-beeper/experiments/speex/**/*.asm text eol=lf
+/audiobook-beeper/experiments/speex/**/*.h text eol=lf
+/audiobook-beeper/experiments/speex/upstream/COPYING -text
+/audiobook-beeper/experiments/speex/**/*.bin -text -diff
+/audiobook-beeper/experiments/speex/**/*.lst -text -diff
+/audiobook-beeper/experiments/speex/**/*.log -text -diff
 /audiobook-beeper/experiments/decoder-rounds/**/*.bin -text -diff
 /audiobook-beeper/experiments/decoder-rounds/**/*.inc -text -diff
 /audiobook-beeper/experiments/decoder-rounds/**/*.lst -text -diff
@@ -504,3 +542,7 @@ toolkit/*guarded_cb46*.py text eol=lf
 toolkit/fixed_cell_decoder.py text eol=lf
 toolkit/generic_guarded_cb46*.json text eol=lf
 toolkit/generic_guarded_cb46_evidence/*.gz -text
+# Preserve authenticated sequential-audio evidence byte for byte.
+/audiobook-beeper/experiments/ima-3bit-series/** -text -whitespace
+/audiobook-beeper/experiments/ima-3bit-series/*.md text eol=lf
+/audiobook-beeper/experiments/ima-3bit-series/*.py text eol=lf
