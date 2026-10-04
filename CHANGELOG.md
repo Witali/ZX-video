@@ -1,5 +1,22 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round38 reads private Q14 arguments directly
+
+On unchanged round37 speech, replace four-byte LDIR plus high-word reload
+with direct little-endian reads, retaining only the low argument in scratch.
+The region costs 119 ->74 T; all 93440 calls save exactly 45 T. Full speech
+1558327641 ->1554122841 T (-4204800, 0.270%), 8316.154 T/sample. Every saved
+operand, weighted cost and OUT delta reconciles. All 1343488 arithmetic
+cases, 18384 pointer cases per binary, independent instruction audits and
+1094880 complete PCM16/PCM8 samples pass; fresh default identity matches.
+Retired upper-argument writes are forbidden; page and FFFF wrap boundaries
+pass. All full fixtures improve by 22.5 T/sample. Code +2 to 9044; state and
+14140 useful table bytes unchanged. Select pure-r38, still 19.008x over
+average real time. No native failure, reverted attempt or ULA/hardware
+qualification. Next inspect synthesis specialization for zero top feedback
+nibbles; no next implementation or saving is measured.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/38/REPORT.md).
+
 ## 2026-10-04: Speex round37 fuses Q14 and the LPC caller negation
 
 On unchanged round36 speech, replace twenty adjacent Q14/negate call sites

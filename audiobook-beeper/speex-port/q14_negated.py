@@ -1,7 +1,7 @@
 """Generate the exact negative Q14 product consumed by the LPC recurrence."""
 
 
-def generate():
+def generate(direct_argument=False):
     prepare = """ld (qcoef),hl
 ex de,hl
 ld de,#qarg
@@ -18,6 +18,26 @@ or a,l
 ld l,a
 ld de,(qcoef)
 """
+    if direct_argument:
+        old='ex de,hl\nld de,#qarg\nld bc,#4\nldir\nld hl,(qarg+2)\n'
+        new="""; Read the two little-endian words directly: only the low word must
+; survive the first product. Keep the high word in HL for hi extraction.
+; INC HL crosses page boundaries and wraps at FFFF exactly as LDIR did.
+; The argument must not alias Q14 scratch/stack (the LPC caller uses its
+; polynomial array). qarg+2/+3 are now unused and are never written here.
+ex de,hl
+ld e,(hl)
+inc hl
+ld d,(hl)
+inc hl
+ld (qarg),de
+ld e,(hl)
+inc hl
+ld d,(hl)
+ex de,hl
+"""
+        assert prepare.count(old)==1
+        prepare=prepare.replace(old,new)
     negate16 = 'xor a,a\nsub a,l\nld l,a\nsbc a,a\nsub a,h\nld h,a\n'
     fraction = """ld (qtemp),de
 ld (qtemp+2),hl

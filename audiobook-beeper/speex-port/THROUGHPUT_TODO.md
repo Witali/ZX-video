@@ -13,13 +13,13 @@ already emitted without pacing. Retain the complete upstream PCM16/PCM8
 comparison and report throughput separately from instantaneous OUT gaps.
 
 Round35 achieves the **below-8500 T/sample intermediate target** on the
-same complete 186880-sample speech. Round37 now measures 8338.654 T/sample,
+same complete 186880-sample speech. Round38 now measures 8316.154 T/sample,
 exact PCM16/PCM8 and 14140 useful table bytes in the same 16-KiB arena. This is an input-specific milestone;
 the overall objective still needs 437.5 T/sample. Continue optimizing the
 actual decoder without adding output pacing or changing the input format.
 
 The next intermediate target is **below 8000 T/sample** on the same full
-speech, requiring another 4.06% reduction from round37. Keep exact PCM,
+speech, requiring another 3.80% reduction from round38. Keep exact PCM,
 all stream gates and the 16-KiB table limit. This is a target to investigate,
 not a measured result or a guarantee of real-time feasibility.
 
@@ -255,13 +255,26 @@ not a measured result or a guarantee of real-time feasibility.
   full samples pass, including caller instruction audits and every OUT-delta
   proof. All full fixtures improve; 6773 individual speech calls regress.
   Code +153, state/tables unchanged. Real-time deficit remains 19.060x.
-- [ ] **38. Read the private Q14 argument directly.** The four-byte LDIR
+- [x] **38. Read the private Q14 argument directly.** The four-byte LDIR
   copy is followed by a reload of the high word, while only the low word
   must survive for the fractional product. Inspect direct reads that save
   the low word and retain the high word in registers. The instruction-table
-  estimate is 119 ->74 T, saving 45 T/call before unchanged work; it is not
-  implemented or measured. Preserve pointer boundaries, rounding, register
+  initial estimate was 119 ->74 T, saving 45 T/call before unchanged work.
+  Preserve pointer boundaries, rounding, register
   contracts and all stream gates; retain the ordinary public Q14 entry.
+  [Round38](rounds/38/REPORT.md) confirms 45 T/call: -4204800 T,
+  8316.154 T/sample (-0.270%). All 1343488 arithmetic cases, 18384 pointer
+  cases per binary and 1094880 full samples pass. Every OUT delta matches.
+  Code +2, state/tables unchanged; retired upper-argument writes forbidden.
+  All full fixtures improve by 22.5 T/sample. Real-time deficit is 19.008x.
+- [ ] **39. Specialize synthesis for a zero top feedback nibble.** Count
+  eligible samples using n=(-y)&65535, retaining the separate n=0 path.
+  A zero top nibble makes its partial product zero at all ten taps. Compare
+  one sample-level dispatch plus a kernel that omits those additions,
+  including code-space cost. Preserve signed top-nibble behavior, arbitrary
+  filter histories, SP restoration and full-stream gates. Inspect eligible
+  frequency before building one candidate; no implementation or measured
+  saving exists yet.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

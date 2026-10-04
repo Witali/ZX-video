@@ -732,14 +732,14 @@ def direct_cosine(d, f):
     return d,f
 
 
-def negated_q14(d, f):
+def negated_q14(d, f, direct_argument=False):
     """Fuse the LPC caller's negate into a private exact Q14 entry."""
     from q14_negated import generate
     old='call mulq14\ncall neg32\n'
     assert d.count(old)==20
     d=d.replace(old,'call _q14_negated\n')
     point=d.index('\n.area _TABLES (ABS)')
-    return d[:point]+'\n'+generate()+d[point:],f
+    return d[:point]+'\n'+generate(direct_argument)+d[point:],f
 
 
 def apply(folder, variant):
@@ -748,23 +748,23 @@ def apply(folder, variant):
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'))
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'))
-    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=excitation_shift(d,f)
-    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=innovation_registers(d,f)
-    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=zero_feedback(d,f)
-    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'))
-    if variant in ('pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=pitch_accumulator(d,f)
-    if variant in ('pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=shared_pitch_history(d,f)
-    if variant in ('pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=constant_pitch_products(d,f,folder,'binary' if variant=='pure-r28-binary' else 'chain',variant in ('pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'))
-    if variant in ('pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=synthesis_shift(d,f)
-    if variant in ('pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=split_word_product(d,f)
-    if variant in ('pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'):d,f=shared_q14_coefficient(d,f,variant in ('pure-r33','pure-r34','pure-r35','pure-r36','pure-r37'))
-    if variant in ('pure-r34','pure-r35','pure-r36','pure-r37'):d,f=cancel_preparation_exchanges(d,f)
-    if variant in ('pure-r35','pure-r36','pure-r37'):d,f=register_next_table_step(d,f)
-    if variant in ('pure-r36','pure-r37'):d,f=direct_cosine(d,f)
-    if variant=='pure-r37':d,f=negated_q14(d,f)
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'))
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'))
+    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=excitation_shift(d,f)
+    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=innovation_registers(d,f)
+    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=zero_feedback(d,f)
+    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'))
+    if variant in ('pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=pitch_accumulator(d,f)
+    if variant in ('pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=shared_pitch_history(d,f)
+    if variant in ('pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=constant_pitch_products(d,f,folder,'binary' if variant=='pure-r28-binary' else 'chain',variant in ('pure-r29','pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'))
+    if variant in ('pure-r30','pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=synthesis_shift(d,f)
+    if variant in ('pure-r31','pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=split_word_product(d,f)
+    if variant in ('pure-r32','pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=shared_q14_coefficient(d,f,variant in ('pure-r33','pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'))
+    if variant in ('pure-r34','pure-r35','pure-r36','pure-r37','pure-r38'):d,f=cancel_preparation_exchanges(d,f)
+    if variant in ('pure-r35','pure-r36','pure-r37','pure-r38'):d,f=register_next_table_step(d,f)
+    if variant in ('pure-r36','pure-r37','pure-r38'):d,f=direct_cosine(d,f)
+    if variant in ('pure-r37','pure-r38'):d,f=negated_q14(d,f,variant=='pure-r38')
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')
