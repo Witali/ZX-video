@@ -100,12 +100,21 @@ comparison and report throughput separately from instantaneous OUT gaps.
   [Round24](rounds/24/REPORT.md) saves 282 T/changed page, 12603144 T on
   speech, now 9904.491 T/sample. All 65536 coefficients, 262144 negations
   and 1074400 complete-stream samples pass after correcting a borrow bug.
-- [ ] **25. Refresh the profile after inlining.** Measure the complete
+- [x] **25. Refresh the profile after inlining.** Measure the complete
   unchanged round24 stream. Reconcile nested function times and separately
   bracket the inline feedback block. Count actual changed coefficient pages
   from observed LPC values; account for bypassed zero feedback and unused
   helper calls. Preserve all PCM and every OUT timestamp. Select the next
   structural change from the current measured costs.
+  [Round25](rounds/25/REPORT.md): unchanged PCM/OUT timing, full costs
+  reconcile. Inline feedback uses 35.880%, decoder body 16.470%, preparation
+  13.728%. Independently observe 44692 changed pages and no unused helper
+  calls. Select register-held pitch accumulation as the next candidate.
+- [ ] **26. Keep the pitch sum in alternate registers.** Replace repeated
+  RAM accumulation of the three signed products with alternate HL/C, using
+  the real stack for the product-word transfer. Include initialization and
+  final writeback: predicted 16205909 fewer T. Check helper preservation of
+  alternate registers, skipped taps, modulo24 carries and complete streams.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

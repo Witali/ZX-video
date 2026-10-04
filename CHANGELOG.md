@@ -1,5 +1,18 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round25 separates inline feedback from the current profile
+
+Observe unchanged round24 speech with explicit feedback-block endpoints and
+nested function spans. All 186880 PCM samples, every OUT timestamp, image
+hash and 1850951266 total T match; delta 0 T. Exclusive costs reconcile,
+with feedback 35.880%, remaining decoder 16.470%, preparation 13.728%.
+Incoming LPC values independently confirm 44692 changed pages; obsolete
+product/split helpers receive zero calls. Next estimate alternate-register
+pitch accumulation, saving 37 T/active term minus 24 T/sample setup/writeback,
+or 16205909 T on prior observed counts. This next candidate is unexecuted;
+the average real-time goal remains unmet. No ULA/hardware claim.
+[Profile and reproduction](audiobook-beeper/speex-port/rounds/25/REPORT.md).
+
 ## 2026-10-04: Speex round24 adds a pre-negated coefficient-table step
 
 On unchanged round23-pop speech, replace 64 repeated 42-T subtractions/page

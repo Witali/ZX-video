@@ -50,7 +50,7 @@ def image(path):
             data.update((address+i,v) for i,v in enumerate(row[4:4+row[0]]))
     return data
 
-def native(out,variant='pure-r24',binary=None,require_exact=True,profile=None,entry_observer=None):
+def native(out,variant='pure-r24',binary=None,require_exact=True,profile=None,entry_observer=None,blocks=None):
     from z80 import Z80Machine
     folder=out/variant
     folder.mkdir(parents=True,exist_ok=True)
@@ -133,6 +133,15 @@ def native(out,variant='pure-r24',binary=None,require_exact=True,profile=None,en
     if profile is not None:assert all(k in symbols for k in names)
     watches={symbols[k]:k for k in names if k in symbols}
     for address in watches:m.set_breakpoint(address)
+    # Inline spans have explicit endpoints, not return addresses. They are
+    # observed separately from the nested call stack, never added to its sum.
+    if blocks:assert profile is not None
+    block_starts={symbols[start]:name for name,(start,end) in (blocks or {}).items()}
+    block_ends={symbols[end]:name for name,(start,end) in (blocks or {}).items()}
+    assert len(block_starts)==len(block_ends)==len(blocks or {})
+    block_addresses=set(block_starts)|set(block_ends)
+    block_active={};block_hist={name:Counter() for name in (blocks or {})}
+    for address in block_addresses:m.set_breakpoint(address)
     while True:
         event=m.run()
         if m.pc==symbols['_complete']:break
@@ -143,18 +152,27 @@ def native(out,variant='pure-r24',binary=None,require_exact=True,profile=None,en
             frame=active.pop();span=tick-frame['start'];name=frame['name']
             phases[name]+=span;exclusive[name]+=span-frame['children']
             if active:active[-1]['children']+=span
+        if m.pc in block_ends:
+            name=block_ends[m.pc]
+            assert name in block_active,('block end without start',name)
+            block_hist[name][tick-block_active.pop(name)]+=1
+        if m.pc in block_starts:
+            name=block_starts[m.pc]
+            assert name not in block_active,('overlapping block invocation',name)
+            block_active[name]=tick
         if m.pc in watches:
             name=watches[m.pc];calls[name]+=1
             if entry_observer is not None:entry_observer(name,m)
             ret=int.from_bytes(m.memory[m.sp:m.sp+2],'little')
             active.append(dict(name=name,start=tick,return_address=ret,children=0))
             returns.add(ret);m.set_breakpoint(ret)
-        if m.pc in watches or m.pc in returns:m.step_over_breakpoint()
+        if m.pc in watches or m.pc in returns or m.pc in block_addresses:m.step_over_breakpoint()
         if event&m._TICKS_LIMIT_HIT:
             clock();m.ticks_to_stop=budget;last_remaining=budget
             assert elapsed<100_000_000_000,'CPU timeout'
     total=clock()
     assert not active,'profile activation did not return'
+    assert not block_active,'inline profile span did not finish'
     assert len(events)==len(expected)
     assert int.from_bytes(m.memory[symbols['_status']:symbols['_status']+2],'little')==0
     assert all(m.memory[a]==v for a,v in memory.items() if a not in smc),'static code/table changed'
@@ -186,6 +204,10 @@ def native(out,variant='pure-r24',binary=None,require_exact=True,profile=None,en
         report['profile']=dict(calls=dict(calls),inclusive_tstates=dict(phases),
                                exclusive_tstates=dict(exclusive),unprofiled_tstates=total-sum(exclusive.values()),
                                callee_intervals_exclude_caller_call_instruction=True)
+        if blocks:
+            report['profile']['inline_blocks']={name:dict(calls=sum(hist.values()),
+                total_tstates=sum(t*n for t,n in hist.items()),duration_histogram=dict(sorted(hist.items())))
+                for name,hist in block_hist.items()}
     (folder/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     (folder/'out-times.u64.gz').write_bytes(gzip.compress(struct.pack('<'+'Q'*len(events),*events),mtime=0))
     if not require_exact:

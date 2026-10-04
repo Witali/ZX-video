@@ -34,8 +34,9 @@ assembly. Internal PCM16 and emitted PCM8 stay exact. Real time still fails
 by **22.64x** against 437.5 T/sample: 23.36 seconds of speech needs 528.84
 seconds of nominal CPU time. No pacing is added to this Speex decoder.
 The below-10000 intermediate target is met, retaining exact PCM and the
-table budget. Next refresh the complete profile to select another
-structural optimization.
+table budget. The [updated profile](rounds/25/REPORT.md) independently
+confirms table rebuild counts and separates inline feedback costs. Next
+test register-held pitch accumulation, including setup and writeback.
 
 Current [image](rounds/24/player.ihx), [decoder](rounds/24/decoder.s),
 [filter](rounds/24/filter.s) and [map](rounds/24/player.map) are under

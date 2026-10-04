@@ -32,8 +32,10 @@ filter calls per variant pass. Round24 adds a pre-negated table step and saves
 12603144 T; all 65536 coefficients and 262144 negations pass after fixing
 an initial borrow bug. Code/state 7343/1041 bytes, tables still 16 KiB;
 fresh default build matches and every playback code write is forbidden.
-The below-10000 intermediate target is met. Next refresh the full nested
-profile, bracket inline feedback and independently count changed table pages.
+The below-10000 intermediate target is met. Round25 reconciles the full
+profile with identical PCM/OUT traces: inline feedback 35.880%, decoder
+body 16.470%, preparation 13.728%, 44692 observed changed pages. Next test
+alternate-register pitch accumulation; its estimated saving is 16205909 T.
 The broader goal remains active. Use the
 [throughput worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md) and
 [round24 report](audiobook-beeper/speex-port/rounds/24/REPORT.md), not the
