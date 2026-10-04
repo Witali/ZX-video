@@ -5,8 +5,9 @@ The baseline is exact mode-3 Speex `pure-r4`: 2759257254 T for 186880
 samples, 14764.861 T/sample, 16010 table bytes in a 16-KiB arena.
 Target: mono 8-kHz PCM8 to an 8-bit port on a nominal 3.5-MHz Z80.
 
-- [ ] **7. Specialized table multiplication.** Patch four immediate offsets
+- [x] **7. Specialized table multiplication.** Patch four immediate offsets
   once per sample. Check exact products, full speech and allowed code writes.
+  Selected: [round 07](rounds/07/REPORT.md), -400 T/sample, exact output.
 - [ ] **8. Coefficient table preparation.** Avoid rebuilding unchanged pages;
   reduce loop overhead. Include construction in complete decoder timing.
 - [ ] **9. Port-only output.** Remove validation-only PCM16 stores and unused

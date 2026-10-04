@@ -1,5 +1,16 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex item 07, patch exact product lookup offsets
+
+On the unchanged 186880-sample speech, replace repeated offset loads with
+four explicit writable operands. Full decode falls from 2759257254 to
+2684505254 T (-74752000, exactly -400 T/sample). Code shrinks eight bytes;
+tables and state are unchanged. Full speech, signal/capacity streams,
+specialized arithmetic, code-write guards and first-frame timing audit pass.
+Select the exact change; real time still fails. A premature archive command
+was retried after the completed fixture run. See the
+[report and reproduction](audiobook-beeper/speex-port/rounds/07/REPORT.md).
+
 ## 2026-10-04: Authorize further Speex and waveform playback experiments
 
 Save the user's six follow-up directions in the

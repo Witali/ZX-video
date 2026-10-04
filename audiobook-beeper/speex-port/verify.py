@@ -76,6 +76,11 @@ def native(out,variant='pure-r4',binary=None):
     m.mark_addrs(0,65536,m.WRITE_MARK)
     m.unmark_addrs(bss_start,bss_size,m.WRITE_MARK)
     m.unmark_addrs(0xbf00,256,m.WRITE_MARK)
+    # Allow only declared immediate operand bytes, never an entire code region.
+    smc={v for k,v in symbols.items() if re.fullmatch(r'_smc\d+',k)}
+    for address in smc:
+        assert address in memory and memory[address-1]==0x2e
+        m.unmark_addrs(address,1,m.WRITE_MARK)
     dynamic=[]
     for name in ('innovation','coefficient'):
         if '_'+name+'_start' in symbols:
@@ -136,7 +141,7 @@ def native(out,variant='pure-r4',binary=None):
     total=clock()
     assert len(events)==len(expected)
     assert int.from_bytes(m.memory[symbols['_status']:symbols['_status']+2],'little')==0
-    assert bytes(m.memory[a] for a in sorted(memory))==bytes(memory[a] for a in sorted(memory)),'code changed'
+    assert all(m.memory[a]==v for a,v in memory.items() if a not in smc),'static code/table changed'
     assert bytes(m.memory[0xc000:])==banks[current],'input changed'
     intervals=[b-a for a,b in zip(events,events[1:])]
     report=dict(complete=True,samples=len(events),every_pcm8_exact=True,every_pcm16_exact=True,total_tstates=total,
@@ -149,7 +154,8 @@ def native(out,variant='pure-r4',binary=None):
                 real_time=total<=len(events)*437.5 and max(intervals)<=438,
                 pages=pages,code_rodata_bytes=len(memory),bss_bytes=bss_size,
                 code_bytes=sum(a>=0x8000 for a in memory),tables_bytes=sum(a<0x8000 for a in memory),
-                all_cpu_writes_inside_declared_regions=True,input_code_static_tables_unchanged=True,
+                all_cpu_writes_inside_declared_regions=True,input_static_code_static_tables_unchanged=True,
+                writable_immediate_addresses=sorted(smc),
                 initial_state_fill=state_fill,
                 dynamic_table_reserved_bytes=sum(hi-lo for lo,hi in dynamic),
                 dynamic_table_regions=dynamic,
