@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Audio item 11, periodic waveform/noise kernel
+
+Fit 32-entry waves on the complete control speech; add noise and eight
+transition samples per block. New format is 54320 bytes including noise
+tables (3.440:1 versus PCM8), raw SNR 9.897 dB. Actual assembly kernels
+match all 186880 host-model samples and cost 41604160 T (222.625 T/sample),
+with a complete block instruction audit and guarded writes. Initial record
+packing failed its size assertion and was corrected before native execution.
+Do not select this quality/storage tradeoff over the next waveform VQ
+candidate. Record loading and pacing remain unimplemented after this gate;
+this is not a complete real-time player. [Report](audiobook-beeper/speex-port/rounds/11/REPORT.md).
+
 ## 2026-10-04: Speex item 10, reject approximate eight-bit feedback
 
 Quantize synthesis feedback and omit two partial products. Full speech

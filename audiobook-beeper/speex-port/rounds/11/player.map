@@ -1,0 +1,54 @@
+ASxxxx Linker V05.50.4-SDLD,  page 1.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+.  .ABS.                            00000000    00000000 =           0. bytes (ABS,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     00000000  .__.ABS.                           periodic
+     00000006  l__DATA                         
+     0000003A  l__CODE                         
+     00008000  s__CODE                         
+     0000B000  s__DATA                         
+
+ASxxxx Linker V05.50.4-SDLD,  page 2.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               00008000    0000003A =          58. bytes (REL,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     00008000  _kernel                            periodic
+
+ASxxxx Linker V05.50.4-SDLD,  page 3.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_DATA                               0000B000    00000006 =           6. bytes (REL,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     0000B000  _phase                             periodic
+     0000B002  _step                              periodic
+     0000B004  _noise_page                        periodic
+     0000B005  _noise_index                       periodic
+
+ASxxxx Linker V05.50.4-SDLD,  page 4.
+
+Files Linked                              [ module(s) ]
+
+decoder.rel                               [ periodic ]
+
+ASxxxx Linker V05.50.4-SDLD,  page 5.
+
+User Base Address Definitions
+
+_CODE = 0x8000
+_DATA = 0xb000
+
+

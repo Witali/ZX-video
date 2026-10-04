@@ -18,9 +18,11 @@ Target: mono 8-kHz PCM8 to an 8-bit port on a nominal 3.5-MHz Z80.
   products; measure speed and distortion against exact Speex and the source.
   Reject if quality or sustained throughput is unsuitable.
   Rejected: [round 10](rounds/10/REPORT.md), faster but 26.93x over budget.
-- [ ] **11. Periodic wavetable synthesis.** Try a bounded offline-prepared
+- [x] **11. Periodic wavetable synthesis.** Try a bounded offline-prepared
   waveform representation and a Z80 playback kernel. Charge tables, parameters,
   transitions and scheduling. This changes the stored format, not Speex.
+  [Round 11](rounds/11/REPORT.md): 222.625 T/sample kernel, 3.440:1 storage,
+  9.897-dB raw SNR. Not selected; full loading/pacing deferred after quality gate.
 - [ ] **12. Predictive VQ playback and selection.** Reuse the existing waveform
   codebook experiment. Implement and verify complete PCM8 port playback with
   uniform pacing, including all input-bank and stream boundaries. Compare
