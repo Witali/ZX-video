@@ -7,6 +7,11 @@ dates of earlier attempts are not assigned that reconstruction date.
 
 ## 2026-10-04: assembly Speex-to-PCM port decoder; real-time target rejected
 
+Follow-up authorized on 2026-10-04: execute the saved
+[six-item optimization worklist](audiobook-beeper/speex-port/TODO.md), retaining
+a separate report and focused commit for each completed step. The initial
+commit saves the plan only; no additional acceleration is claimed.
+
 User objective: attempt real-time Speex decoding from RAM on a 3.5-MHz Z80,
 with lookup tables within 16 KiB, unsigned PCM8 directly to an 8-bit output
 port, no PDM, and a separate worktree. The user subsequently preferred
