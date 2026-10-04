@@ -45,13 +45,20 @@ comparison and report throughput separately from instantaneous OUT gaps.
   [Round18](rounds/18/REPORT.md) selects `pure-r18-signed`: 2042203676 T,
   10927.888 T/sample (-5.663%), all 1074400 PCM samples and 589824 additional
   product/cycle cases pass. Average deficit still 24.978x; goal remains active.
-- [ ] **19. Replace seven-bit excitation shifts.** Inspect the signed24
+- [x] **19. Replace seven-bit excitation shifts.** Inspect the signed24
   rounded sum in L:D:E before `_zx_clip`. Instead of seven arithmetic
   right shifts, save the sign byte, shift the three bytes left once, take
   the upper two bytes as DE and restore sign extension in HL. Proposed
   cost 52 versus 184 T including sign extension, saving 132 T/sample;
   this is an instruction estimate, not yet an executed result. Verify
   signed24 extremes, rounding boundaries and all complete reference streams.
+  [Round19](rounds/19/REPORT.md) confirms -132 T/sample: 10795.888 T/sample,
+  all 1074400 PCM samples and 396800 isolated signed24 cases pass.
+- [ ] **20. Register-held innovation table construction.** Keep the signed24
+  value, integer increment, fractional remainder and destination in ordinary
+  and alternate registers. Scale the 12-bit fraction/remainder by sixteen
+  so ADD's carry supplies the quotient increment. Preserve every table byte,
+  table caching and all complete-stream output; include setup in timing.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

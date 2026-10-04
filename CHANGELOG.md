@@ -1,5 +1,16 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round19 replaces seven-bit signed24 shifts
+
+Replace seven arithmetic right shifts with one left shift, byte selection
+and saved sign extension on unchanged round18-signed input. The block costs
+184 -> 52 T; full speech 2042203676 -> 2017535516 T (-24668160), exactly
+-132 T/sample. All 1074400 PCM16/PCM8 samples and 396800 isolated signed24
+cases pass, with instruction counts, memory, arithmetic and cache checks.
+Code -33 bytes, state/tables unchanged. Select the exact optimization; still
+24.676x over the average budget, no ULA/hardware claim. Next test register
+state in innovation construction. [Report](audiobook-beeper/speex-port/rounds/19/REPORT.md).
+
 ## 2026-10-04: Speex round18 selects combined-register signed multiplication
 
 Compare three exact signed8x16 cores on the unchanged complete speech:

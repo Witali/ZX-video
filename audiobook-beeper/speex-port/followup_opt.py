@@ -266,15 +266,39 @@ s8_a_positive:
     return d,f
 
 
+def excitation_shift(d, f):
+    old=('sra l\nrr d\nrr e\n'*7)+'ld a,l\nadd a,a\nsbc a,a\nld h,a\n'
+    new='''; Signed24 L:D:E >> 7, producing sign-extended HL:DE for clipping.
+; Save the sign, shift once left and take the upper two bytes. The seven
+; discarded low bits never reach DE; this retains arithmetic floor rounding.
+.globl _exc_shift_start, _exc_shift_end
+_exc_shift_start::
+ld a,l
+add a,a
+sbc a,a
+sla e
+rl d
+rl l
+ld e,d
+ld d,l
+ld l,a
+ld h,a
+_exc_shift_end::
+'''
+    d=replace_once(d,old,new)
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed'):d,f=register_preparation(d,f)
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant=='pure-r18-signed')
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19'):d,f=register_preparation(d,f)
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19'))
+    if variant=='pure-r19':d,f=excitation_shift(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')
