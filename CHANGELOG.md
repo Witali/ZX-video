@@ -5,6 +5,72 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-04: assembly Speex-to-PCM port decoder; real-time target rejected
+
+User objective: attempt real-time Speex decoding from RAM on a 3.5-MHz Z80,
+with lookup tables within 16 KiB, unsigned PCM8 directly to an 8-bit output
+port, no PDM, and a separate worktree. The user subsequently preferred
+assembly. Implement the complete narrowband mode-3 decoder in generated,
+reviewable Z80 assembly on `codex/speex-port`, retaining C only as a host
+oracle and measured initial baseline. Use official Speex 1.2.1 fixed-point
+mode 3 (8 kbps), with decoder enhancement/highpass disabled, and the entire
+existing 186880-sample 8-kHz speech control. It encodes into 1168 raw frames,
+23360 bytes; do not substitute offline PCM expansion for Z80 decoding.
+
+Exact compressed integer-cosine tables, expanded codebooks, energy gains
+and a quarter-square multiplier occupy 12658 bytes (12800-byte aligned
+span). Default assembly code is 10122 bytes, state 1885, reserved stack 256;
+input uses physical banks 0,1,3,4,6,7. The 16-KiB limit is met for tables,
+not for the entire program. Output uses low port byte FB and a sample-
+dependent high address byte. There is no 8-kHz output pacing or hardware
+DAC validation because sustained decoding is already far too slow.
+
+Complete final speech CPU results, with countdown-boundary overshoot
+accounted for: C baseline 10083761163 T; ordinary full assembly 5033419430 T
+(delta -5050341733); assembly with exact zero/8-bit operand fast paths
+4536172045 T (delta -497247385). The final average is 24273.181 T/sample,
+55.482 times the available 437.5 T/sample. Synthesis alone costs 13259.530
+T/sample. First output is at 883960 T; intervals are 2627..1431069 T, and all
+186879 subsequent outputs miss the deadlines anchored at the first output.
+Nominal CPU time is 1296.049 s for 23.36 s of audio. Exclude ULA contention,
+ROM/disk latency and physical hardware; no playback release is claimed.
+
+Verification: every PCM16 sample and PCM8 output matches unmodified
+libspeex for all three complete speech runs. The final assembly additionally
+passes six 3200-sample signal fixtures and a full 4915-frame/786400-sample
+six-bank capacity stream; input/code/tables stay unchanged and all CPU
+writes remain in allocated state/stack. Zero count, excessive count and
+unsupported modes are checked. Both assembly variants pass exhaustive
+65536-pair unsigned multiplication and 25737-angle cosine tests, plus
+10400 signed products, 3000 Q14 cases and 12 saturation edges. Independent
+instruction-table audits cover each instruction of one complete first
+frame: 4282588 versus 2361219 T, delta -1921369 T. Full-stream counts use
+native emulation, not an extrapolation from the first frame.
+
+Exploratory failures/partial work: the initial hybrid assembly filter
+clobbered its output pointer when calling SDCC multiplication; saving IY
+fixed the local failure, but that hybrid is not claimed as a verified
+final variant. An early complete-assembly pitch-history address error and
+signed cosine-delta error were fixed before final checks. A measured hybrid
+table attempt remained too slow and was superseded by complete assembly.
+The first native long-run counter lost a few instruction-tail T-states at
+each budget boundary; final reports recover them using the independent
+frame clock. Historical approximate counts are not used for the final
+comparison. A packet refill guard and six-bank count limit are included.
+
+Decision: retain a correct, bounded-mode assembly reference and reject this
+implementation for real-time playback. The user's sine-table suggestion
+could replace exact CELP synthesis with a cheaper approximation. A four-
+oscillator estimate is 388 T/sample with 4 KiB of sine/amplitude tables,
+but excludes parameter extraction, noise, scheduling and ULA contention;
+it has not been implemented or assessed for speech quality. Finish this
+measured attempt before selecting that separate codec/synthesis experiment.
+See [README and reproduction](audiobook-beeper/speex-port/README.md),
+[assembly](audiobook-beeper/speex-port/assembly/decoder.s),
+[native verifier](audiobook-beeper/speex-port/verify.py),
+[instruction audit](audiobook-beeper/speex-port/check_primitives.py), and
+[saved evidence manifest](audiobook-beeper/speex-port/evidence/manifest.json).
+
 ## 2026-10-03: measured instruction cost on eight external TR-DOS disks
 
 Answer the user's request for an empirical Z80 instruction average using

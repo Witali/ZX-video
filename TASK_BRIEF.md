@@ -14,6 +14,18 @@ converter must also support other videos.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
+Follow-up on 2026-10-04: the separate `codex/speex-port` worktree now contains
+a complete assembly Speex narrowband mode-3 decoder with direct PCM8 port
+output. It is **not real time**: 24273.181 T/sample versus a 437.5-T budget at
+3.5 MHz/8 kHz. Tables occupy 12658 bytes. The full 186880-sample speech
+fixture matches libspeex at PCM16/PCM8, with additional arithmetic, signal,
+memory and six-bank capacity checks. Reuse the
+[implementation and evidence](audiobook-beeper/speex-port/README.md).
+The user's sine-table synthesis suggestion is documented as an unimplemented
+approximate alternative; a 388-T four-oscillator kernel estimate excludes
+parameter extraction, noise, scheduling and ULA contention. It is not a
+verified Speex playback result. Prefer assembly for further Z80 programs.
+
 Three optimization rounds for each selected decoder are complete. Exact
 IMA3-to-IMA expansion falls from 58750730 T / 16.564 s to 6657930 T / 1.877 s;
 PVQ3x512-to-PCM falls from 31352427 T / 8.839 s to 17460865 T / 4.923 s.

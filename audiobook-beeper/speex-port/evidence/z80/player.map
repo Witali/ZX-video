@@ -1,0 +1,105 @@
+ASxxxx Linker V05.50.4-SDLD,  page 1.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+.  .ABS.                            00000000    00000000 =           0. bytes (ABS,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     00000000  .__.ABS.                           __muluint2slong
+     00000000  l__CABS
+     00000000  l__DABS
+     00000000  l__GSFINAL
+     00000000  l__GSINIT
+     00000000  l__HOME
+     00000000  l__INITIALIZED
+     00000000  l__INITIALIZER
+     00000000  s__CABS
+     00000000  s__DABS
+     0000071C  l__DATA
+     00001AEE  l__CODE
+     00008000  s__CODE
+     0000B000  s__DATA
+     0000B71C  s__GSFINAL
+     0000B71C  s__GSINIT
+     0000B71C  s__HOME
+     0000B71C  s__INITIALIZED
+     0000B71C  s__INITIALIZER
+
+ASxxxx Linker V05.50.4-SDLD,  page 2.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               00008000    00001AEE =        6894. bytes (REL,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     00008078  _cdbk_nb                           decoder
+     000082F8  _cdbk_nb_low1                      decoder
+     00008438  _cdbk_nb_high1                     decoder
+     00008578  _gain_cdbk_lbr                     decoder
+     000085F8  _exc_10_32_table                   decoder
+     00008738  _ol_gain_table                     decoder
+     0000882F  _zx_clip                           decoder
+     000089BC  _zx_speex_lpc                      decoder
+     00008F7E  _zx_speex_reset                    decoder
+     00008FAB  _zx_speex_filter                   decoder
+     000091C4  _zx_speex_decode                   decoder
+     0000999A  _complete                          player
+     0000999B  _entry                             player
+     00009A4A  __moduchar                         modunsigned
+     00009A51  __moduint                          modunsigned
+     00009A56  __divuchar                         divunsigned
+     00009A58  __divu8                            divunsigned
+     00009A5B  __divu16                           divunsigned
+     00009A5B  __divuint                          divunsigned
+     00009A8A  _memmove                           memmove
+     00009AA9  ___mulsint2slong                   __mulsint2slong
+     00009AD7  ___muluint2ulong                   __muluint2slong
+
+ASxxxx Linker V05.50.4-SDLD,  page 3.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_DATA                               0000B000    0000071C =        1820. bytes (REL,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     0000B300  _zx_lpc                            decoder
+     0000B314  _zx_memory                         decoder
+     0000B5C4  _packet_count                      player
+     0000B5C6  _status                            player
+     0000B5C8  _pcm                               player
+     0000B708  _packet                            player
+ASxxxx Linker V05.50.4-SDLD,  page 4.
+
+Files Linked                              [ module(s) ]
+
+decoder.rel                               [ decoder ]
+player.rel                                [ player ]
+
+
+Libraries Linked                          [ object file ]
+
+C:\Work\ZX-video\.tmp\z80-c-compilers\sdcc\bin\..\lib\z80/z80.lib
+                                          [ modunsigned.rel ]
+C:\Work\ZX-video\.tmp\z80-c-compilers\sdcc\bin\..\lib\z80/z80.lib
+                                          [ divunsigned.rel ]
+C:\Work\ZX-video\.tmp\z80-c-compilers\sdcc\bin\..\lib\z80/z80.lib
+                                          [ memmove.rel ]
+C:\Work\ZX-video\.tmp\z80-c-compilers\sdcc\bin\..\lib\z80/z80.lib
+                                          [ __mulsint2slong.rel ]
+C:\Work\ZX-video\.tmp\z80-c-compilers\sdcc\bin\..\lib\z80/z80.lib
+                                          [ __muluint2ulong.rel ]
+
+ASxxxx Linker V05.50.4-SDLD,  page 5.
+
+User Base Address Definitions
+
+_CODE = 0x8000
+_DATA = 0xb000
+
+
