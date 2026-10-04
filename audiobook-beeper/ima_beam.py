@@ -27,9 +27,13 @@ def code_alphabet(allowed_codes=None):
     return codes.astype(np.int64)
 
 
-def encode(pcm8, width=32, block_samples=64, predictor=0, index=0, allowed_codes=None):
+def encode(pcm8, width=32, block_samples=64, predictor=0, index=0, allowed_codes=None,
+           predictor_bounds=(-32768,32767)):
     if len(pcm8) % 2 or width < 1 or block_samples < 2 or block_samples % 2:
         raise ValueError('need even samples/block length and a positive beam width')
+    lower,upper=predictor_bounds
+    if not -32768<=lower<=predictor<=upper<=32767:
+        raise ValueError('predictor must be inside valid signed PCM16 bounds')
     steps = np.asarray(STEPS, dtype=np.int64)[:, None]
     codes = code_alphabet(allowed_codes)
     branches = len(codes)
@@ -49,7 +53,7 @@ def encode(pcm8, width=32, block_samples=64, predictor=0, index=0, allowed_codes
             predicted = (preds[:, None] + delta[indices]).reshape(-1)
             next_indices = successor[indices].reshape(-1)
             score = (costs[:, None] + (predicted.reshape(-1, branches) - sample) ** 2).reshape(-1)
-            valid = (predicted >= -32768) & (predicted <= 32767)
+            valid = (predicted >= lower) & (predicted <= upper)
             ids = np.flatnonzero(valid)
             # Merge equivalent decoder states before beam pruning. Otherwise
             # duplicate code paths can consume the entire beam without looking ahead.

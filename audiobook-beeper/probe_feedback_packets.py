@@ -50,14 +50,14 @@ def generate(levels, words, successor):
     return np.unpackbits(output.view('u1'))
 
 
-def integral_table(pcm_bins, recent_bins, beta=.5, extent=1., slots=16, holds=None):
+def integral_table(pcm_bins, recent_bins, beta=.5, extent=1., slots=16, holds=None, q_clip=(0,15)):
     """Preserve accumulated error q=e-beta*e_old on its exact 1/8 lattice.
 
     For 64 midpoint PCM bins and 16 decisions, 16*x is a multiple of 1/8.
     Unlike independent rounding of two histories, rounding recent e alone
     does not add DC error to q. q has 16 signed states in [-1,7/8].
     """
-    assert pcm_bins == 64 and slots == 16
+    assert pcm_bins in (64,128) and slots == 16
     states = 16 * recent_bins
     q = np.broadcast_to((np.arange(states) // recent_bins - 8) / 8,
                         (pcm_bins, states)).copy()
@@ -69,15 +69,16 @@ def integral_table(pcm_bins, recent_bins, beta=.5, extent=1., slots=16, holds=No
     weights = np.ones(slots) if holds is None else np.asarray(holds) / np.mean(holds)
     for weight in weights:
         u = x + q / weight + beta * recent
-        bit = u >= .5
+        bit = u >= .5 - (1e-12 if pcm_bins == 128 else 0.)
         recent = u - bit
         q += weight * (x - bit)
         words = (words << 1) | bit
         peak = max(peak, float(np.max(abs(recent))))
-    if holds is None:
+    if holds is None and pcm_bins == 64:
         assert np.all(q * 8 == np.rint(q * 8))
-    qcode = np.clip(np.floor(q * 8 + 8.5), 0, 15)
-    r = np.clip(np.floor((recent / extent + 1) * recent_bins / 2), 0, recent_bins - 1)
+    epsilon=1e-12 if pcm_bins == 128 else 0.
+    qcode = np.clip(np.floor(q * 8 + 8.5 + epsilon), *q_clip)
+    r = np.clip(np.floor((recent / extent + 1) * recent_bins / 2 + epsilon), 0, recent_bins - 1)
     successor = (qcode * recent_bins + r).astype(np.uint16)
     return words, successor, peak
 

@@ -99,7 +99,7 @@ def prepare(path):
 
 
 def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regularization=.1,history_bins=0,
-                    allowed_codes=None):
+                    allowed_codes=None,level_bounds=None):
     codes=code_alphabet(allowed_codes);branches=len(codes)
     steps=np.asarray(STEPS,dtype=np.int64)[:,None]
     delta=(steps>>3)+steps*((codes&4)!=0)+(steps>>1)*((codes&2)!=0)+(steps>>2)*((codes&1)!=0)
@@ -113,7 +113,9 @@ def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regul
             a,l,response,endpoint,weights=features[ids[sample]]
             predicted=(preds[:,None]+delta[indices]).ravel();next_indices=successor[indices].ravel()
             valid=(predicted>=-32768)&(predicted<=32767);parent=np.repeat(np.arange(len(preds)),branches)
-            level=np.clip((predicted+32768)//1024,0,63)
+            level=np.clip((predicted+32768)//(65536//nxt.shape[0]),0,nxt.shape[0]-1)
+            if level_bounds is not None:
+                valid &= (level>=level_bounds[0]) & (level<=level_bounds[1])
             word_index=level*32+qs[parent]
             observed=(states@l.T)[parent]+response[word_index]
             error=observed-desired[sample]
@@ -141,7 +143,10 @@ def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regul
             preds,indices,qs,costs=predicted[best],next_indices[best],new_q[best],score[best]
         chosen[start:stop]=paths[0];pred,index,q=int(preds[0]),int(indices[0]),int(qs[0]);filter_state=states[0]
         if stop%16384==0:print(json.dumps(dict(encoded_samples=stop,total_samples=len(source))),flush=True)
-    tail=encode_pcm(np.full(128,128,dtype='u1'),width=32,predictor=pred,index=index,allowed_codes=codes)
+    bounds=((-32768,32767) if level_bounds is None else
+            (level_bounds[0]*(65536//nxt.shape[0])-32768,
+             (level_bounds[1]+1)*(65536//nxt.shape[0])-32769))
+    tail=encode_pcm(np.full(128,128,dtype='u1'),width=32,predictor=pred,index=index,allowed_codes=codes,predictor_bounds=bounds)
     tbytes=np.frombuffer(tail,'u1');chosen[-128::2]=tbytes&15;chosen[-127::2]=tbytes>>4
     packed=bytes((chosen[::2]|(chosen[1::2]<<4)).tolist())
     pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)
@@ -153,6 +158,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--input',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True);p.add_argument('--ffmpeg',required=True)
     p.add_argument('--width',type=int,default=16)
+    p.add_argument('--block-size',type=int,choices=(64,128,256),default=64)
     p.add_argument('--regularization',type=float,default=.1)
     p.add_argument('--prior',choices=('compensated','uniform'),default='compensated')
     p.add_argument('--history-bins',type=int,default=0)
@@ -162,7 +168,7 @@ def main():
     baseline=gzip.decompress((a.input/'soundtrack.ima.gz').read_bytes());pcm,_=decode(baseline)
     state=np.zeros(6);q=16;noise=signal=0.
     for i in range(len(ids)):
-        aa,ll,rr,bb,w=features[ids[i]];v=(int(pcm[i])+32768)//1024;k=v*32+q
+        aa,ll,rr,bb,w=features[ids[i]];v=(int(pcm[i])+32768)//(65536//nxt.shape[0]);k=v*32+q
         observed=ll@state+rr[k]
         if 800<=i<len(source)-800:
             noise+=float(np.sum(w*(observed-desired[i])**2));signal+=float(np.sum(w*desired[i]**2))
@@ -172,7 +178,9 @@ def main():
     prior=wav8(a.input/'compensated-pcm.wav') if a.prior=='compensated' else source
     codes=np.arange(0,16,2) if a.ima3 else None
     packed=encode_waveform(prior,desired,features,ids,nxt,a.width,regularization=a.regularization,
-                           history_bins=a.history_bins,allowed_codes=codes)
+                           block_size=a.block_size,
+                           history_bins=a.history_bins,allowed_codes=codes,
+                           level_bounds=meta['model'].get('level_bounds'))
     if a.ima3:
         assert not np.any(np.frombuffer(packed,'u1')&0x11)
     (a.output/'soundtrack.ima.gz').write_bytes(gzip.compress(packed,mtime=0))
@@ -184,6 +192,7 @@ def main():
     snr=ratio(ref,actual[4410:-4410]-ref)
     write_wav(a.output/'waveform-preview.wav',actual)
     report=dict(scope=__doc__,input=str(a.input),samples=len(source),beam_width=a.width,
+                block_size=a.block_size,
                 allowed_ima_nibbles=code_alphabet(codes).tolist(),ima3_subset=a.ima3,
                 source_sha256=hashlib.sha256(source.tobytes()).hexdigest(),
                 packed_sha256=hashlib.sha256(packed).hexdigest(),

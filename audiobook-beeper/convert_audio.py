@@ -59,10 +59,13 @@ def pcm_wav(path, samples):
         wav.writeframes(np.asarray(samples, dtype='u1').tobytes())
 
 
-def prepare_source(path, ffmpeg, duration=None):
+def prepare_source(path, ffmpeg, duration=None, maximum_samples=None, alignment=512):
     """Read only a bounded prefix; one extra sample detects truncation."""
     guard = 128
-    limit = MAX_PACKED_BYTES * 2 - guard
+    maximum_samples = maximum_samples or MAX_PACKED_BYTES * 2
+    if alignment <= 0 or maximum_samples % alignment:
+        raise ValueError('sample capacity must be a positive multiple of alignment')
+    limit = maximum_samples - guard
     limit_reason = 'resident RAM capacity'
     if duration is not None:
         if not math.isfinite(duration) or duration <= 0:
@@ -87,7 +90,7 @@ def prepare_source(path, ffmpeg, duration=None):
     if fade:
         prepared[:fade] *= np.linspace(0, 1, fade)
         prepared[-fade:] *= np.linspace(1, 0, fade)
-    length = max(512, (len(prepared) + guard + 511) // 512 * 512)
+    length = max(512, (len(prepared) + guard + alignment-1) // alignment * alignment)
     pcm = np.full(length, 128, dtype='u1')
     pcm[:len(prepared)] = np.clip(np.rint(prepared * 128 + 128), 0, 255).astype('u1')
     # Repeating a very short input gives phase calibration a >=1-s loop;
@@ -99,6 +102,7 @@ def prepare_source(path, ffmpeg, duration=None):
                     truncated=truncated, truncation_reason=(limit_reason if truncated else None),
                     requested_duration_seconds=duration,
                     maximum_packed_bytes=MAX_PACKED_BYTES, prepared_samples=len(pcm),
+                    maximum_prepared_samples=maximum_samples,
                     short_input_repetitions=repetitions, silence_guard_samples=guard,
                     fixed_gain=gain, original_peak=peak, edge_fade_samples=fade,
                     peak_target_fraction=109 / 128, quality_reference='Prepared PCM8, with the same gain/fades/padding',

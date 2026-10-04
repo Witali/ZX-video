@@ -13,10 +13,12 @@ def reference(packed,cycles=2,model=None,idle_pairs=0):
     pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)
     levels=((pcm.astype(np.int32)+32768)>>8).astype('u1')
     model=model or dict(holds=HOLDS,beta=.5,extent=1.)
-    words,nxt=rational_tables(model['holds'],integral_table(64,2,holds=model['holds'],beta=model['beta'],extent=model['extent']),model['beta'],model['extent'])
+    bins=model.get('pcm_bins',64)
+    clip=tuple(model.get('q_clip',(0,15)))
+    words,nxt=rational_tables(model['holds'],integral_table(bins,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],q_clip=clip),model['beta'],model['extent'],clip)
     state=16;output=np.empty(len(pcm)*cycles+1,dtype='>u2')
     for i in range(len(output)):
-        value=int(levels[i%len(pcm)])//4;output[i]=words[value,state];state=int(nxt[value,state])
+        value=int(levels[i%len(pcm)])*bins//256;output[i]=words[value,state];state=int(nxt[value,state])
     bits=np.unpackbits(output.view('u1'))[:len(pcm)*cycles*16+1]
     if idle_pairs:
         position=(len(pcm)-3)*16+15;count=len(pcm)*16
@@ -26,6 +28,9 @@ def reference(packed,cycles=2,model=None,idle_pairs=0):
 
 
 def intervals(meta):
+    if meta.get('packed_ima3_direct'):
+        from ima3_direct_player import intervals as packed_intervals
+        return packed_intervals(meta)
     holds=np.tile(HOLDS,meta['pcm_samples']).astype(np.int64);end=0
     for s in meta['sections']:
         for byte in range(256,s['bytes']+1,256):

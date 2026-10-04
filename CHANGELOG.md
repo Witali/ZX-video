@@ -5,6 +5,95 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-04: Packed IMA3 playback, uniform table timing and automatic conversion
+
+The user requests removal of the IMA3-to-IMA4 conversion, optionally higher
+PDM frequency, at least20 dB final SNR, asks whether25 dB is possible, and
+requires the complete conversion workflow to run automatically. Keep the
+same complete186880-sample source/hash as the previous20.071-dB delivery.
+
+Implement a separate assembler player that consumes eight little-endian
+three-bit codes from each three bytes in resident RAM. Reorder packet
+entries to defer the FIRST pointer and use eight extraction phases. There
+is no resident IMA4, PCM or PDM expansion buffer. Resident audio falls from
+93440 to70080 bytes; full available capacity is93432 IMA3 bytes /249152
+samples (31.144 s at8 kHz, including the guard). The new native capacity
+probe covers7972865 bits and498304 predictor/index samples over seven banks
+twice, with synthetic silence after the original clip; no longer real audio
+or physical-machine verification is implied.
+
+The unpadded408.375-T prototype (+2.8701% speed) is rejected. The420.375,
+422.375,423.875 and425.875-T padding trials retain complete native/Fuse
+verification but fail quality on the unchanged old encoded data. A measured
+64-level model gives19.288/19.654-dB host estimates, but a real new disk falls
+to2.604/2.598 dB because signal-dependent table contention changes its sample
+schedule by0.766 ms. Preserve every meaningful attempt and assembly input in
+[the ledger](audiobook-beeper/experiments/ima-3bit-direct/attempts.json).
+
+Move all120 supported128-level PDM rows into the same contended bank5 memory
+class (two rows/page), keep all89 compact IMA rows in uncontended bank2, and
+constrain offline control levels to4..123 with feedback clipping3..12. This
+does not attenuate, crop or replace the source reference. Exact-rational
+checking covers4096 table cases. A rejected earlier128-level model needed
+22 states /132 bytes per row; it also exposed a floating-point tie error.
+The corrected model and table-layout guards are independently checked.
+
+Ordinary cost is427.375 T/sample, **+4.375 T** from the prior423-T player and
++1.5 T from the padded64-level direct experiment. Page and bank overhead
+remain+14/+140 T. Loading progress has zero playback cost. The full width256
+candidate takes79891688 native T per cycle, then83104176 T including actual
+ULA waits:23.430087 s, -0.299133% speed and127652.961 mean PDM outputs/s.
+This does not improve the previous128053.556-Hz mean rate. Runtime disk
+reads remain zero;32 loading progress steps and message hiding pass.
+Uniform-memory sample schedules differ by only0..3 T (<0.846 microseconds)
+across the tested changed payload/model, versus the old0.766-ms discrepancy.
+
+A width256/reg0.03 host estimate19.952800 dB becomes19.944257/19.943702 dB in
+complete cold disk loops, still below20. Width512/reg0.01 scores19.938054 dB
+on that earlier host schedule. Do not label these as passing releases.
+The source clock, integration rate, filter, edge exclusions, amplitude and
+full excerpt remain unchanged; no gain, delay or time-scale fitting is used.
+
+Add `convert_ima3_audio.py`: arbitrary FFmpeg input, bounded initial excerpt,
+separate assembler, automatic cold timing calibration, waveform search,
+complete native/two-loop Fuse checks, best measured candidate, WAV and TRD.
+It supports an explicit25-dB target and integrity-checked resumable stages.
+Below-target results return exit2 and remain previews. A stereo24/16k
+input-path smoke test gives20.948752/20.949015 dB and -1.134646% speed; a
+separate25-dB invocation gives20.948905/20.948362 dB and correctly fails its
+target. These2-s tests do not replace full-source acceptance. All three
+completed stages resume without recalculation; modified cached data is
+rejected. Default4-bit encoding remains byte-identical on regression fixtures.
+
+The earlier no-IMA, ideal128-kHz host study's25.81 dB concerns another input
+and algorithm, not this TRD or physical hardware. Keep that distinction in
+[the implementation notes](audiobook-beeper/IMA3_DIRECT.md).
+
+The completed automatic run extends the PC horizon to128 samples at
+width256/weight0.03: host20.159645 dB, then **20.159645 /20.159651 dB** on
+both complete new cold-Fuse loops, phase0/0 T. This satisfies the20-dB gate
+on the unchanged full source. No additional Z80 work is introduced. The
+superseded width1024/64-sample search was interrupted after65536 samples
+of progress and is preserved as incomplete. The final automatic stereo24
+smoke test measures21.116910/21.115089 dB; it remains a separate short input.
+
+Normal100%-speed recording confirms both wraps, matching paging latches,
+continuous activity and **22.815238 s** cold boot to audio (<60 s); recorded
+playback is46.869388 s. Complete-run resume reuses all four hashed stages,
+including the sound capture. Cross-run pilot reuse checks the exact source,
+player, tools and remaining producers; a one-sample source change is rejected.
+
+Save `ZX-audiobook-IMA3-direct-test.trd` (SHA256
+`601ba65fa7a12b4b6c67f384ba5ed32530bee95816bb86d8effcc0c7de7d34c0`),
+normal WAV, pilot, assembly, producer snapshots, per-attempt results and
+[completion audit](audiobook-beeper/experiments/ima-3bit-direct/completion-audit.json).
+Decision: deliver direct packed IMA3 and the automatic converter.25 dB is
+not achieved; no physical-hardware or arbitrary-recording SNR guarantee is
+made. Keep the earlier expanding disk and all rejected evidence.
+A final whitespace-only source cleanup leaves the Python AST and entire
+rebuilt TRD byte-identical; its proof and original measured producer bytes
+are archived. No additional playback verification is needed for that cleanup.
+
 ## 2026-10-03: IMA3 waveform disk passes the mandatory 20-dB gate
 
 Preserve the complete original186880-sample source and its hash

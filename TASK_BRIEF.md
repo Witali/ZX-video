@@ -1,6 +1,6 @@
 # Focused optimization task
 
-Updated 2026-10-01. Use this brief to continue the project in this or a new
+Updated 2026-10-04. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
 ## Project objective
@@ -11,6 +11,30 @@ prioritize exact five-field video
 deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
+
+## Direct IMA3 / automatic converter checkpoint (2026-10-04)
+
+The direct packed-IMA3 implementation now passes the same complete original
+186880-sample reference at **20.159645 /20.159651 dB** in two cold Fuse loops,
+without Spectrum-side IMA3-to-IMA4 expansion. Resident audio is70080 bytes,
+no PCM/PDM buffer; speed error-0.299133%, phase0/0 T, mean PDM127652.961 Hz.
+Native427.375 T/sample is+4.375 T from the expanding player's423 T; page/
+bank extras stay+14/+140 T. All5981841 outputs and373760 predictor/index
+samples pass native/Fuse checks;32 loading progress steps and message hiding
+pass. Normal cold boot to sound is22.815238 s; actual two-loop WAV and
+completion audit are saved. Full93432-byte /249152-sample capacity is native-tested across seven
+banks with a synthetic tail, not a longer real-source release.
+
+Use [the automatic converter and evidence](audiobook-beeper/IMA3_DIRECT.md).
+It handles FFmpeg input, preparation, separate assembly, calibration,
+waveform search, complete quality checks, TRD and normal WAV automatically.
+The selected width256 /128-sample /weight0.03 horizon scores20.159645 dB
+on the pilot schedule and passes the newly executed disk. Default four-bit
+encoding remains unchanged. A25-dB target is supported but not achieved
+by this full-source IMA3 delivery; below-target runs return exit2 and remain
+previews. Reuse the saved complete checks and hashed pilot rather than
+repeating tuning experiments. The previous expanding20.071-dB disk remains
+historical. New disk: `ZX-audiobook-IMA3-direct-test.trd`.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
