@@ -59,7 +59,7 @@ def square_templates(periods, sample_rate=22050, window_size=4096):
 
 
 @lru_cache(maxsize=4096)
-def volume_candidates(original):
+def volume_candidates(original, level_tuple=None):
     """Preserve the fast RMS envelope within 0.25 dB, including quantization.
 
     The long FFT describes timbre, not the current 20 ms attack amplitude.
@@ -68,13 +68,14 @@ def volume_candidates(original):
     """
     candidates = np.array(list(product(*(range(max(1, v-1), min(15, v+1)+1)
                                          for v in original))), dtype=int)
-    power = np.sum(ay.LEVELS[candidates]**2, axis=1)
-    reference = np.sum(ay.LEVELS[list(original)]**2)
+    table = ay.LEVELS if level_tuple is None else np.asarray(level_tuple)
+    power = np.sum(table[candidates]**2, axis=1)
+    reference = np.sum(table[list(original)]**2)
     return candidates[np.abs(10*np.log10(power/reference)) <= .25+1e-12]
 
 
 def refine(magnitude, periods, volumes, noise, sample_rate=22050, *, noise_steps=1,
-           tuning_cents=50):
+           tuning_cents=50, level_table=None):
     """Fit actual AY periods and tone levels; lower noise by one 3 dB step.
 
     Trackers seed a local integer-period search, including non-concert pitches.
@@ -87,6 +88,8 @@ def refine(magnitude, periods, volumes, noise, sample_rate=22050, *, noise_steps
     if not 0 <= tuning_cents <= 100:
         raise ValueError('tuning_cents must be in 0..100')
     result = volumes.copy()
+    table = ay.LEVELS if level_table is None else np.asarray(level_table, dtype=float)
+    level_tuple = None if level_table is None else tuple(map(float, table))
     tuned = periods.copy()
     used = np.unique(periods[volumes > 0])
     ratio = 2**(tuning_cents/1200)
@@ -108,8 +111,8 @@ def refine(magnitude, periods, volumes, noise, sample_rate=22050, *, noise_steps
         basis = templates[[lookup[int(p[j])] for j in voices]]
         target = magnitude[index]
         target_norm = max(np.linalg.norm(target), 1e-15)
-        old_levels = ay.LEVELS[v[voices]]
-        candidates = volume_candidates(tuple(map(int, v[voices])))
+        old_levels = table[v[voices]]
+        candidates = volume_candidates(tuple(map(int, v[voices])), level_tuple)
         levels = old_levels.copy()
         prediction = levels @ basis
         score = float(prediction @ target/max(np.linalg.norm(prediction)*target_norm, 1e-15))
@@ -135,7 +138,7 @@ def refine(magnitude, periods, volumes, noise, sample_rate=22050, *, noise_steps
                     score = float(scores[selected])
             gram = basis @ basis.T
             correlation = basis @ target
-            trial_levels = ay.LEVELS[candidates]
+            trial_levels = table[candidates]
             denominator = np.sqrt(np.maximum(np.sum((trial_levels @ gram)*trial_levels, axis=1), 1e-30))
             scores = (trial_levels @ correlation)/(denominator*target_norm)
             selected = int(np.argmax(scores))

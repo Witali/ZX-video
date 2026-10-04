@@ -1,5 +1,55 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Implement and qualify a 20-ms AY music profile
+
+The user authorizes the proposed music improvements at 50 Hz, excludes
+100-Hz playback, fixes the sound quantum at 20 ms and requests spectrogram
+comparison. Baseline `8bcc3c3`, unchanged 31.128-s Entertainer request /1556
+states /31.12-s output, source SHA-256
+`08dc5241de419edf9693ad20797389cb735d9b6fc06bfb6936568bb707f13077`.
+Add an optional `--profile music` to the standalone folder, retaining the
+exact old default stream. Implement joint beam voice allocation, attack
+evidence, faster note envelopes, held note periods, YM2149 DAC calibration
+and transient-limited tonal noise. The file grid and existing player remain
+unchanged. No recording-specific score or waveform is added.
+
+Seven predetermined full host comparisons select joint voices + 0.5 envelope
+blend + transient noise. Host unpooled STFT cosine at 512/2048-sample windows
+rises .83076/.82366 -> .83381/.82558; 8192 decreases .81797 -> .81513.
+Spectral convergence decreases at all three scales; finer onset F1 rises
+.65891 -> .74783, though the sequential combined candidate reaches .78414.
+Noise falls 243 ->109 ticks. Individual calibration, envelope, noise and
+joint variants trade off; reject universal/default replacement. Short harmony
+runs increase 34 ->51 and repeated-attack bass tuning remains imperfect.
+Archive every variant, including those not selected; no open-ended tuning.
+
+The selected CLI stream exactly matches the host candidate. Full cold Fuse
+passes both loops: 34232 register writes /3112 fields, zero missed fields,
+67 startup sectors, no runtime disk reads, correct loading-message handling.
+Startup 10.677687 s; normal captured WAV 62.226236 s. Player binary identical:
+ordinary 974 ->974 T, delta 0; 17116 resident bytes. Eight regression tests
+pass, plus complete native offset/one-shot CLI playback and event clipping.
+All 175 prior image hashes remain unchanged. New independently bootable LFS
+preview: `ZX-music-Entertainer-AY-music50-test.trd`.
+
+Full Fuse spectrogram comparison uses equal global RMS, unpooled bins,
+three resolutions and the same fixed known clock correction for both disks;
+raw-time results are also retained. First-loop log-magnitude MAE improves
+9.92776/9.26998/7.78490 ->9.71170/9.13648/7.64777 dB, with improvements in
+both loops. Fine onset F1 rises .62963/.64093 ->.77533/.74894. Long-window
+cosine falls in both loops and second-loop long-window convergence slightly
+worsens. Inspect complete and fixed-region spectrograms: changes are modest,
+with remaining timbre/polyphony errors. Fix cropped detail-figure margins
+before delivery. No subjective or physical-hardware acceptance is claimed.
+
+Save [implementation, decisions and reproduction](ay-converter/analysis/music50/README.md),
+[seven-variant report](ay-converter/analysis/music50/evidence/results.json),
+[complete native/Fuse proof](ay-converter/analysis/music50/evidence/release/verification.json),
+[actual-sound spectral report](ay-converter/analysis/music50/evidence/comparison/fuse-spectrogram.json),
+normal sound, comparison WAV, readable figures and hash audit in the same
+focused change. Decision: deliver this optional 20-ms music preview and keep
+the old disk/default; reuse this complete evidence for any later work.
+
 ## 2026-10-04: Analyse Entertainer AY accuracy with six bounded host probes
 
 At the user's request, review the standalone AY converter and propose ways

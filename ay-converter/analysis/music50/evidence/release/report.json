@@ -1,0 +1,196 @@
+{
+  "complete": true,
+  "preview_only": true,
+  "source": "C:\\Work\\ZX-video\\audiobook-beeper\\experiments\\ima-3bit-entertainer\\original.ogg",
+  "source_sha256": "08dc5241de419edf9693ad20797389cb735d9b6fc06bfb6936568bb707f13077",
+  "title": "THE ENTERTAINER",
+  "start_seconds": 0.0,
+  "requested_duration_seconds": 31.128,
+  "duration_seconds": 31.12,
+  "duration_grid_seconds": 0.02,
+  "ticks": 1556,
+  "maximum_duration_seconds": 178.68,
+  "update_rate_hz": 50,
+  "loop_playback": true,
+  "analysis_sample_rate_hz": 22050,
+  "source_mix": "FFmpeg mono downmix",
+  "profile": "music",
+  "sound_quantum_ms": 20,
+  "mode": "note-oriented music AY synthesis",
+  "square_fit": {
+    "model": "note_oriented_music_50hz_v1",
+    "tone_harmonics": "odd 1/h through 31, below 0.48 sample rate, actual integer AY periods",
+    "noise_attenuation_register_steps": 1,
+    "nominal_noise_attenuation_db": 3.0102999566398125,
+    "changed_tone_registers": 1087,
+    "noise_ticks": 116,
+    "tuned_period_registers": 1638,
+    "tuning_radius_cents": 50.0,
+    "frequency_score_hysteresis": 0.001,
+    "fit_spectral_cosine_sum_before": 1227.2012535078252,
+    "fit_spectral_cosine_sum_after": 1244.2615701633783,
+    "tone_power_tolerance_db": 0.25,
+    "maximum_tone_register_change": 1,
+    "native_instruction_delta_tstates": 0,
+    "limitations": "Automatic note estimates, not an annotated transcription; no listening acceptance implied.",
+    "update_rate_hz": 50,
+    "joint_voice_path": true,
+    "envelope_blend": 0.5,
+    "noise_policy": "transients",
+    "volume_curve": "YM2149 Ayumi",
+    "detected_attacks": 188,
+    "note_events_file": "note-events.json"
+  },
+  "noise_ticks": 109,
+  "analysis_context_before_seconds": 0.0,
+  "analysis_context_after_seconds": 1.0079818594104308,
+  "packed_bytes": 14004,
+  "register_bytes": 17116,
+  "registers_sha256": "1be0d61bfdd483705cec243afd2581c91184533c81fb73737458fc023a76cfa6",
+  "preview_model": "YM2149 Ayumi, three tones, one shared noise generator, equal mono sum",
+  "metrics": {
+    "semitone_spectral_cosine": 0.8920850170858153,
+    "chroma_cosine": 0.9757913845189277,
+    "loudness_correlation": 0.9941847763991543,
+    "rhythm_onset_f1": 0.9032258064516129,
+    "onsets": {
+      "reference": 63,
+      "candidate": 61,
+      "matched": 56,
+      "precision": 0.9180327868852459,
+      "recall": 0.8888888888888888,
+      "f1": 0.9032258064516129
+    },
+    "evaluated_frames": 310
+  },
+  "metrics_scope": "spectral, pitch-class, loudness and rhythm proxies; not waveform SNR or listening acceptance",
+  "spectrogram_metrics": {
+    "512": {
+      "window_ms": 23.219954648526077,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.8338103406162961,
+      "sqrt_magnitude_cosine": 0.8176379776570172,
+      "log_magnitude_mae_db": 10.787788081128166,
+      "spectral_convergence": 0.557986792263309,
+      "active_frames": 1556
+    },
+    "2048": {
+      "window_ms": 92.87981859410431,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.8255838656286624,
+      "sqrt_magnitude_cosine": 0.7886175667618726,
+      "log_magnitude_mae_db": 9.310718473916097,
+      "spectral_convergence": 0.5703802690258254,
+      "active_frames": 1556
+    },
+    "8192": {
+      "window_ms": 371.51927437641723,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.8151345678743142,
+      "sqrt_magnitude_cosine": 0.7944545289842468,
+      "log_magnitude_mae_db": 7.463299037196978,
+      "spectral_convergence": 0.5967904961546225,
+      "active_frames": 1556
+    }
+  },
+  "spectrogram_scope": "50..8000 Hz linear bins, global equal RMS, no time warp or pitch alignment; common source-relative -60 dB floor; 20-ms hop",
+  "equal_rms_preview": 0.11602345908356423,
+  "original_source_not_mixed_into_synthesis": true,
+  "high_rate_pcm_volume_output": false,
+  "disk_timing_verified": true,
+  "hardware_tested": false,
+  "producer_sources_sha256_lf": {
+    "ay_fidelity.py": "72f7d965b29a5e0ddeb9eff593ec398c1bb26c37d7b1bf7b6d7f774310c0d822",
+    "ay_format.py": "a4dba0b53315ada90cd8e7103e7ad4f2d63249eb411b725d94a91ac74521616d",
+    "ay_square_fit.py": "985717aa5e3f8491b486be70fed3652766ac47a31d157144738ea93cb6d52c4c",
+    "convert_audio.py": "9d3d3505d3a7d93c1fe33b0bb1059d27f3c92d71c74dcd98c1687164d4b157ff",
+    "fmf_audio.py": "a3ecbdaa98607ea5f2a93d97541615e9bd028848affe777516d15d451d73ae58",
+    "music_player.py": "28f980e677e628613dcb856626a776c61f763943e8e1004829d91b4644b7b7c4",
+    "music_profile.py": "b8027cfb99332106d201fcf0e11c4ebbaa04ee5ea1017a566e410b34b5fa8875",
+    "quality.py": "7427f1b44a719c316e5fe3228788c739b04bfb0249a9472ee6517dd831ace368",
+    "spectrogram.py": "ea120711a5396e39cb692c6de061af7f8e39b200121c387553e254f76be4aa6f",
+    "support.py": "e36a4fb8d07b97a86a411aa24de8f05e20d31d871eb0942bd4972bbc814069a6",
+    "test_music_player.py": "a9c12d1dffd47c0df2fd21a9e9575a1d02e535299d87c7c8ff611843a881518e",
+    "test_music_profile.py": "4ee0732130024e17f3d3d45e0b0fa5b4618367dfe67325b1b49d2d520de5367d",
+    "trd.py": "9150fe8dab69c9d7e70d3956d534484f316bbe450dd5158c858727a0687ae28c",
+    "verify_preview.py": "d0d34fdc63c75f83e9dd2250322df17dd13f116553b625bfa0284b2a8fa94a99",
+    "ay-player.asm": "153b5ec0b34c8f069ef62dc2c9204fb8ef75a11b1d38835a7ec023c4914e6d90",
+    "render_ym2149.js": "585122fbf9d5bc4af4a0af9086f2bb285ba4a45f6984381d8a275e616ea1d009",
+    "vendor/ayumi-js/ayumi.js": "ded3df8aa2a063bd873ec0fedf167a2f2873034467a94aaa17441feb888b1ba8"
+  },
+  "artifacts": {
+    "assembly/assembler.log": {
+      "bytes": 718,
+      "sha256": "4829d15196938b9352dfe0462cc316719b22bef068d7a5ba1f746c029752ffd0"
+    },
+    "assembly/ay-player.asm": {
+      "bytes": 4390,
+      "sha256": "153b5ec0b34c8f069ef62dc2c9204fb8ef75a11b1d38835a7ec023c4914e6d90"
+    },
+    "assembly/config.inc": {
+      "bytes": 235,
+      "sha256": "57802b616f47ba796828f4197ee4278e668c29de54ef01e74b4c1b8f3cca4729"
+    },
+    "assembly/player.bin": {
+      "bytes": 11008,
+      "sha256": "c62fb8ce55962ebb61969f1722e2e3221959d1e304ccb6e3ed2a84f8797b807a"
+    },
+    "assembly/player.lst": {
+      "bytes": 31588,
+      "sha256": "90118b4a4e1b56de675f7ec0179ccb2b875e17014678011af4844f5b0041c0ae"
+    },
+    "assembly/screen.bin": {
+      "bytes": 6912,
+      "sha256": "a99b576afb7c7fd5dd17e579e6f922aacc87d0d80f61a144cff1292713c9872e"
+    },
+    "audio-preview.trd": {
+      "bytes": 655360,
+      "sha256": "e1ef02bc4bee6163698a4b8ed16dfaa12ec5c2852834a24e57b60d6631619663"
+    },
+    "ay-preview.wav": {
+      "bytes": 2744828,
+      "sha256": "3d3fa95bab33eecc44e85aaad673556ad6c5b00b04d4d9d590a7b3c5141bfa65"
+    },
+    "chip-render.json": {
+      "bytes": 828,
+      "sha256": "6869dd8b2375f2a804823732b367e3b1dc30f197e8dbddd1c7a59ad6ba3f1b07"
+    },
+    "note-events.json": {
+      "bytes": 61833,
+      "sha256": "fdb55cdf1172d8305c9689e2ec7d05a46ee49a71e0bc8f7998437c08dc0b22d5"
+    },
+    "original-preview.wav": {
+      "bytes": 1372436,
+      "sha256": "c27ccd5700b8c2232d661155556bce148a3976cc95b241cf46fb598ffc960469"
+    },
+    "player.json": {
+      "bytes": 3290,
+      "sha256": "e878f7ae6336dc33cbf42f42f351d85c9e84d93e8bdb1d365937c65ba86a3030"
+    },
+    "registers.gz": {
+      "bytes": 3761,
+      "sha256": "5962a204d0a1aa9f63ed852ec25867053c6bd9d54c459207c1c17acb09d94a7c"
+    },
+    "soundtrack.ay9.gz": {
+      "bytes": 3786,
+      "sha256": "c476c406b84f2e8f64633c43960a09d3efede85547064b42d7f42314726707d2"
+    },
+    "verification.json": {
+      "bytes": 2200,
+      "sha256": "8d7b19f156e8ad98e689c11917eab503009bb321bd06d90615d60faba52d5ef8"
+    },
+    "verification-work/fuse-trace.txt.gz": {
+      "bytes": 163470,
+      "sha256": "346b3bd5ac8ab6553ab811337d4e70c8b1b064d0d09f7b9f981fe3744933a81f"
+    },
+    "fuse-preview.wav": {
+      "bytes": 5488398,
+      "sha256": "fc0e9a0b3550f9a5f41cc1449ee74729b7cf13b584171ca35cc832dcfb1406d1"
+    },
+    "verification-work/capture.fmf.gz": {
+      "bytes": 3024248,
+      "sha256": "e524a8a8346ad28ce0d49e7f6957115750e6fbcaec7e37ac71685eaac8508666"
+    }
+  },
+  "verification": "verification.json"
+}

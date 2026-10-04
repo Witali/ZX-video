@@ -6,8 +6,12 @@ Copy the whole folder to another location to use it independently. It does
 not import `toolkit`, `audiobook-ay` or `audiobook-beeper`, and does not need
 the movie, old speech disks or archived experiment data.
 
-The existing square-wave-aware analyser is preserved: three tonal voices,
-shared noise, fixed channel volumes, and R0..R10 updates at nominal 50 Hz.
+The existing square-wave-aware analyser is preserved as the default `legacy`
+profile. The optional `music` profile adds note lifetimes, stable note pitches,
+short-window envelopes, joint voice allocation and calibrated YM2149 volumes.
+Both use three tonal voices, shared noise, fixed channel volumes, and R0..R10
+updates at nominal 50 Hz. **Every exported sound state lasts 20 ms**: pitch,
+volume and noise changes occur only on that grid, with no sub-tick events.
 This is a chip arrangement, not waveform-transparent PCM compression.
 The export is packed nine-byte AY states (`soundtrack.ay9.gz`), eleven-byte
 register records (`registers.gz`), a TRD player and WAV previews. It does not
@@ -39,6 +43,10 @@ the report explicitly records that disk timing has not been verified.
 - `--title TEXT`: screen title, defaulting to the input filename.
 - `--once`: mute at EOF; the default repeats from RAM.
 - `--output DIRECTORY`: a new or empty destination.
+- `--profile music`: use the new note-oriented preset for keyboard-like music.
+  It limits tonal-source noise to attacks while retaining broadband effects.
+  Pitch holding can suppress intentional bends/vibrato; keep `legacy` for
+  those sources until separately evaluated. The selected target curve is YM2149.
 
 Mount `audio-preview.trd` in drive A of Spectrum 128 + Beta Disk/TR-DOS.
 Run `RUN "boot"` if the emulator does not autostart. The disk boots without
@@ -56,8 +64,10 @@ Spectrum recording. Similarity metrics do not establish listening acceptance.
 | --- | --- |
 | `convert_audio.py` | FFmpeg input, analysis, assembly, preview and verification CLI |
 | `ay_fidelity.py`, `ay_square_fit.py` | Harmonic analysis, pitch tracking and square-wave fit |
+| `music_profile.py` | Optional 20-ms note/envelope and joint-voice music arrangement |
 | `ay_format.py` | Packed AY state format and R0..R10 conversion |
 | `quality.py` | Independent comparison metrics and WAV output |
+| `spectrogram.py` | Unpooled, time-aligned STFT comparison at three window sizes |
 | `music_player.py`, `ay-player.asm` | TRD packaging and separately assembled Z80 player |
 | `trd.py` | Disk directory, BASIC boot and Spectrum screen addressing |
 | `render_ym2149.js`, `vendor/ayumi-js/` | YM2149 model, source and license |
@@ -88,6 +98,21 @@ register-write timestamps against every original 70908-T field deadline.
 See [the extraction and full-example verification](verification.json) for
 the preserved musical example and the separate-folder execution check.
 
-The [Entertainer accuracy review](analysis/entertainer/README.md) records six
-bounded host probes and recommendations for better note timing, pitch and
-timbre. These experiments do not change the production converter or player.
+The [Entertainer accuracy review](analysis/entertainer/README.md) records the
+initial six host probes. The [implemented 50-Hz follow-up](analysis/music50/README.md)
+compares seven fixed arrangements, selects the optional `music` profile and
+qualifies its entire new TRD in cold Fuse. It includes original/old/new WAVs,
+matched spectrograms and complete measurements, including regressions.
+
+Every conversion now reports full-bin spectrogram comparisons with 512,
+2048 and 8192-sample Hann windows, a 20-ms hop and one global RMS match.
+No time warping or frequency alignment is used. Smaller spectral error does
+not establish correct notes or a preferred timbre. The music profile also
+writes `note-events.json`: integer start/end ticks, exclusive end, one held
+period per estimated note. The register stream still specifies all channels
+every 20 ms, including repeated states. These are not annotated source notes.
+
+The file grid is exactly 20 ms. The existing Spectrum 128 player applies one
+state per interrupt: 70908 T at a 3546900-Hz CPU in Fuse, about 19.99154 ms.
+The small fixed clock difference is reported in the listening comparison;
+no second update within a field or faster sound format is introduced.

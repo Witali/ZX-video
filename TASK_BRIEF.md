@@ -14,6 +14,20 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
+The [50-Hz AY music improvement](ay-converter/analysis/music50/README.md) is
+complete as an optional `--profile music` in the standalone converter.
+The user fixes the sound quantum at 20 ms and excludes 100-Hz playback.
+Seven bounded host variants select joint voice allocation, held note pitch,
+short-window envelopes, YM2149 volume calibration and transient-limited noise.
+The full 31.12-s Entertainer preview passes two cold Fuse loops: 34232 register
+writes /3112 fields, no missing fields, unchanged player binary and 974 T
+ordinary work (delta 0). Spectrogram error improves modestly; long-window
+cosine and some other proxies regress. All measured tradeoffs, figures,
+normal Fuse WAV and complete proofs are archived. Use
+`ZX-music-Entertainer-AY-music50-test.trd` for listening. Keep the earlier AY
+disk and default `legacy` profile. Reuse this bounded evidence; subjective
+acceptance and physical hardware testing are not claimed.
+
 The latest speech-vibration fix is complete: [overlapping waveform search](audiobook-beeper/experiments/ima-3bit-overlap/README.md)
 commits 64 samples of each 128/256-sample horizon. The automatic converter
 uses it by default. On the unchanged sequential speech fixture, boundary
