@@ -16,8 +16,8 @@ converter must also support other videos.
 
 Active throughput goal clarified on 2026-10-04: consecutive sample writes
 are permitted; do not spend further work on output pacing. Exact Speex
-default is now pure-r35: 1588097042 T / 8497.951 T/sample, 36.749%
-fewer T than round09, but still 19.424x over the average 437.5-T budget.
+default is now pure-r36: 1566795471 T / 8383.965 T/sample, 37.597%
+fewer T than round09, but still 19.163x over the average 437.5-T budget.
 Round17 reconciles nested costs with unchanged OUT traces; round18 selects
 combined-register multiplication after comparing three candidates. All
 1074400 PCM16/PCM8 samples and 589824 extra product/cycle cases pass.
@@ -30,7 +30,7 @@ holds offsets in index halves and borrows SP for first-part reads. It saves
 98139844 T versus round22 including setup; 7719 arbitrary histories and 128
 filter calls per variant pass. Round24 adds a pre-negated table step and saves
 12603144 T; all 65536 coefficients and 262144 negations pass after fixing
-an initial borrow bug. Code/state 8891/1041 bytes, tables still 16 KiB;
+an initial borrow bug. Code/state 8889/1041 bytes, useful tables 14140 bytes within 16 KiB;
 fresh default build matches and every playback code write is forbidden.
 The below-10000 intermediate target is met. Round25 reconciles the full
 profile with identical PCM/OUT traces: inline feedback 35.880%, decoder
@@ -65,13 +65,18 @@ Round35 retains 16*step in BC/BC' and uses aligned group-end addresses:
 exactly -7999868 T, code -27. All 65536 coefficients, 10240 address cases,
 1024 page masks and 1094880 complete samples pass; every OUT delta matches
 179 T per preceding changed page. The below-8500 intermediate target passes.
-Next inspect cosine argument alignment and a direct exact table/fallback;
-margin averaging can break four-unit alignment, so do not assume it.
-The next candidate is unimplemented and has no measured saving.
+Round36 selects direct aligned cosine words and an exact polynomial fallback:
+-21301571 T, code -2, table bytes -1870. All 25737 angles per binary, 720896
+P13 cases and 1094880 complete samples pass; every OUT delta reconciles.
+All speech calls align; random packets exercise two fallback calls. All full
+fixtures improve, but unaligned individual calls are slower. Next combine
+Q14 with the adjacent caller negate, preserving exact floor/ceiling and
+high-part truncation. No next implementation or net saving is measured.
+The next intermediate target is below 8000 T/sample on the same full speech.
 The average real-time goal is still unmet.
 The broader goal remains active. Use the
 [throughput worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md) and
-[round35 report](audiobook-beeper/speex-port/rounds/35/REPORT.md), not the
+[round36 report](audiobook-beeper/speex-port/rounds/36/REPORT.md), not the
 historical PVQ scheduling milestone, to select the next optimization.
 
 Latest optimization milestone on 2026-10-04: selected PVQ round13 retains

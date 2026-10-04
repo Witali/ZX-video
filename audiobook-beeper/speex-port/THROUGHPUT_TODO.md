@@ -13,10 +13,15 @@ already emitted without pacing. Retain the complete upstream PCM16/PCM8
 comparison and report throughput separately from instantaneous OUT gaps.
 
 Round35 achieves the **below-8500 T/sample intermediate target** on the
-same complete 186880-sample speech: 8497.951 T/sample, exact PCM16/PCM8
-and unchanged 16-KiB table arena. This is an input-specific milestone;
+same complete 186880-sample speech. Round36 now measures 8383.965 T/sample,
+exact PCM16/PCM8 and 14140 useful table bytes in the same 16-KiB arena. This is an input-specific milestone;
 the overall objective still needs 437.5 T/sample. Continue optimizing the
 actual decoder without adding output pacing or changing the input format.
+
+The next intermediate target is **below 8000 T/sample** on the same full
+speech, requiring another 4.58% reduction from round36. Keep exact PCM,
+all stream gates and the 16-KiB table limit. This is a target to investigate,
+not a measured result or a guarantee of real-time feasibility.
 
 - [x] **15. Register-based coefficient table construction.** Replace four
   byte stores and repeated step loads with 32-bit register accumulation and
@@ -226,14 +231,26 @@ actual decoder without adding output pacing or changing the input format.
   matches the page count. All 65536 coefficients, 10240 address cases,
   1024 page masks and 1094880 complete samples pass. Code -27; table/state
   layout unchanged. Real-time deficit remains 19.424x.
-- [ ] **36. Inspect a direct exact cosine path for aligned arguments.**
+- [x] **36. Inspect a direct exact cosine path for aligned arguments.**
   The packed positive-half table uses 8050 bytes; the unchanged prior
   profile attributes 30846551 T / 46720 calls to cosine. Mode-3 codebooks
   and interpolation often align values to four units, but margin averaging
   can break that alignment. Observe real residues/costs before choosing
   a direct table and exact fallback. Retain every result in 0..25736,
   arbitrary packet behavior, table budget and complete-stream gates.
-  This is unimplemented; no next speedup or real-time result is claimed.
+  [Round36](rounds/36/REPORT.md) selects direct words plus exact polynomial
+  fallback: -21301571 T, 8383.965 T/sample (-1.341%). All 25737 angles per
+  binary, 720896 P13 cases and 1094880 complete samples pass. All full
+  fixtures improve; unaligned calls individually regress. Speech uses only
+  aligned calls, while random packets exercise two unaligned calls. Tables
+  -1870 bytes, code -2; real-time deficit remains 19.163x.
+- [ ] **37. Combine Q14 multiplication with its caller's negation.** Twenty
+  LPC sites call mulq14 followed by neg32, 93440 times on the saved speech.
+  The separate call plus negate costs 84 T. Compare a private negated-result
+  entry including all altered sign/rounding costs; retain the ordinary entry.
+  Preserve -32768 magnitudes, high-part truncation and exact negative floor/
+  ceiling behavior. Reuse saved operands, full arithmetic and stream gates.
+  No implementation or net saving is yet measured.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

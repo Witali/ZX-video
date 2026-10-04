@@ -1,5 +1,24 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round36 uses exact aligned cosine words
+
+On unchanged round35 speech, observe 46720 cosine inputs, all four-unit
+aligned. Host-only packing inspection finds 46 sixteen-angle blocks too
+wide for simple nibble offsets; select one direct-word candidate with a
+complete exact polynomial fallback. Cosine 30846551 -> 9544980 T; full
+speech 1588097042 -> 1566795471 T (-21301571, 1.341%), 8383.965 T/sample.
+Every angle and OUT-delta/cost proof matches. All 25737 angles per binary,
+720896 P13 cases, independent instruction audits and 1094880 complete
+PCM16/PCM8 samples pass; fresh default identity matches. All full fixtures
+improve; unaligned individual calls are slower. Random packets exercise two
+fallback calls without output changes. Code -2, useful tables -1870 to
+14140 bytes within 16 KiB; state/payload unchanged. Select pure-r36, still
+19.163x over average real time with no ULA/hardware claim. No failed or
+reverted native candidate. Next combine Q14 and caller negation; no next
+implementation or net saving is measured. Record below 8000 T/sample as
+the next unachieved intermediate target.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/36/REPORT.md).
+
 ## 2026-10-04: Speex round35 retains table steps in registers
 
 On unchanged round34 speech, keep 16*step in spare BC/BC' and select aligned
