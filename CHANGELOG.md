@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round24 adds a pre-negated coefficient-table step
+
+On unchanged round23-pop speech, replace 64 repeated 42-T subtractions/page
+with 34-T additions and 230 T of step negation, saving 282 T/changed page.
+An initial borrow bug failed at coefficient -32767; fix the outgoing carry
+with LD A,0 / SBC A,D. Then all 65536 coefficients (4194304 table entries
+per variant), 262144 negations and 1074400 exact PCM samples pass, with
+instruction/write/register checks and fresh default identity. Full speech
+1863554410 -> 1850951266 T (-12603144), 9904.491 T/sample. Code -68 bytes,
+state/tables unchanged. Select pure-r24; still 22.639x over average budget.
+The implied 44692 changed pages are inferred from timing here; next profile
+the new inline filter and count pages independently. No ULA/hardware claim.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/24/REPORT.md).
+
 ## 2026-10-04: Speex round23 inlines products and borrows SP for table reads
 
 Compare register-offset inline products and an added POP table-read variant

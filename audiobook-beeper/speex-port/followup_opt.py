@@ -110,7 +110,7 @@ ld b,(hl)
     return d,f
 
 
-def register_preparation(d, f):
+def register_preparation(d, f, additive=False):
     """Keep the 32-bit table step in DE/DE' and write reverse rows with PUSH."""
     d=d.replace('state_end:', 'coef_saved_sp: .ds 2\nstate_end:')
     begin=d.index('coef_changed:\n')
@@ -143,15 +143,30 @@ ld sp,hl
         else:
             code+='; Signed high nibble: first row is -step, followed by -2..-8.\n'
             code+='ld hl,#0\nexx\nld hl,#0\nexx\n'
-        code+='or a,a\nsbc hl,de\nexx\nsbc hl,de\nexx\n'
+        if additive:
+            code+='''; Negate the step once, keeping HL/HL' and the saved positive
+; 16*step unchanged. Then ADD/ADC can descend without clearing carry first.
+; Both negation and recurrence are exact modulo32, including -32768 inputs.
+'''
+            code+=f'.globl _coef_neg_{part}_start, _coef_neg_{part}_end\n_coef_neg_{part}_start::\n'
+            if part<2:
+                code+='; LD A,0 preserves borrow. SBC A,A / SUB D would lose the outgoing borrow.\n'
+                code+='xor a,a\nsub a,e\nld e,a\nld a,#0\nsbc a,d\nld d,a\n'
+            else:
+                code+='; Shift by 8/12 guarantees E=0; negate D directly and propagate its borrow.\n'
+                code+='xor a,a\nsub a,d\nld d,a\n'
+            code+='exx\nld a,#0\nsbc a,e\nld e,a\nld a,#0\nsbc a,d\nld d,a\nexx\n'
+            code+=f'_coef_neg_{part}_end::\n'
+        change='add hl,de\nexx\nadc hl,de\nexx\n' if additive else 'or a,a\nsbc hl,de\nexx\nsbc hl,de\nexx\n'
+        code+=change
         for i in range(15,-1,-1):
             code+='exx\npush hl\nexx\npush hl\n'
             if part==3 and i==8:
-                code+='; Convert -8*step to +8*step; next subtraction yields row 7.\n'
+                code+='; Convert -8*step to +8*step; next update yields row 7.\n' if additive else '; Convert -8*step to +8*step; next subtraction yields row 7.\n'
                 code+='; Its low byte L is zero (coefficient shifted left 15 bits).\n'
                 code+='xor a,a\nsub a,h\nld h,a\nexx\n'
                 code+='ld a,#0\nsbc a,l\nld l,a\nld a,#0\nsbc a,h\nld h,a\nexx\n'
-            if i:code+='or a,a\nsbc hl,de\nexx\nsbc hl,de\nexx\n'
+            if i:code+=change
         if part<3:code+='ld de,(coef_step)\nexx\nld de,(coef_step+2)\nexx\n'
     code+='''; Restore the caller's stack before returning or examining the next page.
 ld sp,(coef_saved_sp)
@@ -459,13 +474,13 @@ def apply(folder, variant):
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop'):d,f=register_preparation(d,f)
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop'))
-    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop'):d,f=excitation_shift(d,f)
-    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop'):d,f=innovation_registers(d,f)
-    if variant in ('pure-r22','pure-r23','pure-r23-pop'):d,f=zero_feedback(d,f)
-    if variant in ('pure-r23','pure-r23-pop'):d,f=inline_products(d,f,variant=='pure-r23-pop')
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'):d,f=register_preparation(d,f,variant=='pure-r24')
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'))
+    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'):d,f=excitation_shift(d,f)
+    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'):d,f=innovation_registers(d,f)
+    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24'):d,f=zero_feedback(d,f)
+    if variant in ('pure-r23','pure-r23-pop','pure-r24'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24'))
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')

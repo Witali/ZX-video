@@ -91,12 +91,21 @@ comparison and report throughput separately from instantaneous OUT gaps.
   inline products with first-part reads via POP. Measured 9971.931 T/sample
   (-5.003%), meeting the below-10000 milestone. All 1074400 samples,
   7719 arbitrary histories and 128 filter calls per variant pass.
-- [ ] **24. Cheaper coefficient-table recurrence.** Inspect the repeated
+- [x] **24. Cheaper coefficient-table recurrence.** Inspect the repeated
   42-T 32-bit subtraction in reverse table construction. Estimate replacing
   it with a 34-T addition of a negated step, accounting for setup and the
   signed high-nibble midpoint. Preserve every table byte, page-cache
   behavior and SP, then compare complete throughput. The 10000-T milestone
   does not complete the average real-time objective.
+  [Round24](rounds/24/REPORT.md) saves 282 T/changed page, 12603144 T on
+  speech, now 9904.491 T/sample. All 65536 coefficients, 262144 negations
+  and 1074400 complete-stream samples pass after correcting a borrow bug.
+- [ ] **25. Refresh the profile after inlining.** Measure the complete
+  unchanged round24 stream. Reconcile nested function times and separately
+  bracket the inline feedback block. Count actual changed coefficient pages
+  from observed LPC values; account for bypassed zero feedback and unused
+  helper calls. Preserve all PCM and every OUT timestamp. Select the next
+  structural change from the current measured costs.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

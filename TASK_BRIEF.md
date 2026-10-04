@@ -16,8 +16,8 @@ converter must also support other videos.
 
 Active throughput goal clarified on 2026-10-04: consecutive sample writes
 are permitted; do not spend further work on output pacing. Exact Speex
-default is now pure-r23-pop: 1863554410 T / 9971.931 T/sample, 25.778%
-fewer T than round09, but still 22.793x over the average 437.5-T budget.
+default is now pure-r24: 1850951266 T / 9904.491 T/sample, 26.280%
+fewer T than round09, but still 22.639x over the average 437.5-T budget.
 Round17 reconciles nested costs with unchanged OUT traces; round18 selects
 combined-register multiplication after comparing three candidates. All
 1074400 PCM16/PCM8 samples and 589824 extra product/cycle cases pass.
@@ -28,13 +28,15 @@ state copy and removes an unread store, saving exactly 11359020 T. All
 4650 arbitrary-history checks per variant pass. Round23 inlines products,
 holds offsets in index halves and borrows SP for first-part reads. It saves
 98139844 T versus round22 including setup; 7719 arbitrary histories and 128
-filter calls per variant pass. Code/state 7411/1041 bytes, tables still 16 KiB;
+filter calls per variant pass. Round24 adds a pre-negated table step and saves
+12603144 T; all 65536 coefficients and 262144 negations pass after fixing
+an initial borrow bug. Code/state 7343/1041 bytes, tables still 16 KiB;
 fresh default build matches and every playback code write is forbidden.
-The below-10000 intermediate target is now met. Next count the complete
-cost of replacing table-builder subtraction with a pre-negated addition.
+The below-10000 intermediate target is met. Next refresh the full nested
+profile, bracket inline feedback and independently count changed table pages.
 The broader goal remains active. Use the
 [throughput worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md) and
-[round23 report](audiobook-beeper/speex-port/rounds/23/REPORT.md), not the
+[round24 report](audiobook-beeper/speex-port/rounds/24/REPORT.md), not the
 historical PVQ scheduling milestone, to select the next optimization.
 
 Latest optimization milestone on 2026-10-04: selected PVQ round13 retains
