@@ -126,6 +126,23 @@ def write_candidate(out, packed, source, hot=None, pairs=0, pad=0):
     return disk, meta
 
 
+def prepared_ima4_source(path):
+    """Retain an externally normalized PCM8 reference without a second gain."""
+    with wave.open(str(path), 'rb') as wav:
+        if (wav.getnchannels(), wav.getsampwidth(), wav.getframerate()) != (1, 1, RATE):
+            raise ValueError('prepared PCM must be mono PCM8 at 8000 Hz')
+        source = np.frombuffer(wav.readframes(wav.getnframes()), 'u1').copy()
+    if not 8192 <= len(source) <= MAX_PACKED_BYTES * 2 or len(source) % 512:
+        raise ValueError('prepared IMA4 PCM must fit RAM, have >=8192 samples and a multiple of 512 samples')
+    if np.any(source[-128:] != 128):
+        raise ValueError('prepared PCM requires a final 128-sample silent guard')
+    return source, dict(input=str(path), prepared_pcm_unchanged=True,
+                        prepared_samples=len(source), sample_rate_hz=RATE,
+                        channels=1, pcm_bits=8, fixed_gain=1.,
+                        silence_guard_samples=128,
+                        source_sha256=hashlib.sha256(source.tobytes()).hexdigest())
+
+
 def representable_pad(value):
     return value >= 0 and any(value >= 7 * b and (value - 7 * b) % 4 == 0 for b in range(4))
 
@@ -220,7 +237,12 @@ def convert(args):
         raise ValueError('output must be empty; existing conversions are never overwritten')
     out.mkdir(parents=True, exist_ok=True)
     producer_hashes = snapshot_sources(out)
-    source, source_meta = prepare_source(args.input.resolve(), args.ffmpeg, args.duration)
+    if getattr(args, 'prepared_pcm', False):
+        if args.duration is not None:
+            raise ValueError('--prepared-pcm cannot be combined with --duration')
+        source, source_meta = prepared_ima4_source(args.input.resolve())
+    else:
+        source, source_meta = prepare_source(args.input.resolve(), args.ffmpeg, args.duration)
     save(out / 'input.json', source_meta)
     print(json.dumps(source_meta), flush=True)
     packed = encode(source)
@@ -288,6 +310,7 @@ def legacy_main(argv=None, *, parents=()):
     parser.add_argument('--fuse', type=Path, required=True)
     parser.add_argument('--duration', type=float, help='keep at most this many initial seconds; always bounded by RAM')
     parser.add_argument('--iterations', type=int, choices=(1, 2), default=2)
+    parser.add_argument('--prepared-pcm', action='store_true', help='retain exact mono PCM8/8k levels; require RAM-sized, 512-aligned samples with a final 128-sample silent guard')
     parser.add_argument('--no-recording', action='store_true', help='skip normal-speed audible capture; keep complete native/cold-Fuse verification')
     args = parser.parse_args(argv)
     if not args.ffmpeg:

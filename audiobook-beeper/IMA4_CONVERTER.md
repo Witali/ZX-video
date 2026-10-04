@@ -26,6 +26,12 @@ verification also plays/captures two loops through Fuse at normal speed;
 `--no-recording` omits that audible capture, retaining full native/cold-Fuse
 checks and an integrated-port WAV. The WAV report distinguishes these paths.
 
+`--prepared-pcm` preserves an already normalized mono PCM8/8-kHz WAV without
+applying a second gain, fades or padding. It must contain 8192..186880 samples
+in multiples of 512 and end with 128 silent samples (unsigned value 128).
+It cannot be combined with `--duration`. This permits an identical prepared
+reference for IMA3 and IMA4 comparisons.
+
 The useful outputs are:
 
 - `audiobook-preview.trd`: bootable looping disk for Spectrum 128 + Beta Disk.

@@ -1,5 +1,22 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Preserve externally normalized PCM in the IMA4 converter
+
+The user requested loudness-normalized Entertainer disks in both IMA3 and
+IMA4. Add explicit `--prepared-pcm` to the four-bit CLI so that its existing
+peak normalization does not undo a shared external loudness preparation.
+Require mono PCM8/8 kHz, 8192..186880 samples aligned to 512, with a final
+128-sample silent guard; reject combining it with `--duration`. Preserve
+the normal input path and all decoder/modulator behavior.
+
+Nine dispatch/disk-planning tests pass. Reading the actual normalized
+186880-sample music fixture through the new helper preserves every PCM
+byte (SHA-256 `fb630abd3c8129c0ce2b0e2b4f367cf1136c0bc5eb4b104bcec3cd6e7ab501bb`)
+and reports unity gain. The disk-pair build is recorded separately when
+complete; this entry does not claim completed music playback verification.
+IMA4 remains 423 native T/sample, delta 0 T; +14/+140 T page/bank extras
+and memory layout are unchanged. See [prepared-input usage](audiobook-beeper/CONVERTER.md).
+
 ## 2026-10-04: Make accepted IMA3 playback the general converter default
 
 At the user's request, launch the installed Program Files Fuse visibly with

@@ -35,6 +35,12 @@ Fuse sound capture while retaining complete native/Fuse verification. New
 outputs must use an empty directory; IMA3 can resume only a matching saved
 run. Changed producer sources invalidate old resume caches by design.
 
+For a shared externally normalized comparison reference, both codecs accept
+`--prepared-pcm` without changing its gain. Use `--disk-mode preview` for
+IMA3. IMA4 requires mono PCM8/8 kHz, 8192..186880 samples in multiples of
+512, and 128 final silent samples (value 128); do not combine it with
+`--duration`. IMA3 retains its documented groups-of-eight/RAM validation.
+
 ## Main profile
 
 The PC prepares mono 8-kHz /8-bit source audio and optimizes its packed
