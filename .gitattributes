@@ -560,3 +560,8 @@ toolkit/generic_guarded_cb46_evidence/*.gz -text
 /audiobook-beeper/experiments/fuse-host-output/**/*.gz filter=lfs diff=lfs merge=lfs -text
 /audiobook-beeper/experiments/fuse-host-output/*.md text eol=lf
 /audiobook-beeper/experiments/fuse-host-output/*.py text eol=lf
+# Keep normalized music evidence and assembler snapshots byte-exact.
+/audiobook-beeper/experiments/entertainer-normalized/** -text -whitespace
+/audiobook-beeper/experiments/entertainer-normalized/**/*.gz filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/entertainer-normalized/*.py text eol=lf
+/audiobook-beeper/experiments/entertainer-normalized/*.md text eol=lf

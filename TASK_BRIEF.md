@@ -12,6 +12,27 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## Normalized Entertainer pair (2026-10-04)
+
+The requested [normalized music pair](audiobook-beeper/experiments/entertainer-normalized/README.md)
+is complete. Use `ZX-music-Entertainer-normalized-IMA3.trd` and
+`ZX-music-Entertainer-normalized-IMA4.trd`. Both loop the same first 23.344 s
+of music, plus a 128-sample silent guard, from exactly the same PCM8/8-kHz
+reference. Two-pass loudness preparation measures -17.89 LUFS /-1.97 dBTP,
+1.95 LU above the same prefix of the earlier prepared example, without
+clipped quantized samples. IMA4's new explicit `--prepared-pcm` preserves it.
+
+All three IMA3 searches and two IMA4 compensation passes are complete.
+Selected full-Fuse minimum SNR is 19.031203 /17.237725 dB, with speed errors
+-0.299133% /-0.043272%. Both remain listening previews below 20 dB under the
+user's permission to retain the best bounded music result. These compare
+the existing different pipelines, not bit depth alone. Both cold boots,
+two complete native/Fuse loops, paging/memory checks and normal-speed FMF
+recordings pass. The 219-artifact audit authenticates the saved pair.
+IMA3/IMA4 ordinary hot paths remain 427.375/423 T/sample, each delta 0 T;
+no physical hardware or new user listening acceptance is claimed. Reuse
+these reports; no further search is part of this completed deliverable.
+
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
 The user accepted the actual interactive playback of the overlap speech

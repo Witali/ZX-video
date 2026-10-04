@@ -1,5 +1,55 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Normalize Entertainer and publish verified IMA3/IMA4 previews
+
+The user requested loudness normalization and two codec-specific disks.
+Reuse the archived public-domain Entertainer recording; retain the same
+first 23.344 seconds for both pipelines. The final 128-sample guard brings
+the common PCM8/8-kHz reference to 186880 samples, filling IMA4's 93440-byte
+resident payload; IMA3 uses 70080 bytes for this matched-length comparison.
+Keep both previews looping and independently bootable. Preserve prior disks.
+
+Add a [reproducing builder](audiobook-beeper/experiments/entertainer-normalized/build.py)
+with two-pass FFmpeg loudnorm targets -18 LUFS /-2 dBTP /LRA 11. Downmix
+and resample to float before measuring; retain unclipped float values until
+normalization. The source peaks require dynamic limiting rather than only
+constant gain. Apply 10-ms edge fades and the silent guard, preserve encoder
+headroom, quantize, and remeasure. Actual prepared music is -17.89 LUFS,
+-1.97 dBTP, LRA 7, unsigned range 27..230, zero clipped samples. Compared
+with the same prefix of the earlier prepared reference, loudness rises
+1.95 LU and true peak falls from -1.31 dBTP. The old end fade is outside
+this compared prefix. Both converters preserve every common PCM byte via
+`--prepared-pcm`; the IMA4 CLI addition is recorded in the previous entry.
+
+The three bounded IMA3 host searches estimate 18.948458, 19.027906 and
+19.082042 dB (width/horizon 256/128, 512/128, 1024/256, commit 64).
+The third search takes 2723.703 s and adds only 0.054136 dB over the second;
+all have zero predictor saturation. Select it and fully verify its new disk:
+two-loop SNR 19.082042/19.031203 dB, speed -0.299133%, phase deltas 0/0 T.
+The timing pilot's -3.299089 dB is not a listening result. IMA4's pilot and
+two compensation passes have minimum SNR -3.715639, 17.218503, 17.237725 dB;
+select pass 2, with loops 17.237725/17.246241 dB, speed -0.043272%, phase
+deltas 2/0 T. Both miss 20 dB and remain explicitly labeled previews, as
+the user previously permitted for music. This compares the two available
+pipelines, not bit depth alone or a proven codec optimum. Close the search.
+
+Both independently cold-boot in Fuse Spectrum 128/Beta Disk and complete
+two native/Fuse loops: every predictor/index and all 5981841/5985301 PDM
+outputs pass; memory, paging and uncontended-output checks pass. No runtime
+disk reads. Normal-speed FMF captures complete both loops, with startup
+22.815238/26.434444 s and preserved paging. These are internal Fuse sound
+captures, not physical hardware or Windows speaker-loopback measurements.
+Mean PDM rates are 127652.961/128054.581 Hz. Ordinary native paths remain
+427.375/423 T per sample, delta 0 T for each; +14/+140 T page/bank extras
+are unchanged. ROM/disk latency and ULA waits remain separate measurements.
+
+Publish `ZX-music-Entertainer-normalized-IMA3.trd` and
+`ZX-music-Entertainer-normalized-IMA4.trd` in LFS, plus normalized source,
+both Fuse WAVs, full selected traces, search reports and producer snapshots.
+The [219-artifact audit](audiobook-beeper/experiments/entertainer-normalized/archive.py)
+passes and authenticates both root disks and exact shared reference.
+[Results, scope and reproduction](audiobook-beeper/experiments/entertainer-normalized/README.md).
+
 ## 2026-10-04: Preserve externally normalized PCM in the IMA4 converter
 
 The user requested loudness-normalized Entertainer disks in both IMA3 and
