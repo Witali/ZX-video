@@ -1,0 +1,554 @@
+{
+  "scope": "Host-only bounded ablations; unchanged production converter and TRD. No new Fuse or hardware qualification.",
+  "date": "2026-10-04",
+  "source_sha256": "08dc5241de419edf9693ad20797389cb735d9b6fc06bfb6936568bb707f13077",
+  "ticks": 1556,
+  "duration_seconds": 31.12,
+  "baseline_registers_exact": true,
+  "baseline_coarse_metrics_exact": true,
+  "analysis_window_ms": 185.75963718820861,
+  "coarse_metric_window_ms": 371.51927437641723,
+  "coarse_metric_hop_ms": 100,
+  "coarse_onset_tolerance_ms": 100,
+  "finer_proxy_window_ms": 92.87981859410431,
+  "finer_proxy_hop_ms": 10,
+  "onset_proxy_limitation": "Signal detections, not annotated note events; spectral/chroma similarities are not accuracy percentages.",
+  "nominal_to_ym_level_error_db": {
+    "1": 0.10225634554983196,
+    "2": -2.0328552423556943,
+    "3": -2.152810105180457,
+    "4": -2.566690166388013,
+    "5": -2.2286123171296746,
+    "6": -2.4113194948382795,
+    "7": -1.899226249591943,
+    "8": -1.985261207438346,
+    "9": -1.4954831156833903,
+    "10": -1.5598047020195216,
+    "11": -1.0184693106144154,
+    "12": -1.0813724177270736,
+    "13": -0.5784487224534591,
+    "14": -0.6037662495545836,
+    "15": 0.0
+  },
+  "variants": {
+    "baseline": {
+      "parameters": {
+        "noise": true,
+        "tuning_cents": 50,
+        "volume_curve": "nominal 3 dB",
+        "constant_note_period": false
+      },
+      "coarse_metrics": {
+        "semitone_spectral_cosine": 0.8927875643737619,
+        "chroma_cosine": 0.9757128666778847,
+        "loudness_correlation": 0.9953456309038827,
+        "rhythm_onset_f1": 0.8870967741935484,
+        "onsets": {
+          "reference": 63,
+          "candidate": 61,
+          "matched": 55,
+          "precision": 0.9016393442622951,
+          "recall": 0.873015873015873,
+          "f1": 0.8870967741935484
+        },
+        "evaluated_frames": 310
+      },
+      "finer_onset_proxy": {
+        "tolerance_20ms": {
+          "reference": 92,
+          "candidate": 166,
+          "matched": 85,
+          "precision": 0.5120481927710844,
+          "recall": 0.9239130434782609,
+          "f1": 0.6589147286821705
+        },
+        "tolerance_50ms": {
+          "reference": 92,
+          "candidate": 166,
+          "matched": 88,
+          "precision": 0.5301204819277109,
+          "recall": 0.9565217391304348,
+          "f1": 0.6821705426356589
+        },
+        "tolerance_100ms": {
+          "reference": 92,
+          "candidate": 166,
+          "matched": 88,
+          "precision": 0.5301204819277109,
+          "recall": 0.9565217391304348,
+          "f1": 0.6821705426356589
+        }
+      },
+      "noise_ticks": 243,
+      "registers_sha256": "cf78b35e636abc58c8dbaf4e3404e6335fcbf62ee4624b6d9f1619664254e83d",
+      "pitch_diagnostics": {
+        "bass": {
+          "active_ticks": 1383,
+          "same_note_transitions": 1307,
+          "changed_period_within_note": 279,
+          "steps_over_20_cents": 25,
+          "maximum_within_note_step_cents": 60.53882722482949,
+          "note_runs": 76,
+          "runs_shorter_than_60ms": 4
+        },
+        "harmony": {
+          "active_ticks": 1136,
+          "same_note_transitions": 977,
+          "changed_period_within_note": 134,
+          "steps_over_20_cents": 4,
+          "maximum_within_note_step_cents": 49.32624399560767,
+          "note_runs": 159,
+          "runs_shorter_than_60ms": 34
+        },
+        "melody": {
+          "active_ticks": 1442,
+          "same_note_transitions": 1331,
+          "changed_period_within_note": 197,
+          "steps_over_20_cents": 2,
+          "maximum_within_note_step_cents": 31.19425023953349,
+          "note_runs": 111,
+          "runs_shorter_than_60ms": 3
+        }
+      },
+      "artifact_sha256": {
+        "registers.gz": "9c5a5e37eff915bb499ec1c6c949068dc64a30766c6c6e2d281fc7d398efa455",
+        "preview.wav": "2360ea770206c5e0c4b7842c929cfcd0618a6aa120a59a67f87c393401b6f17a",
+        "render.json": "edfa236ff50504901f0f932200a4a891e64dbbcd7d052d103be7c489ae336c6e"
+      }
+    },
+    "no_noise": {
+      "parameters": {
+        "noise": false,
+        "tuning_cents": 50,
+        "volume_curve": "nominal 3 dB",
+        "constant_note_period": false
+      },
+      "coarse_metrics": {
+        "semitone_spectral_cosine": 0.8898242786049052,
+        "chroma_cosine": 0.9776828269267221,
+        "loudness_correlation": 0.9948699061083108,
+        "rhythm_onset_f1": 0.8869565217391304,
+        "onsets": {
+          "reference": 63,
+          "candidate": 52,
+          "matched": 51,
+          "precision": 0.9807692307692307,
+          "recall": 0.8095238095238095,
+          "f1": 0.8869565217391304
+        },
+        "evaluated_frames": 310
+      },
+      "finer_onset_proxy": {
+        "tolerance_20ms": {
+          "reference": 92,
+          "candidate": 125,
+          "matched": 73,
+          "precision": 0.584,
+          "recall": 0.7934782608695652,
+          "f1": 0.6728110599078341
+        },
+        "tolerance_50ms": {
+          "reference": 92,
+          "candidate": 125,
+          "matched": 79,
+          "precision": 0.632,
+          "recall": 0.8586956521739131,
+          "f1": 0.728110599078341
+        },
+        "tolerance_100ms": {
+          "reference": 92,
+          "candidate": 125,
+          "matched": 80,
+          "precision": 0.64,
+          "recall": 0.8695652173913043,
+          "f1": 0.7373271889400922
+        }
+      },
+      "noise_ticks": 0,
+      "registers_sha256": "f1a29908db41dc8dc8c94e919c80f3066d25c7ee5f2aa42ca682036f9542680b",
+      "pitch_diagnostics": {
+        "bass": {
+          "active_ticks": 1383,
+          "same_note_transitions": 1307,
+          "changed_period_within_note": 275,
+          "steps_over_20_cents": 25,
+          "maximum_within_note_step_cents": 60.53882722482949,
+          "note_runs": 76,
+          "runs_shorter_than_60ms": 4
+        },
+        "harmony": {
+          "active_ticks": 1358,
+          "same_note_transitions": 1194,
+          "changed_period_within_note": 185,
+          "steps_over_20_cents": 9,
+          "maximum_within_note_step_cents": 66.36500817115815,
+          "note_runs": 164,
+          "runs_shorter_than_60ms": 26
+        },
+        "melody": {
+          "active_ticks": 1442,
+          "same_note_transitions": 1331,
+          "changed_period_within_note": 197,
+          "steps_over_20_cents": 3,
+          "maximum_within_note_step_cents": 36.36331219623072,
+          "note_runs": 111,
+          "runs_shorter_than_60ms": 3
+        }
+      },
+      "artifact_sha256": {
+        "registers.gz": "a738c44d880344d08592ec97f9fd721af98d624a89ad9d1229c21de960c7e91f",
+        "preview.wav": "3e73961ebb32e5917652283b1dd6b4f0f8901a3e71ae8a3a0dc32aed229cd442",
+        "render.json": "66b2062ec7dbeaeeecfb14c9ee92cb6f779aceb74e6b3be2e3ce1475f3503278"
+      }
+    },
+    "no_fine_tuning": {
+      "parameters": {
+        "noise": true,
+        "tuning_cents": 0,
+        "volume_curve": "nominal 3 dB",
+        "constant_note_period": false
+      },
+      "coarse_metrics": {
+        "semitone_spectral_cosine": 0.8924943264397497,
+        "chroma_cosine": 0.9758632120508542,
+        "loudness_correlation": 0.9956323533838716,
+        "rhythm_onset_f1": 0.8943089430894309,
+        "onsets": {
+          "reference": 63,
+          "candidate": 60,
+          "matched": 55,
+          "precision": 0.9166666666666666,
+          "recall": 0.873015873015873,
+          "f1": 0.8943089430894309
+        },
+        "evaluated_frames": 310
+      },
+      "finer_onset_proxy": {
+        "tolerance_20ms": {
+          "reference": 92,
+          "candidate": 154,
+          "matched": 84,
+          "precision": 0.5454545454545454,
+          "recall": 0.9130434782608695,
+          "f1": 0.6829268292682927
+        },
+        "tolerance_50ms": {
+          "reference": 92,
+          "candidate": 154,
+          "matched": 88,
+          "precision": 0.5714285714285714,
+          "recall": 0.9565217391304348,
+          "f1": 0.7154471544715447
+        },
+        "tolerance_100ms": {
+          "reference": 92,
+          "candidate": 154,
+          "matched": 88,
+          "precision": 0.5714285714285714,
+          "recall": 0.9565217391304348,
+          "f1": 0.7154471544715447
+        }
+      },
+      "noise_ticks": 243,
+      "registers_sha256": "7d46bf99f2da00730e0ddbd1221173004fe773520b416ba5d05f696498a7f4b8",
+      "pitch_diagnostics": {
+        "bass": {
+          "active_ticks": 1383,
+          "same_note_transitions": 1307,
+          "changed_period_within_note": 0,
+          "steps_over_20_cents": 0,
+          "maximum_within_note_step_cents": 0.0,
+          "note_runs": 76,
+          "runs_shorter_than_60ms": 4
+        },
+        "harmony": {
+          "active_ticks": 1136,
+          "same_note_transitions": 977,
+          "changed_period_within_note": 0,
+          "steps_over_20_cents": 0,
+          "maximum_within_note_step_cents": 0.0,
+          "note_runs": 159,
+          "runs_shorter_than_60ms": 34
+        },
+        "melody": {
+          "active_ticks": 1442,
+          "same_note_transitions": 1331,
+          "changed_period_within_note": 0,
+          "steps_over_20_cents": 0,
+          "maximum_within_note_step_cents": 0.0,
+          "note_runs": 111,
+          "runs_shorter_than_60ms": 3
+        }
+      },
+      "artifact_sha256": {
+        "registers.gz": "b16a2b431c16a2ad5a42a393e640f2f4a4755a0f842abfb70729eee4154f7263",
+        "preview.wav": "f09405928375f869799c17ccc0576751f18c76e92d4936b0f3e3217eec4b0310",
+        "render.json": "b7da0227baea703851a79863703266d4a5ff9c5869f6d09abf9af941562e77f1"
+      }
+    },
+    "stable_note_pitch": {
+      "parameters": {
+        "noise": true,
+        "tuning_cents": 50,
+        "volume_curve": "nominal 3 dB",
+        "constant_note_period": true
+      },
+      "coarse_metrics": {
+        "semitone_spectral_cosine": 0.8920470618923739,
+        "chroma_cosine": 0.9754682062237099,
+        "loudness_correlation": 0.9953018884743701,
+        "rhythm_onset_f1": 0.8870967741935484,
+        "onsets": {
+          "reference": 63,
+          "candidate": 61,
+          "matched": 55,
+          "precision": 0.9016393442622951,
+          "recall": 0.873015873015873,
+          "f1": 0.8870967741935484
+        },
+        "evaluated_frames": 310
+      },
+      "finer_onset_proxy": {
+        "tolerance_20ms": {
+          "reference": 92,
+          "candidate": 148,
+          "matched": 84,
+          "precision": 0.5675675675675675,
+          "recall": 0.9130434782608695,
+          "f1": 0.7
+        },
+        "tolerance_50ms": {
+          "reference": 92,
+          "candidate": 148,
+          "matched": 88,
+          "precision": 0.5945945945945946,
+          "recall": 0.9565217391304348,
+          "f1": 0.7333333333333333
+        },
+        "tolerance_100ms": {
+          "reference": 92,
+          "candidate": 148,
+          "matched": 88,
+          "precision": 0.5945945945945946,
+          "recall": 0.9565217391304348,
+          "f1": 0.7333333333333333
+        }
+      },
+      "noise_ticks": 243,
+      "registers_sha256": "c271aae2a1c330032e68dab23179c07fb6a885a73cc9df8f59f8ba2f010d2db1",
+      "pitch_diagnostics": {
+        "bass": {
+          "active_ticks": 1383,
+          "same_note_transitions": 1307,
+          "changed_period_within_note": 0,
+          "steps_over_20_cents": 0,
+          "maximum_within_note_step_cents": 0.0,
+          "note_runs": 76,
+          "runs_shorter_than_60ms": 4
+        },
+        "harmony": {
+          "active_ticks": 1136,
+          "same_note_transitions": 977,
+          "changed_period_within_note": 0,
+          "steps_over_20_cents": 0,
+          "maximum_within_note_step_cents": 0.0,
+          "note_runs": 159,
+          "runs_shorter_than_60ms": 34
+        },
+        "melody": {
+          "active_ticks": 1442,
+          "same_note_transitions": 1331,
+          "changed_period_within_note": 0,
+          "steps_over_20_cents": 0,
+          "maximum_within_note_step_cents": 0.0,
+          "note_runs": 111,
+          "runs_shorter_than_60ms": 3
+        }
+      },
+      "artifact_sha256": {
+        "registers.gz": "878804514b9422a48d7200223209c84d8d51c98d261512c75dfc7e86fb39aab0",
+        "preview.wav": "f22b0603891fc915278570420300a123db7d88b3465cc524c8241bb43219b5c5",
+        "render.json": "555bb2bdd308bbc1f3732017e97cff096285e5399ca851ca08013b5b30b6e88f"
+      }
+    },
+    "ym_volume_curve": {
+      "parameters": {
+        "noise": true,
+        "tuning_cents": 50,
+        "volume_curve": "YM2149 Ayumi fixed-volume",
+        "constant_note_period": false
+      },
+      "coarse_metrics": {
+        "semitone_spectral_cosine": 0.8921402919943477,
+        "chroma_cosine": 0.9756993904012489,
+        "loudness_correlation": 0.9931729956815248,
+        "rhythm_onset_f1": 0.9193548387096774,
+        "onsets": {
+          "reference": 63,
+          "candidate": 61,
+          "matched": 57,
+          "precision": 0.9344262295081968,
+          "recall": 0.9047619047619048,
+          "f1": 0.9193548387096774
+        },
+        "evaluated_frames": 310
+      },
+      "finer_onset_proxy": {
+        "tolerance_20ms": {
+          "reference": 92,
+          "candidate": 155,
+          "matched": 86,
+          "precision": 0.5548387096774193,
+          "recall": 0.9347826086956522,
+          "f1": 0.6963562753036437
+        },
+        "tolerance_50ms": {
+          "reference": 92,
+          "candidate": 155,
+          "matched": 90,
+          "precision": 0.5806451612903226,
+          "recall": 0.9782608695652174,
+          "f1": 0.728744939271255
+        },
+        "tolerance_100ms": {
+          "reference": 92,
+          "candidate": 155,
+          "matched": 90,
+          "precision": 0.5806451612903226,
+          "recall": 0.9782608695652174,
+          "f1": 0.728744939271255
+        }
+      },
+      "noise_ticks": 247,
+      "registers_sha256": "49f45d99ebe69a2051ab4e007784ccc9e9c64aec2556cb514087a0e9cd5aa1d8",
+      "pitch_diagnostics": {
+        "bass": {
+          "active_ticks": 1383,
+          "same_note_transitions": 1307,
+          "changed_period_within_note": 280,
+          "steps_over_20_cents": 23,
+          "maximum_within_note_step_cents": 60.53882722482949,
+          "note_runs": 76,
+          "runs_shorter_than_60ms": 4
+        },
+        "harmony": {
+          "active_ticks": 1132,
+          "same_note_transitions": 976,
+          "changed_period_within_note": 125,
+          "steps_over_20_cents": 4,
+          "maximum_within_note_step_cents": 49.32624399560767,
+          "note_runs": 156,
+          "runs_shorter_than_60ms": 32
+        },
+        "melody": {
+          "active_ticks": 1442,
+          "same_note_transitions": 1331,
+          "changed_period_within_note": 192,
+          "steps_over_20_cents": 2,
+          "maximum_within_note_step_cents": 31.19425023953349,
+          "note_runs": 111,
+          "runs_shorter_than_60ms": 3
+        }
+      },
+      "artifact_sha256": {
+        "registers.gz": "93d47eebb697c417bc9483dc3c89a0f791b8e793796fce31d81320282629ef51",
+        "preview.wav": "6888f3f3882563092eae8fd4f65d7e0467665596fe8153e8f3a1257f16d31e04",
+        "render.json": "482a5466a3244a54c61ea10f71fd36622f128f5c7841f75d475d9464ddcdb3fc"
+      }
+    },
+    "combined_music_probe": {
+      "parameters": {
+        "noise": false,
+        "tuning_cents": 0,
+        "volume_curve": "YM2149 Ayumi fixed-volume",
+        "constant_note_period": false
+      },
+      "coarse_metrics": {
+        "semitone_spectral_cosine": 0.8876550104537005,
+        "chroma_cosine": 0.9762966795639888,
+        "loudness_correlation": 0.9934058847514191,
+        "rhythm_onset_f1": 0.905982905982906,
+        "onsets": {
+          "reference": 63,
+          "candidate": 54,
+          "matched": 53,
+          "precision": 0.9814814814814815,
+          "recall": 0.8412698412698413,
+          "f1": 0.905982905982906
+        },
+        "evaluated_frames": 310
+      },
+      "finer_onset_proxy": {
+        "tolerance_20ms": {
+          "reference": 92,
+          "candidate": 126,
+          "matched": 75,
+          "precision": 0.5952380952380952,
+          "recall": 0.8152173913043478,
+          "f1": 0.6880733944954128
+        },
+        "tolerance_50ms": {
+          "reference": 92,
+          "candidate": 126,
+          "matched": 81,
+          "precision": 0.6428571428571429,
+          "recall": 0.8804347826086957,
+          "f1": 0.7431192660550459
+        },
+        "tolerance_100ms": {
+          "reference": 92,
+          "candidate": 126,
+          "matched": 81,
+          "precision": 0.6428571428571429,
+          "recall": 0.8804347826086957,
+          "f1": 0.7431192660550459
+        }
+      },
+      "noise_ticks": 0,
+      "registers_sha256": "514962244a24c124b63d314612f77d0ce487431b3a1c304208ff716a06c8a517",
+      "pitch_diagnostics": {
+        "bass": {
+          "active_ticks": 1383,
+          "same_note_transitions": 1307,
+          "changed_period_within_note": 0,
+          "steps_over_20_cents": 0,
+          "maximum_within_note_step_cents": 0.0,
+          "note_runs": 76,
+          "runs_shorter_than_60ms": 4
+        },
+        "harmony": {
+          "active_ticks": 1358,
+          "same_note_transitions": 1194,
+          "changed_period_within_note": 0,
+          "steps_over_20_cents": 0,
+          "maximum_within_note_step_cents": 0.0,
+          "note_runs": 164,
+          "runs_shorter_than_60ms": 26
+        },
+        "melody": {
+          "active_ticks": 1442,
+          "same_note_transitions": 1331,
+          "changed_period_within_note": 0,
+          "steps_over_20_cents": 0,
+          "maximum_within_note_step_cents": 0.0,
+          "note_runs": 111,
+          "runs_shorter_than_60ms": 3
+        }
+      },
+      "artifact_sha256": {
+        "registers.gz": "b77391d96b1ff7d0485668f4892d22e81738a577824f13901e6cdb78692a19b9",
+        "preview.wav": "3f421e4bf8941286bba1971e3d4b5e26f8a49b34bc4af13f22bf266ac8bc0de5",
+        "render.json": "39982fb2028d145473c3d6d46ced3e7a6861b5a7226ab31907d51b437561b5d7"
+      }
+    }
+  },
+  "player_native_tstates_delta": 0,
+  "sources_sha256": {
+    "analysis/entertainer/probe.py": "6c8c86fda349227b1c39d83f4f8af5d816708692e1ad2b8edd614e73e276a74e",
+    "ay_fidelity.py": "72f7d965b29a5e0ddeb9eff593ec398c1bb26c37d7b1bf7b6d7f774310c0d822",
+    "ay_square_fit.py": "bb375ba76fe2bece8a9c5b94a638c0a874e8af26fc037fc9ec880c2c58b656ea",
+    "quality.py": "7427f1b44a719c316e5fe3228788c739b04bfb0249a9472ee6517dd831ace368",
+    "render_ym2149.js": "585122fbf9d5bc4af4a0af9086f2bb285ba4a45f6984381d8a275e616ea1d009",
+    "vendor/ayumi-js/ayumi.js": "ded3df8aa2a063bd873ec0fedf167a2f2873034467a94aaa17441feb888b1ba8"
+  }
+}

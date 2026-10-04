@@ -87,3 +87,7 @@ register-write timestamps against every original 70908-T field deadline.
 
 See [the extraction and full-example verification](verification.json) for
 the preserved musical example and the separate-folder execution check.
+
+The [Entertainer accuracy review](analysis/entertainer/README.md) records six
+bounded host probes and recommendations for better note timing, pitch and
+timbre. These experiments do not change the production converter or player.

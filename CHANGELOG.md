@@ -1,5 +1,45 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Analyse Entertainer AY accuracy with six bounded host probes
+
+At the user's request, review the standalone AY converter and propose ways
+to improve melodic and timbral accuracy using the unchanged Entertainer
+example. Baseline is `e604de3`, original source SHA-256
+`08dc5241de419edf9693ad20797389cb735d9b6fc06bfb6936568bb707f13077`,
+31.128-s request /31.12-s AY output. Reproduce every baseline register byte
+and the archived coarse metrics before comparing six fixed variants:
+baseline, no noise, no fine tuning, median pitch per note run, YM2149 volume
+curve, and no-noise/no-tuning/YM combined. This is one bounded analysis;
+the production algorithm, assembly and existing release disks are unchanged.
+
+The baseline uses noise for 243/1556 ticks. Its period changes within its own
+fixed note labels number 279/134/197 for bass/harmony/melody. The 185.76-ms
+analysis window and a 371.52-ms /10-Hz legacy metric obscure short events;
+the old onset match tolerance is 100 ms. The nominal volume curve differs
+from the actual rendering model by up to 2.57 dB. These findings motivate
+note/onset-aware tracking, stable keyboard-note pitches, chip calibration
+and separate music/effects noise policies before raising the update rate.
+
+With the added 92.88-ms-window /10-ms-hop /20-ms-tolerance signal-onset proxy,
+baseline F1 is 0.65891; median-note pitch gives 0.70000 and YM calibration
+0.69636. Spectral cosines are 0.89279 /0.89205 /0.89214 respectively. Pitch
+holding mainly removes extra detections, rather than recovering more source
+attacks. The combined switches score 0.88766 spectral / 0.68807 finer F1;
+reject automatic adoption because metrics trade off. Noise removal also
+loses matched source events. No result is a subjective preference or an
+annotated-note accuracy score; no candidate dominates all measurements.
+
+Save the [review and staged recommendations](ay-converter/analysis/entertainer/README.md),
+[reproducing probe](ay-converter/analysis/entertainer/probe.py),
+[complete report](ay-converter/analysis/entertainer/results.json) and six
+compressed register streams. All six full host renders complete. Reuse the
+existing full baseline native/Fuse evidence; candidates have no new Fuse or
+physical-hardware qualification. Ordinary player work stays 974 T, delta 0 T,
+with the same 17116-byte excerpt and 550 bytes/s. Faster-rate costs in the
+review are explicitly estimates requiring a new scheduler and complete
+timing qualification. Decision: deliver the analysis and prioritize the
+note/attack and chip-model work; do not replace the current release.
+
 ## 2026-10-04: Preserve the AY converter as an independent source folder
 
 At the user's request, retain audio-to-AY conversion in
