@@ -23,10 +23,12 @@ Target: mono 8-kHz PCM8 to an 8-bit port on a nominal 3.5-MHz Z80.
   transitions and scheduling. This changes the stored format, not Speex.
   [Round 11](rounds/11/REPORT.md): 222.625 T/sample kernel, 3.440:1 storage,
   9.897-dB raw SNR. Not selected; full loading/pacing deferred after quality gate.
-- [ ] **12. Predictive VQ playback and selection.** Reuse the existing waveform
+- [x] **12. Predictive VQ playback and selection.** Reuse the existing waveform
   codebook experiment. Implement and verify complete PCM8 port playback with
   uniform pacing, including all input-bank and stream boundaries. Compare
   CPU, stored size, RAM and audio quality with the other candidates.
+  Selected separately: [round 12](rounds/12/REPORT.md), full 437/438-T native
+  schedule, 80974 stored bytes, 23.510-dB raw SNR. ULA/hardware unverified.
 
 For each item save a report under `rounds/07` through `rounds/12`, update
 this checklist and root CHANGELOG, and make a focused commit. Test a bounded

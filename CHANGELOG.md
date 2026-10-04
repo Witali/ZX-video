@@ -1,5 +1,20 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Audio item 12, complete paced PVQ output
+
+Reuse the prior 1024-entry book on the same full speech, implement banked
+input and uniform PCM8 port output. Unpaced cost 16897348 T (90.418 T/sample);
+steady saving versus former probe plus driver is 30.833 T/sample. All
+186879 output intervals are exactly 437/438 T including four bank switches
+and tail. Store 80974 bytes (2.3079:1 PCM8), tables 4614, code 935, state 1,
+stack reserve 256. Raw SNR 23.510 dB; waveform bytes match the independent
+VQ recurrence. Full guards, six short-tail cases and a startup/bank timing
+audit pass. Initial index-half mnemonics were unsupported by sdasz80 and
+encoded explicitly; an initial ten-T bank-path mismatch was fixed before
+full timing passed. Select for nominal CPU playback separately from exact
+Speex. ULA/physical timing remains unverified, including contended input
+banks; no TRD is produced. [Report](audiobook-beeper/speex-port/rounds/12/REPORT.md).
+
 ## 2026-10-04: Audio item 11, periodic waveform/noise kernel
 
 Fit 32-entry waves on the complete control speech; add noise and eight

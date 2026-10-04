@@ -1,0 +1,196 @@
+{
+  "unpaced": {
+    "samples": 186880,
+    "total_cpu_tstates": 16897348,
+    "first_out_tstates": 424,
+    "last_out_tstates": 16897347,
+    "min_interval": 34,
+    "max_interval": 363,
+    "intervals_by_slot": {
+      "0": {
+        "363": 15573
+      },
+      "1": {
+        "34": 15574
+      },
+      "2": {
+        "34": 15574
+      },
+      "3": {
+        "150": 15574
+      },
+      "4": {
+        "34": 15573
+      },
+      "5": {
+        "34": 15573
+      },
+      "6": {
+        "150": 15573
+      },
+      "7": {
+        "34": 15573
+      },
+      "8": {
+        "34": 15573
+      },
+      "9": {
+        "150": 15573
+      },
+      "10": {
+        "34": 15573
+      },
+      "11": {
+        "34": 15573
+      }
+    },
+    "pages": [
+      0,
+      1,
+      3,
+      4,
+      6
+    ],
+    "all_pcm8_exact_to_vq_reference": true,
+    "all_memory_writes_guarded": true,
+    "input_code_tables_unchanged": true,
+    "nominal_437_438_schedule_verified": false,
+    "ula_contention_included": false,
+    "physical_hardware_tested": false,
+    "code_bytes": 387,
+    "table_ram_bytes": 4614,
+    "state_bytes": 1,
+    "stack_reserved_bytes": 256,
+    "binary_sha256": "9c458218115be22ee71f8bafdb061ca093831352c4b7c3645ada158cf0bddbdc"
+  },
+  "paced": {
+    "samples": 186880,
+    "total_cpu_tstates": 81760062,
+    "first_out_tstates": 499,
+    "last_out_tstates": 81760061,
+    "min_interval": 437,
+    "max_interval": 438,
+    "intervals_by_slot": {
+      "0": {
+        "438": 15573
+      },
+      "1": {
+        "437": 15574
+      },
+      "2": {
+        "438": 15574
+      },
+      "3": {
+        "437": 15574
+      },
+      "4": {
+        "438": 15573
+      },
+      "5": {
+        "437": 15573
+      },
+      "6": {
+        "438": 15573
+      },
+      "7": {
+        "437": 15573
+      },
+      "8": {
+        "438": 15573
+      },
+      "9": {
+        "437": 15573
+      },
+      "10": {
+        "438": 15573
+      },
+      "11": {
+        "437": 15573
+      }
+    },
+    "pages": [
+      0,
+      1,
+      3,
+      4,
+      6
+    ],
+    "all_pcm8_exact_to_vq_reference": true,
+    "all_memory_writes_guarded": true,
+    "input_code_tables_unchanged": true,
+    "nominal_437_438_schedule_verified": true,
+    "ula_contention_included": false,
+    "physical_hardware_tested": false,
+    "code_bytes": 935,
+    "table_ram_bytes": 4614,
+    "state_bytes": 1,
+    "stack_reserved_bytes": 256,
+    "binary_sha256": "3d8a7055561a8ced6c53bbcfcc3ef5db8d2648540e825f06196b62fa1dd9d585"
+  },
+  "instruction_audit": {
+    "instructions": 2264,
+    "tstates": 20624,
+    "covers_first_bank_switch": true,
+    "every_instruction_matches_timing_model": true,
+    "histogram": {
+      "4": 327,
+      "6": 18,
+      "7": 206,
+      "8": 111,
+      "10": 778,
+      "11": 812,
+      "12": 4,
+      "13": 3,
+      "14": 2,
+      "17": 3
+    }
+  },
+  "tail_checks": [
+    {
+      "samples": 1,
+      "all_pcm8_exact": true,
+      "schedule_exact": true
+    },
+    {
+      "samples": 2,
+      "all_pcm8_exact": true,
+      "schedule_exact": true
+    },
+    {
+      "samples": 3,
+      "all_pcm8_exact": true,
+      "schedule_exact": true
+    },
+    {
+      "samples": 11,
+      "all_pcm8_exact": true,
+      "schedule_exact": true
+    },
+    {
+      "samples": 12,
+      "all_pcm8_exact": true,
+      "schedule_exact": true
+    },
+    {
+      "samples": 13,
+      "all_pcm8_exact": true,
+      "schedule_exact": true
+    }
+  ],
+  "source_pcm8_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+  "original_bitpacked_sha256": "4d412550d23888f528e3a375d9bc2448971e78198e3788a56f94628d14c41ca9",
+  "dictionary_sha256": "d8aa22c9eaf32799a6152a7bfa465a8b9afbbb4c8cc7c116973bb6950e1e247a",
+  "encoded_sha256": "7f03b15144530cf4eabbe9d0a6070b0c4075353ebffdb67f6203ccc2730a503b",
+  "pcm8_sha256": "2ba8247994beaf574a3e3b8a39009b3abd70b4c1ae5d104e74f54e060af2f473",
+  "samples": 186880,
+  "payload_bytes": 77870,
+  "dictionary_stored_bytes": 3072,
+  "header_bytes": 32,
+  "total_stored_bytes": 80974,
+  "compression_vs_pcm8": 2.3079013016523824,
+  "unused_bytes_per_full_bank": 4,
+  "raw_source_snr_db": 23.510158328321186,
+  "old_probe_decoder_mean_tstates": 100.25,
+  "old_probe_driver_tstates": 21,
+  "decision": "Select for nominal-CPU PCM8 playback, separately from exact Speex; ULA and physical hardware remain unverified."
+}
