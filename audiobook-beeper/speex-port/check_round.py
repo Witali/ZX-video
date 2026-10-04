@@ -26,7 +26,16 @@ def specialized(folder):
             call(m,s['mulq12'],a=x&255,de=0x7e00)
             assert (m.hl<<16|m.de)==q(x*4,e,14)&0xffffffff,(x,e,m.hl,m.de)
             count+=1
-    return dict(signed8x16_cases=len(pairs),min_mul_t=min(costs),max_mul_t=max(costs),energy_shape_pairs=count)
+    table_entries=0
+    if '_build_innovation' in s:
+        for e in energy:
+            m.memory[0x7b00:0x7b04]=struct.pack('<i',e)
+            call(m,s['_build_innovation'],hl=0x7c00,de=0x7b00)
+            for i in range(132):
+                value=int.from_bytes(m.memory[0x7c00+3*i:0x7c03+3*i],'little',signed=True)
+                assert value==q((i-65)*4,e,14),(i,e,value)
+                table_entries+=1
+    return dict(signed8x16_cases=len(pairs),min_mul_t=min(costs),max_mul_t=max(costs),energy_shape_pairs=count,innovation_table_entries=table_entries)
 
 
 def main():

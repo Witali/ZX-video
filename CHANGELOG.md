@@ -1,5 +1,16 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round 02, cached innovation tables
+
+Complete TODO item 2 with exact quotient/remainder table generation and
+per-gain reuse. Full speech CPU cost is 3936652302 T versus 4128347261 T,
+delta -191694959 T including table construction. Reserve 1024 bytes for
+792 dynamic table bytes; the arena stays within 16 KiB. Every PCM16/PCM8
+sample, seven extra streams, all 8448 possible table entries and guarded
+memory checks pass. First-frame instruction count is 2196131 T, delta
+-93459 T. Accept; real-time playback is still rejected. See
+[round 02 report](audiobook-beeper/speex-port/rounds/02/REPORT.md).
+
 ## 2026-10-04: Speex round 01, exact 24-bit excitation
 
 Complete TODO item 1 on the original 186880-sample speech control. Replace

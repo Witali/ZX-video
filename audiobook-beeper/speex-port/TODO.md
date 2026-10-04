@@ -7,8 +7,9 @@ item with a focused commit and a report under `rounds/` before continuing.
 - [x] **1. Excitation arithmetic.** Remove the common factor 128; use signed
   8x16 products and bounded 24-bit arithmetic. Preserve PCM16/PCM8 exactly.
   Completed: [round 01](rounds/01/REPORT.md), 4128347261 T, delta -407824784 T.
-- [ ] **2. Innovation tables.** Build and cache the two exact energy tables
+- [x] **2. Innovation tables.** Build and cache the two exact energy tables
   with additions; include construction time and RAM in the measurement.
+  Completed: [round 02](rounds/02/REPORT.md), 3936652302 T, delta -191694959 T.
 - [ ] **3. Synthesis multiplication.** Compare a register-based multiplier
   with per-coefficient nibble tables, including preparation costs. Select
   the faster complete decoder within the 16-KiB table allocation.

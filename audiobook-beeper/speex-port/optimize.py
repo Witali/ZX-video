@@ -191,9 +191,169 @@ ld h,a
     return d
 
 
+INNOVATION='''
+.globl _innovation_start, _innovation_end, _build_innovation
+_innovation_start = 0x7c00
+_innovation_end = 0x8000
+; Build both energy alternatives once per changed frame gain. Cache starts invalid.
+; Clobbers AF/BC/DE/HL. Tables hold signed24 floor(shape*energy/4096), shape -65..66.
+prepare_innovation:
+ld a,(innov_valid)
+or a,a
+jr z,innov_rebuild
+ld a,(innov_cached)
+ld hl,#gain_index
+cp a,(hl)
+ret z
+innov_rebuild:
+ld a,#1
+ld (innov_valid),a
+ld a,(gain_index)
+ld (innov_cached),a
+ld l,a
+ld h,#0
+add hl,hl
+add hl,hl
+add hl,hl
+ld de,#energy_table
+add hl,de
+ld (energy_pair),hl
+ex de,hl
+ld hl,#0x7c00
+call _build_innovation
+ld de,(energy_pair)
+inc de
+inc de
+inc de
+inc de
+ld hl,#0x7e00
+jp _build_innovation
+
+; HL destination, DE positive energy32 pointer. Only the initial -65 value
+; needs multiplication; advance integer quotient and 12-bit remainder exactly.
+_build_innovation::
+ld (table_out),hl
+ld a,#-65
+call mulq12
+ld (table_value),de
+ld a,l
+ld (table_value+2),a
+ld hl,(qarg+2)
+add hl,hl
+add hl,hl
+add hl,hl
+add hl,hl
+ld a,(qarg+1)
+rrca
+rrca
+rrca
+rrca
+and a,#15
+or a,l
+ld l,a
+ld (table_step),hl
+ld hl,(qarg)
+ld a,h
+and a,#15
+ld h,a
+ld (table_frac),hl
+ld d,h
+ld e,l
+'''+('add hl,hl\n'*6)+'''add hl,de
+ex de,hl
+ld hl,#0
+or a,a
+sbc hl,de
+ld a,h
+and a,#15
+ld h,a
+ld (table_rem),hl
+ld a,#132
+ld (table_count),a
+innov_build_loop:
+ld hl,(table_out)
+ld de,(table_value)
+ld (hl),e
+inc hl
+ld (hl),d
+inc hl
+ld a,(table_value+2)
+ld (hl),a
+inc hl
+ld (table_out),hl
+ld hl,(table_rem)
+ld de,(table_frac)
+add hl,de
+ld a,h
+and a,#16
+rrca
+rrca
+rrca
+rrca
+ld b,a
+ld a,h
+and a,#15
+ld h,a
+ld (table_rem),hl
+ld a,b
+rrca
+ld hl,(table_value)
+ld de,(table_step)
+adc hl,de
+ld a,(table_value+2)
+adc a,#0
+ld (table_value),hl
+ld (table_value+2),a
+ld hl,#table_count
+dec (hl)
+jp nz,innov_build_loop
+ret
+'''
+
+
+def stage2(d):
+    d=d.replace('state_end:', '''innov_valid: .ds 1
+innov_cached: .ds 1
+innov_selected: .ds 2
+energy_pair: .ds 2
+table_out: .ds 2
+table_value: .ds 3
+table_step: .ds 2
+table_frac: .ds 2
+table_rem: .ds 2
+table_count: .ds 1
+state_end:''')
+    d=replace_once(d,'ld (gain_index),a','ld (gain_index),a\ncall prepare_innovation')
+    start='ld c,a\nld a,(gain_index)'
+    old=start+d.split(start)[1].split('ldir')[0]+'ldir'
+    d=replace_once(d,old,'''add a,a
+add a,#0x7c
+ld h,a
+ld l,#0
+ld (innov_selected),hl''')
+    d=replace_once(d,'ld de,#energy\ncall mulq12', '''; Three-byte lookup replaces per-sample multiplication and fractional shifts.
+add a,#65
+ld l,a
+ld h,#0
+ld d,h
+ld e,l
+add hl,hl
+add hl,de
+ld de,(innov_selected)
+add hl,de
+ld e,(hl)
+inc hl
+ld d,(hl)
+inc hl
+ld l,(hl)''')
+    d=d.replace('.area _TABLES (ABS)',INNOVATION+'\n.area _TABLES (ABS)')
+    return d
+
+
 def optimize(folder,variant):
     d=(folder/'decoder.s').read_text()
     d=stage1(d)
+    if variant!='pure-r1':d=stage2(d)
     d=d.replace('_entry::','; Entry: packet count at B000; resets state/stack, disables IRQ, clobbers all registers.\n_entry::')
     d=d.replace('_zx_speex_decode::','; Decode one validated 20-byte packet. Carry reports an unsupported mode.\n; Excitation precedes four delayed 40-sample synthesis blocks. All scratch is private.\n_zx_speex_decode::')
     d=d.replace('_zx_speex_lpc::','; Interpolated LSP angles -> next_lpc, preserving upstream fixed-point rounding.\n; P/Q polynomial arithmetic wraps at 32 bits; final coefficients saturate symmetrically.\n_zx_speex_lpc::')

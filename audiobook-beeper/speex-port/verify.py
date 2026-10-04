@@ -76,6 +76,12 @@ def native(out,variant='pure-fast',binary=None):
     m.mark_addrs(0,65536,m.WRITE_MARK)
     m.unmark_addrs(bss_start,bss_size,m.WRITE_MARK)
     m.unmark_addrs(0xbf00,256,m.WRITE_MARK)
+    dynamic=[]
+    for name in ('innovation','coefficient'):
+        if '_'+name+'_start' in symbols:
+            lo=symbols['_'+name+'_start'];hi=symbols['_'+name+'_end']
+            assert 0x7200<=lo<hi<=0x8000
+            m.unmark_addrs(lo,hi-lo,m.WRITE_MARK);dynamic.append((lo,hi))
     m.set_write_callback(bad_write)
     current=0;events=[];pages=[]
     order=(0,1,3,4,6,7) if variant.startswith('pure-') else (0,1)
@@ -145,6 +151,9 @@ def native(out,variant='pure-fast',binary=None):
                 code_bytes=sum(a>=0x8000 for a in memory),tables_bytes=sum(a<0x8000 for a in memory),
                 all_cpu_writes_inside_state_or_stack=True,input_code_tables_unchanged=True,
                 initial_state_fill=state_fill,
+                dynamic_table_reserved_bytes=sum(hi-lo for lo,hi in dynamic),
+                dynamic_table_regions=dynamic,
+                table_arena_span_bytes=max([a+1 for a in memory if a<0x8000]+[hi for lo,hi in dynamic]+[0x4000])-0x4000,
                 phases_tstates=dict(phases),
                 binary_sha256=sha(bytes(memory[a] for a in sorted(memory))),
                 clock_hz=3500000,ula_contention_included=False,physical_hardware_tested=False)
