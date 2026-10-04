@@ -16,7 +16,8 @@ def digest(folder):
 
 def main():
     out=ROOT/'build/speex-port';folder=out/'pure-r9';fresh=out/'followup-rebuild'
-    subprocess.run([sys.executable,str(HERE/'build.py'),'--skip-host','--output',str(fresh)],check=True)
+    # Historical checkpoint: reproduce its then-selected default explicitly.
+    subprocess.run([sys.executable,str(HERE/'build.py'),'--skip-host','--variant','pure-r9','--output',str(fresh)],check=True)
     assert digest(fresh/'pure-r9')==digest(folder)==json.loads((HERE/'rounds/09/report.json').read_text())['binary_sha256']
     final=dict(fresh_default_build_sha256=digest(folder),general_primitives=primitives(folder),controls=control_cases(folder))
     random=out/'checks/random-packets';random.mkdir(exist_ok=True)

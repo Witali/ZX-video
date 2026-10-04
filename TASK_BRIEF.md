@@ -14,6 +14,17 @@ converter must also support other videos.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
+Active throughput goal clarified on 2026-10-04: consecutive sample writes
+are permitted; do not spend further work on output pacing. Exact Speex
+default is now pure-r16: 2164784952 T / 11583.824 T/sample, 13.781% fewer T
+than round09, but still 26.477x over the average 437.5-T budget. Register
+table preparation and omitted zero product bytes retain all 1074400 tested
+PCM16/PCM8 samples. Code/state 6937/1041 bytes, tables still 16 KiB; fresh
+default build matches. The goal remains active. Use the
+[throughput worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md) and
+[round16 report](audiobook-beeper/speex-port/rounds/16/REPORT.md), not the
+historical PVQ scheduling milestone, to select the next optimization.
+
 Latest optimization milestone on 2026-10-04: selected PVQ round13 retains
 round12 sound and all 80974 stored bytes, while reducing complete unpaced
 CPU from 16897348 to 15651480 T (83.7515 T/sample, 7.373% fewer T).

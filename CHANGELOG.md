@@ -1,5 +1,21 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round16 omits zero partial-product bytes
+
+On round15's unchanged complete mode-3 input, skip the guaranteed zero low
+bytes of the <<8 and <<12 partial products and restart carry at byte 1.
+Each exact product costs 306 -> 268 T; ten taps save exactly 380 T/sample.
+Complete speech 2235799352 -> 2164784952 T (-71014400), 11583.824 T/sample;
+code -8 bytes, state/tables unchanged. All 1074400 exact samples, arithmetic,
+cache, table, control, write-guard and instruction audits pass. First-frame
+CPU drops 60800 T, exactly 160*380. A fresh default rebuild matches. Select
+pure-r16 as default and pin the historical round09 reproduction explicitly.
+Two new rounds save 13.781% versus round09, still 26.477x over the average
+real-time budget. No pacing is required or introduced; active goal remains
+unmet. Next profile should split the remaining synthesis and excitation
+costs. [Report](audiobook-beeper/speex-port/rounds/16/REPORT.md),
+[worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md).
+
 ## 2026-10-04: Unpaced Speex round15 cuts coefficient preparation cost
 
 The active user goal allows consecutive OUT samples; uniform pacing is no

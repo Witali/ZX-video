@@ -20,13 +20,22 @@ comparison and report throughput separately from instantaneous OUT gaps.
   Record total CPU, table construction and instruction timing deltas.
   Selected: [round15](rounds/15/REPORT.md), 2235799352 T / 11963.824 T/sample,
   10.952% fewer T; all 1074400 samples remain exact. Still 27.346x over budget.
-- [ ] **16. Skip guaranteed-zero product bytes.** In partial products shifted
+- [x] **16. Skip guaranteed-zero product bytes.** In partial products shifted
   by eight/twelve bits the low byte is zero. Test eliminating those reads
   and additions while preserving carry into the remaining three bytes.
   Compare the same exact waveform, tables and total CPU against round15.
-- [ ] **Reassess the measured bottleneck.** Keep the full throughput objective
+  Selected: [round16](rounds/16/REPORT.md), exactly -380 T/sample, now
+  11583.824 T/sample. All 1074400 samples pass; fresh default image matches.
+- [x] **Reassess the measured bottleneck.** Keep the full throughput objective
   active if exact Speex remains over budget. Rank the next changes using
   complete decoding measurements, not faster different-format playback.
+  Round16: synthesis/preparation 6051.147 T/sample, LPC 1700.391, remaining
+  decode 3832.286. Average deficit is still 26.477x; goal remains active.
+- [ ] **17. Split the remaining hot-path profile.** Measure coefficient
+  preparation, sample products, innovation construction and excitation work
+  separately on the complete unchanged input; reconcile their inclusive and
+  exclusive times before selecting the next exact optimization. Preserve
+  the same average-throughput goal without adding output pacing.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

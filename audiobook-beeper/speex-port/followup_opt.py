@@ -163,12 +163,40 @@ ld (coef_out),hl
     return d,f
 
 
+def skip_zero_product_bytes(d, f):
+    """The <<8 and <<12 partial products have a zero low byte, without exception."""
+    split=d.index('_split_nibbles::')
+    product=d.index('_coefficient_product::',split)
+    head=d[split:product]
+    head=replace_once(head,'or a,#128','or a,#129')
+    head=replace_once(head,'or a,#192','or a,#193')
+    d=d[:split]+head+d[product:]
+    for part in (2,3):
+        old=f'''product_offset_{part}:
+ld l,#0
+ld a,e
+add a,(hl)
+ld e,a
+inc l
+ld a,d
+adc a,(hl)'''
+        new=f'''; Shifted partial has low byte zero. Offset starts at byte 1;
+; E remains unchanged and ADD starts a new carry chain at D.
+product_offset_{part}:
+ld l,#0
+ld a,d
+add a,(hl)'''
+        d=replace_once(d,old,new)
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant=='pure-r15':d,f=register_preparation(d,f)
+    if variant in ('pure-r15','pure-r16'):d,f=register_preparation(d,f)
+    if variant=='pure-r16':d,f=skip_zero_product_bytes(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')
