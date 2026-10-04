@@ -1,116 +1,67 @@
-# Audio to a Spectrum 128 disk
+# Audio-to-TRD converter
 
-`convert_audio.py` accepts an ordinary local audio file readable by FFmpeg,
-keeps its initial fragment that fits the resident player and generates one
-independently bootable TRD. The current verified architecture uses live
-4-bit IMA ADPCM decoding and direct PDM output. The
-[denser predictive codec](DENSE_CODECS.md) is a measured candidate, not yet
-an integrated player option.
+`convert_audio.py` defaults to **packed IMA3 decoded directly to beeper PDM**.
+The user accepted the overlap speech disk in an interactive Program Files
+Fuse 1.9.0 session on 2026-10-04 and requested this playback algorithm as the
+main option. The existing `convert_ima3_audio.py` entry point remains usable.
+Select `--codec ima4` explicitly for the [historical four-bit converter](IMA4_CONVERTER.md).
 
 ## Run
 
-Install/use the project's Python environment with NumPy, pyz80 and the native
-`z80` package. FFmpeg and Fuse with Spectrum 128/Beta Disk are required for
-the complete verification pipeline. Supply executable paths when they are
-not on PATH. On this checkout, the existing packages can be selected with:
+Use the project's Python dependencies and put `audiobook-beeper` and `toolkit`
+on PYTHONPATH. Supply paths to FFmpeg and Fuse when needed:
 
 ```powershell
-$env:PYTHONPATH='C:/Work/ZX-video/local_tools/python_packages;C:/Work/ZX-video/.tmp/lzma-z80-packages;C:/Work/ZX-video/audiobook-beeper'
-$env:OPENBLAS_NUM_THREADS='1'
-python audiobook-beeper/convert_audio.py "C:/Audio/recording.m4a" --output build/my-audio --ffmpeg "C:/Tools/ffmpeg.exe" --fuse "C:/Program Files (x86)/Fuse/fuse.exe"
+python audiobook-beeper/convert_audio.py "input.m4a" --codec ima3 --output "build/audio" --ffmpeg "path/to/ffmpeg.exe" --fuse "path/to/fuse.exe"
+python audiobook-beeper/convert_audio.py "input.m4a" --codec ima4 --output "build/ima4" --ffmpeg "path/to/ffmpeg.exe" --fuse "path/to/fuse.exe"
 ```
 
-Use `--duration 5` for an initial five-second excerpt. An existing nonempty
-output folder is rejected rather than overwritten. By default the final
-verification also plays/captures two loops through Fuse at normal speed;
-`--no-recording` omits that audible capture, retaining full native/cold-Fuse
-checks and an integrated-port WAV. The WAV report distinguishes these paths.
+Omitting `--codec` is equivalent to `--codec ima3`. Use `--help` for the
+default profile or `--codec ima4 --help` for the four-bit profile's options.
+Existing shared preparation functions and the four-bit Python `convert()`
+API remain compatible; CLI dispatch selects the profile.
 
-The useful outputs are:
+| Option | IMA3 (default) | IMA4 (explicit) |
+| --- | --- | --- |
+| RAM representation | Packed three-bit codes | Packed four-bit codes |
+| Playback | Decode directly to PDM; no IMA3-to-IMA4 conversion | Decode directly to PDM |
+| Default disk output | `audio.trd`, sequential RAM-sized parts | `audiobook-preview.trd`, looping RAM excerpt |
+| Whole selected track | `--disk-mode all` | Not supported by this historical converter |
+| Looping RAM excerpt | `--disk-mode preview` | Default |
+| Search controls | `--target-snr`, `--attempts`, `--resume` | `--iterations` |
 
-- `audiobook-preview.trd`: bootable looping disk for Spectrum 128 + Beta Disk.
-- `result-preview.wav`: actual Fuse capture, or the documented port-rendered
-  fallback when `--no-recording` was selected.
-- `source-preview.wav`: prepared mono 8-kHz PCM8 quality reference.
-- `clock-aware-output-preview.wav`: measured port events through the fixed
-  comparison filter; not a recording of a physical speaker.
-- `report.json`: selected quality, speed, retained duration, truncation,
-  hardware limitations and verification coverage.
-- `input.json`, calibration directories and `producer-source`: reproducible
-  source preparation, rejected candidates and source snapshots.
+Both accept `--duration N` and `--no-recording`. The latter omits normal-speed
+Fuse sound capture while retaining complete native/Fuse verification. New
+outputs must use an empty directory; IMA3 can resume only a matching saved
+run. Changed producer sources invalidate old resume caches by design.
 
-## Preparation and quality policy
+## Main profile
 
-Only a bounded prefix is decoded on the PC. One extra output sample detects
-truncation. The current payload limit is 93440 bytes / 186880 prepared samples;
-128 samples are reserved for silence, leaving **23.344 seconds** of input.
-RAM is the limiting resource even though the TRD has free sectors. There are
-no disk reads during playback and no full PCM/PDM expansion in Spectrum RAM.
+The PC prepares mono 8-kHz /8-bit source audio and optimizes its packed
+IMA3 stream against the measured PDM schedule. Waveform search uses
+128/256-sample horizons with 64-sample commits. Spectrum loads the packed
+codes into RAM and decodes them as it emits PDM; there is no full PCM/PDM
+expansion buffer. Disk reads happen between consecutive RAM-sized parts.
 
-FFmpeg downmixes to mono and resamples to 8 kHz. A fixed peak normalization
-sets the maximum to 109/128 of full scale, preserves relative dynamics, and
-applies at most 10-ms fades at the boundaries. Silence stays silence. PCM is
-rounded to unsigned 8-bit, padded to a 256-byte IMA-sector boundary, and encoded
-using the existing beam-32 encoder. SNR compares against this prepared signal,
-not the full-band stereo input; AAC's `bits_per_sample=0` means unspecified
-PCM bit depth, not zero-bit audio.
+One TRD is the default. `--disk-mode all` produces numbered independently
+bootable disks. See [sequential playback](IMA3_SERIES.md) for output names,
+capacity and audible loading pauses, and [the direct decoder](IMA3_DIRECT.md)
+for timing, search and verification details.
 
-A clip shorter than about one second repeats internally until its prepared
-loop is at least 8192 samples. This bounds the fractional cost of rounding
-the overall loop to an integer video-field count; repetition and padding are
-explicit in `input.json`. Playback of the completed disk is always cyclic.
+The accepted reference is [ZX-audiobook-IMA3-overlap-test.trd](../ZX-audiobook-IMA3-overlap-test.trd),
+SHA-256 `ac4b740ebdcf2f9fb538d286b8ac679df6babc53462cf79b18f08cc8b5a2d66d`.
+Its two verified parts measure 20.436046 dB with -0.271723% mean speed error.
+These are input-specific measurements. Other audio retains the 20-dB default
+quality gate and +/-2% speed requirement; an unmet IMA3 quality target exits
+with code 2 and an explicitly marked preview. No physical-hardware result
+or universal absence of audible artifacts is claimed.
 
-For each encoded stream, a bounded 24-candidate phase search measures cold
-Fuse loops. Only a <=3-T cold transient followed by an exact field-aligned
-second loop is accepted. Full native and cold-Fuse checks then verify every
-bit, predictor/index, bank transition and loading indicator for two loops.
-The PC compensates the original sample clock from that measured schedule,
-re-encodes, **recalibrates the changed stream**, and validates again.
-The uncompensated pilot is retained as an identity-transform candidate.
-Up to two compensation passes are considered, with early exit when both
-loops measure at least 20 dB and mean speed is within the requested +/-2%.
-Otherwise the better speed-compliant verified candidate is retained and
-the unmet 20-dB goal remains explicit. Silence has `null` SNR, not Infinity.
+The accepted emulator setup was Spectrum 128 + Beta 128, 100% speed,
+44.1-kHz /16-bit host output. [Launch the reference](experiments/fuse-host-output/manual-launch.cmd)
+with those settings. The earlier vibration's original cause remains unknown;
+the user accepted this direct interactive playback. Host output rate is
+separate from the source sample rate and the Spectrum PDM pulse rate.
 
-The reference clock is explicitly 8000 Hz; there is no fitted delay, gain or
-pitch correction in the measurement. The phase filler only extends the
-already silent tail. The physical sample intervals still vary with ULA
-contention; offline compensation addresses the resulting voice timing.
-This is a bounded search within the best currently verified player design,
-not proof of a universal codec optimum. New arbitrary inputs can expose
-calibration limits; failures retain diagnostics and are not qualified as
-successful conversions. No physical Spectrum measurement is claimed.
-
-## Player timing and variable length
-
-The generic loader supports 256..93440 IMA bytes in 256-byte steps, using
-only the required banks in order 0,4,6,1,3,7,2. The final partial bank is
-right-aligned so that the existing cursor overflow remains authoritative.
-Empty bank loads are omitted. Each bank tail receives its actual successor;
-the phase filler follows the actual final section, not a fixed bank number.
-
-Instruction timings are unchanged: **423 T per ordinary sample, +14 T at
-ordinary pages, +140 T at bank transitions**. Delta from the old player is
-zero for each executed path. Optional silence costs 52 T per output pair,
-7 T per group, plus the recorded pad. Native cycle totals, ULA wait totals
-and preload ROM/disk time are recorded separately. All 128 KiB are accounted
-for, including unused audio capacity for shorter inputs, screens, tables,
-code, stack and TR-DOS workspace.
-
-`verify_direct_lengths.py` confirms byte-identical regeneration of both
-previous full-capacity disks, and complete native/cold-Fuse playback at the
-256-byte minimum and a 16640-byte two-bank partial tail. The converter is
-also exercised on a short M4A prefix, a 37-ms silent stereo WAV, and the full
-resident prefix of the user-supplied audiobook. These are distinct coverage
-checks, not a claim that every possible input has been tested.
-
-## Saved audiobook example
-
-The [disk](experiments/audio-converter/audiobook-preview.trd) retains the
-first 23.344 seconds of the supplied M4A, with all 93440 IMA bytes used.
-The selected second compensation pass measures 15.80350/15.80023 dB on the
-two complete loops, and mean prepared-sample speed differs by -0.04327%.
-The source differs from the earlier 18.99410-dB experiment, so this is not
-a same-input quality comparison. The 20-dB goal remains open.
-[Full report](experiments/audio-converter/report.json) and
-[Fuse WAV](experiments/audio-converter/result-preview.wav).
+Promoting the CLI default changes no Z80 instruction, table, stream or TRD.
+Mean native IMA3 cost remains 427.375 T/sample, delta 0 T; page/bank extras
+remain +14/+140 T. Reuse the complete prior disk verification.

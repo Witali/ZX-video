@@ -14,8 +14,19 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
-The user clarified that neither short modeled WAV has audible vibration;
-the symptom occurs when playing the TRD in **Program Files Fuse 1.9.0**.
+The user accepted the actual interactive playback of the overlap speech
+TRD in **Program Files Fuse 1.9.0** and requested it as the main algorithm.
+`convert_audio.py` now defaults to the accepted packed IMA3/direct-PDM
+pipeline; select `--codec ima3` or `--codec ima4` explicitly. IMA3 defaults
+to one sequential TRD; the older IMA4 mode remains a looping RAM preview.
+The separate IMA3 entry point stays compatible. See [converter usage](audiobook-beeper/CONVERTER.md).
+The accepted setup is Spectrum 128 + Beta 128, 100% speed, 44.1-kHz/16-bit
+host sound, visible window and no recording/debugger. No Z80 or disk changes.
+This closes the pending acceptance of that control, without establishing
+the cause of the earlier vibration or claiming all arbitrary inputs pass.
+
+Previously, neither short modeled WAV had audible vibration, while the
+user reported it in an earlier Program Files session.
 The [host-output study](audiobook-beeper/experiments/fuse-host-output/README.md)
 tests that native DirectSound build and `tools/fuse-1.9.0-sdl/fuse.exe` with
 real WASAPI speaker-loopback capture. Their interior 19.8 seconds of generated
@@ -30,19 +41,19 @@ the actual Windows-output WAV**. Thus the reported symptom was not reproduced
 in this controlled run. No stored Fuse config or active process was found;
 the user's former unsaved settings remain unknown. A manual launcher with
 the measured audio/machine options is available in the study for a visible
-run without recording/debugger. Its listening result is pending; it is not
-a verified fix. Do not resume blind codec tuning.
+run without recording/debugger. That visible launch has now been performed
+and accepted by the user. Do not resume blind codec tuning.
 The earlier `host_audio_muted: true` FMF metadata was incorrect for native
 Win32 (the SDL environment flag is ignored); the recorder is corrected.
 
-The user still hears unwanted vibration throughout the overlap test disk.
-The listening defect is **unresolved**. The [residual study](audiobook-beeper/experiments/ima-3bit-residual/README.md)
+The earlier vibration report prompted the historical
+[residual study](audiobook-beeper/experiments/ima-3bit-residual/README.md), which
 records seven bounded host controls and diagnostic WAVs: four-bit coding on
 the same saved PDM clock improves a 4.096-s control from 21.600309 to
 23.899006 dB, but is not a new executable disk or proof that flutter is gone.
 Other three-bit controls are rejected as worse or immaterial. The subsequent
-user comparison found no flutter in either short modeled control; proceed
-with the actual host-output investigation above. No new player or
+user comparison found no flutter in either short modeled control, and the
+subsequent interactive run is now accepted. No new player or
 TRD is released. Reuse these reports instead of repeating the same probes.
 
 The narrower boundary-error correction is complete: [overlapping waveform search](audiobook-beeper/experiments/ima-3bit-overlap/README.md)
@@ -52,9 +63,9 @@ noise/interior noise falls from 1.835..1.840 to 0.999; both final parts measure
 20.436046 dB, speed -0.271723%. Every native/Fuse output through EOF passes;
 normal Fuse WAV is saved. Player/table binaries are unchanged, 427.375
 T/sample, delta 0 T, unchanged RAM/payload/capacity. Use
-`ZX-audiobook-IMA3-overlap-test.trd` for the new listening test. This removes
+`ZX-audiobook-IMA3-overlap-test.trd` as the accepted listening reference. This removes
 the measured periodic boundary excess; residual IMA/PDM noise remains and
-subjective acceptance is with the user. Reuse its complete evidence.
+the user has accepted the interactive reference. Reuse its complete evidence.
 
 The [sequential converter](audiobook-beeper/IMA3_SERIES.md) now defaults to
 one TRD; `--disk-mode all` retains the whole selected track on numbered,

@@ -4,8 +4,11 @@ The user hears no vibration in either short modeled IMA3/IMA4 WAV, but
 reported it when playing the TRD in **the Program Files Fuse**. After the
 actual Windows-output WAV was supplied, the user also heard no vibration
 in that recording. The reported symptom has not been reproduced in this
-controlled run. Its cause remains unresolved; neither a fix nor a clean
-ordinary interactive session has been established.
+controlled run. A subsequent visible, uninstrumented launch of the same
+TRD with the control settings was also accepted by the user, who requested
+this algorithm as the main option. The general converter now defaults to
+IMA3/direct PDM. The original vibration's cause remains unknown; acceptance
+of this control does not prove a particular emulator or codec defect fixed.
 
 ## Two installations, one generated signal
 
@@ -83,8 +86,8 @@ bypass and the user's listening identification remain outstanding.
 These files preserve captured level and have no extra listening filter.
 Replaying a loopback WAV passes it through the user's output chain again;
 it is a diagnostic audition, not a measurement of the loudspeaker's acoustic
-output. The user answered **no vibration** for the first file. The follow-up
-question is whether an ordinary interactive TRD launch still has the symptom.
+output. The user answered **no vibration** for the first file and subsequently
+confirmed good sound from the direct interactive Fuse launch.
 
 ## Interactive comparison follow-up
 
@@ -100,11 +103,12 @@ Fuse interactively with the measured run's explicit settings: Spectrum 128
 with Beta 128, 100% speed, 44.1 kHz, 16-bit output. It uses this checkout's
 same TRD, prevents a second concurrent Fuse instance, and disables settings
 autosave. It does not start FMF recording or the debugger and does not hide
-the window. This is a comparison aid, **not a tested fix**. The command has
-been checked with `manual-launch.cmd --print-command`; user listening in
-this interactive mode remains pending. Other in-memory settings from a
-previous session are not known. Do not repeat codec tuning without first
-reproducing the complaint under the user's actual playback conditions.
+the window. The installed Fuse was then launched with these same options
+and the unchanged root TRD. Computer Use verified the visible player at
+DISK 1 / PART 1, Spectrum 128K and 100% speed. The user confirmed that it
+plays well and asked to make its algorithm primary. Record this as direct
+interactive listening acceptance, not a new instrumented full-EOF run.
+Other in-memory settings from the earlier problematic session remain unknown.
 
 ## Rejected attempt and reporting correction
 

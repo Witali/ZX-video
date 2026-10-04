@@ -96,8 +96,10 @@ if args.replay:
                 speech.append(wav.readframes(wav.getnframes())[4800*2:-4800*2])
         assert speech[0] == speech[1] and len(speech[0])//2 == 950400
 
+findings = json.loads((HERE/'findings.json').read_bytes())
 print(json.dumps(dict(artifacts=len(manifest['artifacts']),
                       inputs=len(manifest['inputs']), hashes_exact=True,
                       valid_captures=3, rejected_captures=1,
                       offline_replay_verified=args.replay,
-                      listening_defect_resolved=False)))
+                      control_playback_accepted=findings['control_playback_accepted'],
+                      original_vibration_cause_known=findings['original_vibration_cause_known'])))

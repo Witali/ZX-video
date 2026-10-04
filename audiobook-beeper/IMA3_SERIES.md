@@ -1,13 +1,16 @@
 # Sequential IMA3 audio disks
 
 Updated 2026-10-04. The automatic converter now defaults to **one TRD**.
+The general `convert_audio.py` entry point selects this IMA3 profile by
+default; `--codec ima3` is optional. The user accepted its overlap speech
+reference in interactive Fuse playback.
 It fills that disk with consecutive RAM-sized parts, stopping before the
 next whole part that would overflow it. `--disk-mode all` retains the entire
 selected input across numbered disks. Each disk boots independently.
 
 ```powershell
-python audiobook-beeper/convert_ima3_audio.py "input.m4a" --output "build/audio" --ffmpeg "path/to/ffmpeg.exe" --fuse "path/to/fuse.exe"
-python audiobook-beeper/convert_ima3_audio.py "input.m4a" --output "build/full-track" --disk-mode all --ffmpeg "path/to/ffmpeg.exe" --fuse "path/to/fuse.exe"
+python audiobook-beeper/convert_audio.py "input.m4a" --output "build/audio" --ffmpeg "path/to/ffmpeg.exe" --fuse "path/to/fuse.exe"
+python audiobook-beeper/convert_audio.py "input.m4a" --output "build/full-track" --disk-mode all --ffmpeg "path/to/ffmpeg.exe" --fuse "path/to/fuse.exe"
 ```
 
 The default output is `audio.trd`; all mode produces `audio-0001.trd`,

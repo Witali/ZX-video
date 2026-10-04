@@ -1,10 +1,51 @@
 """Boundary tests for disk planning; full emulator checks use verify_series."""
 import unittest
+import contextlib
+import io
 from unittest.mock import patch
 from ima3_series import capacity_samples,plan_parts,plan_volumes,FIRST_PLAYER_SECTOR
 
 
 class SeriesPlanning(unittest.TestCase):
+    def test_public_converter_defaults_to_ima3_and_keeps_disk_modes(self):
+        from convert_audio import main
+        base=['input.wav','--output','unused','--ffmpeg','ffmpeg','--fuse','fuse']
+        for flags,expected in (([],'single'),(['--codec','ima3'],'single'),(['--disk-mode','all'],'all'),(['--disk-mode','preview'],'preview')):
+            with patch('convert_ima3_audio.convert',return_value={'quality_gate_passed':True}) as convert,patch('convert_audio.convert') as legacy:
+                with self.assertRaises(SystemExit) as result:main(base+flags+['--target-snr','25'])
+                self.assertEqual(result.exception.code,0)
+                self.assertEqual(convert.call_args.args[0].disk_mode,expected)
+                self.assertEqual(convert.call_args.args[0].target_snr,25)
+                legacy.assert_not_called()
+
+    def test_public_converter_preserves_failed_quality_exit(self):
+        from convert_audio import main
+        with patch('convert_ima3_audio.convert',return_value={'quality_gate_passed':False}):
+            with self.assertRaises(SystemExit) as result:
+                main(['input.wav','--output','unused','--ffmpeg','ffmpeg','--fuse','fuse'])
+            self.assertEqual(result.exception.code,2)
+
+    def test_legacy_converter_requires_explicit_codec(self):
+        from convert_audio import main
+        base=['input.wav','--output','unused','--ffmpeg','ffmpeg','--fuse','fuse','--iterations','1']
+        with patch('convert_audio.convert') as legacy,patch('convert_ima3_audio.convert') as accepted:
+            main(base+['--codec','ima4'])
+            self.assertEqual(legacy.call_args.args[0].iterations,1)
+            self.assertEqual(legacy.call_args.args[0].codec,'ima4')
+            accepted.assert_not_called()
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as result:main(base)
+        self.assertEqual(result.exception.code,2)
+
+    def test_codec_abbreviation_cannot_misroute(self):
+        from convert_audio import main
+        with contextlib.redirect_stderr(io.StringIO()),patch('convert_audio.convert') as legacy,patch('convert_ima3_audio.convert') as accepted:
+            with self.assertRaises(SystemExit) as result:
+                main(['input.wav','--output','unused','--ffmpeg','ffmpeg','--fuse','fuse','--cod','ima4'])
+            self.assertEqual(result.exception.code,2)
+            legacy.assert_not_called()
+            accepted.assert_not_called()
+
     def test_cli_defaults_to_one_disk(self):
         from convert_ima3_audio import main
         base=['converter','input.wav','--output','unused','--ffmpeg','ffmpeg','--fuse','fuse']

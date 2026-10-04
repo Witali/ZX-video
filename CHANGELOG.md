@@ -1,5 +1,38 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Make accepted IMA3 playback the general converter default
+
+At the user's request, launch the installed Program Files Fuse visibly with
+the unchanged overlap speech TRD, Spectrum 128 + Beta 128, 100% speed and
+44.1-kHz/16-bit host sound, without FMF or debugger instrumentation. Observe
+the visible player at DISK 1 / PART 1. The user confirms good playback and
+requests this algorithm as primary, then requests explicit IMA3/IMA4 choice.
+Record direct listening acceptance in the [host-output study](audiobook-beeper/experiments/fuse-host-output/README.md).
+The earlier vibration's cause remains unknown; this is not a newly measured
+full-EOF run or proof that arbitrary recordings are artifact-free.
+
+The common `convert_audio.py` CLI previously selected the older four-bit
+preview although the dedicated IMA3 converter already used the accepted
+overlapping waveform search. Route the common CLI to that IMA3 pipeline by
+default. `--codec ima3` selects it explicitly; `--codec ima4` keeps the old
+four-bit converter and its own help/options. Preserve shared helper imports
+and the Python four-bit `convert()` API. The direct IMA3 entry point stays
+compatible; single/all/preview modes and quality-failure exit code 2 remain.
+Reject abbreviated flags to avoid selecting one profile and parsing another.
+
+Promote the accepted reference in the [general guide](audiobook-beeper/CONVERTER.md)
+and brief; retain [historical IMA4 documentation](audiobook-beeper/IMA4_CONVERTER.md).
+No player, encoder search, table or TRD changes. Reuse full prior native/Fuse
+coverage: reference 20.436046 dB on both parts, -0.271723% mean speed error.
+Native IMA3 stays 427.375 T/sample, delta 0 T; +14/+140 T page/bank extras
+and RAM unchanged. The measured values are unchanged input-specific evidence.
+Producer-source changes intentionally invalidate older resume caches.
+Verification: all nine converter-dispatch/disk-planning tests pass, both
+real CLI help commands expose the correct profile options, and the accepted
+disk's 124-artifact audit plus the host study's 40-artifact/four-input audit
+pass. Full audio encoding and Z80 execution are not repeated for a CLI-only
+selection change; their algorithms and saved release bytes are unchanged.
+
 ## 2026-10-04: Record the clean host-output audition and prepare an interactive comparison
 
 The user also hears no vibration in the actual Windows-output excerpt.

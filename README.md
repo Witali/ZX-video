@@ -7,8 +7,11 @@ a particular movie or remove credits automatically.
 
 ## Usage
 
-An audio-only subproject provides a [two-minute O. Henry AY preview](audiobook-ay/README.md),
-with comparison WAVs and an independently bootable Spectrum 128 TRD.
+For audio-only playback, the [audio converter](audiobook-beeper/CONVERTER.md)
+defaults to packed IMA3 and direct beeper PDM, accepted by the user in Fuse.
+Use `--codec ima4` for the historical four-bit mode. The accepted
+[speech reference disk](ZX-audiobook-IMA3-overlap-test.trd) and a separate
+[AY preview](audiobook-ay/README.md) remain available.
 
 Install Python 3.11+, FFmpeg/ffprobe and the ZX0 v2 compressor in `PATH`.
 

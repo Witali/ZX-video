@@ -4,6 +4,11 @@ Measured 2026-10-04. This subproject removes the Spectrum-side IMA3-to-IMA4
 expansion. Three-bit codes stay packed in RAM and are decoded as the PDM
 outputs are emitted. There is no complete PCM, IMA4 or PDM buffer.
 
+The user accepted the overlap speech disk in interactive Fuse playback on
+2026-10-04. This is now the [general converter's default](CONVERTER.md):
+`convert_audio.py` or `convert_audio.py --codec ima3`. The explicit
+`convert_ima3_audio.py` entry point remains compatible.
+
 See [the illustrated decoding pipeline](IMA3_PDM_PIPELINE.md)
 ([Russian version](IMA3_PDM_PIPELINE.ru.md)) for bit packing, IMA state
 transitions, PDM feedback tables and interleaved Z80 output.

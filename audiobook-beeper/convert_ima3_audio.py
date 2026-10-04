@@ -184,8 +184,8 @@ def convert(args):
     return report
 
 
-def main():
-    p=argparse.ArgumentParser(description=__doc__)
+def main(argv=None, *, parents=()):
+    p=argparse.ArgumentParser(description=__doc__,parents=list(parents),allow_abbrev=False)
     p.add_argument('input',type=Path);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--ffmpeg',default=shutil.which('ffmpeg'));p.add_argument('--fuse',type=Path,required=True)
     p.add_argument('--duration',type=float);p.add_argument('--target-snr',type=float,default=20.)
@@ -195,7 +195,7 @@ def main():
     p.add_argument('--no-recording',action='store_true',help='skip normal-speed sound capture, retaining full native/Fuse trace checks')
     p.add_argument('--resume',action='store_true')
     p.add_argument('--reuse-pilot',type=Path,help='optional completed converter pilot cache; exact source/player/tools are checked')
-    a=p.parse_args()
+    a=p.parse_args(argv)
     if not a.ffmpeg:p.error('FFmpeg not found; supply --ffmpeg')
     if not math.isfinite(a.target_snr) or a.target_snr<20 or a.target_snr>60:p.error('target SNR must be 20..60 dB')
     try:r=convert(a)

@@ -1,9 +1,8 @@
-"""Convert an initial audio fragment to a cold-bootable, verified Spectrum TRD.
+"""Convert audio to verified Spectrum TRDs using packed IMA3 and direct PDM.
 
-Use the best currently verified live IMA/direct-PDM architecture. Calibrate
-the actual encoded stream in Fuse, compensate its sample clock offline, and
-measure both repeats against the original prepared 8-kHz reference. A result
-below 20 dB is disclosed, never labelled as satisfying that separate goal.
+The public CLI defaults to the accepted IMA3 converter and one sequential
+disk. --codec ima4 explicitly selects the historical four-bit converter.
+Its implementation and shared preparation helpers remain import-compatible.
 """
 import argparse
 from datetime import date
@@ -281,8 +280,8 @@ def convert(args):
     return report
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+def legacy_main(argv=None, *, parents=()):
+    parser = argparse.ArgumentParser(description='Historical four-bit IMA/direct-PDM looping preview.', parents=list(parents), allow_abbrev=False)
     parser.add_argument('input', type=Path)
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--ffmpeg', default=shutil.which('ffmpeg'))
@@ -290,7 +289,7 @@ def main():
     parser.add_argument('--duration', type=float, help='keep at most this many initial seconds; always bounded by RAM')
     parser.add_argument('--iterations', type=int, choices=(1, 2), default=2)
     parser.add_argument('--no-recording', action='store_true', help='skip normal-speed audible capture; keep complete native/cold-Fuse verification')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if not args.ffmpeg:
         parser.error('FFmpeg not found; supply --ffmpeg')
     if args.output.exists() and any(args.output.iterdir()):
@@ -301,6 +300,20 @@ def main():
         if args.output.exists():
             save(args.output / 'failure.json', dict(complete=False, error=str(error), type=type(error).__name__))
         raise
+
+
+def main(argv=None):
+    # Route the generic entry point before parsing profile-specific flags.
+    # Imports of preparation helpers must never launch a conversion.
+    selector = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
+    selector.add_argument('--codec', choices=('ima3', 'ima4'), default='ima3',
+                          help='ima3 (default): accepted packed IMA3/direct PDM; ima4: historical four-bit preview')
+    selected, remaining = selector.parse_known_args(argv)
+    selector.set_defaults(codec=selected.codec)
+    if selected.codec == 'ima4':
+        return legacy_main(remaining, parents=(selector,))
+    from convert_ima3_audio import main as ima3_main
+    return ima3_main(remaining, parents=(selector,))
 
 
 if __name__ == '__main__':
