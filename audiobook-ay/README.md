@@ -1,5 +1,9 @@
 # AY audiobook preview
 
+The maintained standalone audio conversion entry point is
+[ay-converter](../ay-converter/README.md), with all required project sources
+in one portable folder. The older speech experiments below remain archived.
+
 **Disk retirement (2026-10-04):** obsolete speech TRDs described below
 were removed at the user's request. Links marked "retired" lead to the
 [removal inventory](../audiobook-beeper/retired-disks.json), with exact paths, hashes and the recovery

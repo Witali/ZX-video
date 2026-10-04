@@ -9,7 +9,8 @@ a particular movie or remove credits automatically.
 
 For audio-only speech, use the [automatic IMA3 converter](audiobook-beeper/IMA3_DIRECT.md)
 and the latest [overlap speech disk](ZX-audiobook-IMA3-overlap-test.trd).
-[AY music conversion](audiobook-ay/CONVERTER.md) is also available.
+[Standalone AY music conversion](ay-converter/README.md) includes all its
+project sources in one portable folder.
 [Obsolete speech previews were retired](audiobook-beeper/retired-disks.json);
 comparison WAVs and experiment reports remain available.
 

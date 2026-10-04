@@ -61,6 +61,11 @@ Use `ZX-music-Entertainer-AY.trd`. The chip arrangement's musical similarity
 metrics are not comparable to PDM waveform SNR; listening acceptance remains
 with the user. Reuse this evidence instead of repeating the conversion.
 
+The AY converter is also preserved as a [standalone source folder](ay-converter/README.md).
+It includes the analyser, AY formats, TRD helpers, assembly player, renderer,
+native/Fuse verifier and FMF parser. It runs without imports from the movie
+or beeper projects. Original experiment sources and evidence remain available.
+
 The separate [public-domain music example](audiobook-beeper/experiments/ima-3bit-entertainer/README.md)
 uses The Entertainer by Scott Joplin, performed by IE. The user explicitly
 accepts the best found music result below 20 dB. Three automatic searches

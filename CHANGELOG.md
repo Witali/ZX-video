@@ -1,5 +1,36 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Preserve the AY converter as an independent source folder
+
+At the user's request, retain audio-to-AY conversion in
+[ay-converter](ay-converter/README.md), including all project source required
+for analysis, AY/register formats, TRD packaging, separate Z80 assembly,
+Ayumi rendering, metrics, native/Fuse verification and FMF audio extraction.
+Baseline is `2a55226933f12f529cee8256d82ccf48b16d8039`. Extract the required
+audio routines and disk helpers from the movie/beeper modules; replace parent
+imports with local modules. Preserve the original experiments and evidence.
+Include third-party Ayumi source/license, Python requirements, native tests,
+source provenance and standalone instructions. No synthesizer or player
+algorithm is changed; the ordinary field path is 974 ->974 T, delta 0 T,
+with the existing 105-T loop-restart extra.
+
+Validation runs a copied source folder from a separate directory with only
+external Python packages on PYTHONPATH. Convert the full unchanged 31.128-s
+The Entertainer request to 1556 AY ticks /31.12 s, then execute both complete
+cold Fuse repeats and capture normal-speed sound. All 34232 writes and
+3112 nominal fields pass, with zero missed/duplicate fields, 67 startup
+sector reads and zero runtime reads. The final TRD, player binary, screen,
+both register streams and all three WAVs are byte-identical to the previous
+verified example. TRD SHA-256 remains
+`c6139c9c5cd4c18df82d3b1f208064790487a48db3883b26f916d00765fc177c`.
+All 27 extracted function/class syntax trees match their origins, allowing
+only removal of the local TRD helpers' former `base.` qualification. Both
+native tests pass, covering bank edges, six-bank capacity, looping and EOF.
+See the [saved verification](ay-converter/verification.json) and
+[source manifest](ay-converter/SOURCE_MANIFEST.json). Physical hardware and
+new listening acceptance are not claimed. Accept this source separation;
+the conversion result and existing release images remain unchanged.
+
 ## 2026-10-04: Retire obsolete speech preview disk images
 
 At the user's request, remove 24 obsolete speech TRDs from the current
