@@ -1,5 +1,10 @@
 # Next decoder target
 
+The following PVQ milestone is historical and complete. The user's active
+goal now accepts unpaced output and continues exact Speex throughput work;
+see [THROUGHPUT_TODO](THROUGHPUT_TODO.md). ULA scheduling is no longer the
+next authorized optimization step.
+
 Authorized 2026-10-04, continuing in the existing `codex/speex-port` worktree.
 This milestone concerns the selected PVQ PCM8 player. Exact Speex `pure-r9`
 remains a separate decoder; its real-time deficit is not solved by PVQ.

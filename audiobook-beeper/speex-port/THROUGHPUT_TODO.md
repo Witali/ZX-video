@@ -1,0 +1,35 @@
+# Active unpaced Speex throughput work
+
+2026-10-04. The user clarified that samples may be emitted consecutively;
+uniform per-sample spacing is not required. The goal is to approach real-time
+decoding/output on a nominal 3.5-MHz Z80. Keep the existing worktree and
+assembly implementation, complete memory-to-PCM8-port path and 16-KiB table
+arena. The previous PVQ timing milestone is closed and does not establish
+real-time Speex. Do not spend this milestone on PVQ pacing or ULA scheduling.
+
+Baseline: exact mode-3 Speex `pure-r9`, 2510789186 T for 186880 samples,
+13435.302 T/sample, 30.709x the 437.5-T/sample average budget. Samples are
+already emitted without pacing. Retain the complete upstream PCM16/PCM8
+comparison and report throughput separately from instantaneous OUT gaps.
+
+- [x] **15. Register-based coefficient table construction.** Replace four
+  byte stores and repeated step loads with 32-bit register accumulation and
+  reverse PUSH writes. Save/restore SP around each changed page; document
+  the disabled-interrupt requirement. Check every table entry, signed
+  midpoint, page cache, real stack restoration and all complete fixtures.
+  Record total CPU, table construction and instruction timing deltas.
+  Selected: [round15](rounds/15/REPORT.md), 2235799352 T / 11963.824 T/sample,
+  10.952% fewer T; all 1074400 samples remain exact. Still 27.346x over budget.
+- [ ] **16. Skip guaranteed-zero product bytes.** In partial products shifted
+  by eight/twelve bits the low byte is zero. Test eliminating those reads
+  and additions while preserving carry into the remaining three bytes.
+  Compare the same exact waveform, tables and total CPU against round15.
+- [ ] **Reassess the measured bottleneck.** Keep the full throughput objective
+  active if exact Speex remains over budget. Rank the next changes using
+  complete decoding measurements, not faster different-format playback.
+
+Each completed experiment needs a report, root CHANGELOG entry and focused
+commit. A failed experiment is evidence, not permission to redefine success.
+Nominal CPU measurements exclude ULA, disk and physical hardware. The user
+has removed uniform sample deadlines as a completion gate, not correctness,
+complete-stream timing, input format or the RAM accounting requirement.

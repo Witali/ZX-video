@@ -1,5 +1,20 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Unpaced Speex round15 cuts coefficient preparation cost
+
+The active user goal allows consecutive OUT samples; uniform pacing is no
+longer a gate. Resume exact Speex from pure-r9 on unchanged complete input.
+Use register-held 32-bit steps and reverse PUSH table writes with saved SP.
+Preparation costs 120963 -> 59433 T for ten changed pages; complete speech
+2510789186 -> 2235799352 T (-274989834, 10.952%), 11963.824 T/sample. All
+1074400 exact PCM16/PCM8 checks, tables, cache, arithmetic, controls, memory
+guards and instruction audits pass. Code +321, state +2, tables unchanged
+within 16 KiB. A bounded first implementation passed; eliminating redundant
+zero-byte negation work saved another 12 T/page before final verification.
+Select as next exact throughput baseline; still 27.346x over average budget.
+No ULA/hardware claim. [Report](audiobook-beeper/speex-port/rounds/15/REPORT.md),
+[active worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md).
+
 ## 2026-10-04: Reject PVQ four-sample compression trial; retain round13
 
 On the same complete 186880-sample control, retrain 1024 four-residual

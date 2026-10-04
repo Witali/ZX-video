@@ -110,11 +110,65 @@ ld b,(hl)
     return d,f
 
 
+def register_preparation(d, f):
+    """Keep the 32-bit table step in DE/DE' and write reverse rows with PUSH."""
+    d=d.replace('state_end:', 'coef_saved_sp: .ds 2\nstate_end:')
+    begin=d.index('coef_changed:\n')
+    end=d.index('coef_next:\n',begin)
+    code='''coef_changed:
+; IRQ must remain disabled. Save the real return stack before using SP as
+; a reverse table writer. No CALL/RET occurs until the real SP is restored.
+; DE/DE' hold the low/high step; HL/HL' hold the low/high accumulator.
+ld (coef_saved_sp),sp
+ld a,d
+add a,a
+sbc a,a
+exx
+ld d,a
+ld e,a
+exx
+'''
+    for part in range(4):
+        code+=f'''; Partial table {part}: rows are stored from index 15 down to 0.
+ld hl,(coef_out)
+ld bc,#{64*(part+1)}
+add hl,bc
+ld sp,hl
+'''
+        if part<3:
+            code+='ld h,d\nld l,e\nexx\nld h,d\nld l,e\nexx\n'
+            code+=('add hl,hl\nexx\nadc hl,hl\nexx\n')*4
+            code+='; Save 16*step for the next group before forming 15*step.\n'
+            code+='ld (coef_step),hl\nexx\nld (coef_step+2),hl\nexx\n'
+        else:
+            code+='; Signed high nibble: first row is -step, followed by -2..-8.\n'
+            code+='ld hl,#0\nexx\nld hl,#0\nexx\n'
+        code+='or a,a\nsbc hl,de\nexx\nsbc hl,de\nexx\n'
+        for i in range(15,-1,-1):
+            code+='exx\npush hl\nexx\npush hl\n'
+            if part==3 and i==8:
+                code+='; Convert -8*step to +8*step; next subtraction yields row 7.\n'
+                code+='; Its low byte L is zero (coefficient shifted left 15 bits).\n'
+                code+='xor a,a\nsub a,h\nld h,a\nexx\n'
+                code+='ld a,#0\nsbc a,l\nld l,a\nld a,#0\nsbc a,h\nld h,a\nexx\n'
+            if i:code+='or a,a\nsbc hl,de\nexx\nsbc hl,de\nexx\n'
+        if part<3:code+='ld de,(coef_step)\nexx\nld de,(coef_step+2)\nexx\n'
+    code+='''; Restore the caller's stack before returning or examining the next page.
+ld sp,(coef_saved_sp)
+ld hl,(coef_out)
+inc h
+ld (coef_out),hl
+'''
+    d=d[:begin]+code+d[end:]
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
+    if variant=='pure-r15':d,f=register_preparation(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')

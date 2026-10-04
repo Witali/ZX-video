@@ -1,0 +1,465 @@
+{
+  "specialized": {
+    "signed8x16_cases": 12048,
+    "min_mul_t": 41,
+    "max_mul_t": 664,
+    "energy_shape_pairs": 5056,
+    "innovation_table_entries": 8448,
+    "coefficient_entries": 40960,
+    "coefficient_products": 12800,
+    "cache_cases": [
+      {
+        "tap": 0,
+        "unchanged_t": 976,
+        "one_page_changed_t": 8646
+      },
+      {
+        "tap": 1,
+        "unchanged_t": 976,
+        "one_page_changed_t": 8738
+      },
+      {
+        "tap": 2,
+        "unchanged_t": 976,
+        "one_page_changed_t": 8830
+      },
+      {
+        "tap": 3,
+        "unchanged_t": 976,
+        "one_page_changed_t": 8922
+      },
+      {
+        "tap": 4,
+        "unchanged_t": 976,
+        "one_page_changed_t": 9014
+      },
+      {
+        "tap": 5,
+        "unchanged_t": 976,
+        "one_page_changed_t": 9106
+      },
+      {
+        "tap": 6,
+        "unchanged_t": 976,
+        "one_page_changed_t": 9198
+      },
+      {
+        "tap": 7,
+        "unchanged_t": 976,
+        "one_page_changed_t": 9290
+      },
+      {
+        "tap": 8,
+        "unchanged_t": 976,
+        "one_page_changed_t": 9382
+      },
+      {
+        "tap": 9,
+        "unchanged_t": 976,
+        "one_page_changed_t": 9474
+      }
+    ]
+  },
+  "audit": {
+    "scope": "1 complete frame(s), including startup, packet parsing, LPC and port output",
+    "tstates": 1738549,
+    "instructions": 229237,
+    "instruction_tstate_histogram": {
+      "4": 101263,
+      "5": 120,
+      "6": 2782,
+      "7": 47024,
+      "8": 17214,
+      "10": 7481,
+      "11": 15940,
+      "12": 6307,
+      "13": 6009,
+      "14": 10,
+      "15": 5069,
+      "16": 5837,
+      "17": 3080,
+      "19": 360,
+      "20": 8954,
+      "21": 1787
+    },
+    "every_instruction_matches_zilog_table": true
+  },
+  "fixtures": {
+    "silence": {
+      "complete": true,
+      "samples": 3200,
+      "every_pcm8_exact": true,
+      "every_pcm16_exact": true,
+      "total_tstates": 27509059,
+      "seconds_at_3_5_mhz": 7.859731142857143,
+      "mean_total_tstates_per_sample": 8596.5809375,
+      "first_out_tstates": 535513,
+      "last_out_tstates": 27508055,
+      "min_out_interval": 4986,
+      "max_out_interval": 358473,
+      "nominal_late_samples": 3199,
+      "max_lateness_tstates": 25572979.5,
+      "real_time": false,
+      "pages": [
+        0
+      ],
+      "code_rodata_bytes": 19603,
+      "bss_bytes": 1041,
+      "code_bytes": 6945,
+      "tables_bytes": 12658,
+      "all_cpu_writes_inside_declared_regions": true,
+      "input_static_code_static_tables_unchanged": true,
+      "writable_immediate_addresses": [
+        39002,
+        39011,
+        39028,
+        39045
+      ],
+      "pcm16_output_buffer": false,
+      "initial_state_fill": 165,
+      "dynamic_table_reserved_bytes": 3584,
+      "dynamic_table_regions": [
+        [
+          31744,
+          32768
+        ],
+        [
+          29184,
+          31744
+        ]
+      ],
+      "table_arena_span_bytes": 16384,
+      "phases_tstates": {
+        "_zx_speex_lpc": 5316640,
+        "_zx_speex_filter": 16158472
+      },
+      "binary_sha256": "d5a283da89cb49276b72d3edd6311c8e3d68bafc1b46bfbce6c7ce6f388c04d0",
+      "clock_hz": 3500000,
+      "ula_contention_included": false,
+      "physical_hardware_tested": false
+    },
+    "impulses": {
+      "complete": true,
+      "samples": 3200,
+      "every_pcm8_exact": true,
+      "every_pcm16_exact": true,
+      "total_tstates": 35705314,
+      "seconds_at_3_5_mhz": 10.201518285714286,
+      "mean_total_tstates_per_sample": 11157.910625,
+      "first_out_tstates": 657368,
+      "last_out_tstates": 35704310,
+      "min_out_interval": 4986,
+      "max_out_interval": 779129,
+      "nominal_late_samples": 3199,
+      "max_lateness_tstates": 33647379.5,
+      "real_time": false,
+      "pages": [
+        0
+      ],
+      "code_rodata_bytes": 19603,
+      "bss_bytes": 1041,
+      "code_bytes": 6945,
+      "tables_bytes": 12658,
+      "all_cpu_writes_inside_declared_regions": true,
+      "input_static_code_static_tables_unchanged": true,
+      "writable_immediate_addresses": [
+        39002,
+        39011,
+        39028,
+        39045
+      ],
+      "pcm16_output_buffer": false,
+      "initial_state_fill": 165,
+      "dynamic_table_reserved_bytes": 3584,
+      "dynamic_table_regions": [
+        [
+          31744,
+          32768
+        ],
+        [
+          29184,
+          31744
+        ]
+      ],
+      "table_arena_span_bytes": 16384,
+      "phases_tstates": {
+        "_zx_speex_lpc": 5333563,
+        "_zx_speex_filter": 18772923
+      },
+      "binary_sha256": "d5a283da89cb49276b72d3edd6311c8e3d68bafc1b46bfbce6c7ce6f388c04d0",
+      "clock_hz": 3500000,
+      "ula_contention_included": false,
+      "physical_hardware_tested": false
+    },
+    "low-tone": {
+      "complete": true,
+      "samples": 3200,
+      "every_pcm8_exact": true,
+      "every_pcm16_exact": true,
+      "total_tstates": 32839263,
+      "seconds_at_3_5_mhz": 9.382646571428571,
+      "mean_total_tstates_per_sample": 10262.2696875,
+      "first_out_tstates": 668392,
+      "last_out_tstates": 32838259,
+      "min_out_interval": 4986,
+      "max_out_interval": 689718,
+      "nominal_late_samples": 3199,
+      "max_lateness_tstates": 30770304.5,
+      "real_time": false,
+      "pages": [
+        0
+      ],
+      "code_rodata_bytes": 19603,
+      "bss_bytes": 1041,
+      "code_bytes": 6945,
+      "tables_bytes": 12658,
+      "all_cpu_writes_inside_declared_regions": true,
+      "input_static_code_static_tables_unchanged": true,
+      "writable_immediate_addresses": [
+        39002,
+        39011,
+        39028,
+        39045
+      ],
+      "pcm16_output_buffer": false,
+      "initial_state_fill": 165,
+      "dynamic_table_reserved_bytes": 3584,
+      "dynamic_table_regions": [
+        [
+          31744,
+          32768
+        ],
+        [
+          29184,
+          31744
+        ]
+      ],
+      "table_arena_span_bytes": 16384,
+      "phases_tstates": {
+        "_zx_speex_lpc": 5313287,
+        "_zx_speex_filter": 16442156
+      },
+      "binary_sha256": "d5a283da89cb49276b72d3edd6311c8e3d68bafc1b46bfbce6c7ce6f388c04d0",
+      "clock_hz": 3500000,
+      "ula_contention_included": false,
+      "physical_hardware_tested": false
+    },
+    "high-tone": {
+      "complete": true,
+      "samples": 3200,
+      "every_pcm8_exact": true,
+      "every_pcm16_exact": true,
+      "total_tstates": 33895474,
+      "seconds_at_3_5_mhz": 9.684421142857143,
+      "mean_total_tstates_per_sample": 10592.335625,
+      "first_out_tstates": 663573,
+      "last_out_tstates": 33894470,
+      "min_out_interval": 4986,
+      "max_out_interval": 713455,
+      "nominal_late_samples": 3199,
+      "max_lateness_tstates": 31831334.5,
+      "real_time": false,
+      "pages": [
+        0
+      ],
+      "code_rodata_bytes": 19603,
+      "bss_bytes": 1041,
+      "code_bytes": 6945,
+      "tables_bytes": 12658,
+      "all_cpu_writes_inside_declared_regions": true,
+      "input_static_code_static_tables_unchanged": true,
+      "writable_immediate_addresses": [
+        39002,
+        39011,
+        39028,
+        39045
+      ],
+      "pcm16_output_buffer": false,
+      "initial_state_fill": 165,
+      "dynamic_table_reserved_bytes": 3584,
+      "dynamic_table_regions": [
+        [
+          31744,
+          32768
+        ],
+        [
+          29184,
+          31744
+        ]
+      ],
+      "table_arena_span_bytes": 16384,
+      "phases_tstates": {
+        "_zx_speex_lpc": 5194463,
+        "_zx_speex_filter": 17752575
+      },
+      "binary_sha256": "d5a283da89cb49276b72d3edd6311c8e3d68bafc1b46bfbce6c7ce6f388c04d0",
+      "clock_hz": 3500000,
+      "ula_contention_included": false,
+      "physical_hardware_tested": false
+    },
+    "noise": {
+      "complete": true,
+      "samples": 3200,
+      "every_pcm8_exact": true,
+      "every_pcm16_exact": true,
+      "total_tstates": 36966434,
+      "seconds_at_3_5_mhz": 10.561838285714286,
+      "mean_total_tstates_per_sample": 11552.010625,
+      "first_out_tstates": 669967,
+      "last_out_tstates": 36965430,
+      "min_out_interval": 4986,
+      "max_out_interval": 686401,
+      "nominal_late_samples": 3199,
+      "max_lateness_tstates": 34895900.5,
+      "real_time": false,
+      "pages": [
+        0
+      ],
+      "code_rodata_bytes": 19603,
+      "bss_bytes": 1041,
+      "code_bytes": 6945,
+      "tables_bytes": 12658,
+      "all_cpu_writes_inside_declared_regions": true,
+      "input_static_code_static_tables_unchanged": true,
+      "writable_immediate_addresses": [
+        39002,
+        39011,
+        39028,
+        39045
+      ],
+      "pcm16_output_buffer": false,
+      "initial_state_fill": 165,
+      "dynamic_table_reserved_bytes": 3584,
+      "dynamic_table_regions": [
+        [
+          31744,
+          32768
+        ],
+        [
+          29184,
+          31744
+        ]
+      ],
+      "table_arena_span_bytes": 16384,
+      "phases_tstates": {
+        "_zx_speex_lpc": 5341988,
+        "_zx_speex_filter": 20595753
+      },
+      "binary_sha256": "d5a283da89cb49276b72d3edd6311c8e3d68bafc1b46bfbce6c7ce6f388c04d0",
+      "clock_hz": 3500000,
+      "ula_contention_included": false,
+      "physical_hardware_tested": false
+    },
+    "level-jumps": {
+      "complete": true,
+      "samples": 3200,
+      "every_pcm8_exact": true,
+      "every_pcm16_exact": true,
+      "total_tstates": 34480334,
+      "seconds_at_3_5_mhz": 9.851524,
+      "mean_total_tstates_per_sample": 10775.104375,
+      "first_out_tstates": 599856,
+      "last_out_tstates": 34479330,
+      "min_out_interval": 4986,
+      "max_out_interval": 711484,
+      "nominal_late_samples": 3199,
+      "max_lateness_tstates": 32479911.5,
+      "real_time": false,
+      "pages": [
+        0
+      ],
+      "code_rodata_bytes": 19603,
+      "bss_bytes": 1041,
+      "code_bytes": 6945,
+      "tables_bytes": 12658,
+      "all_cpu_writes_inside_declared_regions": true,
+      "input_static_code_static_tables_unchanged": true,
+      "writable_immediate_addresses": [
+        39002,
+        39011,
+        39028,
+        39045
+      ],
+      "pcm16_output_buffer": false,
+      "initial_state_fill": 165,
+      "dynamic_table_reserved_bytes": 3584,
+      "dynamic_table_regions": [
+        [
+          31744,
+          32768
+        ],
+        [
+          29184,
+          31744
+        ]
+      ],
+      "table_arena_span_bytes": 16384,
+      "phases_tstates": {
+        "_zx_speex_lpc": 5378124,
+        "_zx_speex_filter": 18079781
+      },
+      "binary_sha256": "d5a283da89cb49276b72d3edd6311c8e3d68bafc1b46bfbce6c7ce6f388c04d0",
+      "clock_hz": 3500000,
+      "ula_contention_included": false,
+      "physical_hardware_tested": false
+    },
+    "six-bank-capacity": {
+      "complete": true,
+      "samples": 786400,
+      "every_pcm8_exact": true,
+      "every_pcm16_exact": true,
+      "total_tstates": 6702420029,
+      "seconds_at_3_5_mhz": 1914.977151142857,
+      "mean_total_tstates_per_sample": 8522.914584181079,
+      "first_out_tstates": 535513,
+      "last_out_tstates": 6702419025,
+      "min_out_interval": 4986,
+      "max_out_interval": 358645,
+      "nominal_late_samples": 786399,
+      "max_lateness_tstates": 6357833949.5,
+      "real_time": false,
+      "pages": [
+        0,
+        1,
+        3,
+        4,
+        6,
+        7
+      ],
+      "code_rodata_bytes": 19603,
+      "bss_bytes": 1041,
+      "code_bytes": 6945,
+      "tables_bytes": 12658,
+      "all_cpu_writes_inside_declared_regions": true,
+      "input_static_code_static_tables_unchanged": true,
+      "writable_immediate_addresses": [
+        39002,
+        39011,
+        39028,
+        39045
+      ],
+      "pcm16_output_buffer": false,
+      "initial_state_fill": 165,
+      "dynamic_table_reserved_bytes": 3584,
+      "dynamic_table_regions": [
+        [
+          31744,
+          32768
+        ],
+        [
+          29184,
+          31744
+        ]
+      ],
+      "table_arena_span_bytes": 16384,
+      "phases_tstates": {
+        "_zx_speex_lpc": 1306564280,
+        "_zx_speex_filter": 3942281332
+      },
+      "binary_sha256": "d5a283da89cb49276b72d3edd6311c8e3d68bafc1b46bfbce6c7ce6f388c04d0",
+      "clock_hz": 3500000,
+      "ula_contention_included": false,
+      "physical_hardware_tested": false
+    }
+  }
+}
