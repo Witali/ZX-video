@@ -46,9 +46,11 @@ The follow-up also implements three distinct alternatives:
 | Exact Speex round 09 | 13435.302 | 23360 / 8:1 | Selected exact decoder; too slow |
 | Approximate Speex round 10 | 11781.204 | 23360 / 8:1 | Rejected: still too slow, added error |
 | Periodic wave/noise round 11 | 222.625, kernel only | 54320 / 3.440:1 | Not selected; loading/pacing unimplemented |
-| PVQ3x1024 round 12 | 90.418 before pacing | 80974 / 2.308:1 | Selected separately for nominal CPU playback |
+| PVQ3x1024 round 12 | 90.418 before pacing | 80974 / 2.308:1 | Previous nominal CPU baseline |
+| PVQ3x1024 round 13 | 83.751 before pacing | 80974 / 2.308:1 | Selected separately; unchanged sound, 7.373% fewer T |
+| PVQ4x1024 round 14 | 69.313 before pacing | 62528 / 2.989:1 | Rejected: raw SNR loss 3.655 dB exceeds one-dB gate |
 
-The [PVQ assembly player](rounds/12/REPORT.md) reads the complete memory
+The [selected PVQ assembly player](rounds/13/REPORT.md) reads the complete memory
 stream and emits every sample on its alternating **437/438-T schedule**,
 including bank switches and tail. It uses 4614 table bytes, 935 code bytes,
 one state byte and 256 reserved stack bytes, plus five input banks. Raw
@@ -56,6 +58,8 @@ source SNR is 23.510 dB (periodic wave: 9.897 dB); raw waveform SNR is not
 a perceptual speech score. PVQ is a different format, not faster Speex.
 **ULA contention and physical hardware remain unverified**, particularly
 the contended input banks of a Spectrum 128. No release TRD is claimed.
+The [latest target and results](NEXT_TARGET.md) record the achieved <=84-T
+unchanged-sound target and the rejected four-sample compression experiment.
 
 To build and check the selected version:
 
@@ -75,9 +79,12 @@ reports are archived separately with `report_round.py`.
 
 Run `check_approx.py` after building `--variant pure-r10-approx` for its
 quality experiment, `wavetable_experiment.py` for the periodic kernel, and
-`pvq_port.py` for complete VQ playback. They regenerate listening WAVs under
-`build/speex-port/`. The latter reuses the saved 1024-entry training result;
-it does not retrain or silently change the sound during timing optimization.
+`pvq_improve.py` for selected round13 VQ playback. They regenerate listening
+WAVs under `build/speex-port/` (round13: `pvq-r13/preview.wav`). The latter
+reuses the archived compressed input and book; it does not retrain or change
+the sound during timing optimization. `pvq_port.py` reproduces historical
+round12. `pvq_four.py` reproduces the rejected round14 format/quality trial
+and its `pvq-r14/preview.wav`; it does not replace the selected variant.
 
 ## Original implementation and baseline evidence
 

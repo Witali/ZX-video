@@ -33,16 +33,16 @@ def check_variant(out,encoded,*,tight):
     group=book.shape[1]*4
     # Bounded first comparison exercises every slot, another group and a tail.
     n=group*2+1;probe=out/'probe';build(probe,n,book,True,tight=tight)
-    execute(probe,stream[:((n+group-1)//group)*5],expected[:n],True)
+    execute(probe,stream[:((n+group-1)//group)*5],expected[:n],True,dimensions=book.shape[1])
     results={}
     for name,paced in [('unpaced',False),('paced',True)]:
         folder=out/name;build(folder,len(expected),book,paced,tight=tight)
-        results[name]=execute(folder,stream,expected,paced)
-    results['instruction_audit']=execute(out/'paced',stream,expected,True,audit_first=True)
+        results[name]=execute(folder,stream,expected,paced,dimensions=book.shape[1])
+    results['instruction_audit']=execute(out/'paced',stream,expected,True,audit_first=True,dimensions=book.shape[1])
     tails=[]
     for n in range(1,2*group+2):
         folder=out/f'tail-{n}';build(folder,n,book,True,tight=tight)
-        r=execute(folder,stream[:((n+group-1)//group)*5],expected[:n],True)
+        r=execute(folder,stream[:((n+group-1)//group)*5],expected[:n],True,dimensions=book.shape[1])
         tails.append(dict(samples=n,exact=r['all_pcm8_exact_to_vq_reference'],paced=r['nominal_437_438_schedule_verified']))
     results['tails']=tails
     results.update(samples=len(expected),encoded_sha256=sha(encoded),pcm8_sha256=sha(expected),

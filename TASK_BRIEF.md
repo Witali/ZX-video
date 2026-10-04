@@ -14,6 +14,16 @@ converter must also support other videos.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
+Latest optimization milestone on 2026-10-04: selected PVQ round13 retains
+round12 sound and all 80974 stored bytes, while reducing complete unpaced
+CPU from 16897348 to 15651480 T (83.7515 T/sample, 7.373% fewer T).
+Every 437/438-T port interval and 25 short-length checks pass. Conditional
+round14 reaches 62528 bytes / 2.98874:1 and 69.3130 T/sample, but loses
+3.6550 dB raw SNR and is rejected against the declared one-dB gate. Keep
+round13 selected; exact Speex remains pure-r9. Table RAM remains 4614 bytes;
+ULA/hardware timing remains unverified. Both experiments and reproduction
+are linked from the [completed target](audiobook-beeper/speex-port/NEXT_TARGET.md).
+
 Further follow-up on 2026-10-04: all six items in the
 [new audio worklist](audiobook-beeper/speex-port/FOLLOWUP_TODO.md) are closed
 in the same `codex/speex-port` worktree. Exact default `pure-r9` costs

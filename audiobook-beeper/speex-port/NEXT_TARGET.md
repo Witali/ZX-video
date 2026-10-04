@@ -26,6 +26,21 @@ decoding increases time available for useful work; the output stays at 8 kHz.
 Do not expand this milestone into PDM, TRD release or another Speex rewrite.
 Commit each completed change with its report and root CHANGELOG entry.
 
-Target 1 achieved: [round13](rounds/13/REPORT.md), 83.7515 T/sample for the
-complete recording, identical data/sound and all 437/438-T output intervals.
-The conditional four-sample-vector comparison remains the next experiment.
+## Completed results (2026-10-04)
+
+- [x] Target 1 achieved: [round13](rounds/13/REPORT.md), 83.7515 T/sample for
+  the complete recording, 7.373% fewer T, identical data/sound and every
+  437/438-T output interval. Keep this version selected for nominal playback.
+- [x] Conditional experiment completed: [round14](rounds/14/REPORT.md),
+  69.3130 T/sample, 62528 stored bytes / 2.98874:1. Speed/storage pass,
+  but raw SNR falls 3.6550 dB, exceeding the one-dB gate. Reject this
+  candidate; the combined compression/quality target is **not achieved**.
+- [x] Recheck round13 and the historical round12 build after generalizing
+  vector length; all waveform, timing and binary-identity checks pass.
+
+This milestone is complete. A future compression experiment would need
+raw SNR >=22.5102 dB at roughly 3:1 and <=80 T/sample; the current encoder
+does not meet that combination. The practical integration milestone is
+to verify the complete 8-kHz port schedule in a Spectrum emulator with
+ULA contention, before claiming hardware-level playback timing. Neither
+future milestone has been measured by these nominal CPU checks.

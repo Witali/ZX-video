@@ -33,7 +33,10 @@ def data_bytes(data):
 
 
 def assembly(samples,book,paced,*,tight=False):
-    groups,tail=divmod(samples,12)
+    dimensions=book.shape[1]
+    assert book.shape==(1024,dimensions) and dimensions in (3,4)
+    group=4*dimensions
+    groups,tail=divmod(samples,group)
     assert 0<samples and groups<=65535
     code='''; PVQ3x1024, three signed residuals per vector, PCM8 DAC port FB.
 ; Valid encoder output has no sum overflow. IRQ disabled; nominal 3.5-MHz
@@ -84,22 +87,22 @@ ld b,a
     def block(n,prefix):
         text=prefix+'_start:\ncall ensure_bank\nld a,(de)\ninc de\nld c,a\n'
         for i in range(n):
-            if i%3==0:text+=vector
+            if i%dimensions==0:text+=vector
             if tight:
                 # Only the last reconstructed value becomes the next predictor.
                 # The next vector reloads HL, so its final INC L is also dead.
                 text+='; Keep history only at vector end; no dead final pointer increment.\nld a,(hl)\n'
-                if i%3!=2:text+='inc l\n'
+                if i%dimensions!=dimensions-1:text+='inc l\n'
                 text+='add a,b\n'
-                if i%3==2:text+='ld ixh,a\n'
+                if i%dimensions==dimensions-1:text+='ld ixh,a\n'
             else:text+=sample
             # Includes previous group control on slot zero, CALL/RET and OUT.
-            base=363 if i==0 else 150 if i%3==0 else 34
-            if tight:base-=4 if i%3==2 else 8
+            base=363 if i==0 else 150 if i%dimensions==0 else 34
+            if tight:base-=4 if i%dimensions==dimensions-1 else 8
             if paced:text+=delay(438-i%2-base)
             text+=f'.globl _{prefix}_out{i}\n_{prefix}_out{i}::\nout (0xfb),a\n'
         return text
-    code+=block(12,'group')
+    code+=block(group,'group')
     code+='dec iy\nld a,iyh\nor a,iyl\njp nz,group_start\n'
     if tail:code+=block(tail,'tail')
     else:code+='tail_start:\n'
@@ -140,13 +143,16 @@ _code_end::
 '''+data_bytes(bytes((i*4)&255 for i in range(256)))
     code+='.org 0x8900\n'+data_bytes(bytes(0x90+(i>>6) for i in range(256)))
     code+='.org 0x8a00\n'+data_bytes(bytes(ORDER))
-    expanded=np.full((1024,4),165,dtype='u1');expanded[:,:3]=book.view('u1')
+    expanded=np.full((1024,4),165,dtype='u1');expanded[:,:dimensions]=book.view('u1')
     code+='.org 0x9000\n'+data_bytes(expanded.tobytes())
     # sdasz80 does not accept index-half mnemonics. Emit their normal Z80
     # encodings explicitly; each takes the base register opcode's 4 T + prefix 4 T.
     for mnemonic,opcode in [('ld a,ixh','0xdd,0x7c'),('ld ixh,a','0xdd,0x67'),
                             ('ld a,iyh','0xfd,0x7c'),('or a,iyl','0xfd,0xb5')]:
         code=code.replace(mnemonic+'\n',f'.db {opcode} ; {mnemonic}, 8 T (index-half instruction)\n')
+    if dimensions==4:
+        code=code.replace('PVQ3x1024, three signed residuals','PVQ4x1024, four signed residuals')
+        code=code.replace('12-sample groups','16-sample groups')
     return code
 
 
@@ -172,7 +178,8 @@ def prepare(folder,stream):
     return m,s,mem,banks
 
 
-def execute(folder,stream,expected,paced,audit_first=False):
+def execute(folder,stream,expected,paced,audit_first=False,*,dimensions=3):
+    group=dimensions*4
     m,s,mem,banks=prepare(folder,stream);events=[];actual=[];pages=[];current=None
     budget=200_000_000;m.ticks_to_stop=budget
     audits=Counter();audited_t=0;instructions=0
@@ -200,18 +207,18 @@ def execute(folder,stream,expected,paced,audit_first=False):
                     before=m.frame_tick;m.ticks_to_stop=1;m.run();got+=(m.frame_tick-before)%100000
                 assert got==want,(hex(pc),got,want)
                 audits[got]+=1;audited_t+=got;instructions+=1
-        audit_until(min(24,len(expected)))
-        boundary=(CHUNK//5)*12
-        if len(expected)>boundary+12:
+        audit_until(min(group*2,len(expected)))
+        boundary=(CHUNK//5)*group
+        if len(expected)>boundary+group:
             address=s['_group_out0'];m.set_breakpoint(address)
-            while len(actual)<boundary-12:
+            while len(actual)<boundary-group:
                 m.ticks_to_stop=budget;m.run()
                 if m.pc==address:m.step_over_breakpoint()
             m.clear_breakpoint(address)
-            audit_until(boundary+12)
+            audit_until(boundary+group)
             assert len(pages)>=2
         return dict(instructions=instructions,tstates=audited_t,
-                    covers_first_bank_switch=len(expected)>boundary+12,
+                    covers_first_bank_switch=len(expected)>boundary+group,
                     every_instruction_matches_timing_model=True,histogram=dict(sorted(audits.items())))
     while m.pc!=s['_complete']:
         event=m.run();assert not(event&m._TICKS_LIMIT_HIT),'native timeout'
@@ -222,7 +229,7 @@ def execute(folder,stream,expected,paced,audit_first=False):
     if paced:
         assert intervals==[438-i%2 for i in range(1,len(events))]
         assert all(t-events[0]==437*i+i//2 for i,t in enumerate(events))
-    by_slot={str(i):dict(Counter(intervals[j-1] for j in range(1,len(events)) if j%12==i)) for i in range(12)}
+    by_slot={str(i):dict(Counter(intervals[j-1] for j in range(1,len(events)) if j%group==i)) for i in range(group)}
     report=dict(samples=len(actual),total_cpu_tstates=budget-m.ticks_to_stop,
                 first_out_tstates=events[0],last_out_tstates=events[-1],
                 min_interval=min(intervals) if intervals else None,max_interval=max(intervals) if intervals else None,

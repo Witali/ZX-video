@@ -1,5 +1,24 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Reject PVQ four-sample compression trial; retain round13
+
+On the same complete 186880-sample control, retrain 1024 four-residual
+vectors with the prior seeded K-means method and extend the assembly
+generator from twelve- to sixteen-sample groups. Full unpaced CPU becomes
+12953218 T / 69.3130 T/sample, down 2698262 T from round13; storage is
+62528 bytes / 2.98874:1 PCM8, down 18446 bytes. Tables remain 4614 bytes.
+All native samples match the scalar recurrence, every 437/438-T interval
+including three bank switches passes, and 33 short lengths, memory guards
+and instruction audit pass. Rebuilt round13 and historical round12 preserve
+their evidence. Raw SNR falls from 23.5102 to 19.8552 dB (-3.6550), exceeding
+the predeclared one-dB gate: reject this candidate, retain round13's 7.373%
+CPU saving with unchanged sound. A first launch failed on an unrelated
+OpenCV import before training; isolating the NumPy helper resolved it.
+No ULA/hardware or listening qualification is claimed. Close the scoped
+two-target milestone with the compression/quality combination unmet.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/14/REPORT.md),
+[completed target](audiobook-beeper/speex-port/NEXT_TARGET.md).
+
 ## 2026-10-04: PVQ round13 reaches the unchanged-sound speed target
 
 On unchanged round12 input/book, remove two intermediate IXH writes and
