@@ -656,24 +656,36 @@ def split_word_product(d, f):
     return d,f[:start]+generate()+f[stop:]
 
 
+def shared_q14_coefficient(d, f):
+    """Prepare one coefficient magnitude for both exact Q14 partial products."""
+    from q14_product import q14,unsigned_product
+    assert d.count('s8_sign')==1 and 's8_sign: .ds 1' in d
+    start=d.index('; HL coefficient, DE pointer to signed32 argument;')
+    end=d.index('; Exact integer cosine',start)
+    d=d[:start]+q14()+d[end:]
+    f=replace_once(f,'; Unsigned A*C',unsigned_product()+'; Unsigned A*C')
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'))
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'))
-    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=excitation_shift(d,f)
-    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=innovation_registers(d,f)
-    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=zero_feedback(d,f)
-    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'))
-    if variant in ('pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=pitch_accumulator(d,f)
-    if variant in ('pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=shared_pitch_history(d,f)
-    if variant in ('pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):d,f=constant_pitch_products(d,f,folder,'binary' if variant=='pure-r28-binary' else 'chain',variant in ('pure-r29','pure-r30','pure-r31'))
-    if variant in ('pure-r30','pure-r31'):d,f=synthesis_shift(d,f)
-    if variant=='pure-r31':d,f=split_word_product(d,f)
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'))
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'))
+    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'):d,f=excitation_shift(d,f)
+    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'):d,f=innovation_registers(d,f)
+    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'):d,f=zero_feedback(d,f)
+    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'))
+    if variant in ('pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'):d,f=pitch_accumulator(d,f)
+    if variant in ('pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'):d,f=shared_pitch_history(d,f)
+    if variant in ('pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'):d,f=constant_pitch_products(d,f,folder,'binary' if variant=='pure-r28-binary' else 'chain',variant in ('pure-r29','pure-r30','pure-r31','pure-r32'))
+    if variant in ('pure-r30','pure-r31','pure-r32'):d,f=synthesis_shift(d,f)
+    if variant in ('pure-r31','pure-r32'):d,f=split_word_product(d,f)
+    if variant=='pure-r32':d,f=shared_q14_coefficient(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')

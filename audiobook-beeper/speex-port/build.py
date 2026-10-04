@@ -43,7 +43,7 @@ def main():
     p.add_argument('--sdcc',type=Path,default=Path('C:/Work/ZX-video/.tmp/z80-c-compilers/sdcc/bin/sdcc.exe'))
     p.add_argument('--vcvars',type=Path,default=Path('C:/Program Files/Microsoft Visual Studio/18/Community/VC/Auxiliary/Build/vcvars64.bat'))
     p.add_argument('--host-only',action='store_true')
-    p.add_argument('--variant',choices=['z80','asm','table','pure-asm','pure-fast','pure-r1','pure-r2','pure-r3-register','pure-r3','pure-r4','pure-r7','pure-r8','pure-r9','pure-r10-approx','pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'],default='pure-r31')
+    p.add_argument('--variant',choices=['z80','asm','table','pure-asm','pure-fast','pure-r1','pure-r2','pure-r3-register','pure-r3','pure-r4','pure-r7','pure-r8','pure-r9','pure-r10-approx','pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'],default='pure-r32')
     p.add_argument('--skip-host',action='store_true')
     a=p.parse_args();out=a.output.resolve();out.mkdir(parents=True,exist_ok=True)
     source=out/'speex-1.2.1'
@@ -61,8 +61,8 @@ def main():
         emit(target/'decoder.s',fast=a.variant!='pure-asm')
         if a.variant.startswith('pure-r'):
             from optimize import optimize
-            optimize(target,'pure-r4' if a.variant in ('pure-r7','pure-r8','pure-r9','pure-r10-approx','pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31') else a.variant)
-            if a.variant in ('pure-r7','pure-r8','pure-r9','pure-r10-approx','pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31'):
+            optimize(target,'pure-r4' if a.variant in ('pure-r7','pure-r8','pure-r9','pure-r10-approx','pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32') else a.variant)
+            if a.variant in ('pure-r7','pure-r8','pure-r9','pure-r10-approx','pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26','pure-r27','pure-r28-binary','pure-r28','pure-r29','pure-r30','pure-r31','pure-r32'):
                 from followup_opt import apply
                 apply(target,a.variant)
         for name in ('decoder','filter'):

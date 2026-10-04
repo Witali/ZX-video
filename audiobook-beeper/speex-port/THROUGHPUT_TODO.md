@@ -12,6 +12,12 @@ Baseline: exact mode-3 Speex `pure-r9`, 2510789186 T for 186880 samples,
 already emitted without pacing. Retain the complete upstream PCM16/PCM8
 comparison and report throughput separately from instantaneous OUT gaps.
 
+Next intermediate target after round32: **below 8500 T/sample** on the same
+complete 186880-sample speech, exact PCM16/PCM8 and unchanged 16-KiB table
+arena. Current 8722.182 T/sample needs another 41521442 T saving to reach
+8500 (about 2.55%). This is an unachieved target, not a forecast; round33
+alone is not expected to close the gap. Real time still needs 437.5 T/sample.
+
 - [x] **15. Register-based coefficient table construction.** Replace four
   byte stores and repeated step loads with 32-bit register accumulation and
   reverse PUSH writes. Save/restore SP around each changed page; document
@@ -176,14 +182,25 @@ comparison and report throughput separately from instantaneous OUT gaps.
   products, instruction formulas/guards and 1094880 full-stream samples pass.
   All observed operands match; isolated costs reconcile with the total delta.
   Code -39, table/state unchanged. Average real-time deficit still 20.002x.
-- [ ] **32. Share coefficient preparation inside Q14 multiplication.** The
+- [x] **32. Share coefficient preparation inside Q14 multiplication.** The
   two signed16 products in MULT16_32_Q14 use the same coefficient. Reuse the
   archived operand trace to quantify repeated normalization and sign work,
   then prototype a fused path only with a plausible total saving. Preserve
   high-argument signed16 truncation and negative fractional rounding exactly.
   Include argument extraction, scratch/stack, calls and final combination;
   compare complete CPU with unchanged general multiplier and table contracts.
-  This next candidate is unimplemented and unmeasured.
+  [Round32](rounds/32/REPORT.md) selects shared normalization: -5359215 T,
+  8722.182 T/sample (-0.328%). All 1343488 Q14 cases, 1179648 unsigned
+  products and 1094880 complete samples pass. Every checked full fixture
+  improves, but 40193 individual speech calls regress. Code +179 bytes;
+  table/state unchanged. Average real-time deficit remains 19.936x.
+- [ ] **33. Avoid double Q14 sign reversal.** Negative coefficient/negative
+  high-part inputs occur 39946 times in the saved trace. The current path
+  negates the high product and later negates the combined result. Compare
+  a positive high product minus the rounded fractional contribution, with
+  all sign/zero/remainder boundaries and setup costs included. Preserve
+  truncation, exact PCM, memory and complete-stream gates. This candidate
+  is unimplemented; do not claim its saving in advance.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

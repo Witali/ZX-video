@@ -1,5 +1,23 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round32 shares Q14 coefficient normalization
+
+On unchanged round31 speech, normalize the repeated Q14 coefficient once,
+use unsigned byte/word partials and retain high-part truncation plus exact
+negative fractional rounding. Q14 172467335 -> 167108120 T; full speech
+1635360657 -> 1630001442 T (-5359215, 0.328%), 8722.182 T/sample. Every
+observed operand matches; isolated instruction formulas reconcile with the
+full saving. All 1343488 Q14 cases, 1179648 unsigned products, 374 boundary
+instruction audits per binary and 1094880 complete PCM16/PCM8 samples pass;
+fresh default identity matches. Every complete fixture improves, but 40193
+individual speech calls regress; this is not a universal per-call speedup.
+Code +179 bytes, state/table/payload unchanged. Select pure-r32; still
+19.936x over average real-time budget, no ULA/hardware claim. The next
+intermediate target is below 8500 T/sample (unachieved); first investigate
+removing double sign reversal on negative coefficient/high inputs. No next
+speedup is measured. No candidate was reverted in this round.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/32/REPORT.md).
+
 ## 2026-10-04: Speex round31 combines two unsigned byte/word products
 
 On unchanged round30 speech, replace general signed16x16 bit-serial products
