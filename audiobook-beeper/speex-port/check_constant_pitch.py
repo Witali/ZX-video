@@ -21,8 +21,10 @@ def constants(folder,plan):
     preserved=(0x1234,0xabcd,0x3456,0x5678,0xcafe,0xdead,0xbffe)
     def reset():
         m.alt_af,m.alt_bc,m.alt_de,m.alt_hl,m.ix,m.iy=preserved[:-1]
+    direct=plan.get('result_registers')=='A:HL'
     def check(word,gain):
-        assert (m.hl<<16|m.de)==(gain*word)&0xffffffff,(gain,word,m.hl,m.de)
+        got=(m.a<<16|m.hl) if direct else (m.hl<<16|m.de)
+        assert got==(gain*word)&(0xffffff if direct else 0xffffffff),(gain,word,got)
         assert (m.alt_af,m.alt_bc,m.alt_de,m.alt_hl,m.ix,m.iy,m.sp)==preserved
     routines=plan['routines'];by_gain={r['gain']:r for r in routines}
     pointer=s['_pitch_gain_targets']
@@ -59,18 +61,21 @@ def constants(folder,plan):
                 audited_instructions=audit_instructions,all_audited_instructions_match=True,routines=rows)
 
 
-def speech(folder,variant,plan,baseline):
+def speech(folder,variant,plan,baseline,previous_plan=None):
     out=ROOT/'build/speex-port'
     s=symbols(folder);by_name={r['label']:r for r in plan['routines']}
     counts=Counter();saving=0;negative_words=0
+    previous={r['label']:r for r in previous_plan['routines']} if previous_plan else None
+    old_add=48 if previous_plan and previous_plan.get('result_registers')=='A:HL' else 52
+    new_add=48 if plan.get('result_registers')=='A:HL' else 52
     def observe(name,m):
         nonlocal saving,negative_words
         if name not in by_name:return
         row=by_name[name];word=m.de-65536 if m.de&32768 else m.de
-        old=expected_cost(row['gain'],word)
-        # Old LD A,(gain)=13, CALL=17. New LD HL,(target)=16,
-        # CALL=17 and JP(HL)=4: +7 T outside each constant routine.
-        saving+=old-row['tstates_including_ret']-7
+        old=previous[name]['tstates_including_ret'] if previous else expected_cost(row['gain'],word)
+        # Generic->constant dispatch adds 7 T; constant->constant is unchanged.
+        # Direct A:HL also removes the caller's 4-T LD A,L before accumulation.
+        saving+=old-row['tstates_including_ret']-(0 if previous else 7)+old_add-new_add
         counts[name]+=1;negative_words+=(word<0)
     with redirect_stdout(io.StringIO()):
         r=native(out,variant,folder,profile=tuple(by_name)+('_mul_s8',),entry_observer=observe)
@@ -109,12 +114,14 @@ def main():
     p.add_argument('--variants',nargs='+',default=['pure-r28-binary','pure-r28'])
     p.add_argument('--previous',default='pure-r27');a=p.parse_args()
     out=ROOT/'build/speex-port';baseline=json.loads((out/a.previous/'report.json').read_text())
+    previous_path=out/a.previous/'constant-pitch-plan.json'
+    previous_plan=json.loads(previous_path.read_text()) if previous_path.exists() else None
     results={}
     for variant in a.variants:
         folder=out/variant;plan=json.loads((folder/'constant-pitch-plan.json').read_text())
         checks=constants(folder,plan)
         print(variant,'exhaustive constants passed:',checks['exact_products'],'products,',checks['code_bytes'],'code bytes',flush=True)
-        checks['speech']=speech(folder,variant,plan,baseline)
+        checks['speech']=speech(folder,variant,plan,baseline,previous_plan)
         checks['all_pitches']=extra_stream(folder,variant)
         (folder/'constant-pitch-checks.json').write_text(json.dumps(checks,indent=2)+'\n',newline='\n')
         results[variant]=checks

@@ -2,7 +2,7 @@
 
 ## Latest result: exact Speex improved; separate VQ playback meets nominal CPU timing
 
-The selected exact default is **`pure-r28`**. Both the initial [TODO](TODO.md)
+The selected exact default is **`pure-r29`**. Both the initial [TODO](TODO.md)
 and six-item [follow-up worklist](FOLLOWUP_TODO.md) are complete, with reports
 and focused commits. Original generators and evidence remain reproducible.
 The exact decoder retains Speex mode-3 packets and emits identical PCM8.
@@ -31,21 +31,23 @@ throughput; no uniform per-sample output schedule is required.
 | 26. Register-held pitch accumulation | 1834745357 | 9817.773 |
 | 27. Shared long-period history cursor | 1790761749 | 9582.415 |
 | 28. Constant pitch-gain chains | 1693838136 | 9063.774 |
+| 29. Direct signed24 pitch results | 1680861924 | 8994.338 |
 
-Round 28 uses **32.54% fewer T than round 09**, 2.678x faster than original
+Round 29 uses **33.05% fewer T than round 09**, 2.699x faster than original
 assembly. Internal PCM16 and emitted PCM8 stay exact. Real time still fails
-by **20.72x** against 437.5 T/sample: 23.36 seconds of speech needs 483.95
+by **20.56x** against 437.5 T/sample: 23.36 seconds of speech needs 480.25
 seconds of nominal CPU time. No pacing is added to this Speex decoder.
-The below-10000 intermediate target is met. The next target is **below 9000
-T/sample**, preserving the same PCM and table budget. Returning constant
-pitch products directly as A:HL could avoid conversion and reload costs;
-current counts predict 8994.833 T/sample. This next change is unimplemented.
-See the [current result and instruction estimate](rounds/28/REPORT.md).
+The **below-9000 T/sample intermediate target is met**, preserving the same
+PCM and table budget. Returning constant pitch products directly as A:HL
+saves 12976212 T and 325 code bytes. Next inspect the synthesis filter's
+signed shift: a three-left-shift equivalent predicts another 27 T/sample.
+This next change is unimplemented; the average real-time goal remains unmet.
+See the [current result and next estimate](rounds/29/REPORT.md).
 
-Current [image](rounds/28/player.ihx), [decoder](rounds/28/decoder.s),
-[filter](rounds/28/filter.s) and [map](rounds/28/player.map) are under
-`rounds/28`. Entry/count/status, input-bank order and port contract below
-remain unchanged. Code is `8000..A412` (9235 bytes), state `B000..B410`
+Current [image](rounds/29/player.ihx), [decoder](rounds/29/decoder.s),
+[filter](rounds/29/filter.s) and [map](rounds/29/player.map) are under
+`rounds/29`. Entry/count/status, input-bank order and port contract below
+remain unchanged. Code is `8000..A2CD` (8910 bytes), state `B000..B410`
 (1041), stack reserve `BF00..BFFF`. The PCM16 output buffer is removed;
 `_last_pcm16` exposes the existing feedback sample for verification. All
 code writes are forbidden during playback. Retained standalone product
@@ -56,11 +58,12 @@ code/state/input are additional RAM. Gain triples now hold routine pointers.
 
 The final exact binary passes **1094880 complete-stream samples**, arithmetic,
 memory guards, instruction audits and a fresh default-build identity check.
-All **4259840 constant/word products** pass for each of the binary and selected
-add/subtract candidates, with exact timings and preserved alternate registers.
-See [standard verification](rounds/28/unpaced-checks.json),
-[constant products and all-pitch streams](rounds/28/constant-pitch-checks.json),
-[prior history-address checks](rounds/27/pitch-path-checks.json),
+All **4259840 constant/word products** pass for the direct signed24 routines,
+with exact timings and preserved alternate registers. Both baseline and new
+paths pass 200187 sums and all 163840 codebook/pitch/position cases.
+See [standard verification](rounds/29/unpaced-checks.json),
+[constant products and all-pitch streams](rounds/29/constant-pitch-checks.json),
+[current sum/address checks](rounds/29/direct-pitch-checks.json),
 [complete coefficient-domain checks](rounds/24/coefficient-step-checks.json),
 [200187 pitch-sum checks](rounds/26/pitch-accumulator-checks.json),
 [prior feedback/filter contracts](rounds/23/inline-checks.json), and
@@ -73,7 +76,7 @@ The follow-up also implements three distinct alternatives:
 
 | Candidate | CPU T/sample | Stored bytes / PCM8 ratio | Decision |
 | --- | ---: | ---: | --- |
-| Exact Speex round 28 | 9063.774 | 23360 / 8:1 | Selected exact decoder; too slow |
+| Exact Speex round 29 | 8994.338 | 23360 / 8:1 | Selected exact decoder; too slow |
 | Approximate Speex round 10 | 11781.204 | 23360 / 8:1 | Rejected: still too slow, added error |
 | Periodic wave/noise round 11 | 222.625, kernel only | 54320 / 3.440:1 | Not selected; loading/pacing unimplemented |
 | PVQ3x1024 round 12 | 90.418 before pacing | 80974 / 2.308:1 | Previous nominal CPU baseline |
@@ -96,14 +99,15 @@ To build and check the selected version:
 ```powershell
 python audiobook-beeper/speex-port/build.py --skip-host
 python audiobook-beeper/speex-port/verify.py --native-only --restore-fixture
-python audiobook-beeper/speex-port/check_round.py --variant pure-r28
-python audiobook-beeper/speex-port/check_constant_pitch.py --variants pure-r28
-python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r28 --previous pure-r27 --check-default
+python audiobook-beeper/speex-port/check_round.py --variant pure-r29
+python audiobook-beeper/speex-port/check_constant_pitch.py --variants pure-r29 --previous pure-r28
+python audiobook-beeper/speex-port/check_pitch_direct.py
+python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r29 --previous pure-r28 --check-default
 ```
 
 The stream checks require the host-generated fixtures: build host DLLs
-as described below and run `check_streams.py --variant pure-r28` to generate
-them. Keep the pure-r27 build/report and archived random-packet fixtures
+as described below and run `check_streams.py --variant pure-r29` to generate
+them. Keep the pure-r28 build/report and archived random-packet fixtures
 available for `check_unpaced.py`. Retain the same Python runtime. `finish_followup.py`
 reproduces the historical round09 checkpoint. `final_checks.py` reproduces historical
 round-04 LPC evidence and needs `pure-r3` and `pure-r4` builds explicitly.

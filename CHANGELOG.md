@@ -1,5 +1,21 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round29 returns signed24 pitch products directly
+
+On unchanged round28 speech, return constants in A:HL and consume that
+representation directly in the pitch sum. Ordinary calls save 24 T including
+accumulation; zero/identity save 12/8 T. Predicted and executed total savings
+agree: 12976212 T, 1693838136 -> 1680861924 T, **8994.338 T/sample** (-0.766%).
+The below-9000 intermediate target passes. All 4259840 products, 200187 sums
+and 163840 complete codebook/pitch/position cases per baseline/new variant
+pass, with instruction/register/write guards and 1094880 complete-stream
+PCM16/PCM8 samples. Fresh default and prior-round rebuild identities match.
+Code -325 bytes; state/tables/payload unchanged. Select pure-r29; still
+20.558x over average real-time budget, with no pacing or ULA/hardware claim.
+Next inspect a 93-T replacement for the 120-T synthesis signed shift;
+27-T/sample saving is only an instruction estimate.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/29/REPORT.md).
+
 ## 2026-10-04: Speex round28 specializes exact pitch-gain products
 
 On unchanged round27 speech, replace the 192-byte gain triples with same-size

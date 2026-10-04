@@ -140,14 +140,26 @@ comparison and report throughput separately from instantaneous OUT gaps.
   binary Horner: 9063.774 T/sample, 96923613 fewer T (-5.412%). All 4259840
   products per candidate and 1094880 selected complete-stream samples pass.
   Code +1616, tables/state unchanged; average real-time deficit still 20.717x.
-- [ ] **29. Return pitch products directly as A:HL.** The accumulator uses
+- [x] **29. Return pitch products directly as A:HL.** The accumulator uses
   only signed24, so avoid the constant helper's signed32 conversion and
   subsequent high-byte reload. Keep the ordinary 24-T saving separate from
   zero's proposed 10 T and identity's 4 T. On observed counts the estimate
   is 12883810 T, or 8994.833 T/sample: aim for **below 9000 T/sample** on
   the unchanged full speech. Verify every constant/word, modulo24 sums,
-  skipped taps, registers, memory and full streams. This is unimplemented;
-  an instruction estimate does not pass the milestone or real-time goal.
+  skipped taps, registers, memory and full streams. The initial estimate
+  alone did not pass the milestone or real-time goal.
+  [Round29](rounds/29/REPORT.md) confirms 12976212 fewer T, **8994.338
+  T/sample**, passing the intermediate target. Zero/identity save 12/8 T,
+  better than the original estimate. All 4259840 products, 200187 additions
+  and 163840 history cases per variant plus 1094880 full-stream samples pass.
+  Code -325, table/state unchanged; average real-time deficit still 20.558x.
+- [ ] **30. Shorten the synthesis feedback shift.** Replace five signed24
+  right shifts after byte discard with three left shifts in sign-extended
+  A:E:HL, then select the upper three bytes. Count 93 versus 120 T, saving
+  27 T/sample: predicted 8967.338 T/sample on the unchanged full speech.
+  Verify signed extrema, every rounding boundary, register/flag assumptions,
+  memory and complete streams. Preserve exact Speex and the table budget;
+  this next candidate is unimplemented and unmeasured.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

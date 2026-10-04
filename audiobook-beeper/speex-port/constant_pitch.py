@@ -52,7 +52,7 @@ def binary_plan(gain):
     return dict(seed='negative' if gain<0 else 'positive',operations=path,uses_b=uses_b,core_tstates=cost,core_bytes=size)
 
 
-def generate(strategy):
+def generate(strategy, return_ahl=False):
     assert strategy in ('binary','chain')
     plans=chain_plans() if strategy=='chain' else {g:binary_plan(g) for g in set(gains())}
     code='''; DE signed16 history, HL selected immutable routine address. CALL this
@@ -67,15 +67,27 @@ jp (hl)
 ; Intermediate wrap is harmless: every final book gain*word fits signed24,
 ; so sign-extending the final high byte gives the exact signed32 result.
 '''
+    if return_ahl:
+        code=code.replace('returns signed32 HL:DE', 'returns signed24 A:HL')
+        code=code.replace('Ordinary AF/BC may be clobbered.', 'Ordinary flags/BC/DE may be clobbered.')
+        code=code.replace('; so sign-extending the final high byte gives the exact signed32 result.',
+                          '; so the final A:HL bits are the exact signed24 product consumed by the sum.')
     records=[]
     for gain in sorted(plans):
         plan=plans[gain];name=label(gain)
         code+=f'; Constant {gain}: {strategy} sequence; no data-dependent branches.\n.globl {name}\n{name}::\n'
         if gain==0:
-            code+='ld hl,#0\nld de,#0\nret\n';cost=30;size=7
+            if return_ahl:
+                code+='xor a,a\nld h,a\nld l,a\nret\n';cost=22;size=4
+            else:
+                code+='ld hl,#0\nld de,#0\nret\n';cost=30;size=7
             plan=dict(seed='zero',operations=[],uses_b=False)
         elif gain==1:
-            code+='ld a,d\nadd a,a\nsbc a,a\nld l,a\nld h,a\nret\n';cost=30;size=6
+            if return_ahl:
+                # A retains the word's sign; one EX transfers the input to HL.
+                code+='ld a,d\nadd a,a\nsbc a,a\nex de,hl\nret\n';cost=26;size=5
+            else:
+                code+='ld a,d\nadd a,a\nsbc a,a\nld l,a\nld h,a\nret\n';cost=30;size=6
             plan=dict(seed='identity',operations=[],uses_b=False)
         else:
             code+='ld a,d\nadd a,a\nsbc a,a\n'
@@ -92,7 +104,11 @@ sbc a,b
             for op in plan['operations']:
                 code+=dict(double='add hl,hl\nrla\n',plus='add hl,de\nadc a,b\n',
                            minus='or a,a\nsbc hl,de\nsbc a,b\n')[op]
-            code+='''; Transfer the low word to DE, then sign-extend the final high byte.
+            if return_ahl:
+                code+='; Leave A:HL directly for modulo24 accumulation; no signed32 conversion.\nret\n'
+                cost=plan['core_tstates']+10;size=plan['core_bytes']+1
+            else:
+                code+='''; Transfer the low word to DE, then sign-extend the final high byte.
 ex de,hl
 ld l,a
 add a,a
@@ -100,7 +116,9 @@ sbc a,a
 ld h,a
 ret
 '''
-            cost=plan['core_tstates']+30;size=plan['core_bytes']+6
+                cost=plan['core_tstates']+30;size=plan['core_bytes']+6
         records.append(dict(gain=gain,label=name,tstates_including_ret=cost,bytes=size,**plan))
-    return code,dict(strategy=strategy,search_multiplier_bound=256 if strategy=='chain' else None,
+    metadata=dict(strategy=strategy,search_multiplier_bound=256 if strategy=='chain' else None,
                      pointer_table_bytes=192,trampoline_tstates=4,trampoline_bytes=1,routines=records)
+    if return_ahl:metadata['result_registers']='A:HL'
+    return code,metadata
