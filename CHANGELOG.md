@@ -1,5 +1,23 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round35 retains table steps in registers
+
+On unchanged round34 speech, keep 16*step in spare BC/BC' and select aligned
+group-end addresses directly. Save exactly 179 T/changed page: preparation
+231223829 -> 223223961 T; full speech 1596096910 -> 1588097042 T (-7999868,
+0.501%), 8497.951 T/sample. The below-8500 intermediate target passes.
+All coefficient inputs match and every OUT delta equals 179 times its
+preceding changed-page count. All 65536 coefficients per variant, 10240
+address cases, 1024 page masks and 1094880 complete PCM16/PCM8 samples pass;
+independent instruction audits and fresh default identity match. Code -27
+bytes; table/state layout/payload unchanged. Only documented BC/BC' scratch
+outputs and retired step contents differ. Initial host-generator quoting
+failure was fixed before producing a binary; no native failure or revert.
+Select pure-r35, still 19.424x over average real time, no ULA/hardware claim.
+Next inspect exact cosine lookup and actual alignment; margin averaging
+can break four-unit alignment. No next implementation or saving is claimed.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/35/REPORT.md).
+
 ## 2026-10-04: Speex round34 cancels redundant table-builder exchanges
 
 On unchanged round33 speech, remove exactly 64 EXX/EXX identity pairs from

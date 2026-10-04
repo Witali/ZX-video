@@ -12,11 +12,11 @@ Baseline: exact mode-3 Speex `pure-r9`, 2510789186 T for 186880 samples,
 already emitted without pacing. Retain the complete upstream PCM16/PCM8
 comparison and report throughput separately from instantaneous OUT gaps.
 
-Next intermediate target after round34: **below 8500 T/sample** on the same
-complete 186880-sample speech, exact PCM16/PCM8 and unchanged 16-KiB table
-arena. Current 8540.758 T/sample needs another 7616910 T saving to reach
-8500 (about 0.477%). The next register-held step/page-address candidate
-estimates 8497.951 T/sample, but is unimplemented and unverified. Real time still needs 437.5 T/sample.
+Round35 achieves the **below-8500 T/sample intermediate target** on the
+same complete 186880-sample speech: 8497.951 T/sample, exact PCM16/PCM8
+and unchanged 16-KiB table arena. This is an input-specific milestone;
+the overall objective still needs 437.5 T/sample. Continue optimizing the
+actual decoder without adding output pacing or changing the input format.
 
 - [x] **15. Register-based coefficient table construction.** Replace four
   byte stores and repeated step loads with 32-bit register accumulation and
@@ -214,14 +214,26 @@ estimates 8497.951 T/sample, but is unimplemented and unverified. Real time stil
   T/sample (-1.413%). All 65536 coefficients per variant, 1024 page masks
   and 1094880 complete samples pass. Code -128, table/state unchanged.
   Preparation costs and full delta reconcile; average deficit still 19.522x.
-- [ ] **35. Retain the next table step in registers and shorten addressing.**
+- [x] **35. Retain the next table step in registers and shorten addressing.**
   BC/BC' are available while the first three groups retain 16*step in RAM.
   Register copies predict 40 T/group saved, 120 T/page. Since coef_out is
   page-aligned, direct L values or INC H predict another 59 T/page. Combined
   estimate: 179 T/page / 7999868 T, reaching 8497.951 T/sample on the saved
   input. Verify all coefficients/table bytes, alignment, cache, caller
-  contracts and complete streams. This is unimplemented; the below-8500
-  target and average real-time objective remain unmet.
+  contracts and complete streams.
+  [Round35](rounds/35/REPORT.md) confirms exactly -7999868 T, 8497.951
+  T/sample (-0.501%), passing the intermediate target. Every OUT delta
+  matches the page count. All 65536 coefficients, 10240 address cases,
+  1024 page masks and 1094880 complete samples pass. Code -27; table/state
+  layout unchanged. Real-time deficit remains 19.424x.
+- [ ] **36. Inspect a direct exact cosine path for aligned arguments.**
+  The packed positive-half table uses 8050 bytes; the unchanged prior
+  profile attributes 30846551 T / 46720 calls to cosine. Mode-3 codebooks
+  and interpolation often align values to four units, but margin averaging
+  can break that alignment. Observe real residues/costs before choosing
+  a direct table and exact fallback. Retain every result in 0..25736,
+  arbitrary packet behavior, table budget and complete-stream gates.
+  This is unimplemented; no next speedup or real-time result is claimed.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

@@ -16,8 +16,8 @@ converter must also support other videos.
 
 Active throughput goal clarified on 2026-10-04: consecutive sample writes
 are permitted; do not spend further work on output pacing. Exact Speex
-default is now pure-r34: 1596096910 T / 8540.758 T/sample, 36.430%
-fewer T than round09, but still 19.522x over the average 437.5-T budget.
+default is now pure-r35: 1588097042 T / 8497.951 T/sample, 36.749%
+fewer T than round09, but still 19.424x over the average 437.5-T budget.
 Round17 reconciles nested costs with unchanged OUT traces; round18 selects
 combined-register multiplication after comparing three candidates. All
 1074400 PCM16/PCM8 samples and 589824 extra product/cycle cases pass.
@@ -30,7 +30,7 @@ holds offsets in index halves and borrows SP for first-part reads. It saves
 98139844 T versus round22 including setup; 7719 arbitrary histories and 128
 filter calls per variant pass. Round24 adds a pre-negated table step and saves
 12603144 T; all 65536 coefficients and 262144 negations pass after fixing
-an initial borrow bug. Code/state 8918/1041 bytes, tables still 16 KiB;
+an initial borrow bug. Code/state 8891/1041 bytes, tables still 16 KiB;
 fresh default build matches and every playback code write is forbidden.
 The below-10000 intermediate target is met. Round25 reconciles the full
 profile with identical PCM/OUT traces: inline feedback 35.880%, decoder
@@ -61,15 +61,17 @@ Round34 removes 64 cancelling EXX pairs per changed page: exactly
 -22882304 T, code -128. All 65536 coefficient pages per variant, 1024 page
 masks and 1094880 complete samples pass; registers/flags/BSS match. The
 44692-page count and preparation/full saving reconcile with identical inputs.
-Next keep 16*step in BC/BC' and use page-aligned group-end addresses;
-179 T/page / 7999868 T saving is an unimplemented estimate.
-Next intermediate target: below 8500 T/sample on this unchanged full input,
-requiring another 7616910 T saving to reach 8500. The next estimate is
-8497.951 T/sample, but the target is unachieved and execution is required.
+Round35 retains 16*step in BC/BC' and uses aligned group-end addresses:
+exactly -7999868 T, code -27. All 65536 coefficients, 10240 address cases,
+1024 page masks and 1094880 complete samples pass; every OUT delta matches
+179 T per preceding changed page. The below-8500 intermediate target passes.
+Next inspect cosine argument alignment and a direct exact table/fallback;
+margin averaging can break four-unit alignment, so do not assume it.
+The next candidate is unimplemented and has no measured saving.
 The average real-time goal is still unmet.
 The broader goal remains active. Use the
 [throughput worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md) and
-[round34 report](audiobook-beeper/speex-port/rounds/34/REPORT.md), not the
+[round35 report](audiobook-beeper/speex-port/rounds/35/REPORT.md), not the
 historical PVQ scheduling milestone, to select the next optimization.
 
 Latest optimization milestone on 2026-10-04: selected PVQ round13 retains
