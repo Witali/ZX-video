@@ -14,9 +14,10 @@ Target: mono 8-kHz PCM8 to an 8-bit port on a nominal 3.5-MHz Z80.
 - [x] **9. Port-only output.** Remove validation-only PCM16 stores and unused
   pointer work. Preserve internal precision and every PCM8 output.
   Selected: [round 09](rounds/09/REPORT.md), -16564288 T and -320 state bytes.
-- [ ] **10. Approximate synthesis.** Try reduced sample precision with compact
+- [x] **10. Approximate synthesis.** Try reduced sample precision with compact
   products; measure speed and distortion against exact Speex and the source.
   Reject if quality or sustained throughput is unsuitable.
+  Rejected: [round 10](rounds/10/REPORT.md), faster but 26.93x over budget.
 - [ ] **11. Periodic wavetable synthesis.** Try a bounded offline-prepared
   waveform representation and a Z80 playback kernel. Charge tables, parameters,
   transitions and scheduling. This changes the stored format, not Speex.

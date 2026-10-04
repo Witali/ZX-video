@@ -50,7 +50,7 @@ def image(path):
             data.update((address+i,v) for i,v in enumerate(row[4:4+row[0]]))
     return data
 
-def native(out,variant='pure-r4',binary=None):
+def native(out,variant='pure-r4',binary=None,require_exact=True):
     from z80 import Z80Machine
     folder=out/variant
     folder.mkdir(parents=True,exist_ok=True)
@@ -88,7 +88,7 @@ def native(out,variant='pure-r4',binary=None):
             assert 0x7200<=lo<hi<=0x8000
             m.unmark_addrs(lo,hi-lo,m.WRITE_MARK);dynamic.append((lo,hi))
     m.set_write_callback(bad_write)
-    current=0;events=[];pages=[]
+    current=0;events=[];pages=[];actual16=[];actual8=[]
     order=(0,1,3,4,6,7) if variant.startswith('pure-') else (0,1)
     banks={order[i//16384]:payload[i:i+16384].ljust(16384,b'\xa5') for i in range(0,len(payload),16384)}
     m.set_memory_block(0xc000,banks[0])
@@ -118,8 +118,11 @@ def native(out,variant='pure-r4',binary=None):
             assert index<len(expected),'extra output'
             pcm_address=symbols['_last_pcm16'] if '_last_pcm16' in symbols else symbols['_pcm']+2*(index%160)
             want=struct.pack('<h',samples[index])
-            assert bytes(m.memory[pcm_address:pcm_address+2])==want,('Z80 PCM16',index,bytes(m.memory[pcm_address:pcm_address+2]).hex(),want.hex())
-            assert value==expected[index],('Z80 PCM8',index,value,expected[index])
+            actual16.append(int.from_bytes(m.memory[pcm_address:pcm_address+2],'little',signed=True))
+            actual8.append(value)
+            if require_exact:
+                assert bytes(m.memory[pcm_address:pcm_address+2])==want,('Z80 PCM16',index,bytes(m.memory[pcm_address:pcm_address+2]).hex(),want.hex())
+                assert value==expected[index],('Z80 PCM8',index,value,expected[index])
             events.append(clock())
     m.set_output_callback(output);m.pc=symbols['_entry'];m.sp=0xbffe
     m.set_breakpoint(symbols['_complete'])
@@ -144,7 +147,7 @@ def native(out,variant='pure-r4',binary=None):
     assert all(m.memory[a]==v for a,v in memory.items() if a not in smc),'static code/table changed'
     assert bytes(m.memory[0xc000:])==banks[current],'input changed'
     intervals=[b-a for a,b in zip(events,events[1:])]
-    report=dict(complete=True,samples=len(events),every_pcm8_exact=True,every_pcm16_exact=True,total_tstates=total,
+    report=dict(complete=True,samples=len(events),every_pcm8_exact=bytes(actual8)==expected,every_pcm16_exact=tuple(actual16)==samples,total_tstates=total,
                 seconds_at_3_5_mhz=total/3500000,mean_total_tstates_per_sample=total/len(events),
                 first_out_tstates=events[0],last_out_tstates=events[-1],
                 min_out_interval=min(intervals),max_out_interval=max(intervals),
@@ -166,6 +169,9 @@ def native(out,variant='pure-r4',binary=None):
                 clock_hz=3500000,ula_contention_included=False,physical_hardware_tested=False)
     (folder/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     (folder/'out-times.u64.gz').write_bytes(gzip.compress(struct.pack('<'+'Q'*len(events),*events),mtime=0))
+    if not require_exact:
+        (folder/'actual.pcm16').write_bytes(struct.pack('<'+'h'*len(actual16),*actual16))
+        (folder/'actual.pcm8').write_bytes(bytes(actual8))
     print({k:v for k,v in report.items() if k!='out_intervals_histogram'},flush=True)
     return report
 

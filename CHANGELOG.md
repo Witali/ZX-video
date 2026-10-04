@@ -1,5 +1,15 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex item 10, reject approximate eight-bit feedback
+
+Quantize synthesis feedback and omit two partial products. Full speech
+2510789186 -> 2201671482 T (-309117704), still 26.929x over budget. 960
+independent-model samples and instruction audit pass; output is deliberately
+inexact (150751 changed PCM8 samples, 15.492-dB SNR against exact). Source
+comparison uses a measured shared 79-sample delay, correcting an initial
+40-sample assumption. Reject due to remaining CPU deficit plus extra error;
+keep exact round 09 selected. See [round 10](audiobook-beeper/speex-port/rounds/10/REPORT.md).
+
 ## 2026-10-04: Speex item 09, exact PCM8 port-only output
 
 Remove validation-only PCM16 buffer writes and IY work while checking the

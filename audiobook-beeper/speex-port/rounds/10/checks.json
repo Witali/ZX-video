@@ -1,0 +1,42 @@
+{
+  "filter": {
+    "samples": 960,
+    "independent_approximate_filter_model": true
+  },
+  "audit": {
+    "scope": "1 complete frame(s), including startup, packet parsing, LPC and port output",
+    "tstates": 1596831,
+    "instructions": 196789,
+    "instruction_tstate_histogram": {
+      "4": 75531,
+      "5": 120,
+      "6": 7822,
+      "7": 35852,
+      "8": 17214,
+      "10": 7601,
+      "11": 14340,
+      "12": 6405,
+      "13": 5949,
+      "14": 10,
+      "15": 3549,
+      "16": 5717,
+      "17": 3100,
+      "19": 360,
+      "20": 11434,
+      "21": 1785
+    },
+    "every_instruction_matches_zilog_table": true
+  },
+  "quality": {
+    "source_pcm8_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+    "alignment_delay_samples": 79,
+    "alignment_method": "Minimum raw squared error on first 32000 samples, lag 0..320, exact decoder only",
+    "approximate_vs_exact_snr_db": 15.491566006869723,
+    "exact_vs_source_snr_db": 6.499836315289213,
+    "approximate_vs_source_snr_db": 6.096442375378447,
+    "changed_pcm8_samples": 150751,
+    "rail_samples": 14,
+    "mean_signed_pcm8": 2.3263431078767125,
+    "metrics": "Raw PCM8 SNR; no gain fitting, filtering or perceptual-quality claim"
+  }
+}

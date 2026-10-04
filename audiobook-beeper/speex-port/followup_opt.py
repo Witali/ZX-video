@@ -81,10 +81,36 @@ def port_only(d, f):
     return d,f
 
 
+def approximate_feedback(d, f):
+    f=f.replace('exact Speex synthesis','APPROXIMATE Speex feedback synthesis')
+    d=d.replace('four cached offsets -> exact signed32 HL:DE.',
+                'two upper-byte offsets -> quantized signed32 HL:DE.')
+    start=d.index('_split_nibbles::')+len('_split_nibbles::\n')
+    end=d.index('ld a,h\nand a,#15',start)
+    d=d[:start]+'; Approximation: floor the signed feedback multiplier to a multiple of 256.\n'+d[end:]
+    start=d.index('_coefficient_product::')+len('_coefficient_product::\n')
+    end=d.index('product_offset_3:',start)
+    d=d[:start]+'''ld h,a
+; Only the upper byte contributes. The two lower partial products vanish.
+product_offset_2:
+ld l,#0
+ld e,(hl)
+inc l
+ld d,(hl)
+inc l
+ld c,(hl)
+inc l
+ld b,(hl)
+'''+d[end:]
+    for i in range(2):d=d.replace(f'.globl _smc{i}\n_smc{i} = product_offset_{i}+1\n','')
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
+    if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')
