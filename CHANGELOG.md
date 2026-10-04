@@ -1,5 +1,14 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex item 09, exact PCM8 port-only output
+
+Remove validation-only PCM16 buffer writes and IY work while checking the
+existing internal sample word against the same reference. Full speech
+2527353474 -> 2510789186 T (-16564288); code -33 bytes, state -320, tables
+unchanged. All speech, signal/capacity, arithmetic and cache checks pass;
+first-frame instruction timings reconcile. Select for direct port output;
+real time still fails. [Report](audiobook-beeper/speex-port/rounds/09/REPORT.md).
+
 ## 2026-10-04: Speex item 08, faster coefficient page construction
 
 Unroll 16-entry loops and retain unchanged coefficient pages on the same

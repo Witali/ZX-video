@@ -1,4 +1,5 @@
 """Follow-up assembly transforms, always starting from the verified round-four code."""
+import re
 from optimize import replace_once
 
 
@@ -67,9 +68,23 @@ ld (coef_step),de''')
     return d,f
 
 
+def port_only(d, f):
+    d=replace_once(d,'_pcm: .ds 320','_pcm: .ds 0 ; compatibility symbol; no PCM buffer is allocated')
+    d=re.sub(r'ld de,#_pcm\+\d+\n','',d)
+    f=replace_once(f,'    push de\n    pop iy\n','')
+    for line in ('    push iy\n','    pop iy\n','    ld 0(iy),e\n','    ld 1(iy),d\n','    inc iy\n'):
+        f=f.replace(line,'')
+    f=f.replace('; HL excitation input, DE PCM16 output; 40 samples and direct PCM8 OUT.',
+                '; HL excitation input; 40 samples to PCM8 OUT, no PCM16 output buffer.\n'
+                '; Internal PCM16 feedback is retained; _last_pcm16 exposes it to verification.')
+    f+='\n.globl _last_pcm16\n_last_pcm16 = asm_y\n'
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
+    if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')

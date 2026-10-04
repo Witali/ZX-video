@@ -11,8 +11,9 @@ Target: mono 8-kHz PCM8 to an 8-bit port on a nominal 3.5-MHz Z80.
 - [x] **8. Coefficient table preparation.** Avoid rebuilding unchanged pages;
   reduce loop overhead. Include construction in complete decoder timing.
   Selected: [round 08](rounds/08/REPORT.md), -157151780 T on full speech.
-- [ ] **9. Port-only output.** Remove validation-only PCM16 stores and unused
+- [x] **9. Port-only output.** Remove validation-only PCM16 stores and unused
   pointer work. Preserve internal precision and every PCM8 output.
+  Selected: [round 09](rounds/09/REPORT.md), -16564288 T and -320 state bytes.
 - [ ] **10. Approximate synthesis.** Try reduced sample precision with compact
   products; measure speed and distortion against exact Speex and the source.
   Reject if quality or sustained throughput is unsuitable.

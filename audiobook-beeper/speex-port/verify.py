@@ -116,7 +116,7 @@ def native(out,variant='pure-r4',binary=None):
             assert port&255==0xfb,(hex(port),value)
             index=len(events)
             assert index<len(expected),'extra output'
-            pcm_address=symbols['_pcm']+2*(index%160)
+            pcm_address=symbols['_last_pcm16'] if '_last_pcm16' in symbols else symbols['_pcm']+2*(index%160)
             want=struct.pack('<h',samples[index])
             assert bytes(m.memory[pcm_address:pcm_address+2])==want,('Z80 PCM16',index,bytes(m.memory[pcm_address:pcm_address+2]).hex(),want.hex())
             assert value==expected[index],('Z80 PCM8',index,value,expected[index])
@@ -156,6 +156,7 @@ def native(out,variant='pure-r4',binary=None):
                 code_bytes=sum(a>=0x8000 for a in memory),tables_bytes=sum(a<0x8000 for a in memory),
                 all_cpu_writes_inside_declared_regions=True,input_static_code_static_tables_unchanged=True,
                 writable_immediate_addresses=sorted(smc),
+                pcm16_output_buffer='_last_pcm16' not in symbols,
                 initial_state_fill=state_fill,
                 dynamic_table_reserved_bytes=sum(hi-lo for lo,hi in dynamic),
                 dynamic_table_regions=dynamic,
