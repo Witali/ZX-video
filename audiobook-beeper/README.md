@@ -4,6 +4,8 @@
 were removed at the user's request. Links marked "retired" lead to the
 [removal inventory](retired-disks.json), with exact paths, hashes and the recovery
 commit. Measurements, WAVs and build instructions remain historical evidence.
+The [direct IMA4 disk](../ZX-audiobook-IMA-ADPCM-direct-test.trd) was subsequently
+restored byte for byte to preserve a public YouTube video link; keep its path.
 
 For a new recording, use [convert_audio.py](CONVERTER.md). Its default is
 packed IMA3 decoded directly to PDM, accepted by the user in interactive Fuse
@@ -49,7 +51,7 @@ before interpreting the SNR figures below as end-to-end voice quality.
 The [direct-pointer follow-up](DIRECT.md) fixes playback speed while retaining
 the complete source: **+0.042%** overall, worst **0.112%** on checked 0.1-second
 windows. It measures **18.85 dB** total SNR and **128.05 kHz** average output.
-Use [its historical TRD (retired)](retired-disks.json) to reproduce
+Use [its historical TRD](../ZX-audiobook-IMA-ADPCM-direct-test.trd) to reproduce
 that checkpoint; the newer waveform-aware result above supersedes its
 quality measurement on the complete control excerpt.
 

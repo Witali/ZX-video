@@ -1,5 +1,23 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Restore the direct IMA4 disk linked from YouTube
+
+The user requests restoration of the public `main` URL for
+`ZX-audiobook-IMA-ADPCM-direct-test.trd`, which a YouTube video references.
+Restore the exact image introduced by `b359f53` and removed by `2a55226`,
+under its original root filename, using Git LFS. Keep this public link
+available during future preview cleanup. Update the direct-player links
+and annotate the historical retirement inventory without rewriting its
+original removal counts.
+
+Verification: the restored image is 655360 bytes and its SHA-256 is
+`9ce319e8b9352a96ed965d87ff3d1d8698df7d788221563758d306d23c053013`,
+matching both the original LFS pointer and the retirement inventory.
+No encoding, player or timing changes are made; instruction costs are
+unchanged (delta 0 T). Reuse the [historical measurements](audiobook-beeper/DIRECT.md)
+and their stated limitations. No new emulator or hardware run is claimed.
+This restores the published historical artifact, not a new quality release.
+
 ## 2026-10-04: Fit AY noise colour with the actual chip simulator
 
 After `4ab6d7f`, the user asks for an accurate online noise-generator model

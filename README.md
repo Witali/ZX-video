@@ -16,6 +16,8 @@ Use `--codec ima4` for the historical four-bit mode. The accepted
 project sources in one portable folder.
 [Obsolete speech previews were retired](audiobook-beeper/retired-disks.json);
 comparison WAVs and experiment reports remain available.
+The [historical direct IMA4 disk](ZX-audiobook-IMA-ADPCM-direct-test.trd)
+is preserved at its original path for a public YouTube video link.
 
 Install Python 3.11+, FFmpeg/ffprobe and the ZX0 v2 compressor in `PATH`.
 
