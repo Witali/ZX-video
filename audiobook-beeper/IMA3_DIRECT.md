@@ -20,10 +20,15 @@ Use [the independently bootable disk](../ZX-audiobook-IMA3-direct-test.trd),
 
 ## Automatic workflow
 
+The converter now defaults to [one sequential disk](IMA3_SERIES.md):
+`audio.trd`, with automatic loading of RAM-sized parts. Use `--disk-mode all`
+for the whole track on numbered disks. The workflow below describes the
+legacy looping preview, now explicitly selected with `--disk-mode preview`.
+
 Run `convert_ima3_audio.py` once with an audio file supported by FFmpeg:
 
 ```powershell
-python audiobook-beeper/convert_ima3_audio.py "input.m4a" --output "build/ima3" --ffmpeg "path/to/ffmpeg.exe" --fuse "path/to/fuse.exe"
+python audiobook-beeper/convert_ima3_audio.py "input.m4a" --output "build/ima3" --disk-mode preview --ffmpeg "path/to/ffmpeg.exe" --fuse "path/to/fuse.exe"
 ```
 
 The script prepares an initial mono 8-kHz / 8-bit excerpt that fits RAM,

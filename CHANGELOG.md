@@ -5,6 +5,53 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-04: Sequential audio parts; one TRD by default
+
+The user requests one or many disks, maximum-RAM load/play cycles, and
+explicitly selects one TRD as the default. Add `--disk-mode single|all|preview`
+to the [automatic converter](audiobook-beeper/IMA3_SERIES.md), a separately
+assembled transient TR-DOS controller, per-volume identity headers, automatic
+part transitions, next-disk/Space prompts and wrong-disk rejection. Each disk
+is independently bootable. All mode covers each source sample once; single
+mode stops before the next whole RAM part that cannot fit. Keep global gain,
+short edge fades and silent guards. Final quality decisions include complete
+execution of the actual published volumes. Disk reads cause audible pauses.
+
+The controller replaces bank-5 PDM tables only after sound stops. Its 57-byte
+resident exit fits existing 64-byte padding: bank-2 reservation remains
+13312 bytes and maximum packed audio 94458 bytes /251888 samples. Source
+capacity excluding the guard is 31.470 s per full part, 157.350 s for five
+parts per TRD. Shared tables are stored once per disk. Ordinary phases remain
+417/413/458/413/417/446/409/446 T, **427.375 T/sample, delta 0 T**; page/bank
+extras +14/+140 T are unchanged. Only the final silent guard exits: 61 native
+T to clear the beeper versus 103 T to the former next output without filler
+(-42 T), or 22005 T with the reference's filler (-21944 T). These are stop
+versus continue endpoints, not an increased sustained PDM rate.
+
+Two copies of the unchanged 186880-sample reference verify all **5980094**
+live bits natively and in complete cold Fuse 128 playback. Final-disk SNR is
+20.161979 /20.161096 dB, speed about -0.27172%, and automatic loading pause
+19.798231 s. A two-disk short fixture verifies both independent boots,
+predecessor-RAM continuation and wrong-disk rejection; no disk calls occur
+during audio. The final all-seven-bank synthetic-tail fixture verifies
+4030175 bits, RAM guards and EOF; cold ready takes 28.608176 s. Its 18.563389-dB
+score is below target and is not promoted as a quality release. The ordinary
+stereo-input CLI test creates one TRD at 20.978697 dB; silent default/all CLI
+tests verify output names and nonapplicable SNR. Five planning/CLI tests pass.
+The legacy compact looping disk remains byte-identical.
+
+Retain development findings: corrected assembler string/padding syntax;
+corrected signed-marker/Windows-newline trace parsing; exact clock reuse
+rejected after a three-T HALT/IRQ alignment difference, replaced with bounded
+clock checks and actual-waveform measurement; superseded 251200-sample
+reservation passed but wasted 256 bytes, removed after measuring the stub.
+The larger final capacity was tested afresh. No physical hardware or real
+drive swap is certified. Full counts, inputs, source snapshots, raw traces,
+reports and reproducing scripts are in the
+[series experiment](audiobook-beeper/experiments/ima-3bit-series/README.md).
+Save `ZX-audiobook-IMA3-sequential-test.trd` in LFS as a clearly labelled
+two-repeat loading test; preserve previous release disks.
+
 ## 2026-10-04: Reduce IMA3 table overhead without changing output timing
 
 The user requests smaller auxiliary table allocations. Audit the current

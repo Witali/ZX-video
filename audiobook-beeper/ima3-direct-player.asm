@@ -185,6 +185,13 @@ idle_block_\1: ASSERT 1
         ENDM
 BANK_TAIL: MACRO
 bank_tail_\0: ASSERT 1
+        IF chained_playback
+        IF \0 == final_section_index
+        ; Only the final guard is cut: the last real source sample is at
+        ; least 128 samples earlier. No disk operation occurs in live audio.
+        JP chain_exit
+        ENDIF
+        ENDIF
         LD BC,0x7FFD
         LD A,\1+24
 page_\0: OUT (C),A
@@ -1106,6 +1113,37 @@ code_end:
         MDAT "pcm-high.bin"
         MDAT "fixed-pages.bin"
         MDAT "decoder-extra.bin"
+        IF chained_playback
+chain_exit:
+        DI
+        LD SP,0x6000
+        LD IY,0x5C3A
+        IM 1
+        XOR A
+        OUT (0xFE),A
+        ; Playback is over. Disable the exhausted progress counter while
+        ; reusing the loader to replace bank-5 tables with the controller.
+        LD A,0xC9
+        LD (update_progress),A
+chain_retry:
+        LD BC,0x7FFD
+        LD A,31
+        OUT (C),A
+        LD DE,chain_disk
+        LD HL,0x4000
+        LD B,chain_sectors
+        EI
+        CALL read_n
+        DI
+        LD HL,(0x4003)           ; refuse an unrelated disk's machine code
+        LD DE,0x4D49            ; first two bytes of IMA3CHN1
+        OR A
+        SBC HL,DE
+        JR NZ,chain_retry
+        LD HL,chain_volume
+        LD A,chain_next_slot
+        JP 0x400B              ; fixed warm entry, after the signature
+        ENDIF
 resident_end:
         ASSERT $ <= 0x8000+resident_reserve
         DS 0xC000-$

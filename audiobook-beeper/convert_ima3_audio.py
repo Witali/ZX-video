@@ -1,8 +1,9 @@
 """One-command audio -> native packed IMA3 -> measured PDM TRD conversion.
 
-Every quality decision uses both complete cold Fuse loops. Host estimates
-only order the bounded encoder search; they never qualify a disk. --resume
-reuses completed, hashed stages only when input, tools and producer match.
+Default: fill one disk with RAM-sized parts. --disk-mode all keeps the full
+track; --disk-mode preview retains the legacy looping RAM excerpt. Parts
+are qualified in complete Fuse loops, then every final volume is executed.
+Host estimates only order the search. --resume checks saved stage hashes.
 """
 import argparse
 from datetime import date
@@ -87,6 +88,9 @@ def reuse_pilot(path,old,source,identity):
 
 
 def convert(args):
+    if getattr(args,'disk_mode',None) in ('single','all'):
+        from ima3_series import convert_series
+        return convert_series(args)
     out=args.output.resolve();manifest=out/'run.json'
     producers={p.name:digest(p) for p in HERE.glob('*.py')}
     producers['ima3-direct-player.asm']=digest(HERE/'ima3-direct-player.asm')
@@ -182,6 +186,7 @@ def main():
     p.add_argument('input',type=Path);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--ffmpeg',default=shutil.which('ffmpeg'));p.add_argument('--fuse',type=Path,required=True)
     p.add_argument('--duration',type=float);p.add_argument('--target-snr',type=float,default=20.)
+    p.add_argument('--disk-mode',choices=('single','all','preview'),default='single',help='single (default): fill one TRD; all: retain the whole selected audio across TRDs; preview: legacy looping RAM preview.')
     p.add_argument('--attempts',type=int,choices=(1,2,3),default=3)
     p.add_argument('--prepared-pcm',action='store_true',help='reuse an exact PCM8/8k mono reference with its existing silent guard')
     p.add_argument('--no-recording',action='store_true',help='skip normal-speed sound capture, retaining full native/Fuse trace checks')

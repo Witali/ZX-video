@@ -1,4 +1,7 @@
 # Disk images belong in Git LFS, including uppercase file extensions.
+/audiobook-beeper/experiments/ima-3bit-series/**/*.bin -text -diff
+/audiobook-beeper/experiments/ima-3bit-series/**/*.txt -text -diff
+/audiobook-beeper/experiments/ima-3bit-series/**/*.szx filter=lfs diff=lfs merge=lfs -text
 /audiobook-beeper/experiments/ima-3bit-memory/**/*.gz filter=lfs diff=lfs merge=lfs -text
 /audiobook-beeper/experiments/ima-3bit-memory/**/*.bin -text -diff
 /audiobook-beeper/experiments/ima-3bit-memory/**/*.txt -text -diff
@@ -76,6 +79,8 @@
 /audiobook-beeper/experiments/ima-3bit-direct/**/*.bin -text -diff
 /audiobook-beeper/experiments/ima-3bit-direct/**/*.txt -text -diff
 # Keep measured assembler snapshots byte-exact for their recorded hashes.
+/audiobook-beeper/experiments/ima-3bit-series/**/*.asm -text -whitespace
+/audiobook-beeper/experiments/ima-3bit-series/**/*.gz filter=lfs diff=lfs merge=lfs -text
 /audiobook-beeper/experiments/ima-3bit-memory/**/*.asm -text -whitespace
 /audiobook-beeper/experiments/ima-3bit-entertainer/**/*.asm -text -whitespace
 /audiobook-beeper/experiments/ima-3bit-direct/**/*.asm -text -whitespace
@@ -537,3 +542,7 @@ toolkit/*guarded_cb46*.py text eol=lf
 toolkit/fixed_cell_decoder.py text eol=lf
 toolkit/generic_guarded_cb46*.json text eol=lf
 toolkit/generic_guarded_cb46_evidence/*.gz -text
+# Preserve authenticated sequential-audio evidence byte for byte.
+/audiobook-beeper/experiments/ima-3bit-series/** -text -whitespace
+/audiobook-beeper/experiments/ima-3bit-series/*.md text eol=lf
+/audiobook-beeper/experiments/ima-3bit-series/*.py text eol=lf

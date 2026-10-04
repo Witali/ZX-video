@@ -14,6 +14,20 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
+The [sequential converter](audiobook-beeper/IMA3_SERIES.md) now defaults to
+one TRD; `--disk-mode all` retains the whole selected track on numbered,
+independently bootable volumes, and `--disk-mode preview` keeps the old
+looping RAM demo. It loads/plays successive RAM-sized parts with audible
+disk pauses. The 57-byte exit fits existing padding: no extra RAM, no new
+per-sample cost, unchanged 94458-byte /251888-sample capacity. Five full
+parts hold 157.35 seconds of source on one disk. Full native/Fuse tests cover
+automatic loading, both cold disk boots, actual-RAM continuation, wrong disk,
+all seven banks and CLI defaults. The root
+`ZX-audiobook-IMA3-sequential-test.trd` deliberately plays the same 23.36-s
+reference twice; measured 20.161979/20.161096 dB and a 19.798231-s load pause.
+The synthetic full-capacity fixture is a correctness test below 20 dB,
+not a longer quality release. Reuse the [archived evidence](audiobook-beeper/experiments/ima-3bit-series/README.md).
+
 The [compact IMA3 table layout](audiobook-beeper/IMA3_MEMORY.md) is complete.
 It reuses 352 code-gap bytes and removes excess padding, reclaiming 1024
 physical RAM bytes with all decoder/PDM states retained. Fixed reservation

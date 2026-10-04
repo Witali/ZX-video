@@ -80,7 +80,7 @@ def decoder_slots(second,pointers,*,compact_tables=True,startup_gap=True):
     return slots,reserve
 
 
-def layout(packed,model=None,hot_indices=None,*,compact_tables=True,startup_gap=True):
+def layout(packed,model=None,hot_indices=None,*,compact_tables=True,startup_gap=True,chained=False):
     model=model or MEASURED_MODEL
     bins=model.get('pcm_bins',64)
     words,nxt,_=integral_table(bins,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],q_clip=tuple(model.get('q_clip',(0,15))))
@@ -117,6 +117,10 @@ def layout(packed,model=None,hot_indices=None,*,compact_tables=True,startup_gap=
                                    compact_tables=compact_tables,startup_gap=startup_gap)
     assert reserve<=16384,'code/tables exceed fixed bank 2'
     rows={i:a for i,a in zip(hot,slots)}
+    if chained:
+        # The 57-byte exit stub fits the existing 64-byte tail padding.
+        # The larger controller replaces bank-5 PDM tables after audio stops.
+        reserve=max(reserve,(max(rows.values())+32+64+255)//256*256-0x8000)
     resident=pack3(packed)
     assert len(resident)%3==0
     sections=[];remaining=len(resident)
@@ -131,7 +135,9 @@ def layout(packed,model=None,hot_indices=None,*,compact_tables=True,startup_gap=
     return words,nxt,states,first,second,pointers,pages,rows,sections,hot,float(counts[hot].sum()/counts.sum()),reserve
 
 
-def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*,compact_tables=True):
+def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*,compact_tables=True,chain=None,storage=None):
+    """Build a standalone disk, or external-volume assembly with disk=None."""
+    if (chain is None)!=(storage is None):raise ValueError('chain and external storage must be supplied together')
     model=model or MEASURED_MODEL
     work=Path(work).resolve();work.mkdir(parents=True,exist_ok=True)
     # Calibration uses at most 260 T of explicit padding. Even with seven
@@ -139,7 +145,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     # externally requested fillers retain the old startup gap instead.
     startup_gap=idle_pad<=260
     words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage,reserve=layout(
-        packed,model,hot_indices,compact_tables=compact_tables,startup_gap=startup_gap)
+        packed,model,hot_indices,compact_tables=compact_tables,startup_gap=startup_gap,chained=chain is not None)
     bins=words.shape[0]
     compact=compact_tables and bins==128
     startup_data=0x8380 if compact and startup_gap else 0x8400
@@ -172,10 +178,17 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     track,sector=calculate_file_start([boot,TrdFile('PLAYER','C',bytes(23296),start=0x8000)])
     lower=track*16+sector;upper=lower+28;pos=upper+32
     for s in sections:s['sector']=pos;pos+=s['sectors']
+    if storage is not None:
+        lower,upper=storage['lower'],storage['upper']
+        assert len(storage['audio'])==len(sections)
+        for s,sector in zip(sections,storage['audio']):s['sector']=sector
     total_reads=60+sum(s['sectors'] for s in sections)
     progress_steps=np.diff(np.r_[0,(np.arange(1,33)*total_reads+31)//32])
     assert np.all((progress_steps>0)&(progress_steps<256))
     constants=dict(lpc_preloaded=0,screen_disk=0,first_base=0x8400,first_size=46 if bins==128 else 41,
+                   chained_playback=int(chain is not None),chain_disk=chain['controller_disk'] if chain else 0,
+                   chain_sectors=chain['controller_sectors'] if chain else 0,
+                   chain_volume=chain['volume'] if chain else 0,chain_next_slot=chain['next_slot'] if chain else 0,
                    startup_data=startup_data,prefix_data=prefix_data,
                    pcm_bins=bins,pcm_high=pointers,phase_base=pointers-2048,resident_reserve=reserve,decoder_seed=rows[0],
                    initial_feedback_offset=states.index(16)*6,lower_disk=lower//16*256+lower%16,upper_disk=upper//16*256+upper%16,
@@ -200,7 +213,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
                       ('decoder-extra',memory[pointers+256:decoder_end] if bins==128 else memory[pointers+1280:pointers+1280+2336]),
                       ('bank5-lower',memory[0x4000:0x5c00]),('bank5-upper',memory[0x6000:0x8000]),
                       ('progress-steps',bytes(progress_steps[1:].astype('u1'))+bytes([255])),
-                      ('screen',direct_loading_screen(len(packed)*2))]:
+                      ('screen',direct_loading_screen(len(packed)*2,chain))]:
         (work/(name+'.bin')).write_bytes(data)
     (work/'player.asm').write_bytes((HERE/'ima3-direct-player.asm').read_bytes())
     run=subprocess.run([sys.executable,'-m','pyz80.pyz80','--obj=player.bin','--lstfile=player.lst','-s','.*','player.asm'],cwd=work,capture_output=True,text=True)
@@ -208,13 +221,16 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     if run.returncode:raise RuntimeError(run.stdout+run.stderr)
     labels=next(ast.literal_eval(s) for s in run.stdout.splitlines() if s.startswith('{'))
     assert labels['resident_end']<=0x8000+reserve
+    if chain is not None:assert labels['resident_end']-labels['chain_exit']<=64
     blob=(work/'player.bin').read_bytes();assert len(blob)==23296
     files=[boot,TrdFile('PLAYER','C',blob,start=0x8000),TrdFile('LOWER','C',bytes(memory[0x4000:0x5c00]),start=0x4000),TrdFile('UPPER','C',bytes(memory[0x6000:0x8000]),start=0x6000)]
     offset=0
     for i,s in enumerate(sections):
         data=bytes(s['bytes']-s['audio_bytes'])+resident[offset:offset+s['audio_bytes']]
         files.append(TrdFile(f'IMA3{i}','C',data,start=s['address']));offset+=s['audio_bytes']
-    disk,directory,capacity=place_files(files,'IMADIR')
+    # External sector addresses refer to the enclosing volume, so this is
+    # assembly only: never return a misleading standalone disk for that case.
+    disk,directory,capacity=place_files(files,'IMADIR') if storage is None else (None,[],{})
     meta=dict(direct=True,packed_ima3_direct=True,phase_base=pointers-2048,model=model,origin=0x8000,player_labels=labels,sections=sections,directory=directory,capacity=capacity,
               first_addresses=list(first.values()),second_addresses=list(second.values()),
               first_patterns=len(first),second_patterns=len(second),resident_reserve=reserve,
@@ -227,7 +243,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
               baseline_ordinary_tstates=423,ordinary_delta_tstates=4.375 if bins==128 else 2.875,
               initial_predictor=0,initial_index=0,initial_feedback=16,paging_base=24,preload_table_sectors=60,
               playback_preload_sector_reads=60+sum(s['sectors'] for s in sections),
-              loading_progress_steps=32,
+              loading_progress_steps=32,chained_playback=chain,
               record_stop_addresses=[a+2 for a in first.values()],repeat=True,
               mutable_addresses=[labels['bank_jump']+1,labels['bank_jump']+2],
               source_sample_rate_hz=8000,cpu_clock_hz=3546900,saturation_guard=require_unclipped(packed),
@@ -247,7 +263,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     return disk,meta
 
 
-def direct_loading_screen(samples):
+def direct_loading_screen(samples,chain=None):
     """Keep the existing UI, with the resident format stated correctly."""
     from PIL import Image,ImageDraw,ImageFont
     from pcm_player import spectrum_bitmap_offset
@@ -260,4 +276,14 @@ def direct_loading_screen(samples):
         for col in range(32):
             data[spectrum_bitmap_offset(col,y+48)]=sum(
                 (128>>bit) for bit in range(8) if tile.getpixel((col*8+bit,y)))
+    if chain:
+        # Replace the old looping-demo instruction, not the loading UI.
+        tile=Image.new('1',(256,24));draw=ImageDraw.Draw(tile)
+        text=f'DISK {chain["volume"]} / PART {chain["next_slot"]}'
+        box=draw.textbbox((0,0),text,font=font)
+        draw.text(((256-(box[2]-box[0]))//2,3),text,font=font,fill=1)
+        for y in range(24):
+            for col in range(32):
+                data[spectrum_bitmap_offset(col,y+168)]=sum(
+                    (128>>bit) for bit in range(8) if tile.getpixel((col*8+bit,y)))
     return bytes(data)
