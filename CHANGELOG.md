@@ -1,5 +1,23 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round37 fuses Q14 and the LPC caller negation
+
+On unchanged round36 speech, replace twenty adjacent Q14/negate call sites
+with one private exact negative-Q14 entry. Preserve high-part truncation,
+-32768 magnitudes and floor/ceiling rounding; ordinary Q14 stays intact.
+Full speech 1566795471 ->1558327641 T (-8467830, 0.540%), 8338.654 T/sample.
+Every saved operand, weighted cost and OUT delta reconciles. All 1343488
+arithmetic cases, actual caller/ordinary-entry instruction audits and
+1094880 complete PCM16/PCM8 samples pass; fresh default identity matches.
+All full fixtures improve, although 6773 speech calls individually regress.
+An initial cost estimate failed on five-T branch differences; corrected
+formulas pass exhaustive domains and instruction stepping. No native
+arithmetic/PCM failure or reverted candidate. Code +153 to 9042; state and
+14140 useful table bytes unchanged. Select pure-r37, still 19.060x over
+average real time. No ULA/hardware qualification. Next inspect direct private
+Q14 argument reads; the 45-T estimate is unimplemented and unmeasured.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/37/REPORT.md).
+
 ## 2026-10-04: Speex round36 uses exact aligned cosine words
 
 On unchanged round35 speech, observe 46720 cosine inputs, all four-unit

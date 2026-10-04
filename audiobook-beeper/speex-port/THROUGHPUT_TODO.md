@@ -13,13 +13,13 @@ already emitted without pacing. Retain the complete upstream PCM16/PCM8
 comparison and report throughput separately from instantaneous OUT gaps.
 
 Round35 achieves the **below-8500 T/sample intermediate target** on the
-same complete 186880-sample speech. Round36 now measures 8383.965 T/sample,
+same complete 186880-sample speech. Round37 now measures 8338.654 T/sample,
 exact PCM16/PCM8 and 14140 useful table bytes in the same 16-KiB arena. This is an input-specific milestone;
 the overall objective still needs 437.5 T/sample. Continue optimizing the
 actual decoder without adding output pacing or changing the input format.
 
 The next intermediate target is **below 8000 T/sample** on the same full
-speech, requiring another 4.58% reduction from round36. Keep exact PCM,
+speech, requiring another 4.06% reduction from round37. Keep exact PCM,
 all stream gates and the 16-KiB table limit. This is a target to investigate,
 not a measured result or a guarantee of real-time feasibility.
 
@@ -244,13 +244,24 @@ not a measured result or a guarantee of real-time feasibility.
   fixtures improve; unaligned calls individually regress. Speech uses only
   aligned calls, while random packets exercise two unaligned calls. Tables
   -1870 bytes, code -2; real-time deficit remains 19.163x.
-- [ ] **37. Combine Q14 multiplication with its caller's negation.** Twenty
+- [x] **37. Combine Q14 multiplication with its caller's negation.** Twenty
   LPC sites call mulq14 followed by neg32, 93440 times on the saved speech.
   The separate call plus negate costs 84 T. Compare a private negated-result
   entry including all altered sign/rounding costs; retain the ordinary entry.
   Preserve -32768 magnitudes, high-part truncation and exact negative floor/
   ceiling behavior. Reuse saved operands, full arithmetic and stream gates.
-  No implementation or net saving is yet measured.
+  [Round37](rounds/37/REPORT.md) selects the fused entry: -8467830 T,
+  8338.654 T/sample (-0.540%). All 1343488 arithmetic cases and 1094880
+  full samples pass, including caller instruction audits and every OUT-delta
+  proof. All full fixtures improve; 6773 individual speech calls regress.
+  Code +153, state/tables unchanged. Real-time deficit remains 19.060x.
+- [ ] **38. Read the private Q14 argument directly.** The four-byte LDIR
+  copy is followed by a reload of the high word, while only the low word
+  must survive for the fractional product. Inspect direct reads that save
+  the low word and retain the high word in registers. The instruction-table
+  estimate is 119 ->74 T, saving 45 T/call before unchanged work; it is not
+  implemented or measured. Preserve pointer boundaries, rounding, register
+  contracts and all stream gates; retain the ordinary public Q14 entry.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.
