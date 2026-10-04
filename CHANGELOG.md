@@ -1,5 +1,14 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Define the next PVQ optimization target
+
+Continue in the same worktree. Record a firm target of <=84 T/sample with
+unchanged PCM8 and rate, plus a conditional four-sample-vector experiment
+aiming at ~3:1 versus PCM8 / <=80 T/sample. Use round12's complete source,
+dictionary and timing evidence; select a changed format only after a
+declared quality comparison. No new performance measurement in this scope
+commit. [Target and gates](audiobook-beeper/speex-port/NEXT_TARGET.md).
+
 ## 2026-10-04: Close audio follow-up and select exact/default and paced variants
 
 Complete all six follow-up decisions. Select `pure-r9` as the exact Speex
