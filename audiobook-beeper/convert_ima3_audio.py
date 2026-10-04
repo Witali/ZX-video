@@ -72,7 +72,7 @@ def reuse_pilot(path,old,source,identity):
         if previous[key]!=identity[key]:raise ValueError(f'pilot cache mismatch: {key}')
     # The converter and waveform encoder did not produce the initial PCM-IMA
     # pilot. Every other producer/verifier must match the saved run exactly.
-    exempt={'convert_ima3_audio.py','ima_waveform_encoder.py'}
+    exempt={'convert_ima3_audio.py','ima_waveform_encoder.py','waveform_kernel.py'}
     for name,value in identity['producer_sha256'].items():
         if name not in exempt and previous['producer_sha256'].get(name)!=value:
             raise ValueError(f'pilot producer changed: {name}')

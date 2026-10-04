@@ -16,6 +16,7 @@ from verify_direct import reference
 from build_pdm import reconstruct,write_wav
 from pdm_player import CPU_CLOCK
 from assess_snr import ratio
+from waveform_kernel import workspace
 
 
 class WaveformModel:
@@ -98,8 +99,28 @@ def prepare(path):
     return meta,t,words,nxt,source,desired,features,ids
 
 
+def _best_unique(candidates,score,key,width):
+    """Merge equal decoder states, preserving the old (cost, candidate) ties.
+
+    Sorting only the integer key costs less than lexsorting all candidates
+    by key, score and ID. Group reductions select exactly the same winner.
+    Partition the winners before sorting the beam; include every boundary
+    tie so that argpartition's arbitrary tie order cannot change the stream.
+    """
+    order=np.argsort(key,kind='stable')
+    ordered=candidates[order];keys=key[order];scores=score[ordered]
+    starts=np.r_[0,np.flatnonzero(keys[1:]!=keys[:-1])+1]
+    minimum=np.minimum.reduceat(scores,starts)
+    tied=scores==np.repeat(minimum,np.diff(np.r_[starts,len(ordered)]))
+    winners=np.minimum.reduceat(np.where(tied,ordered,np.iinfo(np.intp).max),starts)
+    if len(winners)>width:
+        threshold=np.partition(minimum,width-1)[width-1]
+        winners=winners[minimum<=threshold]
+    return winners[np.lexsort((winners,score[winners]))[:width]]
+
+
 def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regularization=.1,history_bins=0,
-                    allowed_codes=None,level_bounds=None,commit_size=None):
+                    allowed_codes=None,level_bounds=None,commit_size=None,backend='auto',statistics=None):
     """Search a horizon, then accept its prefix and reconsider the future.
 
     Committing a whole horizon can introduce periodic errors at its end:
@@ -110,6 +131,9 @@ def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regul
     commit_size=block_size if commit_size is None else commit_size
     if not 1<=commit_size<=block_size:raise ValueError('commit size must be within the lookahead block')
     codes=code_alphabet(allowed_codes);branches=len(codes)
+    if width<1:raise ValueError('beam width must be positive')
+    kernel=workspace(width,branches,backend)
+    if statistics is not None:statistics['backend']='native' if kernel is not None else 'numpy'
     branch_for_code={int(code):branch for branch,code in enumerate(codes)}
     steps=np.asarray(STEPS,dtype=np.int64)[:,None]
     delta=(steps>>3)+steps*((codes&4)!=0)+(steps>>1)*((codes&2)!=0)+(steps>>2)*((codes&1)!=0)
@@ -118,7 +142,11 @@ def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regul
     chosen=np.empty(len(source),dtype='u1');pred=index=0;q=16;filter_state=np.zeros(6)
     for start in range(0,len(ids),commit_size):
         stop=min(len(ids),start+block_size);preds=np.array([pred]);indices=np.array([index]);qs=np.array([q])
-        states=filter_state[None,:].copy();costs=np.zeros(1);paths=np.zeros((1,stop-start),dtype='u1')
+        states=filter_state[None,:].copy();costs=np.zeros(1)
+        # Store ancestry once. Copying every complete path at every sample
+        # adds quadratic horizon traffic; only the winning path is needed.
+        parents=np.empty((stop-start,width),dtype=np.intp)
+        path_codes=np.empty((stop-start,width),dtype='u1')
         for sample in range(start,stop):
             a,l,response,endpoint,weights=features[ids[sample]]
             predicted=(preds[:,None]+delta[indices]).ravel();next_indices=successor[indices].ravel()
@@ -127,9 +155,17 @@ def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regul
             if level_bounds is not None:
                 valid &= (level>=level_bounds[0]) & (level<=level_bounds[1])
             word_index=level*32+qs[parent]
-            observed=(states@l.T)[parent]+response[word_index]
-            error=observed-desired[sample]
-            score=costs[parent]+np.sum(error*error*weights,axis=1)
+            # Broadcast the shared parent response instead of materializing
+            # it once per branch. Reuse the scratch array for each elementwise
+            # operation, retaining the original float64 evaluation order.
+            if kernel is None:
+                error=((states@l.T)[:,None,:]+response[word_index.reshape(-1,branches)]).reshape(-1,16)
+                error-=desired[sample]
+                np.multiply(error,error,out=error)
+                error*=weights
+            else:
+                error=kernel.errors(states@l.T,response,word_index,desired[sample],weights)
+            score=costs[parent]+np.sum(error,axis=1)
             # Keep the control signal near the already timed source. Without
             # this term a short beam can chase the filter's delayed response
             # into large DC excursions and clipping-range control values.
@@ -138,21 +174,28 @@ def encode_waveform(source,desired,features,ids,nxt,width=16,block_size=64,regul
             new_q=nxt[level,qs[parent]]
             candidates=np.flatnonzero(valid)
             key=((predicted[candidates]+32768)*89+next_indices[candidates])*32+new_q[candidates]
-            next_filters=(states@a.T)[parent]+endpoint[word_index]
             if history_bins:
+                next_filters=(states@a.T)[parent]+endpoint[word_index]
                 columns=np.column_stack((key,np.rint(next_filters[candidates]*history_bins).astype(np.int64)))
                 order=np.lexsort((candidates,score[candidates],*columns.T[::-1]))
                 ordered=candidates[order]
                 ordered=ordered[np.r_[True,np.any(columns[order][1:]!=columns[order][:-1],axis=1)]]
+                best=ordered[np.lexsort((ordered,score[ordered]))[:width]]
+                next_states=next_filters[best]
             else:
-                order=np.lexsort((candidates,score[candidates],key));ordered=candidates[order]
-                ordered=ordered[np.r_[True,key[order][1:]!=key[order][:-1]]]
-            best=ordered[np.lexsort((ordered,score[ordered]))[:width]]
-            paths=paths[parent[best]].copy();paths[:,sample-start]=codes[best%branches]
-            states=next_filters[best]
+                best=(_best_unique(candidates,score,key,width) if kernel is None else
+                      kernel.select(candidates,score,key))
+                # Discarded branches do not need propagated filter states.
+                next_states=(states@a.T)[parent[best]]+endpoint[word_index[best]]
+            parents[sample-start,:len(best)]=parent[best]
+            path_codes[sample-start,:len(best)]=codes[best%branches]
+            states=next_states
             preds,indices,qs,costs=predicted[best],next_indices[best],new_q[best],score[best]
+        path=np.empty(stop-start,dtype='u1');winner=0
+        for position in range(stop-start-1,-1,-1):
+            path[position]=path_codes[position,winner];winner=parents[position,winner]
         committed=min(stop,start+commit_size)
-        chosen[start:committed]=paths[0,:committed-start]
+        chosen[start:committed]=path[:committed-start]
         if committed==stop:
             pred,index,q=int(preds[0]),int(indices[0]),int(qs[0]);filter_state=states[0]
         else:
@@ -185,6 +228,8 @@ def main():
     p.add_argument('--regularization',type=float,default=.1)
     p.add_argument('--prior',choices=('compensated','uniform'),default='compensated')
     p.add_argument('--history-bins',type=int,default=0)
+    p.add_argument('--backend',choices=('auto','numpy','native'),default='auto',
+                   help='optional locally compiled exact kernels; auto retains a NumPy fallback')
     p.add_argument('--ima3',action='store_true',help='Restrict every nibble, including the guard, to the exact IMA3 subset')
     a=p.parse_args()
     if a.commit_size is not None and not 1<=a.commit_size<=a.block_size:
@@ -203,10 +248,13 @@ def main():
     print(json.dumps(dict(model_prepared=True,unique_packet_shapes=len(features),baseline_model_snr_db=baseline_model_snr)),flush=True)
     prior=wav8(a.input/'compensated-pcm.wav') if a.prior=='compensated' else source
     codes=np.arange(0,16,2) if a.ima3 else None
+    search_stats={};search_started=time.monotonic()
     packed=encode_waveform(prior,desired,features,ids,nxt,a.width,regularization=a.regularization,
                            block_size=a.block_size,
                            history_bins=a.history_bins,allowed_codes=codes,
-                           level_bounds=meta['model'].get('level_bounds'),commit_size=a.commit_size)
+                           level_bounds=meta['model'].get('level_bounds'),commit_size=a.commit_size,
+                           backend=a.backend,statistics=search_stats)
+    search_seconds=time.monotonic()-search_started
     if a.ima3:
         assert not np.any(np.frombuffer(packed,'u1')&0x11)
     (a.output/'soundtrack.ima.gz').write_bytes(gzip.compress(packed,mtime=0))
@@ -226,6 +274,7 @@ def main():
                 merge_rule=('Retain discrete decoder state plus quantized filter history' if a.history_bins else
                             'Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state'),
                 history_bins=a.history_bins,
+                search_backend=search_stats['backend'],search_seconds=search_seconds,
                 baseline_model_snr_db=float(baseline_model_snr),host_fixed_clock_snr_db=snr,
                 control_prior=a.prior,control_regularization=a.regularization,
                 elapsed_seconds=time.monotonic()-started,ordinary_native_tstate_delta=0,new_timeline_verified=False,

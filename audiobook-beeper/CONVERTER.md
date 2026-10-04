@@ -54,6 +54,17 @@ bootable disks. See [sequential playback](IMA3_SERIES.md) for output names,
 capacity and audible loading pauses, and [the direct decoder](IMA3_DIRECT.md)
 for timing, search and verification details.
 
+Waveform search automatically uses an optional exact C kernel when an
+installed MSVC x64 compiler (Windows) or `cc` (64-bit Unix) is available.
+The first call builds it locally into ignored `audiobook-beeper/.native-cache/`;
+later calls reuse a cache keyed by source, flags and platform. Nothing is
+downloaded. Without a compiler, the optimized NumPy implementation remains
+available. A failed optional build reports its log and falls back to NumPy.
+The standalone `ima_waveform_encoder.py --backend numpy|native|auto` option
+can force a backend for diagnostics; `native` requires successful loading.
+Search widths, lookahead, overlap, quality gates and Spectrum playback are
+unchanged. [Speed measurements and exact-output regressions](experiments/waveform-speed/README.md).
+
 The accepted reference is [ZX-audiobook-IMA3-overlap-test.trd](../ZX-audiobook-IMA3-overlap-test.trd),
 SHA-256 `ac4b740ebdcf2f9fb538d286b8ac679df6babc53462cf79b18f08cc8b5a2d66d`.
 Its two verified parts measure 20.436046 dB with -0.271723% mean speed error.

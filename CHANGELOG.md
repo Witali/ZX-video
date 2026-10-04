@@ -1,5 +1,48 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Accelerate PC waveform search without changing encoded bytes
+
+The user asked why encoding was slow and requested optimization. Profile the
+unchanged normalized Entertainer pilot on 2048 searched samples with width
+1024, horizon 256, commit 64 and regularization 0.03. The old encoder spends
+most time materializing candidate responses/errors and sorting all candidates
+twice. Its full third CLI attempt previously took 2723.703 s. Preserve all
+search/quality settings and use exact output equality as the acceptance gate.
+
+Reuse error storage, broadcast parent responses, retain ancestry instead of
+copying whole paths, and propagate only selected filter states. The NumPy
+fallback sorts integer keys, reduces equivalent states and partitions before
+the final beam sort, preserving all boundary ties. Add an optional local C
+kernel for fused elementwise terms and hash/heap selection. Keep float64,
+strict operation order, NumPy's original reduction and candidate-ID ties.
+The first MSVC command failed from cmd/CRT quote escaping and correctly fell
+back with an exact stream; fix the quoting and verify the compiled path.
+Build privately and atomically publish a source/platform/flag-keyed cache.
+No download or mandatory compiler. Auto is the default; standalone
+`--backend numpy|native|auto` supports diagnostics. Retain strict pilot reuse
+checks, exempting only the new host-only helper along with waveform search.
+
+Three like-for-like repeats give medians 22.766993 s baseline, 12.571314 s
+NumPy (1.811x) and 5.589146 s native (4.073x), all with identical bytes.
+Full searches at widths/horizons 256/128, 512/128 and 1024/256 take
+102.094716, 170.451387 and 652.329028 s, reproducing every byte of all three
+186880-sample archived streams. The old full CLI times also include model
+preparation/scoring; do not label their ratio a directly measured end-to-end
+speedup. Five search test methods cover ties, collisions, exact error terms,
+alphabets, history, overlap, partial horizons and fallback; nine existing
+converter tests also pass. The CLI help exposes the backend options.
+
+Adopt the exact acceleration. Existing complete native/Fuse music results
+remain applicable because streams, player sources and both release disks
+are unchanged; no new TRD or SNR improvement is claimed. Ordinary IMA3 cost
+remains 427.375 T/sample, delta 0 T, with unchanged +14/+140 T page/bank
+extras and RAM. The legacy IMA4 PCM search is outside this change. Retain
+baseline/profile data, pilot inputs, build identity, tests, all full results
+and producer snapshots in the [28-artifact archive](audiobook-beeper/experiments/waveform-speed/README.md).
+The [reproducer](audiobook-beeper/experiments/waveform-speed/reproduce.py) and
+[audit](audiobook-beeper/experiments/waveform-speed/archive.py) pass. Close
+this bounded comparison; no reduced-quality fast mode is introduced.
+
 ## 2026-10-04: Normalize Entertainer and publish verified IMA3/IMA4 previews
 
 The user requested loudness normalization and two codec-specific disks.

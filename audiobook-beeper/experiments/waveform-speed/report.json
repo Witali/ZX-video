@@ -1,0 +1,83 @@
+{
+  "complete": true,
+  "source_sha256": "fb630abd3c8129c0ce2b0e2b4f367cf1136c0bc5eb4b104bcec3cd6e7ab501bb",
+  "preparation_seconds": 2.1598160000285134,
+  "short": [
+    {
+      "backend": "baseline",
+      "seconds": [
+        23.34489189996384,
+        22.766992899938487,
+        22.72905520000495
+      ],
+      "median_seconds": 22.766992899938487,
+      "samples": 2048,
+      "packed_sha256": "7c974d85469b8132e15b0659cb36ca6c7ba94e6d36771871fea1ecfd1e36aa4a",
+      "byte_exact": true
+    },
+    {
+      "backend": "numpy",
+      "seconds": [
+        12.940659999963827,
+        12.57131400005892,
+        12.557652899995446
+      ],
+      "median_seconds": 12.57131400005892,
+      "samples": 2048,
+      "packed_sha256": "7c974d85469b8132e15b0659cb36ca6c7ba94e6d36771871fea1ecfd1e36aa4a",
+      "byte_exact": true
+    },
+    {
+      "backend": "native",
+      "seconds": [
+        7.8302381000248715,
+        5.5891464001033455,
+        5.578422700054944
+      ],
+      "median_seconds": 5.5891464001033455,
+      "samples": 2048,
+      "packed_sha256": "7c974d85469b8132e15b0659cb36ca6c7ba94e6d36771871fea1ecfd1e36aa4a",
+      "byte_exact": true
+    }
+  ],
+  "full": [
+    {
+      "attempt": 1,
+      "width": 256,
+      "horizon": 128,
+      "seconds": 102.09471600002144,
+      "old_complete_cli_seconds": 259.85900000005495,
+      "samples": 186880,
+      "packed_sha256": "c969bff47bd16cfe7945d2306e2a208b32e098d69bfee524c92beb7c7f872364",
+      "byte_exact": true
+    },
+    {
+      "attempt": 2,
+      "width": 512,
+      "horizon": 128,
+      "seconds": 170.45138689992018,
+      "old_complete_cli_seconds": 526.8129999999655,
+      "samples": 186880,
+      "packed_sha256": "2e98fdac60a47c0a827483837ec25e825d3cb826014f757a407d982dec50f485",
+      "byte_exact": true
+    },
+    {
+      "attempt": 3,
+      "width": 1024,
+      "horizon": 256,
+      "seconds": 652.3290281000081,
+      "old_complete_cli_seconds": 2723.7029999999795,
+      "samples": 186880,
+      "packed_sha256": "c0dfb69186b5f24e711fc991b3c809d5f6bd9821c171b3bf36a11c7fe042909c",
+      "byte_exact": true
+    }
+  ],
+  "producer_sha256_lf": {
+    "ima_waveform_encoder.py": "0554c6a026074a08aaff42b5e6352a1899824217215be8f55f1148c04af459a5",
+    "waveform_kernel.py": "2272effc955fefff986b4de9665246acaf741948888e77077e524609bf4b0004",
+    "convert_ima3_audio.py": "b631a023dd48999ee7837008d94b387e6a569f29a430d0cb91318893ba82bd1d"
+  },
+  "native_tstate_delta": 0,
+  "changed_player": false,
+  "timing_scope": "Short medians time the same encode function; old full times also include CLI preparation/scoring."
+}

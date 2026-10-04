@@ -12,6 +12,28 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## Exact PC encoder acceleration (2026-10-04)
+
+The user requested faster audio encoding after the long normalized music
+build. [Waveform search acceleration](audiobook-beeper/experiments/waveform-speed/README.md)
+is complete. Keep beam widths, horizons and quality settings unchanged.
+Reuse scratch arrays, parent backpointers and retained-state propagation;
+replace full sorting with exact state merging and bounded selection.
+An optional C kernel is built automatically with installed MSVC x64 or cc,
+cached locally, and covered by producer hashes. No downloads. A compiler-free
+NumPy fallback remains. The standalone encoder exposes `--backend` controls.
+
+Three comparable 2048-sample repeats measure median 22.766993 s before,
+12.571314 s with optimized NumPy (1.811x), and 5.589146 s with the native
+kernel (4.073x). All three complete 186880-sample Entertainer search outputs
+match the old bytes: new search times 102.094716/170.451387/652.329028 s.
+Previous full CLI times include preparation/scoring and are not an exact
+end-to-end comparison. Five new test methods and nine converter tests pass.
+Reuse existing complete Fuse/quality evidence for the unchanged streams and
+players; both published music disks are unchanged. Z80 delta is 0 T, ordinary
+IMA3 cost remains 427.375 T/sample and page/bank extras +14/+140 T. The
+28-artifact archive authenticates the comparison; no further sweep is needed.
+
 ## Normalized Entertainer pair (2026-10-04)
 
 The requested [normalized music pair](audiobook-beeper/experiments/entertainer-normalized/README.md)
