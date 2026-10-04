@@ -291,8 +291,12 @@ progress_remaining: DB progress_first
 progress_cursor: DW progress_steps
 progress_steps: MDAT "progress-steps.bin"
 startup_end:
-        ASSERT $ <= first_base
-        DS first_base-$
+        ; IMA rows may occupy unused alignment bytes, never instructions.
+        ; The fixed limit covers all seven loads and the bounded loop filler.
+        ASSERT $ <= startup_data
+        DS startup_data-$
+        MDAT "decoder-startup.bin"
+        ASSERT $ == first_base
 
 PULSE: MACRO
         IF \0
@@ -882,8 +886,12 @@ SECOND: MACRO
         SECOND 254
         SECOND 255
 
-        ASSERT $ <= phase_base
-        DS phase_base-$
+        ; Fill whole 32-byte slots before the phase-aligned code with IMA
+        ; rows. Keeping all FIRST/SECOND/TAIL addresses preserves timing.
+        ASSERT $ <= prefix_data
+        DS prefix_data-$
+        MDAT "decoder-prefix.bin"
+        ASSERT $ == phase_base
 ; Three output bits around each extraction. Each tail occupies 32 bytes.
 ; Phase 2 combines b0[7:6] and b1[0]; phase 5 combines b1[7] and b2[1:0].
 TAIL: MACRO

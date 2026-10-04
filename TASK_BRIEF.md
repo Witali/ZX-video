@@ -14,6 +14,18 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
+The [compact IMA3 table layout](audiobook-beeper/IMA3_MEMORY.md) is complete.
+It reuses 352 code-gap bytes and removes excess padding, reclaiming 1024
+physical RAM bytes with all decoder/PDM states retained. Fixed reservation
+is 13312 bytes; automatic capacity is 94458 packed bytes /251888 samples /
+31.486 s. Pulse instructions and 427.375 T/sample are unchanged, delta 0 T.
+Two full cold Fuse reference loops have exactly the old 5981841 bits and
+relative timestamps, preserving the existing 20.159645/20.159651-dB result.
+Native and cold Fuse verify the new full seven-bank capacity with a synthetic
+tail (8060417 outputs), not a longer real recording. Use
+`ZX-audiobook-IMA3-compact-tables.trd`; retain earlier disks as baselines.
+Reuse this proof instead of repeating the encoder search or quality checks.
+
 The user also requested a movie-style AY version of the same music. The
 [generic AY converter](audiobook-ay/CONVERTER.md) and separately assembled
 looping player are complete. The 31.12-s The Entertainer example uses 17116

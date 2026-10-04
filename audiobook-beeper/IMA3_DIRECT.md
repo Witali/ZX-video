@@ -4,6 +4,12 @@ Measured 2026-10-04. This subproject removes the Spectrum-side IMA3-to-IMA4
 expansion. Three-bit codes stay packed in RAM and are decoded as the PDM
 outputs are emitted. There is no complete PCM, IMA4 or PDM buffer.
 
+The [compact table placement](IMA3_MEMORY.md) now frees 1024 bytes without
+changing playback instructions. The automatic converter uses it by default;
+maximum resident capacity is 94458 bytes /251888 samples /31.486 s. The
+original measurements and capacity figures below describe the preceding
+93432-byte baseline and remain historical evidence.
+
 The complete unchanged 23.36-s control excerpt now measures **20.159645 /
 20.159651 dB** in two full cold Fuse 128 loops. Speed error is **-0.299133%**,
 mean PDM output is **127652.961 Hz**, and both loop phase errors are **0 T**.

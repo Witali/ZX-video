@@ -8,8 +8,7 @@ from pcm_player import TrdFile,basic_line,calculate_file_start,place_files
 from probe_feedback_packets import integral_table
 
 HERE=Path(__file__).resolve().parent
-MAX_PACKED_BYTES=93440
-MAX_IMA3_BYTES=5*16383+9471+2046
+LEGACY_BANK2_RESERVE=14336
 HOLDS=[36,28,28,31,24,26,22,20,22,26,22,30,31,27,34,16]
 MEASURED_MODEL=dict(holds=[288,224,224,248,196,265,272,183,220,176,216,184,142,247,164,308],
                     beta=.5,extent=.5,weight_units='eighth T-state; rounded ordinary Fuse means',
@@ -61,7 +60,27 @@ def intervals(meta):
     return holds
 
 
-def layout(packed,model=None,hot_indices=None):
+def decoder_slots(second,pointers,*,compact_tables=True,startup_gap=True):
+    """Reuse only whole aligned rows in unreachable, uncontended code gaps.
+
+    Keep every pulse/extraction address unchanged: moving those can change
+    Spectrum contention and invalidate the measured encoder clock. The
+    assembler independently rejects any overlap with executable bytes.
+    """
+    fixed=pointers+256
+    if not compact_tables:
+        reserve=max(LEGACY_BANK2_RESERVE,(fixed+89*32+255)//256*256-0x8000)
+        return [fixed+i*32 for i in range(89)],reserve
+    slots=list(range(0x8380,0x8400,32)) if startup_gap else []
+    prefix_end=max(second.values())+20
+    slots+=list(range((prefix_end+31)&~31,pointers-2048,32))
+    slots+=list(range(fixed,fixed+89*32,32))
+    slots=slots[:89]
+    reserve=(max(fixed,max(slots)+32)+255)//256*256-0x8000
+    return slots,reserve
+
+
+def layout(packed,model=None,hot_indices=None,*,compact_tables=True,startup_gap=True):
     model=model or MEASURED_MODEL
     bins=model.get('pcm_bins',64)
     words,nxt,_=integral_table(bins,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],q_clip=tuple(model.get('q_clip',(0,15))))
@@ -93,7 +112,10 @@ def layout(packed,model=None,hot_indices=None):
     counts=np.bincount(np.r_[0,indices[:-1]],minlength=89)
     hot=list(range(89))
     slots=[fixed+i*256+j for i in range(4) for j in (128,160,192,224)]+[extra+i*32 for i in range(73)]
-    if bins==128:slots=[extra+i*32 for i in range(89)]
+    if bins==128:
+        slots,reserve=decoder_slots(second,pointers,
+                                   compact_tables=compact_tables,startup_gap=startup_gap)
+    assert reserve<=16384,'code/tables exceed fixed bank 2'
     rows={i:a for i,a in zip(hot,slots)}
     resident=pack3(packed)
     assert len(resident)%3==0
@@ -109,11 +131,21 @@ def layout(packed,model=None,hot_indices=None):
     return words,nxt,states,first,second,pointers,pages,rows,sections,hot,float(counts[hot].sum()/counts.sum()),reserve
 
 
-def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
+def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*,compact_tables=True):
     model=model or MEASURED_MODEL
     work=Path(work).resolve();work.mkdir(parents=True,exist_ok=True)
-    words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage,reserve=layout(packed,model,hot_indices)
+    # Calibration uses at most 260 T of explicit padding. Even with seven
+    # LOAD_AUDIOs and six idle blocks it leaves 8380..83FF unused. Larger
+    # externally requested fillers retain the old startup gap instead.
+    startup_gap=idle_pad<=260
+    words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage,reserve=layout(
+        packed,model,hot_indices,compact_tables=compact_tables,startup_gap=startup_gap)
     bins=words.shape[0]
+    compact=compact_tables and bins==128
+    startup_data=0x8380 if compact and startup_gap else 0x8400
+    prefix_end=max(second.values())+20
+    prefix_data=(prefix_end+31)&~31 if compact else pointers-2048
+    decoder_end=max(a+32 for a in rows.values())
     resident=pack3(packed)
     assert len(resident)==sum(s['audio_bytes'] for s in sections)
     pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)
@@ -144,6 +176,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
     progress_steps=np.diff(np.r_[0,(np.arange(1,33)*total_reads+31)//32])
     assert np.all((progress_steps>0)&(progress_steps<256))
     constants=dict(lpc_preloaded=0,screen_disk=0,first_base=0x8400,first_size=46 if bins==128 else 41,
+                   startup_data=startup_data,prefix_data=prefix_data,
                    pcm_bins=bins,pcm_high=pointers,phase_base=pointers-2048,resident_reserve=reserve,decoder_seed=rows[0],
                    initial_feedback_offset=states.index(16)*6,lower_disk=lower//16*256+lower%16,upper_disk=upper//16*256+upper%16,
                    final_section_index=len(sections)-1,progress_first=int(progress_steps[0]))
@@ -161,8 +194,10 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
     constants['initial_audio_address']=sections[0]['play_address']
     (work/'config.inc').write_text(''.join(f'{k}: EQU {v}\n' for k,v in constants.items()))
     for name,data in [('pcm-high',memory[pointers:pointers+256]),
+                      ('decoder-startup',memory[startup_data:0x8400]),
+                      ('decoder-prefix',memory[prefix_data:pointers-2048]),
                       ('fixed-pages',b'' if bins==128 else memory[pointers+256:pointers+1280]),
-                      ('decoder-extra',memory[pointers+256:pointers+256+2848] if bins==128 else memory[pointers+1280:pointers+1280+2336]),
+                      ('decoder-extra',memory[pointers+256:decoder_end] if bins==128 else memory[pointers+1280:pointers+1280+2336]),
                       ('bank5-lower',memory[0x4000:0x5c00]),('bank5-upper',memory[0x6000:0x8000]),
                       ('progress-steps',bytes(progress_steps[1:].astype('u1'))+bytes([255])),
                       ('screen',direct_loading_screen(len(packed)*2))]:
@@ -172,6 +207,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
     (work/'assembler.log').write_text(run.stdout+run.stderr)
     if run.returncode:raise RuntimeError(run.stdout+run.stderr)
     labels=next(ast.literal_eval(s) for s in run.stdout.splitlines() if s.startswith('{'))
+    assert labels['resident_end']<=0x8000+reserve
     blob=(work/'player.bin').read_bytes();assert len(blob)==23296
     files=[boot,TrdFile('PLAYER','C',blob,start=0x8000),TrdFile('LOWER','C',bytes(memory[0x4000:0x5c00]),start=0x4000),TrdFile('UPPER','C',bytes(memory[0x6000:0x8000]),start=0x6000)]
     offset=0
@@ -199,7 +235,12 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
               packed_sha256=hashlib.sha256(packed).hexdigest(),binary_sha256=hashlib.sha256(blob).hexdigest(),
               assembly=dict(instruction_bytes_emitted_by_python=False,assembler='pyz80 1.3.0'),
               memory=dict(total_ram_bytes=131072,adpcm_bytes=len(resident),sector_alignment_bytes=sum(s['bytes'] for s in sections)-len(resident),shadow_screen_bytes=6912,bank5_tables_and_workspace_bytes=16384,bank2_resident_bytes=reserve,
-                          unused_audio_capacity_bytes=MAX_PACKED_BYTES+14336-reserve-sum(s['bytes'] for s in sections),
+                          compact_tables=compact,baseline_bank2_resident_bytes=14336,
+                          bank2_bytes_reclaimed=14336-reserve,
+                          decoder_table_bytes=89*32,decoder_rows_retained=89,
+                          decoder_bytes_in_code_gaps=sum(32 for a in rows.values() if a<pointers),
+                          decoder_bytes_after_pointer_table=sum(32 for a in rows.values() if a>=pointers+256),
+                          unused_audio_capacity_bytes=5*16383+9471+(16384-reserve)//3*3-len(resident),
                           maximum_ima3_bytes=5*16383+9471+(16384-reserve)//3*3,
                           maximum_pcm_samples=(5*16383+9471+(16384-reserve)//3*3)//3*8,
                           resident_ima4_bytes=0,pcm_buffer_bytes=0,pdm_buffer_bytes=0))

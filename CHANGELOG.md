@@ -5,6 +5,52 @@ calculations and commands remain in the linked `toolkit` reports. The initial
 history was reconstructed on 2026-09-17 from reports, builds and Git; unknown
 dates of earlier attempts are not assigned that reconstruction date.
 
+## 2026-10-04: Reduce IMA3 table overhead without changing output timing
+
+The user requests smaller auxiliary table allocations. Audit the current
+PDM/IMA3 player; the recent AY player's service tables are already small.
+Use the complete unchanged 186880-sample audiobook reference from
+`ima-3bit-direct`, baseline TRD SHA-256
+`601ba65fa7a12b4b6c67f384ba5ed32530bee95816bb86d8effcc0c7de7d34c0`.
+Do not run another codec/quality search. The source uses 88 of 89 IMA indices
+and all 120 legal PCM control levels, so retain the complete tables.
+
+[The compact layout](audiobook-beeper/IMA3_MEMORY.md) relocates 352 bytes of
+the 2848-byte IMA table into existing aligned code gaps and reduces trailing
+reservation padding from 736 to 64 bytes. Bank 2's reservation falls from
+14336 to 13312 bytes: **1024 physical bytes reclaimed**. Maximum IMA3 payload
+grows from 93432 to 94458 bytes, including two formerly unusable remainder
+bytes, giving 251888 samples /31.486 s instead of 249152 /31.144 s. All 89
+rows, 712 transitions and PDM feedback states remain exact. The converter
+automatically uses the new capacity. Larger external loop fillers skip the
+startup gap; a 300-T fixture reserves 13568 bytes. Assembly assertions check
+every gap; the maximum normal 1530-pair /260-T filler with seven banks ends
+startup at 8365, before the first relocated row at 8380.
+
+The original binary and disk reproduce byte for byte. Pulse/extraction
+instruction bytes and addresses remain identical. Native phase totals stay
+417/413/458/413/417/446/409/446 T, mean **427.375 T/sample, delta 0 T**;
+page/bank extras remain +14/+140 T, delta 0. Complete new native and cold
+Fuse 128 reference runs verify all **5981841 outputs /373760 predictor-index
+samples** over two repeats. Every relative Fuse timestamp equals the old
+trace. This exact waveform/clock equivalence reuses the prior
+20.159645/20.159651-dB quality and -0.299133% speed result; it is not a new
+encoder search, subjective listening approval or physical-hardware test.
+
+A separate full-capacity fixture appends synthetic silence and verifies
+**8060417 outputs /503776 samples**, all seven banks, native RAM guards and
+complete cold Fuse loading into the reclaimed bank-2 region. It makes 429
+startup sector reads and zero runtime reads; both loading UI checks pass.
+This uncalibrated fixture proves capacity, not additional real audio or a
+quality-qualified 31.486-s release. The retained 64-level model also passes
+262145 native outputs /16384 samples. Accept the compact placement and save
+`ZX-audiobook-IMA3-compact-tables.trd` in LFS; retain existing root disks.
+
+[Reproducing verifier](audiobook-beeper/verify_ima3_memory.py),
+[comparison and full evidence](audiobook-beeper/experiments/ima-3bit-memory/comparison.json),
+[completion audit](audiobook-beeper/experiments/ima-3bit-memory/completion-audit.json).
+No additional table/codec experiment is opened by this change.
+
 ## 2026-10-04: Generic AY converter and looping music disk
 
 The user asks to convert the same music with the AY method used by the movie
