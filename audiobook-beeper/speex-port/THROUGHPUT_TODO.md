@@ -62,11 +62,19 @@ comparison and report throughput separately from instantaneous OUT gaps.
   [Round20](rounds/20/REPORT.md): -28189 T per table, -44482242 T on the
   complete speech, 10557.862 T/sample. All 1074400 PCM samples and every
   innovation entry pass, including complete instruction/guard checks.
-- [ ] **21. Measure profitable zero shortcuts.** Count actual zero feedback,
+- [x] **21. Measure profitable zero shortcuts.** Count actual zero feedback,
   zero pitch gains and zero history words on the complete current input.
   Estimate both skipped work and the extra branch cost on nonzero data;
   prototype only paths with a measured net benefit. Do not sacrifice the
   ordinary nonzero path to optimize synthetic silence alone.
+  [Round21](rounds/21/REPORT.md) rejects zero-word and zero-gain guards:
+  forecast slowdowns 11.95M T and at least 8.96M T. Observe 3340 zero
+  feedback samples; select only the state-copy path for a prototype.
+- [ ] **22. Zero-feedback state copy and dead-store removal.** Reuse A=H
+  after negation for a 14-T zero test. Remove the unread `asm_n` store/state,
+  copy the nine following history words and zero the final word when y=0.
+  Verify arbitrary nonzero history with zero feedback, every exact stream,
+  and both ordinary and zero path T-states. Predicted full saving 11359020 T.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

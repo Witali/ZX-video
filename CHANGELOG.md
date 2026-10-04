@@ -1,5 +1,16 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round21 selects zero-feedback bypass from actual counts
+
+Profile unchanged round20 speech arguments: 3340 zero feedback samples,
+18847 zero pitch gains, and 3447 zero words with nonzero multipliers. Every
+PCM sample and OUT timestamp remains unchanged; delta 0 T. Cycle forecasts
+reject zero-word and zero-gain tests (11.95M and at least 8.96M extra T).
+Select only a zero-feedback state-copy prototype; a conservative saving
+7.62M T improves to an estimated 11.36M T after identifying reusable flags
+and the unread asm_n store. Candidates are estimates, not execution results.
+[Measured profile](audiobook-beeper/speex-port/rounds/21/REPORT.md).
+
 ## 2026-10-04: Speex round20 retains innovation state in registers
 
 Replace memory-held recurrence state with ordinary/alternate registers and

@@ -50,7 +50,7 @@ def image(path):
             data.update((address+i,v) for i,v in enumerate(row[4:4+row[0]]))
     return data
 
-def native(out,variant='pure-r20',binary=None,require_exact=True,profile=None):
+def native(out,variant='pure-r20',binary=None,require_exact=True,profile=None,entry_observer=None):
     from z80 import Z80Machine
     folder=out/variant
     folder.mkdir(parents=True,exist_ok=True)
@@ -142,6 +142,7 @@ def native(out,variant='pure-r20',binary=None,require_exact=True,profile=None):
             if active:active[-1]['children']+=span
         if m.pc in watches:
             name=watches[m.pc];calls[name]+=1
+            if entry_observer is not None:entry_observer(name,m)
             ret=int.from_bytes(m.memory[m.sp:m.sp+2],'little')
             active.append(dict(name=name,start=tick,return_address=ret,children=0))
             returns.add(ret);m.set_breakpoint(ret)
