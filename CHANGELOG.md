@@ -1,5 +1,20 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Close audio follow-up and select exact/default and paced variants
+
+Complete all six follow-up decisions. Select `pure-r9` as the exact Speex
+default: 2510789186 T, 9.00% fewer than round04, still 30.71x over budget.
+A fresh default build reproduces the image. Extend final verification to
+1074400 exact samples, general arithmetic, controls and cached-silence
+instruction timing; original evidence hashes remain unchanged. Separately
+select the complete PVQ CPU schedule, and independently recheck all 186880
+archived timestamps and stored-data hash. Retain rejected approximate
+variants without changing the exact default. Update README/task checkpoint,
+including limits of ULA/physical timing. Reproduction and evidence:
+[finish_followup.py](audiobook-beeper/speex-port/finish_followup.py),
+[verification](audiobook-beeper/speex-port/FOLLOWUP_VERIFICATION.json),
+[completed worklist](audiobook-beeper/speex-port/FOLLOWUP_TODO.md).
+
 ## 2026-10-04: Audio item 12, complete paced PVQ output
 
 Reuse the prior 1024-entry book on the same full speech, implement banked

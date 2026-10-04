@@ -14,7 +14,21 @@ converter must also support other videos.
 
 ## Separate audio subproject checkpoint (2026-10-03)
 
-Follow-up on 2026-10-04: the separate `codex/speex-port` worktree contains a
+Further follow-up on 2026-10-04: all six items in the
+[new audio worklist](audiobook-beeper/speex-port/FOLLOWUP_TODO.md) are closed
+in the same `codex/speex-port` worktree. Exact default `pure-r9` costs
+2510789186 T / 13435.302 T per sample, 9.00% less than round04, but still
+30.71x over budget. 1074400 exact PCM16/PCM8 checks pass; code/state are
+6624/1039 bytes and the table arena remains 16 KiB. Reduced-precision Speex
+and periodic waves were tried and not selected. A separate assembly
+PVQ3x1024 player now verifies the complete 186880-sample control with exact
+437/438-T output intervals including banks and tail; 90.418 T/sample before
+pacing, 80974 stored bytes (2.308:1 versus PCM8), 4614 table bytes. Raw source
+SNR is 23.510 dB. This changes the format; it is not real-time Speex.
+ULA/physical timing, particularly contended input banks, remains unverified.
+Reuse [current code, reports and reproduction](audiobook-beeper/speex-port/README.md).
+
+Initial follow-up on 2026-10-04: the separate `codex/speex-port` worktree contains a
 complete assembly Speex narrowband mode-3 decoder with direct PCM8 port
 output. Its six-item optimization worklist is complete, with a report and
 focused commit for every item. The selected `pure-r4` is 1.644x faster than
@@ -24,8 +38,8 @@ useful bytes); code/state are 6152/1356 bytes. All 1074400 tested PCM16/PCM8
 samples match, including speech, signal/capacity and random mode-3 packets,
 with arithmetic/LPC, memory and instruction-timing checks. Reuse the
 [implementation and evidence](audiobook-beeper/speex-port/README.md).
-The user's sine-table synthesis suggestion is documented as an unimplemented
-approximate alternative; a 388-T four-oscillator kernel estimate excludes
+At that initial checkpoint the sine-table suggestion was an unimplemented
+approximate alternative; a 388-T four-oscillator kernel estimate excluded
 parameter extraction, noise, scheduling and ULA contention. It is not a
 verified Speex playback result. Prefer assembly for further Z80 programs.
 

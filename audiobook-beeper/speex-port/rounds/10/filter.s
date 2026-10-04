@@ -13,7 +13,7 @@ mul_sign: .ds 1
 mul_result: .ds 4
     .area _CODE
 ; HL excitation input; 40 samples to PCM8 OUT, no PCM16 output buffer.
-; Internal PCM16 feedback is retained; _last_pcm16 exposes it to verification.
+; Feedback is quantized; _last_pcm16 exposes the output before PCM8 conversion.
 ; Preserves IX/IY; AF/BC/DE/HL and private scratch are clobbered.
 _zx_speex_filter::
     push ix

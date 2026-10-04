@@ -83,6 +83,10 @@ def port_only(d, f):
 
 def approximate_feedback(d, f):
     f=f.replace('exact Speex synthesis','APPROXIMATE Speex feedback synthesis')
+    f=f.replace('Internal PCM16 feedback is retained; _last_pcm16 exposes it to verification.',
+                'Feedback is quantized; _last_pcm16 exposes the output before PCM8 conversion.')
+    d=d.replace('patch four LD L,n operands once for all ten taps.',
+                'patch two LD L,n operands once for all ten taps.')
     d=d.replace('four cached offsets -> exact signed32 HL:DE.',
                 'two upper-byte offsets -> quantized signed32 HL:DE.')
     start=d.index('_split_nibbles::')+len('_split_nibbles::\n')

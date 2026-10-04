@@ -3264,7 +3264,7 @@ ld (coef_taps),a
 jp nz,coef_tap
 ret
 
-; HL signed multiplier: patch four LD L,n operands once for all ten taps.
+; HL signed multiplier: patch two LD L,n operands once for all ten taps.
 ; Code must reside in writable RAM. Clobbers AF; no opcode is modified.
 _split_nibbles::
 ; Approximation: floor the signed feedback multiplier to a multiple of 256.

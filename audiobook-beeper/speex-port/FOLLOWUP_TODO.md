@@ -37,3 +37,12 @@ Record failed/rejected candidates as well. Select exact and approximate
 results separately; never claim a faster different codec is exact Speex.
 All proposed cycle savings remain estimates until executed and audited.
 No PDM, disk release or physical-hardware qualification is requested.
+
+All six experiments are closed. Exact default: **pure-r9**, 2510789186 T,
+9.00% fewer T than the starting round04, still 30.71x over real-time budget.
+Separate nominal-CPU playback candidate: **PVQ3x1024**, all 186880 samples
+on the 437/438-T schedule, 80974 stored bytes including dictionary/header.
+Approximate Speex and the periodic-wave format are retained as rejected
+experiments. ULA contention and hardware timing are unverified. Final
+[verification](FOLLOWUP_VERIFICATION.json) covers 1074400 exact samples,
+fresh-build identity, unchanged baseline evidence and all saved VQ deadlines.
