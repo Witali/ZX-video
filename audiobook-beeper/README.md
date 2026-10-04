@@ -12,6 +12,8 @@ packed IMA3 decoded directly to PDM, accepted by the user in interactive Fuse
 playback on 2026-10-04. `--codec ima3` selects it explicitly; `--codec ima4`
 selects the historical four-bit variant. The [direct IMA3 guide](IMA3_DIRECT.md)
 describes its implementation.
+The [IMA3 and IMA4 comparison](IMA3_IMA4_COMPARISON.md) records which
+algorithms are already shared and which improvements can transfer.
 It defaults to [one TRD with sequential RAM-sized parts](IMA3_SERIES.md).
 Use `--disk-mode all` for the entire track on numbered TRDs, or
 `--disk-mode preview` for the former looping RAM demo. Audio remains packed

@@ -1,5 +1,26 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Compare IMA3 and IMA4 and record reusable improvements
+
+At the user's request, save the [algorithm comparison and transfer plan](audiobook-beeper/IMA3_IMA4_COMPARISON.md).
+Review `main` at `6ce7f55`: shared IMA recurrence, restricted/full alphabets,
+packed storage, host search, PDM/table layouts and sequential versus preview
+workflows. Identify local checkpoints `de6d02b` and `fb29e4a` as reusable
+work outside that baseline; this change does not merge them.
+
+Prioritize automatic waveform search with overlapping commits for IMA4.
+Reuse the earlier complete IMA4 result (18.994103 ->21.010690 dB) and label
+the four-bit-on-IMA3-clock result (21.600309 ->23.899006 dB) as a short host
+control only. Quantify the 2848/5696-byte decoder tables, 24/32-kbit/s
+payloads and 427.375/423-T ordinary paths. Record table-placement, PDM-grid
+and disk-loader transfers as proposals needing new implementation checks.
+
+Verification is source/report review and documentation link/format checks;
+no encoder, assembly, table, stream or TRD changes and no new performance
+or audio measurements. Both player timing deltas are 0 T. Keep the public
+YouTube disk path intact. Decision: retain this scoped comparison for the
+next implementation milestone rather than start an unrequested rebuild.
+
 ## 2026-10-04: Restore the direct IMA4 disk linked from YouTube
 
 The user requests restoration of the public `main` URL for

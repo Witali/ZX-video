@@ -6,6 +6,9 @@ Fuse 1.9.0 session on 2026-10-04 and requested this playback algorithm as the
 main option. The existing `convert_ima3_audio.py` entry point remains usable.
 Select `--codec ima4` explicitly for the [historical four-bit converter](IMA4_CONVERTER.md).
 
+See the [IMA3 and IMA4 comparison](IMA3_IMA4_COMPARISON.md) for shared
+decoding, current implementation differences and proposed transfers.
+
 ## Run
 
 Use the project's Python dependencies and put `audiobook-beeper` and `toolkit`

@@ -14,6 +14,13 @@ converter must also support other videos.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 
+The [IMA3 and IMA4 comparison](audiobook-beeper/IMA3_IMA4_COMPARISON.md)
+records the common recurrence, distinct packing/timing/memory and proposed
+transfers. First candidate: automatic IMA4 waveform search with overlapping
+windows on its existing player. This is a documented proposal, not a new
+implementation or release. Local acceleration/prepared-PCM checkpoints are
+identified separately from the inspected main baseline; reuse that work.
+
 The latest AY follow-up is [chip-model noise colour fitting](ay-converter/analysis/noise_colour/README.md).
 The music profile searches 31 noise periods and three bounded shared-level
 choices using valid-rate Ayumi simulation, retaining all tone/channel IDs,
