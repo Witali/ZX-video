@@ -1,0 +1,111 @@
+{
+  "lpc": {
+    "cases": 1104,
+    "all_ten_coefficients_exact": true,
+    "comparison": "Verified round03 polynomial implementation versus compact round04"
+  },
+  "random_packets": {
+    "complete": true,
+    "samples": 81920,
+    "every_pcm8_exact": true,
+    "every_pcm16_exact": true,
+    "total_tstates": 1236545462,
+    "seconds_at_3_5_mhz": 353.2987034285714,
+    "mean_total_tstates_per_sample": 15094.549096679688,
+    "first_out_tstates": 891839,
+    "last_out_tstates": 1236544444,
+    "min_out_interval": 5473,
+    "max_out_interval": 885336,
+    "nominal_late_samples": 81919,
+    "max_lateness_tstates": 1199813042.5,
+    "real_time": false,
+    "pages": [
+      0
+    ],
+    "code_rodata_bytes": 18810,
+    "bss_bytes": 1356,
+    "code_bytes": 6152,
+    "tables_bytes": 12658,
+    "all_cpu_writes_inside_declared_regions": true,
+    "input_code_static_tables_unchanged": true,
+    "initial_state_fill": 165,
+    "dynamic_table_reserved_bytes": 3584,
+    "dynamic_table_regions": [
+      [
+        31744,
+        32768
+      ],
+      [
+        29184,
+        31744
+      ]
+    ],
+    "table_arena_span_bytes": 16384,
+    "phases_tstates": {
+      "_zx_speex_lpc": 139274794,
+      "_zx_speex_filter": 769376882
+    },
+    "binary_sha256": "bee20e8c7e86172d06af716d26f53fa353b569ee08b2c2b4785106fa1af0cc7e",
+    "clock_hz": 3500000,
+    "ula_contention_included": false,
+    "physical_hardware_tested": false,
+    "payload_sha256": "74b28b25217cee7b5874bc682525b3189ff52507dc69d0142f6439697288734f",
+    "reference_pcm16_sha256": "ad2422bfcb7f4c29b776e1391754631a8ae19f654e0a3f8e0140ac6416b16b8f"
+  },
+  "controls": [
+    {
+      "packet_count": 0,
+      "first_byte": 0,
+      "status": 0,
+      "pcm_outputs": 0
+    },
+    {
+      "packet_count": 1,
+      "first_byte": 0,
+      "status": 1,
+      "pcm_outputs": 0
+    },
+    {
+      "packet_count": 1,
+      "first_byte": 152,
+      "status": 1,
+      "pcm_outputs": 0
+    },
+    {
+      "packet_count": 4916,
+      "first_byte": 0,
+      "status": 2,
+      "pcm_outputs": 0
+    },
+    {
+      "packet_count": 65535,
+      "first_byte": 0,
+      "status": 2,
+      "pcm_outputs": 0
+    }
+  ],
+  "cached_silence_instruction_audit": {
+    "scope": "2 complete frame(s), including startup, packet parsing, LPC and port output",
+    "tstates": 3320178,
+    "instructions": 443264,
+    "instruction_tstate_histogram": {
+      "4": 208919,
+      "5": 248,
+      "6": 9456,
+      "7": 83663,
+      "8": 25266,
+      "10": 14888,
+      "11": 20884,
+      "12": 9132,
+      "13": 25583,
+      "14": 356,
+      "15": 5877,
+      "16": 9578,
+      "17": 6066,
+      "19": 1360,
+      "20": 19107,
+      "21": 2881
+    },
+    "every_instruction_matches_zilog_table": true
+  }
+}

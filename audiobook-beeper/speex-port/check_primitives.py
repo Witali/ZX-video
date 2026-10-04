@@ -73,10 +73,11 @@ def primitives(folder):
                 multiply8_tstates=dict(sorted(eight.items())),multiply16_tstates=dict(sorted(sixteen.items())),
                 cosine_tstates=dict(sorted(cos_cost.items())))
 
-def audit(folder,payload,reference):
+def audit(folder,payload,reference,frames=1):
     s=symbols(folder);m=machine(folder);m.clear_breakpoint(0x7f00)
-    m.memory[s['_packet_count']:s['_packet_count']+2]=b'\x01\x00'
-    m.set_memory_block(0xc000,payload[:20]+bytes(16364))
+    assert 1<=frames<=819
+    m.memory[s['_packet_count']:s['_packet_count']+2]=frames.to_bytes(2,'little')
+    m.set_memory_block(0xc000,payload[:20*frames]+bytes(16384-20*frames))
     seen=[];counts=Counter();total=0
     def output(port,value):
         if port==0x7ffd:assert value==16
@@ -93,8 +94,8 @@ def audit(folder,payload,reference):
             actual+=(m.frame_tick-before)%100000
         assert actual==expected,(hex(pc),op,actual,expected)
         total+=actual;counts[str(expected)]+=1
-    assert seen==[(x>>8)+128 for x in struct.unpack('<160h',reference[:320])]
-    return dict(scope='One complete first frame, including startup, packet parsing, LPC and port output',
+    assert seen==[(x>>8)+128 for x in struct.unpack('<'+'h'*(160*frames),reference[:320*frames])]
+    return dict(scope=f'{frames} complete frame(s), including startup, packet parsing, LPC and port output',
                 tstates=total,instructions=sum(counts.values()),instruction_tstate_histogram=dict(sorted(counts.items(),key=lambda x:int(x[0]))),
                 every_instruction_matches_zilog_table=True)
 

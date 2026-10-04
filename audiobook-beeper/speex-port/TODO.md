@@ -17,9 +17,11 @@ item with a focused commit and a report under `rounds/` before continuing.
 - [x] **4. LPC and interpolation.** Exploit polynomial symmetry and known
   constants, reduce temporary storage, and use exact 16-bit interpolation.
   Completed: [round 04](rounds/04/REPORT.md), 2759257254 T, delta -330262705 T.
-- [ ] **5. Final verification.** Compare the entire speech stream and
+- [x] **5. Final verification.** Compare the entire speech stream and
   additional fixtures with the independent reference; verify arithmetic,
   RAM boundaries, actual OUT timing and instruction-table cycle counts.
+  Completed: [round 05](rounds/05/REPORT.md), 1074400 PCM samples plus arithmetic
+  and instruction checks; no mismatches.
 - [ ] **6. Real-time decision.** Reconcile the complete profile against
   437.5 T/sample and 70000 T/frame. Record an explicit pass/fail and assess
   the next approximate-synthesis experiment if the exact decoder still fails.

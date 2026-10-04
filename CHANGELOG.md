@@ -1,5 +1,18 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex item 05, final exactness and timing audit
+
+Complete the final verification item without changing decoder instructions.
+Across speech, signal/capacity fixtures and 512 random mode-3 packets, all
+1074400 PCM16/PCM8 samples match upstream. Compact LPC matches round03 on
+1104 ordered, unordered and extreme angle vectors. Arithmetic, all table
+entries/products, input/code/static-table immutability, declared RAM writes
+and control cases pass. Two complete silence frames including cache reuse
+audit at 3320178 T / 443264 instructions, each matching the instruction table.
+The saved full speech OUT trace reconciles with every reported deadline.
+No mismatch occurred; real time remains unqualified. See
+[item 05 report](audiobook-beeper/speex-port/rounds/05/REPORT.md).
+
 ## 2026-10-04: Speex round 04, compact symmetric LPC
 
 Complete TODO item 4: exact signed16 LSP interpolation, descending half-
