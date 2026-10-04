@@ -1,5 +1,20 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round26 retains pitch accumulation in alternate registers
+
+On unchanged round24 speech, replace RAM accumulation after each active
+pitch product with alternate HL/C. Addition 89 -> 52 T, initialization
+42 -> 25 T, final writeback +41 T/sample. Full saving exactly 16205909 T:
+1850951266 -> 1834745357, 9817.773 T/sample. All 1074400 PCM samples,
+200187 sums, 1037 writebacks and 589824 helper-register checks pass, with
+memory/instruction guards and fresh default identity. A shared-breakpoint
+stall interrupted the initial unit-checker run; resume and complete-count
+assertions fixed the harness before final verification. Code -23 bytes,
+state/tables unchanged. Select pure-r26; still 22.441x over average budget.
+Next investigate shared history addressing at pitch >=41: 3519/4672 input
+subframes qualify, but no speedup is yet measured. No ULA/hardware claim.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/26/REPORT.md).
+
 ## 2026-10-04: Speex round25 separates inline feedback from the current profile
 
 Observe unchanged round24 speech with explicit feedback-block endpoints and

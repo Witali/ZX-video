@@ -16,8 +16,8 @@ converter must also support other videos.
 
 Active throughput goal clarified on 2026-10-04: consecutive sample writes
 are permitted; do not spend further work on output pacing. Exact Speex
-default is now pure-r24: 1850951266 T / 9904.491 T/sample, 26.280%
-fewer T than round09, but still 22.639x over the average 437.5-T budget.
+default is now pure-r26: 1834745357 T / 9817.773 T/sample, 26.926%
+fewer T than round09, but still 22.441x over the average 437.5-T budget.
 Round17 reconciles nested costs with unchanged OUT traces; round18 selects
 combined-register multiplication after comparing three candidates. All
 1074400 PCM16/PCM8 samples and 589824 extra product/cycle cases pass.
@@ -30,15 +30,18 @@ holds offsets in index halves and borrows SP for first-part reads. It saves
 98139844 T versus round22 including setup; 7719 arbitrary histories and 128
 filter calls per variant pass. Round24 adds a pre-negated table step and saves
 12603144 T; all 65536 coefficients and 262144 negations pass after fixing
-an initial borrow bug. Code/state 7343/1041 bytes, tables still 16 KiB;
+an initial borrow bug. Code/state 7320/1041 bytes, tables still 16 KiB;
 fresh default build matches and every playback code write is forbidden.
 The below-10000 intermediate target is met. Round25 reconciles the full
 profile with identical PCM/OUT traces: inline feedback 35.880%, decoder
-body 16.470%, preparation 13.728%, 44692 observed changed pages. Next test
-alternate-register pitch accumulation; its estimated saving is 16205909 T.
+body 16.470%, preparation 13.728%, 44692 observed changed pages. Round26
+then saves exactly 16205909 T by keeping the pitch sum in alternate registers;
+200187 sum and 589824 helper-preservation cases pass. Next investigate one
+advancing history cursor for pitch >=41, with the smaller-pitch path retained;
+3519/4672 input subframes qualify, speedup not yet measured.
 The broader goal remains active. Use the
 [throughput worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md) and
-[round24 report](audiobook-beeper/speex-port/rounds/24/REPORT.md), not the
+[round26 report](audiobook-beeper/speex-port/rounds/26/REPORT.md), not the
 historical PVQ scheduling milestone, to select the next optimization.
 
 Latest optimization milestone on 2026-10-04: selected PVQ round13 retains

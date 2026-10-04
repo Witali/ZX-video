@@ -468,19 +468,71 @@ ld (_zx_memory+{4*tap+2}),hl
     return d,f
 
 
+def pitch_accumulator(d, f):
+    """Keep the modulo24 pitch sum in alternate HL/C across the three products."""
+    start=d.index('exc_sample:\n');end=d.index('; S=sum(gain8*history16)',start)
+    body=d[start:end]
+    body=replace_once(body,'ld hl,#0\nld (accum),hl\nld (accum+2),hl\n','''; Alternate HL/C hold the low16/high8 modulo24 pitch sum. The signed8
+; product and its neg32 tail preserve all alternate registers. No sum RAM
+; access is needed until all three active-or-skipped pitch taps are handled.
+.globl _pitch_init_start, _pitch_init_end, _pitch_sum_state
+_pitch_sum_state = accum
+_pitch_init_start::
+exx
+ld hl,#0
+ld c,#0
+exx
+_pitch_init_end::
+''')
+    old='ld bc,(accum)\nex de,hl\nadd hl,bc\nex de,hl\nld a,(accum+2)\nadc a,l\nld (accum),de\nld (accum+2),a\n'
+    assert body.count(old)==3
+    for tap in range(3):
+        new=f'''; Transfer the low product word through the real stack. EXX and POP
+; preserve flags; ADD supplies carry for the high-byte ADC. Discard carry
+; beyond bit 23 exactly as in the previous RAM accumulation.
+.globl _pitch_add_{tap}_start, _pitch_add_{tap}_end
+_pitch_add_{tap}_start::
+push de
+ld a,l
+exx
+pop de
+add hl,de
+adc a,c
+ld c,a
+exx
+_pitch_add_{tap}_end::
+'''
+        body=body.replace(old,new,1)
+    body+='''; Write exactly the three bytes consumed by the unchanged clamp and
+; innovation logic. The fourth scratch byte is never read on this path.
+.globl _pitch_flush_start, _pitch_flush_end
+_pitch_flush_start::
+exx
+ld (accum),hl
+ld a,c
+ld (accum+2),a
+exx
+_pitch_flush_end::
+'''
+    d=d[:start]+body+d[end:]
+    d=replace_once(d,'_mul_s8::\n','; Preserves alternate AF/BC/DE/HL and IX/IY, including the neg32 tail.\n_mul_s8::\n')
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'):d,f=register_preparation(d,f,variant=='pure-r24')
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'))
-    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'):d,f=excitation_shift(d,f)
-    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24'):d,f=innovation_registers(d,f)
-    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24'):d,f=zero_feedback(d,f)
-    if variant in ('pure-r23','pure-r23-pop','pure-r24'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24'))
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=register_preparation(d,f,variant in ('pure-r24','pure-r26'))
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'))
+    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=excitation_shift(d,f)
+    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=innovation_registers(d,f)
+    if variant in ('pure-r22','pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=zero_feedback(d,f)
+    if variant in ('pure-r23','pure-r23-pop','pure-r24','pure-r26'):d,f=inline_products(d,f,variant in ('pure-r23-pop','pure-r24','pure-r26'))
+    if variant=='pure-r26':d,f=pitch_accumulator(d,f)
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')

@@ -110,11 +110,21 @@ comparison and report throughput separately from instantaneous OUT gaps.
   reconcile. Inline feedback uses 35.880%, decoder body 16.470%, preparation
   13.728%. Independently observe 44692 changed pages and no unused helper
   calls. Select register-held pitch accumulation as the next candidate.
-- [ ] **26. Keep the pitch sum in alternate registers.** Replace repeated
+- [x] **26. Keep the pitch sum in alternate registers.** Replace repeated
   RAM accumulation of the three signed products with alternate HL/C, using
   the real stack for the product-word transfer. Include initialization and
   final writeback: predicted 16205909 fewer T. Check helper preservation of
   alternate registers, skipped taps, modulo24 carries and complete streams.
+  [Round26](rounds/26/REPORT.md) confirms exactly that saving: 9817.773
+  T/sample. All 1074400 PCM samples, 200187 sums, 1037 writebacks and
+  589824 helper-preservation cases pass. Tables/state unchanged, code -23.
+- [ ] **27. Share history addressing for pitch >=41.** For all 40 samples
+  in these subframes, the three history indices remain negative and adjacent.
+  Prototype one advancing IX cursor, preserving the general smaller-pitch
+  path. Include dispatch/setup in costs and verify threshold 40/41, all
+  pitch values, every frame, register contracts and all complete streams.
+  The current input has 3519 eligible subframes out of 4672; speedup is not
+  yet measured. Do not add output pacing or change Speex packets.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.
