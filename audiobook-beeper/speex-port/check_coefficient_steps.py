@@ -21,7 +21,7 @@ def guarded(folder):
     return m,s
 
 
-def full_domain(old_folder,new_folder):
+def full_domain(old_folder,new_folder,saving=282):
     variants=[guarded(old_folder),guarded(new_folder)];costs=[Counter(),Counter()]
     factors=[(n-16 if part==3 and n>=8 else n)<<(part*4) for part in range(4) for n in range(16)]
     for coef in range(-32768,32768):
@@ -32,7 +32,7 @@ def full_domain(old_folder,new_folder):
             assert bytes(m.memory[0x7200:0x7300])==want,('coefficient',i,coef)
             assert (m.sp,m.ix,m.iy)==(0xbffe,0x1234,0x5678)
             pair.append(t);costs[i][t]+=1
-        assert pair[0]-pair[1]==282,(coef,pair)
+        assert pair[0]-pair[1]==saving,(coef,pair)
     unchanged=[]
     for m,s in variants:
         before=bytes(m.memory[0x7200:0x7c00])
@@ -41,7 +41,7 @@ def full_domain(old_folder,new_folder):
     assert unchanged==[976,976]
     return dict(signed16_coefficients=65536,exact_entries_per_variant=65536*64,
                 previous_tstates=dict(costs[0]),selected_tstates=dict(costs[1]),
-                saving_per_changed_page=282,unchanged_cache_tstates=unchanged,
+                saving_per_changed_page=saving,unchanged_cache_tstates=unchanged,
                 sp_ix_iy_preserved=True,all_writes_guarded_other_pages_immutable=True)
 
 

@@ -2,7 +2,7 @@
 
 ## Latest result: exact Speex improved; separate VQ playback meets nominal CPU timing
 
-The selected exact default is **`pure-r33`**. Both the initial [TODO](TODO.md)
+The selected exact default is **`pure-r34`**. Both the initial [TODO](TODO.md)
 and six-item [follow-up worklist](FOLLOWUP_TODO.md) are complete, with reports
 and focused commits. Original generators and evidence remain reproducible.
 The exact decoder retains Speex mode-3 packets and emits identical PCM8.
@@ -36,22 +36,23 @@ throughput; no uniform per-sample output schedule is required.
 | 31. Two-part general word products | 1635360657 | 8750.860 |
 | 32. Shared Q14 coefficient magnitude | 1630001442 | 8722.182 |
 | 33. Sign-specific Q14 combination | 1618979214 | 8663.202 |
+| 34. Cancel redundant table-builder EXX | 1596096910 | 8540.758 |
 
-Round 33 uses **35.52% fewer T than round 09**, 2.802x faster than original
+Round 34 uses **36.43% fewer T than round 09**, 2.842x faster than original
 assembly. Internal PCM16 and emitted PCM8 stay exact. Real time still fails
-by **19.802x** against 437.5 T/sample: 23.36 seconds of speech needs 462.57
+by **19.522x** against 437.5 T/sample: 23.36 seconds of speech needs 456.03
 seconds of nominal CPU time. No pacing is added to this Speex decoder.
-The below-9000 target is met; the **next intermediate target remains below
-8500 T/sample**, requiring about 1.88% additional saving on unchanged speech.
-Sign-specific Q14 combination saves 11022228 T (0.676%), with eight more code
-bytes. Every Q14 input saves at least 30 nominal T versus round32. Next remove
-64 cancelling EXX pairs in changed-page table construction; the estimated
-512-T/page saving has not been executed. See the [current report](rounds/33/REPORT.md).
+The below-9000 target is met; **below 8500 T/sample remains the next target**,
+requiring about 0.477% additional saving on unchanged speech. Cancelling
+64 EXX/EXX pairs per changed coefficient page saves exactly 22882304 T
+(1.413%) and 128 code bytes. Next retain the saved table step in registers
+and simplify page-aligned addressing; 8497.951 T/sample is an unexecuted
+estimate. See the [current report](rounds/34/REPORT.md).
 
-Current [image](rounds/33/player.ihx), [decoder](rounds/33/decoder.s),
-[filter](rounds/33/filter.s) and [map](rounds/33/player.map) are under
-`rounds/33`. Entry/count/status, input-bank order and port contract below
-remain unchanged. Code is `8000..A355` (9046 bytes), state `B000..B410`
+Current [image](rounds/34/player.ihx), [decoder](rounds/34/decoder.s),
+[filter](rounds/34/filter.s) and [map](rounds/34/player.map) are under
+`rounds/34`. Entry/count/status, input-bank order and port contract below
+remain unchanged. Code is `8000..A2D5` (8918 bytes), state `B000..B410`
 (1041), stack reserve `BF00..BFFF`. The PCM16 output buffer is removed;
 `_last_pcm16` exposes the existing feedback sample for verification. All
 code writes are forbidden during playback. Retained standalone product
@@ -62,11 +63,13 @@ code/state/input are additional RAM. Gain triples now hold routine pointers.
 
 The final exact binary passes **1094880 complete-stream samples**, arithmetic,
 memory guards, instruction audits and a fresh default-build identity check.
-All **1343488 Q14 cases** pass with exact instruction costs and register/
-memory contracts; unchanged unsigned helper evidence is reused. All 93440 real
-Q14 operand pairs match; isolated costs reconcile with the full saving.
-See [standard verification](rounds/33/unpaced-checks.json),
-[Q14 signs and observed costs](rounds/33/q14-sign-checks.json),
+All **65536 signed coefficients** and **1024 changed-page masks** pass
+on both binaries, with exact table bytes, instruction costs and matching
+registers/flags/state. The 44692 changed pages predict the complete saving
+exactly; observed coefficient inputs and profiled OUT traces match.
+See [standard verification](rounds/34/unpaced-checks.json),
+[builder domains, masks and profiles](rounds/34/preparation-exchange-checks.json),
+[prior exact Q14 signs](rounds/33/q14-sign-checks.json),
 [prior unsigned word domains](rounds/32/q14-product-checks.json),
 [prior exhaustive byte/word products](rounds/31/word-product-checks.json),
 [prior exact synthesis shift](rounds/30/synthesis-shift-checks.json),
@@ -84,7 +87,7 @@ The follow-up also implements three distinct alternatives:
 
 | Candidate | CPU T/sample | Stored bytes / PCM8 ratio | Decision |
 | --- | ---: | ---: | --- |
-| Exact Speex round 33 | 8663.202 | 23360 / 8:1 | Selected exact decoder; too slow |
+| Exact Speex round 34 | 8540.758 | 23360 / 8:1 | Selected exact decoder; too slow |
 | Approximate Speex round 10 | 11781.204 | 23360 / 8:1 | Rejected: still too slow, added error |
 | Periodic wave/noise round 11 | 222.625, kernel only | 54320 / 3.440:1 | Not selected; loading/pacing unimplemented |
 | PVQ3x1024 round 12 | 90.418 before pacing | 80974 / 2.308:1 | Previous nominal CPU baseline |
@@ -107,14 +110,14 @@ To build and check the selected version:
 ```powershell
 python audiobook-beeper/speex-port/build.py --skip-host
 python audiobook-beeper/speex-port/verify.py --native-only --restore-fixture
-python audiobook-beeper/speex-port/check_round.py --variant pure-r33
-python audiobook-beeper/speex-port/check_q14_sign.py
-python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r33 --previous pure-r32 --check-default
+python audiobook-beeper/speex-port/check_round.py --variant pure-r34
+python audiobook-beeper/speex-port/check_preparation_exchanges.py
+python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r34 --previous pure-r33 --check-default
 ```
 
 The stream checks require the host-generated fixtures: build host DLLs
-as described below and run `check_streams.py --variant pure-r33` to generate
-them. Keep the pure-r32 build/report/operand archive and archived random-packet fixtures
+as described below and run `check_streams.py --variant pure-r34` to generate
+them. Keep the pure-r33 build/report/OUT trace and archived random-packet fixtures
 available for `check_unpaced.py`. Retain the same Python runtime. `finish_followup.py`
 reproduces the historical round09 checkpoint. `final_checks.py` reproduces historical
 round-04 LPC evidence and needs `pure-r3` and `pure-r4` builds explicitly.

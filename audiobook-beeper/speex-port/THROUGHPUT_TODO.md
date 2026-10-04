@@ -12,11 +12,11 @@ Baseline: exact mode-3 Speex `pure-r9`, 2510789186 T for 186880 samples,
 already emitted without pacing. Retain the complete upstream PCM16/PCM8
 comparison and report throughput separately from instantaneous OUT gaps.
 
-Next intermediate target after round33: **below 8500 T/sample** on the same
+Next intermediate target after round34: **below 8500 T/sample** on the same
 complete 186880-sample speech, exact PCM16/PCM8 and unchanged 16-KiB table
-arena. Current 8663.202 T/sample needs another 30499214 T saving to reach
-8500 (about 1.88%). This is an unachieved target, not a forecast; the next
-builder simplification alone is not expected to close the gap. Real time still needs 437.5 T/sample.
+arena. Current 8540.758 T/sample needs another 7616910 T saving to reach
+8500 (about 0.477%). The next register-held step/page-address candidate
+estimates 8497.951 T/sample, but is unimplemented and unverified. Real time still needs 437.5 T/sample.
 
 - [x] **15. Register-based coefficient table construction.** Replace four
   byte stores and repeated step loads with 32-bit register accumulation and
@@ -204,13 +204,24 @@ builder simplification alone is not expected to close the gap. Real time still n
   8663.202 T/sample (-0.676%). Every Q14 input saves 30..211 nominal T.
   All 1343488 arithmetic cases and 1094880 complete samples pass. Code +8;
   table/state unchanged, average real-time deficit still 19.802x.
-- [ ] **34. Remove cancelling register-bank exchanges in table preparation.**
+- [x] **34. Remove cancelling register-bank exchanges in table preparation.**
   The changed-page builder contains 64 adjacent EXX/EXX pairs. Each pair is
   an 8-T identity; removing them predicts 512 T/page and 22882304 T on the
   saved 44692 changed pages, about 8540.76 T/sample. Restrict removal to this
   builder, verify every coefficient/table entry, flags, cache, memory and SP,
-  then reconcile full playback with the estimate. This is unimplemented;
-  8500 and average real time remain unmet.
+  then reconcile full playback with the estimate.
+  [Round34](rounds/34/REPORT.md) confirms exactly -22882304 T, 8540.758
+  T/sample (-1.413%). All 65536 coefficients per variant, 1024 page masks
+  and 1094880 complete samples pass. Code -128, table/state unchanged.
+  Preparation costs and full delta reconcile; average deficit still 19.522x.
+- [ ] **35. Retain the next table step in registers and shorten addressing.**
+  BC/BC' are available while the first three groups retain 16*step in RAM.
+  Register copies predict 40 T/group saved, 120 T/page. Since coef_out is
+  page-aligned, direct L values or INC H predict another 59 T/page. Combined
+  estimate: 179 T/page / 7999868 T, reaching 8497.951 T/sample on the saved
+  input. Verify all coefficients/table bytes, alignment, cache, caller
+  contracts and complete streams. This is unimplemented; the below-8500
+  target and average real-time objective remain unmet.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

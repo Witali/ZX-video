@@ -1,5 +1,22 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round34 cancels redundant table-builder exchanges
+
+On unchanged round33 speech, remove exactly 64 EXX/EXX identity pairs from
+the changed coefficient-page builder. Save 512 T/page; observed 44692 pages
+predict the complete -22882304 T exactly. Preparation 254106133 -> 231223829
+T (-9.005%); full speech 1618979214 -> 1596096910 T (-1.413%), 8540.758
+T/sample. All 65536 signed coefficients and 1024 changed-page masks per
+variant pass, including exact tables/registers/flags/BSS, write guards,
+independent instruction costs, unchanged coefficient inputs and preserved
+profiled OUT traces. All 1094880 complete PCM16/PCM8 samples and fresh
+default identity pass. Code -128 bytes, state/tables/payload unchanged;
+select pure-r34. Still 19.522x over average real time; no ULA/hardware claim.
+Next estimate: keep 16*step in BC/BC' and use page-aligned group addresses,
+179 T/page or 8497.951 T/sample. This is unimplemented; below-8500 remains
+unmet. No failed, reverted or interrupted candidate occurred this round.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/34/REPORT.md).
+
 ## 2026-10-04: Speex round33 combines Q14 by coefficient sign
 
 On unchanged round32 speech, split Q14 on coefficient sign, restore only
