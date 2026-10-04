@@ -190,13 +190,91 @@ add a,(hl)'''
     return d,f
 
 
+def combined_signed8(d, f, leading, signed_word=False):
+    """Reuse A for the unread multiplier bits and the accumulating high byte."""
+    begin=d.index('s8_b_positive:\n')+len('s8_b_positive:\n')
+    end=d.index('; Signed A * positive energy/4096',begin)
+    code='''; Unsigned core: A starts with the 8 multiplier bits and ends
+; as the product high byte; HL holds the low word. ADD HL,HL carries into
+; RLA, whose outgoing carry selects this bit's addition. ADC A,0 merges
+; the low-word carry. DE is treated as unsigned; no extra table or scratch.
+ld a,b
+'''
+    if leading:
+        code+='; Nonzero B is guaranteed by the entry check. Skip the zero prefix.\n'
+        for i in range(8):code+=f'add a,a\njr c,s8_leading_{i}\n'
+        for i in range(8):
+            target=f's8_acc_{i+1}' if i<7 else 's8_acc_done'
+            code+=f's8_leading_{i}:\nld h,d\nld l,e\njp {target}\n'
+    else:code+='ld hl,#0\n'
+    for i in range(1 if leading else 0,8):
+        code+=f'''s8_acc_{i}:
+add hl,hl
+rla
+jr nc,s8_acc_skip_{i}
+add hl,de
+adc a,#0
+s8_acc_skip_{i}:
+'''
+    code+='''s8_acc_done:
+ex de,hl
+ld l,a
+ld h,#0
+ld a,(s8_sign)
+or a,a
+jp nz,neg32
+ret
+
+'''
+    if signed_word:
+        # DE remains the original unsigned bit pattern during the core.
+        # Correct the top product byte by -magnitude when its sign bit is set.
+        tail=code.index('s8_acc_done:\n')
+        code=code[:tail]+'''s8_acc_done:
+; For negative DE, unsigned(DE) differs by 65536. Subtract B from the
+; high product byte before sign extending, then apply the original A sign.
+bit 7,d
+jr z,s8_word_positive
+sub a,b
+s8_word_positive:
+ex de,hl
+ld l,a
+add a,a
+sbc a,a
+ld h,a
+bit 7,c
+jp nz,neg32
+ret
+
+'''
+    d=d[:begin]+code+d[end:]
+    if signed_word:
+        start=d.index('s8_nonzero:\n');stop=d.index('s8_b_positive:\n',start)
+        d=d[:start]+'''s8_nonzero:
+; C preserves the original signed byte; B is its unsigned magnitude.
+; The multiplicand DE stays signed, avoiding a word negation and sign RAM.
+ld c,a
+ld b,a
+bit 7,b
+jr z,s8_a_positive
+neg
+ld b,a
+s8_a_positive:
+'''+d[stop:]
+    d=d.replace('; Signed A * DE -> HL:DE. Magnitudes use an unsigned 24-bit C:HL accumulator.',
+                '; Signed A * DE -> HL:DE. Magnitudes use an unsigned 24-bit A:HL accumulator.')
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16'):d,f=register_preparation(d,f)
-    if variant=='pure-r16':d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed'):d,f=register_preparation(d,f)
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant=='pure-r18-signed')
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')

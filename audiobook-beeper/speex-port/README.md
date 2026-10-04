@@ -2,7 +2,7 @@
 
 ## Latest result: exact Speex improved; separate VQ playback meets nominal CPU timing
 
-The selected exact default is **`pure-r16`**. Both the initial [TODO](TODO.md)
+The selected exact default is **`pure-r18-signed`**. Both the initial [TODO](TODO.md)
 and six-item [follow-up worklist](FOLLOWUP_TODO.md) are complete, with reports
 and focused commits. Original generators and evidence remain reproducible.
 The exact decoder retains Speex mode-3 packets and emits identical PCM8.
@@ -22,16 +22,17 @@ throughput; no uniform per-sample output schedule is required.
 | 9. Port-only exact output | 2510789186 | 13435.302 |
 | 15. Register-based table construction | 2235799352 | 11963.824 |
 | 16. Omit zero partial-product bytes | 2164784952 | 11583.824 |
+| 18. Combined-register signed products | 2042203676 | 10927.888 |
 
-Round 16 uses **13.78% fewer T than round 09**, 2.095x faster than original
+Round 18 uses **18.66% fewer T than round 09**, 2.221x faster than original
 assembly. Internal PCM16 and emitted PCM8 stay exact. Real time still fails
-by **26.48x** against 437.5 T/sample: 23.36 seconds of speech needs 618.51
+by **24.98x** against 437.5 T/sample: 23.36 seconds of speech needs 583.49
 seconds of nominal CPU time. No pacing is added to this Speex decoder.
 
-Current [image](rounds/16/player.ihx), [decoder](rounds/16/decoder.s),
-[filter](rounds/16/filter.s) and [map](rounds/16/player.map) are under
-`rounds/16`. Entry/count/status, input-bank order and port contract below
-remain unchanged. Code is `8000..9B18` (6937 bytes), state `B000..B410`
+Current [image](rounds/18/player.ihx), [decoder](rounds/18/decoder.s),
+[filter](rounds/18/filter.s) and [map](rounds/18/player.map) are under
+`rounds/18`. Entry/count/status, input-bank order and port contract below
+remain unchanged. Code is `8000..9B22` (6947 bytes), state `B000..B410`
 (1041), stack reserve `BF00..BFFF`. The PCM16 output buffer is removed;
 `_last_pcm16` exposes the existing feedback sample for verification. Exactly
 four immediate operands are writable code; the routine is not reentrant
@@ -40,7 +41,8 @@ and runs with IRQ disabled. Tables still occupy **16010 useful bytes in a
 
 The final exact binary passes **1074400 complete-stream samples**, arithmetic,
 memory guards, instruction audits and a fresh default-build identity check.
-See [current verification](rounds/16/unpaced-checks.json). Its sound matches
+See [current verification](rounds/18/unpaced-checks.json) and the additional
+[589824 product/cycle checks](rounds/18/s8-domain-checks.json). Its sound matches
 the previously supplied exact Speex comparison. Reports for initial rounds
 are linked from [TODO](TODO.md), [FOLLOWUP_TODO](FOLLOWUP_TODO.md) and
 [THROUGHPUT_TODO](THROUGHPUT_TODO.md).
@@ -49,7 +51,7 @@ The follow-up also implements three distinct alternatives:
 
 | Candidate | CPU T/sample | Stored bytes / PCM8 ratio | Decision |
 | --- | ---: | ---: | --- |
-| Exact Speex round 16 | 11583.824 | 23360 / 8:1 | Selected exact decoder; too slow |
+| Exact Speex round 18 | 10927.888 | 23360 / 8:1 | Selected exact decoder; too slow |
 | Approximate Speex round 10 | 11781.204 | 23360 / 8:1 | Rejected: still too slow, added error |
 | Periodic wave/noise round 11 | 222.625, kernel only | 54320 / 3.440:1 | Not selected; loading/pacing unimplemented |
 | PVQ3x1024 round 12 | 90.418 before pacing | 80974 / 2.308:1 | Previous nominal CPU baseline |
@@ -72,13 +74,14 @@ To build and check the selected version:
 ```powershell
 python audiobook-beeper/speex-port/build.py --skip-host
 python audiobook-beeper/speex-port/verify.py --native-only --restore-fixture
-python audiobook-beeper/speex-port/check_round.py --variant pure-r16
-python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r16 --previous pure-r15 --check-default
+python audiobook-beeper/speex-port/check_round.py --variant pure-r18-signed
+python audiobook-beeper/speex-port/check_s8_combined.py
+python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r18-signed --previous pure-r16 --check-default
 ```
 
-The last two commands require the host-generated fixtures: build host DLLs
-as described below and run `check_streams.py --variant pure-r16` to generate
-them. Keep the round15 build and archived random-packet fixtures available
+The stream checks require the host-generated fixtures: build host DLLs
+as described below and run `check_streams.py --variant pure-r18-signed` to generate
+them. Keep the round16 build and archived random-packet fixtures available
 for `check_unpaced.py`. Retain the same Python runtime. `finish_followup.py`
 reproduces the historical round09 checkpoint. `final_checks.py` reproduces historical
 round-04 LPC evidence and needs `pure-r3` and `pure-r4` builds explicitly.

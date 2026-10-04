@@ -38,10 +38,20 @@ comparison and report throughput separately from instantaneous OUT gaps.
   the same average-throughput goal without adding output pacing.
   [Round17](rounds/17/REPORT.md): full trace and PCM unchanged, nested times
   reconcile. Coefficient products cost 23.136%, signed 8x16 products 13.865%.
-- [ ] **18. Combined-register signed 8x16 multiplication.** Replace separate
+- [x] **18. Combined-register signed 8x16 multiplication.** Replace separate
   shifts with an A:HL accumulator, compare fixed eight steps with leading-bit
   skipping, and retain the fastest exact complete-stream implementation.
   Preserve signs, -32768 handling, all tables and the PCM8 port contract.
+  [Round18](rounds/18/REPORT.md) selects `pure-r18-signed`: 2042203676 T,
+  10927.888 T/sample (-5.663%), all 1074400 PCM samples and 589824 additional
+  product/cycle cases pass. Average deficit still 24.978x; goal remains active.
+- [ ] **19. Replace seven-bit excitation shifts.** Inspect the signed24
+  rounded sum in L:D:E before `_zx_clip`. Instead of seven arithmetic
+  right shifts, save the sign byte, shift the three bytes left once, take
+  the upper two bytes as DE and restore sign extension in HL. Proposed
+  cost 52 versus 184 T including sign extension, saving 132 T/sample;
+  this is an instruction estimate, not yet an executed result. Verify
+  signed24 extremes, rounding boundaries and all complete reference streams.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

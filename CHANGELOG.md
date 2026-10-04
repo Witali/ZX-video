@@ -1,5 +1,21 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round18 selects combined-register signed multiplication
+
+Compare three exact signed8x16 cores on the unchanged complete speech:
+fixed A:HL costs 2105364513 T, leading-bit skipping 2066995457 T, and
+signed-word correction 2042203676 T, versus round16's 2164784952. Select
+pure-r18-signed: -122581276 T (5.663%), 10927.888 T/sample, code +10 bytes,
+state/tables unchanged. All candidates pass full speech and bounded
+arithmetic/frame checks; only the selected one passes the full 1074400
+PCM16/PCM8 suite, guards, tables, general arithmetic, controls and fresh
+default identity. Additional 589824 products cover nine full word domains;
+every cycle count matches the instruction formula. Other candidates remain
+archived as superseded. No output pacing is introduced, no sound or format
+change; average deficit remains 24.978x. Next inspect the seven-bit
+excitation shift; its proposed 132-T/sample saving is not measured yet.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/18/REPORT.md).
+
 ## 2026-10-04: Speex round17 profiles nested work without changing CPU execution
 
 Observe function entry/return in the unchanged round16 complete speech run.
