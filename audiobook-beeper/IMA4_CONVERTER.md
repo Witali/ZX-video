@@ -1,4 +1,15 @@
-# Historical IMA4 audio-to-TRD converter
+# IMA4 audio to TRD converter
+
+Updated 2026-10-04: the default `--quality best` adds the shared PDM waveform
+search with overlapping windows to the unchanged four-bit player. It keeps
+the old verified candidates, recalibrates the two best host candidates on
+their own clocks and selects the best complete two-loop result. A final
+clock-refinement pass re-encodes the winner against
+its measured data-dependent waits; `--no-refine-clock` omits that pass.
+The prior verified result remains eligible if refinement is worse. Use
+`--quality balanced` to reproduce the earlier PCM-search workflow described
+below. See [current search controls](CONVERTER.md). This change adds no
+Z80 instruction: ordinary cost remains 423 T/sample, delta 0 T.
 
 `convert_audio.py --codec ima4` accepts an ordinary local audio file readable by FFmpeg,
 keeps its initial fragment that fits the resident player and generates one

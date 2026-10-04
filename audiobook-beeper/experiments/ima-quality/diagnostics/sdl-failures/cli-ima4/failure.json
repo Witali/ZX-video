@@ -1,0 +1,5 @@
+{
+  "complete": false,
+  "error": "Command '['C:\\\\Work\\\\ZX-video\\\\tools\\\\fuse-1.9.0-sdl\\\\fuse.exe', '--no-sound', '--no-autosave-settings', '--no-confirm-actions', '--speed', '10000', '--machine', '128', '--beta128', '--debugger-command', 'base 10\\nset $r 0\\nset $bits 0\\nbreakpoint 32928\\ncommands 1\\nset $r 1\\ncontinue\\nend\\nbreakpoint port write 254\\ncondition 2 $r==1\\ncommands 2\\nset $bits $bits+1\\ncontinue\\nend\\nbreakpoint port write 254\\ncondition 3 $r==1 && ($bits==1 || $bits==131073 || $bits==262145)\\ncommands 3\\nprint spectrum:frames*70908+ula:tstates\\ncontinue\\nend\\nbreakpoint port write 254\\ncondition 4 $bits>=262145\\ncommands 4\\nexit 77\\nend', 'C:\\\\Work\\\\ZX-video\\\\.worktree\\\\lpc-ima-preload\\\\build\\\\ima-quality\\\\cli-ima4\\\\pilot\\\\phase-00\\\\audiobook-preview.trd']' timed out after 179.96899999992456 seconds",
+  "type": "TimeoutExpired"
+}

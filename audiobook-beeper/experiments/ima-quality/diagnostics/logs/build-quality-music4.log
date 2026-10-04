@@ -1,0 +1,60 @@
+{"model_prepared": true, "unique_packet_shapes": 101, "baseline_model_snr_db": 17.243080911201687}
+{"encoded_samples": 16384, "total_samples": 186880}
+{"encoded_samples": 32768, "total_samples": 186880}
+{"encoded_samples": 49152, "total_samples": 186880}
+{"encoded_samples": 65536, "total_samples": 186880}
+{"encoded_samples": 81920, "total_samples": 186880}
+{"encoded_samples": 98304, "total_samples": 186880}
+{"encoded_samples": 114688, "total_samples": 186880}
+{"encoded_samples": 131072, "total_samples": 186880}
+{"encoded_samples": 147456, "total_samples": 186880}
+{"encoded_samples": 163840, "total_samples": 186880}
+{"encoded_samples": 180224, "total_samples": 186880}
+{"scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n", "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\audiobook-beeper\\experiments\\entertainer-normalized\\ima4", "samples": 186880, "beam_width": 256, "block_size": 128, "commit_size": 64, "allowed_ima_nibbles": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "ima3_subset": false, "source_sha256": "fb630abd3c8129c0ce2b0e2b4f367cf1136c0bc5eb4b104bcec3cd6e7ab501bb", "packed_sha256": "27e6b5bc052bf78ccd4395e1f7fff72f17a8a179b81fb4821145ac109924427e", "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state", "history_bins": 0, "search_backend": "native", "search_seconds": 175.03099999995902, "baseline_model_snr_db": 17.243080911201687, "host_fixed_clock_snr_db": 20.403729254287807, "control_prior": "compensated", "control_regularization": 0.1, "elapsed_seconds": 181.23499999998603, "ordinary_native_tstate_delta": 0, "new_timeline_verified": false, "saturation_guard": {"samples": 186880, "saturation_events": 0, "raw_min": -25457, "raw_max": 27177}, "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"}
+{"model_prepared": true, "unique_packet_shapes": 101, "baseline_model_snr_db": 17.243080911201687}
+{"encoded_samples": 16384, "total_samples": 186880}
+{"encoded_samples": 32768, "total_samples": 186880}
+{"encoded_samples": 49152, "total_samples": 186880}
+{"encoded_samples": 65536, "total_samples": 186880}
+{"encoded_samples": 81920, "total_samples": 186880}
+{"encoded_samples": 98304, "total_samples": 186880}
+{"encoded_samples": 114688, "total_samples": 186880}
+{"encoded_samples": 131072, "total_samples": 186880}
+{"encoded_samples": 147456, "total_samples": 186880}
+{"encoded_samples": 163840, "total_samples": 186880}
+{"encoded_samples": 180224, "total_samples": 186880}
+{"scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n", "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\audiobook-beeper\\experiments\\entertainer-normalized\\ima4", "samples": 186880, "beam_width": 512, "block_size": 128, "commit_size": 64, "allowed_ima_nibbles": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "ima3_subset": false, "source_sha256": "fb630abd3c8129c0ce2b0e2b4f367cf1136c0bc5eb4b104bcec3cd6e7ab501bb", "packed_sha256": "788850681906ce63ed98ab3812dfb7a81fb1f571b3a9f5d97f8b5dee2ddb4205", "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state", "history_bins": 0, "search_backend": "native", "search_seconds": 323.34399999992456, "baseline_model_snr_db": 17.243080911201687, "host_fixed_clock_snr_db": 20.0003715364908, "control_prior": "compensated", "control_regularization": 0.03, "elapsed_seconds": 329.719000000041, "ordinary_native_tstate_delta": 0, "new_timeline_verified": false, "saturation_guard": {"samples": 186880, "saturation_events": 0, "raw_min": -25455, "raw_max": 27147}, "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"}
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\experiments\ima-quality\run.py", line 120, in <module>
+    recording = stage(out/'sound-128', lambda path:record(dest, path, a.fuse))
+    ^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\experiments\ima-quality\run.py", line 87, in main
+    'probe_reconstruction_error.py', 'verify_direct.py', 'build_pdm.py',
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_ima3_audio.py", line 49, in stage
+    files=list(path.glob('*'))+list((path/'assembly').glob('*'))
+           ^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\experiments\ima-quality\run.py", line 88, in <lambda>
+    'probe_feedback_packets.py', 'assess_snr.py'):
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\experiments\ima-quality\run.py", line 37, in four_bit
+    selected, meta = calibrate(out/'calibration', packed, source, fuse, hot)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_audio.py", line 163, in calibrate
+    probe = measure(work, fuse, fields)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\probe_loop_phase.py", line 29, in measure
+    result=subprocess.run([str(fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions','--speed','10000',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 1228, in communicate
+    sts = self.wait(timeout=self._remaining_time(endtime))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 1264, in wait
+    return self._wait(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 1593, in _wait
+    raise TimeoutExpired(self.args, timeout)
+subprocess.TimeoutExpired: Command '['C:\\Work\\ZX-video\\tools\\fuse-1.9.0-sdl\\fuse.exe', '--no-sound', '--no-autosave-settings', '--no-confirm-actions', '--speed', '10000', '--machine', '128', '--beta128', '--debugger-command', 'base 10\nset $r 0\nset $bits 0\nbreakpoint 33036\ncommands 1\nset $r 1\ncontinue\nend\nbreakpoint port write 254\ncondition 2 $r==1\ncommands 2\nset $bits $bits+1\ncontinue\nend\nbreakpoint port write 254\ncondition 3 $r==1 && ($bits==1 || $bits==2990081 || $bits==5980161)\ncommands 3\nprint spectrum:frames*70908+ula:tstates\ncontinue\nend\nbreakpoint port write 254\ncondition 4 $bits>=5980161\ncommands 4\nexit 77\nend', 'C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima-quality\\music4\\disk-encode-1\\calibration\\phase-00\\audiobook-preview.trd']' timed out after 179.98399999993853 seconds

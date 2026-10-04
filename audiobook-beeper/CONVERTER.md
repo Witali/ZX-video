@@ -4,7 +4,19 @@
 The user accepted the overlap speech disk in an interactive Program Files
 Fuse 1.9.0 session on 2026-10-04 and requested this playback algorithm as the
 main option. The existing `convert_ima3_audio.py` entry point remains usable.
-Select `--codec ima4` explicitly for the [historical four-bit converter](IMA4_CONVERTER.md).
+Select `--codec ima4` explicitly for the [four-bit converter](IMA4_CONVERTER.md).
+
+Both modes now default to `--quality best`: complete a bounded waveform
+search even if an early candidate reaches the SNR target, execute the two
+highest-scoring host candidates, then select by the worse of their two
+fully measured Fuse loops. The verified pilot remains a fallback; IMA4
+also retains its earlier clock-compensated candidates. This means best
+among the verified candidates, not a proof of a global optimum.
+IMA4 also performs one refinement on the winning waveform candidate's new
+measured clock, then keeps whichever verified result is better. Its
+data-dependent memory waits make that clock different from the pilot.
+`--no-refine-clock` omits this last four-bit pass. IMA3 retains its fixed
+decoder placement and existing clock model.
 
 ## Run
 
@@ -28,12 +40,21 @@ API remain compatible; CLI dispatch selects the profile.
 | Default disk output | `audio.trd`, sequential RAM-sized parts | `audiobook-preview.trd`, looping RAM excerpt |
 | Whole selected track | `--disk-mode all` | Not supported by this historical converter |
 | Looping RAM excerpt | `--disk-mode preview` | Default |
-| Search controls | `--target-snr`, `--attempts`, `--resume` | `--iterations` |
+| Search controls | `--quality`, `--target-snr`, `--attempts`, `--resume` | `--quality`, `--target-snr`, `--attempts`, `--iterations` |
 
 Both accept `--duration N` and `--no-recording`. The latter omits normal-speed
 Fuse sound capture while retaining complete native/Fuse verification. New
 outputs must use an empty directory; IMA3 can resume only a matching saved
 run. Changed producer sources invalidate old resume caches by design.
+
+`best` defaults to two full searches. IMA3 uses width 1024, horizon 256,
+commit 64 with prior weights .03 and .003. IMA4 uses width 256 /horizon 128
+with weight .1, then width 512 /horizon 128 with weight .03, also committing
+64 samples. `--attempts 3` adds another bounded candidate; it is optional.
+All work is on the PC. `--quality balanced` retains the former IMA3 search
+with up to three attempts and early target exit, or the former IMA4 PCM
+search. Both best modes return code 2 for a completed preview that misses
+`--target-snr` (default 20 dB); no physical-hardware result is implied.
 
 For a shared externally normalized comparison reference, both codecs accept
 `--prepared-pcm` without changing its gain. Use `--disk-mode preview` for
@@ -62,8 +83,9 @@ downloaded. Without a compiler, the optimized NumPy implementation remains
 available. A failed optional build reports its log and falls back to NumPy.
 The standalone `ima_waveform_encoder.py --backend numpy|native|auto` option
 can force a backend for diagnostics; `native` requires successful loading.
-Search widths, lookahead, overlap, quality gates and Spectrum playback are
-unchanged. [Speed measurements and exact-output regressions](experiments/waveform-speed/README.md).
+The accelerator itself changes no search decision or Spectrum instruction;
+the selected quality profile supplies the widths and horizons.
+[Speed measurements and exact-output regressions](experiments/waveform-speed/README.md).
 
 The accepted reference is [ZX-audiobook-IMA3-overlap-test.trd](../ZX-audiobook-IMA3-overlap-test.trd),
 SHA-256 `ac4b740ebdcf2f9fb538d286b8ac679df6babc53462cf79b18f08cc8b5a2d66d`.
@@ -79,6 +101,8 @@ with those settings. The earlier vibration's original cause remains unknown;
 the user accepted this direct interactive playback. Host output rate is
 separate from the source sample rate and the Spectrum PDM pulse rate.
 
-Promoting the CLI default changes no Z80 instruction, table, stream or TRD.
+The earlier CLI-default promotion changed no stream or TRD. The new best
+search changes encoded streams and verifies each candidate independently.
 Mean native IMA3 cost remains 427.375 T/sample, delta 0 T; page/bank extras
-remain +14/+140 T. Reuse the complete prior disk verification.
+remain +14/+140 T. See [the paired quality study](experiments/ima-quality/README.md)
+for new complete-disk results, including IMA4.

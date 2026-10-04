@@ -3,7 +3,9 @@
 For a new recording, use [convert_audio.py](CONVERTER.md). Its default is
 packed IMA3 decoded directly to PDM, accepted by the user in interactive Fuse
 playback on 2026-10-04. `--codec ima3` selects it explicitly; `--codec ima4`
-selects the historical four-bit variant. The [direct IMA3 guide](IMA3_DIRECT.md)
+selects the four-bit variant. Both default to the shared bounded waveform
+search in `--quality best`; [converter controls](CONVERTER.md) explain the
+measured selection and the older `balanced` mode. The [direct IMA3 guide](IMA3_DIRECT.md)
 describes its implementation.
 It defaults to [one TRD with sequential RAM-sized parts](IMA3_SERIES.md).
 Use `--disk-mode all` for the entire track on numbered TRDs, or

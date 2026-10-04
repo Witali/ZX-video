@@ -24,9 +24,9 @@ from ima3_direct_player import MEASURED_MODEL, layout
 from ima_beam import encode
 from probe_reconstruction_error import wav8
 from verify_pcm import save
+from quality_search import host_search, search_plan, ranked_hosts
 
 HERE=Path(__file__).resolve().parent
-SEARCH=((256,.03,128),(512,.03,128),(1024,.03,256))
 
 
 def digest(path):
@@ -49,17 +49,6 @@ def stage(path,operation):
     files=list(path.glob('*'))+list((path/'assembly').glob('*'))
     save(marker,{str(p.relative_to(path)):digest(p) for p in files if p.is_file() and p!=marker})
     return result
-
-
-def host_search(pilot,out,width,weight,block_size,ffmpeg):
-    # Keep future filter response in every decision. Full-horizon commits
-    # caused periodic error bursts in the speech reference at block edges.
-    subprocess.run([sys.executable,str(HERE/'ima_waveform_encoder.py'),
-                    '--input',str(pilot),'--output',str(out),'--ima3',
-                    '--width',str(width),'--regularization',str(weight),
-                    '--block-size',str(block_size),'--commit-size','64',
-                    '--ffmpeg',ffmpeg],check=True)
-    return json.loads((out/'report.json').read_bytes())
 
 
 def reuse_pilot(path,old,source,identity):
@@ -97,7 +86,8 @@ def convert(args):
     out=args.output.resolve();manifest=out/'run.json'
     producers={p.name:digest(p) for p in HERE.glob('*.py')}
     producers['ima3-direct-player.asm']=digest(HERE/'ima3-direct-player.asm')
-    identity=dict(input_sha256=digest(args.input),prepared_pcm=args.prepared_pcm,
+    quality=getattr(args,'quality','best')
+    identity=dict(input_sha256=digest(args.input),prepared_pcm=args.prepared_pcm,quality=quality,
                   duration=args.duration,target_snr_db=args.target_snr,attempts=args.attempts,
                   recording=not args.no_recording,model=MEASURED_MODEL,producer_sha256=producers,
                   reuse_pilot=str(args.reuse_pilot.resolve()) if args.reuse_pilot else None,
@@ -139,11 +129,12 @@ def convert(args):
     def accepted(result):
         score=result['minimum_snr_db']
         return result['speed_within_two_percent'] and result['startup_within_60_seconds'] and (silent or score is not None and score>=args.target_snr)
-    for number,(width,weight,block_size) in enumerate(SEARCH[:args.attempts],1):
-        if any(accepted(c) for c in candidates):break
+    for number,(width,weight,block_size) in enumerate(search_plan('ima3',quality,args.attempts),1):
+        if silent or quality=='balanced' and any(accepted(c) for c in candidates):break
         folder=out/f'encode-{number}'
         estimate=stage(folder,lambda p:host_search(pilot,p,width,weight,block_size,args.ffmpeg))
         hosts.append(dict(directory=folder.name,**estimate));save(out/'host-search.json',hosts)
+        if quality=='best':continue
         # Save expensive full traces for candidates near the goal, and always
         # execute the best estimate when the bounded search is exhausted.
         if estimate['host_fixed_clock_snr_db']<args.target_snr and number<args.attempts:continue
@@ -153,6 +144,12 @@ def convert(args):
             gzip.decompress((encoded/'soundtrack.ima.gz').read_bytes()),p,args.fuse,args.ffmpeg,model))
         candidates.append(measured(variant,result))
         save(out/'variants.json',candidates)
+    if quality=='best':
+        for host in ranked_hosts(hosts):
+            encoded=out/host['directory'];variant=out/f'disk-{host["directory"]}'
+            result=stage(variant,lambda p:build_verified(source,
+                gzip.decompress((encoded/'soundtrack.ima.gz').read_bytes()),p,args.fuse,args.ffmpeg,model))
+            candidates.append(measured(variant,result));save(out/'variants.json',candidates)
     eligible=[c for c in candidates if c['speed_within_two_percent'] and c['startup_within_60_seconds']]
     if not eligible:raise RuntimeError('no complete disk meets the speed and startup limits')
     best=max(eligible,key=lambda c:c['minimum_snr_db'] if c['minimum_snr_db'] is not None else -math.inf)
@@ -174,7 +171,7 @@ def convert(args):
     report=dict(date=date.today().isoformat(),complete=True,source=source_meta,selected=best,candidates=candidates,
                 target_snr_db=args.target_snr,target_applicable=not silent,target_met=None if silent else accepted(best),
                 quality_gate_passed=accepted(best),preview_only=not accepted(best),
-                search_attempts=len(hosts),bounded_search=True,recording=recording,
+                search_attempts=len(hosts),quality_profile=quality,bounded_search=True,recording=recording,
                 trd_sha256=digest(out/'audiobook-preview.trd'),physical_hardware_tested=False,
                 source_reference='Prepared 8-kHz PCM8, no fitted gain/delay/time stretch; unchanged 70 Hz..4.5 kHz filter',
                 spectrum_expansion=False,pcm_buffer_bytes=0,pdm_buffer_bytes=0,
@@ -190,12 +187,16 @@ def main(argv=None, *, parents=()):
     p.add_argument('--ffmpeg',default=shutil.which('ffmpeg'));p.add_argument('--fuse',type=Path,required=True)
     p.add_argument('--duration',type=float);p.add_argument('--target-snr',type=float,default=20.)
     p.add_argument('--disk-mode',choices=('single','all','preview'),default='single',help='single (default): fill one TRD; all: retain the whole selected audio across TRDs; preview: legacy looping RAM preview.')
-    p.add_argument('--attempts',type=int,choices=(1,2,3),default=3)
+    p.add_argument('--attempts',type=int,choices=(1,2,3),
+                   help='bounded full searches; default 2 for best, 3 for balanced')
+    p.add_argument('--quality',choices=('best','balanced'),default='best',
+                   help='best: complete bounded waveform search and verify the top two; balanced: stop at target')
     p.add_argument('--prepared-pcm',action='store_true',help='reuse an exact PCM8/8k mono reference with its existing silent guard')
     p.add_argument('--no-recording',action='store_true',help='skip normal-speed sound capture, retaining full native/Fuse trace checks')
     p.add_argument('--resume',action='store_true')
     p.add_argument('--reuse-pilot',type=Path,help='optional completed converter pilot cache; exact source/player/tools are checked')
     a=p.parse_args(argv)
+    if a.attempts is None:a.attempts=2 if a.quality=='best' else 3
     if not a.ffmpeg:p.error('FFmpeg not found; supply --ffmpeg')
     if not math.isfinite(a.target_snr) or a.target_snr<20 or a.target_snr>60:p.error('target SNR must be 20..60 dB')
     try:r=convert(a)

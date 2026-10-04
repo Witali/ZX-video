@@ -1,0 +1,95 @@
+{
+  "date": "2026-10-04",
+  "complete": true,
+  "source": {
+    "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima-quality\\cli-ima3-series\\work\\input-00001.wav",
+    "prepared_pcm_unchanged": true,
+    "prepared_samples": 8320,
+    "sample_rate_hz": 8000,
+    "pcm_bits": 8,
+    "channels": 1,
+    "maximum_prepared_samples": 251888,
+    "source_sha256": "7ea3f60b9c84751560a94906f99784126945e21e6f6fa3d19557868e32b88315"
+  },
+  "selected": {
+    "directory": "disk-encode-1",
+    "two_loop_clock_aware_snr_db": [
+      16.591940607483487,
+      16.589964649344253
+    ],
+    "minimum_snr_db": 16.589964649344253,
+    "snr_at_least_20_db": false,
+    "mean_prepared_sample_rate_hz": 7852.378454300398,
+    "mean_speed_error_percent": -1.8452693212450244,
+    "speed_within_two_percent": true,
+    "reference_rate_hz": 8000,
+    "physical_hardware_tested": false,
+    "complete_trace_phase_deltas_tstates": [
+      -1,
+      0
+    ],
+    "cold_startup_seconds": 12.774951365981561,
+    "startup_within_60_seconds": true
+  },
+  "candidates": [
+    {
+      "directory": "pilot",
+      "two_loop_clock_aware_snr_db": [
+        -2.5702864755066224,
+        -2.5699916491573505
+      ],
+      "minimum_snr_db": -2.5702864755066224,
+      "snr_at_least_20_db": false,
+      "mean_prepared_sample_rate_hz": 7852.379499021187,
+      "mean_speed_error_percent": -1.845256262235162,
+      "speed_within_two_percent": true,
+      "reference_rate_hz": 8000,
+      "physical_hardware_tested": false,
+      "complete_trace_phase_deltas_tstates": [
+        -2,
+        0
+      ],
+      "cold_startup_seconds": 12.774952211790577,
+      "startup_within_60_seconds": true
+    },
+    {
+      "directory": "disk-encode-1",
+      "two_loop_clock_aware_snr_db": [
+        16.591940607483487,
+        16.589964649344253
+      ],
+      "minimum_snr_db": 16.589964649344253,
+      "snr_at_least_20_db": false,
+      "mean_prepared_sample_rate_hz": 7852.378454300398,
+      "mean_speed_error_percent": -1.8452693212450244,
+      "speed_within_two_percent": true,
+      "reference_rate_hz": 8000,
+      "physical_hardware_tested": false,
+      "complete_trace_phase_deltas_tstates": [
+        -1,
+        0
+      ],
+      "cold_startup_seconds": 12.774951365981561,
+      "startup_within_60_seconds": true
+    }
+  ],
+  "target_snr_db": 20.0,
+  "target_applicable": true,
+  "target_met": false,
+  "quality_gate_passed": false,
+  "preview_only": true,
+  "search_attempts": 1,
+  "quality_profile": "best",
+  "bounded_search": true,
+  "recording": null,
+  "trd_sha256": "c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b",
+  "physical_hardware_tested": false,
+  "source_reference": "Prepared 8-kHz PCM8, no fitted gain/delay/time stretch; unchanged 70 Hz..4.5 kHz filter",
+  "spectrum_expansion": false,
+  "pcm_buffer_bytes": 0,
+  "pdm_buffer_bytes": 0,
+  "limitations": [
+    "Target is measured per input; it is not guaranteed for arbitrary audio.",
+    "25 dB remains a requested search target, not an established hardware capability."
+  ]
+}

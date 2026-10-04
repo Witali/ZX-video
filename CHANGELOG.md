@@ -1,5 +1,61 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Improve both IMA encoders; save and pause the partial milestone
+
+The user requested better quality for both IMA3 and IMA4, then explicitly
+asked to save current progress and pause. Stop the remaining study process
+trees/Fuse children; preserve completed and interrupted stages separately.
+The [study](audiobook-beeper/experiments/ima-quality/README.md) records scope,
+inputs, search settings, rejected attempts and complete/partial coverage.
+The [checkpoint](audiobook-beeper/experiments/ima-quality/CHECKPOINT.md)
+contains exact resume instructions. Do not resume automatically.
+
+Add shared bounded waveform search orchestration. Best mode completes two
+host searches even when an early result reaches the target, executes the
+top two candidates, and chooses the better actual two-loop SNR while keeping
+verified fallbacks. IMA3 retains width 1024/horizon 256/commit 64 and tests
+priors .03/.003. IMA4 uses all 16 codes, widths 256/512, horizon 128/commit 64
+and priors .1/.03, then one pass on the winner's new measured clock. Retain
+the explicit balanced workflow. A worse refinement cannot displace the
+earlier measured winner. No player instruction/table/layout changed.
+
+The full inputs are identical 186880-sample prepared PCM8/8-kHz speech/music
+references with 128-sample guards. Complete two-loop cold/native checks and
+normal-speed recordings are saved for new Entertainer IMA3 (19.031203 ->
+19.165090 dB), Entertainer IMA4 (17.237725 ->19.897558 dB), and speech IMA4
+(21.010690 ->22.164431 dB). Speed errors are -0.299133%, -0.043272% and
+-0.043270%, within +/-2%. Both music disks remain below-target previews.
+Native cycle totals before/after are 79891688/79891688, 79123155/79123155,
+and 79122532/79122529 T; the last -3 T is calibrated silent filler. Ordinary
+IMA3/IMA4 costs remain 427.375/423 T/sample, each delta 0 T; page/bank extras
+remain +14/+140 T. Reports separate ULA waits and disk/ROM startup.
+
+Speech IMA3's .003-prior candidate passes both full traces at 20.659504 dB
+versus 20.436321 before, but comparison with the other candidate and the
+final recording were interrupted. Speech IMA4's final refinement encoded
+fully (22.552121-dB host estimate), but was stopped during its own complete
+Fuse verification. Do not promote that estimate. Preserve both unfinished
+runs in `paused/` and their local caches. Three root disks are published in
+this branch via Git LFS; no new speech IMA3 root image is declared ready.
+
+Retain 24 short prefix probes. More filter-history bins did not improve the
+tested scores and were rejected. The original speech4 prefix run hit an LFS
+pointer; materialize existing audio and rerun that case. Tools-directory
+SDL Fuse phase probes timed out after 180 seconds; Program Files Fuse
+completed the same-disk control, so authenticate/reuse host outputs but redo
+all actual disk checks with that binary. Cause of the SDL timeout remains
+unknown. A restricted 16-code silent-state closure probe did not improve the
+references and is not adopted. Correct uint32 overflow in archive-only
+boundary diagnostics before saving their results. These failures affected
+neither the selected audio inputs nor the complete verification claims.
+
+Fourteen tests pass (five quality-selection, nine series). Short real CLI
+runs cover IMA3 through EOF and IMA4 with a losing refinement; correctness
+and speed pass, while below-20-dB status correctly remains preview. Source
+snapshots, identities, all logs, host streams, complete proofs and partial
+state are saved. No physical hardware result, new listening acceptance,
+global quality optimum, completed four-case release, merge or push is claimed.
+
 ## 2026-10-04: Accelerate PC waveform search without changing encoded bytes
 
 The user asked why encoding was slow and requested optimization. Profile the

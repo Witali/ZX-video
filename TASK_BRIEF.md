@@ -12,6 +12,33 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## IMA3 / IMA4 quality checkpoint — paused (2026-10-04)
+
+The user requested saving progress and pausing. **Do not resume automatically.**
+All study processes are stopped. See the exact
+[checkpoint and resume instructions](audiobook-beeper/experiments/ima-quality/CHECKPOINT.md)
+and [study](audiobook-beeper/experiments/ima-quality/README.md).
+
+Both converters now offer a shared bounded `--quality best` waveform search,
+measured-candidate selection, and verified fallbacks. IMA4 additionally
+refines on the winner's measured clock. Fourteen tests pass; both short CLI
+paths execute successfully and mark below-target previews correctly.
+Ordinary Z80 costs remain IMA3 427.375 /IMA4 423 T/sample, delta 0 T.
+
+Three new root TRDs and recordings are complete: Entertainer IMA3
+19.031203 ->19.165090 dB, Entertainer IMA4 17.237725 ->19.897558 dB,
+speech IMA4 21.010690 ->22.164431 dB. Music remains below 20 dB.
+Speech IMA3 has one complete trace-qualified candidate at 20.659504 dB
+(baseline 20.436321), but the other candidate and final recording remain
+unfinished. Speech IMA4's final refinement has completed host encoding,
+but its own Fuse verification was interrupted. Keep the earlier verified
+speech IMA4 disk until the new stream proves better. Host scores are not
+release scores. Preserve/reuse completed host searches and all saved traces.
+
+This is a saved partial milestone, not a completed four-case release. The
+worktree/branch is `C:/Work/ZX-video/.worktree/lpc-ima-preload` /
+`codex/lpc-ima-preload`; no merge or push is part of this checkpoint.
+
 ## Exact PC encoder acceleration (2026-10-04)
 
 The user requested faster audio encoding after the long normalized music

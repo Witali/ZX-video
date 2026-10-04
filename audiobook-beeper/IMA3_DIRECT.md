@@ -1,5 +1,11 @@
 # Direct packed IMA3 playback and automatic conversion
 
+The newer [best-quality search](CONVERTER.md) uses two full 1024-wide,
+256-sample-horizon searches with prior weights .03/.003 and 64-sample
+commits, and selects by fresh complete disk measurements. It does not
+stop at the first passing target. `--quality balanced` retains the older
+automatic search described below. The Z80 player and its timing are unchanged.
+
 Measured 2026-10-04. This subproject removes the Spectrum-side IMA3-to-IMA4
 expansion. Three-bit codes stay packed in RAM and are decoded as the PDM
 outputs are emitted. There is no complete PCM, IMA4 or PDM buffer.
