@@ -2,7 +2,7 @@
 
 ## Latest result: exact Speex improved; separate VQ playback meets nominal CPU timing
 
-The selected exact default is **`pure-r22`**. Both the initial [TODO](TODO.md)
+The selected exact default is **`pure-r23-pop`**. Both the initial [TODO](TODO.md)
 and six-item [follow-up worklist](FOLLOWUP_TODO.md) are complete, with reports
 and focused commits. Original generators and evidence remain reproducible.
 The exact decoder retains Speex mode-3 packets and emits identical PCM8.
@@ -26,28 +26,30 @@ throughput; no uniform per-sample output schedule is required.
 | 19. Signed24 shift by byte extraction | 2017535516 | 10795.888 |
 | 20. Register-held innovation tables | 1973053274 | 10557.862 |
 | 22. Zero-feedback state copy | 1961694254 | 10497.080 |
+| 23. Inline products and POP table reads | 1863554410 | 9971.931 |
 
-Round 22 uses **21.87% fewer T than round 09**, 2.312x faster than original
+Round 23 uses **25.78% fewer T than round 09**, 2.434x faster than original
 assembly. Internal PCM16 and emitted PCM8 stay exact. Real time still fails
-by **23.99x** against 437.5 T/sample: 23.36 seconds of speech needs 560.48
-seconds of nominal CPU time. No pacing is added to this Speex decoder. The below-10500 intermediate
-target is met; next proposed milestone is below 10000 T/sample, retaining
-exact PCM and the table budget. That next target is not yet achieved.
+by **22.79x** against 437.5 T/sample: 23.36 seconds of speech needs 532.44
+seconds of nominal CPU time. No pacing is added to this Speex decoder.
+The below-10000 intermediate target is met, retaining exact PCM and the
+table budget. Next investigate cheaper coefficient-table recurrence.
 
-Current [image](rounds/22/player.ihx), [decoder](rounds/22/decoder.s),
-[filter](rounds/22/filter.s) and [map](rounds/22/player.map) are under
-`rounds/22`. Entry/count/status, input-bank order and port contract below
-remain unchanged. Code is `8000..9B0A` (6923 bytes), state `B000..B40E`
-(1039), stack reserve `BF00..BFFF`. The PCM16 output buffer is removed;
-`_last_pcm16` exposes the existing feedback sample for verification. Exactly
-four immediate operands are writable code; the routine is not reentrant
-and runs with IRQ disabled. Tables still occupy **16010 useful bytes in a
+Current [image](rounds/23/player.ihx), [decoder](rounds/23/decoder.s),
+[filter](rounds/23/filter.s) and [map](rounds/23/player.map) are under
+`rounds/23`. Entry/count/status, input-bank order and port contract below
+remain unchanged. Code is `8000..9CF2` (7411 bytes), state `B000..B410`
+(1041), stack reserve `BF00..BFFF`. The PCM16 output buffer is removed;
+`_last_pcm16` exposes the existing feedback sample for verification. All
+code writes are forbidden during playback. Retained standalone product
+helpers patch four operands only when invoked by primitive tests. The filter
+borrows SP for table reads, preserves caller IX/IY and runs with IRQ disabled. Tables still occupy **16010 useful bytes in a
 16384-byte arena**; code/state/input are additional RAM.
 
 The final exact binary passes **1074400 complete-stream samples**, arithmetic,
 memory guards, instruction audits and a fresh default-build identity check.
-See [current verification](rounds/22/unpaced-checks.json),
-[4650 feedback checks](rounds/22/zero-feedback-checks.json), and the prior unchanged
+See [current verification](rounds/23/unpaced-checks.json),
+[7719 feedback and 128 filter-call checks](rounds/23/inline-checks.json), and the prior unchanged
 [589824 product/cycle checks](rounds/18/s8-domain-checks.json). Its sound matches
 the previously supplied exact Speex comparison. Reports for initial rounds
 are linked from [TODO](TODO.md), [FOLLOWUP_TODO](FOLLOWUP_TODO.md) and
@@ -57,7 +59,7 @@ The follow-up also implements three distinct alternatives:
 
 | Candidate | CPU T/sample | Stored bytes / PCM8 ratio | Decision |
 | --- | ---: | ---: | --- |
-| Exact Speex round 22 | 10497.080 | 23360 / 8:1 | Selected exact decoder; too slow |
+| Exact Speex round 23 | 9971.931 | 23360 / 8:1 | Selected exact decoder; too slow |
 | Approximate Speex round 10 | 11781.204 | 23360 / 8:1 | Rejected: still too slow, added error |
 | Periodic wave/noise round 11 | 222.625, kernel only | 54320 / 3.440:1 | Not selected; loading/pacing unimplemented |
 | PVQ3x1024 round 12 | 90.418 before pacing | 80974 / 2.308:1 | Previous nominal CPU baseline |
@@ -80,14 +82,14 @@ To build and check the selected version:
 ```powershell
 python audiobook-beeper/speex-port/build.py --skip-host
 python audiobook-beeper/speex-port/verify.py --native-only --restore-fixture
-python audiobook-beeper/speex-port/check_round.py --variant pure-r22
-python audiobook-beeper/speex-port/check_zero_feedback.py --variant pure-r22 --previous pure-r20
-python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r22 --previous pure-r20 --check-default
+python audiobook-beeper/speex-port/check_round.py --variant pure-r23-pop
+python audiobook-beeper/speex-port/check_inline_products.py
+python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r23-pop --previous pure-r22 --check-default
 ```
 
 The stream checks require the host-generated fixtures: build host DLLs
-as described below and run `check_streams.py --variant pure-r22` to generate
-them. Keep the round20 build and archived random-packet fixtures available
+as described below and run `check_streams.py --variant pure-r23-pop` to generate
+them. Keep the round22 and pure-r23 builds and archived random-packet fixtures available
 for `check_unpaced.py`. Retain the same Python runtime. `finish_followup.py`
 reproduces the historical round09 checkpoint. `final_checks.py` reproduces historical
 round-04 LPC evidence and needs `pure-r3` and `pure-r4` builds explicitly.

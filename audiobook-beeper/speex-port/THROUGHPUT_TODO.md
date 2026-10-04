@@ -78,7 +78,7 @@ comparison and report throughput separately from instantaneous OUT gaps.
   [Round22](rounds/22/REPORT.md) confirms exactly that saving: 10497.080
   T/sample, achieving the intermediate below-10500 target. All 1074400
   samples and 4650 arbitrary-history checks per variant pass.
-- [ ] **23. Inline coefficient products with register-held offsets.**
+- [x] **23. Inline coefficient products with register-held offsets.**
   Count all register saves, nibble setup, products and memory updates before
   implementing. Investigate replacing the per-tap CALL/RET and writable
   immediates with inline products and offsets in spare registers. Preserve
@@ -87,6 +87,16 @@ comparison and report throughput separately from instantaneous OUT gaps.
   Next proposed milestone: below 10000 T/sample on the same full speech,
   with exact PCM and the same 16-KiB table arena. Not yet achieved; this
   candidate alone has not been shown to reach it.
+  [Round23](rounds/23/REPORT.md) compares both complete candidates and selects
+  inline products with first-part reads via POP. Measured 9971.931 T/sample
+  (-5.003%), meeting the below-10000 milestone. All 1074400 samples,
+  7719 arbitrary histories and 128 filter calls per variant pass.
+- [ ] **24. Cheaper coefficient-table recurrence.** Inspect the repeated
+  42-T 32-bit subtraction in reverse table construction. Estimate replacing
+  it with a 34-T addition of a negated step, accounting for setup and the
+  signed high-nibble midpoint. Preserve every table byte, page-cache
+  behavior and SP, then compare complete throughput. The 10000-T milestone
+  does not complete the average real-time objective.
 
 Each completed experiment needs a report, root CHANGELOG entry and focused
 commit. A failed experiment is evidence, not permission to redefine success.

@@ -1,5 +1,22 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: Speex round23 inlines products and borrows SP for table reads
+
+Compare register-offset inline products and an added POP table-read variant
+against unchanged round22 speech. Complete totals 1885485770 / 1863554410 T
+versus 1961694254; select pure-r23-pop, saving 98139844 T (5.003%) exactly
+as predicted including cursor and register/stack setup. Mean 9971.931 T/sample
+meets the below-10000 intermediate milestone; average real-time deficit is
+still 22.793x. Both candidates pass full speech, first-frame audit, 7719
+arbitrary histories and 128 filter calls each. Only selected POP receives
+the full 1074400-sample fixture suite and fresh default identity. Every code
+write is forbidden during inline playback; all guards and SP/IX/IY checks
+pass. Code +488 bytes, state +2, tables unchanged. SDAS's unsupported
+index-half mnemonics required explicit prefixed bytes with instruction/timing
+comments; no failed audio result occurred. No ULA/hardware claim. Next count
+cheaper coefficient-table recurrence, including negation/setup costs.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/23/REPORT.md).
+
 ## 2026-10-04: Speex round22 bypasses zero-feedback products exactly
 
 Apply the round21-selected state-copy shortcut on unchanged round20 speech,

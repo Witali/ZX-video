@@ -50,7 +50,7 @@ def image(path):
             data.update((address+i,v) for i,v in enumerate(row[4:4+row[0]]))
     return data
 
-def native(out,variant='pure-r22',binary=None,require_exact=True,profile=None,entry_observer=None):
+def native(out,variant='pure-r23-pop',binary=None,require_exact=True,profile=None,entry_observer=None):
     from z80 import Z80Machine
     folder=out/variant
     folder.mkdir(parents=True,exist_ok=True)
@@ -76,11 +76,14 @@ def native(out,variant='pure-r22',binary=None,require_exact=True,profile=None,en
     m.mark_addrs(0,65536,m.WRITE_MARK)
     m.unmark_addrs(bss_start,bss_size,m.WRITE_MARK)
     m.unmark_addrs(0xbf00,256,m.WRITE_MARK)
-    # Allow only declared immediate operand bytes, never an entire code region.
-    smc={v for k,v in symbols.items() if re.fullmatch(r'_smc\d+',k)}
-    for address in smc:
+    # Allow only declared immediate operands on legacy paths. The register
+    # variant retains standalone helpers for primitive checks but never calls
+    # them in playback, so its entire code image must stay write-protected.
+    declared_smc={v for k,v in symbols.items() if re.fullmatch(r'_smc\d+',k)}
+    smc=set() if symbols.get('_immutable_playback_code') else declared_smc
+    for address in declared_smc:
         assert address in memory and memory[address-1]==0x2e
-        m.unmark_addrs(address,1,m.WRITE_MARK)
+        if address in smc:m.unmark_addrs(address,1,m.WRITE_MARK)
     dynamic=[]
     for name in ('innovation','coefficient'):
         if '_'+name+'_start' in symbols:
@@ -168,6 +171,8 @@ def native(out,variant='pure-r22',binary=None,require_exact=True,profile=None,en
                 pages=pages,code_rodata_bytes=len(memory),bss_bytes=bss_size,
                 code_bytes=sum(a>=0x8000 for a in memory),tables_bytes=sum(a<0x8000 for a in memory),
                 all_cpu_writes_inside_declared_regions=True,input_static_code_static_tables_unchanged=True,
+                every_code_write_forbidden=not smc,
+                all_code_bytes_unchanged=all(m.memory[a]==v for a,v in memory.items() if a>=0x8000),
                 writable_immediate_addresses=sorted(smc),
                 pcm16_output_buffer='_last_pcm16' not in symbols,
                 initial_state_fill=state_fill,
@@ -194,7 +199,7 @@ if __name__=='__main__':
     p.add_argument('--source',type=Path,default=Path('C:/Work/ZX-video/audiobook-beeper/experiments/ima-waveform/source-preview.wav'))
     p.add_argument('--host-only',action='store_true');p.add_argument('--native-only',action='store_true')
     p.add_argument('--restore-fixture',action='store_true',help='Restore the saved speech packets and independent PCM16 reference')
-    p.add_argument('--variant',default='pure-r22');a=p.parse_args()
+    p.add_argument('--variant',default='pure-r23-pop');a=p.parse_args()
     if a.restore_fixture:
         a.output.mkdir(parents=True,exist_ok=True)
         for name in ('input.spxraw','reference.pcm16'):

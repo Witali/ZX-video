@@ -373,18 +373,99 @@ filter_zero_feedback:
     return d,f
 
 
+def inline_products(d, f, pop_tables=False):
+    """Keep nibble offsets in index halves, leaving ordinary BC:DE for the sum."""
+    f+='''
+; Playback never calls the retained standalone self-modifying product helpers.
+; Verification must forbid every code write for this entry-to-completion path.
+.globl _immutable_playback_code
+_immutable_playback_code = 1
+'''
+    f=replace_once(f,'    push ix\n    push hl\n    pop ix\n',
+                   '    push ix\n    push iy\n    push hl\n')
+    f=replace_once(f,'    call _prepare_coefficients\n', '''    call _prepare_coefficients
+; Preparation clobbers both register sets. Recover the saved input cursor only
+; afterwards; alternate HL remains its cursor throughout this 40-sample call.
+    exx
+    pop hl
+    exx
+'''+('    ld (_filter_saved_sp),sp\n' if pop_tables else ''))
+    f=replace_once(f,'    ld c,0(ix)\n    ld b,1(ix)\n', '''; Fetch through the alternate cursor and transfer its word via the real stack.
+; _zx_clip and the inline product/state update preserve alternate HL.
+    exx
+    ld c,(hl)
+    inc hl
+    ld b,(hl)
+    inc hl
+    push bc
+    exx
+    pop bc
+''')
+    f=replace_once(f,'    inc ix\n    inc ix\n','')
+    f=replace_once(f,'    pop ix\n    ret\n','    pop iy\n    pop ix\n    ret\n')
+    f=f.replace('; Preserves IX/IY; AF/BC/DE/HL and private scratch are clobbered.',
+                '; Preserves IX/IY; ordinary and alternate AF/BC/DE/HL and scratch are clobbered.')
+    # Build a sample's four offsets once, without writable product instructions.
+    split=d[d.index('_split_nibbles::\n')+len('_split_nibbles::\n'):d.index('; A=coefficient page;')]
+    assert split.endswith('ret\n')
+    split=split[:-len('ret\n')]
+    regs=('ixl','ixh','iyl','iyh')
+    # SDAS rejects index-half mnemonics. Encode the real Z80 prefixed register
+    # operations explicitly, keeping their mnemonic and timing in the output.
+    for i,reg in enumerate(regs):
+        prefix=0xdd if i<2 else 0xfd;store=0x6f if i%2==0 else 0x67
+        split=replace_once(split,f'ld (_smc{i}),a',f'.db {prefix:#x},{store:#x} ; LD {reg.upper()},A: 8 T')
+    product=d[d.index('_coefficient_product::\n')+len('_coefficient_product::\n'):d.index('\n.area _TABLES',d.index('_coefficient_product::'))]
+    product=replace_once(product,'ld h,a\n','')
+    product=replace_once(product,'ld h,b\nld l,c\nret\n','')
+    product=product.rstrip()+'\n'
+    for i,reg in enumerate(regs):
+        prefix=0xdd if i<2 else 0xfd;load=0x7d if i%2==0 else 0x7c
+        product=replace_once(product,f'product_offset_{i}:\nld l,#0',
+                             f'.db {prefix:#x},{load:#x} ; LD A,{reg.upper()}: 8 T\nld l,a')
+    if pop_tables:
+        product=replace_once(product,'ld e,(hl)\ninc l\nld d,(hl)\ninc l\nld c,(hl)\ninc l\nld b,(hl)\n',
+                             'ld sp,hl\npop de\npop bc\n')
+        f=replace_once(f,'asm_y: .ds 2\n','asm_y: .ds 2\n.globl _filter_saved_sp\n_filter_saved_sp:: .ds 2\n')
+    body='''; Split signed feedback once into IX/IY halves. Indexed LD A,r followed
+; by ordinary LD L,A intentionally avoids DD/FD substitution of ordinary L.
+; Every inline product leaves exact modulo32 BC:DE, including signed top nibble.
+'''+split
+    if pop_tables:
+        body+='''; IRQ must remain disabled. Each tap borrows SP to read four table bytes
+; with POP; no CALL/PUSH/RET occurs before the saved real SP is restored.
+; Coefficient preparation has its own independent saved-SP slot.
+'''
+    for tap in range(10):
+        body+=f'; Synthesis tap {tap}: coefficient page {0x72+tap:#04x}.\nld h,#{0x72+tap}\n'+product
+        if tap<9:
+            body+=f'''ld hl,(_zx_memory+{4*tap+4})
+add hl,de
+ld (_zx_memory+{4*tap}),hl
+ld hl,(_zx_memory+{4*tap+6})
+adc hl,bc
+ld (_zx_memory+{4*tap+2}),hl
+'''
+        else:body+='ld (_zx_memory+36),de\nld (_zx_memory+38),bc\n'
+    if pop_tables:body+='ld sp,(_filter_saved_sp)\n'
+    start=f.index('    call _split_nibbles\n');end=f.index('_filter_emit::',start)
+    f=f[:start]+body+f[end:]
+    return d,f
+
+
 def apply(folder, variant):
     d=(folder/'decoder.s').read_text();f=(folder/'filter.s').read_text()
     d,f=immediate_offsets(d,f)
     if variant!='pure-r7':d,f=faster_preparation(d,f)
     if variant not in ('pure-r7','pure-r8'):d,f=port_only(d,f)
     if variant=='pure-r10-approx':d,f=approximate_feedback(d,f)
-    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22'):d,f=register_preparation(d,f)
-    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22'):d,f=skip_zero_product_bytes(d,f)
-    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22'):
-        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22'))
-    if variant in ('pure-r19','pure-r20','pure-r22'):d,f=excitation_shift(d,f)
-    if variant in ('pure-r20','pure-r22'):d,f=innovation_registers(d,f)
-    if variant=='pure-r22':d,f=zero_feedback(d,f)
+    if variant in ('pure-r15','pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop'):d,f=register_preparation(d,f)
+    if variant in ('pure-r16','pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop'):d,f=skip_zero_product_bytes(d,f)
+    if variant in ('pure-r18-fixed','pure-r18','pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop'):
+        d,f=combined_signed8(d,f,variant!='pure-r18-fixed',variant in ('pure-r18-signed','pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop'))
+    if variant in ('pure-r19','pure-r20','pure-r22','pure-r23','pure-r23-pop'):d,f=excitation_shift(d,f)
+    if variant in ('pure-r20','pure-r22','pure-r23','pure-r23-pop'):d,f=innovation_registers(d,f)
+    if variant in ('pure-r22','pure-r23','pure-r23-pop'):d,f=zero_feedback(d,f)
+    if variant in ('pure-r23','pure-r23-pop'):d,f=inline_products(d,f,variant=='pure-r23-pop')
     (folder/'decoder.s').write_text(d,newline='\n')
     (folder/'filter.s').write_text(f,newline='\n')
