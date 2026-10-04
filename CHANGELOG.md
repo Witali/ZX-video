@@ -1,5 +1,16 @@
 # Changelog and optimization experiments
 
+## 2026-10-04: PVQ round13 reaches the unchanged-sound speed target
+
+On unchanged round12 input/book, remove two intermediate IXH writes and
+the final pointer increment per three-sample vector. Full CPU falls from
+16897348 to 15651480 T (-1245868), 83.7515 T/sample, meeting <=84. All
+186880 PCM8 and stored bytes remain identical; every 437/438-T interval,
+all bank/tail boundaries, guarded writes and 25 short-length cases pass.
+Startup/bank instruction audit passes and the old generator option still
+rebuilds the baseline hash. Select the change; ULA/hardware unverified.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/13/REPORT.md).
+
 ## 2026-10-04: Define the next PVQ optimization target
 
 Continue in the same worktree. Record a firm target of <=84 T/sample with

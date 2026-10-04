@@ -32,7 +32,7 @@ def data_bytes(data):
     return '\n'.join('.db '+','.join(map(str,data[i:i+16])) for i in range(0,len(data),16))+'\n'
 
 
-def assembly(samples,book,paced):
+def assembly(samples,book,paced,*,tight=False):
     groups,tail=divmod(samples,12)
     assert 0<samples and groups<=65535
     code='''; PVQ3x1024, three signed residuals per vector, PCM8 DAC port FB.
@@ -85,9 +85,17 @@ ld b,a
         text=prefix+'_start:\ncall ensure_bank\nld a,(de)\ninc de\nld c,a\n'
         for i in range(n):
             if i%3==0:text+=vector
-            text+=sample
+            if tight:
+                # Only the last reconstructed value becomes the next predictor.
+                # The next vector reloads HL, so its final INC L is also dead.
+                text+='; Keep history only at vector end; no dead final pointer increment.\nld a,(hl)\n'
+                if i%3!=2:text+='inc l\n'
+                text+='add a,b\n'
+                if i%3==2:text+='ld ixh,a\n'
+            else:text+=sample
             # Includes previous group control on slot zero, CALL/RET and OUT.
             base=363 if i==0 else 150 if i%3==0 else 34
+            if tight:base-=4 if i%3==2 else 8
             if paced:text+=delay(438-i%2-base)
             text+=f'.globl _{prefix}_out{i}\n_{prefix}_out{i}::\nout (0xfb),a\n'
         return text
@@ -142,9 +150,9 @@ _code_end::
     return code
 
 
-def build(folder,samples,book,paced):
+def build(folder,samples,book,paced,*,tight=False):
     folder.mkdir(parents=True,exist_ok=True)
-    (folder/'decoder.s').write_text(assembly(samples,book,paced),newline='\n')
+    (folder/'decoder.s').write_text(assembly(samples,book,paced,tight=tight),newline='\n')
     cc=Path('C:/Work/ZX-video/.tmp/z80-c-compilers/sdcc/bin/sdcc.exe')
     run([str(cc.with_name('sdasz80.exe')),'-plosgff','decoder.rel','decoder.s'],folder/'asm.log',folder)
     run([str(cc),'-mz80','--no-std-crt0','--code-loc','0x8000','--data-loc','0xb000','decoder.rel','-o','player.ihx'],folder/'link.log',folder)

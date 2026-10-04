@@ -25,3 +25,7 @@ claim only; ULA/physical timing remains a later validation target. Faster
 decoding increases time available for useful work; the output stays at 8 kHz.
 Do not expand this milestone into PDM, TRD release or another Speex rewrite.
 Commit each completed change with its report and root CHANGELOG entry.
+
+Target 1 achieved: [round13](rounds/13/REPORT.md), 83.7515 T/sample for the
+complete recording, identical data/sound and all 437/438-T output intervals.
+The conditional four-sample-vector comparison remains the next experiment.
