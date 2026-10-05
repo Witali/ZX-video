@@ -12,6 +12,20 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## AY speech audition checkpoint (2026-10-05)
+
+The [O. Henry trial](ay-converter/analysis/o_henry/README.md) applies the current
+AY music profile unchanged to source seconds 60..84: 1200 states at 20 ms,
+persistent channels and chip-model noise fitting. Use
+`ZX-audiobook-OHenry-AY50-test.trd` and the original/AY comparison WAV (AY
+starts at 25 seconds). Two complete native/cold Fuse loops pass all 26400
+writes /2400 fields, zero misses. Ordinary work remains 974 T, delta 0.
+Full and detailed spectrograms show preserved pauses/parts of the pitch
+contour but extra diffuse noise and lost upper harmonic detail. This is a
+listening trial, not a speech-quality release; user acceptance is pending.
+Reuse this completed evidence. No converter/player change or speech-specific
+retuning was made; the accepted IMA3 speech reference remains separate.
+
 ## Completed audio request: gentle compression and normalization (2026-10-05)
 
 After identifying vibration in `ZX-audiobook-IMA4-full-disk.trd`, the user

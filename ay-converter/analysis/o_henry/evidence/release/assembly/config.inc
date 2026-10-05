@@ -1,0 +1,14 @@
+total_ticks: EQU 1200
+loop_playback: EQU 1
+disk_0: EQU 780
+sectors_0: EQU 52
+disk_1: EQU 0
+sectors_1: EQU 0
+disk_2: EQU 0
+sectors_2: EQU 0
+disk_3: EQU 0
+sectors_3: EQU 0
+disk_4: EQU 0
+sectors_4: EQU 0
+disk_5: EQU 0
+sectors_5: EQU 0
