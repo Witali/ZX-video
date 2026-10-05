@@ -12,7 +12,23 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
-## Active audio request: audit the preferred direct IMA4 disk (2026-10-05)
+## Active audio request: gentle compression and normalization (2026-10-05)
+
+After identifying vibration in `ZX-audiobook-IMA4-full-disk.trd`, the user
+explicitly requests more source gain, normalization and gentle dynamic
+compression. Implement this in the converter, processing the complete selected
+track continuously before RAM splits. Preserve an explicit uncompressed
+dynamics option and externally prepared PCM. Keep IMA/PDM timing unchanged;
+validate the new complete disk and distinguish stronger signal from an actual
+elimination of cyclic distortion. No merge/push requested.
+
+The [vibration investigation](audiobook-beeper/experiments/ima4-flutter/README.md)
+records all five parts through ordinary installed Fuse and speaker loopback.
+It finds repeatable field-synchronous error power, not a strong simple 50-Hz
+voice AM/FM component or a large host transport slip. It does not claim the
+symptom fixed. Continue with the user's authorized source-conditioning change.
+
+## Completed audio request: audit the preferred direct IMA4 disk (2026-10-05)
 
 The user prefers `ZX-audiobook-IMA-ADPCM-direct-test.trd` and asks when sound
 quality changed and whether to restore the earlier algorithm. This steers

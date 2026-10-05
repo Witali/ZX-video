@@ -1,5 +1,38 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Check vibration across the complete reported IMA4 disk
+
+The user specifically identifies `ZX-audiobook-IMA4-full-disk.trd`.
+[Investigation, complete capture and replay](audiobook-beeper/experiments/ima4-flutter/README.md).
+Capture all five parts, four reloads and END OF AUDIO through installed Fuse
+at 100% speed, Spectrum 128/Beta Disk, 44.1-kHz/16-bit sound; also record the
+48-kHz Realtek speaker loopback, never a microphone. The complete 237.657-s
+run has no capture warnings. Sparse markers are not a fresh all-bit trace;
+retain the previous complete native/cold-Fuse execution proof.
+
+Authenticate every source, full pulse timeline and reconstructed WAV used.
+Error power folded at the actual 50.021154-Hz field rate varies by factors
+2.801, 4.259, 4.886, 3.803 and 4.682; early/late profile correlations are
+0.843–0.925. Strong residual bins around 3.85/3.90/4.15/4.20 kHz are consistent
+with cyclic PDM distortion. Small-signal coherent voice AM is only
+0.032–0.252%, with delay amplitudes 0.455–1.605 us. These fitted diagnostic
+indicators are not codec SNR or proof of a particular perceived pitch error.
+Synthetic injected modulation and a constant gain/delay control pass.
+
+Internal-vs-endpoint 20-ms accepted windows show 1–2 samples of delay spread
+at 48 kHz, with no large persistent slip. This does not exclude faster host
+artifacts or explain every listening difference. Preserve both unfiltered
+eight-second listening excerpts and the complete compressed recordings.
+Replay from the archived files reproduces the results. Initial missing local
+SoundCard and exploratory SciPy imports stop before producing evidence;
+use the existing SoundCard package and NumPy-only final analysis.
+
+Decision: record a reproducible cyclic noise/distortion artifact, without
+claiming the vibration fixed or blaming all of it on a changing voice pitch.
+The subsequent user request authorizes gentle compression/normalization of
+the source. No production/player changes in this audit; 423 T/sample and
+14/140-T page/bank extras, all deltas 0. No physical-hardware test.
+
 ## 2026-10-05: Audit and reproduce the user's preferred direct IMA4 sound
 
 The user identifies `ZX-audiobook-IMA-ADPCM-direct-test.trd` as good sounding

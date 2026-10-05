@@ -1,0 +1,38 @@
+base 10
+set $part 0
+breakpoint 33057
+condition 1 $part<4
+commands 1
+print 100
+print $part
+print spectrum:frames
+print ula:tstates
+continue
+end
+breakpoint 33015
+condition 2 $part==4
+commands 2
+print 100
+print $part
+print spectrum:frames
+print ula:tstates
+continue
+end
+breakpoint 46912
+commands 3
+print 200
+print $part
+print spectrum:frames
+print ula:tstates
+set $part $part+1
+continue
+end
+breakpoint 16486
+condition 4 $part==5
+commands 4
+print 300
+print $part
+print spectrum:frames
+print ula:tstates
+exit 77
+end
