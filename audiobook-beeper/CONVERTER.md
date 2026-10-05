@@ -5,10 +5,13 @@ The user accepted the overlap speech disk in an interactive Program Files
 Fuse 1.9.0 session on 2026-10-04 and requested this playback algorithm as the
 main option. The existing `convert_ima3_audio.py` entry point remains usable.
 Select `--codec ima4` explicitly for the [four-bit converter](IMA4_CONVERTER.md).
-The separate experimental `--codec mulaw` (alias `ulaw`) adds an
-[eight-bit G.711 resident preview](MULAW_CONVERTER.md). Its first-order
-control is verified to run, but is noisier than the accepted IMA player;
-it does not implement the PC-only second-order 128-kHz model.
+The separate `--codec mulaw` (alias `ulaw`) adds an
+[eight-bit G.711 resident preview](MULAW_CONVERTER.md). It defaults to
+`--pdm-rate 128000`, using sixteen-pulse packets and bounded feedback.
+`--pdm-rate 64000` preserves the older exact-accumulator control. Both
+store compact8-bit mu-law at an8-kHz source rate, with no PCM/PDM audio
+expansion. The128-kHz tables reduce the resident prefix to12.128 seconds.
+This is not the ideal full-precision second-order PC model.
 
 Both IMA modes now default to `--quality best`: complete a bounded waveform
 search even if an early candidate reaches the SNR target, execute every

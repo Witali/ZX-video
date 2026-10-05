@@ -1,7 +1,81 @@
-# Compact mu-law TRD preview
+# Compact mu-law TRD converter
+
+The eight-bit profile now defaults to approximately **128-kHz PDM**:
 
 ```powershell
-python audiobook-beeper/convert_audio.py "input.m4a" --codec mulaw --output "build/mulaw" --ffmpeg "path/to/ffmpeg.exe" --fuse "path/to/fuse.exe"
+python audiobook-beeper/convert_audio.py "input.m4a" --codec mulaw --pdm-rate 128000 --output "build/mulaw128" --ffmpeg "path/to/ffmpeg.exe" --fuse "path/to/fuse.exe"
+```
+
+`--codec ulaw` is an alias. Without `--codec`, the shared converter still
+defaults to IMA3. Both mu-law rates produce one independently bootable
+TRD containing a looping resident prefix. Use an empty output directory.
+
+The source remains mono **8 kHz**: 128 kHz describes the rate of one-bit
+beeper output, not source sample rate. Both modes store one G.711 byte per
+sample and preserve the full16-bit inverse-companded level in modulation.
+There is no full PCM/PDM expansion buffer or simultaneous disk playback.
+
+| Option | `--pdm-rate 128000` (default) | `--pdm-rate 64000` |
+| --- | --- | --- |
+| Modulation | Sixteen-pulse packet table with quantized feedback | Eight arithmetic decisions, exact16-bit accumulator |
+| Maximum compact audio | 97024 bytes /12.128 nominal seconds | 121088 bytes /15.136 nominal seconds |
+| Ordinary Z80 work | 423 T/sample,16 outputs | 432 T/sample,8 outputs |
+| Resident code/map | 12544 bytes | 2048 bytes including staging |
+| Extra packet rows | 13568 bytes | None |
+| Repeat clock | Calibrated ULA phase, feedback reset in guard | Free-running phase, accumulator closed by guard codes |
+
+The PC prepares audio using FFmpeg, fixed peak normalization,10-ms edge
+fades and PCM16 precision. It reserves128 final silent samples. `--duration`
+limits the initial prefix. `--prepared-pcm` instead preserves aligned mono
+8-kHz PCM8/PCM16 WAV data unchanged, with at least8192 samples,128 final
+silent samples, and no more than the selected profile's capacity. Do not
+combine prepared input with `--duration`.
+
+When reducing a higher input sample rate to8 kHz, FFmpeg's automatically
+inserted SWResampler supplies anti-alias low-pass filtering. The installed
+build defaults to a Kaiser-windowed sinc filter; the CLI currently leaves
+its cutoff and size at FFmpeg defaults. There is no bare sample dropping.
+Already8-kHz input does not need this rate conversion, and `--prepared-pcm`
+bypasses filtering entirely. The separate70-Hz/4500-Hz measurement filters
+operate on reconstructed PDM and do not replace this input anti-alias filter.
+[FFmpeg resampler options](https://ffmpeg.org/ffmpeg-resampler.html).
+
+`--quality best` (default) first qualifies ordinary G.711, then tries two
+overlapping waveform searches on the measured Fuse clock. The128-kHz
+searches use beam16/horizon16/prior0.1 and beam64/horizon32/prior0.03,
+committing8 samples. Every candidate receives complete native and cold
+Fuse tests over two loops. The lower of the two fixed-reference SNR scores
+selects the result. An ordinary decoder can read the resulting G.711 bytes,
+but will reproduce a control signal optimized for this modulator rather
+than the nearest-level encoding of the source. All extra search runs on
+the PC. Silent-reference SNR is reported as undefined, not an infinite
+quality claim.
+
+`--quality balanced` skips waveform search and retains ordinary G.711.
+It is a quick functional control and can have substantially lower measured
+quality. `--no-recording` skips only the normal-speed sound-generator
+capture; complete native/Fuse execution checks remain mandatory. The
+converter reports measured quality and whether30 dB was reached; no
+universal SNR guarantee is implied.
+
+Outputs include `audiobook-preview.trd`, `soundtrack.mulaw`, a prepared
+`source-preview.wav`, equally scaled filtered `reference-preview.wav` and
+`output-preview.wav`, reports/assembly/traces, and normally
+`recording/fuse-preview.wav`. The latter uses Fuse's own mixer level.
+
+The packet profile uses eleven reachable feedback states and212
+deduplicated64-byte rows, with95 FIRST and110 SECOND routines. Full G.711
+levels enter the table calculation. Feedback is quantized between packets;
+this is **not** the earlier ideal full-precision second-order PC model.
+Read [the algorithm, exact timing/RAM budget and complete results](experiments/mulaw128/README.md).
+
+## Preserved 64-kHz control
+
+The following documents the separately selectable exact-accumulator
+implementation and its historical measurements.
+
+```powershell
+python audiobook-beeper/convert_audio.py "input.m4a" --codec mulaw --pdm-rate 64000 --output "build/mulaw" --ffmpeg "path/to/ffmpeg.exe" --fuse "path/to/fuse.exe"
 ```
 
 `--codec ulaw` is an alias. IMA3 remains the default. The new profile writes

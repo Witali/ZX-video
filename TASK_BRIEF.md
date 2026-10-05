@@ -31,12 +31,23 @@ All new streams pass full native/cold Fuse two-loop verification and the
 three selected images have normal-speed recordings. Fifteen tests and a
 complete short public CLI conversion pass. Z80 costs and RAM are unchanged.
 
-The user subsequently requests **128-kHz modulation for the eight-bit
-mode**. This next authorized milestone must keep compact mu-law bytes,
-account for tables/RAM, and prove actual output rate and quality. The
-existing exact16-bit first-order decision alone costs34 T, exceeding the
-27.710-T budget at128 kHz. Investigate packet dispatch before claiming that
-rate. Keep the completed64-kHz control as a fallback/comparison.
+The subsequent **128-kHz eight-bit milestone is also complete**:
+[packet algorithm, timing and full evidence](audiobook-beeper/experiments/mulaw128/README.md).
+Compact mu-law remains one byte/sample. Sixteen-pulse table dispatch costs
+423 T/sample versus432 (−9), with page/bank extras41/112 T versus35/116;
+guard reset adds7 T once. All128 KiB are accounted for; tables reduce the
+prefix to97024 bytes/12.128 nominal seconds without PCM/PDM expansion.
+The public mu-law CLI defaults to `--pdm-rate 128000`;64000 preserves the
+old exact-accumulator control. IMA3 remains the overall codec default.
+
+Selected `ZX-audiobook-mulaw-128-test.trd` measures127927.577 useful outputs/s,
+tempo−0.056580%, and25.244120 dB on both complete cold Fuse loops. The same
+PCM16 reference gives11.927962 dB with64-kHz `best`. All3107833 bits and194049
+feedback states, native RAM, paging, startup UI and repeat phase pass;
+normal-speed Fuse capture is complete. Twenty-one tests pass. The30-dB
+target is not met; no physical-hardware proof, exact full-precision SD2,
+sequential mu-law volumes, merge or push is claimed. Finish this milestone
+without opening another codec/model sweep.
 
 ## IMA4 overlapping PDM search — requested follow-up complete (2026-10-05)
 

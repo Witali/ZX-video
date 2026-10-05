@@ -1,5 +1,51 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Compact eight-bit mu-law reaches approximately128-kHz PDM
+
+The user requests128-kHz modulation for the eight-bit mode. Replace the
+64-kHz control's eight arithmetic decisions with sixteen-pulse routines
+and bounded feedback; keep standard G.711 bytes compact on disk and in RAM.
+The full decoded PCM16 value enters the table calculation. Eleven reachable
+states and212 deduplicated rows fit the128-KiB budget, leaving97024 bytes
+of audio/12.128 nominal seconds (previous121088/15.136). No expanded PCM or
+PDM audio buffer. [Algorithm, manual timing, reproduction and evidence](audiobook-beeper/experiments/mulaw128/README.md).
+
+On the full new normalized PCM16 speech prefix, ordinary G.711 gives
+−2.379847 dB by the strict fixed8-kHz-reference measure; beam16/horizon16
+/prior.1 gives23.806554; beam64/horizon32/prior.03 gives25.244120 and is
+selected. Both searches commit8 samples and run entirely on the PC. On
+exactly the same prepared WAV, the old64-kHz `best` selects11.927962 dB:
+an improvement of13.316158 dB including both feedback and timing changes.
+The128-kHz search durations are45.364 /308.311 s, excluding qualification.
+This is a bounded result, not a universal optimum or30-dB achievement.
+
+The new native path costs423 T/sample instead of432 (−9) for twice the
+output operations. Page extra41 versus35 (+6), bank112 versus116 (−4),
+guard-only reset7 T; idle filler is counted separately. Complete native
+execution confirms every interval and no RAM writes. Actual Spectrum128
++Beta128 Fuse output measures127927.577 useful PDM pulses/s,128053.825
+including guard, tempo−0.056580%. Selected loops both take43041156 T
+(607 fields), phase deltas0/0. ULA adds3887990 T over two loops above the
+native82194322. All3107833 bits and194049 feedback states match; full
+memory, bank transitions, loading-message removal and32 progress updates
+pass. Selected loading reads439 sectors in17.391963 emulator seconds,
+separate from deterministic CPU counts; no runtime disk reads. Fresh
+normal-speed Program Files Fuse recording completes both wraps.
+
+Preserve the uncalibrated all-code microtest and short balanced speech
+(0.365875 dB, tempo−0.155795%) as limited probes. The first assembler IF
+spacing failed; the initial Fuse parser used the callback PC without its
+required−2 correction. Fix both before qualification. Correct the early
+test's96768-byte expectation to the actual97024-byte deduplicated layout.
+Twenty-one tests now pass, including independent rational transitions,
+all-code native execution, idle block boundaries and waveform backend
+identity. Automatic producer snapshots and undefined silent-reference SNR
+reporting are completed after the measured nonzero run; its executing
+producer versions are retained. Save the full hashed archive and independently
+bootable LFS image `ZX-audiobook-mulaw-128-test.trd`. Mu-law defaults to128000;
+`--pdm-rate 64000` preserves the old control; IMA3 remains the overall default.
+No physical Spectrum test, full-precision SD2 claim, merge or push.
+
 ## 2026-10-05: Complete bounded quality searches for IMA3, IMA4 and mu-law
 
 The user requests maximum quality for all active codecs. Complete the

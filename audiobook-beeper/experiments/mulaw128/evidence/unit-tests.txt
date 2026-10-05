@@ -1,0 +1,28 @@
+test_all_codes_and_idle_block_boundary_in_native_z80 (test_mulaw_packet.MuLawPackets.test_all_codes_and_idle_block_boundary_in_native_z80) ... ok
+test_all_transitions_against_exact_fractions (test_mulaw_packet.MuLawPackets.test_all_transitions_against_exact_fractions) ... ok
+test_public_rate_selection_preserves_64khz_control (test_mulaw_packet.MuLawPackets.test_public_rate_selection_preserves_64khz_control) ... ok
+test_ram_and_repeat_contract (test_mulaw_packet.MuLawPackets.test_ram_and_repeat_contract) ... ok
+test_silent_reference_has_no_infinite_snr_claim (test_mulaw_packet.MuLawPackets.test_silent_reference_has_no_infinite_snr_claim) ... ok
+test_waveform_backends_preserve_guard (test_mulaw_packet.MuLawPackets.test_waveform_backends_preserve_guard) ... ok
+test_all_fast_transitions_against_cumulative_area (test_mulaw_waveform.WaveformMuLaw.test_all_fast_transitions_against_cumulative_area) ... ok
+test_backends_match_and_both_loops_close (test_mulaw_waveform.WaveformMuLaw.test_backends_match_and_both_loops_close) ... ok
+test_guard_covers_every_reachable_residue_with_small_levels (test_mulaw_waveform.WaveformMuLaw.test_guard_covers_every_reachable_residue_with_small_levels) ... ok
+test_every_code_in_native_z80 (test_mulaw_player.MuLawPlayer.test_every_code_in_native_z80) ... ok
+test_full_ram_boundaries (test_mulaw_player.MuLawPlayer.test_full_ram_boundaries) ... ok
+test_prepared_pcm16_retains_low_bits (test_mulaw_player.MuLawPlayer.test_prepared_pcm16_retains_low_bits) ... ok
+test_public_aliases_and_ima_default (test_mulaw_player.MuLawPlayer.test_public_aliases_and_ima_default) ... ok
+test_invalid_inputs_are_rejected_before_external_encoding (test_g711_codec.G711.test_invalid_inputs_are_rejected_before_external_encoding) ... ok
+test_readonly_word_tables_and_one_byte_input (test_g711_codec.G711.test_readonly_word_tables_and_one_byte_input) ... ok
+test_standard_silence_sign_and_extrema (test_g711_codec.G711.test_standard_silence_sign_and_extrema) ... ok
+test_balanced_profile_remains_explicit_and_bounded (test_quality_search.QualitySearch.test_balanced_profile_remains_explicit_and_bounded) ... ok
+{"stage": "prepare", "input": "C:\\Users\\rudol\\AppData\\Local\\Temp\\tmpsbpjsu18\\source.wav", "prepared_pcm_unchanged": true, "prepared_samples": 8192, "sample_rate_hz": 8000, "pcm_bits": 8, "channels": 1, "maximum_prepared_samples": 251888, "source_sha256": "3fdfb2a385183a3b05d5abe58407e12b889e3d61e224ed4a4188f98c4b1a36e9"}
+{"date": "2026-10-05", "complete": true, "source": {"input": "C:\\Users\\rudol\\AppData\\Local\\Temp\\tmpsbpjsu18\\source.wav", "prepared_pcm_unchanged": true, "prepared_samples": 8192, "sample_rate_hz": 8000, "pcm_bits": 8, "channels": 1, "maximum_prepared_samples": 251888, "source_sha256": "3fdfb2a385183a3b05d5abe58407e12b889e3d61e224ed4a4188f98c4b1a36e9"}, "selected": {"directory": "disk-encode-3", "minimum_snr_db": 23.0, "speed_within_two_percent": true, "cold_startup_seconds": 1.0, "startup_within_60_seconds": true}, "candidates": [{"directory": "pilot", "minimum_snr_db": 21.0, "speed_within_two_percent": true, "cold_startup_seconds": 1.0, "startup_within_60_seconds": true}, {"directory": "disk-encode-1", "minimum_snr_db": 20.5, "speed_within_two_percent": true, "cold_startup_seconds": 1.0, "startup_within_60_seconds": true}, {"directory": "disk-encode-2", "minimum_snr_db": 22.0, "speed_within_two_percent": true, "cold_startup_seconds": 1.0, "startup_within_60_seconds": true}, {"directory": "disk-encode-3", "minimum_snr_db": 23.0, "speed_within_two_percent": true, "cold_startup_seconds": 1.0, "startup_within_60_seconds": true}], "target_snr_db": 20.0, "target_applicable": true, "target_met": true, "quality_gate_passed": true, "preview_only": false, "search_attempts": 3, "quality_profile": "best", "bounded_search": true, "recording": null, "trd_sha256": "ed54a2794bdc29395cca7566c2645a6960449a3ebf980b3e69ae13b614494851", "physical_hardware_tested": false, "source_reference": "Prepared 8-kHz PCM8, no fitted gain/delay/time stretch; unchanged 70 Hz..4.5 kHz filter", "spectrum_expansion": false, "pcm_buffer_bytes": 0, "pdm_buffer_bytes": 0, "limitations": ["Target is measured per input; it is not guaranteed for arbitrary audio.", "25 dB remains a requested search target, not an established hardware capability."]}
+test_best_continues_after_target_and_selects_measured_quality (test_quality_search.QualitySearch.test_best_continues_after_target_and_selects_measured_quality) ... ok
+test_default_quality_and_failure_gate_match_both_codecs (test_quality_search.QualitySearch.test_default_quality_and_failure_gate_match_both_codecs) ... ok
+test_shortlist_uses_host_scores_without_marking_a_release (test_quality_search.QualitySearch.test_shortlist_uses_host_scores_without_marking_a_release) ... ok
+test_waveform_command_selects_real_alphabet_and_overlap (test_quality_search.QualitySearch.test_waveform_command_selects_real_alphabet_and_overlap) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 7.635s
+
+OK

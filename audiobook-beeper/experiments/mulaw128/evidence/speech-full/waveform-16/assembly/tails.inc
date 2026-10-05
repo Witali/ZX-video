@@ -1,0 +1,8 @@
+        BANK_TAIL 0,4,49152,1,0
+        BANK_TAIL 1,6,49152,2,0
+        BANK_TAIL 2,1,49152,3,0
+        BANK_TAIL 3,3,49152,4,0
+        BANK_TAIL 4,7,56064,5,0
+        BANK_TAIL 5,2,61696,6,0
+        BANK_TAIL 6,5,63744,7,0
+        BANK_TAIL 7,0,49152,0,1
