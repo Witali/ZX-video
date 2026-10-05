@@ -1,8 +1,8 @@
 """Archive a completed conditioned IMA4 disk and its full execution evidence.
 
 Retain selected native/Fuse traces, final volume traces, producer snapshots,
-and every candidate's metadata/payload. Intermediate duplicate disks and
-rejected candidates' large traces stay in the original build directory.
+and every candidate's metadata. Intermediate payloads, duplicate disks and
+rejected candidates' large traces stay in the generated build directory.
 """
 import argparse
 import hashlib
@@ -63,7 +63,7 @@ def main():
             relative = file.relative_to(part)
             if len(relative.parts) < 2 or relative.parts[0] in ('assembly', 'producer-source'):
                 continue
-            if file.is_file() and (file.suffix == '.json' or file.name == 'soundtrack.ima.gz'
+            if file.is_file() and (file.suffix == '.json'
                                    or file.name in ('phase-trace.txt', 'phase-debugger.txt', 'phase-stderr.txt')):
                 copy(file, here/'searches'/part.name/relative)
     for name in ('ima4-normalized-convert.log', 'ima4-normalized-part-3.log',

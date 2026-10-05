@@ -50,8 +50,10 @@ and performed all final volume checks. The earlier 15.884-dB first-part
 compensation result was partial; the final selected waveform search improves
 that part further. Part 3 retains compensation pass 2 because its waveform
 candidate scores 15.604614 dB versus the control's 15.664102 dB over two loops.
-Other parts select the single waveform candidate. All candidate metadata and
-payloads are preserved, including lower-quality controls.
+Other parts select the single waveform candidate. All candidate metadata
+remain, including lower-quality controls. Superseded candidate payloads were
+removed in the subsequent user-authorized cleanup; their paths/hashes and
+recovery commit are in [retired-artifacts.json](retired-artifacts.json).
 
 The [new independently bootable disk](../../../ZX-audiobook-IMA4-normalized-full-disk.trd)
 retains **113.712 source seconds** in five parts and fills all 2560 sectors
@@ -110,7 +112,10 @@ No additional playback normalization or gain is applied to these WAVs.
 
 `archive_release.py` preserves selected streams, assembly, exact producer
 snapshots, complete selected native/Fuse traces, final volume execution and
-all search metadata/payloads. `artifact-hashes.json` authenticates 1051 files.
+all search metadata. The original archive authenticated 1051 files; after the
+authorized cleanup, `artifact-hashes.json` authenticates the 966 retained files.
+The original postflight counts describe the pre-cleanup archive. Selected
+streams and complete release evidence are unchanged.
 `compare_output.py` authenticates both historical and new evidence before
 comparing quality and cyclic-error indicators. `postflight.json` records the
 successful byte-identical rebuild from the archived selected streams.

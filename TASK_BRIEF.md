@@ -37,6 +37,11 @@ part 3's fitted AM diagnostic increases; do not claim flutter eliminated or
 20 dB achieved. No player/hot-path change, carrier reduction, merge or push.
 This milestone is complete; do not open another experiment automatically.
 
+The subsequent 2026-10-05 request authorizes cleanup of unsuccessful attempts,
+merge into `main` and push. Retire intermediate candidate payloads, duplicate
+traces and generated unselected builds while preserving reports, selected
+streams and full release verification. See the cleanup entry in CHANGELOG.md.
+
 ## Completed audio request: audit the preferred direct IMA4 disk (2026-10-05)
 
 The user prefers `ZX-audiobook-IMA-ADPCM-direct-test.trd` and asks when sound

@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-05",
+  "baseline_commit": "2454c14127ff8bfd9f8b015240cec25e675ab169",
+  "removed_files": 4499,
+  "removed_file_bytes": 3363393406,
+  "removed_tracked_files": 245,
+  "removed_tracked_bytes": 78346234,
+  "removed_generated_files": 4254,
+  "removed_generated_bytes": 3285047172,
+  "archives": [
+    {
+      "archive": "ima4-full-disk",
+      "removed_files": 160,
+      "removed_bytes": 72244246,
+      "retained_manifest_files": 1194
+    },
+    {
+      "archive": "audio-dynamics",
+      "removed_files": 85,
+      "removed_bytes": 6101988,
+      "retained_manifest_files": 966
+    }
+  ],
+  "scope": "Only unselected generated candidates for the two complete IMA4 disks and retired archived candidate payloads/duplicate traces. Other codec research and worktrees retained. Sizes are summed removed file lengths, not measured filesystem free-space gain. Git/LFS history is retained without rewriting or pruning.",
+  "validation": {
+    "focused_tests_passed": 30,
+    "test_modules": [
+      "test_audio_dynamics",
+      "test_ima3_series",
+      "test_ima4_series",
+      "test_ima4_phase_fallback",
+      "test_ima4_clock_reference",
+      "test_quality_search"
+    ],
+    "rebuilds": [
+      {
+        "archive": "ima4-full-disk",
+        "disk": "ZX-audiobook-IMA4-full-disk.trd",
+        "sha256": "a7e4fb4f289b036b2f84e2032938894767875db3b1e70fbe19d79780af106aa7",
+        "rebuilt_exactly": true,
+        "additional_emulator_run": false
+      },
+      {
+        "archive": "audio-dynamics",
+        "disk": "ZX-audiobook-IMA4-normalized-full-disk.trd",
+        "sha256": "e734494907b00ba0e5bbb36b65f37152710fd73ac06efc0865f728a0037b8004",
+        "rebuilt_exactly": true,
+        "additional_emulator_run": false
+      }
+    ],
+    "youtube_linked_disk_unchanged_sha256": "9ce319e8b9352a96ed965d87ff3d1d8698df7d788221563758d306d23c053013",
+    "initial_rebuild_failure": "Stale README digest in historical full-disk manifest; only intentional documentation hash refreshed, then rebuild passed."
+  },
+  "empty_directories_removed": 457
+}

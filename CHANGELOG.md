@@ -1,5 +1,43 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Retire superseded audio candidates before main integration
+
+The user authorizes deletion of previous unsuccessful attempts, merging the
+current audio work into main and pushing it. Scope cleanup to unselected
+candidates from the two complete IMA4 builds and redundant archived candidate
+payloads/traces. Preserve all selected streams, release disks, source snapshots,
+complete qualified native/Fuse proof, candidate JSON measurements and historical
+changelog entries. Other codec research and all 70 registered worktrees are
+retained; unrelated changes in the root and streaming-zx0-player worktrees are
+not touched. No Git operation is unfinished at audit time.
+
+[Cleanup inventory and validation](audiobook-beeper/experiments/audio-cleanup-2026-10-05.json):
+remove 4499 reviewed files totaling 3363393406 bytes, including 4254 generated
+unselected build files (3285047172 bytes) and 245 tracked superseded payloads or
+duplicate traces (78346234 bytes). These are summed file lengths, not a measured
+filesystem free-space gain. Verify absolute paths, regular files, no reparse
+point ancestors, unchanged HEAD/index/content hashes and inactive converters
+before deletion. Remove 457 now-empty directories without recursive deletion.
+No releases, worktrees, local configuration, Git/LFS objects or history are
+deleted. Old tracked artifacts remain recoverable from commit 2454c14.
+
+Retirement manifests retain each removed tracked path, size and SHA-256;
+current artifact manifests authenticate 1194 old-disk and 966 normalized-disk
+files. The normalized archive helper now saves candidate metadata without
+redundant candidate payloads. Existing full selected execution evidence remains
+intact. The initial old-disk replay detects a stale README digest after the
+documentation updates; refresh only that intentional documentation hash and
+repeat successfully, without changing any raw measurement hash or quality gate.
+
+All 30 focused converter/series/phase/quality tests pass. Both retained disks
+rebuild byte for byte from their cleaned archives: a7e4fb4f...106aa7 and
+e7344949...7b8004. These are authenticated assembly rebuilds, not additional
+emulator runs. Reuse the previously complete native/cold Fuse validation for
+unchanged disk bytes. No player code or timing changes in this cleanup: IMA4
+423 T/sample, page/bank extras 14/140 T, all deltas 0. Decision: keep the proven
+feature and evidence, retire reproducible failed intermediates, and integrate
+the authorized audio branch into main without rewriting history.
+
 ## 2026-10-05: Qualify the complete normalized IMA4 disk
 
 Finish the user's source-gain/compression request using the public converter

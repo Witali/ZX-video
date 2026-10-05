@@ -146,8 +146,12 @@ pass, including 8-T acceptance, 9-T rejection and fatal non-phase failures.
 `run-producers/` preserves the exact original producer bytes and hashes,
 including orchestration helpers. `selected/` retains each selected
 stream, source reference, assembled player and complete two-loop evidence.
-`searches/` retains candidate reports and packed payloads, including rejected
-candidates. `release/` contains the final volume, layout, complete cold
+`searches/` retains candidate reports, including rejected candidates. The
+subsequent user-authorized cleanup removes superseded payloads and redundant
+traces; [retired-artifacts.json](retired-artifacts.json) records their paths,
+hashes and recovery commit. Two incomplete-run binary copies have identical
+retained final evidence. All selected streams and full verification remain.
+`release/` contains the final volume, layout, complete cold
 trace, per-part native proofs, actual output timelines/WAVs and terminal RAM.
 Saved absolute metadata paths are historical; rebuild fresh local metadata
 with the reproducer rather than invoking relocated metadata directly.
