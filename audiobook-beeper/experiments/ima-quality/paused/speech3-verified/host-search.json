@@ -1,0 +1,82 @@
+[
+  {
+    "directory": "encode-1",
+    "scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n",
+    "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\audiobook-beeper\\experiments\\ima-3bit-overlap\\qualified",
+    "samples": 186880,
+    "beam_width": 1024,
+    "block_size": 256,
+    "commit_size": 64,
+    "allowed_ima_nibbles": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14
+    ],
+    "ima3_subset": true,
+    "source_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+    "packed_sha256": "0130ba579e00cfb91f8e51c27389a80025c1fd91b11a0b4e568cc625426f3df1",
+    "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state",
+    "history_bins": 0,
+    "search_backend": "native",
+    "search_seconds": 786.0779999999795,
+    "baseline_model_snr_db": 20.428184919422122,
+    "host_fixed_clock_snr_db": 20.582819452493712,
+    "control_prior": "compensated",
+    "control_regularization": 0.03,
+    "elapsed_seconds": 793.0620000000345,
+    "ordinary_native_tstate_delta": 0,
+    "new_timeline_verified": false,
+    "saturation_guard": {
+      "samples": 186880,
+      "saturation_events": 0,
+      "raw_min": -30041,
+      "raw_max": 30619
+    },
+    "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"
+  },
+  {
+    "directory": "encode-2",
+    "scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n",
+    "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\audiobook-beeper\\experiments\\ima-3bit-overlap\\qualified",
+    "samples": 186880,
+    "beam_width": 1024,
+    "block_size": 256,
+    "commit_size": 64,
+    "allowed_ima_nibbles": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14
+    ],
+    "ima3_subset": true,
+    "source_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+    "packed_sha256": "677c877d8fac248accde53c07ac0f2ad1b4fa044ebd15999cb6b5b93fed81c8b",
+    "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state",
+    "history_bins": 0,
+    "search_backend": "native",
+    "search_seconds": 748.2179999999935,
+    "baseline_model_snr_db": 20.428184919422122,
+    "host_fixed_clock_snr_db": 20.659503692212727,
+    "control_prior": "compensated",
+    "control_regularization": 0.003,
+    "elapsed_seconds": 754.875,
+    "ordinary_native_tstate_delta": 0,
+    "new_timeline_verified": false,
+    "saturation_guard": {
+      "samples": 186880,
+      "saturation_events": 0,
+      "raw_min": -30703,
+      "raw_max": 30717
+    },
+    "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"
+  }
+]

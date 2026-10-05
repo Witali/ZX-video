@@ -34,6 +34,10 @@ def analyze(out,ffmpeg,loop=0):
     signals={'output':reconstruct(bits[:count],t),
              'source_warped':reconstruct(expand_samples(meta,source)/256,t),
              'source_fixed':reconstruct(fixed_values,fixed_edges)}
+    # A declared headroom gain is part of the modulator, never fitted to the
+    # output. Preserve the original PCM and disclose the quieter reference.
+    gain=meta.get('model',{}).get('output_gain',1.)
+    signals['source_warped']*=gain;signals['source_fixed']*=gain
     filtered={}
     for name,signal in signals.items():
         run=subprocess.run([ffmpeg,'-v','error','-nostdin','-f','f32le','-ar',str(RATE),'-ac','1','-i','-',
@@ -65,7 +69,7 @@ def analyze(out,ffmpeg,loop=0):
                 jitter_seconds=dict(minimum=float(jitter.min()),maximum=float(jitter.max()),
                                     mean=float(jitter.mean()),standard_deviation=float(jitter.std()),peak_to_peak=float(np.ptp(jitter))),
                 jitter_line_amplitude_seconds=amplitudes,folded_field_jitter_seconds=folded.tolist(),speed_windows=windows,
-                physical_hardware_tested=False)
+                declared_modulator_gain=gain,physical_hardware_tested=False)
     prefix='' if loop==0 else f'loop-{loop+1}-'
     (out/(prefix+'voice-jitter.json')).write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     write_wav(out/(prefix+'uniform-clock-source-preview.wav'),filtered['source_fixed'])

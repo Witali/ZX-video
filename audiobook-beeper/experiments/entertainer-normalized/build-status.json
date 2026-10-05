@@ -1,0 +1,74 @@
+{
+  "complete": true,
+  "normalization": {
+    "source": "audiobook-beeper\\experiments\\ima-3bit-entertainer\\original.ogg",
+    "source_sha256": "08dc5241de419edf9693ad20797389cb735d9b6fc06bfb6936568bb707f13077",
+    "retained_seconds": 23.344,
+    "prepared_seconds": 23.36,
+    "retained_samples": 186752,
+    "prepared_samples": 186880,
+    "target_lufs": -18,
+    "target_true_peak_db": -2,
+    "target_lra": 11,
+    "before": {
+      "input_i": "-16.73",
+      "input_tp": "1.83",
+      "input_lra": "8.20",
+      "input_thresh": "-26.91",
+      "output_i": "-17.21",
+      "output_tp": "-2.00",
+      "output_lra": "6.90",
+      "output_thresh": "-27.34",
+      "normalization_type": "dynamic",
+      "target_offset": "-0.79"
+    },
+    "normalization": {
+      "input_i": "-16.73",
+      "input_tp": "1.83",
+      "input_lra": "8.20",
+      "input_thresh": "-26.91",
+      "output_i": "-17.94",
+      "output_tp": "-2.00",
+      "output_lra": "7.00",
+      "output_thresh": "-28.07",
+      "normalization_type": "dynamic",
+      "target_offset": "-0.06"
+    },
+    "final_pcm8": {
+      "input_i": "-17.89",
+      "input_tp": "-1.97",
+      "input_lra": "7.00",
+      "input_thresh": "-28.00",
+      "output_i": "-17.73",
+      "output_tp": "-2.00",
+      "output_lra": "6.30",
+      "output_thresh": "-27.84",
+      "normalization_type": "dynamic",
+      "target_offset": "-0.27"
+    },
+    "safety_gain": 1.0,
+    "edge_fades_samples": 80,
+    "silent_guard_samples": 128,
+    "clipped_pcm_samples": 0,
+    "pcm_min": 27,
+    "pcm_max": 230,
+    "pcm_sha256": "fb630abd3c8129c0ce2b0e2b4f367cf1136c0bc5eb4b104bcec3cd6e7ab501bb",
+    "prepared_wav_sha256": "3b49a603888957c2a9cd298eccf25b0b86b658a8619713e71cc750b9e9fd92ca",
+    "ffmpeg_sha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+    "builder_sha256": "cbfc04eac23b48bb667cd29fad72ec893e9478788226937d8b0af93d4fd21eb0"
+  },
+  "codecs": {
+    "ima3": {
+      "exit_code": 2,
+      "elapsed_seconds": 3874.655999999959,
+      "same_normalized_reference": true,
+      "report": "ima3/report.json"
+    },
+    "ima4": {
+      "exit_code": 0,
+      "elapsed_seconds": 542.0470000000205,
+      "same_normalized_reference": true,
+      "report": "ima4/report.json"
+    }
+  }
+}

@@ -1,0 +1,277 @@
+[
+  {
+    "line": 130,
+    "seconds": 5.53769610170275,
+    "code": "observed=(states@l.T)[parent]+response[word_index]"
+  },
+  {
+    "line": 148,
+    "seconds": 5.1360593002755195,
+    "code": "order=np.lexsort((candidates,score[candidates],key));ordered=candidates[order]"
+  },
+  {
+    "line": 132,
+    "seconds": 4.227642698446289,
+    "code": "score=costs[parent]+np.sum(error*error*weights,axis=1)"
+  },
+  {
+    "line": 131,
+    "seconds": 2.60242940147873,
+    "code": "error=observed-desired[sample]"
+  },
+  {
+    "line": 150,
+    "seconds": 2.2029078039340675,
+    "code": "best=ordered[np.lexsort((ordered,score[ordered]))[:width]]"
+  },
+  {
+    "line": 141,
+    "seconds": 2.0579338084207848,
+    "code": "next_filters=(states@a.T)[parent]+endpoint[word_index]"
+  },
+  {
+    "line": 151,
+    "seconds": 0.5788379957666621,
+    "code": "paths=paths[parent[best]].copy();paths[:,sample-start]=codes[best%branches]"
+  },
+  {
+    "line": 149,
+    "seconds": 0.50714649586007,
+    "code": "ordered=ordered[np.r_[True,key[order][1:]!=key[order][:-1]]]"
+  },
+  {
+    "line": 124,
+    "seconds": 0.3829765924019739,
+    "code": "predicted=(preds[:,None]+delta[indices]).ravel();next_indices=successor[indices].ravel()"
+  },
+  {
+    "line": 140,
+    "seconds": 0.3559072947828099,
+    "code": "key=((predicted[candidates]+32768)*89+next_indices[candidates])*32+new_q[candidates]"
+  },
+  {
+    "line": 138,
+    "seconds": 0.3382455025566742,
+    "code": "new_q=nxt[level,qs[parent]]"
+  },
+  {
+    "line": 125,
+    "seconds": 0.3131959077436477,
+    "code": "valid=(predicted>=-32768)&(predicted<=32767);parent=np.repeat(np.arange(len(preds)),branches)"
+  },
+  {
+    "line": 126,
+    "seconds": 0.27164879837073386,
+    "code": "level=np.clip((predicted+32768)//(65536//nxt.shape[0]),0,nxt.shape[0]-1)"
+  },
+  {
+    "line": 152,
+    "seconds": 0.18210530269425362,
+    "code": "states=next_filters[best]"
+  },
+  {
+    "line": 137,
+    "seconds": 0.164173896308057,
+    "code": "score+=regularization*(predicted/32768-target)**2"
+  },
+  {
+    "line": 129,
+    "seconds": 0.16414889961015433,
+    "code": "word_index=level*32+qs[parent]"
+  },
+  {
+    "line": 139,
+    "seconds": 0.11201360065024346,
+    "code": "candidates=np.flatnonzero(valid)"
+  },
+  {
+    "line": 136,
+    "seconds": 0.06623390247114003,
+    "code": "target=(source[sample]-128.)/128"
+  },
+  {
+    "line": 128,
+    "seconds": 0.06339889264199883,
+    "code": "valid &= (level>=level_bounds[0]) & (level<=level_bounds[1])"
+  },
+  {
+    "line": 153,
+    "seconds": 0.059770802734419703,
+    "code": "preds,indices,qs,costs=predicted[best],next_indices[best],new_q[best],score[best]"
+  },
+  {
+    "line": 112,
+    "seconds": 0.014804299920797348,
+    "code": "codes=code_alphabet(allowed_codes);branches=len(codes)"
+  },
+  {
+    "line": 123,
+    "seconds": 0.011365099111571908,
+    "code": "a,l,response,endpoint,weights=features[ids[sample]]"
+  },
+  {
+    "line": 142,
+    "seconds": 0.010927097755484283,
+    "code": "if history_bins:"
+  },
+  {
+    "line": 127,
+    "seconds": 0.008099504048004746,
+    "code": "if level_bounds is not None:"
+  },
+  {
+    "line": 171,
+    "seconds": 0.007435299921780825,
+    "code": "tail=encode_pcm(np.full(128,128,dtype='u1'),width=32,predictor=pred,index=index,allowed_codes=codes,predictor_bounds=bounds)"
+  },
+  {
+    "line": 122,
+    "seconds": 0.006883400492370129,
+    "code": "for sample in range(start,stop):"
+  },
+  {
+    "line": 166,
+    "seconds": 0.006199600989930332,
+    "code": "filter_state=aa@filter_state+endpoint[word];q=int(nxt[level,q])"
+  },
+  {
+    "line": 174,
+    "seconds": 0.002921900013461709,
+    "code": "pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)"
+  },
+  {
+    "line": 121,
+    "seconds": 0.0025879997992888093,
+    "code": "states=filter_state[None,:].copy();costs=np.zeros(1);paths=np.zeros((1,stop-start),dtype='u1')"
+  },
+  {
+    "line": 175,
+    "seconds": 0.001951300073415041,
+    "code": "require_unclipped(packed)"
+  },
+  {
+    "line": 163,
+    "seconds": 0.0019321992294862866,
+    "code": "branch=branch_for_code[int(code)];pred+=int(delta[index,branch]);index=int(successor[index,branch])"
+  },
+  {
+    "line": 164,
+    "seconds": 0.0016760003054514527,
+    "code": "level=(pred+32768)//(65536//nxt.shape[0]);word=level*32+q"
+  },
+  {
+    "line": 162,
+    "seconds": 0.001628299243748188,
+    "code": "for sample,code in enumerate(chosen[start:committed],start):"
+  },
+  {
+    "line": 165,
+    "seconds": 0.0013810000382363796,
+    "code": "aa,_,_,endpoint,_=features[ids[sample]]"
+  },
+  {
+    "line": 120,
+    "seconds": 0.00016769987996667624,
+    "code": "stop=min(len(ids),start+block_size);preds=np.array([pred]);indices=np.array([index]);qs=np.array([q])"
+  },
+  {
+    "line": 173,
+    "seconds": 0.00015249999705702066,
+    "code": "packed=bytes((chosen[::2]|(chosen[1::2]<<4)).tolist())"
+  },
+  {
+    "line": 115,
+    "seconds": 7.860001642256975e-05,
+    "code": "delta=(steps>>3)+steps*((codes&4)!=0)+(steps>>1)*((codes&2)!=0)+(steps>>2)*((codes&1)!=0)"
+  },
+  {
+    "line": 155,
+    "seconds": 7.010030094534159e-05,
+    "code": "chosen[start:committed]=paths[0,:committed-start]"
+  },
+  {
+    "line": 154,
+    "seconds": 6.169977132230997e-05,
+    "code": "committed=min(stop,start+commit_size)"
+  },
+  {
+    "line": 117,
+    "seconds": 5.279993638396263e-05,
+    "code": "successor=np.clip(np.arange(89)[:,None]+np.asarray(INDEX)[codes&7],0,88)"
+  },
+  {
+    "line": 167,
+    "seconds": 3.599992487579584e-05,
+    "code": "if committed%16384==0:print(json.dumps(dict(encoded_samples=committed,total_samples=len(source))),flush=True)"
+  },
+  {
+    "line": 156,
+    "seconds": 3.160000778734684e-05,
+    "code": "if committed==stop:"
+  },
+  {
+    "line": 119,
+    "seconds": 2.5800196453928947e-05,
+    "code": "for start in range(0,len(ids),commit_size):"
+  },
+  {
+    "line": 116,
+    "seconds": 1.650000922381878e-05,
+    "code": "delta*=np.where(codes&8,-1,1)"
+  },
+  {
+    "line": 113,
+    "seconds": 1.400010660290718e-05,
+    "code": "branch_for_code={int(code):branch for branch,code in enumerate(codes)}"
+  },
+  {
+    "line": 172,
+    "seconds": 1.3699987903237343e-05,
+    "code": "tbytes=np.frombuffer(tail,'u1');chosen[-128::2]=tbytes&15;chosen[-127::2]=tbytes>>4"
+  },
+  {
+    "line": 114,
+    "seconds": 1.1499971151351929e-05,
+    "code": "steps=np.asarray(STEPS,dtype=np.int64)[:,None]"
+  },
+  {
+    "line": 118,
+    "seconds": 5.300040356814861e-06,
+    "code": "chosen=np.empty(len(source),dtype='u1');pred=index=0;q=16;filter_state=np.zeros(6)"
+  },
+  {
+    "line": 157,
+    "seconds": 4.500034265220165e-06,
+    "code": "pred,index,q=int(preds[0]),int(indices[0]),int(qs[0]);filter_state=states[0]"
+  },
+  {
+    "line": 111,
+    "seconds": 4.300032742321491e-06,
+    "code": "if not 1<=commit_size<=block_size:raise ValueError('commit size must be within the lookahead block')"
+  },
+  {
+    "line": 169,
+    "seconds": 3.00002284348011e-06,
+    "code": "(level_bounds[0]*(65536//nxt.shape[0])-32768,"
+  },
+  {
+    "line": 176,
+    "seconds": 1.999898813664913e-06,
+    "code": "return packed"
+  },
+  {
+    "line": 168,
+    "seconds": 1.600012183189392e-06,
+    "code": "bounds=((-32768,32767) if level_bounds is None else"
+  },
+  {
+    "line": 170,
+    "seconds": 1.400010660290718e-06,
+    "code": "(level_bounds[1]+1)*(65536//nxt.shape[0])-32769))"
+  },
+  {
+    "line": 110,
+    "seconds": 1.300009898841381e-06,
+    "code": "commit_size=block_size if commit_size is None else commit_size"
+  }
+]

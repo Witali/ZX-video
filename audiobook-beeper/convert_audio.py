@@ -1,7 +1,7 @@
 """Convert audio to verified Spectrum TRDs using packed IMA3 and direct PDM.
 
 The public CLI defaults to the accepted IMA3 converter and one sequential
-disk. --codec ima4 explicitly selects the historical four-bit converter.
+disk. --codec ima4 selects the four-bit player with shared waveform search.
 Its implementation and shared preparation helpers remain import-compatible.
 """
 import argparse
@@ -27,6 +27,7 @@ from probe_loop_phase import measure
 from verify_direct import reference, intervals, sample_positions
 from verify_packet import native_check, fuse_check
 from verify_pcm import save
+from quality_search import host_search, search_plan, ranked_hosts
 
 CPU = 3546900
 FIELD = 70908
@@ -42,7 +43,8 @@ def snapshot_sources(out):
              'precompensate_voice.py', 'analyze_voice_jitter.py', 'verify_direct.py', 'verify_packet.py',
              'ima_beam.py', 'ima_codec.py', 'feedback_player.py', 'pcm_player.py', 'pdm_player.py',
              'packet_player.py', 'probe_feedback_packets.py', 'build_pdm.py', 'assess_snr.py',
-             'verify_pcm.py', 'record_pcm.py')
+             'verify_pcm.py', 'record_pcm.py', 'quality_search.py',
+             'ima_waveform_encoder.py', 'waveform_kernel.py')
     hashes = {}
     for name in names:
         data = (HERE / name).read_bytes().replace(b'\r\n', b'\n')
@@ -124,6 +126,23 @@ def write_candidate(out, packed, source, hot=None, pairs=0, pad=0):
     (out / 'soundtrack.ima.gz').write_bytes(gzip.compress(packed, mtime=0))
     pcm_wav(out / 'source-preview.wav', source)
     return disk, meta
+
+
+def prepared_ima4_source(path):
+    """Retain an externally normalized PCM8 reference without a second gain."""
+    with wave.open(str(path), 'rb') as wav:
+        if (wav.getnchannels(), wav.getsampwidth(), wav.getframerate()) != (1, 1, RATE):
+            raise ValueError('prepared PCM must be mono PCM8 at 8000 Hz')
+        source = np.frombuffer(wav.readframes(wav.getnframes()), 'u1').copy()
+    if not 8192 <= len(source) <= MAX_PACKED_BYTES * 2 or len(source) % 512:
+        raise ValueError('prepared IMA4 PCM must fit RAM, have >=8192 samples and a multiple of 512 samples')
+    if np.any(source[-128:] != 128):
+        raise ValueError('prepared PCM requires a final 128-sample silent guard')
+    return source, dict(input=str(path), prepared_pcm_unchanged=True,
+                        prepared_samples=len(source), sample_rate_hz=RATE,
+                        channels=1, pcm_bits=8, fixed_gain=1.,
+                        silence_guard_samples=128,
+                        source_sha256=hashlib.sha256(source.tobytes()).hexdigest())
 
 
 def representable_pad(value):
@@ -220,7 +239,12 @@ def convert(args):
         raise ValueError('output must be empty; existing conversions are never overwritten')
     out.mkdir(parents=True, exist_ok=True)
     producer_hashes = snapshot_sources(out)
-    source, source_meta = prepare_source(args.input.resolve(), args.ffmpeg, args.duration)
+    if getattr(args, 'prepared_pcm', False):
+        if args.duration is not None:
+            raise ValueError('--prepared-pcm cannot be combined with --duration')
+        source, source_meta = prepared_ima4_source(args.input.resolve())
+    else:
+        source, source_meta = prepare_source(args.input.resolve(), args.ffmpeg, args.duration)
     save(out / 'input.json', source_meta)
     print(json.dumps(source_meta), flush=True)
     packed = encode(source)
@@ -241,8 +265,52 @@ def convert(args):
         variants.append(dict(directory=str(variant.relative_to(out)), **result))
         save(out / 'variants.json', variants)
         pilot, meta = variant, new_meta
-        if result['snr_at_least_20_db'] and result['speed_within_two_percent']:
+        if (result['minimum_snr_db'] is not None and result['minimum_snr_db'] >= getattr(args,'target_snr',20.)
+                and result['speed_within_two_percent']):
             break
+    quality_profile = getattr(args, 'quality', 'best')
+    hosts = []
+    if quality_profile == 'best' and np.any(source != 128):
+        # Keep the verified legacy candidates as fallbacks. Optimize against
+        # the best one's actual clock; never borrow an IMA3 output schedule.
+        baseline = max((r for r in variants if r['speed_within_two_percent']),
+                       key=lambda r: r['minimum_snr_db'] if r['minimum_snr_db'] is not None else -math.inf)
+        clock = out/baseline['directory']
+        clock_meta = json.loads((clock/'player.json').read_bytes())
+        for number, (width, weight, horizon) in enumerate(search_plan('ima4', quality_profile, getattr(args,'attempts',3)), 1):
+            folder = out/f'encode-{number}'
+            estimate = host_search(clock, folder, width, weight, horizon, args.ffmpeg, 'ima4')
+            hosts.append(dict(directory=folder.name, **estimate))
+            save(out/'host-search.json', hosts)
+        for host in ranked_hosts(hosts, limit=len(hosts)):
+            packed = gzip.decompress((out/host['directory']/'soundtrack.ima.gz').read_bytes())
+            variant, new_meta = calibrate(out/f'disk-{host["directory"]}', packed, source, args.fuse, clock_meta['hot_indices'])
+            result = validate(variant, args.fuse, args.ffmpeg)
+            times = np.frombuffer(gzip.decompress((variant/'output-times.u32.gz').read_bytes()), '<u4').astype(np.int64)
+            target = compensate(source, times[sample_positions(new_meta)], period=CPU/RATE)
+            pcm_wav(variant/'compensated-pcm.wav', target)
+            variants.append(dict(directory=str(variant.relative_to(out)), **result))
+            save(out/'variants.json', variants)
+        # Re-estimate once on the winner's *new* ULA timeline. Four-bit
+        # decoding places some rows in contended RAM, so changing codes can
+        # invalidate the pilot's pulse spacing even with identical CPU cost.
+        winner = max((r for r in variants if r['speed_within_two_percent']),
+                     key=lambda r:r['minimum_snr_db'] if r['minimum_snr_db'] is not None else -math.inf)
+        prefix = Path(winner['directory']).parts[0]
+        chosen = next((h for h in hosts if prefix == 'disk-'+h['directory']), None)
+        if chosen is not None and getattr(args,'refine_clock',True):
+            clock = out/winner['directory']; clock_meta=json.loads((clock/'player.json').read_bytes())
+            folder=out/'encode-refined'
+            estimate=host_search(clock,folder,chosen['beam_width'],chosen['control_regularization'],
+                                 chosen['block_size'],args.ffmpeg,'ima4')
+            hosts.append(dict(directory=folder.name,**estimate));save(out/'host-search.json',hosts)
+            packed=gzip.decompress((folder/'soundtrack.ima.gz').read_bytes())
+            if packed != gzip.decompress((clock/'soundtrack.ima.gz').read_bytes()):
+                variant,new_meta=calibrate(out/'disk-refined',packed,source,args.fuse,clock_meta['hot_indices'])
+                result=validate(variant,args.fuse,args.ffmpeg)
+                times=np.frombuffer(gzip.decompress((variant/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)
+                pcm_wav(variant/'compensated-pcm.wav',compensate(source,times[sample_positions(new_meta)],period=CPU/RATE))
+                variants.append(dict(directory=str(variant.relative_to(out)),**result));save(out/'variants.json',variants)
     eligible = [r for r in variants if r['speed_within_two_percent']]
     if not eligible:
         raise RuntimeError('no variant meets the required +/-2% mean playback speed')
@@ -264,8 +332,13 @@ def convert(args):
         shutil.copy2(out / 'sound-128' / 'fuse-preview.wav', out / 'result-preview.wav')
     else:
         shutil.copy2(out / 'clock-aware-output-preview.wav', out / 'result-preview.wav')
-    report = dict(date=date.today().isoformat(), complete=True, preview_only=True,
-                  profile='IMA beam32 / measured-weight direct PDM / per-input loop-phase calibration and clock compensation',
+    target_snr = getattr(args, 'target_snr', 20.)
+    passed = best['speed_within_two_percent'] and (not np.any(source != 128) or
+             best['minimum_snr_db'] is not None and best['minimum_snr_db'] >= target_snr)
+    report = dict(date=date.today().isoformat(), complete=True, preview_only=not passed,
+                  quality_gate_passed=passed,target_snr_db=target_snr,
+                  profile='IMA4 / measured direct PDM / bounded waveform search' if quality_profile=='best' else 'IMA4 / legacy PCM beam32 and clock compensation',
+                  quality_profile=quality_profile,host_search=hosts,
                   source=source_meta, selected_variant=best, variants=variants, independent_ima=independent,
                   recording=recording, wav_scope=('Actual Fuse sound generator, two loops' if recording else 'Integrated Fuse port events with measurement filter'),
                   trd_sha256=hashlib.sha256((out / 'audiobook-preview.trd').read_bytes()).hexdigest(),
@@ -281,37 +354,52 @@ def convert(args):
 
 
 def legacy_main(argv=None, *, parents=()):
-    parser = argparse.ArgumentParser(description='Historical four-bit IMA/direct-PDM looping preview.', parents=list(parents), allow_abbrev=False)
+    parser = argparse.ArgumentParser(description='Four-bit IMA/direct-PDM looping preview with waveform optimization.', parents=list(parents), allow_abbrev=False)
     parser.add_argument('input', type=Path)
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--ffmpeg', default=shutil.which('ffmpeg'))
     parser.add_argument('--fuse', type=Path, required=True)
     parser.add_argument('--duration', type=float, help='keep at most this many initial seconds; always bounded by RAM')
     parser.add_argument('--iterations', type=int, choices=(1, 2), default=2)
+    parser.add_argument('--quality',choices=('best','balanced'),default='best',
+                        help='best: complete all requested waveform searches and verify each; balanced: legacy PCM search')
+    parser.add_argument('--attempts',type=int,choices=(1,2,3),default=3,
+                        help='bounded full waveform searches in best mode (default 3)')
+    parser.add_argument('--target-snr',type=float,default=20.)
+    parser.add_argument('--no-refine-clock',dest='refine_clock',action='store_false',
+                        help='omit the final four-bit search on the measured candidate clock')
+    parser.add_argument('--prepared-pcm', action='store_true', help='retain exact mono PCM8/8k levels; require RAM-sized, 512-aligned samples with a final 128-sample silent guard')
     parser.add_argument('--no-recording', action='store_true', help='skip normal-speed audible capture; keep complete native/cold-Fuse verification')
     args = parser.parse_args(argv)
+    if not math.isfinite(args.target_snr) or not 20 <= args.target_snr <= 60:
+        parser.error('target SNR must be 20..60 dB')
     if not args.ffmpeg:
         parser.error('FFmpeg not found; supply --ffmpeg')
     if args.output.exists() and any(args.output.iterdir()):
         parser.error('output must be empty; existing conversions are never overwritten')
     try:
-        convert(args)
+        report = convert(args)
     except Exception as error:
         if args.output.exists():
             save(args.output / 'failure.json', dict(complete=False, error=str(error), type=type(error).__name__))
         raise
+    if args.quality == 'best' and not report['quality_gate_passed']:
+        raise SystemExit(2)
 
 
 def main(argv=None):
     # Route the generic entry point before parsing profile-specific flags.
     # Imports of preparation helpers must never launch a conversion.
     selector = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
-    selector.add_argument('--codec', choices=('ima3', 'ima4'), default='ima3',
-                          help='ima3 (default): accepted packed IMA3/direct PDM; ima4: historical four-bit preview')
+    selector.add_argument('--codec', choices=('ima3', 'ima4', 'mulaw', 'ulaw'), default='ima3',
+                          help='ima3 (default): accepted packed IMA3; ima4: four-bit preview; mulaw/ulaw: compact G.711 eight-bit preview')
     selected, remaining = selector.parse_known_args(argv)
     selector.set_defaults(codec=selected.codec)
     if selected.codec == 'ima4':
         return legacy_main(remaining, parents=(selector,))
+    if selected.codec in ('mulaw', 'ulaw'):
+        from convert_mulaw_audio import main as mulaw_main
+        return mulaw_main(remaining, parents=(selector,))
     from convert_ima3_audio import main as ima3_main
     return ima3_main(remaining, parents=(selector,))
 

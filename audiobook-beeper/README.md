@@ -10,7 +10,9 @@ restored byte for byte to preserve a public YouTube video link; keep its path.
 For a new recording, use [convert_audio.py](CONVERTER.md). Its default is
 packed IMA3 decoded directly to PDM, accepted by the user in interactive Fuse
 playback on 2026-10-04. `--codec ima3` selects it explicitly; `--codec ima4`
-selects the historical four-bit variant. The [direct IMA3 guide](IMA3_DIRECT.md)
+selects the four-bit variant. Both default to the shared bounded waveform
+search in `--quality best`; [converter controls](CONVERTER.md) explain the
+measured selection and the older `balanced` mode. The [direct IMA3 guide](IMA3_DIRECT.md)
 describes its implementation.
 The [IMA3 and IMA4 comparison](IMA3_IMA4_COMPARISON.md) records which
 algorithms are already shared and which improvements can transfer.
@@ -22,6 +24,11 @@ verifies the quality and timing of the complete resulting disks in Fuse.
 The [four-bit converter](IMA4_CONVERTER.md) remains available explicitly. The
 [denser-codec study](DENSE_CODECS.md) compares compression and native Z80
 decoder costs; predictive VQ is not yet an integrated playback mode.
+
+The [two-bit G.726 experiment](g726/README.md) provides a standard-compatible
+codec, PC audition converter and a complete measured Z80 decoder. Its8:1
+compression meets the storage target, but this compiled decoder fails live
+and preload timing; it is not a TRD playback mode. [Listening files and results](experiments/g726-2bit/README.md).
 
 The accepted reference is [the overlap speech disk](../ZX-audiobook-IMA3-overlap-test.trd).
 Older experiments and their contemporary measurements follow below; they

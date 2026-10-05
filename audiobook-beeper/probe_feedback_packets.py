@@ -17,6 +17,17 @@ from pdm_player import CPU_CLOCK
 HERE = Path(__file__).resolve().parent
 
 
+def model_table(model):
+    """Dispatch optional exact second-order packets; preserve legacy tables."""
+    if model.get('family')=='sigma_delta2':
+        from sigma_delta2 import tables
+        words,nxt,certificate=tables(model)
+        return words,nxt,certificate['maximum_internal_absolute_state']
+    return integral_table(model.get('pcm_bins',64),2,holds=model['holds'],
+                          beta=model['beta'],extent=model['extent'],
+                          q_clip=tuple(model.get('q_clip',(0,15))))
+
+
 def table(pcm_bins, recent_bins, older_bins, beta, gain, extent, slots=16):
     """Midpoint state quantization; all arithmetic uses exact binary fractions."""
     states = recent_bins * older_bins

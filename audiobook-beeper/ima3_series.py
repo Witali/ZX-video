@@ -162,6 +162,7 @@ def convert_series(args):
         raise ValueError('series mode accepts ordinary audio; --prepared-pcm/--reuse-pilot belong to the looping preview')
     out=args.output.resolve();manifest=out/'run.json'
     identity=dict(mode=args.disk_mode,input_sha256=digest(args.input),duration=args.duration,
+                  quality=getattr(args,'quality','best'),
                   target_snr=args.target_snr,attempts=args.attempts,no_recording=args.no_recording,
                   ffmpeg_sha256=digest(Path(args.ffmpeg)),fuse_sha256=digest(args.fuse),
                   producers={p.name:digest(p) for p in HERE.iterdir() if p.suffix in ('.py','.asm')})

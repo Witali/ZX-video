@@ -1,0 +1,16 @@
+        LD DE,1548
+        LD HL,16384
+        LD B,28
+        CALL read_n
+        LD DE,2056
+        LD HL,24576
+        LD B,32
+        CALL read_n
+        LOAD_AUDIO 0,2568,49152,64
+        LOAD_AUDIO 4,3592,49152,64
+        LOAD_AUDIO 6,4616,49152,64
+        LOAD_AUDIO 1,5640,49152,64
+        LOAD_AUDIO 3,6664,49152,64
+        LOAD_AUDIO 7,7688,56064,37
+        LOAD_AUDIO 2,8205,61696,15
+        LOAD_AUDIO 5,8460,63744,7

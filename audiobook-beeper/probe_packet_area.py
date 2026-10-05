@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 from build_pdm import reconstruct,write_wav
 from pdm_player import CPU_CLOCK
-from probe_feedback_packets import integral_table
+from probe_feedback_packets import model_table
 from probe_reconstruction_error import wav8,filtered
 from verify_direct import sample_positions
 from assess_snr import ratio
@@ -21,7 +21,7 @@ def context(path):
     ordinary=np.r_[holds[:at],holds[at+pairs*2:]].reshape(n,16) if pairs else holds.reshape(n,16)
     unique,ids=np.unique(ordinary,axis=0,return_inverse=True)
     model=meta['model'];bins=model.get('pcm_bins',64)
-    words,next_state,_=integral_table(bins,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],q_clip=tuple(model.get('q_clip',(0,15))))
+    words,next_state,_=model_table(model)
     bits=np.unpackbits(words.astype('>u2').view('u1'),axis=1).reshape(bins,32,16)
     means=(unique@bits.reshape(-1,16).T/unique.sum(axis=1)[:,None]).reshape(len(unique),bins,32)
     return meta,t,words,next_state,bits,means,ids

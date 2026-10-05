@@ -15,12 +15,16 @@ automatic task schedule or a promise that the unported codecs fit Z80.
   This supersedes the earlier twice-raw128 limit of39.904 s; keep that
   benchmark and the old experiments' decision thresholds as history.
 - Preserve voice timbre and waveform. Codec SNR 25..30 dB remains advice;
-  the user subsequently made **final PDM >=20 dB mandatory**. Verify both
+  the user initially made **final PDM >=20 dB mandatory**, then accepted the
+  best achievable result when20 dB is unreachable;30 dB remains aspirational.
+  Report failures and measurement scope explicitly. Verify both
   complete cold Fuse loops against the same source and clock. Also compare
   listening, clipping, active-window error and speed (within 2%).
-- The user selected only three-bit IMA and predictive VQ for three decoder
+- The user initially selected three-bit IMA and predictive VQ for three decoder
   optimization rounds each. The later Speex request adds a host audition
   and Z80 feasibility screen; a full Speex decoder is not implemented.
+  The2026-10-05 request adds a complete two-bit G.726 implementation and
+  three bounded native optimization rounds, with unsuccessful live timing.
 
 Latest integration: the [IMA3 waveform disk](IMA3_WAVEFORM.md) measures
 **20.071/20.071 dB** in complete cold Fuse loops, with all execution checks
@@ -38,7 +42,7 @@ quality results are input-specific; codec SNR is not final beeper SNR.
 | Project ADPCM3-step6 / IMA subset | 24 kbit/s; 5.331:1 with the study's 32-byte framing allowance | Integrated waveform disk: **20.071/20.071 dB end to end**, with full startup/speed and execution checks. Exact expansion uses `nibble = code << 1`; PC waveform search changes neither transport nor Z80 hot-path cost. |
 | Predictive VQ3x512, half-last predictor | 5.217:1 including 1536-byte book and 32-byte framing | Selected. Existing codec SNR 22.185 dB. Three native PCM decoder rounds completed. Still needs fast IMA encoding, resident-bank integration and complete startup/playback checks. |
 | ADPCM-XQ, 2-/3-/4-bit variants | Nominal 8:1 / 5.33:1 / 4:1 | Prioritize expensive PC search/noise shaping. Four-bit is the quality baseline outside the preferred ratio. Generic three-bit formats are not necessarily our exact IMA subset. |
-| ITU G.726, 16/24 kbit/s | 8:1 / 5.33:1 | Now fits the relaxed rate range. Local 16-kbit/s codec SNR 16.481 dB; existing downstream IMA guard rejected saturation. Test a better preparation/encoding path before any port. |
+| ITU G.726, 16/24 kbit/s | 8:1 / 5.33:1 | [Exact two-bit implementation completed](experiments/g726-2bit/README.md): matched speech codec SNR17.077649 dB with the current float64 filter; complete Z80 decoding70415.970 T/sample versus443.3625 available, after three rounds. This port fails live and60-s preload budgets; no TRD. Historical16.481-dB/downstream-IMA saturation result used the older path.24-kbit/s port remains unimplemented. |
 | QOA | About 25.6 kbit/s; about 5:1 payload | Header overhead makes actual compression slightly less than 5:1. Four-tap LMS decoder needs products; measure quality and integer cost before Z80 work. |
 | WavPack hybrid, 2..3 bits/sample | Nominal 8:1..5.33:1 before overhead | Waveform candidate. First measure actual streams and fixed-point decoder cost; the nominal setting alone does not prove a Z80 fit. |
 | Speex narrowband | Measured 18.2k /6.946:1; 24.6k /5.155:1 with framing allowance | [Audition complete](SPEEX_STUDY.md). Disable optional highpass and enhancement: fixed-point codec SNR 24.752/27.823 dB, after IMA 21.054/22.037 dB. Exact table products alone project 58.484 s, leaving only 1.516 s under the new 60-s limit for all other work. No full Z80 port or PDM qualification. |

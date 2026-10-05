@@ -4,7 +4,26 @@
 The user accepted the overlap speech disk in an interactive Program Files
 Fuse 1.9.0 session on 2026-10-04 and requested this playback algorithm as the
 main option. The existing `convert_ima3_audio.py` entry point remains usable.
-Select `--codec ima4` explicitly for the [historical four-bit converter](IMA4_CONVERTER.md).
+Select `--codec ima4` explicitly for the [four-bit converter](IMA4_CONVERTER.md).
+The separate `--codec mulaw` (alias `ulaw`) adds an
+[eight-bit G.711 resident preview](MULAW_CONVERTER.md). It defaults to
+`--pdm-rate 128000`, using sixteen-pulse packets and bounded feedback.
+`--pdm-rate 64000` preserves the older exact-accumulator control. Both
+store compact8-bit mu-law at an8-kHz source rate, with no PCM/PDM audio
+expansion. The128-kHz tables reduce the resident prefix to12.128 seconds.
+This is not the ideal full-precision second-order PC model.
+
+Both IMA modes now default to `--quality best`: complete a bounded waveform
+search even if an early candidate reaches the SNR target, execute every
+requested host candidate, then select by the worse of their two
+fully measured Fuse loops. The verified pilot remains a fallback; IMA4
+also retains its earlier clock-compensated candidates. This means best
+among the verified candidates, not a proof of a global optimum.
+IMA4 also performs one refinement on the winning waveform candidate's new
+measured clock, then keeps whichever verified result is better. Its
+data-dependent memory waits make that clock different from the pilot.
+`--no-refine-clock` omits this last four-bit pass. IMA3 retains its fixed
+decoder placement and existing clock model.
 
 See the [IMA3 and IMA4 comparison](IMA3_IMA4_COMPARISON.md) for shared
 decoding, current implementation differences and proposed transfers.
@@ -31,12 +50,30 @@ API remain compatible; CLI dispatch selects the profile.
 | Default disk output | `audio.trd`, sequential RAM-sized parts | `audiobook-preview.trd`, looping RAM excerpt |
 | Whole selected track | `--disk-mode all` | Not supported by this historical converter |
 | Looping RAM excerpt | `--disk-mode preview` | Default |
-| Search controls | `--target-snr`, `--attempts`, `--resume` | `--iterations` |
+| Search controls | `--quality`, `--target-snr`, `--attempts`, `--resume` | `--quality`, `--target-snr`, `--attempts`, `--iterations` |
 
 Both accept `--duration N` and `--no-recording`. The latter omits normal-speed
 Fuse sound capture while retaining complete native/Fuse verification. New
 outputs must use an empty directory; IMA3 can resume only a matching saved
 run. Changed producer sources invalidate old resume caches by design.
+
+`best` defaults to three full searches. IMA3 uses width 1024, horizon 256,
+commit 64 with prior weights .03, .003 and .1. IMA4 uses width 256 /horizon 128
+with weight .1, then width 512 /horizon 128 with weight .03, also committing
+64 samples, then width512 /horizon256 /weight.003. `--attempts 1` or `2`
+explicitly trades search coverage for shorter conversion time. Every requested
+candidate receives full execution checks: ranking on an old clock cannot
+reliably rule out the third stream. The extra work does not run on Z80.
+All work is on the PC. `--quality balanced` retains the former IMA3 search
+with up to three attempts and early target exit, or the former IMA4 PCM
+search. Both best modes return code 2 for a completed preview that misses
+`--target-snr` (default 20 dB); no physical-hardware result is implied.
+
+For a shared externally normalized comparison reference, both codecs accept
+`--prepared-pcm` without changing its gain. Use `--disk-mode preview` for
+IMA3. IMA4 requires mono PCM8/8 kHz, 8192..186880 samples in multiples of
+512, and 128 final silent samples (value 128); do not combine it with
+`--duration`. IMA3 retains its documented groups-of-eight/RAM validation.
 
 ## Main profile
 
@@ -50,6 +87,18 @@ One TRD is the default. `--disk-mode all` produces numbered independently
 bootable disks. See [sequential playback](IMA3_SERIES.md) for output names,
 capacity and audible loading pauses, and [the direct decoder](IMA3_DIRECT.md)
 for timing, search and verification details.
+
+Waveform search automatically uses an optional exact C kernel when an
+installed MSVC x64 compiler (Windows) or `cc` (64-bit Unix) is available.
+The first call builds it locally into ignored `audiobook-beeper/.native-cache/`;
+later calls reuse a cache keyed by source, flags and platform. Nothing is
+downloaded. Without a compiler, the optimized NumPy implementation remains
+available. A failed optional build reports its log and falls back to NumPy.
+The standalone `ima_waveform_encoder.py --backend numpy|native|auto` option
+can force a backend for diagnostics; `native` requires successful loading.
+The accelerator itself changes no search decision or Spectrum instruction;
+the selected quality profile supplies the widths and horizons.
+[Speed measurements and exact-output regressions](experiments/waveform-speed/README.md).
 
 The accepted reference is [ZX-audiobook-IMA3-overlap-test.trd](../ZX-audiobook-IMA3-overlap-test.trd),
 SHA-256 `ac4b740ebdcf2f9fb538d286b8ac679df6babc53462cf79b18f08cc8b5a2d66d`.
@@ -65,6 +114,8 @@ with those settings. The earlier vibration's original cause remains unknown;
 the user accepted this direct interactive playback. Host output rate is
 separate from the source sample rate and the Spectrum PDM pulse rate.
 
-Promoting the CLI default changes no Z80 instruction, table, stream or TRD.
+The earlier CLI-default promotion changed no stream or TRD. The new best
+search changes encoded streams and verifies each candidate independently.
 Mean native IMA3 cost remains 427.375 T/sample, delta 0 T; page/bank extras
-remain +14/+140 T. Reuse the complete prior disk verification.
+remain +14/+140 T. See [the paired quality study](experiments/ima-quality/README.md)
+for new complete-disk results, including IMA4.

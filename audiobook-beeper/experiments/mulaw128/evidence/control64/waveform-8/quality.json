@@ -1,0 +1,25 @@
+{
+  "cycles": [
+    {
+      "cycle": 1,
+      "total_snr_db": -3.293980775881608,
+      "fixed_clock_snr_db": 11.175545852007927,
+      "codec_snr_db": -3.2041863452505543,
+      "modulator_snr_db": 13.203111744427172
+    },
+    {
+      "cycle": 2,
+      "total_snr_db": -3.287623869958072,
+      "fixed_clock_snr_db": 11.124789091852785,
+      "codec_snr_db": -3.202522267741185,
+      "modulator_snr_db": 13.194810739995662
+    }
+  ],
+  "integration_rate_hz": 768000,
+  "filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+  "minimum_total_snr_db": -3.293980775881608,
+  "minimum_fixed_clock_snr_db": 11.124789091852785,
+  "scope": "Full real OUT timeline. Selection uses fixed_clock_snr_db against the fixed 8-kHz source. Historical total/codec/modulator diagnostics use observed sample boundaries. No gain/delay fitting; speed checked separately.",
+  "listening_gain": 0.5,
+  "physical_hardware_measured": false
+}

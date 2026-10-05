@@ -1,6 +1,6 @@
 # Focused optimization task
 
-Updated 2026-10-04. Use this brief to continue the project in this or a new
+Updated 2026-10-05. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
 ## Project objective
@@ -11,6 +11,233 @@ prioritize exact five-field video
 deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
+
+## Two-bit G.726 implementation — feasibility experiment complete (2026-10-05)
+
+The user requests an implementation of G.726 at two bits/sample. Implement
+and cross-check the exact16-kbit/s,8-kHz codec, retain the same reference
+speech for quality comparisons, and measure a concrete Z80 implementation
+before claiming live PDM playback. Keep IMA/mu-law defaults and releases.
+Standard G.726 has a substantially larger adaptive predictor than IMA;
+do not label a simplified IMA subset or a PC-transcoded disk as native
+G.726 playback. The deliverable must include executable code, listening
+output, tests, timing evidence and a documented integration decision. If
+the measured decoder cannot fit the live budget, preserve that result
+without weakening the2% speed requirement or claiming a qualified TRD.
+
+The complete codec, PC converter/audition and separately compiled Z80
+decoder now pass exact FFmpeg, cross-optimization and native PCM/state tests.
+Three rounds reduce the matched-prefix cost127115.239 ->70442.908 T/sample;
+the full186880-sample run averages70415.970 against a443.3625-T live budget.
+Its CPU-only preparation time3710.095 s also fails the60-second limit.
+The23.36-s payload is46720 bytes/8:1; codec-only filtered SNR17.077649 dB.
+Retain this [tested research implementation and evidence](audiobook-beeper/experiments/g726-2bit/README.md),
+without adding a misleading native G.726 TRD or changing IMA/mu-law defaults.
+This requested bounded implementation is complete; further handwritten
+optimization is a separate milestone, not an automatic open experiment.
+
+## All active audio codecs — bounded quality follow-up complete (2026-10-05)
+
+The later request to maximize all active audio codecs authorizes the bounded
+[quality follow-up](audiobook-beeper/experiments/quality-max/README.md): finish
+the pending speech IMA3 comparison, try the third IMA search for both bit
+depths, and add waveform-aware mu-law encoding on the PC. This supersedes
+the earlier pause for this milestone. Keep resident capacity, formats and
+Z80 kernels unchanged; retain every verified fallback. Run full two-loop
+checks for each new stream and preserve rejected prototypes. No new movie,
+LPC/Speex/AY study, merge or push is part of this request.
+
+Completed results: IMA3 fixed-clock/f64 minimum20.431992 ->20.655388 dB;
+IMA4 keeps22.174535 after rejecting a9.849028-dB candidate. Mu-law's joint
+two-clock search yields10.295781 dB versus6.533228 for its timing-only
+control; its historical9.672027 metric used a different reference clock.
+All new streams pass full native/cold Fuse two-loop verification and the
+three selected images have normal-speed recordings. Fifteen tests and a
+complete short public CLI conversion pass. Z80 costs and RAM are unchanged.
+
+The subsequent **128-kHz eight-bit milestone is also complete**:
+[packet algorithm, timing and full evidence](audiobook-beeper/experiments/mulaw128/README.md).
+Compact mu-law remains one byte/sample. Sixteen-pulse table dispatch costs
+423 T/sample versus432 (−9), with page/bank extras41/112 T versus35/116;
+guard reset adds7 T once. All128 KiB are accounted for; tables reduce the
+prefix to97024 bytes/12.128 nominal seconds without PCM/PDM expansion.
+The public mu-law CLI defaults to `--pdm-rate 128000`;64000 preserves the
+old exact-accumulator control. IMA3 remains the overall codec default.
+
+Selected `ZX-audiobook-mulaw-128-test.trd` measures127927.577 useful outputs/s,
+tempo−0.056580%, and25.244120 dB on both complete cold Fuse loops. The same
+PCM16 reference gives11.927962 dB with64-kHz `best`. All3107833 bits and194049
+feedback states, native RAM, paging, startup UI and repeat phase pass;
+normal-speed Fuse capture is complete. Twenty-one tests pass. The30-dB
+target is not met; no physical-hardware proof, exact full-precision SD2,
+sequential mu-law volumes, merge or push is claimed. Finish this milestone
+without opening another codec/model sweep.
+
+## IMA4 overlapping PDM search — requested follow-up complete (2026-10-05)
+
+The user chooses IMA3 for duration and IMA4 for quality and authorizes the
+overlap transfer/experiment. Inspection confirms it already exists in
+`--codec ima4 --quality best`. Complete only the previously paused speech4
+refinement and a matched commit128 no-overlap control; other paused cases
+remain paused. [Saved comparison](audiobook-beeper/experiments/ima4-overlap/README.md).
+No production encoder/player changes are needed: all extra search remains
+on the PC, IMA4 ordinary423 T/sample, delta0, page/bank extras14/140 T.
+
+Both new streams pass complete two-loop native/cold Fuse, every bit and
+predictor/index, memory/paging/UI and phase checks. However, the refined
+commit64 stream's22.552121-dB host estimate becomes8.126727 dB on its own
+clock; the matched commit128 control yields20.922286 dB. Keep the earlier
+verified22.164431-dB overlap result. Separate consistent float64 audits
+give22.174535 /8.126934 /20.928543 dB respectively. There is no new quality
+improvement to claim. Data-dependent ULA waits matter despite unchanged
+instruction counts. The final disk is a byte-identical copy of the prior
+winner with a new normal-speed recording. Source/stage hashes and search
+AST checks authenticate the reused host candidate; no mismatched resume
+identity or interrupted Fuse proof is accepted. IMA3 stays default.
+
+## Compact mu-law TRD control — complete, not a quality upgrade (2026-10-05)
+
+The user now authorizes the real eight-bit mu-law converter and asks about
+second-order quality. `convert_audio.py --codec mulaw` (`ulaw` alias) builds
+an independently bootable looping RAM prefix with standard G.711 bytes,
+512-byte inverse companding and all decoded 16 bits retained. No PCM/PDM
+audio expansion; all 128 KiB are accounted for, holding121088 bytes/15.136 s.
+The [first-order control and PC comparison](audiobook-beeper/experiments/mulaw-trd/README.md)
+are complete. Native/cold Fuse verify every bit/level/error across two full
+loops, full memory, paging, progress and loading UI; normal-speed audio is
+recorded. Average PDM64119.013 Hz, speed+0.185958%, ordinary432 T/sample
+(+4.625 versus IMA3); page/bank extras35/116 T. Seven tests pass.
+
+Actual total SNR9.672027 dB is poor despite codec-only approximately39 dB.
+Retain as a functional format/control preview; **do not replace IMA3** or
+claim the 30-dB target. On the identical new PCM16 prefix, ideal PC SD2
+at128 kHz gives27.185326 dB versus SD1's17.130225; at64 kHz11.536644 versus
+10.053453. These numbers differ from the previous longer PCM8 study.
+No second-order Z80 port or physical-hardware validation is established.
+Further SD2 work needs an explicit next milestone; the older IMA quality
+study remains paused. No merge or push requested for this deliverable.
+
+## Compact mu-law/A-law audio — PC simulation complete (2026-10-05)
+
+The user subsequently authorized eight-bit mu-law/A-law instead of IMA and
+requires inverse companding inside modulation, keeping one stored byte per
+sample and no expanded PCM audio buffer. The PC-first instruction remains.
+[The new study](audiobook-beeper/experiments/xlaw-pc/README.md) selects mu-law:
+30.920091 dB at768-kHz numerical integration,30.917095 dB at1536 kHz, both
+using stable float64 filtering and128000-Hz PDM. Same source and filter
+frequencies/order; all formats are compared under identical conditions.
+A-law gives30.221673 dB; linear PCM8 control32.248227 dB. Old float32 scores
+are retained separately after high-rate numerical instability was exposed.
+Do not mix these numbers with historical measurements without rescoring.
+
+Both payloads are186880 bytes for23.36 s, with512-byte inverse-companding
+tables. The full model input exceeds Spectrum RAM: at the old94458-byte
+audio budget it would hold11.80725 s, before new layout tradeoffs. Every
+direct-byte pulse matches the expanded control; full independent decoder,
+integer recurrence and stable finer-grid checks pass. WAVs and raw bytes
+are archived. No Z80 port/TRD/default converter switch has been done or
+authorized by this PC-only stage. Real timing, RAM layout and loops still
+require proof. The earlier paused IMA quality milestone remains paused.
+
+## 30-dB audio target — PC simulation complete (2026-10-05)
+
+The user requires current IMA compression/duration and requested simulation
+before another Z80 port. [The bounded study](audiobook-beeper/experiments/snr30-ima/README.md)
+keeps the full 186880-sample speech reference, listening filter and 128-kHz
+decision rate. Best ideal-clock total SNR is 21.227136 dB for IMA3 and
+24.639507 dB for IMA4; 30 dB is not reached. The modulator alone exceeds
+30 dB, but the IMA losses remain. Twenty-four configurations include two
+overload rejections; the extra filtered-error encoder is worse. Save all
+results and the independent PCM/bit checks. No new Z80 code/TRD/defaults or
+hardware claim belong to this simulation. Do not port a candidate solely
+because its modulator-only score passes 30 dB. This is not an impossibility
+proof for another joint encoder/output algorithm. The older paused study
+remains paused.
+
+## Second-order audio experiment — completed, rejected (2026-10-05)
+
+The separate [exact SD2 experiment](audiobook-beeper/experiments/sigma-delta2-128/README.md)
+executes at 127652.961 Hz average with unchanged ordinary 427.375 T/sample.
+It is noisier: 11.179067 dB after a silent-guard repeat fix, against the
+accepted IMA3 reference's 20.436321 dB. Keep the old damped model as default.
+All bits, predictor/index states, memory, paging and phase pass two complete
+native/cold Fuse loops; normal-speed recording is saved. The guard reset
+costs 7 T once per loop, offset by 7 T less calibrated filler. Bank-2 tables
+grow by 2816 bytes. Preserve the failed initial candidates and use the
+archived evidence instead of repeating this experiment. No physical test.
+The user subsequently requested 30 dB while retaining current IMA compression
+and duration; this is a separate error-budget investigation, not permission
+to replace IMA with precomputed PDM or shorten the excerpt.
+
+## IMA3 / IMA4 quality checkpoint — paused (2026-10-04)
+
+The user requested saving progress and pausing. **Do not resume automatically.**
+All study processes are stopped. See the exact
+[checkpoint and resume instructions](audiobook-beeper/experiments/ima-quality/CHECKPOINT.md)
+and [study](audiobook-beeper/experiments/ima-quality/README.md).
+
+Both converters now offer a shared bounded `--quality best` waveform search,
+measured-candidate selection, and verified fallbacks. IMA4 additionally
+refines on the winner's measured clock. Fourteen tests pass; both short CLI
+paths execute successfully and mark below-target previews correctly.
+Ordinary Z80 costs remain IMA3 427.375 /IMA4 423 T/sample, delta 0 T.
+
+Three new root TRDs and recordings are complete: Entertainer IMA3
+19.031203 ->19.165090 dB, Entertainer IMA4 17.237725 ->19.897558 dB,
+speech IMA4 21.010690 ->22.164431 dB. Music remains below 20 dB.
+Speech IMA3 has one complete trace-qualified candidate at 20.659504 dB
+(baseline 20.436321), but the other candidate and final recording remain
+unfinished. Speech IMA4's final refinement has completed host encoding,
+but its own Fuse verification was interrupted. Keep the earlier verified
+speech IMA4 disk until the new stream proves better. Host scores are not
+release scores. Preserve/reuse completed host searches and all saved traces.
+
+This is a saved partial milestone, not a completed four-case release. The
+worktree/branch is `C:/Work/ZX-video/.worktree/lpc-ima-preload` /
+`codex/lpc-ima-preload`; no merge or push is part of this checkpoint.
+
+## Exact PC encoder acceleration (2026-10-04)
+
+The user requested faster audio encoding after the long normalized music
+build. [Waveform search acceleration](audiobook-beeper/experiments/waveform-speed/README.md)
+is complete. Keep beam widths, horizons and quality settings unchanged.
+Reuse scratch arrays, parent backpointers and retained-state propagation;
+replace full sorting with exact state merging and bounded selection.
+An optional C kernel is built automatically with installed MSVC x64 or cc,
+cached locally, and covered by producer hashes. No downloads. A compiler-free
+NumPy fallback remains. The standalone encoder exposes `--backend` controls.
+
+Three comparable 2048-sample repeats measure median 22.766993 s before,
+12.571314 s with optimized NumPy (1.811x), and 5.589146 s with the native
+kernel (4.073x). All three complete 186880-sample Entertainer search outputs
+match the old bytes: new search times 102.094716/170.451387/652.329028 s.
+Previous full CLI times include preparation/scoring and are not an exact
+end-to-end comparison. Five new test methods and nine converter tests pass.
+Reuse existing complete Fuse/quality evidence for the unchanged streams and
+players; both published music disks are unchanged. Z80 delta is 0 T, ordinary
+IMA3 cost remains 427.375 T/sample and page/bank extras +14/+140 T. The
+28-artifact archive authenticates the comparison; no further sweep is needed.
+
+## Normalized Entertainer pair (2026-10-04)
+
+The requested [normalized music pair](audiobook-beeper/experiments/entertainer-normalized/README.md)
+is complete. Use `ZX-music-Entertainer-normalized-IMA3.trd` and
+`ZX-music-Entertainer-normalized-IMA4.trd`. Both loop the same first 23.344 s
+of music, plus a 128-sample silent guard, from exactly the same PCM8/8-kHz
+reference. Two-pass loudness preparation measures -17.89 LUFS /-1.97 dBTP,
+1.95 LU above the same prefix of the earlier prepared example, without
+clipped quantized samples. IMA4's new explicit `--prepared-pcm` preserves it.
+
+All three IMA3 searches and two IMA4 compensation passes are complete.
+Selected full-Fuse minimum SNR is 19.031203 /17.237725 dB, with speed errors
+-0.299133% /-0.043272%. Both remain listening previews below 20 dB under the
+user's permission to retain the best bounded music result. These compare
+the existing different pipelines, not bit depth alone. Both cold boots,
+two complete native/Fuse loops, paging/memory checks and normal-speed FMF
+recordings pass. The 219-artifact audit authenticates the saved pair.
+IMA3/IMA4 ordinary hot paths remain 427.375/423 T/sample, each delta 0 T;
+no physical hardware or new user listening acceptance is claimed. Reuse
+these reports; no further search is part of this completed deliverable.
 
 ## Direct IMA3 / automatic converter checkpoint (2026-10-04)
 

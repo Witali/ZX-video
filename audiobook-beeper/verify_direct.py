@@ -14,10 +14,16 @@ def reference(packed,cycles=2,model=None,idle_pairs=0):
     levels=((pcm.astype(np.int32)+32768)>>8).astype('u1')
     model=model or dict(holds=HOLDS,beta=.5,extent=1.)
     bins=model.get('pcm_bins',64)
-    clip=tuple(model.get('q_clip',(0,15)))
-    words,nxt=rational_tables(model['holds'],integral_table(bins,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],q_clip=clip),model['beta'],model['extent'],clip)
+    if model.get('family')=='sigma_delta2':
+        from sigma_delta2 import independent_tables
+        words,nxt=independent_tables(model)
+    else:
+        clip=tuple(model.get('q_clip',(0,15)))
+        words,nxt=rational_tables(model['holds'],integral_table(bins,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],q_clip=clip),model['beta'],model['extent'],clip)
     state=16;output=np.empty(len(pcm)*cycles+1,dtype='>u2')
     for i in range(len(output)):
+        if model.get('reset_feedback_in_guard') and i%len(pcm)==len(pcm)-1:
+            state=16
         value=int(levels[i%len(pcm)])*bins//256;output[i]=words[value,state];state=int(nxt[value,state])
     bits=np.unpackbits(output.view('u1'))[:len(pcm)*cycles*16+1]
     if idle_pairs:

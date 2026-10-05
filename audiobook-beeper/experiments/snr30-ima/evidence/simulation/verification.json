@@ -1,0 +1,91 @@
+{
+  "scope": "Independent codec/recurrence checks and numerical convergence, PC only.",
+  "complete": true,
+  "codec_checks": [
+    {
+      "file": "build\\snr30-ima-v2\\ima3-pcm-search.ima.gz",
+      "sha256": "7760dc66ec4304fb8a3561325f8591e131fa8633db8a2a3e918dfd3e10fa63d1",
+      "decoder": "FFmpeg IMA WAV",
+      "samples": 186880,
+      "every_sample_exact": true
+    },
+    {
+      "file": "build\\snr30-ima-sim\\ima3-filtered128.ima.gz",
+      "sha256": "8b4a4f32480acd20f5b77c0fd02614d9e30c786298e5de5f22d5230a8d4089c6",
+      "decoder": "FFmpeg IMA WAV",
+      "samples": 186880,
+      "every_sample_exact": true
+    },
+    {
+      "file": "build\\snr30-ima-v2\\ima4-pcm-search.ima.gz",
+      "sha256": "1f51b2c55e22945c80e3856bf1ac2ab4da069af4726871f1653232642090e624",
+      "decoder": "FFmpeg IMA WAV",
+      "samples": 186880,
+      "every_sample_exact": true
+    },
+    {
+      "file": "build\\snr30-ima-sim\\ima4-filtered128.ima.gz",
+      "sha256": "c906dfad2705222f2c97159b615ed4e66aaef3a20022768ab059e69a55eff723",
+      "decoder": "FFmpeg IMA WAV",
+      "samples": 186880,
+      "every_sample_exact": true
+    }
+  ],
+  "controls": [
+    {
+      "codec": "ima3",
+      "selected": "ima3-pcm64-beta1-gain1",
+      "full_snr_db": 21.227136071388692,
+      "modulator_only_snr_db": 30.82769235932474,
+      "independent_sd2_gain": 1.0,
+      "selected_output_bits_checked": true,
+      "listening_wav_gain": 0.5,
+      "unscaled_output_peak": 1.0093653202056885,
+      "every_sd2_decision_matches_integer_reference": true,
+      "decisions_checked": 2990080,
+      "numerical_check_first_five_seconds": [
+        {
+          "integration_rate_hz": 192000,
+          "snr_db": 22.381925139193115
+        },
+        {
+          "integration_rate_hz": 768000,
+          "snr_db": 22.38550399822207
+        }
+      ],
+      "finer_integration_snr_delta_db": 0.0035788590289556055
+    },
+    {
+      "codec": "ima4",
+      "selected": "ima4-pcm64-beta1-gain1",
+      "full_snr_db": 24.639507403483904,
+      "modulator_only_snr_db": 30.921171332998057,
+      "independent_sd2_gain": 1.0,
+      "selected_output_bits_checked": true,
+      "listening_wav_gain": 0.5,
+      "unscaled_output_peak": 1.022344946861267,
+      "every_sd2_decision_matches_integer_reference": true,
+      "decisions_checked": 2990080,
+      "numerical_check_first_five_seconds": [
+        {
+          "integration_rate_hz": 192000,
+          "snr_db": 25.71378234667609
+        },
+        {
+          "integration_rate_hz": 768000,
+          "snr_db": 25.69202571129339
+        }
+      ],
+      "finer_integration_snr_delta_db": -0.021756635382701006
+    }
+  ],
+  "ideal_pcm_control": {
+    "snr_db": 31.691681317623242,
+    "declared_gain": 1.0,
+    "beta": 1.0,
+    "peak_state": 4.34375,
+    "scope": "Diagnostic only, no IMA; user constraint still requires IMA storage"
+  },
+  "z80_ported": false,
+  "physical_hardware_tested": false
+}

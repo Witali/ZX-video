@@ -1,0 +1,62 @@
+{
+  "complete": true,
+  "scope": "Same-payload ideal-clock controls; these do not execute on the Spectrum.",
+  "rows": [
+    {
+      "order": 1,
+      "pdm_hz": 64000,
+      "snr_db": 10.053452789140085,
+      "exact_sd2_state": null,
+      "z80_executable": false
+    },
+    {
+      "order": 2,
+      "pdm_hz": 64000,
+      "snr_db": 11.536644252892936,
+      "exact_sd2_state": {
+        "input_bytes": 121088,
+        "bytes_per_sample": 1,
+        "expanded_pcm_audio_buffer_bytes": 0,
+        "code_to_pcm16_table_bytes": 512,
+        "feedback_coordinates": 2,
+        "model_storage_bits_per_coordinate": 32,
+        "maximum_absolute_integer_state": 148272,
+        "state_peak": 2.262451171875,
+        "playback_pipeline": "read code -> inverse-compand in modulator -> PDM decisions",
+        "scope": "PC streaming model; output array is measurement trace, not Spectrum RAM"
+      },
+      "z80_executable": false
+    },
+    {
+      "order": 1,
+      "pdm_hz": 128000,
+      "snr_db": 17.130224840098627,
+      "exact_sd2_state": null,
+      "z80_executable": false
+    },
+    {
+      "order": 2,
+      "pdm_hz": 128000,
+      "snr_db": 27.185326257704745,
+      "exact_sd2_state": {
+        "input_bytes": 121088,
+        "bytes_per_sample": 1,
+        "expanded_pcm_audio_buffer_bytes": 0,
+        "code_to_pcm16_table_bytes": 512,
+        "feedback_coordinates": 2,
+        "model_storage_bits_per_coordinate": 32,
+        "maximum_absolute_integer_state": 152392,
+        "state_peak": 2.3253173828125,
+        "playback_pipeline": "read code -> inverse-compand in modulator -> PDM decisions",
+        "scope": "PC streaming model; output array is measurement trace, not Spectrum RAM"
+      },
+      "z80_executable": false
+    }
+  ],
+  "payload_sha256": "402f4a725cb8c965738238ef90c4198de2fc2be607ee982db98bf14ff14af578",
+  "source_samples": 121088,
+  "integration_rate_hz": 768000,
+  "filter": "same float64 70/4500/4500 Hz filter as real-player scoring",
+  "no_delay_or_gain_fitting": true,
+  "physical_hardware_measured": false
+}
