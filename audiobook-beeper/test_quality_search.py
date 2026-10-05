@@ -21,7 +21,7 @@ class QualitySearch(unittest.TestCase):
                     main(args+['--codec', codec, '--target-snr', '25'])
                 self.assertEqual(status.exception.code, 2)
                 options = convert.call_args.args[0]
-                self.assertEqual((options.quality, options.target_snr, options.attempts), ('best', 25, 2))
+                self.assertEqual((options.quality, options.target_snr, options.attempts), ('best', 25, 3))
                 if codec=='ima4':self.assertTrue(options.refine_clock)
 
     def test_balanced_profile_remains_explicit_and_bounded(self):
@@ -64,14 +64,14 @@ class QualitySearch(unittest.TestCase):
             pcm_wav(root/'source.wav', source)
             (root/'fuse').write_bytes(b'fixture'); (root/'ffmpeg').write_bytes(b'fixture')
             args = SimpleNamespace(output=root/'out', input=root/'source.wav',
-                ffmpeg=str(root/'ffmpeg'), fuse=root/'fuse', quality='best', attempts=2,
+                ffmpeg=str(root/'ffmpeg'), fuse=root/'fuse', quality='best', attempts=3,
                 duration=None, target_snr=20., no_recording=True, disk_mode='preview',
                 prepared_pcm=True, reuse_pilot=None, resume=False)
 
             def build(source, packed, path, *unused):
                 path.mkdir(parents=True)
                 (path/'assembly').mkdir()
-                score = 21. if path.name=='pilot' else 20.5 if path.name.endswith('1') else 22.
+                score = 21. if path.name=='pilot' else 23. if path.name.endswith('3') else 20.5 if path.name.endswith('1') else 22.
                 report = dict(complete=True, quality=dict(minimum_snr_db=score, speed_within_two_percent=True))
                 for name, data in (('report.json', report), ('player.json', {'model': {}}),
                                    ('phase-probe.json', {'first_output_absolute_tstates':[3546900]})):
@@ -83,7 +83,7 @@ class QualitySearch(unittest.TestCase):
             def host(pilot, path, *unused):
                 path.mkdir()
                 (path/'soundtrack.ima.gz').write_bytes(gzip.compress(bytes(4096)))
-                report = {'host_fixed_clock_snr_db':24. if path.name.endswith('1') else 23.}
+                report = {'host_fixed_clock_snr_db':24. if path.name.endswith('1') else 22. if path.name.endswith('3') else 23.}
                 (path/'report.json').write_text(json.dumps(report))
                 return report
 
@@ -91,10 +91,10 @@ class QualitySearch(unittest.TestCase):
                  patch('convert_ima3_audio.host_search', side_effect=host) as host_call, \
                  patch('convert_ima3_audio.encode', return_value=bytes(4096)):
                 report = convert(args)
-                self.assertEqual(host_call.call_count, 2)
-                self.assertEqual(build_call.call_count, 3)
-                self.assertEqual(report['selected']['directory'], 'disk-encode-2')
-                self.assertEqual(report['selected']['minimum_snr_db'], 22.)
+                self.assertEqual(host_call.call_count, 3)
+                self.assertEqual(build_call.call_count, 4)
+                self.assertEqual(report['selected']['directory'], 'disk-encode-3')
+                self.assertEqual(report['selected']['minimum_snr_db'], 23.)
                 self.assertTrue(report['quality_gate_passed'])
 
 

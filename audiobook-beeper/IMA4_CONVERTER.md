@@ -10,7 +10,7 @@ automatic overlapping waveform search for quality. No Z80 cost is added.
 
 Updated 2026-10-04: the default `--quality best` adds the shared PDM waveform
 search with overlapping windows to the unchanged four-bit player. It keeps
-the old verified candidates, recalibrates the two best host candidates on
+the old verified candidates, recalibrates every requested host candidate on
 their own clocks and selects the best complete two-loop result. A final
 clock-refinement pass re-encodes the winner against
 its measured data-dependent waits; `--no-refine-clock` omits that pass.

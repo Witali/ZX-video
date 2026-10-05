@@ -1,0 +1,356 @@
+base 10
+set $r 0
+set $bits 0
+breakpoint 33097
+commands 1
+print 100
+print spectrum:frames*70908+ula:tstates
+set $r 1
+continue
+end
+breakpoint port write 4350
+commands 2
+print 140
+print spectrum:frames*70908+ula:tstates
+print z80:a
+print z80:de
+print z80:hl
+set $bits $bits+1
+continue
+end
+condition 2 $r==1
+breakpoint 33131
+commands 3
+print 200
+print spectrum:frames*70908+ula:tstates
+print z80:sp
+exit 77
+end
+condition 3 $bits>=1937409
+breakpoint 33229
+commands 4
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33251
+commands 5
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33273
+commands 6
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33295
+commands 7
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33317
+commands 8
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33339
+commands 9
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33361
+commands 10
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33383
+commands 11
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33405
+commands 12
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33433
+commands 13
+print 102
+print $r
+print spectrum:frames*70908+ula:tstates
+print z80:sp
+print ula:mem7ffd
+continue
+end
+breakpoint 32830
+commands 14
+print 103
+print spectrum:frames*70908+ula:tstates
+print ula:mem7ffd
+print [55296]
+print [55297]
+print [55298]
+print [55299]
+print [55300]
+print [55301]
+print [55302]
+print [55303]
+print [55304]
+print [55305]
+print [55306]
+print [55307]
+print [55308]
+print [55309]
+print [55310]
+print [55311]
+print [55312]
+print [55313]
+print [55314]
+print [55315]
+print [55316]
+print [55317]
+print [55318]
+print [55319]
+print [55320]
+print [55321]
+print [55322]
+print [55323]
+print [55324]
+print [55325]
+print [55326]
+print [55327]
+print [55328]
+print [55329]
+print [55330]
+print [55331]
+print [55332]
+print [55333]
+print [55334]
+print [55335]
+print [55336]
+print [55337]
+print [55338]
+print [55339]
+print [55340]
+print [55341]
+print [55342]
+print [55343]
+print [55344]
+print [55345]
+print [55346]
+print [55347]
+print [55348]
+print [55349]
+print [55350]
+print [55351]
+print [55352]
+print [55353]
+print [55354]
+print [55355]
+print [55356]
+print [55357]
+print [55358]
+print [55359]
+print [55360]
+print [55361]
+print [55362]
+print [55363]
+print [55364]
+print [55365]
+print [55366]
+print [55367]
+print [55368]
+print [55369]
+print [55370]
+print [55371]
+print [55372]
+print [55373]
+print [55374]
+print [55375]
+print [55376]
+print [55377]
+print [55378]
+print [55379]
+print [55380]
+print [55381]
+print [55382]
+print [55383]
+print [55384]
+print [55385]
+print [55386]
+print [55387]
+print [55388]
+print [55389]
+print [55390]
+print [55391]
+continue
+end
+breakpoint 33048
+commands 15
+print 104
+print spectrum:frames*70908+ula:tstates
+print ula:mem7ffd
+print [55296]
+print [55297]
+print [55298]
+print [55299]
+print [55300]
+print [55301]
+print [55302]
+print [55303]
+print [55304]
+print [55305]
+print [55306]
+print [55307]
+print [55308]
+print [55309]
+print [55310]
+print [55311]
+print [55312]
+print [55313]
+print [55314]
+print [55315]
+print [55316]
+print [55317]
+print [55318]
+print [55319]
+print [55320]
+print [55321]
+print [55322]
+print [55323]
+print [55324]
+print [55325]
+print [55326]
+print [55327]
+print [55328]
+print [55329]
+print [55330]
+print [55331]
+print [55332]
+print [55333]
+print [55334]
+print [55335]
+print [55336]
+print [55337]
+print [55338]
+print [55339]
+print [55340]
+print [55341]
+print [55342]
+print [55343]
+print [55344]
+print [55345]
+print [55346]
+print [55347]
+print [55348]
+print [55349]
+print [55350]
+print [55351]
+print [55352]
+print [55353]
+print [55354]
+print [55355]
+print [55356]
+print [55357]
+print [55358]
+print [55359]
+print [55360]
+print [55361]
+print [55362]
+print [55363]
+print [55364]
+print [55365]
+print [55366]
+print [55367]
+print [55368]
+print [55369]
+print [55370]
+print [55371]
+print [55372]
+print [55373]
+print [55374]
+print [55375]
+print [55376]
+print [55377]
+print [55378]
+print [55379]
+print [55380]
+print [55381]
+print [55382]
+print [55383]
+print [55384]
+print [55385]
+print [55386]
+print [55387]
+print [55388]
+print [55389]
+print [55390]
+print [55391]
+continue
+end
+breakpoint 33493
+commands 16
+print 105
+print spectrum:frames*70908+ula:tstates
+print ula:mem7ffd
+print [33514]
+print [55456]
+print [55457]
+print [55458]
+print [55459]
+print [55460]
+print [55461]
+print [55462]
+print [55463]
+print [55464]
+print [55465]
+print [55466]
+print [55467]
+print [55468]
+print [55469]
+print [55470]
+print [55471]
+print [55472]
+print [55473]
+print [55474]
+print [55475]
+print [55476]
+print [55477]
+print [55478]
+print [55479]
+print [55480]
+print [55481]
+print [55482]
+print [55483]
+print [55484]
+print [55485]
+print [55486]
+print [55487]
+continue
+end

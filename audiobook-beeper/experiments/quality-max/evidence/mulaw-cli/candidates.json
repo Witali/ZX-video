@@ -1,0 +1,312 @@
+[
+  {
+    "directory": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\quality-max\\mulaw-cli\\control",
+    "quality": {
+      "cycles": [
+        {
+          "cycle": 1,
+          "total_snr_db": 13.728079697122315,
+          "fixed_clock_snr_db": -3.2959666928590368,
+          "codec_snr_db": 38.959756521816665,
+          "modulator_snr_db": 13.74530467586218
+        },
+        {
+          "cycle": 2,
+          "total_snr_db": 13.70166427270069,
+          "fixed_clock_snr_db": -3.3650455048855052,
+          "codec_snr_db": 38.954841183801655,
+          "modulator_snr_db": 13.715947629010332
+        }
+      ],
+      "integration_rate_hz": 768000,
+      "filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+      "minimum_total_snr_db": 13.70166427270069,
+      "minimum_fixed_clock_snr_db": -3.3650455048855052,
+      "scope": "Full real OUT timeline. Selection uses fixed_clock_snr_db against the fixed 8-kHz source. Historical total/codec/modulator diagnostics use observed sample boundaries. No gain/delay fitting; speed checked separately.",
+      "listening_gain": 0.5,
+      "physical_hardware_measured": false
+    }
+  },
+  {
+    "directory": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\quality-max\\mulaw-cli\\timing-control",
+    "complete": true,
+    "quality": {
+      "cycles": [
+        {
+          "cycle": 1,
+          "total_snr_db": -3.28603167772489,
+          "fixed_clock_snr_db": 13.748972466755475,
+          "codec_snr_db": -3.1923499425193844,
+          "modulator_snr_db": 13.82429130896943
+        },
+        {
+          "cycle": 2,
+          "total_snr_db": -3.2842664858772603,
+          "fixed_clock_snr_db": 8.327136651528408,
+          "codec_snr_db": -3.196769650101235,
+          "modulator_snr_db": 13.879401163060068
+        }
+      ],
+      "integration_rate_hz": 768000,
+      "filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+      "minimum_total_snr_db": -3.28603167772489,
+      "minimum_fixed_clock_snr_db": 8.327136651528408,
+      "scope": "Full real OUT timeline. Selection uses fixed_clock_snr_db against the fixed 8-kHz source. Historical total/codec/modulator diagnostics use observed sample boundaries. No gain/delay fitting; speed checked separately.",
+      "listening_gain": 0.5,
+      "physical_hardware_measured": false
+    },
+    "native": {
+      "complete": true,
+      "cycles_verified": 2,
+      "bits_verified": 131073,
+      "every_pdm_bit_exact": true,
+      "every_decoded_level_and_error_exact": true,
+      "memory_guards_passed": true,
+      "cycle_tstates": 3540145,
+      "bank_sequence": [
+        0,
+        0,
+        0
+      ],
+      "interval_histogram_tstates": {
+        "53": 65536,
+        "54": 16384,
+        "55": 32768,
+        "56": 16320,
+        "91": 62,
+        "172": 2
+      },
+      "scope": "Continuous native Z80; excludes ULA waits, TR-DOS and physical disk latency"
+    },
+    "fuse": {
+      "complete": true,
+      "cold_boot": true,
+      "machine": "Spectrum 128 + Beta 128",
+      "cycles_verified": 2,
+      "every_pdm_bit_exact": true,
+      "every_decoded_level_and_error_exact": true,
+      "bits_verified": 131073,
+      "paging_latches_verified": true,
+      "loading_message_and_32_progress_steps_verified": true,
+      "startup_sector_reads": 32,
+      "runtime_disk_reads": 0,
+      "loading_seconds": 1.418597084778257,
+      "average_pcm_rate_hz": 8071.490859634386,
+      "average_pdm_rate_hz": 64571.926877075086,
+      "speed_error_percent": 0.8936357454298216,
+      "cycle_durations_seconds": [
+        1.0149908370689897,
+        1.0148696044433168
+      ],
+      "additional_ula_tstates": 119422,
+      "interval_histogram_tstates": {
+        "53": 44998,
+        "54": 10078,
+        "55": 38561,
+        "56": 19667,
+        "57": 3186,
+        "58": 3652,
+        "59": 4647,
+        "60": 4631,
+        "61": 1581,
+        "62": 7,
+        "91": 38,
+        "93": 3,
+        "94": 15,
+        "96": 6,
+        "175": 2
+      },
+      "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+      "physical_hardware_tested": false
+    },
+    "trd_sha256": "021e4779f2cb766fa95b8572308ab323c092fd1007c1dbf2ccc18541d93d3a93"
+  },
+  {
+    "directory": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\quality-max\\mulaw-cli\\waveform-8",
+    "complete": true,
+    "quality": {
+      "cycles": [
+        {
+          "cycle": 1,
+          "total_snr_db": -3.256635982930752,
+          "fixed_clock_snr_db": 12.35065947716302,
+          "codec_snr_db": -3.204803436035407,
+          "modulator_snr_db": 15.552061458218628
+        },
+        {
+          "cycle": 2,
+          "total_snr_db": -3.2606848377922324,
+          "fixed_clock_snr_db": 12.338602553495079,
+          "codec_snr_db": -3.209006448669382,
+          "modulator_snr_db": 15.57529177595222
+        }
+      ],
+      "integration_rate_hz": 768000,
+      "filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+      "minimum_total_snr_db": -3.2606848377922324,
+      "minimum_fixed_clock_snr_db": 12.338602553495079,
+      "scope": "Full real OUT timeline. Selection uses fixed_clock_snr_db against the fixed 8-kHz source. Historical total/codec/modulator diagnostics use observed sample boundaries. No gain/delay fitting; speed checked separately.",
+      "listening_gain": 0.5,
+      "physical_hardware_measured": false
+    },
+    "native": {
+      "complete": true,
+      "cycles_verified": 2,
+      "bits_verified": 131073,
+      "every_pdm_bit_exact": true,
+      "every_decoded_level_and_error_exact": true,
+      "memory_guards_passed": true,
+      "cycle_tstates": 3540145,
+      "bank_sequence": [
+        0,
+        0,
+        0
+      ],
+      "interval_histogram_tstates": {
+        "53": 65536,
+        "54": 16384,
+        "55": 32768,
+        "56": 16320,
+        "91": 62,
+        "172": 2
+      },
+      "scope": "Continuous native Z80; excludes ULA waits, TR-DOS and physical disk latency"
+    },
+    "fuse": {
+      "complete": true,
+      "cold_boot": true,
+      "machine": "Spectrum 128 + Beta 128",
+      "cycles_verified": 2,
+      "every_pdm_bit_exact": true,
+      "every_decoded_level_and_error_exact": true,
+      "bits_verified": 131073,
+      "paging_latches_verified": true,
+      "loading_message_and_32_progress_steps_verified": true,
+      "startup_sector_reads": 32,
+      "runtime_disk_reads": 0,
+      "loading_seconds": 1.4137057712368548,
+      "average_pcm_rate_hz": 8071.491980719782,
+      "average_pdm_rate_hz": 64571.93584575826,
+      "speed_error_percent": 0.8936497589972836,
+      "cycle_durations_seconds": [
+        1.014990555132651,
+        1.0148696044433168
+      ],
+      "additional_ula_tstates": 119421,
+      "interval_histogram_tstates": {
+        "53": 44998,
+        "54": 10078,
+        "55": 38561,
+        "56": 19668,
+        "57": 3185,
+        "58": 3652,
+        "59": 4647,
+        "60": 4631,
+        "61": 1581,
+        "62": 7,
+        "91": 38,
+        "93": 3,
+        "94": 15,
+        "96": 6,
+        "175": 2
+      },
+      "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+      "physical_hardware_tested": false
+    },
+    "trd_sha256": "cab8ca761e9bc6c0b15d2839484478887acd105459d7e1ec4e92972251a7c350"
+  },
+  {
+    "directory": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\quality-max\\mulaw-cli\\waveform-32",
+    "complete": true,
+    "quality": {
+      "cycles": [
+        {
+          "cycle": 1,
+          "total_snr_db": -3.2358317338725264,
+          "fixed_clock_snr_db": 12.837994794373866,
+          "codec_snr_db": -3.187181737864631,
+          "modulator_snr_db": 16.043573896484226
+        },
+        {
+          "cycle": 2,
+          "total_snr_db": -3.238023373578731,
+          "fixed_clock_snr_db": 12.91923461318743,
+          "codec_snr_db": -3.191195304797827,
+          "modulator_snr_db": 16.10679804538781
+        }
+      ],
+      "integration_rate_hz": 768000,
+      "filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+      "minimum_total_snr_db": -3.238023373578731,
+      "minimum_fixed_clock_snr_db": 12.837994794373866,
+      "scope": "Full real OUT timeline. Selection uses fixed_clock_snr_db against the fixed 8-kHz source. Historical total/codec/modulator diagnostics use observed sample boundaries. No gain/delay fitting; speed checked separately.",
+      "listening_gain": 0.5,
+      "physical_hardware_measured": false
+    },
+    "native": {
+      "complete": true,
+      "cycles_verified": 2,
+      "bits_verified": 131073,
+      "every_pdm_bit_exact": true,
+      "every_decoded_level_and_error_exact": true,
+      "memory_guards_passed": true,
+      "cycle_tstates": 3540145,
+      "bank_sequence": [
+        0,
+        0,
+        0
+      ],
+      "interval_histogram_tstates": {
+        "53": 65536,
+        "54": 16384,
+        "55": 32768,
+        "56": 16320,
+        "91": 62,
+        "172": 2
+      },
+      "scope": "Continuous native Z80; excludes ULA waits, TR-DOS and physical disk latency"
+    },
+    "fuse": {
+      "complete": true,
+      "cold_boot": true,
+      "machine": "Spectrum 128 + Beta 128",
+      "cycles_verified": 2,
+      "every_pdm_bit_exact": true,
+      "every_decoded_level_and_error_exact": true,
+      "bits_verified": 131073,
+      "paging_latches_verified": true,
+      "loading_message_and_32_progress_steps_verified": true,
+      "startup_sector_reads": 32,
+      "runtime_disk_reads": 0,
+      "loading_seconds": 1.4146516676534437,
+      "average_pcm_rate_hz": 8071.4897385493005,
+      "average_pdm_rate_hz": 64571.917908394404,
+      "speed_error_percent": 0.8936217318662454,
+      "cycle_durations_seconds": [
+        1.0149911190053287,
+        1.0148696044433168
+      ],
+      "additional_ula_tstates": 119423,
+      "interval_histogram_tstates": {
+        "53": 44998,
+        "54": 10078,
+        "55": 38561,
+        "56": 19667,
+        "57": 3185,
+        "58": 3653,
+        "59": 4647,
+        "60": 4631,
+        "61": 1581,
+        "62": 7,
+        "91": 38,
+        "93": 3,
+        "94": 15,
+        "96": 6,
+        "175": 2
+      },
+      "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+      "physical_hardware_tested": false
+    },
+    "trd_sha256": "a5360271fe41576a69782346a1fb165f67545363883c5d75d040f9468641056c"
+  }
+]

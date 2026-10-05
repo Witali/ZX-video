@@ -7,25 +7,54 @@ python audiobook-beeper/convert_audio.py "input.m4a" --codec mulaw --output "bui
 `--codec ulaw` is an alias. IMA3 remains the default. The new profile writes
 one independently bootable `audiobook-preview.trd` containing a looping
 resident prefix. It is an **experimental first-order PDM control**, not the
-PC-only second-order 128-kHz model and not an improvement over the accepted
-IMA player. It does not implement sequential mu-law volumes.
+PC-only second-order 128-kHz model. The default now searches for a better
+stream on the PC; it does not implement sequential mu-law volumes.
 
 The PC decodes the input through FFmpeg to mono 8 kHz, applies one fixed
 gain (peak 109/128), 10-ms edge fades, then quantizes to PCM16 before standard
 G.711 mu-law encoding. It never quantizes through linear PCM8 first.
 One byte represents each source sample: 64 kbit/s, 2:1 relative to PCM16.
 The resulting `soundtrack.mulaw` is ordinary raw G.711, without a custom
-predictor, headers or sample-dependent decoding state.
+predictor, headers or sample-dependent decoding state. With `--quality best`
+(default), the byte choices optimize the *filtered beeper output*, so an
+ordinary G.711 decoder reproduces the modulator's control signal. It is
+not the nearest-level mu-law encoding of the original PCM.
 
 `--duration N` selects an initial prefix, bounded by RAM. `--prepared-pcm`
 instead preserves a mono PCM8/PCM16 8-kHz WAV exactly, requiring 8192..121088
 samples, a multiple of 256, and 128 final silent samples; do not combine it
 with `--duration`. Normal input is padded to at least 8192 samples. The last
-128 samples are a silent loop guard. Output directories must be empty.
+128 samples are a loop guard. Waveform search uses at most64 of these to
+close the accumulator with small levels of at most132/32768 (0.403%); no
+audible-source samples are replaced by guard data. Output directories must be empty.
 `--no-recording` skips only the normal-speed sound-generator capture, never
-the complete native and cold-Fuse checks. Unlike the IMA waveform searches,
-this profile has no `--quality` search or SNR-based success exit code;
+the complete native and cold-Fuse checks. `--quality balanced` preserves
+the ordinary G.711 control. This profile has no SNR-based success exit code;
 `report.json` explicitly states whether 30 dB was achieved.
+
+## Offline quality search
+
+The control supplies two complete measured clocks. `best` retains this
+verified fallback, executes a Lanczos16 timing-compensated ordinary G.711
+control, and searches two overlapping waveform variants: beam8 /horizon16
+/prior.1 and beam32 /horizon32 /prior.3, both committing8 samples. All256
+G.711 byte choices are available. The filter states of both measured loops
+contribute to the objective; the control prior follows their real hold
+centers. Only committed filter history propagates across search windows.
+
+All2048 reachable16-bit residues have256 precomputed eight-pulse transitions
+on the **PC only**. Nothing is added to the Spectrum tables. Small guard
+levels return the exact accumulator to32768 at each wrap without adding
+instructions. Every resulting disk gets two fresh native/cold-Fuse loops,
+every-bit/state checks, memory/paging/UI checks and a speed check. Selection
+uses the lower fixed8-kHz-reference SNR of the two loops, with float64
+filtering and no fitted time shift, resampling or gain. Historical diagnostics
+using actual sample boundaries remain separately named; their scores must
+not be confused with the stricter fixed-clock metric. This is a bounded
+search, not proof of the best possible stream for every recording.
+
+See [the quality follow-up](experiments/quality-max/README.md) for new results.
+The numbers below preserve the original ordinary-encoder control study.
 
 ## Spectrum data path
 

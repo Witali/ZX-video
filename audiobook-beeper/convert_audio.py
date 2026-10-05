@@ -282,7 +282,7 @@ def convert(args):
             estimate = host_search(clock, folder, width, weight, horizon, args.ffmpeg, 'ima4')
             hosts.append(dict(directory=folder.name, **estimate))
             save(out/'host-search.json', hosts)
-        for host in ranked_hosts(hosts):
+        for host in ranked_hosts(hosts, limit=len(hosts)):
             packed = gzip.decompress((out/host['directory']/'soundtrack.ima.gz').read_bytes())
             variant, new_meta = calibrate(out/f'disk-{host["directory"]}', packed, source, args.fuse, clock_meta['hot_indices'])
             result = validate(variant, args.fuse, args.ffmpeg)
@@ -362,9 +362,9 @@ def legacy_main(argv=None, *, parents=()):
     parser.add_argument('--duration', type=float, help='keep at most this many initial seconds; always bounded by RAM')
     parser.add_argument('--iterations', type=int, choices=(1, 2), default=2)
     parser.add_argument('--quality',choices=('best','balanced'),default='best',
-                        help='best: add waveform search and verify its top two; balanced: legacy PCM search')
-    parser.add_argument('--attempts',type=int,choices=(1,2,3),default=2,
-                        help='bounded full waveform searches in best mode (default 2)')
+                        help='best: complete all requested waveform searches and verify each; balanced: legacy PCM search')
+    parser.add_argument('--attempts',type=int,choices=(1,2,3),default=3,
+                        help='bounded full waveform searches in best mode (default 3)')
     parser.add_argument('--target-snr',type=float,default=20.)
     parser.add_argument('--no-refine-clock',dest='refine_clock',action='store_false',
                         help='omit the final four-bit search on the measured candidate clock')

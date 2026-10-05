@@ -12,6 +12,32 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## All active audio codecs — bounded quality follow-up complete (2026-10-05)
+
+The later request to maximize all active audio codecs authorizes the bounded
+[quality follow-up](audiobook-beeper/experiments/quality-max/README.md): finish
+the pending speech IMA3 comparison, try the third IMA search for both bit
+depths, and add waveform-aware mu-law encoding on the PC. This supersedes
+the earlier pause for this milestone. Keep resident capacity, formats and
+Z80 kernels unchanged; retain every verified fallback. Run full two-loop
+checks for each new stream and preserve rejected prototypes. No new movie,
+LPC/Speex/AY study, merge or push is part of this request.
+
+Completed results: IMA3 fixed-clock/f64 minimum20.431992 ->20.655388 dB;
+IMA4 keeps22.174535 after rejecting a9.849028-dB candidate. Mu-law's joint
+two-clock search yields10.295781 dB versus6.533228 for its timing-only
+control; its historical9.672027 metric used a different reference clock.
+All new streams pass full native/cold Fuse two-loop verification and the
+three selected images have normal-speed recordings. Fifteen tests and a
+complete short public CLI conversion pass. Z80 costs and RAM are unchanged.
+
+The user subsequently requests **128-kHz modulation for the eight-bit
+mode**. This next authorized milestone must keep compact mu-law bytes,
+account for tables/RAM, and prove actual output rate and quality. The
+existing exact16-bit first-order decision alone costs34 T, exceeding the
+27.710-T budget at128 kHz. Investigate packet dispatch before claiming that
+rate. Keep the completed64-kHz control as a fallback/comparison.
+
 ## IMA4 overlapping PDM search — requested follow-up complete (2026-10-05)
 
 The user chooses IMA3 for duration and IMA4 for quality and authorizes the

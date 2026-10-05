@@ -72,17 +72,71 @@ def measure(out, meta, payload, pcm, ffmpeg):
         ref=filter_signal((pcm.astype(float)+32768)/65536,times[::8],ffmpeg,768000)
         decoded=filter_signal((decode(payload,'mulaw').astype(float)+32768)/65536,times[::8],ffmpeg,768000)
         actual=filter_signal(bits[cycle*n:(cycle+1)*n],times,ffmpeg,768000)
+        # Codec-only diagnostics retain their historical shared-clock basis.
+        # Selection must also penalize timing error against the fixed source.
+        period=CPU/8000;count=int(np.ceil(times[-1]/period))
+        edges=np.r_[np.arange(count)*period,times[-1]]
+        values=np.pad((pcm.astype(float)+32768)/65536,(0,max(0,count-len(pcm))),constant_values=.5)[:count]
+        fixed=filter_signal(values,edges,ffmpeg,768000)
         cut=slice(4410,-4410)
         rows.append(dict(cycle=cycle+1,total_snr_db=ratio(ref[cut],actual[cut]-ref[cut]),
+                         fixed_clock_snr_db=ratio(fixed[cut],actual[cut]-fixed[cut]),
                          codec_snr_db=ratio(ref[cut],decoded[cut]-ref[cut]),
                          modulator_snr_db=ratio(decoded[cut],actual[cut]-decoded[cut])))
         if cycle==0:
             write_wav(out/'reference-preview.wav',ref*.5)
+            write_wav(out/'fixed-reference-preview.wav',fixed*.5)
             write_wav(out/'output-preview.wav',actual*.5)
     return dict(cycles=rows,integration_rate_hz=768000,filter=STABLE_FILTER,
                 minimum_total_snr_db=min(r['total_snr_db'] for r in rows),
-                scope='Full real OUT timeline; reference uses the same sample boundaries. Includes codec and modulation distortion; no gain/delay fitting. Speed is checked separately.',
+                minimum_fixed_clock_snr_db=min(r['fixed_clock_snr_db'] for r in rows),
+                scope='Full real OUT timeline. Selection uses fixed_clock_snr_db against the fixed 8-kHz source. Historical total/codec/modulator diagnostics use observed sample boundaries. No gain/delay fitting; speed checked separately.',
                 listening_gain=.5,physical_hardware_measured=False)
+
+
+def qualify(out,payload,pcm,fuse,ffmpeg):
+    """Execute a complete candidate; all PC estimates remain provisional."""
+    out.mkdir(parents=True,exist_ok=True)
+    with wave.open(str(out/'source-preview.wav'),'wb') as w:
+        w.setnchannels(1);w.setsampwidth(2);w.setframerate(8000);w.writeframes(pcm.astype('<i2').tobytes())
+    (out/'soundtrack.mulaw').write_bytes(payload)
+    disk,meta=build_disk(payload,out/'assembly')
+    save(out/'player.json',meta);(out/'audiobook-preview.trd').write_bytes(disk)
+    print('Verifying mu-law candidate: '+str(out),flush=True)
+    native=native_check(disk,meta,payload);save(out/'native.json',native)
+    actual=fuse_check(fuse,out,meta,payload);save(out/'fuse.json',actual)
+    quality=measure(out,meta,payload,pcm,ffmpeg);save(out/'quality.json',quality)
+    return dict(complete=True,quality=quality,native=native,fuse=actual,
+                trd_sha256=hashlib.sha256(disk).hexdigest())
+
+
+def optimize(control,out,pcm,fuse,ffmpeg):
+    from mulaw_waveform_encoder import encode as search, saved_timeline, timed_pcm, close_guard
+    from g711_codec import decode_table
+    timeline=saved_timeline(control);timeline-=timeline[0]
+    candidates=[dict(directory=str(control),quality=json.loads((control/'quality.json').read_bytes()))]
+    target=timed_pcm(pcm,timeline);target[-128:]=0
+    compensated=np.frombuffer(encode(np.rint(target).astype('<i2'),'mulaw',ffmpeg),'u1').copy()
+    levels=decode_table('mulaw').astype(np.int64)+32768
+    close_guard(compensated,(32768+8*int(levels[compensated].sum()))&65535,levels)
+    folder=out/'timing-control'
+    result=qualify(folder,compensated.tobytes(),pcm,fuse,ffmpeg)
+    candidates.append(dict(directory=str(folder),**result));save(out/'candidates.json',candidates)
+    for width,horizon,weight in ((8,16,.1),(32,32,.3)):
+        folder=out/f'waveform-{width}';folder.mkdir(parents=True,exist_ok=True)
+        statistics={}
+        payload=search(pcm,timeline,width=width,horizon=horizon,commit=8,regularization=weight,statistics=statistics)
+        statistics.update(source_sha256=hashlib.sha256(pcm.astype('<i2').tobytes()).hexdigest(),
+            clock_sha256=hashlib.sha256((control/'output-times.u32.gz').read_bytes()).hexdigest(),
+            packed_sha256=hashlib.sha256(payload).hexdigest(),
+            producer_sha256={name:hashlib.sha256((HERE/name).read_bytes()).hexdigest() for name in
+                ('mulaw_waveform_encoder.py','ima_waveform_encoder.py','waveform_kernel.py','g711_codec.py')})
+        save(folder/'search.json',statistics)
+        result=qualify(folder,payload,pcm,fuse,ffmpeg)
+        assert json.loads((folder/'player.json').read_bytes())['binary_sha256']==json.loads((control/'player.json').read_bytes())['binary_sha256']
+        candidates.append(dict(directory=str(folder),**result))
+        save(out/'candidates.json',candidates)
+    return max(candidates,key=lambda row:row['quality']['minimum_fixed_clock_snr_db']),candidates
 
 
 def convert(args):
@@ -94,14 +148,16 @@ def convert(args):
     verify_tables(args.ffmpeg)
     payload=encode(pcm,'mulaw',args.ffmpeg)
     assert len(payload)==len(pcm)
-    (out/'soundtrack.mulaw').write_bytes(payload)
-    disk,meta=build_disk(payload,out/'assembly')
-    save(out/'player.json',meta);(out/'audiobook-preview.trd').write_bytes(disk)
-    print('Built mu-law TRD; verifying every decoded level and PDM output',flush=True)
-    native=native_check(disk,meta,payload);save(out/'native.json',native)
-    print('Native Z80 passed; checking two complete cold-Fuse loops',flush=True)
-    actual=fuse_check(args.fuse,out,meta,payload);save(out/'fuse.json',actual)
-    quality=measure(out,meta,payload,pcm,args.ffmpeg);save(out/'quality.json',quality)
+    control=out/'control';initial=qualify(control,payload,pcm,args.fuse,args.ffmpeg)
+    best=dict(directory=str(control),**initial);candidates=[best]
+    if getattr(args,'quality','best')=='best' and np.any(pcm):
+        best,candidates=optimize(control,out,pcm,args.fuse,args.ffmpeg)
+    selected=Path(best['directory'])
+    for path in selected.iterdir():
+        if path.is_file():shutil.copy2(path,out/path.name)
+    shutil.copytree(selected/'assembly',out/'assembly')
+    native=json.loads((out/'native.json').read_bytes());actual=json.loads((out/'fuse.json').read_bytes())
+    quality=best['quality'];disk=(out/'audiobook-preview.trd').read_bytes()
     recording=None
     if not args.no_recording:
         subprocess.run([sys.executable,str(HERE/'record_pcm.py'),str(out),'--fuse',str(args.fuse),
@@ -110,20 +166,21 @@ def convert(args):
         assert recording['paging_latches_match'] and recording['secondary_paging_unchanged']
     sources=['convert_mulaw_audio.py','mulaw_player.py','mulaw-player.asm','verify_mulaw.py','g711_codec.py',
              'record_pcm.py','build_pdm.py','assess_snr.py','verify_pdm.py','feedback_player.py','ima_player.py',
-             'pcm_player.py','pdm_player.py']
+             'pcm_player.py','pdm_player.py','mulaw_waveform_encoder.py','ima_waveform_encoder.py','waveform_kernel.py']
     snapshots=out/'sources';snapshots.mkdir(exist_ok=True)
     for name in sources:shutil.copy2(HERE/name,snapshots/name)
     report=dict(complete=True,codec='G.711 mu-law',disks=1,repeat=True,
         prepared_seconds=len(pcm)/8000,retained_input_seconds=preparation['retained_input_samples']/8000,
         native=native,fuse=actual,quality=quality,recording=recording,
-        target_30_db_passed=quality['minimum_total_snr_db']>=30,
+        selected=selected.name,candidates=candidates,quality_profile=getattr(args,'quality','best'),
+        target_30_db_passed=quality['minimum_fixed_clock_snr_db']>=30,
         limitations=['First-order real-time control, not the PC-only second-order 128-kHz model',
                      'One resident prefix, looping; mu-law sequential volumes are not implemented',
                      'No physical Spectrum or sound-card-loopback test'],
         trd_sha256=hashlib.sha256(disk).hexdigest())
     save(out/'report.json',report)
     print(json.dumps(dict(complete=True,disk=str(out/'audiobook-preview.trd'),
-        snr_db=quality['minimum_total_snr_db'],speed_error_percent=actual['speed_error_percent'])),flush=True)
+        snr_db=quality['minimum_fixed_clock_snr_db'],speed_error_percent=actual['speed_error_percent'])),flush=True)
     return report
 
 
@@ -132,6 +189,8 @@ def main(argv=None, *, parents=()):
     p.add_argument('input',type=Path);p.add_argument('--output',required=True,type=Path)
     p.add_argument('--ffmpeg',default=shutil.which('ffmpeg'));p.add_argument('--fuse',required=True,type=Path)
     p.add_argument('--duration',type=float,help='initial seconds, bounded by resident capacity')
+    p.add_argument('--quality',choices=('best','balanced'),default='best',
+                   help='best: waveform-aware PC search with verified fallback; balanced: ordinary G.711 encoder')
     p.add_argument('--prepared-pcm',action='store_true',help='retain exact aligned PCM8/PCM16 mono 8-kHz reference with final silent guard')
     p.add_argument('--no-recording',action='store_true',help='omit sound-generator capture; all native/cold-Fuse checks still run')
     args=p.parse_args(argv)

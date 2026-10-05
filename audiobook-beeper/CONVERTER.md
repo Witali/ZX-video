@@ -11,8 +11,8 @@ control is verified to run, but is noisier than the accepted IMA player;
 it does not implement the PC-only second-order 128-kHz model.
 
 Both IMA modes now default to `--quality best`: complete a bounded waveform
-search even if an early candidate reaches the SNR target, execute the two
-highest-scoring host candidates, then select by the worse of their two
+search even if an early candidate reaches the SNR target, execute every
+requested host candidate, then select by the worse of their two
 fully measured Fuse loops. The verified pilot remains a fallback; IMA4
 also retains its earlier clock-compensated candidates. This means best
 among the verified candidates, not a proof of a global optimum.
@@ -51,10 +51,13 @@ Fuse sound capture while retaining complete native/Fuse verification. New
 outputs must use an empty directory; IMA3 can resume only a matching saved
 run. Changed producer sources invalidate old resume caches by design.
 
-`best` defaults to two full searches. IMA3 uses width 1024, horizon 256,
-commit 64 with prior weights .03 and .003. IMA4 uses width 256 /horizon 128
+`best` defaults to three full searches. IMA3 uses width 1024, horizon 256,
+commit 64 with prior weights .03, .003 and .1. IMA4 uses width 256 /horizon 128
 with weight .1, then width 512 /horizon 128 with weight .03, also committing
-64 samples. `--attempts 3` adds another bounded candidate; it is optional.
+64 samples, then width512 /horizon256 /weight.003. `--attempts 1` or `2`
+explicitly trades search coverage for shorter conversion time. Every requested
+candidate receives full execution checks: ranking on an old clock cannot
+reliably rule out the third stream. The extra work does not run on Z80.
 All work is on the PC. `--quality balanced` retains the former IMA3 search
 with up to three attempts and early target exit, or the former IMA4 PCM
 search. Both best modes return code 2 for a completed preview that misses

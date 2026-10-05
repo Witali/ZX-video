@@ -1,7 +1,7 @@
 # Direct packed IMA3 playback and automatic conversion
 
-The newer [best-quality search](CONVERTER.md) uses two full 1024-wide,
-256-sample-horizon searches with prior weights .03/.003 and 64-sample
+The newer [best-quality search](CONVERTER.md) uses three full 1024-wide,
+256-sample-horizon searches with prior weights .03/.003/.1 and 64-sample
 commits, and selects by fresh complete disk measurements. It does not
 stop at the first passing target. `--quality balanced` retains the older
 automatic search described below. The Z80 player and its timing are unchanged.

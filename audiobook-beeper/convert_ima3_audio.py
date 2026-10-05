@@ -145,7 +145,7 @@ def convert(args):
         candidates.append(measured(variant,result))
         save(out/'variants.json',candidates)
     if quality=='best':
-        for host in ranked_hosts(hosts):
+        for host in ranked_hosts(hosts, limit=len(hosts)):
             encoded=out/host['directory'];variant=out/f'disk-{host["directory"]}'
             result=stage(variant,lambda p:build_verified(source,
                 gzip.decompress((encoded/'soundtrack.ima.gz').read_bytes()),p,args.fuse,args.ffmpeg,model))
@@ -188,15 +188,15 @@ def main(argv=None, *, parents=()):
     p.add_argument('--duration',type=float);p.add_argument('--target-snr',type=float,default=20.)
     p.add_argument('--disk-mode',choices=('single','all','preview'),default='single',help='single (default): fill one TRD; all: retain the whole selected audio across TRDs; preview: legacy looping RAM preview.')
     p.add_argument('--attempts',type=int,choices=(1,2,3),
-                   help='bounded full searches; default 2 for best, 3 for balanced')
+                   help='bounded full searches; default 3')
     p.add_argument('--quality',choices=('best','balanced'),default='best',
-                   help='best: complete bounded waveform search and verify the top two; balanced: stop at target')
+                   help='best: complete and verify all requested waveform searches; balanced: stop at target')
     p.add_argument('--prepared-pcm',action='store_true',help='reuse an exact PCM8/8k mono reference with its existing silent guard')
     p.add_argument('--no-recording',action='store_true',help='skip normal-speed sound capture, retaining full native/Fuse trace checks')
     p.add_argument('--resume',action='store_true')
     p.add_argument('--reuse-pilot',type=Path,help='optional completed converter pilot cache; exact source/player/tools are checked')
     a=p.parse_args(argv)
-    if a.attempts is None:a.attempts=2 if a.quality=='best' else 3
+    if a.attempts is None:a.attempts=3
     if not a.ffmpeg:p.error('FFmpeg not found; supply --ffmpeg')
     if not math.isfinite(a.target_snr) or a.target_snr<20 or a.target_snr>60:p.error('target SNR must be 20..60 dB')
     try:r=convert(a)

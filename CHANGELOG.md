@@ -1,5 +1,40 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Complete bounded quality searches for IMA3, IMA4 and mu-law
+
+The user requests maximum quality for all active codecs. Complete the
+pending IMA3 speech case, add the third IMA3/IMA4 searches, and implement
+waveform-aware mu-law coding on the PC. Keep formats, capacities and Z80
+kernels unchanged. [Reproduction, full results and rejected probes](audiobook-beeper/experiments/quality-max/README.md)
+use186880 PCM8 samples for IMA and121088 PCM16 samples for mu-law. Stable
+float64 fixed-clock minima: IMA3 improves20.431992 ->20.655388 dB; IMA4
+keeps22.174535 dB because the new candidate falls to9.849028 on its own
+clock despite21.282149 host estimate. All three IMA searches are now
+executed by default rather than discarding the third by host ranking.
+
+Mu-law searches two real loop clocks, uses a timed PCM16 prior, overlapping
+windows and exact accumulator closure in the guard. PC-only transition
+tables accelerate all256 G.711 choices. The first unretimed-prior prototype
+gives4.897807 /5.618310 dB and is rejected. Joint beam8/32 gives9.608146
+/10.295781 dB; keep beam32. Its comparison controls are-3.347765 dB for
+ordinary encoding and6.533228 for first-clock timing compensation. The
+historical9.672027-dB mu-law metric followed the observed sample boundaries
+and is not directly comparable to these stricter fixed-clock numbers.
+Neither30 dB nor an improvement of every codec is established.
+
+All new disks pass full two-loop native/cold Fuse bits/state, memory,
+paging, UI and speed checks; IMA includes exact repeat-phase calibration.
+Authenticate cached IMA3 and IMA4 winners by hashes/rebuild; record all
+three selected disks at normal speed. Mu-law still has a free-running loop
+clock: two-clock optimization is not a proof over arbitrary later phases.
+Ordinary costs remain IMA3 427.375, IMA4 423 and mu-law432 T/sample, delta0;
+page/bank extras14/140,14/140 and35/116 T. Selected speeds are-0.299133%,
+-0.043270% and+0.185960%; no additional resident tables or buffers. Save
+the complete archive and three LFS preview images. Fifteen tests and a
+full public mu-law CLI conversion pass. No physical-hardware test, merge
+or push. The later user request for128-kHz eight-bit playback starts a
+separate milestone; this mu-law control remains approximately64 kHz.
+
 ## 2026-10-05: Complete IMA4 overlap experiment with a matched control
 
 The user chooses IMA3 for duration and IMA4 for quality and requests the
