@@ -1,0 +1,77 @@
+{
+  "scope": "Compare verified contour data with the current ZX0 stream, without a speed claim.",
+  "complete": true,
+  "release": false,
+  "player_changed": false,
+  "player_delta_tstates": 0,
+  "input_reports": [
+    {
+      "file": "integer_contours_report.json",
+      "sha256": "ec20a3a86fca5c96c69b689f7db66636c31670165d19eae0eca1c2d193123fc5"
+    },
+    {
+      "file": "compact_contours_hybrid_zx0.json",
+      "sha256": "3dfa1464562ed0df35d37b33d058eec8cc5924ac8edd862b76359782313bc0de"
+    },
+    {
+      "file": "lean_frame_zx0.json",
+      "sha256": "b95fff4f7a7c93aad9d5cfef211ccef507784b588868f1bc4cc3b1eb327985f0"
+    },
+    {
+      "file": "compact_contours_report.json",
+      "sha256": "854167f7f7165854688ee76e9ddb87b5ffbd01f349e9875661fb81815bf0dd76"
+    }
+  ],
+  "checked_frames": 4221,
+  "checked_ay_ticks": 25326,
+  "exact_active_pixels_attributes_ay": true,
+  "mode_selection": "minimum uncompressed geometry bytes per frame, not a global ZX0 optimum",
+  "hybrid_modes": {
+    "rectangles": 2300,
+    "compact_grid": 182,
+    "compact_polygon": 48,
+    "raster": 1691
+  },
+  "mean_hybrid_geometry_bytes": 1683.6017531390667,
+  "raw_streams": {
+    "compact_grid": {
+      "raw_bytes": 15064969,
+      "sha256": "31858d22b2c3b44dac4408125a7faadbf39c07a5c62e26d58d54098b7f0f31b3",
+      "deflate_8192_layout_screen": 6614058
+    },
+    "compact_polygon": {
+      "raw_bytes": 15940981,
+      "sha256": "6dcaf01163142ae723dfe029f355bb7dadeca5b3385e33ccaa0bb85928b91188",
+      "deflate_8192_layout_screen": 9478988
+    },
+    "compact_hybrid": {
+      "raw_bytes": 7396678,
+      "sha256": "8788c7c1a91c9352b1e70063d504087a6ab3d23504755f102ef6d056166c2978",
+      "deflate_8192_layout_screen": 3458564
+    }
+  },
+  "baseline_raw_bytes": 3097959,
+  "baseline_deflate_layout_screen": 1928573,
+  "zx0_before_bytes": 1932429,
+  "zx0_hybrid_bytes": 3476798,
+  "zx0_delta_bytes": 1544369,
+  "zx0_change_percent": 79.91853775740273,
+  "absolute_three_trd_bytes": 1966080,
+  "exceeds_even_three_whole_disk_images": true,
+  "minimum_disks_ignoring_all_filesystem_loader_overhead": 6,
+  "speed_measured": false,
+  "cadence_verified": false,
+  "disk_delivery_verified": false,
+  "summary": {
+    "mean_grid_vertices": 2476.012793176972,
+    "max_grid_vertices": 5718,
+    "mean_polygon_vertices": 1150.2314617389245,
+    "max_polygon_vertices": 3808,
+    "mean_polygon_correction_pixels": 504.29661217720917,
+    "mean_polygon_edge_row_updates": 1709.0694148306088,
+    "mean_polygon_native_byte_touches": 8964.588486140725,
+    "max_polygon_native_byte_touches": 11298,
+    "max_polygon_record_bytes": 10400
+  },
+  "decision": "Retain as separate experiment. Choose no replacement without Z80 timing and a complete playable build. This hybrid has no temporal contour-ID/vertex reuse; its result does not bound other vector codecs."
+}
