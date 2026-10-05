@@ -1,6 +1,6 @@
 # Focused optimization task
 
-Updated 2026-10-04. Use this brief to continue the project in this or a new
+Updated 2026-10-05. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
 ## Project objective
@@ -11,6 +11,21 @@ prioritize exact five-field video
 deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
+
+## Second-order audio experiment — completed, rejected (2026-10-05)
+
+The separate [exact SD2 experiment](audiobook-beeper/experiments/sigma-delta2-128/README.md)
+executes at 127652.961 Hz average with unchanged ordinary 427.375 T/sample.
+It is noisier: 11.179067 dB after a silent-guard repeat fix, against the
+accepted IMA3 reference's 20.436321 dB. Keep the old damped model as default.
+All bits, predictor/index states, memory, paging and phase pass two complete
+native/cold Fuse loops; normal-speed recording is saved. The guard reset
+costs 7 T once per loop, offset by 7 T less calibrated filler. Bank-2 tables
+grow by 2816 bytes. Preserve the failed initial candidates and use the
+archived evidence instead of repeating this experiment. No physical test.
+The user subsequently requested 30 dB while retaining current IMA compression
+and duration; this is a separate error-budget investigation, not permission
+to replace IMA with precomputed PDM or shorten the excerpt.
 
 ## IMA3 / IMA4 quality checkpoint — paused (2026-10-04)
 

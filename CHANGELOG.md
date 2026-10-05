@@ -1,5 +1,39 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Exact second-order packets at 128 kHz; retain the old default
+
+Implement the user's requested SD2 trial as optional tables for the direct
+IMA3 player. The [study and evidence](audiobook-beeper/experiments/sigma-delta2-128/README.md)
+retain five memory/state preflights, three complete-source ideal controls,
+one full waveform search and all three executed disks. Q64/gain 3/8 preserves
+14 exact error states without clipping or rounding, but admits only 25 input
+levels. Higher precision variants exceed the present code/table layout.
+
+On the unchanged 186880-sample speech reference, 127652.961-Hz average PDM
+meets the frequency objective; speed error is -0.299133%. Quality is worse:
+old codes give 2.456665/2.451909 dB, the new search 11.179067/1.133075 dB.
+The complete second loop exposes a feedback-seed mismatch. Initialize state
+in the final silent guard, reusing the search; both loops now score 11.179067
+dB. The accepted damped reference is 20.436321 dB and remains the default.
+The user also hears more noise. Do not promote this failed quality result.
+
+Ordinary cost remains 427.375 T/sample, delta 0 T; page/bank extras +14/+140 T.
+The guard's LD E,n adds 7 T once per loop, compensated by filler 48 ->41 T;
+native cycle totals remain 79891688 T. Fuse adds 6424976 ULA waits over two
+loops; startup has 334 sector reads, normal capture sound starts at22.815238
+s. Bank-2 reservation grows 13312 ->16128 bytes, resident IMA3 stays70080;
+maximum capacity falls94458 ->91641 bytes. No physical hardware claim.
+
+All5981841 bits,373760 decoded samples, memory, paging, progress/message and
+0/0-T phase checks pass over two complete native/cold Fuse loops. Normal
+recording completes both repeats. Eighteen tests pass, including byte-exact
+legacy rebuilding; an earlier sandbox-only missing-pyz80 import is recorded
+as a failed invocation and was rerun successfully with local dependencies.
+Final sources reproduce all three tested images byte-exactly. Preserve the
+initial identity and final producer snapshots separately. Save the guarded
+TRD as an additional experimental image in LFS; leave public/reference disks
+unchanged. The previous encoder-quality milestone remains paused.
+
 ## 2026-10-04: Improve both IMA encoders; save and pause the partial milestone
 
 The user requested better quality for both IMA3 and IMA4, then explicitly

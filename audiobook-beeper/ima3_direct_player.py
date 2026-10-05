@@ -5,7 +5,7 @@ import numpy as np
 from feedback_player import loading_screen
 from ima_codec import decode,STEPS,INDEX,require_unclipped
 from pcm_player import TrdFile,basic_line,calculate_file_start,place_files
-from probe_feedback_packets import integral_table
+from probe_feedback_packets import model_table
 
 HERE=Path(__file__).resolve().parent
 LEGACY_BANK2_RESERVE=14336
@@ -50,13 +50,15 @@ def intervals(meta):
                 holds[k]+=140 if byte==s['audio_bytes'] else 14
         sample+=s['audio_bytes']//3*8
     pairs=meta.get('loop_idle_pairs',0)
+    reset=7 if meta['model'].get('reset_feedback_in_guard') else 0
+    k=(meta['pcm_samples']-3)*16+14
     if pairs:
-        k=(meta['pcm_samples']-3)*16+14
         idle=[]
         for j in range(pairs):
             idle.extend([26,33 if (j+1)%255==0 and j+1<pairs else 26])
-        idle[-1]=34+meta['loop_idle_pad_tstates']
+        idle[-1]=34+meta['loop_idle_pad_tstates']+reset
         holds=np.r_[holds[:k],holds[k]-1,idle,holds[k+1:]]
+    else:holds[k]+=reset
     return holds
 
 
@@ -83,7 +85,7 @@ def decoder_slots(second,pointers,*,compact_tables=True,startup_gap=True):
 def layout(packed,model=None,hot_indices=None,*,compact_tables=True,startup_gap=True,chained=False):
     model=model or MEASURED_MODEL
     bins=model.get('pcm_bins',64)
-    words,nxt,_=integral_table(bins,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],q_clip=tuple(model.get('q_clip',(0,15))))
+    words,nxt,_=model_table(model)
     reachable={16}
     while True:
         expanded=reachable|set(map(int,nxt[:,sorted(reachable)].ravel()))
@@ -186,6 +188,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     progress_steps=np.diff(np.r_[0,(np.arange(1,33)*total_reads+31)//32])
     assert np.all((progress_steps>0)&(progress_steps<256))
     constants=dict(lpc_preloaded=0,screen_disk=0,first_base=0x8400,first_size=46 if bins==128 else 41,
+                   reset_feedback_tail=int(model.get('reset_feedback_in_guard',False)),
                    chained_playback=int(chain is not None),chain_disk=chain['controller_disk'] if chain else 0,
                    chain_sectors=chain['controller_sectors'] if chain else 0,
                    chain_volume=chain['volume'] if chain else 0,chain_next_slot=chain['next_slot'] if chain else 0,

@@ -95,7 +95,7 @@ def prepare(path):
         a,b,l,r=model.packet(row)
         features.append((a,l,signed@r.T,signed@b.T,row/(CPU_CLOCK/8000)))
     queries=((t[:count*16]+t[1:count*16+1])/2).reshape(count,16)
-    source=wav8(path/'source-preview.wav');desired=model.reference(source,queries)
+    source=wav8(path/'source-preview.wav');desired=model.reference(source,queries)*meta['model'].get('output_gain',1.)
     return meta,t,words,nxt,source,desired,features,ids
 
 
@@ -262,7 +262,7 @@ def main():
     actual=filtered(reconstruct(outbits[:len(t)-1],t),a.ffmpeg)
     period=CPU_CLOCK/8000;segments=int(np.ceil(t[-1]/period));edges=np.r_[np.arange(segments)*period,t[-1]]
     values=np.pad(source/256,(0,max(0,segments-len(source))),constant_values=.5)[:segments]
-    original=filtered(reconstruct(values,edges),a.ffmpeg);ref=original[4410:-4410]
+    original=filtered(reconstruct(values,edges)*meta['model'].get('output_gain',1.),a.ffmpeg);ref=original[4410:-4410]
     snr=ratio(ref,actual[4410:-4410]-ref)
     write_wav(a.output/'waveform-preview.wav',actual)
     report=dict(scope=__doc__,input=str(a.input),samples=len(source),beam_width=a.width,

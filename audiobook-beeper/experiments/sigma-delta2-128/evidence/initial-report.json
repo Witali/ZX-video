@@ -1,0 +1,586 @@
+{
+  "complete": true,
+  "model": {
+    "family": "sigma_delta2",
+    "dac_scale": 64,
+    "gain_numerator": 3,
+    "gain_denominator": 8,
+    "output_gain": 0.375,
+    "pcm_bins": 128,
+    "level_bounds": [
+      4,
+      123
+    ],
+    "slots": 16,
+    "state_quantization": false,
+    "state_clipping": false,
+    "clock_scope": "exact recurrence in decision index; physical OUT holds remain nonuniform"
+  },
+  "selected": "pilot",
+  "quality": {
+    "two_loop_clock_aware_snr_db": [
+      2.456664712742042,
+      2.4519092257358683
+    ],
+    "minimum_snr_db": 2.4519092257358683,
+    "snr_at_least_20_db": false,
+    "mean_prepared_sample_rate_hz": 7976.069361424148,
+    "mean_speed_error_percent": -0.299132982198147,
+    "speed_within_two_percent": true,
+    "reference_rate_hz": 8000,
+    "physical_hardware_tested": false,
+    "complete_trace_phase_deltas_tstates": [
+      0,
+      0
+    ]
+  },
+  "pilot_quality": {
+    "two_loop_clock_aware_snr_db": [
+      2.456664712742042,
+      2.4519092257358683
+    ],
+    "minimum_snr_db": 2.4519092257358683,
+    "snr_at_least_20_db": false,
+    "mean_prepared_sample_rate_hz": 7976.069361424148,
+    "mean_speed_error_percent": -0.299132982198147,
+    "speed_within_two_percent": true,
+    "reference_rate_hz": 8000,
+    "physical_hardware_tested": false,
+    "complete_trace_phase_deltas_tstates": [
+      0,
+      0
+    ]
+  },
+  "candidate_quality": {
+    "two_loop_clock_aware_snr_db": [
+      11.1790667439981,
+      1.1330747456199077
+    ],
+    "minimum_snr_db": 1.1330747456199077,
+    "snr_at_least_20_db": false,
+    "mean_prepared_sample_rate_hz": 7976.069361424148,
+    "mean_speed_error_percent": -0.299132982198147,
+    "speed_within_two_percent": true,
+    "reference_rate_hz": 8000,
+    "physical_hardware_tested": false,
+    "complete_trace_phase_deltas_tstates": [
+      0,
+      0
+    ]
+  },
+  "host": {
+    "scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n",
+    "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\sigma-delta2\\run\\pilot",
+    "samples": 186880,
+    "beam_width": 256,
+    "block_size": 128,
+    "commit_size": 64,
+    "allowed_ima_nibbles": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14
+    ],
+    "ima3_subset": true,
+    "source_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+    "packed_sha256": "37538b3481c85aff503d48fba72a216bcbc3f4895e738013e7cba0ba9430ce8d",
+    "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state",
+    "history_bins": 0,
+    "search_backend": "native",
+    "search_seconds": 101.48499999998603,
+    "baseline_model_snr_db": 2.4530350392266325,
+    "host_fixed_clock_snr_db": 11.1790667439981,
+    "control_prior": "compensated",
+    "control_regularization": 0.003,
+    "elapsed_seconds": 106.70299999997951,
+    "ordinary_native_tstate_delta": 0,
+    "new_timeline_verified": false,
+    "saturation_guard": {
+      "samples": 186880,
+      "saturation_events": 0,
+      "raw_min": -30653,
+      "raw_max": 30676
+    },
+    "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"
+  },
+  "recording": {
+    "recording_complete": true,
+    "two_wraps_observed": true,
+    "timing_code": "B",
+    "startup_seconds": 22.835238095238097,
+    "recorded_playback_seconds": 46.86938775510204,
+    "paging_latches_match": true,
+    "secondary_paging_unchanged": true,
+    "paging_events": [
+      [
+        1415,
+        64901,
+        28,
+        28,
+        0
+      ],
+      [
+        1689,
+        58696,
+        30,
+        30,
+        0
+      ],
+      [
+        1963,
+        52122,
+        25,
+        25,
+        0
+      ],
+      [
+        2237,
+        45526,
+        27,
+        27,
+        0
+      ],
+      [
+        2313,
+        48490,
+        24,
+        24,
+        0
+      ],
+      [
+        2587,
+        64901,
+        28,
+        28,
+        0
+      ],
+      [
+        2861,
+        58696,
+        30,
+        30,
+        0
+      ],
+      [
+        3135,
+        52122,
+        25,
+        25,
+        0
+      ],
+      [
+        3409,
+        45526,
+        27,
+        27,
+        0
+      ],
+      [
+        3485,
+        48490,
+        24,
+        24,
+        0
+      ]
+    ],
+    "paging_event_fields": [
+      "frame",
+      "tstates",
+      "intended_value",
+      "7ffd",
+      "1ffd"
+    ],
+    "half_second_windows": [
+      {
+        "start_seconds": 0.0,
+        "ac_rms": 0.0166198418132411
+      },
+      {
+        "start_seconds": 0.5,
+        "ac_rms": 0.020130430094322544
+      },
+      {
+        "start_seconds": 1.0,
+        "ac_rms": 0.015371751151792522
+      },
+      {
+        "start_seconds": 1.5,
+        "ac_rms": 0.019432631894182352
+      },
+      {
+        "start_seconds": 2.0,
+        "ac_rms": 0.01989831167970074
+      },
+      {
+        "start_seconds": 2.5,
+        "ac_rms": 0.017575114119743235
+      },
+      {
+        "start_seconds": 3.0,
+        "ac_rms": 0.018353396030422044
+      },
+      {
+        "start_seconds": 3.5,
+        "ac_rms": 0.020005923091085728
+      },
+      {
+        "start_seconds": 4.0,
+        "ac_rms": 0.01729490301202609
+      },
+      {
+        "start_seconds": 4.5,
+        "ac_rms": 0.014145526396093774
+      },
+      {
+        "start_seconds": 5.0,
+        "ac_rms": 0.015941640540011678
+      },
+      {
+        "start_seconds": 5.5,
+        "ac_rms": 0.014901781159611754
+      },
+      {
+        "start_seconds": 6.0,
+        "ac_rms": 0.010575775446648675
+      },
+      {
+        "start_seconds": 6.5,
+        "ac_rms": 0.022367469672724457
+      },
+      {
+        "start_seconds": 7.0,
+        "ac_rms": 0.018163563762854724
+      },
+      {
+        "start_seconds": 7.5,
+        "ac_rms": 0.01760575431356703
+      },
+      {
+        "start_seconds": 8.0,
+        "ac_rms": 0.013409433993816361
+      },
+      {
+        "start_seconds": 8.5,
+        "ac_rms": 0.0126725885982888
+      },
+      {
+        "start_seconds": 9.0,
+        "ac_rms": 0.008915547329605361
+      },
+      {
+        "start_seconds": 9.5,
+        "ac_rms": 0.01665924817045303
+      },
+      {
+        "start_seconds": 10.0,
+        "ac_rms": 0.014738854460486603
+      },
+      {
+        "start_seconds": 10.5,
+        "ac_rms": 0.015782575475106312
+      },
+      {
+        "start_seconds": 11.0,
+        "ac_rms": 0.0147960747757565
+      },
+      {
+        "start_seconds": 11.5,
+        "ac_rms": 0.011369010809016788
+      },
+      {
+        "start_seconds": 12.0,
+        "ac_rms": 0.018345432809469632
+      },
+      {
+        "start_seconds": 12.5,
+        "ac_rms": 0.020681440622822567
+      },
+      {
+        "start_seconds": 13.0,
+        "ac_rms": 0.02266939267802046
+      },
+      {
+        "start_seconds": 13.5,
+        "ac_rms": 0.019439469410908437
+      },
+      {
+        "start_seconds": 14.0,
+        "ac_rms": 0.019486632155835695
+      },
+      {
+        "start_seconds": 14.5,
+        "ac_rms": 0.017012485607869807
+      },
+      {
+        "start_seconds": 15.0,
+        "ac_rms": 0.015583626860657911
+      },
+      {
+        "start_seconds": 15.5,
+        "ac_rms": 0.02068178958176393
+      },
+      {
+        "start_seconds": 16.0,
+        "ac_rms": 0.016106414212715827
+      },
+      {
+        "start_seconds": 16.5,
+        "ac_rms": 0.01843643161331903
+      },
+      {
+        "start_seconds": 17.0,
+        "ac_rms": 0.016582519182942183
+      },
+      {
+        "start_seconds": 17.5,
+        "ac_rms": 0.014509339658690753
+      },
+      {
+        "start_seconds": 18.0,
+        "ac_rms": 0.011028973078127913
+      },
+      {
+        "start_seconds": 18.5,
+        "ac_rms": 0.012457456037600982
+      },
+      {
+        "start_seconds": 19.0,
+        "ac_rms": 0.01872535049849414
+      },
+      {
+        "start_seconds": 19.5,
+        "ac_rms": 0.0201832971678672
+      },
+      {
+        "start_seconds": 20.0,
+        "ac_rms": 0.019803569260144593
+      },
+      {
+        "start_seconds": 20.5,
+        "ac_rms": 0.020181991075875472
+      },
+      {
+        "start_seconds": 21.0,
+        "ac_rms": 0.017867047276544697
+      },
+      {
+        "start_seconds": 21.5,
+        "ac_rms": 0.016628726949674228
+      },
+      {
+        "start_seconds": 22.0,
+        "ac_rms": 0.020111484090457075
+      },
+      {
+        "start_seconds": 22.5,
+        "ac_rms": 0.021398043085481912
+      },
+      {
+        "start_seconds": 23.0,
+        "ac_rms": 0.019222306336099903
+      },
+      {
+        "start_seconds": 23.5,
+        "ac_rms": 0.017309615145671427
+      },
+      {
+        "start_seconds": 24.0,
+        "ac_rms": 0.01863639822866074
+      },
+      {
+        "start_seconds": 24.5,
+        "ac_rms": 0.015251199015090049
+      },
+      {
+        "start_seconds": 25.0,
+        "ac_rms": 0.020136426820204778
+      },
+      {
+        "start_seconds": 25.5,
+        "ac_rms": 0.01954424336496356
+      },
+      {
+        "start_seconds": 26.0,
+        "ac_rms": 0.01794667542759425
+      },
+      {
+        "start_seconds": 26.5,
+        "ac_rms": 0.017939561569780934
+      },
+      {
+        "start_seconds": 27.0,
+        "ac_rms": 0.02031636264248058
+      },
+      {
+        "start_seconds": 27.5,
+        "ac_rms": 0.017197433940983442
+      },
+      {
+        "start_seconds": 28.0,
+        "ac_rms": 0.01379138295893254
+      },
+      {
+        "start_seconds": 28.5,
+        "ac_rms": 0.016007469469170192
+      },
+      {
+        "start_seconds": 29.0,
+        "ac_rms": 0.014117179267912332
+      },
+      {
+        "start_seconds": 29.5,
+        "ac_rms": 0.013852533157270147
+      },
+      {
+        "start_seconds": 30.0,
+        "ac_rms": 0.02249195137681682
+      },
+      {
+        "start_seconds": 30.5,
+        "ac_rms": 0.017172807891904354
+      },
+      {
+        "start_seconds": 31.0,
+        "ac_rms": 0.016353621896424
+      },
+      {
+        "start_seconds": 31.5,
+        "ac_rms": 0.012929240143151688
+      },
+      {
+        "start_seconds": 32.0,
+        "ac_rms": 0.012725323483118443
+      },
+      {
+        "start_seconds": 32.5,
+        "ac_rms": 0.010288708985498869
+      },
+      {
+        "start_seconds": 33.0,
+        "ac_rms": 0.016780474079451838
+      },
+      {
+        "start_seconds": 33.5,
+        "ac_rms": 0.01577401453013215
+      },
+      {
+        "start_seconds": 34.0,
+        "ac_rms": 0.0159395857144646
+      },
+      {
+        "start_seconds": 34.5,
+        "ac_rms": 0.014189544117033373
+      },
+      {
+        "start_seconds": 35.0,
+        "ac_rms": 0.01169915682721383
+      },
+      {
+        "start_seconds": 35.5,
+        "ac_rms": 0.020042134748856997
+      },
+      {
+        "start_seconds": 36.0,
+        "ac_rms": 0.020152880398331213
+      },
+      {
+        "start_seconds": 36.5,
+        "ac_rms": 0.022436920233450123
+      },
+      {
+        "start_seconds": 37.0,
+        "ac_rms": 0.019676957115317632
+      },
+      {
+        "start_seconds": 37.5,
+        "ac_rms": 0.018816783338810067
+      },
+      {
+        "start_seconds": 38.0,
+        "ac_rms": 0.016123409336077532
+      },
+      {
+        "start_seconds": 38.5,
+        "ac_rms": 0.016967463121942285
+      },
+      {
+        "start_seconds": 39.0,
+        "ac_rms": 0.01967865629062849
+      },
+      {
+        "start_seconds": 39.5,
+        "ac_rms": 0.01790485984004802
+      },
+      {
+        "start_seconds": 40.0,
+        "ac_rms": 0.017939906247979833
+      },
+      {
+        "start_seconds": 40.5,
+        "ac_rms": 0.015210909867939038
+      },
+      {
+        "start_seconds": 41.0,
+        "ac_rms": 0.01481172249273885
+      },
+      {
+        "start_seconds": 41.5,
+        "ac_rms": 0.010180527137725746
+      },
+      {
+        "start_seconds": 42.0,
+        "ac_rms": 0.01253155230207766
+      },
+      {
+        "start_seconds": 42.5,
+        "ac_rms": 0.019344940066612824
+      },
+      {
+        "start_seconds": 43.0,
+        "ac_rms": 0.019743054289198602
+      },
+      {
+        "start_seconds": 43.5,
+        "ac_rms": 0.019455509051556304
+      },
+      {
+        "start_seconds": 44.0,
+        "ac_rms": 0.01987478225334629
+      },
+      {
+        "start_seconds": 44.5,
+        "ac_rms": 0.01756673185512773
+      },
+      {
+        "start_seconds": 45.0,
+        "ac_rms": 0.017917586920024254
+      },
+      {
+        "start_seconds": 45.5,
+        "ac_rms": 0.020166994198678716
+      },
+      {
+        "start_seconds": 46.0,
+        "ac_rms": 0.021399907954893264
+      }
+    ],
+    "all_half_second_windows_have_signal": true,
+    "scope": "Fuse sound generator capture, not physical sound-card loopback; sparse trace is not an all-bit check",
+    "date": "2026-10-05",
+    "requested_machine": "128",
+    "elapsed_seconds": 70.625,
+    "source_trd_sha256": "426fb0884fe8d39cd59c53d79e58d85e2754afe9afd9f94e82c43f99c3113703",
+    "fuse_sha256": "e7aba457ea405f8e2fcab9d4bc703e9f1013453726e178d8c7333ce9685a1266",
+    "recorder_sha256_lf": "0a2501668a4f6a64ae14224eb0605991ecf7940a9c02cfbf0144cf72ee8f4a8f"
+  },
+  "trd_sha256": "426fb0884fe8d39cd59c53d79e58d85e2754afe9afd9f94e82c43f99c3113703",
+  "source_pcm_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+  "ordinary_tstates": 427.375,
+  "ordinary_tstate_delta": 0,
+  "physical_hardware_tested": false,
+  "previous_quality_study_resumed": false
+}

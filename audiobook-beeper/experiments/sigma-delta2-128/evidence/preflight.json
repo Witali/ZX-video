@@ -1,0 +1,682 @@
+[
+  {
+    "name": "q32-half",
+    "model": {
+      "family": "sigma_delta2",
+      "dac_scale": 32,
+      "gain_numerator": 1,
+      "gain_denominator": 2,
+      "output_gain": 0.5,
+      "pcm_bins": 128,
+      "level_bounds": [
+        4,
+        123
+      ],
+      "slots": 16,
+      "state_quantization": false,
+      "state_clipping": false,
+      "clock_scope": "exact recurrence in decision index; physical OUT holds remain nonuniform"
+    },
+    "certificate": {
+      "order": 2,
+      "ntf": "(1-z^-1)^2 in decision index",
+      "exact_state_count": 6,
+      "input_levels": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "states": {
+        "16": [
+          0,
+          0
+        ],
+        "0": [
+          -16,
+          -8
+        ],
+        "1": [
+          0,
+          -16
+        ],
+        "2": [
+          0,
+          16
+        ],
+        "3": [
+          16,
+          -8
+        ],
+        "4": [
+          16,
+          8
+        ]
+      },
+      "all_input_sequences_closed": true,
+      "state_rounding": false,
+      "state_clipping": false,
+      "maximum_internal_absolute_state": 33,
+      "dac_scale": 32,
+      "input_gain": 0.5,
+      "table_cases": 4096,
+      "note": "Input-level quantization and physical nonuniform timing are separate error sources."
+    },
+    "fits": true,
+    "first_patterns": 87,
+    "second_patterns": 67,
+    "reserve": 11520,
+    "ordinary_tstates": 427.375
+  },
+  {
+    "name": "q64-half",
+    "model": {
+      "family": "sigma_delta2",
+      "dac_scale": 64,
+      "gain_numerator": 1,
+      "gain_denominator": 2,
+      "output_gain": 0.5,
+      "pcm_bins": 128,
+      "level_bounds": [
+        4,
+        123
+      ],
+      "slots": 16,
+      "state_quantization": false,
+      "state_clipping": false,
+      "clock_scope": "exact recurrence in decision index; physical OUT holds remain nonuniform"
+    },
+    "certificate": {
+      "order": 2,
+      "ntf": "(1-z^-1)^2 in decision index",
+      "exact_state_count": 21,
+      "input_levels": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "states": {
+        "16": [
+          0,
+          0
+        ],
+        "0": [
+          -48,
+          -24
+        ],
+        "1": [
+          -48,
+          8
+        ],
+        "2": [
+          -32,
+          -16
+        ],
+        "3": [
+          -32,
+          16
+        ],
+        "4": [
+          -16,
+          -72
+        ],
+        "5": [
+          -16,
+          -40
+        ],
+        "6": [
+          -16,
+          -8
+        ],
+        "7": [
+          -16,
+          24
+        ],
+        "8": [
+          -16,
+          56
+        ],
+        "9": [
+          0,
+          -32
+        ],
+        "10": [
+          0,
+          32
+        ],
+        "11": [
+          16,
+          -88
+        ],
+        "12": [
+          16,
+          -56
+        ],
+        "13": [
+          16,
+          -24
+        ],
+        "14": [
+          16,
+          8
+        ],
+        "15": [
+          16,
+          40
+        ],
+        "17": [
+          16,
+          72
+        ],
+        "18": [
+          32,
+          -16
+        ],
+        "19": [
+          32,
+          16
+        ],
+        "20": [
+          48,
+          24
+        ]
+      },
+      "all_input_sequences_closed": true,
+      "state_rounding": false,
+      "state_clipping": false,
+      "maximum_internal_absolute_state": 139,
+      "dac_scale": 64,
+      "input_gain": 0.5,
+      "table_cases": 4096,
+      "note": "Input-level quantization and physical nonuniform timing are separate error sources."
+    },
+    "fits": false,
+    "reason": "code/tables exceed fixed bank 2"
+  },
+  {
+    "name": "q64-three-eighths",
+    "model": {
+      "family": "sigma_delta2",
+      "dac_scale": 64,
+      "gain_numerator": 3,
+      "gain_denominator": 8,
+      "output_gain": 0.375,
+      "pcm_bins": 128,
+      "level_bounds": [
+        4,
+        123
+      ],
+      "slots": 16,
+      "state_quantization": false,
+      "state_clipping": false,
+      "clock_scope": "exact recurrence in decision index; physical OUT holds remain nonuniform"
+    },
+    "certificate": {
+      "order": 2,
+      "ntf": "(1-z^-1)^2 in decision index",
+      "exact_state_count": 14,
+      "input_levels": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44
+      ],
+      "states": {
+        "16": [
+          0,
+          0
+        ],
+        "0": [
+          -48,
+          -24
+        ],
+        "1": [
+          -32,
+          -16
+        ],
+        "2": [
+          -32,
+          16
+        ],
+        "3": [
+          -16,
+          -40
+        ],
+        "4": [
+          -16,
+          -8
+        ],
+        "5": [
+          -16,
+          24
+        ],
+        "6": [
+          0,
+          -32
+        ],
+        "7": [
+          16,
+          -24
+        ],
+        "8": [
+          16,
+          8
+        ],
+        "9": [
+          16,
+          40
+        ],
+        "10": [
+          32,
+          -16
+        ],
+        "11": [
+          32,
+          16
+        ],
+        "12": [
+          48,
+          24
+        ]
+      },
+      "all_input_sequences_closed": true,
+      "state_rounding": false,
+      "state_clipping": false,
+      "maximum_internal_absolute_state": 72,
+      "dac_scale": 64,
+      "input_gain": 0.375,
+      "table_cases": 4096,
+      "note": "Input-level quantization and physical nonuniform timing are separate error sources."
+    },
+    "fits": true,
+    "first_patterns": 164,
+    "second_patterns": 122,
+    "reserve": 16128,
+    "ordinary_tstates": 427.375
+  },
+  {
+    "name": "q64-quarter",
+    "model": {
+      "family": "sigma_delta2",
+      "dac_scale": 64,
+      "gain_numerator": 1,
+      "gain_denominator": 4,
+      "output_gain": 0.25,
+      "pcm_bins": 128,
+      "level_bounds": [
+        4,
+        123
+      ],
+      "slots": 16,
+      "state_quantization": false,
+      "state_clipping": false,
+      "clock_scope": "exact recurrence in decision index; physical OUT holds remain nonuniform"
+    },
+    "certificate": {
+      "order": 2,
+      "ntf": "(1-z^-1)^2 in decision index",
+      "exact_state_count": 14,
+      "input_levels": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "states": {
+        "16": [
+          0,
+          0
+        ],
+        "0": [
+          -48,
+          -24
+        ],
+        "1": [
+          -32,
+          -16
+        ],
+        "2": [
+          -32,
+          16
+        ],
+        "3": [
+          -16,
+          -40
+        ],
+        "4": [
+          -16,
+          -8
+        ],
+        "5": [
+          -16,
+          24
+        ],
+        "6": [
+          0,
+          -32
+        ],
+        "7": [
+          16,
+          -24
+        ],
+        "8": [
+          16,
+          8
+        ],
+        "9": [
+          16,
+          40
+        ],
+        "10": [
+          32,
+          -16
+        ],
+        "11": [
+          32,
+          16
+        ],
+        "12": [
+          48,
+          24
+        ]
+      },
+      "all_input_sequences_closed": true,
+      "state_rounding": false,
+      "state_clipping": false,
+      "maximum_internal_absolute_state": 72,
+      "dac_scale": 64,
+      "input_gain": 0.25,
+      "table_cases": 4096,
+      "note": "Input-level quantization and physical nonuniform timing are separate error sources."
+    },
+    "fits": true,
+    "first_patterns": 125,
+    "second_patterns": 90,
+    "reserve": 13824,
+    "ordinary_tstates": 427.375
+  },
+  {
+    "name": "q128-three-eighths",
+    "model": {
+      "family": "sigma_delta2",
+      "dac_scale": 128,
+      "gain_numerator": 3,
+      "gain_denominator": 8,
+      "output_gain": 0.375,
+      "pcm_bins": 128,
+      "level_bounds": [
+        4,
+        123
+      ],
+      "slots": 16,
+      "state_quantization": false,
+      "state_clipping": false,
+      "clock_scope": "exact recurrence in decision index; physical OUT holds remain nonuniform"
+    },
+    "certificate": {
+      "order": 2,
+      "ntf": "(1-z^-1)^2 in decision index",
+      "exact_state_count": 30,
+      "input_levels": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88
+      ],
+      "states": {
+        "16": [
+          0,
+          0
+        ],
+        "0": [
+          -96,
+          -48
+        ],
+        "1": [
+          -80,
+          -40
+        ],
+        "2": [
+          -64,
+          -32
+        ],
+        "3": [
+          -64,
+          32
+        ],
+        "4": [
+          -48,
+          -88
+        ],
+        "5": [
+          -48,
+          -24
+        ],
+        "6": [
+          -48,
+          40
+        ],
+        "7": [
+          -32,
+          -80
+        ],
+        "8": [
+          -32,
+          -16
+        ],
+        "9": [
+          -32,
+          48
+        ],
+        "10": [
+          -16,
+          -136
+        ],
+        "11": [
+          -16,
+          -72
+        ],
+        "12": [
+          -16,
+          -8
+        ],
+        "13": [
+          -16,
+          56
+        ],
+        "14": [
+          0,
+          -64
+        ],
+        "15": [
+          16,
+          -56
+        ],
+        "17": [
+          16,
+          8
+        ],
+        "18": [
+          16,
+          72
+        ],
+        "19": [
+          16,
+          136
+        ],
+        "20": [
+          32,
+          -48
+        ],
+        "21": [
+          32,
+          16
+        ],
+        "22": [
+          32,
+          80
+        ],
+        "23": [
+          48,
+          -40
+        ],
+        "24": [
+          48,
+          24
+        ],
+        "25": [
+          48,
+          88
+        ],
+        "26": [
+          64,
+          -32
+        ],
+        "27": [
+          64,
+          32
+        ],
+        "28": [
+          80,
+          40
+        ],
+        "29": [
+          96,
+          48
+        ]
+      },
+      "all_input_sequences_closed": true,
+      "state_rounding": false,
+      "state_clipping": false,
+      "maximum_internal_absolute_state": 186,
+      "dac_scale": 128,
+      "input_gain": 0.375,
+      "table_cases": 4096,
+      "note": "Input-level quantization and physical nonuniform timing are separate error sources."
+    },
+    "fits": false,
+    "reason": ""
+  }
+]

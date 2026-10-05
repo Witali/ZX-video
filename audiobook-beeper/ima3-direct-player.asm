@@ -7,6 +7,9 @@
 ; Alternate HL: exact IMA row, BC: delta, DE: compressed input cursor.
 ; AF' preserves one code across bank handoff; SP is a lookup cursor.
 ; No calls/IRQs or writes to the compressed audio occur during playback.
+; Optional SD2 tables encode both exact error coordinates in the feedback ID.
+; POP DE advances that state once per 16-pulse packet; the same instruction
+; path serves the legacy damped table. No two-integrator arithmetic runs here.
         INCLUDE "config.inc"
         ORG 0x8000
 LOAD_AUDIO: MACRO
@@ -219,6 +222,15 @@ page_\0: OUT (C),A
         LD A,0
         ENDIF
         DS idle_pad_nops         ; pyz80 zero-fills the gap: NOP opcodes
+        ENDIF
+        ENDIF
+        IF reset_feedback_tail
+        IF \0 == final_section_index
+        ; At the final handoff, packet n-2 is already prefetched. Reset the
+        ; table-state cursor used by its FIRST routine to generate n-1 (the
+        ; last silent sample). That sample settles the new loop to its seed.
+        ; LD E,n costs 7 T once per loop, outside all audible source samples.
+        LD E,initial_feedback_offset
         ENDIF
         ENDIF
         SCF
