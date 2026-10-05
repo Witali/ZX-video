@@ -1,0 +1,265 @@
+{
+  "date": "2026-10-05",
+  "authorization": "User requested removal of clearly unsuccessful disk images to save working-copy space.",
+  "scope": "Only listed TRDs; reports, source snapshots, traces and successful fixtures retained. No Git/LFS history rewrite or object pruning.",
+  "files": [
+    {
+      "path": "ZX-audiobook-SD2-128-test.trd",
+      "bytes": 655360,
+      "sha256": "f3c194a9816127a69ed29408ff21fd58aab76a4948afa4a284f3f2f712a2718e",
+      "commit": "9e99606f35a8a11ade17022b84a202374ab5dba2",
+      "reason": "User explicitly rejected the quiet root SD2 audition; removed in 9a81342a.",
+      "evidence": [
+        "audiobook-beeper/experiments/sigma-delta2-128/README.md"
+      ]
+    },
+    {
+      "path": "ZX-video-fast-preview_part01.trd",
+      "bytes": 655360,
+      "sha256": "f3d414762f5f1d354e780a35379210f6d03b87c00213da2164444b00ddc81f90",
+      "commit": "28816675b76159750aac1599f27031af0a3e37ac",
+      "reason": "Superseded three-disk timing failure: 1239 late frames; neither nominal nor fallback video gate passed.",
+      "evidence": [
+        "toolkit/FAST_ZX0_PLAYER.md",
+        "toolkit/fast_zx0_preview.json"
+      ]
+    },
+    {
+      "path": "ZX-video-fast-preview_part02.trd",
+      "bytes": 655360,
+      "sha256": "37bb7f9dd96bc1c406911c504d7332fe4a38c9acd543435d58546e4a28108087",
+      "commit": "28816675b76159750aac1599f27031af0a3e37ac",
+      "reason": "Superseded three-disk timing failure: 1239 late frames; neither nominal nor fallback video gate passed.",
+      "evidence": [
+        "toolkit/FAST_ZX0_PLAYER.md",
+        "toolkit/fast_zx0_preview.json"
+      ]
+    },
+    {
+      "path": "ZX-video-fast-preview_part03.trd",
+      "bytes": 655360,
+      "sha256": "22e4f724831210688cd284581b2c98e64759c52536642abcdf3c05e1f9131c2b",
+      "commit": "28816675b76159750aac1599f27031af0a3e37ac",
+      "reason": "Superseded three-disk timing failure: 1239 late frames; neither nominal nor fallback video gate passed.",
+      "evidence": [
+        "toolkit/FAST_ZX0_PLAYER.md",
+        "toolkit/fast_zx0_preview.json"
+      ]
+    },
+    {
+      "path": "ZX-video-optimized-preview_part01.trd",
+      "bytes": 655360,
+      "sha256": "a13a3c7ced4478d3a939dfe80120c2edff2875c45cf21e08400b0ae1b96d4ad7",
+      "commit": "63cc07dd51ed4d60ff9b4c9951b7033b2da47b48",
+      "reason": "Superseded four-disk preview: approximately 5..6 fps instead of 8 1/3 fps and AY rhythm interruptions on ordinary TR-DOS.",
+      "evidence": [
+        "ZX-video-optimized-preview.md",
+        "toolkit/fap3_preview/summary.json"
+      ]
+    },
+    {
+      "path": "ZX-video-optimized-preview_part02.trd",
+      "bytes": 655360,
+      "sha256": "6856c268ddb2b889b44bf7e960f58a234e04c1f7080151a62b8248cb91e3a0f1",
+      "commit": "63cc07dd51ed4d60ff9b4c9951b7033b2da47b48",
+      "reason": "Superseded four-disk preview: approximately 5..6 fps instead of 8 1/3 fps and AY rhythm interruptions on ordinary TR-DOS.",
+      "evidence": [
+        "ZX-video-optimized-preview.md",
+        "toolkit/fap3_preview/summary.json"
+      ]
+    },
+    {
+      "path": "ZX-video-optimized-preview_part03.trd",
+      "bytes": 655360,
+      "sha256": "4ad2da8a94154fc28992bfd7017fe48629ed149bb47b9408c20ed5374f11fcc1",
+      "commit": "63cc07dd51ed4d60ff9b4c9951b7033b2da47b48",
+      "reason": "Superseded four-disk preview: approximately 5..6 fps instead of 8 1/3 fps and AY rhythm interruptions on ordinary TR-DOS.",
+      "evidence": [
+        "ZX-video-optimized-preview.md",
+        "toolkit/fap3_preview/summary.json"
+      ]
+    },
+    {
+      "path": "ZX-video-optimized-preview_part04.trd",
+      "bytes": 655360,
+      "sha256": "3acd6c733cba08a63ec90990898cdf258a80096b5883200995fcadea729b90d8",
+      "commit": "63cc07dd51ed4d60ff9b4c9951b7033b2da47b48",
+      "reason": "Superseded four-disk preview: approximately 5..6 fps instead of 8 1/3 fps and AY rhythm interruptions on ordinary TR-DOS.",
+      "evidence": [
+        "ZX-video-optimized-preview.md",
+        "toolkit/fap3_preview/summary.json"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-first/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "7e19f2be137ed95228dcfd562c847197add57a0b1f41e56e6727366a190e36ec",
+      "commit": "84e75a3afeddc3e888db4cbb2e54043b485ed7a8",
+      "reason": "Rejected: maximum PDM hold 94 T, below required 40 kHz instantaneous rate.",
+      "evidence": [
+        "audiobook-beeper/experiments/ima-first/failure.json"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-tag-tail/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "c827d73b5329acc3ab18234500854952a04a3769a1bfc1cec0e01938aab35e15",
+      "commit": "84e75a3afeddc3e888db4cbb2e54043b485ed7a8",
+      "reason": "Rejected: bank-change PDM hold 90 T still fails the >=40 kHz gate.",
+      "evidence": [
+        "audiobook-beeper/experiments/ima-tag-tail/failure.json"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-unbalanced/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "64d49874806d7213912d070817025c8cd9f072cf25f08a1764b32b6349534fed",
+      "commit": "84e75a3afeddc3e888db4cbb2e54043b485ed7a8",
+      "reason": "Superseded for poor speech quality: reconstructed PDM SNR -1.075 dB, despite correct content/timing checks.",
+      "evidence": [
+        "CHANGELOG.md",
+        "audiobook-beeper/experiments/ima-unbalanced/report.json"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/pcm-live-stop-extra/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "12163ecf5f206ac60e685cb96269cf7d5d46e458968f86a6517dca6d6cae8793",
+      "commit": "453b93e80710a17062ae97ca50989f445c023fd5",
+      "reason": "Superseded paging-bug image: automatic Fuse startup plays the first bank then silence; explicit 128 mode worked. Fixed variant remains.",
+      "evidence": [
+        "audiobook-beeper/paging-fix-evidence/diagnosis/report.json"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/sigma-delta2-128/evidence/guarded/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "f3c194a9816127a69ed29408ff21fd58aab76a4948afa4a284f3f2f712a2718e",
+      "commit": "9e99606f35a8a11ade17022b84a202374ab5dba2",
+      "reason": "Rejected second-order modulator: measured 2.46..11.18 dB versus accepted 20.44 dB; increased noise, quiet output; unreset variant also regresses on repeat.",
+      "evidence": [
+        "audiobook-beeper/experiments/sigma-delta2-128/README.md"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/sigma-delta2-128/evidence/pilot/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "426fb0884fe8d39cd59c53d79e58d85e2754afe9afd9f94e82c43f99c3113703",
+      "commit": "9e99606f35a8a11ade17022b84a202374ab5dba2",
+      "reason": "Rejected second-order modulator: measured 2.46..11.18 dB versus accepted 20.44 dB; increased noise, quiet output; unreset variant also regresses on repeat.",
+      "evidence": [
+        "audiobook-beeper/experiments/sigma-delta2-128/README.md"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/sigma-delta2-128/evidence/unreset-search/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "b1cbd0fecbce79bf12201374e1df2146ac81c71efa20b7e7912e068f4a5562b7",
+      "commit": "9e99606f35a8a11ade17022b84a202374ab5dba2",
+      "reason": "Rejected second-order modulator: measured 2.46..11.18 dB versus accepted 20.44 dB; increased noise, quiet output; unreset variant also regresses on repeat.",
+      "evidence": [
+        "audiobook-beeper/experiments/sigma-delta2-128/README.md"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/pcm-live-preview/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "12163ecf5f206ac60e685cb96269cf7d5d46e458968f86a6517dca6d6cae8793",
+      "commit": "453b93e80710a17062ae97ca50989f445c023fd5",
+      "reason": "Superseded paging-bug image: automatic Fuse startup plays the first bank then silence; explicit 128 mode worked. Fixed variant remains.",
+      "evidence": [
+        "audiobook-beeper/paging-fix-evidence/diagnosis/report.json"
+      ]
+    },
+    {
+      "path": "toolkit/refined_av_attempt_evidence/refined-av-build-ZX-video-refined_part01.trd.trd",
+      "bytes": 655360,
+      "sha256": "164046e3dcd9fda2194b642324d61adffc916225aa5de94bcd92217d462cbb34",
+      "commit": "3727f8bb842d87300720f1a72efac660ff9e2189",
+      "reason": "Retired as a failed eight-disk set: parts 4/6/7 miss 30/153/22 deadlines and fail the one-field fallback. Other parts passed individually; current four-disk refined release remains.",
+      "evidence": [
+        "toolkit/refined_av_attempt_report.json",
+        "ZX-video-refined.md"
+      ]
+    },
+    {
+      "path": "toolkit/refined_av_attempt_evidence/refined-av-build-ZX-video-refined_part02.trd.trd",
+      "bytes": 655360,
+      "sha256": "47363d216eece47f8a49a213c4f7ee3e17604f00d4555aed7fa0886df0d0ec45",
+      "commit": "3727f8bb842d87300720f1a72efac660ff9e2189",
+      "reason": "Retired as a failed eight-disk set: parts 4/6/7 miss 30/153/22 deadlines and fail the one-field fallback. Other parts passed individually; current four-disk refined release remains.",
+      "evidence": [
+        "toolkit/refined_av_attempt_report.json",
+        "ZX-video-refined.md"
+      ]
+    },
+    {
+      "path": "toolkit/refined_av_attempt_evidence/refined-av-build-ZX-video-refined_part03.trd.trd",
+      "bytes": 655360,
+      "sha256": "4520f0a1c8f012e038c14bd2b08b136eea2ac2fa31baad08256fa49cb55fafaa",
+      "commit": "3727f8bb842d87300720f1a72efac660ff9e2189",
+      "reason": "Retired as a failed eight-disk set: parts 4/6/7 miss 30/153/22 deadlines and fail the one-field fallback. Other parts passed individually; current four-disk refined release remains.",
+      "evidence": [
+        "toolkit/refined_av_attempt_report.json",
+        "ZX-video-refined.md"
+      ]
+    },
+    {
+      "path": "toolkit/refined_av_attempt_evidence/refined-av-build-ZX-video-refined_part04.trd.trd",
+      "bytes": 655360,
+      "sha256": "e38c9e972ed114da2203d3ea9f9a581711be5ff58738d74e61ab8742bc985e1d",
+      "commit": "3727f8bb842d87300720f1a72efac660ff9e2189",
+      "reason": "Retired as a failed eight-disk set: parts 4/6/7 miss 30/153/22 deadlines and fail the one-field fallback. Other parts passed individually; current four-disk refined release remains.",
+      "evidence": [
+        "toolkit/refined_av_attempt_report.json",
+        "ZX-video-refined.md"
+      ]
+    },
+    {
+      "path": "toolkit/refined_av_attempt_evidence/refined-av-build-ZX-video-refined_part05.trd.trd",
+      "bytes": 655360,
+      "sha256": "d9f043c3ee641112891959418069c945ccdc8bf3cd9bc002af301250db523532",
+      "commit": "3727f8bb842d87300720f1a72efac660ff9e2189",
+      "reason": "Retired as a failed eight-disk set: parts 4/6/7 miss 30/153/22 deadlines and fail the one-field fallback. Other parts passed individually; current four-disk refined release remains.",
+      "evidence": [
+        "toolkit/refined_av_attempt_report.json",
+        "ZX-video-refined.md"
+      ]
+    },
+    {
+      "path": "toolkit/refined_av_attempt_evidence/refined-av-build-ZX-video-refined_part06.trd.trd",
+      "bytes": 655360,
+      "sha256": "c4092450aaa0388ea1205147cea7a2c441429e9e89ceaa5d92d0559bd502680f",
+      "commit": "3727f8bb842d87300720f1a72efac660ff9e2189",
+      "reason": "Retired as a failed eight-disk set: parts 4/6/7 miss 30/153/22 deadlines and fail the one-field fallback. Other parts passed individually; current four-disk refined release remains.",
+      "evidence": [
+        "toolkit/refined_av_attempt_report.json",
+        "ZX-video-refined.md"
+      ]
+    },
+    {
+      "path": "toolkit/refined_av_attempt_evidence/refined-av-build-ZX-video-refined_part07.trd.trd",
+      "bytes": 655360,
+      "sha256": "2899bb84d1a4aaa853426f0ab8dabb5503e2c78c1c16ff6d4449cf7a0346341f",
+      "commit": "3727f8bb842d87300720f1a72efac660ff9e2189",
+      "reason": "Retired as a failed eight-disk set: parts 4/6/7 miss 30/153/22 deadlines and fail the one-field fallback. Other parts passed individually; current four-disk refined release remains.",
+      "evidence": [
+        "toolkit/refined_av_attempt_report.json",
+        "ZX-video-refined.md"
+      ]
+    },
+    {
+      "path": "toolkit/refined_av_attempt_evidence/refined-av-build-ZX-video-refined_part08.trd.trd",
+      "bytes": 655360,
+      "sha256": "131a9447350744a98c1dec6df3fc742d2b97efd9002c6a9b836a004de5911d22",
+      "commit": "3727f8bb842d87300720f1a72efac660ff9e2189",
+      "reason": "Retired as a failed eight-disk set: parts 4/6/7 miss 30/153/22 deadlines and fail the one-field fallback. Other parts passed individually; current four-disk refined release remains.",
+      "evidence": [
+        "toolkit/refined_av_attempt_report.json",
+        "ZX-video-refined.md"
+      ]
+    }
+  ],
+  "count": 24,
+  "working_copy_bytes_removed": 15728640
+}

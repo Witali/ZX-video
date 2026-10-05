@@ -1,5 +1,7 @@
 # Adapted Fast ZX0 in independently bootable TRDs
 
+Maintenance, 2026-10-05: the three root preview images were retired after the user requested removal of clearly unsuccessful disks. Their 1239 late frames fail both video timing gates. Reports and reproduction sources remain; see the [retirement record](../docs/maintenance/2026-10-05-retired-trds.md).
+
 Date: 2026-09-27. Repository input: `3aa3e4b`. Comparison: retained Turbo
 periodic-drive player at `a84451d`. Scope: all 4221 frames of the authorized
 edit, unchanged resolution, 25/3-fps nominal schedule and 50-Hz AY data.

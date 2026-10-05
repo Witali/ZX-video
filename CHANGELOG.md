@@ -1,7 +1,21 @@
 # Changelog and optimization experiments
 
+## 2026-10-05 — Remove explicitly unsuccessful disk payloads
 
-
+- **Scope/baseline:** follow-up authorization to delete clearly unsuccessful
+  images; baseline `9a81342a`, after the separate quiet SD2 root removal.
+- **Decision:** retire 23 more TRDs (15,073,280 logical working-copy bytes):
+  three rejected SD2 candidates, two failing IMA timing attempts, the -1.075-dB
+  unbalanced IMA, both copies of the faulty PCM paging image, seven obsolete
+  FAP3/Fast previews and the failed eight-part refined set. The latter failed
+  fallback timing on parts 4/6/7; individual passing parts are not relabeled
+  failures. Preserve successful fixtures and current/accepted releases.
+- **Verification:** authenticate every deleted payload against its recorded
+  SHA-256 and exact Git blob/LFS OID before removal. Keep reports, sources,
+  traces, WAVs and original manifest history; redirect existing Markdown
+  links to immutable artifact commits. Record per-file reasons and recovery
+  in [the retirement ledger](docs/maintenance/2026-10-05-retired-trds.md).
+  No player changes, new playback claims, Git history rewrite or LFS pruning.
 
 ## 2026-10-05 — Retire the quiet SD2 root audition
 

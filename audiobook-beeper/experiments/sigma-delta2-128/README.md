@@ -1,5 +1,7 @@
 # Exact second-order packet experiment — rejected for quality
 
+Maintenance, 2026-10-05: all three archived SD2 TRDs have also been retired for the documented quality failure. WAVs, reports, producer snapshots and restoration identities remain. Artifact manifests describe the original experiment; restore the listed images from history before replaying an original whole-archive check. See the [retirement record](../../../docs/maintenance/2026-10-05-retired-trds.md).
+
 2026-10-05. The user requested second-order sigma-delta at 128 kHz, with
 64 kHz as a fallback. The existing IMA3 kernel executes the new tables at
 **127652.961 Hz average**, but the result is noisier. Keep the accepted

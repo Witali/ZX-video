@@ -1,5 +1,7 @@
 # Текущая оптимизация — экспериментальные TRD
 
+Maintenance, 2026-10-05: this obsolete set was removed because playback failed the video/AY timing requirements. Disk links below now point to immutable Git history. Use the current [refined set](ZX-video-refined.md).
+
 **Это комплект для просмотра, а не новый проверенный выпуск.** Все части
 проходят до конца, но скорость на обычном TR-DOS в Fuse составляет около
 **5–6 кадров/с**, со сбоями ритма AY. Требования 8⅓ кадра/с, непрерывного
@@ -9,10 +11,10 @@ AY 50 Гц и максимум трёх дискет пока не выполн�
 
 Spectrum 128 + Beta Disk/TR-DOS. Открыть первый образ и запустить `boot`:
 
-1. [Диск 1](ZX-video-optimized-preview_part01.trd) — кадры 0–1268.
-2. [Диск 2](ZX-video-optimized-preview_part02.trd) — кадры 1269–2333.
-3. [Диск 3](ZX-video-optimized-preview_part03.trd) — кадры 2334–3194.
-4. [Диск 4](ZX-video-optimized-preview_part04.trd) — кадры 3195–4220.
+1. [Диск 1](https://github.com/Witali/ZX-video/blob/63cc07dd51ed4d60ff9b4c9951b7033b2da47b48/ZX-video-optimized-preview_part01.trd) — кадры 0–1268.
+2. [Диск 2](https://github.com/Witali/ZX-video/blob/63cc07dd51ed4d60ff9b4c9951b7033b2da47b48/ZX-video-optimized-preview_part02.trd) — кадры 1269–2333.
+3. [Диск 3](https://github.com/Witali/ZX-video/blob/63cc07dd51ed4d60ff9b4c9951b7033b2da47b48/ZX-video-optimized-preview_part03.trd) — кадры 2334–3194.
+4. [Диск 4](https://github.com/Witali/ZX-video/blob/63cc07dd51ed4d60ff9b4c9951b7033b2da47b48/ZX-video-optimized-preview_part04.trd) — кадры 3195–4220.
 
 Когда появится **INSERT NEXT DISK**, заменить образ в том же дисководе A,
 не перезапуская Spectrum. Проигрыватель проверяет номер части и идентификатор
