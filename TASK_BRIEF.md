@@ -12,6 +12,30 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## Two-bit G.726 implementation — feasibility experiment complete (2026-10-05)
+
+The user requests an implementation of G.726 at two bits/sample. Implement
+and cross-check the exact16-kbit/s,8-kHz codec, retain the same reference
+speech for quality comparisons, and measure a concrete Z80 implementation
+before claiming live PDM playback. Keep IMA/mu-law defaults and releases.
+Standard G.726 has a substantially larger adaptive predictor than IMA;
+do not label a simplified IMA subset or a PC-transcoded disk as native
+G.726 playback. The deliverable must include executable code, listening
+output, tests, timing evidence and a documented integration decision. If
+the measured decoder cannot fit the live budget, preserve that result
+without weakening the2% speed requirement or claiming a qualified TRD.
+
+The complete codec, PC converter/audition and separately compiled Z80
+decoder now pass exact FFmpeg, cross-optimization and native PCM/state tests.
+Three rounds reduce the matched-prefix cost127115.239 ->70442.908 T/sample;
+the full186880-sample run averages70415.970 against a443.3625-T live budget.
+Its CPU-only preparation time3710.095 s also fails the60-second limit.
+The23.36-s payload is46720 bytes/8:1; codec-only filtered SNR17.077649 dB.
+Retain this [tested research implementation and evidence](audiobook-beeper/experiments/g726-2bit/README.md),
+without adding a misleading native G.726 TRD or changing IMA/mu-law defaults.
+This requested bounded implementation is complete; further handwritten
+optimization is a separate milestone, not an automatic open experiment.
+
 ## All active audio codecs — bounded quality follow-up complete (2026-10-05)
 
 The later request to maximize all active audio codecs authorizes the bounded

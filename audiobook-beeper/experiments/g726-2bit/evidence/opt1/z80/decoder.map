@@ -1,0 +1,91 @@
+ASxxxx Linker V05.50.4-SDLD,  page 1.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+.  .ABS.                            00000000    00000000 =           0. bytes (ABS,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     00000000  .__.ABS.                           mul
+     00000000  l__CABS                         
+     00000000  l__DABS                         
+     00000000  l__GSFINAL                      
+     00000000  l__GSINIT                       
+     00000000  l__INITIALIZED                  
+     00000000  l__INITIALIZER                  
+     00000000  s__CABS                         
+     00000000  s__DABS                         
+     00000064  l__DATA                         
+     000000E3  l__HOME                         
+     00000200  s__CODE                         
+     0000126D  l__CODE                         
+     00008000  s__DATA                         
+     00008064  s__HOME                         
+     00008064  s__INITIALIZED                  
+     00008147  s__GSFINAL                      
+     00008147  s__GSINIT                       
+     00008147  s__INITIALIZER                  
+
+ASxxxx Linker V05.50.4-SDLD,  page 2.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               00000200    0000126D =        4717. bytes (REL,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     00000371  _g726_state_bytes                  decoder
+     00000375  _g726_reset                        decoder
+     0000041C  _g726_decode_one                   decoder
+     00001396  _entry                             decoder
+     00001448  ___memcpy                          memcpy
+     00001448  _memcpy                            memcpy
+     00001456  __mulint                           mul
+     00001458  __mul16                            mul
+
+ASxxxx Linker V05.50.4-SDLD,  page 3.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_DATA                               00008000    00000064 =         100. bytes (REL,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+ASxxxx Linker V05.50.4-SDLD,  page 4.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_HOME                               00008064    000000E3 =         227. bytes (REL,CON)
+
+         Value  Global                             Global Defined In Module
+         -----  --------------------------------   ------------------------
+     00008064  __mullong                          _mullong
+
+ASxxxx Linker V05.50.4-SDLD,  page 5.
+
+Files Linked                              [ module(s) ]
+
+decoder.rel                               [ decoder ]
+
+
+Libraries Linked                          [ object file ]
+
+C:\Work\ZX-video\.tmp\z80-c-compilers\sdcc\bin\..\lib\z80/z80.lib
+                                          [ memcpy.rel ]
+C:\Work\ZX-video\.tmp\z80-c-compilers\sdcc\bin\..\lib\z80/z80.lib
+                                          [ _mullong.rel ]
+C:\Work\ZX-video\.tmp\z80-c-compilers\sdcc\bin\..\lib\z80/z80.lib
+                                          [ mul.rel ]
+
+ASxxxx Linker V05.50.4-SDLD,  page 6.
+
+User Base Address Definitions
+
+_CODE = 0x0200
+_DATA = 0x8000
+
+

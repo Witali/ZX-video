@@ -1,5 +1,61 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Exact two-bit G.726 implemented; measured Z80 port misses timing
+
+The user requests G.726 at two bits/sample, then asks for original and
+codec-processed audio examples. Implement the16-kbit/s,8-kHz uniform-PCM
+codec, adapted from the retained LGPL FFmpeg source, and a separate PC
+audition converter. Compile the complete decoder to Z80 with installed
+SDCC4.6.0; do not substitute IMA or generate a misleading native G.726 TRD.
+[Algorithm, use and provenance](audiobook-beeper/g726/README.md),
+[listening files, results and authenticated evidence](audiobook-beeper/experiments/g726-2bit/README.md).
+
+Baseline/input: the identical186880-sample prepared PCM8 speech used in
+the IMA quality follow-up, widened without changing values to PCM16.
+Standard G.726 produces46720 bytes/23.360 s, exactly8:1 payload compression.
+Raw SNR15.767523 dB; fixed-clock float64 filtered codec SNR17.077649 dB,
+with100-ms edge exclusions and no gain/delay fit. These are codec-only
+values, not PDM or Fuse audio. PC encode+decode took0.025166 s excluding
+build, resampling, cross-checks and measurement. The requested two WAVs
+and the actual packed stream were supplied in chat and retained.
+
+Three bounded exact native rounds: constrain Float11 intermediates;
+add1280 bytes of log/product tables; add4580 inverse-table bytes and replace
+general sign multiplications with conditional arithmetic. Matched8192-sample
+speech costs127115.239 /113469.926 /106288.924 /70442.908 T/sample;
+successive deltas−13645.313 /−7181.002 /−35846.016. Final code+constants11123 B,
+state100 B and observed stack91 B. Existing IMA/mu-law hot paths change0 T.
+The full186880-sample native run takes13159336513 T, averaging70415.970;
+CPU-only preparation would take3710.095 s, against the60-s allowance.
+Only443.3625 T/sample are available at8 kHz including PDM. Thus this port
+fails live timing by158.823 times before disk/ULA/PDM overhead. This is
+not a universal lower bound on handwritten G.726 implementations.
+
+Verification: nine8192-sample host fixtures match FFmpeg in both packings;
+all four optimized codecs agree on output and complete100-byte state.
+An additional295936 arbitrary codes pass, including257-sample streaming
+chunks. Full native speech checks every PCM sample and92 state checkpoints;
+an extra8192-code native fixture also passes. Memory/stack/short-block bounds
+and IX/SP contracts pass. Independent Zilog instruction-table audits cover
+32 speech samples per round and64 extra-code samples; every audited
+instruction and total agrees with the CPU counter. The rest of the complete
+native run uses that counter. Public CLI tests cover padding, PCM8 input,
+44.1-kHz stereo silence resampling and invalid duration. No official ITU
+conformance vectors, Spectrum memory allocation, cold Fuse run, physical
+hardware or new TRD is claimed.
+
+Retain preliminary random probes: the inverse-table-only third round gave
+104198.709 T/sample on512 codes; sign simplification gave70083.649 on8192
+random codes. Do not mix those scopes with the matched final speech table.
+Initial compiler-log decoding/encoding failures were fixed with tolerant
+decoding and UTF8 writes. The first verifier incorrectly expected IY to be
+preserved by SDCC; correct its ABI contract after exact PCM/state checks.
+Strengthen input bounds for shorter subsequent blocks and represent
+undefined silent-signal SNR as JSON null. These harness fixes are included
+before completion. Decision: preserve the executable research and listening
+result; leave playback defaults/releases intact. Further handwritten
+optimization is a separate milestone, not an automatically opened study.
+
 ## 2026-10-05: Compact eight-bit mu-law reaches approximately128-kHz PDM
 
 The user requests128-kHz modulation for the eight-bit mode. Replace the

@@ -1,0 +1,58 @@
+{
+  "complete": true,
+  "pcm_samples_verified": 8192,
+  "state_checkpoints": 4,
+  "all_output_samples_exact": true,
+  "all_checkpoint_states_exact": true,
+  "memory_guards_passed": true,
+  "code_and_constants_bytes": 5024,
+  "state_bytes": 100,
+  "stack_bytes": 92,
+  "decode_core_tstates": {
+    "minimum": 117144,
+    "mean": 126725.58581542969,
+    "maximum": 134448,
+    "includes_return": true,
+    "excludes_call": true
+  },
+  "total_tstates": 1041328041,
+  "block_tstates": [
+    259556831,
+    260742487,
+    259276225,
+    261752498
+  ],
+  "total_seconds_at_spectrum128": 293.58821534297556,
+  "average_tstates_per_sample": 127115.23937988281,
+  "maximum_sustainable_pcm_hz": 27.90302734198627,
+  "live_8000_hz_budget_tstates": 443.3625,
+  "live_pdm_qualified": false,
+  "instruction_audit": {
+    "samples": 32,
+    "tstates": 3947276,
+    "instructions": 371624,
+    "instruction_tstate_histogram": {
+      "4": 69033,
+      "6": 8724,
+      "7": 33877,
+      "8": 66135,
+      "10": 19536,
+      "11": 44349,
+      "12": 21024,
+      "13": 26792,
+      "14": 2980,
+      "15": 3332,
+      "16": 1486,
+      "17": 2177,
+      "19": 58749,
+      "20": 34,
+      "21": 4353,
+      "23": 9043
+    },
+    "every_instruction_audited": true,
+    "iy_clobbered": true
+  },
+  "binary_sha256": "f195e4392ddbe393498df83597ae7904a26f622d460367c7bc5b925b5b48c233",
+  "scope": "Complete flat Z80 decoder benchmark. Excludes ULA, paging, ROM, disk and PDM; no TRD/player is built.",
+  "host_execution_seconds": 7.209538499941118
+}

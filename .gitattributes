@@ -612,3 +612,13 @@ toolkit/generic_guarded_cb46_evidence/*.gz -text
 /audiobook-beeper/experiments/mulaw128/**/*.mulaw filter=lfs diff=lfs merge=lfs -text
 /audiobook-beeper/experiments/mulaw128/*.py text eol=lf
 /audiobook-beeper/experiments/mulaw128/*.md text eol=lf
+/audiobook-beeper/g726/** text eol=lf
+/audiobook-beeper/g726/ffmpeg-reference.c -text
+/audiobook-beeper/g726/COPYING.LGPLv2.1 -text
+/audiobook-beeper/convert_g726_audio.py text eol=lf
+# Preserve the complete G.726 codec/cycle evidence byte for byte.
+/audiobook-beeper/experiments/g726-2bit/** -text -whitespace
+/audiobook-beeper/experiments/g726-2bit/**/*.wav filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/g726-2bit/**/*.g726 filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/g726-2bit/**/*.gz filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/g726-2bit/*.md text eol=lf

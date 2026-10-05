@@ -1,0 +1,88 @@
+{
+  "audition": {
+    "codec": "G.726-16 uniform PCM",
+    "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\audiobook-beeper\\experiments\\quality-max\\evidence\\ima3\\selected\\source-preview.wav",
+    "input_sha256": "6dfd92aac774283ffd96e7549cfa42eaeb833439570ec51f9ca1c69d36bedde0",
+    "pcm_reference_bits": 16,
+    "sample_rate_hz": 8000,
+    "bitrate": 16000,
+    "original_samples": 186880,
+    "padding_samples": 0,
+    "samples": 186880,
+    "duration_seconds": 23.36,
+    "payload_bytes": 46720,
+    "payload_compression_ratio": 8.0,
+    "header_bytes": 0,
+    "packing": "Four 2-bit codes per byte, MSB first; headerless FFmpeg g726 format",
+    "source_wav_sha256": "52f56552ebe8c7bab1fa7e524d270965ce43429064633d9d512945115e904d8e",
+    "payload_sha256": "f3197e710808f66c4737cf588ee72744f3c3f98b9fa1296957c2dc4baafe773e",
+    "decoded_wav_sha256": "08128d6ce8cf5c700d35cb4cfc734faf3d5f248ccc719c1748cd9ba4e3d5566a",
+    "host_library_sha256": "c94215413fdbfcd33111944eec1903361d0c5bc7cd2791cd1938893e5f286eae",
+    "core_source_sha256": "f0538f354d622a889eb6e2754a872722497b6c5eea0608f72dd030c5802795c7",
+    "ffmpeg_sha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+    "standard_encoder_matches_ffmpeg": true,
+    "every_decoded_sample_matches_ffmpeg": true,
+    "host_encode_and_decode_seconds": 0.025165800005197525,
+    "quality": {
+      "raw_pcm_snr_db": 15.767522917513316,
+      "filtered_codec_snr_db": 17.07764914256323,
+      "filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+      "integration_rate_hz": 768000,
+      "excluded_edge_seconds": 0.1,
+      "delay_fit": false,
+      "gain_fit": false,
+      "pdm_included": false,
+      "scope": "Codec-only PCM16; fixed 8000-Hz clock. Not end-to-end beeper SNR."
+    },
+    "native_pdm_qualified": false,
+    "scope": "PC codec audition. No TRD generated; Z80 timing is a separate measured gate."
+  },
+  "optimization_rounds": [
+    {
+      "opt": 0,
+      "average_tstates_per_sample": 127115.23937988281,
+      "maximum_sustainable_pcm_hz": 27.90302734198627,
+      "code_and_constants_bytes": 5024,
+      "state_bytes": 100,
+      "stack_bytes": 92,
+      "delta_from_baseline_tstates_per_sample": 0.0,
+      "delta_from_previous_tstates_per_sample": 0.0
+    },
+    {
+      "opt": 1,
+      "average_tstates_per_sample": 113469.92639160156,
+      "maximum_sustainable_pcm_hz": 31.258502695763823,
+      "code_and_constants_bytes": 4944,
+      "state_bytes": 100,
+      "stack_bytes": 92,
+      "delta_from_baseline_tstates_per_sample": -13645.31298828125,
+      "delta_from_previous_tstates_per_sample": -13645.31298828125
+    },
+    {
+      "opt": 2,
+      "average_tstates_per_sample": 106288.92419433594,
+      "maximum_sustainable_pcm_hz": 33.37036315764133,
+      "code_and_constants_bytes": 6248,
+      "state_bytes": 100,
+      "stack_bytes": 92,
+      "delta_from_baseline_tstates_per_sample": -20826.315185546875,
+      "delta_from_previous_tstates_per_sample": -7181.002197265625
+    },
+    {
+      "opt": 3,
+      "average_tstates_per_sample": 70442.90771484375,
+      "maximum_sustainable_pcm_hz": 50.35141386210263,
+      "code_and_constants_bytes": 11123,
+      "state_bytes": 100,
+      "stack_bytes": 91,
+      "delta_from_baseline_tstates_per_sample": -56672.33166503906,
+      "delta_from_previous_tstates_per_sample": -35846.01647949219
+    }
+  ],
+  "full_selected_average_tstates_per_sample": 70415.97021083048,
+  "full_selected_cpu_seconds": 3710.095157179509,
+  "live_budget_tstates": 443.3625,
+  "slowdown_without_pdm": 158.82256666008172,
+  "no_new_trd": true,
+  "decision": "Exact executable codec retained as research; this Z80 port fails live and preload time budgets."
+}

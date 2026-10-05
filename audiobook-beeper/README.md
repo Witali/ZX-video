@@ -16,6 +16,11 @@ The [four-bit converter](IMA4_CONVERTER.md) remains available explicitly. The
 [denser-codec study](DENSE_CODECS.md) compares compression and native Z80
 decoder costs; predictive VQ is not yet an integrated playback mode.
 
+The [two-bit G.726 experiment](g726/README.md) provides a standard-compatible
+codec, PC audition converter and a complete measured Z80 decoder. Its8:1
+compression meets the storage target, but this compiled decoder fails live
+and preload timing; it is not a TRD playback mode. [Listening files and results](experiments/g726-2bit/README.md).
+
 The accepted reference is [the overlap speech disk](../ZX-audiobook-IMA3-overlap-test.trd).
 Older experiments and their contemporary measurements follow below; they
 do not supersede the current default described above.
