@@ -3,6 +3,20 @@
 
 
 
+## 2026-10-05 — Retire the quiet SD2 root audition
+
+- **Request/baseline:** the user identifies `ZX-audiobook-SD2-128-test.trd`
+  as too quiet and authorizes deletion. Baseline `12a3fab9`; the image was
+  recorded in `9e99606f35a8a11ade17022b84a202374ab5dba2`.
+- **Change:** remove that one 655360-byte root image and its ignore exception;
+  retain the SD2 source, measurements, archived images, WAVs and Git/LFS history.
+  Replace the experiment README's root link with an immutable historical link.
+- **Verification/decision:** confirm SHA-256
+  `f3c194a9816127a69ed29408ff21fd58aab76a4948afa4a284f3f2f712a2718e`
+  before removal and record restoration data in
+  [retired-disks.json](audiobook-beeper/retired-disks.json). No player or timing
+  changes; no audio rebuild or new sound-quality claim.
+
 ## 2026-10-05 — Consolidate completed branches and archive inactive worktrees
 
 - **Objective/baseline:** user-authorized repository cleanup, useful merges into

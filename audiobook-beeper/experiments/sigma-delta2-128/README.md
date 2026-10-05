@@ -6,9 +6,10 @@
 damped-feedback modulator as the default. This is a saved unsuccessful
 experiment, not a quality upgrade. The user also reports increased noise.
 
-The optional [TRD](../../../ZX-audiobook-SD2-128-test.trd) and
-[actual Fuse sound-generator WAV](result-preview.wav) preserve the final
-guarded experiment. [Source WAV](source-preview.wav). The previous accepted
+The root TRD was removed on 2026-10-05 at the user's request because its
+output was too quiet. The [historical image](https://github.com/Witali/ZX-video/blob/9e99606f35a8a11ade17022b84a202374ab5dba2/ZX-audiobook-SD2-128-test.trd),
+archived experiment evidence and [actual Fuse sound-generator WAV](result-preview.wav)
+preserve the final guarded experiment. [Source WAV](source-preview.wav). The previous accepted
 disks, including the public YouTube-linked file, are unchanged.
 
 ## Algorithm and tradeoffs
