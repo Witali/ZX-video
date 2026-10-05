@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-05",
+  "scope": "Full-reference error budget for the 30-dB target, keeping IMA and duration.\n\nThese controls are diagnostic, not executable players or universal upper\nbounds. Keep the established listening filter, gain, clock and edge policy.\nArchive each measured stage; do not change the source or remove noisy passages.\n",
+  "target_snr_db": 30,
+  "source_samples": 186880,
+  "source_seconds": 23.36,
+  "source_pcm_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+  "filter": "highpass=f=70,lowpass=f=4500:p=2,lowpass=f=4500:p=2",
+  "edge_exclusion_seconds": 0.1,
+  "reference": "Unchanged prepared unsigned PCM8 / 8000 Hz",
+  "fitted_gain": false,
+  "fitted_delay": false,
+  "bandwidth_reduced": false,
+  "player_changed": false,
+  "producers": {
+    "assess_snr.py": "d4e76b7212a971176ed3d3550e7dec721a217599b9487ef3606a2f6e92de9bc8",
+    "build_pdm.py": "6d9fd77e2bd2f9eaf45f8c6c0ef502ed60c76520b9e90dbf7cadf9930a4cc018",
+    "ima_beam.py": "571f2e55c43788e6afc2ccd4164b5b2cc92679037b9589a2527e23b62a44c15a",
+    "ima_codec.py": "263d52677e423e9f9f55636b84fe108aa3eed1751bf1c09ce751b65a22f3349b",
+    "probe_reconstruction_error.py": "87abd81d68978ca3d0d447e94f7fedad5723921bf3619566e5490b1c336a9422",
+    "verify_direct.py": "8b30e3c4aa1861f6d93ebfe044a31dd1bc8900cc506d59e3540428210e3ef4fa"
+  },
+  "script_sha256": "2dbaadfab8a5e0db78724f19975a4cb108727a314676ddb7cb0d494cea0ae8e6",
+  "ffmpeg_sha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+  "rows": [
+    {
+      "name": "ima3_timing_control",
+      "snr_db": 28.892007518723915,
+      "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit",
+      "signal_rms": 0.19298000827754508,
+      "error_rms": 0.006932852249367006,
+      "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"
+    },
+    {
+      "name": "ima3_decoded_pcm16",
+      "snr_db": 17.679572792356865,
+      "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit",
+      "signal_rms": 0.19298000827754508,
+      "error_rms": 0.025207726669155047,
+      "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"
+    },
+    {
+      "name": "ima3_packet_input_midpoints",
+      "snr_db": 17.654240155993357,
+      "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit",
+      "signal_rms": 0.19298000827754508,
+      "error_rms": 0.02528135301271792,
+      "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"
+    },
+    {
+      "name": "ima3_actual_pdm",
+      "snr_db": 20.43632101482426,
+      "scope": "Recomputed first loop of previously fully checked Fuse disk",
+      "signal_rms": 0.19298000827754508,
+      "error_rms": 0.01835254383066653,
+      "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"
+    }
+  ]
+}

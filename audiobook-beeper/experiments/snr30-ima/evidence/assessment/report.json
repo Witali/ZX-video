@@ -1,0 +1,175 @@
+{
+  "date": "2026-10-05",
+  "scope": "Full-reference error budget for the 30-dB target, keeping IMA and duration.\n\nThese controls are diagnostic, not executable players or universal upper\nbounds. Keep the established listening filter, gain, clock and edge policy.\nArchive each measured stage; do not change the source or remove noisy passages.\n",
+  "target_snr_db": 30,
+  "source_samples": 186880,
+  "source_seconds": 23.36,
+  "source_pcm_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+  "filter": "highpass=f=70,lowpass=f=4500:p=2,lowpass=f=4500:p=2",
+  "edge_exclusion_seconds": 0.1,
+  "reference": "Unchanged prepared unsigned PCM8 / 8000 Hz",
+  "fitted_gain": false,
+  "fitted_delay": false,
+  "bandwidth_reduced": false,
+  "player_changed": false,
+  "producers": {
+    "assess_snr.py": "d4e76b7212a971176ed3d3550e7dec721a217599b9487ef3606a2f6e92de9bc8",
+    "build_pdm.py": "6d9fd77e2bd2f9eaf45f8c6c0ef502ed60c76520b9e90dbf7cadf9930a4cc018",
+    "ima_beam.py": "571f2e55c43788e6afc2ccd4164b5b2cc92679037b9589a2527e23b62a44c15a",
+    "ima_codec.py": "263d52677e423e9f9f55636b84fe108aa3eed1751bf1c09ce751b65a22f3349b",
+    "probe_reconstruction_error.py": "87abd81d68978ca3d0d447e94f7fedad5723921bf3619566e5490b1c336a9422",
+    "verify_direct.py": "8b30e3c4aa1861f6d93ebfe044a31dd1bc8900cc506d59e3540428210e3ef4fa"
+  },
+  "script_sha256": "dc6baacf2665f3a59e90729b84d4b618928b71555981691e13dd6d329b19eef5",
+  "ffmpeg_sha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+  "rows": [
+    {
+      "name": "ima3_timing_control",
+      "snr_db": 28.892007518723915,
+      "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit",
+      "signal_rms": 0.19298000827754508,
+      "error_rms": 0.006932852249367006,
+      "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"
+    },
+    {
+      "name": "ima3_decoded_pcm16",
+      "snr_db": 17.679572792356865,
+      "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit",
+      "signal_rms": 0.19298000827754508,
+      "error_rms": 0.025207726669155047,
+      "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"
+    },
+    {
+      "name": "ima3_packet_input_midpoints",
+      "snr_db": 17.654240155993357,
+      "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit",
+      "signal_rms": 0.19298000827754508,
+      "error_rms": 0.02528135301271792,
+      "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"
+    },
+    {
+      "name": "ima3_actual_pdm",
+      "snr_db": 20.43632101482426,
+      "scope": "Recomputed first loop of previously fully checked Fuse disk",
+      "signal_rms": 0.19298000827754508,
+      "error_rms": 0.01835254383066653,
+      "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"
+    },
+    {
+      "name": "ima4_timing_control",
+      "snr_db": 29.233999925023713,
+      "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit",
+      "signal_rms": 0.19282977861228215,
+      "error_rms": 0.006659998117106548,
+      "saved_trd_sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c"
+    },
+    {
+      "name": "ima4_decoded_pcm16",
+      "snr_db": 21.920793405346373,
+      "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit",
+      "signal_rms": 0.19282977861228215,
+      "error_rms": 0.01545732834687991,
+      "saved_trd_sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c"
+    },
+    {
+      "name": "ima4_packet_input_midpoints",
+      "snr_db": 21.24199687320222,
+      "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit",
+      "signal_rms": 0.19282977861228215,
+      "error_rms": 0.016713763745446125,
+      "saved_trd_sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c"
+    },
+    {
+      "name": "ima4_actual_pdm",
+      "snr_db": 22.17428945360765,
+      "scope": "Recomputed first loop of previously fully checked Fuse disk",
+      "signal_rms": 0.19282977861228215,
+      "error_rms": 0.015012728477670448,
+      "saved_trd_sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c"
+    },
+    {
+      "name": "ima3_pcm_beam64",
+      "snr_db": 21.770813371122955,
+      "scope": "Fresh PCM-error search, ideal multilevel DAC and fixed 8-kHz clock; no PDM/player",
+      "signal_rms": 0.19282129036772255,
+      "error_rms": 0.01572585678701787,
+      "beam_width": 64,
+      "block_samples": 64,
+      "encode_seconds": 15.23499999998603,
+      "packed_sha256": "7760dc66ec4304fb8a3561325f8591e131fa8633db8a2a3e918dfd3e10fa63d1",
+      "disk_audio_bytes": 70080
+    },
+    {
+      "name": "ima4_pcm_beam64",
+      "snr_db": 25.841827440419152,
+      "scope": "Fresh PCM-error search, ideal multilevel DAC and fixed 8-kHz clock; no PDM/player",
+      "signal_rms": 0.19282129036772255,
+      "error_rms": 0.009841552483144075,
+      "beam_width": 64,
+      "block_samples": 64,
+      "encode_seconds": 24.656000000075437,
+      "packed_sha256": "1f51b2c55e22945c80e3856bf1ac2ab4da069af4726871f1653232642090e624",
+      "disk_audio_bytes": 93440
+    },
+    {
+      "name": "pcm_control_feedback_0.5",
+      "snr_db": 25.790641265358087,
+      "scope": "Ideal uniform 128-kHz host control with full-precision state; not executable on Z80",
+      "signal_rms": 0.19282129036772255,
+      "error_rms": 0.009899720233311265,
+      "beta": 0.5,
+      "declared_gain": 1.0,
+      "state_peak": 0.9452569476847801
+    },
+    {
+      "name": "pcm_control_feedback_1",
+      "snr_db": 25.77434384038329,
+      "scope": "Ideal uniform 128-kHz host control with full-precision state; not executable on Z80",
+      "signal_rms": 0.09641064518386128,
+      "error_rms": 0.004959156309165843,
+      "beta": 1.0,
+      "declared_gain": 0.5,
+      "state_peak": 1.3203125
+    },
+    {
+      "name": "ima3_feedback_0.5",
+      "snr_db": 20.269056454675297,
+      "scope": "Ideal uniform 128-kHz host control with full-precision state; not executable on Z80",
+      "signal_rms": 0.19282129036772255,
+      "error_rms": 0.018693996718425445,
+      "beta": 0.5,
+      "declared_gain": 1.0,
+      "state_peak": 1.0612699369808598
+    },
+    {
+      "name": "ima3_feedback_1",
+      "snr_db": 20.299764468505618,
+      "scope": "Ideal uniform 128-kHz host control with full-precision state; not executable on Z80",
+      "signal_rms": 0.09641064518386128,
+      "error_rms": 0.009314011412959684,
+      "beta": 1.0,
+      "declared_gain": 0.5,
+      "state_peak": 1.351226806640625
+    },
+    {
+      "name": "ima4_feedback_0.5",
+      "snr_db": 22.72967807341847,
+      "scope": "Ideal uniform 128-kHz host control with full-precision state; not executable on Z80",
+      "signal_rms": 0.19282129036772255,
+      "error_rms": 0.014082218585049237,
+      "beta": 0.5,
+      "declared_gain": 1.0,
+      "state_peak": 0.9814028403082624
+    },
+    {
+      "name": "ima4_feedback_1",
+      "snr_db": 22.800423573650164,
+      "scope": "Ideal uniform 128-kHz host control with full-precision state; not executable on Z80",
+      "signal_rms": 0.09641064518386128,
+      "error_rms": 0.006983993242768132,
+      "beta": 1.0,
+      "declared_gain": 0.5,
+      "state_peak": 1.3094558715820312
+    }
+  ]
+}

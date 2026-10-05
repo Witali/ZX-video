@@ -12,6 +12,21 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## 30-dB audio target — PC simulation complete (2026-10-05)
+
+The user requires current IMA compression/duration and requested simulation
+before another Z80 port. [The bounded study](audiobook-beeper/experiments/snr30-ima/README.md)
+keeps the full 186880-sample speech reference, listening filter and 128-kHz
+decision rate. Best ideal-clock total SNR is 21.227136 dB for IMA3 and
+24.639507 dB for IMA4; 30 dB is not reached. The modulator alone exceeds
+30 dB, but the IMA losses remain. Twenty-four configurations include two
+overload rejections; the extra filtered-error encoder is worse. Save all
+results and the independent PCM/bit checks. No new Z80 code/TRD/defaults or
+hardware claim belong to this simulation. Do not port a candidate solely
+because its modulator-only score passes 30 dB. This is not an impossibility
+proof for another joint encoder/output algorithm. The older paused study
+remains paused.
+
 ## Second-order audio experiment — completed, rejected (2026-10-05)
 
 The separate [exact SD2 experiment](audiobook-beeper/experiments/sigma-delta2-128/README.md)

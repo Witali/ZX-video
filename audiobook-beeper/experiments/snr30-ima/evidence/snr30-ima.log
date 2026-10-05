@@ -1,0 +1,12 @@
+{"name": "ima3_timing_control", "snr_db": 28.892007518723915, "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit", "signal_rms": 0.19298000827754508, "error_rms": 0.006932852249367006, "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"}
+{"name": "ima3_decoded_pcm16", "snr_db": 17.679572792356865, "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit", "signal_rms": 0.19298000827754508, "error_rms": 0.025207726669155047, "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"}
+{"name": "ima3_packet_input_midpoints", "snr_db": 17.654240155993357, "scope": "Ideal multilevel DAC on saved disk sample clock; diagnostic, not codec limit", "signal_rms": 0.19298000827754508, "error_rms": 0.02528135301271792, "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"}
+{"name": "ima3_actual_pdm", "snr_db": 20.43632101482426, "scope": "Recomputed first loop of previously fully checked Fuse disk", "signal_rms": 0.19298000827754508, "error_rms": 0.01835254383066653, "saved_trd_sha256": "c2a735c5ce5a556918c6ea78456f755cc530015c6b39271ebfa22de54dd4c749"}
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\experiments\snr30-ima\assess.py", line 121, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\experiments\snr30-ima\assess.py", line 85, in main
+    ('packet_input_midpoints',(np.floor((pcm.astype(float)+32768)/(65536/meta['model']['pcm_bins']))+.5)/meta['model']['pcm_bins'])]:
+                                                                         ~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'pcm_bins'

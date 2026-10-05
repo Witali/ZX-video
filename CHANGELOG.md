@@ -1,5 +1,38 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Simulate the 30-dB target while retaining IMA and duration
+
+The user requested at least30 dB, kept current IMA compression/duration,
+and explicitly asked for PC simulation before Z80 work. The separate
+[study](audiobook-beeper/experiments/snr30-ima/README.md) uses the complete
+unchanged186880-sample speech reference, original70-Hz/two4500-Hz-pole-pair
+filter, fixed100-ms edge exclusions and128000-Hz decisions. No fitted
+gain/delay, narrowed bandwidth, shorter excerpt or new Spectrum format.
+
+Reproduce old first-loop Fuse scores20.436321/22.174289 dB, then measure
+fresh PCM-error IMA3/IMA4 encoding at21.770813/25.841827 dB on an ideal
+multilevel DAC. Half-gain full-precision SD2 gives20.299764/22.800424 dB.
+An additional width128/horizon128/commit64 filtered-error encoder is worse;
+retain its streams/reports and reject it. Test24 complete-source feedback/
+gain configurations;22 finish and two exceed the declared state limit.
+The best full-gain SD2 models give21.227136/24.639507 dB total SNR. The
+modulator alone scores30.827692/30.921171 dB relative to decoded IMA; a
+diagnostic no-IMA PCM model scores31.691681 dB. These are different metrics;
+the user's30-dB complete-path objective remains unachieved.
+
+All four streams'186880 decoded samples match independent FFmpeg decoding.
+All2990080 selected SD2 bits per codec match an integer two-history model.
+First-five-second192 ->768-kHz integration checks change SNR by+0.003579 /
+-0.021757 dB. Selected WAVs/reports and source hashes are saved. An initial
+metadata-default failure is retained separately and fixed before the full
+run. The export audit catches brief clipping in unattenuated listening WAVs;
+apply the same fixed0.5 listening gain to selected output/reference pairs
+and verify no full-scale samples. Float-domain SNR is unchanged.
+No Z80 hot-path change (delta0 T), no new TRD or hardware feasibility
+claim. Retain the current player; another port is not justified by these
+below-target ideal-clock models. This bounded search is not a universal
+upper-bound proof. The earlier paused encoder-quality study stays paused.
+
 ## 2026-10-05: Exact second-order packets at 128 kHz; retain the old default
 
 Implement the user's requested SD2 trial as optional tables for the direct
