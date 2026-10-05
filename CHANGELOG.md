@@ -1,5 +1,47 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Audition O. Henry speech through the current AY music profile
+
+At the user's request, apply the existing AY converter to the familiar
+O. Henry voice example. Baseline `ec0676d`, original supplied 1977 M4A,
+source seconds [60,84), SHA-256
+`a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779`.
+Use the unchanged `music` profile with chip-model noise fitting: 50 Hz,
+1200 complete 20-ms states, 10800 packed /13200 resident bytes in bank 0.
+This is one 24-second listening preview, not a full-book conversion or a
+new speech-specific search. Keep all existing images and production sources.
+
+The 488 estimated component lifetimes have zero channel migrations; noise
+is enabled in 1049 states (1023 mixed, 26 noise-only), with zero active tones
+disabled. The existing 93-candidate fit changes 925 periods and 978 shared
+levels relative to the heuristic input. Full native and cold Fuse playback
+verify 26400 register writes /2400 fields across two repeats, every register
+exact, no missing/duplicate fields. Fuse reads 52 payload sectors at startup
+and zero during playback; loading-screen checks pass. Ordinary player work
+is unchanged, **974 ->974 T /delta 0**, restart 1079 T unchanged. Native
+counts exclude ULA/HALT/ROM/disk; Fuse separately verifies actual timestamps.
+
+Archive the normal two-loop Fuse WAV and an original-then-AY audition (AY
+starts at 25 s). Independent comparisons of both full loops use unpooled
+512/2048/8192 windows and only the known fixed Spectrum clock mapping. First
+loop spectral cosines are .69129/.68728/.75628 and log errors are
+9.08048/8.81341/8.09250 dB; second-loop errors are
+9.24588/8.82414/8.08278 dB. Inspect full and 4..8-s spectrograms: pauses and
+parts of the low contour survive, but diffuse noise is stronger and upper
+harmonic detail is altered/lost. These are signal proxies, not word accuracy
+or proof of listening acceptance. No hardware result or new unit-suite run
+is claimed. All recorded artifact/producer hashes and every exported state
+are independently checked.
+
+Retain `ZX-audiobook-OHenry-AY50-test.trd` in LFS (SHA-256
+`aa2013bab38a3fbffecb97f1069b570d17e9fefa591c075da58c4000b84169d1`)
+for user audition; music pitch holding remains a speech limitation. See
+[method and reproduction](ay-converter/analysis/o_henry/README.md),
+[audit and plots](ay-converter/analysis/o_henry/evidence/comparison/comparison.json)
+and [complete execution proof](ay-converter/analysis/o_henry/evidence/release/verification.json).
+Do not supersede the accepted IMA3 speech reference or start another
+optimization before the listening outcome gives a concrete target.
+
 ## 2026-10-04: Compare IMA3 and IMA4 and record reusable improvements
 
 At the user's request, save the [algorithm comparison and transfer plan](audiobook-beeper/IMA3_IMA4_COMPARISON.md).

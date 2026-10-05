@@ -115,6 +115,12 @@ chip simulator to fit R6 and the carrier's shared level, retaining those
 channel identities. These milestones include WAVs, spectrograms and complete
 measurements, including regressions.
 
+The [O. Henry speech audition](analysis/o_henry/README.md) applies this current
+music preset unchanged to source seconds 60..84. It includes a bootable TRD,
+original/AY listening comparison, full cold Fuse proof and speech spectrograms.
+It is an exploratory listening trial, without speech-specific tuning or an
+intelligibility claim.
+
 Every conversion now reports full-bin spectrogram comparisons with 512,
 2048 and 8192-sample Hann windows, a 20-ms hop and one global RMS match.
 No time warping or frequency alignment is used. Smaller spectral error does
