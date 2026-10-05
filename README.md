@@ -9,7 +9,8 @@ a particular movie or remove credits automatically.
 
 For audio-only playback, the [audio converter](audiobook-beeper/CONVERTER.md)
 defaults to packed IMA3 and direct beeper PDM, accepted by the user in Fuse.
-Use `--codec ima4` for the historical four-bit mode. The accepted
+Use `--codec ima4` for four-bit audio; both modes default to one disk with
+sequential parts and automatic loading between them. The accepted
 [speech reference disk](ZX-audiobook-IMA3-overlap-test.trd) and a separate
 [AY preview](audiobook-ay/README.md) remain available.
 [Standalone AY music conversion](ay-converter/README.md) includes all its
@@ -18,6 +19,10 @@ project sources in one portable folder.
 comparison WAVs and experiment reports remain available.
 The [historical direct IMA4 disk](ZX-audiobook-IMA-ADPCM-direct-test.trd)
 is preserved at its original path for a public YouTube video link.
+The [full IMA4 audiobook disk](ZX-audiobook-IMA4-full-disk.trd) contains the
+first 113.712 seconds in five automatically loaded parts, with all 2560
+sectors occupied. [Measurements and reproduction](audiobook-beeper/experiments/ima4-full-disk/README.md)
+include the loading pauses and the unmet 20-dB quality target.
 
 Install Python 3.11+, FFmpeg/ffprobe and the ZX0 v2 compressor in `PATH`.
 

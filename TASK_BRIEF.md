@@ -12,6 +12,37 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## Full IMA4 disk through the public script — complete (2026-10-05)
+
+The user requests a complete disk in IMA4 and explicitly requires our
+existing conversion script. Extend `convert_audio.py --codec ima4` with
+sequential RAM-sized parts, reusing the existing encoder, calibrated player
+and disk controller. Use the supplied O. Henry audiobook. Account for each
+part's recording-dependent decoder tables; shorten the final part to fill
+the remaining sectors. Preserve the looping preview and IMA3 behavior.
+Verify every final part, actual cold disk playback, automatic transitions,
+loading UI, speed within 2% and measured quality. Keep loading pauses explicit.
+Deliver one independently bootable TRD with source ranges and saved evidence;
+do not open unrelated codec experiments or merge/push without a new request.
+
+The [completed disk and evidence](audiobook-beeper/experiments/ima4-full-disk/README.md)
+retain 113.712 source seconds in five parts, using all 2560 sectors. Complete
+native and cold Fuse checks pass every bit, state, memory/paging check, four
+automatic transitions, loading UI and END OF AUDIO. Speed error is about
++0.042%; measured loading pauses are 21.03–22.79 seconds. The fixed-clock
+float64 SNR is 10.33–13.53 dB: the 20-dB target is not met, so the report
+explicitly marks the otherwise verified output as a quality preview.
+
+Twenty-five focused tests pass. Live timing remains 423 T/sample, delta 0.
+The full disk's pulse timings match independently qualified references
+exactly; the unchanged 8-T limit still includes every startup sample.
+Natural HALT-phase qualification and optional phase-search failure handling
+are now automatic. Original failures, exact producers, authenticated full
+trace reuse and corrected native timing labels are preserved. Ordinary
+looping preview binaries remain byte-identical. No physical-hardware or
+multi-disk swap execution is claimed for this IMA4 milestone. Further
+quality experiments, merge and push require a new request.
+
 ## Two-bit G.726 implementation — feasibility experiment complete (2026-10-05)
 
 The user requests an implementation of G.726 at two bits/sample. Implement

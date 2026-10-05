@@ -10,6 +10,9 @@ LOAD_AUDIO: MACRO
         LD BC,0x7FFD
         LD A,\0+24
         OUT (C),A
+        IF chained_playback
+        LD (load_bank),A
+        ENDIF
         LD DE,\1
         LD HL,\2
         LD B,\3
@@ -173,6 +176,13 @@ idle_block_\1: ASSERT 1
         ENDM
 BANK_TAIL: MACRO
 bank_tail_\0: ASSERT 1
+        IF chained_playback
+        IF \0 == final_section_index
+        ; Stop in the silent guard only; live source samples keep the exact
+        ; qualified extraction, paging and PDM timing.
+        JP chain_exit
+        ENDIF
+        ENDIF
         LD BC,0x7FFD
         LD A,\1+24
 page_\0: OUT (C),A
@@ -232,9 +242,54 @@ disk_call: CALL 0x3D13
         INC D
 sector_ok:
         LD (disk_position),DE
+        IF chained_playback
+        CALL update_progress
+        ENDIF
         DJNZ read_next
         RET
 disk_position: DW 0
+        IF chained_playback
+; Loading-only work: preserve the destination, disk position and sector count.
+; Bank 7 remains the visible screen even while another bank receives audio.
+; Interrupts are disabled only while its attribute row is temporarily paged in.
+update_progress:
+        PUSH HL
+        LD HL,progress_remaining
+        DEC (HL)
+        JR NZ,progress_return
+        PUSH BC
+        DI
+        LD BC,0x7FFD
+        LD A,31
+        OUT (C),A
+        LD A,(load_progress)
+        LD L,A
+        LD H,0xD8
+        LD A,0xA0
+        ADD A,L
+        LD L,A
+        LD (HL),0x20
+        LD HL,load_progress
+        INC (HL)
+load_progress_event:
+        LD A,(load_bank)
+        OUT (C),A
+        LD HL,(progress_cursor)
+        LD A,(HL)
+        LD (progress_remaining),A
+        INC HL
+        LD (progress_cursor),HL
+        EI
+        POP BC
+progress_return:
+        POP HL
+        RET
+load_bank: DB 31
+load_progress: DB 0
+progress_remaining: DB progress_first
+progress_cursor: DW progress_steps
+progress_steps: MDAT "progress-steps.bin"
+        ENDIF
 startup_end:
         ASSERT $ <= first_base
         DS first_base-$
@@ -856,6 +911,40 @@ code_end:
         MDAT "pcm-high.bin"
         MDAT "fixed-pages.bin"
         MDAT "decoder-extra.bin"
+        IF chained_playback
+chain_exit:
+        ; Final silent-guard entry; no live register inputs, all clobbered.
+        ; Restore the TR-DOS stack/IY/interrupt mode, then reload a transient
+        ; controller over obsolete PDM tables. This routine does not return.
+        DI
+        LD SP,0x6000
+        LD IY,0x5C3A
+        IM 1
+        XOR A
+        OUT (0xFE),A
+        ; Playback is over. Disable the exhausted progress counter while
+        ; reusing the loader to replace bank-5 tables with the controller.
+        LD A,0xC9
+        LD (update_progress),A
+chain_retry:
+        LD BC,0x7FFD
+        LD A,31
+        OUT (C),A
+        LD DE,chain_disk
+        LD HL,0x4000
+        LD B,chain_sectors
+        EI
+        CALL read_n
+        DI
+        LD HL,(0x4003)           ; refuse an unrelated disk's machine code
+        LD DE,0x4D49            ; first two bytes of IMA3CHN1
+        OR A
+        SBC HL,DE
+        JR NZ,chain_retry
+        LD HL,chain_volume
+        LD A,chain_next_slot
+        JP 0x400B              ; fixed warm entry, after the signature
+        ENDIF
 resident_end:
         ASSERT $ <= 0x8000+resident_reserve
         DS 0xC000-$

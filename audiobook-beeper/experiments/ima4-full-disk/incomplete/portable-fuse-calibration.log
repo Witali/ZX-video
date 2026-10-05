@@ -1,0 +1,44 @@
+{"stage": "convert-part", "part": 1, "parts": 5, "start": 0, "stop": 186752, "samples": 186880, "sectors": 516}
+{"input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima4-full-o-henry\\work\\input-00001.wav", "prepared_pcm_unchanged": true, "prepared_samples": 186880, "sample_rate_hz": 8000, "channels": 1, "pcm_bits": 8, "fixed_gain": 1.0, "silence_guard_samples": 128, "source_sha256": "d6e5b1c1041d8c626d4fec3fea6a313c212e35c844fcdacd33734c3c16548fb4"}
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_audio.py", line 415, in <module>
+    main()
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_audio.py", line 406, in main
+    return legacy_main(remaining, parents=(selector,))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_audio.py", line 388, in legacy_main
+    report = convert(args)
+             ^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_audio.py", line 239, in convert
+    return convert_series(args)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\ima3_series.py", line 216, in convert_series
+    result=stage(options.output,lambda target:convert(options))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_ima3_audio.py", line 48, in stage
+    result=operation(path)
+           ^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\ima3_series.py", line 216, in <lambda>
+    result=stage(options.output,lambda target:convert(options))
+                                              ^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_audio.py", line 254, in convert
+    pilot, meta = calibrate(out / 'pilot', packed, source, args.fuse)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_audio.py", line 163, in calibrate
+    probe = measure(work, fuse, fields)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\probe_loop_phase.py", line 29, in measure
+    result=subprocess.run([str(fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions','--speed','10000',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 1228, in communicate
+    sts = self.wait(timeout=self._remaining_time(endtime))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 1264, in wait
+    return self._wait(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 1593, in _wait
+    raise TimeoutExpired(self.args, timeout)
+subprocess.TimeoutExpired: Command '['C:\\Work\\ZX-video\\tools\\fuse-1.9.0-sdl\\fuse.exe', '--no-sound', '--no-autosave-settings', '--no-confirm-actions', '--speed', '10000', '--machine', '128', '--beta128', '--debugger-command', 'base 10\nset $r 0\nset $bits 0\nbreakpoint 33036\ncommands 1\nset $r 1\ncontinue\nend\nbreakpoint port write 254\ncondition 2 $r==1\ncommands 2\nset $bits $bits+1\ncontinue\nend\nbreakpoint port write 254\ncondition 3 $r==1 && ($bits==1 || $bits==2990081 || $bits==5980161)\ncommands 3\nprint spectrum:frames*70908+ula:tstates\ncontinue\nend\nbreakpoint port write 254\ncondition 4 $bits>=5980161\ncommands 4\nexit 77\nend', 'C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima4-full-o-henry\\work\\part-00001\\pilot\\phase-00\\audiobook-preview.trd']' timed out after 179.98400000005495 seconds

@@ -55,7 +55,8 @@ def layout(packed,model=None,hot_indices=None):
     return words,nxt,states,first,second,pointers,pages,rows,sections,hot,float(counts[hot].sum()/counts.sum())
 
 
-def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
+def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*,chain=None,storage=None):
+    if (chain is None)!=(storage is None):raise ValueError('chain and storage must be supplied together')
     work=Path(work).resolve();work.mkdir(parents=True,exist_ok=True)
     words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage=layout(packed,model,hot_indices)
     assert len(packed)==sum(s['bytes'] for s in sections)
@@ -78,9 +79,21 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
     track,sector=calculate_file_start([boot,TrdFile('PLAYER','C',bytes(23296),start=0x8000)])
     lower=track*16+sector;upper=lower+28;pos=upper+32
     for s in sections:s['sector']=pos;pos+=s['sectors']
+    if storage is not None:
+        lower,upper=storage['lower'],storage['upper']
+        assert len(storage['audio'])==len(sections)
+        for s,sector in zip(sections,storage['audio']):s['sector']=sector
+    total_reads=60+sum(s['sectors'] for s in sections)
+    progress_steps=np.diff(np.r_[0,(np.arange(1,33)*total_reads+31)//32])
     constants=dict(lpc_preloaded=0,screen_disk=0,first_base=0x8400,pcm_high=pointers,resident_reserve=14336,decoder_seed=rows[0],
                    initial_feedback_offset=states.index(16)*6,lower_disk=lower//16*256+lower%16,upper_disk=upper//16*256+upper%16,
                    final_section_index=len(sections)-1)
+    constants.update(chained_playback=int(chain is not None),
+                     chain_disk=chain['controller_disk'] if chain else 0,
+                     chain_sectors=chain['controller_sectors'] if chain else 0,
+                     chain_volume=chain['volume'] if chain else 0,
+                     chain_next_slot=chain['next_slot'] if chain else 0,
+                     progress_first=int(progress_steps[0]))
     assert 0<=idle_pairs<=1530 and idle_pad>=0 and (idle_pairs or idle_pad==0)
     loads=next((b for b in range(4) if idle_pad>=7*b and (idle_pad-7*b)%4==0),None)
     assert loads is not None,'padding must be a nonnegative sum of 4-T NOP and 7-T LD A,n'
@@ -93,22 +106,27 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
         constants.update({f'disk_{i}':s['sector']//16*256+s['sector']%16,f'address_{i}':s['address'],f'sectors_{i}':s['sectors'],
                           f'next_bank_{i}':nxt_section['bank'],f'next_address_{i}':nxt_section['address'],f'next_tail_{i}':f'bank_tail_{successor}'})
     (work/'config.inc').write_text(''.join(f'{k}: EQU {v}\n' for k,v in constants.items()))
+    screen=loading_screen(len(packed)*2,'IMA / DIRECT PDM')
+    if chain:
+        from ima3_direct_player import direct_loading_screen
+        screen=direct_loading_screen(len(packed)*2,chain,bits=4)
     for name,data in [('pcm-high',memory[pointers:pointers+256]),('fixed-pages',memory[pointers+256:pointers+1280]),
                       ('decoder-extra',memory[pointers+1280:pointers+1280+1088]),
                       ('bank5-lower',memory[0x4000:0x5c00]),('bank5-upper',memory[0x6000:0x8000]),
-                      ('screen',loading_screen(len(packed)*2,'IMA / DIRECT PDM'))]:
+                      ('screen',screen),('progress-steps',bytes(progress_steps[1:].astype('u1'))+bytes([255]))]:
         (work/(name+'.bin')).write_bytes(data)
     (work/'player.asm').write_bytes((HERE/'direct-player.asm').read_bytes())
     run=subprocess.run([sys.executable,'-m','pyz80.pyz80','--obj=player.bin','--lstfile=player.lst','-s','.*','player.asm'],cwd=work,capture_output=True,text=True)
     (work/'assembler.log').write_text(run.stdout+run.stderr)
     if run.returncode:raise RuntimeError(run.stdout+run.stderr)
     labels=next(ast.literal_eval(s) for s in run.stdout.splitlines() if s.startswith('{'))
+    if chain:assert labels['resident_end']<=0xb800 and labels['resident_end']-labels['chain_exit']==57
     blob=(work/'player.bin').read_bytes();assert len(blob)==23296
     files=[boot,TrdFile('PLAYER','C',blob,start=0x8000),TrdFile('LOWER','C',bytes(memory[0x4000:0x5c00]),start=0x4000),TrdFile('UPPER','C',bytes(memory[0x6000:0x8000]),start=0x6000)]
     offset=0
     for i,s in enumerate(sections):
         files.append(TrdFile(f'IMA{i}','C',packed[offset:offset+s['bytes']],start=s['address']));offset+=s['bytes']
-    disk,directory,capacity=place_files(files,'IMADIR')
+    disk,directory,capacity=place_files(files,'IMADIR') if storage is None else (None,[],{})
     meta=dict(direct=True,model=model or dict(holds=HOLDS,beta=.5,extent=1.),origin=0x8000,player_labels=labels,sections=sections,directory=directory,capacity=capacity,
               first_addresses=list(first.values()),second_addresses=list(second.values()),
               first_patterns=len(first),second_patterns=len(second),resident_reserve=14336,
@@ -118,6 +136,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0):
               feedback_states=states,packet_pages=pages,pcm_samples=len(packed)*2,packed_bytes=len(packed),
               ordinary_holds_tstates=HOLDS,ordinary_tstates=sum(HOLDS),page_extra_tstates=14,bank_extra_tstates=140,
               initial_predictor=0,initial_index=0,initial_feedback=16,paging_base=24,preload_table_sectors=60,
+              chained_playback=chain,loading_progress_steps=32 if chain else 0,
               record_stop_addresses=[a+2 for a in first.values()],repeat=True,
               mutable_addresses=[labels['bank_jump']+1,labels['bank_jump']+2],
               source_sample_rate_hz=8000,cpu_clock_hz=3546900,saturation_guard=require_unclipped(packed),

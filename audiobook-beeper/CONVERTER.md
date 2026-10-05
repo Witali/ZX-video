@@ -47,15 +47,17 @@ API remain compatible; CLI dispatch selects the profile.
 | --- | --- | --- |
 | RAM representation | Packed three-bit codes | Packed four-bit codes |
 | Playback | Decode directly to PDM; no IMA3-to-IMA4 conversion | Decode directly to PDM |
-| Default disk output | `audio.trd`, sequential RAM-sized parts | `audiobook-preview.trd`, looping RAM excerpt |
-| Whole selected track | `--disk-mode all` | Not supported by this historical converter |
-| Looping RAM excerpt | `--disk-mode preview` | Default |
-| Search controls | `--quality`, `--target-snr`, `--attempts`, `--resume` | `--quality`, `--target-snr`, `--attempts`, `--iterations` |
+| Default disk output | `audio.trd`, sequential RAM-sized parts | `audio.trd`, sequential parts; shorter final part fills the disk |
+| Whole selected track | `--disk-mode all` | `--disk-mode all` |
+| Looping RAM excerpt | `--disk-mode preview` | `--disk-mode preview` |
+| Search controls | `--quality`, `--target-snr`, `--attempts`, `--resume` | `--quality`, `--target-snr`, `--attempts`, `--iterations`, `--resume` |
 
 Both accept `--duration N` and `--no-recording`. The latter omits normal-speed
 Fuse sound capture while retaining complete native/Fuse verification. New
-outputs must use an empty directory; IMA3 can resume only a matching saved
-run. Changed producer sources invalidate old resume caches by design.
+outputs must use an empty directory; sequential conversions can resume only
+a matching saved run. Changed producer sources invalidate old resume caches
+by design. IMA4 preserves completed parts, but an interrupted part's search
+restarts after its incomplete directory is retained under another name.
 
 `best` defaults to three full searches. IMA3 uses width 1024, horizon 256,
 commit 64 with prior weights .03, .003 and .1. IMA4 uses width 256 /horizon 128
@@ -71,7 +73,7 @@ search. Both best modes return code 2 for a completed preview that misses
 
 For a shared externally normalized comparison reference, both codecs accept
 `--prepared-pcm` without changing its gain. Use `--disk-mode preview` for
-IMA3. IMA4 requires mono PCM8/8 kHz, 8192..186880 samples in multiples of
+either codec. IMA4 requires mono PCM8/8 kHz, 8192..186880 samples in multiples of
 512, and 128 final silent samples (value 128); do not combine it with
 `--duration`. IMA3 retains its documented groups-of-eight/RAM validation.
 
@@ -83,9 +85,10 @@ IMA3 stream against the measured PDM schedule. Waveform search uses
 codes into RAM and decodes them as it emits PDM; there is no full PCM/PDM
 expansion buffer. Disk reads happen between consecutive RAM-sized parts.
 
-One TRD is the default. `--disk-mode all` produces numbered independently
-bootable disks. See [sequential playback](IMA3_SERIES.md) for output names,
-capacity and audible loading pauses, and [the direct decoder](IMA3_DIRECT.md)
+One TRD is the default for both IMA codecs. `--disk-mode all` produces numbered
+independently bootable disks. See [IMA3 sequential playback](IMA3_SERIES.md)
+and [IMA4 sequential playback](IMA4_SERIES.md) for output names, capacity and
+audible loading pauses, and [the direct decoder](IMA3_DIRECT.md)
 for timing, search and verification details.
 
 Waveform search automatically uses an optional exact C kernel when an

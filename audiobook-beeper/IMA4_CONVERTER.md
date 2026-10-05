@@ -19,10 +19,14 @@ The prior verified result remains eligible if refinement is worse. Use
 below. See [current search controls](CONVERTER.md). This change adds no
 Z80 instruction: ordinary cost remains 423 T/sample, delta 0 T.
 
-`convert_audio.py --codec ima4` accepts an ordinary local audio file readable by FFmpeg,
-keeps its initial fragment that fits the resident player and generates one
-independently bootable TRD. This historical architecture uses live
-4-bit IMA ADPCM decoding and direct PDM output. The
+`convert_audio.py --codec ima4` accepts an ordinary local audio file readable
+by FFmpeg. It now defaults to one independently bootable disk filled with
+sequential parts: four full RAM parts and a shorter fifth retain up to
+**113.712 seconds** of source. Spectrum loads and plays each part in order,
+with audible loading pauses. `--disk-mode all` retains the whole selected
+track across numbered disks; `--disk-mode preview` keeps the old looping RAM
+excerpt. See [disk layout, capacity and timing](IMA4_SERIES.md).
+All modes use live 4-bit IMA ADPCM decoding and direct PDM output. The
 [denser predictive codec](DENSE_CODECS.md) is a measured candidate, not yet
 an integrated player option.
 
@@ -40,18 +44,26 @@ python audiobook-beeper/convert_audio.py "C:/Audio/recording.m4a" --codec ima4 -
 ```
 
 Use `--duration 5` for an initial five-second excerpt. An existing nonempty
-output folder is rejected rather than overwritten. By default the final
-verification also plays/captures two loops through Fuse at normal speed;
+output folder is rejected unless `--resume` authenticates an identical
+sequential run. `audio.trd` is the single-disk result; all mode writes
+`audio-0001.trd`, etc. `report.json` and `volumes.json` record source ranges,
+capacity, quality, loading and complete final-volume verification. Per-part
+artifacts under `work/` are calibration evidence, not additional release
+disks. Each part is independently calibrated and checked on two loops before
+the final sequential disk is checked from a cold boot through end of audio.
+
+By default each part's verification also plays/captures two loops through
+Fuse at normal speed;
 `--no-recording` omits that audible capture, retaining full native/cold-Fuse
 checks and an integrated-port WAV. The WAV report distinguishes these paths.
 
-`--prepared-pcm` preserves an already normalized mono PCM8/8-kHz WAV without
+In `--disk-mode preview`, `--prepared-pcm` preserves an already normalized mono PCM8/8-kHz WAV without
 applying a second gain, fades or padding. It must contain 8192..186880 samples
 in multiples of 512 and end with 128 silent samples (unsigned value 128).
 It cannot be combined with `--duration`. This permits an identical prepared
 reference for IMA3 and IMA4 comparisons.
 
-The useful outputs are:
+The looping preview's outputs (also retained under each sequential part) are:
 
 - `audiobook-preview.trd`: bootable looping disk for Spectrum 128 + Beta Disk.
 - `result-preview.wav`: actual Fuse capture, or the documented port-rendered
@@ -66,11 +78,13 @@ The useful outputs are:
 
 ## Preparation and quality policy
 
-Only a bounded prefix is decoded on the PC. One extra output sample detects
-truncation. The current payload limit is 93440 bytes / 186880 prepared samples;
-128 samples are reserved for silence, leaving **23.344 seconds** of input.
-RAM is the limiting resource even though the TRD has free sectors. There are
-no disk reads during playback and no full PCM/PDM expansion in Spectrum RAM.
+Sequential mode decodes the selected track on the PC to determine one global
+gain, then encodes only the parts included in the requested disk set. The
+looping preview decodes a bounded prefix with one extra sample to detect
+truncation. Each part's payload limit is 93440 bytes /186880 prepared samples;
+128 samples are reserved for silence, leaving **23.344 seconds** of source.
+There are no disk reads while PDM is active and no full PCM/PDM expansion in
+Spectrum RAM. The sequential loader reuses RAM between parts.
 
 FFmpeg downmixes to mono and resamples to 8 kHz. A fixed peak normalization
 sets the maximum to 109/128 of full scale, preserves relative dynamics, and
@@ -80,10 +94,11 @@ using the existing beam-32 encoder. SNR compares against this prepared signal,
 not the full-band stereo input; AAC's `bits_per_sample=0` means unspecified
 PCM bit depth, not zero-bit audio.
 
-A clip shorter than about one second repeats internally until its prepared
-loop is at least 8192 samples. This bounds the fractional cost of rounding
-the overall loop to an integer video-field count; repetition and padding are
-explicit in `input.json`. Playback of the completed disk is always cyclic.
+In preview mode a clip shorter than about one second repeats internally until
+its prepared loop is at least 8192 samples. This bounds the fractional cost
+of rounding the loop to an integer video-field count; repetition and padding
+are explicit in `input.json`. Sequential mode pads a short tail with silence,
+never repeats source audio, and stops at `END OF AUDIO` on the last disk.
 
 For each encoded stream, a bounded 24-candidate phase search measures cold
 Fuse loops. Only a <=3-T cold transient followed by an exact field-aligned
@@ -96,6 +111,10 @@ Up to two compensation passes are considered, with early exit when both
 loops measure at least 20 dB and mean speed is within the requested +/-2%.
 Otherwise the better speed-compliant verified candidate is retained and
 the unmet 20-dB goal remains explicit. Silence has `null` SNR, not Infinity.
+An optional compensation or waveform candidate that fails the bounded phase
+gate is recorded in `rejected_variants`; the already verified fallback is
+retained. The initial pilot must pass. Bit, memory, tool and unrelated runtime
+failures remain fatal; rejecting a phase candidate does not weaken any check.
 
 The reference clock is explicitly 8000 Hz; there is no fitted delay, gain or
 pitch correction in the measurement. The phase filler only extends the

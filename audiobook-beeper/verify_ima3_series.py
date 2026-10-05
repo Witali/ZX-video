@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import struct
 import subprocess
 
@@ -73,7 +74,7 @@ def native_part(disk,meta,packed):
     assert after==before
     return dict(complete=True,bits_verified=len(bits),predictor_index_samples_verified=checked,
                 every_bit_and_native_hold_exact=True,memory_guards_passed=True,bank_sequence=pages,
-                ordinary_tstates=427.375,ordinary_delta_tstates=0,
+                ordinary_tstates=meta['ordinary_tstates'],ordinary_delta_tstates=0,
                 discarded_guard_pulses=33,final_guard_pulses_retained=15)
 
 
@@ -88,6 +89,39 @@ def continuation_snapshot(ram,pc):
     banks={5:ram[:16384],2:ram[16384:32768],7:ram[32768:]}
     for bank in range(8):data+=block(b'RAMP',struct.pack('<HB',0,bank)+banks.get(bank,b'\xa5'*16384))
     return data
+
+
+def matching_clock_reference(times,selected,meta,*,both_loops):
+    """Keep the 8-T limit, selecting among independently executed loops."""
+    old=np.frombuffer(gzip.decompress((selected/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)
+    matches=[]
+    for loop in range(2 if both_loops else 1):
+        start=loop*meta['outputs_per_cycle'];reference=old[start:start+len(times)]
+        assert len(reference)==len(times)
+        delta=times-(reference-reference[0]);maximum=int(np.max(np.abs(delta)))
+        if maximum<=8:matches.append((maximum,loop+1,delta))
+    return min(matches,key=lambda item:item[:2]) if matches else None
+
+
+def qualify_ready_phase(selected,out,fuse,ffmpeg,phase):
+    """Qualify the unchanged preview in the actual volume's HALT entry phase.
+
+    A different naturally occurring cold phase can cause brief contention
+    differences at the first active scanline. Full native/two-loop Fuse
+    checks qualify another reference; the final volume still has to match
+    every pulse within the same 8 T, with no omitted startup samples.
+    """
+    from convert_audio import validate
+    out.mkdir(parents=True,exist_ok=True)
+    names=('player.json','soundtrack.ima.gz','source-preview.wav','audiobook-preview.trd')
+    for name in names:shutil.copy2(selected/name,out/name)
+    result=validate(out,fuse,ffmpeg,ready_phase=phase)
+    assert result['speed_within_two_percent']
+    assert all((selected/name).read_bytes()==(out/name).read_bytes() for name in names)
+    save(out/'qualified-reference.json',dict(complete=True,ready_phase=phase,
+        unchanged_preview_sha256=hashlib.sha256((selected/'audiobook-preview.trd').read_bytes()).hexdigest(),
+        quality=result,scope='Additional full native/cold two-loop proof; CPU/ULA time and disk bytes unchanged'))
+    return out
 
 
 def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=False):
@@ -181,13 +215,14 @@ def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=Fa
         times=np.cumsum(pulse>>1);times-=times[0]
         # Preserve actual disk timing for reproducible boundary-noise analysis.
         (out/f'part-{i+1:02d}-times.u32.gz').write_bytes(gzip.compress(times.astype('<u4').tobytes(),mtime=0))
-        old_times=np.frombuffer(gzip.decompress((selected/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)[:count]
-        delta=times-(old_times-old_times[0])
-        # HALT can enter the ROM IRQ at one of four T-state offsets. Cold
-        # loading and an automatic transition need not select the same one.
-        # Verify the bounded phase difference AND measure this actual waveform.
-        assert np.max(np.abs(delta))<=8,('output clock changed',i,
-            int(np.flatnonzero(delta)[0]),delta[:32].tolist(),int(delta.min()),int(delta.max()))
+        clock_source=selected
+        match=matching_clock_reference(times,clock_source,meta,both_loops=volume.get('codec')=='ima4')
+        if match is None and volume.get('codec')=='ima4':
+            phase=ready[i][1]%70908
+            clock_source=qualify_ready_phase(selected,out/f'phase-reference-{i+1:02d}-{phase}',fuse,ffmpeg,phase)
+            match=matching_clock_reference(times,clock_source,meta,both_loops=True)
+        assert match is not None,('output clock changed beyond 8 T',i)
+        _,clock_loop,delta=match
         assert np.array_equal(np.asarray(preds[i]),pcm[1:1+len(preds[i])].astype(np.int32)+32768)
         assert np.array_equal(np.asarray(indices[i]),np.asarray(meta['decoder_rows'])[idx[1:1+len(indices[i])]])
         assert [r[1] for r in progress if r[0]==i]==list(range(1,33))
@@ -196,11 +231,19 @@ def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=Fa
         source=wav8(selected/'source-preview.wav');assert np.all(source[-128:]==128)
         # Exclude the final guard pulse's interval and retain all
         # source-bearing intervals in the same listening-filter measurement.
-        edges=times;output=filtered(reconstruct(bits[:-1],edges),ffmpeg)
+        edges=times
         period=3546900/8000;segments=int(np.ceil(edges[-1]/period))
         fixed_edges=np.r_[np.arange(segments)*period,edges[-1]]
         values=np.pad(source/256,(0,max(0,segments-len(source))),constant_values=.5)[:segments]
-        fixed=filtered(reconstruct(values,fixed_edges),ffmpeg)
+        if volume.get('codec')=='ima4':
+            from convert_mulaw_audio import filter_signal,STABLE_FILTER
+            output=filter_signal(bits[:-1],edges,ffmpeg,768000)
+            fixed=filter_signal(values,fixed_edges,ffmpeg,768000)
+            measurement_filter=STABLE_FILTER
+        else:
+            output=filtered(reconstruct(bits[:-1],edges),ffmpeg)
+            fixed=filtered(reconstruct(values,fixed_edges),ffmpeg)
+            measurement_filter=FILTER
         edge=min(4410,len(output)//10);window=slice(edge,-edge if edge else None)
         score=ratio(fixed[window],output[window]-fixed[window]) if np.any(source!=128) else None
         rate=((count-1)/16)*3546900/edges[-1];speed=100*(rate/8000-1)
@@ -208,9 +251,10 @@ def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=Fa
         write_wav(out/f'part-{i+1:02d}-output.wav',output)
         reports.append(dict(part=i+1,bits_verified=count,predictor_index_samples_verified=len(preds[i]),
                             every_live_bit_identical=True,
+                            clock_reference=str(clock_source.resolve()),clock_reference_loop=clock_loop,
                             timing_delta_from_qualified_part_tstates=[int(delta.min()),int(delta.max())],
                             fixed_clock_snr_db=score,source_silent=not np.any(source!=128),
-                            filter=FILTER,speed_error_percent=speed,
+                            filter=measurement_filter,speed_error_percent=speed,
                             start_tstates=ready[i][1],stop_tstates=ends[i][1]))
     assert [r[1]+256*r[2] for r in accepted]==[volume['volume']]*(len(metas)+1)
     (out/'terminal.ram.gz').write_bytes(gzip.compress(ram,mtime=0))

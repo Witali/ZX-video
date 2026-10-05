@@ -1,5 +1,74 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Fill an IMA4 disk through the existing audio converter
+
+The user requests a complete IMA4 disk and explicitly requires our script.
+Extend `convert_audio.py --codec ima4` with default single-volume sequential
+playback, all-volume output and the retained looping preview. Reuse the
+existing bounded quality search, native four-bit/PDM kernel and separately
+assembled IMA3 disk controller. Keep each part's recording-dependent hot/cold
+decoder tables intact. [Format and timing](audiobook-beeper/IMA4_SERIES.md).
+
+The planner fits four 186880-sample parts and one 162816-sample part in exactly
+2560 sectors, retaining 909696 source samples/113.712 s after the silent
+guards. Audio uses 455168 bytes; 151 sectors of player/screen/tables are stored
+per part. Bank-2 reservation remains 14336 bytes. The 57-byte exit fits existing
+padding. Live paths remain 423 T/sample with page/bank extras 14/140 T, delta 0.
+Only the final guard changes: 61 T to clear the beeper versus 103 T to the old
+next output without filler (-42 T, stop/continue endpoints); 33 guard pulses
+are omitted. Loader/progress and disk/ROM latency remain outside this cost.
+
+The two-part control repeats the existing fully qualified quality-max IMA4
+reference twice. Both full native checks pass; cold Program Files Fuse
+executes all 5980094 bits, 373756 predictor/index observations, the automatic
+transition, 32 progress steps per part and terminal screen. Each part's
+actual timeline differs 0..1 T from its qualified control, stable float64
+SNR 22.173492 dB, speed +0.041482%. Cold preparation 27.388691 s; between-part
+pause 22.750346 s. No disk reads occur during audio. Twenty-five unit tests pass;
+short and full ordinary IMA4 previews regenerate byte for byte.
+
+Retain the initial harness's missing short-reference IMA-file failure; recover
+the payload from that archived TRD and rerun the equality check. The first
+full-generation attempt used the portable SDL Fuse, which redirects debugger
+output to shared stdout.txt; its phase probe exceeded 180 s and its concurrent
+full trace was interrupted/discarded. Repeat with the installed Fuse build,
+whose independent captured stdout is verified. This is a harness/tool-build
+issue, not accepted playback evidence. The control and incomplete-attempt
+records are under `audiobook-beeper/experiments/ima4-full-disk/`.
+
+The public script produces `ZX-audiobook-IMA4-full-disk.trd` from the supplied
+O. Henry audiobook. The complete native/cold Fuse run verifies 14565211 bits,
+910326 predictor/index observations, all four transitions and END OF AUDIO.
+No disk reads occur during sound; each part has 32 loading progress steps.
+Cold preparation is 27.388691 s; reload pauses range 21.03–22.79 s. Speed error
+is about +0.042%. Stable fixed-clock float64 SNR per part is 11.448644,
+12.842333, 13.266120, 13.527789 and 10.333552 dB. The 20-dB target is not met:
+keep the functional disk explicitly marked as a quality preview. This quieter
+track preparation differs from the earlier 22-dB control and is not a matched
+quality regression comparison. [Full evidence and reproduction](audiobook-beeper/experiments/ima4-full-disk/README.md).
+
+Retain two optional first-part phase failures and a worse 6.282434-dB candidate;
+select the verified compensation fallback. The production fix rejects only
+explicit optional phase failures, preserving fatal bit/memory/tool errors.
+The original final-volume parser falsely rejects a different natural HALT
+phase against only the first preview loop. Keep its complete captured run,
+authenticate disk/tool/script/trace hashes, and recheck every event with the
+correct reference selection. Part 1 gets an additional full native/cold
+two-loop proof in its actual entry phase (found on the fifth cold start);
+part 4 matches the already qualified warm loop. Every final pulse now differs
+0 T, with the original 8-T limit unchanged and no skipped samples or time edits.
+This is an authenticated reanalysis, not a second full-volume emulator run.
+
+Correct the native report's hard-coded IMA3 timing label to the codec metadata
+and repeat all five final and two control native checks; actual timing
+assertions and binaries were unaffected. Preserve the tail-audit export's
+missing-directory failure, create its directory and rerun successfully.
+The instruction-table and native tail counts agree. The current-source
+reproducer authenticates archived artifacts and rebuilds the exact disk.
+Decision: deliver this completely filled, verified single disk and retain all
+search failures. No physical hardware, IMA4 multi-disk swap execution, new
+quality study, merge or push is claimed.
+
 ## 2026-10-05: Integrate the saved audio experiments into main
 
 The user requests commit, merge and publication of the current work. Merge

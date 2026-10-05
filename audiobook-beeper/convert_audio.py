@@ -35,6 +35,10 @@ RATE = 8000
 HERE = Path(__file__).resolve().parent
 
 
+class PhaseCalibrationError(RuntimeError):
+    """A candidate cannot satisfy the existing cold/repeat phase contract."""
+
+
 def snapshot_sources(out):
     """Keep the producer and verifier sources beside each independent result."""
     archive = out / 'producer-source'
@@ -183,28 +187,28 @@ def calibrate(out, packed, source, fuse, hot=None, writer=write_candidate):
             choices = sorted((v for v in range(261) if representable_pad(v) and (pairs, v) not in tried),
                              key=lambda v: (abs(v - desired), v))
             if not choices:
-                raise RuntimeError('no untried phase pad remains')
+                raise PhaseCalibrationError('no untried phase pad remains')
             pad = choices[0]
         if (pairs, pad) in tried:
             pairs = max(1, pairs - 1)
             pad = 52
         if (pairs, pad) in tried:
-            raise RuntimeError('phase calibration failed to make progress')
-    raise RuntimeError('phase calibration did not converge within 24 candidates')
+            raise PhaseCalibrationError('phase calibration failed to make progress')
+    raise PhaseCalibrationError('phase calibration did not converge within 24 candidates')
 
 
-def validate(out, fuse, ffmpeg):
+def validate(out, fuse, ffmpeg, *, ready_phase=None):
     meta = json.loads((out / 'player.json').read_bytes())
     packed = gzip.decompress((out / 'soundtrack.ima.gz').read_bytes())
     ref = partial(reference, model=meta['model'], idle_pairs=meta['loop_idle_pairs'])
     save(out / 'native.json', native_check((out / 'audiobook-preview.trd').read_bytes(), meta, packed, ref, intervals))
-    result = fuse_check(fuse, out, meta, packed, False, ref, intervals)
+    result = fuse_check(fuse, out, meta, packed, False, ref, intervals, ready_phase=ready_phase)
     save(out / 'fuse.json', result)
     periods = [round(t * CPU) for t in result['cycle_durations_seconds']]
     target = round(periods[1] / FIELD) * FIELD
     phase_deltas = [t - target for t in periods]
     if abs(phase_deltas[0]) > 3 or phase_deltas[1] != 0:
-        raise RuntimeError(f'complete cold trace failed repeat-phase check: {phase_deltas}')
+        raise PhaseCalibrationError(f'complete cold trace failed repeat-phase check: {phase_deltas}')
     quality = [analyze(out, ffmpeg, loop=i) for i in range(2)]
     values = [q['fixed_mean_clock_total_snr_db'] for q in quality]
     # Silent input has no signal/noise ratio. Keep null, rather than NaN/Infinity.
@@ -234,6 +238,9 @@ def independent_ima_check(packed, ffmpeg):
 
 
 def convert(args):
+    if getattr(args,'disk_mode',None) in ('single','all'):
+        from ima3_series import convert_series
+        return convert_series(args)
     out = args.output.resolve()
     if out.exists() and any(out.iterdir()):
         raise ValueError('output must be empty; existing conversions are never overwritten')
@@ -252,6 +259,17 @@ def convert(args):
     pilot_quality = validate(pilot, args.fuse, args.ffmpeg)
     pcm_wav(pilot / 'compensated-pcm.wav', source)  # Identity transform candidate.
     variants = [dict(directory=str(pilot.relative_to(out)), **pilot_quality)]
+    rejected_variants = []
+
+    def reject_phase(folder, error):
+        # Keep complete trace diagnostics and the previous verified baseline.
+        # Memory/bit/predictor failures and tool errors remain fatal; only this
+        # explicit phase-contract failure is an ineligible search candidate.
+        rejected_variants.append(dict(directory=str(folder.relative_to(out)),
+                                      reason=str(error), qualified=False))
+        save(out/'rejected-variants.json', rejected_variants)
+        print(json.dumps(rejected_variants[-1]), flush=True)
+
     hot = meta['hot_indices']
     for iteration in range(args.iterations):
         times = np.frombuffer(gzip.decompress((pilot / 'output-times.u32.gz').read_bytes()), '<u4').astype(np.int64)
@@ -259,9 +277,13 @@ def convert(args):
         target = compensate(source, boundaries, period=CPU / RATE)
         packed = encode(target)
         folder = out / f'compensated-{iteration + 1}'
-        variant, new_meta = calibrate(folder, packed, source, args.fuse, hot)
-        pcm_wav(variant / 'compensated-pcm.wav', target)
-        result = validate(variant, args.fuse, args.ffmpeg)
+        try:
+            variant, new_meta = calibrate(folder, packed, source, args.fuse, hot)
+            pcm_wav(variant / 'compensated-pcm.wav', target)
+            result = validate(variant, args.fuse, args.ffmpeg)
+        except PhaseCalibrationError as error:
+            reject_phase(folder, error)
+            break
         variants.append(dict(directory=str(variant.relative_to(out)), **result))
         save(out / 'variants.json', variants)
         pilot, meta = variant, new_meta
@@ -284,8 +306,13 @@ def convert(args):
             save(out/'host-search.json', hosts)
         for host in ranked_hosts(hosts, limit=len(hosts)):
             packed = gzip.decompress((out/host['directory']/'soundtrack.ima.gz').read_bytes())
-            variant, new_meta = calibrate(out/f'disk-{host["directory"]}', packed, source, args.fuse, clock_meta['hot_indices'])
-            result = validate(variant, args.fuse, args.ffmpeg)
+            folder = out/f'disk-{host["directory"]}'
+            try:
+                variant, new_meta = calibrate(folder, packed, source, args.fuse, clock_meta['hot_indices'])
+                result = validate(variant, args.fuse, args.ffmpeg)
+            except PhaseCalibrationError as error:
+                reject_phase(folder, error)
+                continue
             times = np.frombuffer(gzip.decompress((variant/'output-times.u32.gz').read_bytes()), '<u4').astype(np.int64)
             target = compensate(source, times[sample_positions(new_meta)], period=CPU/RATE)
             pcm_wav(variant/'compensated-pcm.wav', target)
@@ -306,11 +333,15 @@ def convert(args):
             hosts.append(dict(directory=folder.name,**estimate));save(out/'host-search.json',hosts)
             packed=gzip.decompress((folder/'soundtrack.ima.gz').read_bytes())
             if packed != gzip.decompress((clock/'soundtrack.ima.gz').read_bytes()):
-                variant,new_meta=calibrate(out/'disk-refined',packed,source,args.fuse,clock_meta['hot_indices'])
-                result=validate(variant,args.fuse,args.ffmpeg)
-                times=np.frombuffer(gzip.decompress((variant/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)
-                pcm_wav(variant/'compensated-pcm.wav',compensate(source,times[sample_positions(new_meta)],period=CPU/RATE))
-                variants.append(dict(directory=str(variant.relative_to(out)),**result));save(out/'variants.json',variants)
+                try:
+                    variant,new_meta=calibrate(out/'disk-refined',packed,source,args.fuse,clock_meta['hot_indices'])
+                    result=validate(variant,args.fuse,args.ffmpeg)
+                except PhaseCalibrationError as error:
+                    reject_phase(out/'disk-refined', error)
+                else:
+                    times=np.frombuffer(gzip.decompress((variant/'output-times.u32.gz').read_bytes()),'<u4').astype(np.int64)
+                    pcm_wav(variant/'compensated-pcm.wav',compensate(source,times[sample_positions(new_meta)],period=CPU/RATE))
+                    variants.append(dict(directory=str(variant.relative_to(out)),**result));save(out/'variants.json',variants)
     eligible = [r for r in variants if r['speed_within_two_percent']]
     if not eligible:
         raise RuntimeError('no variant meets the required +/-2% mean playback speed')
@@ -339,7 +370,8 @@ def convert(args):
                   quality_gate_passed=passed,target_snr_db=target_snr,
                   profile='IMA4 / measured direct PDM / bounded waveform search' if quality_profile=='best' else 'IMA4 / legacy PCM beam32 and clock compensation',
                   quality_profile=quality_profile,host_search=hosts,
-                  source=source_meta, selected_variant=best, variants=variants, independent_ima=independent,
+                  source=source_meta, selected_variant=best, variants=variants,
+                  rejected_variants=rejected_variants, independent_ima=independent,
                   recording=recording, wav_scope=('Actual Fuse sound generator, two loops' if recording else 'Integrated Fuse port events with measurement filter'),
                   trd_sha256=hashlib.sha256((out / 'audiobook-preview.trd').read_bytes()).hexdigest(),
                   source_sha256_lf=producer_hashes,
@@ -354,12 +386,12 @@ def convert(args):
 
 
 def legacy_main(argv=None, *, parents=()):
-    parser = argparse.ArgumentParser(description='Four-bit IMA/direct-PDM looping preview with waveform optimization.', parents=list(parents), allow_abbrev=False)
+    parser = argparse.ArgumentParser(description='Four-bit IMA/direct-PDM disks with sequential parts and waveform optimization.', parents=list(parents), allow_abbrev=False)
     parser.add_argument('input', type=Path)
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--ffmpeg', default=shutil.which('ffmpeg'))
     parser.add_argument('--fuse', type=Path, required=True)
-    parser.add_argument('--duration', type=float, help='keep at most this many initial seconds; always bounded by RAM')
+    parser.add_argument('--duration', type=float, help='keep at most this many initial seconds within the selected disk mode')
     parser.add_argument('--iterations', type=int, choices=(1, 2), default=2)
     parser.add_argument('--quality',choices=('best','balanced'),default='best',
                         help='best: complete all requested waveform searches and verify each; balanced: legacy PCM search')
@@ -370,12 +402,16 @@ def legacy_main(argv=None, *, parents=()):
                         help='omit the final four-bit search on the measured candidate clock')
     parser.add_argument('--prepared-pcm', action='store_true', help='retain exact mono PCM8/8k levels; require RAM-sized, 512-aligned samples with a final 128-sample silent guard')
     parser.add_argument('--no-recording', action='store_true', help='skip normal-speed audible capture; keep complete native/cold-Fuse verification')
+    parser.add_argument('--disk-mode',choices=('single','all','preview'),default='single',
+                        help='single (default): fill one disk; all: whole track on disks; preview: looping RAM excerpt')
+    parser.add_argument('--resume',action='store_true',help='resume a matching sequential conversion')
     args = parser.parse_args(argv)
+    args.codec='ima4'
     if not math.isfinite(args.target_snr) or not 20 <= args.target_snr <= 60:
         parser.error('target SNR must be 20..60 dB')
     if not args.ffmpeg:
         parser.error('FFmpeg not found; supply --ffmpeg')
-    if args.output.exists() and any(args.output.iterdir()):
+    if args.output.exists() and any(args.output.iterdir()) and not (args.resume and args.disk_mode!='preview'):
         parser.error('output must be empty; existing conversions are never overwritten')
     try:
         report = convert(args)

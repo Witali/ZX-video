@@ -266,13 +266,13 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     return disk,meta
 
 
-def direct_loading_screen(samples,chain=None):
+def direct_loading_screen(samples,chain=None,*,bits=3):
     """Keep the existing UI, with the resident format stated correctly."""
     from PIL import Image,ImageDraw,ImageFont
     from pcm_player import spectrum_bitmap_offset
-    data=bytearray(loading_screen(samples,'IMA3 / DIRECT PDM'))
+    data=bytearray(loading_screen(samples,f'IMA{bits} / DIRECT PDM'))
     tile=Image.new('1',(256,24));draw=ImageDraw.Draw(tile)
-    font=ImageFont.load_default(size=13);text='3-BIT PACKED AUDIO'
+    font=ImageFont.load_default(size=13);text=f'{bits}-BIT PACKED AUDIO'
     box=draw.textbbox((0,0),text,font=font)
     draw.text(((256-(box[2]-box[0]))//2,6),text,font=font,fill=1)
     for y in range(24):

@@ -1,0 +1,1974 @@
+base 10
+se $active 0
+se $part 0
+se $dump 0
+se $last 0
+br 33057
+com 1
+pr -100
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr ula:mem7ffd
+se $active 1
+se $last spectrum:frames*70908+ula:tstates
+co
+end
+cond 1 $part==0 && $active==0
+br 32820
+com 2
+pr -103
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr [55296]
+pr [55391]
+co
+end
+cond 2 $part==0 && $active==0
+br 33008
+com 3
+pr -104
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr [55296]
+pr [55391]
+co
+end
+cond 3 $part==0 && $active==0
+br 33508
+com 4
+pr -105
+pr $part
+pr [33529]
+co
+end
+cond 4 $part==0 && $active==0
+br 33057
+com 5
+pr -100
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr ula:mem7ffd
+se $active 1
+se $last spectrum:frames*70908+ula:tstates
+co
+end
+cond 5 $part==1 && $active==0
+br 32820
+com 6
+pr -103
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr [55296]
+pr [55391]
+co
+end
+cond 6 $part==1 && $active==0
+br 33008
+com 7
+pr -104
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr [55296]
+pr [55391]
+co
+end
+cond 7 $part==1 && $active==0
+br 33507
+com 8
+pr -105
+pr $part
+pr [33528]
+co
+end
+cond 8 $part==1 && $active==0
+br 33057
+com 9
+pr -100
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr ula:mem7ffd
+se $active 1
+se $last spectrum:frames*70908+ula:tstates
+co
+end
+cond 9 $part==2 && $active==0
+br 32820
+com 10
+pr -103
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr [55296]
+pr [55391]
+co
+end
+cond 10 $part==2 && $active==0
+br 33008
+com 11
+pr -104
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr [55296]
+pr [55391]
+co
+end
+cond 11 $part==2 && $active==0
+br 33508
+com 12
+pr -105
+pr $part
+pr [33529]
+co
+end
+cond 12 $part==2 && $active==0
+br 33057
+com 13
+pr -100
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr ula:mem7ffd
+se $active 1
+se $last spectrum:frames*70908+ula:tstates
+co
+end
+cond 13 $part==3 && $active==0
+br 32820
+com 14
+pr -103
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr [55296]
+pr [55391]
+co
+end
+cond 14 $part==3 && $active==0
+br 33008
+com 15
+pr -104
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr [55296]
+pr [55391]
+co
+end
+cond 15 $part==3 && $active==0
+br 33507
+com 16
+pr -105
+pr $part
+pr [33528]
+co
+end
+cond 16 $part==3 && $active==0
+br 33015
+com 17
+pr -100
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr ula:mem7ffd
+se $active 1
+se $last spectrum:frames*70908+ula:tstates
+co
+end
+cond 17 $part==4 && $active==0
+br 32820
+com 18
+pr -103
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr [55296]
+pr [55391]
+co
+end
+cond 18 $part==4 && $active==0
+br 32966
+com 19
+pr -104
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr [55296]
+pr [55391]
+co
+end
+cond 19 $part==4 && $active==0
+br 33424
+com 20
+pr -105
+pr $part
+pr [33445]
+co
+end
+cond 20 $part==4 && $active==0
+br 46912
+com 21
+pr -110
+pr $part
+pr spectrum:frames*70908+ula:tstates
+se $active 0
+se $part $part+1
+co
+end
+cond 21 $active==1
+br port write 254
+com 22
+pr (spectrum:frames*70908+ula:tstates-$last)*2+([z80:pc-1]==81 || ([z80:pc-1]==65 && z80:b==16) || ([z80:pc-1]==254 && z80:a==16))
+se $last spectrum:frames*70908+ula:tstates
+co
+end
+cond 22 $active==1
+br 33812
+com 23
+pr -121
+pr z80:hl
+co
+end
+cond 23 $active==1
+br 33815
+com 24
+pr -120
+pr z80:ix
+co
+end
+cond 24 $active==1
+br 33853
+com 25
+pr -121
+pr z80:hl
+co
+end
+cond 25 $active==1
+br 33856
+com 26
+pr -120
+pr z80:ix
+co
+end
+cond 26 $active==1
+br 33894
+com 27
+pr -121
+pr z80:hl
+co
+end
+cond 27 $active==1
+br 33897
+com 28
+pr -120
+pr z80:ix
+co
+end
+cond 28 $active==1
+br 33935
+com 29
+pr -121
+pr z80:hl
+co
+end
+cond 29 $active==1
+br 33938
+com 30
+pr -120
+pr z80:ix
+co
+end
+cond 30 $active==1
+br 33976
+com 31
+pr -121
+pr z80:hl
+co
+end
+cond 31 $active==1
+br 33979
+com 32
+pr -120
+pr z80:ix
+co
+end
+cond 32 $active==1
+br 34017
+com 33
+pr -121
+pr z80:hl
+co
+end
+cond 33 $active==1
+br 34020
+com 34
+pr -120
+pr z80:ix
+co
+end
+cond 34 $active==1
+br 34058
+com 35
+pr -121
+pr z80:hl
+co
+end
+cond 35 $active==1
+br 34061
+com 36
+pr -120
+pr z80:ix
+co
+end
+cond 36 $active==1
+br 34099
+com 37
+pr -121
+pr z80:hl
+co
+end
+cond 37 $active==1
+br 34102
+com 38
+pr -120
+pr z80:ix
+co
+end
+cond 38 $active==1
+br 34140
+com 39
+pr -121
+pr z80:hl
+co
+end
+cond 39 $active==1
+br 34143
+com 40
+pr -120
+pr z80:ix
+co
+end
+cond 40 $active==1
+br 34181
+com 41
+pr -121
+pr z80:hl
+co
+end
+cond 41 $active==1
+br 34184
+com 42
+pr -120
+pr z80:ix
+co
+end
+cond 42 $active==1
+br 34222
+com 43
+pr -121
+pr z80:hl
+co
+end
+cond 43 $active==1
+br 34225
+com 44
+pr -120
+pr z80:ix
+co
+end
+cond 44 $active==1
+br 34263
+com 45
+pr -121
+pr z80:hl
+co
+end
+cond 45 $active==1
+br 34266
+com 46
+pr -120
+pr z80:ix
+co
+end
+cond 46 $active==1
+br 34304
+com 47
+pr -121
+pr z80:hl
+co
+end
+cond 47 $active==1
+br 34307
+com 48
+pr -120
+pr z80:ix
+co
+end
+cond 48 $active==1
+br 34345
+com 49
+pr -121
+pr z80:hl
+co
+end
+cond 49 $active==1
+br 34348
+com 50
+pr -120
+pr z80:ix
+co
+end
+cond 50 $active==1
+br 34386
+com 51
+pr -121
+pr z80:hl
+co
+end
+cond 51 $active==1
+br 34389
+com 52
+pr -120
+pr z80:ix
+co
+end
+cond 52 $active==1
+br 34427
+com 53
+pr -121
+pr z80:hl
+co
+end
+cond 53 $active==1
+br 34430
+com 54
+pr -120
+pr z80:ix
+co
+end
+cond 54 $active==1
+br 34468
+com 55
+pr -121
+pr z80:hl
+co
+end
+cond 55 $active==1
+br 34471
+com 56
+pr -120
+pr z80:ix
+co
+end
+cond 56 $active==1
+br 34509
+com 57
+pr -121
+pr z80:hl
+co
+end
+cond 57 $active==1
+br 34512
+com 58
+pr -120
+pr z80:ix
+co
+end
+cond 58 $active==1
+br 34550
+com 59
+pr -121
+pr z80:hl
+co
+end
+cond 59 $active==1
+br 34553
+com 60
+pr -120
+pr z80:ix
+co
+end
+cond 60 $active==1
+br 34591
+com 61
+pr -121
+pr z80:hl
+co
+end
+cond 61 $active==1
+br 34594
+com 62
+pr -120
+pr z80:ix
+co
+end
+cond 62 $active==1
+br 34632
+com 63
+pr -121
+pr z80:hl
+co
+end
+cond 63 $active==1
+br 34635
+com 64
+pr -120
+pr z80:ix
+co
+end
+cond 64 $active==1
+br 34673
+com 65
+pr -121
+pr z80:hl
+co
+end
+cond 65 $active==1
+br 34676
+com 66
+pr -120
+pr z80:ix
+co
+end
+cond 66 $active==1
+br 34714
+com 67
+pr -121
+pr z80:hl
+co
+end
+cond 67 $active==1
+br 34717
+com 68
+pr -120
+pr z80:ix
+co
+end
+cond 68 $active==1
+br 34755
+com 69
+pr -121
+pr z80:hl
+co
+end
+cond 69 $active==1
+br 34758
+com 70
+pr -120
+pr z80:ix
+co
+end
+cond 70 $active==1
+br 34796
+com 71
+pr -121
+pr z80:hl
+co
+end
+cond 71 $active==1
+br 34799
+com 72
+pr -120
+pr z80:ix
+co
+end
+cond 72 $active==1
+br 34837
+com 73
+pr -121
+pr z80:hl
+co
+end
+cond 73 $active==1
+br 34840
+com 74
+pr -120
+pr z80:ix
+co
+end
+cond 74 $active==1
+br 34878
+com 75
+pr -121
+pr z80:hl
+co
+end
+cond 75 $active==1
+br 34881
+com 76
+pr -120
+pr z80:ix
+co
+end
+cond 76 $active==1
+br 34919
+com 77
+pr -121
+pr z80:hl
+co
+end
+cond 77 $active==1
+br 34922
+com 78
+pr -120
+pr z80:ix
+co
+end
+cond 78 $active==1
+br 34960
+com 79
+pr -121
+pr z80:hl
+co
+end
+cond 79 $active==1
+br 34963
+com 80
+pr -120
+pr z80:ix
+co
+end
+cond 80 $active==1
+br 35001
+com 81
+pr -121
+pr z80:hl
+co
+end
+cond 81 $active==1
+br 35004
+com 82
+pr -120
+pr z80:ix
+co
+end
+cond 82 $active==1
+br 35042
+com 83
+pr -121
+pr z80:hl
+co
+end
+cond 83 $active==1
+br 35045
+com 84
+pr -120
+pr z80:ix
+co
+end
+cond 84 $active==1
+br 35083
+com 85
+pr -121
+pr z80:hl
+co
+end
+cond 85 $active==1
+br 35086
+com 86
+pr -120
+pr z80:ix
+co
+end
+cond 86 $active==1
+br 35124
+com 87
+pr -121
+pr z80:hl
+co
+end
+cond 87 $active==1
+br 35127
+com 88
+pr -120
+pr z80:ix
+co
+end
+cond 88 $active==1
+br 35165
+com 89
+pr -121
+pr z80:hl
+co
+end
+cond 89 $active==1
+br 35168
+com 90
+pr -120
+pr z80:ix
+co
+end
+cond 90 $active==1
+br 35206
+com 91
+pr -121
+pr z80:hl
+co
+end
+cond 91 $active==1
+br 35209
+com 92
+pr -120
+pr z80:ix
+co
+end
+cond 92 $active==1
+br 35247
+com 93
+pr -121
+pr z80:hl
+co
+end
+cond 93 $active==1
+br 35250
+com 94
+pr -120
+pr z80:ix
+co
+end
+cond 94 $active==1
+br 35288
+com 95
+pr -121
+pr z80:hl
+co
+end
+cond 95 $active==1
+br 35291
+com 96
+pr -120
+pr z80:ix
+co
+end
+cond 96 $active==1
+br 35329
+com 97
+pr -121
+pr z80:hl
+co
+end
+cond 97 $active==1
+br 35332
+com 98
+pr -120
+pr z80:ix
+co
+end
+cond 98 $active==1
+br 35370
+com 99
+pr -121
+pr z80:hl
+co
+end
+cond 99 $active==1
+br 35373
+com 100
+pr -120
+pr z80:ix
+co
+end
+cond 100 $active==1
+br 35411
+com 101
+pr -121
+pr z80:hl
+co
+end
+cond 101 $active==1
+br 35414
+com 102
+pr -120
+pr z80:ix
+co
+end
+cond 102 $active==1
+br 35452
+com 103
+pr -121
+pr z80:hl
+co
+end
+cond 103 $active==1
+br 35455
+com 104
+pr -120
+pr z80:ix
+co
+end
+cond 104 $active==1
+br 35493
+com 105
+pr -121
+pr z80:hl
+co
+end
+cond 105 $active==1
+br 35496
+com 106
+pr -120
+pr z80:ix
+co
+end
+cond 106 $active==1
+br 35534
+com 107
+pr -121
+pr z80:hl
+co
+end
+cond 107 $active==1
+br 35537
+com 108
+pr -120
+pr z80:ix
+co
+end
+cond 108 $active==1
+br 35575
+com 109
+pr -121
+pr z80:hl
+co
+end
+cond 109 $active==1
+br 35578
+com 110
+pr -120
+pr z80:ix
+co
+end
+cond 110 $active==1
+br 35616
+com 111
+pr -121
+pr z80:hl
+co
+end
+cond 111 $active==1
+br 35619
+com 112
+pr -120
+pr z80:ix
+co
+end
+cond 112 $active==1
+br 35657
+com 113
+pr -121
+pr z80:hl
+co
+end
+cond 113 $active==1
+br 35660
+com 114
+pr -120
+pr z80:ix
+co
+end
+cond 114 $active==1
+br 35698
+com 115
+pr -121
+pr z80:hl
+co
+end
+cond 115 $active==1
+br 35701
+com 116
+pr -120
+pr z80:ix
+co
+end
+cond 116 $active==1
+br 35739
+com 117
+pr -121
+pr z80:hl
+co
+end
+cond 117 $active==1
+br 35742
+com 118
+pr -120
+pr z80:ix
+co
+end
+cond 118 $active==1
+br 35780
+com 119
+pr -121
+pr z80:hl
+co
+end
+cond 119 $active==1
+br 35783
+com 120
+pr -120
+pr z80:ix
+co
+end
+cond 120 $active==1
+br 35821
+com 121
+pr -121
+pr z80:hl
+co
+end
+cond 121 $active==1
+br 35824
+com 122
+pr -120
+pr z80:ix
+co
+end
+cond 122 $active==1
+br 35862
+com 123
+pr -121
+pr z80:hl
+co
+end
+cond 123 $active==1
+br 35865
+com 124
+pr -120
+pr z80:ix
+co
+end
+cond 124 $active==1
+br 35903
+com 125
+pr -121
+pr z80:hl
+co
+end
+cond 125 $active==1
+br 35906
+com 126
+pr -120
+pr z80:ix
+co
+end
+cond 126 $active==1
+br 35944
+com 127
+pr -121
+pr z80:hl
+co
+end
+cond 127 $active==1
+br 35947
+com 128
+pr -120
+pr z80:ix
+co
+end
+cond 128 $active==1
+br 35985
+com 129
+pr -121
+pr z80:hl
+co
+end
+cond 129 $active==1
+br 35988
+com 130
+pr -120
+pr z80:ix
+co
+end
+cond 130 $active==1
+br 36026
+com 131
+pr -121
+pr z80:hl
+co
+end
+cond 131 $active==1
+br 36029
+com 132
+pr -120
+pr z80:ix
+co
+end
+cond 132 $active==1
+br 36067
+com 133
+pr -121
+pr z80:hl
+co
+end
+cond 133 $active==1
+br 36070
+com 134
+pr -120
+pr z80:ix
+co
+end
+cond 134 $active==1
+br 36108
+com 135
+pr -121
+pr z80:hl
+co
+end
+cond 135 $active==1
+br 36111
+com 136
+pr -120
+pr z80:ix
+co
+end
+cond 136 $active==1
+br 36149
+com 137
+pr -121
+pr z80:hl
+co
+end
+cond 137 $active==1
+br 36152
+com 138
+pr -120
+pr z80:ix
+co
+end
+cond 138 $active==1
+br 36190
+com 139
+pr -121
+pr z80:hl
+co
+end
+cond 139 $active==1
+br 36193
+com 140
+pr -120
+pr z80:ix
+co
+end
+cond 140 $active==1
+br 36231
+com 141
+pr -121
+pr z80:hl
+co
+end
+cond 141 $active==1
+br 36234
+com 142
+pr -120
+pr z80:ix
+co
+end
+cond 142 $active==1
+br 36272
+com 143
+pr -121
+pr z80:hl
+co
+end
+cond 143 $active==1
+br 36275
+com 144
+pr -120
+pr z80:ix
+co
+end
+cond 144 $active==1
+br 36313
+com 145
+pr -121
+pr z80:hl
+co
+end
+cond 145 $active==1
+br 36316
+com 146
+pr -120
+pr z80:ix
+co
+end
+cond 146 $active==1
+br 36354
+com 147
+pr -121
+pr z80:hl
+co
+end
+cond 147 $active==1
+br 36357
+com 148
+pr -120
+pr z80:ix
+co
+end
+cond 148 $active==1
+br 36395
+com 149
+pr -121
+pr z80:hl
+co
+end
+cond 149 $active==1
+br 36398
+com 150
+pr -120
+pr z80:ix
+co
+end
+cond 150 $active==1
+br 36436
+com 151
+pr -121
+pr z80:hl
+co
+end
+cond 151 $active==1
+br 36439
+com 152
+pr -120
+pr z80:ix
+co
+end
+cond 152 $active==1
+br 36477
+com 153
+pr -121
+pr z80:hl
+co
+end
+cond 153 $active==1
+br 36480
+com 154
+pr -120
+pr z80:ix
+co
+end
+cond 154 $active==1
+br 36518
+com 155
+pr -121
+pr z80:hl
+co
+end
+cond 155 $active==1
+br 36521
+com 156
+pr -120
+pr z80:ix
+co
+end
+cond 156 $active==1
+br 36559
+com 157
+pr -121
+pr z80:hl
+co
+end
+cond 157 $active==1
+br 36562
+com 158
+pr -120
+pr z80:ix
+co
+end
+cond 158 $active==1
+br 36600
+com 159
+pr -121
+pr z80:hl
+co
+end
+cond 159 $active==1
+br 36603
+com 160
+pr -120
+pr z80:ix
+co
+end
+cond 160 $active==1
+br 36641
+com 161
+pr -121
+pr z80:hl
+co
+end
+cond 161 $active==1
+br 36644
+com 162
+pr -120
+pr z80:ix
+co
+end
+cond 162 $active==1
+br 36682
+com 163
+pr -121
+pr z80:hl
+co
+end
+cond 163 $active==1
+br 36685
+com 164
+pr -120
+pr z80:ix
+co
+end
+cond 164 $active==1
+br 36723
+com 165
+pr -121
+pr z80:hl
+co
+end
+cond 165 $active==1
+br 36726
+com 166
+pr -120
+pr z80:ix
+co
+end
+cond 166 $active==1
+br 36764
+com 167
+pr -121
+pr z80:hl
+co
+end
+cond 167 $active==1
+br 36767
+com 168
+pr -120
+pr z80:ix
+co
+end
+cond 168 $active==1
+br 36805
+com 169
+pr -121
+pr z80:hl
+co
+end
+cond 169 $active==1
+br 36808
+com 170
+pr -120
+pr z80:ix
+co
+end
+cond 170 $active==1
+br 36846
+com 171
+pr -121
+pr z80:hl
+co
+end
+cond 171 $active==1
+br 36849
+com 172
+pr -120
+pr z80:ix
+co
+end
+cond 172 $active==1
+br 36887
+com 173
+pr -121
+pr z80:hl
+co
+end
+cond 173 $active==1
+br 36890
+com 174
+pr -120
+pr z80:ix
+co
+end
+cond 174 $active==1
+br 36928
+com 175
+pr -121
+pr z80:hl
+co
+end
+cond 175 $active==1
+br 36931
+com 176
+pr -120
+pr z80:ix
+co
+end
+cond 176 $active==1
+br 36969
+com 177
+pr -121
+pr z80:hl
+co
+end
+cond 177 $active==1
+br 36972
+com 178
+pr -120
+pr z80:ix
+co
+end
+cond 178 $active==1
+br 37010
+com 179
+pr -121
+pr z80:hl
+co
+end
+cond 179 $active==1
+br 37013
+com 180
+pr -120
+pr z80:ix
+co
+end
+cond 180 $active==1
+br 37051
+com 181
+pr -121
+pr z80:hl
+co
+end
+cond 181 $active==1
+br 37054
+com 182
+pr -120
+pr z80:ix
+co
+end
+cond 182 $active==1
+br 37092
+com 183
+pr -121
+pr z80:hl
+co
+end
+cond 183 $active==1
+br 37095
+com 184
+pr -120
+pr z80:ix
+co
+end
+cond 184 $active==1
+br 37133
+com 185
+pr -121
+pr z80:hl
+co
+end
+cond 185 $active==1
+br 37136
+com 186
+pr -120
+pr z80:ix
+co
+end
+cond 186 $active==1
+br 37174
+com 187
+pr -121
+pr z80:hl
+co
+end
+cond 187 $active==1
+br 37177
+com 188
+pr -120
+pr z80:ix
+co
+end
+cond 188 $active==1
+br 37215
+com 189
+pr -121
+pr z80:hl
+co
+end
+cond 189 $active==1
+br 37218
+com 190
+pr -120
+pr z80:ix
+co
+end
+cond 190 $active==1
+br 37256
+com 191
+pr -121
+pr z80:hl
+co
+end
+cond 191 $active==1
+br 37259
+com 192
+pr -120
+pr z80:ix
+co
+end
+cond 192 $active==1
+br 37297
+com 193
+pr -121
+pr z80:hl
+co
+end
+cond 193 $active==1
+br 37300
+com 194
+pr -120
+pr z80:ix
+co
+end
+cond 194 $active==1
+br 37338
+com 195
+pr -121
+pr z80:hl
+co
+end
+cond 195 $active==1
+br 37341
+com 196
+pr -120
+pr z80:ix
+co
+end
+cond 196 $active==1
+br 37379
+com 197
+pr -121
+pr z80:hl
+co
+end
+cond 197 $active==1
+br 37382
+com 198
+pr -120
+pr z80:ix
+co
+end
+cond 198 $active==1
+br 37420
+com 199
+pr -121
+pr z80:hl
+co
+end
+cond 199 $active==1
+br 37423
+com 200
+pr -120
+pr z80:ix
+co
+end
+cond 200 $active==1
+br 37461
+com 201
+pr -121
+pr z80:hl
+co
+end
+cond 201 $active==1
+br 37464
+com 202
+pr -120
+pr z80:ix
+co
+end
+cond 202 $active==1
+br 37502
+com 203
+pr -121
+pr z80:hl
+co
+end
+cond 203 $active==1
+br 37505
+com 204
+pr -120
+pr z80:ix
+co
+end
+cond 204 $active==1
+br 37543
+com 205
+pr -121
+pr z80:hl
+co
+end
+cond 205 $active==1
+br 37546
+com 206
+pr -120
+pr z80:ix
+co
+end
+cond 206 $active==1
+br 37584
+com 207
+pr -121
+pr z80:hl
+co
+end
+cond 207 $active==1
+br 37587
+com 208
+pr -120
+pr z80:ix
+co
+end
+cond 208 $active==1
+br 37625
+com 209
+pr -121
+pr z80:hl
+co
+end
+cond 209 $active==1
+br 37628
+com 210
+pr -120
+pr z80:ix
+co
+end
+cond 210 $active==1
+br 37666
+com 211
+pr -121
+pr z80:hl
+co
+end
+cond 211 $active==1
+br 37669
+com 212
+pr -120
+pr z80:ix
+co
+end
+cond 212 $active==1
+br 37707
+com 213
+pr -121
+pr z80:hl
+co
+end
+cond 213 $active==1
+br 37710
+com 214
+pr -120
+pr z80:ix
+co
+end
+cond 214 $active==1
+br 37748
+com 215
+pr -121
+pr z80:hl
+co
+end
+cond 215 $active==1
+br 37751
+com 216
+pr -120
+pr z80:ix
+co
+end
+cond 216 $active==1
+br 37789
+com 217
+pr -121
+pr z80:hl
+co
+end
+cond 217 $active==1
+br 37792
+com 218
+pr -120
+pr z80:ix
+co
+end
+cond 218 $active==1
+br 37830
+com 219
+pr -121
+pr z80:hl
+co
+end
+cond 219 $active==1
+br 37833
+com 220
+pr -120
+pr z80:ix
+co
+end
+cond 220 $active==1
+br 37871
+com 221
+pr -121
+pr z80:hl
+co
+end
+cond 221 $active==1
+br 37874
+com 222
+pr -120
+pr z80:ix
+co
+end
+cond 222 $active==1
+br 37912
+com 223
+pr -121
+pr z80:hl
+co
+end
+cond 223 $active==1
+br 37915
+com 224
+pr -120
+pr z80:ix
+co
+end
+cond 224 $active==1
+br 37953
+com 225
+pr -121
+pr z80:hl
+co
+end
+cond 225 $active==1
+br 37956
+com 226
+pr -120
+pr z80:ix
+co
+end
+cond 226 $active==1
+br 37994
+com 227
+pr -121
+pr z80:hl
+co
+end
+cond 227 $active==1
+br 37997
+com 228
+pr -120
+pr z80:ix
+co
+end
+cond 228 $active==1
+br 38035
+com 229
+pr -121
+pr z80:hl
+co
+end
+cond 229 $active==1
+br 38038
+com 230
+pr -120
+pr z80:ix
+co
+end
+cond 230 $active==1
+br 38076
+com 231
+pr -121
+pr z80:hl
+co
+end
+cond 231 $active==1
+br 38079
+com 232
+pr -120
+pr z80:ix
+co
+end
+cond 232 $active==1
+br 38117
+com 233
+pr -121
+pr z80:hl
+co
+end
+cond 233 $active==1
+br 38120
+com 234
+pr -120
+pr z80:ix
+co
+end
+cond 234 $active==1
+br 38158
+com 235
+pr -121
+pr z80:hl
+co
+end
+cond 235 $active==1
+br 38161
+com 236
+pr -120
+pr z80:ix
+co
+end
+cond 236 $active==1
+br 38199
+com 237
+pr -121
+pr z80:hl
+co
+end
+cond 237 $active==1
+br 38202
+com 238
+pr -120
+pr z80:ix
+co
+end
+cond 238 $active==1
+br 38240
+com 239
+pr -121
+pr z80:hl
+co
+end
+cond 239 $active==1
+br 38243
+com 240
+pr -120
+pr z80:ix
+co
+end
+cond 240 $active==1
+br 38281
+com 241
+pr -121
+pr z80:hl
+co
+end
+cond 241 $active==1
+br 38284
+com 242
+pr -120
+pr z80:ix
+co
+end
+cond 242 $active==1
+br 38322
+com 243
+pr -121
+pr z80:hl
+co
+end
+cond 243 $active==1
+br 38325
+com 244
+pr -120
+pr z80:ix
+co
+end
+cond 244 $active==1
+br 38363
+com 245
+pr -121
+pr z80:hl
+co
+end
+cond 245 $active==1
+br 38366
+com 246
+pr -120
+pr z80:ix
+co
+end
+cond 246 $active==1
+br 38404
+com 247
+pr -121
+pr z80:hl
+co
+end
+cond 247 $active==1
+br 38407
+com 248
+pr -120
+pr z80:ix
+co
+end
+cond 248 $active==1
+br 38445
+com 249
+pr -121
+pr z80:hl
+co
+end
+cond 249 $active==1
+br 38448
+com 250
+pr -120
+pr z80:ix
+co
+end
+cond 250 $active==1
+br 38486
+com 251
+pr -121
+pr z80:hl
+co
+end
+cond 251 $active==1
+br 38489
+com 252
+pr -120
+pr z80:ix
+co
+end
+cond 252 $active==1
+br 38527
+com 253
+pr -121
+pr z80:hl
+co
+end
+cond 253 $active==1
+br 38530
+com 254
+pr -120
+pr z80:ix
+co
+end
+cond 254 $active==1
+br 38568
+com 255
+pr -121
+pr z80:hl
+co
+end
+cond 255 $active==1
+br 38571
+com 256
+pr -120
+pr z80:ix
+co
+end
+cond 256 $active==1
+br 38609
+com 257
+pr -121
+pr z80:hl
+co
+end
+cond 257 $active==1
+br 38612
+com 258
+pr -120
+pr z80:ix
+co
+end
+cond 258 $active==1
+br 38650
+com 259
+pr -121
+pr z80:hl
+co
+end
+cond 259 $active==1
+br 38653
+com 260
+pr -120
+pr z80:ix
+co
+end
+cond 260 $active==1
+br 38691
+com 261
+pr -121
+pr z80:hl
+co
+end
+cond 261 $active==1
+br 38694
+com 262
+pr -120
+pr z80:ix
+co
+end
+cond 262 $active==1
+br 38732
+com 263
+pr -121
+pr z80:hl
+co
+end
+cond 263 $active==1
+br 38735
+com 264
+pr -120
+pr z80:ix
+co
+end
+cond 264 $active==1
+br 38773
+com 265
+pr -121
+pr z80:hl
+co
+end
+cond 265 $active==1
+br 38776
+com 266
+pr -120
+pr z80:ix
+co
+end
+cond 266 $active==1
+br 15635
+com 267
+pr -102
+pr $active
+pr spectrum:frames*70908+ula:tstates
+pr z80:hl
+pr z80:de
+pr z80:b
+co
+end
+br 16589
+com 268
+pr -130
+pr spectrum:frames*70908+ula:tstates
+pr [16733]
+pr [16734]
+co
+end
+br 16605
+com 269
+pr -198
+pr spectrum:frames*70908+ula:tstates
+ex 77
+end
+br 16486
+com 270
+pr -199
+pr $part
+pr spectrum:frames*70908+ula:tstates
+pr ula:mem7ffd
+se $dump 16384
+se z80:pc 16395
+co
+end
+br 16396
+com 271
+pr -300
+pr [$dump]+256*[$dump+1]+65536*[$dump+2]+16777216*[$dump+3]
+se $dump $dump+4
+se z80:pc 16395
+co
+end
+cond 271 $dump>=16384 && $dump<65536
+br 16396
+com 272
+pr -301
+ex 77
+end
+cond 272 $dump==65536

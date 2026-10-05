@@ -622,3 +622,9 @@ toolkit/generic_guarded_cb46_evidence/*.gz -text
 /audiobook-beeper/experiments/g726-2bit/**/*.g726 filter=lfs diff=lfs merge=lfs -text
 /audiobook-beeper/experiments/g726-2bit/**/*.gz filter=lfs diff=lfs merge=lfs -text
 /audiobook-beeper/experiments/g726-2bit/*.md text eol=lf
+# Preserve authenticated IMA4 sequential-volume evidence byte for byte.
+/audiobook-beeper/experiments/ima4-full-disk/** -text -whitespace
+/audiobook-beeper/experiments/ima4-full-disk/**/*.gz filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/ima4-full-disk/**/*.wav filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/ima4-full-disk/*.py text eol=lf
+/audiobook-beeper/experiments/ima4-full-disk/*.md text eol=lf

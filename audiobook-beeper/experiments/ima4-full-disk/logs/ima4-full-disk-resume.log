@@ -1,0 +1,32 @@
+{"stage": "convert-part", "part": 1, "parts": 5, "start": 0, "stop": 186752, "samples": 186880, "sectors": 516}
+{"reused_stage": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima4-full-disk\\work\\part-00001"}
+{"stage": "convert-part", "part": 2, "parts": 5, "start": 186752, "stop": 373504, "samples": 186880, "sectors": 516}
+{"reused_stage": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima4-full-disk\\work\\part-00002"}
+{"stage": "convert-part", "part": 3, "parts": 5, "start": 373504, "stop": 560256, "samples": 186880, "sectors": 516}
+{"reused_stage": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima4-full-disk\\work\\part-00003"}
+{"stage": "convert-part", "part": 4, "parts": 5, "start": 560256, "stop": 747008, "samples": 186880, "sectors": 516}
+{"reused_stage": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima4-full-disk\\work\\part-00004"}
+{"stage": "convert-part", "part": 5, "parts": 5, "start": 747008, "stop": 909696, "samples": 162816, "sectors": 469}
+{"reused_stage": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima4-full-disk\\work\\part-00005"}
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_audio.py", line 415, in <module>
+    main()
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_audio.py", line 406, in main
+    return legacy_main(remaining, parents=(selector,))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_audio.py", line 388, in legacy_main
+    report = convert(args)
+             ^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\convert_audio.py", line 239, in convert
+    return convert_series(args)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\ima3_series.py", line 227, in convert_series
+    verified=verify_series(out,args.fuse,args.ffmpeg)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\verify_ima3_series.py", line 247, in verify_series
+    cold,ram=fuse_volume(out/volume['file'],volume,verification/f'cold-{volume["volume"]:04d}',fuse,ffmpeg=ffmpeg)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\lpc-ima-preload\audiobook-beeper\verify_ima3_series.py", line 189, in fuse_volume
+    assert np.max(np.abs(delta))<=8,('output clock changed',i,
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('output clock changed', 0, 496, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], -13, 3)

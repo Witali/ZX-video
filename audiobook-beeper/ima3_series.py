@@ -63,23 +63,23 @@ def plan_parts(samples,*,part_samples=None):
     return parts
 
 
-def plan_volumes(parts,*,single=False):
-    volumes=[];current=[];position=FIRST_PLAYER_SECTOR
+def plan_volumes(parts,*,single=False,first_sector=FIRST_PLAYER_SECTOR):
+    volumes=[];current=[];position=first_sector
     for index,part in enumerate(parts):
         if position+part['sectors']>2560 or len(current)==32:
             if not current:raise ValueError('a RAM part cannot fit a disk')
             volumes.append(current)
             if single:return volumes
-            current=[];position=FIRST_PLAYER_SECTOR
+            current=[];position=first_sector
         current.append(index);position+=part['sectors']
     if current:volumes.append(current)
     if len(volumes)>9999:raise ValueError('more than 9999 TRDs requested')
     return volumes
 
 
-def assemble_controller(work,series,volume):
+def assemble_controller(work,series,volume,*,magic=MAGIC):
     work.mkdir(parents=True,exist_ok=True)
-    (work/'identity.bin').write_bytes(MAGIC+series)
+    (work/'identity.bin').write_bytes(magic+series)
     (work/'chain-config.inc').write_text(
         f'initial_volume: EQU {volume}\nheader_disk: EQU {disk_address(HEADER_SECTOR)}\n',encoding='ascii')
     (work/'ima3-chain.asm').write_bytes((HERE/'ima3-chain.asm').read_bytes())
@@ -158,7 +158,12 @@ def build_volume(selected,work,series,volume,total_volumes):
 def convert_series(args):
     from convert_ima3_audio import convert,digest
     from verify_ima3_series import verify_series
-    if args.prepared_pcm or args.reuse_pilot:
+    codec=getattr(args,'codec','ima3')
+    planner,volumer,packer,capacity=plan_parts,plan_volumes,build_volume,capacity_samples
+    if codec=='ima4':
+        from convert_audio import convert
+        from ima4_series import plan_parts as planner,plan_volumes as volumer,build_volume as packer,capacity_samples as capacity
+    if args.prepared_pcm or getattr(args,'reuse_pilot',None):
         raise ValueError('series mode accepts ordinary audio; --prepared-pcm/--reuse-pilot belong to the looping preview')
     out=args.output.resolve();manifest=out/'run.json'
     identity=dict(mode=args.disk_mode,input_sha256=digest(args.input),duration=args.duration,
@@ -166,6 +171,7 @@ def convert_series(args):
                   target_snr=args.target_snr,attempts=args.attempts,no_recording=args.no_recording,
                   ffmpeg_sha256=digest(Path(args.ffmpeg)),fuse_sha256=digest(args.fuse),
                   producers={p.name:digest(p) for p in HERE.iterdir() if p.suffix in ('.py','.asm')})
+    if codec=='ima4':identity.update(codec=codec,iterations=args.iterations,refine_clock=args.refine_clock)
     if out.exists() and any(out.iterdir()):
         if not args.resume or not manifest.is_file() or json.loads(manifest.read_bytes())!=identity:
             raise ValueError('output not empty or resume source/settings/producers changed')
@@ -188,7 +194,7 @@ def convert_series(args):
         del values
     original=json.loads(source_marker.read_bytes())
     if digest(source)!=original['sha256']:raise ValueError('cached decoded source changed')
-    parts=plan_parts(original['samples']);volumes=plan_volumes(parts,single=args.disk_mode=='single')
+    parts=planner(original['samples']);volumes=volumer(parts,single=args.disk_mode=='single')
     included=[i for volume in volumes for i in volume]
     values=np.memmap(source,dtype='<f4',mode='r');work=out/'work';work.mkdir(exist_ok=True)
     selected=[];qualities=[]
@@ -203,16 +209,27 @@ def convert_series(args):
         options=copy.copy(args);options.disk_mode=None;options.input=path;options.output=work/f'part-{i+1:05d}'
         options.prepared_pcm=True;options.duration=None
         print(json.dumps(dict(stage='convert-part',part=i+1,parts=len(included),**part)),flush=True)
-        result=convert(options);selected.append(options.output);qualities.append(result['quality_gate_passed'])
+        if codec=='ima4':
+            # Reuse complete part conversions only after authenticating every
+            # selected artifact. Preserve interrupted work under another name.
+            from convert_ima3_audio import stage
+            result=stage(options.output,lambda target:convert(options))
+        else:result=convert(options)
+        selected.append(options.output);qualities.append(result['quality_gate_passed'])
     del values
     series=hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).digest()[:16]
     disks=[]
     for number,indices in enumerate(volumes,1):
-        disk,meta=build_volume([selected[i] for i in indices],work/f'volume-{number:04d}',series,number,len(volumes))
+        disk,meta=packer([selected[i] for i in indices],work/f'volume-{number:04d}',series,number,len(volumes))
         name='audio.trd' if args.disk_mode=='single' else f'audio-{number:04d}.trd'
         (out/name).write_bytes(disk);disks.append(dict(file=name,**meta))
     save(out/'volumes.json',disks)
     verified=verify_series(out,args.fuse,args.ffmpeg)
+    return write_series_report(out,args,original,parts,included,disks,qualities,verified,capacity)
+
+
+def write_series_report(out,args,original,parts,included,disks,qualities,verified,capacity):
+    """Write the common export after complete generation or authenticated re-verification."""
     measured=[p for run in verified['volumes']+verified['continuations'] for p in run['parts']]
     passed=all(qualities) and all(p['source_silent'] or p['fixed_clock_snr_db'] is not None
                                 and p['fixed_clock_snr_db']>=args.target_snr for p in measured)
@@ -222,7 +239,7 @@ def convert_series(args):
                 full_source_retained=parts[included[-1]]['stop']==original['samples'],
                 parts=[parts[i] for i in included],fixed_gain=original['gain'],
                 sample_rate_hz=8000,silence_guard_samples=128,edge_fade_samples=80,
-                maximum_prepared_samples_per_part=capacity_samples(),
+                maximum_prepared_samples_per_part=capacity(),
                 quality_gate_passed=passed,preview_only=not passed,
                 loading_between_parts=True,simultaneous_disk_and_audio=False,verification=verified,
                 physical_hardware_tested=False)

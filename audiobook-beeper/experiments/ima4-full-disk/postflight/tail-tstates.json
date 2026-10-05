@@ -1,0 +1,82 @@
+{
+  "complete": true,
+  "ordinary_tstates": 423,
+  "ordinary_delta_tstates": 0,
+  "page_extra_tstates": 14,
+  "bank_extra_tstates": 140,
+  "new_instruction_table": [
+    [
+      "JP nn",
+      10
+    ],
+    [
+      "DI",
+      4
+    ],
+    [
+      "LD SP,nn",
+      10
+    ],
+    [
+      "LD IY,nn",
+      14
+    ],
+    [
+      "IM 1",
+      8
+    ],
+    [
+      "XOR A",
+      4
+    ],
+    [
+      "OUT (n),A",
+      11
+    ]
+  ],
+  "old_without_filler_tstates": 103,
+  "old_filler_formula": "52*pairs + 7*ceil(pairs/255) + pad",
+  "parts": [
+    {
+      "part": 1,
+      "old_continuation_tstates": 67026,
+      "new_stop_tstates": 61,
+      "difference_tstates": -66965,
+      "idle_pairs": 1285,
+      "pad_tstates": 61
+    },
+    {
+      "part": 2,
+      "old_continuation_tstates": 66816,
+      "new_stop_tstates": 61,
+      "difference_tstates": -66755,
+      "idle_pairs": 1281,
+      "pad_tstates": 59
+    },
+    {
+      "part": 3,
+      "old_continuation_tstates": 67026,
+      "new_stop_tstates": 61,
+      "difference_tstates": -66965,
+      "idle_pairs": 1285,
+      "pad_tstates": 61
+    },
+    {
+      "part": 4,
+      "old_continuation_tstates": 67024,
+      "new_stop_tstates": 61,
+      "difference_tstates": -66963,
+      "idle_pairs": 1285,
+      "pad_tstates": 59
+    },
+    {
+      "part": 5,
+      "old_continuation_tstates": 26809,
+      "new_stop_tstates": 61,
+      "difference_tstates": -26748,
+      "idle_pairs": 512,
+      "pad_tstates": 61
+    }
+  ],
+  "scope": "Native CPU only; different silent-guard stop/continue endpoints; no ULA, ROM or disk latency"
+}

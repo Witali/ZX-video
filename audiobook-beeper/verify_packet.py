@@ -139,7 +139,7 @@ def native_check(disk,meta,packed,reference_fn=reference,intervals_fn=intervals)
                 scope='Continuous Z80 execution; excludes ULA contention, disk and ROM')
 
 
-def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals_fn=intervals):
+def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals_fn=intervals,*,ready_phase=None):
     pcm,indices,levels,expected=reference_fn(packed)
     labels=meta['player_labels'];blob=extract_player((out/'audiobook-preview.trd').read_bytes())
     count=33 if probe else len(expected)
@@ -179,11 +179,21 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
                   'set $preloadstage 1','continue','end','breakpoint 32768',
                   f'condition {eid+2} $preloadstage==1',f'commands {eid+2}',
                   'set $preloadstage 2','continue','end']
+    if ready_phase is not None:
+        assert not preload and 0<=ready_phase<70908
+        # Observe a naturally occurring HALT/ROM entry phase. Reject other
+        # cold boots before their first audio output; never edit CPU/ULA time.
+        lines += [f'breakpoint {labels["ready"]}',f'commands {eid+1}',
+                  'exit 78','end',f'condition {eid+1} ula:tstates!={ready_phase}']
     script='\n'.join(lines);(work/'fuse-debugger.txt').write_text(script,encoding='utf-8',newline='\n')
     command=[str(fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions','--speed','10000',
              '--machine','128','--beta128','--debugger-command',script,str((out/'audiobook-preview.trd').resolve())]
     try:
-        result=subprocess.run(command,cwd=fuse.parent,capture_output=True,startupinfo=hidden_startupinfo(),timeout=600)
+        for attempt in range(32 if ready_phase is not None else 1):
+            result=subprocess.run(command,cwd=fuse.parent,capture_output=True,startupinfo=hidden_startupinfo(),timeout=600)
+            if result.returncode!=78:break
+            (work/f'other-ready-phase-{attempt:02d}.txt.gz').write_bytes(gzip.compress(result.stdout,compresslevel=1,mtime=0))
+        else:raise RuntimeError(f'cold ready phase {ready_phase} not observed in 32 boots')
     except subprocess.TimeoutExpired as e:
         (work/'timeout-trace.txt.gz').write_bytes(gzip.compress(e.stdout or b'',mtime=0));raise
     # Multi-million-line pulse traces are diagnostic data. A fast lossless
@@ -218,6 +228,7 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
         elif tag==200:ends.append(row)
     if probe:return dict(port_rows=port_rows,ready=ready,reads=len(reads),shown=shown,hidden=hidden)
     assert len(ready)==len(ends)==1 and ready[0][1]==0x6000
+    if ready_phase is not None:assert ready[0][0]%70908==ready_phase
     assert count<=len(bits)<=count+1
     bits=bits[:count];times=times[:count]
     assert np.array_equal(np.frombuffer(bits,'u1'),expected),'Fuse PDM mismatch'
@@ -248,6 +259,7 @@ def fuse_check(fuse,out,meta,packed,probe=False,reference_fn=reference,intervals
     (out/'output-times.u32.gz').write_bytes(gzip.compress(timeline.astype('<u4').tobytes(),mtime=0))
     n=meta.get('outputs_per_cycle',meta['pcm_samples']*16)
     return dict(complete=True,cold_boot=True,machine='128',cycles_verified=2,bits_verified=len(bits),
+                ready_field_phase=ready[0][0]%70908,phase_selection_attempts=attempt+1,
                 pcm16_samples_verified=len(samples),every_pdm_bit_exact=True,every_predictor_and_index_exact=True,
                 paging_latches_verified=True,startup_sector_reads=len(reads),runtime_disk_reads=0,
                 cycle_durations_seconds=(np.diff(timeline[::n])/CPU_CLOCK).tolist(),
