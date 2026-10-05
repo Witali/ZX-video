@@ -1,0 +1,125 @@
+{
+  "scope": "Whole-selected-clip numerical check and compact payload/WAV audit.",
+  "complete": true,
+  "payloads": [
+    {
+      "law": "mulaw",
+      "payload_bytes": 186880,
+      "bytes_per_sample": 1,
+      "pcm_audio_buffer_bytes": 0,
+      "table_bytes": 512,
+      "payload_sha256": "bbba77316dfb988ce2463018b9eee1020564ad8946e4f77b9d645d515ea81f4b"
+    },
+    {
+      "law": "alaw",
+      "payload_bytes": 186880,
+      "bytes_per_sample": 1,
+      "pcm_audio_buffer_bytes": 0,
+      "table_bytes": 512,
+      "payload_sha256": "b29ae1bfeb70565c1158eea42d91bd5a181425048480cc8eb639d76ec5669d6a"
+    }
+  ],
+  "wavs": [
+    {
+      "file": "alaw-sd2-128k-preview.wav",
+      "samples": 1030176,
+      "full_scale_samples": 0
+    },
+    {
+      "file": "alaw-sd2-64k-preview.wav",
+      "samples": 1030176,
+      "full_scale_samples": 0
+    },
+    {
+      "file": "alaw-verified-preview.wav",
+      "samples": 1030176,
+      "full_scale_samples": 0
+    },
+    {
+      "file": "mulaw-sd2-128k-preview.wav",
+      "samples": 1030176,
+      "full_scale_samples": 0
+    },
+    {
+      "file": "mulaw-sd2-64k-preview.wav",
+      "samples": 1030176,
+      "full_scale_samples": 0
+    },
+    {
+      "file": "mulaw-verified-preview.wav",
+      "samples": 1030176,
+      "full_scale_samples": 0
+    },
+    {
+      "file": "pcm8-sd2-128k-preview.wav",
+      "samples": 1030176,
+      "full_scale_samples": 0
+    },
+    {
+      "file": "pcm8-sd2-64k-preview.wav",
+      "samples": 1030176,
+      "full_scale_samples": 0
+    },
+    {
+      "file": "pcm8-verified-preview.wav",
+      "samples": 1030176,
+      "full_scale_samples": 0
+    },
+    {
+      "file": "reference-preview.wav",
+      "samples": 1030176,
+      "full_scale_samples": 0
+    },
+    {
+      "file": "reference-verified-preview.wav",
+      "samples": 1030176,
+      "full_scale_samples": 0
+    }
+  ],
+  "verification_filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+  "numerical_check": {
+    "format": "mulaw",
+    "entire_clip_samples": 186880,
+    "old_integration_rate_hz": 192000,
+    "integration_rate_hz": 768000,
+    "old_snr_db": 30.385296587638166,
+    "snr_db": 30.920091091567016,
+    "delta_db": 0.5347945039288504,
+    "target_30_db_passed": true
+  },
+  "all_formats_768k": [
+    {
+      "format": "pcm8",
+      "integration_rate_hz": 768000,
+      "snr_db": 32.248226778758124
+    },
+    {
+      "format": "mulaw",
+      "integration_rate_hz": 768000,
+      "snr_db": 30.920091091567016
+    },
+    {
+      "format": "alaw",
+      "integration_rate_hz": 768000,
+      "snr_db": 30.22167255693068
+    }
+  ],
+  "selected_high_precision": {
+    "format": "mulaw",
+    "integration_rate_hz": 768000,
+    "snr_db": 30.920091091567016
+  },
+  "coarse_f64": {
+    "integration_rate_hz": 192000,
+    "snr_db": 30.405279165157438
+  },
+  "finer_selected": {
+    "integration_rate_hz": 1536000,
+    "snr_db": 30.91709545505222,
+    "delta_from_768k_db": -0.002995636514796729,
+    "target_30_db_passed": true
+  },
+  "same_source_duration": true,
+  "z80_ported": false,
+  "hardware_measured": false
+}

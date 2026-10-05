@@ -12,6 +12,28 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## Compact mu-law/A-law audio — PC simulation complete (2026-10-05)
+
+The user subsequently authorized eight-bit mu-law/A-law instead of IMA and
+requires inverse companding inside modulation, keeping one stored byte per
+sample and no expanded PCM audio buffer. The PC-first instruction remains.
+[The new study](audiobook-beeper/experiments/xlaw-pc/README.md) selects mu-law:
+30.920091 dB at768-kHz numerical integration,30.917095 dB at1536 kHz, both
+using stable float64 filtering and128000-Hz PDM. Same source and filter
+frequencies/order; all formats are compared under identical conditions.
+A-law gives30.221673 dB; linear PCM8 control32.248227 dB. Old float32 scores
+are retained separately after high-rate numerical instability was exposed.
+Do not mix these numbers with historical measurements without rescoring.
+
+Both payloads are186880 bytes for23.36 s, with512-byte inverse-companding
+tables. The full model input exceeds Spectrum RAM: at the old94458-byte
+audio budget it would hold11.80725 s, before new layout tradeoffs. Every
+direct-byte pulse matches the expanded control; full independent decoder,
+integer recurrence and stable finer-grid checks pass. WAVs and raw bytes
+are archived. No Z80 port/TRD/default converter switch has been done or
+authorized by this PC-only stage. Real timing, RAM layout and loops still
+require proof. The earlier paused IMA quality milestone remains paused.
+
 ## 30-dB audio target — PC simulation complete (2026-10-05)
 
 The user requires current IMA compression/duration and requested simulation

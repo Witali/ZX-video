@@ -1,5 +1,38 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Model compact mu-law/A-law directly at the modulator input
+
+After the IMA simulation, the user authorizes eight-bit mu-law/A-law and
+requires amplitude conversion during modulation, without expanding audio
+in RAM. Keep the PC-first scope. The [study](audiobook-beeper/experiments/xlaw-pc/README.md)
+provides standard G.711 encoding and512-byte exact PCM16 lookup tables.
+The integer producer consumes one compact byte per8-kHz sample and directly
+generates SD2 pulses. It needs no expanded PCM audio buffer. All pulse bits
+match the expanded diagnostic control. The full186880-sample input is used;
+one-byte audio costs8000 B/s, so this23.36-s simulation is not a resident
+duration claim. At the old94458-byte payload budget the estimate is11.80725 s.
+
+Initial128-kHz results in legacy arithmetic are31.691681 dB (PCM8),
+30.385297 (mu-law),29.776037 (A-law). Checking numerical convergence exposes
+automatic-float32 IIR instability atMHz integration rates, including an
+invalid -7.606974-dB result. Preserve the failed checks; explicitly use
+float64 for both output and reference with unchanged70/4500/4500-Hz filters.
+The stable768-kHz comparisons are32.248227,30.920091 and30.221673 dB.
+Selected mu-law at1536 kHz is30.917095 dB, only-0.002996 dB different, passing
+the unchanged30-dB PC-model target. This numerical fix changes no payload,
+PDM bit, bandwidth or fitting policy. Historical measurements remain intact;
+do not compare their float32 scores directly without rescoring.
+
+All256 decoder codes per law and every decoded sample match FFmpeg. Every
+128-kHz decision (2990080 per format) also matches an independent integer
+recurrence. Three unit tests pass. Both raw compact payloads, equal-gain
+unclipped WAVs, reports, failed convergence evidence and producer snapshots
+are saved. Truncating the recovered level to PCM8 is measured separately
+and rejected; main modulation retains its full precision.64-kHz controls
+are much noisier in this model. No Z80 hot-path change (delta0 T), new TRD,
+real timing/loop/memory-layout proof or physical-hardware claim. Retain the
+current player while the new compact-byte PC model is ready for future work.
+
 ## 2026-10-05: Simulate the 30-dB target while retaining IMA and duration
 
 The user requested at least30 dB, kept current IMA compression/duration,
