@@ -1,5 +1,7 @@
 # Read literal fragments directly from LZSA2 slots
 
+Maintenance, 2026-10-05: explicitly unsuccessful TRD payloads from this study were removed at the user's request. Reports, source snapshots and measurements remain historical evidence; [retirement identities and reasons](../docs/maintenance/2026-10-05-retired-trds.md) allow recovery. This does not change the original results.
+
 2026-09-30, baseline `dacb24f`. **Adopt this optional, host-validated mode**
 for temporal/whole-fragment streams. The unchanged 192-frame five-level test
 improves from **7.478465 to 7.683025 fps** in a complete Fuse run. Exact 25/3
@@ -128,7 +130,7 @@ late video. This is a 192-frame experiment, not full-movie or hardware proof.
 - [JSON summary](borrowed_literals_profile.json) links hashed reports,
   generated code, instruction timings and complete Fuse traces under
   [borrowed_literals_evidence](borrowed_literals_evidence).
-- Updated optional [LFS test disk](../ZX-video-five-level-lzsa2-test.trd),
+- Updated optional [LFS test disk](https://github.com/Witali/ZX-video/blob/d0e47315262e09db9ceae70e90281fcce0d58c1b/ZX-video-five-level-lzsa2-test.trd),
   SHA-256 `14788fa7b7272c1d8ae4d47e63804cd60998d8ee95032ce56c879a120226e2d5`.
   Runtime compressed stream stays
   `1c8f598fa5fcc4ba2ac5f60355f6b3845cf5d8aa89f2ded328f5f98dd1b21bbc`.

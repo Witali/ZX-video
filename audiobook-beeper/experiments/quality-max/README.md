@@ -1,5 +1,7 @@
 # Bounded quality search for all active audio codecs
 
+Maintenance, 2026-10-05: explicitly unsuccessful TRD payloads from this study were removed at the user's request. Reports, source snapshots and measurements remain historical evidence; [retirement identities and reasons](../../../docs/maintenance/2026-10-05-retired-trds.md) allow recovery. This does not change the original results.
+
 2026-10-05. The user requests maximum quality for IMA3, IMA4 and mu-law.
 Complete the pending IMA3 comparison and a third IMA search, then add a
 waveform-aware PC encoder for the existing mu-law player. Keep all resident

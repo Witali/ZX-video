@@ -1,5 +1,7 @@
 # Faster row-index playback: bounded experiment
 
+Maintenance, 2026-10-05: explicitly unsuccessful TRD payloads from this study were removed at the user's request. Reports, source snapshots and measurements remain historical evidence; [retirement identities and reasons](../docs/maintenance/2026-10-05-retired-trds.md) allow recovery. This does not change the original results.
+
 2026-09-30, baseline `78541a5`. Reuse the exact 192 five-level frames and AY
 from the previous test. No re-quantization, resolution or dither change.
 
@@ -21,7 +23,7 @@ Actual delivery improves by **5.60%**. Both timing gates still fail: video
 can lag AY by **3.88 seconds**. This is not a release or a whole-movie capacity
 result. Preserve the compact default; the faster mode remains opt-in.
 
-[ZX-video-five-level-fast-test.trd](../ZX-video-five-level-fast-test.trd)
+[ZX-video-five-level-fast-test.trd](https://github.com/Witali/ZX-video/blob/c6b8475a3de05d9a449207c69313ab300abd09b4/ZX-video-five-level-fast-test.trd)
 is a separate independently bootable visual test, stored in Git LFS. It has
 633 occupied and 1911 free file sectors. The original slower test image is
 retained as the baseline. Both contain the same three 64-frame windows.

@@ -258,8 +258,78 @@
         "toolkit/refined_av_attempt_report.json",
         "ZX-video-refined.md"
       ]
+    },
+    {
+      "path": "ZX-video-five-level-test.trd",
+      "bytes": 655360,
+      "sha256": "889e4c5d370a8d92775ba852d51f65fe8b935cb5e6caa0ad9f72cac26f3e7cef",
+      "commit": "78541a5ecb5bb2f8fba42e9d081a284569d00dc6",
+      "reason": "Video/AY synchronization fails: 174 of 192 frames late, maximum 5.38 seconds; both timing gates fail.",
+      "evidence": [
+        "toolkit/FIVE_LEVEL_TEST_TRD.md"
+      ]
+    },
+    {
+      "path": "ZX-video-five-level-fast-test.trd",
+      "bytes": 655360,
+      "sha256": "affcd34dac24c6698953dc4aa7e4379e4d8bbf4481d73850f253eee17bfaaad3",
+      "commit": "c6b8475a3de05d9a449207c69313ab300abd09b4",
+      "reason": "Video/AY synchronization fails: 145 late frames, maximum 3.88 seconds; both timing gates fail.",
+      "evidence": [
+        "toolkit/ROW_FRAGMENT_SPEED.md"
+      ]
+    },
+    {
+      "path": "ZX-video-five-level-lzsa2-test.trd",
+      "bytes": 655360,
+      "sha256": "14788fa7b7272c1d8ae4d47e63804cd60998d8ee95032ce56c879a120226e2d5",
+      "commit": "d0e47315262e09db9ceae70e90281fcce0d58c1b",
+      "reason": "Borrowed-literal test still fails both timing gates; final run stays late through EOF, maximum 1.98 seconds.",
+      "evidence": [
+        "toolkit/BORROWED_LITERALS.md"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/quality-max/evidence/ima4/third/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "e00d75dfef7bc4910887f59b7c24c037860f18174254e0044f9af71f5043ac66",
+      "commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
+      "reason": "Explicitly rejected IMA4 candidate: measured 9.849028 dB versus retained 22.174535 dB; host estimate failed on the actual output clock.",
+      "evidence": [
+        "audiobook-beeper/experiments/quality-max/README.md"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/selected/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "4a35386ebac6a70046e4bc8d2f8481b56f13d068af6f3cde2833e187fd86e4ae",
+      "commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
+      "reason": "Superseded failed unretimed-prior mu-law prototype: 4.897807/5.618310 dB versus corrected 10.295781 dB. The ordinary baseline control is retained.",
+      "evidence": [
+        "audiobook-beeper/experiments/quality-max/README.md"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/waveform-32/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "4a35386ebac6a70046e4bc8d2f8481b56f13d068af6f3cde2833e187fd86e4ae",
+      "commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
+      "reason": "Superseded failed unretimed-prior mu-law prototype: 4.897807/5.618310 dB versus corrected 10.295781 dB. The ordinary baseline control is retained.",
+      "evidence": [
+        "audiobook-beeper/experiments/quality-max/README.md"
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/waveform-8/audiobook-preview.trd",
+      "bytes": 655360,
+      "sha256": "265243241043d669ec078d007ffbc7d33ce126913bd6333830a85f41401172bd",
+      "commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
+      "reason": "Superseded failed unretimed-prior mu-law prototype: 4.897807/5.618310 dB versus corrected 10.295781 dB. The ordinary baseline control is retained.",
+      "evidence": [
+        "audiobook-beeper/experiments/quality-max/README.md"
+      ]
     }
   ],
-  "count": 24,
-  "working_copy_bytes_removed": 15728640
+  "count": 31,
+  "working_copy_bytes_removed": 20316160
 }

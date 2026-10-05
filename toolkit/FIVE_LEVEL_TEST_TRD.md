@@ -1,6 +1,8 @@
 # Five-level TRD: visual prototype and full test playback
 
-Measured on 2026-09-30. Image: [ZX-video-five-level-test.trd](../ZX-video-five-level-test.trd).
+Maintenance, 2026-10-05: explicitly unsuccessful TRD payloads from this study were removed at the user's request. Reports, source snapshots and measurements remain historical evidence; [retirement identities and reasons](../docs/maintenance/2026-10-05-retired-trds.md) allow recovery. This does not change the original results.
+
+Measured on 2026-09-30. Image: [ZX-video-five-level-test.trd](https://github.com/Witali/ZX-video/blob/78541a5ecb5bb2f8fba42e9d081a284569d00dc6/ZX-video-five-level-test.trd).
 This is one independently bootable **test montage**, with three 64-frame
 windows starting at source frames 629, 2857 and 3855. Their corresponding
 existing AY states are concatenated. The two hard cuts are intentional.

@@ -1,5 +1,21 @@
 # Changelog and optimization experiments
 
+## 2026-10-05 — Retire remaining severe quality and synchronization failures
+
+- **Scope:** while authenticating the complete disk catalogue, review the
+  exact revisions of three five-level row-video tests and the quality-max
+  study's rejected streams. Baseline `fb40f2d4`.
+- **Result:** remove seven additional images (4,587,520 logical bytes): video
+  tests lagging AY by 5.38/3.88/1.98 seconds, the rejected 9.849-dB IMA4
+  candidate and three copies/stages of the failed 4.90/5.62-dB mu-law search.
+  Keep the ordinary mu-law control and the near-equal 20.38-dB IMA3 candidate;
+  directory names or merely missing a quality target do not prove failure.
+- **Validation:** the same exact Git-blob and current-file SHA checks apply;
+  update the [retirement ledger](docs/maintenance/2026-10-05-retired-trds.md)
+  and convert affected Markdown links to their verified historical commits.
+  Total for this request: 31 removed TRDs / 20,316,160 logical bytes, including
+  the first SD2 deletion. No runtime, source-audio or historical report edits.
+
 ## 2026-10-05 — Remove explicitly unsuccessful disk payloads
 
 - **Scope/baseline:** follow-up authorization to delete clearly unsuccessful
