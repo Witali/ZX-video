@@ -3,6 +3,40 @@
 
 
 
+## 2026-10-05 — Consolidate completed branches and archive inactive worktrees
+
+- **Objective/baseline:** user-authorized repository cleanup, useful merges into
+  main, publication and removal of old working directories; baseline main
+  `92fb920f`, 77 original local branches and 70 registered checkouts.
+- **Integration:** merge the AY O. Henry audition, completed exact Speex/PVQ
+  research and isolated integer-contour study. Reconcile the already
+  cherry-picked volume-Huffman branch without changing the newer main tree.
+  Preserve all historical entries, restrictions and negative results.
+- **Result:** 64 worktrees removed normally, 71 merged local branches deleted
+  with `branch -d`. Preserve 64,981 local files in 64 ZIP archives (8,383,967,872
+  bytes), verifying every file hash and final source state before deletion.
+  Removed trees held 37,951,068,368 logical file bytes; this is not a filesystem
+  free-space claim. Keep five trees with WIP, nested repositories or inaccessible
+  files, plus the primary checkout and unrelated user attachments.
+- **Verification:** fresh complete AY native loops, 2,400 fields/26,400 exact
+  writes; ordinary/restart 974/1,079 T unchanged. Fresh merged Speex build and
+  all 186,880 speech PCM16/PCM8 samples exact at 1,487,605,573 T, matching the
+  archived binary (round39 delta -31,084,822 T). Four contour tests pass;
+  authenticate three Huffman traces and reproduce their timing summary.
+  Current production IMA/PDM/movie paths and retained release hashes are
+  unchanged. Reuse authenticated historical full Fuse/extended arithmetic
+  evidence; no fresh physical hardware test or new playback release is claimed.
+- **Exceptions:** access errors persist outside the sandbox in retained trees.
+  The plotting entry point lacked Matplotlib; use a separate complete AY
+  artifact/native audit instead, without claiming regenerated figures. Preserve
+  linker-map whitespace exactly. No force, broad clean, remote branch removal,
+  ownership change, history rewrite, Git/LFS garbage collection or new experiment.
+- **Decision/evidence:** integration published at `59e77ecc`; retain research
+  limits (Speex still 18.195x over budget, Huffman deadlines fail). See the
+  [full report](docs/maintenance/2026-10-05-repository-cleanup.md),
+  [machine inventory](docs/maintenance/2026-10-05-repository-cleanup.json) and
+  [local archive recovery guide](local-worktree-archive/README.md).
+
 ## 2026-09-20 — отдельный целочисленный векторный формат: контуры, заливки и два гибрида
 
 - **Цель/база:** предложение пользователя о другом формате, ветка

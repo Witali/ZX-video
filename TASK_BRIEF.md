@@ -12,6 +12,18 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## Repository cleanup checkpoint (2026-10-05)
+
+The user authorized repository consolidation and removal of old worktrees.
+Completed AY audition, Speex/PVQ and contour research now belong to main;
+volume-Huffman history is reconciled without reverting later improvements.
+The [cleanup report](docs/maintenance/2026-10-05-repository-cleanup.md)
+records 64 removed trees, 71 removed merged local refs, verified local recovery
+archives and five intentionally retained trees. Historical paths may require
+restoring an archive or supplying explicit input/tool locations. Existing
+research next-step notes are checkpoints, not authorization to start another
+experiment during cleanup. Current IMA/PDM playback is unchanged.
+
 ## AY speech audition checkpoint (2026-10-05)
 
 The [O. Henry trial](ay-converter/analysis/o_henry/README.md) applies the current
