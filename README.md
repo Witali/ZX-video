@@ -1,5 +1,10 @@
 # ZX-video
 
+The [TRD catalogue](TRD_CATALOG.md) describes every retained disk image,
+its producer scripts, exact artifact commit, recorded branch reference and
+SHA-256. [Unsuccessful images retired on 2026-10-05](docs/maintenance/2026-10-05-retired-trds.md)
+have per-file reasons and restoration identities.
+
 Convert video files into TRD disk images for **ZX Spectrum 128 + Beta Disk**.
 FFmpeg detects the input format: MP4, MKV, AVI, MOV and other supported
 formats. The converter processes the complete input; it does not depend on

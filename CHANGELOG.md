@@ -1,5 +1,26 @@
 # Changelog and optimization experiments
 
+## 2026-10-05 — Catalogue every retained TRD with verified provenance
+
+- **Request/scope:** describe each disk, how it was produced, its script,
+  repository hash and branch. Baseline `11a9051d`, after authorized removal
+  of 31 unsuccessful images. No tracked TFD files exist; catalogue TRDs.
+- **Deliverable:** [TRD_CATALOG.md](TRD_CATALOG.md), reviewed metadata in
+  [trd_catalog.json](toolkit/trd_catalog.json) and the standard-library
+  [renderer/checker](toolkit/catalog_trd.py). Cover all 283 remaining images:
+  49 root disks and 234 archived fixtures/candidates, grouped by production
+  method. Link input/settings reports, reproduction guides and exact copies.
+- **Provenance:** distinguish a verified artifact commit from an unrecorded
+  original build HEAD. Record a containing branch checkpoint from the saved
+  cleanup inventory and authenticate ancestry; do not invent creation-branch
+  data. Current script paths are recipe references, not a promise that current
+  defaults reproduce historical bytes. Preserve producer-snapshot guidance.
+- **Validation:** authenticate all materialized image SHA-256/size pairs,
+  commit:path Git blobs/LFS OIDs, hash-matched reports, recipe paths, duplicate
+  sets and branch checkpoints. Regenerate and run `catalog_trd.py --check`;
+  check the documentation diff. No codec/player/timing changes, audio rebuild
+  or new playback-quality claim. Link the catalogue from the root README.
+
 ## 2026-10-05 — Retire remaining severe quality and synchronization failures
 
 - **Scope:** while authenticating the complete disk catalogue, review the
