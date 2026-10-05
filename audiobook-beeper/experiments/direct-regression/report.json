@@ -1,0 +1,271 @@
+{
+  "date": "2026-10-05",
+  "reference_sha256": "9ce319e8b9352a96ed965d87ff3d1d8698df7d788221563758d306d23c053013",
+  "exact_rebuild": true,
+  "differing_disk_bytes": 0,
+  "native_ordinary_tstates": 423,
+  "player_tstate_delta": 0,
+  "filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+  "integration_rate_hz": 768000,
+  "excluded_edge_seconds": 0.1,
+  "common_listening_gain": 0.8,
+  "fitted_gain_or_delay": false,
+  "stages": [
+    {
+      "stage": "original",
+      "archived_path": "ima-direct",
+      "source_pcm_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+      "packed_sha256": "f20921d4e5f51ad55e10af9c2d20dc1b8ec118b9f9bc2cad54e8bac1b48ec9f9",
+      "cold_fuse_proof_reused": true,
+      "native_proof_reused": true,
+      "native_ordinary_tstates": 423,
+      "cycles": [
+        {
+          "loop": 1,
+          "duration_seconds": 23.350339451351886,
+          "mean_sample_rate_hz": 8003.309775831994,
+          "fixed_8000_snr_db": -2.9945110527039622,
+          "fixed_mean_snr_db": 8.316930158141583,
+          "declared_reference_rate_hz": 8003.309775831994,
+          "declared_clock_snr_db": 8.316930158141583,
+          "declared_error_rms": 0.07400676920147749
+        },
+        {
+          "loop": 2,
+          "duration_seconds": 23.350240209760635,
+          "mean_sample_rate_hz": 8003.3437909509075,
+          "fixed_8000_snr_db": -3.0864604776104576,
+          "fixed_mean_snr_db": 7.676326529016287,
+          "declared_reference_rate_hz": 8003.3437909509075,
+          "declared_clock_snr_db": 7.676326529016287,
+          "declared_error_rms": 0.07967124138226529
+        }
+      ]
+    },
+    {
+      "stage": "weighted",
+      "archived_path": "ima-direct-weighted",
+      "source_pcm_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+      "packed_sha256": "f20921d4e5f51ad55e10af9c2d20dc1b8ec118b9f9bc2cad54e8bac1b48ec9f9",
+      "cold_fuse_proof_reused": true,
+      "native_proof_reused": true,
+      "native_ordinary_tstates": 423,
+      "cycles": [
+        {
+          "loop": 1,
+          "duration_seconds": 23.350340015224564,
+          "mean_sample_rate_hz": 8003.309582565098,
+          "fixed_8000_snr_db": -3.0113837946857966,
+          "fixed_mean_snr_db": 8.429852321293083,
+          "declared_reference_rate_hz": 8003.309582565098,
+          "declared_clock_snr_db": 8.429852321293083,
+          "declared_error_rms": 0.07305085978406563
+        },
+        {
+          "loop": 2,
+          "duration_seconds": 23.350240209760635,
+          "mean_sample_rate_hz": 8003.3437909509075,
+          "fixed_8000_snr_db": -3.1041493878413418,
+          "fixed_mean_snr_db": 7.777230085248467,
+          "declared_reference_rate_hz": 8003.3437909509075,
+          "declared_clock_snr_db": 7.777230085248467,
+          "declared_error_rms": 0.07875105965900586
+        }
+      ]
+    },
+    {
+      "stage": "locked",
+      "archived_path": "ima-direct-locked",
+      "source_pcm_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+      "packed_sha256": "9e80e58629964883d9a442b3c17a238b5eb935bc111f20430da4ae382b7b0d77",
+      "cold_fuse_proof_reused": true,
+      "native_proof_reused": true,
+      "native_ordinary_tstates": 423,
+      "cycles": [
+        {
+          "loop": 1,
+          "duration_seconds": 23.370112492599173,
+          "mean_sample_rate_hz": 7996.538316158341,
+          "fixed_8000_snr_db": 18.99782059722332,
+          "fixed_mean_snr_db": -3.1714346687688466,
+          "declared_reference_rate_hz": 8000,
+          "declared_clock_snr_db": 18.99782059722332,
+          "declared_error_rms": 0.02163940159940582
+        },
+        {
+          "loop": 2,
+          "duration_seconds": 23.370112492599173,
+          "mean_sample_rate_hz": 7996.538316158341,
+          "fixed_8000_snr_db": 18.99782059722332,
+          "fixed_mean_snr_db": -3.1714346687688466,
+          "declared_reference_rate_hz": 8000,
+          "declared_clock_snr_db": 18.99782059722332,
+          "declared_error_rms": 0.02163940159940582
+        }
+      ]
+    },
+    {
+      "stage": "current",
+      "archived_path": "quality-max/evidence/ima4/selected",
+      "source_pcm_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+      "packed_sha256": "2992e2d1cfcd6eab768181a4a1668d8e009ea33af2fd2019bcc7cfc9842c0be6",
+      "cold_fuse_proof_reused": true,
+      "native_proof_reused": true,
+      "native_ordinary_tstates": 423,
+      "cycles": [
+        {
+          "loop": 1,
+          "duration_seconds": 23.370112210662832,
+          "mean_sample_rate_hz": 7996.5384126283425,
+          "fixed_8000_snr_db": 22.18350922321679,
+          "fixed_mean_snr_db": -3.1786865150749883,
+          "declared_reference_rate_hz": 8000,
+          "declared_clock_snr_db": 22.18350922321679,
+          "declared_error_rms": 0.014995495320253615
+        },
+        {
+          "loop": 2,
+          "duration_seconds": 23.370112492599173,
+          "mean_sample_rate_hz": 7996.538316158341,
+          "fixed_8000_snr_db": 22.174534605739545,
+          "fixed_mean_snr_db": -3.178484875427632,
+          "declared_reference_rate_hz": 8000,
+          "declared_clock_snr_db": 22.174534605739545,
+          "declared_error_rms": 0.01501099728840309
+        }
+      ]
+    }
+  ],
+  "input_hashes": {
+    "audiobook-beeper/experiments/ima-direct/source-preview.wav": "6dfd92aac774283ffd96e7549cfa42eaeb833439570ec51f9ca1c69d36bedde0",
+    "audiobook-beeper/experiments/ima-direct/soundtrack.ima.gz": "b4e5f9c64ea9958f4edeb1c49e758313fa5fbcb72a8f2f79eb9c25f8ab629dd6",
+    "audiobook-beeper/experiments/ima-direct/player.json": "85bda7cd184b1d8f65a30d792eae7a25ac7d86be01fb8c6988da131ca4cd1869",
+    "audiobook-beeper/experiments/ima-direct/fuse.json": "800eafd8f41bfac4e01ef8bf366b63db616d56aba7fe1a5b1a2651329f0101b3",
+    "audiobook-beeper/experiments/ima-direct/native.json": "7c757c9ef6f159a103a711a565f49e62f557defad3ab4ebdfa44ef833a3f8979",
+    "audiobook-beeper/experiments/ima-direct/output-times.u32.gz": "02597559ae58647eeb7efd88036c6a54b8fc917b3f91806d4e7e4507fe4cb448",
+    "audiobook-beeper/experiments/ima-direct-weighted/source-preview.wav": "6dfd92aac774283ffd96e7549cfa42eaeb833439570ec51f9ca1c69d36bedde0",
+    "audiobook-beeper/experiments/ima-direct-weighted/soundtrack.ima.gz": "b4e5f9c64ea9958f4edeb1c49e758313fa5fbcb72a8f2f79eb9c25f8ab629dd6",
+    "audiobook-beeper/experiments/ima-direct-weighted/player.json": "4391e2735d6ff7d644531c93edc8dec531cca50270ffa89729caec4dc89553b1",
+    "audiobook-beeper/experiments/ima-direct-weighted/fuse.json": "883527af0c8d4b070bdb447326451624db4226fd89798afabae7d0652ff60000",
+    "audiobook-beeper/experiments/ima-direct-weighted/native.json": "7c757c9ef6f159a103a711a565f49e62f557defad3ab4ebdfa44ef833a3f8979",
+    "audiobook-beeper/experiments/ima-direct-weighted/output-times.u32.gz": "584f1e95975964ee36059a95e9e0336405a4c2935cfff6aa961655f73ca74d52",
+    "audiobook-beeper/experiments/ima-direct-locked/source-preview.wav": "6dfd92aac774283ffd96e7549cfa42eaeb833439570ec51f9ca1c69d36bedde0",
+    "audiobook-beeper/experiments/ima-direct-locked/soundtrack.ima.gz": "dbca19728c364a33c7def3d269acc371b65df408b11f4fc0ac0d8b98c7681ed5",
+    "audiobook-beeper/experiments/ima-direct-locked/player.json": "420306af21daf8eaabc871521718689433a279cf258d8492f0a8cd3f7edca423",
+    "audiobook-beeper/experiments/ima-direct-locked/fuse.json": "2cc2e813a8f18cafda14a01dfa0adf2b304abf7b795522dcf2b4b1c7a1b33ced",
+    "audiobook-beeper/experiments/ima-direct-locked/native.json": "71c9ca5508cbbf1e6c3e63bce0f72408b8156ded114972d639f0eaced1c64bd9",
+    "audiobook-beeper/experiments/ima-direct-locked/output-times.u32.gz": "c233436646f8a931c6337f4a6cac8bb87dabfd2feefa288684bd38cea09c56ef",
+    "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/source-preview.wav": "6dfd92aac774283ffd96e7549cfa42eaeb833439570ec51f9ca1c69d36bedde0",
+    "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/soundtrack.ima.gz": "348e5484442eef5360d1c99d652d86af83866cc3d720d7b79ec1cb33b216ef15",
+    "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/player.json": "99cb0488ccebe4f06f109c967d12c757d8e042d25452c6ba7e7c83d95a06ece8",
+    "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/fuse.json": "872d790a8e9803ecfc5a3957f68524fa0f85fdc5b1c4f8608be76e5f12c564a2",
+    "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/native.json": "c976cf31c4efd088538d98499b0cce7f2d5f9b26c58619184e2519534d362f3e",
+    "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/output-times.u32.gz": "d9a4c40571f01ce0bec177d6463b445533c2d53b60634ac3b1664085bb48f694"
+  },
+  "verification": "Authenticated archived complete native/cold Fuse runs. No new emulator run; exact byte-identical disk rebuild.",
+  "quality_scope": "Reported SNR includes distortion. Fixed 8000 penalizes accumulated speed offset; fixed mean removes overall speed offset only. Declared reference uses 8000 for compensated streams and measured mean for older unwarped streams. Do not compare different clocks without this qualification.",
+  "physical_hardware_tested": false,
+  "preparation_comparison": {
+    "source_file_sha256": "a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779",
+    "start_seconds": 60,
+    "current_retained_seconds": 23.344,
+    "current_peak_gain": 1.2747916919852074,
+    "old_conditioned_rms": 0.19582111762247678,
+    "current_peak_only_rms": 0.07503342045826397,
+    "old_to_current_level_db": 8.3320956070788,
+    "rms_excludes_edge_seconds": 0.1,
+    "historical_preparation": {
+      "source": {
+        "verified_date": "2026-10-02",
+        "source": "C:\\Work\\AudioBooksDownloader\\Audiobooks\\003 - \u041e. \u0413\u0435\u043d\u0440\u0438. \u041a\u043e\u0440\u043e\u0442\u043a\u0438\u0435 \u0440\u0430\u0441\u0441\u043a\u0430\u0437\u044b \uff02\u0414\u043e\u0440\u043e\u0433\u043e \u043a\u0430\u043a \u043f\u0430\u043c\u044f\u0442\u044c\uff02 \u0438 \uff02\u041e\u0431\u043e\u0440\u043e\u0442\u043d\u0430\u044f \u0441\u0442\u043e\u0440\u043e\u043d\u0430\uff02 (1977) [1bqRZ3gM55s].m4a",
+        "source_sha256": "a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779",
+        "tool": "FFprobe 8.1.1",
+        "stream": {
+          "codec_name": "aac",
+          "sample_rate": 44100,
+          "channels": 2,
+          "channel_layout": "stereo",
+          "sample_fmt": "fltp",
+          "bits_per_sample": 0,
+          "bit_rate": 127999
+        },
+        "interpretation": "AAC source has no fixed PCM word length; fltp describes floating-point decoder output, not original PCM bit depth."
+      },
+      "source_start_seconds": 60,
+      "source_duration_seconds": 28.864,
+      "source_pcm": {
+        "sample_rate_hz": 8000,
+        "bits_per_sample": 8,
+        "channels": 1,
+        "codec": "PCM unsigned 8-bit",
+        "samples": 230912,
+        "duration_seconds": 28.864,
+        "quantization": "round to nearest, (u8-128)/128",
+        "data_sha256": "742edf0652f2a7ffbcbdc38d92985a76cfbf37bce659d8924848e7699e2d77ca",
+        "file": "pcm8k-preview.wav",
+        "antialiasing": "FFmpeg sample-rate converter",
+        "pdm_input": "high byte of live IMA PCM16 predictor; six PDM slots/sample plus bank-tail holds"
+      },
+      "source_gain": 0.9246234673393592,
+      "edge_fade_seconds": 0.02,
+      "ffmpeg_decode": {
+        "complete": true,
+        "tool": "ffmpeg version 8.1.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+        "blocks": [
+          {
+            "packed_offset": 0,
+            "bytes": 32764,
+            "decoded_samples": 65528,
+            "exact": true
+          },
+          {
+            "packed_offset": 32764,
+            "bytes": 32764,
+            "decoded_samples": 65528,
+            "exact": true
+          },
+          {
+            "packed_offset": 65528,
+            "bytes": 32764,
+            "decoded_samples": 65528,
+            "exact": true
+          },
+          {
+            "packed_offset": 98292,
+            "bytes": 17164,
+            "decoded_samples": 34328,
+            "exact": true
+          }
+        ],
+        "decoded_samples": 230912,
+        "every_sample_exact": true
+      },
+      "level_conditioning": {
+        "filter": "volume=4,alimiter=limit=0.85:attack=5:release=100:level=0:latency=1",
+        "before_rms": 0.053702756600853524,
+        "after_rms": 0.1967937045347077,
+        "purpose": "raise quiet speech above first-order PDM noise; peak limiting changes dynamics"
+      },
+      "compression_snr_db": 22.41166927530752,
+      "compression_ratio_to_pcm8": 2,
+      "compression_ratio_to_pcm16": 4,
+      "input_pcm_bytes": 230912,
+      "compressed_bytes": 115456
+    },
+    "current_pcm_sha256": "7061903bac62ff1fe75fd0a7d98b5e9b410d6fc212eb63d548e6b36a5e81006c",
+    "interpretation": "Matched source position, different preparation. Level difference is not a measured PDM SNR gain or a causal isolation of the limiter alone."
+  },
+  "python_version": "3.12.14",
+  "ffmpeg_version": "ffmpeg version 8.1.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+  "producer_sha256_lf": {
+    "audit_direct_regression.py": "6e84088037b450b78aa12addc882e0d93d33cdc5bda355d34adaaaa127332956",
+    "direct_player.py": "5b973f75f06de30c183cafa35caad59baadc530caf962c809f96714279084908",
+    "direct-player.asm": "88d1f3ec67f3b52e4fbbc53694aa11d5f34a01fb02ae5a32e7ea3ed90e1d66d9",
+    "verify_direct.py": "8b30e3c4aa1861f6d93ebfe044a31dd1bc8900cc506d59e3540428210e3ef4fa",
+    "verify_packet.py": "0131ce326e2f50c4f1c9b1d36f5a138e8927898157717bff0b35b6875ab7b02d",
+    "probe_feedback_packets.py": "f3937f1c11a56528f0f6ca09607b39533dc5b16042cd8c53e354cb46939a6331",
+    "convert_mulaw_audio.py": "3fe83556f11974d61a13c215b41a71d1837063a9220d2a35f5cf9bddae166883",
+    "build_pdm.py": "6d9fd77e2bd2f9eaf45f8c6c0ef502ed60c76520b9e90dbf7cadf9930a4cc018",
+    "assess_snr.py": "d4e76b7212a971176ed3d3550e7dec721a217599b9487ef3606a2f6e92de9bc8"
+  }
+}

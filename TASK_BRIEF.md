@@ -12,7 +12,26 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
-## Active audio requirement: fixed sample duration and fast conversion (2026-10-05)
+## Active audio request: audit the preferred direct IMA4 disk (2026-10-05)
+
+The user prefers `ZX-audiobook-IMA-ADPCM-direct-test.trd` and asks when sound
+quality changed and whether to restore the earlier algorithm. This steers
+the active milestone to a historical comparison, not another clock design.
+The [completed audit](audiobook-beeper/DIRECT_REGRESSION.md) authenticates four
+complete two-loop records with identical source PCM and reconstructs them
+with one float64 filter. The current assembler rebuilds the preferred disk
+byte for byte; no player rollback is needed to recover that checkpoint.
+
+The generic converter introduced in `d4a980d` dropped the old speech-specific
+gain/limiter and band-pass preparation. On the same source position, the old
+prepared speech is 8.332 dB louder RMS at the same peak. This is a level
+difference, not an isolated measured PDM SNR gain. Modern IMA4 on the identical
+old PCM has less measured waveform error; no blanket kernel regression is
+established. Keep the preferred disk and reproduction guard, preserve current
+converter defaults, and do not silently roll back clock corrections or apply
+speech limiting to arbitrary music. No merge/push is part of this request.
+
+## Pending audio requirement: fixed sample duration and fast conversion (2026-10-05)
 
 The user requests equal physical duration for every audio sample, eliminating
 recording-specific clock compensation. A complete disk should be generated

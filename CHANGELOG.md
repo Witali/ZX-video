@@ -1,5 +1,48 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Audit and reproduce the user's preferred direct IMA4 sound
+
+The user identifies `ZX-audiobook-IMA-ADPCM-direct-test.trd` as good sounding
+and requests a historical regression check, with a possible rollback.
+[Investigation, listening files and reproduction](audiobook-beeper/DIRECT_REGRESSION.md).
+Authenticate the original `b359f53` disk, four identical-source checkpoints,
+packed streams, metadata and complete native/cold Fuse two-loop evidence.
+The current assembler with the original payload/default modulation model
+recreates all 655360 bytes exactly (SHA256 `9ce319e8b9352a96ed965d87ff3d1d8698df7d788221563758d306d23c053013`).
+Keep the public YouTube-linked filename and bytes unchanged. No old code
+checkout is needed to reproduce the preferred playback algorithm.
+
+Locate a substantial preparation change in `d4a980d`, October 3 at 19:22:07
++02:00: generic peak normalization omits the historical 4x speech gain,
+0.85 lookahead limiter and explicit voice-band filters. Compare the same
+source second 60: archived speech RMS 0.195821 versus peak-only 0.075033,
+an 8.332-dB level difference at the same 109/128 peak. This is not an isolated
+PDM SNR improvement claim; filtering and normalization windows also differ.
+The later full disk starts at second 0 and uses whole-track normalization.
+IMA3 becoming the generic default is another format difference; it is not
+the four-bit player in the preferred TRD.
+
+Reconstruct both complete loops at 768-kHz integration using one float64
+filter, no fitted gain/delay and one 0.8 listening gain. Identical-source
+declared-clock SNR is 8.317/7.676 dB for original direct, 8.430/7.777 for
+measured weights, 18.998/18.998 for locked compensation, and 22.184/22.175
+for the current waveform-aware IMA4 winner. The early streams use uniform
+measured mean speed; compensated streams use fixed 8000 Hz. Both clock
+definitions are reported for every stage. Historical 18.85-dB warped-clock
+SNR is not directly comparable. No blanket IMA4 kernel regression is proven;
+the measured metric alone does not overrule the user's listening preference.
+
+The first invocation stops on an LFS source pointer; materialize the local
+source WAVs and rerun successfully. Save a reproducible audit with input
+hashes, report and seven comparison WAVs. Verification reuses the authenticated
+complete traces rather than inventing a fresh emulator run. The exact original
+disk has 5,980,161 native/Fuse bits and 373,760 predictor/index checks over two
+loops. No physical-hardware test. Production/assembly/defaults are unchanged:
+ordinary 423 T/sample and page/bank extras 14/140 T, all deltas 0.
+Decision: retain the preferred reference and exact-rebuild guard; avoid a
+blanket rollback or applying speech limiting to all audio without a separate
+matched test. Fixed-duration playback and total host speed remain pending.
+
 ## 2026-10-05: Audit equal sample duration and the host conversion budget
 
 The user wants constant physical sample duration and a full TRD conversion

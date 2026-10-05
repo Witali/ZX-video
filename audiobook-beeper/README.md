@@ -7,6 +7,13 @@ commit. Measurements, WAVs and build instructions remain historical evidence.
 The [direct IMA4 disk](../ZX-audiobook-IMA-ADPCM-direct-test.trd) was subsequently
 restored byte for byte to preserve a public YouTube video link; keep its path.
 
+On 2026-10-05 the user identified that direct IMA4 disk as a good sounding
+reference. The [historical regression audit](DIRECT_REGRESSION.md) locates
+the changed speech preparation, compares identical-source player stages,
+and rebuilds the preferred TRD byte for byte with the current assembler.
+Its listening preference is retained; a higher numerical SNR alone does not
+establish a preferred sound. This audit does not change converter defaults.
+
 For a new recording, use [convert_audio.py](CONVERTER.md). Its default is
 packed IMA3 decoded directly to PDM, accepted by the user in interactive Fuse
 playback on 2026-10-04. `--codec ima3` selects it explicitly; `--codec ima4`
