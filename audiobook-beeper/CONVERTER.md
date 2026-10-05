@@ -5,8 +5,12 @@ The user accepted the overlap speech disk in an interactive Program Files
 Fuse 1.9.0 session on 2026-10-04 and requested this playback algorithm as the
 main option. The existing `convert_ima3_audio.py` entry point remains usable.
 Select `--codec ima4` explicitly for the [four-bit converter](IMA4_CONVERTER.md).
+The separate experimental `--codec mulaw` (alias `ulaw`) adds an
+[eight-bit G.711 resident preview](MULAW_CONVERTER.md). Its first-order
+control is verified to run, but is noisier than the accepted IMA player;
+it does not implement the PC-only second-order 128-kHz model.
 
-Both modes now default to `--quality best`: complete a bounded waveform
+Both IMA modes now default to `--quality best`: complete a bounded waveform
 search even if an early candidate reaches the SNR target, execute the two
 highest-scoring host candidates, then select by the worse of their two
 fully measured Fuse loops. The verified pilot remains a fallback; IMA4

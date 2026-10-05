@@ -12,6 +12,28 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## Compact mu-law TRD control — complete, not a quality upgrade (2026-10-05)
+
+The user now authorizes the real eight-bit mu-law converter and asks about
+second-order quality. `convert_audio.py --codec mulaw` (`ulaw` alias) builds
+an independently bootable looping RAM prefix with standard G.711 bytes,
+512-byte inverse companding and all decoded 16 bits retained. No PCM/PDM
+audio expansion; all 128 KiB are accounted for, holding121088 bytes/15.136 s.
+The [first-order control and PC comparison](audiobook-beeper/experiments/mulaw-trd/README.md)
+are complete. Native/cold Fuse verify every bit/level/error across two full
+loops, full memory, paging, progress and loading UI; normal-speed audio is
+recorded. Average PDM64119.013 Hz, speed+0.185958%, ordinary432 T/sample
+(+4.625 versus IMA3); page/bank extras35/116 T. Seven tests pass.
+
+Actual total SNR9.672027 dB is poor despite codec-only approximately39 dB.
+Retain as a functional format/control preview; **do not replace IMA3** or
+claim the 30-dB target. On the identical new PCM16 prefix, ideal PC SD2
+at128 kHz gives27.185326 dB versus SD1's17.130225; at64 kHz11.536644 versus
+10.053453. These numbers differ from the previous longer PCM8 study.
+No second-order Z80 port or physical-hardware validation is established.
+Further SD2 work needs an explicit next milestone; the older IMA quality
+study remains paused. No merge or push requested for this deliverable.
+
 ## Compact mu-law/A-law audio — PC simulation complete (2026-10-05)
 
 The user subsequently authorized eight-bit mu-law/A-law instead of IMA and

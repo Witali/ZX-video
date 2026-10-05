@@ -1,5 +1,42 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Add compact mu-law TRD control and compare modulator orders
+
+The user requests an eight-bit mu-law mode in the real generator, then asks
+whether second order improves quality. Add `--codec mulaw` /`ulaw`, keeping
+IMA3 default. Standard G.711 bytes are stored unchanged on disk and in RAM;
+an exact512-byte lookup supplies PCM16 during modulation. A two-byte staging
+slot replaces any whole PCM/PDM expansion. The separate commented assembly
+is compiled by pyz80 and inserted by Python. Fill121088 audio bytes; remaining
+2048 code/table/stack,6912 shadow screen and1024 TR-DOS/stack account for all
+128 KiB. The independent disk loops a15.120-s source prefix plus128 silent
+samples. The English loading message disappears and32 progress steps pass.
+
+The [saved experiment](audiobook-beeper/experiments/mulaw-trd/README.md) uses
+the original audiobook, direct mono8-kHz PCM16 preparation, gain1.95979033,
+80-sample fades and ordinary G.711 encoding. The first-order control costs
+432 T/sample, +4.625 versus IMA3's427.375, with8 instead of16 decisions;
+page/bank extensions35/116 T versus14/140. Counts exclude ROM/disk/ULA.
+Initial macro integration fixes precede qualification; native verification
+catches a bank-count sum typo126→116 without changing the executable path.
+Two full native/cold-Fuse loops verify1937409 outputs, every decoded level
+and accumulator, memory guards, paging and473 startup reads. Program Files
+Fuse measures64119.013-Hz PDM,8014.877-Hz samples,+0.185958% speed error,
+15.107991/15.107820-s loops,18.508372-s audio reading and no live disk reads.
+Normal-speed FMF capture succeeds. Seven tests cover all256 G.711 codes,
+full allocation, low PCM16 bits, aliases and unchanged IMA3 routing.
+
+Quality is **not accepted as an upgrade**: full real-timeline filtered SNR
+is9.679190/9.672027 dB despite codec-only approximately39 dB. Retain the
+working disk as an explicit experimental control. Same-payload ideal-clock
+PC controls answer the follow-up: SD1/SD2 at64 kHz10.053453/11.536644 dB;
+at128 kHz17.130225/27.185326 dB. All use the same full prefix and stable
+float64 filters; these do not prove an executable SD2 kernel. The earlier
+30.920091-dB result used a different longer PCM8 reference. Preserve the
+failed quality outcome, full traces, tables, source snapshots and both
+distinct WAV types. No physical-hardware test, second-order Z80 claim,
+IMA default switch or resumption of the paused IMA quality study.
+
 ## 2026-10-05: Model compact mu-law/A-law directly at the modulator input
 
 After the IMA simulation, the user authorizes eight-bit mu-law/A-law and

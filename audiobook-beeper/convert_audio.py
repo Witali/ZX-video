@@ -391,12 +391,15 @@ def main(argv=None):
     # Route the generic entry point before parsing profile-specific flags.
     # Imports of preparation helpers must never launch a conversion.
     selector = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
-    selector.add_argument('--codec', choices=('ima3', 'ima4'), default='ima3',
-                          help='ima3 (default): accepted packed IMA3/direct PDM; ima4: historical four-bit preview')
+    selector.add_argument('--codec', choices=('ima3', 'ima4', 'mulaw', 'ulaw'), default='ima3',
+                          help='ima3 (default): accepted packed IMA3; ima4: four-bit preview; mulaw/ulaw: compact G.711 eight-bit preview')
     selected, remaining = selector.parse_known_args(argv)
     selector.set_defaults(codec=selected.codec)
     if selected.codec == 'ima4':
         return legacy_main(remaining, parents=(selector,))
+    if selected.codec in ('mulaw', 'ulaw'):
+        from convert_mulaw_audio import main as mulaw_main
+        return mulaw_main(remaining, parents=(selector,))
     from convert_ima3_audio import main as ima3_main
     return ima3_main(remaining, parents=(selector,))
 
