@@ -42,3 +42,5 @@ it does not claim the original real-time playback objective was achieved.
 The default build now selects `pure-r4`; every earlier variant remains
 reproducible. Approximate synthesis is documented as a separate next
 experiment, not silently substituted for exact Speex decoding.
+
+The next six experiments are tracked in [FOLLOWUP_TODO.md](FOLLOWUP_TODO.md).

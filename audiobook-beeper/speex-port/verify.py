@@ -50,13 +50,13 @@ def image(path):
             data.update((address+i,v) for i,v in enumerate(row[4:4+row[0]]))
     return data
 
-def native(out,variant='pure-r4',binary=None):
+def native(out,variant='pure-r31',binary=None,require_exact=True,profile=None,entry_observer=None,blocks=None):
     from z80 import Z80Machine
     folder=out/variant
     folder.mkdir(parents=True,exist_ok=True)
     binary=binary or folder
     mapping=(binary/'player.map').read_text()
-    symbols={name:int(addr,16) for addr,name in re.findall(r'([0-9A-F]{8})\s+(_\w+)\s',mapping)}
+    symbols={name:int(addr,16) for addr,name in re.findall(r'([0-9A-F]{8})\s+(\w+)\s',mapping)}
     memory=image(binary/'player.ihx');payload=(out/'input.spxraw').read_bytes()
     assert len(payload)%20==0 and 0<len(payload)<=4915*20
     samples=struct.unpack('<'+'h'*((out/'reference.pcm16').stat().st_size//2),(out/'reference.pcm16').read_bytes())
@@ -76,6 +76,14 @@ def native(out,variant='pure-r4',binary=None):
     m.mark_addrs(0,65536,m.WRITE_MARK)
     m.unmark_addrs(bss_start,bss_size,m.WRITE_MARK)
     m.unmark_addrs(0xbf00,256,m.WRITE_MARK)
+    # Allow only declared immediate operands on legacy paths. The register
+    # variant retains standalone helpers for primitive checks but never calls
+    # them in playback, so its entire code image must stay write-protected.
+    declared_smc={v for k,v in symbols.items() if re.fullmatch(r'_smc\d+',k)}
+    smc=set() if symbols.get('_immutable_playback_code') else declared_smc
+    for address in declared_smc:
+        assert address in memory and memory[address-1]==0x2e
+        if address in smc:m.unmark_addrs(address,1,m.WRITE_MARK)
     dynamic=[]
     for name in ('innovation','coefficient'):
         if '_'+name+'_start' in symbols:
@@ -83,7 +91,7 @@ def native(out,variant='pure-r4',binary=None):
             assert 0x7200<=lo<hi<=0x8000
             m.unmark_addrs(lo,hi-lo,m.WRITE_MARK);dynamic.append((lo,hi))
     m.set_write_callback(bad_write)
-    current=0;events=[];pages=[]
+    current=0;events=[];pages=[];actual16=[];actual8=[]
     order=(0,1,3,4,6,7) if variant.startswith('pure-') else (0,1)
     banks={order[i//16384]:payload[i:i+16384].ljust(16384,b'\xa5') for i in range(0,len(payload),16384)}
     m.set_memory_block(0xc000,banks[0])
@@ -99,7 +107,7 @@ def native(out,variant='pure-r4',binary=None):
         elapsed+=delta
         last_remaining=m.ticks_to_stop;last_frame_tick=m.frame_tick
         return elapsed
-    phases=Counter();phase_starts={};returns={}
+    phases=Counter();exclusive=Counter();calls=Counter();active=[];returns=set()
     def output(port,value):
         nonlocal current
         if port==0x7ffd:
@@ -111,35 +119,66 @@ def native(out,variant='pure-r4',binary=None):
             assert port&255==0xfb,(hex(port),value)
             index=len(events)
             assert index<len(expected),'extra output'
-            pcm_address=symbols['_pcm']+2*(index%160)
+            pcm_address=symbols['_last_pcm16'] if '_last_pcm16' in symbols else symbols['_pcm']+2*(index%160)
             want=struct.pack('<h',samples[index])
-            assert bytes(m.memory[pcm_address:pcm_address+2])==want,('Z80 PCM16',index,bytes(m.memory[pcm_address:pcm_address+2]).hex(),want.hex())
-            assert value==expected[index],('Z80 PCM8',index,value,expected[index])
+            actual16.append(int.from_bytes(m.memory[pcm_address:pcm_address+2],'little',signed=True))
+            actual8.append(value)
+            if require_exact:
+                assert bytes(m.memory[pcm_address:pcm_address+2])==want,('Z80 PCM16',index,bytes(m.memory[pcm_address:pcm_address+2]).hex(),want.hex())
+                assert value==expected[index],('Z80 PCM8',index,value,expected[index])
             events.append(clock())
     m.set_output_callback(output);m.pc=symbols['_entry'];m.sp=0xbffe
     m.set_breakpoint(symbols['_complete'])
-    watches={symbols[k]:k for k in ('_zx_speex_filter','_zx_speex_lpc') if k in symbols}
+    names=profile if profile is not None else ('_zx_speex_filter','_zx_speex_lpc')
+    if profile is not None:assert all(k in symbols for k in names)
+    watches={symbols[k]:k for k in names if k in symbols}
     for address in watches:m.set_breakpoint(address)
+    # Inline spans have explicit endpoints, not return addresses. They are
+    # observed separately from the nested call stack, never added to its sum.
+    if blocks:assert profile is not None
+    block_starts={symbols[start]:name for name,(start,end) in (blocks or {}).items()}
+    block_ends={symbols[end]:name for name,(start,end) in (blocks or {}).items()}
+    assert len(block_starts)==len(block_ends)==len(blocks or {})
+    block_addresses=set(block_starts)|set(block_ends)
+    block_active={};block_hist={name:Counter() for name in (blocks or {})}
+    for address in block_addresses:m.set_breakpoint(address)
     while True:
         event=m.run()
         if m.pc==symbols['_complete']:break
         tick=clock()
+        # A tail call can share its caller's return address. Close every
+        # matching activation before considering a new entry at this PC.
+        while active and m.pc==active[-1]['return_address']:
+            frame=active.pop();span=tick-frame['start'];name=frame['name']
+            phases[name]+=span;exclusive[name]+=span-frame['children']
+            if active:active[-1]['children']+=span
+        if m.pc in block_ends:
+            name=block_ends[m.pc]
+            assert name in block_active,('block end without start',name)
+            block_hist[name][tick-block_active.pop(name)]+=1
+        if m.pc in block_starts:
+            name=block_starts[m.pc]
+            assert name not in block_active,('overlapping block invocation',name)
+            block_active[name]=tick
         if m.pc in watches:
-            name=watches[m.pc];phase_starts[name]=tick
+            name=watches[m.pc];calls[name]+=1
+            if entry_observer is not None:entry_observer(name,m)
             ret=int.from_bytes(m.memory[m.sp:m.sp+2],'little')
-            returns[ret]=name;m.set_breakpoint(ret);m.step_over_breakpoint()
-        elif m.pc in returns:
-            name=returns[m.pc];phases[name]+=tick-phase_starts[name];m.step_over_breakpoint()
+            active.append(dict(name=name,start=tick,return_address=ret,children=0))
+            returns.add(ret);m.set_breakpoint(ret)
+        if m.pc in watches or m.pc in returns or m.pc in block_addresses:m.step_over_breakpoint()
         if event&m._TICKS_LIMIT_HIT:
             clock();m.ticks_to_stop=budget;last_remaining=budget
             assert elapsed<100_000_000_000,'CPU timeout'
     total=clock()
+    assert not active,'profile activation did not return'
+    assert not block_active,'inline profile span did not finish'
     assert len(events)==len(expected)
     assert int.from_bytes(m.memory[symbols['_status']:symbols['_status']+2],'little')==0
-    assert bytes(m.memory[a] for a in sorted(memory))==bytes(memory[a] for a in sorted(memory)),'code changed'
+    assert all(m.memory[a]==v for a,v in memory.items() if a not in smc),'static code/table changed'
     assert bytes(m.memory[0xc000:])==banks[current],'input changed'
     intervals=[b-a for a,b in zip(events,events[1:])]
-    report=dict(complete=True,samples=len(events),every_pcm8_exact=True,every_pcm16_exact=True,total_tstates=total,
+    report=dict(complete=True,samples=len(events),every_pcm8_exact=bytes(actual8)==expected,every_pcm16_exact=tuple(actual16)==samples,total_tstates=total,
                 seconds_at_3_5_mhz=total/3500000,mean_total_tstates_per_sample=total/len(events),
                 first_out_tstates=events[0],last_out_tstates=events[-1],
                 min_out_interval=min(intervals),max_out_interval=max(intervals),
@@ -149,7 +188,11 @@ def native(out,variant='pure-r4',binary=None):
                 real_time=total<=len(events)*437.5 and max(intervals)<=438,
                 pages=pages,code_rodata_bytes=len(memory),bss_bytes=bss_size,
                 code_bytes=sum(a>=0x8000 for a in memory),tables_bytes=sum(a<0x8000 for a in memory),
-                all_cpu_writes_inside_declared_regions=True,input_code_static_tables_unchanged=True,
+                all_cpu_writes_inside_declared_regions=True,input_static_code_static_tables_unchanged=True,
+                every_code_write_forbidden=not smc,
+                all_code_bytes_unchanged=all(m.memory[a]==v for a,v in memory.items() if a>=0x8000),
+                writable_immediate_addresses=sorted(smc),
+                pcm16_output_buffer='_last_pcm16' not in symbols,
                 initial_state_fill=state_fill,
                 dynamic_table_reserved_bytes=sum(hi-lo for lo,hi in dynamic),
                 dynamic_table_regions=dynamic,
@@ -157,8 +200,19 @@ def native(out,variant='pure-r4',binary=None):
                 phases_tstates=dict(phases),
                 binary_sha256=sha(bytes(memory[a] for a in sorted(memory))),
                 clock_hz=3500000,ula_contention_included=False,physical_hardware_tested=False)
+    if profile is not None:
+        report['profile']=dict(calls=dict(calls),inclusive_tstates=dict(phases),
+                               exclusive_tstates=dict(exclusive),unprofiled_tstates=total-sum(exclusive.values()),
+                               callee_intervals_exclude_caller_call_instruction=True)
+        if blocks:
+            report['profile']['inline_blocks']={name:dict(calls=sum(hist.values()),
+                total_tstates=sum(t*n for t,n in hist.items()),duration_histogram=dict(sorted(hist.items())))
+                for name,hist in block_hist.items()}
     (folder/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     (folder/'out-times.u64.gz').write_bytes(gzip.compress(struct.pack('<'+'Q'*len(events),*events),mtime=0))
+    if not require_exact:
+        (folder/'actual.pcm16').write_bytes(struct.pack('<'+'h'*len(actual16),*actual16))
+        (folder/'actual.pcm8').write_bytes(bytes(actual8))
     print({k:v for k,v in report.items() if k!='out_intervals_histogram'},flush=True)
     return report
 
@@ -167,7 +221,7 @@ if __name__=='__main__':
     p.add_argument('--source',type=Path,default=Path('C:/Work/ZX-video/audiobook-beeper/experiments/ima-waveform/source-preview.wav'))
     p.add_argument('--host-only',action='store_true');p.add_argument('--native-only',action='store_true')
     p.add_argument('--restore-fixture',action='store_true',help='Restore the saved speech packets and independent PCM16 reference')
-    p.add_argument('--variant',default='pure-r4');a=p.parse_args()
+    p.add_argument('--variant',default='pure-r40');a=p.parse_args()
     if a.restore_fixture:
         a.output.mkdir(parents=True,exist_ok=True)
         for name in ('input.spxraw','reference.pcm16'):

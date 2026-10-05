@@ -1,0 +1,129 @@
+{
+  "pointers_and_audits": {
+    "pure-r37": {
+      "pointer_starts": 1149,
+      "pointer_arithmetic_cases": 18384,
+      "instruction_audit_cases": 128,
+      "instructions": 16872,
+      "audited_tstates": 137920,
+      "every_instruction_matches_timing_table": true,
+      "all_page_and_16bit_wrap_cases_exact": true,
+      "input_register_and_write_guards": true
+    },
+    "pure-r38": {
+      "pointer_starts": 1149,
+      "pointer_arithmetic_cases": 18384,
+      "instruction_audit_cases": 128,
+      "instructions": 17128,
+      "audited_tstates": 132160,
+      "every_instruction_matches_timing_table": true,
+      "all_page_and_16bit_wrap_cases_exact": true,
+      "input_register_and_write_guards": true
+    }
+  },
+  "domains": {
+    "q14_cases": 1343488,
+    "all_signed16_coefficients_against_arguments": 12,
+    "all_14bit_fractions_against_coefficient_high_pairs": 32,
+    "random_signed32_cases": 32768,
+    "minimum_tstates": 604,
+    "maximum_tstates": 2187,
+    "every_case_saves_tstates": 45,
+    "exact_result_rounding_and_instruction_formula": true,
+    "register_input_and_writes_guarded": true,
+    "retired_upper_argument_bytes_unchanged": true
+  },
+  "speech": {
+    "calls": 93440,
+    "operands_sha256": "28e21475a3e06c55e7380b36470747eac002bc232ca857fc175bc18869583be2",
+    "every_operand_unchanged": true,
+    "operand_archive": "rounds/32/observed-q14-operands.i16i32.gz",
+    "old_q14_tstates": 155467022,
+    "new_q14_tstates": 151262222,
+    "total_saving": 4204800,
+    "old_full_tstates": 1558327641,
+    "new_full_tstates": 1554122841,
+    "isolated_costs_and_full_delta_reconcile": true,
+    "every_call_saves_tstates": 45,
+    "profile_preserves_every_uninstrumented_out": true,
+    "every_out_delta_matches_cumulative_saving": true,
+    "other_decoder_and_filter_assembly_unchanged": true,
+    "complete_pcm16_and_pcm8_samples": 186880
+  },
+  "all_pitches": {
+    "complete": true,
+    "samples": 20480,
+    "every_pcm8_exact": true,
+    "every_pcm16_exact": true,
+    "total_tstates": 171713365,
+    "seconds_at_3_5_mhz": 49.06096142857143,
+    "mean_total_tstates_per_sample": 8384.441650390625,
+    "first_out_tstates": 434949,
+    "last_out_tstates": 171712347,
+    "min_out_interval": 1285,
+    "max_out_interval": 460931,
+    "nominal_late_samples": 20479,
+    "max_lateness_tstates": 162317835.5,
+    "real_time": false,
+    "pages": [
+      0
+    ],
+    "code_rodata_bytes": 19832,
+    "bss_bytes": 1041,
+    "code_bytes": 9044,
+    "tables_bytes": 10788,
+    "all_cpu_writes_inside_declared_regions": true,
+    "input_static_code_static_tables_unchanged": true,
+    "every_code_write_forbidden": true,
+    "all_code_bytes_unchanged": true,
+    "writable_immediate_addresses": [],
+    "pcm16_output_buffer": false,
+    "initial_state_fill": 165,
+    "dynamic_table_reserved_bytes": 3584,
+    "dynamic_table_regions": [
+      [
+        31744,
+        32768
+      ],
+      [
+        29184,
+        31744
+      ]
+    ],
+    "table_arena_span_bytes": 16384,
+    "phases_tstates": {
+      "_zx_speex_lpc": 24898014,
+      "_zx_speex_filter": 108067279
+    },
+    "binary_sha256": "470dc453454a9fcfe057d10a13e467f03988424e298a87a5f6ca310edbfc786e",
+    "clock_hz": 3500000,
+    "ula_contention_included": false,
+    "physical_hardware_tested": false,
+    "payload_sha256": "b97d08b10ed8256cef215a4be68b4ec45e702d5cfbfe3141013d618bdf19348a",
+    "reference_pcm16_sha256": "3754000a24d50eaff7df9873f06bc3e8a2f1ff6d2d55179eb85dac49e919fc4e",
+    "first_speech_frame_audit": {
+      "scope": "1 complete frame(s), including startup, packet parsing, LPC and port output",
+      "tstates": 1040240,
+      "instructions": 131049,
+      "instruction_tstate_histogram": {
+        "4": 59231,
+        "5": 20,
+        "6": 3579,
+        "7": 18388,
+        "8": 6152,
+        "10": 6978,
+        "11": 13849,
+        "12": 2623,
+        "13": 2320,
+        "14": 11,
+        "15": 3240,
+        "16": 5405,
+        "17": 1552,
+        "19": 280,
+        "20": 2724,
+        "21": 4697
+      },
+      "every_instruction_matches_zilog_table": true
+    }
+  }
+}

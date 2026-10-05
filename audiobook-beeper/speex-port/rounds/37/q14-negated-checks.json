@@ -1,0 +1,159 @@
+{
+  "caller_audits": {
+    "pure-r36": {
+      "actual_call_sites": 20,
+      "combined_caller_cases": 374,
+      "instructions": 54851,
+      "tstates": 440944,
+      "ordinary_q14_boundary_cases": 374,
+      "every_instruction_matches_timing_table": true,
+      "register_input_and_write_guards": true
+    },
+    "pure-r37": {
+      "actual_call_sites": 20,
+      "combined_caller_cases": 374,
+      "instructions": 50136,
+      "tstates": 412933,
+      "ordinary_q14_boundary_cases": 374,
+      "every_instruction_matches_timing_table": true,
+      "register_input_and_write_guards": true
+    }
+  },
+  "domains": {
+    "q14_cases": 1343488,
+    "all_signed16_coefficients_against_arguments": 12,
+    "all_14bit_fractions_against_coefficient_high_pairs": 32,
+    "random_signed32_cases": 32768,
+    "minimum_tstates": 649,
+    "maximum_tstates": 2232,
+    "paths": {
+      "negative/high_False/carry_False/rounding_False": 163853,
+      "nonnegative/high_False": 270299,
+      "negative/high_True/carry_False/rounding_False": 163857,
+      "negative/high_True/carry_False/rounding_True": 170994,
+      "negative/high_True/carry_True/rounding_True": 66632,
+      "nonnegative/high_True": 335872,
+      "negative/high_False/carry_False/rounding_True": 170975,
+      "negative/high_False/carry_True/rounding_True": 1006
+    },
+    "saving_histogram": {
+      "-25": 269252,
+      "-24": 1047,
+      "16": 66632,
+      "17": 334851,
+      "143": 334789,
+      "144": 1083,
+      "184": 1006,
+      "185": 334828
+    },
+    "minimum_saving": -25,
+    "maximum_saving": 185,
+    "exact_results_rounding_and_instruction_formulas": true,
+    "register_input_and_write_guards": true
+  },
+  "speech": {
+    "calls": 93440,
+    "unique_pairs": 84220,
+    "operands_sha256": "28e21475a3e06c55e7380b36470747eac002bc232ca857fc175bc18869583be2",
+    "operand_archive": "rounds/32/observed-q14-operands.i16i32.gz",
+    "every_operand_unchanged": true,
+    "old_q14_plus_negate_tstates": 163934852,
+    "new_negated_q14_tstates": 155467022,
+    "total_saving": 8467830,
+    "old_full_tstates": 1566795471,
+    "new_full_tstates": 1558327641,
+    "saving_histogram": {
+      "-25": 6389,
+      "-24": 384,
+      "16": 5835,
+      "17": 34111,
+      "143": 14001,
+      "144": 2116,
+      "184": 5063,
+      "185": 25541
+    },
+    "regressed_calls": 6773,
+    "isolated_costs_and_full_delta_reconcile": true,
+    "profile_preserves_every_uninstrumented_out": true,
+    "every_out_delta_matches_cumulative_saving": true,
+    "full_filter_assembly_unchanged": true,
+    "complete_pcm16_and_pcm8_samples": 186880,
+    "retained_decoder_prefix_source_unchanged": true
+  },
+  "all_pitches": {
+    "complete": true,
+    "samples": 20480,
+    "every_pcm8_exact": true,
+    "every_pcm16_exact": true,
+    "total_tstates": 172174165,
+    "seconds_at_3_5_mhz": 49.19261857142857,
+    "mean_total_tstates_per_sample": 8406.941650390625,
+    "first_out_tstates": 435849,
+    "last_out_tstates": 172173147,
+    "min_out_interval": 1285,
+    "max_out_interval": 461831,
+    "nominal_late_samples": 20479,
+    "max_lateness_tstates": 162777735.5,
+    "real_time": false,
+    "pages": [
+      0
+    ],
+    "code_rodata_bytes": 19830,
+    "bss_bytes": 1041,
+    "code_bytes": 9042,
+    "tables_bytes": 10788,
+    "all_cpu_writes_inside_declared_regions": true,
+    "input_static_code_static_tables_unchanged": true,
+    "every_code_write_forbidden": true,
+    "all_code_bytes_unchanged": true,
+    "writable_immediate_addresses": [],
+    "pcm16_output_buffer": false,
+    "initial_state_fill": 165,
+    "dynamic_table_reserved_bytes": 3584,
+    "dynamic_table_regions": [
+      [
+        31744,
+        32768
+      ],
+      [
+        29184,
+        31744
+      ]
+    ],
+    "table_arena_span_bytes": 16384,
+    "phases_tstates": {
+      "_zx_speex_lpc": 25358814,
+      "_zx_speex_filter": 108067279
+    },
+    "binary_sha256": "0d5d89d71c04a7c08796c6dc843b3f06d9c1b6d40db76f2196781af79bdfb2a6",
+    "clock_hz": 3500000,
+    "ula_contention_included": false,
+    "physical_hardware_tested": false,
+    "payload_sha256": "b97d08b10ed8256cef215a4be68b4ec45e702d5cfbfe3141013d618bdf19348a",
+    "reference_pcm16_sha256": "3754000a24d50eaff7df9873f06bc3e8a2f1ff6d2d55179eb85dac49e919fc4e",
+    "first_speech_frame_audit": {
+      "scope": "1 complete frame(s), including startup, packet parsing, LPC and port output",
+      "tstates": 1043840,
+      "instructions": 130889,
+      "instruction_tstate_histogram": {
+        "4": 59151,
+        "5": 20,
+        "6": 3339,
+        "7": 18068,
+        "8": 6152,
+        "10": 7138,
+        "11": 13849,
+        "12": 2623,
+        "13": 2320,
+        "14": 11,
+        "15": 3240,
+        "16": 5565,
+        "17": 1552,
+        "19": 280,
+        "20": 2644,
+        "21": 4937
+      },
+      "every_instruction_matches_zilog_table": true
+    }
+  }
+}

@@ -1,6 +1,547 @@
 # Changelog and optimization experiments
 
 
+
+## 2026-10-04: Speex round40 meets the below-8000 intermediate target
+
+On unchanged round39 speech, inspect small signed feedback populations and
+choose byte-magnitude products fused with subtractive state updates. This
+avoids a cached correction table and preparation; that alternative was not
+implemented. Full speech 1518690395 ->1487605573 T (-31084822, 2.047%),
+7960.218 T/sample. Both binaries pass 196608 feedback cases, instruction
+audits and 128 full arbitrary-state filter calls. A wrong runtime path and
+comment-match assertion first stopped host setup/build. The first native
+candidate failed at sample 100 (-61 versus -69) due to an intermediate-byte
+borrow bug; corrected and verified with 327680 dedicated negate cases.
+All 1094880 complete PCM16/PCM8 samples, every fixture/OUT cost proof and
+fresh default identity pass. Low/high tone regress by 34212/33010 T
+(0.154%/0.140%); other full fixtures improve or stay unchanged. Select for
+speech and random/all-pitch gains, without a universal speed claim. Code
++902 to 10527, state and 14140 useful table bytes unchanged. Real-time deficit
+is still 18.195x; ULA/hardware unverified. Next inspect negative 12-bit
+subtractive synthesis; below 7800 is an unachieved intermediate target.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/40/REPORT.md).
+
+## 2026-10-04: Speex round39 omits zero top feedback partials
+
+Inspect unchanged round38 speech: 3340 zero, 58289 top-zero and 125251 general
+feedback words. Select one specialized synthesis kernel: 653 T saved on
+eligible samples, +21 T on general nonzero, zero unchanged. Complete speech
+1554122841 ->1518690395 T (-35432446, 2.280%), 8126.554 T/sample. Both binaries
+pass all 65536 words with three coefficient arrays (196608 cases), arbitrary
+histories, instruction audits and 128 full filter calls. All 1094880 complete
+PCM16/PCM8 samples, fresh default identity, per-OUT and every fixture-cost
+prediction pass. No checked full fixture regresses; other inputs can regress.
+Only forty history bytes are writable in the feedback block. Code +581 to
+9625; state and 14140 useful table bytes unchanged. Initial Python variant
+wiring failed before assembly, leaving no image for the attempted verifier;
+fixed before the first native build. No native arithmetic/PCM failure or
+reverted native candidate. Select pure-r39, still 18.575x over average real
+time; no ULA/hardware qualification. Next inspect combined upper partials
+for small signed feedback; no additional implementation or saving measured.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/39/REPORT.md).
+
+## 2026-10-04: Speex round38 reads private Q14 arguments directly
+
+On unchanged round37 speech, replace four-byte LDIR plus high-word reload
+with direct little-endian reads, retaining only the low argument in scratch.
+The region costs 119 ->74 T; all 93440 calls save exactly 45 T. Full speech
+1558327641 ->1554122841 T (-4204800, 0.270%), 8316.154 T/sample. Every saved
+operand, weighted cost and OUT delta reconciles. All 1343488 arithmetic
+cases, 18384 pointer cases per binary, independent instruction audits and
+1094880 complete PCM16/PCM8 samples pass; fresh default identity matches.
+Retired upper-argument writes are forbidden; page and FFFF wrap boundaries
+pass. All full fixtures improve by 22.5 T/sample. Code +2 to 9044; state and
+14140 useful table bytes unchanged. Select pure-r38, still 19.008x over
+average real time. No native failure, reverted attempt or ULA/hardware
+qualification. Next inspect synthesis specialization for zero top feedback
+nibbles; no next implementation or saving is measured.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/38/REPORT.md).
+
+## 2026-10-04: Speex round37 fuses Q14 and the LPC caller negation
+
+On unchanged round36 speech, replace twenty adjacent Q14/negate call sites
+with one private exact negative-Q14 entry. Preserve high-part truncation,
+-32768 magnitudes and floor/ceiling rounding; ordinary Q14 stays intact.
+Full speech 1566795471 ->1558327641 T (-8467830, 0.540%), 8338.654 T/sample.
+Every saved operand, weighted cost and OUT delta reconciles. All 1343488
+arithmetic cases, actual caller/ordinary-entry instruction audits and
+1094880 complete PCM16/PCM8 samples pass; fresh default identity matches.
+All full fixtures improve, although 6773 speech calls individually regress.
+An initial cost estimate failed on five-T branch differences; corrected
+formulas pass exhaustive domains and instruction stepping. No native
+arithmetic/PCM failure or reverted candidate. Code +153 to 9042; state and
+14140 useful table bytes unchanged. Select pure-r37, still 19.060x over
+average real time. No ULA/hardware qualification. Next inspect direct private
+Q14 argument reads; the 45-T estimate is unimplemented and unmeasured.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/37/REPORT.md).
+
+## 2026-10-04: Speex round36 uses exact aligned cosine words
+
+On unchanged round35 speech, observe 46720 cosine inputs, all four-unit
+aligned. Host-only packing inspection finds 46 sixteen-angle blocks too
+wide for simple nibble offsets; select one direct-word candidate with a
+complete exact polynomial fallback. Cosine 30846551 -> 9544980 T; full
+speech 1588097042 -> 1566795471 T (-21301571, 1.341%), 8383.965 T/sample.
+Every angle and OUT-delta/cost proof matches. All 25737 angles per binary,
+720896 P13 cases, independent instruction audits and 1094880 complete
+PCM16/PCM8 samples pass; fresh default identity matches. All full fixtures
+improve; unaligned individual calls are slower. Random packets exercise two
+fallback calls without output changes. Code -2, useful tables -1870 to
+14140 bytes within 16 KiB; state/payload unchanged. Select pure-r36, still
+19.163x over average real time with no ULA/hardware claim. No failed or
+reverted native candidate. Next combine Q14 and caller negation; no next
+implementation or net saving is measured. Record below 8000 T/sample as
+the next unachieved intermediate target.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/36/REPORT.md).
+
+## 2026-10-04: Speex round35 retains table steps in registers
+
+On unchanged round34 speech, keep 16*step in spare BC/BC' and select aligned
+group-end addresses directly. Save exactly 179 T/changed page: preparation
+231223829 -> 223223961 T; full speech 1596096910 -> 1588097042 T (-7999868,
+0.501%), 8497.951 T/sample. The below-8500 intermediate target passes.
+All coefficient inputs match and every OUT delta equals 179 times its
+preceding changed-page count. All 65536 coefficients per variant, 10240
+address cases, 1024 page masks and 1094880 complete PCM16/PCM8 samples pass;
+independent instruction audits and fresh default identity match. Code -27
+bytes; table/state layout/payload unchanged. Only documented BC/BC' scratch
+outputs and retired step contents differ. Initial host-generator quoting
+failure was fixed before producing a binary; no native failure or revert.
+Select pure-r35, still 19.424x over average real time, no ULA/hardware claim.
+Next inspect exact cosine lookup and actual alignment; margin averaging
+can break four-unit alignment. No next implementation or saving is claimed.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/35/REPORT.md).
+
+## 2026-10-04: Speex round34 cancels redundant table-builder exchanges
+
+On unchanged round33 speech, remove exactly 64 EXX/EXX identity pairs from
+the changed coefficient-page builder. Save 512 T/page; observed 44692 pages
+predict the complete -22882304 T exactly. Preparation 254106133 -> 231223829
+T (-9.005%); full speech 1618979214 -> 1596096910 T (-1.413%), 8540.758
+T/sample. All 65536 signed coefficients and 1024 changed-page masks per
+variant pass, including exact tables/registers/flags/BSS, write guards,
+independent instruction costs, unchanged coefficient inputs and preserved
+profiled OUT traces. All 1094880 complete PCM16/PCM8 samples and fresh
+default identity pass. Code -128 bytes, state/tables/payload unchanged;
+select pure-r34. Still 19.522x over average real time; no ULA/hardware claim.
+Next estimate: keep 16*step in BC/BC' and use page-aligned group addresses,
+179 T/page or 8497.951 T/sample. This is unimplemented; below-8500 remains
+unmet. No failed, reverted or interrupted candidate occurred this round.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/34/REPORT.md).
+
+## 2026-10-04: Speex round33 combines Q14 by coefficient sign
+
+On unchanged round32 speech, split Q14 on coefficient sign, restore only
+the high product's final sign, and add floor or subtract ceiling of the
+unsigned fractional product. Remove the sign scratch traffic and double
+negation. Q14 167108120 -> 156085892 T; full speech 1630001442 -> 1618979214
+T (-11022228, 0.676%), 8663.202 T/sample. All Q14 inputs save 30..211 nominal
+T; the 93440-call trace and weighted isolated instruction costs reconcile
+with the full saving. All 1343488 Q14 cases, 374 boundary instruction audits
+per binary and 1094880 complete PCM16/PCM8 samples pass, as does fresh
+default identity. Reuse unchanged unsigned helper/filter evidence. Code +8
+bytes, state/table/payload unchanged; select pure-r33. Real-time deficit
+remains 19.802x with no ULA/hardware claim. Below-8500 target is unmet.
+Next remove 64 cancelling EXX pairs per changed coefficient page; predicted
+512 T/page is not implemented or measured. No failed or reverted candidate
+occurred in this round.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/33/REPORT.md).
+
+## 2026-10-04: Speex round32 shares Q14 coefficient normalization
+
+On unchanged round31 speech, normalize the repeated Q14 coefficient once,
+use unsigned byte/word partials and retain high-part truncation plus exact
+negative fractional rounding. Q14 172467335 -> 167108120 T; full speech
+1635360657 -> 1630001442 T (-5359215, 0.328%), 8722.182 T/sample. Every
+observed operand matches; isolated instruction formulas reconcile with the
+full saving. All 1343488 Q14 cases, 1179648 unsigned products, 374 boundary
+instruction audits per binary and 1094880 complete PCM16/PCM8 samples pass;
+fresh default identity matches. Every complete fixture improves, but 40193
+individual speech calls regress; this is not a universal per-call speedup.
+Code +179 bytes, state/table/payload unchanged. Select pure-r32; still
+19.936x over average real-time budget, no ULA/hardware claim. The next
+intermediate target is below 8500 T/sample (unachieved); first investigate
+removing double sign reversal on negative coefficient/high inputs. No next
+speedup is measured. No candidate was reverted in this round.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/32/REPORT.md).
+
+## 2026-10-04: Speex round31 combines two unsigned byte/word products
+
+On unchanged round30 speech, replace general signed16x16 bit-serial products
+with two unsigned8x16 partials and exact carry/sign combination; retain byte
+and zero paths. Multiplier 167043802 -> 126588295 T (-24.219%); full speech
+1675816164 -> 1635360657 T (-40455507, 2.414%), 8750.860 T/sample. All 186880
+operands match, and isolated instruction costs reconcile with the complete
+delta. All 16777216 unsigned and 2228224 signed products, boundary instruction/
+register/write checks and 1094880 complete-stream samples pass; fresh default
+identity matches. Code -39 bytes, table/state/payload unchanged, at most four
+additional stack bytes within the existing reserve. Select pure-r31; still
+20.002x over average real-time budget, no ULA/hardware claim. Next investigate
+shared coefficient normalization inside Q14, preserving exact high-part
+truncation and negative fractional rounding. No next speedup is measured.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/31/REPORT.md).
+
+## 2026-10-04: Speex round30 shortens the exact synthesis shift
+
+On unchanged round29 speech, replace signed24 >>5 with sign extension,
+three left shifts and byte selection: 120 -> 93 T. Full speech 1680861924 ->
+1675816164 T (-5045760, 0.300%), 8967.338 T/sample. Every OUT timestamp
+saves exactly 27*(sample_index+1) T. Both versions pass 393216 isolated shifts,
+1572864 rounding boundary cases and 128 arbitrary-state filter calls, with
+independent instruction/register/write checks. Selected 1094880 full-stream
+PCM samples and fresh default identity pass. Code -12 bytes, state/tables/
+payload unchanged. Select pure-r30; still 20.497x over the average real-time
+budget, with no ULA/hardware claim. Next investigate a two-byte-partial
+signed16x16 LPC multiplier; the unchanged kernel's prior profile represents
+about 10% of current CPU, but the next candidate's speedup is unmeasured.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/30/REPORT.md).
+
+## 2026-10-04: Speex round29 returns signed24 pitch products directly
+
+On unchanged round28 speech, return constants in A:HL and consume that
+representation directly in the pitch sum. Ordinary calls save 24 T including
+accumulation; zero/identity save 12/8 T. Predicted and executed total savings
+agree: 12976212 T, 1693838136 -> 1680861924 T, **8994.338 T/sample** (-0.766%).
+The below-9000 intermediate target passes. All 4259840 products, 200187 sums
+and 163840 complete codebook/pitch/position cases per baseline/new variant
+pass, with instruction/register/write guards and 1094880 complete-stream
+PCM16/PCM8 samples. Fresh default and prior-round rebuild identities match.
+Code -325 bytes; state/tables/payload unchanged. Select pure-r29; still
+20.558x over average real-time budget, with no pacing or ULA/hardware claim.
+Next inspect a 93-T replacement for the 120-T synthesis signed shift;
+27-T/sample saving is only an instruction estimate.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/29/REPORT.md).
+
+## 2026-10-04: Speex round28 specializes exact pitch-gain products
+
+On unchanged round27 speech, replace the 192-byte gain triples with same-size
+routine-pointer triples and generate 65 constant multiplication routines.
+Compare binary Horner with bounded add/subtract chains, including the +7-T
+indirect-call cost. Selected chains save exactly 96923613 T: 1790761749 ->
+1693838136 T, 9063.774 T/sample (-5.412%). Binary saves 94418524 T and is
+retained as a comparison. All 4259840 products per candidate, instruction/
+register/write guards and 1094880 selected complete-stream samples pass;
+fresh default identity matches. Initial generator placement caused an import
+failure; an obsolete checker profile key then interrupted final reporting.
+Both harness issues were fixed and both candidates rerun to completion.
+Code +1616 bytes, state/tables/payload unchanged. Select pure-r28, still
+20.717x over the average real-time budget; no ULA/hardware claim. Next target
+below 9000 T/sample with direct A:HL pitch returns; the 8994.833-T estimate
+has not been implemented or executed.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/28/REPORT.md).
+
+## 2026-10-04: Speex round27 shares long-period history addressing
+
+On unchanged round26 speech, dispatch once per 40-sample subframe. For pitch
+>=41 use one advancing IX history cursor and a duplicate loop with unchanged
+clamp/innovation logic; retain the general smaller-period path. Save 316 T
+per fast sample minus 128 T/subframe setup; general path adds 40 T/subframe.
+Complete 1834745357 -> 1790761749 T (-43983608, 2.397%), 9582.415 T/sample.
+All 81920 address/sum cases per variant, 20480 additional upstream samples
+covering every pitch and the standard 1074400 samples pass, with guards,
+instruction audits and fresh default identity. Silence costs one extra
+T/sample; accept the tradeoff for the measured full-speech improvement.
+Code +299 bytes, state/tables unchanged. Select pure-r27; still 21.903x
+over average real-time budget, no ULA/hardware claim. Next investigate
+constant pitch-gain multipliers and same-size pointer triples.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/27/REPORT.md).
+
+## 2026-10-04: Speex round26 retains pitch accumulation in alternate registers
+
+On unchanged round24 speech, replace RAM accumulation after each active
+pitch product with alternate HL/C. Addition 89 -> 52 T, initialization
+42 -> 25 T, final writeback +41 T/sample. Full saving exactly 16205909 T:
+1850951266 -> 1834745357, 9817.773 T/sample. All 1074400 PCM samples,
+200187 sums, 1037 writebacks and 589824 helper-register checks pass, with
+memory/instruction guards and fresh default identity. A shared-breakpoint
+stall interrupted the initial unit-checker run; resume and complete-count
+assertions fixed the harness before final verification. Code -23 bytes,
+state/tables unchanged. Select pure-r26; still 22.441x over average budget.
+Next investigate shared history addressing at pitch >=41: 3519/4672 input
+subframes qualify, but no speedup is yet measured. No ULA/hardware claim.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/26/REPORT.md).
+
+## 2026-10-04: Speex round25 separates inline feedback from the current profile
+
+Observe unchanged round24 speech with explicit feedback-block endpoints and
+nested function spans. All 186880 PCM samples, every OUT timestamp, image
+hash and 1850951266 total T match; delta 0 T. Exclusive costs reconcile,
+with feedback 35.880%, remaining decoder 16.470%, preparation 13.728%.
+Incoming LPC values independently confirm 44692 changed pages; obsolete
+product/split helpers receive zero calls. Next estimate alternate-register
+pitch accumulation, saving 37 T/active term minus 24 T/sample setup/writeback,
+or 16205909 T on prior observed counts. This next candidate is unexecuted;
+the average real-time goal remains unmet. No ULA/hardware claim.
+[Profile and reproduction](audiobook-beeper/speex-port/rounds/25/REPORT.md).
+
+## 2026-10-04: Speex round24 adds a pre-negated coefficient-table step
+
+On unchanged round23-pop speech, replace 64 repeated 42-T subtractions/page
+with 34-T additions and 230 T of step negation, saving 282 T/changed page.
+An initial borrow bug failed at coefficient -32767; fix the outgoing carry
+with LD A,0 / SBC A,D. Then all 65536 coefficients (4194304 table entries
+per variant), 262144 negations and 1074400 exact PCM samples pass, with
+instruction/write/register checks and fresh default identity. Full speech
+1863554410 -> 1850951266 T (-12603144), 9904.491 T/sample. Code -68 bytes,
+state/tables unchanged. Select pure-r24; still 22.639x over average budget.
+The implied 44692 changed pages are inferred from timing here; next profile
+the new inline filter and count pages independently. No ULA/hardware claim.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/24/REPORT.md).
+
+## 2026-10-04: Speex round23 inlines products and borrows SP for table reads
+
+Compare register-offset inline products and an added POP table-read variant
+against unchanged round22 speech. Complete totals 1885485770 / 1863554410 T
+versus 1961694254; select pure-r23-pop, saving 98139844 T (5.003%) exactly
+as predicted including cursor and register/stack setup. Mean 9971.931 T/sample
+meets the below-10000 intermediate milestone; average real-time deficit is
+still 22.793x. Both candidates pass full speech, first-frame audit, 7719
+arbitrary histories and 128 filter calls each. Only selected POP receives
+the full 1074400-sample fixture suite and fresh default identity. Every code
+write is forbidden during inline playback; all guards and SP/IX/IY checks
+pass. Code +488 bytes, state +2, tables unchanged. SDAS's unsupported
+index-half mnemonics required explicit prefixed bytes with instruction/timing
+comments; no failed audio result occurred. No ULA/hardware claim. Next count
+cheaper coefficient-table recurrence, including negation/setup costs.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/23/REPORT.md).
+
+## 2026-10-04: Speex round22 bypasses zero-feedback products exactly
+
+Apply the round21-selected state-copy shortcut on unchanged round20 speech,
+reuse A=H for its zero test and remove unread asm_n. Feedback block costs
+4138 -> 847 T when zero, 4138 -> 4136 otherwise. Full speech saves exactly
+11359020 T: 1973053274 -> 1961694254, 10497.080 T/sample, meeting the
+below-10500 intermediate target. All 1074400 exact PCM16/PCM8 samples,
+4650 independent arbitrary-history cases per variant, memory/instruction
+audits and fresh default identity pass. Code +24 bytes, state -2, tables
+unchanged. Select pure-r22; still 23.993x over the average real-time budget.
+Next proposed target is below 10000 T/sample, beginning with the full cost
+of inline products. No pacing, ULA or hardware claim.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/22/REPORT.md).
+
+## 2026-10-04: Speex round21 selects zero-feedback bypass from actual counts
+
+Profile unchanged round20 speech arguments: 3340 zero feedback samples,
+18847 zero pitch gains, and 3447 zero words with nonzero multipliers. Every
+PCM sample and OUT timestamp remains unchanged; delta 0 T. Cycle forecasts
+reject zero-word and zero-gain tests (11.95M and at least 8.96M extra T).
+Select only a zero-feedback state-copy prototype; a conservative saving
+7.62M T improves to an estimated 11.36M T after identifying reusable flags
+and the unread asm_n store. Candidates are estimates, not execution results.
+[Measured profile](audiobook-beeper/speex-port/rounds/21/REPORT.md).
+
+## 2026-10-04: Speex round20 retains innovation state in registers
+
+Replace memory-held recurrence state with ordinary/alternate registers and
+scale the fractional remainder by sixteen so carry supplies the quotient
+increment. All table bytes stay exact. Loop 352 -> 137 T (132 last); setup
+20 -> 216 T; net -28189 T/table for every energy. Full speech 2017535516 ->
+1973053274 T (-44482242), 10557.862 T/sample. All 1074400 PCM16/PCM8 samples,
+8448 builder entries per variant, exact write guards, SP/IX/IY and instruction
+audits pass; fresh default rebuild matches. Code -15, state/tables unchanged.
+Select pure-r20, retaining unpaced output; still 24.132x over average budget,
+no ULA/hardware claim. Next measure zero frequencies before adding branches.
+[Report](audiobook-beeper/speex-port/rounds/20/REPORT.md).
+
+## 2026-10-04: Speex round19 replaces seven-bit signed24 shifts
+
+Replace seven arithmetic right shifts with one left shift, byte selection
+and saved sign extension on unchanged round18-signed input. The block costs
+184 -> 52 T; full speech 2042203676 -> 2017535516 T (-24668160), exactly
+-132 T/sample. All 1074400 PCM16/PCM8 samples and 396800 isolated signed24
+cases pass, with instruction counts, memory, arithmetic and cache checks.
+Code -33 bytes, state/tables unchanged. Select the exact optimization; still
+24.676x over the average budget, no ULA/hardware claim. Next test register
+state in innovation construction. [Report](audiobook-beeper/speex-port/rounds/19/REPORT.md).
+
+## 2026-10-04: Speex round18 selects combined-register signed multiplication
+
+Compare three exact signed8x16 cores on the unchanged complete speech:
+fixed A:HL costs 2105364513 T, leading-bit skipping 2066995457 T, and
+signed-word correction 2042203676 T, versus round16's 2164784952. Select
+pure-r18-signed: -122581276 T (5.663%), 10927.888 T/sample, code +10 bytes,
+state/tables unchanged. All candidates pass full speech and bounded
+arithmetic/frame checks; only the selected one passes the full 1074400
+PCM16/PCM8 suite, guards, tables, general arithmetic, controls and fresh
+default identity. Additional 589824 products cover nine full word domains;
+every cycle count matches the instruction formula. Other candidates remain
+archived as superseded. No output pacing is introduced, no sound or format
+change; average deficit remains 24.978x. Next inspect the seven-bit
+excitation shift; its proposed 132-T/sample saving is not measured yet.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/18/REPORT.md).
+
+## 2026-10-04: Speex round17 profiles nested work without changing CPU execution
+
+Observe function entry/return in the unchanged round16 complete speech run.
+Inclusive/exclusive accounting reconciles to 2164784952 T, delta 0; all
+186880 PCM16/PCM8 values and every archived output timestamp stay exact.
+Coefficient products use 23.136% and signed 8x16 products 13.865% of total
+CPU; coefficient preparation uses 12.320%. Expected call counts and old
+phase totals pass. Choose a combined-register signed8x16 algorithm with
+leading-bit skipping as the next no-extra-table experiment. No timing or
+hardware release claim. [Profile](audiobook-beeper/speex-port/rounds/17/REPORT.md).
+
+## 2026-10-04: Speex round16 omits zero partial-product bytes
+
+On round15's unchanged complete mode-3 input, skip the guaranteed zero low
+bytes of the <<8 and <<12 partial products and restart carry at byte 1.
+Each exact product costs 306 -> 268 T; ten taps save exactly 380 T/sample.
+Complete speech 2235799352 -> 2164784952 T (-71014400), 11583.824 T/sample;
+code -8 bytes, state/tables unchanged. All 1074400 exact samples, arithmetic,
+cache, table, control, write-guard and instruction audits pass. First-frame
+CPU drops 60800 T, exactly 160*380. A fresh default rebuild matches. Select
+pure-r16 as default and pin the historical round09 reproduction explicitly.
+Two new rounds save 13.781% versus round09, still 26.477x over the average
+real-time budget. No pacing is required or introduced; active goal remains
+unmet. Next profile should split the remaining synthesis and excitation
+costs. [Report](audiobook-beeper/speex-port/rounds/16/REPORT.md),
+[worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md).
+
+## 2026-10-04: Unpaced Speex round15 cuts coefficient preparation cost
+
+The active user goal allows consecutive OUT samples; uniform pacing is no
+longer a gate. Resume exact Speex from pure-r9 on unchanged complete input.
+Use register-held 32-bit steps and reverse PUSH table writes with saved SP.
+Preparation costs 120963 -> 59433 T for ten changed pages; complete speech
+2510789186 -> 2235799352 T (-274989834, 10.952%), 11963.824 T/sample. All
+1074400 exact PCM16/PCM8 checks, tables, cache, arithmetic, controls, memory
+guards and instruction audits pass. Code +321, state +2, tables unchanged
+within 16 KiB. A bounded first implementation passed; eliminating redundant
+zero-byte negation work saved another 12 T/page before final verification.
+Select as next exact throughput baseline; still 27.346x over average budget.
+No ULA/hardware claim. [Report](audiobook-beeper/speex-port/rounds/15/REPORT.md),
+[active worklist](audiobook-beeper/speex-port/THROUGHPUT_TODO.md).
+
+## 2026-10-04: Reject PVQ four-sample compression trial; retain round13
+
+On the same complete 186880-sample control, retrain 1024 four-residual
+vectors with the prior seeded K-means method and extend the assembly
+generator from twelve- to sixteen-sample groups. Full unpaced CPU becomes
+12953218 T / 69.3130 T/sample, down 2698262 T from round13; storage is
+62528 bytes / 2.98874:1 PCM8, down 18446 bytes. Tables remain 4614 bytes.
+All native samples match the scalar recurrence, every 437/438-T interval
+including three bank switches passes, and 33 short lengths, memory guards
+and instruction audit pass. Rebuilt round13 and historical round12 preserve
+their evidence. Raw SNR falls from 23.5102 to 19.8552 dB (-3.6550), exceeding
+the predeclared one-dB gate: reject this candidate, retain round13's 7.373%
+CPU saving with unchanged sound. A first launch failed on an unrelated
+OpenCV import before training; isolating the NumPy helper resolved it.
+No ULA/hardware or listening qualification is claimed. Close the scoped
+two-target milestone with the compression/quality combination unmet.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/14/REPORT.md),
+[completed target](audiobook-beeper/speex-port/NEXT_TARGET.md).
+
+## 2026-10-04: PVQ round13 reaches the unchanged-sound speed target
+
+On unchanged round12 input/book, remove two intermediate IXH writes and
+the final pointer increment per three-sample vector. Full CPU falls from
+16897348 to 15651480 T (-1245868), 83.7515 T/sample, meeting <=84. All
+186880 PCM8 and stored bytes remain identical; every 437/438-T interval,
+all bank/tail boundaries, guarded writes and 25 short-length cases pass.
+Startup/bank instruction audit passes and the old generator option still
+rebuilds the baseline hash. Select the change; ULA/hardware unverified.
+[Report and reproduction](audiobook-beeper/speex-port/rounds/13/REPORT.md).
+
+## 2026-10-04: Define the next PVQ optimization target
+
+Continue in the same worktree. Record a firm target of <=84 T/sample with
+unchanged PCM8 and rate, plus a conditional four-sample-vector experiment
+aiming at ~3:1 versus PCM8 / <=80 T/sample. Use round12's complete source,
+dictionary and timing evidence; select a changed format only after a
+declared quality comparison. No new performance measurement in this scope
+commit. [Target and gates](audiobook-beeper/speex-port/NEXT_TARGET.md).
+
+## 2026-10-04: Close audio follow-up and select exact/default and paced variants
+
+Complete all six follow-up decisions. Select `pure-r9` as the exact Speex
+default: 2510789186 T, 9.00% fewer than round04, still 30.71x over budget.
+A fresh default build reproduces the image. Extend final verification to
+1074400 exact samples, general arithmetic, controls and cached-silence
+instruction timing; original evidence hashes remain unchanged. Separately
+select the complete PVQ CPU schedule, and independently recheck all 186880
+archived timestamps and stored-data hash. Retain rejected approximate
+variants without changing the exact default. Update README/task checkpoint,
+including limits of ULA/physical timing. Reproduction and evidence:
+[finish_followup.py](audiobook-beeper/speex-port/finish_followup.py),
+[verification](audiobook-beeper/speex-port/FOLLOWUP_VERIFICATION.json),
+[completed worklist](audiobook-beeper/speex-port/FOLLOWUP_TODO.md).
+
+## 2026-10-04: Audio item 12, complete paced PVQ output
+
+Reuse the prior 1024-entry book on the same full speech, implement banked
+input and uniform PCM8 port output. Unpaced cost 16897348 T (90.418 T/sample);
+steady saving versus former probe plus driver is 30.833 T/sample. All
+186879 output intervals are exactly 437/438 T including four bank switches
+and tail. Store 80974 bytes (2.3079:1 PCM8), tables 4614, code 935, state 1,
+stack reserve 256. Raw SNR 23.510 dB; waveform bytes match the independent
+VQ recurrence. Full guards, six short-tail cases and a startup/bank timing
+audit pass. Initial index-half mnemonics were unsupported by sdasz80 and
+encoded explicitly; an initial ten-T bank-path mismatch was fixed before
+full timing passed. Select for nominal CPU playback separately from exact
+Speex. ULA/physical timing remains unverified, including contended input
+banks; no TRD is produced. [Report](audiobook-beeper/speex-port/rounds/12/REPORT.md).
+
+## 2026-10-04: Audio item 11, periodic waveform/noise kernel
+
+Fit 32-entry waves on the complete control speech; add noise and eight
+transition samples per block. New format is 54320 bytes including noise
+tables (3.440:1 versus PCM8), raw SNR 9.897 dB. Actual assembly kernels
+match all 186880 host-model samples and cost 41604160 T (222.625 T/sample),
+with a complete block instruction audit and guarded writes. Initial record
+packing failed its size assertion and was corrected before native execution.
+Do not select this quality/storage tradeoff over the next waveform VQ
+candidate. Record loading and pacing remain unimplemented after this gate;
+this is not a complete real-time player. [Report](audiobook-beeper/speex-port/rounds/11/REPORT.md).
+
+## 2026-10-04: Speex item 10, reject approximate eight-bit feedback
+
+Quantize synthesis feedback and omit two partial products. Full speech
+2510789186 -> 2201671482 T (-309117704), still 26.929x over budget. 960
+independent-model samples and instruction audit pass; output is deliberately
+inexact (150751 changed PCM8 samples, 15.492-dB SNR against exact). Source
+comparison uses a measured shared 79-sample delay, correcting an initial
+40-sample assumption. Reject due to remaining CPU deficit plus extra error;
+keep exact round 09 selected. See [round 10](audiobook-beeper/speex-port/rounds/10/REPORT.md).
+
+## 2026-10-04: Speex item 09, exact PCM8 port-only output
+
+Remove validation-only PCM16 buffer writes and IY work while checking the
+existing internal sample word against the same reference. Full speech
+2527353474 -> 2510789186 T (-16564288); code -33 bytes, state -320, tables
+unchanged. All speech, signal/capacity, arithmetic and cache checks pass;
+first-frame instruction timings reconcile. Select for direct port output;
+real time still fails. [Report](audiobook-beeper/speex-port/rounds/09/REPORT.md).
+
+## 2026-10-04: Speex item 08, faster coefficient page construction
+
+Unroll 16-entry loops and retain unchanged coefficient pages on the same
+complete speech. 2684505254 T becomes 2527353474 T (-157151780); code +513
+bytes, state +3, tables unchanged. Full speech, signal/capacity fixtures,
+products, entries, ten isolated page changes and first-frame instruction
+audit pass. Select the exact change; no real-time claim. See
+[round 08](audiobook-beeper/speex-port/rounds/08/REPORT.md).
+
+## 2026-10-04: Speex item 07, patch exact product lookup offsets
+
+On the unchanged 186880-sample speech, replace repeated offset loads with
+four explicit writable operands. Full decode falls from 2759257254 to
+2684505254 T (-74752000, exactly -400 T/sample). Code shrinks eight bytes;
+tables and state are unchanged. Full speech, signal/capacity streams,
+specialized arithmetic, code-write guards and first-frame timing audit pass.
+Select the exact change; real time still fails. A premature archive command
+was retried after the completed fixture run. See the
+[report and reproduction](audiobook-beeper/speex-port/rounds/07/REPORT.md).
+
+## 2026-10-04: Authorize further Speex and waveform playback experiments
+
+Save the user's six follow-up directions in the
+[new worklist](audiobook-beeper/speex-port/FOLLOWUP_TODO.md), based on the
+complete `pure-r4` speech result (2759257254 T, 186880 samples). Compare
+specialized multiplication, table construction and port-only output before
+trying approximate synthesis, periodic waves and predictive VQ. Preserve
+separate exactness, quality, rate and timing claims. This commit records
+scope only; it adds no decoder or measured speedup.
 ## 2026-10-05: Audition O. Henry speech through the current AY music profile
 
 At the user's request, apply the existing AY converter to the familiar

@@ -1,10 +1,14 @@
 # Speex mode 3 on a 3.5 MHz Z80
 
-## Latest result: optimization worklist completed
+## Latest result: exact Speex improved; separate VQ playback meets nominal CPU timing
 
-The selected default is now **`pure-r4`**, a complete Z80 assembly decoder.
-All six [TODO items](TODO.md) have reports and commits. The original
-`pure-fast` implementation and evidence below are preserved as the baseline.
+The selected exact default is **`pure-r40`**. Both the initial [TODO](TODO.md)
+and six-item [follow-up worklist](FOLLOWUP_TODO.md) are complete, with reports
+and focused commits. Original generators and evidence remain reproducible.
+The exact decoder retains Speex mode-3 packets and emits identical PCM8.
+The active [throughput worklist](THROUGHPUT_TODO.md) follows the user's
+clarification: consecutive OUT samples are acceptable. Measure average CPU
+throughput; no uniform per-sample output schedule is required.
 
 | Stage | Full speech T-states | T/sample |
 | --- | ---: | ---: |
@@ -13,45 +17,136 @@ All six [TODO items](TODO.md) have reports and commits. The original
 | 2. Cached innovation tables | 3936652302 | 21065.134 |
 | 3. Coefficient tables | 3089519959 | 16532.106 |
 | 4. Compact LPC/interpolation | 2759257254 | 14764.861 |
+| 7. Immediate product offsets | 2684505254 | 14364.861 |
+| 8. Faster coefficient preparation | 2527353474 | 13523.938 |
+| 9. Port-only exact output | 2510789186 | 13435.302 |
+| 15. Register-based table construction | 2235799352 | 11963.824 |
+| 16. Omit zero partial-product bytes | 2164784952 | 11583.824 |
+| 18. Combined-register signed products | 2042203676 | 10927.888 |
+| 19. Signed24 shift by byte extraction | 2017535516 | 10795.888 |
+| 20. Register-held innovation tables | 1973053274 | 10557.862 |
+| 22. Zero-feedback state copy | 1961694254 | 10497.080 |
+| 23. Inline products and POP table reads | 1863554410 | 9971.931 |
+| 24. Pre-negated coefficient-table step | 1850951266 | 9904.491 |
+| 26. Register-held pitch accumulation | 1834745357 | 9817.773 |
+| 27. Shared long-period history cursor | 1790761749 | 9582.415 |
+| 28. Constant pitch-gain chains | 1693838136 | 9063.774 |
+| 29. Direct signed24 pitch results | 1680861924 | 8994.338 |
+| 30. Shorter synthesis shift | 1675816164 | 8967.338 |
+| 31. Two-part general word products | 1635360657 | 8750.860 |
+| 32. Shared Q14 coefficient magnitude | 1630001442 | 8722.182 |
+| 33. Sign-specific Q14 combination | 1618979214 | 8663.202 |
+| 34. Cancel redundant table-builder EXX | 1596096910 | 8540.758 |
+| 35. Register-held table step/aligned addresses | 1588097042 | 8497.951 |
+| 36. Direct exact cosine with polynomial fallback | 1566795471 | 8383.965 |
+| 37. Fuse Q14 product and caller negation | 1558327641 | 8338.654 |
+| 38. Direct private Q14 argument reads | 1554122841 | 8316.154 |
+| 39. Omit zero top feedback partials | 1518690395 | 8126.554 |
+| 40. Small signed feedback kernels | 1487605573 | 7960.218 |
 
-This is **1.644x faster, 39.17% fewer T**, with identical PCM16/PCM8.
-Real time still fails by **33.75x** against 437.5 T/sample. At nominal 3.5 MHz,
-the 23.36-second speech input needs 788.36 seconds of CPU time. No output
-pacing, ULA/disk timing or physical hardware qualification is claimed.
+Round 40 uses **40.75% fewer T than round 09**, 3.049x faster than the
+initial pure-fast assembly baseline. Internal PCM16 and emitted PCM8 stay
+exact. The **below-8000 T/sample intermediate target is achieved** on the
+complete speech input. Real time still fails by **18.195x** against 437.5
+T/sample: 23.36 seconds of speech needs 425.03 seconds of nominal CPU time.
+Output is unpaced. Small signed feedback kernels save 31084822 T (2.047%).
+Two tone fixtures regress by 0.154%/0.140%; other checked full streams improve
+or stay unchanged. Code grows by 902 bytes; state/tables are unchanged.
+Next inspect negative 12-bit magnitude/subtraction, targeting below 7800
+T/sample as an intermediate step. No next saving is measured.
+See the [current report](rounds/40/REPORT.md).
 
-Current ready-to-load [image](rounds/04/player.ihx),
-[decoder assembly](rounds/04/decoder.s), [filter assembly](rounds/04/filter.s)
-and [symbols](rounds/04/player.map) are under `rounds/04`. The entry/count/status,
-input-bank order and port contract described below remain the same. Current
-code occupies `8000..9807` (6152 bytes), state `B000..B54B` (1356), and the
-stack reserve remains `BF00..BFFF`. Static tables are unchanged; dynamic
-coefficient tables use `7200..7BFF`, and two innovation tables use a reserve
-at `7C00..7FFF`. The **entire table arena is exactly 16 KiB**, with 16010
-useful bytes. Code/state/input are additional RAM.
+Current [image](rounds/40/player.ihx), [decoder](rounds/40/decoder.s),
+[filter](rounds/40/filter.s) and [map](rounds/40/player.map) are under
+`rounds/40`. Entry/count/status, input-bank order and port contract below
+remain unchanged. Code is `8000..A91E` (10527 bytes), state `B000..B410`
+(1041), stack reserve `BF00..BFFF`. The PCM16 output buffer is removed;
+`_last_pcm16` exposes the existing feedback sample for verification. All
+code writes are forbidden during playback. Retained standalone product
+helpers patch four operands only when invoked by primitive tests. The filter
+borrows SP for table reads, preserves caller IX/IY and runs with IRQ disabled.
+Tables now occupy **14140 useful bytes in a 16384-byte arena**;
+code/state/input are additional RAM. Gain triples now hold routine pointers.
 
-Reports: [01](rounds/01/REPORT.md), [02](rounds/02/REPORT.md),
-[03, including the register-only candidate](rounds/03/REPORT.md),
-[04](rounds/04/REPORT.md), [05 final verification](rounds/05/REPORT.md),
-[06 real-time decision](rounds/06/REPORT.md). The selected binary passes
-1074400 complete-stream PCM16/PCM8 samples, separate arithmetic/LPC checks,
-RAM guards and instruction timing audits. Its output audio is identical to
-the previously supplied comparison file.
+The final exact binary passes **1094880 complete-stream samples**, arithmetic,
+memory guards, instruction audits and a fresh default-build identity check.
+Both binaries pass **196608 feedback cases**, covering all 65536 words,
+arbitrary histories and three coefficient arrays. The final negate passes
+**327680 borrow-domain cases** after an initial borrow bug was caught and
+fixed. Instruction audits and 128 full arbitrary-state filter calls per
+binary pass. Every OUT and full-fixture cost delta matches the measured
+sample classes, including the two tone regressions. decoder.s is unchanged.
+See [standard verification](rounds/40/unpaced-checks.json),
+[feedback/borrow domains and cost proofs](rounds/40/small-feedback-checks.json),
+[prior top-zero feedback evidence](rounds/39/top-zero-checks.json),
+[prior Q14 argument/pointer domains](rounds/38/q14-argument-checks.json),
+[prior fused-Q14 domains and caller audits](rounds/37/q14-negated-checks.json),
+[prior exact cosine domains](rounds/36/direct-cosine-checks.json),
+[prior builder domains and address/mask checks](rounds/35/next-step-checks.json),
+[prior exact Q14 signs](rounds/33/q14-sign-checks.json),
+[prior unsigned word domains](rounds/32/q14-product-checks.json),
+[prior exhaustive byte/word products](rounds/31/word-product-checks.json),
+[prior exact synthesis shift](rounds/30/synthesis-shift-checks.json),
+[prior exact constant products](rounds/29/constant-pitch-checks.json),
+[prior sum/address checks](rounds/29/direct-pitch-checks.json),
+[complete coefficient-domain checks](rounds/24/coefficient-step-checks.json),
+[200187 pitch-sum checks](rounds/26/pitch-accumulator-checks.json),
+[prior feedback/filter contracts](rounds/23/inline-checks.json), and
+[generic product/register checks](rounds/26/s8-domain-checks.json). Its sound
+matches the previously supplied exact Speex comparison. Reports for initial
+rounds are linked from [TODO](TODO.md), [FOLLOWUP_TODO](FOLLOWUP_TODO.md) and
+[THROUGHPUT_TODO](THROUGHPUT_TODO.md).
+
+The follow-up also implements three distinct alternatives:
+
+| Candidate | CPU T/sample | Stored bytes / PCM8 ratio | Decision |
+| --- | ---: | ---: | --- |
+| Exact Speex round 40 | 7960.218 | 23360 / 8:1 | Selected exact decoder; too slow |
+| Approximate Speex round 10 | 11781.204 | 23360 / 8:1 | Rejected: still too slow, added error |
+| Periodic wave/noise round 11 | 222.625, kernel only | 54320 / 3.440:1 | Not selected; loading/pacing unimplemented |
+| PVQ3x1024 round 12 | 90.418 before pacing | 80974 / 2.308:1 | Previous nominal CPU baseline |
+| PVQ3x1024 round 13 | 83.751 before pacing | 80974 / 2.308:1 | Selected separately; unchanged sound, 7.373% fewer T |
+| PVQ4x1024 round 14 | 69.313 before pacing | 62528 / 2.989:1 | Rejected: raw SNR loss 3.655 dB exceeds one-dB gate |
+
+The [selected PVQ assembly player](rounds/13/REPORT.md) reads the complete memory
+stream and emits every sample on its alternating **437/438-T schedule**,
+including bank switches and tail. It uses 4614 table bytes, 935 code bytes,
+one state byte and 256 reserved stack bytes, plus five input banks. Raw
+source SNR is 23.510 dB (periodic wave: 9.897 dB); raw waveform SNR is not
+a perceptual speech score. PVQ is a different format, not faster Speex.
+**ULA contention and physical hardware remain unverified**, particularly
+the contended input banks of a Spectrum 128. No release TRD is claimed.
+The [completed PVQ target](NEXT_TARGET.md) records the achieved <=84-T
+unchanged-sound target and the rejected four-sample compression experiment.
 
 To build and check the selected version:
 
 ```powershell
 python audiobook-beeper/speex-port/build.py --skip-host
 python audiobook-beeper/speex-port/verify.py --native-only --restore-fixture
-python audiobook-beeper/speex-port/check_round.py --variant pure-r4
-python audiobook-beeper/speex-port/final_checks.py
+python audiobook-beeper/speex-port/check_round.py --variant pure-r40
+python audiobook-beeper/speex-port/check_small_feedback.py
+python audiobook-beeper/speex-port/check_unpaced.py --variant pure-r40 --previous pure-r39 --check-default
+python audiobook-beeper/speex-port/check_small_feedback.py --reconcile-fixtures
 ```
 
-The last two commands require the host-generated fixtures and the round03
-binary: build host DLLs as described below, run `check_streams.py --variant
-pure-r4` to generate signal fixtures, and build `--variant pure-r3` for the
-independent LPC recurrence comparison. Retain the same Python runtime.
+The stream checks require the host-generated fixtures: build host DLLs
+as described below and run `check_streams.py --variant pure-r40` to generate
+them. Keep the pure-r39 build/report/OUT trace and archived random-packet fixtures
+available for `check_unpaced.py`. Retain the same Python runtime. `finish_followup.py`
+reproduces the historical round09 checkpoint. `final_checks.py` reproduces historical
+round-04 LPC evidence and needs `pure-r3` and `pure-r4` builds explicitly.
 Historical `save_evidence.py` refreshes **baseline** snapshots only; round
 reports are archived separately with `report_round.py`.
+
+Run `check_approx.py` after building `--variant pure-r10-approx` for its
+quality experiment, `wavetable_experiment.py` for the periodic kernel, and
+`pvq_improve.py` for selected round13 VQ playback. They regenerate listening
+WAVs under `build/speex-port/` (round13: `pvq-r13/preview.wav`). The latter
+reuses the archived compressed input and book; it does not retrain or change
+the sound during timing optimization. `pvq_port.py` reproduces historical
+round12. `pvq_four.py` reproduces the rejected round14 format/quality trial
+and its `pvq-r14/preview.wav`; it does not replace the selected variant.
 
 ## Original implementation and baseline evidence
 

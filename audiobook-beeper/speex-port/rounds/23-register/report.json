@@ -1,0 +1,80 @@
+{
+  "complete": true,
+  "samples": 186880,
+  "every_pcm8_exact": true,
+  "every_pcm16_exact": true,
+  "total_tstates": 1885485770,
+  "seconds_at_3_5_mhz": 538.71022,
+  "mean_total_tstates_per_sample": 10089.286012414384,
+  "first_out_tstates": 544269,
+  "last_out_tstates": 1885484752,
+  "min_out_interval": 1312,
+  "max_out_interval": 614031,
+  "nominal_late_samples": 186879,
+  "max_lateness_tstates": 1803180920.5,
+  "real_time": false,
+  "pages": [
+    0,
+    1
+  ],
+  "code_rodata_bytes": 20101,
+  "bss_bytes": 1039,
+  "code_bytes": 7443,
+  "tables_bytes": 12658,
+  "all_cpu_writes_inside_declared_regions": true,
+  "input_static_code_static_tables_unchanged": true,
+  "every_code_write_forbidden": true,
+  "all_code_bytes_unchanged": true,
+  "writable_immediate_addresses": [],
+  "pcm16_output_buffer": false,
+  "initial_state_fill": 165,
+  "dynamic_table_reserved_bytes": 3584,
+  "dynamic_table_regions": [
+    [
+      31744,
+      32768
+    ],
+    [
+      29184,
+      31744
+    ]
+  ],
+  "table_arena_span_bytes": 16384,
+  "phases_tstates": {
+    "_zx_speex_lpc": 317769021,
+    "_zx_speex_filter": 1043270912
+  },
+  "binary_sha256": "29229ea5a63c2a58cd6dd91032afc302212d9034e7be0aad07337f0671f65508",
+  "clock_hz": 3500000,
+  "ula_contention_included": false,
+  "physical_hardware_tested": false,
+  "variant": "pure-r23",
+  "previous": "pure-r22",
+  "delta_tstates": -76208484,
+  "selected": false,
+  "verification_scope": "Full speech, first-frame audit, feedback and filter contracts; full fixture suite is reserved for the selected pure-r23-pop.",
+  "first_frame_audit": {
+    "scope": "1 complete frame(s), including startup, packet parsing, LPC and port output",
+    "tstates": 1228433,
+    "instructions": 152891,
+    "instruction_tstate_histogram": {
+      "4": 63453,
+      "5": 120,
+      "6": 3102,
+      "7": 23848,
+      "8": 13756,
+      "10": 5647,
+      "11": 13870,
+      "12": 5059,
+      "13": 4351,
+      "14": 10,
+      "15": 4263,
+      "16": 5287,
+      "17": 1320,
+      "19": 40,
+      "20": 3828,
+      "21": 4937
+    },
+    "every_instruction_matches_zilog_table": true
+  }
+}

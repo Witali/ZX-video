@@ -1,0 +1,234 @@
+{
+  "source": {
+    "removed_identity_pairs": 64,
+    "exx_tstates": 4,
+    "page_saving": 512,
+    "all_other_instructions_labels_and_filter_unchanged": true,
+    "code_byte_saving": 128
+  },
+  "full_coefficient_domain": {
+    "signed16_coefficients": 65536,
+    "exact_entries_per_variant": 4194304,
+    "previous_tstates": {
+      "8410": 1,
+      "8364": 65535
+    },
+    "selected_tstates": {
+      "7898": 1,
+      "7852": 65535
+    },
+    "saving_per_changed_page": 512,
+    "unchanged_cache_tstates": [
+      976,
+      976
+    ],
+    "sp_ix_iy_preserved": true,
+    "all_writes_guarded_other_pages_immutable": true
+  },
+  "masks": {
+    "masks": 1024,
+    "cached_repeats_per_variant": 1024,
+    "changed_pages_histogram": {
+      "0": 1,
+      "1": 10,
+      "2": 45,
+      "3": 120,
+      "4": 210,
+      "5": 252,
+      "6": 210,
+      "7": 120,
+      "8": 45,
+      "9": 10,
+      "10": 1
+    },
+    "example_cost_pairs": {
+      "0": [
+        976,
+        976
+      ],
+      "1": [
+        8364,
+        7852
+      ],
+      "2": [
+        13747,
+        12723
+      ],
+      "3": [
+        19130,
+        17594
+      ],
+      "4": [
+        24513,
+        22465
+      ],
+      "5": [
+        29896,
+        27336
+      ],
+      "6": [
+        35279,
+        32207
+      ],
+      "7": [
+        40662,
+        37078
+      ],
+      "8": [
+        46045,
+        41949
+      ],
+      "9": [
+        51428,
+        46820
+      ],
+      "10": [
+        56811,
+        51691
+      ]
+    },
+    "all_registers_including_flags_and_bss_identical": true,
+    "every_table_entry_exact": true,
+    "unchanged_pages_and_all_other_writes_guarded": true,
+    "page_saving": 512,
+    "unchanged_cache_tstates": 976
+  },
+  "audits": {
+    "pure-r33": {
+      "tstates": 56613,
+      "instructions": 7226,
+      "table_entries": 640,
+      "caller_sp_ix_iy_preserved": true,
+      "every_instruction_matches_timing_table": true,
+      "writes_guarded": true
+    },
+    "pure-r34": {
+      "tstates": 51493,
+      "instructions": 5946,
+      "table_entries": 640,
+      "caller_sp_ix_iy_preserved": true,
+      "every_instruction_matches_timing_table": true,
+      "writes_guarded": true
+    }
+  },
+  "speech": {
+    "calls": 4672,
+    "coefficient_bytes_sha256": "f3076bd024162243c7895e0aa193367028c41f131c2468da893d7f453251321d",
+    "observed_changed_pages": {
+      "total": 44692,
+      "by_tap": {
+        "0": 4468,
+        "1": 4472,
+        "2": 4471,
+        "3": 4468,
+        "4": 4470,
+        "5": 4471,
+        "6": 4470,
+        "7": 4470,
+        "8": 4467,
+        "9": 4465
+      },
+      "per_call": {
+        "0": 199,
+        "8": 1,
+        "9": 36,
+        "10": 4436
+      }
+    },
+    "every_coefficient_unchanged": true,
+    "profile_preserves_every_out_in_both_variants": true,
+    "preparation_and_full_saving_reconcile": true,
+    "total_saving": 22882304,
+    "variants": [
+      {
+        "variant": "pure-r33",
+        "preparation_tstates": 254106133,
+        "full_tstates": 1618979214,
+        "binary_sha256": "b74f241d3902cb049cd0f168b83172dc944c5be1e57367d42d9fc89ccd21ccce"
+      },
+      {
+        "variant": "pure-r34",
+        "preparation_tstates": 231223829,
+        "full_tstates": 1596096910,
+        "binary_sha256": "11eadd8ba8f47e16c3ff1ba3cff0b7506dbf48653c98fffa71f643681f485cff"
+      }
+    ],
+    "complete_pcm16_and_pcm8_samples": 186880
+  },
+  "all_pitches": {
+    "complete": true,
+    "samples": 20480,
+    "every_pcm8_exact": true,
+    "every_pcm16_exact": true,
+    "total_tstates": 176333076,
+    "seconds_at_3_5_mhz": 50.380878857142854,
+    "mean_total_tstates_per_sample": 8610.0134765625,
+    "first_out_tstates": 443574,
+    "last_out_tstates": 176332058,
+    "min_out_interval": 1285,
+    "max_out_interval": 469923,
+    "nominal_late_samples": 20479,
+    "max_lateness_tstates": 166928921.5,
+    "real_time": false,
+    "pages": [
+      0
+    ],
+    "code_rodata_bytes": 21576,
+    "bss_bytes": 1041,
+    "code_bytes": 8918,
+    "tables_bytes": 12658,
+    "all_cpu_writes_inside_declared_regions": true,
+    "input_static_code_static_tables_unchanged": true,
+    "every_code_write_forbidden": true,
+    "all_code_bytes_unchanged": true,
+    "writable_immediate_addresses": [],
+    "pcm16_output_buffer": false,
+    "initial_state_fill": 165,
+    "dynamic_table_reserved_bytes": 3584,
+    "dynamic_table_regions": [
+      [
+        31744,
+        32768
+      ],
+      [
+        29184,
+        31744
+      ]
+    ],
+    "table_arena_span_bytes": 16384,
+    "phases_tstates": {
+      "_zx_speex_lpc": 28614670,
+      "_zx_speex_filter": 108970334
+    },
+    "binary_sha256": "11eadd8ba8f47e16c3ff1ba3cff0b7506dbf48653c98fffa71f643681f485cff",
+    "clock_hz": 3500000,
+    "ula_contention_included": false,
+    "physical_hardware_tested": false,
+    "payload_sha256": "b97d08b10ed8256cef215a4be68b4ec45e702d5cfbfe3141013d618bdf19348a",
+    "reference_pcm16_sha256": "3754000a24d50eaff7df9873f06bc3e8a2f1ff6d2d55179eb85dac49e919fc4e",
+    "first_speech_frame_audit": {
+      "scope": "1 complete frame(s), including startup, packet parsing, LPC and port output",
+      "tstates": 1071160,
+      "instructions": 134029,
+      "instruction_tstate_histogram": {
+        "4": 60051,
+        "5": 20,
+        "6": 3451,
+        "7": 18520,
+        "8": 6452,
+        "10": 7426,
+        "11": 14305,
+        "12": 2643,
+        "13": 2580,
+        "14": 11,
+        "15": 3272,
+        "16": 5733,
+        "17": 1632,
+        "19": 280,
+        "20": 2716,
+        "21": 4937
+      },
+      "every_instruction_matches_zilog_table": true
+    }
+  }
+}

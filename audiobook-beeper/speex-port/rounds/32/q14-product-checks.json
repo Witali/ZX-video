@@ -1,0 +1,155 @@
+{
+  "audits": {
+    "pure-r31": {
+      "cases": 374,
+      "instructions": 54005,
+      "minimum_tstates": 591,
+      "maximum_tstates": 2452,
+      "every_instruction_matches_timing_table": true,
+      "all_registers_and_writes_guarded": true
+    },
+    "pure-r32": {
+      "cases": 374,
+      "instructions": 53937,
+      "minimum_tstates": 672,
+      "maximum_tstates": 2312,
+      "every_instruction_matches_timing_table": true,
+      "all_registers_and_writes_guarded": true
+    }
+  },
+  "speech": {
+    "calls": 93440,
+    "unique_pairs": 84220,
+    "operands_sha256": "28e21475a3e06c55e7380b36470747eac002bc232ca857fc175bc18869583be2",
+    "sign_categories": {
+      "coefficient_nonnegative/high_negative": 16117,
+      "coefficient_nonnegative/high_nonnegative": 6773,
+      "coefficient_negative/high_nonnegative": 30604,
+      "coefficient_negative/high_negative": 39946
+    },
+    "saving_histogram": {
+      "-181": 332,
+      "-28": 245,
+      "-26": 2,
+      "-15": 3761,
+      "-12": 35853,
+      "58": 15872,
+      "91": 6773,
+      "140": 45,
+      "143": 30557
+    },
+    "regressed_calls": 40193,
+    "variants": [
+      {
+        "variant": "pure-r31",
+        "q14_tstates": 172467335,
+        "minimum_call_tstates": 1006,
+        "maximum_call_tstates": 2255,
+        "full_tstates": 1635360657,
+        "binary_sha256": "cd86cb9bcbf5e1162f753e07724acd6a9f7a64584de30a5de1f8d2b913099d3f"
+      },
+      {
+        "variant": "pure-r32",
+        "q14_tstates": 167108120,
+        "minimum_call_tstates": 1092,
+        "maximum_call_tstates": 2225,
+        "full_tstates": 1630001442,
+        "binary_sha256": "19582a1aff55a679abe762f4485a6a1d24f4791cdd572043222dd397b0579415"
+      }
+    ],
+    "total_saving": 5359215,
+    "every_operand_and_baseline_out_unchanged": true,
+    "previous_word_operands_reconstructed_exactly": true,
+    "isolated_costs_and_full_delta_reconcile": true,
+    "complete_pcm16_and_pcm8_samples": 186880
+  },
+  "domains": {
+    "q14_cases": 1343488,
+    "all_signed16_coefficients_against_arguments": 12,
+    "all_14bit_fractions_against_coefficient_high_pairs": 32,
+    "random_signed32_cases": 32768,
+    "unsigned16_products": 1179648,
+    "minimum_q14_tstates": 672,
+    "maximum_q14_tstates": 2344,
+    "minimum_saving_tstates": -194,
+    "maximum_saving_tstates": 143,
+    "exact_results_rounding_and_instruction_formulas": true,
+    "register_contracts_input_and_writes_guarded": true
+  },
+  "all_pitches": {
+    "complete": true,
+    "samples": 20480,
+    "every_pcm8_exact": true,
+    "every_pcm16_exact": true,
+    "total_tstates": 180124893,
+    "seconds_at_3_5_mhz": 51.46425514285714,
+    "mean_total_tstates_per_sample": 8795.160791015625,
+    "first_out_tstates": 451093,
+    "last_out_tstates": 180123875,
+    "min_out_interval": 1285,
+    "max_out_interval": 477437,
+    "nominal_late_samples": 20479,
+    "max_lateness_tstates": 170713219.5,
+    "real_time": false,
+    "pages": [
+      0
+    ],
+    "code_rodata_bytes": 21696,
+    "bss_bytes": 1041,
+    "code_bytes": 9038,
+    "tables_bytes": 12658,
+    "all_cpu_writes_inside_declared_regions": true,
+    "input_static_code_static_tables_unchanged": true,
+    "every_code_write_forbidden": true,
+    "all_code_bytes_unchanged": true,
+    "writable_immediate_addresses": [],
+    "pcm16_output_buffer": false,
+    "initial_state_fill": 165,
+    "dynamic_table_reserved_bytes": 3584,
+    "dynamic_table_regions": [
+      [
+        31744,
+        32768
+      ],
+      [
+        29184,
+        31744
+      ]
+    ],
+    "table_arena_span_bytes": 16384,
+    "phases_tstates": {
+      "_zx_speex_lpc": 29823447,
+      "_zx_speex_filter": 111553374
+    },
+    "binary_sha256": "19582a1aff55a679abe762f4485a6a1d24f4791cdd572043222dd397b0579415",
+    "clock_hz": 3500000,
+    "ula_contention_included": false,
+    "physical_hardware_tested": false,
+    "payload_sha256": "b97d08b10ed8256cef215a4be68b4ec45e702d5cfbfe3141013d618bdf19348a",
+    "reference_pcm16_sha256": "3754000a24d50eaff7df9873f06bc3e8a2f1ff6d2d55179eb85dac49e919fc4e",
+    "first_speech_frame_audit": {
+      "scope": "1 complete frame(s), including startup, packet parsing, LPC and port output",
+      "tstates": 1090996,
+      "instructions": 138065,
+      "instruction_tstate_histogram": {
+        "4": 63451,
+        "5": 20,
+        "6": 3447,
+        "7": 18876,
+        "8": 6452,
+        "10": 7530,
+        "11": 14369,
+        "12": 2639,
+        "13": 2740,
+        "14": 11,
+        "15": 3224,
+        "16": 5589,
+        "17": 1640,
+        "19": 280,
+        "20": 2860,
+        "21": 4937
+      },
+      "every_instruction_matches_zilog_table": true
+    }
+  }
+}

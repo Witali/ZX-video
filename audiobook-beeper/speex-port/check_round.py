@@ -55,8 +55,25 @@ def specialized(folder):
                     call(m,s['_coefficient_product'],a=0x72+tap)
                     assert (m.hl<<16|m.de)==(coef*x)&0xffffffff,(coef,x,m.hl,m.de)
                     coefficient_products+=1
+    cache_cases=[]
+    if 'coef_cache_ptr' in s:
+        for tap in range(10):
+            before=bytes(m.memory[0x7200:0x7c00])
+            unchanged=call(m,s['_prepare_coefficients'],budget=1000000)
+            assert bytes(m.memory[0x7200:0x7c00])==before
+            coefficients[tap]=((coefficients[tap]+32769)&65535)-32768
+            m.memory[s['_zx_lpc']:s['_zx_lpc']+20]=struct.pack('<10h',*coefficients)
+            changed=call(m,s['_prepare_coefficients'],budget=1000000)
+            for other in range(10):
+                if other!=tap:
+                    lo=other*256
+                    assert bytes(m.memory[0x7200+lo:0x7300+lo])==before[lo:lo+256]
+            call(m,s['_split_nibbles'],hl=12345)
+            call(m,s['_coefficient_product'],a=0x72+tap)
+            assert (m.hl<<16|m.de)==(coefficients[tap]*12345)&0xffffffff
+            cache_cases.append(dict(tap=tap,unchanged_t=unchanged,one_page_changed_t=changed))
     return dict(signed8x16_cases=len(pairs),min_mul_t=min(costs),max_mul_t=max(costs),energy_shape_pairs=count,innovation_table_entries=table_entries,
-                coefficient_entries=coefficient_entries,coefficient_products=coefficient_products)
+                coefficient_entries=coefficient_entries,coefficient_products=coefficient_products,cache_cases=cache_cases)
 
 
 def main():

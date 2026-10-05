@@ -1,0 +1,1143 @@
+{
+  "fixture_inspection": {
+    "speech": {
+      "samples": 186880,
+      "reference_sha256": "a4cd4925230dd2b6c99a69684677362b460b956bf9c4f1d536c01790e797c803",
+      "classes": {
+        "zero": 3340,
+        "small_negative": 18461,
+        "small_positive": 17835,
+        "top_zero": 40454,
+        "general": 106750,
+        "minus_256": 40
+      },
+      "predicted_saving": 31084822
+    },
+    "silence": {
+      "samples": 3200,
+      "reference_sha256": "56a43ef88ddfcd0f56f7dd973312c0e73d62f59655c01d7b4e59aaa3be8b3fb6",
+      "classes": {
+        "zero": 3200
+      },
+      "predicted_saving": 0
+    },
+    "impulses": {
+      "samples": 3200,
+      "reference_sha256": "61811ea59502a41a167b9a03abb0a6e954b19aaba68e162b5006c9d53ff286a0",
+      "classes": {
+        "zero": 957,
+        "general": 358,
+        "top_zero": 275,
+        "small_positive": 748,
+        "small_negative": 861,
+        "minus_256": 1
+      },
+      "predicted_saving": 1506162
+    },
+    "low-tone": {
+      "samples": 3200,
+      "reference_sha256": "f6ef52af326c9f04a7dc53c134d0c3767ebb3b84996f4570e813fcd86bfd78db",
+      "classes": {
+        "zero": 80,
+        "small_negative": 12,
+        "general": 2952,
+        "top_zero": 145,
+        "small_positive": 11
+      },
+      "predicted_saving": -34212
+    },
+    "high-tone": {
+      "samples": 3200,
+      "reference_sha256": "15f0046e072dcae1316cb770827559312bc2e29c85cd3434564bb2577b799b81",
+      "classes": {
+        "zero": 80,
+        "top_zero": 165,
+        "general": 2931,
+        "small_positive": 11,
+        "small_negative": 13
+      },
+      "predicted_saving": -33010
+    },
+    "noise": {
+      "samples": 3200,
+      "reference_sha256": "1602fba01cc39eae2bad9426df1635ca607ac3705052576a2fc30beb3e3eee57",
+      "classes": {
+        "zero": 80,
+        "general": 2556,
+        "top_zero": 494,
+        "small_negative": 36,
+        "small_positive": 34
+      },
+      "predicted_saving": 10368
+    },
+    "level-jumps": {
+      "samples": 3200,
+      "reference_sha256": "2d16696ee54cbb9a3a09717a23f55a5f3e9e34fa5e221ed76e912a5f17458a67",
+      "classes": {
+        "zero": 85,
+        "general": 1491,
+        "top_zero": 581,
+        "small_negative": 501,
+        "small_positive": 541,
+        "minus_256": 1
+      },
+      "predicted_saving": 916158
+    },
+    "six-bank-capacity": {
+      "samples": 786400,
+      "reference_sha256": "61a16ef063fbcb782375bb35065d3c1bbdc0e2860ada6c82017296b04b255df4",
+      "classes": {
+        "zero": 786400
+      },
+      "predicted_saving": 0
+    },
+    "random-packets": {
+      "samples": 81920,
+      "reference_sha256": "ad2422bfcb7f4c29b776e1391754631a8ae19f654e0a3f8e0140ac6416b16b8f",
+      "classes": {
+        "zero": 175,
+        "small_positive": 7936,
+        "small_negative": 8522,
+        "top_zero": 20889,
+        "general": 44379,
+        "minus_256": 19
+      },
+      "predicted_saving": 14199916
+    },
+    "all-pitches": {
+      "samples": 20480,
+      "reference_sha256": "3754000a24d50eaff7df9873f06bc3e8a2f1ff6d2d55179eb85dac49e919fc4e",
+      "classes": {
+        "zero": 101,
+        "small_negative": 1892,
+        "small_positive": 1829,
+        "general": 11159,
+        "top_zero": 5493,
+        "minus_256": 6
+      },
+      "predicted_saving": 3158290
+    }
+  },
+  "feedback": {
+    "pure-r39": {
+      "feedback_cases": 196608,
+      "coefficient_arrays": 3,
+      "arbitrary_histories": 515,
+      "every_16bit_feedback_word": true,
+      "cost_histogram": {
+        "847": 3,
+        "2950": 12285,
+        "3624": 184320
+      },
+      "audits": [
+        {
+          "n": 0,
+          "kind": "zero",
+          "tstates": 847,
+          "instructions": 45,
+          "instructions_with_table_sp": 0
+        },
+        {
+          "n": 1,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 15,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 16,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 127,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 128,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 255,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 256,
+          "kind": "top_zero",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4095,
+          "kind": "top_zero",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4096,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 8191,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32767,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32768,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65279,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65280,
+          "kind": "minus_256",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65281,
+          "kind": "small_negative",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65408,
+          "kind": "small_negative",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65535,
+          "kind": "small_negative",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 0,
+          "kind": "zero",
+          "tstates": 847,
+          "instructions": 45,
+          "instructions_with_table_sp": 0
+        },
+        {
+          "n": 1,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 15,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 16,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 127,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 128,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 255,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 256,
+          "kind": "top_zero",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4095,
+          "kind": "top_zero",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4096,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 8191,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32767,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32768,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65279,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65280,
+          "kind": "minus_256",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65281,
+          "kind": "small_negative",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65408,
+          "kind": "small_negative",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65535,
+          "kind": "small_negative",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 0,
+          "kind": "zero",
+          "tstates": 847,
+          "instructions": 45,
+          "instructions_with_table_sp": 0
+        },
+        {
+          "n": 1,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 15,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 16,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 127,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 128,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 255,
+          "kind": "small_positive",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 256,
+          "kind": "top_zero",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4095,
+          "kind": "top_zero",
+          "tstates": 2950,
+          "instructions": 440,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4096,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 8191,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32767,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32768,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65279,
+          "kind": "general",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65280,
+          "kind": "minus_256",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65281,
+          "kind": "small_negative",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65408,
+          "kind": "small_negative",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65535,
+          "kind": "small_negative",
+          "tstates": 3624,
+          "instructions": 575,
+          "instructions_with_table_sp": 543
+        }
+      ],
+      "only_40_history_bytes_writable": true,
+      "real_sp_and_all_alternates_preserved": true,
+      "every_instruction_matches_timing_table": true,
+      "exact_signed_products_and_modulo32_histories": true,
+      "filter_contract": {
+        "calls": 128,
+        "samples": 5120,
+        "every_pcm16_and_pcm8_exact": true,
+        "final_history_exact": true,
+        "sp_ix_iy_preserved": true,
+        "writes_guarded": true,
+        "all_code_immutable": true
+      }
+    },
+    "pure-r40": {
+      "feedback_cases": 196608,
+      "coefficient_arrays": 3,
+      "arbitrary_histories": 515,
+      "every_16bit_feedback_word": true,
+      "cost_histogram": {
+        "847": 3,
+        "2284": 765,
+        "2440": 765,
+        "2968": 11520,
+        "3642": 183552,
+        "3660": 3
+      },
+      "audits": [
+        {
+          "n": 0,
+          "kind": "zero",
+          "tstates": 847,
+          "instructions": 45,
+          "instructions_with_table_sp": 0
+        },
+        {
+          "n": 1,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 15,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 16,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 127,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 128,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 255,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 256,
+          "kind": "top_zero",
+          "tstates": 2968,
+          "instructions": 443,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4095,
+          "kind": "top_zero",
+          "tstates": 2968,
+          "instructions": 443,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4096,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 8191,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32767,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32768,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65279,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65280,
+          "kind": "minus_256",
+          "tstates": 3660,
+          "instructions": 581,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65281,
+          "kind": "small_negative",
+          "tstates": 2440,
+          "instructions": 333,
+          "instructions_with_table_sp": 304
+        },
+        {
+          "n": 65408,
+          "kind": "small_negative",
+          "tstates": 2440,
+          "instructions": 333,
+          "instructions_with_table_sp": 304
+        },
+        {
+          "n": 65535,
+          "kind": "small_negative",
+          "tstates": 2440,
+          "instructions": 333,
+          "instructions_with_table_sp": 304
+        },
+        {
+          "n": 0,
+          "kind": "zero",
+          "tstates": 847,
+          "instructions": 45,
+          "instructions_with_table_sp": 0
+        },
+        {
+          "n": 1,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 15,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 16,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 127,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 128,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 255,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 256,
+          "kind": "top_zero",
+          "tstates": 2968,
+          "instructions": 443,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4095,
+          "kind": "top_zero",
+          "tstates": 2968,
+          "instructions": 443,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4096,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 8191,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32767,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32768,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65279,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65280,
+          "kind": "minus_256",
+          "tstates": 3660,
+          "instructions": 581,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65281,
+          "kind": "small_negative",
+          "tstates": 2440,
+          "instructions": 333,
+          "instructions_with_table_sp": 304
+        },
+        {
+          "n": 65408,
+          "kind": "small_negative",
+          "tstates": 2440,
+          "instructions": 333,
+          "instructions_with_table_sp": 304
+        },
+        {
+          "n": 65535,
+          "kind": "small_negative",
+          "tstates": 2440,
+          "instructions": 333,
+          "instructions_with_table_sp": 304
+        },
+        {
+          "n": 0,
+          "kind": "zero",
+          "tstates": 847,
+          "instructions": 45,
+          "instructions_with_table_sp": 0
+        },
+        {
+          "n": 1,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 15,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 16,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 127,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 128,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 255,
+          "kind": "small_positive",
+          "tstates": 2284,
+          "instructions": 307,
+          "instructions_with_table_sp": 283
+        },
+        {
+          "n": 256,
+          "kind": "top_zero",
+          "tstates": 2968,
+          "instructions": 443,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4095,
+          "kind": "top_zero",
+          "tstates": 2968,
+          "instructions": 443,
+          "instructions_with_table_sp": 413
+        },
+        {
+          "n": 4096,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 8191,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32767,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 32768,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65279,
+          "kind": "general",
+          "tstates": 3642,
+          "instructions": 578,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65280,
+          "kind": "minus_256",
+          "tstates": 3660,
+          "instructions": 581,
+          "instructions_with_table_sp": 543
+        },
+        {
+          "n": 65281,
+          "kind": "small_negative",
+          "tstates": 2440,
+          "instructions": 333,
+          "instructions_with_table_sp": 304
+        },
+        {
+          "n": 65408,
+          "kind": "small_negative",
+          "tstates": 2440,
+          "instructions": 333,
+          "instructions_with_table_sp": 304
+        },
+        {
+          "n": 65535,
+          "kind": "small_negative",
+          "tstates": 2440,
+          "instructions": 333,
+          "instructions_with_table_sp": 304
+        }
+      ],
+      "only_40_history_bytes_writable": true,
+      "real_sp_and_all_alternates_preserved": true,
+      "every_instruction_matches_timing_table": true,
+      "exact_signed_products_and_modulo32_histories": true,
+      "filter_contract": {
+        "calls": 128,
+        "samples": 5120,
+        "every_pcm16_and_pcm8_exact": true,
+        "final_history_exact": true,
+        "sp_ix_iy_preserved": true,
+        "writes_guarded": true,
+        "all_code_immutable": true
+      }
+    }
+  },
+  "negate_domain": {
+    "cases": 327680,
+    "tstates": 54,
+    "instruction_audits": 40,
+    "instructions": 480,
+    "all_low_words_against_high_words": 5,
+    "every_borrow_and_instruction_exact": true,
+    "all_memory_writes_forbidden": true,
+    "hl_sp_indexes_and_alternates_preserved": true
+  },
+  "speech": {
+    "samples": 186880,
+    "reference_sha256": "a4cd4925230dd2b6c99a69684677362b460b956bf9c4f1d536c01790e797c803",
+    "classes": {
+      "zero": 3340,
+      "small_negative": 18461,
+      "small_positive": 17835,
+      "top_zero": 40454,
+      "general": 106750,
+      "minus_256": 40
+    },
+    "predicted_saving": 31084822,
+    "old_feedback": {
+      "calls": 186880,
+      "total_tstates": 628691154,
+      "duration_histogram": {
+        "847": 3340,
+        "2950": 58289,
+        "3624": 125251
+      }
+    },
+    "new_feedback": {
+      "calls": 186880,
+      "total_tstates": 597606332,
+      "duration_histogram": {
+        "847": 3340,
+        "2284": 17835,
+        "2440": 18461,
+        "2968": 40454,
+        "3642": 106750,
+        "3660": 40
+      }
+    },
+    "total_saving": 31084822,
+    "old_full_tstates": 1518690395,
+    "new_full_tstates": 1487605573,
+    "every_out_delta_matches_cumulative_saving": true,
+    "profile_preserves_all_uninstrumented_out": true,
+    "complete_pcm16_pcm8_exact": true,
+    "decoder_assembly_source_unchanged": true
+  },
+  "all_pitches": {
+    "complete": true,
+    "samples": 20480,
+    "every_pcm8_exact": true,
+    "every_pcm16_exact": true,
+    "total_tstates": 164048006,
+    "seconds_at_3_5_mhz": 46.870858857142856,
+    "mean_total_tstates_per_sample": 8010.15654296875,
+    "first_out_tstates": 434949,
+    "last_out_tstates": 164046988,
+    "min_out_interval": 1285,
+    "max_out_interval": 460970,
+    "nominal_late_samples": 20479,
+    "max_lateness_tstates": 154652476.5,
+    "real_time": false,
+    "pages": [
+      0
+    ],
+    "code_rodata_bytes": 21315,
+    "bss_bytes": 1041,
+    "code_bytes": 10527,
+    "tables_bytes": 10788,
+    "all_cpu_writes_inside_declared_regions": true,
+    "input_static_code_static_tables_unchanged": true,
+    "every_code_write_forbidden": true,
+    "all_code_bytes_unchanged": true,
+    "writable_immediate_addresses": [],
+    "pcm16_output_buffer": false,
+    "initial_state_fill": 165,
+    "dynamic_table_reserved_bytes": 3584,
+    "dynamic_table_regions": [
+      [
+        31744,
+        32768
+      ],
+      [
+        29184,
+        31744
+      ]
+    ],
+    "table_arena_span_bytes": 16384,
+    "phases_tstates": {
+      "_zx_speex_lpc": 24898014,
+      "_zx_speex_filter": 100401920
+    },
+    "binary_sha256": "f49f43048e862c274148efb279905dd5f4308e1f16f1573f5af3dcc7c1320f24",
+    "clock_hz": 3500000,
+    "ula_contention_included": false,
+    "physical_hardware_tested": false,
+    "payload_sha256": "b97d08b10ed8256cef215a4be68b4ec45e702d5cfbfe3141013d618bdf19348a",
+    "reference_pcm16_sha256": "3754000a24d50eaff7df9873f06bc3e8a2f1ff6d2d55179eb85dac49e919fc4e",
+    "first_speech_frame_audit": {
+      "scope": "1 complete frame(s), including startup, packet parsing, LPC and port output",
+      "tstates": 961246,
+      "instructions": 114987,
+      "instruction_tstate_histogram": {
+        "4": 48263,
+        "5": 20,
+        "6": 3579,
+        "7": 14428,
+        "8": 4777,
+        "10": 7219,
+        "11": 13552,
+        "12": 2623,
+        "13": 2320,
+        "14": 11,
+        "15": 3537,
+        "16": 5405,
+        "17": 1552,
+        "19": 280,
+        "20": 2724,
+        "21": 4697
+      },
+      "every_instruction_matches_zilog_table": true
+    }
+  },
+  "complete_fixture_cost_proofs": {
+    "speech": {
+      "samples": 186880,
+      "old_tstates": 1518690395,
+      "new_tstates": 1487605573,
+      "saving_tstates": 31084822,
+      "regressed": false,
+      "exact_and_matches_class_prediction": true
+    },
+    "silence": {
+      "samples": 3200,
+      "old_tstates": 13322477,
+      "new_tstates": 13322477,
+      "saving_tstates": 0,
+      "regressed": false,
+      "exact_and_matches_class_prediction": true
+    },
+    "impulses": {
+      "samples": 3200,
+      "old_tstates": 21847385,
+      "new_tstates": 20341223,
+      "saving_tstates": 1506162,
+      "regressed": false,
+      "exact_and_matches_class_prediction": true
+    },
+    "low-tone": {
+      "samples": 3200,
+      "old_tstates": 22293119,
+      "new_tstates": 22327331,
+      "saving_tstates": -34212,
+      "regressed": true,
+      "exact_and_matches_class_prediction": true
+    },
+    "high-tone": {
+      "samples": 3200,
+      "old_tstates": 23618381,
+      "new_tstates": 23651391,
+      "saving_tstates": -33010,
+      "regressed": true,
+      "exact_and_matches_class_prediction": true
+    },
+    "noise": {
+      "samples": 3200,
+      "old_tstates": 25625523,
+      "new_tstates": 25615155,
+      "saving_tstates": 10368,
+      "regressed": false,
+      "exact_and_matches_class_prediction": true
+    },
+    "level-jumps": {
+      "samples": 3200,
+      "old_tstates": 23667094,
+      "new_tstates": 22750936,
+      "saving_tstates": 916158,
+      "regressed": false,
+      "exact_and_matches_class_prediction": true
+    },
+    "six-bank-capacity": {
+      "samples": 786400,
+      "old_tstates": 3234791367,
+      "new_tstates": 3234791367,
+      "saving_tstates": 0,
+      "regressed": false,
+      "exact_and_matches_class_prediction": true
+    },
+    "random-packets": {
+      "samples": 81920,
+      "old_tstates": 675442563,
+      "new_tstates": 661242647,
+      "saving_tstates": 14199916,
+      "regressed": false,
+      "exact_and_matches_class_prediction": true
+    },
+    "all-pitches": {
+      "samples": 20480,
+      "old_tstates": 167206296,
+      "new_tstates": 164048006,
+      "saving_tstates": 3158290,
+      "regressed": false,
+      "exact_and_matches_class_prediction": true
+    }
+  }
+}
