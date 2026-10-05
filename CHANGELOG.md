@@ -1,5 +1,40 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Complete IMA4 overlap experiment with a matched control
+
+The user chooses IMA3 for duration and IMA4 for quality and requests the
+automatic overlapping PDM search. Inspection finds the shared transfer
+already implemented in `--codec ima4 --quality best`; finish its paused
+speech4 refinement and add a matched no-overlap control. Leave IMA3 and the
+other paused cases unchanged. The [experiment](audiobook-beeper/experiments/ima4-overlap/README.md)
+keeps186880 prepared PCM8/8-kHz samples, the verified IMA4 clock/prior,
+beam512, horizon128 and prior0.03; commits are64 versus128. Authenticate
+the old completed host output and source/clock hashes, unchanged search
+AST/kernel and exact legacy table dispatch. Rebuild it byte-exactly and
+rerun all native/Fuse checks; do not bypass the changed resume identity or
+reuse its interrupted trace. The new no-overlap search takes128.531 s.
+
+Host scores22.552121 /22.319142 dB do not hold on the candidates' own
+timelines. Complete two-loop Fuse gives8.126727 dB for refinement and
+20.922286 for the no-overlap control. Both are worse than the saved
+22.164431-dB overlap winner, which remains selected. Stable768-kHz/f64
+rescoring with unchanged fixed8-kHz reference/filter and no fitted gain,
+delay or time stretch gives22.174535 /8.126934 /20.928543 respectively.
+Keep the unsuccessful refinement and distinguish host estimates from real
+results. This pair does not prove a universal benefit from overlap.
+
+Both new disks pass every predictor/index and PDM bit for two complete
+native/cold Fuse loops, memory, paging, loading UI and no live disk reads;
+5980181 /5985269 outputs, phase deltas[2,0] /[-2,0] T. All ordinary Z80
+paths remain423 T/sample (delta0), page/bank extras14/140 T; data-dependent
+ULA waits and stream-specific silent filler are measured separately.
+The selected fallback's speed error stays-0.043270%, and its complete
+trace evidence is reused with a new normal-speed Fuse recording. Five
+shared quality-selection tests pass. Save the selected TRD, both rejected
+candidate streams, full traces, assembly, source snapshots, stable WAVs
+and boundary diagnostics. No new quality gain, physical-hardware test,
+IMA3/default change, merge or push is claimed.
+
 ## 2026-10-05: Add compact mu-law TRD control and compare modulator orders
 
 The user requests an eight-bit mu-law mode in the real generator, then asks

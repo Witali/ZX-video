@@ -12,6 +12,28 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## IMA4 overlapping PDM search — requested follow-up complete (2026-10-05)
+
+The user chooses IMA3 for duration and IMA4 for quality and authorizes the
+overlap transfer/experiment. Inspection confirms it already exists in
+`--codec ima4 --quality best`. Complete only the previously paused speech4
+refinement and a matched commit128 no-overlap control; other paused cases
+remain paused. [Saved comparison](audiobook-beeper/experiments/ima4-overlap/README.md).
+No production encoder/player changes are needed: all extra search remains
+on the PC, IMA4 ordinary423 T/sample, delta0, page/bank extras14/140 T.
+
+Both new streams pass complete two-loop native/cold Fuse, every bit and
+predictor/index, memory/paging/UI and phase checks. However, the refined
+commit64 stream's22.552121-dB host estimate becomes8.126727 dB on its own
+clock; the matched commit128 control yields20.922286 dB. Keep the earlier
+verified22.164431-dB overlap result. Separate consistent float64 audits
+give22.174535 /8.126934 /20.928543 dB respectively. There is no new quality
+improvement to claim. Data-dependent ULA waits matter despite unchanged
+instruction counts. The final disk is a byte-identical copy of the prior
+winner with a new normal-speed recording. Source/stage hashes and search
+AST checks authenticate the reused host candidate; no mismatched resume
+identity or interrupted Fuse proof is accepted. IMA3 stays default.
+
 ## Compact mu-law TRD control — complete, not a quality upgrade (2026-10-05)
 
 The user now authorizes the real eight-bit mu-law converter and asks about

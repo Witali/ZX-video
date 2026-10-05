@@ -1,5 +1,13 @@
 # IMA4 audio to TRD converter
 
+The [2026-10-05 overlap follow-up](experiments/ima4-overlap/README.md) completes
+the paused speech refinement and compares an otherwise identical search
+without overlap. The earlier verified overlap result remains best at
+22.174535 dB in a separate stable float64 audit. The refinement's22.55-dB
+host estimate fails on its changed real clock; the converter must keep its
+measured fallback. IMA3 remains the duration/default option; IMA4 keeps the
+automatic overlapping waveform search for quality. No Z80 cost is added.
+
 Updated 2026-10-04: the default `--quality best` adds the shared PDM waveform
 search with overlapping windows to the unchanged four-bit player. It keeps
 the old verified candidates, recalibrates the two best host candidates on
