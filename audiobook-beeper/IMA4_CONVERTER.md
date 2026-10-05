@@ -86,9 +86,11 @@ truncation. Each part's payload limit is 93440 bytes /186880 prepared samples;
 There are no disk reads while PDM is active and no full PCM/PDM expansion in
 Spectrum RAM. The sequential loader reuses RAM between parts.
 
-FFmpeg downmixes to mono and resamples to 8 kHz. A fixed peak normalization
-sets the maximum to 109/128 of full scale, preserves relative dynamics, and
-applies at most 10-ms fades at the boundaries. Silence stays silence. PCM is
+FFmpeg downmixes to mono and resamples to 8 kHz. By default,
+[gentle compression and normalization](AUDIO_DYNAMICS.md) raise quiet passages
+with a final peak of 109/128; `--dynamics off` preserves the former peak-only
+behavior. Processing runs continuously before splitting, with at most 10-ms
+fades at part boundaries. Silence stays silence. PCM is
 rounded to unsigned 8-bit, padded to a 256-byte IMA-sector boundary, and encoded
 using the existing beam-32 encoder. SNR compares against this prepared signal,
 not the full-band stereo input; AAC's `bits_per_sample=0` means unspecified

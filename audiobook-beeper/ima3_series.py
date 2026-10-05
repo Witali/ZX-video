@@ -167,7 +167,7 @@ def convert_series(args):
         raise ValueError('series mode accepts ordinary audio; --prepared-pcm/--reuse-pilot belong to the looping preview')
     out=args.output.resolve();manifest=out/'run.json'
     identity=dict(mode=args.disk_mode,input_sha256=digest(args.input),duration=args.duration,
-                  quality=getattr(args,'quality','best'),
+                  quality=getattr(args,'quality','best'),dynamics=getattr(args,'dynamics','gentle'),
                   target_snr=args.target_snr,attempts=args.attempts,no_recording=args.no_recording,
                   ffmpeg_sha256=digest(Path(args.ffmpeg)),fuse_sha256=digest(args.fuse),
                   producers={p.name:digest(p) for p in HERE.iterdir() if p.suffix in ('.py','.asm')})
@@ -183,15 +183,11 @@ def convert_series(args):
         if args.duration is not None:
             if not math.isfinite(args.duration) or args.duration<=0:raise ValueError('duration must be positive and finite')
             command+=['-t',str(args.duration)]
-        subprocess.run(command+['-ac','1','-ar','8000','-f','f32le',str(source)],check=True)
-        if not source.stat().st_size or source.stat().st_size%4:raise ValueError('no decoded audio')
-        values=np.memmap(source,dtype='<f4',mode='r');peak=0.
-        for i in range(0,len(values),1000000):
-            block=values[i:i+1000000]
-            if not np.all(np.isfinite(block)):raise ValueError('nonfinite audio')
-            peak=max(peak,float(np.max(np.abs(block))))
-        save(source_marker,dict(samples=len(values),gain=(109/128)/peak if peak else 1.,sha256=digest(source)))
-        del values
+        from audio_dynamics import normalize_file
+        decoded=out/'track-decoded.f32'
+        subprocess.run(command+['-ac','1','-ar','8000','-f','f32le',str(decoded)],check=True)
+        gain,conditioning=normalize_file(decoded,source,args.ffmpeg,getattr(args,'dynamics','gentle'))
+        save(source_marker,dict(samples=conditioning['samples'],gain=gain,sha256=digest(source),dynamics=conditioning))
     original=json.loads(source_marker.read_bytes())
     if digest(source)!=original['sha256']:raise ValueError('cached decoded source changed')
     parts=planner(original['samples']);volumes=volumer(parts,single=args.disk_mode=='single')
@@ -237,7 +233,7 @@ def write_series_report(out,args,original,parts,included,disks,qualities,verifie
                 part_count=len(included),source_samples=original['samples'],
                 retained_source_samples=parts[included[-1]]['stop'],
                 full_source_retained=parts[included[-1]]['stop']==original['samples'],
-                parts=[parts[i] for i in included],fixed_gain=original['gain'],
+                parts=[parts[i] for i in included],fixed_gain=original['gain'],dynamics=original.get('dynamics'),
                 sample_rate_hz=8000,silence_guard_samples=128,edge_fade_samples=80,
                 maximum_prepared_samples_per_part=capacity(),
                 quality_gate_passed=passed,preview_only=not passed,

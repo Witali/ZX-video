@@ -24,8 +24,9 @@ There is no full PCM/PDM expansion buffer or simultaneous disk playback.
 | Extra packet rows | 13568 bytes | None |
 | Repeat clock | Calibrated ULA phase, feedback reset in guard | Free-running phase, accumulator closed by guard codes |
 
-The PC prepares audio using FFmpeg, fixed peak normalization,10-ms edge
-fades and PCM16 precision. It reserves128 final silent samples. `--duration`
+The PC prepares audio using FFmpeg, [gentle compression and peak normalization](AUDIO_DYNAMICS.md),
+10-ms edge fades and PCM16 precision. `--dynamics off` restores peak-only
+normalization. It reserves128 final silent samples. `--duration`
 limits the initial prefix. `--prepared-pcm` instead preserves aligned mono
 8-kHz PCM8/PCM16 WAV data unchanged, with at least8192 samples,128 final
 silent samples, and no more than the selected profile's capacity. Do not

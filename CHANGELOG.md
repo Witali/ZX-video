@@ -1,5 +1,37 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Add continuous gentle compression and normalization to audio conversion
+
+The user requests source amplification, normalization and mild dynamic
+compression. Add shared [source conditioning](audiobook-beeper/AUDIO_DYNAMICS.md)
+for IMA3, IMA4 and both mu-law output rates. Default `--dynamics gentle` uses
+2:1 soft-knee RMS compression at threshold 0.125, 5-ms attack/200-ms release,
+then a latency-compensated 0.5 peak guard and final peak 109/128. Preserve
+the former peak-only arithmetic with `--dynamics off`. Prepared PCM bypasses
+conditioning. Process a selected track continuously before RAM/disk splits;
+no part-boundary compressor resets or per-part gain. Stream whole-track
+float32 processing in bounded memory, record gains/RMS/filter parameters and
+include the mode/helper in resume identities and producer snapshots.
+
+[Saved preparation audit](audiobook-beeper/experiments/audio-dynamics/README.md)
+confirms all five off-mode PCM sources match the previous complete disk byte
+for byte. The supplied 5340776-sample track retains its count and peak;
+RMS 0.070617 ->0.112783, +4.066736 dB. Its first five resident parts gain
+4.966–5.454 dB. Do not interpret that directly as PDM SNR. Thirty focused
+tests pass, including actual FFmpeg compression and stream/array identity.
+Correct an initial test's invalid universal-RMS-increase assumption for a
+sustained loud tone and account for the IMA3 CLI's successful SystemExit(0).
+Direct tests verify raised quiet passages and reduced contrast instead.
+
+The new complete IMA4 volume is in progress through the public script with
+`--attempts 1 --no-refine-clock --no-recording`, retaining all bit/state,
+phase and final cold-volume checks. The first compensation measures
+15.884 dB over two complete loops; this is only a partial new-disk result.
+Do not label the unfinished volume a release or the reported vibration fixed.
+Decoder/modulator/assembly and all Z80 hot paths are unchanged: IMA4 423 T
+ordinary, page/bank extras 14/140 T, delta 0 throughout. Decision: accept the
+verified source-conditioning feature and continue full-disk qualification.
+
 ## 2026-10-05: Check vibration across the complete reported IMA4 disk
 
 The user specifically identifies `ZX-audiobook-IMA4-full-disk.trd`.

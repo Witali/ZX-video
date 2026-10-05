@@ -30,6 +30,11 @@ decoding, current implementation differences and proposed transfers.
 
 ## Run
 
+Ordinary input now uses [gentle compression and normalization](AUDIO_DYNAMICS.md)
+by default (`--dynamics gentle`). `--dynamics off` restores the former peak-only
+preparation. The whole selected track is conditioned before RAM splitting;
+`--prepared-pcm` always bypasses this processing. Carrier frequency is unchanged.
+
 Use the project's Python dependencies and put `audiobook-beeper` and `toolkit`
 on PYTHONPATH. Supply paths to FFmpeg and Fuse when needed:
 

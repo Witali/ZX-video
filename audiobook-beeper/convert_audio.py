@@ -18,6 +18,7 @@ import sys
 import wave
 
 import numpy as np
+from audio_dynamics import normalize, add_argument as add_dynamics_argument
 from analyze_voice_jitter import analyze
 from direct_player import build_disk, MAX_PACKED_BYTES, MEASURED_MODEL
 from ima_beam import encode
@@ -48,7 +49,7 @@ def snapshot_sources(out):
              'ima_beam.py', 'ima_codec.py', 'feedback_player.py', 'pcm_player.py', 'pdm_player.py',
              'packet_player.py', 'probe_feedback_packets.py', 'build_pdm.py', 'assess_snr.py',
              'verify_pcm.py', 'record_pcm.py', 'quality_search.py',
-             'ima_waveform_encoder.py', 'waveform_kernel.py')
+             'ima_waveform_encoder.py', 'waveform_kernel.py', 'audio_dynamics.py')
     hashes = {}
     for name in names:
         data = (HERE / name).read_bytes().replace(b'\r\n', b'\n')
@@ -64,7 +65,7 @@ def pcm_wav(path, samples):
         wav.writeframes(np.asarray(samples, dtype='u1').tobytes())
 
 
-def prepare_source(path, ffmpeg, duration=None, maximum_samples=None, alignment=512):
+def prepare_source(path, ffmpeg, duration=None, maximum_samples=None, alignment=512, dynamics='gentle'):
     """Read only a bounded prefix; one extra sample detects truncation."""
     guard = 128
     maximum_samples = maximum_samples or MAX_PACKED_BYTES * 2
@@ -89,8 +90,8 @@ def prepare_source(path, ffmpeg, duration=None, maximum_samples=None, alignment=
     samples = samples[:limit]
     peak = float(np.max(abs(samples)))
     gain = (109 / 128) / peak if peak else 1.
-    prepared = samples * gain
-    # Preserve relative dynamics; only one fixed gain and short edge fades.
+    prepared, conditioning = normalize(samples, ffmpeg, dynamics)
+    # Dynamics run continuously before these short part-boundary fades.
     fade = min(80, len(prepared) // 2)
     if fade:
         prepared[:fade] *= np.linspace(0, 1, fade)
@@ -109,7 +110,8 @@ def prepare_source(path, ffmpeg, duration=None, maximum_samples=None, alignment=
                     maximum_packed_bytes=MAX_PACKED_BYTES, prepared_samples=len(pcm),
                     maximum_prepared_samples=maximum_samples,
                     short_input_repetitions=repetitions, silence_guard_samples=guard,
-                    fixed_gain=gain, original_peak=peak, edge_fade_samples=fade,
+                    fixed_gain=(gain if dynamics=='off' else None), dynamics=conditioning,
+                    original_peak=peak, edge_fade_samples=fade,
                     peak_target_fraction=109 / 128, quality_reference='Prepared PCM8, with the same gain/fades/padding',
                     source_sha256=hashlib.sha256(pcm.tobytes()).hexdigest())
     probe = Path(ffmpeg).with_name('ffprobe' + Path(ffmpeg).suffix)
@@ -251,7 +253,8 @@ def convert(args):
             raise ValueError('--prepared-pcm cannot be combined with --duration')
         source, source_meta = prepared_ima4_source(args.input.resolve())
     else:
-        source, source_meta = prepare_source(args.input.resolve(), args.ffmpeg, args.duration)
+        source, source_meta = prepare_source(args.input.resolve(), args.ffmpeg, args.duration,
+                                            dynamics=getattr(args,'dynamics','gentle'))
     save(out / 'input.json', source_meta)
     print(json.dumps(source_meta), flush=True)
     packed = encode(source)
@@ -405,6 +408,7 @@ def legacy_main(argv=None, *, parents=()):
     parser.add_argument('--disk-mode',choices=('single','all','preview'),default='single',
                         help='single (default): fill one disk; all: whole track on disks; preview: looping RAM excerpt')
     parser.add_argument('--resume',action='store_true',help='resume a matching sequential conversion')
+    add_dynamics_argument(parser)
     args = parser.parse_args(argv)
     args.codec='ima4'
     if not math.isfinite(args.target_snr) or not 20 <= args.target_snr <= 60:

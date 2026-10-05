@@ -87,7 +87,7 @@ def convert(args):
     producers={p.name:digest(p) for p in HERE.glob('*.py')}
     producers['ima3-direct-player.asm']=digest(HERE/'ima3-direct-player.asm')
     quality=getattr(args,'quality','best')
-    identity=dict(input_sha256=digest(args.input),prepared_pcm=args.prepared_pcm,quality=quality,
+    identity=dict(input_sha256=digest(args.input),prepared_pcm=args.prepared_pcm,quality=quality,dynamics=getattr(args,'dynamics','gentle'),
                   duration=args.duration,target_snr_db=args.target_snr,attempts=args.attempts,
                   recording=not args.no_recording,model=MEASURED_MODEL,producer_sha256=producers,
                   reuse_pilot=str(args.reuse_pilot.resolve()) if args.reuse_pilot else None,
@@ -108,7 +108,7 @@ def convert(args):
         source_meta=dict(input=str(args.input),prepared_pcm_unchanged=True,prepared_samples=len(source),
                          sample_rate_hz=8000,pcm_bits=8,channels=1,maximum_prepared_samples=capacity)
     else:
-        source,source_meta=prepare_source(args.input,args.ffmpeg,args.duration,capacity,8)
+        source,source_meta=prepare_source(args.input,args.ffmpeg,args.duration,capacity,8,getattr(args,'dynamics','gentle'))
         source_meta['maximum_packed_bytes']=capacity//8*3
     source_meta['source_sha256']=hashlib.sha256(source.tobytes()).hexdigest()
     save(out/'input.json',source_meta);pcm_wav(out/'source-preview.wav',source)
@@ -194,6 +194,8 @@ def main(argv=None, *, parents=()):
     p.add_argument('--prepared-pcm',action='store_true',help='reuse an exact PCM8/8k mono reference with its existing silent guard')
     p.add_argument('--no-recording',action='store_true',help='skip normal-speed sound capture, retaining full native/Fuse trace checks')
     p.add_argument('--resume',action='store_true')
+    from audio_dynamics import add_argument
+    add_argument(p)
     p.add_argument('--reuse-pilot',type=Path,help='optional completed converter pilot cache; exact source/player/tools are checked')
     a=p.parse_args(argv)
     if a.attempts is None:a.attempts=3

@@ -44,8 +44,9 @@ before playback. The last disk displays `END OF AUDIO` rather than looping.
 This PDM implementation monopolizes the CPU while producing sound. Blocking
 TR-DOS sector reads therefore happen **between** parts; those pauses are
 audible. They are not gapless playback, and the program does not compress
-the source timeline to hide them. A global normalization gain is used for
-the whole track; parts have 10-ms edge fades and at least 128 silent guard
+the source timeline to hide them. [Gentle compression and global normalization](AUDIO_DYNAMICS.md)
+are applied continuously to the whole selected track; `--dynamics off` keeps
+the previous peak-only gain. Parts have 10-ms edge fades and at least 128 silent guard
 samples. A very short final part is zero padded to 8192 samples, never
 repeated. All-mode source sample ranges cover the input exactly once.
 

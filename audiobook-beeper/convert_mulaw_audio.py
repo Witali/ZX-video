@@ -11,6 +11,7 @@ import sys
 import wave
 
 import numpy as np
+from audio_dynamics import normalize, add_argument as add_dynamics_argument
 from assess_snr import FILTER, ratio
 from build_pdm import reconstruct, write_wav
 from g711_codec import encode, decode, verify_tables
@@ -22,7 +23,7 @@ HERE=Path(__file__).resolve().parent
 STABLE_FILTER=','.join(part+':precision=f64' for part in FILTER.split(','))
 
 
-def prepare(path, ffmpeg, duration=None, prepared=False, capacity=CAPACITY):
+def prepare(path, ffmpeg, duration=None, prepared=False, capacity=CAPACITY, dynamics='gentle'):
     limit=capacity-128
     if duration is not None:
         if not math.isfinite(duration) or duration<=0: raise ValueError('duration must be finite and positive')
@@ -43,12 +44,12 @@ def prepare(path, ffmpeg, duration=None, prepared=False, capacity=CAPACITY):
         if not len(samples) or not np.all(np.isfinite(samples)): raise ValueError('no finite decodable audio')
         truncated=len(samples)>limit; samples=samples[:limit]
         peak=float(np.max(abs(samples)));gain=(109/128)/peak if peak else 1.
-        samples*=gain;fade=min(80,len(samples)//2)
+        samples,conditioning=normalize(samples,ffmpeg,dynamics);fade=min(80,len(samples)//2)
         if fade:
             samples[:fade]*=np.linspace(0,1,fade);samples[-fade:]*=np.linspace(1,0,fade)
         length=max(8192,(len(samples)+128+255)//256*256)
         pcm=np.zeros(length,dtype='<i2');pcm[:len(samples)]=np.rint(samples*32768).astype('<i2')
-        info=dict(prepared_input=False,retained_input_samples=len(samples),fixed_gain=gain,
+        info=dict(prepared_input=False,retained_input_samples=len(samples),fixed_gain=(gain if dynamics=='off' else None),dynamics=conditioning,
                   original_peak=peak,edge_fade_samples=fade,truncated=truncated,
                   truncation_reason=('duration or resident RAM bound' if truncated else None))
     info.update(input=str(path.resolve()),prepared_samples=len(pcm),maximum_samples=capacity,
@@ -141,7 +142,7 @@ def optimize(control,out,pcm,fuse,ffmpeg):
 
 def convert(args):
     out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
-    pcm,preparation=prepare(args.input,args.ffmpeg,args.duration,args.prepared_pcm)
+    pcm,preparation=prepare(args.input,args.ffmpeg,args.duration,args.prepared_pcm,dynamics=getattr(args,'dynamics','gentle'))
     save(out/'preparation.json',preparation)
     with wave.open(str(out/'source-preview.wav'),'wb') as w:
         w.setnchannels(1);w.setsampwidth(2);w.setframerate(8000);w.writeframes(pcm.astype('<i2').tobytes())
@@ -166,7 +167,7 @@ def convert(args):
         assert recording['paging_latches_match'] and recording['secondary_paging_unchanged']
     sources=['convert_mulaw_audio.py','mulaw_player.py','mulaw-player.asm','verify_mulaw.py','g711_codec.py',
              'record_pcm.py','build_pdm.py','assess_snr.py','verify_pdm.py','feedback_player.py','ima_player.py',
-             'pcm_player.py','pdm_player.py','mulaw_waveform_encoder.py','ima_waveform_encoder.py','waveform_kernel.py']
+             'pcm_player.py','pdm_player.py','mulaw_waveform_encoder.py','ima_waveform_encoder.py','waveform_kernel.py','audio_dynamics.py']
     snapshots=out/'sources';snapshots.mkdir(exist_ok=True)
     for name in sources:shutil.copy2(HERE/name,snapshots/name)
     report=dict(complete=True,codec='G.711 mu-law',disks=1,repeat=True,
@@ -195,6 +196,7 @@ def main(argv=None, *, parents=()):
                    help='128000 (default): sixteen-pulse packets; 64000: exact accumulator control')
     p.add_argument('--prepared-pcm',action='store_true',help='retain exact aligned PCM8/PCM16 mono 8-kHz reference with final silent guard')
     p.add_argument('--no-recording',action='store_true',help='omit sound-generator capture; all native/cold-Fuse checks still run')
+    add_dynamics_argument(p)
     args=p.parse_args(argv)
     if not args.ffmpeg:p.error('FFmpeg not found; supply --ffmpeg')
     if args.output.exists() and any(args.output.iterdir()):p.error('output must be empty')

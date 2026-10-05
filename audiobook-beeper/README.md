@@ -21,6 +21,8 @@ selects the four-bit variant. Both default to the shared bounded waveform
 search in `--quality best`; [converter controls](CONVERTER.md) explain the
 measured selection and the older `balanced` mode. The [direct IMA3 guide](IMA3_DIRECT.md)
 describes its implementation.
+Ordinary source audio now receives [gentle compression and normalization](AUDIO_DYNAMICS.md)
+before encoding; `--dynamics off` preserves the previous peak-only preparation.
 The [IMA3 and IMA4 comparison](IMA3_IMA4_COMPARISON.md) records which
 algorithms are already shared and which improvements can transfer.
 It defaults to [one TRD with sequential RAM-sized parts](IMA3_SERIES.md).

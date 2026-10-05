@@ -88,7 +88,7 @@ def qualify(out,payload,pcm,fuse,ffmpeg,model=MODEL):
 def convert(args):
     out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
     capacity=sum(size for _,_,size in layout()[-1])
-    pcm,preparation=prepare(args.input,args.ffmpeg,args.duration,args.prepared_pcm,capacity=capacity)
+    pcm,preparation=prepare(args.input,args.ffmpeg,args.duration,args.prepared_pcm,capacity=capacity,dynamics=getattr(args,'dynamics','gentle'))
     save(out/'preparation.json',preparation);snapshot(out)
     save(out/'rational-tables.json',rational_check(MODEL));verify_tables(args.ffmpeg)
     payload=encode(pcm,'mulaw',args.ffmpeg)
