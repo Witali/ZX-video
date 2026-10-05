@@ -1,0 +1,207 @@
+{
+  "date": "2026-10-05",
+  "complete": true,
+  "preview_only": true,
+  "quality_gate_passed": false,
+  "target_snr_db": 20.0,
+  "profile": "IMA4 / measured direct PDM / bounded waveform search",
+  "quality_profile": "best",
+  "host_search": [
+    {
+      "directory": "encode-1",
+      "scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n",
+      "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima4-normalized-precompute\\part-00005\\compensated-2\\phase-03",
+      "samples": 162816,
+      "beam_width": 256,
+      "block_size": 128,
+      "commit_size": 64,
+      "allowed_ima_nibbles": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "ima3_subset": false,
+      "source_sha256": "73a1c9418e3e37455556931fd2501d7e383c45d03e360d848254ac43441af3bd",
+      "packed_sha256": "cec180d123a12dc856f9f1b9ee61e1db3d59fba499277bad2813a44b6643da6b",
+      "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state",
+      "history_bins": 0,
+      "search_backend": "native",
+      "search_seconds": 153.625,
+      "baseline_model_snr_db": 12.99671941293947,
+      "host_fixed_clock_snr_db": 15.64239254463282,
+      "control_prior": "compensated",
+      "control_regularization": 0.1,
+      "elapsed_seconds": 159.18800000008196,
+      "ordinary_native_tstate_delta": 0,
+      "new_timeline_verified": false,
+      "saturation_guard": {
+        "samples": 162816,
+        "saturation_events": 0,
+        "raw_min": -23109,
+        "raw_max": 22247
+      },
+      "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"
+    }
+  ],
+  "source": {
+    "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima4-normalized\\work\\input-00005.wav",
+    "prepared_pcm_unchanged": true,
+    "prepared_samples": 162816,
+    "sample_rate_hz": 8000,
+    "channels": 1,
+    "pcm_bits": 8,
+    "fixed_gain": 1.0,
+    "silence_guard_samples": 128,
+    "source_sha256": "73a1c9418e3e37455556931fd2501d7e383c45d03e360d848254ac43441af3bd"
+  },
+  "selected_variant": {
+    "directory": "disk-encode-1\\phase-03",
+    "two_loop_clock_aware_snr_db": [
+      15.120127194233213,
+      15.115367576174316
+    ],
+    "minimum_snr_db": 15.115367576174316,
+    "snr_at_least_20_db": false,
+    "mean_prepared_sample_rate_hz": 8000.239919060566,
+    "mean_speed_error_percent": 0.002998988257063573,
+    "speed_within_two_percent": true,
+    "reference_rate_hz": 8000,
+    "physical_hardware_tested": false,
+    "complete_trace_phase_deltas_tstates": [
+      0,
+      0
+    ]
+  },
+  "variants": [
+    {
+      "directory": "pilot\\phase-03",
+      "two_loop_clock_aware_snr_db": [
+        -3.162150063469156,
+        -3.162164996341581
+      ],
+      "minimum_snr_db": -3.162164996341581,
+      "snr_at_least_20_db": false,
+      "mean_prepared_sample_rate_hz": 8000.239919060566,
+      "mean_speed_error_percent": 0.002998988257063573,
+      "speed_within_two_percent": true,
+      "reference_rate_hz": 8000,
+      "physical_hardware_tested": false,
+      "complete_trace_phase_deltas_tstates": [
+        0,
+        0
+      ]
+    },
+    {
+      "directory": "compensated-1\\phase-03",
+      "two_loop_clock_aware_snr_db": [
+        12.974688736855533,
+        12.974688736855533
+      ],
+      "minimum_snr_db": 12.974688736855533,
+      "snr_at_least_20_db": false,
+      "mean_prepared_sample_rate_hz": 8000.239919060566,
+      "mean_speed_error_percent": 0.002998988257063573,
+      "speed_within_two_percent": true,
+      "reference_rate_hz": 8000,
+      "physical_hardware_tested": false,
+      "complete_trace_phase_deltas_tstates": [
+        0,
+        0
+      ]
+    },
+    {
+      "directory": "compensated-2\\phase-03",
+      "two_loop_clock_aware_snr_db": [
+        12.9838250949779,
+        12.98800076443165
+      ],
+      "minimum_snr_db": 12.9838250949779,
+      "snr_at_least_20_db": false,
+      "mean_prepared_sample_rate_hz": 8000.239863645225,
+      "mean_speed_error_percent": 0.0029982955653151677,
+      "speed_within_two_percent": true,
+      "reference_rate_hz": 8000,
+      "physical_hardware_tested": false,
+      "complete_trace_phase_deltas_tstates": [
+        1,
+        0
+      ]
+    },
+    {
+      "directory": "disk-encode-1\\phase-03",
+      "two_loop_clock_aware_snr_db": [
+        15.120127194233213,
+        15.115367576174316
+      ],
+      "minimum_snr_db": 15.115367576174316,
+      "snr_at_least_20_db": false,
+      "mean_prepared_sample_rate_hz": 8000.239919060566,
+      "mean_speed_error_percent": 0.002998988257063573,
+      "speed_within_two_percent": true,
+      "reference_rate_hz": 8000,
+      "physical_hardware_tested": false,
+      "complete_trace_phase_deltas_tstates": [
+        0,
+        0
+      ]
+    }
+  ],
+  "rejected_variants": [],
+  "independent_ima": {
+    "decoder": "FFmpeg IMA WAV",
+    "samples": 162816,
+    "every_sample_exact": true
+  },
+  "recording": null,
+  "wav_scope": "Integrated Fuse port events with measurement filter",
+  "trd_sha256": "555f8229c47d92026dcd5c5c1f2ac943a2391b67c413541477f9fe63b4493315",
+  "source_sha256_lf": {
+    "convert_audio.py": "248ca78fbec7b862c8201ca907b4d11d9d39cabf1b60464583c348ce37d063af",
+    "direct_player.py": "5b973f75f06de30c183cafa35caad59baadc530caf962c809f96714279084908",
+    "direct-player.asm": "88d1f3ec67f3b52e4fbbc53694aa11d5f34a01fb02ae5a32e7ea3ed90e1d66d9",
+    "probe_loop_phase.py": "171e619553dc0b79edbbbcf4aee486ae6aae86fe49e4e6221c1906ee414b3172",
+    "precompensate_voice.py": "85ea58afe93c2af8cde6143db2e9c1f7a796bfa5f549f0ab81a174d00d20d5b8",
+    "analyze_voice_jitter.py": "9ac3421542bacc2f03f38922aca4820217141d4e683f9274d470e1acf16d200f",
+    "verify_direct.py": "8b30e3c4aa1861f6d93ebfe044a31dd1bc8900cc506d59e3540428210e3ef4fa",
+    "verify_packet.py": "0131ce326e2f50c4f1c9b1d36f5a138e8927898157717bff0b35b6875ab7b02d",
+    "ima_beam.py": "571f2e55c43788e6afc2ccd4164b5b2cc92679037b9589a2527e23b62a44c15a",
+    "ima_codec.py": "263d52677e423e9f9f55636b84fe108aa3eed1751bf1c09ce751b65a22f3349b",
+    "feedback_player.py": "8f230d9d8e1ec2ddf66e99b8f9bcff470e400835240bef4d9e530be25c509fe0",
+    "pcm_player.py": "4f23aff5deb1a474b42251ceb4a7271d616e5dc69d6524bf57a46422934fc3ec",
+    "pdm_player.py": "12c1e553961fdcd40112a0d48105ce7dd934fa245212024b269f4eab2f5ff0b8",
+    "packet_player.py": "faf6e7a256b1838e0684e86bf7628798a6fa841fc62821be44a74f859080df2b",
+    "probe_feedback_packets.py": "f3937f1c11a56528f0f6ca09607b39533dc5b16042cd8c53e354cb46939a6331",
+    "build_pdm.py": "6d9fd77e2bd2f9eaf45f8c6c0ef502ed60c76520b9e90dbf7cadf9930a4cc018",
+    "assess_snr.py": "d4e76b7212a971176ed3d3550e7dec721a217599b9487ef3606a2f6e92de9bc8",
+    "verify_pcm.py": "8a95bd693849b7c614c6c51977249fb339a305dcc2aeed104d7335be82e05990",
+    "record_pcm.py": "0a2501668a4f6a64ae14224eb0605991ecf7940a9c02cfbf0144cf72ee8f4a8f",
+    "quality_search.py": "080fc2892996966d7d41c0d60e72396fa3a6db5a58a07200bd9ce8e1ba4556c5",
+    "ima_waveform_encoder.py": "4d79cfd7a5800d0f9a9c1ffba928df39a2e590cf79da05bbdc71dc74819cceae",
+    "waveform_kernel.py": "2272effc955fefff986b4de9665246acaf741948888e77077e524609bf4b0004",
+    "audio_dynamics.py": "c77f8369d11086d5565b09962a1fcb7e88fa5e3313c9cd8e421d8a58bded4e75"
+  },
+  "timing": {
+    "ordinary_native_tstates": 423,
+    "delta_from_verified_player": 0,
+    "source_reference_rate_hz": 8000,
+    "physical_hardware_tested": false
+  },
+  "limitations": [
+    "8-kHz mono PCM8 reference; quality is not measured against full-band original input",
+    "Bounded search over the verified IMA architecture, not a universal codec optimum",
+    "20-dB end-to-end goal passes only when measured on both loops"
+  ]
+}

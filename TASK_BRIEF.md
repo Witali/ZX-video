@@ -12,7 +12,7 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
-## Active audio request: gentle compression and normalization (2026-10-05)
+## Completed audio request: gentle compression and normalization (2026-10-05)
 
 After identifying vibration in `ZX-audiobook-IMA4-full-disk.trd`, the user
 explicitly requests more source gain, normalization and gentle dynamic
@@ -26,7 +26,16 @@ The [vibration investigation](audiobook-beeper/experiments/ima4-flutter/README.m
 records all five parts through ordinary installed Fuse and speaker loopback.
 It finds repeatable field-synchronous error power, not a strong simple 50-Hz
 voice AM/FM component or a large host transport slip. It does not claim the
-symptom fixed. Continue with the user's authorized source-conditioning change.
+symptom fixed. The subsequent [source-conditioning change and complete disk](audiobook-beeper/experiments/audio-dynamics/README.md)
+are now qualified: default gentle 2:1 compression/normalization, exact peak-only
+off mode, prepared-PCM bypass and 30 passing focused tests. The new full IMA4
+disk retains 113.712 seconds/all 2560 sectors; fresh complete native/cold Fuse
+checks pass every bit/state, all transitions/UI and END OF AUDIO. Its SNR is
+15.14..18.95 dB versus 10.33..13.53 previously; speed error is about +0.042%.
+Archived streams rebuild the disk byte for byte. Cyclic error remains, and
+part 3's fitted AM diagnostic increases; do not claim flutter eliminated or
+20 dB achieved. No player/hot-path change, carrier reduction, merge or push.
+This milestone is complete; do not open another experiment automatically.
 
 ## Completed audio request: audit the preferred direct IMA4 disk (2026-10-05)
 

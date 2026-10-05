@@ -1,0 +1,50 @@
+[
+  {
+    "directory": "encode-1",
+    "scope": "Encode IMA against the filtered, timed PDM waveform on a saved schedule.\n\nAll extra computation is offline. This host probe neither changes the Z80\ndecoder nor proves that a new byte stream retains the pilot's ULA timeline.\nThe scoring model is an analog approximation to the existing listening filter;\nthe final host score still uses the unchanged FFmpeg measurement pipeline.\n",
+    "input": "C:\\Work\\ZX-video\\.worktree\\lpc-ima-preload\\build\\ima4-normalized-precompute\\part-00005\\compensated-2\\phase-03",
+    "samples": 162816,
+    "beam_width": 256,
+    "block_size": 128,
+    "commit_size": 64,
+    "allowed_ima_nibbles": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "ima3_subset": false,
+    "source_sha256": "73a1c9418e3e37455556931fd2501d7e383c45d03e360d848254ac43441af3bd",
+    "packed_sha256": "cec180d123a12dc856f9f1b9ee61e1db3d59fba499277bad2813a44b6643da6b",
+    "merge_rule": "Heuristic: retain lowest-cost filter history per discrete predictor/index/PDM state",
+    "history_bins": 0,
+    "search_backend": "native",
+    "search_seconds": 153.625,
+    "baseline_model_snr_db": 12.99671941293947,
+    "host_fixed_clock_snr_db": 15.64239254463282,
+    "control_prior": "compensated",
+    "control_regularization": 0.1,
+    "elapsed_seconds": 159.18800000008196,
+    "ordinary_native_tstate_delta": 0,
+    "new_timeline_verified": false,
+    "saturation_guard": {
+      "samples": 162816,
+      "saturation_events": 0,
+      "raw_min": -23109,
+      "raw_max": 22247
+    },
+    "model": "Analog six-state filter, analytic pulse propagation, midpoint quadrature"
+  }
+]

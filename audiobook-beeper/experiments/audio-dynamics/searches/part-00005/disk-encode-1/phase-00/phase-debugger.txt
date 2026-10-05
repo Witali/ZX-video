@@ -1,0 +1,25 @@
+base 10
+set $r 0
+set $bits 0
+breakpoint 33000
+commands 1
+set $r 1
+continue
+end
+breakpoint port write 254
+condition 2 $r==1
+commands 2
+set $bits $bits+1
+continue
+end
+breakpoint port write 254
+condition 3 $r==1 && ($bits==1 || $bits==2605057 || $bits==5210113)
+commands 3
+print spectrum:frames*70908+ula:tstates
+continue
+end
+breakpoint port write 254
+condition 4 $bits>=5210113
+commands 4
+exit 77
+end

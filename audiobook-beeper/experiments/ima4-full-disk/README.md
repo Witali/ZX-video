@@ -20,10 +20,11 @@ input/preparation differs from the earlier louder quality-max control; its
 SNR must not be presented as a matched comparison with that control.
 
 ```powershell
-python audiobook-beeper/convert_audio.py "path/to/audiobook.m4a" --codec ima4 --disk-mode single --output build/ima4-full-disk --ffmpeg "path/to/ffmpeg.exe" --fuse "C:/Program Files (x86)/Fuse/fuse.exe" --no-recording
+python audiobook-beeper/convert_audio.py "path/to/audiobook.m4a" --codec ima4 --disk-mode single --dynamics off --output build/ima4-full-disk --ffmpeg "path/to/ffmpeg.exe" --fuse "C:/Program Files (x86)/Fuse/fuse.exe" --no-recording
 ```
 
-The default `best` profile uses all three bounded waveform searches, up to
+The explicit `--dynamics off` preserves this historical peak-only preparation
+after the later source-conditioning default change. The `best` profile uses all three bounded waveform searches, up to
 two clock-compensation passes and the conditional winner-clock refinement.
 Native acceleration is used for host searches. `--no-recording` skips only
 normal-speed audible host capture; it retains full native/cold Fuse checks

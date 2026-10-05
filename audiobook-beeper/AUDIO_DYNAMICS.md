@@ -65,6 +65,11 @@ the old peak-only signal to **0.112783**, **+4.067 dB**, with the same 0.8515625
 peak. This is a source-level measurement, not a promised 4.067-dB PDM SNR gain.
 Only the initial disk-capacity prefix is retained on one TRD, as before.
 
+The [completed normalized IMA4 disk and comparison](experiments/audio-dynamics/README.md)
+retain 113.712 seconds and pass complete native/cold Fuse checks. Prepared-source
+SNR improves from 10.33..13.53 to 15.14..18.95 dB over its five parts. Periodic
+distortion remains; normalization is not a proven flutter fix or a 20-dB result.
+
 `test_audio_dynamics.py` checks actual FFmpeg compression, quiet-passage gain,
 reduced contrast, unchanged sample count/polarity/peak, streaming parity,
 silence, exact off mode, prepared PCM and public CLI routing. Run with

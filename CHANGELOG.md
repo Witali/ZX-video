@@ -1,5 +1,44 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Qualify the complete normalized IMA4 disk
+
+Finish the user's source-gain/compression request using the public converter
+on the same supplied O. Henry recording and first 113.712 seconds as the old
+full disk. [Disk, parameters, comparison and full evidence](audiobook-beeper/experiments/audio-dynamics/README.md).
+Keep gentle 2:1 compression and final peak normalization; run one bounded PDM
+waveform attempt with no additional clock refinement. Parts 3..5 use the same
+public function in parallel host jobs with source/tool/producer identity checks;
+the serial driver adopts completed results and verifies the final volume.
+
+All 2560 sectors are filled in five independently loaded parts. Fresh complete
+native and cold Fuse checks pass 14565211 bits, 910326 predictor/index states,
+memory/paging, all four transitions, loading UI and END OF AUDIO. Pulse times
+differ at most 1 T from complete qualified controls, within the unchanged 8-T
+limit including startup. Preserve extra full controls for ready phases 987/988
+and their five/one early phase rejections. Source speed errors are
++0.041952%..+0.041995%. Cold preparation is 27.388691 s; reloads 21.031193..22.810440 s.
+All 2585 sector reads occur outside audio. No physical-hardware or new normal-speed
+endpoint recording is claimed. Hot path remains 423 T/sample and 14/140-T
+page/bank extras, all deltas 0, with approximately 128-kHz PDM unchanged.
+
+Final fixed-clock/f64 SNR by part is 18.212893, 18.260997, 15.674295,
+18.946754 and 15.139674 dB, versus 11.448644, 12.842333, 13.266120,
+13.527789 and 10.333552 previously. Compare each disk with its own prepared
+reference; this is not fidelity to the uncompressed source or an isolated
+compressor gain, and the historical run used more search attempts. Part 3
+keeps compensation pass 2 after its waveform candidate scores slightly worse.
+Keep all candidate metadata/payloads, full selected traces and exact producers.
+The 20-dB gate remains false; the fully verified image is a quality preview.
+
+The unchanged cyclic diagnostic still finds field-folded error-power ratios
+3.057..4.793. Part 3's fitted field-rate AM rises to 2.558% from 0.032%; do not
+present louder speech or higher SNR as elimination of the reported vibration.
+Decision: deliver the completed source-conditioning change and separately named
+disk, preserving the old images. Further timing/quality work is a separate
+milestone. Archive authentication and an independent assembly rebuild reproduce
+SHA-256 e734494907b00ba0e5bbb36b65f37152710fd73ac06efc0865f728a0037b8004
+byte for byte. No merge or push is included.
+
 ## 2026-10-05: Add continuous gentle compression and normalization to audio conversion
 
 The user requests source amplification, normalization and mild dynamic
