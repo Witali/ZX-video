@@ -12,6 +12,28 @@ deadlines. All quality, fallback jitter, memory, cycle accounting, LFS and
 release requirements in [AGENTS.md](AGENTS.md) remain mandatory. The generic
 converter must also support other videos.
 
+## Active audio requirement: fixed sample duration and fast conversion (2026-10-05)
+
+The user requests equal physical duration for every audio sample, eliminating
+recording-specific clock compensation. A complete disk should be generated
+within the duration of the retained audio on the host PC. Shorter resident
+parts are allowed; reducing PDM frequency is explicitly not allowed. Retain
+approximately 128 kHz or higher and measure end-to-end quality. Do not silently
+replace compressed IMA storage, reduce source bandwidth, or exempt normal
+conversion stages from the speed measurement.
+
+First audit the saved full-disk timing and benchmark the existing encoder
+without repeating waveform searches. Native instruction equality alone is
+insufficient: ULA port/RAM waits, page and bank transitions must all be included.
+Any new player needs complete native/cold Fuse proof and explicit CPU counts;
+host simulation, codec-only speed or ordinary-sample measurements cannot qualify
+the requested result. Preserve the existing release while this is unverified.
+The initial [audit](audiobook-beeper/FIXED_SAMPLE_CLOCK.md) is complete:
+909696 measured source intervals span 423..598 T. Encoding 23.36 seconds takes
+0.531 s with nearest-delta IMA or 13.517 s with the existing beam-32 encoder.
+These are encoding-only results. The candidate 440-T / 16-output budget is
+128978.182 PDM outputs/s; no such player is implemented or qualified yet.
+
 ## Full IMA4 disk through the public script — complete (2026-10-05)
 
 The user requests a complete disk in IMA4 and explicitly requires our

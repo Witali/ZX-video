@@ -1,0 +1,141 @@
+{
+  "date": "2026-10-05",
+  "scope": "Read saved Fuse clocks and benchmark ordinary IMA encoding, without new playback.\n\nThis is a diagnostic, not a fixed-clock player or an end-to-end speed claim.\nThe source and measured clocks are authenticated against the saved experiment.\n",
+  "python": "3.12.14",
+  "host": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD",
+  "current_measured_samples": [
+    {
+      "part": 1,
+      "samples": 186752,
+      "minimum_tstates": 423,
+      "maximum_tstates": 590,
+      "mean_tstates": 443.171891064085,
+      "stddev_tstates": 16.829560061696323,
+      "distinct_durations": 28,
+      "percentile_tstates": {
+        "0": 423.0,
+        "1": 423.0,
+        "50": 456.0,
+        "99": 472.0,
+        "100": 590.0
+      }
+    },
+    {
+      "part": 2,
+      "samples": 186752,
+      "minimum_tstates": 423,
+      "maximum_tstates": 598,
+      "mean_tstates": 443.17302090472924,
+      "stddev_tstates": 17.158287350974664,
+      "distinct_durations": 36,
+      "percentile_tstates": {
+        "0": 423.0,
+        "1": 423.0,
+        "50": 448.0,
+        "99": 472.0,
+        "100": 598.0
+      }
+    },
+    {
+      "part": 3,
+      "samples": 186752,
+      "minimum_tstates": 423,
+      "maximum_tstates": 590,
+      "mean_tstates": 443.1717571967101,
+      "stddev_tstates": 17.148280103773345,
+      "distinct_durations": 28,
+      "percentile_tstates": {
+        "0": 423.0,
+        "1": 423.0,
+        "50": 448.0,
+        "99": 472.0,
+        "100": 590.0
+      }
+    },
+    {
+      "part": 4,
+      "samples": 186752,
+      "minimum_tstates": 423,
+      "maximum_tstates": 590,
+      "mean_tstates": 443.17188570939,
+      "stddev_tstates": 17.131224771569958,
+      "distinct_durations": 37,
+      "percentile_tstates": {
+        "0": 423.0,
+        "1": 423.0,
+        "50": 448.0,
+        "99": 472.0,
+        "100": 590.0
+      }
+    },
+    {
+      "part": 5,
+      "samples": 162688,
+      "minimum_tstates": 423,
+      "maximum_tstates": 598,
+      "mean_tstates": 443.17897447875686,
+      "stddev_tstates": 17.1277990571334,
+      "distinct_durations": 32,
+      "percentile_tstates": {
+        "0": 423.0,
+        "1": 423.0,
+        "50": 448.0,
+        "99": 472.0,
+        "100": 598.0
+      }
+    }
+  ],
+  "encoding_benchmarks": [
+    {
+      "encoder": "nearest_delta",
+      "samples": 186880,
+      "source_seconds": 23.36,
+      "encode_seconds": 0.530679100076668,
+      "realtime_factor": 0.022717427229309417,
+      "codec_only_raw_snr_db": 23.611075130761087,
+      "packed_sha256": "4f38d7e32a555dabfd511dc0142178d7317fa90e38f3ae78b08d22ed14c29003",
+      "scope": "Encoding only: excludes source decode, tables, assembly, disk packing and verification",
+      "saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -13324,
+        "raw_max": 15425
+      }
+    },
+    {
+      "encoder": "existing_beam32",
+      "samples": 186880,
+      "source_seconds": 23.36,
+      "encode_seconds": 13.516767099965364,
+      "realtime_factor": 0.5786287285944077,
+      "codec_only_raw_snr_db": 25.613615524707182,
+      "packed_sha256": "d23dc55a8bc394e46aa33bab7c42bf48078dabe616044263b0584f881abfc03b",
+      "scope": "Encoding only: excludes source decode, tables, assembly, disk packing and verification",
+      "saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -13634,
+        "raw_max": 15784
+      }
+    }
+  ],
+  "cpu_hz": 3546900,
+  "exact_8000_hz_sample_tstates": 443.3625,
+  "proposed_integer_periods": [
+    {
+      "tstates": 440,
+      "sample_rate_hz": 8061.136363636364,
+      "pdm_rate_hz": 128978.18181818182,
+      "source_8000_speed_error_percent": 0.7642045454545388
+    },
+    {
+      "tstates": 444,
+      "sample_rate_hz": 7988.513513513513,
+      "pdm_rate_hz": 127816.21621621621,
+      "source_8000_speed_error_percent": -0.14358108108107892
+    }
+  ],
+  "fixed_sample_player_implemented": false,
+  "end_to_end_realtime_conversion_proven": false,
+  "player_tstate_change": 0
+}

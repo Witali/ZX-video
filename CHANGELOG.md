@@ -1,5 +1,32 @@
 # Changelog and optimization experiments
 
+## 2026-10-05: Audit equal sample duration and the host conversion budget
+
+The user wants constant physical sample duration and a full TRD conversion
+within the retained audio duration. They permit shorter RAM parts but explicitly
+reject a lower PDM frequency. [Requirements, audit and design budget](audiobook-beeper/FIXED_SAMPLE_CLOCK.md).
+Authenticate the five saved full-disk clocks and first prepared source from
+the previous experiment; do not repeat encoding searches or emulator runs.
+All 909696 source-bearing sample intervals range 423..598 T, despite a mean
+near 443.17 T. Equal native ordinary paths alone do not remove ULA or boundary
+delays; padding to the worst case would reduce 16-pulse PDM to about 94.9 kHz.
+
+One benchmark on the existing 23.36-second prepared first part: nearest-delta
+IMA encoding takes 0.530679 s at raw codec-only SNR 23.611075 dB; the existing
+beam-32 encoder takes 13.516767 s at 25.613616 dB. Both pass the no-saturation
+guard. These are encoding-only timings and unfiltered decoded-PCM SNR, not
+end-to-end conversion times or measured PDM quality. The audit authenticates
+sources against the earlier artifact manifest; packed-output hashes and the
+machine/runtime scope are in the [report](audiobook-beeper/experiments/fixed-sample-clock/audit.json).
+
+Record a possible 440-T / 16-output budget (128978.182 outputs/s), while clearly
+marking it unimplemented: many current paths exceed that deadline. No release
+or player changes; ordinary CPU count remains 423 T, delta 0. The requested
+constant-clock player and complete conversion-time target remain unverified.
+Decision: retain the existing release and use these measured constraints for
+the new scheduler; do not silently lower carrier rate or substitute raw PDM
+disk storage for IMA.
+
 ## 2026-10-05: Fill an IMA4 disk through the existing audio converter
 
 The user requests a complete IMA4 disk and explicitly requires our script.
