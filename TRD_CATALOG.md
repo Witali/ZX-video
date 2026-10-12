@@ -1,6 +1,6 @@
 # TRD image catalogue
 
-Snapshot 2026-10-05: **283 tracked images**, including **49 root images** and **234 archived experiment/fixture images**; 218 distinct SHA-256 identities. No tracked `.tfd` files were found; this catalogue covers `.trd` disk images.
+Snapshot 2026-10-12: **189 tracked images**, including **47 root images** and **142 archived experiment/fixture images**; 189 distinct SHA-256 identities. No tracked `.tfd` files were found; this catalogue covers `.trd` disk images.
 
 The user requested purpose, production scripts, repository hash and branch for every disk. This is an inventory, not certification that every retained experiment is a recommended release.
 
@@ -10,11 +10,13 @@ An **artifact commit** is verified to contain these exact disk bytes (Git LFS OI
 
 Git commits do not store their creation branch. The **recorded containing branch** is the nearest containing non-main checkpoint in the [2026-10-05 cleanup inventory](docs/maintenance/2026-10-05-repository-cleanup.json). An ancestry check authenticates this relationship; it is not proof that encoding ran on that branch. Many branches have since been merged/deleted. Original build HEAD/branch are not uniformly recorded, so they are not invented. Study baselines and source/tool hashes in reports have their own scopes.
 
-The inventory source revision is [11a9051da3481f2832316d8a0a0d25a45e51ef1e](https://github.com/Witali/ZX-video/commit/11a9051da3481f2832316d8a0a0d25a45e51ef1e); publication/integration branch: `main`. Each recipe names the responsible builder or orchestrator, with a guide and hash-matched report for parameters and inputs. Links to scripts use current repository paths; for historical reproduction use the recorded revision and its producer snapshots. Do not assume today's defaults recreate an old image. Saved `.gz` producers, `run-producers`, prepared PCM/IMA streams and manifests take precedence. Old absolute worktree/input paths may need restoration or explicit replacements; external source media and tools are not all included in Git.
+The inventory source revision is [ead95787f25dfc9a2e18abf46f313f5e73de4143](https://github.com/Witali/ZX-video/commit/ead95787f25dfc9a2e18abf46f313f5e73de4143); publication/integration branch: `main`. Each recipe names the responsible builder or orchestrator, with a guide and hash-matched report for parameters and inputs. Links to scripts use current repository paths; for historical reproduction use the recorded revision and its producer snapshots. Do not assume today's defaults recreate an old image. Saved `.gz` producers, `run-producers`, prepared PCM/IMA streams and manifests take precedence. Old absolute worktree/input paths may need restoration or explicit replacements; external source media and tools are not all included in Git.
 
 Archived `phase-*`, `pilot`, `control`, `history` and `paused` files are different build/calibration stages. Their path and evidence identify the stage. Equal hashes are explicitly linked; equal filenames or codec names do not imply equal sound. Individual resident-part test disks are not the whole sequential disk.
 
 Clearly unsuccessful payloads, including SD2, were removed: [reasons and restoration ledger](docs/maintenance/2026-10-05-retired-trds.md). Historical manifests describe original bundles; restore retired payloads before replaying an old whole-bundle check. The public YouTube-linked direct IMA4 root file remains intact.
+
+Exact copies and almost identical calibration/UI images were consolidated on 2026-10-12: [comparison, retained replacements and exact restoration](docs/maintenance/2026-10-12-trd-deduplication.md). Near variants are stored as small byte edits, not assumed to sound identical. Distinct frame rates, loader behavior and audio data remain separate full images.
 
 Maintain reviewed records in [toolkit/trd_catalog.json](toolkit/trd_catalog.json), then run:
 
@@ -77,7 +79,6 @@ Saved change: Fix periodic speech errors with overlapping IMA waveform search.
 - Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `ac4b740ebdcf2f9fb538d286b8ac679df6babc53462cf79b18f08cc8b5a2d66d`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-3bit-overlap/volumes.json](audiobook-beeper/experiments/ima-3bit-overlap/volumes.json); [audiobook-beeper/experiments/ima-3bit-overlap/comparison.json](audiobook-beeper/experiments/ima-3bit-overlap/comparison.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-3bit-overlap/audio.trd](audiobook-beeper/experiments/ima-3bit-overlap/audio.trd).
 
 IMA3 waveform search with overlapping windows; accepted speech reference. Series image and its resident first part are both retained.
 
@@ -106,27 +107,11 @@ Saved change: Reach 20 dB with waveform-aware IMA3 disk encoding.
 - Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `5556a64f54ad932e8b65f96f6f55b4bffafae9e5bbec0ba025463fe0c2b34f89`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-3bit-waveform/fuse.json](audiobook-beeper/experiments/ima-3bit-waveform/fuse.json); [audiobook-beeper/experiments/ima-3bit-waveform/report.json](audiobook-beeper/experiments/ima-3bit-waveform/report.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-3bit-waveform/audiobook-preview.trd](audiobook-beeper/experiments/ima-3bit-waveform/audiobook-preview.trd).
 
 Historical three-bit IMA alphabet with waveform-aware PC encoding; this pre-direct experiment expands the packed stream to IMA4 at load time.
 
 Producer / orchestration: [audiobook-beeper/ima_waveform_encoder.py](audiobook-beeper/ima_waveform_encoder.py); [audiobook-beeper/verify_waveform_disk.py](audiobook-beeper/verify_waveform_disk.py).
 Method, inputs and invocation: [audiobook-beeper/IMA3_WAVEFORM.md](audiobook-beeper/IMA3_WAVEFORM.md).
-
-### [ZX-audiobook-IMA4-PDM-search-test.trd](ZX-audiobook-IMA4-PDM-search-test.trd)
-
-Saved change: Verify IMA4 overlapping PDM search against control.
-
-- Exact artifact commit: [db67cae7c4c84e532ed6044b0cd141c8a6465694](https://github.com/Witali/ZX-video/commit/db67cae7c4c84e532ed6044b0cd141c8a6465694).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima4-overlap/manifest.json](audiobook-beeper/experiments/ima4-overlap/manifest.json); [audiobook-beeper/experiments/ima4-overlap/evidence/report.json](audiobook-beeper/experiments/ima4-overlap/evidence/report.json).
-- Byte-identical retained copies: [ZX-audiobook-max-IMA4.trd](ZX-audiobook-max-IMA4.trd); [ZX-audiobook-quality-IMA4.trd](ZX-audiobook-quality-IMA4.trd); [audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd); [audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd).
-
-IMA4 overlapping-window PDM waveform search and its selected/control builds; all extra search work is on the PC.
-
-Producer / orchestration: [audiobook-beeper/experiments/ima4-overlap/run.py](audiobook-beeper/experiments/ima4-overlap/run.py).
-Method, inputs and invocation: [audiobook-beeper/experiments/ima4-overlap/README.md](audiobook-beeper/experiments/ima4-overlap/README.md).
 
 ### [ZX-audiobook-IMA4-full-disk.trd](ZX-audiobook-IMA4-full-disk.trd)
 
@@ -136,7 +121,6 @@ Saved change: Generate a full IMA4 disk with sequential playback.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `a7e4fb4f289b036b2f84e2032938894767875db3b1e70fbe19d79780af106aa7`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json](audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json); [audiobook-beeper/experiments/ima4-full-disk/release/report.json](audiobook-beeper/experiments/ima4-full-disk/release/report.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima4-full-disk/release/audio.trd](audiobook-beeper/experiments/ima4-full-disk/release/audio.trd).
 
 First 113.712 seconds of speech in five IMA4 parts filling one TRD; original low-gain comparison. Known flutter/quality limitation; stronger normalized successor is separate.
 
@@ -151,7 +135,6 @@ Saved change: Qualify a full IMA4 disk with gentle source dynamics.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `e734494907b00ba0e5bbb36b65f37152710fd73ac06efc0865f728a0037b8004`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/audio-dynamics/postflight.json](audiobook-beeper/experiments/audio-dynamics/postflight.json); [audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json](audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/audio-dynamics/release/audio.trd](audiobook-beeper/experiments/audio-dynamics/release/audio.trd).
 
 Gentle 2:1 source compression and normalization before IMA4 encoding; full five-part disk and individual selected/calibration builds. Playback timing is unchanged; residual cyclic error remains.
 
@@ -166,7 +149,6 @@ Saved change: Add verified O. Henry AY50 listening preview.
 - Recorded containing branch: `codex/ay-o-henry-preview` at [a871a4b63ef3f023f4dd930603c73fa940aa0319](https://github.com/Witali/ZX-video/commit/a871a4b63ef3f023f4dd930603c73fa940aa0319). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `aa2013bab38a3fbffecb97f1069b570d17e9fefa591c075da58c4000b84169d1`.
 - Hash-matched evidence / build settings: [ay-converter/analysis/o_henry/evidence/release/report.json](ay-converter/analysis/o_henry/evidence/release/report.json); [ay-converter/analysis/o_henry/evidence/release/verification.json](ay-converter/analysis/o_henry/evidence/release/verification.json).
-- Byte-identical retained copies: [ay-converter/analysis/o_henry/evidence/release/audio-preview.trd](ay-converter/analysis/o_henry/evidence/release/audio-preview.trd).
 
 O. Henry source seconds 60..84; unchanged music profile and chip-model noise fit, 1200 AY states. Speech audition awaiting user acceptance.
 
@@ -181,7 +163,6 @@ Saved change: Preserve vocal pitch in AY50 speech preview.
 - Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `37e0ae4d8876e5441c0f21cb87f0152bd98b5cc13dfe78e05fba6da1cfdf66a6`.
 - Hash-matched evidence / build settings: [audiobook-ay/pitch-preview/report.json](audiobook-ay/pitch-preview/report.json); [audiobook-ay/pitch-preview/verification.json](audiobook-ay/pitch-preview/verification.json).
-- Byte-identical retained copies: [audiobook-ay/pitch-preview/audiobook-preview.trd](audiobook-ay/pitch-preview/audiobook-preview.trd).
 
 Pitch-aware YM2149 speech synthesis, three tone generators and shared noise at interrupt rate.
 
@@ -196,7 +177,6 @@ Saved change: Improve bounded IMA and mu-law waveform quality search.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/results.json](audiobook-beeper/experiments/quality-max/results.json); [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd).
 
 Bounded quality search across direct IMA3, IMA4 and mu-law; per-codec controls, selected streams and candidate stages retained.
 
@@ -211,7 +191,6 @@ Saved change: Improve bounded IMA and mu-law waveform quality search.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/results.json](audiobook-beeper/experiments/quality-max/results.json); [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json).
-- Byte-identical retained copies: [ZX-audiobook-IMA4-PDM-search-test.trd](ZX-audiobook-IMA4-PDM-search-test.trd); [ZX-audiobook-quality-IMA4.trd](ZX-audiobook-quality-IMA4.trd); [audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd); [audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd).
 
 Bounded quality search across direct IMA3, IMA4 and mu-law; per-codec controls, selected streams and candidate stages retained.
 
@@ -226,7 +205,6 @@ Saved change: Improve bounded IMA and mu-law waveform quality search.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `1b9a4e45e6f34c1fde830ecabea85d4018a15c7b7600484d4fef5444f91c8667`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/results.json](audiobook-beeper/experiments/quality-max/results.json); [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/quality-max/evidence/mulaw/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/selected/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-32/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-32/audiobook-preview.trd).
 
 Bounded quality search across direct IMA3, IMA4 and mu-law; per-codec controls, selected streams and candidate stages retained.
 
@@ -241,7 +219,6 @@ Saved change: Add verified 128 kHz mu-law packet playback.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `c78eeaab5fc14347feb1f09217867a789ad49d30e77f73a6c648645d963041e6`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/mulaw128/results.json](audiobook-beeper/experiments/mulaw128/results.json); [audiobook-beeper/experiments/mulaw128/manifest.json](audiobook-beeper/experiments/mulaw128/manifest.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/mulaw128/evidence/speech-full/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/speech-full/audiobook-preview.trd); [audiobook-beeper/experiments/mulaw128/evidence/speech-full/waveform-64/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/speech-full/waveform-64/audiobook-preview.trd).
 
 Eight-bit mu-law packet-PDM 128-kHz study, including 64-kHz control and waveform candidates. Use path and evidence to distinguish each stage.
 
@@ -256,27 +233,11 @@ Saved change: Add verified compact mu-law TRD control.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/mulaw-trd/manifest.json](audiobook-beeper/experiments/mulaw-trd/manifest.json); [audiobook-beeper/experiments/mulaw-trd/qualified/report.json](audiobook-beeper/experiments/mulaw-trd/qualified/report.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd](audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd).
 
 Compact eight-bit mu-law source, expanded to amplitude only while generating PDM; qualified baseline converter image.
 
 Producer / orchestration: [audiobook-beeper/convert_mulaw_audio.py](audiobook-beeper/convert_mulaw_audio.py).
 Method, inputs and invocation: [audiobook-beeper/experiments/mulaw-trd/README.md](audiobook-beeper/experiments/mulaw-trd/README.md).
-
-### [ZX-audiobook-quality-IMA4.trd](ZX-audiobook-quality-IMA4.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/results.json](audiobook-beeper/experiments/ima-quality/results.json); [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [ZX-audiobook-IMA4-PDM-search-test.trd](ZX-audiobook-IMA4-PDM-search-test.trd); [ZX-audiobook-max-IMA4.trd](ZX-audiobook-max-IMA4.trd); [audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd); [audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd).
-
-Shared IMA3/IMA4 host quality search. music/speech names identify the source; selected, pilot, phase calibration, history, CLI and paused paths are distinct stages, not equally accepted releases.
-
-Producer / orchestration: [audiobook-beeper/experiments/ima-quality/run.py](audiobook-beeper/experiments/ima-quality/run.py); [audiobook-beeper/convert_ima3_audio.py](audiobook-beeper/convert_ima3_audio.py); [audiobook-beeper/convert_audio.py](audiobook-beeper/convert_audio.py).
-Method, inputs and invocation: [audiobook-beeper/experiments/ima-quality/README.md](audiobook-beeper/experiments/ima-quality/README.md).
 
 ### [ZX-music-Entertainer-AY-music50-test.trd](ZX-music-Entertainer-AY-music50-test.trd)
 
@@ -286,7 +247,6 @@ Saved change: Add verified 20-ms AY music profile and spectrogram comparison.
 - Recorded containing branch: `codex/ay-music-50hz` at [4484bab95df7359dea4ef46414025c9f1706aecb](https://github.com/Witali/ZX-video/commit/4484bab95df7359dea4ef46414025c9f1706aecb). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `e1ef02bc4bee6163698a4b8ed16dfaa12ec5c2852834a24e57b60d6631619663`.
 - Hash-matched evidence / build settings: [ay-converter/analysis/music50/evidence/archive-check.json](ay-converter/analysis/music50/evidence/archive-check.json); [ay-converter/analysis/music50/evidence/release/report.json](ay-converter/analysis/music50/evidence/release/report.json).
-- Byte-identical retained copies: [ay-converter/analysis/music50/evidence/release/audio-preview.trd](ay-converter/analysis/music50/evidence/release/audio-preview.trd).
 
 Entertainer converted with the 20-ms AY music preset.
 
@@ -301,7 +261,6 @@ Saved change: Fit AY noise colour against continuous chip simulation.
 - Recorded containing branch: `codex/ay-music-50hz` at [4484bab95df7359dea4ef46414025c9f1706aecb](https://github.com/Witali/ZX-video/commit/4484bab95df7359dea4ef46414025c9f1706aecb). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `a7d36854c41ca7f408619ffb32f6218aeb28324c397cdf30ff131e4d6f6a8691`.
 - Hash-matched evidence / build settings: [ay-converter/analysis/noise_colour/evidence/completion.json](ay-converter/analysis/noise_colour/evidence/completion.json); [ay-converter/analysis/noise_colour/evidence/release/report.json](ay-converter/analysis/noise_colour/evidence/release/report.json).
-- Byte-identical retained copies: [ay-converter/analysis/noise_colour/evidence/release/audio-preview.trd](ay-converter/analysis/noise_colour/evidence/release/audio-preview.trd).
 
 Entertainer with continuous AY chip-model noise fitting.
 
@@ -316,7 +275,6 @@ Saved change: Keep AY components on persistent channels and mix detected noise.
 - Recorded containing branch: `codex/ay-music-50hz` at [4484bab95df7359dea4ef46414025c9f1706aecb](https://github.com/Witali/ZX-video/commit/4484bab95df7359dea4ef46414025c9f1706aecb). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `2e6a14a9637a9fae6d7546826473148de1e3b263a8b58717abfcbfe61f79e8d4`.
 - Hash-matched evidence / build settings: [ay-converter/analysis/tracked50/evidence/release/report.json](ay-converter/analysis/tracked50/evidence/release/report.json); [ay-converter/analysis/tracked50/evidence/release/verification.json](ay-converter/analysis/tracked50/evidence/release/verification.json).
-- Byte-identical retained copies: [ay-converter/analysis/tracked50/evidence/release/audio-preview.trd](ay-converter/analysis/tracked50/evidence/release/audio-preview.trd).
 
 Entertainer with persistent tonal-component tracking and channel assignment at 50 Hz.
 
@@ -331,7 +289,6 @@ Saved change: Add generic AY audio converter and looping music preview.
 - Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `c6139c9c5cd4c18df82d3b1f208064790487a48db3883b26f916d00765fc177c`.
 - Hash-matched evidence / build settings: [audiobook-ay/music-preview/report.json](audiobook-ay/music-preview/report.json); [audiobook-ay/music-preview/verification.json](audiobook-ay/music-preview/verification.json).
-- Byte-identical retained copies: [audiobook-ay/music-preview/audio-preview.trd](audiobook-ay/music-preview/audio-preview.trd).
 
 Initial Entertainer music-to-AY conversion; the before-loading-label subdirectory preserves the earlier UI build.
 
@@ -360,7 +317,6 @@ Saved change: Add normalized Entertainer IMA3 and IMA4 disk previews.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `45144ad87f93cea4a28de9f6ae04e59851eabb325caa5ea74b53864efaab6c62`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/entertainer-normalized/comparison.json](audiobook-beeper/experiments/entertainer-normalized/comparison.json); [audiobook-beeper/experiments/entertainer-normalized/artifact-hashes.json](audiobook-beeper/experiments/entertainer-normalized/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/entertainer-normalized/ima3/audiobook-preview.trd](audiobook-beeper/experiments/entertainer-normalized/ima3/audiobook-preview.trd).
 
 Peak-normalized Entertainer source, encoded separately as IMA3 and IMA4.
 
@@ -375,7 +331,6 @@ Saved change: Add normalized Entertainer IMA3 and IMA4 disk previews.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `6f3e8f6fb5bcd92d243a97642cb8e9483f7cba83a904bdc3c78c919b784434d4`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/entertainer-normalized/comparison.json](audiobook-beeper/experiments/entertainer-normalized/comparison.json); [audiobook-beeper/experiments/entertainer-normalized/artifact-hashes.json](audiobook-beeper/experiments/entertainer-normalized/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/entertainer-normalized/ima4/audiobook-preview.trd](audiobook-beeper/experiments/entertainer-normalized/ima4/audiobook-preview.trd).
 
 Peak-normalized Entertainer source, encoded separately as IMA3 and IMA4.
 
@@ -390,7 +345,6 @@ Saved change: Improve IMA quality search and save paused study.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `49dbc1ef793d11e8bec474f57d321645edcbe24e9704c33516a9ad5466007e60`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/results.json](audiobook-beeper/experiments/ima-quality/results.json); [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/music3/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/music3/selected/audiobook-preview.trd).
 
 Shared IMA3/IMA4 host quality search. music/speech names identify the source; selected, pilot, phase calibration, history, CLI and paused paths are distinct stages, not equally accepted releases.
 
@@ -405,7 +359,6 @@ Saved change: Improve IMA quality search and save paused study.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `0da2ac5a1b12f4e0093f910a298018171c602037defc9ec16303472bcc6ee3e1`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/results.json](audiobook-beeper/experiments/ima-quality/results.json); [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/music4/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/music4/selected/audiobook-preview.trd).
 
 Shared IMA3/IMA4 host quality search. music/speech names identify the source; selected, pilot, phase calibration, history, CLI and paused paths are distinct stages, not equally accepted releases.
 
@@ -672,7 +625,6 @@ Saved change: Build monochrome comparison disk with timing evidence.
 - Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `38cecad279376a10b86fa5265930976b923d202465310026525eef2ed40cd16f`.
 - Hash-matched evidence / build settings: [toolkit/monochrome_preview_report.json](toolkit/monochrome_preview_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-- Byte-identical retained copies: [toolkit/monochrome_preview_evidence/cb41-monochrome-preview-ZX-video-monochrome-preview_part01.trd.trd](toolkit/monochrome_preview_evidence/cb41-monochrome-preview-ZX-video-monochrome-preview_part01.trd.trd).
 
 Monochrome 256-frame preview starting at frame 4128, five-level cells at 10 fps.
 
@@ -687,7 +639,6 @@ Saved change: Deliver the complete refined movie on four disks.
 - Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `f9039541aa1309fe8a3acf5ad7171f6ed52ef497b7f170585b995e64da1c19b8`.
 - Hash-matched evidence / build settings: [toolkit/refined_four_report.json](toolkit/refined_four_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-- Byte-identical retained copies: [toolkit/refined_four_evidence/ZX-video-refined_part01.trd](toolkit/refined_four_evidence/ZX-video-refined_part01.trd).
 
 Current four-disk cached refined-colour movie at 10 fps with 50-Hz AY; full verification accepts fallback timing, not zero late frames.
 
@@ -702,7 +653,6 @@ Saved change: Deliver the complete refined movie on four disks.
 - Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `eb0d781e1219d9dc59423876f0dc9d0b9cc7ff86cec0786e292c3d93ff820edf`.
 - Hash-matched evidence / build settings: [toolkit/refined_four_report.json](toolkit/refined_four_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-- Byte-identical retained copies: [toolkit/refined_four_evidence/ZX-video-refined_part02.trd](toolkit/refined_four_evidence/ZX-video-refined_part02.trd).
 
 Current four-disk cached refined-colour movie at 10 fps with 50-Hz AY; full verification accepts fallback timing, not zero late frames.
 
@@ -717,7 +667,6 @@ Saved change: Deliver the complete refined movie on four disks.
 - Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `4001ebc3a3b1cde5a637973039cdf6c1c41eec3f8fac9e40df740fdc72aea4c0`.
 - Hash-matched evidence / build settings: [toolkit/refined_four_report.json](toolkit/refined_four_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-- Byte-identical retained copies: [toolkit/refined_four_evidence/ZX-video-refined_part03.trd](toolkit/refined_four_evidence/ZX-video-refined_part03.trd).
 
 Current four-disk cached refined-colour movie at 10 fps with 50-Hz AY; full verification accepts fallback timing, not zero late frames.
 
@@ -732,7 +681,6 @@ Saved change: Deliver the complete refined movie on four disks.
 - Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `6c4861a9eb9d161429fdf0e85a9fd618dc9e6f69af4c8e31adb7952cc4c19eb5`.
 - Hash-matched evidence / build settings: [toolkit/refined_four_report.json](toolkit/refined_four_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-- Byte-identical retained copies: [toolkit/refined_four_evidence/ZX-video-refined_part04.trd](toolkit/refined_four_evidence/ZX-video-refined_part04.trd).
 
 Current four-disk cached refined-colour movie at 10 fps with 50-Hz AY; full verification accepts fallback timing, not zero late frames.
 
@@ -757,49 +705,6 @@ Saved change: Compare LPC2 speech analysis with an AY formant preview.
 - Image: 655360 bytes; SHA-256 `e0295a75b67db54cbeb92b15d75dd11180921f7d41a97bcdb1ffb1c60208fbd8`.
 - Hash-matched evidence / build settings: [audiobook-ay/lpc-probe/report.json](audiobook-ay/lpc-probe/report.json); [audiobook-ay/lpc-probe/verification.json](audiobook-ay/lpc-probe/verification.json).
 
-### audiobook-ay/music-preview
-
-Initial Entertainer music-to-AY conversion; the before-loading-label subdirectory preserves the earlier UI build.
-
-Producer / orchestration: [audiobook-ay/convert_audio.py](audiobook-ay/convert_audio.py).
-Method, inputs and invocation: [audiobook-ay/CONVERTER.md](audiobook-ay/CONVERTER.md).
-
-#### [audiobook-ay/music-preview/attempts/before-loading-label/audio-preview.trd](audiobook-ay/music-preview/attempts/before-loading-label/audio-preview.trd)
-
-Saved change: Add generic AY audio converter and looping music preview.
-
-- Exact artifact commit: [b44b1fd1696ed205db5ee603eb8d981194335864](https://github.com/Witali/ZX-video/commit/b44b1fd1696ed205db5ee603eb8d981194335864).
-- Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `d56c38ce62ea7398a559a02cc66a0aea6cfe42c557842f312dd238f8202a7fc5`.
-- Hash-matched evidence / build settings: [audiobook-ay/music-preview/artifact-hashes.json](audiobook-ay/music-preview/artifact-hashes.json); [audiobook-ay/music-preview/attempts/before-loading-label/report.json](audiobook-ay/music-preview/attempts/before-loading-label/report.json).
-
-#### [audiobook-ay/music-preview/audio-preview.trd](audiobook-ay/music-preview/audio-preview.trd)
-
-Saved change: Add generic AY audio converter and looping music preview.
-
-- Exact artifact commit: [b44b1fd1696ed205db5ee603eb8d981194335864](https://github.com/Witali/ZX-video/commit/b44b1fd1696ed205db5ee603eb8d981194335864).
-- Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `c6139c9c5cd4c18df82d3b1f208064790487a48db3883b26f916d00765fc177c`.
-- Hash-matched evidence / build settings: [audiobook-ay/music-preview/report.json](audiobook-ay/music-preview/report.json); [audiobook-ay/music-preview/verification.json](audiobook-ay/music-preview/verification.json).
-- Byte-identical retained copies: [ZX-music-Entertainer-AY.trd](ZX-music-Entertainer-AY.trd).
-
-### audiobook-ay/pitch-preview
-
-Pitch-aware YM2149 speech synthesis, three tone generators and shared noise at interrupt rate.
-
-Producer / orchestration: [audiobook-ay/probe_pitch_aware.py](audiobook-ay/probe_pitch_aware.py).
-Method, inputs and invocation: [audiobook-ay/PITCH_AWARE_PREVIEW.md](audiobook-ay/PITCH_AWARE_PREVIEW.md).
-
-#### [audiobook-ay/pitch-preview/audiobook-preview.trd](audiobook-ay/pitch-preview/audiobook-preview.trd)
-
-Saved change: Preserve vocal pitch in AY50 speech preview.
-
-- Exact artifact commit: [55c1a8cb5c43ef6244f3947482cdf6cde6267ecc](https://github.com/Witali/ZX-video/commit/55c1a8cb5c43ef6244f3947482cdf6cde6267ecc).
-- Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `37e0ae4d8876e5441c0f21cb87f0152bd98b5cc13dfe78e05fba6da1cfdf66a6`.
-- Hash-matched evidence / build settings: [audiobook-ay/pitch-preview/report.json](audiobook-ay/pitch-preview/report.json); [audiobook-ay/pitch-preview/verification.json](audiobook-ay/pitch-preview/verification.json).
-- Byte-identical retained copies: [ZX-audiobook-YM2149-voice-test.trd](ZX-audiobook-YM2149-voice-test.trd).
-
 ### audiobook-beeper/experiments/audio-converter
 
 Generic IMA4 audio-converter fixtures: short speech and silence, including calibration builds.
@@ -815,16 +720,6 @@ Saved change: Convert arbitrary audio prefixes to verified looping PDM disks.
 - Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `0ba2c5dc6951639f86ddb3ba9a7cdce8772145b5a27fb9833c4e3c43acfc42c4`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/audio-converter/fuse.json](audiobook-beeper/experiments/audio-converter/fuse.json); [audiobook-beeper/experiments/audio-converter/report.json](audiobook-beeper/experiments/audio-converter/report.json).
-
-#### [audiobook-beeper/experiments/audio-converter/checks/final-silence/audiobook-preview.trd](audiobook-beeper/experiments/audio-converter/checks/final-silence/audiobook-preview.trd)
-
-Saved change: Convert arbitrary audio prefixes to verified looping PDM disks.
-
-- Exact artifact commit: [d4a980d79b801fad9050a60f573898344743d49a](https://github.com/Witali/ZX-video/commit/d4a980d79b801fad9050a60f573898344743d49a).
-- Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `199e27aba4837fc9581888c1b8a6a445efb5a612046b06404a0c4820dfced0a5`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/audio-converter/checks/silence/fuse.json](audiobook-beeper/experiments/audio-converter/checks/silence/fuse.json); [audiobook-beeper/experiments/audio-converter/checks/silence/report.json](audiobook-beeper/experiments/audio-converter/checks/silence/report.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/audio-converter/checks/silence/audiobook-preview.trd](audiobook-beeper/experiments/audio-converter/checks/silence/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/audio-converter/checks/short/audiobook-preview.trd](audiobook-beeper/experiments/audio-converter/checks/short/audiobook-preview.trd)
 
@@ -843,7 +738,6 @@ Saved change: Convert arbitrary audio prefixes to verified looping PDM disks.
 - Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `199e27aba4837fc9581888c1b8a6a445efb5a612046b06404a0c4820dfced0a5`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/audio-converter/checks/silence/fuse.json](audiobook-beeper/experiments/audio-converter/checks/silence/fuse.json); [audiobook-beeper/experiments/audio-converter/checks/silence/report.json](audiobook-beeper/experiments/audio-converter/checks/silence/report.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/audio-converter/checks/final-silence/audiobook-preview.trd](audiobook-beeper/experiments/audio-converter/checks/final-silence/audiobook-preview.trd).
 
 ### audiobook-beeper/experiments/audio-dynamics
 
@@ -851,36 +745,6 @@ Gentle 2:1 source compression and normalization before IMA4 encoding; full five-
 
 Producer / orchestration: [audiobook-beeper/experiments/audio-dynamics/reproduce.py](audiobook-beeper/experiments/audio-dynamics/reproduce.py); [audiobook-beeper/convert_audio.py](audiobook-beeper/convert_audio.py).
 Method, inputs and invocation: [audiobook-beeper/experiments/audio-dynamics/README.md](audiobook-beeper/experiments/audio-dynamics/README.md).
-
-#### [audiobook-beeper/experiments/audio-dynamics/release/audio.trd](audiobook-beeper/experiments/audio-dynamics/release/audio.trd)
-
-Saved change: Qualify a full IMA4 disk with gentle source dynamics.
-
-- Exact artifact commit: [2454c14127ff8bfd9f8b015240cec25e675ab169](https://github.com/Witali/ZX-video/commit/2454c14127ff8bfd9f8b015240cec25e675ab169).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `e734494907b00ba0e5bbb36b65f37152710fd73ac06efc0865f728a0037b8004`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/audio-dynamics/postflight.json](audiobook-beeper/experiments/audio-dynamics/postflight.json); [audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json](audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json).
-- Byte-identical retained copies: [ZX-audiobook-IMA4-normalized-full-disk.trd](ZX-audiobook-IMA4-normalized-full-disk.trd).
-
-#### [audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-02-987/audiobook-preview.trd](audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-02-987/audiobook-preview.trd)
-
-Saved change: Qualify a full IMA4 disk with gentle source dynamics.
-
-- Exact artifact commit: [2454c14127ff8bfd9f8b015240cec25e675ab169](https://github.com/Witali/ZX-video/commit/2454c14127ff8bfd9f8b015240cec25e675ab169).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `3526d26b44ed09c25a4a76e697b342aa348a18d53554d227a7cfbaccd72e4977`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json](audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json); [audiobook-beeper/experiments/audio-dynamics/selected/part-00002/fuse.json](audiobook-beeper/experiments/audio-dynamics/selected/part-00002/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/audio-dynamics/selected/part-00002/audiobook-preview.trd](audiobook-beeper/experiments/audio-dynamics/selected/part-00002/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-05-988/audiobook-preview.trd](audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-05-988/audiobook-preview.trd)
-
-Saved change: Qualify a full IMA4 disk with gentle source dynamics.
-
-- Exact artifact commit: [2454c14127ff8bfd9f8b015240cec25e675ab169](https://github.com/Witali/ZX-video/commit/2454c14127ff8bfd9f8b015240cec25e675ab169).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `555f8229c47d92026dcd5c5c1f2ac943a2391b67c413541477f9fe63b4493315`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json](audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json); [audiobook-beeper/experiments/audio-dynamics/selected/part-00005/fuse.json](audiobook-beeper/experiments/audio-dynamics/selected/part-00005/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/audio-dynamics/selected/part-00005/audiobook-preview.trd](audiobook-beeper/experiments/audio-dynamics/selected/part-00005/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/audio-dynamics/selected/part-00001/audiobook-preview.trd](audiobook-beeper/experiments/audio-dynamics/selected/part-00001/audiobook-preview.trd)
 
@@ -899,7 +763,6 @@ Saved change: Qualify a full IMA4 disk with gentle source dynamics.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `3526d26b44ed09c25a4a76e697b342aa348a18d53554d227a7cfbaccd72e4977`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json](audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json); [audiobook-beeper/experiments/audio-dynamics/selected/part-00002/fuse.json](audiobook-beeper/experiments/audio-dynamics/selected/part-00002/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-02-987/audiobook-preview.trd](audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-02-987/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/audio-dynamics/selected/part-00003/audiobook-preview.trd](audiobook-beeper/experiments/audio-dynamics/selected/part-00003/audiobook-preview.trd)
 
@@ -927,34 +790,6 @@ Saved change: Qualify a full IMA4 disk with gentle source dynamics.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `555f8229c47d92026dcd5c5c1f2ac943a2391b67c413541477f9fe63b4493315`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json](audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json); [audiobook-beeper/experiments/audio-dynamics/selected/part-00005/fuse.json](audiobook-beeper/experiments/audio-dynamics/selected/part-00005/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-05-988/audiobook-preview.trd](audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-05-988/audiobook-preview.trd).
-
-### audiobook-beeper/experiments/entertainer-normalized
-
-Peak-normalized Entertainer source, encoded separately as IMA3 and IMA4.
-
-Producer / orchestration: [audiobook-beeper/experiments/entertainer-normalized/build.py](audiobook-beeper/experiments/entertainer-normalized/build.py).
-Method, inputs and invocation: [audiobook-beeper/experiments/entertainer-normalized/README.md](audiobook-beeper/experiments/entertainer-normalized/README.md).
-
-#### [audiobook-beeper/experiments/entertainer-normalized/ima3/audiobook-preview.trd](audiobook-beeper/experiments/entertainer-normalized/ima3/audiobook-preview.trd)
-
-Saved change: Add normalized Entertainer IMA3 and IMA4 disk previews.
-
-- Exact artifact commit: [a2bad4eeddb5d53341e349c39946c2683fbd7f24](https://github.com/Witali/ZX-video/commit/a2bad4eeddb5d53341e349c39946c2683fbd7f24).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `45144ad87f93cea4a28de9f6ae04e59851eabb325caa5ea74b53864efaab6c62`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/entertainer-normalized/comparison.json](audiobook-beeper/experiments/entertainer-normalized/comparison.json); [audiobook-beeper/experiments/entertainer-normalized/artifact-hashes.json](audiobook-beeper/experiments/entertainer-normalized/artifact-hashes.json).
-- Byte-identical retained copies: [ZX-music-Entertainer-normalized-IMA3.trd](ZX-music-Entertainer-normalized-IMA3.trd).
-
-#### [audiobook-beeper/experiments/entertainer-normalized/ima4/audiobook-preview.trd](audiobook-beeper/experiments/entertainer-normalized/ima4/audiobook-preview.trd)
-
-Saved change: Add normalized Entertainer IMA3 and IMA4 disk previews.
-
-- Exact artifact commit: [a2bad4eeddb5d53341e349c39946c2683fbd7f24](https://github.com/Witali/ZX-video/commit/a2bad4eeddb5d53341e349c39946c2683fbd7f24).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `6f3e8f6fb5bcd92d243a97642cb8e9483f7cba83a904bdc3c78c919b784434d4`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/entertainer-normalized/comparison.json](audiobook-beeper/experiments/entertainer-normalized/comparison.json); [audiobook-beeper/experiments/entertainer-normalized/artifact-hashes.json](audiobook-beeper/experiments/entertainer-normalized/artifact-hashes.json).
-- Byte-identical retained copies: [ZX-music-Entertainer-normalized-IMA4.trd](ZX-music-Entertainer-normalized-IMA4.trd).
 
 ### audiobook-beeper/experiments/ima-3bit-direct
 
@@ -978,16 +813,6 @@ IMA3 waveform search with overlapping windows; accepted speech reference. Series
 
 Producer / orchestration: [audiobook-beeper/experiments/ima-3bit-overlap/reproduce.py](audiobook-beeper/experiments/ima-3bit-overlap/reproduce.py); [audiobook-beeper/convert_ima3_audio.py](audiobook-beeper/convert_ima3_audio.py).
 Method, inputs and invocation: [audiobook-beeper/experiments/ima-3bit-overlap/README.md](audiobook-beeper/experiments/ima-3bit-overlap/README.md).
-
-#### [audiobook-beeper/experiments/ima-3bit-overlap/audio.trd](audiobook-beeper/experiments/ima-3bit-overlap/audio.trd)
-
-Saved change: Fix periodic speech errors with overlapping IMA waveform search.
-
-- Exact artifact commit: [e3a9dc2cf820f083cf8725eaf23a4a264facbdd0](https://github.com/Witali/ZX-video/commit/e3a9dc2cf820f083cf8725eaf23a4a264facbdd0).
-- Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `ac4b740ebdcf2f9fb538d286b8ac679df6babc53462cf79b18f08cc8b5a2d66d`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-3bit-overlap/volumes.json](audiobook-beeper/experiments/ima-3bit-overlap/volumes.json); [audiobook-beeper/experiments/ima-3bit-overlap/comparison.json](audiobook-beeper/experiments/ima-3bit-overlap/comparison.json).
-- Byte-identical retained copies: [ZX-audiobook-IMA3-overlap-test.trd](ZX-audiobook-IMA3-overlap-test.trd).
 
 #### [audiobook-beeper/experiments/ima-3bit-overlap/qualified/audiobook-preview.trd](audiobook-beeper/experiments/ima-3bit-overlap/qualified/audiobook-preview.trd)
 
@@ -1058,23 +883,6 @@ Saved change: Add sequential IMA3 disks with single-disk default.
 - Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `35f588ca95b7c94c36212eccc6534d3340ac570df2a70217a2674052f0e11714`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-3bit-series/artifact-hashes.json](audiobook-beeper/experiments/ima-3bit-series/artifact-hashes.json); [audiobook-beeper/experiments/ima-3bit-series/swap/volumes.json](audiobook-beeper/experiments/ima-3bit-series/swap/volumes.json).
-
-### audiobook-beeper/experiments/ima-3bit-waveform
-
-Historical three-bit IMA alphabet with waveform-aware PC encoding; this pre-direct experiment expands the packed stream to IMA4 at load time.
-
-Producer / orchestration: [audiobook-beeper/ima_waveform_encoder.py](audiobook-beeper/ima_waveform_encoder.py); [audiobook-beeper/verify_waveform_disk.py](audiobook-beeper/verify_waveform_disk.py).
-Method, inputs and invocation: [audiobook-beeper/IMA3_WAVEFORM.md](audiobook-beeper/IMA3_WAVEFORM.md).
-
-#### [audiobook-beeper/experiments/ima-3bit-waveform/audiobook-preview.trd](audiobook-beeper/experiments/ima-3bit-waveform/audiobook-preview.trd)
-
-Saved change: Reach 20 dB with waveform-aware IMA3 disk encoding.
-
-- Exact artifact commit: [63898f5c15aa79ac04fdf322fcd53248f82f50c1](https://github.com/Witali/ZX-video/commit/63898f5c15aa79ac04fdf322fcd53248f82f50c1).
-- Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `5556a64f54ad932e8b65f96f6f55b4bffafae9e5bbec0ba025463fe0c2b34f89`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-3bit-waveform/fuse.json](audiobook-beeper/experiments/ima-3bit-waveform/fuse.json); [audiobook-beeper/experiments/ima-3bit-waveform/report.json](audiobook-beeper/experiments/ima-3bit-waveform/report.json).
-- Byte-identical retained copies: [ZX-audiobook-IMA3-waveform-test.trd](ZX-audiobook-IMA3-waveform-test.trd).
 
 ### audiobook-beeper/experiments/ima-direct-locked
 
@@ -1182,54 +990,6 @@ Saved change: Improve IMA quality search and save paused study.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-03/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-03/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `63c9784372e341b9755a71c96b0c2936ce6422695ec3248f704b2489a2cc5543`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-01/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `d0a2631b1f5739a19e37fa36e089a6a46d61ba94a1c66f67f5e76a51e08b04ff`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-02/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `2441c4c6077293ed81e4a73bf6bbef9786977d7eed93f27eadc2516e5600b3c9`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-03/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/audiobook-preview.trd)
 
@@ -1239,84 +999,6 @@ Saved change: Improve IMA quality search and save paused study.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `bfb642ee669988b3dad687a420a8d1d9119ef37af55d4a0141bba1963be4eca7`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-03/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `2fc4e1fe4029a70e3e15445598747819a849edfd22b678e7dbef17f320a9df58`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-01/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `0e88b9faf8dbf84dbba9b055a02c75db533afd18a92af6c1abe33a6aabdf672e`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-02/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `ea50878e84c03712f04e3674579ddb02b492956b44a883d700ac15ee985f1d43`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-03/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `bfb642ee669988b3dad687a420a8d1d9119ef37af55d4a0141bba1963be4eca7`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-03/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `9112feaabc464ccb55ee6c0bc6ccb32361058a267056376e973f4c7cead280bb`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-00/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-01/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `2f164d85f62efef9e4c6e011b0fea031350ea97973ff72b72f18c2ff3efbb471`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-01/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-02/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `e7cce85870e16d6f7884c0873afd0548c6fef8053e8815b1989fa800231f53bf`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-02/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/audiobook-preview.trd)
 
@@ -1327,73 +1009,6 @@ Saved change: Improve IMA quality search and save paused study.
 - Image: 655360 bytes; SHA-256 `f538082abd1be4732ba54a9c6a3f4521c8d04cc54a1617838073768179c91286`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/fuse.json).
 
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `5900f44cce16eeac13b959e5fc67cd20d293220356971da45db0a26e27989bdd`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-00/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-01/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `06cff9b50fbc8d478a99b7ff9b470d0d7747350d1e9726cc88f6bfb1fe728041`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-01/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-02/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `64b5e5e901a2fabccbdf62eff50f12446a02298cd5a7ee005740344f4a2cd8f8`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-02/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-03/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `ed0028f050c93e6399e01c165877d6d5b136d5ec84332f354d8573c2da243d50`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-01/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `564e1e1c515a9f6f8642fbf5dd6228872f7663d43c8dbacce9fe90d5592f6663`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-02/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `9b4ff91b2c53c7704e1ab8c369de01364925a4f2eea183cba673467ca6a8772a`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
 #### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-03/audiobook-preview.trd)
 
 Saved change: Improve IMA quality search and save paused study.
@@ -1403,46 +1018,6 @@ Saved change: Improve IMA quality search and save paused study.
 - Image: 655360 bytes; SHA-256 `a3a9ed1741f03999dc43bd91ad21d862454b11c3183eb9410c9ca3a673eae981`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-03/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-03/fuse.json).
 
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-00/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-01/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `450898716c236e62371f8f41acde87985fef61635c5fab1f277a971210cca217`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-01/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-02/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `ba9c14e88e2bac5d6c15ede04b43340e5d6efc4b8b7eea0def71340a541085e6`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-02/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `c9862f9f8b4a3f5f355b07d761616f59f8501ab2211835e90ae47bde97c8d150`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-03/audiobook-preview.trd).
-
 #### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd)
 
 Saved change: Improve IMA quality search and save paused study.
@@ -1451,136 +1026,6 @@ Saved change: Improve IMA quality search and save paused study.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-03/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `97b738bda1430edcdc509dbc0c1a6e8d497b70e1b9c1a1ad2a0639f121031f1a`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-03/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/selected/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `9112feaabc464ccb55ee6c0bc6ccb32361058a267056376e973f4c7cead280bb`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-00/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-01/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `2f164d85f62efef9e4c6e011b0fea031350ea97973ff72b72f18c2ff3efbb471`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-01/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-02/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `e7cce85870e16d6f7884c0873afd0548c6fef8053e8815b1989fa800231f53bf`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-02/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-03/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `c0097c769dc5d09d4724607e4377c6a15e5c86344f335852de29daa211881d97`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-03/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-03/fuse.json).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `5900f44cce16eeac13b959e5fc67cd20d293220356971da45db0a26e27989bdd`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-00/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-01/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `06cff9b50fbc8d478a99b7ff9b470d0d7747350d1e9726cc88f6bfb1fe728041`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-01/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-02/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `64b5e5e901a2fabccbdf62eff50f12446a02298cd5a7ee005740344f4a2cd8f8`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-02/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-03/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `97b738bda1430edcdc509dbc0c1a6e8d497b70e1b9c1a1ad2a0639f121031f1a`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/selected/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-00/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-01/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `450898716c236e62371f8f41acde87985fef61635c5fab1f277a971210cca217`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-01/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-02/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `ba9c14e88e2bac5d6c15ede04b43340e5d6efc4b8b7eea0def71340a541085e6`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-02/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-03/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `c9862f9f8b4a3f5f355b07d761616f59f8501ab2211835e90ae47bde97c8d150`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/selected/audiobook-preview.trd)
 
@@ -1590,7 +1035,6 @@ Saved change: Improve IMA quality search and save paused study.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `97b738bda1430edcdc509dbc0c1a6e8d497b70e1b9c1a1ad2a0639f121031f1a`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/fuse.json](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-03/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd)
 
@@ -1600,7 +1044,6 @@ Saved change: Improve IMA quality search and save paused study.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-00/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-00/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/ima-quality/history/music4-verified/disk-encode-1/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/history/music4-verified/disk-encode-1/audiobook-preview.trd)
 
@@ -1629,130 +1072,6 @@ Saved change: Improve IMA quality search and save paused study.
 - Image: 655360 bytes; SHA-256 `5786f20179774ce2ce2ff25be0819fe5b4b3f7f3f4d68f8d7fcaa5b5c25c0f39`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/speech4/disk-encode-1/fuse.json](audiobook-beeper/experiments/ima-quality/speech4/disk-encode-1/fuse.json).
 
-#### [audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/results.json](audiobook-beeper/experiments/ima-quality/results.json); [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [ZX-audiobook-IMA4-PDM-search-test.trd](ZX-audiobook-IMA4-PDM-search-test.trd); [ZX-audiobook-max-IMA4.trd](ZX-audiobook-max-IMA4.trd); [ZX-audiobook-quality-IMA4.trd](ZX-audiobook-quality-IMA4.trd); [audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd); [audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/music3/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/music3/selected/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `49dbc1ef793d11e8bec474f57d321645edcbe24e9704c33516a9ad5466007e60`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/results.json](audiobook-beeper/experiments/ima-quality/results.json); [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [ZX-music-Entertainer-quality-IMA3.trd](ZX-music-Entertainer-quality-IMA3.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/music4/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/music4/selected/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `0da2ac5a1b12f4e0093f910a298018171c602037defc9ec16303472bcc6ee3e1`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/results.json](audiobook-beeper/experiments/ima-quality/results.json); [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [ZX-music-Entertainer-quality-IMA4.trd](ZX-music-Entertainer-quality-IMA4.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-1/calibration/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-1/calibration/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `3f6f0b693bc17ffdd3e893b76fdd74f6e7a19c558ca6a85a58056041a3997f6e`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/fuse.json](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/fuse.json).
-- Byte-identical retained copies: [ZX-audiobook-max-IMA3.trd](ZX-audiobook-max-IMA3.trd); [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `fa3919bb4759e3759fe53e40c204df275271b48fb34b965cb1a8d773328aa79f`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-01/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `b872311ebfd532f8796963d10a11958c5252b4a94a290b77a34494128012d779`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-02/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `44c332425b3135bfc2a1a841ae16287f9d3417db4dc6d58f3688c57fa2b4fef7`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/fuse.json](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/fuse.json).
-- Byte-identical retained copies: [ZX-audiobook-max-IMA3.trd](ZX-audiobook-max-IMA3.trd); [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-00/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `233f118bbff3400b69653440265fd6fbdd9fa6e3402c80301e9b55377385c0db`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-01/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `7ffdd9e933f160240d4f6358d1babcd1661f778095137ef6388e425aeeb75c77`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-
-#### [audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-02/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `bf6d8531f3646854e1ee68d6f21ec39e0346af211e5a6168acf10554889fb023`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json); [audiobook-beeper/experiments/ima4-overlap/manifest.json](audiobook-beeper/experiments/ima4-overlap/manifest.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima4-overlap/evidence/disk-overlap/audiobook-preview.trd](audiobook-beeper/experiments/ima4-overlap/evidence/disk-overlap/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd)
-
-Saved change: Improve IMA quality search and save paused study.
-
-- Exact artifact commit: [cf1988f8a2183863cbedc84b2bd5b92019ae5526](https://github.com/Witali/ZX-video/commit/cf1988f8a2183863cbedc84b2bd5b92019ae5526).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-quality/results.json](audiobook-beeper/experiments/ima-quality/results.json); [audiobook-beeper/experiments/ima-quality/artifact-hashes.json](audiobook-beeper/experiments/ima-quality/artifact-hashes.json).
-- Byte-identical retained copies: [ZX-audiobook-IMA4-PDM-search-test.trd](ZX-audiobook-IMA4-PDM-search-test.trd); [ZX-audiobook-max-IMA4.trd](ZX-audiobook-max-IMA4.trd); [ZX-audiobook-quality-IMA4.trd](ZX-audiobook-quality-IMA4.trd); [audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd); [audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd).
-
 ### audiobook-beeper/experiments/ima-waveform
 
 Waveform-aware four-bit IMA host search, rebuilt and verified on the candidate clock; includes all saved phase candidates.
@@ -1768,44 +1087,6 @@ Saved change: Reach 21 dB with waveform-aware IMA encoding.
 - Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `68c22d1e49273242393b009c030a86ea395ca234ea9fdf36b988edb5a2568aa6`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-waveform/fuse.json](audiobook-beeper/experiments/ima-waveform/fuse.json); [audiobook-beeper/experiments/ima-waveform/report.json](audiobook-beeper/experiments/ima-waveform/report.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-waveform/calibration/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-waveform/calibration/phase-03/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima-waveform/calibration/phase-00/audiobook-preview.trd](audiobook-beeper/experiments/ima-waveform/calibration/phase-00/audiobook-preview.trd)
-
-Saved change: Reach 21 dB with waveform-aware IMA encoding.
-
-- Exact artifact commit: [5d28485e36cb83c31bee2ea07f08f74ea8dfb722](https://github.com/Witali/ZX-video/commit/5d28485e36cb83c31bee2ea07f08f74ea8dfb722).
-- Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `9dbdbd98548ec4b316b1b810a73f361a44885fb54a955da561bedad50c3b6234`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-waveform/artifacts.json](audiobook-beeper/experiments/ima-waveform/artifacts.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-
-#### [audiobook-beeper/experiments/ima-waveform/calibration/phase-01/audiobook-preview.trd](audiobook-beeper/experiments/ima-waveform/calibration/phase-01/audiobook-preview.trd)
-
-Saved change: Reach 21 dB with waveform-aware IMA encoding.
-
-- Exact artifact commit: [5d28485e36cb83c31bee2ea07f08f74ea8dfb722](https://github.com/Witali/ZX-video/commit/5d28485e36cb83c31bee2ea07f08f74ea8dfb722).
-- Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `7e63b4070cb034dc0da6603ebc37a4559ca236b5dff702a539ab82e72baf3184`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-waveform/artifacts.json](audiobook-beeper/experiments/ima-waveform/artifacts.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-
-#### [audiobook-beeper/experiments/ima-waveform/calibration/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-waveform/calibration/phase-02/audiobook-preview.trd)
-
-Saved change: Reach 21 dB with waveform-aware IMA encoding.
-
-- Exact artifact commit: [5d28485e36cb83c31bee2ea07f08f74ea8dfb722](https://github.com/Witali/ZX-video/commit/5d28485e36cb83c31bee2ea07f08f74ea8dfb722).
-- Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `871ae04f4e3df3ceac9583adaf25755d03ac41c22a2d23d79d8c91beffa107d3`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-waveform/artifacts.json](audiobook-beeper/experiments/ima-waveform/artifacts.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-
-#### [audiobook-beeper/experiments/ima-waveform/calibration/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-waveform/calibration/phase-03/audiobook-preview.trd)
-
-Saved change: Reach 21 dB with waveform-aware IMA encoding.
-
-- Exact artifact commit: [5d28485e36cb83c31bee2ea07f08f74ea8dfb722](https://github.com/Witali/ZX-video/commit/5d28485e36cb83c31bee2ea07f08f74ea8dfb722).
-- Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `68c22d1e49273242393b009c030a86ea395ca234ea9fdf36b988edb5a2568aa6`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima-waveform/fuse.json](audiobook-beeper/experiments/ima-waveform/fuse.json); [audiobook-beeper/experiments/ima-waveform/report.json](audiobook-beeper/experiments/ima-waveform/report.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-waveform/audiobook-preview.trd](audiobook-beeper/experiments/ima-waveform/audiobook-preview.trd).
 
 ### audiobook-beeper/experiments/ima4-full-disk
 
@@ -1823,26 +1104,6 @@ Saved change: Generate a full IMA4 disk with sequential playback.
 - Image: 655360 bytes; SHA-256 `2e17ed6e14a03a98448ebd5c73d599a76d521430999d4a47f4732567e02df12b`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json](audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json); [audiobook-beeper/experiments/ima4-full-disk/micro/volumes.json](audiobook-beeper/experiments/ima4-full-disk/micro/volumes.json).
 
-#### [audiobook-beeper/experiments/ima4-full-disk/release/audio.trd](audiobook-beeper/experiments/ima4-full-disk/release/audio.trd)
-
-Saved change: Generate a full IMA4 disk with sequential playback.
-
-- Exact artifact commit: [6a3d3313f78c345c05e718c8079a3edd93acfa30](https://github.com/Witali/ZX-video/commit/6a3d3313f78c345c05e718c8079a3edd93acfa30).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `a7e4fb4f289b036b2f84e2032938894767875db3b1e70fbe19d79780af106aa7`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json](audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json); [audiobook-beeper/experiments/ima4-full-disk/release/report.json](audiobook-beeper/experiments/ima4-full-disk/release/report.json).
-- Byte-identical retained copies: [ZX-audiobook-IMA4-full-disk.trd](ZX-audiobook-IMA4-full-disk.trd).
-
-#### [audiobook-beeper/experiments/ima4-full-disk/release/verification/cold-0001/phase-reference-01-987/audiobook-preview.trd](audiobook-beeper/experiments/ima4-full-disk/release/verification/cold-0001/phase-reference-01-987/audiobook-preview.trd)
-
-Saved change: Generate a full IMA4 disk with sequential playback.
-
-- Exact artifact commit: [6a3d3313f78c345c05e718c8079a3edd93acfa30](https://github.com/Witali/ZX-video/commit/6a3d3313f78c345c05e718c8079a3edd93acfa30).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `d854a09e32d20260264018a6545bd8d51082d2c6ee7d76c18e46b1e885a4edce`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json](audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json); [audiobook-beeper/experiments/ima4-full-disk/searches/part-00001/fuse.json](audiobook-beeper/experiments/ima4-full-disk/searches/part-00001/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima4-full-disk/selected/part-00001/audiobook-preview.trd](audiobook-beeper/experiments/ima4-full-disk/selected/part-00001/audiobook-preview.trd).
-
 #### [audiobook-beeper/experiments/ima4-full-disk/selected/part-00001/audiobook-preview.trd](audiobook-beeper/experiments/ima4-full-disk/selected/part-00001/audiobook-preview.trd)
 
 Saved change: Generate a full IMA4 disk with sequential playback.
@@ -1851,7 +1112,6 @@ Saved change: Generate a full IMA4 disk with sequential playback.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `d854a09e32d20260264018a6545bd8d51082d2c6ee7d76c18e46b1e885a4edce`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json](audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json); [audiobook-beeper/experiments/ima4-full-disk/searches/part-00001/fuse.json](audiobook-beeper/experiments/ima4-full-disk/searches/part-00001/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima4-full-disk/release/verification/cold-0001/phase-reference-01-987/audiobook-preview.trd](audiobook-beeper/experiments/ima4-full-disk/release/verification/cold-0001/phase-reference-01-987/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/ima4-full-disk/selected/part-00002/audiobook-preview.trd](audiobook-beeper/experiments/ima4-full-disk/selected/part-00002/audiobook-preview.trd)
 
@@ -1913,51 +1173,6 @@ Saved change: Verify IMA4 overlapping PDM search against control.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `bf6d8531f3646854e1ee68d6f21ec39e0346af211e5a6168acf10554889fb023`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima4-overlap/manifest.json](audiobook-beeper/experiments/ima4-overlap/manifest.json); [audiobook-beeper/experiments/ima4-overlap/evidence/disk-overlap/fuse.json](audiobook-beeper/experiments/ima4-overlap/evidence/disk-overlap/fuse.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-02/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-02/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd)
-
-Saved change: Verify IMA4 overlapping PDM search against control.
-
-- Exact artifact commit: [db67cae7c4c84e532ed6044b0cd141c8a6465694](https://github.com/Witali/ZX-video/commit/db67cae7c4c84e532ed6044b0cd141c8a6465694).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/ima4-overlap/manifest.json](audiobook-beeper/experiments/ima4-overlap/manifest.json); [audiobook-beeper/experiments/ima4-overlap/evidence/report.json](audiobook-beeper/experiments/ima4-overlap/evidence/report.json).
-- Byte-identical retained copies: [ZX-audiobook-IMA4-PDM-search-test.trd](ZX-audiobook-IMA4-PDM-search-test.trd); [ZX-audiobook-max-IMA4.trd](ZX-audiobook-max-IMA4.trd); [ZX-audiobook-quality-IMA4.trd](ZX-audiobook-quality-IMA4.trd); [audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd).
-
-### audiobook-beeper/experiments/loop-debugger-interrupted
-
-Precomputed 8-kHz PCM-to-PDM timing pilot from an interrupted debugger session; interruption alone does not prove a defective disk.
-
-Producer / orchestration: [audiobook-beeper/build_pdm.py](audiobook-beeper/build_pdm.py).
-Method, inputs and invocation: [audiobook-beeper/README.md](audiobook-beeper/README.md).
-
-#### [audiobook-beeper/experiments/loop-debugger-interrupted/timing-pilot/audiobook-preview.trd](audiobook-beeper/experiments/loop-debugger-interrupted/timing-pilot/audiobook-preview.trd)
-
-Saved change: Add looping 8 kHz 8-bit audiobook PDM test.
-
-- Exact artifact commit: [5c9200a2a1d64343e207163a91f03ce819cd0b5e](https://github.com/Witali/ZX-video/commit/5c9200a2a1d64343e207163a91f03ce819cd0b5e).
-- Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `91ba4b710ce4c6b6bd01ff1a657ef769889ac7dd2cec1c0ba1aebe5272321c94`.
-- Hash-matched evidence / build settings: [audiobook-beeper/preview-8k8-loop/report.json](audiobook-beeper/preview-8k8-loop/report.json); [audiobook-beeper/preview-8k8-loop/timing-pilot/verification.json](audiobook-beeper/preview-8k8-loop/timing-pilot/verification.json).
-- Byte-identical retained copies: [audiobook-beeper/preview-8k8-loop/timing-pilot/audiobook-preview.trd](audiobook-beeper/preview-8k8-loop/timing-pilot/audiobook-preview.trd).
-
-### audiobook-beeper/experiments/mulaw-trd
-
-Compact eight-bit mu-law source, expanded to amplitude only while generating PDM; qualified baseline converter image.
-
-Producer / orchestration: [audiobook-beeper/convert_mulaw_audio.py](audiobook-beeper/convert_mulaw_audio.py).
-Method, inputs and invocation: [audiobook-beeper/experiments/mulaw-trd/README.md](audiobook-beeper/experiments/mulaw-trd/README.md).
-
-#### [audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd](audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd)
-
-Saved change: Add verified compact mu-law TRD control.
-
-- Exact artifact commit: [190e655f9f1bb3f32a07bce47ad6ee8dfb7e4fb0](https://github.com/Witali/ZX-video/commit/190e655f9f1bb3f32a07bce47ad6ee8dfb7e4fb0).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/mulaw-trd/manifest.json](audiobook-beeper/experiments/mulaw-trd/manifest.json); [audiobook-beeper/experiments/mulaw-trd/qualified/report.json](audiobook-beeper/experiments/mulaw-trd/qualified/report.json).
-- Byte-identical retained copies: [ZX-audiobook-mulaw-test.trd](ZX-audiobook-mulaw-test.trd); [audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd).
 
 ### audiobook-beeper/experiments/mulaw128
 
@@ -1974,7 +1189,6 @@ Saved change: Add verified 128 kHz mu-law packet playback.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `ee0c50a8ec6a65055b36f461ca9ac57b96532517fd79ad8f07b79e3df97a6f05`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/mulaw128/manifest.json](audiobook-beeper/experiments/mulaw128/manifest.json); [audiobook-beeper/experiments/mulaw128/evidence/control64/report.json](audiobook-beeper/experiments/mulaw128/evidence/control64/report.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/mulaw128/evidence/control64/waveform-32/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/control64/waveform-32/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/mulaw128/evidence/control64/control/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/control64/control/audiobook-preview.trd)
 
@@ -1994,16 +1208,6 @@ Saved change: Add verified 128 kHz mu-law packet playback.
 - Image: 655360 bytes; SHA-256 `65cc4ee903766b25d049550eadaa1d84c205757493c773d4fd5340a7a08f7c5e`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/mulaw128/manifest.json](audiobook-beeper/experiments/mulaw128/manifest.json); [audiobook-beeper/experiments/mulaw128/evidence/control64/report.json](audiobook-beeper/experiments/mulaw128/evidence/control64/report.json).
 
-#### [audiobook-beeper/experiments/mulaw128/evidence/control64/waveform-32/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/control64/waveform-32/audiobook-preview.trd)
-
-Saved change: Add verified 128 kHz mu-law packet playback.
-
-- Exact artifact commit: [ef294dc3db26943afccfd9d8aa44f08e65380f03](https://github.com/Witali/ZX-video/commit/ef294dc3db26943afccfd9d8aa44f08e65380f03).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `ee0c50a8ec6a65055b36f461ca9ac57b96532517fd79ad8f07b79e3df97a6f05`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/mulaw128/manifest.json](audiobook-beeper/experiments/mulaw128/manifest.json); [audiobook-beeper/experiments/mulaw128/evidence/control64/report.json](audiobook-beeper/experiments/mulaw128/evidence/control64/report.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/mulaw128/evidence/control64/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/control64/audiobook-preview.trd).
-
 #### [audiobook-beeper/experiments/mulaw128/evidence/control64/waveform-8/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/control64/waveform-8/audiobook-preview.trd)
 
 Saved change: Add verified 128 kHz mu-law packet playback.
@@ -2022,16 +1226,6 @@ Saved change: Add verified 128 kHz mu-law packet playback.
 - Image: 655360 bytes; SHA-256 `73e43bb7a9b633a67f9933d49ebc0e3dae89b13588cc888c14a7007480ff30de`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/mulaw128/manifest.json](audiobook-beeper/experiments/mulaw128/manifest.json); [audiobook-beeper/experiments/mulaw128/evidence/micro-all-bytes/fuse.json](audiobook-beeper/experiments/mulaw128/evidence/micro-all-bytes/fuse.json).
 
-#### [audiobook-beeper/experiments/mulaw128/evidence/speech-full/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/speech-full/audiobook-preview.trd)
-
-Saved change: Add verified 128 kHz mu-law packet playback.
-
-- Exact artifact commit: [ef294dc3db26943afccfd9d8aa44f08e65380f03](https://github.com/Witali/ZX-video/commit/ef294dc3db26943afccfd9d8aa44f08e65380f03).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `c78eeaab5fc14347feb1f09217867a789ad49d30e77f73a6c648645d963041e6`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/mulaw128/results.json](audiobook-beeper/experiments/mulaw128/results.json); [audiobook-beeper/experiments/mulaw128/manifest.json](audiobook-beeper/experiments/mulaw128/manifest.json).
-- Byte-identical retained copies: [ZX-audiobook-mulaw-128-test.trd](ZX-audiobook-mulaw-128-test.trd); [audiobook-beeper/experiments/mulaw128/evidence/speech-full/waveform-64/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/speech-full/waveform-64/audiobook-preview.trd).
-
 #### [audiobook-beeper/experiments/mulaw128/evidence/speech-full/pilot/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/speech-full/pilot/audiobook-preview.trd)
 
 Saved change: Add verified 128 kHz mu-law packet playback.
@@ -2049,16 +1243,6 @@ Saved change: Add verified 128 kHz mu-law packet playback.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `9fe693262d00b2ef9843acfa1f9de02596811f9d7f12fd4bb08d5955dd53073e`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/mulaw128/results.json](audiobook-beeper/experiments/mulaw128/results.json); [audiobook-beeper/experiments/mulaw128/manifest.json](audiobook-beeper/experiments/mulaw128/manifest.json).
-
-#### [audiobook-beeper/experiments/mulaw128/evidence/speech-full/waveform-64/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/speech-full/waveform-64/audiobook-preview.trd)
-
-Saved change: Add verified 128 kHz mu-law packet playback.
-
-- Exact artifact commit: [ef294dc3db26943afccfd9d8aa44f08e65380f03](https://github.com/Witali/ZX-video/commit/ef294dc3db26943afccfd9d8aa44f08e65380f03).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `c78eeaab5fc14347feb1f09217867a789ad49d30e77f73a6c648645d963041e6`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/mulaw128/results.json](audiobook-beeper/experiments/mulaw128/results.json); [audiobook-beeper/experiments/mulaw128/manifest.json](audiobook-beeper/experiments/mulaw128/manifest.json).
-- Byte-identical retained copies: [ZX-audiobook-mulaw-128-test.trd](ZX-audiobook-mulaw-128-test.trd); [audiobook-beeper/experiments/mulaw128/evidence/speech-full/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/speech-full/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/mulaw128/evidence/speech-short/pilot/audiobook-preview.trd](audiobook-beeper/experiments/mulaw128/evidence/speech-short/pilot/audiobook-preview.trd)
 
@@ -2126,16 +1310,6 @@ Saved change: Improve bounded IMA and mu-law waveform quality search.
 - Image: 655360 bytes; SHA-256 `2c54a063bdbc55fde495bc0cfd2a362080573b224c4164f1e001e8cd5e4c4ad2`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json); [audiobook-beeper/experiments/quality-max/evidence/ima3/cached-first/fuse.json](audiobook-beeper/experiments/quality-max/evidence/ima3/cached-first/fuse.json).
 
-#### [audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd)
-
-Saved change: Improve bounded IMA and mu-law waveform quality search.
-
-- Exact artifact commit: [b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4](https://github.com/Witali/ZX-video/commit/b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/results.json](audiobook-beeper/experiments/quality-max/results.json); [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json).
-- Byte-identical retained copies: [ZX-audiobook-max-IMA3.trd](ZX-audiobook-max-IMA3.trd); [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd).
-
 #### [audiobook-beeper/experiments/quality-max/evidence/ima3/third/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima3/third/audiobook-preview.trd)
 
 Saved change: Improve bounded IMA and mu-law waveform quality search.
@@ -2145,16 +1319,6 @@ Saved change: Improve bounded IMA and mu-law waveform quality search.
 - Image: 655360 bytes; SHA-256 `765dcb60cc81109879fe358501e9649db0deccb16bd2ce177e93f56721af7158`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json); [audiobook-beeper/experiments/quality-max/evidence/ima3/third/fuse.json](audiobook-beeper/experiments/quality-max/evidence/ima3/third/fuse.json).
 
-#### [audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd)
-
-Saved change: Improve bounded IMA and mu-law waveform quality search.
-
-- Exact artifact commit: [b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4](https://github.com/Witali/ZX-video/commit/b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/results.json](audiobook-beeper/experiments/quality-max/results.json); [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json).
-- Byte-identical retained copies: [ZX-audiobook-IMA4-PDM-search-test.trd](ZX-audiobook-IMA4-PDM-search-test.trd); [ZX-audiobook-max-IMA4.trd](ZX-audiobook-max-IMA4.trd); [ZX-audiobook-quality-IMA4.trd](ZX-audiobook-quality-IMA4.trd); [audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd); [audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd); [audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd](audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd).
-
 #### [audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/audiobook-preview.trd)
 
 Saved change: Improve bounded IMA and mu-law waveform quality search.
@@ -2163,7 +1327,6 @@ Saved change: Improve bounded IMA and mu-law waveform quality search.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `a5360271fe41576a69782346a1fb165f67545363883c5d75d040f9468641056c`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json); [audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/report.json](audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/report.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/waveform-32/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/waveform-32/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/control/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/control/audiobook-preview.trd)
 
@@ -2183,16 +1346,6 @@ Saved change: Improve bounded IMA and mu-law waveform quality search.
 - Image: 655360 bytes; SHA-256 `021e4779f2cb766fa95b8572308ab323c092fd1007c1dbf2ccc18541d93d3a93`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json); [audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/report.json](audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/report.json).
 
-#### [audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/waveform-32/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/waveform-32/audiobook-preview.trd)
-
-Saved change: Improve bounded IMA and mu-law waveform quality search.
-
-- Exact artifact commit: [b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4](https://github.com/Witali/ZX-video/commit/b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `a5360271fe41576a69782346a1fb165f67545363883c5d75d040f9468641056c`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json); [audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/report.json](audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/report.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/audiobook-preview.trd).
-
 #### [audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/waveform-8/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/waveform-8/audiobook-preview.trd)
 
 Saved change: Improve bounded IMA and mu-law waveform quality search.
@@ -2201,26 +1354,6 @@ Saved change: Improve bounded IMA and mu-law waveform quality search.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `cab8ca761e9bc6c0b15d2839484478887acd105459d7e1ec4e92972251a7c350`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json); [audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/report.json](audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/report.json).
-
-#### [audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd)
-
-Saved change: Improve bounded IMA and mu-law waveform quality search.
-
-- Exact artifact commit: [b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4](https://github.com/Witali/ZX-video/commit/b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json); [audiobook-beeper/experiments/quality-max/evidence/mulaw/reuse.json](audiobook-beeper/experiments/quality-max/evidence/mulaw/reuse.json).
-- Byte-identical retained copies: [ZX-audiobook-mulaw-test.trd](ZX-audiobook-mulaw-test.trd); [audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd](audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd).
-
-#### [audiobook-beeper/experiments/quality-max/evidence/mulaw/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/selected/audiobook-preview.trd)
-
-Saved change: Improve bounded IMA and mu-law waveform quality search.
-
-- Exact artifact commit: [b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4](https://github.com/Witali/ZX-video/commit/b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `1b9a4e45e6f34c1fde830ecabea85d4018a15c7b7600484d4fef5444f91c8667`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/results.json](audiobook-beeper/experiments/quality-max/results.json); [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json).
-- Byte-identical retained copies: [ZX-audiobook-max-mulaw.trd](ZX-audiobook-max-mulaw.trd); [audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-32/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-32/audiobook-preview.trd).
 
 #### [audiobook-beeper/experiments/quality-max/evidence/mulaw/timing-control/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/timing-control/audiobook-preview.trd)
 
@@ -2231,16 +1364,6 @@ Saved change: Improve bounded IMA and mu-law waveform quality search.
 - Image: 655360 bytes; SHA-256 `7b6beb5e773814e5311d9c49ac5cec194e7b54db3a1ff5be7205040e81107e1a`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/results.json](audiobook-beeper/experiments/quality-max/results.json); [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json).
 
-#### [audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-32/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-32/audiobook-preview.trd)
-
-Saved change: Improve bounded IMA and mu-law waveform quality search.
-
-- Exact artifact commit: [b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4](https://github.com/Witali/ZX-video/commit/b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `1b9a4e45e6f34c1fde830ecabea85d4018a15c7b7600484d4fef5444f91c8667`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/results.json](audiobook-beeper/experiments/quality-max/results.json); [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json).
-- Byte-identical retained copies: [ZX-audiobook-max-mulaw.trd](ZX-audiobook-max-mulaw.trd); [audiobook-beeper/experiments/quality-max/evidence/mulaw/selected/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/selected/audiobook-preview.trd).
-
 #### [audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-8/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-8/audiobook-preview.trd)
 
 Saved change: Improve bounded IMA and mu-law waveform quality search.
@@ -2249,16 +1372,6 @@ Saved change: Improve bounded IMA and mu-law waveform quality search.
 - Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `b9ac5ea4eb80ab2045ebe4a82068f9ee0742e2fc5b759444f19d96ec00bb2b01`.
 - Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/results.json](audiobook-beeper/experiments/quality-max/results.json); [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json).
-
-#### [audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd)
-
-Saved change: Improve bounded IMA and mu-law waveform quality search.
-
-- Exact artifact commit: [b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4](https://github.com/Witali/ZX-video/commit/b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4).
-- Recorded containing branch: `codex/lpc-ima-preload` at [92fb920f193aaed3908564d4a8c528514d29407b](https://github.com/Witali/ZX-video/commit/92fb920f193aaed3908564d4a8c528514d29407b). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2`.
-- Hash-matched evidence / build settings: [audiobook-beeper/experiments/quality-max/manifest.json](audiobook-beeper/experiments/quality-max/manifest.json); [audiobook-beeper/experiments/quality-max/evidence/mulaw/reuse.json](audiobook-beeper/experiments/quality-max/evidence/mulaw/reuse.json).
-- Byte-identical retained copies: [ZX-audiobook-mulaw-test.trd](ZX-audiobook-mulaw-test.trd); [audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd](audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd); [audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd](audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd).
 
 ### audiobook-beeper/ima-preview
 
@@ -2348,75 +1461,6 @@ Saved change: Add looping 8 kHz 8-bit audiobook PDM test.
 - Recorded containing branch: `codex/cleanup-retired-audio-disks` at [2a55226933f12f529cee8256d82ccf48b16d8039](https://github.com/Witali/ZX-video/commit/2a55226933f12f529cee8256d82ccf48b16d8039). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `91ba4b710ce4c6b6bd01ff1a657ef769889ac7dd2cec1c0ba1aebe5272321c94`.
 - Hash-matched evidence / build settings: [audiobook-beeper/preview-8k8-loop/report.json](audiobook-beeper/preview-8k8-loop/report.json); [audiobook-beeper/preview-8k8-loop/timing-pilot/verification.json](audiobook-beeper/preview-8k8-loop/timing-pilot/verification.json).
-- Byte-identical retained copies: [audiobook-beeper/experiments/loop-debugger-interrupted/timing-pilot/audiobook-preview.trd](audiobook-beeper/experiments/loop-debugger-interrupted/timing-pilot/audiobook-preview.trd).
-
-### ay-converter/analysis/music50
-
-Entertainer converted with the 20-ms AY music preset.
-
-Producer / orchestration: [ay-converter/convert_audio.py](ay-converter/convert_audio.py).
-Method, inputs and invocation: [ay-converter/analysis/music50/README.md](ay-converter/analysis/music50/README.md).
-
-#### [ay-converter/analysis/music50/evidence/release/audio-preview.trd](ay-converter/analysis/music50/evidence/release/audio-preview.trd)
-
-Saved change: Add verified 20-ms AY music profile and spectrogram comparison.
-
-- Exact artifact commit: [c8866310c283aae8fa27c2cad4dd5c9a7ef35196](https://github.com/Witali/ZX-video/commit/c8866310c283aae8fa27c2cad4dd5c9a7ef35196).
-- Recorded containing branch: `codex/ay-music-50hz` at [4484bab95df7359dea4ef46414025c9f1706aecb](https://github.com/Witali/ZX-video/commit/4484bab95df7359dea4ef46414025c9f1706aecb). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `e1ef02bc4bee6163698a4b8ed16dfaa12ec5c2852834a24e57b60d6631619663`.
-- Hash-matched evidence / build settings: [ay-converter/analysis/music50/evidence/archive-check.json](ay-converter/analysis/music50/evidence/archive-check.json); [ay-converter/analysis/music50/evidence/release/report.json](ay-converter/analysis/music50/evidence/release/report.json).
-- Byte-identical retained copies: [ZX-music-Entertainer-AY-music50-test.trd](ZX-music-Entertainer-AY-music50-test.trd).
-
-### ay-converter/analysis/noise_colour
-
-Entertainer with continuous AY chip-model noise fitting.
-
-Producer / orchestration: [ay-converter/convert_audio.py](ay-converter/convert_audio.py).
-Method, inputs and invocation: [ay-converter/analysis/noise_colour/README.md](ay-converter/analysis/noise_colour/README.md).
-
-#### [ay-converter/analysis/noise_colour/evidence/release/audio-preview.trd](ay-converter/analysis/noise_colour/evidence/release/audio-preview.trd)
-
-Saved change: Fit AY noise colour against continuous chip simulation.
-
-- Exact artifact commit: [4484bab95df7359dea4ef46414025c9f1706aecb](https://github.com/Witali/ZX-video/commit/4484bab95df7359dea4ef46414025c9f1706aecb).
-- Recorded containing branch: `codex/ay-music-50hz` at [4484bab95df7359dea4ef46414025c9f1706aecb](https://github.com/Witali/ZX-video/commit/4484bab95df7359dea4ef46414025c9f1706aecb). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `a7d36854c41ca7f408619ffb32f6218aeb28324c397cdf30ff131e4d6f6a8691`.
-- Hash-matched evidence / build settings: [ay-converter/analysis/noise_colour/evidence/completion.json](ay-converter/analysis/noise_colour/evidence/completion.json); [ay-converter/analysis/noise_colour/evidence/release/report.json](ay-converter/analysis/noise_colour/evidence/release/report.json).
-- Byte-identical retained copies: [ZX-music-Entertainer-AY-noise-colour-test.trd](ZX-music-Entertainer-AY-noise-colour-test.trd).
-
-### ay-converter/analysis/o_henry
-
-O. Henry source seconds 60..84; unchanged music profile and chip-model noise fit, 1200 AY states. Speech audition awaiting user acceptance.
-
-Producer / orchestration: [ay-converter/convert_audio.py](ay-converter/convert_audio.py).
-Method, inputs and invocation: [ay-converter/analysis/o_henry/README.md](ay-converter/analysis/o_henry/README.md).
-
-#### [ay-converter/analysis/o_henry/evidence/release/audio-preview.trd](ay-converter/analysis/o_henry/evidence/release/audio-preview.trd)
-
-Saved change: Add verified O. Henry AY50 listening preview.
-
-- Exact artifact commit: [a871a4b63ef3f023f4dd930603c73fa940aa0319](https://github.com/Witali/ZX-video/commit/a871a4b63ef3f023f4dd930603c73fa940aa0319).
-- Recorded containing branch: `codex/ay-o-henry-preview` at [a871a4b63ef3f023f4dd930603c73fa940aa0319](https://github.com/Witali/ZX-video/commit/a871a4b63ef3f023f4dd930603c73fa940aa0319). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `aa2013bab38a3fbffecb97f1069b570d17e9fefa591c075da58c4000b84169d1`.
-- Hash-matched evidence / build settings: [ay-converter/analysis/o_henry/evidence/release/report.json](ay-converter/analysis/o_henry/evidence/release/report.json); [ay-converter/analysis/o_henry/evidence/release/verification.json](ay-converter/analysis/o_henry/evidence/release/verification.json).
-- Byte-identical retained copies: [ZX-audiobook-OHenry-AY50-test.trd](ZX-audiobook-OHenry-AY50-test.trd).
-
-### ay-converter/analysis/tracked50
-
-Entertainer with persistent tonal-component tracking and channel assignment at 50 Hz.
-
-Producer / orchestration: [ay-converter/convert_audio.py](ay-converter/convert_audio.py).
-Method, inputs and invocation: [ay-converter/analysis/tracked50/README.md](ay-converter/analysis/tracked50/README.md).
-
-#### [ay-converter/analysis/tracked50/evidence/release/audio-preview.trd](ay-converter/analysis/tracked50/evidence/release/audio-preview.trd)
-
-Saved change: Keep AY components on persistent channels and mix detected noise.
-
-- Exact artifact commit: [4ab6d7f3bddab0d3c217fd5c3ffe4e5bd3e749ef](https://github.com/Witali/ZX-video/commit/4ab6d7f3bddab0d3c217fd5c3ffe4e5bd3e749ef).
-- Recorded containing branch: `codex/ay-music-50hz` at [4484bab95df7359dea4ef46414025c9f1706aecb](https://github.com/Witali/ZX-video/commit/4484bab95df7359dea4ef46414025c9f1706aecb). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `2e6a14a9637a9fae6d7546826473148de1e3b263a8b58717abfcbfe61f79e8d4`.
-- Hash-matched evidence / build settings: [ay-converter/analysis/tracked50/evidence/release/report.json](ay-converter/analysis/tracked50/evidence/release/report.json); [ay-converter/analysis/tracked50/evidence/release/verification.json](ay-converter/analysis/tracked50/evidence/release/verification.json).
-- Byte-identical retained copies: [ZX-music-Entertainer-AY-tracked50-test.trd](ZX-music-Entertainer-AY-tracked50-test.trd).
 
 ### toolkit/banked_audio_evidence
 
@@ -2701,7 +1745,6 @@ Saved change: Validate full-volume compression budgets and profile delivery stal
 - Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `02aac909f9a56ac27d89d42f52d48fa4dc5ec7e4a5a04ba1c237ec3ab20346c4`.
 - Hash-matched evidence / build settings: [toolkit/sector_cache_report.json](toolkit/sector_cache_report.json); [toolkit/full_volume_dictionary_report.json](toolkit/full_volume_dictionary_report.json).
-- Byte-identical retained copies: [toolkit/sector_cache_evidence/sector-cache-part04-capacity-part04.trd](toolkit/sector_cache_evidence/sector-cache-part04-capacity-part04.trd).
 
 ### toolkit/generic_cb41_evidence
 
@@ -2884,23 +1927,6 @@ Saved change: Reduce invisible attribute writes within decoder budgets.
 - Image: 655360 bytes; SHA-256 `ef6da3405cd1962856d10a49ed59a1c340636eba78ea7e12e873461fb6409a30`.
 - Hash-matched evidence / build settings: [toolkit/invisible_attributes_report.json](toolkit/invisible_attributes_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
 
-### toolkit/monochrome_preview_evidence
-
-Monochrome 256-frame preview starting at frame 4128, five-level cells at 10 fps.
-
-Producer / orchestration: [toolkit/build_cb41_cadence_movie.py](toolkit/build_cb41_cadence_movie.py); [toolkit/finalize_monochrome_preview.py](toolkit/finalize_monochrome_preview.py).
-Method, inputs and invocation: [toolkit/MONOCHROME_PREVIEW.md](toolkit/MONOCHROME_PREVIEW.md).
-
-#### [toolkit/monochrome_preview_evidence/cb41-monochrome-preview-ZX-video-monochrome-preview_part01.trd.trd](toolkit/monochrome_preview_evidence/cb41-monochrome-preview-ZX-video-monochrome-preview_part01.trd.trd)
-
-Saved change: Build monochrome comparison disk with timing evidence.
-
-- Exact artifact commit: [0cbfa1714b682c226f83742e66967fddea68fa6b](https://github.com/Witali/ZX-video/commit/0cbfa1714b682c226f83742e66967fddea68fa6b).
-- Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `38cecad279376a10b86fa5265930976b923d202465310026525eef2ed40cd16f`.
-- Hash-matched evidence / build settings: [toolkit/monochrome_preview_report.json](toolkit/monochrome_preview_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-- Byte-identical retained copies: [ZX-video-monochrome-preview.trd](ZX-video-monochrome-preview.trd).
-
 ### toolkit/optional_read_gate_evidence
 
 Optional read-admission gate in the CB41 player, rebuilt against saved stream.
@@ -2932,23 +1958,6 @@ Saved change: Encode exact single-row cell updates to fit four-volume capacity.
 - Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `ae9900c741a57c095a960427fedb896d1072b8d6475f5967d44b1a4d811a0f23`.
 - Hash-matched evidence / build settings: [toolkit/partial_row_report.json](toolkit/partial_row_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-
-### toolkit/refined_av_attempt_evidence
-
-Passing 64-frame probe from the original refined-AV disk partition study. The failed eight-part set was retired separately.
-
-Producer / orchestration: [toolkit/prepare_refined_av.py](toolkit/prepare_refined_av.py); [toolkit/build_cb41_cadence_movie.py](toolkit/build_cb41_cadence_movie.py).
-Method, inputs and invocation: [toolkit/CB41_10FPS.md](toolkit/CB41_10FPS.md).
-
-#### [toolkit/refined_av_attempt_evidence/refined-av-probe-09-ZX-video-refined_part09.trd.trd](toolkit/refined_av_attempt_evidence/refined-av-probe-09-ZX-video-refined_part09.trd.trd)
-
-Saved change: Prepare refined movie audio and colour with measured disk cuts.
-
-- Exact artifact commit: [3727f8bb842d87300720f1a72efac660ff9e2189](https://github.com/Witali/ZX-video/commit/3727f8bb842d87300720f1a72efac660ff9e2189).
-- Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `f9472730e57043393dfdafdfbe2f884ac888b0dc135cf9a8030991f51e9d5df5`.
-- Hash-matched evidence / build settings: [toolkit/refined_av_movie_report.json](toolkit/refined_av_movie_report.json); [toolkit/refined_av_attempt_report.json](toolkit/refined_av_attempt_report.json).
-- Byte-identical retained copies: [toolkit/refined_av_movie_evidence/refined-av-final-ZX-video-refined_part09.trd.trd](toolkit/refined_av_movie_evidence/refined-av-final-ZX-video-refined_part09.trd.trd).
 
 ### toolkit/refined_av_movie_evidence
 
@@ -3037,7 +2046,6 @@ Saved change: Publish refined 10 fps movie disks with complete fallback timing c
 - Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `f9472730e57043393dfdafdfbe2f884ac888b0dc135cf9a8030991f51e9d5df5`.
 - Hash-matched evidence / build settings: [toolkit/refined_av_movie_report.json](toolkit/refined_av_movie_report.json); [toolkit/refined_av_attempt_report.json](toolkit/refined_av_attempt_report.json).
-- Byte-identical retained copies: [toolkit/refined_av_attempt_evidence/refined-av-probe-09-ZX-video-refined_part09.trd.trd](toolkit/refined_av_attempt_evidence/refined-av-probe-09-ZX-video-refined_part09.trd.trd).
 
 #### [toolkit/refined_av_movie_evidence/refined-av-final-ZX-video-refined_part10.trd.trd](toolkit/refined_av_movie_evidence/refined-av-final-ZX-video-refined_part10.trd.trd)
 
@@ -3092,53 +2100,6 @@ Saved change: Publish refined 10 fps movie disks with complete fallback timing c
 - Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `223b87d9a1d3d703d8eceba78ea181db921665cf5c99073373fe16f20d0e2ec6`.
 - Hash-matched evidence / build settings: [toolkit/refined_av_movie_report.json](toolkit/refined_av_movie_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-
-### toolkit/refined_four_evidence
-
-Current four-disk cached refined-colour movie at 10 fps with 50-Hz AY; full verification accepts fallback timing, not zero late frames.
-
-Producer / orchestration: [toolkit/build_cached_cell_set.py](toolkit/build_cached_cell_set.py); [toolkit/check_cached_cell_set.py](toolkit/check_cached_cell_set.py); [toolkit/finish_cached_cell_set.py](toolkit/finish_cached_cell_set.py).
-Method, inputs and invocation: [toolkit/../ZX-video-refined.md](toolkit/../ZX-video-refined.md).
-
-#### [toolkit/refined_four_evidence/ZX-video-refined_part01.trd](toolkit/refined_four_evidence/ZX-video-refined_part01.trd)
-
-Saved change: Deliver the complete refined movie on four disks.
-
-- Exact artifact commit: [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e).
-- Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `f9039541aa1309fe8a3acf5ad7171f6ed52ef497b7f170585b995e64da1c19b8`.
-- Hash-matched evidence / build settings: [toolkit/refined_four_report.json](toolkit/refined_four_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-- Byte-identical retained copies: [ZX-video-refined_part01.trd](ZX-video-refined_part01.trd).
-
-#### [toolkit/refined_four_evidence/ZX-video-refined_part02.trd](toolkit/refined_four_evidence/ZX-video-refined_part02.trd)
-
-Saved change: Deliver the complete refined movie on four disks.
-
-- Exact artifact commit: [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e).
-- Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `eb0d781e1219d9dc59423876f0dc9d0b9cc7ff86cec0786e292c3d93ff820edf`.
-- Hash-matched evidence / build settings: [toolkit/refined_four_report.json](toolkit/refined_four_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-- Byte-identical retained copies: [ZX-video-refined_part02.trd](ZX-video-refined_part02.trd).
-
-#### [toolkit/refined_four_evidence/ZX-video-refined_part03.trd](toolkit/refined_four_evidence/ZX-video-refined_part03.trd)
-
-Saved change: Deliver the complete refined movie on four disks.
-
-- Exact artifact commit: [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e).
-- Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `4001ebc3a3b1cde5a637973039cdf6c1c41eec3f8fac9e40df740fdc72aea4c0`.
-- Hash-matched evidence / build settings: [toolkit/refined_four_report.json](toolkit/refined_four_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-- Byte-identical retained copies: [ZX-video-refined_part03.trd](ZX-video-refined_part03.trd).
-
-#### [toolkit/refined_four_evidence/ZX-video-refined_part04.trd](toolkit/refined_four_evidence/ZX-video-refined_part04.trd)
-
-Saved change: Deliver the complete refined movie on four disks.
-
-- Exact artifact commit: [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e).
-- Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `6c4861a9eb9d161429fdf0e85a9fd618dc9e6f69af4c8e31adb7952cc4c19eb5`.
-- Hash-matched evidence / build settings: [toolkit/refined_four_report.json](toolkit/refined_four_report.json); [ay-converter/analysis/music50/evidence/retained-images.json](ay-converter/analysis/music50/evidence/retained-images.json).
-- Byte-identical retained copies: [ZX-video-refined_part04.trd](ZX-video-refined_part04.trd).
 
 ### toolkit/retired_cell_evidence
 
@@ -3205,16 +2166,6 @@ Compressed-sector cache variants rebuilt with saved CB41 input.
 
 Producer / orchestration: [toolkit/build_cell_codebook_trd.py](toolkit/build_cell_codebook_trd.py); [toolkit/rebuild_cell_player.py](toolkit/rebuild_cell_player.py).
 Method, inputs and invocation: [toolkit/CB44_DYNAMIC.md](toolkit/CB44_DYNAMIC.md).
-
-#### [toolkit/sector_cache_evidence/sector-cache-part04-capacity-part04.trd](toolkit/sector_cache_evidence/sector-cache-part04-capacity-part04.trd)
-
-Saved change: Prefetch compressed sectors into spare bank-seven memory.
-
-- Exact artifact commit: [bc615ab0910771fcfb1bccc6f534f827f34193e9](https://github.com/Witali/ZX-video/commit/bc615ab0910771fcfb1bccc6f534f827f34193e9).
-- Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `02aac909f9a56ac27d89d42f52d48fa4dc5ec7e4a5a04ba1c237ec3ab20346c4`.
-- Hash-matched evidence / build settings: [toolkit/sector_cache_report.json](toolkit/sector_cache_report.json); [toolkit/full_volume_dictionary_report.json](toolkit/full_volume_dictionary_report.json).
-- Byte-identical retained copies: [toolkit/full_volume_dictionary_evidence/baseline-part04.trd](toolkit/full_volume_dictionary_evidence/baseline-part04.trd).
 
 #### [toolkit/sector_cache_evidence/sector-cache-window-ZX-video-front_part07.trd](toolkit/sector_cache_evidence/sector-cache-window-ZX-video-front_part07.trd)
 
@@ -3317,7 +2268,6 @@ Saved change: Verify streaming LZSA2 bypass on complete fourth volume.
 - Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
 - Image: 655360 bytes; SHA-256 `9d005b62f27b447fdd6b945c361044850bfa546d83236252f3ae4eb6a8256d6b`.
 - Hash-matched evidence / build settings: [toolkit/streaming_lzsa2_report.json](toolkit/streaming_lzsa2_report.json); [toolkit/streaming_bypass_playback_report.json](toolkit/streaming_bypass_playback_report.json).
-- Byte-identical retained copies: [toolkit/streaming_lzsa2_evidence/bypass-window-ZX-video-front_part07.trd](toolkit/streaming_lzsa2_evidence/bypass-window-ZX-video-front_part07.trd).
 
 ### toolkit/streaming_lzsa2_evidence
 
@@ -3325,16 +2275,6 @@ Streaming/resumable LZSA2 player variants against saved CB41 inputs.
 
 Producer / orchestration: [toolkit/build_cell_codebook_trd.py](toolkit/build_cell_codebook_trd.py); [toolkit/rebuild_cell_player.py](toolkit/rebuild_cell_player.py).
 Method, inputs and invocation: [toolkit/INPLACE_STREAMING.md](toolkit/INPLACE_STREAMING.md).
-
-#### [toolkit/streaming_lzsa2_evidence/bypass-window-ZX-video-front_part07.trd](toolkit/streaming_lzsa2_evidence/bypass-window-ZX-video-front_part07.trd)
-
-Saved change: Record guarded LZSA2 input experiments and compression priority.
-
-- Exact artifact commit: [b8fec73c869d8f4851d2c9720150135de7e4b67b](https://github.com/Witali/ZX-video/commit/b8fec73c869d8f4851d2c9720150135de7e4b67b).
-- Recorded containing branch: `codex/cb41-10fps` at [c7e1554ba4271873efbf804311529ddb935e105e](https://github.com/Witali/ZX-video/commit/c7e1554ba4271873efbf804311529ddb935e105e). Original build branch/HEAD: not established by this record.
-- Image: 655360 bytes; SHA-256 `9d005b62f27b447fdd6b945c361044850bfa546d83236252f3ae4eb6a8256d6b`.
-- Hash-matched evidence / build settings: [toolkit/streaming_lzsa2_report.json](toolkit/streaming_lzsa2_report.json); [toolkit/streaming_bypass_playback_report.json](toolkit/streaming_bypass_playback_report.json).
-- Byte-identical retained copies: [toolkit/streaming_bypass_evidence/window-ZX-video-front_part07.trd](toolkit/streaming_bypass_evidence/window-ZX-video-front_part07.trd).
 
 #### [toolkit/streaming_lzsa2_evidence/fast-window-ZX-video-front_part07.trd](toolkit/streaming_lzsa2_evidence/fast-window-ZX-video-front_part07.trd)
 

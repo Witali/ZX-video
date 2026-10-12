@@ -103,6 +103,11 @@ def validate(catalog: dict) -> None:
         pointer = f"oid sha256:{row['sha256']}\nsize {row['bytes']}\n".encode()
         if kind != "blob" or not (pointer in blob or hashlib.sha256(blob).hexdigest() == row["sha256"]):
             raise ValueError(f"Artifact commit has different bytes: {row['path']}")
+    if catalog.get("deduplication_manifest"):
+        from trd_duplicates import MANIFEST, check
+        if local(catalog["deduplication_manifest"]) != MANIFEST:
+            raise ValueError("Unexpected duplicate manifest")
+        check()
 
 
 def link(path: str, label: str | None = None) -> str:
@@ -170,6 +175,10 @@ def render(data: dict) -> str:
              link("docs/maintenance/2026-10-05-retired-trds.md", "reasons and restoration ledger") +
              ". Historical manifests describe original bundles; restore retired payloads before replaying an old whole-bundle check. "
              "The public YouTube-linked direct IMA4 root file remains intact.", "",
+             "Exact copies and almost identical calibration/UI images were consolidated on 2026-10-12: " +
+             link("docs/maintenance/2026-10-12-trd-deduplication.md", "comparison, retained replacements and exact restoration") +
+             ". Near variants are stored as small byte edits, not assumed to sound identical. "
+             "Distinct frame rates, loader behavior and audio data remain separate full images.", "",
              "Maintain reviewed records in " + link("toolkit/trd_catalog.json") + ", then run:", "",
              "```powershell", "python toolkit/catalog_trd.py", "python toolkit/catalog_trd.py --check", "```", "",
              "The check authenticates complete tracked-image coverage, current SHA-256/size, original Git blobs, "

@@ -105,7 +105,7 @@ overlap search is reused, not redundantly recomputed.
 The [final report](evidence/report.json), [reuse audit](evidence/cached-input-audit.json),
 [boundary diagnostic](evidence/boundary-diagnostics.json), full cold traces,
 assembly, source snapshots and rejected streams are retained.
-The [selected TRD](../../../ZX-audiobook-IMA4-PDM-search-test.trd) SHA256 is
+The [selected TRD](../../../ZX-audiobook-max-IMA4.trd) SHA256 is
 `da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c`.
 The chosen [Fuse WAV](evidence/recording/fuse-preview.wav) is the real
 sound-generator recording; stable filtered output/reference WAVs use an

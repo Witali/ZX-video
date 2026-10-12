@@ -12,6 +12,7 @@ from pathlib import Path
 from ima4_series import build_volume
 from verify_ima3_series import verify_series
 from verify_pcm import save
+from trd_duplicates import read_bytes as artifact_bytes
 
 
 def main():
@@ -25,7 +26,7 @@ def main():
     here = Path(__file__).resolve().parent
     hashes = json.loads((here/'artifact-hashes.json').read_bytes())
     for name, expected in hashes.items():
-        assert hashlib.sha256((here/name).read_bytes()).hexdigest() == expected, name
+        assert hashlib.sha256(artifact_bytes(here/name)).hexdigest() == expected, name
     out = args.output.resolve()
     if out.exists() and any(out.iterdir()):
         parser.error('output must be empty')

@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "date": "2026-10-05",
-  "snapshot_commit": "11a9051da3481f2832316d8a0a0d25a45e51ef1e",
+  "date": "2026-10-12",
+  "snapshot_commit": "ead95787f25dfc9a2e18abf46f313f5e73de4143",
   "publication_branch": "main",
   "branch_semantics": "Nearest containing branch checkpoint from the cleanup inventory; not a claim about the original build branch.",
   "build_identity_note": "Original build HEAD/branch are not uniformly recorded. Artifact commits authenticate exact image bytes; saved reports and producer snapshots carry the finer build evidence.",
@@ -145,13 +145,6 @@
         "audiobook-beeper/experiments/ima4-overlap/run.py"
       ],
       "guide": "audiobook-beeper/experiments/ima4-overlap/README.md"
-    },
-    "audiobook-beeper/experiments/loop-debugger-interrupted": {
-      "description": "Precomputed 8-kHz PCM-to-PDM timing pilot from an interrupted debugger session; interruption alone does not prove a defective disk.",
-      "scripts": [
-        "audiobook-beeper/build_pdm.py"
-      ],
-      "guide": "audiobook-beeper/README.md"
     },
     "audiobook-beeper/experiments/mulaw-trd": {
       "description": "Compact eight-bit mu-law source, expanded to amplitude only while generating PDM; qualified baseline converter image.",
@@ -392,14 +385,6 @@
       ],
       "guide": "toolkit/CB44_DYNAMIC.md"
     },
-    "toolkit/refined_av_attempt_evidence": {
-      "description": "Passing 64-frame probe from the original refined-AV disk partition study. The failed eight-part set was retired separately.",
-      "scripts": [
-        "toolkit/prepare_refined_av.py",
-        "toolkit/build_cb41_cadence_movie.py"
-      ],
-      "guide": "toolkit/CB41_10FPS.md"
-    },
     "toolkit/refined_av_movie_evidence": {
       "description": "Historical fifteen-disk refined colour and AY movie, before the four-disk cached rebuild.",
       "scripts": [
@@ -603,9 +588,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-3bit-overlap/audio.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-audiobook-IMA3-sequential-test.trd",
@@ -647,37 +630,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-3bit-waveform/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "ZX-audiobook-IMA4-PDM-search-test.trd",
-      "bytes": 655360,
-      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
-      "commit": "db67cae7c4c84e532ed6044b0cd141c8a6465694",
-      "subject": "Verify IMA4 overlapping PDM search against control",
-      "group": "audiobook-beeper/experiments/ima4-overlap",
-      "evidence": [
-        "audiobook-beeper/experiments/ima4-overlap/manifest.json",
-        "audiobook-beeper/experiments/ima4-overlap/evidence/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 11,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-max-IMA4.trd",
-        "ZX-audiobook-quality-IMA4.trd",
-        "audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-audiobook-IMA4-full-disk.trd",
@@ -698,9 +651,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima4-full-disk/release/audio.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-audiobook-IMA4-normalized-full-disk.trd",
@@ -721,9 +672,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/audio-dynamics/release/audio.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-audiobook-OHenry-AY50-test.trd",
@@ -744,9 +693,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "ay-converter/analysis/o_henry/evidence/release/audio-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-audiobook-YM2149-voice-test.trd",
@@ -767,9 +714,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-ay/pitch-preview/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-audiobook-max-IMA3.trd",
@@ -790,11 +735,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-audiobook-max-IMA4.trd",
@@ -815,14 +756,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-IMA4-PDM-search-test.trd",
-        "ZX-audiobook-quality-IMA4.trd",
-        "audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-audiobook-max-mulaw.trd",
@@ -843,10 +777,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-32/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-audiobook-mulaw-128-test.trd",
@@ -867,10 +798,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/mulaw128/evidence/speech-full/audiobook-preview.trd",
-        "audiobook-beeper/experiments/mulaw128/evidence/speech-full/waveform-64/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-audiobook-mulaw-test.trd",
@@ -891,39 +819,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "ZX-audiobook-quality-IMA4.trd",
-      "bytes": 655360,
-      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/results.json",
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-IMA4-PDM-search-test.trd",
-        "ZX-audiobook-max-IMA4.trd",
-        "audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-music-Entertainer-AY-music50-test.trd",
@@ -944,9 +840,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "ay-converter/analysis/music50/evidence/release/audio-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-music-Entertainer-AY-noise-colour-test.trd",
@@ -967,9 +861,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "ay-converter/analysis/noise_colour/evidence/release/audio-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-music-Entertainer-AY-tracked50-test.trd",
@@ -990,9 +882,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "ay-converter/analysis/tracked50/evidence/release/audio-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-music-Entertainer-AY.trd",
@@ -1013,9 +903,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-ay/music-preview/audio-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-music-Entertainer-IMA3.trd",
@@ -1057,9 +945,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/entertainer-normalized/ima3/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-music-Entertainer-normalized-IMA4.trd",
@@ -1080,9 +966,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/entertainer-normalized/ima4/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-music-Entertainer-quality-IMA3.trd",
@@ -1103,9 +987,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/music3/selected/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-music-Entertainer-quality-IMA4.trd",
@@ -1126,9 +1008,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/music4/selected/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-video-cb41-test.trd",
@@ -1523,9 +1403,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "toolkit/monochrome_preview_evidence/cb41-monochrome-preview-ZX-video-monochrome-preview_part01.trd.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-video-refined_part01.trd",
@@ -1546,9 +1424,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "toolkit/refined_four_evidence/ZX-video-refined_part01.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-video-refined_part02.trd",
@@ -1569,9 +1445,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "toolkit/refined_four_evidence/ZX-video-refined_part02.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-video-refined_part03.trd",
@@ -1592,9 +1466,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "toolkit/refined_four_evidence/ZX-video-refined_part03.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "ZX-video-refined_part04.trd",
@@ -1615,9 +1487,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "toolkit/refined_four_evidence/ZX-video-refined_part04.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "audiobook-ay/lpc-probe/audiobook-preview.trd",
@@ -1641,73 +1511,6 @@
       "duplicates": []
     },
     {
-      "path": "audiobook-ay/music-preview/attempts/before-loading-label/audio-preview.trd",
-      "bytes": 655360,
-      "sha256": "d56c38ce62ea7398a559a02cc66a0aea6cfe42c557842f312dd238f8202a7fc5",
-      "commit": "b44b1fd1696ed205db5ee603eb8d981194335864",
-      "subject": "Add generic AY audio converter and looping music preview",
-      "group": "audiobook-ay/music-preview",
-      "evidence": [
-        "audiobook-ay/music-preview/artifact-hashes.json",
-        "audiobook-ay/music-preview/attempts/before-loading-label/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cleanup-retired-audio-disks",
-        "head": "2a55226933f12f529cee8256d82ccf48b16d8039",
-        "distance": 6,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-ay/music-preview/audio-preview.trd",
-      "bytes": 655360,
-      "sha256": "c6139c9c5cd4c18df82d3b1f208064790487a48db3883b26f916d00765fc177c",
-      "commit": "b44b1fd1696ed205db5ee603eb8d981194335864",
-      "subject": "Add generic AY audio converter and looping music preview",
-      "group": "audiobook-ay/music-preview",
-      "evidence": [
-        "audiobook-ay/music-preview/report.json",
-        "audiobook-ay/music-preview/verification.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cleanup-retired-audio-disks",
-        "head": "2a55226933f12f529cee8256d82ccf48b16d8039",
-        "distance": 6,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-music-Entertainer-AY.trd"
-      ]
-    },
-    {
-      "path": "audiobook-ay/pitch-preview/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "37e0ae4d8876e5441c0f21cb87f0152bd98b5cc13dfe78e05fba6da1cfdf66a6",
-      "commit": "55c1a8cb5c43ef6244f3947482cdf6cde6267ecc",
-      "subject": "Preserve vocal pitch in AY50 speech preview",
-      "group": "audiobook-ay/pitch-preview",
-      "evidence": [
-        "audiobook-ay/pitch-preview/report.json",
-        "audiobook-ay/pitch-preview/verification.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cleanup-retired-audio-disks",
-        "head": "2a55226933f12f529cee8256d82ccf48b16d8039",
-        "distance": 45,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-YM2149-voice-test.trd"
-      ]
-    },
-    {
       "path": "audiobook-beeper/experiments/audio-converter/audiobook-preview.trd",
       "bytes": 655360,
       "sha256": "0ba2c5dc6951639f86ddb3ba9a7cdce8772145b5a27fb9833c4e3c43acfc42c4",
@@ -1727,29 +1530,6 @@
       "build_head": null,
       "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/audio-converter/checks/final-silence/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "199e27aba4837fc9581888c1b8a6a445efb5a612046b06404a0c4820dfced0a5",
-      "commit": "d4a980d79b801fad9050a60f573898344743d49a",
-      "subject": "Convert arbitrary audio prefixes to verified looping PDM disks",
-      "group": "audiobook-beeper/experiments/audio-converter",
-      "evidence": [
-        "audiobook-beeper/experiments/audio-converter/checks/silence/fuse.json",
-        "audiobook-beeper/experiments/audio-converter/checks/silence/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cleanup-retired-audio-disks",
-        "head": "2a55226933f12f529cee8256d82ccf48b16d8039",
-        "distance": 17,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/audio-converter/checks/silence/audiobook-preview.trd"
-      ]
     },
     {
       "path": "audiobook-beeper/experiments/audio-converter/checks/short/audiobook-preview.trd",
@@ -1791,78 +1571,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/audio-converter/checks/final-silence/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/audio-dynamics/release/audio.trd",
-      "bytes": 655360,
-      "sha256": "e734494907b00ba0e5bbb36b65f37152710fd73ac06efc0865f728a0037b8004",
-      "commit": "2454c14127ff8bfd9f8b015240cec25e675ab169",
-      "subject": "Qualify a full IMA4 disk with gentle source dynamics",
-      "group": "audiobook-beeper/experiments/audio-dynamics",
-      "evidence": [
-        "audiobook-beeper/experiments/audio-dynamics/postflight.json",
-        "audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 1,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-IMA4-normalized-full-disk.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-02-987/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "3526d26b44ed09c25a4a76e697b342aa348a18d53554d227a7cfbaccd72e4977",
-      "commit": "2454c14127ff8bfd9f8b015240cec25e675ab169",
-      "subject": "Qualify a full IMA4 disk with gentle source dynamics",
-      "group": "audiobook-beeper/experiments/audio-dynamics",
-      "evidence": [
-        "audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json",
-        "audiobook-beeper/experiments/audio-dynamics/selected/part-00002/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 1,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/audio-dynamics/selected/part-00002/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-05-988/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "555f8229c47d92026dcd5c5c1f2ac943a2391b67c413541477f9fe63b4493315",
-      "commit": "2454c14127ff8bfd9f8b015240cec25e675ab169",
-      "subject": "Qualify a full IMA4 disk with gentle source dynamics",
-      "group": "audiobook-beeper/experiments/audio-dynamics",
-      "evidence": [
-        "audiobook-beeper/experiments/audio-dynamics/artifact-hashes.json",
-        "audiobook-beeper/experiments/audio-dynamics/selected/part-00005/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 1,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/audio-dynamics/selected/part-00005/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "audiobook-beeper/experiments/audio-dynamics/selected/part-00001/audiobook-preview.trd",
@@ -1904,9 +1613,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-02-987/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "audiobook-beeper/experiments/audio-dynamics/selected/part-00003/audiobook-preview.trd",
@@ -1969,55 +1676,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-05-988/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/entertainer-normalized/ima3/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "45144ad87f93cea4a28de9f6ae04e59851eabb325caa5ea74b53864efaab6c62",
-      "commit": "a2bad4eeddb5d53341e349c39946c2683fbd7f24",
-      "subject": "Add normalized Entertainer IMA3 and IMA4 disk previews",
-      "group": "audiobook-beeper/experiments/entertainer-normalized",
-      "evidence": [
-        "audiobook-beeper/experiments/entertainer-normalized/comparison.json",
-        "audiobook-beeper/experiments/entertainer-normalized/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 18,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-music-Entertainer-normalized-IMA3.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/entertainer-normalized/ima4/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "6f3e8f6fb5bcd92d243a97642cb8e9483f7cba83a904bdc3c78c919b784434d4",
-      "commit": "a2bad4eeddb5d53341e349c39946c2683fbd7f24",
-      "subject": "Add normalized Entertainer IMA3 and IMA4 disk previews",
-      "group": "audiobook-beeper/experiments/entertainer-normalized",
-      "evidence": [
-        "audiobook-beeper/experiments/entertainer-normalized/comparison.json",
-        "audiobook-beeper/experiments/entertainer-normalized/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 18,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-music-Entertainer-normalized-IMA4.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "audiobook-beeper/experiments/ima-3bit-direct/pilot/audiobook-preview.trd",
@@ -2039,29 +1698,6 @@
       "build_head": null,
       "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-3bit-overlap/audio.trd",
-      "bytes": 655360,
-      "sha256": "ac4b740ebdcf2f9fb538d286b8ac679df6babc53462cf79b18f08cc8b5a2d66d",
-      "commit": "e3a9dc2cf820f083cf8725eaf23a4a264facbdd0",
-      "subject": "Fix periodic speech errors with overlapping IMA waveform search",
-      "group": "audiobook-beeper/experiments/ima-3bit-overlap",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-3bit-overlap/volumes.json",
-        "audiobook-beeper/experiments/ima-3bit-overlap/comparison.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cleanup-retired-audio-disks",
-        "head": "2a55226933f12f529cee8256d82ccf48b16d8039",
-        "distance": 2,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-IMA3-overlap-test.trd"
-      ]
     },
     {
       "path": "audiobook-beeper/experiments/ima-3bit-overlap/qualified/audiobook-preview.trd",
@@ -2209,29 +1845,6 @@
       "build_head": null,
       "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-3bit-waveform/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "5556a64f54ad932e8b65f96f6f55b4bffafae9e5bbec0ba025463fe0c2b34f89",
-      "commit": "63898f5c15aa79ac04fdf322fcd53248f82f50c1",
-      "subject": "Reach 20 dB with waveform-aware IMA3 disk encoding",
-      "group": "audiobook-beeper/experiments/ima-3bit-waveform",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-3bit-waveform/fuse.json",
-        "audiobook-beeper/experiments/ima-3bit-waveform/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cleanup-retired-audio-disks",
-        "head": "2a55226933f12f529cee8256d82ccf48b16d8039",
-        "distance": 9,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-IMA3-waveform-test.trd"
-      ]
     },
     {
       "path": "audiobook-beeper/experiments/ima-direct-locked/audiobook-preview.trd",
@@ -2399,118 +2012,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-03/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-03/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "63c9784372e341b9755a71c96b0c2936ce6422695ec3248f704b2489a2cc5543",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "d0a2631b1f5739a19e37fa36e089a6a46d61ba94a1c66f67f5e76a51e08b04ff",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "2441c4c6077293ed81e4a73bf6bbef9786977d7eed93f27eadc2516e5600b3c9",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-03/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/audiobook-preview.trd"
-      ]
     },
     {
       "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/audiobook-preview.trd",
@@ -2531,182 +2033,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-03/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "2fc4e1fe4029a70e3e15445598747819a849edfd22b678e7dbef17f320a9df58",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "0e88b9faf8dbf84dbba9b055a02c75db533afd18a92af6c1abe33a6aabdf672e",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "ea50878e84c03712f04e3674579ddb02b492956b44a883d700ac15ee985f1d43",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-03/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "bfb642ee669988b3dad687a420a8d1d9119ef37af55d4a0141bba1963be4eca7",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-03/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "9112feaabc464ccb55ee6c0bc6ccb32361058a267056376e973f4c7cead280bb",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-00/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "2f164d85f62efef9e4c6e011b0fea031350ea97973ff72b72f18c2ff3efbb471",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-01/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "e7cce85870e16d6f7884c0873afd0548c6fef8053e8815b1989fa800231f53bf",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-02/audiobook-preview.trd"
-      ]
     },
     {
       "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/audiobook-preview.trd",
@@ -2718,156 +2045,6 @@
       "evidence": [
         "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
         "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "5900f44cce16eeac13b959e5fc67cd20d293220356971da45db0a26e27989bdd",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-00/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "06cff9b50fbc8d478a99b7ff9b470d0d7747350d1e9726cc88f6bfb1fe728041",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-01/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "64b5e5e901a2fabccbdf62eff50f12446a02298cd5a7ee005740344f4a2cd8f8",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-02/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-03/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "ed0028f050c93e6399e01c165877d6d5b136d5ec84332f354d8573c2da243d50",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "564e1e1c515a9f6f8642fbf5dd6228872f7663d43c8dbacce9fe90d5592f6663",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "9b4ff91b2c53c7704e1ab8c369de01364925a4f2eea183cba673467ca6a8772a",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
       ],
       "branch_reference": {
         "name": "codex/lpc-ima-preload",
@@ -2901,96 +2078,6 @@
       "duplicates": []
     },
     {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-00/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "450898716c236e62371f8f41acde87985fef61635c5fab1f277a971210cca217",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-01/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "ba9c14e88e2bac5d6c15ede04b43340e5d6efc4b8b7eea0def71340a541085e6",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-02/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "c9862f9f8b4a3f5f355b07d761616f59f8501ab2211835e90ae47bde97c8d150",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-03/audiobook-preview.trd"
-      ]
-    },
-    {
       "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd",
       "bytes": 655360,
       "sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
@@ -3009,301 +2096,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-03/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "97b738bda1430edcdc509dbc0c1a6e8d497b70e1b9c1a1ad2a0639f121031f1a",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-03/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/selected/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "9112feaabc464ccb55ee6c0bc6ccb32361058a267056376e973f4c7cead280bb",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-00/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "2f164d85f62efef9e4c6e011b0fea031350ea97973ff72b72f18c2ff3efbb471",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-01/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "e7cce85870e16d6f7884c0873afd0548c6fef8053e8815b1989fa800231f53bf",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-02/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-03/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "c0097c769dc5d09d4724607e4377c6a15e5c86344f335852de29daa211881d97",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-03/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "5900f44cce16eeac13b959e5fc67cd20d293220356971da45db0a26e27989bdd",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-00/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "06cff9b50fbc8d478a99b7ff9b470d0d7747350d1e9726cc88f6bfb1fe728041",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-01/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "64b5e5e901a2fabccbdf62eff50f12446a02298cd5a7ee005740344f4a2cd8f8",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-02/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-03/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "97b738bda1430edcdc509dbc0c1a6e8d497b70e1b9c1a1ad2a0639f121031f1a",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/selected/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-00/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "450898716c236e62371f8f41acde87985fef61635c5fab1f277a971210cca217",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-01/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "ba9c14e88e2bac5d6c15ede04b43340e5d6efc4b8b7eea0def71340a541085e6",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-02/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-03/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "c9862f9f8b4a3f5f355b07d761616f59f8501ab2211835e90ae47bde97c8d150",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/audiobook-preview.trd"
-      ]
     },
     {
       "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/selected/audiobook-preview.trd",
@@ -3324,10 +2117,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-03/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd",
@@ -3347,10 +2137,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-00/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-00/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "audiobook-beeper/experiments/ima-quality/history/music4-verified/disk-encode-1/audiobook-preview.trd",
@@ -3416,301 +2203,6 @@
       "duplicates": []
     },
     {
-      "path": "audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/results.json",
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-IMA4-PDM-search-test.trd",
-        "ZX-audiobook-max-IMA4.trd",
-        "ZX-audiobook-quality-IMA4.trd",
-        "audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/music3/selected/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "49dbc1ef793d11e8bec474f57d321645edcbe24e9704c33516a9ad5466007e60",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/results.json",
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-music-Entertainer-quality-IMA3.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/music4/selected/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "0da2ac5a1b12f4e0093f910a298018171c602037defc9ec16303472bcc6ee3e1",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/results.json",
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-music-Entertainer-quality-IMA4.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-1/calibration/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "3f6f0b693bc17ffdd3e893b76fdd74f6e7a19c558ca6a85a58056041a3997f6e",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-max-IMA3.trd",
-        "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "fa3919bb4759e3759fe53e40c204df275271b48fb34b965cb1a8d773328aa79f",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "b872311ebfd532f8796963d10a11958c5252b4a94a290b77a34494128012d779",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "44c332425b3135bfc2a1a841ae16287f9d3417db4dc6d58f3688c57fa2b4fef7",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-max-IMA3.trd",
-        "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "233f118bbff3400b69653440265fd6fbdd9fa6e3402c80301e9b55377385c0db",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "7ffdd9e933f160240d4f6358d1babcd1661f778095137ef6388e425aeeb75c77",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "bf6d8531f3646854e1ee68d6f21ec39e0346af211e5a6168acf10554889fb023",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima4-overlap/manifest.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima4-overlap/evidence/disk-overlap/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
-      "commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
-      "subject": "Improve IMA quality search and save paused study",
-      "group": "audiobook-beeper/experiments/ima-quality",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-quality/results.json",
-        "audiobook-beeper/experiments/ima-quality/artifact-hashes.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 16,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-IMA4-PDM-search-test.trd",
-        "ZX-audiobook-max-IMA4.trd",
-        "ZX-audiobook-quality-IMA4.trd",
-        "audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd"
-      ]
-    },
-    {
       "path": "audiobook-beeper/experiments/ima-waveform/audiobook-preview.trd",
       "bytes": 655360,
       "sha256": "68c22d1e49273242393b009c030a86ea395ca234ea9fdf36b988edb5a2568aa6",
@@ -3729,95 +2221,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-waveform/calibration/phase-03/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-waveform/calibration/phase-00/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "9dbdbd98548ec4b316b1b810a73f361a44885fb54a955da561bedad50c3b6234",
-      "commit": "5d28485e36cb83c31bee2ea07f08f74ea8dfb722",
-      "subject": "Reach 21 dB with waveform-aware IMA encoding",
-      "group": "audiobook-beeper/experiments/ima-waveform",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-waveform/artifacts.json",
-        "ay-converter/analysis/music50/evidence/retained-images.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cleanup-retired-audio-disks",
-        "head": "2a55226933f12f529cee8256d82ccf48b16d8039",
-        "distance": 15,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-waveform/calibration/phase-01/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "7e63b4070cb034dc0da6603ebc37a4559ca236b5dff702a539ab82e72baf3184",
-      "commit": "5d28485e36cb83c31bee2ea07f08f74ea8dfb722",
-      "subject": "Reach 21 dB with waveform-aware IMA encoding",
-      "group": "audiobook-beeper/experiments/ima-waveform",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-waveform/artifacts.json",
-        "ay-converter/analysis/music50/evidence/retained-images.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cleanup-retired-audio-disks",
-        "head": "2a55226933f12f529cee8256d82ccf48b16d8039",
-        "distance": 15,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-waveform/calibration/phase-02/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "871ae04f4e3df3ceac9583adaf25755d03ac41c22a2d23d79d8c91beffa107d3",
-      "commit": "5d28485e36cb83c31bee2ea07f08f74ea8dfb722",
-      "subject": "Reach 21 dB with waveform-aware IMA encoding",
-      "group": "audiobook-beeper/experiments/ima-waveform",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-waveform/artifacts.json",
-        "ay-converter/analysis/music50/evidence/retained-images.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cleanup-retired-audio-disks",
-        "head": "2a55226933f12f529cee8256d82ccf48b16d8039",
-        "distance": 15,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima-waveform/calibration/phase-03/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "68c22d1e49273242393b009c030a86ea395ca234ea9fdf36b988edb5a2568aa6",
-      "commit": "5d28485e36cb83c31bee2ea07f08f74ea8dfb722",
-      "subject": "Reach 21 dB with waveform-aware IMA encoding",
-      "group": "audiobook-beeper/experiments/ima-waveform",
-      "evidence": [
-        "audiobook-beeper/experiments/ima-waveform/fuse.json",
-        "audiobook-beeper/experiments/ima-waveform/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cleanup-retired-audio-disks",
-        "head": "2a55226933f12f529cee8256d82ccf48b16d8039",
-        "distance": 15,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-waveform/audiobook-preview.trd"
-      ]
     },
     {
       "path": "audiobook-beeper/experiments/ima4-full-disk/micro/audio.trd",
@@ -3841,52 +2245,6 @@
       "duplicates": []
     },
     {
-      "path": "audiobook-beeper/experiments/ima4-full-disk/release/audio.trd",
-      "bytes": 655360,
-      "sha256": "a7e4fb4f289b036b2f84e2032938894767875db3b1e70fbe19d79780af106aa7",
-      "commit": "6a3d3313f78c345c05e718c8079a3edd93acfa30",
-      "subject": "Generate a full IMA4 disk with sequential playback",
-      "group": "audiobook-beeper/experiments/ima4-full-disk",
-      "evidence": [
-        "audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima4-full-disk/release/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 6,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-IMA4-full-disk.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima4-full-disk/release/verification/cold-0001/phase-reference-01-987/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "d854a09e32d20260264018a6545bd8d51082d2c6ee7d76c18e46b1e885a4edce",
-      "commit": "6a3d3313f78c345c05e718c8079a3edd93acfa30",
-      "subject": "Generate a full IMA4 disk with sequential playback",
-      "group": "audiobook-beeper/experiments/ima4-full-disk",
-      "evidence": [
-        "audiobook-beeper/experiments/ima4-full-disk/artifact-hashes.json",
-        "audiobook-beeper/experiments/ima4-full-disk/searches/part-00001/fuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 6,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima4-full-disk/selected/part-00001/audiobook-preview.trd"
-      ]
-    },
-    {
       "path": "audiobook-beeper/experiments/ima4-full-disk/selected/part-00001/audiobook-preview.trd",
       "bytes": 655360,
       "sha256": "d854a09e32d20260264018a6545bd8d51082d2c6ee7d76c18e46b1e885a4edce",
@@ -3905,9 +2263,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima4-full-disk/release/verification/cold-0001/phase-reference-01-987/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "audiobook-beeper/experiments/ima4-full-disk/selected/part-00002/audiobook-preview.trd",
@@ -4033,85 +2389,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-02/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
-      "commit": "db67cae7c4c84e532ed6044b0cd141c8a6465694",
-      "subject": "Verify IMA4 overlapping PDM search against control",
-      "group": "audiobook-beeper/experiments/ima4-overlap",
-      "evidence": [
-        "audiobook-beeper/experiments/ima4-overlap/manifest.json",
-        "audiobook-beeper/experiments/ima4-overlap/evidence/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 11,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-IMA4-PDM-search-test.trd",
-        "ZX-audiobook-max-IMA4.trd",
-        "ZX-audiobook-quality-IMA4.trd",
-        "audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/loop-debugger-interrupted/timing-pilot/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "91ba4b710ce4c6b6bd01ff1a657ef769889ac7dd2cec1c0ba1aebe5272321c94",
-      "commit": "5c9200a2a1d64343e207163a91f03ce819cd0b5e",
-      "subject": "Add looping 8 kHz 8-bit audiobook PDM test",
-      "group": "audiobook-beeper/experiments/loop-debugger-interrupted",
-      "evidence": [
-        "audiobook-beeper/preview-8k8-loop/report.json",
-        "audiobook-beeper/preview-8k8-loop/timing-pilot/verification.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cleanup-retired-audio-disks",
-        "head": "2a55226933f12f529cee8256d82ccf48b16d8039",
-        "distance": 46,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/preview-8k8-loop/timing-pilot/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2",
-      "commit": "190e655f9f1bb3f32a07bce47ad6ee8dfb7e4fb0",
-      "subject": "Add verified compact mu-law TRD control",
-      "group": "audiobook-beeper/experiments/mulaw-trd",
-      "evidence": [
-        "audiobook-beeper/experiments/mulaw-trd/manifest.json",
-        "audiobook-beeper/experiments/mulaw-trd/qualified/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 12,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-mulaw-test.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "audiobook-beeper/experiments/mulaw128/evidence/control64/audiobook-preview.trd",
@@ -4132,9 +2410,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/mulaw128/evidence/control64/waveform-32/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "audiobook-beeper/experiments/mulaw128/evidence/control64/control/audiobook-preview.trd",
@@ -4176,29 +2452,6 @@
       "build_head": null,
       "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/mulaw128/evidence/control64/waveform-32/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "ee0c50a8ec6a65055b36f461ca9ac57b96532517fd79ad8f07b79e3df97a6f05",
-      "commit": "ef294dc3db26943afccfd9d8aa44f08e65380f03",
-      "subject": "Add verified 128 kHz mu-law packet playback",
-      "group": "audiobook-beeper/experiments/mulaw128",
-      "evidence": [
-        "audiobook-beeper/experiments/mulaw128/manifest.json",
-        "audiobook-beeper/experiments/mulaw128/evidence/control64/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 9,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/mulaw128/evidence/control64/audiobook-preview.trd"
-      ]
     },
     {
       "path": "audiobook-beeper/experiments/mulaw128/evidence/control64/waveform-8/audiobook-preview.trd",
@@ -4243,30 +2496,6 @@
       "duplicates": []
     },
     {
-      "path": "audiobook-beeper/experiments/mulaw128/evidence/speech-full/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "c78eeaab5fc14347feb1f09217867a789ad49d30e77f73a6c648645d963041e6",
-      "commit": "ef294dc3db26943afccfd9d8aa44f08e65380f03",
-      "subject": "Add verified 128 kHz mu-law packet playback",
-      "group": "audiobook-beeper/experiments/mulaw128",
-      "evidence": [
-        "audiobook-beeper/experiments/mulaw128/results.json",
-        "audiobook-beeper/experiments/mulaw128/manifest.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 9,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-mulaw-128-test.trd",
-        "audiobook-beeper/experiments/mulaw128/evidence/speech-full/waveform-64/audiobook-preview.trd"
-      ]
-    },
-    {
       "path": "audiobook-beeper/experiments/mulaw128/evidence/speech-full/pilot/audiobook-preview.trd",
       "bytes": 655360,
       "sha256": "d15690a1c0e7306f74aa57e2ba806141e3dd3544b2efa5948d19f6f6ed07b3c3",
@@ -4307,30 +2536,6 @@
       "build_head": null,
       "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/mulaw128/evidence/speech-full/waveform-64/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "c78eeaab5fc14347feb1f09217867a789ad49d30e77f73a6c648645d963041e6",
-      "commit": "ef294dc3db26943afccfd9d8aa44f08e65380f03",
-      "subject": "Add verified 128 kHz mu-law packet playback",
-      "group": "audiobook-beeper/experiments/mulaw128",
-      "evidence": [
-        "audiobook-beeper/experiments/mulaw128/results.json",
-        "audiobook-beeper/experiments/mulaw128/manifest.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 9,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-mulaw-128-test.trd",
-        "audiobook-beeper/experiments/mulaw128/evidence/speech-full/audiobook-preview.trd"
-      ]
     },
     {
       "path": "audiobook-beeper/experiments/mulaw128/evidence/speech-short/pilot/audiobook-preview.trd",
@@ -4438,31 +2643,6 @@
       "duplicates": []
     },
     {
-      "path": "audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
-      "commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
-      "subject": "Improve bounded IMA and mu-law waveform quality search",
-      "group": "audiobook-beeper/experiments/quality-max",
-      "evidence": [
-        "audiobook-beeper/experiments/quality-max/results.json",
-        "audiobook-beeper/experiments/quality-max/manifest.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 10,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-max-IMA3.trd",
-        "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd"
-      ]
-    },
-    {
       "path": "audiobook-beeper/experiments/quality-max/evidence/ima3/third/audiobook-preview.trd",
       "bytes": 655360,
       "sha256": "765dcb60cc81109879fe358501e9649db0deccb16bd2ce177e93f56721af7158",
@@ -4484,34 +2664,6 @@
       "duplicates": []
     },
     {
-      "path": "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
-      "commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
-      "subject": "Improve bounded IMA and mu-law waveform quality search",
-      "group": "audiobook-beeper/experiments/quality-max",
-      "evidence": [
-        "audiobook-beeper/experiments/quality-max/results.json",
-        "audiobook-beeper/experiments/quality-max/manifest.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 10,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-IMA4-PDM-search-test.trd",
-        "ZX-audiobook-max-IMA4.trd",
-        "ZX-audiobook-quality-IMA4.trd",
-        "audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd",
-        "audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd"
-      ]
-    },
-    {
       "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/audiobook-preview.trd",
       "bytes": 655360,
       "sha256": "a5360271fe41576a69782346a1fb165f67545363883c5d75d040f9468641056c",
@@ -4530,9 +2682,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/waveform-32/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/control/audiobook-preview.trd",
@@ -4576,29 +2726,6 @@
       "duplicates": []
     },
     {
-      "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/waveform-32/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "a5360271fe41576a69782346a1fb165f67545363883c5d75d040f9468641056c",
-      "commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
-      "subject": "Improve bounded IMA and mu-law waveform quality search",
-      "group": "audiobook-beeper/experiments/quality-max",
-      "evidence": [
-        "audiobook-beeper/experiments/quality-max/manifest.json",
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 10,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/audiobook-preview.trd"
-      ]
-    },
-    {
       "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/waveform-8/audiobook-preview.trd",
       "bytes": 655360,
       "sha256": "cab8ca761e9bc6c0b15d2839484478887acd105459d7e1ec4e92972251a7c350",
@@ -4618,55 +2745,6 @@
       "build_head": null,
       "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2",
-      "commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
-      "subject": "Improve bounded IMA and mu-law waveform quality search",
-      "group": "audiobook-beeper/experiments/quality-max",
-      "evidence": [
-        "audiobook-beeper/experiments/quality-max/manifest.json",
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw/reuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 10,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-mulaw-test.trd",
-        "audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd"
-      ]
-    },
-    {
-      "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw/selected/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "1b9a4e45e6f34c1fde830ecabea85d4018a15c7b7600484d4fef5444f91c8667",
-      "commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
-      "subject": "Improve bounded IMA and mu-law waveform quality search",
-      "group": "audiobook-beeper/experiments/quality-max",
-      "evidence": [
-        "audiobook-beeper/experiments/quality-max/results.json",
-        "audiobook-beeper/experiments/quality-max/manifest.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 10,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-max-mulaw.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-32/audiobook-preview.trd"
-      ]
     },
     {
       "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw/timing-control/audiobook-preview.trd",
@@ -4690,30 +2768,6 @@
       "duplicates": []
     },
     {
-      "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-32/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "1b9a4e45e6f34c1fde830ecabea85d4018a15c7b7600484d4fef5444f91c8667",
-      "commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
-      "subject": "Improve bounded IMA and mu-law waveform quality search",
-      "group": "audiobook-beeper/experiments/quality-max",
-      "evidence": [
-        "audiobook-beeper/experiments/quality-max/results.json",
-        "audiobook-beeper/experiments/quality-max/manifest.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 10,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-max-mulaw.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw/selected/audiobook-preview.trd"
-      ]
-    },
-    {
       "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-8/audiobook-preview.trd",
       "bytes": 655360,
       "sha256": "b9ac5ea4eb80ab2045ebe4a82068f9ee0742e2fc5b759444f19d96ec00bb2b01",
@@ -4733,31 +2787,6 @@
       "build_head": null,
       "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd",
-      "bytes": 655360,
-      "sha256": "e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2",
-      "commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
-      "subject": "Improve bounded IMA and mu-law waveform quality search",
-      "group": "audiobook-beeper/experiments/quality-max",
-      "evidence": [
-        "audiobook-beeper/experiments/quality-max/manifest.json",
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw/reuse.json"
-      ],
-      "branch_reference": {
-        "name": "codex/lpc-ima-preload",
-        "head": "92fb920f193aaed3908564d4a8c528514d29407b",
-        "distance": 10,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-mulaw-test.trd",
-        "audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd",
-        "audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd"
-      ]
     },
     {
       "path": "audiobook-beeper/ima-preview/audiobook-preview.trd",
@@ -4820,9 +2849,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "audiobook-beeper/experiments/loop-debugger-interrupted/timing-pilot/audiobook-preview.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "audiobook-beeper/preview-8k8/audiobook-preview.trd",
@@ -4886,98 +2913,6 @@
       "build_head": null,
       "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "ay-converter/analysis/music50/evidence/release/audio-preview.trd",
-      "bytes": 655360,
-      "sha256": "e1ef02bc4bee6163698a4b8ed16dfaa12ec5c2852834a24e57b60d6631619663",
-      "commit": "c8866310c283aae8fa27c2cad4dd5c9a7ef35196",
-      "subject": "Add verified 20-ms AY music profile and spectrogram comparison",
-      "group": "ay-converter/analysis/music50",
-      "evidence": [
-        "ay-converter/analysis/music50/evidence/archive-check.json",
-        "ay-converter/analysis/music50/evidence/release/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/ay-music-50hz",
-        "head": "4484bab95df7359dea4ef46414025c9f1706aecb",
-        "distance": 2,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-music-Entertainer-AY-music50-test.trd"
-      ]
-    },
-    {
-      "path": "ay-converter/analysis/noise_colour/evidence/release/audio-preview.trd",
-      "bytes": 655360,
-      "sha256": "a7d36854c41ca7f408619ffb32f6218aeb28324c397cdf30ff131e4d6f6a8691",
-      "commit": "4484bab95df7359dea4ef46414025c9f1706aecb",
-      "subject": "Fit AY noise colour against continuous chip simulation",
-      "group": "ay-converter/analysis/noise_colour",
-      "evidence": [
-        "ay-converter/analysis/noise_colour/evidence/completion.json",
-        "ay-converter/analysis/noise_colour/evidence/release/report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/ay-music-50hz",
-        "head": "4484bab95df7359dea4ef46414025c9f1706aecb",
-        "distance": 0,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-music-Entertainer-AY-noise-colour-test.trd"
-      ]
-    },
-    {
-      "path": "ay-converter/analysis/o_henry/evidence/release/audio-preview.trd",
-      "bytes": 655360,
-      "sha256": "aa2013bab38a3fbffecb97f1069b570d17e9fefa591c075da58c4000b84169d1",
-      "commit": "a871a4b63ef3f023f4dd930603c73fa940aa0319",
-      "subject": "Add verified O. Henry AY50 listening preview",
-      "group": "ay-converter/analysis/o_henry",
-      "evidence": [
-        "ay-converter/analysis/o_henry/evidence/release/report.json",
-        "ay-converter/analysis/o_henry/evidence/release/verification.json"
-      ],
-      "branch_reference": {
-        "name": "codex/ay-o-henry-preview",
-        "head": "a871a4b63ef3f023f4dd930603c73fa940aa0319",
-        "distance": 0,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-audiobook-OHenry-AY50-test.trd"
-      ]
-    },
-    {
-      "path": "ay-converter/analysis/tracked50/evidence/release/audio-preview.trd",
-      "bytes": 655360,
-      "sha256": "2e6a14a9637a9fae6d7546826473148de1e3b263a8b58717abfcbfe61f79e8d4",
-      "commit": "4ab6d7f3bddab0d3c217fd5c3ffe4e5bd3e749ef",
-      "subject": "Keep AY components on persistent channels and mix detected noise",
-      "group": "ay-converter/analysis/tracked50",
-      "evidence": [
-        "ay-converter/analysis/tracked50/evidence/release/report.json",
-        "ay-converter/analysis/tracked50/evidence/release/verification.json"
-      ],
-      "branch_reference": {
-        "name": "codex/ay-music-50hz",
-        "head": "4484bab95df7359dea4ef46414025c9f1706aecb",
-        "distance": 1,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-music-Entertainer-AY-tracked50-test.trd"
-      ]
     },
     {
       "path": "toolkit/banked_audio_evidence/failed-banked-audio-fixture-fixed-ZX-video-banked_part01.trd",
@@ -5460,9 +3395,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "toolkit/sector_cache_evidence/sector-cache-part04-capacity-part04.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "toolkit/generic_cb41_evidence/anamorphic-ZX-video_part01.trd",
@@ -5822,29 +3755,6 @@
       "duplicates": []
     },
     {
-      "path": "toolkit/monochrome_preview_evidence/cb41-monochrome-preview-ZX-video-monochrome-preview_part01.trd.trd",
-      "bytes": 655360,
-      "sha256": "38cecad279376a10b86fa5265930976b923d202465310026525eef2ed40cd16f",
-      "commit": "0cbfa1714b682c226f83742e66967fddea68fa6b",
-      "subject": "Build monochrome comparison disk with timing evidence",
-      "group": "toolkit/monochrome_preview_evidence",
-      "evidence": [
-        "toolkit/monochrome_preview_report.json",
-        "ay-converter/analysis/music50/evidence/retained-images.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cb41-10fps",
-        "head": "c7e1554ba4271873efbf804311529ddb935e105e",
-        "distance": 31,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-video-monochrome-preview.trd"
-      ]
-    },
-    {
       "path": "toolkit/optional_read_gate_evidence/ZX-video-front_part07.trd",
       "bytes": 655360,
       "sha256": "6a46b0157c7078201444323248b398d4eed666b4f3119871ff70f36598fc6306",
@@ -5885,29 +3795,6 @@
       "build_head": null,
       "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "toolkit/refined_av_attempt_evidence/refined-av-probe-09-ZX-video-refined_part09.trd.trd",
-      "bytes": 655360,
-      "sha256": "f9472730e57043393dfdafdfbe2f884ac888b0dc135cf9a8030991f51e9d5df5",
-      "commit": "3727f8bb842d87300720f1a72efac660ff9e2189",
-      "subject": "Prepare refined movie audio and colour with measured disk cuts",
-      "group": "toolkit/refined_av_attempt_evidence",
-      "evidence": [
-        "toolkit/refined_av_movie_report.json",
-        "toolkit/refined_av_attempt_report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cb41-10fps",
-        "head": "c7e1554ba4271873efbf804311529ddb935e105e",
-        "distance": 27,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "toolkit/refined_av_movie_evidence/refined-av-final-ZX-video-refined_part09.trd.trd"
-      ]
     },
     {
       "path": "toolkit/refined_av_movie_evidence/refined-av-final-ZX-video-refined_part01.trd.trd",
@@ -6096,9 +3983,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "toolkit/refined_av_attempt_evidence/refined-av-probe-09-ZX-video-refined_part09.trd.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "toolkit/refined_av_movie_evidence/refined-av-final-ZX-video-refined_part10.trd.trd",
@@ -6227,98 +4112,6 @@
       "duplicates": []
     },
     {
-      "path": "toolkit/refined_four_evidence/ZX-video-refined_part01.trd",
-      "bytes": 655360,
-      "sha256": "f9039541aa1309fe8a3acf5ad7171f6ed52ef497b7f170585b995e64da1c19b8",
-      "commit": "c7e1554ba4271873efbf804311529ddb935e105e",
-      "subject": "Deliver the complete refined movie on four disks",
-      "group": "toolkit/refined_four_evidence",
-      "evidence": [
-        "toolkit/refined_four_report.json",
-        "ay-converter/analysis/music50/evidence/retained-images.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cb41-10fps",
-        "head": "c7e1554ba4271873efbf804311529ddb935e105e",
-        "distance": 0,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-video-refined_part01.trd"
-      ]
-    },
-    {
-      "path": "toolkit/refined_four_evidence/ZX-video-refined_part02.trd",
-      "bytes": 655360,
-      "sha256": "eb0d781e1219d9dc59423876f0dc9d0b9cc7ff86cec0786e292c3d93ff820edf",
-      "commit": "c7e1554ba4271873efbf804311529ddb935e105e",
-      "subject": "Deliver the complete refined movie on four disks",
-      "group": "toolkit/refined_four_evidence",
-      "evidence": [
-        "toolkit/refined_four_report.json",
-        "ay-converter/analysis/music50/evidence/retained-images.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cb41-10fps",
-        "head": "c7e1554ba4271873efbf804311529ddb935e105e",
-        "distance": 0,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-video-refined_part02.trd"
-      ]
-    },
-    {
-      "path": "toolkit/refined_four_evidence/ZX-video-refined_part03.trd",
-      "bytes": 655360,
-      "sha256": "4001ebc3a3b1cde5a637973039cdf6c1c41eec3f8fac9e40df740fdc72aea4c0",
-      "commit": "c7e1554ba4271873efbf804311529ddb935e105e",
-      "subject": "Deliver the complete refined movie on four disks",
-      "group": "toolkit/refined_four_evidence",
-      "evidence": [
-        "toolkit/refined_four_report.json",
-        "ay-converter/analysis/music50/evidence/retained-images.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cb41-10fps",
-        "head": "c7e1554ba4271873efbf804311529ddb935e105e",
-        "distance": 0,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-video-refined_part03.trd"
-      ]
-    },
-    {
-      "path": "toolkit/refined_four_evidence/ZX-video-refined_part04.trd",
-      "bytes": 655360,
-      "sha256": "6c4861a9eb9d161429fdf0e85a9fd618dc9e6f69af4c8e31adb7952cc4c19eb5",
-      "commit": "c7e1554ba4271873efbf804311529ddb935e105e",
-      "subject": "Deliver the complete refined movie on four disks",
-      "group": "toolkit/refined_four_evidence",
-      "evidence": [
-        "toolkit/refined_four_report.json",
-        "ay-converter/analysis/music50/evidence/retained-images.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cb41-10fps",
-        "head": "c7e1554ba4271873efbf804311529ddb935e105e",
-        "distance": 0,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "ZX-video-refined_part04.trd"
-      ]
-    },
-    {
       "path": "toolkit/retired_cell_evidence/front-retired-core-ZX-video-front_part07.trd",
       "bytes": 655360,
       "sha256": "f646c364246d304986238010f587d74896b78c4cc440f21801c583784f84984a",
@@ -6422,29 +4215,6 @@
       "build_head": null,
       "build_branch": null,
       "duplicates": []
-    },
-    {
-      "path": "toolkit/sector_cache_evidence/sector-cache-part04-capacity-part04.trd",
-      "bytes": 655360,
-      "sha256": "02aac909f9a56ac27d89d42f52d48fa4dc5ec7e4a5a04ba1c237ec3ab20346c4",
-      "commit": "bc615ab0910771fcfb1bccc6f534f827f34193e9",
-      "subject": "Prefetch compressed sectors into spare bank-seven memory",
-      "group": "toolkit/sector_cache_evidence",
-      "evidence": [
-        "toolkit/sector_cache_report.json",
-        "toolkit/full_volume_dictionary_report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cb41-10fps",
-        "head": "c7e1554ba4271873efbf804311529ddb935e105e",
-        "distance": 11,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "toolkit/full_volume_dictionary_evidence/baseline-part04.trd"
-      ]
     },
     {
       "path": "toolkit/sector_cache_evidence/sector-cache-window-ZX-video-front_part07.trd",
@@ -6633,32 +4403,7 @@
       },
       "build_head": null,
       "build_branch": null,
-      "duplicates": [
-        "toolkit/streaming_lzsa2_evidence/bypass-window-ZX-video-front_part07.trd"
-      ]
-    },
-    {
-      "path": "toolkit/streaming_lzsa2_evidence/bypass-window-ZX-video-front_part07.trd",
-      "bytes": 655360,
-      "sha256": "9d005b62f27b447fdd6b945c361044850bfa546d83236252f3ae4eb6a8256d6b",
-      "commit": "b8fec73c869d8f4851d2c9720150135de7e4b67b",
-      "subject": "Record guarded LZSA2 input experiments and compression priority",
-      "group": "toolkit/streaming_lzsa2_evidence",
-      "evidence": [
-        "toolkit/streaming_lzsa2_report.json",
-        "toolkit/streaming_bypass_playback_report.json"
-      ],
-      "branch_reference": {
-        "name": "codex/cb41-10fps",
-        "head": "c7e1554ba4271873efbf804311529ddb935e105e",
-        "distance": 10,
-        "evidence": "docs/maintenance/2026-10-05-repository-cleanup.json"
-      },
-      "build_head": null,
-      "build_branch": null,
-      "duplicates": [
-        "toolkit/streaming_bypass_evidence/window-ZX-video-front_part07.trd"
-      ]
+      "duplicates": []
     },
     {
       "path": "toolkit/streaming_lzsa2_evidence/fast-window-ZX-video-front_part07.trd",
@@ -6723,5 +4468,6 @@
       "build_branch": null,
       "duplicates": []
     }
-  ]
+  ],
+  "deduplication_manifest": "docs/maintenance/2026-10-12-trd-deduplication.json"
 }

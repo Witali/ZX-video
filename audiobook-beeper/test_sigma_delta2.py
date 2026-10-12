@@ -9,6 +9,7 @@ import unittest
 import numpy as np
 from sigma_delta2 import model,tables,independent_tables,step
 from ima3_direct_player import build_disk
+from trd_duplicates import read_bytes as artifact_bytes
 
 
 class SigmaDelta2(unittest.TestCase):
@@ -43,7 +44,7 @@ class SigmaDelta2(unittest.TestCase):
             disk,_=build_disk(packed,Path(work),meta['model'],meta['hot_indices'],
                               meta['loop_idle_pairs'],meta['loop_idle_pad_tstates'])
         self.assertEqual(hashlib.sha256(disk).hexdigest(),
-                         hashlib.sha256((root/'audiobook-preview.trd').read_bytes()).hexdigest())
+                         hashlib.sha256(artifact_bytes(root/'audiobook-preview.trd')).hexdigest())
 
     def test_measurement_gain_cannot_disagree_with_feedback_model(self):
         spec=model();spec['output_gain']=.5

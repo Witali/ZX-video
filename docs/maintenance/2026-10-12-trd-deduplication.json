@@ -1,0 +1,3351 @@
+{
+  "schema": 1,
+  "date": "2026-10-12",
+  "baseline_commit": "ead95787f25dfc9a2e18abf46f313f5e73de4143",
+  "before_images": 283,
+  "after_images": 189,
+  "exact_redundant_images": 65,
+  "near_unique_variants": 29,
+  "removed_file_bytes": 61603840,
+  "selection": "Retain one whole image per exact group, preferring root release names and selected fixtures. Collapse only archived phase-calibration/UI variants with <=2048 differing PLAYER bytes, identical directory and every other disk byte. Store exact sparse edits; do not treat timing differences as equivalent playback.",
+  "files": [
+    {
+      "path": "ZX-audiobook-IMA4-PDM-search-test.trd",
+      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "bytes": 655360,
+      "artifact_commit": "db67cae7c4c84e532ed6044b0cd141c8a6465694",
+      "retained": "ZX-audiobook-max-IMA4.trd",
+      "retained_sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "ZX-audiobook-quality-IMA4.trd",
+      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "ZX-audiobook-max-IMA4.trd",
+      "retained_sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-ay/music-preview/attempts/before-loading-label/audio-preview.trd",
+      "sha256": "d56c38ce62ea7398a559a02cc66a0aea6cfe42c557842f312dd238f8202a7fc5",
+      "bytes": 655360,
+      "artifact_commit": "b44b1fd1696ed205db5ee603eb8d981194335864",
+      "retained": "ZX-music-Entertainer-AY.trd",
+      "retained_sha256": "c6139c9c5cd4c18df82d3b1f208064790487a48db3883b26f916d00765fc177c",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 389,
+      "edits": [
+        [
+          4389,
+          "0e"
+        ],
+        [
+          4397,
+          "ea80"
+        ],
+        [
+          4411,
+          "0e"
+        ],
+        [
+          4419,
+          "ea80"
+        ],
+        [
+          4422,
+          "16"
+        ],
+        [
+          4424,
+          "1e000efd06ffed5106bfed59147afe0e20f22100be1101be01000136bdedb03ec332bdbd21e78022bebd3ebeed47ed5e3e1001fd7fed792100c0fb76ed5b0c817ab3caca8016000efd5e2306ffed5106bfed59147afe0b20f0ed5b0c811bed530c817cfeff20d47dfefb20cf7ab328cb2a10"
+        ],
+        [
+          4539,
+          "232210817e01fd7fed792100c018b9111406ed530c"
+        ],
+        [
+          4561,
+          "2112812210813e1001fd7fed792100c0c38d807618fdfbed4dc5e5ed5b0e81010501cd133de1c124ed5b0e811ccb6328031e0014ed530e8110dfc914060000128110141611131700"
+        ],
+        [
+          4634,
+          "00000000000000000000"
+        ],
+        [
+          4646,
+          "0000000000000000"
+        ],
+        [
+          8519,
+          "000000000000000000000000000000000000"
+        ],
+        [
+          8775,
+          "000000000000000000000000000000000000"
+        ],
+        [
+          9031,
+          "000000000000000000000000000000000000"
+        ],
+        [
+          9287,
+          "000000000000000000000000000000000000"
+        ],
+        [
+          9511,
+          "0000000000000000000000000000000000"
+        ],
+        [
+          9543,
+          "000000000000000000000000000000000000"
+        ],
+        [
+          9767,
+          "0000000000000000000000000000000000"
+        ],
+        [
+          10023,
+          "0000000000000000000000000000000000"
+        ],
+        [
+          10279,
+          "00000000000000"
+        ],
+        [
+          10287,
+          "000000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-ay/music-preview/audio-preview.trd",
+      "sha256": "c6139c9c5cd4c18df82d3b1f208064790487a48db3883b26f916d00765fc177c",
+      "bytes": 655360,
+      "artifact_commit": "b44b1fd1696ed205db5ee603eb8d981194335864",
+      "retained": "ZX-music-Entertainer-AY.trd",
+      "retained_sha256": "c6139c9c5cd4c18df82d3b1f208064790487a48db3883b26f916d00765fc177c",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-ay/pitch-preview/audiobook-preview.trd",
+      "sha256": "37e0ae4d8876e5441c0f21cb87f0152bd98b5cc13dfe78e05fba6da1cfdf66a6",
+      "bytes": 655360,
+      "artifact_commit": "55c1a8cb5c43ef6244f3947482cdf6cde6267ecc",
+      "retained": "ZX-audiobook-YM2149-voice-test.trd",
+      "retained_sha256": "37e0ae4d8876e5441c0f21cb87f0152bd98b5cc13dfe78e05fba6da1cfdf66a6",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/audio-converter/checks/final-silence/audiobook-preview.trd",
+      "sha256": "199e27aba4837fc9581888c1b8a6a445efb5a612046b06404a0c4820dfced0a5",
+      "bytes": 655360,
+      "artifact_commit": "d4a980d79b801fad9050a60f573898344743d49a",
+      "retained": "audiobook-beeper/experiments/audio-converter/checks/silence/audiobook-preview.trd",
+      "retained_sha256": "199e27aba4837fc9581888c1b8a6a445efb5a612046b06404a0c4820dfced0a5",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/audio-dynamics/release/audio.trd",
+      "sha256": "e734494907b00ba0e5bbb36b65f37152710fd73ac06efc0865f728a0037b8004",
+      "bytes": 655360,
+      "artifact_commit": "2454c14127ff8bfd9f8b015240cec25e675ab169",
+      "retained": "ZX-audiobook-IMA4-normalized-full-disk.trd",
+      "retained_sha256": "e734494907b00ba0e5bbb36b65f37152710fd73ac06efc0865f728a0037b8004",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-02-987/audiobook-preview.trd",
+      "sha256": "3526d26b44ed09c25a4a76e697b342aa348a18d53554d227a7cfbaccd72e4977",
+      "bytes": 655360,
+      "artifact_commit": "2454c14127ff8bfd9f8b015240cec25e675ab169",
+      "retained": "audiobook-beeper/experiments/audio-dynamics/selected/part-00002/audiobook-preview.trd",
+      "retained_sha256": "3526d26b44ed09c25a4a76e697b342aa348a18d53554d227a7cfbaccd72e4977",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/audio-dynamics/release/verification/cold-0001/phase-reference-05-988/audiobook-preview.trd",
+      "sha256": "555f8229c47d92026dcd5c5c1f2ac943a2391b67c413541477f9fe63b4493315",
+      "bytes": 655360,
+      "artifact_commit": "2454c14127ff8bfd9f8b015240cec25e675ab169",
+      "retained": "audiobook-beeper/experiments/audio-dynamics/selected/part-00005/audiobook-preview.trd",
+      "retained_sha256": "555f8229c47d92026dcd5c5c1f2ac943a2391b67c413541477f9fe63b4493315",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/entertainer-normalized/ima3/audiobook-preview.trd",
+      "sha256": "45144ad87f93cea4a28de9f6ae04e59851eabb325caa5ea74b53864efaab6c62",
+      "bytes": 655360,
+      "artifact_commit": "a2bad4eeddb5d53341e349c39946c2683fbd7f24",
+      "retained": "ZX-music-Entertainer-normalized-IMA3.trd",
+      "retained_sha256": "45144ad87f93cea4a28de9f6ae04e59851eabb325caa5ea74b53864efaab6c62",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/entertainer-normalized/ima4/audiobook-preview.trd",
+      "sha256": "6f3e8f6fb5bcd92d243a97642cb8e9483f7cba83a904bdc3c78c919b784434d4",
+      "bytes": 655360,
+      "artifact_commit": "a2bad4eeddb5d53341e349c39946c2683fbd7f24",
+      "retained": "ZX-music-Entertainer-normalized-IMA4.trd",
+      "retained_sha256": "6f3e8f6fb5bcd92d243a97642cb8e9483f7cba83a904bdc3c78c919b784434d4",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-3bit-overlap/audio.trd",
+      "sha256": "ac4b740ebdcf2f9fb538d286b8ac679df6babc53462cf79b18f08cc8b5a2d66d",
+      "bytes": 655360,
+      "artifact_commit": "e3a9dc2cf820f083cf8725eaf23a4a264facbdd0",
+      "retained": "ZX-audiobook-IMA3-overlap-test.trd",
+      "retained_sha256": "ac4b740ebdcf2f9fb538d286b8ac679df6babc53462cf79b18f08cc8b5a2d66d",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-3bit-waveform/audiobook-preview.trd",
+      "sha256": "5556a64f54ad932e8b65f96f6f55b4bffafae9e5bbec0ba025463fe0c2b34f89",
+      "bytes": 655360,
+      "artifact_commit": "63898f5c15aa79ac04fdf322fcd53248f82f50c1",
+      "retained": "ZX-audiobook-IMA3-waveform-test.trd",
+      "retained_sha256": "5556a64f54ad932e8b65f96f6f55b4bffafae9e5bbec0ba025463fe0c2b34f89",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/audiobook-preview.trd",
+      "sha256": "c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/audiobook-preview.trd",
+      "retained_sha256": "c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-00/audiobook-preview.trd",
+      "sha256": "63c9784372e341b9755a71c96b0c2936ce6422695ec3248f704b2489a2cc5543",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/audiobook-preview.trd",
+      "retained_sha256": "c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 384,
+      "edits": [
+        [
+          4424,
+          "ce81"
+        ],
+        [
+          4435,
+          "ce81"
+        ],
+        [
+          4445,
+          "2d"
+        ],
+        [
+          4456,
+          "ce81"
+        ],
+        [
+          4632,
+          "3708"
+        ],
+        [
+          4635,
+          "4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e813202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e813202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e0332"
+        ],
+        [
+          4713,
+          "813e813202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e0332"
+        ],
+        [
+          4742,
+          "813e813202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e0332"
+        ],
+        [
+          4771,
+          "813e813202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e0332"
+        ],
+        [
+          4800,
+          "813e813202813708ed4106a1e1e9ed53f781c5e5ed5bf781010501cd133de1c124"
+        ],
+        [
+          4834,
+          "5bf7811ccb6328031e0014ed53f7"
+        ],
+        [
+          4849,
+          "cdf98110dcc90000e5212f8235202bc5f301fd7f3e1fed793a2e826f26d83ea0856f3620212e82343a2d82"
+        ],
+        [
+          4893,
+          "792a30827e322f8223223082fbc1e1c91f0003328202020302020203020203020202030202030202020302020302020203020202ff000000000000000000000000000000000000000000000000000000000000000000000000"
+        ],
+        [
+          4983,
+          "0000000000000000000000000000000000000000000000000000000000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-01/audiobook-preview.trd",
+      "sha256": "d0a2631b1f5739a19e37fa36e089a6a46d61ba94a1c66f67f5e76a51e08b04ff",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/audiobook-preview.trd",
+      "retained_sha256": "c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 301,
+      "edits": [
+        [
+          4424,
+          "14"
+        ],
+        [
+          4435,
+          "14"
+        ],
+        [
+          4445,
+          "73"
+        ],
+        [
+          4456,
+          "14"
+        ],
+        [
+          4689,
+          "2e"
+        ],
+        [
+          4702,
+          "3708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4728,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4757,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4786,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4815,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4844,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4873,
+          "3202813708ed4106a1e1e9ed533d82c5e5ed5b3d820105"
+        ],
+        [
+          4897,
+          "cd133de1c124ed5b3d821ccb6328031e0014ed533d82cd3f8210dcc90000e521758235202bc5f301fd7f3e1fed793a74826f26d83ea0856f3620217482343a7382ed792a76827e32758223227682fbc1e1c91f00037882020203"
+        ],
+        [
+          4988,
+          "02"
+        ],
+        [
+          4990,
+          "03"
+        ],
+        [
+          4992,
+          "0203"
+        ],
+        [
+          4995,
+          "02"
+        ],
+        [
+          4997,
+          "03"
+        ],
+        [
+          4999,
+          "0203"
+        ],
+        [
+          5002,
+          "02"
+        ],
+        [
+          5004,
+          "03"
+        ],
+        [
+          5006,
+          "0203"
+        ],
+        [
+          5009,
+          "02"
+        ],
+        [
+          5011,
+          "03"
+        ],
+        [
+          5013,
+          "02"
+        ],
+        [
+          5015,
+          "ff0000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-02/audiobook-preview.trd",
+      "sha256": "2441c4c6077293ed81e4a73bf6bbef9786977d7eed93f27eadc2516e5600b3c9",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/audiobook-preview.trd",
+      "retained_sha256": "c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 300,
+      "edits": [
+        [
+          4424,
+          "14"
+        ],
+        [
+          4435,
+          "14"
+        ],
+        [
+          4445,
+          "73"
+        ],
+        [
+          4456,
+          "14"
+        ],
+        [
+          4702,
+          "3708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4728,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4757,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4786,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4815,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4844,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4873,
+          "3202813708ed4106a1e1e9ed533d82c5e5ed5b3d820105"
+        ],
+        [
+          4897,
+          "cd133de1c124ed5b3d821ccb6328031e0014ed533d82cd3f8210dcc90000e521758235202bc5f301fd7f3e1fed793a74826f26d83ea0856f3620217482343a7382ed792a76827e32758223227682fbc1e1c91f00037882020203"
+        ],
+        [
+          4988,
+          "02"
+        ],
+        [
+          4990,
+          "03"
+        ],
+        [
+          4992,
+          "0203"
+        ],
+        [
+          4995,
+          "02"
+        ],
+        [
+          4997,
+          "03"
+        ],
+        [
+          4999,
+          "0203"
+        ],
+        [
+          5002,
+          "02"
+        ],
+        [
+          5004,
+          "03"
+        ],
+        [
+          5006,
+          "0203"
+        ],
+        [
+          5009,
+          "02"
+        ],
+        [
+          5011,
+          "03"
+        ],
+        [
+          5013,
+          "02"
+        ],
+        [
+          5015,
+          "ff0000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/disk-encode-1/calibration/phase-03/audiobook-preview.trd",
+      "sha256": "c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/audiobook-preview.trd",
+      "retained_sha256": "c6e92465c553db03616e90377b54383cc3a4df1b60f4b331f2d10a47fec6dd0b",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-00/audiobook-preview.trd",
+      "sha256": "2fc4e1fe4029a70e3e15445598747819a849edfd22b678e7dbef17f320a9df58",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/audiobook-preview.trd",
+      "retained_sha256": "bfb642ee669988b3dad687a420a8d1d9119ef37af55d4a0141bba1963be4eca7",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 384,
+      "edits": [
+        [
+          4424,
+          "ce81"
+        ],
+        [
+          4435,
+          "ce81"
+        ],
+        [
+          4445,
+          "2d"
+        ],
+        [
+          4456,
+          "ce81"
+        ],
+        [
+          4632,
+          "3708"
+        ],
+        [
+          4635,
+          "4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e813202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e813202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e0332"
+        ],
+        [
+          4713,
+          "813e813202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e0332"
+        ],
+        [
+          4742,
+          "813e813202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e0332"
+        ],
+        [
+          4771,
+          "813e813202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e0332"
+        ],
+        [
+          4800,
+          "813e813202813708ed4106a1e1e9ed53f781c5e5ed5bf781010501cd133de1c124"
+        ],
+        [
+          4834,
+          "5bf7811ccb6328031e0014ed53f7"
+        ],
+        [
+          4849,
+          "cdf98110dcc90000e5212f8235202bc5f301fd7f3e1fed793a2e826f26d83ea0856f3620212e82343a2d82"
+        ],
+        [
+          4893,
+          "792a30827e322f8223223082fbc1e1c91f0003328202020302020203020203020202030202030202020302020302020203020202ff000000000000000000000000000000000000000000000000000000000000000000000000"
+        ],
+        [
+          4983,
+          "0000000000000000000000000000000000000000000000000000000000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-01/audiobook-preview.trd",
+      "sha256": "0e88b9faf8dbf84dbba9b055a02c75db533afd18a92af6c1abe33a6aabdf672e",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/audiobook-preview.trd",
+      "retained_sha256": "bfb642ee669988b3dad687a420a8d1d9119ef37af55d4a0141bba1963be4eca7",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 301,
+      "edits": [
+        [
+          4424,
+          "14"
+        ],
+        [
+          4435,
+          "14"
+        ],
+        [
+          4445,
+          "73"
+        ],
+        [
+          4456,
+          "14"
+        ],
+        [
+          4689,
+          "2e"
+        ],
+        [
+          4702,
+          "3708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4728,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4757,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4786,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4815,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4844,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4873,
+          "3202813708ed4106a1e1e9ed533d82c5e5ed5b3d820105"
+        ],
+        [
+          4897,
+          "cd133de1c124ed5b3d821ccb6328031e0014ed533d82cd3f8210dcc90000e521758235202bc5f301fd7f3e1fed793a74826f26d83ea0856f3620217482343a7382ed792a76827e32758223227682fbc1e1c91f00037882020203"
+        ],
+        [
+          4988,
+          "02"
+        ],
+        [
+          4990,
+          "03"
+        ],
+        [
+          4992,
+          "0203"
+        ],
+        [
+          4995,
+          "02"
+        ],
+        [
+          4997,
+          "03"
+        ],
+        [
+          4999,
+          "0203"
+        ],
+        [
+          5002,
+          "02"
+        ],
+        [
+          5004,
+          "03"
+        ],
+        [
+          5006,
+          "0203"
+        ],
+        [
+          5009,
+          "02"
+        ],
+        [
+          5011,
+          "03"
+        ],
+        [
+          5013,
+          "02"
+        ],
+        [
+          5015,
+          "ff0000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-02/audiobook-preview.trd",
+      "sha256": "ea50878e84c03712f04e3674579ddb02b492956b44a883d700ac15ee985f1d43",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/audiobook-preview.trd",
+      "retained_sha256": "bfb642ee669988b3dad687a420a8d1d9119ef37af55d4a0141bba1963be4eca7",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 300,
+      "edits": [
+        [
+          4424,
+          "14"
+        ],
+        [
+          4435,
+          "14"
+        ],
+        [
+          4445,
+          "73"
+        ],
+        [
+          4456,
+          "14"
+        ],
+        [
+          4702,
+          "3708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4728,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4757,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4786,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4815,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4844,
+          "3202813708ed4106a1e1e901fd7f3e18ed7911d0f3d93e033201813e"
+        ],
+        [
+          4873,
+          "3202813708ed4106a1e1e9ed533d82c5e5ed5b3d820105"
+        ],
+        [
+          4897,
+          "cd133de1c124ed5b3d821ccb6328031e0014ed533d82cd3f8210dcc90000e521758235202bc5f301fd7f3e1fed793a74826f26d83ea0856f3620217482343a7382ed792a76827e32758223227682fbc1e1c91f00037882020203"
+        ],
+        [
+          4988,
+          "02"
+        ],
+        [
+          4990,
+          "03"
+        ],
+        [
+          4992,
+          "0203"
+        ],
+        [
+          4995,
+          "02"
+        ],
+        [
+          4997,
+          "03"
+        ],
+        [
+          4999,
+          "0203"
+        ],
+        [
+          5002,
+          "02"
+        ],
+        [
+          5004,
+          "03"
+        ],
+        [
+          5006,
+          "0203"
+        ],
+        [
+          5009,
+          "02"
+        ],
+        [
+          5011,
+          "03"
+        ],
+        [
+          5013,
+          "02"
+        ],
+        [
+          5015,
+          "ff0000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/calibration/phase-03/audiobook-preview.trd",
+      "sha256": "bfb642ee669988b3dad687a420a8d1d9119ef37af55d4a0141bba1963be4eca7",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima3-series/work/part-00001/pilot/audiobook-preview.trd",
+      "retained_sha256": "bfb642ee669988b3dad687a420a8d1d9119ef37af55d4a0141bba1963be4eca7",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/audiobook-preview.trd",
+      "sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd",
+      "retained_sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-00/audiobook-preview.trd",
+      "sha256": "9112feaabc464ccb55ee6c0bc6ccb32361058a267056376e973f4c7cead280bb",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/audiobook-preview.trd",
+      "retained_sha256": "f538082abd1be4732ba54a9c6a3f4521c8d04cc54a1617838073768179c91286",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 269,
+      "edits": [
+        [
+          4414,
+          "b1"
+        ],
+        [
+          4425,
+          "b1"
+        ],
+        [
+          4443,
+          "b1"
+        ],
+        [
+          4624,
+          "3708"
+        ],
+        [
+          4627,
+          "41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4661,
+          "791100f0d9"
+        ],
+        [
+          4667,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e9ed53d781c5e5ed5bd781010501cd133de1c124ed5bd7811ccb6328031e0014ed53d78110dfc900000000000000000000000000000000"
+        ],
+        [
+          4840,
+          "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        ],
+        [
+          4887,
+          "0000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-01/audiobook-preview.trd",
+      "sha256": "2f164d85f62efef9e4c6e011b0fea031350ea97973ff72b72f18c2ff3efbb471",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/audiobook-preview.trd",
+      "retained_sha256": "f538082abd1be4732ba54a9c6a3f4521c8d04cc54a1617838073768179c91286",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 198,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4681,
+          "01"
+        ],
+        [
+          4694,
+          "3708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4717,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4743,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4769,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4795,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4821,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4847,
+          "32fa803708ed41e9ed531d82c5e5ed5b1d820105"
+        ],
+        [
+          4868,
+          "cd133de1c124ed5b1d821ccb6328031e0014ed531d8210dfc90000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-02/audiobook-preview.trd",
+      "sha256": "e7cce85870e16d6f7884c0873afd0548c6fef8053e8815b1989fa800231f53bf",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/audiobook-preview.trd",
+      "retained_sha256": "f538082abd1be4732ba54a9c6a3f4521c8d04cc54a1617838073768179c91286",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 197,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4694,
+          "3708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4717,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4743,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4769,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4795,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4821,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4847,
+          "32fa803708ed41e9ed531d82c5e5ed5b1d820105"
+        ],
+        [
+          4868,
+          "cd133de1c124ed5b1d821ccb6328031e0014ed531d8210dfc90000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-00/audiobook-preview.trd",
+      "sha256": "5900f44cce16eeac13b959e5fc67cd20d293220356971da45db0a26e27989bdd",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd",
+      "retained_sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 269,
+      "edits": [
+        [
+          4414,
+          "b1"
+        ],
+        [
+          4425,
+          "b1"
+        ],
+        [
+          4443,
+          "b1"
+        ],
+        [
+          4624,
+          "3708"
+        ],
+        [
+          4627,
+          "41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4661,
+          "791100f0d9"
+        ],
+        [
+          4667,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e9ed53d781c5e5ed5bd781010501cd133de1c124ed5bd7811ccb6328031e0014ed53d78110dfc900000000000000000000000000000000"
+        ],
+        [
+          4840,
+          "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        ],
+        [
+          4887,
+          "0000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-01/audiobook-preview.trd",
+      "sha256": "06cff9b50fbc8d478a99b7ff9b470d0d7747350d1e9726cc88f6bfb1fe728041",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd",
+      "retained_sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 198,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4681,
+          "01"
+        ],
+        [
+          4694,
+          "3708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4717,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4743,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4769,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4795,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4821,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4847,
+          "32fa803708ed41e9ed531d82c5e5ed5b1d820105"
+        ],
+        [
+          4868,
+          "cd133de1c124ed5b1d821ccb6328031e0014ed531d8210dfc90000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-02/audiobook-preview.trd",
+      "sha256": "64b5e5e901a2fabccbdf62eff50f12446a02298cd5a7ee005740344f4a2cd8f8",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd",
+      "retained_sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 197,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4694,
+          "3708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4717,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4743,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4769,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4795,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4821,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4847,
+          "32fa803708ed41e9ed531d82c5e5ed5b1d820105"
+        ],
+        [
+          4868,
+          "cd133de1c124ed5b1d821ccb6328031e0014ed531d8210dfc90000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-encode-1/phase-03/audiobook-preview.trd",
+      "sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd",
+      "retained_sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-00/audiobook-preview.trd",
+      "sha256": "ed0028f050c93e6399e01c165877d6d5b136d5ec84332f354d8573c2da243d50",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-03/audiobook-preview.trd",
+      "retained_sha256": "a3a9ed1741f03999dc43bd91ad21d862454b11c3183eb9410c9ca3a673eae981",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 269,
+      "edits": [
+        [
+          4414,
+          "b1"
+        ],
+        [
+          4425,
+          "b1"
+        ],
+        [
+          4443,
+          "b1"
+        ],
+        [
+          4624,
+          "3708"
+        ],
+        [
+          4627,
+          "41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4661,
+          "791100f0d9"
+        ],
+        [
+          4667,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e9ed53d781c5e5ed5bd781010501cd133de1c124ed5bd7811ccb6328031e0014ed53d78110dfc900000000000000000000000000000000"
+        ],
+        [
+          4840,
+          "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        ],
+        [
+          4887,
+          "0000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-01/audiobook-preview.trd",
+      "sha256": "564e1e1c515a9f6f8642fbf5dd6228872f7663d43c8dbacce9fe90d5592f6663",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-03/audiobook-preview.trd",
+      "retained_sha256": "a3a9ed1741f03999dc43bd91ad21d862454b11c3183eb9410c9ca3a673eae981",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 198,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4681,
+          "01"
+        ],
+        [
+          4694,
+          "3708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4717,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4743,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4769,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4795,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4821,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4847,
+          "32fa803708ed41e9ed531d82c5e5ed5b1d820105"
+        ],
+        [
+          4868,
+          "cd133de1c124ed5b1d821ccb6328031e0014ed531d8210dfc90000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-02/audiobook-preview.trd",
+      "sha256": "9b4ff91b2c53c7704e1ab8c369de01364925a4f2eea183cba673467ca6a8772a",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/disk-refined/phase-03/audiobook-preview.trd",
+      "retained_sha256": "a3a9ed1741f03999dc43bd91ad21d862454b11c3183eb9410c9ca3a673eae981",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 197,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4694,
+          "3708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4717,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4743,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4769,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4795,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4821,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4847,
+          "32fa803708ed41e9ed531d82c5e5ed5b1d820105"
+        ],
+        [
+          4868,
+          "cd133de1c124ed5b1d821ccb6328031e0014ed531d8210dfc90000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-00/audiobook-preview.trd",
+      "sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd",
+      "retained_sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-01/audiobook-preview.trd",
+      "sha256": "450898716c236e62371f8f41acde87985fef61635c5fab1f277a971210cca217",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd",
+      "retained_sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 259,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4624,
+          "3eff"
+        ],
+        [
+          4627,
+          "51c3178100ed713dc212813effed51c3258100ed713dc220813effed51c3338100"
+        ],
+        [
+          4661,
+          "713dc22e81"
+        ],
+        [
+          4667,
+          "ffed51c3418100ed713dc23c813e"
+        ],
+        [
+          4682,
+          "ed51c34f8100ed713dc24a813708ed41e901fd7f3e18"
+        ],
+        [
+          4705,
+          "791100f0d9"
+        ],
+        [
+          4711,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4731,
+          "791100f0d9"
+        ],
+        [
+          4737,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4757,
+          "791100f0d9"
+        ],
+        [
+          4763,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4783,
+          "791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed7911"
+        ],
+        [
+          4838,
+          "f0d93efb32f9803e8032fa803708ed41e9ed531d82c5e5ed5b1d82010501cd133de1c124ed5b1d821ccb6328031e"
+        ],
+        [
+          4885,
+          "14ed531d8210dfc9"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-02/audiobook-preview.trd",
+      "sha256": "ba9c14e88e2bac5d6c15ede04b43340e5d6efc4b8b7eea0def71340a541085e6",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd",
+      "retained_sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 260,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4624,
+          "3eff"
+        ],
+        [
+          4627,
+          "51c3178100ed713dc212813effed51c3258100ed713dc220813effed51c3338100"
+        ],
+        [
+          4661,
+          "713dc22e81"
+        ],
+        [
+          4667,
+          "ffed51c3418100ed713dc23c813e06ed51c34f8100ed713dc24a813708ed41e901fd7f3e18"
+        ],
+        [
+          4705,
+          "791100f0d9"
+        ],
+        [
+          4711,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4731,
+          "791100f0d9"
+        ],
+        [
+          4737,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4757,
+          "791100f0d9"
+        ],
+        [
+          4763,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4783,
+          "791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed7911"
+        ],
+        [
+          4838,
+          "f0d93efb32f9803e8032fa803708ed41e9ed531d82c5e5ed5b1d82010501cd133de1c124ed5b1d821ccb6328031e"
+        ],
+        [
+          4885,
+          "14ed531d8210dfc9"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/pilot/phase-03/audiobook-preview.trd",
+      "sha256": "c9862f9f8b4a3f5f355b07d761616f59f8501ab2211835e90ae47bde97c8d150",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd",
+      "retained_sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 269,
+      "edits": [
+        [
+          4414,
+          "f9"
+        ],
+        [
+          4425,
+          "f9"
+        ],
+        [
+          4443,
+          "f9"
+        ],
+        [
+          4624,
+          "3eff"
+        ],
+        [
+          4627,
+          "51c3178100ed713dc212813effed51c3258100ed713dc220813effed51c3338100"
+        ],
+        [
+          4661,
+          "713dc22e81"
+        ],
+        [
+          4667,
+          "ffed51c3418100ed713dc23c813e06ed51c34f8100ed713dc24a813e003708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed7911"
+        ],
+        [
+          4840,
+          "f0d93efb32f9803e8032fa803708ed41e9ed531f82c5e5ed5b1f82010501cd133de1c124ed5b1f821ccb6328031e"
+        ],
+        [
+          4887,
+          "14ed531f8210dfc9"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/audiobook-preview.trd",
+      "sha256": "97b738bda1430edcdc509dbc0c1a6e8d497b70e1b9c1a1ad2a0639f121031f1a",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/selected/audiobook-preview.trd",
+      "retained_sha256": "97b738bda1430edcdc509dbc0c1a6e8d497b70e1b9c1a1ad2a0639f121031f1a",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-00/audiobook-preview.trd",
+      "sha256": "9112feaabc464ccb55ee6c0bc6ccb32361058a267056376e973f4c7cead280bb",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/audiobook-preview.trd",
+      "retained_sha256": "f538082abd1be4732ba54a9c6a3f4521c8d04cc54a1617838073768179c91286",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 269,
+      "edits": [
+        [
+          4414,
+          "b1"
+        ],
+        [
+          4425,
+          "b1"
+        ],
+        [
+          4443,
+          "b1"
+        ],
+        [
+          4624,
+          "3708"
+        ],
+        [
+          4627,
+          "41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4661,
+          "791100f0d9"
+        ],
+        [
+          4667,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e9ed53d781c5e5ed5bd781010501cd133de1c124ed5bd7811ccb6328031e0014ed53d78110dfc900000000000000000000000000000000"
+        ],
+        [
+          4840,
+          "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        ],
+        [
+          4887,
+          "0000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-01/audiobook-preview.trd",
+      "sha256": "2f164d85f62efef9e4c6e011b0fea031350ea97973ff72b72f18c2ff3efbb471",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/audiobook-preview.trd",
+      "retained_sha256": "f538082abd1be4732ba54a9c6a3f4521c8d04cc54a1617838073768179c91286",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 198,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4681,
+          "01"
+        ],
+        [
+          4694,
+          "3708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4717,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4743,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4769,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4795,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4821,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4847,
+          "32fa803708ed41e9ed531d82c5e5ed5b1d820105"
+        ],
+        [
+          4868,
+          "cd133de1c124ed5b1d821ccb6328031e0014ed531d8210dfc90000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-02/audiobook-preview.trd",
+      "sha256": "e7cce85870e16d6f7884c0873afd0548c6fef8053e8815b1989fa800231f53bf",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/audiobook-preview.trd",
+      "retained_sha256": "f538082abd1be4732ba54a9c6a3f4521c8d04cc54a1617838073768179c91286",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 197,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4694,
+          "3708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4717,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4743,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4769,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4795,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4821,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4847,
+          "32fa803708ed41e9ed531d82c5e5ed5b1d820105"
+        ],
+        [
+          4868,
+          "cd133de1c124ed5b1d821ccb6328031e0014ed531d8210dfc90000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/compensated-1/phase-03/audiobook-preview.trd",
+      "sha256": "c0097c769dc5d09d4724607e4377c6a15e5c86344f335852de29daa211881d97",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/compensated-1/phase-03/audiobook-preview.trd",
+      "retained_sha256": "f538082abd1be4732ba54a9c6a3f4521c8d04cc54a1617838073768179c91286",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 1,
+      "edits": [
+        [
+          4694,
+          "00"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-00/audiobook-preview.trd",
+      "sha256": "5900f44cce16eeac13b959e5fc67cd20d293220356971da45db0a26e27989bdd",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd",
+      "retained_sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 269,
+      "edits": [
+        [
+          4414,
+          "b1"
+        ],
+        [
+          4425,
+          "b1"
+        ],
+        [
+          4443,
+          "b1"
+        ],
+        [
+          4624,
+          "3708"
+        ],
+        [
+          4627,
+          "41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4661,
+          "791100f0d9"
+        ],
+        [
+          4667,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e9ed53d781c5e5ed5bd781010501cd133de1c124ed5bd7811ccb6328031e0014ed53d78110dfc900000000000000000000000000000000"
+        ],
+        [
+          4840,
+          "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        ],
+        [
+          4887,
+          "0000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-01/audiobook-preview.trd",
+      "sha256": "06cff9b50fbc8d478a99b7ff9b470d0d7747350d1e9726cc88f6bfb1fe728041",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd",
+      "retained_sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 198,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4681,
+          "01"
+        ],
+        [
+          4694,
+          "3708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4717,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4743,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4769,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4795,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4821,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4847,
+          "32fa803708ed41e9ed531d82c5e5ed5b1d820105"
+        ],
+        [
+          4868,
+          "cd133de1c124ed5b1d821ccb6328031e0014ed531d8210dfc90000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-02/audiobook-preview.trd",
+      "sha256": "64b5e5e901a2fabccbdf62eff50f12446a02298cd5a7ee005740344f4a2cd8f8",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-refined/selected/audiobook-preview.trd",
+      "retained_sha256": "083882b59f3d583087495f8087297fdf6488c79a7b00715e2d3e44ead2d3cc85",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 197,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4694,
+          "3708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4717,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4743,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4769,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4795,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4821,
+          "32fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e"
+        ],
+        [
+          4847,
+          "32fa803708ed41e9ed531d82c5e5ed5b1d820105"
+        ],
+        [
+          4868,
+          "cd133de1c124ed5b1d821ccb6328031e0014ed531d8210dfc90000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/disk-encode-1/phase-03/audiobook-preview.trd",
+      "sha256": "97b738bda1430edcdc509dbc0c1a6e8d497b70e1b9c1a1ad2a0639f121031f1a",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/selected/audiobook-preview.trd",
+      "retained_sha256": "97b738bda1430edcdc509dbc0c1a6e8d497b70e1b9c1a1ad2a0639f121031f1a",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-00/audiobook-preview.trd",
+      "sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd",
+      "retained_sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-01/audiobook-preview.trd",
+      "sha256": "450898716c236e62371f8f41acde87985fef61635c5fab1f277a971210cca217",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd",
+      "retained_sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 259,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4624,
+          "3eff"
+        ],
+        [
+          4627,
+          "51c3178100ed713dc212813effed51c3258100ed713dc220813effed51c3338100"
+        ],
+        [
+          4661,
+          "713dc22e81"
+        ],
+        [
+          4667,
+          "ffed51c3418100ed713dc23c813e"
+        ],
+        [
+          4682,
+          "ed51c34f8100ed713dc24a813708ed41e901fd7f3e18"
+        ],
+        [
+          4705,
+          "791100f0d9"
+        ],
+        [
+          4711,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4731,
+          "791100f0d9"
+        ],
+        [
+          4737,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4757,
+          "791100f0d9"
+        ],
+        [
+          4763,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4783,
+          "791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed7911"
+        ],
+        [
+          4838,
+          "f0d93efb32f9803e8032fa803708ed41e9ed531d82c5e5ed5b1d82010501cd133de1c124ed5b1d821ccb6328031e"
+        ],
+        [
+          4885,
+          "14ed531d8210dfc9"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-02/audiobook-preview.trd",
+      "sha256": "ba9c14e88e2bac5d6c15ede04b43340e5d6efc4b8b7eea0def71340a541085e6",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd",
+      "retained_sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 260,
+      "edits": [
+        [
+          4414,
+          "f7"
+        ],
+        [
+          4425,
+          "f7"
+        ],
+        [
+          4443,
+          "f7"
+        ],
+        [
+          4624,
+          "3eff"
+        ],
+        [
+          4627,
+          "51c3178100ed713dc212813effed51c3258100ed713dc220813effed51c3338100"
+        ],
+        [
+          4661,
+          "713dc22e81"
+        ],
+        [
+          4667,
+          "ffed51c3418100ed713dc23c813e06ed51c34f8100ed713dc24a813708ed41e901fd7f3e18"
+        ],
+        [
+          4705,
+          "791100f0d9"
+        ],
+        [
+          4711,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4731,
+          "791100f0d9"
+        ],
+        [
+          4737,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4757,
+          "791100f0d9"
+        ],
+        [
+          4763,
+          "fb32f9803e8032fa803708ed41e901fd7f3e18"
+        ],
+        [
+          4783,
+          "791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed7911"
+        ],
+        [
+          4838,
+          "f0d93efb32f9803e8032fa803708ed41e9ed531d82c5e5ed5b1d82010501cd133de1c124ed5b1d821ccb6328031e"
+        ],
+        [
+          4885,
+          "14ed531d8210dfc9"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/cli/cli-ima4-verified/pilot/phase-03/audiobook-preview.trd",
+      "sha256": "c9862f9f8b4a3f5f355b07d761616f59f8501ab2211835e90ae47bde97c8d150",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima-quality/diagnostics/program-files-control/audiobook-preview.trd",
+      "retained_sha256": "04943f2a93976ef528e065578691ebd0df3f29e657ec311c7e4de1a3b51d0b59",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 269,
+      "edits": [
+        [
+          4414,
+          "f9"
+        ],
+        [
+          4425,
+          "f9"
+        ],
+        [
+          4443,
+          "f9"
+        ],
+        [
+          4624,
+          "3eff"
+        ],
+        [
+          4627,
+          "51c3178100ed713dc212813effed51c3258100ed713dc220813effed51c3338100"
+        ],
+        [
+          4661,
+          "713dc22e81"
+        ],
+        [
+          4667,
+          "ffed51c3418100ed713dc23c813e06ed51c34f8100ed713dc24a813e003708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed791100f0d93efb32f9803e8032fa803708ed41e901fd7f3e18ed7911"
+        ],
+        [
+          4840,
+          "f0d93efb32f9803e8032fa803708ed41e9ed531f82c5e5ed5b1f82010501cd133de1c124ed5b1f821ccb6328031e"
+        ],
+        [
+          4887,
+          "14ed531f8210dfc9"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/history/speech4-verified/disk-encode-2/audiobook-preview.trd",
+      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "ZX-audiobook-max-IMA4.trd",
+      "retained_sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/music3/selected/audiobook-preview.trd",
+      "sha256": "49dbc1ef793d11e8bec474f57d321645edcbe24e9704c33516a9ad5466007e60",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "ZX-music-Entertainer-quality-IMA3.trd",
+      "retained_sha256": "49dbc1ef793d11e8bec474f57d321645edcbe24e9704c33516a9ad5466007e60",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/music4/selected/audiobook-preview.trd",
+      "sha256": "0da2ac5a1b12f4e0093f910a298018171c602037defc9ec16303472bcc6ee3e1",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "ZX-music-Entertainer-quality-IMA4.trd",
+      "retained_sha256": "0da2ac5a1b12f4e0093f910a298018171c602037defc9ec16303472bcc6ee3e1",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-1/calibration/phase-00/audiobook-preview.trd",
+      "sha256": "3f6f0b693bc17ffdd3e893b76fdd74f6e7a19c558ca6a85a58056041a3997f6e",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/quality-max/evidence/ima3/cached-first/audiobook-preview.trd",
+      "retained_sha256": "2c54a063bdbc55fde495bc0cfd2a362080573b224c4164f1e001e8cd5e4c4ad2",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 244,
+      "edits": [
+        [
+          4424,
+          "22"
+        ],
+        [
+          4435,
+          "22"
+        ],
+        [
+          4445,
+          "81"
+        ],
+        [
+          4456,
+          "22"
+        ],
+        [
+          4466,
+          "81"
+        ],
+        [
+          4477,
+          "22"
+        ],
+        [
+          4487,
+          "81"
+        ],
+        [
+          4498,
+          "22"
+        ],
+        [
+          4508,
+          "81"
+        ],
+        [
+          4519,
+          "22"
+        ],
+        [
+          4529,
+          "81"
+        ],
+        [
+          4540,
+          "22"
+        ],
+        [
+          4832,
+          "3708"
+        ],
+        [
+          4835,
+          "4106a1e1e901fd7f3e1ced791101c0d93e743255813e813256813708ed4106a1e1e901fd7f3e1e"
+        ],
+        [
+          4875,
+          "791101c0d93e913255813e813256813708ed4106a1e1e9ed534b82c5e5ed5b4b82010501cd133de1c124ed5b4b821ccb6328031e0014ed534b82cd4d8210dcc90000e521838235202bc5f3"
+        ],
+        [
+          4951,
+          "fd7f3e1fed793a82826f26d83ea0856f3620218282343a81"
+        ],
+        [
+          4976,
+          "ed792a84827e3283"
+        ],
+        [
+          4985,
+          "23228482fbc1e1c91f000b86820a0b0a0b0a0b0a0a0b0a0b0a0b0a0a0b0a0b0a0b0a0b0a0a0b0a0b0a0b0a0aff00000000"
+        ],
+        [
+          5035,
+          "0000000000000000000000000000000000000000000000000000000000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/audiobook-preview.trd",
+      "sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "ZX-audiobook-max-IMA3.trd",
+      "retained_sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-00/audiobook-preview.trd",
+      "sha256": "fa3919bb4759e3759fe53e40c204df275271b48fb34b965cb1a8d773328aa79f",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "ZX-audiobook-max-IMA3.trd",
+      "retained_sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 244,
+      "edits": [
+        [
+          4424,
+          "22"
+        ],
+        [
+          4435,
+          "22"
+        ],
+        [
+          4445,
+          "81"
+        ],
+        [
+          4456,
+          "22"
+        ],
+        [
+          4466,
+          "81"
+        ],
+        [
+          4477,
+          "22"
+        ],
+        [
+          4487,
+          "81"
+        ],
+        [
+          4498,
+          "22"
+        ],
+        [
+          4508,
+          "81"
+        ],
+        [
+          4519,
+          "22"
+        ],
+        [
+          4529,
+          "81"
+        ],
+        [
+          4540,
+          "22"
+        ],
+        [
+          4832,
+          "3708"
+        ],
+        [
+          4835,
+          "4106a1e1e901fd7f3e1ced791101c0d93e743255813e813256813708ed4106a1e1e901fd7f3e1e"
+        ],
+        [
+          4875,
+          "791101c0d93e913255813e813256813708ed4106a1e1e9ed534b82c5e5ed5b4b82010501cd133de1c124ed5b4b821ccb6328031e0014ed534b82cd4d8210dcc90000e521838235202bc5f3"
+        ],
+        [
+          4951,
+          "fd7f3e1fed793a82826f26d83ea0856f3620218282343a81"
+        ],
+        [
+          4976,
+          "ed792a84827e3283"
+        ],
+        [
+          4985,
+          "23228482fbc1e1c91f000b86820a0b0a0b0a0b0a0a0b0a0b0a0b0a0a0b0a0b0a0b0a0b0a0a0b0a0b0a0b0a0aff00000000"
+        ],
+        [
+          5035,
+          "0000000000000000000000000000000000000000000000000000000000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-01/audiobook-preview.trd",
+      "sha256": "b872311ebfd532f8796963d10a11958c5252b4a94a290b77a34494128012d779",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "ZX-audiobook-max-IMA3.trd",
+      "retained_sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 208,
+      "edits": [
+        [
+          4424,
+          "3e"
+        ],
+        [
+          4435,
+          "3e"
+        ],
+        [
+          4445,
+          "9d"
+        ],
+        [
+          4456,
+          "3e"
+        ],
+        [
+          4466,
+          "9d"
+        ],
+        [
+          4477,
+          "3e"
+        ],
+        [
+          4487,
+          "9d"
+        ],
+        [
+          4498,
+          "3e"
+        ],
+        [
+          4508,
+          "9d"
+        ],
+        [
+          4519,
+          "3e"
+        ],
+        [
+          4529,
+          "9d"
+        ],
+        [
+          4540,
+          "3e"
+        ],
+        [
+          4847,
+          "95"
+        ],
+        [
+          4860,
+          "3708ed4106a1e1e901fd7f3e1ced791101c0d93e743255813e813256813708ed4106a1e1e901fd7f3e1eed791101c0d93e913255813e813256813708ed4106a1e1e9ed536782c5e5"
+        ],
+        [
+          4933,
+          "5b6782010501cd133de1c124ed5b67821ccb6328031e0014"
+        ],
+        [
+          4958,
+          "5367"
+        ],
+        [
+          4961,
+          "cd698210dcc9"
+        ],
+        [
+          4968,
+          "00e5219f"
+        ],
+        [
+          4973,
+          "35202bc5f301fd7f3e1fed793a9e826f26d83ea0856f3620219e"
+        ],
+        [
+          5000,
+          "343a9d82ed792aa0827e329f822322a082fbc1e1c91f000ba2820a0b0a0b0a0b0a0a0b0a0b0a0b0a"
+        ],
+        [
+          5045,
+          "0b0a0b0a"
+        ],
+        [
+          5052,
+          "0b0a0b0a"
+        ],
+        [
+          5057,
+          "ff000000000000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-02/audiobook-preview.trd",
+      "sha256": "44c332425b3135bfc2a1a841ae16287f9d3417db4dc6d58f3688c57fa2b4fef7",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "ZX-audiobook-max-IMA3.trd",
+      "retained_sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 207,
+      "edits": [
+        [
+          4424,
+          "3e"
+        ],
+        [
+          4435,
+          "3e"
+        ],
+        [
+          4445,
+          "9d"
+        ],
+        [
+          4456,
+          "3e"
+        ],
+        [
+          4466,
+          "9d"
+        ],
+        [
+          4477,
+          "3e"
+        ],
+        [
+          4487,
+          "9d"
+        ],
+        [
+          4498,
+          "3e"
+        ],
+        [
+          4508,
+          "9d"
+        ],
+        [
+          4519,
+          "3e"
+        ],
+        [
+          4529,
+          "9d"
+        ],
+        [
+          4540,
+          "3e"
+        ],
+        [
+          4860,
+          "3708ed4106a1e1e901fd7f3e1ced791101c0d93e743255813e813256813708ed4106a1e1e901fd7f3e1eed791101c0d93e913255813e813256813708ed4106a1e1e9ed536782c5e5"
+        ],
+        [
+          4933,
+          "5b6782010501cd133de1c124ed5b67821ccb6328031e0014"
+        ],
+        [
+          4958,
+          "5367"
+        ],
+        [
+          4961,
+          "cd698210dcc9"
+        ],
+        [
+          4968,
+          "00e5219f"
+        ],
+        [
+          4973,
+          "35202bc5f301fd7f3e1fed793a9e826f26d83ea0856f3620219e"
+        ],
+        [
+          5000,
+          "343a9d82ed792aa0827e329f822322a082fbc1e1c91f000ba2820a0b0a0b0a0b0a0a0b0a0b0a0b0a"
+        ],
+        [
+          5045,
+          "0b0a0b0a"
+        ],
+        [
+          5052,
+          "0b0a0b0a"
+        ],
+        [
+          5057,
+          "ff000000000000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/paused/speech3-verified/disk-encode-2/calibration/phase-03/audiobook-preview.trd",
+      "sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "ZX-audiobook-max-IMA3.trd",
+      "retained_sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-00/audiobook-preview.trd",
+      "sha256": "233f118bbff3400b69653440265fd6fbdd9fa6e3402c80301e9b55377385c0db",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima4-overlap/evidence/disk-overlap/audiobook-preview.trd",
+      "retained_sha256": "bf6d8531f3646854e1ee68d6f21ec39e0346af211e5a6168acf10554889fb023",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 66,
+      "edits": [
+        [
+          4414,
+          "1d"
+        ],
+        [
+          4425,
+          "1d"
+        ],
+        [
+          4443,
+          "1d"
+        ],
+        [
+          4461,
+          "1d"
+        ],
+        [
+          4479,
+          "1d"
+        ],
+        [
+          4497,
+          "1d"
+        ],
+        [
+          4515,
+          "1d"
+        ],
+        [
+          4533,
+          "1d"
+        ],
+        [
+          4551,
+          "1d"
+        ],
+        [
+          4888,
+          "3708"
+        ],
+        [
+          4891,
+          "41e9ed534382c5e5ed5b4382010501cd133de1c124ed5b43821ccb6328031e0014ed53438210dfc900000000000000"
+        ],
+        [
+          4939,
+          "0000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-01/audiobook-preview.trd",
+      "sha256": "7ffdd9e933f160240d4f6358d1babcd1661f778095137ef6388e425aeeb75c77",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima4-overlap/evidence/disk-overlap/audiobook-preview.trd",
+      "retained_sha256": "bf6d8531f3646854e1ee68d6f21ec39e0346af211e5a6168acf10554889fb023",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 53,
+      "edits": [
+        [
+          4414,
+          "2b"
+        ],
+        [
+          4425,
+          "2b"
+        ],
+        [
+          4443,
+          "2b"
+        ],
+        [
+          4461,
+          "2b"
+        ],
+        [
+          4479,
+          "2b"
+        ],
+        [
+          4497,
+          "2b"
+        ],
+        [
+          4515,
+          "2b"
+        ],
+        [
+          4533,
+          "2b"
+        ],
+        [
+          4551,
+          "2b"
+        ],
+        [
+          4902,
+          "3708ed41e9ed535182c5e5ed5b51820105"
+        ],
+        [
+          4920,
+          "cd133de1c124ed5b51821ccb6328031e0014ed53518210dfc90000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/paused/speech4-refined/disk-encode-1/calibration/phase-02/audiobook-preview.trd",
+      "sha256": "bf6d8531f3646854e1ee68d6f21ec39e0346af211e5a6168acf10554889fb023",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "audiobook-beeper/experiments/ima4-overlap/evidence/disk-overlap/audiobook-preview.trd",
+      "retained_sha256": "bf6d8531f3646854e1ee68d6f21ec39e0346af211e5a6168acf10554889fb023",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-quality/speech4/selected/audiobook-preview.trd",
+      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "bytes": 655360,
+      "artifact_commit": "cf1988f8a2183863cbedc84b2bd5b92019ae5526",
+      "retained": "ZX-audiobook-max-IMA4.trd",
+      "retained_sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-waveform/calibration/phase-00/audiobook-preview.trd",
+      "sha256": "9dbdbd98548ec4b316b1b810a73f361a44885fb54a955da561bedad50c3b6234",
+      "bytes": 655360,
+      "artifact_commit": "5d28485e36cb83c31bee2ea07f08f74ea8dfb722",
+      "retained": "audiobook-beeper/experiments/ima-waveform/audiobook-preview.trd",
+      "retained_sha256": "68c22d1e49273242393b009c030a86ea395ca234ea9fdf36b988edb5a2568aa6",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 119,
+      "edits": [
+        [
+          4414,
+          "1d"
+        ],
+        [
+          4425,
+          "1d"
+        ],
+        [
+          4443,
+          "1d"
+        ],
+        [
+          4461,
+          "1d"
+        ],
+        [
+          4479,
+          "1d"
+        ],
+        [
+          4497,
+          "1d"
+        ],
+        [
+          4515,
+          "1d"
+        ],
+        [
+          4533,
+          "1d"
+        ],
+        [
+          4551,
+          "1d"
+        ],
+        [
+          4888,
+          "3708"
+        ],
+        [
+          4891,
+          "41e9ed534382c5e5ed5b4382010501cd133de1c124ed5b43"
+        ],
+        [
+          4916,
+          "1ccb6328031e0014"
+        ],
+        [
+          4925,
+          "53438210dfc9000000000000"
+        ],
+        [
+          4938,
+          "00000000000000000000000000"
+        ],
+        [
+          4952,
+          "00000000000000"
+        ],
+        [
+          4960,
+          "00"
+        ],
+        [
+          4962,
+          "00"
+        ],
+        [
+          4976,
+          "00000000000000000000000000000000000000000000000000000000000000000000"
+        ],
+        [
+          5011,
+          "0000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-waveform/calibration/phase-01/audiobook-preview.trd",
+      "sha256": "7e63b4070cb034dc0da6603ebc37a4559ca236b5dff702a539ab82e72baf3184",
+      "bytes": 655360,
+      "artifact_commit": "5d28485e36cb83c31bee2ea07f08f74ea8dfb722",
+      "retained": "audiobook-beeper/experiments/ima-waveform/audiobook-preview.trd",
+      "retained_sha256": "68c22d1e49273242393b009c030a86ea395ca234ea9fdf36b988edb5a2568aa6",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 70,
+      "edits": [
+        [
+          4414,
+          "63"
+        ],
+        [
+          4425,
+          "63"
+        ],
+        [
+          4443,
+          "63"
+        ],
+        [
+          4461,
+          "63"
+        ],
+        [
+          4479,
+          "63"
+        ],
+        [
+          4497,
+          "63"
+        ],
+        [
+          4515,
+          "63"
+        ],
+        [
+          4533,
+          "63"
+        ],
+        [
+          4551,
+          "63"
+        ],
+        [
+          4945,
+          "e8"
+        ],
+        [
+          4958,
+          "3708ed41e9ed538982c5e5ed5b8982010501cd133de1c124ed5b89821ccb6328031e0014ed53898210dfc9000000000000000000"
+        ],
+        [
+          5011,
+          "0000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-waveform/calibration/phase-02/audiobook-preview.trd",
+      "sha256": "871ae04f4e3df3ceac9583adaf25755d03ac41c22a2d23d79d8c91beffa107d3",
+      "bytes": 655360,
+      "artifact_commit": "5d28485e36cb83c31bee2ea07f08f74ea8dfb722",
+      "retained": "audiobook-beeper/experiments/ima-waveform/audiobook-preview.trd",
+      "retained_sha256": "68c22d1e49273242393b009c030a86ea395ca234ea9fdf36b988edb5a2568aa6",
+      "reason": "archived calibration/UI variant; only PLAYER bytes differ; exact bytes preserved as sparse edits",
+      "exact_copy_in_original_inventory": false,
+      "changed_bytes": 69,
+      "edits": [
+        [
+          4414,
+          "63"
+        ],
+        [
+          4425,
+          "63"
+        ],
+        [
+          4443,
+          "63"
+        ],
+        [
+          4461,
+          "63"
+        ],
+        [
+          4479,
+          "63"
+        ],
+        [
+          4497,
+          "63"
+        ],
+        [
+          4515,
+          "63"
+        ],
+        [
+          4533,
+          "63"
+        ],
+        [
+          4551,
+          "63"
+        ],
+        [
+          4958,
+          "3708ed41e9ed538982c5e5ed5b8982010501cd133de1c124ed5b89821ccb6328031e0014ed53898210dfc9000000000000000000"
+        ],
+        [
+          5011,
+          "0000000000000000"
+        ]
+      ]
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima-waveform/calibration/phase-03/audiobook-preview.trd",
+      "sha256": "68c22d1e49273242393b009c030a86ea395ca234ea9fdf36b988edb5a2568aa6",
+      "bytes": 655360,
+      "artifact_commit": "5d28485e36cb83c31bee2ea07f08f74ea8dfb722",
+      "retained": "audiobook-beeper/experiments/ima-waveform/audiobook-preview.trd",
+      "retained_sha256": "68c22d1e49273242393b009c030a86ea395ca234ea9fdf36b988edb5a2568aa6",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima4-full-disk/release/audio.trd",
+      "sha256": "a7e4fb4f289b036b2f84e2032938894767875db3b1e70fbe19d79780af106aa7",
+      "bytes": 655360,
+      "artifact_commit": "6a3d3313f78c345c05e718c8079a3edd93acfa30",
+      "retained": "ZX-audiobook-IMA4-full-disk.trd",
+      "retained_sha256": "a7e4fb4f289b036b2f84e2032938894767875db3b1e70fbe19d79780af106aa7",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima4-full-disk/release/verification/cold-0001/phase-reference-01-987/audiobook-preview.trd",
+      "sha256": "d854a09e32d20260264018a6545bd8d51082d2c6ee7d76c18e46b1e885a4edce",
+      "bytes": 655360,
+      "artifact_commit": "6a3d3313f78c345c05e718c8079a3edd93acfa30",
+      "retained": "audiobook-beeper/experiments/ima4-full-disk/selected/part-00001/audiobook-preview.trd",
+      "retained_sha256": "d854a09e32d20260264018a6545bd8d51082d2c6ee7d76c18e46b1e885a4edce",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/ima4-overlap/evidence/selected/audiobook-preview.trd",
+      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "bytes": 655360,
+      "artifact_commit": "db67cae7c4c84e532ed6044b0cd141c8a6465694",
+      "retained": "ZX-audiobook-max-IMA4.trd",
+      "retained_sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/loop-debugger-interrupted/timing-pilot/audiobook-preview.trd",
+      "sha256": "91ba4b710ce4c6b6bd01ff1a657ef769889ac7dd2cec1c0ba1aebe5272321c94",
+      "bytes": 655360,
+      "artifact_commit": "5c9200a2a1d64343e207163a91f03ce819cd0b5e",
+      "retained": "audiobook-beeper/preview-8k8-loop/timing-pilot/audiobook-preview.trd",
+      "retained_sha256": "91ba4b710ce4c6b6bd01ff1a657ef769889ac7dd2cec1c0ba1aebe5272321c94",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/mulaw-trd/qualified/audiobook-preview.trd",
+      "sha256": "e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2",
+      "bytes": 655360,
+      "artifact_commit": "190e655f9f1bb3f32a07bce47ad6ee8dfb7e4fb0",
+      "retained": "ZX-audiobook-mulaw-test.trd",
+      "retained_sha256": "e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/mulaw128/evidence/control64/waveform-32/audiobook-preview.trd",
+      "sha256": "ee0c50a8ec6a65055b36f461ca9ac57b96532517fd79ad8f07b79e3df97a6f05",
+      "bytes": 655360,
+      "artifact_commit": "ef294dc3db26943afccfd9d8aa44f08e65380f03",
+      "retained": "audiobook-beeper/experiments/mulaw128/evidence/control64/audiobook-preview.trd",
+      "retained_sha256": "ee0c50a8ec6a65055b36f461ca9ac57b96532517fd79ad8f07b79e3df97a6f05",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/mulaw128/evidence/speech-full/audiobook-preview.trd",
+      "sha256": "c78eeaab5fc14347feb1f09217867a789ad49d30e77f73a6c648645d963041e6",
+      "bytes": 655360,
+      "artifact_commit": "ef294dc3db26943afccfd9d8aa44f08e65380f03",
+      "retained": "ZX-audiobook-mulaw-128-test.trd",
+      "retained_sha256": "c78eeaab5fc14347feb1f09217867a789ad49d30e77f73a6c648645d963041e6",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/mulaw128/evidence/speech-full/waveform-64/audiobook-preview.trd",
+      "sha256": "c78eeaab5fc14347feb1f09217867a789ad49d30e77f73a6c648645d963041e6",
+      "bytes": 655360,
+      "artifact_commit": "ef294dc3db26943afccfd9d8aa44f08e65380f03",
+      "retained": "ZX-audiobook-mulaw-128-test.trd",
+      "retained_sha256": "c78eeaab5fc14347feb1f09217867a789ad49d30e77f73a6c648645d963041e6",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/quality-max/evidence/ima3/selected/audiobook-preview.trd",
+      "sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
+      "bytes": 655360,
+      "artifact_commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
+      "retained": "ZX-audiobook-max-IMA3.trd",
+      "retained_sha256": "188b015c8498c8481acaa23fbc7c393dd84327a4bed32c6113feb8fae42a28b4",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/quality-max/evidence/ima4/selected/audiobook-preview.trd",
+      "sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "bytes": 655360,
+      "artifact_commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
+      "retained": "ZX-audiobook-max-IMA4.trd",
+      "retained_sha256": "da533b71755fd3d33f195ff49ce9f2c8a9afbf4f285787d6eae31aa0daa0305c",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/waveform-32/audiobook-preview.trd",
+      "sha256": "a5360271fe41576a69782346a1fb165f67545363883c5d75d040f9468641056c",
+      "bytes": 655360,
+      "artifact_commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
+      "retained": "audiobook-beeper/experiments/quality-max/evidence/mulaw-cli/audiobook-preview.trd",
+      "retained_sha256": "a5360271fe41576a69782346a1fb165f67545363883c5d75d040f9468641056c",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw/control/audiobook-preview.trd",
+      "sha256": "e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2",
+      "bytes": 655360,
+      "artifact_commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
+      "retained": "ZX-audiobook-mulaw-test.trd",
+      "retained_sha256": "e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw/selected/audiobook-preview.trd",
+      "sha256": "1b9a4e45e6f34c1fde830ecabea85d4018a15c7b7600484d4fef5444f91c8667",
+      "bytes": 655360,
+      "artifact_commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
+      "retained": "ZX-audiobook-max-mulaw.trd",
+      "retained_sha256": "1b9a4e45e6f34c1fde830ecabea85d4018a15c7b7600484d4fef5444f91c8667",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/quality-max/evidence/mulaw/waveform-32/audiobook-preview.trd",
+      "sha256": "1b9a4e45e6f34c1fde830ecabea85d4018a15c7b7600484d4fef5444f91c8667",
+      "bytes": 655360,
+      "artifact_commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
+      "retained": "ZX-audiobook-max-mulaw.trd",
+      "retained_sha256": "1b9a4e45e6f34c1fde830ecabea85d4018a15c7b7600484d4fef5444f91c8667",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "audiobook-beeper/experiments/quality-max/evidence/rejected-first-clock/control/audiobook-preview.trd",
+      "sha256": "e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2",
+      "bytes": 655360,
+      "artifact_commit": "b87ac68f7a597bfd4dbde9e6cad721b0a2af83e4",
+      "retained": "ZX-audiobook-mulaw-test.trd",
+      "retained_sha256": "e5e165410adc3993ea57cce3fe311f99c1d50770f6cbc146dd8ab4671ad857e2",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "ay-converter/analysis/music50/evidence/release/audio-preview.trd",
+      "sha256": "e1ef02bc4bee6163698a4b8ed16dfaa12ec5c2852834a24e57b60d6631619663",
+      "bytes": 655360,
+      "artifact_commit": "c8866310c283aae8fa27c2cad4dd5c9a7ef35196",
+      "retained": "ZX-music-Entertainer-AY-music50-test.trd",
+      "retained_sha256": "e1ef02bc4bee6163698a4b8ed16dfaa12ec5c2852834a24e57b60d6631619663",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "ay-converter/analysis/noise_colour/evidence/release/audio-preview.trd",
+      "sha256": "a7d36854c41ca7f408619ffb32f6218aeb28324c397cdf30ff131e4d6f6a8691",
+      "bytes": 655360,
+      "artifact_commit": "4484bab95df7359dea4ef46414025c9f1706aecb",
+      "retained": "ZX-music-Entertainer-AY-noise-colour-test.trd",
+      "retained_sha256": "a7d36854c41ca7f408619ffb32f6218aeb28324c397cdf30ff131e4d6f6a8691",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "ay-converter/analysis/o_henry/evidence/release/audio-preview.trd",
+      "sha256": "aa2013bab38a3fbffecb97f1069b570d17e9fefa591c075da58c4000b84169d1",
+      "bytes": 655360,
+      "artifact_commit": "a871a4b63ef3f023f4dd930603c73fa940aa0319",
+      "retained": "ZX-audiobook-OHenry-AY50-test.trd",
+      "retained_sha256": "aa2013bab38a3fbffecb97f1069b570d17e9fefa591c075da58c4000b84169d1",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "ay-converter/analysis/tracked50/evidence/release/audio-preview.trd",
+      "sha256": "2e6a14a9637a9fae6d7546826473148de1e3b263a8b58717abfcbfe61f79e8d4",
+      "bytes": 655360,
+      "artifact_commit": "4ab6d7f3bddab0d3c217fd5c3ffe4e5bd3e749ef",
+      "retained": "ZX-music-Entertainer-AY-tracked50-test.trd",
+      "retained_sha256": "2e6a14a9637a9fae6d7546826473148de1e3b263a8b58717abfcbfe61f79e8d4",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "toolkit/monochrome_preview_evidence/cb41-monochrome-preview-ZX-video-monochrome-preview_part01.trd.trd",
+      "sha256": "38cecad279376a10b86fa5265930976b923d202465310026525eef2ed40cd16f",
+      "bytes": 655360,
+      "artifact_commit": "0cbfa1714b682c226f83742e66967fddea68fa6b",
+      "retained": "ZX-video-monochrome-preview.trd",
+      "retained_sha256": "38cecad279376a10b86fa5265930976b923d202465310026525eef2ed40cd16f",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "toolkit/refined_av_attempt_evidence/refined-av-probe-09-ZX-video-refined_part09.trd.trd",
+      "sha256": "f9472730e57043393dfdafdfbe2f884ac888b0dc135cf9a8030991f51e9d5df5",
+      "bytes": 655360,
+      "artifact_commit": "3727f8bb842d87300720f1a72efac660ff9e2189",
+      "retained": "toolkit/refined_av_movie_evidence/refined-av-final-ZX-video-refined_part09.trd.trd",
+      "retained_sha256": "f9472730e57043393dfdafdfbe2f884ac888b0dc135cf9a8030991f51e9d5df5",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "toolkit/refined_four_evidence/ZX-video-refined_part01.trd",
+      "sha256": "f9039541aa1309fe8a3acf5ad7171f6ed52ef497b7f170585b995e64da1c19b8",
+      "bytes": 655360,
+      "artifact_commit": "c7e1554ba4271873efbf804311529ddb935e105e",
+      "retained": "ZX-video-refined_part01.trd",
+      "retained_sha256": "f9039541aa1309fe8a3acf5ad7171f6ed52ef497b7f170585b995e64da1c19b8",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "toolkit/refined_four_evidence/ZX-video-refined_part02.trd",
+      "sha256": "eb0d781e1219d9dc59423876f0dc9d0b9cc7ff86cec0786e292c3d93ff820edf",
+      "bytes": 655360,
+      "artifact_commit": "c7e1554ba4271873efbf804311529ddb935e105e",
+      "retained": "ZX-video-refined_part02.trd",
+      "retained_sha256": "eb0d781e1219d9dc59423876f0dc9d0b9cc7ff86cec0786e292c3d93ff820edf",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "toolkit/refined_four_evidence/ZX-video-refined_part03.trd",
+      "sha256": "4001ebc3a3b1cde5a637973039cdf6c1c41eec3f8fac9e40df740fdc72aea4c0",
+      "bytes": 655360,
+      "artifact_commit": "c7e1554ba4271873efbf804311529ddb935e105e",
+      "retained": "ZX-video-refined_part03.trd",
+      "retained_sha256": "4001ebc3a3b1cde5a637973039cdf6c1c41eec3f8fac9e40df740fdc72aea4c0",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "toolkit/refined_four_evidence/ZX-video-refined_part04.trd",
+      "sha256": "6c4861a9eb9d161429fdf0e85a9fd618dc9e6f69af4c8e31adb7952cc4c19eb5",
+      "bytes": 655360,
+      "artifact_commit": "c7e1554ba4271873efbf804311529ddb935e105e",
+      "retained": "ZX-video-refined_part04.trd",
+      "retained_sha256": "6c4861a9eb9d161429fdf0e85a9fd618dc9e6f69af4c8e31adb7952cc4c19eb5",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "toolkit/sector_cache_evidence/sector-cache-part04-capacity-part04.trd",
+      "sha256": "02aac909f9a56ac27d89d42f52d48fa4dc5ec7e4a5a04ba1c237ec3ab20346c4",
+      "bytes": 655360,
+      "artifact_commit": "bc615ab0910771fcfb1bccc6f534f827f34193e9",
+      "retained": "toolkit/full_volume_dictionary_evidence/baseline-part04.trd",
+      "retained_sha256": "02aac909f9a56ac27d89d42f52d48fa4dc5ec7e4a5a04ba1c237ec3ab20346c4",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    },
+    {
+      "path": "toolkit/streaming_lzsa2_evidence/bypass-window-ZX-video-front_part07.trd",
+      "sha256": "9d005b62f27b447fdd6b945c361044850bfa546d83236252f3ae4eb6a8256d6b",
+      "bytes": 655360,
+      "artifact_commit": "b8fec73c869d8f4851d2c9720150135de7e4b67b",
+      "retained": "toolkit/streaming_bypass_evidence/window-ZX-video-front_part07.trd",
+      "retained_sha256": "9d005b62f27b447fdd6b945c361044850bfa546d83236252f3ae4eb6a8256d6b",
+      "reason": "exact copy",
+      "exact_copy_in_original_inventory": true,
+      "changed_bytes": 0,
+      "edits": []
+    }
+  ]
+}

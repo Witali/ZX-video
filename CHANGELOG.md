@@ -1,5 +1,39 @@
 # Changelog and optimization experiments
 
+## 2026-10-12 — Consolidate duplicate and near-identical TRD images
+
+- **Request/baseline:** inspect practically repeated disks and remove them;
+  baseline `ead95787`, 283 tracked TRDs / 218 distinct SHA-256 identities.
+  Scope is tracked images in the primary checkout; retain other worktrees,
+  user attachments and existing Git/LFS history.
+- **Comparison/decision:** authenticate every original against Git/LFS and
+  its current bytes; compare all unique pairs, finding 76 pairs within 2048
+  changed bytes. Remove 65 exact copies and 29 archived calibration/UI variants
+  whose only differences are in PLAYER. Preserve exact sparse edits for the
+  latter, rather than treating different timing as interchangeable. Keep
+  distinct cadence, continuation, audio and decoder experiments. Preserve
+  the accepted speech reference and public YouTube-linked direct IMA4 path.
+- **Result:** 189 unique full TRDs remain; remove 94 full files / 61,603,840
+  logical bytes (58.75 MiB). Sparse edits carry 8,536 changed bytes including
+  repeated aliases; documentation/JSON/helper overhead is additional. Root
+  `max-IMA4` retains the exact bytes of former `IMA4-PDM-search` and
+  `quality-IMA4`. Update the catalogue and affected Markdown links; retain
+  original measurement reports. [Decisions, comparison and restoration](docs/maintenance/2026-10-12-trd-deduplication.md).
+- **Verification:** reconstruct all 94 candidates byte for byte before deletion
+  and authenticate their hashes again afterwards. Catalogue validation checks
+  all 189 retained images and all aliases/edits. Four archive-integrity tests
+  pass; the existing accepted IMA3 byte-exact rebuild test passes. Its initial
+  sandbox Temp-directory run failed with access denial; using a task-local
+  temporary directory passes without changing the player. Both full IMA4
+  reproduction scripts pass their complete saved-artifact authentication and
+  `--build-only` rebuilds with unchanged original TRD hashes. No fresh Fuse
+  playback or new quality claim; no runtime instructions or T-state changes.
+- **Maintenance:** the full-disk reproduction wrappers read missing archived
+  TRDs through the authenticated alias reader. Update only the full-disk
+  manifest's current wrapper hash; original producer snapshots and measurements
+  remain unchanged. Other historical whole-bundle scripts can restore an old
+  path explicitly using `toolkit/trd_duplicates.py --restore ... --output ...`.
+
 ## 2026-10-05 — Catalogue every retained TRD with verified provenance
 
 - **Request/scope:** describe each disk, how it was produced, its script,

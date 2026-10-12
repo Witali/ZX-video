@@ -77,7 +77,7 @@ Music remains below the 20-dB goal and is labeled as a listening preview.
 The saved root images are
 [music IMA3](../../../ZX-music-Entertainer-quality-IMA3.trd),
 [music IMA4](../../../ZX-music-Entertainer-quality-IMA4.trd), and
-[speech IMA4](../../../ZX-audiobook-quality-IMA4.trd).
+[speech IMA4](../../../ZX-audiobook-max-IMA4.trd).
 The new speech IMA3 candidate is preserved under `paused/` with its evidence;
 it has not been promoted to a root release filename.
 

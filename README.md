@@ -4,6 +4,9 @@ The [TRD catalogue](TRD_CATALOG.md) describes every retained disk image,
 its producer scripts, exact artifact commit, recorded branch reference and
 SHA-256. [Unsuccessful images retired on 2026-10-05](docs/maintenance/2026-10-05-retired-trds.md)
 have per-file reasons and restoration identities.
+The [duplicate consolidation](docs/maintenance/2026-10-12-trd-deduplication.md)
+keeps one full copy of repeated images and small exact-restoration edits for
+near-identical archived calibration variants.
 
 Convert video files into TRD disk images for **ZX Spectrum 128 + Beta Disk**.
 FFmpeg detects the input format: MP4, MKV, AVI, MOV and other supported
