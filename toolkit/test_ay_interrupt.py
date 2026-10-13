@@ -93,6 +93,23 @@ class AyInterruptTests(unittest.TestCase):
         self.assertEqual(word_at(cpu,labels,'audio_ticks_played'),120)
         self.assertEqual(word_at(cpu,labels,'audio_underruns'),0)
 
+    def test_extended_mixer_states_use_the_unchanged_native_irq(self):
+        frames=[video.AyFrame.deserialize(video.AyFrame((251,731,1977),(8,11,14),19,m).serialize())
+                for m in range(64)]
+        frames += [frames[-1]]*2
+        records=audio.encode_ticks(frames)
+        cpu,labels=fixture(11);arm(cpu,labels)
+        for start in range(0,len(frames),6):
+            stage(cpu,labels,records[start:start+6])
+            for index,(frame,record) in enumerate(zip(frames[start:start+6],records[start:start+6])):
+                cycles=run(cpu,labels,'audio_tick')
+                self.assertEqual(bytes(cpu.ay[:11]),audio.registers(frame))
+                expected=(367+83*record[0] if record[0] else 377)
+                if start+index==len(frames)-1:expected+=24
+                self.assertEqual(cycles,expected)
+        self.assertEqual(word_at(cpu,labels,'audio_ticks_played'),66)
+        self.assertEqual(word_at(cpu,labels,'audio_underruns'),0)
+
     def test_underrun_does_not_read_unpublished_memory(self):
         cpu,labels=fixture();arm(cpu,labels)
         for i in range(1024):cpu.write8(audio.QUEUE_BASE+i,255)

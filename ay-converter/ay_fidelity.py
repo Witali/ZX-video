@@ -47,7 +47,7 @@ def harmonic_dictionary(sample_rate, window_size=4096, notes=NOTES):
     return np.stack(columns, axis=1), useful
 
 
-def decompose(magnitude, sample_rate=22050, iterations=80):
+def _decompose(magnitude, sample_rate=22050, iterations=80):
     """Nonnegative sparse fit of competing harmonic templates (no ML model)."""
     dictionary, useful = harmonic_dictionary(sample_rate)
     target = magnitude[:, useful].T
@@ -73,6 +73,13 @@ def decompose(magnitude, sample_rate=22050, iterations=80):
     # Broadband noise has no reliable note: do not turn it into a chord.
     amplitude[flatness>.75] = 0
     return amplitude, np.clip(explained, 0, 1)
+
+
+def decompose(magnitude, sample_rate=22050, iterations=80, *, pattern_cache=False):
+    if pattern_cache:
+        from spectral_patterns import decompose as cached
+        return cached(magnitude, sample_rate, iterations, _decompose)
+    return _decompose(magnitude, sample_rate, iterations)
 
 
 def track(amplitude, low, high, reference=None, change_cost=.25, jump_cost=.14, transition_scale=1.0):

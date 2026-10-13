@@ -6,10 +6,12 @@ Copy the whole folder to another location to use it independently. It does
 not import `toolkit`, `audiobook-ay` or `audiobook-beeper`, and does not need
 the movie, old speech disks or archived experiment data.
 
-The existing square-wave-aware analyser is preserved as the default `legacy`
-profile. The optional `music` profile tracks three dominant harmonic components
-on persistent channels, with note lifetimes, stable note pitches, short-window
-envelopes, calibrated YM2149 volumes and independently detected mixed noise.
+The default `auto` profile uses the shared sound engine also used by the movie
+converter. It tracks persistent components, then chooses tone, noise or mixed
+tone/noise with actual YM2149 renders and nearby shared DAC levels. The previous
+`music` profile and original square-aware `legacy` profile remain selectable.
+[Measurements, auditions and complete bounded checks](analysis/auto_mixer/README.md).
+
 Both use three tonal voices, shared noise, fixed channel volumes, and R0..R10
 updates at nominal 50 Hz. **Every exported sound state lasts 20 ms**: pitch,
 volume and noise changes occur only on that grid, with no sub-tick events.
@@ -44,7 +46,8 @@ the report explicitly records that disk timing has not been verified.
 - `--title TEXT`: screen title, defaulting to the input filename.
 - `--once`: mute at EOF; the default repeats from RAM.
 - `--output DIRECTORY`: a new or empty destination.
-- `--profile music`: use the new note-oriented preset for keyboard-like music.
+- `--profile auto`: automatic tone/noise/mixed fitting (default).
+- `--profile music`: retain the preceding note-oriented preset for keyboard-like music.
   Small frequency/amplitude changes keep a component on its original channel.
   Noise can coexist with tones; its period and routing are fitted separately.
   By default, its colour and shared channel level are then refined against
@@ -67,7 +70,9 @@ Spectrum recording. Similarity metrics do not establish listening acceptance.
 
 | File | Purpose |
 | --- | --- |
-| `convert_audio.py` | FFmpeg input, analysis, assembly, preview and verification CLI |
+| `convert_audio.py` | FFmpeg input, assembly, preview and verification CLI |
+| `engine.py`, `encode_pcm.py` | Common audio/movie analysis and aligned PCM bridge |
+| `mixer_fit.py`, `spectral_patterns.py` | Automatic mode/level fitting and checked pattern reuse |
 | `ay_fidelity.py`, `ay_square_fit.py` | Harmonic analysis, pitch tracking and square-wave fit |
 | `music_profile.py`, `channel_tracking.py` | Optional 20-ms note/envelope, persistent-channel and shared-noise arrangement |
 | `ay_format.py` | Packed AY state format and R0..R10 conversion |

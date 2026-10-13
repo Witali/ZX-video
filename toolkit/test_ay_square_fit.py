@@ -102,7 +102,7 @@ class SquareFitTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder, patch('convert_video.run', return_value=pcm):
             directory = Path(folder)
             frames, report = convert_audio(Path('fixture.mov'), 'ffmpeg', directory,
-                dict(start_time='0'), dict(index=1), 5, Fraction(10), noise_steps=0)
+                dict(start_time='0'), dict(index=1), 5, Fraction(10), noise_steps=0, profile='legacy')
             self.assertEqual(len(frames), 25)
             self.assertEqual(len((directory/'ay.bin').read_bytes()), 25*9)
             self.assertEqual(report['chip_fit']['model'], 'ay_square_register_fit_v2')

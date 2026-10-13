@@ -67,7 +67,7 @@ def attacks(samples, sample_rate, count):
 def analyse(samples, sample_rate=22050):
     count = (len(samples)+round(sample_rate/50)-1)//round(sample_rate/50)
     magnitude, rms = ay.spectra(samples, sample_rate, 50, count)
-    amplitude, explained = ay.decompose(magnitude, sample_rate)
+    amplitude, explained = ay.decompose(magnitude, sample_rate, pattern_cache=True)
     short, _ = ay.spectra(samples, sample_rate, 50, count, window_size=2048)
     short_amplitude = short_decomposition(short, sample_rate)
     onset, flux, flatness = attacks(samples, sample_rate, count)

@@ -1,0 +1,257 @@
+{
+  "model": "persistent_components_and_automatic_mixer_v4",
+  "tone_harmonics": "odd 1/h through 31, below 0.48 sample rate, actual integer AY periods",
+  "noise_attenuation_register_steps": 1,
+  "nominal_noise_attenuation_db": 3.0102999566398125,
+  "changed_tone_registers": 425,
+  "noise_ticks": 396,
+  "tuned_period_registers": 1103,
+  "tuning_radius_cents": 50.0,
+  "frequency_score_hysteresis": 0.001,
+  "fit_spectral_cosine_sum_before": 276.1964952771797,
+  "fit_spectral_cosine_sum_after": 291.7513118050996,
+  "tone_power_tolerance_db": 0.25,
+  "maximum_tone_register_change": 1,
+  "native_instruction_delta_tstates": 0,
+  "limitations": "Estimated fundamentals and noise; AY Boolean mixer shares one volume with the tone and cannot add an independently controlled fourth voice. No listening acceptance implied.",
+  "update_rate_hz": 50,
+  "selection": "dominant",
+  "volume_curve": "YM2149 Ayumi",
+  "channel_assignment": "pitch continuity, 2-semitone gate; amplitude rank never changes channel",
+  "component_count": 182,
+  "component_channel_migrations": 0,
+  "tone_plus_noise_ticks": 388,
+  "noise_only_ticks": 8,
+  "noise_colour_fit": {
+    "model": "Ayumi continuous YM2149 spectral noise fit v1",
+    "update_rate_hz": 50,
+    "quantum_ms": 20,
+    "candidate_count": 93,
+    "period_range": [
+      1,
+      31
+    ],
+    "shared_volume_deltas": [
+      -2,
+      -1,
+      0
+    ],
+    "window_sizes": [
+      512,
+      2048,
+      8192
+    ],
+    "frequency_hz": [
+      50,
+      8000
+    ],
+    "objective": "mean of three log-magnitude MAE values after narrow 50-Hz power smoothing; source-relative -60 dB floor",
+    "frequency_smoothing_hz": 50,
+    "renderer_sample_rate_hz": 44100,
+    "analysis_sample_rate_hz": 22050,
+    "resampling": "127-tap Hann/sinc, cutoff 10584 Hz, zero-phase then decimate by two",
+    "transition_penalty_db_per_octave_and_volume_step": 0.15,
+    "noise_ticks": 361,
+    "limitations": "Candidate streams have continuous phase; the chosen sequence has a different LFSR history. Final rendering and independent emulator validation are required. No analogue circuit or source-separation accuracy claim.",
+    "global_source_model_rms_gain": 1.768297926690194,
+    "changed_period_ticks": 277,
+    "changed_volume_ticks": 320,
+    "period_histogram": {
+      "1": 17,
+      "2": 8,
+      "3": 8,
+      "4": 5,
+      "5": 9,
+      "6": 4,
+      "7": 1,
+      "8": 5,
+      "9": 4,
+      "10": 10,
+      "11": 7,
+      "12": 6,
+      "13": 1,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "18": 0,
+      "19": 0,
+      "20": 1,
+      "21": 0,
+      "22": 4,
+      "23": 11,
+      "24": 16,
+      "25": 16,
+      "26": 19,
+      "27": 14,
+      "28": 22,
+      "29": 38,
+      "30": 54,
+      "31": 80
+    },
+    "volume_delta_histogram": {
+      "-2": 287,
+      "-1": 33,
+      "0": 41
+    },
+    "mean_selected_candidate_error_db": 4.67411665003706
+  },
+  "noise_colour_fit_file": "noise-fit.json.gz",
+  "automatic_mixer_fit": {
+    "model": "automatic_boolean_mixer_fit_v1",
+    "update_rate_hz": 50,
+    "quantum_ms": 20,
+    "candidate_count": 374,
+    "noise_period_range": [
+      1,
+      31
+    ],
+    "shared_volume_deltas": [
+      -3,
+      -2,
+      -1,
+      0,
+      1,
+      2
+    ],
+    "eligible_ticks": 396,
+    "modes": [
+      "tone",
+      "noise",
+      "mixed"
+    ],
+    "routing": "one tracked noise carrier per state",
+    "tone_periods_changed": 0,
+    "component_channel_migrations": 0,
+    "native_instruction_delta_tstates": 0,
+    "limitations": "Bounded search with one carrier, fixed tracked pitches and nearby shared DAC levels; no independent tone/noise gains. Candidate LFSR histories differ from the final sequence. Metrics are not perceptual fidelity.",
+    "global_source_model_rms_gain": 2.0949191427964995,
+    "final_decision": "automatic",
+    "final_multiresolution_log_mae_db": {
+      "seed": 6.928998510678611,
+      "tone": 8.331171101313995,
+      "automatic": 6.627871509511202
+    },
+    "final_metrics": {
+      "seed": {
+        "512": {
+          "window_ms": 23.219954648526077,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.8102018672555021,
+          "sqrt_magnitude_cosine": 0.9066642422112341,
+          "log_magnitude_mae_db": 7.084165278765696,
+          "spectral_convergence": 0.6835859983076065,
+          "active_frames": 400
+        },
+        "2048": {
+          "window_ms": 92.87981859410431,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.7966906893433332,
+          "sqrt_magnitude_cosine": 0.893889705362832,
+          "log_magnitude_mae_db": 6.919426152539533,
+          "spectral_convergence": 0.6949286761874828,
+          "active_frames": 400
+        },
+        "8192": {
+          "window_ms": 371.51927437641723,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.7858068067602301,
+          "sqrt_magnitude_cosine": 0.8968311153022822,
+          "log_magnitude_mae_db": 6.783404100730606,
+          "spectral_convergence": 0.7168257251883486,
+          "active_frames": 400
+        }
+      },
+      "tone": {
+        "512": {
+          "window_ms": 23.219954648526077,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.8140012939518587,
+          "sqrt_magnitude_cosine": 0.8903226327320997,
+          "log_magnitude_mae_db": 8.051076414109641,
+          "spectral_convergence": 0.6832026511956873,
+          "active_frames": 400
+        },
+        "2048": {
+          "window_ms": 92.87981859410431,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.7903353625648717,
+          "sqrt_magnitude_cosine": 0.8589884756639296,
+          "log_magnitude_mae_db": 8.694335897906802,
+          "spectral_convergence": 0.7091263172474803,
+          "active_frames": 400
+        },
+        "8192": {
+          "window_ms": 371.51927437641723,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.7805843415501909,
+          "sqrt_magnitude_cosine": 0.8697795740503311,
+          "log_magnitude_mae_db": 8.248100991925543,
+          "spectral_convergence": 0.7325151482281763,
+          "active_frames": 400
+        }
+      },
+      "automatic": {
+        "512": {
+          "window_ms": 23.219954648526077,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.7994483123711749,
+          "sqrt_magnitude_cosine": 0.9043946899145442,
+          "log_magnitude_mae_db": 6.797608510188674,
+          "spectral_convergence": 0.6959629968746985,
+          "active_frames": 400
+        },
+        "2048": {
+          "window_ms": 92.87981859410431,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.7723925288603428,
+          "sqrt_magnitude_cosine": 0.8885737265047099,
+          "log_magnitude_mae_db": 6.617157910241555,
+          "spectral_convergence": 0.7338765279970627,
+          "active_frames": 400
+        },
+        "8192": {
+          "window_ms": 371.51927437641723,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.7651085451790236,
+          "sqrt_magnitude_cosine": 0.8932842159374104,
+          "log_magnitude_mae_db": 6.468848108103377,
+          "spectral_convergence": 0.7495875053218796,
+          "active_frames": 400
+        }
+      }
+    },
+    "mean_selected_candidate_error_db": 4.609472305661683,
+    "modes_before": {
+      "tone": 831,
+      "noise": 4,
+      "mixed": 357,
+      "silent": 8
+    },
+    "modes_after": {
+      "tone": 796,
+      "noise": 8,
+      "mixed": 388,
+      "silent": 8
+    },
+    "changed_ticks": 385,
+    "cache_hit": false,
+    "elapsed_seconds": 149.81188629999815,
+    "cache_key": "f0fa22feed7ed3ae0715d157ddcc9b81532f2487decfa96e5048940760f5a62d"
+  },
+  "automatic_mixer_fit_file": "mixer-fit.json.gz",
+  "channel_states_file": "channel-states.json.gz",
+  "analysis_context_component_count": 220,
+  "note_events_file": "note-events.json",
+  "spectral_pattern_cache": {
+    "rows": 500,
+    "reused": 0,
+    "largest_shape_error": 0.0,
+    "entries": 500,
+    "capacity": 2048,
+    "full_shape_tolerance": 1e-07
+  },
+  "profile": "auto",
+  "shared_core": "ay-converter/engine.py",
+  "sound_quantum_ms": 20
+}

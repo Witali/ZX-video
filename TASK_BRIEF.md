@@ -1450,3 +1450,18 @@ of every volume, including video publication times, missed nominal deadlines,
 jitter recovery and AY continuity. Window tests never replace this gate.
 Rerun a final set only when fixes or invalidated evidence justify it. Reuse
 the passing root movie set and archives when their identities are unchanged.
+
+## Shared automatic AY sound engine — complete (2026-10-13)
+
+The user requests automatic tone/noise/mixed selection, closer PCM matching,
+shared movie/audio conversion and repeated-pattern reuse. Both public entry
+points now use `ay-converter/engine.py`, defaulting to `auto` with the previous
+music/legacy profiles retained. Five complete eight-second excerpts improve
+selected mean log-spectral error; auditions and regressions remain explicit.
+The exact-repeat mixer cache passes byte identity; strict spectral reuse has
+zero hits in these recordings. No playback grid, RAM layout or Z80 instructions
+change. Sixty-six relevant tests, native two-loop excerpts, three cold Fuse
+sound auditions and a complete five-frame 10-fps movie fixture pass. Both
+public commands produce identical sound states. This does not rebuild or
+qualify the complete movie with the changed soundtrack. Reuse
+[the method and saved evidence](ay-converter/analysis/auto_mixer/README.md).

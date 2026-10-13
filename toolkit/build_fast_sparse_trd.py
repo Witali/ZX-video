@@ -1486,6 +1486,8 @@ def main() -> None:
             parser.error("50 Hz audio currently supports at most 65535 ticks")
         audio_frames=[source.AyFrame.deserialize(audio_data[i:i+9]) for i in range(0,len(audio_data),9)]
     ay_noise = any(source.AyFrame.deserialize(state).noise_period for state in ay_states)
+    if not audio_irq and any(state[5] & 0x80 for state in ay_states):
+        raise ValueError('extended AY mixers require --ay-50hz and the IRQ audio player')
     if ay_noise and not interleaved:
         parser.error('AY noise requires --packing zx0 --disk-layout interleaved (v10)')
     args.output.mkdir(parents=True, exist_ok=True)

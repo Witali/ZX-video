@@ -1,0 +1,874 @@
+{
+  "scope": "Measure a complete experimental FAP3 disk with the real Fuse/TR-DOS.\n\nRecords actual publication OUTs, every AY register write/tick, all runtime\nsector bytes and deterministic pixel samples per frame. Samples are not a\nfull image comparison. No synthetic disk producer or IRQ is used.\n",
+  "part": 1,
+  "frame_fields": 5,
+  "complete": true,
+  "release": false,
+  "exit_code": 77,
+  "runtime_seconds": 0.5319999999992433,
+  "trd_sha256": "b1a55f3c6b630e59698cfd4dd627043bc51b6c00e4ccf1387dcc6f815d6f32af",
+  "final": [
+    38788725,
+    5,
+    25,
+    0
+  ],
+  "failure": null,
+  "frames": 5,
+  "native_frames_sampled": 5,
+  "progress_100_percent": true,
+  "ay_ticks": 25,
+  "ay_records_exact": true,
+  "audio_underruns": 0,
+  "runtime_sectors_checked": 9,
+  "read_attempts": 9,
+  "errors": [],
+  "fast_read_retries": 0,
+  "fast_disk": true,
+  "cached_seek": true,
+  "seek_calls": [],
+  "interleaved": true,
+  "audio_tick_tstates": [
+    37086629,
+    37156431,
+    37227333,
+    37298501,
+    37369492,
+    37440589,
+    37510971,
+    37581967,
+    37652875,
+    37723783,
+    37795046,
+    37865426,
+    37936424,
+    38007664,
+    38078406,
+    38149669,
+    38220043,
+    38291213,
+    38362204,
+    38433029,
+    38504043,
+    38574585,
+    38645657,
+    38716482,
+    38787391
+  ],
+  "elapsed_timing": {
+    "bootstrap_tstates": 10416300,
+    "playback_tstates": 3054145,
+    "bootstrap_and_playback_tstates": 13470445,
+    "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+  },
+  "ay_record_field_gaps": 0,
+  "ay_record_field_duplicates": 0,
+  "pixel_sample_offsets": [
+    0,
+    97,
+    194,
+    291,
+    388,
+    485,
+    582,
+    679,
+    776,
+    873,
+    970,
+    1067,
+    1164,
+    1261,
+    1358,
+    1455,
+    1552,
+    1649,
+    1746,
+    1843,
+    1940,
+    2037,
+    2134,
+    2231,
+    2328,
+    2425,
+    2522,
+    2619,
+    2716,
+    2813,
+    2910,
+    3007,
+    3104,
+    3201,
+    3298,
+    3395,
+    3492,
+    3589,
+    3686,
+    3783,
+    3880,
+    3977,
+    4074,
+    4171,
+    4268,
+    4365,
+    4462,
+    4559,
+    4656,
+    4753,
+    4850,
+    4947,
+    5044,
+    5141,
+    5238,
+    5335,
+    6144,
+    6175,
+    6206,
+    6237,
+    6268,
+    6299,
+    6330,
+    6361,
+    6392,
+    6423,
+    6454,
+    6485,
+    6516,
+    6547,
+    6578,
+    6609,
+    6640,
+    6671,
+    6702,
+    6733,
+    6764,
+    6795,
+    6826,
+    6857
+  ],
+  "pixel_samples_per_frame": 80,
+  "full_pixel_comparison": false,
+  "nominal_late_frames": 0,
+  "max_late_fields": 0,
+  "actual_out_over_one_field": 0,
+  "max_actual_deviation_tstates": 1,
+  "bad_actual_intervals": 0,
+  "late_runs": [],
+  "publications": [
+    {
+      "tstate": 37085212,
+      "page": 31,
+      "field": 18,
+      "late_fields": 0
+    },
+    {
+      "tstate": 37439753,
+      "page": 23,
+      "field": 23,
+      "late_fields": 0
+    },
+    {
+      "tstate": 37794293,
+      "page": 31,
+      "field": 28,
+      "late_fields": 0
+    },
+    {
+      "tstate": 38148833,
+      "page": 23,
+      "field": 33,
+      "late_fields": 0
+    },
+    {
+      "tstate": 38503373,
+      "page": 31,
+      "field": 38,
+      "late_fields": 0
+    }
+  ],
+  "actual_phase_tstates": [
+    0,
+    1,
+    1,
+    1,
+    1
+  ],
+  "reads": [
+    {
+      "sector": 49,
+      "tstates": 68801,
+      "kind": "trdos",
+      "bytes_exact": true,
+      "retried": false,
+      "start_tstate": 35815767,
+      "end_tstate": 35884568,
+      "entry_tstates": 17
+    },
+    {
+      "sector": 50,
+      "tstates": 65045,
+      "kind": "direct503",
+      "bytes_exact": true,
+      "retried": false,
+      "start_tstate": 35891891,
+      "end_tstate": 35956936,
+      "entry_tstates": 10
+    },
+    {
+      "sector": 51,
+      "tstates": 65032,
+      "kind": "direct503",
+      "bytes_exact": true,
+      "retried": false,
+      "start_tstate": 35959045,
+      "end_tstate": 36024077,
+      "entry_tstates": 10
+    },
+    {
+      "sector": 52,
+      "tstates": 64960,
+      "kind": "direct503",
+      "bytes_exact": true,
+      "retried": false,
+      "start_tstate": 36026186,
+      "end_tstate": 36091146,
+      "entry_tstates": 10
+    },
+    {
+      "sector": 53,
+      "tstates": 65153,
+      "kind": "direct503",
+      "bytes_exact": true,
+      "retried": false,
+      "start_tstate": 36093521,
+      "end_tstate": 36158674,
+      "entry_tstates": 10
+    },
+    {
+      "sector": 54,
+      "tstates": 65509,
+      "kind": "direct503",
+      "bytes_exact": true,
+      "retried": false,
+      "start_tstate": 36160783,
+      "end_tstate": 36226292,
+      "entry_tstates": 10
+    },
+    {
+      "sector": 55,
+      "tstates": 65783,
+      "kind": "direct503",
+      "bytes_exact": true,
+      "retried": false,
+      "start_tstate": 36228401,
+      "end_tstate": 36294184,
+      "entry_tstates": 10
+    },
+    {
+      "sector": 56,
+      "tstates": 129749,
+      "kind": "direct503",
+      "bytes_exact": true,
+      "retried": false,
+      "start_tstate": 36296293,
+      "end_tstate": 36426042,
+      "entry_tstates": 10
+    },
+    {
+      "sector": 57,
+      "tstates": 65911,
+      "kind": "direct503",
+      "bytes_exact": true,
+      "retried": false,
+      "start_tstate": 36428837,
+      "end_tstate": 36494748,
+      "entry_tstates": 10
+    }
+  ],
+  "audio_underrun_tstates": [],
+  "rom_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+  "trace_nonce": 403731637,
+  "trace_nonce_exact": true,
+  "debugger_script_sha256": "3f43340bdc886968d58fd514d6df1a145b448b5fd41a72e6b9a53e9e5dd86e6c",
+  "trace_sha256": "00bd3c2ab9593af127c481f9a08fff6da5f5d531aca894b527fbb64242e85cc9",
+  "integrated_slot_queue": true,
+  "debugger_installed_bytes": 0,
+  "integrated_bootstrap_metadata_sha256": "79c68fac86a018bc49d7007177ed640f987ed358369d9149d03801a0346849bb",
+  "uncontended_frame": {
+    "instruction_operands": [
+      {
+        "address": 32930,
+        "instruction": "LD HL,compact_frame",
+        "old_operand": 25600,
+        "new_operand": 43008,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 32971,
+        "instruction": "LD DE,top_virtual_cache_rows",
+        "old_operand": 30465,
+        "new_operand": 42753,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 32979,
+        "instruction": "LD HL,compact_frame",
+        "old_operand": 25600,
+        "new_operand": 43008,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 32982,
+        "instruction": "LD DE,cache_first_visible",
+        "old_operand": 29697,
+        "new_operand": 41985,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 33189,
+        "instruction": "CP frame_page",
+        "old_operand": 100,
+        "new_operand": 168,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 33217,
+        "instruction": "CP frame_page",
+        "old_operand": 100,
+        "new_operand": 168,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 33837,
+        "instruction": "CP frame_page",
+        "old_operand": 100,
+        "new_operand": 168,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 33865,
+        "instruction": "CP frame_page",
+        "old_operand": 100,
+        "new_operand": 168,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 33896,
+        "instruction": "CP frame_page",
+        "old_operand": 100,
+        "new_operand": 168,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 33924,
+        "instruction": "CP frame_page",
+        "old_operand": 100,
+        "new_operand": 168,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 34620,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 34778,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 34861,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 34946,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 34969,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 34992,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35015,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35038,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35061,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35084,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35145,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35191,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35237,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35283,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35329,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35375,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35421,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35501,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35547,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35593,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35639,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35685,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35731,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35777,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35857,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35903,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35949,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 35995,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 36041,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 36087,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 36133,
+        "instruction": "OR cache_page",
+        "old_operand": 116,
+        "new_operand": 164,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 36537,
+        "instruction": "LD DE,attributes",
+        "old_operand": 28672,
+        "new_operand": 46080,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 37731,
+        "instruction": "LD DE,compact attributes",
+        "old_operand": 28672,
+        "new_operand": 46080,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 36883,
+        "instruction": "LD HL,compact_first_row",
+        "old_operand": 25984,
+        "new_operand": 43392,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 37392,
+        "instruction": "OR 70h",
+        "old_operand": 112,
+        "new_operand": 180,
+        "baseline_tstates": 7,
+        "tstates": 7,
+        "delta_tstates": 0
+      },
+      {
+        "address": 37416,
+        "instruction": "LD HL,compact attributes",
+        "old_operand": 28768,
+        "new_operand": 46176,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 30982,
+        "instruction": "LD HL,bitmap_masks",
+        "old_operand": 42176,
+        "new_operand": 46848,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 30988,
+        "instruction": "LD HL,attribute_masks",
+        "old_operand": 42560,
+        "new_operand": 47232,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 30739,
+        "instruction": "LD DE,MASKS",
+        "old_operand": 42176,
+        "new_operand": 46848,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 56356,
+        "instruction": "LD DE,packet",
+        "old_operand": 42656,
+        "new_operand": 25600,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 56370,
+        "instruction": "LD HL,AY records",
+        "old_operand": 42656,
+        "new_operand": 25600,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      },
+      {
+        "address": 58136,
+        "instruction": "LD DE,MASKS",
+        "old_operand": 42176,
+        "new_operand": 46848,
+        "baseline_tstates": 10,
+        "tstates": 10,
+        "delta_tstates": 0
+      }
+    ],
+    "changed_bytes": 74,
+    "instruction_tstate_delta": 0,
+    "extra_runtime_bytes": 0,
+    "packet_capacity": 4704,
+    "memory": [
+      {
+        "old_start": 25600,
+        "old_end": 29440,
+        "new_start": 43008,
+        "new_end": 46848
+      },
+      {
+        "old_start": 29440,
+        "old_end": 29520,
+        "new_start": 30496,
+        "new_end": 30576
+      },
+      {
+        "old_start": 29696,
+        "old_end": 30720,
+        "new_start": 41984,
+        "new_end": 43008
+      },
+      {
+        "old_start": 41984,
+        "old_end": 42176,
+        "new_start": 30304,
+        "new_end": 30496
+      },
+      {
+        "old_start": 42176,
+        "old_end": 42656,
+        "new_start": 46848,
+        "new_end": 47328
+      },
+      {
+        "old_start": 42656,
+        "old_end": 47360,
+        "new_start": 25600,
+        "new_end": 30304
+      }
+    ],
+    "checkpoint_copy_tstates": 102194,
+    "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf"
+  },
+  "compiled_masks": {
+    "enabled": false,
+    "replaced_by": "cell_codebook"
+  },
+  "inline_literals": {
+    "enabled": false,
+    "replaced_by": "cell_codebook"
+  },
+  "demand_decode": {
+    "helper_start": 57856,
+    "helper_end": 57923,
+    "queue_bytes": 360,
+    "helper_bytes": 67,
+    "extra_variable_bytes": 0,
+    "extra_stream_bytes": 0,
+    "background_quantum": 256
+  },
+  "inline_huffman_patches": {
+    "enabled": false,
+    "replaced_by": "cell_codebook"
+  },
+  "bank2_zx0": {
+    "enabled": false,
+    "replaced_by": "lzsa2"
+  },
+  "fast_return_irq": {
+    "enabled": true,
+    "hook_address": 24689,
+    "previous_hook_hex": "ca8d60",
+    "hook_hex": "ca9b60",
+    "accepted_sector": 24731,
+    "restore_address": 24717,
+    "restoration_hex": "f33ebeed47ed5e2180bd22bebdfb",
+    "previous_success_to_cursor_tstates": 115,
+    "success_to_cursor_tstates": 57,
+    "delta_tstates": -58,
+    "restore_only_tstates": 58,
+    "full_dispatch_delta_tstates": 0,
+    "short_read_fallback_delta_tstates": 0,
+    "code_growth_bytes": 0,
+    "extra_ram_bytes": 0,
+    "extra_stack_bytes": 0,
+    "extra_stream_bytes": 0,
+    "required_trdos_sha256": "91259fca6a8ded428cc24046f5b48b31d4043f2afbd9087d8946eaf4e10d71a5",
+    "invariants": [
+      "I=BEh",
+      "IM=2",
+      "JP at BDBD targets BD80",
+      "direct ROM return followed by EI"
+    ],
+    "timing_excludes": [
+      "ROM",
+      "IRQ",
+      "ULA",
+      "physical disk latency"
+    ],
+    "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf"
+  },
+  "hl_mask_reader": {
+    "enabled": false,
+    "replaced_by": "cell_codebook"
+  }
+}

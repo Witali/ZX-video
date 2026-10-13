@@ -142,7 +142,7 @@ def write_video_preview(images, states, quality, path):
 
 
 def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS, *,
-                  noise_steps=1, tuning_cents=50):
+                  noise_steps=1, tuning_cents=50, profile='auto', node=None):
     ticks, rate = count*fields_for_fps(fps), 22050
     if sound is None:
         frames = [video.AyFrame((1, 1, 1), (0, 0, 0))]*ticks
@@ -159,18 +159,30 @@ def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS, *,
         sample_count = round(duration*rate)
         samples = np.pad(samples[:sample_count], (0, max(0, sample_count-len(samples))))
         print(f'AY analysis: {ticks} updates at 50 Hz', flush=True)
-        magnitude, rms = ay.spectra(samples, rate, 50, ticks)
-        periods, volumes, _, noise, _, fit = ay.arrange_for_chip(
-            magnitude, rms, rate, noise_steps=noise_steps, tuning_cents=tuning_cents)
-        frames = [video.AyFrame(tuple(map(int, p)), tuple(map(int, v)), int(n))
-                  for p, v, n in zip(periods, volumes, noise)]
+        node = executable(node, 'node')
+        core = HERE.parent/'ay-converter'/'encode_pcm.py'
+        pcm_path = directory/'audio-source.f32'
+        samples.astype('<f4').tofile(pcm_path)
+        core_output = directory/'ay-core'
+        subprocess.run([sys.executable, str(core), str(pcm_path), '--output', str(core_output),
+            '--profile', profile, '--node', node, '--noise-steps', str(noise_steps),
+            '--tuning-cents', str(tuning_cents)], check=True)
+        raw = (core_output/'ay.bin').read_bytes()
+        if len(raw) != ticks*9:
+            raise ValueError('shared AY core returned the wrong 50-Hz state count')
+        frames = [video.AyFrame.deserialize(raw[i:i+9]) for i in range(0,len(raw),9)]
+        fit = json.loads((core_output/'analysis.json').read_text(encoding='utf-8'))
         import compare_ay_fidelity as quality
-        rendered = ay.render(frames, 50, rate)
+        import wave
+        with wave.open(str(core_output/'audio-preview.wav'),'rb') as preview:
+            rendered = np.frombuffer(preview.readframes(preview.getnframes()),'<i2').astype(float)/32768
+        if len(rendered) != ticks*441:
+            raise ValueError('shared AY preview returned the wrong duration')
         quality.write_wav(directory/'audio-preview.wav', rendered, rate)
         metrics = quality.compare(quality.features(samples, rate, float(fps), count),
                                   quality.features(rendered, rate, float(fps), count))
-        report = dict(source_audio=True, ticks=ticks, noise_ticks=int(np.count_nonzero(noise)),
-            synthesis='three AY voices, optional noise on B, 50 Hz', chip_fit=fit, metrics=metrics,
+        report = dict(source_audio=True, ticks=ticks, noise_ticks=sum(bool(f.noise_period) for f in frames),
+            synthesis='shared audio/movie AY core, automatic tone/noise/mixed modes, 50 Hz', profile=profile, chip_fit=fit, metrics=metrics,
             metric_note='signal proxies, not a perceptual accuracy percentage', command=command)
     (directory/'ay.bin').write_bytes(b''.join(frame.serialize() for frame in frames))
     return frames, report
@@ -190,6 +202,9 @@ def main(argv=None):
     parser.add_argument('--audio-banks',type=int,choices=(1,2),default=1,help='CB41-family resident AY banks: 4 or 4+6')
     parser.add_argument('--fps', choices=('25/3', '10'), default='25/3',
         help='video rate; 10 requires CB41, AY always remains 50 Hz')
+    parser.add_argument('--ay-profile', choices=('auto','music','legacy'), default='auto',
+        help='shared sound engine: automatic tone/noise/mixed fitting, preceding music profile, or legacy')
+    parser.add_argument('--node', help='Node.js path for the shared AY chip model')
     parser.add_argument('--ay-noise-steps', type=int, choices=(0, 1), default=1,
         help='noise attenuation in nominal 3 dB AY volume steps (default: 1)')
     parser.add_argument('--ay-tuning-cents', type=float, default=50,
@@ -280,7 +295,7 @@ def main(argv=None):
             write_video_preview(images, states, quality, output/'video-preview.png')
         write_json(output/'video-quality.json', quality)
         ay_frames, audio = convert_audio(source, executables['ffmpeg'], work, picture, sound,
-            len(states), Fraction(args.fps), noise_steps=args.ay_noise_steps, tuning_cents=args.ay_tuning_cents)
+            len(states), Fraction(args.fps), noise_steps=args.ay_noise_steps, tuning_cents=args.ay_tuning_cents, profile=args.ay_profile, node=args.node)
         write_json(output/'audio-quality.json', audio)
         raw, codec = encode(states, scaffold_audio(ay_frames, args.frame_fields))
         codec.update(build_envelope_fields=6, runtime_frame_fields=args.frame_fields,

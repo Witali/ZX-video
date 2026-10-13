@@ -1,5 +1,43 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Share automatic tone/noise/mixed AY conversion
+
+- **Request/baseline:** `3002f6a7`; select tone, noise or simultaneous tone/noise
+  closer to PCM, reuse repeated spectral patterns, and share the advanced audio
+  engine with movies. Use five complete eight-second source excerpts: music
+  0..8, O. Henry 8..16, movie 60..68/170..178/430..438 seconds.
+- **Change:** canonical `ay-converter/engine.py`, isolated PCM movie bridge,
+  existing extended AY9 mixer format, 374 continuous chip candidates across
+  modes, R6=1..31 and shared-volume offsets -3..+2, with a final unpooled-error
+  fallback. Default `auto`; retain `music`/`legacy`. Exact context/source-hash
+  cache and full-vector-checked intensity-normalized spectral reuse preserve
+  the 20-ms grid. Archival players reject unsupported extended records.
+- **Result:** mean multiresolution log MAE, old music ->auto: 8.75613 ->8.35282,
+  8.74940 ->7.78872, 7.42225 ->7.07508, 6.34678 ->5.75762, 6.92900 ->6.62787 dB.
+  Some cosine proxies regress; no perceptual/voice-intelligibility percentage.
+  Real spectral-cache hits are zero at the strict 1e-7 threshold. Exact repeated
+  mixer search is 144.7363 ->0.03178 s, excluding earlier analysis/noise fitting.
+- **Verification:** 22 standalone +44 toolkit tests; 4000 native ticks /44000
+  writes across five complete two-loop excerpts. Three cold Fuse auditions
+  each verify 800 ticks /8800 writes, with no missing/duplicate field. Public
+  audio/movie commands produce identical 25 states. Complete five-frame 10-fps
+  Fuse fixture verifies all 34560 screen bytes, AY and sectors: zero nominal
+  misses, maximum publication deviation 1 T. Source/byte archive authentication
+  and normal-speed recordings are retained.
+- **Timing/limits:** player instructions/RAM unchanged, delta 0 T; standalone
+  ordinary 974 ->974 T, bank boundary1091, loop restart1079. Movie IRQ remains
+  367+83*n /377 T (+24 at EOF); changed data affects n and compressed bytes,
+  separately recorded. No whole-film capacity/timing or physical-hardware
+  claim; root releases are not rebuilt. Initial checks needed task-local z80,
+  pyz80/OpenCV dependencies; Windows strict-path sandbox checks required an
+  approved public-CLI rerun. The old default-profile assertion was updated
+  to explicitly request `legacy`; all final checks pass.
+- **Decision/evidence:** integrate the shared default and retain measured
+  fallbacks/auditions. [Method and commands](ay-converter/analysis/auto_mixer/README.md),
+  [full report](ay-converter/analysis/auto_mixer/evidence/results.json),
+  [authenticated artifacts](ay-converter/analysis/auto_mixer/evidence/manifest.json),
+  [reproducer](ay-converter/analysis/auto_mixer/probe.py).
+
 ## 2026-10-12 — Consolidate duplicate and near-identical TRD images
 
 - **Request/baseline:** inspect practically repeated disks and remove them;

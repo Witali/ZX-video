@@ -1,0 +1,92 @@
+{
+  "complete": true,
+  "release": false,
+  "all_nominal_deadlines_met": true,
+  "player_hot_path_changed": true,
+  "player_hot_path_delta_tstates": 0,
+  "unchanged_native_baseline": "9885483",
+  "disks": [
+    {
+      "file": "ZX-video_part01.trd",
+      "frames": 5,
+      "cold": {
+        "cold_sections": [
+          {
+            "bank": 6,
+            "offset": 0,
+            "bytes": 16384,
+            "sha256": "b5d621fdf10aa73255620c69a4ed7af009c865ed43b749eaaa48700390afa7fd"
+          },
+          {
+            "bank": 2,
+            "offset": 0,
+            "bytes": 16384,
+            "sha256": "323a69f7cece7c16c77aec9adeff660b48aa9cf51ae5a8459a9e27c3ee06bb47"
+          },
+          {
+            "bank": 7,
+            "offset": 0,
+            "bytes": 9216,
+            "sha256": "caa7c3fb5cdc5d722f754ba0da8492b0b7bc990d004fd0312f010dc24a4c6a00"
+          },
+          {
+            "bank": 5,
+            "offset": 13824,
+            "bytes": 2560,
+            "sha256": "6e2e162d232885acd947c91fe9f2a1d0d166c946f3f7c3aa0f003313a42da965"
+          },
+          {
+            "bank": 4,
+            "offset": 0,
+            "bytes": 871,
+            "sha256": "7b3b4a3119920358c2ff3d14f37dc6a1c1c3db3f097b5d95448129acfbcdcf87"
+          },
+          {
+            "bank": 5,
+            "offset": 0,
+            "bytes": 6912,
+            "sha256": "edc19bce178397837cca26c4b46ff1748ebd37cdfb8e48732a2e0c7232b9755f"
+          }
+        ],
+        "mocked_boot_tstates": 1863289,
+        "boot_sectors": 33,
+        "dirty_ram_boot_exact": true
+      },
+      "cpu_complete": true,
+      "cpu_all_native_screens_exact": true,
+      "cpu_report": "work/ZX-video_part01/cpu.json",
+      "disk_timing": {
+        "complete": true,
+        "nominal_deadlines_met": true,
+        "missed_nominal_frame_indices": [],
+        "missed_nominal_frames": 0,
+        "fallback_one_field_met": true,
+        "late_runs": [],
+        "late_runs_recovered": true,
+        "maximum_deviation_tstates": 1,
+        "publication_intervals_tstates": [
+          354541,
+          354540,
+          354540,
+          354540
+        ],
+        "actual_ay_50hz": true,
+        "ay_missing_fields": 0,
+        "runtime_disk_reads": 9,
+        "disk_read_service_tstates": 655943,
+        "disk_read_min_tstates": 64960,
+        "disk_read_max_tstates": 129749,
+        "seek_service_tstates": 0,
+        "startup_and_playback_timing": {
+          "bootstrap_tstates": 10416300,
+          "playback_tstates": 3054145,
+          "bootstrap_and_playback_tstates": 13470445,
+          "includes": "all elapsed CPU/ROM/disk/IRQ/ULA time from PLAYER entry to finished; excludes BASIC loading PLAYER and human disk changes"
+        },
+        "disk_latency_note": "Fuse call intervals combine ROM execution, physical emulation, IRQs and contention; no artificial separation",
+        "partial_run_passes": false
+      },
+      "full_fuse_screens_exact": true
+    }
+  ]
+}

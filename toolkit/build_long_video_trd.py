@@ -107,36 +107,7 @@ class ToneRange:
     white_percentile: float = 97.0
 
 
-@dataclass(frozen=True)
-class AyFrame:
-    periods: tuple[int, int, int]
-    volumes: tuple[int, int, int]
-    # Zero: three tones. 1..31: channel B becomes noise-only (ZXFC v10).
-    noise_period: int = 0
-
-    @property
-    def mixer(self) -> int:
-        return 0x2A if self.noise_period else 0x38
-
-    def serialize(self) -> bytes:
-        result = bytearray()
-        for period in self.periods:
-            result += bytes((period & 0xFF, (period >> 8) & 0x0F))
-        result += bytes(self.volumes)
-        if not 0 <= self.noise_period <= 31:
-            raise ValueError("noise period must be 0..31")
-        result[1] |= (self.noise_period & 15) << 4
-        result[3] |= self.noise_period & 16
-        if len(result) != AY_STATE_BYTES:
-            raise AssertionError("invalid AY state size")
-        return bytes(result)
-
-    @classmethod
-    def deserialize(cls, state: bytes) -> "AyFrame":
-        if len(state) != AY_STATE_BYTES:
-            raise ValueError("invalid AY state size")
-        return cls(tuple(state[2*i] + ((state[2*i+1] & 15) << 8) for i in range(3)),
-                   tuple(state[6:]), (state[1] >> 4) | (state[3] & 16))
+from shared_ay import AyFrame
 
 
 @dataclass(frozen=True)
@@ -577,6 +548,8 @@ def serialize_video(
 ) -> bytes:
     if not packets:
         raise ValueError("cannot serialize an empty video")
+    if any(packet.ay_state[5] & 0x80 for packet in packets):
+        raise ValueError('extended AY mixers require the modern IRQ/resident audio stream')
     packet_data = b"".join(packet.serialize() for packet in packets)
     header = bytearray(base.SECTOR_SIZE)
     header[:4] = VIDEO_MAGIC
