@@ -1538,3 +1538,26 @@ The resident audio forest bounds the conservative selected part; no maximum
 single-disk duration or full-cartoon qualification is claimed. The prerequisite
 checkpoint fix changes startup by+255 T and runtime by0 T. Finish this authorized
 excerpt; no new RAM/codec sweep or existing movie rebuild is part of it.
+
+## Source-matched stable colour for the sea-foam excerpt — active (2026-10-13)
+
+The user requests colours closer to the original and less attribute flicker.
+From `7886808a`, add bounded source/output comparison to host CB41 preparation,
+including all legal colour pairs and temporal feedback among close candidates.
+Preserve resolution, fixed dither phase, the exact50.7-second RGB source and
+2535 existing AY fields. Compare every frame against the retained legacy
+reference, inspect difficult scenes and provide source/old/new previews.
+Rebuild and fully cold-Fuse qualify the same excerpt, including every screen,
+AY field and nominal deadline, before replacing its root TRD. Native ABI and
+instructions remain unchanged; record0 T delta. Keep old measured evidence.
+Do not expand to the full cartoon, audio memory optimization or unrelated
+colour/model sweeps as part of this requested correction.
+The user additionally requires current-frame colour without trailing changes:
+history is disabled in every cell with any source component delta above4 codes.
+Add a public `--monochrome` option for explicit black/white spatial gray output;
+retain unchanged audio/cadence and check both supported host formats.
+The user identifies artificial8x8 cell-border blocks in smooth source areas.
+Add current-frame spatial coherence across attribute boundaries, comparing
+source-relative edge steps and protecting actual contours with source contrast.
+Keep sample-level actual RGB/chroma guards; temporal history must not delay
+meaningfully changed cells. Complete the same selected excerpt qualification.

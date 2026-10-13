@@ -1,5 +1,42 @@
 # Generic five-level CB41 converter
 
+## Source-matched stable colour and monochrome (2026-10-13)
+
+CB41 now defaults to `--colour-policy stable`. All 56 canonical INK/PAPER
+pairs, including normal white, are compared to the current source with all
+five coverages. Averaged RGB and actual 2x2 pixel RGB errors are bounded by
+the source's monochrome reference plus64 MSE/component. Physical opponent
+colour error is also bounded by twice the neutral reference plus16; a misleading
+average cannot justify strongly mismatching coloured dither pixels.
+
+History applies only when every sample/component in a cell changes by at
+most4 source codes. Moving/changing cells use current-source selection with
+zero history influence. Near-static previous output is retained only within
+the current source bounds and a256-unit spatial score allowance. No output
+frames are blended or buffered for delayed colour updates. These thresholds
+are encoded-RGB error proxies, not perceptual scores. Some averaged RGB
+scores may increase when a misleading saturated mixture is rejected.
+
+Three alternating-parity spatial passes penalize source-relative output steps
+across neighboring attribute cells. Source contrast protects real object
+contours; smooth source gradients discourage artificial8x8 rectangular borders.
+Selection stays within the close source candidates and physical-colour guards.
+Connected smooth gray regions additionally use one source-valid gray pair to
+avoid normal/BRIGHT texture islands. Regions follow current-source contours;
+this does not blur samples or alter the fixed dither phase.
+
+Use `--colour-policy legacy` to reproduce the previous CB41 palette search.
+Use **`--monochrome`** for black/BRIGHT-white output with fixed spatial gray
+dithering. This switch works with both CB41 and FAP3, using encoded Rec.709
+luma, five or four coverages respectively. It overrides colour selection;
+audio, resolution, frame rate and native formats remain unchanged. For example,
+add `--monochrome` to either conversion command below. `video-quality.json`
+records source/legacy/output measurements and the selected policy.
+
+The changes are host-only: native player instruction delta0 T. Each new
+source/disk still needs complete timing qualification. See the
+[sea-foam comparison](analysis/sea_foam/README.md) for the measured clip.
+
 2026-10-01, baseline `9885483`. `convert_video.py --video-codec cb41` connects
 the verified five-level renderer and LZSA2 transport to ordinary video input.
 The existing FAP3 default is unchanged. No movie name, source-frame numbers,

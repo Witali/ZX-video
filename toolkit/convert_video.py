@@ -96,14 +96,25 @@ def decode_video(source, ffmpeg, directory, probe, picture, sound, fps=FPS):
         encoded_seconds=float(Fraction(wanted, 1)/fps), fit='contain', crop=False, command=command)
 
 
-def convert_frames(images, directory):
+def convert_frames(images, directory, *, monochrome=False):
     states = np.lib.format.open_memmap(directory/'states.npy', mode='w+', dtype=np.uint8, shape=(len(images), 3840))
     previous = None
     errors = []
     image = np.zeros((96, 128, 3), dtype=np.uint8)
     for index, active in enumerate(images):
         image[12:84] = active
-        data, previous = video.encode_compact_frame(image, previous, 100000, 'ordered4')
+        if monochrome:
+            # Existing four-code ABI uses fixed black/BRIGHT-white coverage.
+            # Direct luma quantization prevents accidental coloured dither
+            # pairs even on a neutral source; five-level CB41 is prepared next.
+            from monochrome_five_level import luma_numerator
+            luma = luma_numerator(image).astype(float)/10000
+            codes = np.abs(luma[:, :, None]-np.array([0., 63.75, 127.5, 255.])).argmin(axis=2).astype(np.uint8)
+            packed = codes.reshape(96, 32, 4)
+            data = ((packed[:, :, 0]<<6)|(packed[:, :, 1]<<4)
+                    |(packed[:, :, 2]<<2)|packed[:, :, 3]).tobytes()+bytes([71])*768
+        else:
+            data, previous = video.encode_compact_frame(image, previous, 100000, 'ordered4')
         states[index] = np.frombuffer(data, dtype=np.uint8)
         # Enforce the player format's fixed black bands, including their palette.
         states[index, :384] = states[index, 2688:3072] = 0
@@ -240,6 +251,10 @@ def main(argv=None):
     parser.add_argument('--startup-delta', action='store_true', help='Smaller boot tables when adjacent-byte differences save disk sectors')
     parser.add_argument('--verify', choices=('cpu', 'fuse', 'none'), default='cpu',
         help='cpu: every instruction and full images; fuse: also real disk timing; none: host roundtrip only')
+    parser.add_argument('--colour-policy', choices=('stable', 'legacy'), default='stable',
+        help='CB41 source-bounded colour/temporal matching, or reproduce the legacy palette')
+    parser.add_argument('--monochrome', action='store_true',
+        help='Black/white image with fixed spatial gray dithering; audio and cadence unchanged')
     parser.add_argument('--fuse', type=Path, help='Fuse executable for --verify fuse')
     parser.add_argument('--verification-timeout', type=float, default=1800, help='Fuse timeout in seconds per disk')
     parser.add_argument('--cached-huffman-byte', action='store_true', help='Cache current Huffman byte in B; requires --carry-huffman')
@@ -295,17 +310,19 @@ def main(argv=None):
         cached_huffman_byte=args.cached_huffman_byte,
         irq_safe_paging=args.irq_safe_paging,
         startup_delta=args.startup_delta,
-        timing_verified=False, verification=args.verify, video_codec=args.video_codec)
+        timing_verified=False, verification=args.verify, video_codec=args.video_codec,
+        monochrome=args.monochrome, colour_policy=args.colour_policy)
     if args.video_codec == 'cb41':
         manifest.update(player_baseline='9885483', player_hot_path_changed=False,
                         player_hot_path_delta_tstates=0, brightness_levels=5)
     write_json(output/'conversion.json', manifest)
     try:
         images, manifest['input'] = decode_video(source, executables['ffmpeg'], work, probe, picture, sound, Fraction(args.fps))
-        states, quality = convert_frames(images, work)
+        states, quality = convert_frames(images, work, monochrome=args.monochrome)
         if args.video_codec == 'cb41':
             from generic_cell_codebook import prepare_frames, write_preview
-            five_states, quality = prepare_frames(images, states, work)
+            five_states, quality = prepare_frames(images, states, work,
+                colour_policy=args.colour_policy, monochrome=args.monochrome)
             write_preview(images, five_states, quality, output/'video-preview.png')
         else:
             write_video_preview(images, states, quality, output/'video-preview.png')

@@ -17,15 +17,22 @@ from probe_hybrid_five_level import error
 from row_dictionary_video import encode_states
 
 
-def prepare_frames(images, compact, directory):
+def prepare_frames(images, compact, directory, *, colour_policy='stable', monochrome=False):
     """Refine the generic converter's palette without changing its media fit.
 
-    Keep palette history from the four-level conversion, exactly as in the
-    verified movie preparation. Add the missing quarter shade only when it
-    reduces RGB error; dithering is applied afterward at a fixed screen phase.
+    First retain the reproducible legacy five-level reference. The default
+    source-bounded colour search then matches colours and temporal transitions
+    with sample-level actual-pixel guards. Legacy preparation
+    remains available explicitly; native dithering keeps a fixed screen phase.
     """
     if len(images) != len(compact) or not len(images):
         raise ValueError('expected matching nonempty RGB and compact frames')
+    if colour_policy not in ('stable', 'legacy'):
+        raise ValueError('unknown colour policy')
+    import stable_colour
+    import monochrome_five_level
+    comparison = stable_colour.Comparison()
+    previous = previous_image = None
     path = Path(directory)/'five-states.npy'
     states = np.lib.format.open_memmap(path, mode='w+', dtype=np.uint8,
                                      shape=(len(images), five.STATE_BYTES))
@@ -37,10 +44,15 @@ def prepare_frames(images, compact, directory):
         refined = bytearray(hybrid.refine_compact(original, image))
         refined[3840:3936] = bytes([1])*96
         refined[4512:] = bytes([1])*96
-        state = bytes(refined)
+        legacy = bytes(refined)
+        state = (monochrome_five_level.encode(image) if monochrome else
+                 stable_colour.encode(image, legacy, previous, previous_image)
+                 if colour_policy == 'stable' else legacy)
+        comparison.add(image, legacy, state)
+        previous, previous_image = state, image.copy()
         old_error = error(hybrid.from_compact(original), image)
         new_error = error(hybrid.from_five(state, adaptive=False), image)
-        if new_error > old_error+1e-9:
+        if not monochrome and colour_policy == 'legacy' and new_error > old_error+1e-9:
             raise AssertionError(('five-level refinement increased RGB error', index))
         states[index] = np.frombuffer(state, dtype=np.uint8)
         before.append(old_error)
@@ -52,9 +64,11 @@ def prepare_frames(images, compact, directory):
         measured_against='scaled source before Spectrum palette quantization',
         mean_mse=float(np.mean(after)), maximum_mse=max(after), frame_mse=after,
         four_level_frame_mse=before, four_level_mean_mse=float(np.mean(before)),
-        refinement_never_increased_rgb_error=True, brightness_levels=5,
+        refinement_never_increased_rgb_error=all(a<=b+1e-9 for a,b in zip(after,before)), brightness_levels=5,
         dither='fixed-phase 2x2 after brightness reconstruction',
-        compression_additional_pixel_changes=False, perceptual_percent_claimed=False)
+        compression_additional_pixel_changes=False, perceptual_percent_claimed=False,
+        colour_policy='monochrome' if monochrome else colour_policy,
+        monochrome=monochrome, colour_comparison=comparison.report())
 
 
 def row_sets(frames):

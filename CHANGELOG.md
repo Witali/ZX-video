@@ -1,5 +1,46 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Source-bounded colour, cell coherence and monochrome option
+
+- **Request/baseline:** From `7886808a`, correct the sea-foam excerpt's colour
+  mismatch, flicker and false8x8 borders, without trailing current-frame
+  changes. Add the requested public `--monochrome` switch. Preserve the exact
+  507 RGB frames/2535 AY fields from `fe3bb2cf`; no new audio fit or native ABI.
+- **Algorithm:** Search56 canonical pairs including normal white. Compare
+  averaged and actual2x2 RGB errors to current-source monochrome references;
+  bound physical opponent-colour error to reject saturated misleading averages.
+  History is disabled when any cell source component changes by>4 codes.
+  Joint current-frame boundary/endpoint costs protect actual source contours;
+  connected smooth gray regions share a source-valid pair to avoid normal/
+  BRIGHT islands. Fixed dither phase, no output-frame blend or delay.
+- **Unsuccessful/intermediate measurements:** Averaged-only matching lowers
+  RGB MSE494.64372 ->309.77568 but raises temporal chroma residual58.44063
+  ->96.44955 and quiet attribute switches6 ->1400. Actual quiet-cell retention
+  gives309.96778/96.17286 and1118 switches; reject both as final quality results.
+  Strict physical-colour guard gives440.44703/33.23320, quiet residual0.33630
+  versus4.92013, but over-suppresses source colour. A relaxed guard with local
+  boundaries gives434.73543/43.11757 and quiet residual0.67550. Those complete
+  candidate disks pass Fuse timing/content; none replaces the root release.
+  Inspect frames98,100,154,506. Retain measured reports; intermediate producer
+  source snapshots were not saved, so current code cannot exactly regenerate
+  those drafts. A superseded RGB-only guard also failed a legacy cell-bound
+  test; replace that obsolete contract with independent actual-pixel guards.
+- **Gradient/checks:** Local per-cell minima still yield false gray texture
+  islands: synthetic smooth-ramp boundary residual54.05114 ->66.91425. Shared
+  neutral regions reduce it to1.23110 (97.72%). Twenty-seven focused tests now
+  pass: actual pixel/source bounds, static stability, moving-colour independence,
+  real contours, smooth gradients, both monochrome ABIs and generic regressions.
+  Public monochrome CLI smoke builds pass complete CPU/content checks on6
+  CB41 frames and5 FAP3 frames,30 AY fields each; no Fuse cadence claim for
+  these small smoke fixtures. Source-near history and spatial error thresholds
+  are explicit model proxies, not a perceptual percentage or zero-artifact claim.
+- **Timing/decision:** Host-only change; existing player instructions and their
+  absolute baseline counts remain unchanged, delta0 T. Keep the integrated
+  selector/flag and reproduce with `stable_colour.py`, `test_stable_colour.py`,
+  `convert_video.py` and the sea-foam build/comparison/archive scripts. Complete
+  full final-clip qualification and archive its measured result separately;
+  this implementation checkpoint alone does not qualify a new release disk.
+
 ## 2026-10-13 — Complete one-disk sea-foam YouTube excerpt
 
 - **Request/baseline/input:** The user requests a video/TRD excerpt from
