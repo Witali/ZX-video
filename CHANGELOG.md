@@ -330,6 +330,262 @@
   Existing root releases are untouched. Keep this prerequisite fix; its
   input-specific release evidence is preserved by the following focused change.
 
+## 2026-10-13 — Reduce YM3812 audio-frame transition clicks
+
+- **Request/input:** User reports clicks in the accepted nine-channel sound,
+  suspected at frame boundaries. Continue `.worktree/ym3812-speech` from
+  `60e8bb3e`; same O. Henry[60,90),1500 targets and constant gain. No spectral
+  refit. Old register bursts end within1.859411 ms of each20-ms boundary.
+- **Diagnosis/change:** Boundary/interior derivative-power ratio1.169034.
+  Same-chip-state first-sample counterfactuals isolate immediate write effects:
+  squared sum6.984949,95.42% carrier TL. Add eight real quantized raised-cosine
+  TL substeps, quiet key-on/off transitions, and choose carrier MULT/FNUM/BLOCK
+  write order minimizing intermediate pitch excursion. Keep exact targets,
+  bus spacing45.35us, fixed output filter/gain and historical exporter. Saved
+  controls CLI reproduces the fix; new sine fits use it by default, with an
+  explicit legacy flag. General FM/waveform transitions remain outside scope.
+- **Eight complete trials/decision:** Abrupt, historical4-step linear4-ms,
+  cosine8-step2/4/8-ms, cosine4-ms without reordered pitch, and cosine4-step
+  2/4-ms. Squared sums6.984949/1.990289/1.398379/1.411234/1.376354/1.456972/
+  2.203186/2.207496. Select8-step nominal2 ms: -79.9801% squared effect,
+  maximum0.286625 ->0.069429. Serial writes stretch completion to4.217687 ms;
+  all targets precede exact next-frame boundaries. Four steps leave more
+  abrupt step energy;8 ms worsens levels; retain4-ms audition alternative.
+- **Quality/storage tradeoff:** Dominant cosines0.944152/0.899093/0.903570 ->
+  0.944361/0.899641/0.904923. Level MAE0.304720 ->0.424978 dB; combined
+  log/level7.242039 ->7.376224; root cosines worsen. Derivative-power ratio
+  becomes0.986364; peak0.792078, zero clipping. Same gain. Writes39,128 ->
+  82,166; VGM161,158 ->337,171 bytes; VGZ61,653 ->134,200. No compact-storage
+  optimization or perceptual/global optimum claim.
+- **Verification:** Eight tests pass, including actual native broadband edge
+  suppression and avoidance of double-frequency MULT/BLOCK bursts. All eight
+  complete streams pass1500 exact state audits and independent continuous
+  native replay equality;1491477 native /1323000 output samples each. Old
+  WAV/VGM byte exact, revised CLI WAV/VGM/VGZ byte exact,61-second comparison
+  exact segments, source/core/producer/artifact hashes retained. Figures
+  inspected with shared scales. Counterfactual and derivative diagnostics
+  include legitimate tone/pitch/envelope behavior; click audibility remains
+  pending user listening. Pinned-core limitations unchanged; no physical-chip,
+  Z80, disk or release qualification. Native instructions unchanged; no hot
+  path T-state delta applies.
+- **Evidence/reproduction:** [Report, WAVs, all trial streams and scripts](ay-converter/analysis/ym3812_clicks/README.md).
+
+## 2026-10-13 — Simulate nine-channel YM3812 speech from frequencies
+
+- **Request/input:** Create `.worktree/ym3812-speech`, branch
+  `codex/ym3812-speech`, from `86b959f9` for the user-authorized YM3812/OPL2
+  simulation. Reuse exact prepared O. Henry[60,90),1500 targets at50 Hz.
+  Use actual OPL2 registers and pinned ymfm-py0.2.0; source supplies analysis
+  targets only. Preserve the previous model and all native/release code.
+- **Eight complete trials:** Carrier-sine, four carrier shapes, fourteen
+  FM patches (ratios1/2/3, TL16..40), and real4-step TL ramp comparison.
+  Multiplier1 objectives7.626318/6.593306/7.252963/7.855888. Tests expose
+  the6208.79-Hz base limit; make it explicit and add multiplier2 patches,
+  doubling matching modulator ratios. Expanded objectives7.242039/6.741937/
+  7.262293/7.448328. Runs take87.095/164.632 s on this host, excluding archive
+  work. Retain all controls, VGZ, reports and exact original producer source.
+  A disabled-waveform test reveals an unused0.2.0 gating limitation; every
+  exported stream enables the bit. No silicon-bit-accuracy claim.
+- **Selection and failed attempts:** Four-waveform log winner6.593306 has
+  10.912983% sub50-Hz power and worse medium/long dominant cosine. All
+  waveform/FM variants have about9..11% sub50 power from changing positive
+  waveform means. Strict all-scale dominant/root/level/subsonic guard rejects
+  every candidate; retain that failed selection attempt. Deliver a bounded
+  audition under an explicitly narrower dominant/level/subsonic guard,
+  choosing expanded carrier-sine. No overall-quality or listening claim.
+- **Actual saved-WAV results:** Magnitude cosines0.899120/0.848475/0.864305
+  ->0.944152/0.899093/0.903570; level MAE0.789174 ->0.304720 dB; sub50 power
+  0.137689% ->0.030281%. Short root cosine worsens0.914079 ->0.899614 and
+  combined log/level objective6.771566 ->7.242039. Quiet/broadband details
+  remain incomplete. Peak0.892415, no clipping. Fixed20-Hz AC/8-kHz playback
+  filter plus one constant gain; no source PCM or output morphing.
+- **Verification/delivery:** All8*1500 states and eight complete VGM exports/
+  1491477-native/1323000-output-sample replays pass byte-exactly. Five tests
+  cover native frequency/TL, high multiplier2 tones, four shapes, nine voices,
+  timing and invalid inputs. Zero chip clipping in all eight. Source/core/
+  producer/media hashes and exact61-second comparison segments checked.
+  Selected39128 writes, VGM161158/VGZ61653 bytes. Timed writes45.35us apart;
+  initial silent setup precedes playback. Emulator evidence, not physical
+  chip/Z80/disk/release qualification. Native instructions unchanged; no
+  player hot-path T-state delta applies.
+  [Auditions, figures, tradeoffs and reproduction](ay-converter/analysis/ym3812/README.md),
+  [all results and replay proof](ay-converter/analysis/ym3812/evidence/report.json).
+
+## 2026-10-13 — Verify real-time six-voice command decoding on Z80
+
+- **Request/input:** The user asks whether the measured compressed commands
+  decode in real time. Continue `codex/six-voice-clicks` from `b6d8badc`, using
+  the exact19,853-byte one-second-block ZX0 stream,30 blocks/1500 updates.
+  Execute generated native Standard68-byte and Turbo126-byte ZX0 plus a
+  native IM2 consumer on the existing Z80 instruction-table interpreter.
+  Split LDIR into interruptible21/16-T iterations, calibrating every block's
+  count/output against the existing aggregate implementation.
+- **CPU and path counts:** Standard mean67,099.933/max77,497 T per block
+  (worst21.849 ms); Turbo mean53,653.800/max61,583 T (17.362 ms), saving
+  13,446.133 T/block on average. Flat19-byte output1168 T; columnar1268 T,
+  +100 T/update. IRQ body1505 T normal/1605 at switch, plus IM2 entry19 and
+  vector JP10. Full decode+IRQ/output budget4.059% Standard/3.679% Turbo.
+  Code/input/IM2/stack/buffers need3938 bytes in uncontended banks2/0, including
+  alignment and the unused baseline routine. Existing release code unchanged.
+- **Complete verification/decision:** All60 native block decodes and60
+  varying-phase IRQ injections preserve every byte and restore registers,
+  flags and stack. Both full1500-field schedules pass with two-field
+  preparation, no missed updates or underflows. Worst preparation including
+  IRQs22.714/17.795 ms; minimum ready margins17.297/22.216 ms. Actual commits
+  finish at most0.422059 ms after an IRQ edge, admission delays15/13 T;
+  intervals70808..71008 T recover the100-T switch difference on the next
+  field with no origin drift. Retain complete actual-commit traces, not just
+  counters. Turbo's additional one-field run also passes1500 fields, margin
+  2.225 ms; Standard underflows at field400/block8 and is a rejected partial
+  run with400 earlier fields checked. An initial eager-swap harness failed a
+  short window; move the swap before the new first field and rerun all cases.
+  Use double buffering and prepare two fields ahead for the verified decoder
+  design; no broader optimization search is needed.
+- **Limits/evidence:** This is complete deterministic CPU/command scheduling
+  evidence, not a physical-chip or Fuse/TR-DOS qualification. The19-register
+  plus atomic-commit bus is hypothetical, matching stored controls rather
+  than actual AY capabilities. Input bytes are already in RAM; disk/ROM,
+  video, contention and native sound synthesis are unmeasured. Spectrum
+  fields70908 T at3546900 Hz imply about50.021 Hz; no exact50.000-Hz physical
+  audio identity claim. No new release or modified player hot path.
+  [Native generator, timing/RAM calculations and reproduction](ay-converter/analysis/six_voice_realtime/README.md),
+  [full report](ay-converter/analysis/six_voice_realtime/evidence/report.json).
+
+## 2026-10-13 — Measure lossless six-voice command storage
+
+- **Request/input:** The user reports good overall sound, with residual
+  squeaking/ringing, and asks for compressed AY-like command size. Continue
+  `codex/six-voice-clicks` from `593301b6` using the exact accepted spectral
+  candidate's O. Henry[60,90) controls, 1500 updates at50 Hz. No new fitting,
+  renderer change or quality search; preserve the current sound.
+- **Parameters/coverage:** Compare16-byte packed frames,19-column byte planes,
+  and modulo4096 period/XOR control deltas, each with DEFLATE9, XZ/LZMA6 and
+  optimal ZX0 v2, using1500-update and50-update independent blocks. All18
+  combinations complete. Include36 bytes of exact model metadata plus4 bytes
+  per compressed block and codec framing. Preserve muted oscillator periods
+  and noise clocks as well as audible controls.
+- **Measured results/decision:** Raw aligned commands24,036 bytes; whole-block
+  columnar DEFLATE18,261, ZX017,897 and XZ16,180 bytes. One-second columnar
+  ZX0 blocks19,853 bytes, with950 decoded bytes per block. Select columnar
+  absolute values for the useful storage comparison; whole-block deltas are
+  worse (DEFLATE18,463/ZX019,160/XZ16,692). All other outcomes, including
+  rejected packed/delta layouts, remain in the report. ZX0 scales to about
+  35.8..39.7 KB/minute or2.15..2.38 MB/hour on this excerpt; these are linear
+  estimates, not measurements of longer recordings. Existing NPZ21,465 bytes;
+  WAV2,646,044 bytes. Exclude player code and disk-sector/directory overhead.
+- **Verification/limits:** Every saved-stream decode reproduces all1500
+  control states and model metadata; full1,323,000-sample recovered-control
+  WAV replay is byte-identical. Source/producer/encoder hashes checked. Retain
+  two ZX0 comparison streams and the smallest XZ stream, with
+  [measurement script, format notes and reproduction](ay-converter/analysis/six_voice_storage/README.md)
+  and [all results](ay-converter/analysis/six_voice_storage/evidence/report.json).
+  This is a hypothetical six-voice command container; real AY cannot directly
+  reproduce its selectable shapes/smooth transitions/balanced mixer. Native
+  AY fit/storage, decoder timing and release playback were not measured.
+  No native instructions changed; no Z80 cycle delta applies. This authorized
+  storage deliverable is complete without opening another sound experiment.
+
+## 2026-10-13 — Improve six-voice spectral reconstruction on the same source
+
+- **Request/input:** The user requests source/output spectrogram comparison
+  and the closest practical spectral reconstruction. Continue
+  `codex/six-voice-clicks` from `15d01878`, retaining exact prepared
+  O. Henry[60,90) PCM, six voices and the preceding smooth-render settings.
+  Common-scale full/detail1024-Hann/20-ms maps use one source peak, with no
+  image gain normalization or audio time/pitch warp. Worst detail interval
+  is selected from the old output, not chosen to favour the new one.
+- **Diagnosis/changes:** The old2048-sample/92.88-ms fit smears rapid changes
+  across almost five control fields. Strong partials dominate plain magnitude
+  least squares/global peaks. Also29.008758% of old output power is below50 Hz
+  versus approximately0.000727% of source: changing unipolar means consume RMS
+  calibration/headroom. Default to512-sample/23.22-ms fitting, source-only
+  inverse magnitude weights exponent1/floor2.5%, and four added peaks per
+  frequency band. Explicitly subtract the target tone/noise ensemble means
+  with the existing4-ms transition before AC coupling, giving a balanced
+  hypothetical mixer. Six phases, integer periods,16 target levels, shared
+  LFSR and8-kHz FIR remain. The new mixer is not a real AY capability. Native
+  player instructions are unchanged; Z80 cycle changes are not applicable.
+- **Sixteen full trials/decision:** Weight/band proposals alone fail the
+  all-scale guard (objectives8.288128/8.286017/8.306427/8.322892). With DC
+  compensation, the2048 window reaches7.642938/7.543670/7.511460 for exponents
+  0/0.5/1. Window1024/1536 at exponent1 gives6.946782/7.219268. Further window/
+  weight variants and every rejected feedback proposal are saved in
+  [trials.json](ay-converter/analysis/six_voice_spectral/evidence/trials.json).
+  Select window512/exponent1, objective6.771538, with improvements in magnitude
+  cosine, root cosine, log error and convergence at ALL512/2048/8192 scales,
+  level MAE and sub50-Hz power below1%. Reject512/exponent1.5 despite scalar
+  objective6.723018: long-window cosine0.852582 ->0.846768 and convergence
+  0.483057 ->0.498788 regress. This is the best eligible tested setting, not
+  a global-optimum or intelligibility claim.
+- **Actual-WAV results:** Objective8.281245 ->6.771566 dB; masked spectral MAEs
+  8.488287/7.424396/6.828067 ->7.137307/6.399630/5.949129; level MAE
+  2.002844 ->0.789174 dB. Magnitude cosines0.820376/0.823144/0.852582 ->
+  0.899120/0.848475/0.864305; convergence0.423273/0.465396/0.483057 ->
+  0.282958/0.408591/0.460184. Below50-Hz power29.008758% ->0.137689%.
+  Source-relative2..4-kHz power0.315397 ->0.846484. Remaining higher-band
+  missing/extra bin power is substantial; total band power is not bin-wise
+  agreement. New float peak0.838500/RMS0.132497, zero clipping; normal
+  standalone conversion20.370 s on this host. Searches/plots/archive checks
+  are additional work, and overlapping trial times are not a benchmark.
+- **Checks/delivery:** Twelve tests pass, adding short/long dictionary scaling,
+  quiet upper-tone retention, DC-energy suppression/tone preservation and
+  invalid fit settings. All1500 fields/1323000 samples and all16 trial streams
+  replay byte-exactly from controls/model parameters only; previous WAV replay,
+  source/producer/media hashes and exact61-second before/after PCM segments
+  pass. Retain all trial controls, reports and expected WAV hashes; duplicate
+  rejected WAVs are omitted. CLI copies the prepared source exactly, adds a
+  correctly labelled generic `--baseline`, and retains explicit original
+  fitter/render compatibility. [Figures, new WAV and reproduction](ay-converter/analysis/six_voice_spectral/README.md),
+  [full verification](ay-converter/analysis/six_voice_spectral/evidence/verification.json).
+  WAV/PNG media use LFS. Listening acceptance remains pending; no native
+  player, release-disk change or further automatic model search.
+
+## 2026-10-13 — Reduce six-voice control clicks and unscored high harmonics
+
+- **Request/baseline:** The user hears clicks and periodic ringing in the
+  six-voice WAV and requests further converter work in its own Git worktree.
+  Branch `codex/six-voice-clicks` at `.worktree/six-voice-clicks`, from
+  `bd2a5be2`; reuse the exact prepared O. Henry[60,90) reference and original
+  controls/WAV. This is one bounded30-second listening repair, not a new
+  hardware target or movie rebuild.
+- **Diagnosis/settings:** Old/new controls evaluated at the same oscillator
+  and noise phase give jump RMS0.144476, max0.719618, DC-step RMS0.117457,
+  max0.551612. Persistent phase did not prevent level/shape/route jumps.
+  The old19.845-kHz output cutoff also exposed harmonics outside the
+  50..8000-Hz feedback objective. Add explicit4-ms raised-cosine transitions
+  on each of the six running phases, triangle fundamental alignment and an
+  8-kHz output FIR. Intermediate amplitudes/shape mixtures extend the
+  hypothetical model; no extra oscillators, phase resets or frequency glide.
+  Keep direct-render defaults and `--legacy-render` for the original model.
+  No Z80 instructions changed; player T-state changes are not applicable.
+- **Trials/results:** Nine complete same-control/same-gain ablations retain
+  bandwidth/alignment alone,2/4/8-ms transitions and combined variants.
+  Bandwidth alone leaves boundary/interior power ratio1.975 versus1.864;
+  ramps alone give1.031..1.044. Combined objectives2/4/8 ms are
+  8.388522/8.361905/8.313501 dB; select4 ms for a short transition and level
+  agreement, preserving the slightly better8-ms spectrum result as evidence.
+  After complete normal conversion and bounded feedback, volume-0.5 passes;
+  stronger volume, sine-only and both noise-period offsets fail acceptance.
+  Final objective8.186964 ->8.281203 dB, level MAE2.031917 ->2.002794 dB.
+  Boundary derivative RMS0.0274105 ->0.0144173 (power -72.3%), boundary/interior
+  ratio1.863759 ->1.120837. Above9-kHz power fraction0.00391550 ->3.18746e-10.
+  In-band excess-tone fields remain12. These are diagnostics, not heard-click
+  counts, an intelligibility score or proof of eliminating all ringing.
+- **Checks/decision:** Eight independent tests pass. Complete old-model and
+  new controls-only WAV replays are byte-exact; all1500 states and1323000
+  output samples are checked. Source/producer/media hashes authenticate the
+  candidate, peak0.912645, zero clipping, RMS0.134261. Conversion takes23.480 s
+  on this host; comparison/archival verification adds work. The61-second
+  before/after file retains both PCM segments exactly with a1-second gap.
+  An initial staged-manifest check caught CRLF normalization in two run/test
+  logs; disable text conversion, restage their raw bytes and verify every
+  archived file against the index, including the LFS object hashes/sizes.
+  Keep this candidate for listening despite the0.094238-dB objective tradeoff;
+  subjective acceptance remains pending. WAV media use LFS. Existing real AY
+  players/releases are unchanged. [Reproduction, all trials and audio](ay-converter/analysis/six_voice_clicks/README.md),
+  [comparison](ay-converter/analysis/six_voice_clicks/evidence/comparison.json),
+  [full verification](ay-converter/analysis/six_voice_clicks/evidence/verification.json).
+
 ## 2026-10-13 — Hypothetical six-voice square/triangle/sine audition
 
 - **Request/baseline:** The user requests an experimental script and WAV for

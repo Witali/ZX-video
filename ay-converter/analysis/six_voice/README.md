@@ -83,7 +83,7 @@ The standalone folder's NumPy dependency is sufficient; no SciPy or Node
 runtime is needed by this experimental renderer.
 
 ```text
-python ay-converter/experimental_six_voice.py ay-converter/analysis/o_henry/evidence/compact30/original-preview.wav --output OUTPUT --ay-baseline ay-converter/analysis/o_henry/evidence/compact30/ay-preview.wav --square-control
+python ay-converter/experimental_six_voice.py ay-converter/analysis/o_henry/evidence/compact30/original-preview.wav --output OUTPUT --ay-baseline ay-converter/analysis/o_henry/evidence/compact30/ay-preview.wav --square-control --legacy-render
 python -m unittest discover -s ay-converter -p test_experimental_six_voice.py -v
 python ay-converter/analysis/six_voice/archive.py OUTPUT --log RUN_LOG --tests TEST_LOG
 ```

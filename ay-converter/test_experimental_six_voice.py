@@ -53,5 +53,88 @@ class SixVoiceTests(unittest.TestCase):
         self.assertEqual(model.validate(state),20)
         self.assertGreater(gain,0)
 
+    def test_transition_removes_control_jump_without_adding_oscillator_phases(self):
+        data=controls(20);data['volumes'][:,0]=15;data['shapes'][:,0]=1
+        data['volumes'][1::2,0]=11;data['shapes'][1::2,0]=2
+        step=model.synthesize_raw(data,aligned_triangle=True)
+        smooth=model.synthesize_raw(data,transition_ms=4,aligned_triangle=True)
+        edges=np.arange(1,20)*3528
+        before=np.diff(step)[edges-1];after=np.diff(smooth)[edges-1]
+        self.assertLess(np.sqrt(np.mean(after**2)),np.sqrt(np.mean(before**2))*.05)
+        # After settling, no frequency glide or second oscillator can change
+        # the target waveform: it agrees with the original running phase.
+        offset=np.arange(800,3528)
+        for tick in range(20):
+            np.testing.assert_allclose(smooth[tick*3528+offset],step[tick*3528+offset],atol=1e-12)
+
+    def test_output_filter_rejects_unscored_square_harmonics(self):
+        data=controls(100);data['volumes'][:,0]=15;data['periods'][:,0]=63
+        frequency=model.CLOCK/(16*63)
+        old=model.render(data)[8820:]
+        filtered=model.render(data,output_bandwidth_hz=8000)[8820:]
+        t=np.arange(len(old))/44100
+        def projection(audio,harmonic):
+            return abs(np.sum(audio*np.exp(-2j*np.pi*harmonic*frequency*t)))
+        self.assertGreater(projection(old,7)/projection(old,1),.12)
+        self.assertLess(projection(filtered,7)/projection(filtered,1),.001)
+        self.assertAlmostEqual(projection(filtered,1)/projection(old,1),1.,delta=.003)
+
+    def test_aligned_triangle_and_sine_have_same_fundamental_phase(self):
+        data=controls(50);data['volumes'][:,0]=15
+        frequency=model.CLOCK/(16*251)
+        coefficients=[]
+        for shape in (1,2):
+            data['shapes'][:,0]=shape
+            raw=model.synthesize_raw(data,aligned_triangle=True)
+            t=np.arange(len(raw))/176400
+            coefficients.append(np.sum((raw-.5)*np.exp(-2j*np.pi*frequency*t)))
+        self.assertLess(abs(np.angle(coefficients[0]/coefficients[1])),.01)
+
+    def test_invalid_transition_or_cutoff_fails(self):
+        data=controls(2)
+        for duration in (-1,21,float('nan')):
+            with self.assertRaises(ValueError):model.render(data,transition_ms=duration)
+        for cutoff in (0,22050,float('inf')):
+            with self.assertRaises(ValueError):model.render(data,output_bandwidth_hz=cutoff)
+
+    def test_balanced_fit_retains_quiet_independent_upper_partial(self):
+        t=np.arange(441*40)/22050
+        low=model.CLOCK/(16*211);high=model.CLOCK/(16*37)
+        source=.25*np.sin(2*np.pi*low*t)+.004*np.sin(2*np.pi*high*t)
+        for size in (512,2048):
+            fitted,gain=model.fit(source,model.dictionary(size),spectral_weight_exponent=1.,band_peak_count=4)
+            middle=fitted['periods'][10:30].astype(int)
+            active=fitted['volumes'][10:30]>0
+            self.assertGreater(np.mean(np.any((abs(middle-37)<=1)&active,axis=1)),.8)
+            self.assertGreater(np.mean(np.any((abs(middle-211)<=1)&active,axis=1)),.8)
+            self.assertGreater(gain,0)
+
+    def test_invalid_spectral_fit_settings_fail_before_analysis(self):
+        for exponent in (-1,2.1,float('nan')):
+            with self.assertRaises(ValueError):model.fit(np.zeros(441),None,spectral_weight_exponent=exponent)
+        for count in (-1,9,1.5):
+            with self.assertRaises(ValueError):model.fit(np.zeros(441),None,band_peak_count=count)
+
+    def test_dc_compensation_removes_subsonic_control_energy_and_keeps_tone(self):
+        data=controls(100);data['shapes'][:,0]=2;data['volumes'][:,0]=15
+        data['volumes'][1::2,0]=5
+        options=dict(transition_ms=4,output_bandwidth_hz=8000,aligned_triangle=True)
+        ordinary=model.render(data,**options)
+        balanced=model.render(data,compensate_dc=True,**options)
+        hz=np.fft.rfftfreq(len(ordinary),1/44100)
+        before=abs(np.fft.rfft(ordinary))**2;after=abs(np.fft.rfft(balanced))**2
+        self.assertLess(after[hz<50].sum(),before[hz<50].sum()*.01)
+        self.assertAlmostEqual(after[hz>150].sum()/before[hz>150].sum(),1.,delta=.03)
+
+    def test_short_and_long_dictionary_scales_match_direct_windowed_tone(self):
+        frequency=model.CLOCK/(16*133)
+        for size in (512,1024,1536,2048):
+            periods,basis,_,hz,useful=model.dictionary(size)
+            t=(np.arange(size)-size//2)/22050
+            window=np.hanning(size)
+            measured=abs(np.fft.rfft(.5*np.sin(2*np.pi*frequency*t)*window,n=2*size))/(window.sum()/2)
+            prediction=basis[2,np.flatnonzero(periods==133)[0]]
+            self.assertLess(abs(prediction-measured[useful]).max()/measured.max(),.008)
+
 
 if __name__=='__main__':unittest.main()
