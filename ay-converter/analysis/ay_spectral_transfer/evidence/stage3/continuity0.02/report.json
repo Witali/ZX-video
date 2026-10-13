@@ -1,0 +1,109 @@
+{
+  "name": "continuity0.02",
+  "settings": {
+    "window": 512,
+    "weight": 1.0,
+    "band_peaks": 4,
+    "continuity": 0.02
+  },
+  "gain": 1.619215014884398,
+  "metadata": {
+    "window": 512,
+    "weight": 1.0,
+    "band_peaks": 4,
+    "continuity": 0.02,
+    "output_gain": 1.619215014884398,
+    "clock_hz": 1773450,
+    "source_samples_added_to_output": false,
+    "update_rate_hz": 50,
+    "model": "direct_integer_AY_periods_square_and_shared_noise_v1",
+    "peak_budget": 18,
+    "channel_assignment": "exact3! by physical pitch continuity",
+    "simultaneous_non_tone_carriers_max": 1
+  },
+  "diagnostics": {
+    "metrics": {
+      "objective_db": 9.900928068778233,
+      "masked_spectral_mae_db": {
+        "512": 9.982236304757636,
+        "2048": 9.636855688288708,
+        "8192": 8.622360286567005
+      },
+      "absolute_spectral_mae_db": {
+        "512": 9.902950536975329,
+        "2048": 9.587767317091878,
+        "8192": 8.583114736964966
+      },
+      "level_mae_db": 1.391744692115567,
+      "level_bias_db": 0.3640425700885604,
+      "reference_rms": 0.13231162599193383,
+      "model_rms": 0.13741724379890982
+    },
+    "unpooled": {
+      "512": {
+        "window_ms": 23.219954648526077,
+        "hop_ms": 20,
+        "magnitude_cosine": 0.7799373260583273,
+        "sqrt_magnitude_cosine": 0.8607179068301039,
+        "log_magnitude_mae_db": 9.90295052483065,
+        "spectral_convergence": 0.622608025843668,
+        "active_frames": 1500
+      },
+      "2048": {
+        "window_ms": 92.87981859410431,
+        "hop_ms": 20,
+        "magnitude_cosine": 0.7090268175747293,
+        "sqrt_magnitude_cosine": 0.8424956120575762,
+        "log_magnitude_mae_db": 9.587767311222793,
+        "spectral_convergence": 0.7196899424643168,
+        "active_frames": 1500
+      },
+      "8192": {
+        "window_ms": 371.51927437641723,
+        "hop_ms": 20,
+        "magnitude_cosine": 0.7315145099279134,
+        "sqrt_magnitude_cosine": 0.8703983894974449,
+        "log_magnitude_mae_db": 8.583114794306601,
+        "spectral_convergence": 0.7123424400743463,
+        "active_frames": 1500
+      }
+    },
+    "bands_2048": {
+      "50-300": {
+        "power_ratio": 1.089640144665495,
+        "missing_power_fraction": 0.45680729309243506,
+        "extra_power_fraction": 0.5464475622635196
+      },
+      "300-1000": {
+        "power_ratio": 0.7250648334960369,
+        "missing_power_fraction": 0.5748088661303067,
+        "extra_power_fraction": 0.29987366709131097
+      },
+      "1000-2000": {
+        "power_ratio": 1.1804716758710332,
+        "missing_power_fraction": 0.6647515211860665,
+        "extra_power_fraction": 0.8452231527690294
+      },
+      "2000-4000": {
+        "power_ratio": 1.4260082433065133,
+        "missing_power_fraction": 0.5954641304953591,
+        "extra_power_fraction": 1.0214724008012421
+      },
+      "4000-8000": {
+        "power_ratio": 1.8686394690892723,
+        "missing_power_fraction": 0.6444490049635516,
+        "extra_power_fraction": 1.5130884800112643
+      }
+    },
+    "sub_50hz_power_fraction": 0.10794459635777769,
+    "worst_interval_seconds": [
+      1.38,
+      4.38
+    ]
+  },
+  "peak": 0.8085327416165845,
+  "clipping_samples": 0,
+  "eligible": false,
+  "registers_sha256": "2e2dfa77fd9cdb59ac56f596b887976d76f0d57eec564548d224eded2458b961",
+  "wave_sha256": "88fe2d8e2504beeeb3d87fd77605b3151f9b29c800ec8fe9f66d102dc01fe2d5"
+}

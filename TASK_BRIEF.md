@@ -1793,3 +1793,56 @@ comparison, complete native proofs and failed attempts; replace the root disk
 only after qualification. Native instructions remain unchanged,0 T delta.
 The authorized image correction and practical one-disk fill are complete.
 No full-cartoon rebuild, further model/codec/RAM experiment or push is opened.
+
+## AY spectral transfer — complete (2026-10-13)
+
+The user requests saving the transfer plan, a new worktree, implementation and
+measured outcomes. Branch `codex/ay-spectral-transfer` starts from `6168ba14` at
+`.worktree/ay-spectral-transfer`. Follow [the saved plan](docs/ay-spectral-transfer-plan.md):
+direct integer-period spectral fitting; inverse weighting/band peak candidates;
+transition-aware selection; then a separately qualified subframe DAC-ramp
+probe. Use the exact prepared O. Henry[60,90) reference and1500 current states,
+including envelopes; avoid double source conditioning. Retain all trials and
+failed guards, figures, streams and exact auditions. Preserve default/release
+code until evidence admits a change. The subsequent user steering adds source
+verification of the installed Fuse sound model and explicit AY/YM comparison.
+Finish each milestone before opening the next; do not treat a model-only
+subframe experiment as native scheduler or release qualification.
+
+Fuse-source steering is complete: official1.9.0 source uses AY-3-8912 masks,
+16-level envelope and its own DAC; static Ayumi curve MAE1.928268 dB AY versus
+3.328873 YM. Default AY is retained. Optional standalone `psg_probe.asm` uses
+R1=1Fh, validates used-bit reads and restores R1;30 native fixtures pass,
+265/279 T AY/YM excluding CALL. Current player unchanged. [Proof](ay-converter/analysis/ay_spectral_transfer/FUSE_SOUND.md).
+Continue the original ordered encoder plan; source checks do not finish it.
+
+Stage1 direct-period fitting is complete with two rejected trials:512/2048
+objectives10.112593/10.711803 versus9.248850, with improved dominant cosines
+but worse weak-bin log error. Keep baseline and both full trials. Three tests,
+all2*1500 states and exact full WAV replays pass; native/default code unchanged.
+[Evidence](ay-converter/analysis/ay_spectral_transfer/README.md). Continue stage2
+inverse weighting and regional peaks, then transition and subframe milestones.
+
+Stage2 is complete: exponent1 gives9.926241; regional peaks9.913041 versus
+baseline9.248850. Long dominant cosines0.728756/0.730898 fail the saved guard;
+both rejected. All four full stream/WAV checks pass. Continue stage3 and the
+separate subframe probe without changing the default encoder or guard.
+
+Stage3 is complete: continuity0.02/0.05/0.1 objectives9.900928/9.901714/9.874857;
+existing feedback plus envelope reaches9.667439, still worse than9.248850.
+All four final streams/WAVs replay exactly, including AY12 state decoding.
+All rejected under saved guards, default/native code unchanged. Continue the
+separate timed-DAC probe on retained baseline; no native scheduler claim.
+
+All four bounded milestones are now complete. Timed eight-step2/4/8-ms
+real-DAC ramps reduce same-state step energy21.88..22.15%, below their25%
+integration threshold;19,574 ->25,707 writes and67,644 ->88,122..89,953 gzip
+bytes. Scalar timed-baseline9.338099 ->9.326758/9.302608/9.264055; spectral and
+dynamic tradeoffs retained, no native scheduler added. Seven tests pass; nine
+unique50-Hz streams execute27,000 total native fields/two full loops each,
+exact values/banks/stack. General CLI reproduces AY stream/WAV byte exactly;
+explicit YM variant9.814675 does not make Fuse a YM model. Default remains
+the current9.248850 encoder; best new full pipeline9.667439 is rejected.
+[Completion, auditions and all results](ay-converter/analysis/ay_spectral_transfer/README.md).
+No physical-chip/Fuse-audio/movie-release claim; no hot-path change, delta0 T.
+No further sweep, native scheduler, merge or push starts automatically.

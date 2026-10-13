@@ -1,5 +1,144 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Complete timed AY ramps, target comparison and transfer verification
+
+- **Fourth milestone/input:** Same prepared30 s/1500 states and gain. Build
+  real timestamp/register commands for serial current AY and eight-step
+  raised-cosine2/4/8-ms fixed-DAC ramps. Only fixed-to-fixed, unchanged-gate
+  channels fade; shared envelope/routing transitions are excluded. No PCM
+  interpolation.44.1-kHz slots approximate22.675737us writes; nominal50-Hz
+  model, not exact Fuse/Z80 timing. Native scheduler threshold25% was set
+  before outcomes. Preserve the original generator snapshot/hash after
+  tightening argument validation; current export reproduces all six streams.
+- **Measurements/decision:** Serial objective9.338099, level1.582626,
+  instantaneous DAC-step squared sum10.401989. Ramps objectives9.326758/
+  9.302608/9.264055, levels1.576297/1.578038/1.628808, squared sums8.125744/
+  8.124667/8.098357 (-21.88..22.15%). All miss the25% integration threshold;
+  retain as model auditions, do not add a native scheduler or claim clicks
+  eliminated. Writes19,574 ->25,707; gzip67,644 ->88,122/88,872/89,953 bytes.
+  Regional/continuity fits have5.013071/4.684238 squared steps (-6.56%) but
+  their spectral loss still prevents admission. Serial versus atomic baseline
+  differs; do not attribute its phase/level change to smoothing.
+- **Target/API:** Add explicit general experimental prepared-PCM CLI; current
+  auto/default preserved. Same source/gain/settings AY9.874857/level1.425594,
+  YM9.814675/level1.338828. Correct selected-chip code generation/rendering,
+  not relabeling AY registers. Fuse source remains AY; target comparison does
+  not establish a physical-chip or Fuse advantage. General AY CLI reproduces
+  stage3 full stream/WAV byte for byte. No repeated source processing.
+- **Final checks:** Seven tests pass,30 optional chip-probe bus fixtures.
+  Nine unique AY50-Hz streams run27,000 native fields/two full loops each,
+  exact values/banks/stack. Existing11-register path974/992/1091/1079 T;
+  existing14-register ordinary1166/1206 T and observed edge/loop1184/1224/
+  1271/1283. Same instruction bytes/paths, delta0 T. Six timed streams each
+  pass1500 final states,1323000 samples, two exact replays and zero clipping.
+  All prior archive hashes rechecked. Figures inspected on shared source
+  scales, including rejected strong-track fits. Exact61-second ramp comparison
+  retained. No physical-chip, cold-Fuse sound or movie release proof claimed.
+- **Completion:** All bounded plan milestones finished; no new50-Hz fitter
+  admitted (best9.667439 versus current9.248850). Keep current default, every
+  rejected trial and model limitation. No merge/push requested for this tree.
+  [Plan](docs/ay-spectral-transfer-plan.md), [all audio, figures, code and proof](ay-converter/analysis/ay_spectral_transfer/README.md).
+
+## 2026-10-13 — Transition-aware AY fit and existing feedback, rejected complete trials
+
+- **Scope/parameters:** Same prepared30 s/1500 states/gain. Three continuity
+  strengths0.02/0.05/0.1 at512/weight1/four regional peaks. Reuse prior
+  completed results instead of refitting them. Lowest continuity seed also
+  receives one existing chip-feedback round and existing hardware-envelope
+  proposals, at the same calibration and without pitch search.
+- **Results/decision:** Continuity objectives9.900928/9.901714/9.874857;
+  full feedback/envelope9.667439, peak0.901259. All remain worse than current
+ 9.248850; strongest raw long dominant cosine0.735210 also fails the guard.
+  Reject all; retain baseline. Full-level proposal improves scalar but
+  violates headroom, retained in history and not accepted. No weakening of
+  admission criteria or perceptual click-removal claim.
+- **Checks:** All four final11/14-register streams pass4*1500 independent
+  packed-state checks and full1323000-sample exact WAV replay. Retain every
+  final stream/media, deterministic seeds and existing optimizer histories.
+  Defaults and native instructions unchanged, hot-path delta0 T. Transition
+  diagnostics and separate subframe probe follow; no Fuse/audio-release
+  qualification claimed. [Complete evidence](ay-converter/analysis/ay_spectral_transfer/README.md).
+
+## 2026-10-13 — AY inverse-weight and regional-peak transfer, complete rejected trials
+
+- **Parameters/input:** Same prepared30-second source,1500 states/gain,
+  window512; compare source-only inverse exponent1 with2.5%-of-peak floor,
+  then add four peaks per frequency region. Stage1 controls reproduce exactly.
+- **Results/decision:** Objectives9.926241/9.913041 improve direct51210.112593
+  but not current AY9.248850. Level MAE1.417882/1.419244;8192 dominant
+  cosines0.728756/0.730898 versus baseline0.760072 violate the0.005 guard.
+  Reject both and retain default/baseline; no quiet-detail listening claim.
+- **Verification:** Four complete streams pass all4*1500 packed/real-register
+  states and1323000-sample exact WAV replays; retain parameters, all media,
+  reports and hashes. No player/native/default change, hot-path delta0 T.
+  Continue the authorized transition milestone. [Evidence](ay-converter/analysis/ay_spectral_transfer/README.md).
+
+## 2026-10-13 — Direct AY spectral-period fitting, complete rejected baseline trials
+
+- **Scope/input:** First saved-plan milestone in `ay-spectral-transfer`, same
+  prepared O. Henry[60,90),1500 states, gain1.619215014884398. Current14-reg
+  baseline with envelope replays byte for byte; no repeated source processing.
+- **Prototype/parameters:** Three physical channels, real AY DAC codes,
+  interpolated peaks/subharmonics and neighboring integer periods, exact3!
+  channel matching, one shared noise/mixed carrier. Full square harmonics
+  below8 kHz plus measured chip-noise templates;512/2048 Hann fits, no inverse
+  weighting or regional-peak extension. Output50-Hz11-register/AY9 streams.
+- **Results/decision:** Baseline objective9.248850, level MAE1.367314,
+  dominant cosines0.718194/0.709185/0.760072. Direct512 gives10.112593,
+  1.360436,0.836898/0.789642/0.805211; direct2048 gives10.711803,1.404012,
+  0.779358/0.778900/0.805034. Peaks0.814667/0.786563; zero clipping.
+  Both improve dominant components but worsen combined log/level error;
+  reject under the saved guard, keep baseline. Two-trial time27.837460 s
+  excludes baseline/archive work. Continue the authorized weighting milestone.
+- **Checks:** Three tests pass independent bandlimited Fourier templates,
+  real off-note integer states/pauses and invalid-input behavior. Initial
+  test-source aliasing and NumPy2 uint8 helper overflow are repaired without
+  relaxing the dictionary assertion. All2*1500 raw/packed states and full
+ 1323000-sample replays match archived audio exactly; producer/source hashes
+  and both trial media retained in LFS. Defaults and native instructions
+  unchanged, hot-path delta0 T. No new physical/Fuse/release proof claimed.
+  [Reproduction, metrics, streams and rejected auditions](ay-converter/analysis/ay_spectral_transfer/README.md).
+
+## 2026-10-13 — Verify Fuse PSG model and optional software chip probe
+
+- **Steering/input:** User asks which PSG installed Fuse supports, whether to
+  target YM2149, and whether a Spectrum can detect the chip in software.
+  Inspect the exact official Fuse1.9.0 release commit
+  `b72c83e85786f5f84375d42c104952cc5453bbaa`; installed executable reports1.9.0.
+  Initial archive HTTP download is HTML, rejected; official Git tag is used.
+- **Finding/decision:** Fuse uses AY-3-8912 register masks,16 envelope levels
+  and its own measured16-level DAC; no YM model selector. Normalized static
+  DAC-code MAE versus Ayumi is1.928268 dB AY /3.328873 dB YM. Keep AY target
+  and label YM comparisons separately; this is not waveform/perceptual proof.
+- **Code/checks:** Add an optional standalone startup Z80 readback probe:
+  validate00h/0Fh on R1, write1Fh, classify0Fh as AY-style /1Fh as YM-style,
+  restore R1 on every outcome. Original hardware investigation establishes
+  the1Fh distinction and showsFFh is unsuitable on genuine Yamaha parts.
+  Unknown/clone/FPGA behavior remains explicit. Thirty independent native
+  fixtures pass return/restore/stack checks. A temp-directory sandbox issue
+  is repaired by placing assembler test output in the verified worktree.
+- **Timing/scope:** Instruction-table sums including RET265/279 T AY/YM,
+ 226 T for tested unknown buses, CALL+17 T. Current player is untouched,
+  hot-path delta0 T. Source/executable hashes retained; no physical-chip or
+  new release qualification. [Source proof, limits and reproduction](ay-converter/analysis/ay_spectral_transfer/FUSE_SOUND.md).
+
+## 2026-10-13 — Start the authorized AY spectral-transfer plan
+
+- **Request/scope:** Save the transfer plan and implement/test it in a new
+  worktree. Create `.worktree/ay-spectral-transfer`, branch
+  `codex/ay-spectral-transfer`, from `6168ba14`. Reuse exact prepared O. Henry
+  [60,90),1500 current50-Hz states. No new signal or release is claimed yet.
+- **Plan:** Direct integer-period fitting, bounded inverse spectral weighting
+  and regional peaks, transition-aware selection, then a separate subframe
+  amplitude-ramp probe. Keep defaults/releases, full evidence, fixed gains
+  and explicit admission guards. Each completed experiment gets a focused
+  commit. New native timing changes require their own complete verification.
+- **Steering:** The user requests inspecting installed Fuse1.9.0 sound source
+  and considering YM2149 as the target; include source/model provenance and
+  separate AY/YM comparisons before interpreting audio outcomes.
+- **Status:** Plan saved; implementation and source verification in progress.
+  [Plan and decision criteria](docs/ay-spectral-transfer-plan.md).
+
 ## 2026-10-13 — Extract reusable ZX0 and raw LZSA2 libraries
 
 - **Request/baseline:** From `0085a116`, package ZX0 and LZSA separately for
