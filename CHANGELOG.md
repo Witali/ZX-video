@@ -58,6 +58,10 @@
 - **Decision/evidence:** integrate the shared default and retain measured
   fallbacks/auditions. [Method and commands](ay-converter/analysis/auto_mixer/README.md),
   [full report](ay-converter/analysis/auto_mixer/evidence/results.json),
+  Archive follow-up: explicitly re-clean indexed artifacts after changing
+  nested Git attributes; preserve original CRLF bytes and encode WAVs as LFS
+  pointers. Validate committed objects as well as working files. Metrics and
+  signal output are unchanged.
   [authenticated artifacts](ay-converter/analysis/auto_mixer/evidence/manifest.json),
   [reproducer](ay-converter/analysis/auto_mixer/probe.py).
 
