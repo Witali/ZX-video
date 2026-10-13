@@ -1,5 +1,43 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Complete one-disk sea-foam YouTube excerpt
+
+- **Request/baseline/input:** The user requests a video/TRD excerpt from
+  YouTube `WGc7ptKfA9c`. From `7f9206ed`, keep existing guarded CB46,
+  128x72 logical preparation, five-level refinement,10 fps and real AY-3-8910
+  at50 Hz with compact dynamics. Download SHA256
+  `995ddb8988fd57f5d718df9f4811faf7d7dc68999164116effe04ce1178bd931`.
+- **Selection and unsuccessful scope:** First120-second window probes estimate
+  a101.5-second candidate. The actual1016-frame endpoint and resident AY forest
+  split [0,507,1015,1016]; that attempt fails before qualification on the old
+  11-register checkpoint. Preserve its manifest, partition and log. Following
+  the separately committed fix, select507 exact prepared RGB frames and2535
+  exact controls from continuous5080-field analysis, with unchanged processed
+  PCM/calibration. Explicit frame count avoids the extra EOF frame. No new
+  fitter or decoder search; planning estimates are not release measurements.
+- **Result:** Source[0,50.7), one independently bootable655360-byte TRD using
+  1321 sectors,1223 free. Native-reference MP4/model-audio preview is50.7 seconds.
+  Cell-averaged RGB MSE620.26689 ->494.64372 after refinement, maximum759.81737;
+  compression adds no pixel changes. Inspect frames98..100,154,506. Zero
+  >15-dB RMS shortfalls among2530 reference fields above-45 dBFS.
+- **Complete native evidence:** Dirty-RAM cold Fuse1.9.0 finishes all507 frames.
+  All3504384 native screen bytes match over five complete passes; all2535 AY
+  records match, zero missing/duplicate fields. Every nominal five-field
+  deadline passes: zero missed deadlines or late runs, maximum in-field
+  publication deviation17 T. Runtime1250 sector reads; measured aggregate
+  read service35305209 T, per-call22308..134473 T, seek service852681 T.
+  ROM, physical emulation, IRQ and contention remain combined in these Fuse
+  measurements; no physical hardware claim. Checkpoint runtime delta0 T,
+  startup930 ->1185 T (+255); existing CB46/AYH2 runtime costs are unchanged.
+  Eight targeted and19 generic tests pass.
+- **Decision/archive:** Keep the fully checked selected excerpt and preview,
+  not a full-cartoon or maximum-duration claim. Resident audio allocation,
+  rather than disk occupancy alone, bounds this conservative part. Archive122
+  measured files/60290864 bytes, source/producer/artifact hashes, all complete
+  proofs and the failed longer attempt; store TRD/media/large arrays in LFS.
+  Reproduce with [the scripts and report](toolkit/analysis/sea_foam/README.md).
+  Preserve existing releases and close this requested deliverable.
+
 ## 2026-10-13 — Restore AYH2 checkpoints in queued movie bootstraps
 
 - **Trigger/baseline:** A new user-authorized YouTube cartoon prefix from

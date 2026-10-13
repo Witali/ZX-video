@@ -1523,3 +1523,18 @@ level MAE2.03192 versus1.36731 dB; no listening grade or isolated voice-count
 claim. [Code, auditions and evidence](ay-converter/analysis/six_voice/README.md).
 No real-chip, Z80, release, full-film or subsequent model search is part of this
 completed request.
+
+## YouTube sea-foam one-disk excerpt — complete (2026-10-13)
+
+From `7f9206ed`, deliver a beginning-of-source excerpt of the user's
+`WGc7ptKfA9c` video with the existing guarded CB46 and real AY-3-8910 pipeline.
+The selected source[0,50.7) interval has507 frames at10 fps and2535 AY fields
+at50 Hz, on one independently bootable TRD. Complete dirty-RAM cold Fuse,
+all native screen bytes, every AY record and all nominal publication deadlines
+pass; zero missed deadlines, no late runs, maximum in-field deviation17 T.
+The MP4 preview, source/producer hashes, complete proofs and the superseded
+longer attempt are retained in [the archive](toolkit/analysis/sea_foam/README.md).
+The resident audio forest bounds the conservative selected part; no maximum
+single-disk duration or full-cartoon qualification is claimed. The prerequisite
+checkpoint fix changes startup by+255 T and runtime by0 T. Finish this authorized
+excerpt; no new RAM/codec sweep or existing movie rebuild is part of it.
