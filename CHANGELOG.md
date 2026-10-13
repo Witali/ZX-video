@@ -1,5 +1,60 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Improve six-voice spectral reconstruction on the same source
+
+- **Request/input:** The user requests source/output spectrogram comparison
+  and the closest practical spectral reconstruction. Continue
+  `codex/six-voice-clicks` from `15d01878`, retaining exact prepared
+  O. Henry[60,90) PCM, six voices and the preceding smooth-render settings.
+  Common-scale full/detail1024-Hann/20-ms maps use one source peak, with no
+  image gain normalization or audio time/pitch warp. Worst detail interval
+  is selected from the old output, not chosen to favour the new one.
+- **Diagnosis/changes:** The old2048-sample/92.88-ms fit smears rapid changes
+  across almost five control fields. Strong partials dominate plain magnitude
+  least squares/global peaks. Also29.008758% of old output power is below50 Hz
+  versus approximately0.000727% of source: changing unipolar means consume RMS
+  calibration/headroom. Default to512-sample/23.22-ms fitting, source-only
+  inverse magnitude weights exponent1/floor2.5%, and four added peaks per
+  frequency band. Explicitly subtract the target tone/noise ensemble means
+  with the existing4-ms transition before AC coupling, giving a balanced
+  hypothetical mixer. Six phases, integer periods,16 target levels, shared
+  LFSR and8-kHz FIR remain. The new mixer is not a real AY capability. Native
+  player instructions are unchanged; Z80 cycle changes are not applicable.
+- **Sixteen full trials/decision:** Weight/band proposals alone fail the
+  all-scale guard (objectives8.288128/8.286017/8.306427/8.322892). With DC
+  compensation, the2048 window reaches7.642938/7.543670/7.511460 for exponents
+  0/0.5/1. Window1024/1536 at exponent1 gives6.946782/7.219268. Further window/
+  weight variants and every rejected feedback proposal are saved in
+  [trials.json](ay-converter/analysis/six_voice_spectral/evidence/trials.json).
+  Select window512/exponent1, objective6.771538, with improvements in magnitude
+  cosine, root cosine, log error and convergence at ALL512/2048/8192 scales,
+  level MAE and sub50-Hz power below1%. Reject512/exponent1.5 despite scalar
+  objective6.723018: long-window cosine0.852582 ->0.846768 and convergence
+  0.483057 ->0.498788 regress. This is the best eligible tested setting, not
+  a global-optimum or intelligibility claim.
+- **Actual-WAV results:** Objective8.281245 ->6.771566 dB; masked spectral MAEs
+  8.488287/7.424396/6.828067 ->7.137307/6.399630/5.949129; level MAE
+  2.002844 ->0.789174 dB. Magnitude cosines0.820376/0.823144/0.852582 ->
+  0.899120/0.848475/0.864305; convergence0.423273/0.465396/0.483057 ->
+  0.282958/0.408591/0.460184. Below50-Hz power29.008758% ->0.137689%.
+  Source-relative2..4-kHz power0.315397 ->0.846484. Remaining higher-band
+  missing/extra bin power is substantial; total band power is not bin-wise
+  agreement. New float peak0.838500/RMS0.132497, zero clipping; normal
+  standalone conversion20.370 s on this host. Searches/plots/archive checks
+  are additional work, and overlapping trial times are not a benchmark.
+- **Checks/delivery:** Twelve tests pass, adding short/long dictionary scaling,
+  quiet upper-tone retention, DC-energy suppression/tone preservation and
+  invalid fit settings. All1500 fields/1323000 samples and all16 trial streams
+  replay byte-exactly from controls/model parameters only; previous WAV replay,
+  source/producer/media hashes and exact61-second before/after PCM segments
+  pass. Retain all trial controls, reports and expected WAV hashes; duplicate
+  rejected WAVs are omitted. CLI copies the prepared source exactly, adds a
+  correctly labelled generic `--baseline`, and retains explicit original
+  fitter/render compatibility. [Figures, new WAV and reproduction](ay-converter/analysis/six_voice_spectral/README.md),
+  [full verification](ay-converter/analysis/six_voice_spectral/evidence/verification.json).
+  WAV/PNG media use LFS. Listening acceptance remains pending; no native
+  player, release-disk change or further automatic model search.
+
 ## 2026-10-13 — Reduce six-voice control clicks and unscored high harmonics
 
 - **Request/baseline:** The user hears clicks and periodic ringing in the

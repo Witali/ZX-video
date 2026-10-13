@@ -1545,3 +1545,29 @@ WAV replays, all1500 states, zero clipping and complete source/producer/media
 hash checks pass. [Candidate, before/after, evidence and reproduction](ay-converter/analysis/six_voice_clicks/README.md).
 Listening acceptance is pending. The bounded deliverable is ready; do not
 start another search automatically. Existing native players/releases unchanged.
+
+## Six-voice source/output spectrogram follow-up — complete (2026-10-13)
+
+The user requests spectrogram comparison and closer spectral reconstruction.
+Continue `.worktree/six-voice-clicks` from `15d01878` on the same prepared
+O. Henry[60,90) reference. Common-scale full/detail maps expose weak upper
+partials, 2..4-kHz power0.315397 of source and29.008758% of output power below
+50 Hz. Six-voice CLI defaults now use512-sample analysis, source-only inverse
+magnitude weighting exponent1, four extra peaks per band, and explicit
+control-only DC compensation in a balanced hypothetical mixer. Retain six
+phases, 50-Hz/16-level targets, shapes, shared noise, 4-ms morph and8-kHz FIR.
+
+Sixteen complete trials are retained and replayed. Select the lowest objective
+that improves both cosines, log error and convergence on all three scales,
+level MAE and subsonic power. Reject exponent1.5/window512 despite its lower
+scalar objective because long-window dominant-partial agreement worsens.
+Actual saved-WAV objective8.281245 ->6.771566 dB, level MAE2.002844 ->0.789174,
+cosines0.820376/0.823144/0.852582 ->0.899120/0.848475/0.864305. Sub50-Hz power
+29.008758% ->0.137689%; 2..4-kHz relative power0.315397 ->0.846484, with
+remaining bin-wise errors above4 kHz. [Figures, new WAV, all trials and reproduction](ay-converter/analysis/six_voice_spectral/README.md).
+Twelve tests, full1500-state/1323000-sample candidate and all16 trial replays,
+previous-WAV replay, zero clipping and source/producer/artifact hashes pass.
+Balanced DC compensation explicitly extends the hypothetical model; no real
+AY/Yamaha/Z80/release proof or global optimum is claimed. Listening acceptance
+is pending. The bounded deliverable is complete; no further search opens
+automatically. Existing native players/releases are unchanged.

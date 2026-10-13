@@ -1,5 +1,9 @@
 # Six-voice click and ringing follow-up
 
+The subsequent [spectral follow-up](../six_voice_spectral/README.md) changes
+the current CLI defaults. This folder preserves the earlier completed run;
+the reproduction command below explicitly requests its original settings.
+
 Completed 2026-10-13 in `.worktree/six-voice-clicks`, branch
 `codex/six-voice-clicks`, from `bd2a5be2`. The user reported clicks and periodic
 ringing in the [previous six-voice audition](../six_voice/README.md) and asked
@@ -103,7 +107,7 @@ From the task worktree, using Python with NumPy:
 
 ```powershell
 $env:OPENBLAS_NUM_THREADS='1'
-python ay-converter/experimental_six_voice.py ay-converter/analysis/six_voice/evidence/reference.wav --output .tmp/six-voice-smooth --ay-baseline ay-converter/analysis/six_voice/evidence/previous-ay.wav
+python ay-converter/experimental_six_voice.py ay-converter/analysis/six_voice/evidence/reference.wav --output .tmp/six-voice-smooth --ay-baseline ay-converter/analysis/six_voice/evidence/previous-ay.wav --analysis-window 2048 --spectral-weight-exponent 0 --band-peak-count 0 --no-dc-compensation
 python -m unittest discover -s ay-converter -p test_experimental_six_voice.py -v
 python ay-converter/analysis/six_voice_clicks/compare.py --output .tmp/six-voice-comparison.json --candidate .tmp/six-voice-smooth
 python ay-converter/analysis/six_voice_clicks/archive.py .tmp/six-voice-smooth --comparison .tmp/six-voice-comparison.json --log RUN_LOG --tests TEST_LOG

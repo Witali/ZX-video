@@ -97,5 +97,44 @@ class SixVoiceTests(unittest.TestCase):
         for cutoff in (0,22050,float('inf')):
             with self.assertRaises(ValueError):model.render(data,output_bandwidth_hz=cutoff)
 
+    def test_balanced_fit_retains_quiet_independent_upper_partial(self):
+        t=np.arange(441*40)/22050
+        low=model.CLOCK/(16*211);high=model.CLOCK/(16*37)
+        source=.25*np.sin(2*np.pi*low*t)+.004*np.sin(2*np.pi*high*t)
+        for size in (512,2048):
+            fitted,gain=model.fit(source,model.dictionary(size),spectral_weight_exponent=1.,band_peak_count=4)
+            middle=fitted['periods'][10:30].astype(int)
+            active=fitted['volumes'][10:30]>0
+            self.assertGreater(np.mean(np.any((abs(middle-37)<=1)&active,axis=1)),.8)
+            self.assertGreater(np.mean(np.any((abs(middle-211)<=1)&active,axis=1)),.8)
+            self.assertGreater(gain,0)
+
+    def test_invalid_spectral_fit_settings_fail_before_analysis(self):
+        for exponent in (-1,2.1,float('nan')):
+            with self.assertRaises(ValueError):model.fit(np.zeros(441),None,spectral_weight_exponent=exponent)
+        for count in (-1,9,1.5):
+            with self.assertRaises(ValueError):model.fit(np.zeros(441),None,band_peak_count=count)
+
+    def test_dc_compensation_removes_subsonic_control_energy_and_keeps_tone(self):
+        data=controls(100);data['shapes'][:,0]=2;data['volumes'][:,0]=15
+        data['volumes'][1::2,0]=5
+        options=dict(transition_ms=4,output_bandwidth_hz=8000,aligned_triangle=True)
+        ordinary=model.render(data,**options)
+        balanced=model.render(data,compensate_dc=True,**options)
+        hz=np.fft.rfftfreq(len(ordinary),1/44100)
+        before=abs(np.fft.rfft(ordinary))**2;after=abs(np.fft.rfft(balanced))**2
+        self.assertLess(after[hz<50].sum(),before[hz<50].sum()*.01)
+        self.assertAlmostEqual(after[hz>150].sum()/before[hz>150].sum(),1.,delta=.03)
+
+    def test_short_and_long_dictionary_scales_match_direct_windowed_tone(self):
+        frequency=model.CLOCK/(16*133)
+        for size in (512,1024,1536,2048):
+            periods,basis,_,hz,useful=model.dictionary(size)
+            t=(np.arange(size)-size//2)/22050
+            window=np.hanning(size)
+            measured=abs(np.fft.rfft(.5*np.sin(2*np.pi*frequency*t)*window,n=2*size))/(window.sum()/2)
+            prediction=basis[2,np.flatnonzero(periods==133)[0]]
+            self.assertLess(abs(prediction-measured[useful]).max()/measured.max(),.008)
+
 
 if __name__=='__main__':unittest.main()
