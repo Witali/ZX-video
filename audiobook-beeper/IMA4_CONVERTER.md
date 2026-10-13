@@ -1,5 +1,13 @@
 # IMA4 audio to TRD converter
 
+Updated 2026-10-13: the current measured PDM table uses integer PCM-bin
+targets, so unsigned PCM8 silence128 maps to exactly one-half duty instead
+of one-half plus1/128. Historical model dictionaries keep their midpoint
+meaning when `pcm_origin` is absent. The original direct disk still rebuilds
+byte for byte. The [matched vibration audit](experiments/flutter-regression/README.md)
+separates this table correction from physical sample-clock variation; source
+clock compensation and full timing/quality gates remain required.
+
 The [2026-10-05 overlap follow-up](experiments/ima4-overlap/README.md) completes
 the paused speech refinement and compares an otherwise identical search
 without overlap. The earlier verified overlap result remains best at

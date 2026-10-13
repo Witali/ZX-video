@@ -19,6 +19,31 @@ exact bytes/addresses/labels; deterministic delta0 T. Seventy-seven tests,
 timing. This request is complete; it does not authorize a new movie rebuild,
 another codec experiment, merge or push.
 
+## Completed bounded audio correction: periodic-noise audit (2026-10-13)
+
+The user again reports periodic voice vibration after the preferred original
+direct IMA4 disk and explicitly authorizes tracing the responsible change and
+fixing the latest encoder. Compare authenticated checkpoints on identical
+prepared source PCM before attributing the effect to a revision; distinguish
+physical sample-clock changes from field-synchronous PDM noise and host output.
+Reuse prior full traces, then completely execute each selected corrected disk
+in native Z80/Fuse, including both loops and sequential transitions when used.
+Preserve IMA storage, source content/bandwidth, approximately128-kHz carrier,
+independent boot, and all existing timing/quality gates. Do not claim subjective
+flutter eliminated solely from average SNR. Deliver the integrated correction,
+audition files, regression tests and reproducible evidence; keep old releases.
+
+The [matched audit and correction](audiobook-beeper/experiments/flutter-regression/README.md)
+now qualify the current IMA4 integer PCM-origin table. On unchanged quiet
+O. Henry PCM, field-noise peak falls26.525% and total error power14.483%;
+the stronger speech control still passes20 dB.43 tests, full native/cold Fuse
+loops, a real sequential reload/END OF AUDIO and byte-identical legacy/new
+rebuilds pass. This is a periodic-noise reduction, not a subjective cure or
+constant-clock implementation. The quiet excerpt remains below20 dB, and
+bare-silence cyclic profile variation increases despite lower total noise.
+The original full disk remains unchanged; the new looping audition is
+`ZX-audiobook-IMA4-flutter-check.trd`. Reuse the saved complete evidence.
+
 ## Project objective
 
 Fit the authorized movie edit on at most three independently bootable TRDs,

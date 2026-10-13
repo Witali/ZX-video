@@ -25,7 +25,8 @@ def model_table(model):
         return words,nxt,certificate['maximum_internal_absolute_state']
     return integral_table(model.get('pcm_bins',64),2,holds=model['holds'],
                           beta=model['beta'],extent=model['extent'],
-                          q_clip=tuple(model.get('q_clip',(0,15))))
+                          q_clip=tuple(model.get('q_clip',(0,15))),
+                          pcm_origin=model.get('pcm_origin',.5))
 
 
 def table(pcm_bins, recent_bins, older_bins, beta, gain, extent, slots=16):
@@ -61,7 +62,7 @@ def generate(levels, words, successor):
     return np.unpackbits(output.view('u1'))
 
 
-def integral_table(pcm_bins, recent_bins, beta=.5, extent=1., slots=16, holds=None, q_clip=(0,15)):
+def integral_table(pcm_bins, recent_bins, beta=.5, extent=1., slots=16, holds=None, q_clip=(0,15), pcm_origin=.5):
     """Preserve accumulated error q=e-beta*e_old on its exact 1/8 lattice.
 
     For 64 midpoint PCM bins and 16 decisions, 16*x is a multiple of 1/8.
@@ -69,25 +70,29 @@ def integral_table(pcm_bins, recent_bins, beta=.5, extent=1., slots=16, holds=No
     does not add DC error to q. q has 16 signed states in [-1,7/8].
     """
     assert pcm_bins in (64,128) and slots == 16
+    if pcm_origin not in (0,.5):raise ValueError('PCM origin must be zero or historical midpoint')
     states = 16 * recent_bins
     q = np.broadcast_to((np.arange(states) // recent_bins - 8) / 8,
                         (pcm_bins, states)).copy()
     recent = np.broadcast_to(((np.arange(states) % recent_bins + .5) /
                               recent_bins * 2 - 1) * extent, (pcm_bins, states)).copy()
-    x = (np.arange(pcm_bins)[:, None] + .5) / pcm_bins
+    # PCM8 silence is exactly 128. The zero-origin grid represents it as 1/2;
+    # midpoint bins represent it as 1/2+1/(2*bins), a DC control bias.
+    # Preserve midpoint tables for archived recordings and other codecs.
+    x = (np.arange(pcm_bins)[:, None] + pcm_origin) / pcm_bins
     words = np.zeros((pcm_bins, states), dtype=np.uint16)
     peak = 0.
     weights = np.ones(slots) if holds is None else np.asarray(holds) / np.mean(holds)
     for weight in weights:
         u = x + q / weight + beta * recent
-        bit = u >= .5 - (1e-12 if pcm_bins == 128 else 0.)
+        bit = u >= .5 - (1e-12 if pcm_bins == 128 or pcm_origin == 0 else 0.)
         recent = u - bit
         q += weight * (x - bit)
         words = (words << 1) | bit
         peak = max(peak, float(np.max(abs(recent))))
     if holds is None and pcm_bins == 64:
         assert np.all(q * 8 == np.rint(q * 8))
-    epsilon=1e-12 if pcm_bins == 128 else 0.
+    epsilon=1e-12 if pcm_bins == 128 or pcm_origin == 0 else 0.
     qcode = np.clip(np.floor(q * 8 + 8.5 + epsilon), *q_clip)
     r = np.clip(np.floor((recent / extent + 1) * recent_bins / 2 + epsilon), 0, recent_bins - 1)
     successor = (qcode * recent_bins + r).astype(np.uint16)

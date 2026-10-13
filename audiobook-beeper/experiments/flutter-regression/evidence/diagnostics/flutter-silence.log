@@ -1,0 +1,25 @@
+{"scope": "Measure direct-player loop periods cheaply before a full output trace.\n\nThis is only a phase probe. It neither validates sample contents nor qualifies\na release; the complete native/Fuse checks remain mandatory after calibration.\n", "first_output_absolute_tstates": [45524198, 49154229, 52785235], "field_phases": [1262, 14985, 29683], "cycle_tstates": [3630031, 3631006], "target_cycle_tstates": 3687216, "deltas_from_target": [-57185, -56210], "exact_repeat_phase": false, "idle_pairs": 0, "idle_pad_tstates": 0}
+{"scope": "Measure direct-player loop periods cheaply before a full output trace.\n\nThis is only a phase probe. It neither validates sample contents nor qualifies\na release; the complete native/Fuse checks remain mandatory after calibration.\n", "first_output_absolute_tstates": [45453293, 49140240, 52827032], "field_phases": [1265, 996, 572], "cycle_tstates": [3686947, 3686792], "target_cycle_tstates": 3687216, "deltas_from_target": [-269, -424], "exact_repeat_phase": false, "idle_pairs": 1021, "idle_pad_tstates": 0}
+{"scope": "Measure direct-player loop periods cheaply before a full output trace.\n\nThis is only a phase probe. It neither validates sample contents nor qualifies\na release; the complete native/Fuse checks remain mandatory after calibration.\n", "first_output_absolute_tstates": [45524198, 49211408, 52898624], "field_phases": [1262, 1256, 1256], "cycle_tstates": [3687210, 3687216], "target_cycle_tstates": 3687216, "deltas_from_target": [-6, 0], "exact_repeat_phase": false, "idle_pairs": 1026, "idle_pad_tstates": 0}
+{"scope": "Measure direct-player loop periods cheaply before a full output trace.\n\nThis is only a phase probe. It neither validates sample contents nor qualifies\na release; the complete native/Fuse checks remain mandatory after calibration.\n", "first_output_absolute_tstates": [45524201, 49211415, 52898631], "field_phases": [1265, 1263, 1263], "cycle_tstates": [3687214, 3687216], "target_cycle_tstates": 3687216, "deltas_from_target": [-2, 0], "exact_repeat_phase": false, "idle_pairs": 1026, "idle_pad_tstates": 7}
+{"verified_variant": "C:\\Work\\ZX-video\\.tmp\\flutter-silence\\midpoint\\phase-03", "two_loop_clock_aware_snr_db": [null, null], "minimum_snr_db": null, "snr_at_least_20_db": false, "mean_prepared_sample_rate_hz": 7880.256741164166, "mean_speed_error_percent": -1.4967907354479282, "speed_within_two_percent": true, "reference_rate_hz": 8000, "physical_hardware_tested": false, "complete_trace_phase_deltas_tstates": [-1, 0]}
+C:\Work\ZX-video\.worktree\fix-audio-flutter\audiobook-beeper\experiments\flutter-regression\audit.py:56: RuntimeWarning: divide by zero encountered in log10
+  return dict(total_snr_db=float(10*np.log10(np.mean(ref*ref)/np.mean(error*error))),
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\fix-audio-flutter\audiobook-beeper\experiments\flutter-regression\silence.py", line 39, in <module>
+    main()
+  File "C:\Work\ZX-video\.worktree\fix-audio-flutter\audiobook-beeper\experiments\flutter-regression\silence.py", line 30, in main
+    row = measure(candidate, a.repository, a.ffmpeg, a.output, label)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\fix-audio-flutter\audiobook-beeper\experiments\flutter-regression\measure_comparison.py", line 51, in measure
+    field_modulation=cyclic_fit(fixed, actual, CPU/FIELD))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\fix-audio-flutter\audiobook-beeper\experiments\ima4-flutter\analyze.py", line 47, in cyclic_fit
+    coeff = np.linalg.solve(gram, rhs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\numpy\linalg\_linalg.py", line 471, in solve
+    r = gufunc(a, b, signature=signature)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\numpy\linalg\_linalg.py", line 163, in _raise_linalgerror_singular
+    raise LinAlgError("Singular matrix")
+numpy.linalg.LinAlgError: Singular matrix

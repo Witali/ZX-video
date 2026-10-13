@@ -49,6 +49,80 @@
   [verification and reproducing commands](libraries/verification.json),
   [complete streaming evidence](libraries/evidence/streaming_lzsa2.json).
 
+## 2026-10-13 — Matched vibration audit and current IMA4 PCM-origin correction
+
+- **Request/baseline/input:** From `0085a116`, trace the user's reported voice
+  vibration after the preferred original direct disk; the user identifies
+  O. Henry speech in `ZX-audiobook-IMA4-full-disk.trd`. Authenticate/reuse five
+  complete historical native/cold-Fuse checkpoints on unchanged louder PCM
+  SHA256 `ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304`.
+  Then execute matched current-converter arms on the original full disk's
+  quiet first-part PCM, SHA256
+  `d6e5b1c1041d8c626d4fec3fea6a313c212e35c844fcdacd33734c3c16548fb4`.
+- **Historical finding:** Physical sample ranges423..590/598 T and exact
+  field-rate delay component141.5..141.7 us already exist in the original.
+  Current compensated/waveform output improves fixed-clock fidelity. No
+  newly introduced strong physical speed regression is established. Source
+  preparation/level changes are a confound, separately documented in the
+  existing direct regression audit; do not compare different source gains
+  as a codec-only improvement.
+- **Change/parameters:** Current measured IMA4 model explicitly uses integer
+  PCM-bin origin0 instead of midpoint0.5, mapping unsigned silence128 to
+  exactly one-half duty rather than value130. Missing origin retains legacy
+  midpoint semantics. Independently verify all2048 rational table entries
+  and rounding ties. Reclaim128 startup-padding bytes for126/88 code patterns
+  rather than122/86; PCM-pointer/decoder addresses,93440 packed-byte capacity,
+  all128 KiB, IMA storage, source bandwidth and16 outputs/sample remain.
+  Quiet A/B uses identical source, two compensation passes, best width256,
+  prior0.1, horizon128/commit64, one attempt, no clock refinement/recording.
+- **Measured outcome:** Converter worse-loop SNR11.428863 ->12.096913 dB.
+  The separate stable-float64 audit gives loop1 SNR11.450700 ->12.130164 dB,
+  field-error power peak-26.525%, field-profile standard deviation-32.642%,
+  total error power-14.483%. The quiet excerpt still fails20 dB and remains
+  an explicit preview. The louder corrected control passes both loops,
+  minimum21.996457 dB; its field-power peak falls about28.17%, with about
+  0.17-dB lower audit SNR than the older three-attempt stronger control
+  (not a matched-search causal comparison). Independently executed digital
+  silence lowers total noise power about49.85%, while cyclic-profile
+  standard deviation increases about26%; no universal flattening is claimed.
+- **Timing/full coverage:** Same instruction-table path215+208=423 T/sample,
+  page/bank14/140 T, all deltas0. Native execution checks every hold;
+  ULA/ROM/disk latency remains separately measured. Each selected quiet arm
+  and the corrected louder control pass every bit/predictor/index over two
+  full native/cold-Fuse loops, paging and protected RAM. Corrected quiet
+  proof covers5985285 bits/373760 observations, cold phase delta2 T, exact
+  warm phase0 T; mean speed-0.043272%. Independent FFmpeg IMA decoding is
+  sample-exact.43 focused/compatibility tests pass. A complete two-part
+  sequential integration run repeats the corrected louder source and verifies
+  5980094 bits/373756 observations, one automatic reload, loading UI,
+  END OF AUDIO, all1054 sector calls outside audio and pulse deltas[0,0]/[0,1]
+  T within the unchanged8-T limit. SNR22.010503/22.001649 dB, cold setup
+  27.388691 s, reload22.750404 s. No physical hardware/fresh normal-speed
+  endpoint capture; old execution reuse is distinct from these new runs.
+- **Retained failed/provisional attempts:** Initial historical audit lacks
+  an old model; supply authentic defaults and rerun. Initial host layout
+  estimate omits the256-byte pointer page; correct the estimate and reclaim
+  startup padding. Default sandbox temp storage prevents a test fixture;
+  rerun using the project temp directory. The initial silent-source AM fit
+  is singular; skip undefined silence SNR/modulation fits and rerun both
+  clocks. Initial compatibility test reads an LFS pointer as gzip; hydrate
+  the exact fixture and rerun all21 compatibility checks. Host substitution
+  without re-encoding is inferior and is not promoted. Preserve these logs,
+  stage/calibration reports, producer snapshots and corrected complete proofs.
+- **Decision/delivery:** Integrate the qualified PCM-origin correction into
+  the latest IMA4 encoder as a measured periodic-noise reduction. Preserve
+  original disks and IMA3 defaults/tables. Preferred original TRD regenerates
+  byte for byte; the new23.36-s looping audition also rebuilds byte for byte,
+  SHA256 `15ed36d0def8b42a4ccff58e070fcf4a087a78d8c7daf47901032050b0c58845`.
+  Do not claim subjective vibration eliminated, a constant physical sample
+  clock, a full-book rebuild or faster-than-real-time conversion. The prior
+  constant-clock/conversion-speed requirements remain unimplemented.
+- **Evidence/reproduction:** [Experiment and commands](audiobook-beeper/experiments/flutter-regression/README.md),
+  [summary](audiobook-beeper/experiments/flutter-regression/evidence/report.json),
+  [complete manifest](audiobook-beeper/experiments/flutter-regression/evidence/manifest.json),
+  [byte-exact reproducer](audiobook-beeper/experiments/flutter-regression/reproduce.py)
+  and [audition TRD](ZX-audiobook-IMA4-flutter-check.trd).
+
 ## 2026-10-13 — Main sea-foam song with the preferred original direct IMA4
 
 - **Request/baseline/input:** From `7886808a`, extract the main song from the

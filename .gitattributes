@@ -666,3 +666,9 @@ toolkit/generic_guarded_cb46_evidence/*.gz -text
 /audiobook-beeper/experiments/sea-foam-song/evidence/**/*.wav filter=lfs diff=lfs merge=lfs -text
 /audiobook-beeper/experiments/sea-foam-song/*.py text eol=lf
 /audiobook-beeper/experiments/sea-foam-song/*.md text eol=lf
+# Preserve complete matched audio/table-correction evidence byte for byte.
+/audiobook-beeper/experiments/flutter-regression/evidence/** -text -whitespace
+/audiobook-beeper/experiments/flutter-regression/evidence/**/*.gz filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/flutter-regression/evidence/**/*.wav filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/flutter-regression/*.py text eol=lf
+/audiobook-beeper/experiments/flutter-regression/*.md text eol=lf

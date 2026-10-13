@@ -1,0 +1,45 @@
+test_all_codes_and_idle_block_boundary_in_native_z80 (test_mulaw_packet.MuLawPackets.test_all_codes_and_idle_block_boundary_in_native_z80) ... ok
+test_all_transitions_against_exact_fractions (test_mulaw_packet.MuLawPackets.test_all_transitions_against_exact_fractions) ... ok
+test_public_rate_selection_preserves_64khz_control (test_mulaw_packet.MuLawPackets.test_public_rate_selection_preserves_64khz_control) ... ok
+test_ram_and_repeat_contract (test_mulaw_packet.MuLawPackets.test_ram_and_repeat_contract) ... ok
+test_silent_reference_has_no_infinite_snr_claim (test_mulaw_packet.MuLawPackets.test_silent_reference_has_no_infinite_snr_claim) ... ok
+test_waveform_backends_preserve_guard (test_mulaw_packet.MuLawPackets.test_waveform_backends_preserve_guard) ... ok
+test_every_code_in_native_z80 (test_mulaw_player.MuLawPlayer.test_every_code_in_native_z80) ... ok
+test_full_ram_boundaries (test_mulaw_player.MuLawPlayer.test_full_ram_boundaries) ... ok
+test_prepared_pcm16_retains_low_bits (test_mulaw_player.MuLawPlayer.test_prepared_pcm16_retains_low_bits) ... ok
+test_public_aliases_and_ima_default (test_mulaw_player.MuLawPlayer.test_public_aliases_and_ima_default) ... ok
+test_exact_second_difference_and_continuous_packet_state (test_sigma_delta2.SigmaDelta2.test_exact_second_difference_and_continuous_packet_state) ... ok
+test_exhaustive_independent_entries_and_no_state_rounding (test_sigma_delta2.SigmaDelta2.test_exhaustive_independent_entries_and_no_state_rounding) ... ok
+test_measurement_gain_cannot_disagree_with_feedback_model (test_sigma_delta2.SigmaDelta2.test_measurement_gain_cannot_disagree_with_feedback_model) ... ok
+test_unmodified_model_rebuilds_accepted_disk_byte_exactly (test_sigma_delta2.SigmaDelta2.test_unmodified_model_rebuilds_accepted_disk_byte_exactly) ... ERROR
+test_eight_tstates_pass_nine_fail (test_ima4_clock_reference.ClockReference.test_eight_tstates_pass_nine_fail) ... ok
+test_ima3_keeps_its_first_loop_reference (test_ima4_clock_reference.ClockReference.test_ima3_keeps_its_first_loop_reference) ... ok
+test_matching_warm_loop_is_used (test_ima4_clock_reference.ClockReference.test_matching_warm_loop_is_used) ... ok
+test_no_time_stretch_or_partial_prefix_acceptance (test_ima4_clock_reference.ClockReference.test_no_time_stretch_or_partial_prefix_acceptance) ... ok
+{"input": "C:\\Work\\ZX-video\\.worktree\\fix-audio-flutter\\.tmp\\test-runtime\\tmpaiwp6t86\\source.wav", "prepared_pcm_unchanged": true, "prepared_samples": 8192, "sample_rate_hz": 8000, "channels": 1, "pcm_bits": 8, "fixed_gain": 1.0, "silence_guard_samples": 128, "source_sha256": "128f91e0b6909a2678c28b958263a09c701425e3448a353af42922f4d2e0a1d0"}
+test_corrupt_bits_are_fatal_not_a_quality_rejection (test_ima4_phase_fallback.PhaseFallback.test_corrupt_bits_are_fatal_not_a_quality_rejection) ... ok
+{"input": "C:\\Work\\ZX-video\\.worktree\\fix-audio-flutter\\.tmp\\test-runtime\\tmpkgro8w0o\\source.wav", "prepared_pcm_unchanged": true, "prepared_samples": 8192, "sample_rate_hz": 8000, "channels": 1, "pcm_bits": 8, "fixed_gain": 1.0, "silence_guard_samples": 128, "source_sha256": "128f91e0b6909a2678c28b958263a09c701425e3448a353af42922f4d2e0a1d0"}
+{"directory": "disk-encode-1", "reason": "complete cold trace failed repeat-phase check: [626, 218]", "qualified": false}
+{"disk": "C:\\Work\\ZX-video\\.worktree\\fix-audio-flutter\\.tmp\\test-runtime\\tmpkgro8w0o\\out\\audiobook-preview.trd", "directory": "disk-encode-2", "minimum_snr_db": 23.0, "speed_within_two_percent": true}
+test_phase_failure_keeps_baseline_and_evaluates_later_candidates (test_ima4_phase_fallback.PhaseFallback.test_phase_failure_keeps_baseline_and_evaluates_later_candidates) ... ok
+{"input": "C:\\Work\\ZX-video\\.worktree\\fix-audio-flutter\\.tmp\\test-runtime\\tmps_ijfn4k\\source.wav", "prepared_pcm_unchanged": true, "prepared_samples": 8192, "sample_rate_hz": 8000, "channels": 1, "pcm_bits": 8, "fixed_gain": 1.0, "silence_guard_samples": 128, "source_sha256": "128f91e0b6909a2678c28b958263a09c701425e3448a353af42922f4d2e0a1d0"}
+test_unrelated_runtime_failure_is_fatal (test_ima4_phase_fallback.PhaseFallback.test_unrelated_runtime_failure_is_fatal) ... ok
+
+======================================================================
+ERROR: test_unmodified_model_rebuilds_accepted_disk_byte_exactly (test_sigma_delta2.SigmaDelta2.test_unmodified_model_rebuilds_accepted_disk_byte_exactly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\fix-audio-flutter\audiobook-beeper\test_sigma_delta2.py", line 42, in test_unmodified_model_rebuilds_accepted_disk_byte_exactly
+    packed=gzip.decompress((root/'soundtrack.ima.gz').read_bytes())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\gzip.py", line 644, in decompress
+    if _read_gzip_header(fp) is None:
+       ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\gzip.py", line 473, in _read_gzip_header
+    raise BadGzipFile('Not a gzipped file (%r)' % magic)
+gzip.BadGzipFile: Not a gzipped file (b've')
+
+----------------------------------------------------------------------
+Ran 21 tests in 6.589s
+
+FAILED (errors=1)

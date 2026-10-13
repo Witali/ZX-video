@@ -11,14 +11,18 @@ from verify_pcm import save
 HERE=Path(__file__).resolve().parent
 MAX_PACKED_BYTES=93440
 HOLDS=[36,28,28,31,24,26,22,20,22,26,22,30,31,27,34,16]
+# The current four-bit encoder uses an integer PCM grid: unsigned128 is
+# exactly one-half duty. Archived models without pcm_origin retain midpoint
+# bins, so their tables and disk bytes remain independently reproducible.
 MEASURED_MODEL=dict(holds=[288,231,225,248,192,218,204,170,215,226,177,240,248,216,291,156],
                     beta=.5,extent=.5,weight_units='eighth T-state; rounded ordinary Fuse means',
+                    pcm_origin=0,
                     calibration='experiments/ima-direct/output-times.u32.gz')
 
 
 def layout(packed,model=None,hot_indices=None):
     model=model or dict(holds=HOLDS,beta=.5,extent=1.)
-    words,nxt,_=integral_table(64,2,holds=model['holds'],beta=model['beta'],extent=model['extent'])
+    words,nxt,_=integral_table(64,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],pcm_origin=model.get('pcm_origin',.5))
     reachable={16}
     while True:
         expanded=reachable|set(map(int,nxt[:,sorted(reachable)].ravel()))
@@ -27,8 +31,13 @@ def layout(packed,model=None,hot_indices=None):
     states=sorted(reachable);assert len(states)*6<=128
     first_patterns=sorted(set(map(int,(words[:,states]>>8).ravel())))
     second_patterns=sorted(set(map(int,(words[:,states]&255).ravel())))
-    first={p:0x8400+i*41 for i,p in enumerate(first_patterns)}
-    base=0x8400+len(first)*41
+    # Zero-origin tables need four more first/two more second patterns. Reuse
+    # 128 bytes of uncontended startup padding; page alignment then leaves the
+    # PCM-pointer/decoder tables at their old addresses and retains all audio.
+    # Assembly separately proves that the complete loader/filler fits below it.
+    first_base=0x8380 if model.get('pcm_origin',.5)==0 else 0x8400
+    first={p:first_base+i*41 for i,p in enumerate(first_patterns)}
+    base=first_base+len(first)*41
     second={p:base+i*64 for i,p in enumerate(second_patterns)}
     pointers=(base+len(second)*64+255)&~255
     fixed=pointers+256;extra=fixed+1024
@@ -85,7 +94,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
         for s,sector in zip(sections,storage['audio']):s['sector']=sector
     total_reads=60+sum(s['sectors'] for s in sections)
     progress_steps=np.diff(np.r_[0,(np.arange(1,33)*total_reads+31)//32])
-    constants=dict(lpc_preloaded=0,screen_disk=0,first_base=0x8400,pcm_high=pointers,resident_reserve=14336,decoder_seed=rows[0],
+    constants=dict(lpc_preloaded=0,screen_disk=0,first_base=min(first.values()),pcm_high=pointers,resident_reserve=14336,decoder_seed=rows[0],
                    initial_feedback_offset=states.index(16)*6,lower_disk=lower//16*256+lower%16,upper_disk=upper//16*256+upper%16,
                    final_section_index=len(sections)-1)
     constants.update(chained_playback=int(chain is not None),

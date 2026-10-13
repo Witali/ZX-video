@@ -1,0 +1,1813 @@
+base 10
+set $r 0
+set $bits 0
+breakpoint 32928
+commands 1
+print 100
+print spectrum:frames*70908+ula:tstates
+print z80:sp
+set $r 1
+continue
+end
+breakpoint 32820
+commands 2
+print 103
+print spectrum:frames*70908+ula:tstates
+print ula:mem7ffd
+print [55296]
+print [55297]
+print [55298]
+print [55299]
+print [55300]
+print [55301]
+print [55302]
+print [55303]
+print [55304]
+print [55305]
+print [55306]
+print [55307]
+print [55308]
+print [55309]
+print [55310]
+print [55311]
+print [55312]
+print [55313]
+print [55314]
+print [55315]
+print [55316]
+print [55317]
+print [55318]
+print [55319]
+print [55320]
+print [55321]
+print [55322]
+print [55323]
+print [55324]
+print [55325]
+print [55326]
+print [55327]
+print [55328]
+print [55329]
+print [55330]
+print [55331]
+print [55332]
+print [55333]
+print [55334]
+print [55335]
+print [55336]
+print [55337]
+print [55338]
+print [55339]
+print [55340]
+print [55341]
+print [55342]
+print [55343]
+print [55344]
+print [55345]
+print [55346]
+print [55347]
+print [55348]
+print [55349]
+print [55350]
+print [55351]
+print [55352]
+print [55353]
+print [55354]
+print [55355]
+print [55356]
+print [55357]
+print [55358]
+print [55359]
+print [55360]
+print [55361]
+print [55362]
+print [55363]
+print [55364]
+print [55365]
+print [55366]
+print [55367]
+print [55368]
+print [55369]
+print [55370]
+print [55371]
+print [55372]
+print [55373]
+print [55374]
+print [55375]
+print [55376]
+print [55377]
+print [55378]
+print [55379]
+print [55380]
+print [55381]
+print [55382]
+print [55383]
+print [55384]
+print [55385]
+print [55386]
+print [55387]
+print [55388]
+print [55389]
+print [55390]
+print [55391]
+continue
+end
+breakpoint 32879
+commands 3
+print 104
+print spectrum:frames*70908+ula:tstates
+print ula:mem7ffd
+print [55296]
+print [55297]
+print [55298]
+print [55299]
+print [55300]
+print [55301]
+print [55302]
+print [55303]
+print [55304]
+print [55305]
+print [55306]
+print [55307]
+print [55308]
+print [55309]
+print [55310]
+print [55311]
+print [55312]
+print [55313]
+print [55314]
+print [55315]
+print [55316]
+print [55317]
+print [55318]
+print [55319]
+print [55320]
+print [55321]
+print [55322]
+print [55323]
+print [55324]
+print [55325]
+print [55326]
+print [55327]
+print [55328]
+print [55329]
+print [55330]
+print [55331]
+print [55332]
+print [55333]
+print [55334]
+print [55335]
+print [55336]
+print [55337]
+print [55338]
+print [55339]
+print [55340]
+print [55341]
+print [55342]
+print [55343]
+print [55344]
+print [55345]
+print [55346]
+print [55347]
+print [55348]
+print [55349]
+print [55350]
+print [55351]
+print [55352]
+print [55353]
+print [55354]
+print [55355]
+print [55356]
+print [55357]
+print [55358]
+print [55359]
+print [55360]
+print [55361]
+print [55362]
+print [55363]
+print [55364]
+print [55365]
+print [55366]
+print [55367]
+print [55368]
+print [55369]
+print [55370]
+print [55371]
+print [55372]
+print [55373]
+print [55374]
+print [55375]
+print [55376]
+print [55377]
+print [55378]
+print [55379]
+print [55380]
+print [55381]
+print [55382]
+print [55383]
+print [55384]
+print [55385]
+print [55386]
+print [55387]
+print [55388]
+print [55389]
+print [55390]
+print [55391]
+continue
+end
+breakpoint port write 254
+commands 4
+print 140
+print spectrum:frames*70908+ula:tstates
+print z80:pc
+print z80:a
+print z80:d
+print z80:b
+set $bits $bits+1
+continue
+end
+condition 4 $r==1
+breakpoint port write 254
+commands 5
+print 200
+print spectrum:frames*70908+ula:tstates
+exit 77
+end
+condition 5 $bits>=266249
+breakpoint 33687
+commands 6
+print 120
+print z80:ix
+continue
+end
+breakpoint 33684
+commands 7
+print 121
+print z80:hl
+continue
+end
+breakpoint 33728
+commands 8
+print 120
+print z80:ix
+continue
+end
+breakpoint 33725
+commands 9
+print 121
+print z80:hl
+continue
+end
+breakpoint 33769
+commands 10
+print 120
+print z80:ix
+continue
+end
+breakpoint 33766
+commands 11
+print 121
+print z80:hl
+continue
+end
+breakpoint 33810
+commands 12
+print 120
+print z80:ix
+continue
+end
+breakpoint 33807
+commands 13
+print 121
+print z80:hl
+continue
+end
+breakpoint 33851
+commands 14
+print 120
+print z80:ix
+continue
+end
+breakpoint 33848
+commands 15
+print 121
+print z80:hl
+continue
+end
+breakpoint 33892
+commands 16
+print 120
+print z80:ix
+continue
+end
+breakpoint 33889
+commands 17
+print 121
+print z80:hl
+continue
+end
+breakpoint 33933
+commands 18
+print 120
+print z80:ix
+continue
+end
+breakpoint 33930
+commands 19
+print 121
+print z80:hl
+continue
+end
+breakpoint 33974
+commands 20
+print 120
+print z80:ix
+continue
+end
+breakpoint 33971
+commands 21
+print 121
+print z80:hl
+continue
+end
+breakpoint 34015
+commands 22
+print 120
+print z80:ix
+continue
+end
+breakpoint 34012
+commands 23
+print 121
+print z80:hl
+continue
+end
+breakpoint 34056
+commands 24
+print 120
+print z80:ix
+continue
+end
+breakpoint 34053
+commands 25
+print 121
+print z80:hl
+continue
+end
+breakpoint 34097
+commands 26
+print 120
+print z80:ix
+continue
+end
+breakpoint 34094
+commands 27
+print 121
+print z80:hl
+continue
+end
+breakpoint 34138
+commands 28
+print 120
+print z80:ix
+continue
+end
+breakpoint 34135
+commands 29
+print 121
+print z80:hl
+continue
+end
+breakpoint 34179
+commands 30
+print 120
+print z80:ix
+continue
+end
+breakpoint 34176
+commands 31
+print 121
+print z80:hl
+continue
+end
+breakpoint 34220
+commands 32
+print 120
+print z80:ix
+continue
+end
+breakpoint 34217
+commands 33
+print 121
+print z80:hl
+continue
+end
+breakpoint 34261
+commands 34
+print 120
+print z80:ix
+continue
+end
+breakpoint 34258
+commands 35
+print 121
+print z80:hl
+continue
+end
+breakpoint 34302
+commands 36
+print 120
+print z80:ix
+continue
+end
+breakpoint 34299
+commands 37
+print 121
+print z80:hl
+continue
+end
+breakpoint 34343
+commands 38
+print 120
+print z80:ix
+continue
+end
+breakpoint 34340
+commands 39
+print 121
+print z80:hl
+continue
+end
+breakpoint 34384
+commands 40
+print 120
+print z80:ix
+continue
+end
+breakpoint 34381
+commands 41
+print 121
+print z80:hl
+continue
+end
+breakpoint 34425
+commands 42
+print 120
+print z80:ix
+continue
+end
+breakpoint 34422
+commands 43
+print 121
+print z80:hl
+continue
+end
+breakpoint 34466
+commands 44
+print 120
+print z80:ix
+continue
+end
+breakpoint 34463
+commands 45
+print 121
+print z80:hl
+continue
+end
+breakpoint 34507
+commands 46
+print 120
+print z80:ix
+continue
+end
+breakpoint 34504
+commands 47
+print 121
+print z80:hl
+continue
+end
+breakpoint 34548
+commands 48
+print 120
+print z80:ix
+continue
+end
+breakpoint 34545
+commands 49
+print 121
+print z80:hl
+continue
+end
+breakpoint 34589
+commands 50
+print 120
+print z80:ix
+continue
+end
+breakpoint 34586
+commands 51
+print 121
+print z80:hl
+continue
+end
+breakpoint 34630
+commands 52
+print 120
+print z80:ix
+continue
+end
+breakpoint 34627
+commands 53
+print 121
+print z80:hl
+continue
+end
+breakpoint 34671
+commands 54
+print 120
+print z80:ix
+continue
+end
+breakpoint 34668
+commands 55
+print 121
+print z80:hl
+continue
+end
+breakpoint 34712
+commands 56
+print 120
+print z80:ix
+continue
+end
+breakpoint 34709
+commands 57
+print 121
+print z80:hl
+continue
+end
+breakpoint 34753
+commands 58
+print 120
+print z80:ix
+continue
+end
+breakpoint 34750
+commands 59
+print 121
+print z80:hl
+continue
+end
+breakpoint 34794
+commands 60
+print 120
+print z80:ix
+continue
+end
+breakpoint 34791
+commands 61
+print 121
+print z80:hl
+continue
+end
+breakpoint 34835
+commands 62
+print 120
+print z80:ix
+continue
+end
+breakpoint 34832
+commands 63
+print 121
+print z80:hl
+continue
+end
+breakpoint 34876
+commands 64
+print 120
+print z80:ix
+continue
+end
+breakpoint 34873
+commands 65
+print 121
+print z80:hl
+continue
+end
+breakpoint 34917
+commands 66
+print 120
+print z80:ix
+continue
+end
+breakpoint 34914
+commands 67
+print 121
+print z80:hl
+continue
+end
+breakpoint 34958
+commands 68
+print 120
+print z80:ix
+continue
+end
+breakpoint 34955
+commands 69
+print 121
+print z80:hl
+continue
+end
+breakpoint 34999
+commands 70
+print 120
+print z80:ix
+continue
+end
+breakpoint 34996
+commands 71
+print 121
+print z80:hl
+continue
+end
+breakpoint 35040
+commands 72
+print 120
+print z80:ix
+continue
+end
+breakpoint 35037
+commands 73
+print 121
+print z80:hl
+continue
+end
+breakpoint 35081
+commands 74
+print 120
+print z80:ix
+continue
+end
+breakpoint 35078
+commands 75
+print 121
+print z80:hl
+continue
+end
+breakpoint 35122
+commands 76
+print 120
+print z80:ix
+continue
+end
+breakpoint 35119
+commands 77
+print 121
+print z80:hl
+continue
+end
+breakpoint 35163
+commands 78
+print 120
+print z80:ix
+continue
+end
+breakpoint 35160
+commands 79
+print 121
+print z80:hl
+continue
+end
+breakpoint 35204
+commands 80
+print 120
+print z80:ix
+continue
+end
+breakpoint 35201
+commands 81
+print 121
+print z80:hl
+continue
+end
+breakpoint 35245
+commands 82
+print 120
+print z80:ix
+continue
+end
+breakpoint 35242
+commands 83
+print 121
+print z80:hl
+continue
+end
+breakpoint 35286
+commands 84
+print 120
+print z80:ix
+continue
+end
+breakpoint 35283
+commands 85
+print 121
+print z80:hl
+continue
+end
+breakpoint 35327
+commands 86
+print 120
+print z80:ix
+continue
+end
+breakpoint 35324
+commands 87
+print 121
+print z80:hl
+continue
+end
+breakpoint 35368
+commands 88
+print 120
+print z80:ix
+continue
+end
+breakpoint 35365
+commands 89
+print 121
+print z80:hl
+continue
+end
+breakpoint 35409
+commands 90
+print 120
+print z80:ix
+continue
+end
+breakpoint 35406
+commands 91
+print 121
+print z80:hl
+continue
+end
+breakpoint 35450
+commands 92
+print 120
+print z80:ix
+continue
+end
+breakpoint 35447
+commands 93
+print 121
+print z80:hl
+continue
+end
+breakpoint 35491
+commands 94
+print 120
+print z80:ix
+continue
+end
+breakpoint 35488
+commands 95
+print 121
+print z80:hl
+continue
+end
+breakpoint 35532
+commands 96
+print 120
+print z80:ix
+continue
+end
+breakpoint 35529
+commands 97
+print 121
+print z80:hl
+continue
+end
+breakpoint 35573
+commands 98
+print 120
+print z80:ix
+continue
+end
+breakpoint 35570
+commands 99
+print 121
+print z80:hl
+continue
+end
+breakpoint 35614
+commands 100
+print 120
+print z80:ix
+continue
+end
+breakpoint 35611
+commands 101
+print 121
+print z80:hl
+continue
+end
+breakpoint 35655
+commands 102
+print 120
+print z80:ix
+continue
+end
+breakpoint 35652
+commands 103
+print 121
+print z80:hl
+continue
+end
+breakpoint 35696
+commands 104
+print 120
+print z80:ix
+continue
+end
+breakpoint 35693
+commands 105
+print 121
+print z80:hl
+continue
+end
+breakpoint 35737
+commands 106
+print 120
+print z80:ix
+continue
+end
+breakpoint 35734
+commands 107
+print 121
+print z80:hl
+continue
+end
+breakpoint 35778
+commands 108
+print 120
+print z80:ix
+continue
+end
+breakpoint 35775
+commands 109
+print 121
+print z80:hl
+continue
+end
+breakpoint 35819
+commands 110
+print 120
+print z80:ix
+continue
+end
+breakpoint 35816
+commands 111
+print 121
+print z80:hl
+continue
+end
+breakpoint 35860
+commands 112
+print 120
+print z80:ix
+continue
+end
+breakpoint 35857
+commands 113
+print 121
+print z80:hl
+continue
+end
+breakpoint 35901
+commands 114
+print 120
+print z80:ix
+continue
+end
+breakpoint 35898
+commands 115
+print 121
+print z80:hl
+continue
+end
+breakpoint 35942
+commands 116
+print 120
+print z80:ix
+continue
+end
+breakpoint 35939
+commands 117
+print 121
+print z80:hl
+continue
+end
+breakpoint 35983
+commands 118
+print 120
+print z80:ix
+continue
+end
+breakpoint 35980
+commands 119
+print 121
+print z80:hl
+continue
+end
+breakpoint 36024
+commands 120
+print 120
+print z80:ix
+continue
+end
+breakpoint 36021
+commands 121
+print 121
+print z80:hl
+continue
+end
+breakpoint 36065
+commands 122
+print 120
+print z80:ix
+continue
+end
+breakpoint 36062
+commands 123
+print 121
+print z80:hl
+continue
+end
+breakpoint 36106
+commands 124
+print 120
+print z80:ix
+continue
+end
+breakpoint 36103
+commands 125
+print 121
+print z80:hl
+continue
+end
+breakpoint 36147
+commands 126
+print 120
+print z80:ix
+continue
+end
+breakpoint 36144
+commands 127
+print 121
+print z80:hl
+continue
+end
+breakpoint 36188
+commands 128
+print 120
+print z80:ix
+continue
+end
+breakpoint 36185
+commands 129
+print 121
+print z80:hl
+continue
+end
+breakpoint 36229
+commands 130
+print 120
+print z80:ix
+continue
+end
+breakpoint 36226
+commands 131
+print 121
+print z80:hl
+continue
+end
+breakpoint 36270
+commands 132
+print 120
+print z80:ix
+continue
+end
+breakpoint 36267
+commands 133
+print 121
+print z80:hl
+continue
+end
+breakpoint 36311
+commands 134
+print 120
+print z80:ix
+continue
+end
+breakpoint 36308
+commands 135
+print 121
+print z80:hl
+continue
+end
+breakpoint 36352
+commands 136
+print 120
+print z80:ix
+continue
+end
+breakpoint 36349
+commands 137
+print 121
+print z80:hl
+continue
+end
+breakpoint 36393
+commands 138
+print 120
+print z80:ix
+continue
+end
+breakpoint 36390
+commands 139
+print 121
+print z80:hl
+continue
+end
+breakpoint 36434
+commands 140
+print 120
+print z80:ix
+continue
+end
+breakpoint 36431
+commands 141
+print 121
+print z80:hl
+continue
+end
+breakpoint 36475
+commands 142
+print 120
+print z80:ix
+continue
+end
+breakpoint 36472
+commands 143
+print 121
+print z80:hl
+continue
+end
+breakpoint 36516
+commands 144
+print 120
+print z80:ix
+continue
+end
+breakpoint 36513
+commands 145
+print 121
+print z80:hl
+continue
+end
+breakpoint 36557
+commands 146
+print 120
+print z80:ix
+continue
+end
+breakpoint 36554
+commands 147
+print 121
+print z80:hl
+continue
+end
+breakpoint 36598
+commands 148
+print 120
+print z80:ix
+continue
+end
+breakpoint 36595
+commands 149
+print 121
+print z80:hl
+continue
+end
+breakpoint 36639
+commands 150
+print 120
+print z80:ix
+continue
+end
+breakpoint 36636
+commands 151
+print 121
+print z80:hl
+continue
+end
+breakpoint 36680
+commands 152
+print 120
+print z80:ix
+continue
+end
+breakpoint 36677
+commands 153
+print 121
+print z80:hl
+continue
+end
+breakpoint 36721
+commands 154
+print 120
+print z80:ix
+continue
+end
+breakpoint 36718
+commands 155
+print 121
+print z80:hl
+continue
+end
+breakpoint 36762
+commands 156
+print 120
+print z80:ix
+continue
+end
+breakpoint 36759
+commands 157
+print 121
+print z80:hl
+continue
+end
+breakpoint 36803
+commands 158
+print 120
+print z80:ix
+continue
+end
+breakpoint 36800
+commands 159
+print 121
+print z80:hl
+continue
+end
+breakpoint 36844
+commands 160
+print 120
+print z80:ix
+continue
+end
+breakpoint 36841
+commands 161
+print 121
+print z80:hl
+continue
+end
+breakpoint 36885
+commands 162
+print 120
+print z80:ix
+continue
+end
+breakpoint 36882
+commands 163
+print 121
+print z80:hl
+continue
+end
+breakpoint 36926
+commands 164
+print 120
+print z80:ix
+continue
+end
+breakpoint 36923
+commands 165
+print 121
+print z80:hl
+continue
+end
+breakpoint 36967
+commands 166
+print 120
+print z80:ix
+continue
+end
+breakpoint 36964
+commands 167
+print 121
+print z80:hl
+continue
+end
+breakpoint 37008
+commands 168
+print 120
+print z80:ix
+continue
+end
+breakpoint 37005
+commands 169
+print 121
+print z80:hl
+continue
+end
+breakpoint 37049
+commands 170
+print 120
+print z80:ix
+continue
+end
+breakpoint 37046
+commands 171
+print 121
+print z80:hl
+continue
+end
+breakpoint 37090
+commands 172
+print 120
+print z80:ix
+continue
+end
+breakpoint 37087
+commands 173
+print 121
+print z80:hl
+continue
+end
+breakpoint 37131
+commands 174
+print 120
+print z80:ix
+continue
+end
+breakpoint 37128
+commands 175
+print 121
+print z80:hl
+continue
+end
+breakpoint 37172
+commands 176
+print 120
+print z80:ix
+continue
+end
+breakpoint 37169
+commands 177
+print 121
+print z80:hl
+continue
+end
+breakpoint 37213
+commands 178
+print 120
+print z80:ix
+continue
+end
+breakpoint 37210
+commands 179
+print 121
+print z80:hl
+continue
+end
+breakpoint 37254
+commands 180
+print 120
+print z80:ix
+continue
+end
+breakpoint 37251
+commands 181
+print 121
+print z80:hl
+continue
+end
+breakpoint 37295
+commands 182
+print 120
+print z80:ix
+continue
+end
+breakpoint 37292
+commands 183
+print 121
+print z80:hl
+continue
+end
+breakpoint 37336
+commands 184
+print 120
+print z80:ix
+continue
+end
+breakpoint 37333
+commands 185
+print 121
+print z80:hl
+continue
+end
+breakpoint 37377
+commands 186
+print 120
+print z80:ix
+continue
+end
+breakpoint 37374
+commands 187
+print 121
+print z80:hl
+continue
+end
+breakpoint 37418
+commands 188
+print 120
+print z80:ix
+continue
+end
+breakpoint 37415
+commands 189
+print 121
+print z80:hl
+continue
+end
+breakpoint 37459
+commands 190
+print 120
+print z80:ix
+continue
+end
+breakpoint 37456
+commands 191
+print 121
+print z80:hl
+continue
+end
+breakpoint 37500
+commands 192
+print 120
+print z80:ix
+continue
+end
+breakpoint 37497
+commands 193
+print 121
+print z80:hl
+continue
+end
+breakpoint 37541
+commands 194
+print 120
+print z80:ix
+continue
+end
+breakpoint 37538
+commands 195
+print 121
+print z80:hl
+continue
+end
+breakpoint 37582
+commands 196
+print 120
+print z80:ix
+continue
+end
+breakpoint 37579
+commands 197
+print 121
+print z80:hl
+continue
+end
+breakpoint 37623
+commands 198
+print 120
+print z80:ix
+continue
+end
+breakpoint 37620
+commands 199
+print 121
+print z80:hl
+continue
+end
+breakpoint 37664
+commands 200
+print 120
+print z80:ix
+continue
+end
+breakpoint 37661
+commands 201
+print 121
+print z80:hl
+continue
+end
+breakpoint 37705
+commands 202
+print 120
+print z80:ix
+continue
+end
+breakpoint 37702
+commands 203
+print 121
+print z80:hl
+continue
+end
+breakpoint 37746
+commands 204
+print 120
+print z80:ix
+continue
+end
+breakpoint 37743
+commands 205
+print 121
+print z80:hl
+continue
+end
+breakpoint 37787
+commands 206
+print 120
+print z80:ix
+continue
+end
+breakpoint 37784
+commands 207
+print 121
+print z80:hl
+continue
+end
+breakpoint 37828
+commands 208
+print 120
+print z80:ix
+continue
+end
+breakpoint 37825
+commands 209
+print 121
+print z80:hl
+continue
+end
+breakpoint 37869
+commands 210
+print 120
+print z80:ix
+continue
+end
+breakpoint 37866
+commands 211
+print 121
+print z80:hl
+continue
+end
+breakpoint 37910
+commands 212
+print 120
+print z80:ix
+continue
+end
+breakpoint 37907
+commands 213
+print 121
+print z80:hl
+continue
+end
+breakpoint 37951
+commands 214
+print 120
+print z80:ix
+continue
+end
+breakpoint 37948
+commands 215
+print 121
+print z80:hl
+continue
+end
+breakpoint 37992
+commands 216
+print 120
+print z80:ix
+continue
+end
+breakpoint 37989
+commands 217
+print 121
+print z80:hl
+continue
+end
+breakpoint 38033
+commands 218
+print 120
+print z80:ix
+continue
+end
+breakpoint 38030
+commands 219
+print 121
+print z80:hl
+continue
+end
+breakpoint 38074
+commands 220
+print 120
+print z80:ix
+continue
+end
+breakpoint 38071
+commands 221
+print 121
+print z80:hl
+continue
+end
+breakpoint 38115
+commands 222
+print 120
+print z80:ix
+continue
+end
+breakpoint 38112
+commands 223
+print 121
+print z80:hl
+continue
+end
+breakpoint 38156
+commands 224
+print 120
+print z80:ix
+continue
+end
+breakpoint 38153
+commands 225
+print 121
+print z80:hl
+continue
+end
+breakpoint 38197
+commands 226
+print 120
+print z80:ix
+continue
+end
+breakpoint 38194
+commands 227
+print 121
+print z80:hl
+continue
+end
+breakpoint 38238
+commands 228
+print 120
+print z80:ix
+continue
+end
+breakpoint 38235
+commands 229
+print 121
+print z80:hl
+continue
+end
+breakpoint 38279
+commands 230
+print 120
+print z80:ix
+continue
+end
+breakpoint 38276
+commands 231
+print 121
+print z80:hl
+continue
+end
+breakpoint 38320
+commands 232
+print 120
+print z80:ix
+continue
+end
+breakpoint 38317
+commands 233
+print 121
+print z80:hl
+continue
+end
+breakpoint 38361
+commands 234
+print 120
+print z80:ix
+continue
+end
+breakpoint 38358
+commands 235
+print 121
+print z80:hl
+continue
+end
+breakpoint 38402
+commands 236
+print 120
+print z80:ix
+continue
+end
+breakpoint 38399
+commands 237
+print 121
+print z80:hl
+continue
+end
+breakpoint 38443
+commands 238
+print 120
+print z80:ix
+continue
+end
+breakpoint 38440
+commands 239
+print 121
+print z80:hl
+continue
+end
+breakpoint 38484
+commands 240
+print 120
+print z80:ix
+continue
+end
+breakpoint 38481
+commands 241
+print 121
+print z80:hl
+continue
+end
+breakpoint 38525
+commands 242
+print 120
+print z80:ix
+continue
+end
+breakpoint 38522
+commands 243
+print 121
+print z80:hl
+continue
+end
+breakpoint 38566
+commands 244
+print 120
+print z80:ix
+continue
+end
+breakpoint 38563
+commands 245
+print 121
+print z80:hl
+continue
+end
+breakpoint 38607
+commands 246
+print 120
+print z80:ix
+continue
+end
+breakpoint 38604
+commands 247
+print 121
+print z80:hl
+continue
+end
+breakpoint 38648
+commands 248
+print 120
+print z80:ix
+continue
+end
+breakpoint 38645
+commands 249
+print 121
+print z80:hl
+continue
+end
+breakpoint 38689
+commands 250
+print 120
+print z80:ix
+continue
+end
+breakpoint 38686
+commands 251
+print 121
+print z80:hl
+continue
+end
+breakpoint 38730
+commands 252
+print 120
+print z80:ix
+continue
+end
+breakpoint 38727
+commands 253
+print 121
+print z80:hl
+continue
+end
+breakpoint 38771
+commands 254
+print 120
+print z80:ix
+continue
+end
+breakpoint 38768
+commands 255
+print 121
+print z80:hl
+continue
+end
+breakpoint 38812
+commands 256
+print 120
+print z80:ix
+continue
+end
+breakpoint 38809
+commands 257
+print 121
+print z80:hl
+continue
+end
+breakpoint 33026
+commands 258
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33124
+commands 259
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33150
+commands 260
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33176
+commands 261
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33202
+commands 262
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33228
+commands 263
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33254
+commands 264
+print 150
+print z80:a
+print ula:mem7ffd
+print ula:mem1ffd
+continue
+end
+breakpoint 33286
+commands 265
+print 102
+print $r
+print spectrum:frames*70908+ula:tstates
+print ula:mem7ffd
+print z80:sp
+continue
+end

@@ -19,7 +19,8 @@ def reference(packed,cycles=2,model=None,idle_pairs=0):
         words,nxt=independent_tables(model)
     else:
         clip=tuple(model.get('q_clip',(0,15)))
-        words,nxt=rational_tables(model['holds'],integral_table(bins,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],q_clip=clip),model['beta'],model['extent'],clip)
+        origin=model.get('pcm_origin',.5)
+        words,nxt=rational_tables(model['holds'],integral_table(bins,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],q_clip=clip,pcm_origin=origin),model['beta'],model['extent'],clip,pcm_origin=origin)
     state=16;output=np.empty(len(pcm)*cycles+1,dtype='>u2')
     for i in range(len(output)):
         if model.get('reset_feedback_in_guard') and i%len(pcm)==len(pcm)-1:
