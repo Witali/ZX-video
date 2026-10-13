@@ -1,0 +1,30 @@
+{
+  "item": "02",
+  "baseline_revision": "542b2059",
+  "complete": true,
+  "decision": "already present / no eligible pair transfer",
+  "primitive_checks": 1536,
+  "transfer_tstates": {
+    "before": 21,
+    "after": 8,
+    "delta": -13
+  },
+  "save_counterexample": {
+    "input": 16384,
+    "count": 8,
+    "correct_hl": 16384,
+    "correct_bc": 7,
+    "invalid_replacement_hl": 16383,
+    "invalid_replacement_bc": 16383
+  },
+  "decoder_changes": 0,
+  "release": false,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "Native instruction/precondition checks; no new decoder or playback performance claim.",
+  "sources": {
+    "libraries/zx0/src/zx0/banked.py": "ad195aead1104b71784cbab1d42337a12decf5ad6b1fa10c12fc54090ef16c2d",
+    "libraries/zx0/src/zx0/incremental.py": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a",
+    "libraries/zx0/src/zx0/resumable.py": "d45721b7bc473d84df1a54d7e4c39aeec9dca7589efddba1c3740234041f2572",
+    "libraries/lzsa/src/lzsa/resumable.py": "6858a2ae34e2972b01b7e7f668d5e4e5bf5dc306ebd404bda1c4210885a6440a"
+  }
+}

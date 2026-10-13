@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Item02: register-transfer audit, retain live saves
+
+- **Objective/baseline:** From `542b2059`, check PUSH/POP pair transfers in
+  reusable ZX0/LZSA2. LD B,H/LD C,L already appears in eligible ZX0 refill/
+  ring paths. Remaining saves protect input/count/offset/coroutine registers.
+- **Measured coverage:**1536 native primitive value/flag checks establish
+  21 ->8 T (-13) for a pure transfer. A native live-count counterexample
+  proves that replacing the match input save with BC destroys the count
+  and continuation. [Audit](libraries/TRICK_AUDIT.md),
+  [report](libraries/evidence/trick_02.json), reproducer `measure_tricks.py --item 02`.
+- **Decision:** Already present where eligible; no new decoder rewrite.
+  Delta0 T/code/RAM/stack/table/stream bytes. Reuse the unchanged31 profiles
+  and78 regression tests from item01; primitive savings are not codec gains.
+
 ## 2026-10-13 — Item01: optional bounded LZSA2 long-copy kernels
 
 - **Objective/baseline:** Apply the unrolled-LDI forum technique to reusable

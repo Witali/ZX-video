@@ -19,7 +19,9 @@ or unrelated audio/movie redesign is authorized by this work.
 
 Item01 is complete: [optional long-copy LZSA2](libraries/LONG_COPY.md),
 77 complete native blocks, both24-case guarded modes,12 library and66
-toolkit tests. Defaults remain byte-exact. Next: item02 register transfers.
+toolkit tests. Defaults remain byte-exact. Item02 is audited: eligible register
+copies already use LD; native evidence rejects replacing live saves. Next:
+item03 accumulator masks versus RES/SET.
 
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 
