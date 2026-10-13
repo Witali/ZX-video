@@ -1,0 +1,223 @@
+"""Suspend ZX0 at a requested output boundary, preserving its private stack.
+
+The compressed stream and the 8 KiB history buffer are unchanged. Only LDIR
+sites in the turbo decoder call a bounded copier. HL' belongs to the IM2 clock.
+inline_literals=True moves the literal copier into the ZX0 path and omits
+the stored-block dispatch. Use only with a producer that supplies ZX0 blocks.
+"""
+from . import codec as zx0_codec
+
+STACK_TOP = 0x7DF0
+STACK_BOTTOM = 0x7D80
+
+
+def emit_wait(a, *, lookahead=False, output_base=0x8000, direct_input=False, audio_irq=False):
+    a.label('prepare_packet' if lookahead else 'wait_packet')
+    a.abs16(0x2A,'block_frame_pointer')
+    a.abs16((0xED,0x5B),'block_end');a.emit(0xB7,0xED,0x52)
+    a.abs16(0xC2,'slice_frame_header')
+    if lookahead:
+        a.abs16(0x3A,'ahead_input_ready');a.emit(0xB7)
+        a.abs16(0xC2,'slice_validate_length')
+        if direct_input:a.abs16(0xCD,'direct_release')
+        a.abs16(0xCD,'ahead_require_input')
+    a.abs16(0xCD,'load_block_header')
+    if lookahead:a.label('slice_validate_length')
+    a.abs16(0x2A,'block_length');a.emit(0x11);a.word(8193)
+    a.emit(0xB7,0xED,0x52);a.abs16(0xD2,'fatal')
+    a.abs16(0x2A,'block_length');a.emit(0x7C,0xB7)
+    a.rel8(0x20,'slice_length_valid')
+    a.emit(0x7D,0xFE,9 if audio_irq else 12);a.abs16(0xDA,'fatal')
+    a.label('slice_length_valid')
+    if lookahead:
+        a.abs16(0x3A,'ahead_input_ready');a.emit(0xB7)
+        a.rel8(0x28,'slice_copy_input')
+        a.emit(0xAF);a.abs16(0x32,'ahead_input_ready')
+        a.abs16(0xC3,'slice_block_loaded')
+        a.label('slice_copy_input')
+    a.abs16(0xCD,'load_block_body')
+    if lookahead:a.label('slice_block_loaded')
+    a.abs16(0x2A,'block_length');a.emit(0x11);a.word(output_base)
+    a.emit(0x19);a.abs16(0x22,'block_end')
+    a.emit(0x21);a.word(output_base);a.abs16(0x22,'block_frame_pointer')
+    a.abs16(0x22,'slice_output');a.emit(0x23,0x23);a.abs16(0x22,'slice_target')
+    a.abs16(0xCD,'slice_begin')
+
+    a.label('slice_frame_header')
+    a.abs16(0x2A,'block_frame_pointer');a.emit(0x23,0x23)
+    a.abs16(0x22,'slice_target');a.abs16(0xCD,'slice_until')
+    a.abs16(0x2A,'block_frame_pointer');a.emit(0x5E,0x23,0x56,0x23,0x19)
+    a.abs16(0x22,'slice_target')
+    a.abs16((0xED,0x5B),'block_end');a.emit(0xB7,0xED,0x52)
+    a.rel8(0x28,'slice_frame_valid');a.abs16(0xD2,'fatal')
+    a.label('slice_frame_valid');a.abs16(0xC3,'ahead_decode' if lookahead else 'slice_until')
+
+
+def emit_decoder(a, *, output_base=0x8000, input_base=0xA000, stack_top=STACK_TOP, direct_input=False, wrapped_input=False, wrap_output=False, source_page_wrap=None, literal_hook=None, token_boundaries=False, inline_matches=False, input_pointer_label=None, inline_literals=False):
+    if inline_literals and (token_boundaries is not True or not inline_matches or literal_hook or source_page_wrap):
+        raise ValueError('inline literals require inline matches, token boundaries and contiguous input')
+    if input_pointer_label is not None and direct_input:
+        raise ValueError('choose one dynamic input pointer contract')
+    if token_boundaries not in (False,True,'decrement'):
+        raise ValueError('unknown token boundary comparison')
+    if token_boundaries and (not wrap_output or direct_input or wrapped_input):
+        raise ValueError('token boundaries require the wrapped banked-output path')
+    if inline_matches and token_boundaries is not True:
+        raise ValueError('inline matches require current token boundaries')
+    if wrapped_input and (source_page_wrap or literal_hook):
+        raise ValueError('wrapped direct input and fixed input window are exclusive')
+    a.label('slice_until')
+    a.abs16(0xCD,'slice_sync_target')
+    a.abs16(0x2A,'slice_output');a.abs16((0xED,0x5B),'slice_target')
+    # Wrapped end 0000 cannot use an unsigned >= comparison. In this mode
+    # the caller must request monotonic targets and the copier stops exactly.
+    if token_boundaries:
+        # A completed 8-KiB block has absolute output address 0000.
+        # Other targets may already have been exceeded by the last token.
+        a.emit(0x7c,0xb5,0xc8,0x7a,0xb3)
+        a.abs16(0xca,'slice_resume')
+        a.emit(0xb7,0xed,0x52,0xd0)
+    else:
+        a.emit(0xB7,0xED,0x52,0xC8 if wrap_output else 0xD0)
+    a.label('slice_resume')
+    if direct_input:a.abs16(0xCD,'direct_page')
+    a.abs16((0xED,0x73),'slice_caller_sp')
+    a.abs16((0xED,0x7B),'slice_decoder_sp')
+    a.emit(0xE1,0xD1,0xC1,0xF1,0xC9)
+
+    a.label('slice_begin')
+    if direct_input:a.abs16(0xCD,'direct_page')
+    a.abs16(0xCD,'slice_sync_target')
+    a.abs16((0xED,0x73),'slice_caller_sp')
+    a.emit(0x31);a.word(stack_top)
+    a.abs16(0x21,'slice_finished');a.emit(0xE5)
+    if direct_input:a.abs16(0x2A,'direct_pointer')
+    elif input_pointer_label is not None:a.abs16(0x2A,input_pointer_label)
+    else:a.emit(0x21);a.word(input_base)
+    a.emit(0x11);a.word(output_base)
+    if inline_literals:
+        # This optional local-bank producer accepts ZX0 blocks only. Moving
+        # the one literal copier into the decoder removes CALL/RET without
+        # duplicating the body. The general stored-block path stays unchanged.
+        a.abs16(0xc3,'dzx0_turbo')
+    else:
+        a.abs16(0x3A,'block_stored');a.emit(0xB7)
+        if wrapped_input:
+            a.rel8(0x20,'slice_stored')
+            a.abs16(0x3A,'direct_cross');a.emit(0xB7);a.abs16(0xC2,'wrap_dzx0_turbo')
+            a.abs16(0xC3,'dzx0_turbo')
+            a.label('slice_stored')
+        else:a.abs16(0xCA,'dzx0_turbo')
+        a.abs16((0xED,0x4B),'block_length');a.abs16(0xCD,'wrapped_literal' if wrapped_input else literal_hook or 'slice_copy')
+        a.emit(0xC9)
+
+    a.label('slice_finished')
+    a.abs16(0x2A,'block_end');a.emit(0xB7,0xED,0x52)
+    a.abs16(0xC2,'fatal')
+    a.abs16((0xED,0x53),'slice_output')
+    a.abs16((0xED,0x7B),'slice_caller_sp')
+    if direct_input:a.abs16(0xC3,'page_bank7')
+    else:a.emit(0xC9)
+
+    a.label('slice_yield')
+    a.abs16((0xED,0x53),'slice_output')
+    a.emit(0xF5,0xC5,0xD5,0xE5)
+    a.abs16((0xED,0x73),'slice_decoder_sp')
+    a.abs16((0xED,0x7B),'slice_caller_sp')
+    if direct_input:a.abs16(0xC3,'page_bank7')
+    else:a.emit(0xC9)
+
+    def literal_copy(a):
+        a.label('slice_copy')
+        # Pause before a new copy, once the preceding token met the target.
+        # A wrapped target uses FFFF and permits equality, so the final
+        # byte and EOF still run. Normal targets pause on equality.
+        a.emit(0x08,0x7a)
+        a.label('slice_compare_high');a.emit(0xfe,0)
+        a.rel8(0x38,'slice_copy_fast');a.rel8(0x20,'slice_copy_slow')
+        a.emit(0x7b)
+        a.label('slice_compare_low');a.emit(0xfe,0)
+        a.rel8(0x38,'slice_copy_fast')
+        a.label('slice_equal_branch');a.rel8(0x28 if token_boundaries=='decrement' else 0x38,'slice_copy_fast')
+        a.label('slice_copy_slow');a.emit(0x08)
+        a.abs16(0xcd,'slice_yield');a.abs16(0xc3,'slice_copy')
+        a.label('slice_copy_fast');a.emit(0x08,0xed,0xb0)
+        if not inline_literals:a.emit(0xc9)
+    if token_boundaries and not inline_literals:
+        literal_copy(a)
+    elif not token_boundaries:
+        a.label('slice_copy')
+        emit_exact_copy(a,wrap_output=wrap_output)
+    a.label('slice_sync_target')
+    a.abs16(0x2A,'slice_target')
+    if token_boundaries=='decrement':
+        a.emit(0x2b)  # Reproduce the first measured target-1 experiment.
+    elif token_boundaries:
+        # Preserve the target's high byte on aligned non-final requests:
+        # E100 remains E100, keeping all E0xx positions on the short path.
+        a.emit(0x7c,0xb5,0x3e,0x38)  # LD A,H / OR L / LD A,JR C.
+        a.rel8(0x20,'slice_sync_compare')
+        a.emit(0x3e,0x28,0x2b)  # Wrapped target: JR Z / DEC HL -> FFFF.
+        a.label('slice_sync_compare');a.abs16(0x32,'slice_equal_branch')
+        if inline_matches: a.abs16(0x32,'match_equal_branch')
+    a.emit(0x7C);a.abs16(0x32,'slice_high_operand')
+    if inline_matches: a.abs16(0x32,'match_high_operand')
+    a.emit(0x7D);a.abs16(0x32,'slice_low_operand')
+    if inline_matches: a.abs16(0x32,'match_low_operand')
+    a.emit(0xC9)
+    def inline_copy(assembler):
+        # Same pause contract as slice_copy; fall through to POP HL instead
+        # of returning through a CALL/RET for each match. Both sets of target
+        # operands are synchronized before starting/resuming the decoder.
+        assembler.label('match_copy');assembler.emit(0x08,0x7a)
+        assembler.label('match_compare_high');assembler.emit(0xfe,0)
+        assembler.rel8(0x38,'match_copy_fast');assembler.rel8(0x20,'match_copy_slow')
+        assembler.emit(0x7b)
+        assembler.label('match_compare_low');assembler.emit(0xfe,0)
+        assembler.rel8(0x38,'match_copy_fast')
+        assembler.label('match_equal_branch');assembler.rel8(0x38,'match_copy_fast')
+        assembler.label('match_copy_slow');assembler.emit(0x08)
+        assembler.abs16(0xcd,'slice_yield');assembler.abs16(0xc3,'match_copy')
+        assembler.label('match_copy_fast');assembler.emit(0x08,0xed,0xb0)
+        assembler.labels['match_high_operand']=assembler.labels['match_compare_high']+1
+        assembler.labels['match_low_operand']=assembler.labels['match_compare_low']+1
+    zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook=literal_hook,source_page_wrap=source_page_wrap,
+        inline_match=inline_copy if inline_matches else None,
+        inline_literal=literal_copy if inline_literals else None)
+    a.labels['slice_high_operand']=a.labels['slice_compare_high']+1
+    a.labels['slice_low_operand']=a.labels['slice_compare_low']+1
+    if wrapped_input:
+        zx0_codec.emit_decoder(a,'turbo',copy_hook='slice_copy',literal_hook='wrapped_literal',
+                              source_wrap='direct_wrap',label_prefix='wrap_')
+
+
+def emit_exact_copy(a,*,wrap_output):
+    # The usual run fits entirely. Compare DE+BC with patched target bytes,
+    # preserving the ZX0 bit accumulator in AF' without borrowing HL.
+    a.emit(0x08,0x7B,0x81,0x7A,0x88)
+    if wrap_output:
+        # An end sum of 0000 is beyond a target such as FF80, not below it.
+        a.rel8(0x38,'slice_copy_slow')
+    a.label('slice_compare_high');a.emit(0xFE,0)
+    a.rel8(0x38,'slice_copy_fast');a.rel8(0x20,'slice_copy_slow')
+    a.emit(0x7B,0x81)
+    a.label('slice_compare_low');a.emit(0xFE,0)
+    a.rel8(0x38,'slice_copy_fast');a.rel8(0x28,'slice_copy_fast')
+    a.label('slice_copy_slow');a.emit(0x08)
+    a.emit(0xF5,0xE5,0xC5)
+    a.abs16(0x2A,'slice_target');a.emit(0xB7,0xED,0x52)
+    a.rel8(0x28,'slice_no_space')
+    a.emit(0xD5,0x50,0x59,0xB7,0xED,0x52,0xD1)
+    a.rel8(0x30,'slice_copy_full')
+    # HL = available - run length. Split the run at the frame boundary.
+    a.emit(0x09,0x44,0x4D,0xE1,0xB7,0xED,0x42,0xE3,0xED,0xB0,0xC1,0xF1)
+    a.rel8(0x18,'slice_pause')
+    a.label('slice_no_space');a.emit(0xC1,0xE1,0xF1)
+    a.label('slice_pause');a.abs16(0xCD,'slice_yield');a.abs16(0xC3,'slice_copy')
+    a.label('slice_copy_full');a.emit(0xC1,0xE1,0xED,0xB0,0xF1,0xC9)
+    a.label('slice_copy_fast');a.emit(0x08,0xED,0xB0,0xC9)
+
+
+def emit_variables(a):
+    for name in ('slice_output','slice_target','slice_caller_sp','slice_decoder_sp'):
+        a.label(name);a.word(0)

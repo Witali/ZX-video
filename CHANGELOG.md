@@ -1,5 +1,54 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Extract reusable ZX0 and raw LZSA2 libraries
+
+- **Request/baseline:** From `0085a116`, package ZX0 and LZSA separately for
+  other projects and retain existing improvements. Extract maintained cores
+  into `libraries/zx0` and `libraries/lzsa`, with independent pyprojects,
+  licensed original resources, upstream-executable adapters, host parsers,
+  serializers/overlap checks, Z80 generators and usable assembly examples.
+  Toolkit imports delegate to the libraries. Retain application-specific
+  video transforms, dictionary/block planning, disk queues/cache and AY.
+- **Transferred work:** Fast/tuned Turbo, bounded/inline/token-boundary ZX0,
+  bank-local/ring input, page guards, checked split layouts, short-match
+  rewriting and measured bytes/CPU Pareto selection. Standard raw LZSA2
+  S/P dispatch, preserved AF', byte-exact EOF, output/input suspension,
+  direct46-T header and final-input branch bypass, exact short-input oracle,
+  fixed-command distance DP and native short-match budget fitter. No rejected
+  compression experiment becomes a default; LZSA1/framed/backward formats
+  are outside this package. Original notices and pinned revisions remain.
+- **Compatibility/timing:** All31 pre-extraction profiles retain exact code,
+  origins and label maps. Both streaming input producer variants also retain
+  code/labels/instruction rows. Existing deterministic paths add0 T; retained
+  absolute counts and consistent endpoints are in [TIMING.md](libraries/TIMING.md).
+  Existing split relocation executes347057 ->347057 T for15872 bytes and
+  46904 ->46904 T for2100 bytes. Configurable prefix/core/stack/output
+  reservations support standalone layouts without changing default opcodes.
+- **Checks/repair:**50 existing compatibility tests,16 additional native/
+  ring/window tests and11 portable library tests pass (77 total). New tests
+  cover126 binary oracle inputs, lengths through15872, canonical offset
+  classes, exact/truncated/trailing EOF, shared-memory replay, native
+  relocation, optimization budgets and all four guard-update costs. Initial
+  relocated native replay exposes a caller stack inside moved output; make
+  that stack configurable and reject output/stack overlap, then rerun. The
+  complete24-case direct streaming test passes every slice, sector and six
+  full-flags replay placements per case. Component complete-input total
+  4101406 T versus guarded4144763 T is a different supply comparison, not
+  an extraction delta or physical disk result.
+- **Packaging/decision:** Build/install each wheel separately and test with
+  isolated Python outside the source imports; both resource lookups, custom
+  layouts, CLI exports and real upstream compression adapters round-trip.
+  Both example preparation scripts run against their installed package.
+  Assembly ORG/DB output independently reconstructs the exact code regions.
+  Source directories and sdist manifests retain examples/licenses. Preserve
+  original Git-blob bytes and stable resource hashes across platforms; generated
+  wheels, binaries and temporary dependencies stay untracked. Keep the shared
+  implementations: this requested library deliverable is complete. No new
+  TRD, Fuse release qualification, hardware run or push is claimed.
+  [API/usage](libraries/README.md), [baseline](libraries/tests/decoder_baseline.json),
+  [verification and reproducing commands](libraries/verification.json),
+  [complete streaming evidence](libraries/evidence/streaming_lzsa2.json).
+
 ## 2026-10-13 — Main sea-foam song with the preferred original direct IMA4
 
 - **Request/baseline/input:** From `7886808a`, extract the main song from the

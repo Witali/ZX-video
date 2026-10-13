@@ -1,0 +1,133 @@
+{
+  "date": "2026-10-13",
+  "source_commit": "0085a116",
+  "complete": true,
+  "release": false,
+  "scope": "Reusable library extraction; default instructions unchanged. Flat/native checks exclude TR-DOS, physical disk, ULA and publication timing.",
+  "default_decoder_configurations": 31,
+  "default_code_addresses_labels_identical": true,
+  "instruction_tstate_delta": 0,
+  "shared_input_producer_variants": 2,
+  "producer_code_labels_timings_identical": true,
+  "upstream_resources": [
+    {
+      "package": "zx0",
+      "file": "dzx0_fast.asm",
+      "sha256": "bb4c0d8f359091522958d7ffc12b841629412a91a81ebd7eb03f824877bf5fd4"
+    },
+    {
+      "package": "zx0",
+      "file": "dzx0_standard.asm",
+      "sha256": "95b5dde1cfb334cb09d8be566728662bd94eb867f8c2f5437c31d78f2f4647b0"
+    },
+    {
+      "package": "zx0",
+      "file": "dzx0_turbo.asm",
+      "sha256": "9de7ca474bf03bdb4fe773f0eb1327744fae5558c285d5e670388b8ba20bc39d"
+    },
+    {
+      "package": "lzsa",
+      "file": "unlzsa2_fast.asm",
+      "sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071"
+    }
+  ],
+  "unit_tests": {
+    "total": 77,
+    "compatibility": 50,
+    "additional_native": 16,
+    "portable_libraries": 11,
+    "native_tests_skipped": 0
+  },
+  "streaming": {
+    "complete": true,
+    "cases": 24,
+    "full_flags_placements_per_case": 6,
+    "baseline_complete_input_T": 4101406,
+    "guarded_input_T": 4144763,
+    "sectors_exact_once": true,
+    "evidence": "evidence/streaming_lzsa2.json"
+  },
+  "isolated_wheels": [
+    {
+      "package": "zx0",
+      "independent_wheel": true,
+      "custom_layout": true,
+      "cli_export": true,
+      "resources": true,
+      "exact_round_trip": true,
+      "external_encoder": true
+    },
+    {
+      "package": "lzsa",
+      "independent_wheel": true,
+      "custom_layout": true,
+      "cli_export": true,
+      "resources": true,
+      "exact_round_trip": true,
+      "external_encoder": true
+    }
+  ],
+  "examples": {
+    "zx0_prepared_against_installed_package": true,
+    "lzsa_prepared_against_installed_package": true,
+    "assembly_org_db_reconstruction_exact": true,
+    "external_assembler_run": false
+  },
+  "commands": [
+    {
+      "cwd": ".",
+      "command": "python -m unittest discover -s libraries/tests -v"
+    },
+    {
+      "cwd": "toolkit",
+      "command": "python -m unittest test_zx0_speed test_inplace_zx0 test_token_boundary_zx0 test_inline_zx0 test_bank_local_zx0 test_bank2_zx0 test_streaming_inline_zx0 test_streaming_zx0_input test_streaming_split_zx0 test_direct_lzsa2_header test_dynamic_zx0_placement test_guarded_cb46"
+    },
+    {
+      "cwd": "toolkit",
+      "command": "python -m unittest test_faster_zx0 test_incremental_zx0 test_banked_zx0 test_windowed_zx0_planner test_inplace_zx0_native"
+    },
+    {
+      "cwd": ".",
+      "command": "python toolkit/test_streaming_lzsa2.py --direct-header --output build/library-streaming-lzsa2.json"
+    },
+    {
+      "cwd": ".",
+      "command": "python libraries/tests/compare_producer.py"
+    },
+    {
+      "cwd": ".",
+      "command": "python -m pip wheel --no-deps --no-build-isolation --wheel-dir build/library-wheels libraries/zx0 libraries/lzsa"
+    },
+    {
+      "cwd": ".",
+      "command": "python -m pip install --no-index --no-deps --target build/installed-zx0 build/library-wheels/zxvideo_zx0-0.1.0-py3-none-any.whl"
+    },
+    {
+      "cwd": ".",
+      "command": "python -m pip install --no-index --no-deps --target build/installed-lzsa build/library-wheels/zxvideo_lzsa-0.1.0-py3-none-any.whl"
+    },
+    {
+      "cwd": ".",
+      "command": "python -I libraries/tests/smoke_install.py build/installed-zx0 zx0 build/smoke-zx0 /path/to/zx0"
+    },
+    {
+      "cwd": ".",
+      "command": "python -I libraries/tests/smoke_install.py build/installed-lzsa lzsa build/smoke-lzsa /path/to/lzsa"
+    }
+  ],
+  "source_distributions": [
+    {
+      "package": "zx0",
+      "source_distribution_complete": true,
+      "examples": true,
+      "licenses": true
+    },
+    {
+      "package": "lzsa",
+      "source_distribution_complete": true,
+      "examples": true,
+      "licenses": true
+    }
+  ],
+  "upstream_resource_comparison": "Exact original Git blobs; explicit checkout attributes preserve each resource byte for byte."
+}

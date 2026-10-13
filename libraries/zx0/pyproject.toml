@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zxvideo-zx0"
+version = "0.1.0"
+description = "Reusable ZX0 v2 host tools and resumable Z80 decoder generators"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+
+[project.scripts]
+zx0-library = "zx0.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+zx0 = ["asm/*.asm", "LICENSE"]

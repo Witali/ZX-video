@@ -13,6 +13,10 @@ FFmpeg detects the input format: MP4, MKV, AVI, MOV and other supported
 formats. The converter processes the complete input; it does not depend on
 a particular movie or remove credits automatically.
 
+The reusable [ZX0 and LZSA libraries](libraries/README.md) contain the current
+host optimizers and Z80 decoder generators, with independent installation,
+assembly exports and examples for other projects.
+
 ## Usage
 
 For audio-only playback, the [audio converter](audiobook-beeper/CONVERTER.md)

@@ -1,7 +1,23 @@
 # Focused optimization task
 
-Updated 2026-10-05. Use this brief to continue the project in this or a new
+Updated 2026-10-13. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
+
+## Reusable ZX0/LZSA libraries — complete (2026-10-13)
+
+The user requests separate reusable ZX0 and LZSA libraries with the project's
+existing improvements. [libraries](libraries/README.md) now contains two
+independently installable packages, host tools, adapted Z80 generators,
+licenses, configurable coroutine layouts, assembly exports and examples.
+Toolkit compatibility imports share their implementations. Keep media-specific
+transforms, scheduling, dictionary planning and disk queues in the application.
+
+All31 default decoder profiles and both streaming producer variants retain
+exact bytes/addresses/labels; deterministic delta0 T. Seventy-seven tests,
+24 full streaming edge cases and isolated wheel/encoder/example checks pass.
+[Saved report](libraries/verification.json) separates native CPU from delivery
+timing. This request is complete; it does not authorize a new movie rebuild,
+another codec experiment, merge or push.
 
 ## Project objective
 
