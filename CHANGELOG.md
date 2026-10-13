@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Item04: retain page-aware increments
+
+- **Objective/baseline:** From `1f362d16`, seek proven page-confined INC HL
+  sites. ZX0 already uses INC L/CALL Z with explicit page/frontier handling;
+  variable ZX0/LZSA2 input and frame-header positions have no alignment proof.
+- **Measurements/coverage:**2304 native pointer/flag checks show6 ->4 T
+  (-2) only with no crossing and compatible live flags. Minimal guarded
+  increment costs14/56 T before supply work. Confirm40FF/FFFF crossing and
+  carry preservation; [audit](libraries/TRICK_AUDIT.md),
+  [report](libraries/evidence/trick_04.json), `measure_tricks.py --item 04`.
+- **Decision:** Existing guarded use retained; unguarded replacements
+  rejected. Delta0 T/code/RAM/stack/stream; prior complete decoder regression
+  evidence remains valid. No new input-buffer or playback claim.
+
 ## 2026-10-13 — Item03: preserve live accumulator/flag masks
 
 - **Objective/baseline:** From `ec68b9d6`, inspect RES/SET replacements for

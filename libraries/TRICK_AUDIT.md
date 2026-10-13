@@ -54,3 +54,29 @@ LD pair-byte,A sequence. Upstream resources remain immutable.
 **Decision: inapplicable to the current mask sites.** Retain the live flag/
 value operations; delta0 T/code/state/stack/stream. Reproduce with
 `measure_tricks.py --item 03 --output libraries/evidence/trick_03.json`.
+
+## 04 — INC L instead of INC HL (2026-10-13)
+
+INC HL=6 T, INC L=4 (-2), both one byte. INC L preserves carry but changes
+S/Z/H/P/N; INC HL preserves all flags. At low byte FF, INC L leaves H
+unchanged. [Native evidence](evidence/trick_04.json) checks2304 pointer/flag
+inputs, including40FF andFFFF, and confirms crossing/flag differences.
+
+ZX0 `codec.py` already emits INC L / CALL Z,input_next_page for page-aware
+input. `streaming.py` and `streaming_inline.py` preserve AF around INC H in
+that handler, then enforce the loaded frontier. The minimal increment-only
+convention is14 T without crossing and56 T with crossing, before actual
+supply/guard work. Its purpose is correct page supply, not a universal2-T
+saving over an unguarded contiguous pointer.
+
+LZSA2 token/length/nibble positions and contiguous ZX0 bit-byte positions
+can occur at any low address. Even a two-byte length word is not guaranteed
+even-aligned after variable tokens/nibbles/literals. Frame packet positions
+in `incremental.emit_wait` also move by variable byte lengths. No newly
+eligible page-confined increment is proved by the current ABI. The six
+native input placements from item01 deliberately exercise these boundaries.
+
+**Decision: already present where page handling is explicit; reject an
+unguarded replacement elsewhere.** No decoder change, delta0 T/code/RAM/
+stack/stream. Reproduce `measure_tricks.py --item 04 --output
+libraries/evidence/trick_04.json`.

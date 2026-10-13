@@ -22,7 +22,8 @@ Item01 is complete: [optional long-copy LZSA2](libraries/LONG_COPY.md),
 toolkit tests. Defaults remain byte-exact. Item02 is audited: eligible register
 copies already use LD; native evidence rejects replacing live saves. Next:
 item03 is audited: live parity/Z/carry and multi-bit masks prevent the rewrite.
-Next: item04 page-safe pointer increments.
+Item04 retains existing ZX0 page-aware increments and rejects unguarded
+crossings in variable-position headers. Next: item05 jump tables.
 
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 

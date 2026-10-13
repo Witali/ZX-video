@@ -62,11 +62,36 @@ def bit_masks():
         live_af_counterexample=dict(before_af=old.af,after_af=new.af,equal_hl=old.hl),decoder_changes=0)
 
 
+def pointer_increments():
+    checks=crossings=flag_changes=0
+    for high in (0x20,0x40,0xff):
+        for low in range(256):
+            for flags in (0,1,0xff):
+                registers=dict(hl=high*256+low,af=0x7300|flags)
+                old,ot=run('23',registers);new,nt=run('2c',registers)
+                assert (ot,nt)==(6,4) and old.f==flags and new.f&1==flags&1
+                crossings+=old.hl!=new.hl;flag_changes+=old.f!=new.f;checks+=1
+                if low!=255:assert old.hl==new.hl
+    guarded=[]
+    for value in (0x40fe,0x40ff,0xffff):
+        # Same INC L / CALL Z convention as ZX0's page-aware generator. This
+        # minimal handler advances H and preserves the live carry/INC flags;
+        # a real input-frontier check/refill has additional costs.
+        m,t=run('2c cc 00 03',dict(hl=value,af=0x7301),memory=((0x300,bytes.fromhex('f5 24 f1 c9')),))
+        assert m.hl==(value+1)&65535 and m.f&1
+        assert t==(56 if value&255==255 else 14)
+        guarded.append(dict(input=value,output=m.hl,tstates=t))
+    return dict(item='04',baseline_revision='1f362d16',complete=True,
+        decision='already present with page handling; reject unguarded decoder increments',
+        primitive_checks=checks,pointer_mismatches=crossings,flag_changes=flag_changes,
+        tstates=dict(inc_hl=6,inc_l=4,delta=-2),minimal_guarded=guarded,decoder_changes=0)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',required=True,choices=('02','03'))
+    parser.add_argument('--item',required=True,choices=('02','03','04'))
     parser.add_argument('--output',type=Path,required=True)
-    args=parser.parse_args();report={'02':transfers,'03':bit_masks}[args.item]()
+    args=parser.parse_args();report={'02':transfers,'03':bit_masks,'04':pointer_increments}[args.item]()
     report.update(release=False,timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         scope='Native instruction/precondition checks; no new decoder or playback performance claim.',
         sources={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (
