@@ -1,5 +1,36 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Complete five-minute compressed AY audition qualification
+
+- **Scope/baseline:** Publish the selected 0..300-second sound-only result from
+  `4d411e87`; preserve every movie release. Input SHA256 and processed PCM
+  SHA256 are authenticated in the saved report. No additional search is opened.
+- **Full playback:** Three independent 100-second disks cold-boot and finish in
+  Fuse1.9.0. All15000 50-Hz fields and195145 register writes match:65008,
+  65028 and65109 per disk. No missing/duplicate fields, runtime disk reads or
+  EOF failures. Each disk loads274 startup sectors before playback, roughly
+  18.8 seconds. First OUT phase150..153 T, intervals70905..70911 T on the
+  70908-T field grid; no accumulated drift. Normal-speed recordings cover all
+  three streams. Continuous300-second model WAV retains the complete timeline.
+- **Level/result:** Final PCM16 audit has zero strong level-hole fields and zero
+  muted audible fields under its documented -45-dBFS/15-dB thresholds; peak
+  0.927948 and zero clipping. The reported p90-p10 level spread decreases
+  24.95316 ->20.94300 dB. Existing hardware controls are seeds for freshly
+  computed compressed-reference feedback; this is not a global-optimum claim.
+- **Integration/evidence:** Final-producer public five-frame10-fps movie rebuild
+  is byte-identical to the fully measured AYH2 disk. Authenticate reuse of its
+  complete cold Fuse, every AY action, all screens and zero nominal misses;
+  retain the current native rebuild and corrected audio timing metadata.
+  Archive250 measured files/117836275 bytes with byte hashes and70 producer
+  hashes, alongside the implementation tests and superseded/failed attempts.
+  WAV/FMF/TRD media use LFS; every committed blob and local LFS object is
+  verified separately. The evidence manifest authenticates saved bytes.
+- **Decision/reproduction:** Complete the requested deliverable. Use
+  `ay-converter/analysis/bbb_5min/{finish,check_levels,check_movie_reuse,verify_archive}.py`
+  and its README/report. The common CLI defaults to compact dynamics and
+  AY-3-8910; original dynamics and YM2149 remain selectable. No physical
+  hardware listening or gapless disk swap, full-film rebuild, merge or push.
+
 ## 2026-10-13 — Chip-specific envelopes, sparse noise and controlled PCM dynamics
 
 - **Objective/baseline:** Extend the shared sound engine from `5e54b31a` for

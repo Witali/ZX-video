@@ -71,6 +71,9 @@ level offsets -1/0/+1. Seed and pure tones make 20 candidates instead of 374.
 A Viterbi path limits chatter, followed by complete unpooled verification.
 This is a bounded proposal search, not a global optimum.
 
+These historical shortlist cases used the preceding YM renderer before the
+physical AY audit; final AY feedback is measured separately.
+
 [Five complete validation excerpts](shortlist-validation/report.json):
 
 | Excerpt | Seed log MAE, dB | Analytic 20 | Full 374 |
@@ -136,8 +139,11 @@ and passes cold boot, every screen, every AY field and nominal deadlines in
 Fuse. Rebuilding with final producers yields an identical disk, permitting
 reuse of those actual binary proofs. The complete movie release is unchanged.
 
-The selected audio set must pass all three complete cold Fuse runs before the
-final archive is qualified. [Report](evidence/report.json) records exact native
+The selected audio set passes all three complete cold Fuse runs: 15000 fields,
+195145 exact bus writes, no missing/duplicate fields and no runtime disk reads.
+Each disk loads 274 startup sectors; first OUT phase is 150..153 T, and
+consecutive OUT intervals are 70905..70911 T on the original 70908-T grid.
+The completed archive is qualified for this sound audition. [Report](evidence/report.json) records exact native
 and Fuse counts, every field, startup/runtime reads and normal-speed captures.
 No physical Spectrum or seamless drive-swap listening claim is made.
 
@@ -172,3 +178,6 @@ long audition splits only after continuous fitting. Movie AYH2 adds +60 T per
 skipped field; resident ordinary fields cost 1166/1206 T versus previous974 T
 (+192/+232), excluding ULA/HALT/IRQ and disk latency. Full counts are in
 [CHIP_MODEL.md](../../CHIP_MODEL.md).
+
+Verify every worktree byte and committed Git/LFS object with
+`python ay-converter/analysis/bbb_5min/verify_archive.py --revision HEAD`.

@@ -1,0 +1,167 @@
+{
+  "complete": true,
+  "source": "C:\\Work\\HLV-codec\\out\\sources\\big_buck_bunny_1080p_h264\\big_buck_bunny_1080p_h264.mov",
+  "source_sha256": "dc2146a2b1172def56730143ad80cd1825b7fad15f1fc9c23a4e7d01a741ac11",
+  "ffmpeg_command": [
+    "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+    "-v",
+    "error",
+    "-nostdin",
+    "-i",
+    "C:\\Work\\HLV-codec\\out\\sources\\big_buck_bunny_1080p_h264\\big_buck_bunny_1080p_h264.mov",
+    "-t",
+    "301",
+    "-map",
+    "0:a:0",
+    "-vn",
+    "-ac",
+    "1",
+    "-ar",
+    "22050",
+    "-f",
+    "f32le",
+    "-"
+  ],
+  "interval_seconds": [
+    0,
+    300
+  ],
+  "ticks": 15000,
+  "update_rate_hz": 50,
+  "sound_quantum_ms": 20,
+  "profile": "auto",
+  "analysis_context_after_seconds": 1.0,
+  "continuous_analysis": true,
+  "continuous_model_preview": true,
+  "no_source_pcm_in_synthesis": true,
+  "global_preview_rms": 0.045197318011369246,
+  "resumed_complete_noise_stage": true,
+  "resumed_noise_proof": {
+    "source_and_pcm_exact": true,
+    "every_saved_change_reapplied_exact": true,
+    "baseline_gain_exact": true,
+    "initial_registers_sha256": "bc48ca042c26cefe9da2f9f30850fc3580e841bd6a127d67c0f5237f971559d1",
+    "fitted_registers_sha256": "e85ed9b530b254c633079832c4239966568d3d9738fd1dffafeb6ef40a15c7eb"
+  },
+  "mixer_search": "analytic-20",
+  "registers_sha256": "15177cc0efe68c98147af6d14f4e314fc5b5be2a0d3518b099de97d14487ee80",
+  "packed_sha256": "6439acd72814f3b9fa6d12414c252efc65f74119f8026c7a1c638e0ced3b2fbf",
+  "parts": [
+    {
+      "number": 1,
+      "start_tick": 0,
+      "end_tick": 7500,
+      "duration_seconds": 150,
+      "disk": "part01/audio-preview.trd",
+      "trd_sha256": "420cb9876ba0dcb713ea7b6d7efc2149a26b014ca7fbf17d734d25d53ddaf02b",
+      "native": {
+        "complete": true,
+        "ticks": 7500,
+        "register_writes": 82500,
+        "registers_exact": true,
+        "bank_sequence": [
+          0,
+          4,
+          6,
+          1,
+          3,
+          7
+        ],
+        "eof_mutes": true,
+        "deterministic_field_work_tstates": {
+          "974": 7385,
+          "992": 110,
+          "1091": 5
+        },
+        "scope": "independent Z80 core; no ULA, IRQ, HALT or disk latency"
+      }
+    },
+    {
+      "number": 2,
+      "start_tick": 7500,
+      "end_tick": 15000,
+      "duration_seconds": 150,
+      "disk": "part02/audio-preview.trd",
+      "trd_sha256": "d5c2220effc9c88e0a5cfacfb27093823fd6be71f17bed98db5a555c2fd5104b",
+      "native": {
+        "complete": true,
+        "ticks": 7500,
+        "register_writes": 82500,
+        "registers_exact": true,
+        "bank_sequence": [
+          0,
+          4,
+          6,
+          1,
+          3,
+          7
+        ],
+        "eof_mutes": true,
+        "deterministic_field_work_tstates": {
+          "974": 7385,
+          "992": 110,
+          "1091": 5
+        },
+        "scope": "independent Z80 core; no ULA, IRQ, HALT or disk latency"
+      }
+    }
+  ],
+  "scheduling_check": {
+    "complete": true,
+    "waveforms": 465,
+    "byte_exact": true,
+    "combined_sha256": "ceba00b57d3b5ce2c20d3f4d6321a8285408163ad06c9ec06d6676f483d8fa9a",
+    "workers": 6
+  },
+  "objective_check": {
+    "complete": true,
+    "workers": 6,
+    "proofs": {
+      "noise": {
+        "all_costs_byte_exact": true,
+        "result_and_metadata_exact": true,
+        "cost_sha256": "772940e1ddf570925eac1eb3cb0563fedf4ab9b65b33ea4bfaa476753a15ec76",
+        "registers_sha256": "7140df72b45b432a367cc9abd0c5b2667a8a72bd77b4b9adcec0eb9739cc3944"
+      },
+      "mixer": {
+        "all_costs_byte_exact": true,
+        "result_and_metadata_exact": true,
+        "cost_sha256": "1e4ba99c98a1228b1c174474e3223ce9e1da66c6b79c39796ebba54b9b688385",
+        "registers_sha256": "b02ac45c25a4985463812f56b02a413a1e43c99dd4948790e93c498631d2a38a"
+      }
+    }
+  },
+  "spectrogram_metrics": {
+    "512": {
+      "window_ms": 23.219954648526077,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.7597742552454537,
+      "sqrt_magnitude_cosine": 0.8202585706417599,
+      "log_magnitude_mae_db": 5.86226396110371,
+      "spectral_convergence": 0.5865464616817468,
+      "active_frames": 14998
+    },
+    "2048": {
+      "window_ms": 92.87981859410431,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.7513306060127855,
+      "sqrt_magnitude_cosine": 0.8069571428017442,
+      "log_magnitude_mae_db": 5.855512982135839,
+      "spectral_convergence": 0.6052561715526297,
+      "active_frames": 14998
+    },
+    "8192": {
+      "window_ms": 371.51927437641723,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.7467045304443309,
+      "sqrt_magnitude_cosine": 0.8183400225121608,
+      "log_magnitude_mae_db": 5.613470006698877,
+      "spectral_convergence": 0.6258895456948061,
+      "active_frames": 14998
+    }
+  },
+  "elapsed_seconds": 277.9516772999996,
+  "physical_hardware_tested": false,
+  "all_disks_fuse_verified": false,
+  "limits": "Two independently bootable one-shot resident disks; a manual swap causes a pause. Full WAV has continuous chip phase. No video rebuild."
+}

@@ -1,0 +1,499 @@
+{
+  "model": "continuous_chip_feedback_v1",
+  "update_rate_hz": 50,
+  "quantum_ms": 20,
+  "objective": "mean absolute masked log-spectral MAE for 512/2048/8192 + 0.35 * 20-ms RMS log-MAE; fixed calibration",
+  "psychoacoustic": {
+    "model": "relative_bark_masking_v1",
+    "bands": 24,
+    "spreading_db_per_bark_up": 15,
+    "spreading_db_per_bark_down": 27,
+    "noise_masker_offset_db": 6,
+    "tonal_masker_offset_db": 16,
+    "forward_decay_db_per_20ms": 8,
+    "minimum_error_weight": 0.1,
+    "absolute_hearing_threshold": false,
+    "calibrated_playback_spl": false,
+    "source": "https://publica-rest.fraunhofer.de/server/api/core/bitstreams/02820baa-82ed-4a16-80c3-c4c974362413/content",
+    "limitations": "Tunable approximation of critical bands, simultaneous and short forward masking; no standard compliance or listening-quality guarantee."
+  },
+  "fixed_model_gain": 1.0242888314453904,
+  "calibration_changes_between_candidates": false,
+  "baseline": {
+    "objective_db": 10.0183882634989,
+    "masked_spectral_mae_db": {
+      "512": 7.70789843536755,
+      "2048": 7.185786327732313,
+      "8192": 6.486939221050885
+    },
+    "absolute_spectral_mae_db": {
+      "512": 7.638405038606107,
+      "2048": 7.0835759256338955,
+      "8192": 6.395097353512648
+    },
+    "level_mae_db": 8.261467434615195,
+    "level_bias_db": -8.11475793654092,
+    "reference_rms": 0.07148979893886667,
+    "model_rms": 0.05385707505315235
+  },
+  "final": {
+    "objective_db": 7.686692299584761,
+    "masked_spectral_mae_db": {
+      "512": 8.128125026617079,
+      "2048": 7.312264109278824,
+      "8192": 6.186886432096424
+    },
+    "absolute_spectral_mae_db": {
+      "512": 8.07874794183714,
+      "2048": 7.242756975528218,
+      "8192": 6.145631420832635
+    },
+    "level_mae_db": 1.364572695963767,
+    "level_bias_db": -0.6830820071209771,
+    "reference_rms": 0.07148979893886667,
+    "model_rms": 0.07156893406682092
+  },
+  "candidates_rendered": 19,
+  "maximum_rounds": 3,
+  "proposal_tuning_radius_cents": 25,
+  "history": [
+    {
+      "round": 1,
+      "proposal": "level-half",
+      "peak": 0.9422263235848976,
+      "admissible": true,
+      "improved_current_best": true,
+      "metrics": {
+        "objective_db": 8.33159278268564,
+        "masked_spectral_mae_db": {
+          "512": 7.520762436554151,
+          "2048": 6.890463204041376,
+          "8192": 5.968094397296666
+        },
+        "absolute_spectral_mae_db": {
+          "512": 7.46856117239939,
+          "2048": 6.811492378341652,
+          "8192": 5.90911260060808
+        },
+        "level_mae_db": 4.395674581109264,
+        "level_bias_db": -4.215098683577388,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.05969155357698401
+      }
+    },
+    {
+      "round": 1,
+      "proposal": "level-full",
+      "peak": 0.932400738001072,
+      "admissible": true,
+      "improved_current_best": true,
+      "metrics": {
+        "objective_db": 7.8362990510283765,
+        "masked_spectral_mae_db": {
+          "512": 8.278779798101748,
+          "2048": 7.5074456327360535,
+          "8192": 6.319484938969685
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.228177188385615,
+          "2048": 7.435280032317475,
+          "8192": 6.278120922113897
+        },
+        "level_mae_db": 1.336368365026324,
+        "level_bias_db": -0.6395773236800769,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.07167736448321076
+      }
+    },
+    {
+      "round": 1,
+      "proposal": "tone-periods",
+      "peak": 0.9508707289286895,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 10.004518274938562,
+        "masked_spectral_mae_db": {
+          "512": 7.704651254176363,
+          "2048": 7.157872330657807,
+          "8192": 6.449562774818973
+        },
+        "absolute_spectral_mae_db": {
+          "512": 7.635295886669865,
+          "2048": 7.057066427864193,
+          "8192": 6.359786913816402
+        },
+        "level_mae_db": 8.287112823964327,
+        "level_bias_db": -8.116238234715727,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.05451904310295612
+      }
+    },
+    {
+      "round": 1,
+      "proposal": "joint",
+      "peak": 0.9335233079640376,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 7.884643620782993,
+        "masked_spectral_mae_db": {
+          "512": 8.277506906573679,
+          "2048": 7.491693478110801,
+          "8192": 6.309303620148158
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.226911497630775,
+          "2048": 7.420841509256446,
+          "8192": 6.269227566563627
+        },
+        "level_mae_db": 1.500406530967944,
+        "level_bias_db": -0.6442293170909597,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.07248417020967432
+      }
+    },
+    {
+      "round": 1,
+      "proposal": "noise--1",
+      "peak": 0.9603576570053323,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 10.05437236501169,
+        "masked_spectral_mae_db": {
+          "512": 7.708226669235773,
+          "2048": 7.219306979545253,
+          "8192": 6.539778366380905
+        },
+        "absolute_spectral_mae_db": {
+          "512": 7.638416634081707,
+          "2048": 7.115299518854355,
+          "8192": 6.445351662313899
+        },
+        "level_mae_db": 8.281719123688703,
+        "level_bias_db": -8.134108282433937,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.053860058668259866
+      }
+    },
+    {
+      "round": 1,
+      "proposal": "noise-+1",
+      "peak": 0.9425633326780378,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 10.004164258774509,
+        "masked_spectral_mae_db": {
+          "512": 7.721416078620788,
+          "2048": 7.179655974770134,
+          "8192": 6.453271293614962
+        },
+        "absolute_spectral_mae_db": {
+          "512": 7.651234032987772,
+          "2048": 7.077902865836086,
+          "8192": 6.362921875082257
+        },
+        "level_mae_db": 8.245856599350136,
+        "level_bias_db": -8.097013794073815,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.05390143024194573
+      }
+    },
+    {
+      "round": 2,
+      "proposal": "level-half",
+      "peak": 0.932400738001072,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 7.836509457242624,
+        "masked_spectral_mae_db": {
+          "512": 8.282677899420262,
+          "2048": 7.509330848405172,
+          "8192": 6.3207661240587765
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.2320849676443,
+          "2048": 7.437181737533934,
+          "8192": 6.279487206872677
+        },
+        "level_mae_db": 1.3302414284225332,
+        "level_bias_db": -0.6294263638438122,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.07173759808749616
+      }
+    },
+    {
+      "round": 2,
+      "proposal": "level-full",
+      "peak": 0.932400738001072,
+      "admissible": true,
+      "improved_current_best": true,
+      "metrics": {
+        "objective_db": 7.835514804184931,
+        "masked_spectral_mae_db": {
+          "512": 8.312520858541353,
+          "2048": 7.53131159538219,
+          "8192": 6.340134327740021
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.261682515810278,
+          "2048": 7.459414852853837,
+          "8192": 6.299274502727076
+        },
+        "level_mae_db": 1.2595977437059331,
+        "level_bias_db": -0.5321146200684623,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.0721211424372016
+      }
+    },
+    {
+      "round": 2,
+      "proposal": "tone-periods",
+      "peak": 0.9335233079640376,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 7.884643620782993,
+        "masked_spectral_mae_db": {
+          "512": 8.277506906573679,
+          "2048": 7.491693478110801,
+          "8192": 6.309303620148158
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.226911497630775,
+          "2048": 7.420841509256446,
+          "8192": 6.269227566563627
+        },
+        "level_mae_db": 1.500406530967944,
+        "level_bias_db": -0.6442293170909597,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.07248417020967432
+      }
+    },
+    {
+      "round": 2,
+      "proposal": "joint",
+      "peak": 0.9335233079640376,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 7.887303045578974,
+        "masked_spectral_mae_db": {
+          "512": 8.310592302377703,
+          "2048": 7.5153736809283895,
+          "8192": 6.331050918045039
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.259750335452502,
+          "2048": 7.444864162632233,
+          "8192": 6.2914338654195285
+        },
+        "level_mae_db": 1.433230700367419,
+        "level_bias_db": -0.5359103347811945,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.0729731227894226
+      }
+    },
+    {
+      "round": 2,
+      "proposal": "noise--1",
+      "peak": 0.9432966937698496,
+      "admissible": true,
+      "improved_current_best": true,
+      "metrics": {
+        "objective_db": 7.750544870192191,
+        "masked_spectral_mae_db": {
+          "512": 8.196594370683956,
+          "2048": 7.398026301770586,
+          "8192": 6.236596670733437
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.146769235546278,
+          "2048": 7.327390376751087,
+          "8192": 6.195496969250036
+        },
+        "level_mae_db": 1.352778349893896,
+        "level_bias_db": -0.6590438191060732,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.0716288802584651
+      }
+    },
+    {
+      "round": 2,
+      "proposal": "noise-+1",
+      "peak": 0.9248619300608447,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 7.913304482468517,
+        "masked_spectral_mae_db": {
+          "512": 8.331113767263657,
+          "2048": 7.592951906278546,
+          "8192": 6.399604666644754
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.28007447597345,
+          "2048": 7.519474920487401,
+          "8192": 6.357274329320827
+        },
+        "level_mae_db": 1.3488029592558024,
+        "level_bias_db": -0.621237219197804,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.07181153247547775
+      }
+    },
+    {
+      "round": 3,
+      "proposal": "level-half",
+      "peak": 0.9432966937698496,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 7.75062419230011,
+        "masked_spectral_mae_db": {
+          "512": 8.201191488063992,
+          "2048": 7.400605882183199,
+          "8192": 6.238643325453984
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.151373611811762,
+          "2048": 7.32997505387158,
+          "8192": 6.197597749537902
+        },
+        "level_mae_db": 1.3442208392372912,
+        "level_bias_db": -0.6474928997069862,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.07168644018772002
+      }
+    },
+    {
+      "round": 3,
+      "proposal": "level-full",
+      "peak": 0.9432966937698496,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 7.758707516919471,
+        "masked_spectral_mae_db": {
+          "512": 8.240954107794083,
+          "2048": 7.43659547140773,
+          "8192": 6.2701701240616705
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.190932099926991,
+          "2048": 7.36610060246802,
+          "8192": 6.229512952470263
+        },
+        "level_mae_db": 1.2651455690427897,
+        "level_bias_db": -0.5347858277801171,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.0720536712346094
+      }
+    },
+    {
+      "round": 3,
+      "proposal": "tone-periods",
+      "peak": 0.944244104477703,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 7.792487207430742,
+        "masked_spectral_mae_db": {
+          "512": 8.194914383885607,
+          "2048": 7.379316953116822,
+          "8192": 6.222895068133472
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.145021485812672,
+          "2048": 7.309818597777987,
+          "8192": 6.183076167125145
+        },
+        "level_mae_db": 1.5050811591965043,
+        "level_bias_db": -0.6669150952348926,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.07235954600313811
+      }
+    },
+    {
+      "round": 3,
+      "proposal": "joint",
+      "peak": 0.944244104477703,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 7.807732406768277,
+        "masked_spectral_mae_db": {
+          "512": 8.239669208715426,
+          "2048": 7.417512356778363,
+          "8192": 6.257297650792884
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.189488718615179,
+          "2048": 7.348203990288784,
+          "8192": 6.217831044032205
+        },
+        "level_mae_db": 1.4368742895411044,
+        "level_bias_db": -0.5420942385490429,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.07284605508920292
+      }
+    },
+    {
+      "round": 3,
+      "proposal": "noise--1",
+      "peak": 0.9417829612598279,
+      "admissible": true,
+      "improved_current_best": true,
+      "metrics": {
+        "objective_db": 7.686692299584761,
+        "masked_spectral_mae_db": {
+          "512": 8.128125026617079,
+          "2048": 7.312264109278824,
+          "8192": 6.186886432096424
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.07874794183714,
+          "2048": 7.242756975528218,
+          "8192": 6.145631420832635
+        },
+        "level_mae_db": 1.364572695963767,
+        "level_bias_db": -0.6830820071209771,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.07156893406682092
+      }
+    },
+    {
+      "round": 3,
+      "proposal": "noise-+1",
+      "peak": 0.932400738001072,
+      "admissible": true,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 7.8362990510283765,
+        "masked_spectral_mae_db": {
+          "512": 8.278779798101748,
+          "2048": 7.5074456327360535,
+          "8192": 6.319484938969685
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.228177188385615,
+          "2048": 7.435280032317475,
+          "8192": 6.278120922113897
+        },
+        "level_mae_db": 1.336368365026324,
+        "level_bias_db": -0.6395773236800769,
+        "reference_rms": 0.07148979893886667,
+        "model_rms": 0.07167736448321076
+      }
+    }
+  ],
+  "changed_volume_registers": 31692,
+  "changed_tone_periods": 0,
+  "changed_noise_ticks": 3817,
+  "native_instruction_delta_tstates": 0,
+  "no_local_pcm_gain": true,
+  "limitations": "Bounded local proposals, not a global optimum; three channels cannot reproduce arbitrary PCM. Playback SPL and analogue circuit response are unknown."
+}

@@ -1,0 +1,3000 @@
+{
+  "complete": true,
+  "source": "C:\\Work\\HLV-codec\\out\\sources\\big_buck_bunny_1080p_h264\\big_buck_bunny_1080p_h264.mov",
+  "source_sha256": "dc2146a2b1172def56730143ad80cd1825b7fad15f1fc9c23a4e7d01a741ac11",
+  "ffmpeg_command": [
+    "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+    "-v",
+    "error",
+    "-nostdin",
+    "-i",
+    "C:\\Work\\HLV-codec\\out\\sources\\big_buck_bunny_1080p_h264\\big_buck_bunny_1080p_h264.mov",
+    "-t",
+    "301",
+    "-map",
+    "0:a:0",
+    "-vn",
+    "-ac",
+    "1",
+    "-ar",
+    "22050",
+    "-f",
+    "f32le",
+    "-"
+  ],
+  "interval_seconds": [
+    0,
+    300
+  ],
+  "ticks": 15000,
+  "update_rate_hz": 50,
+  "sound_quantum_ms": 20,
+  "profile": "auto",
+  "input_normalization": {
+    "applied_before_analysis": true,
+    "method": "global selected-interval sample-peak normalization",
+    "target_peak_dbfs": -1.0,
+    "source_peak": 1.5209401845932007,
+    "source_rms": 0.0763804635548106,
+    "gain_linear": 0.5859868436391695,
+    "gain_db": -4.642242689844721,
+    "normalized_peak": 0.8912509381337456,
+    "normalized_rms": 0.044757946754180086,
+    "normalization_interval_seconds": [
+      0,
+      300
+    ],
+    "same_gain_on_analysis_context": true,
+    "dynamics_preserved": true,
+    "sample_rate_hz": 22050,
+    "normalized_pcm_sha256": "effd32eca2d11756d72fbed8f4e32a2e02221981c8a02b356c311588b2bc1cf7",
+    "clipping_samples": 0,
+    "true_peak_or_lufs_normalization": false
+  },
+  "analysis_context_after_seconds": 1.0,
+  "continuous_analysis": true,
+  "continuous_model_preview": true,
+  "no_source_pcm_in_synthesis": true,
+  "resumed_complete_noise_stage": false,
+  "resumed_noise_proof": {},
+  "mixer_search": "analytic-20",
+  "registers_sha256": "b08c03fd58606df64d618cc9d39ef38248cabd8fdea88ed316d50262442ec04a",
+  "packed_sha256": "72d85577f12ee8bee1bc9b47b3e826c517eac8c8925834176d6c54caf8e1eb50",
+  "parts": [
+    {
+      "number": 1,
+      "start_tick": 0,
+      "end_tick": 5000,
+      "duration_seconds": 100.0,
+      "disk": "part01/audio-preview.trd",
+      "trd_sha256": "b4cbf91c41a73f9f5a9168d6026a332fcaf265590bbcfadadfc8f9784bf6535b",
+      "native": {
+        "complete": true,
+        "ticks": 5000,
+        "register_writes": 65008,
+        "registers_exact": true,
+        "bank_sequence": [
+          0,
+          4,
+          6,
+          1,
+          3
+        ],
+        "eof_mutes": true,
+        "deterministic_field_work_tstates": {
+          "1166": 4916,
+          "1184": 72,
+          "1206": 8,
+          "1283": 4
+        },
+        "scope": "independent Z80 core; no ULA, IRQ, HALT or disk latency"
+      }
+    },
+    {
+      "number": 2,
+      "start_tick": 5000,
+      "end_tick": 10000,
+      "duration_seconds": 100.0,
+      "disk": "part02/audio-preview.trd",
+      "trd_sha256": "08c97d1187ab21cab4f0ff5392e59e66bbfeff681d3e3b2d3974cde8b540b59a",
+      "native": {
+        "complete": true,
+        "ticks": 5000,
+        "register_writes": 65028,
+        "registers_exact": true,
+        "bank_sequence": [
+          0,
+          4,
+          6,
+          1,
+          3
+        ],
+        "eof_mutes": true,
+        "deterministic_field_work_tstates": {
+          "1166": 4896,
+          "1184": 72,
+          "1206": 28,
+          "1283": 4
+        },
+        "scope": "independent Z80 core; no ULA, IRQ, HALT or disk latency"
+      }
+    },
+    {
+      "number": 3,
+      "start_tick": 10000,
+      "end_tick": 15000,
+      "duration_seconds": 100.0,
+      "disk": "part03/audio-preview.trd",
+      "trd_sha256": "523cf65f5fb0a1d4b0d97cf4ee805d3b08edfdeea1a806e9d9c4a4395b20d388",
+      "native": {
+        "complete": true,
+        "ticks": 5000,
+        "register_writes": 65109,
+        "registers_exact": true,
+        "bank_sequence": [
+          0,
+          4,
+          6,
+          1,
+          3
+        ],
+        "eof_mutes": true,
+        "deterministic_field_work_tstates": {
+          "1166": 4816,
+          "1184": 71,
+          "1206": 108,
+          "1224": 1,
+          "1283": 4
+        },
+        "scope": "independent Z80 core; no ULA, IRQ, HALT or disk latency"
+      }
+    }
+  ],
+  "scheduling_check": {
+    "complete": true,
+    "waveforms": 465,
+    "byte_exact": true,
+    "combined_sha256": "ceba00b57d3b5ce2c20d3f4d6321a8285408163ad06c9ec06d6676f483d8fa9a",
+    "workers": 6
+  },
+  "objective_check": {
+    "complete": true,
+    "workers": 6,
+    "proofs": {
+      "noise": {
+        "all_costs_byte_exact": true,
+        "result_and_metadata_exact": true,
+        "cost_sha256": "772940e1ddf570925eac1eb3cb0563fedf4ab9b65b33ea4bfaa476753a15ec76",
+        "registers_sha256": "7140df72b45b432a367cc9abd0c5b2667a8a72bd77b4b9adcec0eb9739cc3944"
+      },
+      "mixer": {
+        "all_costs_byte_exact": true,
+        "result_and_metadata_exact": true,
+        "cost_sha256": "1e4ba99c98a1228b1c174474e3223ce9e1da66c6b79c39796ebba54b9b688385",
+        "registers_sha256": "b02ac45c25a4985463812f56b02a413a1e43c99dd4948790e93c498631d2a38a"
+      }
+    }
+  },
+  "spectrogram_metrics": {
+    "512": {
+      "window_ms": 23.219954648526077,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.7572332037104762,
+      "sqrt_magnitude_cosine": 0.8005867073118745,
+      "log_magnitude_mae_db": 6.259709552088883,
+      "spectral_convergence": 0.6071156972432169,
+      "active_frames": 14998
+    },
+    "2048": {
+      "window_ms": 92.87981859410431,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.7552916451088613,
+      "sqrt_magnitude_cosine": 0.7970962883705441,
+      "log_magnitude_mae_db": 5.999189702493095,
+      "spectral_convergence": 0.6307627915816928,
+      "active_frames": 14998
+    },
+    "8192": {
+      "window_ms": 371.51927437641723,
+      "hop_ms": 20,
+      "magnitude_cosine": 0.7552909702836815,
+      "sqrt_magnitude_cosine": 0.813743608788906,
+      "log_magnitude_mae_db": 5.53560265409106,
+      "spectral_convergence": 0.6605722991982873,
+      "active_frames": 14998
+    }
+  },
+  "elapsed_seconds": 564.9753020000062,
+  "physical_hardware_tested": false,
+  "all_disks_fuse_verified": false,
+  "limits": "Independently bootable one-shot resident disks. Manual disk swaps pause sound; the full 300-s WAV is continuous. No complete film rebuild or physical-hardware claim.",
+  "packed_state_bytes": 12,
+  "packed_filename": "soundtrack.ay12.gz",
+  "register_bytes_per_state": 14,
+  "target_chip": "AY-3-8910/8912",
+  "distinct_envelope_levels": 16,
+  "simulation_feedback": {
+    "model": "continuous_chip_feedback_v1",
+    "update_rate_hz": 50,
+    "quantum_ms": 20,
+    "objective": "mean absolute masked log-spectral MAE for 512/2048/8192 + 0.35 * 20-ms RMS log-MAE; fixed calibration",
+    "psychoacoustic": {
+      "model": "relative_bark_masking_v1",
+      "bands": 24,
+      "spreading_db_per_bark_up": 15,
+      "spreading_db_per_bark_down": 27,
+      "noise_masker_offset_db": 6,
+      "tonal_masker_offset_db": 16,
+      "forward_decay_db_per_20ms": 8,
+      "minimum_error_weight": 0.1,
+      "absolute_hearing_threshold": false,
+      "calibrated_playback_spl": false,
+      "source": "https://publica-rest.fraunhofer.de/server/api/core/bitstreams/02820baa-82ed-4a16-80c3-c4c974362413/content",
+      "limitations": "Tunable approximation of critical bands, simultaneous and short forward masking; no standard compliance or listening-quality guarantee."
+    },
+    "fixed_model_gain": 0.8369542987059729,
+    "calibration_changes_between_candidates": false,
+    "baseline": {
+      "objective_db": 6.5102673200413985,
+      "masked_spectral_mae_db": {
+        "512": 6.077453427736304,
+        "2048": 6.08683836091857,
+        "8192": 5.764676248624161
+      },
+      "absolute_spectral_mae_db": {
+        "512": 6.06024773762516,
+        "2048": 6.052616913501945,
+        "8192": 5.733913335913136
+      },
+      "level_mae_db": 1.5255561169953913,
+      "level_bias_db": 0.3166784721544873,
+      "reference_rms": 0.044757946754180086,
+      "model_rms": 0.044757946754180086
+    },
+    "final": {
+      "objective_db": 6.2668897714036,
+      "masked_spectral_mae_db": {
+        "512": 6.063522859897448,
+        "2048": 5.962067110594332,
+        "8192": 5.683268955049484
+      },
+      "absolute_spectral_mae_db": {
+        "512": 6.0465054962400755,
+        "2048": 5.930791932757251,
+        "8192": 5.655243199044886
+      },
+      "level_mae_db": 1.0398194177805087,
+      "level_bias_db": 0.15997167696193237,
+      "reference_rms": 0.044757946754180086,
+      "model_rms": 0.044264807367323245
+    },
+    "candidates_rendered": 13,
+    "maximum_rounds": 2,
+    "proposal_tuning_radius_cents": 25,
+    "history": [
+      {
+        "round": 1,
+        "proposal": "level-half",
+        "peak": 0.7151041116978443,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.434512061117012,
+          "masked_spectral_mae_db": {
+            "512": 6.0653871619463615,
+            "2048": 6.074124917651466,
+            "8192": 5.764551880446374
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.048294259898116,
+            "2048": 6.040163018968227,
+            "8192": 5.734198951087228
+          },
+          "level_mae_db": 1.3328306888636516,
+          "level_bias_db": 0.2958934577250699,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04468339426485417
+        }
+      },
+      {
+        "round": 1,
+        "proposal": "level-full",
+        "peak": 0.7220199580658119,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.288626793486537,
+          "masked_spectral_mae_db": {
+            "512": 6.03232300325046,
+            "2048": 6.020579133547619,
+            "8192": 5.747158023385085
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.015111349391426,
+            "2048": 5.987254268640583,
+            "8192": 5.717446204695796
+          },
+          "level_mae_db": 1.015066876453758,
+          "level_bias_db": 0.12322041105636194,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.0441513392062305
+        }
+      },
+      {
+        "round": 1,
+        "proposal": "tone-periods",
+        "peak": 0.72744899125103,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.4502939522805995,
+          "masked_spectral_mae_db": {
+            "512": 6.067749751497453,
+            "2048": 5.999182512568835,
+            "8192": 5.674261384124987
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.050495546983947,
+            "2048": 5.96786796303119,
+            "8192": 5.647657794254089
+          },
+          "level_mae_db": 1.533036389190974,
+          "level_bias_db": 0.33557925757941776,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04496790245612238
+        }
+      },
+      {
+        "round": 1,
+        "proposal": "joint",
+        "peak": 0.7525297596758281,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.291483494786499,
+          "masked_spectral_mae_db": {
+            "512": 6.0275885322431435,
+            "2048": 5.947354857345774,
+            "8192": 5.669845083947774
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.010401019406169,
+            "2048": 5.916502774106895,
+            "8192": 5.643554948501362
+          },
+          "level_mae_db": 1.1711066769741003,
+          "level_bias_db": 0.13815079848238832,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.044913809672519955
+        }
+      },
+      {
+        "round": 1,
+        "proposal": "noise--1",
+        "peak": 0.7190052253366511,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.563933221820543,
+          "masked_spectral_mae_db": {
+            "512": 6.124635241446015,
+            "2048": 6.16248418962722,
+            "8192": 5.790264558225393
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.10684366107191,
+            "2048": 6.126311434566012,
+            "8192": 5.7587228744818715
+          },
+          "level_mae_db": 1.537538739202859,
+          "level_bias_db": 0.286644593130293,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04475714288943614
+        }
+      },
+      {
+        "round": 1,
+        "proposal": "noise-+1",
+        "peak": 0.701395239189259,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.46179159032201,
+          "masked_spectral_mae_db": {
+            "512": 6.087981796951659,
+            "2048": 6.000593871475227,
+            "8192": 5.7094325801663555
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.071075883900299,
+            "2048": 5.968388963544873,
+            "8192": 5.67976352065108
+          },
+          "level_mae_db": 1.5117776403550358,
+          "level_bias_db": 0.3537014086208071,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04481897084058301
+        }
+      },
+      {
+        "round": 2,
+        "proposal": "level-half",
+        "peak": 0.7220199580658119,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.290498379871586,
+          "masked_spectral_mae_db": {
+            "512": 6.035020114613824,
+            "2048": 6.022406058827791,
+            "8192": 5.751674685453402
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.017714836378506,
+            "2048": 5.989058486160008,
+            "8192": 5.721953932653873
+          },
+          "level_mae_db": 1.0118040768759458,
+          "level_bias_db": 0.12269502309386457,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.044245581664411185
+        }
+      },
+      {
+        "round": 2,
+        "proposal": "level-full",
+        "peak": 0.7220199580658119,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.282580193271778,
+          "masked_spectral_mae_db": {
+            "512": 6.034568963871626,
+            "2048": 6.018988964362566,
+            "8192": 5.753635423783734
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.017185677482403,
+            "2048": 5.985641517644377,
+            "8192": 5.7240477302443225
+          },
+          "level_mae_db": 0.9909973598070578,
+          "level_bias_db": 0.0835941452264163,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04408542436843112
+        }
+      },
+      {
+        "round": 2,
+        "proposal": "tone-periods",
+        "peak": 0.7525297596758281,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.291483494786499,
+          "masked_spectral_mae_db": {
+            "512": 6.0275885322431435,
+            "2048": 5.947354857345774,
+            "8192": 5.669845083947774
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.010401019406169,
+            "2048": 5.916502774106895,
+            "8192": 5.643554948501362
+          },
+          "level_mae_db": 1.1711066769741003,
+          "level_bias_db": 0.13815079848238832,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.044913809672519955
+        }
+      },
+      {
+        "round": 2,
+        "proposal": "joint",
+        "peak": 0.7525297596758281,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.282977941125401,
+          "masked_spectral_mae_db": {
+            "512": 6.028752767794506,
+            "2048": 5.946419005972294,
+            "8192": 5.673250500170647
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.011522336430619,
+            "2048": 5.915478294211435,
+            "8192": 5.647078568612788
+          },
+          "level_mae_db": 1.143344332798819,
+          "level_bias_db": 0.10063880986155195,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04478564352662158
+        }
+      },
+      {
+        "round": 2,
+        "proposal": "noise--1",
+        "peak": 0.7142075040836464,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.35104067510648,
+          "masked_spectral_mae_db": {
+            "512": 6.06305897571385,
+            "2048": 6.101356332182807,
+            "8192": 5.791248507830982
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.045308323173408,
+            "2048": 6.066544921319605,
+            "8192": 5.7603969799458925
+          },
+          "level_mae_db": 1.0451982948493341,
+          "level_bias_db": 0.09282947678328748,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.044188752460062854
+        }
+      },
+      {
+        "round": 2,
+        "proposal": "noise-+1",
+        "peak": 0.7249905413631267,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.2668897714036,
+          "masked_spectral_mae_db": {
+            "512": 6.063522859897448,
+            "2048": 5.962067110594332,
+            "8192": 5.683268955049484
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.0465054962400755,
+            "2048": 5.930791932757251,
+            "8192": 5.655243199044886
+          },
+          "level_mae_db": 1.0398194177805087,
+          "level_bias_db": 0.15997167696193237,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.044264807367323245
+        }
+      }
+    ],
+    "changed_volume_registers": 12422,
+    "changed_tone_periods": 0,
+    "changed_noise_ticks": 7699,
+    "native_instruction_delta_tstates": 0,
+    "no_local_pcm_gain": true,
+    "limitations": "Bounded local proposals, not a global optimum; three channels cannot reproduce arbitrary PCM. Playback SPL and analogue circuit response are unknown."
+  },
+  "necessary_noise": {
+    "model": "source_evidence_and_rendered_noise_necessity_v1",
+    "baseline": {
+      "objective_db": 6.2668897714036,
+      "masked_spectral_mae_db": {
+        "512": 6.063522859897448,
+        "2048": 5.962067110594332,
+        "8192": 5.683268955049484
+      },
+      "absolute_spectral_mae_db": {
+        "512": 6.0465054962400755,
+        "2048": 5.930791932757251,
+        "8192": 5.655243199044886
+      },
+      "level_mae_db": 1.0398194177805087,
+      "level_bias_db": 0.15997167696193237,
+      "reference_rms": 0.044757946754180086,
+      "model_rms": 0.044264807367323245
+    },
+    "final": {
+      "objective_db": 6.51340293694846,
+      "masked_spectral_mae_db": {
+        "512": 6.325846093561683,
+        "2048": 6.264337933409841,
+        "8192": 5.7775522541274515
+      },
+      "absolute_spectral_mae_db": {
+        "512": 6.304956373327452,
+        "2048": 6.2140537920116525,
+        "8192": 5.731415692216597
+      },
+      "level_mae_db": 1.116640504520383,
+      "level_bias_db": -0.1496634798976669,
+      "reference_rms": 0.044757946754180086,
+      "model_rms": 0.04316297353174566
+    },
+    "noise_ticks_before": 10203,
+    "noise_ticks_after": 3831,
+    "removed_noise_ticks": 6372,
+    "selected_policy": {
+      "minimum_source_noise_share": 0.2,
+      "minimum_rendered_benefit_db": 0.35,
+      "noise_ticks": 3831,
+      "metrics": {
+        "objective_db": 6.51340293694846,
+        "masked_spectral_mae_db": {
+          "512": 6.325846093561683,
+          "2048": 6.264337933409841,
+          "8192": 5.7775522541274515
+        },
+        "absolute_spectral_mae_db": {
+          "512": 6.304956373327452,
+          "2048": 6.2140537920116525,
+          "8192": 5.731415692216597
+        },
+        "level_mae_db": 1.116640504520383,
+        "level_bias_db": -0.1496634798976669,
+        "reference_rms": 0.044757946754180086,
+        "model_rms": 0.04316297353174566
+      },
+      "admissible": true
+    },
+    "fixed_model_gain": 0.8369542987059729,
+    "source_evidence": "tracker broadband power share",
+    "necessity": "3-field mean of complete tone-only minus noise-enabled perceptual error",
+    "keep_generator_period_history": true,
+    "history": [
+      {
+        "minimum_source_noise_share": 0.2,
+        "minimum_rendered_benefit_db": 0.35,
+        "noise_ticks": 3831,
+        "metrics": {
+          "objective_db": 6.51340293694846,
+          "masked_spectral_mae_db": {
+            "512": 6.325846093561683,
+            "2048": 6.264337933409841,
+            "8192": 5.7775522541274515
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.304956373327452,
+            "2048": 6.2140537920116525,
+            "8192": 5.731415692216597
+          },
+          "level_mae_db": 1.116640504520383,
+          "level_bias_db": -0.1496634798976669,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04316297353174566
+        },
+        "admissible": true
+      },
+      {
+        "minimum_source_noise_share": 0.3,
+        "minimum_rendered_benefit_db": 0.35,
+        "noise_ticks": 2175,
+        "metrics": {
+          "objective_db": 6.754826444348021,
+          "masked_spectral_mae_db": {
+            "512": 6.540674404749281,
+            "2048": 6.543268317229608,
+            "8192": 5.940627633469097
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.51573133918413,
+            "2048": 6.478642355824622,
+            "8192": 5.881305693588424
+          },
+          "level_mae_db": 1.1808656929486454,
+          "level_bias_db": -0.28269230394388434,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04261966763941189
+        },
+        "admissible": true
+      },
+      {
+        "minimum_source_noise_share": 0.2,
+        "minimum_rendered_benefit_db": 0.75,
+        "noise_ticks": 3073,
+        "metrics": {
+          "objective_db": 6.557123165478157,
+          "masked_spectral_mae_db": {
+            "512": 6.3599373119767835,
+            "2048": 6.310644928379515,
+            "8192": 5.812930531113493
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.338270584241321,
+            "2048": 6.257660555444342,
+            "8192": 5.764126446378528
+          },
+          "level_mae_db": 1.1312921190139793,
+          "level_bias_db": -0.22145264729824884,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.043064570989939
+        },
+        "admissible": true
+      },
+      {
+        "minimum_source_noise_share": 0.3,
+        "minimum_rendered_benefit_db": 0.75,
+        "noise_ticks": 1783,
+        "metrics": {
+          "objective_db": 6.778484360965426,
+          "masked_spectral_mae_db": {
+            "512": 6.559903532417671,
+            "2048": 6.565569130897155,
+            "8192": 5.957706713487894
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.534565215450062,
+            "2048": 6.499641021294516,
+            "8192": 5.897283288203693
+          },
+          "level_mae_db": 1.1926416248510046,
+          "level_bias_db": -0.33023764835433794,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04258229030346063
+        },
+        "admissible": true
+      }
+    ],
+    "limitations": "Conservative audibility policy requested after listening; ordinary spectral error can increase when weak residual noise is omitted. Not perfect source separation."
+  },
+  "hardware_envelope": {
+    "model": "shared_running_hardware_envelope_feedback_v1",
+    "selected": true,
+    "register_bytes": 14,
+    "packed_state_bytes": 12,
+    "fixed_model_gain": 0.8369542987059729,
+    "baseline": {
+      "objective_db": 6.51340293694846,
+      "masked_spectral_mae_db": {
+        "512": 6.325846093561683,
+        "2048": 6.264337933409841,
+        "8192": 5.7775522541274515
+      },
+      "absolute_spectral_mae_db": {
+        "512": 6.304956373327452,
+        "2048": 6.2140537920116525,
+        "8192": 5.731415692216597
+      },
+      "level_mae_db": 1.116640504520383,
+      "level_bias_db": -0.1496634798976669,
+      "reference_rms": 0.044757946754180086,
+      "model_rms": 0.04316297353174566
+    },
+    "final": {
+      "objective_db": 6.429208955099012,
+      "masked_spectral_mae_db": {
+        "512": 6.229029327461204,
+        "2048": 6.147602353248039,
+        "8192": 5.690981174283604
+      },
+      "absolute_spectral_mae_db": {
+        "512": 6.208176850151965,
+        "2048": 6.100076239788543,
+        "8192": 5.6473340324432035
+      },
+      "level_mae_db": 1.1619181050516136,
+      "level_bias_db": -0.17641752987786577,
+      "reference_rms": 0.044757946754180086,
+      "model_rms": 0.04223239173100657
+    },
+    "final_decision": "wave-14 + disjoint ramps-1.0",
+    "candidates_rendered": 13,
+    "history": [
+      {
+        "proposal": "ramps-0.8",
+        "proposed_blocks": 838,
+        "kept_blocks": 57,
+        "peak": 0.7249905413631267,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.510506321984252,
+          "masked_spectral_mae_db": {
+            "512": 6.321391826040039,
+            "2048": 6.260793139978301,
+            "8192": 5.774209064997358
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.300521357257994,
+            "2048": 6.210540696507221,
+            "8192": 5.728045281274854
+          },
+          "level_mae_db": 1.119166604701962,
+          "level_bias_db": -0.16080978811844568,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04310757443841086
+        }
+      },
+      {
+        "proposal": "ramps-1.0",
+        "proposed_blocks": 838,
+        "kept_blocks": 45,
+        "peak": 0.7249905413631267,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.510156998121666,
+          "masked_spectral_mae_db": {
+            "512": 6.320039629258575,
+            "2048": 6.261053925563197,
+            "8192": 5.774176807553564
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.299161006236462,
+            "2048": 6.21071349270104,
+            "8192": 5.727992078143536
+          },
+          "level_mae_db": 1.1192386971330124,
+          "level_bias_db": -0.16172953978096122,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04313428772288105
+        }
+      },
+      {
+        "proposal": "ramps-1.2",
+        "proposed_blocks": 838,
+        "kept_blocks": 44,
+        "peak": 0.7249905413631267,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.5102490324825855,
+          "masked_spectral_mae_db": {
+            "512": 6.319647778615441,
+            "2048": 6.260870983547409,
+            "8192": 5.773091343435576
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.298810653959402,
+            "2048": 6.210493591929134,
+            "8192": 5.7268999476417575
+          },
+          "level_mae_db": 1.1210828493803118,
+          "level_bias_db": -0.16564012867802233,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04313393215296356
+        }
+      },
+      {
+        "proposal": "wave-8",
+        "proposed_blocks": 168,
+        "kept_blocks": 68,
+        "peak": 0.7249905413631267,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.479300247726075,
+          "masked_spectral_mae_db": {
+            "512": 6.253809979048297,
+            "2048": 6.218592775117159,
+            "8192": 5.7534997299551325
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.233825818209216,
+            "2048": 6.17091826346924,
+            "8192": 5.709760540368926
+          },
+          "level_mae_db": 1.1542840562453685,
+          "level_bias_db": -0.1775630444669949,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.041946719824336884
+        }
+      },
+      {
+        "proposal": "wave-12",
+        "proposed_blocks": 168,
+        "kept_blocks": 68,
+        "peak": 0.7249905413631267,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.4751704327420665,
+          "masked_spectral_mae_db": {
+            "512": 6.253756834853799,
+            "2048": 6.214084140069689,
+            "8192": 5.747098899760893
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.233734345607778,
+            "2048": 6.1661669290049765,
+            "8192": 5.702990841845543
+          },
+          "level_mae_db": 1.152925165277924,
+          "level_bias_db": -0.1793692095966873,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.041943979210575036
+        }
+      },
+      {
+        "proposal": "wave-14",
+        "proposed_blocks": 169,
+        "kept_blocks": 101,
+        "peak": 0.6580104156393612,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.4327108365808865,
+          "masked_spectral_mae_db": {
+            "512": 6.234560768761511,
+            "2048": 6.150672376493073,
+            "8192": 5.694939919260558
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.213708606638135,
+            "2048": 6.103224569730505,
+            "8192": 5.651341884796977
+          },
+          "level_mae_db": 1.1599613764071572,
+          "level_bias_db": -0.16445680341393434,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04229896252868505
+        }
+      }
+    ],
+    "blocks": [
+      {
+        "start": 743,
+        "end": 754,
+        "channel": 1,
+        "period": 32,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 7010,
+        "end": 7013,
+        "channel": 1,
+        "period": 65,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 9019,
+        "end": 9024,
+        "channel": 2,
+        "period": 42,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 9773,
+        "end": 9776,
+        "channel": 2,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 9787,
+        "end": 9790,
+        "channel": 0,
+        "period": 12,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 9815,
+        "end": 9818,
+        "channel": 2,
+        "period": 47,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 9819,
+        "end": 9833,
+        "channel": 0,
+        "period": 32,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 9842,
+        "end": 9855,
+        "channel": 1,
+        "period": 24,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 9877,
+        "end": 9881,
+        "channel": 0,
+        "period": 32,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 9882,
+        "end": 9900,
+        "channel": 0,
+        "period": 32,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 11346,
+        "end": 11349,
+        "channel": 2,
+        "period": 12,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12203,
+        "end": 12217,
+        "channel": 1,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12566,
+        "end": 12569,
+        "channel": 0,
+        "period": 22,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12569,
+        "end": 12577,
+        "channel": 1,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12579,
+        "end": 12582,
+        "channel": 1,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12601,
+        "end": 12606,
+        "channel": 2,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12607,
+        "end": 12610,
+        "channel": 2,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12614,
+        "end": 12624,
+        "channel": 2,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12625,
+        "end": 12628,
+        "channel": 2,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12636,
+        "end": 12641,
+        "channel": 2,
+        "period": 42,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12641,
+        "end": 12647,
+        "channel": 0,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12659,
+        "end": 12662,
+        "channel": 2,
+        "period": 22,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12665,
+        "end": 12670,
+        "channel": 0,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12694,
+        "end": 12698,
+        "channel": 2,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12700,
+        "end": 12718,
+        "channel": 2,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12784,
+        "end": 12788,
+        "channel": 1,
+        "period": 10,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12790,
+        "end": 12795,
+        "channel": 1,
+        "period": 20,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12795,
+        "end": 12804,
+        "channel": 0,
+        "period": 10,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12804,
+        "end": 12810,
+        "channel": 1,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12847,
+        "end": 12872,
+        "channel": 2,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12872,
+        "end": 12876,
+        "channel": 2,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12881,
+        "end": 12886,
+        "channel": 1,
+        "period": 6,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12886,
+        "end": 12896,
+        "channel": 2,
+        "period": 18,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12896,
+        "end": 12905,
+        "channel": 1,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12906,
+        "end": 12911,
+        "channel": 0,
+        "period": 15,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12911,
+        "end": 12928,
+        "channel": 1,
+        "period": 30,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12968,
+        "end": 12985,
+        "channel": 2,
+        "period": 12,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12988,
+        "end": 12991,
+        "channel": 1,
+        "period": 10,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12991,
+        "end": 12998,
+        "channel": 1,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 12999,
+        "end": 13002,
+        "channel": 1,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13104,
+        "end": 13122,
+        "channel": 2,
+        "period": 37,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13126,
+        "end": 13129,
+        "channel": 2,
+        "period": 17,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13130,
+        "end": 13145,
+        "channel": 1,
+        "period": 37,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13161,
+        "end": 13173,
+        "channel": 1,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13175,
+        "end": 13186,
+        "channel": 1,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13194,
+        "end": 13198,
+        "channel": 0,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13207,
+        "end": 13210,
+        "channel": 1,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13220,
+        "end": 13223,
+        "channel": 0,
+        "period": 17,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13223,
+        "end": 13232,
+        "channel": 1,
+        "period": 30,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13254,
+        "end": 13279,
+        "channel": 0,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13290,
+        "end": 13302,
+        "channel": 2,
+        "period": 37,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13303,
+        "end": 13307,
+        "channel": 2,
+        "period": 37,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13313,
+        "end": 13316,
+        "channel": 0,
+        "period": 19,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13316,
+        "end": 13325,
+        "channel": 1,
+        "period": 37,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13325,
+        "end": 13330,
+        "channel": 0,
+        "period": 7,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13330,
+        "end": 13334,
+        "channel": 1,
+        "period": 37,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13348,
+        "end": 13352,
+        "channel": 1,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13352,
+        "end": 13356,
+        "channel": 0,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13357,
+        "end": 13360,
+        "channel": 1,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13360,
+        "end": 13363,
+        "channel": 2,
+        "period": 18,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13363,
+        "end": 13366,
+        "channel": 0,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13386,
+        "end": 13389,
+        "channel": 2,
+        "period": 14,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13389,
+        "end": 13395,
+        "channel": 1,
+        "period": 28,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13407,
+        "end": 13420,
+        "channel": 1,
+        "period": 28,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13482,
+        "end": 13499,
+        "channel": 1,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13501,
+        "end": 13506,
+        "channel": 0,
+        "period": 37,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13601,
+        "end": 13604,
+        "channel": 0,
+        "period": 15,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13637,
+        "end": 13641,
+        "channel": 1,
+        "period": 16,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13658,
+        "end": 13664,
+        "channel": 1,
+        "period": 27,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13674,
+        "end": 13680,
+        "channel": 0,
+        "period": 20,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13789,
+        "end": 13792,
+        "channel": 0,
+        "period": 45,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13806,
+        "end": 13816,
+        "channel": 2,
+        "period": 30,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13834,
+        "end": 13839,
+        "channel": 1,
+        "period": 30,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13863,
+        "end": 13867,
+        "channel": 1,
+        "period": 30,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13894,
+        "end": 13899,
+        "channel": 0,
+        "period": 40,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13901,
+        "end": 13910,
+        "channel": 1,
+        "period": 30,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13911,
+        "end": 13914,
+        "channel": 0,
+        "period": 7,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13920,
+        "end": 13929,
+        "channel": 2,
+        "period": 30,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13958,
+        "end": 13961,
+        "channel": 1,
+        "period": 30,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13965,
+        "end": 13975,
+        "channel": 1,
+        "period": 30,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13987,
+        "end": 13993,
+        "channel": 1,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 13994,
+        "end": 14002,
+        "channel": 1,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14021,
+        "end": 14026,
+        "channel": 0,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14073,
+        "end": 14079,
+        "channel": 2,
+        "period": 22,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14081,
+        "end": 14086,
+        "channel": 1,
+        "period": 30,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14103,
+        "end": 14111,
+        "channel": 1,
+        "period": 30,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14135,
+        "end": 14138,
+        "channel": 2,
+        "period": 12,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14146,
+        "end": 14155,
+        "channel": 1,
+        "period": 37,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14167,
+        "end": 14170,
+        "channel": 1,
+        "period": 37,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14170,
+        "end": 14183,
+        "channel": 0,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14192,
+        "end": 14196,
+        "channel": 0,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14203,
+        "end": 14208,
+        "channel": 0,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14245,
+        "end": 14250,
+        "channel": 2,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14532,
+        "end": 14535,
+        "channel": 0,
+        "period": 47,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14537,
+        "end": 14540,
+        "channel": 0,
+        "period": 46,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14560,
+        "end": 14563,
+        "channel": 1,
+        "period": 45,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14579,
+        "end": 14582,
+        "channel": 1,
+        "period": 22,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14758,
+        "end": 14762,
+        "channel": 1,
+        "period": 7,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14825,
+        "end": 14828,
+        "channel": 0,
+        "period": 50,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14833,
+        "end": 14836,
+        "channel": 2,
+        "period": 33,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 14836,
+        "end": 14842,
+        "channel": 0,
+        "period": 25,
+        "shape": 14,
+        "oscillator": true,
+        "priority": 1.0
+      },
+      {
+        "start": 730,
+        "end": 733,
+        "channel": 2,
+        "period": 1108,
+        "shape": 13,
+        "priority": 80.0
+      },
+      {
+        "start": 1834,
+        "end": 1846,
+        "channel": 1,
+        "period": 11962,
+        "shape": 13,
+        "priority": 64.0
+      },
+      {
+        "start": 1847,
+        "end": 1853,
+        "channel": 1,
+        "period": 4310,
+        "shape": 13,
+        "priority": 54.0
+      },
+      {
+        "start": 4770,
+        "end": 4777,
+        "channel": 0,
+        "period": 5173,
+        "shape": 13,
+        "priority": 40.0
+      },
+      {
+        "start": 4778,
+        "end": 4785,
+        "channel": 2,
+        "period": 1724,
+        "shape": 13,
+        "priority": 144.0
+      },
+      {
+        "start": 4848,
+        "end": 4858,
+        "channel": 2,
+        "period": 3810,
+        "shape": 13,
+        "priority": 60.0
+      },
+      {
+        "start": 4916,
+        "end": 4922,
+        "channel": 1,
+        "period": 3233,
+        "shape": 13,
+        "priority": 40.0
+      },
+      {
+        "start": 5568,
+        "end": 5577,
+        "channel": 2,
+        "period": 2333,
+        "shape": 13,
+        "priority": 112.0
+      },
+      {
+        "start": 5691,
+        "end": 5695,
+        "channel": 1,
+        "period": 887,
+        "shape": 13,
+        "priority": 160.0
+      },
+      {
+        "start": 5716,
+        "end": 5721,
+        "channel": 1,
+        "period": 964,
+        "shape": 13,
+        "priority": 180.0
+      },
+      {
+        "start": 5731,
+        "end": 5743,
+        "channel": 1,
+        "period": 4561,
+        "shape": 13,
+        "priority": 84.0
+      },
+      {
+        "start": 6582,
+        "end": 6585,
+        "channel": 2,
+        "period": 1478,
+        "shape": 13,
+        "priority": 24.0
+      },
+      {
+        "start": 6887,
+        "end": 6891,
+        "channel": 0,
+        "period": 887,
+        "shape": 13,
+        "priority": 126.0
+      },
+      {
+        "start": 7198,
+        "end": 7202,
+        "channel": 2,
+        "period": 1056,
+        "shape": 13,
+        "priority": 84.0
+      },
+      {
+        "start": 7356,
+        "end": 7360,
+        "channel": 2,
+        "period": 887,
+        "shape": 13,
+        "priority": 126.0
+      },
+      {
+        "start": 7478,
+        "end": 7483,
+        "channel": 0,
+        "period": 3167,
+        "shape": 13,
+        "priority": 48.0
+      },
+      {
+        "start": 8524,
+        "end": 8528,
+        "channel": 0,
+        "period": 1478,
+        "shape": 13,
+        "priority": 70.0
+      },
+      {
+        "start": 8680,
+        "end": 8683,
+        "channel": 0,
+        "period": 1478,
+        "shape": 13,
+        "priority": 24.0
+      },
+      {
+        "start": 8687,
+        "end": 8697,
+        "channel": 1,
+        "period": 3356,
+        "shape": 13,
+        "priority": 60.0
+      },
+      {
+        "start": 8858,
+        "end": 8866,
+        "channel": 1,
+        "period": 1605,
+        "shape": 13,
+        "priority": 198.0
+      },
+      {
+        "start": 9131,
+        "end": 9137,
+        "channel": 2,
+        "period": 1804,
+        "shape": 13,
+        "priority": 90.0
+      },
+      {
+        "start": 9141,
+        "end": 9148,
+        "channel": 2,
+        "period": 1411,
+        "shape": 13,
+        "priority": 216.0
+      },
+      {
+        "start": 9483,
+        "end": 9487,
+        "channel": 1,
+        "period": 2217,
+        "shape": 13,
+        "priority": 42.0
+      },
+      {
+        "start": 9799,
+        "end": 9804,
+        "channel": 0,
+        "period": 3695,
+        "shape": 9,
+        "priority": 90.0
+      },
+      {
+        "start": 9809,
+        "end": 9812,
+        "channel": 2,
+        "period": 739,
+        "shape": 9,
+        "priority": 180.0
+      },
+      {
+        "start": 9942,
+        "end": 9945,
+        "channel": 0,
+        "period": 1108,
+        "shape": 13,
+        "priority": 72.0
+      },
+      {
+        "start": 10379,
+        "end": 10383,
+        "channel": 0,
+        "period": 1304,
+        "shape": 13,
+        "priority": 60.0
+      },
+      {
+        "start": 11445,
+        "end": 11449,
+        "channel": 2,
+        "period": 2217,
+        "shape": 13,
+        "priority": 36.0
+      },
+      {
+        "start": 12027,
+        "end": 12031,
+        "channel": 1,
+        "period": 1705,
+        "shape": 13,
+        "priority": 56.0
+      },
+      {
+        "start": 12122,
+        "end": 12127,
+        "channel": 0,
+        "period": 1167,
+        "shape": 13,
+        "priority": 144.0
+      },
+      {
+        "start": 12178,
+        "end": 12183,
+        "channel": 0,
+        "period": 1167,
+        "shape": 13,
+        "priority": 192.0
+      },
+      {
+        "start": 12197,
+        "end": 12202,
+        "channel": 2,
+        "period": 964,
+        "shape": 13,
+        "priority": 260.0
+      },
+      {
+        "start": 12586,
+        "end": 12591,
+        "channel": 0,
+        "period": 1167,
+        "shape": 13,
+        "priority": 126.0
+      },
+      {
+        "start": 12736,
+        "end": 12745,
+        "channel": 2,
+        "period": 3595,
+        "shape": 9,
+        "priority": 150.0
+      },
+      {
+        "start": 12942,
+        "end": 12948,
+        "channel": 0,
+        "period": 2675,
+        "shape": 9,
+        "priority": 112.0
+      },
+      {
+        "start": 13080,
+        "end": 13083,
+        "channel": 2,
+        "period": 1478,
+        "shape": 9,
+        "priority": 84.0
+      },
+      {
+        "start": 13582,
+        "end": 13587,
+        "channel": 2,
+        "period": 1167,
+        "shape": 13,
+        "priority": 208.0
+      },
+      {
+        "start": 13697,
+        "end": 13704,
+        "channel": 1,
+        "period": 5173,
+        "shape": 13,
+        "priority": 24.0
+      },
+      {
+        "start": 13704,
+        "end": 13707,
+        "channel": 1,
+        "period": 1108,
+        "shape": 13,
+        "priority": 40.0
+      },
+      {
+        "start": 13816,
+        "end": 13821,
+        "channel": 1,
+        "period": 1705,
+        "shape": 13,
+        "priority": 90.0
+      },
+      {
+        "start": 13823,
+        "end": 13828,
+        "channel": 0,
+        "period": 887,
+        "shape": 13,
+        "priority": 234.0
+      },
+      {
+        "start": 13886,
+        "end": 13891,
+        "channel": 1,
+        "period": 1847,
+        "shape": 13,
+        "priority": 100.0
+      },
+      {
+        "start": 14770,
+        "end": 14784,
+        "channel": 0,
+        "period": 7584,
+        "shape": 9,
+        "priority": 90.0
+      },
+      {
+        "start": 14788,
+        "end": 14796,
+        "channel": 2,
+        "period": 3211,
+        "shape": 9,
+        "priority": 140.0
+      }
+    ],
+    "envelope_channel_ticks": 944,
+    "shape_restarts": 145,
+    "shared_generators": 1,
+    "phase_continues_between_fields": true,
+    "no_per_field_restart": true,
+    "shape_write_sentinel": 255,
+    "limitations": "One shared nonlinear 16-level AY DAC envelope (paired 32-counter steps in Ayumi), bounded proposals and coarse frequency grid; not an ideal triangle or arbitrary independent channel envelopes.",
+    "ramp_followup": {
+      "selected": true,
+      "baseline": {
+        "objective_db": 6.4327108365808865,
+        "masked_spectral_mae_db": {
+          "512": 6.234560768761511,
+          "2048": 6.150672376493073,
+          "8192": 5.694939919260558
+        },
+        "absolute_spectral_mae_db": {
+          "512": 6.213708606638135,
+          "2048": 6.103224569730505,
+          "8192": 5.651341884796977
+        },
+        "level_mae_db": 1.1599613764071572,
+        "level_bias_db": -0.16445680341393434,
+        "reference_rms": 0.044757946754180086,
+        "model_rms": 0.04229896252868505
+      },
+      "final": {
+        "objective_db": 6.429208955099012,
+        "masked_spectral_mae_db": {
+          "512": 6.229029327461204,
+          "2048": 6.147602353248039,
+          "8192": 5.690981174283604
+        },
+        "absolute_spectral_mae_db": {
+          "512": 6.208176850151965,
+          "2048": 6.100076239788543,
+          "8192": 5.6473340324432035
+        },
+        "level_mae_db": 1.1619181050516136,
+        "level_bias_db": -0.17641752987786577,
+        "reference_rms": 0.044757946754180086,
+        "model_rms": 0.04223239173100657
+      },
+      "final_decision": "disjoint ramps-1.0",
+      "history": [
+        {
+          "proposal": "disjoint ramps-0.8",
+          "blocks": 50,
+          "metrics": {
+            "objective_db": 6.430491510201394,
+            "masked_spectral_mae_db": {
+              "512": 6.231917364164313,
+              "2048": 6.148182133959729,
+              "8192": 5.692193571767304
+            },
+            "absolute_spectral_mae_db": {
+              "512": 6.2110723688867795,
+              "2048": 6.100741641337324,
+              "8192": 5.6485909441702775
+            },
+            "level_mae_db": 1.1611252006788901,
+            "level_bias_db": -0.1729520842123166,
+            "reference_rms": 0.044757946754180086,
+            "model_rms": 0.04227080859283781
+          },
+          "improved_current_best": true,
+          "peak": 0.6580104156393612
+        },
+        {
+          "proposal": "disjoint ramps-1.0",
+          "blocks": 44,
+          "metrics": {
+            "objective_db": 6.429208955099012,
+            "masked_spectral_mae_db": {
+              "512": 6.229029327461204,
+              "2048": 6.147602353248039,
+              "8192": 5.690981174283604
+            },
+            "absolute_spectral_mae_db": {
+              "512": 6.208176850151965,
+              "2048": 6.100076239788543,
+              "8192": 5.6473340324432035
+            },
+            "level_mae_db": 1.1619181050516136,
+            "level_bias_db": -0.17641752987786577,
+            "reference_rms": 0.044757946754180086,
+            "model_rms": 0.04223239173100657
+          },
+          "improved_current_best": true,
+          "peak": 0.6580104156393612
+        },
+        {
+          "proposal": "disjoint ramps-1.2",
+          "blocks": 46,
+          "metrics": {
+            "objective_db": 6.429687404170945,
+            "masked_spectral_mae_db": {
+              "512": 6.229226158196589,
+              "2048": 6.147695972487942,
+              "8192": 5.690295350596083
+            },
+            "absolute_spectral_mae_db": {
+              "512": 6.208414916621406,
+              "2048": 6.100139482886033,
+              "8192": 5.646621977623905
+            },
+            "level_mae_db": 1.1636616487925908,
+            "level_bias_db": -0.1802194240655729,
+            "reference_rms": 0.044757946754180086,
+            "model_rms": 0.042257050190645386
+          },
+          "improved_current_best": false,
+          "peak": 0.6580104156393612
+        }
+      ],
+      "blocks": [
+        {
+          "start": 730,
+          "end": 733,
+          "channel": 2,
+          "period": 1108,
+          "shape": 13,
+          "priority": 80.0
+        },
+        {
+          "start": 1834,
+          "end": 1846,
+          "channel": 1,
+          "period": 11962,
+          "shape": 13,
+          "priority": 64.0
+        },
+        {
+          "start": 1847,
+          "end": 1853,
+          "channel": 1,
+          "period": 4310,
+          "shape": 13,
+          "priority": 54.0
+        },
+        {
+          "start": 4770,
+          "end": 4777,
+          "channel": 0,
+          "period": 5173,
+          "shape": 13,
+          "priority": 40.0
+        },
+        {
+          "start": 4778,
+          "end": 4785,
+          "channel": 2,
+          "period": 1724,
+          "shape": 13,
+          "priority": 144.0
+        },
+        {
+          "start": 4848,
+          "end": 4858,
+          "channel": 2,
+          "period": 3810,
+          "shape": 13,
+          "priority": 60.0
+        },
+        {
+          "start": 4916,
+          "end": 4922,
+          "channel": 1,
+          "period": 3233,
+          "shape": 13,
+          "priority": 40.0
+        },
+        {
+          "start": 5568,
+          "end": 5577,
+          "channel": 2,
+          "period": 2333,
+          "shape": 13,
+          "priority": 112.0
+        },
+        {
+          "start": 5691,
+          "end": 5695,
+          "channel": 1,
+          "period": 887,
+          "shape": 13,
+          "priority": 160.0
+        },
+        {
+          "start": 5716,
+          "end": 5721,
+          "channel": 1,
+          "period": 964,
+          "shape": 13,
+          "priority": 180.0
+        },
+        {
+          "start": 5731,
+          "end": 5743,
+          "channel": 1,
+          "period": 4561,
+          "shape": 13,
+          "priority": 84.0
+        },
+        {
+          "start": 6582,
+          "end": 6585,
+          "channel": 2,
+          "period": 1478,
+          "shape": 13,
+          "priority": 24.0
+        },
+        {
+          "start": 6887,
+          "end": 6891,
+          "channel": 0,
+          "period": 887,
+          "shape": 13,
+          "priority": 126.0
+        },
+        {
+          "start": 7198,
+          "end": 7202,
+          "channel": 2,
+          "period": 1056,
+          "shape": 13,
+          "priority": 84.0
+        },
+        {
+          "start": 7356,
+          "end": 7360,
+          "channel": 2,
+          "period": 887,
+          "shape": 13,
+          "priority": 126.0
+        },
+        {
+          "start": 7478,
+          "end": 7483,
+          "channel": 0,
+          "period": 3167,
+          "shape": 13,
+          "priority": 48.0
+        },
+        {
+          "start": 8524,
+          "end": 8528,
+          "channel": 0,
+          "period": 1478,
+          "shape": 13,
+          "priority": 70.0
+        },
+        {
+          "start": 8680,
+          "end": 8683,
+          "channel": 0,
+          "period": 1478,
+          "shape": 13,
+          "priority": 24.0
+        },
+        {
+          "start": 8687,
+          "end": 8697,
+          "channel": 1,
+          "period": 3356,
+          "shape": 13,
+          "priority": 60.0
+        },
+        {
+          "start": 8858,
+          "end": 8866,
+          "channel": 1,
+          "period": 1605,
+          "shape": 13,
+          "priority": 198.0
+        },
+        {
+          "start": 9131,
+          "end": 9137,
+          "channel": 2,
+          "period": 1804,
+          "shape": 13,
+          "priority": 90.0
+        },
+        {
+          "start": 9141,
+          "end": 9148,
+          "channel": 2,
+          "period": 1411,
+          "shape": 13,
+          "priority": 216.0
+        },
+        {
+          "start": 9483,
+          "end": 9487,
+          "channel": 1,
+          "period": 2217,
+          "shape": 13,
+          "priority": 42.0
+        },
+        {
+          "start": 9799,
+          "end": 9804,
+          "channel": 0,
+          "period": 3695,
+          "shape": 9,
+          "priority": 90.0
+        },
+        {
+          "start": 9809,
+          "end": 9812,
+          "channel": 2,
+          "period": 739,
+          "shape": 9,
+          "priority": 180.0
+        },
+        {
+          "start": 9942,
+          "end": 9945,
+          "channel": 0,
+          "period": 1108,
+          "shape": 13,
+          "priority": 72.0
+        },
+        {
+          "start": 10379,
+          "end": 10383,
+          "channel": 0,
+          "period": 1304,
+          "shape": 13,
+          "priority": 60.0
+        },
+        {
+          "start": 11445,
+          "end": 11449,
+          "channel": 2,
+          "period": 2217,
+          "shape": 13,
+          "priority": 36.0
+        },
+        {
+          "start": 12027,
+          "end": 12031,
+          "channel": 1,
+          "period": 1705,
+          "shape": 13,
+          "priority": 56.0
+        },
+        {
+          "start": 12122,
+          "end": 12127,
+          "channel": 0,
+          "period": 1167,
+          "shape": 13,
+          "priority": 144.0
+        },
+        {
+          "start": 12178,
+          "end": 12183,
+          "channel": 0,
+          "period": 1167,
+          "shape": 13,
+          "priority": 192.0
+        },
+        {
+          "start": 12197,
+          "end": 12202,
+          "channel": 2,
+          "period": 964,
+          "shape": 13,
+          "priority": 260.0
+        },
+        {
+          "start": 12586,
+          "end": 12591,
+          "channel": 0,
+          "period": 1167,
+          "shape": 13,
+          "priority": 126.0
+        },
+        {
+          "start": 12736,
+          "end": 12745,
+          "channel": 2,
+          "period": 3595,
+          "shape": 9,
+          "priority": 150.0
+        },
+        {
+          "start": 12942,
+          "end": 12948,
+          "channel": 0,
+          "period": 2675,
+          "shape": 9,
+          "priority": 112.0
+        },
+        {
+          "start": 13080,
+          "end": 13083,
+          "channel": 2,
+          "period": 1478,
+          "shape": 9,
+          "priority": 84.0
+        },
+        {
+          "start": 13582,
+          "end": 13587,
+          "channel": 2,
+          "period": 1167,
+          "shape": 13,
+          "priority": 208.0
+        },
+        {
+          "start": 13697,
+          "end": 13704,
+          "channel": 1,
+          "period": 5173,
+          "shape": 13,
+          "priority": 24.0
+        },
+        {
+          "start": 13704,
+          "end": 13707,
+          "channel": 1,
+          "period": 1108,
+          "shape": 13,
+          "priority": 40.0
+        },
+        {
+          "start": 13816,
+          "end": 13821,
+          "channel": 1,
+          "period": 1705,
+          "shape": 13,
+          "priority": 90.0
+        },
+        {
+          "start": 13823,
+          "end": 13828,
+          "channel": 0,
+          "period": 887,
+          "shape": 13,
+          "priority": 234.0
+        },
+        {
+          "start": 13886,
+          "end": 13891,
+          "channel": 1,
+          "period": 1847,
+          "shape": 13,
+          "priority": 100.0
+        },
+        {
+          "start": 14770,
+          "end": 14784,
+          "channel": 0,
+          "period": 7584,
+          "shape": 9,
+          "priority": 90.0
+        },
+        {
+          "start": 14788,
+          "end": 14796,
+          "channel": 2,
+          "period": 3211,
+          "shape": 9,
+          "priority": 140.0
+        }
+      ],
+      "one_shared_generator": true
+    },
+    "initial_registers_sha256": "4c9550e60d2ebfaf336535635364cff15efb86826c4fbe8ab24647f202b2d3c6",
+    "registers_sha256": "962318cc199a7f1d1ab7676fa94d294a9401b1f9182ab9532026a6b572d6cabb",
+    "normalized_pcm_sha256": "effd32eca2d11756d72fbed8f4e32a2e02221981c8a02b356c311588b2bc1cf7"
+  },
+  "final_feedback": {
+    "model": "continuous_chip_feedback_v1",
+    "update_rate_hz": 50,
+    "quantum_ms": 20,
+    "objective": "mean absolute masked log-spectral MAE for 512/2048/8192 + 0.35 * 20-ms RMS log-MAE; fixed calibration",
+    "psychoacoustic": {
+      "model": "relative_bark_masking_v1",
+      "bands": 24,
+      "spreading_db_per_bark_up": 15,
+      "spreading_db_per_bark_down": 27,
+      "noise_masker_offset_db": 6,
+      "tonal_masker_offset_db": 16,
+      "forward_decay_db_per_20ms": 8,
+      "minimum_error_weight": 0.1,
+      "absolute_hearing_threshold": false,
+      "calibrated_playback_spl": false,
+      "source": "https://publica-rest.fraunhofer.de/server/api/core/bitstreams/02820baa-82ed-4a16-80c3-c4c974362413/content",
+      "limitations": "Tunable approximation of critical bands, simultaneous and short forward masking; no standard compliance or listening-quality guarantee."
+    },
+    "fixed_model_gain": 0.8369542987059729,
+    "calibration_changes_between_candidates": false,
+    "baseline": {
+      "objective_db": 6.429208955099012,
+      "masked_spectral_mae_db": {
+        "512": 6.229029327461204,
+        "2048": 6.147602353248039,
+        "8192": 5.690981174283604
+      },
+      "absolute_spectral_mae_db": {
+        "512": 6.208176850151965,
+        "2048": 6.100076239788543,
+        "8192": 5.6473340324432035
+      },
+      "level_mae_db": 1.1619181050516136,
+      "level_bias_db": -0.17641752987786577,
+      "reference_rms": 0.044757946754180086,
+      "model_rms": 0.04223239173100657
+    },
+    "final": {
+      "objective_db": 6.310758595014044,
+      "masked_spectral_mae_db": {
+        "512": 6.261256894945628,
+        "2048": 6.034926381902507,
+        "8192": 5.561721773988992
+      },
+      "absolute_spectral_mae_db": {
+        "512": 6.240176638278615,
+        "2048": 5.990985540729629,
+        "8192": 5.525704020506344
+      },
+      "level_mae_db": 1.0232102230523847,
+      "level_bias_db": 0.0012061595952722857,
+      "reference_rms": 0.044757946754180086,
+      "model_rms": 0.04400703112017607
+    },
+    "candidates_rendered": 11,
+    "maximum_rounds": 2,
+    "proposal_tuning_radius_cents": 25,
+    "history": [
+      {
+        "round": 1,
+        "proposal": "level-half",
+        "peak": 0.6580104156393612,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.421921434524775,
+          "masked_spectral_mae_db": {
+            "512": 6.233758450229752,
+            "2048": 6.14843358925423,
+            "8192": 5.693830976741888
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.212932661392361,
+            "2048": 6.100629628512801,
+            "8192": 5.650417382467566
+          },
+          "level_mae_db": 1.13308694033186,
+          "level_bias_db": -0.15392608718588713,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.042541929954327116
+        }
+      },
+      {
+        "round": 1,
+        "proposal": "level-full",
+        "peak": 0.6580104156393612,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.389359333635273,
+          "masked_spectral_mae_db": {
+            "512": 6.247976666489888,
+            "2048": 6.154013872226455,
+            "8192": 5.698315068656079
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.227061629567832,
+            "2048": 6.105885886653984,
+            "8192": 5.655675294562451
+          },
+          "level_mae_db": 1.0169260890794276,
+          "level_bias_db": -0.0007615505796597868,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.043251347423985016
+        }
+      },
+      {
+        "round": 1,
+        "proposal": "tone-periods",
+        "peak": 0.6994946685062505,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.368056105677195,
+          "masked_spectral_mae_db": {
+            "512": 6.2231523580496315,
+            "2048": 6.01921310360057,
+            "8192": 5.530790976946228
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.20221527659673,
+            "2048": 5.975830440277863,
+            "8192": 5.493672887663246
+          },
+          "level_mae_db": 1.2676303604144317,
+          "level_bias_db": -0.17484022097069993,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04250299083484926
+        }
+      },
+      {
+        "round": 1,
+        "proposal": "joint",
+        "peak": 0.776252321963412,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.343237096677611,
+          "masked_spectral_mae_db": {
+            "512": 6.243157872289338,
+            "2048": 6.030142338855594,
+            "8192": 5.54622631008604
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.222205980361352,
+            "2048": 5.986202444121908,
+            "8192": 5.509768466515642
+          },
+          "level_mae_db": 1.1525569226684385,
+          "level_bias_db": 0.0005159620212062059,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04360581407217714
+        }
+      },
+      {
+        "round": 1,
+        "proposal": "noise--1",
+        "peak": 0.6717047712161194,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.468685034885017,
+          "masked_spectral_mae_db": {
+            "512": 6.221389899499603,
+            "2048": 6.213926619238796,
+            "8192": 5.74885683093791
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.200368620606286,
+            "2048": 6.163630091483204,
+            "8192": 5.703238283619866
+          },
+          "level_mae_db": 1.1636969095035623,
+          "level_bias_db": -0.20039563972938523,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04221116748897158
+        }
+      },
+      {
+        "round": 1,
+        "proposal": "noise-+1",
+        "peak": 0.6517003892717732,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.420202780284782,
+          "masked_spectral_mae_db": {
+            "512": 6.257738344509082,
+            "2048": 6.126075899107019,
+            "8192": 5.652170388588547
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.23673811147211,
+            "2048": 6.079724545983869,
+            "8192": 5.609774586827976
+          },
+          "level_mae_db": 1.1663082939520932,
+          "level_bias_db": -0.16073803751323085,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04221006795014678
+        }
+      },
+      {
+        "round": 2,
+        "proposal": "level-half",
+        "peak": 0.776252321963412,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.327737340412172,
+          "masked_spectral_mae_db": {
+            "512": 6.2436738172814445,
+            "2048": 6.029880062821478,
+            "8192": 5.550573413158079
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.222764268629934,
+            "2048": 5.985898405831553,
+            "8192": 5.51407504137501
+          },
+          "level_mae_db": 1.1038902171195348,
+          "level_bias_db": -0.002100575768380786,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04366249599888201
+        }
+      },
+      {
+        "round": 2,
+        "proposal": "level-full",
+        "peak": 0.776252321963412,
+        "admissible": true,
+        "improved_current_best": true,
+        "metrics": {
+          "objective_db": 6.310758595014044,
+          "masked_spectral_mae_db": {
+            "512": 6.261256894945628,
+            "2048": 6.034926381902507,
+            "8192": 5.561721773988992
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.240176638278615,
+            "2048": 5.990985540729629,
+            "8192": 5.525704020506344
+          },
+          "level_mae_db": 1.0232102230523847,
+          "level_bias_db": 0.0012061595952722857,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04400703112017607
+        }
+      },
+      {
+        "round": 2,
+        "proposal": "noise--1",
+        "peak": 0.7696439751410916,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.377391152681555,
+          "masked_spectral_mae_db": {
+            "512": 6.238910674454541,
+            "2048": 6.088414422765691,
+            "8192": 5.591177527631669
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.217637891816492,
+            "2048": 6.042447133565694,
+            "8192": 5.553383015942798
+          },
+          "level_mae_db": 1.1558769839931098,
+          "level_bias_db": -0.021399319877878936,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04359666973867608
+        }
+      },
+      {
+        "round": 2,
+        "proposal": "noise-+1",
+        "peak": 0.7674271747987942,
+        "admissible": true,
+        "improved_current_best": false,
+        "metrics": {
+          "objective_db": 6.335831101504415,
+          "masked_spectral_mae_db": {
+            "512": 6.274597080619136,
+            "2048": 6.01054300176025,
+            "8192": 5.511979035434411
+          },
+          "absolute_spectral_mae_db": {
+            "512": 6.253363338820022,
+            "2048": 5.96780300411381,
+            "8192": 5.476558283717986
+          },
+          "level_mae_db": 1.1527373206661427,
+          "level_bias_db": 0.01809978553517314,
+          "reference_rms": 0.044757946754180086,
+          "model_rms": 0.04359257265131281
+        }
+      }
+    ],
+    "changed_volume_registers": 6759,
+    "changed_tone_periods": 14826,
+    "changed_noise_ticks": 0,
+    "native_instruction_delta_tstates": 0,
+    "no_local_pcm_gain": true,
+    "limitations": "Bounded local proposals, not a global optimum; three channels cannot reproduce arbitrary PCM. Playback SPL and analogue circuit response are unknown."
+  },
+  "final_metrics": {
+    "objective_db": 6.310758595014044,
+    "masked_spectral_mae_db": {
+      "512": 6.261256894945628,
+      "2048": 6.034926381902507,
+      "8192": 5.561721773988992
+    },
+    "absolute_spectral_mae_db": {
+      "512": 6.240176638278615,
+      "2048": 5.990985540729629,
+      "8192": 5.525704020506344
+    },
+    "level_mae_db": 1.0232102230523847,
+    "level_bias_db": 0.0012061595952722857,
+    "reference_rms": 0.044757946754180086,
+    "model_rms": 0.04400703112017607
+  },
+  "preview_levels": {
+    "source_rms": 0.044757946754180086,
+    "source_peak": 0.8912509381337456,
+    "model_rms": 0.04411569971833114,
+    "model_peak": 0.776252321963412,
+    "one_fixed_calibration": true,
+    "no_local_pcm_gain": true
+  },
+  "fixed_model_gain": 0.8369542987059729,
+  "seed_reuse": "previous YM-fitted component/colour controls; all final feedback rerun on AY",
+  "final_fit_elapsed_seconds": 762.2207343000046
+}

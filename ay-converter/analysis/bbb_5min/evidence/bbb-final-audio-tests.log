@@ -1,0 +1,79 @@
+test_exact_cache_checks_context_and_saves_registers (test_auto_mixer.AutomaticMixerTests.test_exact_cache_checks_context_and_saves_registers) ... ok
+test_spectral_reuse_scales_intensity_and_matches_uncached_fit (test_auto_mixer.AutomaticMixerTests.test_spectral_reuse_scales_intensity_and_matches_uncached_fit) ... ok
+AY mixer: noise, shared volume delta -3, 31 periods
+AY mixer: noise, shared volume delta -2, 31 periods
+AY mixer: noise, shared volume delta -1, 31 periods
+AY mixer: noise, shared volume delta 0, 31 periods
+AY mixer: noise, shared volume delta 1, 31 periods
+AY mixer: noise, shared volume delta 2, 31 periods
+AY mixer: mixed, shared volume delta -3, 31 periods
+AY mixer: mixed, shared volume delta -2, 31 periods
+AY mixer: mixed, shared volume delta -1, 31 periods
+AY mixer: mixed, shared volume delta 0, 31 periods
+AY mixer: mixed, shared volume delta 1, 31 periods
+AY mixer: mixed, shared volume delta 2, 31 periods
+test_three_modes_from_an_unseen_phase_and_final_real_render (test_auto_mixer.AutomaticMixerTests.test_three_modes_from_an_unseen_phase_and_final_real_render) ... ok
+test_amplitude_swaps_and_small_pitch_motion_never_move_channels (test_channel_tracking.TrackingTests.test_amplitude_swaps_and_small_pitch_motion_never_move_channels) ... ok
+test_every_mixer_value_through_native_z80 (test_channel_tracking.TrackingTests.test_every_mixer_value_through_native_z80) ... ok
+test_free_channel_noise_and_independent_noise_detection (test_channel_tracking.TrackingTests.test_free_channel_noise_and_independent_noise_detection) ... ok
+test_mixer_extension_and_all_legacy_noise_periods (test_channel_tracking.TrackingTests.test_mixer_extension_and_all_legacy_noise_periods) ... ok
+test_noise_mixes_without_disabling_or_moving_active_tones (test_channel_tracking.TrackingTests.test_noise_mixes_without_disabling_or_moving_active_tones) ... ok
+test_rest_releases_only_its_channel (test_channel_tracking.TrackingTests.test_rest_releases_only_its_channel) ... ok
+test_engine_scope_reaches_workers_and_restores_on_failure (test_chip_selection.ChipSelectionTests.test_engine_scope_reaches_workers_and_restores_on_failure) ... ok
+test_explicit_cli_render_target_overrides_the_environment (test_chip_selection.ChipSelectionTests.test_explicit_cli_render_target_overrides_the_environment) ... ok
+test_scoped_target_selects_dac_and_separates_exact_cache (test_chip_selection.ChipSelectionTests.test_scoped_target_selects_dac_and_separates_exact_cache) ... ok
+{"complete":true,"chip":"AY-3-8910/8912","distinct_dac_levels":16,"envelope_shape_period_cases":64,"envelope_step_checks":4096,"shared_envelope":true,"period_write_preserves_phase":true,"shape_write_restarts":true,"sentinel_not_sent_to_chip":true,"envelope_only_boolean_gate_valid":true,"manual_register_notation":"octal","analogue_circuit_measured":false}
+test_ay_dac_shapes_periods_and_phase_against_manual_rules (test_hardware_envelope.HardwareEnvelopeTests.test_ay_dac_shapes_periods_and_phase_against_manual_rules) ... ok
+test_holding_shape_preserves_multi_field_envelope_phase (test_hardware_envelope.HardwareEnvelopeTests.test_holding_shape_preserves_multi_field_envelope_phase) ... ok
+test_native_sentinel_bank_boundary_eof_and_instruction_counts (test_hardware_envelope.HardwareEnvelopeTests.test_native_sentinel_bank_boundary_eof_and_instruction_counts) ... ok
+test_packed_envelope_actions_survive_independent_decode (test_hardware_envelope.HardwareEnvelopeTests.test_packed_envelope_actions_survive_independent_decode) ... ok
+{"stage": "hardware_envelope", "proposal": "wave-8", "blocks": 3, "objective_db": 10.302363843794609, "accepted": true}
+{"stage": "hardware_envelope", "proposal": "wave-12", "blocks": 3, "objective_db": 10.362260609202455, "accepted": false}
+{"stage": "hardware_envelope", "proposal": "wave-14", "blocks": 3, "objective_db": 3.0145436335739757, "accepted": true}
+test_real_envelope_wave_is_selected_against_a_square_seed (test_hardware_envelope.HardwareEnvelopeTests.test_real_envelope_wave_is_selected_against_a_square_seed) ... ok
+test_once_mutes_and_full_capacity_guard (test_music_player.MusicPlayerTests.test_once_mutes_and_full_capacity_guard) ... ok
+test_two_complete_loops_and_instruction_costs (test_music_player.MusicPlayerTests.test_two_complete_loops_and_instruction_costs) ... ok
+test_calibration_is_local_and_cache_is_curve_specific (test_music_profile.ProfileTests.test_calibration_is_local_and_cache_is_curve_specific) ... ok
+test_envelope_does_not_cross_rests_or_new_notes (test_music_profile.ProfileTests.test_envelope_does_not_cross_rests_or_new_notes) ... ok
+test_joint_path_keeps_three_distinct_chord_notes (test_music_profile.ProfileTests.test_joint_path_keeps_three_distinct_chord_notes) ... ok
+test_note_lifetimes_and_repeated_attack (test_music_profile.ProfileTests.test_note_lifetimes_and_repeated_attack) ... ok
+test_silence_and_held_tone_end_to_end (test_music_profile.ProfileTests.test_silence_and_held_tone_end_to_end) ... ok
+test_spectrogram_identity_gain_and_wrong_octave (test_music_profile.ProfileTests.test_spectrogram_identity_gain_and_wrong_octave) ... ok
+test_choices_preserve_tones_routing_and_other_volumes (test_noise_colour.NoiseTests.test_choices_preserve_tones_routing_and_other_volumes) ... ok
+Noise colour: render and compare 31 periods, volume delta -2
+Noise colour: render and compare 31 periods, volume delta -1
+Noise colour: render and compare 31 periods, volume delta 0
+{"held_out_noise_period": 23, "recovered_median_period": 23.0, "recovered_median_volume": 11.0, "reference_volume": 11, "core": {"lfsr_states": 131071, "ones": 65536, "period_divisors_checked": 31, "mixer_truth_cases": 16, "pass": true}}
+test_digital_model_and_unseen_noise_phase (test_noise_colour.NoiseTests.test_digital_model_and_unseen_noise_phase) ... ok
+test_no_noise_is_exact_and_needs_no_renderer (test_noise_colour.NoiseTests.test_no_noise_is_exact_and_needs_no_renderer) ... ok
+test_path_suppresses_weak_chatter_but_resets_at_gaps (test_noise_colour.NoiseTests.test_path_suppresses_weak_chatter_but_resets_at_gaps) ... ok
+test_resampling_rejects_aliases_without_moving_time (test_noise_colour.NoiseTests.test_resampling_rejects_aliases_without_moving_time) ... ok
+{"stage": "necessary_noise", "share": 0.2, "benefit_db": 0.35, "noise_ticks": 60, "objective_db": 1.8722880177080669e-07}
+{"stage": "necessary_noise", "share": 0.3, "benefit_db": 0.35, "noise_ticks": 60, "objective_db": 1.8722880177080669e-07}
+{"stage": "necessary_noise", "share": 0.2, "benefit_db": 0.75, "noise_ticks": 60, "objective_db": 1.8722880177080669e-07}
+{"stage": "necessary_noise", "share": 0.3, "benefit_db": 0.75, "noise_ticks": 60, "objective_db": 1.8722880177080669e-07}
+test_actual_noise_with_strong_source_evidence_is_retained (test_noise_gate.NoiseNecessityTests.test_actual_noise_with_strong_source_evidence_is_retained) ... ok
+{"stage": "necessary_noise", "share": 0.2, "benefit_db": 0.35, "noise_ticks": 0, "objective_db": 5.9419655403839355}
+{"stage": "necessary_noise", "share": 0.3, "benefit_db": 0.35, "noise_ticks": 0, "objective_db": 5.9419655403839355}
+{"stage": "necessary_noise", "share": 0.2, "benefit_db": 0.75, "noise_ticks": 0, "objective_db": 5.9419655403839355}
+{"stage": "necessary_noise", "share": 0.3, "benefit_db": 0.75, "noise_ticks": 0, "objective_db": 5.9419655403839355}
+test_added_noise_is_removed_from_a_pure_tone (test_noise_gate.NoiseNecessityTests.test_added_noise_is_removed_from_a_pure_tone) ... ok
+test_context_and_invalid_options (test_pcm_levels.PcmLevelTests.test_context_and_invalid_options) ... ok
+test_five_point_one_uses_an_explicit_centre_priority_mix (test_pcm_levels.PcmLevelTests.test_five_point_one_uses_an_explicit_centre_priority_mix) ... ok
+test_quiet_passage_gets_closer_without_clipping_or_filling_silence (test_pcm_levels.PcmLevelTests.test_quiet_passage_gets_closer_without_clipping_or_filling_silence) ... ok
+test_fast_cache_is_exact_and_separate_from_full_search (test_simulation_refine.PerceptualFeedbackTests.test_fast_cache_is_exact_and_separate_from_full_search) ... ok
+test_forward_masking_decays_without_suppressing_new_sound (test_simulation_refine.PerceptualFeedbackTests.test_forward_masking_decays_without_suppressing_new_sound) ... ok
+test_neighbour_masking_and_candidate_cannot_hide_its_own_error (test_simulation_refine.PerceptualFeedbackTests.test_neighbour_masking_and_candidate_cannot_hide_its_own_error) ... ok
+{"stage": "chip_feedback", "round": 1, "proposal": "level-half", "objective_db": 15.858763925353745, "level_mae_db": 2.577175241219609, "accepted": true}
+{"stage": "chip_feedback", "round": 1, "proposal": "level-full", "objective_db": 14.876550915907494, "level_mae_db": 1.0439818917040866, "accepted": true}
+{"stage": "chip_feedback", "round": 1, "proposal": "tone-periods", "objective_db": 15.02567637598495, "level_mae_db": 5.956022233044187, "accepted": false}
+{"stage": "chip_feedback", "round": 1, "proposal": "joint", "objective_db": 11.119784251925228, "level_mae_db": 1.0450521203293626, "accepted": true}
+{"stage": "chip_feedback", "round": 2, "proposal": "level-full", "objective_db": 11.373050889968846, "level_mae_db": 1.0332194118152613, "accepted": false}
+test_real_chip_levels_and_periods_improve_detuned_dynamic_target (test_simulation_refine.PerceptualFeedbackTests.test_real_chip_levels_and_periods_improve_detuned_dynamic_target) ... ok
+test_short_note_recovery_uses_audible_tonal_neighbour_and_preserves_silence_and_envelope (test_simulation_refine.PerceptualFeedbackTests.test_short_note_recovery_uses_audible_tonal_neighbour_and_preserves_silence_and_envelope) ... ok
+test_zero_source_emits_mute_registers_instead_of_hiding_sound_with_gain (test_simulation_refine.PerceptualFeedbackTests.test_zero_source_emits_mute_registers_instead_of_hiding_sound_with_gain) ... ok
+
+----------------------------------------------------------------------
+Ran 41 tests in 76.173s
+
+OK

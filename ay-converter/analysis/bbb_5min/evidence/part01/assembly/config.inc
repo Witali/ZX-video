@@ -1,0 +1,16 @@
+total_ticks: EQU 5000
+loop_playback: EQU 0
+record_bytes: EQU 14
+bank_end_low: EQU 252
+disk_0: EQU 780
+sectors_0: EQU 64
+disk_1: EQU 1804
+sectors_1: EQU 64
+disk_2: EQU 2828
+sectors_2: EQU 64
+disk_3: EQU 3852
+sectors_3: EQU 64
+disk_4: EQU 4876
+sectors_4: EQU 18
+disk_5: EQU 0
+sectors_5: EQU 0

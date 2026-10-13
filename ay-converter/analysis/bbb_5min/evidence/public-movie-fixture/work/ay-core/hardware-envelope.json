@@ -1,0 +1,181 @@
+{
+  "model": "shared_running_hardware_envelope_feedback_v1",
+  "selected": true,
+  "target_chip": "AY-3-8910",
+  "envelope_level_codes": 16,
+  "register_bytes": 14,
+  "packed_state_bytes": 12,
+  "fixed_model_gain": 2.3767006631302103,
+  "baseline": {
+    "objective_db": 8.268513330718635,
+    "masked_spectral_mae_db": {
+      "512": 8.441137784767623,
+      "2048": 8.066641871341092,
+      "8192": 7.491500616227231
+    },
+    "absolute_spectral_mae_db": {
+      "512": 8.405644268753518,
+      "2048": 7.968000863144627,
+      "8192": 7.419857555384727
+    },
+    "level_mae_db": 0.7678663998285277,
+    "level_bias_db": -0.4149885517920795,
+    "reference_rms": 0.20659452689126184,
+    "model_rms": 0.196912680882824
+  },
+  "final": {
+    "objective_db": 8.136198821792744,
+    "masked_spectral_mae_db": {
+      "512": 8.142148613443677,
+      "2048": 7.918674092249633,
+      "8192": 7.552928753038945
+    },
+    "absolute_spectral_mae_db": {
+      "512": 8.110869859904133,
+      "2048": 7.83026351475325,
+      "8192": 7.485544988383569
+    },
+    "level_mae_db": 0.7569952444247403,
+    "level_bias_db": -0.2869356328865749,
+    "reference_rms": 0.20659452689126184,
+    "model_rms": 0.20194910989157888
+  },
+  "final_decision": "wave-8",
+  "candidates_rendered": 4,
+  "history": [
+    {
+      "proposal": "wave-8",
+      "proposed_blocks": 1,
+      "kept_blocks": 1,
+      "peak": 0.8359201368297604,
+      "admissible": true,
+      "improved_current_best": true,
+      "metrics": {
+        "objective_db": 8.136198821792744,
+        "masked_spectral_mae_db": {
+          "512": 8.142148613443677,
+          "2048": 7.918674092249633,
+          "8192": 7.552928753038945
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.110869859904133,
+          "2048": 7.83026351475325,
+          "8192": 7.485544988383569
+        },
+        "level_mae_db": 0.7569952444247403,
+        "level_bias_db": -0.2869356328865749,
+        "reference_rms": 0.20659452689126184,
+        "model_rms": 0.20194910989157888
+      }
+    },
+    {
+      "proposal": "wave-12",
+      "proposed_blocks": 1,
+      "kept_blocks": 1,
+      "peak": 1.0640037527898294,
+      "admissible": false,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 8.128342372234364,
+        "masked_spectral_mae_db": {
+          "512": 8.144382655487865,
+          "2048": 7.914944376473707,
+          "8192": 7.554427692243833
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.112736023797025,
+          "2048": 7.826461706832885,
+          "8192": 7.485648433774063
+        },
+        "level_mae_db": 0.7345451357120784,
+        "level_bias_db": -0.3567024547004693,
+        "reference_rms": 0.20659452689126184,
+        "model_rms": 0.19945758639902855
+      }
+    },
+    {
+      "proposal": "wave-14",
+      "proposed_blocks": 1,
+      "kept_blocks": 1,
+      "peak": 1.008312013964009,
+      "admissible": false,
+      "improved_current_best": false,
+      "metrics": {
+        "objective_db": 8.09667613909329,
+        "masked_spectral_mae_db": {
+          "512": 8.323917276449933,
+          "2048": 7.830653032504115,
+          "8192": 7.387860640683536
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.2805598512691,
+          "2048": 7.74116564805289,
+          "8192": 7.320590519502934
+        },
+        "level_mae_db": 0.711997588230748,
+        "level_bias_db": -0.3253869449100521,
+        "reference_rms": 0.20659452689126184,
+        "model_rms": 0.20060202862018467
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "start": 2,
+      "end": 5,
+      "channel": 1,
+      "period": 50,
+      "shape": 8,
+      "oscillator": true,
+      "priority": 1.0
+    }
+  ],
+  "envelope_channel_ticks": 3,
+  "shape_restarts": 1,
+  "shared_generators": 1,
+  "phase_continues_between_fields": true,
+  "no_per_field_restart": true,
+  "shape_write_sentinel": 255,
+  "limitations": "One shared nonlinear DAC envelope: 16 AY or 32 YM level codes. Bounded proposals and coarse frequency grid; not an ideal triangle or independent channel envelopes.",
+  "ramp_followup": {
+    "selected": false,
+    "baseline": {
+      "objective_db": 8.136198821792744,
+      "masked_spectral_mae_db": {
+        "512": 8.142148613443677,
+        "2048": 7.918674092249633,
+        "8192": 7.552928753038945
+      },
+      "absolute_spectral_mae_db": {
+        "512": 8.110869859904133,
+        "2048": 7.83026351475325,
+        "8192": 7.485544988383569
+      },
+      "level_mae_db": 0.7569952444247403,
+      "level_bias_db": -0.2869356328865749,
+      "reference_rms": 0.20659452689126184,
+      "model_rms": 0.20194910989157888
+    },
+    "final": {
+      "objective_db": 8.136198821792744,
+      "masked_spectral_mae_db": {
+        "512": 8.142148613443677,
+        "2048": 7.918674092249633,
+        "8192": 7.552928753038945
+      },
+      "absolute_spectral_mae_db": {
+        "512": 8.110869859904133,
+        "2048": 7.83026351475325,
+        "8192": 7.485544988383569
+      },
+      "level_mae_db": 0.7569952444247403,
+      "level_bias_db": -0.2869356328865749,
+      "reference_rms": 0.20659452689126184,
+      "model_rms": 0.20194910989157888
+    },
+    "final_decision": "held plan",
+    "history": [],
+    "blocks": [],
+    "one_shared_generator": true
+  }
+}

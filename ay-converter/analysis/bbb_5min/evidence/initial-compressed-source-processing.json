@@ -1,0 +1,68 @@
+{
+  "downmix": "pan=mono|c0=0.23*c0+0.23*c1+0.40*c2+0.07*c4+0.07*c5",
+  "normalization": {
+    "method": "selected-interval sample-peak calibration with bounded smooth dynamics",
+    "target_peak_dbfs": -1.0,
+    "source_peak": 0.5566455125808716,
+    "gain_linear": 1.601110433822569,
+    "normalized_peak": 0.8912509381337456,
+    "applied_before_analysis": true,
+    "same_gain_on_analysis_context": true,
+    "dynamics": "compact",
+    "dynamics_preserved": false,
+    "compressor": {
+      "ratio": 2.5,
+      "threshold_dbfs": -24,
+      "maximum_upward_db": 9,
+      "maximum_downward_db": 18,
+      "attack_ms": 10,
+      "release_ms": 150,
+      "offline_future_smoothing": true,
+      "no_time_shift": true
+    },
+    "makeup_gain_linear": 1.9720573147227674,
+    "makeup_gain_db": 5.898390657399087,
+    "source_levels": {
+      "rms": 0.026213788589350126,
+      "peak": 0.5566455125808716,
+      "active_ticks": 11956,
+      "p10_dbfs": -51.25428470704813,
+      "p90_dbfs": -26.301124756354135,
+      "p90_minus_p10_db": 24.953159950693994
+    },
+    "processed_levels": {
+      "rms": 0.07148979893886667,
+      "peak": 0.8912509381337456,
+      "active_ticks": 13944,
+      "p10_dbfs": -39.36913597218057,
+      "p90_dbfs": -18.426137705280752,
+      "p90_minus_p10_db": 20.94299826689982
+    },
+    "clipping_samples": 0,
+    "true_peak_or_lufs_normalization": false
+  },
+  "source_sha256": "dc2146a2b1172def56730143ad80cd1825b7fad15f1fc9c23a4e7d01a741ac11",
+  "reference_pcm_sha256": "d8dee069fcbe7ecc14d44c35db035d7f8bb03b9ae3f96d614d0304ac33d71910",
+  "ffmpeg_command": [
+    "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+    "-v",
+    "error",
+    "-nostdin",
+    "-i",
+    "C:\\Work\\HLV-codec\\out\\sources\\big_buck_bunny_1080p_h264\\big_buck_bunny_1080p_h264.mov",
+    "-t",
+    "301",
+    "-map",
+    "0:a:0",
+    "-vn",
+    "-ac",
+    "1",
+    "-ar",
+    "22050",
+    "-f",
+    "f32le",
+    "-af",
+    "pan=mono|c0=0.23*c0+0.23*c1+0.40*c2+0.07*c4+0.07*c5",
+    "-"
+  ]
+}

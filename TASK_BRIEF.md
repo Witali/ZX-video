@@ -1475,7 +1475,7 @@ and increases gzip size. Keep the measured host prototype and report; retain
 the release codec. No native decoder or subsequent experiment is authorized
 by this completed milestone. See the automatic-mixer report's phrase section.
 
-## First five minutes of Big Buck Bunny AY audio — authorized (2026-10-13)
+## First five minutes of Big Buck Bunny AY audio — complete (2026-10-13)
 
 From `e7450386`, convert source 0..300 seconds with the shared default `auto`
 engine, preserving all 15000 states on the 20-ms grid. Analyse the timeline
@@ -1498,6 +1498,8 @@ The subsequent requests authorize an explicit AY-3-8910/YM2149 target,
 source-evidenced sparse noise, bounded smooth dynamic-range compression and
 centre-priority 5.1 downmixing shared by both public entry points. The final
 300-second host/native set is built, with zero strong level-hole fields under
-the documented source-audibility check. Complete all three cold runs and the
-archive/commits; do not open another quality sweep. Current audio format is
+the documented source-audibility check. All three complete cold runs now pass 15000 fields and 195145 exact bus
+writes, with zero missing/duplicate fields or runtime disk reads. The complete
+listening set and proofs are archived in ay-converter/analysis/bbb_5min/evidence.
+This authorized sound deliverable is complete; do not open another quality sweep. Current audio format is
 AY12/14 registers; ordinary resident work increases 974 ->1166/1206 T.

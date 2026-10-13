@@ -1,0 +1,143 @@
+{
+  "source": "C:\\Work\\ZX-video\\ay-converter\\analysis\\auto_mixer\\evidence\\shared-core-fixture.mkv",
+  "source_sha256": "c43c608a2c0ac8cdf50dc4ed2818600ed8c7125126784a3076f02452d2c876dd",
+  "complete": true,
+  "release": false,
+  "video_fps": "10",
+  "frame_fields": 5,
+  "ay_hz": 50,
+  "native_resolution": [
+    256,
+    192
+  ],
+  "active_resolution": [
+    256,
+    144
+  ],
+  "logical_resolution": [
+    128,
+    96
+  ],
+  "disk_profile": "trdos503",
+  "executables": {
+    "ffmpeg": "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+    "ffprobe": "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffprobe.exe",
+    "zx0": "C:\\Work\\ZX-video\\.worktree\\compression\\.tmp\\ZX0\\win\\zx0.exe",
+    "lzsa": "C:\\Work\\ZX-video\\.tmp\\lzsa2-deep-search\\build\\lzsa.exe"
+  },
+  "player_baseline": "9885483",
+  "player_hot_path_changed": true,
+  "player_hot_path_delta_tstates": null,
+  "inline_matches": false,
+  "fast_noop_scan": false,
+  "static_cache_borders": false,
+  "carry_huffman": false,
+  "register_fragments": false,
+  "cached_huffman_byte": false,
+  "irq_safe_paging": false,
+  "startup_delta": false,
+  "timing_verified": false,
+  "verification": "cpu",
+  "video_codec": "cb41",
+  "brightness_levels": 5,
+  "input": {
+    "video_stream": 0,
+    "audio_stream": 1,
+    "decoded_frames": 5,
+    "encoded_frames": 5,
+    "tail_repeated_frames": 0,
+    "encoded_seconds": 0.5,
+    "fit": "contain",
+    "crop": false,
+    "command": [
+      "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+      "-v",
+      "error",
+      "-nostdin",
+      "-y",
+      "-i",
+      "C:\\Work\\ZX-video\\ay-converter\\analysis\\auto_mixer\\evidence\\shared-core-fixture.mkv",
+      "-map",
+      "0:0",
+      "-an",
+      "-vf",
+      "setpts=PTS-STARTPTS,fps=10:start_time=0:round=up:eof_action=pass,scale=w='max(1,round(min(128,72*dar)))':h='max(1,round(min(72,128/dar)))':flags=area,setsar=1,pad=128:72:(ow-iw)/2:(oh-ih)/2:black",
+      "-pix_fmt",
+      "rgb24",
+      "-f",
+      "rawvideo",
+      "C:\\Work\\ZX-video\\.tmp\\bbb-final-movie-current\\work\\frames.rgb"
+    ]
+  },
+  "volumes": [
+    {
+      "file": "ZX-video_part01.trd",
+      "metadata": "ZX-video_part01.json",
+      "frames": 5,
+      "frame_start": 0,
+      "frame_end_exclusive": 5,
+      "used_sectors": 42,
+      "free_sectors": 2502,
+      "sha256": "2e9e2aadc8a3653ef8819cf3ce3272f393ab2543f7a19c0c87f015e6d7d5f0a6",
+      "states": "work/ZX-video_part01/states.npz",
+      "host_screens_exact": true,
+      "row_entries": 103
+    }
+  ],
+  "frames": 5,
+  "ay_ticks": 25,
+  "duration_seconds": 0.5,
+  "stream_sha256": "6ee12464d5da7d141cff86ecf85c982f5007c5f4e4f142ac424f25f93f4b14e6",
+  "five_states_sha256": "94d7fcacd1cd91d9e9dee660377a94a5fc60a8ce5f7012c8d7c8e5007e754f4e",
+  "compression": {
+    "source_revision": "user-supplied executable; exact hash recorded",
+    "encoder_sha256": "bbecbbdeaac1a03b27c4204cb77b7f506ded7e14ed81ca27b2118bddcc860b25",
+    "decoder_sha256": "bbecbbdeaac1a03b27c4204cb77b7f506ded7e14ed81ca27b2118bddcc860b25",
+    "encoder_flags": [
+      "-r",
+      "-f",
+      "2",
+      "--prefer-ratio"
+    ],
+    "decoder_flags": [
+      "-d",
+      "-r",
+      "-f",
+      "2"
+    ]
+  },
+  "native_options": {
+    "fast_disk": true,
+    "cached_seek": true,
+    "interleaved": true,
+    "deferred_limit": 248,
+    "keepalive_fields": 64,
+    "frame_service": true,
+    "cold_bitmaps": true,
+    "inline_matches": true,
+    "startup_delta": false,
+    "fast_noop_scan": true,
+    "irq_safe_paging": true,
+    "static_cache_borders": true,
+    "carry_huffman": true,
+    "register_fragments": true,
+    "cached_huffman_byte": true,
+    "bank2_zx0": true,
+    "fast_return_irq": true,
+    "hl_mask_reader": true,
+    "compact_cursor": true,
+    "cached_huffman_lookahead": true,
+    "audio_batch": 31,
+    "foreground_audio": true
+  },
+  "independently_bootable": true,
+  "video_instruction_delta_tstates": 0,
+  "audio_wire": "AYH2",
+  "audio_register_count": 14,
+  "audio_skipped_register_checks_delta_tstates": 60,
+  "audio_constant_present_register_tstates": 167,
+  "audio_skipped_register_tstates": 20,
+  "audio_irq_tstates": "367+83*n; fourteen writes 1529",
+  "audio_init_delta_tstates": 234,
+  "cycle_scope": "AYH2 adds three 20-T register checks; changed-symbol and IRQ work is data-dependent. Video instruction timing is unchanged."
+}
