@@ -1,5 +1,25 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Transition-aware AY fit and existing feedback, rejected complete trials
+
+- **Scope/parameters:** Same prepared30 s/1500 states/gain. Three continuity
+  strengths0.02/0.05/0.1 at512/weight1/four regional peaks. Reuse prior
+  completed results instead of refitting them. Lowest continuity seed also
+  receives one existing chip-feedback round and existing hardware-envelope
+  proposals, at the same calibration and without pitch search.
+- **Results/decision:** Continuity objectives9.900928/9.901714/9.874857;
+  full feedback/envelope9.667439, peak0.901259. All remain worse than current
+ 9.248850; strongest raw long dominant cosine0.735210 also fails the guard.
+  Reject all; retain baseline. Full-level proposal improves scalar but
+  violates headroom, retained in history and not accepted. No weakening of
+  admission criteria or perceptual click-removal claim.
+- **Checks:** All four final11/14-register streams pass4*1500 independent
+  packed-state checks and full1323000-sample exact WAV replay. Retain every
+  final stream/media, deterministic seeds and existing optimizer histories.
+  Defaults and native instructions unchanged, hot-path delta0 T. Transition
+  diagnostics and separate subframe probe follow; no Fuse/audio-release
+  qualification claimed. [Complete evidence](ay-converter/analysis/ay_spectral_transfer/README.md).
+
 ## 2026-10-13 — AY inverse-weight and regional-peak transfer, complete rejected trials
 
 - **Parameters/input:** Same prepared30-second source,1500 states/gain,

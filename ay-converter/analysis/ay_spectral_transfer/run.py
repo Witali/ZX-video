@@ -51,7 +51,10 @@ def main():
     baseline = diagnostic(source, read(args.output / 'baseline.wav'))
     settings = [('direct512', dict(window=512)), ('direct2048', dict(window=2048))]
     if args.stage >= 2: settings += [('weighted512', dict(window=512, weight=1.)), ('bands512', dict(window=512, weight=1., band_peaks=4))]
-    if args.stage >= 3: settings += [(f'continuity{value:g}', dict(window=512, weight=1., band_peaks=4, continuity=value)) for value in (.02, .05, .1)]
+    if args.stage >= 3:
+        # Earlier complete trials are archived; do not refit them just to
+        # compare a new continuity strength against the identical baseline.
+        settings = [(f'continuity{value:g}', dict(window=512, weight=1., band_peaks=4, continuity=value)) for value in (.02, .05, .1)]
     trials = []; start = time.perf_counter()
     with chip_model.select('AY-3-8910'):
         for name, options in settings:
@@ -71,6 +74,31 @@ def main():
             print(json.dumps(dict(stage=args.stage, name=name, objective=details['metrics']['objective_db'],
                                  level_mae=details['metrics']['level_mae_db'], eligible=bool(eligible),
                                  cosines=[v['magnitude_cosine'] for v in details['unpooled'].values()])), flush=True)
+        if args.stage == 3:
+            # Current auto has full chip feedback and a hardware-envelope
+            # stage. Give the new fitter the same capabilities before the
+            # final admission decision, rather than comparing raw squares
+            # alone with the already-refined envelope baseline.
+            import simulation_refine, hardware_envelope
+            seed = min(trials, key=lambda t: t['diagnostics']['metrics']['objective_db'])
+            folder = args.output / 'with-existing-feedback'; folder.mkdir()
+            raw = gzip.decompress((args.output / seed['name'] / 'registers.gz').read_bytes())
+            raw, feedback = simulation_refine.optimize(source, raw, args.node, work_parent=folder,
+                                                       calibration_gain=gain, rounds=1, tuning_cents=0)
+            raw, envelope = hardware_envelope.optimize(source, raw, args.node, work_parent=folder, calibration_gain=gain)
+            width = envelope['register_bytes']; audio = render(raw, args.node, folder, width) * gain
+            quality.write_wav(folder / 'ay-preview.wav', audio, 44100)
+            details = diagnostic(source, read(folder / 'ay-preview.wav'))
+            eligible = abs(audio).max() < 1 and details['metrics']['objective_db'] < baseline['metrics']['objective_db']
+            eligible &= details['metrics']['level_mae_db'] <= baseline['metrics']['level_mae_db'] + .2
+            eligible &= all(details['unpooled'][s]['magnitude_cosine'] >= baseline['unpooled'][s]['magnitude_cosine'] - .005 for s in ('512', '2048', '8192'))
+            np.savez_compressed(folder / 'fit-controls.npz', registers=np.frombuffer(raw, np.uint8).reshape(-1, width))
+            entry = dict(name='with-existing-feedback', settings=dict(seed=seed['name']), gain=gain,
+                         metadata=dict(register_bytes=width, feedback=feedback, envelope=envelope), diagnostics=details,
+                         peak=float(abs(audio).max()), clipping_samples=int((abs(audio) >= 1).sum()), eligible=bool(eligible),
+                         registers_sha256=sha(raw), wave_sha256=sha((folder / 'ay-preview.wav').read_bytes()))
+            trials.append(entry); save(folder / 'report.json', entry)
+            print(json.dumps(dict(name=entry['name'], objective=details['metrics']['objective_db'], eligible=bool(eligible))), flush=True)
     eligible = [t for t in trials if t['eligible']]
     selected = min(eligible, key=lambda t: t['diagnostics']['metrics']['objective_db']) if eligible else None
     report = dict(complete=True, date='2026-10-13', stage=args.stage, seconds=30, fields=1500,

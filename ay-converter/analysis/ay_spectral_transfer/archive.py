@@ -36,19 +36,22 @@ def main():
     for trial in report['trials']:
         original = args.build / trial['name']; saved = target / trial['name']; saved.mkdir()
         raw = gzip.decompress((original / 'registers.gz').read_bytes())
-        rows = np.frombuffer(raw, np.uint8).reshape(-1, 11)
-        assert len(rows) == 1500 and np.all(rows[:, 1:6:2] < 16) and np.all(rows[:, 8:11] < 16)
+        width = trial['metadata'].get('register_bytes', 11)
+        rows = np.frombuffer(raw, np.uint8).reshape(-1, width)
+        assert len(rows) == 1500 and np.all(rows[:, 1:6:2] < 16) and np.all(rows[:, 8:11] < (32 if width == 14 else 16))
         periods = rows[:, :6:2].astype(int) + 256 * rows[:, 1:6:2].astype(int)
-        packed = b''.join(AyFrame(tuple(map(int, p)), tuple(map(int, r[8:11])), int(r[6]), int(r[7])).serialize()
+        packed = b''.join(AyFrame(tuple(map(int, p)), tuple(map(int, r[8:11])), int(r[6]), int(r[7]),
+                                  int(r[11]) + 256 * int(r[12]) if width == 14 else 0,
+                                  int(r[13]) if width == 14 else 255, 12 if width == 14 else 9).serialize()
                           for p, r in zip(periods, rows))
-        assert expected_registers(packed) == raw and sha(raw) == trial['registers_sha256']
-        replay = render(raw, args.node, original / 'independent-replay') * trial['gain']
+        assert expected_registers(packed, 12 if width == 14 else 9) == raw and sha(raw) == trial['registers_sha256']
+        replay = render(raw, args.node, original / 'independent-replay', width) * trial['gain']
         replay_path = original / 'independent-replay' / 'replay.wav'; quality.write_wav(replay_path, replay, 44100)
         assert replay_path.read_bytes() == (original / 'ay-preview.wav').read_bytes()
         assert sha(replay_path.read_bytes()) == trial['wave_sha256'] and len(replay) == 1323000
         for name in ('registers.gz', 'fit-controls.npz', 'report.json', 'ay-preview.wav', 'chip-render.json'):
             shutil.copyfile(original / name, saved / name)
-        (saved / 'soundtrack.ay9.gz').write_bytes(gzip.compress(packed, mtime=0))
+        (saved / ('soundtrack.ay12.gz' if width == 14 else 'soundtrack.ay9.gz')).write_bytes(gzip.compress(packed, mtime=0))
         streams.append(dict(name=trial['name'], fields=1500, packed_registers_exact=True,
                             complete_wav_replay_exact=True, clipping_samples=int((abs(replay) >= 1).sum())))
     if args.tests: shutil.copyfile(args.tests, target / 'tests.log')

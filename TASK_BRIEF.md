@@ -1785,3 +1785,9 @@ Stage2 is complete: exponent1 gives9.926241; regional peaks9.913041 versus
 baseline9.248850. Long dominant cosines0.728756/0.730898 fail the saved guard;
 both rejected. All four full stream/WAV checks pass. Continue stage3 and the
 separate subframe probe without changing the default encoder or guard.
+
+Stage3 is complete: continuity0.02/0.05/0.1 objectives9.900928/9.901714/9.874857;
+existing feedback plus envelope reaches9.667439, still worse than9.248850.
+All four final streams/WAVs replay exactly, including AY12 state decoding.
+All rejected under saved guards, default/native code unchanged. Continue the
+separate timed-DAC probe on retained baseline; no native scheduler claim.

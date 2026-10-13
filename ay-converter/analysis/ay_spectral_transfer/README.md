@@ -45,8 +45,6 @@ multiplication overflow in the decoder helper; fix the test signal/casts
 instead of relaxing the model assertion. Default encoder/player unchanged;
 native hot-path instruction delta0 T. No new Fuse/physical-chip audio claim.
 
-## Reproduce
-
 ## Stage2: inverse weighting and regional peaks — complete, not admitted
 
 At window512, exponent1 reduces the direct fit objective10.112593 ->9.926241;
@@ -60,6 +58,24 @@ pass all1500 legal packed states and complete byte-exact WAV replays.
 [weighted audition](evidence/stage2/weighted512/ay-preview.wav),
 [weighted + band audition](evidence/stage2/bands512/ay-preview.wav).
 Next evaluate transition-aware candidates; retain the baseline selection.
+
+## Stage3: transitions and existing feedback — complete, not admitted
+
+Continuity strengths0.02/0.05/0.1 give objectives9.900928/9.901714/9.874857.
+The strongest setting is the lowest scalar among these, but still fails
+baseline9.248850 and its long dominant cosine0.735210 fails the guard.
+One bounded existing-chip feedback round (fixed calibration, no pitch search)
+plus existing hardware-envelope proposals reduces the strongest seed to
+9.667439, with peak0.901259. It remains rejected. This comparison retains
+the baseline's hardware-envelope capability; it is not an unfair comparison
+of unrefined squares against a refined envelope output. The proposed full
+level correction was below9.83 but failed headroom and was not accepted.
+All optimizer histories are retained with their deterministic source/seed
+registers; four final streams/WAVs pass complete exact replay and independent
+AY9/AY12 decoding. [Stage3 report](evidence/stage3/report.json),
+[feedback audition](evidence/stage3/with-existing-feedback/ay-preview.wav).
+Next run the separately labeled subframe register-ramp probe on the retained
+baseline, including exact channel/envelope restrictions and bus timing.
 
 ## Reproduce
 
