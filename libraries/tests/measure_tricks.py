@@ -136,12 +136,40 @@ def aligned_addresses():
         full_decoder_evidence='ring_table_native.json')
 
 
+def stack_copies():
+    def bulk(source,end):
+        # Seven words: AF plus both BC/DE/HL banks. Store in reverse word
+        # order so a nonoverlapping 14-byte copy preserves byte order.
+        return ('31 '+source.to_bytes(2,'little').hex(' ')+' f1 c1 d1 e1 d9 c1 d1 e1 31 '
+            +end.to_bytes(2,'little').hex(' ')+' e5 d5 c5 d9 e5 d5 c5 f5')
+    raw=bytes(range(1,15));registers=dict(hl=0x4000,de=0x9000,bc=14,af=0x7301,alt_hl=0x1234)
+    old,ot=run('ed b0',registers,memory=((0x4000,raw),))
+    new,nt=run(bulk(0x4000,0x900e),registers,memory=((0x4000,raw),))
+    assert bytes(old.memory[0x9000:0x900e])==bytes(new.memory[0x9000:0x900e])==raw
+    assert (ot,nt)==(289,175) and old.sp!=new.sp and old.alt_hl!=new.alt_hl and old.a!=new.a
+    overlap=[]
+    for distance in (1,2):
+        seed=b'ZQ'[:distance];source=0x9000-distance
+        registers=dict(hl=source,de=0x9000,bc=14,af=0x7301,alt_hl=0x1234)
+        old,_=run('ed b0',registers,memory=((source,seed),))
+        new,_=run(bulk(source,0x900e),registers,memory=((source,seed),))
+        correct=bytes(old.memory[0x9000:0x900e]);wrong=bytes(new.memory[0x9000:0x900e])
+        assert correct!=wrong
+        overlap.append(dict(distance=distance,correct=correct.hex(),invalid_prefetch=wrong.hex()))
+    return dict(item='07',baseline_revision='94092f04',complete=True,
+        decision='rejected for current live-register/private-stack/overlap ABI',
+        primitive_bytes=14,primitive_tstates=dict(before=289,after=175,delta=-114),
+        private_sp_restore_tstates=40,restore_is_excluded_from_primitive=True,
+        live_register_changes=dict(sp=new.sp,alternate_hl=new.alt_hl,accumulator=new.a),
+        overlap_counterexamples=overlap,decoder_changes=0)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',required=True,choices=('02','03','04','05','06'))
+    parser.add_argument('--item',required=True,choices=('02','03','04','05','06','07'))
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args();report={'02':transfers,'03':bit_masks,'04':pointer_increments,'05':jump_tables,
-        '06':aligned_addresses}[args.item]()
+        '06':aligned_addresses,'07':stack_copies}[args.item]()
     report.update(release=False,timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         scope='Native instruction/precondition checks; no new decoder or playback performance claim.',
         sources={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (

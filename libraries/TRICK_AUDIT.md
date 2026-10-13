@@ -151,3 +151,28 @@ application; it has no integrated player allocation or ULA/disk/publication run.
 This applies alignment to a real small table with an explicit memory cost.
 Reproduce `measure_ring_table.py --output libraries/evidence/ring_table_native.json`
 and `measure_tricks.py --item 06 --output libraries/evidence/trick_06.json`.
+
+## 07 — POP/PUSH bulk copy through SP/EXX (2026-10-13)
+
+The [14-byte forum copier](https://zx-pk.ru/threads/22089-memcpy-bystraya-peresylka-dannykh.html#post640226)
+costs seven POPs70 + seven PUSHes77 + two EXX8 + two LD SP,nn20=175 T
+(12.5 per byte), versus LDIR14=289. [Native probes](evidence/trick_07.json)
+verify ordered nonoverlapping output and wrong output for legal match
+distances1/2: prefetched bytes have not yet been produced. Forward LDI/LDIR
+correctly repeats the seed; bulk prereading copies poisoned bytes instead.
+
+Even literal-only use changes SP, A/AF, both BC/DE/HL sets and specifically
+HL'. ZX0 carries its bit reservoir in A; LZSA2 needs the token in A after
+literal copying and the shared nibble in AF'. `incremental.py` explicitly
+assigns HL' to the IM2 clock, while coroutine returns depend on the private
+stack. Save/restore private SP alone adds ED LD (nn),SP20 + LD SP,(nn)20,
+before retaining AF/alternate live state and fixing byte-count tails. IRQ
+pushes would use data-address headroom that the current input/history ABI
+does not allocate, rather than the verified private stack. No IRQ masking
+or new temporary literal buffer is introduced by this audit.
+
+**Decision: reject for the current ABI.** The primitive's114-T gain excludes
+required preservation and is not a whole-decoder result. Correct LZ overlap,
+AY clock ownership and suspension take precedence; no core/RAM/stream changes
+(actual delta0 T). Reproduce `measure_tricks.py --item 07 --output
+libraries/evidence/trick_07.json`.

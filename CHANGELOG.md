@@ -1,5 +1,18 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Item07: reject stack-prefetched copying for this ABI
+
+- **Objective/baseline:** From `94092f04`, measure14-byte POP/PUSH/EXX copy
+  and verify legal LZ overlap, live registers and the private-stack contract.
+- **Measurements/coverage:** Nonoverlapping primitive175 T versus LDIR289
+  (-114), excluding40 T for SP save/restore and all AF/alternate retention/
+  tails. Native probes show poisoned output at distances1/2 and changed live
+  A/HL'/SP. [Audit](libraries/TRICK_AUDIT.md),
+  [report](libraries/evidence/trick_07.json), `measure_tricks.py --item 07`.
+- **Decision:** Reject under current match/literal/AY coroutine ABI; no new
+  buffer, IRQ masking or codec changes (actual delta0 T/code/RAM/stream).
+  No whole-decoder or physical-delivery saving is claimed for this primitive.
+
 ## 2026-10-13 — Item06: optional aligned ZX0 ring table
 
 - **Objective/baseline:** From `ac346c70`, apply aligned addressing where

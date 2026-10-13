@@ -1,0 +1,41 @@
+{
+  "item": "07",
+  "baseline_revision": "94092f04",
+  "complete": true,
+  "decision": "rejected for current live-register/private-stack/overlap ABI",
+  "primitive_bytes": 14,
+  "primitive_tstates": {
+    "before": 289,
+    "after": 175,
+    "delta": -114
+  },
+  "private_sp_restore_tstates": 40,
+  "restore_is_excluded_from_primitive": true,
+  "live_register_changes": {
+    "sp": 36864,
+    "alternate_hl": 42405,
+    "accumulator": 81
+  },
+  "overlap_counterexamples": [
+    {
+      "distance": 1,
+      "correct": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+      "invalid_prefetch": "5aa5a5a5a5a5a5a5a5a5a5a5a5a5"
+    },
+    {
+      "distance": 2,
+      "correct": "5a515a515a515a515a515a515a51",
+      "invalid_prefetch": "5a51a5a5a5a5a5a5a5a5a5a5a5a5"
+    }
+  ],
+  "decoder_changes": 0,
+  "release": false,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "Native instruction/precondition checks; no new decoder or playback performance claim.",
+  "sources": {
+    "libraries/zx0/src/zx0/banked.py": "6535d8405b79fa8a1001ac39309e7198d4adfe40441fcfa9486a10a8657d381f",
+    "libraries/zx0/src/zx0/incremental.py": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a",
+    "libraries/zx0/src/zx0/resumable.py": "d45721b7bc473d84df1a54d7e4c39aeec9dca7589efddba1c3740234041f2572",
+    "libraries/lzsa/src/lzsa/resumable.py": "6858a2ae34e2972b01b7e7f668d5e4e5bf5dc306ebd404bda1c4210885a6440a"
+  }
+}

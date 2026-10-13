@@ -27,7 +27,8 @@ crossings in variable-position headers. Item05 rejects the jump table:
 57 T versus24/31/36 T for current class selection. Item06 adds an optional
 aligned ZX0 ring table (108 ->87 T, +121..245 bytes),64 full native banked
 blocks/all16 profiles and AY/IM2 at every instruction pass. Next: item07
-stack bulk copies.
+stack bulk copies reject legal overlap1/2 and violate live A/HL'/private-SP
+contracts. Next: item08 constants as code.
 
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 
