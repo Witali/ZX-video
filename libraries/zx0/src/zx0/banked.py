@@ -17,7 +17,7 @@ STACK_TOP, STACK_BOTTOM = 0x7be0, 0x7b70
 BANKS = (0, 1, 3, 4)
 
 
-def build(*, fast_literal=False, fast_refill=False, token_boundaries=False,page_entry=None,disk_refill_entry=None,inline_matches=False):
+def build(*, fast_literal=False, fast_refill=False, token_boundaries=False,page_entry=None,disk_refill_entry=None,inline_matches=False,aligned_ring_table=False):
     a = MiniAssembler(CODE)
     a.label('begin')
     a.abs16(0xcd, 'refill')
@@ -130,10 +130,17 @@ def build(*, fast_literal=False, fast_refill=False, token_boundaries=False,page_
         a.emit(0xed, 0xb0, 0xc9)
 
     a.label('ring_page')
+    # Input ring_region is 0..3; history_page retains ROM/screen bits. AF,
+    # BC, DE and HL are scratch here; both callers save live decoder registers.
+    # Optional page-aligned four-byte table uses the index directly as L,
+    # saving 21 T. Its padding is explicit RAM, not free address arithmetic.
     a.abs16(0x3a, 'ring_region')
-    a.emit(0x5f, 0x16, 0)
-    a.abs16(0x21, 'ring_banks')
-    a.emit(0x19, 0x5e)
+    if aligned_ring_table:
+        a.emit(0x6f,0x26);table_high_operand=len(a.code);a.emit(0,0x5e)
+    else:
+        a.emit(0x5f, 0x16, 0)
+        a.abs16(0x21, 'ring_banks')
+        a.emit(0x19, 0x5e)
     a.abs16(0x3a, 'history_page')
     a.emit(0xe6, 0xf8, 0xb3, 0x01); a.word(0x7ffd)
     if page_entry is None: a.emit(0xed, 0x79)
@@ -147,6 +154,11 @@ def build(*, fast_literal=False, fast_refill=False, token_boundaries=False,page_
         a.label(name); a.word(0)
     for name in ('block_stored', 'ring_region', 'history_page'):
         a.label(name); a.emit(0)
+    if aligned_ring_table:
+        # Align only the existing four entries, never a lookup over history.
+        # The fixed layout must reserve the resulting code/state/table extent.
+        a.emit(*bytes((-a.pc)&255))
+        a.code[table_high_operand]=a.pc>>8
     a.label('ring_banks'); a.emit(*BANKS)
     a.label('end')
     if a.pc > 0x8000:

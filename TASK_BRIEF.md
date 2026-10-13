@@ -24,7 +24,10 @@ copies already use LD; native evidence rejects replacing live saves. Next:
 item03 is audited: live parity/Z/carry and multi-bit masks prevent the rewrite.
 Item04 retains existing ZX0 page-aware increments and rejects unguarded
 crossings in variable-position headers. Item05 rejects the jump table:
-57 T versus24/31/36 T for current class selection. Next: item06 aligned tables.
+57 T versus24/31/36 T for current class selection. Item06 adds an optional
+aligned ZX0 ring table (108 ->87 T, +121..245 bytes),64 full native banked
+blocks/all16 profiles and AY/IM2 at every instruction pass. Next: item07
+stack bulk copies.
 
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 

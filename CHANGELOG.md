@@ -1,5 +1,27 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Item06: optional aligned ZX0 ring table
+
+- **Objective/baseline:** From `ac346c70`, apply aligned addressing where
+  valid. Reject SET7,H for dynamic LZ history (native wrong-address probes).
+  Add opt-in `banked.build(aligned_ring_table=True)` for the four bank entries.
+- **Measurements:** Lookup address part39 ->18 T, whole ring_page108 ->87
+  (-21); direct OUT endpoints include state loads and RET. Table at7F00,
+  extent7F04; net +121..245 bytes (ordinary567 ->772) including alignment,
+  no extra state/stack/buffer/stream bytes or sectors. Defaults unchanged.
+- **Coverage:** All16 banked profiles,128 native page combinations and64
+  complete8192-byte banked native blocks with exact ring/input/output,
+  overlap1/256, poisoned caller registers and132 interrupts.17898920 ->
+  17874728 T (-24192), zero slower blocks/slices. AY/IM2 at every instruction
+  passes with the optional layout; all31 default profiles and12 library
+  regression tests pass. [Audit](libraries/TRICK_AUDIT.md),
+  [full report](libraries/evidence/ring_table_native.json),
+  [mask counterexamples](libraries/evidence/trick_06.json), reproducer
+  `measure_ring_table.py`.
+- **Decision:** Optional measured library profile, with explicit bank5 padding
+  cost; reject history masks. No integrated player/physical disk/ULA/publication
+  qualification or changed release defaults.
+
 ## 2026-10-13 — Item05: reject a slower saved-HL dispatch table
 
 - **Objective/baseline:** From `0d7caa52`, evaluate the22-T forum jump-table

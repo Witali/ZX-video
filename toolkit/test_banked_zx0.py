@@ -59,10 +59,13 @@ class BankedZX0Tests(unittest.TestCase):
     def test_irq_at_every_instruction_and_private_stack(self):
         self.exercise_irq()
 
-    def exercise_irq(self,*,token_boundaries=False,inline_matches=False):
+    def test_aligned_ring_table_irq_at_every_instruction(self):
+        self.exercise_irq(aligned_ring_table=True)
+
+    def exercise_irq(self,*,token_boundaries=False,inline_matches=False,aligned_ring_table=False):
         raw = bytes(range(256))*32
         payload = encode(raw, [Token(0, 300), Token(300, len(raw)-300, 256)])
-        h = Harness(fast_literal=True, fast_refill=True,token_boundaries=token_boundaries,inline_matches=inline_matches)
+        h = Harness(fast_literal=True, fast_refill=True,token_boundaries=token_boundaries,inline_matches=inline_matches,aligned_ring_table=aligned_ring_table)
         h.begin(payload, raw, ring_start=0xffff)
         a = MiniAssembler(0x9400)
         ay_interrupt.emit(a)

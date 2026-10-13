@@ -119,11 +119,29 @@ def jump_tables():
         production_layout_allocated=False,decoder_changes=0)
 
 
+def aligned_addresses():
+    valid=[];invalid=[]
+    for index in (0,1,0x3fff,0x7fff):
+        old,ot=run('19',dict(hl=index,de=0x8000));new,nt=run('cb fc',dict(hl=index,de=0x8000))
+        assert old.hl==new.hl==index+0x8000 and (ot,nt)==(11,8)
+        valid.append(dict(index=index,address=new.hl))
+    for offset,output in ((0xffff,0xc001),(0xfff0,0xc210),(0xffff,0xa001)):
+        old,_=run('19',dict(hl=offset,de=output));new,_=run('cb fc',dict(hl=offset,de=output))
+        assert old.hl!=new.hl
+        invalid.append(dict(offset=offset,output=output,correct_address=old.hl,invalid_mask_address=new.hl))
+    return dict(item='06',baseline_revision='ac346c70',complete=True,
+        decision='optional aligned ZX0 bank table; reject history address masking',
+        index_mapping=valid,history_counterexamples=invalid,primitive_tstates=dict(add=11,set=8,delta=-3),
+        applied_lookup_tstates=dict(before=108,after=87,delta=-21),
+        full_decoder_evidence='ring_table_native.json')
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',required=True,choices=('02','03','04','05'))
+    parser.add_argument('--item',required=True,choices=('02','03','04','05','06'))
     parser.add_argument('--output',type=Path,required=True)
-    args=parser.parse_args();report={'02':transfers,'03':bit_masks,'04':pointer_increments,'05':jump_tables}[args.item]()
+    args=parser.parse_args();report={'02':transfers,'03':bit_masks,'04':pointer_increments,'05':jump_tables,
+        '06':aligned_addresses}[args.item]()
     report.update(release=False,timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         scope='Native instruction/precondition checks; no new decoder or playback performance claim.',
         sources={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (

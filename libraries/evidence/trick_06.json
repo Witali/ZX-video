@@ -1,0 +1,64 @@
+{
+  "item": "06",
+  "baseline_revision": "ac346c70",
+  "complete": true,
+  "decision": "optional aligned ZX0 bank table; reject history address masking",
+  "index_mapping": [
+    {
+      "index": 0,
+      "address": 32768
+    },
+    {
+      "index": 1,
+      "address": 32769
+    },
+    {
+      "index": 16383,
+      "address": 49151
+    },
+    {
+      "index": 32767,
+      "address": 65535
+    }
+  ],
+  "history_counterexamples": [
+    {
+      "offset": 65535,
+      "output": 49153,
+      "correct_address": 49152,
+      "invalid_mask_address": 65535
+    },
+    {
+      "offset": 65520,
+      "output": 49680,
+      "correct_address": 49664,
+      "invalid_mask_address": 65520
+    },
+    {
+      "offset": 65535,
+      "output": 40961,
+      "correct_address": 40960,
+      "invalid_mask_address": 65535
+    }
+  ],
+  "primitive_tstates": {
+    "add": 11,
+    "set": 8,
+    "delta": -3
+  },
+  "applied_lookup_tstates": {
+    "before": 108,
+    "after": 87,
+    "delta": -21
+  },
+  "full_decoder_evidence": "ring_table_native.json",
+  "release": false,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "Native instruction/precondition checks; no new decoder or playback performance claim.",
+  "sources": {
+    "libraries/zx0/src/zx0/banked.py": "6535d8405b79fa8a1001ac39309e7198d4adfe40441fcfa9486a10a8657d381f",
+    "libraries/zx0/src/zx0/incremental.py": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a",
+    "libraries/zx0/src/zx0/resumable.py": "d45721b7bc473d84df1a54d7e4c39aeec9dca7589efddba1c3740234041f2572",
+    "libraries/lzsa/src/lzsa/resumable.py": "6858a2ae34e2972b01b7e7f668d5e4e5bf5dc306ebd404bda1c4210885a6440a"
+  }
+}
