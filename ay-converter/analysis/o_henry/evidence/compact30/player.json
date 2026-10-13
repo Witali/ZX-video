@@ -1,0 +1,156 @@
+{
+  "origin": 32768,
+  "ticks": 1500,
+  "duration_seconds": 30.0,
+  "register_bytes_per_state": 14,
+  "bank_payload_bytes": 16380,
+  "packed_state_bytes": 12,
+  "packed_filename": "soundtrack.ay12.gz",
+  "loop_playback": false,
+  "disk_filename": "audio-preview.trd",
+  "player_labels": {
+    "total_ticks": 1500,
+    "loop_playback": 0,
+    "record_bytes": 14,
+    "bank_end_low": 252,
+    "disk_0": 780,
+    "sectors_0": 64,
+    "disk_1": 1804,
+    "sectors_1": 19,
+    "disk_2": 0,
+    "sectors_2": 0,
+    "disk_3": 0,
+    "sectors_3": 0,
+    "disk_4": 0,
+    "sectors_4": 0,
+    "disk_5": 0,
+    "sectors_5": 0,
+    "LOAD_BANK": 32768,
+    "start": 32768,
+    "clear_loading": 32843,
+    "clear_ay": 32866,
+    "ready": 32920,
+    "wait_field": 32921,
+    "field_start": 32922,
+    "tick_start": 32931,
+    "write_register": 32935,
+    "ay_out": 32943,
+    "ay_env_out": 32966,
+    "tick_end": 32968,
+    "finished": 33009,
+    "finished_wait": 33043,
+    "irq": 33046,
+    "read_n": 33049,
+    "disk_call": 33058,
+    "sector_ok": 33076,
+    "remaining": 33083,
+    "disk_position": 33085,
+    "bank_pointer": 33087,
+    "bank_table": 33089,
+    "code_end": 33095,
+    "screen_data": 36864
+  },
+  "sections": [
+    {
+      "bank": 0,
+      "sector": 60,
+      "sectors": 64,
+      "bytes": 16380
+    },
+    {
+      "bank": 4,
+      "sector": 124,
+      "sectors": 19,
+      "bytes": 4620
+    }
+  ],
+  "directory": [
+    {
+      "name": "boot",
+      "type": "B",
+      "field1": 67,
+      "length": 67,
+      "sectors": 1,
+      "sector": 0,
+      "track": 1
+    },
+    {
+      "name": "PLAYER",
+      "type": "C",
+      "field1": 32768,
+      "length": 11008,
+      "sectors": 43,
+      "sector": 1,
+      "track": 1
+    },
+    {
+      "name": "AUDIO0",
+      "type": "C",
+      "field1": 49152,
+      "length": 16380,
+      "sectors": 64,
+      "sector": 12,
+      "track": 3
+    },
+    {
+      "name": "AUDIO1",
+      "type": "C",
+      "field1": 49152,
+      "length": 4620,
+      "sectors": 19,
+      "sector": 12,
+      "track": 7
+    }
+  ],
+  "capacity": {
+    "used_sectors": 127,
+    "free_sectors": 2417,
+    "first_free_track": 8,
+    "first_free_sector": 15
+  },
+  "assembly": {
+    "assembler": "pyz80",
+    "instruction_bytes_emitted_by_python": false,
+    "source_sha256_lf": "4f15575a7d22d59c9befbc3609137071def01f6a0902b3a6ffe8e4e8853b099f",
+    "binary_sha256": "cf29637210348d9c52350e031692687bd196bd965c53787e3639ea9a9c38b7f1"
+  },
+  "loading_message": "LOADING AUDIO DATA",
+  "loading_bitmap_rows": 24,
+  "registers_sha256": "77f2b930a1b223f4746c4549b9d464d7fd98d6f095e6000e51139a3d8d5b4b05",
+  "timing": {
+    "ordinary_field_work_tstates": 1166,
+    "ordinary_delta_tstates": 192,
+    "near_boundary_tstates": 1184,
+    "bank_change_tstates": 1283,
+    "exact_boundary_eof_tstates": 1199,
+    "loop_restart_extra_tstates": 105,
+    "loop_first_field_tstates": 1271,
+    "tick_start_to_tick_end_tstates": 1059,
+    "irq_body_tstates": 18,
+    "im2_ack_tstates": 19,
+    "vector_jump_tstates": 10,
+    "nominal_field_tstates": 70908,
+    "envelope_no_restart_delta_tstates": 192,
+    "envelope_restart_delta_tstates": 232,
+    "envelope_field_work_no_restart_tstates": 1166,
+    "envelope_field_work_restart_tstates": 1206,
+    "envelope_tick_work_no_restart_tstates": 1059,
+    "envelope_tick_work_restart_tstates": 1099,
+    "excludes": "ULA contention, HALT wait, boot ROM and physical disk latency"
+  },
+  "memory": {
+    "bank_5": "display, BASIC and TR-DOS workspace",
+    "bank_2": "8000..8FFF code; 9000..AAFF screen copy; stack below B800; BDBD vector; BE00..BF00 IM2",
+    "data_banks": [
+      0,
+      4,
+      6,
+      1,
+      3,
+      7
+    ],
+    "capacity_register_bytes": 98280,
+    "unused_data_tail_bytes_per_bank": 4,
+    "runtime_disk_reads": 0
+  }
+}

@@ -1,5 +1,28 @@
 # O. Henry speech through the current AY converter
 
+## Thirty-second compact-dynamics audition (2026-10-13)
+
+[Listen to the current AY model WAV](evidence/compact30/ay-preview.wav).
+The requested 30-second interval is source [60,90), extending the earlier
+24-second excerpt from the same original M4A. This uses the current shared
+`auto` engine, AY-3-8910, smooth `compact` dynamics, analytic20 mixer search,
+source-evidenced noise, hardware-envelope proposals and complete simulation
+feedback. [Processed PCM reference](evidence/compact30/original-preview.wav)
+uses the same preprocessing as the fitter.
+
+The archive includes exact packed/register checks, source/producer/artifact
+hashes and WAV duration/headroom checks in
+[audition-check.json](evidence/compact30/audition-check.json). Its generated
+resident player is retained as a build artifact; this request qualifies the
+simulation WAV rather than a new hardware/Fuse recording.
+
+```text
+python ay-converter/convert_audio.py SOURCE.m4a --output OUTPUT --start 60 --duration 30 --once --profile auto --chip AY-3-8910 --dynamics compact --ffmpeg FFMPEG --node NODE
+python ay-converter/analysis/o_henry/save_compact30.py OUTPUT --log CONVERSION_LOG
+```
+
+## Earlier 24-second music-profile trial
+
 Completed 2026-10-05 against `ec0676d`. This is a bounded listening trial of
 the current music preset on the familiar O. Henry recording. No converter
 or player algorithm changes: persistent components, held note pitch and

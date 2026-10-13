@@ -1503,3 +1503,11 @@ writes, with zero missing/duplicate fields or runtime disk reads. The complete
 listening set and proofs are archived in ay-converter/analysis/bbb_5min/evidence.
 This authorized sound deliverable is complete; do not open another quality sweep. Current audio format is
 AY12/14 registers; ordinary resident work increases 974 ->1166/1206 T.
+
+## Thirty-second O. Henry listening follow-up — complete (2026-10-13)
+
+The requested source[60,90) WAV uses the current shared auto engine, AY-3-8910
+and compact dynamics. All1500 packed/control states, source/producer hashes
+and30-second WAV/headroom checks pass; listen in
+[the retained audition](ay-converter/analysis/o_henry/README.md). No converter
+or native instruction changes, new Fuse qualification or broader search.

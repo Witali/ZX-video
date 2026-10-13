@@ -1,5 +1,27 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Thirty-second O. Henry WAV through the current shared engine
+
+- **Request/baseline:** The user requests another30 seconds from the familiar
+  O. Henry excerpt and an inline WAV. Use `38514c98`, source[60,90) from the
+  same original M4A (SHA256 a34f27c44c0df7f817814df2c43eb3c58d2d415e0892434c99dc23b6b2d2e779),
+  extending the prior24-second excerpt. No sound algorithm or player change.
+- **Settings/result:** Public `convert_audio.py`, auto, analytic20, AY-3-8910,
+  compact dynamics, continuous hardware-envelope and sparse-noise feedback.
+  All1500 states export as AY12/14 registers;607 audible noise fields,
+  327 ENV channel-fields and74 shape actions. Final objective9.24880 dB,
+  level MAE1.36729 dB. The30-second mono PCM16 model WAV has44100-Hz rate,
+  RMS0.13319327, peak0.90640259 and zero clipped samples. Processed source
+  reference RMS0.13231163. Spectral/level proxies are not a listening grade.
+- **Coverage/decision:** Source, producer and artifact hashes match; independent
+  packed-register decode matches every state. WAV duration, sample format and
+  headroom checks pass. Save the WAV, reference, state/control data, build log
+  and manifest under `ay-converter/analysis/o_henry/evidence/compact30`, with
+  WAV/TRD in LFS and committed-byte verification. The generated resident player
+  remains a build artifact; no new Fuse/hardware playback claim is required
+  for this WAV request. Prior24-second disk proof remains unchanged.
+  Reproduce with the README command and `save_compact30.py`. Deliverable complete.
+
 ## 2026-10-13 — Complete five-minute compressed AY audition qualification
 
 - **Scope/baseline:** Publish the selected 0..300-second sound-only result from
