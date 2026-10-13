@@ -1,5 +1,27 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Normalize the five-minute PCM before AY analysis
+
+- **Request/baseline:** after `548d7def`, the user requested level normalization
+  before conversion. Scope remains Big Buck Bunny 0..300 seconds and its
+  continuous analysis context; public converter defaults are not changed.
+- **Change/measurement:** decode 48-kHz AAC 5.1 to mono 22050-Hz float PCM,
+  then apply one gain before harmonic/noise analysis. Source peak 1.52094018
+  (+3.64224 dBFS), gain 0.58598684 (-4.64224 dB), target and actual sample
+  peak 0.89125094 (-1 dBFS). All 6615000 selected samples have zero clipping;
+  original dynamics and the same context gain are retained. Record target,
+  before/after RMS, PCM hash and actual gain. No limiter, per-tick AGC, LUFS
+  or oversampled true-peak processing is implied.
+- **Checks/decision:** actual input assertions verify the full selected peak,
+  zero clipping and finite PCM before conversion. The earlier unnormalized
+  build completed 15000 native ticks and the first 7500-tick cold Fuse disk;
+  the second Fuse run was interrupted at this request. Supersede that draft.
+  Normalization invalidates its PCM identity, so the new run recomputes both
+  noise and mixer stages rather than reusing its snapshot. Full normalized
+  disk qualification is pending and will be recorded separately.
+  [Code and method](ay-converter/analysis/bbb_5min/README.md),
+  [reproducer](ay-converter/analysis/bbb_5min/build.py).
+
 ## 2026-10-13 — Calculate a short AY mixer candidate list for the long audition
 
 - **Request/baseline:** `e7450386`; user requested Big Buck Bunny source 0..300

@@ -180,8 +180,11 @@ def main():
     p.add_argument('--check-only',action='store_true')
     p.add_argument('--resume-noise',type=Path,help='reuse an authenticated complete noise-colour stage')
     p.add_argument('--full-mixer',action='store_true',help='use the 374-candidate reference instead of the analytic shortlist')
+    p.add_argument('--normalize-peak-db',type=float,default=-1.,help='normalize selected PCM before analysis, default -1 dBFS')
     args=p.parse_args()
     if not 1<=args.workers<=12: p.error('workers must be 1..12')
+    if not np.isfinite(args.normalize_peak_db) or not -24<=args.normalize_peak_db<=0:
+        p.error('normalize peak must be -24..0 dBFS')
     out=args.output; out.mkdir(parents=True,exist_ok=True)
     check=scheduling_check(args.node,args.workers); save(out/'scheduling-check.json',check)
     objective=objective_check(args.node,args.workers); save(out/'objective-check.json',objective)
@@ -190,7 +193,24 @@ def main():
     command=[args.ffmpeg,'-v','error','-nostdin','-i',str(args.source),'-t','301','-map','0:a:0','-vn','-ac','1','-ar','22050','-f','f32le','-']
     samples=np.frombuffer(RUN(command,capture_output=True,check=True).stdout,'<f4').astype(float)
     assert len(samples)>=300*22050 and np.isfinite(samples).all()
+    source_peak=float(np.max(abs(samples[:300*22050])))
+    source_rms=float(np.sqrt(np.mean(samples[:300*22050]**2)))
+    target_peak=10**(args.normalize_peak_db/20)
+    input_gain=target_peak/source_peak if source_peak>0 else 1.
+    # One scalar for the selected interval and following context. Preserve
+    # every waveform ratio; do not compress dynamics or normalize per tick.
+    samples=samples*input_gain
     original=samples[:300*22050]
+    normalization=dict(applied_before_analysis=True,method='global selected-interval sample-peak normalization',
+        target_peak_dbfs=args.normalize_peak_db,source_peak=source_peak,source_rms=source_rms,
+        gain_linear=input_gain,gain_db=20*np.log10(input_gain),
+        normalized_peak=float(np.max(abs(original))),normalized_rms=float(np.sqrt(np.mean(original**2))),
+        normalization_interval_seconds=[0,300],same_gain_on_analysis_context=True,dynamics_preserved=True,
+        sample_rate_hz=22050,normalized_pcm_sha256=sha(original.astype('<f8').tobytes()),
+        clipping_samples=int(np.count_nonzero(abs(original)>1)),true_peak_or_lufs_normalization=False)
+    assert normalization['clipping_samples']==0
+    if source_peak: assert np.isclose(normalization['normalized_peak'],target_peak,rtol=1e-14)
+    save(out/'input-normalization.json',normalization)
     with args.source.open('rb') as stream: source_hash=hashlib.file_digest(stream,'sha256').hexdigest()
     print(json.dumps(dict(stage='analyse',duration_seconds=300,ticks=15000,source_sha256=source_hash)),flush=True)
     subprocess.run=lambda command,**kw: parallel_run(command,args.workers,**kw)
@@ -273,6 +293,7 @@ def main():
     assert b''.join(gzip.decompress((out/f'part{i:02d}/registers.gz').read_bytes()) for i in (1,2))==raw
     report=dict(complete=True,source=str(args.source),source_sha256=source_hash,ffmpeg_command=command,
         interval_seconds=[0,300],ticks=15000,update_rate_hz=50,sound_quantum_ms=20,profile='auto',
+        input_normalization=normalization,
         analysis_context_after_seconds=(len(samples)-len(original))/22050,continuous_analysis=True,
         continuous_model_preview=True,no_source_pcm_in_synthesis=True,global_preview_rms=target,
         resumed_complete_noise_stage=bool(args.resume_noise),

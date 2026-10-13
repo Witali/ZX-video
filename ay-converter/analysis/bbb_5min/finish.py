@@ -23,6 +23,11 @@ def main():
     args=parser.parse_args()
     root=args.build
     report=json.loads((root/'report.json').read_bytes())
+    norm=report['input_normalization']
+    assert norm['applied_before_analysis'] and norm['dynamics_preserved']
+    assert norm['target_peak_dbfs']==-1 and norm['clipping_samples']==0
+    if norm['source_peak']:
+        assert abs(norm['normalized_peak']-10**(-1/20))<1e-12
     raw=gzip.decompress((root/'registers.gz').read_bytes())
     packed=gzip.decompress((root/'soundtrack.ay9.gz').read_bytes())
     assert report['ticks']==15000 and len(raw)==165000 and len(packed)==135000
@@ -59,14 +64,16 @@ def main():
     (root/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     target=HERE/'evidence'
     shutil.copytree(root,target,dirs_exist_ok=True)
-    logs={'build.log':'bbb-five-minute-shortlist.log','part01-verification.log':'bbb-five-minute-part01-verify.log',
-          'part02-verification.log':'bbb-five-minute-part02-verify.log','interrupted-render-only.log':'bbb-five-minute-auto-build.log',
+    logs={'build.log':'bbb-five-minute-normalized.log','part01-verification.log':'bbb-normalized-part01-verify.log',
+          'part02-verification.log':'bbb-normalized-part02-verify.log','interrupted-render-only.log':'bbb-five-minute-auto-build.log',
           'interrupted-column-pool.log':'bbb-five-minute-auto-parallel.log',
-          'interrupted-bounded-full-search.log':'bbb-five-minute-final.log'}
+          'interrupted-bounded-full-search.log':'bbb-five-minute-final.log',
+          'superseded-unnormalized-build.log':'bbb-five-minute-shortlist.log'}
     for destination,name in logs.items():
         shutil.copyfile(root.parent/name,target/destination)
     if report.get('resumed_complete_noise_stage'):
         shutil.copyfile(root.parent/'bbb-complete-noise.json',target/'resume-noise.json')
+    shutil.copyfile(root.parent/'bbb-five-minute-shortlist/report.json',target/'superseded-unnormalized-host-report.json')
     shortlist=json.loads((root.parent/'bbb-shortlist-check/report.json').read_bytes())
     assert shortlist['complete'] and len(shortlist['cases'])==5
     assert all(x['shortlist_error_db']<=x['seed_error_db'] for x in shortlist['cases'].values())

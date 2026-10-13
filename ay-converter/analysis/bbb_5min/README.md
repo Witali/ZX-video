@@ -6,6 +6,13 @@ edit. The shared `auto` engine analyses the full timeline once, preserving
 component tracking across the two resident disk boundaries. All 15000 states
 last 20 ms and specify three voices plus one shared noise generator. The source
 audio is 48-kHz AAC 5.1 starting at zero; FFmpeg performs its mono downmix.
+Before any harmonic/noise analysis, normalize the selected 0..300-second PCM
+peak to -1 dBFS with one scalar, also applied to the following context. The
+mono source peak is 1.520940 (+3.64224 dBFS), so gain is 0.58598684
+(-4.64224 dB). The normalized peak is 0.89125094 with zero clipped samples.
+Dynamics are preserved. This is sample-peak normalization at 22050 Hz, not
+LUFS, a limiter or oversampled true-peak processing. `--normalize-peak-db`
+controls the target; default is -1.
 
 The resident limit is 8934 states, so the output uses two independently
 bootable one-shot disks, each 7500 states /150 seconds. All disk data loads
@@ -61,11 +68,15 @@ field against the sequential objective; both cost matrices match byte-for-byte,
 including the bounded window gather and hoisted gain multiplication.
 
 The initial render-only and column-pool attempts were interrupted for excessive
-full-PCM copies; their logs remain evidence of incomplete attempts. The complete
-noise stage from the second attempt is reusable only when source/PCM hashes,
-every reapplied noise change and the freshly rendered baseline gain match
-exactly. The final run retains those checks and a saved resume snapshot. The
-default reproduction command calculates every stage from scratch.
+full-PCM copies; their logs remain evidence of incomplete attempts. A bounded
+full-search attempt was interrupted when the user requested analytic proposals.
+The first 20-candidate, unnormalized build passed both native disks and the
+first cold Fuse disk. The second Fuse run was interrupted at the user's input
+normalization request; that build is superseded, not a qualified final set.
+Its report/log remain evidence. A complete noise stage is reusable only when
+source/PCM hashes, every reapplied change and the baseline gain match exactly.
+Normalization changes the PCM hash, so the final run calculates both noise and
+mixer stages afresh. No unnormalized cache/snapshot is used in the final set.
 
 The full conversion and both disks must finish their checks before this
 audition is considered complete. This is an audio audition, without a rebuilt
