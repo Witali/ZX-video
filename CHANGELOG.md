@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Preserve the fully qualified local-image checkpoint
+
+- Archive the completed `12c859d8`507-frame correction before the newly
+  requested full-disk extension. [Evidence](toolkit/analysis/attribute_pattern/evidence/)
+  contains116 measured files/57830879 bytes plus its manifest, native-reference
+  and source/previous/new videos, every screen/AY/deadline proof and source
+  hashes. Native instructions remain unchanged,0 T delta. The old root TRD
+  is not replaced by a partly checked longer candidate.
+- Preserve the entire independently qualified solid/pattern-only predecessor
+  in its separate archive and both noisy draft probe images. Retain prior
+  changelog entries and all reported pixel-error/flicker tradeoffs. The full
+  source prefix is still being sized and will need independent final release
+  qualification; this checkpoint does not qualify the longer video.
+
 ## 2026-10-13 — Cover NORMAL/BRIGHT solid steps after native seam qualification
 
 - **Baseline/input:** The `10a4b1ab` local solid/pattern selector preserves

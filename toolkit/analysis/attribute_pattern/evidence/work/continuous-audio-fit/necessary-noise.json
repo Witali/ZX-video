@@ -1,0 +1,162 @@
+{
+  "model": "source_evidence_and_rendered_noise_necessity_v1",
+  "baseline": {
+    "objective_db": 9.163233375697967,
+    "masked_spectral_mae_db": {
+      "512": 10.512788021017984,
+      "2048": 8.625507818445955,
+      "8192": 7.664827232947017
+    },
+    "absolute_spectral_mae_db": {
+      "512": 10.404765137558991,
+      "2048": 8.524584943699669,
+      "8192": 7.589875399448099
+    },
+    "level_mae_db": 0.6538829092218554,
+    "level_bias_db": 0.07455793873206248,
+    "reference_rms": 0.17321699202894886,
+    "model_rms": 0.17451714400681032
+  },
+  "final": {
+    "objective_db": 9.198806723490193,
+    "masked_spectral_mae_db": {
+      "512": 10.652557636245554,
+      "2048": 8.5922464445299,
+      "8192": 7.602045948117616
+    },
+    "absolute_spectral_mae_db": {
+      "512": 10.539032297194524,
+      "2048": 8.48225132692147,
+      "8192": 7.519352033528056
+    },
+    "level_mae_db": 0.7138763253119155,
+    "level_bias_db": -0.002639397397228935,
+    "reference_rms": 0.17321699202894886,
+    "model_rms": 0.17327715077802294
+  },
+  "noise_ticks_before": 2744,
+  "noise_ticks_after": 2313,
+  "removed_noise_ticks": 431,
+  "selected_policy": {
+    "minimum_source_noise_share": 0.2,
+    "minimum_rendered_benefit_db": 0.75,
+    "noise_ticks": 2313,
+    "metrics": {
+      "objective_db": 9.198806723490193,
+      "masked_spectral_mae_db": {
+        "512": 10.652557636245554,
+        "2048": 8.5922464445299,
+        "8192": 7.602045948117616
+      },
+      "absolute_spectral_mae_db": {
+        "512": 10.539032297194524,
+        "2048": 8.48225132692147,
+        "8192": 7.519352033528056
+      },
+      "level_mae_db": 0.7138763253119155,
+      "level_bias_db": -0.002639397397228935,
+      "reference_rms": 0.17321699202894886,
+      "model_rms": 0.17327715077802294
+    },
+    "admissible": true
+  },
+  "fixed_model_gain": 1.9914798847271464,
+  "source_evidence": "tracker broadband power share",
+  "necessity": "3-field mean of complete tone-only minus noise-enabled perceptual error",
+  "keep_generator_period_history": true,
+  "history": [
+    {
+      "minimum_source_noise_share": 0.2,
+      "minimum_rendered_benefit_db": 0.35,
+      "noise_ticks": 2409,
+      "metrics": {
+        "objective_db": 9.204765657681575,
+        "masked_spectral_mae_db": {
+          "512": 10.638400917746097,
+          "2048": 8.621801292260352,
+          "8192": 7.62494899972836
+        },
+        "absolute_spectral_mae_db": {
+          "512": 10.52645980454327,
+          "2048": 8.514027269932333,
+          "8192": 7.544194898190625
+        },
+        "level_mae_db": 0.6944245364856367,
+        "level_bias_db": 0.024521963868961858,
+        "reference_rms": 0.17321699202894886,
+        "model_rms": 0.17372222100425722
+      },
+      "admissible": true
+    },
+    {
+      "minimum_source_noise_share": 0.3,
+      "minimum_rendered_benefit_db": 0.35,
+      "noise_ticks": 2169,
+      "metrics": {
+        "objective_db": 9.27815892896872,
+        "masked_spectral_mae_db": {
+          "512": 10.764761424861899,
+          "2048": 8.667729553093354,
+          "8192": 7.641522054844493
+        },
+        "absolute_spectral_mae_db": {
+          "512": 10.649486363850746,
+          "2048": 8.553037147766377,
+          "8192": 7.554971565579881
+        },
+        "level_mae_db": 0.7242511943870612,
+        "level_bias_db": -0.016940809022479505,
+        "reference_rms": 0.17321699202894886,
+        "model_rms": 0.1732769914314822
+      },
+      "admissible": true
+    },
+    {
+      "minimum_source_noise_share": 0.2,
+      "minimum_rendered_benefit_db": 0.75,
+      "noise_ticks": 2313,
+      "metrics": {
+        "objective_db": 9.198806723490193,
+        "masked_spectral_mae_db": {
+          "512": 10.652557636245554,
+          "2048": 8.5922464445299,
+          "8192": 7.602045948117616
+        },
+        "absolute_spectral_mae_db": {
+          "512": 10.539032297194524,
+          "2048": 8.48225132692147,
+          "8192": 7.519352033528056
+        },
+        "level_mae_db": 0.7138763253119155,
+        "level_bias_db": -0.002639397397228935,
+        "reference_rms": 0.17321699202894886,
+        "model_rms": 0.17327715077802294
+      },
+      "admissible": true
+    },
+    {
+      "minimum_source_noise_share": 0.3,
+      "minimum_rendered_benefit_db": 0.75,
+      "noise_ticks": 2083,
+      "metrics": {
+        "objective_db": 9.274765589299095,
+        "masked_spectral_mae_db": {
+          "512": 10.77802496505945,
+          "2048": 8.643702258298271,
+          "8192": 7.623988245410539
+        },
+        "absolute_spectral_mae_db": {
+          "512": 10.661072596466791,
+          "2048": 8.526864802109118,
+          "8192": 7.535426700193938
+        },
+        "level_mae_db": 0.7415059991705005,
+        "level_bias_db": -0.041866898458770556,
+        "reference_rms": 0.17321699202894886,
+        "model_rms": 0.17286369571768154
+      },
+      "admissible": true
+    }
+  ],
+  "limitations": "Conservative audibility policy requested after listening; ordinary spectral error can increase when weak residual noise is omitted. Not perfect source separation."
+}
