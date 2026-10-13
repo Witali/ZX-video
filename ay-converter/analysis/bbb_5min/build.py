@@ -93,6 +93,7 @@ def bounded_spectra(function):
     source=inspect.getsource(function)
     old="    padded = np.pad(samples,(size//2,size//2))\n    segments = padded[centres[:,None]+np.arange(size)]"
     new="    indices = centres[:,None]+np.arange(size)-size//2\n    segments = samples[np.clip(indices,0,len(samples)-1)]\n    segments[(indices < 0) | (indices >= len(samples))] = 0."
+    if new in source: return function
     if source.count(old)!=1: raise ValueError('canonical FFT window gather changed')
     namespace=dict(function.__globals__)
     exec(compile(source.replace(old,new),str(HERE/'bounded-spectra-generated.py'),'exec'),namespace)
@@ -183,8 +184,8 @@ def main():
     p.add_argument('--normalize-peak-db',type=float,default=-1.,help='normalize selected PCM before analysis, default -1 dBFS')
     args=p.parse_args()
     if not 1<=args.workers<=12: p.error('workers must be 1..12')
-    if not np.isfinite(args.normalize_peak_db) or not -24<=args.normalize_peak_db<=0:
-        p.error('normalize peak must be -24..0 dBFS')
+    if args.normalize_peak_db != -1:
+        p.error('the shared automatic engine uses the fixed -1 dBFS target')
     out=args.output; out.mkdir(parents=True,exist_ok=True)
     check=scheduling_check(args.node,args.workers); save(out/'scheduling-check.json',check)
     objective=objective_check(args.node,args.workers); save(out/'objective-check.json',objective)
@@ -250,7 +251,8 @@ def main():
     else:
         mixer_fit.optimize=lambda *a,**kw: fast_mixer.optimize(*a,**kw,workers=args.workers)
     try:
-        frames,fit=encode(samples,args.node,out,profile='auto',start_tick=0,ticks=15000)
+        frames,fit=encode(samples,args.node,out,profile='auto',start_tick=0,ticks=15000,
+            mixer_search='full' if args.full_mixer else 'fast')
     finally:
         subprocess.run=RUN
         noise_colour.optimize,mixer_fit._optimize=original_noise,original_mixer
@@ -267,8 +269,8 @@ def main():
     assert len(rendered)==300*44100
     levels=[float(np.sqrt(np.mean(s*s))) for s in (original,rendered)]
     target=min(.12,*(.9*r/max(float(np.max(abs(s))),1e-12) for s,r in zip((original,rendered),levels)))
-    quality.write_wav(out/'original-preview.wav',original*target/max(levels[0],1e-12),22050)
-    quality.write_wav(out/'ay-preview.wav',rendered*target/max(levels[1],1e-12),44100)
+    quality.write_wav(out/'original-preview.wav',original,22050)
+    quality.write_wav(out/'ay-preview.wav',rendered*fit['simulation_feedback']['fixed_model_gain'],44100)
     down=noise_colour.downsample(rendered)
     metrics=spectrogram.compare(spectrogram.features(original),spectrogram.features(down))
     (out/'chip.f32').unlink()
@@ -295,7 +297,8 @@ def main():
         interval_seconds=[0,300],ticks=15000,update_rate_hz=50,sound_quantum_ms=20,profile='auto',
         input_normalization=normalization,
         analysis_context_after_seconds=(len(samples)-len(original))/22050,continuous_analysis=True,
-        continuous_model_preview=True,no_source_pcm_in_synthesis=True,global_preview_rms=target,
+        continuous_model_preview=True,no_source_pcm_in_synthesis=True,
+        fixed_model_gain=fit['simulation_feedback']['fixed_model_gain'],simulation_feedback=fit['simulation_feedback'],
         resumed_complete_noise_stage=bool(args.resume_noise),
         resumed_noise_proof=resume_proof,
         mixer_search='full-374' if args.full_mixer else 'analytic-20',

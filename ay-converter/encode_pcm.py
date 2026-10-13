@@ -16,6 +16,7 @@ def main():
     parser.add_argument('input', type=Path)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--profile', choices=('auto', 'music', 'legacy'), default='auto')
+    parser.add_argument('--mixer-search', choices=('fast','full'), default='fast')
     parser.add_argument('--node', required=True)
     parser.add_argument('--noise-steps', type=int, default=1)
     parser.add_argument('--tuning-cents', type=float, default=50)
@@ -24,7 +25,8 @@ def main():
     if len(samples) % 441:
         raise ValueError('PCM must contain whole 20-ms states')
     frames, info = encode(samples, args.node, args.output, profile=args.profile,
-                          noise_steps=args.noise_steps, tuning_cents=args.tuning_cents)
+                          noise_steps=args.noise_steps, tuning_cents=args.tuning_cents,
+                          mixer_search=args.mixer_search)
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output/'ay.bin').write_bytes(b''.join(f.serialize() for f in frames))
     raw = b''.join(registers(f) for f in frames)
@@ -33,6 +35,8 @@ def main():
                     str(args.output/'registers.gz'), str(args.output/'chip.f32'), '50',
                     str(args.output/'chip-render.json')], check=True)
     rendered = downsample(np.fromfile(args.output/'chip.f32', '<f4').astype(float))
+    if args.profile == 'auto':
+        rendered *= info['simulation_feedback']['fixed_model_gain']
     quality.write_wav(args.output/'audio-preview.wav', rendered, 22050)
     (args.output/'chip.f32').unlink()
     (args.output/'analysis.json').write_text(json.dumps(info, indent=2)+'\n', encoding='utf-8')

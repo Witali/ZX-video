@@ -42,8 +42,9 @@ def spectra_at(samples, ticks, size):
     """
     window = np.hanning(size)
     centres = np.rint((np.asarray(ticks)+.5)*441).astype(int)
-    padded = np.pad(samples,(size//2,size//2))
-    segments = padded[centres[:,None]+np.arange(size)]
+    indices = centres[:,None]+np.arange(size)-size//2
+    segments = samples[np.clip(indices,0,len(samples)-1)]
+    segments[(indices < 0) | (indices >= len(samples))] = 0.
     hz = np.fft.rfftfreq(size*2,1/22050)
     power = abs(np.fft.rfft(segments*window,n=size*2,axis=1))**2/(window.sum()/2)**2
     width = max(1,int(round(50/(22050/(size*2)))) | 1)

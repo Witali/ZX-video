@@ -12,6 +12,18 @@ tone/noise with actual YM2149 renders and nearby shared DAC levels. The previous
 `music` profile and original square-aware `legacy` profile remain selectable.
 [Measurements, auditions and complete bounded checks](analysis/auto_mixer/README.md).
 
+Automatic conversion first normalizes the selected mono PCM sample peak to
+-1 dBFS, retaining its dynamics. Its default mixer search estimates noise
+colour and shared DAC balance, then checks 20 complete chip candidates.
+A final feedback stage compares complete continuous simulation with the
+source at one fixed output calibration. It adjusts real channel-volume,
+tone-period and shared-noise registers when the combined error falls. The
+objective combines source-only Bark-band masking with absolute spectral and
+20-ms level differences. Short forward masking and tonal/noise distinctions
+are approximations; there is no calibrated hearing threshold or PEAQ claim.
+Ordinary unweighted errors are retained for comparison. See the
+[five-minute audition and validation](analysis/bbb_5min/README.md).
+
 Both use three tonal voices, shared noise, fixed channel volumes, and R0..R10
 updates at nominal 50 Hz. **Every exported sound state lasts 20 ms**: pitch,
 volume and noise changes occur only on that grid, with no sub-tick events.
@@ -47,6 +59,10 @@ the report explicitly records that disk timing has not been verified.
 - `--once`: mute at EOF; the default repeats from RAM.
 - `--output DIRECTORY`: a new or empty destination.
 - `--profile auto`: automatic tone/noise/mixed fitting (default).
+- `--mixer-search fast`: 20 analytic mixer candidates (default).
+  `--mixer-search full` retains the 374-candidate reference; both receive
+  the same normalization and final simulation feedback. The movie converter
+  has the equivalent `--ay-mixer-search` option.
 - `--profile music`: retain the preceding note-oriented preset for keyboard-like music.
   Small frequency/amplitude changes keep a component on its original channel.
   Noise can coexist with tones; its period and routing are fitted separately.
@@ -73,6 +89,8 @@ Spectrum recording. Similarity metrics do not establish listening acceptance.
 | `convert_audio.py` | FFmpeg input, assembly, preview and verification CLI |
 | `engine.py`, `encode_pcm.py` | Common audio/movie analysis and aligned PCM bridge |
 | `mixer_fit.py`, `spectral_patterns.py` | Automatic mode/level fitting and checked pattern reuse |
+| `fast_mixer.py` | Analytic 20-candidate mixer with an exact-context cache |
+| `simulation_refine.py`, `psychoacoustic.py` | Complete-render level/frequency feedback and source-only relative masking |
 | `ay_fidelity.py`, `ay_square_fit.py` | Harmonic analysis, pitch tracking and square-wave fit |
 | `music_profile.py`, `channel_tracking.py` | Optional 20-ms note/envelope, persistent-channel and shared-noise arrangement |
 | `ay_format.py` | Packed AY state format and R0..R10 conversion |

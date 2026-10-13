@@ -14,7 +14,8 @@ from support import save
 
 
 def encode(samples, node, output, *, profile='auto', start_tick=0, ticks=None,
-           noise_fit='chip', noise_steps=1, tuning_cents=50, cache_dir=None):
+           noise_fit='chip', noise_steps=1, tuning_cents=50, cache_dir=None,
+           mixer_search='fast', simulation_feedback=True):
     samples = np.asarray(samples, dtype=float)
     if samples.ndim != 1 or not len(samples) or not np.isfinite(samples).all():
         raise ValueError('expected finite mono PCM')
@@ -28,6 +29,20 @@ def encode(samples, node, output, *, profile='auto', start_tick=0, ticks=None,
         raise ValueError('invalid 20-ms source interval')
     out = Path(output)
     out.mkdir(parents=True, exist_ok=True)
+    normalization = None
+    if profile == 'auto':
+        if mixer_search not in ('fast', 'full'):
+            raise ValueError('mixer_search must be fast or full')
+        selected = samples[start_tick*441:(start_tick+ticks)*441]
+        peak = float(np.max(abs(selected)))
+        gain = 10**(-1/20)/peak if peak else 1.
+        samples = samples*gain
+        normalization = dict(method='global selected-interval sample-peak normalization',
+            target_peak_dbfs=-1., source_peak=peak, gain_linear=gain,
+            normalized_peak=peak*gain, applied_before_analysis=True,
+            same_gain_on_analysis_context=True, dynamics_preserved=True,
+            true_peak_or_lufs_normalization=False)
+        save(out/'pcm-level.json', normalization)
     if profile in ('music', 'auto'):
         import music_profile
         periods, volumes, notes, noise, explained, fit = music_profile.convert(samples, rate)
@@ -50,9 +65,14 @@ def encode(samples, node, output, *, profile='auto', start_tick=0, ticks=None,
         fit['model'] = 'persistent_components_and_chip_noise_colour_v3'
     if profile == 'auto':
         import mixer_fit
+        if mixer_search == 'fast':
+            import fast_mixer
+            optimize_mixer = fast_mixer.optimize
+        else:
+            optimize_mixer = mixer_fit.optimize
         initial = b''.join(frame_registers(AyFrame(tuple(map(int,p)),tuple(map(int,v)),int(n),int(m)))
             for p,v,n,m in zip(periods[lo:lo+ticks],volumes[lo:lo+ticks],noise[lo:lo+ticks],fit['mixers'][lo:lo+ticks]))
-        fitted, mixer_info = mixer_fit.optimize(samples[first:first+ticks*441], initial, node,
+        fitted, mixer_info = optimize_mixer(samples[first:first+ticks*441], initial, node,
             tone_volumes=fit['base_tone_volumes'][lo:lo+ticks],
             noise_shares=fit['noise_shares'][lo:lo+ticks], carriers=fit['noise_carriers'][lo:lo+ticks],
             work_parent=out, cache_dir=cache_dir if cache_dir is not None else Path(__file__).parent/'.cache/mixer')
@@ -63,6 +83,18 @@ def encode(samples, node, output, *, profile='auto', start_tick=0, ticks=None,
         fit['automatic_mixer_fit'] = {k:v for k,v in mixer_info.items() if k != 'states'}
         fit['automatic_mixer_fit_file'] = 'mixer-fit.json.gz'
         fit['model'] = 'persistent_components_and_automatic_mixer_v4'
+        fit['input_normalization'] = normalization
+        if simulation_feedback:
+            import simulation_refine
+            fitted, feedback = simulation_refine.optimize(samples[first:first+ticks*441], fitted,
+                node, work_parent=out, tuning_cents=tuning_cents)
+            rows = np.frombuffer(fitted, np.uint8).reshape(-1, 11)
+            periods[lo:lo+ticks] = rows[:, :6:2].astype(int)+(rows[:, 1:6:2].astype(int) << 8)
+            noise[lo:lo+ticks], volumes[lo:lo+ticks] = rows[:, 6], rows[:, 8:]
+            fit['mixers'][lo:lo+ticks] = rows[:, 7].astype(int).tolist()
+            save(out/'simulation-feedback.json', feedback)
+            fit['simulation_feedback'] = feedback
+            fit['model'] = 'persistent_components_and_perceptual_chip_feedback_v5'
     mixers = fit.pop('mixers', [None]*len(periods))
     component_tracks = fit.pop('component_tracks', None)
     if component_tracks is not None:
@@ -90,7 +122,12 @@ def encode(samples, node, output, *, profile='auto', start_tick=0, ticks=None,
         for event in fit.pop('note_events'):
             start, end = max(lo, event['start_tick']), min(lo+ticks, event['end_tick'])
             if start < end:
-                events.append(dict(event, start_tick=start-lo, end_tick=end-lo))
+                exported = dict(event, start_tick=start-lo, end_tick=end-lo)
+                if profile == 'auto' and simulation_feedback:
+                    values = periods[start:end, event['voice']]
+                    exported.update(rendered_period_range=[int(values.min()), int(values.max())],
+                                    pitch_held=bool(np.all(values == values[0])))
+                events.append(exported)
         save(out/'note-events.json', dict(update_rate_hz=50, quantum_ms=20,
              duration_ticks=ticks, end_tick_exclusive=True, estimated_not_ground_truth=True, events=events))
         fit['note_events_file'] = 'note-events.json'

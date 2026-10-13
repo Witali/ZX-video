@@ -142,7 +142,7 @@ def write_video_preview(images, states, quality, path):
 
 
 def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS, *,
-                  noise_steps=1, tuning_cents=50, profile='auto', node=None):
+                  noise_steps=1, tuning_cents=50, profile='auto', node=None, mixer_search='fast'):
     ticks, rate = count*fields_for_fps(fps), 22050
     if sound is None:
         frames = [video.AyFrame((1, 1, 1), (0, 0, 0))]*ticks
@@ -166,12 +166,14 @@ def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS, *,
         core_output = directory/'ay-core'
         subprocess.run([sys.executable, str(core), str(pcm_path), '--output', str(core_output),
             '--profile', profile, '--node', node, '--noise-steps', str(noise_steps),
-            '--tuning-cents', str(tuning_cents)], check=True)
+            '--tuning-cents', str(tuning_cents), '--mixer-search', mixer_search], check=True)
         raw = (core_output/'ay.bin').read_bytes()
         if len(raw) != ticks*9:
             raise ValueError('shared AY core returned the wrong 50-Hz state count')
         frames = [video.AyFrame.deserialize(raw[i:i+9]) for i in range(0,len(raw),9)]
         fit = json.loads((core_output/'analysis.json').read_text(encoding='utf-8'))
+        if profile == 'auto':
+            samples *= fit['input_normalization']['gain_linear']
         import compare_ay_fidelity as quality
         import wave
         with wave.open(str(core_output/'audio-preview.wav'),'rb') as preview:
@@ -204,6 +206,8 @@ def main(argv=None):
         help='video rate; 10 requires CB41, AY always remains 50 Hz')
     parser.add_argument('--ay-profile', choices=('auto','music','legacy'), default='auto',
         help='shared sound engine: automatic tone/noise/mixed fitting, preceding music profile, or legacy')
+    parser.add_argument('--ay-mixer-search',choices=('fast','full'),default='fast',
+        help='auto: 20 analytic candidates or 374 reference candidates, followed by chip feedback')
     parser.add_argument('--node', help='Node.js path for the shared AY chip model')
     parser.add_argument('--ay-noise-steps', type=int, choices=(0, 1), default=1,
         help='noise attenuation in nominal 3 dB AY volume steps (default: 1)')
@@ -295,7 +299,7 @@ def main(argv=None):
             write_video_preview(images, states, quality, output/'video-preview.png')
         write_json(output/'video-quality.json', quality)
         ay_frames, audio = convert_audio(source, executables['ffmpeg'], work, picture, sound,
-            len(states), Fraction(args.fps), noise_steps=args.ay_noise_steps, tuning_cents=args.ay_tuning_cents, profile=args.ay_profile, node=args.node)
+            len(states), Fraction(args.fps), noise_steps=args.ay_noise_steps, tuning_cents=args.ay_tuning_cents, profile=args.ay_profile, node=args.node,mixer_search=args.ay_mixer_search)
         write_json(output/'audio-quality.json', audio)
         raw, codec = encode(states, scaffold_audio(ay_frames, args.frame_fields))
         codec.update(build_envelope_fields=6, runtime_frame_fields=args.frame_fields,

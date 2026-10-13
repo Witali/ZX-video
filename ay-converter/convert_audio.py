@@ -49,7 +49,8 @@ def convert(args):
     from engine import encode
     profile = getattr(args, 'profile', 'auto')
     frames, fit = encode(samples, args.node, out, profile=profile,
-        start_tick=round(before*50), ticks=ticks, noise_fit=getattr(args,'noise_fit','chip'))
+        start_tick=round(before*50), ticks=ticks, noise_fit=getattr(args,'noise_fit','chip'),
+        mixer_search=getattr(args,'mixer_search','fast'))
     assert len(frames) == ticks
     packed = b''.join(f.serialize() for f in frames)
     registers = b''.join(frame_registers(f) for f in frames)
@@ -70,8 +71,14 @@ def convert(args):
     levels = [float(np.sqrt(np.mean(s*s))) for s in (original, rendered)]
     target = min(.12, *(0.9*r/max(float(np.max(abs(s))), 1e-12)
                        for s, r in zip((original, rendered), levels)))
-    quality.write_wav(out/'original-preview.wav', original*target/max(levels[0], 1e-12), rate)
-    quality.write_wav(out/'ay-preview.wav', rendered*target/max(levels[1], 1e-12), 44100)
+    if profile == 'auto':
+        original = original*fit['input_normalization']['gain_linear']
+        quality.write_wav(out/'original-preview.wav', original, rate)
+        quality.write_wav(out/'ay-preview.wav', rendered*fit['simulation_feedback']['fixed_model_gain'], 44100)
+        target = None
+    else:
+        quality.write_wav(out/'original-preview.wav', original*target/max(levels[0], 1e-12), rate)
+        quality.write_wav(out/'ay-preview.wav', rendered*target/max(levels[1], 1e-12), 44100)
     downsampled = np.frombuffer(subprocess.run([str(args.ffmpeg), '-v', 'error', '-nostdin',
         '-f', 'f32le', '-ar', '44100', '-ac', '1', '-i', str(out/'chip.f32'),
         '-ar', str(rate), '-f', 'f32le', '-'], capture_output=True, check=True).stdout, '<f4').astype(float)
@@ -102,6 +109,7 @@ def convert(args):
         spectrogram_metrics=stft,
         spectrogram_scope='50..8000 Hz linear bins, global equal RMS, no time warp or pitch alignment; common source-relative -60 dB floor; 20-ms hop',
         equal_rms_preview=target, original_source_not_mixed_into_synthesis=True,
+        fixed_preview_calibration=fit.get('simulation_feedback',{}).get('fixed_model_gain'),
         high_rate_pcm_volume_output=False, disk_timing_verified=False, hardware_tested=False,
         producer_sources_sha256_lf={p.relative_to(HERE).as_posix():sha(p.read_bytes().replace(b'\r\n', b'\n')) for p in producers},
         artifacts={p.relative_to(out).as_posix():dict(bytes=p.stat().st_size, sha256=sha(p.read_bytes()))
@@ -129,6 +137,8 @@ def main():
                         help='auto fits tone/noise/mixed modes at 50 Hz; music retains the preceding chip-noise fit; legacy reproduces the original analyser')
     parser.add_argument('--noise-fit',choices=('chip','heuristic'),default='chip',
                         help='music profile only: fit noise colour with Ayumi (default), or reproduce the preceding heuristic')
+    parser.add_argument('--mixer-search',choices=('fast','full'),default='fast',
+                        help='auto: 20 analytic candidates (default) or 374 reference candidates; both use chip feedback')
     parser.add_argument('--ffmpeg', default=shutil.which('ffmpeg'))
     parser.add_argument('--node', default=shutil.which('node'))
     parser.add_argument('--fuse', type=Path, help='also verify every output field and capture normal Fuse audio')

@@ -1486,3 +1486,10 @@ listening artifacts and a reproducible report. The resident player and its
 instruction-table costs remain unchanged. Independent candidate rendering may
 be scheduled concurrently after byte-equivalence checks; do not open another
 codec/quality sweep or rebuild the video releases as part of this request.
+
+The user subsequently authorizes shared analytic proposals, PCM normalization,
+complete simulation feedback for levels/frequencies, relative psychoacoustic
+masking, and hardware envelopes configured across multiple 20-ms fields.
+Finish this sound deliverable with actual envelope-aware native/cold playback
+proofs; report any changed resident disk count. Full movie release remains
+outside this milestone; preserve its current qualified disks.

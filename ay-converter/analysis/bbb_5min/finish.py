@@ -57,15 +57,17 @@ def main():
     import numpy as np
     report['numpy_version']=np.__version__
     sources=[*sorted(CORE.glob('*.py')),*sorted(CORE.glob('*.js')),CORE/'ay-player.asm',CORE/'vendor/ayumi-js/ayumi.js',
-             HERE/'build.py',HERE/'render_group.js',HERE/'finish.py',HERE/'fast_mixer.py',HERE/'check_shortlist.py']
+             HERE/'build.py',HERE/'render_group.js',HERE/'finish.py',HERE/'fast_mixer.py',HERE/'check_shortlist.py',
+             HERE/'refine_existing.py',HERE/'check_feedback.py']
     report['producer_sources_sha256_lf']={p.relative_to(CORE).as_posix():sha(p.read_bytes().replace(b'\r\n',b'\n')) for p in sources}
     report['baseline_commit']='e7450386'
     report['date']='2026-10-13'
     (root/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     target=HERE/'evidence'
     shutil.copytree(root,target,dirs_exist_ok=True)
-    logs={'build.log':'bbb-five-minute-normalized.log','part01-verification.log':'bbb-normalized-part01-verify.log',
-          'part02-verification.log':'bbb-normalized-part02-verify.log','interrupted-render-only.log':'bbb-five-minute-auto-build.log',
+    logs={'build.log':'bbb-five-minute-feedback.log','initial-normalized-build.log':'bbb-five-minute-normalized.log',
+          'part01-verification.log':'bbb-feedback-part01-verify.log',
+          'part02-verification.log':'bbb-feedback-part02-verify.log','interrupted-render-only.log':'bbb-five-minute-auto-build.log',
           'interrupted-column-pool.log':'bbb-five-minute-auto-parallel.log',
           'interrupted-bounded-full-search.log':'bbb-five-minute-final.log',
           'superseded-unnormalized-build.log':'bbb-five-minute-shortlist.log'}
@@ -79,6 +81,13 @@ def main():
     assert all(x['shortlist_error_db']<=x['seed_error_db'] for x in shortlist['cases'].values())
     shutil.copytree(root.parent/'bbb-shortlist-check',target/'shortlist-validation',dirs_exist_ok=True)
     shutil.copyfile(root.parent/'bbb-shortlist-check.log',target/'shortlist-validation/run.log')
+    feedback=json.loads((root.parent/'bbb-feedback-check/report.json').read_bytes())
+    assert feedback['complete'] and len(feedback['cases'])==5
+    assert all(x['after']['objective_db']<=x['before']['objective_db'] for x in feedback['cases'].values())
+    shutil.copytree(root.parent/'bbb-feedback-check',target/'feedback-validation',dirs_exist_ok=True)
+    shutil.copyfile(root.parent/'bbb-feedback-check.log',target/'feedback-validation/run.log')
+    for name in ('bbb-feedback-unit.log','bbb-shared-feedback-tests.log','bbb-toolkit-feedback-tests.log','bbb-toolkit-player-tests.log'):
+        shutil.copyfile(root.parent/name,target/name)
     files={p.relative_to(target).as_posix():dict(bytes=p.stat().st_size,sha256=sha(p.read_bytes()))
            for p in sorted(target.rglob('*')) if p.is_file() and p.name!='manifest.json'}
     (target/'manifest.json').write_text(json.dumps(dict(date=report['date'],files=files),indent=2)+'\n',encoding='utf-8',newline='\n')

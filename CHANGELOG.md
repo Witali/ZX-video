@@ -1,5 +1,29 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Shared perceptual chip feedback, completed host stage
+
+- **Objective/input:** User requests normalization before analysis, algorithmic
+  comparison with actual AY simulation, level/frequency correction and masking.
+  Five complete eight-second excerpts; normalized BBB 0..300 s from `8c52ed27`.
+- **Change:** Promote analytic 20-candidate fitting to the common auto engine;
+  retain full 374 reference and exact-context caches. Normalize PCM peak to
+  -1 dBFS. Complete-chip feedback uses relative source-only Bark masking,
+  forward decay, absolute spectra and 20-ms RMS at one fixed calibration.
+  Proposals change real volume/tone/noise registers in both public entry points.
+- **Results:** Five-minute objective 6.31672 ->6.15281 dB; level MAE
+  1.43541 ->0.95505 dB, bias +0.39991 ->+0.10436 dB. Changed 11289 volume
+  registers and 15406 tone periods; noise proposals lose. All five short cases
+  retain/improve the combined objective. Some unweighted spectral errors grow
+  while level matching improves; no global optimum or listening grade follows.
+- **Coverage/decision:** 27 standalone +28 toolkit audio +14 player tests pass,
+  including real-chip detuning/dynamics, silence, masking, cache and parity.
+  Five-minute host/native build is complete; new cold Fuse checks pending.
+  No Z80 instruction change: ordinary 974 ->974 T, delta 0. Keep this completed
+  host stage. The user then explicitly requests hardware envelopes continuing
+  across several fields; extend the same audition next. No new film release.
+  Reproduce with the public CLIs and
+  `ay-converter/analysis/bbb_5min/{check_feedback,refine_existing}.py`.
+
 ## 2026-10-13 — Normalize the five-minute PCM before AY analysis
 
 - **Request/baseline:** after `548d7def`, the user requested level normalization
