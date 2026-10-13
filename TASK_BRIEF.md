@@ -1523,3 +1523,25 @@ level MAE2.03192 versus1.36731 dB; no listening grade or isolated voice-count
 claim. [Code, auditions and evidence](ay-converter/analysis/six_voice/README.md).
 No real-chip, Z80, release, full-film or subsequent model search is part of this
 completed request.
+
+## Six-voice clicks/ringing follow-up — candidate delivered (2026-10-13)
+
+The user reported clicks and periodic ringing and authorized continuation in
+a separate worktree. Use `.worktree/six-voice-clicks`, branch
+`codex/six-voice-clicks`, from `bd2a5be2`. On the same prepared O. Henry[60,90)
+reference, diagnose large control-boundary and DC jumps plus output harmonics
+outside the 8-kHz fitting band. CLI defaults now explicitly model a 4-ms
+raised-cosine level/shape/route transition, aligned triangle fundamental and
+8-kHz output filter. Six continuous phases, 16 target levels and 50-Hz controls
+remain; smooth transitions extend the hypothetical model, not real AY writes.
+
+Nine full same-control ablations and complete final feedback are retained.
+Selected boundary derivative power falls72.3%, boundary/interior ratio
+1.863759 ->1.120837, and power above9 kHz is negligible. Objective slightly
+worsens8.186964 ->8.281203 dB; level MAE improves2.031917 ->2.002794 dB.
+Inside-band excess-tone fields remain12; complete ringing removal or speech
+intelligibility is not established. Eight tests, old/new exact controls-only
+WAV replays, all1500 states, zero clipping and complete source/producer/media
+hash checks pass. [Candidate, before/after, evidence and reproduction](ay-converter/analysis/six_voice_clicks/README.md).
+Listening acceptance is pending. The bounded deliverable is ready; do not
+start another search automatically. Existing native players/releases unchanged.

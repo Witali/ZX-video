@@ -53,5 +53,49 @@ class SixVoiceTests(unittest.TestCase):
         self.assertEqual(model.validate(state),20)
         self.assertGreater(gain,0)
 
+    def test_transition_removes_control_jump_without_adding_oscillator_phases(self):
+        data=controls(20);data['volumes'][:,0]=15;data['shapes'][:,0]=1
+        data['volumes'][1::2,0]=11;data['shapes'][1::2,0]=2
+        step=model.synthesize_raw(data,aligned_triangle=True)
+        smooth=model.synthesize_raw(data,transition_ms=4,aligned_triangle=True)
+        edges=np.arange(1,20)*3528
+        before=np.diff(step)[edges-1];after=np.diff(smooth)[edges-1]
+        self.assertLess(np.sqrt(np.mean(after**2)),np.sqrt(np.mean(before**2))*.05)
+        # After settling, no frequency glide or second oscillator can change
+        # the target waveform: it agrees with the original running phase.
+        offset=np.arange(800,3528)
+        for tick in range(20):
+            np.testing.assert_allclose(smooth[tick*3528+offset],step[tick*3528+offset],atol=1e-12)
+
+    def test_output_filter_rejects_unscored_square_harmonics(self):
+        data=controls(100);data['volumes'][:,0]=15;data['periods'][:,0]=63
+        frequency=model.CLOCK/(16*63)
+        old=model.render(data)[8820:]
+        filtered=model.render(data,output_bandwidth_hz=8000)[8820:]
+        t=np.arange(len(old))/44100
+        def projection(audio,harmonic):
+            return abs(np.sum(audio*np.exp(-2j*np.pi*harmonic*frequency*t)))
+        self.assertGreater(projection(old,7)/projection(old,1),.12)
+        self.assertLess(projection(filtered,7)/projection(filtered,1),.001)
+        self.assertAlmostEqual(projection(filtered,1)/projection(old,1),1.,delta=.003)
+
+    def test_aligned_triangle_and_sine_have_same_fundamental_phase(self):
+        data=controls(50);data['volumes'][:,0]=15
+        frequency=model.CLOCK/(16*251)
+        coefficients=[]
+        for shape in (1,2):
+            data['shapes'][:,0]=shape
+            raw=model.synthesize_raw(data,aligned_triangle=True)
+            t=np.arange(len(raw))/176400
+            coefficients.append(np.sum((raw-.5)*np.exp(-2j*np.pi*frequency*t)))
+        self.assertLess(abs(np.angle(coefficients[0]/coefficients[1])),.01)
+
+    def test_invalid_transition_or_cutoff_fails(self):
+        data=controls(2)
+        for duration in (-1,21,float('nan')):
+            with self.assertRaises(ValueError):model.render(data,transition_ms=duration)
+        for cutoff in (0,22050,float('inf')):
+            with self.assertRaises(ValueError):model.render(data,output_bandwidth_hz=cutoff)
+
 
 if __name__=='__main__':unittest.main()

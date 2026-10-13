@@ -1,5 +1,51 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Reduce six-voice control clicks and unscored high harmonics
+
+- **Request/baseline:** The user hears clicks and periodic ringing in the
+  six-voice WAV and requests further converter work in its own Git worktree.
+  Branch `codex/six-voice-clicks` at `.worktree/six-voice-clicks`, from
+  `bd2a5be2`; reuse the exact prepared O. Henry[60,90) reference and original
+  controls/WAV. This is one bounded30-second listening repair, not a new
+  hardware target or movie rebuild.
+- **Diagnosis/settings:** Old/new controls evaluated at the same oscillator
+  and noise phase give jump RMS0.144476, max0.719618, DC-step RMS0.117457,
+  max0.551612. Persistent phase did not prevent level/shape/route jumps.
+  The old19.845-kHz output cutoff also exposed harmonics outside the
+  50..8000-Hz feedback objective. Add explicit4-ms raised-cosine transitions
+  on each of the six running phases, triangle fundamental alignment and an
+  8-kHz output FIR. Intermediate amplitudes/shape mixtures extend the
+  hypothetical model; no extra oscillators, phase resets or frequency glide.
+  Keep direct-render defaults and `--legacy-render` for the original model.
+  No Z80 instructions changed; player T-state changes are not applicable.
+- **Trials/results:** Nine complete same-control/same-gain ablations retain
+  bandwidth/alignment alone,2/4/8-ms transitions and combined variants.
+  Bandwidth alone leaves boundary/interior power ratio1.975 versus1.864;
+  ramps alone give1.031..1.044. Combined objectives2/4/8 ms are
+  8.388522/8.361905/8.313501 dB; select4 ms for a short transition and level
+  agreement, preserving the slightly better8-ms spectrum result as evidence.
+  After complete normal conversion and bounded feedback, volume-0.5 passes;
+  stronger volume, sine-only and both noise-period offsets fail acceptance.
+  Final objective8.186964 ->8.281203 dB, level MAE2.031917 ->2.002794 dB.
+  Boundary derivative RMS0.0274105 ->0.0144173 (power -72.3%), boundary/interior
+  ratio1.863759 ->1.120837. Above9-kHz power fraction0.00391550 ->3.18746e-10.
+  In-band excess-tone fields remain12. These are diagnostics, not heard-click
+  counts, an intelligibility score or proof of eliminating all ringing.
+- **Checks/decision:** Eight independent tests pass. Complete old-model and
+  new controls-only WAV replays are byte-exact; all1500 states and1323000
+  output samples are checked. Source/producer/media hashes authenticate the
+  candidate, peak0.912645, zero clipping, RMS0.134261. Conversion takes23.480 s
+  on this host; comparison/archival verification adds work. The61-second
+  before/after file retains both PCM segments exactly with a1-second gap.
+  An initial staged-manifest check caught CRLF normalization in two run/test
+  logs; disable text conversion, restage their raw bytes and verify every
+  archived file against the index, including the LFS object hashes/sizes.
+  Keep this candidate for listening despite the0.094238-dB objective tradeoff;
+  subjective acceptance remains pending. WAV media use LFS. Existing real AY
+  players/releases are unchanged. [Reproduction, all trials and audio](ay-converter/analysis/six_voice_clicks/README.md),
+  [comparison](ay-converter/analysis/six_voice_clicks/evidence/comparison.json),
+  [full verification](ay-converter/analysis/six_voice_clicks/evidence/verification.json).
+
 ## 2026-10-13 — Hypothetical six-voice square/triangle/sine audition
 
 - **Request/baseline:** The user requests an experimental script and WAV for

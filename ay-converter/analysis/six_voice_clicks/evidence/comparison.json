@@ -1,0 +1,423 @@
+{
+  "date": "2026-10-13",
+  "complete": true,
+  "seconds": 30.0,
+  "ticks": 1500,
+  "baseline_commit": "bd2a5be2",
+  "same_controls_and_gain": true,
+  "baseline_controls_sha256": "093e788a19311e1598213bc4a9ca3765e29c7cc5de30c146a41887997fb9b66f",
+  "reference_sha256": "99d8ddbca22dd76037e23d4f545d9452b3c8518061666726d9346d4e0fb3e2bd",
+  "baseline_wav_replay_exact": true,
+  "baseline_boundaries": {
+    "control_jump_rms": 0.14447584328218496,
+    "control_jump_max": 0.7196180373772727,
+    "dc_step_rms": 0.11745696726904424,
+    "dc_step_max": 0.5516117924297044,
+    "active_shape_changes": 2213,
+    "active_mode_changes": 325,
+    "active_pitch_jumps_over_semitone": 3575,
+    "top_boundaries": [
+      {
+        "seconds": 6.86,
+        "jump": -0.7196180373772727,
+        "dc_step": -0.5515165898307405
+      },
+      {
+        "seconds": 20.66,
+        "jump": -0.5682389046275611,
+        "dc_step": -0.4247146614494586
+      },
+      {
+        "seconds": 14.44,
+        "jump": 0.5259561555227845,
+        "dc_step": 0.3208406923390722
+      },
+      {
+        "seconds": 26.4,
+        "jump": -0.525902701470895,
+        "dc_step": -0.5516117924297044
+      },
+      {
+        "seconds": 22.76,
+        "jump": -0.5045015793617366,
+        "dc_step": -0.28412819008147816
+      },
+      {
+        "seconds": 21.06,
+        "jump": 0.48387336844295215,
+        "dc_step": 0.27365193741117955
+      },
+      {
+        "seconds": 12.6,
+        "jump": -0.4826186966970719,
+        "dc_step": -0.17410175300781644
+      },
+      {
+        "seconds": 6.62,
+        "jump": 0.473539759949251,
+        "dc_step": 0.2069069819292933
+      },
+      {
+        "seconds": 10.16,
+        "jump": 0.4638146600502881,
+        "dc_step": 0.32562858971646275
+      },
+      {
+        "seconds": 13.88,
+        "jump": -0.4629962483619393,
+        "dc_step": -0.40769323009502656
+      },
+      {
+        "seconds": 27.6,
+        "jump": -0.4580011363557487,
+        "dc_step": -0.41060880969063585
+      },
+      {
+        "seconds": 7.34,
+        "jump": -0.44597227371922493,
+        "dc_step": -0.2436313845117187
+      }
+    ]
+  },
+  "trials": [
+    {
+      "name": "legacy",
+      "options": {},
+      "peak": 0.9500000000012581,
+      "metrics": {
+        "objective_db": 8.186964425305217,
+        "masked_spectral_mae_db": {
+          "512": 8.527756007054672,
+          "2048": 7.154686097936663,
+          "8192": 6.744938085465687
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.404159610931714,
+          "2048": 7.076348010408021,
+          "8192": 6.665960281249888
+        },
+        "level_mae_db": 2.031917224246313,
+        "level_bias_db": -0.0695568998489884,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.13101362456685636
+      },
+      "artifacts": {
+        "boundary_derivative_rms": 0.027410496920121787,
+        "interior_derivative_rms": 0.020078070724057248,
+        "boundary_to_interior_power_ratio": 1.8637594493407021,
+        "boundary_derivative_p95": 0.05440785321392191,
+        "output_power_above_9khz_fraction": 0.003915495450060326,
+        "high_band_excess_rms": 0.0006113591561493555,
+        "high_band_excess_fields": 12
+      }
+    },
+    {
+      "name": "bandwidth-only",
+      "options": {
+        "output_bandwidth_hz": 8000.0
+      },
+      "peak": 0.9516243930205877,
+      "metrics": {
+        "objective_db": 8.217259412911572,
+        "masked_spectral_mae_db": {
+          "512": 8.536171822694074,
+          "2048": 7.173467168851759,
+          "8192": 6.769407346733963
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.411823116101791,
+          "2048": 7.094143480592535,
+          "8192": 6.689148391028967
+        },
+        "level_mae_db": 2.069268476623733,
+        "level_bias_db": -0.12068848325248523,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.1308628975192336
+      },
+      "artifacts": {
+        "boundary_derivative_rms": 0.018119674076325795,
+        "interior_derivative_rms": 0.012892392256903765,
+        "boundary_to_interior_power_ratio": 1.9753030848209439,
+        "boundary_derivative_p95": 0.03535847883867218,
+        "output_power_above_9khz_fraction": 3.273375739057611e-10,
+        "high_band_excess_rms": 0.0005644875653438734,
+        "high_band_excess_fields": 11
+      }
+    },
+    {
+      "name": "aligned-only",
+      "options": {
+        "aligned_triangle": true
+      },
+      "peak": 0.9050050970585589,
+      "metrics": {
+        "objective_db": 8.20832050766712,
+        "masked_spectral_mae_db": {
+          "512": 8.525377953989466,
+          "2048": 7.16952425193822,
+          "8192": 6.753413097986941
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.40195019953857,
+          "2048": 7.087064119262322,
+          "8192": 6.6721943345670525
+        },
+        "level_mae_db": 2.0729963991302225,
+        "level_bias_db": -0.078810481403131,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.13101354568759488
+      },
+      "artifacts": {
+        "boundary_derivative_rms": 0.02688359303205595,
+        "interior_derivative_rms": 0.020112335041645075,
+        "boundary_to_interior_power_ratio": 1.7866917600754777,
+        "boundary_derivative_p95": 0.053959217877960264,
+        "output_power_above_9khz_fraction": 0.0038832272685887775,
+        "high_band_excess_rms": 0.0006110331931213718,
+        "high_band_excess_fields": 12
+      }
+    },
+    {
+      "name": "ramp-2ms",
+      "options": {
+        "transition_ms": 2.0
+      },
+      "peak": 0.8736054279303317,
+      "metrics": {
+        "objective_db": 8.358065051940452,
+        "masked_spectral_mae_db": {
+          "512": 8.536665216786089,
+          "2048": 7.480734679235824,
+          "8192": 6.918356481178873
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.4114102072721,
+          "2048": 7.376641275227573,
+          "8192": 6.824626631185474
+        },
+        "level_mae_db": 2.0366083605910172,
+        "level_bias_db": -0.10524776875630679,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.12997276153771226
+      },
+      "artifacts": {
+        "boundary_derivative_rms": 0.020391731427696652,
+        "interior_derivative_rms": 0.02007807072405725,
+        "boundary_to_interior_power_ratio": 1.0314881564267486,
+        "boundary_derivative_p95": 0.0422819465044468,
+        "output_power_above_9khz_fraction": 0.003740101145379501,
+        "high_band_excess_rms": 0.0006103590617660153,
+        "high_band_excess_fields": 12
+      }
+    },
+    {
+      "name": "ramp-4ms",
+      "options": {
+        "transition_ms": 4.0
+      },
+      "peak": 0.881243072767909,
+      "metrics": {
+        "objective_db": 8.335542439383593,
+        "masked_spectral_mae_db": {
+          "512": 8.506827621256093,
+          "2048": 7.464511678635005,
+          "8192": 6.888593963820075
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.379098880207705,
+          "2048": 7.359379511899691,
+          "8192": 6.795238370550626
+        },
+        "level_mae_db": 2.04447052803772,
+        "level_bias_db": -0.1350012648035327,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.12890593225667027
+      },
+      "artifacts": {
+        "boundary_derivative_rms": 0.020482280871956474,
+        "interior_derivative_rms": 0.020078070724057238,
+        "boundary_to_interior_power_ratio": 1.0406691376911963,
+        "boundary_derivative_p95": 0.042524278335231036,
+        "output_power_above_9khz_fraction": 0.003756153963225858,
+        "high_band_excess_rms": 0.0006082170520330125,
+        "high_band_excess_fields": 12
+      }
+    },
+    {
+      "name": "ramp-8ms",
+      "options": {
+        "transition_ms": 8.0
+      },
+      "peak": 0.8649484455141639,
+      "metrics": {
+        "objective_db": 8.294332599463468,
+        "masked_spectral_mae_db": {
+          "512": 8.408887989098035,
+          "2048": 7.438829228555892,
+          "8192": 6.8518953973447845
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.286077772629032,
+          "2048": 7.33359230335674,
+          "8192": 6.760027586213565
+        },
+        "level_mae_db": 2.0794144603730422,
+        "level_bias_db": -0.17280838651639147,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.12706085433179135
+      },
+      "artifacts": {
+        "boundary_derivative_rms": 0.020510798627043483,
+        "interior_derivative_rms": 0.02007810373333423,
+        "boundary_to_interior_power_ratio": 1.0435655989924495,
+        "boundary_derivative_p95": 0.042571719805976994,
+        "output_power_above_9khz_fraction": 0.003768969134316464,
+        "high_band_excess_rms": 0.0005954588312183089,
+        "high_band_excess_fields": 11
+      }
+    },
+    {
+      "name": "combined-2ms",
+      "options": {
+        "transition_ms": 2.0,
+        "aligned_triangle": true,
+        "output_bandwidth_hz": 8000.0
+      },
+      "peak": 0.8524179184811976,
+      "metrics": {
+        "objective_db": 8.388521918901487,
+        "masked_spectral_mae_db": {
+          "512": 8.547895985318025,
+          "2048": 7.473943314203226,
+          "8192": 6.93312461424939
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.423452432726203,
+          "2048": 7.367695536338553,
+          "8192": 6.837111899664262
+        },
+        "level_mae_db": 2.105335088508404,
+        "level_bias_db": -0.1576748791740125,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.12997096720837895
+      },
+      "artifacts": {
+        "boundary_derivative_rms": 0.013609088217205731,
+        "interior_derivative_rms": 0.012941654904029796,
+        "boundary_to_interior_power_ratio": 1.105804692795606,
+        "boundary_derivative_p95": 0.026911559476430036,
+        "output_power_above_9khz_fraction": 3.0530164502753225e-10,
+        "high_band_excess_rms": 0.0005626412647567889,
+        "high_band_excess_fields": 11
+      }
+    },
+    {
+      "name": "combined-4ms",
+      "options": {
+        "transition_ms": 4.0,
+        "aligned_triangle": true,
+        "output_bandwidth_hz": 8000.0
+      },
+      "peak": 0.8601327614480819,
+      "metrics": {
+        "objective_db": 8.361904709837846,
+        "masked_spectral_mae_db": {
+          "512": 8.519346567367005,
+          "2048": 7.459180130937271,
+          "8192": 6.9027382338548895
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.392392454548137,
+          "2048": 7.352465712017621,
+          "8192": 6.807123951830593
+        },
+        "level_mae_db": 2.099475426051784,
+        "level_bias_db": -0.17726086136001032,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.12903978462101995
+      },
+      "artifacts": {
+        "boundary_derivative_rms": 0.013676791396284515,
+        "interior_derivative_rms": 0.012941654904029796,
+        "boundary_to_interior_power_ratio": 1.1168344865259996,
+        "boundary_derivative_p95": 0.02724702770632261,
+        "output_power_above_9khz_fraction": 3.085333987189857e-10,
+        "high_band_excess_rms": 0.0005611061604741722,
+        "high_band_excess_fields": 11
+      }
+    },
+    {
+      "name": "combined-8ms",
+      "options": {
+        "transition_ms": 8.0,
+        "aligned_triangle": true,
+        "output_bandwidth_hz": 8000.0
+      },
+      "peak": 0.8473538102668496,
+      "metrics": {
+        "objective_db": 8.313501436830048,
+        "masked_spectral_mae_db": {
+          "512": 8.417494262699105,
+          "2048": 7.43557453124987,
+          "8192": 6.866994149919639
+        },
+        "absolute_spectral_mae_db": {
+          "512": 8.293777396056495,
+          "2048": 7.328072009231415,
+          "8192": 6.772768912523097
+        },
+        "level_mae_db": 2.114706063449077,
+        "level_bias_db": -0.19649466347217545,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.1273674979314232
+      },
+      "artifacts": {
+        "boundary_derivative_rms": 0.013699658538973728,
+        "interior_derivative_rms": 0.012941705342330525,
+        "boundary_to_interior_power_ratio": 1.1205634947264829,
+        "boundary_derivative_p95": 0.027262913701822922,
+        "output_power_above_9khz_fraction": 3.146647896166593e-10,
+        "high_band_excess_rms": 0.0005507296405565434,
+        "high_band_excess_fields": 10
+      }
+    }
+  ],
+  "limitations": "Signal diagnostics only; no claim of subjective click elimination, ringing elimination or intelligibility.",
+  "candidate": {
+    "options": {
+      "transition_ms": 4.0,
+      "output_bandwidth_hz": 8000.0,
+      "aligned_triangle": true
+    },
+    "controls_only_replay_exact": true,
+    "samples": 1323000,
+    "clipping_samples": 0,
+    "peak": 0.9126454732494259,
+    "metrics": {
+      "objective_db": 8.28120272800532,
+      "masked_spectral_mae_db": {
+        "512": 8.488268314164964,
+        "2048": 7.424384954209997,
+        "8192": 6.828021419328278
+      },
+      "absolute_spectral_mae_db": {
+        "512": 8.363926098642683,
+        "2048": 7.322229845459492,
+        "8192": 6.738237400407412
+      },
+      "level_mae_db": 2.002793806012115,
+      "level_bias_db": 0.18975134187129575,
+      "reference_rms": 0.13231162599193383,
+      "model_rms": 0.13426073733941335
+    },
+    "artifacts": {
+      "boundary_derivative_rms": 0.014417289913418924,
+      "interior_derivative_rms": 0.013617969652405788,
+      "boundary_to_interior_power_ratio": 1.1208372070902273,
+      "boundary_derivative_p95": 0.0283593021741932,
+      "output_power_above_9khz_fraction": 3.187463581364432e-10,
+      "high_band_excess_rms": 0.0006214259815266332,
+      "high_band_excess_fields": 12
+    }
+  }
+}

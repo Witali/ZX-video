@@ -4,6 +4,8 @@ This is a hypothetical synthesizer, not an AY register stream. Frequency
 periods, fixed-volume DAC codes and the 50-Hz control grid retain AY limits.
 The six oscillator phases and one shared 17-bit noise source run continuously.
 Only these controls generate output; source PCM supplies analysis targets.
+The CLI uses an explicit hypothetical 4-ms transition envelope and 8-kHz
+output bandwidth. The original stepped model remains available for comparison.
 """
 from __future__ import annotations
 import argparse
@@ -201,17 +203,36 @@ def validate(controls):
     return count
 
 
-def render(controls,voice_gain=1.,oversample=OVERSAMPLE):
-    """Continuous unipolar DAC waves, shared gated noise, DC removal and FIR.
+def synthesize_raw(controls,voice_gain=1.,oversample=OVERSAMPLE,*,transition_ms=0.,aligned_triangle=False):
+    """Run six phases with optional raised-cosine control transitions.
 
-    Square/triangle/sine selection changes the oscillator shape, not its phase.
-    Fixed volumes change only at 50 Hz, without hidden sample-rate envelopes.
+    Target periods, DAC codes and routes still arrive at 50 Hz. With a positive
+    transition duration, a voice morphs from its previous level/shape/route to
+    the current target using ONE continuously running oscillator phase. It
+    never crossfades old/new frequencies or adds a second oscillator. Period
+    changes take effect at the field boundary, without resetting the phase.
+    This envelope is an explicit extension of the hypothetical hardware model;
+    it is not a property of real AY fixed-volume registers.
+
+    The aligned triangle starts at its midpoint rising, aligning its positive
+    fundamental with square/sine. The legacy triangle starts at its trough,
+    so switching shapes also changed the fundamental's phase by 90 degrees.
     Tone+noise multiplies the unipolar wave by the common noise bit. Noise-only
     holds the oscillator gate high, exactly the AY mixer interpretation.
     """
+    if not isinstance(oversample,(int,np.integer)) or oversample<1:
+        raise ValueError('oversample must be a positive integer')
+    if not np.isfinite(transition_ms) or not 0<=transition_ms<=20:
+        raise ValueError('transition duration must be within 0..20 ms')
     count=validate(controls);rate=OUTPUT_RATE*oversample;chunk=rate//50
     raw=np.empty(count*chunk);phase=np.zeros(6);nphase=0.;nindex=0
     time_axis=np.arange(chunk)/rate;bits=noise_cycle()
+    blend=(.5-.5*np.cos(np.pi*np.minimum(time_axis/(transition_ms/1000),1))) if transition_ms else None
+    def tone_for(shape,mode,positions,noise):
+        if mode==1:tone=np.ones(chunk)
+        elif shape==1 and aligned_triangle:tone=waveform(shape,(positions+.25)%1)
+        else:tone=waveform(shape,positions)
+        return tone*noise if mode else tone
     for tick in range(count):
         steps=CLOCK/(16*int(controls['noise_periods'][tick]))
         noise=bits[(nindex+np.floor(nphase+time_axis*steps).astype(int))%len(bits)]
@@ -222,24 +243,41 @@ def render(controls,voice_gain=1.,oversample=OVERSAMPLE):
             positions=(phase[channel]+frequency*time_axis)%1
             phase[channel]=(phase[channel]+chunk/rate*frequency)%1
             level=LEVELS[controls['volumes'][tick,channel]]*voice_gain
-            if not level:continue
-            mode=controls['modes'][tick,channel]
-            tone=np.ones(chunk) if mode==1 else waveform(int(controls['shapes'][tick,channel]),positions)
-            if mode: tone=tone*noise
-            mixed+=level*tone
+            old_level=LEVELS[controls['volumes'][tick-1,channel]]*voice_gain if tick else 0.
+            if not level and (blend is None or not old_level):continue
+            tone=tone_for(int(controls['shapes'][tick,channel]),int(controls['modes'][tick,channel]),positions,noise)
+            if blend is None:mixed+=level*tone
+            else:
+                old=tone_for(int(controls['shapes'][tick-1,channel]),int(controls['modes'][tick-1,channel]),positions,noise) if tick and old_level else 0.
+                mixed+=(1-blend)*old_level*old+blend*level*tone
         raw[tick*chunk:(tick+1)*chunk]=mixed
+    return raw
+
+
+def render(controls,voice_gain=1.,oversample=OVERSAMPLE,*,transition_ms=0.,output_bandwidth_hz=None,aligned_triangle=False):
+    """AC coupling and FIR, preserving the original render with default args.
+
+    The old 19.845-kHz output passband exposed square-wave harmonics outside
+    the fitter's 50..8000-Hz objective. A specified cutoff makes the audible
+    output bandwidth explicit and consistent with the spectrum being fitted.
+    """
+    if output_bandwidth_hz is not None and (not np.isfinite(output_bandwidth_hz) or not 0<output_bandwidth_hz<OUTPUT_RATE/2):
+        raise ValueError('output bandwidth must be within 0..22050 Hz')
+    raw=synthesize_raw(controls,voice_gain,oversample,transition_ms=transition_ms,aligned_triangle=aligned_triangle)
     # An unipolar DAC needs AC coupling. Retain the AY renderer's 1024-output-
     # sample moving-mean horizon. FIR decimation prevents waveform aliasing.
     length=1024*oversample;cumulative=np.r_[0,np.cumsum(raw)]
     mean=(cumulative[1:]-cumulative[np.maximum(0,np.arange(len(raw))+1-length)])/length
     raw-=mean
     width=63*oversample;offset=np.arange(-width,width+1);cutoff=.45/oversample
+    if output_bandwidth_hz is not None:cutoff=min(cutoff,output_bandwidth_hz/(OUTPUT_RATE*oversample))
     kernel=2*cutoff*np.sinc(2*cutoff*offset)*np.hanning(len(offset));kernel/=kernel.sum()
     return np.convolve(np.pad(raw,(width,width)),kernel,mode='valid')[::oversample]
 
 
-def feedback(samples,controls,voice_gain,objective,*,allow_wave_proposals=True):
-    audio=render(controls,voice_gain)
+def feedback(samples,controls,voice_gain,objective,*,allow_wave_proposals=True,render_options=None):
+    render_options={} if render_options is None else render_options
+    audio=render(controls,voice_gain,**render_options)
     calibration=min(float(np.sqrt(np.mean(samples**2)/max(np.mean(noise_colour.downsample(audio)**2),1e-20))),
         .95/max(float(abs(audio).max()),1e-12)) if np.any(samples) else 1.
     gain=voice_gain*calibration;audio*=calibration
@@ -263,13 +301,13 @@ def feedback(samples,controls,voice_gain,objective,*,allow_wave_proposals=True):
         candidate['noise_periods']=np.clip(candidate['noise_periods'].astype(int)+delta,1,31).astype(np.uint8)
         proposals.append((f'noise-{delta:+d}',candidate))
     for name,candidate in proposals:
-        trial=render(candidate,gain);metrics=objective.measure(noise_colour.downsample(trial));peak=float(abs(trial).max())
+        trial=render(candidate,gain,**render_options);metrics=objective.measure(noise_colour.downsample(trial));peak=float(abs(trial).max())
         accepted=peak<=.999 and metrics['objective_db']<best['objective_db']-1e-6
         history.append(dict(proposal=name,peak=peak,accepted=accepted,metrics=metrics))
         print(json.dumps(dict(stage='six_voice_feedback',proposal=name,accepted=accepted,objective_db=metrics['objective_db'])),flush=True)
         if accepted:controls=candidate;audio=trial;best=metrics
     return controls,audio,dict(baseline=baseline,final=best,voice_gain=gain,history=history,
-        fixed_candidate_calibration=True,source_pcm_added_to_output=False)
+        fixed_candidate_calibration=True,source_pcm_added_to_output=False,render_options=render_options)
 
 
 def main():
@@ -278,15 +316,24 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--ay-baseline',type=Path,help='previous AY PCM16 WAV for comparison')
     parser.add_argument('--square-control',action='store_true',help='also fit six square-only voices as an ablation')
+    parser.add_argument('--transition-ms',type=float,default=4.,help='hypothetical raised-cosine transition envelope, 0..20 ms (default: 4)')
+    parser.add_argument('--output-bandwidth-hz',type=float,default=8000.,help='output FIR cutoff (default: 8000 Hz)')
+    parser.add_argument('--legacy-render',action='store_true',help='original stepped levels, trough-start triangle and 19.845-kHz FIR')
     args=parser.parse_args();out=args.output
+    if not args.legacy_render:
+        if not np.isfinite(args.transition_ms) or not 0<=args.transition_ms<=20:
+            parser.error('--transition-ms must be within 0..20')
+        if not np.isfinite(args.output_bandwidth_hz) or not 0<args.output_bandwidth_hz<OUTPUT_RATE/2:
+            parser.error('--output-bandwidth-hz must be within 0..22050')
     if out.exists() and any(out.iterdir()):raise ValueError('output must be new or empty')
     out.mkdir(parents=True,exist_ok=True);started=time.perf_counter()
     samples=read_reference(args.reference);templates=dictionary();objective=Objective(samples)
+    options={} if args.legacy_render else dict(transition_ms=args.transition_ms,output_bandwidth_hz=args.output_bandwidth_hz,aligned_triangle=True)
     results={}
     variants=['selectable','square'] if args.square_control else ['selectable']
     for variant in variants:
         controls,gain=fit(samples,templates,square_only=variant=='square')
-        controls,audio,info=feedback(samples,controls,gain,objective,allow_wave_proposals=variant=='selectable')
+        controls,audio,info=feedback(samples,controls,gain,objective,allow_wave_proposals=variant=='selectable',render_options=options)
         name='six-voice-preview.wav' if variant=='selectable' else 'six-square-preview.wav'
         quality.write_wav(out/name,audio,OUTPUT_RATE)
         np.savez_compressed(out/f'{variant}-controls.npz',**controls)
@@ -309,12 +356,14 @@ def main():
     save(out/'report.json',dict(complete=True,date='2026-10-13',hypothetical_hardware=True,voices=6,
         waveforms=SHAPES,clock_hz=CLOCK,period_range=[1,4095],fixed_volume_codes=16,update_hz=50,
         continuous_phase=True,shared_noise_generators=1,noise_lfsr_bits=17,hardware_envelope_used=False,
-        no_volume_interpolation=True,oversample=OVERSAMPLE,output_rate_hz=OUTPUT_RATE,ticks=len(samples)//441,
+        no_volume_interpolation=args.legacy_render or args.transition_ms==0,render_options=options,
+        transition_model='legacy steps' if args.legacy_render else 'raised-cosine level/shape/route morph on one phase per voice',
+        oversample=OVERSAMPLE,output_rate_hz=OUTPUT_RATE,ticks=len(samples)//441,
         seconds=len(samples)/RATE,reference=str(args.reference.resolve()),reference_sha256=hashlib.sha256(args.reference.read_bytes()).hexdigest(),
         processed_pcm_sha256=hashlib.sha256(samples.astype('<f8').tobytes()).hexdigest(),results=results,
         producer_sources_sha256_lf={p.name:hashlib.sha256(p.read_bytes().replace(b'\r\n',b'\n')).hexdigest() for p in producers},
         elapsed_seconds=time.perf_counter()-started,
-        limitations='Hypothetical oscillator DAC and gating model, not an actual AY or six-channel hardware proof. Fixed-level mode only; no hardware envelopes. Bounded magnitude proposals and full-render feedback; not a global optimum or listening grade.'))
+        limitations='Hypothetical oscillator DAC, gating and transition-envelope model, not an actual AY or six-channel hardware proof. Targets are fixed 16-code levels; smooth transitions explicitly extend the old model. Bounded magnitude proposals and full-render feedback; not a global optimum or listening grade.'))
     print(json.dumps(dict(complete=True,seconds=len(samples)/RATE,results={k:v.get('feedback',{}).get('final',v.get('metrics')) for k,v in results.items()})),flush=True)
 
 
