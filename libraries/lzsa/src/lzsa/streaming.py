@@ -43,8 +43,8 @@ def emit_guard_update(a, z, *, emit=None, operand=None, label_prefix=''):
     # instead of adding a per-token test after the complete block is retained.
     for key, active, complete, operands in (
             ('token',z['token_guard'],z['token_body'],('token_high_target','token_low_target','token_end_target')),
-            ('long8',z['guard_long8'],z['CopyMoreLiterals'],('long8_target',)),
-            ('long16',z['guard_long16'],z['NextUseBC'],('long16_target',))):
+            ('long8',z['guard_long8'],z.get('long8_complete',z['CopyMoreLiterals']),('long8_target',)),
+            ('long16',z['guard_long16'],z.get('long16_complete',z['NextUseBC']),('long16_target',))):
         operand('LD HL,guarded '+key,0x21,active,10)
         jump(0xca,label_prefix+'set_'+key)
         operand('LD HL,complete '+key,0x21,complete,10)

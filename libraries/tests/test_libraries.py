@@ -100,7 +100,8 @@ class LibraryTests(unittest.TestCase):
     def test_export_is_a_complete_commented_include(self):
         from zx0.export import export as zx_export
         from lzsa.export import export as lz_export
-        for build,export in ((zx0_build,zx_export),(lzsa_build,lz_export)):
+        for build,export in ((zx0_build,zx_export),(lzsa_build,lz_export),
+                (lambda:lzsa_build(long_copy=True,core_limit=0x9000),lz_export)):
             regions,labels,metadata=build()
             with tempfile.TemporaryDirectory() as directory:
                 export(directory,regions,labels,metadata)
@@ -123,6 +124,7 @@ class LibraryTests(unittest.TestCase):
             with self.assertRaises(ValueError):build(core=-1)
             with self.assertRaises(ValueError):build(stack=65536)
         with self.assertRaises(ValueError):lzsa_build(direct_header=True)
+        with self.assertRaises(ValueError):lzsa_build(long_copy=True)
 
 
 @unittest.skipUnless(importlib.util.find_spec('z80'), 'install lzsa[native] for native tests')
@@ -187,8 +189,8 @@ class NativeTests(unittest.TestCase):
     def test_streaming_guard_patcher_restores_and_bypasses(self):
         from z80 import Z80Machine
         from lzsa.streaming import emit_guard_update
-        for direct in (False,True):
-            regions,z,_=lzsa_build(streaming=True,direct_header=direct)
+        for direct,long_copy in itertools.product((False,True),repeat=2):
+            regions,z,_=lzsa_build(streaming=True,direct_header=direct,long_copy=long_copy,core_limit=0x9000)
             a=MiniAssembler(0x6000);rows=emit_guard_update(a,z);a.emit(0xc9)
             m=Z80Machine()
             for at,data in regions:m.set_memory_block(at,data)
@@ -210,8 +212,24 @@ class NativeTests(unittest.TestCase):
                     ('long8_target','guard_long8','CopyMoreLiterals'),
                     ('long16_target','guard_long16','NextUseBC')):
                     value=m.memory[z[operand]]+256*m.memory[z[operand]+1]
-                    self.assertEqual(value,z[done if complete else active])
+                    done=z.get(operand.replace('_target','_complete'),z[done])
+                    self.assertEqual(value,done if complete else z[active])
                 self.assertEqual((m.alt_af,m.bc,m.de),(0x6537,0x1234,0x2345))
+
+    def test_long_copy_length_boundaries_and_overlap(self):
+        from lzsa.native import execute
+        for layout in ({},dict(prefix=0x5000,prefix_limit=0x5400,core=0x6000,
+                stack=0x4ff0,output_base=0xa000)):
+            baseline=lzsa_build(**layout,core_limit=0x6400 if layout else 0x9000)
+            candidate=lzsa_build(**layout,core_limit=0x6400 if layout else 0x9000,long_copy=True)
+            for literal in (1,2,3,17,18,237,238,239,255,256,257):
+                for match in (2,8,9,23,24,255,256,257):
+                    raw=bytes(i%251 for i in range(literal));raw+=bytes([raw[-1]])*match
+                    payload=lzsa.encode(raw,[(literal,match,1)])
+                    old=execute(*baseline,payload,raw,source=0x2000,caller_stack=0x9df0)
+                    new=execute(*candidate,payload,raw,source=0x2000,caller_stack=0x9df0)
+                    self.assertTrue(new['exact'])
+                    self.assertLessEqual(new['tstates'],old['tstates'])
 
 
 if __name__=='__main__':unittest.main()

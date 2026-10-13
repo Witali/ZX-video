@@ -1,5 +1,29 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Item01: optional bounded LZSA2 long-copy kernels
+
+- **Objective/baseline:** Apply the unrolled-LDI forum technique to reusable
+  codecs at `6168ba14`. ZX0 already has bounded256-byte refill unrolling;
+  retain it. Add opt-in `long_copy=True` to LZSA2 for literals>=18 and
+  matches>=24, leaving short tokens/EOD unchanged and retaining forward
+  overlap, AF' and guarded input. Explicitly enlarge the core reservation.
+- **Measurements:** +89 ordinary /88 streaming core bytes, no extra state/
+  stack/tables or stream bytes/sectors. Long literal paths save60..70 T and
+  long matches59 T, including helper jumps/shared-offset read. On77 complete
+  blocks,26320517 ->26242238 T (-78279); 21 authenticated real blocks
+  19412006 ->19385952 T (-26054,0.134%). Zero slower blocks/slices; exact
+  output with230 accepted synthetic interrupts. Both24-case streaming
+  guard modes save1718 T; producers533509/535745 T and165 once-only sectors unchanged.
+- **Coverage/decision:** All31 default code/label profiles remain exact;
+  12 library and66 toolkit regression tests pass, including native
+  length/offset/overlap/relocation and six in-place placements per
+  streaming case pass. Keep this as an optional measured library profile:
+  small CPU gain and more bank2 RAM; no new player default or release.
+  [Timing/protocol](libraries/LONG_COPY.md), [native report](libraries/evidence/long_copy_native.json),
+  [streaming report](libraries/evidence/long_copy_streaming.json) and their
+  reproducing scripts retain deterministic evidence separately from IRQ/
+  contention/TR-DOS/physical delivery/publication qualification.
+
 ## 2026-10-13 — Start the sequential Z80 codec optimization branch
 
 - **Request/baseline:** The user authorizes a new branch, a saved list of nine

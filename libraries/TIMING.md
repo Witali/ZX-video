@@ -48,3 +48,7 @@ input has extra work. That comparison is to complete-input decoding, not to
 the pre-extraction streaming implementation. Do not turn it into a claimed
 new regression/improvement or a disk-delivery result. ROM/disk/IRQ/ULA and
 actual publication timing remain separately qualified by the application.
+
+[Item01 long-copy counts](LONG_COPY.md) add an opt-in LZSA2 profile, with
+complete native/streaming comparisons and exact path/space deltas. They do
+not change this default baseline or its compression cost model.

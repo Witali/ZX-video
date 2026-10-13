@@ -18,6 +18,11 @@ ROUTINES = {
     'guard_header': 'Require a 32-byte token prefix; direct mode uses dead AF for a 46-T ready path.',
     'guard_literals': 'Require the literal extent plus seven-byte lookahead before LDIR.',
     'input_wait': 'Set input_needed and yield; supplied pages and shared tails belong to the caller.',
+    'LongLiterals16': 'BC>=256, A=token, HL=high length byte; advance HL before the long literal kernel.',
+    'LongLiterals8': 'A>=18 literal bytes, B=token; prepare BC and retain the token in A.',
+    'LongLiteralsBC': 'BC>=18, HL=readable literals, DE=output; 16 forward LDIs then nonzero LDIR. AF\' is preserved.',
+    'LongMatch8': 'A>=24 match bytes, B=0; prepare BC for the long match kernel.',
+    'LongMatchBC': 'BC>=24, HL=input, DE=output; save HL, load shared negative offset, copy forward for distance-1 overlap.',
     'state': 'Mutable words/flags. Keep state and self-modifying operands in writable RAM.',
 }
 

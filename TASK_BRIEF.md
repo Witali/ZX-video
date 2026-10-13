@@ -17,6 +17,10 @@ requires complete actual delivery/Fuse/publication qualification from AGENTS.md.
 Library component evidence must not be labeled a movie release. No merge/push
 or unrelated audio/movie redesign is authorized by this work.
 
+Item01 is complete: [optional long-copy LZSA2](libraries/LONG_COPY.md),
+77 complete native blocks, both24-case guarded modes,12 library and66
+toolkit tests. Defaults remain byte-exact. Next: item02 register transfers.
+
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 
 The user requests separate reusable ZX0 and LZSA libraries with the project's

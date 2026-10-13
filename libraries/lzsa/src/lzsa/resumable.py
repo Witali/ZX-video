@@ -12,7 +12,7 @@ from ._z80 import sha
 PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
-def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
+def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,
           prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000):
     """Generate raw-v2 decode regions, coroutine labels and instruction costs.
 
@@ -23,6 +23,8 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
     Caller SP is restored; AF/BC/DE/HL and AF' may be clobbered on return.
     streaming input waits use input_needed and finished, independently of the
     output target. The application owns page supply and final-input bypass.
+    long_copy appends bounded 16-LDI kernels to the core: reserve more core RAM
+    explicitly (e.g. core_limit=0x9000). Short tokens retain their old paths.
     """
     if direct_header and not streaming:raise ValueError('direct header requires streaming input')
     if not (0<=core<core_limit<=65536 and 0<=prefix<prefix_limit<=65536):
@@ -50,15 +52,18 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
     a.label('start');emit('LD B,0',(6,0),7);emit('SCF',(0x37,),4);x();jp(0xc3,'ReadToken')
     a.label('ManyLiterals');emit('LD A,18',(0x3e,18),7);emit('ADD A,(HL)',(0x86,),7);inc()
     if streaming:a.labels['long8_target']=a.pc+1;jp(0xd2,'guard_long8')
+    elif long_copy:jp(0xd2,'LongLiterals8')
     else:jr(0x30,'CopyMoreLiterals')
     emit('LD C,(HL)',(0x4e,),7);inc();emit('LD A,B',(0x78,),4);emit('LD B,(HL)',(0x46,),7)
     if streaming:a.labels['long16_target']=a.pc+1
-    jp(0xc3,'guard_long16' if streaming else 'NextUseBC')
+    jp(0xc3,'guard_long16' if streaming else ('LongLiterals16' if long_copy else 'NextUseBC'))
     a.label('MoreLiterals');emit('LD B,(HL)',(0x46,),7);inc();nibble('LiteralNibble',True)
     emit('INC A',(0x3c,),4);jr(0x28,'ManyLiterals');emit('SUB 238',(0xd6,238),7)
     a.label('CopyMoreLiterals');emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('LD B,0',(6,0),7)
     if streaming:a.label('copy_long8')
-    ldi();ldi();ldir();emit('OR A',(0xb7,),4);jp(0xf2,'Case0xx')
+    ldi();ldi();ldir()
+    if long_copy:a.label('AfterLongLiterals')
+    emit('OR A',(0xb7,),4);jp(0xf2,'Case0xx')
     emit('CP 192',(0xfe,192),7);jr(0x38,'Case10x')
     a.label('Case11x');emit('CP 224',(0xfe,224),7);jr(0x30,'MatchLen')
     emit('LD B,(HL)',(0x46,),7);inc();jr(0x18,'ReadOffsetC')
@@ -71,7 +76,9 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
     a.label('MatchLen');emit('INC A',(0x3c,),4);emit('AND 7',(0xe6,7),7);jr(0x28,'LongerMatch');emit('INC A',(0x3c,),4)
     a.label('CopyMatch');emit('LD C,A',(0x4f,),4)
     a.label('MatchUseC');emit('PUSH HL',(0xe5,),11);a.labels['offset']=a.pc+1;emit('LD HL,offset',(0x21,0,0),10)
-    emit('ADD HL,DE',(0x19,),11);ldi();ldir();emit('POP HL',(0xe1,),10)
+    emit('ADD HL,DE',(0x19,),11);ldi();ldir()
+    if long_copy:a.label('AfterLongMatch')
+    emit('POP HL',(0xe1,),10)
     a.label('ReadToken');emit('LD A,D',(0x7a,),4);a.labels['high_operand']=a.pc+1;emit('CP high',(0xfe,0),7)
     if streaming:a.labels['token_high_target']=a.pc+1
     jp(0xda,'guard_header' if direct_header else 'Token')
@@ -99,8 +106,33 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
     a.label('Case00x');emit('LD B,A',(0x47,),4);nibble('Offset5Nibble')
     emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('CP 32',(0xfe,32),7);emit('RL C',(0xcb,0x11),8);emit('LD B,255',(6,255),7);jp(0xc3,'SaveOffset')
     a.label('LongerMatch');nibble('MatchNibble',True);emit('SUB 231',(0xd6,231),7);emit('CP 24',(0xfe,24),7);jp(0xda,'CopyMatch')
-    emit('ADD A,(HL)',(0x86,),7);inc();jp(0xd2,'CopyMatch');emit('RET Z',(0xc8,),[5,11])
-    emit('LD C,(HL)',(0x4e,),7);inc();emit('LD B,(HL)',(0x46,),7);inc();jp(0xc3,'MatchUseC')
+    emit('ADD A,(HL)',(0x86,),7);inc();jp(0xd2,'LongMatch8' if long_copy else 'CopyMatch');emit('RET Z',(0xc8,),[5,11])
+    emit('LD C,(HL)',(0x4e,),7);inc();emit('LD B,(HL)',(0x46,),7);inc();jp(0xc3,'LongMatchBC' if long_copy else 'MatchUseC')
+    if long_copy:
+        # Only structurally long forms reach these kernels: literals >=18,
+        # extra-byte matches >=24, or either 16-bit length >=256. Sixteen
+        # forward LDIs leave a positive BC for LDIR and preserve overlap at
+        # distance 1/2. No count test, AF' scratch or SP redirection is needed.
+        # Literal entry: A=count/B=token (8-bit), or BC=count/A=token with HL
+        # still on the high length byte (16-bit). Guards have already advanced
+        # HL and call LongLiteralsBC only after the entire extent is readable.
+        a.label('LongLiterals16');inc();jp(0xc3,'LongLiteralsBC')
+        a.label('LongLiterals8');emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('LD B,0',(6,0),7)
+        a.label('LongLiteralsBC')
+        for _ in range(16):ldi()
+        ldir();jp(0xc3,'AfterLongLiterals')
+        # Match entry: A=count/B=0 or BC=count; DE=next output, HL=input.
+        # The shared self-modified offset is loaded as data, costing 6 T more
+        # than the short path's immediate load but avoiding another store on
+        # every offset token. The existing POP HL restores the continuation.
+        a.label('LongMatch8');emit('LD C,A',(0x4f,),4)
+        a.label('LongMatchBC');emit('PUSH HL',(0xe5,),11)
+        ld('LD HL,(offset)',0x2a,'offset',16);emit('ADD HL,DE',(0x19,),11)
+        for _ in range(16):ldi()
+        ldir();jp(0xc3,'AfterLongMatch')
+        if streaming:
+            a.labels['long8_complete']=a.labels['LongLiterals8']
+            a.labels['long16_complete']=a.labels['LongLiterals16']
     # Output-only suspension and unavailable-input suspension have different
     # completion rules. Keep the private continuation until raw EOD is read.
     cold.label('slice_until')
@@ -148,9 +180,9 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
             cold.label('header_short');cold.emit(0xf1);cold.abs16(0xcd,'input_wait');cold.rel8(0x18,'guard_header')
             cold.label('header_ready');cold.emit(0xf1,0xc9)
         cold.label('guard_long8');cold.emit(0x4f,0x78,0x06,0)
-        cold.abs16(0xcd,'guard_literals');cold.abs16(0xc3,'copy_long8')
+        cold.abs16(0xcd,'guard_literals');cold.abs16(0xc3,'LongLiteralsBC' if long_copy else 'copy_long8')
         cold.label('guard_long16');cold.emit(0x23)
-        cold.abs16(0xcd,'guard_literals');cold.abs16(0xc3,'copy_long16')
+        cold.abs16(0xcd,'guard_literals');cold.abs16(0xc3,'LongLiteralsBC' if long_copy else 'copy_long16')
         cold.label('guard_literals');cold.emit(0xf5,0xe5,0x09);cold.rel8(0x38,'literal_short')
         cold.emit(0x7d,0xc6,7,0x7c,0xce,0);cold.rel8(0x38,'literal_short')
         cold.emit(0xfe);cold.label('literal_frontier');cold.emit(0);cold.rel8(0x38,'literal_ready')
@@ -205,5 +237,9 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
         instruction_listing=rows,**(dict(direct_header_guard=True,available_header_tstates=46,
             previous_available_header_tstates=96,available_header_delta_tstates=-50) if direct_header else {}),
         upstream_commit='15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5',
+        **(dict(long_copy=True,long_copy_minimum_literals=18,long_copy_minimum_match=24,
+            long_copy_unrolled_bytes=16,long_copy_extra_core_bytes=88 if streaming else 89,
+            long_copy_delta_tstates=dict(literals8=-60 if streaming else -62,
+                literals16=-60,guarded_literals16=-70,matches8=-59,matches16=-59)) if long_copy else {}),
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         upstream_sha256=sha((Path(__file__).parent/'asm/unlzsa2_fast.asm').read_bytes()))
