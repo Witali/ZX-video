@@ -1,5 +1,45 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Verify real-time six-voice command decoding on Z80
+
+- **Request/input:** The user asks whether the measured compressed commands
+  decode in real time. Continue `codex/six-voice-clicks` from `b6d8badc`, using
+  the exact19,853-byte one-second-block ZX0 stream,30 blocks/1500 updates.
+  Execute generated native Standard68-byte and Turbo126-byte ZX0 plus a
+  native IM2 consumer on the existing Z80 instruction-table interpreter.
+  Split LDIR into interruptible21/16-T iterations, calibrating every block's
+  count/output against the existing aggregate implementation.
+- **CPU and path counts:** Standard mean67,099.933/max77,497 T per block
+  (worst21.849 ms); Turbo mean53,653.800/max61,583 T (17.362 ms), saving
+  13,446.133 T/block on average. Flat19-byte output1168 T; columnar1268 T,
+  +100 T/update. IRQ body1505 T normal/1605 at switch, plus IM2 entry19 and
+  vector JP10. Full decode+IRQ/output budget4.059% Standard/3.679% Turbo.
+  Code/input/IM2/stack/buffers need3938 bytes in uncontended banks2/0, including
+  alignment and the unused baseline routine. Existing release code unchanged.
+- **Complete verification/decision:** All60 native block decodes and60
+  varying-phase IRQ injections preserve every byte and restore registers,
+  flags and stack. Both full1500-field schedules pass with two-field
+  preparation, no missed updates or underflows. Worst preparation including
+  IRQs22.714/17.795 ms; minimum ready margins17.297/22.216 ms. Actual commits
+  finish at most0.422059 ms after an IRQ edge, admission delays15/13 T;
+  intervals70808..71008 T recover the100-T switch difference on the next
+  field with no origin drift. Retain complete actual-commit traces, not just
+  counters. Turbo's additional one-field run also passes1500 fields, margin
+  2.225 ms; Standard underflows at field400/block8 and is a rejected partial
+  run with400 earlier fields checked. An initial eager-swap harness failed a
+  short window; move the swap before the new first field and rerun all cases.
+  Use double buffering and prepare two fields ahead for the verified decoder
+  design; no broader optimization search is needed.
+- **Limits/evidence:** This is complete deterministic CPU/command scheduling
+  evidence, not a physical-chip or Fuse/TR-DOS qualification. The19-register
+  plus atomic-commit bus is hypothetical, matching stored controls rather
+  than actual AY capabilities. Input bytes are already in RAM; disk/ROM,
+  video, contention and native sound synthesis are unmeasured. Spectrum
+  fields70908 T at3546900 Hz imply about50.021 Hz; no exact50.000-Hz physical
+  audio identity claim. No new release or modified player hot path.
+  [Native generator, timing/RAM calculations and reproduction](ay-converter/analysis/six_voice_realtime/README.md),
+  [full report](ay-converter/analysis/six_voice_realtime/evidence/report.json).
+
 ## 2026-10-13 — Measure lossless six-voice command storage
 
 - **Request/input:** The user reports good overall sound, with residual

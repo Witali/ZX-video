@@ -1589,3 +1589,24 @@ Absolute columns beat deltas. ZX0 gives estimated35.8..39.7 KB/minute or
 This is the hypothetical six-voice model, not a native AY format; no real
 chip, Z80 decoder timing or release proof. Native code/releases unchanged.
 The bounded size deliverable is complete; do not open another search.
+
+## Six-voice real-time decoding — complete (2026-10-13)
+
+The user authorizes real-time decoder verification after storage commit
+`b6d8badc`. Reuse the exact19,853-byte one-second ZX0 control stream without
+refitting. Native Standard/Turbo decoders plus an IM2 double-buffer consumer
+pass all60 actual block timing checks,60 varying-phase interrupt injections,
+and two full1500-field schedules with two-field preparation. Turbo additionally
+passes a full one-field schedule; Standard's one-field underflow at field400
+is retained as a rejected partial run. All actual commits/values are checked.
+
+Worst decode21.849/17.362 ms Standard/Turbo for each second of commands;
+including IRQs22.714/17.795 ms. CPU including every command IRQ4.059/3.679%.
+Flat output1168 T ->columnar1268 T (+100); IRQ1505/1605 +29 entry/vector T.
+Working RAM3938 bytes; minimum two-field ready margins17.297/22.216 ms.
+Commit lag<=0.422059 ms, intervals70808..71008 T with no origin drift.
+[Full traces, report, code and reproduction](ay-converter/analysis/six_voice_realtime/README.md).
+This establishes instruction-table throughput for the hypothetical19-register
+device. Disk/ROM/video/contention, actual AY/hardware audio and release playback
+remain unmeasured; native release instructions are unchanged. The requested
+decoder check is complete; no further experiment opens automatically.
