@@ -126,3 +126,39 @@ snapshots authenticate the saved public CLI report; later CLI label/import
 cleanup and toolkit pickle/legacy-format guards do not change the measured
 registers or Z80 instructions. Physical hardware and complete rebuilt-film
 timing/capacity have not been tested for this new audio.
+
+
+## Completed lossless phrase experiment
+
+[Measured sizes](phrase-results.json), [host encoder/decoder](phrase_probe.py).
+The separate AYP1 prototype replaces repeated words of 2/4/8/16 exact AY9
+states with dictionary references, plus unchanged-state runs and literals.
+It counts the complete dictionary and stream headers. All eight recordings
+round-trip exactly; two dedicated synthetic/random/truncation tests pass.
+The input set combines the five new excerpts above with the current released
+music/O. Henry streams and the current full movie's 25330-state audio stream.
+
+| Current stream | Raw AY9 | Phrase prototype | Existing AYH1 | gzip AY9 | gzip phrase |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| The Entertainer, 1556 ticks | 14004 | 11914 | 3238 | 4730 | 5173 |
+| O. Henry, 1200 ticks | 10800 | 10329 | 5486 | 6445 | 6527 |
+| Full movie, 25330 ticks | 227970 | 192885 | 63243 | 90032 | 93147 |
+
+Repeated states exist: 323, 70 and 4602 unchanged ticks respectively. Exact
+longer words produce only 4, 0 and 54 dictionary references; a maximum of 64
+entries is allowed. This prototype reduces raw bytes but loses to the existing
+register-delta/Huffman stream and even makes gzip larger. Every new excerpt
+also loses to AYH1. Retain the experiment and do not deploy a native phrase
+decoder or change the release format. This is a whole-input host compression
+comparison, not a sum of partitioned disk audio sizes or a playback claim.
+Approximate spectral-pattern reuse for analysis is distinct from exact,
+lossless output compression; it cannot justify substituting different states.
+
+```text
+python ay-converter/analysis/auto_mixer/phrase_probe.py --source-root REPOSITORY --new-results ay-converter/analysis/auto_mixer/evidence --output REPORT.json
+python -m unittest discover -s ay-converter/analysis/auto_mixer -p test_phrase_probe.py
+```
+
+The full-movie input is the existing REPOSITORY/.tmp/refined-av-movie/audio.bin;
+the two current audition inputs are named in phrase_probe.py. Reproduction
+requires those original streams. The saved report does not imply a new release.

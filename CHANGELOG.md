@@ -1,5 +1,28 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Measure and reject lossless AY phrase dictionaries
+
+- **Objective/input:** user proposed short codes for repeated spectral/AY
+  patterns. Baseline is the current Entertainer (1556 ticks), O. Henry
+  (1200 ticks) and full movie (25330 ticks), plus the five newly fitted
+  eight-second excerpts from the shared automatic-mixer change.
+- **Parameters:** host-only AYP1 dictionary of exact 2/4/8/16-state words,
+  at most 64 entries, previous-state runs and literals; account for dictionary
+  and header bytes. Compare raw/gzip AY9 and the existing delta/AYH1 encoder.
+- **Results:** current music/O. Henry/movie raw ->phrase ->AYH1 sizes are
+  14004 ->11914 ->3238; 10800 ->10329 ->5486; 227970 ->192885 ->63243 bytes.
+  gzip also grows: 4730 ->5173, 6445 ->6527, 90032 ->93147 bytes. Unchanged
+  ticks number 323/70/4602; longer words give only 4/0/54 dictionary uses.
+  All five new excerpts also lose to AYH1.
+- **Verification/decision:** all eight streams round-trip exactly; two host
+  prototype tests pass, including random streams and truncated input rejection.
+  Reject deployment because total bytes increase against the existing codec;
+  no Z80 path, release image, timing or RAM changes. Sizes are whole-input host
+  comparisons, not partitioned disk totals; no native/disk-delivery claim.
+  [Method](ay-converter/analysis/auto_mixer/README.md#completed-lossless-phrase-experiment),
+  [saved sizes](ay-converter/analysis/auto_mixer/phrase-results.json),
+  [reproducer](ay-converter/analysis/auto_mixer/phrase_probe.py).
+
 ## 2026-10-13 — Share automatic tone/noise/mixed AY conversion
 
 - **Request/baseline:** `3002f6a7`; select tone, noise or simultaneous tone/noise

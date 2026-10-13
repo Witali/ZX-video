@@ -1465,3 +1465,12 @@ sound auditions and a complete five-frame 10-fps movie fixture pass. Both
 public commands produce identical sound states. This does not rebuild or
 qualify the complete movie with the changed soundtrack. Reuse
 [the method and saved evidence](ay-converter/analysis/auto_mixer/README.md).
+
+
+### AY phrase dictionary experiment — complete, rejected (2026-10-13)
+
+The requested repeat-code idea was measured separately on eight exact streams.
+AYP1 has correct lossless round trips but uses more bytes than existing AYH1
+and increases gzip size. Keep the measured host prototype and report; retain
+the release codec. No native decoder or subsequent experiment is authorized
+by this completed milestone. See the automatic-mixer report's phrase section.
