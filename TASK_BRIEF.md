@@ -1511,3 +1511,15 @@ and compact dynamics. All1500 packed/control states, source/producer hashes
 and30-second WAV/headroom checks pass; listen in
 [the retained audition](ay-converter/analysis/o_henry/README.md). No converter
 or native instruction changes, new Fuse qualification or broader search.
+
+## Hypothetical six-voice waveform experiment — complete (2026-10-13)
+
+The user authorizes a bounded script/WAV experiment with six AY-like voices
+and square/triangle/sine selection on the same O. Henry source[60,90) prepared
+reference. Complete selectable and square-only controls-only WAV replays,
+four independent tests and exact source/producer/artifact checks pass.
+Selected spectral objective8.18696 versus old AY9.24885, with worse short-field
+level MAE2.03192 versus1.36731 dB; no listening grade or isolated voice-count
+claim. [Code, auditions and evidence](ay-converter/analysis/six_voice/README.md).
+No real-chip, Z80, release, full-film or subsequent model search is part of this
+completed request.

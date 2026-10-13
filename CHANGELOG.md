@@ -1,5 +1,36 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Hypothetical six-voice square/triangle/sine audition
+
+- **Request/baseline:** The user requests an experimental script and WAV for
+  six AY-like channels with selectable square, triangle or sine oscillators.
+  From `e38f3c2e`, use the same O. Henry source[60,90) prepared PCM exactly;
+  no second compression, full-film rebuild or real-chip implementation.
+- **Model/settings:** Six continuous phases, 12-bit clock periods,16 fixed AY
+  volume codes,50-Hz controls, one17-bit shared noise generator, tone/noise/
+  mixed gating. Idealized unipolar waveform shape, fourfold oversampling/FIR
+  and DC mean. Fixed-volume mode; no hardware ENV, per-sample level envelope
+  or source PCM added to output. Existing player instruction delta0 T.
+- **Fit/results:** Bounded peak/subharmonic proposals, masking-weighted six
+  components, channel continuity and complete rendered feedback. Selectable
+  shapes objective8.18696 dB versus six squares9.41877 and previous AY9.24885;
+  level MAE2.03192 versus1.45010 /1.36731 dB. Spectral matching improves at
+  all three windows, while short-field level matching is worse. Six squares
+  alone do not improve the old combined metric. The old fitter/ENV differ,
+  so that comparison does not isolate voice count or prove intelligibility.
+  Selected periodic fields:2830 square,3198 triangle,2230 sine;70 noise-only,
+  226 mixed. Main30-second WAV is1323000 samples,44100-Hz mono PCM16,
+  peak0.949982 and zero clipping; float RMS0.131256, reference0.132312.
+- **Checks/decision:** Four tests pass independently checking Fourier ratios,
+  uninterrupted phase, shared LFSR and legal limits, and off-grid tone/silence.
+  Both NPZ control streams replay their saved WAV bytes exactly without source
+  PCM. Source/baseline/producer hashes and artifact manifest authenticate the
+  completed listening run. Keep this bounded experimental script and WAV;
+  no native six-channel hardware or arbitrary-waveform AY compatibility is
+  claimed. WAV media are retained in LFS. No new algorithm sweep is opened.
+  Reproduce with `ay-converter/experimental_six_voice.py` and
+  `ay-converter/analysis/six_voice/{README.md,archive.py}`.
+
 ## 2026-10-13 — Thirty-second O. Henry WAV through the current shared engine
 
 - **Request/baseline:** The user requests another30 seconds from the familiar
