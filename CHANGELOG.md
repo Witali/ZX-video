@@ -1,5 +1,56 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Chip-specific envelopes, sparse noise and controlled PCM dynamics
+
+- **Objective/baseline:** Extend the shared sound engine from `5e54b31a` for
+  real hardware envelopes across fields, actual AY capability checks, less
+  noise, explicit AY/YM selection and fewer strong volume holes. Scope is the
+  first 300 seconds of Big Buck Bunny and bounded regression/fixture inputs.
+- **Implementation:** AY12/14-register actions preserve R13 phase; movie AYH2
+  stores 14 initial registers and 16 contexts. One shared generator supplies
+  accepted waves and disjoint ramps, with 255 meaning no bus write. Canonical
+  fitting and caches choose AY-3-8910 or YM2149. Source broadband evidence plus
+  full-render benefit gates noise. Shared 5.1 downmix uses .23/.23/.40/0/.07/.07.
+  Default compact dynamics use 2.5:1, -24 dBFS, bounded +9/-18 dB, 10/150-ms
+  attack/release, smooth gain and -1-dBFS sample-peak makeup. Original dynamics
+  remain selectable. Full-render recovery proposes short muted tonal notes.
+- **Physical audit:** GI/Yamaha manuals confirm Boolean mixing, gate-open
+  envelope-only output, one shared generator, 16 AY effective envelope levels
+  versus 32 YM codes. The preceding renderer had used YM; final feedback is
+  recalculated for AY, without claiming the original controls were a fresh AY
+  search. Independent manual-shape checks cover 4096 steps, all shape actions,
+  period/phase writes and legal sentinels. See `ay-converter/CHIP_MODEL.md`.
+- **Measurements:** AY retargeted noise 10203 ->3831 fields; final level changes
+  leave 3817. Before compression, AY objective 6.51027 ->6.31076; level MAE
+  1.52556 ->1.02321 dB. New 5.1 raw peak 0.55664551, processed RMS 0.07148980;
+  p90-p10 active level spread 24.95316 ->20.94300 dB, zero clipping. Against
+  this changed reference, fixed-calibration feedback 10.01839 ->7.64596 dB,
+  level MAE 8.26147 ->1.37248 dB. The PCM16 audit finds zero >15-dB shortfalls
+  on 13234 fields above -45 dBFS, active level MAE 0.86743 dB and peak 0.927948.
+  No comparison of objective percentages across different references is made.
+- **Superseded/failed attempts:** YM envelope and uncompressed AY sets each
+  completed three cold runs; later requests replace their listening selection.
+  First envelope trace incorrectly counted skipped R13 sentinel values as bus
+  writes; conditioning the trace on E!=255 fixes measurement. Original failed
+  trace/diagnosis and corrected proofs are retained. Initial recovery improved
+  the objective but was discarded by a better noise-period proposal; combined
+  recovery proposals retain both improvements. No extra chip function is
+  invented. Prior interrupted full-search attempts remain recorded.
+- **Validation/timing:** 41 standalone +70 toolkit tests pass; six final recovery
+  regressions pass after combined proposal changes. Both chip models share
+  movie/audio identity. Native checks cover every final 300-second record,
+  all banks and EOF. Five-frame 10-fps public CB41 selects AYH2 and passes full
+  cold CPU/Fuse fields/screens/deadlines. Resident routine 867 ->1059/1099 T;
+  ordinary 974 ->1166/1206 T (+192/+232), with full path table in CHIP_MODEL.
+  Movie IRQ remains 367+83*n T; AYH2 adds three 20-T checks, +60 T/field;
+  changed-symbol costs remain data-dependent. No movie video instruction delta.
+  Final compressed three-disk cold playback is pending in this implementation
+  commit; the following evidence commit must finish it before qualification.
+- **Decision/reproduction:** Keep this authorized shared implementation and
+  the bounded selected result. Fresh common-engine and authenticated staged
+  producers live in `ay-converter/analysis/bbb_5min`; preserve stage scopes.
+  No full-film rebuild, physical hardware measurement, merge or push.
+
 ## 2026-10-13 — Shared perceptual chip feedback, completed host stage
 
 - **Objective/input:** User requests normalization before analysis, algorithmic

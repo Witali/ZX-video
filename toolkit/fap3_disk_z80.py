@@ -331,9 +331,10 @@ def build_driver(h, clock, ay_state, *, has_next=False, deferred=False, prefill_
         a.emit(0x21); a.word(0xa200); a.emit(0x11); a.word(DEFERRED)
         a.emit(0x01); a.word(256); a.emit(0xed,0xb0)
     a.emit(0x21); a.word(h.frames); call(h.audio['audio_init']); call(h.audio['setup_clock'])
-    # R0..10 checkpoint: following packets remain byte-identical AY deltas.
+    # Restore all checkpoint registers before the 50-Hz schedule begins.
+    # AYH2 includes the envelope period and last actual shape, never FF.
     a.abs16(0x21,'ay_state'); a.emit(0x16,0)
-    a.label('ay_restore'); a.emit(0x7a,0x01); a.word(0xfffd); a.emit(0xed,0x79,0x7e,0x23,0x06,0xbf,0xed,0x79,0x14,0x7a,0xfe,11)
+    a.label('ay_restore'); a.emit(0x7a,0x01); a.word(0xfffd); a.emit(0xed,0x79,0x7e,0x23,0x06,0xbf,0xed,0x79,0x14,0x7a,0xfe,len(ay_state))
     a.rel8(0x20,'ay_restore')
     a.emit(0xfb)
     if prefill_entry is not None: call(prefill_entry)

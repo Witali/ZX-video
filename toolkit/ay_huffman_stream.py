@@ -14,13 +14,14 @@ from probe_motion_entropy import Reader, huffman_lengths, codes_for
 from probe_hybrid_tiles import Writer
 
 
-def symbols(ticks):
-    result = [[] for _ in range(13)]
+def symbols(ticks,register_count=11):
+    result = [[] for _ in range(register_count+2)]
     sequence = []
     for tick in ticks:
         r = Reader(tick)
         if take_tick(r)!=tick: raise ValueError('invalid record')
         r.end()
+        if any(reg>=register_count for reg in tick[1::2]):raise ValueError('register outside selected AY wire format')
         mask = sum(1<<v for v in tick[1::2])
         row = [(0,mask&255),(1,mask>>8)]
         row.extend((reg+2,value) for reg,value in zip(tick[1::2],tick[2::2],strict=True))
@@ -31,8 +32,8 @@ def symbols(ticks):
 
 
 def encode(ticks, initial=bytes(11)):
-    if len(initial)!=11: raise ValueError('expected eleven initial registers')
-    values,sequence = symbols(ticks)
+    if len(initial) not in (11,14): raise ValueError('expected eleven or fourteen initial registers')
+    values,sequence = symbols(ticks,len(initial))
     tables = []
     dictionaries = []
     for row in values:
@@ -49,7 +50,8 @@ def encode(ticks, initial=bytes(11)):
     for context,value in sequence:
         code,length = dictionaries[context][value]
         if length: writer.put(code,length)
-    header = bytearray(b'AYH1'+struct.pack('<II',len(ticks),writer.bits)+initial)
+    magic=b'AYH1' if len(initial)==11 else b'AYH2'
+    header = bytearray(magic+struct.pack('<II',len(ticks),writer.bits)+initial)
     for entries in tables:
         header += struct.pack('<H',len(entries))+bytes(v for pair in entries for v in pair)
     payload = writer.finish()
@@ -61,11 +63,13 @@ def encode(ticks, initial=bytes(11)):
 
 def decode(data):
     r = Reader(data)
-    if r.take(4)!=b'AYH1': raise ValueError('expected AYH1')
+    magic=r.take(4)
+    if magic not in (b'AYH1',b'AYH2'): raise ValueError('expected AYH1/AYH2')
+    register_count=11 if magic==b'AYH1' else 14
     count,bits = struct.unpack('<II',r.take(8))
-    initial = r.take(11)
+    initial = r.take(register_count)
     contexts = []
-    for _ in range(13):
+    for _ in range(register_count+2):
         size = r.u16()
         if size>256: raise ValueError('too many symbols')
         entries = [tuple(r.take(2)) for _ in range(size)]
@@ -100,9 +104,9 @@ def decode(data):
     result = []
     for _ in range(count):
         mask = value(0)|(value(1)<<8)
-        if mask>>11: raise ValueError('invalid AY mask')
+        if mask>>register_count: raise ValueError('invalid AY mask')
         pairs = bytearray()
-        for reg in range(11):
+        for reg in range(register_count):
             if mask&(1<<reg): pairs.extend((reg,value(reg+2)))
         result.append(bytes([len(pairs)//2])+pairs)
     if position!=bits: raise ValueError('unused coded bits')

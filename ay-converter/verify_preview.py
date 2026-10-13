@@ -17,12 +17,12 @@ from music_player import BANKS, BANK_BYTES, ORIGIN
 from support import hidden_startupinfo
 
 
-def expected_registers(packed):
+def expected_registers(packed, state_bytes=9):
     output = bytearray()
-    if len(packed) % 9:
+    if state_bytes not in (9,12) or len(packed) % state_bytes:
         raise ValueError('truncated AY9 stream')
-    for i in range(0, len(packed), 9):
-        row = packed[i:i+9]
+    for i in range(0, len(packed), state_bytes):
+        row = packed[i:i+state_bytes]
         noise = (row[1] >> 4) | (row[3] & 16)
         # Decode independently of AyFrame so producer and verifier cannot
         # agree merely by calling the same packing implementation.
@@ -30,7 +30,12 @@ def expected_registers(packed):
         output.extend((row[0], row[1] & 15, row[2], row[3] & 15,
                        row[4], row[5] & 15, noise, mixer,
                        *row[6:9]))
+        if state_bytes==12:output.extend(row[9:12])
     return bytes(output)
+
+
+def write_pairs(row):
+    return [(reg,value) for reg,value in enumerate(row) if reg!=13 or value!=255]
 
 
 def extract_player(disk):
@@ -50,6 +55,8 @@ def native_check(code, metadata, expected):
     labels = metadata['player_labels']
     banks = metadata.get('memory', {}).get('data_banks', BANKS)
     looping = metadata.get('loop_playback', False)
+    width=metadata.get('register_bytes_per_state',11)
+    bank_bytes=metadata.get('bank_payload_bytes',BANK_BYTES)
     cycles = 2 if looping else 1
     writes, pages = [], []
     selected = 0
@@ -60,8 +67,8 @@ def native_check(code, metadata, expected):
             if bank not in banks:
                 raise AssertionError('invalid bank')
             pages.append(bank)
-            first = list(banks).index(bank)*BANK_BYTES
-            payload = expected[first:first+BANK_BYTES]
+            first = list(banks).index(bank)*bank_bytes
+            payload = expected[first:first+bank_bytes]
             m.set_memory_block(0xc000, payload + b'\xa5'*(16384-len(payload)))
         elif port == 0xfffd:
             selected = value
@@ -73,6 +80,7 @@ def native_check(code, metadata, expected):
     output(0x7ffd, 0x10)
     m.hl, m.sp = 0xc000, 0xb800
     histogram = Counter()
+    expected_writes=0
     m.set_breakpoint(labels['wait_field'])
     for tick in range(metadata['ticks']*cycles):
         m.pc = labels['field_start']
@@ -83,8 +91,8 @@ def native_check(code, metadata, expected):
         elapsed = 10000-m.ticks_to_stop
         histogram[elapsed] += 1
         index = tick % metadata['ticks']
-        want = list(enumerate(expected[index*11:(index+1)*11]))
-        if writes[-11:] != want or len(writes) != (tick+1)*11:
+        want = write_pairs(expected[index*width:(index+1)*width]);expected_writes+=len(want)
+        if writes[-len(want):] != want or len(writes) != expected_writes:
             raise AssertionError(f'wrong register sequence at tick {tick}')
         if m.sp != 0xb800:
             raise AssertionError('stack leak')
@@ -102,7 +110,7 @@ def native_check(code, metadata, expected):
             raise AssertionError('missing EOF')
     if writes[-3:] != [(8, 0), (9, 0), (10, 0)]:
         raise AssertionError('EOF must mute all channels')
-    return dict(complete=True, ticks=metadata['ticks'], register_writes=metadata['ticks']*11,
+    return dict(complete=True, ticks=metadata['ticks'], register_writes=expected_writes,
                 registers_exact=True, bank_sequence=pages, eof_mutes=True,
                 deterministic_field_work_tstates=dict(sorted(histogram.items())),
                 scope='independent Z80 core; no ULA, IRQ, HALT or disk latency')
@@ -115,6 +123,8 @@ def fuse_check(fuse, directory, metadata, expected, record=False):
     cycles = 2 if metadata.get('loop_playback') else 1
     total_ticks = metadata['ticks']*cycles
     expected = expected*cycles
+    width=metadata.get('register_bytes_per_state',11)
+    expected_pairs=[pair for lo in range(0,len(expected),width) for pair in write_pairs(expected[lo:lo+width])]
     disk_path = directory/metadata.get('disk_filename', 'audiobook-preview.trd')
     lines, events = ['base 10', 'set $r 0', 'set $ticks 0'], []
     loading_addresses = [0x4000+plane*256+i for plane in range(8) for i in range(96)] if metadata.get('loading_message') else []
@@ -136,6 +146,9 @@ def fuse_check(fuse, directory, metadata, expected, record=False):
         event(labels['disk_call'], 103, [stamp, *pixels], ['set $loadseen 1'], condition='$loadseen==0')
         event(labels['ready'], 104, [stamp, *pixels])
     event(labels['ay_out']+2, 140, [stamp, 'z80:d', 'z80:e'])
+    # The instruction after the optional R13 OUT is also the skip target.
+    # E=255 identifies a skipped write; trace only an actual shape action.
+    if width==14:event(labels['ay_env_out']+2, 140, [stamp, 'z80:d', 'z80:e'],condition='z80:e!=255')
     event(labels['tick_end'], 143, [stamp], ['set $ticks $ticks+1'])
     event(labels['disk_call'], 102, [stamp, '$r'])
     if metadata.get('loop_playback'):
@@ -174,12 +187,12 @@ def fuse_check(fuse, directory, metadata, expected, record=False):
         {100:boot, 140:writes, 143:ticks, 102:reads, 200:ends, 103:before_load, 104:after_load}[tag].append(row)
     if len(boot) != 1 or len(ends) != 1 or len(ticks) != total_ticks:
         raise AssertionError('incomplete Fuse playback')
-    if len(writes) != len(expected) or any(r[1] for r in reads):
+    if len(writes) != len(expected_pairs) or any(r[1] for r in reads):
         raise AssertionError('missing writes or runtime disk access')
     for i, (_, register, value) in enumerate(writes):
-        if register != i % 11 or value != expected[i]:
+        if (register,value) != expected_pairs[i]:
             raise AssertionError(f'Fuse register mismatch at byte {i}')
-    starts = [writes[i][0] for i in range(0, len(writes), 11)]
+    starts = [stamp for stamp,reg,value in writes if reg==0]
     fields = [x//70908 for x in starts]
     missing = [i for i in range(1, len(fields)) if fields[i] != fields[0]+i]
     if missing:
@@ -235,8 +248,8 @@ def main():
     p.add_argument('--record', action='store_true', help='also capture normal-speed Fuse sound')
     args = p.parse_args()
     metadata = json.loads((args.directory/'player.json').read_bytes())
-    packed = gzip.decompress((args.directory/'soundtrack.ay9.gz').read_bytes())
-    expected = expected_registers(packed)
+    packed = gzip.decompress((args.directory/metadata.get('packed_filename','soundtrack.ay9.gz')).read_bytes())
+    expected = expected_registers(packed,metadata.get('packed_state_bytes',9))
     if hashlib.sha256(expected).hexdigest() != metadata['registers_sha256']:
         raise AssertionError('prepared audio identity changed')
     code = extract_player((args.directory/metadata.get('disk_filename', 'audiobook-preview.trd')).read_bytes())

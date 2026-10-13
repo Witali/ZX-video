@@ -21,11 +21,11 @@ from build_long_video_trd import AyFrame
 
 def take_tick(reader):
     count = reader.take(1)[0]
-    if count > 11:
+    if count > 14:
         raise ValueError('invalid AY register count')
     pairs = reader.take(count*2)
     registers = list(pairs[::2])
-    if any(r > 10 for r in registers) or registers != sorted(set(registers)):
+    if any(r > 13 for r in registers) or registers != sorted(set(registers)):
         raise ValueError('invalid AY registers')
     return bytes([count])+pairs
 

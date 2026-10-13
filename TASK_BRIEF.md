@@ -1479,11 +1479,11 @@ by this completed milestone. See the automatic-mixer report's phrase section.
 
 From `e7450386`, convert source 0..300 seconds with the shared default `auto`
 engine, preserving all 15000 states on the 20-ms grid. Analyse the timeline
-continuously, render one complete listening WAV, and package two independently
-bootable 150-second resident audition disks. The source has no movie edit.
-Complete native and cold Fuse checks for every state on both disks; save
-listening artifacts and a reproducible report. The resident player and its
-instruction-table costs remain unchanged. Independent candidate rendering may
+continuously, render one complete listening WAV, and package independently
+bootable resident audition disks (three 100-second parts with hardware envelopes). The source has no movie edit.
+Complete native and cold Fuse checks for every state on all disks; save
+listening artifacts and a reproducible report. Count and verify any resident player
+instruction changes needed for the authorized hardware envelopes. Independent candidate rendering may
 be scheduled concurrently after byte-equivalence checks; do not open another
 codec/quality sweep or rebuild the video releases as part of this request.
 
@@ -1493,3 +1493,11 @@ masking, and hardware envelopes configured across multiple 20-ms fields.
 Finish this sound deliverable with actual envelope-aware native/cold playback
 proofs; report any changed resident disk count. Full movie release remains
 outside this milestone; preserve its current qualified disks.
+
+The subsequent requests authorize an explicit AY-3-8910/YM2149 target,
+source-evidenced sparse noise, bounded smooth dynamic-range compression and
+centre-priority 5.1 downmixing shared by both public entry points. The final
+300-second host/native set is built, with zero strong level-hole fields under
+the documented source-audibility check. Complete all three cold runs and the
+archive/commits; do not open another quality sweep. Current audio format is
+AY12/14 registers; ordinary resident work increases 974 ->1166/1206 T.

@@ -100,6 +100,9 @@ class Builder:
         state=bytearray(11)
         for _ in range(count):
             _,detail=read_packet(r,stored_guards=False)
+            if any(any(reg>10 for reg in tick[1::2]) for tick in detail['ticks']) and len(state)==11:
+                state.extend(bytes(3))
+                self.ay=[old+bytes(3) for old in self.ay]
             self.native_map_offsets.append(self.offsets[-1]+2+detail['coded_offset']-80)
             for tick in detail['ticks']:
                 for i in range(tick[0]): state[tick[1+2*i]]=tick[2+2*i]

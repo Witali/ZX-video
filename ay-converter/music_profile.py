@@ -15,8 +15,11 @@ import ay_fidelity as ay
 import ay_square_fit as fit
 
 
-def chip_levels(chip='YM'):
+def chip_levels(chip=None):
     """Read the same fixed-volume curve used by the vendored renderer."""
+    if chip is None:
+        import chip_model
+        chip=chip_model.render_name()
     if chip not in ('AY', 'YM'):
         raise ValueError('chip must be AY or YM')
     text = (Path(__file__).parent/'vendor/ayumi-js/ayumi.js').read_text()
@@ -219,7 +222,7 @@ def arrange(features, *, joint=False, envelope_blend=0., noise_policy='legacy', 
                 periods[i, voice] = previous
     metadata.update(model='note_oriented_music_50hz_v1', update_rate_hz=50,
         joint_voice_path=joint, envelope_blend=envelope_blend, noise_policy=noise_policy,
-        volume_curve='YM2149 Ayumi' if calibrated else 'nominal 3 dB',
+        volume_curve=('AY-3-8910/8912' if np.array_equal(table,chip_levels('AY')) else 'YM2149')+' Ayumi' if calibrated else 'nominal 3 dB',
         detected_attacks=int(onset.sum()), note_events=events,
         noise_ticks=int(noisy.sum()), native_instruction_delta_tstates=0,
         limitations='Automatic note estimates, not an annotated transcription; no listening acceptance implied.')

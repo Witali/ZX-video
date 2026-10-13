@@ -20,9 +20,9 @@ def single_stream(data):
     return data
 
 
-def forest(trees,core_limit):
+def forest(trees,core_limit,roots_address=ROOTS):
     """Place 4-byte nodes in two disjoint fixed ranges; pointers remain absolute."""
-    spans=[(ROOTS+26,core_limit),(TAIL,TAIL_END)]
+    spans=[(roots_address+len(trees)*2,core_limit),(TAIL,TAIL_END)]
     nodes=[];index=0;cursor=spans[0][0]
     def node(value):
         nonlocal index,cursor
@@ -35,8 +35,8 @@ def forest(trees,core_limit):
         at=cursor;cursor+=4;entry=[at,b''];nodes.append(entry)
         left,right=node(value[0]),node(value[1]);entry[1]=struct.pack('<HH',left,right)
         return at
-    roots=struct.pack('<13H',*(node(tree) for tree in trees))
-    regions=[(ROOTS,roots)]
+    roots=struct.pack('<'+str(len(trees))+'H',*(node(tree) for tree in trees))
+    regions=[(roots_address,roots)]
     for at,blob in nodes:
         if regions[-1][0]+len(regions[-1][1])==at:
             before,data=regions[-1];regions[-1]=(before,data+blob)
@@ -48,7 +48,11 @@ def build(data,audio,*,core_limit,batch=31,first_bank_bytes=16384,single_bank=4,
     data=single_stream(data);initial,records,trees,payload=resident.tables(data)
     if not 1<=first_bank_bytes<=16384:raise ValueError('invalid first payload capacity')
     if len(payload)>first_bank_bytes+1536:raise ValueError('shared AY overflow exceeds reserved 1536-byte tail')
-    regions=forest(trees,core_limit)
+    # Root indexing loads H and a context*2 low byte, requiring page alignment.
+    # AYH2's larger unrolled decoder uses one more reserved code page; all
+    # eleven-register builds retain the previous addresses and instruction bytes.
+    roots_address=ROOTS if len(initial)==11 else ROOTS+256
+    regions=forest(trees,core_limit,roots_address)
     first=min(first_bank_bytes,len(payload));overflow=payload[first:]
     if single_bank not in (4,6):raise ValueError('shared AY single bank must be 4 or 6')
     if overflow and single_bank!=4 and not fixed_tail:raise ValueError('four video slots require one-bank AY')
@@ -61,11 +65,13 @@ def build(data,audio,*,core_limit,batch=31,first_bank_bytes=16384,single_bank=4,
         if second+len(overflow)>FIXED_PAYLOAD_END:raise ValueError('fixed AY payload tail overlaps BA00h workspace')
         regions.append((second,overflow))
     if overflow:segments.append(dict(bank=2 if in_fixed else 6,address=second,data_hex=overflow.hex(),bytes=len(overflow)))
-    code,labels,listing=resident.code(audio,len(records),initial,ROOTS,start,batch=batch,origin=ORIGIN,
+    code,labels,listing=resident.code(audio,len(records),initial,roots_address,start,batch=batch,origin=ORIGIN,
         payload_overflow=second,page_entry=PAGE,fixed_overflow=in_fixed)
-    if labels['end']>ROOTS:raise ValueError('fixed AY decoder overlaps roots')
+    if labels['end']>roots_address:raise ValueError('fixed AY decoder overlaps roots')
     regions=[(ORIGIN,code),*regions]
-    return dict(enabled=True,wire='AYH1',origin=ORIGIN,ticks=len(records),batch=batch,
+    return dict(enabled=True,wire='AYH1' if len(initial)==11 else 'AYH2',origin=ORIGIN,ticks=len(records),batch=batch,
+        root_address=roots_address,register_count=len(initial),
+        unchanged_register_checks_delta_tstates=60 if len(initial)==14 else 0,
         labels=labels,listing=listing,regions=[dict(address=at,data_hex=blob.hex()) for at,blob in regions],
         payload_segments=segments,banks=[s['bank'] for s in segments if s['address']>=0xc000],
         payload_bank_address=labels.get('payload_bank'),payload_address=start,payload_bytes=len(payload),
@@ -148,7 +154,7 @@ def install(banks,m,sections,data,compress,*,four_slots=False):
     cell['memory']['fixed_audio']=[dict(start=r['address'],end=r['address']+len(bytes.fromhex(r['data_hex']))) for r in compiled['regions']]
     cell['memory']['bank6_audio_tail_bytes']=compiled['bank6_reserved_bytes']
     old['previous_bank_bytes']=[s['image_bytes'] for s in old['compiled'].get('segments',[old['compiled']])]
-    old.update(compiled=compiled,format='video-only '+cell['wire']+' + fixed AYH1',banks=compiled['banks'],
+    old.update(compiled=compiled,format='video-only '+cell['wire']+' + fixed '+compiled['wire'],banks=compiled['banks'],
         shared_fixed=True,startup_sections=len(payload_sections),audio_isr_changed=False,
         bank6_reserved_bytes=compiled['bank6_reserved_bytes'])
     old.pop('segment_boundary_ticks',None)

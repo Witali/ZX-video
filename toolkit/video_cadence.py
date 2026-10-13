@@ -24,5 +24,7 @@ def scaffold_audio(audio, frame_fields):
     for lo in range(0, len(audio), frame_fields):
         group = audio[lo:lo+frame_fields]
         result.extend(group)
-        result.append(group[-1])
+        from dataclasses import replace
+        # The build-only sixth slot must never repeat an R13 restart action.
+        result.append(replace(group[-1],envelope_shape=255) if group[-1].state_bytes==12 else group[-1])
     return result

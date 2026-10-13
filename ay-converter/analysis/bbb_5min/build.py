@@ -178,6 +178,8 @@ def main():
     p.add_argument('--node',required=True)
     p.add_argument('--ffmpeg',required=True)
     p.add_argument('--workers',type=int,default=6)
+    p.add_argument('--chip',choices=('AY-3-8910','YM2149'),default='AY-3-8910')
+    p.add_argument('--dynamics',choices=('compact','original'),default='compact')
     p.add_argument('--check-only',action='store_true')
     p.add_argument('--resume-noise',type=Path,help='reuse an authenticated complete noise-colour stage')
     p.add_argument('--full-mixer',action='store_true',help='use the 374-candidate reference instead of the analytic shortlist')
@@ -192,6 +194,9 @@ def main():
     if args.check_only: return
     started=time.perf_counter()
     command=[args.ffmpeg,'-v','error','-nostdin','-i',str(args.source),'-t','301','-map','0:a:0','-vn','-ac','1','-ar','22050','-f','f32le','-']
+    import audio_input
+    mono,downmix=audio_input.probe_filter(args.source,args.ffmpeg)
+    if mono:command[-1:-1]=['-af',mono]
     samples=np.frombuffer(RUN(command,capture_output=True,check=True).stdout,'<f4').astype(float)
     assert len(samples)>=300*22050 and np.isfinite(samples).all()
     source_peak=float(np.max(abs(samples[:300*22050])))
@@ -216,6 +221,7 @@ def main():
     print(json.dumps(dict(stage='analyse',duration_seconds=300,ticks=15000,source_sha256=source_hash)),flush=True)
     subprocess.run=lambda command,**kw: parallel_run(command,args.workers,**kw)
     original_noise,original_mixer,original_optimizer,original_spectrum=noise_colour.optimize,mixer_fit._optimize,mixer_fit.optimize,noise_colour.spectra_at
+    original_fast=fast_mixer.optimize
     noise_colour.spectra_at=bounded_spectra(original_spectrum)
     resume_proof={}
     if args.resume_noise:
@@ -249,53 +255,63 @@ def main():
     else: noise_colour.optimize=parallel_objective(original_noise,args.workers)
     if args.full_mixer: mixer_fit._optimize=parallel_objective(original_mixer,args.workers)
     else:
-        mixer_fit.optimize=lambda *a,**kw: fast_mixer.optimize(*a,**kw,workers=args.workers)
+        fast_mixer.optimize=lambda *a,**kw: original_fast(*a,**kw,workers=args.workers)
     try:
         frames,fit=encode(samples,args.node,out,profile='auto',start_tick=0,ticks=15000,
-            mixer_search='full' if args.full_mixer else 'fast')
+            mixer_search='full' if args.full_mixer else 'fast',chip=args.chip,dynamics=args.dynamics)
     finally:
         subprocess.run=RUN
         noise_colour.optimize,mixer_fit._optimize=original_noise,original_mixer
+        fast_mixer.optimize=original_fast
         mixer_fit.optimize=original_optimizer
         noise_colour.spectra_at=original_spectrum
     raw=b''.join(registers(f) for f in frames); packed=b''.join(f.serialize() for f in frames)
-    assert len(frames)==15000 and raw==expected_registers(packed)
+    width=fit['register_bytes_per_state'];state_bytes=fit['packed_state_bytes']
+    packed_name=f'soundtrack.ay{state_bytes}.gz'
+    assert len(frames)==15000 and raw==expected_registers(packed,state_bytes)
     (out/'registers.gz').write_bytes(gzip.compress(raw,mtime=0))
-    (out/'soundtrack.ay9.gz').write_bytes(gzip.compress(packed,mtime=0))
+    (out/packed_name).write_bytes(gzip.compress(packed,mtime=0))
     save(out/'analysis.json',fit)
     print(json.dumps(dict(stage='full_continuous_preview',elapsed_seconds=time.perf_counter()-started)),flush=True)
-    RUN([args.node,str(CORE/'render_ym2149.js'),str(out/'registers.gz'),str(out/'chip.f32'),'50',str(out/'chip-render.json')],check=True)
+    RUN([args.node,str(CORE/'render_ym2149.js'),str(out/'registers.gz'),str(out/'chip.f32'),'50',str(out/'chip-render.json'),str(width),
+        'YM' if args.chip=='YM2149' else 'AY'],check=True)
     rendered=np.fromfile(out/'chip.f32','<f4').astype(float)
     assert len(rendered)==300*44100
     levels=[float(np.sqrt(np.mean(s*s))) for s in (original,rendered)]
     target=min(.12,*(.9*r/max(float(np.max(abs(s))),1e-12) for s,r in zip((original,rendered),levels)))
+    import pcm_levels
+    processed,_=pcm_levels.process(samples,ticks=15000,dynamics=args.dynamics)
+    original=processed[:300*22050]
     quality.write_wav(out/'original-preview.wav',original,22050)
     quality.write_wav(out/'ay-preview.wav',rendered*fit['simulation_feedback']['fixed_model_gain'],44100)
     down=noise_colour.downsample(rendered)
     metrics=spectrogram.compare(spectrogram.features(original),spectrogram.features(down))
     (out/'chip.f32').unlink()
     parts=[]
-    for number,lo in enumerate((0,7500),1):
+    part_ticks=5000 if width==14 else 7500;part_count=15000//part_ticks
+    for number,lo in enumerate(range(0,15000,part_ticks),1):
         part=out/f'part{number:02d}'; part.mkdir(exist_ok=True)
-        regs=raw[lo*11:(lo+7500)*11]; ay=packed[lo*9:(lo+7500)*9]
-        title=f'BIG BUCK BUNNY {number}/2'
-        disk,meta=build_disk(regs,title=title,loop=False,assembly_dir=part/'assembly')
+        regs=raw[lo*width:(lo+part_ticks)*width]; ay=packed[lo*state_bytes:(lo+part_ticks)*state_bytes]
+        title=f'BIG BUCK BUNNY {number}/{part_count}'
+        disk,meta=build_disk(regs,title=title,loop=False,assembly_dir=part/'assembly',register_bytes=width)
         (part/'audio-preview.trd').write_bytes(disk)
-        (part/'soundtrack.ay9.gz').write_bytes(gzip.compress(ay,mtime=0))
+        (part/packed_name).write_bytes(gzip.compress(ay,mtime=0))
         (part/'registers.gz').write_bytes(gzip.compress(regs,mtime=0))
         save(part/'player.json',meta)
         native=native_check(extract_player(disk),meta,regs); save(part/'native.json',native)
         part_report=dict(complete=True,preview_only=True,source=str(args.source),source_sha256=source_hash,
-            start_seconds=lo/50,duration_seconds=150,ticks=7500,update_rate_hz=50,sound_quantum_ms=20,
+            start_seconds=lo/50,duration_seconds=part_ticks/50,ticks=part_ticks,update_rate_hz=50,sound_quantum_ms=20,
             profile='auto',loop_playback=False,disk_timing_verified=False,hardware_tested=False,
             artifacts={x.relative_to(part).as_posix():dict(bytes=x.stat().st_size,sha256=sha(x.read_bytes())) for x in part.rglob('*') if x.is_file()})
         save(part/'report.json',part_report)
-        parts.append(dict(number=number,start_tick=lo,end_tick=lo+7500,duration_seconds=150,
+        parts.append(dict(number=number,start_tick=lo,end_tick=lo+part_ticks,duration_seconds=part_ticks/50,
             disk=(part/'audio-preview.trd').relative_to(out).as_posix(),trd_sha256=sha(disk),native=native))
-    assert b''.join(gzip.decompress((out/f'part{i:02d}/registers.gz').read_bytes()) for i in (1,2))==raw
+    assert b''.join(gzip.decompress((out/f'part{i:02d}/registers.gz').read_bytes()) for i in range(1,part_count+1))==raw
     report=dict(complete=True,source=str(args.source),source_sha256=source_hash,ffmpeg_command=command,
         interval_seconds=[0,300],ticks=15000,update_rate_hz=50,sound_quantum_ms=20,profile='auto',
         input_normalization=normalization,
+        source_processing=fit['input_normalization'],target_chip=args.chip,downmix=downmix,
+        register_bytes_per_state=width,packed_state_bytes=state_bytes,packed_filename=packed_name,
         analysis_context_after_seconds=(len(samples)-len(original))/22050,continuous_analysis=True,
         continuous_model_preview=True,no_source_pcm_in_synthesis=True,
         fixed_model_gain=fit['simulation_feedback']['fixed_model_gain'],simulation_feedback=fit['simulation_feedback'],
@@ -305,9 +321,9 @@ def main():
         registers_sha256=sha(raw),packed_sha256=sha(packed),parts=parts,scheduling_check=check,objective_check=objective,
         spectrogram_metrics=metrics,elapsed_seconds=time.perf_counter()-started,
         physical_hardware_tested=False,all_disks_fuse_verified=False,
-        limits='Two independently bootable one-shot resident disks; a manual swap causes a pause. Full WAV has continuous chip phase. No video rebuild.')
+        limits='Independent one-shot resident disks; a manual swap causes a pause. Full WAV has continuous chip phase. No video rebuild.')
     save(out/'report.json',report)
-    print(json.dumps(dict(stage='built',ticks=15000,seconds=300,disks=2,elapsed_seconds=report['elapsed_seconds'])),flush=True)
+    print(json.dumps(dict(stage='built',ticks=15000,seconds=300,disks=part_count,elapsed_seconds=report['elapsed_seconds'])),flush=True)
 
 
 if __name__=='__main__': main()

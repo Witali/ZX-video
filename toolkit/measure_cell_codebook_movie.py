@@ -27,7 +27,11 @@ def audio_size(frames, start, end, labels, frame_fields=6, audio_banks=1):
     # Retain the actual global change records; initialize from the prior tick.
     records = ay_interrupt.encode_ticks(frames)
     selected = records[start*frame_fields:end*frame_fields]
-    initial = ay_interrupt.registers(frames[start*frame_fields-1]) if start else bytes(11)
+    width=len(ay_interrupt.registers(frames[0]))
+    initial=bytearray(width)
+    for record in records[:start*frame_fields]:
+        for reg,value in zip(record[1::2],record[2::2]):initial[reg]=value
+    initial=bytes(initial)
     if audio_banks==2:
         import banked_resident_audio as banked
         data=banked.encode(selected,initial)
@@ -37,8 +41,9 @@ def audio_size(frames, start, end, labels, frame_fields=6, audio_banks=1):
             first,ticks,trees,payload=resident.tables(segment)
             _,layout,_=resident.code(labels,len(ticks),first,0,0,total_ticks=len(selected))
             roots=(layout['end']+255)&~255
-            _,nodes=resident.tree_bytes(trees,roots+26)
-            sizes.append(roots-resident.ORIGIN+26+len(nodes)+len(payload))
+            root_bytes=len(trees)*2
+            _,nodes=resident.tree_bytes(trees,roots+root_bytes)
+            sizes.append(roots-resident.ORIGIN+root_bytes+len(nodes)+len(payload))
         fits=all(size<=16384 for size in sizes)
         if fits:assert [s['image_bytes'] for s in banked.build(data,labels)['segments']]==sizes
         return data,dict(wire='AYB1',ayh1_bytes=len(data),resident_bytes=sum(sizes),resident_fits=fits,
@@ -52,18 +57,21 @@ def audio_size(frames, start, end, labels, frame_fields=6, audio_banks=1):
     for tick, frame in zip(decoded, frames[start*frame_fields:end*frame_fields], strict=True):
         for i in range(1, len(tick), 2):
             registers[tick[i]] = tick[i+1]
-        assert bytes(registers) == ay_interrupt.registers(frame)
+        wanted=ay_interrupt.registers(frame)
+        assert bytes(registers[:13]) == wanted[:13]
+        if len(wanted)==14 and wanted[13]!=255:assert registers[13]==wanted[13]
     first, ticks, trees, payload = resident.tables(data)
     blob, layout, _ = resident.code(labels, len(ticks), first, 0, 0)
     roots = (layout['end']+255) & ~255
-    _, nodes = resident.tree_bytes(trees, roots+26)
-    size = roots-resident.ORIGIN+26+len(nodes)+len(payload)
+    root_bytes=len(trees)*2
+    _, nodes = resident.tree_bytes(trees, roots+root_bytes)
+    size = roots-resident.ORIGIN+root_bytes+len(nodes)+len(payload)
     fits = size <= 16384
     if fits:
         actual = resident.build(data, labels)
         assert actual['image_bytes'] == size
     return data, dict(ayh1_bytes=len(data), resident_bytes=size, resident_fits=fits,
-                      spare_bank_bytes=16384-size, trees_bytes=len(nodes)+26,
+                      spare_bank_bytes=16384-size, trees_bytes=len(nodes)+root_bytes,
                       code_state_alignment_bytes=roots-resident.ORIGIN,
                       register_roundtrip_exact=True, initial_sha256=sha(initial), **metadata)
 

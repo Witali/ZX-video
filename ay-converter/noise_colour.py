@@ -108,7 +108,8 @@ def optimize(samples, registers, node, *, work_parent=None):
     if len(samples) != len(raw)*441 or not np.isfinite(samples).all():
         raise ValueError('expected finite mono 22050-Hz audio, 441 samples per state')
     ticks = np.flatnonzero(raw[:,6])
-    info = dict(model='Ayumi continuous YM2149 spectral noise fit v1',
+    import chip_model
+    info = dict(model='Ayumi continuous '+chip_model.current()+' spectral noise fit v2',
         update_rate_hz=50,quantum_ms=20,candidate_count=93,period_range=[1,31],
         shared_volume_deltas=[-2,-1,0],window_sizes=list(SIZES),frequency_hz=[50,8000],
         objective='mean of three log-magnitude MAE values after narrow 50-Hz power smoothing; source-relative -60 dB floor',

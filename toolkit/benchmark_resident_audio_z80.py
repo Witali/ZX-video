@@ -72,7 +72,7 @@ class CheckedCPU(TraceCPU):
             elif ay_interrupt.QUEUE_BASE <= at < ay_interrupt.QUEUE_BASE+1024:
                 index = self.read8(self.audio['audio_write_index'])
                 slot = ay_interrupt.QUEUE_BASE+index*32
-                if (self.mode != 'fill' or not slot <= at < slot+23 or
+                if (self.mode != 'fill' or not slot <= at < slot+1+2*self.register_count or
                         (index+1)&31 == self.read8(self.audio['audio_read_index'])):
                     raise AssertionError(('invalid FIFO write', at, self.pc))
             elif at == self.audio['audio_write_index'] and self.mode == 'fill':
@@ -130,6 +130,7 @@ class Harness:
             if fixed else banked.build(blob,self.audio,batch=batch) if self.banked else resident.build(blob, self.audio, batch=batch))
         self.labels = self.build['labels']
         c = self.cpu = CheckedCPU()
+        c.register_count=len(self.initial)
         # Dirty all RAM first. Only the explicit code/data sections get loaded.
         for bank in c.banks: bank[:] = b'\xa5'*16384
         c.port_7ffd, c.sp = 0x14, STACK
@@ -178,7 +179,7 @@ class Harness:
         c.listing = {row['address']: row for row in self.build['listing']+extra_listing}
         c.checking = True
         self.init_tstates = self.run('init',self.segment_hooks['labels'] if self.banked else None)
-        if bytes(c.ay[:11]) != self.initial or c.writes != list(enumerate(self.initial)):
+        if bytes(c.ay[:len(self.initial)]) != self.initial or c.writes != list(enumerate(self.initial)):
             raise AssertionError('initial registers not written exactly')
         c.writes.clear()
         c.write8(self.audio['audio_enabled'], int(bool(self.records)))
@@ -228,7 +229,7 @@ class Harness:
         cycles = self.run('audio_tick', self.audio, check=False)
         if c.writes != expected: raise AssertionError(('AY writes differ', self.consumed))
         for reg, value in expected: self.expected_ay[reg] = value
-        if bytes(c.ay[:11]) != self.expected_ay: raise AssertionError('AY state differs')
+        if bytes(c.ay[:len(self.initial)]) != self.expected_ay: raise AssertionError('AY state differs')
         self.consumed += 1
         if word(c, self.audio['audio_ticks_played']) != self.consumed:
             raise AssertionError('lost or duplicated tick')

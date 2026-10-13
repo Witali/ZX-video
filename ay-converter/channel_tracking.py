@@ -203,7 +203,7 @@ def arrange(features, *, selection='dominant', noise_enabled=True):
     assert not np.any(active & tone_disabled)
     mixed_ticks = sum(bool(n and volumes[i,c]) for i,(n,c) in enumerate(zip(noise,carriers)))
     metadata.update(model='persistent_components_and_shared_noise_v2',update_rate_hz=50,
-        selection=selection,volume_curve='YM2149 Ayumi',channel_assignment='pitch continuity, 2-semitone gate; amplitude rank never changes channel',
+        selection=selection,volume_curve=('AY-3-8910/8912' if np.array_equal(table,music.chip_levels('AY')) else 'YM2149')+' Ayumi',channel_assignment='pitch continuity, 2-semitone gate; amplitude rank never changes channel',
         component_count=len(owners),component_channel_migrations=0,
         noise_ticks=int(np.count_nonzero(noise)),tone_plus_noise_ticks=mixed_ticks,
         noise_only_ticks=int(np.count_nonzero(noise))-mixed_ticks,

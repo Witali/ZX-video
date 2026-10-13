@@ -17,6 +17,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--profile', choices=('auto', 'music', 'legacy'), default='auto')
     parser.add_argument('--mixer-search', choices=('fast','full'), default='fast')
+    parser.add_argument('--chip',choices=('AY-3-8910','YM2149'),default='AY-3-8910')
+    parser.add_argument('--dynamics',choices=('compact','original'),default='compact')
     parser.add_argument('--node', required=True)
     parser.add_argument('--noise-steps', type=int, default=1)
     parser.add_argument('--tuning-cents', type=float, default=50)
@@ -26,14 +28,15 @@ def main():
         raise ValueError('PCM must contain whole 20-ms states')
     frames, info = encode(samples, args.node, args.output, profile=args.profile,
                           noise_steps=args.noise_steps, tuning_cents=args.tuning_cents,
-                          mixer_search=args.mixer_search)
+                          mixer_search=args.mixer_search,chip=args.chip,dynamics=args.dynamics)
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output/'ay.bin').write_bytes(b''.join(f.serialize() for f in frames))
     raw = b''.join(registers(f) for f in frames)
     (args.output/'registers.gz').write_bytes(gzip.compress(raw, mtime=0))
     subprocess.run([args.node, str(Path(__file__).with_name('render_ym2149.js')),
                     str(args.output/'registers.gz'), str(args.output/'chip.f32'), '50',
-                    str(args.output/'chip-render.json')], check=True)
+                    str(args.output/'chip-render.json'),str(info['register_bytes_per_state']),
+                    'YM' if args.chip=='YM2149' else 'AY'], check=True)
     rendered = downsample(np.fromfile(args.output/'chip.f32', '<f4').astype(float))
     if args.profile == 'auto':
         rendered *= info['simulation_feedback']['fixed_model_gain']

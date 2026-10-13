@@ -26,9 +26,9 @@ def tables(data):
     if len(records) > 65535:
         raise ValueError('resident tick counter exceeds 16 bits')
     r = Reader(data)
-    r.take(23)
+    r.take(12+len(initial))
     trees = []
-    for _ in range(13):
+    for _ in range(len(initial)+2):
         entries = [tuple(r.take(2)) for _ in range(r.u16())]
         if len(entries) <= 1:
             trees.append(entries[0][0] if entries else 0)
@@ -61,7 +61,7 @@ def tree_bytes(trees, origin):
         return origin+offset
 
     roots = [pointer(tree) for tree in trees]
-    return struct.pack('<13H', *roots), bytes(result)
+    return struct.pack('<'+str(len(roots))+'H', *roots), bytes(result)
 
 
 def code(audio, ticks, initial, roots, payload, *, batch=6, total_ticks=None,
@@ -114,7 +114,7 @@ def code(audio, ticks, initial, roots, payload, *, batch=6, total_ticks=None,
     if payload_overflow is not None and not fixed_overflow:
         emit('LD A,bank 4',[0x3e,0x14],7);store('payload_bank')
     absolute('LD HL,initial', 0x21, 'initial', 10)
-    absolute('LD DE,0B00h', 0x11, 0x0b00, 10)
+    absolute('LD DE,register count', 0x11, len(initial)<<8, 10)
     a.label('init_register')
     absolute('LD BC,FFFDh', 0x01, 0xfffd, 10)
     emit('LD A,E', [0x7b], 4); emit('OUT (C),A', [0xed, 0x79], 12)
@@ -159,7 +159,10 @@ def code(audio, ticks, initial, roots, payload, *, batch=6, total_ticks=None,
     emit('XOR A', [0xaf], 4); emit("EX AF,AF' (count)", [0x08], 4)
     emit('XOR A', [0xaf], 4); call('symbol'); emit('LD C,A', [0x4f], 4)
     emit('LD A,1', [0x3e, 1], 7); call('symbol'); store('high_mask')
-    for register in range(11):
+    # Every added unmodified register costs SRL C (8) + taken JR NC (12):
+    # AYH2 adds 3*20=60 T to a tick. Present registers retain the same path;
+    # the existing listing records absolute instruction costs and tree reads.
+    for register in range(len(initial)):
         if register == 8:
             load('high_mask'); emit('LD C,A', [0x4f], 4)
         emit('SRL C', [0xcb, 0x39], 8)
@@ -218,8 +221,9 @@ def build(data, audio, *, batch=6, total_ticks=None, preinitialized=False):
     initial, records, trees, payload = tables(data)
     blob, labels, _ = code(audio, len(records), initial, 0, 0, batch=batch,total_ticks=total_ticks)
     roots = (labels['end']+255) & ~255
-    table_roots, nodes = tree_bytes(trees, roots+26)
-    payload_start = roots+26+len(nodes)
+    root_bytes=2*len(trees)
+    table_roots, nodes = tree_bytes(trees, roots+root_bytes)
+    payload_start = roots+root_bytes+len(nodes)
     if payload_start+len(payload) > LIMIT:
         raise ValueError('resident code, lookup and payload exceed one 16-KiB bank')
     blob, labels, listing = code(audio, len(records), initial, roots, payload_start, batch=batch,total_ticks=total_ticks)
@@ -235,7 +239,8 @@ def build(data, audio, *, batch=6, total_ticks=None, preinitialized=False):
         image_hex=image.hex(), image_sha256=sha(image), image_bytes=len(image),
         labels=labels, listing=listing, code_bytes=labels['code_end']-ORIGIN,
         state_bytes=labels['state_end']-labels['state'], initial_bytes=len(initial),
-        root_address=roots, root_bytes=26, node_bytes=len(nodes),
+        root_address=roots, root_bytes=root_bytes, node_bytes=len(nodes),
+        register_count=len(initial),unchanged_register_checks_delta_tstates=60 if len(initial)==14 else 0,
         alignment_bytes=roots-labels['end'], payload_address=payload_start,
         payload_bytes=len(payload), payload_end=payload_start+len(payload),
         spare_bank_bytes=16384-len(image), ayh1_sha256=sha(data),

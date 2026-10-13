@@ -208,6 +208,14 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
         timing.update(profile='cb46-guarded-v1',unchanged_native_baseline='7cfbacf',
             player_hot_path_changed=False,player_hot_path_delta_tstates=0,
             cycle_scope='Same measured player opcodes; build-time relocation preserves every instruction timing. Data-dependent counts are per volume.')
+    envelope_audio=any(f.state_bytes==12 for f in audio)
+    if envelope_audio:
+        timing.update(player_hot_path_changed=True,player_hot_path_delta_tstates=None,
+            video_instruction_delta_tstates=0,audio_wire='AYH2',audio_register_count=14,
+            audio_skipped_register_checks_delta_tstates=60,
+            audio_constant_present_register_tstates=167,audio_skipped_register_tstates=20,
+            audio_irq_tstates='367+83*n; fourteen writes 1529',audio_init_delta_tstates=234,
+            cycle_scope='AYH2 adds three 20-T register checks; changed-symbol and IRQ work is data-dependent. Video instruction timing is unchanged.')
     write_json(output/'timing.json', timing)
     for number, part in enumerate(parts, 1):
         if only is not None and number != only: continue
@@ -334,4 +342,7 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
         manifest.update(whole_movie=False, selected_volume=only, source_movie_frames=len(frames),
                         frames=sum(r['frames'] for r in records), ay_ticks=sum(r['frames'] for r in records)*frame_fields,
                         duration_seconds=sum(r['frames'] for r in records)*frame_fields/50)
+    if envelope_audio:
+        manifest.update({key:value for key,value in timing.items() if key.startswith('audio_') or
+            key in ('player_hot_path_changed','player_hot_path_delta_tstates','video_instruction_delta_tstates','cycle_scope')})
     return records

@@ -142,7 +142,7 @@ def write_video_preview(images, states, quality, path):
 
 
 def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS, *,
-                  noise_steps=1, tuning_cents=50, profile='auto', node=None, mixer_search='fast'):
+                  noise_steps=1, tuning_cents=50, profile='auto', node=None, mixer_search='fast',chip='AY-3-8910',dynamics='compact'):
     ticks, rate = count*fields_for_fps(fps), 22050
     if sound is None:
         frames = [video.AyFrame((1, 1, 1), (0, 0, 0))]*ticks
@@ -152,6 +152,11 @@ def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS, *,
         start = rational(picture.get('start_time'))
         # Keep audio offsets relative to the first video PTS; fill gaps and tail.
         filters = f'asetpts=PTS-({float(start):.12g})/TB,aresample={rate}:async=1:first_pts=0,apad'
+        import importlib.util
+        input_spec=importlib.util.spec_from_file_location('_zx_audio_input',HERE.parent/'ay-converter/audio_input.py')
+        input_module=importlib.util.module_from_spec(input_spec);input_spec.loader.exec_module(input_module)
+        mono=input_module.mono_filter(sound.get('channels'),sound.get('channel_layout',''))
+        if mono:filters+=','+mono
         command = [ffmpeg, '-v', 'error', '-nostdin', '-copyts', '-i', str(source),
             '-map', f'0:{sound["index"]}', '-vn', '-af', filters, '-t', f'{float(duration):.12g}',
             '-ac', '1', '-ar', str(rate), '-f', 'f32le', '-']
@@ -166,14 +171,17 @@ def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS, *,
         core_output = directory/'ay-core'
         subprocess.run([sys.executable, str(core), str(pcm_path), '--output', str(core_output),
             '--profile', profile, '--node', node, '--noise-steps', str(noise_steps),
-            '--tuning-cents', str(tuning_cents), '--mixer-search', mixer_search], check=True)
+            '--tuning-cents', str(tuning_cents), '--mixer-search', mixer_search,'--chip',chip,'--dynamics',dynamics], check=True)
         raw = (core_output/'ay.bin').read_bytes()
-        if len(raw) != ticks*9:
-            raise ValueError('shared AY core returned the wrong 50-Hz state count')
-        frames = [video.AyFrame.deserialize(raw[i:i+9]) for i in range(0,len(raw),9)]
         fit = json.loads((core_output/'analysis.json').read_text(encoding='utf-8'))
+        width=fit['packed_state_bytes']
+        if width not in (9,12) or len(raw) != ticks*width:
+            raise ValueError('shared AY core returned the wrong 50-Hz state count')
+        frames = [video.AyFrame.deserialize(raw[i:i+width]) for i in range(0,len(raw),width)]
         if profile == 'auto':
-            samples *= fit['input_normalization']['gain_linear']
+            level_spec=importlib.util.spec_from_file_location('_zx_pcm_levels',HERE.parent/'ay-converter/pcm_levels.py')
+            level_module=importlib.util.module_from_spec(level_spec);level_spec.loader.exec_module(level_module)
+            samples,_=level_module.process(samples,dynamics=dynamics)
         import compare_ay_fidelity as quality
         import wave
         with wave.open(str(core_output/'audio-preview.wav'),'rb') as preview:
@@ -183,7 +191,7 @@ def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS, *,
         quality.write_wav(directory/'audio-preview.wav', rendered, rate)
         metrics = quality.compare(quality.features(samples, rate, float(fps), count),
                                   quality.features(rendered, rate, float(fps), count))
-        report = dict(source_audio=True, ticks=ticks, noise_ticks=sum(bool(f.noise_period) for f in frames),
+        report = dict(source_audio=True, ticks=ticks, noise_ticks=fit.get('noise_ticks',sum(bool(f.noise_period) for f in frames)),
             synthesis='shared audio/movie AY core, automatic tone/noise/mixed modes, 50 Hz', profile=profile, chip_fit=fit, metrics=metrics,
             metric_note='signal proxies, not a perceptual accuracy percentage', command=command)
     (directory/'ay.bin').write_bytes(b''.join(frame.serialize() for frame in frames))
@@ -208,6 +216,10 @@ def main(argv=None):
         help='shared sound engine: automatic tone/noise/mixed fitting, preceding music profile, or legacy')
     parser.add_argument('--ay-mixer-search',choices=('fast','full'),default='fast',
         help='auto: 20 analytic candidates or 374 reference candidates, followed by chip feedback')
+    parser.add_argument('--ay-chip',choices=('AY-3-8910','YM2149'),default='AY-3-8910',
+        help='physical sound-chip target for all shared fitting and previews')
+    parser.add_argument('--ay-dynamics',choices=('compact','original'),default='compact',
+        help='smooth bounded audio dynamics before AY analysis, or preserve original dynamics')
     parser.add_argument('--node', help='Node.js path for the shared AY chip model')
     parser.add_argument('--ay-noise-steps', type=int, choices=(0, 1), default=1,
         help='noise attenuation in nominal 3 dB AY volume steps (default: 1)')
@@ -299,7 +311,7 @@ def main(argv=None):
             write_video_preview(images, states, quality, output/'video-preview.png')
         write_json(output/'video-quality.json', quality)
         ay_frames, audio = convert_audio(source, executables['ffmpeg'], work, picture, sound,
-            len(states), Fraction(args.fps), noise_steps=args.ay_noise_steps, tuning_cents=args.ay_tuning_cents, profile=args.ay_profile, node=args.node,mixer_search=args.ay_mixer_search)
+            len(states), Fraction(args.fps), noise_steps=args.ay_noise_steps, tuning_cents=args.ay_tuning_cents, profile=args.ay_profile, node=args.node,mixer_search=args.ay_mixer_search,chip=args.ay_chip,dynamics=args.ay_dynamics)
         write_json(output/'audio-quality.json', audio)
         raw, codec = encode(states, scaffold_audio(ay_frames, args.frame_fields))
         codec.update(build_envelope_fields=6, runtime_frame_fields=args.frame_fields,

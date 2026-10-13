@@ -93,6 +93,8 @@ def cache_key(samples, registers, tone_volumes, noise_shares, carriers, node):
         digest.update(str(data.shape).encode())
         digest.update(data.tobytes())
     digest.update(registers)
+    import chip_model
+    digest.update(chip_model.current().encode())
     digest.update(np.__version__.encode())
     digest.update(subprocess.check_output([str(node), '--version']))
     for source in [*sorted(HERE.glob('*.py')), *sorted(HERE.glob('*.js')),

@@ -24,6 +24,15 @@ def drain(h):
 
 
 class ResidentAudioZ80Tests(unittest.TestCase):
+    def test_hardware_envelope_records_use_native_decoder_fifo_and_irq(self):
+        records=[bytes([14])+b''.join(bytes([r,(r+v)&255]) for r in range(14)) if v%3==0
+            else bytes([1,13,13]) if v%3==1 else b'\0' for v in range(60)]
+        data=encode(records,bytes(14))[0]
+        for fixed in (False,True):
+            h=Harness(data,paging=fixed,fixed=fixed)
+            drain(h)
+            self.assertEqual(h.cpu.published,60)
+
     def test_empty_constant_and_independent_initial_registers(self):
         for records in ([], [b'\0']*60, [record(2047, lambda r: 251-r)]*60):
             initial = bytes(range(101,112))

@@ -55,6 +55,19 @@ class PerceptualFeedbackTests(unittest.TestCase):
         self.assertFalse(np.frombuffer(result,np.uint8).reshape(-1,11)[:,8:].any())
         self.assertEqual(info['fixed_model_gain'],1.)
 
+    def test_short_note_recovery_uses_audible_tonal_neighbour_and_preserves_silence_and_envelope(self):
+        rows=np.tile([246,0,1,0,1,0,7,0x38,10,0,0,32,0,255],(20,1)).astype(np.uint8)
+        rows[8:10,8:11]=0;rows[16:,8:11]=0
+        source=np.full(20,.1);source[16:]=0
+        observed=source.copy();observed[8:10]=0
+        repaired=fit.gap_proposal(rows,source,observed)
+        self.assertTrue(np.all(repaired[8:10,8]>0))
+        self.assertFalse(repaired[16:,8:11].any())
+        np.testing.assert_array_equal(repaired[:,11:],rows[:,11:])
+        np.testing.assert_array_equal(repaired[:,6],rows[:,6])
+        rows[:,7]=0x30
+        np.testing.assert_array_equal(fit.gap_proposal(rows,source,observed),rows)
+
     def test_fast_cache_is_exact_and_separate_from_full_search(self):
         seed=bytes([251,0,1,0,1,0,0,0x38,12,0,0])*3
         samples=np.zeros(3*441)

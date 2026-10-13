@@ -1,7 +1,9 @@
 ; Standalone AY50 player: all R0..R10 records are loaded before playback.
 ; Python supplies constants, screen pixels and register data, never opcodes.
 ; Bank 5: display/BASIC/TR-DOS. Bank 2: code, screen image, stack and IM2.
-; Six other banks: whole 11-byte records. Interrupts preserve all registers.
+; Six other banks: whole 11- or 14-byte records. IRQ preserves all registers.
+; Extended records carry R11/R12 and an R13 action: FF means omit the write.
+; Never rewrite a held shape every field: R13 writes restart envelope phase.
         INCLUDE "config.inc"
         ORG 0x8000
 LOAD_BANK: MACRO
@@ -103,8 +105,29 @@ write_register:
 ay_out: OUT (C),E
         INC D
         LD A,D
+        IF record_bytes == 14
+        CP 13
+        ELSE
         CP 11
+        ENDIF
         JR NZ,write_register
+        IF record_bytes == 14
+        ; Thirteen ordinary writes cost 1023 T. The R13 action consumes one
+        ; byte even when skipped. Tail is 36 T without restart, 76 T with it:
+        ; total tick work 1059/1099 T vs 867 T, delta +192/+232 T.
+        ; Input HL=R13 action, D=13, C=FD. Clobbers A/B/E and advances HL.
+        LD E,(HL)
+        INC HL
+        LD A,E
+        CP 255
+        JR Z,tick_end
+        LD D,13
+        LD B,0xFF
+        OUT (C),D
+        LD B,0xBF
+ay_env_out:
+        OUT (C),E
+        ENDIF
 tick_end:
         LD DE,(remaining)
         DEC DE
@@ -113,7 +136,7 @@ tick_end:
         CP 0xFF
         JR NZ,wait_field
         LD A,L
-        CP 0xFB
+        CP bank_end_low
         JR NZ,wait_field
         ; Never read past the bank table on an exact-boundary EOF.
         LD A,D

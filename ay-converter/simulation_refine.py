@@ -50,8 +50,9 @@ class Objective:
             self.floor[size] = max(float(magnitude.max())*.001, 1e-12)
             self.useful[size] = useful
 
-    def measure(self, audio):
+    def measure(self, audio, per_tick=False):
         errors = {}; weighted = {}
+        local = np.zeros(self.count)
         for size in SIZES:
             total = weight_total = plain_total = support_total = 0.
             floor = self.floor[size]
@@ -62,6 +63,8 @@ class Objective:
                 support = (wanted > floor) | (observed > floor)
                 weights = psycho.error_weights(wanted, observed, self.masking[size][start:end])*support
                 error = abs(20*np.log10(np.maximum(wanted, floor)/np.maximum(observed, floor)))
+                if per_tick:
+                    local[start:end] += (weights*error).sum(axis=1)/np.maximum(weights.sum(axis=1),1)/len(SIZES)
                 total += float((weights*error).sum()); weight_total += float(weights.sum())
                 plain_total += float((support*error).sum()); support_total += int(support.sum())
             weighted[str(size)] = total/max(weight_total, 1)
@@ -70,28 +73,33 @@ class Objective:
         support = (self.rms > self.level_floor) | (rms > self.level_floor)
         difference = 20*np.log10(np.maximum(rms, self.level_floor)/np.maximum(self.rms, self.level_floor))
         level_error = float(abs(difference[support]).mean()) if support.any() else 0.
-        return dict(objective_db=float(np.mean(list(weighted.values())))+.35*level_error,
+        result = dict(objective_db=float(np.mean(list(weighted.values())))+.35*level_error,
             masked_spectral_mae_db=weighted, absolute_spectral_mae_db=errors,
             level_mae_db=level_error, level_bias_db=float(difference[support].mean()) if support.any() else 0.,
             reference_rms=float(np.sqrt(np.mean(self.samples**2))),
             model_rms=float(np.sqrt(np.mean(audio**2))))
+        return (result,local+.35*abs(difference)) if per_tick else result
 
 
 def volume_proposal(rows, reference_rms, observed_rms, strength):
     table = music_profile.chip_levels()
     ratio = np.clip(reference_rms/np.maximum(observed_rms, 1e-12), .25, 4)**strength
-    target = table[rows[:, 8:]]*ratio[:, None]
+    original=rows[:,8:11]
+    envelope=original>=16
+    target = table[np.minimum(original,15)]*ratio[:, None]
     volumes = abs(target[:, :, None]-table).argmin(axis=2)
-    volumes[rows[:, 8:] == 0] = 0
+    volumes[original == 0] = 0
+    volumes[envelope]=original[envelope]
     volumes[reference_rms < 1e-9] = 0
-    result = rows.copy(); result[:, 8:] = volumes
+    result = rows.copy(); result[:, 8:11] = volumes
     return result
 
 
 def pitch_proposal(samples, rows, tuning_cents):
     import ay_square_fit
     periods = rows[:, :6:2].astype(int)+(rows[:, 1:6:2].astype(int) << 8)
-    volumes = rows[:, 8:].astype(int).copy()
+    volumes = rows[:, 8:11].astype(int).copy()
+    volumes[volumes>=16]=0  # Envelope amplitude is not a fixed DAC level.
     for channel in range(3):
         volumes[(rows[:, 7] & (1 << channel)) != 0, channel] = 0
     magnitude = np.empty((len(rows), 2049))
@@ -104,17 +112,45 @@ def pitch_proposal(samples, rows, tuning_cents):
     return result
 
 
-def optimize(samples, registers, node, *, work_parent=None, rounds=2, tuning_cents=25):
+def gap_proposal(rows, reference_rms, observed_rms):
+    """Recover short lost notes from a nearby fixed-level tonal state.
+
+    Only a fully muted state with audible reference PCM is eligible. The
+    neighbour must be within 100 ms and contain tones without noise/ENV.
+    Preserve the running envelope actions; the complete chip objective still
+    decides whether the proposed recovery helps, including transition errors.
+    """
+    result=rows.copy();table=music_profile.chip_levels()
+    missing=np.all(rows[:,8:11]==0,axis=1)&(reference_rms>10**(-45/20))&(observed_rms<reference_rms*10**(-15/20))
+    tonal=(rows[:,7]&0x38)==0x38
+    available=tonal&np.any((rows[:,8:11]>0)&(rows[:,8:11]<16),axis=1)&np.all(rows[:,8:11]<16,axis=1)&(observed_rms>1e-8)
+    for tick in np.flatnonzero(missing):
+        nearby=np.flatnonzero(available[max(0,tick-5):min(len(rows),tick+6)])+max(0,tick-5)
+        if not len(nearby):continue
+        neighbour=int(nearby[np.argmin(abs(nearby-tick))])
+        ratio=np.clip(reference_rms[tick]/observed_rms[neighbour],.125,4)
+        target=table[rows[neighbour,8:11]]*ratio
+        levels=abs(target[:,None]-table).argmin(axis=1)
+        levels[rows[neighbour,8:11]==0]=0
+        result[tick,:6]=rows[neighbour,:6]
+        result[tick,7]=rows[neighbour,7]
+        result[tick,8:11]=levels
+    return result
+
+
+def optimize(samples, registers, node, *, work_parent=None, rounds=2, tuning_cents=25,
+             register_bytes=11, calibration_gain=None):
     samples = np.asarray(samples, float)
-    rows = np.frombuffer(registers, np.uint8).reshape(-1, 11).copy()
+    if register_bytes not in (11,14):raise ValueError('expected eleven or fourteen register bytes')
+    rows = np.frombuffer(registers, np.uint8).reshape(-1, register_bytes).copy()
     if len(samples) != len(rows)*441 or not len(rows) or not np.isfinite(samples).all():
         raise ValueError('expected finite aligned 22050-Hz PCM')
-    if np.any(rows[:, 1:6:2] > 15) or np.any(rows[:, 6] > 31) or np.any(rows[:, 7] > 63) or np.any(rows[:, 8:] > 15):
+    if np.any(rows[:, 1:6:2] > 15) or np.any(rows[:, 6] > 31) or np.any(rows[:, 7] > 63) or np.any(rows[:, 8:11] > (31 if register_bytes==14 else 15)):
         raise ValueError('invalid fixed-level AY registers')
     if not np.any(samples):
-        rows[:, 8:] = 0
+        rows[:, 8:11] = 0
         return rows.tobytes(), dict(model='continuous_chip_feedback_v1', skipped='silent source',
-            fixed_model_gain=1., changed_volume_registers=int(np.count_nonzero(np.frombuffer(registers,np.uint8).reshape(-1,11)[:,8:])),
+            fixed_model_gain=1., changed_volume_registers=int(np.count_nonzero(np.frombuffer(registers,np.uint8).reshape(-1,register_bytes)[:,8:11])),
             changed_tone_periods=0, changed_noise_ticks=0, native_instruction_delta_tstates=0)
     initial = rows.copy(); history = []; evaluated = 0
     with tempfile.TemporaryDirectory(prefix='ay-feedback-', dir=work_parent) as directory:
@@ -124,13 +160,13 @@ def optimize(samples, registers, node, *, work_parent=None, rounds=2, tuning_cen
             evaluated += 1
             (root/'registers.gz').write_bytes(gzip.compress(candidate.tobytes(), mtime=0))
             subprocess.run([str(node), str(HERE/'render_ym2149.js'), str(root/'registers.gz'),
-                str(root/'chip.f32'), '50', str(root/'render.json')], check=True)
+                str(root/'chip.f32'), '50', str(root/'render.json'),str(register_bytes)], check=True)
             audio = np.fromfile(root/'chip.f32', '<f4').astype(float)
             peak = float(np.max(abs(audio)))
             return noise_colour.downsample(audio), peak
         audio, peak = render(rows)
         # One speaker/output-voltage calibration, fixed for all candidates.
-        gain = min(float(np.sqrt(np.mean(samples**2)/max(np.mean(audio**2), 1e-20))), .95/max(peak, 1e-12))
+        gain = calibration_gain if calibration_gain is not None else min(float(np.sqrt(np.mean(samples**2)/max(np.mean(audio**2), 1e-20))), .95/max(peak, 1e-12))
         objective = Objective(samples)
         best_audio = audio*gain; best = objective.measure(best_audio); baseline = best.copy()
         pitch = pitch_proposal(samples, rows, tuning_cents) if tuning_cents else rows.copy()
@@ -141,12 +177,17 @@ def optimize(samples, registers, node, *, work_parent=None, rounds=2, tuning_cen
             full = volume_proposal(previous, objective.rms, observed, 1.)
             frequency = previous.copy(); frequency[:, :6] = pitch[:, :6]
             joint = full.copy(); joint[:, :6] = pitch[:, :6]
-            proposals = [('level-half', soft), ('level-full', full), ('tone-periods', frequency), ('joint', joint)]
+            proposals = [('level-half', soft), ('level-full', full), ('tone-periods', frequency), ('joint', joint),
+                         ('short-note-recovery',gap_proposal(previous,objective.rms,observed))]
             audible = np.any([(previous[:, 8+c] > 0) & ((previous[:, 7] & (1 << (c+3))) == 0) for c in range(3)], axis=0)
             for delta in (-1, 1):
                 noise = previous.copy()
                 noise[audible, 6] = np.clip(previous[audible, 6].astype(int)+delta, 1, 31)
                 proposals.append((f'noise-{delta:+d}', noise))
+            # A better global period proposal must not discard an independently
+            # useful short-note recovery. Evaluate their combination as well.
+            proposals += [(name+'+recovery',gap_proposal(candidate,objective.rms,observed))
+                          for name,candidate in proposals if name!='short-note-recovery']
             seen = {previous.tobytes()}; accepted = None
             for name, proposal in proposals:
                 key = proposal.tobytes()
@@ -171,7 +212,7 @@ def optimize(samples, registers, node, *, work_parent=None, rounds=2, tuning_cen
         psychoacoustic=psycho.MODEL, fixed_model_gain=gain, calibration_changes_between_candidates=False,
         baseline=baseline, final=best, candidates_rendered=evaluated, maximum_rounds=rounds,
         proposal_tuning_radius_cents=min(tuning_cents,25), history=history,
-        changed_volume_registers=int(np.count_nonzero(rows[:, 8:] != initial[:, 8:])),
+        changed_volume_registers=int(np.count_nonzero(rows[:, 8:11] != initial[:, 8:11])),
         changed_tone_periods=int(np.count_nonzero(np.any(rows[:, :6].reshape(-1,3,2) != initial[:, :6].reshape(-1,3,2), axis=2))),
         changed_noise_ticks=int(np.count_nonzero(rows[:, 6] != initial[:, 6])),
         native_instruction_delta_tstates=0, no_local_pcm_gain=True,

@@ -46,7 +46,7 @@ def word_at(cpu,labels,name):return cpu.read8(labels[name])+256*cpu.read8(labels
 
 class AyInterruptTests(unittest.TestCase):
     def test_timing_table_counts_for_every_write_count(self):
-        for count in range(12):
+        for count in range(15):
             for final in (False,True):
                 cpu,labels=fixture(2)
                 record=bytes([count])+b''.join(bytes([i,0]) for i in range(count))

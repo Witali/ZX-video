@@ -23,7 +23,10 @@ TSTATES = dict(disabled=58,underrun=205,unchanged=377,
 def registers(frame):
     result=[]
     for period in frame.periods:result.extend((period&255,(period>>8)&15))
-    return bytes((*result,frame.noise_period,frame.mixer,*frame.volumes))
+    result=bytes((*result,frame.noise_period,frame.mixer,*frame.volumes))
+    if frame.state_bytes==12:
+        result+=bytes((frame.envelope_period&255,frame.envelope_period>>8,frame.envelope_shape))
+    return result
 
 
 def encode_ticks(frames):
@@ -31,7 +34,11 @@ def encode_ticks(frames):
     previous=None;result=[]
     for frame in frames:
         current=registers(frame)
-        changed=[i for i in range(11) if previous is None or current[i]!=previous[i]]
+        changed=[i for i in range(min(len(current),13)) if previous is None or current[i]!=previous[i]]
+        # R13 is an action: writing the same shape again restarts its phase.
+        # A 255 sentinel never reaches the AY bus. Running envelopes therefore
+        # continue through unchanged fields without spurious resets.
+        if len(current)==14 and current[13]!=255:changed.append(13)
         result.append(bytes([len(changed)])+b''.join(bytes((i,current[i])) for i in changed))
         previous=current
     return result
@@ -68,7 +75,9 @@ def emit(a, *, backpressure=False):
         a.label('audio_enqueue_space')
     else: a.abs16(0xCA,'fatal')
     a.emit(0xE5);a.abs16(0x3A,'audio_write_index');emit_slot_address(a)
-    a.emit(0xEB,0xE1,0x7E,0xFE,12);a.abs16(0xD2,'fatal')
+    # At most 14 register/value pairs: 29 bytes fit one 32-byte queue slot.
+    # CP immediate changes from 12 to 15, retaining exactly the same T-states.
+    a.emit(0xEB,0xE1,0x7E,0xFE,15);a.abs16(0xD2,'fatal')
     a.emit(0x87,0x3C,0x4F,0x06,0,0xED,0xB0)
     # Publication after LDIR is atomic; interrupt cannot consume a partial slot.
     a.abs16(0x3A,'audio_write_index');a.emit(0x3C,0xE6,31)

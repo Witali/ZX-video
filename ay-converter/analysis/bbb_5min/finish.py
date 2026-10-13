@@ -24,26 +24,30 @@ def main():
     root=args.build
     report=json.loads((root/'report.json').read_bytes())
     norm=report['input_normalization']
-    assert norm['applied_before_analysis'] and norm['dynamics_preserved']
+    assert norm['applied_before_analysis']
     assert norm['target_peak_dbfs']==-1 and norm['clipping_samples']==0
     if norm['source_peak']:
         assert abs(norm['normalized_peak']-10**(-1/20))<1e-12
     raw=gzip.decompress((root/'registers.gz').read_bytes())
-    packed=gzip.decompress((root/'soundtrack.ay9.gz').read_bytes())
-    assert report['ticks']==15000 and len(raw)==165000 and len(packed)==135000
+    width=report['register_bytes_per_state'];state_bytes=report['packed_state_bytes']
+    packed=gzip.decompress((root/report['packed_filename']).read_bytes())
+    assert report['ticks']==15000 and len(raw)==15000*width and len(packed)==15000*state_bytes
     assert sha(raw)==report['registers_sha256'] and sha(packed)==report['packed_sha256']
     proofs=[]; joined=[]
-    for number in (1,2):
+    for item in report['parts']:
+        number=item['number'];ticks=item['end_tick']-item['start_tick']
         part=root/f'part{number:02d}'
         proof=json.loads((part/'verification.json').read_bytes())
         assert proof['complete'] and proof['native']['complete'] and proof['native']['registers_exact']
         fuse=proof['fuse']
         assert fuse['complete'] and fuse['cold_boot'] and fuse['every_register_exact']
-        assert fuse['ticks']==7500 and fuse['register_writes']==82500
+        part_raw=gzip.decompress((part/'registers.gz').read_bytes())
+        writes=ticks*13+sum(part_raw[t*width+13]!=255 for t in range(ticks)) if width==14 else ticks*11
+        assert fuse['ticks']==ticks and fuse['register_writes']==writes
         assert not fuse['missing_or_duplicate_fields'] and fuse['runtime_disk_reads']==0
         assert fuse['recording']['complete'] and fuse['recording']['cycles']==1
         assert sha((part/'audio-preview.trd').read_bytes())==fuse['trd_sha256']
-        joined.append(gzip.decompress((part/'registers.gz').read_bytes()))
+        joined.append(part_raw)
         proofs.append(dict(number=number,native=proof['native'],fuse=fuse))
     assert b''.join(joined)==raw
     for name,rate in (('ay-preview.wav',44100),('original-preview.wav',22050)):
@@ -56,18 +60,25 @@ def main():
         python_version=sys.version,node_version=subprocess.check_output([args.node,'--version']).decode().strip())
     import numpy as np
     report['numpy_version']=np.__version__
+    toolkit=CORE.parent/'toolkit'
     sources=[*sorted(CORE.glob('*.py')),*sorted(CORE.glob('*.js')),CORE/'ay-player.asm',CORE/'vendor/ayumi-js/ayumi.js',
-             HERE/'build.py',HERE/'render_group.js',HERE/'finish.py',HERE/'fast_mixer.py',HERE/'check_shortlist.py',
-             HERE/'refine_existing.py',HERE/'check_feedback.py']
-    report['producer_sources_sha256_lf']={p.relative_to(CORE).as_posix():sha(p.read_bytes().replace(b'\r\n',b'\n')) for p in sources}
+             *sorted(HERE.glob('*.py')),*sorted(HERE.glob('*.js')),
+             *(toolkit/name for name in ('ay_huffman_stream.py','ay_interrupt.py','resident_audio_z80.py',
+                'fixed_resident_audio.py','convert_video.py','convert_cb41.py','video_cadence.py','cell_audio_stream.py','build_fap3_trd.py',
+                'fap3_disk_z80.py','measure_cell_codebook_movie.py'))]
+    report['producer_sources_sha256_lf']={p.relative_to(CORE.parent).as_posix():sha(p.read_bytes().replace(b'\r\n',b'\n')) for p in sources}
     report['baseline_commit']='e7450386'
     report['date']='2026-10-13'
     (root/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     target=HERE/'evidence'
     shutil.copytree(root,target,dirs_exist_ok=True)
-    logs={'build.log':'bbb-five-minute-feedback.log','initial-normalized-build.log':'bbb-five-minute-normalized.log',
-          'part01-verification.log':'bbb-feedback-part01-verify.log',
-          'part02-verification.log':'bbb-feedback-part02-verify.log','interrupted-render-only.log':'bbb-five-minute-auto-build.log',
+    logs={'build.log':'bbb-compact-final-build.log','initial-normalized-build.log':'bbb-five-minute-normalized.log',
+          **{f'part{i:02d}-verification.log':f'bbb-compact-part{i:02d}-verify.log' for i in range(1,len(proofs)+1)},
+          'compressed-fit.log':'bbb-compact-fit.log','short-note-recovery.log':'bbb-compact-combined.log',
+          'superseded-recovery-only.log':'bbb-compact-recovered.log',
+          'ay-model-feedback.log':'bbb-ay-final-fit.log','ay-final-feedback.log':'bbb-ay-polished.log',
+          'superseded-ym-envelope-fit.log':'bbb-envelope-fit.log','superseded-ym-envelope-ramps.log':'bbb-envelope-combined.log',
+          'interrupted-render-only.log':'bbb-five-minute-auto-build.log',
           'interrupted-column-pool.log':'bbb-five-minute-auto-parallel.log',
           'interrupted-bounded-full-search.log':'bbb-five-minute-final.log',
           'superseded-unnormalized-build.log':'bbb-five-minute-shortlist.log'}
@@ -86,16 +97,27 @@ def main():
     assert all(x['after']['objective_db']<=x['before']['objective_db'] for x in feedback['cases'].values())
     shutil.copytree(root.parent/'bbb-feedback-check',target/'feedback-validation',dirs_exist_ok=True)
     shutil.copyfile(root.parent/'bbb-feedback-check.log',target/'feedback-validation/run.log')
-    for name in ('bbb-feedback-unit.log','bbb-shared-feedback-tests.log','bbb-toolkit-feedback-tests.log','bbb-toolkit-player-tests.log'):
+    for name in ('bbb-final-audio-tests.log','bbb-final-toolkit-tests.log','bbb-final-recovery-tests.log','bbb-chip-selection-tests.log',
+                 'bbb-dynamics-tests.log','bbb-dynamics-parity-tests.log','bbb-chip-capabilities.log',
+                 'bbb-final-movie-fixture.log','bbb-final-movie-current.log'):
         shutil.copyfile(root.parent/name,target/name)
+    for name in ('source-processing.json','stage-report.json','final-feedback.json'):
+        shutil.copyfile(root.parent/'bbb-compact-fit'/name,target/f'initial-compressed-{name}')
+    for name in ('bbb-envelope-first-failed-trace.txt.gz','bbb-envelope-first-failed-trace.json'):
+        if (root.parent/name).exists():shutil.copyfile(root.parent/name,target/name)
+    shutil.copytree(root.parent/'bbb-final-movie-fixture',target/'public-movie-fixture',dirs_exist_ok=True)
+    seed=target/'seed-normalized';seed.mkdir(exist_ok=True)
+    for name in ('report.json','registers.gz','channel-states.json.gz','note-events.json','input-normalization.json',
+                 'noise-fit.json.gz','mixer-fit.json.gz','scheduling-check.json','objective-check.json'):
+        shutil.copyfile(root.parent/'bbb-five-minute-normalized'/name,seed/name)
     files={p.relative_to(target).as_posix():dict(bytes=p.stat().st_size,sha256=sha(p.read_bytes()))
            for p in sorted(target.rglob('*')) if p.is_file() and p.name!='manifest.json'}
     (target/'manifest.json').write_text(json.dumps(dict(date=report['date'],files=files),indent=2)+'\n',encoding='utf-8',newline='\n')
     for name,expected in files.items():
         data=(target/name).read_bytes()
         assert len(data)==expected['bytes'] and sha(data)==expected['sha256'],name
-    print(json.dumps(dict(complete=True,seconds=300,ticks=15000,disks=2,
-                         fuse_register_writes=165000,archived_files=len(files),archive_bytes=sum(x['bytes'] for x in files.values()))))
+    print(json.dumps(dict(complete=True,seconds=300,ticks=15000,disks=len(proofs),
+                         fuse_register_writes=report['fuse_register_writes_verified'],archived_files=len(files),archive_bytes=sum(x['bytes'] for x in files.values()))))
 
 
 if __name__=='__main__': main()

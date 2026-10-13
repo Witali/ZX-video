@@ -7,6 +7,11 @@ from profile_fap3 import summarize_fuse, FIELD
 
 
 class CadenceTests(unittest.TestCase):
+    def test_build_only_padding_cannot_retrigger_a_hardware_envelope(self):
+        frames=[AyFrame((251,1,1),(16,0,0),0,0x38,2000,13 if i==4 else 255,12) for i in range(5)]
+        records=ay_interrupt.encode_ticks(scaffold_audio(frames,5))
+        self.assertEqual(records[4],bytes([1,13,13]))
+        self.assertEqual(records[5],b'\0')
     def test_supported_rates_and_no_fractional_fields(self):
         self.assertEqual(fields_for_fps('10'),5)
         self.assertEqual(fields_for_fps('25/3'),6)

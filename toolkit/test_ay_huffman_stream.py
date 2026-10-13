@@ -6,6 +6,11 @@ from ay_huffman_stream import encode,decode
 
 
 class ResidentAudioTests(unittest.TestCase):
+    def test_ayh2_explicit_restarts_and_all_fourteen_registers(self):
+        ticks=[bytes([14])+b''.join(bytes([r,(r+v)&255]) for r in range(14)) for v in range(80)]
+        coded,_=encode(ticks,bytes(14))
+        self.assertEqual(coded[:4],b'AYH2')
+        self.assertEqual(decode(coded),(bytes(14),ticks))
     def test_empty_and_constant_ticks(self):
         for ticks in ([],[b'\0']*100,[bytes([1,10,15])]*100):
             coded,detail=encode(ticks,bytes(range(11)))

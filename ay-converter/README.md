@@ -8,12 +8,15 @@ the movie, old speech disks or archived experiment data.
 
 The default `auto` profile uses the shared sound engine also used by the movie
 converter. It tracks persistent components, then chooses tone, noise or mixed
-tone/noise with actual YM2149 renders and nearby shared DAC levels. The previous
+tone/noise with actual selected-chip renders and nearby shared DAC levels. The previous
 `music` profile and original square-aware `legacy` profile remain selectable.
 [Measurements, auditions and complete bounded checks](analysis/auto_mixer/README.md).
 
 Automatic conversion first normalizes the selected mono PCM sample peak to
--1 dBFS, retaining its dynamics. Its default mixer search estimates noise
+-1 dBFS, then applies bounded smooth dynamic-range compression by default.
+`--dynamics original` preserves source dynamics. For 5.1 input the shared
+mono matrix weights FL/FR 0.23 each, centre 0.40 and surrounds 0.07 each;
+LFE is omitted. Its default mixer search estimates noise
 colour and shared DAC balance, then checks 20 complete chip candidates.
 A final feedback stage compares complete continuous simulation with the
 source at one fixed output calibration. It adjusts real channel-volume,
@@ -24,12 +27,20 @@ are approximations; there is no calibrated hearing threshold or PEAQ claim.
 Ordinary unweighted errors are retained for comparison. See the
 [five-minute audition and validation](analysis/bbb_5min/README.md).
 
-Both use three tonal voices, shared noise, fixed channel volumes, and R0..R10
-updates at nominal 50 Hz. **Every exported sound state lasts 20 ms**: pitch,
-volume and noise changes occur only on that grid, with no sub-tick events.
+The auto profile additionally fits the one shared hardware envelope from
+complete rendered feedback. R11/R12 select its period, R13 explicitly starts
+a shape, and volume bit 4 selects the envelope per channel. The generator
+continues between 50-Hz updates; held shapes are not restarted every field.
+Fixed-level tones, noise and mixed routing remain available. Noise is retained
+only with source broadband evidence and a measured benefit. Short lost tonal
+notes can be recovered from nearby states when complete simulation improves.
+**Every exported register state lasts 20 ms**; hardware oscillators and the
+envelope continue within each field.
 This is a chip arrangement, not waveform-transparent PCM compression.
-The export is packed nine-byte AY states (`soundtrack.ay9.gz`), eleven-byte
-register records (`registers.gz`), a TRD player and WAV previews. It does not
+The export uses nine-byte AY states (`soundtrack.ay9.gz`) and eleven-register
+records, or twelve-byte states (`soundtrack.ay12.gz`) and fourteen-register
+records when envelopes are selected, plus a TRD player and WAV previews. The
+software R13 value 255 means no write and is never sent to the chip. It does not
 produce the unrelated ZXAYEMUL `.ay` music-file container.
 
 ## Install and run
@@ -53,12 +64,20 @@ FFmpeg and Node.js are found on PATH when their explicit options are omitted.
 the report explicitly records that disk timing has not been verified.
 
 - `--duration SECONDS`: limit the excerpt, rounded down to complete 20-ms
-  records. The resident limit is 8934 ticks /178.68 seconds.
+  records. Auto reserves room for 7020 envelope records /140.4 seconds;
+  music/legacy retain 8934 records /178.68 seconds.
 - `--start SECONDS`: nonnegative source offset on the 20-ms grid.
 - `--title TEXT`: screen title, defaulting to the input filename.
 - `--once`: mute at EOF; the default repeats from RAM.
 - `--output DIRECTORY`: a new or empty destination.
 - `--profile auto`: automatic tone/noise/mixed fitting (default).
+- `--chip AY-3-8910` (default) or `--chip YM2149`: choose the DAC and envelope
+  model throughout analysis and simulation. Fixed volume has 16 codes on both;
+  the shared envelope has 16 effective AY levels or 32 YM codes.
+- `--dynamics compact` (default): 2.5:1 compression around -24 dBFS with
+  bounded +9/-18 dB gain, 10-ms attack, 150-ms release and smooth sample gain.
+  `--dynamics original` keeps source dynamics. This affects the auto profile.
+  Movie equivalents are `--ay-chip` and `--ay-dynamics`.
 - `--mixer-search fast`: 20 analytic mixer candidates (default).
   `--mixer-search full` retains the 374-candidate reference; both receive
   the same normalization and final simulation feedback. The movie converter
@@ -70,7 +89,7 @@ the report explicitly records that disk timing has not been verified.
   93 continuous Ayumi renders. `--noise-fit heuristic` reproduces the earlier
   music noise fit; it does not affect the default `legacy` profile.
   Pitch holding can suppress intentional bends/vibrato; keep `legacy` for
-  those sources until separately evaluated. The selected target curve is YM2149.
+  those sources until separately evaluated. Both profiles use the selected chip.
 
 Mount `audio-preview.trd` in drive A of Spectrum 128 + Beta Disk/TR-DOS.
 Run `RUN "boot"` if the emulator does not autostart. The disk boots without
@@ -78,6 +97,9 @@ RAM from a previous disk; all reads finish before sound begins.
 
 ## Outputs and source map
 
+The auto `original-preview.wav` contains the downmixed, processed PCM reference
+used by the fitter. `ay-preview.wav` uses its fixed chip-output calibration,
+with no gain envelope applied after chip synthesis.
 The output includes the TRD, original/model WAVs, compressed AY/register
 streams, separately assembled player, constants, screen and build report.
 With `--fuse`, it also contains complete native/Fuse verification and a
