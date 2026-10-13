@@ -1574,3 +1574,23 @@ draft outcomes; use [the comparison/archive](toolkit/analysis/sea_foam/README.md
 No source/AY change, native instruction change, full-cartoon or subsequent
 model search is part of this completed request. Actual two-colour-per-cell
 limits remain; do not claim perfect gradients, source gamut or zero artifacts.
+
+## Pattern/solid cell-boundary correction — active (2026-10-13)
+
+The user still sees character-cell rectangles and sharp patterned/solid borders.
+From `0085a116`, inspect actual native texture, not just averaged RGB. Fit palette
+and fractional density together with globally anchored coordinates, source-edge
+texture continuity and current-frame palette coherence. Preserve true contours,
+frame cadence, resolution and the existing2535 AY fields. Use the same507-frame
+sea-foam source and retain `db07319e` evidence. Compare visible native patches and
+defined texture metrics before accepting the host candidate; fully cold-Fuse
+qualify every final screen/AY field and nominal deadline before replacing TRDs.
+Native ABI/2x2 lookup phase remains unchanged, instruction delta0 T. Work on
+`codex/attribute-pattern` to preserve concurrent codec-library edits on main.
+
+The user rejects the whole-image fractional-density draft for visible noise
+and identifies the false red rectangle on frame259. Supersede it with the
+crisp baseline quantizer, a source-relative20-degree opponent-colour cone and
+four-native-pixel local gray seam feathering. Keep real contours and all other
+dither samples; do not retexture entire smooth regions. Archive the rejected
+draft as an interrupted host attempt, never as a native-qualified release.

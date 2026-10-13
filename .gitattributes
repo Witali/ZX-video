@@ -660,6 +660,23 @@ toolkit/generic_guarded_cb46_evidence/*.gz -text
 /toolkit/analysis/sea_foam/evidence-colour/**/*.npy filter=lfs diff=lfs merge=lfs -text
 /toolkit/analysis/sea_foam/evidence-colour/**/*.npz filter=lfs diff=lfs merge=lfs -text
 /toolkit/analysis/sea_foam/evidence-colour/**/*.gz filter=lfs diff=lfs merge=lfs -text
+# Authenticate local seam evidence byte for byte; retain media in LFS.
+/toolkit/texture_colour.py text eol=lf
+/toolkit/test_texture_colour.py text eol=lf
+/toolkit/stable_colour.py text eol=lf
+/toolkit/generic_cell_codebook.py text eol=lf
+/toolkit/test_generic_cell_codebook.py text eol=lf
+/toolkit/analysis/attribute_pattern/*.py text eol=lf
+/toolkit/analysis/attribute_pattern/*.md text eol=lf
+/toolkit/analysis/attribute_pattern/evidence/** -text -whitespace
+/toolkit/analysis/attribute_pattern/rejected-density/** -text -whitespace
+/toolkit/analysis/attribute_pattern/**/*.wav filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/attribute_pattern/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/attribute_pattern/**/*.rgb filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/attribute_pattern/**/*.f32 filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/attribute_pattern/**/*.npy filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/attribute_pattern/**/*.npz filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/attribute_pattern/**/*.gz filter=lfs diff=lfs merge=lfs -text
 # Preserve the selected legacy song's complete playback evidence and audio.
 /audiobook-beeper/experiments/sea-foam-song/evidence/** -text -whitespace
 /audiobook-beeper/experiments/sea-foam-song/evidence/**/*.gz filter=lfs diff=lfs merge=lfs -text

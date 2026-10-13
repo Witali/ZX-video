@@ -252,7 +252,7 @@ def main(argv=None):
     parser.add_argument('--verify', choices=('cpu', 'fuse', 'none'), default='cpu',
         help='cpu: every instruction and full images; fuse: also real disk timing; none: host roundtrip only')
     parser.add_argument('--colour-policy', choices=('stable', 'legacy'), default='stable',
-        help='CB41 source-bounded colour/temporal matching, or reproduce the legacy palette')
+        help='CB41 source-matched colour and local solid/pattern seam smoothing, or reproduce the legacy palette')
     parser.add_argument('--monochrome', action='store_true',
         help='Black/white image with fixed spatial gray dithering; audio and cadence unchanged')
     parser.add_argument('--fuse', type=Path, help='Fuse executable for --verify fuse')

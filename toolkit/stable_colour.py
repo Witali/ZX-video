@@ -142,7 +142,20 @@ def cells(values):
         0, 2, 1, 3, *range(4, values.ndim+2)).reshape(768, 16, *values.shape[2:])
 
 
-def encode(image, reference, previous=None, previous_image=None):
+def hue_valid(source, output, degrees):
+    """Require a close opponent-colour direction; neutral output is eligible.
+
+    This is a source-relative cone in (R-G, B-G), not a perceptual hue model.
+    It prevents a muted orange source from becoming a saturated red rectangle.
+    Exact Spectrum primaries remain eligible and gray is always a fallback.
+    """
+    a = np.asarray(source, dtype=float) @ CHROMA
+    b = np.asarray(output, dtype=float) @ CHROMA
+    scale = np.linalg.norm(a, axis=-1)*np.linalg.norm(b, axis=-1)
+    return (scale < 1e-8) | ((a*b).sum(axis=-1) >= np.cos(np.deg2rad(degrees))*scale-1e-8)
+
+
+def encode(image, reference, previous=None, previous_image=None, *, hue_limit=None):
     image = np.asarray(image)
     if image.shape != (96, 128, 3) or image.dtype != np.uint8:
         raise ValueError('expected uint8 RGB 128x96')
@@ -177,6 +190,8 @@ def encode(image, reference, previous=None, previous_image=None):
                 + PARAMETERS['source_rgb_allowance'])
             & (chroma_distance+CHROMA_GRAIN[None] <= PARAMETERS['source_chroma_ratio']*neutral_chroma[:, None, None]
                 + PARAMETERS['source_chroma_allowance']))
+        if hue_limit is not None:
+            valid &= hue_valid(values[:, None, None], PALETTES[None], hue_limit)
         guarded = np.where(valid, distance, np.inf)
         choices[start:start+512] = guarded.argmin(axis=2)
         available[start:start+512] = valid.any(axis=2)
@@ -244,6 +259,8 @@ def encode(image, reference, previous=None, previous_image=None):
         old_close = ((old_sample_rgb <= cells(mono_rgb[:, :, None])[:, :, 0]+PARAMETERS['source_rgb_allowance']+1e-8)
             & (old_physical <= cells(mono_physical[:, :, None])[:, :, 0]+PARAMETERS['source_rgb_allowance']+1e-8)
             & (old_physical_chroma <= PARAMETERS['source_chroma_ratio']*neutral_chroma+PARAMETERS['source_chroma_allowance']+1e-8)).all(axis=1)
+        if hue_limit is not None:
+            old_close &= hue_valid(source, old_output, hue_limit).all(axis=1)
         retain = (confidence.astype(bool) & old_close
             & (old_rgb <= np.maximum(reference_error, cells(mono_rgb[:, :, None])[:, :, 0].mean(axis=1))+PARAMETERS['source_rgb_allowance']+1e-8)
             & (old_spatial <= best+PARAMETERS['close_score_allowance']))

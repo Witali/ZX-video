@@ -1,5 +1,47 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Keep crisp patterns and feather false solid/pattern seams
+
+- **Request/baseline:** The user still sees8x8 rectangles after `db07319e`,
+  asks for a gradual solid/pattern transition where appropriate, and rejects
+  grain and false red blocks in the first draft. Work from `0085a116` in
+  `codex/attribute-pattern`, preserving concurrent main codec-library work.
+  Use the unchanged507-frame sea-foam source[0,50.7),10 fps and2535 AY fields.
+- **Rejected host experiment:** Fit all56 pairs with fractional R2 density,
+  multi-scale mean error, texture cost and shared gray regions. Probe frames
+  98,100,154,259,300,506. The initial chroma ratio4 produces misleading colour
+  speckles. Ratio2 removes some, and frame154 cell-mean RGB error falls454.23
+  ->282.73 with solid/pattern cell edges33 ->0; physical RGB rises6594.03
+  ->8378.78. Visible whole-image grain obscures detail. Stop its full build
+  after all507 host states and motion coding, before native qualification,
+  in response to user review. Preserve source/probes/interrupted metadata in
+  [rejected-density](toolkit/analysis/attribute_pattern/rejected-density/).
+  It is not a release. The old sample-error-monotonic default test also fails
+  for intentional fractional density; retain that contract for explicit
+  legacy preparation and add independent native/seam/default-path tests.
+- **Selected correction:** Keep the crisp baseline quantizer. Require a
+  source-relative20-degree cone in(R-G,B-G) for non-neutral tint; gray is a
+  fallback. Feather only a two-logical-sample(four-native-pixel) band on each
+  side of gray solid/pattern borders, source RMS contrast<=8, output<=40,
+  solid target pull<=8 luma codes, half strength one sample farther away.
+  Global fractional phase applies only inside this band. Preserve real
+  contours, native ABI/lookup phase and all other shade samples. Explicitly
+  report that local feather samples may exceed the old physical/sample bound.
+- **Host verification:**34 tests pass, including source contours, exact native
+  endpoints, no history influence on changing cells, repeat stability, local
+  transition extent, orange/red hue rejection and public converter routing.
+  Inspect the same six native-rendered source/old/new frames. Frame259's false
+  red region goes to gray: boundary residual604.68 ->166.50, cell texture seam
+  244.79 ->91.03; sample RGB833.01 ->988.88 exposes the colour tradeoff. These
+  are probe results, not all-frame or release claims. Full unchanged-source
+  cold-Fuse delivery/screen/AY/deadline qualification is still running.
+- **Native/timing scope:** Host-only change, deterministic native instruction
+  counts unchanged, delta0 T. New data can alter sector traffic and producer
+  time, which must be measured through EOF before replacing the root disk.
+  No new audio fit, cadence/resolution change, physical-hardware test,
+  full-cartoon work, codec/RAM experiment or push is included.
+  [Method and reproduction](toolkit/analysis/attribute_pattern/README.md).
+
 ## 2026-10-13 — Main sea-foam song with the preferred original direct IMA4
 
 - **Request/baseline/input:** From `7886808a`, extract the main song from the
