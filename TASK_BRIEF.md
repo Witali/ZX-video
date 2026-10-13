@@ -28,7 +28,8 @@ crossings in variable-position headers. Item05 rejects the jump table:
 aligned ZX0 ring table (108 ->87 T, +121..245 bytes),64 full native banked
 blocks/all16 profiles and AY/IM2 at every instruction pass. Next: item07
 stack bulk copies reject legal overlap1/2 and violate live A/HL'/private-SP
-contracts. Next: item08 constants as code.
+contracts. Item08 is inapplicable to generic runtime literals; measured constant
+code enlarges the sample transport. Next: item09 carry masks.
 
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 

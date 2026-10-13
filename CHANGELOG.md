@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Item08: fixed-data code is not a generic literal decoder
+
+- **Objective/baseline:** From `7d83ca1e`, test LD rr,nn/PUSH constant data
+  and account for code/storage, rather than quoting execution alone.
+- **Measurements/coverage:** Exact128-byte native sample:21 T/word,1354 T
+  including LD SP entry versus2683 T for LDIR-only; required SP retention
+  (40 T) excluded. Compiled259 bytes/two isolated sectors versus the measured
+  standard all-literal payloads/one sector. [Audit](libraries/TRICK_AUDIT.md),
+  [report](libraries/evidence/trick_08.json), `measure_tricks.py --item 08`.
+- **Decision:** Inapplicable to runtime literals under unchanged ZX0/LZSA2
+  formats. No specific constant dictionary/fill exists in the codec API;
+  no compiled transport/JIT or default change (actual delta0 T/RAM/stream).
+  Primitive CPU savings are not measured physical-delivery savings.
+
 ## 2026-10-13 — Item07: reject stack-prefetched copying for this ABI
 
 - **Objective/baseline:** From `94092f04`, measure14-byte POP/PUSH/EXX copy

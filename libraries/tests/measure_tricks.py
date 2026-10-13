@@ -164,12 +164,31 @@ def stack_copies():
         overlap_counterexamples=overlap,decoder_changes=0)
 
 
+def constant_code():
+    from zx0 import Token,encode as zx_encode
+    from lzsa import encode as lz_encode
+    raw=bytes(range(128))
+    # Fixed output known at code-generation time; PUSH emits words backwards.
+    code='31 80 90 '+ ' '.join('21 '+raw[i:i+2].hex(' ')+' e5' for i in range(126,-1,-2))
+    m,t=run(code,dict(hl=0x4000,de=0x9000,bc=len(raw),af=0x7301))
+    assert bytes(m.memory[0x9000:0x9080])==raw and t==1354
+    zx=zx_encode(raw,[Token(0,len(raw))]);lz=lz_encode(raw,[])
+    return dict(item='08',baseline_revision='7d83ca1e',complete=True,
+        decision='inapplicable to generic literals; compiled constants enlarge/change transport',
+        fixed_data_bytes=len(raw),compiled_body_bytes=256,compiled_with_sp_entry_bytes=len(bytes.fromhex(code)),
+        compiled_tstates=t,ldir_only_tstates=21*len(raw)-5,sp_save_restore_excluded_tstates=40,
+        word_primitive_tstates=dict(load_immediate=10,push=11,total=21),
+        formats=[dict(format=name,payload_bytes=len(blob),payload_sectors=(len(blob)+255)//256)
+            for name,blob in (('zx0',zx),('lzsa2',lz))],
+        compiled_sectors=(len(bytes.fromhex(code))+255)//256,exact_fixed_output=True,decoder_changes=0)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',required=True,choices=('02','03','04','05','06','07'))
+    parser.add_argument('--item',required=True,choices=('02','03','04','05','06','07','08'))
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args();report={'02':transfers,'03':bit_masks,'04':pointer_increments,'05':jump_tables,
-        '06':aligned_addresses,'07':stack_copies}[args.item]()
+        '06':aligned_addresses,'07':stack_copies,'08':constant_code}[args.item]()
     report.update(release=False,timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         scope='Native instruction/precondition checks; no new decoder or playback performance claim.',
         sources={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (

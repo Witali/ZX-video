@@ -176,3 +176,30 @@ required preservation and is not a whole-decoder result. Correct LZ overlap,
 AY clock ownership and suspension take precedence; no core/RAM/stream changes
 (actual delta0 T). Reproduce `measure_tricks.py --item 07 --output
 libraries/evidence/trick_07.json`.
+
+## 08 — Constant data as LD rr,nn/PUSH code (2026-10-13)
+
+The [constant word emitter](https://zx-pk.ru/threads/22089-memcpy-bystraya-peresylka-dannykh.html#post640483)
+costs LD HL,nn10 + PUSH HL11=21 T per fixed word (10.5 per byte), storing
+each two-byte word as four instruction bytes. It only works when values are
+known at assembly-generation time, and writes backwards through SP.
+
+[Native fixed128-byte sample](evidence/trick_08.json) is exact:256 body
+bytes plus3-byte LD SP entry=259,1354 T including that entry; LDIR-only
+costs2683 T. SP save/restore adds8 code bytes/40 T and is excluded from
+this primitive. Generic ZX0/LZSA2 literals are runtime input bytes, not
+constants. Their exact standard all-literal samples occupy133/132 bytes
+respectively in the measured serializer (one isolated256-byte sector);
+the compiled version needs two sectors. These are illustrative isolated
+payload counts, not a movie allocation or measured physical delivery result.
+
+A repeated-fill/dictionary-specific generator would need a declared data
+contract, caller stack/IRQ headroom and whole delivery accounting. A universal
+literal-code format or a per-block executable/JIT stage would change the
+standard transport and add generation/storage work. The reusable decoders
+already initialize their fixed offsets with immediate constants; there is
+no fixed literal/dictionary fill to rewrite in their current API.
+
+**Decision: inapplicable to generic standard-format literals.** Retain the
+standard stream and codecs; actual delta0 T/code/RAM/stream. Reproduce
+`measure_tricks.py --item 08 --output libraries/evidence/trick_08.json`.

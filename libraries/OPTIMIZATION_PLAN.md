@@ -18,7 +18,7 @@ isolated snippet. Preserve the standard compressed formats and decoded bytes.
 | 05 | [Fast jump tables](https://zx-pk.ru/threads/30694-vyravnivanie-utrambovyvanie-i-vpikhivanie-koda-bystrye-tablitsy-perekhodov-i-sjasm.html#post1020767) | LZSA2 dispatch; compare existing S/P branches, count complete entry work and table padding | Rejected: every class slower with live HL preserved |
 | 06 | [Power-of-two table placement](https://zx-pk.ru/threads/33945-optimizatsiya-z80-koda-dlya-mandelbrota.html#post1138932) | Decoder lookup/history bounds; preserve actual history and nonwrapping EOF | Optional measured ZX0 bank table; history masking rejected |
 | 07 | [POP/PUSH bulk transfer](https://zx-pk.ru/threads/22089-memcpy-bystraya-peresylka-dannykh.html#post640226) | Literal copying only where overlap/order/IRQ contracts permit; retain AY registers | Rejected for current overlap/live-register/private-stack ABI |
-| 08 | [Constant data embedded in instructions](https://zx-pk.ru/threads/22089-memcpy-bystraya-peresylka-dannykh.html#post640483) | Constant fills/dictionaries; count compiled code and on-disk bytes, not only execution | Pending |
+| 08 | [Constant data embedded in instructions](https://zx-pk.ru/threads/22089-memcpy-bystraya-peresylka-dannykh.html#post640483) | Constant fills/dictionaries; count compiled code and on-disk bytes, not only execution | Inapplicable to runtime standard-format literals |
 | 09 | [Carry converted to a mask](https://zx-pk.ru/threads/20455-ispolzovanie-steka-i-preryvaniya.html#post559684) | Offset signs, bounds and wrap corrections; preserve ZX0 bit/LZSA2 nibble reservoirs | Pending |
 
 Each item ends as **adopted**, **optional measured candidate**, **already
@@ -69,4 +69,5 @@ retains the required live saves. Item03 has no equivalent eligible mask.
 Item04 retains explicit page handling. Item05's saved-HL table is slower
 for every literal class. Item06 adds an optional aligned ZX0 ring table with
 complete banked-native/IRQ evidence. Item07 fails overlap and live stack/
-register contracts. Proceed with item08.
+register contracts. Item08's fixed-data code does not replace generic literals
+and enlarges the sample transport. Proceed with item09.
