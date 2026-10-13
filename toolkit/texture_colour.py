@@ -12,7 +12,8 @@ from cell_palette_quality import averaged
 from stable_colour import cells, ATTRS, RGB_GRAIN
 
 PARAMETERS = dict(hue_limit_degrees=20., feather_width_logical=2,
-    source_edge_rms_max=8., output_edge_rms_max=40., solid_pull_max=8.)
+    source_edge_rms_max=8., output_edge_rms_max=40., solid_pull_max=8.,
+    solid_step_rms_max=56., solid_step_pull_max=24.)
 Y = np.array([.2126, .7152, .0722])
 yy, xx = np.indices((96, 128))
 PHASE = np.mod((xx+.5)*.7548776662466927+(yy+.5)*.5698402909980532, 1.)
@@ -37,27 +38,29 @@ def feather(image, state):
     grain = (levels > 0) & (levels < 4)
     seeds = np.zeros((96, 128), bool)
     target = np.zeros((96, 128), float)
+    counts = np.zeros((96, 128), np.uint8)
     luminance = output @ Y
     original = source @ Y
     edges = [(np.s_[:, 4::4], np.s_[:, 3:-1:4]),
              (np.s_[4::4, :], np.s_[3:-1:4, :])]
     for right, left in edges:
-        valid = (gray[right] & gray[left] & (grain[right] != grain[left])
+        contrast = np.mean((output[right]-output[left])**2, axis=2)
+        # NORMAL white=205 versus BRIGHT white=255 can form a flat square
+        # even when neither cell has dots. Seed the bright side gradually too.
+        solid_step = (~grain[right] & ~grain[left] & (contrast >= 12**2)
+            & (contrast <= PARAMETERS['solid_step_rms_max']**2))
+        valid = (gray[right] & gray[left]
             & (np.mean((source[right]-source[left])**2, axis=2) <= PARAMETERS['source_edge_rms_max']**2)
-            & (np.mean((output[right]-output[left])**2, axis=2) <= PARAMETERS['output_edge_rms_max']**2))
+            & (solid_step | ((grain[right] != grain[left]) & (contrast <= PARAMETERS['output_edge_rms_max']**2))))
         for at, neighbor in ((right, left), (left, right)):
+            maximum_pull = np.where(solid_step, PARAMETERS['solid_step_pull_max'], PARAMETERS['solid_pull_max'])
             pulled = luminance[at]+np.clip((luminance[neighbor]-luminance[at])/2,
-                -PARAMETERS['solid_pull_max'], PARAMETERS['solid_pull_max'])
+                -maximum_pull, maximum_pull)
             value = np.where(grain[at], original[at], pulled)
             target[at] += np.where(valid, value, 0)
             seeds[at] |= valid
+            counts[at] += valid
     # A corner can be seeded by two edges. Average their target values.
-    counts = np.zeros((96, 128), np.uint8)
-    for right, left in edges:
-        valid = (gray[right] & gray[left] & (grain[right] != grain[left])
-            & (np.mean((source[right]-source[left])**2, axis=2) <= PARAMETERS['source_edge_rms_max']**2)
-            & (np.mean((output[right]-output[left])**2, axis=2) <= PARAMETERS['output_edge_rms_max']**2))
-        counts[right] += valid;counts[left] += valid
     target /= np.maximum(counts, 1)
     target_delta = target-luminance
     weight = seeds.astype(float)

@@ -1,5 +1,40 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Cover NORMAL/BRIGHT solid steps after native seam qualification
+
+- **Baseline/input:** The `10a4b1ab` local solid/pattern selector preserves
+  detail and removes frame259's false red rectangle. All507 original RGB
+  frames/2535 AY fields pass complete cold Fuse, full3504384 screen bytes,
+  zero nominal misses/late runs, maximum deviation23 T. One TRD uses1471
+  sectors,1073 free; SHA256517a5c7f24d844c7867065593bc8fa921c022431d596fee8cffb09e931cee8a8.
+  Preserve this full measured attempt as superseded, not as the final disk.
+- **Fix:** Both neighboring gray cells can be solid, yet NORMAL205/BRIGHT255
+  create a false square absent in the source. Include source-smooth12..56-code
+  solid steps in the existing four-native-pixel band, target pull<=24, half
+  strength farther away. The older pattern/solid case retains its8-code cap.
+  No whole-image retexturing, source-contour smoothing or native instruction
+  change; delta0 T. Eight targeted final tests pass after the34-test core run.
+- **Final507-frame qualification:** All3504384 actual screen bytes and2535
+  AY records pass independently dirty-booted Fuse. Zero missed nominal frames,
+  missing/duplicate AY fields or late runs; maximum deviation17 T. TRD1481
+  sectors,1063 free, SHA256982b44e9989e9f2f0f97d3100e422164c84baaad85bf65a9bf761a2ef013b75c.
+  Runtime1410 reads,39624380 T aggregate service,22317..134454 T per read,
+  961726 T seeks. ROM/disk/IRQ/ULA are measured separately from deterministic
+  instruction costs; no physical-machine claim.
+- **Quality/decision:** Cell texture seam233.77694 ->194.98473(-16.59%),
+  sample RGB465.80088 ->476.37844(+2.27%), physical RGB8621.12748 ->8645.12338
+  (+0.28%). Preserve the crisp candidate and report the tradeoff: sample-quiet
+  luma54.39508 ->61.72966 increases, while false hue and temporal chroma improve.
+  Binary solid/pattern cell counts8827 ->8865 do not universally decrease;
+  they are diagnostics, not a perceptual grade. Inspect actual native scenes.
+- **Scope update:** The user requests one full disk. Keep this qualified image
+  checkpoint and extend its source prefix with unchanged audio/cadence/quality.
+  The old planning bisection selected507 frames even though the exact fixed
+  AY forest allows1005 frames(100.5 s);1006 introduces node1046 beyond1045
+  available nodes. The valid1005-frame payload is14019 bytes. This is an exact
+  host memory limit, not a disk-capacity or native-release result.
+  [Method and preserved results](toolkit/analysis/attribute_pattern/README.md).
+
 ## 2026-10-13 — Keep crisp patterns and feather false solid/pattern seams
 
 - **Request/baseline:** The user still sees8x8 rectangles after `db07319e`,

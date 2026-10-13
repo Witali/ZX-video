@@ -1594,3 +1594,14 @@ crisp baseline quantizer, a source-relative20-degree opponent-colour cone and
 four-native-pixel local gray seam feathering. Keep real contours and all other
 dither samples; do not retexture entire smooth regions. Archive the rejected
 draft as an interrupted host attempt, never as a native-qualified release.
+
+The final local selector additionally handles source-smooth NORMAL/BRIGHT solid
+steps. All507 final screens and2535 AY fields pass complete cold Fuse with zero
+nominal misses and maximum deviation17 T. Preserve its qualified checkpoint.
+The user now requests a video occupying one full disk: extend the continuous
+source prefix toward actual single-TRD capacity with these image settings,
+10 fps and unchanged50-Hz AY. Measure real resident memory, actual disk sectors
+and complete native timing; do not silently reduce quality/cadence or publish a
+size-only estimate. Reuse verified cached preparation when all source bytes
+and selector parameters match. The fixed AY forest permits1005 leading frames,
+not the conservative507-frame bisection. Disk capacity is the remaining gate.

@@ -50,6 +50,18 @@ class TextureColourTests(unittest.TestCase):
         source = image([205]*3);source[12:84, 64:] = 191
         self.assertEqual(colour.feather(source, false_seam()), false_seam())
 
+    def test_normal_bright_solid_step_has_a_local_pattern_transition(self):
+        old = false_seam()
+        levels = five.unpack_levels(old[:3840]);levels[12:84] = 4
+        old = five.pack_levels(levels)+old[3840:]
+        source = image([230]*3);new = colour.feather(source, old)
+        shades = five.unpack_levels(new[:3840])
+        self.assertTrue((shades[12:84, 64:66] < 4).any())
+        np.testing.assert_array_equal(shades[:, :64], levels[:, :64])
+        np.testing.assert_array_equal(shades[:, 66:], levels[:, 66:])
+        source[12:84, :64] = 205;source[12:84, 64:] = 255
+        self.assertEqual(colour.feather(source, old), old)
+
     def test_muted_orange_cannot_become_a_saturated_red_rectangle(self):
         source = image([180, 100, 40]);state = colour.encode(source, reference())
         actual = averaged(state)[12:84]

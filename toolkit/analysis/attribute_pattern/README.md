@@ -21,6 +21,25 @@ stays fixed in time. True source edges are excluded rather than blurred.
 These local samples may exceed the older sample-level physical/RGB bound:
 reports explicitly identify the scope and measure their actual errors.
 
+Two gray solid fills can also create a false square when NORMAL white205
+meets BRIGHT white255. A source-smooth step between12 and56 output codes is
+eligible for the same narrow band, with at most24 codes of target pull.
+This introduces a gradual pattern on the bright side while preserving the
+normal-white endpoint and actual source contrast.
+
+The solid/pattern-only version passed complete cold Fuse(all507 screens,
+2535 AY fields, zero nominal misses, maximum deviation23 T) but left this
+solid/solid case untreated. Keep its full archive in
+[superseded-solid-pattern-only](superseded-solid-pattern-only/).
+The final local selector passes eight targeted contracts after the earlier
+34-test regression run. The same507-frame final build also completely passes
+Fuse, zero nominal misses, maximum deviation17 T;1481 sectors,1063 free.
+Cell texture seam variance233.77694 ->194.98473(-16.59%), sample RGB MSE
+465.80088 ->476.37844(+2.27%), physical RGB8621.12748 ->8645.12338(+0.28%).
+Temporal chroma improves, but sample-quiet brightness variation rises
+54.39508 ->61.72966. This is a measured tradeoff, not zero flicker or universal
+improvement of every seam/count. The noisy whole-image draft remains rejected.
+
 The whole-image density draft in [rejected-density](rejected-density/) improved
 cell-mean error and some solid/pattern counts, but visibly reduced clarity and
 added grain. The user rejected it. Its source, probe, quality and interrupted
