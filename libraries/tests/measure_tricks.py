@@ -24,21 +24,49 @@ def run(code,registers,*,memory=(),prepare=None,stop=None):
 
 
 def transfers():
-    checks=0
-    for value in (0,1,0xff,0x100,0x1234,0xffff):
-        for flags in range(256):
-            registers=dict(hl=value,bc=value^0xffff,af=0x7300|flags)
-            old,ot=run('e5 c1',registers);new,nt=run('44 4d',registers)
-            assert (old.hl,old.bc,old.af,old.sp)==(new.hl,new.bc,new.af,new.sp)
-            assert old.bc==value and (ot,nt)==(21,8);checks+=1
+    checks=0;directions=[]
+    moves={('bc','de'):'50 59',('bc','hl'):'60 69',('de','bc'):'42 4b',
+           ('de','hl'):'62 6b',('hl','bc'):'44 4d',('hl','de'):'54 5d'}
+    push={'bc':'c5','de':'d5','hl':'e5'};pop={'bc':'c1','de':'d1','hl':'e1'}
+    increment={'bc':'03','de':'13','hl':'23'}
+    for (source,destination),move in moves.items():
+        free=next(pair for pair in push if pair not in (source,destination));variants={}
+        for value in (0,1,0xff,0x100,0x1234,0xffff):
+            for flags in range(256):
+                registers=dict(hl=0x369a,bc=0x1357,de=0x2468,af=0x7300|flags)
+                registers[source]=value;registers[destination]=value^0xffff
+                for name,middle,placement in (
+                        ('adjacent','','pop'),('independent_increment',increment[free],'pop'),
+                        ('independent_call','cd 00 03','pop'),
+                        ('source_modified_destination_dead',increment[source],'push')):
+                    old_code=' '.join((push[source],middle,pop[destination]))
+                    new_code=' '.join((move,middle) if placement=='push' else (middle,move))
+                    memory=((0x300,bytes.fromhex(increment[free]+' c9')),)
+                    old,ot=run(old_code,registers,memory=memory);new,nt=run(new_code,registers,memory=memory)
+                    assert tuple(getattr(old,k) for k in ('hl','bc','de','af','sp'))==tuple(
+                        getattr(new,k) for k in ('hl','bc','de','af','sp'))
+                    assert old.__getattribute__(destination)==value and ot-nt==13;checks+=1
+                    variants[name]=dict(placement=placement,before_tstates=ot,after_tstates=nt,delta=-13)
+        directions.append(dict(source=source,destination=destination,stack_code=push[source]+' '+pop[destination],
+            register_code=move,checks=6144,interleavings=variants))
     # Actual decoder save: BC remains a live count while HL becomes history.
     old,_=run('e5 21 ff ff 19 ed a0 e1',dict(hl=0x4000,bc=8,de=0x9000),
         memory=((0x8fff,b'Z'),))
     wrong,_=run('44 4d 21 ff ff 19 ed a0 60 69',dict(hl=0x4000,bc=8,de=0x9000),
         memory=((0x8fff,b'Z'),))
     assert old.hl==0x4000 and old.bc==7 and (wrong.hl,wrong.bc)!=(old.hl,old.bc)
-    return dict(item='02',baseline_revision='542b2059',complete=True,decision='already present / no eligible pair transfer',
+    # Real bounded ZX0 copier: old BC is popped into HL after BC has become
+    # the prefix count and HL was used as available-space scratch. Neither
+    # endpoint can hold a two-LD transfer without losing a live value.
+    registers=dict(bc=8,hl=0x4000,de=0x9000)
+    original,_=run('c5 21 03 00 44 4d e1',registers)
+    at_push,_=run('60 69 21 03 00 44 4d',registers)
+    at_pop,_=run('21 03 00 44 4d 60 69',registers)
+    assert original.hl==8 and original.bc==3 and at_push.hl==at_pop.hl==3
+    return dict(item='02',baseline_revision='d0f04472',complete=True,decision='already present / no eligible pair transfer',
         primitive_checks=checks,transfer_tstates=dict(before=21,after=8,delta=-13),
+        directions=directions,source_and_destination_live_counterexample=dict(
+            correct_hl=original.hl,correct_bc=original.bc,at_push_hl=at_push.hl,at_pop_hl=at_pop.hl),
         save_counterexample=dict(input=0x4000,count=8,correct_hl=old.hl,correct_bc=old.bc,
             invalid_replacement_hl=wrong.hl,invalid_replacement_bc=wrong.bc),decoder_changes=0)
 

@@ -1,13 +1,219 @@
 {
   "item": "02",
-  "baseline_revision": "542b2059",
+  "baseline_revision": "d0f04472",
   "complete": true,
   "decision": "already present / no eligible pair transfer",
-  "primitive_checks": 1536,
+  "primitive_checks": 36864,
   "transfer_tstates": {
     "before": 21,
     "after": 8,
     "delta": -13
+  },
+  "directions": [
+    {
+      "source": "bc",
+      "destination": "de",
+      "stack_code": "c5 d1",
+      "register_code": "50 59",
+      "checks": 6144,
+      "interleavings": {
+        "adjacent": {
+          "placement": "pop",
+          "before_tstates": 21,
+          "after_tstates": 8,
+          "delta": -13
+        },
+        "independent_increment": {
+          "placement": "pop",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        },
+        "independent_call": {
+          "placement": "pop",
+          "before_tstates": 54,
+          "after_tstates": 41,
+          "delta": -13
+        },
+        "source_modified_destination_dead": {
+          "placement": "push",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        }
+      }
+    },
+    {
+      "source": "bc",
+      "destination": "hl",
+      "stack_code": "c5 e1",
+      "register_code": "60 69",
+      "checks": 6144,
+      "interleavings": {
+        "adjacent": {
+          "placement": "pop",
+          "before_tstates": 21,
+          "after_tstates": 8,
+          "delta": -13
+        },
+        "independent_increment": {
+          "placement": "pop",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        },
+        "independent_call": {
+          "placement": "pop",
+          "before_tstates": 54,
+          "after_tstates": 41,
+          "delta": -13
+        },
+        "source_modified_destination_dead": {
+          "placement": "push",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        }
+      }
+    },
+    {
+      "source": "de",
+      "destination": "bc",
+      "stack_code": "d5 c1",
+      "register_code": "42 4b",
+      "checks": 6144,
+      "interleavings": {
+        "adjacent": {
+          "placement": "pop",
+          "before_tstates": 21,
+          "after_tstates": 8,
+          "delta": -13
+        },
+        "independent_increment": {
+          "placement": "pop",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        },
+        "independent_call": {
+          "placement": "pop",
+          "before_tstates": 54,
+          "after_tstates": 41,
+          "delta": -13
+        },
+        "source_modified_destination_dead": {
+          "placement": "push",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        }
+      }
+    },
+    {
+      "source": "de",
+      "destination": "hl",
+      "stack_code": "d5 e1",
+      "register_code": "62 6b",
+      "checks": 6144,
+      "interleavings": {
+        "adjacent": {
+          "placement": "pop",
+          "before_tstates": 21,
+          "after_tstates": 8,
+          "delta": -13
+        },
+        "independent_increment": {
+          "placement": "pop",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        },
+        "independent_call": {
+          "placement": "pop",
+          "before_tstates": 54,
+          "after_tstates": 41,
+          "delta": -13
+        },
+        "source_modified_destination_dead": {
+          "placement": "push",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        }
+      }
+    },
+    {
+      "source": "hl",
+      "destination": "bc",
+      "stack_code": "e5 c1",
+      "register_code": "44 4d",
+      "checks": 6144,
+      "interleavings": {
+        "adjacent": {
+          "placement": "pop",
+          "before_tstates": 21,
+          "after_tstates": 8,
+          "delta": -13
+        },
+        "independent_increment": {
+          "placement": "pop",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        },
+        "independent_call": {
+          "placement": "pop",
+          "before_tstates": 54,
+          "after_tstates": 41,
+          "delta": -13
+        },
+        "source_modified_destination_dead": {
+          "placement": "push",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        }
+      }
+    },
+    {
+      "source": "hl",
+      "destination": "de",
+      "stack_code": "e5 d1",
+      "register_code": "54 5d",
+      "checks": 6144,
+      "interleavings": {
+        "adjacent": {
+          "placement": "pop",
+          "before_tstates": 21,
+          "after_tstates": 8,
+          "delta": -13
+        },
+        "independent_increment": {
+          "placement": "pop",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        },
+        "independent_call": {
+          "placement": "pop",
+          "before_tstates": 54,
+          "after_tstates": 41,
+          "delta": -13
+        },
+        "source_modified_destination_dead": {
+          "placement": "push",
+          "before_tstates": 27,
+          "after_tstates": 14,
+          "delta": -13
+        }
+      }
+    }
+  ],
+  "source_and_destination_live_counterexample": {
+    "correct_hl": 8,
+    "correct_bc": 3,
+    "at_push_hl": 3,
+    "at_pop_hl": 3
   },
   "save_counterexample": {
     "input": 16384,
@@ -22,7 +228,7 @@
   "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
   "scope": "Native instruction/precondition checks; no new decoder or playback performance claim.",
   "sources": {
-    "libraries/zx0/src/zx0/banked.py": "ad195aead1104b71784cbab1d42337a12decf5ad6b1fa10c12fc54090ef16c2d",
+    "libraries/zx0/src/zx0/banked.py": "6535d8405b79fa8a1001ac39309e7198d4adfe40441fcfa9486a10a8657d381f",
     "libraries/zx0/src/zx0/incremental.py": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a",
     "libraries/zx0/src/zx0/resumable.py": "d45721b7bc473d84df1a54d7e4c39aeec9dca7589efddba1c3740234041f2572",
     "libraries/lzsa/src/lzsa/resumable.py": "6858a2ae34e2972b01b7e7f668d5e4e5bf5dc306ebd404bda1c4210885a6440a"

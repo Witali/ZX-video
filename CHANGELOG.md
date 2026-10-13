@@ -1,5 +1,21 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Expand item02 to all pair directions and intervening code
+
+- **Request/baseline:** At `d0f04472`, the user clarifies that PUSH BC/POP HL
+  and other directions, including unrelated instructions between them, are
+  in scope. Expand all six BC/DE/HL transfers and analyze both LD placements.
+- **Coverage:**36864 native value/flag/interleaving checks cover adjacent
+  transfers, independent pair increments/calls and source mutation with a
+  dead destination. Each saves13 T with exact register/flag/SP results.
+  The bounded ZX0 copier's nonadjacent PUSH BC/POP HL retains a live original
+  count while BC/HL are rewritten; LDs at either endpoint lose it.
+  [Expanded audit](libraries/TRICK_AUDIT.md), [report](libraries/evidence/trick_02.json).
+- **Decision:** Retain already efficient moves and required saves. No decoder
+  change (delta0 T/code/RAM/stream); prior full-codec evidence still applies.
+  AF/indexed pairs need their actual instructions/contracts, not an assumed
+  universal two-LD replacement.
+
 ## 2026-10-13 — Item08: fixed-data code is not a generic literal decoder
 
 - **Objective/baseline:** From `7d83ca1e`, test LD rr,nn/PUSH constant data

@@ -10,8 +10,28 @@ byte-exact unless a separately qualified change is explicitly adopted.
 The [forum pair-transfer example](https://zx-pk.ru/threads/33945-optimizatsiya-z80-koda-dlya-mandelbrota.html#post1138545)
 costs PUSH HL11 + POP BC10=21 T versus LD B,H4 + LD C,L4=8 T (-13).
 Both are two code bytes, no flags change; the latter needs no temporary
-stack word. [Native evidence](evidence/trick_02.json) checks1536 values/flag
-combinations and demonstrates why a live save cannot use the same rewrite.
+stack word. The user explicitly expands the audit to every direction and
+nonadjacent commands. [Native evidence](evidence/trick_02.json) now checks
+36864 value/flag/interleaving cases, covering all six ordinary pair transfers:
+
+| Stack transfer | Direct register copy |
+| --- | --- |
+| PUSH BC / POP DE | LD D,B / LD E,C |
+| PUSH BC / POP HL | LD H,B / LD L,C |
+| PUSH DE / POP BC | LD B,D / LD C,E |
+| PUSH DE / POP HL | LD H,D / LD L,E |
+| PUSH HL / POP BC | LD B,H / LD C,L |
+| PUSH HL / POP DE | LD D,H / LD E,L |
+
+The stack operations need not be adjacent. Place the LDs at POP when the
+source pair retains its pushed value across the intervening code. Place
+them at PUSH when the destination is dead and neither read nor overwritten
+until POP, even if the source subsequently changes. Account for branches,
+calls/IRQ clobbers, stack balance, EX (SP),HL and any explicit SP-relative
+access. Independent arithmetic and register-preserving calls pass the native
+tests, retaining the same13-T saving. AF is special because F cannot be
+copied with an ordinary LD; indexed pairs require a separate instruction/ABI
+analysis rather than assuming the8-T result.
 
 ZX0 `banked.py:refill_short` already transfers HL to BC with LD B,H/LD C,L;
 `ring_copy` also uses register copies for BC/HL. `incremental.py` copies
@@ -22,7 +42,12 @@ the count; the native counterexample changes8 to0x4000. Suspend/resume
 pushes preserve independent live AF/BC/DE/HL (and AF' in LZSA2) across a
 caller that may overwrite every working register. ZX0's standard decoder
 also keeps its last offset on the stack, with EX (SP),HL ownership changes.
-These operations are saves/restores, not eligible pair transfers.
+These operations are saves/restores, not eligible pair transfers. In
+`incremental.emit_exact_copy`, PUSH BC eventually pairs with POP HL, but BC
+has already become the prefix count and HL held the available-space scratch.
+The expanded native counterexample loses the saved original count with LDs
+placed at either endpoint. Check this nonadjacent case explicitly; scanning
+only adjacent PUSH/POP would miss its actual dataflow.
 
 **Decision: already present in eligible paths; no further code change.**
 No added code/RAM/stack/table/stream bytes; decoder instruction delta0 T.

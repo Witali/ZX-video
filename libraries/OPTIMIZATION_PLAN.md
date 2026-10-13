@@ -12,7 +12,7 @@ isolated snippet. Preserve the standard compressed formats and decoded bytes.
 | ID | Technique and source | Application to investigate | Status |
 | --- | --- | --- | --- |
 | 01 | [Unrolled LDI](https://zx-pk.ru/threads/22089-memcpy-bystraya-peresylka-dannykh.html) | Long literal/match copies; existing ZX0 bank-ring refill | Optional measured LZSA2 candidate; already in ZX0 |
-| 02 | [Register copies instead of PUSH/POP](https://zx-pk.ru/threads/33945-optimizatsiya-z80-koda-dlya-mandelbrota.html#post1138545) | Transfers between pairs; distinguish transfers from required saved continuations | Already present; live saves retained |
+| 02 | [Register copies instead of PUSH/POP](https://zx-pk.ru/threads/33945-optimizatsiya-z80-koda-dlya-mandelbrota.html#post1138545) | All six BC/DE/HL directions, including intervening independent code/calls; distinguish live saves | Already present; full interleaving audit retains live saves |
 | 03 | [RES/SET instead of accumulator masks](https://zx-pk.ru/threads/33945-optimizatsiya-z80-koda-dlya-mandelbrota.html) | Offset/length fields and aligned addresses; check all live flags and A | Inapplicable: live flags/value or multi-bit masks |
 | 04 | [INC L instead of INC HL](https://zx-pk.ru/threads/21702-optimizatsiya-v-hl.html) | Input windows and word reads; prove page crossings and preserve carry | Already present in page-aware ZX0; unguarded replacement rejected |
 | 05 | [Fast jump tables](https://zx-pk.ru/threads/30694-vyravnivanie-utrambovyvanie-i-vpikhivanie-koda-bystrye-tablitsy-perekhodov-i-sjasm.html#post1020767) | LZSA2 dispatch; compare existing S/P branches, count complete entry work and table padding | Rejected: every class slower with live HL preserved |
