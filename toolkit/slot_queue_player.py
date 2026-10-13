@@ -18,6 +18,25 @@ import pipelined_frame_z80 as video
 import bulk_frame_z80 as packet
 
 
+def checkpoint(reader,frame_count,register_count):
+    """Replay the prior bus actions at the original driver's AY width.
+
+    The bootstrap metadata already knows whether the source uses AYH2.
+    Preserve its fourteen-register checkpoint even at frame zero, so dirty
+    R11/R12/R13 are initialized before the first 50-Hz field.
+    """
+    if register_count not in (11,14):raise ValueError('invalid AY checkpoint width')
+    ay=bytearray(register_count)
+    for _ in range(frame_count):
+        _,detail=read_packet(reader,stored_guards=False)
+        for tick in detail['ticks']:
+            for i in range(tick[0]):
+                register=tick[1+2*i]
+                if register>=register_count:raise ValueError('AY action exceeds checkpoint width')
+                ay[register]=tick[2+2*i]
+    return bytes(ay)
+
+
 def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False,partial_consumption=False,cached_huffman_byte=False,inline_literals=False,demand_decode=False,hl_mask_reader=False):
     if hl_mask_reader and (not compiled_masks or idle_masks):
         raise ValueError('HL mask reader requires compiled masks without idle overrides')
@@ -36,11 +55,15 @@ def build(metadata,raw,*,uncontended=False,compiled_masks=False,idle_masks=False
         raise ValueError('queue requires IRQ-safe paging and an independent volume')
     if sha(raw)!=m['raw_sha256']:raise ValueError('wrong volume Huffman stream')
     r=Reader(raw);_,_,count,mapping,tables=read_header(r,magic=b'FAP3')
-    ay=bytearray(11)
-    for _ in range(m['frame_start']):
-        _,detail=read_packet(r,stored_guards=False)
-        for tick in detail['ticks']:
-            for i in range(tick[0]):ay[tick[1+2*i]]=tick[2+2*i]
+    original_driver=m['player_labels']
+    register_count=original_driver['end']-original_driver['ay_state']
+    ay=checkpoint(r,m['frame_start'],register_count)
+    m['checkpoint_audio']=dict(register_count=register_count,
+        restore_loop_tstates=85*register_count-5,
+        restore_loop_baseline_tstates=930,
+        startup_delta_tstates=255 if register_count==14 else 0,
+        runtime_instruction_delta_tstates=0,
+        timing='85 T per continuing iteration, 80 T final; excludes LD HL/LD D setup and all disk work')
     options={key:m[key] for key in ('inline_matches','fast_noop_scan','irq_safe_paging',
         'static_cache_borders','carry_huffman','register_fragments')}
     options['cached_huffman_byte']=cached_in_bootstrap

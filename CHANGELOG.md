@@ -1,5 +1,27 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Restore AYH2 checkpoints in queued movie bootstraps
+
+- **Trigger/baseline:** A new user-authorized YouTube cartoon prefix from
+  `bd2a5be2` uses current14-register hardware envelopes. The guarded queued
+  bootstrap still reconstructed prior AY actions into an11-byte host array,
+  raising IndexError before the longer candidate could produce a release.
+- **Fix:** Derive checkpoint width from the original driver's state bounds;
+  replay all14 registers, including held period and last actual shape. Frame
+  zero also receives the complete zero checkpoint. Keep the11-register path
+  byte-compatible and reject actions outside its declared width.
+- **Timing:** Runtime field instructions remain unchanged (0 T delta). The
+  existing restoration loop is85 T per continuing iteration,80 T final:
+  11 registers930 T,14 registers1185 T, startup-only delta+255 T; LD HL/LD D
+  setup adds17 T to either path. An initial handcount was corrected against
+  independent native execution. ROM/disk latency and IRQ entry are excluded.
+- **Checks/result:** Eight targeted checkpoint/bootstrap/disk tests and19
+  generic converter tests pass. The selected50.7-second one-disk clip then
+  passes complete cold Fuse: all507 native screens/3504384 screen bytes,
+  2535 exact AY records, every nominal five-field deadline, no late runs.
+  Existing root releases are untouched. Keep this prerequisite fix; its
+  input-specific release evidence is preserved by the following focused change.
+
 ## 2026-10-13 — Hypothetical six-voice square/triangle/sine audition
 
 - **Request/baseline:** The user requests an experimental script and WAV for
