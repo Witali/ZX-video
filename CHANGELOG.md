@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Add a reversible extended-RAM detector and sector cache
+
+- **Request/baseline:** User authorizes all available RAM on Spectrum128,
+  Scorpion256, Pentagon512 and Pentagon1024. Baseline main `6168ba14` has
+ 128-KiB resident audio and physical reads at each part transition.
+- **Change:** [loading-only worker](audiobook-beeper/ram-cache.asm) verifies
+  every extra page against all earlier pages, restores probe bytes, avoids
+  the512K paging lock, and authorizes1024K bits through a reversible EFF7
+  alias test. Cache all upcoming sectors within128/384/896-KiB extra-bank
+  capacity, stopping at actual EOF. Fixed-bank bounce reads restore normal
+  mapping before ROM calls; preserve16 persistent bytes at5B70 during
+  table loads. Exact remainder arithmetic drives32 progress cells.
+- **Measured verification:** Six [native Z80 tests](audiobook-beeper/test_ram_cache.py)
+  cover all four models, mirrored expansion, every cached byte, ROM misses,
+  state preservation, full-progress accounting and consumed-cache EOF.
+  [Saved results](audiobook-beeper/experiments/ram-audio/evidence/logs/native-cache-tests.log)
+  pass. This is a complete cache-component milestone; ROM/disk latency,
+  cover/controller integration and whole-song playback are qualified below
+  when complete. No live PDM path changes in this component milestone.
+- **Failed attempts/decision:** Initial native callback harness lacked address
+  marks (fixed); a paging restore clobbered DE before sector acquisition
+  (fixed with explicit preservation); a consumed EOF window retained stale
+  count (fixed and regression tested). Preserve the first two failure logs
+  beside the passing tests. Proceed with the independently bootable player
+  integration, preserving the128-KiB fallback and byte-exact legacy builds.
 ## 2026-10-13 — Complete timed AY ramps, target comparison and transfer verification
 
 - **Fourth milestone/input:** Same prepared30 s/1500 states and gain. Build

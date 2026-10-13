@@ -1,0 +1,153 @@
+test_cached_sector_copies_and_rom_misses_preserve_state (test_ram_cache.RamCache.test_cached_sector_copies_and_rom_misses_preserve_state) ... 
+  test_cached_sector_copies_and_rom_misses_preserve_state (test_ram_cache.RamCache.test_cached_sector_copies_and_rom_misses_preserve_state) (sector=100) ... FAIL
+  test_cached_sector_copies_and_rom_misses_preserve_state (test_ram_cache.RamCache.test_cached_sector_copies_and_rom_misses_preserve_state) (sector=163) ... FAIL
+  test_cached_sector_copies_and_rom_misses_preserve_state (test_ram_cache.RamCache.test_cached_sector_copies_and_rom_misses_preserve_state) (sector=164) ... FAIL
+  test_cached_sector_copies_and_rom_misses_preserve_state (test_ram_cache.RamCache.test_cached_sector_copies_and_rom_misses_preserve_state) (sector=174) ... FAIL
+  test_cached_sector_copies_and_rom_misses_preserve_state (test_ram_cache.RamCache.test_cached_sector_copies_and_rom_misses_preserve_state) (sector=175) ... FAIL
+test_detects_every_model_without_lock_or_destructive_alias_probe (test_ram_cache.RamCache.test_detects_every_model_without_lock_or_destructive_alias_probe) ... 
+  test_detects_every_model_without_lock_or_destructive_alias_probe (test_ram_cache.RamCache.test_detects_every_model_without_lock_or_destructive_alias_probe) (kind='128') ... FAIL
+  test_detects_every_model_without_lock_or_destructive_alias_probe (test_ram_cache.RamCache.test_detects_every_model_without_lock_or_destructive_alias_probe) (kind='scorpion') ... FAIL
+  test_detects_every_model_without_lock_or_destructive_alias_probe (test_ram_cache.RamCache.test_detects_every_model_without_lock_or_destructive_alias_probe) (kind='pentagon512') ... FAIL
+  test_detects_every_model_without_lock_or_destructive_alias_probe (test_ram_cache.RamCache.test_detects_every_model_without_lock_or_destructive_alias_probe) (kind='pentagon1024') ... FAIL
+test_fill_all_extended_pages_and_stop_at_disk_eof (test_ram_cache.RamCache.test_fill_all_extended_pages_and_stop_at_disk_eof) ... 
+  test_fill_all_extended_pages_and_stop_at_disk_eof (test_ram_cache.RamCache.test_fill_all_extended_pages_and_stop_at_disk_eof) (kind='scorpion') ... FAIL
+  test_fill_all_extended_pages_and_stop_at_disk_eof (test_ram_cache.RamCache.test_fill_all_extended_pages_and_stop_at_disk_eof) (kind='pentagon512') ... FAIL
+  test_fill_all_extended_pages_and_stop_at_disk_eof (test_ram_cache.RamCache.test_fill_all_extended_pages_and_stop_at_disk_eof) (kind='pentagon1024') ... FAIL
+test_mirrored_expansion_cannot_inflate_capacity (test_ram_cache.RamCache.test_mirrored_expansion_cannot_inflate_capacity) ... FAIL
+
+======================================================================
+FAIL: test_cached_sector_copies_and_rom_misses_preserve_state (test_ram_cache.RamCache.test_cached_sector_copies_and_rom_misses_preserve_state) (sector=100)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 144, in test_cached_sector_copies_and_rom_misses_preserve_state
+    self.assertEqual(bytes(m.read(destination+i) for i in range(256)),expected)
+AssertionError: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00[980 chars]\x00' != bytearray(b'\xa4\xb1\xbe\xcb\xd8\xe5\xf2\x[702 chars]x97')
+
+======================================================================
+FAIL: test_cached_sector_copies_and_rom_misses_preserve_state (test_ram_cache.RamCache.test_cached_sector_copies_and_rom_misses_preserve_state) (sector=163)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 144, in test_cached_sector_copies_and_rom_misses_preserve_state
+    self.assertEqual(bytes(m.read(destination+i) for i in range(256)),expected)
+AssertionError: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00[980 chars]\x00' != bytearray(b'\xd3\xe0\xed\xfa\x07\x14!.;HUb[702 chars]xc6')
+
+======================================================================
+FAIL: test_cached_sector_copies_and_rom_misses_preserve_state (test_ram_cache.RamCache.test_cached_sector_copies_and_rom_misses_preserve_state) (sector=164)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 144, in test_cached_sector_copies_and_rom_misses_preserve_state
+    self.assertEqual(bytes(m.read(destination+i) for i in range(256)),expected)
+AssertionError: b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05[980 chars]\x05' != bytearray(b'\xe4\xf1\xfe\x0b\x18%2?LYfs\x8[719 chars]xd7')
+
+======================================================================
+FAIL: test_cached_sector_copies_and_rom_misses_preserve_state (test_ram_cache.RamCache.test_cached_sector_copies_and_rom_misses_preserve_state) (sector=174)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 144, in test_cached_sector_copies_and_rom_misses_preserve_state
+    self.assertEqual(bytes(m.read(destination+i) for i in range(256)),expected)
+AssertionError: b'\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02[980 chars]\x02' != bytearray(b'\x8e\x9b\xa8\xb5\xc2\xcf\xdc\x[702 chars]x81')
+
+======================================================================
+FAIL: test_cached_sector_copies_and_rom_misses_preserve_state (test_ram_cache.RamCache.test_cached_sector_copies_and_rom_misses_preserve_state) (sector=175)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 144, in test_cached_sector_copies_and_rom_misses_preserve_state
+    self.assertEqual(bytes(m.read(destination+i) for i in range(256)),expected)
+AssertionError: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00[980 chars]\x00' != bytearray(b'\x9f\xac\xb9\xc6\xd3\xe0\xed\x[702 chars]x92')
+
+======================================================================
+FAIL: test_detects_every_model_without_lock_or_destructive_alias_probe (test_ram_cache.RamCache.test_detects_every_model_without_lock_or_destructive_alias_probe) (kind='128')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 106, in test_detects_every_model_without_lock_or_destructive_alias_probe
+    self.assertEqual((m.read(STATE+2),m.read(STATE+3)),(mode,pages))
+AssertionError: Tuples differ: (5, 5) != (0, 0)
+
+First differing element 0:
+5
+0
+
+- (5, 5)
++ (0, 0)
+
+======================================================================
+FAIL: test_detects_every_model_without_lock_or_destructive_alias_probe (test_ram_cache.RamCache.test_detects_every_model_without_lock_or_destructive_alias_probe) (kind='scorpion')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 106, in test_detects_every_model_without_lock_or_destructive_alias_probe
+    self.assertEqual((m.read(STATE+2),m.read(STATE+3)),(mode,pages))
+AssertionError: Tuples differ: (5, 5) != (1, 8)
+
+First differing element 0:
+5
+1
+
+- (5, 5)
++ (1, 8)
+
+======================================================================
+FAIL: test_detects_every_model_without_lock_or_destructive_alias_probe (test_ram_cache.RamCache.test_detects_every_model_without_lock_or_destructive_alias_probe) (kind='pentagon512')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 106, in test_detects_every_model_without_lock_or_destructive_alias_probe
+    self.assertEqual((m.read(STATE+2),m.read(STATE+3)),(mode,pages))
+AssertionError: Tuples differ: (5, 5) != (2, 24)
+
+First differing element 0:
+5
+2
+
+- (5, 5)
++ (2, 24)
+
+======================================================================
+FAIL: test_detects_every_model_without_lock_or_destructive_alias_probe (test_ram_cache.RamCache.test_detects_every_model_without_lock_or_destructive_alias_probe) (kind='pentagon1024')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 106, in test_detects_every_model_without_lock_or_destructive_alias_probe
+    self.assertEqual((m.read(STATE+2),m.read(STATE+3)),(mode,pages))
+AssertionError: Tuples differ: (5, 5) != (3, 56)
+
+First differing element 0:
+5
+3
+
+- (5, 5)
++ (3, 56)
+
+======================================================================
+FAIL: test_fill_all_extended_pages_and_stop_at_disk_eof (test_ram_cache.RamCache.test_fill_all_extended_pages_and_stop_at_disk_eof) (kind='scorpion')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 126, in test_fill_all_extended_pages_and_stop_at_disk_eof
+    self.assertEqual(m.word(STATE+4),27)
+AssertionError: 1285 != 27
+
+======================================================================
+FAIL: test_fill_all_extended_pages_and_stop_at_disk_eof (test_ram_cache.RamCache.test_fill_all_extended_pages_and_stop_at_disk_eof) (kind='pentagon512')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 126, in test_fill_all_extended_pages_and_stop_at_disk_eof
+    self.assertEqual(m.word(STATE+4),27)
+AssertionError: 1285 != 27
+
+======================================================================
+FAIL: test_fill_all_extended_pages_and_stop_at_disk_eof (test_ram_cache.RamCache.test_fill_all_extended_pages_and_stop_at_disk_eof) (kind='pentagon1024')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 126, in test_fill_all_extended_pages_and_stop_at_disk_eof
+    self.assertEqual(m.word(STATE+4),27)
+AssertionError: 1285 != 27
+
+======================================================================
+FAIL: test_mirrored_expansion_cannot_inflate_capacity (test_ram_cache.RamCache.test_mirrored_expansion_cannot_inflate_capacity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\test_ram_cache.py", line 116, in test_mirrored_expansion_cannot_inflate_capacity
+    self.assertEqual(m.read(STATE+3),8)
+AssertionError: 5 != 8
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.251s
+
+FAILED (failures=13)
