@@ -1,5 +1,26 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Keep gray-region coherence from overriding quiet-cell history
+
+- **Trigger/baseline:** On the same507-frame source from `2eddcaa3`, shared
+  gray regions improve boundary residual231.36326 ->144.96604 and temporal
+  chroma58.44063 ->43.06844. A separate brightness audit detects a regression:
+  quiet-cell pooled RGB temporal residual19.02686 ->26.13840 and Rec.709 luma
+  18.12883 ->25.88659 over2194912 logical sample comparisons. The complete
+  candidate passes all native/Fuse fields/screens but is superseded for quality.
+- **Fix:** Gray-region coherence must preserve already source-valid retained
+  cells. Select a feasible common pair for mutable cells around those neighbors,
+  preferring their shared pair when it still fits today's source. Initial-frame
+  smooth gradients retain their shared palette; actual source changes are not
+  blended, buffered or delayed. All physical/source guards remain in force.
+- **Checks/scope:** Twenty-seven focused tests pass, including current-frame
+  colour independence, real contours, synthetic gradient and monochrome ABIs.
+  Native instruction delta0 T, unchanged absolute player baseline. The final
+  selected excerpt is being fully rebuilt and measured; preserve the rejected
+  candidate's reports and brightness audit. Reproduce the latter with
+  `toolkit/analysis/sea_foam/temporal_luminance.py`; its metric is explicitly
+  pooled area-averaged error, not a physical-pixel temporal measurement.
+
 ## 2026-10-13 — Source-bounded colour, cell coherence and monochrome option
 
 - **Request/baseline:** From `7886808a`, correct the sea-foam excerpt's colour

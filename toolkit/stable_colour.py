@@ -75,7 +75,7 @@ def boundary_error(source, output):
     return numerator/max(denominator, 1e-12)
 
 
-def coherent_neutral_regions(source, levels, attrs, feasible, choices, spatial):
+def coherent_neutral_regions(source, levels, attrs, feasible, choices, spatial, retained):
     """Use one gray pair across connected smooth gray output regions.
 
     Independent cell minima can alternate normal/BRIGHT white and create
@@ -110,17 +110,29 @@ def coherent_neutral_regions(source, levels, attrs, feasible, choices, spatial):
                     component.append(neighbor);seen[neighbor] = True
         if len(component) < 4 or len(np.unique(attrs[component])) == 1:
             continue
+        # Spatial grouping must not undo temporal stability in quiet cells.
+        # Optimize changing cells around their already source-valid neighbors;
+        # do not flash an entire old region when component connectivity changes.
+        component = np.asarray(component)
+        fixed = component[retained[component]]
+        mutable = component[~retained[component]]
+        if not len(mutable):
+            continue
         candidates = [int(np.flatnonzero(ATTRS == a)[0]) for a in (7, 71)]
-        candidates = [p for p in candidates if feasible[component, p].all()]
+        candidates = [p for p in candidates if feasible[mutable, p].all()]
         if not candidates:
             continue
-        pair = min(candidates, key=lambda p: float(spatial[component, p].sum()))
-        current_pair = (attrs[component, None] == ATTRS[None]).argmax(axis=1)
-        old_score = spatial[np.asarray(component), current_pair].mean()
-        if spatial[component, pair].mean() > old_score+1024:
+        pair = min(candidates, key=lambda p: float(spatial[mutable, p].sum()))
+        if len(fixed) and len(np.unique(attrs[fixed])) == 1:
+            prior = int(np.flatnonzero(ATTRS == attrs[fixed[0]])[0])
+            if prior in candidates:
+                pair = prior
+        current_pair = (attrs[mutable, None] == ATTRS[None]).argmax(axis=1)
+        old_score = spatial[mutable, current_pair].mean()
+        if spatial[mutable, pair].mean() > old_score+1024:
             continue
-        attrs[component] = ATTRS[pair]
-        level_cells[component] = choices[np.asarray(component), :, pair]
+        attrs[mutable] = ATTRS[pair]
+        level_cells[mutable] = choices[mutable, :, pair]
     return level_cells.reshape(24, 32, 4, 4).transpose(0, 2, 1, 3).reshape(96, 128), attrs
 
 
@@ -261,7 +273,7 @@ def encode(image, reference, previous=None, previous_image=None):
     output_levels = output_cells.reshape(24, 32, 4, 4).transpose(0, 2, 1, 3).reshape(96, 128)
     output_levels[:12] = output_levels[84:] = 0
     attrs = ATTRS[selected].copy();attrs[retain] = held_attrs[retain]
-    output_levels, attrs = coherent_neutral_regions(source, output_levels, attrs, feasible, levels, spatial)
+    output_levels, attrs = coherent_neutral_regions(source, output_levels, attrs, feasible, levels, spatial, retain)
     attrs[:96] = 1
     attrs[672:] = 1
     state = five.pack_levels(output_levels)+attrs.tobytes()

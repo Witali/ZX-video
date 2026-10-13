@@ -22,6 +22,7 @@ def main():
     parser.add_argument('--second', type=Path, required=True)
     parser.add_argument('--third', type=Path, required=True)
     parser.add_argument('--fourth', type=Path, required=True)
+    parser.add_argument('--fifth', type=Path, required=True)
     args = parser.parse_args()
     build = args.build
     conversion = json.loads((build/'conversion.json').read_bytes())
@@ -52,11 +53,14 @@ def main():
     drafts = destination/'superseded';drafts.mkdir(exist_ok=True)
     for label, candidate in [('averaged-only', args.first), ('quiet-cell-hold', args.second),
                              ('strict-physical-colour', args.third),
-                             ('local-boundary-only', args.fourth)]:
+                             ('local-boundary-only', args.fourth),
+                             ('region-without-quiet-guard', args.fifth)]:
         saved = drafts/label;saved.mkdir(exist_ok=True)
         for filename in ('video-quality.json', 'conversion.json', 'timing.json'):
             shutil.copyfile(candidate/filename, saved/filename)
         shutil.copyfile(candidate.with_suffix('.log'), saved/'run.log')
+        if (candidate/'luminance-temporal-check.json').exists():
+            shutil.copyfile(candidate/'luminance-temporal-check.json', saved/'luminance-temporal-check.json')
     shutil.copyfile(ROOT/'.tmp/stable-colour-v3-check.png', drafts/'physical-rgb-only-check.png')
     smoke = destination/'monochrome-smoke';smoke.mkdir(exist_ok=True)
     for profile in ('cb41', 'fap3'):
