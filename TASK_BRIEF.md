@@ -1571,3 +1571,21 @@ Balanced DC compensation explicitly extends the hypothetical model; no real
 AY/Yamaha/Z80/release proof or global optimum is claimed. Listening acceptance
 is pending. The bounded deliverable is complete; no further search opens
 automatically. Existing native players/releases are unchanged.
+
+## Six-voice compressed-command size — complete (2026-10-13)
+
+The user accepts the overall spectral candidate sound with residual
+squeaking/ringing and requests storage size. Reuse its exact30-second/1500-
+update controls from `593301b6` in `.worktree/six-voice-clicks`; no new fit.
+All18 combinations of packed/columnar/delta layouts, DEFLATE/XZ/ZX0, and
+30-second/1-second blocks are measured and recover every control/model setting.
+Complete1,323,000-sample recovered-control WAV replay is byte-identical.
+
+Raw aligned commands24,036 bytes including header; columnar ZX017,897 for
+one30-second block or19,853 for independent1-second blocks, versus XZ16,180.
+Absolute columns beat deltas. ZX0 gives estimated35.8..39.7 KB/minute or
+2.15..2.38 MB/hour by linear scaling of this excerpt; longer audio unmeasured.
+[Streams, full report, format limits and reproduction](ay-converter/analysis/six_voice_storage/README.md).
+This is the hypothetical six-voice model, not a native AY format; no real
+chip, Z80 decoder timing or release proof. Native code/releases unchanged.
+The bounded size deliverable is complete; do not open another search.

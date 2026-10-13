@@ -1,5 +1,39 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Measure lossless six-voice command storage
+
+- **Request/input:** The user reports good overall sound, with residual
+  squeaking/ringing, and asks for compressed AY-like command size. Continue
+  `codex/six-voice-clicks` from `593301b6` using the exact accepted spectral
+  candidate's O. Henry[60,90) controls, 1500 updates at50 Hz. No new fitting,
+  renderer change or quality search; preserve the current sound.
+- **Parameters/coverage:** Compare16-byte packed frames,19-column byte planes,
+  and modulo4096 period/XOR control deltas, each with DEFLATE9, XZ/LZMA6 and
+  optimal ZX0 v2, using1500-update and50-update independent blocks. All18
+  combinations complete. Include36 bytes of exact model metadata plus4 bytes
+  per compressed block and codec framing. Preserve muted oscillator periods
+  and noise clocks as well as audible controls.
+- **Measured results/decision:** Raw aligned commands24,036 bytes; whole-block
+  columnar DEFLATE18,261, ZX017,897 and XZ16,180 bytes. One-second columnar
+  ZX0 blocks19,853 bytes, with950 decoded bytes per block. Select columnar
+  absolute values for the useful storage comparison; whole-block deltas are
+  worse (DEFLATE18,463/ZX019,160/XZ16,692). All other outcomes, including
+  rejected packed/delta layouts, remain in the report. ZX0 scales to about
+  35.8..39.7 KB/minute or2.15..2.38 MB/hour on this excerpt; these are linear
+  estimates, not measurements of longer recordings. Existing NPZ21,465 bytes;
+  WAV2,646,044 bytes. Exclude player code and disk-sector/directory overhead.
+- **Verification/limits:** Every saved-stream decode reproduces all1500
+  control states and model metadata; full1,323,000-sample recovered-control
+  WAV replay is byte-identical. Source/producer/encoder hashes checked. Retain
+  two ZX0 comparison streams and the smallest XZ stream, with
+  [measurement script, format notes and reproduction](ay-converter/analysis/six_voice_storage/README.md)
+  and [all results](ay-converter/analysis/six_voice_storage/evidence/report.json).
+  This is a hypothetical six-voice command container; real AY cannot directly
+  reproduce its selectable shapes/smooth transitions/balanced mixer. Native
+  AY fit/storage, decoder timing and release playback were not measured.
+  No native instructions changed; no Z80 cycle delta applies. This authorized
+  storage deliverable is complete without opening another sound experiment.
+
 ## 2026-10-13 — Improve six-voice spectral reconstruction on the same source
 
 - **Request/input:** The user requests source/output spectrogram comparison
