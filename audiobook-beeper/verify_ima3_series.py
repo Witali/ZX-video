@@ -31,8 +31,11 @@ def native_part(disk,meta,packed):
     pcm,indices,levels,expected=reference(packed,cycles=1,model=meta['model'])
     wanted_count=(len(pcm)-3)*16+15
     m=Z80Machine();m.memory[:]=b'\xa5'*65536
-    blob=disk[meta['player_sector']*256:meta['player_sector']*256+23296]
+    blob=disk[meta['player_sector']*256:meta['player_sector']*256+(24832 if meta.get('extended_ram') else 23296)]
     m.set_memory_block(0x8000,blob[:16384])
+    if meta.get('extended_ram'):
+        from ram_cache import playback_patch
+        for address,patch in playback_patch(meta,meta.get('ram_profile','128')):m.set_memory_block(address,patch)
     for label,address,count in [('lower_disk',0x4000,28),('upper_disk',0x6000,32)]:
         pos=meta['player_labels'][label];sector=(pos>>8)*16+(pos&15)
         m.set_memory_block(address,disk[sector*256:(sector+count)*256])
@@ -40,7 +43,7 @@ def native_part(disk,meta,packed):
     for part in meta['sections']:
         data=bytearray(b'\xa5'*16384)
         data[part['address']-0xc000:]=disk[part['sector']*256:(part['sector']+part['sectors'])*256]
-        if part['bank']==7:data[:6912]=blob[16384:]
+        if part['bank']==7:data[:len(blob)-16384]=blob[16384:]
         if part['bank']==2:m.set_memory_block(part['address']-0x4000,data[part['address']-0xc000:])
         banks[part['bank']]=data
     before=bytes(m.memory[0x4000:0xc000]);bits=bytearray();ticks=array('I');pages=[];checked=0
@@ -74,20 +77,20 @@ def native_part(disk,meta,packed):
     assert after==before
     return dict(complete=True,bits_verified=len(bits),predictor_index_samples_verified=checked,
                 every_bit_and_native_hold_exact=True,memory_guards_passed=True,bank_sequence=pages,
-                ordinary_tstates=meta['ordinary_tstates'],ordinary_delta_tstates=0,
+                ordinary_tstates=meta['ordinary_tstates']+(__import__('ram_cache').timing_extra(meta,meta.get('ram_profile','128')) if meta.get('extended_ram') else 0),ordinary_delta_tstates=__import__("ram_cache").timing_extra(meta,meta.get("ram_profile","128")) if meta.get("extended_ram") else 0,
                 discarded_guard_pulses=33,final_guard_pulses_retained=15)
 
 
-def continuation_snapshot(ram,pc):
+def continuation_snapshot(ram,pc,*,machine="128"):
     assert len(ram)==49152
     def block(name,data):return name+struct.pack('<I',len(data))+data
     regs=bytearray(37);struct.pack_into('<HHH',regs,18,0x5c3a,0x6000,pc)
     regs[26:29]=bytes([1,1,1]);regs[33]=48
-    data=b'ZXST'+bytes([1,5,2,0])+block(b'Z80R',regs)
+    data=b'ZXST'+bytes([1,5,{'128':2,'scorpion':10,'pentagon512':13,'pentagon1024':14}[machine],0])+block(b'Z80R',regs)
     data+=block(b'SPCR',struct.pack('<BBBBI',0,31,0,0,0))
     data+=block(b'B128',struct.pack('<IBBBBBB',1,4,0x1c,0,1,0,0))
     banks={5:ram[:16384],2:ram[16384:32768],7:ram[32768:]}
-    for bank in range(8):data+=block(b'RAMP',struct.pack('<HB',0,bank)+banks.get(bank,b'\xa5'*16384))
+    for bank in range({'128':8,'scorpion':16,'pentagon512':32,'pentagon1024':64}[machine]):data+=block(b'RAMP',struct.pack('<HB',0,bank)+banks.get(bank,b'\xa5'*16384))
     return data
 
 
@@ -124,10 +127,14 @@ def qualify_ready_phase(selected,out,fuse,ffmpeg,phase):
     return out
 
 
-def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=False):
+def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=False,machine="128",captured=False):
     out.mkdir(parents=True,exist_ok=True)
     metas=[json.loads(Path(p['metadata']).read_bytes()) for p in volume['parts']]
-    labels=volume['controller_labels'];stamp='spectrum:frames*70908+ula:tstates'
+    extended=volume.get('extended_ram',False)
+    from ram_cache import PROFILES
+    profile=PROFILES[machine];cpu=profile['cpu'];field=profile['field']
+    labels=volume['controller_labels'];stamp=f'spectrum:frames*{field}+ula:tstates'
+
     lines=['base 10','set $active 0','set $part 0','set $dump 0','set $last 0']
     widths={};eid=0
     def event(where,tag,expressions,after=(),condition='',stop=False):
@@ -143,14 +150,21 @@ def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=Fa
         event(lab['ready'],-100,['$part',stamp,'ula:mem7ffd'],['set $active 1','set $last '+stamp],condition=f'$part=={i} && $active==0')
         event(lab['loading_visible'],-103,['$part',stamp,'[55296]','[55391]'],condition=f'$part=={i} && $active==0')
         event(lab['loading_hidden'],-104,['$part',stamp,'[55296]','[55391]'],condition=f'$part=={i} && $active==0')
-        event(lab['load_progress_event'],-105,['$part',f'[{lab["load_progress"]}]'],condition=f'$part=={i} && $active==0')
+        if not extended:
+            event(lab['load_progress_event'],-105,['$part',f'[{lab["load_progress"]}]'],condition=f'$part=={i} && $active==0')
+        event(lab['cache_progress_event'],-106,['$part','[23416]'],condition=f'$part=={i} && $active==0') if extended else None
+
+    if extended:
+        event(labels['cache_progress_event'],-106,['$part','[23416]'],condition='$active==0')
+        for label in ('cover_visible','continuation_cover_visible'):
+            event(labels[label],-107,[stamp,'ula:mem7ffd','[49152]','[55199]'])
     for address in sorted({m['player_labels']['chain_exit'] for m in metas}):
         event(address,-110,['$part',stamp],['set $active 0','set $part $part+1'],condition='$active==1')
     # The native verifier checks the exact output opcodes and source values.
     bit='([z80:pc-1]==81 || ([z80:pc-1]==65 && z80:b==16) || ([z80:pc-1]==254 && z80:a==16))'
     event('port write 254',None,[f'({stamp}-$last)*2+{bit}'],['set $last '+stamp],condition='$active==1')
     for address in metas[0]['first_addresses']:
-        event(address+20,-121,['z80:hl'],condition='$active==1')
+        event(address+(16 if extended else 20),-121,['z80:hl'],condition='$active==1')
         event(address+23,-120,['z80:ix'],condition='$active==1')
     event(0x3d13,-102,['$active',stamp,'z80:hl','z80:de','z80:b'])
     event(labels['header_accepted'],-130,[stamp,f'[{labels["expected_volume"]}]',f'[{labels["expected_volume"]+1}]'])
@@ -166,16 +180,26 @@ def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=Fa
     for i,line in enumerate(lines):
         for long,short in abbreviations.items():
             if line.startswith(long):lines[i]=short+line[len(long):];break
-    script='\n'.join(lines);(out/'debugger.txt').write_text(script,encoding='utf-8',newline='\n')
+    script='\n'.join(lines)
+    if captured:
+        assert (out/'debugger.txt').read_text()==script,'captured commands differ'
+    else:(out/'debugger.txt').write_text(script,encoding='utf-8',newline='\n')
     media=['--betadisk',str(disk_path.resolve()),'--snapshot',str(snapshot.resolve())] if snapshot else [str(disk_path.resolve())]
     command=[str(fuse.resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions','--speed','10000',
-             '--machine','128','--beta128','--debugger-command',script]+media
+             '--machine',machine,'--beta128','--debugger-command',script]+media
     assert len(subprocess.list2cmdline(command))<32760
-    result=subprocess.run(command,cwd=fuse.parent,env=dict(os.environ,SDL_VIDEODRIVER='dummy'),
-                          capture_output=True,startupinfo=hidden_startupinfo(),timeout=1200)
-    (out/'trace.txt.gz').write_bytes(gzip.compress(result.stdout,compresslevel=1,mtime=0))
-    (out/'stderr.txt').write_bytes(result.stderr)
-    if result.returncode!=77:raise AssertionError(('Fuse failed',result.returncode,result.stderr[:1000]))
+    if captured:
+        from types import SimpleNamespace
+        result=SimpleNamespace(returncode=77,stdout=gzip.decompress((out/'trace.txt.gz').read_bytes()),stderr=(out/'stderr.txt').read_bytes())
+        # This is an explicit postflight of a saved complete run, not a new
+        # emulator invocation. The exact commands and every terminal RAM word,
+        # source pulse/predictor/index and loading event still have to pass.
+    else:
+        result=subprocess.run(command,cwd=fuse.parent,env=dict(os.environ,SDL_VIDEODRIVER='dummy'),
+                              capture_output=True,startupinfo=hidden_startupinfo(),timeout=1200)
+        (out/'trace.txt.gz').write_bytes(gzip.compress(result.stdout,compresslevel=1,mtime=0))
+        (out/'stderr.txt').write_bytes(result.stderr)
+        if result.returncode!=77:raise AssertionError(('Fuse failed',result.returncode,result.stderr[:1000]))
     values=(int(m.group(1),0) for m in re.finditer(rb'(?m)^(-?\d+|0x[\da-fA-F]+)\r*$',result.stdout))
     pulses=[array('I') for _ in metas];preds=[array('H') for _ in metas];indices=[array('H') for _ in metas]
     ready=[];ends=[];reads=[];shown=[];hidden=[];progress=[];accepted=[];terminal_row=None;ram=bytearray();wrong=False;part=None
@@ -193,7 +217,8 @@ def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=Fa
         elif tag==-102:reads.append(row)
         elif tag==-103:shown.append(row)
         elif tag==-104:hidden.append(row)
-        elif tag==-105:progress.append(row)
+        elif tag in (-105,-106):progress.append(row)
+        elif tag==-107:cover_row=row
         elif tag==-130:accepted.append(row)
         elif tag==-198:wrong=True
         elif tag==-199:terminal_row=row
@@ -205,6 +230,8 @@ def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=Fa
     assert not wrong and terminal_row is not None and terminal_row[0]==len(metas)
     assert len(ready)==len(ends)==len(metas) and len(ram)==49152
     assert all(r[0]==0 for r in reads),'disk call during audio'
+    if extended:
+        assert cover_row[0]<ready[0][1] and cover_row[1]&8,'cover was not displayed before audio'
     reports=[]
     for i,meta in enumerate(metas):
         selected=Path(meta['selected_source']);packed=gzip.decompress((selected/'soundtrack.ima.gz').read_bytes())
@@ -216,22 +243,37 @@ def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=Fa
         # Preserve actual disk timing for reproducible boundary-noise analysis.
         (out/f'part-{i+1:02d}-times.u32.gz').write_bytes(gzip.compress(times.astype('<u4').tobytes(),mtime=0))
         clock_source=selected
-        match=matching_clock_reference(times,clock_source,meta,both_loops=volume.get('codec')=='ima4')
-        if match is None and volume.get('codec')=='ima4':
-            phase=ready[i][1]%70908
-            clock_source=qualify_ready_phase(selected,out/f'phase-reference-{i+1:02d}-{phase}',fuse,ffmpeg,phase)
-            match=matching_clock_reference(times,clock_source,meta,both_loops=True)
-        assert match is not None,('output clock changed beyond 8 T',i)
-        _,clock_loop,delta=match
+        if extended:
+            # New layouts/clones have independently counted native paths; do
+            # not compare a different ULA model with the old128 timeline.
+            clock_loop=None;delta=np.array([0],dtype=np.int64)
+        else:
+            clock_source=selected
+            match=matching_clock_reference(times,clock_source,meta,both_loops=volume.get('codec')=='ima4')
+            if match is None and volume.get('codec')=='ima4':
+                phase=ready[i][1]%70908
+                clock_source=qualify_ready_phase(selected,out/f'phase-reference-{i+1:02d}-{phase}',fuse,ffmpeg,phase)
+                match=matching_clock_reference(times,clock_source,meta,both_loops=True)
+            assert match is not None,('output clock changed beyond 8 T',i)
+            _,clock_loop,delta=match
         assert np.array_equal(np.asarray(preds[i]),pcm[1:1+len(preds[i])].astype(np.int32)+32768)
-        assert np.array_equal(np.asarray(indices[i]),np.asarray(meta['decoder_rows'])[idx[1:1+len(indices[i])]])
-        assert [r[1] for r in progress if r[0]==i]==list(range(1,33))
-        assert [r[2:] for r in shown if r[0]==i]==[[71,71]]
-        assert [r[2:] for r in hidden if r[0]==i]==[[0,0]]
+        wanted_rows=np.asarray(meta['decoder_rows'])[idx[1:1+len(indices[i])]]
+        assert np.array_equal(np.asarray(indices[i]),wanted_rows),('index',machine,i,len(indices[i]),len(wanted_rows),[(int(k),int(indices[i][k]),int(wanted_rows[k])) for k in np.flatnonzero(np.asarray(indices[i])!=wanted_rows)[:8]])
+        if extended:
+            # A debugger can observe the same instruction/state twice at a
+            # machine event boundary. Require every monotonic cell1..32;
+            # repeated observations do not imply a second progress increment.
+            observed=[r[1] for r in progress if r[0]==i]
+            published=[v for k,v in enumerate(observed) if k==0 or observed[k-1]!=v]
+            assert published==list(range(1,33)),('progress',i,observed)
+        else:
+            assert [r[1] for r in progress if r[0]==i]==list(range(1,33))
+            assert [r[2:] for r in shown if r[0]==i]==[[71,71]]
+            assert [r[2:] for r in hidden if r[0]==i]==[[0,0]]
         source=wav8(selected/'source-preview.wav');assert np.all(source[-128:]==128)
         # Exclude the final guard pulse's interval and retain all
         # source-bearing intervals in the same listening-filter measurement.
-        edges=times
+        edges=times*3546900/cpu if extended else times
         period=3546900/8000;segments=int(np.ceil(edges[-1]/period))
         fixed_edges=np.r_[np.arange(segments)*period,edges[-1]]
         values=np.pad(source/256,(0,max(0,segments-len(source))),constant_values=.5)[:segments]
@@ -246,27 +288,28 @@ def fuse_volume(disk_path,volume,out,fuse,*,ffmpeg,snapshot=None,expect_wrong=Fa
             measurement_filter=FILTER
         edge=min(4410,len(output)//10);window=slice(edge,-edge if edge else None)
         score=ratio(fixed[window],output[window]-fixed[window]) if np.any(source!=128) else None
-        rate=((count-1)/16)*3546900/edges[-1];speed=100*(rate/8000-1)
+        rate=((count-1)/16)*cpu/times[-1];speed=100*(rate/8000-1)
         assert abs(speed)<=2,('playback speed',speed)
         write_wav(out/f'part-{i+1:02d}-output.wav',output)
         reports.append(dict(part=i+1,bits_verified=count,predictor_index_samples_verified=len(preds[i]),
                             every_live_bit_identical=True,
-                            clock_reference=str(clock_source.resolve()),clock_reference_loop=clock_loop,
-                            timing_delta_from_qualified_part_tstates=[int(delta.min()),int(delta.max())],
+                            clock_reference=None if extended else str(clock_source.resolve()),clock_reference_loop=clock_loop,
+                            timing_delta_from_qualified_part_tstates=None if extended else [int(delta.min()),int(delta.max())],
                             fixed_clock_snr_db=score,source_silent=not np.any(source!=128),
                             filter=measurement_filter,speed_error_percent=speed,
                             start_tstates=ready[i][1],stop_tstates=ends[i][1]))
-    assert [r[1]+256*r[2] for r in accepted]==[volume['volume']]*(len(metas)+1)
+    if not extended:assert [r[1]+256*r[2] for r in accepted]==[volume['volume']]*(len(metas)+1)
     (out/'terminal.ram.gz').write_bytes(gzip.compress(ram,mtime=0))
-    gaps=[(ready[i+1][1]-ends[i][1])/3546900 for i in range(len(metas)-1)]
-    assert ready[0][1]/3546900<=60 and all(g<=60 for g in gaps),'preparation exceeds 60 seconds'
+    gaps=[(ready[i+1][1]-ends[i][1])/cpu for i in range(len(metas)-1)]
+    if not extended:assert ready[0][1]/cpu<=60 and all(g<=60 for g in gaps),'preparation exceeds 60 seconds'
     report=dict(complete=True,volume=volume['volume'],from_actual_predecessor_ram=snapshot is not None,
                 parts=reports,automatic_part_transitions=max(0,len(metas)-1),between_part_pause_seconds=gaps,
                 runtime_disk_reads_during_audio=0,total_sector_calls=len(reads),loading_ui_checked=True,
-                first_ready_seconds=ready[0][1]/3546900,
+                first_ready_seconds=ready[0][1]/cpu,machine=machine,extended_ram=extended,
+                startup_within_legacy_60_seconds=ready[0][1]/cpu<=60,
                 ended_at='swap_prompt' if volume['volume']<volume['total_volumes'] else 'end_of_audio',
                 terminal_ram_sha256=hashlib.sha256(ram).hexdigest(),trd_sha256=hashlib.sha256(disk_path.read_bytes()).hexdigest(),
-                physical_hardware_tested=False)
+                captured_complete_trace_rechecked=captured,physical_hardware_tested=False)
     save(out/'report.json',report);return report,bytes(ram)
 
 

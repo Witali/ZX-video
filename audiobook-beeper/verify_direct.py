@@ -39,6 +39,9 @@ def intervals(meta):
         from ima3_direct_player import intervals as packed_intervals
         return packed_intervals(meta)
     holds=np.tile(HOLDS,meta['pcm_samples']).astype(np.int64);end=0
+    if meta.get('extended_ram'):
+        from ram_cache import timing_extra
+        holds[7::16]+=timing_extra(meta,meta.get('ram_profile','128'))
     for s in meta['sections']:
         for byte in range(256,s['bytes']+1,256):
             holds[(2*(end+byte)-3)*16+14]+=meta['bank_extra_tstates'] if byte==s['bytes'] else meta['page_extra_tstates']

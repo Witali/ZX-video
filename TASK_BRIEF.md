@@ -3,6 +3,40 @@
 Updated 2026-10-13. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## Adaptive audio RAM and cover loading — complete (2026-10-13)
+
+The user requests available RAM on Spectrum128, Scorpion256, Pentagon512
+and Pentagon1024, plus a cartoon title loaded before audio and a bottom
+progress bar. The adaptive sequential player now uses all distinct extra
+banks as a future-sector cache, reserves base code/tables/stack/TR-DOS/screen
+space explicitly, and keeps independently cold-bootable disks and128-KiB
+fallback. The public converter defaults to auto RAM; legacy layouts remain
+available with `--ram-cache off`. Supplied image/SCR covers survive loading.
+
+[RAM-audio evidence](audiobook-beeper/experiments/ram-audio/README.md) qualifies
+27 tests, four complete native/cold Fuse90-second song runs, eight cold IMA3
+volume runs, four actual predecessor continuations/wrong-disk rejections and
+all-four-model public CLI conversion. Every live pulse, predictor/index,
+native hold, bank guard, loading bar and END OF AUDIO is checked. Pentagon
+pacing adds26/18 T per ordinary IMA4/IMA3 sample;128/Scorpion delta0. The
+original uncompensated song remains a listening preview, not a20-dB release.
+
+Deliver `ZX-music-Sea-Foam-RAM-auto.trd`, one disk with the main song and real
+movie title. Pentagon1024 preloads the remaining volume before audio, with
+no subsequent floppy reads; active-part RAM copies still pause about1.9445 s
+and0.7645 s. Large RAM prefetch intentionally trades longer startup for
+fewer later disk reads; measured first start is96.82 s on Pentagon1024.
+
+## Next requested audio improvement: seamless RAM playback (2026-10-13)
+
+The user explicitly asks to eliminate the remaining Pentagon1024 part pauses
+as a future improvement. Replace intermediate RAM copies with direct
+extended-bank playback or prepared handoffs. Scope the next milestone around
+continuous complete-source playback, then verify all paging/decoder T-states,
+actual output intervals, four RAM models and independently bootable disks.
+Preserve current source/settings and quality gates; do not claim seamless
+playback from a disk-read count alone. Current release is delivered first.
+
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 
 The user requests separate reusable ZX0 and LZSA libraries with the project's

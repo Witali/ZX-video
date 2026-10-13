@@ -407,6 +407,8 @@ def legacy_main(argv=None, *, parents=()):
     parser.add_argument('--no-recording', action='store_true', help='skip normal-speed audible capture; keep complete native/cold-Fuse verification')
     parser.add_argument('--disk-mode',choices=('single','all','preview'),default='single',
                         help='single (default): fill one disk; all: whole track on disks; preview: looping RAM excerpt')
+    parser.add_argument('--ram-cache',choices=('auto','off'),default='auto',help='Sequential disks: detect128/256/512/1024 KiB and cache upcoming parts; off reproduces the legacy format.')
+    parser.add_argument('--cover',type=Path,help='Sequential adaptive disk cover: image or6912-byte Spectrum SCR.')
     parser.add_argument('--resume',action='store_true',help='resume a matching sequential conversion')
     add_dynamics_argument(parser)
     args = parser.parse_args(argv)

@@ -1,5 +1,61 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Integrate adaptive audio RAM, cover-first loading and a song disk
+
+- **Request/baseline:** Build on the cache-component commit `f65259fe` and
+  main `6168ba14`: available128/256/512/1024-KiB RAM, actual movie-title cover
+  before audio, and exact bottom loading progress. Preserve the user-selected
+  original direct IMA4 song preparation/model and90-second main cut; keep
+  old images and independently cold-bootable disks.
+- **Implementation:** Automatic distinct-bank detection; raw future-sector
+  cache; fixed-bank ROM bounce; protected16-byte state; compressed2.5-KiB
+  transient controller restored without floppy reads;1536-byte bank7 reserve.
+  Base128 KiB accounts for89856 audio/sector-alignment bytes,6912 screen,
+ 1536 controller and two16-KiB code/table/workspace banks. New active capacities
+ 179712 IMA4/239600 IMA3 samples. Global cover first, then PLAYER/tables/audio
+  and cache prefetch in the32-cell progress denominator. New public defaults
+  support image/SCR covers; `--ram-cache off` keeps legacy format.
+- **Deterministic CPU:** IMA4 ordinary423 T on128/Scorpion,449 T on Pentagon
+  (delta+26). IMA3 mean427.375/445.375 T (delta0/+18). Absolute JP10 T plus
+ 4/2 NOPs adds26/18 T while preserving original JP(IY), all registers and SP.
+  IMA4 page/bank extras14/140 T remain delta0. ROM/physical disk and ULA waits
+  are separately measured; no disk operation during live PDM.
+- **Complete verification:**27 tests;20 complete native song parts and four
+  complete cold Fuse song runs, each11,632,475 source/guard pulses with every
+  predictor/index and native hold checked. Eight cold IMA3 volume runs, four
+  actual predecessor continuations with other banks poisoned, four wrong-disk
+  rejections; the public CLI completes on all four models. Representative
+  legacy song-part TRD rebuild is byte-identical (`d5ba644d...`). See the
+  [summary](audiobook-beeper/experiments/ram-audio/evidence/summary.json),
+  [implementation/evidence guide](audiobook-beeper/experiments/ram-audio/README.md),
+  [song reproducer](audiobook-beeper/experiments/ram-audio/build.py) and
+  [disk-swap reproducer](audiobook-beeper/experiments/ram-audio/check_controls.py).
+- **Measured result/limits:** One TRD, all90 source seconds retained,90.88 s
+  including guards/padding.128 rate+0.0425..+0.0586%; Scorpion+0.7991..+0.7992%;
+  both Pentagons-0.2296..-0.2286%, within the unchanged2% gate.1024 startup
+ 96.82 s; then no floppy reads, but RAM-copy gaps1.9445/0.7645 s remain.
+ 512 startup89.78 s, three1.9445-s gaps and a9.2645-s final disk reload.
+  Scorpion startup46.83 s, cached2.0952-s transitions and a43.2892-s refill.
+  Large prefetch exceeds the former60-s startup target, explicitly reported
+  as the user-requested all-RAM loading tradeoff. Original uncompensated music
+  still fails20-dB fixed-clock SNR (approximately-3 dB); it remains a listening
+  preview. No invented quality upgrade or physical-hardware qualification.
+- **Rejected/partial attempts:**2-KiB controller overflow led to2.5-KiB code
+  and a separate bank7 compressed-controller reserve. Correct missing pacing
+  return and IMA3 decoder-input copy. Initial Scorpion+14/+10-T delay slowed
+  playback; complete IMA3 measurement rejected-2.94%, so retain its ULA-paced
+  delta0 path. Move index observation off a DD prefix; repeated identical
+  progress observations at machine boundaries are accepted only if the full
+  monotonic1..32 sequence remains. Recheck the final same-image/same-command
+  complete traces without omitting any samples/intervals; label saved postflight
+  separately. Preserve superseded attempts/logs and exact captured producer
+  sources plus the corrected observation verifier.
+- **Decision/delivery:** `ZX-music-Sea-Foam-RAM-auto.trd`, SHA256
+  `f3c131ba4fae9618e150016fc6d4a08b408203d0728408cc8b8a45d2f8bae771`.
+  Keep compatibility and deliver this measured improvement. The user separately
+  requests eliminating RAM-copy pauses as a future milestone; record direct
+  extended-bank playback in TASK_BRIEF without opening another experiment.
+
 ## 2026-10-13 — Add a reversible extended-RAM detector and sector cache
 
 - **Request/baseline:** User authorizes all available RAM on Spectrum128,

@@ -1,0 +1,20 @@
+{"stage": "encode", "part": 1, "total": 5}
+{"stage": "encode", "part": 2, "total": 5}
+{"stage": "encode", "part": 3, "total": 5}
+{"stage": "encode", "part": 4, "total": 5}
+{"stage": "encode", "part": 5, "total": 5}
+{"stage": "verify-all-four-machines", "used_sectors": 2261}
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\experiments\ram-audio\build.py", line 64, in <module>
+    p.add_argument('--ffmpeg',default=shutil.which('ffmpeg'));build(p.parse_args())
+                                                              ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\experiments\ram-audio\build.py", line 53, in build
+    verified=verify_series(out,args.fuse,args.ffmpeg)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\verify_ram_series.py", line 94, in verify_series
+    packed=gzip.decompress((Path(record['selected'])/'soundtrack.ima.gz').read_bytes())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\extended-audio-ram\audiobook-beeper\verify_ima3_series.py", line 249, in fuse_volume
+    assert np.array_equal(np.asarray(indices[i]),np.asarray(meta['decoder_rows'])[idx[1:1+len(indices[i])]])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

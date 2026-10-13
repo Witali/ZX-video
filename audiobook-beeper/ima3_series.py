@@ -163,6 +163,13 @@ def convert_series(args):
     if codec=='ima4':
         from convert_audio import convert
         from ima4_series import plan_parts as planner,plan_volumes as volumer,build_volume as packer,capacity_samples as capacity
+    adaptive=getattr(args,'ram_cache','auto')=='auto'
+    if adaptive:
+        from functools import partial
+        from ram_series import plan_parts as ram_parts,plan_volumes as ram_volumes,build_volume as ram_volume,capacity_samples as ram_capacity
+        planner=partial(ram_parts,codec=codec);volumer=ram_volumes
+        packer=partial(ram_volume,codec=codec,cover=getattr(args,'cover',None))
+        capacity=partial(ram_capacity,codec)
     if args.prepared_pcm or getattr(args,'reuse_pilot',None):
         raise ValueError('series mode accepts ordinary audio; --prepared-pcm/--reuse-pilot belong to the looping preview')
     out=args.output.resolve();manifest=out/'run.json'
@@ -171,6 +178,7 @@ def convert_series(args):
                   target_snr=args.target_snr,attempts=args.attempts,no_recording=args.no_recording,
                   ffmpeg_sha256=digest(Path(args.ffmpeg)),fuse_sha256=digest(args.fuse),
                   producers={p.name:digest(p) for p in HERE.iterdir() if p.suffix in ('.py','.asm')})
+    identity.update(ram_cache='auto' if adaptive else 'off',cover_sha256=digest(args.cover) if getattr(args,'cover',None) else None)
     if codec=='ima4':identity.update(codec=codec,iterations=args.iterations,refine_clock=args.refine_clock)
     if out.exists() and any(out.iterdir()):
         if not args.resume or not manifest.is_file() or json.loads(manifest.read_bytes())!=identity:
@@ -220,13 +228,17 @@ def convert_series(args):
         name='audio.trd' if args.disk_mode=='single' else f'audio-{number:04d}.trd'
         (out/name).write_bytes(disk);disks.append(dict(file=name,**meta))
     save(out/'volumes.json',disks)
-    verified=verify_series(out,args.fuse,args.ffmpeg)
+    if adaptive:
+        from verify_ram_series import verify_series as verify_ram
+        verified=verify_ram(out,args.fuse,args.ffmpeg)
+    else:verified=verify_series(out,args.fuse,args.ffmpeg)
     return write_series_report(out,args,original,parts,included,disks,qualities,verified,capacity)
 
 
 def write_series_report(out,args,original,parts,included,disks,qualities,verified,capacity):
     """Write the common export after complete generation or authenticated re-verification."""
-    measured=[p for run in verified['volumes']+verified['continuations'] for p in run['parts']]
+    all_runs=verified['volumes']+verified['continuations']+[r for name,runs in verified.get('machines',{}).items() if name!='128' for r in runs]
+    measured=[p for run in all_runs for p in run['parts']]
     passed=all(qualities) and all(p['source_silent'] or p['fixed_clock_snr_db'] is not None
                                 and p['fixed_clock_snr_db']>=args.target_snr for p in measured)
     report=dict(complete=True,disk_mode=args.disk_mode,disks=[d['file'] for d in disks],
@@ -237,6 +249,7 @@ def write_series_report(out,args,original,parts,included,disks,qualities,verifie
                 sample_rate_hz=8000,silence_guard_samples=128,edge_fade_samples=80,
                 maximum_prepared_samples_per_part=capacity(),
                 quality_gate_passed=passed,preview_only=not passed,
+                ram_cache=getattr(args,'ram_cache','auto'),cover=str(args.cover) if getattr(args,'cover',None) else None,
                 loading_between_parts=True,simultaneous_disk_and_audio=False,verification=verified,
                 physical_hardware_tested=False)
     save(out/'report.json',report)

@@ -6,6 +6,7 @@ from feedback_player import loading_screen
 from ima_codec import decode,STEPS,INDEX,require_unclipped
 from pcm_player import TrdFile,basic_line,calculate_file_start,place_files
 from probe_feedback_packets import model_table
+from ram_cache import pack_controller,write_decoder,enabled as ram_enabled,copy_worker,IMA3_BYTES
 
 HERE=Path(__file__).resolve().parent
 LEGACY_BANK2_RESERVE=14336
@@ -42,6 +43,9 @@ def intervals(meta):
     phase_holds=[first+[26,22,27,23,16,12+before[p],12+after[p],33 if p==7 else 30]
                  for p in range(8)]
     holds=np.asarray([phase_holds[(i+2)%8] for i in range(meta['pcm_samples'])],dtype=np.int64).ravel()
+    if meta.get('extended_ram'):
+        from ram_cache import pack_controller,write_decoder,timing_extra
+        holds[7::16]+=timing_extra(meta,meta.get('ram_profile','128'))
     sample=0
     for s in meta['sections']:
         for byte in range(3,s['audio_bytes']+1,3):
@@ -84,6 +88,7 @@ def decoder_slots(second,pointers,*,compact_tables=True,startup_gap=True):
 
 def layout(packed,model=None,hot_indices=None,*,compact_tables=True,startup_gap=True,chained=False):
     model=model or MEASURED_MODEL
+    extended=ram_enabled(model)
     bins=model.get('pcm_bins',64)
     words,nxt,_=model_table(model)
     reachable={16}
@@ -94,7 +99,7 @@ def layout(packed,model=None,hot_indices=None,*,compact_tables=True,startup_gap=
     states=sorted(reachable);assert len(states)*6<=128
     first_patterns=sorted(set(map(int,(words[:,states]>>8).ravel())))
     second_patterns=sorted(set(map(int,(words[:,states]&255).ravel())))
-    first_size=46 if bins==128 else 41
+    first_size=(46 if bins==128 else 41)+int(extended)
     first={p:0x8400+i*first_size for i,p in enumerate(first_patterns)}
     base=0x8400+len(first)*first_size
     second={p:base+i*20 for i,p in enumerate(second_patterns)}
@@ -125,8 +130,12 @@ def layout(packed,model=None,hot_indices=None,*,compact_tables=True,startup_gap=
         reserve=max(reserve,(max(rows.values())+32+64+255)//256*256-0x8000)
     resident=pack3(packed)
     assert len(resident)%3==0
+    if extended:
+        assert reserve<=14336,'playback tables overlap the reserved loader worker'
+        assert len(states)<=18,'persistent cache state needs a16-byte packet-page gap'
+        reserve=16384
     sections=[];remaining=len(resident)
-    for bank,capacity in [(b,16383) for b in (0,4,6,1,3)]+[(7,9471),(2,(16384-reserve)//3*3)]:
+    for bank,capacity in [(b,16383) for b in (0,4,6,1,3)]+[(7,7935 if extended else 9471),(2,(16384-reserve)//3*3)]:
         size=min(remaining,capacity)
         if size:
             allocated=(size+255)//256*256
@@ -137,11 +146,20 @@ def layout(packed,model=None,hot_indices=None,*,compact_tables=True,startup_gap=
     return words,nxt,states,first,second,pointers,pages,rows,sections,hot,float(counts[hot].sum()/counts.sum()),reserve
 
 
-def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*,compact_tables=True,chain=None,storage=None):
+def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*,compact_tables=True,chain=None,storage=None,cover=None):
     """Build a standalone disk, or external-volume assembly with disk=None."""
     if (chain is None)!=(storage is None):raise ValueError('chain and external storage must be supplied together')
     model=model or MEASURED_MODEL
     work=Path(work).resolve();work.mkdir(parents=True,exist_ok=True)
+    extended=ram_enabled(model)
+    if extended:
+        copy_worker(work)
+        if chain:
+            write_decoder(work)
+            controller=pack_controller(chain['controller_blob'])
+            assert len(controller)<=1536,'transient controller exceeds bank7 reserve'
+            (work/'controller.lzsa').write_bytes(controller+bytes(1536-len(controller)))
+        else:(work/'controller.lzsa').write_bytes(bytes(1536))
     # Calibration uses at most 260 T of explicit padding. Even with seven
     # LOAD_AUDIOs and six idle blocks it leaves 8380..83FF unused. Larger
     # externally requested fillers retain the old startup gap instead.
@@ -177,7 +195,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     memory[pointers:pointers+256]=bytes(pages[i*bins//256]>>8 for i in range(256))
     basic=b''.join([basic_line(10,b'\xfd \xb0 "32767"'),basic_line(20,b'\xf9 \xc0 \xb0 "15619":\xea:\xef "PLAYER" \xaf'),basic_line(30,b'\xf9 \xc0 \xb0 "32768"')])
     boot=TrdFile('boot','B',basic,autostart_line=10)
-    track,sector=calculate_file_start([boot,TrdFile('PLAYER','C',bytes(23296),start=0x8000)])
+    track,sector=calculate_file_start([boot,TrdFile('PLAYER','C',bytes(24832 if extended else 23296),start=0x8000)])
     lower=track*16+sector;upper=lower+28;pos=upper+32
     for s in sections:s['sector']=pos;pos+=s['sectors']
     if storage is not None:
@@ -187,7 +205,10 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     total_reads=60+sum(s['sectors'] for s in sections)
     progress_steps=np.diff(np.r_[0,(np.arange(1,33)*total_reads+31)//32])
     assert np.all((progress_steps>0)&(progress_steps<256))
-    constants=dict(lpc_preloaded=0,screen_disk=0,first_base=0x8400,first_size=46 if bins==128 else 41,
+    constants=dict(lpc_preloaded=0,screen_disk=0,extended_ram=int(extended),first_patterns=len(first),codec_bits=3,
+                   cache_future_sector=chain.get('future_sector',0) if chain else 0,
+                   cache_disk_end_sector=chain.get('end_sector',0) if chain else 0,
+                   first_base=0x8400,first_size=(46 if bins==128 else 41)+int(extended),
                    reset_feedback_tail=int(model.get('reset_feedback_in_guard',False)),
                    chained_playback=int(chain is not None),chain_disk=chain['controller_disk'] if chain else 0,
                    chain_sectors=chain['controller_sectors'] if chain else 0,
@@ -216,7 +237,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
                       ('decoder-extra',memory[pointers+256:decoder_end] if bins==128 else memory[pointers+1280:pointers+1280+2336]),
                       ('bank5-lower',memory[0x4000:0x5c00]),('bank5-upper',memory[0x6000:0x8000]),
                       ('progress-steps',bytes(progress_steps[1:].astype('u1'))+bytes([255])),
-                      ('screen',direct_loading_screen(len(packed)*2,chain))]:
+                      ('screen',cover if cover is not None else direct_loading_screen(len(packed)*2,chain))]:
         (work/(name+'.bin')).write_bytes(data)
     (work/'player.asm').write_bytes((HERE/'ima3-direct-player.asm').read_bytes())
     run=subprocess.run([sys.executable,'-m','pyz80.pyz80','--obj=player.bin','--lstfile=player.lst','-s','.*','player.asm'],cwd=work,capture_output=True,text=True)
@@ -224,8 +245,8 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     if run.returncode:raise RuntimeError(run.stdout+run.stderr)
     labels=next(ast.literal_eval(s) for s in run.stdout.splitlines() if s.startswith('{'))
     assert labels['resident_end']<=0x8000+reserve
-    if chain is not None:assert labels['resident_end']-labels['chain_exit']<=64
-    blob=(work/'player.bin').read_bytes();assert len(blob)==23296
+    if chain is not None and not extended:assert labels['resident_end']-labels['chain_exit']<=64
+    blob=(work/'player.bin').read_bytes();assert len(blob)==(24832 if extended else 23296)
     files=[boot,TrdFile('PLAYER','C',blob,start=0x8000),TrdFile('LOWER','C',bytes(memory[0x4000:0x5c00]),start=0x4000),TrdFile('UPPER','C',bytes(memory[0x6000:0x8000]),start=0x6000)]
     offset=0
     for i,s in enumerate(sections):
@@ -235,6 +256,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     # assembly only: never return a misleading standalone disk for that case.
     disk,directory,capacity=place_files(files,'IMADIR') if storage is None else (None,[],{})
     meta=dict(direct=True,packed_ima3_direct=True,phase_base=pointers-2048,model=model,origin=0x8000,player_labels=labels,sections=sections,directory=directory,capacity=capacity,
+              extended_ram=extended,first_code_bytes=(46 if bins==128 else 41)+int(extended),
               first_addresses=list(first.values()),second_addresses=list(second.values()),
               first_patterns=len(first),second_patterns=len(second),resident_reserve=reserve,
               loop_idle_pairs=idle_pairs,loop_idle_pad_tstates=idle_pad,
@@ -246,7 +268,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
               baseline_ordinary_tstates=423,ordinary_delta_tstates=4.375 if bins==128 else 2.875,
               initial_predictor=0,initial_index=0,initial_feedback=16,paging_base=24,preload_table_sectors=60,
               playback_preload_sector_reads=60+sum(s['sectors'] for s in sections),
-              loading_progress_steps=32,chained_playback=chain,
+              loading_progress_steps=32,chained_playback={k:v for k,v in chain.items() if k!='controller_blob'} if chain else None,
               record_stop_addresses=[a+2 for a in first.values()],repeat=True,
               mutable_addresses=[labels['bank_jump']+1,labels['bank_jump']+2],
               source_sample_rate_hz=8000,cpu_clock_hz=3546900,saturation_guard=require_unclipped(packed),
@@ -259,7 +281,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
                           decoder_table_bytes=89*32,decoder_rows_retained=89,
                           decoder_bytes_in_code_gaps=sum(32 for a in rows.values() if a<pointers),
                           decoder_bytes_after_pointer_table=sum(32 for a in rows.values() if a>=pointers+256),
-                          unused_audio_capacity_bytes=5*16383+9471+(16384-reserve)//3*3-len(resident),
+                          unused_audio_capacity_bytes=5*16383+(7935 if extended else 9471)+(16384-reserve)//3*3-len(resident),
                           maximum_ima3_bytes=5*16383+9471+(16384-reserve)//3*3,
                           maximum_pcm_samples=(5*16383+9471+(16384-reserve)//3*3)//3*8,
                           resident_ima4_bytes=0,pcm_buffer_bytes=0,pdm_buffer_bytes=0))

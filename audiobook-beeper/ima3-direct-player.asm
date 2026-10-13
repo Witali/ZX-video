@@ -38,6 +38,11 @@ start:  DI
         IM 1
         XOR A
         OUT (0xFE),A
+        IF extended_ram
+        IF chained_playback == 0
+        CALL cache_detect
+        ENDIF
+        ENDIF
         IF lpc_preloaded
         LD BC,0x7FFD
         LD A,31
@@ -51,6 +56,12 @@ start:  DI
         LD DE,0x4000
         LD BC,6912
         LDIR
+        IF extended_ram
+        LD HL,screen_data+6912
+        LD DE,0x6000
+        LD BC,1536
+        LDIR
+        ENDIF
         LD BC,0x7FFD
         LD A,31
         OUT (C),A
@@ -58,7 +69,16 @@ start:  DI
         LD DE,0xC000
         LD BC,6912
         LDIR
+        IF extended_ram
+        LD HL,0x6000
+        LD DE,0xDB00
+        LD BC,1536
+        LDIR
         ENDIF
+        ENDIF
+        IF extended_ram
+        CALL cache_draw_bar
+        ELSE
         LD HL,0xD800
         LD B,96
 show_loading:
@@ -71,6 +91,7 @@ show_progress:
         LD (HL),0x08
         INC L
         DJNZ show_progress
+        ENDIF
 loading_visible: ASSERT 1
         EI
 ; Skip the four bank-5 pages occupied by TR-DOS workspace.
@@ -95,6 +116,11 @@ loading_visible: ASSERT 1
         LD BC,0x7FFD
         LD A,31
         OUT (C),A
+        IF extended_ram
+        LD HL,cache_future_sector
+        LD DE,cache_disk_end_sector
+        CALL cache_prefetch
+        ELSE
         LD HL,0xD800
         LD B,96
 hide_loading:
@@ -107,7 +133,11 @@ hide_progress:
         LD (HL),0
         INC L
         DJNZ hide_progress
+        ENDIF
 loading_hidden: ASSERT 1
+        IF extended_ram
+        CALL patch_hardware_timing
+        ENDIF
         SILENCE_AY 8
         SILENCE_AY 9
         SILENCE_AY 10
@@ -253,7 +283,13 @@ read_next:
         PUSH HL
         LD DE,(disk_position)
         LD BC,0x0105
-disk_call: CALL 0x3D13
+disk_call:
+        IF extended_ram
+        LD A,(load_bank)
+        CALL cache_read_sector
+        ELSE
+        CALL 0x3D13
+        ENDIF
         POP HL
         POP BC
         INC H
@@ -273,6 +309,14 @@ disk_position: DW 0
 ; Bank 7 remains the visible screen even while another bank receives audio.
 ; Interrupts are disabled only while its attribute row is temporarily paged in.
 update_progress:
+        IF extended_ram
+        PUSH HL
+        PUSH BC
+        CALL cache_progress
+        POP BC
+        POP HL
+        RET
+        ELSE
         PUSH HL
         LD HL,progress_remaining
         DEC (HL)
@@ -304,6 +348,7 @@ load_progress_event:
 progress_return:
         POP HL
         RET
+        ENDIF
 load_bank: DB 31
 load_progress: DB 0
 progress_remaining: DB progress_first
@@ -368,6 +413,9 @@ FIRST: MACRO
         LD SP,HL
         PULSE (\0) & 1
         JP (IY)
+        IF extended_ram
+        DEFB 0                  ; never executed by the ordinary128 dispatch
+        ENDIF
         ASSERT $ == first_address_\0+first_size
         ENDIF
         ENDM
@@ -1127,6 +1175,23 @@ code_end:
         MDAT "decoder-extra.bin"
         IF chained_playback
 chain_exit:
+        IF extended_ram
+        DI
+        LD SP,0x6000
+        LD IY,0x5C3A
+        IM 1
+        XOR A
+        OUT (0xFE),A
+        LD BC,0x7FFD
+        LD A,31
+        OUT (C),A
+        LD HL,0xDB00
+        LD DE,0x4000
+        CALL DecompressLZSA2
+        LD HL,chain_volume
+        LD A,chain_next_slot
+        JP 0x400B
+        ELSE
         DI
         LD SP,0x6000
         LD IY,0x5C3A
@@ -1156,10 +1221,63 @@ chain_retry:
         LD A,chain_next_slot
         JP 0x400B              ; fixed warm entry, after the signature
         ENDIF
+        ENDIF
 resident_end:
         ASSERT $ <= 0x8000+resident_reserve
+        IF extended_ram
+        ASSERT $ <= 0xB800
+        DS 0xB800-$
+        INCLUDE "ram-cache.asm"
+; Clone pacing preserves all main/alternate registers and the lookup SP.
+; Standard128 keeps JP(IY); redirect JP adds10 T, Pentagon entry two NOPs.
+hardware_delay:
+        NOP
+        NOP
+        NOP
+        NOP
+        JP (IY)
+patch_hardware_timing:
+        LD A,(cache_mode)
+        OR A
+        RET Z
+        CP 1
+        LD DE,hardware_delay+2
+        JR NZ,patch_pentagon
+        RET                     ; Scorpion retains the128-style ULA-paced path
+        NOP                     ; retain all addresses in the fixed worker
+        NOP
+patch_pentagon:
+        LD HL,first_base+first_size-3
+        LD B,first_patterns
+patch_first:
+        LD (HL),0xC3
+        INC HL
+        LD (HL),E
+        INC HL
+        LD (HL),D
+        LD A,L
+        ADD A,first_size-2
+        LD L,A
+        JR NC,patch_first_next
+        INC H
+patch_first_next:
+        DJNZ patch_first
+        RET
+        IF chained_playback
+        INCLUDE "cache-lzsa.asm"
+        ENDIF
+worker_end:
+        ASSERT $ <= 0xC000
+        ENDIF
         DS 0xC000-$
 screen_data:
         MDAT "screen.bin"
+        IF extended_ram
+        MDAT "controller.lzsa"
+        ENDIF
 player_end:
+        IF extended_ram
+        ASSERT $ == 0xE100
+        ELSE
         ASSERT $ == 0xDB00
+        ENDIF

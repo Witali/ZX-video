@@ -66,6 +66,10 @@ def native_check(disk,meta,packed,reference_fn=reference,intervals_fn=intervals)
     labels=meta['player_labels'];blob=extract_player(disk)
     m=Z80Machine();m.memory[:]=b'\xa5'*65536
     m.set_memory_block(0x8000,blob[:16384])
+    if meta.get('extended_ram'):
+        from ram_cache import playback_patch
+        for address,data in playback_patch(meta,meta.get('ram_profile','128')):
+            m.set_memory_block(address,data)
     if meta.get('direct'):
         for key,address,count in [('lower_disk',0x4000,28),('upper_disk',0x6000,32)]:
             location=labels[key];sector=(location>>8)*16+(location&255)
@@ -84,7 +88,7 @@ def native_check(disk,meta,packed,reference_fn=reference,intervals_fn=intervals)
         payload=(disk[s['sector']*256:(s['sector']+s['sectors'])*256]
                  if meta.get('packed_ima3_direct') else packed[offset:offset+s['bytes']])
         data[s['address']-0xc000:]=payload
-        if s['bank']==7:data[:6912]=blob[16384:]
+        if s['bank']==7:data[:len(blob)-16384]=blob[16384:]
         if s['bank']==2:m.set_memory_block(s['address']-0x4000,data[s['address']-0xc000:])
         banks[s['bank']]=data;offset+=s['bytes']
     before=bytes(m.memory[0x4000:0xc000]);bits=bytearray();times=array('I');pages=[];checked=0

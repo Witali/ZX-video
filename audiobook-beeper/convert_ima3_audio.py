@@ -193,6 +193,8 @@ def main(argv=None, *, parents=()):
                    help='best: complete and verify all requested waveform searches; balanced: stop at target')
     p.add_argument('--prepared-pcm',action='store_true',help='reuse an exact PCM8/8k mono reference with its existing silent guard')
     p.add_argument('--no-recording',action='store_true',help='skip normal-speed sound capture, retaining full native/Fuse trace checks')
+    p.add_argument('--ram-cache',choices=('auto','off'),default='auto',help='Sequential disks: detect128/256/512/1024 KiB and cache upcoming parts; off reproduces the legacy format.')
+    p.add_argument('--cover',type=Path,help='Sequential adaptive disk cover: image or6912-byte Spectrum SCR.')
     p.add_argument('--resume',action='store_true')
     from audio_dynamics import add_argument
     add_argument(p)

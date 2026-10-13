@@ -1,0 +1,840 @@
+                 	
+                 	; Adaptive transient TR-DOS controller; no cache work during audio.
+                 	; Transient TR-DOS controller. Never resident during PDM playback.
+                 	; Bank5:4000..49FF controller,4A00 header,4C00 incoming header.
+                 	; It loads a complete independently runnable PLAYER into bank 2/bank 0,
+                 	; then that player's normal loader fills the audio banks and replaces us.
+                 	
+8000              	initial_volume: EQU 1
+8000              	header_disk: EQU 267
+8000              	cover_disk: EQU 269
+8000              	        INCLUDE "chain-config.inc"
+4000              	        ORG 0x4000
+4000 C3 22 40     	        JP cold_start
+4003 31           	        DEFM "IMA3CHN1"
+                 	resume_entry:
+400B              	        ASSERT $ == 0x400B
+400B F3           	        DI
+400C 31 00 60     	        LD SP,0x6000
+400F FD 21 3A 5C  	        LD IY,0x5C3A
+4013 ED 56        	        IM 1
+4015 32 61 42     	        LD (slot),A
+4018 22 62 42     	        LD (expected_volume),HL
+401B FB           	        EI
+401C CD 0E 41     	        CALL read_header
+401F C3 67 40     	        JP choose_part
+                 	cold_start:
+4022 F3           	        DI
+4023 31 00 60     	        LD SP,0x6000
+4026 FD 21 3A 5C  	        LD IY,0x5C3A
+402A ED 56        	        IM 1
+402C AF           	        XOR A
+402D 32 61 42     	        LD (slot),A
+4030 32 72 5B     	        LD (cache_mode),A
+4033 32 79 5B     	        LD (cache_progress_enabled),A
+4036 21 00 00     	        LD HL,0
+4039 22 76 5B     	        LD (cache_count),HL
+403C 21 01 00     	        LD HL,initial_volume
+403F 22 62 42     	        LD (expected_volume),HL
+4042 FB           	        EI
+4043 CD 0E 41     	        CALL read_header
+                 	        ; Display the independently stored cover before probing/loading audio.
+4046 3E 1F        	        LD A,31
+4048 32 C6 42     	        LD (load_bank),A
+404B 01 FD 7F     	        LD BC,0x7FFD
+404E ED 79        	        OUT (C),A
+4050 11 0D 01     	        LD DE,cover_disk
+4053 21 00 C0     	        LD HL,0xC000
+4056 06 1B        	        LD B,27
+4058 CD 31 42     	        CALL read_n
+                 	cover_visible:
+405B CD 6C 43     	        CALL cache_detect
+405E 2A 62 42     	        LD HL,(expected_volume)
+4061 22 7E 5B     	        LD (cache_volume),HL
+4064 C3 67 40     	        JP choose_part
+                 	
+                 	choose_part:
+4067 3A 61 42     	        LD A,(slot)
+406A 21 1C 4A     	        LD HL,0x4a1c
+406D BE           	        CP (HL)
+406E 38 4C        	        JR C,load_part
+4070 2A 62 42     	        LD HL,(expected_volume)
+4073 ED 5B 1A 4A  	        LD DE,(0x4a1a)          ; number of disks in this series
+4077 B7           	        OR A
+4078 ED 52        	        SBC HL,DE
+407A 28 37        	        JR Z,end_audio
+407C 2A 62 42     	        LD HL,(expected_volume)
+407F 23           	        INC HL
+4080 22 62 42     	        LD (expected_volume),HL
+4083 21 80 4A     	        LD HL,0x4a80           ; INSERT DISK NNNN
+4086 CD EE 41     	        CALL show
+4089 21 91 42     	        LD HL,space_message
+408C 11 60 C0     	        LD DE,0xC060
+408F CD 14 42     	        CALL print
+                 	swap_prompt:
+4092 CD DD 41     	        CALL wait_space
+                 	key_accepted:
+4095 CD 0E 41     	        CALL read_header
+                 	        ; A new volume is independently pictured before its first audio load.
+4098 3E 1F        	        LD A,31
+409A 32 C6 42     	        LD (load_bank),A
+409D 01 FD 7F     	        LD BC,0x7FFD
+40A0 ED 79        	        OUT (C),A
+40A2 11 0D 01     	        LD DE,cover_disk
+40A5 21 00 C0     	        LD HL,0xC000
+40A8 06 1B        	        LD B,27
+40AA CD 31 42     	        CALL read_n
+                 	continuation_cover_visible:
+40AD AF           	        XOR A
+40AE 32 61 42     	        LD (slot),A
+40B1 18 B4        	        JR choose_part
+                 	end_audio:
+40B3 21 B9 42     	        LD HL,end_message
+40B6 CD EE 41     	        CALL show
+                 	finished:
+40B9 76           	        HALT
+40BA 18 FD        	        JR finished
+                 	
+                 	load_part:
+40BC 3A 61 42     	        LD A,(slot)
+40BF 87           	        ADD A,A
+40C0 6F           	        LD L,A
+40C1 26 00        	        LD H,0
+40C3 11 20 4A     	        LD DE,0x4a20
+40C6 19           	        ADD HL,DE
+40C7 5E           	        LD E,(HL)
+40C8 23           	        INC HL
+40C9 56           	        LD D,(HL)
+40CA ED 53 C7 42  	        LD (record_disk),DE
+40CE 2A 40 4B     	        LD HL,(0x4B40)
+40D1 22 F9 45     	        LD (cache_disk_end),HL
+40D4 3A 61 42     	        LD A,(slot)
+40D7 87           	        ADD A,A
+40D8 6F           	        LD L,A
+40D9 26 00        	        LD H,0
+40DB 11 C0 4A     	        LD DE,0x4ac0
+40DE 19           	        ADD HL,DE
+40DF 5E           	        LD E,(HL)
+40E0 23           	        INC HL
+40E1 56           	        LD D,(HL)
+40E2 2A C7 42     	        LD HL,(record_disk)
+40E5 D5           	        PUSH DE
+40E6 54           	        LD D,H
+40E7 5D           	        LD E,L
+40E8 CD 00 44     	        CALL cache_linear
+40EB D1           	        POP DE
+40EC 3E 18        	        LD A,24
+40EE 32 EC 45     	        LD (cache_destination_page),A
+40F1 CD 91 45     	        CALL cache_begin_progress
+40F4 ED 5B C7 42  	        LD DE,(record_disk)
+40F8 01 FD 7F     	        LD BC,0x7FFD
+40FB 3E 18        	        LD A,24                ; bank 0 with the shadow screen still visible
+40FD ED 79        	        OUT (C),A
+40FF 32 C6 42     	        LD (load_bank),A
+4102 21 00 80     	        LD HL,0x8000
+4105 06 61        	        LD B,97                ; code64 + screen27 + compressed controller6 sectors
+4107 CD 31 42     	        CALL read_n
+                 	player_loaded:
+410A F3           	        DI
+410B C3 00 80     	        JP 0x8000
+                 	
+                 	; Only a complete same-volume cached record may bypass physical identity
+                 	; checks. Otherwise authenticate the inserted disk before any audio reads.
+                 	read_header:
+410E AF           	        XOR A
+410F 32 79 5B     	        LD (cache_progress_enabled),A
+4112 2A 62 42     	        LD HL,(expected_volume)
+4115 11 01 00     	        LD DE,initial_volume
+4118 B7           	        OR A
+4119 ED 52        	        SBC HL,DE
+411B 20 50        	        JR NZ,read_header_rom
+411D 2A 7E 5B     	        LD HL,(cache_volume)
+4120 B7           	        OR A
+4121 ED 52        	        SBC HL,DE
+4123 20 48        	        JR NZ,read_header_rom
+4125 21 0B 47     	        LD HL,header_seed
+4128 11 00 4A     	        LD DE,0x4a00
+412B 01 00 02     	        LD BC,512
+412E ED B0        	        LDIR
+4130 3A 61 42     	        LD A,(slot)
+4133 21 1C 4A     	        LD HL,0x4a1c
+4136 BE           	        CP (HL)
+4137 D2 C7 41     	        JP NC,header_accepted
+413A 87           	        ADD A,A
+413B 6F           	        LD L,A
+413C 26 00        	        LD H,0
+413E 11 20 4A     	        LD DE,0x4a20
+4141 19           	        ADD HL,DE
+4142 5E           	        LD E,(HL)
+4143 23           	        INC HL
+4144 56           	        LD D,(HL)
+4145 CD 00 44     	        CALL cache_linear
+4148 ED 5B 74 5B  	        LD DE,(cache_start)
+414C B7           	        OR A
+414D ED 52        	        SBC HL,DE
+414F 38 1C        	        JR C,read_header_rom
+4151 3A 61 42     	        LD A,(slot)
+4154 87           	        ADD A,A
+4155 6F           	        LD L,A
+4156 26 00        	        LD H,0
+4158 11 C0 4A     	        LD DE,0x4ac0
+415B 19           	        ADD HL,DE
+415C 5E           	        LD E,(HL)
+415D 23           	        INC HL
+415E 56           	        LD D,(HL)
+415F 2A 74 5B     	        LD HL,(cache_start)
+4162 ED 4B 76 5B  	        LD BC,(cache_count)
+4166 09           	        ADD HL,BC
+4167 B7           	        OR A
+4168 ED 52        	        SBC HL,DE
+416A D2 C7 41     	        JP NC,header_accepted
+                 	read_header_rom:
+416D 3E 18        	        LD A,24
+416F 32 C6 42     	        LD (load_bank),A
+4172 11 0B 01     	        LD DE,header_disk
+4175 21 00 4C     	        LD HL,0x4c00
+4178 06 02        	        LD B,2
+417A CD 31 42     	        CALL read_n
+417D 21 00 4C     	        LD HL,0x4c00
+4180 11 66 42     	        LD DE,identity
+4183 06 18        	        LD B,24                ; magic and 128-bit series identity
+                 	check_identity:
+4185 1A           	        LD A,(DE)
+4186 BE           	        CP (HL)
+4187 20 3F        	        JR NZ,wrong_disk
+4189 23           	        INC HL
+418A 13           	        INC DE
+418B 10 F8        	        DJNZ check_identity
+418D ED 5B 62 42  	        LD DE,(expected_volume)
+4191 7E           	        LD A,(HL)
+4192 BB           	        CP E
+4193 20 33        	        JR NZ,wrong_disk
+4195 23           	        INC HL
+4196 7E           	        LD A,(HL)
+4197 BA           	        CP D
+4198 20 2E        	        JR NZ,wrong_disk
+419A 3A 1C 4C     	        LD A,(0x4c1c)
+419D B7           	        OR A
+419E 28 28        	        JR Z,wrong_disk
+41A0 FE 21        	        CP 33
+41A2 30 24        	        JR NC,wrong_disk
+41A4 21 00 4C     	        LD HL,0x4c00
+41A7 11 00 4A     	        LD DE,0x4a00
+41AA 01 00 02     	        LD BC,512
+41AD ED B0        	        LDIR
+41AF 2A 62 42     	        LD HL,(expected_volume)
+41B2 ED 5B 7E 5B  	        LD DE,(cache_volume)
+41B6 B7           	        OR A
+41B7 ED 52        	        SBC HL,DE
+41B9 28 0C        	        JR Z,header_accepted
+41BB 21 00 00     	        LD HL,0
+41BE 22 76 5B     	        LD (cache_count),HL
+41C1 2A 62 42     	        LD HL,(expected_volume)
+41C4 22 7E 5B     	        LD (cache_volume),HL
+                 	header_accepted:
+41C7 C9           	        RET
+                 	wrong_disk:
+41C8 21 A2 42     	        LD HL,wrong_message
+41CB CD EE 41     	        CALL show
+41CE 21 91 42     	        LD HL,space_message
+41D1 11 60 C0     	        LD DE,0xC060
+41D4 CD 14 42     	        CALL print
+                 	wrong_disk_prompt:
+41D7 CD DD 41     	        CALL wait_space
+41DA C3 0E 41     	        JP read_header
+                 	
+                 	wait_space:
+41DD 01 FE 7F     	        LD BC,0x7FFE
+                 	key_release:
+41E0 ED 78        	        IN A,(C)
+41E2 E6 01        	        AND 1
+41E4 28 FA        	        JR Z,key_release
+                 	key_press:
+41E6 76           	        HALT
+41E7 ED 78        	        IN A,(C)
+41E9 E6 01        	        AND 1
+41EB 20 F9        	        JR NZ,key_press
+41ED C9           	        RET
+                 	
+                 	show:
+41EE E5           	        PUSH HL
+41EF 01 FD 7F     	        LD BC,0x7FFD
+41F2 3E 1F        	        LD A,31
+41F4 ED 79        	        OUT (C),A
+41F6 21 00 C0     	        LD HL,0xC000
+41F9 11 01 C0     	        LD DE,0xC001
+41FC 01 FF 17     	        LD BC,6143
+41FF 36 00        	        LD (HL),0
+4201 ED B0        	        LDIR
+4203 21 00 D8     	        LD HL,0xD800
+4206 11 01 D8     	        LD DE,0xD801
+4209 01 FF 02     	        LD BC,767
+420C 36 47        	        LD (HL),0x47
+420E ED B0        	        LDIR
+4210 E1           	        POP HL
+4211 11 40 C0     	        LD DE,0xC040
+                 	print:
+4214 7E           	        LD A,(HL)
+4215 B7           	        OR A
+4216 C8           	        RET Z
+4217 23           	        INC HL
+4218 E5           	        PUSH HL
+4219 6F           	        LD L,A
+421A 26 00        	        LD H,0
+421C 29           	        ADD HL,HL
+421D 29           	        ADD HL,HL
+421E 29           	        ADD HL,HL
+421F 01 00 3C     	        LD BC,0x3C00           ; 48K ROM font, selected by paging value 31
+4222 09           	        ADD HL,BC
+4223 D5           	        PUSH DE
+4224 06 08        	        LD B,8
+                 	glyph:
+4226 7E           	        LD A,(HL)
+4227 12           	        LD (DE),A
+4228 23           	        INC HL
+4229 14           	        INC D
+422A 10 FA        	        DJNZ glyph
+422C D1           	        POP DE
+422D 1C           	        INC E
+422E E1           	        POP HL
+422F 18 E3        	        JR print
+                 	
+                 	; Same sector progression as the proven player loader. ROM/disk latency
+                 	; belongs to the between-part pause, not the PDM CPU timing budget.
+                 	read_n:
+4231 ED 53 64 42  	        LD (disk_position),DE
+                 	read_next:
+4235 C5           	        PUSH BC
+4236 E5           	        PUSH HL
+4237 ED 5B 64 42  	        LD DE,(disk_position)
+423B 01 05 01     	        LD BC,0x0105
+                 	disk_call:
+423E 3A C6 42     	        LD A,(load_bank)
+4241 CD 22 44     	        CALL cache_read_sector
+4244 E1           	        POP HL
+4245 C1           	        POP BC
+4246 24           	        INC H
+4247 ED 5B 64 42  	        LD DE,(disk_position)
+424B 1C           	        INC E
+424C CB 63        	        BIT 4,E
+424E 28 03        	        JR Z,sector_ok
+4250 1E 00        	        LD E,0
+4252 14           	        INC D
+                 	sector_ok:
+4253 ED 53 64 42  	        LD (disk_position),DE
+4257 C5           	        PUSH BC
+4258 E5           	        PUSH HL
+4259 CD 43 45     	        CALL cache_progress
+425C E1           	        POP HL
+425D C1           	        POP BC
+425E 10 D5        	        DJNZ read_next
+4260 C9           	        RET
+4261 00           	slot: DEFB 0
+4262 00 00        	expected_volume: DEFW 0
+4264 00 00        	disk_position: DEFW 0
+4266 49 4D 41 34 56 4F 4C 31 BF 4F B3 0C F4 B0 01 97 64 F8 A9 B1 0F 7A F4 4E 	identity: MDAT "identity.bin"
+427E 00           	loading_message: DEFM "LOADING AUDIO DATA",0
+4291 00           	space_message: DEFM "THEN PRESS SPACE",0
+42A2 00           	wrong_message: DEFM "WRONG DISK - TRY AGAIN",0
+42B9 00           	end_message: DEFM "END OF AUDIO",0
+42C6 18           	load_bank: DEFB 24
+42C7 00 00        	record_disk: DEFW 0
+                 	
+                 	; Loading-only extended-RAM cache, included in both transient controller and
+                 	; fixed bank2. CACHE_STATE occupies16 unused packet-page bytes at5B70; callers
+                 	; independently prove <=18 feedback entries (108 bytes) in each half-page.
+                 	; All disk operations use a fixed-bank bounce buffer: TR-DOS is never asked
+                 	; to preserve an extended7FFD/1FFD mapping. No cache code runs during PDM.
+42C9              	CACHE_STATE: EQU 0x5B70
+42C9              	cache_mode: EQU CACHE_STATE+2       ; 0=128,1=Scorpion,2=Pentagon512,3=Pentagon1024
+42C9              	cache_pages: EQU CACHE_STATE+3      ; distinct extra16-KiB pages,0/8/24/56
+42C9              	cache_start: EQU CACHE_STATE+4      ; linear first disk sector in this window
+42C9              	cache_count: EQU CACHE_STATE+6      ; number of valid cached256-byte sectors
+42C9              	cache_bar: EQU CACHE_STATE+8
+42C9              	cache_progress_enabled: EQU CACHE_STATE+9
+42C9              	cache_fraction: EQU CACHE_STATE+10
+42C9              	cache_total: EQU CACHE_STATE+12
+42C9              	cache_volume: EQU CACHE_STATE+14
+                 	
+                 	; A=physical RAM page,0..63. BC/DE/AF clobbered; HL preserved.
+                 	; Shadow screen and48K ROM stay selected. Bit5 is never used on a512K
+                 	; device: only the reversible EFF7 alias test may authorize the1024 mapping.
+                 	cache_map:
+42C9 5F           	        LD E,A
+42CA 3A 72 5B     	        LD A,(cache_mode)
+42CD FE 01        	        CP 1
+42CF 20 10        	        JR NZ,cache_map_pentagon
+42D1 7B           	        LD A,E
+42D2 E6 08        	        AND 8
+42D4 87           	        ADD A,A
+42D5 01 FD 1F     	        LD BC,0x1FFD
+42D8 ED 79        	        OUT (C),A
+42DA 7B           	        LD A,E
+42DB E6 07        	        AND 7
+42DD F6 18        	        OR 24
+42DF 18 12        	        JR cache_map_output
+                 	cache_map_pentagon:
+42E1 7B           	        LD A,E
+42E2 E6 18        	        AND 24
+42E4 07           	        RLCA
+42E5 07           	        RLCA
+42E6 07           	        RLCA
+42E7 57           	        LD D,A
+42E8 7B           	        LD A,E
+42E9 E6 20        	        AND 32
+42EB B2           	        OR D
+42EC 57           	        LD D,A
+42ED 7B           	        LD A,E
+42EE E6 07        	        AND 7
+42F0 F6 18        	        OR 24
+42F2 B2           	        OR D
+                 	cache_map_output:
+42F3 01 FD 7F     	        LD BC,0x7FFD
+42F6 ED 79        	        OUT (C),A
+42F8 C9           	        RET
+                 	
+                 	; A=normal paging byte. Clear Scorpion's high RAM bit before returning to
+                 	; ordinary banks; preserve AF'/IY and use no ROM while high RAM is paged.
+                 	cache_restore:
+42F9 5F           	        LD E,A
+42FA 3A 72 5B     	        LD A,(cache_mode)
+42FD FE 01        	        CP 1
+42FF 20 06        	        JR NZ,cache_restore_low
+4301 AF           	        XOR A
+4302 01 FD 1F     	        LD BC,0x1FFD
+4305 ED 79        	        OUT (C),A
+                 	cache_restore_low:
+4307 7B           	        LD A,E
+4308 01 FD 7F     	        LD BC,0x7FFD
+430B ED 79        	        OUT (C),A
+430D C9           	        RET
+                 	
+                 	; Test two physical page selectors without destroying either original byte.
+                 	; Private ref/candidate fields are outside paged RAM. Z=alias,NZ=distinct.
+                 	; Even when both selectors alias, both saved originals are identical because
+                 	; they are captured before either test write. Interrupts must be disabled.
+                 	cache_alias:
+430E 3A E6 45     	        LD A,(cache_ref)
+4311 CD C9 42     	        CALL cache_map
+4314 3A 00 C0     	        LD A,(0xC000)
+4317 32 E9 45     	        LD (cache_ref_byte),A
+431A 3A E7 45     	        LD A,(cache_candidate)
+431D CD C9 42     	        CALL cache_map
+4320 3A 00 C0     	        LD A,(0xC000)
+4323 32 EA 45     	        LD (cache_candidate_byte),A
+4326 3A E6 45     	        LD A,(cache_ref)
+4329 CD C9 42     	        CALL cache_map
+432C 3E 55        	        LD A,0x55
+432E 32 00 C0     	        LD (0xC000),A
+4331 3A E7 45     	        LD A,(cache_candidate)
+4334 CD C9 42     	        CALL cache_map
+4337 3E AA        	        LD A,0xAA
+4339 32 00 C0     	        LD (0xC000),A
+433C 3A E6 45     	        LD A,(cache_ref)
+433F CD C9 42     	        CALL cache_map
+4342 3A 00 C0     	        LD A,(0xC000)
+4345 FE 55        	        CP 0x55
+4347 3E 00        	        LD A,0
+4349 20 01        	        JR NZ,cache_alias_saved
+434B 3C           	        INC A
+                 	cache_alias_saved:
+434C 32 EB 45     	        LD (cache_distinct),A
+434F 3A E7 45     	        LD A,(cache_candidate)
+4352 CD C9 42     	        CALL cache_map
+4355 3A EA 45     	        LD A,(cache_candidate_byte)
+4358 32 00 C0     	        LD (0xC000),A
+435B 3A E6 45     	        LD A,(cache_ref)
+435E CD C9 42     	        CALL cache_map
+4361 3A E9 45     	        LD A,(cache_ref_byte)
+4364 32 00 C0     	        LD (0xC000),A
+4367 3A EB 45     	        LD A,(cache_distinct)
+436A B7           	        OR A
+436B C9           	        RET
+                 	
+                 	; Cold initialization: probe Scorpion1FFD first, then safe Pentagon bits6/7.
+                 	; EFF7 bit2 temporarily removes Pentagon1024 high RAM bits without asserting
+                 	; 7FFD's lock bit. A512K machine ignores it and remains distinct. Verify every
+                 	; candidate against all earlier pages, so mirrored expansion cannot inflate
+                 	; the reported capacity. Every probe restores original RAM and normal paging.
+                 	cache_detect:
+436C F3           	        DI
+436D AF           	        XOR A
+436E 21 70 5B     	        LD HL,CACHE_STATE
+4371 11 71 5B     	        LD DE,CACHE_STATE+1
+4374 01 0F 00     	        LD BC,15
+4377 77           	        LD (HL),A
+4378 ED B0        	        LDIR
+437A 32 E6 45     	        LD (cache_ref),A
+437D 3E 08        	        LD A,8
+437F 32 E7 45     	        LD (cache_candidate),A
+4382 3E 01        	        LD A,1
+4384 32 72 5B     	        LD (cache_mode),A
+4387 CD 0E 43     	        CALL cache_alias
+438A 20 2E        	        JR NZ,cache_detect_scorpion
+438C 3E 18        	        LD A,24
+438E CD F9 42     	        CALL cache_restore
+4391 3E 02        	        LD A,2
+4393 32 72 5B     	        LD (cache_mode),A
+4396 CD 0E 43     	        CALL cache_alias
+4399 28 55        	        JR Z,cache_detect_none
+439B 01 F7 EF     	        LD BC,0xEFF7
+439E 3E 04        	        LD A,4
+43A0 ED 79        	        OUT (C),A
+43A2 CD 0E 43     	        CALL cache_alias
+43A5 F5           	        PUSH AF
+43A6 01 F7 EF     	        LD BC,0xEFF7
+43A9 AF           	        XOR A
+43AA ED 79        	        OUT (C),A
+43AC F1           	        POP AF
+43AD 3E 20        	        LD A,32
+43AF 20 0B        	        JR NZ,cache_detect_limit
+43B1 3E 03        	        LD A,3
+43B3 32 72 5B     	        LD (cache_mode),A
+43B6 3E 40        	        LD A,64
+43B8 18 02        	        JR cache_detect_limit
+                 	cache_detect_scorpion:
+43BA 3E 10        	        LD A,16
+                 	cache_detect_limit:
+43BC 32 E8 45     	        LD (cache_limit),A
+43BF 3E 08        	        LD A,8
+43C1 32 E7 45     	        LD (cache_candidate),A
+                 	cache_detect_next:
+43C4 AF           	        XOR A
+43C5 32 E6 45     	        LD (cache_ref),A
+                 	cache_detect_reference:
+43C8 CD 0E 43     	        CALL cache_alias
+43CB 28 27        	        JR Z,cache_detect_done
+43CD 3A E6 45     	        LD A,(cache_ref)
+43D0 3C           	        INC A
+43D1 32 E6 45     	        LD (cache_ref),A
+43D4 21 E7 45     	        LD HL,cache_candidate
+43D7 BE           	        CP (HL)
+43D8 38 EE        	        JR C,cache_detect_reference
+43DA 3A 73 5B     	        LD A,(cache_pages)
+43DD 3C           	        INC A
+43DE 32 73 5B     	        LD (cache_pages),A
+43E1 3A E7 45     	        LD A,(cache_candidate)
+43E4 3C           	        INC A
+43E5 32 E7 45     	        LD (cache_candidate),A
+43E8 21 E8 45     	        LD HL,cache_limit
+43EB BE           	        CP (HL)
+43EC 38 D6        	        JR C,cache_detect_next
+43EE 18 04        	        JR cache_detect_done
+                 	cache_detect_none:
+43F0 AF           	        XOR A
+43F1 32 72 5B     	        LD (cache_mode),A
+                 	cache_detect_done:
+43F4 3E 18        	        LD A,24
+43F6 CD F9 42     	        CALL cache_restore
+43F9 21 52 43     	        LD HL,0x4352            ; 'RC',little endian
+43FC 22 70 5B     	        LD (CACHE_STATE),HL
+43FF C9           	        RET
+                 	
+                 	; DE=TR-DOS track/sector. Return HL=linear sector; AF/DE clobbered.
+                 	cache_linear:
+4400 26 00        	        LD H,0
+4402 6A           	        LD L,D
+4403 29           	        ADD HL,HL
+4404 29           	        ADD HL,HL
+4405 29           	        ADD HL,HL
+4406 29           	        ADD HL,HL
+4407 16 00        	        LD D,0
+4409 19           	        ADD HL,DE
+440A C9           	        RET
+                 	
+                 	; HL=zero-based cached sector, <3584. A=RAM page,HL=page-local source.
+                 	cache_location:
+440B 7C           	        LD A,H
+440C 87           	        ADD A,A
+440D 87           	        ADD A,A
+440E 57           	        LD D,A
+440F 7D           	        LD A,L
+4410 07           	        RLCA
+4411 07           	        RLCA
+4412 E6 03        	        AND 3
+4414 B2           	        OR D
+4415 C6 08        	        ADD A,8
+4417 5F           	        LD E,A
+4418 7D           	        LD A,L
+4419 E6 3F        	        AND 63
+441B F6 C0        	        OR 0xC0
+441D 67           	        LD H,A
+441E 2E 00        	        LD L,0
+4420 7B           	        LD A,E
+4421 C9           	        RET
+                 	
+                 	; A=normal destination paging,HL=destination,DE=track/sector.
+                 	; Read one sector, using the cache only for a proved complete hit. Cached
+                 	; transfers first copy to fixed bounce RAM, then restore destination paging.
+                 	; Preserve the persistent state even when the destination is its table page.
+                 	cache_read_sector:
+4422 F3           	        DI
+4423 32 EC 45     	        LD (cache_destination_page),A
+4426 22 ED 45     	        LD (cache_destination),HL
+4429 ED 53 EF 45  	        LD (cache_disk_address),DE
+442D 21 70 5B     	        LD HL,CACHE_STATE
+4430 11 FB 45     	        LD DE,cache_saved_state
+4433 01 10 00     	        LD BC,16
+4436 ED B0        	        LDIR
+4438 ED 5B EF 45  	        LD DE,(cache_disk_address)
+443C CD 00 44     	        CALL cache_linear
+443F ED 5B 74 5B  	        LD DE,(cache_start)
+4443 B7           	        OR A
+4444 ED 52        	        SBC HL,DE
+4446 38 2D        	        JR C,cache_read_rom
+4448 E5           	        PUSH HL
+4449 ED 5B 76 5B  	        LD DE,(cache_count)
+444D B7           	        OR A
+444E ED 52        	        SBC HL,DE
+4450 E1           	        POP HL
+4451 30 22        	        JR NC,cache_read_rom
+4453 CD 0B 44     	        CALL cache_location
+4456 CD C9 42     	        CALL cache_map
+4459 11 0B 46     	        LD DE,cache_bounce
+445C 01 00 01     	        LD BC,256
+445F ED B0        	        LDIR
+4461 3A EC 45     	        LD A,(cache_destination_page)
+4464 CD F9 42     	        CALL cache_restore
+4467 21 0B 46     	        LD HL,cache_bounce
+446A ED 5B ED 45  	        LD DE,(cache_destination)
+446E 01 00 01     	        LD BC,256
+4471 ED B0        	        LDIR
+                 	cache_hit_event:
+4473 18 14        	        JR cache_read_restored
+                 	cache_read_rom:
+4475 3A EC 45     	        LD A,(cache_destination_page)
+4478 CD F9 42     	        CALL cache_restore
+447B 2A ED 45     	        LD HL,(cache_destination)
+447E ED 5B EF 45  	        LD DE,(cache_disk_address)
+4482 01 05 01     	        LD BC,0x0105
+4485 FB           	        EI
+                 	cache_physical_read:
+4486 CD 13 3D     	        CALL 0x3D13
+                 	cache_read_restored:
+4489 21 FB 45     	        LD HL,cache_saved_state
+448C 11 70 5B     	        LD DE,CACHE_STATE
+448F 01 10 00     	        LD BC,16
+4492 ED B0        	        LDIR
+4494 FB           	        EI
+4495 C9           	        RET
+                 	
+                 	; HL=linear first future sector,DE=one-past-last sector on this volume.
+                 	; Refill only after the previous window has been consumed. Read the complete
+                 	; available window before audio, stopping at EOF rather than reading padding.
+                 	; Each disk read targets fixed bounce RAM before its physical extra-page copy.
+                 	cache_prefetch:
+4496 22 F1 45     	        LD (cache_future),HL
+4499 E5           	        PUSH HL
+449A 2A 74 5B     	        LD HL,(cache_start)
+449D ED 4B 76 5B  	        LD BC,(cache_count)
+44A1 09           	        ADD HL,BC
+44A2 C1           	        POP BC
+44A3 B7           	        OR A
+44A4 ED 42        	        SBC HL,BC
+44A6 28 01        	        JR Z,cache_prefetch_empty
+44A8 D0           	        RET NC                  ; some future sectors are still cached
+                 	cache_prefetch_empty:
+44A9 01 00 00     	        LD BC,0
+44AC ED 43 76 5B  	        LD (cache_count),BC      ; EOF/zero capacity must leave no stale window
+44B0 2A F1 45     	        LD HL,(cache_future)
+44B3 22 74 5B     	        LD (cache_start),HL
+44B6 EB           	        EX DE,HL
+44B7 B7           	        OR A
+44B8 ED 52        	        SBC HL,DE
+44BA C8           	        RET Z
+44BB D8           	        RET C
+44BC 3A 73 5B     	        LD A,(cache_pages)
+44BF B7           	        OR A
+44C0 C8           	        RET Z
+44C1 47           	        LD B,A
+44C2 0E 00        	        LD C,0
+44C4 CB 38        	        SRL B
+44C6 CB 19        	        RR C
+44C8 CB 38        	        SRL B
+44CA CB 19        	        RR C                    ; BC=pages*64
+44CC B7           	        OR A
+44CD ED 42        	        SBC HL,BC
+44CF 30 03        	        JR NC,cache_prefetch_capacity
+44D1 09           	        ADD HL,BC
+44D2 44           	        LD B,H
+44D3 4D           	        LD C,L
+                 	cache_prefetch_capacity:
+44D4 ED 43 F3 45  	        LD (cache_fill_limit),BC
+44D8 21 00 00     	        LD HL,0
+44DB 22 76 5B     	        LD (cache_count),HL
+44DE 22 F5 45     	        LD (cache_fill_index),HL
+                 	cache_fill_next:
+44E1 2A 74 5B     	        LD HL,(cache_start)
+44E4 ED 5B F5 45  	        LD DE,(cache_fill_index)
+44E8 19           	        ADD HL,DE
+44E9 7D           	        LD A,L
+44EA E6 0F        	        AND 15
+44EC 5F           	        LD E,A
+44ED CB 3C        	        SRL H
+44EF CB 1D        	        RR L
+44F1 CB 3C        	        SRL H
+44F3 CB 1D        	        RR L
+44F5 CB 3C        	        SRL H
+44F7 CB 1D        	        RR L
+44F9 CB 3C        	        SRL H
+44FB CB 1D        	        RR L
+44FD 55           	        LD D,L
+44FE D5           	        PUSH DE
+44FF 3E 18        	        LD A,24
+4501 CD F9 42     	        CALL cache_restore
+4504 D1           	        POP DE
+4505 21 0B 46     	        LD HL,cache_bounce
+4508 01 05 01     	        LD BC,0x0105
+450B FB           	        EI
+                 	cache_prefetch_physical_read:
+450C CD 13 3D     	        CALL 0x3D13
+450F F3           	        DI
+4510 2A F5 45     	        LD HL,(cache_fill_index)
+4513 CD 0B 44     	        CALL cache_location
+4516 E5           	        PUSH HL
+4517 CD C9 42     	        CALL cache_map
+451A D1           	        POP DE
+451B 21 0B 46     	        LD HL,cache_bounce
+451E 01 00 01     	        LD BC,256
+4521 ED B0        	        LDIR
+4523 3E 18        	        LD A,24
+4525 CD F9 42     	        CALL cache_restore
+4528 2A F5 45     	        LD HL,(cache_fill_index)
+452B 23           	        INC HL
+452C 22 F5 45     	        LD (cache_fill_index),HL
+452F 22 76 5B     	        LD (cache_count),HL
+4532 CD 43 45     	        CALL cache_progress
+                 	cache_prefetch_sector_done:
+4535 2A F5 45     	        LD HL,(cache_fill_index)
+4538 ED 4B F3 45  	        LD BC,(cache_fill_limit)
+453C B7           	        OR A
+453D ED 42        	        SBC HL,BC
+453F 38 A0        	        JR C,cache_fill_next
+4541 FB           	        EI
+4542 C9           	        RET
+                 	
+                 	; Progress uses remainder arithmetic: add32 per completed sector and publish
+                 	; one cell when remainder>=total. No approximation or early100% completion.
+                 	; Caller supplies the actual logical loading+prefetch total before its reads.
+                 	cache_progress:
+4543 3A 79 5B     	        LD A,(cache_progress_enabled)
+4546 B7           	        OR A
+4547 C8           	        RET Z
+4548 2A 7A 5B     	        LD HL,(cache_fraction)
+454B 11 20 00     	        LD DE,32
+454E 19           	        ADD HL,DE
+454F ED 5B 7C 5B  	        LD DE,(cache_total)
+4553 B7           	        OR A
+4554 ED 52        	        SBC HL,DE
+4556 30 05        	        JR NC,cache_progress_publish
+4558 19           	        ADD HL,DE
+4559 22 7A 5B     	        LD (cache_fraction),HL
+455C C9           	        RET
+                 	cache_progress_publish:
+455D 22 7A 5B     	        LD (cache_fraction),HL
+4560 3A 78 5B     	        LD A,(cache_bar)
+4563 FE 20        	        CP 32
+4565 D0           	        RET NC
+4566 3C           	        INC A
+4567 32 78 5B     	        LD (cache_bar),A
+                 	cache_progress_event:
+456A C3 6D 45     	        JP cache_draw_bar
+                 	
+                 	; Loading-only UI: the shadow screen is bank7. Restore the caller's normal
+                 	; destination page afterward. HL/DE/BC/AF are scratch; AF'/IX/IY untouched.
+                 	cache_draw_bar:
+456D F3           	        DI
+456E 3E 1F        	        LD A,31
+4570 CD F9 42     	        CALL cache_restore
+4573 21 C0 DA     	        LD HL,0xDAC0
+4576 3A 78 5B     	        LD A,(cache_bar)
+4579 5F           	        LD E,A
+457A 06 20        	        LD B,32
+                 	cache_draw_cell:
+457C 7B           	        LD A,E
+457D B7           	        OR A
+457E 3E 04        	        LD A,4
+4580 28 03        	        JR Z,cache_draw_empty
+4582 1D           	        DEC E
+4583 3E 24        	        LD A,0x24
+                 	cache_draw_empty:
+4585 77           	        LD (HL),A
+4586 23           	        INC HL
+4587 10 F3        	        DJNZ cache_draw_cell
+4589 3A EC 45     	        LD A,(cache_destination_page)
+458C CD F9 42     	        CALL cache_restore
+458F FB           	        EI
+4590 C9           	        RET
+                 	
+                 	; HL=current record start,DE=record end. Include any newly needed prefetch
+                 	; in the exact progress denominator; an existing unconsumed window is free.
+                 	cache_begin_progress:
+4591 22 F7 45     	        LD (cache_record_start),HL
+4594 ED 53 F1 45  	        LD (cache_future),DE
+4598 EB           	        EX DE,HL
+4599 B7           	        OR A
+459A ED 52        	        SBC HL,DE
+459C 22 7C 5B     	        LD (cache_total),HL
+459F 2A 74 5B     	        LD HL,(cache_start)
+45A2 ED 5B 76 5B  	        LD DE,(cache_count)
+45A6 19           	        ADD HL,DE
+45A7 ED 5B F1 45  	        LD DE,(cache_future)
+45AB B7           	        OR A
+45AC ED 52        	        SBC HL,DE
+45AE 38 02        	        JR C,cache_begin_fill
+45B0 20 23        	        JR NZ,cache_begin_ready
+                 	cache_begin_fill:
+45B2 2A F9 45     	        LD HL,(cache_disk_end)
+45B5 B7           	        OR A
+45B6 ED 52        	        SBC HL,DE
+45B8 3A 73 5B     	        LD A,(cache_pages)
+45BB 47           	        LD B,A
+45BC 0E 00        	        LD C,0
+45BE CB 38        	        SRL B
+45C0 CB 19        	        RR C
+45C2 CB 38        	        SRL B
+45C4 CB 19        	        RR C
+45C6 B7           	        OR A
+45C7 ED 42        	        SBC HL,BC
+45C9 30 03        	        JR NC,cache_begin_capacity
+45CB 09           	        ADD HL,BC
+45CC 44           	        LD B,H
+45CD 4D           	        LD C,L
+                 	cache_begin_capacity:
+45CE 2A 7C 5B     	        LD HL,(cache_total)
+45D1 09           	        ADD HL,BC
+45D2 22 7C 5B     	        LD (cache_total),HL
+                 	cache_begin_ready:
+45D5 AF           	        XOR A
+45D6 32 78 5B     	        LD (cache_bar),A
+45D9 21 00 00     	        LD HL,0
+45DC 22 7A 5B     	        LD (cache_fraction),HL
+45DF 3C           	        INC A
+45E0 32 79 5B     	        LD (cache_progress_enabled),A
+45E3 C3 6D 45     	        JP cache_draw_bar
+                 	
+45E6 00           	cache_ref: DEFB 0
+45E7 08           	cache_candidate: DEFB 8
+45E8 00           	cache_limit: DEFB 0
+45E9 00           	cache_ref_byte: DEFB 0
+45EA 00           	cache_candidate_byte: DEFB 0
+45EB 00           	cache_distinct: DEFB 0
+45EC 18           	cache_destination_page: DEFB 24
+45ED 00 00        	cache_destination: DEFW 0
+45EF 00 00        	cache_disk_address: DEFW 0
+45F1 00 00        	cache_future: DEFW 0
+45F3 00 00        	cache_fill_limit: DEFW 0
+45F5 00 00        	cache_fill_index: DEFW 0
+45F7 00 00        	cache_record_start: DEFW 0
+45F9 00 00        	cache_disk_end: DEFW 0
+45FB              	cache_saved_state: DEFS 16
+460B              	cache_bounce: DEFS 256
+                 	cache_code_end:
+470B              	        INCLUDE "ram-cache.asm"
+470B 49 4D 41 34 56 4F 4C 31 BF 4F B3 0C F4 B0 01 97 64 F8 A9 B1 0F 7A F4 4E 01 00 01 00 05 00 00 00 08 03 04 23 00 43 0C 62 08 82 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 49 4E 53 45 52 54 20 44 49 53 4B 20 30 30 30 32 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 34 02 30 04 2C 06 28 08 D5 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 D5 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 	header_seed: MDAT "header-seed.bin"
+                 	code_end:
+490B              	        ASSERT $ <= 0x49FF
+490B              	        DS 0x49FF-$
+49FF 00           	        DEFB 0
+                 	
+                 	
