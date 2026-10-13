@@ -1751,3 +1751,45 @@ pass; old media and revised CLI replay byte-exactly, zero clipping. Selected
 Diagnostics include legitimate pitch/envelope changes; do not claim perceptual
 click elimination. Listening acceptance pending. No native/player/release
 changes or physical-chip/Z80 proof. This bounded deliverable is complete.
+
+## Pattern/solid cell-boundary correction and full-disk extension — complete (2026-10-13)
+
+The user still sees character-cell rectangles and sharp patterned/solid borders.
+From `0085a116`, inspect actual native texture, not just averaged RGB. Fit palette
+and fractional density together with globally anchored coordinates, source-edge
+texture continuity and current-frame palette coherence. Preserve true contours,
+frame cadence, resolution and the existing2535 AY fields. Use the same507-frame
+sea-foam source and retain `db07319e` evidence. Compare visible native patches and
+defined texture metrics before accepting the host candidate; fully cold-Fuse
+qualify every final screen/AY field and nominal deadline before replacing TRDs.
+Native ABI/2x2 lookup phase remains unchanged, instruction delta0 T. Work on
+`codex/attribute-pattern` to preserve concurrent codec-library edits on main.
+
+The user rejects the whole-image fractional-density draft for visible noise
+and identifies the false red rectangle on frame259. Supersede it with the
+crisp baseline quantizer, a source-relative20-degree opponent-colour cone and
+four-native-pixel local gray seam feathering. Keep real contours and all other
+dither samples; do not retexture entire smooth regions. Archive the rejected
+draft as an interrupted host attempt, never as a native-qualified release.
+
+The final local selector additionally handles source-smooth NORMAL/BRIGHT solid
+steps. All507 final screens and2535 AY fields pass complete cold Fuse with zero
+nominal misses and maximum deviation17 T. Preserve its qualified checkpoint.
+The user now requests a video occupying one full disk: extend the continuous
+source prefix toward actual single-TRD capacity with these image settings,
+10 fps and unchanged50-Hz AY. Measure real resident memory, actual disk sectors
+and complete native timing; do not silently reduce quality/cadence or publish a
+size-only estimate. Reuse verified cached preparation when all source bytes
+and selector parameters match. The fixed AY forest permits1005 leading frames,
+not the conservative507-frame bisection. Disk capacity is the remaining gate.
+
+The practical full-disk result is900 frames/90 seconds,4500 unchanged AY fields
+and one TRD with2529 used/15 free data sectors(99.4104%). The1005- and940-frame
+attempts require2704 and2602 sectors and remain failed size probes. The final
+disk completely passes independent cold Fuse, all6220800 screen bytes, every
+AY record and all nominal deadlines; zero late runs, maximum deviation22 T.
+Archive the full media, all-frame source metrics, matching507-frame old/new
+comparison, complete native proofs and failed attempts; replace the root disk
+only after qualification. Native instructions remain unchanged,0 T delta.
+The authorized image correction and practical one-disk fill are complete.
+No full-cartoon rebuild, further model/codec/RAM experiment or push is opened.

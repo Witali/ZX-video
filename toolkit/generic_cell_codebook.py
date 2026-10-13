@@ -21,8 +21,8 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
     """Refine the generic converter's palette without changing its media fit.
 
     First retain the reproducible legacy five-level reference. The default
-    source-bounded colour search then matches colours and temporal transitions
-    with sample-level actual-pixel guards. Legacy preparation
+    colour search then rejects misleading tint and feathers only narrow,
+    source-smooth solid/pattern transitions. Legacy preparation
     remains available explicitly; native dithering keeps a fixed screen phase.
     """
     if len(images) != len(compact) or not len(images):
@@ -30,6 +30,7 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
     if colour_policy not in ('stable', 'legacy'):
         raise ValueError('unknown colour policy')
     import stable_colour
+    import texture_colour
     import monochrome_five_level
     comparison = stable_colour.Comparison()
     previous = previous_image = None
@@ -46,7 +47,7 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
         refined[4512:] = bytes([1])*96
         legacy = bytes(refined)
         state = (monochrome_five_level.encode(image) if monochrome else
-                 stable_colour.encode(image, legacy, previous, previous_image)
+                 texture_colour.encode(image, legacy, previous, previous_image)
                  if colour_policy == 'stable' else legacy)
         comparison.add(image, legacy, state)
         previous, previous_image = state, image.copy()
@@ -68,7 +69,8 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
         dither='fixed-phase 2x2 after brightness reconstruction',
         compression_additional_pixel_changes=False, perceptual_percent_claimed=False,
         colour_policy='monochrome' if monochrome else colour_policy,
-        monochrome=monochrome, colour_comparison=comparison.report())
+        monochrome=monochrome, colour_comparison=texture_colour.comparison_report(
+            comparison, active=not monochrome and colour_policy == 'stable'))
 
 
 def row_sets(frames):

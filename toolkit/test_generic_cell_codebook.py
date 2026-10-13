@@ -109,14 +109,14 @@ class GenericCellCodebookTests(unittest.TestCase):
         baseline['startup_delta'] = False
         self.assertEqual(OPTIONS, baseline)
 
-    def test_generic_refinement_preserves_fit_and_improves_error(self):
+    def test_generic_legacy_refinement_preserves_fit_and_improves_error(self):
         ramp = np.tile(np.repeat(np.array([0, 64, 128, 192, 255], dtype=np.uint8),
                                  [24, 24, 24, 24, 32]), (72, 1))
         images = np.stack([np.repeat(ramp[:, :, None], 3, axis=2)]*2)
         with tempfile.TemporaryDirectory() as tmp:
             compact, _ = convert_frames(images, Path(tmp))
             original = compact.copy()
-            prepared, quality = generic.prepare_frames(images, compact, tmp)
+            prepared, quality = generic.prepare_frames(images, compact, tmp, colour_policy='legacy')
             self.assertTrue(quality['refinement_never_increased_rgb_error'])
             self.assertLessEqual(quality['mean_mse'], quality['four_level_mean_mse'])
             self.assertEqual(set(five.unpack_levels(prepared[0, :3840].tobytes()).ravel()), set(range(5)))

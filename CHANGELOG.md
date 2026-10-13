@@ -123,6 +123,147 @@
   [byte-exact reproducer](audiobook-beeper/experiments/flutter-regression/reproduce.py)
   and [audition TRD](ZX-audiobook-IMA4-flutter-check.trd).
 
+## 2026-10-13 — Publish the completely checked90-second full-disk video
+
+- Complete the user-requested one-disk fill with the unchanged local image
+  selector and original continuous RGB/PCM/AY prefix. One655360-byte TRD,
+  source[0,90),900 frames,4500 AY fields,2529 data sectors,15 free(99.4104%).
+  SHA256df986063d6cc6e5ff9048cea074e642759fc6140ca911ecd86064b7fe1c399cb.
+  Full independent cold Fuse checks every6220800 screen byte, every AY record
+  and actual nominal publication deadline: zero misses, late runs, underruns,
+  missing/duplicate fields, maximum in-field deviation22 T. Deterministic
+  native instruction counts remain the previous counts, delta0 T; full disk
+  service statistics and the earlier pixel/flicker tradeoffs remain above.
+- Preserve143 authenticated evidence files/89285289 bytes plus manifest,
+  20 exact producer-source snapshots, all900 source frame metrics, complete
+  native proofs, full90-second native-reference/model-AY MP4 and the common
+  507-frame source/old/new comparison. Keep both oversized attempts, the
+  earlier qualified checkpoints and rejected whole-image grain draft.
+  Store disk/media/large captures in LFS. Replace the root TRD with this
+  qualified artifact. The staged byte audit authenticates278 checkpoint/full
+  archive/root objects and35 local LFS identities, with zero mismatches.
+  No full-cartoon, subsequent model sweep or push is part
+  of the completed deliverable. [Video, TRD and reproduction](toolkit/analysis/attribute_pattern/README.md).
+
+## 2026-10-13 — Size one full TRD using authenticated preparation caches
+
+- **Request/input:** Extend the same cartoon prefix toward one full disk with
+  the final local-image selector,10 fps and unchanged continuously fitted AY.
+  Reuse coarse states only after every decoded RGB byte matches. Reuse colour
+  states only with matching selector parameters/source bytes and exact prior
+  state continuity; continue normal fitting beyond the cached prefix.
+  No native instructions change,0 T delta; no audio refit or quality reduction.
+- **Measured constraints:** All1005 prepared frames fit the exact AY forest,
+  but the compiled disk needs2704 sectors versus2544 available. The940-frame
+  candidate needs2602. Neither yields a release disk; preserve failure,
+  parameter, metadata and log evidence. Ordinary window estimates are bypassed
+  with a single explicit cut; actual assembly remains the capacity gate.
+- **Verified practical fill:**900 frames(90 seconds) use2529 sectors,15 free:
+  99.4104% of usable data sectors,3840 bytes spare. All900 actual screens
+  (6220800 bytes),4500 AY records and nominal five-field deadlines pass a
+  complete independent dirty-RAM Fuse run, zero underruns/missing/duplicate
+  fields or late runs, maximum deviation22 T. Runtime2444 sector reads,
+  68071315 T read service,22306..134473 T per read,1655531 T seek service.
+  These include ROM/disk/IRQ/ULA; deterministic instruction paths remain the
+  prior counts. No physical-machine or mathematically maximum-duration claim.
+- **Provenance:** Preserve the earlier507-frame checkpoint. Save18 producer
+  source snapshots only after their LF-normalized SHA256 matches its existing
+  qualification, including recovery of the exact pre-override helper by hash.
+  Its archive now authenticates134 files/57978501 bytes plus manifest.
+  Full-prefix final archive/root publication follows complete release checks.
+  [Cached rebuild and measurement helpers](toolkit/analysis/attribute_pattern/README.md).
+
+## 2026-10-13 — Preserve the fully qualified local-image checkpoint
+
+- Archive the completed `12c859d8`507-frame correction before the newly
+  requested full-disk extension. [Evidence](toolkit/analysis/attribute_pattern/evidence/)
+  contains116 measured files/57830879 bytes plus its manifest, native-reference
+  and source/previous/new videos, every screen/AY/deadline proof and source
+  hashes. Native instructions remain unchanged,0 T delta. The old root TRD
+  is not replaced by a partly checked longer candidate.
+- Preserve the entire independently qualified solid/pattern-only predecessor
+  in its separate archive and both noisy draft probe images. Retain prior
+  changelog entries and all reported pixel-error/flicker tradeoffs. The full
+  source prefix is still being sized and will need independent final release
+  qualification; this checkpoint does not qualify the longer video.
+
+## 2026-10-13 — Cover NORMAL/BRIGHT solid steps after native seam qualification
+
+- **Baseline/input:** The `10a4b1ab` local solid/pattern selector preserves
+  detail and removes frame259's false red rectangle. All507 original RGB
+  frames/2535 AY fields pass complete cold Fuse, full3504384 screen bytes,
+  zero nominal misses/late runs, maximum deviation23 T. One TRD uses1471
+  sectors,1073 free; SHA256517a5c7f24d844c7867065593bc8fa921c022431d596fee8cffb09e931cee8a8.
+  Preserve this full measured attempt as superseded, not as the final disk.
+- **Fix:** Both neighboring gray cells can be solid, yet NORMAL205/BRIGHT255
+  create a false square absent in the source. Include source-smooth12..56-code
+  solid steps in the existing four-native-pixel band, target pull<=24, half
+  strength farther away. The older pattern/solid case retains its8-code cap.
+  No whole-image retexturing, source-contour smoothing or native instruction
+  change; delta0 T. Eight targeted final tests pass after the34-test core run.
+- **Final507-frame qualification:** All3504384 actual screen bytes and2535
+  AY records pass independently dirty-booted Fuse. Zero missed nominal frames,
+  missing/duplicate AY fields or late runs; maximum deviation17 T. TRD1481
+  sectors,1063 free, SHA256982b44e9989e9f2f0f97d3100e422164c84baaad85bf65a9bf761a2ef013b75c.
+  Runtime1410 reads,39624380 T aggregate service,22317..134454 T per read,
+  961726 T seeks. ROM/disk/IRQ/ULA are measured separately from deterministic
+  instruction costs; no physical-machine claim.
+- **Quality/decision:** Cell texture seam233.77694 ->194.98473(-16.59%),
+  sample RGB465.80088 ->476.37844(+2.27%), physical RGB8621.12748 ->8645.12338
+  (+0.28%). Preserve the crisp candidate and report the tradeoff: sample-quiet
+  luma54.39508 ->61.72966 increases, while false hue and temporal chroma improve.
+  Binary solid/pattern cell counts8827 ->8865 do not universally decrease;
+  they are diagnostics, not a perceptual grade. Inspect actual native scenes.
+- **Scope update:** The user requests one full disk. Keep this qualified image
+  checkpoint and extend its source prefix with unchanged audio/cadence/quality.
+  The old planning bisection selected507 frames even though the exact fixed
+  AY forest allows1005 frames(100.5 s);1006 introduces node1046 beyond1045
+  available nodes. The valid1005-frame payload is14019 bytes. This is an exact
+  host memory limit, not a disk-capacity or native-release result.
+  [Method and preserved results](toolkit/analysis/attribute_pattern/README.md).
+
+## 2026-10-13 — Keep crisp patterns and feather false solid/pattern seams
+
+- **Request/baseline:** The user still sees8x8 rectangles after `db07319e`,
+  asks for a gradual solid/pattern transition where appropriate, and rejects
+  grain and false red blocks in the first draft. Work from `0085a116` in
+  `codex/attribute-pattern`, preserving concurrent main codec-library work.
+  Use the unchanged507-frame sea-foam source[0,50.7),10 fps and2535 AY fields.
+- **Rejected host experiment:** Fit all56 pairs with fractional R2 density,
+  multi-scale mean error, texture cost and shared gray regions. Probe frames
+  98,100,154,259,300,506. The initial chroma ratio4 produces misleading colour
+  speckles. Ratio2 removes some, and frame154 cell-mean RGB error falls454.23
+  ->282.73 with solid/pattern cell edges33 ->0; physical RGB rises6594.03
+  ->8378.78. Visible whole-image grain obscures detail. Stop its full build
+  after all507 host states and motion coding, before native qualification,
+  in response to user review. Preserve source/probes/interrupted metadata in
+  [rejected-density](toolkit/analysis/attribute_pattern/rejected-density/).
+  It is not a release. The old sample-error-monotonic default test also fails
+  for intentional fractional density; retain that contract for explicit
+  legacy preparation and add independent native/seam/default-path tests.
+- **Selected correction:** Keep the crisp baseline quantizer. Require a
+  source-relative20-degree cone in(R-G,B-G) for non-neutral tint; gray is a
+  fallback. Feather only a two-logical-sample(four-native-pixel) band on each
+  side of gray solid/pattern borders, source RMS contrast<=8, output<=40,
+  solid target pull<=8 luma codes, half strength one sample farther away.
+  Global fractional phase applies only inside this band. Preserve real
+  contours, native ABI/lookup phase and all other shade samples. Explicitly
+  report that local feather samples may exceed the old physical/sample bound.
+- **Host verification:**34 tests pass, including source contours, exact native
+  endpoints, no history influence on changing cells, repeat stability, local
+  transition extent, orange/red hue rejection and public converter routing.
+  Inspect the same six native-rendered source/old/new frames. Frame259's false
+  red region goes to gray: boundary residual604.68 ->166.50, cell texture seam
+  244.79 ->91.03; sample RGB833.01 ->988.88 exposes the colour tradeoff. These
+  are probe results, not all-frame or release claims. Full unchanged-source
+  cold-Fuse delivery/screen/AY/deadline qualification is still running.
+- **Native/timing scope:** Host-only change, deterministic native instruction
+  counts unchanged, delta0 T. New data can alter sector traffic and producer
+  time, which must be measured through EOF before replacing the root disk.
+  No new audio fit, cadence/resolution change, physical-hardware test,
+  full-cartoon work, codec/RAM experiment or push is included.
+  [Method and reproduction](toolkit/analysis/attribute_pattern/README.md).
+
 ## 2026-10-13 — Main sea-foam song with the preferred original direct IMA4
 
 - **Request/baseline/input:** From `7886808a`, extract the main song from the

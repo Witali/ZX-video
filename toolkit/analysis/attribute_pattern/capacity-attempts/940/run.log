@@ -1,0 +1,31 @@
+Reused exact coarse preparation: 940 source RGB frames checked
+Five-level refinement: 1/940
+Five-level refinement: 101/940
+Five-level refinement: 201/940
+Five-level refinement: 301/940
+Five-level refinement: 401/940
+Five-level refinement: 501/940
+Five-level refinement: 601/940
+Five-level refinement: 701/940
+Five-level refinement: 801/940
+Five-level refinement: 901/940
+Motion tile 8: 0/940
+Motion tile 8: 500/940
+CB41 disk 1/1: frames 0..939
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\attribute-pattern\toolkit\analysis\attribute_pattern\rebuild.py", line 81, in <module>
+    if __name__ == '__main__':main()
+                              ^^^^^^
+  File "C:\Work\ZX-video\.worktree\attribute-pattern\toolkit\analysis\attribute_pattern\rebuild.py", line 78, in main
+    build_prefix.main()
+  File "C:\Work\ZX-video\.worktree\attribute-pattern\toolkit\analysis\sea_foam\build_prefix.py", line 83, in main
+    converter.main(argv)
+  File "C:\Work\ZX-video\.worktree\attribute-pattern\toolkit\analysis\attribute_pattern\rebuild.py", line 48, in verified_main
+    return original_main(arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\attribute-pattern\toolkit\convert_video.py", line 340, in main
+    records = build(five_states, ay_frames, raw, states, args, executables, output, manifest)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\attribute-pattern\toolkit\convert_cb41.py", line 269, in build
+    raise ValueError(f'CB41 disk {number} needs {metadata["used_sectors"]} sectors; '
+ValueError: CB41 disk 1 needs 2602 sectors; maximum 2544. Local-window size estimate was insufficient. Retry with a smaller --max-frames-per-disk; no image/frame/quality was truncated.
