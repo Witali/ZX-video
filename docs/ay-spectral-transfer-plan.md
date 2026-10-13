@@ -75,3 +75,16 @@ reproducing code/evidence. Update TASK_BRIEF as work progresses. Generated
 temporary files stay untracked; deliverable WAV/figures use Git LFS. No merge
 or push has been requested for this new worktree. Subjective speech quality,
 physical-chip playback and a full-film release remain separate evidence.
+
+## Completion checkpoint
+
+All four bounded milestones complete on2026-10-13. Direct, weighted and
+continuity fits plus existing full-chip/envelope feedback fail the original
+admission guard: best new9.667439 versus current9.248850. Default retained.
+Timed real-DAC ramps reduce instantaneous command-step energy21.88..22.15%,
+below their pre-run25% integration threshold; native scheduler not added.
+Seven tests, nine unique50-Hz streams/two full native loops each, exact media
+replays and all timed target checks pass. General experimental CLI and the
+optional reversible chip probe are saved. Fuse source and explicit AY/YM
+comparison are complete. [All evidence and reproducing commands](../ay-converter/analysis/ay_spectral_transfer/README.md).
+Listening acceptance and physical/Fuse waveform qualification remain separate.

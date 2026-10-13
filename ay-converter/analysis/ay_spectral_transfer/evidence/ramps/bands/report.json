@@ -1,0 +1,107 @@
+{
+  "name": "bands",
+  "gain": 1.619215014884398,
+  "transition_ms": 0.0,
+  "register_bytes": 11,
+  "commands_gzip_bytes": 60742,
+  "commands_sha256": "7980b865c4f1536fa63ce22e1c253ee9d26ddf3de4f04df322706ee561f1e977",
+  "registers_sha256": "b14f6ad5184a0525463116ac808b01b8894cb62faaa95e05fefb59914d8ebb3b",
+  "all_1500_states": {
+    "fields": 1500,
+    "samples": 1323000,
+    "writes": 16500,
+    "all_target_states_exact": true,
+    "serial_spacing_output_samples_min": 1,
+    "native_scheduler_qualified": false
+  },
+  "steps": {
+    "writes": 16500,
+    "instant_dac_step_squared_sum": 5.0130713654668995,
+    "instant_dac_step_max": 0.26852826733799995,
+    "limitations": "Same-state DAC changes only; not future pitch transients or perceptual click audibility. One44.1-kHz-sample spacing approximates21.99us register writes at22.68us. Not Fuse or native Z80 qualification."
+  },
+  "diagnostics": {
+    "metrics": {
+      "objective_db": 9.908020893992074,
+      "masked_spectral_mae_db": {
+        "512": 9.956494847223478,
+        "2048": 9.650459653666186,
+        "8192": 8.620897210162953
+      },
+      "absolute_spectral_mae_db": {
+        "512": 9.87698689082073,
+        "2048": 9.602462108362705,
+        "8192": 8.58256145712162
+      },
+      "level_mae_db": 1.4249628294510543,
+      "level_bias_db": 0.39376429285718373,
+      "reference_rms": 0.13231162599193383,
+      "model_rms": 0.13766712071580114
+    },
+    "unpooled": {
+      "512": {
+        "window_ms": 23.219954648526077,
+        "hop_ms": 20,
+        "magnitude_cosine": 0.7771430071028848,
+        "sqrt_magnitude_cosine": 0.8606530474096196,
+        "log_magnitude_mae_db": 9.87698687872738,
+        "spectral_convergence": 0.6268902643749185,
+        "active_frames": 1500
+      },
+      "2048": {
+        "window_ms": 92.87981859410431,
+        "hop_ms": 20,
+        "magnitude_cosine": 0.7094531989354519,
+        "sqrt_magnitude_cosine": 0.8432542359292037,
+        "log_magnitude_mae_db": 9.602462102654727,
+        "spectral_convergence": 0.7205994005224833,
+        "active_frames": 1500
+      },
+      "8192": {
+        "window_ms": 371.51927437641723,
+        "hop_ms": 20,
+        "magnitude_cosine": 0.7306914194106704,
+        "sqrt_magnitude_cosine": 0.8710778309427208,
+        "log_magnitude_mae_db": 8.582561514664938,
+        "spectral_convergence": 0.7159191737842182,
+        "active_frames": 1500
+      }
+    },
+    "bands_2048": {
+      "50-300": {
+        "power_ratio": 1.097937000818367,
+        "missing_power_fraction": 0.45736729317224495,
+        "extra_power_fraction": 0.5553044184962016
+      },
+      "300-1000": {
+        "power_ratio": 0.7203802691664634,
+        "missing_power_fraction": 0.5803902383877649,
+        "extra_power_fraction": 0.3007704750191956
+      },
+      "1000-2000": {
+        "power_ratio": 1.1990256420160768,
+        "missing_power_fraction": 0.6573354405806376,
+        "extra_power_fraction": 0.8563610383086441
+      },
+      "2000-4000": {
+        "power_ratio": 1.4197432301886943,
+        "missing_power_fraction": 0.5955384949808636,
+        "extra_power_fraction": 1.0152817521689275
+      },
+      "4000-8000": {
+        "power_ratio": 1.8657450387625245,
+        "missing_power_fraction": 0.6422438380849133,
+        "extra_power_fraction": 1.507988882805878
+      }
+    },
+    "sub_50hz_power_fraction": 0.10824737067928658,
+    "worst_interval_seconds": [
+      1.38,
+      4.38
+    ]
+  },
+  "peak": 0.7952302947316823,
+  "clipping_samples": 0,
+  "replay_exact": true,
+  "wave_sha256": "471750ba1c83f11a75089d6165805365bbc623f738cd22f0fbca83e6796a3e0f"
+}

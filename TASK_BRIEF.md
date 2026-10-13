@@ -1791,3 +1791,16 @@ existing feedback plus envelope reaches9.667439, still worse than9.248850.
 All four final streams/WAVs replay exactly, including AY12 state decoding.
 All rejected under saved guards, default/native code unchanged. Continue the
 separate timed-DAC probe on retained baseline; no native scheduler claim.
+
+All four bounded milestones are now complete. Timed eight-step2/4/8-ms
+real-DAC ramps reduce same-state step energy21.88..22.15%, below their25%
+integration threshold;19,574 ->25,707 writes and67,644 ->88,122..89,953 gzip
+bytes. Scalar timed-baseline9.338099 ->9.326758/9.302608/9.264055; spectral and
+dynamic tradeoffs retained, no native scheduler added. Seven tests pass; nine
+unique50-Hz streams execute27,000 total native fields/two full loops each,
+exact values/banks/stack. General CLI reproduces AY stream/WAV byte exactly;
+explicit YM variant9.814675 does not make Fuse a YM model. Default remains
+the current9.248850 encoder; best new full pipeline9.667439 is rejected.
+[Completion, auditions and all results](ay-converter/analysis/ay_spectral_transfer/README.md).
+No physical-chip/Fuse-audio/movie-release claim; no hot-path change, delta0 T.
+No further sweep, native scheduler, merge or push starts automatically.

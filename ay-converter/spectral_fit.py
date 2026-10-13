@@ -159,3 +159,42 @@ def fit(samples, node, work, *, window=512, weight=0., band_peaks=0, continuity=
         output_gain=output_gain, clock_hz=CLOCK, source_samples_added_to_output=False, update_rate_hz=50,
         model='direct_integer_AY_periods_square_and_shared_noise_v1', peak_budget=18,
         channel_assignment='exact3! by physical pitch continuity', simultaneous_non_tone_carriers_max=1)
+
+
+def main():
+    """Explicit experimental CLI; does not change the accepted auto profile."""
+    import argparse, gzip, json
+    import chip_model, quality
+    from experimental_six_voice import read_reference
+    from ay_format import AyFrame
+    from support import sha, save
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('reference', type=Path, help='already prepared mono22050-Hz PCM16 WAV')
+    parser.add_argument('--output', type=Path, required=True); parser.add_argument('--node', default='node')
+    parser.add_argument('--chip', choices=chip_model.CHOICES, default='AY-3-8910')
+    parser.add_argument('--window', type=int, default=512); parser.add_argument('--weight', type=float, default=0.)
+    parser.add_argument('--band-peaks', type=int, default=0); parser.add_argument('--continuity', type=float, default=0.)
+    parser.add_argument('--output-gain', type=float, default=1.)
+    args = parser.parse_args()
+    if args.output.exists(): raise ValueError('use a new output directory')
+    args.output.mkdir(parents=True); source = read_reference(args.reference)
+    with chip_model.select(args.chip):
+        raw, metadata = fit(source, args.node, args.output, window=args.window, weight=args.weight,
+                            band_peaks=args.band_peaks, continuity=args.continuity, output_gain=args.output_gain)
+        (args.output / 'registers.gz').write_bytes(gzip.compress(raw, mtime=0))
+        rows = np.frombuffer(raw, np.uint8).reshape(-1, 11)
+        periods = rows[:, :6:2].astype(int) + 256 * rows[:, 1:6:2].astype(int)
+        packed = b''.join(AyFrame(tuple(map(int, p)), tuple(map(int, r[8:11])), int(r[6]), int(r[7])).serialize() for p, r in zip(periods, rows))
+        (args.output / 'soundtrack.ay9.gz').write_bytes(gzip.compress(packed, mtime=0))
+        subprocess.run([args.node, str(CORE / 'render_ym2149.js'), str(args.output / 'registers.gz'),
+                        str(args.output / 'chip.f32'), '50', str(args.output / 'chip-render.json'), '11',
+                        chip_model.render_name()], check=True)
+    audio = np.fromfile(args.output / 'chip.f32', '<f4').astype(float) * args.output_gain
+    if abs(audio).max() >= 1: raise ValueError('audition gain clips; choose a lower explicit gain')
+    quality.write_wav(args.output / 'ay-preview.wav', audio, 44100)
+    save(args.output / 'report.json', dict(complete=True, experimental=True, fields=len(rows), target_chip=args.chip,
+        metadata=metadata, registers_sha256=sha(raw), reference_sha256=sha(args.reference.read_bytes()),
+        repeated_source_conditioning=False, selected_for_default=False, peak=float(abs(audio).max())))
+
+
+if __name__ == '__main__': main()

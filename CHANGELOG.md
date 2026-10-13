@@ -1,5 +1,44 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Complete timed AY ramps, target comparison and transfer verification
+
+- **Fourth milestone/input:** Same prepared30 s/1500 states and gain. Build
+  real timestamp/register commands for serial current AY and eight-step
+  raised-cosine2/4/8-ms fixed-DAC ramps. Only fixed-to-fixed, unchanged-gate
+  channels fade; shared envelope/routing transitions are excluded. No PCM
+  interpolation.44.1-kHz slots approximate22.675737us writes; nominal50-Hz
+  model, not exact Fuse/Z80 timing. Native scheduler threshold25% was set
+  before outcomes. Preserve the original generator snapshot/hash after
+  tightening argument validation; current export reproduces all six streams.
+- **Measurements/decision:** Serial objective9.338099, level1.582626,
+  instantaneous DAC-step squared sum10.401989. Ramps objectives9.326758/
+  9.302608/9.264055, levels1.576297/1.578038/1.628808, squared sums8.125744/
+  8.124667/8.098357 (-21.88..22.15%). All miss the25% integration threshold;
+  retain as model auditions, do not add a native scheduler or claim clicks
+  eliminated. Writes19,574 ->25,707; gzip67,644 ->88,122/88,872/89,953 bytes.
+  Regional/continuity fits have5.013071/4.684238 squared steps (-6.56%) but
+  their spectral loss still prevents admission. Serial versus atomic baseline
+  differs; do not attribute its phase/level change to smoothing.
+- **Target/API:** Add explicit general experimental prepared-PCM CLI; current
+  auto/default preserved. Same source/gain/settings AY9.874857/level1.425594,
+  YM9.814675/level1.338828. Correct selected-chip code generation/rendering,
+  not relabeling AY registers. Fuse source remains AY; target comparison does
+  not establish a physical-chip or Fuse advantage. General AY CLI reproduces
+  stage3 full stream/WAV byte for byte. No repeated source processing.
+- **Final checks:** Seven tests pass,30 optional chip-probe bus fixtures.
+  Nine unique AY50-Hz streams run27,000 native fields/two full loops each,
+  exact values/banks/stack. Existing11-register path974/992/1091/1079 T;
+  existing14-register ordinary1166/1206 T and observed edge/loop1184/1224/
+  1271/1283. Same instruction bytes/paths, delta0 T. Six timed streams each
+  pass1500 final states,1323000 samples, two exact replays and zero clipping.
+  All prior archive hashes rechecked. Figures inspected on shared source
+  scales, including rejected strong-track fits. Exact61-second ramp comparison
+  retained. No physical-chip, cold-Fuse sound or movie release proof claimed.
+- **Completion:** All bounded plan milestones finished; no new50-Hz fitter
+  admitted (best9.667439 versus current9.248850). Keep current default, every
+  rejected trial and model limitation. No merge/push requested for this tree.
+  [Plan](docs/ay-spectral-transfer-plan.md), [all audio, figures, code and proof](ay-converter/analysis/ay_spectral_transfer/README.md).
+
 ## 2026-10-13 — Transition-aware AY fit and existing feedback, rejected complete trials
 
 - **Scope/parameters:** Same prepared30 s/1500 states/gain. Three continuity
