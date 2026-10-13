@@ -1,5 +1,20 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Start the sequential Z80 codec optimization branch
+
+- **Request/baseline:** The user authorizes a new branch, a saved list of nine
+  zx-pk.ru techniques and sequential application, evaluation and regression
+  checking. Create `codex/z80-codec-tricks` at `6168ba14` in the required
+  `.worktree/z80-codec-tricks` location. The root ignore rule already exists
+  and is committed; preserve unrelated root attachments and current main.
+- **Scope/decision:** Save sources, exact applicability checks, timing/memory/
+  overlap/IRQ gates and focused experiment commits in
+  [OPTIMIZATION_PLAN.md](libraries/OPTIMIZATION_PLAN.md). Reuse authenticated
+  extraction/streaming evidence and the complete 21-block LZSA2 fixture.
+  This planning change adds no instructions, stream bytes or RAM (delta0 T);
+  no new performance result, TRD or release qualification is claimed. Proceed
+  with item01 first; no merge/push or unrelated audio/movie sweep.
+
 ## 2026-10-13 — Extract reusable ZX0 and raw LZSA2 libraries
 
 - **Request/baseline:** From `0085a116`, package ZX0 and LZSA separately for

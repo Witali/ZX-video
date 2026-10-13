@@ -3,6 +3,20 @@
 Updated 2026-10-13. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## Active: sequential Z80 tricks for reusable codecs (2026-10-13)
+
+The user requests a new branch, a saved list of the zx-pk.ru optimization
+techniques, and sequential application/measurement/regression checking.
+Work on `codex/z80-codec-tricks` in `.worktree/z80-codec-tricks`, from
+`6168ba14`. Follow [the nine-item checklist](libraries/OPTIMIZATION_PLAN.md).
+Finish each bounded experiment before the next, including failed/inapplicable
+results. Preserve standard ZX0 v2/raw LZSA2, all decoded bytes and existing
+default/release profiles. Count instructions and memory; test complete native
+blocks, overlap, suspension, EOF and IRQ. Any player-default adoption still
+requires complete actual delivery/Fuse/publication qualification from AGENTS.md.
+Library component evidence must not be labeled a movie release. No merge/push
+or unrelated audio/movie redesign is authorized by this work.
+
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 
 The user requests separate reusable ZX0 and LZSA libraries with the project's
