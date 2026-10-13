@@ -1,5 +1,100 @@
 # One-disk sea-foam cartoon excerpt
 
+## Current source-matched colour rebuild (2026-10-13)
+
+The latest qualified version uses `stable_colour.py`, current-source temporal
+feedback, actual-pixel colour guards and spatial coherence across attribute
+cells. A connected smooth gray region uses a shared source-valid palette;
+quiet cells are protected from later spatial regrouping. Meaningfully changed
+cells have zero direct history influence. Real source contours and the fixed
+dither phase remain intact. `--monochrome` is now available for either public
+converter format; `--colour-policy legacy` reproduces the old CB41 selection.
+
+- [Current TRD](evidence-colour/ZX-video-sea-foam_part01.trd)
+- [Current native-reference MP4](evidence-colour/native-preview.mp4)
+- [Source / previous / current comparison video](evidence-colour/colour-comparison.mp4)
+- [Comparison sheet](evidence-colour/colour-comparison.png)
+- [Complete qualification](evidence-colour/qualification.json)
+- [Frame measurements](evidence-colour/colour-comparison.json)
+
+The source interval, all507 prepared RGB frames and2535 AY controls/WAV bytes
+are identical to the original archive below. This remains one50.7-second
+independently bootable10-fps TRD with50-Hz AY. The disk now uses1436 sectors
+(+115),1108 free; it still meets every nominal deadline. Spectrum's two colours
+per8x8 cell remain a hardware constraint. The selector suppresses mismatching
+colours, so muted source areas often use gray; it cannot reproduce the source
+gamut or guarantee absence of every visible cell/dither artifact.
+
+| Measurement against the scaled source | Previous | Current |
+| --- | ---: | ---: |
+| Area-averaged RGB MSE | 494.64372 | 465.80088 |
+| Actual2x2 pixel RGB MSE model | 8891.00644 | 8621.12748 |
+| Actual2x2 opponent-colour MSE model | 2098.39740 | 386.63225 |
+| Source-weighted boundary residual MSE | 231.36326 | 151.03494 |
+| Temporal chroma residual MSE | 58.44063 | 43.06844 |
+| Near-static pooled RGB temporal residual MSE | 19.02686 | 13.89894 |
+| Near-static pooled Rec.709 luma temporal residual MSE | 18.12883 | 13.68272 |
+
+Boundary error falls34.72%, temporal colour error26.30%, and quiet-area luma
+error24.53%. These are defined error proxies, not perceptual quality grades.
+Quiet attribute-change counts rise6 ->831 because choosing current-source
+palettes differs from the old strongly held attributes; a count alone is not
+a measurement of visible flicker. Near-static temporal errors are pooled over
+2194912 logical samples. The synthetic smooth gray ramp's boundary residual
+falls54.05114 ->1.23110; actual contour and no-lag source tests also pass.
+
+The complete cold Fuse1.9.0 run compares all507 screens/3504384 bytes and every
+2535 AY record. Zero missed nominal deadlines, missing/duplicate AY fields,
+or late runs; maximum in-field publication deviation19 T. Runtime1367 sector
+reads,38520429 T aggregate read-call service (22303..134473 T per call),937507 T
+seek service. These measured intervals combine ROM/disk/IRQ/contention.
+The host-only changes add0 T to player instructions; unchanged absolute
+baseline costs remain in native metadata. No physical hardware result.
+
+Twenty-seven focused tests and both public monochrome CPU/content smoke builds
+pass. The smoke fixtures have6 CB41 frames or5 FAP3 frames,30 silent AY fields;
+they do not establish Fuse cadence for an arbitrary monochrome movie. Inspect
+source/old/current frames98..100,154,259,506. Earlier unsuccessful selectors,
+the gray-regrouping brightness regression and their complete/partial coverage
+are retained under `evidence-colour/superseded/` and in the root changelog.
+Intermediate producer sources were not saved; the final producer hashes are
+authenticated in the qualification. The147-file archive contains61672605
+measured bytes, excluding its manifest; binary/media files use Git LFS.
+
+### Reproduce using retained source preparation
+
+This avoids a new download, source normalization or expensive audio fit.
+Start from the original archive's exact RGB prefix, full decoded mono PCM,
+continuous fit and WAV. Supply the executable `$tools` array and `$ffmpeg`
+as described below, and choose new empty scratch/build directories:
+
+```powershell
+$preparedColor = '.tmp/sea-foam-colour-prepared'
+New-Item -ItemType Directory -Path "$preparedColor/work" -Force
+Copy-Item -LiteralPath toolkit/analysis/sea_foam/evidence/work/continuous-audio-fit `
+  -Destination "$preparedColor/work/ay-core" -Recurse
+Copy-Item -LiteralPath toolkit/analysis/sea_foam/evidence/work/frames.rgb `
+  -Destination "$preparedColor/work/frames.rgb"
+Copy-Item -LiteralPath toolkit/analysis/sea_foam/evidence/work/continuous-audio-fit/input.f32 `
+  -Destination "$preparedColor/work/audio-source.f32"
+Copy-Item -LiteralPath toolkit/analysis/sea_foam/evidence/work/continuous-audio-fit/audio-preview.wav `
+  -Destination "$preparedColor/work/audio-preview.wav"
+python toolkit/analysis/sea_foam/build_prefix.py $preparedColor `
+  --plan toolkit/analysis/sea_foam/evidence/prefix-plan.json `
+  --output .tmp/sea-foam-colour-rebuild --frames 507 @tools
+python toolkit/analysis/sea_foam/preview.py .tmp/sea-foam-colour-rebuild --ffmpeg $ffmpeg
+python toolkit/analysis/sea_foam/compare_colour.py .tmp/sea-foam-colour-rebuild --ffmpeg $ffmpeg
+python toolkit/analysis/sea_foam/temporal_luminance.py .tmp/sea-foam-colour-rebuild
+```
+
+`archive_colour.py` requires complete qualification and the five superseded
+candidate report directories before preserving a new archive. The original
+report/reproduction section below describes the historical `fe3bb2cf` result;
+use that revision for its exact former default. Current scripts use the new
+selector, and planning estimates alone remain insufficient for release.
+
+## Original qualified excerpt and preserved baseline
+
 The user requested a TRD from [this YouTube video](https://www.youtube.com/watch?v=WGc7ptKfA9c).
 The completed deliverable is source interval **[0,50.7) seconds**, 507 frames
 at 10 fps and 2535 AY updates at 50 Hz, on one independently bootable disk.

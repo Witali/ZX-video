@@ -1539,7 +1539,7 @@ single-disk duration or full-cartoon qualification is claimed. The prerequisite
 checkpoint fix changes startup by+255 T and runtime by0 T. Finish this authorized
 excerpt; no new RAM/codec sweep or existing movie rebuild is part of it.
 
-## Source-matched stable colour for the sea-foam excerpt — active (2026-10-13)
+## Source-matched stable colour for the sea-foam excerpt — complete (2026-10-13)
 
 The user requests colours closer to the original and less attribute flicker.
 From `7886808a`, add bounded source/output comparison to host CB41 preparation,
@@ -1561,3 +1561,16 @@ Add current-frame spatial coherence across attribute boundaries, comparing
 source-relative edge steps and protecting actual contours with source contrast.
 Keep sample-level actual RGB/chroma guards; temporal history must not delay
 meaningfully changed cells. Complete the same selected excerpt qualification.
+
+The final `df44dac2` selector meets the requested correction on all507 frames:
+boundary residual231.36326 ->151.03494, temporal chroma58.44063 ->43.06844,
+quiet pooled luma18.12883 ->13.68272. Synthetic smooth-gradient grid error
+falls97.72%; moving-source colour and real-contour tests pass. Twenty-seven
+tests and both monochrome CLI CPU/content smoke checks pass. The rebuilt
+one-disk excerpt fully passes dirty cold Fuse, all3504384 screen bytes, every
+2535 AY record and all nominal deadlines; maximum in-field deviation19 T,
+zero late runs. Actual sector count1436. Preserve old evidence and all measured
+draft outcomes; use [the comparison/archive](toolkit/analysis/sea_foam/README.md).
+No source/AY change, native instruction change, full-cartoon or subsequent
+model search is part of this completed request. Actual two-colour-per-cell
+limits remain; do not claim perfect gradients, source gamut or zero artifacts.

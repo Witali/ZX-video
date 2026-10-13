@@ -1,0 +1,182 @@
+{
+  "metric": "MSE of cell-averaged RGB over the active image",
+  "measured_against": "scaled source before Spectrum palette quantization",
+  "mean_mse": 810.1670995641638,
+  "maximum_mse": 839.5104076244213,
+  "frame_mse": [
+    826.1331041124132,
+    808.7777167426216,
+    764.9342832212095,
+    807.7552331995081,
+    839.5104076244213,
+    813.8918524848091
+  ],
+  "four_level_frame_mse": [
+    706.4952121310764,
+    699.6420423719618,
+    685.4427738896122,
+    699.6560035988136,
+    713.630212854456,
+    703.5122138129341
+  ],
+  "four_level_mean_mse": 701.3964097764756,
+  "refinement_never_increased_rgb_error": false,
+  "brightness_levels": 5,
+  "dither": "fixed-phase 2x2 after brightness reconstruction",
+  "compression_additional_pixel_changes": false,
+  "perceptual_percent_claimed": false,
+  "colour_policy": "monochrome",
+  "monochrome": true,
+  "colour_comparison": {
+    "parameters": {
+      "chroma_weight": 0.5,
+      "chroma_grain_weight": 0.05,
+      "close_score_allowance": 64.0,
+      "temporal_weight": 0.75,
+      "attribute_change_cost": 24.0,
+      "quiet_max_component_delta": 4.0
+    },
+    "frames": [
+      {
+        "legacy": {
+          "rgb_mse": 686.2747395833334,
+          "chroma_mse": 956.3479817708334
+        },
+        "stable": {
+          "rgb_mse": 826.1331041124132,
+          "chroma_mse": 956.3479817708334
+        }
+      },
+      {
+        "legacy": {
+          "rgb_mse": 679.563951280382,
+          "chroma_mse": 956.2451171875,
+          "temporal_chroma_residual_mse": 0.3697916666666667,
+          "quiet_temporal_chroma_residual_mse": 0.22835467706013363,
+          "quiet_cells": 449,
+          "quiet_attribute_changes": 0,
+          "attribute_changes": 0
+        },
+        "stable": {
+          "rgb_mse": 808.7777167426216,
+          "chroma_mse": 956.2451171875,
+          "temporal_chroma_residual_mse": 0.3697916666666667,
+          "quiet_temporal_chroma_residual_mse": 0.22835467706013363,
+          "quiet_cells": 449,
+          "quiet_attribute_changes": 0,
+          "attribute_changes": 0
+        }
+      },
+      {
+        "legacy": {
+          "rgb_mse": 665.7532054759838,
+          "chroma_mse": 957.0237087673611,
+          "temporal_chroma_residual_mse": 0.2919379340277778,
+          "quiet_temporal_chroma_residual_mse": 0.2465761952191235,
+          "quiet_cells": 502,
+          "quiet_attribute_changes": 0,
+          "attribute_changes": 0
+        },
+        "stable": {
+          "rgb_mse": 764.9342832212095,
+          "chroma_mse": 957.0237087673611,
+          "temporal_chroma_residual_mse": 0.2919379340277778,
+          "quiet_temporal_chroma_residual_mse": 0.2465761952191235,
+          "quiet_cells": 502,
+          "quiet_attribute_changes": 0,
+          "attribute_changes": 0
+        }
+      },
+      {
+        "legacy": {
+          "rgb_mse": 679.27182119864,
+          "chroma_mse": 956.5938585069445,
+          "temporal_chroma_residual_mse": 0.2523328993055556,
+          "quiet_temporal_chroma_residual_mse": 0.20714458413926498,
+          "quiet_cells": 517,
+          "quiet_attribute_changes": 0,
+          "attribute_changes": 0
+        },
+        "stable": {
+          "rgb_mse": 807.7552331995081,
+          "chroma_mse": 956.5938585069445,
+          "temporal_chroma_residual_mse": 0.2523328993055556,
+          "quiet_temporal_chroma_residual_mse": 0.20714458413926498,
+          "quiet_cells": 517,
+          "quiet_attribute_changes": 0,
+          "attribute_changes": 0
+        }
+      },
+      {
+        "legacy": {
+          "rgb_mse": 693.1474586769386,
+          "chroma_mse": 956.4210069444445,
+          "temporal_chroma_residual_mse": 0.3174913194444444,
+          "quiet_temporal_chroma_residual_mse": 0.22871475054229934,
+          "quiet_cells": 461,
+          "quiet_attribute_changes": 0,
+          "attribute_changes": 0
+        },
+        "stable": {
+          "rgb_mse": 839.5104076244213,
+          "chroma_mse": 956.4210069444445,
+          "temporal_chroma_residual_mse": 0.3174913194444444,
+          "quiet_temporal_chroma_residual_mse": 0.22871475054229934,
+          "quiet_cells": 461,
+          "quiet_attribute_changes": 0,
+          "attribute_changes": 0
+        }
+      },
+      {
+        "legacy": {
+          "rgb_mse": 683.2957763671875,
+          "chroma_mse": 955.9430881076389,
+          "temporal_chroma_residual_mse": 0.2532009548611111,
+          "quiet_temporal_chroma_residual_mse": 0.19990808823529413,
+          "quiet_cells": 476,
+          "quiet_attribute_changes": 0,
+          "attribute_changes": 0
+        },
+        "stable": {
+          "rgb_mse": 813.8918524848091,
+          "chroma_mse": 955.9430881076389,
+          "temporal_chroma_residual_mse": 0.2532009548611111,
+          "quiet_temporal_chroma_residual_mse": 0.19990808823529413,
+          "quiet_cells": 476,
+          "quiet_attribute_changes": 0,
+          "attribute_changes": 0
+        }
+      }
+    ],
+    "rgb_cell_bound": "Every active cell <= legacy five-level RGB MSE",
+    "chroma_metric": "Squared R-G and B-G differences; not a perceptual grade",
+    "quiet_source_cell_max_component_delta": 4,
+    "fixed_dither_phase": true,
+    "player_instruction_delta_tstates": 0,
+    "legacy": {
+      "rgb_mse": 681.2178254304109,
+      "chroma_mse": 956.429126880787,
+      "temporal_chroma_residual_mse": 0.2969509548611111,
+      "quiet_temporal_chroma_residual_mse": 0.22213965903922311,
+      "quiet_cells": 2405,
+      "quiet_attribute_changes": 0,
+      "attribute_changes": 0
+    },
+    "stable": {
+      "rgb_mse": 810.1670995641638,
+      "chroma_mse": 956.429126880787,
+      "temporal_chroma_residual_mse": 0.2969509548611111,
+      "quiet_temporal_chroma_residual_mse": 0.22213965903922311,
+      "quiet_cells": 2405,
+      "quiet_attribute_changes": 0,
+      "attribute_changes": 0
+    }
+  },
+  "preview_frames": [
+    0,
+    1,
+    4,
+    5
+  ],
+  "preview": "video-preview.png"
+}

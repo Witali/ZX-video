@@ -1,5 +1,38 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Qualify and publish the coherent sea-foam colour excerpt
+
+- **Baseline/input:** Complete the user-requested correction with `df44dac2`.
+  Source[0,50.7),507 exact prepared RGB frames,2535 exact existing AY controls
+  and listening WAV bytes match `fe3bb2cf`; no fresh normalization/audio fit.
+  Preserve resolution,10 fps,50-Hz AY, independent boot and fixed dither phase.
+- **Measured image result:** RGB MSE494.64372 ->465.80088; actual2x2 physical
+  RGB model8891.00644 ->8621.12748; physical opponent-colour model2098.39740
+  ->386.63225. Source-weighted boundary residual231.36326 ->151.03494 (-34.72%);
+  temporal chroma58.44063 ->43.06844 (-26.30%). Quiet pooled RGB temporal
+  19.02686 ->13.89894 and Rec.709 luma18.12883 ->13.68272 (-24.53%), over
+  2194912 logical samples. Quiet attribute switches6 ->831 are also reported;
+  they are not a flicker grade. Source-near selection reduces artificial
+  saturation and may use gray for muted colours. Native two-colour cells and
+  fixed dither retain some limitations; no perfect-gamut/gradient claim.
+- **Complete qualification:** One655360-byte TRD,1436 used sectors (+115),1108
+  free. Dirty independent Fuse1.9.0 boot finishes all507 frames; all3504384
+  native screen bytes and every2535 AY record match. Zero missed nominal
+  deadlines, missing/duplicate fields or late runs, maximum in-field deviation
+  19 T. Runtime1367 sector reads,38520429 T aggregate read service,22303..
+  134473 T per call,937507 T seek service. These include ROM/disk/IRQ/ULA;
+  deterministic player instructions remain unchanged, delta0 T. No physical
+  machine test. Twenty-seven tests pass; monochrome CLI fixtures pass complete
+  CPU/content only. Inspect source/old/new frames98..100,154,259,506.
+- **Archive/decision:** Retain the new TRD, current preview, synchronized
+  source/old/new video, full frame metrics, all native proofs and five rejected
+  candidate report sets. Authenticate147 measured files/61672605 bytes and
+  final producers, preserve binary/media in LFS. Replace the root TRD only
+  after full qualification; the former disk remains in its original archive
+  and Git history. Reproduce with [the documented cached-input workflow](toolkit/analysis/sea_foam/README.md).
+  This requested excerpt/selector/monochrome deliverable is complete; no new
+  audio/RAM optimization, full-cartoon rebuild or automatic push is opened.
+
 ## 2026-10-13 — Keep gray-region coherence from overriding quiet-cell history
 
 - **Trigger/baseline:** On the same507-frame source from `2eddcaa3`, shared

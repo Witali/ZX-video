@@ -1,0 +1,89 @@
+{
+  "source": "C:\\Work\\ZX-video\\.tmp\\monochrome-smoke.mkv",
+  "source_sha256": "fc922429a92a2ba9434828166dca82e64ed7e26fbba1d6198a26dbff4ad297c5",
+  "complete": true,
+  "release": false,
+  "video_fps": "25/3",
+  "frame_fields": 6,
+  "ay_hz": 50,
+  "native_resolution": [
+    256,
+    192
+  ],
+  "active_resolution": [
+    256,
+    144
+  ],
+  "logical_resolution": [
+    128,
+    96
+  ],
+  "disk_profile": "portable",
+  "executables": {
+    "ffmpeg": "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+    "ffprobe": "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffprobe.exe",
+    "zx0": "C:\\Work\\ZX-video\\.worktree\\compression\\.tmp\\ZX0\\win\\zx0.exe"
+  },
+  "player_baseline": "00313d3",
+  "player_hot_path_changed": false,
+  "player_hot_path_delta_tstates": 0,
+  "inline_matches": false,
+  "fast_noop_scan": false,
+  "static_cache_borders": false,
+  "carry_huffman": false,
+  "register_fragments": false,
+  "cached_huffman_byte": false,
+  "irq_safe_paging": false,
+  "startup_delta": false,
+  "timing_verified": false,
+  "verification": "cpu",
+  "video_codec": "fap3",
+  "monochrome": true,
+  "colour_policy": "stable",
+  "input": {
+    "video_stream": 0,
+    "audio_stream": null,
+    "decoded_frames": 5,
+    "encoded_frames": 5,
+    "tail_repeated_frames": 0,
+    "encoded_seconds": 0.6,
+    "fit": "contain",
+    "crop": false,
+    "command": [
+      "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+      "-v",
+      "error",
+      "-nostdin",
+      "-y",
+      "-i",
+      "C:\\Work\\ZX-video\\.tmp\\monochrome-smoke.mkv",
+      "-map",
+      "0:0",
+      "-an",
+      "-vf",
+      "setpts=PTS-STARTPTS,fps=25/3:start_time=0:round=up:eof_action=pass,scale=w='max(1,round(min(128,72*dar)))':h='max(1,round(min(72,128/dar)))':flags=area,setsar=1,pad=128:72:(ow-iw)/2:(oh-ih)/2:black",
+      "-pix_fmt",
+      "rgb24",
+      "-f",
+      "rawvideo",
+      "C:\\Work\\ZX-video\\.tmp\\monochrome-smoke-fap3\\work\\frames.rgb"
+    ]
+  },
+  "frames": 5,
+  "ay_ticks": 30,
+  "volumes": [
+    {
+      "file": "ZX-mono-smoke_part01.trd",
+      "metadata": "ZX-mono-smoke_part01.json",
+      "frames": 5,
+      "frame_start": 0,
+      "frame_end_exclusive": 5,
+      "used_sectors": 33,
+      "free_sectors": 2511,
+      "sha256": "0068ef85110eeb069b1fba76edea90946aa123a4df7e0e36b31316ccdc97b146"
+    }
+  ],
+  "duration_seconds": 0.6,
+  "stream_sha256": "6e58597d4150d293fd86b098430f9cc916dafb9eefa104cab962f6fac307f59c",
+  "states_sha256": "d4c54e7784be76af1d6ce19b4f48b4efe2d16bdb2a1c26a5f3cd6c19ed363c60"
+}
