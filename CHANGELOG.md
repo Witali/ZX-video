@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — AY inverse-weight and regional-peak transfer, complete rejected trials
+
+- **Parameters/input:** Same prepared30-second source,1500 states/gain,
+  window512; compare source-only inverse exponent1 with2.5%-of-peak floor,
+  then add four peaks per frequency region. Stage1 controls reproduce exactly.
+- **Results/decision:** Objectives9.926241/9.913041 improve direct51210.112593
+  but not current AY9.248850. Level MAE1.417882/1.419244;8192 dominant
+  cosines0.728756/0.730898 versus baseline0.760072 violate the0.005 guard.
+  Reject both and retain default/baseline; no quiet-detail listening claim.
+- **Verification:** Four complete streams pass all4*1500 packed/real-register
+  states and1323000-sample exact WAV replays; retain parameters, all media,
+  reports and hashes. No player/native/default change, hot-path delta0 T.
+  Continue the authorized transition milestone. [Evidence](ay-converter/analysis/ay_spectral_transfer/README.md).
+
 ## 2026-10-13 — Direct AY spectral-period fitting, complete rejected baseline trials
 
 - **Scope/input:** First saved-plan milestone in `ay-spectral-transfer`, same

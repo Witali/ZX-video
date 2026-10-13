@@ -1780,3 +1780,8 @@ but worse weak-bin log error. Keep baseline and both full trials. Three tests,
 all2*1500 states and exact full WAV replays pass; native/default code unchanged.
 [Evidence](ay-converter/analysis/ay_spectral_transfer/README.md). Continue stage2
 inverse weighting and regional peaks, then transition and subframe milestones.
+
+Stage2 is complete: exponent1 gives9.926241; regional peaks9.913041 versus
+baseline9.248850. Long dominant cosines0.728756/0.730898 fail the saved guard;
+both rejected. All four full stream/WAV checks pass. Continue stage3 and the
+separate subframe probe without changing the default encoder or guard.

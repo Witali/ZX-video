@@ -47,6 +47,22 @@ native hot-path instruction delta0 T. No new Fuse/physical-chip audio claim.
 
 ## Reproduce
 
+## Stage2: inverse weighting and regional peaks — complete, not admitted
+
+At window512, exponent1 reduces the direct fit objective10.112593 ->9.926241;
+adding four peaks per50..800/800..1800/1800..3500/3500..8000-Hz region gives
+9.913041. Both remain worse than current AY9.248850. Level MAE1.417882/
+1.419244 passes its bounded tolerance, but8192 dominant cosine0.728756/
+0.730898 is below baseline0.760072 by more than0.005. Both are rejected.
+The four complete streams, including exactly reproduced stage1 controls,
+pass all1500 legal packed states and complete byte-exact WAV replays.
+[Stage2 report](evidence/stage2/report.json),
+[weighted audition](evidence/stage2/weighted512/ay-preview.wav),
+[weighted + band audition](evidence/stage2/bands512/ay-preview.wav).
+Next evaluate transition-aware candidates; retain the baseline selection.
+
+## Reproduce
+
 With NumPy/Pillow and Node.js; native probe tests also need pyz801.3.0/z801.2.0:
 
 ```powershell
