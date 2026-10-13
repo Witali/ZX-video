@@ -42,3 +42,7 @@ analysis/o_henry/evidence/**/*.inc -text
 # Preserve measured bytes and keep listening previews in LFS.
 analysis/auto_mixer/evidence/** -text -whitespace
 analysis/auto_mixer/evidence/**/*.wav filter=lfs diff=lfs merge=lfs -text
+# Five-minute Big Buck Bunny audition: preserve proofs and store media in LFS.
+analysis/bbb_5min/evidence/** -text -whitespace
+analysis/bbb_5min/evidence/**/*.wav filter=lfs diff=lfs merge=lfs -text
+analysis/bbb_5min/evidence/**/capture.fmf.gz filter=lfs diff=lfs merge=lfs -text

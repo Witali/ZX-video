@@ -1,5 +1,39 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Calculate a short AY mixer candidate list for the long audition
+
+- **Request/baseline:** `e7450386`; user requested Big Buck Bunny source 0..300
+  seconds, then asked to calculate parameters rather than test 374 complete
+  variants. Reuse the five authenticated eight-second excerpts as references.
+- **Change:** task-local 20-candidate mixer: broadband colour prior, analytic
+  shared DAC balance M=N or M=(4*T+sqrt(2)*N)/3, chip-level quantization,
+  neighbouring -1/0/+1 levels and period scales 1/2,1,2; retain seed/pure-tone
+  and complete unpooled acceptance. Persistent pitches and the 20-ms grid
+  remain unchanged. Public converter defaults and Z80/RAM are unchanged.
+- **Measured validation:** seed ->shortlist ->full mean log MAE is
+  8.75613 ->8.48796 ->8.35282; 8.74940 ->8.09358 ->7.78872;
+  7.42225 ->7.24126 ->7.07508; 6.34678 ->5.88827 ->5.75762;
+  6.92900 ->6.70362 ->6.62787 dB. All five seeds improve, but the exhaustive
+  optimum is better by 0.07575..0.30486 dB. No perceptual equivalence claim.
+  Shortlist stages take 10.88..17.70 s; the prior full musical stage took
+  144.74 s under different load, so this is not a controlled speed benchmark.
+- **Correctness/evidence:** all five 400-state streams preserve every tone
+  period and valid R6/R7/volume fields. Fixtures authenticate all 465 waveform
+  variants and every full-search cost/register/metadata value after concurrent
+  scheduling, bounded zero-padding and hoisted gain. Every cost matrix is
+  byte-identical. Ordinary player remains 974 ->974 T (delta 0), near boundary
+  992, bank change 1091, exact-boundary EOF 1007, loop restart 1079 T; unchanged
+  instructions, excluding ULA/HALT/ROM/disk/IRQ entry.
+- **Attempts/decision:** render-only and column-pool full-movie attempts were
+  interrupted for repeated full-PCM copies; the later bounded full search was
+  interrupted at the user's speed steering. None qualifies a release. Reuse
+  only the complete noise-colour stage after source/PCM, exact replay and
+  baseline-gain checks. Use the shortlist for this audition; the complete
+  five-minute disk proof is still pending and will be recorded separately.
+  [Method](ay-converter/analysis/bbb_5min/README.md),
+  [comparison](ay-converter/analysis/bbb_5min/shortlist-validation/report.json),
+  [reproducer](ay-converter/analysis/bbb_5min/check_shortlist.py).
+
 ## 2026-10-13 — Measure and reject lossless AY phrase dictionaries
 
 - **Objective/input:** user proposed short codes for repeated spectral/AY

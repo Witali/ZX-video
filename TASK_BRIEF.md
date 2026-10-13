@@ -1474,3 +1474,15 @@ AYP1 has correct lossless round trips but uses more bytes than existing AYH1
 and increases gzip size. Keep the measured host prototype and report; retain
 the release codec. No native decoder or subsequent experiment is authorized
 by this completed milestone. See the automatic-mixer report's phrase section.
+
+## First five minutes of Big Buck Bunny AY audio — authorized (2026-10-13)
+
+From `e7450386`, convert source 0..300 seconds with the shared default `auto`
+engine, preserving all 15000 states on the 20-ms grid. Analyse the timeline
+continuously, render one complete listening WAV, and package two independently
+bootable 150-second resident audition disks. The source has no movie edit.
+Complete native and cold Fuse checks for every state on both disks; save
+listening artifacts and a reproducible report. The resident player and its
+instruction-table costs remain unchanged. Independent candidate rendering may
+be scheduled concurrently after byte-equivalence checks; do not open another
+codec/quality sweep or rebuild the video releases as part of this request.
