@@ -3,7 +3,7 @@
 Updated 2026-10-13. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
-## Active: sequential Z80 tricks for reusable codecs (2026-10-13)
+## Completed: first sequential Z80 codec trick pass (2026-10-13)
 
 The user requests a new branch, a saved list of the zx-pk.ru optimization
 techniques, and sequential application/measurement/regression checking.
@@ -36,7 +36,10 @@ endpoint. Final review corrected item01's unproved16-bit length bound: unroll
 only byte forms, retain original word paths/JR cost.95 native blocks and both
 42-case/six-placement streaming modes pass, with initial failures retained.
 Real LZSA2 gain is now24026 T (0.124%), +87 ordinary/84 streaming bytes.
-Next: item09 carry masks.
+Item09 finds no cheaper carry-mask branch (direct ADC11 T versus mask15).
+The first nine-item pass is complete, with two optional measured profiles and
+all other decisions/evidence saved. Defaults remain exact. No merge/push or
+movie release is produced; application adoption needs its complete gates.
 
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 

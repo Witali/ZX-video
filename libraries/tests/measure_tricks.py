@@ -211,18 +211,39 @@ def constant_code():
         compiled_sectors=(len(bytes.fromhex(code))+255)//256,exact_fixed_output=True,decoder_changes=0)
 
 
+def carry_masks():
+    masks=propagation=0
+    for value in range(256):
+        for carry in (0,1):
+            m,t=run('9f',dict(af=(value<<8)|0x54|carry))
+            assert m.a==(255 if carry else 0) and m.f&1==carry and t==4;masks+=1
+            # A is dead here, just as in a frontier high-byte calculation.
+            # The mask is correct, but direct carry propagation is cheaper.
+            old,ot=run('7c ce 00',dict(hl=value<<8,af=0x7354|carry))
+            new,nt=run('9f e6 01 84',dict(hl=value<<8,af=0x7354|carry))
+            assert old.af==new.af and (ot,nt)==(11,15);propagation+=1
+    m,_=run('9f',dict(af=0x7300))
+    assert m.a==0
+    return dict(item='09',baseline_revision='3e41889d',complete=True,
+        decision='inapplicable: no carry-to-mask branch; existing ADC/rotate paths cheaper',
+        mask_checks=masks,carry_propagation_checks=propagation,mask_tstates=4,
+        high_byte_tstates=dict(direct_adc=11,via_mask=15,delta=4),
+        live_accumulator_counterexample=dict(before=0x73,after=m.a),decoder_changes=0)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',required=True,choices=('02','03','04','05','06','07','08'))
+    parser.add_argument('--item',required=True,choices=('02','03','04','05','06','07','08','09'))
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args();report={'02':transfers,'03':bit_masks,'04':pointer_increments,'05':jump_tables,
-        '06':aligned_addresses,'07':stack_copies,'08':constant_code}[args.item]()
+        '06':aligned_addresses,'07':stack_copies,'08':constant_code,'09':carry_masks}[args.item]()
     report.update(release=False,timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         scope='Native instruction/precondition checks; no new decoder or playback performance claim.',
         sources={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (
             ROOT/'libraries/zx0/src/zx0/banked.py',ROOT/'libraries/zx0/src/zx0/incremental.py',
             ROOT/'libraries/zx0/src/zx0/resumable.py',ROOT/'libraries/lzsa/src/lzsa/resumable.py')})
-    args.output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8');print(json.dumps(report))
+    args.output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
+    print(json.dumps({key:report[key] for key in ('item','complete','decision')}))
 
 
 if __name__=='__main__':main()

@@ -1,5 +1,23 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Item09: direct carry propagation wins; first pass complete
+
+- **Objective/baseline:** From `3e41889d`, seek eligible carry-to-mask
+  branches. Current ZX0/LZSA2 offsets/frontiers use direct ADC/SBC/rotates,
+  with live bit/token/nibble reservoirs rather than a00/FF branch.
+- **Measurements/coverage:**512 native A/carry mask checks confirm SBC A,A4 T.
+  Another512 high-byte checks preserve exact AF but cost15 T through the
+  mask versus11 T direct ADC (+4). [Audit](libraries/TRICK_AUDIT.md),
+  [report](libraries/evidence/trick_09.json), `measure_tricks.py --item 09`.
+- **Decision:** No cheaper eligible mask branch; no decoder rewrite (delta0
+  T/code/RAM/stream). The nine-item pass is complete: corrected optional
+  LZSA2 byte-form long copies and aligned ZX0 ring table, retained efficient
+  existing paths, and measured rejected/inapplicable alternatives. Preserve
+  the expanded nonadjacent six-direction transfer audit requested by the user.
+  [Checklist](libraries/OPTIMIZATION_PLAN.md) links all evidence. Both new
+  profiles keep standard bytes/defaults; no integrated playback release,
+  automatic merge/push or new experiment is claimed or started.
+
 ## 2026-10-13 — Correct item01: preserve short escaped16-bit lengths
 
 - **Finding/baseline:** Final review at `18e7b1aa` checks the pinned LZSA2

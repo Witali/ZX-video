@@ -19,7 +19,7 @@ isolated snippet. Preserve the standard compressed formats and decoded bytes.
 | 06 | [Power-of-two table placement](https://zx-pk.ru/threads/33945-optimizatsiya-z80-koda-dlya-mandelbrota.html#post1138932) | Decoder lookup/history bounds; preserve actual history and nonwrapping EOF | Optional measured ZX0 bank table; history masking rejected |
 | 07 | [POP/PUSH bulk transfer](https://zx-pk.ru/threads/22089-memcpy-bystraya-peresylka-dannykh.html#post640226) | Literal copying only where overlap/order/IRQ contracts permit; retain AY registers | Rejected for current overlap/live-register/private-stack ABI |
 | 08 | [Constant data embedded in instructions](https://zx-pk.ru/threads/22089-memcpy-bystraya-peresylka-dannykh.html#post640483) | Constant fills/dictionaries; count compiled code and on-disk bytes, not only execution | Inapplicable to runtime standard-format literals |
-| 09 | [Carry converted to a mask](https://zx-pk.ru/threads/20455-ispolzovanie-steka-i-preryvaniya.html#post559684) | Offset signs, bounds and wrap corrections; preserve ZX0 bit/LZSA2 nibble reservoirs | Pending |
+| 09 | [Carry converted to a mask](https://zx-pk.ru/threads/20455-ispolzovanie-steka-i-preryvaniya.html#post559684) | Offset signs, bounds and wrap corrections; preserve ZX0 bit/LZSA2 nibble reservoirs | Inapplicable: ADC/rotate paths already cheaper |
 
 Each item ends as **adopted**, **optional measured candidate**, **already
 present**, **rejected**, or **inapplicable to the current ABI**, with concrete
@@ -63,11 +63,19 @@ The forum snippets are starting points; timings use
 
 ## Results
 
-[Item01](LONG_COPY.md) is complete: optional LZSA2 long-copy profile, complete
-native/streaming evidence, unchanged defaults. [Item02 audit](TRICK_AUDIT.md)
-retains the required live saves. Item03 has no equivalent eligible mask.
-Item04 retains explicit page handling. Item05's saved-HL table is slower
-for every literal class. Item06 adds an optional aligned ZX0 ring table with
-complete banked-native/IRQ evidence. Item07 fails overlap and live stack/
-register contracts. Item08's fixed-data code does not replace generic literals
-and enlarges the sample transport. Proceed with item09.
+The first nine-item pass is complete. [Corrected item01](LONG_COPY.md)
+adds optional LZSA2 byte-form long copies:95 complete native blocks, both
+42-case/six-placement streaming modes, real CPU gain24026 T (0.124%),
++87 ordinary/84 streaming core bytes. Short escaped16-bit encodings exposed
+an initial regression; retain its reports and corrected kernels.
+
+[Items02–09](TRICK_AUDIT.md) include all six BC/DE/HL transfer directions
+and intervening independent commands/calls, bit/flag/page counterexamples,
+an inferior saved-HL jump table and rejected overlap/stack/code-data masks.
+Item06 adds an optional aligned ZX0 bank table:108 ->87 T per paging call,
++121..245 bytes,64 complete native banked blocks/all16 profiles, IRQ/AY checks.
+
+Both new profiles preserve compressed bytes and default opcode/label layouts.
+No movie/TRD has been rebuilt or newly qualified. The next milestone requires
+selecting an application/profile with a fitting RAM reservation and complete
+actual delivery/publication evidence; this pass does not start it automatically.

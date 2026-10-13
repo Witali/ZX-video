@@ -228,3 +228,23 @@ no fixed literal/dictionary fill to rewrite in their current API.
 **Decision: inapplicable to generic standard-format literals.** Retain the
 standard stream and codecs; actual delta0 T/code/RAM/stream. Reproduce
 `measure_tricks.py --item 08 --output libraries/evidence/trick_08.json`.
+
+## 09 — Carry to a mask with SBC A,A (2026-10-13)
+
+The [carry-mask primitive](https://zx-pk.ru/threads/20455-ispolzovanie-steka-i-preryvaniya.html#post559684)
+costs4 T and produces00/FF for carry0/1, independent of the incoming A.
+[Native evidence](evidence/trick_09.json) checks all512 A/carry combinations
+and another512 high-byte propagation inputs. Existing LD A,H4 / ADC A,07
+costs11 T; SBC A,A4 / AND1=7 / ADD A,H4 costs15 (+4), with identical final
+AF on the latter inputs. The mask is correct but adds work at these sites.
+
+LZSA2 input-frontier guards already propagate low-byte carry with ADC0;
+offset5/13 builders consume carry with RL C/RL B. ZX0 Elias offsets use
+RR/RL and its bounds use ADC/SBC directly. None of these sites contains a
+carry-conditioned branch that chooses A=00/FF. ZX0's live A bit reservoir
+and LZSA2's token/nibble registers also prohibit using SBC A,A as scratch
+unless A is proved dead. The primitive overwrites73 with00 when carry is0.
+
+**Decision: no cheaper eligible mask branch.** Retain direct propagation/
+rotates; actual delta0 T/code/RAM/stream. Reproduce `measure_tricks.py
+--item 09 --output libraries/evidence/trick_09.json`.
