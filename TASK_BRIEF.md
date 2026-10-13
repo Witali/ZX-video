@@ -23,7 +23,8 @@ toolkit tests. Defaults remain byte-exact. Item02 is audited: eligible register
 copies already use LD; native evidence rejects replacing live saves. Next:
 item03 is audited: live parity/Z/carry and multi-bit masks prevent the rewrite.
 Item04 retains existing ZX0 page-aware increments and rejects unguarded
-crossings in variable-position headers. Next: item05 jump tables.
+crossings in variable-position headers. Item05 rejects the jump table:
+57 T versus24/31/36 T for current class selection. Next: item06 aligned tables.
 
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 

@@ -11,13 +11,14 @@ for package in ('zx0','lzsa'):
 from z80 import Z80Machine
 
 
-def run(code,registers,*,memory=(),prepare=None):
+def run(code,registers,*,memory=(),prepare=None,stop=None):
     m=Z80Machine();m.memory[:]=b'\xa5'*65536
     m.set_memory_block(0x200,bytes.fromhex(code));m.pc=0x200;m.sp=0xbff0
     for name,value in registers.items():setattr(m,name,value)
     for address,data in memory:m.set_memory_block(address,data)
     if prepare:prepare(m)
-    stop=0x200+len(bytes.fromhex(code));m.set_breakpoint(stop);m.ticks_to_stop=100000
+    if stop is None:stop=0x200+len(bytes.fromhex(code))
+    m.set_breakpoint(stop);m.ticks_to_stop=100000
     while m.pc!=stop:assert not m.run()&m._TICKS_LIMIT_HIT
     return m,100000-m.ticks_to_stop
 
@@ -87,11 +88,42 @@ def pointer_increments():
         tstates=dict(inc_hl=6,inc_l=4,delta=-2),minimal_guarded=guarded,decoder_changes=0)
 
 
+def jump_tables():
+    from lzsa.resumable import build
+    regions,z,_=build();checks=0;rows={}
+    # A is already a table index in the 22-T primitive. A real token dispatch
+    # additionally reads/masks A and must retain the live input pointer HL.
+    for token in range(256):
+        index=token&24;destination=0x7000+index
+        m,t=run('6f 26 60 66 e9',dict(af=index<<8,hl=0x4000),
+            memory=((0x6000+index,b'\x70'),),stop=destination)
+        assert m.pc==destination and t==22 and m.hl!=0x4000
+        new,nt=run('e5 7e e6 18 6f 26 60 66 e9',dict(hl=0x4000,af=0x73ff,bc=0x1234,de=0x9000),
+            memory=((0x4000,bytes([token])),(0x6000+index,b'\x70'),(destination,b'\xe1')),
+            stop=destination+1)
+        m=Z80Machine()
+        for at,blob in regions:m.set_memory_block(at,blob)
+        m.memory[0x4000]=token;m.hl=0x4000;m.af=0x73ff;m.bc=0x1234;m.de=0x9000
+        m.pc=z['Token'];stop=z['NoLiterals'] if index==0 else z['MoreLiterals'] if index==24 else z['Token']+6
+        m.set_breakpoint(stop);m.ticks_to_stop=10000
+        while m.pc!=stop:assert not m.run()&m._TICKS_LIMIT_HIT
+        ot=10000-m.ticks_to_stop
+        assert (m.hl,m.af,m.bc,m.de)==(new.hl,new.af,new.bc,new.de)
+        assert nt==57 and ot=={0:31,8:24,16:24,24:36}[index]
+        rows[index]=dict(index=index,baseline_tstates=ot,candidate_tstates=nt,delta_tstates=nt-ot)
+        checks+=1
+    return dict(item='05',baseline_revision='0d7caa52',complete=True,
+        decision='rejected: saved-HL jump table slows every literal dispatch class',
+        tokens_checked=checks,primitive_tstates=22,live_hl_dispatch=list(rows.values()),
+        table_bytes=25,table_page_alignment=256,handler_low_bytes=[0,8,16,24],
+        production_layout_allocated=False,decoder_changes=0)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',required=True,choices=('02','03','04'))
+    parser.add_argument('--item',required=True,choices=('02','03','04','05'))
     parser.add_argument('--output',type=Path,required=True)
-    args=parser.parse_args();report={'02':transfers,'03':bit_masks,'04':pointer_increments}[args.item]()
+    args=parser.parse_args();report={'02':transfers,'03':bit_masks,'04':pointer_increments,'05':jump_tables}[args.item]()
     report.update(release=False,timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         scope='Native instruction/precondition checks; no new decoder or playback performance claim.',
         sources={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (

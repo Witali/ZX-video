@@ -80,3 +80,36 @@ native input placements from item01 deliberately exercise these boundaries.
 unguarded replacement elsewhere.** No decoder change, delta0 T/code/RAM/
 stack/stream. Reproduce `measure_tricks.py --item 04 --output
 libraries/evidence/trick_04.json`.
+
+## 05 — Aligned fast jump table (2026-10-13)
+
+The [special table](https://zx-pk.ru/threads/30694-vyravnivanie-utrambovyvanie-i-vpikhivanie-koda-bystrye-tablitsy-perekhodov-i-sjasm.html#post1020767)
+uses LD L,A4 / LD H,page7 / LD H,(HL)7 / JP (HL)4=22 T. It requires
+the handler low byte to equal the input index and destroys HL. LZSA2 keeps
+its input in HL. The measured complete selection prefix becomes PUSH HL11,
+LD A,(HL)7, AND24=7, the22-T table and POP HL10=57 T.
+
+[All256 token bytes](evidence/trick_05.json) reach the same masked A/flags,
+original HL and unchanged BC/DE in both probes. Consistent endpoints are
+immediately after class selection, before common length/copy/offset work:
+
+| LL | Current S/P branches | Saved-HL table | Delta |
+| --- | ---: | ---: | ---: |
+| 00: NoLiterals entry | 31 T | 57 T | +26 T |
+| 01/10: first short-length RRCA | 24 T | 57 T | +33 T |
+| 11: MoreLiterals entry | 36 T | 57 T | +21 T |
+
+These endpoints differ from the historical dispatch-plus-offset table in
+`toolkit/LZSA2_DISPATCH.md`; do not mix those totals. The toy table requires
+25 bytes at a256-aligned start (only indices0,8,16,24 are used), up to255
+alignment bytes without an existing gap, and handlers with prescribed low
+bytes. Real handler bodies would require further placement/padding work;
+none is allocated in the player. Saving HL in another working pair just
+moves the live-register/stack problem. ZX0's bit/gamma branching has no
+existing equivalent dense token index table to replace.
+
+**Decision: reject before a whole-block prototype.** Every LZSA2 selection
+class is already faster, and the table adds memory/placement constraints.
+No core/stream change; actual delta0 T/bytes. The microcandidate delta is
+positive above, not a claimed whole-decoder measurement. Reproduce
+`measure_tricks.py --item 05 --output libraries/evidence/trick_05.json`.

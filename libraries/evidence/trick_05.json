@@ -1,0 +1,53 @@
+{
+  "item": "05",
+  "baseline_revision": "0d7caa52",
+  "complete": true,
+  "decision": "rejected: saved-HL jump table slows every literal dispatch class",
+  "tokens_checked": 256,
+  "primitive_tstates": 22,
+  "live_hl_dispatch": [
+    {
+      "index": 0,
+      "baseline_tstates": 31,
+      "candidate_tstates": 57,
+      "delta_tstates": 26
+    },
+    {
+      "index": 8,
+      "baseline_tstates": 24,
+      "candidate_tstates": 57,
+      "delta_tstates": 33
+    },
+    {
+      "index": 16,
+      "baseline_tstates": 24,
+      "candidate_tstates": 57,
+      "delta_tstates": 33
+    },
+    {
+      "index": 24,
+      "baseline_tstates": 36,
+      "candidate_tstates": 57,
+      "delta_tstates": 21
+    }
+  ],
+  "table_bytes": 25,
+  "table_page_alignment": 256,
+  "handler_low_bytes": [
+    0,
+    8,
+    16,
+    24
+  ],
+  "production_layout_allocated": false,
+  "decoder_changes": 0,
+  "release": false,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "Native instruction/precondition checks; no new decoder or playback performance claim.",
+  "sources": {
+    "libraries/zx0/src/zx0/banked.py": "ad195aead1104b71784cbab1d42337a12decf5ad6b1fa10c12fc54090ef16c2d",
+    "libraries/zx0/src/zx0/incremental.py": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a",
+    "libraries/zx0/src/zx0/resumable.py": "d45721b7bc473d84df1a54d7e4c39aeec9dca7589efddba1c3740234041f2572",
+    "libraries/lzsa/src/lzsa/resumable.py": "6858a2ae34e2972b01b7e7f668d5e4e5bf5dc306ebd404bda1c4210885a6440a"
+  }
+}

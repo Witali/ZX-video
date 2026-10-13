@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Item05: reject a slower saved-HL dispatch table
+
+- **Objective/baseline:** From `0d7caa52`, evaluate the22-T forum jump-table
+  primitive against LZSA2 S/P class selection. Include live input-HL save,
+  token read/mask and restore; count table alignment/handler constraints.
+- **Measurements/coverage:** All256 tokens agree on masked AF/HL/BC/DE.
+  The saved-HL candidate costs57 T versus31/24/24/36 T for current LL
+  classes (+26/+33/+33/+21). A25-byte table needs256-byte alignment and
+  prescribed handler low bytes; real placement is not allocated.
+  [Audit](libraries/TRICK_AUDIT.md), [report](libraries/evidence/trick_05.json),
+  reproducer `measure_tricks.py --item 05`.
+- **Decision:** Reject at the complete selection-prefix stage; no whole-block
+  rewrite warranted. Actual decoder delta0 T/code/RAM/stream; no new release.
+
 ## 2026-10-13 — Item04: retain page-aware increments
 
 - **Objective/baseline:** From `1f362d16`, seek proven page-confined INC HL
