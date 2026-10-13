@@ -125,11 +125,15 @@ From this worktree with NumPy/Pillow:
 python -m pip install --no-deps --target .tmp/dependencies/ymfm ymfm-py==0.2.0
 $env:PYTHONPATH=(Resolve-Path .tmp/dependencies/ymfm).Path
 $env:OPENBLAS_NUM_THREADS='1'
-python ay-converter/experimental_ym3812.py ay-converter/analysis/six_voice_spectral/evidence/reference.wav --output .tmp/ym3812-reproduction
+python ay-converter/experimental_ym3812.py ay-converter/analysis/six_voice_spectral/evidence/reference.wav --legacy-sine-transitions --output .tmp/ym3812-reproduction
 python -m unittest discover -s ay-converter -p test_experimental_ym3812.py -v
 ```
 
 Use a new output directory. This regenerates the expanded four trials. The
+original archive's producer-hash assertion uses revision `60e8bb3e`; use that
+revision for its exact historical provenance. Current sine exports default to
+the [subsequent click-reduction experiment](../ym3812_clicks/README.md).
+The legacy flag above preserves the original register/audio streams. The
 initial producer's exact snapshot is `evidence/trials/mult1/producer.py.gz`;
 its hash matches its manifest. Rejected media replay from retained VGZ/gain
 using `experimental_ym3812.replay()`/`playback()`. `archive.py` verifies both

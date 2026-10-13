@@ -1638,3 +1638,24 @@ The core's unused wave-disable-gating limitation is recorded; streams enable
 the bit. Physical chip/Z80/release proof and listening acceptance remain
 pending. Existing native code/releases unchanged. Simulation complete;
 do not open another experiment automatically.
+
+## YM3812 frame-boundary clicks — complete (2026-10-13)
+
+The user likes the YM3812 audition but hears clicks and suspects audio-frame
+boundaries. Reuse exact1500 targets/gain from `60e8bb3e` in the same worktree;
+do not refit spectra. Carrier TL accounts for95.42% of the measured immediate
+register-effect squared sum. Eight full trials compare real TL ramps and
+split pitch-register ordering. Select eight-step raised-cosine nominal2-ms
+TL transitions plus pitch order minimizing temporary frequency excursions.
+Actual serial bus completion is<=4.217687 ms; all exact20-ms targets remain.
+
+Squared immediate write effect6.984949 ->1.398379 (-79.9801%); largest effect
+0.286625 ->0.069429. Dominant cosines0.944361/0.899641/0.904923 slightly improve;
+level MAE0.304720 ->0.424978 dB and log/level7.242039 ->7.376224 worsen. Root
+cosines worsen too. Eight unit tests and all8*1500 states/full native replays
+pass; old media and revised CLI replay byte-exactly, zero clipping. Selected
+82,166 writes,337,171 VGM /134,200 VGZ bytes. Keep all trial streams/reports.
+[Audio, comparison, figures and reproduction](ay-converter/analysis/ym3812_clicks/README.md).
+Diagnostics include legitimate pitch/envelope changes; do not claim perceptual
+click elimination. Listening acceptance pending. No native/player/release
+changes or physical-chip/Z80 proof. This bounded deliverable is complete.

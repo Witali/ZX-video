@@ -1,5 +1,45 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Reduce YM3812 audio-frame transition clicks
+
+- **Request/input:** User reports clicks in the accepted nine-channel sound,
+  suspected at frame boundaries. Continue `.worktree/ym3812-speech` from
+  `60e8bb3e`; same O. Henry[60,90),1500 targets and constant gain. No spectral
+  refit. Old register bursts end within1.859411 ms of each20-ms boundary.
+- **Diagnosis/change:** Boundary/interior derivative-power ratio1.169034.
+  Same-chip-state first-sample counterfactuals isolate immediate write effects:
+  squared sum6.984949,95.42% carrier TL. Add eight real quantized raised-cosine
+  TL substeps, quiet key-on/off transitions, and choose carrier MULT/FNUM/BLOCK
+  write order minimizing intermediate pitch excursion. Keep exact targets,
+  bus spacing45.35us, fixed output filter/gain and historical exporter. Saved
+  controls CLI reproduces the fix; new sine fits use it by default, with an
+  explicit legacy flag. General FM/waveform transitions remain outside scope.
+- **Eight complete trials/decision:** Abrupt, historical4-step linear4-ms,
+  cosine8-step2/4/8-ms, cosine4-ms without reordered pitch, and cosine4-step
+  2/4-ms. Squared sums6.984949/1.990289/1.398379/1.411234/1.376354/1.456972/
+  2.203186/2.207496. Select8-step nominal2 ms: -79.9801% squared effect,
+  maximum0.286625 ->0.069429. Serial writes stretch completion to4.217687 ms;
+  all targets precede exact next-frame boundaries. Four steps leave more
+  abrupt step energy;8 ms worsens levels; retain4-ms audition alternative.
+- **Quality/storage tradeoff:** Dominant cosines0.944152/0.899093/0.903570 ->
+  0.944361/0.899641/0.904923. Level MAE0.304720 ->0.424978 dB; combined
+  log/level7.242039 ->7.376224; root cosines worsen. Derivative-power ratio
+  becomes0.986364; peak0.792078, zero clipping. Same gain. Writes39,128 ->
+  82,166; VGM161,158 ->337,171 bytes; VGZ61,653 ->134,200. No compact-storage
+  optimization or perceptual/global optimum claim.
+- **Verification:** Eight tests pass, including actual native broadband edge
+  suppression and avoidance of double-frequency MULT/BLOCK bursts. All eight
+  complete streams pass1500 exact state audits and independent continuous
+  native replay equality;1491477 native /1323000 output samples each. Old
+  WAV/VGM byte exact, revised CLI WAV/VGM/VGZ byte exact,61-second comparison
+  exact segments, source/core/producer/artifact hashes retained. Figures
+  inspected with shared scales. Counterfactual and derivative diagnostics
+  include legitimate tone/pitch/envelope behavior; click audibility remains
+  pending user listening. Pinned-core limitations unchanged; no physical-chip,
+  Z80, disk or release qualification. Native instructions unchanged; no hot
+  path T-state delta applies.
+- **Evidence/reproduction:** [Report, WAVs, all trial streams and scripts](ay-converter/analysis/ym3812_clicks/README.md).
+
 ## 2026-10-13 — Simulate nine-channel YM3812 speech from frequencies
 
 - **Request/input:** Create `.worktree/ym3812-speech`, branch

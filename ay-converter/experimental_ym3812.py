@@ -8,6 +8,7 @@ from functools import lru_cache
 import gzip
 import hashlib
 import importlib.metadata
+import itertools
 import json
 from pathlib import Path
 import struct
@@ -283,6 +284,80 @@ def vgm(c, ramp_steps=0):
     return bytes(header + body), write_count
 
 
+def smooth_vgm(c, transition_ms=2., steps=8, ordered_pitch=True):
+    """Ramp sine-carrier TL with real writes, retaining the exact frame targets.
+
+    Key-on starts at TL63 after tuning; key-off follows the quiet end of its
+    ramp. Raised-cosine amplitude targets soften both ends of a transition.
+    The finite 0.75-dB TL steps and 45.35-us bus slots remain observable.
+    Deadlines are relative to each frame; bus writes can overrun a substep
+    deadline, so transition_ms is nominal, not an atomic all-channel duration.
+    Every target is attained before the next exact20-ms frame boundary.
+    Frequency is phase-continuous in the chip but its split registers are
+    not atomic. Choose the order with the smallest intermediate excursion
+    outside the old/new frequency interval, including carrier MULT changes.
+    Only the measured sine patches are supported; waveform/FM changes need
+    separate transition tests. Historical vgm() stays byte-compatible.
+    """
+    count = validate(c)
+    if not np.isin(c['patch'], [0, 14]).all(): raise ValueError('smooth export requires sine patches')
+    if not np.isfinite(transition_ms) or not 1 <= transition_ms <= 8 or steps not in (4, 8, 16):
+        raise ValueError('transition must be1..8 ms with4/8/16 steps')
+    body = bytearray(); state = {}; writes = 0; elapsed = 0
+    def write(address, value, timed=True):
+        nonlocal writes, elapsed
+        address, value = int(address), int(value)
+        if state.get(address) == value: return
+        body.extend((0x5a, address, value)); state[address] = value; writes += 1
+        if timed: body.append(0x71); elapsed += 2
+    def until(deadline):
+        nonlocal elapsed
+        if elapsed < deadline:
+            body.extend(struct.pack('<BH', 0x61, deadline - elapsed)); elapsed = deadline
+    for address, value in initial_registers(): write(address, value, False)
+    old_level = np.full(9, 64)
+    for tick in range(count):
+        elapsed = 0; target = c['level'][tick]
+        for ch, mod in enumerate(MOD_OFFSETS):
+            p = PATCHES[int(c['patch'][tick, ch])]
+            if old_level[ch] == 64: write(0x43 + mod, 63)
+            write(0x20 + mod, 0x20 | p['mod_mul'])
+            write(0x40 + mod, p['mod_tl']); write(0xe3 + mod, p['wave'])
+            key = old_level[ch] < 64 or target[ch] < 64
+            changes = [(0x23 + mod, 0x20 | p['car_mul']), (0xa0 + ch, int(c['fnum'][tick, ch]) & 255),
+                       (0xb0 + ch, (0x20 if key else 0) | int(c['block'][tick, ch]) << 2 | int(c['fnum'][tick, ch]) >> 8)]
+            if ordered_pitch and old_level[ch] < 64:
+                def frequency(s):
+                    high = s.get(0xb0 + ch, 0)
+                    return (s.get(0xa0 + ch, 0) | (high & 3) << 8) * 2 ** ((high >> 2) & 7) * (s[0x23 + mod] & 15)
+                old = frequency(state); destination = dict(state); destination.update(changes)
+                new = frequency(destination); low, high = sorted((old, new))
+                def cost(order):
+                    intermediate = dict(state); excursion = []; travel = []; previous = old
+                    for address, value in order:
+                        intermediate[address] = value; current = frequency(intermediate)
+                        excursion.append(max(low - current, current - high, 0)); travel.append(abs(current - previous)); previous = current
+                    return max(excursion), sum(travel)
+                changes = min(itertools.permutations(changes), key=cost)
+            for address, value in changes: write(address, value)
+        for step in range(1, steps + 1):
+            until(round(OUT_RATE * transition_ms / 1000 * step / steps))
+            blend = .5 - .5 * np.cos(np.pi * step / steps)
+            amplitude = (1 - blend) * LEVELS[old_level] + blend * LEVELS[target]
+            code = abs(amplitude[:, None] - LEVELS).argmin(axis=1)
+            for ch, mod in enumerate(MOD_OFFSETS):
+                write(0x43 + mod, min(int(code[ch]), 63))
+                if step == steps and target[ch] == 64:
+                    write(0xb0 + ch, int(c['block'][tick, ch]) << 2 | int(c['fnum'][tick, ch]) >> 8)
+        if elapsed > 882: raise ValueError('write burst exceeds20 ms')
+        until(882); old_level = target.copy()
+    body.append(0x66)
+    header = bytearray(0x100); header[:4] = b'Vgm '
+    for offset, value in ((4, len(header) + len(body) - 4), (8, 0x171), (0x18, count * 882), (0x34, 0xcc), (0x50, CLOCK)):
+        struct.pack_into('<I', header, offset, value)
+    return bytes(header + body), writes
+
+
 def replay(data):
     if len(data) < 0x100 or data[:4] != b'Vgm ' or struct.unpack_from('<I', data, 0x50)[0] != CLOCK: raise ValueError('wrong VGM chip/header')
     if struct.unpack_from('<I', data, 4)[0] != len(data) - 4: raise ValueError('wrong VGM length')
@@ -339,6 +414,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('reference', type=Path)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--controls', type=Path, help='re-export saved sine targets with smooth register transitions')
+    parser.add_argument('--gain', type=float, help='constant audition gain for saved controls')
+    parser.add_argument('--transition-ms', type=float, default=2.)
+    parser.add_argument('--transition-steps', type=int, default=8)
+    parser.add_argument('--legacy-sine-transitions', action='store_true', help='reproduce historical abrupt sine export')
     args = parser.parse_args()
     if args.output.exists(): raise ValueError('use a new output directory')
     import experimental_six_voice as six
@@ -347,12 +427,33 @@ def main():
     if len(source) != 30 * RATE: raise ValueError('bounded experiment requires30 seconds')
     args.output.mkdir(parents=True)
     objective = Objective(source); start = time.perf_counter(); trials = []
+    if args.controls:
+        with np.load(args.controls) as stored: controls = {k: stored[k] for k in stored.files}
+        if validate(controls) != len(source) // 441: raise ValueError('source/control duration mismatch')
+        data, writes = smooth_vgm(controls, args.transition_ms, args.transition_steps)
+        raw, samples, parsed_writes = replay(data); assert writes == parsed_writes
+        audio = playback(raw, samples)
+        gain = args.gain if args.gain is not None else min(float(np.sqrt(np.mean(source ** 2) / max(np.mean(noise_colour.downsample(audio) ** 2), 1e-20))), .95 / max(float(abs(audio).max()), 1e-12))
+        if not np.isfinite(gain) or gain <= 0 or abs(audio * gain).max() >= 1: raise ValueError('invalid/clipping audition gain')
+        quality.write_wav(args.output / 'ym3812-preview.wav', audio * gain, OUT_RATE)
+        (args.output / 'ym3812.vgm').write_bytes(data)
+        (args.output / 'ym3812.vgz').write_bytes(gzip.compress(data, mtime=0))
+        np.savez_compressed(args.output / 'controls.npz', **controls)
+        save(args.output / 'report.json', dict(complete=True, fields=len(controls['fnum']), output_samples=samples,
+             native_samples=len(raw), writes=writes, global_playback_gain=gain, nominal_transition_ms=args.transition_ms,
+             transition_steps=args.transition_steps, controls_sha256=sha(args.controls.read_bytes()),
+             reference_sha256=sha(args.reference.read_bytes()), metrics=objective.measure(noise_colour.downsample(audio * gain)),
+             source_pcm_in_output=False, vgm_sha256=sha(data), wave_sha256=sha((args.output / 'ym3812-preview.wav').read_bytes())))
+        return
     for mode in ('sine', 'waveforms', 'fm'):
         controls, fitting_gain = fit(source, mode)
         np.savez_compressed(args.output / f'{mode}-controls.npz', **controls)
         for ramp in ((0, 4) if mode == 'fm' else (0,)):
             name = mode + ('-tl-ramp' if ramp else '')
-            data, writes = vgm(controls, ramp); raw, samples, parsed_writes = replay(data)
+            smooth = mode == 'sine' and not args.legacy_sine_transitions
+            if smooth: name = 'sine-smooth'
+            data, writes = smooth_vgm(controls, args.transition_ms, args.transition_steps) if smooth else vgm(controls, ramp)
+            raw, samples, parsed_writes = replay(data)
             assert writes == parsed_writes and samples == 1323000
             audio = playback(raw, samples)
             gain = min(float(np.sqrt(np.mean(source ** 2) / max(np.mean(noise_colour.downsample(audio) ** 2), 1e-20))), .95 / max(float(abs(audio).max()), 1e-12))
@@ -362,6 +463,8 @@ def main():
             coded = gzip.compress(data, mtime=0)
             (args.output / f'{name}.vgz').write_bytes(coded)
             result = dict(name=name, mode=mode, ramp_steps=ramp, global_playback_gain=gain,
+                          smooth_sine_transitions=smooth, nominal_transition_ms=args.transition_ms if smooth else None,
+                          transition_steps=args.transition_steps if smooth else None,
                           fitting_gain=fitting_gain, writes=writes, vgm_bytes=len(data), vgz_bytes=len(coded),
                           wave_sha256=sha((args.output / f'{name}.wav').read_bytes()), vgm_sha256=sha(data),
                           metrics=objective.measure(noise_colour.downsample(audio)),

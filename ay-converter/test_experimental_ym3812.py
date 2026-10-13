@@ -121,5 +121,54 @@ class Ym3812Tests(unittest.TestCase):
         altered = bytearray(data); altered[0x100] = 0x67
         with self.assertRaises(ValueError): opl.replay(altered)
 
+    def test_smooth_sine_keeps_targets_and_bus_schedule(self):
+        controls = self.controls(); controls['patch'][:] = np.array([0, 14, 0, 14])[:, None]
+        for ms, steps in ((2., 4), (2., 8), (4., 8), (8., 16)):
+            data, writes = opl.smooth_vgm(controls, ms, steps)
+            self.assertEqual(audit(data, controls)['writes'], writes)
+            raw, samples, count = opl.replay(data)
+            self.assertEqual((samples, count), (3528, writes))
+            self.assertEqual(len(raw), samples * opl.CLOCK // (72 * opl.OUT_RATE))
+        controls['patch'][0, 0] = 1
+        with self.assertRaises(ValueError): opl.smooth_vgm(controls)
+        controls['patch'][0, 0] = 0
+        for ms, steps in ((0., 8), (9., 8), (float('nan'), 8), (4., 7)):
+            with self.assertRaises(ValueError): opl.smooth_vgm(controls, ms, steps)
+
+    def test_smooth_amplitude_reduces_broadband_edges_in_actual_chip(self):
+        controls = dict(fnum=np.full((32, 9), 580, np.uint16), block=np.full((32, 9), 4, np.uint8),
+                        patch=np.zeros((32, 9), np.uint8), level=np.full((32, 9), 64, np.uint8))
+        # One440-Hz carrier alternates by27 dB every20 ms; remaining channels
+        # stay silent. Measure actual native output, with no playback filter.
+        controls['level'][:, 0] = np.tile([0, 36], 16)
+        powers = []
+        for exporter in (opl.vgm, opl.smooth_vgm):
+            raw, *_ = opl.replay(exporter(controls)[0])
+            spectrum = abs(np.fft.rfft(raw * np.hanning(len(raw)))) ** 2
+            hz = np.fft.rfftfreq(len(raw), 1 / opl.NATIVE_RATE)
+            powers.append(float(spectrum[(hz > 3500) & (hz < 8000)].sum()))
+        self.assertLess(powers[1], powers[0] * .4)
+
+    def test_equivalent_pitch_retune_avoids_double_frequency_burst(self):
+        controls = dict(fnum=np.full((2, 9), 512, np.uint16), block=np.full((2, 9), 4, np.uint8),
+                        patch=np.zeros((2, 9), np.uint8), level=np.full((2, 9), 64, np.uint8))
+        controls['level'][:, 0] = 12
+        controls['patch'][1, 0] = 14; controls['block'][1, 0] = 3
+        data, _ = opl.smooth_vgm(controls); audit(data, controls)
+        state = {}; elapsed = 0; pos = 256; frequencies = []
+        while data[pos] != 0x66:
+            op = data[pos]; pos += 1
+            if op == 0x5a:
+                reg, val = data[pos:pos + 2]; pos += 2; state[reg] = val
+                if elapsed >= 882 and reg in (0xa0, 0xb0, 0x23):
+                    high = state[0xb0]
+                    frequencies.append((state[0xa0] | (high & 3) << 8) * 2 ** ((high >> 2) & 7) * (state[0x23] & 15))
+            elif op == 0x61:
+                elapsed += struct.unpack_from('<H', data, pos)[0]; pos += 2
+            else: elapsed += (op & 15) + 1
+        self.assertEqual(frequencies[-1], 8192)
+        self.assertLessEqual(max(frequencies), 8192)
+        self.assertGreaterEqual(min(frequencies), 4096)
+
 
 if __name__ == '__main__': unittest.main()
