@@ -1,5 +1,18 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Item03: preserve live accumulator/flag masks
+
+- **Objective/baseline:** From `ec68b9d6`, inspect RES/SET replacements for
+  ZX0/LZSA2 masks. LZSA2 dispatch/length masks need A/P/Z; nibble format and
+  ZX0 bank selectors require multi-bit masks. No eligible pair-byte mask.
+- **Measurements/coverage:**1024 independent native checks give15 ->8 T
+  (-7) for the primitive L-mask while exposing unequal AF/live carry.
+  [Audit](libraries/TRICK_AUDIT.md), [report](libraries/evidence/trick_03.json),
+  reproducer `measure_tricks.py --item 03`.
+- **Decision:** Inapplicable at current sites; retain flags/data semantics.
+  No decoder changes (delta0 T/code/RAM/stack/stream), unchanged prior
+  complete regression evidence. Primitive savings do not qualify a codec gain.
+
 ## 2026-10-13 — Item02: register-transfer audit, retain live saves
 
 - **Objective/baseline:** From `542b2059`, check PUSH/POP pair transfers in

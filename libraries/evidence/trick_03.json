@@ -1,0 +1,28 @@
+{
+  "item": "03",
+  "baseline_revision": "ec68b9d6",
+  "complete": true,
+  "decision": "inapplicable: no equivalent single-bit mask with dead A/flags",
+  "primitive_checks": 1024,
+  "af_differences": 1024,
+  "mask_tstates": {
+    "before": 15,
+    "after": 8,
+    "delta": -7
+  },
+  "live_af_counterexample": {
+    "before_af": 84,
+    "after_af": 29441,
+    "equal_hl": 16384
+  },
+  "decoder_changes": 0,
+  "release": false,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "Native instruction/precondition checks; no new decoder or playback performance claim.",
+  "sources": {
+    "libraries/zx0/src/zx0/banked.py": "ad195aead1104b71784cbab1d42337a12decf5ad6b1fa10c12fc54090ef16c2d",
+    "libraries/zx0/src/zx0/incremental.py": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a",
+    "libraries/zx0/src/zx0/resumable.py": "d45721b7bc473d84df1a54d7e4c39aeec9dca7589efddba1c3740234041f2572",
+    "libraries/lzsa/src/lzsa/resumable.py": "6858a2ae34e2972b01b7e7f668d5e4e5bf5dc306ebd404bda1c4210885a6440a"
+  }
+}

@@ -42,11 +42,31 @@ def transfers():
             invalid_replacement_hl=wrong.hl,invalid_replacement_bc=wrong.bc),decoder_changes=0)
 
 
+def bit_masks():
+    checks=0;differences=0
+    for low in range(256):
+        for flags in (0,1,0x45,0xff):
+            registers=dict(hl=0x4000|low,af=0x7300|flags)
+            old,ot=run('7d e6 fe 6f',registers);new,nt=run('cb 85',registers)
+            assert old.hl==new.hl==(0x4000|(low&254)) and (ot,nt)==(15,8)
+            differences+=old.af!=new.af;checks+=1
+    # RES cannot supply the cleared carry or updated parity of AND. LZSA2
+    # explicitly consumes P/Z after AND 24 and Z after AND 7.
+    old,_=run('7d e6 fe 6f',dict(hl=0x4001,af=0x7301))
+    new,_=run('cb 85',dict(hl=0x4001,af=0x7301))
+    assert old.f&1==0 and new.f&1==1 and old.a!=new.a
+    return dict(item='03',baseline_revision='ec68b9d6',complete=True,
+        decision='inapplicable: no equivalent single-bit mask with dead A/flags',
+        primitive_checks=checks,af_differences=differences,
+        mask_tstates=dict(before=15,after=8,delta=-7),
+        live_af_counterexample=dict(before_af=old.af,after_af=new.af,equal_hl=old.hl),decoder_changes=0)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',required=True,choices=('02',))
+    parser.add_argument('--item',required=True,choices=('02','03'))
     parser.add_argument('--output',type=Path,required=True)
-    args=parser.parse_args();report=transfers()
+    args=parser.parse_args();report={'02':transfers,'03':bit_masks}[args.item]()
     report.update(release=False,timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         scope='Native instruction/precondition checks; no new decoder or playback performance claim.',
         sources={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (

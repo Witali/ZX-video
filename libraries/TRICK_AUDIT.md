@@ -32,3 +32,25 @@ changed decoder. Reproduce the independent primitive/counterexample check:
 ```powershell
 python libraries/tests/measure_tricks.py --item 02 --output libraries/evidence/trick_02.json
 ```
+
+## 03 — RES/SET instead of accumulator masks (2026-10-13)
+
+LD A,L4 / AND FE7 / LD L,A4 costs15 T; RES 0,L costs8 (-7), both four
+versus two code bytes. It is valid only if the changed A and flags are dead.
+[1024 native checks](evidence/trick_03.json) preserve the masked L value but
+show differing AF, including live carry. RES/SET preserve flags; AND clears
+carry and calculates S/Z/P. SET similarly replaces a15-T OR sequence only
+when its side effects are unnecessary.
+
+LZSA2 AND24 supplies even parity for LL=00/11, Z for the zero-literal
+class, and the masked value used by short literal rotation. AND7 supplies
+match length and Z for extension. OR F0 preserves the cached nibble format.
+ZX0's bank selector AND3 clears six bits; AND F8 clears three bits. They
+are multi-bit masks in A, not a single bit in a pair. Several RES operations
+cost more than the existing7-T mask, and would not reproduce its flags.
+The generators contain no eligible LD A,pair-byte / single-bit-mask /
+LD pair-byte,A sequence. Upstream resources remain immutable.
+
+**Decision: inapplicable to the current mask sites.** Retain the live flag/
+value operations; delta0 T/code/state/stack/stream. Reproduce with
+`measure_tricks.py --item 03 --output libraries/evidence/trick_03.json`.
