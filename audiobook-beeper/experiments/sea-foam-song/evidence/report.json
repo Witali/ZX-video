@@ -1,0 +1,250 @@
+{
+  "complete": true,
+  "disk_count": 1,
+  "source_seconds": 90.0,
+  "full_selected_song_retained": true,
+  "parts": [
+    {
+      "start": 0,
+      "stop": 186752,
+      "samples": 186880,
+      "sectors": 516
+    },
+    {
+      "start": 186752,
+      "stop": 373504,
+      "samples": 186880,
+      "sectors": 516
+    },
+    {
+      "start": 373504,
+      "stop": 560256,
+      "samples": 186880,
+      "sectors": 516
+    },
+    {
+      "start": 560256,
+      "stop": 720000,
+      "samples": 160256,
+      "sectors": 464
+    }
+  ],
+  "reference_disk_sha256": "9ce319e8b9352a96ed965d87ff3d1d8698df7d788221563758d306d23c053013",
+  "selected_legacy_model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      20,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0
+  },
+  "preparation": {
+    "source_interval_seconds": [
+      133.6,
+      223.6
+    ],
+    "duration_seconds": 90.0,
+    "source_sha256": "995ddb8988fd57f5d718df9f4811faf7d7dc68999164116effe04ce1178bd931",
+    "original_wav_sha256": "bf2218324c29575d3360d67d995012db43d27f5deb6aed9721aa9809d1c49190",
+    "source_filter": "highpass=f=70,lowpass=f=3800:p=2,lowpass=f=3800:p=2",
+    "normalizing_peak": 0.65,
+    "normalization_gain": 0.5144154766682573,
+    "normalization_scope": "whole selected song",
+    "edge_fade_seconds": 0.02,
+    "limiter": "volume=4,alimiter=limit=0.85:attack=5:release=100:level=0:latency=1",
+    "preparation_rate_hz": 192000,
+    "pcm": {
+      "sample_rate_hz": 8000,
+      "bits_per_sample": 8,
+      "channels": 1,
+      "codec": "PCM unsigned 8-bit",
+      "samples": 720000,
+      "duration_seconds": 90.0,
+      "quantization": "round to nearest, (u8-128)/128",
+      "data_sha256": "1619621f2f3cea60a728a2014514070f5a93cdaecfbb1f4fa621de9b128b7084",
+      "file": "prepared-song.wav",
+      "antialiasing": "FFmpeg sample-rate converter",
+      "pdm_input": "band-limited reconstruction of these exact 8-bit PCM bytes"
+    },
+    "prepared_wav_sha256": "bf4fb30cf4b0019764f8a9b10f7af44eb19293710947124911624d4da13a00aa",
+    "encoder": {
+      "type": "historical PCM beam search",
+      "width": 32,
+      "block_samples": 64
+    },
+    "pdm_model": {
+      "holds": [
+        36,
+        28,
+        28,
+        31,
+        24,
+        26,
+        22,
+        20,
+        22,
+        26,
+        22,
+        30,
+        31,
+        27,
+        34,
+        16
+      ],
+      "beta": 0.5,
+      "extent": 1.0
+    },
+    "offline_clock_compensation": false,
+    "phase_lock": false,
+    "reference_disk_sha256": "9ce319e8b9352a96ed965d87ff3d1d8698df7d788221563758d306d23c053013",
+    "explicit_user_selected_settings": true
+  },
+  "trd_sha256": "ba7f2924a030f72ccd5cbfe0b1bae34ab34b29dc1b2c9446393bb456b7bb588f",
+  "verification": {
+    "complete": true,
+    "volumes": [
+      {
+        "complete": true,
+        "volume": 1,
+        "from_actual_predecessor_ram": false,
+        "parts": [
+          {
+            "part": 1,
+            "bits_verified": 2990047,
+            "predictor_index_samples_verified": 186878,
+            "every_live_bit_identical": true,
+            "clock_reference": "C:\\Work\\ZX-video\\.tmp\\sea-foam-song-direct\\selected\\part-00001",
+            "clock_reference_loop": 1,
+            "timing_delta_from_qualified_part_tstates": [
+              -5,
+              3
+            ],
+            "fixed_clock_snr_db": -3.114067800325626,
+            "source_silent": false,
+            "filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+            "speed_error_percent": 0.04148241493333593,
+            "start_tstates": 97144947,
+            "stop_tstates": 179965592
+          },
+          {
+            "part": 2,
+            "bits_verified": 2990047,
+            "predictor_index_samples_verified": 186878,
+            "every_live_bit_identical": true,
+            "clock_reference": "C:\\Work\\ZX-video\\.tmp\\sea-foam-song-direct\\selected\\part-00002",
+            "clock_reference_loop": 1,
+            "timing_delta_from_qualified_part_tstates": [
+              0,
+              0
+            ],
+            "fixed_clock_snr_db": -3.05264931848408,
+            "source_silent": false,
+            "filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+            "speed_error_percent": 0.04148362286786611,
+            "start_tstates": 260587888,
+            "stop_tstates": 343408532
+          },
+          {
+            "part": 3,
+            "bits_verified": 2990047,
+            "predictor_index_samples_verified": 186878,
+            "every_live_bit_identical": true,
+            "clock_reference": "C:\\Work\\ZX-video\\.tmp\\sea-foam-song-direct\\selected\\part-00003",
+            "clock_reference_loop": 1,
+            "timing_delta_from_qualified_part_tstates": [
+              0,
+              1
+            ],
+            "fixed_clock_snr_db": -3.152756608972312,
+            "source_silent": false,
+            "filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+            "speed_error_percent": 0.04148241493333593,
+            "start_tstates": 423392655,
+            "stop_tstates": 506213300
+          },
+          {
+            "part": 4,
+            "bits_verified": 2564063,
+            "predictor_index_samples_verified": 160254,
+            "every_live_bit_identical": true,
+            "clock_reference": "C:\\Work\\ZX-video\\.tmp\\sea-foam-song-direct\\selected\\part-00004",
+            "clock_reference_loop": 1,
+            "timing_delta_from_qualified_part_tstates": [
+              0,
+              1
+            ],
+            "fixed_clock_snr_db": -3.172643534106231,
+            "source_silent": false,
+            "filter": "highpass=f=70:precision=f64,lowpass=f=4500:p=2:precision=f64,lowpass=f=4500:p=2:precision=f64",
+            "speed_error_percent": 0.041302659433850586,
+            "start_tstates": 579815703,
+            "stop_tstates": 650837291
+          }
+        ],
+        "automatic_part_transitions": 3,
+        "between_part_pause_seconds": [
+          22.73035495785052,
+          22.550430798725646,
+          20.75119202684034
+        ],
+        "runtime_disk_reads_during_audio": 0,
+        "total_sector_calls": 2054,
+        "loading_ui_checked": true,
+        "first_ready_seconds": 27.38869068764273,
+        "ended_at": "end_of_audio",
+        "terminal_ram_sha256": "2685e54e8bdba560b88707ff47228583ee11e0a0fb501fa36ff39364104d6cf4",
+        "trd_sha256": "ba7f2924a030f72ccd5cbfe0b1bae34ab34b29dc1b2c9446393bb456b7bb588f",
+        "physical_hardware_tested": false
+      }
+    ],
+    "continuations": []
+  },
+  "ordinary_tstates": 423,
+  "ordinary_delta_tstates": 0,
+  "page_extra_tstates": 14,
+  "page_delta_tstates": 0,
+  "bank_extra_tstates": 140,
+  "bank_delta_tstates": 0,
+  "hot_path_scope": "source-bearing decoder and PDM instructions; series exit is in silent guard",
+  "between_part_pause_seconds": [
+    22.73035495785052,
+    22.550430798725646,
+    20.75119202684034
+  ],
+  "quality_reference": "fixed 8-kHz conditioned PCM8; original full-band song retained separately",
+  "fixed_clock_snr_db": [
+    -3.114067800325626,
+    -3.05264931848408,
+    -3.152756608972312,
+    -3.172643534106231
+  ],
+  "speed_error_percent": [
+    0.04148241493333593,
+    0.04148362286786611,
+    0.04148241493333593,
+    0.041302659433850586
+  ],
+  "sample_boundary_snr_db": [
+    19.260738199337823,
+    19.66294926975404,
+    20.641649301630316,
+    19.56927101827286
+  ],
+  "preview_only": true,
+  "listening_acceptance_pending": true,
+  "physical_hardware_tested": false
+}

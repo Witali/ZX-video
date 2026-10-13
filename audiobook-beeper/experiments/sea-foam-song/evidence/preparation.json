@@ -1,0 +1,61 @@
+{
+  "source_interval_seconds": [
+    133.6,
+    223.6
+  ],
+  "duration_seconds": 90.0,
+  "source_sha256": "995ddb8988fd57f5d718df9f4811faf7d7dc68999164116effe04ce1178bd931",
+  "original_wav_sha256": "bf2218324c29575d3360d67d995012db43d27f5deb6aed9721aa9809d1c49190",
+  "source_filter": "highpass=f=70,lowpass=f=3800:p=2,lowpass=f=3800:p=2",
+  "normalizing_peak": 0.65,
+  "normalization_gain": 0.5144154766682573,
+  "normalization_scope": "whole selected song",
+  "edge_fade_seconds": 0.02,
+  "limiter": "volume=4,alimiter=limit=0.85:attack=5:release=100:level=0:latency=1",
+  "preparation_rate_hz": 192000,
+  "pcm": {
+    "sample_rate_hz": 8000,
+    "bits_per_sample": 8,
+    "channels": 1,
+    "codec": "PCM unsigned 8-bit",
+    "samples": 720000,
+    "duration_seconds": 90.0,
+    "quantization": "round to nearest, (u8-128)/128",
+    "data_sha256": "1619621f2f3cea60a728a2014514070f5a93cdaecfbb1f4fa621de9b128b7084",
+    "file": "prepared-song.wav",
+    "antialiasing": "FFmpeg sample-rate converter",
+    "pdm_input": "band-limited reconstruction of these exact 8-bit PCM bytes"
+  },
+  "prepared_wav_sha256": "bf4fb30cf4b0019764f8a9b10f7af44eb19293710947124911624d4da13a00aa",
+  "encoder": {
+    "type": "historical PCM beam search",
+    "width": 32,
+    "block_samples": 64
+  },
+  "pdm_model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      20,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0
+  },
+  "offline_clock_compensation": false,
+  "phase_lock": false,
+  "reference_disk_sha256": "9ce319e8b9352a96ed965d87ff3d1d8698df7d788221563758d306d23c053013",
+  "explicit_user_selected_settings": true
+}

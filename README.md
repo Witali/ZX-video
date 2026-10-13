@@ -27,6 +27,9 @@ project sources in one portable folder.
 comparison WAVs and experiment reports remain available.
 The [historical direct IMA4 disk](ZX-audiobook-IMA-ADPCM-direct-test.trd)
 is preserved at its original path for a public YouTube video link.
+The [sea-foam main song](ZX-music-Sea-Foam-IMA4-direct.trd) uses that preferred
+original direct IMA4 setup: 90 seconds on one disk, four automatically loaded
+parts and the original vocal. [WAV, exact settings and playback evidence](audiobook-beeper/experiments/sea-foam-song/README.md).
 The [full IMA4 audiobook disk](ZX-audiobook-IMA4-full-disk.trd) contains the
 first 113.712 seconds in five automatically loaded parts, with all 2560
 sectors occupied. [Measurements and reproduction](audiobook-beeper/experiments/ima4-full-disk/README.md)

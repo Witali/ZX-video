@@ -1,5 +1,57 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Main sea-foam song with the preferred original direct IMA4
+
+- **Request/baseline/input:** From `7886808a`, extract the main song from the
+  existing sea-foam cartoon, source SHA256
+  `995ddb8988fd57f5d718df9f4811faf7d7dc68999164116effe04ce1178bd931`.
+  The user selects original vocal/music, supersedes the full-disk settings
+  with `ZX-audiobook-IMA-ADPCM-direct-test.trd` and excludes the later reprise.
+  Select source [133.6,223.6),90 seconds. Public song-only audio/captions and
+  inspected scene cuts locate the number; deliverable audio comes entirely
+  from the existing cartoon. No conversion using the superseded settings ran.
+- **Parameters:** Rebuild the preferred reference byte for byte, SHA256
+  `9ce319e8b9352a96ed965d87ff3d1d8698df7d788221563758d306d23c053013`.
+  Preserve70-Hz HP/two3800-Hz LPs,192-kHz preparation,0.65 peak normalization,
+  volume4 /0.85 limiter /5-ms attack /100-ms release,20-ms outer fades,8-kHz
+  mono PCM8,PCM beam32/block64 and the original16-pulse native-weight PDM
+  table(beta0.5,extent1). No measured-table substitution,waveform search,
+  offline clock compensation or silent phase lock; converter defaults stay
+  unchanged. Use the existing sequential controller for the longer song.
+- **Result:** One independently bootable655360-byte TRD uses2039 sectors,
+  521 free. Retain all720000 selected source samples in four parts ending at
+  23.344,46.688,70.032 and90 seconds, with20-ms part-tail fades/silent guards.
+  Preserve the unprocessed90-second stereo44.1-kHz PCM16 WAV separately.
+  New TRD SHA256
+  `ba7f2924a030f72ccd5cbfe0b1bae34ab34b29dc1b2c9446393bb456b7bb588f`.
+- **Timing/complete checks:** Ordinary decoder/PDM remains423 T/sample,
+  delta0; page/bank extras14/140 T,delta0. The existing controller's silent
+  exit costs61 T versus103 T to the old next output(-42 T,different endpoints),
+  omitting33 final guard pulses. All128 KiB remain accounted for. Four native
+  and cold Fuse resident proofs cover23068676 bits/1441792 predictor/index
+  observations over two loops each. The final cold volume verifies11534204
+  bits/720888 observations, every source-bearing output, protected RAM,
+  paging,loading UI,three transitions and END OF AUDIO. Pulse deltas[-5,3],
+  [0,0],[0,1],[0,1] T meet the unchanged8-T limit; no extra phase proof needed.
+  All2054 sector calls occur outside active audio. Cold preparation27.388691 s;
+  audible reload pauses22.730355,22.550431,20.751192 s. Full-volume speed errors
+  +0.041303%..+0.041484%. ROM/disk service and ULA remain measured separately
+  from deterministic native costs; no gapless or physical-hardware claim.
+- **Quality/decision:** Minimum resident sample-boundary SNR19.260738,
+  19.662949,20.641649,19.569271 dB. Full-volume fixed8-kHz SNR-3.114068,
+  -3.052649,-3.152757,-3.172644 dB retains the original clock's accumulating
+  phase error on music; it is not comparable with sample-boundary SNR.
+  Deliver the explicitly requested legacy listening artifact as a completely
+  execution-verified preview,without claiming a20-dB release or cured voice
+  vibration. No new quality/model experiment is opened. Authenticate327
+  evidence files/331192377 bytes plus manifest; retain media,TRDs and large
+  gzip evidence in LFS. Exact saved-stream reassembly passes byte equality.
+  Initial index authentication detects newline normalization of the copied
+  reference report; place evidence attributes after generic JSON rules and
+  refresh the index. The completed byte audit authenticates329 archived/root
+  artifacts,including178 LFS identities,with zero mismatches.
+  [Scripts,WAV,settings and complete evidence](audiobook-beeper/experiments/sea-foam-song/README.md).
+
 ## 2026-10-13 — Qualify and publish the coherent sea-foam colour excerpt
 
 - **Baseline/input:** Complete the user-requested correction with `df44dac2`.
