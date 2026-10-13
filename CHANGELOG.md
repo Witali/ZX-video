@@ -1,5 +1,33 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Expand forum sources and screen new Z80 candidates
+
+- **Objective/baseline:** From `12d4eeac`, inspect previously unvisited
+  zx-pk.ru pages and locate the compiler recalled as `x80cc`. Preserve the
+  completed nine-item audit and standard/default decoder profiles.
+- **Sources/scope:** Capture and keyword-screen 54 pages in 15 additional
+  topics (14 complete captures, SjASMPlus page1/18), including all29 pages
+  of ЭТЮДЫ, SDCC code generation and LLVM. Inspect selected assembly posts;
+  save page/post URLs, counts and hashes, not full forum copies. Document
+  hashes normalize UTF-8/LF for portable replay. Thread
+  pages cap at40 despite pp=200. Additional section listings are title
+  searches, not full readings. Exact x80cc compiler/thread remains unidentified;
+  official z88dk80cc is an explicitly unconfirmed name hypothesis.
+- **Measurements/verification:**512 native indexed-shift cases confirm
+  46 ->23 T when A is dead.233 inputs23..255 expose the source decrement's
+  lower-bound error (23 ->22); corrected A agrees at14 versus22/23 T,
+  but every final F differs. One adjacent-byte clear probe is30 ->26 T;
+  AF/HL/IRQ contract unqualified. Reauthenticate all31 exact default layouts
+  and four immutable assembly resources. These are primitive screens, not
+  new complete codec/streaming/IRQ tests. Actual decoder delta0 T/bytes/RAM/input.
+- **Decision:** Save 12 additional candidate groups10–21 for sequential
+  evaluation, with no adoption or movie/release claim. The bounded research
+  is complete; retain explicit unread pages and identification uncertainty.
+  [Survey and reproducer](libraries/FORUM_RESEARCH.md),
+  [coverage record](libraries/evidence/forum_research_2026-10-13.json),
+  [primitive report](libraries/evidence/forum_primitive_screen.json),
+  [updated queue](libraries/OPTIMIZATION_PLAN.md).
+
 ## 2026-10-13 — Authenticate the completed trick pass and raw code storage
 
 - **Baseline/scope:** Final review after `960cc3cb`; authenticate all31 default

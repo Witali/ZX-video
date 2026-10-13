@@ -5,6 +5,18 @@ chat. This document scopes work; it does not start an automatic goal.
 
 ## Completed: first sequential Z80 codec trick pass (2026-10-13)
 
+The subsequent user request asks for additional forum pages, especially a
+compiler thread remembered as `x80cc`. The [bounded survey](libraries/FORUM_RESEARCH.md)
+captures/screens 54 pages in 15 additional topics and records partial/unread
+coverage explicitly. The actual requested compiler/thread is unidentified;
+official z88dk 80cc is a naming hypothesis only. Twelve additional candidate
+groups (10–21) are saved in the checklist, with 512 indexed-shift checks,
+233 corrected bounded-decrement value checks and one adjacent-clear probe.
+The source decrement fails at its lower bound; all corrected final flags
+differ. This research deliverable is complete, with no codec/default change
+or new full-codec/player qualification. Continue one codec experiment at a
+time from candidate 10 when proceeding with the saved optimization queue.
+
 The user requests a new branch, a saved list of the zx-pk.ru optimization
 techniques, and sequential application/measurement/regression checking.
 Work on `codex/z80-codec-tricks` in `.worktree/z80-codec-tricks`, from

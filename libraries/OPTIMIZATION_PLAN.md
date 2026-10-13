@@ -81,3 +81,33 @@ The [authenticated final summary](optimization_verification.json) records
 No movie/TRD has been rebuilt or newly qualified. The next milestone requires
 selecting an application/profile with a fitting RAM reservation and complete
 actual delivery/publication evidence; this pass does not start it automatically.
+
+## Additional research queue (2026-10-13)
+
+The user requests further forum pages and recalls a compiler named like
+`x80cc`. [Additional survey](FORUM_RESEARCH.md) records 15 topics/54 pages,
+explicit partial coverage, source post links and the unconfirmed 80cc naming
+hypothesis. The first nine decisions above remain complete. The following
+12 candidate groups require their own sequential codec experiments; primitive
+screening does not mark them adopted or fully audited.
+
+Source group names below link to [the survey's source list](FORUM_RESEARCH.md#source-groups-for-candidates-1021).
+The proposed codec sites are our inferences from those sources.
+
+| ID | Technique and source group | Application and required proof | Status |
+| --- | --- | --- | --- |
+| 10 | Branch choice and helper placement: ETUDES-JUMP, 80CC-OPTIONS | Move optional LZSA2 long-copy helper to remove its trampoline; retain 7-T untaken word path, JR bounds and full core reservation | Pending codec experiment |
+| 11 | Reuse loaded values across independent code: SDCC-RMW, 80CC-OPTIONS | Repeated state/history loads and spills; prove source immutability, liveness at both endpoints and every control-flow edge | Pending codec experiment |
+| 12 | Direct known-address access: SDCC-ADDR | Remove temporary HL/IX/IY construction only when the pointer is dead; include complete setup/save costs | Pending codec experiment |
+| 13 | In-place memory arithmetic: SDCC-RMW | Indexed shift instead of load/modify/store only when A is dead; audit nibble/bit reservoir ownership | Primitive 512 cases pass; codec pending |
+| 14 | Rotate/mask decomposition and narrow constant shifts: ETUDES-SHIFT, 80CC-OPTIONS | Offset/nibble extraction; prove discarded bits, carry and S/Z/P/V/N/H requirements | Pending codec experiment |
+| 15 | Running pointers and reused address calculations: 80CC-OPTIONS | Avoid recalculating state addresses across a loop; retain BC copy count and suspension state | Pending codec experiment |
+| 16 | Combine adjacent byte-state stores: SDCC-ADDR, our mapping | Streaming begin clears input_needed/finished; prove AF/HL liveness, layout and IRQ-visible ordering | 30 → 26-T primitive; codec pending |
+| 17 | Carry-based bounded increment/decrement: ETUDES-BOUND | Only for a proven input domain with dead result flags; fix the source's lower-bound error | 233 corrected value cases pass; codec pending |
+| 18 | Branch threading, tail calls and merged fall-through: 80CC-OPTIONS | Shorten helper/finish dispatch; CALL+RET → JP requires identical return-stack/continuation ownership | Pending codec experiment |
+| 19 | Preinitialized data and bulk initialization: SDCC-RMW, SDCC-ADDR | State/table startup instead of per-byte code; account for writable copies, relocations and transported bytes | Pending codec experiment |
+| 20 | Comparison orientation and reuse of existing flags: ETUDES-CMP, 80CC-DESIGN | Equality/bounds checks; only commute when the actual Z/carry/sign/overflow contract permits | Pending codec experiment |
+| 21 | Counter-width proof and register cost: 80CC-DESIGN | Loop-local bounds and complete spill costs; include short escaped LZSA2 word encodings and alternate loops | Pending codec experiment |
+
+Existing default profiles remain exact. The new queue contains ideas to
+evaluate, not additional accepted gains or a new player release.
