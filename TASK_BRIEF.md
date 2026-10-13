@@ -1766,3 +1766,10 @@ code until evidence admits a change. The subsequent user steering adds source
 verification of the installed Fuse sound model and explicit AY/YM comparison.
 Finish each milestone before opening the next; do not treat a model-only
 subframe experiment as native scheduler or release qualification.
+
+Fuse-source steering is complete: official1.9.0 source uses AY-3-8912 masks,
+16-level envelope and its own DAC; static Ayumi curve MAE1.928268 dB AY versus
+3.328873 YM. Default AY is retained. Optional standalone `psg_probe.asm` uses
+R1=1Fh, validates used-bit reads and restores R1;30 native fixtures pass,
+265/279 T AY/YM excluding CALL. Current player unchanged. [Proof](ay-converter/analysis/ay_spectral_transfer/FUSE_SOUND.md).
+Continue the original ordered encoder plan; source checks do not finish it.

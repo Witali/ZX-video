@@ -1,5 +1,28 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Verify Fuse PSG model and optional software chip probe
+
+- **Steering/input:** User asks which PSG installed Fuse supports, whether to
+  target YM2149, and whether a Spectrum can detect the chip in software.
+  Inspect the exact official Fuse1.9.0 release commit
+  `b72c83e85786f5f84375d42c104952cc5453bbaa`; installed executable reports1.9.0.
+  Initial archive HTTP download is HTML, rejected; official Git tag is used.
+- **Finding/decision:** Fuse uses AY-3-8912 register masks,16 envelope levels
+  and its own measured16-level DAC; no YM model selector. Normalized static
+  DAC-code MAE versus Ayumi is1.928268 dB AY /3.328873 dB YM. Keep AY target
+  and label YM comparisons separately; this is not waveform/perceptual proof.
+- **Code/checks:** Add an optional standalone startup Z80 readback probe:
+  validate00h/0Fh on R1, write1Fh, classify0Fh as AY-style /1Fh as YM-style,
+  restore R1 on every outcome. Original hardware investigation establishes
+  the1Fh distinction and showsFFh is unsuitable on genuine Yamaha parts.
+  Unknown/clone/FPGA behavior remains explicit. Thirty independent native
+  fixtures pass return/restore/stack checks. A temp-directory sandbox issue
+  is repaired by placing assembler test output in the verified worktree.
+- **Timing/scope:** Instruction-table sums including RET265/279 T AY/YM,
+ 226 T for tested unknown buses, CALL+17 T. Current player is untouched,
+  hot-path delta0 T. Source/executable hashes retained; no physical-chip or
+  new release qualification. [Source proof, limits and reproduction](ay-converter/analysis/ay_spectral_transfer/FUSE_SOUND.md).
+
 ## 2026-10-13 — Start the authorized AY spectral-transfer plan
 
 - **Request/scope:** Save the transfer plan and implement/test it in a new
