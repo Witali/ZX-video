@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import wave
 import numpy as np
 from PIL import Image, ImageDraw
 
@@ -26,16 +27,25 @@ def main():
     parser.add_argument('build', type=Path)
     parser.add_argument('--baseline', type=Path, required=True)
     parser.add_argument('--ffmpeg', required=True)
+    parser.add_argument('--skip-preview', action='store_true', help='refresh measurements without encoding previews again')
     args = parser.parse_args();build = args.build
     conversion = json.loads((build/'conversion.json').read_bytes())
     # Diagnostics can be saved after a failed/partial native run. They cannot
     # qualify a release; archive.py separately requires all full native proofs.
-    count = conversion['frames'] if conversion.get('frames') else 507
+    native_count = conversion.get('frames') or conversion['input']['encoded_frames']
     old = np.load(args.baseline/'work/five-states.npy', mmap_mode='r')
     new = np.load(build/'work/five-states.npy', mmap_mode='r')
-    assert old.shape == new.shape == (count, 4608)
-    for name in ('frames.rgb', 'ay.bin', 'audio-preview.wav'):
-        assert digest(build/'work'/name) == digest(args.baseline/'work'/name)
+    count = min(len(old), native_count)
+    assert new.shape == (native_count, 4608) and old.shape[1] == 4608
+    for name, size in (('frames.rgb', count*72*128*3), ('ay.bin', count*5*12)):
+        with (build/'work'/name).open('rb') as current, (args.baseline/'work'/name).open('rb') as prior:
+            assert current.read(size) == prior.read(size)
+    with wave.open(str(build/'work/audio-preview.wav'), 'rb') as current, wave.open(str(args.baseline/'work/audio-preview.wav'), 'rb') as prior:
+        assert current.getframerate() == prior.getframerate() == 22050
+        assert current.getnchannels() == prior.getnchannels() == 1
+        assert current.getsampwidth() == prior.getsampwidth() == 2
+        samples = count*5*441
+        assert current.readframes(samples) == prior.readframes(samples)
     sources = np.memmap(build/'work/frames.rgb', np.uint8, mode='r', shape=(count, 72, 128, 3))
     image = np.zeros((96, 128, 3), np.uint8)
     comparison = stable_colour.Comparison();rows = [];previous = None
@@ -57,7 +67,8 @@ def main():
         previous = source.astype(float), output
         rows.append(row)
     report = dict(complete=True, full_native_qualified=bool(conversion.get('timing_verified')),
-        frames=count, baseline_commit='db07319e', exact_source_and_ay_unchanged=True,
+        frames=count, native_frames=native_count, baseline_commit='db07319e', exact_source_and_ay_unchanged=True,
+        comparison_scope=f'Leading {count} frames against previously qualified disk. Full {native_count}-frame source errors are in video-quality.json and every native screen/AY/deadline is independently checked.',
         source_rgb_sha256=digest(build/'work/frames.rgb'),
         baseline_states_sha256=digest(args.baseline/'work/five-states.npy'),
         selected_states_sha256=digest(build/'work/five-states.npy'),
@@ -73,6 +84,9 @@ def main():
         report[name]['quiet_pooled_luma_residual_mse'] = quiet_sum[at]/max(quiet_count, 1)
     report['quiet_source_samples'] = quiet_count
     (build/'pattern-comparison.json').write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
+    if args.skip_preview:
+        print(json.dumps({key:report[key] for key in ('previous', 'selected', 'quiet_source_samples', 'full_native_qualified')}, indent=2))
+        return
     worst = int(np.argmax([r['selected']['cell_texture_seam_mse'] for r in rows]))
     indices = sorted({98, 100, 154, 259, 300, 506, worst})
     sheets = []

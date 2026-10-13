@@ -17,12 +17,17 @@ def main():
     parser.add_argument('build', type=Path)
     parser.add_argument('--baseline', type=Path, required=True)
     parser.add_argument('--tests', type=Path, required=True)
+    parser.add_argument('--destination', type=Path, default=HERE/'evidence')
     args = parser.parse_args();build = args.build
     conversion = json.loads((build/'conversion.json').read_bytes())
     timing = json.loads((build/'timing.json').read_bytes())
     comparison = json.loads((build/'pattern-comparison.json').read_bytes())
     assert conversion['complete'] and conversion['timing_verified']
-    assert conversion['frames'] == 507 and conversion['ay_ticks'] == 2535
+    count = conversion['frames']
+    assert conversion['ay_ticks'] == count*5
+    audio_quality = json.loads((build/'audio-quality.json').read_bytes())
+    assert audio_quality['reuse']['rgb_prefix_exact']
+    assert audio_quality['reuse']['exported_ticks'] == count*5
     assert timing['complete'] and timing['all_nominal_deadlines_met']
     assert comparison['complete'] and comparison['full_native_qualified'] and comparison['exact_source_and_ay_unchanged']
     records = []
@@ -38,9 +43,9 @@ def main():
         records.append(dict(file=volume['file'], sha256=volume['sha256'],
             frames=volume['frames'], ay_ticks=real['ay_ticks'], used_sectors=volume['used_sectors'],
             free_sectors=volume['free_sectors'], maximum_deviation_tstates=measured['maximum_deviation_tstates']))
-    assert sum(row['frames'] for row in records) == 507
-    assert sum(row['ay_ticks'] for row in records) == 2535
-    destination = HERE/'evidence'
+    assert sum(row['frames'] for row in records) == count
+    assert sum(row['ay_ticks'] for row in records) == count*5
+    destination = args.destination
     if destination.exists():
         prior = json.loads((destination/'qualification.json').read_bytes())
         assert prior['volumes'] == records, 'different archive already exists'
@@ -54,15 +59,24 @@ def main():
         'cell_palette_quality.py', 'monochrome_five_level.py', 'five_level_dither.py')]
     producers += sorted(HERE.glob('*.py'))
     producers += [ROOT/'toolkit/analysis/sea_foam'/name for name in ('build_prefix.py', 'preview.py')]
-    qualification = dict(complete=True, date='2026-10-13', frames=507, duration_seconds=50.7,
-        ay_ticks=2535, disks=len(records), volumes=records, all_nominal_deadlines_met=True,
+    qualification = dict(complete=True, date='2026-10-13', frames=count, duration_seconds=count/10,
+        ay_ticks=count*5, disks=len(records), volumes=records, all_nominal_deadlines_met=True,
         missed_nominal_frames=0, full_fuse_screens_exact=True, independent_dirty_boot_exact=True,
         every_ay_record_exact=True, actual_ay_50hz=True, exact_source_and_ay_unchanged=True,
+        continuous_original_rgb_and_ay_prefix_exact=True,
+        previous_qualified_comparison_frames=comparison['frames'],
         baseline_commit='db07319e', native_instruction_delta_tstates=0, physical_hardware_tested=False,
         implementation_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip(),
-        scope='Complete qualification of selected excerpt only; rejected whole-image density draft is independently preserved and never qualified.',
+        scope='Complete qualification of selected source prefix. Prior-disk image comparison covers its matching leading frames only; full source frame metrics cover every new frame. Rejected and superseded attempts remain separate.',
         producer_sources_sha256_lf={p.relative_to(ROOT).as_posix():hashlib.sha256(
             p.read_bytes().replace(b'\r\n', b'\n')).hexdigest() for p in producers})
+    qualification['producer_source_snapshots'] = {}
+    for path in producers:
+        relative = path.relative_to(ROOT)
+        target = destination/'producer-sources'/relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(path.read_bytes().replace(b'\r\n', b'\n'))
+        qualification['producer_source_snapshots'][relative.as_posix()] = target.relative_to(destination).as_posix()
     (destination/'qualification.json').write_text(json.dumps(qualification, indent=2)+'\n', encoding='utf-8', newline='\n')
     files = {p.relative_to(destination).as_posix():dict(bytes=p.stat().st_size, sha256=sha(p))
              for p in destination.rglob('*') if p.is_file() and p != destination/'manifest.json'}

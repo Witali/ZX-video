@@ -1,5 +1,33 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Size one full TRD using authenticated preparation caches
+
+- **Request/input:** Extend the same cartoon prefix toward one full disk with
+  the final local-image selector,10 fps and unchanged continuously fitted AY.
+  Reuse coarse states only after every decoded RGB byte matches. Reuse colour
+  states only with matching selector parameters/source bytes and exact prior
+  state continuity; continue normal fitting beyond the cached prefix.
+  No native instructions change,0 T delta; no audio refit or quality reduction.
+- **Measured constraints:** All1005 prepared frames fit the exact AY forest,
+  but the compiled disk needs2704 sectors versus2544 available. The940-frame
+  candidate needs2602. Neither yields a release disk; preserve failure,
+  parameter, metadata and log evidence. Ordinary window estimates are bypassed
+  with a single explicit cut; actual assembly remains the capacity gate.
+- **Verified practical fill:**900 frames(90 seconds) use2529 sectors,15 free:
+  99.4104% of usable data sectors,3840 bytes spare. All900 actual screens
+  (6220800 bytes),4500 AY records and nominal five-field deadlines pass a
+  complete independent dirty-RAM Fuse run, zero underruns/missing/duplicate
+  fields or late runs, maximum deviation22 T. Runtime2444 sector reads,
+  68071315 T read service,22306..134473 T per read,1655531 T seek service.
+  These include ROM/disk/IRQ/ULA; deterministic instruction paths remain the
+  prior counts. No physical-machine or mathematically maximum-duration claim.
+- **Provenance:** Preserve the earlier507-frame checkpoint. Save18 producer
+  source snapshots only after their LF-normalized SHA256 matches its existing
+  qualification, including recovery of the exact pre-override helper by hash.
+  Its archive now authenticates134 files/57978501 bytes plus manifest.
+  Full-prefix final archive/root publication follows complete release checks.
+  [Cached rebuild and measurement helpers](toolkit/analysis/attribute_pattern/README.md).
+
 ## 2026-10-13 — Preserve the fully qualified local-image checkpoint
 
 - Archive the completed `12c859d8`507-frame correction before the newly
