@@ -1,0 +1,250 @@
+{
+  "complete": true,
+  "date": "2026-10-13",
+  "reference_sha256": "99d8ddbca22dd76037e23d4f545d9452b3c8518061666726d9346d4e0fb3e2bd",
+  "seconds": 30,
+  "fields": 1500,
+  "channels": 9,
+  "operators_per_channel": 2,
+  "chip": "YM3812",
+  "clock_hz": 3579545,
+  "native_rate_exact": 49715.90277777778,
+  "control_hz": 50,
+  "real_registers": true,
+  "rhythm": false,
+  "csm": false,
+  "patch_bank": [
+    {
+      "name": "carrier-sine",
+      "wave": 0,
+      "mod_mul": 1,
+      "mod_tl": 63
+    },
+    {
+      "name": "half-sine",
+      "wave": 1,
+      "mod_mul": 1,
+      "mod_tl": 63
+    },
+    {
+      "name": "absolute-sine",
+      "wave": 2,
+      "mod_mul": 1,
+      "mod_tl": 63
+    },
+    {
+      "name": "quarter-sine",
+      "wave": 3,
+      "mod_mul": 1,
+      "mod_tl": 63
+    },
+    {
+      "name": "fm-1:1-tl16",
+      "wave": 0,
+      "mod_mul": 1,
+      "mod_tl": 16
+    },
+    {
+      "name": "fm-1:1-tl24",
+      "wave": 0,
+      "mod_mul": 1,
+      "mod_tl": 24
+    },
+    {
+      "name": "fm-1:1-tl32",
+      "wave": 0,
+      "mod_mul": 1,
+      "mod_tl": 32
+    },
+    {
+      "name": "fm-1:1-tl40",
+      "wave": 0,
+      "mod_mul": 1,
+      "mod_tl": 40
+    },
+    {
+      "name": "fm-2:1-tl16",
+      "wave": 0,
+      "mod_mul": 2,
+      "mod_tl": 16
+    },
+    {
+      "name": "fm-2:1-tl24",
+      "wave": 0,
+      "mod_mul": 2,
+      "mod_tl": 24
+    },
+    {
+      "name": "fm-2:1-tl32",
+      "wave": 0,
+      "mod_mul": 2,
+      "mod_tl": 32
+    },
+    {
+      "name": "fm-2:1-tl40",
+      "wave": 0,
+      "mod_mul": 2,
+      "mod_tl": 40
+    },
+    {
+      "name": "fm-3:1-tl24",
+      "wave": 0,
+      "mod_mul": 3,
+      "mod_tl": 24
+    },
+    {
+      "name": "fm-3:1-tl32",
+      "wave": 0,
+      "mod_mul": 3,
+      "mod_tl": 32
+    }
+  ],
+  "trials": [
+    {
+      "name": "sine",
+      "mode": "sine",
+      "ramp_steps": 0,
+      "global_playback_gain": 2.343829251401998,
+      "fitting_gain": 2.3178456741139035,
+      "writes": 30383,
+      "vgm_bytes": 126178,
+      "vgz_bytes": 52809,
+      "wave_sha256": "ce70b2330dd0e24a48685d43037945efd357b7cc735e65bb6cd1d728b58df77d",
+      "vgm_sha256": "596107526bdc73bad0dd52ce6b5508d4d9b71c14ddf0225e9355932efc3b5600",
+      "metrics": {
+        "objective_db": 7.626258790809214,
+        "masked_spectral_mae_db": {
+          "512": 9.203595973858002,
+          "2048": 6.901057276349243,
+          "8192": 6.475694147016102
+        },
+        "absolute_spectral_mae_db": {
+          "512": 9.023501658728357,
+          "2048": 6.793988318633345,
+          "8192": 6.388442454631817
+        },
+        "level_mae_db": 0.28421807162313384,
+        "level_bias_db": 0.07018163316809027,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.1323116259919338
+      },
+      "peak": 0.802729121451994,
+      "chip_clipping_samples": 0,
+      "source_pcm_in_output": false,
+      "native_samples": 1491477,
+      "complete": true
+    },
+    {
+      "name": "waveforms",
+      "mode": "waveforms",
+      "ramp_steps": 0,
+      "global_playback_gain": 4.305595585133789,
+      "fitting_gain": 4.5715199809590885,
+      "writes": 36646,
+      "vgm_bytes": 151230,
+      "vgz_bytes": 62282,
+      "wave_sha256": "94569d5dcef2484ad65d50504fc25a6bf392b7d794370030fa02f1e422c6cf95",
+      "vgm_sha256": "fa8981bc99be726fb72bb6083827a773d596067fc1671f922c2f345751218d4c",
+      "metrics": {
+        "objective_db": 6.5933139384847745,
+        "masked_spectral_mae_db": {
+          "512": 6.340355261162158,
+          "2048": 6.269491824103208,
+          "8192": 5.767208739812239
+        },
+        "absolute_spectral_mae_db": {
+          "512": 6.280184558175941,
+          "2048": 6.22391165486502,
+          "8192": 5.726160613352408
+        },
+        "level_mae_db": 1.3360818955968732,
+        "level_bias_db": 0.09298942195512454,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.13231162599193386
+      },
+      "peak": 0.8487317806238396,
+      "chip_clipping_samples": 0,
+      "source_pcm_in_output": false,
+      "native_samples": 1491477,
+      "complete": true
+    },
+    {
+      "name": "fm",
+      "mode": "fm",
+      "ramp_steps": 0,
+      "global_playback_gain": 4.4122801026255765,
+      "fitting_gain": 4.577015775172658,
+      "writes": 47587,
+      "vgm_bytes": 194994,
+      "vgz_bytes": 73956,
+      "wave_sha256": "82b50910529efc2c226d388ff086780b2664ceced6420775880c4f43dfed91f6",
+      "vgm_sha256": "2e6d5c98fff4cbc3a207eacd157c85fd3623387f76e1df19c4c2e8737621c9ca",
+      "metrics": {
+        "objective_db": 7.253041821961837,
+        "masked_spectral_mae_db": {
+          "512": 6.9302320148660375,
+          "2048": 6.806712268038423,
+          "8192": 6.308260982204659
+        },
+        "absolute_spectral_mae_db": {
+          "512": 6.870369465956223,
+          "2048": 6.759298952198448,
+          "8192": 6.2647403559580415
+        },
+        "level_mae_db": 1.6323049531203735,
+        "level_bias_db": -0.4522871453312686,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.13231162599193383
+      },
+      "peak": 0.8960598804460007,
+      "chip_clipping_samples": 0,
+      "source_pcm_in_output": false,
+      "native_samples": 1491477,
+      "complete": true
+    },
+    {
+      "name": "fm-tl-ramp",
+      "mode": "fm",
+      "ramp_steps": 4,
+      "global_playback_gain": 3.3068368879767416,
+      "fitting_gain": 4.577015775172658,
+      "writes": 77876,
+      "vgm_bytes": 331015,
+      "vgz_bytes": 126218,
+      "wave_sha256": "d519f105d110a83bdbb8162ea35c6dcd90337433219ffe9ea245c244e51aa4c9",
+      "vgm_sha256": "03d6a22e406f670ca17aa46b53496d04e8c870f4dd1ca625cbee0943e15e92b2",
+      "metrics": {
+        "objective_db": 7.85576551967348,
+        "masked_spectral_mae_db": {
+          "512": 7.232771901191522,
+          "2048": 6.738707199619709,
+          "8192": 6.2866310417681746
+        },
+        "absolute_spectral_mae_db": {
+          "512": 7.151431346752847,
+          "2048": 6.680445564054754,
+          "8192": 6.233706755418509
+        },
+        "level_mae_db": 3.151606110896224,
+        "level_bias_db": -2.8647298649555935,
+        "reference_rms": 0.13231162599193383,
+        "model_rms": 0.09801054532532551
+      },
+      "peak": 0.95,
+      "chip_clipping_samples": 0,
+      "source_pcm_in_output": false,
+      "native_samples": 1491477,
+      "complete": true
+    }
+  ],
+  "selected": "waveforms",
+  "output_filter": "Fixed20-Hz AC coupling and8-kHz129-tap fractional resampler; constant playback gain only.",
+  "emulator": "ymfm-py",
+  "emulator_version": "0.2.0",
+  "emulator_binary_sha256": "8d8d50145ca579d1073b23ac44579b7dba02f99b741ed57b12f4d0a07619a2c7",
+  "silicon_bit_exact_claim": false,
+  "physical_chip_or_z80_verified": false,
+  "no_source_pcm_in_stream": true,
+  "elapsed_seconds": 87.09489620001114,
+  "producer_sha256_lf": "01bf8097db711ba1bccd75e3b2df4db5d7f3bff2b9b67b23446a7d0ba8c9516a"
+}

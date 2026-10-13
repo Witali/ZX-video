@@ -1,5 +1,46 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Simulate nine-channel YM3812 speech from frequencies
+
+- **Request/input:** Create `.worktree/ym3812-speech`, branch
+  `codex/ym3812-speech`, from `86b959f9` for the user-authorized YM3812/OPL2
+  simulation. Reuse exact prepared O. Henry[60,90),1500 targets at50 Hz.
+  Use actual OPL2 registers and pinned ymfm-py0.2.0; source supplies analysis
+  targets only. Preserve the previous model and all native/release code.
+- **Eight complete trials:** Carrier-sine, four carrier shapes, fourteen
+  FM patches (ratios1/2/3, TL16..40), and real4-step TL ramp comparison.
+  Multiplier1 objectives7.626318/6.593306/7.252963/7.855888. Tests expose
+  the6208.79-Hz base limit; make it explicit and add multiplier2 patches,
+  doubling matching modulator ratios. Expanded objectives7.242039/6.741937/
+  7.262293/7.448328. Runs take87.095/164.632 s on this host, excluding archive
+  work. Retain all controls, VGZ, reports and exact original producer source.
+  A disabled-waveform test reveals an unused0.2.0 gating limitation; every
+  exported stream enables the bit. No silicon-bit-accuracy claim.
+- **Selection and failed attempts:** Four-waveform log winner6.593306 has
+  10.912983% sub50-Hz power and worse medium/long dominant cosine. All
+  waveform/FM variants have about9..11% sub50 power from changing positive
+  waveform means. Strict all-scale dominant/root/level/subsonic guard rejects
+  every candidate; retain that failed selection attempt. Deliver a bounded
+  audition under an explicitly narrower dominant/level/subsonic guard,
+  choosing expanded carrier-sine. No overall-quality or listening claim.
+- **Actual saved-WAV results:** Magnitude cosines0.899120/0.848475/0.864305
+  ->0.944152/0.899093/0.903570; level MAE0.789174 ->0.304720 dB; sub50 power
+  0.137689% ->0.030281%. Short root cosine worsens0.914079 ->0.899614 and
+  combined log/level objective6.771566 ->7.242039. Quiet/broadband details
+  remain incomplete. Peak0.892415, no clipping. Fixed20-Hz AC/8-kHz playback
+  filter plus one constant gain; no source PCM or output morphing.
+- **Verification/delivery:** All8*1500 states and eight complete VGM exports/
+  1491477-native/1323000-output-sample replays pass byte-exactly. Five tests
+  cover native frequency/TL, high multiplier2 tones, four shapes, nine voices,
+  timing and invalid inputs. Zero chip clipping in all eight. Source/core/
+  producer/media hashes and exact61-second comparison segments checked.
+  Selected39128 writes, VGM161158/VGZ61653 bytes. Timed writes45.35us apart;
+  initial silent setup precedes playback. Emulator evidence, not physical
+  chip/Z80/disk/release qualification. Native instructions unchanged; no
+  player hot-path T-state delta applies.
+  [Auditions, figures, tradeoffs and reproduction](ay-converter/analysis/ym3812/README.md),
+  [all results and replay proof](ay-converter/analysis/ym3812/evidence/report.json).
+
 ## 2026-10-13 — Verify real-time six-voice command decoding on Z80
 
 - **Request/input:** The user asks whether the measured compressed commands

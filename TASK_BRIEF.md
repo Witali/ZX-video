@@ -1610,3 +1610,31 @@ This establishes instruction-table throughput for the hypothetical19-register
 device. Disk/ROM/video/contention, actual AY/hardware audio and release playback
 remain unmeasured; native release instructions are unchanged. The requested
 decoder check is complete; no further experiment opens automatically.
+
+## YM3812 nine-channel speech simulation — complete (2026-10-13)
+
+The user authorizes a YM3812/OPL2 reconstruction of the same accepted sound.
+Use `.worktree/ym3812-speech`, branch `codex/ym3812-speech`, from `86b959f9`.
+Reuse the exact prepared O. Henry[60,90) source,1500 targets at50 Hz. Compare
+nine carrier-sine channels, all four real OPL2 carrier waveforms, and a bounded
+two-operator FM patch bank; one FM comparison may ramp TL through real writes.
+Render actual YM3812 register streams with pinned ymfm-py0.2.0, export VGM,
+retain all trials, source/output figures and an audition. Check complete
+controls/VGM/audio replay, chip constraints and no source PCM in output.
+Do not modify the six-voice model or release/native players, or open another
+hardware/CSM/voice-count search. This is emulator evidence, not a real-chip
+qualification or a promise of better listening quality.
+
+All eight1500-field streams replay exactly via real OPL2 VGM writes; five
+independent tests pass. Keep multiplier1 and multiplier1/2 banks. Select
+`mult12/sine`: magnitude cosines0.944152/0.899093/0.903570, level MAE0.304720
+dB, sub50 power0.030281%, peak0.892415/no clipping. Combined log score7.242039
+is worse than six-voice6.771566; short root cosine also worsens. Strict
+all-root/cosine guard has no eligible trial; deliver the explicitly narrower
+dominant/level/subsonic audition choice. Four-waveform log winner6.593306 has
+10.912983% sub50 power. Selected VGM161158/VGZ61653 bytes; all native/output
+samples and states checked. [WAVs, metrics and reproduction](ay-converter/analysis/ym3812/README.md).
+The core's unused wave-disable-gating limitation is recorded; streams enable
+the bit. Physical chip/Z80/release proof and listening acceptance remain
+pending. Existing native code/releases unchanged. Simulation complete;
+do not open another experiment automatically.
