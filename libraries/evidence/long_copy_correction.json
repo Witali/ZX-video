@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-13",
+  "baseline_revision": "18e7b1aa",
+  "release": false,
+  "initial_native_evidence": "long_copy_native_initial.json",
+  "initial_streaming_evidence": "long_copy_streaming_initial.json",
+  "short_word_literal_failure": {
+    "payload_hex": "5fffef030041424300e8",
+    "expected_hex": "414243",
+    "host_exact": true,
+    "default_native_exact": true,
+    "default_native_tstates": 828,
+    "initial_candidate_error": ["invalid write", "0xc003", "0x8eeb"]
+  },
+  "first_repair_regression": {
+    "trigger": "16-bit literal form takes an untaken JR NC replaced by JP NC",
+    "before_branch_tstates": 7,
+    "after_branch_tstates": 10,
+    "delta_tstates": 3,
+    "unit_observed_before_tstates": 6720,
+    "unit_observed_after_tstates": 6723
+  },
+  "accepted_correction": "Unroll only byte-extended forms with proved minimum lengths; retain JR via a nearby ordinary-input trampoline and original word-form kernels.",
+  "expanded_complete_native_evidence": "long_copy_native.json",
+  "expanded_complete_streaming_evidence": "long_copy_streaming.json"
+}

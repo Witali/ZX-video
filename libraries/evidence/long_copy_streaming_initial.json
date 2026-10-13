@@ -1,0 +1,2637 @@
+{
+  "complete": true,
+  "release": false,
+  "scope": "Compare the same guarded decoder before/after --long-copy, not complete input.",
+  "direct": {
+    "cases": 24,
+    "placements_per_case": 6,
+    "stream_sha256": "8ed8c9bef0e62450838212df54de51442a2dc84add34728d66fd4b8c2c5aa388",
+    "summary": {
+      "producer_tstates": 533509,
+      "decoder_tstates": 3609536,
+      "total_tstates": 4143045,
+      "sector_reads": 165,
+      "sectors_exact_once": true,
+      "carry_copy_bytes": 12288,
+      "max_step_tstates": 11790,
+      "baseline_decoder_tstates": 3611254,
+      "baseline_total_tstates": 4144763,
+      "delta_tstates": -1718,
+      "slower_blocks": 0
+    },
+    "blocks": [
+      {
+        "case": "literal-1",
+        "payload_sha256": "00718ff37c6a3c13a5c8cdf69b7caa4fa16d2bed4d62429f16999f70bea82705",
+        "raw_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "baseline_decoder_tstates": 693,
+        "candidate_decoder_tstates": 693,
+        "delta_tstates": 0,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 693,
+            "after_tstates": 693,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 693,
+            "after_tstates": 693,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 693,
+            "after_tstates": 693,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 719,
+            "after_tstates": 719,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 693,
+            "after_tstates": 693,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 693,
+            "after_tstates": 693,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-2",
+        "payload_sha256": "7a58cde13b50fbe32287c03a5fedcc8629fbb2d447780d17dbf136fa499c13e4",
+        "raw_sha256": "b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2",
+        "baseline_decoder_tstates": 714,
+        "candidate_decoder_tstates": 714,
+        "delta_tstates": 0,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 714,
+            "after_tstates": 714,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 714,
+            "after_tstates": 714,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 714,
+            "after_tstates": 714,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 740,
+            "after_tstates": 740,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 714,
+            "after_tstates": 714,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 714,
+            "after_tstates": 714,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-3",
+        "payload_sha256": "568ec219daa7313a6929b59ca1cae2943b227e43dc1965ee9ed43f0e9affdbaa",
+        "raw_sha256": "ae4b3280e56e2faf83f414a6e3dabe9d5fbe18976544c05fed121accb85b53fc",
+        "baseline_decoder_tstates": 778,
+        "candidate_decoder_tstates": 778,
+        "delta_tstates": 0,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 778,
+            "after_tstates": 778,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 778,
+            "after_tstates": 778,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 778,
+            "after_tstates": 778,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 804,
+            "after_tstates": 804,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 778,
+            "after_tstates": 778,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 778,
+            "after_tstates": 778,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-17",
+        "payload_sha256": "51e40fc47182968af70ff68e8c03f5e5b4fd844db78260aad67cb658202c887b",
+        "raw_sha256": "3e5718fea51a8f3f5baca61c77afab473c1810f8b9db330273b4011ce92c787e",
+        "baseline_decoder_tstates": 1072,
+        "candidate_decoder_tstates": 1072,
+        "delta_tstates": 0,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 1072,
+            "after_tstates": 1072,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 1072,
+            "after_tstates": 1072,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 1072,
+            "after_tstates": 1072,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 1098,
+            "after_tstates": 1098,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 1072,
+            "after_tstates": 1072,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 1072,
+            "after_tstates": 1072,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-18",
+        "payload_sha256": "05dc117a1f242e737b05f3dd7b7a4a98706f08f889b095186775d438758e90a8",
+        "raw_sha256": "7a096cc12702bcfa647ee070d4f3ba4c2d1d715b484b55b825d0edba6545803b",
+        "baseline_decoder_tstates": 1121,
+        "candidate_decoder_tstates": 1061,
+        "delta_tstates": -60,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 1121,
+            "after_tstates": 1061,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 1121,
+            "after_tstates": 1061,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 1121,
+            "after_tstates": 1061,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 1147,
+            "after_tstates": 1087,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 1121,
+            "after_tstates": 1061,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 1121,
+            "after_tstates": 1061,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-237",
+        "payload_sha256": "ff21a53e83e5e06fe56f58553f2432eb8ad618c81a2f58259d481b766b5b7ca0",
+        "raw_sha256": "69e640e22c3ddd1e1d8391aa4db54aa6ac8aa60ff687a5986f1bea86c49651ab",
+        "baseline_decoder_tstates": 5720,
+        "candidate_decoder_tstates": 5660,
+        "delta_tstates": -60,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 5720,
+            "after_tstates": 5660,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 5720,
+            "after_tstates": 5660,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 5720,
+            "after_tstates": 5660,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 5746,
+            "after_tstates": 5686,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 5720,
+            "after_tstates": 5660,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 5720,
+            "after_tstates": 5660,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-238",
+        "payload_sha256": "e32fcce1e2436276aea8edc998c6cbf9b3a517ac20fa3dd60076051f752749e7",
+        "raw_sha256": "6f58ce599facae90d94a287e9bf8cb06eaf17da2c293700eeb6bc087fec676b1",
+        "baseline_decoder_tstates": 5741,
+        "candidate_decoder_tstates": 5681,
+        "delta_tstates": -60,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 5741,
+            "after_tstates": 5681,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 5741,
+            "after_tstates": 5681,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 5741,
+            "after_tstates": 5681,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 5767,
+            "after_tstates": 5707,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 5741,
+            "after_tstates": 5681,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 5741,
+            "after_tstates": 5681,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-239",
+        "payload_sha256": "9ad08bd0690297005647eb98ea61f722c0d5ce9c539b264d26f5ac3abd99ee1d",
+        "raw_sha256": "5e1c10284710f5c2db48f88de3d051579643a1ed042afa846a7844895351a77b",
+        "baseline_decoder_tstates": 5762,
+        "candidate_decoder_tstates": 5702,
+        "delta_tstates": -60,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 5762,
+            "after_tstates": 5702,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 5762,
+            "after_tstates": 5702,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 5762,
+            "after_tstates": 5702,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 5788,
+            "after_tstates": 5728,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 5762,
+            "after_tstates": 5702,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 5762,
+            "after_tstates": 5702,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-255",
+        "payload_sha256": "eb5578372e87fae2310aec12ea80c38aa4902d8413ed644a759b70db50c2fd72",
+        "raw_sha256": "857df204175f077a9986709897f00ee0bcc0449585248e4b42498337e9329999",
+        "baseline_decoder_tstates": 6098,
+        "candidate_decoder_tstates": 6038,
+        "delta_tstates": -60,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65028,
+            "exact": true,
+            "before_tstates": 6810,
+            "after_tstates": 6750,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65029,
+            "exact": true,
+            "before_tstates": 6810,
+            "after_tstates": 6750,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65024,
+            "exact": true,
+            "before_tstates": 6810,
+            "after_tstates": 6750,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65025,
+            "exact": true,
+            "before_tstates": 6862,
+            "after_tstates": 6802,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65026,
+            "exact": true,
+            "before_tstates": 6810,
+            "after_tstates": 6750,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65027,
+            "exact": true,
+            "before_tstates": 6810,
+            "after_tstates": 6750,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-256",
+        "payload_sha256": "2128dbdc925d23a3400d3f58c3711a834381e194d9e08a1ef5c51019ba11a3fe",
+        "raw_sha256": "5bc31b283cef0072274e97d74916552954c935794536cab632641e5ea071379d",
+        "baseline_decoder_tstates": 6157,
+        "candidate_decoder_tstates": 6094,
+        "delta_tstates": -63,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65028,
+            "exact": true,
+            "before_tstates": 6869,
+            "after_tstates": 6796,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65029,
+            "exact": true,
+            "before_tstates": 6869,
+            "after_tstates": 6796,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65024,
+            "exact": true,
+            "before_tstates": 6869,
+            "after_tstates": 6796,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65025,
+            "exact": true,
+            "before_tstates": 6921,
+            "after_tstates": 6848,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65026,
+            "exact": true,
+            "before_tstates": 6869,
+            "after_tstates": 6796,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65027,
+            "exact": true,
+            "before_tstates": 6869,
+            "after_tstates": 6796,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-257",
+        "payload_sha256": "e774cdddd0242ee3f24483fc45f28e6ded7eb7ee776e9837c24aa231a3e3e460",
+        "raw_sha256": "a2c6cad2ffa699b14538231fef914f45d30440389e6f8d79091efba836165a2b",
+        "baseline_decoder_tstates": 6201,
+        "candidate_decoder_tstates": 6138,
+        "delta_tstates": -63,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65028,
+            "exact": true,
+            "before_tstates": 6908,
+            "after_tstates": 6835,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65029,
+            "exact": true,
+            "before_tstates": 6908,
+            "after_tstates": 6835,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65024,
+            "exact": true,
+            "before_tstates": 6908,
+            "after_tstates": 6835,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65025,
+            "exact": true,
+            "before_tstates": 6986,
+            "after_tstates": 6913,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65026,
+            "exact": true,
+            "before_tstates": 6908,
+            "after_tstates": 6835,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65027,
+            "exact": true,
+            "before_tstates": 6908,
+            "after_tstates": 6835,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-511",
+        "payload_sha256": "3d6204ebe98a779bb657e23ec83966f412c9331d79232f37b43d08168c812310",
+        "raw_sha256": "96781741ba50e7280e4d5eab7cf2cfed6b0eeb98d27d235611e689322b6b6d0f",
+        "baseline_decoder_tstates": 12242,
+        "candidate_decoder_tstates": 12169,
+        "delta_tstates": -73,
+        "sectors": 2,
+        "input_waits": 1,
+        "native": [
+          {
+            "input_start": 64772,
+            "exact": true,
+            "before_tstates": 12866,
+            "after_tstates": 12793,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64773,
+            "exact": true,
+            "before_tstates": 12866,
+            "after_tstates": 12793,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64768,
+            "exact": true,
+            "before_tstates": 12866,
+            "after_tstates": 12793,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64769,
+            "exact": true,
+            "before_tstates": 12970,
+            "after_tstates": 12897,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64770,
+            "exact": true,
+            "before_tstates": 12866,
+            "after_tstates": 12793,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64771,
+            "exact": true,
+            "before_tstates": 12866,
+            "after_tstates": 12793,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-800",
+        "payload_sha256": "d96d0ae2c1436b32d9161f7c40fc289cec7344b6250bee1cabe55530d9e12762",
+        "raw_sha256": "aa93d03f36b1ae08887c3af467bdf524b430e67599bf53e270edc115c73c0b0e",
+        "baseline_decoder_tstates": 18991,
+        "candidate_decoder_tstates": 18918,
+        "delta_tstates": -73,
+        "sectors": 3,
+        "input_waits": 2,
+        "native": [
+          {
+            "input_start": 64516,
+            "exact": true,
+            "before_tstates": 19615,
+            "after_tstates": 19542,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64517,
+            "exact": true,
+            "before_tstates": 19615,
+            "after_tstates": 19542,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64512,
+            "exact": true,
+            "before_tstates": 19615,
+            "after_tstates": 19542,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64513,
+            "exact": true,
+            "before_tstates": 19797,
+            "after_tstates": 19724,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64514,
+            "exact": true,
+            "before_tstates": 19615,
+            "after_tstates": 19542,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64515,
+            "exact": true,
+            "before_tstates": 19615,
+            "after_tstates": 19542,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-4096",
+        "payload_sha256": "10d3887921f181acf4bedbb5b22f4b419688459fa393e9cfc0d80d67514b907d",
+        "raw_sha256": "d67c656e01756650d77717b0839985a056ec28ffe174601d690fc407a2ceffca",
+        "baseline_decoder_tstates": 96655,
+        "candidate_decoder_tstates": 96582,
+        "delta_tstates": -73,
+        "sectors": 16,
+        "input_waits": 15,
+        "native": [
+          {
+            "input_start": 61188,
+            "exact": true,
+            "before_tstates": 97279,
+            "after_tstates": 97206,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 61189,
+            "exact": true,
+            "before_tstates": 97279,
+            "after_tstates": 97206,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 61184,
+            "exact": true,
+            "before_tstates": 97279,
+            "after_tstates": 97206,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 61185,
+            "exact": true,
+            "before_tstates": 98111,
+            "after_tstates": 98038,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 61186,
+            "exact": true,
+            "before_tstates": 97279,
+            "after_tstates": 97206,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 61187,
+            "exact": true,
+            "before_tstates": 97279,
+            "after_tstates": 97206,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-15872",
+        "payload_sha256": "c82534754471a52a7e68e6b2444b68f9dbc0d0d095e1108adf867fec22a4a2e3",
+        "raw_sha256": "884fba662bdfee42f3d6cd82bb504f49151b65158fda671b5d03684821e874b9",
+        "baseline_decoder_tstates": 373943,
+        "candidate_decoder_tstates": 373870,
+        "delta_tstates": -73,
+        "sectors": 62,
+        "input_waits": 61,
+        "native": [
+          {
+            "input_start": 49412,
+            "exact": true,
+            "before_tstates": 374567,
+            "after_tstates": 374494,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 49413,
+            "exact": true,
+            "before_tstates": 374567,
+            "after_tstates": 374494,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 49408,
+            "exact": true,
+            "before_tstates": 374567,
+            "after_tstates": 374494,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 49409,
+            "exact": true,
+            "before_tstates": 378076,
+            "after_tstates": 378003,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 49410,
+            "exact": true,
+            "before_tstates": 374567,
+            "after_tstates": 374494,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 49411,
+            "exact": true,
+            "before_tstates": 374567,
+            "after_tstates": 374494,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-1",
+        "payload_sha256": "dba481a5fb080956277d101a4e20019ca9b4d59bbed0bf31675dce5ac84e71d8",
+        "raw_sha256": "4cab2551b407bf533455a5e64771f1895f13ca23db7539d94ec34716efaf9e77",
+        "baseline_decoder_tstates": 336147,
+        "candidate_decoder_tstates": 336088,
+        "delta_tstates": -59,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 338044,
+            "after_tstates": 337985,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-2",
+        "payload_sha256": "f6957e907414f0937fbde9af3fdc2ec6ffff6523fc1deca8a573ca9999d9f369",
+        "raw_sha256": "8f0c0a18f8075bc4220335acacf343987f98995731a694c09232de26b18e368a",
+        "baseline_decoder_tstates": 336147,
+        "candidate_decoder_tstates": 336088,
+        "delta_tstates": -59,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 338044,
+            "after_tstates": 337985,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-32",
+        "payload_sha256": "531c0aeec9c3901235ba184eadc0dec3b93ddfd4082c6c3077603c0424378bc4",
+        "raw_sha256": "1941082acc511833175942fa56ff14f1ca961311644a9ef9116548f83ff62146",
+        "baseline_decoder_tstates": 336221,
+        "candidate_decoder_tstates": 336102,
+        "delta_tstates": -119,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 336221,
+            "after_tstates": 336102,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 336221,
+            "after_tstates": 336102,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 336221,
+            "after_tstates": 336102,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 338118,
+            "after_tstates": 337999,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 336221,
+            "after_tstates": 336102,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 336221,
+            "after_tstates": 336102,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-33",
+        "payload_sha256": "2f9f26be52fcadb5e703d81fcef2b4377767c9e63bcfb59da9b382e5533071ee",
+        "raw_sha256": "41a809dcc8de9ce907e54f3cc970555de6e33e8fe44e4c7d33c0f13b98dd43cd",
+        "baseline_decoder_tstates": 336181,
+        "candidate_decoder_tstates": 336062,
+        "delta_tstates": -119,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 336181,
+            "after_tstates": 336062,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 336181,
+            "after_tstates": 336062,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 336181,
+            "after_tstates": 336062,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 338078,
+            "after_tstates": 337959,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 336181,
+            "after_tstates": 336062,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 336181,
+            "after_tstates": 336062,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-511",
+        "payload_sha256": "45f803b4443d953829f6ad13c714a271c72ea4eec4a3a81b3a501e448da23477",
+        "raw_sha256": "81d9e3d3912a462b532be69443cb658f9a1bfcffdc7a483d473a036ceb7d1370",
+        "baseline_decoder_tstates": 336923,
+        "candidate_decoder_tstates": 336794,
+        "delta_tstates": -129,
+        "sectors": 2,
+        "input_waits": 1,
+        "native": [
+          {
+            "input_start": 64772,
+            "exact": true,
+            "before_tstates": 337547,
+            "after_tstates": 337418,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64773,
+            "exact": true,
+            "before_tstates": 337547,
+            "after_tstates": 337418,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64768,
+            "exact": true,
+            "before_tstates": 337547,
+            "after_tstates": 337418,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64769,
+            "exact": true,
+            "before_tstates": 339496,
+            "after_tstates": 339367,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 64770,
+            "exact": true,
+            "before_tstates": 337547,
+            "after_tstates": 337418,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64771,
+            "exact": true,
+            "before_tstates": 337547,
+            "after_tstates": 337418,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-512",
+        "payload_sha256": "160d47f40b7fa8d1037264f02f071d64c069d7314919d2bf98f92f6cfe2ca487",
+        "raw_sha256": "caf173cf95a1135d697b957269630fb080da9962d09d36616f1923007644d322",
+        "baseline_decoder_tstates": 336923,
+        "candidate_decoder_tstates": 336794,
+        "delta_tstates": -129,
+        "sectors": 2,
+        "input_waits": 1,
+        "native": [
+          {
+            "input_start": 64772,
+            "exact": true,
+            "before_tstates": 337547,
+            "after_tstates": 337418,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64773,
+            "exact": true,
+            "before_tstates": 337547,
+            "after_tstates": 337418,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64768,
+            "exact": true,
+            "before_tstates": 337547,
+            "after_tstates": 337418,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64769,
+            "exact": true,
+            "before_tstates": 339496,
+            "after_tstates": 339367,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 64770,
+            "exact": true,
+            "before_tstates": 337547,
+            "after_tstates": 337418,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64771,
+            "exact": true,
+            "before_tstates": 337547,
+            "after_tstates": 337418,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-513",
+        "payload_sha256": "5c8537b3fd80236559d283c9be54432391ca66f09a28a106e03412f42f35601e",
+        "raw_sha256": "dffcd4cc4ae8c7224f81637a69ab6253f62aa16603241b8a5ecf9850ba285c52",
+        "baseline_decoder_tstates": 336971,
+        "candidate_decoder_tstates": 336844,
+        "delta_tstates": -127,
+        "sectors": 2,
+        "input_waits": 1,
+        "native": [
+          {
+            "input_start": 64772,
+            "exact": true,
+            "before_tstates": 337595,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64773,
+            "exact": true,
+            "before_tstates": 337595,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64768,
+            "exact": true,
+            "before_tstates": 337595,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64769,
+            "exact": true,
+            "before_tstates": 339544,
+            "after_tstates": 339417,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 64770,
+            "exact": true,
+            "before_tstates": 337595,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64771,
+            "exact": true,
+            "before_tstates": 337595,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-8704",
+        "payload_sha256": "fc5a59393a275a704eee4abd01a644ab61eed28995bb637d08e81c5547dc321e",
+        "raw_sha256": "ae04333088afc3003393a4b3fe651ef528d60d809dad1b69929846bb2e17b954",
+        "baseline_decoder_tstates": 356939,
+        "candidate_decoder_tstates": 356812,
+        "delta_tstates": -127,
+        "sectors": 34,
+        "input_waits": 33,
+        "native": [
+          {
+            "input_start": 56580,
+            "exact": true,
+            "before_tstates": 357563,
+            "after_tstates": 357436,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56581,
+            "exact": true,
+            "before_tstates": 357563,
+            "after_tstates": 357436,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56576,
+            "exact": true,
+            "before_tstates": 357563,
+            "after_tstates": 357436,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56577,
+            "exact": true,
+            "before_tstates": 360344,
+            "after_tstates": 360217,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 56578,
+            "exact": true,
+            "before_tstates": 357563,
+            "after_tstates": 357436,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56579,
+            "exact": true,
+            "before_tstates": 357563,
+            "after_tstates": 357436,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-8705",
+        "payload_sha256": "1aeec7c4cb5b9e52297e2f85d54f599c5f7e908072e9bbb8288c695c1a1e91de",
+        "raw_sha256": "ac2b346434b9e158f126b4b3ae7396a0f107254b6a6e54b021977fe10639d552",
+        "baseline_decoder_tstates": 356914,
+        "candidate_decoder_tstates": 356782,
+        "delta_tstates": -132,
+        "sectors": 34,
+        "input_waits": 33,
+        "native": [
+          {
+            "input_start": 56580,
+            "exact": true,
+            "before_tstates": 357538,
+            "after_tstates": 357406,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56581,
+            "exact": true,
+            "before_tstates": 357538,
+            "after_tstates": 357406,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56576,
+            "exact": true,
+            "before_tstates": 357538,
+            "after_tstates": 357406,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56577,
+            "exact": true,
+            "before_tstates": 360319,
+            "after_tstates": 360187,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 56578,
+            "exact": true,
+            "before_tstates": 357538,
+            "after_tstates": 357406,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56579,
+            "exact": true,
+            "before_tstates": 357538,
+            "after_tstates": 357406,
+            "injected_interrupts": 0
+          }
+        ]
+      }
+    ]
+  },
+  "call": {
+    "cases": 24,
+    "placements_per_case": 6,
+    "stream_sha256": "8ed8c9bef0e62450838212df54de51442a2dc84add34728d66fd4b8c2c5aa388",
+    "summary": {
+      "producer_tstates": 535745,
+      "decoder_tstates": 3609986,
+      "total_tstates": 4145731,
+      "sector_reads": 165,
+      "sectors_exact_once": true,
+      "carry_copy_bytes": 12288,
+      "max_step_tstates": 11803,
+      "baseline_decoder_tstates": 3611704,
+      "baseline_total_tstates": 4147449,
+      "delta_tstates": -1718,
+      "slower_blocks": 0
+    },
+    "blocks": [
+      {
+        "case": "literal-1",
+        "payload_sha256": "00718ff37c6a3c13a5c8cdf69b7caa4fa16d2bed4d62429f16999f70bea82705",
+        "raw_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "baseline_decoder_tstates": 693,
+        "candidate_decoder_tstates": 693,
+        "delta_tstates": 0,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 693,
+            "after_tstates": 693,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 693,
+            "after_tstates": 693,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 693,
+            "after_tstates": 693,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 719,
+            "after_tstates": 719,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 693,
+            "after_tstates": 693,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 693,
+            "after_tstates": 693,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-2",
+        "payload_sha256": "7a58cde13b50fbe32287c03a5fedcc8629fbb2d447780d17dbf136fa499c13e4",
+        "raw_sha256": "b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2",
+        "baseline_decoder_tstates": 714,
+        "candidate_decoder_tstates": 714,
+        "delta_tstates": 0,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 714,
+            "after_tstates": 714,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 714,
+            "after_tstates": 714,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 714,
+            "after_tstates": 714,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 740,
+            "after_tstates": 740,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 714,
+            "after_tstates": 714,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 714,
+            "after_tstates": 714,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-3",
+        "payload_sha256": "568ec219daa7313a6929b59ca1cae2943b227e43dc1965ee9ed43f0e9affdbaa",
+        "raw_sha256": "ae4b3280e56e2faf83f414a6e3dabe9d5fbe18976544c05fed121accb85b53fc",
+        "baseline_decoder_tstates": 778,
+        "candidate_decoder_tstates": 778,
+        "delta_tstates": 0,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 778,
+            "after_tstates": 778,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 778,
+            "after_tstates": 778,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 778,
+            "after_tstates": 778,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 804,
+            "after_tstates": 804,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 778,
+            "after_tstates": 778,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 778,
+            "after_tstates": 778,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-17",
+        "payload_sha256": "51e40fc47182968af70ff68e8c03f5e5b4fd844db78260aad67cb658202c887b",
+        "raw_sha256": "3e5718fea51a8f3f5baca61c77afab473c1810f8b9db330273b4011ce92c787e",
+        "baseline_decoder_tstates": 1072,
+        "candidate_decoder_tstates": 1072,
+        "delta_tstates": 0,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 1072,
+            "after_tstates": 1072,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 1072,
+            "after_tstates": 1072,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 1072,
+            "after_tstates": 1072,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 1098,
+            "after_tstates": 1098,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 1072,
+            "after_tstates": 1072,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 1072,
+            "after_tstates": 1072,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-18",
+        "payload_sha256": "05dc117a1f242e737b05f3dd7b7a4a98706f08f889b095186775d438758e90a8",
+        "raw_sha256": "7a096cc12702bcfa647ee070d4f3ba4c2d1d715b484b55b825d0edba6545803b",
+        "baseline_decoder_tstates": 1121,
+        "candidate_decoder_tstates": 1061,
+        "delta_tstates": -60,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 1121,
+            "after_tstates": 1061,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 1121,
+            "after_tstates": 1061,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 1121,
+            "after_tstates": 1061,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 1147,
+            "after_tstates": 1087,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 1121,
+            "after_tstates": 1061,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 1121,
+            "after_tstates": 1061,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-237",
+        "payload_sha256": "ff21a53e83e5e06fe56f58553f2432eb8ad618c81a2f58259d481b766b5b7ca0",
+        "raw_sha256": "69e640e22c3ddd1e1d8391aa4db54aa6ac8aa60ff687a5986f1bea86c49651ab",
+        "baseline_decoder_tstates": 5720,
+        "candidate_decoder_tstates": 5660,
+        "delta_tstates": -60,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 5720,
+            "after_tstates": 5660,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 5720,
+            "after_tstates": 5660,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 5720,
+            "after_tstates": 5660,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 5746,
+            "after_tstates": 5686,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 5720,
+            "after_tstates": 5660,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 5720,
+            "after_tstates": 5660,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-238",
+        "payload_sha256": "e32fcce1e2436276aea8edc998c6cbf9b3a517ac20fa3dd60076051f752749e7",
+        "raw_sha256": "6f58ce599facae90d94a287e9bf8cb06eaf17da2c293700eeb6bc087fec676b1",
+        "baseline_decoder_tstates": 5741,
+        "candidate_decoder_tstates": 5681,
+        "delta_tstates": -60,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 5741,
+            "after_tstates": 5681,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 5741,
+            "after_tstates": 5681,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 5741,
+            "after_tstates": 5681,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 5767,
+            "after_tstates": 5707,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 5741,
+            "after_tstates": 5681,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 5741,
+            "after_tstates": 5681,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-239",
+        "payload_sha256": "9ad08bd0690297005647eb98ea61f722c0d5ce9c539b264d26f5ac3abd99ee1d",
+        "raw_sha256": "5e1c10284710f5c2db48f88de3d051579643a1ed042afa846a7844895351a77b",
+        "baseline_decoder_tstates": 5762,
+        "candidate_decoder_tstates": 5702,
+        "delta_tstates": -60,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 5762,
+            "after_tstates": 5702,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 5762,
+            "after_tstates": 5702,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 5762,
+            "after_tstates": 5702,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 5788,
+            "after_tstates": 5728,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 5762,
+            "after_tstates": 5702,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 5762,
+            "after_tstates": 5702,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-255",
+        "payload_sha256": "eb5578372e87fae2310aec12ea80c38aa4902d8413ed644a759b70db50c2fd72",
+        "raw_sha256": "857df204175f077a9986709897f00ee0bcc0449585248e4b42498337e9329999",
+        "baseline_decoder_tstates": 6098,
+        "candidate_decoder_tstates": 6038,
+        "delta_tstates": -60,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65028,
+            "exact": true,
+            "before_tstates": 6860,
+            "after_tstates": 6800,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65029,
+            "exact": true,
+            "before_tstates": 6860,
+            "after_tstates": 6800,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65024,
+            "exact": true,
+            "before_tstates": 6860,
+            "after_tstates": 6800,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65025,
+            "exact": true,
+            "before_tstates": 6912,
+            "after_tstates": 6852,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65026,
+            "exact": true,
+            "before_tstates": 6860,
+            "after_tstates": 6800,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65027,
+            "exact": true,
+            "before_tstates": 6860,
+            "after_tstates": 6800,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-256",
+        "payload_sha256": "2128dbdc925d23a3400d3f58c3711a834381e194d9e08a1ef5c51019ba11a3fe",
+        "raw_sha256": "5bc31b283cef0072274e97d74916552954c935794536cab632641e5ea071379d",
+        "baseline_decoder_tstates": 6157,
+        "candidate_decoder_tstates": 6094,
+        "delta_tstates": -63,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65028,
+            "exact": true,
+            "before_tstates": 6919,
+            "after_tstates": 6846,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65029,
+            "exact": true,
+            "before_tstates": 6919,
+            "after_tstates": 6846,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65024,
+            "exact": true,
+            "before_tstates": 6919,
+            "after_tstates": 6846,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65025,
+            "exact": true,
+            "before_tstates": 6971,
+            "after_tstates": 6898,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65026,
+            "exact": true,
+            "before_tstates": 6919,
+            "after_tstates": 6846,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65027,
+            "exact": true,
+            "before_tstates": 6919,
+            "after_tstates": 6846,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-257",
+        "payload_sha256": "e774cdddd0242ee3f24483fc45f28e6ded7eb7ee776e9837c24aa231a3e3e460",
+        "raw_sha256": "a2c6cad2ffa699b14538231fef914f45d30440389e6f8d79091efba836165a2b",
+        "baseline_decoder_tstates": 6201,
+        "candidate_decoder_tstates": 6138,
+        "delta_tstates": -63,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65028,
+            "exact": true,
+            "before_tstates": 6958,
+            "after_tstates": 6885,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65029,
+            "exact": true,
+            "before_tstates": 6958,
+            "after_tstates": 6885,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65024,
+            "exact": true,
+            "before_tstates": 6958,
+            "after_tstates": 6885,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65025,
+            "exact": true,
+            "before_tstates": 7036,
+            "after_tstates": 6963,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65026,
+            "exact": true,
+            "before_tstates": 6958,
+            "after_tstates": 6885,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65027,
+            "exact": true,
+            "before_tstates": 6958,
+            "after_tstates": 6885,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-511",
+        "payload_sha256": "3d6204ebe98a779bb657e23ec83966f412c9331d79232f37b43d08168c812310",
+        "raw_sha256": "96781741ba50e7280e4d5eab7cf2cfed6b0eeb98d27d235611e689322b6b6d0f",
+        "baseline_decoder_tstates": 12292,
+        "candidate_decoder_tstates": 12219,
+        "delta_tstates": -73,
+        "sectors": 2,
+        "input_waits": 1,
+        "native": [
+          {
+            "input_start": 64772,
+            "exact": true,
+            "before_tstates": 12916,
+            "after_tstates": 12843,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64773,
+            "exact": true,
+            "before_tstates": 12916,
+            "after_tstates": 12843,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64768,
+            "exact": true,
+            "before_tstates": 12916,
+            "after_tstates": 12843,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64769,
+            "exact": true,
+            "before_tstates": 13020,
+            "after_tstates": 12947,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64770,
+            "exact": true,
+            "before_tstates": 12916,
+            "after_tstates": 12843,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64771,
+            "exact": true,
+            "before_tstates": 12916,
+            "after_tstates": 12843,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-800",
+        "payload_sha256": "d96d0ae2c1436b32d9161f7c40fc289cec7344b6250bee1cabe55530d9e12762",
+        "raw_sha256": "aa93d03f36b1ae08887c3af467bdf524b430e67599bf53e270edc115c73c0b0e",
+        "baseline_decoder_tstates": 19041,
+        "candidate_decoder_tstates": 18968,
+        "delta_tstates": -73,
+        "sectors": 3,
+        "input_waits": 2,
+        "native": [
+          {
+            "input_start": 64516,
+            "exact": true,
+            "before_tstates": 19665,
+            "after_tstates": 19592,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64517,
+            "exact": true,
+            "before_tstates": 19665,
+            "after_tstates": 19592,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64512,
+            "exact": true,
+            "before_tstates": 19665,
+            "after_tstates": 19592,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64513,
+            "exact": true,
+            "before_tstates": 19847,
+            "after_tstates": 19774,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64514,
+            "exact": true,
+            "before_tstates": 19665,
+            "after_tstates": 19592,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64515,
+            "exact": true,
+            "before_tstates": 19665,
+            "after_tstates": 19592,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-4096",
+        "payload_sha256": "10d3887921f181acf4bedbb5b22f4b419688459fa393e9cfc0d80d67514b907d",
+        "raw_sha256": "d67c656e01756650d77717b0839985a056ec28ffe174601d690fc407a2ceffca",
+        "baseline_decoder_tstates": 96705,
+        "candidate_decoder_tstates": 96632,
+        "delta_tstates": -73,
+        "sectors": 16,
+        "input_waits": 15,
+        "native": [
+          {
+            "input_start": 61188,
+            "exact": true,
+            "before_tstates": 97329,
+            "after_tstates": 97256,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 61189,
+            "exact": true,
+            "before_tstates": 97329,
+            "after_tstates": 97256,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 61184,
+            "exact": true,
+            "before_tstates": 97329,
+            "after_tstates": 97256,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 61185,
+            "exact": true,
+            "before_tstates": 98161,
+            "after_tstates": 98088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 61186,
+            "exact": true,
+            "before_tstates": 97329,
+            "after_tstates": 97256,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 61187,
+            "exact": true,
+            "before_tstates": 97329,
+            "after_tstates": 97256,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "literal-15872",
+        "payload_sha256": "c82534754471a52a7e68e6b2444b68f9dbc0d0d095e1108adf867fec22a4a2e3",
+        "raw_sha256": "884fba662bdfee42f3d6cd82bb504f49151b65158fda671b5d03684821e874b9",
+        "baseline_decoder_tstates": 373993,
+        "candidate_decoder_tstates": 373920,
+        "delta_tstates": -73,
+        "sectors": 62,
+        "input_waits": 61,
+        "native": [
+          {
+            "input_start": 49412,
+            "exact": true,
+            "before_tstates": 374617,
+            "after_tstates": 374544,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 49413,
+            "exact": true,
+            "before_tstates": 374617,
+            "after_tstates": 374544,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 49408,
+            "exact": true,
+            "before_tstates": 374617,
+            "after_tstates": 374544,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 49409,
+            "exact": true,
+            "before_tstates": 378126,
+            "after_tstates": 378053,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 49410,
+            "exact": true,
+            "before_tstates": 374617,
+            "after_tstates": 374544,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 49411,
+            "exact": true,
+            "before_tstates": 374617,
+            "after_tstates": 374544,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-1",
+        "payload_sha256": "dba481a5fb080956277d101a4e20019ca9b4d59bbed0bf31675dce5ac84e71d8",
+        "raw_sha256": "4cab2551b407bf533455a5e64771f1895f13ca23db7539d94ec34716efaf9e77",
+        "baseline_decoder_tstates": 336147,
+        "candidate_decoder_tstates": 336088,
+        "delta_tstates": -59,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 338044,
+            "after_tstates": 337985,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-2",
+        "payload_sha256": "f6957e907414f0937fbde9af3fdc2ec6ffff6523fc1deca8a573ca9999d9f369",
+        "raw_sha256": "8f0c0a18f8075bc4220335acacf343987f98995731a694c09232de26b18e368a",
+        "baseline_decoder_tstates": 336147,
+        "candidate_decoder_tstates": 336088,
+        "delta_tstates": -59,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 338044,
+            "after_tstates": 337985,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 336147,
+            "after_tstates": 336088,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-32",
+        "payload_sha256": "531c0aeec9c3901235ba184eadc0dec3b93ddfd4082c6c3077603c0424378bc4",
+        "raw_sha256": "1941082acc511833175942fa56ff14f1ca961311644a9ef9116548f83ff62146",
+        "baseline_decoder_tstates": 336221,
+        "candidate_decoder_tstates": 336102,
+        "delta_tstates": -119,
+        "sectors": 0,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 336221,
+            "after_tstates": 336102,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 336221,
+            "after_tstates": 336102,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 336221,
+            "after_tstates": 336102,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 338118,
+            "after_tstates": 337999,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 336221,
+            "after_tstates": 336102,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 336221,
+            "after_tstates": 336102,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-33",
+        "payload_sha256": "2f9f26be52fcadb5e703d81fcef2b4377767c9e63bcfb59da9b382e5533071ee",
+        "raw_sha256": "41a809dcc8de9ce907e54f3cc970555de6e33e8fe44e4c7d33c0f13b98dd43cd",
+        "baseline_decoder_tstates": 336181,
+        "candidate_decoder_tstates": 336062,
+        "delta_tstates": -119,
+        "sectors": 1,
+        "input_waits": 0,
+        "native": [
+          {
+            "input_start": 65284,
+            "exact": true,
+            "before_tstates": 336181,
+            "after_tstates": 336062,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65285,
+            "exact": true,
+            "before_tstates": 336181,
+            "after_tstates": 336062,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65280,
+            "exact": true,
+            "before_tstates": 336181,
+            "after_tstates": 336062,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65281,
+            "exact": true,
+            "before_tstates": 338078,
+            "after_tstates": 337959,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 65282,
+            "exact": true,
+            "before_tstates": 336181,
+            "after_tstates": 336062,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 65283,
+            "exact": true,
+            "before_tstates": 336181,
+            "after_tstates": 336062,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-511",
+        "payload_sha256": "45f803b4443d953829f6ad13c714a271c72ea4eec4a3a81b3a501e448da23477",
+        "raw_sha256": "81d9e3d3912a462b532be69443cb658f9a1bfcffdc7a483d473a036ceb7d1370",
+        "baseline_decoder_tstates": 336973,
+        "candidate_decoder_tstates": 336844,
+        "delta_tstates": -129,
+        "sectors": 2,
+        "input_waits": 1,
+        "native": [
+          {
+            "input_start": 64772,
+            "exact": true,
+            "before_tstates": 337597,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64773,
+            "exact": true,
+            "before_tstates": 337597,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64768,
+            "exact": true,
+            "before_tstates": 337597,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64769,
+            "exact": true,
+            "before_tstates": 339546,
+            "after_tstates": 339417,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 64770,
+            "exact": true,
+            "before_tstates": 337597,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64771,
+            "exact": true,
+            "before_tstates": 337597,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-512",
+        "payload_sha256": "160d47f40b7fa8d1037264f02f071d64c069d7314919d2bf98f92f6cfe2ca487",
+        "raw_sha256": "caf173cf95a1135d697b957269630fb080da9962d09d36616f1923007644d322",
+        "baseline_decoder_tstates": 336973,
+        "candidate_decoder_tstates": 336844,
+        "delta_tstates": -129,
+        "sectors": 2,
+        "input_waits": 1,
+        "native": [
+          {
+            "input_start": 64772,
+            "exact": true,
+            "before_tstates": 337597,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64773,
+            "exact": true,
+            "before_tstates": 337597,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64768,
+            "exact": true,
+            "before_tstates": 337597,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64769,
+            "exact": true,
+            "before_tstates": 339546,
+            "after_tstates": 339417,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 64770,
+            "exact": true,
+            "before_tstates": 337597,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64771,
+            "exact": true,
+            "before_tstates": 337597,
+            "after_tstates": 337468,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-513",
+        "payload_sha256": "5c8537b3fd80236559d283c9be54432391ca66f09a28a106e03412f42f35601e",
+        "raw_sha256": "dffcd4cc4ae8c7224f81637a69ab6253f62aa16603241b8a5ecf9850ba285c52",
+        "baseline_decoder_tstates": 337021,
+        "candidate_decoder_tstates": 336894,
+        "delta_tstates": -127,
+        "sectors": 2,
+        "input_waits": 1,
+        "native": [
+          {
+            "input_start": 64772,
+            "exact": true,
+            "before_tstates": 337645,
+            "after_tstates": 337518,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64773,
+            "exact": true,
+            "before_tstates": 337645,
+            "after_tstates": 337518,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64768,
+            "exact": true,
+            "before_tstates": 337645,
+            "after_tstates": 337518,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64769,
+            "exact": true,
+            "before_tstates": 339594,
+            "after_tstates": 339467,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 64770,
+            "exact": true,
+            "before_tstates": 337645,
+            "after_tstates": 337518,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 64771,
+            "exact": true,
+            "before_tstates": 337645,
+            "after_tstates": 337518,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-8704",
+        "payload_sha256": "fc5a59393a275a704eee4abd01a644ab61eed28995bb637d08e81c5547dc321e",
+        "raw_sha256": "ae04333088afc3003393a4b3fe651ef528d60d809dad1b69929846bb2e17b954",
+        "baseline_decoder_tstates": 356989,
+        "candidate_decoder_tstates": 356862,
+        "delta_tstates": -127,
+        "sectors": 34,
+        "input_waits": 33,
+        "native": [
+          {
+            "input_start": 56580,
+            "exact": true,
+            "before_tstates": 357613,
+            "after_tstates": 357486,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56581,
+            "exact": true,
+            "before_tstates": 357613,
+            "after_tstates": 357486,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56576,
+            "exact": true,
+            "before_tstates": 357613,
+            "after_tstates": 357486,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56577,
+            "exact": true,
+            "before_tstates": 360394,
+            "after_tstates": 360267,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 56578,
+            "exact": true,
+            "before_tstates": 357613,
+            "after_tstates": 357486,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56579,
+            "exact": true,
+            "before_tstates": 357613,
+            "after_tstates": 357486,
+            "injected_interrupts": 0
+          }
+        ]
+      },
+      {
+        "case": "match-8705",
+        "payload_sha256": "1aeec7c4cb5b9e52297e2f85d54f599c5f7e908072e9bbb8288c695c1a1e91de",
+        "raw_sha256": "ac2b346434b9e158f126b4b3ae7396a0f107254b6a6e54b021977fe10639d552",
+        "baseline_decoder_tstates": 356964,
+        "candidate_decoder_tstates": 356832,
+        "delta_tstates": -132,
+        "sectors": 34,
+        "input_waits": 33,
+        "native": [
+          {
+            "input_start": 56580,
+            "exact": true,
+            "before_tstates": 357588,
+            "after_tstates": 357456,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56581,
+            "exact": true,
+            "before_tstates": 357588,
+            "after_tstates": 357456,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56576,
+            "exact": true,
+            "before_tstates": 357588,
+            "after_tstates": 357456,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56577,
+            "exact": true,
+            "before_tstates": 360369,
+            "after_tstates": 360237,
+            "injected_interrupts": 3
+          },
+          {
+            "input_start": 56578,
+            "exact": true,
+            "before_tstates": 357588,
+            "after_tstates": 357456,
+            "injected_interrupts": 0
+          },
+          {
+            "input_start": 56579,
+            "exact": true,
+            "before_tstates": 357588,
+            "after_tstates": 357456,
+            "injected_interrupts": 0
+          }
+        ]
+      }
+    ]
+  }
+}

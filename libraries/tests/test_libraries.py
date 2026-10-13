@@ -230,6 +230,12 @@ class NativeTests(unittest.TestCase):
                     new=execute(*candidate,payload,raw,source=0x2000,caller_stack=0x9df0)
                     self.assertTrue(new['exact'])
                     self.assertLessEqual(new['tstates'],old['tstates'])
+            from measure_long_copy import noncanonical_cases
+            for _,payload,raw in noncanonical_cases():
+                self.assertEqual(lzsa.decompress(payload,limit=len(raw)),raw)
+                old=execute(*baseline,payload,raw,source=0x2000,caller_stack=0x9df0)
+                new=execute(*candidate,payload,raw,source=0x2000,caller_stack=0x9df0)
+                self.assertEqual(new['tstates'],old['tstates'])
 
 
 if __name__=='__main__':unittest.main()

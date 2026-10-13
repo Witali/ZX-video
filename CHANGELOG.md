@@ -1,5 +1,28 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Correct item01: preserve short escaped16-bit lengths
+
+- **Finding/baseline:** Final review at `18e7b1aa` checks the pinned LZSA2
+  format and a short escaped16-bit literal. Host/default native decode ABC
+  exactly in828 T; the initial opt-in kernel writes outside output atC003.
+  Canonical encoder inputs had hidden an unproved >=256 length assumption.
+- **Attempts:** Remove unrolling from all word forms. This first repair
+  exposes a3-T untaken-JP regression (6720 ->6723 T) on the original JR path.
+  Keep a nearby ordinary-input trampoline so only eligible byte-form literals
+  pay its10 T. Preserve [both failure records](libraries/evidence/long_copy_correction.json)
+  and initial native/streaming reports; do not treat their larger gains as
+  current accepted results.
+- **Accepted results:** Unroll only byte-form literals18..255 and matches
+  24..255; word/short paths unchanged. +87 ordinary/84 streaming core bytes;
+  literals save50/60 T, byte matches59 T.95 complete native blocks including
+  18 short-word encodings:26352611 ->26297662 T (-54949); real21 blocks
+  19412006 ->19387980 (-24026,0.124%), zero slower blocks/slices,230 IRQs.
+  Both42-case guarded modes/six placements pass and save420 T each, with
+  167 once-only sectors and identical producer/waits.12 library tests pass.
+- **Decision:** Corrected optional profile, defaults still exact; no new
+  player release. [Updated timing](libraries/LONG_COPY.md) links current and
+  superseded evidence and the expanded reproducing commands.
+
 ## 2026-10-13 — Expand item02 to all pair directions and intervening code
 
 - **Request/baseline:** At `d0f04472`, the user clarifies that PUSH BC/POP HL

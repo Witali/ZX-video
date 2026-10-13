@@ -8,6 +8,7 @@ from collections import Counter
 import json
 from pathlib import Path
 import struct
+import sys
 from unittest.mock import patch
 
 from z80 import Z80Machine
@@ -141,8 +142,13 @@ def cases():
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--stream',type=Path);p.add_argument('--raw',type=Path)
-    p.add_argument('--direct-header',action='store_true');p.add_argument('--long-copy',action='store_true');a=p.parse_args()
+    p.add_argument('--direct-header',action='store_true');p.add_argument('--long-copy',action='store_true')
+    p.add_argument('--noncanonical',action='store_true');a=p.parse_args()
     samples=list(cases())
+    if a.noncanonical:
+        sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'libraries/tests'))
+        from measure_long_copy import noncanonical_cases
+        samples.extend(noncanonical_cases())
     if a.stream:
         data=a.stream.read_bytes();raw=a.raw.read_bytes();at=out=0;index=0
         while at<len(data):

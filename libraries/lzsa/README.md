@@ -97,22 +97,23 @@ additional per-token test once complete. With `direct_header=True`, the
 available-prefix path remains 46 T versus 96 T for the prior CALL/RET guard.
 Direct mode requires `streaming=True`; AF is dead at entry, AF' stays live.
 
-An optional long-copy profile applies sixteen `LDI` instructions to literals
-of at least18 bytes and matches of at least24 bytes. Short forms keep their
-existing paths. Enable it with `build(long_copy=True, core_limit=0x9000)`, or:
+An optional long-copy profile applies sixteen `LDI` instructions to the
+byte-extended literal18..255 and match24..255 forms. All short and escaped
+16-bit forms keep their existing paths, including short lengths encoded with
+a16-bit escape. Enable it with `build(long_copy=True, core_limit=0x9000)`, or:
 
 ```powershell
 python -m lzsa build --long-copy --core-limit 0x9000 --output build/lzsa-long
 ```
 
-Explicitly reserve the additional89 core bytes (88 with streaming); the
+Explicitly reserve the additional87 core bytes (84 with streaming); the
 default reservation rejects this profile. It adds no state, stack or tables.
 The default placement keeps these kernels in uncontended Spectrum bank2.
 Retain writable code and the same forward-copy/IRQ contracts. Streaming users
-must use `emit_guard_update` or the optional `long8_complete`/`long16_complete`
+must use `emit_guard_update` or the optional `long8_complete`
 labels when bypassing guards. Calling the old short-copy targets is correct
 but loses the long-copy improvement on completely loaded blocks.
-[Timing and complete-block evidence](../LONG_COPY.md) records a small0.134%
+[Timing and complete-block evidence](../LONG_COPY.md) records a small0.124%
 CPU gain on the retained real fixture; compressed bytes/sectors are unchanged.
 This profile has no new movie publication or physical disk qualification.
 

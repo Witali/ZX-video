@@ -49,14 +49,18 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         emit('LD A,(HL)',(0x7e,),7);inc()
         for _ in range(4):emit('RRCA',(0x0f,),4)
         a.label(label);emit('OR F0h',(0xf6,0xf0),7)
+    if long_copy and not streaming:
+        # Preserve the original JR's 7-T untaken word-length path. A nearby
+        # trampoline adds 10 T only to the eligible long8 literal path.
+        a.label('LongLiterals8Jump');jp(0xc3,'LongLiterals8')
     a.label('start');emit('LD B,0',(6,0),7);emit('SCF',(0x37,),4);x();jp(0xc3,'ReadToken')
     a.label('ManyLiterals');emit('LD A,18',(0x3e,18),7);emit('ADD A,(HL)',(0x86,),7);inc()
     if streaming:a.labels['long8_target']=a.pc+1;jp(0xd2,'guard_long8')
-    elif long_copy:jp(0xd2,'LongLiterals8')
+    elif long_copy:jr(0x30,'LongLiterals8Jump')
     else:jr(0x30,'CopyMoreLiterals')
     emit('LD C,(HL)',(0x4e,),7);inc();emit('LD A,B',(0x78,),4);emit('LD B,(HL)',(0x46,),7)
     if streaming:a.labels['long16_target']=a.pc+1
-    jp(0xc3,'guard_long16' if streaming else ('LongLiterals16' if long_copy else 'NextUseBC'))
+    jp(0xc3,'guard_long16' if streaming else 'NextUseBC')
     a.label('MoreLiterals');emit('LD B,(HL)',(0x46,),7);inc();nibble('LiteralNibble',True)
     emit('INC A',(0x3c,),4);jr(0x28,'ManyLiterals');emit('SUB 238',(0xd6,238),7)
     a.label('CopyMoreLiterals');emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('LD B,0',(6,0),7)
@@ -107,16 +111,16 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('CP 32',(0xfe,32),7);emit('RL C',(0xcb,0x11),8);emit('LD B,255',(6,255),7);jp(0xc3,'SaveOffset')
     a.label('LongerMatch');nibble('MatchNibble',True);emit('SUB 231',(0xd6,231),7);emit('CP 24',(0xfe,24),7);jp(0xda,'CopyMatch')
     emit('ADD A,(HL)',(0x86,),7);inc();jp(0xd2,'LongMatch8' if long_copy else 'CopyMatch');emit('RET Z',(0xc8,),[5,11])
-    emit('LD C,(HL)',(0x4e,),7);inc();emit('LD B,(HL)',(0x46,),7);inc();jp(0xc3,'LongMatchBC' if long_copy else 'MatchUseC')
+    emit('LD C,(HL)',(0x4e,),7);inc();emit('LD B,(HL)',(0x46,),7);inc();jp(0xc3,'MatchUseC')
     if long_copy:
         # Only structurally long forms reach these kernels: literals >=18,
-        # extra-byte matches >=24, or either 16-bit length >=256. Sixteen
-        # forward LDIs leave a positive BC for LDIR and preserve overlap at
+        # extra-byte matches >=24. Escaped 16-bit lengths need not be >=256:
+        # retain their original paths even for short noncanonical encodings.
+        # Sixteen forward LDIs leave a positive BC for LDIR and preserve overlap at
         # distance 1/2. No count test, AF' scratch or SP redirection is needed.
-        # Literal entry: A=count/B=token (8-bit), or BC=count/A=token with HL
-        # still on the high length byte (16-bit). Guards have already advanced
-        # HL and call LongLiteralsBC only after the entire extent is readable.
-        a.label('LongLiterals16');inc();jp(0xc3,'LongLiteralsBC')
+        # Literal entry: A=count/B=token, count 18..255. Guards call the BC
+        # entry only after the entire extent is readable. Word-length guards
+        # must keep their original zero-prefix LDIR continuation.
         a.label('LongLiterals8');emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('LD B,0',(6,0),7)
         a.label('LongLiteralsBC')
         for _ in range(16):ldi()
@@ -132,7 +136,6 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         ldir();jp(0xc3,'AfterLongMatch')
         if streaming:
             a.labels['long8_complete']=a.labels['LongLiterals8']
-            a.labels['long16_complete']=a.labels['LongLiterals16']
     # Output-only suspension and unavailable-input suspension have different
     # completion rules. Keep the private continuation until raw EOD is read.
     cold.label('slice_until')
@@ -182,7 +185,7 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         cold.label('guard_long8');cold.emit(0x4f,0x78,0x06,0)
         cold.abs16(0xcd,'guard_literals');cold.abs16(0xc3,'LongLiteralsBC' if long_copy else 'copy_long8')
         cold.label('guard_long16');cold.emit(0x23)
-        cold.abs16(0xcd,'guard_literals');cold.abs16(0xc3,'LongLiteralsBC' if long_copy else 'copy_long16')
+        cold.abs16(0xcd,'guard_literals');cold.abs16(0xc3,'copy_long16')
         cold.label('guard_literals');cold.emit(0xf5,0xe5,0x09);cold.rel8(0x38,'literal_short')
         cold.emit(0x7d,0xc6,7,0x7c,0xce,0);cold.rel8(0x38,'literal_short')
         cold.emit(0xfe);cold.label('literal_frontier');cold.emit(0);cold.rel8(0x38,'literal_ready')
@@ -238,8 +241,9 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
             previous_available_header_tstates=96,available_header_delta_tstates=-50) if direct_header else {}),
         upstream_commit='15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5',
         **(dict(long_copy=True,long_copy_minimum_literals=18,long_copy_minimum_match=24,
-            long_copy_unrolled_bytes=16,long_copy_extra_core_bytes=88 if streaming else 89,
-            long_copy_delta_tstates=dict(literals8=-60 if streaming else -62,
-                literals16=-60,guarded_literals16=-70,matches8=-59,matches16=-59)) if long_copy else {}),
+            long_copy_unrolled_bytes=16,long_copy_16bit_forms=False,
+            long_copy_extra_core_bytes=84 if streaming else 87,
+            long_copy_delta_tstates=dict(literals8=-60 if streaming else -50,
+                literals16=0,guarded_literals16=0,matches8=-59,matches16=0)) if long_copy else {}),
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         upstream_sha256=sha((Path(__file__).parent/'asm/unlzsa2_fast.asm').read_bytes()))

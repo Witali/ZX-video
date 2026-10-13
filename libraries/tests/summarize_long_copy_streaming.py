@@ -7,7 +7,7 @@ from pathlib import Path
 def comparison(before,after):
     old=json.loads(before.read_text());new=json.loads(after.read_text())
     assert old['complete'] and new['complete']
-    assert old['stream_sha256']==new['stream_sha256'] and old['cases']==new['cases']==24
+    assert old['stream_sha256']==new['stream_sha256'] and old['cases']==new['cases']
     rows=[]
     for left,right,li,ri in zip(old['blocks'],new['blocks'],old['independent'],new['independent']):
         assert left['payload_sha256']==right['payload_sha256']==li['payload_sha256']==ri['payload_sha256']
@@ -34,7 +34,7 @@ def comparison(before,after):
         baseline_total_tstates=old['candidate']['total_tstates'],
         delta_tstates=new['candidate']['total_tstates']-old['candidate']['total_tstates'],
         slower_blocks=sum(r['delta_tstates']>0 for r in rows))
-    return dict(cases=24,placements_per_case=6,stream_sha256=new['stream_sha256'],summary=summary,blocks=rows)
+    return dict(cases=new['cases'],placements_per_case=6,stream_sha256=new['stream_sha256'],summary=summary,blocks=rows)
 
 
 def main():

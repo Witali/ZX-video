@@ -18,6 +18,18 @@ from zx0 import banked
 from z80 import Z80Machine
 
 
+def noncanonical_cases():
+    # The format assigns the final 16-bit value without a >=256 restriction.
+    # Cover short literal/match encodings already accepted by the host and
+    # baseline native decoder; their LDIR paths must never underflow.
+    for n in (3,4,15,16,17,18,24,255):
+        raw=bytes(i%251 for i in range(n))
+        yield f'word-literal-{n}',bytes.fromhex('5f ff ef')+n.to_bytes(2,'little')+raw+bytes.fromhex('00 e8'),raw
+    for n in (2,3,8,9,15,16,17,23,24,255):
+        raw=b'A'*(n+1)
+        yield f'word-match-{n}',bytes.fromhex('0f 41 ff e9')+n.to_bytes(2,'little')+bytes.fromhex('47 00 f0 e8'),raw
+
+
 def sha(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -52,6 +64,7 @@ def samples():
             for _ in range(length):raw.append(raw[-distance])
             matches.append((start,length,distance))
         raw=bytes(raw);yield f'random-{index}',encode(raw,matches),raw
+    yield from noncanonical_cases()
 
 
 def compare(payload,raw,baseline,candidate):

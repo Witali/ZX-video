@@ -32,7 +32,11 @@ contracts. Item08 is inapplicable to generic runtime literals; measured constant
 code enlarges the sample transport. The user expanded item02 to all six
 BC/DE/HL directions and nonadjacent independent instructions/calls;36864
 native checks pass, but bounded-copy live saves cannot be replaced at either
-endpoint. Next: item09 carry masks.
+endpoint. Final review corrected item01's unproved16-bit length bound: unroll
+only byte forms, retain original word paths/JR cost.95 native blocks and both
+42-case/six-placement streaming modes pass, with initial failures retained.
+Real LZSA2 gain is now24026 T (0.124%), +87 ordinary/84 streaming bytes.
+Next: item09 carry masks.
 
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 
