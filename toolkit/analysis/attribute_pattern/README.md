@@ -1,5 +1,39 @@
 # Local solid/pattern transitions
 
+## Current full-disk video
+
+The user-requested practical single-disk fill is90 seconds,900 frames at10 fps
+and4500 unchanged50-Hz AY fields. The TRD uses2529 of2544 data sectors(99.4104%),
+with15 sectors/3840 bytes spare. It independently boots from dirty RAM in Fuse;
+all6220800 actual screen bytes and every AY record match, with zero nominal
+deadline misses, underruns or late runs. Maximum in-field deviation22 T.
+There is no mathematically maximum-duration or physical-machine claim.
+
+- [Full TRD](evidence-full-disk/ZX-video-sea-foam_part01.trd)
+- [Full90-second viewing video](evidence-full-disk/native-preview.mp4)
+- [Original/previous/new comparison of their shared50.7-second prefix](evidence-full-disk/pattern-comparison.mp4)
+- [Complete qualification](evidence-full-disk/qualification.json)
+- [All900 source frame measurements](evidence-full-disk/video-quality.json)
+- [Capacity attempts](capacity-attempts/)
+
+The fixed AY forest actually permits1005 source frames, rather than the earlier
+conservative507-frame bisection. Actual assembly rejects1005/940-frame attempts
+at2704/2602 sectors. Neither failed size probe is a qualified release. Reuse
+the exact RGB/PCM/AY preparation and the completed1005-frame host colour cache
+with `rebuild.py --compact-cache PREPARED --colour-cache COLOUR --one-disk
+--frames 900`, plus the existing `build_prefix.py` executable/plan/output
+arguments. Each cached RGB byte, selector parameter set and preceding state
+is checked. `--verification none` is only a capacity probe; final delivery uses
+the default complete Fuse verification. `disk_limit.py` reproduces the host
+forest ceiling. No soundtrack refit, resolution/cadence/quality reduction or
+native instruction change was used, delta0 T.
+
+The full archive contains143 measured files/89285289 bytes plus its manifest,
+including20 exact producer-source snapshots. Source/output image comparison
+against the previous qualified disk covers its507 available frames; full
+source metrics and independent native proofs cover all900. The earlier local
+image checkpoint and rejected/superseded attempts remain below.
+
 This follow-up to `db07319e` addresses visible8x8 solid/pattern rectangles
 without adding grain over the whole image. The selected source remains the
 same507 RGB frames,50.7 seconds at10 fps, and2535 existing50-Hz AY fields.

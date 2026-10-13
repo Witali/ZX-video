@@ -1,5 +1,27 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Publish the completely checked90-second full-disk video
+
+- Complete the user-requested one-disk fill with the unchanged local image
+  selector and original continuous RGB/PCM/AY prefix. One655360-byte TRD,
+  source[0,90),900 frames,4500 AY fields,2529 data sectors,15 free(99.4104%).
+  SHA256df986063d6cc6e5ff9048cea074e642759fc6140ca911ecd86064b7fe1c399cb.
+  Full independent cold Fuse checks every6220800 screen byte, every AY record
+  and actual nominal publication deadline: zero misses, late runs, underruns,
+  missing/duplicate fields, maximum in-field deviation22 T. Deterministic
+  native instruction counts remain the previous counts, delta0 T; full disk
+  service statistics and the earlier pixel/flicker tradeoffs remain above.
+- Preserve143 authenticated evidence files/89285289 bytes plus manifest,
+  20 exact producer-source snapshots, all900 source frame metrics, complete
+  native proofs, full90-second native-reference/model-AY MP4 and the common
+  507-frame source/old/new comparison. Keep both oversized attempts, the
+  earlier qualified checkpoints and rejected whole-image grain draft.
+  Store disk/media/large captures in LFS. Replace the root TRD with this
+  qualified artifact. The staged byte audit authenticates278 checkpoint/full
+  archive/root objects and35 local LFS identities, with zero mismatches.
+  No full-cartoon, subsequent model sweep or push is part
+  of the completed deliverable. [Video, TRD and reproduction](toolkit/analysis/attribute_pattern/README.md).
+
 ## 2026-10-13 — Size one full TRD using authenticated preparation caches
 
 - **Request/input:** Extend the same cartoon prefix toward one full disk with

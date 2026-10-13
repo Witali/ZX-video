@@ -1575,7 +1575,7 @@ No source/AY change, native instruction change, full-cartoon or subsequent
 model search is part of this completed request. Actual two-colour-per-cell
 limits remain; do not claim perfect gradients, source gamut or zero artifacts.
 
-## Pattern/solid cell-boundary correction — active (2026-10-13)
+## Pattern/solid cell-boundary correction and full-disk extension — complete (2026-10-13)
 
 The user still sees character-cell rectangles and sharp patterned/solid borders.
 From `0085a116`, inspect actual native texture, not just averaged RGB. Fit palette
@@ -1605,3 +1605,14 @@ and complete native timing; do not silently reduce quality/cadence or publish a
 size-only estimate. Reuse verified cached preparation when all source bytes
 and selector parameters match. The fixed AY forest permits1005 leading frames,
 not the conservative507-frame bisection. Disk capacity is the remaining gate.
+
+The practical full-disk result is900 frames/90 seconds,4500 unchanged AY fields
+and one TRD with2529 used/15 free data sectors(99.4104%). The1005- and940-frame
+attempts require2704 and2602 sectors and remain failed size probes. The final
+disk completely passes independent cold Fuse, all6220800 screen bytes, every
+AY record and all nominal deadlines; zero late runs, maximum deviation22 T.
+Archive the full media, all-frame source metrics, matching507-frame old/new
+comparison, complete native proofs and failed attempts; replace the root disk
+only after qualification. Native instructions remain unchanged,0 T delta.
+The authorized image correction and practical one-disk fill are complete.
+No full-cartoon rebuild, further model/codec/RAM experiment or push is opened.

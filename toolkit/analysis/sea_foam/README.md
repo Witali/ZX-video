@@ -1,6 +1,17 @@
 # One-disk sea-foam cartoon excerpt
 
-## Current source-matched colour rebuild (2026-10-13)
+## Current90-second full-disk rebuild (2026-10-13)
+
+The latest independently qualified disk extends the source prefix to90 seconds
+with the local solid/pattern transition correction and source-hue guard.
+It uses2529 data sectors(99.4104%),15 free, retaining10 fps and50-Hz AY.
+All900 actual screens and4500 AY records pass complete cold Fuse, with zero
+nominal deadline misses and maximum in-field deviation22 T. The root TRD
+matches the new archive. Preserve the older50.7-second versions below.
+
+See [the current TRD, full video, measurements and reproduction](../attribute_pattern/README.md).
+
+## Earlier source-matched colour rebuild (2026-10-13)
 
 The latest qualified version uses `stable_colour.py`, current-source temporal
 feedback, actual-pixel colour guards and spatial coherence across attribute
