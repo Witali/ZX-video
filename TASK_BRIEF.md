@@ -1773,3 +1773,10 @@ Fuse-source steering is complete: official1.9.0 source uses AY-3-8912 masks,
 R1=1Fh, validates used-bit reads and restores R1;30 native fixtures pass,
 265/279 T AY/YM excluding CALL. Current player unchanged. [Proof](ay-converter/analysis/ay_spectral_transfer/FUSE_SOUND.md).
 Continue the original ordered encoder plan; source checks do not finish it.
+
+Stage1 direct-period fitting is complete with two rejected trials:512/2048
+objectives10.112593/10.711803 versus9.248850, with improved dominant cosines
+but worse weak-bin log error. Keep baseline and both full trials. Three tests,
+all2*1500 states and exact full WAV replays pass; native/default code unchanged.
+[Evidence](ay-converter/analysis/ay_spectral_transfer/README.md). Continue stage2
+inverse weighting and regional peaks, then transition and subframe milestones.

@@ -1,5 +1,31 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Direct AY spectral-period fitting, complete rejected baseline trials
+
+- **Scope/input:** First saved-plan milestone in `ay-spectral-transfer`, same
+  prepared O. Henry[60,90),1500 states, gain1.619215014884398. Current14-reg
+  baseline with envelope replays byte for byte; no repeated source processing.
+- **Prototype/parameters:** Three physical channels, real AY DAC codes,
+  interpolated peaks/subharmonics and neighboring integer periods, exact3!
+  channel matching, one shared noise/mixed carrier. Full square harmonics
+  below8 kHz plus measured chip-noise templates;512/2048 Hann fits, no inverse
+  weighting or regional-peak extension. Output50-Hz11-register/AY9 streams.
+- **Results/decision:** Baseline objective9.248850, level MAE1.367314,
+  dominant cosines0.718194/0.709185/0.760072. Direct512 gives10.112593,
+  1.360436,0.836898/0.789642/0.805211; direct2048 gives10.711803,1.404012,
+  0.779358/0.778900/0.805034. Peaks0.814667/0.786563; zero clipping.
+  Both improve dominant components but worsen combined log/level error;
+  reject under the saved guard, keep baseline. Two-trial time27.837460 s
+  excludes baseline/archive work. Continue the authorized weighting milestone.
+- **Checks:** Three tests pass independent bandlimited Fourier templates,
+  real off-note integer states/pauses and invalid-input behavior. Initial
+  test-source aliasing and NumPy2 uint8 helper overflow are repaired without
+  relaxing the dictionary assertion. All2*1500 raw/packed states and full
+ 1323000-sample replays match archived audio exactly; producer/source hashes
+  and both trial media retained in LFS. Defaults and native instructions
+  unchanged, hot-path delta0 T. No new physical/Fuse/release proof claimed.
+  [Reproduction, metrics, streams and rejected auditions](ay-converter/analysis/ay_spectral_transfer/README.md).
+
 ## 2026-10-13 — Verify Fuse PSG model and optional software chip probe
 
 - **Steering/input:** User asks which PSG installed Fuse supports, whether to
