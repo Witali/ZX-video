@@ -171,6 +171,9 @@ The existing four entries remain four bytes, no new state/stack/buffer/
 compressed bytes/sectors. All optional extents end at7F04 within bank5's
 declared7C00..8000 template reservation. Account for this full range in an
 application; it has no integrated player allocation or ULA/disk/publication run.
+As an isolated raw binary, every measured banked profile grows from3 to4
+rounded256-byte sectors; actual compressed boot packaging remains unmeasured.
+Unchanged runtime input sectors do not imply unchanged total disk occupation.
 
 **Decision: optional measured ZX0 profile; history masking rejected.**
 This applies alignment to a real small table with an explicit memory cost.

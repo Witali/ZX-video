@@ -40,10 +40,13 @@ and the ordinary literal trampoline are included; these are not naive5N savings.
 
 Ordinary prefix/core sizes134/250 ->134/337 bytes (+87); CALL-guarded
 224/254 ->224/338 (+84); direct222/251 ->222/335 (+84). No new state,
-stack, tables, packets, compressed bytes or sectors. Ordinary core ends at
+stack, tables, packets, or compressed payload bytes/sectors. Ordinary core ends at
 0x8f31 in bank2; the default 0x8ef7 limit cannot hold it. Reserve the larger
 range explicitly and check the application's other allocations. No player
-layout or default codec profile is changed.
+layout or default codec profile is changed. Storing the exported raw regions
+as separately rounded256-byte files costs2 ->3 sectors (+1); actual boot
+packaging/compression has not been built or measured. Payload-sector invariance
+must not be interpreted as unchanged total disk occupation.
 
 ## Complete verification and decision
 

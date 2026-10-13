@@ -76,6 +76,8 @@ Item06 adds an optional aligned ZX0 bank table:108 ->87 T per paging call,
 +121..245 bytes,64 complete native banked blocks/all16 profiles, IRQ/AY checks.
 
 Both new profiles preserve compressed bytes and default opcode/label layouts.
+The [authenticated final summary](optimization_verification.json) records
+79 observed unit tests, exact original resources and raw code-sector estimates.
 No movie/TRD has been rebuilt or newly qualified. The next milestone requires
 selecting an application/profile with a fitting RAM reservation and complete
 actual delivery/publication evidence; this pass does not start it automatically.

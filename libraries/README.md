@@ -49,6 +49,13 @@ components. Their useful mechanisms are preserved in ZX-video, including the
 generic code's use of the shared compression tools. Rejected experiments keep
 their reports and are not silently turned on by library installation.
 
+The [nine-item Z80 trick pass](OPTIMIZATION_PLAN.md) adds two explicitly
+optional measured profiles: LZSA2 `long_copy=True` for byte-extended forms,
+and ZX0 `banked.build(aligned_ring_table=True)`. Complete native/streaming/
+IRQ results and rejected candidates are retained. Both need more code RAM;
+runtime compressed bytes stay unchanged, while actual boot-code disk packing
+and playback qualification remain application work. All defaults stay exact.
+
 ## Verification and provenance
 
 [Verification](verification.json) records the extraction from `0085a116`.

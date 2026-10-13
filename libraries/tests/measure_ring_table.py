@@ -97,7 +97,9 @@ def main():
                 before=banked.build(**options);after=banked.build(**options,aligned_ring_table=True)
                 layouts.append(dict(options=options,before_bytes=len(before[0]),after_bytes=len(after[0]),
                     added_bytes=len(after[0])-len(before[0]),before_sha256=hashlib.sha256(before[0]).hexdigest(),
-                    after_sha256=hashlib.sha256(after[0]).hexdigest(),table_address=after[1]['ring_banks']))
+                    after_sha256=hashlib.sha256(after[0]).hexdigest(),table_address=after[1]['ring_banks'],
+                    standalone_raw_sectors_before=(len(before[0])+255)//256,
+                    standalone_raw_sectors_after=(len(after[0])+255)//256))
                 for region,history in itertools.product(range(4),(0x17,0x1f)):
                     costs=[]
                     for blob,z in (before,after):

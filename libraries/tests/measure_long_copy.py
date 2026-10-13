@@ -109,6 +109,7 @@ def main():
         regions,labels,report=profile
         return dict(core_end=report['core_end'],prefix_end=report['prefix_end'],
             code_bytes=report['code_bytes'],state_bytes=labels['end']-labels['state'],
+            standalone_raw_region_sectors=sum((len(blob)+255)//256 for _,blob in regions),
             private_stack=report['private_stack'],output_base=report['output_base'],
             regions=[dict(address=at,bytes=len(blob),sha256=sha(blob)) for at,blob in regions])
     report=dict(complete=True,release=False,baseline_revision='6168ba14',

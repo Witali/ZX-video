@@ -1,5 +1,24 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Authenticate the completed trick pass and raw code storage
+
+- **Baseline/scope:** Final review after `960cc3cb`; authenticate all31 default
+  byte/address/label profiles against the extraction baseline and all four
+  immutable assembly resources. Retain current95-block LZSA2 and64-block
+  banked ZX0 native evidence, both42-case guarded modes and all nine decisions.
+- **Accounting/verification:**79 distinct unit tests have been observed passing;
+  corrected optional paths also have complete native/streaming checks with no
+  slower blocks/slices. Runtime compressed bytes/sectors stay identical.
+  Separately rounded raw exported code costs2 ->3 sectors for ordinary LZSA2
+  and3 ->4 for every banked ZX0 profile; actual compressed boot packing and
+  physical delivery are unmeasured. Do not infer total disk occupation from
+  unchanged runtime input sectors. Replayed instruction totals are unchanged
+  by adding these report fields.
+- **Decision:** Completed library first pass, two explicit optional profiles,
+  unchanged defaults and source resources; no movie/TRD qualification.
+  [Final report](libraries/optimization_verification.json) is reproduced by
+  `libraries/tests/summarize_trick_pass.py` and links the retained reports.
+
 ## 2026-10-13 — Item09: direct carry propagation wins; first pass complete
 
 - **Objective/baseline:** From `3e41889d`, seek eligible carry-to-mask
