@@ -1751,3 +1751,18 @@ pass; old media and revised CLI replay byte-exactly, zero clipping. Selected
 Diagnostics include legitimate pitch/envelope changes; do not claim perceptual
 click elimination. Listening acceptance pending. No native/player/release
 changes or physical-chip/Z80 proof. This bounded deliverable is complete.
+
+## AY spectral transfer — authorized, in progress (2026-10-13)
+
+The user requests saving the transfer plan, a new worktree, implementation and
+measured outcomes. Branch `codex/ay-spectral-transfer` starts from `6168ba14` at
+`.worktree/ay-spectral-transfer`. Follow [the saved plan](docs/ay-spectral-transfer-plan.md):
+direct integer-period spectral fitting; inverse weighting/band peak candidates;
+transition-aware selection; then a separately qualified subframe DAC-ramp
+probe. Use the exact prepared O. Henry[60,90) reference and1500 current states,
+including envelopes; avoid double source conditioning. Retain all trials and
+failed guards, figures, streams and exact auditions. Preserve default/release
+code until evidence admits a change. The subsequent user steering adds source
+verification of the installed Fuse sound model and explicit AY/YM comparison.
+Finish each milestone before opening the next; do not treat a model-only
+subframe experiment as native scheduler or release qualification.

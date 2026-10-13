@@ -1,5 +1,22 @@
 # Changelog and optimization experiments
 
+## 2026-10-13 — Start the authorized AY spectral-transfer plan
+
+- **Request/scope:** Save the transfer plan and implement/test it in a new
+  worktree. Create `.worktree/ay-spectral-transfer`, branch
+  `codex/ay-spectral-transfer`, from `6168ba14`. Reuse exact prepared O. Henry
+  [60,90),1500 current50-Hz states. No new signal or release is claimed yet.
+- **Plan:** Direct integer-period fitting, bounded inverse spectral weighting
+  and regional peaks, transition-aware selection, then a separate subframe
+  amplitude-ramp probe. Keep defaults/releases, full evidence, fixed gains
+  and explicit admission guards. Each completed experiment gets a focused
+  commit. New native timing changes require their own complete verification.
+- **Steering:** The user requests inspecting installed Fuse1.9.0 sound source
+  and considering YM2149 as the target; include source/model provenance and
+  separate AY/YM comparisons before interpreting audio outcomes.
+- **Status:** Plan saved; implementation and source verification in progress.
+  [Plan and decision criteria](docs/ay-spectral-transfer-plan.md).
+
 ## 2026-10-13 — Extract reusable ZX0 and raw LZSA2 libraries
 
 - **Request/baseline:** From `0085a116`, package ZX0 and LZSA separately for
