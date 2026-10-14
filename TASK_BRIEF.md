@@ -49,6 +49,18 @@ disk and pause the goal; do not start further image, duration or codec work.
 Do not claim globally optimal contours, finer-than-two-pixel geometry or a
 maximum-duration disk. No push is requested.
 
+## ZX Compressors migration plan prepared 2026-10-14
+
+The user requests a plan for a separate `zx-compressors` repository consumed
+by ZX-video through Git subtree. [ZX_COMPRESSORS_PLAN.md](ZX_COMPRESSORS_PLAN.md)
+defines filtered history export, standalone test/package preparation, target
+creation, in-place `libraries/` registration using split/rejoin, pinned imports,
+CI/update workflow and rollback. Preserve independent `zx0`/`lzsa` packages,
+31 default profiles, resource/provenance hashes, application tests and timing.
+Planning snapshot main `93e93664`; freeze the latest source for implementation.
+The plan is this request's deliverable; creation/migration/publication follow
+only when implementation is requested. Existing movie/audio tasks stay intact.
+
 ## Source-line drawing full disk — complete (2026-10-14)
 
 Latest steering rejects flat fills because details are lost. Stop the1005-frame

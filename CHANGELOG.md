@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Merge the ZX Compressors migration plan into main
+
+- **Request/baselines:** The user requests merge and push of the prepared plan.
+  Integrate `codex/zx-compressors-plan` at `4f013998` into main at `bd01d761`.
+- **Integration:** Preserve both histories and every nonblank line from both
+  branches in the additive CHANGELOG/TASK_BRIEF conflicts. The plan is identical
+  to its reviewed branch; existing movie, audio and codec work is retained.
+- **Verification/scope:** Check the resolved diff, Markdown fences/milestones,
+  local plan links and the complete set of changed paths. Only three documents
+  change; no source, generated code, release artifact or instruction change
+  (0 T). Codec/runtime tests are not rerun for this documentation-only merge.
+  Repository creation and subtree migration remain future implementation work.
+  [Saved plan](ZX_COMPRESSORS_PLAN.md).
+
 ## 2026-10-14 — Deliver the line-art test disk and stop the accuracy goal
 
 - **Request:** The user asks for a test disk and explicitly stops the broader
@@ -87,6 +101,24 @@
   converter. The next authorized candidate tests source-matched dark fills.
   [Reproducer](toolkit/analysis/flat_colour/feasible_probe.py),
   [full measurements](toolkit/analysis/flat_colour/feasible-evidence/decision.json).
+
+## 2026-10-14 — Plan a separate ZX Compressors repository and subtree integration
+
+- **Request/baseline:** The user requests a creation/integration plan for
+  `zx-compressors` using Git subtree in ZX-video. Inspect main `93e93664`,
+  independent packages, shared tests and the retained codec verification.
+- **Plan:** Keep `zx0`/`lzsa` packages under the existing `libraries/` prefix;
+  export filtered history, separate portable/application tests, preserve
+  historical hashes/licenses, create the selected target and register the
+  populated prefix with split/rejoin. Use reviewed full-history imports,
+  an external version record, independent CI, regression gates and rollback.
+- **Verification/scope:** Read current path/toolkit/Git couplings and official
+  subtree/pip documentation; Git for Windows2.54.0 exposes the needed subtree
+  commands. Review the plan against current files and phase dependencies.
+  Documentation-only change, no source/codec/player instruction change (0 T).
+  The historical85 tests are reference coverage, not rerun for this plan.
+  No external repository, real history export or migration/publication performed.
+  [Implementation plan](ZX_COMPRESSORS_PLAN.md).
 ## 2026-10-14 — Merge the consolidated YM3812 archive into main
 
 - **Request/baselines:** Integrate the user's completed YM3812 folder request:
