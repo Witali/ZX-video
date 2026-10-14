@@ -1,5 +1,44 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Reduce oscillator-generated overtones in the YM3812 song
+
+- **Request/baseline:** The user reports extra high harmonics, suggests mostly
+  sine signals and asks whether data updates50 times/s. Continue the complete
+  sea-foam main song from `4b73f9ea` in the same worktree/branch. Retain exact
+  source/gain, nine voices,50-Hz control grid and the selected smooth exporter.
+- **Parameters/change:** The old waveform0 carrier still has a TL63/AR15
+  modulator. An opt-in exporter changes silent initialization to C0=1 and
+  modulator AR0, eliminating phase modulation and silencing that operator.
+  Source-derived512/2048 spectral caps affect high carrier TL only, with
+  1.5-dB allowance,1800..3000-Hz blend and12-dB maximum. Compare pure setup,
+  cap0.6/cap1, then three finer-window pure-sine refits at1024/w0,2048/w0/w0.5.
+  Every prior producer/stream remains reproducible; no playback filter change.
+- **Results:** Four held native tones show intrinsic harmonic reduction
+  33.95..40.83 dB; changing muted modulator TL to0 leaves every sample exact.
+  Selected `cap10` changes72/40,500 level targets, preserving every frequency,
+  multiplier and key. Extra4..8-kHz power drops24.4575/4.8548/3.7432% across
+  windows512/2048/8192;1.8..8-kHz drops4.1247/0.4467/0.3555%. Level MAE
+  1.379574 ->1.368393; log/level score9.444631 ->9.897613 worsens. Selected
+  peak0.904347,242,850 writes,992,180 VGM/369,336 VGZ bytes, zero clipping.
+- **Rejected/interrupted:** All six trials fail the exploratory20% aggregate
+  high-excess gate. Longer refits improve2048 excess to0.095682/0.085109/
+  0.087828 but fail other content/scale guards. The third reaches peak1.050863
+  and11 clipped samples at unchanged gain, aborting the initial runner.
+  Archive creation first encounters the missing report; preserve that scratch
+  copy and complete independent measurements from exact already fitted NPZ
+  targets without refitting or gain adjustment. Retain the failed attempt,
+  clipped rejected audition and full recovered reports.
+- **Verification/decision:** Four new and eight original tests pass. All six
+  complete4500-field streams audit every channel/state/write slot and recover
+  every4,474,431 native/3,969,000 output sample; the11 clipped samples remain
+  confined to the rejected refit. Selected pitches/keys,181-second comparison,
+  source/core/producer/artifact hashes and four oscillator probes are exact.
+  Deliver the explicitly narrower sine-purity audition with all original
+  content/level guards; the broad20% gate remains unmet, and no global spectral
+  superiority or perceptual click/ringing cure is claimed. No native player,
+  hot-path change or physical-chip/Z80/disk proof. [WAVs, all outcomes,
+  verification and reproducing scripts](ay-converter/analysis/ym3812_sea_foam/OVERTONES.md).
+
 ## 2026-10-14 — Reconstruct the full sea-foam song through YM3812
 
 - **Request/baseline:** Create a YM3812 track from the song in the existing

@@ -1,0 +1,893 @@
+{
+  "complete": true,
+  "date": "2026-10-14",
+  "seconds": 90,
+  "fields": 4500,
+  "selected": null,
+  "baseline": {
+    "high": {
+      "scales": {
+        "512": {
+          "low_band_cosine": 0.9628416188784763,
+          "1800-8000": {
+            "power_ratio": 0.6297914595992145,
+            "extra_power_fraction": 0.02198965218011872,
+            "missing_power_fraction": 0.3921981925809044
+          },
+          "4000-8000": {
+            "power_ratio": 0.18641476647820113,
+            "extra_power_fraction": 0.008537052405441331,
+            "missing_power_fraction": 0.8221222859272398
+          }
+        },
+        "2048": {
+          "low_band_cosine": 0.8603979588266698,
+          "1800-8000": {
+            "power_ratio": 0.6352035134904849,
+            "extra_power_fraction": 0.1583377864482627,
+            "missing_power_fraction": 0.523134272957778
+          },
+          "4000-8000": {
+            "power_ratio": 0.19738523027371352,
+            "extra_power_fraction": 0.0427096677728267,
+            "missing_power_fraction": 0.8453244374991128
+          }
+        },
+        "8192": {
+          "low_band_cosine": 0.7995846069035265,
+          "1800-8000": {
+            "power_ratio": 0.633526411014714,
+            "extra_power_fraction": 0.21232322585193963,
+            "missing_power_fraction": 0.5787968148372256
+          },
+          "4000-8000": {
+            "power_ratio": 0.19734846468413295,
+            "extra_power_fraction": 0.04808119435747181,
+            "missing_power_fraction": 0.850732729673339
+          }
+        }
+      },
+      "worst_extra_interval_seconds": [
+        20.34,
+        23.34
+      ]
+    },
+    "diagnostics": {
+      "metrics": {
+        "objective_db": 9.444630541888397,
+        "masked_spectral_mae_db": {
+          "512": 12.11811971336651,
+          "2048": 8.145155912292829,
+          "8192": 6.622063502994717
+        },
+        "absolute_spectral_mae_db": {
+          "512": 11.813073573467227,
+          "2048": 7.895624243912741,
+          "8192": 6.477109419342992
+        },
+        "level_mae_db": 1.3795738066772716,
+        "level_bias_db": -1.3783943980588929,
+        "reference_rms": 0.2320781927929141,
+        "model_rms": 0.19732755220592832
+      },
+      "unpooled": {
+        "512": {
+          "window_ms": 23.219954648526077,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.9500166674888151,
+          "sqrt_magnitude_cosine": 0.8925863717598206,
+          "log_magnitude_mae_db": 11.813073576762715,
+          "spectral_convergence": 0.3114605313473649,
+          "active_frames": 4500
+        },
+        "2048": {
+          "window_ms": 92.87981859410431,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.8545193962313042,
+          "sqrt_magnitude_cosine": 0.8969974872085548,
+          "log_magnitude_mae_db": 7.895624250793348,
+          "spectral_convergence": 0.5020702873200705,
+          "active_frames": 4500
+        },
+        "8192": {
+          "window_ms": 371.51927437641723,
+          "hop_ms": 20,
+          "magnitude_cosine": 0.7981153081022199,
+          "sqrt_magnitude_cosine": 0.8941363106836795,
+          "log_magnitude_mae_db": 6.477109427146199,
+          "spectral_convergence": 0.5937852072006657,
+          "active_frames": 4500
+        }
+      },
+      "bands_2048": {
+        "50-300": {
+          "power_ratio": 0.7214395130617373,
+          "missing_power_fraction": 0.45317564861993936,
+          "extra_power_fraction": 0.17461514374315706
+        },
+        "300-1000": {
+          "power_ratio": 0.7428482391524108,
+          "missing_power_fraction": 0.4543175716863206,
+          "extra_power_fraction": 0.19716586948045733
+        },
+        "1000-2000": {
+          "power_ratio": 0.7387981973812697,
+          "missing_power_fraction": 0.4564981750996413,
+          "extra_power_fraction": 0.19529639834246112
+        },
+        "2000-4000": {
+          "power_ratio": 0.6354046454198412,
+          "missing_power_fraction": 0.5292126445882969,
+          "extra_power_fraction": 0.1646172147222181
+        },
+        "4000-8000": {
+          "power_ratio": 0.19738523833909696,
+          "missing_power_fraction": 0.8453244719478945,
+          "extra_power_fraction": 0.042709669548306115
+        }
+      },
+      "sub_50hz_power_fraction": 0.00024779138487185983,
+      "worst_interval_seconds": [
+        35.44,
+        38.44
+      ]
+    }
+  },
+  "trials": [
+    {
+      "name": "fit1024-w0",
+      "window": 1024,
+      "exponent": 0.0,
+      "admitted": false,
+      "admission": {
+        "no_clipping": true,
+        "extra_2048": true,
+        "all_extra_scales": false,
+        "high_missing": false,
+        "low_band": false,
+        "levels": true
+      },
+      "high": {
+        "scales": {
+          "512": {
+            "low_band_cosine": 0.9429249665186665,
+            "1800-8000": {
+              "power_ratio": 0.5684301093543989,
+              "extra_power_fraction": 0.03660239283050783,
+              "missing_power_fraction": 0.46817228347610906
+            },
+            "4000-8000": {
+              "power_ratio": 0.10261887057514439,
+              "extra_power_fraction": 0.0031228110755368416,
+              "missing_power_fraction": 0.9005039405003925
+            }
+          },
+          "2048": {
+            "low_band_cosine": 0.9061018876346231,
+            "1800-8000": {
+              "power_ratio": 0.5702632387948452,
+              "extra_power_fraction": 0.09568202613387503,
+              "missing_power_fraction": 0.52541878733903
+            },
+            "4000-8000": {
+              "power_ratio": 0.10798257234604308,
+              "extra_power_fraction": 0.009911653812104059,
+              "missing_power_fraction": 0.9019290814660613
+            }
+          },
+          "8192": {
+            "low_band_cosine": 0.8410076046894277,
+            "1800-8000": {
+              "power_ratio": 0.5701454775915763,
+              "extra_power_fraction": 0.15870988631018598,
+              "missing_power_fraction": 0.5885644087186097
+            },
+            "4000-8000": {
+              "power_ratio": 0.10796309630208,
+              "extra_power_fraction": 0.01731204144170242,
+              "missing_power_fraction": 0.9093489451396227
+            }
+          }
+        },
+        "worst_extra_interval_seconds": [
+          20.38,
+          23.38
+        ]
+      },
+      "diagnostics": {
+        "metrics": {
+          "objective_db": 10.653611490112784,
+          "masked_spectral_mae_db": {
+            "512": 13.996488852006983,
+            "2048": 9.159046737249916,
+            "8192": 7.338639446054808
+          },
+          "absolute_spectral_mae_db": {
+            "512": 13.583487783975349,
+            "2048": 8.835263670530091,
+            "8192": 7.139482506595433
+          },
+          "level_mae_db": 1.3968185095491839,
+          "level_bias_db": -1.3964274166577915,
+          "reference_rms": 0.2320781927929141,
+          "model_rms": 0.19716046295986464
+        },
+        "unpooled": {
+          "512": {
+            "window_ms": 23.219954648526077,
+            "hop_ms": 20,
+            "magnitude_cosine": 0.9234859670407506,
+            "sqrt_magnitude_cosine": 0.8434521317415024,
+            "log_magnitude_mae_db": 13.583487787401882,
+            "spectral_convergence": 0.37078887798979066,
+            "active_frames": 4500
+          },
+          "2048": {
+            "window_ms": 92.87981859410431,
+            "hop_ms": 20,
+            "magnitude_cosine": 0.8922223923929538,
+            "sqrt_magnitude_cosine": 0.8834055330842707,
+            "log_magnitude_mae_db": 8.835263675664962,
+            "spectral_convergence": 0.4410770765551013,
+            "active_frames": 4500
+          },
+          "8192": {
+            "window_ms": 371.51927437641723,
+            "hop_ms": 20,
+            "magnitude_cosine": 0.8325199626699656,
+            "sqrt_magnitude_cosine": 0.8812682693937912,
+            "log_magnitude_mae_db": 7.139482513008648,
+            "spectral_convergence": 0.5453009633137831,
+            "active_frames": 4500
+          }
+        },
+        "bands_2048": {
+          "50-300": {
+            "power_ratio": 0.7184241483937512,
+            "missing_power_fraction": 0.3482086199896748,
+            "extra_power_fraction": 0.06663275044490642
+          },
+          "300-1000": {
+            "power_ratio": 0.7628635700160273,
+            "missing_power_fraction": 0.3821080817298326,
+            "extra_power_fraction": 0.1449717103875859
+          },
+          "1000-2000": {
+            "power_ratio": 0.7439531939620881,
+            "missing_power_fraction": 0.39397940681998583,
+            "extra_power_fraction": 0.13793262664362402
+          },
+          "2000-4000": {
+            "power_ratio": 0.5192648781073103,
+            "missing_power_fraction": 0.5654796745120308,
+            "extra_power_fraction": 0.08474447733342108
+          },
+          "4000-8000": {
+            "power_ratio": 0.10798257675833295,
+            "missing_power_fraction": 0.9019291181549729,
+            "extra_power_fraction": 0.009911654174620452
+          }
+        },
+        "sub_50hz_power_fraction": 5.6779690777325694e-05,
+        "worst_interval_seconds": [
+          35.72,
+          38.72
+        ]
+      },
+      "audit": {
+        "fields": 4500,
+        "writes": 216907,
+        "all_channel_states_exact": true,
+        "timed_write_spacing_samples_min": 2,
+        "additive_sine_and_silent_modulator": true
+      },
+      "write_effects": {
+        "all": {
+          "events": 216795,
+          "sum_squared_sample_perturbation": 11.106193179116785,
+          "maximum": 0.07697114755499784,
+          "p99": 0.028124073145095366
+        },
+        "carrier_tl": {
+          "events": 147691,
+          "sum_squared_sample_perturbation": 10.450828583612786,
+          "maximum": 0.07697114755499784,
+          "p99": 0.031362042092721476
+        },
+        "other": {
+          "events": 69104,
+          "sum_squared_sample_perturbation": 0.6553645955039358,
+          "maximum": 0.06679467371960149,
+          "p99": 0.013321929384518857
+        },
+        "last_bus_slot_ms_max": 3.7188208616780045,
+        "last_bus_slot_ms_p95": 2.947845804988662,
+        "top": [
+          {
+            "seconds": 56.902086167800455,
+            "register": 83,
+            "sample_perturbation": 0.07697114755499784
+          },
+          {
+            "seconds": 32.12185941043084,
+            "register": 85,
+            "sample_perturbation": -0.07253050442682489
+          },
+          {
+            "seconds": 61.7015873015873,
+            "register": 69,
+            "sample_perturbation": -0.07216045083281047
+          },
+          {
+            "seconds": 34.10199546485261,
+            "register": 76,
+            "sample_perturbation": 0.07179039723879607
+          },
+          {
+            "seconds": 53.101451247165535,
+            "register": 75,
+            "sample_perturbation": 0.07169788384029246
+          },
+          {
+            "seconds": 34.101768707483,
+            "register": 85,
+            "sample_perturbation": 0.07068023645675282
+          },
+          {
+            "seconds": 61.641179138321995,
+            "register": 69,
+            "sample_perturbation": 0.06882996848668077
+          },
+          {
+            "seconds": 66.54181405895692,
+            "register": 76,
+            "sample_perturbation": -0.0673497541106231
+          },
+          {
+            "seconds": 31.641269841269843,
+            "register": 84,
+            "sample_perturbation": -0.0673497541106231
+          },
+          {
+            "seconds": 29.900045351473924,
+            "register": 176,
+            "sample_perturbation": -0.06679467371960149
+          },
+          {
+            "seconds": 55.34195011337869,
+            "register": 85,
+            "sample_perturbation": 0.06623959332857987
+          },
+          {
+            "seconds": 81.48063492063493,
+            "register": 181,
+            "sample_perturbation": 0.06586953973456547
+          }
+        ]
+      },
+      "writes": 216907,
+      "vgm_bytes": 899316,
+      "vgz_bytes": 337294,
+      "vgm_sha256": "f53f9d1f22d116ab47ae4103c38c1bc8d1f54c64e3d49faeeed40e13b7751053",
+      "peak": 0.8963038297977731,
+      "native_clipping_samples": 0,
+      "clipping_samples": 0,
+      "saved_pcm_clips_only_for_rejected_trial": false,
+      "complete_independent_native_replay_exact": true
+    },
+    {
+      "name": "fit2048-w0",
+      "window": 2048,
+      "exponent": 0.0,
+      "admitted": false,
+      "admission": {
+        "no_clipping": true,
+        "extra_2048": true,
+        "all_extra_scales": false,
+        "high_missing": false,
+        "low_band": false,
+        "levels": true
+      },
+      "high": {
+        "scales": {
+          "512": {
+            "low_band_cosine": 0.8979478259112127,
+            "1800-8000": {
+              "power_ratio": 0.5112559034887278,
+              "extra_power_fraction": 0.08363918638460291,
+              "missing_power_fraction": 0.572383282895875
+            },
+            "4000-8000": {
+              "power_ratio": 0.050457057001624686,
+              "extra_power_fraction": 0.003855825535321544,
+              "missing_power_fraction": 0.9533987685336969
+            }
+          },
+          "2048": {
+            "low_band_cosine": 0.896981527081766,
+            "1800-8000": {
+              "power_ratio": 0.5087452026624593,
+              "extra_power_fraction": 0.08510909042161154,
+              "missing_power_fraction": 0.5763638877591528
+            },
+            "4000-8000": {
+              "power_ratio": 0.05221836345390251,
+              "extra_power_fraction": 0.003866822699242645,
+              "missing_power_fraction": 0.9516484592453405
+            }
+          },
+          "8192": {
+            "low_band_cosine": 0.845825105915037,
+            "1800-8000": {
+              "power_ratio": 0.5090663564164285,
+              "extra_power_fraction": 0.13396545197070248,
+              "missing_power_fraction": 0.6248990955542737
+            },
+            "4000-8000": {
+              "power_ratio": 0.0521968823741212,
+              "extra_power_fraction": 0.005639464601089871,
+              "missing_power_fraction": 0.953442582226969
+            }
+          }
+        },
+        "worst_extra_interval_seconds": [
+          19.2,
+          22.2
+        ]
+      },
+      "diagnostics": {
+        "metrics": {
+          "objective_db": 11.529152728720094,
+          "masked_spectral_mae_db": {
+            "512": 14.848167494080124,
+            "2048": 10.09606333368318,
+            "8192": 8.131201186708207
+          },
+          "absolute_spectral_mae_db": {
+            "512": 14.393836154609286,
+            "2048": 9.711238998519228,
+            "8192": 7.876956415900937
+          },
+          "level_mae_db": 1.4400249254178743,
+          "level_bias_db": -1.4313281150045922,
+          "reference_rms": 0.2320781927929141,
+          "model_rms": 0.19716793676022723
+        },
+        "unpooled": {
+          "512": {
+            "window_ms": 23.219954648526077,
+            "hop_ms": 20,
+            "magnitude_cosine": 0.8740528378301672,
+            "sqrt_magnitude_cosine": 0.8055490080459486,
+            "log_magnitude_mae_db": 14.393836158238976,
+            "spectral_convergence": 0.47056161606967106,
+            "active_frames": 4500
+          },
+          "2048": {
+            "window_ms": 92.87981859410431,
+            "hop_ms": 20,
+            "magnitude_cosine": 0.8782622764541764,
+            "sqrt_magnitude_cosine": 0.8583330177958518,
+            "log_magnitude_mae_db": 9.711239002862218,
+            "spectral_convergence": 0.4674829307213918,
+            "active_frames": 4500
+          },
+          "8192": {
+            "window_ms": 371.51927437641723,
+            "hop_ms": 20,
+            "magnitude_cosine": 0.831495641060658,
+            "sqrt_magnitude_cosine": 0.86207503261062,
+            "log_magnitude_mae_db": 7.876956422026328,
+            "spectral_convergence": 0.5478268108386649,
+            "active_frames": 4500
+          }
+        },
+        "bands_2048": {
+          "50-300": {
+            "power_ratio": 0.7272972644816996,
+            "missing_power_fraction": 0.3510823550716261,
+            "extra_power_fraction": 0.07837960161480628
+          },
+          "300-1000": {
+            "power_ratio": 0.7767280370062872,
+            "missing_power_fraction": 0.3740547054758219,
+            "extra_power_fraction": 0.1507828011238351
+          },
+          "1000-2000": {
+            "power_ratio": 0.748771033812741,
+            "missing_power_fraction": 0.3967164034067542,
+            "extra_power_fraction": 0.14548746308104507
+          },
+          "2000-4000": {
+            "power_ratio": 0.4296393721841818,
+            "missing_power_fraction": 0.6406171122137971,
+            "extra_power_fraction": 0.07025640911205877
+          },
+          "4000-8000": {
+            "power_ratio": 0.05221836558760383,
+            "missing_power_fraction": 0.9516484979935622,
+            "extra_power_fraction": 0.003866822842480583
+          }
+        },
+        "sub_50hz_power_fraction": 4.5947752326826276e-05,
+        "worst_interval_seconds": [
+          35.5,
+          38.5
+        ]
+      },
+      "audit": {
+        "fields": 4500,
+        "writes": 189859,
+        "all_channel_states_exact": true,
+        "timed_write_spacing_samples_min": 2,
+        "additive_sine_and_silent_modulator": true
+      },
+      "write_effects": {
+        "all": {
+          "events": 189747,
+          "sum_squared_sample_perturbation": 8.337613448228373,
+          "maximum": 0.07253050442682489,
+          "p99": 0.025163644392980064
+        },
+        "carrier_tl": {
+          "events": 129535,
+          "sum_squared_sample_perturbation": 7.8417104336907375,
+          "maximum": 0.07253050442682489,
+          "p99": 0.028124073145095366
+        },
+        "other": {
+          "events": 60212,
+          "sum_squared_sample_perturbation": 0.4959030145376052,
+          "maximum": 0.06586953973456547,
+          "p99": 0.011841715008461207
+        },
+        "last_bus_slot_ms_max": 3.492063492063492,
+        "last_bus_slot_ms_p95": 2.675736961451247,
+        "top": [
+          {
+            "seconds": 61.56131519274376,
+            "register": 85,
+            "sample_perturbation": 0.07253050442682489
+          },
+          {
+            "seconds": 61.70140589569161,
+            "register": 75,
+            "sample_perturbation": 0.07095777665226363
+          },
+          {
+            "seconds": 59.061360544217685,
+            "register": 84,
+            "sample_perturbation": 0.06660964692259429
+          },
+          {
+            "seconds": 34.04063492063492,
+            "register": 181,
+            "sample_perturbation": 0.06586953973456547
+          },
+          {
+            "seconds": 61.561451247165536,
+            "register": 69,
+            "sample_perturbation": -0.06364921817047899
+          },
+          {
+            "seconds": 20.420680272108843,
+            "register": 183,
+            "sample_perturbation": 0.06198397699741413
+          },
+          {
+            "seconds": 54.60004535147392,
+            "register": 176,
+            "sample_perturbation": -0.061891463598910526
+          },
+          {
+            "seconds": 78.50126984126985,
+            "register": 85,
+            "sample_perturbation": 0.06152141000489611
+          },
+          {
+            "seconds": 61.66145124716553,
+            "register": 68,
+            "sample_perturbation": 0.06142889660639251
+          },
+          {
+            "seconds": 34.10181405895692,
+            "register": 75,
+            "sample_perturbation": 0.0610588430123781
+          },
+          {
+            "seconds": 64.9813605442177,
+            "register": 75,
+            "sample_perturbation": 0.0610588430123781
+          },
+          {
+            "seconds": 59.00140589569161,
+            "register": 84,
+            "sample_perturbation": 0.06096632961387449
+          }
+        ]
+      },
+      "writes": 189859,
+      "vgm_bytes": 807978,
+      "vgz_bytes": 304707,
+      "vgm_sha256": "09d51d019234dd053f0b2a9ad99d3e3e8a20172f1425fc41d3b7ff75695782c0",
+      "peak": 0.986078306710539,
+      "native_clipping_samples": 0,
+      "clipping_samples": 0,
+      "saved_pcm_clips_only_for_rejected_trial": false,
+      "complete_independent_native_replay_exact": true
+    },
+    {
+      "name": "fit2048-w0.5",
+      "window": 2048,
+      "exponent": 0.5,
+      "admitted": false,
+      "admission": {
+        "no_clipping": false,
+        "extra_2048": true,
+        "all_extra_scales": false,
+        "high_missing": false,
+        "low_band": false,
+        "levels": true
+      },
+      "high": {
+        "scales": {
+          "512": {
+            "low_band_cosine": 0.900753173974382,
+            "1800-8000": {
+              "power_ratio": 0.5187014545485157,
+              "extra_power_fraction": 0.0835348026750561,
+              "missing_power_fraction": 0.5648333481265406
+            },
+            "4000-8000": {
+              "power_ratio": 0.05317181199112396,
+              "extra_power_fraction": 0.004522784817151514,
+              "missing_power_fraction": 0.9513509728260272
+            }
+          },
+          "2048": {
+            "low_band_cosine": 0.8998595142461077,
+            "1800-8000": {
+              "power_ratio": 0.5232669780828225,
+              "extra_power_fraction": 0.08782788234412496,
+              "missing_power_fraction": 0.564560904261303
+            },
+            "4000-8000": {
+              "power_ratio": 0.05592351914257872,
+              "extra_power_fraction": 0.004739729614303349,
+              "missing_power_fraction": 0.9488162104717246
+            }
+          },
+          "8192": {
+            "low_band_cosine": 0.8524559915500284,
+            "1800-8000": {
+              "power_ratio": 0.5230976719624638,
+              "extra_power_fraction": 0.13392589128260732,
+              "missing_power_fraction": 0.6108282193201433
+            },
+            "4000-8000": {
+              "power_ratio": 0.05589689973719319,
+              "extra_power_fraction": 0.006116184380752572,
+              "missing_power_fraction": 0.9502192846435598
+            }
+          }
+        },
+        "worst_extra_interval_seconds": [
+          20.34,
+          23.34
+        ]
+      },
+      "diagnostics": {
+        "metrics": {
+          "objective_db": 11.450679114680447,
+          "masked_spectral_mae_db": {
+            "512": 14.758834006690451,
+            "2048": 10.02357377040992,
+            "8192": 8.063405143916746
+          },
+          "absolute_spectral_mae_db": {
+            "512": 14.309993581562212,
+            "2048": 9.643383655046282,
+            "8192": 7.813949841659788
+          },
+          "level_mae_db": 1.4344994504992665,
+          "level_bias_db": -1.4282716103750313,
+          "reference_rms": 0.2320781927929141,
+          "model_rms": 0.19733353812805515
+        },
+        "unpooled": {
+          "512": {
+            "window_ms": 23.219954648526077,
+            "hop_ms": 20,
+            "magnitude_cosine": 0.8768928440567489,
+            "sqrt_magnitude_cosine": 0.808915645945155,
+            "log_magnitude_mae_db": 14.30999358487856,
+            "spectral_convergence": 0.46328290411441575,
+            "active_frames": 4500
+          },
+          "2048": {
+            "window_ms": 92.87981859410431,
+            "hop_ms": 20,
+            "magnitude_cosine": 0.8815919477778349,
+            "sqrt_magnitude_cosine": 0.8609417709082632,
+            "log_magnitude_mae_db": 9.643383659947817,
+            "spectral_convergence": 0.459443752428722,
+            "active_frames": 4500
+          },
+          "8192": {
+            "window_ms": 371.51927437641723,
+            "hop_ms": 20,
+            "magnitude_cosine": 0.8389457111839183,
+            "sqrt_magnitude_cosine": 0.8651092658524109,
+            "log_magnitude_mae_db": 7.8139498473345705,
+            "spectral_convergence": 0.5336784915087884,
+            "active_frames": 4500
+          }
+        },
+        "bands_2048": {
+          "50-300": {
+            "power_ratio": 0.7219104773545693,
+            "missing_power_fraction": 0.34935533348370984,
+            "extra_power_fraction": 0.0712657928997595
+          },
+          "300-1000": {
+            "power_ratio": 0.7763736257110987,
+            "missing_power_fraction": 0.36798321733979816,
+            "extra_power_fraction": 0.14435690169262275
+          },
+          "1000-2000": {
+            "power_ratio": 0.7510839967807701,
+            "missing_power_fraction": 0.3906410279826783,
+            "extra_power_fraction": 0.14172505062499843
+          },
+          "2000-4000": {
+            "power_ratio": 0.4390945160668313,
+            "missing_power_fraction": 0.6282749916476813,
+            "extra_power_fraction": 0.06736943242859256
+          },
+          "4000-8000": {
+            "power_ratio": 0.05592352142767687,
+            "missing_power_fraction": 0.9488162491242834,
+            "extra_power_fraction": 0.004739729813274827
+          }
+        },
+        "sub_50hz_power_fraction": 4.465761008467354e-05,
+        "worst_interval_seconds": [
+          35.5,
+          38.5
+        ]
+      },
+      "audit": {
+        "fields": 4500,
+        "writes": 192285,
+        "all_channel_states_exact": true,
+        "timed_write_spacing_samples_min": 2,
+        "additive_sine_and_silent_modulator": true
+      },
+      "write_effects": {
+        "all": {
+          "events": 192173,
+          "sum_squared_sample_perturbation": 8.412613110313776,
+          "maximum": 0.07253050442682489,
+          "p99": 0.025163644392980064
+        },
+        "carrier_tl": {
+          "events": 130888,
+          "sum_squared_sample_perturbation": 7.879659426826255,
+          "maximum": 0.07253050442682489,
+          "p99": 0.028124073145095366
+        },
+        "other": {
+          "events": 61285,
+          "sum_squared_sample_perturbation": 0.5329536834875033,
+          "maximum": 0.06882996848668077,
+          "p99": 0.012581822196490032
+        },
+        "last_bus_slot_ms_max": 3.7188208616780045,
+        "last_bus_slot_ms_p95": 2.7210884353741496,
+        "top": [
+          {
+            "seconds": 64.10181405895692,
+            "register": 84,
+            "sample_perturbation": 0.07253050442682489
+          },
+          {
+            "seconds": 34.061950113378686,
+            "register": 85,
+            "sample_perturbation": -0.07253050442682489
+          },
+          {
+            "seconds": 61.70154195011338,
+            "register": 67,
+            "sample_perturbation": 0.07234547762981769
+          },
+          {
+            "seconds": 32.12199546485261,
+            "register": 85,
+            "sample_perturbation": -0.07160537044178886
+          },
+          {
+            "seconds": 57.70022675736961,
+            "register": 177,
+            "sample_perturbation": 0.06882996848668077
+          },
+          {
+            "seconds": 75.58167800453515,
+            "register": 76,
+            "sample_perturbation": 0.06808986129865194
+          },
+          {
+            "seconds": 39.74240362811791,
+            "register": 84,
+            "sample_perturbation": 0.06660964692259429
+          },
+          {
+            "seconds": 64.82113378684807,
+            "register": 84,
+            "sample_perturbation": -0.06290911098245017
+          },
+          {
+            "seconds": 12.0415873015873,
+            "register": 85,
+            "sample_perturbation": -0.06244654398993214
+          },
+          {
+            "seconds": 34.121315192743765,
+            "register": 84,
+            "sample_perturbation": 0.062169003794421335
+          },
+          {
+            "seconds": 34.201950113378686,
+            "register": 84,
+            "sample_perturbation": 0.06170643680190332
+          },
+          {
+            "seconds": 39.80126984126984,
+            "register": 75,
+            "sample_perturbation": 0.0610588430123781
+          }
+        ]
+      },
+      "writes": 192285,
+      "vgm_bytes": 815906,
+      "vgz_bytes": 307593,
+      "vgm_sha256": "da619015d63df334f7e86b645bbb9858b38d334e9e45798ad66cba296c275327",
+      "peak": 1.050863036399247,
+      "native_clipping_samples": 0,
+      "clipping_samples": 11,
+      "saved_pcm_clips_only_for_rejected_trial": true,
+      "complete_independent_native_replay_exact": true
+    }
+  ],
+  "global_playback_gain": 3.031479042166069,
+  "fitting_gain": 3.535606377250534,
+  "source_pcm_in_output": false,
+  "output_filter_unchanged": true,
+  "elapsed_seconds": 145.43838640000013,
+  "original_attempt": {
+    "complete": false,
+    "failure": "AssertionError: output clips at unchanged fixed gain in fit2048-w0.5",
+    "completed_targets_all_three": true,
+    "original_producer_sha256_lf": "c932f9fa4daadc76962bfced034c7af056a0e82de87ca4f4fae344934db11f1d"
+  },
+  "recovery": "Reuse exact fitted NPZ targets; no refit, gain adjustment or clipping-gate exemption.",
+  "source_sha256": "378c0bdfa5119b38d954f1871c88b5cb4b15c93054fe09d3e828e42e5c34345c",
+  "previous_report_sha256": "eb2cc227a0f0c5dc6b00bfb516b8b65e0d5967112fd8a0c99d7ab58981ea18f7",
+  "native_core_sha256": "8d8d50145ca579d1073b23ac44579b7dba02f99b741ed57b12f4d0a07619a2c7",
+  "producer_sources_sha256_lf": {
+    "analysis/ym3812_sea_foam/recover_refit.py": "687b1d38a9020407584b42ae150094c91ddf851bc3a6778ee2657a43b0e0b73c",
+    "analysis/ym3812_sea_foam/refit_overtones.py": "c932f9fa4daadc76962bfced034c7af056a0e82de87ca4f4fae344934db11f1d",
+    "analysis/ym3812_sea_foam/overtones.py": "e569b67be15dad0273a7b052e2eeb7ffa7814dab48367b04d05e26a7012e44ff",
+    "experimental_ym3812.py": "672c60b25966111d36c03c1346cfe4d530af427feecbf8cc9f94aee0c22d1715"
+  },
+  "artifacts_sha256": {
+    "fit1024-w0.npz": "917b5e38115581ead792c5afca27a72e73ea6a5a296f762e1a4f88475171b11a",
+    "fit1024-w0.vgz": "20ca80fd3aabd792ec39dc847773b2677492a56b43d6288ef51056c4e109be84",
+    "fit1024-w0.wav": "e0fd49d494f728f19c1aec1c54bbfe1583dbe55780d07fc34f0dcf465e3d6493",
+    "fit2048-w0.5.npz": "eb4f359b70eefe959a696ca52a263e543e837caaa965b18bd943db6b6d164c6c",
+    "fit2048-w0.5.vgz": "3534bedf0660fd09f67c7fd1ec35e8a03e7120f5ac63230dba703fffef74c018",
+    "fit2048-w0.5.wav": "102122133a923ee01cd9c717a7c5db9f5153ff92b15f8d116bf77569ac3434f4",
+    "fit2048-w0.npz": "eff1fd2c25c5a03edea18abf83c23dd27f78a6cf314359c86e4087cb8926b277",
+    "fit2048-w0.vgz": "c8adb71b637ccf8eed6c331b92819b2b6134d02bad5811d5d290c92571a262f0",
+    "fit2048-w0.wav": "ae230681a9ade2bc2f7212f057b74f20c1afac2871991d810c5d74547632d605"
+  }
+}

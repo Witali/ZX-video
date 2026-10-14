@@ -3,6 +3,25 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## YM3812 generated-overtones follow-up — complete (2026-10-14)
+
+The user hears added high harmonics, suggests mostly sines and asks the update
+rate. Continue the same90-second song from `4b73f9ea`; preserve content, nine
+voices,50-Hz targets, smooth register transitions, gain and playback filter.
+The [pure-sine/source-cap audition](ay-converter/analysis/ym3812_sea_foam/OVERTONES.md)
+uses additive connection and a silent modulator from reset. Four held native
+tones reduce intrinsic harmonic power33.95..40.83 dB. The selected cap changes
+only72 TL targets; every pitch/multiplier/key is preserved. Extra4..8-kHz bin
+power falls24.46/4.85/3.74% across three scales; the broad20%1.8..8-kHz gate
+is unmet and retained. Log score worsens9.444631 ->9.897613; use the explicit
+narrower sine-purity audition goal with all original content/level guards.
+
+All six trials, rejected refits and the11-clipped-sample interruption/recovery
+are preserved. Twelve tests and six complete4500-field/native/full-PCM replays
+pass, with selected zero clipping and exact181-second comparison segments.
+This bounded request is complete; no new fit, higher update-rate experiment,
+native scheduler or physical-chip qualification starts automatically.
+
 ## YM3812 sea-foam main song — complete (2026-10-14)
 
 Create a YM3812 soundtrack from the archived unprocessed main song, source

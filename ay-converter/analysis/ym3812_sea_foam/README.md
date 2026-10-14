@@ -4,6 +4,13 @@ Completed2026-10-14 in `.worktree/ym3812-sea-foam`, branch
 `codex/ym3812-sea-foam`, from main `13819086`. The user requests a YM3812
 track of the song from "In the Blue Sea, in the White Foam".
 
+The subsequent user request to reduce added high harmonics and use mainly
+sines is complete. **[Latest pure-sine audition](overtones-evidence/ym3812-preview.wav)**
+and **[before/after comparison, revised starts91 s](overtones-evidence/before-after.wav)**
+retain the same90-second song and50-Hz targets. See [the measured changes,
+all six trials and explicit selection limits](OVERTONES.md). The initial
+version and its evidence remain below.
+
 - **[Complete90-second YM3812 audition](evidence/ym3812-preview.wav)**
 - **[Source0..90 s, silence90..91 s, YM381291..181 s](evidence/source-versus-ym3812.wav)**
 - [VGM commands](evidence/ym3812.vgm), [compressed VGZ](evidence/ym3812.vgz)
