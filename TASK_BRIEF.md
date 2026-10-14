@@ -35,87 +35,71 @@ quality on a different clone without its own measurements.
 
 ### Current continuation checkpoint
 
-The complete song now scores20.250315887 dB on its own full512/1024 Fuse
-clocks, gain23.335544175 against the strict original-clock baseline. Both
-clocks exactly retain all11,526,111 old relative pulse timestamps (delta0 T),
-with no full-RAM refills or new bank pause. Artifact acceptance remains false.
+Worktree `.worktree/audio-snr-research`, branch `codex/audio-snr-research`.
+The strict original8-kHz complete-song baseline is-3.085228288 dB. The current
+half-joint preview scores20.250315887 dB on its complete512/1024 Fuse clocks,
+gain23.335544175. Both retain all11,526,111 relative source pulse timestamps
+(delta0 T), no full-RAM refills/new bank pause. Artifact acceptance stays false.
+Main `ZX-music-Sea-Foam-RAM-auto.trd` still hashes226388fb...; no promotion.
 
-C implementations and retained Python byte parity are committed: waveform
-`a60932d9`, PCM baseline `466f6e4d`. All nine whole sources match original
-Python bytes. Automatic CLI `convert_snr_audio.py` is committed in`f5dd5109`:
-the whole prepared song converts in72.7946 s externally, including all normal
-steps, using populated compiler caches. Its entire TRD equals the completely
-played`ccab8724...` image. `--encoder python` keeps the original reference;
-Python still prepares inputs/models while C executes both encoding loops.
-Root main`226388fb...` remains unchanged. Full evidence is under
-`evidence/automatic-conversion` and `evidence/native-*-encoder`.
+The C waveform/PCM loops and automatic CLI milestones pass: all nine entire
+default outputs match original Python, and v1 worksets are exact. Original
+`ima_waveform_encoder.py`/`ima_beam.py` still equal13819086; clock/general
+reference producers are unchanged. `convert_snr_audio.py --encoder python`
+remains executable. Full prepared90.048-s song conversion takes72.7946 s
+externally with warm compiler caches, including preparation/both encoders/
+assembly/scoring/cleanup; entire disk equals fully playedccab8724... . Reuse
+`evidence/automatic-conversion` and `evidence/native-*-encoder`, not repeated
+performance/parity sweeps when unchanged source/table proves compatibility.
 
-Optional compact loader `08eaa7c1` enables midpoint tables: probe+bounce in
-startup808A..82C1, workerBC40..BF8F (maximumBFBC). Six tests, complete native
-old-song runs on all four profiles and maximum-disk cold loading pass. Default
-disk AND PLAYER metadata remain identical. No new midpoint Fuse quality claim.
+Centered bias512 maps all65536 PCM16 inputs exactly to the256-byte IXH lookup
+min(63,(IXH+2)//4), zero bucket[-512,511]. It is opt-in and preserves absent/0
+old disk AND metadata. Six independent C tests, four player tests/eight short
+native runs pass. Compact loader moves loading-only probe/bounce into startup
+padding; baseline macro counts423/449 T ordinary,14 page,243/267 bank extras
+remain. Native CPU proofs do not cover128/Scorpion ULA waits or their quality.
+See `evidence/native-centered-encoder`, `pcm-quantization-bias`, `compact-midpoint`.
 
-New frozen midpoint+C joint controls finish all nine sources but regress on
-four non-silent sources, including song20.122406406 dB. Silence falls to
-0.011473 RMS but produces an approximately1996-Hz line. Tiny decoded values
-[-1,0,0,-1] cross the floor64-bin boundary31/32, causing a full1/64 duty step.
-The separate18-case centered lookup control confirms the mechanism: offset
-512 maps zero bin[-512,511], implements exactly as256-byte IXH LUT
-`min(63,(IXH+2)//4)` and needs no new live instructions. Midpoint silence then
-falls to0.00369117 with the1996-Hz line removed; all eight non-silent frozen
-payloads regress in both models, so lookup replacement alone is rejected.
-See `evidence/midpoint-control` and `evidence/centered-quantizer`.
+The nine-source midpoint and centered duration_zero controls are rejected.
+The latter scores song20.110900648 dB but has four SNR/five RMS regressions
+versus half-joint and a3991-Hz idle tone. Exact PCM0/index0/packed0 stays bin32,
+while feedback16/17 alternates6ad5/952a with223/226 high T per449. This is
+separate from the older floor-bin[-1,0] discontinuity/1996-Hz tone. Full
+reports remain in `evidence/midpoint-control`, `centered-quantizer` and
+`matched-centered-control`; all measured edges/filter/source clock unchanged.
 
-The next mechanism is a matched source-independent centered lookup AND C
-search, as an explicit optional model field; preserve default0 disk/metadata,
-workset/API and Python reference compatibility. Verify exact new reference
-bytes, all nine full-source artifact controls and selected full actual TRDs.
-The C option is now implemented and tested: six tests, exhaustive65536-value
-mapping, separate independent512 NumPy search and fresh complete default
-DLL/standalone/v1 workset parity across all nine sources. Original Python
-files remain equal to the starting Git content. Evidence is under
-`evidence/native-centered-encoder`. The first matched corpus candidate uses
-`duration_zero`, full extent1, origin0, compact loader and fixed bias512;
-its zero bucket then has the correct half-duty semantic target. Keep this
-candidate distinct from the previous frozen-midpoint lookup control.
-The matching player flag also passes four tests: every65536 PCM value, eight
-complete short native runs, absent/0 old disk AND7938 metadata exact, only126
-LUT bytes changed. CPU counts423/449 and all extras stay identical(delta0).
-`evidence/pcm-quantization-bias` has actual prior-producer snapshots; these
-native proofs do not cover128/Scorpion ULA waits or a new full Fuse quality run.
-The matched full nine-source host control is now rejected: song20.110900648
-dB(-0.139415 versus half-joint), four SNR/five RMS regressions, residual
-3991-Hz silence tone. Complete source/packed/predictor/index silence is zero;
-bin32 remains constant while table feedback16/17 alternates6ad5/952a with
-223/226 activeT out of449. Evidence is `evidence/matched-centered-control`;
-fresh91.324658 s,84 measured outputs/22 producer hashes, no new Fuse run.
-The next bounded mechanism may test a source-independent stable neutral
-packet with an instruction-derived duty constraint and matched C features.
-That bounded stage is now complete and rejected. Source-free enumeration of
-65536 words chooses0x56AD (225/449 high T), fixed successor16. Six independent
-selector tests pass; player five tests/eight short native runs preserve old
-defaults and prove max2392-sector cold loading, workerBC40..BFBC/67-byte margin.
-The full nine-source C control takes93.237901 s and reduces silence16.579842
-dB to0.002300011 RMS, but regresses six sources versus matched, including
-quiet440-4.299602, speech-0.902078 and Entertainer-1.430123 dB. Song20.076588406
-loses0.173727 versus half-joint. Preserve selector/player/full-corpus evidence
-under `evidence/neutral-packet-*`; no new Fuse or main promotion.
+The source-free neutral selector enumerates65536 words (848 with224/225 high T),
+choosing0x56AD/225 T by steady analytic variance. All-state successor16 reset
+reduces silence16.579842 dB to0.002300011 RMS but regresses six sources;
+song20.076588406. Word-only `idle_cycle_word` instead replaces exactly cells
+[32,16]/[32,17], retaining all successors/other2046 words. It recovers large
+reset losses but still regresses five sources versus matched: speech-0.190457,
+Entertainer-0.360775, steps-0.394416, quiet440-0.000415, song-0.009961 dB.
+Song20.100940113; silence exactly equals reset-neutral. Reject both unconditional
+replacements. Reuse `evidence/neutral-packet-*` and `idle-cycle-*`.
 
-The next bounded mechanism should preserve neutral feedback history: consider
-replacing emitted words only in the actual16/17 idle cycle while retaining
-successors and all other bin32 states. This is a hypothesis, not an accepted
-model or opened experiment. Freeze it generically, compare all nine whole
-sources and retain every modulation/noise regression before any full Fuse.
-Separately, the Pentagon ordinary449 T corresponds to7982 Hz; an eventual
-448-T pacing audit could address the source/DAC image mismatch. A possible
-15-T stub is `LD A,R`(9)+`INC HL`(6), but register/flag liveness, absolute/delta
-counts and every actual clock need proof before any implementation/claim.
-Do not start both mechanisms together or alter defaults/original Python.
-Keep the exact original scope and artifact/clock/SNR gates; the saved goal
-is active, while C/automatic-conversion/Python-preservation milestones pass.
-Do not silently promote the midpoint/centered frozen-payload controls. Keep
-the complete original scope and artifact/clock/20-dB gates; language and speed
-milestones alone do not complete the active goal.
+Idle helper six/player six tests, eight native before/after runs and max2392-
+sector cold load pass. Closure18 states, FIRST138/SECOND97 (+64 dictionary
+bytes), assembled workerBC40..BFBC/67-byte margin. Full host100.797013 s;
+125-file/22-producer manifest, nine unscaled/source identities,36 baseline
+inputs. Cosmetic helper changes are disclosed with exact pre-input archives.
+No new Fuse quality run. Original encoders/main remain exact; goal is active.
+
+Next bounded mechanism: choose a source-independent zero-mean two-packet pair
+for bin32/state16 and17, preserving all successors. Constrain first high-time
+224 T and second225 T (total449/898=50%), evaluate every permitted pair with
+the unchanged analytic two-packet periodic filter, break mathematical ties
+by deterministic IDs and freeze literals before any source. Compare all nine
+full sources, all prior controls, every AM/FM/coherent-line increase and silence
+PSD. Native/default/footprint checks precede any selected full Fuse execution.
+Do not change source, gain, filter, edges, clock or C/Python original during
+this mechanism; no simultaneous retiming experiment.
+
+A later separate pacing audit may consider448 ordinary Pentagon T rather than
+449: prospective15-T stub `LD A,R`(9)+`INC HL`(6) needs register/flag liveness,
+absolute/delta counts and complete actual-clock proof. It remains a hypothesis,
+not an implementation or permission blocker. Never relax20-dB/2% gates or
+claim physical/all-clone proof from Pentagon/native measurements.
 
 ## Source-independent SNR research: diagnostic/prototype milestone complete (2026-10-14)
 

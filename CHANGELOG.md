@@ -1,5 +1,33 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Word-only idle feedback control completed and rejected
+
+- **Objective/baseline:** Preserve the original16→17→16 idle feedback history
+  after the all-state reset harmed quiet/speech/music. Reuse the source-free
+  0x56AD choice; replace only words[32,16]/[32,17], never successors or other
+  cells. Exact same centered duration_zero/C/prior/search/source/filter/clock.
+- **Functional evidence:** Six helper/six independent player tests pass.
+  Absent options reproduce actual0a212417 disk AND metadata;28 malformed
+  models fail before output. Eight complete4096-sample native runs cover all
+  four profiles, every bit/state/guard/interval. All64 closure18 states,
+  FIRST138/SECOND97,64 dictionary bytes added. Max2392-sector cold load on1024
+  confirms BC40..BFBC/67-byte margin. Ordinary423/449, page14, bank243/267,
+  deterministic delta0; actual ULA/ROM/disk/hardware separate.
+- **Full corpus:** Nine sources in100.797013 s. Silence remains exactly the
+  reset-neutral output, RMS0.002300011/16.579842 dB below matched. Large reset
+  losses recover, but five SNR/RMS regressions versus matched remain: speech
+  -0.190457, Entertainer-0.360775, steps-0.394416, quiet440-0.000415 and
+  song-0.009961 dB. Song20.100940113 dB,0.149375774 below half-joint.33 AM,
+  29 delay/19 line increases and33 inconclusive fits versus matched disclosed.
+- **Decision:** Reject unconditional use; no new Fuse warranted or release
+  claim.125-file/22-producer manifest preserves all measured/archive files,
+  nine unscaled/source identities and36 baseline inputs. Helper cosmetic
+  changes are recorded separately from exact tested/pre-input bytes; no
+  runtime table/measurement change. Both idle words have225/449 duty, leaving
+  a small mean offset; a separately frozen zero-mean pair is a next hypothesis,
+  not an accepted cure. Original Python/C and main unchanged; goal active.
+  [Complete evidence and reproducer](audiobook-beeper/experiments/song-snr/evidence/idle-cycle-control/README.md).
+
 ## 2026-10-14 — Complete stable-neutral source control rejected
 
 - **Objective/baseline:** Test one source-free analytic0x56AD/successor16

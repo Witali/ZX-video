@@ -1,0 +1,226 @@
+{
+  "date": "2026-10-14",
+  "source": "silence",
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0,
+    "pcm_origin": 0,
+    "compact_stream_loader": true,
+    "pcm_quantization_bias": 512,
+    "idle_cycle_word": 22189
+  },
+  "packed_sha256": "0f47ecf52af95b17e5b78e1ac181dc092897de95163da5d708eee4331918cf16",
+  "source_samples": 16896,
+  "all_packed_bytes_zero": true,
+  "all_decoded_pcm16_zero": true,
+  "all_decoded_ima_indices_zero": true,
+  "initial_feedback_state": 16,
+  "all_input_bins32": true,
+  "packet_hex": "56ad",
+  "feedback_cycle": [
+    16,
+    17
+  ],
+  "successor_cycle": [
+    17,
+    16
+  ],
+  "packet_repeats": 16896,
+  "ordinary_active_tstates": 225,
+  "ordinary_total_tstates": 449,
+  "ordinary_duty": 0.5011135857461024,
+  "ordinary_bipolar_dc": 0.00222717149220486,
+  "independent_rational_literal_override_all64_table_matches": true,
+  "only_overridden_cells": [
+    [
+      32,
+      16
+    ],
+    [
+      32,
+      17
+    ]
+  ],
+  "all_other_words_and_every_successor_unchanged": true,
+  "independent_all64_bin_closure": {
+    "states": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29,
+      31
+    ],
+    "count": 18,
+    "packet_table_sha256": "581cbf13fffa0a5bb4b54fc3807236502f0d6d9371e0f5baa9cf2cd12f7ebd6e",
+    "successor_table_sha256": "00bac2e74df2d20e0075144fc30898f8cd1ff157d1ba4433db480f96370c1e89"
+  },
+  "silence_error_rms": 0.0023000112968818366,
+  "silence_error_rms_dbfs": -52.765400617375136,
+  "silence_rms_change_db_vs_matched": -16.579842258271107,
+  "every_silence_output_f64_equals_reset_neutral": true,
+  "error_spectrum": {
+    "available": true,
+    "window_samples": 32768,
+    "windows": 5,
+    "bin_width_hz": 1.3458251953125,
+    "window": "Hann;50-percent overlap;one-sided density",
+    "bands": [
+      {
+        "low_hz": 0,
+        "high_hz": 20,
+        "rms": 4.275311741778257e-06,
+        "rms_dbfs": -107.38064424890125
+      },
+      {
+        "low_hz": 20,
+        "high_hz": 200,
+        "rms": 0.00023760061240122435,
+        "rms_dbfs": -72.48304888643223
+      },
+      {
+        "low_hz": 200,
+        "high_hz": 1000,
+        "rms": 0.0006218949952555133,
+        "rms_dbfs": -64.12565876376684
+      },
+      {
+        "low_hz": 1000,
+        "high_hz": 3500,
+        "rms": 0.0010091071768736884,
+        "rms_dbfs": -59.92125410136864
+      },
+      {
+        "low_hz": 3500,
+        "high_hz": 4500,
+        "rms": 0.0004363978977651829,
+        "rms_dbfs": -67.20234700361617
+      },
+      {
+        "low_hz": 4500,
+        "high_hz": 22050.0,
+        "rms": 0.00190544579517349,
+        "rms_dbfs": -54.40006802460489
+      }
+    ],
+    "every_error_sample_inside_a_window": true,
+    "spectral_total_error_rms": 0.0022984102793809406,
+    "strongest_error_bins": [
+      {
+        "hz": 561.2091064453125,
+        "density_per_hz": 3.690096237392838e-09,
+        "three_bin_error_power_fraction": 0.0014101758489765152
+      },
+      {
+        "hz": 748.27880859375,
+        "density_per_hz": 3.6889155054408966e-09,
+        "three_bin_error_power_fraction": 0.001409735606611493
+      },
+      {
+        "hz": 374.139404296875,
+        "density_per_hz": 3.6863974213756933e-09,
+        "three_bin_error_power_fraction": 0.0014087538926526423
+      },
+      {
+        "hz": 935.3485107421875,
+        "density_per_hz": 3.6836005970862953e-09,
+        "three_bin_error_power_fraction": 0.0014077199123882344
+      },
+      {
+        "hz": 1122.418212890625,
+        "density_per_hz": 3.6721720507891584e-09,
+        "three_bin_error_power_fraction": 0.0014033809011105404
+      },
+      {
+        "hz": 639.2669677734375,
+        "density_per_hz": 3.6597322083669303e-09,
+        "three_bin_error_power_fraction": 0.0014097857214157156
+      },
+      {
+        "hz": 452.197265625,
+        "density_per_hz": 3.657901662688091e-09,
+        "three_bin_error_power_fraction": 0.0014093567657232104
+      },
+      {
+        "hz": 826.336669921875,
+        "density_per_hz": 3.6577833315726365e-09,
+        "three_bin_error_power_fraction": 0.0014087626118270882
+      }
+    ],
+    "caveat": "On non-silent sources these are error peaks, not independently identified background. Welch windows include the whole declared edge-cropped scope."
+  },
+  "fullband_silence_peaks": {
+    "scope": "Complete silence except fixed100-ms edges;20..22050Hz;Hann Welch bins;no fitted transfer",
+    "window_samples": 32768,
+    "windows": 5,
+    "bin_width_hz": 1.3458251953125,
+    "strongest_bins": [
+      {
+        "hz": 15962.832641601562,
+        "three_bin_total_noise_power_fraction": 0.48765136725583796
+      },
+      {
+        "hz": 15964.178466796875,
+        "three_bin_total_noise_power_fraction": 0.47780127137631645
+      },
+      {
+        "hz": 7982.0892333984375,
+        "three_bin_total_noise_power_fraction": 0.1599919520035616
+      },
+      {
+        "hz": 7980.743408203125,
+        "three_bin_total_noise_power_fraction": 0.15146434166705838
+      },
+      {
+        "hz": 15961.48681640625,
+        "three_bin_total_noise_power_fraction": 0.27793608886098636
+      },
+      {
+        "hz": 7983.43505859375,
+        "three_bin_total_noise_power_fraction": 0.105190152691754
+      },
+      {
+        "hz": 15965.524291992188,
+        "three_bin_total_noise_power_fraction": 0.21554380967146639
+      },
+      {
+        "hz": 15978.982543945312,
+        "three_bin_total_noise_power_fraction": 0.0021652051506235287
+      }
+    ]
+  },
+  "interpretation": "The original idle feedback cycle is preserved while both idle states emit the same frozen word. Entire silence output is byte-identical to reset-neutral, but non-silent sources differ. Lower silence RMS does not establish universal quality or absence of audible background; full-corpus regressions and inapplicable diagnostics remain explicit.",
+  "new_fuse_verified": false,
+  "artifact_accepted": false,
+  "scope": "Read-only diagnosis of this completed frozen candidate; no new selection, word, source tuning, altered filter, clock, gain or second data variant."
+}

@@ -40,6 +40,9 @@ def canonical_pcm_model(model=None):
     if 'neutral_packet_word' in result or 'neutral_packet_successor' in result:
         from neutral_packet_model import validate_neutral_packet
         validate_neutral_packet(result)
+    if 'idle_cycle_word' in result:
+        from idle_cycle_packet_model import validate_idle_cycle_packet
+        validate_idle_cycle_packet(result)
     return result
 
 
@@ -75,6 +78,18 @@ def neutral_packet_metadata(model):
                 scope='Ordinary Pentagon packet only; bank/page holds and128/Scorpion ULA effects require separate complete verification')
 
 
+def idle_cycle_packet_metadata(model):
+    """Describe a word-only idle-cycle override; no successor or clock change."""
+    word=model['idle_cycle_word'];period=sum(model['holds'])
+    on=sum(hold for slot,hold in enumerate(model['holds']) if word&(1<<(15-slot)))
+    return dict(packet_bin=32,word=word,word_hex=f'{word:04x}',feedback_states=[16,17],
+                preserve_successors=True,successor_cycle=[17,16],
+                ordinary_on_tstates=on,ordinary_period_tstates=period,ordinary_mean_duty=on/period,
+                source_independent_selection_assumption='Reuse the frozen balanced0x56ad literal selected analytically without source audio; change only the emitted words in the existing16/17 idle cycle',
+                live_instruction_changes=False,packet_native_tstate_delta=0,
+                scope='Ordinary Pentagon packet only; bank/page holds and128/Scorpion ULA effects require separate complete verification')
+
+
 def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
     model=canonical_pcm_model(model)
     extended=ram_enabled(model)
@@ -89,6 +104,9 @@ def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
     if 'neutral_packet_word' in model:
         from neutral_packet_model import apply_neutral_packet
         words,nxt=apply_neutral_packet(words,nxt,model)
+    if 'idle_cycle_word' in model:
+        from idle_cycle_packet_model import apply_idle_cycle_packet
+        words,nxt=apply_idle_cycle_packet(words,nxt,model)
     reachable={16}
     while True:
         expanded=reachable|set(map(int,nxt[:,sorted(reachable)].ravel()))
@@ -239,6 +257,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
                           unused_audio_capacity_bytes=(IMA4_BYTES if extended else MAX_PACKED_BYTES)-len(packed),pcm_buffer_bytes=0,pdm_buffer_bytes=0))
     if model.get('pcm_quantization_bias'):meta['pcm_quantization']=pcm_quantization_metadata(model)
     if 'neutral_packet_word' in model:meta['neutral_packet']=neutral_packet_metadata(model)
+    if 'idle_cycle_word' in model:meta['idle_cycle_packet']=idle_cycle_packet_metadata(model)
     return disk,meta
 
 

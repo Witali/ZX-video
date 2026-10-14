@@ -1,0 +1,465 @@
+{
+  "source": "quiet997",
+  "method": "joint",
+  "parameters": {
+    "profile": "pentagon",
+    "source_rate_hz": 8000,
+    "lanczos_radius": 16,
+    "pcm_beam_width": 32,
+    "pcm_block_samples": 64,
+    "waveform_beam_width": 32,
+    "horizon_samples": 128,
+    "commit_samples": 64,
+    "regularization": 0.1,
+    "model_name": "duration_zero",
+    "search_query_grid_tstates": 0.0125,
+    "source_specific_fitted_clock_gain_delay": false,
+    "compact_stream_loader": true,
+    "pcm_quantization_bias": 512,
+    "encoder": "standalone-c",
+    "idle_cycle_word": 22189,
+    "source_specific_parameter_selection": false
+  },
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0,
+    "pcm_origin": 0,
+    "compact_stream_loader": true,
+    "pcm_quantization_bias": 512,
+    "idle_cycle_word": 22189
+  },
+  "source_samples": 16896,
+  "source_sha256": "5de800f0c6f1cb7c0a089916f2f0d7eab5c692bd9d7c2e9b1d1fd34e982ac619",
+  "original_wav_sha256": "47b05c981c95ef8600e14fe5cfeb36f5aa9e2479eb1bbc79670027ba0ceadaf2",
+  "packed_sha256": "a5fb82b5d454e42617263564695f07d224471840e2b391ef72b1056f64efa981",
+  "compensated_prior_sha256": "a618bf3091047041a666c428775a338e4f82a650289539b4f03529ca2bf65635",
+  "original_content_preserved": true,
+  "source_content_end_seconds": 2.048,
+  "settling_start_seconds": 2.1008035714285715,
+  "final128_guard_already_silent": true,
+  "source_specific_parameter_selection": false,
+  "fixed_clock": {
+    "snr_db": 0.8400432453982031,
+    "signal_rms": 0.011265046174644336,
+    "error_rms": 0.010226589274370942,
+    "error_power": 0.00010458312818667879,
+    "error_power_field_component": 7.870124102949151e-07,
+    "field_hz": 50,
+    "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+  },
+  "baseline_fixed_clock": {
+    "snr_db": -14.297954511052946,
+    "signal_rms": 0.011265046174644336,
+    "error_rms": 0.05842930247441367,
+    "error_power": 0.003413983387646523,
+    "error_power_field_component": 3.324730318816241e-05,
+    "field_hz": 50,
+    "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+  },
+  "change_db": 15.13799775645115,
+  "comparisons": [
+    {
+      "from_variant": "compensation",
+      "to_variant": "idle-cycle",
+      "fixed_snr_change_db": 3.8913888841248374,
+      "error_rms_change_db": -3.8913888841248374,
+      "modulation": [
+        {
+          "hz": 0.2436,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 2.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 5.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 10.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 15.589,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 25.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 50.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 62.356,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 100.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 124.712,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        }
+      ],
+      "coherent_error": [
+        {
+          "hz": 50.0,
+          "peak_change": -0.00010125335455782032,
+          "peak_ratio_db": -9.487596966706604
+        },
+        {
+          "hz": 100.0,
+          "peak_change": -0.00010959601927753188,
+          "peak_ratio_db": -9.777048122694138
+        },
+        {
+          "hz": 150.0,
+          "peak_change": -0.00016041505552866588,
+          "peak_ratio_db": -18.311913109554837
+        },
+        {
+          "hz": 200.0,
+          "peak_change": -7.635818236721775e-05,
+          "peak_ratio_db": -21.490329802700444
+        }
+      ],
+      "numeric_regressions": {
+        "unfitted_snr": 0,
+        "absolute_error_rms": 0,
+        "applicable_am": 0,
+        "applicable_delay": 0,
+        "coherent_error_lines": 0,
+        "inconclusive_modulation": 10
+      },
+      "interpretation": "Numerical increases above1e-10 are disclosed, not an audibility threshold. Any SNR gain alone is insufficient to accept a candidate. Inapplicable legacy drift fits are missing artifact evidence."
+    },
+    {
+      "from_variant": "joint",
+      "to_variant": "idle-cycle",
+      "fixed_snr_change_db": 3.2105659235974144,
+      "error_rms_change_db": -3.2105659235974144,
+      "modulation": [
+        {
+          "hz": 0.2436,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 2.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 5.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 10.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 15.589,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 25.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 50.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 62.356,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 100.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 124.712,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        }
+      ],
+      "coherent_error": [
+        {
+          "hz": 50.0,
+          "peak_change": -4.2503220629158446e-05,
+          "peak_ratio_db": -5.256697217333529
+        },
+        {
+          "hz": 100.0,
+          "peak_change": -7.686284203307556e-05,
+          "peak_ratio_db": -7.819637477310178
+        },
+        {
+          "hz": 150.0,
+          "peak_change": -0.00013173050750977117,
+          "peak_ratio_db": -16.82746311348955
+        },
+        {
+          "hz": 200.0,
+          "peak_change": -8.780863317632104e-05,
+          "peak_ratio_db": -22.6080270002824
+        }
+      ],
+      "numeric_regressions": {
+        "unfitted_snr": 0,
+        "absolute_error_rms": 0,
+        "applicable_am": 0,
+        "applicable_delay": 0,
+        "coherent_error_lines": 0,
+        "inconclusive_modulation": 10
+      },
+      "interpretation": "Numerical increases above1e-10 are disclosed, not an audibility threshold. Any SNR gain alone is insufficient to accept a candidate. Inapplicable legacy drift fits are missing artifact evidence."
+    },
+    {
+      "from_variant": "matched-centered",
+      "to_variant": "idle-cycle",
+      "fixed_snr_change_db": 6.918484674045544e-10,
+      "error_rms_change_db": -6.918470976315437e-10,
+      "modulation": [
+        {
+          "hz": 0.2436,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 2.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 5.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 10.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 15.589,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 25.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 50.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 62.356,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 100.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 124.712,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        }
+      ],
+      "coherent_error": [
+        {
+          "hz": 50.0,
+          "peak_change": 5.9556851522691e-11,
+          "peak_ratio_db": 1.0121578312218875e-05
+        },
+        {
+          "hz": 100.0,
+          "peak_change": -1.2387188476836123e-11,
+          "peak_ratio_db": -2.0441003595355287e-06
+        },
+        {
+          "hz": 150.0,
+          "peak_change": 3.281604131364019e-12,
+          "peak_ratio_db": 1.2853357824369443e-06
+        },
+        {
+          "hz": 200.0,
+          "peak_change": -1.7802932502797178e-11,
+          "peak_ratio_db": -2.2016642240638073e-05
+        }
+      ],
+      "numeric_regressions": {
+        "unfitted_snr": 0,
+        "absolute_error_rms": 0,
+        "applicable_am": 0,
+        "applicable_delay": 0,
+        "coherent_error_lines": 0,
+        "inconclusive_modulation": 10
+      },
+      "interpretation": "Numerical increases above1e-10 are disclosed, not an audibility threshold. Any SNR gain alone is insufficient to accept a candidate. Inapplicable legacy drift fits are missing artifact evidence."
+    },
+    {
+      "from_variant": "neutral-packet",
+      "to_variant": "idle-cycle",
+      "fixed_snr_change_db": 1.626419020622144,
+      "error_rms_change_db": -1.626419020622145,
+      "modulation": [
+        {
+          "hz": 0.2436,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 2.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 5.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 10.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 15.589,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 25.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 50.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 62.356,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 100.0,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        },
+        {
+          "hz": 124.712,
+          "both_small_signal_applicable": false,
+          "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+        }
+      ],
+      "coherent_error": [
+        {
+          "hz": 50.0,
+          "peak_change": 2.9180183763207483e-05,
+          "peak_ratio_db": 7.3496261466512
+        },
+        {
+          "hz": 100.0,
+          "peak_change": 3.939179946483119e-05,
+          "peak_ratio_db": 11.985029067031201
+        },
+        {
+          "hz": 150.0,
+          "peak_change": -1.2912966737452739e-05,
+          "peak_ratio_db": -3.985742051984848
+        },
+        {
+          "hz": 200.0,
+          "peak_change": -1.2717804512648102e-05,
+          "peak_ratio_db": -8.976437104517126
+        }
+      ],
+      "numeric_regressions": {
+        "unfitted_snr": 0,
+        "absolute_error_rms": 0,
+        "applicable_am": 0,
+        "applicable_delay": 0,
+        "coherent_error_lines": 2,
+        "inconclusive_modulation": 10
+      },
+      "interpretation": "Numerical increases above1e-10 are disclosed, not an audibility threshold. Any SNR gain alone is insufficient to accept a candidate. Inapplicable legacy drift fits are missing artifact evidence."
+    }
+  ],
+  "preparation_seconds": 0.44295290000081877,
+  "workset_write_seconds": 0.02675219999946421,
+  "workset_bytes": 35606720,
+  "workset_sha256": "dadb2170f864b6d99887b98803afe29ca99501c91a59b66ee0f4175ab0698410",
+  "standalone_c_encoding_seconds": 1.3442233999994642,
+  "render_seconds": 0.6041531999999279,
+  "entire_host_conversion_seconds": 3.2741091000007145,
+  "statistics": {
+    "samples": 16896,
+    "search_iterations": 33472,
+    "final_predictor": 0,
+    "final_index": 0,
+    "pcm_quantization_bias": 512,
+    "backend": "standalone-c",
+    "executable": "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\.native-cache\\standalone-waveform-78b04b8854e6b14ab4ad80fd\\kernel.exe",
+    "matrix_library": "C:\\Users\\rudol\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-9e3e5a4229c1ca39f10dc82bba9e2b2b.dll",
+    "child_python_runtime": false,
+    "native_source_sha256": "f3aa67518bf32e47f8891f371ff1462e4a6e50018a5b3628191113ea86174403"
+  },
+  "max_search_query_quantization_seconds": 1.7621022748861103e-09,
+  "saturation_guard": {
+    "samples": 16896,
+    "saturation_events": 0,
+    "raw_min": -1566,
+    "raw_max": 1564
+  },
+  "host_prediction": true,
+  "new_emulator_verified": false,
+  "scope": "Complete unchanged source; common idle-cycle PDM/C-joint encoder on instruction-derived Pentagon timeline. No fitted gain/delay/clock and no new emulator proof."
+}
