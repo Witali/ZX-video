@@ -17,6 +17,10 @@ The reusable [ZX0 and LZSA libraries](libraries/README.md) contain the current
 host optimizers and Z80 decoder generators, with independent installation,
 assembly exports and examples for other projects.
 
+The [YM3812 / OPL2 folder](ym3812/README.md) collects the nine-channel audio
+fitter, tests, speech and song experiments, register streams, listening files
+and complete verification evidence.
+
 ## Usage
 
 For audio-only playback, the [audio converter](audiobook-beeper/CONVERTER.md)

@@ -81,6 +81,99 @@ unchanged,0 T delta; no new TRD or Z80/Fuse timing claim. See
 encoder/comparison deliverable is complete; no further model/movie search
 or push starts automatically.
 
+## YM3812 folder consolidation — complete (2026-10-14)
+
+The user requests collecting all YM3812 work in a separate folder and merging
+it into main. [ym3812/](ym3812/README.md) now contains all 256 relocated files
+and 23 fixed shared dependency/input copies. Historical Python producers and
+evidence retain exact content; paths in human-facing documentation are updated.
+The AY converter's shared files remain in place. Eighteen tests and the layout
+check authenticate 279 entries, 33 archived artifact manifests and 92 local
+links. All 18 entrypoints start from the new layout. All 15 full song streams
+are independently replayed again after relocation: 67,500 fields and every
+native/output sample remain exact. [Consolidation checks](ym3812/verification.json).
+This is organization scope, with no audio algorithm, native player or disk
+change and no newly authorized experiment.
+
+## YM3812 coherent-voice implementation — complete (2026-10-14)
+
+The user now explicitly requests acting on the proposed beep-analysis plan.
+Follow [the implementation scope](ym3812/analysis/ym3812_sea_foam/TRACKING_PLAN.md)
+in the existing song worktree from `e22fb680`: temporal source tracking,
+confidence/inactive voices, mild-FM source envelopes, then actual full-track
+qualification. Use the original90-second mildly modulated baseline and fixed
+source/gain/filter. Retain failed attempts and all earlier media. The prior
+analysis's no-automatic-experiment checkpoint is superseded for this work.
+
+The [selected full-track result](ym3812/analysis/ym3812_sea_foam/TRACKING_RESULT.md)
+now retains all 15 measured attempts and the `soft52` audition. Source-confirmed
+localized tracking and softer FM improve objective 9.444631 -> 9.358669 and
+A/B/A returns 1050 -> 798, passing all original guards plus an added strict
+below-50-Hz content guard. Exposed-line events improve only 1155 -> 1141;
+level MAE worsens by 0.051744 dB within the saved allowance. Fourteen tests,
+all 67,500 fields and every independently replayed native/output sample pass.
+Keep the bounded listening classification. The requested implementation is
+complete; higher-rate, physical-chip and native-player experiments remain
+optional future work.
+
+## YM3812 intermittent-tone analysis — complete (2026-10-14)
+
+The user finds the original song rendition better and reports periodic
+electronic beep/blam sounds; study source/output and propose improvements.
+The [complete audit/proposal](ym3812/analysis/ym3812_sea_foam/BEEP_ANALYSIS.md)
+checks all90 seconds, source/old/pure PCM, exact40,500 refitted targets and
+four matched excerpts.35.87% of audible channel transitions jump>=3 semitones
+per20 ms;1,050 A/B/A returns occur within40 ms. Source-diffuse regions become
+isolated synthesized lines, essentially unchanged by the pure-sine update.
+Large template-RMS boost is not supported. Direct auditory perception is
+unavailable in this session; no perceptually labelled beep count is claimed.
+
+Recommend the earlier mildly modulated `4b73f9ea` baseline and coherent source
+partial tracking, source-tonality/inactive-voice gates and source-derived
+transient behavior before testing higher target rates. Preserve the purity
+attempt and all failures. This analysis/proposal request is complete; do not
+start the proposed new fit, rate change or release experiment automatically.
+
+## YM3812 generated-overtones follow-up — complete (2026-10-14)
+
+The user hears added high harmonics, suggests mostly sines and asks the update
+rate. Continue the same90-second song from `4b73f9ea`; preserve content, nine
+voices,50-Hz targets, smooth register transitions, gain and playback filter.
+The [pure-sine/source-cap audition](ym3812/analysis/ym3812_sea_foam/OVERTONES.md)
+uses additive connection and a silent modulator from reset. Four held native
+tones reduce intrinsic harmonic power33.95..40.83 dB. The selected cap changes
+only72 TL targets; every pitch/multiplier/key is preserved. Extra4..8-kHz bin
+power falls24.46/4.85/3.74% across three scales; the broad20%1.8..8-kHz gate
+is unmet and retained. Log score worsens9.444631 ->9.897613; use the explicit
+narrower sine-purity audition goal with all original content/level guards.
+
+All six trials, rejected refits and the11-clipped-sample interruption/recovery
+are preserved. Twelve tests and six complete4500-field/native/full-PCM replays
+pass, with selected zero clipping and exact181-second comparison segments.
+This bounded request is complete; no new fit, higher update-rate experiment,
+native scheduler or physical-chip qualification starts automatically.
+
+## YM3812 sea-foam main song — complete (2026-10-14)
+
+Create a YM3812 soundtrack from the archived unprocessed main song, source
+[133.6,223.6),90 seconds. Use `codex/ym3812-sea-foam` from `13819086` in
+`.worktree/ym3812-sea-foam`. Reuse the nine sine-carrier fitter, multiplier1/2
+and previously selected eight-step2-ms ordered TL exporter. Fit all4500 fields
+continuously; no30-second chunk resets, beeper limiter or source PCM in the
+chip output. Retain one abrupt same-target control, WAV auditions, VGM/VGZ,
+spectrograms and complete state/replay/hash evidence. Preserve native players.
+This bounded listening trial does not open new FM/rhythm/CSM searches or a
+Spectrum delivery implementation. Finish the track before another experiment.
+
+The [complete track and evidence](ym3812/analysis/ym3812_sea_foam/README.md)
+now retain the90-second WAV,992,252-byte VGM/369,327-byte VGZ and181-second
+source comparison. Smooth same-target writes reduce immediate register-effect
+energy81.0822%, with a small spectral/level tradeoff. Eight tests, both4500-
+field audits and full independent4,474,431-native/3,969,000-output-sample
+replays pass; every command/PCM byte and comparison segment is exact, zero
+clipping. Keep the bounded listening classification; no native/player change
+or physical-chip delivery proof. The requested soundtrack is complete.
+
 ## Adaptive audio RAM and cover loading — complete (2026-10-13)
 
 The user requests available RAM on Spectrum128, Scorpion256, Pentagon512
@@ -1955,7 +2048,7 @@ is worse than six-voice6.771566; short root cosine also worsens. Strict
 all-root/cosine guard has no eligible trial; deliver the explicitly narrower
 dominant/level/subsonic audition choice. Four-waveform log winner6.593306 has
 10.912983% sub50 power. Selected VGM161158/VGZ61653 bytes; all native/output
-samples and states checked. [WAVs, metrics and reproduction](ay-converter/analysis/ym3812/README.md).
+samples and states checked. [WAVs, metrics and reproduction](ym3812/analysis/ym3812/README.md).
 The core's unused wave-disable-gating limitation is recorded; streams enable
 the bit. Physical chip/Z80/release proof and listening acceptance remain
 pending. Existing native code/releases unchanged. Simulation complete;
@@ -1977,7 +2070,7 @@ level MAE0.304720 ->0.424978 dB and log/level7.242039 ->7.376224 worsen. Root
 cosines worsen too. Eight unit tests and all8*1500 states/full native replays
 pass; old media and revised CLI replay byte-exactly, zero clipping. Selected
 82,166 writes,337,171 VGM /134,200 VGZ bytes. Keep all trial streams/reports.
-[Audio, comparison, figures and reproduction](ay-converter/analysis/ym3812_clicks/README.md).
+[Audio, comparison, figures and reproduction](ym3812/analysis/ym3812_clicks/README.md).
 Diagnostics include legitimate pitch/envelope changes; do not claim perceptual
 click elimination. Listening acceptance pending. No native/player/release
 changes or physical-chip/Z80 proof. This bounded deliverable is complete.
