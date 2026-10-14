@@ -9,6 +9,36 @@ from verify_packet import rational_tables,native_check,fuse_check
 from verify_pcm import save
 
 
+def independent_neutral_packet(model):
+    """Validate the literal using counted holds, independently of its helper."""
+    present='neutral_packet_word' in model
+    if not present:
+        if 'neutral_packet_successor' in model:
+            raise ValueError('neutral packet successor requires a literal word')
+        return None
+    word=model['neutral_packet_word'];successor=model.get('neutral_packet_successor')
+    if type(word) is not int or not 0<=word<=65535:
+        raise ValueError('neutral packet word must be a literal integer within0..65535')
+    if type(successor) is not int or successor!=16:
+        raise ValueError('neutral packet successor must be integer16')
+    holds=HOLDS.copy();holds[7]+=26
+    try:specified_holds=list(model.get('holds',()));clip=tuple(model.get('q_clip',(0,15)))
+    except TypeError:raise ValueError('neutral packet timing and q_clip must be sequences') from None
+    bins=model.get('pcm_bins',64)
+    if (specified_holds!=holds or model.get('pcm_quantization_bias')!=512 or
+            type(bins) is not int or bins!=64 or model.get('family','integral')!='integral' or
+            clip!=(0,15) or any(type(value) is not int for value in clip)):
+        raise ValueError('neutral packet requires the centered64-bin Pentagon duration_zero integral model')
+    for key,default,wanted in (('beta',.5,.5),('extent',1.,1),('pcm_origin',.5,0)):
+        value=model.get(key,default)
+        if type(value) not in (int,float) or value!=wanted:
+            raise ValueError('neutral packet requires zero origin, full extent and beta0.5')
+    on=sum(hold for slot,hold in enumerate(holds) if word&(1<<(15-slot)))
+    if on not in (224,225):
+        raise ValueError('neutral packet must have224 or225 on-T within the449-T ordinary packet')
+    return word,successor
+
+
 def reference(packed,cycles=2,model=None,idle_pairs=0):
     model=model or dict(holds=HOLDS,beta=.5,extent=1.)
     bins=model.get('pcm_bins',64)
@@ -17,6 +47,7 @@ def reference(packed,cycles=2,model=None,idle_pairs=0):
         raise ValueError('pcm_quantization_bias must be integer0 or512 (PCM16 units)')
     if bias and (bins!=64 or model.get('family') not in (None,'integral')):
         raise ValueError('PCM quantization bias requires the64-bin integral PDM model')
+    neutral=independent_neutral_packet(model)
     pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)
     # Keep the returned PCM8 levels unchanged for existing callers. Derive the
     # optional centered packet index independently from full signed PCM16.
@@ -28,6 +59,10 @@ def reference(packed,cycles=2,model=None,idle_pairs=0):
         clip=tuple(model.get('q_clip',(0,15)))
         origin=model.get('pcm_origin',.5)
         words,nxt=rational_tables(model['holds'],integral_table(bins,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],q_clip=clip,pcm_origin=origin),model['beta'],model['extent'],clip,pcm_origin=origin)
+    if neutral is not None:
+        # Do not call the primary table helper: override the independently
+        # generated row for every feedback state using only the two literals.
+        words=words.copy();nxt=nxt.copy();words[32,:]=neutral[0];nxt[32,:]=neutral[1]
     state=16;output=np.empty(len(pcm)*cycles+1,dtype='>u2')
     for i in range(len(output)):
         if model.get('reset_feedback_in_guard') and i%len(pcm)==len(pcm)-1:

@@ -1,5 +1,25 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Optional stable neutral packet wired and native-verified
+
+- **Objective/baseline:** Compile the instruction-derived bin32 template and
+  independently verify its functional/timing contract against1d5bd8e0.
+  Keep original encoders and absent-option disk/metadata exact.
+- **Change:** Optional table override, literal metadata and early model/duty
+  validation. The rational verifier applies the literal independently of the
+  primary helper/validator, including separate invalid-q_clip guards.
+- **Coverage:** Five tests, eight complete4096-sample native before/after runs
+  on all four profiles, exact original centered disk/metadata, all64-bin
+  closure18 states/FIRST138/SECOND97 and maximum2392-sector cold load on1024K.
+  Assembled maximum workerBC40..BFBC leaves67 bytes belowBFFF. Every bit/state,
+  memory guard and deterministic interval is exact. No full new Fuse run.
+- **Timing/decision:** PDM dictionary bytes change; macro logic/counts retain
+  423/449 T ordinary,14 page and243/267 bank extras, delta0 T. CPU proof excludes
+  source-dependent128/Scorpion ULA waits and physical disk latency. Keep only
+  experimental functionality; complete host quality rejects unconditional
+  use. Original Python/C and main preserved, no release/hardware claim.
+  [Independent native proof](audiobook-beeper/experiments/song-snr/evidence/neutral-packet-player/README.md).
+
 ## 2026-10-14 — Source-independent stable neutral-packet selector
 
 - **Objective/baseline:** Test a bounded mechanism against the demonstrated

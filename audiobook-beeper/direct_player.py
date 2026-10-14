@@ -37,6 +37,9 @@ def canonical_pcm_model(model=None):
         if result.get('pcm_bins',64)!=64 or result.get('family') not in (None,'integral'):
             raise ValueError('PCM quantization bias requires the64-bin integral PDM model')
         result['pcm_quantization_bias']=bias
+    if 'neutral_packet_word' in result or 'neutral_packet_successor' in result:
+        from neutral_packet_model import validate_neutral_packet
+        validate_neutral_packet(result)
     return result
 
 
@@ -61,6 +64,17 @@ def pcm_quantization_metadata(model):
                 timing_scope='Native instruction counts only;128/Scorpion ULA waits depend on selected addresses and require separate actual timing verification')
 
 
+def neutral_packet_metadata(model):
+    """Record the literal ordinary-packet contract, without source-fit claims."""
+    word=model['neutral_packet_word'];period=sum(model['holds'])
+    on=sum(hold for slot,hold in enumerate(model['holds']) if (word>>(15-slot))&1)
+    return dict(packet_bin=32,word=word,word_hex=f'{word:04x}',successor=model['neutral_packet_successor'],
+                ordinary_on_tstates=on,ordinary_period_tstates=period,ordinary_mean_duty=on/period,
+                source_independent_selection_assumption='One literal chosen once from all65536 words with224/225 on-T of449 by analytical steady filtered variance; builder validates the contract, not the selection provenance',
+                live_instruction_changes=False,packet_native_tstate_delta=0,
+                scope='Ordinary Pentagon packet only; bank/page holds and128/Scorpion ULA effects require separate complete verification')
+
+
 def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
     model=canonical_pcm_model(model)
     extended=ram_enabled(model)
@@ -72,6 +86,9 @@ def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
     if not 14336<=resident_limit<=16384:
         raise ValueError('resident limit must stay within fixed bank2')
     words,nxt,_=integral_table(64,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],pcm_origin=model.get('pcm_origin',.5))
+    if 'neutral_packet_word' in model:
+        from neutral_packet_model import apply_neutral_packet
+        words,nxt=apply_neutral_packet(words,nxt,model)
     reachable={16}
     while True:
         expanded=reachable|set(map(int,nxt[:,sorted(reachable)].ravel()))
@@ -221,6 +238,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
               memory=dict(total_ram_bytes=131072,adpcm_bytes=len(packed),shadow_screen_bytes=6912,bank5_tables_and_workspace_bytes=16384,bank2_resident_bytes=16384 if extended else 14336,
                           unused_audio_capacity_bytes=(IMA4_BYTES if extended else MAX_PACKED_BYTES)-len(packed),pcm_buffer_bytes=0,pdm_buffer_bytes=0))
     if model.get('pcm_quantization_bias'):meta['pcm_quantization']=pcm_quantization_metadata(model)
+    if 'neutral_packet_word' in model:meta['neutral_packet']=neutral_packet_metadata(model)
     return disk,meta
 
 
