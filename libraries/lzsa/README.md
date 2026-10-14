@@ -102,6 +102,11 @@ input_needed/finished in one word instruction, saving4 T per begin and one
 code byte. Both input-guard modes retain exact EOF/yield/IRQ behavior.
 [Second-pass evidence](../SECOND_PASS.md) includes both full streaming checks.
 
+`restore_compare=True` / `--restore-compare` optionally restores the compared
+target with ADD HL,DE instead of a reload, saving5 T per begin/resume and two
+code bytes. Equality/carry semantics remain valid; the complete ordinary and
+both streaming modes are measured in [the second pass](../SECOND_PASS.md).
+
 An optional long-copy profile applies sixteen `LDI` instructions to the
 byte-extended literal18..255 and match24..255 forms. All short and escaped
 16-bit forms keep their existing paths, including short lengths encoded with

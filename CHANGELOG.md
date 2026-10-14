@@ -1,5 +1,20 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item20: restore LZSA2 target arithmetically
+
+- **Baseline/objective:** From `bba0b616`, replace sync's repeated target
+  load after subtraction only with equivalent consumed comparison flags.
+- **Change/counts:** Optional restore_compare, ordinary/streaming; ADD HL,DE
+  restores target, preserving S/Z/PV/C while dead H/N differ. Full sync
+ 127 ->122 T nonfinal,132 ->127 final;−2 prefix bytes, no state/stack/input
+  growth. Default profiles unchanged; no application release adoption.
+- **Verification:**95 full blocks,26352611 ->26340326 T (−12285), real21
+  −6330; no slower blocks/slices,230 IRQs. Both42-case/six-placement guarded
+  modes save950 T each with identical waits/producers/167 once-only sectors.
+  Equality/FFFF/boundary and combined profile checks,15 unit tests pass.
+- **Decision:** Optional measured profile. [Result/reproduction](libraries/SECOND_PASS.md),
+  [evidence](libraries/evidence/trick_20.json). Continue item21.
+
 ## 2026-10-14 — Item19: preinitialized constants cannot replace block resets
 
 - **Baseline/objective:** From `c3abf249`, inspect per-byte startup code and

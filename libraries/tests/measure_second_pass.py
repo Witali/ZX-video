@@ -23,7 +23,7 @@ def layout(profile):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('10','16'),required=True)
+    parser.add_argument('--item',choices=('10','16','20'),required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--stream-directory',type=Path)
     args=parser.parse_args()
@@ -32,6 +32,8 @@ def main():
     if args.item=='10':
         baseline=build(long_copy=True,core_limit=0x9000)
         candidate=build(long_copy=True,near_literals=True,core_limit=0x9000)
+    elif args.item=='20':
+        baseline=build();candidate=build(restore_compare=True)
     else:
         def resident(word):
             regions,labels,metadata=build(streaming=True,direct_header=True,word_state_init=word)
@@ -43,10 +45,11 @@ def main():
             return [(at,bytes(data)) for at,data in regions],labels,metadata
         baseline=resident(False);candidate=resident(True)
     rows=[dict(case=name,**compare(payload,raw,baseline,candidate)) for name,payload,raw in samples()]
-    assert candidate[2]['code_bytes']==baseline[2]['code_bytes']-(3 if args.item=='10' else 1)
+    assert candidate[2]['code_bytes']==baseline[2]['code_bytes']-{'10':3,'16':1,'20':2}[args.item]
     if args.item=='10':assert 'LongLiterals8Jump' not in candidate[1]
-    else:assert all(row['delta_tstates']==-4 for row in rows)
-    report=dict(date='2026-10-14',item=args.item,baseline_revision='3f34a4a4' if args.item=='10' else '2740a270',complete=True,release=False,
+    elif args.item=='16':assert all(row['delta_tstates']==-4 for row in rows)
+    else:assert all(row['delta_tstates']==-5*row['slices'] for row in rows)
+    report=dict(date='2026-10-14',item=args.item,baseline_revision={'10':'3f34a4a4','16':'2740a270','20':'bba0b616'}[args.item],complete=True,release=False,
         scope=__doc__,baseline=layout(baseline),candidate=layout(candidate),
         summary=dict(cases=len(rows),decoded_bytes=sum(row['raw_bytes'] for row in rows),
             baseline_tstates=sum(row['baseline_tstates'] for row in rows),

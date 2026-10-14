@@ -23,7 +23,9 @@ blocks and both42-case/six-placement guarded modes pass, unchanged waits/
 sectors, dirty prior flags,252 native IRQs and14 library tests. Item17 finds
 no saturating counter contract (259 checks). Item18 retains live continuations
 and rejects a slower one-byte dispatch merge (513 checks). Item19 retains
-compiled tables and required per-block mutable resets; item20 is next.
+compiled tables and required per-block mutable resets. Item20 adds optional
+restore_compare, −5 T/demand/−2 bytes;95 blocks/230 IRQs, both42-case guarded
+modes, boundary/combined-profile tests and15 unit tests pass. Item21 is next.
 
 ## Completed: other-site Z80 speed/size survey (2026-10-14)
 

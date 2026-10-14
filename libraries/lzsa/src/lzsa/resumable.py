@@ -12,7 +12,7 @@ from ._z80 import sha
 PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
-def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,word_state_init=False,
+def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,word_state_init=False,restore_compare=False,
           prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000):
     """Generate raw-v2 decode regions, coroutine labels and instruction costs.
 
@@ -29,6 +29,8 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     removing its trampoline. Streaming and all default profiles stay unchanged.
     word_state_init clears adjacent streaming flags in one word instruction;
     caller/IRQ observers see initialized flags only after instruction completion.
+    restore_compare restores the compared target with ADD HL,DE instead of
+    reloading it. S/Z/PV/C agree; H/N and undocumented flags are dead here.
     """
     if direct_header and not streaming:raise ValueError('direct header requires streaming input')
     if near_literals and (not long_copy or streaming):
@@ -181,7 +183,13 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     cold.label('slice_yield');cold.abs16((0xed,0x53),'slice_output');cold.emit(0xf5,8,0xf5,8,0xc5,0xd5,0xe5)
     cold.abs16((0xed,0x73),'slice_decoder_sp');cold.abs16((0xed,0x7b),'slice_caller_sp');cold.emit(0xc9)
     cold.label('sync');cold.abs16(0x2a,'slice_target');cold.abs16((0xed,0x5b),'block_end');cold.emit(0xb7,0xed,0x52)
-    cold.abs16(0x2a,'slice_target');cold.rel8(0x20,'sync_target');cold.emit(0x21,0xff,0xff)
+    if restore_compare:
+        # (target-end)+end restores target modulo65536. ADD HL retains Z
+        # from SBC and carries exactly when SBC borrowed. The following
+        # branch consumes only Z; target operand stores consume HL/A.
+        cold.emit(0x19)
+    else:cold.abs16(0x2a,'slice_target')
+    cold.rel8(0x20,'sync_target');cold.emit(0x21,0xff,0xff)
     cold.label('sync_target');cold.emit(0x7c);cold.abs16(0x32,'high_operand');cold.emit(0x7d);cold.abs16(0x32,'low_operand');cold.emit(0xc9)
     cold.label('fatal');cold.emit(0x76)
     if streaming:
@@ -270,5 +278,8 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         **(dict(near_literals=True,near_literal_delta_tstates=-10,near_literal_code_delta=-3) if near_literals else {}),
         **(dict(word_state_init=True,begin_init_tstates_before=30,begin_init_tstates_after=26,
                 begin_init_code_delta=-1) if word_state_init else {}),
+        **(dict(restore_compare=True,sync_tstate_delta=-5,sync_code_delta=-2,
+                sync_regular_tstates_before=127,sync_regular_tstates_after=122,
+                sync_final_tstates_before=132,sync_final_tstates_after=127) if restore_compare else {}),
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         upstream_sha256=sha((Path(__file__).parent/'asm/unlzsa2_fast.asm').read_bytes()))

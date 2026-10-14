@@ -275,5 +275,37 @@ class NativeTests(unittest.TestCase):
             raw=b'AB'*128;payload=lzsa.encode(raw,[(2,254,2)])
             self.assertTrue(execute(changed,labels,metadata,payload,raw,source=0x2000,interrupts=True)['exact'])
 
+    def test_compare_restore_sync_bounds_and_combined_profiles(self):
+        from z80 import Z80Machine
+        from lzsa.native import execute
+        for target,end in ((0,1),(1,0),(0xffff,0xffff),(0xfffe,0xffff),
+                           (0x8000,0x7fff),(0xc100,0xc200),(0xc200,0xc200)):
+            for optimized in (False,True):
+                regions,z,meta=lzsa_build(restore_compare=optimized)
+                machine=Z80Machine()
+                for address,data in regions:machine.set_memory_block(address,data)
+                machine.set_memory_block(z['slice_target'],target.to_bytes(2,'little'))
+                machine.set_memory_block(z['block_end'],end.to_bytes(2,'little'))
+                machine.set_memory_block(0x9dee,b'\x00\x01');machine.sp=0x9dee;machine.pc=z['sync']
+                machine.set_breakpoint(0x100);machine.ticks_to_stop=10000
+                while machine.pc!=0x100:self.assertFalse(machine.run()&machine._TICKS_LIMIT_HIT)
+                wanted=0xffff if target==end else target
+                self.assertEqual((machine.memory[z['high_operand']],machine.memory[z['low_operand']]),
+                                 (wanted>>8,wanted&255))
+                self.assertEqual(10000-machine.ticks_to_stop,(132 if target==end else 127)-(5 if optimized else 0))
+        raw=b'AB'*256;payload=lzsa.encode(raw,[(2,510,2)])
+        for streaming in (False,True):
+            regions,z,meta=lzsa_build(core_limit=0x9000,long_copy=True,near_literals=not streaming,
+                streaming=streaming,direct_header=streaming,word_state_init=streaming,restore_compare=True)
+            if streaming:
+                changed=[]
+                for address,data in regions:
+                    data=bytearray(data)
+                    for name in ('header_frontier','literal_frontier'):
+                        if address<=z[name]<address+len(data):data[z[name]-address]=255
+                    changed.append((address,bytes(data)))
+                regions=changed
+            self.assertTrue(execute(regions,z,meta,payload,raw,source=0x2000,interrupts=True)['exact'])
+
 
 if __name__=='__main__':unittest.main()

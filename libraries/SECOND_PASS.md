@@ -181,3 +181,29 @@ reserved RAM and correct initialization, not free size reduction.
 
 [Report](evidence/trick_19.json),31 exact defaults; actual delta0 T/code/state/
 input. `audit_second_pass.py --item 19 --output libraries/evidence/trick_19.json`.
+
+## Item20 — arithmetic target restore after comparison
+
+**Decision: optional measured candidate.** `restore_compare=True` / CLI
+`--restore-compare` applies to ordinary or streaming LZSA2. After OR A /
+SBC HL,DE, ADD HL,DE restores the same target instead of reloading it from
+state. Modular restoring carry equals subtraction borrow; S/Z/PV are retained.
+Only Z is consumed by the following branch; H/N/undocumented flags are dead.
+Nonfinal `sync` including RET127 →122 T, final132 →127 T; prefix−2 bytes,
+no state/stack/payload increase. Defaults remain exact.
+
+[Report](evidence/trick_20.json):95 full blocks/619480 bytes,
+26352611 →26340326 T (−12285), real21 blocks−6330; exactly−5 per caller
+demand, no slower block/slice,230 accepted IRQs. Both guarded modes pass42
+cases/six placements: direct4365880 →4364930 and CALL4368800 →4367850 T
+(−950 each), identical producer/waits/167 once-only sectors. Directed sync
+checks cover equality, signed/unsigned boundaries and FFFF; combined near/
+word-init/long-copy profiles pass IRQ replay. All15 library tests pass.
+
+```text
+python toolkit/test_streaming_lzsa2.py --direct-header --noncanonical --output .tmp/item20-direct-before.json
+python toolkit/test_streaming_lzsa2.py --direct-header --noncanonical --restore-compare --output .tmp/item20-direct-after.json
+python toolkit/test_streaming_lzsa2.py --noncanonical --output .tmp/item20-call-before.json
+python toolkit/test_streaming_lzsa2.py --noncanonical --restore-compare --output .tmp/item20-call-after.json
+python libraries/tests/measure_second_pass.py --item 20 --stream-directory .tmp --output libraries/evidence/trick_20.json
+```
