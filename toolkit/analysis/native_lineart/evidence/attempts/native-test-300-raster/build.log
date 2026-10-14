@@ -1,0 +1,107 @@
+Reused exact source-native preparation: 300 frames
+Motion tile 8: 0/300
+CB47 disk 1/1: frames 0..299
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\measure_fap3_fuse.py", line 461, in <module>
+    if __name__=='__main__': main()
+                             ^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\measure_fap3_fuse.py", line 256, in main
+    if tag not in widths or pos+widths[tag]>len(nums): raise ValueError(f'bad trace at {pos}: {nums[pos-1:pos+3]} / {output[-300:]}')
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: bad trace at 13296: [143] / 0
+
+0x8c
+
+0x2f44e41
+
+0x6
+
+0x1c
+
+0x8c
+
+0x2f44e94
+
+0xa
+
+0xa
+
+0x8f
+
+0x2f44ee2
+
+0x8c
+
+0x2f56295
+
+0x6
+
+0x1f
+
+0x8c
+
+0x2f562e8
+
+0xa
+
+0xb
+
+0x8f
+
+0x2f56336
+
+0x8c
+
+0x2f67791
+
+0x9
+
+0xa
+
+0x8f
+
+0x2f677df
+
+0x8c
+
+0x2f78c8d
+
+0x9
+
+0x9
+
+0x8f
+
+0x2f78cdb
+
+0x8f
+
+0x2f8a18e
+
+0x8c
+
+0x2f9b690
+
+0xa
+
+0xa
+
+0x8f
+
+0x2f9b6de
+
+0x8f
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\analysis\native_lineart\build_test.py", line 103, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\analysis\native_lineart\build_test.py", line 95, in main
+    converter.main(argv)
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\convert_video.py", line 372, in main
+    records = build(five_states, ay_frames, raw, states, args, executables, output, manifest)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\convert_cb41.py", line 313, in build
+    subprocess.run([sys.executable, str(Path(__file__).with_name('measure_fap3_fuse.py')),
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['C:\\Users\\rudol\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe', 'C:\\Work\\ZX-video\\.worktree\\native-lineart\\toolkit\\measure_fap3_fuse.py', '--fuse', 'C:\\Program Files (x86)\\Fuse\\fuse.exe', '--trd', 'C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-raster\\ZX-video-sea-foam-native-lineart_part01.trd', '--metadata', 'C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-raster\\ZX-video-sea-foam-native-lineart_part01.json', '--states', 'C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-raster\\work\\ZX-video-sea-foam-native-lineart_part01\\states.npz', '--timeout', '1800', '--raw', 'C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-raster\\work\\stream.raw', '--output', 'C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-raster\\work\\ZX-video-sea-foam-native-lineart_part01\\timing.json']' returned non-zero exit status 1.

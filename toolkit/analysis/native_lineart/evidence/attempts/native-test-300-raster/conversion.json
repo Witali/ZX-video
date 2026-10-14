@@ -1,0 +1,83 @@
+{
+  "source": "C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-raster-source.mkv",
+  "source_sha256": "8771a68c057dd8511cd792b57d089695fba023aa1a9e9a5aa9b5c872f755afdb",
+  "complete": false,
+  "release": false,
+  "video_fps": "10",
+  "frame_fields": 5,
+  "ay_hz": 50,
+  "native_resolution": [
+    256,
+    192
+  ],
+  "active_resolution": [
+    256,
+    144
+  ],
+  "logical_resolution": [
+    256,
+    192
+  ],
+  "disk_profile": "trdos503",
+  "executables": {
+    "ffmpeg": "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+    "ffprobe": "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffprobe.exe",
+    "zx0": "C:\\Work\\ZX-video\\.worktree\\compression\\.tmp\\ZX0\\win\\zx0.exe",
+    "lzsa": "C:\\Work\\ZX-video\\.tmp\\lzsa2-deep-search\\build\\lzsa.exe"
+  },
+  "player_baseline": "9885483",
+  "player_hot_path_changed": false,
+  "player_hot_path_delta_tstates": 0,
+  "inline_matches": false,
+  "fast_noop_scan": false,
+  "static_cache_borders": false,
+  "carry_huffman": false,
+  "register_fragments": false,
+  "cached_huffman_byte": false,
+  "irq_safe_paging": false,
+  "startup_delta": false,
+  "timing_verified": false,
+  "verification": "fuse",
+  "video_codec": "cb47",
+  "monochrome": false,
+  "colour_policy": "lineart",
+  "colour_dither": "none",
+  "colour_contours": false,
+  "colour_vision": "none",
+  "lineart_dark_fills": true,
+  "brightness_levels": 5,
+  "input": {
+    "video_stream": 0,
+    "audio_stream": 1,
+    "decoded_frames": 300,
+    "encoded_frames": 300,
+    "tail_repeated_frames": 0,
+    "encoded_seconds": 30.0,
+    "fit": "contain",
+    "crop": false,
+    "command": [
+      "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+      "-v",
+      "error",
+      "-nostdin",
+      "-y",
+      "-i",
+      "C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-raster-source.mkv",
+      "-map",
+      "0:0",
+      "-an",
+      "-vf",
+      "setpts=PTS-STARTPTS,fps=10:start_time=0:round=up:eof_action=pass,scale=w='max(1,round(min(256,144*dar)))':h='max(1,round(min(144,256/dar)))':flags=area,setsar=1,pad=256:144:(ow-iw)/2:(oh-ih)/2:black",
+      "-pix_fmt",
+      "rgb24",
+      "-f",
+      "rawvideo",
+      "C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-raster\\work\\frames.rgb"
+    ],
+    "original_source_native_prefix_exact": true,
+    "original_source_sha256": "995ddb8988fd57f5d718df9f4811faf7d7dc68999164116effe04ce1178bd931"
+  },
+  "native_pixels": true,
+  "host_frame_bytes": 6912,
+  "failure": "CalledProcessError: Command '['C:\\\\Users\\\\rudol\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\python\\\\python.exe', 'C:\\\\Work\\\\ZX-video\\\\.worktree\\\\native-lineart\\\\toolkit\\\\measure_fap3_fuse.py', '--fuse', 'C:\\\\Program Files (x86)\\\\Fuse\\\\fuse.exe', '--trd', 'C:\\\\Work\\\\ZX-video\\\\.worktree\\\\native-lineart\\\\.tmp\\\\native-test-300-raster\\\\ZX-video-sea-foam-native-lineart_part01.trd', '--metadata', 'C:\\\\Work\\\\ZX-video\\\\.worktree\\\\native-lineart\\\\.tmp\\\\native-test-300-raster\\\\ZX-video-sea-foam-native-lineart_part01.json', '--states', 'C:\\\\Work\\\\ZX-video\\\\.worktree\\\\native-lineart\\\\.tmp\\\\native-test-300-raster\\\\work\\\\ZX-video-sea-foam-native-lineart_part01\\\\states.npz', '--timeout', '1800', '--raw', 'C:\\\\Work\\\\ZX-video\\\\.worktree\\\\native-lineart\\\\.tmp\\\\native-test-300-raster\\\\work\\\\stream.raw', '--output', 'C:\\\\Work\\\\ZX-video\\\\.worktree\\\\native-lineart\\\\.tmp\\\\native-test-300-raster\\\\work\\\\ZX-video-sea-foam-native-lineart_part01\\\\timing.json']' returned non-zero exit status 1."
+}

@@ -91,7 +91,7 @@ def build(data,audio,*,core_limit,batch=31,first_bank_bytes=16384,single_bank=4,
 def install(banks,m,sections,data,compress,*,four_slots=False):
     """Replace resident segments after the cell player has retired old code."""
     old=m['resident_audio'];cell=m['cell_codebook']
-    if cell['wire'] not in ('CB44','CB46') or not cell.get('obsolete_fixed_ranges'):
+    if cell['wire'] not in ('CB44','CB46','CB47') or not cell.get('obsolete_fixed_ranges'):
         raise ValueError('fixed AY integration requires the retired CB44 reconstruction')
     compiled=build(data,m['audio_labels'],core_limit=m['decoder_labels']['start'],batch=old['compiled']['batch'],
         single_bank=6 if four_slots else 4,fixed_tail=four_slots)

@@ -31,8 +31,10 @@ WINDOW = 32
 VIDEO_BUDGET = (2544-160)*256
 
 
-def video_encoder(dynamic_rows=False,front_reuse=False,guarded_cb46=False):
-    if guarded_cb46:
+def video_encoder(dynamic_rows=False,front_reuse=False,guarded_cb46=False,native_bitmap=False):
+    if native_bitmap:
+        from native_cell_codebook import representation as selected
+    elif guarded_cb46:
         from guarded_cb46 import representation as selected
     elif front_reuse:
         from front_cell_reuse import representation as selected
@@ -60,19 +62,22 @@ def pack_blocks(raw, codec, cache):
 
 
 def plan_volumes(frames, audio, labels, codec, cache, max_frames, frame_fields=6, target_volumes=None,
-                 volume_cuts=None, dynamic_rows=False, audio_banks=1,front_reuse=False,guarded_cb46=False):
+                 volume_cuts=None, dynamic_rows=False, audio_banks=1,front_reuse=False,guarded_cb46=False,native_bitmap=False):
     """Measure short windows once; choose cuts without building candidate sets.
 
     Exact row unions include both histories. Window byte costs select an
     initial size partition; exact resident AY sizes may split it further.
     Final TRD capacity is a separate gate, never inferred from this estimate.
     """
-    sets = row_sets(frames)
+    if native_bitmap:
+        from native_cell_codebook import validate
+        validate(frames);sets=[{0} for _ in frames]
+    else:sets = row_sets(frames)
     if guarded_cb46:audio_banks=2
     audio_options=dict(frame_fields=frame_fields)
     if audio_banks!=1:audio_options['audio_banks']=audio_banks
     dynamic_rows=dynamic_rows or front_reuse or guarded_cb46
-    represent=video_encoder(dynamic_rows,front_reuse,guarded_cb46)
+    represent=video_encoder(dynamic_rows,front_reuse,guarded_cb46,native_bitmap)
     def selected_audio(lo,hi):
         coded,report=audio_size(audio,lo,hi,labels,**audio_options)
         if guarded_cb46:
@@ -171,6 +176,14 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     # Resolve the real audio ABI, rather than borrowing labels from a movie.
     labels = player_harness(bytes(4), scaffold.tables, scaffold.mapping, 1).audio
     guarded=getattr(args,'guarded_cb46',False)
+    native_bitmap=getattr(args,'video_codec',None)=='cb47'
+    if native_bitmap:
+        # Native line drawings produce many short fragments. The ratio-only
+        # parse spent too much time dispatching tiny matches in full Fuse
+        # runs. Use the author's speed preference/minimum5-byte match; every
+        # block still passes author, independent host and in-place checks.
+        codec.encflags=['-r','-f','2','-m','5']
+        codec.identity['encoder_flags']=list(codec.encflags)
     front_reuse=getattr(args,'front_reuse',False) or guarded
     dynamic_rows=getattr(args,'dynamic_rows',False) or front_reuse
     audio_banks=2 if guarded else getattr(args,'audio_banks',1)
@@ -178,9 +191,9 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     if guarded:
         from guarded_cb46 import PLAYER_OPTIONS,select
         player_options=PLAYER_OPTIONS
-    represent=video_encoder(dynamic_rows,front_reuse,guarded)
+    represent=video_encoder(dynamic_rows,front_reuse,guarded,native_bitmap)
     parts, plan = plan_volumes(frames, audio, labels, codec, cache, args.max_frames_per_disk,
-        frame_fields, getattr(args,'target_volumes',None), getattr(args,'volume_cuts',None),dynamic_rows,audio_banks,front_reuse,guarded)
+        frame_fields, getattr(args,'target_volumes',None), getattr(args,'volume_cuts',None),dynamic_rows,audio_banks,front_reuse,guarded,native_bitmap)
     only = getattr(args,'only_volume',None)
     if only is not None and not 1 <= only <= len(parts): raise ValueError('invalid selected volume')
     write_json(output/'partition.json', plan)
@@ -190,9 +203,10 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     if front_reuse:identity_options['front_reuse']=True
     if audio_banks!=1:identity_options['audio_banks']=audio_banks
     if guarded:identity_options['profile']='cb46-guarded-v1'
+    if native_bitmap:identity_options['profile']='cb47-native-v1'
     identity = sha(frames.tobytes()+b''.join(f.serialize() for f in audio)
                    +json.dumps(identity_options, sort_keys=True).encode())
-    fingerprint = (b'CB46GEN1' if guarded else b'CB44GEN1' if front_reuse else b'CB42GEN1' if dynamic_rows else b'CB41GEN1')+bytes.fromhex(identity)[:6]
+    fingerprint = (b'CB47GEN1' if native_bitmap else b'CB46GEN1' if guarded else b'CB44GEN1' if front_reuse else b'CB42GEN1' if dynamic_rows else b'CB41GEN1')+bytes.fromhex(identity)[:6]
     records = []
     timing = dict(complete=False, release=False, all_nominal_deadlines_met=False,
         player_hot_path_changed=frame_fields!=6, player_hot_path_delta_tstates=0,
@@ -216,11 +230,16 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
             audio_constant_present_register_tstates=167,audio_skipped_register_tstates=20,
             audio_irq_tstates='367+83*n; fourteen writes 1529',audio_init_delta_tstates=234,
             cycle_scope='AYH2 adds three 20-T register checks; changed-symbol and IRQ work is data-dependent. Video instruction timing is unchanged.')
+    if native_bitmap:
+        timing.update(profile='cb47-native-v1',player_hot_path_changed=True,player_hot_path_delta_tstates=None,
+            video_instruction_delta_tstates=None,native_path_tstates=dict(literal_before=231,literal_after=188,
+                literal_delta=-43,partial_before=93,partial_after=53,partial_delta=-40,ordinary_packet_delta=-18),
+            cycle_scope='Instruction-counted CB47 literal/single-row paths; total delivery, IRQ/ULA/ROM/disk measured separately.')
     write_json(output/'timing.json', timing)
     for number, part in enumerate(parts, 1):
         if only is not None and number != only: continue
         lo, hi = part['start'], part['end']
-        print(f'CB41 disk {number}/{len(parts)}: frames {lo}..{hi-1}', flush=True)
+        print(f'{"CB47" if native_bitmap else "CB41"} disk {number}/{len(parts)}: frames {lo}..{hi-1}', flush=True)
         chosen = represent(frames, lo, hi)
         stem = f'{args.prefix}_part{number:02}'
         folder = work/stem; folder.mkdir()
@@ -231,7 +250,7 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
         if dynamic_rows:
             states=frames
             builder_states=np.zeros((len(frames),3840),dtype=np.uint8)
-            builder_states[:,3072:]=frames[:,3840:]
+            builder_states[:,3072:]=frames[:,-768:]
             write_json(folder/'dynamic-rows.json',dict(frames=chosen['details'],
                 proof=chosen['dynamic_proof'],updates=chosen['row_updates'],
                 unique_literal_rows=chosen['unique_literal_rows']))
@@ -240,7 +259,7 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
             states[chosen['first']:hi] = chosen['states']
             builder_states=states
         packed, blocks = pack_blocks(chosen['raw'], codec, cache)
-        if guarded:
+        if guarded and not native_bitmap:
             candidate=select(chosen['raw'],packed,blocks,chosen['rows'],frames,lo,hi,codec,cache)
             states=candidate['states'];packed=candidate['stream'];blocks=candidate['blocks']
             chosen=dict(chosen,raw=candidate['raw'],raw_sha256=sha(candidate['raw']))
@@ -258,7 +277,7 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
             builder.inplace_streams[lo, hi] = packed, blocks
             builder.resident_streams[lo, hi] = b'', part['audio']
             image, metadata = builder.volume(lo, hi, number)
-            if guarded:
+            if guarded and not native_bitmap:
                 from guarded_cb46 import CORE
                 if image is not None:assert metadata['decoder_labels']['start']==CORE
                 metadata['compression_selection']=dict(profile='cb46-guarded-v1',
@@ -292,7 +311,7 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
                         cpu_all_native_screens_exact=cpu['all_native_screens_exact'],
                         cpu_report=str((folder/'cpu.json').relative_to(output)).replace('\\', '/'))
                 else:
-                    checked['instruction_replay'] = 'Covered by unchanged-kernel fixtures; all movie screens checked in Fuse'
+                    checked['instruction_replay'] = 'Covered by native instruction fixtures; all movie screens checked in Fuse'
         if args.verify == 'fuse':
             common = ['--fuse', str(args.fuse.resolve()), '--trd', str(output/record['file']),
                 '--metadata', str(output/record['metadata']), '--states', str(folder/'states.npz'),
@@ -345,4 +364,13 @@ def build(frames, audio, raw, compact, args, executables, output, manifest):
     if envelope_audio:
         manifest.update({key:value for key,value in timing.items() if key.startswith('audio_') or
             key in ('player_hot_path_changed','player_hot_path_delta_tstates','video_instruction_delta_tstates','cycle_scope')})
+    if native_bitmap:
+        manifest['native_states_sha256']=manifest.pop('five_states_sha256')
+        manifest.update(profile='cb47-native-v1',wire='CB47',native_pixels=True,dynamic_row_dictionary=False,host_frame_bytes=6912,
+            logical_resolution=[256,192],brightness_levels=2,player_hot_path_changed=True,
+            player_hot_path_delta_tstates=None,video_instruction_delta_tstates=None,
+            native_path_tstates=dict(literal_before=231,literal_after=188,literal_delta=-43,
+                partial_before=93,partial_after=53,partial_delta=-40,ordinary_packet_delta=-18),
+            encoder_selection='Exact native cells; no invisible-attribute selection or five-level fallback',
+            cycle_note='CB47 native raw literal and single-row paths counted against CB46; dictionaries/front copy/clock/AY unchanged. Complete delivery is measured in Fuse.')
     return records

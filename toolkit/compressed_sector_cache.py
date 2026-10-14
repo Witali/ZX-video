@@ -62,7 +62,7 @@ def build(m):
 
 
 def install(banks,m):
-    if not m.get('four_video_slots',{}).get('enabled') or m['cell_codebook']['wire']!='CB46':
+    if not m.get('four_video_slots',{}).get('enabled') or m['cell_codebook']['wire'] not in ('CB46','CB47'):
         raise ValueError('sector cache requires four-slot CB46')
     regions,labels,rows=build(m);p,q=m['producer_labels'],m['queue_labels']
     if q['end']>PREFETCH or q['demand_end']>PREFETCH:raise ValueError('queue overlaps cache helper')

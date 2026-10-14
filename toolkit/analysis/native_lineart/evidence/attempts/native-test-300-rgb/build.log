@@ -1,0 +1,32 @@
+Native lineart: 1/300
+Native lineart: 101/300
+Native lineart: 201/300
+Motion tile 8: 0/300
+CB41 disk 1/1: frames 0..299
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\analysis\native_lineart\build_test.py", line 88, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\analysis\native_lineart\build_test.py", line 80, in main
+    converter.main(argv)
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\convert_video.py", line 372, in main
+    records = build(five_states, ay_frames, raw, states, args, executables, output, manifest)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\convert_cb41.py", line 272, in build
+    image, metadata = builder.volume(lo, hi, number)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\cell_codebook_player.py", line 319, in volume
+    image,m=super().volume(start,end,part)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\resident_audio_player.py", line 308, in volume
+    image,m=super().volume(start,end,part)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\build_fap3_trd.py", line 288, in volume
+    sections,metadata=self.ram(start,end,video_sector+positions[min(self.preload_sectors,ns)],max(0,ns-self.preload_sectors))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\cell_codebook_player.py", line 294, in ram
+    sections=fixed_resident_audio.install(banks,m,sections,sound,self.compress,four_slots=self.four_slots)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\fixed_resident_audio.py", line 95, in install
+    raise ValueError('fixed AY integration requires the retired CB44 reconstruction')
+ValueError: fixed AY integration requires the retired CB44 reconstruction

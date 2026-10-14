@@ -13,8 +13,8 @@ import streaming_slot_queue as queue
 
 
 def install(banks,m,*,direct_header=False,early_prefix=False):
-    if not m.get('four_video_slots',{}).get('enabled') or m['cell_codebook']['wire']!='CB46':
-        raise ValueError('streaming LZSA2 requires four-slot CB46')
+    if not m.get('four_video_slots',{}).get('enabled') or m['cell_codebook']['wire'] not in ('CB46','CB47'):
+        raise ValueError('streaming LZSA2 requires four-slot CB46 or CB47')
     if m.get('compressed_sector_cache') or m.get('streaming_input'):
         raise ValueError('install streaming LZSA2 before sector cache, once')
     def bank(at):return 5 if at<0x8000 else 2 if at<0xc000 else 7
@@ -79,7 +79,11 @@ def install(banks,m,*,direct_header=False,early_prefix=False):
                 external.append(dict(address=pc,operand_address=pc+offset,old=old,new=new,
                     tstates=row['tstates'],delta_tstates=0))
         retained.append(row)
-    if (sum(r['old']==oldq['take'] for r in external)!=4
+    # CB47 has no row-table control packet, so its packet reader has one
+    # fewer queue-take call. Keep the complete relocation check for both
+    # layouts, including the AY service's queue-phase reference.
+    expected_take_calls = 3 if m['cell_codebook']['wire']=='CB47' else 4
+    if (sum(r['old']==oldq['take'] for r in external)!=expected_take_calls
             or not any(r['address']==hooks['queue_service']+3 and r['new']==q['phase'] for r in external)):
         raise ValueError(('packet or AY queue reference was not remapped',external))
     for at,data in regions:put(at,data)
@@ -96,7 +100,8 @@ def install(banks,m,*,direct_header=False,early_prefix=False):
     m['demand_decode']=dict(helper_start=queue.DEMAND,helper_end=q['demand_end'],
         queue_bytes=q['end']-queue.CODE,helper_bytes=q['demand_end']-queue.DEMAND,background_quantum=256,extra_stream_bytes=0)
     m['streaming_input']=dict(enabled=True,codec='lzsa2',input_wait_phase=3,completion_flag=z['finished'],
-        previous_queue_labels=oldq,external_operands=external,queue_adjustments=patches,listing=listing,
+        previous_queue_labels=oldq,external_operands=external,expected_external_take_calls=expected_take_calls,
+        queue_adjustments=patches,listing=listing,
         regions=[dict(address=at,code_hex=data.hex(),sha256=sha(data)) for at,data in regions],
         decoder_bytes_before=oldlayout['code_bytes'],decoder_bytes_after=layout['code_bytes'],
         prefix_end=p['prefix_end'],extra_stream_bytes=0,extra_output_copies=0,

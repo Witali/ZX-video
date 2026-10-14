@@ -1,0 +1,83 @@
+{
+  "source": "C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-player-source.mkv",
+  "source_sha256": "a0e098838f5b45a96b0372b6beb0325d95fbbb3936c66001e07eab2ae3e536d7",
+  "complete": false,
+  "release": false,
+  "video_fps": "10",
+  "frame_fields": 5,
+  "ay_hz": 50,
+  "native_resolution": [
+    256,
+    192
+  ],
+  "active_resolution": [
+    256,
+    144
+  ],
+  "logical_resolution": [
+    256,
+    192
+  ],
+  "disk_profile": "trdos503",
+  "executables": {
+    "ffmpeg": "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+    "ffprobe": "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffprobe.exe",
+    "zx0": "C:\\Work\\ZX-video\\.worktree\\compression\\.tmp\\ZX0\\win\\zx0.exe",
+    "lzsa": "C:\\Work\\ZX-video\\.tmp\\lzsa2-deep-search\\build\\lzsa.exe"
+  },
+  "player_baseline": "9885483",
+  "player_hot_path_changed": false,
+  "player_hot_path_delta_tstates": 0,
+  "inline_matches": false,
+  "fast_noop_scan": false,
+  "static_cache_borders": false,
+  "carry_huffman": false,
+  "register_fragments": false,
+  "cached_huffman_byte": false,
+  "irq_safe_paging": false,
+  "startup_delta": false,
+  "timing_verified": false,
+  "verification": "fuse",
+  "video_codec": "cb47",
+  "monochrome": false,
+  "colour_policy": "lineart",
+  "colour_dither": "none",
+  "colour_contours": false,
+  "colour_vision": "none",
+  "lineart_dark_fills": true,
+  "brightness_levels": 5,
+  "input": {
+    "video_stream": 0,
+    "audio_stream": 1,
+    "decoded_frames": 300,
+    "encoded_frames": 300,
+    "tail_repeated_frames": 0,
+    "encoded_seconds": 30.0,
+    "fit": "contain",
+    "crop": false,
+    "command": [
+      "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+      "-v",
+      "error",
+      "-nostdin",
+      "-y",
+      "-i",
+      "C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-player-source.mkv",
+      "-map",
+      "0:0",
+      "-an",
+      "-vf",
+      "setpts=PTS-STARTPTS,fps=10:start_time=0:round=up:eof_action=pass,scale=w='max(1,round(min(256,144*dar)))':h='max(1,round(min(144,256/dar)))':flags=area,setsar=1,pad=256:144:(ow-iw)/2:(oh-ih)/2:black",
+      "-pix_fmt",
+      "rgb24",
+      "-f",
+      "rawvideo",
+      "C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-player\\work\\frames.rgb"
+    ],
+    "original_source_native_prefix_exact": true,
+    "original_source_sha256": "995ddb8988fd57f5d718df9f4811faf7d7dc68999164116effe04ce1178bd931"
+  },
+  "native_pixels": true,
+  "host_frame_bytes": 6912,
+  "failure": "ValueError: ('packet or AY queue reference was not remapped', [{'address': 56099, 'operand_address': 56100, 'old': 57680, 'new': 57689, 'tstates': 13, 'delta_tstates': 0}, {'address': 56336, 'operand_address': 56337, 'old': 57518, 'new': 57527, 'tstates': 17, 'delta_tstates': 0}, {'address': 56356, 'operand_address': 56357, 'old': 57518, 'new': 57527, 'tstates': 17, 'delta_tstates': 0}, {'address': 56368, 'operand_address': 56369, 'old': 31862, 'new': 31868, 'tstates': 10, 'delta_tstates': 0}, {'address': 56377, 'operand_address': 56378, 'old': 31862, 'new': 31868, 'tstates': 10, 'delta_tstates': 0}, {'address': 56387, 'operand_address': 56388, 'old': 57518, 'new': 57527, 'tstates': 17, 'delta_tstates': 0}, {'address': 56414, 'operand_address': 56415, 'old': 31862, 'new': 31868, 'tstates': 10, 'delta_tstates': 0}])"
+}

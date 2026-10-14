@@ -1,5 +1,73 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Integrate the experimental native drawing progress
+
+- **Integration:** Merge `codex/native-lineart` at `89fc7211` into main at
+  `af304189`. Preserve both additive journal histories, the ZX Compressors
+  migration plan, the paused accuracy goal and unrelated local attachments.
+- **Scope/checks:** Native production sources and the archived measured
+  objects remain exact to the experiment commit. Preserve all 26 tests and
+  complete cold/screen/AY checks; no native instruction or timing change is
+  introduced by integration (0 T). The experimental TRD still fails both
+  deadline gates and is explicitly separate from the qualified coarse disk.
+  Validate archive Git/LFS identities and publish code/evidence together.
+
+## 2026-10-14 — Native-pixel line-art prototype and readability correction; timing rejected
+
+- **Request/baseline:** From `bd01d761`, the user requests the existing contour
+  style at genuine 256x192 pixel precision, permits the 256x144 active area,
+  rejects extra outlines on thin strokes, then reports unreadable faces/title
+  lettering. Keep the paused broad goal paused. Use the original sea-foam
+  source's first 300 frames / 30 seconds, unchanged 1500 continuous-fit AY
+  controls and the qualified coarse dark-fill drawing as comparisons.
+- **Implementation:** Add opt-in `--video-codec cb47`, actual 6912-byte screens,
+  eight-byte cell literals, a 256-entry book, same-position front reuse and
+  one native-row changes. Keep old defaults/formats. Filter source grain only
+  for tracing; use coherent narrow-stroke cores, preserve white letters/eye
+  highlights and source-matched colours. Original RGB still drives fill/error
+  decisions. Correct the native maximum-packet allocation to 6200h..7760h,
+  before retained 7800h AY/producer helpers. Preserve the unused 512-byte row
+  table allocation in RAM accounting. Native LZSA2 uses `-r -f 2 -m 5`.
+- **Readability/image evidence:** Active RGB MSE against direct native source:
+  previous coarse 6522.985329, rejected noisy native 6054.531982, revised
+  native 5070.659015. Coarse centring differs by one native pixel; these are
+  stylised RGB errors, not semantic recognition scores. Review lettering,
+  boy/grandfather and moving scenes explicitly; no dither or extra parallel
+  contour on tested thin strokes. Save both bounded four-frame reviews.
+- **Complete checks:** All 300 frames / 2,073,600 native screen bytes, independent
+  dirty-RAM cold boot, all 1500 AY records at 50 Hz and zero audio underruns
+  pass. 26 component/regression tests pass. Six historical renderer variants
+  generate identical bytes/labels to `bd01d761`. Final raw stream 557,176 bytes,
+  LZSA2 369,251 bytes, actual disk 1488 sectors / 1056 free, 1443 verified reads.
+  Count literal body 231 -> 188 T (-43), partial row 93 -> 53 T (-40) and
+  ordinary row-control dispatch -18 T. Full instruction/disk/IRQ/ULA delivery
+  is data-dependent; the measured ROM/disk/IRQ/ULA read service is 39,943,368 T
+  and seek service 978,583 T, not deterministic decoder-only CPU counts.
+- **Failed release gate:** 165 exact nominal deadlines miss, frames 135..299;
+  maximum actual deviation 37,084,884 T / 523 fields / 10.46 seconds. No recovery;
+  the one-field fallback also fails. Actual first-to-last OUT spans 40.36 seconds
+  versus nominal 29.9. Host MP4s show nominal reference cadence; they are not
+  recordings of actual TRD timing. Do not promote the disk to a release.
+- **Preserved failures/decision:** Full worktree checkout ran out of space;
+  use a sparse source worktree instead. Separate YUV/BGR extraction rounded
+  differently from canonical RGB; materializing decoded RGB fixes it. AY and
+  streaming format gates required CB47 support and three packet queue calls
+  (the removed row-control path previously added a fourth). The initial
+  cell-only noisy run reproduced all screens/AY but missed 170 deadlines,
+  reaching 681 late fields. Dense-raster copy counts 122,020 T per active
+  frame (31 setup + 109,847 rows + 12,142 attributes). Its old buffer corrupts
+  retained helpers; that partial run was interrupted. After fixing the buffer,
+  the complete readable raster run still misses 184 deadlines / 1116 fields;
+  reject and remove the raster path from production. The combined speed/min5
+  CLI flags are rejected by the author executable; use its valid `-m 5` option.
+  The revised cell-only run improves delivery but remains unqualified.
+- **Saved progress:** Preserve 181 measured files / 101,390,532 bytes plus the
+  manifest, exact source/AY prefixes, generated code/streams, failed attempts
+  and comparisons. Root `ZX-video-sea-foam-native-lineart-experimental.trd`,
+  SHA256 `b42525283a578045a7279817350168d939d40640758ba2505c243538abd86031`.
+  The finite native format/readability prototype is reviewable; sustained
+  10-fps delivery is unresolved. [Results, previews, constraints and scripts](toolkit/analysis/native_lineart/README.md).
+
 ## 2026-10-14 — Merge the ZX Compressors migration plan into main
 
 - **Request/baselines:** The user requests merge and push of the prepared plan.

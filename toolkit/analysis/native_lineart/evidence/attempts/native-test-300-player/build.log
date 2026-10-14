@@ -1,0 +1,29 @@
+Reused exact source-native preparation: 300 frames
+Motion tile 8: 0/300
+CB41 disk 1/1: frames 0..299
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\analysis\native_lineart\build_test.py", line 103, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\analysis\native_lineart\build_test.py", line 95, in main
+    converter.main(argv)
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\convert_video.py", line 372, in main
+    records = build(five_states, ay_frames, raw, states, args, executables, output, manifest)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\convert_cb41.py", line 272, in build
+    image, metadata = builder.volume(lo, hi, number)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\cell_codebook_player.py", line 319, in volume
+    image,m=super().volume(start,end,part)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\resident_audio_player.py", line 308, in volume
+    image,m=super().volume(start,end,part)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\build_fap3_trd.py", line 288, in volume
+    sections,metadata=self.ram(start,end,video_sector+positions[min(self.preload_sectors,ns)],max(0,ns-self.preload_sectors))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\cell_codebook_player.py", line 297, in ram
+    streaming_lzsa2_player.install(banks,m,direct_header=self.direct_lzsa2_header,early_prefix=self.early_lzsa2_prefix)
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\streaming_lzsa2_player.py", line 84, in install
+    raise ValueError(('packet or AY queue reference was not remapped',external))
+ValueError: ('packet or AY queue reference was not remapped', [{'address': 56099, 'operand_address': 56100, 'old': 57680, 'new': 57689, 'tstates': 13, 'delta_tstates': 0}, {'address': 56336, 'operand_address': 56337, 'old': 57518, 'new': 57527, 'tstates': 17, 'delta_tstates': 0}, {'address': 56356, 'operand_address': 56357, 'old': 57518, 'new': 57527, 'tstates': 17, 'delta_tstates': 0}, {'address': 56368, 'operand_address': 56369, 'old': 31862, 'new': 31868, 'tstates': 10, 'delta_tstates': 0}, {'address': 56377, 'operand_address': 56378, 'old': 31862, 'new': 31868, 'tstates': 10, 'delta_tstates': 0}, {'address': 56387, 'operand_address': 56388, 'old': 57518, 'new': 57527, 'tstates': 17, 'delta_tstates': 0}, {'address': 56414, 'operand_address': 56415, 'old': 31862, 'new': 31868, 'tstates': 10, 'delta_tstates': 0}])

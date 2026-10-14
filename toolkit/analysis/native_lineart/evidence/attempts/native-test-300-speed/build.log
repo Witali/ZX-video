@@ -1,0 +1,23 @@
+Reused exact source-native preparation: 300 frames
+Motion tile 8: 0/300
+CB47 disk 1/1: frames 0..299
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\analysis\native_lineart\build_test.py", line 103, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\analysis\native_lineart\build_test.py", line 95, in main
+    converter.main(argv)
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\convert_video.py", line 372, in main
+    records = build(five_states, ay_frames, raw, states, args, executables, output, manifest)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\convert_cb41.py", line 262, in build
+    packed, blocks = pack_blocks(chosen['raw'], codec, cache)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\convert_cb41.py", line 51, in pack_blocks
+    payload = codec.encode_verified(data, None, cache)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\native-lineart\toolkit\probe_adaptive_block_codecs.py", line 151, in encode_verified
+    subprocess.run([str(self.encoder), *self.encflags, str(src), str(packed)],
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['C:\\Work\\ZX-video\\.tmp\\lzsa2-deep-search\\build\\lzsa.exe', '-r', '-f', '2', '--prefer-speed', '-m', '5', 'C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-speed\\work\\lzsa\\tmpqicoboro\\in.raw', 'C:\\Work\\ZX-video\\.worktree\\native-lineart\\.tmp\\native-test-300-speed\\work\\lzsa\\tmpqicoboro\\out.bin']' returned non-zero exit status 100.

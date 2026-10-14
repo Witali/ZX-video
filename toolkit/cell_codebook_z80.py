@@ -15,9 +15,10 @@ CODE, ROWS, BOOK, POPCOUNT = 0x9000,0x9e00,0xa800,0xb000
 INLINE_CODE = 0x8e80
 
 
-def build(*,dictionary=True,front_reuse=False,fast_masks=False,partial_rows=False,inline_cells=False):
+def build(*,dictionary=True,front_reuse=False,fast_masks=False,partial_rows=False,inline_cells=False,native_bitmap=False):
     if front_reuse and not dictionary:raise ValueError('front reuse requires the cell book')
     if partial_rows and not front_reuse:raise ValueError('partial rows require front-reuse modes')
+    if native_bitmap and not partial_rows:raise ValueError('native bitmap requires CB47 front/partial modes')
     if inline_cells and not (dictionary and front_reuse and fast_masks and partial_rows):
         raise ValueError('inline cells require the complete CB46 renderer')
     origin=INLINE_CODE if inline_cells else CODE
@@ -63,19 +64,33 @@ def build(*,dictionary=True,front_reuse=False,fast_masks=False,partial_rows=Fals
         if partial_rows:
             stage='partial_row';a.label(name('partial_row'))
             emit('LD A,(HL)',[0x7e],7);emit('INC HL',[0x23],6)
-            emit('ADD A,A',[0x87],4);emit('ADD A,D',[0x82],4);emit('LD D,A',[0x57],4)
-            emit('LD B,row page',[6,ROWS>>8],7);emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6)
-            emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
-            emit('INC B',[4],4);emit('INC D',[0x14],4)
-            emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
+            if not native_bitmap:emit('ADD A,A',[0x87],4)
+            emit('ADD A,D',[0x82],4);emit('LD D,A',[0x57],4)
+            if native_bitmap:
+                # CB47 supplies one actual row byte. Row0..7 offsets the
+                # screen's high byte; cell_done restores the cell-row base.
+                emit('LD A,(HL)',[0x7e],7);emit('INC HL',[0x23],6);emit('LD (DE),A',[0x12],7)
+            else:
+                emit('LD B,row page',[6,ROWS>>8],7);emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6)
+                emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
+                emit('INC B',[4],4);emit('INC D',[0x14],4)
+                emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
             jr(0x18,name('cell_done'))
-        stage='literal';a.label(name('literal'));emit('LD B,row page',[6,ROWS>>8],7)
-        for i in range(4):
-            emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6)
-            emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
-            emit('INC B',[4],4);emit('INC D',[0x14],4)
-            emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7);emit('DEC B',[5],4)
-            if i<3:emit('INC D',[0x14],4)
+        stage='literal';a.label(name('literal'))
+        if native_bitmap:
+            # Eight row-order bytes write true Spectrum bitmap pixels.
+            # No mutable row table or2x2 sample expansion is involved.
+            for i in range(8):
+                emit('LD A,(HL)',[0x7e],7);emit('INC HL',[0x23],6);emit('LD (DE),A',[0x12],7)
+                if i<7:emit('INC D',[0x14],4)
+        else:
+            emit('LD B,row page',[6,ROWS>>8],7)
+            for i in range(4):
+                emit('LD C,(HL)',[0x4e],7);emit('INC HL',[0x23],6)
+                emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7)
+                emit('INC B',[4],4);emit('INC D',[0x14],4)
+                emit('LD A,(BC)',[0x0a],7);emit('LD (DE),A',[0x12],7);emit('DEC B',[5],4)
+                if i<3:emit('INC D',[0x14],4)
         stage='cell_return';a.label(name('cell_done'))
         emit('LD A,D',[0x7a],4);emit('AND F8h',[0xe6,0xf8],7);emit('LD D,A',[0x57],4);exaf()
         if not fallthrough:emit('RET',[0xc9],10)
@@ -155,7 +170,8 @@ def build(*,dictionary=True,front_reuse=False,fast_masks=False,partial_rows=Fals
     if a.pc>(0x9400 if inline_cells else 0x9d00):raise ValueError('renderer exceeds provisional code allocation')
     regions=[(origin,a.resolve()),(POPCOUNT,bytes(i.bit_count() for i in range(256)))]
     return regions,a.labels,dict(dictionary=dictionary,front_reuse=front_reuse,fast_masks=fast_masks,**(dict(partial_rows=True) if partial_rows else {}),instruction_listing=listing,code_bytes=len(regions[0][1])-3,
-        state_bytes=3,book_bytes=2048,popcount_bytes=256,row_table_bytes=512,
+        state_bytes=3,book_bytes=2048,popcount_bytes=256,row_table_bytes=0 if native_bitmap else 512,
+        **(dict(native_bitmap=True,native_literal_bytes=8,native_partial_rows=8) if native_bitmap else {}),
         **(dict(inline_cells=True,origin=origin,cell_delta_tstates=-17) if inline_cells else {}),
         layout_scope='Component-only: reuses obsolete compact-frame range A800..B0FF; integration must remove old frame consumers.',
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf')
