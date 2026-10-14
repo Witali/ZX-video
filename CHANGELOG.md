@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Move the complete PCM baseline trellis into C
+
+- **Objective:** Remove the remaining slow Python baseline encoding from
+  automatic quality comparisons. Keep `ima_beam.py` and the committed full
+  waveform C implementation unchanged. Implement a separate integer PCM
+  beam search, state merging, ancestry and nibble packing in C.
+- **Proof/coverage:** Six tests pass for exact ties, extremes, partial blocks,
+  seed predictor/index, custom bounds, code alphabet/order, invalid input and
+  Unicode standalone paths. All nine complete sources match fresh original
+  Python, standalone C and historical `general` streams byte for byte.
+  Default width32/block64 includes the entire720,384-sample song and its
+  exact final zero state; saturation is forbidden as before.
+- **Measured performance:** Whole-song Python63.6411 s, C library7.7862 s
+  (8.17x), standalone7.0315 s. Keep compiler/startup and model/frontend timing
+  separate in the saved report; these are not the subsequent full conversion
+  benchmark. Integer block costs and candidate-ID tie order match Python.
+- **Decision/limits:** Accept exact acceleration for baseline/compensation
+  encoding. The separate raw-PCM C executable needs neither Python nor BLAS;
+  the Python wrapper provides input validation/array marshalling. No source
+  gain, codec format, waveform preset, Z80 instruction, disk default or main
+  image changes. Ordinary423/449, page14, bank243/267 T, delta0. Retain
+  original Python as the executable reference and continue automatic CLI
+  and artifact gates.
+  [Proof/reproducer](audiobook-beeper/experiments/song-snr/evidence/native-pcm-encoder/README.md).
+
 ## 2026-10-14 — Admit universal midpoint tables with optional compact loader
 
 - **Objective/baseline:** Enable the quieter instruction-derived midpoint
