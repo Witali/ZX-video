@@ -51,7 +51,7 @@ def source_lines(image):
     return mask
 
 
-def source_fills(image):
+def source_fills(image, *, dark_fills=False):
     """Accept only original RGB sufficiently close to an actual chip colour.
 
     Strong colour labels must form a small connected region, independently of
@@ -64,7 +64,8 @@ def source_fills(image):
     eligible = (distance <= PARAMETERS['fill_rgb_rms_max']**2)
     eligible &= np.max(np.abs(delta), axis=-1) <= PARAMETERS['fill_max_component_delta']
     eligible &= hue_valid(original[:, :, None], COLOURS[None, None], PARAMETERS['fill_hue_degrees'])
-    eligible[:, :, 0] &= original.max(axis=-1) <= PARAMETERS['black_max_component']
+    black_limit = PARAMETERS['fill_max_component_delta'] if dark_fills else PARAMETERS['black_max_component']
+    eligible[:, :, 0] &= original.max(axis=-1) <= black_limit
     # White is the fixed paper, not an extra coloured label.
     eligible[:, :, 7] = eligible[:, :, 15] = eligible[:, :, 8] = False
     selected = np.where(eligible, distance, np.inf).argmin(axis=-1)
@@ -80,7 +81,7 @@ def source_fills(image):
     return full
 
 
-def encode(image, previous=None, previous_image=None):
+def render_fills(fills, line_mask):
     """Prioritize contours and black regions over optional third-colour fills.
 
     Every selected endpoint must be either the exact classified source colour
@@ -89,12 +90,6 @@ def encode(image, previous=None, previous_image=None):
     spills where the Spectrum cannot fit contour/paper/fill simultaneously.
     History is intentionally unused: every mask follows the current source.
     """
-    image = validate(image)
-    if (previous is None) != (previous_image is None):
-        raise ValueError('temporal inputs must be supplied together')
-    if previous_image is not None:validate(previous_image)
-    fills = source_fills(image)
-    line_mask = source_lines(image)
     desired = fills.copy();desired[line_mask] = 0
     desired[:12] = desired[84:] = 0
     labels = cells(desired[..., None])[..., 0]
@@ -120,7 +115,49 @@ def encode(image, previous=None, previous_image=None):
     return five.pack_levels(levels)+attrs.tobytes()
 
 
-def comparison_report(comparison):
+def select_fills(image, *, dark_fills=False):
+    """Roll back source-connected new dark regions if a cell loses accuracy.
+
+    Adding mandatory black to a white/colour cell can displace its old colour.
+    Reject every added dark component touching such a cell, not just its cell
+    fragment, then rerender. Rejection is monotonic and eventually reaches the
+    original feasible image. Existing black/colour/line pixels remain exact;
+    every changed pixel strictly reduces original RGB error. No old frame is
+    involved and accepted dark-region geometry never follows the cell grid.
+    """
+    image = validate(image);lines = source_lines(image)
+    original_fills = source_fills(image)
+    original_state = render_fills(original_fills, lines)
+    if not dark_fills:return original_state, original_fills
+    proposed = source_fills(image, dark_fills=True)
+    added = (proposed == 0) & (original_fills != 0)
+    count, labels = cv2.connectedComponents(added.astype(np.uint8), connectivity=8)
+    original = averaged(original_state)
+    original_error = np.mean((original-image)**2, axis=-1)
+    retained = np.ones(count, bool);retained[0] = False
+    for _ in range(count):
+        fills = np.where(retained[labels], proposed, original_fills).astype(np.uint8)
+        state = render_fills(fills, lines);output = averaged(state)
+        changed = np.any(output != original, axis=-1)
+        bad = changed & (np.mean((output-image)**2, axis=-1) >= original_error)
+        bad |= changed & (np.ptp(original, axis=-1) > 0)
+        if not bad.any():return state, fills
+        bad_cells = cells(bad[..., None])[..., 0].any(axis=1).reshape(24, 32)
+        rejected = np.unique(labels[bad_cells.repeat(4, 0).repeat(4, 1) & retained[labels]])
+        if not len(rejected):raise AssertionError('dark fill regression outside added regions')
+        retained[rejected] = False
+    raise AssertionError('non-monotonic dark fill selection')
+
+
+def encode(image, previous=None, previous_image=None, *, dark_fills=False):
+    image = validate(image)
+    if (previous is None) != (previous_image is None):
+        raise ValueError('temporal inputs must be supplied together')
+    if previous_image is not None:validate(previous_image)
+    return select_fills(image, dark_fills=dark_fills)[0]
+
+
+def comparison_report(comparison, *, dark_fills=False):
     report = comparison.report()
     report.pop('rgb_sample_bound');report.pop('chroma_sample_bound');report.pop('parameters')
     report.update(selector='source-RGB line drawing with matched native solid fills',
@@ -129,4 +166,9 @@ def comparison_report(comparison):
         source_guard_scope='Stylistic line drawing. Fill labels are source-matched, but no photographic RGB error bound is claimed. Black contours and uniform white paper override unsupported optional third-colour fills.',
         available_fill_colours='Normal and BRIGHT Spectrum colours. Fixed white paper RGB205 must remain exact; cells with paper cannot select a BRIGHT colour.',
         semantic_person_model=False)
+    report['dark_fills'] = dark_fills
+    if dark_fills:
+        report['parameters']['black_max_component'] = PARAMETERS['fill_max_component_delta']
+        report['source_guard_scope'] += ' Dark fills admit black within the same RMS60/component100 source guard as coloured endpoints; isolated samples remain rejected.'
+        report['dark_region_rollback'] = 'Reject whole source-connected added regions touching a cell with any pixel RGB regression or a changed old coloured pixel. Every accepted changed pixel strictly improves original RGB error.'
     return report

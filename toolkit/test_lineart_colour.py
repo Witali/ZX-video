@@ -2,6 +2,7 @@
 from pathlib import Path
 import tempfile
 import unittest
+import cv2
 import numpy as np
 
 import lineart_colour as line
@@ -15,6 +16,43 @@ def image(rgb):
 
 
 class LineartColourTests(unittest.TestCase):
+    def test_dark_region_rollback_preserves_real_colour_and_entire_source_components(self):
+        fixture = np.load(Path(__file__).parent/'analysis/flat_colour/dark-fixtures/regression460.npz')
+        source = fixture['source'];old = averaged(fixture['baseline'])
+        unguarded = averaged(line.render_fills(line.source_fills(source, dark_fills=True), line.source_lines(source)))
+        self.assertTrue((np.mean((unguarded-source)**2, -1) > np.mean((old-source)**2, -1)).any())
+        state, accepted = line.select_fills(source, dark_fills=True);new = averaged(state)
+        self.assertTrue((np.mean((new-source)**2, -1) <= np.mean((old-source)**2, -1)).all())
+        coloured = np.ptp(old, axis=-1) > 0
+        np.testing.assert_array_equal(new[coloured], old[coloured])
+        original = line.source_fills(source);proposed = line.source_fills(source, dark_fills=True)
+        added = (proposed == 0) & (original != 0)
+        count, labels = cv2.connectedComponents(added.astype(np.uint8), connectivity=8)
+        rejected = 0
+        for label in range(1, count):
+            values = accepted[labels == label]
+            self.assertTrue((values == 0).all() or (values == 7).all())
+            rejected += (values == 7).all()
+        self.assertGreater(rejected, 0)
+
+    def test_dark_fills_use_existing_rgb_bounds_without_erasing_source_lines(self):
+        source = image([190, 185, 165]);source[25:65, 35:83] = [83, 42, 10]
+        source[34:38, 43:49] = source[34:38, 68:74] = 245
+        old = averaged(line.encode(source));new = averaged(line.encode(source, dark_fills=True))
+        changed = np.any(old != new, axis=-1)
+        self.assertTrue(changed.any())
+        self.assertTrue((np.mean((new-source)**2, -1) <= np.mean((old-source)**2, -1)).all())
+        lines = line.source_lines(source)
+        np.testing.assert_array_equal(new[lines], old[lines])
+        fills = line.source_fills(source, dark_fills=True)
+        added = (fills == 0) & (line.source_fills(source) != 0)
+        self.assertTrue((np.mean(source[added].astype(float)**2, -1) <= 60**2).all())
+        self.assertTrue((source[added].max(-1) <= 100).all())
+        for rgb in ([65]*3, [100, 100, 0], [101, 0, 0]):
+            self.assertTrue((line.source_fills(image(rgb), dark_fills=True)[12:84] == 7).all())
+        source = image([190]*3);source[30, 40] = [90, 0, 0]
+        self.assertEqual(line.source_fills(source, dark_fills=True)[30, 40], 7)
+
     def test_real_solid_colours_include_normal_and_bright(self):
         for colour in (0, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14):
             source = image(line.COLOURS[colour].astype(np.uint8))
@@ -82,6 +120,24 @@ class LineartColourTests(unittest.TestCase):
                 row_sets(prepared)
                 self.assertTrue(representation(prepared, 0, 2)['full_host_screens_exact'])
             finally:del compact, prepared
+
+    def test_generic_dark_option_metadata_and_exact_screen_roundtrip(self):
+        from convert_video import convert_frames
+        from generic_cell_codebook import prepare_frames, representation
+        source = image([180]*3);source[30:55, 43:77] = [83, 42, 10]
+        with tempfile.TemporaryDirectory() as tmp:
+            compact, _ = convert_frames(np.stack([source[12:84]]*2), Path(tmp))
+            states, report = prepare_frames(np.stack([source[12:84]]*2), compact, tmp,
+                colour_policy='lineart', lineart_dark_fills=True)
+            try:
+                self.assertEqual(states[0].tobytes(), line.encode(source, dark_fills=True))
+                self.assertTrue(report['lineart_dark_fills'])
+                self.assertEqual(report['colour_comparison']['parameters']['black_max_component'], 100)
+                self.assertTrue(representation(states, 0, 2)['full_host_screens_exact'])
+            finally:del compact, states
+        with self.assertRaises(ValueError):
+            prepare_frames([source[12:84]], np.zeros((1, 3840), np.uint8), '.',
+                colour_policy='flat', lineart_dark_fills=True)
 
 
 if __name__ == '__main__':unittest.main()

@@ -1,5 +1,52 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Accuracy-guarded dark fills improve the complete line-art disk
+
+- **Request/baseline:** The user chooses contour drawing with source-close
+  solid fills and higher accuracy with ideally unchanged compression. Keep
+  the exact977-frame/97.7-second sea-foam RGB and4885 AY controls from the
+  qualified`78b7a7be` image; no new audio or native-player feature.
+- **Trials/change:** Optional`--lineart-dark-fills` replaces extra black
+  max-component64 cap with the existing RMS60/component100 fill bounds,
+  retaining coherent minimum-two samples and every current-source line.
+  First check incorrectly required old classified colour which was rendered
+  as paper to stay paper; preserve its partial log. Correct the contract to
+  protect old rendered colours. Unguarded fill then harms five source pixels
+  in independently reproduced frame460; preserve log/source/fixture. Add
+  monotonic whole-source-component rejection for any pixel RGB regression
+  or changed old coloured pixel. Reject nine added dark samples across the
+  complete input; never trim such a region at the attribute grid.
+- **Measured result:**57 tests pass, all977 frame contracts/CB46/in-place
+  LZSA2 roundtrips pass.342,800 samples improve on963 frames; mean native RGB
+  MSE6885.659687 ->6025.180072(12.4967%). This is a drawing colour-error
+  diagnostic, not a photographic/recognition percentage. Complete transport
+  before invisible-attribute selection658,097 ->624,535 bytes. Actual selected
+  stream626,964 ->591,481 bytes(-35,483,-5.6595%). Actual disk2541 ->2399
+  sectors(-142/36,352 bytes),145 free; retain the same duration for comparison.
+  Quiet RGB residual variation1614.039170 ->1414.350569 on6,454,423 source
+  samples(delta<=4); chroma29.012656 ->29.041162(+0.098%), so no universal
+  temporal improvement claim. Difficult character/dark scenes and full motion
+  are saved. No dither, colour lag or changes to existing coloured pixels.
+- **Complete native qualification:** Independently dirty-RAM Fuse1.9.0
+  verifies all6,753,024 screen bytes and every4885 AY record, zero nominal
+  misses/late runs/underruns/drops/missing or duplicated fields. Max deviation
+  23 T. Native packet/clock/cell listings exactly match baseline, instruction
+  delta0 T; absolute counts stay in metadata. Selected independent LZSA2
+  core62,140,081 ->58,364,356 T(excludes IRQ/ULA/paging/disk). Full runtime
+  reads2450 ->2311, zero retries; combined ROM/disk/IRQ/ULA read service
+  68,229,686 ->64,420,510 T(range22,323..134,473), seek1,655,691 ->1,567,780 T.
+  No partial-run or offline-size release claim. Original RGB/AY/model WAV
+  match for the entire97.7 seconds; both MP4s confirm977 frames/10 fps and
+  exact-duration sound. Media are native-reference/model-WAV renders.
+- **Decision/artifacts:** Qualify separately named root
+  `ZX-video-sea-foam-lineart-dark_part01.trd`, SHA256
+  `ec6fe8d13b986400dcf6b722aa5e9575ff3f3c5c0245ea4aeb2dd31a2f672dd0`.
+  Preserve154 measured files/109,149,355 bytes plus manifest,16 source
+  snapshots, complete host/native proofs and partial failures. Keep old
+  defaults/images and both qualified disks. This completes the bounded
+  dark-fill milestone, not the broader optimal-accuracy goal. No push.
+  [Result, implementation and reproduction](toolkit/analysis/flat_colour/DARK_FILLS.md).
+
 ## 2026-10-14 — Hardware-feasible brightness alternatives, rejected on real input
 
 - **Request/scope:** The active accuracy/compression goal is clarified as

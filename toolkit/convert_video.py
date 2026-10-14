@@ -259,6 +259,8 @@ def main(argv=None):
         help='Flat colour only: restore thin source RGB lines whose contrast was lost in the fill (requires OpenCV)')
     parser.add_argument('--colour-vision', choices=('none', 'regions'), default='none',
         help='Flat colour only: source-bounded mean-shift region guidance with fine-detail protection (requires OpenCV)')
+    parser.add_argument('--lineart-dark-fills', action='store_true',
+        help='Lineart only: recognize dark solid regions within the same RGB error bounds as colour fills')
     parser.add_argument('--monochrome', action='store_true',
         help='Black/white image with fixed spatial gray dithering; audio and cadence unchanged')
     parser.add_argument('--fuse', type=Path, help='Fuse executable for --verify fuse')
@@ -269,6 +271,8 @@ def main(argv=None):
         parser.error('--colour-policy flat/lineart requires --video-codec cb41 without --monochrome')
     if (args.colour_dither != 'none' or args.colour_contours or args.colour_vision != 'none') and args.colour_policy != 'flat':
         parser.error('minimal dither, contours and vision require --colour-policy flat')
+    if args.lineart_dark_fills and args.colour_policy != 'lineart':
+        parser.error('--lineart-dark-fills requires --colour-policy lineart')
     if not 0 <= args.ay_tuning_cents <= 100:
         parser.error('--ay-tuning-cents must be in 0..100')
     args.frame_fields = fields_for_fps(args.fps)
@@ -322,7 +326,8 @@ def main(argv=None):
         startup_delta=args.startup_delta,
         timing_verified=False, verification=args.verify, video_codec=args.video_codec,
         monochrome=args.monochrome, colour_policy=args.colour_policy,
-        colour_dither=args.colour_dither, colour_contours=args.colour_contours, colour_vision=args.colour_vision)
+        colour_dither=args.colour_dither, colour_contours=args.colour_contours, colour_vision=args.colour_vision,
+        lineart_dark_fills=args.lineart_dark_fills)
     if args.video_codec == 'cb41':
         manifest.update(player_baseline='9885483', player_hot_path_changed=False,
                         player_hot_path_delta_tstates=0, brightness_levels=5)
@@ -334,7 +339,8 @@ def main(argv=None):
             from generic_cell_codebook import prepare_frames, write_preview
             five_states, quality = prepare_frames(images, states, work,
                 colour_policy=args.colour_policy, monochrome=args.monochrome,
-                colour_dither=args.colour_dither, colour_contours=args.colour_contours, colour_vision=args.colour_vision)
+                colour_dither=args.colour_dither, colour_contours=args.colour_contours, colour_vision=args.colour_vision,
+                lineart_dark_fills=args.lineart_dark_fills)
             write_preview(images, five_states, quality, output/'video-preview.png')
         else:
             write_video_preview(images, states, quality, output/'video-preview.png')

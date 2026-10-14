@@ -3,7 +3,7 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
-## Accuracy and compression of source-line drawings — active (2026-10-14)
+## Accuracy and compression of source-line drawings — dark-fill milestone complete (2026-10-14)
 
 The user explicitly chooses a contour drawing with source-close coloured
 fills as the target and asks to improve accuracy without ideally losing
@@ -24,6 +24,28 @@ host gate passes, build and fully qualify a separately named TRD before any
 release claim. No new audio fit, native opcode change, neural model search
 or push is requested. A qualified bounded improvement is progress toward
 the active accuracy goal, not proof of a globally optimal encoder.
+
+The optional`--lineart-dark-fills` now accepts source-close black with the
+same60-RMS/100-component bound as coloured fills. Whole-source-component
+rollback protects every existing coloured pixel and all source lines;
+every changed pixel strictly improves original RGB error. Unguarded source
+colour loss at frame460 is preserved with a regression fixture.57 tests pass.
+On all977 matched frames,342,800 samples improve; RGB MSE6885.659687 ->
+6025.180072. Final stream626,964 ->591,481 bytes; actual disk2541 ->2399
+sectors. Complete independent dirty-RAM Fuse checks all6,753,024 screen bytes
+and4885 AY records, zero nominal misses/late runs/underruns, max deviation23 T.
+Native instruction delta0 T; packet/clock/cell listings are identical.
+The selected LZSA2 core falls62,140,081 ->58,364,356 T, excluding disk/IRQ/ULA;
+2311 actual reads replace2450. Entire original RGB/AY/model WAV remains exact.
+Quiet RGB variation improves; chroma variation rises0.098%, so no universal
+temporal improvement claim. Preserve154 measured files/109,149,355 bytes
+plus manifest, previous disk and all failed attempts. Root disk:
+`ZX-video-sea-foam-lineart-dark_part01.trd`, SHA256
+`ec6fe8d13b986400dcf6b722aa5e9575ff3f3c5c0245ea4aeb2dd31a2f672dd0`.
+[Usage, comparisons and full proof](toolkit/analysis/flat_colour/DARK_FILLS.md).
+The scoped milestone is complete. The broader accuracy goal remains active;
+do not claim globally optimal contours, finer-than-two-pixel geometry or a
+maximum-duration disk. No push is requested.
 
 ## Source-line drawing full disk — complete (2026-10-14)
 
