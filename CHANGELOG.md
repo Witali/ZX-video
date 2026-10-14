@@ -1,5 +1,29 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Implement and reject the first global trajectory trials
+
+- **Baseline/scope:** Implement the authorized song plan from `6ba3d4fc` using
+  the exact4500-field source, original controls and frozen gains/filter.
+- **Change:** `coherent_ym3812.SourceLattice` combines512/2048 windows,
+  five-field confirmation and a seven-state per-voice lattice. Second-order
+  Viterbi costs pitch/level motion and acceleration; inactive states, joint
+  NNLS levels and source-aware weak-component envelopes are optional. Native
+  carrier patches, registers and exporter remain historical0/14 sine+weak FM.
+- **Measured attempts:** Six complete trials: `track01/04`, `gate01/04`,
+  `levels01`, `envelope01`. Objectives9.488461/9.693898/9.487281/9.695950/
+  9.519391/9.515709 all exceed9.444631. Stronger tracking lowers A/B/A returns
+  1050 ->774/786 but exposed-line events increase1155 ->1659/1559. All cosine,
+  level and clipping checks pass; none passes all saved quality/trajectory
+  guards. Sparse inactive penalties have little effect on this input.
+- **Coverage/decision:** Four focused Viterbi/silent-state/bus tests pass.
+  All six actual4500-field streams audit every nine-channel target and replay
+  every4,474,431 native/3,969,000 output sample once; full independent repeat
+  verification is deferred to final qualification. Reject all six; global
+  holding can preserve a wrong tone, so proceed to selective confidence and
+  source-supported harmonic groups. No accepted song or native-player change.
+  [Full attempts](ay-converter/analysis/ym3812_sea_foam/tracking-evidence/phase1/report.json),
+  [runner](ay-converter/analysis/ym3812_sea_foam/tracking_trials.py).
+
 ## 2026-10-14 — Authorize coherent YM3812 song trajectories
 
 - **Request/scope:** The user explicitly requests implementing the preceding
