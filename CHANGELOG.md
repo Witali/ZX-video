@@ -1,5 +1,31 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Optional centered C lookup with original Python preserved
+
+- **Objective/baseline:** Enable a matched generic encoder/player quantizer
+  experiment after the rejected frozen-payload controls. Retain the user's
+  original Python and the complete nine-source default C/standalone outputs.
+- **Change:** Add explicit integer `pcm_quantization_bias=512` to C candidate
+  selection and committed-prefix replay, with upper-bin saturation. Default0
+  preserves the original ABI, version1 workset bytes and statistics; version2
+  adds one signed64-bit bias field. A separate NumPy reference implements512
+  and delegates0 to the untouched original Python. PCM trellis is unchanged.
+- **Verification:** Six tests pass, including actual C lookup over all65536
+  signedPCM16 values, independent search parity with midpoint and zero-origin
+  tables, page/bank holds, guard/clipping, Unicode and invalid version2 inputs.
+  Fresh complete DLL and standalone searches on all nine sources match the
+  archived Python output hashes AND every version1 serialized-workset hash.
+  Original waveform/PCM Python files still equal `13819086`; clock/general
+  references equal `7938cbe6`, checked with normalizedLF Git content.
+- **Measurements/decision:** Latest default full-song DLL/standalone searches
+  take23.4748/25.4115 s on this host. They are search observations, distinct
+  from the earlier72.7946-s complete automatic conversion. Keep the option
+  experimental until whole-corpus and actual player evidence is available.
+  No new waveform-quality, Fuse or physical-hardware claim. Offline encoding
+  adds0 live instructions/T-states; ordinary423/449, page14 and bank243/267
+  baselines remain. Main disk and original Python stay unchanged; goal active.
+  [Reproduction and authenticated evidence](audiobook-beeper/experiments/song-snr/evidence/native-centered-encoder/README.md).
+
 ## 2026-10-14 — Midpoint and centered-lookup whole-corpus controls rejected
 
 - **Objective/baseline:** Seek generic lower idle/quiet-source noise after

@@ -78,6 +78,11 @@ def _load():
         size, size, size, ctypes.c_double, ctypes.c_void_p, ctypes.c_void_p,
         octets, integers]
     library.native_waveform_encode.restype = ctypes.c_int
+    library.native_waveform_encode_centered.argtypes = (library.native_waveform_encode.argtypes[:17]
+        + [ctypes.c_int64] + library.native_waveform_encode.argtypes[17:])
+    library.native_waveform_encode_centered.restype = ctypes.c_int
+    library.native_waveform_quantize.argtypes = [integers,size,ctypes.c_int64,integers]
+    library.native_waveform_quantize.restype = ctypes.c_int
     library._nwf_gemm = ctypes.cast(gemm, ctypes.c_void_p)
     library._nwf_gemv = ctypes.cast(gemv, ctypes.c_void_p)
     library._nwf_binary = str(binary)
@@ -90,7 +95,9 @@ def _load():
 def _prepare_arrays(source, desired, features, ids, nxt, width=32,
                     block_size=128, regularization=.1, history_bins=0,
                     allowed_codes=None, level_bounds=None,
-                    commit_size=64, backend='native'):
+                    commit_size=64, backend='native', pcm_quantization_bias=0):
+    if type(pcm_quantization_bias) is not int or pcm_quantization_bias not in (0,512):
+        raise ValueError('pcm_quantization_bias must be builtin integer0 or512')
     if backend != 'native':
         raise ValueError('Complete C encoder backend must be native')
     if history_bins or level_bounds is not None:
@@ -147,28 +154,34 @@ def _prepare_arrays(source, desired, features, ids, nxt, width=32,
              + (steps>>2)*((codes&1)!=0)) * np.where(codes&8,-1,1)
     successor = np.ascontiguousarray(np.clip(np.arange(89)[:,None]
         + np.asarray(INDEX)[codes&7],0,88), dtype=np.int64)
-    return source,desired,columns,ids,nxt,delta,successor,width,block_size,commit_size,regularization
+    return source,desired,columns,ids,nxt,delta,successor,width,block_size,commit_size,regularization,pcm_quantization_bias
 
 
 def encode_waveform_native(source, desired, features, ids, nxt, width=32,
                            block_size=128, regularization=.1, history_bins=0,
                            allowed_codes=None, level_bounds=None,
-                           commit_size=64, backend='native', statistics=None):
+                           commit_size=64, backend='native', statistics=None,
+                           pcm_quantization_bias=0):
     """One C call for a complete source, matching the unchanged Python API.
 
     The proved path has all 16 nibbles,64 PCM bins/32 feedback states and the
     existing 128-sample settling guard. Width>=32 and horizon>=64 use the same
     algorithm; options outside that contract fail before entering native code.
     """
-    source,desired,columns,ids,nxt,delta,successor,width,block_size,commit_size,regularization = _prepare_arrays(
+    source,desired,columns,ids,nxt,delta,successor,width,block_size,commit_size,regularization,bias = _prepare_arrays(
         source,desired,features,ids,nxt,width,block_size,regularization,history_bins,
-        allowed_codes,level_bounds,commit_size,backend)
+        allowed_codes,level_bounds,commit_size,backend,pcm_quantization_bias)
     library = _load()
     packed = np.empty(len(source)//2, dtype=np.uint8)
     counts = np.zeros(3, dtype=np.int64)
-    status = library.native_waveform_encode(source, len(source), desired, *columns,
-        ids, len(columns[0]), nxt, delta, successor, width, block_size, commit_size,
-        regularization, library._nwf_gemm, library._nwf_gemv, packed, counts)
+    if not bias:
+        status = library.native_waveform_encode(source, len(source), desired, *columns,
+            ids, len(columns[0]), nxt, delta, successor, width, block_size, commit_size,
+            regularization, library._nwf_gemm, library._nwf_gemv, packed, counts)
+    else:
+        status = library.native_waveform_encode_centered(source, len(source), desired, *columns,
+            ids, len(columns[0]), nxt, delta, successor, width, block_size, commit_size,
+            regularization, bias, library._nwf_gemm, library._nwf_gemv, packed, counts)
     if status:
         raise RuntimeError(f'Complete C waveform encoder failed with status {status}')
     if statistics is not None:
@@ -178,27 +191,46 @@ def encode_waveform_native(source, desired, features, ids, nxt, width=32,
             native_source_sha256=library._nwf_source_sha256,
             matrix_backend='Same installed NumPy ILP64 OpenBLAS',
             native_library=library._nwf_binary)
+        if bias:statistics['pcm_quantization_bias']=bias
     return packed.tobytes()
 
 
 def write_workset(path, source, desired, features, ids, nxt, **options):
-    """Write deterministic little-endian version1 input for the C executable.
+    """Write deterministic little-endian input for the C executable.
 
     The executable independently validates the header, finite coefficients,
     feedback closure, silent guard and exact IMA transition table before search.
+    Default bias0 preserves every version1 byte. Opt-in bias512 writes version2
+    with one int64 bias after the original56-byte header.
     """
     arrays = _prepare_arrays(source,desired,features,ids,nxt,**options)
-    source,desired,columns,ids,nxt,delta,successor,width,horizon,commit,reg = arrays
+    source,desired,columns,ids,nxt,delta,successor,width,horizon,commit,reg,bias = arrays
     path = Path(path)
     with path.open('wb') as stream:
-        stream.write(struct.pack('<8sQQQQQd',b'NWFB001\0',len(source),len(features),
+        magic=b'NWFB002\0' if bias else b'NWFB001\0'
+        stream.write(struct.pack('<8sQQQQQd',magic,len(source),len(features),
                                  width,horizon,commit,reg))
+        if bias:stream.write(struct.pack('<q',bias))
         source.tofile(stream)
         for array in (desired,*columns):
             np.asarray(array,dtype='<f8').tofile(stream)
         for array in (ids,nxt,delta,successor):
             np.asarray(array,dtype='<i8').tofile(stream)
     return path
+
+
+def quantize_pcm_levels(predictors,pcm_quantization_bias=0):
+    """Expose the C integer lookup for exhaustive signed-PCM16 verification."""
+    if type(pcm_quantization_bias) is not int or pcm_quantization_bias not in (0,512):
+        raise ValueError('pcm_quantization_bias must be builtin integer0 or512')
+    values=np.asarray(predictors)
+    if (not np.issubdtype(values.dtype,np.integer) or
+            np.any(values < -32768) or np.any(values>32767)):
+        raise ValueError('Predictors must be signed PCM16 integers')
+    values=np.ascontiguousarray(values,dtype=np.int64);levels=np.empty_like(values)
+    status=_load().native_waveform_quantize(values,values.size,pcm_quantization_bias,levels)
+    if status:raise RuntimeError('Native PCM lookup rejected its validated input')
+    return levels
 
 
 def build_executable():

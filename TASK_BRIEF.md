@@ -70,6 +70,14 @@ The next mechanism is a matched source-independent centered lookup AND C
 search, as an explicit optional model field; preserve default0 disk/metadata,
 workset/API and Python reference compatibility. Verify exact new reference
 bytes, all nine full-source artifact controls and selected full actual TRDs.
+The C option is now implemented and tested: six tests, exhaustive65536-value
+mapping, separate independent512 NumPy search and fresh complete default
+DLL/standalone/v1 workset parity across all nine sources. Original Python
+files remain equal to the starting Git content. Evidence is under
+`evidence/native-centered-encoder`. The first matched corpus candidate uses
+`duration_zero`, full extent1, origin0, compact loader and fixed bias512;
+its zero bucket then has the correct half-duty semantic target. Keep this
+candidate distinct from the previous frozen-midpoint lookup control.
 Do not silently promote the midpoint/centered frozen-payload controls. Keep
 the complete original scope and artifact/clock/20-dB gates; language and speed
 milestones alone do not complete the active goal.

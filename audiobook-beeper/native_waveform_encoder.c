@@ -27,15 +27,25 @@ static double nwf_sum16(const double *a) {
     return ((r0+r1)+(r2+r3))+((r4+r5)+(r6+r7));
 }
 
-API int native_waveform_encode(const uint8_t *source,size_t samples,
+/* Integer-only midpoint recentering. Saturation of the final PCM bucket is
+   essential: the positive PCM16 tail otherwise reaches an invalid bin64.
+   Bias0 retains the archived floor lookup; bias512 maps both -1 and0 to32. */
+static size_t nwf_level(int64_t predictor,int64_t pcm_quantization_bias) {
+    size_t level=(size_t)(predictor+32768+pcm_quantization_bias)/1024;
+    return level>63 ? 63 : level;
+}
+
+API int native_waveform_encode_centered(const uint8_t *source,size_t samples,
     const double *desired,const double *aa,const double *ll,
     const double *response,const double *endpoint,const double *weights,
     const int64_t *ids,size_t shapes,const int64_t *nxt,
     const int64_t *delta,const int64_t *successor,size_t width,size_t horizon,
-    size_t commit,double regularization,void *gemm_pointer,void *gemv_pointer,
+    size_t commit,double regularization,int64_t pcm_quantization_bias,
+    void *gemm_pointer,void *gemv_pointer,
     uint8_t *packed,int64_t *statistics) {
     if (samples<128 || samples%2 || width<32 || width>4096 || horizon<64 ||
-        horizon>8192 || !commit || commit>horizon || !isfinite(regularization) || regularization<0)
+        horizon>8192 || !commit || commit>horizon || !isfinite(regularization) || regularization<0 ||
+        (pcm_quantization_bias!=0 && pcm_quantization_bias!=512))
         return 1;
     if (!gemm_pointer || !gemv_pointer) return 2;
     nwf_gemm gemm=(nwf_gemm)gemm_pointer;nwf_gemv gemv=(nwf_gemv)gemv_pointer;
@@ -78,7 +88,7 @@ API int native_waveform_encode(const uint8_t *source,size_t samples,
                 int64_t ni=successor[indices[p]*16+code];
                 predicted[k]=predicted_value;next_index[k]=ni;
                 if (predicted_value < -32768 || predicted_value > 32767) continue;
-                size_t level=(size_t)(predicted_value+32768)/1024;
+                size_t level=nwf_level(predicted_value,pcm_quantization_bias);
                 size_t word=level*32+(size_t)qs[p];word_ids[k]=(int64_t)word;
                 double terms[16];
                 for (size_t j=0;j<16;++j) {
@@ -119,7 +129,7 @@ API int native_waveform_encode(const uint8_t *source,size_t samples,
             pred=preds[0];index=indices[0];q=qs[0];memcpy(filter,states,6*sizeof(double));
         } else for (size_t sample=start;sample<accepted;++sample) {
             size_t code=chosen[sample];pred+=delta[index*16+code];index=successor[index*16+code];
-            size_t level=(size_t)(pred+32768)/1024,word=level*32+(size_t)q,fid=(size_t)ids[sample];
+            size_t level=nwf_level(pred,pcm_quantization_bias),word=level*32+(size_t)q,fid=(size_t)ids[sample];
             double advanced[6];gemv(101,111,6,6,1.,aa+fid*36,6,filter,1,0.,advanced,1);
             for (size_t d=0;d<6;++d) filter[d]=advanced[d]+endpoint[fid*12288+word*6+d];
             q=nxt[level*32+q];
@@ -166,6 +176,32 @@ cleanup:
     free(heap);free(parents);free(path_codes);free(path);free(chosen);return result;
 }
 
+/* Preserve the existing exported ABI as well as the default waveform. Older
+   Python front ends orversion1 standalone worksets use exactly bias0. */
+API int native_waveform_encode(const uint8_t *source,size_t samples,
+    const double *desired,const double *aa,const double *ll,
+    const double *response,const double *endpoint,const double *weights,
+    const int64_t *ids,size_t shapes,const int64_t *nxt,
+    const int64_t *delta,const int64_t *successor,size_t width,size_t horizon,
+    size_t commit,double regularization,void *gemm_pointer,void *gemv_pointer,
+    uint8_t *packed,int64_t *statistics) {
+    return native_waveform_encode_centered(source,samples,desired,aa,ll,response,
+        endpoint,weights,ids,shapes,nxt,delta,successor,width,horizon,commit,
+        regularization,0,gemm_pointer,gemv_pointer,packed,statistics);
+}
+
+/* Exhaustive test entry for the exact quantizer, separate from filter/search.
+   All predictors must be signed PCM16; the public encoder verifies bounds. */
+API int native_waveform_quantize(const int64_t *predictors,size_t count,
+    int64_t pcm_quantization_bias,int64_t *levels) {
+    if (pcm_quantization_bias!=0 && pcm_quantization_bias!=512) return 1;
+    for (size_t i=0;i<count;++i) {
+        if (predictors[i] < -32768 || predictors[i]>32767) return 1;
+        levels[i]=(int64_t)nwf_level(predictors[i],pcm_quantization_bias);
+    }
+    return 0;
+}
+
 #ifdef NWF_STANDALONE
 /* Standalone conversion consumes a versioned workset prepared by the host
    front end. Its source clock, analytic coefficients and desired waveform
@@ -191,13 +227,20 @@ int wmain(int argc,wchar_t **argv) {
     int status=65;FILE *file=_wfopen(argv[1],L"rb");
     if (!file) {perror("workset");return 66;}
     char magic[8];uint64_t n=0,f=0,width=0,horizon=0,commit=0;double reg=0.;
-    if (fread(magic,1,8,file)!=8 || memcmp(magic,"NWFB001",8) ||
+    int64_t pcm_quantization_bias=0;
+    if (fread(magic,1,8,file)!=8 || (memcmp(magic,"NWFB001",8) && memcmp(magic,"NWFB002",8)) ||
         fread(&n,8,1,file)!=1 || fread(&f,8,1,file)!=1 ||
         fread(&width,8,1,file)!=1 || fread(&horizon,8,1,file)!=1 ||
         fread(&commit,8,1,file)!=1 || fread(&reg,8,1,file)!=1 ||
         n<128 || n%2 || n>16000000 || !f || f>4096 || width<32 || width>4096 ||
         horizon<64 || horizon>8192 || !commit || commit>horizon || !isfinite(reg) || reg<0) {
         fprintf(stderr,"Invalid or unsupported workset header\n");fclose(file);return 65;
+    }
+    if (!memcmp(magic,"NWFB002",8) && fread(&pcm_quantization_bias,8,1,file)!=1) {
+        fprintf(stderr,"Truncated version2 quantization bias\n");fclose(file);return 65;
+    }
+    if (pcm_quantization_bias!=0 && pcm_quantization_bias!=512) {
+        fprintf(stderr,"Unsupported quantization bias; need0 or512\n");fclose(file);return 65;
     }
     /* Bound all array sizes before reading untrusted header-derived lengths. */
     uint64_t memory=n+(n-128)*136+f*(36+96+32768+12288+16)*8+4096*8+2848*8;
@@ -252,9 +295,9 @@ int wmain(int argc,wchar_t **argv) {
     FARPROC gemm=GetProcAddress(blas,"scipy_cblas_dgemm64_");
     FARPROC gemv=GetProcAddress(blas,"scipy_cblas_dgemv64_");
     int64_t statistics[3]={0};
-    int error=native_waveform_encode(source,(size_t)n,desired,aa,ll,response,endpoint,weights,
+    int error=native_waveform_encode_centered(source,(size_t)n,desired,aa,ll,response,endpoint,weights,
         ids,(size_t)f,nxt,delta,successor,(size_t)width,(size_t)horizon,(size_t)commit,reg,
-        (void*)gemm,(void*)gemv,packed,statistics);
+        pcm_quantization_bias,(void*)gemm,(void*)gemv,packed,statistics);
     FreeLibrary(blas);
     if (error) {fprintf(stderr,"Native encoding failed: %d\n",error);goto finish;}
     FILE *output=_wfopen(argv[2],L"wb");
@@ -262,8 +305,10 @@ int wmain(int argc,wchar_t **argv) {
     size_t written=fwrite(packed,1,(size_t)n/2,output);
     int closed=fclose(output);
     if (written!=(size_t)n/2 || closed) {fprintf(stderr,"Output write failed\n");goto finish;}
-    printf("{\"samples\":%llu,\"search_iterations\":%lld,\"final_predictor\":%lld,\"final_index\":%lld}\n",
+    printf("{\"samples\":%llu,\"search_iterations\":%lld,\"final_predictor\":%lld,\"final_index\":%lld",
         (unsigned long long)n,(long long)statistics[0],(long long)statistics[1],(long long)statistics[2]);
+    if (pcm_quantization_bias) printf(",\"pcm_quantization_bias\":%lld",(long long)pcm_quantization_bias);
+    printf("}\n");
     status=0;
 finish:
     fclose(file);free(source);free(packed);free(desired);free(aa);free(ll);free(response);
