@@ -1,0 +1,120 @@
+{
+  "complete": true,
+  "date": "2026-10-14",
+  "seconds": 90,
+  "fields": 4500,
+  "original_control_refit_all40500_targets_byte_exact": true,
+  "original_fitting_gain_exact": true,
+  "old_and_pure_frequency_patch_key_schedules_identical": true,
+  "changed_level_targets": 72,
+  "control_stats": {
+    "active_voice_mean": 9.0,
+    "audible_threshold_tl": 40,
+    "audible_pitch_pairs": 39542,
+    "jumps_gt3_semitones": 14185,
+    "jumps_gt12_semitones": 2658,
+    "level_steps_ge6db": 10567,
+    "three_field_pitch_bounces": 1050,
+    "audible_segments": 22034,
+    "segments_le80ms": 20808,
+    "short_segments_above800hz": 12412
+  },
+  "spectral_flatness": {
+    "source": {
+      "300-1500": {
+        "median": 0.13839023966492836,
+        "mean": 0.15359047936255862
+      },
+      "1500-4000": {
+        "median": 0.11782079996632724,
+        "mean": 0.15198895447689406
+      },
+      "4000-8000": {
+        "median": 0.26274172698001264,
+        "mean": 0.2638873210543339
+      }
+    },
+    "old": {
+      "300-1500": {
+        "median": 0.12141324188963351,
+        "mean": 0.12997571303368377
+      },
+      "1500-4000": {
+        "median": 0.026380210575578635,
+        "mean": 0.03660144323470757
+      },
+      "4000-8000": {
+        "median": 0.10297777698823099,
+        "mean": 0.15463199828487348
+      }
+    },
+    "new": {
+      "300-1500": {
+        "median": 0.11990561117405862,
+        "mean": 0.1283687843549644
+      },
+      "1500-4000": {
+        "median": 0.01942047997664955,
+        "mean": 0.030538005435134387
+      },
+      "4000-8000": {
+        "median": 0.3948853529690706,
+        "mean": 0.30797893411733684
+      }
+    }
+  },
+  "normalization": {
+    "whole_source_rms_to_selected_template_rms_median": 1.0474480912866038,
+    "p90": 1.1774525448918765,
+    "maximum": 1.56655105643945,
+    "fields_gain_above1_5": 3,
+    "fields_gain_above2": 0
+  },
+  "exposed_synthetic_lines": {
+    "heuristic": "TL<=40;300..8000Hz;source local prominence<8dB;old synthetic prominence>14dB",
+    "field_voice_count": 1155,
+    "fields_with_any": 1012,
+    "old_mean_prominence_db": 16.75773140655681,
+    "new_mean_prominence_db": 16.77291588194224,
+    "source_mean_prominence_db": 4.944437777311389,
+    "strongest3_second_spans": [
+      [
+        12.5,
+        15.5
+      ],
+      [
+        22.82,
+        25.82
+      ],
+      [
+        63.98,
+        66.97999999999999
+      ],
+      [
+        78.06,
+        81.06
+      ]
+    ]
+  },
+  "evidence_interpretation": "Heuristic candidate events; no claim of independently labeled audible beeps.",
+  "source_sha256": "378c0bdfa5119b38d954f1871c88b5cb4b15c93054fe09d3e828e42e5c34345c",
+  "old_wav_sha256": "942ce219af3f648f5fa12e3d383bdbe2cd73ac79ebb12e852be3528b607b3ade",
+  "new_wav_sha256": "5347d3b52acdac7467ed31790613a1ccf88a9b66636be8d7c2ecadaabde9014c",
+  "baseline_objective_db": 9.444630541888397,
+  "pure_objective_db": 9.897612667593283,
+  "producer_sources_sha256_lf": {
+    "analysis/ym3812_sea_foam/inspect_beeps.py": "31894e1d0faee7b7a59a63f003e99a51232d69b29846af2b6522edf6a1670205",
+    "experimental_ym3812.py": "672c60b25966111d36c03c1346cfe4d530af427feecbf8cc9f94aee0c22d1715"
+  },
+  "artifacts_sha256": {
+    "diagnostic-arrays.npz": "acce2649b23a21dee1e8e7d6ccec50de9be6f16e54ea75efd3914eacaa3762f9",
+    "span-1-source-old-new.wav": "334ac396591dd5c406d81f42c8aa733daa30730fc9f762d44f7a372ff74b3c55",
+    "span-1.png": "0fe0dc5202f471b18c90810b20d158b63cef4fd23c8d89a1a9a03ccf22daad8a",
+    "span-2-source-old-new.wav": "25c63c958fcdcae881a9578532b7606d6d81e93a28760ea04a2b29d727b47d5e",
+    "span-2.png": "a62b22ef5e77b5b2319c70e87eb3865313a411cc1a7d5a368909de50a7b05443",
+    "span-3-source-old-new.wav": "4f5e777d9c6270f6e91056d94f63d08906b008ecd52fdcef28518ba424a0d7c4",
+    "span-3.png": "6de2b10cca1a85f30aa837040ff22bca785b00981c5d02718a8889c769cabc76",
+    "span-4-source-old-new.wav": "b3088863b2c07c657422838261187fe9ad644abdde4f4aa1e484da096fc1047f",
+    "span-4.png": "4e7e32f89f197ea04cf46c7f74de41ef44380a796c0e42a371969a0785dd3dc5"
+  }
+}

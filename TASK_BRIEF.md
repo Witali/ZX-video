@@ -3,6 +3,24 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## YM3812 intermittent-tone analysis — complete (2026-10-14)
+
+The user finds the original song rendition better and reports periodic
+electronic beep/blam sounds; study source/output and propose improvements.
+The [complete audit/proposal](ay-converter/analysis/ym3812_sea_foam/BEEP_ANALYSIS.md)
+checks all90 seconds, source/old/pure PCM, exact40,500 refitted targets and
+four matched excerpts.35.87% of audible channel transitions jump>=3 semitones
+per20 ms;1,050 A/B/A returns occur within40 ms. Source-diffuse regions become
+isolated synthesized lines, essentially unchanged by the pure-sine update.
+Large template-RMS boost is not supported. Direct auditory perception is
+unavailable in this session; no perceptually labelled beep count is claimed.
+
+Recommend the earlier mildly modulated `4b73f9ea` baseline and coherent source
+partial tracking, source-tonality/inactive-voice gates and source-derived
+transient behavior before testing higher target rates. Preserve the purity
+attempt and all failures. This analysis/proposal request is complete; do not
+start the proposed new fit, rate change or release experiment automatically.
+
 ## YM3812 generated-overtones follow-up — complete (2026-10-14)
 
 The user hears added high harmonics, suggests mostly sines and asks the update

@@ -1,5 +1,34 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Audit intermittent electronic tones in the YM3812 song
+
+- **Request/baseline:** The user prefers the original audition and reports
+  periodic beep/blam sounds, requesting source/output study and improvements.
+  Compare `4b73f9ea` and the pure-sine `38bea3dd` on the exact90-second song;
+  this is analysis/proposal scope, not another production fit. Direct audio
+  perception is unavailable; use PCM/STFT/control evidence without claiming
+  subjective listening or ground-truth perceptual event labels.
+- **Method/coverage:** Instrument the unchanged original fitter to capture its
+  sparse-template/RMS prediction; require all40,500 controls and fitting gain
+  to match exactly. Check prior media hashes, complete source/old/new texture,
+  control trajectories and four exact source/old/new3-second comparisons with
+  common-scale plots. Preserve the input/source processing and fixed gain.
+- **Findings:** All nine voices stay active.14,185/39,542 audible transitions
+  (35.873%) jump>=3 semitones in20 ms;1,050 two-jump A/B/A returns occur in40 ms.
+  A local prominence heuristic finds1,155 field/voice pairs with diffuse source
+  but exposed synthesized lines; old/new prominence16.758/16.773 dB versus
+  source4.944 dB. Source/old/new1.5..4-kHz median flatness0.117821/0.026380/
+  0.019420. These are candidate mechanisms/metrics, not identified audible
+  beep counts. RMS boost is modest: median1.047,p90=1.177,max1.567, no field>2.
+  Whole-song error already worsened9.444631 ->9.897613 with pure setup.
+- **Decision/proposal:** Prefer the original rendition as the next baseline.
+  First track source partials coherently over time, gate weak diffuse peaks
+  and permit inactive voices; then test source-supported FM/transient shapes.
+  Preserve source attacks, all spectral/dynamic/timing guards and actual full
+  chip replay. Test higher update rates after trajectory stability. No new
+  output or native/player change. [Measured excerpts, reproducer, limitations
+  and concrete proposal](ay-converter/analysis/ym3812_sea_foam/BEEP_ANALYSIS.md).
+
 ## 2026-10-14 — Reduce oscillator-generated overtones in the YM3812 song
 
 - **Request/baseline:** The user reports extra high harmonics, suggests mostly
