@@ -137,3 +137,15 @@ python toolkit/test_streaming_lzsa2.py --noncanonical --output .tmp/item16-call-
 python toolkit/test_streaming_lzsa2.py --noncanonical --word-state-init --output .tmp/item16-call-after.json
 python libraries/tests/measure_second_pass.py --item 16 --stream-directory .tmp --output libraries/evidence/trick_16.json
 ```
+
+## Item17 — carry-based bounded increment/decrement
+
+**Decision: no saturating counter contract.** The corrected14-T bounded
+decrement agrees in A for233 inputs23..255, with all final flags different.
+Using it for ordinary exact decrements fails all22 directed counts2..23.
+Length/offset fields are exact, not clamped. The four-bank ring must wrap:
+its last index3 becomes0, whereas saturation holds3 and selects the wrong
+bank. The source's original off-by-one remains in the earlier screen.
+
+[259 checks](evidence/trick_17.json),31 exact defaults; actual delta0 T/code/
+state/input. `audit_second_pass.py --item 17 --output libraries/evidence/trick_17.json`.

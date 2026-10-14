@@ -20,7 +20,8 @@ rotations and rejects unproved word narrowing (768 checks). Item15 retains
 running pointers and rejects unconditional guard caching (2049 checks).
 Item16 adds optional streaming word_state_init, −4 T/block/−1 byte;95 full
 blocks and both42-case/six-placement guarded modes pass, unchanged waits/
-sectors, dirty prior flags,252 native IRQs and14 library tests. Item17 is next.
+sectors, dirty prior flags,252 native IRQs and14 library tests. Item17 finds
+no saturating counter contract (259 checks); item18 is next.
 
 ## Completed: other-site Z80 speed/size survey (2026-10-14)
 

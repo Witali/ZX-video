@@ -112,9 +112,35 @@ def item15():
                   'A wait-only cache would need separate pointer/overflow/continuation ownership and preserve reentry through ReadToken after target/frontier updates; it is not a free common-subexpression replacement.'])
 
 
+def item17():
+    checks=differences=0
+    for value in range(23,256):
+        old,_=run('3d fe 17 30 01 3c',dict(af=value<<8))
+        bounded,t=run('d6 18 ce 17',dict(af=value<<8))
+        assert old.a==bounded.a==max(23,value-1) and t==14
+        differences+=old.f!=bounded.f;checks+=1
+    wrong_lengths=0
+    for value in range(2,24):
+        bounded,_=run('d6 18 ce 17',dict(af=value<<8))
+        wrong_lengths+=bounded.a!=value-1;checks+=1
+    ring_counterexample=None
+    for value in range(4):
+        wrap,_=run('3c e6 03',dict(af=value<<8))
+        saturated,_=run('fe 03 28 01 3c',dict(af=value<<8))
+        if wrap.a!=saturated.a:ring_counterexample=dict(input=value,required=wrap.a,saturated=saturated.a)
+        checks+=1
+    assert wrong_lengths==22 and ring_counterexample==dict(input=3,required=0,saturated=3)
+    return dict(decision='no saturating counter contract in current codecs',checks=checks,
+        corrected_domain=[23,255],corrected_tstates=14,final_flag_differences=differences,
+        legal_short_count_failures=wrong_lengths,ring_counterexample=ring_counterexample,
+        findings=['Length/offset arithmetic represents exact standard fields, not a saturating minimum/maximum.',
+                  'ZX0 four-bank ring index wraps modulo4; holding the upper bound selects the wrong bank.',
+                  'The source lower-bound off-by-one and corrected dead-flag primitive remain recorded; no current caller has its preconditions.'])
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('11','12','13','14','15'),required=True)
+    parser.add_argument('--item',choices=('11','12','13','14','15','17'),required=True)
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     defaults=profiles();assert defaults==json.loads((ROOT/'tests/decoder_baseline.json').read_text())['profiles']
     report=dict(date='2026-10-14',item=args.item,complete=True,release=False,scope=__doc__,

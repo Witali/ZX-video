@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item17: exact codec counters cannot saturate
+
+- **Baseline/objective:** From `d1030dd5`, apply bounded carry arithmetic
+  only where the actual codec caller needs saturation and permits dead flags.
+- **Coverage/results:**233 corrected bounded values pass at14 T, all final
+  flags differ;22 legal short exact decrements fail that substitution. Four
+  ring values expose3 ->0 required versus saturation3.259 native checks,
+  31 default profiles exact; original source off-by-one remains archived.
+- **Decision:** No eligible saturating contract; no decoder change, delta0
+  T/code/state/input. [Result](libraries/SECOND_PASS.md),
+  [report](libraries/evidence/trick_17.json). Continue item18.
+
 ## 2026-10-14 — Item16: clear streaming status in one word instruction
 
 - **Baseline/objective:** From `2740a270`, verify adjacent input_needed/
