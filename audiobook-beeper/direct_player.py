@@ -21,8 +21,48 @@ MEASURED_MODEL=dict(holds=[288,231,225,248,192,218,204,170,215,226,177,240,248,2
                     calibration='experiments/ima-direct/output-times.u32.gz')
 
 
+def canonical_pcm_model(model=None):
+    """Validate the optional 512-unit PCM16 bias; preserve historical defaults.
+
+    The live player indexes its 256-byte table with IXH. A bias of 512 adds
+    exactly two unsigned high-byte units before the divide by four, so it
+    requires no live instructions. Zero is omitted from exported metadata.
+    Other grids/families have no proved hardware interpretation for this flag.
+    """
+    result=dict(model or dict(holds=HOLDS,beta=.5,extent=1.))
+    bias=result.pop('pcm_quantization_bias',0)
+    if type(bias) is not int or bias not in (0,512):
+        raise ValueError('pcm_quantization_bias must be integer0 or512 (PCM16 units)')
+    if bias:
+        if result.get('pcm_bins',64)!=64 or result.get('family') not in (None,'integral'):
+            raise ValueError('PCM quantization bias requires the64-bin integral PDM model')
+        result['pcm_quantization_bias']=bias
+    return result
+
+
+def pcm_high_lookup(pages,model=None):
+    """Map every IXH to a packet page, with an explicit upper-bin clamp.
+
+    The lower eight PCM bits cannot change floor((PCM16+32768+512)/1024).
+    Thus min(63,(IXH+2)//4) is exact over all65536 signed PCM values. Compute
+    with host integers: an 8-bit addition would wrap IXH254/255 incorrectly.
+    """
+    model=canonical_pcm_model(model)
+    high_bias=model.get('pcm_quantization_bias',0)//256
+    return bytes(pages[min(63,(high+high_bias)//4)]>>8 for high in range(256))
+
+
+def pcm_quantization_metadata(model):
+    """Describe the opt-in data-only lookup change, never a quality claim."""
+    return dict(pcm16_bias=model['pcm_quantization_bias'],pcm16_bucket_step=1024,
+                hardware_index='IXH',lookup_bytes=256,packet_bin='min(63,(IXH+2)//4)',
+                saturated_upper_bin=63,live_instruction_changes=False,
+                lookup_native_tstate_delta=0,
+                timing_scope='Native instruction counts only;128/Scorpion ULA waits depend on selected addresses and require separate actual timing verification')
+
+
 def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
-    model=model or dict(holds=HOLDS,beta=.5,extent=1.)
+    model=canonical_pcm_model(model)
     extended=ram_enabled(model)
     # Legacy builders retain their14336-byte reserve and source capacity.
     # The continuous stream owns all of bank2 and may explicitly move its
@@ -76,6 +116,7 @@ def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
 
 def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*,chain=None,storage=None,cover=None):
     if (chain is None)!=(storage is None):raise ValueError('chain and storage must be supplied together')
+    model=canonical_pcm_model(model)
     work=Path(work).resolve();work.mkdir(parents=True,exist_ok=True)
     words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage=layout(packed,model,hot_indices)
     extended=ram_enabled(model or {})
@@ -102,7 +143,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
             if code&8:delta=-delta
             address=rows[index]+code*4
             memory[address:address+4]=struct.pack('<HH',delta&65535,rows[max(0,min(88,index+INDEX[code&7]))])
-    memory[pointers:pointers+256]=bytes(pages[i>>2]>>8 for i in range(256))
+    memory[pointers:pointers+256]=pcm_high_lookup(pages,model)
     basic=b''.join([basic_line(10,b'\xfd \xb0 "32767"'),basic_line(20,b'\xf9 \xc0 \xb0 "15619":\xea:\xef "PLAYER" \xaf'),basic_line(30,b'\xf9 \xc0 \xb0 "32768"')])
     boot=TrdFile('boot','B',basic,autostart_line=10)
     track,sector=calculate_file_start([boot,TrdFile('PLAYER','C',bytes(24832 if extended else 23296),start=0x8000)])
@@ -179,6 +220,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
               assembly=dict(instruction_bytes_emitted_by_python=False,assembler='pyz80 1.3.0'),
               memory=dict(total_ram_bytes=131072,adpcm_bytes=len(packed),shadow_screen_bytes=6912,bank5_tables_and_workspace_bytes=16384,bank2_resident_bytes=16384 if extended else 14336,
                           unused_audio_capacity_bytes=(IMA4_BYTES if extended else MAX_PACKED_BYTES)-len(packed),pcm_buffer_bytes=0,pdm_buffer_bytes=0))
+    if model.get('pcm_quantization_bias'):meta['pcm_quantization']=pcm_quantization_metadata(model)
     return disk,meta
 
 

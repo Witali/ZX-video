@@ -1,5 +1,26 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Optional centered player table with default compatibility
+
+- **Objective/baseline:** Match the new explicit C quantizer in the hardware
+  PCM-high selector while preserving the absent/zero default. Compare with
+  actual7938cbe6 builder/layout/assembly and the authenticated old full disk.
+- **Change:** Integer bias512 selects `min(63,(IXH+2)//4)`, saturating the
+  positive tail. Validate model/flag before output and omit default0 from
+  metadata. Independent reference derives bins from full signedPCM16; cold
+  loader checks every256-byte selector entry even for unvisited bins.
+- **Verification:** Four tests pass (13.97 s), including all65536 inputs,
+  top clamp, invalid flags/families and exact old TRD/metadata for absent/0.
+  Eight complete4096-sample native before/after runs on all four profiles
+  check every pulse/state, guard, loading and hold. A corrupted LUT is detected.
+  Only126 lookup data bytes change; all instructions and interval extras match.
+- **Timing/decision:** Ordinary423/449 T, page extra14 T, bank extra243/267 T;
+  absolute counts unchanged and delta0 T. Native CPU proof excludes ULA waits,
+  ROM and disk latency.128/Scorpion address-dependent contention needs its own
+  actual source/profile trace. Keep opt-in experimental; no full new Fuse,
+  source-quality, artifact-free or hardware claim. Main remains unchanged.
+  [Reproduction and evidence](audiobook-beeper/experiments/song-snr/evidence/pcm-quantization-bias/README.md).
+
 ## 2026-10-14 — Optional centered C lookup with original Python preserved
 
 - **Objective/baseline:** Enable a matched generic encoder/player quantizer

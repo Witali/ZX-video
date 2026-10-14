@@ -78,6 +78,11 @@ files remain equal to the starting Git content. Evidence is under
 `duration_zero`, full extent1, origin0, compact loader and fixed bias512;
 its zero bucket then has the correct half-duty semantic target. Keep this
 candidate distinct from the previous frozen-midpoint lookup control.
+The matching player flag also passes four tests: every65536 PCM value, eight
+complete short native runs, absent/0 old disk AND7938 metadata exact, only126
+LUT bytes changed. CPU counts423/449 and all extras stay identical(delta0).
+`evidence/pcm-quantization-bias` has actual prior-producer snapshots; these
+native proofs do not cover128/Scorpion ULA waits or a new full Fuse quality run.
 Do not silently promote the midpoint/centered frozen-payload controls. Keep
 the complete original scope and artifact/clock/20-dB gates; language and speed
 milestones alone do not complete the active goal.

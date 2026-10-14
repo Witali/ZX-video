@@ -13,7 +13,7 @@ import numpy as np
 
 from audio_cover import prepare
 from convert_audio import pcm_wav
-from direct_player import layout,HOLDS
+from direct_player import layout,HOLDS,canonical_pcm_model,pcm_high_lookup,pcm_quantization_metadata
 from ima_beam import encode
 from ima_codec import decode,STEPS,INDEX,require_unclipped
 from ima3_series import disk_address
@@ -37,8 +37,8 @@ def sections(byte_count,extra_pages):
 
 
 def build(packed,work,cover,model=None):
+    model=dict(canonical_pcm_model(model),extended_ram=True)
     work=Path(work);work.mkdir(parents=True,exist_ok=True)
-    model=dict(model or dict(holds=HOLDS,beta=.5,extent=1.),extended_ram=True)
     pcm,indices=decode(packed);assert len(packed)%256==0 and (pcm[-1],indices[-1])==(0,0)
     counts=np.bincount(np.r_[0,indices[:-1]],minlength=89)
     hot=sorted(range(89),key=lambda i:(-int(counts[i]),i))[:25]
@@ -75,7 +75,7 @@ def build(packed,work,cover,model=None):
             if code&8:delta=-delta
             at=rows[index]+code*4
             memory[at:at+4]=struct.pack('<HH',delta&65535,rows[max(0,min(88,index+INDEX[code&7]))])
-    memory[pointers:pointers+256]=bytes(pages[i>>2]>>8 for i in range(256))
+    memory[pointers:pointers+256]=pcm_high_lookup(pages,model)
     all_sections,remaining=sections(len(packed),56);assert remaining==0
     basic=b''.join([basic_line(10,b'\xfd \xb0 "32767"'),basic_line(20,b'\xf9 \xc0 \xb0 "15619":\xea:\xef "PLAYER" \xaf'),basic_line(30,b'\xf9 \xc0 \xb0 "32768"')])
     files=[TrdFile('boot','B',basic,autostart_line=10),TrdFile('PLAYER','C',bytes(16384),start=0x8000),
@@ -91,7 +91,10 @@ def build(packed,work,cover,model=None):
                    record_slots=len(all_sections)+1,worker_origin=worker_origin,
                    compact_stream_loader=int(compact_loader))
     for i in range(256):constants.update({f'first_address_{i}':first.get(i,-1),f'second_address_{i}':second.get(i,-1)})
-    (work/'config.inc').write_text(''.join(f'{k}: EQU {v}\n' for k,v in constants.items()),encoding='utf-8',newline='\n')
+    config=''.join(f'{k}: EQU {v}\n' for k,v in constants.items())
+    if model.get('pcm_quantization_bias'):
+        config+='; PCM lookup uses min(63,(IXH+2)//4): centered1024-unit buckets; no live instruction change.\n'
+    (work/'config.inc').write_text(config,encoding='utf-8',newline='\n')
     for name,data in [('pcm-high',memory[pointers:pointers+256]),('fixed-pages',memory[pointers+256:pointers+1280]),
                       ('decoder-extra',memory[pointers+1280:pointers+1280+1088])]:
         (work/(name+'.bin')).write_bytes(data)
@@ -129,6 +132,7 @@ def build(packed,work,cover,model=None):
                           bank5_tables_and_workspace=16384,shadow_screen=6912,
                           base_audio_bytes=91392,extra_audio_bytes_per_page=16384,pcm_buffer_bytes=0,pdm_buffer_bytes=0,**compact_memory),
               saturation_guard=require_unclipped(packed))
+    if model.get('pcm_quantization_bias'):meta['pcm_quantization']=pcm_quantization_metadata(model)
     save(work/'player.json',meta)
     return disk,meta
 

@@ -138,6 +138,9 @@ def fuse_check(disk_path,meta,packed,profile,out,fuse,*,captured=False):
                 complete_playback_seconds=int(times[-1])/cpu,
                 physical_hardware_tested=False,captured_complete_trace_rechecked=captured,
                 trd_sha256=hashlib.sha256(Path(disk_path).read_bytes()).hexdigest())
+    if meta['model'].get('pcm_quantization_bias'):
+        report.update(pcm_quantization_bias=512,lookup_native_tstate_delta=0,
+                      ula_timing_claim='Actual timing belongs to this complete source/profile; no source-independent128/Scorpion contention claim')
     save(out/'report.json',report)
     return report
 
@@ -171,6 +174,17 @@ def cold_load(disk,meta,profile):
         size=(256-high)*256
         assert m.banks[page][high*256-0xc000:]==disk[offset:offset+size],('loaded bytes',profile,page)
         sections.append(dict(bank=page,address=high*256,bytes=size));offset+=size;pointer+=3
+    # Independently inspect all256 hardware selector bytes after cold loading.
+    # This covers every signed PCM16 value, even when a short source does not
+    # visit all64 bins. No selector arithmetic executes on the Z80 hot path.
+    bias=meta['model'].get('pcm_quantization_bias',0)
+    if type(bias) is not int or bias not in (0,512):
+        raise ValueError('invalid PCM quantization bias in player metadata')
+    if bias and (meta['model'].get('pcm_bins',64)!=64 or meta['model'].get('family') not in (None,'integral')):
+        raise ValueError('PCM quantization bias requires the64-bin integral PDM model')
+    lookup=labels['pcm_high']
+    expected=bytes(meta['packet_pages'][min(63,(high*256+bias)//1024)]>>8 for high in range(256))
+    assert bytes(m.read(lookup+high) for high in range(256))==expected,'hardware PCM quantizer lookup'
     return m,dict(complete=True,profile=profile,cover_before_audio=True,progress_complete=True,
                   loaded_sections=sections,disk_calls=len(reads),remaining_sectors=m.word(labels['stream_remaining']))
 
@@ -272,6 +286,10 @@ def native_check(disk,meta,packed,profile,*,out=None):
                 every_bit_predictor_index_exact=True,every_continuous_native_hold_exact=True,memory_guards_passed=True,
                 explicit_reload_intervals=reload_positions,bank_extra_tstates=bank_extra,bank_delta_tstates=bank_extra-140,
                 ordinary_tstates=423+PROFILES[profile]['ima4_extra'],pages=pages,interval_extras=events)
+    if meta['model'].get('pcm_quantization_bias'):
+        report.update(pcm_quantization_bias=512,all256_hardware_lookup_entries_verified=True,
+                      lookup_native_tstate_delta=0,
+                      ula_timing_claim='Native CPU proof excludes data-dependent128/Scorpion ULA waits')
     if out is not None:save(out,report)
     return report
 
