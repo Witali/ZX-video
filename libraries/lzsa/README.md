@@ -97,6 +97,11 @@ additional per-token test once complete. With `direct_header=True`, the
 available-prefix path remains 46 T versus 96 T for the prior CALL/RET guard.
 Direct mode requires `streaming=True`; AF is dead at entry, AF' stays live.
 
+`word_state_init=True` / `--word-state-init` optionally clears adjacent
+input_needed/finished in one word instruction, saving4 T per begin and one
+code byte. Both input-guard modes retain exact EOF/yield/IRQ behavior.
+[Second-pass evidence](../SECOND_PASS.md) includes both full streaming checks.
+
 An optional long-copy profile applies sixteen `LDI` instructions to the
 byte-extended literal18..255 and match24..255 forms. All short and escaped
 16-bit forms keep their existing paths, including short lengths encoded with

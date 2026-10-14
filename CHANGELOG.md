@@ -1,5 +1,21 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item16: clear streaming status in one word instruction
+
+- **Baseline/objective:** From `2740a270`, verify adjacent input_needed/
+  finished clear with dead HL/A initialization and IRQ-visible state ownership.
+- **Change/accounting:** Optional word_state_init, streaming only;30 ->26 T
+  per begin, direct prefix222 ->221 bytes/CALL224 ->223, no new state/stack/
+  payload. Fields remain adjacent; SCF resets nibble-cache carry before use.
+- **Verification:**95 full resident guarded blocks,28415177 ->28414797 T
+  (−380),252 IRQs, zero slower blocks/slices. Both42-case/six-placement partial
+  modes pass; direct4365880 ->4365712, CALL4368800 ->4368632 T (−168 each),
+  identical producers/waits/167 once-only sectors. Dirty prior flags reset,
+  short escaped words/overlap/guarded reads pass;14 unit tests/31 defaults exact.
+- **Decision:** Optional measured profile, no release adoption. [Result and
+  reproduction](libraries/SECOND_PASS.md), [report](libraries/evidence/trick_16.json).
+  Continue item17; physical delivery/publication requirements still apply.
+
 ## 2026-10-14 — Item15: keep running pointers and the ready guard path
 
 - **Baseline/objective:** From `6f288c2d`, inspect address recomputation and

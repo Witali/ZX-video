@@ -18,7 +18,9 @@ retains existing direct state and live input pointers (258 checks). Item13
 rejects input mutation/no indexed state site (256 checks). Item14 keeps fast
 rotations and rejects unproved word narrowing (768 checks). Item15 retains
 running pointers and rejects unconditional guard caching (2049 checks).
-Item16 is next.
+Item16 adds optional streaming word_state_init, −4 T/block/−1 byte;95 full
+blocks and both42-case/six-placement guarded modes pass, unchanged waits/
+sectors, dirty prior flags,252 native IRQs and14 library tests. Item17 is next.
 
 ## Completed: other-site Z80 speed/size survey (2026-10-14)
 

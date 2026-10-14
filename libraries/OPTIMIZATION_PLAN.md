@@ -102,7 +102,7 @@ The proposed codec sites are our inferences from those sources.
 | 13 | In-place memory arithmetic: SDCC-RMW | Indexed shift instead of load/modify/store only when A is dead; audit nibble/bit reservoir ownership | No indexed state site; input mutation rejected, no speed gain |
 | 14 | Rotate/mask decomposition and narrow constant shifts: ETUDES-SHIFT, 80CC-OPTIONS | Offset/nibble extraction; prove discarded bits, carry and S/Z/P/V/N/H requirements | Existing rotations retained; slower nibble path/unproved word narrowing rejected |
 | 15 | Running pointers and reused address calculations: 80CC-OPTIONS | Avoid recalculating state addresses across a loop; retain BC copy count and suspension state | Running pointers already present; unconditional guard cache +26 T rejected |
-| 16 | Combine adjacent byte-state stores: SDCC-ADDR, our mapping | Streaming begin clears input_needed/finished; prove AF/HL liveness, layout and IRQ-visible ordering | 30 → 26-T primitive; codec pending |
+| 16 | Combine adjacent byte-state stores: SDCC-ADDR, our mapping | Streaming begin clears input_needed/finished; prove AF/HL liveness, layout and IRQ-visible ordering | Optional measured word_state_init: −4 T/block, −1 byte; both guarded modes pass |
 | 17 | Carry-based bounded increment/decrement: ETUDES-BOUND | Only for a proven input domain with dead result flags; fix the source's lower-bound error | 233 corrected value cases pass; codec pending |
 | 18 | Branch threading, tail calls and merged fall-through: 80CC-OPTIONS | Shorten helper/finish dispatch; CALL+RET → JP requires identical return-stack/continuation ownership | Pending codec experiment |
 | 19 | Preinitialized data and bulk initialization: SDCC-RMW, SDCC-ADDR | State/table startup instead of per-byte code; account for writable copies, relocations and transported bytes | Pending codec experiment |
@@ -122,7 +122,7 @@ are conditional snippets, not completed codec/streaming/IRQ experiments.
 Item20 now has a concrete LZSA2 `sync` proposal: restore HL with ADD HL,DE
 after subtraction instead of reloading target, 35 ->30 T and6 ->4 bytes;
 S/Z/PV/C agree, H/N differ. The authorized second pass is tracked in
-[SECOND_PASS.md](SECOND_PASS.md); items10–15 are complete, item16 is next.
+[SECOND_PASS.md](SECOND_PASS.md); items10–16 are complete, item17 is next.
 
 | ID | Additional technique and source | Application and required proof | Status |
 | --- | --- | --- | --- |

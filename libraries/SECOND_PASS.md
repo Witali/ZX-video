@@ -110,3 +110,30 @@ not every possible future wait-cache design.
 
 [2049 checks](evidence/trick_15.json),31 exact defaults; actual delta0 T/code/
 state/input. `audit_second_pass.py --item 15 --output libraries/evidence/trick_15.json`.
+
+## Item16 — adjacent streaming status clear
+
+**Decision: optional measured candidate.** `word_state_init=True` / CLI
+`--word-state-init` requires streaming. `input_needed` immediately precedes
+`finished`; clear them with LD HL,0 / LD (input_needed),HL (10+16=26 T)
+instead of XOR A / two absolute byte stores (4+13+13=30 T). The prefix
+shrinks one byte (direct222 →221, CALL224 →223), state/stack/payload unchanged.
+HL is overwritten by finish/input loads; SCF initializes the nibble cache
+before its first use. The word store finishes before an IRQ can observe it;
+no caller relies on the old intermediate byte-store state.
+
+[Report](evidence/trick_16.json):95 full resident-input guarded blocks,
+28415177 →28414797 T (−380), exactly−4 per block;252 accepted IRQs, zero
+slower blocks/slices. Both partial-input modes pass42 full cases and six
+placements: direct4365880 →4365712 T, CALL4368800 →4368632 T (−168 each),
+identical waits/producers and167 once-only sectors. Native source/history
+guards and short escaped words pass. Dirty prior finished/input_needed flags
+are reset correctly. All14 library tests pass;31 defaults remain exact.
+
+```text
+python toolkit/test_streaming_lzsa2.py --direct-header --noncanonical --output .tmp/item16-direct-before.json
+python toolkit/test_streaming_lzsa2.py --direct-header --noncanonical --word-state-init --output .tmp/item16-direct-after.json
+python toolkit/test_streaming_lzsa2.py --noncanonical --output .tmp/item16-call-before.json
+python toolkit/test_streaming_lzsa2.py --noncanonical --word-state-init --output .tmp/item16-call-after.json
+python libraries/tests/measure_second_pass.py --item 16 --stream-directory .tmp --output libraries/evidence/trick_16.json
+```

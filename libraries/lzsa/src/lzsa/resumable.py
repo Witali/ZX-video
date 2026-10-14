@@ -12,7 +12,7 @@ from ._z80 import sha
 PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
-def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,
+def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,word_state_init=False,
           prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000):
     """Generate raw-v2 decode regions, coroutine labels and instruction costs.
 
@@ -27,10 +27,13 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     explicitly (e.g. core_limit=0x9000). Short tokens retain their old paths.
     near_literals moves the ordinary long-copy literal helper before start,
     removing its trampoline. Streaming and all default profiles stay unchanged.
+    word_state_init clears adjacent streaming flags in one word instruction;
+    caller/IRQ observers see initialized flags only after instruction completion.
     """
     if direct_header and not streaming:raise ValueError('direct header requires streaming input')
     if near_literals and (not long_copy or streaming):
         raise ValueError('near literals require ordinary long-copy input')
+    if word_state_init and not streaming:raise ValueError('word state init requires streaming input')
     if not (0<=core<core_limit<=65536 and 0<=prefix<prefix_limit<=65536):
         raise ValueError('invalid code reservations')
     if not (core_limit<=prefix or prefix_limit<=core):raise ValueError('code reservations overlap')
@@ -162,7 +165,13 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     cold.emit(0xe1,0xd1,0xc1,8,0xf1,8,0xf1,0xc9)
     cold.label('begin');cold.abs16(0xcd,'sync');cold.abs16((0xed,0x73),'slice_caller_sp')
     if streaming:
-        cold.emit(0xaf);cold.abs16(0x32,'finished');cold.abs16(0x32,'input_needed')
+        if word_state_init:
+            # HL is overwritten by the finish/input loads below; start's SCF
+            # initializes the nibble reservoir irrespective of dead A/flags.
+            # Both fields are contiguous and IRQs occur after the word store.
+            cold.emit(0x21,0,0);cold.abs16(0x22,'input_needed')
+        else:
+            cold.emit(0xaf);cold.abs16(0x32,'finished');cold.abs16(0x32,'input_needed')
     cold.emit(0x31);cold.word(stack);cold.abs16(0x21,'finish' if streaming else 'finished');cold.emit(0xe5)
     cold.abs16(0x2a,'input_pointer');cold.emit(0x11);cold.word(output_base);cold.abs16(0xc3,'start')
     cold.label('finish' if streaming else 'finished');cold.abs16(0x2a,'block_end');cold.emit(0xb7,0xed,0x52);cold.abs16(0xc2,'fatal')
@@ -219,7 +228,7 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     regions=[(prefix,cold.resolve(labels)),(core,a.resolve(labels))]
     # Fixed cold-wrapper timings from Zilog UM0080; data starts at state.
     cold_ops={0xcd:('CALL nn',3,17),0xc3:('JP nn',3,10),0xc2:('JP NZ,nn',3,10),0xda:('JP C,nn',3,10),
-        0x2a:('LD HL,(nn)',3,16),0x21:('LD HL,nn',3,10),0x11:('LD DE,nn',3,10),
+        0x2a:('LD HL,(nn)',3,16),0x22:('LD (nn),HL',3,16),0x21:('LD HL,nn',3,10),0x11:('LD DE,nn',3,10),
         0x31:('LD SP,nn',3,10),0x32:('LD (nn),A',3,13),0xb7:('OR A',1,4),
         0xd0:('RET NC',1,[5,11]),0xc9:('RET',1,10),0x20:('JR NZ,e',2,[7,12]),
         8:("EX AF,AF'",1,4),0x7c:('LD A,H',1,4),0x7d:('LD A,L',1,4),0x76:('HALT',1,4),
@@ -259,5 +268,7 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
             long_copy_delta_tstates=dict(literals8=-60 if streaming or near_literals else -50,
                 literals16=0,guarded_literals16=0,matches8=-59,matches16=0)) if long_copy else {}),
         **(dict(near_literals=True,near_literal_delta_tstates=-10,near_literal_code_delta=-3) if near_literals else {}),
+        **(dict(word_state_init=True,begin_init_tstates_before=30,begin_init_tstates_after=26,
+                begin_init_code_delta=-1) if word_state_init else {}),
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         upstream_sha256=sha((Path(__file__).parent/'asm/unlzsa2_fast.asm').read_bytes()))

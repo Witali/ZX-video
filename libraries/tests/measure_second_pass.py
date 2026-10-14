@@ -23,17 +23,30 @@ def layout(profile):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('10',),required=True)
+    parser.add_argument('--item',choices=('10','16'),required=True)
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--stream-directory',type=Path)
     args=parser.parse_args()
     defaults=profiles()
     assert defaults==json.loads((ROOT/'tests/decoder_baseline.json').read_text())['profiles']
-    baseline=build(long_copy=True,core_limit=0x9000)
-    candidate=build(long_copy=True,near_literals=True,core_limit=0x9000)
+    if args.item=='10':
+        baseline=build(long_copy=True,core_limit=0x9000)
+        candidate=build(long_copy=True,near_literals=True,core_limit=0x9000)
+    else:
+        def resident(word):
+            regions,labels,metadata=build(streaming=True,direct_header=True,word_state_init=word)
+            regions=[(at,bytearray(data)) for at,data in regions]
+            for name in ('header_frontier','literal_frontier','input_high','all_loaded'):
+                address=labels[name]
+                for at,data in regions:
+                    if at<=address<at+len(data):data[address-at]=0xff if name!='all_loaded' else 1
+            return [(at,bytes(data)) for at,data in regions],labels,metadata
+        baseline=resident(False);candidate=resident(True)
     rows=[dict(case=name,**compare(payload,raw,baseline,candidate)) for name,payload,raw in samples()]
-    assert candidate[2]['code_bytes']==baseline[2]['code_bytes']-3
-    assert 'LongLiterals8Jump' not in candidate[1]
-    report=dict(date='2026-10-14',item=args.item,baseline_revision='3f34a4a4',complete=True,release=False,
+    assert candidate[2]['code_bytes']==baseline[2]['code_bytes']-(3 if args.item=='10' else 1)
+    if args.item=='10':assert 'LongLiterals8Jump' not in candidate[1]
+    else:assert all(row['delta_tstates']==-4 for row in rows)
+    report=dict(date='2026-10-14',item=args.item,baseline_revision='3f34a4a4' if args.item=='10' else '2740a270',complete=True,release=False,
         scope=__doc__,baseline=layout(baseline),candidate=layout(candidate),
         summary=dict(cases=len(rows),decoded_bytes=sum(row['raw_bytes'] for row in rows),
             baseline_tstates=sum(row['baseline_tstates'] for row in rows),
@@ -43,9 +56,15 @@ def main():
             slower_blocks=sum(row['delta_tstates']>0 for row in rows),
             slower_slices=sum(row['slower_slices'] for row in rows),
             injected_interrupts=sum(row['injected_interrupts'] for row in rows)),
-        defaults_exact=len(defaults),streaming_profile_changed=False,blocks=rows)
+        defaults_exact=len(defaults),streaming_profile_changed=args.item=='16',blocks=rows)
+    if args.stream_directory:
+        from summarize_long_copy_streaming import comparison
+        report['streaming']={mode:comparison(args.stream_directory/f'item{args.item}-{mode}-before.json',
+                                            args.stream_directory/f'item{args.item}-{mode}-after.json')
+                             for mode in ('direct','call')}
     args.output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
-    print(json.dumps(report['summary']))
+    print(json.dumps(dict(report['summary'],**(dict(streaming={mode:data['summary']['delta_tstates']
+        for mode,data in report['streaming'].items()}) if 'streaming' in report else {}))))
 
 
 if __name__=='__main__':main()

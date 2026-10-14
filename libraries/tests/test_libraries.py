@@ -126,6 +126,7 @@ class LibraryTests(unittest.TestCase):
         with self.assertRaises(ValueError):lzsa_build(direct_header=True)
         with self.assertRaises(ValueError):lzsa_build(long_copy=True)
         with self.assertRaises(ValueError):lzsa_build(near_literals=True)
+        with self.assertRaises(ValueError):lzsa_build(word_state_init=True)
         with self.assertRaises(ValueError):lzsa_build(long_copy=True,near_literals=True,streaming=True,core_limit=0x9000)
 
 
@@ -191,8 +192,9 @@ class NativeTests(unittest.TestCase):
     def test_streaming_guard_patcher_restores_and_bypasses(self):
         from z80 import Z80Machine
         from lzsa.streaming import emit_guard_update
-        for direct,long_copy in itertools.product((False,True),repeat=2):
-            regions,z,_=lzsa_build(streaming=True,direct_header=direct,long_copy=long_copy,core_limit=0x9000)
+        for direct,long_copy,word_init in itertools.product((False,True),repeat=3):
+            regions,z,_=lzsa_build(streaming=True,direct_header=direct,long_copy=long_copy,
+                                  word_state_init=word_init,core_limit=0x9000)
             a=MiniAssembler(0x6000);rows=emit_guard_update(a,z);a.emit(0xc9)
             m=Z80Machine()
             for at,data in regions:m.set_memory_block(at,data)
@@ -258,6 +260,20 @@ class NativeTests(unittest.TestCase):
                 before=execute(*old,payload,raw,source=0x2000,caller_stack=0x9df0)
                 after=execute(*new,payload,raw,source=0x2000,caller_stack=0x9df0)
                 self.assertEqual(after['tstates'],before['tstates'])
+
+    def test_word_state_init_clears_prior_stream_status(self):
+        from lzsa.native import execute
+        for direct in (False,True):
+            regions,labels,metadata=lzsa_build(streaming=True,direct_header=direct,word_state_init=True)
+            self.assertEqual(labels['finished'],labels['input_needed']+1)
+            changed=[]
+            for at,data in regions:
+                data=bytearray(data)
+                for name,value in (('finished',1),('input_needed',1),('header_frontier',255),('literal_frontier',255)):
+                    if at<=labels[name]<at+len(data):data[labels[name]-at]=value
+                changed.append((at,bytes(data)))
+            raw=b'AB'*128;payload=lzsa.encode(raw,[(2,254,2)])
+            self.assertTrue(execute(changed,labels,metadata,payload,raw,source=0x2000,interrupts=True)['exact'])
 
 
 if __name__=='__main__':unittest.main()
