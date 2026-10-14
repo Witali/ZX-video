@@ -1,12 +1,11 @@
 # Clock-preserving audio progress
 
-The initial frame-clock loading animation is an unsuccessful control, not
-a delivered interface update. Full installed-Fuse playback on both Pentagon
-profiles verifies every source bit and relative timestamp, but observes only
-dot phase1: ROM FRAMES advances just one/two fields during roughly59 seconds
-of TR-DOS loading. A completed-sector counter will replace this unsuitable
-clock. The immutable initial image is `55216119...`; the delivered named
-snapshot remains the previous `ccab8724...` until the interface passes.
+The delivered sector-count image is `b96763ca...`. Full installed-Fuse
+playback on both Pentagon profiles verifies every source bit and relative
+timestamp,92 correct loading phases and22 exact green-prefix updates. The
+initial frame-clock image `55216119...` is preserved as an unsuccessful
+control: actual ROM FRAMES advanced just one/two fields during roughly59
+seconds of TR-DOS loading, leaving the dots at phase1.
 
 The optional `--audio-progress-ui` converter flag adds a light-gray loading
 bar, centered `LOADING` with one/two/three cycling dots, and a green playback
@@ -32,9 +31,11 @@ slice. The global 32-cell fraction represents the whole encoded fragment,
 including previous batches. Completion paints all 32 cells after the final
 mute. Spectrum128/Scorpion256 preserve their existing live paging sequence;
 their playback bar updates at existing refill pauses and completion. The
-loading dots use ROM FRAMES at 25-field intervals, observed after completed
-sector reads. Physical read delays can delay the display; FRAMES does not
-schedule any audio pulse.
+loading dots advance after every16 completed sector reads, including header
+reads after the cover is visible. This requires no ROM interrupt clock.
+Physical read delays change its wall-clock period; there is no promised
+seconds-per-dot interval or catch-up burst. No loading routine schedules or
+runs during live audio.
 
 The live Pentagon tail consumes a cold-built ten-byte command through SP,
 which is dead after SECOND's three POPs and before FIRST resets it. One
@@ -60,7 +61,7 @@ definitions match the previous implementation. These CPU counts exclude
 ULA contention, TR-DOS ROM execution and physical floppy latency.
 
 No audio RAM capacity is lost. The maximum 2392-sector/612352-byte TRD uses
-39 commands; startup ends at `833F`, resident UI helpers at `B9F9`, and the
+39 commands; startup ends at `832E`, resident UI helpers at `B9F8`, and the
 worker at `BFE0`. FIRST remains `8340`, the worker begins `BA00`, and the final
 reserved byte is `BFFF`. The builder checks these bounds. It rejects compact
 loader/UI combinations and multi-bank short fragments whose 32-cell bar
@@ -69,8 +70,8 @@ flag is off; absent/false produces the authenticated previous disk and
 metadata exactly.
 
 The user-requested entire sea-foam song was rebuilt through the public C
-program in 60.620961 seconds. Its main waveform encoding took 25.533929 seconds;
-TRD assembly and artifact writing took 2.341479 seconds. Source, cover,
+program in 60.871331 seconds. Its main waveform encoding took26.677900 seconds;
+TRD assembly and artifact writing took2.195068 seconds. Source, cover,
 compressed audio and decoder tables are exact; only the16-KiB PLAYER file
 changes. The host score stays 20.250315887 dB with the unchanged filter,
 original source clock and fixed 100-ms edge crop. Emulator execution is a
@@ -84,7 +85,7 @@ Thus the source waveform is exact; the post-source teardown interval is
 reported separately and is excluded by the unchanged100-ms edge crop.
 
 Reproduction and verification are saved in
-[delivery evidence](experiments/song-snr/evidence/audio-ui-delivery/README.md),
-[full execution evidence](experiments/song-snr/evidence/audio-ui-emulator/README.md),
-[player cycle proof](experiments/song-snr/evidence/audio-ui-player/README.md),
-and [loading routine proof](experiments/song-snr/evidence/audio-ui-loading/README.md).
+[delivery evidence](experiments/song-snr/evidence/audio-ui-delivery-sectors/README.md),
+[full execution evidence](experiments/song-snr/evidence/audio-ui-emulator-sectors/README.md),
+[player cycle proof](experiments/song-snr/evidence/audio-ui-player-sectors/README.md),
+and [loading routine proof](experiments/song-snr/evidence/audio-ui-loading-sectors/README.md).

@@ -36,20 +36,19 @@ quality on a different clone without its own measurements.
 ### Current continuation checkpoint
 
 Worktree `.worktree/audio-snr-research`, branch `codex/audio-snr-research`.
-The immediate user-authorized deliverable is the loading/playback interface
-on the separately delivered best-measured song disk. The user explicitly
-accepted playback updates about every four seconds to preserve audio timing.
-Use a light-gray loading bar, centered `LOADING` with one/two/three cycling
-dots, and the existing green playback bar. Prove the complete new Pentagon
-512/1024 pulse bits and relative timestamps equal the authenticated ccab
-snapshot before replacing the delivered file. Retain legacy128/Scorpion live
-paging and report their refill/completion-only playback display. The separate
-448-T pacing experiment below is deferred until this deliverable is finished.
-The initial frame-clock UI image55216119... has complete native and actual
-512/1024 source-clock parity, but actual LOADING dots remain at phase1 because
-ROM FRAMES barely advances during TR-DOS reads. Do not deliver that UI build.
-Preserve its complete control traces; replace only the loading animation
-clock with a completed-sector counter, then regenerate and fully verify.
+The requested loading/playback interface is completed and separately
+delivered as the named best-measured song disk, nowb96763ca... . The user
+accepted approximately four-second playback updates to preserve audio.
+Light-gray LOADING dots advance every16 completed sector reads; the green
+Pentagon512/1024 bar has22 exact global-prefix updates. Four whole native
+runs and both actual full installed-Fuse captures pass, including all
+11,526,111 relative source timestamps equalccab,92 dot phases and zero
+full-RAM refills. Legacy128/Scorpion live paging is retained; their progress
+updates at existing refills/completion. Full public C conversion60.871331 s.
+Post-source mute+18 T/5.02us is separately disclosed. The initial FRAMES-based
+image55216119 failed real dot animation and is preserved at8db960a with its
+complete audio clocks/failed-UI and executable-stage controls. See fresh
+`evidence/audio-ui-*-sectors`; the broader noise goal remains unfinished.
 
 The strict original8-kHz complete-song baseline is-3.085228288 dB. The current
 half-joint preview scores20.250315887 dB on its complete512/1024 Fuse clocks,
@@ -58,9 +57,10 @@ gain23.335544175. Both retain all11,526,111 relative source pulse timestamps
 Main `ZX-music-Sea-Foam-RAM-auto.trd` still hashes226388fb...; no promotion.
 
 The user's requested best-achieved disk is now separately delivered as
-`ZX-music-Sea-Foam-SNR20-RAM-auto.trd`, exact ccab8724... bytes. Fresh automatic
-C conversion took64.808918 s; prior complete512/1024 proof is reused by whole
-image identity. See `evidence/achieved-disk`. This does not close the quality
+`ZX-music-Sea-Foam-SNR20-RAM-auto.trd`, originally exact ccab8724... bytes.
+That immutable snapshot and its64.808918-s conversion remain in
+`evidence/achieved-disk`. The UI-onlyb96763ca replacement is verified above.
+This does not close the quality
 goal. The user also asks whether22 dB is reachable: treat it as a research
 aspiration, not a verified result or changed acceptance gate. The existing
 ideal multilevel IMA control22.147802 dB is an orientation, not a hard ceiling.

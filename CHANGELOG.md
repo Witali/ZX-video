@@ -1,5 +1,42 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Sector-count loading animation verified and UI disk delivered
+
+- **Objective/baseline:** Fix the actual phase1 failure of frame-clock image
+  55216119 while preserving the already exact audio and the user-approved
+  approximately four-second playback updates. Keep8db960a and all initial
+  successful/failed controls immutable. Replace only the loading timer with
+  a16-completed-read countdown; retain attribute-only green live writes.
+- **Implementation/functional proof:** No ROM FRAMES dependency, one/two/
+  three phases with no catch-up burst; preserve the initial60-header/1407-
+  audio-read cycle and disable ticks during playback. Ten loading, eight
+  player and four builder tests pass. Original stream hot modules are byte
+  identical to8db960a; native both-bit handlers keep277/301 T, delta0.
+  Ordinary423/449 T, page extra14 and bank extra243/267 remain unchanged.
+  Maximum2392 sectors fit startup832E/workerBFE0/helperB9F8, margins18/31/8.
+  No source RAM loss; absent/false disk AND metadata still equalccab.
+- **Complete program/source/execution:** Fresh entire C CLI60.871331 s,
+  waveform encoding26.677900 s, assembly/artifact I/O2.195068 s. Source,
+  cover, compressed audio and decoder tables exact; only PLAYER changes.
+  New TRDb96763ca passes all four full native runs and two new independent
+  complete installed-Fuse captures, with92 strict loading phases and22
+  independently checked floor32 global-prefix positions per model. All
+  11,526,111 source bits/timestamps and720,382 predictor/index samples pass;
+  source timestamps matchccab exactly, maxintroduced0 T, maxcontinuous277 T.
+  Pentagon512/1024 have no refills/live ROM reads.128/Scorpion keep3/1
+  explicit refills and refill/completion-only playback display. Post-source
+  mute+18 T/5.02us remains separately disclosed, not source waveform parity.
+- **Decision/delivery:** Pass the requested interface update and save the
+  655360-byte namedSNR20 TRD in worktree and main project folders. Reuse
+  20.250315887 dB by complete source-clock/data identity with the unchanged
+  filter/crop, without fitting. Preserve the earlier ccab snapshot and
+  original Python/C encoder sources. MainRAM-auto226388fb stays unchanged.
+  Physical hardware and broader source-independent noise acceptance remain
+  outside this completed UI milestone. [Delivery](audiobook-beeper/experiments/song-snr/evidence/audio-ui-delivery-sectors/README.md),
+  [complete execution/screens](audiobook-beeper/experiments/song-snr/evidence/audio-ui-emulator-sectors/README.md),
+  [cycle/memory proof](audiobook-beeper/experiments/song-snr/evidence/audio-ui-player-sectors/README.md),
+  [loading proof](audiobook-beeper/experiments/song-snr/evidence/audio-ui-loading-sectors/README.md).
+
 ## 2026-10-14 — Exact-clock progress prototype; loading frame clock rejected
 
 - **Objective/baseline:** Add light-gray loading progress, centered cycling

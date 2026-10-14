@@ -161,7 +161,7 @@ def build(packed,work,cover,model=None):
     if 'endpoint_idle_pair_words' in model:meta['endpoint_idle_pair']=endpoint_idle_pair_metadata(model)
     if progress_ui:
         meta['audio_progress_ui']=dict(loading_label='LOADING. / LOADING.. / LOADING...',
-            loading_attribute=0x3f,empty_loading_attribute=0x07,dot_period_fields=25,
+            loading_attribute=0x3f,empty_loading_attribute=0x07,dot_period_completed_sectors=16,
             playback_label='PLAYING',playback_attribute=0x24,empty_playback_attribute=0x04,
             full_bank_update_samples=32768,full_bank_update_seconds=4.105457,
             live_updates_profiles=['pentagon512','pentagon1024'],

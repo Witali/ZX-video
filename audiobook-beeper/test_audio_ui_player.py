@@ -188,6 +188,105 @@ class AudioUiPlayerTests(unittest.TestCase):
         PROOF['global_progress']=dict(every_sector_integer_fraction_verified=self.meta['audio_sectors'],
             completion_columns=32,refill_origin_redraw_columns=17,refill_profiles=list(PROFILES))
 
+    def test_completed_read_countdown_and_initial_header_continuity(self):
+        labels=self.meta['player_labels'];observed=[]
+        # Execute the actual integrated boot with additional loading-only
+        # breakpoints. This checks that all completed header/audio reads are
+        # counted and that entering the initial audio batch does not reset the
+        # already active phase. The deterministic ROM stub owns no clock.
+        machine=MemoryMachine('pentagon1024',b'',labels)
+        entry=next(item for item in self.meta['directory'] if item['name']=='PLAYER')
+        sector=entry['track']*16+entry['sector']
+        machine.banks[2][:]=self.disk[sector*256:(sector+64)*256]
+        m=machine.m;m.clear_breakpoint(0x40)
+        for label in ('audio_ui_begin_loading','audio_ui_sector_tick','audio_ui_begin_playback','stream_loaded'):
+            m.set_breakpoint(labels[label])
+        m.pc=labels['start'];completed=begins=reads=inactive=0
+        def step(address):
+            m.clear_breakpoint(address);m.ticks_to_stop=1;m.run();m.set_breakpoint(address)
+        while m.pc!=labels['stream_loaded']:
+            m.ticks_to_stop=100000000;event=m.run()
+            if m.pc==0x3D13:
+                number=(m.de>>8)*16+(m.de&255);reads+=1
+                self.assertLess(machine.selected,8)
+                for offset,value in enumerate(self.disk[number*256:(number+1)*256]):machine.write(m.hl+offset,value)
+                step(m.pc)
+            elif m.pc==labels['audio_ui_begin_loading']:
+                begins+=1;self.assertEqual(begins,1);step(m.pc)
+            elif m.pc==labels['audio_ui_sector_tick']:
+                if machine.read(labels['audio_ui_loading']):
+                    self.assertEqual(machine.read(labels['audio_ui_sector_count']),16-completed%16)
+                    self.assertEqual(machine.read(labels['audio_ui_dots']),1+(completed//16)%3)
+                    if completed%16==0:
+                        observed.append(dict(completed_reads=completed,phase=machine.read(labels['audio_ui_dots']),counter=16))
+                    completed+=1
+                else:inactive+=1
+                step(m.pc)
+            elif m.pc==labels['audio_ui_begin_playback']:
+                self.assertEqual(completed,60+self.meta['audio_sectors'])
+                self.assertEqual(machine.read(labels['audio_ui_sector_count']),16-completed%16)
+                self.assertEqual(machine.read(labels['audio_ui_dots']),1+(completed//16)%3)
+                step(m.pc)
+            elif event&m._TICKS_LIMIT_HIT:raise AssertionError(('countdown load timeout',hex(m.pc)))
+        self.assertEqual(begins,1);self.assertEqual(inactive,27)
+        self.assertEqual(reads,27+60+self.meta['audio_sectors'])
+        self.assertEqual(machine.read(labels['audio_ui_loading']),0)
+        # Exercise the public countdown contract with ROM FRAMES held fixed.
+        # Suppressed/inactive ticks must not page, write a screen or alter
+        # either interrupt state; only the ordinary test stack is scratch.
+        profiles=[]
+        for profile in PROFILES:
+            current=copy_machine(self.cold[profile],labels)
+            preserved=dict(ix=0x1234,iy=0x5678,alt_af=0x1020,alt_bc=0x3040,alt_de=0x5060,alt_hl=0x7080)
+            for name,value in preserved.items():setattr(current.m,name,value)
+            current.write(0x5C78,123);current.write(0x5C79,0)
+            current.call('audio_ui_begin_loading')
+            self.assertEqual(current.read(labels['audio_ui_sector_count']),16)
+            before=[bytes(bank) for bank in current.banks]
+            for count in range(1,49):
+                paging=len(current.page_writes);current.call('audio_ui_sector_tick')
+                self.assertEqual(current.read(labels['audio_ui_sector_count']),16-count%16)
+                self.assertEqual(current.read(labels['audio_ui_dots']),1+(count//16)%3)
+                if count%16:self.assertEqual(len(current.page_writes),paging)
+                self.assertEqual(current.word(0x5C78),123)
+                self.assertTrue(current.m.iff1)
+                for name,value in preserved.items():self.assertEqual(getattr(current.m,name),value)
+            current.call('audio_ui_begin_playback')
+            current.output(0x7FFD,31);before_inactive=[bytes(bank) for bank in current.banks]
+            page=current.selected;counter=current.read(labels['audio_ui_sector_count']);dots=current.read(labels['audio_ui_dots'])
+            for enabled in (False,True):
+                current.m.iff1=current.m.iff2=enabled;outputs=len(current.page_writes)
+                current.call('audio_ui_sector_tick')
+                self.assertEqual(current.selected,page);self.assertEqual(len(current.page_writes),outputs)
+                self.assertEqual(current.m.iff1,enabled)
+                self.assertEqual(current.read(labels['audio_ui_sector_count']),counter)
+                self.assertEqual(current.read(labels['audio_ui_dots']),dots)
+                for bank,(after,previous) in enumerate(zip(current.banks,before_inactive)):
+                    if bank!=5:self.assertEqual(bytes(after),previous)
+                    else:self.assertEqual(bytes(after[:0x1FC0]),previous[:0x1FC0]);self.assertEqual(bytes(after[0x2000:]),previous[0x2000:])
+            for bank,(after,previous) in enumerate(zip(current.banks,before)):
+                if bank==2:
+                    start=labels['audio_ui_data_start']-0x8000;end=labels['audio_ui_data_end']-0x8000
+                    self.assertEqual(bytes(after[:start]),previous[:start]);self.assertEqual(bytes(after[end:]),previous[end:])
+                elif bank==5:
+                    allowed={0x1B78}|set(range(0x1FC0,0x2000))
+                    self.assertTrue(all(a==b or index in allowed for index,(a,b) in enumerate(zip(after,previous))))
+                elif bank==7:
+                    allowed={0x108B+row*256+column for row in range(8) for column in range(10)}
+                    allowed|=set(range(0x1A8B,0x1A95))|set(range(0x1AC0,0x1AE0))
+                    self.assertTrue(all(a==b or index in allowed for index,(a,b) in enumerate(zip(after,previous))))
+                else:self.assertEqual(bytes(after),previous)
+            self.assertEqual(bytes(current.banks[7][0x1B00:]),before[7][0x1B00:])
+            profiles.append(dict(profile=profile,completed_calls=48,phase_cycle=[1,2,3,1],
+                                 frozen_rom_frames=123,inactive_ticks_preserve_paging_and_iff=True,
+                                 decoder_registers_and_audio_banks_guarded=True))
+        PROOF['completed_sector_animation']=dict(initial_loading_calls=begins,
+            physical_reads=reads,inactive_cover_ticks=inactive,active_header_ticks=60,
+            active_audio_ticks=self.meta['audio_sectors'],whole_initial_count=completed,
+            phases=observed,profiles=profiles,rom_clock_not_used=True,
+            initial_header_audio_phase_not_reset=True,period_completed_reads=16,
+            scope='Actual compiled cold flow with native ROM-sector stub and frozen FRAMES; physical-read wall cadence is separately observed in Fuse')
+
     def test_sentinel_restores_literal_resume_and_saved_ima_row(self):
         labels=self.meta['player_labels'];reports=[]
         for bit in (0,1):

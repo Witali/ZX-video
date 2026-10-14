@@ -48,6 +48,7 @@ audio_ui_bar_empty:
         LD (HL),A
         INC HL
         DJNZ audio_ui_bar_next
+audio_ui_bar_complete:
         RET
 
 ; HL=NUL-terminated ASCII, DE=top pixel byte of a character row. Return with
@@ -91,7 +92,7 @@ audio_ui_playing:       DEFM "PLAYING   ",0
 audio_ui_data_start:
 audio_ui_loading: DEFB 0
 audio_ui_dots: DEFB 0
-audio_ui_frame: DEFW 0
+audio_ui_sector_count: DEFB 0
 audio_ui_data_end:
 
 ; Redraw an already calculated global playback fill count without resetting

@@ -14,8 +14,8 @@
 
 audio_ui_begin_loading:
         DI
-        LD HL,(0x5C78)          ; low 16 ROM FRAMES; modular elapsed arithmetic
-        LD (audio_ui_frame),HL
+        LD A,16
+        LD (audio_ui_sector_count),A
         LD A,1
         LD (audio_ui_dots),A
         LD (audio_ui_loading),A
@@ -28,26 +28,21 @@ audio_ui_begin_loading:
         CALL audio_ui_bar_mapped
         JP audio_ui_leave_enabled
 
-; Call only after a completed physical read/copy, including optional header
-; sectors after the cover is visible. Suppressed updates change neither bank
-; selection nor IFF. ROM FRAMES, rather than source/sector count, sets the
-; approximate 0.5-s period; long blocked reads can delay observation. A 16-bit
-; difference also handles FRAMES wrapping. Large delays advance one phase,
-; avoiding a burst of several labels when reads resume.
+; Call once after each completed physical read/copy, including optional header
+; sectors after the cover is visible. Sixteen reads advance one dot phase;
+; suppressed updates change neither bank selection nor IFF. TR-DOS masks IRQs
+; while reading, so ROM FRAMES cannot supply an elapsed clock here. This is a
+; read-count cadence: physical drive delays change its wall-clock period, and
+; a blocked read cannot trigger an animation burst. The active counter always
+; remains in 1..16 and resets before advancing the three-phase cycle.
 audio_ui_sector_tick:
         LD A,(audio_ui_loading)
         OR A
         RET Z
-        LD HL,(0x5C78)
-        LD DE,(audio_ui_frame)
-        OR A
-        SBC HL,DE
-        LD DE,25
-        OR A
-        SBC HL,DE
-        RET C
-        LD HL,(0x5C78)
-        LD (audio_ui_frame),HL
+        LD HL,audio_ui_sector_count
+        DEC (HL)
+        RET NZ
+        LD (HL),16
         LD A,(audio_ui_dots)
         INC A
         CP 4

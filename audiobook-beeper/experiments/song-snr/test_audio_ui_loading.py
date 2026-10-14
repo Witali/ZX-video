@@ -1,8 +1,9 @@
-"""Actual Z80 loading UI geometry, frame cadence and protected-bank checks.
+"""Actual Z80 loading UI geometry, sector cadence and protected-bank checks.
 
 These are standalone routine proofs with a deterministic synthetic ROM font
-and explicit ROM FRAMES values. They do not run the disk or claim actual
-floppy/IRQ cadence. Integration/native/full Fuse audio checks remain separate.
+and explicitly completed read events. Native read tracing proves these UI
+routines do not read ROM FRAMES. They do not run the disk or claim actual
+floppy latency. Integration/native/full Fuse audio checks remain separate.
 """
 import ast
 import json
@@ -55,6 +56,10 @@ class UIHarness:
         def output(port,value):
             self.outputs.append((port,value));old(port,value)
         self.machine.m.set_output_callback(output)
+        self.native_reads=set();old_read=self.machine.read
+        def read(address):
+            self.native_reads.add(address);return old_read(address)
+        self.machine.m.set_read_callback(read)
         self.preserved=dict(ix=0x1234,iy=0x5C3A,alt_af=0x5566,alt_bc=0x1122,alt_de=0x3344,alt_hl=0x7788)
         for key,value in self.preserved.items():setattr(self.machine.m,key,value)
         self.initial=[bytes(bank) for bank in self.machine.banks]
@@ -66,6 +71,7 @@ class UIHarness:
         self.machine.call(label,**registers)
         assert all(getattr(self.machine.m,key)==value for key,value in self.preserved.items())
         assert not any((port&255)==0xFE for port,value in self.outputs),'UI must not write the beeper port'
+        assert not self.native_reads&{0x5C78,0x5C79},'UI must not use ROM FRAMES as a disk-reading clock'
         self.guards()
 
     def guards(self):
@@ -113,13 +119,16 @@ class AudioUILoading(unittest.TestCase):
         return UIHarness(profile,self.blob,self.labels)
 
     def test_relocatable_split_and_maximum_record_padding(self):
-        self.assertEqual(self.labels['audio_ui_startup_end']-0x808A,153)
-        self.assertEqual(self.labels['audio_ui_end']-0xB940,185)
-        self.assertEqual(self.relocated_labels['audio_ui_startup_end']-0x8100,153)
-        self.assertEqual(self.relocated_labels['audio_ui_end']-0xB800,185)
+        self.assertEqual(self.labels['audio_ui_startup_end']-0x808A,136)
+        self.assertEqual(self.labels['audio_ui_end']-0xB940,184)
+        self.assertEqual(self.relocated_labels['audio_ui_startup_end']-0x8100,136)
+        self.assertEqual(self.relocated_labels['audio_ui_end']-0xB800,184)
         self.assertLessEqual(self.labels['audio_ui_startup_end']+514,0x8340)
         self.assertLess(self.labels['audio_ui_end'],0xBA00)
-        self.assertEqual(self.labels['audio_ui_data_end']-self.labels['audio_ui_data_start'],4)
+        self.assertEqual(self.labels['audio_ui_data_end']-self.labels['audio_ui_data_start'],3)
+        self.assertEqual(self.labels['audio_ui_bar_complete'],self.labels['audio_ui_bar_next']+11)
+        ret=self.labels['audio_ui_bar_complete']-0x808A
+        self.assertEqual(self.blob[ret],0xC9);self.assertEqual(self.blob[ret-2],0x10)
         for profile in PROFILES:
             h=UIHarness(profile,self.relocated,self.relocated_labels,0x8100);h.frames(123)
             h.call('audio_ui_begin_loading');h.expect_label('LOADING.  ',7);h.expect_bar(0,0x3F,7)
@@ -134,28 +143,52 @@ class AudioUILoading(unittest.TestCase):
             self.assertEqual(h.machine.selected,{'128':7,'scorpion':15,'pentagon512':31,'pentagon1024':63}[profile])
             h.frames(100);h.call('audio_ui_begin_loading')
             h.expect_label('LOADING.  ',7);h.expect_bar(0,0x3F,7)
-            self.assertEqual(h.machine.word(self.labels['audio_ui_frame']),100)
+            self.assertEqual(h.machine.read(self.labels['audio_ui_sector_count']),16)
             self.assertEqual(h.machine.read(self.labels['audio_ui_dots']),1)
             self.assertEqual(h.machine.read(self.labels['audio_ui_loading']),1)
             self.assertEqual(h.machine.selected,0);self.assertFalse(h.machine.locked)
             self.assertTrue(h.machine.m.iff1)
 
-    def test_frame_deadline_cycle_and_no_early_paging(self):
-        h=self.harness();h.frames(100);h.call('audio_ui_begin_loading');before=len(h.outputs)
-        h.frames(124);h.call('audio_ui_sector_tick');h.expect_label('LOADING.  ',7)
-        self.assertEqual(len(h.outputs),before);self.assertEqual(h.machine.word(self.labels['audio_ui_frame']),100);self.assertTrue(h.machine.m.iff1)
-        for frame,text,dots in [(125,'LOADING.. ',2),(150,'LOADING...',3),(175,'LOADING.  ',1)]:
-            h.frames(frame);h.call('audio_ui_sector_tick');h.expect_label(text,7)
-            self.assertEqual(h.machine.read(self.labels['audio_ui_dots']),dots)
-            self.assertEqual(h.machine.selected,0)
+    def test_completed_reads_one_through_sixteen_and_phase_wrap(self):
+        for profile in PROFILES:
+            h=self.harness(profile);h.frames(35);h.call('audio_ui_begin_loading')
+            for reads in range(1,49):
+                before=len(h.outputs);iff=bool(reads%2);h.machine.m.iff1=iff
+                h.frames((0,65535,35,1000)[reads%4]);h.call('audio_ui_sector_tick')
+                dots=1+(reads//16)%3
+                h.expect_label('LOADING'+'.'*dots+' '*(3-dots),7)
+                self.assertEqual(h.machine.read(self.labels['audio_ui_dots']),dots)
+                self.assertEqual(h.machine.read(self.labels['audio_ui_sector_count']),16-reads%16)
+                if reads%16:
+                    self.assertEqual(len(h.outputs),before);self.assertEqual(h.machine.m.iff1,iff)
+                else:
+                    self.assertGreater(len(h.outputs),before);self.assertTrue(h.machine.m.iff1)
+                self.assertEqual(h.machine.selected,0)
 
-    def test_frame_wrap_and_delayed_read_does_not_burst(self):
-        h=self.harness();h.frames(65530);h.call('audio_ui_begin_loading')
-        h.frames(19);h.call('audio_ui_sector_tick');h.expect_label('LOADING.. ',7)
-        h.frames(1000);h.call('audio_ui_sector_tick');h.expect_label('LOADING...',7)
-        before=len(h.outputs);h.frames(1024);h.call('audio_ui_sector_tick')
-        self.assertEqual(len(h.outputs),before);h.expect_label('LOADING...',7)
-        h.frames(1025);h.call('audio_ui_sector_tick');h.expect_label('LOADING.  ',7)
+    def test_many_reads_carry_boundaries_and_frozen_frames(self):
+        h=self.harness('128');h.frames(35);h.call('audio_ui_begin_loading')
+        for reads in range(1,514):
+            h.call('audio_ui_sector_tick')
+            self.assertEqual(h.machine.read(self.labels['audio_ui_sector_count']),16-reads%16)
+            if reads in (1,15,16,255,256,257,511,512,513):
+                dots=1+(reads//16)%3
+                h.expect_label('LOADING'+'.'*dots+' '*(3-dots),7)
+                self.assertEqual(h.machine.read(self.labels['audio_ui_dots']),dots)
+        self.assertEqual(h.machine.word(0x5C78),35)
+
+    def test_inactive_ticks_do_not_mutate_state_paging_or_iff(self):
+        for profile in PROFILES:
+            h=self.harness(profile);h.call('audio_ui_begin_loading');h.call('audio_ui_begin_playback')
+            begin=self.labels['audio_ui_data_start'];end=self.labels['audio_ui_data_end']
+            h.machine.write(self.labels['audio_ui_sector_count'],1)
+            h.machine.write(self.labels['audio_ui_dots'],3)
+            before=bytes(h.machine.read(i) for i in range(begin,end));ports=len(h.outputs)
+            for iff in (False,True):
+                h.machine.m.iff1=iff
+                for _ in range(17):h.call('audio_ui_sector_tick')
+                self.assertEqual(bytes(h.machine.read(i) for i in range(begin,end)),before)
+                self.assertEqual(h.machine.m.iff1,iff);self.assertEqual(h.machine.selected,0)
+                self.assertEqual(len(h.outputs),ports)
 
     def test_gray_loading_bar_exact_cells(self):
         for profile in PROFILES:
