@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-14",
+  "item": "15",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "6f288c2d",
+  "decision": "running pointers already present / unconditional address cache rejected",
+  "checks": 2049,
+  "header_address_cache": {
+    "before_tstates": 22,
+    "first_cached_tstates": 48,
+    "first_delta": 26,
+    "later_load_lower_bound": 13,
+    "extra_state_bytes_at_least": 1
+  },
+  "running_pointer": {
+    "reconstructed_tstates": 34,
+    "existing_running_tstates": 20
+  },
+  "findings": [
+    "HL/DE advance directly with INC/LDI/LDIR; no per-byte index-to-base recomputation.",
+    "Header/literal guard endpoints depend on the current HL/BC; the ready path cannot assume a previous token's address.",
+    "A wait-only cache would need separate pointer/overflow/continuation ownership and preserve reentry through ReadToken after target/frontier updates; it is not a free common-subexpression replacement."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}

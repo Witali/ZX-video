@@ -92,9 +92,29 @@ def item14():
                   'Additional bit-phase specialization is evaluated separately in item23; no generic high-byte omission.'])
 
 
+def item15():
+    checks=0
+    for high in (0,1,0x20,0x60,0x7f,0x80,0xfe,0xff):
+        for low in range(256):
+            registers=dict(hl=(high<<8)|low,af=0x9737)
+            old,ot=run('7d c6 1f 7c ce 00',registers)
+            cached,nt=run('7d c6 1f 7c ce 00 32 04 60 3a 04 60',registers)
+            assert old.af==cached.af and (ot,nt)==(22,48);checks+=1
+    old,ot=run('21 00 60 7e 21 01 60 7e',dict(hl=0x6000),memory=((0x6000,b'AB'),))
+    running,nt=run('7e 23 7e',dict(hl=0x6000),memory=((0x6000,b'AB'),))
+    assert (old.hl,old.af)==(running.hl,running.af) and (ot,nt)==(34,20)
+    return dict(decision='running pointers already present / unconditional address cache rejected',checks=checks+1,
+        header_address_cache=dict(before_tstates=22,first_cached_tstates=48,first_delta=26,
+            later_load_lower_bound=13,extra_state_bytes_at_least=1),
+        running_pointer=dict(reconstructed_tstates=34,existing_running_tstates=20),
+        findings=['HL/DE advance directly with INC/LDI/LDIR; no per-byte index-to-base recomputation.',
+                  'Header/literal guard endpoints depend on the current HL/BC; the ready path cannot assume a previous token\'s address.',
+                  'A wait-only cache would need separate pointer/overflow/continuation ownership and preserve reentry through ReadToken after target/frontier updates; it is not a free common-subexpression replacement.'])
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('11','12','13','14'),required=True)
+    parser.add_argument('--item',choices=('11','12','13','14','15'),required=True)
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     defaults=profiles();assert defaults==json.loads((ROOT/'tests/decoder_baseline.json').read_text())['profiles']
     report=dict(date='2026-10-14',item=args.item,complete=True,release=False,scope=__doc__,

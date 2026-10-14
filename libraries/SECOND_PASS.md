@@ -92,3 +92,21 @@ low-byte/carry states. Item23 separately evaluates more bit-phase expansion.
 
 [768 native checks](evidence/trick_14.json),31 exact defaults; actual delta0
 T/code/state/input. `audit_second_pass.py --item 14 --output libraries/evidence/trick_14.json`.
+
+## Item15 — running pointers/address reuse
+
+**Decision: running pointers already present; unconditional caching rejected.**
+HL/DE already advance via INC/LDI/LDIR. A two-byte pointer reconstruction
+probe costs34 T versus20 T for the existing running-pointer form. The
+guard's HL+31 high-byte calculation costs22 T; storing/reloading its A in
+a new state byte costs48 T on the first ready check (+26), verified over
+2048 low/high states including overflow. Later loads would cost at least13 T.
+
+Each new token changes HL/BC, invalidating a previous endpoint. A wait-only
+cache needs explicit pointer/overflow/continuation ownership and must preserve
+ReadToken reentry after new output targets/frontiers; it is not a free CSE
+rewrite of the current ABI. This rejects the unconditional cache proposal,
+not every possible future wait-cache design.
+
+[2049 checks](evidence/trick_15.json),31 exact defaults; actual delta0 T/code/
+state/input. `audit_second_pass.py --item 15 --output libraries/evidence/trick_15.json`.

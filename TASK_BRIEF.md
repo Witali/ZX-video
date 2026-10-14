@@ -16,7 +16,9 @@ relocation/short escaped words and13 unit tests pass. Item11 retains required
 nibble/page reloads:513 native checks show safe caching +22/+8 T. Item12
 retains existing direct state and live input pointers (258 checks). Item13
 rejects input mutation/no indexed state site (256 checks). Item14 keeps fast
-rotations and rejects unproved word narrowing (768 checks). Item15 is next.
+rotations and rejects unproved word narrowing (768 checks). Item15 retains
+running pointers and rejects unconditional guard caching (2049 checks).
+Item16 is next.
 
 ## Completed: other-site Z80 speed/size survey (2026-10-14)
 

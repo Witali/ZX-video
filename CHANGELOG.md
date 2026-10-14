@@ -1,5 +1,18 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item15: keep running pointers and the ready guard path
+
+- **Baseline/objective:** From `6f288c2d`, inspect address recomputation and
+  whether guard endpoints can be retained without changing continuation state.
+- **Results:**2048 native byte/high states confirm HL+31 high calculation22 T
+  versus48 T (+26) with an unconditional byte cache; later loads cost at
+  least13 T and require extra state. One pointer probe confirms the existing
+  running form20 T versus34 T reconstructed.31 defaults remain exact.
+- **Decision:** Existing running pointers retained; unconditional cache
+  rejected. A separate wait-only design would need pointer/overflow/target
+  ownership, not a free CSE replacement. Actual delta0 T/code/state/input.
+  [Result](libraries/SECOND_PASS.md), [report](libraries/evidence/trick_15.json).
+
 ## 2026-10-14 — Item14: existing rotations beat narrowed nibble shifts
 
 - **Baseline/objective:** From `6ea4f15a`, examine rotate/mask fusion and
