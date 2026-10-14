@@ -1,5 +1,13 @@
 # Solid colours and source-defined character lines
 
+## Latest user-selected contour disk (2026-10-14)
+
+The user subsequently rejected flat fills and requested all source detail
+traced with optional near-native solid colours. The new public`lineart` policy
+and independently qualified97.7-second/99.88%-filled TRD supersede the flat
+audition as the selected image. See[the full video, disk, source rules and
+native proofs](LINEART_DISK.md). Preserve all flat attempts/results below.
+
 2026-10-14, baseline `13819086`. The user requested a separate video encoder
 with solid source-matched colours, no or extremely little dither, fewer cell
 clashes and recognizable cartoon people. Subsequent steering asked for

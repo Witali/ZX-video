@@ -3,6 +3,51 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## Source-line drawing full disk — complete (2026-10-14)
+
+Latest steering rejects flat fills because details are lost. Stop the1005-frame
+flat rebuild (219 complete host rows; partial/unqualified output is
+retained). Replace it with `--colour-policy lineart`: trace source detail and
+silhouettes on uniform paper, paint clear near-native black/colours only, and
+sacrifice optional third-colour fill before losing outlines or tinting paper.
+Inspect character/general scenes before rebuilding, then complete the original
+single-disk request with this corrected image. Do not treat the superseded
+flat preview as user-accepted or restart a neural/image-model sweep.
+
+The user now requests a full disk of the shown flat/neutral-contour video.
+Use the existing `.worktree/flat-colour` branch from`96fcec79`; build the
+continuous sea-foam source prefix with `--colour-policy flat --colour-contours`,
+no dither and no region guidance. Keep10 fps, current50-Hz AY controls, native
+resolution, cold independent boot and complete nominal timing gates. Reuse
+authenticated original RGB/coarse/continuous audio preparation. Select length
+using actual disk sectors and resident AY capacity, not a size-only estimate.
+The existing fixed forest's verified prefix ceiling is1005 frames/100.5s;
+measure the new disk and report any RAM-bound unused sectors explicitly.
+Deliver a separately named root TRD, full MP4, all-frame quality/actual native
+proofs and preserved attempts; keep the old qualified disk. Do not change the
+image model, refit the existing soundtrack or open another RAM/codec sweep
+before completing this concrete disk. No push is requested.
+
+The selected`--colour-policy lineart` now traces fine/coarse current RGB lines,
+uses uniform NORMAL-white paper and source-matched normal/BRIGHT fills. Required
+lines/black/paper survive; unsupported third-colour fill falls back to paper.
+The strict45-RMS/75-component review accepted no colour; preserve it. Selected
+60-RMS/100-component/30-degree source criteria retain matching colours without
+spill.50 tests and every-frame line/fill/no-dither checks pass. Native instruction
+delta0 T; default/old images and the existing AY fit remain unchanged.
+
+Actual1005/980-frame assembly requires2589/2545 sectors and fails capacity.
+The977-frame/97.7-second TRD uses2541/2544 sectors(99.8821%),three free. Complete
+independent cold Fuse compares all6,753,024 screen bytes and4885 AY fields;
+zero nominal misses/late runs/underruns, maximum deviation17 T. Shared900-frame
+source/AY/model-WAV prefix remains exact. Full archive141 files/93,558,021 bytes
+plus manifest; native proofs, all-frame metrics, previews,17 source snapshots
+and failed/interrupted attempts are preserved. Root disk:
+`ZX-video-sea-foam-lineart_part01.trd`, SHA256`c573cdd954f2d8cf29350c4e5092df876d7c1596fad8bdbd44fa5042c6758808`.
+[Usage, full media and qualification](toolkit/analysis/flat_colour/LINEART_DISK.md).
+This completes the corrected image and practical full-disk request. No further
+model, maximum-duration, audio/RAM/codec search or push starts automatically.
+
 ## Solid colour and character clarity encoder — optional prototype complete (2026-10-14)
 
 The user requests another encoder with closest source colours, solid fills,

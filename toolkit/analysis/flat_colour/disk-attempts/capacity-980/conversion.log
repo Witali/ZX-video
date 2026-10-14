@@ -1,0 +1,36 @@
+Reused exact coarse preparation: 980 source RGB frames checked
+Five-level refinement: 1/980
+Five-level refinement: 101/980
+Five-level refinement: 201/980
+Five-level refinement: 301/980
+Five-level refinement: 401/980
+Five-level refinement: 501/980
+Five-level refinement: 601/980
+Five-level refinement: 701/980
+Five-level refinement: 801/980
+Five-level refinement: 901/980
+Motion tile 8: 0/980
+Motion tile 8: 500/980
+CB41 disk 1/1: frames 0..979
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\flat-colour\toolkit\analysis\flat_colour\build_disk.py", line 68, in <module>
+    if __name__ == '__main__':main()
+                              ^^^^^^
+  File "C:\Work\ZX-video\.worktree\flat-colour\toolkit\analysis\flat_colour\build_disk.py", line 65, in main
+    rebuild.main()
+  File "C:\Work\ZX-video\.worktree\flat-colour\toolkit\analysis\attribute_pattern\rebuild.py", line 78, in main
+    build_prefix.main()
+  File "C:\Work\ZX-video\.worktree\flat-colour\toolkit\analysis\sea_foam\build_prefix.py", line 83, in main
+    converter.main(argv)
+  File "C:\Work\ZX-video\.worktree\flat-colour\toolkit\analysis\attribute_pattern\rebuild.py", line 48, in verified_main
+    return original_main(arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\flat-colour\toolkit\analysis\flat_colour\build_disk.py", line 30, in selected
+    return original_main([*arguments, *image_options])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\flat-colour\toolkit\convert_video.py", line 352, in main
+    records = build(five_states, ay_frames, raw, states, args, executables, output, manifest)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\flat-colour\toolkit\convert_cb41.py", line 269, in build
+    raise ValueError(f'CB41 disk {number} needs {metadata["used_sectors"]} sectors; '
+ValueError: CB41 disk 1 needs 2545 sectors; maximum 2544. Local-window size estimate was insufficient. Retry with a smaller --max-frames-per-disk; no image/frame/quality was truncated.

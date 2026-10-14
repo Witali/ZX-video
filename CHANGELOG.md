@@ -1,5 +1,51 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Source-line drawing with matched fills on a qualified full disk
+
+- **Request/input:** Build a full disk from the new preview, then user steering
+  rejects flat detail loss and prioritizes all source contours, black areas
+  and near-native yellow/red/other fills. Start from`96fcec79` in the existing
+  flat-colour tree, exact sea-foam RGB/continuous AY preparation and the earlier
+  qualified`df986063...` disk. Stop the superseded1005-frame flat build after219
+  complete host states; no TRD or native check was reached. Preserve actual
+  logs/partial state/input hashes; original uncommitted wrapper was not captured.
+- **Image change/review:** Optional`lineart` keeps current-source fine3x3 sigma
+  0.4 Canny24/48 and coarse5x5 sigma0.9 Canny40/80, minimum two connected samples.
+  Uniform205 paper, exact black lines/fills and no dither. Source fills use
+  nearest actual normal/BRIGHT endpoint, RMS60/component100/hue30-degree guard,
+  colour minimum4 samples, black minimum2 and max source component64. Prioritize
+  outlines/paper when a third colour cannot fit. The strict45/75 review accepted
+  no colour on six scenes; preserve it. Selected criteria accept1466/323/76
+  source colour samples on259/300/506 before contour/hardware restrictions.
+  Inspect boy, king, wider people and dark scenes; no semantic/photographic
+  quality grade or neural person model is claimed. Defaults stay unchanged.
+- **Capacity attempts/result:** Actual unchanged-quality1005 and980 builds need
+  2589/2545 sectors, respectively; preserve complete host/assembly evidence,
+  size failures and1005-frame input cache. The977-frame/97.7-second result fits
+  2541 of2544 sectors(99.8821%, three sectors/768 bytes free), retaining10 fps
+  and4885 existing AY fields. Cached original RGB/coarse/image bytes and selector
+  parameters are checked; packets/allocation/native proofs are rebuilt. No
+  model retuning, audio fit, timing or resolution reduction. Practical fill,
+  not mathematical maximality; native instruction change0 T.
+- **Verification:**50 tests pass. Independent dirty-RAM cold Fuse1.9.0 checks
+  all977 screens/6,753,024 bytes and every4885 AY record, no missing/duplicate
+  fields, underruns, dropped/late frames or late runs; maximum deviation17 T.
+  Every detector line, matched black fill and required paper sample is exact;
+  every coloured output equals an eligible source label; native selected RGB
+  equals preparation and dither is absent. Shared900-frame RGB/AY/WAV prefix
+  matches. Native RGB MSE6885.6597 is only a style diagnostic.2450 actual reads,
+  zero retries,68,229,686 T combined ROM/disk/IRQ/ULA read service(range22,344..
+  134,473),1,655,691 T seeks; deterministic counts remain separately in metadata.
+  Full97.7-second MP4 confirms977 frames/10 fps and exact-duration model audio.
+- **Decision/artifacts:** Deliver separately named root
+  `ZX-video-sea-foam-lineart_part01.trd`, SHA256
+  `c573cdd954f2d8cf29350c4e5092df876d7c1596fad8bdbd44fa5042c6758808`.
+  Full qualified archive141 files/93,558,021 bytes plus manifest,17 exact
+  producer snapshots, all-frame checks, actual native traces and full/shared
+  previews. Keep old disks and all failed/interrupted/strict-review evidence.
+  [Implementation, reproduction and proof](toolkit/analysis/flat_colour/LINEART_DISK.md).
+  No physical-machine result, default promotion or further experiment/push.
+
 ## 2026-10-14 — Optional solid-colour encoder and source-defined character lines
 
 - **Request/baseline:** Another encoder with closest solid colours, no/minimal

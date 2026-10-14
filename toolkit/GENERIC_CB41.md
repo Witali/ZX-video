@@ -2,6 +2,11 @@
 
 ## Optional solid colours and source contours (2026-10-14)
 
+The subsequent`--colour-policy lineart` prioritizes original RGB lines and
+uniform paper, then near-native normal/BRIGHT colour fills where the two-colour
+cell allows them. It uses no dither and current-frame source masks. See[the
+qualified contour disk and matching criteria](analysis/flat_colour/LINEART_DISK.md).
+
 `--colour-policy flat` uses actual solid PAPER/INK colours, preserving source
 gradients and coordinating neighbouring cell choices. Add `--colour-contours`
 for thin OpenCV source-defined lines, `--colour-dither minimal` for sparse

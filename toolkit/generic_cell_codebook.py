@@ -31,10 +31,10 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
     """
     if len(images) != len(compact) or not len(images):
         raise ValueError('expected matching nonempty RGB and compact frames')
-    if colour_policy not in ('stable', 'legacy', 'flat'):
+    if colour_policy not in ('stable', 'legacy', 'flat', 'lineart'):
         raise ValueError('unknown colour policy')
-    if colour_policy == 'flat' and monochrome:
-        raise ValueError('flat colour and monochrome are mutually exclusive')
+    if colour_policy in ('flat', 'lineart') and monochrome:
+        raise ValueError('flat/lineart colour and monochrome are mutually exclusive')
     if colour_dither not in ('none', 'minimal'):
         raise ValueError('unknown colour dither')
     if colour_vision not in ('none', 'regions'):
@@ -45,6 +45,7 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
     import texture_colour
     import monochrome_five_level
     import flat_colour
+    if colour_policy == 'lineart':import lineart_colour
     comparison = stable_colour.Comparison()
     previous = previous_image = None
     path = Path(directory)/'five-states.npy'
@@ -60,6 +61,8 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
         refined[4512:] = bytes([1])*96
         legacy = bytes(refined)
         state = (monochrome_five_level.encode(image) if monochrome else
+                 lineart_colour.encode(image, previous, previous_image)
+                 if colour_policy == 'lineart' else
                  flat_colour.encode(image, previous, previous_image,
                     dither=colour_dither, contours=colour_contours, vision=colour_vision)
                  if colour_policy == 'flat' else
@@ -82,12 +85,14 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
         mean_mse=float(np.mean(after)), maximum_mse=max(after), frame_mse=after,
         four_level_frame_mse=before, four_level_mean_mse=float(np.mean(before)),
         refinement_never_increased_rgb_error=all(a<=b+1e-9 for a,b in zip(after,before)), brightness_levels=5,
-        dither=(colour_dither if colour_policy == 'flat' and not monochrome
+        dither=(colour_dither if colour_policy in ('flat', 'lineart') and not monochrome
                 else 'fixed-phase 2x2 after brightness reconstruction'),
         compression_additional_pixel_changes=False, perceptual_percent_claimed=False,
         colour_policy='monochrome' if monochrome else colour_policy,
         monochrome=monochrome, colour_contours=colour_contours, colour_vision=colour_vision,
-        colour_comparison=(flat_colour.comparison_report(comparison,
+        colour_comparison=(lineart_colour.comparison_report(comparison)
+            if colour_policy == 'lineart' and not monochrome else
+            flat_colour.comparison_report(comparison,
             dither=colour_dither, contours=colour_contours, vision=colour_vision)
             if colour_policy == 'flat' and not monochrome else
             texture_colour.comparison_report(comparison,

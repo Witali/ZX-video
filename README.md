@@ -112,6 +112,10 @@ four-volume partition exceeds capacity. They are optional development modes.
 
 ## Optional solid-colour video encoder
 
+The latest user-selected`--colour-policy lineart` traces source lines and
+adds matched solid colours. Its[97.7-second contour TRD and full preview](toolkit/analysis/flat_colour/LINEART_DISK.md)
+completely pass native/Fuse playback and fill99.88% of one disk.
+
 For the optional solid-colour CB41 encoder, use `--colour-policy flat`.
 `--colour-contours` restores lost source RGB lines; `--colour-dither minimal`
 allows sparse patterns around source detail. Experimental OpenCV region

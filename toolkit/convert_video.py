@@ -251,8 +251,8 @@ def main(argv=None):
     parser.add_argument('--startup-delta', action='store_true', help='Smaller boot tables when adjacent-byte differences save disk sectors')
     parser.add_argument('--verify', choices=('cpu', 'fuse', 'none'), default='cpu',
         help='cpu: every instruction and full images; fuse: also real disk timing; none: host roundtrip only')
-    parser.add_argument('--colour-policy', choices=('stable', 'legacy', 'flat'), default='stable',
-        help='CB41 palette: stable local seam smoothing, legacy, or solid colours preserving source edges')
+    parser.add_argument('--colour-policy', choices=('stable', 'legacy', 'flat', 'lineart'), default='stable',
+        help='CB41 palette: stable seam smoothing, legacy, flat fills, or source lines with matched solid colours')
     parser.add_argument('--colour-dither', choices=('none', 'minimal'), default='none',
         help='Flat colour only: no dots, or at most one patterned 2x2 sample per 8x8 cell')
     parser.add_argument('--colour-contours', action='store_true',
@@ -265,8 +265,8 @@ def main(argv=None):
     parser.add_argument('--verification-timeout', type=float, default=1800, help='Fuse timeout in seconds per disk')
     parser.add_argument('--cached-huffman-byte', action='store_true', help='Cache current Huffman byte in B; requires --carry-huffman')
     args = parser.parse_args(argv)
-    if args.colour_policy == 'flat' and (args.video_codec != 'cb41' or args.monochrome):
-        parser.error('--colour-policy flat requires --video-codec cb41 without --monochrome')
+    if args.colour_policy in ('flat', 'lineart') and (args.video_codec != 'cb41' or args.monochrome):
+        parser.error('--colour-policy flat/lineart requires --video-codec cb41 without --monochrome')
     if (args.colour_dither != 'none' or args.colour_contours or args.colour_vision != 'none') and args.colour_policy != 'flat':
         parser.error('minimal dither, contours and vision require --colour-policy flat')
     if not 0 <= args.ay_tuning_cents <= 100:

@@ -1,0 +1,78 @@
+{
+  "source": "C:\\Work\\ZX-video\\.worktree\\flat-colour\\.tmp\\lineart-disk-1005-source.mkv",
+  "source_sha256": "1aaaf828d176c6b2932c3d96b3a36a4c0079119480df0eb0051013b1ccae5da3",
+  "complete": false,
+  "release": false,
+  "video_fps": "10",
+  "frame_fields": 5,
+  "ay_hz": 50,
+  "native_resolution": [
+    256,
+    192
+  ],
+  "active_resolution": [
+    256,
+    144
+  ],
+  "logical_resolution": [
+    128,
+    96
+  ],
+  "disk_profile": "trdos503",
+  "executables": {
+    "ffmpeg": "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+    "ffprobe": "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffprobe.exe",
+    "zx0": "C:\\Work\\ZX-video\\.worktree\\compression\\.tmp\\ZX0\\win\\zx0.exe",
+    "lzsa": "C:\\Work\\ZX-video\\.tmp\\lzsa2-deep-search\\build\\lzsa.exe"
+  },
+  "player_baseline": "9885483",
+  "player_hot_path_changed": false,
+  "player_hot_path_delta_tstates": 0,
+  "inline_matches": false,
+  "fast_noop_scan": false,
+  "static_cache_borders": false,
+  "carry_huffman": false,
+  "register_fragments": false,
+  "cached_huffman_byte": false,
+  "irq_safe_paging": false,
+  "startup_delta": false,
+  "timing_verified": false,
+  "verification": "fuse",
+  "video_codec": "cb41",
+  "monochrome": false,
+  "colour_policy": "lineart",
+  "colour_dither": "none",
+  "colour_contours": false,
+  "colour_vision": "none",
+  "brightness_levels": 5,
+  "input": {
+    "video_stream": 0,
+    "audio_stream": 1,
+    "decoded_frames": 1005,
+    "encoded_frames": 1005,
+    "tail_repeated_frames": 0,
+    "encoded_seconds": 100.5,
+    "fit": "contain",
+    "crop": false,
+    "command": [
+      "C:\\Users\\rudol\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe",
+      "-v",
+      "error",
+      "-nostdin",
+      "-y",
+      "-i",
+      "C:\\Work\\ZX-video\\.worktree\\flat-colour\\.tmp\\lineart-disk-1005-source.mkv",
+      "-map",
+      "0:0",
+      "-an",
+      "-vf",
+      "setpts=PTS-STARTPTS,fps=10:start_time=0:round=up:eof_action=pass,scale=w='max(1,round(min(128,72*dar)))':h='max(1,round(min(72,128/dar)))':flags=area,setsar=1,pad=128:72:(ow-iw)/2:(oh-ih)/2:black",
+      "-pix_fmt",
+      "rgb24",
+      "-f",
+      "rawvideo",
+      "C:\\Work\\ZX-video\\.worktree\\flat-colour\\.tmp\\lineart-disk-1005\\work\\frames.rgb"
+    ]
+  },
+  "failure": "ValueError: CB41 disk 1 needs 2589 sectors; maximum 2544. Local-window size estimate was insufficient. Retry with a smaller --max-frames-per-disk; no image/frame/quality was truncated."
+}
