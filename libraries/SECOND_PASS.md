@@ -55,3 +55,15 @@ operands. Evaluate the distinct `sync` target restore in item20.
 [513 native checks](evidence/trick_11.json),31 exact default profiles;
 actual decoder delta0 T/code/state/input. No rewrite, no new full-codec run.
 Reproduce with `audit_second_pass.py --item 11 --output libraries/evidence/trick_11.json`.
+
+## Item12 — direct known-address access
+
+**Decision: already present for fixed state.**256 native byte probes verify
+17 →13 T for LD HL,nn / LD A,(HL) →LD A,(nn) when HL is dead. The decoder's
+fixed state uses direct forms already. Its core HL is a live dynamic input/
+history pointer: a directed subsequent INC HL reaches6005 before the rewrite
+but5001 afterwards. With HL already established, LD A,(HL)7 T beats a fixed
+absolute read13 T by6 T. The indexed ring table belongs to item06.
+
+[258 checks](evidence/trick_12.json),31 exact defaults; actual delta0 T/code/
+state/input. Reproduce with `audit_second_pass.py --item 12 --output libraries/evidence/trick_12.json`.

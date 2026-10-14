@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item12: fixed state is direct; input pointers stay live
+
+- **Baseline/objective:** From `3c680445`, inspect temporary pointer setup
+  versus absolute loads in ZX0/LZSA2, including subsequent uses of HL.
+- **Coverage/results:**256 fixed-byte probes verify17 ->13 T when HL is dead;
+  one live-pointer counterexample and one established-pointer comparison
+  complete258 checks. Dynamic HL reads cost7 versus13 T absolute (+6).
+  Existing fixed state already uses direct forms;31 default profiles exact.
+- **Decision:** No eligible rewrite, delta0 T/code/state/input. Retain the
+  live advancing input/history pointer and item06 table implementation.
+  [Result](libraries/SECOND_PASS.md), [evidence](libraries/evidence/trick_12.json).
+
 ## 2026-10-14 — Item11: safe caching loses to live-register reloads
 
 - **Baseline/objective:** From `56f32142`, examine duplicate input/state
