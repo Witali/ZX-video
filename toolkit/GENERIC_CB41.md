@@ -1,5 +1,17 @@
 # Generic five-level CB41 converter
 
+## Optional solid colours and source contours (2026-10-14)
+
+`--colour-policy flat` uses actual solid PAPER/INK colours, preserving source
+gradients and coordinating neighbouring cell choices. Add `--colour-contours`
+for thin OpenCV source-defined lines, `--colour-dither minimal` for sparse
+patterns in detail cells, or experimental `--colour-vision regions` for
+source-bounded mean-shift guidance. These options require CB41 without
+`--monochrome`. Existing defaults and native instructions stay unchanged.
+The [96-frame character comparison](analysis/flat_colour/README.md) records
+loss of intermediate shades, all tested variants and failed approaches.
+This is an optional visual prototype, not a replacement qualified release.
+
 ## Source-matched stable colour and monochrome (2026-10-13)
 
 CB41 now defaults to `--colour-policy stable`. All 56 canonical INK/PAPER

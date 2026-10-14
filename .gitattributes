@@ -769,3 +769,18 @@ toolkit/generic_guarded_cb46_evidence/*.gz -text
 /audiobook-beeper/verify_stream_trd.py text eol=lf
 /audiobook-beeper/test_stream_trd.py text eol=lf
 /audiobook-beeper/stream-*.asm text eol=lf
+
+# Solid-colour host experiments, including retained rejected visual trials.
+/toolkit/flat_colour.py text eol=lf
+/toolkit/test_flat_colour.py text eol=lf
+/toolkit/analysis/flat_colour/**/*.py text eol=lf
+/toolkit/analysis/flat_colour/**/*.md text eol=lf
+/toolkit/analysis/flat_colour/**/*.json text eol=lf
+/toolkit/analysis/flat_colour/**/*.log -text -whitespace
+/toolkit/analysis/flat_colour/**/*.npz filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/flat_colour/**/*.png filter=lfs diff=lfs merge=lfs -text
+/toolkit/analysis/flat_colour/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
+# Keep SHA256-authenticated evidence byte-exact, including Windows log endings.
+/toolkit/analysis/flat_colour/initial-trial/** -text -whitespace
+/toolkit/analysis/flat_colour/unbounded-contour-trial/** -text -whitespace
+/toolkit/analysis/flat_colour/evidence/** -text -whitespace

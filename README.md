@@ -110,6 +110,15 @@ pixels/audio; the current long CB44 test fails 10-fps timing and its first
 four-volume partition exceeds capacity. They are optional development modes.
 [Implementation and measured limits](toolkit/CB44_DYNAMIC.md).
 
+## Optional solid-colour video encoder
+
+For the optional solid-colour CB41 encoder, use `--colour-policy flat`.
+`--colour-contours` restores lost source RGB lines; `--colour-dither minimal`
+allows sparse patterns around source detail. Experimental OpenCV region
+guidance uses `--colour-vision regions`. See the
+[character comparisons, tradeoffs and reproduction](toolkit/analysis/flat_colour/README.md).
+These options do not change the default or qualify a new disk's timing.
+
 ## Refined colour and sound at 10 fps
 
 The latest complete movie preview is **4 independently bootable root TRDs**,

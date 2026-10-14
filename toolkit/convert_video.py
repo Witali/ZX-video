@@ -251,14 +251,24 @@ def main(argv=None):
     parser.add_argument('--startup-delta', action='store_true', help='Smaller boot tables when adjacent-byte differences save disk sectors')
     parser.add_argument('--verify', choices=('cpu', 'fuse', 'none'), default='cpu',
         help='cpu: every instruction and full images; fuse: also real disk timing; none: host roundtrip only')
-    parser.add_argument('--colour-policy', choices=('stable', 'legacy'), default='stable',
-        help='CB41 source-matched colour and local solid/pattern seam smoothing, or reproduce the legacy palette')
+    parser.add_argument('--colour-policy', choices=('stable', 'legacy', 'flat'), default='stable',
+        help='CB41 palette: stable local seam smoothing, legacy, or solid colours preserving source edges')
+    parser.add_argument('--colour-dither', choices=('none', 'minimal'), default='none',
+        help='Flat colour only: no dots, or at most one patterned 2x2 sample per 8x8 cell')
+    parser.add_argument('--colour-contours', action='store_true',
+        help='Flat colour only: restore thin source RGB lines whose contrast was lost in the fill (requires OpenCV)')
+    parser.add_argument('--colour-vision', choices=('none', 'regions'), default='none',
+        help='Flat colour only: source-bounded mean-shift region guidance with fine-detail protection (requires OpenCV)')
     parser.add_argument('--monochrome', action='store_true',
         help='Black/white image with fixed spatial gray dithering; audio and cadence unchanged')
     parser.add_argument('--fuse', type=Path, help='Fuse executable for --verify fuse')
     parser.add_argument('--verification-timeout', type=float, default=1800, help='Fuse timeout in seconds per disk')
     parser.add_argument('--cached-huffman-byte', action='store_true', help='Cache current Huffman byte in B; requires --carry-huffman')
     args = parser.parse_args(argv)
+    if args.colour_policy == 'flat' and (args.video_codec != 'cb41' or args.monochrome):
+        parser.error('--colour-policy flat requires --video-codec cb41 without --monochrome')
+    if (args.colour_dither != 'none' or args.colour_contours or args.colour_vision != 'none') and args.colour_policy != 'flat':
+        parser.error('minimal dither, contours and vision require --colour-policy flat')
     if not 0 <= args.ay_tuning_cents <= 100:
         parser.error('--ay-tuning-cents must be in 0..100')
     args.frame_fields = fields_for_fps(args.fps)
@@ -311,7 +321,8 @@ def main(argv=None):
         irq_safe_paging=args.irq_safe_paging,
         startup_delta=args.startup_delta,
         timing_verified=False, verification=args.verify, video_codec=args.video_codec,
-        monochrome=args.monochrome, colour_policy=args.colour_policy)
+        monochrome=args.monochrome, colour_policy=args.colour_policy,
+        colour_dither=args.colour_dither, colour_contours=args.colour_contours, colour_vision=args.colour_vision)
     if args.video_codec == 'cb41':
         manifest.update(player_baseline='9885483', player_hot_path_changed=False,
                         player_hot_path_delta_tstates=0, brightness_levels=5)
@@ -322,7 +333,8 @@ def main(argv=None):
         if args.video_codec == 'cb41':
             from generic_cell_codebook import prepare_frames, write_preview
             five_states, quality = prepare_frames(images, states, work,
-                colour_policy=args.colour_policy, monochrome=args.monochrome)
+                colour_policy=args.colour_policy, monochrome=args.monochrome,
+                colour_dither=args.colour_dither, colour_contours=args.colour_contours, colour_vision=args.colour_vision)
             write_preview(images, five_states, quality, output/'video-preview.png')
         else:
             write_video_preview(images, states, quality, output/'video-preview.png')

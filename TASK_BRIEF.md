@@ -3,6 +3,39 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## Solid colour and character clarity encoder — optional prototype complete (2026-10-14)
+
+The user requests another encoder with closest source colours, solid fills,
+no or very little dither, fewer attribute clashes and optional object contours.
+The additional steering makes cartoon people, silhouettes and facial detail
+the main visual criterion. Use `.worktree/flat-colour`, `codex/flat-colour`,
+from `13819086`. Add an optional host-only CB41 palette policy; preserve source
+resolution/cadence, default selector, audio and native instructions. Compare
+the exact prepared sea-foam source and old qualified screens on fixed difficult
+windows, including character scenes. Measure grain, actual RGB, edge/shape
+retention and false seams separately; inspect native-size reference images and
+motion. Record all selected and rejected trials. Deliver a runnable encoder,
+tests and reproducible comparison. This is a visual prototype, not a new TRD
+release; do not replace existing disks or claim unmeasured player timing. Do
+not start full-cartoon/disk-capacity/audio searches in this task.
+
+The optional `--colour-policy flat` now supports endpoint fills, source
+structure/seam scoring, `--colour-dither minimal`, OpenCV source-only lost-line
+contours and bounded mean-shift region guidance.96 fixed source frames in six
+windows have full saved source/states, per-frame metrics, motion and character
+comparisons. Flat has0% patterned samples; minimal1.094% versus65.683% before.
+Neutral contours raise strong gradient retention35.408% ->44.246% over plain
+flat, but the old selector retains70.066%, with lower averaged RGB/boundary
+and quiet-source residual error. Region guidance worsens quiet variation.
+Keep every new mode optional; none qualifies as a default quality upgrade or
+semantic person recognition. Preserve both rejected/earlier trials.43 tests
+plus the final8 contracts pass; all36 final compressed windows/576 host screens
+roundtrip,46261 contour bytes versus69993 baseline. Native instructions stay
+unchanged,0 T delta; no new TRD or Z80/Fuse timing claim. See
+[evidence and usage](toolkit/analysis/flat_colour/README.md). This bounded
+encoder/comparison deliverable is complete; no further model/movie search
+or push starts automatically.
+
 ## Adaptive audio RAM and cover loading — complete (2026-10-13)
 
 The user requests available RAM on Spectrum128, Scorpion256, Pentagon512

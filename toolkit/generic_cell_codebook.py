@@ -17,21 +17,34 @@ from probe_hybrid_five_level import error
 from row_dictionary_video import encode_states
 
 
-def prepare_frames(images, compact, directory, *, colour_policy='stable', monochrome=False):
+def prepare_frames(images, compact, directory, *, colour_policy='stable', monochrome=False,
+                   colour_dither='none', colour_contours=False, colour_vision='none'):
     """Refine the generic converter's palette without changing its media fit.
 
     First retain the reproducible legacy five-level reference. The default
     colour search then rejects misleading tint and feathers only narrow,
     source-smooth solid/pattern transitions. Legacy preparation
     remains available explicitly; native dithering keeps a fixed screen phase.
+    Optional flat preparation selects solid hardware endpoints, coordinates
+    source-smooth cell seams and preserves strong source gradients. Minimal
+    dither, OpenCV source contours and region guidance are opt-in for that mode.
     """
     if len(images) != len(compact) or not len(images):
         raise ValueError('expected matching nonempty RGB and compact frames')
-    if colour_policy not in ('stable', 'legacy'):
+    if colour_policy not in ('stable', 'legacy', 'flat'):
         raise ValueError('unknown colour policy')
+    if colour_policy == 'flat' and monochrome:
+        raise ValueError('flat colour and monochrome are mutually exclusive')
+    if colour_dither not in ('none', 'minimal'):
+        raise ValueError('unknown colour dither')
+    if colour_vision not in ('none', 'regions'):
+        raise ValueError('unknown colour vision')
+    if (colour_dither != 'none' or colour_contours or colour_vision != 'none') and (colour_policy != 'flat' or monochrome):
+        raise ValueError('minimal dither, contours and vision require non-monochrome flat colour')
     import stable_colour
     import texture_colour
     import monochrome_five_level
+    import flat_colour
     comparison = stable_colour.Comparison()
     previous = previous_image = None
     path = Path(directory)/'five-states.npy'
@@ -47,6 +60,9 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
         refined[4512:] = bytes([1])*96
         legacy = bytes(refined)
         state = (monochrome_five_level.encode(image) if monochrome else
+                 flat_colour.encode(image, previous, previous_image,
+                    dither=colour_dither, contours=colour_contours, vision=colour_vision)
+                 if colour_policy == 'flat' else
                  texture_colour.encode(image, legacy, previous, previous_image)
                  if colour_policy == 'stable' else legacy)
         comparison.add(image, legacy, state)
@@ -66,11 +82,16 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
         mean_mse=float(np.mean(after)), maximum_mse=max(after), frame_mse=after,
         four_level_frame_mse=before, four_level_mean_mse=float(np.mean(before)),
         refinement_never_increased_rgb_error=all(a<=b+1e-9 for a,b in zip(after,before)), brightness_levels=5,
-        dither='fixed-phase 2x2 after brightness reconstruction',
+        dither=(colour_dither if colour_policy == 'flat' and not monochrome
+                else 'fixed-phase 2x2 after brightness reconstruction'),
         compression_additional_pixel_changes=False, perceptual_percent_claimed=False,
         colour_policy='monochrome' if monochrome else colour_policy,
-        monochrome=monochrome, colour_comparison=texture_colour.comparison_report(
-            comparison, active=not monochrome and colour_policy == 'stable'))
+        monochrome=monochrome, colour_contours=colour_contours, colour_vision=colour_vision,
+        colour_comparison=(flat_colour.comparison_report(comparison,
+            dither=colour_dither, contours=colour_contours, vision=colour_vision)
+            if colour_policy == 'flat' and not monochrome else
+            texture_colour.comparison_report(comparison,
+                active=not monochrome and colour_policy == 'stable')))
 
 
 def row_sets(frames):

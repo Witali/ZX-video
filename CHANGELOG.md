@@ -1,5 +1,48 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Optional solid-colour encoder and source-defined character lines
+
+- **Request/baseline:** Another encoder with closest solid colours, no/minimal
+  dither, fewer clashes and recognizable cartoon people, followed by computer
+  vision steering. Branch `codex/flat-colour` starts at`13819086`. Reuse exact
+  sea-foam source RGB/qualified `df986063...` states on six fixed16-frame windows
+  at90/144/252/288/496/784, plus two current-source context frames per window.
+- **Initial trial, rejected as an upgrade:** Search56 actual endpoint pairs,
+  RGB/opponent/luma score, source-gradient weight0.75, seam weight2, three
+  spatial passes,768 source-score allowance and quiet history<=4 codes/64 score.
+  Soft7x7 Canny100/200/24-code target darkening loses facial detail. Mean-shift
+  sp3/sr24/region RMS8, minimum8 samples, bounded12-code pull and protected source
+  detail do not cure it. Pattern share65.683% ->0%, but regions retain35.444%
+  strong gradients versus70.066% baseline. Keep all96 frames, five variants,
+  initial sources, measurements and full host packet checks in`initial-trial`.
+- **Lost-line follow-up, superseded:** Add35-degree opponent hue cone, restrict
+  minimal dither to detailed cells (one2x2 sample/cell), Canny40/80 with3x3 sigma
+  0.65 and minimum4 connected samples, dark-side line placement and restore
+  source RMS>=24 when output contrast<half source. This restores some facial
+  lines but can use blue as the darker endpoint. Keep complete96-frame evidence
+  and all36 packet checks in`unbounded-contour-trial`; reject coloured outlines.
+- **Final correction/results:** Only existing neutral darker endpoints may
+  restore lost lines. Add optional public `flat`, minimal, contours and regions
+  controls with explicit validation; default/native/audio unchanged. Baseline
+  versus final contours: native RGB MSE8852.682 ->3641.166 (grain removed),
+  averaged RGB534.998 ->3641.166, source seam174.984 ->739.800, quiet residual
+  66.622 ->175.448 and strong gradient retention70.066% ->44.246%. Relative to
+  plain flat, contours restore35.408% ->44.246% strong gradients. Minimal dither
+  uses1.094% patterned samples versus65.683%, with a hard one-sample/cell limit.
+  Actual matched compressed windows69993 ->46261 contour bytes; dictionary
+  maximum242 ->147 including the same two old histories. These are window
+  measurements, not full-volume estimates or a semantic readability grade.
+- **Verification/decision:**43 integration tests pass, plus final8 contracts
+  after CLI/API validation. Every36 final packet window/576 reference screen
+  roundtrips with exact LZSA2 decode, as do both earlier trials. Inspect boy,
+  king, multi-person and dark scenes; verify96-frame/10-fps/9.6-second MP4 with
+  FFprobe. Native instructions unchanged, delta0 T; no disk/ROM/delivery timing
+  or new release qualification. Keep modes optional and show the contour
+  audition. Source shades/detail and quiet stability remain inferior to the old
+  selector; mean-shift guidance is not an automatic improvement. No neural
+  person model was tested. [Scripts, exact sources, reports, all attempts and
+  comparisons](toolkit/analysis/flat_colour/README.md). Existing TRDs remain.
+
 ## 2026-10-14 — Close the audio loading progress frame
 
 - **Request/baseline:** Add vertical edges to the empty bar in the current

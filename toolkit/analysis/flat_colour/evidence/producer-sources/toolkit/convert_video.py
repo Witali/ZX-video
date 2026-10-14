@@ -1,0 +1,398 @@
+"""Convert a local video supported by FFmpeg to numbered Spectrum 128 TRDs."""
+from __future__ import annotations
+
+import argparse
+from fractions import Fraction
+import hashlib
+import json
+import math
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+
+import numpy as np
+
+import ay_fidelity as ay
+import build_long_video_trd as video
+from build_fap3_trd import Builder, sha
+from encode_fap3 import encode
+import fap3_disk_z80 as disk
+from video_cadence import fields_for_fps, scaffold_audio
+
+FPS = Fraction(25, 3)
+HERE = Path(__file__).resolve().parent
+
+
+def write_json(path, value):
+    path.write_text(json.dumps(value, indent=2, ensure_ascii=False)+'\n', encoding='utf-8')
+
+
+def executable(value, name):
+    found = shutil.which(str(value or name))
+    if not found:
+        raise ValueError(f'{name} not found: install it in PATH or pass --{name} PATH')
+    return str(Path(found).resolve())
+
+
+def run(command):
+    result = subprocess.run(command, capture_output=True)
+    if result.returncode:
+        raise RuntimeError(f'{Path(command[0]).name} failed:\n'+result.stderr.decode(errors='replace')[-6000:])
+    return result.stdout
+
+
+def probe_media(source, ffprobe):
+    probe = json.loads(run([ffprobe, '-v', 'error', '-show_streams', '-show_format', '-of', 'json', str(source)]))
+    pictures = [s for s in probe['streams'] if s['codec_type'] == 'video'
+                and not s.get('disposition', {}).get('attached_pic')]
+    sounds = [s for s in probe['streams'] if s['codec_type'] == 'audio']
+    if not pictures:
+        raise ValueError('input has no playable video stream')
+    picture = next((s for s in pictures if s.get('disposition', {}).get('default')), pictures[0])
+    sound = next((s for s in sounds if s.get('disposition', {}).get('default')), sounds[0] if sounds else None)
+    return probe, picture, sound
+
+
+def rational(value, default=Fraction(0)):
+    try:
+        return Fraction(value)
+    except (ValueError, TypeError, ZeroDivisionError):
+        return default
+
+
+def decode_video(source, ffmpeg, directory, probe, picture, sound, fps=FPS):
+    # Fit display aspect (including non-square source pixels); never crop/zoom.
+    # EOF pass + upward rounding retains even a one-frame, sub-120 ms clip.
+    filters = (f"setpts=PTS-STARTPTS,fps={fps}:start_time=0:round=up:eof_action=pass,"
+               "scale=w='max(1,round(min(128,72*dar)))':h='max(1,round(min(72,128/dar)))':flags=area,"
+               "setsar=1,pad=128:72:(ow-iw)/2:(oh-ih)/2:black")
+    path = directory/'frames.rgb'
+    command = [ffmpeg, '-v', 'error', '-nostdin', '-y', '-i', str(source), '-map', f'0:{picture["index"]}',
+               '-an', '-vf', filters, '-pix_fmt', 'rgb24', '-f', 'rawvideo', str(path)]
+    run(command)
+    size = 128*72*3
+    count, remainder = divmod(path.stat().st_size, size)
+    if not count or remainder:
+        raise ValueError('FFmpeg did not return complete video frames')
+    start = rational(picture.get('start_time'))
+    ends = [rational(s.get('start_time'), start)+rational(s.get('duration'))-start
+            for s in (picture, sound) if s and rational(s.get('duration')) > 0]
+    if not ends:
+        ends = [rational(probe.get('format', {}).get('duration'))]
+    wanted = max(count, math.ceil(max(ends, default=Fraction(0))*fps))
+    if wanted > 0xffffffff:
+        raise ValueError('input exceeds the 32-bit FAP3 frame count')
+    if wanted > count:
+        with path.open('r+b') as stream:
+            stream.seek(-size, 2)
+            last = stream.read(size)
+            for _ in range(wanted-count):
+                stream.write(last)
+    return np.memmap(path, dtype=np.uint8, mode='r', shape=(wanted, 72, 128, 3)), dict(
+        video_stream=picture['index'], audio_stream=sound['index'] if sound else None,
+        decoded_frames=count, encoded_frames=wanted, tail_repeated_frames=wanted-count,
+        encoded_seconds=float(Fraction(wanted, 1)/fps), fit='contain', crop=False, command=command)
+
+
+def convert_frames(images, directory, *, monochrome=False):
+    states = np.lib.format.open_memmap(directory/'states.npy', mode='w+', dtype=np.uint8, shape=(len(images), 3840))
+    previous = None
+    errors = []
+    image = np.zeros((96, 128, 3), dtype=np.uint8)
+    for index, active in enumerate(images):
+        image[12:84] = active
+        if monochrome:
+            # Existing four-code ABI uses fixed black/BRIGHT-white coverage.
+            # Direct luma quantization prevents accidental coloured dither
+            # pairs even on a neutral source; five-level CB41 is prepared next.
+            from monochrome_five_level import luma_numerator
+            luma = luma_numerator(image).astype(float)/10000
+            codes = np.abs(luma[:, :, None]-np.array([0., 63.75, 127.5, 255.])).argmin(axis=2).astype(np.uint8)
+            packed = codes.reshape(96, 32, 4)
+            data = ((packed[:, :, 0]<<6)|(packed[:, :, 1]<<4)
+                    |(packed[:, :, 2]<<2)|packed[:, :, 3]).tobytes()+bytes([71])*768
+        else:
+            data, previous = video.encode_compact_frame(image, previous, 100000, 'ordered4')
+        states[index] = np.frombuffer(data, dtype=np.uint8)
+        # Enforce the player format's fixed black bands, including their palette.
+        states[index, :384] = states[index, 2688:3072] = 0
+        states[index, 3072:3168] = states[index, 3744:] = 1
+        previous = states[index, 3072:].copy()
+        errors.append(video.reconstructed_error(states[index].tobytes(), image))
+        if index % 100 == 0:
+            print(f'Image conversion: {index+1}/{len(images)}', flush=True)
+    states.flush()
+    # Existing diagnostic tools consume this portable checkpoint format.
+    np.savez(directory/'conversion.npz', states=states)
+    return states, dict(metric='mean squared linear RGB error after native dithering, per frame',
+        measured_against='scaled source before Spectrum palette quantization',
+        mean_mse=float(np.mean(errors)), maximum_mse=max(errors), frame_mse=errors,
+        compression_additional_pixel_changes=False, perceptual_percent_claimed=False)
+
+
+def write_video_preview(images, states, quality, path):
+    from PIL import Image, ImageDraw
+    worst = np.argsort(quality['frame_mse'])[-4:]
+    indices = sorted({0, len(states)-1, *map(int, worst)})
+    sheet = Image.new('RGB', (512, len(indices)*216), (24, 24, 24))
+    labels = ImageDraw.Draw(sheet)
+    for row, index in enumerate(indices):
+        source = np.zeros((96, 128, 3), dtype=np.uint8)
+        source[12:84] = images[index]
+        sheet.paste(Image.fromarray(source).resize((256, 192), Image.Resampling.NEAREST), (0, row*216+24))
+        bitmap, attrs = video.expand_compact_screen(states[index].tobytes())
+        rendered = video.base.render_spectrum_screen(bitmap, attrs)
+        sheet.paste(Image.fromarray(rendered), (256, row*216+24))
+        labels.text((4, row*216+4), f'Frame {index}: scaled source', fill='white')
+        labels.text((260, row*216+4), 'Spectrum', fill='white')
+    sheet.save(path)
+    quality['preview_frames'] = indices
+    quality['preview'] = path.name
+
+
+def convert_audio(source, ffmpeg, directory, picture, sound, count, fps=FPS, *,
+                  noise_steps=1, tuning_cents=50, profile='auto', node=None, mixer_search='fast',chip='AY-3-8910',dynamics='compact'):
+    ticks, rate = count*fields_for_fps(fps), 22050
+    if sound is None:
+        frames = [video.AyFrame((1, 1, 1), (0, 0, 0))]*ticks
+        report = dict(source_audio=False, ticks=ticks, silence=True)
+    else:
+        duration = Fraction(count, 1)/fps
+        start = rational(picture.get('start_time'))
+        # Keep audio offsets relative to the first video PTS; fill gaps and tail.
+        filters = f'asetpts=PTS-({float(start):.12g})/TB,aresample={rate}:async=1:first_pts=0,apad'
+        import importlib.util
+        input_spec=importlib.util.spec_from_file_location('_zx_audio_input',HERE.parent/'ay-converter/audio_input.py')
+        input_module=importlib.util.module_from_spec(input_spec);input_spec.loader.exec_module(input_module)
+        mono=input_module.mono_filter(sound.get('channels'),sound.get('channel_layout',''))
+        if mono:filters+=','+mono
+        command = [ffmpeg, '-v', 'error', '-nostdin', '-copyts', '-i', str(source),
+            '-map', f'0:{sound["index"]}', '-vn', '-af', filters, '-t', f'{float(duration):.12g}',
+            '-ac', '1', '-ar', str(rate), '-f', 'f32le', '-']
+        samples = np.frombuffer(run(command), dtype='<f4').astype(np.float64)
+        sample_count = round(duration*rate)
+        samples = np.pad(samples[:sample_count], (0, max(0, sample_count-len(samples))))
+        print(f'AY analysis: {ticks} updates at 50 Hz', flush=True)
+        node = executable(node, 'node')
+        core = HERE.parent/'ay-converter'/'encode_pcm.py'
+        pcm_path = directory/'audio-source.f32'
+        samples.astype('<f4').tofile(pcm_path)
+        core_output = directory/'ay-core'
+        subprocess.run([sys.executable, str(core), str(pcm_path), '--output', str(core_output),
+            '--profile', profile, '--node', node, '--noise-steps', str(noise_steps),
+            '--tuning-cents', str(tuning_cents), '--mixer-search', mixer_search,'--chip',chip,'--dynamics',dynamics], check=True)
+        raw = (core_output/'ay.bin').read_bytes()
+        fit = json.loads((core_output/'analysis.json').read_text(encoding='utf-8'))
+        width=fit['packed_state_bytes']
+        if width not in (9,12) or len(raw) != ticks*width:
+            raise ValueError('shared AY core returned the wrong 50-Hz state count')
+        frames = [video.AyFrame.deserialize(raw[i:i+width]) for i in range(0,len(raw),width)]
+        if profile == 'auto':
+            level_spec=importlib.util.spec_from_file_location('_zx_pcm_levels',HERE.parent/'ay-converter/pcm_levels.py')
+            level_module=importlib.util.module_from_spec(level_spec);level_spec.loader.exec_module(level_module)
+            samples,_=level_module.process(samples,dynamics=dynamics)
+        import compare_ay_fidelity as quality
+        import wave
+        with wave.open(str(core_output/'audio-preview.wav'),'rb') as preview:
+            rendered = np.frombuffer(preview.readframes(preview.getnframes()),'<i2').astype(float)/32768
+        if len(rendered) != ticks*441:
+            raise ValueError('shared AY preview returned the wrong duration')
+        quality.write_wav(directory/'audio-preview.wav', rendered, rate)
+        metrics = quality.compare(quality.features(samples, rate, float(fps), count),
+                                  quality.features(rendered, rate, float(fps), count))
+        report = dict(source_audio=True, ticks=ticks, noise_ticks=fit.get('noise_ticks',sum(bool(f.noise_period) for f in frames)),
+            synthesis='shared audio/movie AY core, automatic tone/noise/mixed modes, 50 Hz', profile=profile, chip_fit=fit, metrics=metrics,
+            metric_note='signal proxies, not a perceptual accuracy percentage', command=command)
+    (directory/'ay.bin').write_bytes(b''.join(frame.serialize() for frame in frames))
+    return frames, report
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('input', type=Path, help='local video file; format detected by FFmpeg')
+    parser.add_argument('--output', type=Path, required=True, help='new or empty output directory')
+    parser.add_argument('--prefix', default='ZX-video', help='safe basename of numbered TRD files')
+    parser.add_argument('--video-codec', choices=('fap3', 'cb41'), default='fap3',
+        help='cb41: five brightness levels and the verified LZSA2 player; requires TR-DOS 5.03')
+    parser.add_argument('--lzsa', help='LZSA executable for --video-codec cb41; defaults to PATH')
+    parser.add_argument('--dynamic-rows',action='store_true',help='CB42 mutable row cache for the CB41 pipeline')
+    parser.add_argument('--front-reuse',action='store_true',help='CB44 same-position front-cell reuse; includes dynamic rows')
+    parser.add_argument('--guarded-cb46',action='store_true',help='experimental four-slot CB46 profile with automatic per-block compression/CPU guards; requires cb41')
+    parser.add_argument('--audio-banks',type=int,choices=(1,2),default=1,help='CB41-family resident AY banks: 4 or 4+6')
+    parser.add_argument('--fps', choices=('25/3', '10'), default='25/3',
+        help='video rate; 10 requires CB41, AY always remains 50 Hz')
+    parser.add_argument('--ay-profile', choices=('auto','music','legacy'), default='auto',
+        help='shared sound engine: automatic tone/noise/mixed fitting, preceding music profile, or legacy')
+    parser.add_argument('--ay-mixer-search',choices=('fast','full'),default='fast',
+        help='auto: 20 analytic candidates or 374 reference candidates, followed by chip feedback')
+    parser.add_argument('--ay-chip',choices=('AY-3-8910','YM2149'),default='AY-3-8910',
+        help='physical sound-chip target for all shared fitting and previews')
+    parser.add_argument('--ay-dynamics',choices=('compact','original'),default='compact',
+        help='smooth bounded audio dynamics before AY analysis, or preserve original dynamics')
+    parser.add_argument('--node', help='Node.js path for the shared AY chip model')
+    parser.add_argument('--ay-noise-steps', type=int, choices=(0, 1), default=1,
+        help='noise attenuation in nominal 3 dB AY volume steps (default: 1)')
+    parser.add_argument('--ay-tuning-cents', type=float, default=50,
+        help='integer AY period search around each tracked pitch, 0..100 cents (default: 50)')
+    for name in ('ffmpeg', 'ffprobe', 'zx0'):
+        parser.add_argument('--'+name, help='executable path; defaults to PATH')
+    parser.add_argument('--max-frames-per-disk', type=int, default=4096, help='upper bound, 1..10922; size may split sooner')
+    parser.add_argument('--disk-profile', choices=('portable', 'trdos503'), default='portable',
+        help='trdos503 enables the latest direct reads, cached seek and sector interleave')
+    parser.add_argument('--trdos-rom', type=Path, help='verified TR-DOS 5.03 ROM, required for trdos503')
+    parser.add_argument('--inline-matches', action='store_true', help='Optional faster ZX0 match copies; keeps the compressed stream unchanged')
+    parser.add_argument('--fast-noop-scan', action='store_true', help='Optional combined unchanged-tile checks; keeps zero-copy vectors')
+    parser.add_argument('--static-cache-borders', action='store_true', help='Skip virtual motion rows for unchanged edge stripes')
+    parser.add_argument('--carry-huffman', action='store_true', help='Use carry for Huffman bit positions; unchanged video stream')
+    parser.add_argument('--register-fragments', action='store_true', help='Write repeated fragment rows directly from registers')
+    parser.add_argument('--irq-safe-paging', action='store_true', help='Optional restartable bank changes without disabling IRQ')
+    parser.add_argument('--startup-delta', action='store_true', help='Smaller boot tables when adjacent-byte differences save disk sectors')
+    parser.add_argument('--verify', choices=('cpu', 'fuse', 'none'), default='cpu',
+        help='cpu: every instruction and full images; fuse: also real disk timing; none: host roundtrip only')
+    parser.add_argument('--colour-policy', choices=('stable', 'legacy', 'flat'), default='stable',
+        help='CB41 palette: stable local seam smoothing, legacy, or solid colours preserving source edges')
+    parser.add_argument('--colour-dither', choices=('none', 'minimal'), default='none',
+        help='Flat colour only: no dots, or at most one patterned 2x2 sample per 8x8 cell')
+    parser.add_argument('--colour-contours', action='store_true',
+        help='Flat colour only: restore thin source RGB lines whose contrast was lost in the fill (requires OpenCV)')
+    parser.add_argument('--colour-vision', choices=('none', 'regions'), default='none',
+        help='Flat colour only: source-bounded mean-shift region guidance with fine-detail protection (requires OpenCV)')
+    parser.add_argument('--monochrome', action='store_true',
+        help='Black/white image with fixed spatial gray dithering; audio and cadence unchanged')
+    parser.add_argument('--fuse', type=Path, help='Fuse executable for --verify fuse')
+    parser.add_argument('--verification-timeout', type=float, default=1800, help='Fuse timeout in seconds per disk')
+    parser.add_argument('--cached-huffman-byte', action='store_true', help='Cache current Huffman byte in B; requires --carry-huffman')
+    args = parser.parse_args(argv)
+    if args.colour_policy == 'flat' and (args.video_codec != 'cb41' or args.monochrome):
+        parser.error('--colour-policy flat requires --video-codec cb41 without --monochrome')
+    if (args.colour_dither != 'none' or args.colour_contours or args.colour_vision != 'none') and args.colour_policy != 'flat':
+        parser.error('minimal dither, contours and vision require --colour-policy flat')
+    if not 0 <= args.ay_tuning_cents <= 100:
+        parser.error('--ay-tuning-cents must be in 0..100')
+    args.frame_fields = fields_for_fps(args.fps)
+    if args.fps == '10' and args.video_codec != 'cb41':
+        parser.error('--fps 10 requires --video-codec cb41')
+    if args.video_codec!='cb41' and (args.dynamic_rows or args.front_reuse or args.guarded_cb46 or args.audio_banks!=1):
+        parser.error('dynamic rows, front reuse, guarded CB46 and resident audio banks require --video-codec cb41')
+    if args.cached_huffman_byte and not args.carry_huffman: parser.error('--cached-huffman-byte requires --carry-huffman')
+    try:
+        if not args.input.is_file(): raise ValueError('input video file does not exist')
+        if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}', args.prefix):
+            raise ValueError('--prefix must be 1..64 ASCII letters, digits, underscores or hyphens')
+        if not 1 <= args.max_frames_per_disk <= 10922: raise ValueError('--max-frames-per-disk must be 1..10922')
+        if args.verification_timeout <= 0: raise ValueError('--verification-timeout must be positive')
+        if args.output.exists() and (not args.output.is_dir() or any(args.output.iterdir())):
+            raise ValueError('--output must be new or empty; existing files are never overwritten')
+        executables = {name: executable(getattr(args, name), name) for name in ('ffmpeg', 'ffprobe', 'zx0')}
+        if args.video_codec == 'cb41':
+            if any(getattr(args, name) for name in ('inline_matches', 'fast_noop_scan',
+                    'static_cache_borders', 'carry_huffman', 'register_fragments',
+                    'irq_safe_paging', 'startup_delta', 'cached_huffman_byte')):
+                raise ValueError('CB41 selects its verified optimizations automatically; omit FAP3 optimization flags')
+            executables['lzsa'] = executable(args.lzsa, 'lzsa')
+            args.disk_profile = 'trdos503'
+        fast = args.disk_profile == 'trdos503'
+        if fast and (not args.trdos_rom or sha(args.trdos_rom.read_bytes()) != disk.TRDOS_503_SHA256):
+            raise ValueError('trdos503 requires --trdos-rom with the verified TR-DOS 5.03 hash')
+        if args.verify == 'fuse' and (not args.fuse or not args.fuse.is_file()):
+            raise ValueError('--verify fuse requires --fuse PATH')
+        source, output = args.input.resolve(), args.output.resolve()
+        probe, picture, sound = probe_media(source, executables['ffprobe'])
+    except (ValueError, OSError, RuntimeError) as error:
+        parser.error(str(error))
+    output.mkdir(parents=True, exist_ok=True)
+    work = output/'work'; work.mkdir()
+    with source.open('rb') as stream:
+        source_hash = hashlib.file_digest(stream, 'sha256').hexdigest()
+    manifest = dict(source=str(source), source_sha256=source_hash, complete=False, release=False,
+        video_fps=args.fps, frame_fields=args.frame_fields, ay_hz=50, native_resolution=[256, 192], active_resolution=[256, 144],
+        logical_resolution=[128, 96], disk_profile=args.disk_profile, executables=executables,
+        player_baseline='ab76fa1' if args.cached_huffman_byte else '7152e10' if args.register_fragments else '0cf64be' if args.carry_huffman else '6e724f4' if args.static_cache_borders else '00fb0fd' if args.irq_safe_paging else '491db7b' if args.fast_noop_scan else '80ab9d9' if args.inline_matches else '00313d3',
+        player_hot_path_changed=args.inline_matches or args.fast_noop_scan or args.irq_safe_paging or args.static_cache_borders or args.carry_huffman or args.register_fragments or args.cached_huffman_byte,
+        player_hot_path_delta_tstates=None if args.inline_matches or args.fast_noop_scan or args.irq_safe_paging or args.static_cache_borders or args.carry_huffman or args.register_fragments or args.cached_huffman_byte else 0,
+        inline_matches=args.inline_matches,
+        fast_noop_scan=args.fast_noop_scan,
+        static_cache_borders=args.static_cache_borders,
+        carry_huffman=args.carry_huffman,
+        register_fragments=args.register_fragments,
+        cached_huffman_byte=args.cached_huffman_byte,
+        irq_safe_paging=args.irq_safe_paging,
+        startup_delta=args.startup_delta,
+        timing_verified=False, verification=args.verify, video_codec=args.video_codec,
+        monochrome=args.monochrome, colour_policy=args.colour_policy,
+        colour_dither=args.colour_dither, colour_contours=args.colour_contours, colour_vision=args.colour_vision)
+    if args.video_codec == 'cb41':
+        manifest.update(player_baseline='9885483', player_hot_path_changed=False,
+                        player_hot_path_delta_tstates=0, brightness_levels=5)
+    write_json(output/'conversion.json', manifest)
+    try:
+        images, manifest['input'] = decode_video(source, executables['ffmpeg'], work, probe, picture, sound, Fraction(args.fps))
+        states, quality = convert_frames(images, work, monochrome=args.monochrome)
+        if args.video_codec == 'cb41':
+            from generic_cell_codebook import prepare_frames, write_preview
+            five_states, quality = prepare_frames(images, states, work,
+                colour_policy=args.colour_policy, monochrome=args.monochrome,
+                colour_dither=args.colour_dither, colour_contours=args.colour_contours, colour_vision=args.colour_vision)
+            write_preview(images, five_states, quality, output/'video-preview.png')
+        else:
+            write_video_preview(images, states, quality, output/'video-preview.png')
+        write_json(output/'video-quality.json', quality)
+        ay_frames, audio = convert_audio(source, executables['ffmpeg'], work, picture, sound,
+            len(states), Fraction(args.fps), noise_steps=args.ay_noise_steps, tuning_cents=args.ay_tuning_cents, profile=args.ay_profile, node=args.node,mixer_search=args.ay_mixer_search,chip=args.ay_chip,dynamics=args.ay_dynamics)
+        write_json(output/'audio-quality.json', audio)
+        raw, codec = encode(states, scaffold_audio(ay_frames, args.frame_fields))
+        codec.update(build_envelope_fields=6, runtime_frame_fields=args.frame_fields,
+                     runtime_ay_ticks=len(ay_frames))
+        (work/'stream.raw').write_bytes(raw)
+        write_json(output/'codec.json', codec)
+        if args.video_codec == 'cb41':
+            from convert_cb41 import build
+            records = build(five_states, ay_frames, raw, states, args, executables, output, manifest)
+            manifest['complete'] = True
+            write_json(output/'conversion.json', manifest)
+            print(f'Created {len(records)} five-level TRD(s) in {output}', flush=True)
+            print(f'Exact {args.fps} fps: '+('verified in Fuse' if manifest['timing_verified']
+                                     else 'not verified; see timing.json'), flush=True)
+            return
+        builder = Builder(raw, states, Path(executables['zx0']), work/'zx0',
+            fast_disk=fast, cached_seek=fast, interleaved=fast, inline_matches=args.inline_matches,
+            startup_delta=args.startup_delta,fast_noop_scan=args.fast_noop_scan,irq_safe_paging=args.irq_safe_paging,static_cache_borders=args.static_cache_borders,carry_huffman=args.carry_huffman,register_fragments=args.register_fragments,cached_huffman_byte=args.cached_huffman_byte)
+        ends = builder.automatic_ends(args.max_frames_per_disk)
+        records = []
+        start = 0
+        for part, end in enumerate(ends, 1):
+            print(f'Building disk {part}/{len(ends)}: frames {start}..{end-1}', flush=True)
+            image, metadata = builder.volume(start, end, part)
+            if image is None: raise ValueError('final disk exceeds capacity after checkpoint convergence')
+            stem = f'{args.prefix}_part{part:02}'
+            (output/(stem+'.trd')).write_bytes(image)
+            write_json(output/(stem+'.json'), metadata)
+            records.append(dict(file=stem+'.trd', metadata=stem+'.json', frames=end-start,
+                frame_start=start, frame_end_exclusive=end, used_sectors=metadata['used_sectors'],
+                free_sectors=metadata['free_sectors'], sha256=metadata['trd_sha256']))
+            start = end
+        write_json(output/'volumes.json', records)
+        manifest.update(frames=len(states), ay_ticks=len(ay_frames), volumes=records,
+            duration_seconds=len(states)*3/25, stream_sha256=sha(raw), states_sha256=sha(states.tobytes()))
+        if args.verify != 'none':
+            from profile_fap3 import verify_volumes
+            timing = verify_volumes(builder, records, output, args.fuse if args.verify == 'fuse' else None,
+                                    args.verification_timeout)
+            manifest['timing_verified'] = timing['all_nominal_deadlines_met']
+        else:
+            write_json(output/'timing.json', dict(complete=False, all_nominal_deadlines_met=False,
+                release=False, reason='Instruction and disk measurements skipped by --verify none'))
+        manifest['complete'] = True
+    except Exception as error:
+        manifest['failure'] = f'{type(error).__name__}: {error}'
+        write_json(output/'conversion.json', manifest)
+        raise
+    write_json(output/'conversion.json', manifest)
+    print(f'Created {len(records)} TRD(s) in {output}', flush=True)
+    print('Exact 8 1/3 fps: '+('verified in Fuse' if manifest['timing_verified'] else 'not verified; see timing.json'), flush=True)
+
+
+if __name__ == '__main__':
+    main()
