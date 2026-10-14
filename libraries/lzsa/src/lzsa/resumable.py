@@ -12,7 +12,7 @@ from ._z80 import sha
 PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
-def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,
+def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,
           prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000):
     """Generate raw-v2 decode regions, coroutine labels and instruction costs.
 
@@ -25,8 +25,12 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     output target. The application owns page supply and final-input bypass.
     long_copy appends bounded 16-LDI kernels to the core: reserve more core RAM
     explicitly (e.g. core_limit=0x9000). Short tokens retain their old paths.
+    near_literals moves the ordinary long-copy literal helper before start,
+    removing its trampoline. Streaming and all default profiles stay unchanged.
     """
     if direct_header and not streaming:raise ValueError('direct header requires streaming input')
+    if near_literals and (not long_copy or streaming):
+        raise ValueError('near literals require ordinary long-copy input')
     if not (0<=core<core_limit<=65536 and 0<=prefix<prefix_limit<=65536):
         raise ValueError('invalid code reservations')
     if not (core_limit<=prefix or prefix_limit<=core):raise ValueError('code reservations overlap')
@@ -49,14 +53,26 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         emit('LD A,(HL)',(0x7e,),7);inc()
         for _ in range(4):emit('RRCA',(0x0f,),4)
         a.label(label);emit('OR F0h',(0xf6,0xf0),7)
-    if long_copy and not streaming:
+    def long_literals():
+        # A=count/B=token, count 18..255; BC entry requires readable literals.
+        # Sixteen LDIs leave positive BC and preserve forward overlap/AF'.
+        a.label('LongLiterals8');emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('LD B,0',(6,0),7)
+        a.label('LongLiteralsBC')
+        for _ in range(16):ldi()
+        ldir();jp(0xc3,'AfterLongLiterals')
+    if near_literals:
+        # Both helper and ManyLiterals are now within one relative jump.
+        # Its untaken 7-T word path is unchanged; eligible byte forms avoid
+        # the former 10-T/three-byte trampoline. begin enters start directly.
+        long_literals()
+    elif long_copy and not streaming:
         # Preserve the original JR's 7-T untaken word-length path. A nearby
         # trampoline adds 10 T only to the eligible long8 literal path.
         a.label('LongLiterals8Jump');jp(0xc3,'LongLiterals8')
     a.label('start');emit('LD B,0',(6,0),7);emit('SCF',(0x37,),4);x();jp(0xc3,'ReadToken')
     a.label('ManyLiterals');emit('LD A,18',(0x3e,18),7);emit('ADD A,(HL)',(0x86,),7);inc()
     if streaming:a.labels['long8_target']=a.pc+1;jp(0xd2,'guard_long8')
-    elif long_copy:jr(0x30,'LongLiterals8Jump')
+    elif long_copy:jr(0x30,'LongLiterals8' if near_literals else 'LongLiterals8Jump')
     else:jr(0x30,'CopyMoreLiterals')
     emit('LD C,(HL)',(0x4e,),7);inc();emit('LD A,B',(0x78,),4);emit('LD B,(HL)',(0x46,),7)
     if streaming:a.labels['long16_target']=a.pc+1
@@ -121,10 +137,7 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         # Literal entry: A=count/B=token, count 18..255. Guards call the BC
         # entry only after the entire extent is readable. Word-length guards
         # must keep their original zero-prefix LDIR continuation.
-        a.label('LongLiterals8');emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('LD B,0',(6,0),7)
-        a.label('LongLiteralsBC')
-        for _ in range(16):ldi()
-        ldir();jp(0xc3,'AfterLongLiterals')
+        if not near_literals:long_literals()
         # Match entry: A=count/B=0 or BC=count; DE=next output, HL=input.
         # The shared self-modified offset is loaded as data, costing 6 T more
         # than the short path's immediate load but avoiding another store on
@@ -242,8 +255,9 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         upstream_commit='15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5',
         **(dict(long_copy=True,long_copy_minimum_literals=18,long_copy_minimum_match=24,
             long_copy_unrolled_bytes=16,long_copy_16bit_forms=False,
-            long_copy_extra_core_bytes=84 if streaming else 87,
-            long_copy_delta_tstates=dict(literals8=-60 if streaming else -50,
+            long_copy_extra_core_bytes=84 if streaming or near_literals else 87,
+            long_copy_delta_tstates=dict(literals8=-60 if streaming or near_literals else -50,
                 literals16=0,guarded_literals16=0,matches8=-59,matches16=0)) if long_copy else {}),
+        **(dict(near_literals=True,near_literal_delta_tstates=-10,near_literal_code_delta=-3) if near_literals else {}),
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         upstream_sha256=sha((Path(__file__).parent/'asm/unlzsa2_fast.asm').read_bytes()))

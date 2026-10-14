@@ -96,7 +96,7 @@ The proposed codec sites are our inferences from those sources.
 
 | ID | Technique and source group | Application and required proof | Status |
 | --- | --- | --- | --- |
-| 10 | Branch choice and helper placement: ETUDES-JUMP, 80CC-OPTIONS | Move optional LZSA2 long-copy helper to remove its trampoline; retain 7-T untaken word path, JR bounds and full core reservation | Pending codec experiment |
+| 10 | Branch choice and helper placement: ETUDES-JUMP, 80CC-OPTIONS | Move optional LZSA2 long-copy helper to remove its trampoline; retain 7-T untaken word path, JR bounds and full core reservation | Optional measured near_literals profile: −10 T/call, −3 bytes |
 | 11 | Reuse loaded values across independent code: SDCC-RMW, 80CC-OPTIONS | Repeated state/history loads and spills; prove source immutability, liveness at both endpoints and every control-flow edge | Pending codec experiment |
 | 12 | Direct known-address access: SDCC-ADDR | Remove temporary HL/IX/IY construction only when the pointer is dead; include complete setup/save costs | Pending codec experiment |
 | 13 | In-place memory arithmetic: SDCC-RMW | Indexed shift instead of load/modify/store only when A is dead; audit nibble/bit reservoir ownership | Primitive 512 cases pass; codec pending |
@@ -121,7 +121,8 @@ current library paths. Seven primitive groups pass6604 native cases; these
 are conditional snippets, not completed codec/streaming/IRQ experiments.
 Item20 now has a concrete LZSA2 `sync` proposal: restore HL with ADD HL,DE
 after subtraction instead of reloading target, 35 ->30 T and6 ->4 bytes;
-S/Z/PV/C agree, H/N differ. Item10 remains the next sequential experiment.
+S/Z/PV/C agree, H/N differ. The authorized second pass is tracked in
+[SECOND_PASS.md](SECOND_PASS.md); item10 is complete, item11 is next.
 
 | ID | Additional technique and source | Application and required proof | Status |
 | --- | --- | --- | --- |

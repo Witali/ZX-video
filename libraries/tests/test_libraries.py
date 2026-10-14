@@ -125,6 +125,8 @@ class LibraryTests(unittest.TestCase):
             with self.assertRaises(ValueError):build(stack=65536)
         with self.assertRaises(ValueError):lzsa_build(direct_header=True)
         with self.assertRaises(ValueError):lzsa_build(long_copy=True)
+        with self.assertRaises(ValueError):lzsa_build(near_literals=True)
+        with self.assertRaises(ValueError):lzsa_build(long_copy=True,near_literals=True,streaming=True,core_limit=0x9000)
 
 
 @unittest.skipUnless(importlib.util.find_spec('z80'), 'install lzsa[native] for native tests')
@@ -236,6 +238,26 @@ class NativeTests(unittest.TestCase):
                 old=execute(*baseline,payload,raw,source=0x2000,caller_stack=0x9df0)
                 new=execute(*candidate,payload,raw,source=0x2000,caller_stack=0x9df0)
                 self.assertEqual(new['tstates'],old['tstates'])
+
+    def test_near_literal_helper_relocation_and_escaped_words(self):
+        from lzsa.native import execute
+        from measure_long_copy import noncanonical_cases
+        for config in ({},dict(prefix=0x5000,prefix_limit=0x5400,core=0x6000,
+                              stack=0x4ff0,output_base=0xa000)):
+            old=lzsa_build(**config,long_copy=True,core_limit=0x6400 if config else 0x9000)
+            new=lzsa_build(**config,long_copy=True,near_literals=True,core_limit=0x6400 if config else 0x9000)
+            self.assertEqual(new[2]['code_bytes'],old[2]['code_bytes']-3)
+            for length in (3,17,18,237,238,255,256,257):
+                raw=bytes(index%251 for index in range(length));payload=lzsa.encode(raw,[])
+                before=execute(*old,payload,raw,source=0x2000,caller_stack=0x9df0)
+                after=execute(*new,payload,raw,source=0x2000,caller_stack=0x9df0,interrupts=True)
+                plain=execute(*new,payload,raw,source=0x2000,caller_stack=0x9df0)
+                self.assertTrue(after['exact'])
+                self.assertEqual(plain['tstates']-before['tstates'],-10 if 18<=length<=255 else 0)
+            for _,payload,raw in noncanonical_cases():
+                before=execute(*old,payload,raw,source=0x2000,caller_stack=0x9df0)
+                after=execute(*new,payload,raw,source=0x2000,caller_stack=0x9df0)
+                self.assertEqual(after['tstates'],before['tstates'])
 
 
 if __name__=='__main__':unittest.main()

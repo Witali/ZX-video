@@ -108,6 +108,11 @@ python -m lzsa build --long-copy --core-limit 0x9000 --output build/lzsa-long
 
 Explicitly reserve the additional87 core bytes (84 with streaming); the
 default reservation rejects this profile. It adds no state, stack or tables.
+
+For ordinary complete input, `near_literals=True` (CLI `--near-literals`)
+places the same helper near its JR caller. This saves another10 T per
+byte-form literal and3 bytes, leaving84 extra core bytes. Short and escaped
+word paths stay unchanged. [Second-pass verification](../SECOND_PASS.md).
 The default placement keeps these kernels in uncontended Spectrum bank2.
 Retain writable code and the same forward-copy/IRQ contracts. Streaming users
 must use `emit_guard_update` or the optional `long8_complete`

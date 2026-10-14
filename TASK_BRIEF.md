@@ -3,6 +3,17 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## Active: sequential additional codec improvements (2026-10-14)
+
+The user explicitly authorizes working through the saved list and checking
+the improvements. Continue all pending items10–29 in order, prioritizing
+speed then code size, one complete measured/audited result per focused commit.
+Use [SECOND_PASS.md](libraries/SECOND_PASS.md) and the checklist. Preserve
+defaults, wire formats, EOF/overlap/suspension/IRQ and application release gates.
+Item10 is complete: optional ordinary LZSA2 near_literals saves10 T per
+eligible literal and3 bytes;95 complete blocks,230 IRQs, zero slower slices,
+relocation/short escaped words and13 unit tests pass. Item11 is next.
+
 ## Completed: other-site Z80 speed/size survey (2026-10-14)
 
 The user asks which further library optimizations are possible, prioritizing

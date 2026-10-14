@@ -1,5 +1,22 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item10: remove the optional LZSA2 literal trampoline
+
+- **Authorization/baseline:** User requests sequential application/checking
+  of items10–29. From `3f34a4a4`, compare existing long_copy against a new
+  ordinary near_literals option; defaults and streaming profiles unchanged.
+- **Change/accounting:** Move the41-byte helper before start, preserving JR7
+  on escaped-word paths. Remove JP10/three-byte trampoline; eligible literal
+  path `21*n−18` ->`21*n−28` T, core337 ->334 bytes. No state/stack/input
+  increase; raw region rounding stays3 sectors. Physical boot packing unmeasured.
+- **Verification:**95 complete blocks/619480 bytes,26297662 ->26292702 T
+  (−4960), real21 blocks−1690, zero slower blocks/slices;230 native IRQs.
+  Short-word encodings and relocation retain exact results/timings;13 library
+  tests pass, including31 exact default layouts and unchanged guard modes.
+- **Decision:** Optional measured profile; preserve standard compressed bytes
+  and application release requirements. [Result/reproduction](libraries/SECOND_PASS.md),
+  [report](libraries/evidence/trick_10.json). Continue with item11.
+
 ## 2026-10-14 — Survey other sites for Z80 decoder speed and code size
 
 - **Objective/baseline:** From `5abac404`, answer the user's speed-first,
