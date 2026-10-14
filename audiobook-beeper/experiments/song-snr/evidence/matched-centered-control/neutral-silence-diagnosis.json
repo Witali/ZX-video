@@ -1,0 +1,151 @@
+{
+  "date": "2026-10-14",
+  "source": "silence",
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0,
+    "pcm_origin": 0,
+    "compact_stream_loader": true,
+    "pcm_quantization_bias": 512
+  },
+  "source_samples": 16896,
+  "packed_sha256": "0f47ecf52af95b17e5b78e1ac181dc092897de95163da5d708eee4331918cf16",
+  "encoded_unique_byte_values": [
+    0
+  ],
+  "all_decoded_pcm16_zero": true,
+  "all_decoded_ima_indices_zero": true,
+  "initial_feedback_state": 16,
+  "exact_feedback_cycle": [
+    {
+      "state_before": 16,
+      "pcm16": 0,
+      "centered_bin": 32,
+      "packet_hex": "6ad5",
+      "state_after": 17,
+      "active_tstates": 223,
+      "total_tstates": 449,
+      "duty": 0.49665924276169265,
+      "bipolar_average": -0.006681514476614692
+    },
+    {
+      "state_before": 17,
+      "pcm16": 0,
+      "centered_bin": 32,
+      "packet_hex": "952a",
+      "state_after": 16,
+      "active_tstates": 226,
+      "total_tstates": 449,
+      "duty": 0.5033407572383074,
+      "bipolar_average": 0.006681514476614803
+    }
+  ],
+  "cycle_repeats": 8448,
+  "full_stream_cycle_proof": "Every decoded PCM16 is0, every mapped input is32, and both transitions return to the same two-state cycle; source and packet table hashes are authenticated by host and manifest.",
+  "ordinary_pair_bipolar_mean": 0.0,
+  "silence_error_rms": 0.015513939091325661,
+  "silence_error_rms_dbfs": -36.18555835910403,
+  "strongest_error_bins": [
+    {
+      "hz": 3990.3717041015625,
+      "density_per_hz": 9.895517657633926e-05,
+      "three_bin_error_power_fraction": 0.9695325993583305
+    },
+    {
+      "hz": 3991.717529296875,
+      "density_per_hz": 6.698161817686641e-05,
+      "three_bin_error_power_fraction": 0.9345827564009956
+    },
+    {
+      "hz": 3989.02587890625,
+      "density_per_hz": 7.4504852029300316e-06,
+      "three_bin_error_power_fraction": 0.5954546060577329
+    },
+    {
+      "hz": 3993.0633544921875,
+      "density_per_hz": 1.2001969616919068e-06,
+      "three_bin_error_power_fraction": 0.3814640475088776
+    },
+    {
+      "hz": 3987.6800537109375,
+      "density_per_hz": 8.30262236232171e-08,
+      "three_bin_error_power_fraction": 0.04217015772933718
+    },
+    {
+      "hz": 4006.5216064453125,
+      "density_per_hz": 4.165014767509997e-08,
+      "three_bin_error_power_fraction": 0.0003512947445895555
+    },
+    {
+      "hz": 3994.4091796875,
+      "density_per_hz": 3.7668809064231005e-08,
+      "three_bin_error_power_fraction": 0.006948233037988125
+    },
+    {
+      "hz": 3975.567626953125,
+      "density_per_hz": 1.6997044324888712e-08,
+      "three_bin_error_power_fraction": 0.000152149596461411
+    }
+  ],
+  "fullband_silence_peaks": {
+    "scope": "Complete silence except fixed100-ms edges;20..22050Hz;Hann Welch bins;no fitted transfer",
+    "window_samples": 32768,
+    "windows": 5,
+    "bin_width_hz": 1.3458251953125,
+    "strongest_bins": [
+      {
+        "hz": 3990.3717041015625,
+        "three_bin_total_noise_power_fraction": 0.9695325993583301
+      },
+      {
+        "hz": 3991.717529296875,
+        "three_bin_total_noise_power_fraction": 0.9345827564009951
+      },
+      {
+        "hz": 3989.02587890625,
+        "three_bin_total_noise_power_fraction": 0.5954546060577326
+      },
+      {
+        "hz": 11972.4609375,
+        "three_bin_total_noise_power_fraction": 0.01370325748054146
+      },
+      {
+        "hz": 3993.0633544921875,
+        "three_bin_total_noise_power_fraction": 0.38146404750887736
+      },
+      {
+        "hz": 11973.806762695312,
+        "three_bin_total_noise_power_fraction": 0.011825002093731185
+      },
+      {
+        "hz": 11971.115112304688,
+        "three_bin_total_noise_power_fraction": 0.010971251974103402
+      },
+      {
+        "hz": 19954.550170898438,
+        "three_bin_total_noise_power_fraction": 0.0011835064625548217
+      }
+    ]
+  },
+  "interpretation": "The approximately3991-Hz silence line remains despite a completely constant PCM and centered bin. It arises from the existing alternating neutral feedback/packet words, independently of negative-zero quantizer discontinuity. Average neutral duty is exact over two nominal449-T packets, but this does not establish absence of audible background.",
+  "actual_hardware_verified": false,
+  "scope": "Read-only diagnosis of the completed frozen candidate; no new model, encoded variant, filter, clock or gain change."
+}

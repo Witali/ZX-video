@@ -83,6 +83,16 @@ complete short native runs, absent/0 old disk AND7938 metadata exact, only126
 LUT bytes changed. CPU counts423/449 and all extras stay identical(delta0).
 `evidence/pcm-quantization-bias` has actual prior-producer snapshots; these
 native proofs do not cover128/Scorpion ULA waits or a new full Fuse quality run.
+The matched full nine-source host control is now rejected: song20.110900648
+dB(-0.139415 versus half-joint), four SNR/five RMS regressions, residual
+3991-Hz silence tone. Complete source/packed/predictor/index silence is zero;
+bin32 remains constant while table feedback16/17 alternates6ad5/952a with
+223/226 activeT out of449. Evidence is `evidence/matched-centered-control`;
+fresh91.324658 s,84 measured outputs/22 producer hashes, no new Fuse run.
+The next bounded mechanism may test a source-independent stable neutral
+packet with an instruction-derived duty constraint and matched C features.
+Finish and archive this experiment before starting another; preserve all
+defaults and exact original Python, and do not relax artifact/clock/SNR gates.
 Do not silently promote the midpoint/centered frozen-payload controls. Keep
 the complete original scope and artifact/clock/20-dB gates; language and speed
 milestones alone do not complete the active goal.

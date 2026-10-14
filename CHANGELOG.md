@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Matched centered zero-origin whole-corpus control rejected
+
+- **Objective/baseline:** Test the generic centered quantizer with semantically
+  matched origin0/full-extent duration_zero table after functional C/player
+  proof. Freeze bias512, compact loader, beam32/horizon128/commit64/reg0.1
+  before all nine full inputs; retain gain/content/clock/filter/edges.
+- **Full host results:** Fresh corpus91.324658 s. Song20.110900648 dB,
+  +23.196128936 versus authenticated legacy and-0.139415239 versus half-joint.
+  Speech22.056546, Entertainer19.589737, quiet4407.183904, quiet9970.840043.
+  Four SNR/five RMS regressions versus joint; steps2.456251 is7.502533 dB below
+  compensation. Numeric indicators include22 AM,33 delay and15 error-line
+  increases versus joint;33 modulation comparisons inconclusive. These are
+  disclosure counters with arithmetic tolerance, not audibility thresholds.
+- **Independent mechanism evidence:** Complete silence decodes toPCM0/index0,
+  centered bin32 throughout, yet PDM feedback alternates16/17 with packets
+  6ad5/952a and223/226 activeT per449 T. RMS0.015513939, approximately97% of
+  spectral error near3991 Hz. This intrinsic neutral-state cycle is separate
+  from the previous floor-bin crossing; centered input alone does not remove it.
+- **Decision/coverage:** Reject unconditional promotion; preserve all nine
+  complete outputs and84-artifact/22-producer manifest. No new Fuse execution
+  is warranted for this failed quality candidate; no own-clock or hardware
+  claim. Hot instructions remain unchanged,423/449 ordinary,14 page,243/267
+  bank, delta0. Main/old Python preserved and active goal remains unfinished.
+  [Complete evidence and reproduction](audiobook-beeper/experiments/song-snr/evidence/matched-centered-control/README.md).
+
 ## 2026-10-14 — Optional centered player table with default compatibility
 
 - **Objective/baseline:** Match the new explicit C quantizer in the hardware
