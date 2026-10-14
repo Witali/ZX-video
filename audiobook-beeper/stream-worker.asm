@@ -1,7 +1,14 @@
 ; Loading/reload work stays in fixed bank2. TR-DOS always reads a fixed bounce
 ; buffer with normal RAM selected, then a sector is copied into its final
 ; physical page. There are no copies/ROM calls between live banks when RAM fits.
+; In compact mode the same persistent probe and bounce occupy startup padding;
+; the false branch below preserves every default opcode/address and TRD byte.
+        IF compact_stream_loader
+        ELSE
+stream_probe_start:
         INCLUDE "stream-probe.asm"
+stream_probe_end:
+        ENDIF
 
 stream_cold_start:
         DI
@@ -406,5 +413,8 @@ stream_lookup_sp: DEFW 0
 stream_base_banks: DEFB 0,4,6,1,3,7
 stream_end_message: DEFM "END OF AUDIO",0
 stream_records: DEFS record_slots*3+1
+        IF compact_stream_loader
+        ELSE
 stream_bounce: DEFS 256
+        ENDIF
 stream_worker_end:

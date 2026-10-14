@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Admit universal midpoint tables with optional compact loader
+
+- **Objective/baseline:** Enable the quieter instruction-derived midpoint
+  table whose15424-byte resident footprint exceeded the existing worker
+  budget. Keep defaultFalse main226388fb... and saved clock-joint disk AND
+  entire PLAYER metadata identical. No per-source table training or overlay.
+- **Layout:** Opt-in `compact_stream_loader=True` moves311-byte persistent
+  probe and256-byte mutable bounce into startup808A..82C1, belowFIRST8340.
+  Hot startup still ends808A. Worker starts64-alignedBC40 after the resident
+  tables and endsBF8F(song)/BFBC(max2392 sectors), leaving112/67 bytes before
+  BFFF. Same fixed16-KiB bank, protected table/stack/TR-DOS space, ordinary
+  audio and extended capacities. Assembly comments/asserts survive generation.
+- **Verification:** Six tests pass. Four complete native old-song runs verify
+  11,526,111 bits and720,382 predictor/index states per profile plus every
+  continuous hold, physical bank and code/table guard; refills3/1/0/0.
+  Maximum2392-sector cold loading passes all four profiles, including exact
+  stored bytes/capacity, immutable probe and final-sector bounce. Input is the
+  authenticated original unretimed song; no new encoding is substituted.
+- **CPU/decision:**423/449-T ordinary,14-T page,243/267-T bank extras before
+  and after, all delta0. Only persistent cold/refill placement changes. Native
+  ROM stubs do not measure physical disk latency; no new Fuse, audio quality,
+  audible-noise elimination or release claim. Accept opt-in layout feasibility
+  and continue whole-corpus midpoint encoding/own-clock proof. Main unchanged.
+  [Layout evidence/reproducer](audiobook-beeper/experiments/song-snr/evidence/compact-midpoint/README.md).
+
 ## 2026-10-14 — Complete C waveform encoding with retained Python reference
 
 - **User steering:** Implement the slow encoding in C or Go; retain original

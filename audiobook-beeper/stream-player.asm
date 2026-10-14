@@ -97,6 +97,17 @@ stream_page_event:
         EX AF,AF'
         OUT (C),B               ; release the saved pulse after paging
         JP (HL)
+startup_hot_end:
+        IF compact_stream_loader
+        ; Optional persistent loading helpers reuse fixed-bank2 startup
+        ; padding. They remain callable at every insufficient-RAM refill.
+        ; The bounce is mutable sector RAM, separately reserved after code;
+        ; neither region overlaps the live startup/tail or FIRST dictionary.
+stream_probe_start:
+        INCLUDE "stream-probe.asm"
+stream_probe_end:
+stream_bounce: DEFS 256
+        ENDIF
 startup_end:
         ASSERT $ <= first_base
         DS first_base-$
@@ -724,9 +735,12 @@ resident_end:
         ; Loading-only worker follows the complete universal dictionary.
         ; Its origin changes no live instruction, paging tail or SP lookup.
         ASSERT $ <= worker_origin
+        IF compact_stream_loader
+        ASSERT $ == worker_origin
+        ENDIF
         DS worker_origin-$
         INCLUDE "stream-worker.asm"
 player_end:
-        ASSERT $ <= 0xC000
+        ASSERT $ < 0xBFFF
         DS 0xBFFF-$
         DEFB 0
