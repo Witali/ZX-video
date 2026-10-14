@@ -1,5 +1,26 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Close the audio loading progress frame
+
+- **Request/baseline:** Add vertical edges to the empty bar in the current
+  song TRD, SHA256 `14504d227cf8ab3f927295adcd56772428d300ac53156e8098f4e346ef732cc3`.
+- **Change:** `audio_cover.prepare` sets the left/right bitmap pixels at
+  x0/255, y177..182, joining the existing horizontal lines at y176/183.
+  Patch only these12 bytes in the current COVER entry; retain all other disk
+  bytes and the top160 title lines. The fill still changes only attributes.
+- **Verification:** Inspect rendered empty, half and full states; cold-load
+  the patched disk on all four native RAM models and check the exact bitmap,
+  completed bar and resident audio bytes. Every player, table, audio sector,
+  attribute and directory byte is identical to the completely verified
+  baseline. Hot-path delta0 T; ordinary counts remain423/423/449/449 T.
+  [Saved verification](audiobook-beeper/experiments/progress-frame/verification.json)
+  records hashes and changed byte positions. Reproduce with the current
+  `build_stream_trd.py` using the archived prepared song and SCR; only cover
+  preparation changes. No codec experiment or full playback rerun is needed
+  for this bitmap-only patch; reuse the complete baseline playback evidence.
+- **Decision:** Deliver root `ZX-music-Sea-Foam-RAM-auto.trd`, new SHA256
+  `226388fb795ac70cfd940545a9eb73e3e81b6c7e96533dc6deb0c215257338ea`.
+
 ## 2026-10-14 — Remove part-copy pauses from the current song TRD
 
 - **Request/baseline:** The user clarifies "fix the TRD file": start audio in

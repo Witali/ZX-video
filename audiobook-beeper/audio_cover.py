@@ -70,6 +70,11 @@ def prepare(path=None,*,title='AUDIO DISK'):
         screen=bytearray(encode(image))
     for y in range(160,192):
         for x in range(32):screen[spectrum_bitmap_offset(x,y)]=255 if y in (176,183) else 0
+    # Progress changes only cell attributes; keep both end caps in the bitmap
+    # so the empty bar already has a closed one-pixel frame.
+    for y in range(177,183):
+        screen[spectrum_bitmap_offset(0,y)]|=0x80
+        screen[spectrum_bitmap_offset(31,y)]|=0x01
     screen[6144+20*32:]=bytes([7]*128)
     screen[6144+22*32:6144+23*32]=bytes([4]*32)
     return bytes(screen)
