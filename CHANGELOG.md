@@ -14943,3 +14943,29 @@ exact. Accept separate ABI; coroutine/player defaults unchanged, no release
 or physical disk claim. [Report](libraries/evidence/trick_28.json),
 [reproducer](libraries/tests/measure_resident_profiles.py), [SECOND_PASS](libraries/SECOND_PASS.md).
 
+# 2026-10-14 — item29 compact LZSA2 and completed second pass
+
+Objective: reduce code through shared length/nibble helpers, retaining exact
+standard fields/EOF. Baseline5e070860, same95 full resident blocks/payloads.
+Add explicit Small block API/CLI:218 ->137 bytes (-81), caller stack4 ->8
+bytes including return; no state/private stack/payload increase. Correct pinned
+134-byte source's EOF before dummy reads (+3 bytes); test-only134 reconstruction
+fails protected EOF on15 literal fixtures. Native Fast24297727 ->Small27043456 T
+(+2745729), real17767606 ->20423546 (+14.948%); all95 slower.235 IRQs,
+9103 relocation, exact input/history/short words, dirty state/IX/alternate pairs
+and1024 nibble phase/value probes pass. Initial test-only AF' setup overflow
+was corrected; production emitter unchanged. Accept solely as an explicit code
+space tradeoff, retaining speed-first/default coroutine profiles.
+
+All20 items10–29 are completed as focused experiments/audits, including real
+regressions22/24. Final18 library +67 toolkit tests pass (85);31 default code/
+address/label profiles, four original resources and both producer variants exact.
+Fresh independent wheels include added pinned Mega/Small resources, all six
+resident profiles and exact ORG/DB exports. No merge/push, new movie/TRD,
+physical disk/ULA/publication or release claim. See
+[item29 report](libraries/evidence/trick_29.json),
+[reproducer](libraries/tests/measure_compact_profile.py),
+[authenticated summary](libraries/second_pass_verification.json),
+[summary script](libraries/tests/summarize_second_pass.py),
+and [completed decisions](libraries/SECOND_PASS.md).
+

@@ -376,3 +376,47 @@ words/combined long-copy options and17 library tests pass;31 defaults exact.
 Independent-package CLI exports pass. No player/movie-release qualification.
 
 `measure_resident_profiles.py --output libraries/evidence/trick_28.json`.
+
+## Item29 — compact shared nibble/length helpers
+
+**Decision: optional measured size profile.** `lzsa.block.build('small')` / CLI
+`--profile small-block` adapts pinned spke/uniabis Small with the same explicit
+resident-block caller contract as item28. Shared ExtendedCode/ReadNibble reduce
+218 ->137 bytes (-81,37.16%). AF' S=0 requests a nibble refill, S=1 selects
+its cache; IRQ must preserve full alternate AF. Caller-stack maximum8 bytes
+including return versus Fast4; no state/private stack/input change. Both raw
+cores still round to one256-byte sector. No coroutine compact API is claimed.
+
+Correct the author's134-byte source's EOD path: carry+Z discards only the
+ExtendedCode return, then returns to the caller **before** reading dummy word
+bytes or entering ReadNibble. This adds3 code bytes. The word-escape tail gains
+11 T versus that raw source; final EOD tail from after INC HL costs32 T
+(RET NC5 / JR NZ7 / POP BC10 / RET10). Legal short word counts remain exact.
+The test-only legacy reconstruction is134 bytes and fails protected EOF reads
+on all15 literal fixtures. Its failed contract is retained, not shipped.
+
+[95 complete native blocks](evidence/trick_29.json): Fast24297727 ->Small27043456 T
+(+2745729), real17767606 ->20423546 (+2655940,14.948%). All95 are slower;
+235 accepted IRQs,9103 relocation, exact source/history/EOF/short escaped words,
+dirty offset/reservoir and IX/alternate-pair preservation pass.1024 nibble
+phase/value checks measure40 T cached/98 T refill including CALL. An initial
+test setup incorrectly formed a greater-than16-bit AF' value; correct it to
+the intended byte nibble and retain the real emitter unchanged. All18 library
+tests and67 toolkit tests pass;31 defaults/four original resources exact.
+Independent wheels include both new resources, six resident profiles and exact
+ORG/DB exports; no converter imports or new external encoder round trip needed.
+Accept only as an explicitly selected memory tradeoff, preserving speed-first
+defaults. No physical disk/publication/player release claim.
+
+`measure_compact_profile.py --output libraries/evidence/trick_29.json`.
+
+## Completed pass
+
+All20 items10–29 are complete, each in a focused commit with its changelog
+entry. Optional measured groups10/16/20 improve the coroutine;23/28 add
+resident speed profiles;29 adds a resident size profile with measured penalty.
+Other groups retain efficient existing paths or reject counterexamples and
+real regressions. [Final authenticated summary](second_pass_verification.json)
+protects all reports/defaults/resources. Select an actual caller/RAM allocation
+and complete application delivery/IRQ/publication qualification before player
+adoption; this component pass opens no further experiment automatically.

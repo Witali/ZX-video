@@ -52,3 +52,29 @@ actual publication timing remain separately qualified by the application.
 [Item01 long-copy counts](LONG_COPY.md) add an opt-in LZSA2 profile, with
 complete native/streaming comparisons and exact path/space deltas. They do
 not change this default baseline or its compression cost model.
+
+## Additional pass, items10–29
+
+All completed measurements/audits and precise caller contracts are in
+[SECOND_PASS.md](SECOND_PASS.md), authenticated by
+[second_pass_verification.json](second_pass_verification.json). Existing31
+defaults still have0-T instruction delta. Optional coroutine changes: nearby
+literal helper -10 T/call (-3 code bytes), adjacent streaming flag clear30 ->26 T
+(-1 byte), sync restore127/132 ->122/127 T (-2 bytes). Guarded42-case/six-placement
+comparisons retain exact producer work/waits and167 once-only sectors per mode.
+
+Resident-block profiles have a distinct ABI: external bounds/allocation, full
+input/history, caller stack; no yield/paging/quota. Fast LZSA2 removes331 T of
+wrapper and21 T per token for the same full output request; Fast ZX0 removes
+311 T plus29/57 T per copy boundary. Measured real CPU savings5.112%/10.986%
+are conditional on those omitted features. ZX0 Mega's phase expansion saves
+6.147% versus equal-ABI Fast at673 versus207 bytes. LZSA Small137 versus218
+bytes costs14.948% more real CPU; nibble helper including CALL is40 T cached,
+98 T refill (1024 native phase/value probes). Its exact-EOF correction adds3
+bytes versus raw upstream134 and11 T to the word-escape tail, preventing
+dummy reads; plain peak stack8 versus Fast4 bytes, including caller return.
+
+Whole-run unroll and distance1 selector were rejected for real CPU regressions
+(+8767/+3816 T). Synthetic gains and isolated primitives do not override these
+measurements. Standalone rounded code-region sectors are space estimates,
+not disk latency or movie/frame-publication qualification.

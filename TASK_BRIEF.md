@@ -3,11 +3,11 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
-## Active: sequential additional codec improvements (2026-10-14)
+## Completed: sequential additional codec improvements (2026-10-14)
 
-The user explicitly authorizes working through the saved list and checking
-the improvements. Continue all pending items10–29 in order, prioritizing
-speed then code size, one complete measured/audited result per focused commit.
+The user authorized working through the saved list and checking improvements.
+All20 items10–29 are complete, prioritizing speed then code size, with one
+complete measured/audited result per focused commit and retained failures.
 Use [SECOND_PASS.md](libraries/SECOND_PASS.md) and the checklist. Preserve
 defaults, wire formats, EOF/overlap/suspension/IRQ and application release gates.
 Item10 is complete: optional ordinary LZSA2 near_literals saves10 T per
@@ -39,7 +39,12 @@ elsewhere (1024 native checks). Item26 rejects the guard byte-add rewrite:
 refill A counter/word counts and rejects CPI frontier effects (513 checks).
 Item28 adds explicit resident Fast profiles: LZSA218 bytes/real −5.112%,
 ZX0207/−10.986% vs same full-demand coroutine;95/417 native blocks, IRQ/
-relocation/EOF,17 tests and31 default layouts pass. Item29 is next.
+relocation/EOF,17 tests and31 default layouts pass. Item29 adds explicit137-byte
+resident Small (-81 bytes, +14.948% real CPU), corrected exact EOF;95 native
+blocks/235 IRQs, dirty state and1024 nibble checks pass. Final18 library/67
+toolkit tests, isolated wheels/exports,31 defaults/four original resources and
+both producer variants pass. See second_pass_verification.json. No further
+experiment, merge/push or player/movie-release adoption is opened automatically.
 
 ## Completed: other-site Z80 speed/size survey (2026-10-14)
 

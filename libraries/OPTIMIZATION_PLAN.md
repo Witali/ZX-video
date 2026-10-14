@@ -122,7 +122,8 @@ are conditional snippets, not completed codec/streaming/IRQ experiments.
 Item20 now has a concrete LZSA2 `sync` proposal: restore HL with ADD HL,DE
 after subtraction instead of reloading target, 35 ->30 T and6 ->4 bytes;
 S/Z/PV/C agree, H/N differ. The authorized second pass is tracked in
-[SECOND_PASS.md](SECOND_PASS.md); items10–28 are complete, item29 is next.
+[SECOND_PASS.md](SECOND_PASS.md); all items10–29 are complete and authenticated
+in [second_pass_verification.json](second_pass_verification.json).
 
 | ID | Additional technique and source | Application and required proof | Status |
 | --- | --- | --- | --- |
@@ -133,7 +134,7 @@ S/Z/PV/C agree, H/N differ. The authorized second pass is tracked in
 | 26 | Byte displacement without a spare pair: WikiTI, our variant | Add A to HL while retaining DE; compare with actual register-pressure cost and any already-zero scratch high byte | Rejected: guard22 ->52 T,863 carry errors; signed offsets/live A retained,1824 checks |
 | 27 | Counter-loop form: Grauw, WikiTI, optimizer rules | DJNZ or split counters only where B is available; CPI fusion also reads RAM/advances HL; preserve live flags and exact bounds | No eligible free B; real LDI refill count and CPI frontier counterexamples,513 checks |
 | 28 | Synchronous feature-specific profile: upstream ZX0/LZSA | For fully resident blocks without yield/paging, remove coroutine checks/state; keep a separate explicit caller contract | Optional resident Fast: LZSA218 bytes/real −5.112%, ZX0207/−10.986%;95/417 full blocks, IRQ/relocation |
-| 29 | Compact shared length/nibble helpers: upstream LZSA2 small | Optional size profile; retain standard fields, short-word escapes, exact EOD and coroutine/IRQ rules; measure speed penalty | Raw134-byte source inspected; adapted profile pending |
+| 29 | Compact shared length/nibble helpers: upstream LZSA2 small | Optional size profile; retain standard fields, short-word escapes, exact EOD and coroutine/IRQ rules; measure speed penalty | Optional137-byte resident Small, −81 bytes/+14.948% real CPU vs Fast;95 blocks/IRQ exact, corrected EOF |
 
 Speed candidates have priority over compact profiles. The source's upstream
 percentages and raw core sizes do not qualify our coroutine/streaming ABI.

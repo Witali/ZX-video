@@ -2,7 +2,7 @@
 from z80 import Z80Machine
 
 
-def execute(profile,payload,expected,*,interrupts=False,source=0x2000,output=0xc000):
+def execute(profile,payload,expected,*,interrupts=False,source=0x2000,output=0xc000,alternate_af=0):
     regions,labels,metadata=profile
     m=Z80Machine();m.memory[:]=b'\xa5'*65536
     stack,stop=0xbff0,0x100
@@ -13,6 +13,9 @@ def execute(profile,payload,expected,*,interrupts=False,source=0x2000,output=0xc
     m.set_memory_block(stack-2,stop.to_bytes(2,'little'))
     entry=labels[metadata['entry']]
     m.pc,m.sp,m.hl,m.de=entry,stack-2,source,output
+    m.alt_af=alternate_af
+    preserved=dict(ix=0x1357,alt_bc=0x2468,alt_de=0x369a,alt_hl=0xace1)
+    for name,value in preserved.items():setattr(m,name,value)
     irq=bytes.fromhex('f5 08 f5 3e 55 ee aa f1 08 f1 fb ed 4d')
     m.set_memory_block(0x38,irq)
     if interrupts:
@@ -50,5 +53,6 @@ def execute(profile,payload,expected,*,interrupts=False,source=0x2000,output=0xc
             m.on_handle_active_int();assert m.pc==0x38;irqs+=1
     assert high==output+len(expected) and cursor==source+len(payload)
     assert m.hl==cursor and m.de==high and m.sp==stack
+    assert all(getattr(m,name)==value for name,value in preserved.items())
     return dict(tstates=budget-m.ticks_to_stop,exact=True,injected_interrupts=irqs,
                 unavailable_interrupt_events=skipped,stack_bytes=stack-lowest)

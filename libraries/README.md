@@ -62,6 +62,12 @@ IRQ results and rejected candidates are retained. Both need more code RAM;
 runtime compressed bytes stay unchanged, while actual boot-code disk packing
 and playback qualification remain application work. All defaults stay exact.
 
+The additional items10–29 pass is complete: optional smaller/faster coroutine
+helpers, resident Fast/Mega profiles and an explicit compact LZSA2 tradeoff.
+[Decisions and reproduction](SECOND_PASS.md) record unsuccessful candidates too;
+[final summary](second_pass_verification.json) authenticates evidence, exact
+defaults/resources,85 observed unit tests and independent wheel exports.
+
 ## Verification and provenance
 
 [Verification](verification.json) records the extraction from `0085a116`.

@@ -20,6 +20,15 @@ keep source/history resident and preserve live registers including AF' in IRQ.
 Reserve stack for the decoder plus the actual IRQ handler and hardware return.
 The coroutine stays the default. See [measured comparison](../SECOND_PASS.md).
 
+For tighter code RAM, `lzsa.block.build('small')` or CLI `--profile small-block`
+exports137 bytes instead of Fast's218. It shares nibble/length helpers and
+returns at exact EOF before extra reads. The caller contract stays resident
+input/history, HL/DE pointers, external size validation and writable offset;
+plain caller-stack maximum is8 bytes including return, plus IRQ headroom.
+All95 native blocks pass, but the21 real blocks cost14.948% more CPU than
+resident Fast. Both cores still round to one256-byte raw code sector. Choose
+this profile explicitly for code space; the speed-first default is unchanged.
+
 ```python
 from lzsa import compress, decompress, trace
 

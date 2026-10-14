@@ -295,6 +295,30 @@ class NativeTests(unittest.TestCase):
         for build in (lblock,zblock):
             with self.assertRaises(ValueError):build(core=0xfffe,core_limit=65536)
 
+    def test_compact_lzsa_nibble_phases_word_eof_and_dirty_state(self):
+        from lzsa.block import build
+        from native_block import execute
+        from measure_long_copy import noncanonical_cases
+        from measure_tricks import run
+        for origin in (0x8000,0x9103):
+            profile=build('small',core=origin,core_limit=origin+256)
+            regions,z,meta=profile;self.assertEqual(meta['code_bytes'],137)
+            for value in range(256):
+                for cached in (False,True):
+                    def prepare(m):m.alt_af=(0xf0|value)<<8|0x80 if cached else 0
+                    m,t=run('cd '+z['ReadNibble'].to_bytes(2,'little').hex(' '),dict(hl=0x6000,af=0x0941),
+                        memory=tuple(regions)+((0x6000,bytes([value])),),prepare=prepare)
+                    self.assertEqual(t,40 if cached else 98)
+                    self.assertEqual(m.c,9)
+                    self.assertEqual(m.a,(value|0xf0) if cached else 0xf0|(value>>4))
+                    self.assertEqual(m.hl,0x6000 if cached else 0x6001)
+            at,blob=regions[0];blob=bytearray(blob)
+            offset=z['offset']-at;blob[offset:offset+2]=b'\x23\x81'
+            dirty=([(at,bytes(blob))],z,meta)
+            for _,payload,raw in noncanonical_cases():
+                self.assertTrue(execute(dirty,payload,raw,interrupts=True,alternate_af=0xf580)['exact'])
+        with self.assertRaises(ValueError):build('small',long_copy=True)
+
     def test_word_state_init_clears_prior_stream_status(self):
         from lzsa.native import execute
         for direct in (False,True):
