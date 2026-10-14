@@ -261,6 +261,21 @@ class NativeTests(unittest.TestCase):
                 after=execute(*new,payload,raw,source=0x2000,caller_stack=0x9df0)
                 self.assertEqual(after['tstates'],before['tstates'])
 
+    def test_mega_relocation_long_gamma_and_dirty_offset(self):
+        from measure_bit_phases import build
+        from native_block import execute
+        from zx0.tokens import Token,encode
+        for origin in (0x8000,0x9103):
+            regions,z,meta=build('mega',origin)
+            self.assertEqual(len(regions[0][1]),673)
+            at,blob=regions[0];blob=bytearray(blob)
+            offset=z['dzx0m_last_offset+1']-at
+            blob[offset:offset+2]=b'\x23\x81'
+            for distance in (1,2,127,128,256):
+                raw=bytes(i%251 for i in range(distance));raw+=(raw*16000)[:8192-distance]
+                payload=encode(raw,[Token(0,distance),Token(distance,8192-distance,distance)])
+                self.assertTrue(execute(([(at,bytes(blob))],z,meta),payload,raw,interrupts=True)['exact'])
+
     def test_word_state_init_clears_prior_stream_status(self):
         from lzsa.native import execute
         for direct in (False,True):

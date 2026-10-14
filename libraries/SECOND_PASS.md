@@ -245,3 +245,32 @@ both complete byte regions, labels, patches and opcode timing metadata for
 replay without shipping the rejected option.31 defaults remain exact.
 `measure_second_pass.py --item 22 --output libraries/evidence/trick_22.json`
 reproduces the failure as well as correctness. No streaming/release claim.
+
+## Item23 — phase-expanded ZX0 Mega
+
+**Decision: optional measured one-shot profile.** The pinned upstream673-byte
+Mega expands the Elias paths for each bit-reservoir phase. Export with
+`python -m zx0 build --variant mega --core 0x8000 --core-limit 0x8300 --output build/mega`.
+No paging/yield/quota hook is supported. HL=input, DE=output; preserve working
+AF/BC/DE/HL across IRQ, reserve caller-stack headroom and keep the two offset
+operand bytes writable. Input/history must be resident, output nonwrapping.
+The existing coroutine Fast is unchanged; a raw no-boundary adaptation of
+its emitter supplies the equal-ABI baseline, rather than comparing wrappers.
+
+[417 full native blocks](evidence/trick_23.json),3204723 decoded bytes,
+include all364 authenticated8192-byte real-stream blocks and53 directed/random
+length/offset/phase inputs. Aggregate Fast161515003 ->Mega151879545 T
+(-9635458); real156012520 ->146422274 T (-9590246,6.147%). Zero slower
+blocks. Turbo real160653056 T, Standard201490104 T. The measured paths include
+the actual real-stream bit-phase mix and EOF, rather than upstream percentages.
+Mega costs673 bytes versus the no-boundary Fast profile (see emitted sizes in
+the report); raw code needs three256-byte sectors. No extra format/state/buffer
+bytes. Maximum plain stack use4 bytes including caller return, versus6 Standard.
+1305 accepted IRQs, exact bounded source/history/EOF, relocated Mega at9103,
+dirty prior-offset tests and16 library tests pass. All31 defaults remain exact.
+No coroutine/player adoption, sustained disk or movie-release qualification.
+
+```text
+python libraries/tests/measure_bit_phases.py --output libraries/evidence/trick_23.json
+python -m unittest discover -s libraries/tests -v
+```

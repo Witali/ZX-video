@@ -64,7 +64,7 @@ def decompress(data: bytes, limit: int = 8192, *, on_match=None, on_literals=Non
 
 
 def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, source_wrap=None, source_page_wrap=None, label_prefix="", inline_match=None, inline_literal=None):
-    if variant not in ("standard", "turbo"):
+    if variant not in ("standard", "turbo", "mega"):
         raise ValueError(variant)
     if copy_hook and variant != 'turbo': raise ValueError('suspension requires turbo')
     if source_wrap and source_page_wrap:
@@ -79,7 +79,7 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
     simple = {
         'push bc': (0xC5,), 'push hl': (0xE5,), 'pop bc': (0xC1,), 'pop hl': (0xE1,),
         'inc bc': (0x03,), 'inc c': (0x0C,), 'inc hl': (0x23,),
-        'ldir': (0xED,0xB0), 'add a,a': (0x87,), 'add hl,de': (0x19,),
+        'ldir': (0xED,0xB0), 'ldi': (0xED,0xA0), 'add a,a': (0x87,), 'add hl,de': (0x19,),
         'ex (sp),hl': (0xE3,), 'ld b,c': (0x41,), 'ld c,(hl)': (0x4E,),
         'ld a,(hl)': (0x7E,), 'rr b': (0xCB,0x18), 'rr c': (0xCB,0x19),
         'rl b': (0xCB,0x10), 'rl c': (0xCB,0x11), 'rla': (0x17,),
@@ -111,8 +111,8 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
         if instruction in ('call', 'jr', 'jp'):
             condition, label = operands.split(',',1) if ',' in operands else ('', operands)
             opcodes = {'call': {'':0xCD,'nc':0xD4},
-                       'jr': {'':0x18,'c':0x38,'nc':0x30,'nz':0x20},
-                       'jp': {'':0xC3,'nz':0xC2}}
+                       'jr': {'':0x18,'c':0x38,'nc':0x30,'nz':0x20,'z':0x28},
+                       'jp': {'':0xC3,'nz':0xC2,'z':0xCA,'c':0xDA,'nc':0xD2}}
             (a.rel8 if instruction == 'jr' else a.abs16)(opcodes[instruction][condition],label)
         elif instruction == 'ld':
             dest, value = operands.split(',')
@@ -121,13 +121,18 @@ def emit_decoder(a, variant="turbo", *, copy_hook=None, literal_hook=None, sourc
                 label, offset = expression.split('+')
                 aliases[expression]=(label,int(offset))
                 a.abs16((0xED,0x43),expression)
+            elif dest=='hl' and value.startswith('('):
+                expression=value[1:-1]
+                label, offset=expression.split('+')
+                aliases[expression]=(label,int(offset))
+                a.abs16(0x2A,expression)
             else:
                 number = int(value[1:],16) if value.startswith('$') else int(value)
-                a.emit({'bc':0x01,'hl':0x21,'c':0x0E,'a':0x3E}[dest])
+                a.emit({'bc':0x01,'hl':0x21,'b':0x06,'c':0x0E,'a':0x3E}[dest])
                 if dest in ('bc','hl'): a.word(number)
                 else: a.emit(number)
         else:
             raise ValueError(f'unsupported ZX0 instruction: {line}')
     for alias,(label,offset) in aliases.items(): a.labels[alias]=a.labels[label]+offset
-    assert a.pc-start == {'standard':68,'turbo':126}[variant]+(2 if copy_hook else 0)+(30 if source_wrap else 0)+(18 if source_page_wrap else 0)+inline_delta
+    assert a.pc-start == {'standard':68,'turbo':126,'mega':673}[variant]+(2 if copy_hook else 0)+(30 if source_wrap else 0)+(18 if source_page_wrap else 0)+inline_delta
     return f'{label_prefix}dzx0_{variant}'

@@ -14871,3 +14871,16 @@ See [item22](libraries/SECOND_PASS.md#item22--residue-entry-whole-run-unrolling)
 [report](libraries/evidence/trick_22.json) and frozen code replay through
 [measure_second_pass.py](libraries/tests/measure_second_pass.py).
 
+# 2026-10-14 — item23 optional ZX0 Mega
+
+Objective: check bit-phase expansion beyond Fast. Baseline bfdc9258, pinned
+ZX0 ecde3a2ae05061fe06469ed46df81a33b7de7d86; same one-shot caller contract.
+Add optional Mega emitter/CLI export,673 bytes, writable offset/caller stack;
+coroutines/defaults unchanged.417 complete native blocks/3204723 raw bytes,
+including364 authenticated real blocks: real Fast156012520 ->Mega146422274 T
+(-6.147%); aggregate -9635458 T, no slower blocks.1305 IRQs, exact input/
+history/EOF, relocation/dirty offset and16 unit tests pass;31 defaults exact.
+Accept as an explicit resident-block profile. No disk/publication/release claim.
+Reproduce with [measure_bit_phases.py](libraries/tests/measure_bit_phases.py);
+see [report](libraries/evidence/trick_23.json) and [SECOND_PASS](libraries/SECOND_PASS.md).
+

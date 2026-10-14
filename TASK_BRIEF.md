@@ -29,7 +29,9 @@ modes, boundary/combined-profile tests and15 unit tests pass. Item21 retains
 local count/offset-role bounds and replays18 short-word blocks (55 checks).
 Item22 rejects whole-run residue dispatch:95 blocks exact, but real21 +8767 T,
 19 slower blocks/405 slices; +112 core/+2 stack bytes. Frozen code replays the
-failed experiment without a public option. Item23 is next.
+failed experiment without a public option. Item23 adds optional one-shot Mega:
+417 native blocks (364 real), real −6.147% vs equal-ABI Fast,673 code bytes,
+1305 IRQs, exact EOF/relocation/dirty offset;16 tests pass. Item24 is next.
 
 ## Completed: other-site Z80 speed/size survey (2026-10-14)
 

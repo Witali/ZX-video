@@ -15,6 +15,10 @@ ROUTINES = {
     'DecompressZX0': 'Fast ZX0 v2 bit/gamma decoder with shared literal and match boundaries.',
     'dzx0_turbo': 'ZX0 v2 turbo decoder; HL=input, DE=output, AF holds the bit reservoir.',
     'dzx0_standard': 'ZX0 v2 compact decoder; HL=input, DE=output; uses the caller stack.',
+    'dzx0_mega': 'One-shot bit-phase-expanded ZX0 v2; HL=input, DE=output; AF/BC/HL/DE clobbered. Resident source/history required; writable offset, caller stack.',
+    'dzx0m_literals0': 'Refill the bit reservoir and select phase-specific literal Elias paths; BC carries the exact word count.',
+    'dzx0m_last_offset': 'Patched negative previous offset; forward LDIR/LDI preserves overlapping history, then restores the source pointer.',
+    'dzx0m_new_offset0': 'Decode the inverted offset MSB and test the format EOF before fetching its LSB.',
     'input_check': 'Wait before reading an unavailable page; the bit carry stays live.',
     'literal_split': 'Split literals at input-page boundaries without repeating the output check.',
     'state': 'Mutable words/flags. Keep state and self-modifying operands in writable RAM.',
@@ -41,7 +45,7 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
     if 'input_pointer' not in labels:
         lines = ['; Generated forward ZX0 v2 decoder. See LICENSE; Einar Saukas.',
                  '; ABI: HL=input, DE=output; AF/BC/DE/HL are working registers; uses caller stack.',
-                 '; Standard can run in ROM; Turbo patches its offset and requires writable code.',
+                 '; Standard can run in ROM; the other profiles patch offsets and require writable code.',
                  '; Counts exclude IRQ/ULA/disk. Preserve working registers in interrupt handlers.', '']
     for name, address in sorted(labels.items()):
         if name.isidentifier():
