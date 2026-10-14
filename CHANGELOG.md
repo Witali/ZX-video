@@ -1,5 +1,39 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Verify complete original-clock compensation and joint song
+
+- **Scope/baseline:** Qualify the controls from `430ce415` on their own full
+  player executions. Authenticate unchanged PCM/packed bytes/parameters and
+  the current twelve-byte cover successor. Keep artifact gates separate from
+  the20-dB/+5-dB scalar SNR target; no public/main promotion.
+- **Coverage:** Nine compensation sources finish36 full native runs across
+  128/Scorpion256/Pentagon512/1024 and10 independently cold Fuse runs. Joint
+  speech/song add eight native and three Fuse runs. Every pulse, decoder state,
+  native hold, physical resident byte, guard, paging/refill, title/bar and EOF
+  checked. Both full-song candidates verify11,526,111 pulses per model. Native
+  song128/Scorpion require three/one refills;512/1024 require none.
+- **Exact actual timing:** All new Pentagon clocks match the instruction
+  schedule. Both candidates' song clocks match the authenticated old trace
+  byte for byte on512/1024, maximum introduced change0 T. No live ROM/disk
+  reads or RAM copies; maximum continuous hold277 T/77.288 us. CPU paths stay
+  423/449 ordinary,14-T page,243/267-T bank extras, delta0. ROM/physical disk
+  work occurs in cold loading and the explicit insufficient-RAM refills.
+- **Actual unfitted scores:** Whole song18.825070524/20.250315887 dB for
+  compensation/joint, gains21.910298812/23.335544175 over-3.085228288 baseline.
+  Joint speech21.692333986 dB. All measured outputs reproduce their host
+  predictions exactly under the unchanged original-clock filter/edge policy.
+  Compensation song TRD`787e3d4e...`, joint`ccab8724...`; one disk each.
+- **Decision/limits:** Song scalar target is met, but the recorded whine,
+  steps regression and AM/delay counterexamples leave full artifact acceptance
+  unproven. Preserve goal and continue generic quieter PDM, C implementation,
+  Python reference and automatic conversion. Functional128/Scorpion proofs
+  do not qualify their audio from the Pentagon-compensated stream. No physical
+  hardware or subjective-no-vibration claim. Eighteen focused tests pass in
+  the preceding host stage. Failed dictionary extent arithmetic is retained
+  separately; it does not establish a new executable model.
+  [Actual scores/reproducer](audiobook-beeper/experiments/song-snr/README.md),
+  [joint verification](audiobook-beeper/experiments/song-snr/evidence/clock-joint/sea_foam/verification/execution.json).
+
 ## 2026-10-14 — Original-clock joint encoding and calibrated artifact audit
 
 - **Objective/input:** Continue the saved user goal of at least5 dB on the

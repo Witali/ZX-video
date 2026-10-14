@@ -86,6 +86,51 @@ python audiobook-beeper/experiments/song-snr/artifact_diagnostics.py `
   --output audiobook-beeper/experiments/song-snr/evidence/clock-diagnostics
 ```
 
+## Complete original-clock execution controls
+
+All nine simple-compensation controls now complete36 native runs on all four
+RAM profiles and10 independently cold Fuse runs (all nine on512K, song also
+on1024K). Joint speech and the whole song add eight complete native runs and
+three cold Fuse runs. Every new Pentagon interval matches the source-independent
+schedule. Both full-song candidates on512/1024 match the authenticated old
+song trace byte for byte for all11,526,111 relative source OUT timestamps.
+Maximum introduced physical timing change is0 T. No live disk reads, RAM
+copies or refills occur on512/1024; maximum hold remains277 T (77.288 us).
+Native128/Scorpion still exercise three/one song refills, respectively.
+
+Own complete clocks reproduce the host scores exactly: song compensation
+18.825070524 dB and joint20.250315887 dB (+23.335544175 versus actual legacy).
+Joint speech is21.692333986 dB. These are strict unfitted original-clock
+scores, not just PDM diagnostics. The song clears the scalar20-dB/+5-dB gates;
+the separately recorded background/modulation counterexamples still prevent
+an unconditional release.128/Scorpion functional checks do not establish
+their waveform quality from a stream compensated for Pentagon timing.
+
+Research song TRDs: compensation SHA`787e3d4e...`, joint SHA`ccab8724...`.
+All images retain independent boot, complete source, title, progress display,
+one-disk IMA storage and all-RAM loading. Current main stays`226388fb...`.
+No physical-hardware or subjective cure is claimed.
+
+[Actual compensation scores](evidence/clock-compensation/actual-quality.json),
+[actual joint scores](evidence/clock-joint/actual-quality.json),
+[joint full execution](evidence/clock-joint/sea_foam/verification/execution.json),
+[exact old/new1024 clock](evidence/clock-joint/sea_foam/verification/pentagon1024/timing-comparison.json).
+
+```powershell
+python audiobook-beeper/experiments/song-snr/execute_clock.py `
+  audiobook-beeper/experiments/song-snr/evidence `
+  --fuse 'C:/Program Files (x86)/Fuse/fuse.exe' --jobs 3
+python audiobook-beeper/experiments/song-snr/execute_clock.py `
+  audiobook-beeper/experiments/song-snr/evidence --stage clock-joint `
+  --source speech --source sea_foam `
+  --fuse 'C:/Program Files (x86)/Fuse/fuse.exe' --jobs 2
+python audiobook-beeper/experiments/song-snr/measure_clock.py `
+  audiobook-beeper/experiments/song-snr/evidence --scratch .tmp/clock-actual
+python audiobook-beeper/experiments/song-snr/measure_clock.py `
+  audiobook-beeper/experiments/song-snr/evidence --stage clock-joint `
+  --source speech --source sea_foam --scratch .tmp/clock-joint-actual
+```
+
 ## Completed diagnostic stage
 
 The current TRD hash is `226388fb795ac70cfd940545a9eb73e3e81b6c7e96533dc6deb0c215257338ea`.
