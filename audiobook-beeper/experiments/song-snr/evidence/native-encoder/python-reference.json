@@ -1,0 +1,287 @@
+{
+  "scope": "Whole sources, C search/guard/packing byte comparison against unchanged Python native-kernel reference; same prepared arrays/settings and sequential wall-clock measurement. No new player execution.",
+  "parameters": {
+    "profile": "pentagon",
+    "source_rate_hz": 8000,
+    "lanczos_radius": 16,
+    "pcm_beam_width": 32,
+    "pcm_block_samples": 64,
+    "waveform_beam_width": 32,
+    "horizon_samples": 128,
+    "commit_samples": 64,
+    "regularization": 0.1,
+    "model_name": "duration_zero_half_recent",
+    "search_query_grid_tstates": 0.0125,
+    "source_specific_fitted_clock_gain_delay": false
+  },
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 0.5,
+    "pcm_origin": 0
+  },
+  "rows": [
+    {
+      "source": "silence",
+      "samples": 16896,
+      "input_sha256": "a3c4877ba41e7f790c57962977bdac3901e53b2f337fef956521c5ec9346affc",
+      "packed_sha256": "bb157aa214adc2e833a033469fb3dad526b610be07e2513590fb0451c784fd3d",
+      "parity": true,
+      "c_seconds": 0.6327293999993344,
+      "python_seconds": 4.110663899999963,
+      "speedup": 6.496717080009697,
+      "model_preparation_seconds": 0.43123410000043805,
+      "statistics": {
+        "backend": "complete-c",
+        "search_iterations": 33472,
+        "final_predictor": 0,
+        "final_index": 0,
+        "original_python_reference_unchanged": true,
+        "native_source_sha256": "a7bba92219fe6a2ef2deb0a5aa294e0def87a4e6854b6fddbe601d2f4d85dff7",
+        "matrix_backend": "Same installed NumPy ILP64 OpenBLAS",
+        "native_library": "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\.native-cache\\complete-waveform-fe34e5321a73dac2afd5e5a6\\kernel.dll"
+      },
+      "saturation_guard": {
+        "samples": 16896,
+        "saturation_events": 0,
+        "raw_min": -1,
+        "raw_max": 0
+      }
+    },
+    {
+      "source": "quiet440",
+      "samples": 16896,
+      "input_sha256": "f6585c585fad94a48b68e489a567f71f445740e8717a99e76b5b473d21dbd877",
+      "packed_sha256": "28c6c832c5f5bf77676b1bc4d78084614a3fc5e9e7e947e69a9a0d98c779bdbb",
+      "parity": true,
+      "c_seconds": 0.5485214000000269,
+      "python_seconds": 5.334025400000428,
+      "speedup": 9.724370644427303,
+      "model_preparation_seconds": 0.4483706999999413,
+      "statistics": {
+        "backend": "complete-c",
+        "search_iterations": 33472,
+        "final_predictor": 0,
+        "final_index": 0,
+        "original_python_reference_unchanged": true,
+        "native_source_sha256": "a7bba92219fe6a2ef2deb0a5aa294e0def87a4e6854b6fddbe601d2f4d85dff7",
+        "matrix_backend": "Same installed NumPy ILP64 OpenBLAS",
+        "native_library": "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\.native-cache\\complete-waveform-fe34e5321a73dac2afd5e5a6\\kernel.dll"
+      },
+      "saturation_guard": {
+        "samples": 16896,
+        "saturation_events": 0,
+        "raw_min": -2132,
+        "raw_max": 2163
+      }
+    },
+    {
+      "source": "loud3000",
+      "samples": 16896,
+      "input_sha256": "ca95c239e80e2d717019e082e2d95a99be5e801f9bfda2c0ea7e32258014c12f",
+      "packed_sha256": "32cb9a4a00c63d4451d7cafe4bf82e2ef108a0df0827998b21c74a18f152b348",
+      "parity": true,
+      "c_seconds": 0.4393356999999014,
+      "python_seconds": 4.647251899999901,
+      "speedup": 10.577906370916235,
+      "model_preparation_seconds": 0.46881219999977475,
+      "statistics": {
+        "backend": "complete-c",
+        "search_iterations": 33472,
+        "final_predictor": 0,
+        "final_index": 0,
+        "original_python_reference_unchanged": true,
+        "native_source_sha256": "a7bba92219fe6a2ef2deb0a5aa294e0def87a4e6854b6fddbe601d2f4d85dff7",
+        "matrix_backend": "Same installed NumPy ILP64 OpenBLAS",
+        "native_library": "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\.native-cache\\complete-waveform-fe34e5321a73dac2afd5e5a6\\kernel.dll"
+      },
+      "saturation_guard": {
+        "samples": 16896,
+        "saturation_events": 0,
+        "raw_min": -32764,
+        "raw_max": 28792
+      }
+    },
+    {
+      "source": "steps",
+      "samples": 16896,
+      "input_sha256": "bde5f34cfd29eb29742b37ac1255f84dd398709a8b3c43c431e030fc0fab9ed4",
+      "packed_sha256": "8418ac9e25643df7547370d66a99df49528ea0a17297cc426ccd4e1c1f765d88",
+      "parity": true,
+      "c_seconds": 0.48890949999986333,
+      "python_seconds": 4.728011600000173,
+      "speedup": 9.670525117637302,
+      "model_preparation_seconds": 0.4430835000002844,
+      "statistics": {
+        "backend": "complete-c",
+        "search_iterations": 33472,
+        "final_predictor": 0,
+        "final_index": 0,
+        "original_python_reference_unchanged": true,
+        "native_source_sha256": "a7bba92219fe6a2ef2deb0a5aa294e0def87a4e6854b6fddbe601d2f4d85dff7",
+        "matrix_backend": "Same installed NumPy ILP64 OpenBLAS",
+        "native_library": "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\.native-cache\\complete-waveform-fe34e5321a73dac2afd5e5a6\\kernel.dll"
+      },
+      "saturation_guard": {
+        "samples": 16896,
+        "saturation_events": 0,
+        "raw_min": -31994,
+        "raw_max": 32112
+      }
+    },
+    {
+      "source": "quiet997",
+      "samples": 16896,
+      "input_sha256": "5de800f0c6f1cb7c0a089916f2f0d7eab5c692bd9d7c2e9b1d1fd34e982ac619",
+      "packed_sha256": "3c7c20581b8116b24f259a2a3c53d124c4237c0f1effee50cba69bbbe14abe59",
+      "parity": true,
+      "c_seconds": 0.5488936000001559,
+      "python_seconds": 4.695739100000537,
+      "speedup": 8.554916836339874,
+      "model_preparation_seconds": 0.4522925999999643,
+      "statistics": {
+        "backend": "complete-c",
+        "search_iterations": 33472,
+        "final_predictor": 0,
+        "final_index": 0,
+        "original_python_reference_unchanged": true,
+        "native_source_sha256": "a7bba92219fe6a2ef2deb0a5aa294e0def87a4e6854b6fddbe601d2f4d85dff7",
+        "matrix_backend": "Same installed NumPy ILP64 OpenBLAS",
+        "native_library": "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\.native-cache\\complete-waveform-fe34e5321a73dac2afd5e5a6\\kernel.dll"
+      },
+      "saturation_guard": {
+        "samples": 16896,
+        "saturation_events": 0,
+        "raw_min": -1306,
+        "raw_max": 1121
+      }
+    },
+    {
+      "source": "multitone",
+      "samples": 16896,
+      "input_sha256": "ce41aa7d8037a5354c0e40dc59f0b56fcd94a5c700e1d5770e1c8168c25a14d6",
+      "packed_sha256": "c865fe6cafb6031726c81330a12f08bd252e4ac52faa0e2efdb7eb609de7f32e",
+      "parity": true,
+      "c_seconds": 0.6260022000005847,
+      "python_seconds": 5.064699400000791,
+      "speedup": 8.0905456881718,
+      "model_preparation_seconds": 0.44096079999962967,
+      "statistics": {
+        "backend": "complete-c",
+        "search_iterations": 33472,
+        "final_predictor": 0,
+        "final_index": 0,
+        "original_python_reference_unchanged": true,
+        "native_source_sha256": "a7bba92219fe6a2ef2deb0a5aa294e0def87a4e6854b6fddbe601d2f4d85dff7",
+        "matrix_backend": "Same installed NumPy ILP64 OpenBLAS",
+        "native_library": "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\.native-cache\\complete-waveform-fe34e5321a73dac2afd5e5a6\\kernel.dll"
+      },
+      "saturation_guard": {
+        "samples": 16896,
+        "saturation_events": 0,
+        "raw_min": -23864,
+        "raw_max": 24447
+      }
+    },
+    {
+      "source": "speech",
+      "samples": 186880,
+      "input_sha256": "ea3c0d945a0cc349747664c137c3725aee3fe8cf5e17b991ae3e24f51829a304",
+      "packed_sha256": "a2c3b1d9c7c6e1fc6699c24838646a5e80a1cc88628fb2010bec2c758a393724",
+      "parity": true,
+      "c_seconds": 6.580068599999322,
+      "python_seconds": 52.67431540000052,
+      "speedup": 8.005131648628398,
+      "model_preparation_seconds": 2.2551123000002917,
+      "statistics": {
+        "backend": "complete-c",
+        "search_iterations": 373440,
+        "final_predictor": 0,
+        "final_index": 0,
+        "original_python_reference_unchanged": true,
+        "native_source_sha256": "a7bba92219fe6a2ef2deb0a5aa294e0def87a4e6854b6fddbe601d2f4d85dff7",
+        "matrix_backend": "Same installed NumPy ILP64 OpenBLAS",
+        "native_library": "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\.native-cache\\complete-waveform-fe34e5321a73dac2afd5e5a6\\kernel.dll"
+      },
+      "saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -30029,
+        "raw_max": 30093
+      }
+    },
+    {
+      "source": "entertainer",
+      "samples": 186880,
+      "input_sha256": "fb630abd3c8129c0ce2b0e2b4f367cf1136c0bc5eb4b104bcec3cd6e7ab501bb",
+      "packed_sha256": "1a860b4cb8a1d9ffd986f687e987f1021d459a8cf513dba86427c86393f79f84",
+      "parity": true,
+      "c_seconds": 7.080057099999976,
+      "python_seconds": 54.04907800000001,
+      "speedup": 7.633988997066166,
+      "model_preparation_seconds": 2.3041491999993013,
+      "statistics": {
+        "backend": "complete-c",
+        "search_iterations": 373440,
+        "final_predictor": 0,
+        "final_index": 0,
+        "original_python_reference_unchanged": true,
+        "native_source_sha256": "a7bba92219fe6a2ef2deb0a5aa294e0def87a4e6854b6fddbe601d2f4d85dff7",
+        "matrix_backend": "Same installed NumPy ILP64 OpenBLAS",
+        "native_library": "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\.native-cache\\complete-waveform-fe34e5321a73dac2afd5e5a6\\kernel.dll"
+      },
+      "saturation_guard": {
+        "samples": 186880,
+        "saturation_events": 0,
+        "raw_min": -26486,
+        "raw_max": 26279
+      }
+    },
+    {
+      "source": "sea_foam",
+      "samples": 720384,
+      "input_sha256": "84fa43d12f3f0c67e70846aa53c4568b346dda88e7a4bfa94a4c834eed457700",
+      "packed_sha256": "2b30481f7340698b26e256bfea6636adfd8b8a162bf5030dc5b08d16078f49f1",
+      "parity": true,
+      "c_seconds": 24.759604199999558,
+      "python_seconds": 282.7496775999998,
+      "speedup": 11.4197979626833,
+      "model_preparation_seconds": 7.5446588999993764,
+      "statistics": {
+        "backend": "complete-c",
+        "search_iterations": 1440448,
+        "final_predictor": 0,
+        "final_index": 0,
+        "original_python_reference_unchanged": true,
+        "native_source_sha256": "a7bba92219fe6a2ef2deb0a5aa294e0def87a4e6854b6fddbe601d2f4d85dff7",
+        "matrix_backend": "Same installed NumPy ILP64 OpenBLAS",
+        "native_library": "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\.native-cache\\complete-waveform-fe34e5321a73dac2afd5e5a6\\kernel.dll"
+      },
+      "saturation_guard": {
+        "samples": 720384,
+        "saturation_events": 0,
+        "raw_min": -32714,
+        "raw_max": 32694
+      }
+    }
+  ],
+  "date": "2026-10-14",
+  "historical_stage": "Complete C core before standalone entry point and stricter wrapper validation. Original Python fully rerun for all9 sources; final C producer is rechecked separately against these exact bytes."
+}

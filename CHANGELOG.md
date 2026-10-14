@@ -1,5 +1,40 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Complete C waveform encoding with retained Python reference
+
+- **User steering:** Implement the slow encoding in C or Go; retain original
+  Python as a reference. Choose C and preserve `ima_waveform_encoder.py`,
+  `ima_beam.py` and `clock_control.py` unchanged. Model preparation and the
+  surrounding conversion front end remain Python; all search/sample loops,
+  ancestry, prefix replay,128-sample settling and packing run in one C call.
+- **Proof:** Seven tests pass, including page/bank holds, silence/quiet tones,
+  transients, fixed random input, exact zero guard, clipping exclusion,
+  unsupported settings, malformed worksets and Unicode standalone paths.
+  All nine complete sources, including720,384-song samples, match both fresh
+  Python reference bytes and authenticated `clock-joint` streams exactly.
+  The original Python loop already uses its small native arithmetic kernels;
+  this change additionally removes its per-sample interpreter orchestration.
+- **Measured times:** Initial complete song C core24.7596 s against fresh
+  Python282.7497 s (11.42x), preparation7.5447 s separately. Final producer
+  DLL36.3012 s and standalone35.9395 s (about7.8x against archived Python).
+  Retain both measurements; concurrent research load differs. These are
+  search/process timings, not an end-to-end arbitrary-media/TRD conversion
+  speed claim. Normal preparation/rendering/assembly and cold compiler setup
+  remain part of the subsequent public-program benchmark.
+- **Program/dependencies:** A versioned little-endian workset feeds a separate
+  Windows C executable without Python runtime/callbacks in that child. It
+  loads the same installed NumPy ILP64 OpenBLAS DLL to preserve matrix-product
+  order and reproduces pairwise error sums/candidate-ID ties. Builds publish
+  atomically from private ignored caches. Unsupported options fail explicitly.
+- **Decision/limits:** Accept acceleration for the proved common algorithm;
+  byte equality introduces no new waveform error relative to Python. It does
+  not cure the reference's whine/modulation regressions or promote a release.
+  Z80 source/hot path and source gain/filter remain unchanged (423/449,
+  page14,bank243/267 T; delta0). Goal remains active for artifact improvement
+  and automatic full conversion; main image is unchanged.
+  [C source](audiobook-beeper/native_waveform_encoder.c),
+  [full parity/performance evidence](audiobook-beeper/experiments/song-snr/evidence/native-encoder/README.md).
+
 ## 2026-10-14 — Verify complete original-clock compensation and joint song
 
 - **Scope/baseline:** Qualify the controls from `430ce415` on their own full
