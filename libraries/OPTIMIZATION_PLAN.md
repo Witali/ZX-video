@@ -122,7 +122,7 @@ are conditional snippets, not completed codec/streaming/IRQ experiments.
 Item20 now has a concrete LZSA2 `sync` proposal: restore HL with ADD HL,DE
 after subtraction instead of reloading target, 35 ->30 T and6 ->4 bytes;
 S/Z/PV/C agree, H/N differ. The authorized second pass is tracked in
-[SECOND_PASS.md](SECOND_PASS.md); items10–25 are complete, item26 is next.
+[SECOND_PASS.md](SECOND_PASS.md); items10–26 are complete, item27 is next.
 
 | ID | Additional technique and source | Application and required proof | Status |
 | --- | --- | --- | --- |
@@ -130,7 +130,7 @@ S/Z/PV/C agree, H/N differ. The authorized second pass is tracked in
 | 23 | Bit-phase-specialized Elias paths: upstream ZX0 Mega | Selectively expand length/offset paths beyond current Fast; measure real bit-phase distribution, EOF and code/stack reservations | Optional673-byte one-shot Mega: real364 blocks −6.147% vs equal-ABI Fast;417 full cases/IRQ/relocation |
 | 24 | Distance-1 match as repeated-byte fill: our derivation from loop sources | Avoid redundant history reads on long runs; include seed/dispatch/remainder costs, overlap, flags, output/input limits and suspension | Rejected: real21 +3816 T,51 slower blocks;95 blocks/IRQ exact |
 | 25 | Stack-word exchange: SHIAR, MDL patterns | EX (SP),HL instead of exchange/pop/push where DE is dead; preserve continuation/IRQ stack ownership | Already in Standard;1024 live-DE counterexamples retain other saves |
-| 26 | Byte displacement without a spare pair: WikiTI, our variant | Add A to HL while retaining DE; compare with actual register-pressure cost and any already-zero scratch high byte | 4608 primitive cases; codec pending |
+| 26 | Byte displacement without a spare pair: WikiTI, our variant | Add A to HL while retaining DE; compare with actual register-pressure cost and any already-zero scratch high byte | Rejected: guard22 ->52 T,863 carry errors; signed offsets/live A retained,1824 checks |
 | 27 | Counter-loop form: Grauw, WikiTI, optimizer rules | DJNZ or split counters only where B is available; CPI fusion also reads RAM/advances HL; preserve live flags and exact bounds | DJNZ256 lengths; caller applicability pending |
 | 28 | Synchronous feature-specific profile: upstream ZX0/LZSA | For fully resident blocks without yield/paging, remove coroutine checks/state; keep a separate explicit caller contract | Standard/Turbo already available; additional Fast/LZSA profiles pending |
 | 29 | Compact shared length/nibble helpers: upstream LZSA2 small | Optional size profile; retain standard fields, short-word escapes, exact EOD and coroutine/IRQ rules; measure speed penalty | Raw134-byte source inspected; adapted profile pending |

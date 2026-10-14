@@ -243,9 +243,39 @@ def item25():
                   'No adapted core has an eligible EX DE,HL / POP HL / PUSH DE chain with dead DE; retain current stack and register contracts.'])
 
 
+def item26():
+    checks=lost_overflows=missed_overflows=spurious_overflows=0
+    for high in (0,1,0x60,0x7f,0x80,0xfe,0xff):
+        for low in range(256):
+            registers=dict(hl=(high<<8)|low,de=0xc100,af=0x7355)
+            old,ot=run('7d c6 1f 7c ce 00',registers)
+            new,nt=run('e5 3e 1f 85 6f 8c 95 67 7c e1',registers)
+            assert (old.hl,old.de,old.a)==(new.hl,new.de,new.a)
+            assert (ot,nt)==(22,52)
+            lost_overflows+=bool(old.f&1)!=bool(new.f&1)
+            missed_overflows+=bool(old.f&1) and not bool(new.f&1)
+            spurious_overflows+=bool(new.f&1) and not bool(old.f&1);checks+=1
+    assert missed_overflows==31
+    wrong_offsets=0
+    for destination in (0xc000,0xc001,0xc0ff,0xc100):
+        for distance in (1,2,15,16,127,128,255,256):
+            negative=(-distance)&65535
+            old,_=run('21 '+negative.to_bytes(2,'little').hex(' ')+' 19',dict(de=destination))
+            wrong,_=run('85 6f 8c 95 67',dict(hl=destination,af=(negative&255)<<8))
+            assert old.hl==destination-distance and wrong.hl!=old.hl;wrong_offsets+=1
+    return dict(decision='reject live-input/overflow rewrite; retain signed offset arithmetic',checks=checks+wrong_offsets,
+        guard_endpoint=dict(before_tstates=22,after_with_hl_restored=52,delta=30,
+                            wrong_carry_cases=lost_overflows,missed_overflows=missed_overflows,
+                            spurious_overflows=spurious_overflows),signed_byte_offset_failures=wrong_offsets,
+        findings=['The 20-T unsigned-byte addition destroys A and arithmetic flags; core A is the ZX0 reservoir or LZSA2 token/length, DE is output.',
+                  'Streaming guard needs only endpoint high in A and a full16-bit overflow carry, retaining input HL. Its existing22-T ADD/ADC beats the complete52-T rewrite.',
+                  'The subtraction in the narrow construction loses all31 directed FFFF overflow cases, even after restoring HL.',
+                  'Negative LZSA2 offsets are not zero-extended bytes; using their unsigned low byte adds256 instead of the signed displacement.'])
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('11','12','13','14','15','17','18','19','21','25'),required=True)
+    parser.add_argument('--item',choices=('11','12','13','14','15','17','18','19','21','25','26'),required=True)
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     defaults=profiles();assert defaults==json.loads((ROOT/'tests/decoder_baseline.json').read_text())['profiles']
     report=dict(date='2026-10-14',item=args.item,complete=True,release=False,scope=__doc__,

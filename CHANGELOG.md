@@ -14906,3 +14906,15 @@ new rewrite; actual CPU/code/state/input delta0,31 defaults exact. No changed
 decoder or release claim. Reproduce with audit_second_pass.py --item25;
 see [report](libraries/evidence/trick_25.json) and [SECOND_PASS](libraries/SECOND_PASS.md).
 
+# 2026-10-14 — item26 unsigned byte-add applicability
+
+Objective: map20-T byte-add to live-pointer codec arithmetic. Baseline ccda78a6;
+1792 guard endpoint/32 signed-offset native states. Retaining input HL and
+producing A costs22 ->52 T, and863 carry mismatches (31 missed/832 false
+overflows) invalidate the guard. An initial31-total-mismatch assertion failed;
+enumeration corrected the bound instead of accepting false flags. Signed
+negative offsets also fail zero-extension. Reject; no production rewrite,
+actual CPU/code/state/payload delta0,31 defaults exact. No release claim.
+Reproduce with audit_second_pass.py --item26;
+[report](libraries/evidence/trick_26.json), [SECOND_PASS](libraries/SECOND_PASS.md).
+

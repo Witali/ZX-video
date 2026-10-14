@@ -309,3 +309,19 @@ exists there under the current contract. Do not replace a live save merely
 because a stack word is owned. [Report](evidence/trick_25.json),31 exact defaults,
 actual delta0 code/state/stack/payload/T; no decoder rewrite/new release run.
 `audit_second_pass.py --item 25 --output libraries/evidence/trick_25.json`.
+
+## Item26 — add an unsigned byte without a spare pair
+
+**Decision: reject at current sites.** The20-T arithmetic primitive needs dead
+A/flags. The input guard instead retains HL and needs only endpoint high in A
+plus full16-bit overflow carry. Its current22-T calculation beats52 T for
+PUSH HL / LD A,31 / byte-add / LD A,H / POP HL (+30).1792 native endpoint
+states agree in A/HL/DE but show863 wrong carry results:31 missed wraparounds
+and832 spurious overflows. An initial assertion expecting only31 mismatches
+failed; full enumeration exposed the additional false carries and corrected
+the audit. Another32 signed-offset probes fail when a negative LZSA2 offset
+is incorrectly zero-extended from its low byte. Core A holds live reservoir/
+token/length data; no additional eligible unsigned addition was found.
+
+[1824 checks](evidence/trick_26.json),31 exact defaults, actual CPU/code/state/
+stack/payload delta0. `audit_second_pass.py --item 26 --output libraries/evidence/trick_26.json`.
