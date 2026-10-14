@@ -1,5 +1,27 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Measure confidence gates and source-supported FM groups
+
+- **Baseline/input:** Continue the authorized coherent-song implementation on
+  the original90-second4500-field source, unchanged gains/filter and nine voices.
+- **Change:** Stronger inactive penalties0.02 plus level/envelope refitting;
+  add measured sine-carrier1:1 FM groups at modulator TL40 only for supported
+  fundamentals<=1500 Hz. `grouped_ym3812.export` ramps carrier and modulator TL
+  through real writes. Historical0/14 export remains byte-exact in regression.
+- **Outcomes:** `gate20/gate20levels` objectives9.727057/9.767284 fail baseline
+  9.444631 and introduce more exposed lines. `group04`9.466623 also fails.
+  `group01` improves to9.254882 and1155 ->1084 exposed events, but1050 ->1044
+  A/B/A returns fails the saved20% trajectory guard. All four are unselected.
+- **Coverage/decision:** Two added group-export identity/target/replay tests
+  pass; four full4500-field streams pass state/timing audits and a complete
+  native/output render with zero clipping. Independent whole-stream replays
+  remain part of final qualification. Proceed with source-weak localized
+  trajectory edits, retaining the FM improvement instead of globally holding
+  all source-supported pitches. Source/core/native-player behavior is unchanged
+  outside the opt-in model; no Z80 hot-path delta.
+  [Gate results](ay-converter/analysis/ym3812_sea_foam/tracking-evidence/gates/report.json),
+  [group results](ay-converter/analysis/ym3812_sea_foam/tracking-evidence/groups/report.json).
+
 ## 2026-10-14 — Implement and reject the first global trajectory trials
 
 - **Baseline/scope:** Implement the authorized song plan from `6ba3d4fc` using
