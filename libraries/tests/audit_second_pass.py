@@ -219,9 +219,33 @@ def item21():
                   'Current fast gamma, byte-form unroll and fixed256-byte refill already use local structural bounds.'])
 
 
+def item25():
+    checks=0;live_de_failures=0
+    for word in (0,1,0x9abc,0xffff):
+        for flags in range(256):
+            registers=dict(hl=0x4000,de=0xc100,bc=0x2468,af=0x7300|flags)
+            memory=((0xbff0,word.to_bytes(2,'little')),)
+            old,ot=run('eb e1 d5',registers,memory=memory)
+            new,nt=run('e3',registers,memory=memory)
+            assert (old.hl,old.sp,old.af,old.bc)==(new.hl,new.sp,new.af,new.bc)
+            assert bytes(old.memory[0xbff0:0xbff2])==bytes(new.memory[0xbff0:0xbff2])
+            assert (ot,nt)==(25,19)
+            live_de_failures+=old.de!=new.de;checks+=1
+    assert live_de_failures==checks
+    standard=(ROOT/'zx0/src/zx0/asm/dzx0_standard.asm').read_text()
+    assert standard.count('ex      (sp), hl')==2
+    return dict(decision='already present in stack-offset ZX0; retain live DE/continuations elsewhere',
+        checks=checks,primitive=dict(before_tstates=25,after_tstates=19,code_bytes_delta=-2),
+        live_de_counterexamples=live_de_failures,existing_standard_exchange_sites=2,
+        findings=['ZX0 Standard already exchanges the owned offset stack word with HL before/after a match.',
+                  'Fast/Turbo/LZSA2 keep the offset in a patched operand; DE remains the advancing output pointer, not dead scratch.',
+                  'Coroutine saved words are live source/output/count/AF and a return continuation. An owned word alone is insufficient to replace pair saves.',
+                  'No adapted core has an eligible EX DE,HL / POP HL / PUSH DE chain with dead DE; retain current stack and register contracts.'])
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('11','12','13','14','15','17','18','19','21'),required=True)
+    parser.add_argument('--item',choices=('11','12','13','14','15','17','18','19','21','25'),required=True)
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     defaults=profiles();assert defaults==json.loads((ROOT/'tests/decoder_baseline.json').read_text())['profiles']
     report=dict(date='2026-10-14',item=args.item,complete=True,release=False,scope=__doc__,

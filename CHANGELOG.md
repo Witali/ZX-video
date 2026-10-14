@@ -14896,3 +14896,13 @@ outweighs actual hit savings. No release claim. Reproduce with
 [measure_repeat_match.py](libraries/tests/measure_repeat_match.py); emitted
 code and [report](libraries/evidence/trick_24.json) preserve the failed attempt.
 
+# 2026-10-14 — item25 stack exchange applicability
+
+Objective: find additional25 ->19-T stack-word exchanges. Baseline d4efe3d8;
+1024 native word/flag cases verify HL/stack/AF equivalence but expose live-DE
+differences in every case. Standard already uses two eligible EX (SP),HL sites;
+other cores retain live DE and patched offsets/owned continuations. No eligible
+new rewrite; actual CPU/code/state/input delta0,31 defaults exact. No changed
+decoder or release claim. Reproduce with audit_second_pass.py --item25;
+see [report](libraries/evidence/trick_25.json) and [SECOND_PASS](libraries/SECOND_PASS.md).
+
