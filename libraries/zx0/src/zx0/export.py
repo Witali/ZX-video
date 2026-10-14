@@ -44,7 +44,7 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
              '; Configure input_pointer/block_end/slice_target before begin; private SP is saved.', '']
     if 'input_pointer' not in labels:
         lines = ['; Generated forward ZX0 v2 decoder. See LICENSE; Einar Saukas.',
-                 '; ABI: HL=input, DE=output; AF/BC/DE/HL are working registers; uses caller stack.',
+                 '; ABI: HL=input, DE=output; AF/BC/DE/HL clobbered; uses caller stack. Resident source/history required.',
                  '; Standard can run in ROM; the other profiles patch offsets and require writable code.',
                  '; Counts exclude IRQ/ULA/disk. Preserve working registers in interrupt handlers.', '']
     for name, address in sorted(labels.items()):
@@ -60,7 +60,10 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
         for lo, hi in zip(ordered, ordered[1:]):
             for name, target in labels.items():
                 if target == lo and name in ROUTINES:
-                    lines.append(f'; {namespace}_{name}: {ROUTINES[name]}')
+                    description=ROUTINES[name]
+                    if metadata.get('one_shot') and name=='DecompressZX0':
+                        description='Resident Fast ZX0 v2; bit/gamma decoder, writable offset, no boundaries, IX preserved.'
+                    lines.append(f'; {namespace}_{name}: {description}')
             for offset in range(lo - address, hi - address, 16):
                 part = blob[offset:min(offset + 16, hi - address)]
                 lines.append('db ' + ','.join(f'${value:02x}' for value in part))

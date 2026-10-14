@@ -276,6 +276,25 @@ class NativeTests(unittest.TestCase):
                 payload=encode(raw,[Token(0,distance),Token(distance,8192-distance,distance)])
                 self.assertTrue(execute(([(at,bytes(blob))],z,meta),payload,raw,interrupts=True)['exact'])
 
+    def test_resident_profile_contract_and_exact_word_eof(self):
+        from lzsa.block import build as lblock
+        from zx0.block import build as zblock
+        from native_block import execute
+        from measure_long_copy import noncanonical_cases
+        from zx0.tokens import Token,encode
+        for origin in (0x7c00,0x9103):
+            for options in ({},dict(long_copy=True),dict(long_copy=True,near_literals=True)):
+                profile=lblock(core=origin,core_limit=origin+512,**options)
+                self.assertNotIn('state',profile[1]);self.assertNotIn('slice_until',profile[1])
+                for _,payload,raw in noncanonical_cases():
+                    self.assertTrue(execute(profile,payload,raw,interrupts=True)['exact'])
+            for variant in ('fast','standard','turbo','mega'):
+                profile=zblock(variant,core=origin,core_limit=origin+768)
+                raw=b'AB'*256;payload=encode(raw,[Token(0,2),Token(2,510,2)])
+                self.assertTrue(execute(profile,payload,raw,interrupts=True)['exact'])
+        for build in (lblock,zblock):
+            with self.assertRaises(ValueError):build(core=0xfffe,core_limit=65536)
+
     def test_word_state_init_clears_prior_stream_status(self):
         from lzsa.native import execute
         for direct in (False,True):

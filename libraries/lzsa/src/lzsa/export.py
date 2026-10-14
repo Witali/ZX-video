@@ -44,6 +44,14 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
              '; Preserve decoder registers in IRQ handlers, including AF/AF\' when used.',
              '; Coroutine targets are minimums; retain source and complete output history.',
              '; Configure input_pointer/block_end/slice_target before begin; private SP is saved.', '']
+    routines=dict(ROUTINES)
+    if metadata.get('one_shot'):
+        lines=['; Generated resident raw LZSA2 block decoder; see LICENSE; Emmanuel Marty, spke, uniabis.',
+               '; ABI: HL=input, DE=output; AF/AF\'/BC/DE/HL clobbered; uses caller stack.',
+               '; Complete valid block/history and nonwrapping output required; no quotas/paging/yields.',
+               '; Offset operand needs writable non-reentrant code; IRQ preserves all live registers, including AF\'.',
+               '; Exact EOD returns before dummy word reads. Counts exclude IRQ/ULA/disk.', '']
+        routines['ReadToken']='Enter the next resident token directly; AF\' nibble survives, no quota/frontier check.'
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')
@@ -51,13 +59,13 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
         lines += ['', f'org ${address:04x}', f'; Region {index}: {len(blob)} bytes.']
         points = {address, address + len(blob)}
         for name, target in labels.items():
-            if name in ROUTINES and address <= target < address + len(blob):
+            if name in routines and address <= target < address + len(blob):
                 points.add(target)
         ordered = sorted(points)
         for lo, hi in zip(ordered, ordered[1:]):
             for name, target in labels.items():
-                if target == lo and name in ROUTINES:
-                    lines.append(f'; {namespace}_{name}: {ROUTINES[name]}')
+                if target == lo and name in routines:
+                    lines.append(f'; {namespace}_{name}: {routines[name]}')
             for offset in range(lo - address, hi - address, 16):
                 part = blob[offset:min(offset + 16, hi - address)]
                 lines.append('db ' + ','.join(f'${value:02x}' for value in part))

@@ -41,6 +41,12 @@ short input; it is not a substitute for the full upstream encoder. The library
 does not bundle Windows executables or promise that a CPU-oriented stream will
 also save disk sectors. Native costs and delivery costs remain separate.
 
+For fully resident blocks, the explicit `zx0.block` / `lzsa.block` APIs and
+`--variant fast-block` / `--profile fast-block` exports omit coroutine checks
+and state. They use HL=input, DE=output, caller stack and externally validated
+allocations. See [SECOND_PASS.md](SECOND_PASS.md) for native speed/code results,
+register/IRQ contracts and the separate673-byte ZX0 Mega option.
+
 Existing `toolkit` imports delegate to these packages; there is one maintained
 implementation of the transferred algorithms. Video transforms, dictionary
 numbering, block/reset placement around frame packets, window/deadline planning,

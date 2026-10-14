@@ -14929,3 +14929,17 @@ Retain current code; CPU/code/state/input delta0,31 defaults exact. No release
 claim. Reproduce with audit_second_pass.py --item27;
 [report](libraries/evidence/trick_27.json), [SECOND_PASS](libraries/SECOND_PASS.md).
 
+# 2026-10-14 — item28 explicit resident Fast profiles
+
+Objective: omit features unused by fully resident one-shot callers. Baseline
+db9a50c0, both baselines receive one full output request, unchanged payloads.
+Shared generators produce optional lzsa.block/zx0.block APIs/CLI exports:
+HL=input, DE=output, caller stack, external allocation/size validation; no
+quotas/paging/yields/state. LZSA218 vs384 bytes,95 full blocks25297440 ->24297727 T;
+real -957138 T (5.112%). ZX0 Fast207 vs401 bytes,417 blocks180836248 ->161515003;
+real -19255594 T (10.986%). No slower blocks;206/1394 IRQs,9103 relocation,
+exact source/history/EOF/short words/combined options and17 tests pass.31 defaults
+exact. Accept separate ABI; coroutine/player defaults unchanged, no release
+or physical disk claim. [Report](libraries/evidence/trick_28.json),
+[reproducer](libraries/tests/measure_resident_profiles.py), [SECOND_PASS](libraries/SECOND_PASS.md).
+

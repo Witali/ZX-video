@@ -10,6 +10,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     assembly = commands.add_parser('build')
+    assembly.add_argument('--profile',choices=('coroutine','fast-block'),default='coroutine')
     assembly.add_argument('--output', type=Path, required=True)
     assembly.add_argument('--namespace', default='lzsa2')
     assembly.add_argument('--streaming', action='store_true')
@@ -33,11 +34,18 @@ def main():
     decoder.add_argument('--limit', type=int, required=True)
     args = parser.parse_args()
     if args.command == 'build':
-        regions, labels, metadata = build(core=args.core,core_limit=args.core_limit,
-            prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,
-            output_base=args.output_base,streaming=args.streaming,direct_header=args.direct_header,
-            long_copy=args.long_copy,near_literals=args.near_literals,word_state_init=args.word_state_init,
-            restore_compare=args.restore_compare)
+        if args.profile=='fast-block':
+            if args.streaming or args.direct_header or args.word_state_init or args.restore_compare:
+                parser.error('resident-block profile has no streaming/state wrapper')
+            from .block import build as block_build
+            regions,labels,metadata=block_build(core=args.core,core_limit=args.core_limit,
+                long_copy=args.long_copy,near_literals=args.near_literals)
+        else:
+            regions, labels, metadata = build(core=args.core,core_limit=args.core_limit,
+                prefix=args.prefix,prefix_limit=args.prefix_limit,stack=args.stack,
+                output_base=args.output_base,streaming=args.streaming,direct_header=args.direct_header,
+                long_copy=args.long_copy,near_literals=args.near_literals,word_state_init=args.word_state_init,
+                restore_compare=args.restore_compare)
         export(args.output,regions,labels,metadata,namespace=args.namespace)
         print(args.output / 'decoder.asm')
     else:

@@ -341,3 +341,38 @@ and retain item21's legal short escaped-word cases.
 
 [513 checks](evidence/trick_27.json),31 exact defaults, actual CPU/code/state/
 stack/input delta0. `audit_second_pass.py --item 27 --output libraries/evidence/trick_27.json`.
+
+## Item28 — resident-block feature profiles
+
+**Decision: optional measured Fast block APIs.** `lzsa.block.build()` and
+`zx0.block.build('fast')` share the existing field/gamma generators but omit
+the coroutine wrapper and boundary checks. CLI: LZSA `--profile fast-block`,
+ZX0 `--variant fast-block`. HL=input, DE=output, caller stack; complete valid
+resident input/history and externally validated nonwrapping output/allocation
+are required. AF/BC/DE/HL clobbered, and AF' also for LZSA2. IX/other alternate
+pairs survive. Writable offset operands, no shared-code reentrancy; IRQ must
+preserve live registers and have additional handler/hardware stack headroom.
+No quota/frontier/paging/yield state or automatic output-size enforcement.
+Existing coroutines retain those features/default byte layouts.
+
+For a full output request, LZSA's existing final FFFF target takes21 T per
+ReadToken check; the one-shot removes it and331 T of begin/finish wrapper
+per block. ZX0 removes311 T of wrapper and29/57 T at each copy boundary
+(high below/equal target). Counts use the same Zilog table/endpoints as the
+retained profiles, excluding physical loading/ULA/IRQ. Raw code218 versus384
+total bytes for LZSA2 (-166); ZX0 Fast207 versus401 (-194). No state/private
+continuation stack; maximum plain caller-stack use4 bytes including return.
+Standalone raw-region rounding drops LZSA two ->one256-byte sectors, ZX0
+three ->one; actual boot packing/delivery remains unmeasured. Payload unchanged.
+
+[Native report](evidence/trick_28.json): LZSA95 full blocks/619480 raw bytes,
+25297440 ->24297727 T (-999713); real18724744 ->17767606 (-957138,5.112%).
+ZX0417 blocks/3204723 raw bytes,180836248 ->161515003 (-19321245);
+real175268114 ->156012520 (-19255594,10.986%). Zero slower blocks;206/1394
+accepted IRQs, all blocks relocated to9103, exact source/history/EOF. Baseline
+receives one complete output request too; these are savings from omitted
+features, not a replacement for asynchronous callers. Boundary/short escaped
+words/combined long-copy options and17 library tests pass;31 defaults exact.
+Independent-package CLI exports pass. No player/movie-release qualification.
+
+`measure_resident_profiles.py --output libraries/evidence/trick_28.json`.

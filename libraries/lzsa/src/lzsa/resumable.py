@@ -13,7 +13,7 @@ PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
 def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,word_state_init=False,restore_compare=False,
-          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000):
+          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,_one_shot=False):
     """Generate raw-v2 decode regions, coroutine labels and instruction costs.
 
     Configure input_pointer, block_end and slice_target, then call begin or
@@ -36,9 +36,11 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     if near_literals and (not long_copy or streaming):
         raise ValueError('near literals require ordinary long-copy input')
     if word_state_init and not streaming:raise ValueError('word state init requires streaming input')
+    if _one_shot and (streaming or word_state_init or restore_compare):
+        raise ValueError('one-shot core has no streaming/state wrapper')
     if not (0<=core<core_limit<=65536 and 0<=prefix<prefix_limit<=65536):
         raise ValueError('invalid code reservations')
-    if not (core_limit<=prefix or prefix_limit<=core):raise ValueError('code reservations overlap')
+    if not _one_shot and not (core_limit<=prefix or prefix_limit<=core):raise ValueError('code reservations overlap')
     if not 0<stack<=65535 or not 0<=output_base<65535:raise ValueError('invalid stack/output address')
     cold=MiniAssembler(prefix);a=MiniAssembler(core);rows=[]
     def emit(name,code,t):rows.append(dict(address=a.pc,instruction=name,tstates=t));a.emit(*code)
@@ -104,17 +106,19 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
     emit('ADD HL,DE',(0x19,),11);ldi();ldir()
     if long_copy:a.label('AfterLongMatch')
     emit('POP HL',(0xe1,),10)
-    a.label('ReadToken');emit('LD A,D',(0x7a,),4);a.labels['high_operand']=a.pc+1;emit('CP high',(0xfe,0),7)
-    if streaming:a.labels['token_high_target']=a.pc+1
-    jp(0xda,'guard_header' if direct_header else 'Token')
-    jr(0x20,'Yield');emit('LD A,E',(0x7b,),4);a.labels['low_operand']=a.pc+1;emit('CP low',(0xfe,0),7)
-    if streaming:a.labels['token_low_target']=a.pc+1
-    jp(0xda,'guard_header' if direct_header else 'Token')
-    a.label('Yield');ld('LD A,(block_end+1)',0x3a,'block_end_high',13);emit('CP D',(0xba,),4);jr(0x20,'Suspend')
-    ld('LD A,(block_end)',0x3a,'block_end',13);emit('CP E',(0xbb,),4)
-    if streaming:a.labels['token_end_target']=a.pc+1
-    jp(0xca,'guard_header' if direct_header else 'Token')
-    a.label('Suspend');ld('CALL yield',0xcd,'slice_yield',17);jr(0x18,'ReadToken')
+    a.label('ReadToken')
+    if not _one_shot:
+        emit('LD A,D',(0x7a,),4);a.labels['high_operand']=a.pc+1;emit('CP high',(0xfe,0),7)
+        if streaming:a.labels['token_high_target']=a.pc+1
+        jp(0xda,'guard_header' if direct_header else 'Token')
+        jr(0x20,'Yield');emit('LD A,E',(0x7b,),4);a.labels['low_operand']=a.pc+1;emit('CP low',(0xfe,0),7)
+        if streaming:a.labels['token_low_target']=a.pc+1
+        jp(0xda,'guard_header' if direct_header else 'Token')
+        a.label('Yield');ld('LD A,(block_end+1)',0x3a,'block_end_high',13);emit('CP D',(0xba,),4);jr(0x20,'Suspend')
+        ld('LD A,(block_end)',0x3a,'block_end',13);emit('CP E',(0xbb,),4)
+        if streaming:a.labels['token_end_target']=a.pc+1
+        jp(0xca,'guard_header' if direct_header else 'Token')
+        a.label('Suspend');ld('CALL yield',0xcd,'slice_yield',17);jr(0x18,'ReadToken')
     # AND 24 has even parity for LL=00/11 and odd parity for LL=01/10.
     a.label('Token')
     if streaming and not direct_header:ld('CALL guard_header',0xcd,'guard_header',17)
@@ -154,6 +158,18 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,lo
         ldir();jp(0xc3,'AfterLongMatch')
         if streaming:
             a.labels['long8_complete']=a.labels['LongLiterals8']
+    if _one_shot:
+        # Shared field decoder, with token checks and the entire coroutine
+        # wrapper omitted. HL/DE are supplied directly by the caller. EOD's
+        # RET Z returns without fetching dummy length bytes. Only the offset
+        # operand is mutable; AF' retains the nibble until the next token.
+        if a.pc>core_limit:raise ValueError('one-shot LZSA2 exceeds core-limit')
+        return [(core,a.resolve())],a.labels,dict(entry='start',variant='fast-block',one_shot=True,
+            code_bytes=a.pc-core,core_end=a.pc,patched_addresses=[a.labels['offset']+i for i in (0,1)],
+            instruction_listing=rows,state_bytes=0,private_stack_bytes=0,
+            long_copy=long_copy,near_literals=near_literals,
+            upstream_commit='15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5',
+            timing_source='https://www.zilog.com/docs/z80/um0080.pdf')
     # Output-only suspension and unavailable-input suspension have different
     # completion rules. Keep the private continuation until raw EOD is read.
     cold.label('slice_until')

@@ -37,7 +37,9 @@ Item25 retains existing Standard stack exchanges and live DE/continuations
 elsewhere (1024 native checks). Item26 rejects the guard byte-add rewrite:
 22 ->52 T,863 wrong carries/32 signed-offset failures;1824 checks. Item27 retains
 refill A counter/word counts and rejects CPI frontier effects (513 checks).
-Item28 is next.
+Item28 adds explicit resident Fast profiles: LZSA218 bytes/real −5.112%,
+ZX0207/−10.986% vs same full-demand coroutine;95/417 native blocks, IRQ/
+relocation/EOF,17 tests and31 default layouts pass. Item29 is next.
 
 ## Completed: other-site Z80 speed/size survey (2026-10-14)
 

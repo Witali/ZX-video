@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     assembly = commands.add_parser('build', help='Export an improved Z80 decoder include')
-    assembly.add_argument('--variant', choices=('fast','turbo_tuned','standard','turbo','mega'), default='fast')
+    assembly.add_argument('--variant', choices=('fast','turbo_tuned','standard','turbo','mega','fast-block'), default='fast')
     assembly.add_argument('--output', type=Path, required=True)
     assembly.add_argument('--namespace', default='zx0')
     for name, default in (('core',0x8df2),('core-limit',0x8f09),('prefix',0x7c00),
@@ -29,7 +29,10 @@ def main():
     decoder.add_argument('--limit', type=int, required=True)
     args = parser.parse_args()
     if args.command == 'build':
-        if args.variant in ('standard','turbo','mega'):
+        if args.variant=='fast-block':
+            from .block import build as block_build
+            regions,labels,metadata=block_build(core=args.core,core_limit=args.core_limit)
+        elif args.variant in ('standard','turbo','mega'):
             a = MiniAssembler(args.core)
             entry=emit_decoder(a, args.variant)
             if a.pc > args.core_limit:

@@ -98,6 +98,16 @@ and INCBIN (for example sjasmplus). The default reservations fit this tiny
 sample; a larger project must choose and validate its own layout.
 # Optional Mega one-shot decoder
 
+`zx0.block.build('fast',core=0x8000,core_limit=0x8400)` or
+`python -m zx0 build --variant fast-block --core 0x8000 --core-limit 0x8400 --output build/zx0-block`
+exports the207-byte Fast entry `zx0_DecompressZX0`. The same resident-block
+API also accepts standard, turbo and mega. HL=input, DE=output; AF/BC/DE/HL
+clobbered, IX and alternate registers retained. Preserve live registers in IRQ
+and reserve caller-stack plus handler/hardware headroom. Validate the complete
+valid block, output length/allocation and nonwrapping output externally.
+Fast/Turbo/Mega need writable offset operands and non-reentrant code. No quota,
+paging or yields; use existing coroutine profiles for those caller requirements.
+
 `python -m zx0 build --variant mega --core 0x8000 --core-limit 0x8300 --output build/zx0-mega`
 exports the pinned673-byte bit-phase-specialized decoder. HL points to a complete
 valid ZX0 v2 block, DE to its nonwrapping output; call `zx0_dzx0_mega` with

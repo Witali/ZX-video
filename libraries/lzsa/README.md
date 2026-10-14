@@ -10,6 +10,16 @@ Pinned upstream revision: `15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5`.
 
 ## Host use
 
+For a complete resident block, `lzsa.block.build(core=0x8000,core_limit=0x8400)`
+or `python -m lzsa build --profile fast-block --core 0x8000 --core-limit 0x8400 --output build/lzsa-block`
+exports a separate one-shot entry `lzsa2_start`. Supply HL=input, DE=output;
+AF/AF'/BC/DE/HL are clobbered, IX and other alternate pairs retained. It uses
+the caller stack and a writable offset operand, with no quota/paging/yield
+state. Validate input and expected nonwrapping output/allocation externally,
+keep source/history resident and preserve live registers including AF' in IRQ.
+Reserve stack for the decoder plus the actual IRQ handler and hardware return.
+The coroutine stays the default. See [measured comparison](../SECOND_PASS.md).
+
 ```python
 from lzsa import compress, decompress, trace
 
