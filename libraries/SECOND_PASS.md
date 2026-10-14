@@ -67,3 +67,15 @@ absolute read13 T by6 T. The indexed ring table belongs to item06.
 
 [258 checks](evidence/trick_12.json),31 exact defaults; actual delta0 T/code/
 state/input. Reproduce with `audit_second_pass.py --item 12 --output libraries/evidence/trick_12.json`.
+
+## Item13 — in-place memory arithmetic
+
+**Decision: no eligible indexed state RMW.** The46 →23-T indexed primitive
+has no matching state sequence in the adapted decoders. Their shifts consume
+compressed input into A/the reservoir, rather than update a memory counter.
+256 probes compare LD A,(HL)/SRL A15 T against SRL (HL)15 T: the latter has
+no speed gain, leaves A unchanged and alters255 of256 possible input bytes.
+That violates immutable input/shared-nibble ownership.
+
+[Report](evidence/trick_13.json),31 exact defaults; actual delta0 T/code/state/
+input. `audit_second_pass.py --item 13 --output libraries/evidence/trick_13.json`.

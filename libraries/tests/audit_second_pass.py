@@ -52,9 +52,28 @@ def item12():
                   'ZX0 ring_banks is dynamically indexed; aligned lookup was measured separately in item06.'])
 
 
+def item13():
+    changed=0
+    for value in range(256):
+        registers=dict(hl=0x6004,af=0x9737)
+        memory=((0x6004,bytes([value])),)
+        old,ot=run('7e cb 3f',registers,memory=memory)
+        inplace,nt=run('cb 3e',registers,memory=memory)
+        assert old.a==value>>1 and old.memory[0x6004]==value
+        assert inplace.memory[0x6004]==value>>1 and (ot,nt)==(15,15)
+        assert old.f==inplace.f
+        changed+=old.memory[0x6004]!=inplace.memory[0x6004]
+    return dict(decision='inapplicable to immutable compressed input / no indexed state RMW',checks=256,
+        register_shift_tstates=15,inplace_shift_tstates=15,input_bytes_changed=changed,
+        indexed_state_primitive_reference='forum_primitive_screen.json',
+        findings=['No runtime indexed shift/store sequence exists in adapted codec state; indexed46 ->23-T primitive has no current site.',
+                  'Compressed-input shifts produce an A value/reservoir rather than update a mutable memory counter.',
+                  'In-place SRL (HL) changes unread/shared nibble bytes and leaves A unchanged, with no saving over LD A,(HL)/SRL A.'])
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('11','12'),required=True)
+    parser.add_argument('--item',choices=('11','12','13'),required=True)
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     defaults=profiles();assert defaults==json.loads((ROOT/'tests/decoder_baseline.json').read_text())['profiles']
     report=dict(date='2026-10-14',item=args.item,complete=True,release=False,scope=__doc__,

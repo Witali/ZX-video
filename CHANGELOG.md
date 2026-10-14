@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item13: shifts consume input rather than mutate state
+
+- **Baseline/objective:** From `81488ba9`, locate in-place indexed arithmetic
+  and check compressed/nibble ownership before replacing register shifts.
+- **Measurements:**256 native values give15 T for both LD A,(HL)/SRL A and
+  SRL (HL); the latter changes255 input bytes and fails the A-result contract.
+  The earlier indexed46 ->23-T primitive has no current runtime state site.
+  All31 defaults exact; no decoder rewrite or new full-streaming run.
+- **Decision:** Inapplicable/rejected under immutable input/reservoir ABI,
+  delta0 T/code/state/input. [Result](libraries/SECOND_PASS.md),
+  [report](libraries/evidence/trick_13.json). Continue item14.
+
 ## 2026-10-14 — Item12: fixed state is direct; input pointers stay live
 
 - **Baseline/objective:** From `3c680445`, inspect temporary pointer setup

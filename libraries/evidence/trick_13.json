@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-14",
+  "item": "13",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "81488ba9",
+  "decision": "inapplicable to immutable compressed input / no indexed state RMW",
+  "checks": 256,
+  "register_shift_tstates": 15,
+  "inplace_shift_tstates": 15,
+  "input_bytes_changed": 255,
+  "indexed_state_primitive_reference": "forum_primitive_screen.json",
+  "findings": [
+    "No runtime indexed shift/store sequence exists in adapted codec state; indexed46 ->23-T primitive has no current site.",
+    "Compressed-input shifts produce an A value/reservoir rather than update a mutable memory counter.",
+    "In-place SRL (HL) changes unread/shared nibble bytes and leaves A unchanged, with no saving over LD A,(HL)/SRL A."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}
