@@ -1,5 +1,18 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item18: tail-call eligibility and literal-tail merging
+
+- **Baseline/objective:** From `61dbbadc`, inspect leaf CALL/RET, required
+  yield continuations and potential shared literal dispatch tails.
+- **Coverage/results:**256 flag cases confirm genuine leaf37 ->20 T (−17)
+  including callee RET. A non-leaf substitution loses required continuation
+  work.256 token classes verify a one-byte tail merge costs0/+8/+13 T for
+  0xx/10x/11x.513 total checks,31 default profiles exact.
+- **Decision:** Retain existing ZX0 tails/inline options and required LZSA2
+  continuations; reject the slower merge under speed-first priority. Actual
+  delta0 T/code/state/input. [Result](libraries/SECOND_PASS.md),
+  [report](libraries/evidence/trick_18.json). Continue item19.
+
 ## 2026-10-14 — Item17: exact codec counters cannot saturate
 
 - **Baseline/objective:** From `d1030dd5`, apply bounded carry arithmetic

@@ -138,9 +138,39 @@ def item17():
                   'The source lower-bound off-by-one and corrected dead-flag primitive remain recorded; no current caller has its preconditions.'])
 
 
+def item18():
+    for flags in range(256):
+        memory=((0x300,b'\xc9'),(0xbff0,b'\x00\x01'))
+        old,ot=run('cd 00 03 c9',dict(af=0x7300|flags),memory=memory,stop=0x100)
+        tail,nt=run('c3 00 03',dict(af=0x7300|flags),memory=memory,stop=0x100)
+        assert (old.af,old.sp)==(tail.af,tail.sp) and (ot,nt)==(37,20)
+    old,_=run('cd 00 03 23 c9',dict(hl=0),memory=memory,stop=0x100)
+    wrong,_=run('c3 00 03',dict(hl=0),memory=memory,stop=0x100)
+    assert old.hl==1 and wrong.hl==0
+    continuation=dict(required_hl=old.hl,wrong_hl=wrong.hl)
+    class_deltas={}
+    for value in range(256):
+        old_stop=0x300 if value<128 else 0x230 if value<192 else 0x208
+        new_stop=0x300 if value<128 else 0x215 if value<192 else 0x320
+        old,ot=run('b7 f2 00 03 fe c0 38 28',dict(af=value<<8),stop=old_stop)
+        # Reuse the existing Case1xx CP/JP tail instead of the local CP/JR.
+        new,nt=run('b7 f2 00 03 c3 10 02 '+'00 '*9+'fe c0 d2 20 03',dict(af=value<<8),stop=new_stop)
+        assert old.af==new.af
+        name='0xx' if value<128 else '10x' if value<192 else '11x'
+        class_deltas[name]=dict(before_tstates=ot,merged_tstates=nt,delta=nt-ot)
+    assert [class_deltas[k]['delta'] for k in ('0xx','10x','11x')]==[0,8,13]
+    return dict(decision='existing tail jumps retained / slower literal tail merge rejected',checks=513,
+        leaf_tail=dict(before_tstates=37,after_tstates=20,delta=-17,includes_callee_ret=True),
+        continuation_counterexample=continuation,
+        literal_tail_merge=dict(code_bytes_saved=1,classes=class_deltas),
+        findings=['ZX0 literal/ring-copy tail jumps and inline match/literal options already avoid CALL/RET where possible.',
+                  'LZSA2 guard/input_wait/yield calls have required post-return copy, status clearing or ReadToken continuations; they are not leaf tail calls.',
+                  'Sharing the existing literal CP/JP dispatch tail saves one byte but slows 10x/11x entries by8/13 T.'])
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('11','12','13','14','15','17'),required=True)
+    parser.add_argument('--item',choices=('11','12','13','14','15','17','18'),required=True)
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     defaults=profiles();assert defaults==json.loads((ROOT/'tests/decoder_baseline.json').read_text())['profiles']
     report=dict(date='2026-10-14',item=args.item,complete=True,release=False,scope=__doc__,

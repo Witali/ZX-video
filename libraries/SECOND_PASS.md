@@ -149,3 +149,20 @@ bank. The source's original off-by-one remains in the earlier screen.
 
 [259 checks](evidence/trick_17.json),31 exact defaults; actual delta0 T/code/
 state/input. `audit_second_pass.py --item 17 --output libraries/evidence/trick_17.json`.
+
+## Item18 — tail calls, threading and shared dispatch tails
+
+**Decision: retain existing tails; reject the slower literal merge.**256
+native flag states confirm a genuine CALL/RET forwarding leaf37 →20 T
+(−17), including the callee's RET. ZX0 already uses tail jumps/inline copy
+options. LZSA2 guard/input_wait/yield calls have required post-return work;
+a directed discarded-continuation probe loses the required HL increment.
+
+Sharing the existing Case1xx CP/JP tail in the other literal dispatch saves
+one byte but costs0/+8/+13 T for 0xx/10x/11x classes. All256 token values
+retain AF but verify those slower paths. Do not trade that speed for a byte
+under the user's speed-first priority. Item10 already removed the eligible
+long-literal jump trampoline without adding a branch.
+
+[513 checks](evidence/trick_18.json),31 exact defaults; actual delta0 T/code/
+state/input. `audit_second_pass.py --item 18 --output libraries/evidence/trick_18.json`.
