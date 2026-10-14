@@ -41,6 +41,12 @@ short input; it is not a substitute for the full upstream encoder. The library
 does not bundle Windows executables or promise that a CPU-oriented stream will
 also save disk sectors. Native costs and delivery costs remain separate.
 
+For fully resident blocks, the explicit `zx0.block` / `lzsa.block` APIs and
+`--variant fast-block` / `--profile fast-block` exports omit coroutine checks
+and state. They use HL=input, DE=output, caller stack and externally validated
+allocations. See [SECOND_PASS.md](SECOND_PASS.md) for native speed/code results,
+register/IRQ contracts and the separate673-byte ZX0 Mega option.
+
 Existing `toolkit` imports delegate to these packages; there is one maintained
 implementation of the transferred algorithms. Video transforms, dictionary
 numbering, block/reset placement around frame packets, window/deadline planning,
@@ -48,6 +54,19 @@ disk queues, sector caches, borrowed packet literals and AY remain application
 components. Their useful mechanisms are preserved in ZX-video, including the
 generic code's use of the shared compression tools. Rejected experiments keep
 their reports and are not silently turned on by library installation.
+
+The [nine-item Z80 trick pass](OPTIMIZATION_PLAN.md) adds two explicitly
+optional measured profiles: LZSA2 `long_copy=True` for byte-extended forms,
+and ZX0 `banked.build(aligned_ring_table=True)`. Complete native/streaming/
+IRQ results and rejected candidates are retained. Both need more code RAM;
+runtime compressed bytes stay unchanged, while actual boot-code disk packing
+and playback qualification remain application work. All defaults stay exact.
+
+The additional items10–29 pass is complete: optional smaller/faster coroutine
+helpers, resident Fast/Mega profiles and an explicit compact LZSA2 tradeoff.
+[Decisions and reproduction](SECOND_PASS.md) record unsuccessful candidates too;
+[final summary](second_pass_verification.json) authenticates evidence, exact
+defaults/resources,85 observed unit tests and independent wheel exports.
 
 ## Verification and provenance
 

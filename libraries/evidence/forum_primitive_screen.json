@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-13",
+  "baseline_revision": "12d4eeac",
+  "complete": true,
+  "release": false,
+  "scope": "Screen forum primitives; this does not apply or qualify a codec change.",
+  "decoder_changes": 0,
+  "indexed_shift": {
+    "checks": 512,
+    "before_tstates": 46,
+    "after_tstates": 23,
+    "delta": -23,
+    "code_bytes_before": 8,
+    "code_bytes_after": 4,
+    "source_post": 534511,
+    "condition": "A result must be dead; preserve index, address and memory ownership."
+  },
+  "bounded_decrement": {
+    "checks": 233,
+    "input_range": [
+      23,
+      255
+    ],
+    "source_posts": [
+      170101,
+      170717
+    ],
+    "first_source_counterexample": {
+      "input": 23,
+      "expected": 23,
+      "forum_sequence_result": 22
+    },
+    "corrected_bytes": "d6 18 ce 17",
+    "before_tstates": [
+      22,
+      23
+    ],
+    "after_tstates": 14,
+    "code_bytes_before": 6,
+    "code_bytes_after": 4,
+    "flag_differences": 233,
+    "condition": "Input already within the bound; final flags must be dead."
+  },
+  "adjacent_byte_clear": {
+    "checks": 1,
+    "before_tstates": 30,
+    "after_tstates": 26,
+    "delta": -4,
+    "code_bytes_before": 7,
+    "code_bytes_after": 6,
+    "condition": "Contiguous two bytes; AF/HL side effects must be dead and IRQ may not observe a forbidden intermediate state."
+  },
+  "applied_to_codecs": false,
+  "full_decoder_replay": false,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf"
+}

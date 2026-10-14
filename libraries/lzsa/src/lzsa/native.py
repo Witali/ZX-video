@@ -9,7 +9,7 @@ def put_word(machine, address, value):
     machine.set_memory_block(address, value.to_bytes(2, 'little'))
 
 def execute(regions, labels, layout, payload, expected, interrupts=False, *, source=0x4000,
-            caller_stack=0xbff0):
+            caller_stack=0xbff0,slice_bytes=256):
     m = Z80Machine()
     m.memory[:] = b'\xa5'*65536
     for address,data in regions:
@@ -52,7 +52,8 @@ def execute(regions, labels, layout, payload, expected, interrupts=False, *, sou
         m.memory[address]=value
     m.set_read_callback(read);m.set_write_callback(write)
     slices=[];irqs=0;unavailable_irqs=0
-    for index,target in enumerate(list(range(256,len(expected),256))+[len(expected)]):
+    targets=([len(expected)] if slice_bytes is None else list(range(slice_bytes,len(expected),slice_bytes))+[len(expected)])
+    for index,target in enumerate(targets):
         put_word(m,labels['slice_target'],output+target)
         put_word(m,stack-2,stop)
         entry=labels['begin' if index==0 else 'slice_until']

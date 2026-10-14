@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-14",
+  "item": "26",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "ccda78a6",
+  "decision": "reject live-input/overflow rewrite; retain signed offset arithmetic",
+  "checks": 1824,
+  "guard_endpoint": {
+    "before_tstates": 22,
+    "after_with_hl_restored": 52,
+    "delta": 30,
+    "wrong_carry_cases": 863,
+    "missed_overflows": 31,
+    "spurious_overflows": 832
+  },
+  "signed_byte_offset_failures": 32,
+  "findings": [
+    "The 20-T unsigned-byte addition destroys A and arithmetic flags; core A is the ZX0 reservoir or LZSA2 token/length, DE is output.",
+    "Streaming guard needs only endpoint high in A and a full16-bit overflow carry, retaining input HL. Its existing22-T ADD/ADC beats the complete52-T rewrite.",
+    "The subtraction in the narrow construction loses all31 directed FFFF overflow cases, even after restoring HL.",
+    "Negative LZSA2 offsets are not zero-extended bytes; using their unsigned low byte adds256 instead of the signed displacement."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}

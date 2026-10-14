@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-14",
+  "item": "19",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "c3abf249",
+  "decision": "constant data already emitted / mutable reset cannot be preinitialized once",
+  "checks": 6,
+  "compiled_ring_table": [
+    0,
+    1,
+    3,
+    4
+  ],
+  "stale_offset_cases": 4,
+  "omitted_reset_probe": {
+    "before_tstates": 46,
+    "omitted_tstates": 16,
+    "incorrect_after_prior_block": true
+  },
+  "findings": [
+    "Generators emit tables/state using DB/words, not repeated per-byte initializer routines.",
+    "ZX0 last offset must reset to -1 on every block; compile-time data does not reset the operand after a prior decode.",
+    "Caller-owned pointer/end/frontier state changes each block; the only adjacent runtime zero flags were improved in item16.",
+    "Moving state to external BSS without initialization changes storage accounting, not total required RAM or repeated-entry semantics."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}

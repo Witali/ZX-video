@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-14",
+  "item": "14",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "6ea4f15a",
+  "decision": "retain fast accumulator rotations / unproved word narrowing rejected",
+  "checks": 768,
+  "high_nibble": {
+    "before_tstates": 23,
+    "narrow_shift_tstates": 39,
+    "delta": 16
+  },
+  "word_shift": {
+    "checks": 512,
+    "lost_high_byte_cases": 256
+  },
+  "findings": [
+    "LZSA2 already uses four4-T RRCA instructions; the OR F0 result and flags are live. SRL-based narrowing is slower; RRD would mutate input.",
+    "ZX0 already uses ADD A,A/RLA and specialized short-offset/short-gamma paths. Its longer lengths may carry into B.",
+    "Additional bit-phase specialization is evaluated separately in item23; no generic high-byte omission."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}

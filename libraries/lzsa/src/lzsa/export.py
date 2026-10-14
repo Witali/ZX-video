@@ -15,9 +15,19 @@ ROUTINES = {
     'start': 'Initialize the AF\' nibble reservoir and enter the raw LZSA2 decoder.',
     'ReadToken': 'Check output demand at a token boundary, allowing bounded overshoot.',
     'Token': 'S/P flag dispatch for literal classes; AF\' retains a cached low nibble.',
+    'CopyMatch': 'A=length low byte, B=high; build BC, save input HL and copy forward from the patched negative offset, preserving overlap.',
+    'ExtendedCode': 'Shared Small length helper: C=base; consume nibble/extra/word fields, including legal short word escapes.',
+    'ExtraByte': 'Shared Small byte extension; carry+Z is EOF. Drop only the helper return and return to the caller before any word/nibble read.',
+    'WordLength': 'Read the exact little-endian length into A/B; the encoding implies no lower bound beyond the valid format count.',
+    'ReadNibble': 'Small cache in AF\': S=0 refills, S=1 returns cached low nibble. IRQ must preserve the complete alternate AF.',
     'guard_header': 'Require a 32-byte token prefix; direct mode uses dead AF for a 46-T ready path.',
     'guard_literals': 'Require the literal extent plus seven-byte lookahead before LDIR.',
     'input_wait': 'Set input_needed and yield; supplied pages and shared tails belong to the caller.',
+    'LongLiterals8Jump': 'Nearby JR target for byte-form literals; word forms retain the original 7-T untaken JR.',
+    'LongLiterals8': 'A=18..255 literal bytes, B=token; prepare BC and retain the token in A.',
+    'LongLiteralsBC': 'BC=18..255, HL=readable literals, DE=output; 16 forward LDIs then nonzero LDIR. AF\' is preserved.',
+    'LongMatch8': 'A=24..255 match bytes, B=0; prepare BC for the long match kernel.',
+    'LongMatchBC': 'BC=24..255, HL=input, DE=output; save HL, load shared negative offset, copy forward for distance-1 overlap.',
     'state': 'Mutable words/flags. Keep state and self-modifying operands in writable RAM.',
 }
 
@@ -39,6 +49,14 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
              '; Preserve decoder registers in IRQ handlers, including AF/AF\' when used.',
              '; Coroutine targets are minimums; retain source and complete output history.',
              '; Configure input_pointer/block_end/slice_target before begin; private SP is saved.', '']
+    routines=dict(ROUTINES)
+    if metadata.get('one_shot'):
+        lines=['; Generated resident raw LZSA2 block decoder; see LICENSE; Emmanuel Marty, spke, uniabis.',
+               '; ABI: HL=input, DE=output; AF/AF\'/BC/DE/HL clobbered; uses caller stack.',
+               '; Complete valid block/history and nonwrapping output required; no quotas/paging/yields.',
+               '; Offset operand needs writable non-reentrant code; IRQ preserves all live registers, including AF\'.',
+               '; Exact EOD returns before dummy word reads. Counts exclude IRQ/ULA/disk.', '']
+        routines['ReadToken']='Enter the next resident token directly; AF\' nibble survives, no quota/frontier check.'
     for name, address in sorted(labels.items()):
         if name.isidentifier():
             lines.append(f'{namespace}_{name} equ ${address:04x}')
@@ -46,13 +64,13 @@ def export(directory, regions, labels, metadata, *, namespace='lzsa2'):
         lines += ['', f'org ${address:04x}', f'; Region {index}: {len(blob)} bytes.']
         points = {address, address + len(blob)}
         for name, target in labels.items():
-            if name in ROUTINES and address <= target < address + len(blob):
+            if name in routines and address <= target < address + len(blob):
                 points.add(target)
         ordered = sorted(points)
         for lo, hi in zip(ordered, ordered[1:]):
             for name, target in labels.items():
-                if target == lo and name in ROUTINES:
-                    lines.append(f'; {namespace}_{name}: {ROUTINES[name]}')
+                if target == lo and name in routines:
+                    lines.append(f'; {namespace}_{name}: {routines[name]}')
             for offset in range(lo - address, hi - address, 16):
                 part = blob[offset:min(offset + 16, hi - address)]
                 lines.append('db ' + ','.join(f'${value:02x}' for value in part))

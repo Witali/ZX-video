@@ -126,6 +126,113 @@ from the old140 T. Preserve the original uncompensated listening-preview
 classification and strict quality gate. The generic converters remain unchanged.
 This completes the current image correction; no new movie optimization starts.
 
+## Completed: sequential additional codec improvements (2026-10-14)
+
+The user authorized working through the saved list and checking improvements.
+All20 items10–29 are complete, prioritizing speed then code size, with one
+complete measured/audited result per focused commit and retained failures.
+Use [SECOND_PASS.md](libraries/SECOND_PASS.md) and the checklist. Preserve
+defaults, wire formats, EOF/overlap/suspension/IRQ and application release gates.
+Item10 is complete: optional ordinary LZSA2 near_literals saves10 T per
+eligible literal and3 bytes;95 complete blocks,230 IRQs, zero slower slices,
+relocation/short escaped words and13 unit tests pass. Item11 retains required
+nibble/page reloads:513 native checks show safe caching +22/+8 T. Item12
+retains existing direct state and live input pointers (258 checks). Item13
+rejects input mutation/no indexed state site (256 checks). Item14 keeps fast
+rotations and rejects unproved word narrowing (768 checks). Item15 retains
+running pointers and rejects unconditional guard caching (2049 checks).
+Item16 adds optional streaming word_state_init, −4 T/block/−1 byte;95 full
+blocks and both42-case/six-placement guarded modes pass, unchanged waits/
+sectors, dirty prior flags,252 native IRQs and14 library tests. Item17 finds
+no saturating counter contract (259 checks). Item18 retains live continuations
+and rejects a slower one-byte dispatch merge (513 checks). Item19 retains
+compiled tables and required per-block mutable resets. Item20 adds optional
+restore_compare, −5 T/demand/−2 bytes;95 blocks/230 IRQs, both42-case guarded
+modes, boundary/combined-profile tests and15 unit tests pass. Item21 retains
+local count/offset-role bounds and replays18 short-word blocks (55 checks).
+Item22 rejects whole-run residue dispatch:95 blocks exact, but real21 +8767 T,
+19 slower blocks/405 slices; +112 core/+2 stack bytes. Frozen code replays the
+failed experiment without a public option. Item23 adds optional one-shot Mega:
+417 native blocks (364 real), real −6.147% vs equal-ABI Fast,673 code bytes,
+1305 IRQs, exact EOF/relocation/dirty offset;16 tests pass. Item24 rejects the
+distance1 selector:95 exact blocks/230 IRQs, real +3816 T,51 slower blocks.
+Item25 retains existing Standard stack exchanges and live DE/continuations
+elsewhere (1024 native checks). Item26 rejects the guard byte-add rewrite:
+22 ->52 T,863 wrong carries/32 signed-offset failures;1824 checks. Item27 retains
+refill A counter/word counts and rejects CPI frontier effects (513 checks).
+Item28 adds explicit resident Fast profiles: LZSA218 bytes/real −5.112%,
+ZX0207/−10.986% vs same full-demand coroutine;95/417 native blocks, IRQ/
+relocation/EOF,17 tests and31 default layouts pass. Item29 adds explicit137-byte
+resident Small (-81 bytes, +14.948% real CPU), corrected exact EOF;95 native
+blocks/235 IRQs, dirty state and1024 nibble checks pass. Final18 library/67
+toolkit tests, isolated wheels/exports,31 defaults/four original resources and
+both producer variants pass. See second_pass_verification.json. No further
+experiment, merge/push or player/movie-release adoption is opened automatically.
+
+## Completed: other-site Z80 speed/size survey (2026-10-14)
+
+The user asks which further library optimizations are possible, prioritizing
+speed then code size, and requests other websites. The [survey](libraries/WEB_RESEARCH.md)
+inspects author articles/wiki routines, official optimizer rules and upstream
+ZX0 Mega/LZSA2 small sources. Eight additional candidate groups22–29 are saved
+in the checklist; seven primitive groups pass6604 native cases. An item20
+LZSA2 sync proposal saves5 T/2 bytes locally, while whole-run unrolling can
+beat the current16-byte prefix only on sufficiently long copies. Upstream
+raw core sizes/speed claims do not have the current coroutine/streaming ABI.
+All31 default profiles and four original resources remain exact; no new
+codec path or release is integrated. This research deliverable is complete.
+Continue from pending item10 using one fully verified experiment per commit.
+
+## Completed: first sequential Z80 codec trick pass (2026-10-13)
+
+The subsequent user request asks for additional forum pages, especially a
+compiler thread remembered as `x80cc`. The [bounded survey](libraries/FORUM_RESEARCH.md)
+captures/screens 54 pages in 15 additional topics and records partial/unread
+coverage explicitly. The actual requested compiler/thread is unidentified;
+official z88dk 80cc is a naming hypothesis only. Twelve additional candidate
+groups (10–21) are saved in the checklist, with 512 indexed-shift checks,
+233 corrected bounded-decrement value checks and one adjacent-clear probe.
+The source decrement fails at its lower bound; all corrected final flags
+differ. This research deliverable is complete, with no codec/default change
+or new full-codec/player qualification. Continue one codec experiment at a
+time from candidate 10 when proceeding with the saved optimization queue.
+
+The user requests a new branch, a saved list of the zx-pk.ru optimization
+techniques, and sequential application/measurement/regression checking.
+Work on `codex/z80-codec-tricks` in `.worktree/z80-codec-tricks`, from
+`6168ba14`. Follow [the nine-item checklist](libraries/OPTIMIZATION_PLAN.md).
+Finish each bounded experiment before the next, including failed/inapplicable
+results. Preserve standard ZX0 v2/raw LZSA2, all decoded bytes and existing
+default/release profiles. Count instructions and memory; test complete native
+blocks, overlap, suspension, EOF and IRQ. Any player-default adoption still
+requires complete actual delivery/Fuse/publication qualification from AGENTS.md.
+Library component evidence must not be labeled a movie release. No merge/push
+or unrelated audio/movie redesign is authorized by this work.
+
+Item01 is complete: [optional long-copy LZSA2](libraries/LONG_COPY.md),
+77 complete native blocks, both24-case guarded modes,12 library and66
+toolkit tests. Defaults remain byte-exact. Item02 is audited: eligible register
+copies already use LD; native evidence rejects replacing live saves. Next:
+item03 is audited: live parity/Z/carry and multi-bit masks prevent the rewrite.
+Item04 retains existing ZX0 page-aware increments and rejects unguarded
+crossings in variable-position headers. Item05 rejects the jump table:
+57 T versus24/31/36 T for current class selection. Item06 adds an optional
+aligned ZX0 ring table (108 ->87 T, +121..245 bytes),64 full native banked
+blocks/all16 profiles and AY/IM2 at every instruction pass. Next: item07
+stack bulk copies reject legal overlap1/2 and violate live A/HL'/private-SP
+contracts. Item08 is inapplicable to generic runtime literals; measured constant
+code enlarges the sample transport. The user expanded item02 to all six
+BC/DE/HL directions and nonadjacent independent instructions/calls;36864
+native checks pass, but bounded-copy live saves cannot be replaced at either
+endpoint. Final review corrected item01's unproved16-bit length bound: unroll
+only byte forms, retain original word paths/JR cost.95 native blocks and both
+42-case/six-placement streaming modes pass, with initial failures retained.
+Real LZSA2 gain is now24026 T (0.124%), +87 ordinary/84 streaming bytes.
+Item09 finds no cheaper carry-mask branch (direct ADC11 T versus mask15).
+The first nine-item pass is complete, with two optional measured profiles and
+all other decisions/evidence saved. Defaults remain exact. No merge/push or
+movie release is produced; application adoption needs its complete gates.
+
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 
 The user requests separate reusable ZX0 and LZSA libraries with the project's

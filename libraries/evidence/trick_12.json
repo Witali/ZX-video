@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-14",
+  "item": "12",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "3c680445",
+  "decision": "already direct for fixed state / input pointer must remain live",
+  "checks": 258,
+  "dead_pointer_primitive": {
+    "before_tstates": 17,
+    "after_tstates": 13
+  },
+  "live_pointer_counterexample": {
+    "expected_hl": 24581,
+    "wrong_hl": 20481
+  },
+  "established_input_pointer": {
+    "indirect_tstates": 7,
+    "absolute_tstates": 13,
+    "delta": 6
+  },
+  "findings": [
+    "LZSA2/ZX0 cold state accesses already use absolute load/store forms.",
+    "Core HL is a dynamic advancing input/history pointer, not a disposable construction for one static byte.",
+    "ZX0 ring_banks is dynamically indexed; aligned lookup was measured separately in item06."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}

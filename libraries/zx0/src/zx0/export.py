@@ -15,6 +15,10 @@ ROUTINES = {
     'DecompressZX0': 'Fast ZX0 v2 bit/gamma decoder with shared literal and match boundaries.',
     'dzx0_turbo': 'ZX0 v2 turbo decoder; HL=input, DE=output, AF holds the bit reservoir.',
     'dzx0_standard': 'ZX0 v2 compact decoder; HL=input, DE=output; uses the caller stack.',
+    'dzx0_mega': 'One-shot bit-phase-expanded ZX0 v2; HL=input, DE=output; AF/BC/HL/DE clobbered. Resident source/history required; writable offset, caller stack.',
+    'dzx0m_literals0': 'Refill the bit reservoir and select phase-specific literal Elias paths; BC carries the exact word count.',
+    'dzx0m_last_offset': 'Patched negative previous offset; forward LDIR/LDI preserves overlapping history, then restores the source pointer.',
+    'dzx0m_new_offset0': 'Decode the inverted offset MSB and test the format EOF before fetching its LSB.',
     'input_check': 'Wait before reading an unavailable page; the bit carry stays live.',
     'literal_split': 'Split literals at input-page boundaries without repeating the output check.',
     'state': 'Mutable words/flags. Keep state and self-modifying operands in writable RAM.',
@@ -40,8 +44,8 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
              '; Configure input_pointer/block_end/slice_target before begin; private SP is saved.', '']
     if 'input_pointer' not in labels:
         lines = ['; Generated forward ZX0 v2 decoder. See LICENSE; Einar Saukas.',
-                 '; ABI: HL=input, DE=output; AF/BC/DE/HL are working registers; uses caller stack.',
-                 '; Standard can run in ROM; Turbo patches its offset and requires writable code.',
+                 '; ABI: HL=input, DE=output; AF/BC/DE/HL clobbered; uses caller stack. Resident source/history required.',
+                 '; Standard can run in ROM; the other profiles patch offsets and require writable code.',
                  '; Counts exclude IRQ/ULA/disk. Preserve working registers in interrupt handlers.', '']
     for name, address in sorted(labels.items()):
         if name.isidentifier():
@@ -56,7 +60,10 @@ def export(directory, regions, labels, metadata, *, namespace='zx0'):
         for lo, hi in zip(ordered, ordered[1:]):
             for name, target in labels.items():
                 if target == lo and name in ROUTINES:
-                    lines.append(f'; {namespace}_{name}: {ROUTINES[name]}')
+                    description=ROUTINES[name]
+                    if metadata.get('one_shot') and name=='DecompressZX0':
+                        description='Resident Fast ZX0 v2; bit/gamma decoder, writable offset, no boundaries, IX preserved.'
+                    lines.append(f'; {namespace}_{name}: {description}')
             for offset in range(lo - address, hi - address, 16):
                 part = blob[offset:min(offset + 16, hi - address)]
                 lines.append('db ' + ','.join(f'${value:02x}' for value in part))

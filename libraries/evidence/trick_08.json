@@ -1,0 +1,41 @@
+{
+  "item": "08",
+  "baseline_revision": "7d83ca1e",
+  "complete": true,
+  "decision": "inapplicable to generic literals; compiled constants enlarge/change transport",
+  "fixed_data_bytes": 128,
+  "compiled_body_bytes": 256,
+  "compiled_with_sp_entry_bytes": 259,
+  "compiled_tstates": 1354,
+  "ldir_only_tstates": 2683,
+  "sp_save_restore_excluded_tstates": 40,
+  "word_primitive_tstates": {
+    "load_immediate": 10,
+    "push": 11,
+    "total": 21
+  },
+  "formats": [
+    {
+      "format": "zx0",
+      "payload_bytes": 133,
+      "payload_sectors": 1
+    },
+    {
+      "format": "lzsa2",
+      "payload_bytes": 132,
+      "payload_sectors": 1
+    }
+  ],
+  "compiled_sectors": 2,
+  "exact_fixed_output": true,
+  "decoder_changes": 0,
+  "release": false,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+  "scope": "Native instruction/precondition checks; no new decoder or playback performance claim.",
+  "sources": {
+    "libraries/zx0/src/zx0/banked.py": "6535d8405b79fa8a1001ac39309e7198d4adfe40441fcfa9486a10a8657d381f",
+    "libraries/zx0/src/zx0/incremental.py": "ce032e33e7ba23bb2c3ba32392a6c54da2c5b034f76d2d31716150c19285a23a",
+    "libraries/zx0/src/zx0/resumable.py": "d45721b7bc473d84df1a54d7e4c39aeec9dca7589efddba1c3740234041f2572",
+    "libraries/lzsa/src/lzsa/resumable.py": "6858a2ae34e2972b01b7e7f668d5e4e5bf5dc306ebd404bda1c4210885a6440a"
+  }
+}

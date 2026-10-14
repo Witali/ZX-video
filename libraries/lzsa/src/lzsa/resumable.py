@@ -12,8 +12,8 @@ from ._z80 import sha
 PREFIX,PREFIX_LIMIT,STACK=0x7c00,0x7d50,0x7be0
 
 
-def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
-          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000):
+def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,long_copy=False,near_literals=False,word_state_init=False,restore_compare=False,
+          prefix=PREFIX,prefix_limit=PREFIX_LIMIT,stack=STACK,output_base=0xc000,_one_shot=False):
     """Generate raw-v2 decode regions, coroutine labels and instruction costs.
 
     Configure input_pointer, block_end and slice_target, then call begin or
@@ -23,11 +23,24 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
     Caller SP is restored; AF/BC/DE/HL and AF' may be clobbered on return.
     streaming input waits use input_needed and finished, independently of the
     output target. The application owns page supply and final-input bypass.
+    long_copy appends bounded 16-LDI kernels to the core: reserve more core RAM
+    explicitly (e.g. core_limit=0x9000). Short tokens retain their old paths.
+    near_literals moves the ordinary long-copy literal helper before start,
+    removing its trampoline. Streaming and all default profiles stay unchanged.
+    word_state_init clears adjacent streaming flags in one word instruction;
+    caller/IRQ observers see initialized flags only after instruction completion.
+    restore_compare restores the compared target with ADD HL,DE instead of
+    reloading it. S/Z/PV/C agree; H/N and undocumented flags are dead here.
     """
     if direct_header and not streaming:raise ValueError('direct header requires streaming input')
+    if near_literals and (not long_copy or streaming):
+        raise ValueError('near literals require ordinary long-copy input')
+    if word_state_init and not streaming:raise ValueError('word state init requires streaming input')
+    if _one_shot and (streaming or word_state_init or restore_compare):
+        raise ValueError('one-shot core has no streaming/state wrapper')
     if not (0<=core<core_limit<=65536 and 0<=prefix<prefix_limit<=65536):
         raise ValueError('invalid code reservations')
-    if not (core_limit<=prefix or prefix_limit<=core):raise ValueError('code reservations overlap')
+    if not _one_shot and not (core_limit<=prefix or prefix_limit<=core):raise ValueError('code reservations overlap')
     if not 0<stack<=65535 or not 0<=output_base<65535:raise ValueError('invalid stack/output address')
     cold=MiniAssembler(prefix);a=MiniAssembler(core);rows=[]
     def emit(name,code,t):rows.append(dict(address=a.pc,instruction=name,tstates=t));a.emit(*code)
@@ -47,9 +60,26 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
         emit('LD A,(HL)',(0x7e,),7);inc()
         for _ in range(4):emit('RRCA',(0x0f,),4)
         a.label(label);emit('OR F0h',(0xf6,0xf0),7)
+    def long_literals():
+        # A=count/B=token, count 18..255; BC entry requires readable literals.
+        # Sixteen LDIs leave positive BC and preserve forward overlap/AF'.
+        a.label('LongLiterals8');emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('LD B,0',(6,0),7)
+        a.label('LongLiteralsBC')
+        for _ in range(16):ldi()
+        ldir();jp(0xc3,'AfterLongLiterals')
+    if near_literals:
+        # Both helper and ManyLiterals are now within one relative jump.
+        # Its untaken 7-T word path is unchanged; eligible byte forms avoid
+        # the former 10-T/three-byte trampoline. begin enters start directly.
+        long_literals()
+    elif long_copy and not streaming:
+        # Preserve the original JR's 7-T untaken word-length path. A nearby
+        # trampoline adds 10 T only to the eligible long8 literal path.
+        a.label('LongLiterals8Jump');jp(0xc3,'LongLiterals8')
     a.label('start');emit('LD B,0',(6,0),7);emit('SCF',(0x37,),4);x();jp(0xc3,'ReadToken')
     a.label('ManyLiterals');emit('LD A,18',(0x3e,18),7);emit('ADD A,(HL)',(0x86,),7);inc()
     if streaming:a.labels['long8_target']=a.pc+1;jp(0xd2,'guard_long8')
+    elif long_copy:jr(0x30,'LongLiterals8' if near_literals else 'LongLiterals8Jump')
     else:jr(0x30,'CopyMoreLiterals')
     emit('LD C,(HL)',(0x4e,),7);inc();emit('LD A,B',(0x78,),4);emit('LD B,(HL)',(0x46,),7)
     if streaming:a.labels['long16_target']=a.pc+1
@@ -58,7 +88,9 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
     emit('INC A',(0x3c,),4);jr(0x28,'ManyLiterals');emit('SUB 238',(0xd6,238),7)
     a.label('CopyMoreLiterals');emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('LD B,0',(6,0),7)
     if streaming:a.label('copy_long8')
-    ldi();ldi();ldir();emit('OR A',(0xb7,),4);jp(0xf2,'Case0xx')
+    ldi();ldi();ldir()
+    if long_copy:a.label('AfterLongLiterals')
+    emit('OR A',(0xb7,),4);jp(0xf2,'Case0xx')
     emit('CP 192',(0xfe,192),7);jr(0x38,'Case10x')
     a.label('Case11x');emit('CP 224',(0xfe,224),7);jr(0x30,'MatchLen')
     emit('LD B,(HL)',(0x46,),7);inc();jr(0x18,'ReadOffsetC')
@@ -71,18 +103,22 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
     a.label('MatchLen');emit('INC A',(0x3c,),4);emit('AND 7',(0xe6,7),7);jr(0x28,'LongerMatch');emit('INC A',(0x3c,),4)
     a.label('CopyMatch');emit('LD C,A',(0x4f,),4)
     a.label('MatchUseC');emit('PUSH HL',(0xe5,),11);a.labels['offset']=a.pc+1;emit('LD HL,offset',(0x21,0,0),10)
-    emit('ADD HL,DE',(0x19,),11);ldi();ldir();emit('POP HL',(0xe1,),10)
-    a.label('ReadToken');emit('LD A,D',(0x7a,),4);a.labels['high_operand']=a.pc+1;emit('CP high',(0xfe,0),7)
-    if streaming:a.labels['token_high_target']=a.pc+1
-    jp(0xda,'guard_header' if direct_header else 'Token')
-    jr(0x20,'Yield');emit('LD A,E',(0x7b,),4);a.labels['low_operand']=a.pc+1;emit('CP low',(0xfe,0),7)
-    if streaming:a.labels['token_low_target']=a.pc+1
-    jp(0xda,'guard_header' if direct_header else 'Token')
-    a.label('Yield');ld('LD A,(block_end+1)',0x3a,'block_end_high',13);emit('CP D',(0xba,),4);jr(0x20,'Suspend')
-    ld('LD A,(block_end)',0x3a,'block_end',13);emit('CP E',(0xbb,),4)
-    if streaming:a.labels['token_end_target']=a.pc+1
-    jp(0xca,'guard_header' if direct_header else 'Token')
-    a.label('Suspend');ld('CALL yield',0xcd,'slice_yield',17);jr(0x18,'ReadToken')
+    emit('ADD HL,DE',(0x19,),11);ldi();ldir()
+    if long_copy:a.label('AfterLongMatch')
+    emit('POP HL',(0xe1,),10)
+    a.label('ReadToken')
+    if not _one_shot:
+        emit('LD A,D',(0x7a,),4);a.labels['high_operand']=a.pc+1;emit('CP high',(0xfe,0),7)
+        if streaming:a.labels['token_high_target']=a.pc+1
+        jp(0xda,'guard_header' if direct_header else 'Token')
+        jr(0x20,'Yield');emit('LD A,E',(0x7b,),4);a.labels['low_operand']=a.pc+1;emit('CP low',(0xfe,0),7)
+        if streaming:a.labels['token_low_target']=a.pc+1
+        jp(0xda,'guard_header' if direct_header else 'Token')
+        a.label('Yield');ld('LD A,(block_end+1)',0x3a,'block_end_high',13);emit('CP D',(0xba,),4);jr(0x20,'Suspend')
+        ld('LD A,(block_end)',0x3a,'block_end',13);emit('CP E',(0xbb,),4)
+        if streaming:a.labels['token_end_target']=a.pc+1
+        jp(0xca,'guard_header' if direct_header else 'Token')
+        a.label('Suspend');ld('CALL yield',0xcd,'slice_yield',17);jr(0x18,'ReadToken')
     # AND 24 has even parity for LL=00/11 and odd parity for LL=01/10.
     a.label('Token')
     if streaming and not direct_header:ld('CALL guard_header',0xcd,'guard_header',17)
@@ -99,8 +135,41 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
     a.label('Case00x');emit('LD B,A',(0x47,),4);nibble('Offset5Nibble')
     emit('LD C,A',(0x4f,),4);emit('LD A,B',(0x78,),4);emit('CP 32',(0xfe,32),7);emit('RL C',(0xcb,0x11),8);emit('LD B,255',(6,255),7);jp(0xc3,'SaveOffset')
     a.label('LongerMatch');nibble('MatchNibble',True);emit('SUB 231',(0xd6,231),7);emit('CP 24',(0xfe,24),7);jp(0xda,'CopyMatch')
-    emit('ADD A,(HL)',(0x86,),7);inc();jp(0xd2,'CopyMatch');emit('RET Z',(0xc8,),[5,11])
+    emit('ADD A,(HL)',(0x86,),7);inc();jp(0xd2,'LongMatch8' if long_copy else 'CopyMatch');emit('RET Z',(0xc8,),[5,11])
     emit('LD C,(HL)',(0x4e,),7);inc();emit('LD B,(HL)',(0x46,),7);inc();jp(0xc3,'MatchUseC')
+    if long_copy:
+        # Only structurally long forms reach these kernels: literals >=18,
+        # extra-byte matches >=24. Escaped 16-bit lengths need not be >=256:
+        # retain their original paths even for short noncanonical encodings.
+        # Sixteen forward LDIs leave a positive BC for LDIR and preserve overlap at
+        # distance 1/2. No count test, AF' scratch or SP redirection is needed.
+        # Literal entry: A=count/B=token, count 18..255. Guards call the BC
+        # entry only after the entire extent is readable. Word-length guards
+        # must keep their original zero-prefix LDIR continuation.
+        if not near_literals:long_literals()
+        # Match entry: A=count/B=0 or BC=count; DE=next output, HL=input.
+        # The shared self-modified offset is loaded as data, costing 6 T more
+        # than the short path's immediate load but avoiding another store on
+        # every offset token. The existing POP HL restores the continuation.
+        a.label('LongMatch8');emit('LD C,A',(0x4f,),4)
+        a.label('LongMatchBC');emit('PUSH HL',(0xe5,),11)
+        ld('LD HL,(offset)',0x2a,'offset',16);emit('ADD HL,DE',(0x19,),11)
+        for _ in range(16):ldi()
+        ldir();jp(0xc3,'AfterLongMatch')
+        if streaming:
+            a.labels['long8_complete']=a.labels['LongLiterals8']
+    if _one_shot:
+        # Shared field decoder, with token checks and the entire coroutine
+        # wrapper omitted. HL/DE are supplied directly by the caller. EOD's
+        # RET Z returns without fetching dummy length bytes. Only the offset
+        # operand is mutable; AF' retains the nibble until the next token.
+        if a.pc>core_limit:raise ValueError('one-shot LZSA2 exceeds core-limit')
+        return [(core,a.resolve())],a.labels,dict(entry='start',variant='fast-block',one_shot=True,
+            code_bytes=a.pc-core,core_end=a.pc,patched_addresses=[a.labels['offset']+i for i in (0,1)],
+            instruction_listing=rows,state_bytes=0,private_stack_bytes=0,
+            long_copy=long_copy,near_literals=near_literals,
+            upstream_commit='15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5',
+            timing_source='https://www.zilog.com/docs/z80/um0080.pdf')
     # Output-only suspension and unavailable-input suspension have different
     # completion rules. Keep the private continuation until raw EOD is read.
     cold.label('slice_until')
@@ -114,7 +183,13 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
     cold.emit(0xe1,0xd1,0xc1,8,0xf1,8,0xf1,0xc9)
     cold.label('begin');cold.abs16(0xcd,'sync');cold.abs16((0xed,0x73),'slice_caller_sp')
     if streaming:
-        cold.emit(0xaf);cold.abs16(0x32,'finished');cold.abs16(0x32,'input_needed')
+        if word_state_init:
+            # HL is overwritten by the finish/input loads below; start's SCF
+            # initializes the nibble reservoir irrespective of dead A/flags.
+            # Both fields are contiguous and IRQs occur after the word store.
+            cold.emit(0x21,0,0);cold.abs16(0x22,'input_needed')
+        else:
+            cold.emit(0xaf);cold.abs16(0x32,'finished');cold.abs16(0x32,'input_needed')
     cold.emit(0x31);cold.word(stack);cold.abs16(0x21,'finish' if streaming else 'finished');cold.emit(0xe5)
     cold.abs16(0x2a,'input_pointer');cold.emit(0x11);cold.word(output_base);cold.abs16(0xc3,'start')
     cold.label('finish' if streaming else 'finished');cold.abs16(0x2a,'block_end');cold.emit(0xb7,0xed,0x52);cold.abs16(0xc2,'fatal')
@@ -124,7 +199,13 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
     cold.label('slice_yield');cold.abs16((0xed,0x53),'slice_output');cold.emit(0xf5,8,0xf5,8,0xc5,0xd5,0xe5)
     cold.abs16((0xed,0x73),'slice_decoder_sp');cold.abs16((0xed,0x7b),'slice_caller_sp');cold.emit(0xc9)
     cold.label('sync');cold.abs16(0x2a,'slice_target');cold.abs16((0xed,0x5b),'block_end');cold.emit(0xb7,0xed,0x52)
-    cold.abs16(0x2a,'slice_target');cold.rel8(0x20,'sync_target');cold.emit(0x21,0xff,0xff)
+    if restore_compare:
+        # (target-end)+end restores target modulo65536. ADD HL retains Z
+        # from SBC and carries exactly when SBC borrowed. The following
+        # branch consumes only Z; target operand stores consume HL/A.
+        cold.emit(0x19)
+    else:cold.abs16(0x2a,'slice_target')
+    cold.rel8(0x20,'sync_target');cold.emit(0x21,0xff,0xff)
     cold.label('sync_target');cold.emit(0x7c);cold.abs16(0x32,'high_operand');cold.emit(0x7d);cold.abs16(0x32,'low_operand');cold.emit(0xc9)
     cold.label('fatal');cold.emit(0x76)
     if streaming:
@@ -148,7 +229,7 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
             cold.label('header_short');cold.emit(0xf1);cold.abs16(0xcd,'input_wait');cold.rel8(0x18,'guard_header')
             cold.label('header_ready');cold.emit(0xf1,0xc9)
         cold.label('guard_long8');cold.emit(0x4f,0x78,0x06,0)
-        cold.abs16(0xcd,'guard_literals');cold.abs16(0xc3,'copy_long8')
+        cold.abs16(0xcd,'guard_literals');cold.abs16(0xc3,'LongLiteralsBC' if long_copy else 'copy_long8')
         cold.label('guard_long16');cold.emit(0x23)
         cold.abs16(0xcd,'guard_literals');cold.abs16(0xc3,'copy_long16')
         cold.label('guard_literals');cold.emit(0xf5,0xe5,0x09);cold.rel8(0x38,'literal_short')
@@ -171,7 +252,7 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
     regions=[(prefix,cold.resolve(labels)),(core,a.resolve(labels))]
     # Fixed cold-wrapper timings from Zilog UM0080; data starts at state.
     cold_ops={0xcd:('CALL nn',3,17),0xc3:('JP nn',3,10),0xc2:('JP NZ,nn',3,10),0xda:('JP C,nn',3,10),
-        0x2a:('LD HL,(nn)',3,16),0x21:('LD HL,nn',3,10),0x11:('LD DE,nn',3,10),
+        0x2a:('LD HL,(nn)',3,16),0x22:('LD (nn),HL',3,16),0x21:('LD HL,nn',3,10),0x11:('LD DE,nn',3,10),
         0x31:('LD SP,nn',3,10),0x32:('LD (nn),A',3,13),0xb7:('OR A',1,4),
         0xd0:('RET NC',1,[5,11]),0xc9:('RET',1,10),0x20:('JR NZ,e',2,[7,12]),
         8:("EX AF,AF'",1,4),0x7c:('LD A,H',1,4),0x7d:('LD A,L',1,4),0x76:('HALT',1,4),
@@ -205,5 +286,16 @@ def build(*,core=0x8de0,core_limit=0x8ef7,streaming=False,direct_header=False,
         instruction_listing=rows,**(dict(direct_header_guard=True,available_header_tstates=46,
             previous_available_header_tstates=96,available_header_delta_tstates=-50) if direct_header else {}),
         upstream_commit='15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5',
+        **(dict(long_copy=True,long_copy_minimum_literals=18,long_copy_minimum_match=24,
+            long_copy_unrolled_bytes=16,long_copy_16bit_forms=False,
+            long_copy_extra_core_bytes=84 if streaming or near_literals else 87,
+            long_copy_delta_tstates=dict(literals8=-60 if streaming or near_literals else -50,
+                literals16=0,guarded_literals16=0,matches8=-59,matches16=0)) if long_copy else {}),
+        **(dict(near_literals=True,near_literal_delta_tstates=-10,near_literal_code_delta=-3) if near_literals else {}),
+        **(dict(word_state_init=True,begin_init_tstates_before=30,begin_init_tstates_after=26,
+                begin_init_code_delta=-1) if word_state_init else {}),
+        **(dict(restore_compare=True,sync_tstate_delta=-5,sync_code_delta=-2,
+                sync_regular_tstates_before=127,sync_regular_tstates_after=122,
+                sync_final_tstates_before=132,sync_final_tstates_after=127) if restore_compare else {}),
         timing_source='https://www.zilog.com/docs/z80/um0080.pdf',
         upstream_sha256=sha((Path(__file__).parent/'asm/unlzsa2_fast.asm').read_bytes()))

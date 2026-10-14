@@ -77,6 +77,14 @@ configurable coroutine are the entry points for different memory layouts.
 Commented original assembly is in `src/zx0/asm`; generate `decoder.asm` when
 you need the project adaptations, since original upstream files lack them.
 
+The optional `banked.build(aligned_ring_table=True)` places the existing
+four-bank table at7F00 and saves21 T per ring_page call (108 ->87 T with
+direct OUT). Reserve code/state/table through7F04: alignment adds121..245
+bytes depending on the other banked options. It adds no input/output buffer
+or stack. Defaults retain their original bytes/layout. [Measured applicability](../TRICK_AUDIT.md)
+includes64 complete native banked blocks and IRQ checks; adoption in a player
+still needs its RAM, contention and physical delivery/publication checks.
+
 Run [examples/prepare.py](examples/prepare.py) with an output directory to
 create a small raw sample, compressed payload and complete assembly example:
 
@@ -88,3 +96,22 @@ The example uses the tested serializer and needs no compressor executable.
 Compile its `example.asm` with an assembler supporting ORG, DB, EQU, INCLUDE
 and INCBIN (for example sjasmplus). The default reservations fit this tiny
 sample; a larger project must choose and validate its own layout.
+# Optional Mega one-shot decoder
+
+`zx0.block.build('fast',core=0x8000,core_limit=0x8400)` or
+`python -m zx0 build --variant fast-block --core 0x8000 --core-limit 0x8400 --output build/zx0-block`
+exports the207-byte Fast entry `zx0_DecompressZX0`. The same resident-block
+API also accepts standard, turbo and mega. HL=input, DE=output; AF/BC/DE/HL
+clobbered, IX and alternate registers retained. Preserve live registers in IRQ
+and reserve caller-stack plus handler/hardware headroom. Validate the complete
+valid block, output length/allocation and nonwrapping output externally.
+Fast/Turbo/Mega need writable offset operands and non-reentrant code. No quota,
+paging or yields; use existing coroutine profiles for those caller requirements.
+
+`python -m zx0 build --variant mega --core 0x8000 --core-limit 0x8300 --output build/zx0-mega`
+exports the pinned673-byte bit-phase-specialized decoder. HL points to a complete
+valid ZX0 v2 block, DE to its nonwrapping output; call `zx0_dzx0_mega` with
+resident source/history and the caller stack. AF/BC/DE/HL are clobbered. Preserve
+them in IRQ handlers and reserve caller-stack headroom; the offset operand needs
+writable RAM. There is no yield, paging or output-quota contract. See the native
+comparison in [SECOND_PASS.md](../SECOND_PASS.md); defaults retain their ABI.

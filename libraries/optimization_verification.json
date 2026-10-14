@@ -1,0 +1,173 @@
+{
+  "date": "2026-10-13",
+  "baseline_revision": "6168ba14",
+  "complete": true,
+  "release": false,
+  "branch": "codex/z80-codec-tricks",
+  "scope": "Authenticate retained evidence and exact defaults; no new playback qualification.",
+  "default_profiles": 31,
+  "default_bytes_addresses_labels_exact": true,
+  "default_instruction_delta_tstates": 0,
+  "original_resources": [
+    {
+      "package": "zx0",
+      "file": "dzx0_fast.asm",
+      "sha256": "bb4c0d8f359091522958d7ffc12b841629412a91a81ebd7eb03f824877bf5fd4",
+      "exact": true
+    },
+    {
+      "package": "zx0",
+      "file": "dzx0_standard.asm",
+      "sha256": "95b5dde1cfb334cb09d8be566728662bd94eb867f8c2f5437c31d78f2f4647b0",
+      "exact": true
+    },
+    {
+      "package": "zx0",
+      "file": "dzx0_turbo.asm",
+      "sha256": "9de7ca474bf03bdb4fe773f0eb1327744fae5558c285d5e670388b8ba20bc39d",
+      "exact": true
+    },
+    {
+      "package": "lzsa",
+      "file": "unlzsa2_fast.asm",
+      "sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071",
+      "exact": true
+    }
+  ],
+  "lzsa2": {
+    "evidence": "evidence/long_copy_native.json",
+    "cases": 95,
+    "real_blocks": 21,
+    "decoded_bytes": 619480,
+    "baseline_tstates": 26352611,
+    "candidate_tstates": 26297662,
+    "real_delta_tstates": -24026,
+    "delta_tstates": -54949,
+    "slower_blocks": 0,
+    "slower_slices": 0,
+    "injected_interrupts": 230,
+    "code_bytes_added": 87,
+    "streaming_code_bytes_added": 84,
+    "escaped_word_forms_unchanged": true,
+    "regression_record": "evidence/long_copy_correction.json",
+    "standalone_raw_code_sectors": {
+      "before": 2,
+      "after": 3
+    }
+  },
+  "streaming": {
+    "evidence": "evidence/long_copy_streaming.json",
+    "cases_per_mode": 42,
+    "placements_per_case": 6,
+    "modes": {
+      "direct": {
+        "producer_tstates": 721608,
+        "decoder_tstates": 3643852,
+        "total_tstates": 4365460,
+        "sector_reads": 167,
+        "sectors_exact_once": true,
+        "carry_copy_bytes": 21504,
+        "max_step_tstates": 11790,
+        "baseline_decoder_tstates": 3644272,
+        "baseline_total_tstates": 4365880,
+        "delta_tstates": -420,
+        "slower_blocks": 0
+      },
+      "call": {
+        "producer_tstates": 724078,
+        "decoder_tstates": 3644302,
+        "total_tstates": 4368380,
+        "sector_reads": 167,
+        "sectors_exact_once": true,
+        "carry_copy_bytes": 21504,
+        "max_step_tstates": 11803,
+        "baseline_decoder_tstates": 3644722,
+        "baseline_total_tstates": 4368800,
+        "delta_tstates": -420,
+        "slower_blocks": 0
+      }
+    }
+  },
+  "zx0": {
+    "evidence": "evidence/ring_table_native.json",
+    "profiles": 16,
+    "cases": 64,
+    "baseline_tstates": 17898920,
+    "candidate_tstates": 17874728,
+    "delta_tstates": -24192,
+    "slower_blocks": 0,
+    "slower_slices": 0,
+    "interrupts": 132,
+    "min_added_bytes": 121,
+    "max_added_bytes": 245,
+    "page_checks": 128,
+    "whole_ring_page_tstates": {
+      "before": 108,
+      "after": 87,
+      "delta": -21
+    },
+    "standalone_raw_code_sectors": {
+      "before": 3,
+      "after": 4
+    }
+  },
+  "audits": [
+    {
+      "item": "02",
+      "decision": "already present / no eligible pair transfer",
+      "evidence": "evidence/trick_02.json"
+    },
+    {
+      "item": "03",
+      "decision": "inapplicable: no equivalent single-bit mask with dead A/flags",
+      "evidence": "evidence/trick_03.json"
+    },
+    {
+      "item": "04",
+      "decision": "already present with page handling; reject unguarded decoder increments",
+      "evidence": "evidence/trick_04.json"
+    },
+    {
+      "item": "05",
+      "decision": "rejected: saved-HL jump table slows every literal dispatch class",
+      "evidence": "evidence/trick_05.json"
+    },
+    {
+      "item": "06",
+      "decision": "optional aligned ZX0 bank table; reject history address masking",
+      "evidence": "evidence/trick_06.json"
+    },
+    {
+      "item": "07",
+      "decision": "rejected for current live-register/private-stack/overlap ABI",
+      "evidence": "evidence/trick_07.json"
+    },
+    {
+      "item": "08",
+      "decision": "inapplicable to generic literals; compiled constants enlarge/change transport",
+      "evidence": "evidence/trick_08.json"
+    },
+    {
+      "item": "09",
+      "decision": "inapplicable: no carry-to-mask branch; existing ADC/rotate paths cheaper",
+      "evidence": "evidence/trick_09.json"
+    }
+  ],
+  "unit_checks_observed": {
+    "library_suite": 12,
+    "existing_toolkit_suite": 66,
+    "additional_aligned_ay_im2_test": 1,
+    "unique_tests": 79,
+    "post_correction_direct_header_recheck": 3
+  },
+  "runtime_payload_bytes_changed": 0,
+  "boot_code_packing_measured": false,
+  "physical_disk_ula_rom_publication_measured": false,
+  "commands": [
+    "python -m unittest discover -s libraries/tests -v",
+    "python libraries/tests/measure_long_copy.py --output libraries/evidence/long_copy_native.json",
+    "python libraries/tests/measure_ring_table.py --output libraries/evidence/ring_table_native.json",
+    "python libraries/tests/summarize_long_copy_streaming.py --directory .tmp --output libraries/evidence/long_copy_streaming.json",
+    "python libraries/tests/summarize_trick_pass.py --output libraries/optimization_verification.json"
+  ]
+}

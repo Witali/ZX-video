@@ -68,8 +68,8 @@ class GuardCPU(NativeCPU):
 
 
 class Harness:
-    def __init__(self, *, fast_literal=False, fast_refill=False, profile=False, token_boundaries=False,inline_matches=False):
-        self.code, self.labels = machine.build(fast_literal=fast_literal, fast_refill=fast_refill,token_boundaries=token_boundaries,inline_matches=inline_matches)
+    def __init__(self, *, fast_literal=False, fast_refill=False, profile=False, token_boundaries=False,inline_matches=False,aligned_ring_table=False):
+        self.code, self.labels = machine.build(fast_literal=fast_literal, fast_refill=fast_refill,token_boundaries=token_boundaries,inline_matches=inline_matches,aligned_ring_table=aligned_ring_table)
         self.token_boundaries = token_boundaries
         self.profile, self.histogram = profile, Counter()
         cpu = self.cpu = GuardCPU(b'', b'')

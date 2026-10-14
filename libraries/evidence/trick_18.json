@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-14",
+  "item": "18",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "61dbbadc",
+  "decision": "existing tail jumps retained / slower literal tail merge rejected",
+  "checks": 513,
+  "leaf_tail": {
+    "before_tstates": 37,
+    "after_tstates": 20,
+    "delta": -17,
+    "includes_callee_ret": true
+  },
+  "continuation_counterexample": {
+    "required_hl": 1,
+    "wrong_hl": 0
+  },
+  "literal_tail_merge": {
+    "code_bytes_saved": 1,
+    "classes": {
+      "0xx": {
+        "before_tstates": 14,
+        "merged_tstates": 14,
+        "delta": 0
+      },
+      "10x": {
+        "before_tstates": 33,
+        "merged_tstates": 41,
+        "delta": 8
+      },
+      "11x": {
+        "before_tstates": 28,
+        "merged_tstates": 41,
+        "delta": 13
+      }
+    }
+  },
+  "findings": [
+    "ZX0 literal/ring-copy tail jumps and inline match/literal options already avoid CALL/RET where possible.",
+    "LZSA2 guard/input_wait/yield calls have required post-return copy, status clearing or ReadToken continuations; they are not leaf tail calls.",
+    "Sharing the existing literal CP/JP dispatch tail saves one byte but slows 10x/11x entries by8/13 T."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}

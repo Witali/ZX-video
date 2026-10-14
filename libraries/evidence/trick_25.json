@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-14",
+  "item": "25",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "d4efe3d8",
+  "decision": "already present in stack-offset ZX0; retain live DE/continuations elsewhere",
+  "checks": 1024,
+  "primitive": {
+    "before_tstates": 25,
+    "after_tstates": 19,
+    "code_bytes_delta": -2
+  },
+  "live_de_counterexamples": 1024,
+  "existing_standard_exchange_sites": 2,
+  "findings": [
+    "ZX0 Standard already exchanges the owned offset stack word with HL before/after a match.",
+    "Fast/Turbo/LZSA2 keep the offset in a patched operand; DE remains the advancing output pointer, not dead scratch.",
+    "Coroutine saved words are live source/output/count/AF and a return continuation. An owned word alone is insufficient to replace pair saves.",
+    "No adapted core has an eligible EX DE,HL / POP HL / PUSH DE chain with dead DE; retain current stack and register contracts."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}

@@ -1,5 +1,23 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Merge the reusable codec optimization pass into main
+
+- **Request/baselines:** The user explicitly requests commit, merge into main
+  and push. Integrate `codex/z80-codec-tricks` at `dad28f8e` into main at
+  `78b7a7be`, common ancestor `6168ba14`; retain both commit histories.
+- **Integration:** All29 checklist decisions, optional profiles and retained
+  failed experiments are committed. Resolve only CHANGELOG/TASK_BRIEF additive
+  conflicts by retaining both branches' entries; check every nonblank original
+  line remains. Trim one extra README EOF blank line. Sources merge cleanly;
+  existing main disks and application changes are preserved.
+- **Verification:** On merged main,18 library and67 toolkit tests pass (85).
+  The authenticated second-pass report reproduces exactly:31 default bytes/
+  addresses/labels, four original resources and all saved evidence unchanged.
+  Default hot-path delta0 T; optional measurements retain their recorded scopes.
+  This integration adds no new movie/disk/publication qualification.
+  [Completed results](libraries/SECOND_PASS.md),
+  [authenticated evidence](libraries/second_pass_verification.json).
+
 ## 2026-10-14 — Source-line drawing with matched fills on a qualified full disk
 
 - **Request/input:** Build a full disk from the new preview, then user steering
@@ -384,6 +402,443 @@
   separate AY/YM comparisons before interpreting audio outcomes.
 - **Status:** Plan saved; implementation and source verification in progress.
   [Plan and decision criteria](docs/ay-spectral-transfer-plan.md).
+
+## 2026-10-14 — Item21: widths follow the current path and register role
+
+- **Baseline/objective:** From `c032e9f2`, narrow counters only with local
+  bounds and distinct offset/token/count lifetimes.
+- **Coverage/results:**13 decrement states expose missing high-byte borrow
+  at256/512/8192/15872;20 of24 offset-to-count states fail if B clearing is
+  omitted.18 legal short escaped-word blocks replay exactly.55 checks and
+  31 exact defaults, with existing structurally bounded fast paths retained.
+- **Decision:** Reject global byte-range/encoding assumptions; delta0 T/code/
+  state/input. [Result](libraries/SECOND_PASS.md),
+  [report](libraries/evidence/trick_21.json). Continue item22.
+
+## 2026-10-14 — Item20: restore LZSA2 target arithmetically
+
+- **Baseline/objective:** From `bba0b616`, replace sync's repeated target
+  load after subtraction only with equivalent consumed comparison flags.
+- **Change/counts:** Optional restore_compare, ordinary/streaming; ADD HL,DE
+  restores target, preserving S/Z/PV/C while dead H/N differ. Full sync
+ 127 ->122 T nonfinal,132 ->127 final;−2 prefix bytes, no state/stack/input
+  growth. Default profiles unchanged; no application release adoption.
+- **Verification:**95 full blocks,26352611 ->26340326 T (−12285), real21
+  −6330; no slower blocks/slices,230 IRQs. Both42-case/six-placement guarded
+  modes save950 T each with identical waits/producers/167 once-only sectors.
+  Equality/FFFF/boundary and combined profile checks,15 unit tests pass.
+- **Decision:** Optional measured profile. [Result/reproduction](libraries/SECOND_PASS.md),
+  [evidence](libraries/evidence/trick_20.json). Continue item21.
+
+## 2026-10-14 — Item19: preinitialized constants cannot replace block resets
+
+- **Baseline/objective:** From `c3abf249`, inspect per-byte startup code and
+  one-time initialized data versus mutable repeated-block state.
+- **Results:** Ring table already emitted exactly0/1/3/4; no initializer loop.
+  Five native prior-offset probes expose four stale results if ZX0's per-block
+  reset is omitted (46 ->16 T for an incorrect load/reset fragment). Caller
+  fields vary per block; item16 handles runtime adjacent zero flags already.
+- **Decision:** Retain required resets/compiled data;31 defaults exact,
+  delta0 T/code/state/input. External BSS is not unaccounted free RAM.
+  [Result](libraries/SECOND_PASS.md), [report](libraries/evidence/trick_19.json).
+
+## 2026-10-14 — Item18: tail-call eligibility and literal-tail merging
+
+- **Baseline/objective:** From `61dbbadc`, inspect leaf CALL/RET, required
+  yield continuations and potential shared literal dispatch tails.
+- **Coverage/results:**256 flag cases confirm genuine leaf37 ->20 T (−17)
+  including callee RET. A non-leaf substitution loses required continuation
+  work.256 token classes verify a one-byte tail merge costs0/+8/+13 T for
+  0xx/10x/11x.513 total checks,31 default profiles exact.
+- **Decision:** Retain existing ZX0 tails/inline options and required LZSA2
+  continuations; reject the slower merge under speed-first priority. Actual
+  delta0 T/code/state/input. [Result](libraries/SECOND_PASS.md),
+  [report](libraries/evidence/trick_18.json). Continue item19.
+
+## 2026-10-14 — Item17: exact codec counters cannot saturate
+
+- **Baseline/objective:** From `d1030dd5`, apply bounded carry arithmetic
+  only where the actual codec caller needs saturation and permits dead flags.
+- **Coverage/results:**233 corrected bounded values pass at14 T, all final
+  flags differ;22 legal short exact decrements fail that substitution. Four
+  ring values expose3 ->0 required versus saturation3.259 native checks,
+  31 default profiles exact; original source off-by-one remains archived.
+- **Decision:** No eligible saturating contract; no decoder change, delta0
+  T/code/state/input. [Result](libraries/SECOND_PASS.md),
+  [report](libraries/evidence/trick_17.json). Continue item18.
+
+## 2026-10-14 — Item16: clear streaming status in one word instruction
+
+- **Baseline/objective:** From `2740a270`, verify adjacent input_needed/
+  finished clear with dead HL/A initialization and IRQ-visible state ownership.
+- **Change/accounting:** Optional word_state_init, streaming only;30 ->26 T
+  per begin, direct prefix222 ->221 bytes/CALL224 ->223, no new state/stack/
+  payload. Fields remain adjacent; SCF resets nibble-cache carry before use.
+- **Verification:**95 full resident guarded blocks,28415177 ->28414797 T
+  (−380),252 IRQs, zero slower blocks/slices. Both42-case/six-placement partial
+  modes pass; direct4365880 ->4365712, CALL4368800 ->4368632 T (−168 each),
+  identical producers/waits/167 once-only sectors. Dirty prior flags reset,
+  short escaped words/overlap/guarded reads pass;14 unit tests/31 defaults exact.
+- **Decision:** Optional measured profile, no release adoption. [Result and
+  reproduction](libraries/SECOND_PASS.md), [report](libraries/evidence/trick_16.json).
+  Continue item17; physical delivery/publication requirements still apply.
+
+## 2026-10-14 — Item15: keep running pointers and the ready guard path
+
+- **Baseline/objective:** From `6f288c2d`, inspect address recomputation and
+  whether guard endpoints can be retained without changing continuation state.
+- **Results:**2048 native byte/high states confirm HL+31 high calculation22 T
+  versus48 T (+26) with an unconditional byte cache; later loads cost at
+  least13 T and require extra state. One pointer probe confirms the existing
+  running form20 T versus34 T reconstructed.31 defaults remain exact.
+- **Decision:** Existing running pointers retained; unconditional cache
+  rejected. A separate wait-only design would need pointer/overflow/target
+  ownership, not a free CSE replacement. Actual delta0 T/code/state/input.
+  [Result](libraries/SECOND_PASS.md), [report](libraries/evidence/trick_15.json).
+
+## 2026-10-14 — Item14: existing rotations beat narrowed nibble shifts
+
+- **Baseline/objective:** From `6ea4f15a`, examine rotate/mask fusion and
+  high-byte narrowing without losing nibble/gamma state or live flags.
+- **Results:**256 native nibble values have identical AF at23 T (current)
+  versus39 T (+16) using SRL. Omitting RL B loses the gamma high byte in256
+  of512 byte/carry states. Current ZX0 short paths already specialize their
+  bounds;31 defaults remain exact. Further phase expansion belongs to item23.
+- **Decision:** Retain current rotations and valid full-width paths, delta0
+  T/code/state/input. [Result](libraries/SECOND_PASS.md),
+  [evidence](libraries/evidence/trick_14.json). Continue item15.
+
+## 2026-10-14 — Item13: shifts consume input rather than mutate state
+
+- **Baseline/objective:** From `81488ba9`, locate in-place indexed arithmetic
+  and check compressed/nibble ownership before replacing register shifts.
+- **Measurements:**256 native values give15 T for both LD A,(HL)/SRL A and
+  SRL (HL); the latter changes255 input bytes and fails the A-result contract.
+  The earlier indexed46 ->23-T primitive has no current runtime state site.
+  All31 defaults exact; no decoder rewrite or new full-streaming run.
+- **Decision:** Inapplicable/rejected under immutable input/reservoir ABI,
+  delta0 T/code/state/input. [Result](libraries/SECOND_PASS.md),
+  [report](libraries/evidence/trick_13.json). Continue item14.
+
+## 2026-10-14 — Item12: fixed state is direct; input pointers stay live
+
+- **Baseline/objective:** From `3c680445`, inspect temporary pointer setup
+  versus absolute loads in ZX0/LZSA2, including subsequent uses of HL.
+- **Coverage/results:**256 fixed-byte probes verify17 ->13 T when HL is dead;
+  one live-pointer counterexample and one established-pointer comparison
+  complete258 checks. Dynamic HL reads cost7 versus13 T absolute (+6).
+  Existing fixed state already uses direct forms;31 default profiles exact.
+- **Decision:** No eligible rewrite, delta0 T/code/state/input. Retain the
+  live advancing input/history pointer and item06 table implementation.
+  [Result](libraries/SECOND_PASS.md), [evidence](libraries/evidence/trick_12.json).
+
+## 2026-10-14 — Item11: safe caching loses to live-register reloads
+
+- **Baseline/objective:** From `56f32142`, examine duplicate input/state
+  loads across unrelated code; preserve token/count/pointers and AF' cache.
+- **Measurements/coverage:**512 byte/carry cases give identical full state
+  but nibble caching with BC retained costs51 ->73 T (+22). A saved paging
+  value costs33 ->41 T (+8);31 default layouts still exact. Patched offsets
+  already avoid variable reloads; defer sync's specific restore to item20.
+- **Decision:** Retain cheaper reloads and live saves; delta0 T/code/state/
+  input, no new decoder/full-streaming change. [Result](libraries/SECOND_PASS.md),
+  [report/reproducer](libraries/evidence/trick_11.json). Continue item12.
+
+## 2026-10-14 — Item10: remove the optional LZSA2 literal trampoline
+
+- **Authorization/baseline:** User requests sequential application/checking
+  of items10–29. From `3f34a4a4`, compare existing long_copy against a new
+  ordinary near_literals option; defaults and streaming profiles unchanged.
+- **Change/accounting:** Move the41-byte helper before start, preserving JR7
+  on escaped-word paths. Remove JP10/three-byte trampoline; eligible literal
+  path `21*n−18` ->`21*n−28` T, core337 ->334 bytes. No state/stack/input
+  increase; raw region rounding stays3 sectors. Physical boot packing unmeasured.
+- **Verification:**95 complete blocks/619480 bytes,26297662 ->26292702 T
+  (−4960), real21 blocks−1690, zero slower blocks/slices;230 native IRQs.
+  Short-word encodings and relocation retain exact results/timings;13 library
+  tests pass, including31 exact default layouts and unchanged guard modes.
+- **Decision:** Optional measured profile; preserve standard compressed bytes
+  and application release requirements. [Result/reproduction](libraries/SECOND_PASS.md),
+  [report](libraries/evidence/trick_10.json). Continue with item11.
+
+## 2026-10-14 — Survey other sites for Z80 decoder speed and code size
+
+- **Objective/baseline:** From `5abac404`, answer the user's speed-first,
+  size-second library question and search outside zx-pk.ru. Retain standard
+  formats and the completed prior audit; no new decoder path is integrated.
+- **Sources/parameters:**20 documents retrieved, selected article/routine/
+  optimizer-rule inspection rather than an exhaustive rule audit. Grauw,
+  SHIAR, WikiTI, z80 Heaven, Adam Ziemba's ticalc guide, official SDCC/z88dk/
+  MDL rules and upstream ZX0 Mega/LZSA2 small sources. Save URLs/hashes and
+  failed fetches; no external compiler/optimizer/source execution. Recalculate
+  classic-Z80 T-states rather than copy MSX waits or upstream speed claims.
+- **Measurements/coverage:**Seven primitive groups/6604 native cases pass,
+  including distance1/2 overlap. AF-preserving residue-entry copy costs
+  5371 ->4321 T for256 bytes, or5291 ->4321 against a16-LDI prefix, but is
+  80 T slower than that prefix at18 bytes; +45 bytes versus LDIR. Our
+  distance1/16-byte specialization is331 ->264 T, +40 bytes, excluding
+  selection/remainder work. Conditional stack exchange25 ->19 T/−2 bytes,
+  pointer addition43 ->20 with DE retained, constant arithmetic29 ->21,
+  DJNZ saves3 T/iteration; all have explicit liveness/bound requirements.
+  Item20's LZSA2 compare/restore fragment is35 ->30 T/−2 bytes,288 cases,
+  S/Z/PV/C retained while H/N differ. Reauthenticate31 exact default layouts
+  and four original resources; no new full-codec/streaming/IRQ/delivery run.
+- **Decision:** Save eight candidate groups22–29 and refine item20/other
+  existing proposals. Prioritize complete runtime gains, then compact
+  optional profiles; distinguish raw upstream68/126/187/673-byte ZX0 and
+  134/210-byte LZSA2 cores from our coroutine/streaming code/state totals.
+  Actual decoder delta0 T/bytes/RAM/input; no movie/release qualification.
+  [Survey, priority and reproduction](libraries/WEB_RESEARCH.md),
+  [native evidence](libraries/evidence/web_primitive_screen.json),
+  [source record](libraries/evidence/web_research_2026-10-14.json),
+  [queue](libraries/OPTIMIZATION_PLAN.md).
+
+## 2026-10-13 — Expand forum sources and screen new Z80 candidates
+
+- **Objective/baseline:** From `12d4eeac`, inspect previously unvisited
+  zx-pk.ru pages and locate the compiler recalled as `x80cc`. Preserve the
+  completed nine-item audit and standard/default decoder profiles.
+- **Sources/scope:** Capture and keyword-screen 54 pages in 15 additional
+  topics (14 complete captures, SjASMPlus page1/18), including all29 pages
+  of ЭТЮДЫ, SDCC code generation and LLVM. Inspect selected assembly posts;
+  save page/post URLs, counts and hashes, not full forum copies. Document
+  hashes normalize UTF-8/LF for portable replay. Thread
+  pages cap at40 despite pp=200. Additional section listings are title
+  searches, not full readings. Exact x80cc compiler/thread remains unidentified;
+  official z88dk80cc is an explicitly unconfirmed name hypothesis.
+- **Measurements/verification:**512 native indexed-shift cases confirm
+  46 ->23 T when A is dead.233 inputs23..255 expose the source decrement's
+  lower-bound error (23 ->22); corrected A agrees at14 versus22/23 T,
+  but every final F differs. One adjacent-byte clear probe is30 ->26 T;
+  AF/HL/IRQ contract unqualified. Reauthenticate all31 exact default layouts
+  and four immutable assembly resources. These are primitive screens, not
+  new complete codec/streaming/IRQ tests. Actual decoder delta0 T/bytes/RAM/input.
+- **Decision:** Save 12 additional candidate groups10–21 for sequential
+  evaluation, with no adoption or movie/release claim. The bounded research
+  is complete; retain explicit unread pages and identification uncertainty.
+  [Survey and reproducer](libraries/FORUM_RESEARCH.md),
+  [coverage record](libraries/evidence/forum_research_2026-10-13.json),
+  [primitive report](libraries/evidence/forum_primitive_screen.json),
+  [updated queue](libraries/OPTIMIZATION_PLAN.md).
+
+## 2026-10-13 — Authenticate the completed trick pass and raw code storage
+
+- **Baseline/scope:** Final review after `960cc3cb`; authenticate all31 default
+  byte/address/label profiles against the extraction baseline and all four
+  immutable assembly resources. Retain current95-block LZSA2 and64-block
+  banked ZX0 native evidence, both42-case guarded modes and all nine decisions.
+- **Accounting/verification:**79 distinct unit tests have been observed passing;
+  corrected optional paths also have complete native/streaming checks with no
+  slower blocks/slices. Runtime compressed bytes/sectors stay identical.
+  Separately rounded raw exported code costs2 ->3 sectors for ordinary LZSA2
+  and3 ->4 for every banked ZX0 profile; actual compressed boot packing and
+  physical delivery are unmeasured. Do not infer total disk occupation from
+  unchanged runtime input sectors. Replayed instruction totals are unchanged
+  by adding these report fields.
+- **Decision:** Completed library first pass, two explicit optional profiles,
+  unchanged defaults and source resources; no movie/TRD qualification.
+  [Final report](libraries/optimization_verification.json) is reproduced by
+  `libraries/tests/summarize_trick_pass.py` and links the retained reports.
+
+## 2026-10-13 — Item09: direct carry propagation wins; first pass complete
+
+- **Objective/baseline:** From `3e41889d`, seek eligible carry-to-mask
+  branches. Current ZX0/LZSA2 offsets/frontiers use direct ADC/SBC/rotates,
+  with live bit/token/nibble reservoirs rather than a00/FF branch.
+- **Measurements/coverage:**512 native A/carry mask checks confirm SBC A,A4 T.
+  Another512 high-byte checks preserve exact AF but cost15 T through the
+  mask versus11 T direct ADC (+4). [Audit](libraries/TRICK_AUDIT.md),
+  [report](libraries/evidence/trick_09.json), `measure_tricks.py --item 09`.
+- **Decision:** No cheaper eligible mask branch; no decoder rewrite (delta0
+  T/code/RAM/stream). The nine-item pass is complete: corrected optional
+  LZSA2 byte-form long copies and aligned ZX0 ring table, retained efficient
+  existing paths, and measured rejected/inapplicable alternatives. Preserve
+  the expanded nonadjacent six-direction transfer audit requested by the user.
+  [Checklist](libraries/OPTIMIZATION_PLAN.md) links all evidence. Both new
+  profiles keep standard bytes/defaults; no integrated playback release,
+  automatic merge/push or new experiment is claimed or started.
+
+## 2026-10-13 — Correct item01: preserve short escaped16-bit lengths
+
+- **Finding/baseline:** Final review at `18e7b1aa` checks the pinned LZSA2
+  format and a short escaped16-bit literal. Host/default native decode ABC
+  exactly in828 T; the initial opt-in kernel writes outside output atC003.
+  Canonical encoder inputs had hidden an unproved >=256 length assumption.
+- **Attempts:** Remove unrolling from all word forms. This first repair
+  exposes a3-T untaken-JP regression (6720 ->6723 T) on the original JR path.
+  Keep a nearby ordinary-input trampoline so only eligible byte-form literals
+  pay its10 T. Preserve [both failure records](libraries/evidence/long_copy_correction.json)
+  and initial native/streaming reports; do not treat their larger gains as
+  current accepted results.
+- **Accepted results:** Unroll only byte-form literals18..255 and matches
+  24..255; word/short paths unchanged. +87 ordinary/84 streaming core bytes;
+  literals save50/60 T, byte matches59 T.95 complete native blocks including
+  18 short-word encodings:26352611 ->26297662 T (-54949); real21 blocks
+  19412006 ->19387980 (-24026,0.124%), zero slower blocks/slices,230 IRQs.
+  Both42-case guarded modes/six placements pass and save420 T each, with
+  167 once-only sectors and identical producer/waits.12 library tests pass.
+- **Decision:** Corrected optional profile, defaults still exact; no new
+  player release. [Updated timing](libraries/LONG_COPY.md) links current and
+  superseded evidence and the expanded reproducing commands.
+
+## 2026-10-13 — Expand item02 to all pair directions and intervening code
+
+- **Request/baseline:** At `d0f04472`, the user clarifies that PUSH BC/POP HL
+  and other directions, including unrelated instructions between them, are
+  in scope. Expand all six BC/DE/HL transfers and analyze both LD placements.
+- **Coverage:**36864 native value/flag/interleaving checks cover adjacent
+  transfers, independent pair increments/calls and source mutation with a
+  dead destination. Each saves13 T with exact register/flag/SP results.
+  The bounded ZX0 copier's nonadjacent PUSH BC/POP HL retains a live original
+  count while BC/HL are rewritten; LDs at either endpoint lose it.
+  [Expanded audit](libraries/TRICK_AUDIT.md), [report](libraries/evidence/trick_02.json).
+- **Decision:** Retain already efficient moves and required saves. No decoder
+  change (delta0 T/code/RAM/stream); prior full-codec evidence still applies.
+  AF/indexed pairs need their actual instructions/contracts, not an assumed
+  universal two-LD replacement.
+
+## 2026-10-13 — Item08: fixed-data code is not a generic literal decoder
+
+- **Objective/baseline:** From `7d83ca1e`, test LD rr,nn/PUSH constant data
+  and account for code/storage, rather than quoting execution alone.
+- **Measurements/coverage:** Exact128-byte native sample:21 T/word,1354 T
+  including LD SP entry versus2683 T for LDIR-only; required SP retention
+  (40 T) excluded. Compiled259 bytes/two isolated sectors versus the measured
+  standard all-literal payloads/one sector. [Audit](libraries/TRICK_AUDIT.md),
+  [report](libraries/evidence/trick_08.json), `measure_tricks.py --item 08`.
+- **Decision:** Inapplicable to runtime literals under unchanged ZX0/LZSA2
+  formats. No specific constant dictionary/fill exists in the codec API;
+  no compiled transport/JIT or default change (actual delta0 T/RAM/stream).
+  Primitive CPU savings are not measured physical-delivery savings.
+
+## 2026-10-13 — Item07: reject stack-prefetched copying for this ABI
+
+- **Objective/baseline:** From `94092f04`, measure14-byte POP/PUSH/EXX copy
+  and verify legal LZ overlap, live registers and the private-stack contract.
+- **Measurements/coverage:** Nonoverlapping primitive175 T versus LDIR289
+  (-114), excluding40 T for SP save/restore and all AF/alternate retention/
+  tails. Native probes show poisoned output at distances1/2 and changed live
+  A/HL'/SP. [Audit](libraries/TRICK_AUDIT.md),
+  [report](libraries/evidence/trick_07.json), `measure_tricks.py --item 07`.
+- **Decision:** Reject under current match/literal/AY coroutine ABI; no new
+  buffer, IRQ masking or codec changes (actual delta0 T/code/RAM/stream).
+  No whole-decoder or physical-delivery saving is claimed for this primitive.
+
+## 2026-10-13 — Item06: optional aligned ZX0 ring table
+
+- **Objective/baseline:** From `ac346c70`, apply aligned addressing where
+  valid. Reject SET7,H for dynamic LZ history (native wrong-address probes).
+  Add opt-in `banked.build(aligned_ring_table=True)` for the four bank entries.
+- **Measurements:** Lookup address part39 ->18 T, whole ring_page108 ->87
+  (-21); direct OUT endpoints include state loads and RET. Table at7F00,
+  extent7F04; net +121..245 bytes (ordinary567 ->772) including alignment,
+  no extra state/stack/buffer/stream bytes or sectors. Defaults unchanged.
+- **Coverage:** All16 banked profiles,128 native page combinations and64
+  complete8192-byte banked native blocks with exact ring/input/output,
+  overlap1/256, poisoned caller registers and132 interrupts.17898920 ->
+  17874728 T (-24192), zero slower blocks/slices. AY/IM2 at every instruction
+  passes with the optional layout; all31 default profiles and12 library
+  regression tests pass. [Audit](libraries/TRICK_AUDIT.md),
+  [full report](libraries/evidence/ring_table_native.json),
+  [mask counterexamples](libraries/evidence/trick_06.json), reproducer
+  `measure_ring_table.py`.
+- **Decision:** Optional measured library profile, with explicit bank5 padding
+  cost; reject history masks. No integrated player/physical disk/ULA/publication
+  qualification or changed release defaults.
+
+## 2026-10-13 — Item05: reject a slower saved-HL dispatch table
+
+- **Objective/baseline:** From `0d7caa52`, evaluate the22-T forum jump-table
+  primitive against LZSA2 S/P class selection. Include live input-HL save,
+  token read/mask and restore; count table alignment/handler constraints.
+- **Measurements/coverage:** All256 tokens agree on masked AF/HL/BC/DE.
+  The saved-HL candidate costs57 T versus31/24/24/36 T for current LL
+  classes (+26/+33/+33/+21). A25-byte table needs256-byte alignment and
+  prescribed handler low bytes; real placement is not allocated.
+  [Audit](libraries/TRICK_AUDIT.md), [report](libraries/evidence/trick_05.json),
+  reproducer `measure_tricks.py --item 05`.
+- **Decision:** Reject at the complete selection-prefix stage; no whole-block
+  rewrite warranted. Actual decoder delta0 T/code/RAM/stream; no new release.
+
+## 2026-10-13 — Item04: retain page-aware increments
+
+- **Objective/baseline:** From `1f362d16`, seek proven page-confined INC HL
+  sites. ZX0 already uses INC L/CALL Z with explicit page/frontier handling;
+  variable ZX0/LZSA2 input and frame-header positions have no alignment proof.
+- **Measurements/coverage:**2304 native pointer/flag checks show6 ->4 T
+  (-2) only with no crossing and compatible live flags. Minimal guarded
+  increment costs14/56 T before supply work. Confirm40FF/FFFF crossing and
+  carry preservation; [audit](libraries/TRICK_AUDIT.md),
+  [report](libraries/evidence/trick_04.json), `measure_tricks.py --item 04`.
+- **Decision:** Existing guarded use retained; unguarded replacements
+  rejected. Delta0 T/code/RAM/stack/stream; prior complete decoder regression
+  evidence remains valid. No new input-buffer or playback claim.
+
+## 2026-10-13 — Item03: preserve live accumulator/flag masks
+
+- **Objective/baseline:** From `ec68b9d6`, inspect RES/SET replacements for
+  ZX0/LZSA2 masks. LZSA2 dispatch/length masks need A/P/Z; nibble format and
+  ZX0 bank selectors require multi-bit masks. No eligible pair-byte mask.
+- **Measurements/coverage:**1024 independent native checks give15 ->8 T
+  (-7) for the primitive L-mask while exposing unequal AF/live carry.
+  [Audit](libraries/TRICK_AUDIT.md), [report](libraries/evidence/trick_03.json),
+  reproducer `measure_tricks.py --item 03`.
+- **Decision:** Inapplicable at current sites; retain flags/data semantics.
+  No decoder changes (delta0 T/code/RAM/stack/stream), unchanged prior
+  complete regression evidence. Primitive savings do not qualify a codec gain.
+
+## 2026-10-13 — Item02: register-transfer audit, retain live saves
+
+- **Objective/baseline:** From `542b2059`, check PUSH/POP pair transfers in
+  reusable ZX0/LZSA2. LD B,H/LD C,L already appears in eligible ZX0 refill/
+  ring paths. Remaining saves protect input/count/offset/coroutine registers.
+- **Measured coverage:**1536 native primitive value/flag checks establish
+  21 ->8 T (-13) for a pure transfer. A native live-count counterexample
+  proves that replacing the match input save with BC destroys the count
+  and continuation. [Audit](libraries/TRICK_AUDIT.md),
+  [report](libraries/evidence/trick_02.json), reproducer `measure_tricks.py --item 02`.
+- **Decision:** Already present where eligible; no new decoder rewrite.
+  Delta0 T/code/RAM/stack/table/stream bytes. Reuse the unchanged31 profiles
+  and78 regression tests from item01; primitive savings are not codec gains.
+
+## 2026-10-13 — Item01: optional bounded LZSA2 long-copy kernels
+
+- **Objective/baseline:** Apply the unrolled-LDI forum technique to reusable
+  codecs at `6168ba14`. ZX0 already has bounded256-byte refill unrolling;
+  retain it. Add opt-in `long_copy=True` to LZSA2 for literals>=18 and
+  matches>=24, leaving short tokens/EOD unchanged and retaining forward
+  overlap, AF' and guarded input. Explicitly enlarge the core reservation.
+- **Measurements:** +89 ordinary /88 streaming core bytes, no extra state/
+  stack/tables or stream bytes/sectors. Long literal paths save60..70 T and
+  long matches59 T, including helper jumps/shared-offset read. On77 complete
+  blocks,26320517 ->26242238 T (-78279); 21 authenticated real blocks
+  19412006 ->19385952 T (-26054,0.134%). Zero slower blocks/slices; exact
+  output with230 accepted synthetic interrupts. Both24-case streaming
+  guard modes save1718 T; producers533509/535745 T and165 once-only sectors unchanged.
+- **Coverage/decision:** All31 default code/label profiles remain exact;
+  12 library and66 toolkit regression tests pass, including native
+  length/offset/overlap/relocation and six in-place placements per
+  streaming case pass. Keep this as an optional measured library profile:
+  small CPU gain and more bank2 RAM; no new player default or release.
+  [Timing/protocol](libraries/LONG_COPY.md), [native report](libraries/evidence/long_copy_native.json),
+  [streaming report](libraries/evidence/long_copy_streaming.json) and their
+  reproducing scripts retain deterministic evidence separately from IRQ/
+  contention/TR-DOS/physical delivery/publication qualification.
+
+## 2026-10-13 — Start the sequential Z80 codec optimization branch
+
+- **Request/baseline:** The user authorizes a new branch, a saved list of nine
+  zx-pk.ru techniques and sequential application, evaluation and regression
+  checking. Create `codex/z80-codec-tricks` at `6168ba14` in the required
+  `.worktree/z80-codec-tricks` location. The root ignore rule already exists
+  and is committed; preserve unrelated root attachments and current main.
+- **Scope/decision:** Save sources, exact applicability checks, timing/memory/
+  overlap/IRQ gates and focused experiment commits in
+  [OPTIMIZATION_PLAN.md](libraries/OPTIMIZATION_PLAN.md). Reuse authenticated
+  extraction/streaming evidence and the complete 21-block LZSA2 fixture.
+  This planning change adds no instructions, stream bytes or RAM (delta0 T);
+  no new performance result, TRD or release qualification is claimed. Proceed
+  with item01 first; no merge/push or unrelated audio/movie sweep.
 
 ## 2026-10-13 — Extract reusable ZX0 and raw LZSA2 libraries
 
@@ -14946,3 +15401,121 @@ AY-регистры совпадают в порядке записей, но н
 [подготовка следующего пакета](toolkit/PACKET_LOOKAHEAD_RESULTS_ru.md),
 [прямой вход из кольцевого буфера](toolkit/DIRECT_INPUT_RESULTS_ru.md),
 [переход между банками](toolkit/WRAPPED_INPUT_RESULTS_ru.md).
+# 2026-10-14 — item22 whole-run unroll rejected
+
+Objective: accelerate the existing optional LZSA2 sixteen-byte-prefix profile
+by unrolling the whole byte-form run. Baseline d2f84b87;95 complete blocks,
+619480 raw bytes, unchanged payloads. A residue-entry16-LDI loop adds112 code
+bytes/two stack bytes; below40 its selector costs44 extra T. Native totals
+26297662 ->26162449 T, but21 authenticated real blocks slow by8767 T;
+19 slower blocks/405 slices overall. Exact source/history/EOF and227 IRQs
+pass;31 defaults exact. Reject before streaming/player adoption because the
+synthetic aggregate hides real regression. No release/physical disk claim.
+See [item22](libraries/SECOND_PASS.md#item22--residue-entry-whole-run-unrolling),
+[report](libraries/evidence/trick_22.json) and frozen code replay through
+[measure_second_pass.py](libraries/tests/measure_second_pass.py).
+
+# 2026-10-14 — item23 optional ZX0 Mega
+
+Objective: check bit-phase expansion beyond Fast. Baseline bfdc9258, pinned
+ZX0 ecde3a2ae05061fe06469ed46df81a33b7de7d86; same one-shot caller contract.
+Add optional Mega emitter/CLI export,673 bytes, writable offset/caller stack;
+coroutines/defaults unchanged.417 complete native blocks/3204723 raw bytes,
+including364 authenticated real blocks: real Fast156012520 ->Mega146422274 T
+(-6.147%); aggregate -9635458 T, no slower blocks.1305 IRQs, exact input/
+history/EOF, relocation/dirty offset and16 unit tests pass;31 defaults exact.
+Accept as an explicit resident-block profile. No disk/publication/release claim.
+Reproduce with [measure_bit_phases.py](libraries/tests/measure_bit_phases.py);
+see [report](libraries/evidence/trick_23.json) and [SECOND_PASS](libraries/SECOND_PASS.md).
+
+# 2026-10-14 — item24 distance-one fill rejected
+
+Objective: replace repeated history reads with a seed fill on long distance1
+matches. Baseline1e8cb030, existing optional LZSA2 sixteen-LDI prefix; unchanged
+95-block corpus/payload. Test-only24-store prefix saves42/46 T on hits but
+misses pay24 T. Complete totals26297662 ->26307336 (+9674), real21 +3816;
+51 slower blocks/400 slices.230 IRQs, exact source/history/EOF/short word forms,
+31 defaults pass. Reject before guarded/player integration: dispatch cost
+outweighs actual hit savings. No release claim. Reproduce with
+[measure_repeat_match.py](libraries/tests/measure_repeat_match.py); emitted
+code and [report](libraries/evidence/trick_24.json) preserve the failed attempt.
+
+# 2026-10-14 — item25 stack exchange applicability
+
+Objective: find additional25 ->19-T stack-word exchanges. Baseline d4efe3d8;
+1024 native word/flag cases verify HL/stack/AF equivalence but expose live-DE
+differences in every case. Standard already uses two eligible EX (SP),HL sites;
+other cores retain live DE and patched offsets/owned continuations. No eligible
+new rewrite; actual CPU/code/state/input delta0,31 defaults exact. No changed
+decoder or release claim. Reproduce with audit_second_pass.py --item25;
+see [report](libraries/evidence/trick_25.json) and [SECOND_PASS](libraries/SECOND_PASS.md).
+
+# 2026-10-14 — item26 unsigned byte-add applicability
+
+Objective: map20-T byte-add to live-pointer codec arithmetic. Baseline ccda78a6;
+1792 guard endpoint/32 signed-offset native states. Retaining input HL and
+producing A costs22 ->52 T, and863 carry mismatches (31 missed/832 false
+overflows) invalidate the guard. An initial31-total-mismatch assertion failed;
+enumeration corrected the bound instead of accepting false flags. Signed
+negative offsets also fail zero-extension. Reject; no production rewrite,
+actual CPU/code/state/payload delta0,31 defaults exact. No release claim.
+Reproduce with audit_second_pass.py --item26;
+[report](libraries/evidence/trick_26.json), [SECOND_PASS](libraries/SECOND_PASS.md).
+
+# 2026-10-14 — item27 counter-loop ownership audit
+
+Objective: apply cheaper DJNZ/split-count/CPI loops. Baseline63758a91;
+513 native checks. Generic dead-flag/free-B loop saves3 T/iteration, but real
+32-LDI refill changes BC0100 ->00E0 before the branch; DJNZ corrupts it toFFE0.
+CPI costs16 versus DEC BC6 T and advances/reads input, unsuitable at a frontier.
+Elias loops are bit-terminated and main copies already have exact word counts.
+Retain current code; CPU/code/state/input delta0,31 defaults exact. No release
+claim. Reproduce with audit_second_pass.py --item27;
+[report](libraries/evidence/trick_27.json), [SECOND_PASS](libraries/SECOND_PASS.md).
+
+# 2026-10-14 — item28 explicit resident Fast profiles
+
+Objective: omit features unused by fully resident one-shot callers. Baseline
+db9a50c0, both baselines receive one full output request, unchanged payloads.
+Shared generators produce optional lzsa.block/zx0.block APIs/CLI exports:
+HL=input, DE=output, caller stack, external allocation/size validation; no
+quotas/paging/yields/state. LZSA218 vs384 bytes,95 full blocks25297440 ->24297727 T;
+real -957138 T (5.112%). ZX0 Fast207 vs401 bytes,417 blocks180836248 ->161515003;
+real -19255594 T (10.986%). No slower blocks;206/1394 IRQs,9103 relocation,
+exact source/history/EOF/short words/combined options and17 tests pass.31 defaults
+exact. Accept separate ABI; coroutine/player defaults unchanged, no release
+or physical disk claim. [Report](libraries/evidence/trick_28.json),
+[reproducer](libraries/tests/measure_resident_profiles.py), [SECOND_PASS](libraries/SECOND_PASS.md).
+
+# 2026-10-14 — item29 compact LZSA2 and completed second pass
+
+Objective: reduce code through shared length/nibble helpers, retaining exact
+standard fields/EOF. Baseline5e070860, same95 full resident blocks/payloads.
+Add explicit Small block API/CLI:218 ->137 bytes (-81), caller stack4 ->8
+bytes including return; no state/private stack/payload increase. Correct pinned
+134-byte source's EOF before dummy reads (+3 bytes); test-only134 reconstruction
+fails protected EOF on15 literal fixtures. Native Fast24297727 ->Small27043456 T
+(+2745729), real17767606 ->20423546 (+14.948%); all95 slower.235 IRQs,
+9103 relocation, exact input/history/short words, dirty state/IX/alternate pairs
+and1024 nibble phase/value probes pass. Initial test-only AF' setup overflow
+was corrected; production emitter unchanged. Accept solely as an explicit code
+space tradeoff, retaining speed-first/default coroutine profiles.
+
+All20 items10–29 are completed as focused experiments/audits, including real
+regressions22/24. Final18 library +67 toolkit tests pass (85);31 default code/
+address/label profiles, four original resources and both producer variants exact.
+Fresh independent wheels include added pinned Mega/Small resources, all six
+resident profiles and exact ORG/DB exports. No merge/push, new movie/TRD,
+physical disk/ULA/publication or release claim. See
+[item29 report](libraries/evidence/trick_29.json),
+[reproducer](libraries/tests/measure_compact_profile.py),
+[authenticated summary](libraries/second_pass_verification.json),
+[summary script](libraries/tests/summarize_second_pass.py),
+and [completed decisions](libraries/SECOND_PASS.md).
+
+# 2026-10-14 — second-pass documentation encoding repair
+
+Final inspection exposed Windows default text decoding when rearranging
+SECOND_PASS.md: retained items10–24 had double-encoded punctuation. Repair
+that prefix using explicit UTF-8; items25–29, all measurements, source code,
+reports and defaults are unchanged. The authenticated summary still passes.

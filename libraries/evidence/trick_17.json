@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-14",
+  "item": "17",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "d1030dd5",
+  "decision": "no saturating counter contract in current codecs",
+  "checks": 259,
+  "corrected_domain": [
+    23,
+    255
+  ],
+  "corrected_tstates": 14,
+  "final_flag_differences": 233,
+  "legal_short_count_failures": 22,
+  "ring_counterexample": {
+    "input": 3,
+    "required": 0,
+    "saturated": 3
+  },
+  "findings": [
+    "Length/offset arithmetic represents exact standard fields, not a saturating minimum/maximum.",
+    "ZX0 four-bank ring index wraps modulo4; holding the upper bound selects the wrong bank.",
+    "The source lower-bound off-by-one and corrected dead-flag primitive remain recorded; no current caller has its preconditions."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}

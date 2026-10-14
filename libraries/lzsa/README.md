@@ -10,6 +10,25 @@ Pinned upstream revision: `15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5`.
 
 ## Host use
 
+For a complete resident block, `lzsa.block.build(core=0x8000,core_limit=0x8400)`
+or `python -m lzsa build --profile fast-block --core 0x8000 --core-limit 0x8400 --output build/lzsa-block`
+exports a separate one-shot entry `lzsa2_start`. Supply HL=input, DE=output;
+AF/AF'/BC/DE/HL are clobbered, IX and other alternate pairs retained. It uses
+the caller stack and a writable offset operand, with no quota/paging/yield
+state. Validate input and expected nonwrapping output/allocation externally,
+keep source/history resident and preserve live registers including AF' in IRQ.
+Reserve stack for the decoder plus the actual IRQ handler and hardware return.
+The coroutine stays the default. See [measured comparison](../SECOND_PASS.md).
+
+For tighter code RAM, `lzsa.block.build('small')` or CLI `--profile small-block`
+exports137 bytes instead of Fast's218. It shares nibble/length helpers and
+returns at exact EOF before extra reads. The caller contract stays resident
+input/history, HL/DE pointers, external size validation and writable offset;
+plain caller-stack maximum is8 bytes including return, plus IRQ headroom.
+All95 native blocks pass, but the21 real blocks cost14.948% more CPU than
+resident Fast. Both cores still round to one256-byte raw code sector. Choose
+this profile explicitly for code space; the speed-first default is unchanged.
+
 ```python
 from lzsa import compress, decompress, trace
 
@@ -96,6 +115,41 @@ input and repoints them to the original paths after final input. There is no
 additional per-token test once complete. With `direct_header=True`, the
 available-prefix path remains 46 T versus 96 T for the prior CALL/RET guard.
 Direct mode requires `streaming=True`; AF is dead at entry, AF' stays live.
+
+`word_state_init=True` / `--word-state-init` optionally clears adjacent
+input_needed/finished in one word instruction, saving4 T per begin and one
+code byte. Both input-guard modes retain exact EOF/yield/IRQ behavior.
+[Second-pass evidence](../SECOND_PASS.md) includes both full streaming checks.
+
+`restore_compare=True` / `--restore-compare` optionally restores the compared
+target with ADD HL,DE instead of a reload, saving5 T per begin/resume and two
+code bytes. Equality/carry semantics remain valid; the complete ordinary and
+both streaming modes are measured in [the second pass](../SECOND_PASS.md).
+
+An optional long-copy profile applies sixteen `LDI` instructions to the
+byte-extended literal18..255 and match24..255 forms. All short and escaped
+16-bit forms keep their existing paths, including short lengths encoded with
+a16-bit escape. Enable it with `build(long_copy=True, core_limit=0x9000)`, or:
+
+```powershell
+python -m lzsa build --long-copy --core-limit 0x9000 --output build/lzsa-long
+```
+
+Explicitly reserve the additional87 core bytes (84 with streaming); the
+default reservation rejects this profile. It adds no state, stack or tables.
+
+For ordinary complete input, `near_literals=True` (CLI `--near-literals`)
+places the same helper near its JR caller. This saves another10 T per
+byte-form literal and3 bytes, leaving84 extra core bytes. Short and escaped
+word paths stay unchanged. [Second-pass verification](../SECOND_PASS.md).
+The default placement keeps these kernels in uncontended Spectrum bank2.
+Retain writable code and the same forward-copy/IRQ contracts. Streaming users
+must use `emit_guard_update` or the optional `long8_complete`
+labels when bypassing guards. Calling the old short-copy targets is correct
+but loses the long-copy improvement on completely loaded blocks.
+[Timing and complete-block evidence](../LONG_COPY.md) records a small0.124%
+CPU gain on the retained real fixture; compressed bytes/sectors are unchanged.
+This profile has no new movie publication or physical disk qualification.
 
 Original assembly lives in `src/lzsa/asm`; the generated adapted
 `decoder.asm` includes the coroutine, guards and byte-exact EOF changes.

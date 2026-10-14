@@ -100,7 +100,8 @@ class LibraryTests(unittest.TestCase):
     def test_export_is_a_complete_commented_include(self):
         from zx0.export import export as zx_export
         from lzsa.export import export as lz_export
-        for build,export in ((zx0_build,zx_export),(lzsa_build,lz_export)):
+        for build,export in ((zx0_build,zx_export),(lzsa_build,lz_export),
+                (lambda:lzsa_build(long_copy=True,core_limit=0x9000),lz_export)):
             regions,labels,metadata=build()
             with tempfile.TemporaryDirectory() as directory:
                 export(directory,regions,labels,metadata)
@@ -123,6 +124,10 @@ class LibraryTests(unittest.TestCase):
             with self.assertRaises(ValueError):build(core=-1)
             with self.assertRaises(ValueError):build(stack=65536)
         with self.assertRaises(ValueError):lzsa_build(direct_header=True)
+        with self.assertRaises(ValueError):lzsa_build(long_copy=True)
+        with self.assertRaises(ValueError):lzsa_build(near_literals=True)
+        with self.assertRaises(ValueError):lzsa_build(word_state_init=True)
+        with self.assertRaises(ValueError):lzsa_build(long_copy=True,near_literals=True,streaming=True,core_limit=0x9000)
 
 
 @unittest.skipUnless(importlib.util.find_spec('z80'), 'install lzsa[native] for native tests')
@@ -187,8 +192,9 @@ class NativeTests(unittest.TestCase):
     def test_streaming_guard_patcher_restores_and_bypasses(self):
         from z80 import Z80Machine
         from lzsa.streaming import emit_guard_update
-        for direct in (False,True):
-            regions,z,_=lzsa_build(streaming=True,direct_header=direct)
+        for direct,long_copy,word_init in itertools.product((False,True),repeat=3):
+            regions,z,_=lzsa_build(streaming=True,direct_header=direct,long_copy=long_copy,
+                                  word_state_init=word_init,core_limit=0x9000)
             a=MiniAssembler(0x6000);rows=emit_guard_update(a,z);a.emit(0xc9)
             m=Z80Machine()
             for at,data in regions:m.set_memory_block(at,data)
@@ -210,8 +216,154 @@ class NativeTests(unittest.TestCase):
                     ('long8_target','guard_long8','CopyMoreLiterals'),
                     ('long16_target','guard_long16','NextUseBC')):
                     value=m.memory[z[operand]]+256*m.memory[z[operand]+1]
-                    self.assertEqual(value,z[done if complete else active])
+                    done=z.get(operand.replace('_target','_complete'),z[done])
+                    self.assertEqual(value,done if complete else z[active])
                 self.assertEqual((m.alt_af,m.bc,m.de),(0x6537,0x1234,0x2345))
+
+    def test_long_copy_length_boundaries_and_overlap(self):
+        from lzsa.native import execute
+        for layout in ({},dict(prefix=0x5000,prefix_limit=0x5400,core=0x6000,
+                stack=0x4ff0,output_base=0xa000)):
+            baseline=lzsa_build(**layout,core_limit=0x6400 if layout else 0x9000)
+            candidate=lzsa_build(**layout,core_limit=0x6400 if layout else 0x9000,long_copy=True)
+            for literal in (1,2,3,17,18,237,238,239,255,256,257):
+                for match in (2,8,9,23,24,255,256,257):
+                    raw=bytes(i%251 for i in range(literal));raw+=bytes([raw[-1]])*match
+                    payload=lzsa.encode(raw,[(literal,match,1)])
+                    old=execute(*baseline,payload,raw,source=0x2000,caller_stack=0x9df0)
+                    new=execute(*candidate,payload,raw,source=0x2000,caller_stack=0x9df0)
+                    self.assertTrue(new['exact'])
+                    self.assertLessEqual(new['tstates'],old['tstates'])
+            from measure_long_copy import noncanonical_cases
+            for _,payload,raw in noncanonical_cases():
+                self.assertEqual(lzsa.decompress(payload,limit=len(raw)),raw)
+                old=execute(*baseline,payload,raw,source=0x2000,caller_stack=0x9df0)
+                new=execute(*candidate,payload,raw,source=0x2000,caller_stack=0x9df0)
+                self.assertEqual(new['tstates'],old['tstates'])
+
+    def test_near_literal_helper_relocation_and_escaped_words(self):
+        from lzsa.native import execute
+        from measure_long_copy import noncanonical_cases
+        for config in ({},dict(prefix=0x5000,prefix_limit=0x5400,core=0x6000,
+                              stack=0x4ff0,output_base=0xa000)):
+            old=lzsa_build(**config,long_copy=True,core_limit=0x6400 if config else 0x9000)
+            new=lzsa_build(**config,long_copy=True,near_literals=True,core_limit=0x6400 if config else 0x9000)
+            self.assertEqual(new[2]['code_bytes'],old[2]['code_bytes']-3)
+            for length in (3,17,18,237,238,255,256,257):
+                raw=bytes(index%251 for index in range(length));payload=lzsa.encode(raw,[])
+                before=execute(*old,payload,raw,source=0x2000,caller_stack=0x9df0)
+                after=execute(*new,payload,raw,source=0x2000,caller_stack=0x9df0,interrupts=True)
+                plain=execute(*new,payload,raw,source=0x2000,caller_stack=0x9df0)
+                self.assertTrue(after['exact'])
+                self.assertEqual(plain['tstates']-before['tstates'],-10 if 18<=length<=255 else 0)
+            for _,payload,raw in noncanonical_cases():
+                before=execute(*old,payload,raw,source=0x2000,caller_stack=0x9df0)
+                after=execute(*new,payload,raw,source=0x2000,caller_stack=0x9df0)
+                self.assertEqual(after['tstates'],before['tstates'])
+
+    def test_mega_relocation_long_gamma_and_dirty_offset(self):
+        from measure_bit_phases import build
+        from native_block import execute
+        from zx0.tokens import Token,encode
+        for origin in (0x8000,0x9103):
+            regions,z,meta=build('mega',origin)
+            self.assertEqual(len(regions[0][1]),673)
+            at,blob=regions[0];blob=bytearray(blob)
+            offset=z['dzx0m_last_offset+1']-at
+            blob[offset:offset+2]=b'\x23\x81'
+            for distance in (1,2,127,128,256):
+                raw=bytes(i%251 for i in range(distance));raw+=(raw*16000)[:8192-distance]
+                payload=encode(raw,[Token(0,distance),Token(distance,8192-distance,distance)])
+                self.assertTrue(execute(([(at,bytes(blob))],z,meta),payload,raw,interrupts=True)['exact'])
+
+    def test_resident_profile_contract_and_exact_word_eof(self):
+        from lzsa.block import build as lblock
+        from zx0.block import build as zblock
+        from native_block import execute
+        from measure_long_copy import noncanonical_cases
+        from zx0.tokens import Token,encode
+        for origin in (0x7c00,0x9103):
+            for options in ({},dict(long_copy=True),dict(long_copy=True,near_literals=True)):
+                profile=lblock(core=origin,core_limit=origin+512,**options)
+                self.assertNotIn('state',profile[1]);self.assertNotIn('slice_until',profile[1])
+                for _,payload,raw in noncanonical_cases():
+                    self.assertTrue(execute(profile,payload,raw,interrupts=True)['exact'])
+            for variant in ('fast','standard','turbo','mega'):
+                profile=zblock(variant,core=origin,core_limit=origin+768)
+                raw=b'AB'*256;payload=encode(raw,[Token(0,2),Token(2,510,2)])
+                self.assertTrue(execute(profile,payload,raw,interrupts=True)['exact'])
+        for build in (lblock,zblock):
+            with self.assertRaises(ValueError):build(core=0xfffe,core_limit=65536)
+
+    def test_compact_lzsa_nibble_phases_word_eof_and_dirty_state(self):
+        from lzsa.block import build
+        from native_block import execute
+        from measure_long_copy import noncanonical_cases
+        from measure_tricks import run
+        for origin in (0x8000,0x9103):
+            profile=build('small',core=origin,core_limit=origin+256)
+            regions,z,meta=profile;self.assertEqual(meta['code_bytes'],137)
+            for value in range(256):
+                for cached in (False,True):
+                    def prepare(m):m.alt_af=(0xf0|value)<<8|0x80 if cached else 0
+                    m,t=run('cd '+z['ReadNibble'].to_bytes(2,'little').hex(' '),dict(hl=0x6000,af=0x0941),
+                        memory=tuple(regions)+((0x6000,bytes([value])),),prepare=prepare)
+                    self.assertEqual(t,40 if cached else 98)
+                    self.assertEqual(m.c,9)
+                    self.assertEqual(m.a,(value|0xf0) if cached else 0xf0|(value>>4))
+                    self.assertEqual(m.hl,0x6000 if cached else 0x6001)
+            at,blob=regions[0];blob=bytearray(blob)
+            offset=z['offset']-at;blob[offset:offset+2]=b'\x23\x81'
+            dirty=([(at,bytes(blob))],z,meta)
+            for _,payload,raw in noncanonical_cases():
+                self.assertTrue(execute(dirty,payload,raw,interrupts=True,alternate_af=0xf580)['exact'])
+        with self.assertRaises(ValueError):build('small',long_copy=True)
+
+    def test_word_state_init_clears_prior_stream_status(self):
+        from lzsa.native import execute
+        for direct in (False,True):
+            regions,labels,metadata=lzsa_build(streaming=True,direct_header=direct,word_state_init=True)
+            self.assertEqual(labels['finished'],labels['input_needed']+1)
+            changed=[]
+            for at,data in regions:
+                data=bytearray(data)
+                for name,value in (('finished',1),('input_needed',1),('header_frontier',255),('literal_frontier',255)):
+                    if at<=labels[name]<at+len(data):data[labels[name]-at]=value
+                changed.append((at,bytes(data)))
+            raw=b'AB'*128;payload=lzsa.encode(raw,[(2,254,2)])
+            self.assertTrue(execute(changed,labels,metadata,payload,raw,source=0x2000,interrupts=True)['exact'])
+
+    def test_compare_restore_sync_bounds_and_combined_profiles(self):
+        from z80 import Z80Machine
+        from lzsa.native import execute
+        for target,end in ((0,1),(1,0),(0xffff,0xffff),(0xfffe,0xffff),
+                           (0x8000,0x7fff),(0xc100,0xc200),(0xc200,0xc200)):
+            for optimized in (False,True):
+                regions,z,meta=lzsa_build(restore_compare=optimized)
+                machine=Z80Machine()
+                for address,data in regions:machine.set_memory_block(address,data)
+                machine.set_memory_block(z['slice_target'],target.to_bytes(2,'little'))
+                machine.set_memory_block(z['block_end'],end.to_bytes(2,'little'))
+                machine.set_memory_block(0x9dee,b'\x00\x01');machine.sp=0x9dee;machine.pc=z['sync']
+                machine.set_breakpoint(0x100);machine.ticks_to_stop=10000
+                while machine.pc!=0x100:self.assertFalse(machine.run()&machine._TICKS_LIMIT_HIT)
+                wanted=0xffff if target==end else target
+                self.assertEqual((machine.memory[z['high_operand']],machine.memory[z['low_operand']]),
+                                 (wanted>>8,wanted&255))
+                self.assertEqual(10000-machine.ticks_to_stop,(132 if target==end else 127)-(5 if optimized else 0))
+        raw=b'AB'*256;payload=lzsa.encode(raw,[(2,510,2)])
+        for streaming in (False,True):
+            regions,z,meta=lzsa_build(core_limit=0x9000,long_copy=True,near_literals=not streaming,
+                streaming=streaming,direct_header=streaming,word_state_init=streaming,restore_compare=True)
+            if streaming:
+                changed=[]
+                for address,data in regions:
+                    data=bytearray(data)
+                    for name in ('header_frontier','literal_frontier'):
+                        if address<=z[name]<address+len(data):data[z[name]-address]=255
+                    changed.append((address,bytes(data)))
+                regions=changed
+            self.assertTrue(execute(regions,z,meta,payload,raw,source=0x2000,interrupts=True)['exact'])
 
 
 if __name__=='__main__':unittest.main()
