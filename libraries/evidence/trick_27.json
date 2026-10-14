@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-14",
+  "item": "27",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "63758a91",
+  "decision": "no free B fixed-counter site; retain separate refill counter and exact copies",
+  "checks": 513,
+  "eligible_dead_flags_primitive": {
+    "before": "22*n-5",
+    "after": "19*n-5",
+    "delta": "-3*n"
+  },
+  "refill_first_iteration": {
+    "before_tstates": 528,
+    "wrong_djnz_tstates": 525,
+    "expected_bc": 224,
+    "wrong_bc": 65504
+  },
+  "cpi_pointer_failures": 256,
+  "findings": [
+    "DJNZ is cheaper only with B owned exclusively by the loop and dead DEC flags; no matching adapted decoder loop has these conditions.",
+    "ZX0 ring refill uses A=8 while32 LDI instructions change BC=0100 ->00E0. DJNZ would wrap B toFF and corrupt the remaining copy count.",
+    "Main copy loops already use LDI/LDIR with16-bit BC. Elias loops stop on incoming bits, not a fixed counter.",
+    "CPI reads compressed memory and advances HL while changing compare flags; it is not a free fused DEC BC at an input frontier.",
+    "Split-byte counters require carry/zero compensation at multiples256 and must preserve legal short escaped-word lengths; existing structurally bounded paths already exploit byte counts."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}

@@ -14918,3 +14918,14 @@ actual CPU/code/state/payload delta0,31 defaults exact. No release claim.
 Reproduce with audit_second_pass.py --item26;
 [report](libraries/evidence/trick_26.json), [SECOND_PASS](libraries/SECOND_PASS.md).
 
+# 2026-10-14 — item27 counter-loop ownership audit
+
+Objective: apply cheaper DJNZ/split-count/CPI loops. Baseline63758a91;
+513 native checks. Generic dead-flag/free-B loop saves3 T/iteration, but real
+32-LDI refill changes BC0100 ->00E0 before the branch; DJNZ corrupts it toFFE0.
+CPI costs16 versus DEC BC6 T and advances/reads input, unsuitable at a frontier.
+Elias loops are bit-terminated and main copies already have exact word counts.
+Retain current code; CPU/code/state/input delta0,31 defaults exact. No release
+claim. Reproduce with audit_second_pass.py --item27;
+[report](libraries/evidence/trick_27.json), [SECOND_PASS](libraries/SECOND_PASS.md).
+

@@ -325,3 +325,19 @@ token/length data; no additional eligible unsigned addition was found.
 
 [1824 checks](evidence/trick_26.json),31 exact defaults, actual CPU/code/state/
 stack/payload delta0. `audit_second_pass.py --item 26 --output libraries/evidence/trick_26.json`.
+
+## Item27 — DJNZ, split counters and CPI fusion
+
+**Decision: retain exact count/register ownership.**256 native fixed-loop probes
+confirm INC HL / DEC B / JR NZ costs `22*n-5` versus INC HL / DJNZ `19*n-5`.
+But the real256-byte ring refill uses A=8 while32 LDIs decrement BC from0100
+to00E0. Substituting DJNZ changes B=0 toFF: first-iteration528 ->525 T obtains
+the wrong FFE0 count instead of00E0. Main copies already use exact16-bit LDI/
+LDIR; Elias loops terminate on bits. No adapted fixed-counter loop owns free B
+and dead DEC flags.256 further probes show CPI16 T versus DEC BC6 T also
+reads memory, advances HL and changes comparison flags, violating the frontier/
+reservoir contract. Split-byte counts still need compensation at multiples256
+and retain item21's legal short escaped-word cases.
+
+[513 checks](evidence/trick_27.json),31 exact defaults, actual CPU/code/state/
+stack/input delta0. `audit_second_pass.py --item 27 --output libraries/evidence/trick_27.json`.

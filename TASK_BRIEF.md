@@ -35,7 +35,9 @@ failed experiment without a public option. Item23 adds optional one-shot Mega:
 distance1 selector:95 exact blocks/230 IRQs, real +3816 T,51 slower blocks.
 Item25 retains existing Standard stack exchanges and live DE/continuations
 elsewhere (1024 native checks). Item26 rejects the guard byte-add rewrite:
-22 ->52 T,863 wrong carries/32 signed-offset failures;1824 checks. Item27 is next.
+22 ->52 T,863 wrong carries/32 signed-offset failures;1824 checks. Item27 retains
+refill A counter/word counts and rejects CPI frontier effects (513 checks).
+Item28 is next.
 
 ## Completed: other-site Z80 speed/size survey (2026-10-14)
 

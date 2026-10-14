@@ -273,9 +273,43 @@ def item26():
                   'Negative LZSA2 offsets are not zero-extended bytes; using their unsigned low byte adds256 instead of the signed displacement.'])
 
 
+def item27():
+    for count in range(1,257):
+        registers=dict(bc=(count&255)<<8,hl=0x6000,af=0x7341)
+        old,ot=run('23 05 20 fc',registers)
+        new,nt=run('23 10 fd',registers)
+        assert old.hl==new.hl==0x6000+count and old.b==new.b==0
+        assert (ot,nt)==(22*count-5,19*count-5)
+    # The real fixed256 refill repeats32 LDIs eight times. LDI also modifies
+    # BC; at the first loop boundary B has already become0, not7.
+    registers=dict(hl=0x6000,de=0x9000,bc=256,af=0x0801)
+    memory=((0x6000,bytes(range(32))),)
+    old,ot=run('ed a0 '*32+'3d 20 00',registers,memory=memory)
+    wrong,nt=run('ed a0 '*32+'10 00',registers,memory=memory)
+    assert (old.bc,old.a)==(224,7) and (wrong.bc,wrong.a)==(0xffe0,8)
+    assert (ot,nt)==(528,525)
+    cpi_failures=0
+    for value in range(256):
+        registers=dict(hl=0x6000,bc=257,af=0x7301)
+        old,ot=run('0b',registers,memory=((0x6000,bytes([value])),))
+        wrong,nt=run('ed a1',registers,memory=((0x6000,bytes([value])),))
+        assert old.bc==wrong.bc==256 and old.hl==0x6000 and wrong.hl==0x6001
+        assert (ot,nt)==(6,16);cpi_failures+=1
+    return dict(decision='no free B fixed-counter site; retain separate refill counter and exact copies',checks=513,
+        eligible_dead_flags_primitive=dict(before='22*n-5',after='19*n-5',delta='-3*n'),
+        refill_first_iteration=dict(before_tstates=528,wrong_djnz_tstates=525,
+                                    expected_bc=224,wrong_bc=0xffe0),
+        cpi_pointer_failures=cpi_failures,
+        findings=['DJNZ is cheaper only with B owned exclusively by the loop and dead DEC flags; no matching adapted decoder loop has these conditions.',
+                  'ZX0 ring refill uses A=8 while32 LDI instructions change BC=0100 ->00E0. DJNZ would wrap B toFF and corrupt the remaining copy count.',
+                  'Main copy loops already use LDI/LDIR with16-bit BC. Elias loops stop on incoming bits, not a fixed counter.',
+                  'CPI reads compressed memory and advances HL while changing compare flags; it is not a free fused DEC BC at an input frontier.',
+                  'Split-byte counters require carry/zero compensation at multiples256 and must preserve legal short escaped-word lengths; existing structurally bounded paths already exploit byte counts.'])
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('11','12','13','14','15','17','18','19','21','25','26'),required=True)
+    parser.add_argument('--item',choices=('11','12','13','14','15','17','18','19','21','25','26','27'),required=True)
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     defaults=profiles();assert defaults==json.loads((ROOT/'tests/decoder_baseline.json').read_text())['profiles']
     report=dict(date='2026-10-14',item=args.item,complete=True,release=False,scope=__doc__,
