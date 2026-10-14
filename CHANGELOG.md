@@ -14884,3 +14884,15 @@ Accept as an explicit resident-block profile. No disk/publication/release claim.
 Reproduce with [measure_bit_phases.py](libraries/tests/measure_bit_phases.py);
 see [report](libraries/evidence/trick_23.json) and [SECOND_PASS](libraries/SECOND_PASS.md).
 
+# 2026-10-14 — item24 distance-one fill rejected
+
+Objective: replace repeated history reads with a seed fill on long distance1
+matches. Baseline1e8cb030, existing optional LZSA2 sixteen-LDI prefix; unchanged
+95-block corpus/payload. Test-only24-store prefix saves42/46 T on hits but
+misses pay24 T. Complete totals26297662 ->26307336 (+9674), real21 +3816;
+51 slower blocks/400 slices.230 IRQs, exact source/history/EOF/short word forms,
+31 defaults pass. Reject before guarded/player integration: dispatch cost
+outweighs actual hit savings. No release claim. Reproduce with
+[measure_repeat_match.py](libraries/tests/measure_repeat_match.py); emitted
+code and [report](libraries/evidence/trick_24.json) preserve the failed attempt.
+

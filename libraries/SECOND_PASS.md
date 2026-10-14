@@ -38,6 +38,27 @@ python libraries/tests/measure_second_pass.py --item 10 --output libraries/evide
 python -m unittest discover -s libraries/tests -v
 ```
 
+## Item24 — distance-one repeated-byte prefix
+
+**Decision: reject the generic selector.** A test-only LongMatchBC specialization
+checks the saved offset FFFF using LD A,H / AND L / INC A / JR NZ. AF is dead,
+AF' unchanged, B=0 and byte-form count>=24. On a hit, read one seed and emit24
+LD (HL),A / INC HL pairs; restore DE, subtract24 from C, skip zero remainder,
+otherwise LDIR forward from DE-1. All word/short/default paths stay intact.
+No new stack/state/input bytes. Counting from the loaded offset through the
+common final JP: original `21*n-64`; hit398 T at24 (440 ->398, -42),
+`21*n-110` at25..255 (-46), miss `21*n-40` (+24). The guard dominates when
+distance1 is insufficiently frequent; no assumed page alignment or zero LDIR.
+
+[95 full blocks](evidence/trick_24.json):26297662 ->26307336 T (+9674),
+real21 +3816 T,51 slower blocks/400 slices;230 IRQs and exact output/source/
+history/short escaped words pass.31 defaults exact. Reject before streaming/
+player integration under the speed-first requirement. The reproducible
+[test-only generator](tests/measure_repeat_match.py) requires an exact unique
+production source site and saves emitted code/labels/timing metadata in its
+report. `--output libraries/evidence/trick_24.json` replays the failed attempt.
+The earlier known16-byte primitive alone omitted selector/residue costs.
+
 ## Item11 — repeated loads across independent instructions
 
 **Decision: retain efficient reloads/live saves.** LZSA2's nibble refill reads

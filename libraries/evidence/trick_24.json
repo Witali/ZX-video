@@ -1,0 +1,2963 @@
+{
+  "date": "2026-10-14",
+  "item": 24,
+  "baseline_revision": "1e8cb030",
+  "complete": true,
+  "release": false,
+  "generator_sha256": "a15c7ef4ec9c582e3a6a59aa2000514267218c9ab4ec6564ed72558b41aa7960",
+  "defaults_exact": 31,
+  "code_bytes_before": 471,
+  "code_bytes_after": 541,
+  "state_stack_payload_delta": 0,
+  "summary": {
+    "cases": 95,
+    "baseline_tstates": 26297662,
+    "candidate_tstates": 26307336,
+    "delta_tstates": 9674,
+    "real_delta_tstates": 3816,
+    "slower_blocks": 51,
+    "slower_slices": 400,
+    "injected_interrupts": 230
+  },
+  "candidate": {
+    "regions": [
+      [
+        31744,
+        "cd5b7c2a777ced5b797cb7ed52d0ed737b7ced7b7d7ce1d1c108f108f1c9cd5b7ced737b7c31e07b21357ce52a837c1100c0c3e38d2a817cb7ed52c2767ced53777ced7b7b7cc9ed53777cf508f508c5d5e5ed737d7ced7b7b7cc92a797ced5b817cb7ed522a797c200321ffff7c32528e7d325a8ec976000000000000000000000000000000"
+      ],
+      [
+        36320,
+        "c3dd8e06003708c3508e3e12862330f04e237846c37b8e4623370830097eb7087e230f0f0f0ff6f03c28dfd6ee4f780600eda0eda0edb0b7f22e8efec03868fee0301c4623181020ceb623fa828efe40386e05fe60cb104e23ed43488e06003ce60728763c4fe521000019eda0edb0e17afe00da708e20067bfe00da708e3a827cba20073a817cbbca708ecd477c18e07ee618ea278e0f0f0f4f7e23edb0b7f22e8efec0d21f8e4f0830097eb7087e230f0f0f0ff6f04779fea005cb10c3378e470830097eb7087e230f0f0f0ff6f04f78fe20cb1106ffc3398e370830097eb7087e230f0f0f0ff6f0d6e7fe18da458e8623d2068fc84e234623c3468e4f780600eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0edb0c3178e4fe52a488e7ca53c2041197eeb772377237723772377237723772377237723772377237723772377237723772377237723772377237723772377237723545d79d6184f28032bedb0c34f8e19eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0edb0c34f8e"
+      ]
+    ],
+    "labels": {
+      "slice_until": 31744,
+      "begin": 31774,
+      "finished": 31797,
+      "slice_yield": 31815,
+      "sync": 31835,
+      "sync_target": 31853,
+      "fatal": 31862,
+      "state": 31863,
+      "slice_output": 31863,
+      "slice_target": 31865,
+      "slice_caller_sp": 31867,
+      "slice_decoder_sp": 31869,
+      "block_length": 31871,
+      "block_end": 31873,
+      "input_pointer": 31875,
+      "block_stored": 31877,
+      "end": 31878,
+      "LongLiterals8Jump": 36320,
+      "start": 36323,
+      "ManyLiterals": 36330,
+      "MoreLiterals": 36343,
+      "LiteralNibble": 36358,
+      "CopyMoreLiterals": 36365,
+      "AfterLongLiterals": 36375,
+      "Case11x": 36383,
+      "Literals00or11": 36391,
+      "NoLiterals": 36393,
+      "Case0xx": 36398,
+      "ReadOffsetC": 36407,
+      "SaveOffset": 36409,
+      "MatchLen": 36415,
+      "CopyMatch": 36421,
+      "MatchUseC": 36422,
+      "offset": 36424,
+      "AfterLongMatch": 36431,
+      "ReadToken": 36432,
+      "high_operand": 36434,
+      "low_operand": 36442,
+      "Yield": 36446,
+      "Suspend": 36459,
+      "Token": 36464,
+      "token_body": 36464,
+      "NextUseBC": 36475,
+      "Case1xx": 36482,
+      "Case10x": 36487,
+      "Offset13Nibble": 36500,
+      "Case00x": 36512,
+      "Offset5Nibble": 36525,
+      "LongerMatch": 36538,
+      "MatchNibble": 36551,
+      "LongLiterals8": 36573,
+      "LongLiteralsBC": 36577,
+      "LongMatch8": 36614,
+      "LongMatchBC": 36615,
+      "RepeatDone": 36686,
+      "RepeatFallback": 36689,
+      "block_end_high": 31874
+    },
+    "metadata": {
+      "prefix_end": 31878,
+      "core_end": 36727,
+      "code_bytes": 541,
+      "output_base": 49152,
+      "private_stack": 31712,
+      "patched_addresses": [
+        36434,
+        36442,
+        36424,
+        36425
+      ],
+      "instruction_listing": [
+        {
+          "address": 36320,
+          "instruction": "JP LongLiterals8",
+          "tstates": 10
+        },
+        {
+          "address": 36323,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36325,
+          "instruction": "SCF",
+          "tstates": 4
+        },
+        {
+          "address": 36326,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36327,
+          "instruction": "JP ReadToken",
+          "tstates": 10
+        },
+        {
+          "address": 36330,
+          "instruction": "LD A,18",
+          "tstates": 7
+        },
+        {
+          "address": 36332,
+          "instruction": "ADD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36333,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36334,
+          "instruction": "JR LongLiterals8Jump",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36336,
+          "instruction": "LD C,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36337,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36338,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36339,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36340,
+          "instruction": "JP NextUseBC",
+          "tstates": 10
+        },
+        {
+          "address": 36343,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36344,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36345,
+          "instruction": "SCF",
+          "tstates": 4
+        },
+        {
+          "address": 36346,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36347,
+          "instruction": "JR LiteralNibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36349,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36350,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36351,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36352,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36353,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36354,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36355,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36356,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36357,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36358,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36360,
+          "instruction": "INC A",
+          "tstates": 4
+        },
+        {
+          "address": 36361,
+          "instruction": "JR ManyLiterals",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36363,
+          "instruction": "SUB 238",
+          "tstates": 7
+        },
+        {
+          "address": 36365,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36366,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36367,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36369,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36371,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36373,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36375,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36376,
+          "instruction": "JP Case0xx",
+          "tstates": 10
+        },
+        {
+          "address": 36379,
+          "instruction": "CP 192",
+          "tstates": 7
+        },
+        {
+          "address": 36381,
+          "instruction": "JR Case10x",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36383,
+          "instruction": "CP 224",
+          "tstates": 7
+        },
+        {
+          "address": 36385,
+          "instruction": "JR MatchLen",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36387,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36388,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36389,
+          "instruction": "JR ReadOffsetC",
+          "tstates": 12
+        },
+        {
+          "address": 36391,
+          "instruction": "JR MoreLiterals",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36393,
+          "instruction": "OR (HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36394,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36395,
+          "instruction": "JP Case1xx",
+          "tstates": 10
+        },
+        {
+          "address": 36398,
+          "instruction": "CP 64",
+          "tstates": 7
+        },
+        {
+          "address": 36400,
+          "instruction": "JR Case00x",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36402,
+          "instruction": "DEC B",
+          "tstates": 4
+        },
+        {
+          "address": 36403,
+          "instruction": "CP 96",
+          "tstates": 7
+        },
+        {
+          "address": 36405,
+          "instruction": "RL B",
+          "tstates": 8
+        },
+        {
+          "address": 36407,
+          "instruction": "LD C,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36408,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36409,
+          "instruction": "LD (offset),BC",
+          "tstates": 20
+        },
+        {
+          "address": 36413,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36415,
+          "instruction": "INC A",
+          "tstates": 4
+        },
+        {
+          "address": 36416,
+          "instruction": "AND 7",
+          "tstates": 7
+        },
+        {
+          "address": 36418,
+          "instruction": "JR LongerMatch",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36420,
+          "instruction": "INC A",
+          "tstates": 4
+        },
+        {
+          "address": 36421,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36422,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 36423,
+          "instruction": "LD HL,offset",
+          "tstates": 10
+        },
+        {
+          "address": 36426,
+          "instruction": "ADD HL,DE",
+          "tstates": 11
+        },
+        {
+          "address": 36427,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36429,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36431,
+          "instruction": "POP HL",
+          "tstates": 10
+        },
+        {
+          "address": 36432,
+          "instruction": "LD A,D",
+          "tstates": 4
+        },
+        {
+          "address": 36433,
+          "instruction": "CP high",
+          "tstates": 7
+        },
+        {
+          "address": 36435,
+          "instruction": "JP Token",
+          "tstates": 10
+        },
+        {
+          "address": 36438,
+          "instruction": "JR Yield",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36440,
+          "instruction": "LD A,E",
+          "tstates": 4
+        },
+        {
+          "address": 36441,
+          "instruction": "CP low",
+          "tstates": 7
+        },
+        {
+          "address": 36443,
+          "instruction": "JP Token",
+          "tstates": 10
+        },
+        {
+          "address": 36446,
+          "instruction": "LD A,(block_end+1)",
+          "tstates": 13
+        },
+        {
+          "address": 36449,
+          "instruction": "CP D",
+          "tstates": 4
+        },
+        {
+          "address": 36450,
+          "instruction": "JR Suspend",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36452,
+          "instruction": "LD A,(block_end)",
+          "tstates": 13
+        },
+        {
+          "address": 36455,
+          "instruction": "CP E",
+          "tstates": 4
+        },
+        {
+          "address": 36456,
+          "instruction": "JP Token",
+          "tstates": 10
+        },
+        {
+          "address": 36459,
+          "instruction": "CALL yield",
+          "tstates": 17
+        },
+        {
+          "address": 36462,
+          "instruction": "JR ReadToken",
+          "tstates": 12
+        },
+        {
+          "address": 36464,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36465,
+          "instruction": "AND 24",
+          "tstates": 7
+        },
+        {
+          "address": 36467,
+          "instruction": "JP Literals00or11",
+          "tstates": 10
+        },
+        {
+          "address": 36470,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36471,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36472,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36473,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36474,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36475,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36476,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36478,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36479,
+          "instruction": "JP Case0xx",
+          "tstates": 10
+        },
+        {
+          "address": 36482,
+          "instruction": "CP 192",
+          "tstates": 7
+        },
+        {
+          "address": 36484,
+          "instruction": "JP Case11x",
+          "tstates": 10
+        },
+        {
+          "address": 36487,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36488,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36489,
+          "instruction": "JR Offset13Nibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36491,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36492,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36493,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36494,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36495,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36496,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36497,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36498,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36499,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36500,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36502,
+          "instruction": "LD B,A",
+          "tstates": 4
+        },
+        {
+          "address": 36503,
+          "instruction": "LD A,C",
+          "tstates": 4
+        },
+        {
+          "address": 36504,
+          "instruction": "CP 160",
+          "tstates": 7
+        },
+        {
+          "address": 36506,
+          "instruction": "DEC B",
+          "tstates": 4
+        },
+        {
+          "address": 36507,
+          "instruction": "RL B",
+          "tstates": 8
+        },
+        {
+          "address": 36509,
+          "instruction": "JP ReadOffsetC",
+          "tstates": 10
+        },
+        {
+          "address": 36512,
+          "instruction": "LD B,A",
+          "tstates": 4
+        },
+        {
+          "address": 36513,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36514,
+          "instruction": "JR Offset5Nibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36516,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36517,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36518,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36519,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36520,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36521,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36522,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36523,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36524,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36525,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36527,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36528,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36529,
+          "instruction": "CP 32",
+          "tstates": 7
+        },
+        {
+          "address": 36531,
+          "instruction": "RL C",
+          "tstates": 8
+        },
+        {
+          "address": 36533,
+          "instruction": "LD B,255",
+          "tstates": 7
+        },
+        {
+          "address": 36535,
+          "instruction": "JP SaveOffset",
+          "tstates": 10
+        },
+        {
+          "address": 36538,
+          "instruction": "SCF",
+          "tstates": 4
+        },
+        {
+          "address": 36539,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36540,
+          "instruction": "JR MatchNibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36542,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36543,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36544,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36545,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36546,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36547,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36548,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36549,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36550,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36551,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36553,
+          "instruction": "SUB 231",
+          "tstates": 7
+        },
+        {
+          "address": 36555,
+          "instruction": "CP 24",
+          "tstates": 7
+        },
+        {
+          "address": 36557,
+          "instruction": "JP CopyMatch",
+          "tstates": 10
+        },
+        {
+          "address": 36560,
+          "instruction": "ADD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36561,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36562,
+          "instruction": "JP LongMatch8",
+          "tstates": 10
+        },
+        {
+          "address": 36565,
+          "instruction": "RET Z",
+          "tstates": [
+            5,
+            11
+          ]
+        },
+        {
+          "address": 36566,
+          "instruction": "LD C,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36567,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36568,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36569,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36570,
+          "instruction": "JP MatchUseC",
+          "tstates": 10
+        },
+        {
+          "address": 36573,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36574,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36575,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36577,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36579,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36581,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36583,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36585,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36587,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36589,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36591,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36593,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36595,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36597,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36599,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36601,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36603,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36605,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36607,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36609,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36611,
+          "instruction": "JP AfterLongLiterals",
+          "tstates": 10
+        },
+        {
+          "address": 36614,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36615,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 36616,
+          "instruction": "LD HL,(offset)",
+          "tstates": 16
+        },
+        {
+          "address": 36619,
+          "instruction": "LD A,H",
+          "tstates": 4
+        },
+        {
+          "address": 36620,
+          "instruction": "AND L",
+          "tstates": 4
+        },
+        {
+          "address": 36621,
+          "instruction": "INC A",
+          "tstates": 4
+        },
+        {
+          "address": 36622,
+          "instruction": "JR RepeatFallback",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36624,
+          "instruction": "ADD HL,DE",
+          "tstates": 11
+        },
+        {
+          "address": 36625,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36626,
+          "instruction": "EX DE,HL",
+          "tstates": 4
+        },
+        {
+          "address": 36627,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36628,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36629,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36630,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36631,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36632,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36633,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36634,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36635,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36636,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36637,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36638,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36639,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36640,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36641,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36642,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36643,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36644,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36645,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36646,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36647,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36648,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36649,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36650,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36651,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36652,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36653,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36654,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36655,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36656,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36657,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36658,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36659,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36660,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36661,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36662,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36663,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36664,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36665,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36666,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36667,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36668,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36669,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36670,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36671,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36672,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36673,
+          "instruction": "LD (HL),A",
+          "tstates": 7
+        },
+        {
+          "address": 36674,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36675,
+          "instruction": "LD D,H",
+          "tstates": 4
+        },
+        {
+          "address": 36676,
+          "instruction": "LD E,L",
+          "tstates": 4
+        },
+        {
+          "address": 36677,
+          "instruction": "LD A,C",
+          "tstates": 4
+        },
+        {
+          "address": 36678,
+          "instruction": "SUB 24",
+          "tstates": 7
+        },
+        {
+          "address": 36680,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36681,
+          "instruction": "JR RepeatDone",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36683,
+          "instruction": "DEC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36684,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36686,
+          "instruction": "JP AfterLongMatch",
+          "tstates": 10
+        },
+        {
+          "address": 36689,
+          "instruction": "ADD HL,DE",
+          "tstates": 11
+        },
+        {
+          "address": 36690,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36692,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36694,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36696,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36698,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36700,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36702,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36704,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36706,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36708,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36710,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36712,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36714,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36716,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36718,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36720,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36722,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36724,
+          "instruction": "JP AfterLongMatch",
+          "tstates": 10
+        },
+        {
+          "address": 31744,
+          "instruction": "CALL nn",
+          "tstates": 17
+        },
+        {
+          "address": 31747,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31750,
+          "instruction": "LD DE,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31754,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 31755,
+          "instruction": "SBC HL,DE",
+          "tstates": 15
+        },
+        {
+          "address": 31757,
+          "instruction": "RET NC",
+          "tstates": [
+            5,
+            11
+          ]
+        },
+        {
+          "address": 31758,
+          "instruction": "LD (nn),SP",
+          "tstates": 20
+        },
+        {
+          "address": 31762,
+          "instruction": "LD SP,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31766,
+          "instruction": "POP HL",
+          "tstates": 10
+        },
+        {
+          "address": 31767,
+          "instruction": "POP DE",
+          "tstates": 10
+        },
+        {
+          "address": 31768,
+          "instruction": "POP BC",
+          "tstates": 10
+        },
+        {
+          "address": 31769,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31770,
+          "instruction": "POP AF",
+          "tstates": 10
+        },
+        {
+          "address": 31771,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31772,
+          "instruction": "POP AF",
+          "tstates": 10
+        },
+        {
+          "address": 31773,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31774,
+          "instruction": "CALL nn",
+          "tstates": 17
+        },
+        {
+          "address": 31777,
+          "instruction": "LD (nn),SP",
+          "tstates": 20
+        },
+        {
+          "address": 31781,
+          "instruction": "LD SP,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31784,
+          "instruction": "LD HL,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31787,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 31788,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31791,
+          "instruction": "LD DE,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31794,
+          "instruction": "JP nn",
+          "tstates": 10
+        },
+        {
+          "address": 31797,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31800,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 31801,
+          "instruction": "SBC HL,DE",
+          "tstates": 15
+        },
+        {
+          "address": 31803,
+          "instruction": "JP NZ,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31806,
+          "instruction": "LD (nn),DE",
+          "tstates": 20
+        },
+        {
+          "address": 31810,
+          "instruction": "LD SP,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31814,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31815,
+          "instruction": "LD (nn),DE",
+          "tstates": 20
+        },
+        {
+          "address": 31819,
+          "instruction": "PUSH AF",
+          "tstates": 11
+        },
+        {
+          "address": 31820,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31821,
+          "instruction": "PUSH AF",
+          "tstates": 11
+        },
+        {
+          "address": 31822,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31823,
+          "instruction": "PUSH BC",
+          "tstates": 11
+        },
+        {
+          "address": 31824,
+          "instruction": "PUSH DE",
+          "tstates": 11
+        },
+        {
+          "address": 31825,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 31826,
+          "instruction": "LD (nn),SP",
+          "tstates": 20
+        },
+        {
+          "address": 31830,
+          "instruction": "LD SP,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31834,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31835,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31838,
+          "instruction": "LD DE,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31842,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 31843,
+          "instruction": "SBC HL,DE",
+          "tstates": 15
+        },
+        {
+          "address": 31845,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31848,
+          "instruction": "JR NZ,e",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 31850,
+          "instruction": "LD HL,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31853,
+          "instruction": "LD A,H",
+          "tstates": 4
+        },
+        {
+          "address": 31854,
+          "instruction": "LD (nn),A",
+          "tstates": 13
+        },
+        {
+          "address": 31857,
+          "instruction": "LD A,L",
+          "tstates": 4
+        },
+        {
+          "address": 31858,
+          "instruction": "LD (nn),A",
+          "tstates": 13
+        },
+        {
+          "address": 31861,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31862,
+          "instruction": "HALT",
+          "tstates": 4
+        }
+      ],
+      "upstream_commit": "15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5",
+      "long_copy": true,
+      "long_copy_minimum_literals": 18,
+      "long_copy_minimum_match": 24,
+      "long_copy_unrolled_bytes": 16,
+      "long_copy_16bit_forms": false,
+      "long_copy_extra_core_bytes": 87,
+      "long_copy_delta_tstates": {
+        "literals8": -50,
+        "literals16": 0,
+        "guarded_literals16": 0,
+        "matches8": -59,
+        "matches16": 0
+      },
+      "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+      "upstream_sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071"
+    }
+  },
+  "blocks": [
+    {
+      "case": "real-0",
+      "payload_sha256": "4c6aa0b48f6cbd0bb5560135202f1e878d9c7b4622e5d4484fa1ffeb64205c09",
+      "raw_sha256": "e7e7c41d0245a886940ab04e8dcd0086ebae8018aa2f578e960f576317c0ed91",
+      "raw_bytes": 15872,
+      "baseline_tstates": 930286,
+      "candidate_tstates": 930318,
+      "delta_tstates": 32,
+      "slower_slices": 8,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-1",
+      "payload_sha256": "300ac513e6b5f1dba1f73dbf4387e7a19136e3df2f24305c93a29a6dacadb863",
+      "raw_sha256": "66937d840ebc9dbddf406e73e156c0ad6a77e656aa3ac17b100585b8a84f9064",
+      "raw_bytes": 15872,
+      "baseline_tstates": 970379,
+      "candidate_tstates": 970643,
+      "delta_tstates": 264,
+      "slower_slices": 10,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-2",
+      "payload_sha256": "b78e623d14c6e30a6b8c52ba132fe601ba04cfdac852027333a444047cd2556a",
+      "raw_sha256": "0b85a70ab3c75e7bf75b495cf2eab8b1064ebec2a17a26baaa159820fc88d662",
+      "raw_bytes": 15872,
+      "baseline_tstates": 962691,
+      "candidate_tstates": 962933,
+      "delta_tstates": 242,
+      "slower_slices": 11,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-3",
+      "payload_sha256": "c525b4be2ea7e56a763179797ff7b53e45ddd4db902af4a114342753e5145f37",
+      "raw_sha256": "4882ad3bd31dca42d613db4ad5ed6e83d2687a2a0c8d5e2bc2ab0fb32cedec47",
+      "raw_bytes": 15872,
+      "baseline_tstates": 987543,
+      "candidate_tstates": 987457,
+      "delta_tstates": -86,
+      "slower_slices": 5,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-4",
+      "payload_sha256": "0ea101299b2bcf9849084c9c77010d535c3a442eb60f29318ef0b1ce35dea2e6",
+      "raw_sha256": "7352b71ebe75f513a02760d44386c56a9f0b4801ef034e3abe2c658d01564a3d",
+      "raw_bytes": 15872,
+      "baseline_tstates": 946820,
+      "candidate_tstates": 946924,
+      "delta_tstates": 104,
+      "slower_slices": 11,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-5",
+      "payload_sha256": "87dfcd36d071ceb27926117c849948e90c392feb6144e02af0cfe4c458ea63b6",
+      "raw_sha256": "b7027639639be924f9245104382592ed03b0af5f9a982635bab78f3ead3e73df",
+      "raw_bytes": 15872,
+      "baseline_tstates": 921570,
+      "candidate_tstates": 921720,
+      "delta_tstates": 150,
+      "slower_slices": 11,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-6",
+      "payload_sha256": "a3e64b3db5a39c6f1fa94398511b51cdb2a0bb3ce06bbad49e728dfd8340f3b0",
+      "raw_sha256": "f978ea43b1932117517716cb4dcda43e757e3c2496d25d97be657a76afa6fc8d",
+      "raw_bytes": 15872,
+      "baseline_tstates": 943866,
+      "candidate_tstates": 943924,
+      "delta_tstates": 58,
+      "slower_slices": 10,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-7",
+      "payload_sha256": "80ce24c0285e34692959125a2a6d26cf5ab3815e026672a0c244702db42d4177",
+      "raw_sha256": "5caf48aaf7987fd509037b21eef1dd0f4a5f2a98dae9ab6e95f6f1f32db2fdf4",
+      "raw_bytes": 15872,
+      "baseline_tstates": 961545,
+      "candidate_tstates": 961813,
+      "delta_tstates": 268,
+      "slower_slices": 12,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-8",
+      "payload_sha256": "0850c69a7c00c3107112b7e85e0c4fc8bf7574804a7aefb10285da048e023637",
+      "raw_sha256": "ac5ecaeec5b7ae73290554d899260283338248a6e12c1a84d870100bc8bb42ed",
+      "raw_bytes": 15872,
+      "baseline_tstates": 954074,
+      "candidate_tstates": 954412,
+      "delta_tstates": 338,
+      "slower_slices": 13,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-9",
+      "payload_sha256": "bacebc9c82108773ad5e6951a4ab1821dd53430e30ea3da405fbe879d4dbeb62",
+      "raw_sha256": "658e5d75aac29415dcee3e99017913b9c0146d0df29cf0fb8bca3e0ff1e4407f",
+      "raw_bytes": 15872,
+      "baseline_tstates": 942924,
+      "candidate_tstates": 943142,
+      "delta_tstates": 218,
+      "slower_slices": 10,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-10",
+      "payload_sha256": "69979dd39bce8cb1f13ef5eaf5cbfbbbc9606b6ed24af828acd1f99a35dd3633",
+      "raw_sha256": "d6091732f2cfb62907c821ab897274e75bba7495df49002ce16a6197262b334f",
+      "raw_bytes": 15872,
+      "baseline_tstates": 945327,
+      "candidate_tstates": 945351,
+      "delta_tstates": 24,
+      "slower_slices": 1,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-11",
+      "payload_sha256": "5764c0143ffb7d7c51b017a77f0789236001a638c258ffeedcc00190a168953a",
+      "raw_sha256": "5ba688980a0675fd758549a853f31cf0ce24f6c20bbfc701efc2478a7c2bfa7a",
+      "raw_bytes": 15872,
+      "baseline_tstates": 943413,
+      "candidate_tstates": 943581,
+      "delta_tstates": 168,
+      "slower_slices": 6,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-12",
+      "payload_sha256": "2ddadcd567d255779a0b0ede86f08c5e39eac887a88ff8da80044889e21d3b5d",
+      "raw_sha256": "09b58385b7629f7329b9295cb989cc6b9a4e4a95ffd4398b7372bd70e4c35fe3",
+      "raw_bytes": 15872,
+      "baseline_tstates": 941612,
+      "candidate_tstates": 941900,
+      "delta_tstates": 288,
+      "slower_slices": 12,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-13",
+      "payload_sha256": "7a8e4337859eda8d631b31c137ec8f3b69b6b14b83a6f221e652105bb1fafb17",
+      "raw_sha256": "896aa1eeeb6fd81ba158bd69c1ab156be68cfba79ba2b07a71d9ba491406a199",
+      "raw_bytes": 15872,
+      "baseline_tstates": 941474,
+      "candidate_tstates": 941458,
+      "delta_tstates": -16,
+      "slower_slices": 6,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-14",
+      "payload_sha256": "1fa84bebd3615daa2419c1a12229b9dd576a122b8fe75e55f099e5fafb908eb0",
+      "raw_sha256": "92ec0712a026b8eaa906be208addd96aebf04b0f27a8615d1f6b12a7dd507271",
+      "raw_bytes": 15872,
+      "baseline_tstates": 943303,
+      "candidate_tstates": 943543,
+      "delta_tstates": 240,
+      "slower_slices": 7,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-15",
+      "payload_sha256": "31ae5c221d03eb5e261c3e34484105ac1258f6335799fec063a4c30460945c76",
+      "raw_sha256": "cfcda933fd198a6a0308ada7a2e97d6ea7cc74e60aa463cb2a5b2c20cd610124",
+      "raw_bytes": 15872,
+      "baseline_tstates": 913801,
+      "candidate_tstates": 914329,
+      "delta_tstates": 528,
+      "slower_slices": 19,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-16",
+      "payload_sha256": "b279531a05ba3873fdd4366b75849334827c2c6c6e68765691023a8c7b0ea280",
+      "raw_sha256": "b924e89e0a301d96eedfe1cf51ef9a99d1993ae55d5c4eb2c3ca76f8716a1c78",
+      "raw_bytes": 15872,
+      "baseline_tstates": 955865,
+      "candidate_tstates": 955915,
+      "delta_tstates": 50,
+      "slower_slices": 4,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-17",
+      "payload_sha256": "da27a804f505379a14501765bb95ebec35093fed49f200a712e26b164c812219",
+      "raw_sha256": "5c59f1a93c2b3b04eff7f5a0854d4a251d750448e22a8cdfda1c8dd6a8425292",
+      "raw_bytes": 15872,
+      "baseline_tstates": 956859,
+      "candidate_tstates": 957173,
+      "delta_tstates": 314,
+      "slower_slices": 13,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-18",
+      "payload_sha256": "103989cf36ec070d0e2eff5dca7a7b00494e92bfed2253982892021dbdfc42d4",
+      "raw_sha256": "50f1bde57821d47a171dc2803a4abdf04a65d75616872a59413dd71d32dddd99",
+      "raw_bytes": 15872,
+      "baseline_tstates": 966889,
+      "candidate_tstates": 967157,
+      "delta_tstates": 268,
+      "slower_slices": 13,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-19",
+      "payload_sha256": "beb0b5ae49d257875da05a85bd96d515bb63385114dc12dcb9a657f302bba883",
+      "raw_sha256": "5285284a004272c1c48cf3950cc561eff4f3a08c0809dead3a2e18c98102b2e9",
+      "raw_bytes": 15872,
+      "baseline_tstates": 954302,
+      "candidate_tstates": 954664,
+      "delta_tstates": 362,
+      "slower_slices": 14,
+      "exact": true,
+      "interrupts": 9
+    },
+    {
+      "case": "real-20",
+      "payload_sha256": "1214ce98294834a503811ecc87d65bf5b7a28be3b4741523a617d402f392f597",
+      "raw_sha256": "e774518fb18edaf276dc75278dacdb11c09385a7cdeb239fa3c26a477800defc",
+      "raw_bytes": 6500,
+      "baseline_tstates": 403437,
+      "candidate_tstates": 403439,
+      "delta_tstates": 2,
+      "slower_slices": 2,
+      "exact": true,
+      "interrupts": 4
+    },
+    {
+      "case": "literal-1",
+      "payload_sha256": "00718ff37c6a3c13a5c8cdf69b7caa4fa16d2bed4d62429f16999f70bea82705",
+      "raw_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "raw_bytes": 1,
+      "baseline_tstates": 643,
+      "candidate_tstates": 643,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-2",
+      "payload_sha256": "7a58cde13b50fbe32287c03a5fedcc8629fbb2d447780d17dbf136fa499c13e4",
+      "raw_sha256": "b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2",
+      "raw_bytes": 2,
+      "baseline_tstates": 664,
+      "candidate_tstates": 664,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-3",
+      "payload_sha256": "568ec219daa7313a6929b59ca1cae2943b227e43dc1965ee9ed43f0e9affdbaa",
+      "raw_sha256": "ae4b3280e56e2faf83f414a6e3dabe9d5fbe18976544c05fed121accb85b53fc",
+      "raw_bytes": 3,
+      "baseline_tstates": 728,
+      "candidate_tstates": 728,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-17",
+      "payload_sha256": "51e40fc47182968af70ff68e8c03f5e5b4fd844db78260aad67cb658202c887b",
+      "raw_sha256": "3e5718fea51a8f3f5baca61c77afab473c1810f8b9db330273b4011ce92c787e",
+      "raw_bytes": 17,
+      "baseline_tstates": 1022,
+      "candidate_tstates": 1022,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-18",
+      "payload_sha256": "05dc117a1f242e737b05f3dd7b7a4a98706f08f889b095186775d438758e90a8",
+      "raw_sha256": "7a096cc12702bcfa647ee070d4f3ba4c2d1d715b484b55b825d0edba6545803b",
+      "raw_bytes": 18,
+      "baseline_tstates": 1023,
+      "candidate_tstates": 1023,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-237",
+      "payload_sha256": "ff21a53e83e5e06fe56f58553f2432eb8ad618c81a2f58259d481b766b5b7ca0",
+      "raw_sha256": "69e640e22c3ddd1e1d8391aa4db54aa6ac8aa60ff687a5986f1bea86c49651ab",
+      "raw_bytes": 237,
+      "baseline_tstates": 5622,
+      "candidate_tstates": 5622,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-238",
+      "payload_sha256": "e32fcce1e2436276aea8edc998c6cbf9b3a517ac20fa3dd60076051f752749e7",
+      "raw_sha256": "6f58ce599facae90d94a287e9bf8cb06eaf17da2c293700eeb6bc087fec676b1",
+      "raw_bytes": 238,
+      "baseline_tstates": 5643,
+      "candidate_tstates": 5643,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-239",
+      "payload_sha256": "9ad08bd0690297005647eb98ea61f722c0d5ce9c539b264d26f5ac3abd99ee1d",
+      "raw_sha256": "5e1c10284710f5c2db48f88de3d051579643a1ed042afa846a7844895351a77b",
+      "raw_bytes": 239,
+      "baseline_tstates": 5664,
+      "candidate_tstates": 5664,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-255",
+      "payload_sha256": "eb5578372e87fae2310aec12ea80c38aa4902d8413ed644a759b70db50c2fd72",
+      "raw_sha256": "857df204175f077a9986709897f00ee0bcc0449585248e4b42498337e9329999",
+      "raw_bytes": 255,
+      "baseline_tstates": 6000,
+      "candidate_tstates": 6000,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-256",
+      "payload_sha256": "2128dbdc925d23a3400d3f58c3711a834381e194d9e08a1ef5c51019ba11a3fe",
+      "raw_sha256": "5bc31b283cef0072274e97d74916552954c935794536cab632641e5ea071379d",
+      "raw_bytes": 256,
+      "baseline_tstates": 6104,
+      "candidate_tstates": 6104,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-257",
+      "payload_sha256": "e774cdddd0242ee3f24483fc45f28e6ded7eb7ee776e9837c24aa231a3e3e460",
+      "raw_sha256": "a2c6cad2ffa699b14538231fef914f45d30440389e6f8d79091efba836165a2b",
+      "raw_bytes": 257,
+      "baseline_tstates": 6335,
+      "candidate_tstates": 6335,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-511",
+      "payload_sha256": "3d6204ebe98a779bb657e23ec83966f412c9331d79232f37b43d08168c812310",
+      "raw_sha256": "96781741ba50e7280e4d5eab7cf2cfed6b0eeb98d27d235611e689322b6b6d0f",
+      "raw_bytes": 511,
+      "baseline_tstates": 11669,
+      "candidate_tstates": 11669,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-800",
+      "payload_sha256": "d96d0ae2c1436b32d9161f7c40fc289cec7344b6250bee1cabe55530d9e12762",
+      "raw_sha256": "aa93d03f36b1ae08887c3af467bdf524b430e67599bf53e270edc115c73c0b0e",
+      "raw_bytes": 800,
+      "baseline_tstates": 18158,
+      "candidate_tstates": 18158,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-4096",
+      "payload_sha256": "10d3887921f181acf4bedbb5b22f4b419688459fa393e9cfc0d80d67514b907d",
+      "raw_sha256": "d67c656e01756650d77717b0839985a056ec28ffe174601d690fc407a2ceffca",
+      "raw_bytes": 4096,
+      "baseline_tstates": 89894,
+      "candidate_tstates": 89894,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "literal-15872",
+      "payload_sha256": "c82534754471a52a7e68e6b2444b68f9dbc0d0d095e1108adf867fec22a4a2e3",
+      "raw_sha256": "884fba662bdfee42f3d6cd82bb504f49151b65158fda671b5d03684821e874b9",
+      "raw_bytes": 15872,
+      "baseline_tstates": 346850,
+      "candidate_tstates": 346850,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 3
+    },
+    {
+      "case": "match-1",
+      "payload_sha256": "dba481a5fb080956277d101a4e20019ca9b4d59bbed0bf31675dce5ac84e71d8",
+      "raw_sha256": "4cab2551b407bf533455a5e64771f1895f13ca23db7539d94ec34716efaf9e77",
+      "raw_bytes": 15872,
+      "baseline_tstates": 347204,
+      "candidate_tstates": 347204,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 3
+    },
+    {
+      "case": "match-2",
+      "payload_sha256": "f6957e907414f0937fbde9af3fdc2ec6ffff6523fc1deca8a573ca9999d9f369",
+      "raw_sha256": "8f0c0a18f8075bc4220335acacf343987f98995731a694c09232de26b18e368a",
+      "raw_bytes": 15872,
+      "baseline_tstates": 347204,
+      "candidate_tstates": 347204,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 3
+    },
+    {
+      "case": "match-32",
+      "payload_sha256": "531c0aeec9c3901235ba184eadc0dec3b93ddfd4082c6c3077603c0424378bc4",
+      "raw_sha256": "1941082acc511833175942fa56ff14f1ca961311644a9ef9116548f83ff62146",
+      "raw_bytes": 15872,
+      "baseline_tstates": 347230,
+      "candidate_tstates": 347230,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 3
+    },
+    {
+      "case": "match-33",
+      "payload_sha256": "2f9f26be52fcadb5e703d81fcef2b4377767c9e63bcfb59da9b382e5533071ee",
+      "raw_sha256": "41a809dcc8de9ce907e54f3cc970555de6e33e8fe44e4c7d33c0f13b98dd43cd",
+      "raw_bytes": 15872,
+      "baseline_tstates": 347190,
+      "candidate_tstates": 347190,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 3
+    },
+    {
+      "case": "match-511",
+      "payload_sha256": "45f803b4443d953829f6ad13c714a271c72ea4eec4a3a81b3a501e448da23477",
+      "raw_sha256": "81d9e3d3912a462b532be69443cb658f9a1bfcffdc7a483d473a036ceb7d1370",
+      "raw_bytes": 15872,
+      "baseline_tstates": 347270,
+      "candidate_tstates": 347270,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 3
+    },
+    {
+      "case": "match-512",
+      "payload_sha256": "160d47f40b7fa8d1037264f02f071d64c069d7314919d2bf98f92f6cfe2ca487",
+      "raw_sha256": "caf173cf95a1135d697b957269630fb080da9962d09d36616f1923007644d322",
+      "raw_bytes": 15872,
+      "baseline_tstates": 347270,
+      "candidate_tstates": 347270,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 3
+    },
+    {
+      "case": "match-513",
+      "payload_sha256": "5c8537b3fd80236559d283c9be54432391ca66f09a28a106e03412f42f35601e",
+      "raw_sha256": "dffcd4cc4ae8c7224f81637a69ab6253f62aa16603241b8a5ecf9850ba285c52",
+      "raw_bytes": 15872,
+      "baseline_tstates": 347318,
+      "candidate_tstates": 347318,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 3
+    },
+    {
+      "case": "match-8704",
+      "payload_sha256": "fc5a59393a275a704eee4abd01a644ab61eed28995bb637d08e81c5547dc321e",
+      "raw_sha256": "ae04333088afc3003393a4b3fe651ef528d60d809dad1b69929846bb2e17b954",
+      "raw_bytes": 15872,
+      "baseline_tstates": 347318,
+      "candidate_tstates": 347318,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 3
+    },
+    {
+      "case": "match-8705",
+      "payload_sha256": "1aeec7c4cb5b9e52297e2f85d54f599c5f7e908072e9bbb8288c695c1a1e91de",
+      "raw_sha256": "ac2b346434b9e158f126b4b3ae7396a0f107254b6a6e54b021977fe10639d552",
+      "raw_bytes": 15872,
+      "baseline_tstates": 347293,
+      "candidate_tstates": 347293,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 3
+    },
+    {
+      "case": "random-0",
+      "payload_sha256": "5a0dc8cfba73976c3f4d7f0b48bbe836467f1e98cbec52e1d407e7cb71ab1bae",
+      "raw_sha256": "7fb1ce8520ab18ab3da928c31b4d2047519ef71e8da02114b5890ac15f42d6af",
+      "raw_bytes": 5769,
+      "baseline_tstates": 141227,
+      "candidate_tstates": 141419,
+      "delta_tstates": 192,
+      "slower_slices": 6,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-1",
+      "payload_sha256": "ca710544d4346578bcc4431a25cca9b2cc7e4f01d122a02ac34b7e88d2a647c8",
+      "raw_sha256": "d97f9a81692e550bb0dbc582b9025e502f49cf0c9afb72dbc5f37252d3288542",
+      "raw_bytes": 3772,
+      "baseline_tstates": 95002,
+      "candidate_tstates": 95098,
+      "delta_tstates": 96,
+      "slower_slices": 4,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-2",
+      "payload_sha256": "b1d42b8b3fbb464ba1c6b7815d481e00419f4b29dab1897955e73643d439f5e9",
+      "raw_sha256": "95b46c432efdb99315ee1b8c18ab4173ef83a983961f3dddf3d1ccf7b0f3824b",
+      "raw_bytes": 3834,
+      "baseline_tstates": 96927,
+      "candidate_tstates": 97191,
+      "delta_tstates": 264,
+      "slower_slices": 7,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-3",
+      "payload_sha256": "79cfcf7b65fa7d9823de3c9ece61edb0e46fa7aaae9590b63d7ed35ba4e0326a",
+      "raw_sha256": "ba51817de89fb32a9706986401eacee165a8805f8b37d65f312749171ce47afb",
+      "raw_bytes": 4818,
+      "baseline_tstates": 119882,
+      "candidate_tstates": 120146,
+      "delta_tstates": 264,
+      "slower_slices": 8,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-4",
+      "payload_sha256": "9644b5c3173a9ec43b234945c0b1eade80a709cc92fc54811a29d9b7454fdff0",
+      "raw_sha256": "a3ad898282dc0cce68ca7bebd58cafc77454d12496df413387805282012d7499",
+      "raw_bytes": 2813,
+      "baseline_tstates": 72912,
+      "candidate_tstates": 73056,
+      "delta_tstates": 144,
+      "slower_slices": 5,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-5",
+      "payload_sha256": "6887448e2c82a3291657e415dca753a845e02e53095ab5ae70d4c249cb683ee6",
+      "raw_sha256": "93307ce633620308ab94b4a5eccb9ed870a6f63596bc3a4513164ade54b2ca57",
+      "raw_bytes": 3981,
+      "baseline_tstates": 101323,
+      "candidate_tstates": 101443,
+      "delta_tstates": 120,
+      "slower_slices": 3,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-6",
+      "payload_sha256": "905b45991f18cbfcdd7055f9feb0b61687a5f6c0252a15fca294f2987ad72f78",
+      "raw_sha256": "3823454eccfa306dfde7d606e3bb854e34c243f9c7a7c72bb2b5846dece83902",
+      "raw_bytes": 3349,
+      "baseline_tstates": 85925,
+      "candidate_tstates": 86189,
+      "delta_tstates": 264,
+      "slower_slices": 9,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-7",
+      "payload_sha256": "a995b8a078eaf0c529f9fba6052ea3940982facf9ceb7dff981a78ded9e17496",
+      "raw_sha256": "eefa29d7c005a984e6acf764cc966c2e3ecec520cfb35089fc2dec44251433ca",
+      "raw_bytes": 5513,
+      "baseline_tstates": 135652,
+      "candidate_tstates": 135820,
+      "delta_tstates": 168,
+      "slower_slices": 6,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-8",
+      "payload_sha256": "0b1f354e11a98288da3b6e1d9a2c368e6f3f135e04b67100bc7a293ee51a32bb",
+      "raw_sha256": "5bdbbbfa23d62afb0b9c38f5366decf8d7e6071047a7afa77a3861cd0bdcddd4",
+      "raw_bytes": 3982,
+      "baseline_tstates": 101000,
+      "candidate_tstates": 101168,
+      "delta_tstates": 168,
+      "slower_slices": 6,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-9",
+      "payload_sha256": "e05d84c8cd7e3f613246027598078a3a50f83f8b74578aa29f89578e6e3135f5",
+      "raw_sha256": "478dfb64af2c720ef5ccc7d2f708610bbe746fbfc56605ab5e2294596ffd0927",
+      "raw_bytes": 3061,
+      "baseline_tstates": 78165,
+      "candidate_tstates": 78309,
+      "delta_tstates": 144,
+      "slower_slices": 5,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-10",
+      "payload_sha256": "5546e22f37ce0467071ecb1e78b90da171c8d516aef0124dd1701f3125fae5da",
+      "raw_sha256": "53b7c980f44cb60896c29d4c338ad22200f2c41c04df60a1e9d41d1ca1505220",
+      "raw_bytes": 3086,
+      "baseline_tstates": 79936,
+      "candidate_tstates": 80224,
+      "delta_tstates": 288,
+      "slower_slices": 9,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-11",
+      "payload_sha256": "c32ccc28301cbab96709e4d504b66e4f83243cfd50abaf0ec80f393b6e9b77fe",
+      "raw_sha256": "419be2a6a0440697e390c2ff8218688850a1490b2ccb634ea12987525259edc3",
+      "raw_bytes": 3721,
+      "baseline_tstates": 93939,
+      "candidate_tstates": 94059,
+      "delta_tstates": 120,
+      "slower_slices": 5,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-12",
+      "payload_sha256": "3bdb7150ce25854ed910b83b836933ae46145490c1262cc11f0c9b73402c2d96",
+      "raw_sha256": "8dc9002827953e1440d9aaa96b90ce26775ed5d1b1f672ca01a4409c36022471",
+      "raw_bytes": 4193,
+      "baseline_tstates": 104784,
+      "candidate_tstates": 104952,
+      "delta_tstates": 168,
+      "slower_slices": 6,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-13",
+      "payload_sha256": "bcce919d86457a5dffccbd4e951973320d58901b6b27ef0f41f933eeda523cb5",
+      "raw_sha256": "23a489f79f3be6e1c044abc3536ac84aaec79acb245e50dce67514989331b75d",
+      "raw_bytes": 3548,
+      "baseline_tstates": 90144,
+      "candidate_tstates": 90312,
+      "delta_tstates": 168,
+      "slower_slices": 4,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-14",
+      "payload_sha256": "654dcd30faf9f8c406520bc2b26a3d77568e11871277f8ed3100af2b58516eaa",
+      "raw_sha256": "0d0209f28e0e2602888644f3d3b2c6a70c9259cf809a60547b1fee9b6a85da31",
+      "raw_bytes": 3316,
+      "baseline_tstates": 84466,
+      "candidate_tstates": 84682,
+      "delta_tstates": 216,
+      "slower_slices": 6,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-15",
+      "payload_sha256": "285ffd76510fbb9e2f9f1dad5ce5e3340975e529ba1762b5fcb4a4d1d13f35a9",
+      "raw_sha256": "1da8446e9a7b8a2b7f25dfc92e9ae5e2c9a59c29e40de660472f1491e23e3256",
+      "raw_bytes": 3513,
+      "baseline_tstates": 89635,
+      "candidate_tstates": 89803,
+      "delta_tstates": 168,
+      "slower_slices": 7,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-16",
+      "payload_sha256": "9bc6c85b829f93fac25e895be151ee8e127b66c5f53d5dc709bb5ec1907df132",
+      "raw_sha256": "88b47a977ef6597e885f5a1dfb13d736f34829607ec32fbc7d94a24a0706915b",
+      "raw_bytes": 4016,
+      "baseline_tstates": 101084,
+      "candidate_tstates": 101276,
+      "delta_tstates": 192,
+      "slower_slices": 7,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-17",
+      "payload_sha256": "457ac7f427c95e59ebab132c3d1227d9580dfe8bf52f63a57e928c402e1b4361",
+      "raw_sha256": "5b8656d39901bb809d99736ef248ba555f52cf8f27b8b3144f550277ad489b1d",
+      "raw_bytes": 4392,
+      "baseline_tstates": 109411,
+      "candidate_tstates": 109675,
+      "delta_tstates": 264,
+      "slower_slices": 9,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-18",
+      "payload_sha256": "6a7a256e12daa1bb43f2707032e70660e69c863dc68a0616cdc086a9a4d07578",
+      "raw_sha256": "d283cf8448df0b318577d21051a83e430d73d95254a5c6e5e9870f600e9f965d",
+      "raw_bytes": 4559,
+      "baseline_tstates": 113067,
+      "candidate_tstates": 113235,
+      "delta_tstates": 168,
+      "slower_slices": 7,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-19",
+      "payload_sha256": "9bd969add2ea61d6eb38c5b15478429552bb87304286cae5b8dc03c22a819292",
+      "raw_sha256": "e3187826485774f9da52e024181bbaf0b4cfa58d7c6bde6d5ff8f27f9b81792b",
+      "raw_bytes": 5989,
+      "baseline_tstates": 146027,
+      "candidate_tstates": 146291,
+      "delta_tstates": 264,
+      "slower_slices": 10,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-20",
+      "payload_sha256": "f02f75779a58ae21c079a99cd87e52a5edf5510278fa96b05f6d68ee84969ce8",
+      "raw_sha256": "f1108650f07fd43d4f9f2e8cb917996487d822c0430a439328df9b32db0f6f31",
+      "raw_bytes": 4715,
+      "baseline_tstates": 116790,
+      "candidate_tstates": 116982,
+      "delta_tstates": 192,
+      "slower_slices": 8,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-21",
+      "payload_sha256": "be2989ddee93aa45be8ea3ffd25a9dc6acd25008183e1c078bb56233108cc399",
+      "raw_sha256": "f5350380473f335ae9c6bd73618e46c95eead1b6320d7ac8441fbf8238520b25",
+      "raw_bytes": 2769,
+      "baseline_tstates": 72004,
+      "candidate_tstates": 72100,
+      "delta_tstates": 96,
+      "slower_slices": 3,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-22",
+      "payload_sha256": "d42050401ee8bc3cea7a0af549381b35c45d320f309952bdbb1606e11dce6423",
+      "raw_sha256": "32af6c1e88b847f833ac93ea6972df87a6d0440910fb5729a8803602e06359ff",
+      "raw_bytes": 4703,
+      "baseline_tstates": 116469,
+      "candidate_tstates": 116733,
+      "delta_tstates": 264,
+      "slower_slices": 10,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-23",
+      "payload_sha256": "67e96c6ddb2aaf5c6b5947a3d562046209a40895fd3b1065f60ccb633f686060",
+      "raw_sha256": "5fdbb5b95d73d42dcefa95076ccf19e602f89695779d6269a08fbb1946ddfad3",
+      "raw_bytes": 4969,
+      "baseline_tstates": 123080,
+      "candidate_tstates": 123248,
+      "delta_tstates": 168,
+      "slower_slices": 7,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-24",
+      "payload_sha256": "0f00b84259b68369b9cb1ac886f748c1b6d3495ecda0560309de51bb8d692997",
+      "raw_sha256": "ff651d5caddbae45ab95e28b34a709d33f66e7ceaac96bc3335b4e9ebd036aa9",
+      "raw_bytes": 4494,
+      "baseline_tstates": 112246,
+      "candidate_tstates": 112368,
+      "delta_tstates": 122,
+      "slower_slices": 7,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-25",
+      "payload_sha256": "5b2813a7cdf3c00a16d64151de76482f65524350c0872a02c636a3a8406f308f",
+      "raw_sha256": "dc4c2c0cf7402b501b77bd665bce1fb968b148385cd94fb75b77cd9471185772",
+      "raw_bytes": 2857,
+      "baseline_tstates": 74418,
+      "candidate_tstates": 74634,
+      "delta_tstates": 216,
+      "slower_slices": 6,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-26",
+      "payload_sha256": "9c26523e52a295ac645c0cca82d2bc38e65d9909e6e72be730f2d94bcd4d3b70",
+      "raw_sha256": "dfcd0388db22334f75d8d06b8be883c1bbb629bab80a6f8cf580a9422512240c",
+      "raw_bytes": 3238,
+      "baseline_tstates": 83114,
+      "candidate_tstates": 83258,
+      "delta_tstates": 144,
+      "slower_slices": 4,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-27",
+      "payload_sha256": "532eca9310f9edba3513676024097e7f34375dafe36ebf6aa66bd86b217bb085",
+      "raw_sha256": "54538bc70761655999b9ea062478d3cfb5b43face1ee86dfaff70a49666bffe1",
+      "raw_bytes": 4347,
+      "baseline_tstates": 108298,
+      "candidate_tstates": 108562,
+      "delta_tstates": 264,
+      "slower_slices": 8,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "random-28",
+      "payload_sha256": "a30929e4ef29414b84502f36426dbd259c961c58a2a2451025d84f777b6802a0",
+      "raw_sha256": "e34283fbdd0bffaf1f68cd254e48a7bdf2c34400e8eae3331d059c488b4fa54f",
+      "raw_bytes": 3601,
+      "baseline_tstates": 92241,
+      "candidate_tstates": 92385,
+      "delta_tstates": 144,
+      "slower_slices": 5,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-29",
+      "payload_sha256": "5942417d6925f8f5c36041893373a2ac1f07fec13d0d5005460620035037307b",
+      "raw_sha256": "876625579da2642ab6e67e7cd1d5b8cbf1813ab18ec101140c11c2dc42f04fd7",
+      "raw_bytes": 3907,
+      "baseline_tstates": 99008,
+      "candidate_tstates": 99152,
+      "delta_tstates": 144,
+      "slower_slices": 5,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-30",
+      "payload_sha256": "f3451e70f354c080f30bdf44b4229d0c73054bd88bffd9f86d5ba4df0f145329",
+      "raw_sha256": "b35db691bd80aec1440e9bb7e8b472be71fdb7a985ff1c6d87ec2a384f5099a2",
+      "raw_bytes": 3404,
+      "baseline_tstates": 86339,
+      "candidate_tstates": 86459,
+      "delta_tstates": 120,
+      "slower_slices": 5,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "random-31",
+      "payload_sha256": "9e40a5c265835259f30e01b0b2784bf6eec95ff0bbbd05733b0f802effe99b86",
+      "raw_sha256": "e7019f95da91541ab2f1f7615bc999b22d509dad69afe6ce9c68b5b0b97ca1d4",
+      "raw_bytes": 4927,
+      "baseline_tstates": 121757,
+      "candidate_tstates": 121901,
+      "delta_tstates": 144,
+      "slower_slices": 5,
+      "exact": true,
+      "interrupts": 1
+    },
+    {
+      "case": "word-literal-3",
+      "payload_sha256": "eb7dc8896fa798163f41f6cffea3e990c8dbb62960cac7552c603df787f7728c",
+      "raw_sha256": "ae4b3280e56e2faf83f414a6e3dabe9d5fbe18976544c05fed121accb85b53fc",
+      "raw_bytes": 3,
+      "baseline_tstates": 828,
+      "candidate_tstates": 828,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-literal-4",
+      "payload_sha256": "cb9db14567c9865b2f3ac60e546da4b99fe55c7acdfd8aba4a060fc296d2730b",
+      "raw_sha256": "054edec1d0211f624fed0cbca9d4f9400b0e491c43742af2c5b0abebf0c990d8",
+      "raw_bytes": 4,
+      "baseline_tstates": 849,
+      "candidate_tstates": 849,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-literal-15",
+      "payload_sha256": "c70b28372c18f2896cb891ec2cf9c8b73d6dab5cc1c645320ab5367191723add",
+      "raw_sha256": "7071fc3188fde7e7e500d4768f1784bede1a22e991648dcab9dc3219acff1d4c",
+      "raw_bytes": 15,
+      "baseline_tstates": 1080,
+      "candidate_tstates": 1080,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-literal-16",
+      "payload_sha256": "6d3fe60c92d30bc79d2d49a13ae3645e6dae950604e37e0be9685d3f1952c01f",
+      "raw_sha256": "be45cb2605bf36bebde684841a28f0fd43c69850a3dce5fedba69928ee3a8991",
+      "raw_bytes": 16,
+      "baseline_tstates": 1101,
+      "candidate_tstates": 1101,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-literal-17",
+      "payload_sha256": "4ebc6a1cf9dca8055c4d9c78045ce6d25a21a78435a70d409aa06f2ea8c25218",
+      "raw_sha256": "3e5718fea51a8f3f5baca61c77afab473c1810f8b9db330273b4011ce92c787e",
+      "raw_bytes": 17,
+      "baseline_tstates": 1122,
+      "candidate_tstates": 1122,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-literal-18",
+      "payload_sha256": "c2153fca6d2f2b2d7685c1796b9c62f93c995a16c078250c8082cb9bfa49acbf",
+      "raw_sha256": "7a096cc12702bcfa647ee070d4f3ba4c2d1d715b484b55b825d0edba6545803b",
+      "raw_bytes": 18,
+      "baseline_tstates": 1143,
+      "candidate_tstates": 1143,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-literal-24",
+      "payload_sha256": "aa7105f5a3e42dcf4d1b67dfdbb2d87d37f23346e5475c4d745b9b852b419e27",
+      "raw_sha256": "1d64add2a6388367c9bc2d1f1b384b069a6ef382cdaaa89771dd103e28613a25",
+      "raw_bytes": 24,
+      "baseline_tstates": 1269,
+      "candidate_tstates": 1269,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-literal-255",
+      "payload_sha256": "a36dc4abdbfe88043017b28916e3028ccc0d8ff65cba34b2a82180d2d6ce6e3e",
+      "raw_sha256": "857df204175f077a9986709897f00ee0bcc0449585248e4b42498337e9329999",
+      "raw_bytes": 255,
+      "baseline_tstates": 6120,
+      "candidate_tstates": 6120,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-match-2",
+      "payload_sha256": "144505c4d78aac95d7b59ba2b270c41da6812cfd4efda48b38749eadc6f02b35",
+      "raw_sha256": "cb1ad2119d8fafb69566510ee712661f9f14b83385006ef92aec47f523a38358",
+      "raw_bytes": 3,
+      "baseline_tstates": 1119,
+      "candidate_tstates": 1119,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-match-3",
+      "payload_sha256": "c87165708a1045ffb5e3ff03945af8d3d618290de14ac8be6cb8532148ce7f24",
+      "raw_sha256": "63c1dd951ffedf6f7fd968ad4efa39b8ed584f162f46e715114ee184f8de9201",
+      "raw_bytes": 4,
+      "baseline_tstates": 1140,
+      "candidate_tstates": 1140,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-match-8",
+      "payload_sha256": "977c21c5d9d31d3b4398fe494a628eb7d6b4915854e1b535ffcfa50e1e9ea711",
+      "raw_sha256": "e5f9176ecd90317cf2d4673926c9db65475b0b58e7f468586ddaef280a98cdbd",
+      "raw_bytes": 9,
+      "baseline_tstates": 1245,
+      "candidate_tstates": 1245,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-match-9",
+      "payload_sha256": "97c8f364792cb2eccfe70dd9805ade9d472e7ec40a24654b2d6927d4db939261",
+      "raw_sha256": "1d65bf29403e4fb1767522a107c827b8884d16640cf0e3b18c4c1dd107e0d49d",
+      "raw_bytes": 10,
+      "baseline_tstates": 1266,
+      "candidate_tstates": 1266,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-match-15",
+      "payload_sha256": "2bc6f441592629de7332059229fc3cb62580ba39e2904e940c5b88f15e619621",
+      "raw_sha256": "991204fba2b6216d476282d375ab88d20e6108d109aecded97ef424ddd114706",
+      "raw_bytes": 16,
+      "baseline_tstates": 1392,
+      "candidate_tstates": 1392,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-match-16",
+      "payload_sha256": "5743bb49968a1de0e80bbc7bca4f0a623086ae8d6af4a5d061ddd6c923d2171f",
+      "raw_sha256": "444074d5328d52b4e0036d37b1b6ea0a9fe3b0c96872d1157fbf01b6fdb2ce8d",
+      "raw_bytes": 17,
+      "baseline_tstates": 1413,
+      "candidate_tstates": 1413,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-match-17",
+      "payload_sha256": "f39c66d83a0c2d22badf792a583515f7c284493ef130aee531ab234a83e14a18",
+      "raw_sha256": "d273c6b6de3f5260e123348e0feb270126fa06e164bb82818df7c71b30ab0ef5",
+      "raw_bytes": 18,
+      "baseline_tstates": 1434,
+      "candidate_tstates": 1434,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-match-23",
+      "payload_sha256": "5bcfc8e2bce3f74f2cf2894876ac50b3246feca23f20b277e23ae4293fab55f5",
+      "raw_sha256": "1bda9f0aed80857d43c9329457f28b1ca29f736a0c539901e1ba16a909eb07b4",
+      "raw_bytes": 24,
+      "baseline_tstates": 1560,
+      "candidate_tstates": 1560,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-match-24",
+      "payload_sha256": "c005577427339e35cc40afff54dfd9a3e16e102fc31f55266deb03778a17e26f",
+      "raw_sha256": "6724431fc312ba42c98b38b8595a49749419526aa89722c77a85c6c813dfdb5a",
+      "raw_bytes": 25,
+      "baseline_tstates": 1581,
+      "candidate_tstates": 1581,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    },
+    {
+      "case": "word-match-255",
+      "payload_sha256": "728c49a2b53350c743248c188de71c6e35d3e3c3dcafa5f8ea58c058fd6cc43f",
+      "raw_sha256": "e075f2f51cad23d0537186cfcd50f911ea954f9c2e32a437f45327f1b7899bbb",
+      "raw_bytes": 256,
+      "baseline_tstates": 6432,
+      "candidate_tstates": 6432,
+      "delta_tstates": 0,
+      "slower_slices": 0,
+      "exact": true,
+      "interrupts": 0
+    }
+  ]
+}
