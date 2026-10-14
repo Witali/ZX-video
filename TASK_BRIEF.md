@@ -33,6 +33,47 @@ the evidence/manifest, English documentation and focused commits. Do not
 claim physical-hardware proof from emulator traces or compensated Pentagon
 quality on a different clone without its own measurements.
 
+### Current continuation checkpoint
+
+The complete song now scores20.250315887 dB on its own full512/1024 Fuse
+clocks, gain23.335544175 against the strict original-clock baseline. Both
+clocks exactly retain all11,526,111 old relative pulse timestamps (delta0 T),
+with no full-RAM refills or new bank pause. Artifact acceptance remains false.
+
+C implementations and retained Python byte parity are committed: waveform
+`a60932d9`, PCM baseline `466f6e4d`. All nine whole sources match original
+Python bytes. Automatic CLI `convert_snr_audio.py` is committed in`f5dd5109`:
+the whole prepared song converts in72.7946 s externally, including all normal
+steps, using populated compiler caches. Its entire TRD equals the completely
+played`ccab8724...` image. `--encoder python` keeps the original reference;
+Python still prepares inputs/models while C executes both encoding loops.
+Root main`226388fb...` remains unchanged. Full evidence is under
+`evidence/automatic-conversion` and `evidence/native-*-encoder`.
+
+Optional compact loader `08eaa7c1` enables midpoint tables: probe+bounce in
+startup808A..82C1, workerBC40..BF8F (maximumBFBC). Six tests, complete native
+old-song runs on all four profiles and maximum-disk cold loading pass. Default
+disk AND PLAYER metadata remain identical. No new midpoint Fuse quality claim.
+
+New frozen midpoint+C joint controls finish all nine sources but regress on
+four non-silent sources, including song20.122406406 dB. Silence falls to
+0.011473 RMS but produces an approximately1996-Hz line. Tiny decoded values
+[-1,0,0,-1] cross the floor64-bin boundary31/32, causing a full1/64 duty step.
+The separate18-case centered lookup control confirms the mechanism: offset
+512 maps zero bin[-512,511], implements exactly as256-byte IXH LUT
+`min(63,(IXH+2)//4)` and needs no new live instructions. Midpoint silence then
+falls to0.00369117 with the1996-Hz line removed; all eight non-silent frozen
+payloads regress in both models, so lookup replacement alone is rejected.
+See `evidence/midpoint-control` and `evidence/centered-quantizer`.
+
+The next mechanism is a matched source-independent centered lookup AND C
+search, as an explicit optional model field; preserve default0 disk/metadata,
+workset/API and Python reference compatibility. Verify exact new reference
+bytes, all nine full-source artifact controls and selected full actual TRDs.
+Do not silently promote the midpoint/centered frozen-payload controls. Keep
+the complete original scope and artifact/clock/20-dB gates; language and speed
+milestones alone do not complete the active goal.
+
 ## Source-independent SNR research: diagnostic/prototype milestone complete (2026-10-14)
 
 The user explicitly requests a separate Git worktree and SNR research there.

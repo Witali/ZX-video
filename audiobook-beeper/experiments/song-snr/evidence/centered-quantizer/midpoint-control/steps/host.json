@@ -1,0 +1,209 @@
+{
+  "stage": "midpoint-control",
+  "source": "steps",
+  "settings": {
+    "pcm16_offset": 512,
+    "pcm_bins": 64,
+    "minimum_bin": 0,
+    "maximum_bin": 63,
+    "source_rate_hz": 8000,
+    "profile": "pentagon",
+    "source_specific_selection": false,
+    "source_gain_bandwidth_length_changed": false,
+    "encoded_bytes_changed": false,
+    "pdm_table_changed": false,
+    "initial_feedback_state": 16,
+    "new_encoder_optimization": false,
+    "host_mapping_only": true
+  },
+  "formula": "min(63,(predictor+32768+512)//1024)",
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0,
+    "compact_stream_loader": true
+  },
+  "source_samples": 16896,
+  "source_sha256": "bde5f34cfd29eb29742b37ac1255f84dd398709a8b3c43c431e030fc0fab9ed4",
+  "packed_sha256": "4b5c4a51da6d3450ad7faa38759f5d8c29be6b6761217b20591e6a269043859e",
+  "saved_host_report_sha256": "0c9806f005d9dbe9fce46c24027b026a86f3d3cea725204e74fd3a51349a0824",
+  "same_frozen_encoded_bytes": true,
+  "pdm_rational_table_sha256": "0bed5fca0500b579547eedd021812173c25e3a1324a7b3cbda7ab636307427fd",
+  "pdm_table_unchanged": true,
+  "entire_original_source_preserved": true,
+  "source_specific_mapping": false,
+  "floor_fixed_clock": {
+    "snr_db": 4.1029072695285915,
+    "signal_rms": 0.22506600070878158,
+    "error_rms": 0.14033452544497396,
+    "error_power": 0.019693779031866043,
+    "error_power_field_component": 0.004188611336289305,
+    "field_hz": 50,
+    "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+  },
+  "centered_fixed_clock": {
+    "snr_db": 4.076437901081357,
+    "signal_rms": 0.22506600070878158,
+    "error_rms": 0.1407628329702478,
+    "error_power": 0.01981417514580988,
+    "error_power_field_component": 0.0041424077369868195,
+    "field_hz": 50,
+    "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+  },
+  "comparison": {
+    "from_variant": "floor",
+    "to_variant": "centered",
+    "fixed_snr_change_db": -0.026469368447234132,
+    "error_rms_change_db": 0.026469368447233948,
+    "modulation": [
+      {
+        "hz": 0.2436,
+        "both_small_signal_applicable": false,
+        "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+      },
+      {
+        "hz": 2.0,
+        "both_small_signal_applicable": false,
+        "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+      },
+      {
+        "hz": 5.0,
+        "both_small_signal_applicable": false,
+        "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+      },
+      {
+        "hz": 10.0,
+        "both_small_signal_applicable": false,
+        "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+      },
+      {
+        "hz": 15.589,
+        "both_small_signal_applicable": false,
+        "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+      },
+      {
+        "hz": 25.0,
+        "both_small_signal_applicable": false,
+        "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+      },
+      {
+        "hz": 50.0,
+        "both_small_signal_applicable": false,
+        "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+      },
+      {
+        "hz": 62.356,
+        "both_small_signal_applicable": false,
+        "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+      },
+      {
+        "hz": 100.0,
+        "both_small_signal_applicable": false,
+        "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+      },
+      {
+        "hz": 124.712,
+        "both_small_signal_applicable": false,
+        "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+      }
+    ],
+    "coherent_error": [
+      {
+        "hz": 50.0,
+        "peak_change": 4.09526773031345e-05,
+        "peak_ratio_db": 0.10696822048314794
+      },
+      {
+        "hz": 100.0,
+        "peak_change": -0.00017983651981116552,
+        "peak_ratio_db": -0.3314224748209891
+      },
+      {
+        "hz": 150.0,
+        "peak_change": -0.00042181478943754784,
+        "peak_ratio_db": -1.1313607292916918
+      },
+      {
+        "hz": 200.0,
+        "peak_change": 0.0001727935664213049,
+        "peak_ratio_db": 0.32757040718156777
+      }
+    ],
+    "numeric_regressions": {
+      "unfitted_snr": 1,
+      "absolute_error_rms": 1,
+      "applicable_am": 0,
+      "applicable_delay": 0,
+      "coherent_error_lines": 2,
+      "inconclusive_modulation": 10
+    },
+    "interpretation": "Numerical increases above1e-10 are disclosed, not an audibility threshold. Any SNR gain alone is insufficient to accept a candidate. Inapplicable legacy drift fits are missing artifact evidence."
+  },
+  "legacy_baseline_fixed_clock": {
+    "snr_db": -3.257865797978706,
+    "signal_rms": 0.22506600070878158,
+    "error_rms": 0.327493876353488,
+    "error_power": 0.10725223904903367,
+    "error_power_field_component": 0.0018025261239675268,
+    "field_hz": 50,
+    "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+  },
+  "changed_bucket_samples": 7680,
+  "upper_clamp_samples": 6,
+  "floor_feedback_end_state": 19,
+  "centered_feedback_end_state": 12,
+  "centered_reachable_states": [
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    21,
+    23,
+    25,
+    27,
+    29
+  ],
+  "floor_levels_sha256": "d7e35bdfec82b15a2ead36c9118e284ff40adcf049039db99e09b871fdd555cb",
+  "centered_levels_sha256": "9c9ed719153a2f79350dcf4d62769fdecda7242446c376693d13b3ed65938730",
+  "floor_pdm_bits_sha256": "3e851dea3809b3558b1f4d25520dee734065c85ea980d9b3aa338ba7b156d375",
+  "centered_pdm_bits_sha256": "826cc4fcd1be1fc5d95f446b583e24768a41f56ecf4c855e747366733e88d8c8",
+  "complete_floor_reference_matches_independent_exact_recurrence": true,
+  "original_floor_output_matches_saved_renderer_exactly": true,
+  "deterministic_pulse_clock_sha256": "1f6944431832b763af0a858011cde65638985004ba2d9d6aa2ad8e92c786d7a3",
+  "saturation_guard": {
+    "samples": 16896,
+    "saturation_events": 0,
+    "raw_min": -32724,
+    "raw_max": 32741
+  },
+  "elapsed_seconds": 0.7380784999986645,
+  "emulator_verified": false,
+  "new_c_optimized_payload": false,
+  "host_mapped_prediction": true,
+  "scope": "Complete old encoded source; different fixedPCM16 bucket lookup on identical PDM table/clock. No source-specific settings, gain/delay/clock fitting or new execution."
+}

@@ -1,5 +1,43 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Midpoint and centered-lookup whole-corpus controls rejected
+
+- **Objective/baseline:** Seek generic lower idle/quiet-source noise after
+  full C acceleration and compact-loader feasibility. Freeze one midpoint
+  preset plus unchanged beam32/horizon128/commit64/reg0.1 across all nine
+  complete sources. Compare original-clock half-joint and compensation
+  controls; no source changes, fitted scores, per-song preset or new release.
+- **Matched midpoint host stage:** Nine complete C-joint controls finish in
+  99.36 s. Song20.122406406 dB (-0.127909 vs half-joint), speech-0.049,
+  multitone-0.147 and loud3000-0.125 dB. Quiet440 improves5.185->7.493,
+  quiet997-2.371->-0.265, steps2.617->4.103 (stillbelow9.959 compensation),
+  Entertainer+0.120. Four SNR/RMS regressions,30 applicable AM increases,
+  29 delay increases and21 error-line increases; no unconditional acceptance.
+- **Noise mechanism:** Silence RMS0.015487->0.011473, but about75% of error
+  energy shifts to1995.86 Hz. Decoded [-1,0,0,-1] differs by onePCM16 LSB
+  yet crosses the floor64-bin boundary31/32, producing a full1/64 duty step.
+  Lower overall error alone conceals that new tonal character.
+- **Centered frozen-stream control:** All18 cases (nine sources/two models)
+  retain identical IMA bytes and instruction-derived clock. An exhaustive
+  65536-value check proves nearest-bin offset512 equals the256-byte IXH LUT
+  `min(63,(IXH+2)//4)`, zero interval[-512,511], upperclamp32256..32767.
+  Floor bits match the independent rational reference and archived renders.
+  Midpoint silence drops0.011473->0.00369117 (-9.85 dB),1996-Hz line removed,
+  main residual near7982 Hz/mostlyabove4500. Song20.122->18.708 dB and all
+  eight non-silent sources regress in both models. Half silence stays near
+  0.015514/3991 Hz. Eighteen complete mapped controls take65.72 s initially;
+  later cached report refresh is labelled separately, not a new speed result.
+- **Decision/coverage:** Reject both unconditional midpoint joint and centered
+  lookup on floor-optimized frozen bytes. Centering is a promising generic
+  quantizer correction only with matched re-optimization. These are host
+  controls, with no new assembled/mapped disk or actual Fuse quality proof.
+  A lookup-data-only implementation would add0 live instructions/T-states;
+  that is a feasibility premise, not new timing verification. Existing
+  423/449 ordinary,14 page,243/267 bank baselines stay. Preserve full reports,
+  failed controls, original Python/C and main; goal remains active.
+  [Midpoint control](audiobook-beeper/experiments/song-snr/evidence/midpoint-control/report.json),
+  [centered control](audiobook-beeper/experiments/song-snr/evidence/centered-quantizer/report.json).
+
 ## 2026-10-14 — Automatic C conversion and complete song wall-time benchmark
 
 - **User requirement:** All coding must run through a script/program; use C

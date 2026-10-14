@@ -1,0 +1,217 @@
+{
+  "stage": "midpoint-control",
+  "source": "loud3000",
+  "settings": {
+    "pcm16_offset": 512,
+    "pcm_bins": 64,
+    "minimum_bin": 0,
+    "maximum_bin": 63,
+    "source_rate_hz": 8000,
+    "profile": "pentagon",
+    "source_specific_selection": false,
+    "source_gain_bandwidth_length_changed": false,
+    "encoded_bytes_changed": false,
+    "pdm_table_changed": false,
+    "initial_feedback_state": 16,
+    "new_encoder_optimization": false,
+    "host_mapping_only": true
+  },
+  "formula": "min(63,(predictor+32768+512)//1024)",
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0,
+    "compact_stream_loader": true
+  },
+  "source_samples": 16896,
+  "source_sha256": "ca95c239e80e2d717019e082e2d95a99be5e801f9bfda2c0ea7e32258014c12f",
+  "packed_sha256": "4c596d9281e90b4ab4e2ca7fa1466794d66512781e0793643041b3bd508c326f",
+  "saved_host_report_sha256": "c4ab0a8ba1ea93795809041905d929923aa39ecf0d42c34aa3440af4cd6016d1",
+  "same_frozen_encoded_bytes": true,
+  "pdm_rational_table_sha256": "0bed5fca0500b579547eedd021812173c25e3a1324a7b3cbda7ab636307427fd",
+  "pdm_table_unchanged": true,
+  "entire_original_source_preserved": true,
+  "source_specific_mapping": false,
+  "floor_fixed_clock": {
+    "snr_db": 8.030425194156832,
+    "signal_rms": 0.3613566828548903,
+    "error_rms": 0.1433556555898706,
+    "error_power": 0.020550843989601594,
+    "error_power_field_component": 0.0001038393902428521,
+    "field_hz": 50,
+    "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+  },
+  "centered_fixed_clock": {
+    "snr_db": 7.720519099100373,
+    "signal_rms": 0.3613566828548903,
+    "error_rms": 0.1485628204767195,
+    "error_power": 0.022070911627997986,
+    "error_power_field_component": 5.0820664932272076e-05,
+    "field_hz": 50,
+    "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+  },
+  "comparison": {
+    "from_variant": "floor",
+    "to_variant": "centered",
+    "fixed_snr_change_db": -0.3099060950564594,
+    "error_rms_change_db": 0.3099060950564596,
+    "modulation": [
+      {
+        "hz": 0.2436,
+        "both_small_signal_applicable": false,
+        "reason": "At least one source-clock fit is inapplicable or rank deficient; absence is unproven"
+      },
+      {
+        "hz": 2.0,
+        "both_small_signal_applicable": true,
+        "am_peak_percent_change": -0.034102631751238774,
+        "linearized_delay_peak_us_change": -0.0006154860651930161
+      },
+      {
+        "hz": 5.0,
+        "both_small_signal_applicable": true,
+        "am_peak_percent_change": -0.0165692539576133,
+        "linearized_delay_peak_us_change": 0.007513198110771849
+      },
+      {
+        "hz": 10.0,
+        "both_small_signal_applicable": true,
+        "am_peak_percent_change": -0.14031062585922985,
+        "linearized_delay_peak_us_change": 0.030662067735784893
+      },
+      {
+        "hz": 15.589,
+        "both_small_signal_applicable": true,
+        "am_peak_percent_change": -0.0810171848983875,
+        "linearized_delay_peak_us_change": -0.03425614192135806
+      },
+      {
+        "hz": 25.0,
+        "both_small_signal_applicable": true,
+        "am_peak_percent_change": 0.30242445685986996,
+        "linearized_delay_peak_us_change": 0.09809073477544106
+      },
+      {
+        "hz": 50.0,
+        "both_small_signal_applicable": true,
+        "am_peak_percent_change": 0.1958537425725994,
+        "linearized_delay_peak_us_change": -0.03197361625055811
+      },
+      {
+        "hz": 62.356,
+        "both_small_signal_applicable": true,
+        "am_peak_percent_change": 0.1467092992232702,
+        "linearized_delay_peak_us_change": 0.04033865283244507
+      },
+      {
+        "hz": 100.0,
+        "both_small_signal_applicable": true,
+        "am_peak_percent_change": 0.15785036484300685,
+        "linearized_delay_peak_us_change": 0.08527691402781606
+      },
+      {
+        "hz": 124.712,
+        "both_small_signal_applicable": true,
+        "am_peak_percent_change": -0.02758522611045844,
+        "linearized_delay_peak_us_change": -0.009524880141105266
+      }
+    ],
+    "coherent_error": [
+      {
+        "hz": 50.0,
+        "peak_change": -2.005389535793896e-05,
+        "peak_ratio_db": -0.138723204122391
+      },
+      {
+        "hz": 100.0,
+        "peak_change": 0.00011182627614751,
+        "peak_ratio_db": 0.6814566610982614
+      },
+      {
+        "hz": 150.0,
+        "peak_change": 0.00021800972220009453,
+        "peak_ratio_db": 7.4482817533691
+      },
+      {
+        "hz": 200.0,
+        "peak_change": 0.00012282555936495016,
+        "peak_ratio_db": 2.234483673911079
+      }
+    ],
+    "numeric_regressions": {
+      "unfitted_snr": 1,
+      "absolute_error_rms": 1,
+      "applicable_am": 4,
+      "applicable_delay": 5,
+      "coherent_error_lines": 3,
+      "inconclusive_modulation": 1
+    },
+    "interpretation": "Numerical increases above1e-10 are disclosed, not an audibility threshold. Any SNR gain alone is insufficient to accept a candidate. Inapplicable legacy drift fits are missing artifact evidence."
+  },
+  "legacy_baseline_fixed_clock": {
+    "snr_db": -2.9379174418122784,
+    "signal_rms": 0.3613566828548903,
+    "error_rms": 0.5067945815980549,
+    "error_power": 0.25684074793714756,
+    "error_power_field_component": 0.0011217763871782887,
+    "field_hz": 50,
+    "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+  },
+  "changed_bucket_samples": 8213,
+  "upper_clamp_samples": 0,
+  "floor_feedback_end_state": 19,
+  "centered_feedback_end_state": 19,
+  "centered_reachable_states": [
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    21,
+    23,
+    25,
+    27,
+    29
+  ],
+  "floor_levels_sha256": "a71c10049f01f822bc884ded0f1bd517778fe1e6d7eb46c885808413062c19eb",
+  "centered_levels_sha256": "91584232a2912794c0958da7595a2ccab4e952b1d21870b1fcf05531856d2eb7",
+  "floor_pdm_bits_sha256": "23dd40fc9a24ed1dcb72c03ab5c20ff4676c35d3aed553b1e42c7cf81d7acbb7",
+  "centered_pdm_bits_sha256": "4082d6dca73f71043db6e7337dd0cfb8305b1fd643736d10a73b2ebb4c4e4c94",
+  "complete_floor_reference_matches_independent_exact_recurrence": true,
+  "original_floor_output_matches_saved_renderer_exactly": true,
+  "deterministic_pulse_clock_sha256": "1f6944431832b763af0a858011cde65638985004ba2d9d6aa2ad8e92c786d7a3",
+  "saturation_guard": {
+    "samples": 16896,
+    "saturation_events": 0,
+    "raw_min": -31403,
+    "raw_max": 31385
+  },
+  "elapsed_seconds": 1.4264614999992773,
+  "emulator_verified": false,
+  "new_c_optimized_payload": false,
+  "host_mapped_prediction": true,
+  "scope": "Complete old encoded source; different fixedPCM16 bucket lookup on identical PDM table/clock. No source-specific settings, gain/delay/clock fitting or new execution."
+}

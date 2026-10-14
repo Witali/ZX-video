@@ -1,0 +1,34 @@
+{
+  "settings": {
+    "pcm16_offset": 512,
+    "pcm_bins": 64,
+    "minimum_bin": 0,
+    "maximum_bin": 63,
+    "source_rate_hz": 8000,
+    "profile": "pentagon",
+    "source_specific_selection": false,
+    "source_gain_bandwidth_length_changed": false,
+    "encoded_bytes_changed": false,
+    "pdm_table_changed": false,
+    "initial_feedback_state": 16,
+    "new_encoder_optimization": false,
+    "host_mapping_only": true
+  },
+  "formula": "min(63,(predictor+32768+512)//1024)",
+  "stages": [
+    "clock-joint",
+    "midpoint-control"
+  ],
+  "sources": [
+    "silence",
+    "quiet440",
+    "loud3000",
+    "steps",
+    "quiet997",
+    "multitone",
+    "speech",
+    "entertainer",
+    "sea_foam"
+  ],
+  "sha256": "d1f78de7059b10d97148596cce0601688a643c1f91eaa6c5c3c3a49130a11bdf"
+}
