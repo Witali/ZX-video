@@ -1,0 +1,82 @@
+{
+  "source": "quiet440",
+  "method": "joint",
+  "parameters": {
+    "profile": "pentagon",
+    "source_rate_hz": 8000,
+    "lanczos_radius": 16,
+    "pcm_beam_width": 32,
+    "pcm_block_samples": 64,
+    "waveform_beam_width": 32,
+    "horizon_samples": 128,
+    "commit_samples": 64,
+    "regularization": 0.1,
+    "model_name": "duration_zero_half_recent",
+    "search_query_grid_tstates": 0.0125,
+    "source_specific_fitted_clock_gain_delay": false
+  },
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 0.5,
+    "pcm_origin": 0
+  },
+  "source_samples": 16896,
+  "source_sha256": "f6585c585fad94a48b68e489a567f71f445740e8717a99e76b5b473d21dbd877",
+  "packed_sha256": "28c6c832c5f5bf77676b1bc4d78084614a3fc5e9e7e947e69a9a0d98c779bdbb",
+  "fixed_clock": {
+    "snr_db": 5.185186691767428,
+    "signal_rms": 0.022412310071063722,
+    "error_rms": 0.012337503465006668,
+    "error_power": 0.00015221399174905156,
+    "error_power_field_component": 3.43965656952027e-06,
+    "field_hz": 50,
+    "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+  },
+  "baseline_fixed_clock": {
+    "snr_db": -8.808637917627642,
+    "signal_rms": 0.022412310071063722,
+    "error_rms": 0.06179004594190733,
+    "error_power": 0.0038180097775030184,
+    "error_power_field_component": 2.3275547141691115e-05,
+    "field_hz": 50,
+    "scope": "Whole filtered signal except fixed100-ms edges; no fitted gain/delay/clock"
+  },
+  "change_db": 13.99382460939507,
+  "encoding_seconds": 5.171999999999571,
+  "elapsed_seconds": 6.358999999999469,
+  "statistics": {
+    "backend": "native"
+  },
+  "max_search_query_quantization_seconds": 1.7621022748861103e-09,
+  "original_content_preserved": true,
+  "saturation_guard": {
+    "samples": 16896,
+    "saturation_events": 0,
+    "raw_min": -2132,
+    "raw_max": 2163
+  },
+  "host_prediction": true,
+  "scope": "Entire source on instruction-derived Pentagon timeline, not new emulator execution",
+  "ordinary_tstates": 449,
+  "page_extra_tstates": 14,
+  "bank_extra_tstates": 243,
+  "hot_path_delta_tstates": 0
+}

@@ -1,5 +1,48 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Original-clock joint encoding and calibrated artifact audit
+
+- **Objective/input:** Continue the saved user goal of at least5 dB on the
+  whole sea-foam song using common settings across all nine existing/generated
+  sources. User also requires automatic conversion, a C/Go encoder and the
+  retained Python reference. These latter implementation requirements remain
+  active, not claimed complete by host research. Main `226388fb...` unchanged.
+- **Control:** Freeze instruction-derived Pentagon clocks, Lanczos16 prior,
+  PCM beam32/64 and joint beam32/128/64 with regularization0.1. The desired
+  reference remains original8-kHz PCM; source gain, bandwidth and content are
+  unchanged. Analytic queries alone round by at most1.763 ns. Final f64 filter,
+  768-kHz integration and fixed100-ms edges are unchanged; no fitted score.
+- **Whole-source host results:** Song-3.085228288->18.825070524/20.250315887
+  dB, joint gain23.335544175 dB. Speech19.380/21.692, Entertainer17.043/19.445,
+  multitone15.612/17.327, quiet4403.872/5.185, quiet997-3.051/-2.371,
+  loud30007.456/8.155 and steps9.959/2.617 dB. All18 controls complete;
+  steps is a joint-search regression. Silence has no SNR: RMS0.0526984 becomes
+  0.0155139/0.0154867, with its main whine shifting2661->3991 Hz.
+- **Artifact coverage:** Twenty-seven complete waveform reports include
+  absolute noise spectra, every-sample clock metrics, AM/delay and additive
+  hum diagnostics. Eleven calibration tests recover injected AM/FM/hum and
+  distinguish constant drift; all Welch samples are covered, short-period
+  estimates require three cycles, JSON is finite. Joint versus compensation
+  has28 applicable AM increases,24 delay increases and21 error-line increases;
+  33 modulation comparisons remain inconclusive. These are numerical changes,
+  not audibility thresholds. Legacy drift makes90 modulation comparisons per
+  candidate inconclusive; SNR alone cannot prove no introduced artifacts.
+- **Independent unsuccessful controls:** All eight wider-beam/regularization
+  attempts are saved. Steps width128/256 gives3.530/3.876 dB; reg1 gives8.288,
+  still below9.959 compensation. Ideal compensated loud3000 DAC gives8.193 dB,
+  with99.996% of error above4 kHz in shifted ZOH images. Analytic/final scores
+  agree within0.04 dB for audited controls; no wrapper/filter bug explains it.
+- **CPU/layout/decision:** No hot change:423/449-T ordinary,14-T page,
+  243/267-T bank extras, all delta0. Midpoint relocation arithmetic suggests
+  probe311+bounce256 bytes fit startup694; workerBC40 would endBF8F/BFBC for
+  song/max disk, but no new layout is built here. Keep goal active; reject
+  unconditional release/fitted-clock claims and retain stronger PDM/clock,
+  artifact gates, native C and automatic CLI work. Full new execution belongs
+  to the separate verification stage.
+  [Reproducer/results](audiobook-beeper/experiments/song-snr/README.md),
+  [artifact reports](audiobook-beeper/experiments/song-snr/evidence/clock-diagnostics/report.json),
+  [independent audit](audiobook-beeper/experiments/song-snr/evidence/encoder-audit/README.md).
+
 ## 2026-10-14 — Execute a generic duration-aware PDM feasibility prototype
 
 - **Scope/baseline:** Continue isolated source-independent research from

@@ -5,6 +5,87 @@ improve the generic algorithm for arbitrary sources, not a particular song.
 Branch `codex/audio-snr-research`, worktree `.worktree/audio-snr-research`,
 starts at main `13819086`. The main disk remains unchanged.
 
+## Active +5-dB goal: original-clock controls
+
+The user now requests at least5 dB on the entire song, checks against speed
+flutter, AM and added background, automatic program conversion, a C or Go
+implementation of the slow encoder and retention of Python as its reference.
+The following completed host experiment advances that goal; it does not
+accept a release or demonstrate the forthcoming C implementation.
+
+`clock_control.py` freezes one algorithm for all nine sources: instruction-
+derived Pentagon timing, Lanczos16 prior, PCM beam32/64 or joint IMA/PDM
+beam32 with128-sample horizon,64-sample commit and0.1 regularization. The
+desired waveform remains the original uniform8-kHz PCM, not the resampled
+prior. Only analytic search queries are rounded (maximum1.763 ns); final
+rendering uses exact clocks, the unchanged filter and fixed100-ms edges.
+There is no fitted gain, delay or clock. Whole-song results below are host
+predictions until qualified by separate complete own-clock execution.
+
+| Complete source | Clock compensation | Joint IMA/PDM |
+|---|---:|---:|
+| Quiet440 |3.872 dB |5.185 dB |
+| Loud3000 |7.456 dB |8.155 dB |
+| Steps |9.959 dB |2.617 dB |
+| Quiet997 |-3.051 dB |-2.371 dB |
+| Multitone |15.612 dB |17.327 dB |
+| Speech |19.380 dB |21.692 dB |
+| Entertainer |17.043 dB |19.445 dB |
+| Whole sea-foam song |18.825 dB |20.250 dB |
+
+The song baseline is-3.085228288 dB: joint gain23.335544175 dB exceeds the
+requested5 dB and reaches the20-dB scalar gate, but artifact acceptance is
+still unproven. Silence has no SNR: baseline absolute noise RMS0.0526984
+becomes0.0155139/0.0154867. Its dominant line changes from about2661 to3991
+Hz; the lower total floor alone cannot prove absence of added background.
+The physical clock is still7981.5726 Hz, with the same sparse page/bank
+holds. Corrected fundamental timing is distinct from a uniform physical
+sample clock, whose schedule has not changed.
+
+`artifact_diagnostics.py` independently measures original-clock error,
+absolute silence/noise spectra, average drift, source-correlated AM/delay,
+unfitted hum lines and every physical interval. Eleven calibration tests
+include injected AM/FM/hum, constant drift, coverage and strict JSON.
+Fits are diagnostic only; short records with fewer than three cycles and
+poorly correlated old streams are marked inconclusive. Joint versus simple
+compensation has one SNR/RMS regression (steps),28 numerical AM increases,
+24 delay increases and21 error-line increases. These disclose numerical
+changes, not an invented audibility threshold. Legacy drift makes90
+modulation comparisons per candidate inconclusive.
+
+The [independent audit](evidence/encoder-audit/README.md) rules out a wrapper
+or filter bug and retains all eight wider-beam/regularization controls.
+An ideal compensated DAC reaches only8.193 dB on loud3000: over99.996%
+of its error lies above4 kHz in shifted ZOH images. Narrowing the filter
+would conceal the loss. More beam width alone is insufficient. A universal
+fallback and better PDM/clock handling remain necessary.
+The quieter midpoint table can potentially fit by relocating only311
+probe bytes and256 bounce bytes into694 bytes of startup padding, then
+placing the worker atBC40; this is arithmetic feasibility, not execution.
+
+Do not promote either candidate unconditionally. All Z80 hot instructions
+remain unchanged:423/449-T ordinary,14-T page and243/267-T bank extras,
+delta0. Preserve Python as an executable reference while the full C encoder
+and automatic conversion entry point are developed and checked.
+
+[Host controls](evidence/clock-joint/report.json),
+[complete artifact diagnostics](evidence/clock-diagnostics/report.json).
+
+```powershell
+python audiobook-beeper/experiments/song-snr/clock_control.py `
+  audiobook-beeper/experiments/song-snr/evidence `
+  --output audiobook-beeper/experiments/song-snr/evidence/clock-compensation `
+  --scratch .tmp/clock-compensation --method compensation
+python audiobook-beeper/experiments/song-snr/clock_control.py `
+  audiobook-beeper/experiments/song-snr/evidence `
+  --output audiobook-beeper/experiments/song-snr/evidence/clock-joint `
+  --scratch .tmp/clock-joint --method joint
+python audiobook-beeper/experiments/song-snr/artifact_diagnostics.py `
+  --corpus-evidence audiobook-beeper/experiments/song-snr/evidence `
+  --cache .tmp --scratch .tmp/artifact-diagnostics `
+  --output audiobook-beeper/experiments/song-snr/evidence/clock-diagnostics
+```
+
 ## Completed diagnostic stage
 
 The current TRD hash is `226388fb795ac70cfd940545a9eb73e3e81b6c7e96533dc6deb0c215257338ea`.

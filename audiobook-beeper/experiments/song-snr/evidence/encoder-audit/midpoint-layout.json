@@ -1,0 +1,84 @@
+{
+  "date": "2026-10-14",
+  "scope": "Read-only arithmetic using complete universal table closure and existing assembled code sizes. No new assembly, native execution, Fuse or physical-hardware verification.",
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0,
+    "extended_ram": true
+  },
+  "feedback_states": 18,
+  "first_patterns": 130,
+  "second_patterns": 104,
+  "first_base": 33600,
+  "table_pointers": 45824,
+  "resident_end": 48192,
+  "resident_end_hex": "0xbc40",
+  "old_startup_end": 32906,
+  "startup_padding_bytes": 694,
+  "move_to_startup_probe_bytes": 311,
+  "move_to_startup_bounce_bytes": 256,
+  "startup_remaining_bytes": 127,
+  "remaining_fixed_worker_bytes": 774,
+  "cases": [
+    {
+      "audio_sectors": 1407,
+      "sections": 23,
+      "record_slots": 24,
+      "record_bytes": 73,
+      "worker_bytes": 847,
+      "worker_end": 49039,
+      "worker_end_hex": "0xbf8f",
+      "free_before_forced_final_byte": 112
+    },
+    {
+      "audio_sectors": 2392,
+      "sections": 38,
+      "record_slots": 39,
+      "record_bytes": 118,
+      "worker_bytes": 892,
+      "worker_end": 49084,
+      "worker_end_hex": "0xbfbc",
+      "free_before_forced_final_byte": 67
+    }
+  ],
+  "hot_path_tstate_delta": 0,
+  "ordinary_tstates": {
+    "128": 423,
+    "scorpion": 423,
+    "pentagon512": 449,
+    "pentagon1024": 449
+  },
+  "page_extra_tstates": 14,
+  "bank_extra_tstates": {
+    "128": 243,
+    "scorpion": 267,
+    "pentagon512": 243,
+    "pentagon1024": 243
+  },
+  "requirements": [
+    "Keep all 311 bytes of map/restore/alias/detect in fixed-bank2 startup padding. They remain present for refills.",
+    "Keep the 256-byte bounce in separate startup padding after probe code; do not overlay live code or place it in bank5/TR-DOS workspace.",
+    "Place worker at exact 64-byte-aligned resident_end BC40, without 256-byte rounding.",
+    "Assert startup area end<=FIRSTbase, universal feedback states<=18 and worker_end<=BFFF at maximum 2392 audio sectors.",
+    "Teach guards/verifiers the relocated mutable bounce address, then perform whole coldload/native/Fuse verification on all claimed profiles/refills.",
+    "Preserve actual timing and independently bootable disks. This arithmetic is feasibility only."
+  ]
+}

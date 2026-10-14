@@ -3,6 +3,36 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## Active source-independent +5-dB audio milestone (2026-10-14)
+
+The user now requests continued research on existing recordings and generated
+signals, aiming for at least5 dB improvement on the complete sea-foam song.
+They explicitly require checks against uneven playback, speed flutter,
+amplitude modulation and added background. This is an active saved goal.
+The user also requires automatic script/program conversion and now requests
+C or Go for the slow encoding work while preserving the original Python as
+an executable reference. Use C to extend the existing native search kernels;
+keep Python reference producers unchanged and compare bytes, quality and
+complete conversion time before accepting the accelerated path. Do not hide
+preparation, rendering or TRD assembly costs behind a kernel-only benchmark.
+Continue in the existing isolated research worktree; main promotion remains
+outside scope. The completed diagnostic stage below is evidence to reuse.
+
+Measure the complete original uniform8-kHz source with the unchanged f64
+listening filter, fixed100-ms edges and no fitted gain, delay or clock. Keep
+the20-dB release gate and distinguish diagnostic clock-aligned results. Use
+common encoder parameters across the development/holdout corpus, preserving
+all source content and the existing per-machine memory/boot guarantees.
+Generic deterministic-clock compensation and joint IMA/PDM search may adapt
+the encoded payload to each source, but may not learn a song-specific preset.
+Separately measure hardware scheduling, source-referenced waveform timing,
+periodic AM/FM and absolute silence/hum. Include search-block, page and bank
+frequencies, not just50 Hz. Reject improvement claims based solely on SNR.
+Execute any selected TRD in full, retain unsuccessful controls and update
+the evidence/manifest, English documentation and focused commits. Do not
+claim physical-hardware proof from emulator traces or compensated Pentagon
+quality on a different clone without its own measurements.
+
 ## Source-independent SNR research: diagnostic/prototype milestone complete (2026-10-14)
 
 The user explicitly requests a separate Git worktree and SNR research there.

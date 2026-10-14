@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-14",
+  "scope": "Complete generated-input host audit. Analytic search replay, unchanged exact-clock FFmpeg metrics, and ideal multilevel clock-compensation controls. No new emulator or hardware execution; no release qualification.",
+  "all_wider_beam_attempts_preserved": true,
+  "main_checkout_modified": false,
+  "producer_and_input_sha256": {
+    "audiobook-beeper/ima_waveform_encoder.py": "4d79cfd7a5800d0f9a9c1ffba928df39a2e590cf79da05bbdc71dc74819cceae",
+    "audiobook-beeper/waveform_kernel.py": "2272effc955fefff986b4de9665246acaf741948888e77077e524609bf4b0004",
+    "audiobook-beeper/precompensate_voice.py": "85ea58afe93c2af8cde6143db2e9c1f7a796bfa5f549f0ab81a174d00d20d5b8",
+    "audiobook-beeper/probe_feedback_packets.py": "933a4132c75d3243a46a817bda67bace0bb65ed997c6caab6bfa7d3338bafb0d",
+    "audiobook-beeper/experiments/song-snr/clock_control.py": "fc5b5cf112f2c4581d98bb7f940f14b605df4ffce4b2a84ddc1e5a180582f5ce",
+    "audiobook-beeper/experiments/song-snr/general.py": "8a051e8387611d98a0a2ee102531d2800f0a5687dd168dd74fa2e7c416ca5876",
+    "audiobook-beeper/experiments/song-snr/study.py": "f6b55db44fd4e6a34ea6090f08819852f23d5efd0b90ace7413f19b0309e61ec",
+    "audiobook-beeper/experiments/song-snr/evidence/general/inputs/steps.wav": "7959581ca26716b991a8bf5a356e1bef3a2ca15155692953d422d3c8aad2ddfe",
+    "audiobook-beeper/experiments/song-snr/evidence/clock-joint/steps/soundtrack.ima.gz": "eba2b458e3035f084ec74e963ce227fbd29d5e5fdedea3402c7513b764fcc9b0",
+    "audiobook-beeper/experiments/song-snr/evidence/clock-compensation/steps/soundtrack.ima.gz": "865e5c821c35970b4c20ea165d6b0fda582e50586b1f1cb65160d397d34a6eba",
+    "audiobook-beeper/experiments/song-snr/evidence/general/inputs/loud3000.wav": "aeedbee52563e3d1ccf76e45b1dab213780109499db79722e2289c4a63c0dc27",
+    "audiobook-beeper/experiments/song-snr/evidence/clock-joint/loud3000/soundtrack.ima.gz": "7c3b630d27df8f40d3f40b0033eb34753754264db9fbb2e508f9ebee7fc071b0",
+    "audiobook-beeper/experiments/song-snr/evidence/clock-compensation/loud3000/soundtrack.ima.gz": "aed20f5040347f125cda25e6117808574dac06e54c5708b2daf6fee33d318996",
+    "audiobook-beeper/experiments/song-snr/evidence/general/inputs/silence.wav": "31ea58dae2106f52873cb3ff752ff97a2426b75bdb0b8fa8b4859cda6f641f76",
+    "audiobook-beeper/experiments/song-snr/evidence/clock-joint/silence/soundtrack.ima.gz": "46c7dc47a17c41cd990c5edd1f2981164e0731e8f75a54411b958a4a488488ae",
+    "audiobook-beeper/experiments/song-snr/evidence/clock-compensation/silence/soundtrack.ima.gz": "653e3b63ea3ccf167043f636989c811c5c9f9742a24d90a481957cceb8e9173b",
+    "audiobook-beeper/experiments/song-snr/evidence/general/inputs/quiet440.wav": "72b0a0323c8b20944fabe13eba737e31869306676cbb539a223285c5be989320",
+    "audiobook-beeper/experiments/song-snr/evidence/clock-joint/quiet440/soundtrack.ima.gz": "6b87fc7ae7dd0a5ddc63095f434ca1d0764014ef80ef5a36daa6b3597da7396b",
+    "audiobook-beeper/experiments/song-snr/evidence/clock-compensation/quiet440/soundtrack.ima.gz": "cbc4d70d65796b918aaf69716dffc13eba5eff70301870efe9b152ebf32ade45",
+    "audiobook-beeper/experiments/song-snr/evidence/general/inputs/multitone.wav": "dc969170018a0f8f6c4c32943f94bcfefc2a68d041fb1a10858dd3e60d6cf92a",
+    "audiobook-beeper/experiments/song-snr/evidence/clock-joint/multitone/soundtrack.ima.gz": "fdc63af9361fc1dd2d0b6bfaef4af4bcee5560b85ecfa1690cca3efcc217d8cf",
+    "audiobook-beeper/experiments/song-snr/evidence/clock-compensation/multitone/soundtrack.ima.gz": "ec8b194ed552fa23dd8c7e3e44a34640cffc4a31c7167acb78483032df88f6a3",
+    "audiobook-beeper/direct_player.py": "a471dfb628d0fb1af267c2c19e69a65b22a5650f3c1f0197e2591ab39bcf9ffb",
+    "audiobook-beeper/build_stream_trd.py": "a1e9f60af82343dbbca2ded55e184e422cfc9f2a3ccd4cb84edbd96329edc2b9",
+    "audiobook-beeper/stream-player.asm": "dc81a531ea18ef2abb576bf5175a962e0225d9c442aa0d62edeccb7444aac025",
+    "audiobook-beeper/stream-worker.asm": "25a05a8156d8106a2f313ac941251385b956fa49006bc24e4aeeac18fd4226e0",
+    "audiobook-beeper/experiments/song-snr/evidence/prototype/sea_foam/player.json": "2f45a264785e50c60a91c5464404dce95e031f6196a086c4ca7e7f78d538f826"
+  },
+  "runtime": "Bundled Python/NumPy, existing exact native waveform kernel, installed FFmpeg",
+  "notes": [
+    "The44100-Hz to pulse-midpoint comparison uses linear interpolation, so3-kHz residual includes that interpolation error. Analytic-versus-final SNR agreement is the relevant mismatch check.",
+    "Original sources,8-kHz clock, unchanged70-Hz/two4500-Hz listening filter and100-ms fixed edge policy; no fitted gain, delay or clock.",
+    "Ideal DAC is an unconstrained, unquantized, unclipped Lanczos interpolation control, not an implementable TRD. It exposes shifted ZOH image error under the unchanged listening filter.",
+    "Wall times are historical measurements and depend on concurrent jobs. Numeric metrics and packed hashes support deterministic reproduction."
+  ],
+  "additional_midpoint_memory_scope": "Universal closed dictionary with cold-load/refill sizes inferred from the assembled half-recent prototype; arithmetic only."
+}
