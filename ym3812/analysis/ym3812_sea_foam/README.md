@@ -116,9 +116,9 @@ On Windows with NumPy/Pillow and FFmpeg, from the worktree root:
 python -m pip install --no-deps --target .tmp/dependencies/ymfm ymfm-py==0.2.0
 $env:PYTHONPATH=(Resolve-Path .tmp/dependencies/ymfm).Path
 $env:OPENBLAS_NUM_THREADS='1'
-python ay-converter/analysis/ym3812_sea_foam/run.py --song audiobook-beeper/experiments/sea-foam-song/evidence/original-song.wav --ffmpeg ffmpeg --output .tmp/new-ym3812-song
-python -m unittest discover -s ay-converter -p test_experimental_ym3812.py -v 2> .tmp/song-tests.log
-python ay-converter/analysis/ym3812_sea_foam/verify.py --evidence .tmp/new-ym3812-song --tests .tmp/song-tests.log --song audiobook-beeper/experiments/sea-foam-song/evidence/original-song.wav --ffmpeg ffmpeg
+python ym3812/analysis/ym3812_sea_foam/run.py --song ym3812/sources/original-song.wav --ffmpeg ffmpeg --output .tmp/new-ym3812-song
+python -m unittest discover -s ym3812 -p test_experimental_ym3812.py -v 2> .tmp/song-tests.log
+python ym3812/analysis/ym3812_sea_foam/verify.py --evidence .tmp/new-ym3812-song --tests .tmp/song-tests.log --song ym3812/sources/original-song.wav --ffmpeg ffmpeg
 ```
 
 Use a fresh output directory and hydrate the original song through Git LFS.

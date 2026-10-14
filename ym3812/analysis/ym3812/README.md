@@ -125,8 +125,8 @@ From this worktree with NumPy/Pillow:
 python -m pip install --no-deps --target .tmp/dependencies/ymfm ymfm-py==0.2.0
 $env:PYTHONPATH=(Resolve-Path .tmp/dependencies/ymfm).Path
 $env:OPENBLAS_NUM_THREADS='1'
-python ay-converter/experimental_ym3812.py ay-converter/analysis/six_voice_spectral/evidence/reference.wav --legacy-sine-transitions --output .tmp/ym3812-reproduction
-python -m unittest discover -s ay-converter -p test_experimental_ym3812.py -v
+python ym3812/experimental_ym3812.py ym3812/analysis/six_voice_spectral/evidence/reference.wav --legacy-sine-transitions --output .tmp/ym3812-reproduction
+python -m unittest discover -s ym3812 -p test_experimental_ym3812.py -v
 ```
 
 Use a new output directory. This regenerates the expanded four trials. The

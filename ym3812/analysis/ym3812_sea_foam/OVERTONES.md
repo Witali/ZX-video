@@ -113,18 +113,18 @@ With the same dependencies as the original trial, from the worktree root:
 ```powershell
 $env:PYTHONPATH=(Resolve-Path .tmp/dependencies/ymfm).Path
 $env:OPENBLAS_NUM_THREADS='1'
-python ay-converter/analysis/ym3812_sea_foam/overtones.py --output .tmp/new-overtones
+python ym3812/analysis/ym3812_sea_foam/overtones.py --output .tmp/new-overtones
 # This historical runner rejects its third full fit on fixed-gain clipping.
-python ay-converter/analysis/ym3812_sea_foam/refit_overtones.py --output .tmp/new-refits
-python ay-converter/analysis/ym3812_sea_foam/recover_refit.py --fitted .tmp/new-refits --output .tmp/new-refit-reports
-python -m unittest discover -s ay-converter/analysis/ym3812_sea_foam -p test_overtones.py -v 2> .tmp/new-tests.log
-python ay-converter/analysis/ym3812_sea_foam/finish_overtones.py --setup .tmp/new-overtones --refit .tmp/new-refit-reports --tests .tmp/new-tests.log --output .tmp/new-overtones-archive
-$env:PYTHONPATH='.tmp/dependencies/ymfm;ay-converter;ay-converter/analysis/ym3812_sea_foam'
+python ym3812/analysis/ym3812_sea_foam/refit_overtones.py --output .tmp/new-refits
+python ym3812/analysis/ym3812_sea_foam/recover_refit.py --fitted .tmp/new-refits --output .tmp/new-refit-reports
+python -m unittest discover -s ym3812/analysis/ym3812_sea_foam -p test_overtones.py -v 2> .tmp/new-tests.log
+python ym3812/analysis/ym3812_sea_foam/finish_overtones.py --setup .tmp/new-overtones --refit .tmp/new-refit-reports --tests .tmp/new-tests.log --output .tmp/new-overtones-archive
+$env:PYTHONPATH='.tmp/dependencies/ymfm;ym3812;ym3812/analysis/ym3812_sea_foam'
 python -m unittest test_experimental_ym3812 test_overtones -v 2> .tmp/new-all-tests.log
-python ay-converter/analysis/ym3812_sea_foam/verify_overtones.py --evidence .tmp/new-overtones-archive --tests .tmp/new-all-tests.log
+python ym3812/analysis/ym3812_sea_foam/verify_overtones.py --evidence .tmp/new-overtones-archive --tests .tmp/new-all-tests.log
 ```
 
-Add `ay-converter` and `ay-converter/analysis/ym3812_sea_foam` to PYTHONPATH
+Add `ym3812` and `ym3812/analysis/ym3812_sea_foam` to PYTHONPATH
 when running tests. `verify_overtones.py --evidence OUTPUT --tests LOG`
 independently rechecks the archive; provide a combined12-test unittest log
 from `test_experimental_ym3812` and `test_overtones`. Use new output directories.

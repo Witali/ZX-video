@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Consolidate all YM3812 work for main
+
+- **Request/baseline:** The user requests a separate folder for all YM3812 work
+  and integration into main. Organize `codex/ym3812-sea-foam` at `de2d5160`,
+  including the earlier speech and transition experiments already on main.
+- **Change:** Move all 256 YM3812 files to `ym3812/`: chip fitter/exporter,
+  coherent and harmonic-group models, tests, all three experiment directories,
+  source references, VGM/VGZ, WAV/PNG and measurement/verification archives.
+  Retain 23 exact shared helper/input copies so historical producer paths and
+  hashes stay valid; the AY converter's originals remain. Add a folder index,
+  layout manifest/checker, updated commands/links and relocated LFS rules.
+  Hydrate 16 historical media pointers from authenticated local LFS objects.
+- **Validation:** Eighteen tests pass. The layout checker verifies 279 entries,
+  all unchanged producer/evidence content, 33 archived artifact manifests and
+  92 local documentation links; all 18 entrypoints start independently of the
+  AY converter's import path. All 15 full streams are independently replayed
+  again from the new folder: 67,500 fields, every native/output sample and
+  original verification bytes match exactly. Historical records keep original
+  dates, measurements and producer identities. No audio refit, waveform/filter
+  change, native-player timing delta or release-disk rebuild occurs.
+- **Decision:** Deliver the consolidated folder and merge the full song branch
+  into main, preserving concurrent main changes and unrelated local files.
+  [Folder index](ym3812/README.md), [layout manifest](ym3812/layout.json),
+  [consolidation checks](ym3812/verification.json).
+
 ## 2026-10-14 — Qualify localized tracking with softer YM3812 harmonic groups
 
 - **Baseline/scope:** Complete the authorized coherent-song plan using the
@@ -30,9 +55,9 @@
   plots. Improvement is modest; proxy counts do not establish a subjective
   cure. No native player/release-disk change or Z80 timing delta. This bounded
   plan is complete; higher target rates remain optional later.
-  [Result and reproduction](ay-converter/analysis/ym3812_sea_foam/TRACKING_RESULT.md),
-  [all trials](ay-converter/analysis/ym3812_sea_foam/tracking-evidence/report.json),
-  [complete verification](ay-converter/analysis/ym3812_sea_foam/tracking-evidence/verification.json).
+  [Result and reproduction](ym3812/analysis/ym3812_sea_foam/TRACKING_RESULT.md),
+  [all trials](ym3812/analysis/ym3812_sea_foam/tracking-evidence/report.json),
+  [complete verification](ym3812/analysis/ym3812_sea_foam/tracking-evidence/verification.json).
 
 ## 2026-10-14 — Measure confidence gates and source-supported FM groups
 
@@ -53,8 +78,8 @@
   trajectory edits, retaining the FM improvement instead of globally holding
   all source-supported pitches. Source/core/native-player behavior is unchanged
   outside the opt-in model; no Z80 hot-path delta.
-  [Gate results](ay-converter/analysis/ym3812_sea_foam/tracking-evidence/gates/report.json),
-  [group results](ay-converter/analysis/ym3812_sea_foam/tracking-evidence/groups/report.json).
+  [Gate results](ym3812/analysis/ym3812_sea_foam/tracking-evidence/gates/report.json),
+  [group results](ym3812/analysis/ym3812_sea_foam/tracking-evidence/groups/report.json).
 
 ## 2026-10-14 — Implement and reject the first global trajectory trials
 
@@ -77,8 +102,8 @@
   verification is deferred to final qualification. Reject all six; global
   holding can preserve a wrong tone, so proceed to selective confidence and
   source-supported harmonic groups. No accepted song or native-player change.
-  [Full attempts](ay-converter/analysis/ym3812_sea_foam/tracking-evidence/phase1/report.json),
-  [runner](ay-converter/analysis/ym3812_sea_foam/tracking_trials.py).
+  [Full attempts](ym3812/analysis/ym3812_sea_foam/tracking-evidence/phase1/report.json),
+  [runner](ym3812/analysis/ym3812_sea_foam/tracking_trials.py).
 
 ## 2026-10-14 — Authorize coherent YM3812 song trajectories
 
@@ -89,7 +114,7 @@
   inactive voices, source-supported level/transient fitting, matched excerpt
   screening and complete actual chip replay. Save stricter whole-song quality,
   source-content and trajectory guards before measuring candidates. Existing
-  auditions/native players remain. [Saved scope and admission](ay-converter/analysis/ym3812_sea_foam/TRACKING_PLAN.md).
+  auditions/native players remain. [Saved scope and admission](ym3812/analysis/ym3812_sea_foam/TRACKING_PLAN.md).
 - **Status:** Implementation authorized; no result or higher-rate qualification
   is claimed by this planning checkpoint.
 
@@ -120,7 +145,7 @@
   Preserve source attacks, all spectral/dynamic/timing guards and actual full
   chip replay. Test higher update rates after trajectory stability. No new
   output or native/player change. [Measured excerpts, reproducer, limitations
-  and concrete proposal](ay-converter/analysis/ym3812_sea_foam/BEEP_ANALYSIS.md).
+  and concrete proposal](ym3812/analysis/ym3812_sea_foam/BEEP_ANALYSIS.md).
 
 ## 2026-10-14 — Reduce oscillator-generated overtones in the YM3812 song
 
@@ -159,7 +184,7 @@
   content/level guards; the broad20% gate remains unmet, and no global spectral
   superiority or perceptual click/ringing cure is claimed. No native player,
   hot-path change or physical-chip/Z80/disk proof. [WAVs, all outcomes,
-  verification and reproducing scripts](ay-converter/analysis/ym3812_sea_foam/OVERTONES.md).
+  verification and reproducing scripts](ym3812/analysis/ym3812_sea_foam/OVERTONES.md).
 
 ## 2026-10-14 — Reconstruct the full sea-foam song through YM3812
 
@@ -192,7 +217,7 @@
   preserve the abrupt control/tradeoffs. Measured write effects are not a
   perceptual click grade. No physical-chip/Z80/disk delivery qualification,
   native player or hot-path change. [Auditions, reports and reproducing
-  scripts](ay-converter/analysis/ym3812_sea_foam/README.md).
+  scripts](ym3812/analysis/ym3812_sea_foam/README.md).
 
 ## 2026-10-14 — Close the audio loading progress frame
 
@@ -999,7 +1024,7 @@
   pending user listening. Pinned-core limitations unchanged; no physical-chip,
   Z80, disk or release qualification. Native instructions unchanged; no hot
   path T-state delta applies.
-- **Evidence/reproduction:** [Report, WAVs, all trial streams and scripts](ay-converter/analysis/ym3812_clicks/README.md).
+- **Evidence/reproduction:** [Report, WAVs, all trial streams and scripts](ym3812/analysis/ym3812_clicks/README.md).
 
 ## 2026-10-13 — Simulate nine-channel YM3812 speech from frequencies
 
@@ -1039,8 +1064,8 @@
   initial silent setup precedes playback. Emulator evidence, not physical
   chip/Z80/disk/release qualification. Native instructions unchanged; no
   player hot-path T-state delta applies.
-  [Auditions, figures, tradeoffs and reproduction](ay-converter/analysis/ym3812/README.md),
-  [all results and replay proof](ay-converter/analysis/ym3812/evidence/report.json).
+  [Auditions, figures, tradeoffs and reproduction](ym3812/analysis/ym3812/README.md),
+  [all results and replay proof](ym3812/analysis/ym3812/evidence/report.json).
 
 ## 2026-10-13 — Verify real-time six-voice command decoding on Z80
 

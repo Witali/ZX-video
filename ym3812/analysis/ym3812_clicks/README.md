@@ -116,10 +116,10 @@ With the existing local dependency setup:
 ```powershell
 $env:PYTHONPATH=(Resolve-Path .tmp/dependencies/ymfm).Path
 $env:OPENBLAS_NUM_THREADS='1'
-python ay-converter/experimental_ym3812.py ay-converter/analysis/ym3812/evidence/reference.wav --controls ay-converter/analysis/ym3812/evidence/selected-controls.npz --gain 2.3357702813587116 --output .tmp/ym3812-click-replay
-python -m unittest discover -s ay-converter -p test_experimental_ym3812.py -v
-python ay-converter/analysis/ym3812_clicks/compare.py --output .tmp/ym3812-click-comparison
-python ay-converter/analysis/ym3812_clicks/verify.py --cli .tmp/ym3812-click-replay
+python ym3812/experimental_ym3812.py ym3812/analysis/ym3812/evidence/reference.wav --controls ym3812/analysis/ym3812/evidence/selected-controls.npz --gain 2.3357702813587116 --output .tmp/ym3812-click-replay
+python -m unittest discover -s ym3812 -p test_experimental_ym3812.py -v
+python ym3812/analysis/ym3812_clicks/compare.py --output .tmp/ym3812-click-comparison
+python ym3812/analysis/ym3812_clicks/verify.py --cli .tmp/ym3812-click-replay
 ```
 
 Use new output directories. Saved controls default to the selected nominal2-ms,

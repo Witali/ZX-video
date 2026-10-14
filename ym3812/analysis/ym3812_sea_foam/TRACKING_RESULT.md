@@ -108,16 +108,16 @@ With NumPy/Pillow and a local pinned `ymfm-py==0.2.0` dependency, from the
 worktree root, use fresh trial directories:
 
 ```powershell
-$env:PYTHONPATH='.tmp/dependencies/ymfm;ay-converter'
+$env:PYTHONPATH='.tmp/dependencies/ymfm;ym3812'
 $env:OPENBLAS_NUM_THREADS='1'
-python ay-converter/analysis/ym3812_sea_foam/tracking_trials.py --output .tmp/new-phase1
-python ay-converter/analysis/ym3812_sea_foam/tracking_more.py --output .tmp/new-gates
-python ay-converter/analysis/ym3812_sea_foam/tracking_more.py --groups --output .tmp/new-groups
-python ay-converter/analysis/ym3812_sea_foam/tracking_local.py --output .tmp/new-local
-python ay-converter/analysis/ym3812_sea_foam/tracking_soft.py --mod-tl 48 --output .tmp/new-soft48
-python ay-converter/analysis/ym3812_sea_foam/tracking_soft.py --mod-tl 52 --output .tmp/new-soft52
+python ym3812/analysis/ym3812_sea_foam/tracking_trials.py --output .tmp/new-phase1
+python ym3812/analysis/ym3812_sea_foam/tracking_more.py --output .tmp/new-gates
+python ym3812/analysis/ym3812_sea_foam/tracking_more.py --groups --output .tmp/new-groups
+python ym3812/analysis/ym3812_sea_foam/tracking_local.py --output .tmp/new-local
+python ym3812/analysis/ym3812_sea_foam/tracking_soft.py --mod-tl 48 --output .tmp/new-soft48
+python ym3812/analysis/ym3812_sea_foam/tracking_soft.py --mod-tl 52 --output .tmp/new-soft52
 python -m unittest test_experimental_ym3812 test_coherent_ym3812 test_grouped_ym3812 -v 2> .tmp/new-tests.log
-python ay-converter/analysis/ym3812_sea_foam/verify_tracking.py --tests .tmp/new-tests.log
+python ym3812/analysis/ym3812_sea_foam/verify_tracking.py --tests .tmp/new-tests.log
 ```
 
 The verifier checks the immutable archived evidence, independently of a new

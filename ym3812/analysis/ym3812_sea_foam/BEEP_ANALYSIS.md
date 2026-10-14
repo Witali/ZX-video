@@ -111,7 +111,7 @@ With the existing NumPy/Pillow/ymfm-py0.2.0 environment, from the worktree root:
 ```powershell
 $env:PYTHONPATH=(Resolve-Path .tmp/dependencies/ymfm).Path
 $env:OPENBLAS_NUM_THREADS='1'
-python ay-converter/analysis/ym3812_sea_foam/inspect_beeps.py --output .tmp/new-beep-audit
+python ym3812/analysis/ym3812_sea_foam/inspect_beeps.py --output .tmp/new-beep-audit
 ```
 
 Use a new directory. The runner checks every existing media/source hash,
