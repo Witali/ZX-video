@@ -1,5 +1,40 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Automatic C conversion and complete song wall-time benchmark
+
+- **User requirement:** All coding must run through a script/program; use C
+  for the slow work and retain Python as a reference. Add one public command
+  accepting audio/video/preparedPCM, with automatic common parameters, C
+  waveform child and C PCM baseline. Python reference option keeps original
+  encoders/NumPy backend; no hand-selected payload or song-specific tuning.
+- **Input/clock correctness:** Prepared bytes/guard are exact; ordinary
+  short inputs are not repeated, capacity overflow fails and requested
+  excerpts are explicit. Guard-prior zeroing proves no original content is
+  discarded. A counted resident1024 timeline covers full2392-sector capacity;
+  512 timing is identical when the source fits. Smaller RAM refills and their
+  unqualified continuous-quality scores remain explicit. Source snapshots,
+  cover/progress, independently bootable one-TRD output and reports automatic.
+- **Tests:** Ten pass, including C/Python TRD+stream identity, Unicode/input
+  preservation, malformed/oversize guard rejection, short-content/no fitted
+  crop behavior, full-capacity timeline and actual optional native-four/Fuse
+  two-profile verification. Requested verification is included in grand time.
+- **End-to-end measurement:** Complete90.048-s prepared song conversion as a
+  new CLI subprocess takes72.7946 s externally. Includes imports, model,
+  workset/producer/file I/O, both C encoders, TRD assembly, host quality and
+  cleanup; warm compiler caches. Model11.308 s, waveform30.978, baseline8.368,
+  assembly/I/O2.454, scoring/previews17.560. This measured complete conversion
+  meets source-duration speed; cold compilation/arbitrary-media speed is not
+  inferred. No optional new Fuse run in this benchmark: the entire resulting
+  disk is byte-identical to previously fully played `ccab8724...` on512/1024.
+- **Result/decision:** Sourcefile exact; strict SNR20.250315887 dB, gain
+  23.335544175 dB against automatic unchanged-source legacy baseline. Reuse
+  complete earlier execution only through whole-disk identity. Hardware CPU
+  paths remain423/449 ordinary,14 page,243/267 bank, delta0. Accept automated
+  performance/parity milestone; leave full goal active for whine/modulation/
+  corpus gates, so release remains false and main226388fb... unchanged.
+  [Command/evidence](audiobook-beeper/experiments/song-snr/evidence/automatic-conversion/README.md),
+  [program](audiobook-beeper/convert_snr_audio.py).
+
 ## 2026-10-14 — Move the complete PCM baseline trellis into C
 
 - **Objective:** Remove the remaining slow Python baseline encoding from
