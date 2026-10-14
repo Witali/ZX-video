@@ -1,5 +1,46 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Exact-clock progress prototype; loading frame clock rejected
+
+- **Objective/baseline:** Add light-gray loading progress, centered cycling
+  LOADING dots and a green playback bar to the separate20.250315887-dB song
+  snapshotccab8724. The user explicitly accepts approximately four-second
+  playback updates to preserve audio. Use attribute-only live writes, the
+  existing RAM allocation and independent boot; defer the448-T experiment.
+- **Implementation/counts:** Opt-in boolean/CLI flag;10-byte cold-built
+  Pentagon descriptors use the dead SP and a shared cursor. Both literal
+  release tails retain277 T (34+243) between the previous/last source pulse,
+  new32+14+207+24; following interval16 T and ordinary423/449 T stay exact.
+  Legacy128/Scorpion live paging remains unchanged. Initial maximum2392-sector
+  image fits startup833F/workerBFE0/helperB9F9, with1/31/7-byte margins.
+  Four builder, nine loading and seven player tests pass, including absent/
+  false whole-disk AND metadata parity, memory guards and maximum cold load.
+- **Program/full-source proof:** Fresh public C conversion takes60.620961 s
+  (main encoding25.533929 s; assembly/artifact I/O2.341479 s). Entire source,
+  cover, packed audio and decoder tables remain exact; only PLAYER changes.
+  Experimental TRD55216119 passes four entire native runs and both complete
+  installed-Fuse source/state/read/continuous-hold checks. All11,526,111
+  relative timestamps per Pentagon equalccab, delta0 T; no live ROM reads/
+  refills, maxcontinuous hold277 T. Reuse20.250315887 dB by source clock/data
+  identity. Post-source mute219 vs201 T (+18 T/5.02us) is disclosed separately;
+  it is outside source-bearing pulses and the established100-ms crop.
+- **Failed controls/decision:** Initial full capture used a different portable
+  executable and produced no observations before interruption after1140.39
+  CPU seconds. Preserve that incomplete attempt. Installed-executable bounded
+  boot/first100/exact-script-first-OUT/full-terminal controls pass; detailed
+  installed512/1024 captures complete audio but fail the actual dot test.
+  Only phase1 appears: ROM FRAMES35->37/35->36 during roughly59 seconds of
+  loading. Standalone injected-FRAMES tests did not establish this hardware
+  timing premise. Reject the frame-clock animation and keep the delivered
+  namedccab image unchanged. Next fix uses completed reads, without live-code
+  changes. Preserve the initial diagnostic variable syntax error and its
+  successful repeat; do not treat bounded controls as full waveform proof.
+  [Loading control](audiobook-beeper/experiments/song-snr/evidence/audio-ui-loading/README.md),
+  [player proof](audiobook-beeper/experiments/song-snr/evidence/audio-ui-player/README.md),
+  [complete phase control](audiobook-beeper/experiments/song-snr/evidence/audio-ui-emulator/README.md),
+  [executable/stage controls](audiobook-beeper/experiments/song-snr/evidence/audio-ui-stage/README.md),
+  [program generation](audiobook-beeper/experiments/song-snr/evidence/audio-ui-delivery/generated/generation.json).
+
 ## 2026-10-14 — Endpoint-consistent idle pair completed; general promotion rejected
 
 - **Objective/input:** Address the prior conceptual endpoint mismatch without

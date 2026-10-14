@@ -1,0 +1,37 @@
+base 10
+set $active 0
+set $pulse 0
+br 32771
+com 1
+pr -10
+pr spectrum:frames*71680+ula:tstates
+se $active 1
+co
+end
+br port write 254
+com 2
+pr -11
+pr spectrum:frames*71680+ula:tstates
+pr z80:pc
+pr ([z80:pc-1]==81 || ([z80:pc-1]==65 && z80:b==16) || ([z80:pc-1]==254 && z80:a==16))
+pr $pulse
+ex 77
+end
+cond 2 $active==1 && $pulse==99
+br port write 254
+com 3
+pr -12
+pr spectrum:frames*71680+ula:tstates
+pr z80:pc
+pr ([z80:pc-1]==81 || ([z80:pc-1]==65 && z80:b==16) || ([z80:pc-1]==254 && z80:a==16))
+pr $pulse
+se $pulse $pulse+1
+co
+end
+cond 3 $active==1 && $pulse<99
+br 48640
+com 4
+pr -13
+pr spectrum:frames*71680+ula:tstates
+ex 77
+end

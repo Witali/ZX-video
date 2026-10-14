@@ -1,0 +1,79 @@
+base 10
+set $first_rom 0
+br 32768
+com 1
+pr -10
+pr spectrum:frames*71680+ula:tstates
+pr z80:pc
+pr ula:mem7ffd
+pr z80:hl
+pr z80:de
+pr z80:b
+pr [47557]
+pr [47558]
+pr [23416]
+pr ([48711]+[48712]*256)
+co
+end
+br 47963
+com 2
+pr -11
+pr spectrum:frames*71680+ula:tstates
+pr z80:pc
+pr ula:mem7ffd
+pr z80:hl
+pr z80:de
+pr z80:b
+pr [47557]
+pr [47558]
+pr [23416]
+pr ([48711]+[48712]*256)
+co
+end
+br 15635
+com 3
+pr -12
+pr spectrum:frames*71680+ula:tstates
+pr z80:pc
+pr ula:mem7ffd
+pr z80:hl
+pr z80:de
+pr z80:b
+pr [47557]
+pr [47558]
+pr [23416]
+pr ([48711]+[48712]*256)
+se $first_rom 1
+co
+end
+cond 3 $first_rom==0
+br 32771
+com 4
+pr -13
+pr spectrum:frames*71680+ula:tstates
+pr z80:pc
+pr ula:mem7ffd
+pr z80:hl
+pr z80:de
+pr z80:b
+pr [47557]
+pr [47558]
+pr [23416]
+pr ([48711]+[48712]*256)
+ex 77
+end
+br 48640
+com 5
+pr -14
+pr spectrum:frames*71680+ula:tstates
+pr z80:pc
+pr ula:mem7ffd
+pr z80:hl
+pr z80:de
+pr z80:b
+pr [47557]
+pr [47558]
+pr [23416]
+pr ([48711]+[48712]*256)
+ex 77
+end

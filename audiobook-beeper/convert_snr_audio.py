@@ -61,6 +61,7 @@ PRODUCERS = (
     'ima_waveform_encoder.py', 'waveform_kernel.py', 'ima_beam.py', 'ima_codec.py',
     'precompensate_voice.py', 'probe_feedback_packets.py', 'build_stream_trd.py',
     'stream-player.asm', 'stream-worker.asm', 'stream-progress.asm', 'ram-cache.asm',
+    'stream-audio-ui.asm', 'stream-audio-ui-helper.asm', 'stream-playback-progress.asm',
     'direct_player.py', 'ima3_series.py', 'pcm_player.py', 'ram_cache.py',
     'ram_machine.py', 'audio_cover.py', 'feedback_player.py', 'packet_player.py',
     'pdm_player.py', 'build_pdm.py', 'assess_snr.py', 'convert_mulaw_audio.py',
@@ -260,10 +261,13 @@ def verify(output, disk, meta, packed, times, fuse):
 
 
 def convert(input_path, output, *, cover=None, prepared_pcm=False, encoder='c',
-            ffmpeg=None, duration=None, verify_fuse=None, started=None):
+            ffmpeg=None, duration=None, verify_fuse=None, started=None,
+            audio_progress_ui=False):
     started = time.perf_counter() if started is None else started
     if encoder not in ('c', 'python'):
         raise ValueError('encoder must be c or python')
+    if type(audio_progress_ui) is not bool:
+        raise ValueError('audio_progress_ui must be a boolean')
     if prepared_pcm and duration is not None:
         raise ValueError('--duration cannot alter an explicitly prepared PCM source')
     ffmpeg = ffmpeg or shutil.which('ffmpeg')
@@ -287,6 +291,7 @@ def convert(input_path, output, *, cover=None, prepared_pcm=False, encoder='c',
     snapshot_seconds = time.perf_counter() - phase
     parameters = dict(PARAMETERS)
     model = dict(models())[parameters['model_name']]
+    if audio_progress_ui:model=dict(model,audio_progress_ui=True)
     frozen = dict(parameters=parameters, model=model, algorithm='joint', target_resident_profile='pentagon1024')
     save(output / 'parameters.json', dict(**frozen, sha256=sha(json.dumps(frozen, sort_keys=True).encode())))
     pcm_wav(output / 'source-preview.wav', source)
@@ -396,11 +401,14 @@ def main(argv=None):
     parser.add_argument('--ffmpeg', default=shutil.which('ffmpeg'))
     parser.add_argument('--duration', type=float, help='Explicitly select this many seconds from ordinary media; capacity overflow is otherwise rejected')
     parser.add_argument('--verify-fuse', type=Path, metavar='FUSE_EXE', help='Additionally complete native four-profile and cold Pentagon Fuse checks')
+    parser.add_argument('--audio-progress-ui', action='store_true',
+                        help='Gray LOADING dots and clock-preserving green playback progress (Pentagon512/1024 about every4seconds)')
     args = parser.parse_args(argv)
     try:
         result = convert(args.input, args.output, cover=args.cover, prepared_pcm=args.prepared_pcm,
                          encoder=args.encoder, ffmpeg=args.ffmpeg, duration=args.duration,
-                         verify_fuse=args.verify_fuse, started=PROCESS_STARTED)
+                         verify_fuse=args.verify_fuse, started=PROCESS_STARTED,
+                         audio_progress_ui=args.audio_progress_ui)
     except (ValueError, OSError, RuntimeError, wave.Error, subprocess.SubprocessError) as error:
         parser.exit(1, 'Conversion failed: ' + str(error) + '\n')
     print(json.dumps(dict(output=str(args.output.resolve()), audio_trd=str((args.output / 'audio.trd').resolve()),

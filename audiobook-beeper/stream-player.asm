@@ -55,10 +55,20 @@ page_tail_\0: ASSERT 1
         JP (HL)
 bank_handoff_\0: ASSERT 1
         EX AF,AF'
+        IF audio_progress_ui
+stream_bank_dispatch_\0: ASSERT 1
+        JP stream_legacy_handoff_\0
+stream_legacy_handoff_\0: ASSERT 1
+        EXX
+        LD B,\0*16
+        EXX
+        JP stream_bank_tail     ; dispatchJP10 replaces the old extraJP10
+        ELSE
         EXX
         LD B,\0*16              ; save last bit; 00FE/10FE are uncontended high bytes
         EXX
         JP bank_jump
+        ENDIF
         ENDM
         PAGE_TAIL 0
         PAGE_TAIL 1
@@ -98,6 +108,10 @@ stream_page_event:
         OUT (C),B               ; release the saved pulse after paging
         JP (HL)
 startup_hot_end:
+        IF audio_progress_ui
+        INCLUDE "stream-audio-ui.asm"
+        INCLUDE "stream-playback-progress.asm"
+        ENDIF
         IF compact_stream_loader
         ; Optional persistent loading helpers reuse fixed-bank2 startup
         ; padding. They remain callable at every insufficient-RAM refill.
@@ -726,6 +740,76 @@ SECOND: MACRO
         SECOND 255
 
 code_end:
+        IF audio_progress_ui
+; Cold-only dispatch patch.128/Scorpion retain the original descriptor tail
+; and live paging I/O; only uncontended Pentagon maps the screen while PDM.
+stream_play_patch_tail:
+        LD A,(cache_mode)
+        CP 2
+        RET C
+        LD HL,stream_play_tail_0
+        LD (stream_bank_dispatch_0+1),HL
+        LD HL,stream_play_tail_1
+        LD (stream_bank_dispatch_1+1),HL
+        RET
+
+; Build the parallel ten-byte command while the sector loader already has
+; D=paging. The shared source-sector fraction supplies whole-source position,
+; including every preceding batch; only the last two filled cells are needed
+; because the builder proves each live progress jump is at most two cells.
+; AF/BC/DE/HL scratch; no alternate register, ROM workspace or audio changes.
+stream_play_build_record:
+        LD HL,(stream_play_record_write)
+        XOR A
+        LD (HL),A               ; valid AF has F.Z0
+        INC HL
+        LD A,D
+        LD (HL),A               ; header A=paging
+        INC HL
+        LD (HL),A               ; DE.low duplicates paging until final OUT
+        INC HL
+        LD A,(stream_address_high)
+        LD (HL),A               ; DE.high is the next source high byte
+        INC HL
+        LD A,(stream_play_bar)
+        OR A
+        JR NZ,stream_play_record_columns
+        LD BC,stream_play_dummy
+        LD DE,stream_play_dummy
+        JR stream_play_record_attributes
+stream_play_record_columns:
+        DEC A                   ; last filled column,0..31
+        LD C,A
+        LD B,0xDA
+        LD E,A
+        LD D,0xDA
+        JR Z,stream_play_record_column_zero
+        DEC C                   ; previous filled column may already be green
+stream_play_record_column_zero:
+        LD A,C
+        ADD A,0xC0
+        LD C,A
+        LD A,E
+        ADD A,0xC0
+        LD E,A
+stream_play_record_attributes:
+        LD (HL),C
+        INC HL
+        LD (HL),B
+        INC HL
+        LD (HL),E
+        INC HL
+        LD (HL),D
+        INC HL
+        XOR A
+        LD (HL),A               ; high-selector AF unused by Pentagon
+        INC HL
+        LD (HL),A
+        INC HL
+        LD (stream_play_record_write),HL
+        RET
+
+        ENDIF
         ASSERT $ <= pcm_high
         DS pcm_high-$
         MDAT "pcm-high.bin"
@@ -735,6 +819,11 @@ resident_end:
         ; Loading-only worker follows the complete universal dictionary.
         ; Its origin changes no live instruction, paging tail or SP lookup.
         ASSERT $ <= worker_origin
+        IF audio_progress_ui
+        ASSERT $ == audio_ui_resident_origin
+        INCLUDE "stream-audio-ui-helper.asm"
+        ASSERT $ <= worker_origin
+        ENDIF
         IF compact_stream_loader
         ASSERT $ == worker_origin
         ENDIF

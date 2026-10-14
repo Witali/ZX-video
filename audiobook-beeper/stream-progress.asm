@@ -31,6 +31,9 @@ cache_progress_remainder:
 ; Shadow screen is always bank7. Restore normal bank0 before enabling IRQs;
 ; loader explicitly maps the next destination before each physical copy.
 cache_draw_bar:
+        IF audio_progress_ui
+        JP audio_ui_draw_loading_bar
+        ELSE
         DI
         LD A,31
         CALL cache_restore
@@ -53,3 +56,4 @@ cache_draw_empty:
         CALL cache_restore
         EI
         RET
+        ENDIF

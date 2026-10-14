@@ -14,7 +14,7 @@ from verify_direct import reference
 from verify_pcm import save
 
 
-def fuse_check(disk_path,meta,packed,profile,out,fuse,*,captured=False):
+def fuse_check(disk_path,meta,packed,profile,out,fuse,*,captured=False,capture_ui=False):
     """Cold-boot the actual TRD; check every source-bearing pulse and state.
 
     Native holds are separately exact. These timestamps include actual ULA,
@@ -27,6 +27,16 @@ def fuse_check(disk_path,meta,packed,profile,out,fuse,*,captured=False):
     from smoke_test_fuse import hidden_startupinfo
     out=Path(out);out.mkdir(parents=True,exist_ok=True)
     labels=meta['player_labels'];cpu=PROFILES[profile]['cpu'];field=PROFILES[profile]['field']
+    ui_enabled=bool(meta.get('audio_progress_ui'))
+    if capture_ui and (not ui_enabled or profile not in ('pentagon512','pentagon1024')):
+        raise ValueError('Full live UI capture requires an enabled Pentagon UI disk')
+    # Observe the rendered control bytes while physical bank7 is mapped.
+    # Other cover pixels are kept from the exact independently loaded TRD;
+    # PNG provenance explicitly distinguishes this from a full-screen dump.
+    ui_addresses=([0xD08B+row*256+column for row in range(8) for column in range(10)]+
+                  list(range(0xDA8B,0xDA95))+list(range(0xDAC0,0xDAE0)))
+    final_ui_addresses=([0xD080+row*256+column for row in range(8) for column in range(32)]+
+                        list(range(0xDA80,0xDAA0))+list(range(0xDAC0,0xDAE0)))
     stamp=f'spectrum:frames*{field}+ula:tstates'
     lines=['base 10','set $active 0','set $last 0','set $pulse 0','set $batch 0']
     widths={};eid=0
@@ -51,8 +61,32 @@ def fuse_check(disk_path,meta,packed,profile,out,fuse,*,captured=False):
     for address in meta['first_addresses']:
         event(address+16,-121,['$pulse','z80:hl'],condition='$active==1')
         event(address+23,-120,['$pulse','z80:ix'],condition='$active==1')
-    event(labels['stream_page_event'],-107,['$pulse',stamp,'z80:a'])
-    event(labels['stream_finished'],-199,[stamp,'$pulse','ula:mem7ffd'],stop=True)
+    page_expressions=['$pulse',stamp,'z80:a']
+    if capture_ui:page_expressions+=['ula:mem7ffd']+[f'[{address}]' for address in ui_addresses]
+    event(labels['stream_page_event'],-107,page_expressions)
+    if ui_enabled:
+        # Each optional literal tail restores the next audio page here. The
+        # old event remains necessary for the unchanged128/Scorpion path.
+        for bit in (0,1):
+            event(labels[f'stream_play_page_event_{bit}'],-107,page_expressions)
+    if capture_ui:
+        controls=[stamp,'ula:mem7ffd','$pulse','([23672]+[23673]*256)',
+                  f"[{labels['audio_ui_loading']}]",f"[{labels['audio_ui_dots']}]",'[23416]']
+        controls += [f'[{address}]' for address in ui_addresses]
+        event(labels['audio_ui_leave_enabled'],-108,controls)
+        # Earlier UI disks did not export a label for this existing RET.
+        # Derive it without modifying disk metadata and authenticate every
+        # loop opcode against the actual PLAYER file before observing it.
+        bar_complete=labels.get('audio_ui_bar_complete')
+        if bar_complete is None:
+            bar_complete=labels['audio_ui_bar_next']+11
+            entry=next(item for item in meta['directory'] if item['name']=='PLAYER')
+            offset=(entry['track']*16+entry['sector'])*256+labels['audio_ui_bar_next']-meta['origin']
+            assert Path(disk_path).read_bytes()[offset:offset+12]==bytes.fromhex('7BB77928021D7A772310F5C9'), 'UI bar capture loop changed'
+        event(bar_complete,-108,controls)
+    terminal_expressions=[stamp,'$pulse','ula:mem7ffd']
+    if capture_ui:terminal_expressions += [f'[{address}]' for address in final_ui_addresses]
+    event(labels['stream_finished'],-199,terminal_expressions,stop=True)
     script='\n'.join(lines)
     command=[str(Path(fuse).resolve()),'--no-sound','--no-autosave-settings','--no-confirm-actions',
              '--speed','10000','--machine',profile,'--beta128','--debugger-command',script,str(Path(disk_path).resolve())]
@@ -69,8 +103,8 @@ def fuse_check(disk_path,meta,packed,profile,out,fuse,*,captured=False):
         (out/'stderr.txt').write_bytes(result.stderr)
         assert result.returncode==77,('Fuse exit',profile,result.returncode,result.stderr[:1000])
     values=(int(x.group(1),0) for x in re.finditer(rb'(?m)^(-?\d+|0x[\da-fA-F]+)\r*$',trace))
-    pulses=array('I');preds=[];rows=[];ready=[];begins=[];ends=[];reads=[];covers=[];progress=[];pages=[];terminal=[]
-    targets={-100:ready,-101:begins,-103:ends,-104:covers,-105:progress,-106:reads,-107:pages,-120:preds,-121:rows,-199:terminal}
+    pulses=array('I');preds=[];rows=[];ready=[];begins=[];ends=[];reads=[];covers=[];progress=[];pages=[];terminal=[];ui=[]
+    targets={-100:ready,-101:begins,-103:ends,-104:covers,-105:progress,-106:reads,-107:pages,-108:ui,-120:preds,-121:rows,-199:terminal}
     for tag in values:
         if tag>=0xffff0000:tag-=2**32
         if tag>=0:pulses.append(tag)
@@ -141,6 +175,60 @@ def fuse_check(disk_path,meta,packed,profile,out,fuse,*,captured=False):
     if meta['model'].get('pcm_quantization_bias'):
         report.update(pcm_quantization_bias=512,lookup_native_tstate_delta=0,
                       ula_timing_claim='Actual timing belongs to this complete source/profile; no source-independent128/Scorpion contention claim')
+    if capture_ui:
+        # Check exact gray/green cells, actual dot progression, and every live
+        # prefix. This uses observed bytes rather than inferring the UI from
+        # source position. Only control bytes have debugger capture coverage.
+        assert ui and pages and terminal, 'missing actual UI observations'
+        assert all(item[1]==31 for item in ui), 'loading UI not mapped to physical bank7'
+        loading=[item for item in ui if item[4]]
+        phase=[]
+        for item in loading:
+            assert item[5] in (1,2,3) and 0<=item[6]<=32
+            if not phase or phase[-1]!=item[5]:phase.append(item[5])
+            assert item[7+90:]==[0x3F]*item[6]+[7]*(32-item[6]), 'actual gray loading bar'
+        assert len(phase)>=3 and phase[:3]==[1,2,3]
+        assert all(value==1+i%3 for i,value in enumerate(phase)), 'actual LOADING dot order'
+        playback=[]
+        for item in pages:
+            assert item[3]==31, 'live attributes not on physical bank7'
+            attributes=item[4+90:]
+            filled=sum(value==0x24 for value in attributes)
+            assert attributes==[0x24]*filled+[4]*(32-filled), 'actual green playback prefix'
+            playback.append(dict(pulse=item[0],timestamp_tstates=item[1],filled_columns=filled,
+                                 glyph_bytes=item[4:4+80],label_attributes=item[4+80:4+90],
+                                 bar_attributes=attributes))
+        assert all(a['filled_columns']<=b['filled_columns'] for a,b in zip(playback,playback[1:]))
+        assert terminal[0][3+288:]==[0x24]*32, 'actual final full-green bar'
+        entry=next(item for item in meta['directory'] if item['name']=='COVER')
+        start=(entry['track']*16+entry['sector'])*256
+        cover=Path(disk_path).read_bytes()[start:start+6912]
+        from audio_cover import render
+        def snapshot(name,addresses,values):
+            screen=bytearray(cover)
+            for address,value in zip(addresses,values):screen[address-0xC000]=value
+            raw=out/(name+'.scr');raw.write_bytes(screen)
+            png=out/(name+'.png');render(bytes(screen)).resize((768,576),resample=0).save(png)
+            return dict(screen=raw.name,png=png.name,screen_sha256=hashlib.sha256(screen).hexdigest(),
+                        png_sha256=hashlib.sha256(png.read_bytes()).hexdigest())
+        pictures=[]
+        for dots in (1,2,3):
+            item=next(row for row in loading if row[5]==dots)
+            pictures.append(snapshot('loading-'+str(dots),ui_addresses,item[7:]))
+        empty=next(row for row in ui if not row[4] and row[6]==0)
+        pictures.append(snapshot('playing-start',ui_addresses,empty[7:]))
+        middle=min(pages,key=lambda row:abs(sum(value==0x24 for value in row[4+90:])-16))
+        pictures.append(snapshot('playing-middle',ui_addresses,middle[4:]))
+        pictures.append(snapshot('playing-end',final_ui_addresses,terminal[0][3:]))
+        ui_report=dict(complete=True,loading_observations=len(loading),loading_dot_phases=phase,
+                       loading_gray_attributes_exact=True,live_green_prefixes_exact=True,
+                       live_progress=playback,final_full_green=True,pictures=pictures,
+                       observed_controls=dict(loading_and_playback_glyph_bytes=80,label_attributes=10,bar_attributes=32,
+                                              final_glyph_bytes=256,final_label_attributes=32),
+                       cover_sha256=hashlib.sha256(cover).hexdigest(),
+                       screen_scope='Actual cold-Fuse status bitmap/attributes and bar attributes; other untouched cover pixels from the exact TRD. This is not a full6912-byte debugger dump.',
+                       physical_hardware_tested=False)
+        save(out/'ui.json',ui_report);report['audio_progress_ui']=ui_report
     save(out/'report.json',report)
     return report
 
@@ -152,8 +240,9 @@ def cold_load(disk,meta,profile):
     m.banks[2][:]=disk[sector*256:(sector+64)*256]
     m.m.pc=labels['start'];m.m.set_breakpoint(labels['stream_loaded'])
     m.m.clear_breakpoint(0x40)
-    reads=[];cover=False
+    reads=[];cover=False;ui_enabled=bool(meta.get('audio_progress_ui'));ui_loading_complete=False
     m.m.set_breakpoint(labels['cover_visible'])
+    if ui_enabled:m.m.set_breakpoint(labels['audio_ui_begin_playback'])
     while m.m.pc!=labels['stream_loaded']:
         m.m.ticks_to_stop=100_000_000;event=m.m.run()
         if m.m.pc==0x3d13:
@@ -165,8 +254,15 @@ def cold_load(disk,meta,profile):
             entry=next(x for x in meta['directory'] if x['name']=='COVER')
             at=entry['track']*16+entry['sector'];assert m.banks[7][:6912]==disk[at*256:(at+27)*256]
             cover=True;m.m.clear_breakpoint(labels['cover_visible'])
+        elif ui_enabled and m.m.pc==labels['audio_ui_begin_playback']:
+            # Gray loading is complete before the separate green playback
+            # initialization resets CACHE_BAR to this batch's source origin.
+            assert m.read(0x5b78)==32 and m.word(0x5b7a)==0,'UI loader completion'
+            ui_loading_complete=True;m.m.clear_breakpoint(labels['audio_ui_begin_playback'])
         elif event&m.m._TICKS_LIMIT_HIT:raise AssertionError(('cold timeout',hex(m.m.pc)))
-    assert cover and m.read(0x5b78)==32 and not m.locked
+    assert cover and not m.locked
+    if ui_enabled:assert ui_loading_complete and m.read(0x5b78)==0,'initial UI playback origin'
+    else:assert m.read(0x5b78)==32
     pointer=labels['stream_records'];sections=[];offset=meta['audio_sector']*256
     while m.read(pointer):
         paging=m.read(pointer);high=m.read(pointer+1);scorp=m.read(pointer+2)
@@ -185,8 +281,10 @@ def cold_load(disk,meta,profile):
     lookup=labels['pcm_high']
     expected=bytes(meta['packet_pages'][min(63,(high*256+bias)//1024)]>>8 for high in range(256))
     assert bytes(m.read(lookup+high) for high in range(256))==expected,'hardware PCM quantizer lookup'
-    return m,dict(complete=True,profile=profile,cover_before_audio=True,progress_complete=True,
-                  loaded_sections=sections,disk_calls=len(reads),remaining_sectors=m.word(labels['stream_remaining']))
+    report=dict(complete=True,profile=profile,cover_before_audio=True,progress_complete=True,
+                loaded_sections=sections,disk_calls=len(reads),remaining_sectors=m.word(labels['stream_remaining']))
+    if ui_enabled:report['audio_progress_ui']=dict(gray_loading_complete_before_green=True,initial_playback_column=0)
+    return m,report
 
 
 def native_check(disk,meta,packed,profile,*,out=None):

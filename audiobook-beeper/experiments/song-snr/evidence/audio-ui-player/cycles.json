@@ -1,0 +1,356 @@
+{
+  "date": "2026-10-14",
+  "comparison": "Actual authenticated best-song PLAYER before/after optional bank-boundary progress",
+  "timing_source": "Z80 instruction timing table; native tests execute actual assembled handlers",
+  "measurement_start": "Immediately after SECOND penultimate source OUT; ends after final source OUT",
+  "before": {
+    "entry": [
+      [
+        "EXX",
+        4
+      ],
+      [
+        "INC E",
+        4
+      ],
+      [
+        "JP Z,page_tail",
+        10
+      ],
+      [
+        "INC D",
+        4
+      ],
+      [
+        "JP Z,bank_handoff",
+        10
+      ],
+      [
+        "EX AF,AF'",
+        4
+      ],
+      [
+        "EXX",
+        4
+      ],
+      [
+        "LD B,last bit",
+        7
+      ],
+      [
+        "EXX",
+        4
+      ],
+      [
+        "JP bank_jump",
+        10
+      ],
+      [
+        "JP stream_bank_tail",
+        10
+      ]
+    ],
+    "descriptor_and_release": [
+      [
+        "LD(saved HL),HL",
+        16
+      ],
+      [
+        "LD HL,(cursor)",
+        16
+      ],
+      [
+        "LD A,(HL)",
+        7
+      ],
+      [
+        "OR A",
+        4
+      ],
+      [
+        "JP Z,exhausted",
+        10
+      ],
+      [
+        "LD(paging),A",
+        13
+      ],
+      [
+        "INC HL",
+        6
+      ],
+      [
+        "LD D,(HL)",
+        7
+      ],
+      [
+        "LD E,0",
+        7
+      ],
+      [
+        "INC HL",
+        6
+      ],
+      [
+        "LD A,(HL)",
+        7
+      ],
+      [
+        "INC HL",
+        6
+      ],
+      [
+        "LD(cursor),HL",
+        16
+      ],
+      [
+        "LD HL,(saved HL)",
+        16
+      ],
+      [
+        "JP high_done",
+        10
+      ],
+      [
+        "LD BC,7FFD",
+        10
+      ],
+      [
+        "LD A,(paging)",
+        13
+      ],
+      [
+        "OUT(C),A",
+        12
+      ],
+      [
+        "EXX",
+        4
+      ],
+      [
+        "SCF",
+        4
+      ],
+      [
+        "EX AF,AF'",
+        4
+      ],
+      [
+        "OUT(C),B",
+        12
+      ]
+    ],
+    "entry_tstates": 71,
+    "descriptor_tstates": 206,
+    "total_pentagon_or_128_tstates": 277
+  },
+  "after": {
+    "entry": [
+      [
+        "EXX",
+        4
+      ],
+      [
+        "INC E",
+        4
+      ],
+      [
+        "JP Z,page_tail",
+        10
+      ],
+      [
+        "INC D",
+        4
+      ],
+      [
+        "JP Z,bank_handoff",
+        10
+      ],
+      [
+        "EX AF,AF'",
+        4
+      ],
+      [
+        "JP literal tail",
+        10
+      ]
+    ],
+    "command_and_release": [
+      [
+        "LD SP,(cursor)",
+        20
+      ],
+      [
+        "POP AF",
+        10
+      ],
+      [
+        "JP Z,exhausted",
+        10
+      ],
+      [
+        "POP DE",
+        10
+      ],
+      [
+        "LD BC,7FFD",
+        10
+      ],
+      [
+        "LD A,31",
+        7
+      ],
+      [
+        "OUT(C),A",
+        12
+      ],
+      [
+        "POP BC",
+        10
+      ],
+      [
+        "LD A,24",
+        7
+      ],
+      [
+        "LD(BC),A first",
+        7
+      ],
+      [
+        "POP BC",
+        10
+      ],
+      [
+        "LD(BC),A second",
+        7
+      ],
+      [
+        "POP AF unused selector",
+        10
+      ],
+      [
+        "LD(cursor),SP",
+        20
+      ],
+      [
+        "LD BC,7FFD",
+        10
+      ],
+      [
+        "LD A,E",
+        4
+      ],
+      [
+        "OUT(C),A",
+        12
+      ],
+      [
+        "LD E,0",
+        7
+      ],
+      [
+        "EXX",
+        4
+      ],
+      [
+        "SCF",
+        4
+      ],
+      [
+        "EX AF,AF'",
+        4
+      ],
+      [
+        "literal OUT",
+        12
+      ]
+    ],
+    "padding": [
+      [
+        "NOP",
+        4
+      ],
+      [
+        "NOP",
+        4
+      ],
+      [
+        "NOP",
+        4
+      ],
+      [
+        "NOP",
+        4
+      ],
+      [
+        "NOP",
+        4
+      ],
+      [
+        "NOP",
+        4
+      ]
+    ],
+    "entry_tstates": 46,
+    "command_tstates": 207,
+    "padding_tstates": 24,
+    "total_pentagon_tstates": 277
+  },
+  "ordinary_interval_tstates": 34,
+  "bank_extra_before_tstates": 243,
+  "bank_extra_after_tstates": 243,
+  "bank_extra_delta_tstates": 0,
+  "scorpion": {
+    "live_path": "Original descriptor handler retained",
+    "total_tstates": 301,
+    "bank_extra_tstates": 267,
+    "delta_tstates": 0,
+    "extra_vs_128": "3 NOPs12 +LD BC10 +OUT12 replace JP10, delta24"
+  },
+  "next_source_interval": "JP(HL)4 + next FIRST OUT12 =16T unchanged",
+  "native": {
+    "profiles": [
+      "128",
+      "scorpion",
+      "pentagon512",
+      "pentagon1024"
+    ],
+    "last_bits": [
+      0,
+      1
+    ],
+    "elapsed_to_next_dispatch": {
+      "ordinary": 281,
+      "scorpion": 305
+    },
+    "output_callback_tstates": {
+      "ordinary": 276,
+      "scorpion": 300
+    },
+    "callback_note": "Native callback occurs oneT before the OUT instruction completes. Before/after callbacks are exact.",
+    "proof": "report.json:short_native_bank_handoffs",
+    "every_decoder_register_and_memory_guard": true
+  },
+  "memory": {
+    "shared_cursor": "Fixed bank2 ten-byte command pointer, updated identically by both tails",
+    "sp": "Dead after SECOND threePOP until next FIRST resets it",
+    "preserved": [
+      "Main HL dispatch",
+      "Main DE D16/feedback",
+      "Main C FE",
+      "IX predictor",
+      "IY SECOND",
+      "ALT HL decoder row",
+      "AF-prime prefetched nibble"
+    ],
+    "paging": "Screen7 OUT31; exactly two attribute stores; restore next audio page before later source prefetch",
+    "attribute": "0x24, greenINK andgreenPAPER",
+    "zero_position": "Both writes target a fixedbank2 dummy byte, never prematurely paintcolumn0",
+    "capacity": "Original audio banks and ROM workspace unchanged; max39 records390B startup"
+  },
+  "scope": {
+    "pentagon": "Uncontended RAM andI/O exact CPU scheduling; complete real-emulator traces separately required",
+    "smaller_ram": "Original live audioI/O retained. Green redraw only existing refill pauses and completion; no newULA contentionclaim.",
+    "no_1hz_claim": true
+  }
+}

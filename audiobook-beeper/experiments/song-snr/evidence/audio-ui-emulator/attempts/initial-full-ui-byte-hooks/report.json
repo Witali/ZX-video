@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-14",
+  "complete": false,
+  "profile": "pentagon512",
+  "trd_sha256": "55216119144fdb4e574bb3525b496d15c528b6f1a826da39c5070c3f57be9e1d",
+  "start_local_time": "2026-10-14T19:43:24.0782006+02:00",
+  "stop_local_time": "2026-10-14T20:02:30+02:00",
+  "termination": "Only authenticated Fuse PID 25436 was stopped, at root instruction, before the 1200-second timeout; producer then saved stdout/stderr and failed its exit77 check.",
+  "fuse_return_code": 4294967295,
+  "captured_stdout_bytes": 0,
+  "captured_stderr_bytes": 0,
+  "terminal_fuse_cpu_seconds": 1140.390625,
+  "process_observations": [
+    {
+      "fuse_cpu_seconds": 515.765625,
+      "fuse_working_set_bytes": 122974208,
+      "python_working_set_bytes": 53059584
+    },
+    {
+      "fuse_cpu_seconds": 711.3125,
+      "fuse_working_set_bytes": 122974208,
+      "python_working_set_bytes": 53059584
+    },
+    {
+      "fuse_cpu_seconds": 809.796875,
+      "fuse_private_bytes": 112050176,
+      "python_private_bytes": 441389056
+    },
+    {
+      "fuse_cpu_seconds": 844.15625,
+      "fuse_private_bytes": 112050176,
+      "python_private_bytes": 441389056
+    },
+    {
+      "fuse_cpu_seconds": 969.21875,
+      "fuse_private_bytes": 112050176,
+      "python_private_bytes": 441389056
+    },
+    {
+      "fuse_cpu_seconds": 1057.46875,
+      "fuse_private_bytes": 112050176,
+      "python_private_bytes": 441421824
+    }
+  ],
+  "clean_import_memory_control": {
+    "working_set_bytes": 44081152,
+    "private_bytes": 433336320
+  },
+  "capture_script_sha256": "f470f3a8cabd7aabd001418f628c8c8dd42e883576e2284b207668bd10ff5c7f",
+  "producer_sha256": {
+    "audiobook-beeper/verify_stream_trd.py": "f6c97433bdf3a044ba6b19de9f930187f09d289e77a8e1be477cc98499c6cdd9",
+    "audiobook-beeper/experiments/song-snr/evidence/audio-ui-emulator/verify.py": "447943fc5116a3c386da0748d91c456aaed9957ba280a496a2cbe856129f4fe7"
+  },
+  "observed_stage": null,
+  "actual_source_pulses_verified": 0,
+  "decision": "Failed/incomplete instrumentation attempt; no release or player-fault claim. Separate saved READY/first-source diagnostics prove those stages only.",
+  "limits": "Empty captured pipes do not prove no debugger events occurred, because stopping a process can discard buffered output. Large Python private memory was predominantly clean-import allocation."
+}

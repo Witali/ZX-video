@@ -44,6 +44,22 @@ def build(packed,work,cover,model=None):
     hot=sorted(range(89),key=lambda i:(-int(counts[i]),i))[:25]
     compact_loader=bool(model.pop('compact_stream_loader',False))
     if compact_loader:model['compact_stream_loader']=True
+    progress_ui=model.get('audio_progress_ui',False)
+    if progress_ui and compact_loader:
+        raise ValueError('audio_progress_ui requires the proved noncompact continuous loader')
+    if progress_ui:
+        # The exact-clock Pentagon handoff has room for two attribute writes.
+        # Reject short sources whose32-cell bar would need a larger live jump;
+        # the default player and encoder continue to support those sources.
+        offset=previous=0
+        ui_sections,remaining=sections(len(packed),56)
+        if remaining:raise ValueError('audio_progress_ui source exceeds resident descriptor capacity')
+        for part in ui_sections:
+            current=32*offset//len(packed)
+            if current-previous>2:
+                raise ValueError('audio_progress_ui requires a source long enough for at most two bar cells per RAM handoff')
+            previous=current
+            offset+=part['bytes']
     resident_limit=16384 if compact_loader else 14848
     words,nxt,states,first,second,pointers,pages,rows,_,_,_=layout(packed[:256],model,hot,resident_limit=resident_limit)
     assert len(states)<=18
@@ -89,7 +105,8 @@ def build(packed,work,cover,model=None):
                    lower_disk=disk_address(positions[2]),upper_disk=disk_address(positions[3]),
                    cover_disk=disk_address(positions[4]),audio_sector=position,audio_sectors=len(packed)//256,
                    record_slots=len(all_sections)+1,worker_origin=worker_origin,
-                   compact_stream_loader=int(compact_loader))
+                   compact_stream_loader=int(compact_loader),
+                   audio_progress_ui=int(progress_ui),audio_ui_resident_origin=resident_end)
     for i in range(256):constants.update({f'first_address_{i}':first.get(i,-1),f'second_address_{i}':second.get(i,-1)})
     config=''.join(f'{k}: EQU {v}\n' for k,v in constants.items())
     if model.get('pcm_quantization_bias'):
@@ -100,7 +117,9 @@ def build(packed,work,cover,model=None):
         (work/(name+'.bin')).write_bytes(data)
     cache=(HERE/'ram-cache.asm').read_text(encoding='utf-8')
     (work/'stream-probe.asm').write_text(cache[:cache.index('; DE=TR-DOS track/sector.')],encoding='utf-8',newline='\n')
-    for name in ('stream-player.asm','stream-worker.asm','stream-progress.asm'):(work/name).write_bytes((HERE/name).read_bytes())
+    sources=['stream-player.asm','stream-worker.asm','stream-progress.asm']
+    if progress_ui:sources+=['stream-audio-ui.asm','stream-audio-ui-helper.asm','stream-playback-progress.asm']
+    for name in sources:(work/name).write_bytes((HERE/name).read_bytes())
     r=subprocess.run([sys.executable,'-m','pyz80.pyz80','--obj=player.bin','--lstfile=player.lst','-s','.*','stream-player.asm'],cwd=work,capture_output=True,text=True)
     (work/'assembler.log').write_text(r.stdout+r.stderr,encoding='utf-8')
     if r.returncode:raise RuntimeError(r.stdout+r.stderr)
@@ -109,6 +128,9 @@ def build(packed,work,cover,model=None):
         # Captured historical verification requires exact metadata as well as
         # byte-identical disks. Optional symbols do not enter default exports.
         for name in ('compact_stream_loader','startup_hot_end','stream_probe_start','stream_probe_end'):
+            labels.pop(name,None)
+    if not progress_ui:
+        for name in ('audio_progress_ui','audio_ui_resident_origin'):
             labels.pop(name,None)
     blob=(work/'player.bin').read_bytes();assert len(blob)==16384
     files[1]=TrdFile('PLAYER','C',blob,start=0x8000)
@@ -137,6 +159,15 @@ def build(packed,work,cover,model=None):
     if 'idle_cycle_word' in model:meta['idle_cycle_packet']=idle_cycle_packet_metadata(model)
     if 'idle_pair_words' in model:meta['idle_pair_packet']=idle_pair_packet_metadata(model)
     if 'endpoint_idle_pair_words' in model:meta['endpoint_idle_pair']=endpoint_idle_pair_metadata(model)
+    if progress_ui:
+        meta['audio_progress_ui']=dict(loading_label='LOADING. / LOADING.. / LOADING...',
+            loading_attribute=0x3f,empty_loading_attribute=0x07,dot_period_fields=25,
+            playback_label='PLAYING',playback_attribute=0x24,empty_playback_attribute=0x04,
+            full_bank_update_samples=32768,full_bank_update_seconds=4.105457,
+            live_updates_profiles=['pentagon512','pentagon1024'],
+            smaller_ram_updates='Existing refill pauses and final completion',
+            live_bank_extra_tstates_before=243,live_bank_extra_tstates_after=243,
+            live_bank_delta_tstates=0)
     save(work/'player.json',meta)
     return disk,meta
 

@@ -36,6 +36,21 @@ quality on a different clone without its own measurements.
 ### Current continuation checkpoint
 
 Worktree `.worktree/audio-snr-research`, branch `codex/audio-snr-research`.
+The immediate user-authorized deliverable is the loading/playback interface
+on the separately delivered best-measured song disk. The user explicitly
+accepted playback updates about every four seconds to preserve audio timing.
+Use a light-gray loading bar, centered `LOADING` with one/two/three cycling
+dots, and the existing green playback bar. Prove the complete new Pentagon
+512/1024 pulse bits and relative timestamps equal the authenticated ccab
+snapshot before replacing the delivered file. Retain legacy128/Scorpion live
+paging and report their refill/completion-only playback display. The separate
+448-T pacing experiment below is deferred until this deliverable is finished.
+The initial frame-clock UI image55216119... has complete native and actual
+512/1024 source-clock parity, but actual LOADING dots remain at phase1 because
+ROM FRAMES barely advances during TR-DOS reads. Do not deliver that UI build.
+Preserve its complete control traces; replace only the loading animation
+clock with a completed-sector counter, then regenerate and fully verify.
+
 The strict original8-kHz complete-song baseline is-3.085228288 dB. The current
 half-joint preview scores20.250315887 dB on its complete512/1024 Fuse clocks,
 gain23.335544175. Both retain all11,526,111 relative source pulse timestamps

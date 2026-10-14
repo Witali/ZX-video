@@ -1,0 +1,161 @@
+{
+  "date": "2026-10-14",
+  "profile": "pentagon512",
+  "trd_sha256": "55216119144fdb4e574bb3525b496d15c528b6f1a826da39c5070c3f57be9e1d",
+  "elapsed_seconds": 0.7677424000030442,
+  "timeout_seconds": 60,
+  "timed_out": false,
+  "returncode": 77,
+  "ready_reached": true,
+  "events": [
+    {
+      "tag": -10,
+      "timestamp": 31385878,
+      "pc": 32768,
+      "7ffd": 16,
+      "hl": 11563,
+      "de": 23949,
+      "b": 128,
+      "loading": 0,
+      "dots": 0,
+      "bar": 0,
+      "remaining": 0
+    },
+    {
+      "tag": -12,
+      "timestamp": 31386127,
+      "pc": 15635,
+      "7ffd": 31,
+      "hl": 49152,
+      "de": 2061,
+      "b": 1,
+      "loading": 0,
+      "dots": 0,
+      "bar": 0,
+      "remaining": 0
+    },
+    {
+      "tag": -11,
+      "timestamp": 36323705,
+      "pc": 47963,
+      "7ffd": 31,
+      "hl": 56064,
+      "de": 2568,
+      "b": 0,
+      "loading": 0,
+      "dots": 0,
+      "bar": 0,
+      "remaining": 0
+    },
+    {
+      "tag": -13,
+      "timestamp": 248372199,
+      "pc": 32771,
+      "7ffd": 24,
+      "hl": 56032,
+      "de": 9240,
+      "b": 255,
+      "loading": 0,
+      "dots": 1,
+      "bar": 0,
+      "remaining": 0
+    }
+  ],
+  "checkpoint_definitions": [
+    {
+      "tag": -10,
+      "address": 32768,
+      "fields": [
+        "timestamp",
+        "pc",
+        "7ffd",
+        "hl",
+        "de",
+        "b",
+        "loading",
+        "dots",
+        "bar",
+        "remaining"
+      ]
+    },
+    {
+      "tag": -11,
+      "address": 47963,
+      "fields": [
+        "timestamp",
+        "pc",
+        "7ffd",
+        "hl",
+        "de",
+        "b",
+        "loading",
+        "dots",
+        "bar",
+        "remaining"
+      ]
+    },
+    {
+      "tag": -12,
+      "address": 15635,
+      "fields": [
+        "timestamp",
+        "pc",
+        "7ffd",
+        "hl",
+        "de",
+        "b",
+        "loading",
+        "dots",
+        "bar",
+        "remaining"
+      ]
+    },
+    {
+      "tag": -13,
+      "address": 32771,
+      "fields": [
+        "timestamp",
+        "pc",
+        "7ffd",
+        "hl",
+        "de",
+        "b",
+        "loading",
+        "dots",
+        "bar",
+        "remaining"
+      ]
+    },
+    {
+      "tag": -14,
+      "address": 48640,
+      "fields": [
+        "timestamp",
+        "pc",
+        "7ffd",
+        "hl",
+        "de",
+        "b",
+        "loading",
+        "dots",
+        "bar",
+        "remaining"
+      ]
+    }
+  ],
+  "command": [
+    "C:\\Program Files (x86)\\Fuse\\fuse.exe",
+    "--no-sound",
+    "--no-autosave-settings",
+    "--no-confirm-actions",
+    "--speed",
+    "10000",
+    "--machine",
+    "pentagon512",
+    "--beta128",
+    "--debugger-command",
+    "base 10\nset $seen 0\nbr 32768\ncom 1\npr -10\npr spectrum:frames*71680+ula:tstates\npr z80:pc\npr ula:mem7ffd\npr z80:hl\npr z80:de\npr z80:b\npr [47557]\npr [47558]\npr [23416]\npr ([48711]+[48712]*256)\nco\nend\nbr 47963\ncom 2\npr -11\npr spectrum:frames*71680+ula:tstates\npr z80:pc\npr ula:mem7ffd\npr z80:hl\npr z80:de\npr z80:b\npr [47557]\npr [47558]\npr [23416]\npr ([48711]+[48712]*256)\nco\nend\nbr 15635\ncom 3\npr -12\npr spectrum:frames*71680+ula:tstates\npr z80:pc\npr ula:mem7ffd\npr z80:hl\npr z80:de\npr z80:b\npr [47557]\npr [47558]\npr [23416]\npr ([48711]+[48712]*256)\nse $seen 1\nco\nend\ncond 3 $seen==0\nbr 32771\ncom 4\npr -13\npr spectrum:frames*71680+ula:tstates\npr z80:pc\npr ula:mem7ffd\npr z80:hl\npr z80:de\npr z80:b\npr [47557]\npr [47558]\npr [23416]\npr ([48711]+[48712]*256)\nex 77\nend\nbr 48640\ncom 5\npr -14\npr spectrum:frames*71680+ula:tstates\npr z80:pc\npr ula:mem7ffd\npr z80:hl\npr z80:de\npr z80:b\npr [47557]\npr [47558]\npr [23416]\npr ([48711]+[48712]*256)\nex 77\nend",
+    "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\audio-ui-delivery\\generated\\audio.trd"
+  ],
+  "scope": "Actual independently cold-booted Fuse loader checkpoints only; no complete audio or waveform-quality claim"
+}

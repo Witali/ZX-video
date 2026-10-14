@@ -30,6 +30,12 @@ def canonical_pcm_model(model=None):
     Other grids/families have no proved hardware interpretation for this flag.
     """
     result=dict(model or dict(holds=HOLDS,beta=.5,extent=1.))
+    # UI is an explicit continuous-player option. Omit false from canonical
+    # metadata so archived default models and disks remain exactly reproducible.
+    progress_ui=result.pop('audio_progress_ui',False)
+    if type(progress_ui) is not bool:
+        raise ValueError('audio_progress_ui must be a boolean')
+    if progress_ui:result['audio_progress_ui']=True
     bias=result.pop('pcm_quantization_bias',0)
     if type(bias) is not int or bias not in (0,512):
         raise ValueError('pcm_quantization_bias must be integer0 or512 (PCM16 units)')
@@ -192,6 +198,8 @@ def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
 def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*,chain=None,storage=None,cover=None):
     if (chain is None)!=(storage is None):raise ValueError('chain and storage must be supplied together')
     model=canonical_pcm_model(model)
+    if model.get('audio_progress_ui'):
+        raise ValueError('audio_progress_ui requires build_stream_trd.build')
     work=Path(work).resolve();work.mkdir(parents=True,exist_ok=True)
     words,nxt,states,first,second,pointers,pages,rows,sections,hot,coverage=layout(packed,model,hot_indices)
     extended=ram_enabled(model or {})

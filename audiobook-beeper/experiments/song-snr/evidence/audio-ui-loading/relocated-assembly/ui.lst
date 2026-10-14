@@ -1,0 +1,261 @@
+                 	
+8100              	ORG 33024
+8100              	cache_bar: EQU 0x5B78
+8100              	cache_mode: EQU 0x5B72
+                 	
+                 	; Optional loading UI for the continuous audio disk. Include at any proved
+                 	; fixed bank-2 address: this module contains no ORG or live-player hook.
+                 	; Include the public entries below FIRST; place stream-audio-ui-helper.asm
+                 	; separately in proved fixed bank-2 padding before the worker. Public entries
+                 	; use absolute helper addresses and the two chunks have no ordering dependency.
+                 	; CACHE_BAR and CACHE_RESTORE use the established cache ABI. All public
+                 	; routines clobber AF/BC/DE/HL, preserve IX/IY and every alternate register,
+                 	; and use the caller's ordinary loading stack. Never call during live PDM.
+                 	;
+                 	; Display bank 7 is protected through DAFF; audio in that bank starts at DB00.
+                 	; Row 20's centered 10-cell label uses D08B..D794 and DA8B..DA94. Row 22's
+                 	; 32-cell progress attributes are DAC0..DADF. Direct 48K-ROM font copying
+                 	; avoids ROM text routines that would write the decoder's normal screen RAM.
+                 	
+                 	audio_ui_begin_loading:
+8100 F3           	        DI
+8101 2A 78 5C     	        LD HL,(0x5C78)          ; low 16 ROM FRAMES; modular elapsed arithmetic
+8104 22 87 B8     	        LD (audio_ui_frame),HL
+8107 3E 01        	        LD A,1
+8109 32 86 B8     	        LD (audio_ui_dots),A
+810C 32 85 B8     	        LD (audio_ui_loading),A
+810F AF           	        XOR A
+8110 32 78 5B     	        LD (cache_bar),A
+8113 CD 85 81     	        CALL audio_ui_map_screen
+8116 CD 00 B8     	        CALL audio_ui_loading_label
+8119 16 3F        	        LD D,0x3F               ; paper7/ink7: solid light gray, no BRIGHT
+811B 0E 07        	        LD C,0x07               ; black paper, light-gray ink for empty cells
+811D CD 27 B8     	        CALL audio_ui_bar_mapped
+8120 C3 8B 81     	        JP audio_ui_leave_enabled
+                 	
+                 	; Call only after a completed physical read/copy, including optional header
+                 	; sectors after the cover is visible. Suppressed updates change neither bank
+                 	; selection nor IFF. ROM FRAMES, rather than source/sector count, sets the
+                 	; approximate 0.5-s period; long blocked reads can delay observation. A 16-bit
+                 	; difference also handles FRAMES wrapping. Large delays advance one phase,
+                 	; avoiding a burst of several labels when reads resume.
+                 	audio_ui_sector_tick:
+8123 3A 85 B8     	        LD A,(audio_ui_loading)
+8126 B7           	        OR A
+8127 C8           	        RET Z
+8128 2A 78 5C     	        LD HL,(0x5C78)
+812B ED 5B 87 B8  	        LD DE,(audio_ui_frame)
+812F B7           	        OR A
+8130 ED 52        	        SBC HL,DE
+8132 11 19 00     	        LD DE,25
+8135 B7           	        OR A
+8136 ED 52        	        SBC HL,DE
+8138 D8           	        RET C
+8139 2A 78 5C     	        LD HL,(0x5C78)
+813C 22 87 B8     	        LD (audio_ui_frame),HL
+813F 3A 86 B8     	        LD A,(audio_ui_dots)
+8142 3C           	        INC A
+8143 FE 04        	        CP 4
+8145 38 02        	        JR C,audio_ui_phase_ready
+8147 3E 01        	        LD A,1
+                 	audio_ui_phase_ready:
+8149 32 86 B8     	        LD (audio_ui_dots),A
+814C CD 85 81     	        CALL audio_ui_map_screen
+814F CD 00 B8     	        CALL audio_ui_loading_label
+8152 C3 8B 81     	        JP audio_ui_leave_enabled
+                 	
+                 	; Replacement for the existing loading-only CACHE_DRAW_BAR call. CACHE_BAR
+                 	; is 0..32, calculated by the original exact-sector fractional accumulator.
+                 	; Rendering restores normal bank 0 before EI; the loader maps its destination
+                 	; again before the next physical sector copy.
+                 	audio_ui_draw_loading_bar:
+8155 CD 85 81     	        CALL audio_ui_map_screen
+8158 16 3F        	        LD D,0x3F
+815A 0E 07        	        LD C,0x07
+815C CD 27 B8     	        CALL audio_ui_bar_mapped
+815F C3 8B 81     	        JP audio_ui_leave_enabled
+                 	
+                 	; Call once per loaded batch before entering/resuming live audio. This only
+                 	; paints PLAYING and resets the green progress display; a separate proved
+                 	; clock path owns playback advancement. It returns in normal bank 0 with DI.
+                 	audio_ui_begin_playback:
+8162 F3           	        DI
+8163 AF           	        XOR A
+8164 32 85 B8     	        LD (audio_ui_loading),A
+8167 32 78 5B     	        LD (cache_bar),A
+816A CD 85 81     	        CALL audio_ui_map_screen
+816D 21 7A B8     	        LD HL,audio_ui_playing
+8170 11 8B D0     	        LD DE,0xD08B
+8173 CD 3C B8     	        CALL audio_ui_print
+8176 3E 04        	        LD A,0x04
+8178 CD 1D B8     	        CALL audio_ui_label_attributes
+817B 16 24        	        LD D,0x24               ; green paper/ink for filled playback cells
+817D 0E 04        	        LD C,0x04               ; green ink on black paper for empty cells
+817F CD 27 B8     	        CALL audio_ui_bar_mapped
+8182 C3 92 81     	        JP audio_ui_leave_disabled
+                 	
+                 	; Map protected shadow screen/48K ROM. CACHE_RESTORE independently clears
+                 	; Scorpion's high-RAM selector. Calling code must remain in fixed bank 2.
+                 	audio_ui_map_screen:
+8185 F3           	        DI
+8186 3E 1F        	        LD A,31
+8188 C3 00 BB     	        JP cache_restore
+                 	
+                 	audio_ui_leave_enabled:
+818B 3E 18        	        LD A,24
+818D CD 00 BB     	        CALL cache_restore
+8190 FB           	        EI
+8191 C9           	        RET
+                 	
+                 	; Common paused/end return: ordinary bank 0 with interrupts disabled.
+                 	audio_ui_leave_disabled:
+8192 3E 18        	        LD A,24
+8194 CD 00 BB     	        CALL cache_restore
+8197 F3           	        DI
+8198 C9           	        RET
+                 	
+                 	audio_ui_startup_end:
+8199              	INCLUDE "stream-audio-ui.asm"
+8199              	ASSERT audio_ui_startup_end < 0x8340
+8199              	DS 47104 - $
+                 	
+                 	; Fixed bank-2 helpers for stream-audio-ui.asm. Include at the independently
+                 	; proved AUDIO_UI_RESIDENT_ORIGIN; require AUDIO_UI_END below worker origin.
+                 	; These routines are loading/paused/end only and must never run during PDM.
+                 	
+                 	audio_ui_resident_begin:
+                 	
+                 	; Bank 7/48K ROM mapped, IRQ disabled. The complete 10-cell fixed-width block
+                 	; is rewritten so dot phases do not move the title or leave stale glyphs.
+                 	audio_ui_loading_label:
+B800 21 59 B8     	        LD HL,audio_ui_loading_one
+B803 3A 86 B8     	        LD A,(audio_ui_dots)
+B806 FE 02        	        CP 2
+B808 38 08        	        JR C,audio_ui_label_ready
+B80A 21 64 B8     	        LD HL,audio_ui_loading_two
+B80D 28 03        	        JR Z,audio_ui_label_ready
+B80F 21 6F B8     	        LD HL,audio_ui_loading_three
+                 	audio_ui_label_ready:
+B812 11 8B D0     	        LD DE,0xD08B
+B815 CD 3C B8     	        CALL audio_ui_print
+B818 3E 07        	        LD A,0x07
+B81A C3 1D B8     	        JP audio_ui_label_attributes
+                 	
+                 	; A=attribute; bank 7 mapped. HL/BC clobbered, exactly row 20 columns 11..20.
+                 	audio_ui_label_attributes:
+B81D 21 8B DA     	        LD HL,0xDA8B
+B820 06 0A        	        LD B,10
+                 	audio_ui_label_attribute_next:
+B822 77           	        LD (HL),A
+B823 23           	        INC HL
+B824 10 FC        	        DJNZ audio_ui_label_attribute_next
+B826 C9           	        RET
+                 	
+                 	; Bank 7 mapped; D=filled attribute, C=empty, CACHE_BAR=0..32. AF/BC/DE/HL
+                 	; clobbered. No paging or interrupts inside the 32-cell attribute loop.
+                 	audio_ui_bar_mapped:
+B827 21 C0 DA     	        LD HL,0xDAC0
+B82A 3A 78 5B     	        LD A,(cache_bar)
+B82D 5F           	        LD E,A
+B82E 06 20        	        LD B,32
+                 	audio_ui_bar_next:
+B830 7B           	        LD A,E
+B831 B7           	        OR A
+B832 79           	        LD A,C
+B833 28 02        	        JR Z,audio_ui_bar_empty
+B835 1D           	        DEC E
+B836 7A           	        LD A,D
+                 	audio_ui_bar_empty:
+B837 77           	        LD (HL),A
+B838 23           	        INC HL
+B839 10 F5        	        DJNZ audio_ui_bar_next
+B83B C9           	        RET
+                 	
+                 	; HL=NUL-terminated ASCII, DE=top pixel byte of a character row. Return with
+                 	; HL at the terminator and DE advanced by the character count. AF/BC scratch.
+                 	; Uses the same 3C00+8*ASCII font convention as STREAM_FINISH, but returns at
+                 	; NUL rather than entering its terminal HALT loop. For callers here length 10
+                 	; cannot cross a 32-cell row; incrementing D visits the eight Spectrum scans.
+                 	audio_ui_print:
+B83C 7E           	        LD A,(HL)
+B83D B7           	        OR A
+B83E C8           	        RET Z
+B83F 23           	        INC HL
+B840 E5           	        PUSH HL
+B841 6F           	        LD L,A
+B842 26 00        	        LD H,0
+B844 29           	        ADD HL,HL
+B845 29           	        ADD HL,HL
+B846 29           	        ADD HL,HL
+B847 01 00 3C     	        LD BC,0x3C00
+B84A 09           	        ADD HL,BC
+B84B D5           	        PUSH DE
+B84C 06 08        	        LD B,8
+                 	audio_ui_glyph:
+B84E 7E           	        LD A,(HL)
+B84F 12           	        LD (DE),A
+B850 23           	        INC HL
+B851 14           	        INC D
+B852 10 FA        	        DJNZ audio_ui_glyph
+B854 D1           	        POP DE
+B855 1C           	        INC E
+B856 E1           	        POP HL
+B857 18 E3        	        JR audio_ui_print
+                 	
+B859 00           	audio_ui_loading_one:   DEFM "LOADING.  ",0
+B864 00           	audio_ui_loading_two:   DEFM "LOADING.. ",0
+B86F 00           	audio_ui_loading_three: DEFM "LOADING...",0
+B87A 00           	audio_ui_playing:       DEFM "PLAYING   ",0
+                 	
+                 	; Mutable loading-only state is explicitly bounded for native memory guards.
+                 	; Do not alias the frame snapshot with the persistent playback descriptors.
+                 	audio_ui_data_start:
+B885 00           	audio_ui_loading: DEFB 0
+B886 00           	audio_ui_dots: DEFB 0
+B887 00 00        	audio_ui_frame: DEFW 0
+                 	audio_ui_data_end:
+                 	
+                 	; Redraw an already calculated global playback fill count without resetting
+                 	; CACHE_BAR. Call only while paused/refilling or after the final mute. Return
+                 	; in normal bank 0 with DI; clobber AF/BC/DE/HL, preserve IX/IY/alternates.
+                 	audio_ui_redraw_playback_bar:
+B889 CD 85 81     	        CALL audio_ui_map_screen
+B88C 16 24        	        LD D,0x24
+B88E 0E 04        	        LD C,0x04
+B890 CD 27 B8     	        CALL audio_ui_bar_mapped
+B893 C3 92 81     	        JP audio_ui_leave_disabled
+                 	
+                 	; Clear the centered PLAYING label before the existing end message at column
+                 	; 0. Leave the final progress fill intact, disable loading animation, and
+                 	; return in normal bank 0 with DI. No audio code may be active at this call.
+                 	audio_ui_clear_label:
+B896 AF           	        XOR A
+B897 32 85 B8     	        LD (audio_ui_loading),A
+B89A CD 85 81     	        CALL audio_ui_map_screen
+B89D 21 AE B8     	        LD HL,audio_ui_blank
+B8A0 11 8B D0     	        LD DE,0xD08B
+B8A3 CD 3C B8     	        CALL audio_ui_print
+B8A6 3E 04        	        LD A,0x04
+B8A8 CD 1D B8     	        CALL audio_ui_label_attributes
+B8AB C3 92 81     	        JP audio_ui_leave_disabled
+                 	
+B8AE 00           	audio_ui_blank: DEFM "          ",0
+                 	
+                 	audio_ui_end:
+B8B9              	INCLUDE "stream-audio-ui-helper.asm"
+B8B9              	ASSERT audio_ui_end < 0xBA00
+B8B9              	DS 0xBB00 - $
+                 	cache_restore:
+BB00 5F           	        LD E,A
+BB01 3A 72 5B     	        LD A,(cache_mode)
+BB04 FE 01        	        CP 1
+BB06 20 06        	        JR NZ,cache_restore_low
+BB08 AF           	        XOR A
+BB09 01 FD 1F     	        LD BC,0x1FFD
+BB0C ED 79        	        OUT (C),A
+                 	cache_restore_low:
+BB0E 7B           	        LD A,E
+BB0F 01 FD 7F     	        LD BC,0x7FFD
+BB12 ED 79        	        OUT (C),A
+BB14 C9           	        RET
+                 	

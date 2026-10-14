@@ -1,0 +1,20 @@
+--- tested-verifier-9cc
++++ capture-only-verifier-f6
+@@ -74,7 +74,16 @@
+                   f"[{labels['audio_ui_loading']}]",f"[{labels['audio_ui_dots']}]",'[23416]']
+         controls += [f'[{address}]' for address in ui_addresses]
+         event(labels['audio_ui_leave_enabled'],-108,controls)
+-        event(labels['audio_ui_bar_complete'],-108,controls)
++        # Earlier UI disks did not export a label for this existing RET.
++        # Derive it without modifying disk metadata and authenticate every
++        # loop opcode against the actual PLAYER file before observing it.
++        bar_complete=labels.get('audio_ui_bar_complete')
++        if bar_complete is None:
++            bar_complete=labels['audio_ui_bar_next']+11
++            entry=next(item for item in meta['directory'] if item['name']=='PLAYER')
++            offset=(entry['track']*16+entry['sector'])*256+labels['audio_ui_bar_next']-meta['origin']
++            assert Path(disk_path).read_bytes()[offset:offset+12]==bytes.fromhex('7BB77928021D7A772310F5C9'), 'UI bar capture loop changed'
++        event(bar_complete,-108,controls)
+     terminal_expressions=[stamp,'$pulse','ula:mem7ffd']
+     if capture_ui:terminal_expressions += [f'[{address}]' for address in final_ui_addresses]
+     event(labels['stream_finished'],-199,terminal_expressions,stop=True)
