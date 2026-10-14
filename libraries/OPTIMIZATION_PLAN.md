@@ -111,3 +111,30 @@ The proposed codec sites are our inferences from those sources.
 
 Existing default profiles remain exact. The new queue contains ideas to
 evaluate, not additional accepted gains or a new player release.
+
+## Other-site speed/size research (2026-10-14)
+
+The user prioritizes speed, then code size, and asks for sources outside
+zx-pk.ru. [Survey and priority](WEB_RESEARCH.md) connects Grauw, SHIAR,
+WikiTI, z80 Heaven, ticalc, MDL, SDCC/z88dk and upstream decoder sources to
+current library paths. Seven primitive groups pass6604 native cases; these
+are conditional snippets, not completed codec/streaming/IRQ experiments.
+Item20 now has a concrete LZSA2 `sync` proposal: restore HL with ADD HL,DE
+after subtraction instead of reloading target, 35 ->30 T and6 ->4 bytes;
+S/Z/PV/C agree, H/N differ. Item10 remains the next sequential experiment.
+
+| ID | Additional technique and source | Application and required proof | Status |
+| --- | --- | --- | --- |
+| 22 | Residue-entry unrolled copy: Grauw, WikiTI | Extend item01 from a 16-byte prefix to the entire long run; AF retained, nonzero count, private writable code, exact thresholds including dispatch, short escaped word forms | 543 primitive copy cases; codec pending |
+| 23 | Bit-phase-specialized Elias paths: upstream ZX0 Mega | Selectively expand length/offset paths beyond current Fast; measure real bit-phase distribution, EOF and code/stack reservations | Source inspected; codec pending |
+| 24 | Distance-1 match as repeated-byte fill: our derivation from loop sources | Avoid redundant history reads on long runs; include seed/dispatch/remainder costs, overlap, flags, output/input limits and suspension | 768 exact16-byte probes; codec pending |
+| 25 | Stack-word exchange: SHIAR, MDL patterns | EX (SP),HL instead of exchange/pop/push where DE is dead; preserve continuation/IRQ stack ownership | 96 primitive cases; already present at some ZX0 sites; audit pending |
+| 26 | Byte displacement without a spare pair: WikiTI, our variant | Add A to HL while retaining DE; compare with actual register-pressure cost and any already-zero scratch high byte | 4608 primitive cases; codec pending |
+| 27 | Counter-loop form: Grauw, WikiTI, optimizer rules | DJNZ or split counters only where B is available; CPI fusion also reads RAM/advances HL; preserve live flags and exact bounds | DJNZ256 lengths; caller applicability pending |
+| 28 | Synchronous feature-specific profile: upstream ZX0/LZSA | For fully resident blocks without yield/paging, remove coroutine checks/state; keep a separate explicit caller contract | Standard/Turbo already available; additional Fast/LZSA profiles pending |
+| 29 | Compact shared length/nibble helpers: upstream LZSA2 small | Optional size profile; retain standard fields, short-word escapes, exact EOD and coroutine/IRQ rules; measure speed penalty | Raw134-byte source inspected; adapted profile pending |
+
+Speed candidates have priority over compact profiles. The source's upstream
+percentages and raw core sizes do not qualify our coroutine/streaming ABI.
+The [saved report](evidence/web_research_2026-10-14.json) records source hashes,
+current profile sizes and exclusions. Defaults and compressed formats unchanged.

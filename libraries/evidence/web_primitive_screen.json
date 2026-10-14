@@ -1,0 +1,158 @@
+{
+  "date": "2026-10-14",
+  "baseline_revision": "5abac404",
+  "complete": true,
+  "release": false,
+  "scope": "Check outside-site Z80 primitives; no codec integration or release qualification.",
+  "default_profiles": 31,
+  "default_layouts_exact": true,
+  "residue_copy": {
+    "checks": 519,
+    "overlapping_match_checks": 24,
+    "positive_counts_only": true,
+    "code_bytes_before": 2,
+    "code_bytes_after": 47,
+    "code_bytes_added": 45,
+    "setup_tstates": 65,
+    "examples": [
+      {
+        "bytes": 1,
+        "ldir_tstates": 16,
+        "residue_loop_tstates": 91,
+        "delta": 75
+      },
+      {
+        "bytes": 16,
+        "ldir_tstates": 331,
+        "residue_loop_tstates": 331,
+        "delta": 0
+      },
+      {
+        "bytes": 17,
+        "ldir_tstates": 352,
+        "residue_loop_tstates": 357,
+        "delta": 5,
+        "sixteen_ldi_then_ldir_tstates": 272,
+        "delta_from_sixteen_prefix": 85
+      },
+      {
+        "bytes": 18,
+        "ldir_tstates": 373,
+        "residue_loop_tstates": 373,
+        "delta": 0,
+        "sixteen_ldi_then_ldir_tstates": 293,
+        "delta_from_sixteen_prefix": 80
+      },
+      {
+        "bytes": 19,
+        "ldir_tstates": 394,
+        "residue_loop_tstates": 389,
+        "delta": -5,
+        "sixteen_ldi_then_ldir_tstates": 314,
+        "delta_from_sixteen_prefix": 75
+      },
+      {
+        "bytes": 36,
+        "ldir_tstates": 751,
+        "residue_loop_tstates": 671,
+        "delta": -80,
+        "sixteen_ldi_then_ldir_tstates": 671,
+        "delta_from_sixteen_prefix": 0
+      },
+      {
+        "bytes": 37,
+        "ldir_tstates": 772,
+        "residue_loop_tstates": 687,
+        "delta": -85,
+        "sixteen_ldi_then_ldir_tstates": 692,
+        "delta_from_sixteen_prefix": -5
+      },
+      {
+        "bytes": 64,
+        "ldir_tstates": 1339,
+        "residue_loop_tstates": 1129,
+        "delta": -210,
+        "sixteen_ldi_then_ldir_tstates": 1259,
+        "delta_from_sixteen_prefix": -130
+      },
+      {
+        "bytes": 256,
+        "ldir_tstates": 5371,
+        "residue_loop_tstates": 4321,
+        "delta": -1050,
+        "sixteen_ldi_then_ldir_tstates": 5291,
+        "delta_from_sixteen_prefix": -970
+      },
+      {
+        "bytes": 4096,
+        "ldir_tstates": 86011,
+        "residue_loop_tstates": 68161,
+        "delta": -17850,
+        "sixteen_ldi_then_ldir_tstates": 85931,
+        "delta_from_sixteen_prefix": -17770
+      }
+    ],
+    "condition": "Preserved AF; nonzero BC, readable/writable extents, writable private code, no reentrant use; streaming/IRQ integration remains untested."
+  },
+  "stack_exchange": {
+    "checks": 96,
+    "before_tstates": 25,
+    "after_tstates": 19,
+    "delta": -6,
+    "code_bytes_before": 3,
+    "code_bytes_after": 1,
+    "condition": "DE must be dead: the old form puts the original HL in DE, while EX (SP),HL leaves DE unchanged. The stack word must be owned."
+  },
+  "byte_add": {
+    "checks": 4608,
+    "before_tstates_with_de_saved": 43,
+    "before_tstates_with_de_scratch": 22,
+    "after_tstates": 20,
+    "code_bytes_before_with_de_saved": 6,
+    "code_bytes_before_with_de_scratch": 4,
+    "code_bytes_after": 5,
+    "condition": "A and final flags must be dead; DE is preserved. If the high byte of an available scratch pair is already zero, its cheaper form may win."
+  },
+  "constant_subtract": {
+    "checks": 45,
+    "before_tstates": 29,
+    "after_tstates": 21,
+    "delta": -8,
+    "code_bytes_before": 6,
+    "code_bytes_after": 4,
+    "condition": "Arithmetic result only; BC and all resulting flags must be dead. Not a replacement for an unsigned bounds comparison."
+  },
+  "djnz_loop": {
+    "checks": 256,
+    "before_tstates": "22*n-5",
+    "after_tstates": "19*n-5",
+    "delta": "-3*n",
+    "code_bytes_before": 4,
+    "code_bytes_after": 3,
+    "condition": "Body is INC HL; final DEC flags must be dead. B must not simultaneously be modified by LDI/LDIR or used as a token byte."
+  },
+  "compare_restore": {
+    "checks": 288,
+    "before_tstates": 35,
+    "after_tstates": 30,
+    "delta": -5,
+    "code_bytes_before": 6,
+    "code_bytes_after": 4,
+    "condition": "HL restored from the same DE just subtracted; S/Z/PV/C agree, H/N and undocumented flags may differ. Proposed LZSA2 sync mapping not integrated."
+  },
+  "distance_one_fill": {
+    "checks": 768,
+    "exact_length": 16,
+    "distance": 1,
+    "before_tstates": 331,
+    "after_tstates": 264,
+    "delta": -67,
+    "code_bytes_before": 2,
+    "code_bytes_after": 42,
+    "condition": "Exact distance 1 and length 16 already known, final F dead except preserved carry/S/Z. Excludes dispatch/length checks, variable remainder, streaming guards and IRQ validation."
+  },
+  "decoder_changes": 0,
+  "complete_decoder_replay": false,
+  "irq_delivery_measured": false,
+  "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf"
+}

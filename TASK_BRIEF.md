@@ -1,7 +1,21 @@
 # Focused optimization task
 
-Updated 2026-10-13. Use this brief to continue the project in this or a new
+Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
+
+## Completed: other-site Z80 speed/size survey (2026-10-14)
+
+The user asks which further library optimizations are possible, prioritizing
+speed then code size, and requests other websites. The [survey](libraries/WEB_RESEARCH.md)
+inspects author articles/wiki routines, official optimizer rules and upstream
+ZX0 Mega/LZSA2 small sources. Eight additional candidate groups22–29 are saved
+in the checklist; seven primitive groups pass6604 native cases. An item20
+LZSA2 sync proposal saves5 T/2 bytes locally, while whole-run unrolling can
+beat the current16-byte prefix only on sufficiently long copies. Upstream
+raw core sizes/speed claims do not have the current coroutine/streaming ABI.
+All31 default profiles and four original resources remain exact; no new
+codec path or release is integrated. This research deliverable is complete.
+Continue from pending item10 using one fully verified experiment per commit.
 
 ## Completed: first sequential Z80 codec trick pass (2026-10-13)
 

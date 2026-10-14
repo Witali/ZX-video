@@ -1,0 +1,359 @@
+{
+  "date": "2026-10-14",
+  "baseline_revision": "5abac404",
+  "branch": "codex/z80-codec-tricks",
+  "complete": true,
+  "release": false,
+  "scope": "Outside zx-pk.ru source survey and conditional native primitive screening.",
+  "user_priority": [
+    "Z80 decoder speed",
+    "Z80 decoder code size"
+  ],
+  "sources": [
+    {
+      "name": "grauw-loops",
+      "url": "https://map.grauw.nl/articles/fast_loops.php",
+      "complete": true,
+      "bytes": 9832,
+      "sha256": "4b16dc463357c715340444bd721912503ec75f54699f2d1e7b6a0b18a239912d",
+      "text_sha256": "9ed7bc14ae5905d0cc18c3ef9d114bd6a69ff2cc30dbab5295247bf6839fba76",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "z80-bits",
+      "url": "https://map.grauw.nl/sources/external/z80bits.html",
+      "complete": true,
+      "bytes": 28869,
+      "sha256": "068c43425ff7409a2cc339f8e7d9ad6b1b1c1c736d7e2824f5b32d1ba6d0f3dd",
+      "text_sha256": "91c8345e78b8d09ea38ef4da82e19d26a056940ae17fcfe58e4d25563e9a96d2",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "shiar",
+      "url": "https://shiar.nl/calc/z80/optimize",
+      "complete": true,
+      "bytes": 6032,
+      "sha256": "50cdcf359137e3632c70c13e4d3e339936943930a6a8c122b64976cce62c8a8c",
+      "text_sha256": "4a855295f1e4900e5d4e93d22439b8ad417795a241e3aec730784977fe6800b9",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "wikiti",
+      "url": "https://wikiti.brandonw.net/index.php?title=Z80_Optimization",
+      "complete": true,
+      "bytes": 70462,
+      "sha256": "486b5b79171c4991205287755384ab0b0f2d6afae7b024594b805b13b0b7c900",
+      "text_sha256": "be95281c87888ee91d0b393f329b933711062d809421f3d1b1bf893daaebd1dd",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "wikiti-add",
+      "url": "https://wikiti.brandonw.net/index.php?title=Z80_Routines:Optimized:addAtoHL",
+      "complete": false,
+      "error": "The read operation timed out",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": false
+    },
+    {
+      "name": "heaven",
+      "url": "https://z80-heaven.wikidot.com/optimization",
+      "complete": true,
+      "bytes": 41634,
+      "sha256": "fc35103809bc8a967e060df144b4857656fecccdca4a62d28cb74c10319861df",
+      "text_sha256": "ce05e76088da014857b15652e0ea34949b13cfe1a096e6f81143732f7a6fa63c",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "mdl-readme",
+      "url": "https://raw.githubusercontent.com/santiontanon/mdlz80optimizer/master/README.md",
+      "complete": true,
+      "bytes": 29152,
+      "sha256": "3f144db8a897c5aa1a46b4c85cfe6b64299076c5e56efae3e8043e16f8319301",
+      "text_sha256": "3f144db8a897c5aa1a46b4c85cfe6b64299076c5e56efae3e8043e16f8319301",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "mdl-patterns",
+      "url": "https://raw.githubusercontent.com/santiontanon/mdlz80optimizer/master/data/pbo-patterns.txt",
+      "complete": false,
+      "error": "HTTP Error 404: Not Found",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": false
+    },
+    {
+      "name": "mdl-size",
+      "url": "https://raw.githubusercontent.com/santiontanon/mdlz80optimizer/master/data/pbo-patterns-size.txt",
+      "complete": false,
+      "error": "HTTP Error 404: Not Found",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": false
+    },
+    {
+      "name": "sdcc-peep",
+      "url": "https://raw.githubusercontent.com/svn2github/sdcc/master/sdcc/src/z80/peeph.def",
+      "complete": true,
+      "bytes": 305,
+      "sha256": "72037341bd7da56ed62b87587a3bb11439a67b5286a3732347df4a343cc35515",
+      "text_sha256": "72037341bd7da56ed62b87587a3bb11439a67b5286a3732347df4a343cc35515",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": false,
+      "note": "Historical third-party mirror; use the separately fetched official SDCC source."
+    },
+    {
+      "name": "z88dk-rules",
+      "url": "https://raw.githubusercontent.com/z88dk/z88dk/master/libsrc/_DEVELOPMENT/sdcc_peeph.2",
+      "complete": false,
+      "error": "HTTP Error 404: Not Found",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": false
+    },
+    {
+      "name": "zx0-readme",
+      "url": "https://raw.githubusercontent.com/einar-saukas/ZX0/main/README.md",
+      "complete": true,
+      "bytes": 20531,
+      "sha256": "b70fcc2205c349b4a1f25b8652b4c0f90fb61a9451a17f853c683075336bc0aa",
+      "text_sha256": "b70fcc2205c349b4a1f25b8652b4c0f90fb61a9451a17f853c683075336bc0aa",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "zx0-mega",
+      "url": "https://raw.githubusercontent.com/einar-saukas/ZX0/main/z80/dzx0_mega.asm",
+      "complete": true,
+      "bytes": 15139,
+      "sha256": "6a3774508bf8d0f7a6cf08851a22e836aaedccf56dc1ef119b3e04e0f79fb23a",
+      "text_sha256": "6a3774508bf8d0f7a6cf08851a22e836aaedccf56dc1ef119b3e04e0f79fb23a",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "lzsa-readme",
+      "url": "https://raw.githubusercontent.com/emmanuel-marty/lzsa/master/README.md",
+      "complete": true,
+      "bytes": 7343,
+      "sha256": "cf16aa6b03c29d6c8feb4f40d84f3266dbd3643aca6883212abacfdc88a26f6a",
+      "text_sha256": "cf16aa6b03c29d6c8feb4f40d84f3266dbd3643aca6883212abacfdc88a26f6a",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "lzsa-small",
+      "url": "https://raw.githubusercontent.com/emmanuel-marty/lzsa/master/asm/z80/unlzsa2_small.asm",
+      "complete": true,
+      "bytes": 5949,
+      "sha256": "862882a4ba95de2b7a9cf1246c5c070b6b70ced60be68cd91f4ea4d3a5d7450b",
+      "text_sha256": "862882a4ba95de2b7a9cf1246c5c070b6b70ced60be68cd91f4ea4d3a5d7450b",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "lzsa-fast",
+      "url": "https://raw.githubusercontent.com/emmanuel-marty/lzsa/master/asm/z80/unlzsa2_fast.asm",
+      "complete": true,
+      "bytes": 6803,
+      "sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071",
+      "text_sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "regalloc",
+      "url": "https://raw.githubusercontent.com/oisee/z80-optimizer/main/docs/regalloc_paper.md",
+      "complete": true,
+      "bytes": 77061,
+      "sha256": "f92b624ff0f151c28a70be44a0f1dc3392d5906ea412ccf58e5203160263bae8",
+      "text_sha256": "f92b624ff0f151c28a70be44a0f1dc3392d5906ea412ccf58e5203160263bae8",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": false,
+      "note": "Consulted design discussion; no allocator quality or speed claim adopted."
+    },
+    {
+      "name": "mdl-pbo-patterns-size",
+      "url": "https://raw.githubusercontent.com/santiontanon/mdlz80optimizer/master/src/main/resources/data/pbo-patterns-size.txt",
+      "complete": true,
+      "bytes": 2223,
+      "sha256": "74277fca89abd759b62d285ce7902a98b7d20c2a73b5ba24986aed05c6fb5dd9",
+      "text_sha256": "74277fca89abd759b62d285ce7902a98b7d20c2a73b5ba24986aed05c6fb5dd9",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "mdl-pbo-patterns-speed",
+      "url": "https://raw.githubusercontent.com/santiontanon/mdlz80optimizer/master/src/main/resources/data/pbo-patterns-speed.txt",
+      "complete": true,
+      "bytes": 723,
+      "sha256": "5c9e93eb5bc01348f98e24ebc718085e308308f06e5576ebf3ae6fef91884b53",
+      "text_sha256": "5c9e93eb5bc01348f98e24ebc718085e308308f06e5576ebf3ae6fef91884b53",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "mdl-pbo-patterns",
+      "url": "https://raw.githubusercontent.com/santiontanon/mdlz80optimizer/master/src/main/resources/data/pbo-patterns.txt",
+      "complete": true,
+      "bytes": 55554,
+      "sha256": "c0c8702a20b8ec3f7704c3e69a5120735a6adabede9c82379ed64a94c8aa494a",
+      "text_sha256": "c0c8702a20b8ec3f7704c3e69a5120735a6adabede9c82379ed64a94c8aa494a",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "sdcc-official-peep",
+      "url": "https://svn.code.sf.net/p/sdcc/code/trunk/sdcc/src/z80/peeph-z80.def",
+      "complete": true,
+      "bytes": 1132,
+      "sha256": "e03812a5c4431bbb7b10ded2880f374f050ea0036f91ea8d24eaac9ad6ea06b0",
+      "text_sha256": "e03812a5c4431bbb7b10ded2880f374f050ea0036f91ea8d24eaac9ad6ea06b0",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "z88dk-sdcc_peeph.2",
+      "url": "https://raw.githubusercontent.com/z88dk/z88dk/master/lib/sdcc/sdcc_peeph.2",
+      "complete": true,
+      "bytes": 55034,
+      "sha256": "683b6beb73a7ad747199876b35d51022a5caf7fecde83924284cb6a254af7a6e",
+      "text_sha256": "683b6beb73a7ad747199876b35d51022a5caf7fecde83924284cb6a254af7a6e",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "z88dk-sdcc_peeph.3",
+      "url": "https://raw.githubusercontent.com/z88dk/z88dk/master/lib/sdcc/sdcc_peeph.3",
+      "complete": true,
+      "bytes": 347576,
+      "sha256": "a74d1c86e2616ec8303309227d5865ed8930b8967e894cc471783cc7e0b403ed",
+      "text_sha256": "a74d1c86e2616ec8303309227d5865ed8930b8967e894cc471783cc7e0b403ed",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    },
+    {
+      "name": "ticalc-guide",
+      "url": "https://www.ticalc.org/archives/files/fileinfo/285/28502.html",
+      "archive_url": "https://www.ticalc.org/pub/text/z80/z80optim.zip",
+      "archive_sha256": "ecb16eea8e1e1fc8fc014e20c9b73328cc15c2cadd0a2f4aeebbed140283d837",
+      "complete": true,
+      "member": "z80optim.html",
+      "member_sha256": "284667e8376a25bae2a03a016ce3bd33b6e8d096c629465a4aa7f73e74d3dd7e",
+      "text_sha256": "6f3943a27677148076e6a602058ef9c45630ef8926b2a10e08a72b84dcee2543",
+      "review_scope": "Keyword screening and selected routine/pattern inspection; not a complete semantic audit.",
+      "basis_for_recommendations": true
+    }
+  ],
+  "successful_source_documents": 20,
+  "complete_source_semantic_audit": false,
+  "source_code_executed": false,
+  "external_optimizer_installed_or_run": false,
+  "primitive_report": {
+    "path": "evidence/web_primitive_screen.json",
+    "sha256": "7e8bd03f86aacf7bc1cfe6ae8325ee30a56a2a106fad46c872d36d9f3bfaba81",
+    "native_cases": 6604,
+    "groups": 7,
+    "full_codec_integration": false
+  },
+  "existing_profile_sizes": {
+    "zx0/standard": {
+      "region_bytes": [
+        68
+      ],
+      "code_and_state_bytes": 68
+    },
+    "zx0/turbo": {
+      "region_bytes": [
+        126
+      ],
+      "code_and_state_bytes": 126
+    },
+    "zx0/fast": {
+      "region_bytes": [
+        125,
+        276
+      ],
+      "code_and_state_bytes": 401
+    },
+    "lzsa/False-False": {
+      "region_bytes": [
+        134,
+        250
+      ],
+      "code_and_state_bytes": 384
+    },
+    "lzsa/True-False": {
+      "region_bytes": [
+        224,
+        254
+      ],
+      "code_and_state_bytes": 478
+    },
+    "lzsa/True-True": {
+      "region_bytes": [
+        222,
+        251
+      ],
+      "code_and_state_bytes": 473
+    }
+  },
+  "upstream_claims": {
+    "zx0": {
+      "standard_bytes": 68,
+      "turbo_bytes": 126,
+      "fast_bytes": 187,
+      "mega_bytes": 673,
+      "author_relative_speed_percent_over_standard": {
+        "turbo": 21,
+        "fast": 25,
+        "mega": 28
+      },
+      "measured_on_project_inputs": false,
+      "coroutine_or_streaming_abi": false
+    },
+    "lzsa2": {
+      "small_bytes": 134,
+      "fast_bytes": 210,
+      "measured_on_project_inputs": false,
+      "coroutine_or_streaming_abi": false
+    }
+  },
+  "additional_queue_ids": [
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "refined_existing_items": [
+    10,
+    11,
+    12,
+    14,
+    18,
+    20,
+    21
+  ],
+  "recommended_shortlist": [
+    10,
+    20,
+    22,
+    23,
+    24,
+    28,
+    29
+  ],
+  "recommendations_are_inferences": true,
+  "decoder_changes": 0,
+  "default_profiles": 31,
+  "default_layouts_exact": true,
+  "default_tstate_delta": 0,
+  "new_complete_decoder_streaming_irq_release_qualification": false,
+  "reproducer": "python libraries/tests/screen_web_tricks.py --output libraries/evidence/web_primitive_screen.json"
+}

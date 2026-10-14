@@ -1,5 +1,37 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Survey other sites for Z80 decoder speed and code size
+
+- **Objective/baseline:** From `5abac404`, answer the user's speed-first,
+  size-second library question and search outside zx-pk.ru. Retain standard
+  formats and the completed prior audit; no new decoder path is integrated.
+- **Sources/parameters:**20 documents retrieved, selected article/routine/
+  optimizer-rule inspection rather than an exhaustive rule audit. Grauw,
+  SHIAR, WikiTI, z80 Heaven, Adam Ziemba's ticalc guide, official SDCC/z88dk/
+  MDL rules and upstream ZX0 Mega/LZSA2 small sources. Save URLs/hashes and
+  failed fetches; no external compiler/optimizer/source execution. Recalculate
+  classic-Z80 T-states rather than copy MSX waits or upstream speed claims.
+- **Measurements/coverage:**Seven primitive groups/6604 native cases pass,
+  including distance1/2 overlap. AF-preserving residue-entry copy costs
+  5371 ->4321 T for256 bytes, or5291 ->4321 against a16-LDI prefix, but is
+  80 T slower than that prefix at18 bytes; +45 bytes versus LDIR. Our
+  distance1/16-byte specialization is331 ->264 T, +40 bytes, excluding
+  selection/remainder work. Conditional stack exchange25 ->19 T/−2 bytes,
+  pointer addition43 ->20 with DE retained, constant arithmetic29 ->21,
+  DJNZ saves3 T/iteration; all have explicit liveness/bound requirements.
+  Item20's LZSA2 compare/restore fragment is35 ->30 T/−2 bytes,288 cases,
+  S/Z/PV/C retained while H/N differ. Reauthenticate31 exact default layouts
+  and four original resources; no new full-codec/streaming/IRQ/delivery run.
+- **Decision:** Save eight candidate groups22–29 and refine item20/other
+  existing proposals. Prioritize complete runtime gains, then compact
+  optional profiles; distinguish raw upstream68/126/187/673-byte ZX0 and
+  134/210-byte LZSA2 cores from our coroutine/streaming code/state totals.
+  Actual decoder delta0 T/bytes/RAM/input; no movie/release qualification.
+  [Survey, priority and reproduction](libraries/WEB_RESEARCH.md),
+  [native evidence](libraries/evidence/web_primitive_screen.json),
+  [source record](libraries/evidence/web_research_2026-10-14.json),
+  [queue](libraries/OPTIMIZATION_PLAN.md).
+
 ## 2026-10-13 — Expand forum sources and screen new Z80 candidates
 
 - **Objective/baseline:** From `12d4eeac`, inspect previously unvisited
