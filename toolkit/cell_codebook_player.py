@@ -20,7 +20,7 @@ PACKET,INPUT,LENGTH=0xdc00,0x6400,0xba58
 NATIVE_INPUT=0x6200
 
 
-def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False,native_bitmap=False):
+def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False,native_bitmap=False,native_modeplane=False,native_zero_runs=False):
     a=MiniAssembler(PACKET);rows=[];e,n=helpers(a,rows,'cb41_packet')
     q,z=m['queue_labels'],m['decoder_labels']
     packet_input=NATIVE_INPUT if native_bitmap else INPUT
@@ -41,9 +41,10 @@ def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False,nati
     if dynamic_rows:
         e('BIT 7,H (row update)',[0xcb,0x7c],8)
         n('JP NZ,row_updates',0xc2,'row_updates',10)
-    n('LD DE,minimum',0x11,144,10)
+    minimum=6 if native_zero_runs else 216 if native_modeplane else 144
+    n('LD DE,minimum',0x11,minimum,10)
     e('OR A',[0xb7],4);e('SBC HL,DE',[0xed,0x52],15);n('JP C,fatal',0xda,z['fatal'],10)
-    n('LD DE,range',0x11,(5472 if native_bitmap else 3168 if front_reuse else 3096)-144+1,10);e('OR A',[0xb7],4)
+    n('LD DE,range',0x11,(5472 if native_bitmap else 3168 if front_reuse else 3096)-minimum+1,10);e('OR A',[0xb7],4)
     e('SBC HL,DE',[0xed,0x52],15);n('JP NC,fatal',0xd2,z['fatal'],10)
     n('LD DE,packet',0x11,packet_input,10);n('LD BC,(length)',(0xed,0x4b),LENGTH,20)
     n('CALL queue take',0xcd,q['take'],17)
@@ -90,19 +91,25 @@ def packet_code(m,labels,screen_base,*,dynamic_rows=False,front_reuse=False,nati
 
 
 class Builder(PreviousBuilder):
-    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,inline_cells=False,sector_cache=False,streaming_lzsa2=False,optional_read_gate=False,direct_lzsa2_header=False,early_lzsa2_prefix=False,fixed_cell_decoder=False,side_only_seek=False,**kwargs):
+    def __init__(self,*args,cell_raw,cell_start,frame_fields=6,reference_frames=None,shared_audio=False,four_slots=False,inline_cells=False,sector_cache=False,streaming_lzsa2=False,optional_read_gate=False,direct_lzsa2_header=False,early_lzsa2_prefix=False,fixed_cell_decoder=False,side_only_seek=False,stored_video=False,**kwargs):
         if frame_fields not in (5,6):raise ValueError('CB41 supports five or six fields per frame')
         self.frame_fields=frame_fields
         super().__init__(*args,**kwargs)
         count,entries=struct.unpack_from('<HH',cell_raw,4)
-        self.native_bitmap=cell_raw[:4]==b'CB47'
-        self.front_reuse=cell_raw[:4] in (b'CB44',b'CB46',b'CB47')
-        self.partial_rows=cell_raw[:4] in (b'CB46',b'CB47')
+        self.native_zero_runs=cell_raw[:4]==b'CB49'
+        self.native_repeat_rows=cell_raw[:4]==b'CB50'
+        self.native_modeplane=cell_raw[:4] in (b'CB48',b'CB49',b'CB50')
+        self.native_bitmap=cell_raw[:4] in (b'CB47',b'CB48',b'CB49',b'CB50')
+        self.front_reuse=cell_raw[:4] in (b'CB44',b'CB46',b'CB47',b'CB48',b'CB49',b'CB50')
+        self.partial_rows=cell_raw[:4] in (b'CB46',b'CB47',b'CB48',b'CB49',b'CB50')
         self.packet_capacity=5472 if self.native_bitmap else 3168 if self.front_reuse else 3096
         self.shared_audio=shared_audio
         self.four_slots=four_slots
         self.inline_cells=inline_cells
         self.sector_cache=sector_cache
+        self.stored_video=stored_video
+        if stored_video and not (self.native_modeplane and four_slots and streaming_lzsa2 and not optional_read_gate):
+            raise ValueError('stored native input requires the four-slot CB48 profile')
         self.streaming_lzsa2=streaming_lzsa2
         self.direct_lzsa2_header=direct_lzsa2_header
         self.side_only_seek=side_only_seek
@@ -121,10 +128,13 @@ class Builder(PreviousBuilder):
         self.reference_frames=reference_frames
         self.fixed_cell_decoder=fixed_cell_decoder
         if fixed_cell_decoder and not self.front_reuse:raise ValueError('fixed cell decoder requires retired CB44/46 reconstruction')
-        if cell_raw[:4] not in (b'CB41',b'CB42',b'CB44',b'CB46',b'CB47') or entries!=256 or cell_start<0:
+        if cell_raw[:4] not in (b'CB41',b'CB42',b'CB44',b'CB46',b'CB47',b'CB48',b'CB49',b'CB50') or entries!=256 or cell_start<0:
             raise ValueError('this builder needs a 256-entry book and a nonnegative start')
         if (self.dynamic_rows or self.native_bitmap) and reference_frames is None:
             raise ValueError('CB42 needs independent five-level reference frames')
+        if self.native_modeplane:
+            from native_modeplane import decode_check
+            decode_check(cell_raw,reference_frames,cell_start,cell_start+count,self.row_dictionary)
         at=2056
         for _ in range(count):
             length=struct.unpack_from('<H',cell_raw,at)[0]
@@ -133,8 +143,8 @@ class Builder(PreviousBuilder):
                 if not 1<=replacements<=256:raise ValueError('invalid CB42 row replacement count')
                 at+=2+3*replacements
                 length=struct.unpack_from('<H',cell_raw,at)[0]
-            if not 144<=length<=self.packet_capacity:raise ValueError('cell payload outside native contract')
-            if self.front_reuse:
+            if not (6 if self.native_zero_runs else 216 if self.native_modeplane else 144)<=length<=self.packet_capacity:raise ValueError('cell payload outside native contract')
+            if self.front_reuse and not self.native_modeplane:
                 cells=sum(b.bit_count() for b in cell_raw[at+2:at+74])
                 modes=cell_raw[at+146:at+146+(cells+3)//4]
                 if len(modes)!=(cells+3)//4:raise ValueError('truncated cell modes')
@@ -163,7 +173,10 @@ class Builder(PreviousBuilder):
         def put(at,data):
             if (at&16383)+len(data)>16384:raise ValueError('cross-bank CB41 install')
             banks[bank(at)][at&16383:(at&16383)+len(data)]=data
-        regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse,fast_masks=self.front_reuse,partial_rows=self.partial_rows,inline_cells=self.inline_cells,native_bitmap=self.native_bitmap)
+        if self.native_modeplane:
+            from native_modeplane_z80 import build
+            regions,labels,layout=build(zero_runs=self.native_zero_runs,repeat_rows=self.native_repeat_rows)
+        else:regions,labels,layout=native.build(dictionary=True,front_reuse=self.front_reuse,fast_masks=self.front_reuse,partial_rows=self.partial_rows,inline_cells=self.inline_cells,native_bitmap=self.native_bitmap)
         origin=regions[0][0]
         if self.fixed_cell_decoder:
             from fixed_cell_decoder import install
@@ -219,7 +232,7 @@ class Builder(PreviousBuilder):
         m['video_cadence']=dict(fields_per_frame=self.frame_fields,ay_hz=50,
             deadline_increment_pc=pc,previous_tstates=10,tstates=10,delta_tstates=0,
             schedule_origin_preserved=True)
-        code,p,rows=packet_code(m,labels,screen_base,dynamic_rows=self.dynamic_rows,front_reuse=self.front_reuse,native_bitmap=self.native_bitmap);put(PACKET,code)
+        code,p,rows=packet_code(m,labels,screen_base,dynamic_rows=self.dynamic_rows,front_reuse=self.front_reuse,native_bitmap=self.native_bitmap,native_modeplane=self.native_modeplane,native_zero_runs=self.native_zero_runs);put(PACKET,code)
         # The old clock was retired above; its progress target is a constant
         # from the unchanged progress component.
         import disk_progress_z80
@@ -303,6 +316,11 @@ class Builder(PreviousBuilder):
                 timing_scope='Body counts exclude unchanged mode dispatch, cell return, masks, paging, IRQ, ULA, ROM and disk.')
             m['cell_codebook']['partial_rows'].update(payload='row0..7, actual native byte',
                 unchanged_pairs_remain_in_back_screen=False,unchanged_rows_remain_in_back_screen=True)
+        if self.native_modeplane:
+            m['cell_codebook']['native_bitmap']=dict(enabled=True,host_frame_bytes=6912,
+                mode_plane_bytes=144,attribute_mask_bytes=72,fixed_native_row_pairs=256,
+                row_pair_bytes=512,pixel_changes=0,timing_scope=layout['timing_scope'])
+            m['cell_codebook']['partial_rows'].update(payload='front, single row, two changed rows or four dictionary pairs')
         retired_keys=('compiled_masks','hl_mask_reader','compact_cursor','cached_huffman_lookahead',
                       'inline_huffman_patches','inline_literals')
         m['cell_codebook']['retired_metadata']={key:m[key] for key in retired_keys if key in m}
@@ -312,10 +330,26 @@ class Builder(PreviousBuilder):
             import fixed_resident_audio
             _,sound=self.separated(start,end)
             sections=fixed_resident_audio.install(banks,m,sections,sound,self.compress,four_slots=self.four_slots)
+        if self.native_repeat_rows:
+            # Reclaim only the bytes used by the shared repeat writer from
+            # the legacy AY tail gap; keep the other gaps guarded.
+            for start,data in regions[1:]:
+                stop=start+len(data);remaining=[]
+                for r in m['cell_codebook']['obsolete_fixed_ranges']:
+                    lo,hi=r['start'],r['end']
+                    if hi<=start or lo>=stop:remaining.append(r)
+                    else:
+                        if lo<start:remaining.append(dict(r,end=start))
+                        if hi>stop:remaining.append(dict(r,start=stop))
+                m['cell_codebook']['obsolete_fixed_ranges']=remaining
+            m['cell_codebook']['memory']['repeat_writer']=[labels['repeat_rows'],labels['repeat_end']]
         if self.streaming_lzsa2:
             import streaming_lzsa2_player
             streaming_lzsa2_player.install(banks,m,direct_header=self.direct_lzsa2_header,early_prefix=self.early_lzsa2_prefix)
-        if self.sector_cache:
+        if self.stored_video:
+            import stored_native_queue
+            stored_native_queue.install(banks,m)
+        elif self.sector_cache:
             import compressed_sector_cache
             compressed_sector_cache.install(banks,m)
         if self.optional_read_gate:
@@ -326,6 +360,13 @@ class Builder(PreviousBuilder):
             side_only_seek.install(banks,m)
         result=[]
         for s in sections:
+            if self.stored_video and s['bank']==7 and s['address']==0xc000:
+                required=m['stored_native_video']['labels']['end']-0xc000
+                if s['decoded_bytes']<required:
+                    # The ordinary queue section ends atE400h. Stored
+                    # producer code lives in the retired sector-cache gap;
+                    # independently cold-load it rather than relying on RAM.
+                    s=dict(s,decoded_bytes=required,sha256='')
             lo=s['address']&16383;raw=bytes(banks[s['bank']][lo:lo+s['decoded_bytes']])
             if sha(raw)==s['sha256']:result.append(s);continue
             if s.get('startup_delta'):raise ValueError('unexpected startup delta')

@@ -1,5 +1,64 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Save stopped native-delivery experiment and partial timing improvement
+
+- **Request/scope:** From `dbde780c`, reduce the native test video's audio/video
+  lag using the same accepted 300 native screens / 30 seconds and 1500 AY
+  controls. The user cancels the proposed progress-bar changes before any
+  implementation, stops work, then requests commit/push of current progress.
+  Save the finite experiment on `codex/native-sync`; do not resume experiments
+  or the paused broad goal, merge main, or call these disks releases.
+- **Changes:** Experimental CB48 fixed mode plane, immutable native row pairs
+  and two-row changes; CB49 zero-plane runs; CB50 repeated consecutive native
+  rows. Stored-sector transport bypasses LZSA decoding and loads complete raw
+  blocks straight into the four existing video slots. Include the E400h helper
+  in independent cold bootstrap and guard the B200h repeat writer against AY
+  allocation. Old defaults, native images, AY fit and progress bar stay exact.
+- **Complete timing:** Original CB47: 1488 sectors, 165 misses, maximum 523 late
+  fields (10.46 s). CB48/LZSA: 1551 / 157 / 406 (8.12 s). Stored CB48:
+  1982 / 152 / 185 (3.70 s). Stored CB49: 1951 / 152 / 188 (3.76 s), rejected
+  against CB48. Initial stored CB50: 1786 / 139 / 135 (2.70 s). All 10-fps
+  variants fail nominal and one-field fallback; partial recoveries and the
+  unrecovered final late runs are recorded in the full JSONs. Completed Fuse
+  runs retain all 1500 exact AY records, zero gaps/duplicates/underruns.
+- **Compatibility/coverage:** Current CB50 at 25/3 fps temporally selects 250
+  source screens over 30 seconds, retains source frame 299 and all unchanged
+  50-Hz AY records. Actual disk 1515 sectors; complete Fuse timing has zero
+  nominal misses/late runs/bad intervals and maximum OUT deviation 15 T.
+  Independent dirty cold loading passes, but full native screen-byte capture
+  and independent CPU replay are pending. Initial CB50 at 10 fps compares all
+  300 / 2,073,600 screen bytes in five Fuse passes. Its subsequent flag-branch
+  reorder is cold-checked only at 10 fps; do not assign the old 2.70-s timing
+  to current source. No complete release is qualified by this snapshot.
+- **Cycle/disk evidence:** Matched 300-frame listed CPU scope, mocked ROM:
+  original 83,163,060 -> stored-CB48 41,580,075 T (-41,582,985), all native
+  screens exact. Actual Fuse playback separately 153,230,921 -> 125,386,214 T
+  (-27,844,707), including ROM/disk/IRQ/ULA. Physical read service separately
+  39,943,368 -> 53,408,096 T, runtime reads 1443 -> 1934. Step CALL 17 -> JP
+  10 T (-7); read bridge 51 T excluding the retained read service. CB48 literal
+  body remains 188 T, new scoped mode return 14 T. Every emitted instruction
+  is counted in metadata. Current CB50 branch reorder saves 10 T per repeat
+  cell and adds 10 T per front cell; full current totals remain pending.
+- **Rejected/partial attempts:** Offline span/front-copy gap3/6 and separately
+  compressed full screens increase packed space/decoder work; reject without
+  native playback claims. Adaptive row-pair estimates do not justify update
+  cost; no approximate pixels are implemented. Restore the unsafe direct
+  raster prototype overlapping AY. First stored cold-helper omission times
+  out after 120 s; its image/console were overwritten during correction and
+  are not fabricated. Preserve the later invalid stored-reader/LZSA-stream
+  candidate and explicitly flag its mismatch against older CB48 timing.
+  Initial CB50 passes real Fuse but its flag sequence exceeds the small CPU
+  model's flag tracking; reorder branches, preserve the old source and mark
+  the unrun current CPU proof pending.
+- **Decision/preservation:** Save source, all available reports, complete raw
+  traces/captures, construction scripts and test TRDs as an authenticated LFS
+  snapshot: 141 objects / 56,235,354 bytes plus manifest. Save-time checks pass
+  all object hashes, current source syntax/snapshots, and lossless host decoding
+  of all six saved wire variants; retain the known historical timing mismatch.
+  No new playback runs are launched. Current 10-fps TRD SHA256 `31b497a98b75f62d818e2b5fecc8a5ac2892ca89bfde925ac5cfd08d6a71bf7c`;
+  compatibility SHA256 `da887fead942275de6129be2d74f10b0ae6b4181075067dd562ff30d0329dc26`.
+  [Results, instruction scopes, failures and reproduction](toolkit/analysis/native_sync/README.md).
+
 ## 2026-10-14 — Add the focused native title/face comparison
 
 - **Finding/change:** Final artifact checks find the README's focused PNG link

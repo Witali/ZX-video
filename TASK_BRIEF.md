@@ -3,6 +3,31 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## Native delivery — stopped progress snapshot (2026-10-14)
+
+The user reports growing native-video lag against audio, cancels the proposed
+progress-bar changes before implementation, then stops work and requests a
+commit/push of current progress. Save `.worktree/native-sync`, branch
+`codex/native-sync`, from `dbde780c`. Do not resume the paused broad goal or
+start another build, optimization or playback experiment for this save.
+
+Experimental CB48/49/50 mode planes, native row-pair/two-row/repeat encoding
+and direct stored-sector input preserve the accepted native pixels and the
+1500 unchanged 50-Hz AY controls. Original 10-fps deviation 10.46 s falls to
+2.70 s for the measured initial CB50 variant; it still fails nominal and
+one-field fallback. All 300 initial-CB50 native screens pass full Fuse byte
+comparison. Current source reorders flag dispatch: current 10-fps candidate
+has independent dirty cold proof only; timing/full replay remain pending.
+
+The compatibility candidate selects 250 of 300 source screens at 25/3 fps,
+retaining the last source frame and all 1500 AY records over 30 seconds.
+Complete real-Fuse timing has zero nominal misses, maximum OUT deviation
+15 T, exact AY and independent cold loading. Full screen-byte capture and
+independent CPU replay remain pending, so it is not a qualified release.
+Keep all old defaults and the progress bar unchanged, preserve available
+failed/partial objects and mismatched historical identities explicitly.
+[Snapshot, counted timing, evidence and pending work](toolkit/analysis/native_sync/README.md).
+
 ## Native-pixel line drawing — experimental prototype checked; release timing unresolved (2026-10-14)
 
 The user requests the same current line-art style at true 256x192 native

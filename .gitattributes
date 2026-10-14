@@ -867,3 +867,10 @@ toolkit/generic_guarded_cb46_evidence/*.gz -text
 /toolkit/analysis/native_lineart/evidence/**/*.png filter=lfs diff=lfs merge=lfs -text
 /toolkit/analysis/native_lineart/evidence/**/*.wav filter=lfs diff=lfs merge=lfs -text
 /toolkit/analysis/native_lineart/evidence/**/*.trace.txt filter=lfs diff=lfs merge=lfs -text
+
+# Stopped native-delivery progress: authenticate all measured objects exactly.
+/toolkit/analysis/native_sync/*.py text eol=lf
+/toolkit/analysis/native_sync/*.md text eol=lf
+/toolkit/analysis/native_sync/*.json text eol=lf
+/toolkit/stored_native_queue.py text eol=lf
+/toolkit/analysis/native_sync/evidence/** filter=lfs diff=lfs merge=lfs -text -whitespace
