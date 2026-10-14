@@ -3,6 +3,16 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## YM3812 coherent-voice implementation — authorized (2026-10-14)
+
+The user now explicitly requests acting on the proposed beep-analysis plan.
+Follow [the implementation scope](ay-converter/analysis/ym3812_sea_foam/TRACKING_PLAN.md)
+in the existing song worktree from `e22fb680`: temporal source tracking,
+confidence/inactive voices, mild-FM source envelopes, then actual full-track
+qualification. Use the original90-second mildly modulated baseline and fixed
+source/gain/filter. Retain failed attempts and all earlier media. The prior
+analysis's no-automatic-experiment checkpoint is superseded for this work.
+
 ## YM3812 intermittent-tone analysis — complete (2026-10-14)
 
 The user finds the original song rendition better and reports periodic

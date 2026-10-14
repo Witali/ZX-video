@@ -1,5 +1,18 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Authorize coherent YM3812 song trajectories
+
+- **Request/scope:** The user explicitly requests implementing the preceding
+  beep-analysis proposal. Continue the song branch from `e22fb680`, using the
+  exact original mildly modulated90-second baseline and frozen source/gains.
+- **Plan:** Short/long source features and a temporal lattice, confidence-based
+  inactive voices, source-supported level/transient fitting, matched excerpt
+  screening and complete actual chip replay. Save stricter whole-song quality,
+  source-content and trajectory guards before measuring candidates. Existing
+  auditions/native players remain. [Saved scope and admission](ay-converter/analysis/ym3812_sea_foam/TRACKING_PLAN.md).
+- **Status:** Implementation authorized; no result or higher-rate qualification
+  is claimed by this planning checkpoint.
+
 ## 2026-10-14 — Audit intermittent electronic tones in the YM3812 song
 
 - **Request/baseline:** The user prefers the original audition and reports
