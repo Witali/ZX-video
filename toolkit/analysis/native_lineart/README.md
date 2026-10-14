@@ -23,7 +23,7 @@ colour sigma20/space sigma1.2, fine Canny30/60, coarse40/80, stroke contrast32,
 core fraction0.5 and maximum nearby ink fraction0.01 for bright-stroke inversion.
 Native source-close solid fills retain the existing dark-region rollback.
 
-- [Corrected title/faces against the rejected noisy native preview](evidence/detail-comparison.png)
+- [Corrected title/faces against the rejected noisy native preview](readability.png)
 - [Original / previous coarse drawing / corrected native drawing](evidence/comparison.png)
 - [30-second nominal-cadence preview with unchanged AY simulation](evidence/native-preview.mp4)
 - [Full original/coarse/native comparison](evidence/accuracy-comparison.mp4)

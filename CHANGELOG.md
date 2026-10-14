@@ -1,5 +1,19 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Add the focused native title/face comparison
+
+- **Finding/change:** Final artifact checks find the README's focused PNG link
+  points to an absent file: rerunning the comparison exporter against an
+  existing MP4 failed before its new PNG was saved. Keep the 181-file measured
+  archive unchanged. Add `focus.py` and a separate LFS image from its exact
+  saved source, rejected native and corrected native references at 5.9, 11.9
+  and 17.9 seconds; correct the README link.
+- **Verification/scope:** Inspect the actual title/face panel and check local
+  links/media availability. Pixel conversion, generated Z80, TRD and timing
+  evidence stay exact (0 T); no new playback pass or release claim. The 26
+  tests and failed nominal/fallback gates remain as recorded above.
+  [Focused comparison](toolkit/analysis/native_lineart/readability.png).
+
 ## 2026-10-14 — Integrate the experimental native drawing progress
 
 - **Integration:** Merge `codex/native-lineart` at `89fc7211` into main at
