@@ -37,3 +37,21 @@ all31 exact default layouts and unchanged streaming guard tests.
 python libraries/tests/measure_second_pass.py --item 10 --output libraries/evidence/trick_10.json
 python -m unittest discover -s libraries/tests -v
 ```
+
+## Item11 — repeated loads across independent instructions
+
+**Decision: retain efficient reloads/live saves.** LZSA2's nibble refill reads
+the same input byte twice across EX AF,AF'. BC holds a live token/count;
+DE/HL remain output/input pointers. Caching in B while preserving BC gives
+the identical full register/flag result but costs51 →73 T (+22) across the
+refill fragment. Two4-T register transfers already exceed the second7-T
+read; safe PUSH/POP adds21 T.512 byte/carry cases pass.
+
+The analogous saved paging-value probe costs33 →41 T (+8): retaining A on
+the stack costs21 T versus a13-T reload. Ring copying rewrites main scratch
+pairs; HL' belongs to the clock. Offset/target values already use patched
+operands. Evaluate the distinct `sync` target restore in item20.
+
+[513 native checks](evidence/trick_11.json),31 exact default profiles;
+actual decoder delta0 T/code/state/input. No rewrite, no new full-codec run.
+Reproduce with `audit_second_pass.py --item 11 --output libraries/evidence/trick_11.json`.

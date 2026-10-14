@@ -12,7 +12,8 @@ Use [SECOND_PASS.md](libraries/SECOND_PASS.md) and the checklist. Preserve
 defaults, wire formats, EOF/overlap/suspension/IRQ and application release gates.
 Item10 is complete: optional ordinary LZSA2 near_literals saves10 T per
 eligible literal and3 bytes;95 complete blocks,230 IRQs, zero slower slices,
-relocation/short escaped words and13 unit tests pass. Item11 is next.
+relocation/short escaped words and13 unit tests pass. Item11 retains required
+nibble/page reloads:513 native checks show safe caching +22/+8 T. Item12 is next.
 
 ## Completed: other-site Z80 speed/size survey (2026-10-14)
 

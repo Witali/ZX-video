@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item11: safe caching loses to live-register reloads
+
+- **Baseline/objective:** From `56f32142`, examine duplicate input/state
+  loads across unrelated code; preserve token/count/pointers and AF' cache.
+- **Measurements/coverage:**512 byte/carry cases give identical full state
+  but nibble caching with BC retained costs51 ->73 T (+22). A saved paging
+  value costs33 ->41 T (+8);31 default layouts still exact. Patched offsets
+  already avoid variable reloads; defer sync's specific restore to item20.
+- **Decision:** Retain cheaper reloads and live saves; delta0 T/code/state/
+  input, no new decoder/full-streaming change. [Result](libraries/SECOND_PASS.md),
+  [report/reproducer](libraries/evidence/trick_11.json). Continue item12.
+
 ## 2026-10-14 — Item10: remove the optional LZSA2 literal trampoline
 
 - **Authorization/baseline:** User requests sequential application/checking

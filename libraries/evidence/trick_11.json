@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-14",
+  "item": "11",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "56f32142",
+  "decision": "already present / caching rejected where registers are live",
+  "checks": 513,
+  "nibble_reload": {
+    "before_tstates": 51,
+    "cached_tstates": 73,
+    "delta": 22,
+    "token_pair_preserved": true
+  },
+  "history_page_reload": {
+    "before_tstates": 33,
+    "cached_tstates": 41,
+    "delta": 8
+  },
+  "findings": [
+    "LZSA2 nibble refill reads the same byte twice across EX AF,AF'; B/C hold a live token/count, DE output and HL input. Safe BC caching costs more than the second 7-T load.",
+    "ZX0 paging/copy rewrites main scratch pairs; retaining a page on the stack costs more than its 13-T reload.",
+    "Offset and target constants are already patched into operands; the separate sync target reload is evaluated in item20."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}
