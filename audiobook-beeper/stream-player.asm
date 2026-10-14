@@ -721,8 +721,10 @@ code_end:
         MDAT "fixed-pages.bin"
         MDAT "decoder-extra.bin"
 resident_end:
-        ASSERT $ <= 0xB800
-        DS 0xB800-$
+        ; Loading-only worker follows the complete universal dictionary.
+        ; Its origin changes no live instruction, paging tail or SP lookup.
+        ASSERT $ <= worker_origin
+        DS worker_origin-$
         INCLUDE "stream-worker.asm"
 player_end:
         ASSERT $ <= 0xC000

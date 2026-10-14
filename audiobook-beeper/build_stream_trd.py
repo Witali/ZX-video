@@ -42,8 +42,14 @@ def build(packed,work,cover,model=None):
     pcm,indices=decode(packed);assert len(packed)%256==0 and (pcm[-1],indices[-1])==(0,0)
     counts=np.bincount(np.r_[0,indices[:-1]],minlength=89)
     hot=sorted(range(89),key=lambda i:(-int(counts[i]),i))[:25]
-    words,nxt,states,first,second,pointers,pages,rows,_,_,_=layout(packed[:256],model,hot)
+    words,nxt,states,first,second,pointers,pages,rows,_,_,_=layout(packed[:256],model,hot,resident_limit=14848)
     assert len(states)<=18
+    # Source-independent table dictionaries may grow. Move only cold/refill
+    # code after the aligned resident end; the live descriptor tail remains
+    # at its original address. B800/BA00 leave enough room for this worker,
+    # bounce and the maximum one-TRD descriptor count in the same16-KiB bank.
+    worker_origin=(pointers+256+1024+1088+255)&~255
+    assert worker_origin<=0xBA00,'loader plus wider tables must fit fixed bank2'
     memory=bytearray(65536)
     for value in range(64):
         for sid,state in enumerate(states):
@@ -69,7 +75,7 @@ def build(packed,work,cover,model=None):
                    pcm_high=pointers,decoder_seed=rows[0],initial_feedback_offset=states.index(16)*6,
                    lower_disk=disk_address(positions[2]),upper_disk=disk_address(positions[3]),
                    cover_disk=disk_address(positions[4]),audio_sector=position,audio_sectors=len(packed)//256,
-                   record_slots=len(all_sections)+1)
+                   record_slots=len(all_sections)+1,worker_origin=worker_origin)
     for i in range(256):constants.update({f'first_address_{i}':first.get(i,-1),f'second_address_{i}':second.get(i,-1)})
     (work/'config.inc').write_text(''.join(f'{k}: EQU {v}\n' for k,v in constants.items()),encoding='utf-8',newline='\n')
     for name,data in [('pcm-high',memory[pointers:pointers+256]),('fixed-pages',memory[pointers+256:pointers+1280]),
@@ -97,7 +103,8 @@ def build(packed,work,cover,model=None):
               paging_base=24,source_sample_rate_hz=8000,directory=directory,capacity=capacity,
               binary_sha256=hashlib.sha256(blob).hexdigest(),packed_sha256=hashlib.sha256(packed).hexdigest(),
               trd_sha256=hashlib.sha256(disk).hexdigest(),independently_bootable=True,
-              memory=dict(fixed_bank2=16384,bank5_tables_and_workspace=16384,shadow_screen=6912,
+              memory=dict(fixed_bank2=16384,resident_table_end=labels['resident_end'],worker_origin=worker_origin,
+                          bank5_tables_and_workspace=16384,shadow_screen=6912,
                           base_audio_bytes=91392,extra_audio_bytes_per_page=16384,pcm_buffer_bytes=0,pdm_buffer_bytes=0),
               saturation_guard=require_unclipped(packed))
     save(work/'player.json',meta)

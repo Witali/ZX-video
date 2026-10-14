@@ -69,6 +69,71 @@ replacement is therefore rejected. The half-recent case may fit after moving
 the loading-only worker within the same16-KiB code bank; this needs an explicit
 build and complete own-clock execution before any measured improvement claim.
 
+## Complete executable feasibility prototype
+
+The same source-independent preset is compiled for speech, Entertainer,
+sea foam, loud3000, silence and quiet997. No model parameter is chosen per
+source. It is the duration-aware zero-origin/half-recent control whose wider
+dictionary can fit after moving the loading-only worker fromB800 toBA00.
+Resident tables end atB940, worker/bounce/descriptors atBF86 for the song.
+The fixed16-KiB bank,91,392-byte ordinary audio budget, extended capacities,
+cover, source duration and packed IMA bytes remain unchanged.
+
+Legacy `layout` retains its14336-byte budget; the stream builder explicitly
+grants14848 bytes. Wider unsupported dictionaries still fail. Full one-TRD
+capacity2392 audio sectors is cold-loaded and checked on1024K with the new
+worker. A fresh default build matches the current main TRD byte for byte.
+The generated assembly uses the configured worker origin and preserves its
+routine/memory comments. No live instruction sequence changes: ordinary
+423/449 T, page extra14 T, bank extra243/267 T, all deterministic deltas0.
+
+Twenty-four complete native runs verify every bit, predictor/index, exact
+continuous hold, code/table guards and refills across all four RAM models.
+Seven complete cold Fuse prototype runs cover all six sources on Pentagon512
+and the full song on1024. Two additional cold Fuse legacy speech/music runs
+provide new actual before controls; the authenticated earlier song trace is
+the third actual before. All own timestamps match the source-independent
+instruction schedule, with no dropped source pulse. The complete song stays
+seamless on512/1024. Physical hardware and fresh128/Scorpion Fuse quality are
+not qualified by this prototype.
+
+| Actual Pentagon before/after | Legacy PDM diagnostic | Prototype PDM diagnostic | Gain |
+|---|---:|---:|---:|
+| Speech |10.9683 dB |21.1843 dB |10.2160 dB |
+| Entertainer |7.3795 dB |17.8849 dB |10.5054 dB |
+| Sea foam |16.1088 dB |25.3202 dB |9.2114 dB |
+
+These are the PDM reconstruction error relative to decoded IMA on each actual
+sample clock. Full shared-clock total diagnostics become19.8349/17.4318/
+20.4408 dB. Strict unfitted fixed8-kHz scores remain-3.2578/-3.2741/-2.9873 dB:
+the source-clock problem remains. The20-dB release gate is not relaxed.
+Actual prototype silence noise RMS is0.015514; quiet997 remains-2.9808 dB
+total on the shared clock. Loud3000 is18.8663 dB there, confirming the
+earlier counterexample against the legacy host diagnostic20.9978 dB.
+
+[Own-clock scores](evidence/prototype/quality.json),
+[complete main prototype runs](evidence/prototype/report.json),
+[additional complete stress runs](evidence/prototype/subset-report.json),
+[legacy byte-identical rebuild](evidence/legacy-rebuild.json).
+Before/after WAVs retain the same fixed0.5 export gain. See speech and
+Entertainer under `evidence/legacy-controls` and `evidence/prototype`.
+All TRDs are research previews, with one disk each and the same cover.
+
+The decision remains to reject an unconditional table replacement. A generic
+encoder can adapt the encoded stream to each input using the same fixed
+algorithm and retain the measured original when an attempted improvement
+regresses. That selection/joint optimization is a next mechanism, not an
+implemented or universally proven default in this study.
+
+```powershell
+python audiobook-beeper/experiments/song-snr/prototype.py `
+  audiobook-beeper/experiments/song-snr/evidence `
+  --fuse 'C:/Program Files (x86)/Fuse/fuse.exe' --jobs 3
+python audiobook-beeper/experiments/song-snr/measure_prototype.py `
+  audiobook-beeper/experiments/song-snr/evidence --scratch .tmp/snr-prototype
+python -m unittest discover -s audiobook-beeper/experiments/song-snr -p test_worker_budget.py
+```
+
 ## Evidence and reproduction
 
 [Generic full report](evidence/general/report.json),

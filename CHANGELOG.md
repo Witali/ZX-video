@@ -1,5 +1,40 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Execute a generic duration-aware PDM feasibility prototype
+
+- **Scope/baseline:** Continue isolated source-independent research from
+  `20558388`. One preset from instruction counts, used unchanged on speech,
+  unrelated music, whole song, loud3000, silence and quiet997; no song-trained
+  weights, gain or content modification. Keep main `226388fb...` unchanged.
+- **Layout:** Grant the continuous builder an explicit14848-byte resident
+  budget, while legacy callers keep14336. Move the loading-only worker to
+  BA00 after tables endingB940. Song worker/bounce/descriptors endBF86; same
+  16-KiB bank,91,392-byte base audio budget, IMA data and extended capacities.
+ 19-state models and wider unsupported dictionaries still fail. Default
+  main rebuild is byte-identical. Max2392-sector one-TRD cold load fits1024K.
+- **CPU/execution:** No hot instruction changes;423/449-T ordinary,
+ 14-T page and243/267-T bank extras all delta0. Twenty-four complete native
+  runs on four profiles; seven complete cold Fuse prototype runs (six sources
+  on512K, full song on1024K), two fresh complete legacy speech/music controls.
+  Every source bit/predictor/index/continuous native hold, paging, memory,
+  load bar, independent boot and EOF checked. Every actual Pentagon interval
+  matches the instruction-derived schedule. No song refills on512/1024.
+- **Actual own-clock result:** PDM diagnostic speech10.9683->21.1843 dB,
+  Entertainer7.3795->17.8849, song16.1088->25.3202: gains10.2160/10.5054/
+ 9.2114 dB. Total shared-clock diagnostics19.8349/17.4318/20.4408 dB.
+  Strict fixed8-kHz scores-3.2578/-3.2741/-2.9873 dB still fail20 dB; source
+  timing is not repaired or fitted. Actual silence RMS0.015514; quiet997
+  shared-clock total-2.9808 dB. Loud3000 measured18.8663 dB confirms the
+  regression against the legacy host20.9978-dB control.
+- **Coverage/decision:** Seven tests pass (five analysis, two worker/budget).
+  Prototype demonstrates reusable layout and a source-independent mechanism,
+  not an unconditional arbitrary-source quality improvement. Keep a generic
+  joint encoder/measured original fallback and clone-clock control as the next
+  research question. No public preset/default/main image promotion, subjective
+  cure, physical-hardware claim or128/Scorpion Fuse quality qualification.
+  [Own-clock report](audiobook-beeper/experiments/song-snr/evidence/prototype/quality.json),
+  [prototype/reproducer](audiobook-beeper/experiments/song-snr/README.md).
+
 ## 2026-10-14 — Complete source-independent SNR controls and feasibility audit
 
 - **Steering/input:** The user explicitly requires an arbitrary-source

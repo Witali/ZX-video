@@ -21,9 +21,16 @@ MEASURED_MODEL=dict(holds=[288,231,225,248,192,218,204,170,215,226,177,240,248,2
                     calibration='experiments/ima-direct/output-times.u32.gz')
 
 
-def layout(packed,model=None,hot_indices=None):
+def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
     model=model or dict(holds=HOLDS,beta=.5,extent=1.)
     extended=ram_enabled(model)
+    # Legacy builders retain their14336-byte reserve and source capacity.
+    # The continuous stream owns all of bank2 and may explicitly move its
+    # loading-only worker. Never infer a larger budget for a legacy caller.
+    if resident_limit!=14336 and not extended:
+        raise ValueError('a larger resident limit requires the continuous RAM layout')
+    if not 14336<=resident_limit<=16384:
+        raise ValueError('resident limit must stay within fixed bank2')
     words,nxt,_=integral_table(64,2,holds=model['holds'],beta=model['beta'],extent=model['extent'],pcm_origin=model.get('pcm_origin',.5))
     reachable={16}
     while True:
@@ -45,7 +52,7 @@ def layout(packed,model=None,hot_indices=None):
     pointers=(base+len(second)*64+255)&~255
     fixed=pointers+256;extra=fixed+1024
     reserve=(extra+17*64+255)//256*256-0x8000
-    assert reserve<=14336,'preserve the complete delivered 93440-byte source'
+    assert reserve<=resident_limit,'preserve the declared resident code/table budget'
     # Leave spare resident padding rather than changing this experiment's source.
     reserve=14336
     pages=[fixed+(i-28)*256 if 28<=i<32 else 0x4000+i*256 for i in range(64)]

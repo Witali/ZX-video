@@ -3,7 +3,7 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
-## Active: isolated source-independent SNR research (2026-10-14)
+## Source-independent SNR research: diagnostic/prototype milestone complete (2026-10-14)
 
 The user explicitly requests a separate Git worktree and SNR research there.
 Work in `.worktree/audio-snr-research`, branch `codex/audio-snr-research`, from
@@ -35,6 +35,24 @@ research branch; main promotion is outside this milestone.
 Deliver reproducible measurements, before/after audio where meaningful and
 focused commits with dated changelog entries. Finish this bounded study before
 opening another codec/clock experiment or movie optimization.
+
+The bounded stage now completes45 whole-source host controls, seven tests,
+24 full native prototype runs on four profiles, seven cold Fuse prototype
+runs and two fresh legacy controls. One frozen instruction-derived table
+preset is used for all six executable sources. Moving only the loading worker
+toBA00 admits the wider universal dictionary inside the same16-KiB bank;
+all hot instructions/CPU holds stay unchanged, and the default legacy main
+image rebuilds byte for byte. Own-clock Pentagon PDM diagnostics improve by
+10.216 dB on speech,10.505 on unrelated music and9.211 on the song. These are
+not fixed-clock release scores: the strict20-dB gate still fails and a loud
+3000-Hz control regresses in total error. Main stays unchanged.
+
+Reuse [the report/evidence](audiobook-beeper/experiments/song-snr/README.md).
+The next research question is generic joint IMA/PDM encoding and a measured
+original fallback, together with source-clock control for each machine.
+Reject unconditional parameter replacement and song-trained timing weights.
+Do not promote the prototype or claim arbitrary-source/hardware improvement
+from these finite tests.
 
 ## Adaptive audio RAM and cover loading — complete (2026-10-13)
 
