@@ -1,5 +1,38 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Reconstruct the full sea-foam song through YM3812
+
+- **Request/baseline:** Create a YM3812 track from the song in the existing
+  cartoon. Start from main `13819086` in `.worktree/ym3812-sea-foam`, branch
+  `codex/ym3812-sea-foam`. Reuse the exact archived unprocessed90-second main
+  song, source[133.6,223.6), stereo WAV SHA256 `bf2218324c29575d3360d67d995012db43d27f5deb6aed9721aa9809d1c49190`.
+  Keep the later reprise and separately limited8-kHz beeper preparation out.
+- **Parameters/change:** A standalone reproducer averages stereo0.5L+0.5R,
+  resamples to22050-Hz PCM16 and fits all4500 fields continuously using the
+  existing nine sine-carrier multiplier1/2 fitter. Export actual OPL2
+  registers with the previously selected eight-step nominal2-ms ordered TL
+  transitions, plus one abrupt same-target control. No chunk resets, source
+  PCM commands, compressor or source added to the chip output. Fixed gain
+  3.031479042166069 and the existing20-Hz/8-kHz playback chain apply to both.
+- **Measured result:** Immediate register-effect squared sum66.074976 ->
+  12.499952(-81.0822%); largest0.362005 ->0.080579. Log/level objective
+  9.416898 ->9.444631 dB, level MAE1.372615 ->1.379574; cosines512/2048/8192
+  0.949826/0.855534/0.798895 ->0.950017/0.854519/0.798115. Upper-band detail
+  remains missing. Selected242,868 writes,992,252 VGM /369,327 VGZ bytes;
+  peak0.902472/no clipping, maximum serial burst3.900227 ms. Full host
+  fit/build/measurement112.549 s, excluding independent verification/tests.
+- **Coverage:** Eight independent chip/export tests pass. Both complete
+  4500-field streams pass every nine-channel state and spacing check; full
+  4,474,431-native/3,969,000-output-sample replays match all commands/PCM
+  exactly. Source preparation,181-second comparison segments, artifact,
+  producer and pinned-core hashes all pass independent verification.
+  Inspect full common-scale spectrogram and35.44..38.44-second error detail.
+- **Decision:** Deliver the requested smooth-preset listening trial and
+  preserve the abrupt control/tradeoffs. Measured write effects are not a
+  perceptual click grade. No physical-chip/Z80/disk delivery qualification,
+  native player or hot-path change. [Auditions, reports and reproducing
+  scripts](ay-converter/analysis/ym3812_sea_foam/README.md).
+
 ## 2026-10-14 — Close the audio loading progress frame
 
 - **Request/baseline:** Add vertical edges to the empty bar in the current

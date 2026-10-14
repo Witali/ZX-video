@@ -3,6 +3,27 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## YM3812 sea-foam main song — complete (2026-10-14)
+
+Create a YM3812 soundtrack from the archived unprocessed main song, source
+[133.6,223.6),90 seconds. Use `codex/ym3812-sea-foam` from `13819086` in
+`.worktree/ym3812-sea-foam`. Reuse the nine sine-carrier fitter, multiplier1/2
+and previously selected eight-step2-ms ordered TL exporter. Fit all4500 fields
+continuously; no30-second chunk resets, beeper limiter or source PCM in the
+chip output. Retain one abrupt same-target control, WAV auditions, VGM/VGZ,
+spectrograms and complete state/replay/hash evidence. Preserve native players.
+This bounded listening trial does not open new FM/rhythm/CSM searches or a
+Spectrum delivery implementation. Finish the track before another experiment.
+
+The [complete track and evidence](ay-converter/analysis/ym3812_sea_foam/README.md)
+now retain the90-second WAV,992,252-byte VGM/369,327-byte VGZ and181-second
+source comparison. Smooth same-target writes reduce immediate register-effect
+energy81.0822%, with a small spectral/level tradeoff. Eight tests, both4500-
+field audits and full independent4,474,431-native/3,969,000-output-sample
+replays pass; every command/PCM byte and comparison segment is exact, zero
+clipping. Keep the bounded listening classification; no native/player change
+or physical-chip delivery proof. The requested soundtrack is complete.
+
 ## Adaptive audio RAM and cover loading — complete (2026-10-13)
 
 The user requests available RAM on Spectrum128, Scorpion256, Pentagon512
