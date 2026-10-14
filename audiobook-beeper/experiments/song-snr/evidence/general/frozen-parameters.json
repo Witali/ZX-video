@@ -1,0 +1,220 @@
+{
+  "models": [
+    [
+      "legacy",
+      {
+        "holds": [
+          36,
+          28,
+          28,
+          31,
+          24,
+          26,
+          22,
+          20,
+          22,
+          26,
+          22,
+          30,
+          31,
+          27,
+          34,
+          16
+        ],
+        "beta": 0.5,
+        "extent": 1.0
+      }
+    ],
+    [
+      "zero_only",
+      {
+        "holds": [
+          36,
+          28,
+          28,
+          31,
+          24,
+          26,
+          22,
+          20,
+          22,
+          26,
+          22,
+          30,
+          31,
+          27,
+          34,
+          16
+        ],
+        "beta": 0.5,
+        "extent": 1.0,
+        "pcm_origin": 0
+      }
+    ],
+    [
+      "duration_midpoint",
+      {
+        "holds": [
+          36,
+          28,
+          28,
+          31,
+          24,
+          26,
+          22,
+          46,
+          22,
+          26,
+          22,
+          30,
+          31,
+          27,
+          34,
+          16
+        ],
+        "beta": 0.5,
+        "extent": 1.0
+      }
+    ],
+    [
+      "duration_zero",
+      {
+        "holds": [
+          36,
+          28,
+          28,
+          31,
+          24,
+          26,
+          22,
+          46,
+          22,
+          26,
+          22,
+          30,
+          31,
+          27,
+          34,
+          16
+        ],
+        "beta": 0.5,
+        "extent": 1.0,
+        "pcm_origin": 0
+      }
+    ],
+    [
+      "duration_zero_half_recent",
+      {
+        "holds": [
+          36,
+          28,
+          28,
+          31,
+          24,
+          26,
+          22,
+          46,
+          22,
+          26,
+          22,
+          30,
+          31,
+          27,
+          34,
+          16
+        ],
+        "beta": 0.5,
+        "extent": 0.5,
+        "pcm_origin": 0
+      }
+    ]
+  ],
+  "sha256": "217fadcc7a03cb19112472770258084bd11bad60802d3f1efcea8e046975c5c4",
+  "catalogues": {
+    "legacy": {
+      "reachable_feedback_states": 18,
+      "first_patterns": 128,
+      "second_patterns": 86,
+      "unrolled_pattern_code_bytes": 10880,
+      "packet_bytes_per_bin": 108,
+      "current_protected_state_limit_passed": true,
+      "resident_bytes_before_worker": 14144,
+      "current_worker_start_bytes": 14336,
+      "current_layout_fits": true,
+      "q_clip": [
+        0,
+        15
+      ],
+      "table_internal_peak": 2.2792155680918125,
+      "bound_scope": "Every representable PCM bin and every reachable table state; source independent"
+    },
+    "zero_only": {
+      "reachable_feedback_states": 19,
+      "first_patterns": 129,
+      "second_patterns": 84,
+      "unrolled_pattern_code_bytes": 10794,
+      "packet_bytes_per_bin": 114,
+      "current_protected_state_limit_passed": false,
+      "resident_bytes_before_worker": 14144,
+      "current_worker_start_bytes": 14336,
+      "current_layout_fits": false,
+      "q_clip": [
+        0,
+        15
+      ],
+      "table_internal_peak": 2.519885291107166,
+      "bound_scope": "Every representable PCM bin and every reachable table state; source independent"
+    },
+    "duration_midpoint": {
+      "reachable_feedback_states": 18,
+      "first_patterns": 130,
+      "second_patterns": 104,
+      "unrolled_pattern_code_bytes": 12116,
+      "packet_bytes_per_bin": 108,
+      "current_protected_state_limit_passed": true,
+      "resident_bytes_before_worker": 15424,
+      "current_worker_start_bytes": 14336,
+      "current_layout_fits": false,
+      "q_clip": [
+        0,
+        15
+      ],
+      "table_internal_peak": 2.350637144809323,
+      "bound_scope": "Every representable PCM bin and every reachable table state; source independent"
+    },
+    "duration_zero": {
+      "reachable_feedback_states": 18,
+      "first_patterns": 138,
+      "second_patterns": 96,
+      "unrolled_pattern_code_bytes": 11940,
+      "packet_bytes_per_bin": 108,
+      "current_protected_state_limit_passed": true,
+      "resident_bytes_before_worker": 15168,
+      "current_worker_start_bytes": 14336,
+      "current_layout_fits": false,
+      "q_clip": [
+        0,
+        15
+      ],
+      "table_internal_peak": 2.6716734562823445,
+      "bound_scope": "Every representable PCM bin and every reachable table state; source independent"
+    },
+    "duration_zero_half_recent": {
+      "reachable_feedback_states": 18,
+      "first_patterns": 130,
+      "second_patterns": 92,
+      "unrolled_pattern_code_bytes": 11348,
+      "packet_bytes_per_bin": 108,
+      "current_protected_state_limit_passed": true,
+      "resident_bytes_before_worker": 14656,
+      "current_worker_start_bytes": 14336,
+      "current_layout_fits": false,
+      "q_clip": [
+        0,
+        15
+      ],
+      "table_internal_peak": 2.671669641585079,
+      "bound_scope": "Every representable PCM bin and every reachable table state; source independent"
+    }
+  }
+}

@@ -769,3 +769,11 @@ toolkit/generic_guarded_cb46_evidence/*.gz -text
 /audiobook-beeper/verify_stream_trd.py text eol=lf
 /audiobook-beeper/test_stream_trd.py text eol=lf
 /audiobook-beeper/stream-*.asm text eol=lf
+
+# Preserve isolated source-independent SNR research evidence exactly.
+/audiobook-beeper/experiments/song-snr/evidence/** -text -whitespace
+/audiobook-beeper/experiments/song-snr/evidence/**/*.gz filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/song-snr/evidence/**/*.wav filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/song-snr/evidence/**/*.png filter=lfs diff=lfs merge=lfs -text
+/audiobook-beeper/experiments/song-snr/*.py text eol=lf
+/audiobook-beeper/experiments/song-snr/*.md text eol=lf

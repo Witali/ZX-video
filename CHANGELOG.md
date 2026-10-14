@@ -1,5 +1,37 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Complete source-independent SNR controls and feasibility audit
+
+- **Steering/input:** The user explicitly requires an arbitrary-source
+  improvement. Retain the whole90-second song as one holdout; freeze common
+  instruction-derived presets before silence, quiet/loud tones, steps,
+  multitone, speech and unrelated music. Main `13819086` remains unchanged.
+- **Measurements:** Authenticate complete old clocks and twelve cover-only
+  bytes in current `226388fb...`. Reproduce whole-song fixed-clock-3.085228288
+  dB; timing-only-3.000930738 dB; uniform-clock codec22.147802123 dB. Legacy
+  PDM-only16.108757076 dB. Generic449-T timing independently matches every
+  source-bearing timestamp in the complete old Pentagon Fuse proof.
+- **Generic result:** Nine complete sources/five shared presets,45 comparisons.
+  Duration midpoint changes total shared-clock diagnostic speech10.84->20.36
+  dB, Entertainer7.35->18.23 and song15.18->20.36. Silence noise RMS0.052698
+  ->0.003691. Loud3000 regresses20.998->18.883 dB despite less PDM-only error.
+  All five regressions are recorded; zero-only and half-recent are not
+  unconditional winners. No fitted gain/delay/clock, content/bandwidth change,
+  or additive error-budget claim. Shared-clock scores are not release SNR.
+- **Source-independent bounds:** All64 input bins/closed reachable states:
+  legacy18 states/14144 resident bytes; zero-only19 states fails protected-RAM
+  limit; duration midpoint/zero/half recent18 states require15424/15168/14656
+  bytes before the worker at14336. Reject blind replacement. Moving the
+  loading-only worker is a bounded next feasibility step, not a verified fix.
+- **Coverage/decision:** Five numerical/clock/catalogue tests pass. Full
+  corpus is host research, with no new Z80 execution, release, subjective
+  acceptance or physical-hardware claim. Current CPU423/449 T, page14,
+  bank243/267, delta0; ROM and disk timing unchanged. Keep generic joint
+  waveform encoding and original measured fallback as the next mechanism.
+  [Study/reproducer](audiobook-beeper/experiments/song-snr/README.md),
+  [comparisons](audiobook-beeper/experiments/song-snr/evidence/general/comparison.csv),
+  [regressions](audiobook-beeper/experiments/song-snr/evidence/general/decision.json).
+
 ## 2026-10-14 — Start isolated whole-song SNR research
 
 - **Authorization/baseline:** The user explicitly requests a new Git worktree

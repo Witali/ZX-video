@@ -3,7 +3,7 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
-## Active: isolated whole-song SNR research (2026-10-14)
+## Active: isolated source-independent SNR research (2026-10-14)
 
 The user explicitly requests a separate Git worktree and SNR research there.
 Work in `.worktree/audio-snr-research`, branch `codex/audio-snr-research`, from
@@ -11,9 +11,19 @@ main `13819086`. Keep the current main TRD as the control. Its SHA256 is
 `226388fb795ac70cfd940545a9eb73e3e81b6c7e96533dc6deb0c215257338ea`;
 only twelve cover bytes differ from the fully played seamless baseline.
 
+The user explicitly clarifies that the improvement must apply to arbitrary
+sources, not be tuned for this song. Use source-independent instruction-derived
+parameters and a development/holdout corpus including silence, quiet/loud
+tones, transients, speech and unrelated music. Keep the complete90-second song
+as one holdout. Preserve prepared source gain/bandwidth/content and report
+all regressions; no source-specific gain, clock fitting or winner parameters.
+
 First milestone: authenticate and reuse complete song clocks; measure the
-whole90-second error budget separating timing, IMA4, packet quantization and
-PDM; compare a bounded set of zero-origin/duration-aware PDM tables. Preserve
+whole-source error budget separating timing, IMA4, packet quantization and
+PDM; compare a bounded set of generic duration-aware PDM and pacing controls.
+Record reachable states and complete dictionary/worker footprints before
+claiming feasibility. Reject song-only measured weights as a universal preset.
+Preserve
 source PCM, gain, bandwidth, length, IMA4 storage, one disk, full-RAM seamless
 playback and independent boot. Do not add gains from unlike controls. Label
 frozen-clock predictions separately from newly executed candidates. Execute

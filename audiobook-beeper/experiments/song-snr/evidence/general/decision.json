@@ -1,0 +1,66 @@
+{
+  "complete": true,
+  "comparison_scope": "Host shared-clock total-error controls; not measured fixed-clock disk SNR",
+  "regressions": [
+    {
+      "source": "quiet440",
+      "split": "development",
+      "model": "zero_only",
+      "pdm_snr_db": -7.827805296421454,
+      "total_shared_clock_snr_db": -7.848302299189594,
+      "total_error_improvement_db": -0.49072545656406474,
+      "regression": true,
+      "absolute_noise_rms": 0.055324467341206295,
+      "layout_fits": false
+    },
+    {
+      "source": "loud3000",
+      "split": "development",
+      "model": "zero_only",
+      "pdm_snr_db": 16.46993510977946,
+      "total_shared_clock_snr_db": 15.396396460434662,
+      "total_error_improvement_db": -5.601405280105281,
+      "regression": true,
+      "absolute_noise_rms": 0.0615008102005291,
+      "layout_fits": false
+    },
+    {
+      "source": "loud3000",
+      "split": "development",
+      "model": "duration_midpoint",
+      "pdm_snr_db": 22.730033897085953,
+      "total_shared_clock_snr_db": 18.883233631881495,
+      "total_error_improvement_db": -2.1145681086584474,
+      "regression": true,
+      "absolute_noise_rms": 0.04116602927511581,
+      "layout_fits": false
+    },
+    {
+      "source": "loud3000",
+      "split": "development",
+      "model": "duration_zero",
+      "pdm_snr_db": 21.572563593109983,
+      "total_shared_clock_snr_db": 17.763683015147777,
+      "total_error_improvement_db": -3.2341187253921677,
+      "regression": true,
+      "absolute_noise_rms": 0.04682917528114466,
+      "layout_fits": false
+    },
+    {
+      "source": "loud3000",
+      "split": "development",
+      "model": "duration_zero_half_recent",
+      "pdm_snr_db": 24.852054654112443,
+      "total_shared_clock_snr_db": 18.86616114782568,
+      "total_error_improvement_db": -2.131640592714266,
+      "regression": true,
+      "absolute_noise_rms": 0.041247022421283315,
+      "layout_fits": false
+    }
+  ],
+  "unconditional_table_replacement_accepted": false,
+  "new_release_or_main_changes": false,
+  "reason": "No table control improves every tested signal; beneficial duration-aware dictionaries exceed current fixed layout",
+  "next_mechanism": "Generic clock-aware joint IMA/PDM encoding with measured baseline fallback, plus a verified layout for wider dictionaries",
+  "source_specific_tuning_allowed": false
+}
