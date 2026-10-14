@@ -18,7 +18,7 @@ from row_dictionary_video import encode_states
 
 
 def prepare_frames(images, compact, directory, *, colour_policy='stable', monochrome=False,
-                   colour_dither='none', colour_contours=False, colour_vision='none'):
+                   colour_dither='none', colour_contours=False, colour_vision='none', lineart_dark_fills=False):
     """Refine the generic converter's palette without changing its media fit.
 
     First retain the reproducible legacy five-level reference. The default
@@ -41,6 +41,8 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
         raise ValueError('unknown colour vision')
     if (colour_dither != 'none' or colour_contours or colour_vision != 'none') and (colour_policy != 'flat' or monochrome):
         raise ValueError('minimal dither, contours and vision require non-monochrome flat colour')
+    if lineart_dark_fills and (colour_policy != 'lineart' or monochrome):
+        raise ValueError('dark fills require non-monochrome lineart colour')
     import stable_colour
     import texture_colour
     import monochrome_five_level
@@ -61,7 +63,7 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
         refined[4512:] = bytes([1])*96
         legacy = bytes(refined)
         state = (monochrome_five_level.encode(image) if monochrome else
-                 lineart_colour.encode(image, previous, previous_image)
+                 lineart_colour.encode(image, previous, previous_image, **(dict(dark_fills=True) if lineart_dark_fills else {}))
                  if colour_policy == 'lineart' else
                  flat_colour.encode(image, previous, previous_image,
                     dither=colour_dither, contours=colour_contours, vision=colour_vision)
@@ -90,7 +92,8 @@ def prepare_frames(images, compact, directory, *, colour_policy='stable', monoch
         compression_additional_pixel_changes=False, perceptual_percent_claimed=False,
         colour_policy='monochrome' if monochrome else colour_policy,
         monochrome=monochrome, colour_contours=colour_contours, colour_vision=colour_vision,
-        colour_comparison=(lineart_colour.comparison_report(comparison)
+        lineart_dark_fills=lineart_dark_fills,
+        colour_comparison=(lineart_colour.comparison_report(comparison, dark_fills=lineart_dark_fills)
             if colour_policy == 'lineart' and not monochrome else
             flat_colour.comparison_report(comparison,
             dither=colour_dither, contours=colour_contours, vision=colour_vision)
