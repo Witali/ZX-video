@@ -1,0 +1,3258 @@
+{
+  "baseline": {
+    "regions": [
+      [
+        31744,
+        "cd5b7c2a777ced5b797cb7ed52d0ed737b7ced7b7d7ce1d1c108f108f1c9cd5b7ced737b7c31e07b21357ce52a837c1100c0c3e38d2a817cb7ed52c2767ced53777ced7b7b7cc9ed53777cf508f508c5d5e5ed737d7ced7b7b7cc92a797ced5b817cb7ed522a797c200321ffff7c32528e7d325a8ec976000000000000000000000000000000"
+      ],
+      [
+        36320,
+        "c3dd8e06003708c3508e3e12862330f04e237846c37b8e4623370830097eb7087e230f0f0f0ff6f03c28dfd6ee4f780600eda0eda0edb0b7f22e8efec03868fee0301c4623181020ceb623fa828efe40386e05fe60cb104e23ed43488e06003ce60728763c4fe521000019eda0edb0e17afe00da708e20067bfe00da708e3a827cba20073a817cbbca708ecd477c18e07ee618ea278e0f0f0f4f7e23edb0b7f22e8efec0d21f8e4f0830097eb7087e230f0f0f0ff6f04779fea005cb10c3378e470830097eb7087e230f0f0f0ff6f04f78fe20cb1106ffc3398e370830097eb7087e230f0f0f0ff6f0d6e7fe18da458e8623d2068fc84e234623c3468e4f780600eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0edb0c3178e4fe52a488e19eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0edb0c34f8e"
+      ]
+    ],
+    "labels": {
+      "slice_until": 31744,
+      "begin": 31774,
+      "finished": 31797,
+      "slice_yield": 31815,
+      "sync": 31835,
+      "sync_target": 31853,
+      "fatal": 31862,
+      "state": 31863,
+      "slice_output": 31863,
+      "slice_target": 31865,
+      "slice_caller_sp": 31867,
+      "slice_decoder_sp": 31869,
+      "block_length": 31871,
+      "block_end": 31873,
+      "input_pointer": 31875,
+      "block_stored": 31877,
+      "end": 31878,
+      "LongLiterals8Jump": 36320,
+      "start": 36323,
+      "ManyLiterals": 36330,
+      "MoreLiterals": 36343,
+      "LiteralNibble": 36358,
+      "CopyMoreLiterals": 36365,
+      "AfterLongLiterals": 36375,
+      "Case11x": 36383,
+      "Literals00or11": 36391,
+      "NoLiterals": 36393,
+      "Case0xx": 36398,
+      "ReadOffsetC": 36407,
+      "SaveOffset": 36409,
+      "MatchLen": 36415,
+      "CopyMatch": 36421,
+      "MatchUseC": 36422,
+      "offset": 36424,
+      "AfterLongMatch": 36431,
+      "ReadToken": 36432,
+      "high_operand": 36434,
+      "low_operand": 36442,
+      "Yield": 36446,
+      "Suspend": 36459,
+      "Token": 36464,
+      "token_body": 36464,
+      "NextUseBC": 36475,
+      "Case1xx": 36482,
+      "Case10x": 36487,
+      "Offset13Nibble": 36500,
+      "Case00x": 36512,
+      "Offset5Nibble": 36525,
+      "LongerMatch": 36538,
+      "MatchNibble": 36551,
+      "LongLiterals8": 36573,
+      "LongLiteralsBC": 36577,
+      "LongMatch8": 36614,
+      "LongMatchBC": 36615,
+      "block_end_high": 31874
+    },
+    "metadata": {
+      "prefix_end": 31878,
+      "core_end": 36657,
+      "code_bytes": 471,
+      "output_base": 49152,
+      "private_stack": 31712,
+      "patched_addresses": [
+        36434,
+        36442,
+        36424,
+        36425
+      ],
+      "instruction_listing": [
+        {
+          "address": 36320,
+          "instruction": "JP LongLiterals8",
+          "tstates": 10
+        },
+        {
+          "address": 36323,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36325,
+          "instruction": "SCF",
+          "tstates": 4
+        },
+        {
+          "address": 36326,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36327,
+          "instruction": "JP ReadToken",
+          "tstates": 10
+        },
+        {
+          "address": 36330,
+          "instruction": "LD A,18",
+          "tstates": 7
+        },
+        {
+          "address": 36332,
+          "instruction": "ADD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36333,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36334,
+          "instruction": "JR LongLiterals8Jump",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36336,
+          "instruction": "LD C,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36337,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36338,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36339,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36340,
+          "instruction": "JP NextUseBC",
+          "tstates": 10
+        },
+        {
+          "address": 36343,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36344,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36345,
+          "instruction": "SCF",
+          "tstates": 4
+        },
+        {
+          "address": 36346,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36347,
+          "instruction": "JR LiteralNibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36349,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36350,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36351,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36352,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36353,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36354,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36355,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36356,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36357,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36358,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36360,
+          "instruction": "INC A",
+          "tstates": 4
+        },
+        {
+          "address": 36361,
+          "instruction": "JR ManyLiterals",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36363,
+          "instruction": "SUB 238",
+          "tstates": 7
+        },
+        {
+          "address": 36365,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36366,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36367,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36369,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36371,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36373,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36375,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36376,
+          "instruction": "JP Case0xx",
+          "tstates": 10
+        },
+        {
+          "address": 36379,
+          "instruction": "CP 192",
+          "tstates": 7
+        },
+        {
+          "address": 36381,
+          "instruction": "JR Case10x",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36383,
+          "instruction": "CP 224",
+          "tstates": 7
+        },
+        {
+          "address": 36385,
+          "instruction": "JR MatchLen",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36387,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36388,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36389,
+          "instruction": "JR ReadOffsetC",
+          "tstates": 12
+        },
+        {
+          "address": 36391,
+          "instruction": "JR MoreLiterals",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36393,
+          "instruction": "OR (HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36394,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36395,
+          "instruction": "JP Case1xx",
+          "tstates": 10
+        },
+        {
+          "address": 36398,
+          "instruction": "CP 64",
+          "tstates": 7
+        },
+        {
+          "address": 36400,
+          "instruction": "JR Case00x",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36402,
+          "instruction": "DEC B",
+          "tstates": 4
+        },
+        {
+          "address": 36403,
+          "instruction": "CP 96",
+          "tstates": 7
+        },
+        {
+          "address": 36405,
+          "instruction": "RL B",
+          "tstates": 8
+        },
+        {
+          "address": 36407,
+          "instruction": "LD C,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36408,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36409,
+          "instruction": "LD (offset),BC",
+          "tstates": 20
+        },
+        {
+          "address": 36413,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36415,
+          "instruction": "INC A",
+          "tstates": 4
+        },
+        {
+          "address": 36416,
+          "instruction": "AND 7",
+          "tstates": 7
+        },
+        {
+          "address": 36418,
+          "instruction": "JR LongerMatch",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36420,
+          "instruction": "INC A",
+          "tstates": 4
+        },
+        {
+          "address": 36421,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36422,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 36423,
+          "instruction": "LD HL,offset",
+          "tstates": 10
+        },
+        {
+          "address": 36426,
+          "instruction": "ADD HL,DE",
+          "tstates": 11
+        },
+        {
+          "address": 36427,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36429,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36431,
+          "instruction": "POP HL",
+          "tstates": 10
+        },
+        {
+          "address": 36432,
+          "instruction": "LD A,D",
+          "tstates": 4
+        },
+        {
+          "address": 36433,
+          "instruction": "CP high",
+          "tstates": 7
+        },
+        {
+          "address": 36435,
+          "instruction": "JP Token",
+          "tstates": 10
+        },
+        {
+          "address": 36438,
+          "instruction": "JR Yield",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36440,
+          "instruction": "LD A,E",
+          "tstates": 4
+        },
+        {
+          "address": 36441,
+          "instruction": "CP low",
+          "tstates": 7
+        },
+        {
+          "address": 36443,
+          "instruction": "JP Token",
+          "tstates": 10
+        },
+        {
+          "address": 36446,
+          "instruction": "LD A,(block_end+1)",
+          "tstates": 13
+        },
+        {
+          "address": 36449,
+          "instruction": "CP D",
+          "tstates": 4
+        },
+        {
+          "address": 36450,
+          "instruction": "JR Suspend",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36452,
+          "instruction": "LD A,(block_end)",
+          "tstates": 13
+        },
+        {
+          "address": 36455,
+          "instruction": "CP E",
+          "tstates": 4
+        },
+        {
+          "address": 36456,
+          "instruction": "JP Token",
+          "tstates": 10
+        },
+        {
+          "address": 36459,
+          "instruction": "CALL yield",
+          "tstates": 17
+        },
+        {
+          "address": 36462,
+          "instruction": "JR ReadToken",
+          "tstates": 12
+        },
+        {
+          "address": 36464,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36465,
+          "instruction": "AND 24",
+          "tstates": 7
+        },
+        {
+          "address": 36467,
+          "instruction": "JP Literals00or11",
+          "tstates": 10
+        },
+        {
+          "address": 36470,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36471,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36472,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36473,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36474,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36475,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36476,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36478,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36479,
+          "instruction": "JP Case0xx",
+          "tstates": 10
+        },
+        {
+          "address": 36482,
+          "instruction": "CP 192",
+          "tstates": 7
+        },
+        {
+          "address": 36484,
+          "instruction": "JP Case11x",
+          "tstates": 10
+        },
+        {
+          "address": 36487,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36488,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36489,
+          "instruction": "JR Offset13Nibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36491,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36492,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36493,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36494,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36495,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36496,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36497,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36498,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36499,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36500,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36502,
+          "instruction": "LD B,A",
+          "tstates": 4
+        },
+        {
+          "address": 36503,
+          "instruction": "LD A,C",
+          "tstates": 4
+        },
+        {
+          "address": 36504,
+          "instruction": "CP 160",
+          "tstates": 7
+        },
+        {
+          "address": 36506,
+          "instruction": "DEC B",
+          "tstates": 4
+        },
+        {
+          "address": 36507,
+          "instruction": "RL B",
+          "tstates": 8
+        },
+        {
+          "address": 36509,
+          "instruction": "JP ReadOffsetC",
+          "tstates": 10
+        },
+        {
+          "address": 36512,
+          "instruction": "LD B,A",
+          "tstates": 4
+        },
+        {
+          "address": 36513,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36514,
+          "instruction": "JR Offset5Nibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36516,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36517,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36518,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36519,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36520,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36521,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36522,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36523,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36524,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36525,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36527,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36528,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36529,
+          "instruction": "CP 32",
+          "tstates": 7
+        },
+        {
+          "address": 36531,
+          "instruction": "RL C",
+          "tstates": 8
+        },
+        {
+          "address": 36533,
+          "instruction": "LD B,255",
+          "tstates": 7
+        },
+        {
+          "address": 36535,
+          "instruction": "JP SaveOffset",
+          "tstates": 10
+        },
+        {
+          "address": 36538,
+          "instruction": "SCF",
+          "tstates": 4
+        },
+        {
+          "address": 36539,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36540,
+          "instruction": "JR MatchNibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36542,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36543,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36544,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36545,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36546,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36547,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36548,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36549,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36550,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36551,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36553,
+          "instruction": "SUB 231",
+          "tstates": 7
+        },
+        {
+          "address": 36555,
+          "instruction": "CP 24",
+          "tstates": 7
+        },
+        {
+          "address": 36557,
+          "instruction": "JP CopyMatch",
+          "tstates": 10
+        },
+        {
+          "address": 36560,
+          "instruction": "ADD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36561,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36562,
+          "instruction": "JP LongMatch8",
+          "tstates": 10
+        },
+        {
+          "address": 36565,
+          "instruction": "RET Z",
+          "tstates": [
+            5,
+            11
+          ]
+        },
+        {
+          "address": 36566,
+          "instruction": "LD C,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36567,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36568,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36569,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36570,
+          "instruction": "JP MatchUseC",
+          "tstates": 10
+        },
+        {
+          "address": 36573,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36574,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36575,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36577,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36579,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36581,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36583,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36585,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36587,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36589,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36591,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36593,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36595,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36597,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36599,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36601,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36603,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36605,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36607,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36609,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36611,
+          "instruction": "JP AfterLongLiterals",
+          "tstates": 10
+        },
+        {
+          "address": 36614,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36615,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 36616,
+          "instruction": "LD HL,(offset)",
+          "tstates": 16
+        },
+        {
+          "address": 36619,
+          "instruction": "ADD HL,DE",
+          "tstates": 11
+        },
+        {
+          "address": 36620,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36622,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36624,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36626,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36628,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36630,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36632,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36634,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36636,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36638,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36640,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36642,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36644,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36646,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36648,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36650,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36652,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36654,
+          "instruction": "JP AfterLongMatch",
+          "tstates": 10
+        },
+        {
+          "address": 31744,
+          "instruction": "CALL nn",
+          "tstates": 17
+        },
+        {
+          "address": 31747,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31750,
+          "instruction": "LD DE,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31754,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 31755,
+          "instruction": "SBC HL,DE",
+          "tstates": 15
+        },
+        {
+          "address": 31757,
+          "instruction": "RET NC",
+          "tstates": [
+            5,
+            11
+          ]
+        },
+        {
+          "address": 31758,
+          "instruction": "LD (nn),SP",
+          "tstates": 20
+        },
+        {
+          "address": 31762,
+          "instruction": "LD SP,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31766,
+          "instruction": "POP HL",
+          "tstates": 10
+        },
+        {
+          "address": 31767,
+          "instruction": "POP DE",
+          "tstates": 10
+        },
+        {
+          "address": 31768,
+          "instruction": "POP BC",
+          "tstates": 10
+        },
+        {
+          "address": 31769,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31770,
+          "instruction": "POP AF",
+          "tstates": 10
+        },
+        {
+          "address": 31771,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31772,
+          "instruction": "POP AF",
+          "tstates": 10
+        },
+        {
+          "address": 31773,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31774,
+          "instruction": "CALL nn",
+          "tstates": 17
+        },
+        {
+          "address": 31777,
+          "instruction": "LD (nn),SP",
+          "tstates": 20
+        },
+        {
+          "address": 31781,
+          "instruction": "LD SP,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31784,
+          "instruction": "LD HL,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31787,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 31788,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31791,
+          "instruction": "LD DE,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31794,
+          "instruction": "JP nn",
+          "tstates": 10
+        },
+        {
+          "address": 31797,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31800,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 31801,
+          "instruction": "SBC HL,DE",
+          "tstates": 15
+        },
+        {
+          "address": 31803,
+          "instruction": "JP NZ,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31806,
+          "instruction": "LD (nn),DE",
+          "tstates": 20
+        },
+        {
+          "address": 31810,
+          "instruction": "LD SP,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31814,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31815,
+          "instruction": "LD (nn),DE",
+          "tstates": 20
+        },
+        {
+          "address": 31819,
+          "instruction": "PUSH AF",
+          "tstates": 11
+        },
+        {
+          "address": 31820,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31821,
+          "instruction": "PUSH AF",
+          "tstates": 11
+        },
+        {
+          "address": 31822,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31823,
+          "instruction": "PUSH BC",
+          "tstates": 11
+        },
+        {
+          "address": 31824,
+          "instruction": "PUSH DE",
+          "tstates": 11
+        },
+        {
+          "address": 31825,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 31826,
+          "instruction": "LD (nn),SP",
+          "tstates": 20
+        },
+        {
+          "address": 31830,
+          "instruction": "LD SP,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31834,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31835,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31838,
+          "instruction": "LD DE,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31842,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 31843,
+          "instruction": "SBC HL,DE",
+          "tstates": 15
+        },
+        {
+          "address": 31845,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31848,
+          "instruction": "JR NZ,e",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 31850,
+          "instruction": "LD HL,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31853,
+          "instruction": "LD A,H",
+          "tstates": 4
+        },
+        {
+          "address": 31854,
+          "instruction": "LD (nn),A",
+          "tstates": 13
+        },
+        {
+          "address": 31857,
+          "instruction": "LD A,L",
+          "tstates": 4
+        },
+        {
+          "address": 31858,
+          "instruction": "LD (nn),A",
+          "tstates": 13
+        },
+        {
+          "address": 31861,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31862,
+          "instruction": "HALT",
+          "tstates": 4
+        }
+      ],
+      "upstream_commit": "15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5",
+      "long_copy": true,
+      "long_copy_minimum_literals": 18,
+      "long_copy_minimum_match": 24,
+      "long_copy_unrolled_bytes": 16,
+      "long_copy_16bit_forms": false,
+      "long_copy_extra_core_bytes": 87,
+      "long_copy_delta_tstates": {
+        "literals8": -50,
+        "literals16": 0,
+        "guarded_literals16": 0,
+        "matches8": -59,
+        "matches16": 0
+      },
+      "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+      "upstream_sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071"
+    }
+  },
+  "candidate": {
+    "regions": [
+      [
+        31744,
+        "cd5b7c2a777ced5b797cb7ed52d0ed737b7ced7b7d7ce1d1c108f108f1c9cd5b7ced737b7c31e07b21357ce52a837c1100c0c3e38d2a817cb7ed52c2767ced53777ced7b7b7cc9ed53777cf508f508c5d5e5ed737d7ced7b7b7cc92a797ced5b817cb7ed522a797c200321ffff7c32528e7d325a8ec976000000000000000000000000000000"
+      ],
+      [
+        36320,
+        "c3dd8e06003708c3508e3e12862330f04e237846c37b8e4623370830097eb7087e230f0f0f0ff6f03c28dfd6ee4f780600eda0eda0edb0b7f22e8efec03868fee0301c4623181020ceb623fa828efe40386e05fe60cb104e23ed43488e06003ce60728763c4fe521000019eda0edb0e17afe00da708e20067bfe00da708e3a827cba20073a817cbbca708ecd477c18e07ee618ea278e0f0f0f4f7e23edb0b7f22e8efec0d21f8e4f0830097eb7087e230f0f0f0ff6f04779fea005cb10c3378e470830097eb7087e230f0f0f0ff6f04f78fe20cb1106ffc3398e370830097eb7087e230f0f0f0ff6f0d6e7fe18da458e8623d23e8fc84e234623c3468e4f780600f579fe283831af91e60f8732f18ef11800eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eaf28ec3178ef1eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0edb0c3178e4fe52a488e19f579fe283831af91e60f8732548ff11800eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0ea558fc34f8ef1eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0eda0edb0c34f8e"
+      ]
+    ],
+    "labels": {
+      "slice_until": 31744,
+      "begin": 31774,
+      "finished": 31797,
+      "slice_yield": 31815,
+      "sync": 31835,
+      "sync_target": 31853,
+      "fatal": 31862,
+      "state": 31863,
+      "slice_output": 31863,
+      "slice_target": 31865,
+      "slice_caller_sp": 31867,
+      "slice_decoder_sp": 31869,
+      "block_length": 31871,
+      "block_end": 31873,
+      "input_pointer": 31875,
+      "block_stored": 31877,
+      "end": 31878,
+      "LongLiterals8Jump": 36320,
+      "start": 36323,
+      "ManyLiterals": 36330,
+      "MoreLiterals": 36343,
+      "LiteralNibble": 36358,
+      "CopyMoreLiterals": 36365,
+      "AfterLongLiterals": 36375,
+      "Case11x": 36383,
+      "Literals00or11": 36391,
+      "NoLiterals": 36393,
+      "Case0xx": 36398,
+      "ReadOffsetC": 36407,
+      "SaveOffset": 36409,
+      "MatchLen": 36415,
+      "CopyMatch": 36421,
+      "MatchUseC": 36422,
+      "offset": 36424,
+      "AfterLongMatch": 36431,
+      "ReadToken": 36432,
+      "high_operand": 36434,
+      "low_operand": 36442,
+      "Yield": 36446,
+      "Suspend": 36459,
+      "Token": 36464,
+      "token_body": 36464,
+      "NextUseBC": 36475,
+      "Case1xx": 36482,
+      "Case10x": 36487,
+      "Offset13Nibble": 36500,
+      "Case00x": 36512,
+      "Offset5Nibble": 36525,
+      "LongerMatch": 36538,
+      "MatchNibble": 36551,
+      "LongLiterals8": 36573,
+      "LongLiteralsBC": 36577,
+      "literal_residue": 36593,
+      "literal_loop": 36594,
+      "literal_prefix16": 36632,
+      "LongMatch8": 36670,
+      "LongMatchBC": 36671,
+      "match_residue": 36692,
+      "match_loop": 36693,
+      "match_prefix16": 36731,
+      "block_end_high": 31874
+    },
+    "metadata": {
+      "prefix_end": 31878,
+      "core_end": 36769,
+      "code_bytes": 583,
+      "output_base": 49152,
+      "private_stack": 31712,
+      "patched_addresses": [
+        36434,
+        36442,
+        36424,
+        36425,
+        36593,
+        36692
+      ],
+      "instruction_listing": [
+        {
+          "address": 36320,
+          "instruction": "JP LongLiterals8",
+          "tstates": 10
+        },
+        {
+          "address": 36323,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36325,
+          "instruction": "SCF",
+          "tstates": 4
+        },
+        {
+          "address": 36326,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36327,
+          "instruction": "JP ReadToken",
+          "tstates": 10
+        },
+        {
+          "address": 36330,
+          "instruction": "LD A,18",
+          "tstates": 7
+        },
+        {
+          "address": 36332,
+          "instruction": "ADD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36333,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36334,
+          "instruction": "JR LongLiterals8Jump",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36336,
+          "instruction": "LD C,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36337,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36338,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36339,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36340,
+          "instruction": "JP NextUseBC",
+          "tstates": 10
+        },
+        {
+          "address": 36343,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36344,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36345,
+          "instruction": "SCF",
+          "tstates": 4
+        },
+        {
+          "address": 36346,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36347,
+          "instruction": "JR LiteralNibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36349,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36350,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36351,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36352,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36353,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36354,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36355,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36356,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36357,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36358,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36360,
+          "instruction": "INC A",
+          "tstates": 4
+        },
+        {
+          "address": 36361,
+          "instruction": "JR ManyLiterals",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36363,
+          "instruction": "SUB 238",
+          "tstates": 7
+        },
+        {
+          "address": 36365,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36366,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36367,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36369,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36371,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36373,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36375,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36376,
+          "instruction": "JP Case0xx",
+          "tstates": 10
+        },
+        {
+          "address": 36379,
+          "instruction": "CP 192",
+          "tstates": 7
+        },
+        {
+          "address": 36381,
+          "instruction": "JR Case10x",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36383,
+          "instruction": "CP 224",
+          "tstates": 7
+        },
+        {
+          "address": 36385,
+          "instruction": "JR MatchLen",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36387,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36388,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36389,
+          "instruction": "JR ReadOffsetC",
+          "tstates": 12
+        },
+        {
+          "address": 36391,
+          "instruction": "JR MoreLiterals",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36393,
+          "instruction": "OR (HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36394,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36395,
+          "instruction": "JP Case1xx",
+          "tstates": 10
+        },
+        {
+          "address": 36398,
+          "instruction": "CP 64",
+          "tstates": 7
+        },
+        {
+          "address": 36400,
+          "instruction": "JR Case00x",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36402,
+          "instruction": "DEC B",
+          "tstates": 4
+        },
+        {
+          "address": 36403,
+          "instruction": "CP 96",
+          "tstates": 7
+        },
+        {
+          "address": 36405,
+          "instruction": "RL B",
+          "tstates": 8
+        },
+        {
+          "address": 36407,
+          "instruction": "LD C,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36408,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36409,
+          "instruction": "LD (offset),BC",
+          "tstates": 20
+        },
+        {
+          "address": 36413,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36415,
+          "instruction": "INC A",
+          "tstates": 4
+        },
+        {
+          "address": 36416,
+          "instruction": "AND 7",
+          "tstates": 7
+        },
+        {
+          "address": 36418,
+          "instruction": "JR LongerMatch",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36420,
+          "instruction": "INC A",
+          "tstates": 4
+        },
+        {
+          "address": 36421,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36422,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 36423,
+          "instruction": "LD HL,offset",
+          "tstates": 10
+        },
+        {
+          "address": 36426,
+          "instruction": "ADD HL,DE",
+          "tstates": 11
+        },
+        {
+          "address": 36427,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36429,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36431,
+          "instruction": "POP HL",
+          "tstates": 10
+        },
+        {
+          "address": 36432,
+          "instruction": "LD A,D",
+          "tstates": 4
+        },
+        {
+          "address": 36433,
+          "instruction": "CP high",
+          "tstates": 7
+        },
+        {
+          "address": 36435,
+          "instruction": "JP Token",
+          "tstates": 10
+        },
+        {
+          "address": 36438,
+          "instruction": "JR Yield",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36440,
+          "instruction": "LD A,E",
+          "tstates": 4
+        },
+        {
+          "address": 36441,
+          "instruction": "CP low",
+          "tstates": 7
+        },
+        {
+          "address": 36443,
+          "instruction": "JP Token",
+          "tstates": 10
+        },
+        {
+          "address": 36446,
+          "instruction": "LD A,(block_end+1)",
+          "tstates": 13
+        },
+        {
+          "address": 36449,
+          "instruction": "CP D",
+          "tstates": 4
+        },
+        {
+          "address": 36450,
+          "instruction": "JR Suspend",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36452,
+          "instruction": "LD A,(block_end)",
+          "tstates": 13
+        },
+        {
+          "address": 36455,
+          "instruction": "CP E",
+          "tstates": 4
+        },
+        {
+          "address": 36456,
+          "instruction": "JP Token",
+          "tstates": 10
+        },
+        {
+          "address": 36459,
+          "instruction": "CALL yield",
+          "tstates": 17
+        },
+        {
+          "address": 36462,
+          "instruction": "JR ReadToken",
+          "tstates": 12
+        },
+        {
+          "address": 36464,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36465,
+          "instruction": "AND 24",
+          "tstates": 7
+        },
+        {
+          "address": 36467,
+          "instruction": "JP Literals00or11",
+          "tstates": 10
+        },
+        {
+          "address": 36470,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36471,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36472,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36473,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36474,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36475,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36476,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36478,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36479,
+          "instruction": "JP Case0xx",
+          "tstates": 10
+        },
+        {
+          "address": 36482,
+          "instruction": "CP 192",
+          "tstates": 7
+        },
+        {
+          "address": 36484,
+          "instruction": "JP Case11x",
+          "tstates": 10
+        },
+        {
+          "address": 36487,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36488,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36489,
+          "instruction": "JR Offset13Nibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36491,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36492,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36493,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36494,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36495,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36496,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36497,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36498,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36499,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36500,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36502,
+          "instruction": "LD B,A",
+          "tstates": 4
+        },
+        {
+          "address": 36503,
+          "instruction": "LD A,C",
+          "tstates": 4
+        },
+        {
+          "address": 36504,
+          "instruction": "CP 160",
+          "tstates": 7
+        },
+        {
+          "address": 36506,
+          "instruction": "DEC B",
+          "tstates": 4
+        },
+        {
+          "address": 36507,
+          "instruction": "RL B",
+          "tstates": 8
+        },
+        {
+          "address": 36509,
+          "instruction": "JP ReadOffsetC",
+          "tstates": 10
+        },
+        {
+          "address": 36512,
+          "instruction": "LD B,A",
+          "tstates": 4
+        },
+        {
+          "address": 36513,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36514,
+          "instruction": "JR Offset5Nibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36516,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36517,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36518,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36519,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36520,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36521,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36522,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36523,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36524,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36525,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36527,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36528,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36529,
+          "instruction": "CP 32",
+          "tstates": 7
+        },
+        {
+          "address": 36531,
+          "instruction": "RL C",
+          "tstates": 8
+        },
+        {
+          "address": 36533,
+          "instruction": "LD B,255",
+          "tstates": 7
+        },
+        {
+          "address": 36535,
+          "instruction": "JP SaveOffset",
+          "tstates": 10
+        },
+        {
+          "address": 36538,
+          "instruction": "SCF",
+          "tstates": 4
+        },
+        {
+          "address": 36539,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36540,
+          "instruction": "JR MatchNibble",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36542,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36543,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 36544,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 36545,
+          "instruction": "LD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36546,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36547,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36548,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36549,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36550,
+          "instruction": "RRCA",
+          "tstates": 4
+        },
+        {
+          "address": 36551,
+          "instruction": "OR F0h",
+          "tstates": 7
+        },
+        {
+          "address": 36553,
+          "instruction": "SUB 231",
+          "tstates": 7
+        },
+        {
+          "address": 36555,
+          "instruction": "CP 24",
+          "tstates": 7
+        },
+        {
+          "address": 36557,
+          "instruction": "JP CopyMatch",
+          "tstates": 10
+        },
+        {
+          "address": 36560,
+          "instruction": "ADD A,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36561,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36562,
+          "instruction": "JP LongMatch8",
+          "tstates": 10
+        },
+        {
+          "address": 36565,
+          "instruction": "RET Z",
+          "tstates": [
+            5,
+            11
+          ]
+        },
+        {
+          "address": 36566,
+          "instruction": "LD C,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36567,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36568,
+          "instruction": "LD B,(HL)",
+          "tstates": 7
+        },
+        {
+          "address": 36569,
+          "instruction": "INC HL",
+          "tstates": 6
+        },
+        {
+          "address": 36570,
+          "instruction": "JP MatchUseC",
+          "tstates": 10
+        },
+        {
+          "address": 36573,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36574,
+          "instruction": "LD A,B",
+          "tstates": 4
+        },
+        {
+          "address": 36575,
+          "instruction": "LD B,0",
+          "tstates": 7
+        },
+        {
+          "address": 36577,
+          "instruction": "PUSH AF",
+          "tstates": 11
+        },
+        {
+          "address": 36578,
+          "instruction": "LD A,C",
+          "tstates": 4
+        },
+        {
+          "address": 36579,
+          "instruction": "CP 40",
+          "tstates": 7
+        },
+        {
+          "address": 36581,
+          "instruction": "JR literal_prefix16",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36583,
+          "instruction": "XOR A",
+          "tstates": 4
+        },
+        {
+          "address": 36584,
+          "instruction": "SUB C",
+          "tstates": 4
+        },
+        {
+          "address": 36585,
+          "instruction": "AND 15",
+          "tstates": 7
+        },
+        {
+          "address": 36587,
+          "instruction": "ADD A,A",
+          "tstates": 4
+        },
+        {
+          "address": 36588,
+          "instruction": "LD (residue),A",
+          "tstates": 13
+        },
+        {
+          "address": 36591,
+          "instruction": "POP AF",
+          "tstates": 10
+        },
+        {
+          "address": 36592,
+          "instruction": "JR residue",
+          "tstates": 12
+        },
+        {
+          "address": 36594,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36596,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36598,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36600,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36602,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36604,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36606,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36608,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36610,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36612,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36614,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36616,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36618,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36620,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36622,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36624,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36626,
+          "instruction": "JP literal_loop",
+          "tstates": 10
+        },
+        {
+          "address": 36629,
+          "instruction": "JP AfterLongLiterals",
+          "tstates": 10
+        },
+        {
+          "address": 36632,
+          "instruction": "POP AF",
+          "tstates": 10
+        },
+        {
+          "address": 36633,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36635,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36637,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36639,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36641,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36643,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36645,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36647,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36649,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36651,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36653,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36655,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36657,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36659,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36661,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36663,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36665,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36667,
+          "instruction": "JP AfterLongLiterals",
+          "tstates": 10
+        },
+        {
+          "address": 36670,
+          "instruction": "LD C,A",
+          "tstates": 4
+        },
+        {
+          "address": 36671,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 36672,
+          "instruction": "LD HL,(offset)",
+          "tstates": 16
+        },
+        {
+          "address": 36675,
+          "instruction": "ADD HL,DE",
+          "tstates": 11
+        },
+        {
+          "address": 36676,
+          "instruction": "PUSH AF",
+          "tstates": 11
+        },
+        {
+          "address": 36677,
+          "instruction": "LD A,C",
+          "tstates": 4
+        },
+        {
+          "address": 36678,
+          "instruction": "CP 40",
+          "tstates": 7
+        },
+        {
+          "address": 36680,
+          "instruction": "JR match_prefix16",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 36682,
+          "instruction": "XOR A",
+          "tstates": 4
+        },
+        {
+          "address": 36683,
+          "instruction": "SUB C",
+          "tstates": 4
+        },
+        {
+          "address": 36684,
+          "instruction": "AND 15",
+          "tstates": 7
+        },
+        {
+          "address": 36686,
+          "instruction": "ADD A,A",
+          "tstates": 4
+        },
+        {
+          "address": 36687,
+          "instruction": "LD (residue),A",
+          "tstates": 13
+        },
+        {
+          "address": 36690,
+          "instruction": "POP AF",
+          "tstates": 10
+        },
+        {
+          "address": 36691,
+          "instruction": "JR residue",
+          "tstates": 12
+        },
+        {
+          "address": 36693,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36695,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36697,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36699,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36701,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36703,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36705,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36707,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36709,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36711,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36713,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36715,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36717,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36719,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36721,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36723,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36725,
+          "instruction": "JP match_loop",
+          "tstates": 10
+        },
+        {
+          "address": 36728,
+          "instruction": "JP AfterLongMatch",
+          "tstates": 10
+        },
+        {
+          "address": 36731,
+          "instruction": "POP AF",
+          "tstates": 10
+        },
+        {
+          "address": 36732,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36734,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36736,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36738,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36740,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36742,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36744,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36746,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36748,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36750,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36752,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36754,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36756,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36758,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36760,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36762,
+          "instruction": "LDI",
+          "tstates": 16
+        },
+        {
+          "address": 36764,
+          "instruction": "LDIR",
+          "tstates": [
+            16,
+            21
+          ]
+        },
+        {
+          "address": 36766,
+          "instruction": "JP AfterLongMatch",
+          "tstates": 10
+        },
+        {
+          "address": 31744,
+          "instruction": "CALL nn",
+          "tstates": 17
+        },
+        {
+          "address": 31747,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31750,
+          "instruction": "LD DE,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31754,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 31755,
+          "instruction": "SBC HL,DE",
+          "tstates": 15
+        },
+        {
+          "address": 31757,
+          "instruction": "RET NC",
+          "tstates": [
+            5,
+            11
+          ]
+        },
+        {
+          "address": 31758,
+          "instruction": "LD (nn),SP",
+          "tstates": 20
+        },
+        {
+          "address": 31762,
+          "instruction": "LD SP,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31766,
+          "instruction": "POP HL",
+          "tstates": 10
+        },
+        {
+          "address": 31767,
+          "instruction": "POP DE",
+          "tstates": 10
+        },
+        {
+          "address": 31768,
+          "instruction": "POP BC",
+          "tstates": 10
+        },
+        {
+          "address": 31769,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31770,
+          "instruction": "POP AF",
+          "tstates": 10
+        },
+        {
+          "address": 31771,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31772,
+          "instruction": "POP AF",
+          "tstates": 10
+        },
+        {
+          "address": 31773,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31774,
+          "instruction": "CALL nn",
+          "tstates": 17
+        },
+        {
+          "address": 31777,
+          "instruction": "LD (nn),SP",
+          "tstates": 20
+        },
+        {
+          "address": 31781,
+          "instruction": "LD SP,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31784,
+          "instruction": "LD HL,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31787,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 31788,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31791,
+          "instruction": "LD DE,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31794,
+          "instruction": "JP nn",
+          "tstates": 10
+        },
+        {
+          "address": 31797,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31800,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 31801,
+          "instruction": "SBC HL,DE",
+          "tstates": 15
+        },
+        {
+          "address": 31803,
+          "instruction": "JP NZ,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31806,
+          "instruction": "LD (nn),DE",
+          "tstates": 20
+        },
+        {
+          "address": 31810,
+          "instruction": "LD SP,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31814,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31815,
+          "instruction": "LD (nn),DE",
+          "tstates": 20
+        },
+        {
+          "address": 31819,
+          "instruction": "PUSH AF",
+          "tstates": 11
+        },
+        {
+          "address": 31820,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31821,
+          "instruction": "PUSH AF",
+          "tstates": 11
+        },
+        {
+          "address": 31822,
+          "instruction": "EX AF,AF'",
+          "tstates": 4
+        },
+        {
+          "address": 31823,
+          "instruction": "PUSH BC",
+          "tstates": 11
+        },
+        {
+          "address": 31824,
+          "instruction": "PUSH DE",
+          "tstates": 11
+        },
+        {
+          "address": 31825,
+          "instruction": "PUSH HL",
+          "tstates": 11
+        },
+        {
+          "address": 31826,
+          "instruction": "LD (nn),SP",
+          "tstates": 20
+        },
+        {
+          "address": 31830,
+          "instruction": "LD SP,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31834,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31835,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31838,
+          "instruction": "LD DE,(nn)",
+          "tstates": 20
+        },
+        {
+          "address": 31842,
+          "instruction": "OR A",
+          "tstates": 4
+        },
+        {
+          "address": 31843,
+          "instruction": "SBC HL,DE",
+          "tstates": 15
+        },
+        {
+          "address": 31845,
+          "instruction": "LD HL,(nn)",
+          "tstates": 16
+        },
+        {
+          "address": 31848,
+          "instruction": "JR NZ,e",
+          "tstates": [
+            7,
+            12
+          ]
+        },
+        {
+          "address": 31850,
+          "instruction": "LD HL,nn",
+          "tstates": 10
+        },
+        {
+          "address": 31853,
+          "instruction": "LD A,H",
+          "tstates": 4
+        },
+        {
+          "address": 31854,
+          "instruction": "LD (nn),A",
+          "tstates": 13
+        },
+        {
+          "address": 31857,
+          "instruction": "LD A,L",
+          "tstates": 4
+        },
+        {
+          "address": 31858,
+          "instruction": "LD (nn),A",
+          "tstates": 13
+        },
+        {
+          "address": 31861,
+          "instruction": "RET",
+          "tstates": 10
+        },
+        {
+          "address": 31862,
+          "instruction": "HALT",
+          "tstates": 4
+        }
+      ],
+      "upstream_commit": "15ee2dfe118eeb8f7683ca44f64821c3a61ca1e5",
+      "long_copy": true,
+      "long_copy_minimum_literals": 18,
+      "long_copy_minimum_match": 24,
+      "long_copy_unrolled_bytes": 16,
+      "long_copy_16bit_forms": false,
+      "long_copy_extra_core_bytes": 199,
+      "long_copy_delta_tstates": {
+        "literals8": "length dependent",
+        "literals16": 0,
+        "guarded_literals16": 0,
+        "matches8": "length dependent",
+        "matches16": 0
+      },
+      "loop_copy": true,
+      "loop_copy_minimum": 40,
+      "loop_copy_extra_core_bytes": 112,
+      "loop_copy_extra_stack_bytes": 2,
+      "loop_copy_short_dispatch_tstates": 44,
+      "loop_copy_long_body_tstates": "83+16*n+10*ceil(n/16)",
+      "timing_source": "https://www.zilog.com/docs/z80/um0080.pdf",
+      "upstream_sha256": "4b7e0492b3c88d3eb32677af25593bf1d9a5d758abf31ce563a074a64e507071"
+    }
+  }
+}

@@ -4,7 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from measure_long_copy import samples, compare
+from measure_long_copy import samples, compare, sha
 from test_libraries import profiles, ROOT
 from lzsa.resumable import build
 
@@ -23,7 +23,7 @@ def layout(profile):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('10','16','20'),required=True)
+    parser.add_argument('--item',choices=('10','16','20','22'),required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--stream-directory',type=Path)
     args=parser.parse_args()
@@ -32,6 +32,15 @@ def main():
     if args.item=='10':
         baseline=build(long_copy=True,core_limit=0x9000)
         candidate=build(long_copy=True,near_literals=True,core_limit=0x9000)
+    elif args.item=='22':
+        # Frozen emitted code preserves a rejected experiment without adding
+        # its slower dispatch to the public generator. Native execution still
+        # protects all reads/writes, counts actual opcodes and injects IRQs.
+        frozen=json.loads((ROOT/'tests/fixtures/item22_loop_profiles.json').read_text())
+        def thaw(name):
+            item=frozen[name]
+            return [(at,bytes.fromhex(data)) for at,data in item['regions']],item['labels'],item['metadata']
+        baseline=thaw('baseline');candidate=thaw('candidate')
     elif args.item=='20':
         baseline=build();candidate=build(restore_compare=True)
     else:
@@ -44,12 +53,24 @@ def main():
                     if at<=address<at+len(data):data[address-at]=0xff if name!='all_loaded' else 1
             return [(at,bytes(data)) for at,data in regions],labels,metadata
         baseline=resident(False);candidate=resident(True)
-    rows=[dict(case=name,**compare(payload,raw,baseline,candidate)) for name,payload,raw in samples()]
-    assert candidate[2]['code_bytes']==baseline[2]['code_bytes']-{'10':3,'16':1,'20':2}[args.item]
+    def comparison(payload,raw):
+        if args.item!='22':return compare(payload,raw,baseline,candidate)
+        from lzsa.native import execute
+        old=execute(*baseline,payload,raw,source=0x2000)
+        new=execute(*candidate,payload,raw,source=0x2000)
+        irq=execute(*candidate,payload,raw,source=0x2000,interrupts=True)
+        delta=[b-a for a,b in zip(old['slices'],new['slices'])]
+        assert len(old['slices'])==len(new['slices'])
+        return dict(payload_bytes=len(payload),raw_bytes=len(raw),payload_sha256=sha(payload),raw_sha256=sha(raw),
+            baseline_tstates=old['tstates'],candidate_tstates=new['tstates'],delta_tstates=new['tstates']-old['tstates'],
+            slices=len(delta),slower_slices=sum(t>0 for t in delta),largest_slice_delta=max(delta),exact=new['exact'],
+            interrupt_exact=irq['exact'],injected_interrupts=irq['injected_interrupts'])
+    rows=[dict(case=name,**comparison(payload,raw)) for name,payload,raw in samples()]
+    assert candidate[2]['code_bytes']==baseline[2]['code_bytes']+{'10':-3,'16':-1,'20':-2,'22':112}[args.item]
     if args.item=='10':assert 'LongLiterals8Jump' not in candidate[1]
     elif args.item=='16':assert all(row['delta_tstates']==-4 for row in rows)
-    else:assert all(row['delta_tstates']==-5*row['slices'] for row in rows)
-    report=dict(date='2026-10-14',item=args.item,baseline_revision={'10':'3f34a4a4','16':'2740a270','20':'bba0b616'}[args.item],complete=True,release=False,
+    elif args.item=='20':assert all(row['delta_tstates']==-5*row['slices'] for row in rows)
+    report=dict(date='2026-10-14',item=args.item,baseline_revision={'10':'3f34a4a4','16':'2740a270','20':'bba0b616','22':'d2f84b87'}[args.item],complete=True,release=False,
         scope=__doc__,baseline=layout(baseline),candidate=layout(candidate),
         summary=dict(cases=len(rows),decoded_bytes=sum(row['raw_bytes'] for row in rows),
             baseline_tstates=sum(row['baseline_tstates'] for row in rows),

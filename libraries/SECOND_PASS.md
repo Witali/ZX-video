@@ -220,3 +220,28 @@ byte-form unroll and fixed256-byte refill already exploit proven local bounds.
 
 [55 checks](evidence/trick_21.json),31 exact defaults; actual delta0 T/code/
 state/input. `audit_second_pass.py --item 21 --output libraries/evidence/trick_21.json`.
+
+## Item22 — residue-entry whole-run unrolling
+
+**Decision: reject the generic dispatch.** The measured private-code candidate
+uses16 LDI instructions per loop, a patched JR entry for the residue, and
+PUSH/POP AF around the selector. Only structurally nonzero byte-form lengths
+enter it; all escaped words retain LDIR. Forward overlap and AF' stay intact.
+Compared with the existing16-byte prefix, counts below40 pay44 extra T.
+For n>=40, the copying/dispatch portion costs `83+16*n+10*ceil(n/16)`
+versus `21*n-85`, excluding the common final JP. At40 the gain is only2 T.
+It adds112 core bytes and two private-stack bytes, no input/state bytes.
+
+[95 complete native blocks](evidence/trick_22.json),619480 decoded bytes,
+26297662 ->26162449 T overall (-135213), but the21 real blocks are8767 T
+**slower**, with19 slower blocks and405 slower slices in the entire corpus.
+227 accepted IRQs and exact output/input/history/EOF checks pass. Long synthetic
+runs conceal the cost on frequent short real copies. Reject this speed-first
+candidate before guarded/player integration; production APIs remain unchanged.
+Existing fixed256-byte ZX0 refill avoids this selector and remains useful.
+
+The [frozen emitted profiles](tests/fixtures/item22_loop_profiles.json) retain
+both complete byte regions, labels, patches and opcode timing metadata for
+replay without shipping the rejected option.31 defaults remain exact.
+`measure_second_pass.py --item 22 --output libraries/evidence/trick_22.json`
+reproduces the failure as well as correctness. No streaming/release claim.

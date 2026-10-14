@@ -122,11 +122,11 @@ are conditional snippets, not completed codec/streaming/IRQ experiments.
 Item20 now has a concrete LZSA2 `sync` proposal: restore HL with ADD HL,DE
 after subtraction instead of reloading target, 35 ->30 T and6 ->4 bytes;
 S/Z/PV/C agree, H/N differ. The authorized second pass is tracked in
-[SECOND_PASS.md](SECOND_PASS.md); items10–21 are complete, item22 is next.
+[SECOND_PASS.md](SECOND_PASS.md); items10–22 are complete, item23 is next.
 
 | ID | Additional technique and source | Application and required proof | Status |
 | --- | --- | --- | --- |
-| 22 | Residue-entry unrolled copy: Grauw, WikiTI | Extend item01 from a 16-byte prefix to the entire long run; AF retained, nonzero count, private writable code, exact thresholds including dispatch, short escaped word forms | 543 primitive copy cases; codec pending |
+| 22 | Residue-entry unrolled copy: Grauw, WikiTI | Extend item01 from a 16-byte prefix to the entire long run; AF retained, nonzero count, private writable code, exact thresholds including dispatch, short escaped word forms | Rejected: real21 blocks +8767 T, +112 code/+2 stack bytes;95 blocks exact |
 | 23 | Bit-phase-specialized Elias paths: upstream ZX0 Mega | Selectively expand length/offset paths beyond current Fast; measure real bit-phase distribution, EOF and code/stack reservations | Source inspected; codec pending |
 | 24 | Distance-1 match as repeated-byte fill: our derivation from loop sources | Avoid redundant history reads on long runs; include seed/dispatch/remainder costs, overlap, flags, output/input limits and suspension | 768 exact16-byte probes; codec pending |
 | 25 | Stack-word exchange: SHIAR, MDL patterns | EX (SP),HL instead of exchange/pop/push where DE is dead; preserve continuation/IRQ stack ownership | 96 primitive cases; already present at some ZX0 sites; audit pending |

@@ -14857,3 +14857,17 @@ AY-регистры совпадают в порядке записей, но н
 [подготовка следующего пакета](toolkit/PACKET_LOOKAHEAD_RESULTS_ru.md),
 [прямой вход из кольцевого буфера](toolkit/DIRECT_INPUT_RESULTS_ru.md),
 [переход между банками](toolkit/WRAPPED_INPUT_RESULTS_ru.md).
+# 2026-10-14 — item22 whole-run unroll rejected
+
+Objective: accelerate the existing optional LZSA2 sixteen-byte-prefix profile
+by unrolling the whole byte-form run. Baseline d2f84b87;95 complete blocks,
+619480 raw bytes, unchanged payloads. A residue-entry16-LDI loop adds112 code
+bytes/two stack bytes; below40 its selector costs44 extra T. Native totals
+26297662 ->26162449 T, but21 authenticated real blocks slow by8767 T;
+19 slower blocks/405 slices overall. Exact source/history/EOF and227 IRQs
+pass;31 defaults exact. Reject before streaming/player adoption because the
+synthetic aggregate hides real regression. No release/physical disk claim.
+See [item22](libraries/SECOND_PASS.md#item22--residue-entry-whole-run-unrolling),
+[report](libraries/evidence/trick_22.json) and frozen code replay through
+[measure_second_pass.py](libraries/tests/measure_second_pass.py).
+
