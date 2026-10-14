@@ -1,5 +1,28 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Complete stable-neutral source control rejected
+
+- **Objective/baseline:** Test one source-free analytic0x56AD/successor16
+  override against the complete centered duration_zero, half-joint and
+  compensation controls. Freeze it before any source; only bin32/feedback
+  table changes, with identical C/prior/search/source/filter/clock/edges.
+- **Complete results:** All nine host sources in93.237901 s. Silence RMS
+  0.015513939->0.002300011,16.579842-dB lower. Exact zero PCM/index/packed
+  stream follows bin32/0x56AD/state16 self-loop; complete spectrum disclosed.
+  Song20.076588406 dB loses0.034312242 vs matched and0.173727481 vs half-joint.
+  Six SNR/RMS regressions vs matched: quiet440-4.299602 dB, quiet997-1.626419,
+  speech-0.902078, Entertainer-1.430123, steps-0.559099; only loud3000 and
+  multitone improve.29 AM/23 delay/20 line increases,42 inconclusive fits.
+- **Decision/coverage:** Reject unconditional use despite lower silence noise.
+  Preserve116 measured/archive files,22 pre-run producers, nine unscaled
+  input/output identities and27 baseline inputs. Later helper selector and
+  invalid-model verifier guards are disclosed, with exact pre-run archives;
+  valid measured table/data stay unchanged. No new Fuse or audio-release
+  claim; short native/default/max-load proofs are recorded separately.
+  Macro counts423/449 ordinary,14 page,243/267 bank and delta0 stay; ULA/ROM/
+  physical latency separate. Python/C original and main preserved; goal active.
+  [Full failed control and reproduction](audiobook-beeper/experiments/song-snr/evidence/neutral-packet-control/README.md).
+
 ## 2026-10-14 — Optional stable neutral packet wired and native-verified
 
 - **Objective/baseline:** Compile the instruction-derived bin32 template and

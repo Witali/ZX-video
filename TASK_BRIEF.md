@@ -91,8 +91,28 @@ bin32 remains constant while table feedback16/17 alternates6ad5/952a with
 fresh91.324658 s,84 measured outputs/22 producer hashes, no new Fuse run.
 The next bounded mechanism may test a source-independent stable neutral
 packet with an instruction-derived duty constraint and matched C features.
-Finish and archive this experiment before starting another; preserve all
-defaults and exact original Python, and do not relax artifact/clock/SNR gates.
+That bounded stage is now complete and rejected. Source-free enumeration of
+65536 words chooses0x56AD (225/449 high T), fixed successor16. Six independent
+selector tests pass; player five tests/eight short native runs preserve old
+defaults and prove max2392-sector cold loading, workerBC40..BFBC/67-byte margin.
+The full nine-source C control takes93.237901 s and reduces silence16.579842
+dB to0.002300011 RMS, but regresses six sources versus matched, including
+quiet440-4.299602, speech-0.902078 and Entertainer-1.430123 dB. Song20.076588406
+loses0.173727 versus half-joint. Preserve selector/player/full-corpus evidence
+under `evidence/neutral-packet-*`; no new Fuse or main promotion.
+
+The next bounded mechanism should preserve neutral feedback history: consider
+replacing emitted words only in the actual16/17 idle cycle while retaining
+successors and all other bin32 states. This is a hypothesis, not an accepted
+model or opened experiment. Freeze it generically, compare all nine whole
+sources and retain every modulation/noise regression before any full Fuse.
+Separately, the Pentagon ordinary449 T corresponds to7982 Hz; an eventual
+448-T pacing audit could address the source/DAC image mismatch. A possible
+15-T stub is `LD A,R`(9)+`INC HL`(6), but register/flag liveness, absolute/delta
+counts and every actual clock need proof before any implementation/claim.
+Do not start both mechanisms together or alter defaults/original Python.
+Keep the exact original scope and artifact/clock/SNR gates; the saved goal
+is active, while C/automatic-conversion/Python-preservation milestones pass.
 Do not silently promote the midpoint/centered frozen-payload controls. Keep
 the complete original scope and artifact/clock/20-dB gates; language and speed
 milestones alone do not complete the active goal.
