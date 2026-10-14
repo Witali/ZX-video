@@ -67,6 +67,37 @@ def independent_idle_cycle_packet(model):
     return word
 
 
+def independent_idle_pair_packet(model):
+    """Validate a literal balanced pair without importing its primary helper."""
+    if 'idle_pair_words' not in model:return None
+    if any(key in model for key in ('neutral_packet_word','neutral_packet_successor','idle_cycle_word')):
+        raise ValueError('idle pair cannot be combined with older neutral overrides')
+    specified=model['idle_pair_words']
+    if type(specified) not in (list,tuple) or len(specified)!=2:
+        raise ValueError('idle pair requires exactly two literal integer words')
+    words=tuple(specified)
+    if any(type(word) is not int or not 0<=word<=65535 for word in words):
+        raise ValueError('idle pair words must be literal integers within0..65535')
+    if words!=(0x569a,0x56ad):
+        raise ValueError('idle pair requires the frozen words0x569A and0x56AD')
+    holds=HOLDS.copy();holds[7]+=26
+    try:specified_holds=list(model.get('holds',()));clip=tuple(model.get('q_clip',(0,15)))
+    except TypeError:raise ValueError('idle pair timing and q_clip must be sequences') from None
+    bins=model.get('pcm_bins',64);bias=model.get('pcm_quantization_bias')
+    if (specified_holds!=holds or type(bias) is not int or bias!=512 or
+            type(bins) is not int or bins!=64 or model.get('family','integral')!='integral' or
+            clip!=(0,15) or any(type(value) is not int for value in clip)):
+        raise ValueError('idle pair requires the centered64-bin Pentagon duration_zero integral model')
+    for key,default,wanted in (('beta',.5,.5),('extent',1.,1),('pcm_origin',.5,0)):
+        value=model.get(key,default)
+        if type(value) not in (int,float) or value!=wanted:
+            raise ValueError('idle pair requires zero origin, full extent and beta0.5')
+    on=tuple(sum(hold for slot,hold in enumerate(holds) if word&(1<<(15-slot))) for word in words)
+    if on!=(224,225):
+        raise ValueError('idle pair must have224 then225 on-T within449 T states')
+    return words
+
+
 def reference(packed,cycles=2,model=None,idle_pairs=0):
     model=model or dict(holds=HOLDS,beta=.5,extent=1.)
     bins=model.get('pcm_bins',64)
@@ -77,6 +108,7 @@ def reference(packed,cycles=2,model=None,idle_pairs=0):
         raise ValueError('PCM quantization bias requires the64-bin integral PDM model')
     neutral=independent_neutral_packet(model)
     idle_cycle=independent_idle_cycle_packet(model)
+    idle_pair=independent_idle_pair_packet(model)
     pcm,indices=decode(packed);assert (pcm[-1],indices[-1])==(0,0)
     # Keep the returned PCM8 levels unchanged for existing callers. Derive the
     # optional centered packet index independently from full signed PCM16.
@@ -99,6 +131,10 @@ def reference(packed,cycles=2,model=None,idle_pairs=0):
         if (int(nxt[32,16]),int(nxt[32,17]))!=(17,16):
             raise ValueError('idle cycle requires the original16-to17-to16 neutral successor cycle')
         words=words.copy();words[32,16]=idle_cycle;words[32,17]=idle_cycle
+    if idle_pair is not None:
+        if (int(nxt[32,16]),int(nxt[32,17]))!=(17,16):
+            raise ValueError('idle pair requires the original16-to17-to16 neutral successor cycle')
+        words=words.copy();words[32,16]=idle_pair[0];words[32,17]=idle_pair[1]
     state=16;output=np.empty(len(pcm)*cycles+1,dtype='>u2')
     for i in range(len(output)):
         if model.get('reset_feedback_in_guard') and i%len(pcm)==len(pcm)-1:

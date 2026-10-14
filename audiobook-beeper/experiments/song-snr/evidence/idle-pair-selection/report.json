@@ -1,0 +1,684 @@
+{
+  "date": "2026-10-14",
+  "source_audio_opened": false,
+  "all_words_enumerated": 65536,
+  "duty224_words": 424,
+  "duty225_words": 424,
+  "pairs_enumerated": 179776,
+  "complement_swap_fixed_pairs": 424,
+  "complement_swap_orbits": 90100,
+  "selected_words": [
+    22170,
+    22189
+  ],
+  "selected_hex_words": [
+    "0x569A",
+    "0x56AD"
+  ],
+  "selected_pair_id": 1452955309,
+  "complement_swap_words": [
+    43346,
+    43365
+  ],
+  "selected_on_tstates": [
+    224,
+    225
+  ],
+  "packet_period_tstates": 449,
+  "pair_period_tstates": 898,
+  "pair_on_tstates": 449,
+  "mean_duty": 0.5,
+  "signed_pair_area_error_tstates": 0,
+  "physical_cpu_hz": 3584000,
+  "reference_cpu_hz": 3546900,
+  "physical_pair_period_seconds": 0.0002505580357142857,
+  "integer_holds": [
+    36,
+    28,
+    28,
+    31,
+    24,
+    26,
+    22,
+    46,
+    22,
+    26,
+    22,
+    30,
+    31,
+    27,
+    34,
+    16
+  ],
+  "reference_holds": [
+    35.62734375,
+    27.71015625,
+    27.71015625,
+    30.6791015625,
+    23.7515625,
+    25.730859375,
+    21.772265625,
+    45.523828125,
+    21.772265625,
+    25.730859375,
+    21.772265625,
+    29.689453125,
+    30.6791015625,
+    26.7205078125,
+    33.648046875,
+    15.834375
+  ],
+  "selected_estimated_variance": 1.2726474886971408e-05,
+  "selected_estimated_rms": 0.0035674185186169854,
+  "selected_second_moment": 1.2726716455347753e-05,
+  "selected_midpoint_weighted_mean": -1.5542470085064612e-05,
+  "next_distinct_variance_ratio": 1.3478111195255256,
+  "solve_condition": 18.377621092593238,
+  "solve_residual_max": 2.7755575615628914e-17,
+  "spectral_radius_two_packets": 0.9250347250936656,
+  "objective": "Duration-weighted variance over the 32 steady-state pulse midpoints of a two-packet pair",
+  "formula": "s0=(I-A*A)^-1(A*B*w16+B*w17); y0=L*s0+R*w16; s1=A*s0+B*w16; y1=L*s1+R*w17",
+  "scoring": "Expanded weighted quadratic products; variance=second_moment-midpoint_weighted_mean^2",
+  "tie_rule": "Exact complement-plus-swap symmetry, then ascending pair_id=(word16<<16)|word17",
+  "filter": "Existing 6-state analytic 70-Hz high-pass and two 4500-Hz Butterworth low-pass pairs; unchanged bandwidth",
+  "constraints": {
+    "state16_on_tstates": 224,
+    "state17_on_tstates": 225,
+    "total_on_tstates": 449,
+    "pair_period_tstates": 898,
+    "exact_half_duty": true,
+    "feedback_successors": [
+      17,
+      16
+    ],
+    "changed_cells": [
+      [
+        32,
+        16
+      ],
+      [
+        32,
+        17
+      ]
+    ],
+    "all_other_words_and_successors_preserved": true
+  },
+  "top_candidates": [
+    {
+      "words": [
+        22170,
+        22189
+      ],
+      "hex_words": [
+        "0x569A",
+        "0x56AD"
+      ],
+      "pair_id": 1452955309,
+      "variance": 1.2726474886971408e-05,
+      "rms": 0.0035674185186169854,
+      "second_moment": 1.2726716455347753e-05,
+      "midpoint_weighted_mean": -1.5542470085064612e-05
+    },
+    {
+      "words": [
+        43346,
+        43365
+      ],
+      "hex_words": [
+        "0xA952",
+        "0xA965"
+      ],
+      "pair_id": 2840766821,
+      "variance": 1.2726474886971408e-05,
+      "rms": 0.0035674185186169854,
+      "second_moment": 1.2726716455347753e-05,
+      "midpoint_weighted_mean": 1.5542470085064612e-05
+    },
+    {
+      "words": [
+        22810,
+        22829
+      ],
+      "hex_words": [
+        "0x591A",
+        "0x592D"
+      ],
+      "pair_id": 1494898989,
+      "variance": 1.715288436502242e-05,
+      "rms": 0.004141604081152907,
+      "second_moment": 1.715288776644292e-05,
+      "midpoint_weighted_mean": 1.8442940383526478e-06
+    },
+    {
+      "words": [
+        42706,
+        42725
+      ],
+      "hex_words": [
+        "0xA6D2",
+        "0xA6E5"
+      ],
+      "pair_id": 2798823141,
+      "variance": 1.715288436502242e-05,
+      "rms": 0.004141604081152907,
+      "second_moment": 1.715288776644292e-05,
+      "midpoint_weighted_mean": -1.8442940383526478e-06
+    },
+    {
+      "words": [
+        13526,
+        11947
+      ],
+      "hex_words": [
+        "0x34D6",
+        "0x2EAB"
+      ],
+      "pair_id": 886451883,
+      "variance": 2.7856789030457225e-05,
+      "rms": 0.005277953109914603,
+      "second_moment": 2.7856981121603813e-05,
+      "midpoint_weighted_mean": -1.3859695039463121e-05
+    },
+    {
+      "words": [
+        53588,
+        52009
+      ],
+      "hex_words": [
+        "0xD154",
+        "0xCB29"
+      ],
+      "pair_id": 3511995177,
+      "variance": 2.7856789030457225e-05,
+      "rms": 0.005277953109914603,
+      "second_moment": 2.7856981121603813e-05,
+      "midpoint_weighted_mean": 1.3859695039463121e-05
+    },
+    {
+      "words": [
+        22810,
+        22189
+      ],
+      "hex_words": [
+        "0x591A",
+        "0x56AD"
+      ],
+      "pair_id": 1494898349,
+      "variance": 2.9284306724311338e-05,
+      "rms": 0.005411497641532456,
+      "second_moment": 2.928435363431809e-05,
+      "midpoint_weighted_mean": -6.849088023334686e-06
+    },
+    {
+      "words": [
+        43346,
+        42725
+      ],
+      "hex_words": [
+        "0xA952",
+        "0xA6E5"
+      ],
+      "pair_id": 2840766181,
+      "variance": 2.9284306724311338e-05,
+      "rms": 0.005411497641532456,
+      "second_moment": 2.928435363431809e-05,
+      "midpoint_weighted_mean": 6.849088023334686e-06
+    },
+    {
+      "words": [
+        25421,
+        22189
+      ],
+      "hex_words": [
+        "0x634D",
+        "0x56AD"
+      ],
+      "pair_id": 1666012845,
+      "variance": 3.3976020082584096e-05,
+      "rms": 0.005828895271197116,
+      "second_moment": 3.397602036696334e-05,
+      "midpoint_weighted_mean": -5.33272205994456e-07
+    },
+    {
+      "words": [
+        43346,
+        40114
+      ],
+      "hex_words": [
+        "0xA952",
+        "0x9CB2"
+      ],
+      "pair_id": 2840763570,
+      "variance": 3.3976020082584096e-05,
+      "rms": 0.005828895271197116,
+      "second_moment": 3.397602036696334e-05,
+      "midpoint_weighted_mean": 5.33272205994456e-07
+    },
+    {
+      "words": [
+        22810,
+        26229
+      ],
+      "hex_words": [
+        "0x591A",
+        "0x6675"
+      ],
+      "pair_id": 1494902389,
+      "variance": 3.757190284387298e-05,
+      "rms": 0.006129592388068964,
+      "second_moment": 3.757192602390916e-05,
+      "midpoint_weighted_mean": -4.814565003968587e-06
+    },
+    {
+      "words": [
+        39306,
+        42725
+      ],
+      "hex_words": [
+        "0x998A",
+        "0xA6E5"
+      ],
+      "pair_id": 2576000741,
+      "variance": 3.757190284387298e-05,
+      "rms": 0.006129592388068964,
+      "second_moment": 3.757192602390916e-05,
+      "midpoint_weighted_mean": 4.814565003968587e-06
+    },
+    {
+      "words": [
+        25901,
+        22829
+      ],
+      "hex_words": [
+        "0x652D",
+        "0x592D"
+      ],
+      "pair_id": 1697470765,
+      "variance": 3.89974638846546e-05,
+      "rms": 0.006244794943363201,
+      "second_moment": 3.8997473599517926e-05,
+      "midpoint_weighted_mean": 3.1168675508308995e-06
+    },
+    {
+      "words": [
+        42706,
+        39634
+      ],
+      "hex_words": [
+        "0xA6D2",
+        "0x9AD2"
+      ],
+      "pair_id": 2798820050,
+      "variance": 3.89974638846546e-05,
+      "rms": 0.006244794943363201,
+      "second_moment": 3.8997473599517926e-05,
+      "midpoint_weighted_mean": -3.1168675508308995e-06
+    },
+    {
+      "words": [
+        26381,
+        38556
+      ],
+      "hex_words": [
+        "0x670D",
+        "0x969C"
+      ],
+      "pair_id": 1728943772,
+      "variance": 4.337739430296041e-05,
+      "rms": 0.006586151706646334,
+      "second_moment": 4.3377473591518204e-05,
+      "midpoint_weighted_mean": -8.90441226551156e-06
+    },
+    {
+      "words": [
+        26979,
+        39154
+      ],
+      "hex_words": [
+        "0x6963",
+        "0x98F2"
+      ],
+      "pair_id": 1768134898,
+      "variance": 4.337739430296041e-05,
+      "rms": 0.006586151706646334,
+      "second_moment": 4.3377473591518204e-05,
+      "midpoint_weighted_mean": 8.90441226551156e-06
+    },
+    {
+      "words": [
+        26979,
+        38460
+      ],
+      "hex_words": [
+        "0x6963",
+        "0x963C"
+      ],
+      "pair_id": 1768134204,
+      "variance": 4.580322285828545e-05,
+      "rms": 0.006767807832547068,
+      "second_moment": 4.580322976023094e-05,
+      "midpoint_weighted_mean": -2.6271553986756987e-06
+    },
+    {
+      "words": [
+        27075,
+        38556
+      ],
+      "hex_words": [
+        "0x69C3",
+        "0x969C"
+      ],
+      "pair_id": 1774425756,
+      "variance": 4.580322285828545e-05,
+      "rms": 0.006767807832547068,
+      "second_moment": 4.580322976023094e-05,
+      "midpoint_weighted_mean": 2.6271553986756987e-06
+    },
+    {
+      "words": [
+        26339,
+        39154
+      ],
+      "hex_words": [
+        "0x66E3",
+        "0x98F2"
+      ],
+      "pair_id": 1726191858,
+      "variance": 4.928966093097576e-05,
+      "rms": 0.007020659579482241,
+      "second_moment": 4.928966097550951e-05,
+      "midpoint_weighted_mean": 2.110302038101715e-07
+    },
+    {
+      "words": [
+        26381,
+        39196
+      ],
+      "hex_words": [
+        "0x670D",
+        "0x991C"
+      ],
+      "pair_id": 1728944412,
+      "variance": 4.928966093097576e-05,
+      "rms": 0.007020659579482241,
+      "second_moment": 4.928966097550951e-05,
+      "midpoint_weighted_mean": -2.110302038101715e-07
+    }
+  ],
+  "scope": "Analytic ordinary-packet selection only. Midpoint quadrature is an estimate; page/bank excursions, complete-source FFmpeg metrics, AM/flutter/background and actual playback remain separate acceptance. No release or universal quality claim.",
+  "starting_commit": "92246ae9",
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0,
+    "pcm_origin": 0,
+    "pcm_quantization_bias": 512,
+    "idle_pair_words": [
+      22170,
+      22189
+    ]
+  },
+  "selection_precedes_source_access": true,
+  "before_catalogue": {
+    "closed_feedback_states": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29,
+      31
+    ],
+    "state_count": 18,
+    "pcm_bins": 64,
+    "first_patterns": 138,
+    "second_patterns": 96,
+    "unrolled_dictionary_bytes": 11940,
+    "protected_cache_state_fits": true,
+    "scope": "All-bin closure and dictionary arithmetic; player execution/layout proof is separate"
+  },
+  "after_catalogue": {
+    "closed_feedback_states": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29,
+      31
+    ],
+    "state_count": 18,
+    "pcm_bins": 64,
+    "first_patterns": 138,
+    "second_patterns": 98,
+    "unrolled_dictionary_bytes": 12068,
+    "protected_cache_state_fits": true,
+    "scope": "All-bin closure and dictionary arithmetic; player execution/layout proof is separate"
+  },
+  "dictionary_delta_bytes": 128,
+  "original_idle_words": [
+    27349,
+    38186
+  ],
+  "original_idle_on_tstates": [
+    223,
+    226
+  ],
+  "original_successor_cycle": [
+    17,
+    16
+  ],
+  "changed_word_entries": 2,
+  "unchanged_word_entries": 2046,
+  "changed_successor_entries": 0,
+  "successor_object_preserved": true,
+  "immutable_inputs_unchanged": true,
+  "absent_option_identity": true,
+  "before_table_sha256": "34bca46d77442c827547e046dcb83b9a553935c643ec89fb1f9397e28f3a2f44",
+  "after_table_sha256": "f0c5d46b13100bfd8c48680d8681b4f67a4fd0223d2fa06e3baeb91fdf38bf60",
+  "independent_sequential_propagation": {
+    "transitions": 32,
+    "packet_matrices_used": false,
+    "initial_state": [
+      0.03138397313654796,
+      0.06508199020615646,
+      0.0016953086854060277,
+      0.0037541670108985526,
+      -1.1646537624534085e-06,
+      -2.454063281374374e-05
+    ],
+    "final_state": [
+      0.03138397313654795,
+      0.06508199020615646,
+      0.0016953086854060257,
+      0.003754167010898548,
+      -1.1646537624534373e-06,
+      -2.4540632813744384e-05
+    ],
+    "periodic_state_max_residual": 1.3877787807814457e-17,
+    "midpoint_output": [
+      0.0024978512197229505,
+      0.004403996155728655,
+      0.005410987029866564,
+      0.005475211278467625,
+      0.004271784058055502,
+      0.002569840216364994,
+      0.0005543003867239593,
+      -0.0013042277985668062,
+      -0.000522251316892111,
+      0.0007785548087336141,
+      0.002197399584854762,
+      0.00278494219636177,
+      0.0008310052071114295,
+      -0.002637255553369582,
+      -0.005779822296506259,
+      -0.007332424058600593,
+      -0.007156193214508554,
+      -0.005089192363536694,
+      -0.0032706838248230258,
+      -0.001961617304765002,
+      -0.0018375007889292402,
+      -0.0023089369044888243,
+      -0.003191525546661653,
+      -0.0036090279257768153,
+      -0.0016383120017421557,
+      0.0003355378727964563,
+      0.002295982260396911,
+      0.003797328706184154,
+      0.004385726025113328,
+      0.0032302108303154877,
+      0.001662864737541775,
+      0.0015444708577087125
+    ],
+    "midpoint_weighted_mean": -1.554247008501644e-05,
+    "second_moment": 1.2726716455347736e-05,
+    "variance": 1.2726474886971394e-05,
+    "selected_variance_absolute_difference": 1.3552527156068805e-20
+  },
+  "full_enumeration": {
+    "file": "all-pairs.npz",
+    "sha256": "38c08ee8f7631f9bc7f5b49f5e125bc331ffa679a722642ed95ef7574a904ce6",
+    "bytes": 4793002,
+    "first_words": 424,
+    "second_words": 424,
+    "pair_matrix_shape": [
+      424,
+      424
+    ],
+    "pairs": 179776,
+    "columns": [
+      "variance",
+      "second_moment",
+      "midpoint_weighted_mean",
+      "pair_ids"
+    ],
+    "ranking_rows": 179776,
+    "score_symmetry_exact": true,
+    "includes_every_candidate": true,
+    "includes_periodic_filter_matrices": true
+  },
+  "current_producer_sha256": {
+    "audiobook-beeper/idle_pair_packet_model.py": "fc1a7ef8ed3a87582ff5ee1008ef237ff3ed84e44f3a1d5f715a0c73c3c4bcfd",
+    "audiobook-beeper/test_idle_pair_packet_model.py": "a7253a2845586910f37a29da63782750f5718e695efca1d1207d54ad0e320821",
+    "audiobook-beeper/experiments/song-snr/evidence/idle-pair-selection/select.py": "9452d2079e236da1eabef3de04ec15478be377544379697af7bec3ff87309750",
+    "audiobook-beeper/ima_waveform_encoder.py": "4d79cfd7a5800d0f9a9c1ffba928df39a2e590cf79da05bbdc71dc74819cceae",
+    "audiobook-beeper/neutral_packet_model.py": "032132c939bb6fba87dafc30f7202432e374ae51d4948491c5efea0c3b9ebf7b",
+    "audiobook-beeper/probe_feedback_packets.py": "933a4132c75d3243a46a817bda67bace0bb65ed997c6caab6bfa7d3338bafb0d"
+  },
+  "unchanged_prior_producers": {
+    "ima_waveform_encoder.py": {
+      "git_reference": "92246ae9",
+      "unchanged": true,
+      "normalized_lf_sha256": "4d79cfd7a5800d0f9a9c1ffba928df39a2e590cf79da05bbdc71dc74819cceae"
+    },
+    "ima_beam.py": {
+      "git_reference": "92246ae9",
+      "unchanged": true,
+      "normalized_lf_sha256": "571f2e55c43788e6afc2ccd4164b5b2cc92679037b9589a2527e23b62a44c15a"
+    },
+    "experiments/song-snr/clock_control.py": {
+      "git_reference": "92246ae9",
+      "unchanged": true,
+      "normalized_lf_sha256": "fc5b5cf112f2c4581d98bb7f940f14b605df4ffce4b2a84ddc1e5a180582f5ce"
+    },
+    "experiments/song-snr/general.py": {
+      "git_reference": "92246ae9",
+      "unchanged": true,
+      "normalized_lf_sha256": "8a051e8387611d98a0a2ee102531d2800f0a5687dd168dd74fa2e7c416ca5876"
+    },
+    "native_waveform_encoder.c": {
+      "git_reference": "92246ae9",
+      "unchanged": true,
+      "normalized_lf_sha256": "76b7f0cf8517f6473cd802e4e5c9bb1747012f25b0f7dbacdab22f30685f4080"
+    },
+    "native_waveform_encoder.py": {
+      "git_reference": "92246ae9",
+      "unchanged": true,
+      "normalized_lf_sha256": "f80d5359d0eea321876a27576880723a1c1adf50f48a9fa6db32cc6753af5dd1"
+    },
+    "native_ima_encoder.c": {
+      "git_reference": "92246ae9",
+      "unchanged": true,
+      "normalized_lf_sha256": "4148d42dae77165447ce5313fe263b7bfe01075643898253687f0de0a200997b"
+    },
+    "native_ima_encoder.py": {
+      "git_reference": "92246ae9",
+      "unchanged": true,
+      "normalized_lf_sha256": "429c0030232c3ea23887f023853aa8079326d8330f717cd3c0b35d151a665227"
+    },
+    "centered_waveform_reference.py": {
+      "git_reference": "92246ae9",
+      "unchanged": true,
+      "normalized_lf_sha256": "c8ec40b510705c5717e82bf3d828cce74ee3ced8b1ab821e14fc505abb3a2096"
+    },
+    "neutral_packet_model.py": {
+      "git_reference": "92246ae9",
+      "unchanged": true,
+      "normalized_lf_sha256": "032132c939bb6fba87dafc30f7202432e374ae51d4948491c5efea0c3b9ebf7b"
+    },
+    "idle_cycle_packet_model.py": {
+      "git_reference": "92246ae9",
+      "unchanged": true,
+      "normalized_lf_sha256": "e480137b1327166cd39104f4aaa1ed1e57cda42b38a1fd89830b628fa7a1670d"
+    }
+  },
+  "original_python_reference": {
+    "ima_waveform_encoder.py": {
+      "git_reference": "13819086",
+      "unchanged": true,
+      "normalized_lf_sha256": "4d79cfd7a5800d0f9a9c1ffba928df39a2e590cf79da05bbdc71dc74819cceae"
+    },
+    "ima_beam.py": {
+      "git_reference": "13819086",
+      "unchanged": true,
+      "normalized_lf_sha256": "571f2e55c43788e6afc2ccd4164b5b2cc92679037b9589a2527e23b62a44c15a"
+    }
+  },
+  "tests": {
+    "passed": true,
+    "count": 9,
+    "log": "tests.log",
+    "log_sha256": "c0b934ba5d2ed2c8b4c7d59af0a0c85e823be06c68ee2f89a72660cb31a1f0a5",
+    "command": "python audiobook-beeper/test_idle_pair_packet_model.py -v"
+  },
+  "reproducer": "python audiobook-beeper/experiments/song-snr/evidence/idle-pair-selection/select.py --output NEW_FOLDER"
+}

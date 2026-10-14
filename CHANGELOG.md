@@ -1,5 +1,40 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Zero-mean idle pair rejected; exact endpoint mismatch diagnosed
+
+- **Objective/baseline:** Test a source-free zero-mean replacement of only
+  bin32 words at states16/17, preserving all successors. Enumerate all
+  179,776 duty224/duty225 pairs using the unchanged two-packet periodic
+  analytic filter and deterministic symmetry/ID ties. Frozen pair569A/56AD
+  has449 high T states in898 T (exact50%); estimated variance1.272647e-5.
+  Keep matched-centered C/prior/search/filter/source clocks unchanged.
+- **Functional evidence:** Nine helper tests, six player tests, eight short
+  native runs across four profiles, default disk AND metadata identity to
+  actual92246ae9, and max2392-sector cold loading pass. Closure18 states;
+  dictionary138/98 adds128 bytes, workerBC40..BFBC retains67 spare bytes.
+  Same ordinary423/449 T, page extra14 and bank extra243/267 T, delta0.
+  Native CPU proof remains separate from ULA/ROM/disk/physical hardware.
+- **Full corpus:** All nine sources in99.592166 s. Song20.105055872 dB
+  loses0.005844777 against matched-centered and0.145260015 against half-joint.
+  Five matched SNR/RMS losses include speech-0.245886, Entertainer-0.520855
+  and steps-0.530797 dB. Silence RMS0.003815023 is4.395344 dB worse than
+  one-word idle; the3991-Hz line returns with61.58% of noise spectral power.
+  Matched comparison has34 AM/23 delay/20 line increases;33 fits remain
+  inconclusive. All four baseline comparisons remain explicit.
+- **Endpoint diagnosis:** Exact-Fraction replay matches all2048 original
+  word/successor cells. Forced56AD from state17 derives successor17 rather
+  than retained16; the prior one-word control has the same mismatch. Real
+  hardware still follows the explicit stored graph exactly. The diagnosis
+  does not prove causality or quality; it identifies a source-free domain
+  constraint for a separate next selector (238 words per side,56,644 pairs).
+- **Decision/evidence:** Reject unconditional pair promotion; no new Fuse.
+  Original measured bytes and22 pre-input producer archives are preserved;
+  only the final driver's decision text changes after encoding, with both
+  hashes disclosed.125-file measured manifest and separate exact audit are
+  retained. Original encoders/main and delivered best snapshot unchanged;
+  quality goal active. [Complete control](audiobook-beeper/experiments/song-snr/evidence/idle-pair-control/README.md),
+  [exact replay](audiobook-beeper/experiments/song-snr/evidence/feedback-endpoint-audit/README.md).
+
 ## 2026-10-14 — Best measured sea-foam disk generated for user delivery
 
 - **Objective/input:** The user requested a playable TRD using the best

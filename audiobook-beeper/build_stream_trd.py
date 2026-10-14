@@ -13,7 +13,7 @@ import numpy as np
 
 from audio_cover import prepare
 from convert_audio import pcm_wav
-from direct_player import layout,HOLDS,canonical_pcm_model,pcm_high_lookup,pcm_quantization_metadata,neutral_packet_metadata,idle_cycle_packet_metadata
+from direct_player import layout,HOLDS,canonical_pcm_model,pcm_high_lookup,pcm_quantization_metadata,neutral_packet_metadata,idle_cycle_packet_metadata,idle_pair_packet_metadata
 from ima_beam import encode
 from ima_codec import decode,STEPS,INDEX,require_unclipped
 from ima3_series import disk_address
@@ -135,6 +135,7 @@ def build(packed,work,cover,model=None):
     if model.get('pcm_quantization_bias'):meta['pcm_quantization']=pcm_quantization_metadata(model)
     if 'neutral_packet_word' in model:meta['neutral_packet']=neutral_packet_metadata(model)
     if 'idle_cycle_word' in model:meta['idle_cycle_packet']=idle_cycle_packet_metadata(model)
+    if 'idle_pair_words' in model:meta['idle_pair_packet']=idle_pair_packet_metadata(model)
     save(work/'player.json',meta)
     return disk,meta
 

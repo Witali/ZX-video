@@ -93,15 +93,24 @@ bytes), assembled workerBC40..BFBC/67-byte margin. Full host100.797013 s;
 inputs. Cosmetic helper changes are disclosed with exact pre-input archives.
 No new Fuse quality run. Original encoders/main remain exact; goal is active.
 
-Next bounded mechanism: choose a source-independent zero-mean two-packet pair
-for bin32/state16 and17, preserving all successors. Constrain first high-time
-224 T and second225 T (total449/898=50%), evaluate every permitted pair with
-the unchanged analytic two-packet periodic filter, break mathematical ties
-by deterministic IDs and freeze literals before any source. Compare all nine
-full sources, all prior controls, every AM/FM/coherent-line increase and silence
-PSD. Native/default/footprint checks precede any selected full Fuse execution.
-Do not change source, gain, filter, edges, clock or C/Python original during
-this mechanism; no simultaneous retiming experiment.
+Zero-mean pair569A/56AD is also rejected. All179776 source-free pairs are
+retained; nine helper/six player tests, eight native runs/default identity and
+max2392 load pass. Full nine-source99.592166-s control scores20.105055872 dB,
+five matched SNR/RMS losses; speech-0.245886/Entertainer-0.520855. Silence
+0.003815023 is4.395344 dB worse than one-word;3991-Hz line returns (61.58%).
+Reuse `evidence/idle-pair-*`; no new Fuse or original encoder/default change.
+
+Exact Fraction endpoint replay matches all2048 original cells, but forced56AD
+from state17 derives successor17 while prior overrides retain16. This is a
+conceptual recurrence mismatch, not a physical table/timing failure; no causal
+or perceptual claim. See `evidence/feedback-endpoint-audit`. New bounded
+mechanism: restrict duty224/state16 to derived17 and duty225/state17 to
+derived16 (238 words each/56644 pairs), then use the same source-free periodic
+filter ranking, exact symmetry/ties and frozen literals before any source.
+Preserve every successor/other2046 words. Check all nine full sources against
+prior baselines, AM/FM/lines, silence PSD; native/default/footprint before any
+selected full Fuse. Keep source/gain/filter/edges/clock/original C/Python;
+no simultaneous retiming. Endpoint consistency alone cannot pass acceptance.
 
 A later separate pacing audit may consider448 ordinary Pentagon T rather than
 449: prospective15-T stub `LD A,R`(9)+`INC HL`(6) needs register/flag liveness,

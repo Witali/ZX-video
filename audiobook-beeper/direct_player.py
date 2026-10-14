@@ -43,6 +43,9 @@ def canonical_pcm_model(model=None):
     if 'idle_cycle_word' in result:
         from idle_cycle_packet_model import validate_idle_cycle_packet
         validate_idle_cycle_packet(result)
+    if 'idle_pair_words' in result:
+        from idle_pair_packet_model import validate_idle_pair_packet
+        validate_idle_pair_packet(result)
     return result
 
 
@@ -90,6 +93,19 @@ def idle_cycle_packet_metadata(model):
                 scope='Ordinary Pentagon packet only; bank/page holds and128/Scorpion ULA effects require separate complete verification')
 
 
+def idle_pair_packet_metadata(model):
+    """Record the fixed two-word neutral cycle and its exact mean duty."""
+    words=model['idle_pair_words'];period=sum(model['holds'])
+    on=[sum(hold for slot,hold in enumerate(model['holds']) if word&(1<<(15-slot))) for word in words]
+    return dict(packet_bin=32,words=list(words),words_hex=[f'{word:04x}' for word in words],
+                feedback_states=[16,17],preserve_successors=True,successor_cycle=[17,16],
+                ordinary_on_tstates=on,ordinary_period_tstates=period,
+                pair_on_tstates=sum(on),pair_period_tstates=2*period,pair_mean_duty=sum(on)/(2*period),
+                source_independent_selection_assumption='One frozen pair selected analytically without source audio, with224 then225 on-T of449; replace only the emitted words in the existing16/17 idle cycle',
+                live_instruction_changes=False,packet_native_tstate_delta=0,
+                scope='Ordinary Pentagon pair only; bank/page holds and128/Scorpion ULA effects require separate complete verification')
+
+
 def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
     model=canonical_pcm_model(model)
     extended=ram_enabled(model)
@@ -107,6 +123,9 @@ def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
     if 'idle_cycle_word' in model:
         from idle_cycle_packet_model import apply_idle_cycle_packet
         words,nxt=apply_idle_cycle_packet(words,nxt,model)
+    if 'idle_pair_words' in model:
+        from idle_pair_packet_model import apply_idle_pair_packet
+        words,nxt=apply_idle_pair_packet(words,nxt,model)
     reachable={16}
     while True:
         expanded=reachable|set(map(int,nxt[:,sorted(reachable)].ravel()))
@@ -258,6 +277,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     if model.get('pcm_quantization_bias'):meta['pcm_quantization']=pcm_quantization_metadata(model)
     if 'neutral_packet_word' in model:meta['neutral_packet']=neutral_packet_metadata(model)
     if 'idle_cycle_word' in model:meta['idle_cycle_packet']=idle_cycle_packet_metadata(model)
+    if 'idle_pair_words' in model:meta['idle_pair_packet']=idle_pair_packet_metadata(model)
     return disk,meta
 
 

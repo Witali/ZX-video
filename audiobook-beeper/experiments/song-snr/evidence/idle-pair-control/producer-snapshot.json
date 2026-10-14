@@ -1,0 +1,194 @@
+{
+  "date": "2026-10-14",
+  "complete": true,
+  "before_any_corpus_input_read": true,
+  "frozen_parameters": {
+    "parameters": {
+      "profile": "pentagon",
+      "source_rate_hz": 8000,
+      "lanczos_radius": 16,
+      "pcm_beam_width": 32,
+      "pcm_block_samples": 64,
+      "waveform_beam_width": 32,
+      "horizon_samples": 128,
+      "commit_samples": 64,
+      "regularization": 0.1,
+      "model_name": "duration_zero",
+      "search_query_grid_tstates": 0.0125,
+      "source_specific_fitted_clock_gain_delay": false,
+      "compact_stream_loader": true,
+      "pcm_quantization_bias": 512,
+      "encoder": "standalone-c",
+      "idle_pair_words": [
+        22170,
+        22189
+      ],
+      "source_specific_parameter_selection": false
+    },
+    "model": {
+      "holds": [
+        36,
+        28,
+        28,
+        31,
+        24,
+        26,
+        22,
+        46,
+        22,
+        26,
+        22,
+        30,
+        31,
+        27,
+        34,
+        16
+      ],
+      "beta": 0.5,
+      "extent": 1.0,
+      "pcm_origin": 0,
+      "compact_stream_loader": true,
+      "pcm_quantization_bias": 512,
+      "idle_pair_words": [
+        22170,
+        22189
+      ]
+    },
+    "method": "joint",
+    "sha256": "cd19bd86e3e2f24c7982b30bfbf51177f120be14f0078ad0f655c2ebc83f3c77"
+  },
+  "producer_files": [
+    {
+      "path": "audiobook-beeper/experiments/song-snr/idle_pair_control.py",
+      "bytes": 26228,
+      "sha256_exact": "74dc723f9ea143a82e0c340857c87d29a000dce17efe309320f69605359c0ffb",
+      "sha256_lf": "74dc723f9ea143a82e0c340857c87d29a000dce17efe309320f69605359c0ffb"
+    },
+    {
+      "path": "audiobook-beeper/idle_pair_packet_model.py",
+      "bytes": 10086,
+      "sha256_exact": "fc1a7ef8ed3a87582ff5ee1008ef237ff3ed84e44f3a1d5f715a0c73c3c4bcfd",
+      "sha256_lf": "fc1a7ef8ed3a87582ff5ee1008ef237ff3ed84e44f3a1d5f715a0c73c3c4bcfd"
+    },
+    {
+      "path": "audiobook-beeper/build_stream_trd.py",
+      "bytes": 10447,
+      "sha256_exact": "d957ec0769d76af3789fb93e69a09d3f48da3b59a5e9ecd042d854f63f52f482",
+      "sha256_lf": "d957ec0769d76af3789fb93e69a09d3f48da3b59a5e9ecd042d854f63f52f482"
+    },
+    {
+      "path": "audiobook-beeper/direct_player.py",
+      "bytes": 20163,
+      "sha256_exact": "0d7a7fcfd2365e53e9d26b05e074457e0851bc1989e8d63058f84bcd5df4abd9",
+      "sha256_lf": "0d7a7fcfd2365e53e9d26b05e074457e0851bc1989e8d63058f84bcd5df4abd9"
+    },
+    {
+      "path": "audiobook-beeper/verify_direct.py",
+      "bytes": 11231,
+      "sha256_exact": "563f3d3eebd729617a1020df1fb2b056d64511631332cd02253bb9fde5adaf54",
+      "sha256_lf": "563f3d3eebd729617a1020df1fb2b056d64511631332cd02253bb9fde5adaf54"
+    },
+    {
+      "path": "audiobook-beeper/verify_stream_trd.py",
+      "bytes": 20263,
+      "sha256_exact": "86ae3386f348e72616a826faf03750713424a62b0ddb0903b56f65b591cdf582",
+      "sha256_lf": "86ae3386f348e72616a826faf03750713424a62b0ddb0903b56f65b591cdf582"
+    },
+    {
+      "path": "audiobook-beeper/verify_packet.py",
+      "bytes": 17230,
+      "sha256_exact": "1cc7677728cd88f9933d4ec5d65eac62b690269604c6dac9eb664fed62d7f260",
+      "sha256_lf": "1cc7677728cd88f9933d4ec5d65eac62b690269604c6dac9eb664fed62d7f260"
+    },
+    {
+      "path": "audiobook-beeper/native_waveform_encoder.py",
+      "bytes": 14925,
+      "sha256_exact": "f80d5359d0eea321876a27576880723a1c1adf50f48a9fa6db32cc6753af5dd1",
+      "sha256_lf": "f80d5359d0eea321876a27576880723a1c1adf50f48a9fa6db32cc6753af5dd1"
+    },
+    {
+      "path": "audiobook-beeper/native_waveform_encoder.c",
+      "bytes": 18534,
+      "sha256_exact": "76b7f0cf8517f6473cd802e4e5c9bb1747012f25b0f7dbacdab22f30685f4080",
+      "sha256_lf": "76b7f0cf8517f6473cd802e4e5c9bb1747012f25b0f7dbacdab22f30685f4080"
+    },
+    {
+      "path": "audiobook-beeper/waveform_kernel.py",
+      "bytes": 9717,
+      "sha256_exact": "2272effc955fefff986b4de9665246acaf741948888e77077e524609bf4b0004",
+      "sha256_lf": "2272effc955fefff986b4de9665246acaf741948888e77077e524609bf4b0004"
+    },
+    {
+      "path": "audiobook-beeper/probe_feedback_packets.py",
+      "bytes": 10116,
+      "sha256_exact": "933a4132c75d3243a46a817bda67bace0bb65ed997c6caab6bfa7d3338bafb0d",
+      "sha256_lf": "933a4132c75d3243a46a817bda67bace0bb65ed997c6caab6bfa7d3338bafb0d"
+    },
+    {
+      "path": "audiobook-beeper/ima_codec.py",
+      "bytes": 4629,
+      "sha256_exact": "263d52677e423e9f9f55636b84fe108aa3eed1751bf1c09ce751b65a22f3349b",
+      "sha256_lf": "263d52677e423e9f9f55636b84fe108aa3eed1751bf1c09ce751b65a22f3349b"
+    },
+    {
+      "path": "audiobook-beeper/precompensate_voice.py",
+      "bytes": 4971,
+      "sha256_exact": "85ea58afe93c2af8cde6143db2e9c1f7a796bfa5f549f0ab81a174d00d20d5b8",
+      "sha256_lf": "85ea58afe93c2af8cde6143db2e9c1f7a796bfa5f549f0ab81a174d00d20d5b8"
+    },
+    {
+      "path": "audiobook-beeper/stream-player.asm",
+      "bytes": 15145,
+      "sha256_exact": "ee9a13a2cbbb530ea5dd8049de5dd36b640e64683f5b5ade927f1f1055644f15",
+      "sha256_lf": "ee9a13a2cbbb530ea5dd8049de5dd36b640e64683f5b5ade927f1f1055644f15"
+    },
+    {
+      "path": "audiobook-beeper/stream-worker.asm",
+      "bytes": 9807,
+      "sha256_exact": "14e678bc91f8dd2e444389f5944879bf9521dd870e097b99e9ebe95df28548ec",
+      "sha256_lf": "14e678bc91f8dd2e444389f5944879bf9521dd870e097b99e9ebe95df28548ec"
+    },
+    {
+      "path": "audiobook-beeper/experiments/song-snr/clock_control.py",
+      "bytes": 7370,
+      "sha256_exact": "fc5b5cf112f2c4581d98bb7f940f14b605df4ffce4b2a84ddc1e5a180582f5ce",
+      "sha256_lf": "fc5b5cf112f2c4581d98bb7f940f14b605df4ffce4b2a84ddc1e5a180582f5ce"
+    },
+    {
+      "path": "audiobook-beeper/experiments/song-snr/general.py",
+      "bytes": 8569,
+      "sha256_exact": "8a051e8387611d98a0a2ee102531d2800f0a5687dd168dd74fa2e7c416ca5876",
+      "sha256_lf": "8a051e8387611d98a0a2ee102531d2800f0a5687dd168dd74fa2e7c416ca5876"
+    },
+    {
+      "path": "audiobook-beeper/experiments/song-snr/study.py",
+      "bytes": 10689,
+      "sha256_exact": "f6b55db44fd4e6a34ea6090f08819852f23d5efd0b90ace7413f19b0309e61ec",
+      "sha256_lf": "f6b55db44fd4e6a34ea6090f08819852f23d5efd0b90ace7413f19b0309e61ec"
+    },
+    {
+      "path": "audiobook-beeper/experiments/song-snr/artifact_diagnostics.py",
+      "bytes": 30258,
+      "sha256_exact": "d068732d6ccbde5cd5435ab080d7484a8098e52d498038d437cc112cb511f100",
+      "sha256_lf": "d068732d6ccbde5cd5435ab080d7484a8098e52d498038d437cc112cb511f100"
+    },
+    {
+      "path": "audiobook-beeper/experiments/song-snr/centered_quantizer_control.py",
+      "bytes": 14656,
+      "sha256_exact": "8e408e36180523d7ab7a51c857a71b2103c0bf5bae8eaba7c7782f5d46815ec1",
+      "sha256_lf": "8e408e36180523d7ab7a51c857a71b2103c0bf5bae8eaba7c7782f5d46815ec1"
+    },
+    {
+      "path": "audiobook-beeper/experiments/song-snr/midpoint_control.py",
+      "bytes": 18968,
+      "sha256_exact": "13a0173397567c6c145ca22771470e089020cb4864b58aa68329039a37c68ad1",
+      "sha256_lf": "13a0173397567c6c145ca22771470e089020cb4864b58aa68329039a37c68ad1"
+    },
+    {
+      "path": "audiobook-beeper/experiments/song-snr/execute_clock.py",
+      "bytes": 9323,
+      "sha256_exact": "87e10068d108428fd1738231000164fd31b108448ed980acffbaac5ce4359713",
+      "sha256_lf": "87e10068d108428fd1738231000164fd31b108448ed980acffbaac5ce4359713"
+    }
+  ]
+}
