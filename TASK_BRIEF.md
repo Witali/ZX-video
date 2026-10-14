@@ -3,6 +3,28 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## Accuracy and compression of source-line drawings — active (2026-10-14)
+
+The user explicitly chooses a contour drawing with source-close coloured
+fills as the target and asks to improve accuracy without ideally losing
+compression. Continue on `.worktree/flat-colour`, from `78b7a7be`. The first
+bounded milestone tests hardware-feasible NORMAL/BRIGHT alternatives within
+the existing accepted source-colour regions. All977 frames remain identical;
+reject this as an accuracy improvement. The next candidate admits coherent
+dark fills within the existing RMS60/component100 colour guard, instead of
+an extra max-component64 black cap. Preserve every existing source line,
+classified black/colour region, paper outside the new accepted dark regions,
+current-frame response and no-dither output. Every changed pixel must reduce
+original RGB error.
+Measure the complete qualified977-frame input with actual CB46/LZSA2 data,
+including dictionaries and allocation; compare difficult scenes and motion.
+Keep the previous independently qualified disk. Reject a candidate which
+does not meet the image contracts or loses total compressed space. If the
+host gate passes, build and fully qualify a separately named TRD before any
+release claim. No new audio fit, native opcode change, neural model search
+or push is requested. A qualified bounded improvement is progress toward
+the active accuracy goal, not proof of a globally optimal encoder.
+
 ## Source-line drawing full disk — complete (2026-10-14)
 
 Latest steering rejects flat fills because details are lost. Stop the1005-frame

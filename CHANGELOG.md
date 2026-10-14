@@ -1,5 +1,30 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Hardware-feasible brightness alternatives, rejected on real input
+
+- **Request/scope:** The active accuracy/compression goal is clarified as
+  contour drawing with source-close coloured fills. Compare the whole
+  qualified977-frame/97.7-second sea-foam prefix from`78b7a7be`.
+- **Change:** An experimental host selector considers either NORMAL/BRIGHT
+  endpoint of the same accepted hue within RMS60/component100/hue30-degree
+  bounds. Keep old black/lines/paper and permit only strict per-pixel original
+  RGB improvement. No dither, history lag or native instruction changes(0 T).
+- **Measured result:** All977 frames have identical native RGB and encoded
+  states; zero changed samples, mean RGB MSE6885.659687 before/after. Actual
+  complete CB46/LZSA2 transport is658,097 bytes for both, with identical raw
+  and compressed hashes, including dictionary/block headers. This is before
+  invisible-attribute selection, not final TRD allocation/timing. Four new
+  tests pass, including a synthetic mixed-brightness case which restores
+  eight pixels; that synthetic benefit does not appear in this real input.
+- **Failure/coverage/decision:** The complete image phase initially finished
+  before packing failed because the cache directory was missing. Create it,
+  authenticate the saved input/state prefix and finish both exact host screen
+  and in-place LZSA2 roundtrips. Preserve the error and retry logs. Reject
+  as an actual accuracy improvement; keep the prototype out of the public
+  converter. The next authorized candidate tests source-matched dark fills.
+  [Reproducer](toolkit/analysis/flat_colour/feasible_probe.py),
+  [full measurements](toolkit/analysis/flat_colour/feasible-evidence/decision.json).
+
 ## 2026-10-14 — Source-line drawing with matched fills on a qualified full disk
 
 - **Request/input:** Build a full disk from the new preview, then user steering
