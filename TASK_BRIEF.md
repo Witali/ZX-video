@@ -42,6 +42,14 @@ gain23.335544175. Both retain all11,526,111 relative source pulse timestamps
 (delta0 T), no full-RAM refills/new bank pause. Artifact acceptance stays false.
 Main `ZX-music-Sea-Foam-RAM-auto.trd` still hashes226388fb...; no promotion.
 
+The user's requested best-achieved disk is now separately delivered as
+`ZX-music-Sea-Foam-SNR20-RAM-auto.trd`, exact ccab8724... bytes. Fresh automatic
+C conversion took64.808918 s; prior complete512/1024 proof is reused by whole
+image identity. See `evidence/achieved-disk`. This does not close the quality
+goal. The user also asks whether22 dB is reachable: treat it as a research
+aspiration, not a verified result or changed acceptance gate. The existing
+ideal multilevel IMA control22.147802 dB is an orientation, not a hard ceiling.
+
 The C waveform/PCM loops and automatic CLI milestones pass: all nine entire
 default outputs match original Python, and v1 worksets are exact. Original
 `ima_waveform_encoder.py`/`ima_beam.py` still equal13819086; clock/general

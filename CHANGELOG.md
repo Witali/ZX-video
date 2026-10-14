@@ -1,5 +1,32 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Best measured sea-foam disk generated for user delivery
+
+- **Objective/input:** The user requested a playable TRD using the best
+  achieved parameters. Rebuild the entire main song with its original cover
+  through the automatic C program, retaining720,384 prepared samples and
+  the frozen half-joint beam32/horizon128/commit64/regularization0.1 model.
+  No source-specific preset or experimental idle/centered override is used.
+- **Measured result:** Complete external conversion64.808918 s. Fixed
+  original-clock SNR20.250315887 dB; entire655,360-byte disk is identical to
+  the prior independently cold-played512/1024 image, SHA256ccab87249b9ce148
+  f3b84cc317d64078a05f51c1e7d5ca7aa9f14958e8fc9074 (concatenate).
+  The source WAV, cover and packed audio match authenticated inputs/results.
+- **Verification:** Reuse the exact whole-image complete Fuse evidence:
+  all11,526,111 pulse timestamps/state/EOF, title before audio, loading
+  progress and zero resident refills/live disk reads on512/1024. Independent
+  directory/payload/trace audit reconfirms these identities. No new unchanged
+  Fuse run is claimed. Hot path unchanged, delta0 T; ordinary423/449 T,
+  page extra14 T and bank extra243/267 T. Smaller-RAM refills and physical
+  hardware/quality qualification remain separate.
+- **Delivery/decision:** Save `ZX-music-Sea-Foam-SNR20-RAM-auto.trd` in this
+  research worktree and copy identical bytes to the user's repository root.
+  Track the named snapshot in LFS. The old main disk remains226388fb...;
+  no branch merge or default replacement occurs. Known tonal background and
+  corpus/modulation concerns persist, so the saved quality goal is active.
+  This is a requested best-achieved snapshot, not22-dB/universal acceptance.
+  [Delivery and automatic reproduction evidence](audiobook-beeper/experiments/song-snr/evidence/achieved-disk/README.md).
+
 ## 2026-10-14 — Word-only idle feedback control completed and rejected
 
 - **Objective/baseline:** Preserve the original16→17→16 idle feedback history
