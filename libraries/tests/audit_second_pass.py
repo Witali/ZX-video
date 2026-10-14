@@ -71,9 +71,30 @@ def item13():
                   'In-place SRL (HL) changes unread/shared nibble bytes and leaves A unchanged, with no saving over LD A,(HL)/SRL A.'])
 
 
+def item14():
+    for value in range(256):
+        old,ot=run('0f 0f 0f 0f f6 f0',dict(af=value<<8))
+        narrow,nt=run('cb 3f cb 3f cb 3f cb 3f f6 f0',dict(af=value<<8))
+        assert old.af==narrow.af and old.a==0xf0|(value>>4) and (ot,nt)==(23,39)
+    lost=0
+    for value in range(256):
+        for carry in (0,1):
+            old,ot=run('cb 11 cb 10',dict(bc=value,af=0x7300|carry))
+            wrong,nt=run('cb 11',dict(bc=value,af=0x7300|carry))
+            assert (ot,nt)==(16,8)
+            lost+=old.bc!=wrong.bc
+    assert lost==256
+    return dict(decision='retain fast accumulator rotations / unproved word narrowing rejected',checks=768,
+        high_nibble=dict(before_tstates=23,narrow_shift_tstates=39,delta=16),
+        word_shift=dict(checks=512,lost_high_byte_cases=lost),
+        findings=['LZSA2 already uses four4-T RRCA instructions; the OR F0 result and flags are live. SRL-based narrowing is slower; RRD would mutate input.',
+                  'ZX0 already uses ADD A,A/RLA and specialized short-offset/short-gamma paths. Its longer lengths may carry into B.',
+                  'Additional bit-phase specialization is evaluated separately in item23; no generic high-byte omission.'])
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('11','12','13'),required=True)
+    parser.add_argument('--item',choices=('11','12','13','14'),required=True)
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     defaults=profiles();assert defaults==json.loads((ROOT/'tests/decoder_baseline.json').read_text())['profiles']
     report=dict(date='2026-10-14',item=args.item,complete=True,release=False,scope=__doc__,

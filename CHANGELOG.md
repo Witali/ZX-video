@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item14: existing rotations beat narrowed nibble shifts
+
+- **Baseline/objective:** From `6ea4f15a`, examine rotate/mask fusion and
+  high-byte narrowing without losing nibble/gamma state or live flags.
+- **Results:**256 native nibble values have identical AF at23 T (current)
+  versus39 T (+16) using SRL. Omitting RL B loses the gamma high byte in256
+  of512 byte/carry states. Current ZX0 short paths already specialize their
+  bounds;31 defaults remain exact. Further phase expansion belongs to item23.
+- **Decision:** Retain current rotations and valid full-width paths, delta0
+  T/code/state/input. [Result](libraries/SECOND_PASS.md),
+  [evidence](libraries/evidence/trick_14.json). Continue item15.
+
 ## 2026-10-14 — Item13: shifts consume input rather than mutate state
 
 - **Baseline/objective:** From `81488ba9`, locate in-place indexed arithmetic

@@ -79,3 +79,16 @@ That violates immutable input/shared-nibble ownership.
 
 [Report](evidence/trick_13.json),31 exact defaults; actual delta0 T/code/state/
 input. `audit_second_pass.py --item 13 --output libraries/evidence/trick_13.json`.
+
+## Item14 — rotate/mask decomposition and narrower shifts
+
+**Decision: retain existing fast paths; reject unproved narrowing.**256
+native high-nibble values confirm current four RRCA +OR F0 costs23 T with
+the same final AF as four SRL +OR F0 at39 T (+16). A memory nibble rotation
+would instead mutate the compressed input. ZX0 already uses ADD A,A/RLA,
+short-offset paths and short-gamma paths; longer gamma values need B.
+Omitting RL B from the word shift loses the high byte in256 of512 directed
+low-byte/carry states. Item23 separately evaluates more bit-phase expansion.
+
+[768 native checks](evidence/trick_14.json),31 exact defaults; actual delta0
+T/code/state/input. `audit_second_pass.py --item 14 --output libraries/evidence/trick_14.json`.
