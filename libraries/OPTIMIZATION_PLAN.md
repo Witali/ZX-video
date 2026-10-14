@@ -105,7 +105,7 @@ The proposed codec sites are our inferences from those sources.
 | 16 | Combine adjacent byte-state stores: SDCC-ADDR, our mapping | Streaming begin clears input_needed/finished; prove AF/HL liveness, layout and IRQ-visible ordering | Optional measured word_state_init: −4 T/block, −1 byte; both guarded modes pass |
 | 17 | Carry-based bounded increment/decrement: ETUDES-BOUND | Only for a proven input domain with dead result flags; fix the source's lower-bound error | Inapplicable: exact lengths and modulo ring index, no saturating contract |
 | 18 | Branch threading, tail calls and merged fall-through: 80CC-OPTIONS | Shorten helper/finish dispatch; CALL+RET → JP requires identical return-stack/continuation ownership | Existing tail calls retained; one-byte merge +8/+13 T rejected |
-| 19 | Preinitialized data and bulk initialization: SDCC-RMW, SDCC-ADDR | State/table startup instead of per-byte code; account for writable copies, relocations and transported bytes | Pending codec experiment |
+| 19 | Preinitialized data and bulk initialization: SDCC-RMW, SDCC-ADDR | State/table startup instead of per-byte code; account for writable copies, relocations and transported bytes | Constants already emitted; repeated mutable resets retained |
 | 20 | Comparison orientation and reuse of existing flags: ETUDES-CMP, 80CC-DESIGN | Equality/bounds checks; only commute when the actual Z/carry/sign/overflow contract permits | Pending codec experiment |
 | 21 | Counter-width proof and register cost: 80CC-DESIGN | Loop-local bounds and complete spill costs; include short escaped LZSA2 word encodings and alternate loops | Pending codec experiment |
 
@@ -122,7 +122,7 @@ are conditional snippets, not completed codec/streaming/IRQ experiments.
 Item20 now has a concrete LZSA2 `sync` proposal: restore HL with ADD HL,DE
 after subtraction instead of reloading target, 35 ->30 T and6 ->4 bytes;
 S/Z/PV/C agree, H/N differ. The authorized second pass is tracked in
-[SECOND_PASS.md](SECOND_PASS.md); items10–18 are complete, item19 is next.
+[SECOND_PASS.md](SECOND_PASS.md); items10–19 are complete, item20 is next.
 
 | ID | Additional technique and source | Application and required proof | Status |
 | --- | --- | --- | --- |

@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item19: preinitialized constants cannot replace block resets
+
+- **Baseline/objective:** From `c3abf249`, inspect per-byte startup code and
+  one-time initialized data versus mutable repeated-block state.
+- **Results:** Ring table already emitted exactly0/1/3/4; no initializer loop.
+  Five native prior-offset probes expose four stale results if ZX0's per-block
+  reset is omitted (46 ->16 T for an incorrect load/reset fragment). Caller
+  fields vary per block; item16 handles runtime adjacent zero flags already.
+- **Decision:** Retain required resets/compiled data;31 defaults exact,
+  delta0 T/code/state/input. External BSS is not unaccounted free RAM.
+  [Result](libraries/SECOND_PASS.md), [report](libraries/evidence/trick_19.json).
+
 ## 2026-10-14 — Item18: tail-call eligibility and literal-tail merging
 
 - **Baseline/objective:** From `61dbbadc`, inspect leaf CALL/RET, required

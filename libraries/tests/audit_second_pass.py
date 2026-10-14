@@ -168,9 +168,30 @@ def item18():
                   'Sharing the existing literal CP/JP dispatch tail saves one byte but slows 10x/11x entries by8/13 T.'])
 
 
+def item19():
+    stale=0
+    for previous in (0xffff,0xfffe,0xffdf,0xfe00,0xe000):
+        memory=((0x6004,previous.to_bytes(2,'little')),)
+        reset,ot=run('01 ff ff ed 43 04 60 2a 04 60',dict(),memory=memory)
+        omitted,nt=run('2a 04 60',dict(),memory=memory)
+        assert reset.hl==0xffff and omitted.hl==previous and (ot,nt)==(46,16)
+        stale+=omitted.hl!=reset.hl
+    from zx0 import banked
+    blob,labels=banked.build()
+    table=bytes(blob[labels['ring_banks']-banked.CODE:labels['ring_banks']-banked.CODE+4])
+    assert table==bytes(banked.BANKS)
+    return dict(decision='constant data already emitted / mutable reset cannot be preinitialized once',checks=6,
+        compiled_ring_table=list(table),stale_offset_cases=stale,
+        omitted_reset_probe=dict(before_tstates=46,omitted_tstates=16,incorrect_after_prior_block=True),
+        findings=['Generators emit tables/state using DB/words, not repeated per-byte initializer routines.',
+                  'ZX0 last offset must reset to -1 on every block; compile-time data does not reset the operand after a prior decode.',
+                  'Caller-owned pointer/end/frontier state changes each block; the only adjacent runtime zero flags were improved in item16.',
+                  'Moving state to external BSS without initialization changes storage accounting, not total required RAM or repeated-entry semantics.'])
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('11','12','13','14','15','17','18'),required=True)
+    parser.add_argument('--item',choices=('11','12','13','14','15','17','18','19'),required=True)
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     defaults=profiles();assert defaults==json.loads((ROOT/'tests/decoder_baseline.json').read_text())['profiles']
     report=dict(date='2026-10-14',item=args.item,complete=True,release=False,scope=__doc__,

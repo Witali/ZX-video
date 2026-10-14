@@ -166,3 +166,18 @@ long-literal jump trampoline without adding a branch.
 
 [513 checks](evidence/trick_18.json),31 exact defaults; actual delta0 T/code/
 state/input. `audit_second_pass.py --item 18 --output libraries/evidence/trick_18.json`.
+
+## Item19 — preinitialized data/bulk initialization
+
+**Decision: already present for constants; mutable resets retained.** The
+generators emit table/state DB/words directly; the compiled ring table is
+exactly0/1/3/4. There is no per-byte initialization loop to replace with LDIR.
+ZX0's self-modified last offset must reset to−1 each new block. Five native
+prior-offset probes show omitting initialization leaves stale offsets in
+four cases; the load/reset probe46 →16 T achieves the wrong repeated-entry
+semantics. Runtime pointer/end/frontier fields remain caller-owned. Item16
+already combines the two runtime zero flags. External BSS would still require
+reserved RAM and correct initialization, not free size reduction.
+
+[Report](evidence/trick_19.json),31 exact defaults; actual delta0 T/code/state/
+input. `audit_second_pass.py --item 19 --output libraries/evidence/trick_19.json`.
