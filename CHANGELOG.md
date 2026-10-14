@@ -1,5 +1,39 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Qualify localized tracking with softer YM3812 harmonic groups
+
+- **Baseline/scope:** Complete the authorized coherent-song plan using the
+  exact original 90-second source and mildly modulated rendition, frozen gains,
+  pinned native core, filter and 50-Hz targets. Preserve all earlier media.
+- **Change/attempts:** Restrict neighboring-pitch substitutions to source-weak
+  exposed lines or weak A/B/A events; retain source-supported current and
+  long-window candidates. Try strengths 0.004/0.008/0.002 with gates 0.01/0.02/
+  0.01, joint levels and optional weak envelopes. `local04/08` pass the original
+  guards (objectives 9.242461/9.267879), while `local02` 9.225059 fails the saved
+  20% A/B/A reduction. Stronger FM introduces below-50-Hz power outside the
+  objective floor. Add a stricter source-plus-0.0002 fraction guard, limit
+  0.064466%, and try modulator TL 48/52 instead of 40. `soft48` still exceeds
+  the limit; select `soft52`, the only candidate passing all original and added
+  guards. All 15 trials, including rejected candidates, remain archived.
+- **Selected measurements:** Objective 9.444631 -> 9.358669; A/B/A returns
+  1050 -> 798 (24% reduction); exposed-line events 1155 -> 1141. Dominant
+  cosines improve at all three scales; level MAE 1.379574 -> 1.431317 dB and
+  some root-magnitude cosines worsen. Below-50-Hz power is 0.059148%, source
+  0.044466%; peak 0.907273, zero clipping. All four matched excerpt objectives
+  improve. Output has 323,569 writes, 1,309,602 VGM / 483,310 VGZ bytes.
+- **Verification/decision:** Fourteen tests pass. Independent re-export, all
+  nine-channel states and write timing, all 67,500 fields across 15 full
+  native/output replays, hashes and exact comparison segments pass. Each
+  replay includes 4,474,431 native and 3,969,000 output samples. The historical
+  exporter stays byte-exact for all 4500 baseline fields. Deliver selected
+  audition, full old/new comparison, four source/old/new clips and common-scale
+  plots. Improvement is modest; proxy counts do not establish a subjective
+  cure. No native player/release-disk change or Z80 timing delta. This bounded
+  plan is complete; higher target rates remain optional later.
+  [Result and reproduction](ay-converter/analysis/ym3812_sea_foam/TRACKING_RESULT.md),
+  [all trials](ay-converter/analysis/ym3812_sea_foam/tracking-evidence/report.json),
+  [complete verification](ay-converter/analysis/ym3812_sea_foam/tracking-evidence/verification.json).
+
 ## 2026-10-14 — Measure confidence gates and source-supported FM groups
 
 - **Baseline/input:** Continue the authorized coherent-song implementation on

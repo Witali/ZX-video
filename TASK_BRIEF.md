@@ -3,7 +3,7 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
-## YM3812 coherent-voice implementation — authorized (2026-10-14)
+## YM3812 coherent-voice implementation — complete (2026-10-14)
 
 The user now explicitly requests acting on the proposed beep-analysis plan.
 Follow [the implementation scope](ay-converter/analysis/ym3812_sea_foam/TRACKING_PLAN.md)
@@ -12,6 +12,17 @@ confidence/inactive voices, mild-FM source envelopes, then actual full-track
 qualification. Use the original90-second mildly modulated baseline and fixed
 source/gain/filter. Retain failed attempts and all earlier media. The prior
 analysis's no-automatic-experiment checkpoint is superseded for this work.
+
+The [selected full-track result](ay-converter/analysis/ym3812_sea_foam/TRACKING_RESULT.md)
+now retains all 15 measured attempts and the `soft52` audition. Source-confirmed
+localized tracking and softer FM improve objective 9.444631 -> 9.358669 and
+A/B/A returns 1050 -> 798, passing all original guards plus an added strict
+below-50-Hz content guard. Exposed-line events improve only 1155 -> 1141;
+level MAE worsens by 0.051744 dB within the saved allowance. Fourteen tests,
+all 67,500 fields and every independently replayed native/output sample pass.
+Keep the bounded listening classification. The requested implementation is
+complete; higher-rate, physical-chip and native-player experiments remain
+optional future work.
 
 ## YM3812 intermittent-tone analysis — complete (2026-10-14)
 

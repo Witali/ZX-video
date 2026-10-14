@@ -31,3 +31,12 @@ Do not introduce a native player/scheduler, change release disks or claim
 physical-chip verification. Preserve every previous audition. End this bounded
 implementation after the selected full-track result and verification are saved;
 do not open unrelated FM/rhythm/CSM searches.
+
+Completed 2026-10-14: all four implementation stages are measured, including
+15 full-track attempts. Select `soft52` after adding a stricter below-50-Hz
+content guard; objective 9.444631 -> 9.358669, A/B/A returns 1050 -> 798,
+exposed-line events 1155 -> 1141. All original guards pass, with a small
+level-error tradeoff. Four matched excerpts improve. Fourteen tests and all
+15 independent full command/native/PCM replays pass (67,500 fields); no
+clipping. [Result and complete evidence](TRACKING_RESULT.md). End this
+bounded implementation here; higher-rate listening remains optional later.

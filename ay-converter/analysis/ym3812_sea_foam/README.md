@@ -1,5 +1,14 @@
 # Sea-foam main song through YM3812
 
+The authorized coherent-voice plan is complete. **[Latest 90-second audition](tracking-evidence/ym3812-preview.wav)**
+and **[old/new comparison, selected starts at 91 s](tracking-evidence/before-after.wav)**
+use source-confirmed temporal tracking and softer source-supported FM groups.
+Rapid A/B/A returns decrease 24%; full-track objective improves 9.444631 to
+9.358669, with a small level-error tradeoff. All original guards and an added
+low-frequency content guard pass. See [implementation, all 15 attempts,
+full verification and listening excerpts](TRACKING_RESULT.md). Earlier
+versions below remain historical auditions.
+
 Completed2026-10-14 in `.worktree/ym3812-sea-foam`, branch
 `codex/ym3812-sea-foam`, from main `13819086`. The user requests a YM3812
 track of the song from "In the Blue Sea, in the White Foam".
@@ -8,10 +17,11 @@ The user subsequently prefers the original audition and reports recurring
 electronic "beep/blam" sounds. The [complete source/output audit and proposed
 improvements](BEEP_ANALYSIS.md) identifies rapid peak switching and synthesized
 lines on diffuse source regions. Use [the original version](evidence/ym3812-preview.wav)
-as the next fitting baseline; the purity experiment below remains historical.
+as the completed tracking implementation's baseline; the purity experiment
+below remains historical.
 
 The earlier user request to reduce added high harmonics and use mainly
-sines is complete. **[Latest pure-sine audition](overtones-evidence/ym3812-preview.wav)**
+sines is complete. **[Earlier pure-sine audition](overtones-evidence/ym3812-preview.wav)**
 and **[before/after comparison, revised starts91 s](overtones-evidence/before-after.wav)**
 retain the same90-second song and50-Hz targets. See [the measured changes,
 all six trials and explicit selection limits](OVERTONES.md). The initial
