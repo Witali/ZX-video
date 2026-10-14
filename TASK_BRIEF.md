@@ -1,6 +1,6 @@
 # Focused optimization task
 
-Updated 2026-10-13. Use this brief to continue the project in this or a new
+Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
 ## Adaptive audio RAM and cover loading — complete (2026-10-13)
@@ -21,21 +21,32 @@ native hold, bank guard, loading bar and END OF AUDIO is checked. Pentagon
 pacing adds26/18 T per ordinary IMA4/IMA3 sample;128/Scorpion delta0. The
 original uncompensated song remains a listening preview, not a20-dB release.
 
-Deliver `ZX-music-Sea-Foam-RAM-auto.trd`, one disk with the main song and real
-movie title. Pentagon1024 preloads the remaining volume before audio, with
+The2026-10-13 `ZX-music-Sea-Foam-RAM-auto.trd` contains the main song and real
+movie title. That version preloads the remaining volume on Pentagon1024, with
 no subsequent floppy reads; active-part RAM copies still pause about1.9445 s
 and0.7645 s. Large RAM prefetch intentionally trades longer startup for
-fewer later disk reads; measured first start is96.82 s on Pentagon1024.
+fewer later disk reads; measured first start is96.82 s on Pentagon1024. The
+continuous replacement described below supersedes this image's part handoffs.
 
-## Next requested audio improvement: seamless RAM playback (2026-10-13)
+## Continuous RAM song TRD — complete (2026-10-14)
 
-The user explicitly asks to eliminate the remaining Pentagon1024 part pauses
-as a future improvement. Replace intermediate RAM copies with direct
-extended-bank playback or prepared handoffs. Scope the next milestone around
-continuous complete-source playback, then verify all paging/decoder T-states,
-actual output intervals, four RAM models and independently bootable disks.
-Preserve current source/settings and quality gates; do not claim seamless
-playback from a disk-read count alone. Current release is delivered first.
+The user clarifies that the current TRD itself should be fixed. The replacement
+`ZX-music-Sea-Foam-RAM-auto.trd` now contains one continuous IMA4 stream with
+shared code/tables. Audio starts in ordinary128-KiB banks, then continues
+directly through detected extended physical pages. Both Pentagon512 and1024
+hold the entire90-second song: zero refills, RAM copies or ROM reads between
+live banks. Spectrum128 needs three refills; Scorpion256 needs one, with all
+decoder/prefetch state preserved. The real title and bottom progress remain.
+
+[Evidence and reproducer](audiobook-beeper/experiments/seamless-trd/README.md)
+cover complete native and independently cold Fuse playback on all four models,
+every11,526,111 source/guard pulse,720,382 predictor/index states, exact native
+holds and actual output intervals. Pentagon maximum live hold is277 T,
+77.288 microseconds, replacing multi-second part gaps. Ordinary423/449 T and
+page extra14 T remain unchanged; new bank extras243/267 T have deltas+103/+127
+from the old140 T. Preserve the original uncompensated listening-preview
+classification and strict quality gate. The generic converters remain unchanged.
+This completes the current image correction; no new movie optimization starts.
 
 ## Reusable ZX0/LZSA libraries — complete (2026-10-13)
 

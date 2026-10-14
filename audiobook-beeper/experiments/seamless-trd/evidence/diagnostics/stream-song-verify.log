@@ -1,0 +1,29 @@
+native pentagon512 0
+native scorpion 1
+native pentagon1024 0
+native 128 3
+Traceback (most recent call last):
+  File "C:\Work\ZX-video\.worktree\seamless-audio-trd\.tmp\verify-song.py", line 13, in <module>
+    with ThreadPoolExecutor(max_workers=4) as pool:results=list(pool.map(run,('128','scorpion','pentagon512','pentagon1024')))
+                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\concurrent\futures\_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\concurrent\futures\_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\concurrent\futures\_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    raise self._exception
+  File "C:\Users\rudol\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\seamless-audio-trd\.tmp\verify-song.py", line 11, in run
+    r=fuse_check(disk,meta,packed,profile,verify/profile,Path('C:/Program Files (x86)/Fuse/fuse.exe'));print('fuse',profile,r,flush=True)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Work\ZX-video\.worktree\seamless-audio-trd\audiobook-beeper\verify_stream_trd.py", line 81, in fuse_check
+    assert len(bits)==count and np.array_equal(bits,expected[:count]),('Fuse pulses',profile,len(bits),count)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('Fuse pulses', '128', 11526112, 11526111)

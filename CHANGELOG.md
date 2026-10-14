@@ -1,5 +1,60 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Remove part-copy pauses from the current song TRD
+
+- **Request/baseline:** The user clarifies "fix the TRD file": start audio in
+  ordinary RAM and continue through paged banks without pauses when RAM fits.
+  Main `89cf9f01` and image `f3c131ba...` still pause1.9445/0.7645 s between
+  cached parts;512K additionally reloads the last part. Preserve the complete
+  main90-second song, original direct IMA4/PDM settings, cover/progress and
+  independently cold-bootable128/256/512/1024-KiB support.
+- **Change:** One360,192-byte continuous IMA4 stream with shared code/tables,
+  three-byte physical-page descriptors and a fixed live bank tail. Base audio
+  capacity91,392 bytes; additional16-KiB pages extend it to222,464/484,608/
+  1,008,896 bytes. Bank2/5 reserve32 KiB; bank7 preserves6912 screen bytes.
+  Remove internal part fades/guards/resets; retain every720,000 original
+  prepared sample and384 final silence/alignment samples. Original WAV hash
+  `bf4fb30c...`; beam32/block64 and beta0.5/extent1 unchanged. Low-RAM refills
+  save/restore every live register and lookup SP; no compressed data lost.
+  Fixed-bounce ROM loads run with normal mapping. Generic converters unchanged.
+- **Deterministic CPU:** Ordinary423/449 T and page extra14 T stay delta0.
+  Old107-T bank tail becomes210 T (+103); Scorpion234 T (+127).
+  Shared53-T handoff replaces ordinary20-T tail: bank extra140 becomes243/
+  267 T, affected hold174 becomes277/301 T. Pentagon's existing26-T pacing
+  stays unchanged. Full instruction sums and assumptions are in the
+  [evidence guide](audiobook-beeper/experiments/seamless-trd/README.md).
+- **Complete song checks:** Ten tests; four complete native/cold Fuse runs,
+  every11,526,111 source/guard pulse and720,382 predictor/index states per
+  machine, all exact continuous native holds, resident-byte/guard checks,
+  every physical paging event, exact bar, cover before audio and END OF AUDIO.
+  Both Pentagons have zero refills/ROM reads/RAM-copy gaps after entry.
+  Maximum actual live hold277 T (77.288 us).128/Scorpion max287/308 T.
+  Actual continuous speed errors+0.040739%/+0.798152%/-0.230345% are within2%.
+  First audio27.349/45.607/69.180/69.800 s; preload still exceeds60 s on
+  large RAM.128 explicit refills16.044/15.851/15.188 s; Scorpion23.490 s.
+  [Full reports](audiobook-beeper/experiments/seamless-trd/evidence/song/verification/report.json)
+  retain actual ULA/ROM/floppy timing separately from native CPU counts.
+- **Extended-page control:** The complete512,000-byte non-silent-song-plus-
+  silence control tests physical banks32/33 on1024K and the full512K capacity
+  boundary/refill, with16,383,967 pulses and1,023,998 states per complete run.
+  [Reproducer](audiobook-beeper/experiments/seamless-trd/check_high_bank.py)
+  and separate reports preserve its scope independently of the song.
+- **Rejected harness/prototype attempts:** Trailing DEFS emitted no final
+  padding until an explicit final byte was added; the first short-batch bar
+  advanced one cell/sector and stopped early, corrected by repeated exact
+  subtraction. The first full Fuse harness counted the terminal mute OUT as
+  source and expected no first-page event after a refill. Corrected postflight
+  checks that one teardown OUT separately and all refill descriptors, using
+  unchanged complete same-image/same-command traces; no source samples or
+  source-bearing holds are omitted. Failed logs remain authenticated evidence.
+- **Quality/decision:** Complete verified512K output rendered with the unchanged
+  f64 listening filter at768-kHz integration. Strict unfitted fixed-clock SNR
+  is-3.085 dB, below the unchanged20-dB gate; this remains the user-selected
+  original listening preview, with no quality-release or subjective flutter
+  cure claim. Physical hardware untested. Replace the requested root image
+  with SHA256 `14504d227cf8ab3f927295adcd56772428d300ac53156e8098f4e346ef732cc3`;
+  retain older images in Git. No further movie/codec experiment is started.
+
 ## 2026-10-13 — Integrate adaptive audio RAM, cover-first loading and a song disk
 
 - **Request/baseline:** Build on the cache-component commit `f65259fe` and
