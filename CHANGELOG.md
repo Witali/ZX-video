@@ -1,5 +1,28 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Source-independent stable neutral-packet selector
+
+- **Objective/baseline:** Test a bounded mechanism against the demonstrated
+  3991-Hz zero-bin16/17 cycle. Select one ordinary449-T template without any
+  source audio, keeping origin0/full extent1/bias512 and existing bandwidth.
+- **Method:** Enumerate65536 words, restrict high-time224/225 T (848 words),
+  normalize physical3584000-Hz timing to reference3546900 and solve the
+  existing analytic periodic filter state. Rank duration-weighted midpoint
+  variance; exact complement symmetry plus lower wordID breaks ties.
+  Choose0x56AD/225 T/successor16, estimated RMS0.0019133345. Complete sources
+  and irregular page/bank holds are outside this analytic estimate.
+- **Verification/footprint:** Six tests pass, including independent sequential
+  steady propagation, exhaustive ranking, immutable bin32-only override,
+  absent-option identity, wrong scopes/DC exploits and malformed tables.
+  All64-bin closure18 states, FIRST138/SECOND97, resident15424 bytes. Compact
+  maximum worker endBFBC/67-byte margin is explicitly an unassembled estimate.
+  Full enumeration and original-Python Git hashes are preserved.
+- **Decision:** Keep as experimental model functionality, no new CPU/audio
+  release claim. Subsequent whole-corpus evidence rejects unconditional use
+  because quiet/speech/music regress. C and original Python remain unchanged;
+  all deterministic423/449,14 page,243/267 bank baselines/delta0 remain.
+  [Selector and complete evidence](audiobook-beeper/experiments/song-snr/evidence/neutral-packet-selection/README.md).
+
 ## 2026-10-14 — Matched centered zero-origin whole-corpus control rejected
 
 - **Objective/baseline:** Test the generic centered quantizer with semantically

@@ -1,0 +1,381 @@
+{
+  "date": "2026-10-14",
+  "source_audio_opened": false,
+  "all_words_enumerated": 65536,
+  "balanced_candidates": 848,
+  "complement_pairs": 424,
+  "selected_word": 22189,
+  "selected_hex": "0x56AD",
+  "successor": 16,
+  "selected_on_tstates": 225,
+  "period_tstates": 449,
+  "physical_cpu_hz": 3584000,
+  "reference_cpu_hz": 3546900,
+  "physical_period_seconds": 0.00012527901785714285,
+  "integer_holds": [
+    36,
+    28,
+    28,
+    31,
+    24,
+    26,
+    22,
+    46,
+    22,
+    26,
+    22,
+    30,
+    31,
+    27,
+    34,
+    16
+  ],
+  "reference_holds": [
+    35.62734375,
+    27.71015625,
+    27.71015625,
+    30.6791015625,
+    23.7515625,
+    25.730859375,
+    21.772265625,
+    45.523828125,
+    21.772265625,
+    25.730859375,
+    21.772265625,
+    29.689453125,
+    30.6791015625,
+    26.7205078125,
+    33.648046875,
+    15.834375
+  ],
+  "constraints": {
+    "on_tstates": [
+      224,
+      225
+    ],
+    "maximum_half_duty_area_error_tstates": 0.5,
+    "all_zero_and_all_one_words_rejected": true,
+    "neutral_pcm_bin": 32,
+    "all_feedback_states": 32,
+    "successor": 16
+  },
+  "objective": "Duration-weighted variance of the steady-state bipolar filtered waveform at each pulse midpoint",
+  "formula": "steady=(I-A)^-1 Bword; output=Lsteady+Rword; variance=sum(hold*(output-weightedmean)^2)/449",
+  "filter": "Existing6-state analytic70-Hz high-pass and two4500-Hz Butterworth low-pass pairs; no altered bandwidth",
+  "tie_rule": "Exact complement symmetry followed by ascending unsigned word ID; no source-specific tie choice",
+  "selected_estimated_variance": 3.6608488100227792e-06,
+  "selected_estimated_rms": 0.0019133344741635685,
+  "selected_signed_dc_duty": 0.0022271714922048997,
+  "next_distinct_pair_word": 20139,
+  "next_distinct_variance_ratio": 1.5730842536208962,
+  "solve_condition": 47.47377866974987,
+  "solve_residual_max": 2.7755575615628914e-17,
+  "spectral_radius": 0.9617872556307178,
+  "top_candidates": [
+    {
+      "word": 22189,
+      "hex": "0x56AD",
+      "on_tstates": 225,
+      "variance": 3.6608488100227792e-06,
+      "rms": 0.0019133344741635685,
+      "midpoint_weighted_mean": -1.636763911227918e-05,
+      "second_moment": 3.661116709632889e-06
+    },
+    {
+      "word": 43346,
+      "hex": "0xA952",
+      "on_tstates": 224,
+      "variance": 3.6608488100227792e-06,
+      "rms": 0.0019133344741635685,
+      "midpoint_weighted_mean": 1.636763911227918e-05,
+      "second_moment": 3.661116709632889e-06
+    },
+    {
+      "word": 20139,
+      "hex": "0x4EAB",
+      "on_tstates": 225,
+      "variance": 5.75882361793363e-06,
+      "rms": 0.0023997549078882264,
+      "midpoint_weighted_mean": -1.6434231645699864e-05,
+      "second_moment": 5.759093701903414e-06
+    },
+    {
+      "word": 45396,
+      "hex": "0xB154",
+      "on_tstates": 224,
+      "variance": 5.75882361793363e-06,
+      "rms": 0.0023997549078882264,
+      "midpoint_weighted_mean": 1.6434231645699864e-05,
+      "second_moment": 5.759093701903414e-06
+    },
+    {
+      "word": 22170,
+      "hex": "0x569A",
+      "on_tstates": 224,
+      "variance": 7.253210763799203e-06,
+      "rms": 0.002693178561439847,
+      "midpoint_weighted_mean": -1.4717301057901226e-05,
+      "second_moment": 7.253427362749633e-06
+    },
+    {
+      "word": 43365,
+      "hex": "0xA965",
+      "on_tstates": 225,
+      "variance": 7.253210763799203e-06,
+      "rms": 0.002693178561439847,
+      "midpoint_weighted_mean": 1.4717301057901226e-05,
+      "second_moment": 7.253427362749633e-06
+    },
+    {
+      "word": 22829,
+      "hex": "0x592D",
+      "on_tstates": 225,
+      "variance": 8.065806603735122e-06,
+      "rms": 0.002840036373664098,
+      "midpoint_weighted_mean": 1.0191250111264441e-06,
+      "second_moment": 8.065807642350909e-06
+    },
+    {
+      "word": 42706,
+      "hex": "0xA6D2",
+      "on_tstates": 224,
+      "variance": 8.065806603735122e-06,
+      "rms": 0.002840036373664098,
+      "midpoint_weighted_mean": -1.0191250111264441e-06,
+      "second_moment": 8.065807642350909e-06
+    },
+    {
+      "word": 25901,
+      "hex": "0x652D",
+      "on_tstates": 224,
+      "variance": 1.0773405460877904e-05,
+      "rms": 0.0032822866207688054,
+      "midpoint_weighted_mean": 5.2146100905667955e-06,
+      "second_moment": 1.0773432653036302e-05
+    },
+    {
+      "word": 39634,
+      "hex": "0x9AD2",
+      "on_tstates": 225,
+      "variance": 1.0773405460877904e-05,
+      "rms": 0.0032822866207688054,
+      "midpoint_weighted_mean": -5.2146100905667955e-06,
+      "second_moment": 1.0773432653036302e-05
+    },
+    {
+      "word": 22810,
+      "hex": "0x591A",
+      "on_tstates": 224,
+      "variance": 1.1701071926188897e-05,
+      "rms": 0.0034206829619520276,
+      "midpoint_weighted_mean": 2.6694630655048005e-06,
+      "second_moment": 1.1701079052221956e-05
+    },
+    {
+      "word": 42725,
+      "hex": "0xA6E5",
+      "on_tstates": 225,
+      "variance": 1.1701071926188897e-05,
+      "rms": 0.0034206829619520276,
+      "midpoint_weighted_mean": -2.6694630655048005e-06,
+      "second_moment": 1.1701079052221956e-05
+    },
+    {
+      "word": 11879,
+      "hex": "0x2E67",
+      "on_tstates": 225,
+      "variance": 1.9468690005294682e-05,
+      "rms": 0.004412333850163049,
+      "midpoint_weighted_mean": -2.45945865089306e-05,
+      "second_moment": 1.9469294898980228e-05
+    },
+    {
+      "word": 53656,
+      "hex": "0xD198",
+      "on_tstates": 224,
+      "variance": 1.9468690005294682e-05,
+      "rms": 0.004412333850163049,
+      "midpoint_weighted_mean": 2.45945865089306e-05,
+      "second_moment": 1.9469294898980228e-05
+    },
+    {
+      "word": 13910,
+      "hex": "0x3656",
+      "on_tstates": 224,
+      "variance": 1.9695543481813996e-05,
+      "rms": 0.004437966142481711,
+      "midpoint_weighted_mean": -2.2877655921130972e-05,
+      "second_moment": 1.9696066868954444e-05
+    },
+    {
+      "word": 51625,
+      "hex": "0xC9A9",
+      "on_tstates": 225,
+      "variance": 1.9695543481813996e-05,
+      "rms": 0.004437966142481711,
+      "midpoint_weighted_mean": 2.2877655921130972e-05,
+      "second_moment": 1.9696066868954444e-05
+    },
+    {
+      "word": 11947,
+      "hex": "0x2EAB",
+      "on_tstates": 225,
+      "variance": 2.6811247115572394e-05,
+      "rms": 0.005177957813228338,
+      "midpoint_weighted_mean": -2.1529076060787734e-05,
+      "second_moment": 2.681171061668842e-05
+    },
+    {
+      "word": 53588,
+      "hex": "0xD154",
+      "on_tstates": 224,
+      "variance": 2.6811247115572394e-05,
+      "rms": 0.005177957813228338,
+      "midpoint_weighted_mean": 2.1529076060787734e-05,
+      "second_moment": 2.681171061668842e-05
+    },
+    {
+      "word": 25997,
+      "hex": "0x658D",
+      "on_tstates": 224,
+      "variance": 2.823894407170858e-05,
+      "rms": 0.005314032750342115,
+      "midpoint_weighted_mean": 1.046892088795398e-05,
+      "second_moment": 2.8239053670013138e-05
+    },
+    {
+      "word": 39538,
+      "hex": "0x9A72",
+      "on_tstates": 225,
+      "variance": 2.823894407170858e-05,
+      "rms": 0.005314032750342115,
+      "midpoint_weighted_mean": -1.046892088795398e-05,
+      "second_moment": 2.8239053670013138e-05
+    }
+  ],
+  "scope": "Numerical analytic ordinary-packet selection only. Page/bank excursions, complete sources, actual FFmpeg/noise metrics and native/Fuse playback remain separate validation; no release or universal quality claim.",
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0,
+    "pcm_origin": 0,
+    "pcm_quantization_bias": 512,
+    "neutral_packet_word": 22189,
+    "neutral_packet_successor": 16
+  },
+  "before_catalogue": {
+    "closed_feedback_states": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29,
+      31
+    ],
+    "state_count": 18,
+    "packet_bytes_per_bin": 108,
+    "protected_cache_state_fits": true,
+    "first_patterns": 138,
+    "second_patterns": 96,
+    "unrolled_code_bytes": 11940,
+    "table_pointer": 45568,
+    "resident_end": 47936,
+    "resident_end_hex": "0xbb40",
+    "compact_worker_estimate_maximum_one_trd_end": 48828,
+    "compact_worker_estimate_fits": true,
+    "scope": "Closure over every64 PCM bin from state16; dictionary/layout arithmetic, not new assembly or execution proof"
+  },
+  "after_catalogue": {
+    "closed_feedback_states": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29,
+      31
+    ],
+    "state_count": 18,
+    "packet_bytes_per_bin": 108,
+    "protected_cache_state_fits": true,
+    "first_patterns": 138,
+    "second_patterns": 97,
+    "unrolled_code_bytes": 12004,
+    "table_pointer": 45824,
+    "resident_end": 48192,
+    "resident_end_hex": "0xbc40",
+    "compact_worker_estimate_maximum_one_trd_end": 49084,
+    "compact_worker_estimate_fits": true,
+    "scope": "Closure over every64 PCM bin from state16; dictionary/layout arithmetic, not new assembly or execution proof"
+  },
+  "before_table_sha256": "34bca46d77442c827547e046dcb83b9a553935c643ec89fb1f9397e28f3a2f44",
+  "after_table_sha256": "058a408337c18f6eafb2c50f13af1711d6e1c9a63e4cd03a5d30c95035b362c4",
+  "changed_word_entries": 32,
+  "changed_successor_entries": 29,
+  "full_enumeration": {
+    "file": "enumeration.json.gz",
+    "sha256": "e2baa090206c20f215a7481319fe1d751dcac1f905d826f6525c4c8d603a2b80",
+    "bytes": 2082013,
+    "rows": 65536,
+    "allowed_ranking_rows": 848
+  },
+  "producer_sha256": {
+    "audiobook-beeper/neutral_packet_model.py": "032132c939bb6fba87dafc30f7202432e374ae51d4948491c5efea0c3b9ebf7b",
+    "audiobook-beeper/test_neutral_packet_model.py": "ef1ba3ce4604b144921bdcab4ce665545864e4c56ad1127d5dcc26135a18cb89",
+    "audiobook-beeper/ima_waveform_encoder.py": "4d79cfd7a5800d0f9a9c1ffba928df39a2e590cf79da05bbdc71dc74819cceae",
+    "audiobook-beeper/probe_feedback_packets.py": "933a4132c75d3243a46a817bda67bace0bb65ed997c6caab6bfa7d3338bafb0d",
+    "C:\\Work\\ZX-video\\.worktree\\audio-snr-research\\audiobook-beeper\\experiments\\song-snr\\evidence\\neutral-packet-selection\\select.py": "b9aa2488b3b6e5699921e4cf2fc1c62377ac9630a0fbe7625a171f8e318a79cd"
+  },
+  "original_python": {
+    "audiobook-beeper/ima_waveform_encoder.py": {
+      "git_reference": "13819086",
+      "normalized_lf_sha256": "4d79cfd7a5800d0f9a9c1ffba928df39a2e590cf79da05bbdc71dc74819cceae",
+      "unchanged": true
+    },
+    "audiobook-beeper/ima_beam.py": {
+      "git_reference": "13819086",
+      "normalized_lf_sha256": "571f2e55c43788e6afc2ccd4164b5b2cc92679037b9589a2527e23b62a44c15a",
+      "unchanged": true
+    }
+  }
+}
