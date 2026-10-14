@@ -1,5 +1,21 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Start isolated whole-song SNR research
+
+- **Authorization/baseline:** The user explicitly requests a new Git worktree
+  for research. Create `.worktree/audio-snr-research` on
+  `codex/audio-snr-research` from main `13819086`. The existing `/.worktree/`
+  ignore rule is already committed. Preserve unrelated main attachments.
+- **Scope:** Full90-second prepared song and current seamless TRD
+  `226388fb...`; authenticate its twelve-byte cover-only difference from
+  `14504d22...`. Separate timing, IMA4, packet and PDM reconstruction errors,
+  then compare bounded PDM table candidates and completely verify any selected
+  experimental disk. Source/model changes must remain explicit controls.
+- **Status/decision:** Research initialized; no quality measurement or new
+  release claimed by this setup. Player/code/data unchanged, ordinary423/449 T,
+  page extra14 T, bank extra243/267 T, delta0. Keep all research in its branch;
+  leave the main disk unchanged. [Task scope](TASK_BRIEF.md).
+
 ## 2026-10-14 — Close the audio loading progress frame
 
 - **Request/baseline:** Add vertical edges to the empty bar in the current

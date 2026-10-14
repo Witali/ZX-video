@@ -3,6 +3,29 @@
 Updated 2026-10-14. Use this brief to continue the project in this or a new
 chat. This document scopes work; it does not start an automatic goal.
 
+## Active: isolated whole-song SNR research (2026-10-14)
+
+The user explicitly requests a separate Git worktree and SNR research there.
+Work in `.worktree/audio-snr-research`, branch `codex/audio-snr-research`, from
+main `13819086`. Keep the current main TRD as the control. Its SHA256 is
+`226388fb795ac70cfd940545a9eb73e3e81b6c7e96533dc6deb0c215257338ea`;
+only twelve cover bytes differ from the fully played seamless baseline.
+
+First milestone: authenticate and reuse complete song clocks; measure the
+whole90-second error budget separating timing, IMA4, packet quantization and
+PDM; compare a bounded set of zero-origin/duration-aware PDM tables. Preserve
+source PCM, gain, bandwidth, length, IMA4 storage, one disk, full-RAM seamless
+playback and independent boot. Do not add gains from unlike controls. Label
+frozen-clock predictions separately from newly executed candidates. Execute
+any selected experimental TRD completely before claiming its actual SNR,
+paging, timing or compatibility. Keep strict20-dB and2% gates, explicit
+field-noise diagnostics and physical-hardware limits. Changes stay on this
+research branch; main promotion is outside this milestone.
+
+Deliver reproducible measurements, before/after audio where meaningful and
+focused commits with dated changelog entries. Finish this bounded study before
+opening another codec/clock experiment or movie optimization.
+
 ## Adaptive audio RAM and cover loading — complete (2026-10-13)
 
 The user requests available RAM on Spectrum128, Scorpion256, Pentagon512
