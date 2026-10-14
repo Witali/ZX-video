@@ -14969,3 +14969,10 @@ physical disk/ULA/publication or release claim. See
 [summary script](libraries/tests/summarize_second_pass.py),
 and [completed decisions](libraries/SECOND_PASS.md).
 
+# 2026-10-14 — second-pass documentation encoding repair
+
+Final inspection exposed Windows default text decoding when rearranging
+SECOND_PASS.md: retained items10–24 had double-encoded punctuation. Repair
+that prefix using explicit UTF-8; items25–29, all measurements, source code,
+reports and defaults are unchanged. The authenticated summary still passes.
+
