@@ -1,0 +1,775 @@
+{
+  "date": "2026-10-14",
+  "source_audio_opened": false,
+  "all_words_enumerated": 65536,
+  "duty224_words_before_filter": 424,
+  "duty225_words_before_filter": 424,
+  "state16_endpoint17_words": 238,
+  "state17_endpoint16_words": 238,
+  "rejected_state16_words": 186,
+  "rejected_state17_words": 186,
+  "pairs_enumerated": 56644,
+  "original_unfiltered_pairs": 179776,
+  "complement_swap_candidate_closure": true,
+  "complement_swap_fixed_pairs": 238,
+  "complement_swap_orbits": 28441,
+  "endpoint_arithmetic": "Exact Fraction recurrence, weights16*hold/449, x1/2,beta1/2,q0,recent\u00b11/2",
+  "endpoint_epsilon": "1/1000000000000",
+  "endpoint_quantization": "qcode=clip(floor(8*q+8.5+epsilon),0,15); rcode=clip(floor(recent+1+epsilon),0,1)",
+  "endpoint_boundary_minimum_absolute_distance": "2378855806460342831/10483016544000000000000",
+  "endpoint_boundary_minimum_absolute_distance_float": 0.0002269247402668549,
+  "selected_words": [
+    26381,
+    38556
+  ],
+  "selected_hex_words": [
+    "0x670D",
+    "0x969C"
+  ],
+  "selected_pair_id": 1728943772,
+  "complement_swap_words": [
+    26979,
+    39154
+  ],
+  "selected_on_tstates": [
+    224,
+    225
+  ],
+  "derived_successors": [
+    17,
+    16
+  ],
+  "packet_period_tstates": 449,
+  "pair_period_tstates": 898,
+  "pair_on_tstates": 449,
+  "mean_duty": 0.5,
+  "signed_pair_area_error_tstates": 0,
+  "physical_cpu_hz": 3584000,
+  "reference_cpu_hz": 3546900,
+  "physical_pair_period_seconds": 0.0002505580357142857,
+  "integer_holds": [
+    36,
+    28,
+    28,
+    31,
+    24,
+    26,
+    22,
+    46,
+    22,
+    26,
+    22,
+    30,
+    31,
+    27,
+    34,
+    16
+  ],
+  "reference_holds": [
+    35.62734375,
+    27.71015625,
+    27.71015625,
+    30.6791015625,
+    23.7515625,
+    25.730859375,
+    21.772265625,
+    45.523828125,
+    21.772265625,
+    25.730859375,
+    21.772265625,
+    29.689453125,
+    30.6791015625,
+    26.7205078125,
+    33.648046875,
+    15.834375
+  ],
+  "selected_estimated_variance": 4.337739430296041e-05,
+  "selected_estimated_rms": 0.006586151706646334,
+  "selected_second_moment": 4.3377473591518204e-05,
+  "selected_midpoint_weighted_mean": -8.90441226551156e-06,
+  "next_distinct_variance_ratio": 1.055923796122523,
+  "solve_condition": 18.377621092593238,
+  "solve_residual_max": 2.7755575615628914e-17,
+  "spectral_radius_two_packets": 0.9250347250936656,
+  "objective": "Duration-weighted variance over the 32 steady-state pulse midpoints of a two-packet pair",
+  "formula": "s0=(I-A*A)^-1(A*B*w16+B*w17); y0=L*s0+R*w16; s1=A*s0+B*w16; y1=L*s1+R*w17",
+  "scoring": "Expanded weighted quadratic products; variance=second_moment-midpoint_weighted_mean^2",
+  "tie_rule": "Exact complement-plus-swap symmetry, then ascending pair_id=(word16<<16)|word17",
+  "filter": "Existing 6-state analytic 70-Hz high-pass and two 4500-Hz Butterworth low-pass pairs; unchanged bandwidth",
+  "constraints": {
+    "state16_on_tstates": 224,
+    "state17_on_tstates": 225,
+    "state16_derived_successor": 17,
+    "state17_derived_successor": 16,
+    "changed_cells": [
+      [
+        32,
+        16
+      ],
+      [
+        32,
+        17
+      ]
+    ],
+    "all_other_words_and_successors_preserved": true
+  },
+  "top_candidates": [
+    {
+      "words": [
+        26381,
+        38556
+      ],
+      "hex_words": [
+        "0x670D",
+        "0x969C"
+      ],
+      "pair_id": 1728943772,
+      "variance": 4.337739430296041e-05,
+      "rms": 0.006586151706646334,
+      "second_moment": 4.3377473591518204e-05,
+      "midpoint_weighted_mean": -8.90441226551156e-06
+    },
+    {
+      "words": [
+        26979,
+        39154
+      ],
+      "hex_words": [
+        "0x6963",
+        "0x98F2"
+      ],
+      "pair_id": 1768134898,
+      "variance": 4.337739430296041e-05,
+      "rms": 0.006586151706646334,
+      "second_moment": 4.3377473591518204e-05,
+      "midpoint_weighted_mean": 8.90441226551156e-06
+    },
+    {
+      "words": [
+        26979,
+        38460
+      ],
+      "hex_words": [
+        "0x6963",
+        "0x963C"
+      ],
+      "pair_id": 1768134204,
+      "variance": 4.580322285828545e-05,
+      "rms": 0.006767807832547068,
+      "second_moment": 4.580322976023094e-05,
+      "midpoint_weighted_mean": -2.6271553986756987e-06
+    },
+    {
+      "words": [
+        27075,
+        38556
+      ],
+      "hex_words": [
+        "0x69C3",
+        "0x969C"
+      ],
+      "pair_id": 1774425756,
+      "variance": 4.580322285828545e-05,
+      "rms": 0.006767807832547068,
+      "second_moment": 4.580322976023094e-05,
+      "midpoint_weighted_mean": 2.6271553986756987e-06
+    },
+    {
+      "words": [
+        26339,
+        39154
+      ],
+      "hex_words": [
+        "0x66E3",
+        "0x98F2"
+      ],
+      "pair_id": 1726191858,
+      "variance": 4.928966093097576e-05,
+      "rms": 0.007020659579482241,
+      "second_moment": 4.928966097550951e-05,
+      "midpoint_weighted_mean": 2.110302038101715e-07
+    },
+    {
+      "words": [
+        26381,
+        39196
+      ],
+      "hex_words": [
+        "0x670D",
+        "0x991C"
+      ],
+      "pair_id": 1728944412,
+      "variance": 4.928966093097576e-05,
+      "rms": 0.007020659579482241,
+      "second_moment": 4.928966097550951e-05,
+      "midpoint_weighted_mean": -2.110302038101715e-07
+    },
+    {
+      "words": [
+        22837,
+        26325
+      ],
+      "hex_words": [
+        "0x5935",
+        "0x66D5"
+      ],
+      "pair_id": 1496671957,
+      "variance": 4.9742270841479926e-05,
+      "rms": 0.0070528200630301015,
+      "second_moment": 4.974228030926622e-05,
+      "midpoint_weighted_mean": -3.0769768115296618e-06
+    },
+    {
+      "words": [
+        39210,
+        42698
+      ],
+      "hex_words": [
+        "0x992A",
+        "0xA6CA"
+      ],
+      "pair_id": 2569709258,
+      "variance": 4.9742270841479926e-05,
+      "rms": 0.0070528200630301015,
+      "second_moment": 4.974228030926622e-05,
+      "midpoint_weighted_mean": 3.0769768115296618e-06
+    },
+    {
+      "words": [
+        22837,
+        26937
+      ],
+      "hex_words": [
+        "0x5935",
+        "0x6939"
+      ],
+      "pair_id": 1496672569,
+      "variance": 5.156883161522168e-05,
+      "rms": 0.007181144171733477,
+      "second_moment": 5.156885206375158e-05,
+      "midpoint_weighted_mean": 4.522005075528859e-06
+    },
+    {
+      "words": [
+        38598,
+        42698
+      ],
+      "hex_words": [
+        "0x96C6",
+        "0xA6CA"
+      ],
+      "pair_id": 2529601226,
+      "variance": 5.156883161522168e-05,
+      "rms": 0.007181144171733477,
+      "second_moment": 5.156885206375158e-05,
+      "midpoint_weighted_mean": -4.522005075528859e-06
+    },
+    {
+      "words": [
+        27341,
+        36533
+      ],
+      "hex_words": [
+        "0x6ACD",
+        "0x8EB5"
+      ],
+      "pair_id": 1791856309,
+      "variance": 5.460756985641448e-05,
+      "rms": 0.0073896934886647685,
+      "second_moment": 5.460765577584213e-05,
+      "midpoint_weighted_mean": -9.269273307605638e-06
+    },
+    {
+      "words": [
+        29002,
+        38194
+      ],
+      "hex_words": [
+        "0x714A",
+        "0x9532"
+      ],
+      "pair_id": 1900713266,
+      "variance": 5.460756985641448e-05,
+      "rms": 0.0073896934886647685,
+      "second_moment": 5.460765577584213e-05,
+      "midpoint_weighted_mean": 9.269273307605638e-06
+    },
+    {
+      "words": [
+        26339,
+        38460
+      ],
+      "hex_words": [
+        "0x66E3",
+        "0x963C"
+      ],
+      "pair_id": 1726191164,
+      "variance": 5.5436723435372414e-05,
+      "rms": 0.007445584156758448,
+      "second_moment": 5.5436851589940806e-05,
+      "midpoint_weighted_mean": -1.1320537460403595e-05
+    },
+    {
+      "words": [
+        27075,
+        39196
+      ],
+      "hex_words": [
+        "0x69C3",
+        "0x991C"
+      ],
+      "pair_id": 1774426396,
+      "variance": 5.5436723435372414e-05,
+      "rms": 0.007445584156758448,
+      "second_moment": 5.5436851589940806e-05,
+      "midpoint_weighted_mean": 1.1320537460403595e-05
+    },
+    {
+      "words": [
+        26339,
+        36533
+      ],
+      "hex_words": [
+        "0x66E3",
+        "0x8EB5"
+      ],
+      "pair_id": 1726189237,
+      "variance": 5.73229027358139e-05,
+      "rms": 0.007571188990892639,
+      "second_moment": 5.7322995207992084e-05,
+      "midpoint_weighted_mean": -9.616245534635481e-06
+    },
+    {
+      "words": [
+        29002,
+        39196
+      ],
+      "hex_words": [
+        "0x714A",
+        "0x991C"
+      ],
+      "pair_id": 1900714268,
+      "variance": 5.73229027358139e-05,
+      "rms": 0.007571188990892639,
+      "second_moment": 5.7322995207992084e-05,
+      "midpoint_weighted_mean": 9.616245534635481e-06
+    },
+    {
+      "words": [
+        25997,
+        36533
+      ],
+      "hex_words": [
+        "0x658D",
+        "0x8EB5"
+      ],
+      "pair_id": 1703775925,
+      "variance": 6.668475353252915e-05,
+      "rms": 0.008166073323974574,
+      "second_moment": 6.668475573361231e-05,
+      "midpoint_weighted_mean": -1.483604786970625e-06
+    },
+    {
+      "words": [
+        29002,
+        39538
+      ],
+      "hex_words": [
+        "0x714A",
+        "0x9A72"
+      ],
+      "pair_id": 1900714610,
+      "variance": 6.668475353252915e-05,
+      "rms": 0.008166073323974574,
+      "second_moment": 6.668475573361231e-05,
+      "midpoint_weighted_mean": 1.483604786970625e-06
+    },
+    {
+      "words": [
+        22197,
+        26297
+      ],
+      "hex_words": [
+        "0x56B5",
+        "0x66B9"
+      ],
+      "pair_id": 1454728889,
+      "variance": 7.870388198051139e-05,
+      "rms": 0.008871520838081338,
+      "second_moment": 7.870404748253675e-05,
+      "midpoint_weighted_mean": -1.2864759047887462e-05
+    },
+    {
+      "words": [
+        39238,
+        43338
+      ],
+      "hex_words": [
+        "0x9946",
+        "0xA94A"
+      ],
+      "pair_id": 2571544906,
+      "variance": 7.870388198051139e-05,
+      "rms": 0.008871520838081338,
+      "second_moment": 7.870404748253675e-05,
+      "midpoint_weighted_mean": 1.2864759047887462e-05
+    }
+  ],
+  "scope": "Endpoint labels are conceptually consistent but individual forced bits may violate the original greedy bit rule. Midpoint variance is an analytic ordinary-packet estimate; complete-source noise, AM/flutter/background and actual playback remain separate acceptance. No release or universal quality claim.",
+  "prior_endpoint_audit": {
+    "report": "audiobook-beeper/experiments/song-snr/evidence/feedback-endpoint-audit/report.json",
+    "sha256": "558bc5fb08dcea7c63916751fa75da127d5338c10d6deebfca21643da393b190",
+    "both_allowed_word_lists_exact": true,
+    "allowed_word_counts": [
+      238,
+      238
+    ],
+    "original_table_cells_verified_by_prior_audit": 2048
+  },
+  "prior_periodic_scores": {
+    "archive": "audiobook-beeper/experiments/song-snr/evidence/idle-pair-selection/all-pairs.npz",
+    "sha256": "38c08ee8f7631f9bc7f5b49f5e125bc331ffa679a722642ed95ef7574a904ce6",
+    "all_filtered_scores_moments_means_pair_ids_bit_identical": true,
+    "scope": "Same saved ordinary-packet midpoint objective; no new bandwidth, clock or source-dependent parameters"
+  },
+  "starting_commit": "6e06d009",
+  "selection_precedes_source_access": true,
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0,
+    "pcm_origin": 0,
+    "pcm_quantization_bias": 512,
+    "endpoint_idle_pair_words": [
+      26381,
+      38556
+    ]
+  },
+  "selected_exact_endpoints": [
+    {
+      "word": 26381,
+      "hex_word": "0x670D",
+      "initial_state": 16,
+      "q": {
+        "numerator": 8,
+        "denominator": 449,
+        "decimal": 0.017817371937639197
+      },
+      "recent": {
+        "numerator": 1715169511331,
+        "denominator": 12628951695360,
+        "decimal": 0.13581250072887444
+      },
+      "qcode": 8,
+      "rcode": 1,
+      "successor": 17,
+      "peak_absolute_q": {
+        "numerator": 472,
+        "denominator": 449,
+        "decimal": 1.0512249443207127
+      },
+      "peak_absolute_recent": {
+        "numerator": 2556838129,
+        "denominator": 2192526336,
+        "decimal": 1.1661607375100647
+      },
+      "greedy_bit_rule_mismatch_slots": [
+        4,
+        7,
+        11
+      ],
+      "independent_closed_form_matches": true
+    },
+    {
+      "word": 38556,
+      "hex_word": "0x969C",
+      "initial_state": 17,
+      "q": {
+        "numerator": -8,
+        "denominator": 449,
+        "decimal": -0.017817371937639197
+      },
+      "recent": {
+        "numerator": -1708438613281,
+        "denominator": 4209650565120,
+        "decimal": -0.4058385813389476
+      },
+      "qcode": 8,
+      "rcode": 0,
+      "successor": 16,
+      "peak_absolute_q": {
+        "numerator": 408,
+        "denominator": 449,
+        "decimal": 0.9086859688195991
+      },
+      "peak_absolute_recent": {
+        "numerator": 1050680712481,
+        "denominator": 1052412641280,
+        "decimal": 0.9983543253557905
+      },
+      "greedy_bit_rule_mismatch_slots": [
+        6,
+        10,
+        13
+      ],
+      "independent_closed_form_matches": true
+    }
+  ],
+  "before_catalogue": {
+    "closed_feedback_states": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29,
+      31
+    ],
+    "state_count": 18,
+    "pcm_bins": 64,
+    "first_patterns": 138,
+    "second_patterns": 96,
+    "unrolled_dictionary_bytes": 11940,
+    "protected_cache_state_fits": true,
+    "table_pointer_estimate": 45568,
+    "resident_end_estimate": 47936,
+    "compact_maximum_one_trd_worker_end_estimate": 48828,
+    "compact_worker_estimate_fits": true,
+    "scope": "All-bin catalogue and layout arithmetic estimate; execution/layout proof is separate"
+  },
+  "after_catalogue": {
+    "closed_feedback_states": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29,
+      31
+    ],
+    "state_count": 18,
+    "pcm_bins": 64,
+    "first_patterns": 139,
+    "second_patterns": 98,
+    "unrolled_dictionary_bytes": 12110,
+    "protected_cache_state_fits": true,
+    "table_pointer_estimate": 45824,
+    "resident_end_estimate": 48192,
+    "compact_maximum_one_trd_worker_end_estimate": 49084,
+    "compact_worker_estimate_fits": true,
+    "scope": "All-bin catalogue and layout arithmetic estimate; execution/layout proof is separate"
+  },
+  "dictionary_delta_bytes": 170,
+  "changed_word_entries": 2,
+  "unchanged_word_entries": 2046,
+  "changed_successor_entries": 0,
+  "successor_object_preserved": true,
+  "immutable_inputs_unchanged": true,
+  "absent_option_identity": true,
+  "before_table_sha256": "34bca46d77442c827547e046dcb83b9a553935c643ec89fb1f9397e28f3a2f44",
+  "after_table_sha256": "900a207d0161607a0fe7e6ed7e63860b612d81a441b66745309b86a6e6d7dd6a",
+  "independent_sequential_propagation": {
+    "transitions": 32,
+    "packet_matrices_used": false,
+    "initial_state": [
+      0.06596869871106315,
+      -0.11794133540276773,
+      -0.007602337041998349,
+      0.014037679058784981,
+      1.518469782344193e-06,
+      -1.6288408587314648e-05
+    ],
+    "final_state": [
+      0.06596869871106313,
+      -0.11794133540276772,
+      -0.007602337041998345,
+      0.01403767905878498,
+      1.5184697823441914e-06,
+      -1.6288408587314072e-05
+    ],
+    "periodic_state_max_residual": 1.3877787807814457e-17,
+    "midpoint_output": [
+      -0.005134941014712393,
+      -0.0004279683690775821,
+      0.0016585762145871566,
+      0.0017773774492208577,
+      0.0011757136568581392,
+      -0.0002702704632174595,
+      -0.003152374429099794,
+      -0.008586596634905033,
+      -0.011599304811595074,
+      -0.009824348899024253,
+      -0.0047468212688273675,
+      0.002775975665142656,
+      0.010707339523784333,
+      0.014316056110686868,
+      0.014179320532727515,
+      0.012357418203875297,
+      0.009125950383666814,
+      0.004762468612448159,
+      0.002528687309026397,
+      0.0014443906298426997,
+      0.0003469342386896451,
+      -0.000802815198826156,
+      -0.002177405841325227,
+      -0.003270506321616641,
+      -0.0021010502064930142,
+      -0.0007903069852497243,
+      0.0004378489326729435,
+      0.0006345301582890658,
+      -0.0019455005409604069,
+      -0.006081332945254924,
+      -0.009006322224855184,
+      -0.008362637708520608
+    ],
+    "midpoint_weighted_mean": -8.904412265499145e-06,
+    "second_moment": 4.3377473591518115e-05,
+    "variance": 4.337739430296032e-05,
+    "selected_variance_absolute_difference": 8.809142651444724e-20
+  },
+  "full_enumeration": {
+    "file": "all-pairs.npz",
+    "sha256": "cdf7e3b0e5068952368a3163514ea95a12a5d61aa95cffeaf042ed120a8ef08b",
+    "bytes": 1479101,
+    "pair_matrix_shape": [
+      238,
+      238
+    ],
+    "pairs": 56644,
+    "ranking_rows": 56644,
+    "all_duty_candidate_words": 848,
+    "includes_all_exact_endpoint_recent_fractions_and_successors": true,
+    "includes_every_filtered_pair_score_and_ranking": true,
+    "includes_filter_matrices": true
+  },
+  "current_producer_sha256": {
+    "audiobook-beeper/endpoint_idle_pair_model.py": "607e3aab7bc15c99c262730c735fa7f0c1ea451d36f25326db499d8ee0ea0c0d",
+    "audiobook-beeper/test_endpoint_idle_pair_model.py": "c721acf4cac142e13224e9a41204201bc2038e814877bc3834fc14a69a7983d2",
+    "audiobook-beeper/experiments/song-snr/evidence/endpoint-idle-pair-selection/select.py": "711733906a87610d89048a8de25fac978878f8b643f7180c816c9248cfb5d802",
+    "audiobook-beeper/idle_pair_packet_model.py": "fc1a7ef8ed3a87582ff5ee1008ef237ff3ed84e44f3a1d5f715a0c73c3c4bcfd",
+    "audiobook-beeper/ima_waveform_encoder.py": "4d79cfd7a5800d0f9a9c1ffba928df39a2e590cf79da05bbdc71dc74819cceae",
+    "audiobook-beeper/neutral_packet_model.py": "032132c939bb6fba87dafc30f7202432e374ae51d4948491c5efea0c3b9ebf7b",
+    "audiobook-beeper/probe_feedback_packets.py": "933a4132c75d3243a46a817bda67bace0bb65ed997c6caab6bfa7d3338bafb0d"
+  },
+  "unchanged_prior_producers": {
+    "ima_waveform_encoder.py": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "4d79cfd7a5800d0f9a9c1ffba928df39a2e590cf79da05bbdc71dc74819cceae"
+    },
+    "ima_beam.py": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "571f2e55c43788e6afc2ccd4164b5b2cc92679037b9589a2527e23b62a44c15a"
+    },
+    "experiments/song-snr/clock_control.py": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "fc5b5cf112f2c4581d98bb7f940f14b605df4ffce4b2a84ddc1e5a180582f5ce"
+    },
+    "experiments/song-snr/general.py": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "8a051e8387611d98a0a2ee102531d2800f0a5687dd168dd74fa2e7c416ca5876"
+    },
+    "native_waveform_encoder.c": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "76b7f0cf8517f6473cd802e4e5c9bb1747012f25b0f7dbacdab22f30685f4080"
+    },
+    "native_waveform_encoder.py": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "f80d5359d0eea321876a27576880723a1c1adf50f48a9fa6db32cc6753af5dd1"
+    },
+    "native_ima_encoder.c": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "4148d42dae77165447ce5313fe263b7bfe01075643898253687f0de0a200997b"
+    },
+    "native_ima_encoder.py": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "429c0030232c3ea23887f023853aa8079326d8330f717cd3c0b35d151a665227"
+    },
+    "centered_waveform_reference.py": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "c8ec40b510705c5717e82bf3d828cce74ee3ced8b1ab821e14fc505abb3a2096"
+    },
+    "neutral_packet_model.py": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "032132c939bb6fba87dafc30f7202432e374ae51d4948491c5efea0c3b9ebf7b"
+    },
+    "idle_cycle_packet_model.py": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "e480137b1327166cd39104f4aaa1ed1e57cda42b38a1fd89830b628fa7a1670d"
+    },
+    "idle_pair_packet_model.py": {
+      "git_reference": "6e06d009",
+      "unchanged": true,
+      "normalized_lf_sha256": "fc1a7ef8ed3a87582ff5ee1008ef237ff3ed84e44f3a1d5f715a0c73c3c4bcfd"
+    }
+  },
+  "original_python_reference": {
+    "ima_waveform_encoder.py": {
+      "git_reference": "13819086",
+      "unchanged": true,
+      "normalized_lf_sha256": "4d79cfd7a5800d0f9a9c1ffba928df39a2e590cf79da05bbdc71dc74819cceae"
+    },
+    "ima_beam.py": {
+      "git_reference": "13819086",
+      "unchanged": true,
+      "normalized_lf_sha256": "571f2e55c43788e6afc2ccd4164b5b2cc92679037b9589a2527e23b62a44c15a"
+    }
+  },
+  "tests": {
+    "passed": true,
+    "count": 9,
+    "log": "tests.log",
+    "log_sha256": "8eb66da27d20fc58439101cb4d1c2d56ec2087baaf712c79c879a6cd8505945e",
+    "command": "python audiobook-beeper/test_endpoint_idle_pair_model.py -v"
+  },
+  "reproducer": "python audiobook-beeper/experiments/song-snr/evidence/endpoint-idle-pair-selection/select.py --output NEW_FOLDER"
+}

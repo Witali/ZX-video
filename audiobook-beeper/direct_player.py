@@ -37,6 +37,9 @@ def canonical_pcm_model(model=None):
         if result.get('pcm_bins',64)!=64 or result.get('family') not in (None,'integral'):
             raise ValueError('PCM quantization bias requires the64-bin integral PDM model')
         result['pcm_quantization_bias']=bias
+    if 'endpoint_idle_pair_words' in result:
+        from endpoint_idle_pair_model import validate_endpoint_idle_pair
+        validate_endpoint_idle_pair(result)
     if 'neutral_packet_word' in result or 'neutral_packet_successor' in result:
         from neutral_packet_model import validate_neutral_packet
         validate_neutral_packet(result)
@@ -106,6 +109,21 @@ def idle_pair_packet_metadata(model):
                 scope='Ordinary Pentagon pair only; bank/page holds and128/Scorpion ULA effects require separate complete verification')
 
 
+def endpoint_idle_pair_metadata(model):
+    """Describe the frozen pair and its exact endpoint-label constraint."""
+    pair=model['endpoint_idle_pair_words'];period=sum(model['holds'])
+    on=[sum(hold for slot,hold in enumerate(model['holds']) if word&(1<<(15-slot))) for word in pair]
+    return dict(packet_bin=32,words=list(pair),words_hex=[f'{word:04x}' for word in pair],
+                feedback_states=[16,17],preserve_successors=True,successor_cycle=[17,16],
+                exact_derived_endpoint_successors=[17,16],endpoint_epsilon='1/1000000000000',
+                endpoint_quantization='Exact Fraction recurrence; clipped floor(8*q+8.5+epsilon) and floor(recent+1+epsilon)',
+                ordinary_on_tstates=on,ordinary_period_tstates=period,
+                pair_on_tstates=sum(on),pair_period_tstates=2*period,pair_mean_duty=sum(on)/(2*period),
+                source_independent_selection_assumption='One frozen pair selected analytically without source audio from the238-by238 exact endpoint-consistent duty224/225 domain',
+                live_instruction_changes=False,packet_native_tstate_delta=0,
+                scope='Exact endpoint labels do not prove equivalence to individual greedy decisions, bounded internal history or audio quality. Ordinary Pentagon pair only; bank/page holds and128/Scorpion ULA effects require separate complete verification')
+
+
 def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
     model=canonical_pcm_model(model)
     extended=ram_enabled(model)
@@ -126,6 +144,9 @@ def layout(packed,model=None,hot_indices=None,*,resident_limit=14336):
     if 'idle_pair_words' in model:
         from idle_pair_packet_model import apply_idle_pair_packet
         words,nxt=apply_idle_pair_packet(words,nxt,model)
+    if 'endpoint_idle_pair_words' in model:
+        from endpoint_idle_pair_model import apply_endpoint_idle_pair
+        words,nxt=apply_endpoint_idle_pair(words,nxt,model)
     reachable={16}
     while True:
         expanded=reachable|set(map(int,nxt[:,sorted(reachable)].ravel()))
@@ -278,6 +299,7 @@ def build_disk(packed,work,model=None,hot_indices=None,idle_pairs=0,idle_pad=0,*
     if 'neutral_packet_word' in model:meta['neutral_packet']=neutral_packet_metadata(model)
     if 'idle_cycle_word' in model:meta['idle_cycle_packet']=idle_cycle_packet_metadata(model)
     if 'idle_pair_words' in model:meta['idle_pair_packet']=idle_pair_packet_metadata(model)
+    if 'endpoint_idle_pair_words' in model:meta['endpoint_idle_pair']=endpoint_idle_pair_metadata(model)
     return disk,meta
 
 

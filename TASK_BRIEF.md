@@ -103,20 +103,30 @@ Reuse `evidence/idle-pair-*`; no new Fuse or original encoder/default change.
 Exact Fraction endpoint replay matches all2048 original cells, but forced56AD
 from state17 derives successor17 while prior overrides retain16. This is a
 conceptual recurrence mismatch, not a physical table/timing failure; no causal
-or perceptual claim. See `evidence/feedback-endpoint-audit`. New bounded
-mechanism: restrict duty224/state16 to derived17 and duty225/state17 to
-derived16 (238 words each/56644 pairs), then use the same source-free periodic
-filter ranking, exact symmetry/ties and frozen literals before any source.
-Preserve every successor/other2046 words. Check all nine full sources against
-prior baselines, AM/FM/lines, silence PSD; native/default/footprint before any
-selected full Fuse. Keep source/gain/filter/edges/clock/original C/Python;
-no simultaneous retiming. Endpoint consistency alone cannot pass acceptance.
+or perceptual claim. See `evidence/feedback-endpoint-audit`.
 
-A later separate pacing audit may consider448 ordinary Pentagon T rather than
-449: prospective15-T stub `LD A,R`(9)+`INC HL`(6) needs register/flag liveness,
-absolute/delta counts and complete actual-clock proof. It remains a hypothesis,
-not an implementation or permission blocker. Never relax20-dB/2% gates or
-claim physical/all-clone proof from Pentagon/native measurements.
+Endpoint-consistent670D/969C is now also rejected. All56644 source-free pairs,
+exact epsilon/endpoint constraints and independent propagation are retained.
+Nine helper/seven player tests, eight short native runs/default identity and
+repeated max2392 load pass;139/98 patterns/+170B, workerBC40..BFBC/67 spare.
+Fresh all-nine host100.833500 s scores song20.113106210 dB (-0.137210 versus
+half-joint). Speech22.060791/Entertainer19.626525 recover slightly over matched,
+but steps/multitone/loud regress. Silence0.006652684 is9.225338 dB noisier than
+one-word. Matched42 AM/22 delay/16 line increases/33 inconclusives disclosed;
+five complete baseline comparisons. Reuse `evidence/endpoint-idle-pair-*`;
+no new Fuse, old producer/main/default changes or accepted universal model.
+
+Next separate mechanism is a pacing audit of448 ordinary Pentagon T instead
+of449, motivated by the retained ideal-DAC clock-image failure on loud3000.
+First prove register/flag liveness and exact absolute/delta counts for the
+prospective15-T stub `LD A,R`(9)+`INC HL`(6), preserving all clone paths. It
+remains a hypothesis, not an implementation or permission blocker. Page/bank
+extras still prevent an exact uniform8-kHz clock; disclose residual drift,
+evaluate total delivery and original-clock waveform/alias errors. No source,
+gain/filter/edges/original C/Python change or repeated failed width/idle sweep.
+Any selected implementation needs native/default/whole-corpus and full own-
+clock Fuse proof, with long enough generated signals for bank-period AM/FM.
+Never relax20-dB/2% gates or claim physical/all-clone proof from CPU/Pentagon.
 
 ## Source-independent SNR research: diagnostic/prototype milestone complete (2026-10-14)
 

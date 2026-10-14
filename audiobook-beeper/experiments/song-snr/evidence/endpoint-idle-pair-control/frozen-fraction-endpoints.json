@@ -1,0 +1,275 @@
+{
+  "complete": true,
+  "source_audio_opened": false,
+  "independent_fraction_arithmetic": true,
+  "recurrence": "weight=16*hold/449;u=1/2+q/weight+recent/2;recent=u-bit;q+=weight*(1/2-bit)",
+  "quantizer": "epsilon=1/10^12;qcode=clip(floor(8*q+8.5+epsilon),0,15);recentcode=clip(floor(recent+1+epsilon),0,1);next=2*qcode+recentcode",
+  "original_endpoint_epsilon_fraction": "1/1000000000000",
+  "endpoints": [
+    {
+      "state_before": 16,
+      "word": 26381,
+      "word_hex": "670d",
+      "active_tstates": 224,
+      "total_tstates": 449,
+      "q_end": "8/449",
+      "recent_end": "1715169511331/12628951695360",
+      "q_end_float": 0.017817371937639197,
+      "recent_end_float": 0.13581250072887444,
+      "q_code": 8,
+      "recent_code": 1,
+      "derived_successor": 17,
+      "stored_successor": 17,
+      "maximum_absolute_recent": "2556838129/2192526336",
+      "slots": [
+        {
+          "slot": 0,
+          "hold_tstates": 36,
+          "bit": 0,
+          "q_after": "288/449",
+          "recent_after": "1/4"
+        },
+        {
+          "slot": 1,
+          "hold_tstates": 28,
+          "bit": 1,
+          "q_after": "64/449",
+          "recent_after": "15/56"
+        },
+        {
+          "slot": 2,
+          "hold_tstates": 28,
+          "bit": 1,
+          "q_after": "-160/449",
+          "recent_after": "-25/112"
+        },
+        {
+          "slot": 3,
+          "hold_tstates": 31,
+          "bit": 0,
+          "q_after": "88/449",
+          "recent_after": "457/6944"
+        },
+        {
+          "slot": 4,
+          "hold_tstates": 24,
+          "bit": 0,
+          "q_after": "280/449",
+          "recent_after": "31751/41664"
+        },
+        {
+          "slot": 5,
+          "hold_tstates": 26,
+          "bit": 1,
+          "q_after": "72/449",
+          "recent_after": "600251/1083264"
+        },
+        {
+          "slot": 6,
+          "hold_tstates": 22,
+          "bit": 1,
+          "q_after": "-104/449",
+          "recent_after": "-438455/23831808"
+        },
+        {
+          "slot": 7,
+          "hold_tstates": 46,
+          "bit": 1,
+          "q_after": "-472/449",
+          "recent_after": "-713122801/1096263168"
+        },
+        {
+          "slot": 8,
+          "hold_tstates": 22,
+          "bit": 0,
+          "q_after": "-296/449",
+          "recent_after": "-2556838129/2192526336"
+        },
+        {
+          "slot": 9,
+          "hold_tstates": 26,
+          "bit": 0,
+          "q_after": "-88/449",
+          "recent_after": "-3484445425/4385052672"
+        },
+        {
+          "slot": 10,
+          "hold_tstates": 22,
+          "bit": 0,
+          "q_after": "88/449",
+          "recent_after": "-1291919089/8770105344"
+        },
+        {
+          "slot": 11,
+          "hold_tstates": 30,
+          "bit": 0,
+          "q_after": "328/449",
+          "recent_after": "53469457739/87701053440"
+        },
+        {
+          "slot": 12,
+          "hold_tstates": 31,
+          "bit": 1,
+          "q_after": "80/449",
+          "recent_after": "81760120139/175402106880"
+        },
+        {
+          "slot": 13,
+          "hold_tstates": 27,
+          "bit": 1,
+          "q_after": "-136/449",
+          "recent_after": "-258104191069/3157237923840"
+        },
+        {
+          "slot": 14,
+          "hold_tstates": 34,
+          "bit": 0,
+          "q_after": "136/449",
+          "recent_after": "1320514770851/6314475847680"
+        },
+        {
+          "slot": 15,
+          "hold_tstates": 16,
+          "bit": 1,
+          "q_after": "8/449",
+          "recent_after": "1715169511331/12628951695360"
+        }
+      ]
+    },
+    {
+      "state_before": 17,
+      "word": 38556,
+      "word_hex": "969c",
+      "active_tstates": 225,
+      "total_tstates": 449,
+      "q_end": "-8/449",
+      "recent_end": "-1708438613281/4209650565120",
+      "q_end_float": -0.017817371937639197,
+      "recent_end_float": -0.4058385813389476,
+      "q_code": 8,
+      "recent_code": 0,
+      "derived_successor": 16,
+      "stored_successor": 16,
+      "maximum_absolute_recent": "1050680712481/1052412641280",
+      "slots": [
+        {
+          "slot": 0,
+          "hold_tstates": 36,
+          "bit": 1,
+          "q_after": "-288/449",
+          "recent_after": "-1/4"
+        },
+        {
+          "slot": 1,
+          "hold_tstates": 28,
+          "bit": 0,
+          "q_after": "-64/449",
+          "recent_after": "-15/56"
+        },
+        {
+          "slot": 2,
+          "hold_tstates": 28,
+          "bit": 0,
+          "q_after": "160/449",
+          "recent_after": "25/112"
+        },
+        {
+          "slot": 3,
+          "hold_tstates": 31,
+          "bit": 1,
+          "q_after": "-88/449",
+          "recent_after": "-457/6944"
+        },
+        {
+          "slot": 4,
+          "hold_tstates": 24,
+          "bit": 0,
+          "q_after": "104/449",
+          "recent_after": "9913/41664"
+        },
+        {
+          "slot": 5,
+          "hold_tstates": 26,
+          "bit": 1,
+          "q_after": "-104/449",
+          "recent_after": "-10919/83328"
+        },
+        {
+          "slot": 6,
+          "hold_tstates": 22,
+          "bit": 1,
+          "q_after": "-280/449",
+          "recent_after": "-1578349/1833216"
+        },
+        {
+          "slot": 7,
+          "hold_tstates": 46,
+          "bit": 0,
+          "q_after": "88/449",
+          "recent_after": "-26219339/84327936"
+        },
+        {
+          "slot": 8,
+          "hold_tstates": 22,
+          "bit": 1,
+          "q_after": "-88/449",
+          "recent_after": "-68383307/168655872"
+        },
+        {
+          "slot": 9,
+          "hold_tstates": 26,
+          "bit": 0,
+          "q_after": "120/449",
+          "recent_after": "375936049/4385052672"
+        },
+        {
+          "slot": 10,
+          "hold_tstates": 22,
+          "bit": 0,
+          "q_after": "296/449",
+          "recent_after": "7750797361/8770105344"
+        },
+        {
+          "slot": 11,
+          "hold_tstates": 30,
+          "bit": 1,
+          "q_after": "56/449",
+          "recent_after": "48985776373/87701053440"
+        },
+        {
+          "slot": 12,
+          "hold_tstates": 31,
+          "bit": 1,
+          "q_after": "-192/449",
+          "recent_after": "-18911813387/175402106880"
+        },
+        {
+          "slot": 13,
+          "hold_tstates": 27,
+          "bit": 1,
+          "q_after": "-408/449",
+          "recent_after": "-1050680712481/1052412641280"
+        },
+        {
+          "slot": 14,
+          "hold_tstates": 34,
+          "bit": 0,
+          "q_after": "-136/449",
+          "recent_after": "-1576887033121/2104825282560"
+        },
+        {
+          "slot": 15,
+          "hold_tstates": 16,
+          "bit": 0,
+          "q_after": "-8/449",
+          "recent_after": "-1708438613281/4209650565120"
+        }
+      ]
+    }
+  ],
+  "pair_nominal_on_tstates": 449,
+  "pair_nominal_total_tstates": 898,
+  "pair_nominal_duty": 0.5,
+  "derived_original_successors_retained": true,
+  "scope": "Exact endpoint and nominal area certificate only; no source/quality, continuous-filter or actual transport proof."
+}

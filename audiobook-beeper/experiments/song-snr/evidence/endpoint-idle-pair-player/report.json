@@ -1,0 +1,944 @@
+{
+  "complete": true,
+  "date": "2026-10-14",
+  "proof": {
+    "default": {
+      "prior_version": "6e06d009",
+      "old_centered_disk_exact": true,
+      "prior_metadata_exact": true,
+      "trd_sha256": "a994784bdba352dbd16aed2158309db9a0d87a856deeaf8e9457244786f5346d",
+      "metadata_sha256": "6921df971c1ac7b33d380cdcff5fb8f9e27284b03ec8f07c4736a6cb68f9eb14"
+    },
+    "exact_endpoints": {
+      "primary_replay_unused": true,
+      "forced_successors": [
+        17,
+        16
+      ],
+      "epsilon": "1/1000000000000",
+      "fraction_endpoints": [
+        {
+          "state": 16,
+          "word": 26381,
+          "successor": 17,
+          "q": {
+            "numerator": 8,
+            "denominator": 449
+          },
+          "recent": {
+            "numerator": 1715169511331,
+            "denominator": 12628951695360
+          }
+        },
+        {
+          "state": 17,
+          "word": 38556,
+          "successor": 16,
+          "q": {
+            "numerator": -8,
+            "denominator": 449
+          },
+          "recent": {
+            "numerator": -1708438613281,
+            "denominator": 4209650565120
+          }
+        }
+      ],
+      "incorrect_derived_successor_rejected": true,
+      "scope": "Exact final labels only; not equivalence to original individual bit decisions or a bounded internal-history proof"
+    },
+    "table": {
+      "changed_cells": [
+        [
+          32,
+          16
+        ],
+        [
+          32,
+          17
+        ]
+      ],
+      "all_successors_preserved": true,
+      "idle_successor_cycle": [
+        17,
+        16
+      ],
+      "input_tables_unchanged": true,
+      "absent_option_identity": true,
+      "ordinary_on_tstates": [
+        224,
+        225
+      ],
+      "pair_on_tstates": 449,
+      "pair_period_tstates": 898,
+      "pair_mean_duty": 0.5,
+      "reachable_states": 18,
+      "first_patterns": 139,
+      "second_patterns": 98,
+      "prior_first_patterns": 138,
+      "prior_second_patterns": 96,
+      "whole64_bin_closure": true,
+      "closure_covers_every_pcm_bin": true
+    },
+    "independence": {
+      "reference_uses_neither_primary_helper_nor_validator": true,
+      "every_mixed_source_bit_matches_manual_recurrence": true,
+      "full_silent_source_repeats_pair": true,
+      "words": [
+        26381,
+        38556
+      ],
+      "successor_cycle": [
+        17,
+        16
+      ]
+    },
+    "guards": {
+      "rejected_cases": [
+        "endpoint_idle_pair_words=None",
+        "endpoint_idle_pair_words=[]",
+        "endpoint_idle_pair_words=[26381]",
+        "endpoint_idle_pair_words=[26381, 38556, 26381]",
+        "endpoint_idle_pair_words=[[26381], 38556]",
+        "endpoint_idle_pair_words='[26381, 38556]'",
+        "endpoint_idle_pair_words={0: 26381, 1: 38556}",
+        "endpoint_idle_pair_words=array([26381, 38556])",
+        "endpoint_idle_pair_words=[True, 38556]",
+        "endpoint_idle_pair_words=[26381.0, 38556]",
+        "endpoint_idle_pair_words=[np.int64(26381), 38556]",
+        "endpoint_idle_pair_words=[-1, 38556]",
+        "endpoint_idle_pair_words=[65536, 38556]",
+        "endpoint_idle_pair_words=[0, 38556]",
+        "endpoint_idle_pair_words=[26381, 65535]",
+        "endpoint_idle_pair_words=[38556, 26381]",
+        "endpoint_idle_pair_words=[26381, 26381]",
+        "endpoint_idle_pair_words=[38556, 38556]",
+        "endpoint_idle_pair_words=[43346, 43365]",
+        "endpoint_idle_pair_words=[22170, 22189]",
+        "pcm_origin=0.5",
+        "pcm_origin=False",
+        "extent=0.5",
+        "extent=True",
+        "beta=0.25",
+        "pcm_quantization_bias=0",
+        "pcm_bins=128",
+        "pcm_bins=64.0",
+        "family=None",
+        "family='sigma_delta2'",
+        "q_clip=(0, 14)",
+        "q_clip=None",
+        "q_clip=(0.0, 15.0)",
+        "holds=None",
+        "neutral_packet_word=22189",
+        "neutral_packet_successor=16",
+        "idle_cycle_word=22189",
+        "idle_pair_words=[22170, 22189]",
+        "neutral_packet_word=None",
+        "neutral_packet_successor=None",
+        "idle_cycle_word=None",
+        "idle_pair_words=None",
+        "same period but wrong individual holds",
+        "both old neutral flags"
+      ],
+      "before_output_creation": true
+    },
+    "cycle_guards": {
+      "primary_rejects_modified16_successor": true,
+      "independent_rejects_modified17_successor": true
+    },
+    "native": {
+      "complete_short_native_runs": 8,
+      "profiles": [
+        {
+          "profile": "128",
+          "before": {
+            "complete": true,
+            "profile": "128",
+            "bits_verified": 65503,
+            "predictor_index_samples": 4094,
+            "reloads": 0,
+            "rom_calls_during_refills": 0,
+            "maximum_native_hold_tstates": 48,
+            "loading": {
+              "complete": true,
+              "profile": "128",
+              "cover_before_audio": true,
+              "progress_complete": true,
+              "loaded_sections": [
+                {
+                  "bank": 0,
+                  "address": 63488,
+                  "bytes": 2048
+                }
+              ],
+              "disk_calls": 95,
+              "remaining_sectors": 0
+            },
+            "every_bit_predictor_index_exact": true,
+            "every_continuous_native_hold_exact": true,
+            "memory_guards_passed": true,
+            "explicit_reload_intervals": [],
+            "bank_extra_tstates": 243,
+            "bank_delta_tstates": 103,
+            "ordinary_tstates": 423,
+            "pages": [],
+            "interval_extras": [
+              [
+                8158,
+                14
+              ],
+              [
+                16350,
+                14
+              ],
+              [
+                24542,
+                14
+              ],
+              [
+                32734,
+                14
+              ],
+              [
+                40926,
+                14
+              ],
+              [
+                49118,
+                14
+              ],
+              [
+                57310,
+                14
+              ]
+            ],
+            "pcm_quantization_bias": 512,
+            "all256_hardware_lookup_entries_verified": true,
+            "lookup_native_tstate_delta": 0,
+            "ula_timing_claim": "Native CPU proof excludes data-dependent128/Scorpion ULA waits"
+          },
+          "after": {
+            "complete": true,
+            "profile": "128",
+            "bits_verified": 65503,
+            "predictor_index_samples": 4094,
+            "reloads": 0,
+            "rom_calls_during_refills": 0,
+            "maximum_native_hold_tstates": 48,
+            "loading": {
+              "complete": true,
+              "profile": "128",
+              "cover_before_audio": true,
+              "progress_complete": true,
+              "loaded_sections": [
+                {
+                  "bank": 0,
+                  "address": 63488,
+                  "bytes": 2048
+                }
+              ],
+              "disk_calls": 95,
+              "remaining_sectors": 0
+            },
+            "every_bit_predictor_index_exact": true,
+            "every_continuous_native_hold_exact": true,
+            "memory_guards_passed": true,
+            "explicit_reload_intervals": [],
+            "bank_extra_tstates": 243,
+            "bank_delta_tstates": 103,
+            "ordinary_tstates": 423,
+            "pages": [],
+            "interval_extras": [
+              [
+                8158,
+                14
+              ],
+              [
+                16350,
+                14
+              ],
+              [
+                24542,
+                14
+              ],
+              [
+                32734,
+                14
+              ],
+              [
+                40926,
+                14
+              ],
+              [
+                49118,
+                14
+              ],
+              [
+                57310,
+                14
+              ]
+            ],
+            "pcm_quantization_bias": 512,
+            "all256_hardware_lookup_entries_verified": true,
+            "lookup_native_tstate_delta": 0,
+            "ula_timing_claim": "Native CPU proof excludes data-dependent128/Scorpion ULA waits"
+          }
+        },
+        {
+          "profile": "scorpion",
+          "before": {
+            "complete": true,
+            "profile": "scorpion",
+            "bits_verified": 65503,
+            "predictor_index_samples": 4094,
+            "reloads": 0,
+            "rom_calls_during_refills": 0,
+            "maximum_native_hold_tstates": 48,
+            "loading": {
+              "complete": true,
+              "profile": "scorpion",
+              "cover_before_audio": true,
+              "progress_complete": true,
+              "loaded_sections": [
+                {
+                  "bank": 0,
+                  "address": 63488,
+                  "bytes": 2048
+                }
+              ],
+              "disk_calls": 95,
+              "remaining_sectors": 0
+            },
+            "every_bit_predictor_index_exact": true,
+            "every_continuous_native_hold_exact": true,
+            "memory_guards_passed": true,
+            "explicit_reload_intervals": [],
+            "bank_extra_tstates": 267,
+            "bank_delta_tstates": 127,
+            "ordinary_tstates": 423,
+            "pages": [],
+            "interval_extras": [
+              [
+                8158,
+                14
+              ],
+              [
+                16350,
+                14
+              ],
+              [
+                24542,
+                14
+              ],
+              [
+                32734,
+                14
+              ],
+              [
+                40926,
+                14
+              ],
+              [
+                49118,
+                14
+              ],
+              [
+                57310,
+                14
+              ]
+            ],
+            "pcm_quantization_bias": 512,
+            "all256_hardware_lookup_entries_verified": true,
+            "lookup_native_tstate_delta": 0,
+            "ula_timing_claim": "Native CPU proof excludes data-dependent128/Scorpion ULA waits"
+          },
+          "after": {
+            "complete": true,
+            "profile": "scorpion",
+            "bits_verified": 65503,
+            "predictor_index_samples": 4094,
+            "reloads": 0,
+            "rom_calls_during_refills": 0,
+            "maximum_native_hold_tstates": 48,
+            "loading": {
+              "complete": true,
+              "profile": "scorpion",
+              "cover_before_audio": true,
+              "progress_complete": true,
+              "loaded_sections": [
+                {
+                  "bank": 0,
+                  "address": 63488,
+                  "bytes": 2048
+                }
+              ],
+              "disk_calls": 95,
+              "remaining_sectors": 0
+            },
+            "every_bit_predictor_index_exact": true,
+            "every_continuous_native_hold_exact": true,
+            "memory_guards_passed": true,
+            "explicit_reload_intervals": [],
+            "bank_extra_tstates": 267,
+            "bank_delta_tstates": 127,
+            "ordinary_tstates": 423,
+            "pages": [],
+            "interval_extras": [
+              [
+                8158,
+                14
+              ],
+              [
+                16350,
+                14
+              ],
+              [
+                24542,
+                14
+              ],
+              [
+                32734,
+                14
+              ],
+              [
+                40926,
+                14
+              ],
+              [
+                49118,
+                14
+              ],
+              [
+                57310,
+                14
+              ]
+            ],
+            "pcm_quantization_bias": 512,
+            "all256_hardware_lookup_entries_verified": true,
+            "lookup_native_tstate_delta": 0,
+            "ula_timing_claim": "Native CPU proof excludes data-dependent128/Scorpion ULA waits"
+          }
+        },
+        {
+          "profile": "pentagon512",
+          "before": {
+            "complete": true,
+            "profile": "pentagon512",
+            "bits_verified": 65503,
+            "predictor_index_samples": 4094,
+            "reloads": 0,
+            "rom_calls_during_refills": 0,
+            "maximum_native_hold_tstates": 48,
+            "loading": {
+              "complete": true,
+              "profile": "pentagon512",
+              "cover_before_audio": true,
+              "progress_complete": true,
+              "loaded_sections": [
+                {
+                  "bank": 0,
+                  "address": 63488,
+                  "bytes": 2048
+                }
+              ],
+              "disk_calls": 95,
+              "remaining_sectors": 0
+            },
+            "every_bit_predictor_index_exact": true,
+            "every_continuous_native_hold_exact": true,
+            "memory_guards_passed": true,
+            "explicit_reload_intervals": [],
+            "bank_extra_tstates": 243,
+            "bank_delta_tstates": 103,
+            "ordinary_tstates": 449,
+            "pages": [],
+            "interval_extras": [
+              [
+                8158,
+                14
+              ],
+              [
+                16350,
+                14
+              ],
+              [
+                24542,
+                14
+              ],
+              [
+                32734,
+                14
+              ],
+              [
+                40926,
+                14
+              ],
+              [
+                49118,
+                14
+              ],
+              [
+                57310,
+                14
+              ]
+            ],
+            "pcm_quantization_bias": 512,
+            "all256_hardware_lookup_entries_verified": true,
+            "lookup_native_tstate_delta": 0,
+            "ula_timing_claim": "Native CPU proof excludes data-dependent128/Scorpion ULA waits"
+          },
+          "after": {
+            "complete": true,
+            "profile": "pentagon512",
+            "bits_verified": 65503,
+            "predictor_index_samples": 4094,
+            "reloads": 0,
+            "rom_calls_during_refills": 0,
+            "maximum_native_hold_tstates": 48,
+            "loading": {
+              "complete": true,
+              "profile": "pentagon512",
+              "cover_before_audio": true,
+              "progress_complete": true,
+              "loaded_sections": [
+                {
+                  "bank": 0,
+                  "address": 63488,
+                  "bytes": 2048
+                }
+              ],
+              "disk_calls": 95,
+              "remaining_sectors": 0
+            },
+            "every_bit_predictor_index_exact": true,
+            "every_continuous_native_hold_exact": true,
+            "memory_guards_passed": true,
+            "explicit_reload_intervals": [],
+            "bank_extra_tstates": 243,
+            "bank_delta_tstates": 103,
+            "ordinary_tstates": 449,
+            "pages": [],
+            "interval_extras": [
+              [
+                8158,
+                14
+              ],
+              [
+                16350,
+                14
+              ],
+              [
+                24542,
+                14
+              ],
+              [
+                32734,
+                14
+              ],
+              [
+                40926,
+                14
+              ],
+              [
+                49118,
+                14
+              ],
+              [
+                57310,
+                14
+              ]
+            ],
+            "pcm_quantization_bias": 512,
+            "all256_hardware_lookup_entries_verified": true,
+            "lookup_native_tstate_delta": 0,
+            "ula_timing_claim": "Native CPU proof excludes data-dependent128/Scorpion ULA waits"
+          }
+        },
+        {
+          "profile": "pentagon1024",
+          "before": {
+            "complete": true,
+            "profile": "pentagon1024",
+            "bits_verified": 65503,
+            "predictor_index_samples": 4094,
+            "reloads": 0,
+            "rom_calls_during_refills": 0,
+            "maximum_native_hold_tstates": 48,
+            "loading": {
+              "complete": true,
+              "profile": "pentagon1024",
+              "cover_before_audio": true,
+              "progress_complete": true,
+              "loaded_sections": [
+                {
+                  "bank": 0,
+                  "address": 63488,
+                  "bytes": 2048
+                }
+              ],
+              "disk_calls": 95,
+              "remaining_sectors": 0
+            },
+            "every_bit_predictor_index_exact": true,
+            "every_continuous_native_hold_exact": true,
+            "memory_guards_passed": true,
+            "explicit_reload_intervals": [],
+            "bank_extra_tstates": 243,
+            "bank_delta_tstates": 103,
+            "ordinary_tstates": 449,
+            "pages": [],
+            "interval_extras": [
+              [
+                8158,
+                14
+              ],
+              [
+                16350,
+                14
+              ],
+              [
+                24542,
+                14
+              ],
+              [
+                32734,
+                14
+              ],
+              [
+                40926,
+                14
+              ],
+              [
+                49118,
+                14
+              ],
+              [
+                57310,
+                14
+              ]
+            ],
+            "pcm_quantization_bias": 512,
+            "all256_hardware_lookup_entries_verified": true,
+            "lookup_native_tstate_delta": 0,
+            "ula_timing_claim": "Native CPU proof excludes data-dependent128/Scorpion ULA waits"
+          },
+          "after": {
+            "complete": true,
+            "profile": "pentagon1024",
+            "bits_verified": 65503,
+            "predictor_index_samples": 4094,
+            "reloads": 0,
+            "rom_calls_during_refills": 0,
+            "maximum_native_hold_tstates": 48,
+            "loading": {
+              "complete": true,
+              "profile": "pentagon1024",
+              "cover_before_audio": true,
+              "progress_complete": true,
+              "loaded_sections": [
+                {
+                  "bank": 0,
+                  "address": 63488,
+                  "bytes": 2048
+                }
+              ],
+              "disk_calls": 95,
+              "remaining_sectors": 0
+            },
+            "every_bit_predictor_index_exact": true,
+            "every_continuous_native_hold_exact": true,
+            "memory_guards_passed": true,
+            "explicit_reload_intervals": [],
+            "bank_extra_tstates": 243,
+            "bank_delta_tstates": 103,
+            "ordinary_tstates": 449,
+            "pages": [],
+            "interval_extras": [
+              [
+                8158,
+                14
+              ],
+              [
+                16350,
+                14
+              ],
+              [
+                24542,
+                14
+              ],
+              [
+                32734,
+                14
+              ],
+              [
+                40926,
+                14
+              ],
+              [
+                49118,
+                14
+              ],
+              [
+                57310,
+                14
+              ]
+            ],
+            "pcm_quantization_bias": 512,
+            "all256_hardware_lookup_entries_verified": true,
+            "lookup_native_tstate_delta": 0,
+            "ula_timing_claim": "Native CPU proof excludes data-dependent128/Scorpion ULA waits"
+          }
+        }
+      ],
+      "ordinary_tstates": {
+        "128": 423,
+        "scorpion": 423,
+        "pentagon512": 449,
+        "pentagon1024": 449
+      },
+      "instruction_table_HOLDS": [
+        36,
+        28,
+        28,
+        31,
+        24,
+        26,
+        22,
+        20,
+        22,
+        26,
+        22,
+        30,
+        31,
+        27,
+        34,
+        16
+      ],
+      "pentagon_slot7_extra": 26,
+      "native_tstate_delta": 0,
+      "page_extra_tstates": 14,
+      "bank_extra_tstates": {
+        "128": 243,
+        "scorpion": 267,
+        "pentagon512": 243,
+        "pentagon1024": 243
+      },
+      "dictionary_or_worker_footprint_changed": true,
+      "maximum_cold_loading": {
+        "complete": true,
+        "profile": "pentagon1024",
+        "cover_before_audio": true,
+        "progress_complete": true,
+        "loaded_sections": [
+          {
+            "bank": 0,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 4,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 6,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 1,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 3,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 7,
+            "address": 56064,
+            "bytes": 9472
+          },
+          {
+            "bank": 8,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 9,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 10,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 11,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 12,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 13,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 14,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 15,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 16,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 17,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 18,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 19,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 20,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 21,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 22,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 23,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 24,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 25,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 26,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 27,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 28,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 29,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 30,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 31,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 32,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 33,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 34,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 35,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 36,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 37,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 38,
+            "address": 49152,
+            "bytes": 16384
+          },
+          {
+            "bank": 39,
+            "address": 52480,
+            "bytes": 13056
+          }
+        ],
+        "disk_calls": 2479,
+        "remaining_sectors": 0
+      },
+      "maximum_worker_origin": 48192,
+      "maximum_worker_end": 49084,
+      "maximum_bank2_end": 49151,
+      "actual_Fuse_or_hardware_or_audio_quality_claim": false,
+      "ula_scope": "128/Scorpion address-dependent contention is outside native CPU proofs"
+    }
+  },
+  "current_producer_sha256": {
+    "test_endpoint_idle_pair_player.py": "ba79a2a216e55fb1a3955c3ddf5bed358ff7d6a95eb93317aceaba9ffe192a5e",
+    "build_stream_trd.py": "019fda85651a6037fb6f37564d8d9d4336c386f270aa812df473aa0658bc1d8e",
+    "direct_player.py": "a8f55bd7679c614647e43d8619e93ed2667c6361c108cb9a37f5af0ed95d33e1",
+    "verify_direct.py": "0fef35c8653e6f8df7f82b1c8ec8aee1d13538ad96410be3e4e8b72272f6867a",
+    "verify_stream_trd.py": "86ae3386f348e72616a826faf03750713424a62b0ddb0903b56f65b591cdf582",
+    "endpoint_idle_pair_model.py": "607e3aab7bc15c99c262730c735fa7f0c1ea451d36f25326db499d8ee0ea0c0d"
+  },
+  "scope": "Opt-in exact endpoint-label and functional native proof; no individual-greedy-rule, bounded-history, full Fuse or audio acceptance claim",
+  "reproducer": "python audiobook-beeper/test_endpoint_idle_pair_player.py --evidence NEW_EMPTY_FOLDER -v"
+}

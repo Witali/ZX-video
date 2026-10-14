@@ -1,5 +1,6 @@
 """Independent state recurrence and full native/Fuse direct-player checks."""
 import argparse,gzip,json
+from fractions import Fraction
 from pathlib import Path
 import numpy as np
 from direct_player import HOLDS
@@ -98,6 +99,61 @@ def independent_idle_pair_packet(model):
     return words
 
 
+def independent_idle_endpoint(word,state):
+    """Replay a forced neutral word exactly, independently of its helper.
+
+    The feedback state represents q on an eighth-unit lattice and recent
+    error at either -1/2 or +1/2. Each duration weight is16*hold/449. Endpoint
+    floors and clipping include the original exact positive1/10^12 epsilon.
+    This is a conceptual label check; the Z80 follows stored successors.
+    """
+    if type(word) is not int or not 0<=word<=65535 or type(state) is not int or state not in (16,17):
+        raise ValueError('idle endpoint requires a literal uint16 word and state16 or17')
+    holds=HOLDS.copy();holds[7]+=26
+    epsilon=Fraction(1,10**12);target=Fraction(1,2)
+    q=Fraction(state//2-8,8);recent=Fraction(2*(state%2)-1,2)
+    for position,hold in enumerate(holds):
+        weight=Fraction(16*hold,449)
+        value=target+q/weight+recent/2
+        bit=(word>>(15-position))&1
+        q+=weight*(target-bit);recent=value-bit
+    qcode=min(15,max(0,(8*q+Fraction(17,2)+epsilon).__floor__()))
+    rcode=min(1,max(0,(recent+1+epsilon).__floor__()))
+    return dict(q=q,recent=recent,qcode=qcode,rcode=rcode,successor=2*qcode+rcode)
+
+
+def independent_endpoint_idle_pair(model):
+    """Validate frozen words and exact endpoints without primary imports."""
+    if 'endpoint_idle_pair_words' not in model:return None
+    if any(key in model for key in ('neutral_packet_word','neutral_packet_successor','idle_cycle_word','idle_pair_words')):
+        raise ValueError('endpoint idle pair cannot be combined with older packet overrides')
+    specified=model['endpoint_idle_pair_words']
+    if not isinstance(specified,(list,tuple)) or len(specified)!=2:
+        raise ValueError('endpoint idle pair requires exactly two literal integer words')
+    pair=tuple(specified)
+    if any(type(word) is not int or not 0<=word<=65535 for word in pair):
+        raise ValueError('endpoint idle pair words must be literal integers within0..65535')
+    if pair!=(0x670d,0x969c):
+        raise ValueError('endpoint idle pair requires frozen words0x670D and0x969C')
+    holds=HOLDS.copy();holds[7]+=26
+    try:specified_holds=list(model.get('holds',()));clip=tuple(model.get('q_clip',(0,15)))
+    except TypeError:raise ValueError('endpoint idle pair timing and q_clip must be sequences') from None
+    bins=model.get('pcm_bins',64);bias=model.get('pcm_quantization_bias')
+    if (specified_holds!=holds or type(bias) is not int or bias!=512 or
+            type(bins) is not int or bins!=64 or model.get('family','integral')!='integral' or
+            clip!=(0,15) or any(type(value) is not int for value in clip)):
+        raise ValueError('endpoint idle pair requires the centered64-bin Pentagon duration_zero integral model')
+    for key,default,wanted in (('beta',.5,.5),('extent',1.,1),('pcm_origin',.5,0)):
+        value=model.get(key,default)
+        if type(value) not in (int,float) or value!=wanted:
+            raise ValueError('endpoint idle pair requires zero origin, full extent and beta0.5')
+    on=tuple(sum(hold for slot,hold in enumerate(holds) if word&(1<<(15-slot))) for word in pair)
+    if on!=(224,225):raise ValueError('endpoint idle pair must have224 then225 on-T within449 T states')
+    if tuple(independent_idle_endpoint(word,state)['successor'] for word,state in zip(pair,(16,17)))!=(17,16):
+        raise ValueError('endpoint idle pair must derive the original successor labels17/16')
+    return pair
+
+
 def reference(packed,cycles=2,model=None,idle_pairs=0):
     model=model or dict(holds=HOLDS,beta=.5,extent=1.)
     bins=model.get('pcm_bins',64)
@@ -106,6 +162,7 @@ def reference(packed,cycles=2,model=None,idle_pairs=0):
         raise ValueError('pcm_quantization_bias must be integer0 or512 (PCM16 units)')
     if bias and (bins!=64 or model.get('family') not in (None,'integral')):
         raise ValueError('PCM quantization bias requires the64-bin integral PDM model')
+    endpoint_pair=independent_endpoint_idle_pair(model)
     neutral=independent_neutral_packet(model)
     idle_cycle=independent_idle_cycle_packet(model)
     idle_pair=independent_idle_pair_packet(model)
@@ -135,6 +192,10 @@ def reference(packed,cycles=2,model=None,idle_pairs=0):
         if (int(nxt[32,16]),int(nxt[32,17]))!=(17,16):
             raise ValueError('idle pair requires the original16-to17-to16 neutral successor cycle')
         words=words.copy();words[32,16]=idle_pair[0];words[32,17]=idle_pair[1]
+    if endpoint_pair is not None:
+        if (int(nxt[32,16]),int(nxt[32,17]))!=(17,16):
+            raise ValueError('endpoint idle pair requires the original16-to17-to16 successor cycle')
+        words=words.copy();words[32,16]=endpoint_pair[0];words[32,17]=endpoint_pair[1]
     state=16;output=np.empty(len(pcm)*cycles+1,dtype='>u2')
     for i in range(len(output)):
         if model.get('reset_feedback_in_guard') and i%len(pcm)==len(pcm)-1:

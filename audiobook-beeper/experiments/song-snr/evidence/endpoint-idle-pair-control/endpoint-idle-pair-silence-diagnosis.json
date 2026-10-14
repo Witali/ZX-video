@@ -1,0 +1,506 @@
+{
+  "date": "2026-10-14",
+  "source": "silence",
+  "model": {
+    "holds": [
+      36,
+      28,
+      28,
+      31,
+      24,
+      26,
+      22,
+      46,
+      22,
+      26,
+      22,
+      30,
+      31,
+      27,
+      34,
+      16
+    ],
+    "beta": 0.5,
+    "extent": 1.0,
+    "pcm_origin": 0,
+    "compact_stream_loader": true,
+    "pcm_quantization_bias": 512,
+    "endpoint_idle_pair_words": [
+      26381,
+      38556
+    ]
+  },
+  "packed_sha256": "0f47ecf52af95b17e5b78e1ac181dc092897de95163da5d708eee4331918cf16",
+  "source_samples": 16896,
+  "all_packed_bytes_zero": true,
+  "all_decoded_pcm16_zero": true,
+  "all_decoded_ima_indices_zero": true,
+  "initial_feedback_state": 16,
+  "all_input_bins32": true,
+  "feedback_cycle": [
+    16,
+    17
+  ],
+  "packet_pair_hex": [
+    "670d",
+    "969c"
+  ],
+  "pair_repeats": 8448,
+  "independent_exact_fraction_endpoints": {
+    "complete": true,
+    "source_audio_opened": false,
+    "independent_fraction_arithmetic": true,
+    "recurrence": "weight=16*hold/449;u=1/2+q/weight+recent/2;recent=u-bit;q+=weight*(1/2-bit)",
+    "quantizer": "epsilon=1/10^12;qcode=clip(floor(8*q+8.5+epsilon),0,15);recentcode=clip(floor(recent+1+epsilon),0,1);next=2*qcode+recentcode",
+    "original_endpoint_epsilon_fraction": "1/1000000000000",
+    "endpoints": [
+      {
+        "state_before": 16,
+        "word": 26381,
+        "word_hex": "670d",
+        "active_tstates": 224,
+        "total_tstates": 449,
+        "q_end": "8/449",
+        "recent_end": "1715169511331/12628951695360",
+        "q_end_float": 0.017817371937639197,
+        "recent_end_float": 0.13581250072887444,
+        "q_code": 8,
+        "recent_code": 1,
+        "derived_successor": 17,
+        "stored_successor": 17,
+        "maximum_absolute_recent": "2556838129/2192526336",
+        "slots": [
+          {
+            "slot": 0,
+            "hold_tstates": 36,
+            "bit": 0,
+            "q_after": "288/449",
+            "recent_after": "1/4"
+          },
+          {
+            "slot": 1,
+            "hold_tstates": 28,
+            "bit": 1,
+            "q_after": "64/449",
+            "recent_after": "15/56"
+          },
+          {
+            "slot": 2,
+            "hold_tstates": 28,
+            "bit": 1,
+            "q_after": "-160/449",
+            "recent_after": "-25/112"
+          },
+          {
+            "slot": 3,
+            "hold_tstates": 31,
+            "bit": 0,
+            "q_after": "88/449",
+            "recent_after": "457/6944"
+          },
+          {
+            "slot": 4,
+            "hold_tstates": 24,
+            "bit": 0,
+            "q_after": "280/449",
+            "recent_after": "31751/41664"
+          },
+          {
+            "slot": 5,
+            "hold_tstates": 26,
+            "bit": 1,
+            "q_after": "72/449",
+            "recent_after": "600251/1083264"
+          },
+          {
+            "slot": 6,
+            "hold_tstates": 22,
+            "bit": 1,
+            "q_after": "-104/449",
+            "recent_after": "-438455/23831808"
+          },
+          {
+            "slot": 7,
+            "hold_tstates": 46,
+            "bit": 1,
+            "q_after": "-472/449",
+            "recent_after": "-713122801/1096263168"
+          },
+          {
+            "slot": 8,
+            "hold_tstates": 22,
+            "bit": 0,
+            "q_after": "-296/449",
+            "recent_after": "-2556838129/2192526336"
+          },
+          {
+            "slot": 9,
+            "hold_tstates": 26,
+            "bit": 0,
+            "q_after": "-88/449",
+            "recent_after": "-3484445425/4385052672"
+          },
+          {
+            "slot": 10,
+            "hold_tstates": 22,
+            "bit": 0,
+            "q_after": "88/449",
+            "recent_after": "-1291919089/8770105344"
+          },
+          {
+            "slot": 11,
+            "hold_tstates": 30,
+            "bit": 0,
+            "q_after": "328/449",
+            "recent_after": "53469457739/87701053440"
+          },
+          {
+            "slot": 12,
+            "hold_tstates": 31,
+            "bit": 1,
+            "q_after": "80/449",
+            "recent_after": "81760120139/175402106880"
+          },
+          {
+            "slot": 13,
+            "hold_tstates": 27,
+            "bit": 1,
+            "q_after": "-136/449",
+            "recent_after": "-258104191069/3157237923840"
+          },
+          {
+            "slot": 14,
+            "hold_tstates": 34,
+            "bit": 0,
+            "q_after": "136/449",
+            "recent_after": "1320514770851/6314475847680"
+          },
+          {
+            "slot": 15,
+            "hold_tstates": 16,
+            "bit": 1,
+            "q_after": "8/449",
+            "recent_after": "1715169511331/12628951695360"
+          }
+        ]
+      },
+      {
+        "state_before": 17,
+        "word": 38556,
+        "word_hex": "969c",
+        "active_tstates": 225,
+        "total_tstates": 449,
+        "q_end": "-8/449",
+        "recent_end": "-1708438613281/4209650565120",
+        "q_end_float": -0.017817371937639197,
+        "recent_end_float": -0.4058385813389476,
+        "q_code": 8,
+        "recent_code": 0,
+        "derived_successor": 16,
+        "stored_successor": 16,
+        "maximum_absolute_recent": "1050680712481/1052412641280",
+        "slots": [
+          {
+            "slot": 0,
+            "hold_tstates": 36,
+            "bit": 1,
+            "q_after": "-288/449",
+            "recent_after": "-1/4"
+          },
+          {
+            "slot": 1,
+            "hold_tstates": 28,
+            "bit": 0,
+            "q_after": "-64/449",
+            "recent_after": "-15/56"
+          },
+          {
+            "slot": 2,
+            "hold_tstates": 28,
+            "bit": 0,
+            "q_after": "160/449",
+            "recent_after": "25/112"
+          },
+          {
+            "slot": 3,
+            "hold_tstates": 31,
+            "bit": 1,
+            "q_after": "-88/449",
+            "recent_after": "-457/6944"
+          },
+          {
+            "slot": 4,
+            "hold_tstates": 24,
+            "bit": 0,
+            "q_after": "104/449",
+            "recent_after": "9913/41664"
+          },
+          {
+            "slot": 5,
+            "hold_tstates": 26,
+            "bit": 1,
+            "q_after": "-104/449",
+            "recent_after": "-10919/83328"
+          },
+          {
+            "slot": 6,
+            "hold_tstates": 22,
+            "bit": 1,
+            "q_after": "-280/449",
+            "recent_after": "-1578349/1833216"
+          },
+          {
+            "slot": 7,
+            "hold_tstates": 46,
+            "bit": 0,
+            "q_after": "88/449",
+            "recent_after": "-26219339/84327936"
+          },
+          {
+            "slot": 8,
+            "hold_tstates": 22,
+            "bit": 1,
+            "q_after": "-88/449",
+            "recent_after": "-68383307/168655872"
+          },
+          {
+            "slot": 9,
+            "hold_tstates": 26,
+            "bit": 0,
+            "q_after": "120/449",
+            "recent_after": "375936049/4385052672"
+          },
+          {
+            "slot": 10,
+            "hold_tstates": 22,
+            "bit": 0,
+            "q_after": "296/449",
+            "recent_after": "7750797361/8770105344"
+          },
+          {
+            "slot": 11,
+            "hold_tstates": 30,
+            "bit": 1,
+            "q_after": "56/449",
+            "recent_after": "48985776373/87701053440"
+          },
+          {
+            "slot": 12,
+            "hold_tstates": 31,
+            "bit": 1,
+            "q_after": "-192/449",
+            "recent_after": "-18911813387/175402106880"
+          },
+          {
+            "slot": 13,
+            "hold_tstates": 27,
+            "bit": 1,
+            "q_after": "-408/449",
+            "recent_after": "-1050680712481/1052412641280"
+          },
+          {
+            "slot": 14,
+            "hold_tstates": 34,
+            "bit": 0,
+            "q_after": "-136/449",
+            "recent_after": "-1576887033121/2104825282560"
+          },
+          {
+            "slot": 15,
+            "hold_tstates": 16,
+            "bit": 0,
+            "q_after": "-8/449",
+            "recent_after": "-1708438613281/4209650565120"
+          }
+        ]
+      }
+    ],
+    "pair_nominal_on_tstates": 449,
+    "pair_nominal_total_tstates": 898,
+    "pair_nominal_duty": 0.5,
+    "derived_original_successors_retained": true,
+    "scope": "Exact endpoint and nominal area certificate only; no source/quality, continuous-filter or actual transport proof."
+  },
+  "nominal_pair_active_tstates": 449,
+  "nominal_pair_total_tstates": 898,
+  "nominal_pair_duty": 0.5,
+  "nominal_pair_bipolar_mean": 0.0,
+  "independent_rational_table_matches": true,
+  "only_overridden_cells": [
+    [
+      32,
+      16
+    ],
+    [
+      32,
+      17
+    ]
+  ],
+  "all_other_words_and_every_successor_unchanged": true,
+  "independent_all64_bin_closure": {
+    "states": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29,
+      31
+    ],
+    "count": 18,
+    "packet_table_sha256": "a8978acf8d954f2d1133b83c10969a7c48ee68578e777eee5d72598ed4d3c311",
+    "successor_table_sha256": "00bac2e74df2d20e0075144fc30898f8cd1ff157d1ba4433db480f96370c1e89"
+  },
+  "silence_error_rms": 0.006652683886757357,
+  "silence_error_rms_dbfs": -43.5400622456396,
+  "silence_rms_change_db": {
+    "matched-centered-control": -7.354503886535561,
+    "idle-cycle-control": 9.225338371735546,
+    "idle-pair-control": 4.829993902833582
+  },
+  "error_spectrum": {
+    "available": true,
+    "window_samples": 32768,
+    "windows": 5,
+    "bin_width_hz": 1.3458251953125,
+    "window": "Hann;50-percent overlap;one-sided density",
+    "bands": [
+      {
+        "low_hz": 0,
+        "high_hz": 20,
+        "rms": 4.265813475829128e-06,
+        "rms_dbfs": -107.39996276295985
+      },
+      {
+        "low_hz": 20,
+        "high_hz": 200,
+        "rms": 0.00023708199327317727,
+        "rms_dbfs": -72.50202860150478
+      },
+      {
+        "low_hz": 200,
+        "high_hz": 1000,
+        "rms": 0.0006210614284094165,
+        "rms_dbfs": -64.13730884349405
+      },
+      {
+        "low_hz": 1000,
+        "high_hz": 3500,
+        "rms": 0.0010149099539676285,
+        "rms_dbfs": -59.871449760527696
+      },
+      {
+        "low_hz": 3500,
+        "high_hz": 4500,
+        "rms": 0.0037928663213326885,
+        "rms_dbfs": -48.420649272654614
+      },
+      {
+        "low_hz": 4500,
+        "high_hz": 22050.0,
+        "rms": 0.005328583891400762,
+        "rms_dbfs": -45.467763848979075
+      }
+    ],
+    "every_error_sample_inside_a_window": true,
+    "spectral_total_error_rms": 0.006652189624508231,
+    "strongest_error_bins": [
+      {
+        "hz": 3990.3717041015625,
+        "density_per_hz": 5.9642123524974924e-06,
+        "three_bin_error_power_fraction": 0.3178272393908878
+      },
+      {
+        "hz": 3991.717529296875,
+        "density_per_hz": 4.037104509490314e-06,
+        "three_bin_error_power_fraction": 0.30637017744858003
+      },
+      {
+        "hz": 3989.02587890625,
+        "density_per_hz": 4.4905398373407804e-07,
+        "three_bin_error_power_fraction": 0.1951989234435366
+      },
+      {
+        "hz": 3993.0633544921875,
+        "density_per_hz": 7.233817319189332e-08,
+        "three_bin_error_power_fraction": 0.12504957434365985
+      },
+      {
+        "hz": 4006.5216064453125,
+        "density_per_hz": 6.3887342227546325e-09,
+        "three_bin_error_power_fraction": 0.00029313202999655926
+      },
+      {
+        "hz": 3987.6800537109375,
+        "density_per_hz": 5.0039875458356575e-09,
+        "three_bin_error_power_fraction": 0.013823987106845827
+      },
+      {
+        "hz": 748.27880859375,
+        "density_per_hz": 3.6812186795161247e-09,
+        "three_bin_error_power_fraction": 0.00016794094850633537
+      },
+      {
+        "hz": 935.3485107421875,
+        "density_per_hz": 3.6807484027214276e-09,
+        "three_bin_error_power_fraction": 0.00016792144195631857
+      }
+    ],
+    "caveat": "On non-silent sources these are error peaks, not independently identified background. Welch windows include the whole declared edge-cropped scope."
+  },
+  "fullband_silence_peaks": {
+    "scope": "Complete silence except fixed100-ms edges;20..22050Hz;Hann Welch bins;no fitted transfer",
+    "window_samples": 32768,
+    "windows": 5,
+    "bin_width_hz": 1.3458251953125,
+    "strongest_bins": [
+      {
+        "hz": 11972.4609375,
+        "three_bin_total_noise_power_fraction": 0.353362767093509
+      },
+      {
+        "hz": 3990.3717041015625,
+        "three_bin_total_noise_power_fraction": 0.31782723939088786
+      },
+      {
+        "hz": 3991.717529296875,
+        "three_bin_total_noise_power_fraction": 0.30637017744858003
+      },
+      {
+        "hz": 7982.0892333984375,
+        "three_bin_total_noise_power_fraction": 0.19582630507729654
+      },
+      {
+        "hz": 11973.806762695312,
+        "three_bin_total_noise_power_fraction": 0.3049286439298379
+      },
+      {
+        "hz": 7980.743408203125,
+        "three_bin_total_noise_power_fraction": 0.18538870573724958
+      },
+      {
+        "hz": 11971.115112304688,
+        "three_bin_total_noise_power_fraction": 0.28291315355998486
+      },
+      {
+        "hz": 15962.832641601562,
+        "three_bin_total_noise_power_fraction": 0.07183387722944078
+      }
+    ]
+  },
+  "interpretation": "Exact endpoints17/16 and nominal zero-mean area are valid for the original q/recent rule with exact1e-12 epsilon. They do not make the filtered waveform zero or account for unequal page/bank excursions. Approximately3991-Hz and11972-Hz residual lines remain; complete source/AM/FM/background regressions are separate acceptance evidence.",
+  "new_fuse_verified": false,
+  "artifact_accepted": false,
+  "scope": "Read-only diagnosis of the frozen completed control; no other pair, model, source setting, changed clock/filter/gain, encoding or execution."
+}

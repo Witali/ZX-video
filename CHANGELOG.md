@@ -1,5 +1,44 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Endpoint-consistent idle pair completed; general promotion rejected
+
+- **Objective/input:** Address the prior conceptual endpoint mismatch without
+  tuning to audio. Exact Fraction/epsilon filtering reduces each424-word duty
+  domain to238; rank all56,644 pairs with the unchanged periodic midpoint
+  variance and deterministic symmetry/ID rules. Freeze670D/969C before inputs,
+  with exact derived17/16 endpoints and449/898 nominal high-time. Only two
+  words change; all successors/other2046 words remain exact. Selected analytic
+  variance4.337739430296041e-5 is an estimate, not quality acceptance.
+- **Functional proof:** Nine helper tests and seven player tests pass; eight
+  complete short before/after native runs cover four profiles. Independent
+  exact endpoint/bit/state/hold/guard checks pass,44 malformed cases fail
+  before mkdir, and absent disk AND metadata equal actual6e06d009. Whole64-bin
+  closure18, dictionary139/98 adds170 bytes versus matched. Repeated max2392-
+  sector cold loading verifies all612352 bytes; workerBC40..BFBC/67 spare.
+  Ordinary423/449 T, page extra14 and bank extra243/267 T; delta0, excluding
+  ULA/ROM/physical-disk latency. No complete new Fuse or hardware claim.
+- **Complete common corpus:** Fresh all-nine host run100.833500 s, including
+  C encoding/rendering/diagnostics, excluding TRD assembly/emulation. Song
+  20.113106210 dB gains0.002205562 versus matched but loses0.137209677 versus
+  half-joint. Speech22.060790921 and Entertainer19.626524979 gain0.004245/
+  0.036788 dB versus matched. Steps-0.061170, multitone-0.022146 and loud3000
+  -0.001064 dB regress; quiet440's numerical loss is only1.82e-9 dB. Matched
+  counters disclose four SNR/three RMS losses,42 AM/22 delay/16 line increases
+  and33 inconclusive fits. Five prior baseline comparisons are retained.
+- **Silence/decision:** RMS0.006652684 is7.354504 dB below matched, but9.225338
+  above one-word and4.829994 above the earlier zero-mean pair. Correct endpoint
+  labels retain a3990.37-Hz cluster (31.78% of spectral noise power) and a
+  stronger11972.46-Hz full-band cluster (35.34%); out-of-band power is disclosed.
+  They do not establish improved general audio or absence of tonal/modulation
+  artifacts. Reject unconditional promotion and skip a new rejected-candidate
+  Fuse run. Preserve all pre-input producers, measured outputs, independent
+  Fraction certificate and135-file/22-producer/45-baseline manifest. Original
+  Python/C, main disk and the
+  delivered20.25-dB snapshot remain unchanged; saved quality goal stays active.
+  [Selection](audiobook-beeper/experiments/song-snr/evidence/endpoint-idle-pair-selection/README.md),
+  [functional proof](audiobook-beeper/experiments/song-snr/evidence/endpoint-idle-pair-player/README.md),
+  [complete corpus](audiobook-beeper/experiments/song-snr/evidence/endpoint-idle-pair-control/README.md).
+
 ## 2026-10-14 — Zero-mean idle pair rejected; exact endpoint mismatch diagnosed
 
 - **Objective/baseline:** Test a source-free zero-mean replacement of only
