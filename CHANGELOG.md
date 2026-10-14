@@ -1,5 +1,17 @@
 # Changelog and optimization experiments
 
+## 2026-10-14 — Item21: widths follow the current path and register role
+
+- **Baseline/objective:** From `c032e9f2`, narrow counters only with local
+  bounds and distinct offset/token/count lifetimes.
+- **Coverage/results:**13 decrement states expose missing high-byte borrow
+  at256/512/8192/15872;20 of24 offset-to-count states fail if B clearing is
+  omitted.18 legal short escaped-word blocks replay exactly.55 checks and
+  31 exact defaults, with existing structurally bounded fast paths retained.
+- **Decision:** Reject global byte-range/encoding assumptions; delta0 T/code/
+  state/input. [Result](libraries/SECOND_PASS.md),
+  [report](libraries/evidence/trick_21.json). Continue item22.
+
 ## 2026-10-14 — Item20: restore LZSA2 target arithmetically
 
 - **Baseline/objective:** From `bba0b616`, replace sync's repeated target

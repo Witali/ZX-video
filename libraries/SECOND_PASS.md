@@ -207,3 +207,16 @@ python toolkit/test_streaming_lzsa2.py --noncanonical --output .tmp/item20-call-
 python toolkit/test_streaming_lzsa2.py --noncanonical --restore-compare --output .tmp/item20-call-after.json
 python libraries/tests/measure_second_pass.py --item 20 --stream-directory .tmp --output libraries/evidence/trick_20.json
 ```
+
+## Item21 — local counter width/register-role proof
+
+**Decision: retain structural bounds; reject global byte-range assumptions.**
+Thirteen decrement probes show DEC C loses the borrow from B at256/512/8192/
+15872. BC's role changes from token/negative offset to count; omitting B=0
+after saving offsets leaves the wrong count in20 of24 role probes. All18
+legal short escaped-word blocks replay exactly, again ruling out a large-length
+assumption based only on encoding. Existing Fast short-gamma/offset paths,
+byte-form unroll and fixed256-byte refill already exploit proven local bounds.
+
+[55 checks](evidence/trick_21.json),31 exact defaults; actual delta0 T/code/
+state/input. `audit_second_pass.py --item 21 --output libraries/evidence/trick_21.json`.

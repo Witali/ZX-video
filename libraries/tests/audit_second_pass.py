@@ -189,9 +189,39 @@ def item19():
                   'Moving state to external BSS without initialization changes storage accounting, not total required RAM or repeated-entry semantics.'])
 
 
+def item21():
+    counts=(2,3,8,9,18,24,255,256,257,511,512,8192,15872)
+    lost=[]
+    for count in counts:
+        word,_=run('0b',dict(bc=count))
+        byte,_=run('0d',dict(bc=count))
+        assert word.bc==count-1
+        if byte.bc!=word.bc:lost.append(dict(input=count,expected=word.bc,byte_counter=byte.bc))
+    role_failures=0
+    for high in (0,1,0x7f,0x80,0xfe,0xff):
+        for length in (2,18,24,255):
+            cleared,_=run('06 00',dict(bc=(high<<8)|length))
+            omitted,_=run('',dict(bc=(high<<8)|length))
+            assert cleared.bc==length
+            role_failures+=omitted.bc!=cleared.bc
+    from measure_long_copy import noncanonical_cases
+    from lzsa.resumable import build
+    from lzsa.native import execute
+    native=build();short=0
+    for _,payload,raw in noncanonical_cases():
+        assert execute(*native,payload,raw,source=0x2000)['exact'];short+=1
+    return dict(decision='retain per-path width/role proofs; reject global byte-range assumptions',checks=len(counts)+24+short,
+        narrowed_count_failures=lost,offset_to_count_role_failures=role_failures,
+        short_escaped_word_blocks=short,
+        findings=['BC is a negative offset/token/count at different points; SaveOffset must clear B before the next short match.',
+                  'DEC C does not borrow from B at256/512/page-multiple lengths, and changes flags.',
+                  'All18 short escaped-word blocks remain legal and exact; word encoding alone supplies no lower bound.',
+                  'Current fast gamma, byte-form unroll and fixed256-byte refill already use local structural bounds.'])
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--item',choices=('11','12','13','14','15','17','18','19'),required=True)
+    parser.add_argument('--item',choices=('11','12','13','14','15','17','18','19','21'),required=True)
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     defaults=profiles();assert defaults==json.loads((ROOT/'tests/decoder_baseline.json').read_text())['profiles']
     report=dict(date='2026-10-14',item=args.item,complete=True,release=False,scope=__doc__,

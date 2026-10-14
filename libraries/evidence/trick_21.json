@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-14",
+  "item": "21",
+  "complete": true,
+  "release": false,
+  "scope": "Native eligibility/counterexample audits for unchanged second-pass paths.",
+  "baseline_revision": "c032e9f2",
+  "decision": "retain per-path width/role proofs; reject global byte-range assumptions",
+  "checks": 55,
+  "narrowed_count_failures": [
+    {
+      "input": 256,
+      "expected": 255,
+      "byte_counter": 511
+    },
+    {
+      "input": 512,
+      "expected": 511,
+      "byte_counter": 767
+    },
+    {
+      "input": 8192,
+      "expected": 8191,
+      "byte_counter": 8447
+    },
+    {
+      "input": 15872,
+      "expected": 15871,
+      "byte_counter": 16127
+    }
+  ],
+  "offset_to_count_role_failures": 20,
+  "short_escaped_word_blocks": 18,
+  "findings": [
+    "BC is a negative offset/token/count at different points; SaveOffset must clear B before the next short match.",
+    "DEC C does not borrow from B at256/512/page-multiple lengths, and changes flags.",
+    "All18 short escaped-word blocks remain legal and exact; word encoding alone supplies no lower bound.",
+    "Current fast gamma, byte-form unroll and fixed256-byte refill already use local structural bounds."
+  ],
+  "default_profiles_exact": 31,
+  "decoder_changes": 0,
+  "actual_decoder_delta_tstates": 0,
+  "actual_code_state_payload_delta": 0
+}

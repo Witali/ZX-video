@@ -25,7 +25,9 @@ no saturating counter contract (259 checks). Item18 retains live continuations
 and rejects a slower one-byte dispatch merge (513 checks). Item19 retains
 compiled tables and required per-block mutable resets. Item20 adds optional
 restore_compare, −5 T/demand/−2 bytes;95 blocks/230 IRQs, both42-case guarded
-modes, boundary/combined-profile tests and15 unit tests pass. Item21 is next.
+modes, boundary/combined-profile tests and15 unit tests pass. Item21 retains
+local count/offset-role bounds and replays18 short-word blocks (55 checks).
+Item22 is next.
 
 ## Completed: other-site Z80 speed/size survey (2026-10-14)
 

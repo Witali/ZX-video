@@ -107,7 +107,7 @@ The proposed codec sites are our inferences from those sources.
 | 18 | Branch threading, tail calls and merged fall-through: 80CC-OPTIONS | Shorten helper/finish dispatch; CALL+RET → JP requires identical return-stack/continuation ownership | Existing tail calls retained; one-byte merge +8/+13 T rejected |
 | 19 | Preinitialized data and bulk initialization: SDCC-RMW, SDCC-ADDR | State/table startup instead of per-byte code; account for writable copies, relocations and transported bytes | Constants already emitted; repeated mutable resets retained |
 | 20 | Comparison orientation and reuse of existing flags: ETUDES-CMP, 80CC-DESIGN | Equality/bounds checks; only commute when the actual Z/carry/sign/overflow contract permits | Optional measured restore_compare: −5 T/demand, −2 bytes; both guarded modes pass |
-| 21 | Counter-width proof and register cost: 80CC-DESIGN | Loop-local bounds and complete spill costs; include short escaped LZSA2 word encodings and alternate loops | Pending codec experiment |
+| 21 | Counter-width proof and register cost: 80CC-DESIGN | Loop-local bounds and complete spill costs; include short escaped LZSA2 word encodings and alternate loops | Local bounds already used; global byte-range/role assumptions rejected |
 
 Existing default profiles remain exact. The new queue contains ideas to
 evaluate, not additional accepted gains or a new player release.
@@ -122,7 +122,7 @@ are conditional snippets, not completed codec/streaming/IRQ experiments.
 Item20 now has a concrete LZSA2 `sync` proposal: restore HL with ADD HL,DE
 after subtraction instead of reloading target, 35 ->30 T and6 ->4 bytes;
 S/Z/PV/C agree, H/N differ. The authorized second pass is tracked in
-[SECOND_PASS.md](SECOND_PASS.md); items10–20 are complete, item21 is next.
+[SECOND_PASS.md](SECOND_PASS.md); items10–21 are complete, item22 is next.
 
 | ID | Additional technique and source | Application and required proof | Status |
 | --- | --- | --- | --- |
